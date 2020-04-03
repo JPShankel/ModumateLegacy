@@ -39,7 +39,7 @@ ADynamicIconGenerator::ADynamicIconGenerator()
 	SceneCaptureComp->bCaptureOnMovement = false;
 	SceneCaptureComp->bAlwaysPersistRenderingState = true;
 	SceneCaptureComp->ShowFlags.Fog = false;
-	SceneCaptureComp->ShowFlags.AtmosphericFog = false;
+	SceneCaptureComp->ShowFlags.Atmosphere = false;
 	SceneCaptureComp->ShowFlags.TemporalAA = false;
 	SceneCaptureComp->ShowFlags.SkyLighting = false;
 	SceneCaptureComp->ShowFlags.LightShafts = false;

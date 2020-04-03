@@ -1667,9 +1667,10 @@ bool AEditModelPlayerController_CPP::LineTraceSingleAgainstMOIs(struct FHitResul
 bool AEditModelPlayerController_CPP::IsCursorOverWidget() const
 {
 	FSlateApplication &slateApp = FSlateApplication::Get();
+	TSharedPtr<FSlateUser> slateUser = slateApp.GetUser(0);
 	TSharedPtr<SViewport> gameViewport = slateApp.GetGameViewport();
-	const FWeakWidgetPath *widgetPath = slateApp.GetLastWidgetsUnderCursor();
-	TWeakPtr<SWidget> hoverWidgetWeak = (widgetPath && widgetPath->IsValid()) ? widgetPath->GetLastWidget() : TWeakPtr<SWidget>();
+	FWeakWidgetPath widgetPath = slateUser->GetLastWidgetsUnderCursor();
+	TWeakPtr<SWidget> hoverWidgetWeak = widgetPath.IsValid() ? widgetPath.GetLastWidget() : TWeakPtr<SWidget>();
 
 	if (!hoverWidgetWeak.IsValid())
 	{
