@@ -1,0 +1,80 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "../UE4",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "Modumate",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"ProceduralMeshComponent",
+				"CoreUObject",
+				"UMG"
+			]
+		},
+		{
+			"Name": "ModumateEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PreDefault"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "OculusVR",
+			"Enabled": false
+		},
+		{
+			"Name": "SteamVR",
+			"Enabled": false
+		},
+		{
+			"Name": "ProceduralMeshComponent",
+			"Enabled": true
+		},
+		{
+			"Name": "CWButton",
+			"Enabled": false
+		},
+		{
+			"Name": "Substance",
+			"Enabled": false,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/2f6439c2f9584f49809d9b13b16c2ba4"
+		},
+		{
+			"Name": "BacktraceIntegration",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher: //ue/marketplace/content/66f20b48cf6741e3a47a1fad7d118651",
+			"Token": "0d9dbe05e6a8eec5f01020cdb4cb83748cd1f6306aca28f3fb6885c69d33fa3b",
+			"SymbolsToken": "65845294f6f55f3193482e1a8d0225c2ada5c333bfe41c9a8db6c3375ca2f62d",
+			"Realm": "modumate",
+			"ProjectName": "",
+			"SendReleasePdb": false,
+			"SendDebugPdb": false,
+			"OverrideGlobalReporter": false
+		},
+		{
+			"Name": "ModumateAnalytics",
+			"Enabled": true
+		},
+		{
+			"Name": "Revulytics",
+			"Enabled": true
+		},
+		{
+			"Name": "AnalyticsMulticast",
+			"Enabled": true
+		}
+	],
+	"TargetPlatforms": [
+		"WindowsNoEditor"
+	],
+	"PostBuildSteps":
+	{
+		"Win64": [
+			"if NOT \"$(TargetConfiguration)\" == \"Development\" $(ProjectDir)/Plugins/BacktraceIntegration/Content/BacktraceIntegration/backtrace_post_build.exe --token=0d9dbe05e6a8eec5f01020cdb4cb83748cd1f6306aca28f3fb6885c69d33fa3b --send_debug=False --send_release=False --realm=modumate --symbols_token=65845294f6f55f3193482e1a8d0225c2ada5c333bfe41c9a8db6c3375ca2f62d --engine_dir=\"$(EngineDir)\" --project_dir=\"$(ProjectDir)\" --target_name=\"$(TargetName)\" --target_configuration=\"$(TargetConfiguration)\" --target_type=\"$(TargetType)\" --project_file=\"$(ProjectFile)\""
+		]
+	}
+}

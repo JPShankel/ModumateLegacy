@@ -1,0 +1,61 @@
+
+float2 TexelSize = View.ViewSizeAndInvSize.zw;
+MaterialFloat2 UV = GetViewportUV(Parameters);
+
+// TODO: make this an input
+// Basic filter
+float Radius = 1;
+float Kernel[9] = 
+    {1,2,1,
+     2,-12,2,
+     1,2,1};
+
+float WeightSum = 0.0f;
+
+// TODO: may want to check the custom stencil value for adjacent pixels to help remove edges around miter zones
+int idx = 0;
+bool bPixelInMask = false;
+for (int x = -Radius; x <= Radius; x++)
+{
+    for (int y = -Radius; y <= Radius; y++)
+    {
+		float2 Offset = UV + float2(x, y) * TexelSize;
+        MaterialFloat2 bufferUV = ViewportUVToBufferUV(Offset);
+		MaterialFloat2 clampedUV = min(max(bufferUV,View.BufferBilinearUVMinMax.xy),View.BufferBilinearUVMinMax.zw);
+
+    	WeightSum += CalcSceneDepth(clampedUV) * Kernel[idx];
+        if (SceneTextureLookup(clampedUV, 25, false).r == 4)
+        {
+            bPixelInMask = true;
+        }
+
+        idx+=1;
+    }
+}
+
+WeightSum = abs(WeightSum);
+
+// TODO: Probably should use some kind of clamp instead of if/else
+float threshold = 6.0f;
+if (WeightSum > threshold)
+{
+    WeightSum = (WeightSum - threshold) / threshold;
+}
+else
+{
+    WeightSum = 0.0;
+}
+
+
+// TODO: make these inputs
+MaterialFloat4 FillColor = MaterialFloat4(1.0, 1.0, 1.0, 1.0);
+MaterialFloat4 EdgeColor = MaterialFloat4(0.0, 0.0, 0.0, 1.0);
+
+MaterialFloat4 ResultColor = lerp(FillColor,EdgeColor,WeightSum);
+
+if (bPixelInMask)
+{
+    ResultColor = FillColor;
+}
+
+return ResultColor;

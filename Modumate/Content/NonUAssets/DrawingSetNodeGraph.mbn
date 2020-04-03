@@ -1,0 +1,155 @@
+DEFINE DRAWINGSCALE
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		FIXED("Paper Scale",Drawing.PaperScale)
+		FIXED("World Scale",Drawing.WorldScale)
+END
+
+PRESET DRAWINGSCALE 1_1000 READONLY
+	Preset.Name="1:1000"
+	Drawing.PaperScale="1"
+	Drawing.WorldScale="1000"
+END
+
+PRESET DRAWINGSCALE 1_768 READONLY
+	Preset.Name="1:768"
+	Drawing.PaperScale="1"
+	Drawing.WorldScale="768"
+END
+
+LIST DrawingScales				
+	1_1000, 1_768
+END				
+
+DEFINE DRAWINGSERIES_CONCEPTPLANS
+	INPUT:
+		Drawing->Scale[1..1]
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		BOOLEAN("Add Exterior Wall Dimensions",Drawing.AddExteriorWallDimensions)
+		BOOLEAN("Add Overall Wall Dimensions",Drawing.AddOverallWallDimensions)
+		BOOLEAN("Add Room Tags",Drawing.AddRoomTags)
+		BOOLEAN("Add Section View References",Drawing.AddSectionViewReferences)
+		BOOLEAN("Add Room Legend",Drawing.AddRoomLegend)
+END
+
+PRESET DRAWINGSERIES_CONCEPTPLANS DCONCEPT_EMPTYSET				
+	Scale=DrawingScales.1_1000			
+	Preset.Name="Empty Set"			
+	Drawing.AddExteriorWallDimensions="False"		
+	Drawing.AddOverallWallDimensions="False"	
+	Drawing.AddRoomTags="False"
+	Drawing.AddSectionViewReferences="False"
+	Drawing.AddRoomLegend="False"
+END
+		
+PRESET DRAWINGSERIES_CONCEPTPLANS DCONCEPT_TYPICALSET				
+	Scale=DrawingScales.1_1000			
+	Preset.Name="Concept Plans"			
+	Drawing.AddExteriorWallDimensions="True"		
+	Drawing.AddOverallWallDimensions="True"	
+	Drawing.AddRoomTags="True"
+	Drawing.AddSectionViewReferences="False"
+	Drawing.AddRoomLegend="True"
+END				
+
+PRESET DRAWINGSERIES_CONCEPTPLANS DCONCEPT_FULLSET				
+	Scale=DrawingScales.1_1000			
+	Preset.Name="Concept Plans"			
+	Drawing.AddExteriorWallDimensions="True"		
+	Drawing.AddOverallWallDimensions="True"	
+	Drawing.AddRoomTags="True"
+	Drawing.AddSectionViewReferences="True"
+	Drawing.AddRoomLegend="True"
+END				
+
+
+LIST ConceptPlans
+	DCONCEPT_EMPTYSET, DCONCEPT_TYPICALSET, DCONCEPT_FULLSET
+END
+
+DEFINE DRAWINGSERIES_FLOORPLANS
+	INPUT:
+		Drawing->Scale[1..1]
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		BOOLEAN("Add Exterior Wall Dimensions",Drawing.AddExteriorWallDimensions)
+		BOOLEAN("Add Overall Wall Dimensions",Drawing.AddOverallWallDimensions)
+		BOOLEAN("Add Room Tags",Drawing.AddRoomTags)
+		BOOLEAN("Add Wall Tags",Drawing.AddWallTags)
+		BOOLEAN("Add Door Tags",Drawing.AddDoorTags)
+		BOOLEAN("Add Section View References",Drawing.AddSectionViewReferences)
+		BOOLEAN("Add Section View References",Drawing.AddEnlargedPlanReferences)
+		BOOLEAN("Add Room Legend",Drawing.AddRoomLegend)
+		BOOLEAN("Add Wall Legend",Drawing.AddWallLegend)
+		BOOLEAN("Add Opening Legend",Drawing.AddOpening)
+END
+
+
+PRESET DRAWINGSERIES_FLOORPLANS DFLOOR_EMPTYSET			
+	Preset.Name="Empty Set"		
+	Scale=DrawingScales.1_1000		
+	Drawing.AddExteriorWallDimensions="False"
+	Drawing.AddOverallWallDimensions="False"
+	Drawing.AddRoomTags="False"
+	Drawing.AddWallTags="False"
+	Drawing.AddDoorTags="False"
+	Drawing.AddSectionViewReferences="False"
+	Drawing.AddEnlargedPlanReferences="False"
+	Drawing.AddRoomLegend="False"
+	Drawing.AddWallLegend="False"
+	Drawing.AddOpening="False"
+END			
+
+PRESET DRAWINGSERIES_FLOORPLANS DFLOOR_TYPICALSET			
+	Preset.Name="Empty Set"		
+	Scale=DrawingScales.1_1000		
+	Drawing.AddExteriorWallDimensions="True"
+	Drawing.AddOverallWallDimensions="True"
+	Drawing.AddRoomTags="True"
+	Drawing.AddWallTags="True"
+	Drawing.AddDoorTags="True"
+	Drawing.AddSectionViewReferences="True"
+	Drawing.AddEnlargedPlanReferences="False"
+	Drawing.AddRoomLegend="True"
+	Drawing.AddWallLegend="True"
+	Drawing.AddOpening="True"
+END			
+
+PRESET DRAWINGSERIES_FLOORPLANS DFLOOR_FULLSET			
+	Preset.Name="Empty Set"		
+	Scale=DrawingScales.1_1000		
+	Drawing.AddExteriorWallDimensions="True"
+	Drawing.AddOverallWallDimensions="True"
+	Drawing.AddRoomTags="True"
+	Drawing.AddWallTags="True"
+	Drawing.AddDoorTags="True"
+	Drawing.AddSectionViewReferences="True"
+	Drawing.AddEnlargedPlanReferences="False"
+	Drawing.AddRoomLegend="True"
+	Drawing.AddWallLegend="True"
+	Drawing.AddOpening="True"
+END			
+
+LIST Floorplans
+	DFLOOR_EMPTYSET, DFLOOR_TYPICALSET, DFLOOR_FULLSET
+END
+
+LIST AllPlans
+	DFLOOR_EMPTYSET, DFLOOR_TYPICALSET, DFLOOR_FULLSET
+	DCONCEPT_EMPTYSET, DCONCEPT_TYPICALSET, DCONCEPT_FULLSET
+END
+
+-- Entry point
+
+DEFINE DRAWINGSET
+	INPUT:
+		Drawing->Plans[1..]
+	PROPERTIES:
+		STRING("Set Name",Preset.Name)
+END
+
+PRESET DRAWINGSET DRAWINGSET_ROOT
+	Plans=AllPlans.DFLOOR_EMPTYSET
+	Preset.Name="Default Drawing Set"
+END

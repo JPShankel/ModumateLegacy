@@ -1,0 +1,3 @@
+call BuildProjectForInstall
+call BuildMainInstaller
+

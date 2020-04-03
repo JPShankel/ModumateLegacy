@@ -1,0 +1,3220 @@
+// Copyright 2018 Modumate, Inc. All Rights Reserved.
+
+#include "ModumateFunctionLibrary.h"
+
+#include "Components/SkyLightComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "DocumentManagement/ModumateObjectInstancePortal.h"
+#include "DrawDebugHelpers.h"
+#include "DynamicMeshActor.h"
+#include "EditModelGameMode_CPP.h"
+#include "EditModelGameState_CPP.h"
+#include "EditModelPlayerController_CPP.h"
+#include "Engine/Engine.h"
+#include "Engine/LocalPlayer.h"
+#include "Engine/UserInterfaceSettings.h"
+#include "EngineGlobals.h"
+#include "ExpressionEvaluator.h"
+#include "GameFramework/PlayerController.h"
+#include "HAL/PlatformApplicationMisc.h"
+#include "Interface/IModumateEditorTool.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetStringLibrary.h"
+#include "KismetProceduralMeshLibrary.h"
+#include "Modumate.h"
+#include "ModumateDocument.h"
+#include "ModumateGeometryStatics.h"
+#include "ModumateObjectDatabase.h"
+#include "ModumateObjectInstance.h"
+#include "ModumateObjectStatics.h"
+#include "Runtime/Core/Public/Math/RandomStream.h"
+#include "UnrealClasses/CompoundMeshActor.h"
+#include "ModumateCommands.h"
+#include "ModumateUnits.h"
+#include "ModumateDimensionStatics.h"
+#include "ModumateCraftingWidget_CPP.h"
+#include "Algo/Accumulate.h"
+
+#include <algorithm>
+#include <queue>
+#include <iostream>
+#include <regex>
+
+using namespace std;
+#include "poly2tri/poly2tri.h"
+using namespace p2t;
+
+
+
+using namespace Modumate;
+
+bool UModumateFunctionLibrary::ClosestPointsOnTwoLines(FVector& closestPointLine1, FVector& closestPointLine2, FVector linePoint1, FVector lineVec1, FVector linePoint2, FVector lineVec2)
+{
+	float a = FVector::DotProduct(lineVec1, lineVec1);
+	float b = FVector::DotProduct(lineVec1, lineVec2);
+	float e = FVector::DotProduct(lineVec2, lineVec2);
+
+	float d = a * e - b * b;
+
+	//lines are not parallel
+	if (d != 0.0f)
+	{
+		FVector r = linePoint1 - linePoint2;
+		float c = FVector::DotProduct(lineVec1, r);
+		float f = FVector::DotProduct(lineVec2, r);
+
+		float s = (b*f - c * e) / d;
+		float t = (a*f - c * b) / d;
+
+		closestPointLine1 = linePoint1 + lineVec1 * s;
+		closestPointLine2 = linePoint2 + lineVec2 * t;
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+FVector UModumateFunctionLibrary::V3dToV2d(TArray<FVector2D> & OutV2d, TArray<FVector> InV3d)
+{
+	TArray<FVector2D> V;
+
+	if (InV3d.Num() >= 3)
+	{
+		FVector VectorNormalize = (FVector::CrossProduct((InV3d[1] - InV3d[0]), (InV3d[2] - InV3d[1]))).GetSafeNormal();
+		FRotator VectorRot = UKismetMathLibrary::MakeRotFromZ(VectorNormalize);
+
+		for (FVector& CurV3d : InV3d)
+		{
+			FVector TempVector = VectorRot.UnrotateVector(CurV3d - InV3d[0]);
+			V.Add(FVector2D(TempVector.X, TempVector.Y));
+		}
+
+		OutV2d = V;
+		return VectorNormalize;
+	}
+	else
+	{
+		for (FVector& CurV3d : InV3d)
+		{
+			V.Add(FVector2D(CurV3d.X, CurV3d.Y));
+		}
+		OutV2d = V;
+		return FVector::ZeroVector;
+	}
+}
+
+int32 UModumateFunctionLibrary::LoopArrayIndex(int32 Index, int32 Length, int32 Panner)
+{
+	int32 K = Index + Panner;
+
+	while (K < 0)
+	{
+		K = K + Length;
+	}
+
+	while (K >= Length)
+	{
+		K = K - Length;
+	}
+
+	return K;
+}
+
+float UModumateFunctionLibrary::TwoLineDistance(FVector & PointOfIntersection, FVector Line1Point, FVector Line1Direction, FVector Line2Point, FVector Line2Direction)
+{
+	FVector L = Line1Point - Line2Point;
+	float L1 = FVector::DotProduct(L, Line1Direction.GetSafeNormal());
+	float L2 = FVector::DotProduct(L, Line2Direction.GetSafeNormal());
+	float L21 = FVector::DotProduct(Line1Direction.GetSafeNormal(), Line2Direction.GetSafeNormal());
+
+	float LocalFloat = 1.0 - (L21 * L21);
+	float N = 0.0;
+
+	if (LocalFloat != 0.0)
+	{
+		N = (L2 - (L1 * L21)) / LocalFloat;
+	}
+	//else
+	//{
+	//	N = 0.0;
+	//}
+
+	float M = (N * L21) - L1;
+
+	FVector P = Line1Point + (Line1Direction * M);
+	FVector Q = Line2Point + (Line2Direction * N);
+
+	float distance = (Q - P).Size();
+	PointOfIntersection = (P + Q) / 2;
+
+	return distance;
+}
+
+bool UModumateFunctionLibrary::IsPointInBothLineSegments(FVector2D Point, FVector2D Line1A, FVector2D Line1B, FVector2D Line2A, FVector2D Line2B, float DotError)
+{
+	FVector VPoint = FVector(Point.X, Point.Y, 0.0);
+	FVector VLine1A = FVector(Line1A.X, Line1A.Y, 0.0);
+	FVector VLine1B = FVector(Line1B.X, Line1B.Y, 0.0);
+	FVector VLine2A = FVector(Line2A.X, Line2A.Y, 0.0);
+	FVector VLine2B = FVector(Line2B.X, Line2B.Y, 0.0);
+
+	FVector Norm1 = (VPoint - VLine1A).GetSafeNormal();
+	FVector Norm2 = (VPoint - VLine1B).GetSafeNormal();
+	FVector Norm3 = (VPoint - VLine2A).GetSafeNormal();
+	FVector Norm4 = (VPoint - VLine2B).GetSafeNormal();
+
+	//float Dot1 = FVector::DotProduct(Norm1, Norm2);
+	//float Dot2 = FVector::DotProduct(Norm3, Norm4);
+
+	bool Bool1 = UKismetMathLibrary::NearlyEqual_FloatFloat(FVector::DotProduct(Norm1, Norm2), -1.0, DotError);
+	bool Bool2 = UKismetMathLibrary::NearlyEqual_FloatFloat(FVector::DotProduct(Norm3, Norm4), -1.0, DotError);
+
+	return Bool1 && Bool2;
+}
+
+bool UModumateFunctionLibrary::IsPointInLineSegments(FVector2D Point, FVector2D Line1A, FVector2D Line1B, float ErrorTolerance)
+{
+	FVector VPoint = FVector(Point.X, Point.Y, 0.0);
+	FVector VLine1A = FVector(Line1A.X, Line1A.Y, 0.0);
+	FVector VLine1B = FVector(Line1B.X, Line1B.Y, 0.0);
+
+	FVector V1 = (VPoint - VLine1A).GetSafeNormal();
+	FVector V2 = (VPoint - VLine1B).GetSafeNormal();
+	FVector V3 = (VLine1A - VLine1B).GetSafeNormal();
+
+	bool b1 = UKismetMathLibrary::NearlyEqual_FloatFloat(FVector::DotProduct(V1, V2), -1.0, ErrorTolerance);
+	bool b2 = UKismetMathLibrary::NearlyEqual_FloatFloat((FVector::CrossProduct(V1, V3)).Size(), -1.0, 0.0);
+
+	return b1 && b2;
+}
+
+FVector UModumateFunctionLibrary::MakeStraightLine(FVector& OutDirection, FVector Point1, FVector Point2)
+{
+	OutDirection = (Point2 - Point1).GetSafeNormal();
+
+	return (Point1 + Point2) / 2.0;
+}
+
+bool UModumateFunctionLibrary::TwoLineSegmentIntersection(FVector2D & PointOfIntersection, FVector2D LineAStart, FVector2D LineAEnd, FVector2D LineBStart, FVector2D LineBEnd, float EdgeError, float DotError)
+{
+	FVector A = FVector(LineAStart.X, LineAStart.Y, 0.0);
+	FVector B = FVector(LineAEnd.X, LineAEnd.Y, 0.0);
+	FVector C = FVector(LineBStart.X, LineBStart.Y, 0.0);
+	FVector D = FVector(LineBEnd.X, LineBEnd.Y, 0.0);
+
+	FVector Line1Direction(ForceInitToZero);
+	FVector Line2Direction(ForceInitToZero);
+	FVector Line1Point = MakeStraightLine(Line1Direction, A, B);
+	FVector Line2Point = MakeStraightLine(Line2Direction, C, D);
+
+
+	FVector PointOfIntersectionVector(ForceInitToZero);
+	float LineDistance = TwoLineDistance(PointOfIntersectionVector, Line1Point, Line1Direction, Line2Point, Line2Direction);
+	FVector2D PointOfIntersectionVector2D = FVector2D(PointOfIntersectionVector.X, PointOfIntersectionVector.Y);
+
+	bool IsAtBothLine = IsPointInBothLineSegments(PointOfIntersectionVector2D, LineAStart, LineAEnd, LineBStart, LineBEnd, DotError);
+	bool NearError = UKismetMathLibrary::NearlyEqual_FloatFloat(LineDistance, 0.0, EdgeError);
+
+	PointOfIntersection = PointOfIntersectionVector2D;
+	bool FinishedBool = IsAtBothLine && NearError;
+
+
+
+	return FinishedBool;
+}
+
+bool UModumateFunctionLibrary::ClockwiseRedirector(bool & Clockwise, TArray<FVector2D> Vertex)
+{
+	float Deg = 0.0;
+	float AntiDeg = 0.0;
+
+	if (Vertex.Num() >= 3)
+	{
+		for (int32 i = 0; i < Vertex.Num(); i++)
+		{
+			FVector2D Vector2dA = Vertex[LoopArrayIndex(i, Vertex.Num(), 1)] - Vertex[i];
+			FVector2D Vector2dB = Vertex[i] - Vertex[LoopArrayIndex(i, Vertex.Num(), -1)];
+
+			FVector VectorNormalA = (FVector(Vector2dA.X, Vector2dA.Y, 0.0)).GetSafeNormal();
+			FVector VectorNormalB = (FVector(Vector2dB.X, Vector2dB.Y, 0.0)).GetSafeNormal();
+
+			float sind = FVector::CrossProduct(VectorNormalA, VectorNormalB).Z;
+			float cosd = FVector::DotProduct(VectorNormalA, VectorNormalB);
+
+			float DegDirection = 0.0;
+
+			if (sind >= 0.0)
+			{
+				DegDirection = 180.0 - UKismetMathLibrary::DegAcos(cosd);
+			}
+			else
+			{
+				DegDirection = 360.0 - (180.0 - UKismetMathLibrary::DegAcos(cosd));
+			}
+
+			Deg = Deg + DegDirection;
+			AntiDeg = AntiDeg + (360.0 - DegDirection);
+		}
+
+		bool bDeg = UKismetMathLibrary::NearlyEqual_FloatFloat(Deg, (Vertex.Num() - 2) * 180.0, 2.0);
+		bool bAntiDeg = UKismetMathLibrary::NearlyEqual_FloatFloat(AntiDeg, (Vertex.Num() - 2) * 180.0, 2.0);
+
+		if (bDeg || bAntiDeg)
+		{
+			Clockwise = bAntiDeg;
+			return true;
+		}
+		else
+		{
+			Clockwise = false;
+			return false;
+		}
+
+	}
+	else
+	{
+		Clockwise = false;
+		return false;
+	}
+}
+
+bool UModumateFunctionLibrary::IsPointInTriangle(float & Distance, FVector TriangleA, FVector TriangleB, FVector TriangleC, FVector Point, float EdgeTolerance)
+{
+
+	FVector AC = TriangleC - TriangleA;
+	FVector AB = TriangleB - TriangleA;
+	FVector AP = Point - TriangleA;
+
+	FVector ACNormal = AC.GetSafeNormal();
+	FVector ABNormal = AB.GetSafeNormal();
+
+	float DotAC = FVector::DotProduct(ACNormal, AP);
+	float DotAB = FVector::DotProduct(ACNormal, ABNormal);
+	float DotAP = FVector::DotProduct(ABNormal, AP);
+
+	float AcosTan = FMath::Tan(FMath::Acos(DotAB));
+
+	float NxAC = DotAC - ((((ACNormal*DotAC) - AP).Size()) / AcosTan);
+	float MxAB = DotAP - ((((ABNormal*DotAP) - AP).Size()) / AcosTan);
+
+	float DivideAC = NxAC / AC.Size();
+	float DivideAB = MxAB / AB.Size();
+
+	bool bAC = (DivideAC >= (0.0 - EdgeTolerance)) && (DivideAC <= EdgeTolerance + 1.0);
+	bool bACAB = ((DivideAC + DivideAB) >= (0.0 - EdgeTolerance)) && ((DivideAC + DivideAB) <= EdgeTolerance + 1.0);
+	bool bAB = (DivideAB >= (0.0 - EdgeTolerance)) && (DivideAB <= EdgeTolerance + 1.0);
+
+	Distance = FVector::DotProduct(FVector::CrossProduct(ACNormal, ABNormal).GetSafeNormal(), AP);
+
+	return bAC && bACAB && bAB;
+}
+
+bool UModumateFunctionLibrary::DoVertexCheck(TArray<FVector2D> Polygon, int32 B, int32 A, int32 CheckC, TArray<FLineIndex> ExtraLineList, bool IsClockwise, TArray<int32> ProcessedList)
+{
+	bool bResult = false;
+	bool bFoundResult = false;
+	FVector2D Intersection1 = FVector2D(0.0, 0.0);
+	FVector2D Intersection2 = FVector2D(0.0, 0.0);
+	float TestDistance = 0.0;
+	TArray<int32> TriIndexArray = { B, A, CheckC };
+
+	FVector2D V2BA = Polygon[B] - Polygon[A];
+	FVector2D V2CB = Polygon[CheckC] - Polygon[B];
+
+	FVector ReflexVectA = (FVector(V2BA.X, V2BA.Y, 0.0)).GetSafeNormal();
+	FVector ReflexVectB = (FVector(V2CB.X, V2CB.Y, 0.0)).GetSafeNormal();
+
+	float ReflexAngle = 0.0;
+
+	if (IsClockwise)
+	{
+		ReflexAngle = (FVector::CrossProduct(ReflexVectA, ReflexVectB)).Z * -1.0;
+	}
+	else
+	{
+		ReflexAngle = (FVector::CrossProduct(ReflexVectA, ReflexVectB)).Z * 1.0;
+	}
+
+	if (ReflexAngle >= 0.0)
+	{
+		for (int32 i = 0; i < Polygon.Num(); i++)
+		{
+			int32 b1 = LoopArrayIndex(B, Polygon.Num(), -1);
+			int32 a1 = LoopArrayIndex(A, Polygon.Num(), 1);
+
+			bool bPointSegment1 = IsPointInLineSegments(Polygon[i], Polygon[B], Polygon[CheckC], 0.01);
+			bool bPointSegment2 = IsPointInLineSegments(Polygon[i], Polygon[A], Polygon[CheckC], 0.01);
+
+			bool bSegmentCheck1 = (CheckC != b1) && bPointSegment1;
+			bool bSegmentCheck2 = (CheckC != a1) && bPointSegment2;
+
+			if ((bSegmentCheck1 || bSegmentCheck2) && (ProcessedList.Find(i) == -1))
+			{
+				bFoundResult = true;
+				bResult = false;
+			}
+		}
+
+		for (FLineIndex& CurLineIndex : ExtraLineList)
+		{
+			// Lines checking intersection
+			bool bLineIntersection1 = TwoLineSegmentIntersection(Intersection1, Polygon[A], Polygon[CheckC], Polygon[CurLineIndex.A], Polygon[CurLineIndex.B], 0.01, 0.0001);
+			bool bLineIntersection2 = TwoLineSegmentIntersection(Intersection2, Polygon[B], Polygon[CheckC], Polygon[CurLineIndex.A], Polygon[CurLineIndex.B], 0.01, 0.0001);
+
+			bool bTriIndexArray = (TriIndexArray.Find(CurLineIndex.A) == -1) || (TriIndexArray.Find(CurLineIndex.B) == -1);
+
+			if ((bLineIntersection1 || bLineIntersection2) && bTriIndexArray)
+			{
+				bFoundResult = true;
+				bResult = false;
+			}
+
+		}
+
+		for (int32 i = 0; i < Polygon.Num(); i++)
+		{
+			if ((TriIndexArray.Find(i) == -1) && (ProcessedList.Find(i) == -1))
+			{
+				FVector TriangleA = FVector(Polygon[B].X, Polygon[B].Y, 0.0);
+				FVector TriangleB = FVector(Polygon[A].X, Polygon[A].Y, 0.0);
+				FVector TriangleC = FVector(Polygon[CheckC].X, Polygon[CheckC].Y, 0.0);
+				FVector TPoint = FVector(Polygon[i].X, Polygon[i].Y, 0.0);
+
+				bool bPointTriangle = IsPointInTriangle(TestDistance, TriangleA, TriangleB, TriangleC, TPoint, 0.00012);
+
+				if (bPointTriangle)
+				{
+					bFoundResult = true;
+					bResult = false;
+				}
+			}
+		}
+
+		if (bFoundResult == true)
+		{
+			bResult = false;
+		}
+		else
+		{
+			bResult = true;
+		}
+	}
+	else
+	{
+		bFoundResult = true;
+		bResult = false;
+	}
+
+	return bResult;
+}
+
+int32 UModumateFunctionLibrary::RecurseLoopIndex(int32 V2DLength, int32 PA, int32 PB)
+{
+
+	return V2DLength - abs(PB - PA);
+}
+
+void UModumateFunctionLibrary::PointLimiter(int32& PA, int32& PB, int32 inPA, int32 inPB)
+{
+	int32 pT = FMath::Min(inPA, inPB);
+	PB = FMath::Max(inPA, inPB);
+	PA = pT;
+}
+
+TArray<FTriangle2D> UModumateFunctionLibrary::PolygonTriangulation2D(TArray<FVector2D> Vertex, TArray<FLineIndex> CreatedLine, TArray<int32> ExcludedIndex, int32 Skipper, TArray<int32>& IntersectIDs, TArray<int32>& ConflictIDs)
+{
+	// Max iteration before stopping
+	const int32 MaxCycle = 100;
+
+	int32 pA = 0;
+	int32 pB = 0;
+	int32 pT = 0;
+	int32 SkipCheck = 0;
+	TArray<FTriangle2D> Triangles;
+	TArray<FLineIndex> CreatedLines2D = { FLineIndex{ 0, 0 } };
+	TArray<FVector2D> Vertices2D;
+	TArray<int32> ExcludedList;
+	bool Clockwise = false;
+	TArray<int32> ProcessingList;
+	TArray<int32> IGN1;
+	TArray<int32> IGN2;
+	TArray<int32> BothIGN;
+	TArray<int32> PrdVtx;
+	TArray<FLineIndex> AllLines;
+	TArray<FLineIndex> ExistLines;
+	TArray<FLineIndex> LineIndices;
+	TArray<int32> intersect2DArray;
+	TArray<int32> conflict2DArray;
+
+	//EdgeTmp.Add(FSEdge{Tri1.P0, Tri1.P1, -1});
+	FVector2D TempVector2D;
+
+	if (Skipper > MaxCycle)
+	{
+		//UE_LOG(LogTemp, Error, TEXT("Infinite loop detected when generating at PolygonTriangulation2D"));
+		return Triangles;
+	}
+	else
+	{
+		// Self intersection check
+		if (Skipper <= 0)
+		{
+			for (int32 i = 0; i < Vertex.Num(); i++)
+			{
+				int32 LoopIndexI = LoopArrayIndex(i, Vertex.Num(), 1);
+
+				for (int32 j = i + 1; j < Vertex.Num(); j++)
+				{
+					int32 LoopIndexJ = LoopArrayIndex(j, Vertex.Num(), 1);
+					bool bPolygonCrossing = TwoLineSegmentIntersection(TempVector2D, Vertex[j], Vertex[LoopIndexJ], Vertex[i], Vertex[LoopIndexI], 0.2, 0.00001);
+
+					if (bPolygonCrossing)
+					{
+						//UE_LOG(LogTemp, Error, TEXT("Polygon crossing at index %d, and %d"), j, LoopIndexJ);
+						IntersectIDs = {j, LoopIndexJ};
+						return Triangles;
+					}
+				}
+			}
+		}
+
+		// Deal with passed values
+		for (int32 i = 0; i < Vertex.Num(); i++)
+		{
+			ProcessingList.Add(i);
+			int32 ProcessB = LoopArrayIndex(i, Vertex.Num(), 1);
+			ExistLines.Add(FLineIndex{ i, ProcessB });
+		}
+		CreatedLines2D.Append(CreatedLine);
+		Vertices2D = Vertex;
+
+		for (int32& CurElement : ExcludedIndex)
+		{
+			if ((CurElement < Vertices2D.Num()) && (CurElement >= 0))
+			{
+				ExcludedList.AddUnique(CurElement);
+			}
+		}
+
+		for (int32& CurElementRemove : ExcludedList)
+		{
+			ProcessingList.Remove(CurElementRemove);
+		}
+
+		bool bCWResult = ClockwiseRedirector(Clockwise, Vertices2D);
+
+		if (bCWResult)
+		{
+			// Initalize
+			if (ProcessingList.Num() < 3)
+			{
+				return Triangles;
+			}
+			else
+			{
+				PrdVtx.Append(ExcludedList);
+				pA = ProcessingList[0];
+				pB = ProcessingList[ProcessingList.Num() - 1];
+				AllLines.Append(ExistLines);
+				AllLines.Append(CreatedLines2D);
+
+				////////////////////////////////////////////////////////////////////
+			VertexLoopLabel:
+				////////////////////////////////////////////////////////////////////
+
+				for (int32 i = pA + 1; i < pB; i++)
+				{
+					bool bVertexCheck = DoVertexCheck(Vertices2D, pB, pA, i, AllLines, Clockwise, PrdVtx);
+
+					// If true, add to traingle list
+					if (bVertexCheck)
+					{
+						PrdVtx.AddUnique(pA);
+						PrdVtx.AddUnique(pB);
+						PrdVtx.AddUnique(i);
+						Triangles.Add(FTriangle2D{ pA, pB, i });
+
+						bool bPAIndex = (i != LoopArrayIndex(pA, Vertices2D.Num(), 1));
+						bool bPBIndex = (i != LoopArrayIndex(pB, Vertices2D.Num(), -1));
+
+						if (bPBIndex)
+						{
+							CreatedLines2D.Add(FLineIndex{ pB, i });
+						}
+						if (bPAIndex)
+						{
+							CreatedLines2D.Add(FLineIndex{ pA, i });
+						}
+
+						if (bPBIndex && bPAIndex)
+						{
+							int32 MLast = RecurseLoopIndex(Vertices2D.Num(), pA, pB);
+							for (int32 m = 1; m < MLast; m++)
+							{
+								BothIGN.Add(LoopArrayIndex(pB, Vertices2D.Num(), m));
+							}
+							BothIGN.Append(ExcludedList);
+
+							int32 NLast = abs(pA - i);
+							for (int32 n = 0; n < NLast; n++)
+							{
+								IGN1.Add(LoopArrayIndex(pA, Vertices2D.Num(), n));
+							}
+
+							int32 PLast = abs(i - pB);
+							for (int32 p = 0; p < PLast; p++)
+							{
+								IGN2.Add(LoopArrayIndex(pB, Vertices2D.Num(), p*-1));
+							}
+
+							IGN1.Append(BothIGN);
+							IGN2.Append(BothIGN);
+
+							TArray<FTriangle2D> Tri1 = PolygonTriangulation2D(Vertices2D, CreatedLines2D, IGN1, Skipper + 1, intersect2DArray, ConflictIDs);
+							TArray<FTriangle2D> Tri2 = PolygonTriangulation2D(Vertices2D, CreatedLines2D, IGN2, Skipper + 1, intersect2DArray, ConflictIDs);
+
+							Triangles.Append(Tri1);
+							Triangles.Append(Tri2);
+
+							return Triangles;
+						}
+						else
+						{
+							if (bPAIndex)
+							{
+								pB = i;
+							}
+							else
+							{
+								pA = i;
+							}
+							PointLimiter(pA, pB, pA, pB);
+
+							if (Triangles.Num() >= (ProcessingList.Num() - 2))
+							{
+								//UE_LOG(LogTemp, Error, TEXT("InfiniteLoop"));
+								return Triangles;
+							}
+							else
+							{
+								SkipCheck++;
+
+								if (SkipCheck > MaxCycle)
+								{
+									//UE_LOG(LogTemp, Error, TEXT("InfiniteLoop"));
+								}
+								else
+								{
+									goto VertexLoopLabel;
+								}
+							}
+						}
+					}
+
+				}
+				ConflictIDs.AddUnique(pA);
+				ConflictIDs.AddUnique(pB);
+				//UE_LOG(LogTemp, Error, TEXT("No solution for %d to %d"), pA, pB);
+				return Triangles;
+
+				//goto VertexLoopLabel;
+			}
+		}
+		else
+		{
+			Clockwise = false;
+			return Triangles;
+		}
+	}
+
+	return Triangles;
+}
+
+FVector UModumateFunctionLibrary::PolygonTriangulation(TArray<FTriangle2D>& Triangle, TArray<FVector> Vertices, TArray<int32>& intersectedIDs, TArray<int32>& conflictedIDs)
+{
+	if (Vertices.Num() >= 3)
+	{
+		TArray<FVector2D> Vtx;
+		TArray<FLineIndex> CreatedLines;
+		TArray<int32> ExcludedIndex;
+		FVector GeneralNormal = V3dToV2d(Vtx, Vertices);
+
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		TArray<FTriangle2D> Tri = PolygonTriangulation2D(Vtx, CreatedLines, ExcludedIndex, 0, intersectedIDs, conflictedIDs);
+
+		TArray<int32> Degenerated;
+
+		for (int32 i = 0; i < Tri.Num(); i++)
+		{
+			if ((Tri[i].A == Tri[i].B) || (Tri[i].A == Tri[i].C) || (Tri[i].B == Tri[i].C))
+			{
+				Degenerated.Add(i);
+			}
+		}
+
+		for (int32& CurIndex : Degenerated)
+		{
+			Tri.RemoveAt(CurIndex);
+		}
+		Triangle = Tri;
+		return GeneralNormal;
+	}
+	else
+	{
+		return FVector::ZeroVector;
+	}
+}
+
+TArray<int32> UModumateFunctionLibrary::ConvertTri2DToInt(TArray<FTriangle2D>& InTri, FVector Normal)
+{
+	TArray<int32> TriIndex;
+	if (Normal.Z < 0.0)
+	{
+		for (FTriangle2D& CurTri : InTri)
+		{
+			TriIndex.Add(CurTri.A);
+			TriIndex.Add(CurTri.B);
+			TriIndex.Add(CurTri.C);
+		}
+		return TriIndex;
+	}
+	else
+	{
+		TArray<FTriangle2D> TriInverseIndex;
+		for (FTriangle2D& CurTri : InTri)
+		{
+			TriInverseIndex.Add(FTriangle2D{ CurTri.B, CurTri.A, CurTri.C });
+		}
+
+		for (FTriangle2D& CurTriInverse : TriInverseIndex)
+		{
+			TriIndex.Add(CurTriInverse.A);
+			TriIndex.Add(CurTriInverse.B);
+			TriIndex.Add(CurTriInverse.C);
+		}
+		return TriIndex;
+	}
+}
+
+void UModumateFunctionLibrary::CalculatePolygonTriangle(TArray<FVector> Vertices, TArray<int32>& Triangles)
+{
+	TArray<FTriangle2D> CalTriangles;
+	TArray<int32> intersectedIDs;
+	TArray<int32> conflictedIDs;
+	FVector GeneralNormal = PolygonTriangulation(CalTriangles, Vertices, intersectedIDs, conflictedIDs);
+
+	float xDisplace = -5.0;
+	float yDisplace = 5.0;
+	TArray<int32> VerticesIntersected;
+
+	if (intersectedIDs.Num() == 2)
+	{
+		VerticesIntersected.Add(intersectedIDs[0]);
+		VerticesIntersected.Add(intersectedIDs[1]);
+	}
+
+	if (conflictedIDs.Num() > 0 && intersectedIDs.Num() == 0)
+	{
+		// Reweigh vertices that don't have solution for another pass
+		TArray<FVector> modVertices = Vertices;
+		while (xDisplace < 5.0)
+		{
+			modVertices[conflictedIDs[0]] = Vertices[conflictedIDs[0]] + FVector(xDisplace, yDisplace, 0.0);
+			modVertices[conflictedIDs[1]] = Vertices[conflictedIDs[1]] + FVector(yDisplace, xDisplace, 0.0);
+			intersectedIDs.Reset();
+			conflictedIDs.Reset();
+			GeneralNormal = PolygonTriangulation(CalTriangles, modVertices, intersectedIDs, conflictedIDs);
+
+			if (conflictedIDs.Num() > 0)
+			{
+				xDisplace = xDisplace + 0.2;
+				yDisplace = yDisplace - 0.2;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	TArray<int32> TriangleIndices = ConvertTri2DToInt(CalTriangles, GeneralNormal);
+	Triangles = TriangleIndices;
+	if (intersectedIDs.Num() == 2)
+	{
+		VerticesIntersected = intersectedIDs;
+	}
+	if (VerticesIntersected.Num() == 2)
+	{
+		/*
+		UE_LOG(LogTemp, Error, TEXT("LineIsIntersecting at %d, and %d"), VerticesIntersected[0], VerticesIntersected[1]);
+		*/
+	}
+}
+
+bool UModumateFunctionLibrary::IsWithEditor()
+{
+	return WITH_EDITOR;
+}
+
+bool UModumateFunctionLibrary::PointIsOnSegment(const FVector2D &p, const FVector2D &s1, const FVector2D &s2, float tolerance)
+{
+	float plen = FVector2D::Distance(p, s1) + FVector2D::Distance(p, s2);
+	return FMath::IsNearlyEqual(FVector2D::Distance(s1, s2), plen, tolerance);
+}
+
+FVector2D UModumateFunctionLibrary::ProjectPointToLine2D(const FVector2D &lineP1, const FVector2D &lineP2, const FVector2D &inPoint)
+{
+	FVector2D dl = (lineP2 - lineP1).GetSafeNormal();
+	FVector2D dp = (inPoint - lineP1);
+	return lineP1 + FVector2D::DotProduct(dl, dp) * dl;
+}
+
+FVector UModumateFunctionLibrary::ProjectPointToLine(const FVector &lineP1, const FVector &lineP2, const FVector &inPoint)
+{
+	FVector dl = (lineP2 - lineP1).GetSafeNormal();
+	FVector dp = (inPoint - lineP1);
+	return lineP1 + FVector::DotProduct(dl, dp) * dl;
+}
+
+bool UModumateFunctionLibrary::PointInPoly2D(const FVector2D &p,const TArray<FVector2D> &poly)
+{
+	float angle = 0;
+
+	for (int32 i = 0; i < poly.Num(); ++i)
+	{
+		FVector2D d1 = (poly[i] - p).GetSafeNormal();
+		FVector2D d2 = (poly[(i + 1) % poly.Num()] - p).GetSafeNormal();
+
+		if (d1.X * d2.Y - d1.Y * d2.X > 0)
+		{
+			angle += FMath::Acos(FMath::Clamp(FVector2D::DotProduct(d1, d2), -1.0f, 1.0f));
+		}
+		else
+		{
+			angle -= FMath::Acos(FMath::Clamp(FVector2D::DotProduct(d1, d2), -1.0f, 1.0f));
+		}
+	}
+	return FMath::Abs(angle) > 2 * PI - 0.01f;
+}
+
+
+bool UModumateFunctionLibrary::LinesIntersect2D(const FVector2D &p1, const FVector2D &p2, const FVector2D &p3, const FVector2D &p4, FVector2D &intersection)
+{
+	FMatrix2x2 w1m(p1.X, p1.Y, p2.X, p2.Y);
+	FMatrix2x2 w2m(p3.X, p3.Y, p4.X, p4.Y);
+
+	FMatrix2x2 w1mx(p1.X, 1, p2.X, 1);
+	FMatrix2x2 w2mx(p3.X, 1, p4.X, 1);
+	FMatrix2x2 w1my(p1.Y, 1, p2.Y, 1);
+	FMatrix2x2 w2my(p3.Y, 1, p4.Y, 1);
+
+	float w1md = w1m.Determinant();
+	float w1mxd = w1mx.Determinant();
+	float w1myd = w1my.Determinant();
+
+	float w2md = w2m.Determinant();
+	float w2mxd = w2mx.Determinant();
+	float w2myd = w2my.Determinant();
+
+	FMatrix2x2 pxn(w1md, w1mxd, w2md, w2mxd);
+	FMatrix2x2 pxd(w1mxd, w1myd, w2mxd, w2myd);
+
+	FMatrix2x2 pyn(w1md, w1myd, w2md, w2myd);
+	FMatrix2x2 pyd(w1mxd, w1myd, w2mxd, w2myd);
+
+	float fpxn = pxn.Determinant();
+	float fpxd = pxd.Determinant();
+	float fpyn = pyn.Determinant();
+	float fpyd = pyd.Determinant();
+
+	if (FMath::IsNearlyEqual(fpxd, 0.0f) || FMath::IsNearlyEqual(fpyd, 0.0f))
+	{
+		return false;
+	}
+
+	intersection = FVector2D(fpxn / fpxd, fpyn / fpyd);
+
+	return PointIsOnSegment(intersection, p1, p2) && PointIsOnSegment(intersection, p3, p4);
+}
+
+TArray<FVector2D> UModumateFunctionLibrary::GetPolygonUV(TArray<FVector2D> Verts, FVector2D Size)
+{
+	TArray<float> X;
+	TArray<float> Y;
+	TArray<FVector2D> UVs;
+
+	for (FVector2D& curVectorLoc : Verts)
+	{
+		X.Add(curVectorLoc.X);
+		Y.Add(curVectorLoc.Y);
+	}
+
+	for (FVector2D& curVectorUV : Verts)
+	{
+		UVs.Add(curVectorUV / Size);
+	}
+
+	return UVs;
+}
+
+TArray<FVector2D> UModumateFunctionLibrary::GetPolygonUVWith3DXY(FVector Origin, TArray<FVector> Verts, FVector2D Size, FRotator UvRotation)
+{
+	TArray<FVector2D> returnUV;
+	for (int32 i = 0; i < Verts.Num(); i++)
+	{
+		FVector newUV3D = UvRotation.RotateVector(FVector((Verts[i] + Origin).X, (Verts[i] + Origin).Y, 0.f));
+		returnUV.Add(FVector2D(newUV3D.X, newUV3D.Y) / Size);
+	}
+	return returnUV;
+}
+
+TArray<int32> UModumateFunctionLibrary::IntegerArrayReplaceHighest(TArray<int32> ExistingInt, TArray<int32> NewInt)
+{
+	int32 maxExistingInt = FMath::Max(ExistingInt);
+	TArray<int32> resultInt;
+	for (int32& curInt : NewInt)
+	{
+		resultInt.Add(curInt + (maxExistingInt + 1));
+	}
+
+	return resultInt;
+}
+
+void UModumateFunctionLibrary::CalculatePolygonTriangleWithError(TArray<FVector> Vertices, TArray<int32>& Triangles, TArray<int32>& ConflictID, TArray<int32>& IntersectID)
+{
+
+	TArray<FTriangle2D> CalTriangles;
+	TArray<int32> intersectedIDs;
+	TArray<int32> conflictedIDs;
+	FVector GeneralNormal = PolygonTriangulation(CalTriangles, Vertices, intersectedIDs, conflictedIDs);
+
+	float xDisplace = -10.0;
+	float yDisplace = 10.0;
+	int32 displaceStep = 0;
+
+	TArray<int32> VerticesIntersected;
+
+	if (intersectedIDs.Num() == 2)
+	{
+		VerticesIntersected.Add(intersectedIDs[0]);
+		VerticesIntersected.Add(intersectedIDs[1]);
+	}
+
+	if (conflictedIDs.Num() > 0 && intersectedIDs.Num() == 0)
+	{
+		// Reweigh vertices that don't have solution for another pass
+		TArray<FVector> modVertices = Vertices;
+		while (xDisplace < 100.0)
+		{
+			//UE_LOG(LogTemp, Error, TEXT("ConflictingID at %d, and %d"), conflictedIDs[0], conflictedIDs[1]);
+			ConflictID = { conflictedIDs[0], conflictedIDs[1] };
+			modVertices[conflictedIDs[0]] = Vertices[conflictedIDs[0]] + FVector(xDisplace, yDisplace, 0.0);
+			modVertices[conflictedIDs[1]] = Vertices[conflictedIDs[1]] + FVector(yDisplace, xDisplace, 0.0);
+			intersectedIDs.Reset();
+			conflictedIDs.Reset();
+			GeneralNormal = PolygonTriangulation(CalTriangles, modVertices, intersectedIDs, conflictedIDs);
+			//UE_LOG(LogTemp, Error, TEXT("%f"), xDisplace);
+			//UE_LOG(LogTemp, Error, TEXT("array %f"), xDisplace);
+			if (conflictedIDs.Num() > 0)
+			{
+				xDisplace = xDisplace + 0.11;
+				yDisplace = yDisplace - 0.11;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+
+	TArray<int32> TriangleIndices = ConvertTri2DToInt(CalTriangles, GeneralNormal);
+	Triangles = TriangleIndices;
+	if (intersectedIDs.Num() == 2)
+	{
+		VerticesIntersected = intersectedIDs;
+	}
+	if (VerticesIntersected.Num() == 2)
+	{
+
+		//UE_LOG(LogTemp, Error, TEXT("LineIsIntersecting at %d, and %d"), VerticesIntersected[0], VerticesIntersected[1]);
+		IntersectID = { VerticesIntersected[0], VerticesIntersected[1] };
+	}
+	else
+	{
+		IntersectID.Reset();
+	}
+}
+
+FVector UModumateFunctionLibrary::GetClosestLocationToTargetFromArray(FVector Target, TArray<FVector> Array, int32 & ClosestIndex, int32 & FarestIndex)
+{
+	TArray<float> distances;
+
+	for (FVector& curLocation : Array)
+	{
+		distances.Add((curLocation - Target).Size());
+	}
+
+	int32 minIndex = 0, maxIndex = 0;
+	float minValue = 0, maxValue = 0;
+	UKismetMathLibrary::MinOfFloatArray(distances, minIndex, minValue);
+	UKismetMathLibrary::MaxOfFloatArray(distances, maxIndex, maxValue);
+
+	ClosestIndex = minIndex;
+	FarestIndex = maxIndex;
+
+	return Array[minIndex];
+}
+
+int32 UModumateFunctionLibrary::LoopArrayGetNextIndex(int32 CurrentIndex, int32 LengthOfArray)
+{
+	int32 result;
+	(CurrentIndex + 1) > (LengthOfArray - 1) ? result = 0 : result = CurrentIndex + 1;
+	return result;
+}
+
+TArray<int32> UModumateFunctionLibrary::LoopArrayReverseIndices(int32 FirstIndex, int32 LastIndex, int32 LengthOfArray)
+{
+	int32 curIndex = FirstIndex;
+	TArray<int32> resultArray;
+	resultArray.Add(FirstIndex);
+	while (curIndex != LastIndex)
+	{
+		if ((curIndex - 1) < 0)
+		{
+			resultArray.Add(LengthOfArray - 1);
+			curIndex = LengthOfArray - 1;
+		}
+		else
+		{
+			resultArray.Add(curIndex - 1);
+			curIndex = curIndex - 1;
+		}
+	}
+	return resultArray;
+}
+
+TArray<int32> UModumateFunctionLibrary::LoopArrayIndices(int32 FirstIndex, int32 LastIndex, int32 LengthOfArray)
+{
+	int32 curIndex = FirstIndex;
+	TArray<int32> resultArray;
+	resultArray.Add(FirstIndex);
+	while (curIndex != LastIndex)
+	{
+		if ((curIndex + 1) > LengthOfArray - 1)
+		{
+			curIndex = 0;
+			resultArray.Add(0);
+		}
+		else
+		{
+			resultArray.Add(curIndex + 1);
+			curIndex = curIndex + 1;
+		}
+	}
+	return resultArray;
+}
+
+int32 UModumateFunctionLibrary::FindClockwiseNextIndex(FVector Location, TArray<FVector> PolygonVerts, float Tolerance)
+{
+	FVector lineStart = FVector::ZeroVector, lineEnd = FVector::ZeroVector, clockwiseLocation = FVector::ZeroVector;
+
+	for (int32 i = 0; i < PolygonVerts.Num(); i++)
+	{
+		lineStart = PolygonVerts[i];
+		lineEnd = PolygonVerts[LoopArrayGetNextIndex(i, PolygonVerts.Num())];
+		if (UKismetMathLibrary::GetPointDistanceToSegment(Location, lineStart, lineEnd) <= Tolerance)
+		{
+			FVector directionComparison = UKismetMathLibrary::GetDirectionUnitVector(lineStart, lineEnd) - UKismetMathLibrary::GetDirectionUnitVector(lineStart, Location);
+			if (directionComparison.Size() <= 0.5)
+			{
+				clockwiseLocation = lineEnd;
+			}
+		}
+	}
+	int32 closestIndex;
+	int32 farestIndex;
+	GetClosestLocationToTargetFromArray(clockwiseLocation, PolygonVerts, closestIndex, farestIndex);
+
+	return closestIndex;
+}
+
+TArray<FVector> UModumateFunctionLibrary::SortLocationByTarget(FVector Target, TArray<FVector> LocationsArray)
+{
+	TArray<FVector> unsortedArray = LocationsArray;
+	TArray<FVector> sortedArray;
+	TArray<float> unsortedDistances;
+	float minValue = 0.0;
+	int32 minIndex = 0;
+
+	while (unsortedArray.Num() > 0)
+	{
+		unsortedDistances.Reset();
+		for (FVector& curLocation : unsortedArray)
+		{
+			unsortedDistances.Add((curLocation - Target).Size());
+		}
+		UKismetMathLibrary::MinOfFloatArray(unsortedDistances, minIndex, minValue);
+		sortedArray.Add(unsortedArray[minIndex]);
+		unsortedArray.RemoveAt(minIndex);
+	}
+
+	return sortedArray;
+}
+
+float UModumateFunctionLibrary::YawToDegree(float YawFloat)
+{
+	if ((YawFloat + 90.0) <= 0.0)
+	{
+		return YawFloat + 90.0 + 360.0;
+	}
+	else
+	{
+		return YawFloat + 90.0;
+	}
+}
+
+int32 UModumateFunctionLibrary::LoopArrayGetPreviousIndex(int32 CurrentIndex, int32 LengthOfArray)
+{
+	int32 result;
+	(CurrentIndex - 1) < 0 ? result = LengthOfArray - 1 : result = CurrentIndex - 1;
+	return result;
+}
+
+float UModumateFunctionLibrary::GetDegreeAtIndex(TArray<FVector> PolygonVerts, int32 CurrentIndex)
+{
+	FVector currentLocation = PolygonVerts[CurrentIndex];
+	FVector nextLocation = PolygonVerts[LoopArrayGetNextIndex(CurrentIndex, PolygonVerts.Num())];
+	FVector lastLocation = PolygonVerts[LoopArrayGetPreviousIndex(CurrentIndex, PolygonVerts.Num())];
+
+	float degreeNext = YawToDegree(UKismetMathLibrary::GetDirectionUnitVector(currentLocation, nextLocation).Z);
+	float degreeLast = YawToDegree(UKismetMathLibrary::GetDirectionUnitVector(currentLocation, lastLocation).Z);
+
+	return degreeNext - degreeLast;
+}
+
+bool UModumateFunctionLibrary::IsLocationInLine(FVector Start, FVector End, FVector Point, float Tolerance)
+{
+	float diffA = (Start - End).Size();
+	float diffB = (Start - Point).Size() + (End - Point).Size();
+	return FMath::IsNearlyEqual(diffA, diffB, Tolerance);
+}
+
+bool UModumateFunctionLibrary::IsVectorInArray(const TArray<FVector>& Array, const FVector& TargetVector, float Tolerance)
+{
+	bool bResult = false;
+	for (auto curVector : Array)
+	{
+		if (curVector.Equals(TargetVector, Tolerance))
+		{
+			bResult = true;
+			break;
+		}
+	}
+	return bResult;
+}
+
+void UModumateFunctionLibrary::GetWallActorInfo(AActor * WallActor, AEditModelGameState_CPP * GameState, FVector& WallDirection, TArray<FVector>& WallCorners)
+{
+	TArray<FVector> cornersArray;
+	if (WallActor != nullptr)
+	{
+		FModumateObjectInstance *moi = GameState->Document.ObjectFromActor(WallActor);
+		if (moi != nullptr)
+		{
+			WallDirection = moi->GetWallDirection();
+			for (int32 i = 0; i < 8; i++)
+			{
+				cornersArray.Add(moi->GetCorner(i));
+			}
+			WallCorners = cornersArray;
+		}
+	}
+
+}
+
+TArray<FVector> UModumateFunctionLibrary::GetMOIControlPointsFromActor(AActor * Actor, AEditModelGameState_CPP * GameState)
+{
+	TArray<FVector> moiControlPoints;
+	if (Actor != nullptr)
+	{
+		FModumateObjectInstance *moi = GameState->Document.ObjectFromActor(Actor);
+		moiControlPoints = moi->ControlPoints;
+	}
+	return moiControlPoints;
+}
+
+FVector2D UModumateFunctionLibrary::RotateVector2D(const FVector2D &vec, float angle)
+{
+	float c = cosf(angle);
+	float s = sinf(angle);
+	return FVector2D(vec.X*c - vec.Y*s, vec.Y*c + vec.X*s);
+}
+
+TArray<int32> UModumateFunctionLibrary::ConformTriangleClockwise(TArray<FVector> Vertices, TArray<int32> Triangles)
+{
+	int32 loopLastIndex = (Triangles.Num() / 3) - 1;
+	int32 tri1 = 0, tri2 = 0, tri3 = 0;
+	FVector p1, p2, p3, norm1, norm2;
+	bool bConform = false;
+	TArray<int32> outTriangles;
+
+	for (int32 i = 0; i < loopLastIndex + 1; i++)
+	{
+		tri1 = Triangles[i * 3];
+		tri2 = Triangles[(i * 3) + 1];
+		tri3 = Triangles[(i * 3) + 2];
+
+		p1 = Vertices[tri1];
+		p2 = Vertices[tri2];
+		p3 = Vertices[tri3];
+
+		norm1 = (p3 - p1).GetSafeNormal();
+		norm2 = (p2 - p1).GetSafeNormal();
+		bConform = (FVector::CrossProduct(norm1, norm2).GetSafeNormal()).Equals(FVector(0.0, 0.0, 1.0), 0.1);
+
+		if (bConform)
+		{
+			outTriangles.Add(tri1);
+			outTriangles.Add(tri2);
+			outTriangles.Add(tri3);
+		}
+		else
+		{
+			outTriangles.Add(tri3);
+			outTriangles.Add(tri2);
+			outTriangles.Add(tri1);
+		}
+	}
+	return outTriangles;
+}
+
+TArray<FVector2D> UModumateFunctionLibrary::UVCalculateWithAnchor(TArray<FVector> faceVertsRelative, FVector anchorRelative, FVector faceDirection, FVector horizontalDirection)
+{
+	TArray<FVector> verts3D;
+	TArray<FVector2D> vertsUVs;
+	if ((faceDirection.Equals(FVector(0.f, 0.f, 1.f), 0.1f)) || (faceDirection.Equals(FVector(0.f, 0.f, -1.f), 0.1f)))
+	{
+		FRotator faceRot = UKismetMathLibrary::MakeRotFromX(horizontalDirection);
+		for (int32 i = 0; i < faceVertsRelative.Num(); i++)
+		{
+			verts3D.Add(UKismetMathLibrary::LessLess_VectorRotator(faceVertsRelative[i], faceRot));
+		}
+		FVector unRotatedAnchor = UKismetMathLibrary::LessLess_VectorRotator(anchorRelative, faceRot);
+		for (int32 i = 0; i < verts3D.Num(); i++)
+		{
+			FVector unRotatedVert = verts3D[i] + unRotatedAnchor;
+			vertsUVs.Add(FVector2D(unRotatedVert.X * 0.01f, unRotatedVert.Y * 0.01f));
+		}
+	}
+	else
+	{
+		FRotator faceRot = UKismetMathLibrary::MakeRotFromX(faceDirection);
+		for (int32 i = 0; i < faceVertsRelative.Num(); i++)
+		{
+			verts3D.Add(UKismetMathLibrary::LessLess_VectorRotator(faceVertsRelative[i], faceRot));
+		}
+		FVector unRotatedAnchor = UKismetMathLibrary::LessLess_VectorRotator(anchorRelative, faceRot);
+		for (int32 i = 0; i < verts3D.Num(); i++)
+		{
+			FVector unRotatedVert = verts3D[i] + unRotatedAnchor;
+			vertsUVs.Add(FVector2D(unRotatedVert.Y * -0.01f, unRotatedVert.Z * -0.01f));
+		}
+	}
+	return vertsUVs;
+}
+
+TArray<FVector2D> UModumateFunctionLibrary::FloorUVCalculateWithAnchor(TArray<FVector> faceVertsRelative, FVector anchorRelative, FVector faceDirection, FVector horizontalDirection)
+{
+	TArray<FVector> verts3D;
+	TArray<FVector2D> vertsUVs;
+	if ((faceDirection.Equals(FVector(0.f, 0.f, 1.f), 0.1f)) || (faceDirection.Equals(FVector(0.f, 0.f, -1.f), 0.1f)))
+	{
+		FRotator faceRot = UKismetMathLibrary::MakeRotFromX(horizontalDirection);
+		for (int32 i = 0; i < faceVertsRelative.Num(); i++)
+		{
+			verts3D.Add(UKismetMathLibrary::LessLess_VectorRotator(faceVertsRelative[i], faceRot));
+		}
+		FVector unRotatedAnchor = UKismetMathLibrary::LessLess_VectorRotator(anchorRelative, faceRot);
+		for (int32 i = 0; i < verts3D.Num(); i++)
+		{
+			FVector unRotatedVert = verts3D[i] + unRotatedAnchor;
+			vertsUVs.Add(FVector2D(unRotatedVert.X * 0.01f, unRotatedVert.Y * 0.01f));
+		}
+	}
+	else
+	{
+		FRotator faceRot = UKismetMathLibrary::MakeRotFromX(faceDirection);
+		for (int32 i = 0; i < faceVertsRelative.Num(); i++)
+		{
+			verts3D.Add(UKismetMathLibrary::LessLess_VectorRotator(faceVertsRelative[i], faceRot));
+		}
+		FVector unRotatedAnchor = UKismetMathLibrary::LessLess_VectorRotator(anchorRelative, faceRot);
+		for (int32 i = 0; i < verts3D.Num(); i++)
+		{
+			FVector unRotatedVert = verts3D[i] - unRotatedAnchor;
+			vertsUVs.Add(FVector2D(unRotatedVert.Y * -0.01f, unRotatedVert.Z * -0.01f));
+		}
+	}
+	return vertsUVs;
+}
+
+void UModumateFunctionLibrary::CalculateWallParam(FVector UVAnchorRelative, TArray<FVector> RefFaceVerts, TArray<int32> RefFaceTris, TArray<FVector> WallCorners, FVector WorldLocation, FVector WallFrontDirection, TArray<FVector2D> RefFaceUV, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUVs)
+{
+	TArray<FVector> backVerts, leftVerts, rightVerts, topVerts, bottomVerts, tempCornerVerts;
+	TArray<int32> backTris, leftTris, rightTris, topTris, bottomTris;
+	TArray<FVector> backNormals, leftNormals, rightNormals, topNormals, bottomNormals;
+	TArray<FVector2D> backUVs, leftUVs, rightUVs, topUVs, bottomUVs;
+	FVector2D uv0 = FVector2D::ZeroVector, uv1 = FVector2D::ZeroVector, uv2 = FVector2D::ZeroVector, uv3 = FVector2D::ZeroVector;
+
+	// Add front face parameters to array
+	ReturnVerts.Append(RefFaceVerts);
+	ReturnTris.Append(RefFaceTris);
+	ReturnUVs.Append(RefFaceUV);
+	for (int32 i = 0; i < RefFaceVerts.Num(); i++)
+	{
+		ReturnNormals.Add(WallFrontDirection);
+	}
+
+	// Back face
+	tempCornerVerts = { WallCorners[4], WallCorners[5], WallCorners[1], WallCorners[0] };
+	for (FVector& curVector : tempCornerVerts)
+	{
+		backVerts.Add(curVector - WorldLocation);
+		backNormals.Add(-WallFrontDirection);
+	}
+	backTris = RefFaceTris;
+	Algo::Reverse(backTris);
+	backUVs = UVCalculateWithAnchor(backVerts, UVAnchorRelative, UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, 0.0, FVector(0.0, 0.0, 1.0)), UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)));
+
+	ReturnTris.Append(IntegerArrayReplaceHighest(ReturnTris, backTris));
+	ReturnVerts.Append(backVerts);
+	ReturnNormals.Append(backNormals);
+	ReturnUVs.Append(backUVs);
+
+	// Left face
+	tempCornerVerts = { WallCorners[4], WallCorners[6], WallCorners[2], WallCorners[0] };
+	for (FVector& curVector : tempCornerVerts)
+	{
+		leftVerts.Add(curVector - WorldLocation);
+		leftNormals.Add(UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, 90.0, FVector(0.0, 0.0, 1.0)));
+	}
+	leftTris = { 2, 1, 3, 1, 0, 3 };
+	leftUVs = UVCalculateWithAnchor(leftVerts, UVAnchorRelative, UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, 90.0, FVector(0.0, 0.0, 1.0)), UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)));
+
+	ReturnTris.Append(IntegerArrayReplaceHighest(ReturnTris, leftTris));
+	ReturnVerts.Append(leftVerts);
+	ReturnNormals.Append(leftNormals);
+	ReturnUVs.Append(leftUVs);
+
+	// Right face
+	tempCornerVerts = { WallCorners[5], WallCorners[7], WallCorners[3], WallCorners[1] };
+	for (FVector& curVector : tempCornerVerts)
+	{
+		rightVerts.Add(curVector - WorldLocation);
+		rightNormals.Add(UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)));
+	}
+	rightTris = { 3, 0, 1, 3, 1, 2 };
+	rightUVs = UVCalculateWithAnchor(rightVerts, UVAnchorRelative, UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)), UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)));
+
+	ReturnTris.Append(IntegerArrayReplaceHighest(ReturnTris, rightTris));
+	ReturnVerts.Append(rightVerts);
+	ReturnNormals.Append(rightNormals);
+	ReturnUVs.Append(rightUVs);
+
+	// Top face
+	tempCornerVerts = { WallCorners[4], WallCorners[5], WallCorners[7], WallCorners[6] };
+	for (FVector& curVector : tempCornerVerts)
+	{
+		topVerts.Add(curVector - WorldLocation);
+		topNormals.Add(FVector(0.0, 0.0, 1.0));
+	}
+	topTris = { 2, 1, 3, 1, 0, 3 };
+	topUVs = UVCalculateWithAnchor(topVerts, UVAnchorRelative, FVector(0.0, 0.0, 1.0), UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)));
+
+	ReturnTris.Append(IntegerArrayReplaceHighest(ReturnTris, topTris));
+	ReturnVerts.Append(topVerts);
+	ReturnNormals.Append(topNormals);
+	ReturnUVs.Append(topUVs);
+
+	// Bottom face
+	tempCornerVerts = { WallCorners[0], WallCorners[1], WallCorners[3], WallCorners[2] };
+	for (FVector& curVector : tempCornerVerts)
+	{
+		bottomVerts.Add(curVector - WorldLocation);
+		bottomNormals.Add(FVector(0.0, 0.0, -1.0));
+	}
+	bottomTris = { 3, 0, 1, 3, 1, 2 };
+	bottomUVs = UVCalculateWithAnchor(bottomVerts, UVAnchorRelative, FVector(0.0, 0.0, -1.0), UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)));
+
+	ReturnTris.Append(IntegerArrayReplaceHighest(ReturnTris, bottomTris));
+	ReturnVerts.Append(bottomVerts);
+	ReturnNormals.Append(bottomNormals);
+	ReturnUVs.Append(bottomUVs);
+}
+
+TArray<FWallAssemblyLayerControlPoints> UModumateFunctionLibrary::GetWallAssemblyLayerControlPoints(const TArray<FVector> &controlPoints, const TArray<FModumateObjectAssemblyLayer>& layers, float height, bool ManualLayerCPs)
+{
+	TArray<FWallAssemblyLayerControlPoints> assemblyLayerControlPoints;
+	TArray<FVector> wallAssemblyLayerControlPoints;
+	const FVector wallUp = FVector::UpVector;
+	const FVector wallHeightDelta = height * wallUp;
+	const FVector &p1 = controlPoints[0], &p2 = controlPoints[1];
+	FVector wallDelta = (p2 - p1);
+	FVector wallDir = wallDelta.GetSafeNormal();
+	if (wallDir.IsZero())
+	{
+		wallDir = FVector::ForwardVector;
+	}
+	FVector wallNormal =  FVector::CrossProduct(wallUp, wallDir);
+
+	bool bHasCornerPoints = (controlPoints.Num() == 6);
+	const FVector &wallStart = bHasCornerPoints ? controlPoints[2] : p1;
+	const FVector &wallEnd = bHasCornerPoints ? controlPoints[3] : p2;
+	FVector wallStartSideDir = bHasCornerPoints ? (controlPoints[4] - controlPoints[2]).GetSafeNormal() : wallNormal;
+	FVector wallEndSideDir = bHasCornerPoints ? (controlPoints[5] - controlPoints[3]).GetSafeNormal() : wallNormal;
+	float wallStartOffsetFactor = 1.0f / (wallNormal | wallStartSideDir);
+	float wallEndOffsetFactor = 1.0f / (wallNormal | wallEndSideDir);
+	FVector wallStartSideDelta = wallStartOffsetFactor * wallStartSideDir;
+	FVector wallEndSideDelta = wallEndOffsetFactor * wallEndSideDir;
+
+	float curLayerOffset = 0.0f;
+	FWallAssemblyLayerControlPoints curLayerPoints;
+
+	for (int32 i = 0; i < layers.Num(); i++)
+	{
+		const auto &layer = layers[i];
+		float layerThickness = layer.Thickness.AsWorldCentimeters();
+
+		auto &layerPointArray = curLayerPoints.LayerControlPoints;
+		layerPointArray.Reset(8);
+
+		layerPointArray.Add(wallStart + curLayerOffset * wallStartSideDelta);
+		layerPointArray.Add(wallEnd + curLayerOffset * wallEndSideDelta);
+		layerPointArray.Add(wallStart + (curLayerOffset + layerThickness) * wallStartSideDelta);
+		layerPointArray.Add(wallEnd + (curLayerOffset + layerThickness) * wallEndSideDelta);
+
+		layerPointArray.Add(layerPointArray[0] + wallHeightDelta);
+		layerPointArray.Add(layerPointArray[1] + wallHeightDelta);
+		layerPointArray.Add(layerPointArray[2] + wallHeightDelta);
+		layerPointArray.Add(layerPointArray[3] + wallHeightDelta);
+
+		assemblyLayerControlPoints.Add(curLayerPoints);
+		if (!ManualLayerCPs)
+		{
+			curLayerOffset += layerThickness;
+		}
+	}
+
+	return assemblyLayerControlPoints;
+}
+
+void UModumateFunctionLibrary::GetWallVertsParamFromAssemblyLayerControlPoints(FVector UVAnchor, FWallAssemblyLayerControlPoints AssemblyLayer, AActor * CurrentWallActor, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUVs)
+{
+	TArray<FVector> layerCorners = AssemblyLayer.LayerControlPoints;
+	TArray<FVector> frontVerts = { layerCorners [6], layerCorners [7], layerCorners [3], layerCorners [2]};
+	TArray<FVector> frontLayerRef;
+	FVector wallDirection = (AssemblyLayer.LayerControlPoints[1] - AssemblyLayer.LayerControlPoints[0]).GetSafeNormal();
+	FVector wallFrontFaceDirection = FVector::UpVector ^ wallDirection;
+
+	for (FVector& curVector : frontVerts)
+	{
+		frontLayerRef.Add(curVector - CurrentWallActor->GetActorLocation());
+	}
+
+	TArray<int32> triangles2D, conflictID, intersectID;
+	CalculatePolygonTriangleWithError(frontLayerRef, triangles2D, conflictID, intersectID);
+	triangles2D = ConformTriangleClockwise(frontLayerRef, triangles2D);
+
+	FVector UVAnchorRelative = CurrentWallActor->GetActorLocation() - UVAnchor;
+	TArray<FVector2D> UVs = UVCalculateWithAnchor(frontLayerRef, UVAnchorRelative, wallFrontFaceDirection, wallDirection);
+
+	CalculateWallParam(UVAnchorRelative, frontLayerRef, triangles2D, layerCorners, CurrentWallActor->GetActorLocation(), wallFrontFaceDirection, UVs, ReturnVerts, ReturnTris, ReturnNormals, ReturnUVs);
+
+}
+
+void UModumateFunctionLibrary::CalculateFloorParam(FVector Origin, TArray<FVector> anchorUV, FVector topAnchorUV, FRotator topUvRotation, TArray<FVector> InTopVerts, TArray<FVector> InBottomVerts, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUV, TArray<int32>& ReturnTopTris)
+{
+	float bottomHeight = InBottomVerts[0].Z;
+	TArray<FVector> topVerts, topNormals, sideVertsPending, sideVerts, sideNormals, bottomVerts, bottomNormals, inAnchorUV;
+	TArray<int32> topTris, conflictID, intersectID, sideTris, bottomTris;
+	TArray<FVector2D> topUVs, verts2D, sideUVsPending, sideUVs, bottomUVs;
+	FVector topVert1(ForceInitToZero);
+	FVector topVert2(ForceInitToZero);
+	FVector sideFaceDirection(ForceInitToZero);
+	TArray<int32> squareTris = { 3, 0, 1, 3, 1, 2 };
+	ReturnVerts.Reset();
+	ReturnTris.Reset();
+	ReturnNormals.Reset();
+	ReturnUV.Reset();
+
+	FPlane plane;
+	if (!UModumateGeometryStatics::GetPlaneFromPoints(InTopVerts, plane))
+	{
+		return;
+	}
+	if (!FVector::Parallel(plane, FVector::UpVector))
+	{
+		return;
+	}
+
+	topVerts = InTopVerts;
+	inAnchorUV = anchorUV;
+	if (!FVector::Coincident(plane, FVector::UpVector))
+	{
+		Algo::Reverse(topVerts);
+		Algo::Reverse(inAnchorUV);
+	}
+	// top face
+	CalculatePolygonTriangleWithError(topVerts, topTris, conflictID, intersectID);
+	topTris = ConformTriangleClockwise(topVerts, topTris);
+	V3dToV2d(verts2D, topVerts);
+	topUVs = GetPolygonUVWith3DXY(Origin - topAnchorUV, topVerts, FVector2D(100.0, 100.0), topUvRotation);
+	for (int32 i = 0; i < topVerts.Num(); i++)
+	{
+		topNormals.Add(FVector(0.0, 0.0, 1.0));
+	}
+	// side faces
+	for (int32 i = 0; i < topVerts.Num(); i++)
+	{
+		topVert1 = topVerts[i];
+		topVert2 = topVerts[LoopArrayGetNextIndex(i, topVerts.Num())];
+		sideVertsPending = { topVert1, topVert2, FVector(topVert2.X, topVert2.Y, bottomHeight), FVector(topVert1.X, topVert1.Y, bottomHeight) };
+
+		sideVerts.Append(sideVertsPending);
+		if (i == 0)
+		{
+			sideTris = squareTris;
+		}
+		else
+		{
+			sideTris.Append(IntegerArrayReplaceHighest(sideTris, squareTris));
+		}
+		sideFaceDirection = UKismetMathLibrary::RotateAngleAxis(UKismetMathLibrary::GetDirectionUnitVector(topVert1, topVert2), -90.0, FVector(0.0, 0.0, 1.0));
+		for (int32 j = 0; j < 4; j++)
+		{
+			sideNormals.Add(sideFaceDirection);
+		}
+
+		// check if sideUV contain anchor
+		if (anchorUV.Num() > 0)
+		{
+			int32 curIndex = LoopArrayGetNextIndex(i, topVerts.Num());
+			FVector UVAnchorRelative = inAnchorUV[curIndex];
+
+			TArray<FVector> sideVertsPendingUnOrigin;
+			for (int32 j = 0; j < sideVertsPending.Num(); j++)
+			{
+				sideVertsPendingUnOrigin.Add(sideVertsPending[j] + Origin);
+			}
+			sideUVsPending = FloorUVCalculateWithAnchor(sideVertsPendingUnOrigin, UVAnchorRelative, sideFaceDirection, sideFaceDirection);
+			sideUVs.Append(sideUVsPending);
+		}
+		else
+		{
+			V3dToV2d(verts2D, sideVertsPending);
+			sideUVsPending = GetPolygonUV(verts2D, FVector2D(100.0, 100.0));
+			sideUVs.Append(sideUVsPending);
+		}
+	}
+	// bottom faces
+	for (FVector& curVector : topVerts)
+	{
+		bottomVerts.Add(FVector(curVector.X, curVector.Y, bottomHeight));
+		bottomNormals.Add(FVector(0.0, 0.0, -1.0));
+	}
+	bottomTris = topTris;
+	Algo::Reverse(bottomTris);
+	bottomUVs = topUVs;
+
+	// Append all procedural mesh faces parameters
+	ReturnVerts.Append(topVerts);
+	ReturnVerts.Append(sideVerts);
+	ReturnVerts.Append(bottomVerts);
+
+	ReturnTris.Append(topTris);
+	ReturnTris.Append(IntegerArrayReplaceHighest(ReturnTris, sideTris));
+	ReturnTris.Append(IntegerArrayReplaceHighest(ReturnTris, bottomTris));
+
+	ReturnUV.Append(topUVs);
+	ReturnUV.Append(sideUVs);
+	ReturnUV.Append(bottomUVs);
+
+	ReturnNormals.Append(topNormals);
+	ReturnNormals.Append(sideNormals);
+	ReturnNormals.Append(bottomNormals);
+
+	ReturnTopTris = topTris;
+}
+
+void UModumateFunctionLibrary::GetFloorAssemblyLayerControlPoints(const TArray<FVector>& points, const TArray<FModumateObjectAssemblyLayer>& fal, TArray<FFloorAssemblyLayerControlPoints> &OutLayersCPs, bool bLayersReversed, bool bManualLayerCPs)
+{
+	OutLayersCPs.Reset();
+	FFloorAssemblyLayerControlPoints curLayerCPs;
+
+	FVector extrusionDir = FVector::UpVector;
+	float curTotalThickness = 0.0f;
+	int32 startIndex = bLayersReversed ? (fal.Num() - 1) : 0;
+	int32 di = bLayersReversed ? -1 : 1;
+	for (int32 i = startIndex; bLayersReversed ? (i >= 0) : (i < fal.Num()); i += di)
+	{
+		float curLayerThickness = fal[i].Thickness.AsWorldCentimeters();
+		curLayerCPs.BottomLayerControlPoints.Reset(points.Num());
+		curLayerCPs.TopLayerControlPoints.Reset(points.Num());
+
+		float curLayerOffset = bManualLayerCPs ? 0.0f : curTotalThickness;
+		FVector bottomOffset = curLayerOffset * extrusionDir;
+		FVector topOffset = (curLayerOffset + curLayerThickness) * extrusionDir;
+
+		for (const FVector& point : points)
+		{
+			curLayerCPs.BottomLayerControlPoints.Add(point + bottomOffset);
+			curLayerCPs.TopLayerControlPoints.Add(point + topOffset);
+		}
+
+		OutLayersCPs.Add(curLayerCPs);
+		curTotalThickness += curLayerThickness;
+	}
+}
+
+FVector UModumateFunctionLibrary::GetWorldComponentToScreenSizeScale(UStaticMeshComponent * Target, FVector DesiredScreenSize)
+{
+	APlayerCameraManager* cameraActor = UGameplayStatics::GetPlayerCameraManager(Target, 0);
+	float fovD = UKismetMathLibrary::DegSin(cameraActor->GetFOVAngle());
+	float distance = FVector::Dist(cameraActor->GetCameraLocation(), Target->GetComponentLocation());
+	float relativeScreenSize = FMath::Clamp(50.0f / (distance * fovD), 0.0f, 1.0f);
+
+	float rFOV = FMath::DegreesToRadians(cameraActor->GetFOVAngle());
+	float fovScale = 2 * FMath::Tan(rFOV / 2.f);
+
+	return (DesiredScreenSize / relativeScreenSize) * fovScale;
+}
+
+void UModumateFunctionLibrary::ComponentAsBillboard(UStaticMeshComponent * Target, FVector DesiredScreenSize)
+{
+	Target->SetWorldScale3D(GetWorldComponentToScreenSizeScale(Target, DesiredScreenSize));
+	FRotator camRot = UGameplayStatics::GetPlayerCameraManager(Target, 0)->GetCameraRotation();
+	FTransform transformRot = FTransform(camRot, FVector::ZeroVector, FVector::OneVector);
+	FRotator newRot = UKismetMathLibrary::TransformRotation(transformRot, FRotator(90.0, 0.0, 0.0));
+	Target->SetWorldRotation(newRot);
+}
+
+void UModumateFunctionLibrary::ComponentToUIScreenPosition(UStaticMeshComponent * Target, FVector WorldLocation, FVector ScreenOffset)
+{
+	APlayerController* playerController = UGameplayStatics::GetPlayerController(Target, 0);
+	FVector2D screenLocation;
+	playerController->ProjectWorldLocationToScreen(WorldLocation, screenLocation, false);
+
+	screenLocation = screenLocation + FVector2D(ScreenOffset.X, ScreenOffset.Y * -1);
+	FVector convertWorldLocation, convertWorldDirection;
+	playerController->DeprojectScreenPositionToWorld(screenLocation.X, screenLocation.Y, convertWorldLocation, convertWorldDirection);
+	float distanceFromCamera = 1.0f;
+	FVector newLocation = convertWorldLocation + convertWorldDirection * distanceFromCamera;
+	Target->SetWorldLocation(newLocation, false, 0, ETeleportType::None);
+}
+
+void UModumateFunctionLibrary::ComponentToUIScreenPositionMoiOffset(UStaticMeshComponent * Target, FVector WorldLocation, FVector Direction, float OffsetScreenDistance, FVector ScreenOffset)
+{
+	//const float offsetScreenDistance = 12.0f;
+	APlayerController* playerController = UGameplayStatics::GetPlayerController(Target, 0);
+	APlayerCameraManager* playerCamera = UGameplayStatics::GetPlayerCameraManager(Target, 0);
+
+	// set min size for projection
+	float screenMinSize = (playerCamera->GetCameraLocation() - WorldLocation).Size();
+
+	FVector2D from2D, to2D;
+	playerController->ProjectWorldLocationToScreen(WorldLocation, from2D, false);
+	playerController->ProjectWorldLocationToScreen(WorldLocation + (Direction * screenMinSize), to2D, false);
+	FVector screenVector = UKismetMathLibrary::GetDirectionUnitVector(FVector(from2D.X, from2D.Y, 0.0f), FVector(to2D.X, to2D.Y, 0.0f));
+	FVector offsetScreenSpace = (screenVector * OffsetScreenDistance) + FVector(from2D.X, from2D.Y, 0.0f);
+
+	FVector convertLocationStart, convertDirection;
+	playerController->DeprojectScreenPositionToWorld(offsetScreenSpace.X, offsetScreenSpace.Y, convertLocationStart, convertDirection);
+
+	FVector convertLocationEnd = convertLocationStart + (convertDirection * screenMinSize * 2.0f);
+	FVector planeNormal = UKismetMathLibrary::Conv_RotatorToVector(playerCamera->GetCameraRotation());
+
+	float interectionT;
+	FVector intersectionLocation;
+	UKismetMathLibrary::LinePlaneIntersection_OriginNormal(convertLocationStart, convertLocationEnd, WorldLocation, planeNormal, interectionT, intersectionLocation);
+
+	ComponentToUIScreenPosition(Target, intersectionLocation, ScreenOffset);
+}
+
+
+void UModumateFunctionLibrary::ScreenSizeComponentFreezeDirection(UStaticMeshComponent * Target, FVector WorldDirection)
+{
+	APlayerController* playerController = UGameplayStatics::GetPlayerController(Target, 0);
+	FVector2D start2D, end2D;
+	FRotator lookAtRotation;
+	if (WorldDirection.Equals(FVector(0.0, 0.0, 1.0), 0.01))
+	{
+		//lookAtRotation = FRotator(0.0f, 90.0f, 0.0f);
+		playerController->ProjectWorldLocationToScreen(Target->GetComponentLocation(), start2D, false);
+		playerController->ProjectWorldLocationToScreen(Target->GetComponentLocation() + (WorldDirection * 1.0), end2D, false);
+		lookAtRotation = UKismetMathLibrary::FindLookAtRotation(FVector(end2D.X, end2D.Y, 0.0f), FVector(start2D.X, start2D.Y, 0.0f));
+	}
+	else if (WorldDirection.Equals(FVector(0.0, 0.0, -1.0), 0.01))
+	{
+		//lookAtRotation = FRotator(0.0f, -90.0f, 0.0f);
+		playerController->ProjectWorldLocationToScreen(Target->GetComponentLocation(), start2D, false);
+		playerController->ProjectWorldLocationToScreen(Target->GetComponentLocation() + (WorldDirection * 1.0), end2D, false);
+		lookAtRotation = UKismetMathLibrary::FindLookAtRotation(FVector(end2D.X, end2D.Y, 0.0f), FVector(start2D.X, start2D.Y, 0.0f));
+	}
+	else
+	{
+		playerController->ProjectWorldLocationToScreen(Target->GetComponentLocation(), start2D, false);
+		playerController->ProjectWorldLocationToScreen(Target->GetComponentLocation() + (WorldDirection * 5.0), end2D, false);
+		lookAtRotation = UKismetMathLibrary::FindLookAtRotation(FVector(end2D.X, end2D.Y, 0.0f), FVector(start2D.X, start2D.Y, 0.0f));
+	}
+
+	FRotator makeRot = FRotator(0.0f, lookAtRotation.Yaw, 0.0f);
+	FRotator newRot = UKismetMathLibrary::TransformRotation(Target->GetComponentTransform(), makeRot);
+	Target->SetWorldRotation(newRot, false, 0, ETeleportType::None);
+}
+
+bool UModumateFunctionLibrary::MoiPortalSetNewWidth(AActor* targetActor, float newWidth)
+{
+	AEditModelGameState_CPP * gameState = targetActor->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelPlayerController_CPP *controller = Cast<AEditModelPlayerController_CPP>(targetActor->GetWorld()->GetFirstPlayerController());
+	FModumateObjectInstance *moi = gameState->Document.ObjectFromActor(targetActor);
+	if (moi == nullptr)
+	{
+		return false;
+	}
+	TArray<FVector> proxyCPs = moi->ControlPoints;
+	float midPoint = (proxyCPs[0].X + proxyCPs[3].X) / 2.f;
+	if (moi->ObjectType == EObjectType::OTDoor || moi->ObjectType == EObjectType::OTWindow)
+	{
+		proxyCPs[0].X = midPoint - newWidth * 0.5f;
+		proxyCPs[1].X = midPoint - newWidth * 0.5f;
+		proxyCPs[2].X = midPoint + newWidth * 0.5f;
+		proxyCPs[3].X = midPoint + newWidth * 0.5f;
+
+		// Replace the one above if want to keep one side of CP
+		//proxyCPs[2].Y = proxyCPs[1].Y - newWidth;
+		//proxyCPs[3].Y = proxyCPs[0].Y - newWidth;
+
+		controller->ModumateCommand(
+			FModumateCommand(Commands::kUpdateMOIHoleParams)
+			.Param(Parameters::kObjectID, moi->ID)
+			.Param(Parameters::kLocation, moi->GetObjectLocation())
+			.Param(Parameters::kControlPoints, proxyCPs));
+
+		return true;
+	}
+	return false; // Only set width of doors and windows
+}
+
+bool UModumateFunctionLibrary::MoiPortalSetNewHeight(AActor* targetActor, float newHeight)
+{
+	AEditModelGameState_CPP * gameState = targetActor->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelPlayerController_CPP *controller = Cast<AEditModelPlayerController_CPP>(targetActor->GetWorld()->GetFirstPlayerController());
+	FModumateObjectInstance *moi = gameState->Document.ObjectFromActor(targetActor);
+	if (moi == nullptr)
+	{
+		return false;
+	}
+	TArray<FVector> proxyCPs = moi->ControlPoints;
+	if ((moi->ObjectType == EObjectType::OTDoor) || (moi->ObjectType == EObjectType::OTWindow))
+	{
+		proxyCPs[1].Z = proxyCPs[0].Z + newHeight;
+		proxyCPs[2].Z = proxyCPs[3].Z + newHeight;
+	}
+	else
+	{
+		return false;
+	}
+	controller->ModumateCommand(
+		FModumateCommand(Commands::kUpdateMOIHoleParams)
+		.Param(Parameters::kObjectID, moi->ID)
+		.Param(Parameters::kLocation, moi->GetObjectLocation())
+		.Param(Parameters::kControlPoints, proxyCPs));
+
+	return true;
+}
+
+float SignCheckIfPointInTri(FVector p1, FVector p2, FVector p3)
+{
+	return (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y);
+}
+
+FVector UModumateFunctionLibrary::GetPointSetExtents(const TArray<FVector> &points)
+{
+	FBox aabb = GetPointSetAABB(points);
+	return aabb.Max - aabb.Min;
+}
+
+FBox UModumateFunctionLibrary::GetPointSetAABB(const TArray<FVector> &points)
+{
+	return Algo::Accumulate(
+		points,
+		FBox(FVector(FLT_MAX,FLT_MAX,FLT_MAX),FVector(-FLT_MAX,-FLT_MAX,-FLT_MAX)),
+		[](FBox box,const FVector &p)
+		{
+			return FBox(
+				FVector(FMath::Min(box.Min.X, p.X), FMath::Min(box.Min.Y, p.Y), FMath::Min(box.Min.Z, p.Z)),
+				FVector(FMath::Max(box.Max.X, p.X), FMath::Max(box.Max.Y, p.Y), FMath::Max(box.Max.Z, p.Z))
+			);
+		}
+	);
+}
+
+
+bool UModumateFunctionLibrary::IsPointInTri(FVector pt, FVector v1, FVector v2, FVector v3)
+{
+	bool b1, b2, b3;
+
+	b1 = SignCheckIfPointInTri(pt, v1, v2) < 0.0f;
+	b2 = SignCheckIfPointInTri(pt, v2, v3) < 0.0f;
+	b3 = SignCheckIfPointInTri(pt, v3, v1) < 0.0f;
+
+	return ((b1 == b2) && (b2 == b3));
+}
+
+// Reimplemented in 2D based on FMath::LineBoxIntersection in 3D
+bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVector2D &start, const FVector2D &end)
+{
+	if (start.Equals(end))
+	{
+		return box.IsInside(start);
+	}
+
+	FVector2D time;
+	FVector2D startToEnd = (end - start);
+	FVector2D oneOverStartToEnd(1.0f / startToEnd.X, 1.0f / startToEnd.Y);
+	bool bStartIsOutside = false;
+
+	if (start.X < box.Min.X)
+	{
+		bStartIsOutside = true;
+		if (end.X >= box.Min.X)
+		{
+			time.X = (box.Min.X - start.X) * oneOverStartToEnd.X;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else if (start.X > box.Max.X)
+	{
+		bStartIsOutside = true;
+		if (end.X <= box.Max.X)
+		{
+			time.X = (box.Max.X - start.X) * oneOverStartToEnd.X;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		time.X = 0.0f;
+	}
+
+	if (start.Y < box.Min.Y)
+	{
+		bStartIsOutside = true;
+		if (end.Y >= box.Min.Y)
+		{
+			time.Y = (box.Min.Y - start.Y) * oneOverStartToEnd.Y;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else if (start.Y > box.Max.Y)
+	{
+		bStartIsOutside = true;
+		if (end.Y <= box.Max.Y)
+		{
+			time.Y = (box.Max.Y - start.Y) * oneOverStartToEnd.Y;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		time.Y = 0.0f;
+	}
+
+	if (bStartIsOutside)
+	{
+		const float	maxTime = time.GetMax();
+
+		if (maxTime >= 0.0f && maxTime <= 1.0f)
+		{
+			const FVector2D hit = start + startToEnd * maxTime;
+			const float BOX_SIDE_THRESHOLD = 0.1f;
+			if (hit.X > box.Min.X - BOX_SIDE_THRESHOLD && hit.X < box.Max.X + BOX_SIDE_THRESHOLD &&
+				hit.Y > box.Min.Y - BOX_SIDE_THRESHOLD && hit.Y < box.Max.Y + BOX_SIDE_THRESHOLD)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+TArray<int32> UModumateFunctionLibrary::MatchVector2DForPolygonTriangulation(TArray<FVector2D> TriangulatedLocations, TArray<FVector2D> OriginalVerts)
+{
+	TArray<int32> outTri;
+	for (FVector2D& curVector2D : TriangulatedLocations)
+	{
+		outTri.Add(OriginalVerts.Find(curVector2D));
+	}
+	return outTri;
+}
+
+TArray<FTriangle2D> UModumateFunctionLibrary::ConvertTriangleInt32ToTriangle2D(TArray<int32> Triangles)
+{
+	TArray<FTriangle2D> returnTri2D;
+	for (int32 i = 0; i < Triangles.Num(); i++)
+	{
+		if (((i + 3) % 3) == 0)
+		{
+			//returnTri2D.Add(FTriangle2D{ Triangles[i], Triangles[i + 1], Triangles[i + 2] });
+			returnTri2D.Add(FTriangle2D{ Triangles[i + 1], Triangles[i + 2], Triangles[i] });
+		}
+	}
+	TArray<FTriangle2D> returnTri2DReverse;
+	for (int32 i = returnTri2D.Num() - 1; i >= 0; i--)
+	{
+		returnTri2DReverse.Add(returnTri2D[i]);
+	}
+
+	return returnTri2DReverse;
+}
+
+void UModumateFunctionLibrary::ScreenLineExtend(FVector2D & ReturnStart, FVector2D & ReturnEnd, FVector2D Start, FVector2D End, float StartExtendDistance, float EndExtendDistance)
+{
+	FVector start3D = FVector(Start.X, Start.Y, 0.0f);
+	FVector end3D = FVector(End.X, End.Y, 0.0f);
+
+	FVector startVector = (UKismetMathLibrary::GetDirectionUnitVector(start3D, end3D) * StartExtendDistance * -1.0f) + start3D;
+	FVector endVector = (UKismetMathLibrary::GetDirectionUnitVector(start3D, end3D) * EndExtendDistance) + end3D;
+
+	ReturnStart = FVector2D(startVector.X, startVector.Y);
+	ReturnEnd = FVector2D(endVector.X, endVector.Y);
+}
+
+
+
+bool UModumateFunctionLibrary::ProjectWorldToScreenBidirectional(APlayerController const * Player, const FVector & WorldPosition, FVector2D & ScreenPosition, bool & bTargetBehindCamera, bool bPlayerViewportRelative)
+{
+	FVector Projected;
+	bTargetBehindCamera = false;
+
+	// Custom Projection Function
+	ULocalPlayer* const LP = Player->GetLocalPlayer();
+	if (LP && LP->ViewportClient)
+	{
+		FSceneViewProjectionData NewProjectionData;
+		if (LP->GetProjectionData(LP->ViewportClient->Viewport, EStereoscopicPass::eSSP_FULL, NewProjectionData))
+		{
+			const FMatrix ViewProjectionMatrix = NewProjectionData.ComputeViewProjectionMatrix();
+			const FIntRect ViewRectangle = NewProjectionData.GetConstrainedViewRect();
+
+			FPlane Result = ViewProjectionMatrix.TransformFVector4(FVector4(WorldPosition, 1.f));
+			// Small Result.W gives huge result
+			if (Result.W < 0.f) { bTargetBehindCamera = true; }
+			if (Result.W == 0.f) { Result.W = 1.f; } // Prevent Divide By Zero
+
+			const float RHW = 1.f / FMath::Abs(Result.W);
+			Projected = FVector(Result.X, Result.Y, Result.Z) * RHW;
+
+			// Normalize to 0..1 UI Space
+			const float NormX = (Projected.X / 2.f) + 0.5f;
+			const float NormY = 1.f - (Projected.Y / 2.f) - 0.5f;
+
+			Projected.X = (float)ViewRectangle.Min.X + (NormX * (float)ViewRectangle.Width());
+			Projected.Y = (float)ViewRectangle.Min.Y + (NormY * (float)ViewRectangle.Height());
+		}
+	}
+	ScreenPosition = FVector2D(Projected.X, Projected.Y);
+	return true;
+}
+
+bool UModumateFunctionLibrary::ProjectLineToCameraPlane(APlayerController const* player, const FVector point1, const FVector point2, FVector& newPoint1, FVector& newPoint2)
+{
+	float intersectT = 0.f;
+	FVector intersection;
+
+	bool hasIntersect = UKismetMathLibrary::LinePlaneIntersection_OriginNormal(point1, point2,
+		player->PlayerCameraManager->GetCameraLocation(),
+		player->PlayerCameraManager->GetActorForwardVector(),
+		intersectT, intersection);
+
+	if (hasIntersect)
+	{
+		FVector2D screenPos;
+		bool behindcamera = false;
+		ProjectWorldToScreenBidirectional(player, point1, screenPos, behindcamera, false);
+		if (behindcamera)
+		{
+			newPoint1 = intersection;
+			newPoint2 = point2;
+		}
+		else
+		{
+			newPoint1 = point1;
+			newPoint2 = intersection;
+		}
+		return false;
+	}
+	else
+	{
+		newPoint1 = point1;
+		newPoint2 = point2;
+		return true;
+	}
+}
+
+FModumateSunPositionData UModumateFunctionLibrary::ModumateGetSunPosition(float Latitude, float Longitude, float TimeZone, bool bIsDaylightSavingTime, int32 Year, int32 Month, int32 Day, int32 Hours, int32 Minutes, int32 Seconds)
+{
+	FDateTime CalcTime(Year, Month, Day, Hours, Minutes, Seconds);
+
+	float TimeOffset = TimeZone;
+	if (bIsDaylightSavingTime)
+	{
+		TimeOffset += 1.0f;
+	}
+
+	double LatitudeRad = FMath::DegreesToRadians(Latitude);
+
+	// Get the julian day (number of days since Jan 1st of the year 4713 BC)
+	double JulianDay = CalcTime.GetJulianDay() + (CalcTime.GetTimeOfDay().GetTotalHours() - TimeOffset) / 24.0;
+	double JulianCentury = (JulianDay - 2451545.0) / 36525.0;
+
+	// Get the sun's mean longitude , referred to the mean equinox of julian date
+	double GeomMeanLongSunDeg = FMath::Fmod(280.46646 + JulianCentury * (36000.76983 + JulianCentury * 0.0003032), 360.0f);
+	double GeomMeanLongSunRad = FMath::DegreesToRadians(GeomMeanLongSunDeg);
+
+	// Get the sun's mean anomaly
+	double GeomMeanAnomSunDeg = 357.52911 + JulianCentury * (35999.05029 - 0.0001537*JulianCentury);
+	double GeomMeanAnomSunRad = FMath::DegreesToRadians(GeomMeanAnomSunDeg);
+
+	// Get the earth's orbit eccentricity
+	double EccentEarthOrbit = 0.016708634 - JulianCentury * (0.000042037 + 0.0000001267*JulianCentury);
+
+	// Get the sun's equation of the center
+	double SunEqOfCtr = FMath::Sin(GeomMeanAnomSunRad)*(1.914602 - JulianCentury * (0.004817 + 0.000014*JulianCentury))
+		+ FMath::Sin(2.0 * GeomMeanAnomSunRad)*(0.019993 - 0.000101*JulianCentury)
+		+ FMath::Sin(3.0 * GeomMeanAnomSunRad)*0.000289;
+
+	// Get the sun's true longitude
+	double SunTrueLongDeg = GeomMeanLongSunDeg + SunEqOfCtr;
+
+	// Get the sun's true anomaly
+	//	double SunTrueAnomDeg = GeomMeanAnomSunDeg + SunEqOfCtr;
+	//	double SunTrueAnomRad = FMath::DegreesToRadians(SunTrueAnomDeg);
+
+	// Get the earth's distance from the sun
+	//	double SunRadVectorAUs = (1.000001018*(1.0 - EccentEarthOrbit*EccentEarthOrbit)) / (1.0 + EccentEarthOrbit*FMath::Cos(SunTrueAnomRad));
+
+	// Get the sun's apparent longitude
+	double SunAppLongDeg = SunTrueLongDeg - 0.00569 - 0.00478*FMath::Sin(FMath::DegreesToRadians(125.04 - 1934.136*JulianCentury));
+	double SunAppLongRad = FMath::DegreesToRadians(SunAppLongDeg);
+
+	// Get the earth's mean obliquity of the ecliptic
+	double MeanObliqEclipticDeg = 23.0 + (26.0 + ((21.448 - JulianCentury * (46.815 + JulianCentury * (0.00059 - JulianCentury * 0.001813)))) / 60.0) / 60.0;
+
+	// Get the oblique correction
+	double ObliqCorrDeg = MeanObliqEclipticDeg + 0.00256*FMath::Cos(FMath::DegreesToRadians(125.04 - 1934.136*JulianCentury));
+	double ObliqCorrRad = FMath::DegreesToRadians(ObliqCorrDeg);
+
+	// Get the sun's right ascension
+	double SunRtAscenRad = FMath::Atan2(FMath::Cos(ObliqCorrRad)*FMath::Sin(SunAppLongRad), FMath::Cos(SunAppLongRad));
+	double SunRtAscenDeg = FMath::RadiansToDegrees(SunRtAscenRad);
+
+	// Get the sun's declination
+	double SunDeclinRad = FMath::Asin(FMath::Sin(ObliqCorrRad)*FMath::Sin(SunAppLongRad));
+	double SunDeclinDeg = FMath::RadiansToDegrees(SunDeclinRad);
+
+	double VarY = FMath::Pow(FMath::Tan(ObliqCorrRad / 2.0), 2.0);
+
+	// Get the equation of time
+	double EqOfTimeMinutes = 4.0 * FMath::RadiansToDegrees(VarY*FMath::Sin(2.0 * GeomMeanLongSunRad) - 2.0 * EccentEarthOrbit*FMath::Sin(GeomMeanAnomSunRad) + 4.0 * EccentEarthOrbit*VarY*FMath::Sin(GeomMeanAnomSunRad)*FMath::Cos(2.0 * GeomMeanLongSunRad) - 0.5*VarY*VarY*FMath::Sin(4.0 * GeomMeanLongSunRad) - 1.25*EccentEarthOrbit*EccentEarthOrbit*FMath::Sin(2.0 * GeomMeanAnomSunRad));
+
+	// Get the hour angle of the sunrise
+	double HASunriseDeg = FMath::RadiansToDegrees(FMath::Acos(FMath::Cos(FMath::DegreesToRadians(90.833)) / (FMath::Cos(LatitudeRad)*FMath::Cos(SunDeclinRad)) - FMath::Tan(LatitudeRad)*FMath::Tan(SunDeclinRad)));
+	//	double SunlightDurationMinutes = 8.0 * HASunriseDeg;
+
+	// Get the local time of the sun's rise and set
+	double SolarNoonLST = (720.0 - 4.0 * Longitude - EqOfTimeMinutes + TimeOffset * 60.0) / 1440.0;
+	double SunriseTimeLST = SolarNoonLST - HASunriseDeg * 4.0 / 1440.0;
+	double SunsetTimeLST = SolarNoonLST + HASunriseDeg * 4.0 / 1440.0;
+
+	// Get the true solar time
+	double TrueSolarTimeMinutes = FMath::Fmod(CalcTime.GetTimeOfDay().GetTotalMinutes() + EqOfTimeMinutes + 4.0 * Longitude - 60.0 * TimeOffset, 1440.0);
+
+	// Get the hour angle of current time
+	double HourAngleDeg = TrueSolarTimeMinutes < 0 ? TrueSolarTimeMinutes / 4.0 + 180 : TrueSolarTimeMinutes / 4.0 - 180.0;
+	double HourAngleRad = FMath::DegreesToRadians(HourAngleDeg);
+
+	// Get the solar zenith angle
+	double SolarZenithAngleRad = FMath::Acos(FMath::Sin(LatitudeRad)*FMath::Sin(SunDeclinRad) + FMath::Cos(LatitudeRad)*FMath::Cos(SunDeclinRad)*FMath::Cos(HourAngleRad));
+	double SolarZenithAngleDeg = FMath::RadiansToDegrees(SolarZenithAngleRad);
+
+	// Get the sun elevation
+	double SolarElevationAngleDeg = 90.0 - SolarZenithAngleDeg;
+	double SolarElevationAngleRad = FMath::DegreesToRadians(SolarElevationAngleDeg);
+	double TanOfSolarElevationAngle = FMath::Tan(SolarElevationAngleRad);
+
+	// Get the approximated atmospheric refraction
+	double ApproxAtmosphericRefractionDeg = 0.0;
+	if (SolarElevationAngleDeg <= 85.0)
+	{
+		if (SolarElevationAngleDeg > 5.0)
+		{
+			ApproxAtmosphericRefractionDeg = 58.1 / TanOfSolarElevationAngle - 0.07 / FMath::Pow(TanOfSolarElevationAngle, 3) + 0.000086 / FMath::Pow(TanOfSolarElevationAngle, 5) / 3600.0;
+		}
+		else
+		{
+			if (SolarElevationAngleDeg > -0.575)
+			{
+				ApproxAtmosphericRefractionDeg = 1735.0 + SolarElevationAngleDeg * (-518.2 + SolarElevationAngleDeg * (103.4 + SolarElevationAngleDeg * (-12.79 + SolarElevationAngleDeg * 0.711)));
+			}
+			else
+			{
+				ApproxAtmosphericRefractionDeg = -20.772 / TanOfSolarElevationAngle;
+			}
+		}
+		ApproxAtmosphericRefractionDeg /= 3600.0;
+	}
+
+	// Get the corrected solar elevation
+	double SolarElevationcorrectedforatmrefractionDeg = SolarElevationAngleDeg + ApproxAtmosphericRefractionDeg;
+
+	// Get the solar azimuth
+	double tmp = FMath::RadiansToDegrees(FMath::Acos(((FMath::Sin(LatitudeRad)*FMath::Cos(SolarZenithAngleRad)) - FMath::Sin(SunDeclinRad)) / (FMath::Cos(LatitudeRad)*FMath::Sin(SolarZenithAngleRad))));
+	double SolarAzimuthAngleDegcwfromN = HourAngleDeg > 0.0f ? FMath::Fmod(tmp + 180.0f, 360.0f) : FMath::Fmod(540.0f - tmp, 360.0f);
+
+	// offset elevation angle to fit with UE coords system
+	FModumateSunPositionData SunPositionData;
+
+	SunPositionData.Elevation = 180.0f + SolarElevationAngleDeg;
+	SunPositionData.CorrectedElevation = 180.0f + SolarElevationcorrectedforatmrefractionDeg;
+	SunPositionData.Azimuth = SolarAzimuthAngleDegcwfromN;
+	SunPositionData.SolarNoon = FTimespan::FromDays(SolarNoonLST);
+	SunPositionData.SunriseTime = FTimespan::FromDays(SunriseTimeLST);
+	SunPositionData.SunsetTime = FTimespan::FromDays(SunsetTimeLST);
+
+	return SunPositionData;
+}
+
+void UModumateFunctionLibrary::SetSkylightCubemapAngle(USkyLightComponent* SkyLight, float Angle)
+{
+	SkyLight->SourceCubemapAngle = Angle;
+}
+
+float UModumateFunctionLibrary::GetViewportDPIScale()
+{
+	FVector2D viewportSize;
+	GEngine->GameViewport->GetViewportSize(viewportSize);
+	int32 X = FGenericPlatformMath::FloorToInt(viewportSize.X);
+	int32 Y = FGenericPlatformMath::FloorToInt(viewportSize.Y);
+	return GetDefault<UUserInterfaceSettings>(UUserInterfaceSettings::StaticClass())->GetDPIScaleBasedOnSize(FIntPoint(X, Y));
+}
+
+static FString FormatDateString(const FDateTime &dt, const TCHAR *monthNames[])
+{
+	return monthNames[dt.GetMonth() - 1] + FString(TEXT(" ")) + FString::FromInt(dt.GetDay()) + TEXT(", ") + FString::FromInt(dt.GetYear());
+}
+
+FVector UModumateFunctionLibrary::WallUpdateUVAnchor(FVector currentAnchorOrigin, int32 anchorSide, FVector newP1, FVector newP2, FVector oldP1, FVector oldP2)
+{
+	FVector returnAnchorLocation;
+	FVector curAnchorOrigin = currentAnchorOrigin * FVector(1.0f, 1.0f, 0.0f);
+	FVector nP1 = newP1 * FVector(1.0f, 1.0f, 0.0f);
+	FVector nP2 = newP2 * FVector(1.0f, 1.0f, 0.0f);
+	FVector oP1 = oldP1 * FVector(1.0f, 1.0f, 0.0f);
+	FVector oP2 = oldP2 * FVector(1.0f, 1.0f, 0.0f);
+
+	if (anchorSide == 0)
+	{
+		bool bPossibleNegativeLength = (nP1 - nP2).Size() < (nP1 - curAnchorOrigin).Size();
+		float anchorLength = (oP2 - curAnchorOrigin).Size();
+
+		if (bPossibleNegativeLength)
+		{
+			float lengthA = (oP1 - oP2).Size() + (oP2 - curAnchorOrigin).Size();
+			float lengthB = (oP1 - curAnchorOrigin).Size();
+			if (FMath::IsNearlyEqual(lengthA, lengthB, 0.1f))
+			{
+				anchorLength = anchorLength * -1.0f;
+			}
+		}
+		FVector anchorDirection = UKismetMathLibrary::GetDirectionUnitVector(nP2, nP1);
+		FVector anchorNewLocationXY = (anchorDirection * anchorLength) + nP2;
+		returnAnchorLocation = FVector(anchorNewLocationXY.X, anchorNewLocationXY.Y, currentAnchorOrigin.Z);
+	}
+	else if ((anchorSide == 1) || (anchorSide == 2) || (anchorSide == 3))
+	{
+		bool bPossibleNegativeLength = (nP2 - nP1).Size() < (nP2 - curAnchorOrigin).Size();
+		float anchorLength = (oP1 - curAnchorOrigin).Size();
+
+		if (bPossibleNegativeLength)
+		{
+			float lengthA = (curAnchorOrigin - oP1).Size() + (oP1 - oP2).Size();
+			float lengthB = (curAnchorOrigin - oP2).Size();
+			if (FMath::IsNearlyEqual(lengthA, lengthB, 0.1f))
+			{
+				anchorLength = anchorLength * -1.0f;
+			}
+		}
+		FVector anchorDirection = UKismetMathLibrary::GetDirectionUnitVector(nP1, nP2);
+		FVector anchorNewLocationXY = (anchorDirection * anchorLength) + nP1;
+		returnAnchorLocation = FVector(anchorNewLocationXY.X, anchorNewLocationXY.Y, currentAnchorOrigin.Z);
+	}
+	else if (anchorSide == -1)
+	{
+		returnAnchorLocation = currentAnchorOrigin;
+	}
+
+	return returnAnchorLocation;
+}
+
+bool UModumateFunctionLibrary::IsPointInBetween(FVector pC, FVector pA, FVector pB)
+{
+	float lengthA = (pC - pA).Size() + (pC - pB).Size();
+	float lengthB = (pA - pB).Size();
+
+	return FMath::IsNearlyEqual(lengthA, lengthB, 0.1f);
+}
+
+TArray<FVector2D> UModumateFunctionLibrary::MatchUVToUVAnchor(FVector uvAnchor, FVector currentP1, FVector currentP2, float wallBaseHeight, TArray<FVector2D> oldUV, TArray<FVector> refNormals, bool IsTopAdjustChange)
+{
+	TArray<FVector2D> newUV;
+	FVector curP1 = currentP1 * FVector(1.0f, 1.0f, 0.0f);
+	FVector curP2 = currentP2 * FVector(1.0f, 1.0f, 0.0f);
+	FVector anchorDifference = uvAnchor - curP1;
+	FVector2D uvDiff = FVector2D((anchorDifference.Size() / 100.0f), (wallBaseHeight / -100.0f));
+	bool b1 = IsPointInBetween(uvAnchor, curP1, curP2);
+	bool b2 = IsPointInBetween(curP2, uvAnchor, curP1);
+	if (b1 || b2)
+	{
+		uvDiff = uvDiff * FVector2D(-1.0f, 1.0f);
+	}
+	//////
+	TArray<int32> sideIndices;
+	TArray<int32> topBottomIndices;
+	TArray<int32> nonChangeIndices;
+	FindWallSideIndices(sideIndices, topBottomIndices, refNormals, curP1, curP2);
+	if (IsTopAdjustChange)
+	{
+		nonChangeIndices = topBottomIndices;
+	}
+	else
+	{
+		nonChangeIndices = sideIndices;
+	}
+	for (int32 i = 0; i < oldUV.Num(); i++)
+	{
+		if (nonChangeIndices.Contains(i))
+		{
+			if (IsTopAdjustChange)
+			{
+				newUV.Add(oldUV[i] + uvDiff);
+			}
+			else
+			{
+				newUV.Add(oldUV[i]);
+			}
+		}
+		else
+		{
+			newUV.Add(oldUV[i] + uvDiff);
+		}
+	}
+	//////
+	//for (int32 i = 0; i < oldUV.Num(); i++)
+	//{
+	//    newUV.Add(oldUV[i] + uvDiff);
+	//}
+
+	return newUV;
+}
+
+void UModumateFunctionLibrary::FindWallSideIndices(TArray<int32>& sideIndices, TArray<int32>& topBottomIndices, TArray<FVector> refNormals, FVector p1, FVector p2)
+{
+	TArray<int32> returnTopBottomID;
+	TArray<int32> returnSideID;
+	FVector nonAbsWallDirection = UKismetMathLibrary::GetDirectionUnitVector(p1, p2);
+	FVector wallDirection = FVector(abs(nonAbsWallDirection.X), abs(nonAbsWallDirection.Y), 0.f);
+	for (int32 i = 0; i < refNormals.Num(); i++)
+	{
+		if (FMath::IsNearlyEqual(abs(refNormals[i].Z), 1.0f, 0.1f))
+		{
+			returnTopBottomID.Add(i);
+		}
+		else
+		{
+			FVector curNormal = FVector(abs(refNormals[i].X), abs(refNormals[i].Y), 0.f);
+			if (curNormal.Equals(wallDirection, 0.1f))
+			{
+				returnSideID.Add(i);
+			}
+		}
+	}
+	sideIndices = returnSideID;
+	topBottomIndices = returnTopBottomID;
+}
+
+EObjectType UModumateFunctionLibrary::GetMOITypeFromActor(AActor * MOIActor)
+{
+	if (MOIActor != nullptr)
+	{
+		AEditModelGameState_CPP *gameState = MOIActor->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		FModumateObjectInstance *moi = gameState->Document.ObjectFromActor(MOIActor);
+		if (moi == nullptr)
+		{
+			return EObjectType::OTUnknown;
+		}
+		else
+		{
+			return moi->ObjectType;
+		}
+	}
+	else
+	{
+		return EObjectType::OTUnknown;
+	}
+}
+
+FVector UModumateFunctionLibrary::GetMOIActorsCenter(TArray<AActor*> MOIActors)
+{
+	if (MOIActors[0] == nullptr)
+	{
+		return FVector::ZeroVector;
+	}
+	if (MOIActors[0]->GetWorld() == nullptr)
+	{
+		return FVector::ZeroVector;
+	}
+	AEditModelGameState_CPP *gameState = MOIActors[0]->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	TArray<FVector> allCenterLocations;
+	for (auto& curActor : MOIActors)
+	{
+		FModumateObjectInstance *moi = gameState->Document.ObjectFromActor(curActor);
+		if (moi != nullptr)
+		{
+			switch (moi->ObjectType)
+			{
+			case EObjectType::OTDoor:
+			case EObjectType::OTWindow:
+				allCenterLocations.Add(UKismetMathLibrary::GetVectorArrayAverage(UModumateObjectStatics::GetMoiActorHoleVertsWorldLocations(curActor)));
+				break;
+			case EObjectType::OTRoom:
+			case EObjectType::OTWallSegment:
+			case EObjectType::OTFinish:
+			case EObjectType::OTFloorSegment:
+			case EObjectType::OTRailSegment:
+			case EObjectType::OTCabinet:
+				allCenterLocations.Add(UKismetMathLibrary::GetVectorArrayAverage(moi->ControlPoints) + FVector(0.f, 0.f, moi->Extents.Y / 2.f));
+				break;
+			case EObjectType::OTFurniture:
+				if (moi->ObjectAssembly.AsShoppingItem().EngineMesh != nullptr)
+				{
+					FVector objExtent = moi->ObjectAssembly.AsShoppingItem().EngineMesh->GetBounds().BoxExtent;
+					FVector actorOrigin = moi->GetObjectLocation();
+					allCenterLocations.Add(actorOrigin + FVector(0.f, 0.f, objExtent.Z));
+				}
+				else
+				{
+					FVector actorOrigin; FVector actorBound;
+					moi->GetActor()->GetActorBounds(true, actorOrigin, actorBound);
+					allCenterLocations.Add(actorOrigin);
+				}
+			case EObjectType::OTGroup:
+				allCenterLocations.Add(moi->GetObjectLocation());
+				break;
+			}
+		}
+	}
+
+	return UKismetMathLibrary::GetVectorArrayAverage(allCenterLocations);
+}
+
+void UModumateFunctionLibrary::AddNewDimensionString(const AEditModelPlayerController_CPP *controller, const FVector &p1, const FVector &p2, const FVector &offsetDir, const FName &groupID, const FName &uniqueID, const int32 groupIndex, const AActor* owner, EDimStringStyle style, EEnterableField functionality, const float offset, EAutoEditableBox autoTextBox, const bool alwaysVisible, const FLinearColor &color)
+{
+	if (owner == nullptr)
+	{
+		return;
+	}
+	FModelDimensionString newDimensionString;
+	newDimensionString.Point1 = p1;
+	newDimensionString.Point2 = p2;
+	newDimensionString.Owner = const_cast<AActor*>(owner);
+	newDimensionString.Style = style;
+	newDimensionString.OffsetDirection = offsetDir;
+	newDimensionString.GroupID = groupID;
+	newDimensionString.GroupIndex = groupIndex;
+
+	AEditModelPlayerController_CPP* playerController = const_cast<AEditModelPlayerController_CPP*>(controller);
+	switch (autoTextBox)
+	{
+	case EAutoEditableBox::Never:
+		newDimensionString.Functionality = functionality;
+		break;
+	case EAutoEditableBox::UponUserInput:
+		if (playerController->HasPendingTextBoxUserInput())
+		{
+			newDimensionString.Functionality = EEnterableField::EditableText_ImperialUnits_UserInput;
+		}
+		else
+		{
+			newDimensionString.Functionality = functionality;
+		}
+		break;
+	case EAutoEditableBox::UponUserInput_SameGroupIndex:
+		if (playerController->HasPendingTextBoxUserInput() && playerController->EMPlayerState->CurrentDimensionStringGroupIndex == groupIndex)
+		{
+			newDimensionString.Functionality = EEnterableField::EditableText_ImperialUnits_UserInput;
+		}
+		else
+		{
+			newDimensionString.Functionality = functionality;
+		}
+		break;
+	default:
+		break;
+	}
+	newDimensionString.Offset = offset;
+	newDimensionString.UniqueID = uniqueID;
+	newDimensionString.bAlwaysVisible = alwaysVisible;
+	newDimensionString.Color = color;
+	controller->EMPlayerState->DimensionStrings.Add(newDimensionString);
+}
+
+void UModumateFunctionLibrary::AddNewDegreeString(const AEditModelPlayerController_CPP *controller, const FVector &location, const FVector &start, const FVector &end, const bool clockwise, const FName &groupID, const FName &uniqueID, const int32 groupIndex, const AActor* owner, EDimStringStyle style, EEnterableField functionality /*= EEnterableField::NonEditableText*/, EAutoEditableBox autoTextBox /*= EAutoEditableBox::UponUserInput*/, const bool alwaysVisible /*= false*/, const FLinearColor &color /*= FLinearColor::White*/)
+{
+	if (owner == nullptr)
+	{
+		return;
+	}
+	FModelDimensionString newDimensionString;
+	newDimensionString.bDegreeClockwise = clockwise;
+	newDimensionString.DegreeDirectionStart = start;
+	newDimensionString.DegreeDirectionEnd = end;
+	newDimensionString.DegreeLocation = location;
+	newDimensionString.Owner = const_cast<AActor*>(owner);
+	newDimensionString.Style = style;
+	newDimensionString.GroupID = groupID;
+	newDimensionString.GroupIndex = groupIndex;
+
+	//TODO: assume angle range 0-180 with direction indicated by "clockwise." 
+	newDimensionString.AngleDegrees = FVector::DotProduct((start-location).GetSafeNormal(), (end-location).GetSafeNormal());
+	newDimensionString.AngleDegrees = FMath::RadiansToDegrees(FMath::Acos(newDimensionString.AngleDegrees));
+
+	AEditModelPlayerController_CPP* playerController = const_cast<AEditModelPlayerController_CPP*>(controller);
+	switch (autoTextBox)
+	{
+	case EAutoEditableBox::Never:
+		newDimensionString.Functionality = functionality;
+		break;
+	case EAutoEditableBox::UponUserInput:
+		if (playerController->HasPendingTextBoxUserInput())
+		{
+			newDimensionString.Functionality = EEnterableField::EditableText_ImperialUnits_UserInput;
+		}
+		else
+		{
+			newDimensionString.Functionality = functionality;
+		}
+		break;
+	case EAutoEditableBox::UponUserInput_SameGroupIndex:
+		if (playerController->HasPendingTextBoxUserInput() && playerController->EMPlayerState->CurrentDimensionStringGroupIndex == groupIndex)
+		{
+			newDimensionString.Functionality = EEnterableField::EditableText_ImperialUnits_UserInput;
+		}
+		else
+		{
+			newDimensionString.Functionality = functionality;
+		}
+		break;
+	default:
+		break;
+	}
+
+	newDimensionString.UniqueID = uniqueID;
+	newDimensionString.bAlwaysVisible = alwaysVisible;
+	newDimensionString.Color = color;
+	controller->EMPlayerState->DimensionStrings.Add(newDimensionString);
+}
+
+FBoxSphereBounds UModumateFunctionLibrary::GetSelectedExtents(const AEditModelPlayerController_CPP * Controller)
+{
+	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelPlayerState_CPP *playerState = Controller->EMPlayerState;
+	const Modumate::FModumateDocument &doc = gameState->Document;
+
+	TArray<FVector> selectedMOIPoints;
+	TArray<FStructurePoint> curMOIPoints;
+	TArray<FStructureLine> curMOILines;
+
+	for (const FModumateObjectInstance* moi : playerState->SelectedObjects)
+	{
+		curMOIPoints.Reset();
+		curMOILines.Reset();
+		moi->GetStructuralPointsAndLines(curMOIPoints, curMOILines);
+
+		for (const FStructurePoint &point : curMOIPoints)
+		{
+			selectedMOIPoints.Add(point.Point);
+		}
+	}
+
+	FBoxSphereBounds selectionBounds(selectedMOIPoints.GetData(), selectedMOIPoints.Num());
+	return selectionBounds;
+}
+
+void UModumateFunctionLibrary::SetWindowTitle(const FString& ProjectName)
+{
+	FText AppNameText = FText::FromString(FApp::GetProjectName());
+	FText WindowTitle = AppNameText;
+
+	if (!ProjectName.IsEmpty())
+	{
+		static const FText WindowTitleFormat = FText::FromString(TEXT("{0} - {1}"));
+		WindowTitle = FText::Format(WindowTitleFormat, FText::FromString(ProjectName), AppNameText);
+	}
+
+	UKismetSystemLibrary::SetWindowTitle(WindowTitle);
+}
+
+void UModumateFunctionLibrary::DocAddHideMoiActors(const TArray<AActor*> Actors)
+{
+	if (Actors.Num() > 0)
+	{
+		AEditModelGameState_CPP *gameState = Actors[0]->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		Modumate::FModumateDocument *doc = &gameState->Document;
+
+		// First, find all descendents of the selected actor objects
+		TSet<const FModumateObjectInstance *> objectsAndDescendents;
+		for (auto curActor : Actors)
+		{
+			FModumateObjectInstance *moi = gameState->Document.ObjectFromActor(curActor);
+			if (moi)
+			{
+				objectsAndDescendents.Add(moi);
+
+				TArray<FModumateObjectInstance *> descendents = moi->GetAllDescendents();
+				for (FModumateObjectInstance *descendent : descendents)
+				{
+					if (descendent)
+					{
+						objectsAndDescendents.Add(descendent);
+					}
+				}
+			}
+		}
+
+		// Now, gather their IDs, and any parent IDs that are in the graph
+		TSet<int32> objectIDsToHide;
+		for (const FModumateObjectInstance *object : objectsAndDescendents)
+		{
+			objectIDsToHide.Add(object->ID);
+
+			int32 parentID = object->GetParentID();
+			EGraph3DObjectType parentGraphObjectType;
+			if (doc->IsObjectInVolumeGraph(parentID, parentGraphObjectType))
+			{
+				objectIDsToHide.Add(parentID);
+			}
+		}
+
+		doc->AddHideObjectsById(Actors[0]->GetWorld(), objectIDsToHide.Array());
+	}
+}
+
+void UModumateFunctionLibrary::DocUnHideAllMoiActors(const AActor* Owner)
+{
+	if (Owner != nullptr)
+	{
+		AEditModelGameState_CPP *gameState = Owner->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		Modumate::FModumateDocument *doc = &gameState->Document;
+		doc->UnhideAllObjects(Owner->GetWorld());
+	}
+}
+
+TArray<AActor*> UModumateFunctionLibrary::GetDocHiddenActors(const AActor* Owner)
+{
+	TArray<AActor*> returnActors;
+
+	if (Owner != nullptr)
+	{
+		AEditModelGameState_CPP *gameState = Owner->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		Modumate::FModumateDocument *doc = &gameState->Document;
+
+		for (auto curID : doc->HiddenObjectsID)
+		{
+			FModumateObjectInstance* moi = doc->GetObjectById(curID);
+			if (moi->GetActor() != nullptr)
+			{
+				returnActors.Add(moi->GetActor());
+			}
+		}
+	}
+	return returnActors;
+}
+
+FShoppingItem UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& bSuccess)
+{
+	if (TargetActor != nullptr)
+	{
+		AEditModelGameState_CPP *gameState = TargetActor->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		Modumate::FModumateDocument *doc = &gameState->Document;
+		FModumateObjectInstance *moi = doc->ObjectFromActor(TargetActor);
+		FShoppingItem returnShoppingItem = moi->ObjectAssembly.AsShoppingItem();
+		bSuccess = !returnShoppingItem.Key.IsNone();
+		return returnShoppingItem;
+	}
+	else
+	{
+		bSuccess = false;
+		FShoppingItem returnShoppingItem;
+		return returnShoppingItem;
+	}
+
+}
+
+using namespace Modumate;
+bool UModumateFunctionLibrary::GetCabinetToeKickDimensions(const FModumateObjectAssembly &obAsm, FVector2D &outToeKickDims)
+{
+	outToeKickDims.Set(0.0f, 0.0f);
+
+	FString depth, height;
+	if (obAsm.Properties.TryGetProperty(BIM::EScope::ToeKick,BIM::Parameters::Depth,depth)
+		&& obAsm.Properties.TryGetProperty(BIM::EScope::ToeKick,BIM::Parameters::Height,height))
+	{
+		outToeKickDims.X = UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters;
+		outToeKickDims.Y = UModumateDimensionStatics::StringToFormattedDimension(height).Centimeters;
+		return true;
+	}
+
+	return false;
+}
+
+bool UModumateFunctionLibrary::SetMeshMaterial(UMeshComponent *MeshComponent, const FArchitecturalMaterial &Material, int32 MatIndex, UMaterialInstanceDynamic** CachedMIDPtr)
+{
+	static const FName baseColorParamName(TEXT("ColorMultiplier"));
+	static const FName uvScaleParamName(TEXT("UVScale"));
+
+	if (Material.EngineMaterial.IsValid())
+	{
+		UMaterialInterface* engineMat = Material.EngineMaterial.Get();
+
+		// Only create and set a MaterialInstanceDynamic if there's a param (color) that needs to be set.
+		if (Material.DefaultBaseColor.IsValid())
+		{
+			UMaterialInterface* curEngineMat = MeshComponent->GetMaterial(MatIndex);
+			UMaterialInstanceDynamic* curMID = Cast<UMaterialInstanceDynamic>(curEngineMat);
+			bool bReapplyMID = false;
+
+			// If the mesh's current material isn't the right MID, see if the cached one is.
+			if (((curMID == nullptr) || (curMID->Parent != engineMat)) && CachedMIDPtr)
+			{
+				curMID = *CachedMIDPtr;
+				bReapplyMID = true;
+			}
+
+			if ((curMID == nullptr) || (curMID->Parent != engineMat))
+			{
+				curMID = UMaterialInstanceDynamic::Create(engineMat, MeshComponent);
+				MeshComponent->SetMaterial(MatIndex, curMID);
+			}
+			else if (bReapplyMID)
+			{
+				MeshComponent->SetMaterial(MatIndex, curMID);
+			}
+
+			curMID->SetVectorParameterValue(baseColorParamName, Material.DefaultBaseColor.Color);
+			curMID->SetScalarParameterValue(uvScaleParamName, Material.UVScaleFactor);
+
+			// Cache the MID if requested
+			if (CachedMIDPtr)
+			{
+				*CachedMIDPtr = curMID;
+			}
+		}
+		// Otherwise just set the material to the base MaterialInterface asset.
+		else
+		{
+			MeshComponent->SetMaterial(MatIndex, engineMat);
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool UModumateFunctionLibrary::SetMeshMaterialsFromMapping(UMeshComponent *MeshComponent, const TMap<FName, FArchitecturalMaterial> &MaterialMapping, const TMap<FName, int32> *MatIndexMapping)
+{
+	bool bSuccess = false;
+
+	for (auto &kvp : MaterialMapping)
+	{
+		const FArchitecturalMaterial &matData = kvp.Value;
+		FName materialSlotName = kvp.Key;
+		int32 matIndex = INDEX_NONE;
+		if (MatIndexMapping && MatIndexMapping->Contains(materialSlotName))
+		{
+			matIndex = MatIndexMapping->FindChecked(materialSlotName);
+		}
+		else
+		{
+			matIndex = MeshComponent->GetMaterialIndex(materialSlotName);
+		}
+
+		if (matIndex == INDEX_NONE)
+		{
+			continue;
+		}
+
+		if (SetMeshMaterial(MeshComponent, matData, matIndex))
+		{
+			bSuccess = true;
+		}
+	}
+
+	return bSuccess;
+}
+
+bool UModumateFunctionLibrary::SetMeshMaterialsFromAssemblyLayer(UMeshComponent* MeshComponent, const FModumateObjectAssemblyLayer &AssemblyLayer, const TMap<FName, int32> *MatIndexMapping)
+{
+	bool bSuccess = false;
+
+	for (int32 i = -1; i < AssemblyLayer.ExtraMaterials.Num(); ++i)
+	{
+		auto &matData = (i < 0) ? AssemblyLayer.Material : AssemblyLayer.ExtraMaterials[i];
+		if (matData.EngineMaterial.IsValid())
+		{
+			FName materialSlotName(*FString::Printf(TEXT("Material%d"), i + 1));
+			int32 matIndex = INDEX_NONE;
+			if (MatIndexMapping && MatIndexMapping->Contains(materialSlotName))
+			{
+				matIndex = MatIndexMapping->FindChecked(materialSlotName);
+			}
+			else
+			{
+				matIndex = MeshComponent->GetMaterialIndex(materialSlotName);
+			}
+
+			if (!ensureMsgf(matIndex != INDEX_NONE, TEXT("Couldn't find mesh material index on %s for slot %s"),
+				*MeshComponent->GetName(), *materialSlotName.ToString()))
+			{
+				continue;
+			}
+
+			if (SetMeshMaterial(MeshComponent, matData, matIndex))
+			{
+				bSuccess = true;
+			}
+		}
+	}
+
+	return bSuccess;
+}
+
+FColor UModumateFunctionLibrary::GetColorFromHex(FString Hex)
+{
+	return FColor::FromHex(Hex);
+}
+
+FString UModumateFunctionLibrary::GetHexFromColor(FColor Color)
+{
+	return Color.ToHex();
+}
+
+FLinearColor UModumateFunctionLibrary::ModumateMakeFromHSV(uint8 H, uint8 S, uint8 V)
+{
+	return FLinearColor::MakeFromHSV8(H, S, V);
+}
+
+void UModumateFunctionLibrary::ModumateDebugDrawSphere(AActor* Outer, FVector Location, float Radius, float DrawTime, FLinearColor DrawColor)
+{
+	FColor debugColor = DrawColor.ToFColor(false);
+	DrawDebugSphere(Outer->GetWorld(), Location, Radius, 8, debugColor, false, DrawTime);
+}
+
+FString UModumateFunctionLibrary::GetEnumString(UEnum* EnumClass, uint8 EnumValue)
+{
+	return EnumClass ? EnumClass->GetNameStringByValue(EnumValue) : FString();
+}
+
+void UModumateFunctionLibrary::DocTransverseObject(AActor* MoiActor)
+{
+	TArray<FVector> resultVerts;
+	if (MoiActor != nullptr)
+	{
+		AEditModelGameState_CPP * GameState = MoiActor->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		FModumateObjectInstance *moi = GameState->Document.ObjectFromActor(MoiActor);
+		GameState->Document.TransverseObjects(TArray<FModumateObjectInstance*>{moi});
+	}
+}
+
+bool UModumateFunctionLibrary::ApplyTileMaterialToMeshes(const TArray<UProceduralMeshComponent*> &ProceduralSubLayers, const FName &AssemblyKey, AEditModelPlayerController_CPP *Controller, EToolMode FromToolMode, const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial, bool AsLayer, FString KeyOverride, bool bUseMarketplaceAsm)
+{
+	FModumateObjectAssembly Assembly;
+	AEditModelGameState_CPP* emGameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	if (AsLayer)
+	{
+		if (KeyOverride == FString("temp"))
+		{
+			const FModumateObjectAssembly *pAsm = Controller->EMPlayerState->GetTemporaryAssembly(FromToolMode);
+			if (ensureAlways(pAsm != nullptr))
+			{
+				if (Assembly.Layers.Num() == 0)
+				{
+					Assembly.Layers.Add(pAsm->Layers[0]);
+				}
+				else
+				{
+					Assembly.Layers[0] = pAsm->Layers[0];
+				}
+			}
+			return UpdateMaterialsFromAssembly(ProceduralSubLayers, Assembly, TilingMaterials, MasterPBRMaterial);
+		}
+		else
+		{
+			Modumate::ModumateObjectDatabase *obDB = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+			const FModumateObjectAssembly* asmByKey = bUseMarketplaceAsm ? 
+				obDB->PresetManager.GetAssemblyByKey(FromToolMode, AssemblyKey) :
+				emGameState->GetAssemblyByKey_DEPRECATED(FromToolMode, AssemblyKey);
+			if (asmByKey != nullptr)
+			{
+				Assembly = *asmByKey;
+				return UpdateMaterialsFromAssembly(ProceduralSubLayers, Assembly, TilingMaterials, MasterPBRMaterial);
+			}
+			else
+			{
+				ensureAlways(false);
+				return false;
+			}
+		}
+	}
+	else
+	{
+		if (AssemblyKey == "temp")
+		{
+			const FModumateObjectAssembly *pAsm = Controller->EMPlayerState->GetTemporaryAssembly(FromToolMode);
+			if (ensureAlways(pAsm != nullptr))
+			{
+				Assembly = *pAsm;
+			}
+			return UpdateMaterialsFromAssembly(ProceduralSubLayers, Assembly, TilingMaterials, MasterPBRMaterial);
+		}
+		else
+		{
+			Modumate::ModumateObjectDatabase *obDB = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+			const FModumateObjectAssembly* keyASM = bUseMarketplaceAsm ?
+				obDB->PresetManager.GetAssemblyByKey(FromToolMode, AssemblyKey) :
+				emGameState->GetAssemblyByKey_DEPRECATED(FromToolMode, AssemblyKey);
+			if (keyASM != nullptr)
+			{
+				Assembly = *keyASM;
+				return UpdateMaterialsFromAssembly(ProceduralSubLayers, Assembly, TilingMaterials, MasterPBRMaterial);
+			}
+			else
+			{
+				ensureAlways(false);
+				return false;
+			}
+		}
+	}
+}
+
+void UModumateFunctionLibrary::PopulatePatternModuleVariables(TMap<FString, float> &patternExprVars, const FVector &moduleDims, int32 moduleIdx)
+{
+	auto makeModuleDimensionKey = [](int32 idx, const TCHAR* dimensionPrefix) {
+		return (idx == 0) ? FString(dimensionPrefix) : FString::Printf(TEXT("%s%d"), dimensionPrefix, idx + 1);
+	};
+
+	patternExprVars.Add(makeModuleDimensionKey(moduleIdx, TEXT("L")), moduleDims.X);
+	patternExprVars.Add(makeModuleDimensionKey(moduleIdx, TEXT("W")), moduleDims.Y);
+	patternExprVars.Add(makeModuleDimensionKey(moduleIdx, TEXT("H")), moduleDims.Z);
+}
+
+bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshComponent *MeshComponent, const FModumateObjectAssemblyLayer &Layer,
+	const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial, UMaterialInstanceDynamic** CachedMIDPtr)
+{
+	static const FString continuousPatternKey(TEXT("Continuous"));
+	static const FName masterPBRTexParamBaseColor(TEXT("BaseColor"));
+	static const FName masterPBRTexParamMRSA(TEXT("MRSA"));
+	static const FName masterPBRTexParamNormal(TEXT("Normal"));
+	static const FName patternExtentsParamName(TEXT("TotalSize"));
+	static const FName bgColorParamName(TEXT("BackgroundColorMult"));
+	static const FName bgTexParamBaseColor(TEXT("BackgroundBaseColor"));
+	static const FName bgTexParamMRSA(TEXT("BackgroundMRSA"));
+	static const FName bgTexParamNormal(TEXT("BackgroundNormal"));
+	static const FName bgParamColor(TEXT("BackgroundColorMult"));
+	static const FString commaStr(TEXT(","));
+
+	if (ensure(MeshComponent))
+	{
+		const auto &pattern = Layer.Pattern;
+		int32 numModuleTiles = pattern.ParameterizedModuleDimensions.Num();
+		auto *layerOverrideMat = Layer.Material.EngineMaterial.Get();
+
+		// Check if incoming key from pattern is continuous, if true, modify color only
+		if (MeshComponent && !pattern.Key.IsNone() && (pattern.Key.ToString() != continuousPatternKey) && (numModuleTiles > 0) &&
+			ensure((pattern.ModuleCount == Layer.Modules.Num()) && numModuleTiles <= TilingMaterials.Num()) &&
+			TilingMaterials[numModuleTiles - 1])
+		{
+			TMap<FString, float> patternExprVars;
+			patternExprVars.Add(FString(TEXT("G")), Layer.Gap.GapExtents.X);
+
+			// Define the dimension parameters for each module definition
+			for (int32 moduleIdx = 0; moduleIdx < pattern.ModuleCount; ++moduleIdx)
+			{
+				auto &moduleData = Layer.Modules[moduleIdx];
+
+				// Define L, W, and H since some 3D patterns can be applied to 2D modules,
+				// so make sure all extents are defined for all modules.
+				FVector moduleDims = moduleData.ModuleExtents;
+				if (moduleDims.Z == 0.0f)
+				{
+					moduleDims.Z = moduleDims.Y;
+				}
+
+				PopulatePatternModuleVariables(patternExprVars, moduleDims, moduleIdx);
+			}
+
+			FString extentsExpressions = pattern.ParameterizedExtents;
+			extentsExpressions.RemoveFromStart(TEXT("("));
+			extentsExpressions.RemoveFromEnd(TEXT(")"));
+
+			FString patternWidthExpr, patternHeightExpr;
+			FVector patternExtentsValue(ForceInitToZero);
+			if (extentsExpressions.Split(commaStr, &patternWidthExpr, &patternHeightExpr))
+			{
+				patternExtentsValue.X = Modumate::Expression::Evaluate(patternExprVars, patternWidthExpr);
+				patternExtentsValue.Y = Modumate::Expression::Evaluate(patternExprVars, patternHeightExpr);
+			}
+
+			// Get (or create) the MaterialInstanceDynamic for the desired tiling material on the target layer mesh.
+			UMaterialInterface *tilingMaterial = TilingMaterials[numModuleTiles - 1];
+			UMaterialInstanceDynamic* MID = Cast<UMaterialInstanceDynamic>(MeshComponent->GetMaterial(0));
+			if (MID && (MID->Parent == tilingMaterial))
+			{
+				MID->ClearParameterValues();
+			}
+			else
+			{
+				MID = UMaterialInstanceDynamic::Create(tilingMaterial, MeshComponent);
+				MeshComponent->SetMaterial(0, MID);
+			}
+
+			// Set the extents
+			MID->SetVectorParameterValue(patternExtentsParamName, patternExtentsValue);
+
+			// If the layer specifies a gap background material, then set its parameters here
+			auto *layerGapMat = Layer.Gap.Material.EngineMaterial.Get();
+			auto *layerGapMatInst = Cast<UMaterialInstance>(layerGapMat);
+			if (layerGapMatInst && (layerGapMatInst->Parent == MasterPBRMaterial))
+			{
+				UTexture *bgTexBaseColor = nullptr, *bgTexMRSA = nullptr, *bgTexNormal = nullptr;
+				if (layerGapMatInst->GetTextureParameterValue(FMaterialParameterInfo(masterPBRTexParamBaseColor), bgTexBaseColor) &&
+					layerGapMatInst->GetTextureParameterValue(FMaterialParameterInfo(masterPBRTexParamMRSA), bgTexMRSA) &&
+					layerGapMatInst->GetTextureParameterValue(FMaterialParameterInfo(masterPBRTexParamNormal), bgTexNormal))
+				{
+					MID->SetTextureParameterValue(bgTexParamBaseColor, bgTexBaseColor);
+					MID->SetTextureParameterValue(bgTexParamMRSA, bgTexMRSA);
+					MID->SetTextureParameterValue(bgTexParamNormal, bgTexNormal);
+				}
+
+				if (Layer.Gap.BaseColor.IsValid())
+				{
+					// NOTE: this assumes the provided color is in sRGB space,
+					// otherwise we should use layerData.GapBaseColor.ReinterpretAsLinear()
+					FLinearColor bgColor = Layer.Gap.BaseColor.Color;
+					MID->SetVectorParameterValue(bgColorParamName, bgColor);
+				}
+			}
+
+			TArray<FPatternModuleParams> allModuleInstParams;
+			for (int32 moduleInstIdx = 0; moduleInstIdx < numModuleTiles; ++moduleInstIdx)
+			{
+				FPatternModuleParams moduleInstParams = FPatternModuleParams();
+
+				// Parse the module dimensions into X, Y, W, H, and material index
+				auto &moduleInstData = pattern.ParameterizedModuleDimensions[moduleInstIdx];
+
+				moduleInstParams.Dimensions = FLinearColor(
+					Modumate::Expression::Evaluate(patternExprVars, moduleInstData.ModuleXExpr),
+					Modumate::Expression::Evaluate(patternExprVars, moduleInstData.ModuleYExpr),
+					Modumate::Expression::Evaluate(patternExprVars, moduleInstData.ModuleWidthExpr),
+					Modumate::Expression::Evaluate(patternExprVars, moduleInstData.ModuleHeightExpr)
+				);
+
+				// TODO: populate texture and color details from real data
+				static const float defaultHueVariation = 0.0f;
+				static const float defaultBrightnessVariation = 0.1f;
+				static const float defaultTextureRotation = 0.0f;
+				static const float defaultUVScale = 1.0f;
+				moduleInstParams.TileTexDetails = FLinearColor(defaultHueVariation, defaultBrightnessVariation, defaultTextureRotation, defaultUVScale);
+
+				// TODO: populate bevel details from real data
+				static const float defaultBevelWidth = 0.5f;
+				static const float defaultBevelIntensity = 1.5f;
+				moduleInstParams.TileShapeDetails = FLinearColor(defaultBevelWidth, defaultBevelIntensity, 0.0f, 0.0f);
+
+				if (moduleInstData.ModuleDefIndex < Layer.Modules.Num())
+				{
+					auto &moduleDef = Layer.Modules[moduleInstData.ModuleDefIndex];
+					moduleInstParams.TileShapeDetails.R = moduleDef.BevelWidth.AsWorldCentimeters();
+
+					auto &moduleMaterialData = moduleDef.Material;
+
+					if (moduleMaterialData.DefaultBaseColor.IsValid())
+					{
+						moduleInstParams.Color = moduleMaterialData.DefaultBaseColor.Color;
+					}
+
+					moduleInstParams.TileTexDetails.A = moduleMaterialData.UVScaleFactor;
+
+					auto *moduleSourceMat = Layer.Material.IsValid() ?
+						Layer.Material.EngineMaterial.Get() :
+						moduleMaterialData.EngineMaterial.Get();
+
+					auto *moduleMatInst = Cast<UMaterialInstance>(moduleSourceMat);
+					if (moduleMatInst && (moduleMatInst->Parent == MasterPBRMaterial))
+					{
+						moduleSourceMat->GetTextureParameterValue(FMaterialParameterInfo(masterPBRTexParamBaseColor), moduleInstParams.BaseColorTex);
+						moduleSourceMat->GetTextureParameterValue(FMaterialParameterInfo(masterPBRTexParamMRSA), moduleInstParams.MRSATex);
+						moduleSourceMat->GetTextureParameterValue(FMaterialParameterInfo(masterPBRTexParamNormal), moduleInstParams.NormalTex);
+					}
+				}
+
+				// NOTE: this assumes the provided colors are in sRGB space,
+				// otherwise we should use layerData.BaseColor.ReinterpretAsLinear()
+				if (Layer.BaseColor.IsValid())
+				{
+					moduleInstParams.Color = Layer.BaseColor.Color;
+				}
+				else if (Layer.Material.IsValid() && Layer.Material.DefaultBaseColor.IsValid())
+				{
+					moduleInstParams.Color = Layer.Material.DefaultBaseColor.Color;
+				}
+
+				auto makeTileParamName = [moduleInstIdx](const TCHAR* paramSuffix) {
+					return FName(*FString::Printf(TEXT("Tile%d%s"), moduleInstIdx + 1, paramSuffix));
+				};
+
+				MID->SetVectorParameterValue(makeTileParamName(TEXT("Dims")), moduleInstParams.Dimensions);
+				MID->SetVectorParameterValue(makeTileParamName(TEXT("ColorMult")), moduleInstParams.Color);
+				MID->SetVectorParameterValue(makeTileParamName(TEXT("TexDetails")), moduleInstParams.TileTexDetails);
+				MID->SetVectorParameterValue(makeTileParamName(TEXT("ShapeDetails")), moduleInstParams.TileShapeDetails);
+				MID->SetTextureParameterValue(makeTileParamName(TEXT("BaseColor")), moduleInstParams.BaseColorTex);
+				MID->SetTextureParameterValue(makeTileParamName(TEXT("MRSA")), moduleInstParams.MRSATex);
+				MID->SetTextureParameterValue(makeTileParamName(TEXT("Normal")), moduleInstParams.NormalTex);
+			}
+
+			return true;
+		}
+		else
+		{
+			auto* dynMat = MeshComponent->CreateDynamicMaterialInstance(0, MeshComponent->GetMaterial(0));
+			if (dynMat != nullptr)
+			{
+				dynMat->SetVectorParameterValue(TEXT("ColorMultiplier"), Layer.BaseColor.Color);
+			}
+		}
+	}
+
+	return false;
+}
+
+bool UModumateFunctionLibrary::UpdateMaterialsFromAssembly(const TArray<UProceduralMeshComponent*> &ProceduralSubLayers, const FModumateObjectAssembly &Assembly,
+	const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial,
+	TArray<UMaterialInstanceDynamic*> *CachedMIDs, bool bLayersReversed)
+{
+	bool bAppliedAnyTileMaterials = false;
+	int32 numLayers = Assembly.Layers.Num();
+
+	if (ensure(ProceduralSubLayers.Num() == numLayers))
+	{
+		for (int32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
+		{
+			UProceduralMeshComponent *layerMesh = ProceduralSubLayers[layerIdx];
+
+			int32 fixedLayerIdx = bLayersReversed ? (numLayers - layerIdx - 1) : layerIdx;
+			const FModumateObjectAssemblyLayer &layerData = Assembly.Layers[fixedLayerIdx];
+
+			UMaterialInstanceDynamic** cachedMIDPtr = nullptr;
+			if (CachedMIDs && (layerIdx < CachedMIDs->Num()))
+			{
+				cachedMIDPtr = &((*CachedMIDs)[layerIdx]);
+			}
+
+			if (UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(layerMesh, layerData,
+				TilingMaterials, MasterPBRMaterial, cachedMIDPtr))
+			{
+				bAppliedAnyTileMaterials = true;
+			}
+			else
+			{
+				UModumateFunctionLibrary::SetMeshMaterial(layerMesh, layerData.Material, 0, cachedMIDPtr);
+			}
+		}
+	}
+
+	return bAppliedAnyTileMaterials;
+}
+
+void UModumateFunctionLibrary::CopyToClipboard(const FString& ClipboardContents)
+{
+	FPlatformApplicationMisc::ClipboardCopy(*ClipboardContents);
+}
+
+void UModumateFunctionLibrary::GetClipboardContents(FString& ClipboardContents)
+{
+	FPlatformApplicationMisc::ClipboardPaste(ClipboardContents);
+}
+
+FString UModumateFunctionLibrary::GetProjectVersion()
+{
+	return FModumateModule::Get().GetProjectDisplayVersion();
+}
+
+bool UModumateFunctionLibrary::IsTargetCloseToControlPointEdges(const FVector& target, const TArray<FVector>& controlPoints, const FTransform& parentTransform, float tolerance)
+{
+	bool isClose = false;
+	TArray<FVector> worldCPs;
+	for (FVector curCP : controlPoints)
+	{
+		worldCPs.Add(parentTransform.TransformPosition(curCP));
+	}
+	for (int32 curP = 0; curP < worldCPs.Num(); ++curP)
+	{
+		int32 nextP = (curP + 1 < worldCPs.Num()) ? curP + 1 : 0;
+		float dist = UKismetMathLibrary::GetPointDistanceToSegment(target, worldCPs[curP], worldCPs[nextP]);
+		if (dist < tolerance)
+		{
+			isClose = true;
+			break;
+		}
+	}
+	return isClose;
+}
+
+bool UModumateFunctionLibrary::ClipLine2DToRectangle(const FVector2D& lineStart, const FVector2D& lineEnd, const FBox2D& rectBox, FVector2D& returnLineStart, FVector2D& returnLineEnd, float tolerance)
+{
+	// Establish border from screenSize
+	FVector topLeft = FVector(rectBox.Min.X, rectBox.Min.Y, 0.f);
+	FVector topRight = FVector(rectBox.Max.X, rectBox.Min.Y, 0.f);
+	FVector bottomLeft = FVector(rectBox.Min.X, rectBox.Max.Y, 0.f);
+	FVector bottomRight = FVector(rectBox.Max.X, rectBox.Max.Y, 0.f);
+	FVector start = FVector(lineStart.X, lineStart.Y, 0.f);
+	FVector end = FVector(lineEnd.X, lineEnd.Y, 0.f);
+
+	// If both points in line are in border, return the originals
+	bool startInBorder = rectBox.IsInside(lineStart);
+	bool endInBorder = rectBox.IsInside(lineEnd);
+
+	if (startInBorder && endInBorder)
+	{
+		returnLineStart = lineStart;
+		returnLineEnd = lineEnd;
+		return true;
+	}
+
+	// For floating-point precision, make sure that the start point is the one closer to the rectangle.
+	// Otherwise, for very large numbers this function will fail to find an intersection when it should have.
+	FVector2D rectCenter = rectBox.GetCenter();
+	float startDistFromCenter = FVector2D::Distance(lineStart, rectCenter);
+	float endDistFromCenter = FVector2D::Distance(lineEnd, rectCenter);
+	if (startDistFromCenter > endDistFromCenter)
+	{
+		Swap(start, end);
+	}
+
+	// Loop through the corners to check for intersections
+	TArray<FVector> corners = { topLeft, topRight, bottomRight, bottomLeft };
+	TArray<FVector> intersections;
+	FVector p1, p2;
+	for (int32 curId = 0; curId < corners.Num(); ++curId)
+	{
+		int32 nextId = (curId + 1 < corners.Num()) ? curId + 1 : 0;
+		UKismetMathLibrary::FindNearestPointsOnLineSegments(corners[curId], corners[nextId], start, end, p1, p2);
+		if (p1.Equals(p2, tolerance))
+		{
+			if (!IsVectorInArray(intersections, p1, tolerance))
+			{
+				intersections.AddUnique(p1);
+			}
+		}
+	}
+	// Clip both start and end
+	if (intersections.Num() == 2)
+	{
+		returnLineStart = FVector2D(intersections[0]);
+		returnLineEnd = FVector2D(intersections[1]);
+		return true;
+	}
+	// Clip end only
+	if (startInBorder && (intersections.Num() == 1))
+	{
+		returnLineStart = lineStart;
+		returnLineEnd = FVector2D(intersections[0]);
+		return true;
+	}
+	// Clip start only
+	if (endInBorder && (intersections.Num() == 1))
+	{
+		returnLineStart = FVector2D(intersections[0]);
+		returnLineEnd = lineEnd;
+		return true;
+	}
+	// No clip, both points are outside the rectangle and no intersection with its border
+	return false;
+}
+
+FVector UModumateFunctionLibrary::GetComponentExtentLocalSpace(const USceneComponent* Comp)
+{
+	if (!Comp)
+	{
+		return FVector::ZeroVector;
+	}
+	FTransform ComponentToActor = Comp->GetComponentTransform() * (Comp->GetComponentTransform().Inverse());
+	return Comp->CalcBounds(ComponentToActor).GetBox().GetExtent();
+}
+
+FString UModumateFunctionLibrary::GetNextStringInNumericalSequence(const FString &currentString, const TCHAR firstDigitChar, const TCHAR lastDigitChar)
+{
+	FString ret;
+	if (currentString.IsEmpty())
+	{
+		ret.AppendChar(firstDigitChar);
+		return ret;
+	}
+
+	ret = currentString;
+	if (ret[ret.Len() - 1] == lastDigitChar)
+	{
+		ret[ret.Len() - 1] = firstDigitChar;
+		ret.AppendChar(firstDigitChar);
+	}
+	else
+	{
+		ret[ret.Len() - 1] = ret[ret.Len() - 1] + 1;
+	}
+
+	return ret;
+}
+

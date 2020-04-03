@@ -1,0 +1,5162 @@
+--
+-- 
+--
+
+DEFINE MATERIAL_COLOR
+	PROPERTIES:
+		PRIVATE("Display Name",Preset.Name)
+		PRIVATE("Material",Node.Material)
+		PRIVATE("Color",Node.Color)
+END
+
+-- Note: the 'Node' property scope is replaced by the scope of the pin a node is attached to
+-- When attached to a Module, materials affect the module, when bound to Gap, it's Gap, etc
+PRESET MATERIAL_COLOR Abstract 
+	Preset.Name="Abstract"
+	Node.Material="Abstract"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR Air 
+	Preset.Name="Air"
+	Node.Material="Air"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR Gypsum 
+	Preset.Name="Gypsum"
+	Node.Material="Gypsum"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR FoamExtrudedPolystyreneWhite
+	Preset.Name="Foam - Extruded Polystyrene, White"
+	Node.Material="Foam-ExtrudedPolystyrene"
+	Node.Color="MaterialsFoamWhite"
+END
+
+PRESET MATERIAL_COLOR FoamExtrudedPolystyrenePink
+	Preset.Name="Foam - Extruded Polystyrene, Pink"
+	Node.Material="Foam-ExtrudedPolystyrene"
+	Node.Color="MaterialsFoamPink"
+END
+
+PRESET MATERIAL_COLOR FoamExtrudedPolystyreneBlue
+	Preset.Name="Foam - Extruded Polystyrene, Blue"
+	Node.Material="Foam-ExtrudedPolystyrene"
+	Node.Color="MaterialsFoamBlue"
+END
+
+PRESET MATERIAL_COLOR FoamPolyiso 
+	Preset.Name="Foam - Polyiso"
+	Node.Material="Foam-Polyiso"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR Steel 
+	Preset.Name="Steel"
+	Node.Material="Metal-Steel-ZincPlated"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR StainlessSteelAnodized 
+	Preset.Name="Stainless Steel, Anodized"
+	Node.Material="Metal-StainlessSteel-Anodized"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR StainlessSteelBrushed 
+	Preset.Name="Stainless Steel, Brushed"
+	Node.Material="Metal-StainlessSteel-Brushed"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR StainlessSteelPowderCoated
+	Preset.Name="Stainless Steel, Powder Coated"
+	Node.Material="Metal-StainlessSteel-PowderCoated"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR MarbleCalacatta 
+	Preset.Name="Calcatta Marble"
+	Node.Material="Stone-Marble-Calacatta"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR MarbleCarrara 
+	Preset.Name="Carrara Marble"
+	Node.Material="Stone-Marble-Carrara"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR LimestoneWhite
+	Preset.Name="Limestone"
+	Node.Material="Stone-Limestone-White-1"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR LimestoneBeige
+	Preset.Name="Limestone, Beige"
+	Node.Material="Stone-Limestone-Beige-1"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR Basalt 
+	Preset.Name="Basalt"
+	Node.Material="Stone-Basalt"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR GraniteGrey1 
+	Preset.Name="Granite, Grey"
+	Node.Material="Stone-Granite-Grey-1"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR GraniteBlack1 
+	Preset.Name="Granite, Black"
+	Node.Material="Stone-Granite-Black-1"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR WoodCedarWesternRed
+	Preset.Name="Western Red Cedar"
+	Node.Material="Wood-Cedar-WesternRed"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR WoodCedarWhite
+	Preset.Name="White Cedar"
+	Node.Material="Wood-Cedar-White"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR WoodCypressBald
+	Preset.Name="Bald Cypress"
+	Node.Color="ModumateWhite"
+	Node.Material="Wood-Cypress-Bald"
+END
+
+PRESET MATERIAL_COLOR WoodOakWhite
+	Preset.Name="White Oak"
+	Node.Material="Wood-Oak-White"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR WoodOakRed
+	Preset.Name="Red Oak"
+	Node.Material="Wood-Oak-Red"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR WoodSprucePineFir
+	Preset.Name="Spruce Pine Fir"
+	Node.Material="Wood-SprucePineFir"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR MediumDensityFiberboard
+	Preset.Name="Medium Density Fiberboard"
+	Node.Material="MediumDensityFiberboard"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR OrientedStrand
+	Preset.Name="Oriented Strand Board"
+	Node.Material="OrientedStrand"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR ParticleBoard
+	Preset.Name="Particle Board"
+	Node.Material="Particle"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR PlywoodSprucePineFir
+	Preset.Name="Plywood Spruce Pine Fir"
+	Node.Material="Plywood-SprucePineFir"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR Concrete 
+	Preset.Name="Concrete"
+	Node.Material="Concrete-NormalAggregate"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR ConcreteNatural 
+	Preset.Name="Concrete, Natural"
+	Node.Material="Concrete-NormalAggregate"
+	Node.Color="MaterialsConcreteNatural"
+END
+
+PRESET MATERIAL_COLOR ConcreteMediumGray
+	Preset.Name="Concrete, Medium Gray"
+	Node.Material="Concrete-NormalAggregate"
+	Node.Color="MaterialsConcreteMediumGray"
+END
+
+PRESET MATERIAL_COLOR ConcreteDarkGray
+	Preset.Name="Concrete, Dark Gray"
+	Node.Material="Concrete-NormalAggregate"
+	Node.Color="MaterialsConcreteDarkGray"
+END
+
+PRESET MATERIAL_COLOR ConcreteOlive
+	Preset.Name="Concrete, Olive"
+	Node.Material="Concrete-NormalAggregate"
+	Node.Color="MaterialsConcreteOlive"
+END
+
+PRESET MATERIAL_COLOR ConcreteFineAggregate 
+	Preset.Name="Concrete, Fine Aggregate"
+	Node.Material="Concrete-FineAggregate"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR ConcreteCoarseAggregate 
+	Preset.Name="Concrete, Coarse Aggregate"
+	Node.Material="Concrete-CoarseAggregate"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR RammedEarth
+	Preset.Name="Rammed Earth"
+	Node.Material="RammedEarth"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR Rubber
+	Preset.Name="Rubber"
+	Node.Material="Rubber"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR Felt
+	Preset.Name="Felt"
+	Node.Material="Felt"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR FeltKhaki
+	Preset.Name="Khaki Felt"
+	Node.Material="Felt"
+	Node.Color="MaterialsFeltKhaki"
+END
+
+PRESET MATERIAL_COLOR FeltEnglishGreen
+	Preset.Name="English Green Felt"
+	Node.Material="Felt"
+	Node.Color="MaterialsFeltOlive"
+END
+
+PRESET MATERIAL_COLOR FeltBurgundy
+	Preset.Name="Burgundy Felt"
+	Node.Material="Felt"
+	Node.Color="MaterialsFeltBurgundy"
+END
+
+PRESET MATERIAL_COLOR GlassClear
+	Preset.Name="Clear Glass"
+	Node.Material="Glass-Block"
+	Node.Color="MaterialsGlassClear"
+END
+
+PRESET MATERIAL_COLOR GlassGreen
+	Preset.Name="Green Glass"
+	Node.Material="Glass-Block"
+	Node.Color="MaterialsGlassGreen"
+END
+
+PRESET MATERIAL_COLOR GlassTeal
+	Preset.Name="Teal Glass"
+	Node.Material="Glass-Block"
+	Node.Color="MaterialsGlassTeal"
+END
+
+PRESET MATERIAL_COLOR ClayBrickNatural
+	Preset.Name="Natural Brick"
+	Node.Material="Clay"
+	Node.Color="MaterialsClayBrickNatural"
+END
+
+PRESET MATERIAL_COLOR ClayBrickTan
+	Preset.Name="Tan Brick"
+	Node.Material="Clay"
+	Node.Color="MaterialsClayBrickTan"
+END
+
+PRESET MATERIAL_COLOR ClayBrickYellow
+	Preset.Name="Yellow Brick"
+	Node.Material="Clay"
+	Node.Color="MaterialsClayBrickYellow"
+END
+
+PRESET MATERIAL_COLOR DecomposedGranite
+	Preset.Name="Decomposed Granite"
+	Node.Material="DecomposedGranite"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR DecomposedGraniteGray
+	Preset.Name="Decomposed Granite - Gray"
+	Node.Material="DecomposedGranite"
+	Node.Color="ModumateGray2"
+END
+
+PRESET MATERIAL_COLOR Gravel
+	Preset.Name="Gravel"
+	Node.Material="Gravel"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR Sand
+	Preset.Name="Sand"
+	Node.Material="Sand"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR Asphalt
+	Preset.Name="Asphalt"
+	Node.Material="Asphalt"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR AsphaltBarkwood
+	Preset.Name="Asphalt - Barkwood"
+	Node.Material="Asphalt"
+	Node.Color="MaterialsAsphaltBarkwood"
+END
+
+PRESET MATERIAL_COLOR AsphaltPewterGray
+	Preset.Name="Asphalt - Pewter Gray"
+	Node.Material="Asphalt"
+	Node.Color="MaterialsAsphaltPewterGray"
+END
+
+PRESET MATERIAL_COLOR SoilCoarse
+	Preset.Name="Soil - Coarse"
+	Node.Material="Soil-Coarse"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR SoilFine
+	Preset.Name="Soil - Fine"
+	Node.Material="Soil-Fine"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR GrassShort
+	Preset.Name="Grass - Short"
+	Node.Material="Grass-Short"
+	Node.Color="ModumateWhite"
+END
+
+PRESET MATERIAL_COLOR PaintMatteGentleWhite
+	Preset.Name="Gentle White Matte Paint"
+	Node.Material="Paint-Matte"
+	Node.Color="MaterialsPaintGentleWhite"
+END
+
+PRESET MATERIAL_COLOR PaintMatteBurgundy
+	Preset.Name="Burgundy Matte Paint"
+	Node.Material="Paint-Matte"
+	Node.Color="MaterialsPaintBurgundy"
+END
+
+PRESET MATERIAL_COLOR PaintMatteDarkLime
+	Preset.Name="Lime Green Matte Paint"
+	Node.Material="Paint-Matte"
+	Node.Color="ModumateLimeDark"
+END
+
+PRESET MATERIAL_COLOR PlasterShell
+	Preset.Name="Shell Plaster"
+	Node.Material="Plaster"
+	Node.Color="MaterialsPlasterShell"
+END
+
+PRESET MATERIAL_COLOR PlasterTan
+	Preset.Name="Brown Plaster"
+	Node.Material="Plaster"
+	Node.Color="MaterialsPlasterTan"
+END
+
+PRESET MATERIAL_COLOR PlasterBlue
+	Preset.Name="Blue Plaster"
+	Node.Material="Plaster"
+	Node.Color="MaterialsPlasterBlue"
+END
+
+PRESET MATERIAL_COLOR CarpetSaddle
+	Preset.Name="Carpet Saddle"
+	Node.Material="Carpet-LowProfile"
+	Node.Color="MaterialsCarpetSaddle"
+END
+
+PRESET MATERIAL_COLOR CarpetWhite
+	Preset.Name="Carpet White"
+	Node.Material="Carpet-LowProfile"
+	Node.Color="MaterialsCarpetWhite"
+END
+
+PRESET MATERIAL_COLOR CarpetOliveGreen
+	Preset.Name="Carpet Olive Green"
+	Node.Material="Carpet-LowProfile"
+	Node.Color="MaterialsCarpetOliveGreen"
+END
+
+PRESET MATERIAL_COLOR CorkTan
+	Preset.Name="Tan Cork"
+	Node.Material="Cork"
+	Node.Color="ModumateBrownLight"
+END
+
+PRESET MATERIAL_COLOR CorkRed
+	Preset.Name="Red Cork"
+	Node.Material="Cork"
+	Node.Color="ModumateRed"
+END
+
+PRESET MATERIAL_COLOR CorkBrown
+	Preset.Name="Brown Cork"
+	Node.Material="Cork"
+	Node.Color="ModumateBrown"
+END
+
+LIST ModuleClayBrickMaterials
+	ClayBrickNatural, ClayBrickTan, ClayBrickYellow
+END
+
+LIST ModuleCMUMaterials
+	Concrete, ConcreteNatural, ConcreteMediumGray, ConcreteDarkGray, ConcreteOlive
+END
+
+LIST ModuleGlassBlockMaterials
+	GlassTeal, GlassGreen, GlassClear
+END
+
+LIST ModuleMaterialsWoodStud
+	WoodSprucePineFir
+END
+
+LIST ModuleMaterialsEngineeredWoodStud
+	OrientedStrand
+END
+
+LIST ModuleMaterialsMetalStud
+	Steel, StainlessSteelAnodized
+END
+
+LIST GapMaterialsStud
+	Air, FoamExtrudedPolystyreneWhite, FoamExtrudedPolystyreneBlue, FoamExtrudedPolystyrenePink
+END
+
+LIST MasonryGapMaterials
+	ConcreteCoarseAggregate, ConcreteFineAggregate, Concrete 
+END
+
+LIST LayerAirMaterials 
+	Air
+END
+
+LIST FoamExtrudedPolystyreneMaterials 
+	FoamExtrudedPolystyreneWhite, FoamExtrudedPolystyrenePink, FoamExtrudedPolystyreneBlue
+END
+
+LIST FoamPolyisoMaterials 
+	FoamPolyiso
+END
+
+LIST LayerConcreteMaterials 
+	Concrete, ConcreteFineAggregate, ConcreteCoarseAggregate
+END
+
+LIST LayerAbstractMaterials 
+	Abstract
+END
+
+LIST LayerRammedEarthMaterials
+	RammedEarth
+END
+
+LIST LayerCrossLaminatedTimberMaterials
+	WoodSprucePineFir, WoodCedarWesternRed, WoodCedarWhite
+END
+
+LIST LayerGypsumMaterials
+	Gypsum
+END
+
+LIST MediumDensityFiberboardMaterials
+	MediumDensityFiberboard
+END
+
+LIST OrientedStrandMaterials
+	OrientedStrand
+END
+
+LIST LayerPlywoodMaterials
+	PlywoodSprucePineFir
+END
+
+LIST ParticleMaterials
+	ParticleBoard
+END
+
+LIST MembraneMaterials
+	Rubber
+END
+
+LIST FeltMaterials
+	Felt, FeltKhaki, FeltEnglishGreen, FeltBurgundy
+END
+
+LIST AsphaltMaterials
+	Asphalt, AsphaltBarkwood, AsphaltPewterGray
+END
+
+LIST DecomposedGraniteMaterials
+	DecomposedGranite, DecomposedGraniteGray
+END
+
+LIST GravelMaterials
+	Gravel
+END
+
+LIST SandMaterials
+	Sand
+END
+
+LIST GrassMaterials
+	GrassShort
+	SoilCoarse, SoilFine
+END
+
+LIST SoilMaterials
+	SoilCoarse, SoilFine
+END
+
+LIST PaintMaterials
+	PaintMatteGentleWhite, PaintMatteBurgundy, PaintMatteDarkLime
+END
+
+LIST PlasterMaterials
+	PlasterShell, PlasterTan, PlasterBlue
+END
+
+LIST CarpetMaterials
+	CarpetSaddle, CarpetWhite, CarpetOliveGreen
+END
+
+LIST CorkMaterials
+	CorkTan, CorkRed, CorkBrown
+END
+
+LIST BeamColumnSteelMaterials 
+	Steel, StainlessSteelAnodized, StainlessSteelBrushed, StainlessSteelPowderCoated
+END
+
+LIST BeamColumnStoneMaterials 
+	MarbleCalacatta, MarbleCarrara, LimestoneWhite, LimestoneBeige, Basalt, GraniteGrey1, GraniteBlack1
+END
+
+LIST BeamColumnWoodMaterials 
+	WoodCedarWesternRed, WoodCedarWhite, WoodCypressBald, WoodOakWhite, WoodOakRed, WoodSprucePineFir
+END
+
+LIST BeamColumnConcreteMaterials 
+	Concrete, ConcreteFineAggregate, ConcreteCoarseAggregate
+END
+
+---
+---
+---
+
+DEFINE DIMENSION_WD
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		DIMENSION("Width",Node.XExtents)
+		DIMENSION("Depth",Node.YExtents)
+END
+
+PRESET DIMENSION_WD DIMW6XD6 
+	Preset.Name="W6 x D6"
+	Node.XExtents="6in" 
+	Node.YExtents="6in"
+END
+
+PRESET DIMENSION_WD DIMW6XD8 
+	Preset.Name="W6 x D8"
+	Node.XExtents="6in" 
+	Node.YExtents="8in"
+END
+
+PRESET DIMENSION_WD DIMW8XD8 
+	Preset.Name="W8 x D8"
+	Node.XExtents="8in" 
+	Node.YExtents="8in"
+END
+
+PRESET DIMENSION_WD DIMW8XD12 
+	Preset.Name="W8 x D12"
+	Node.XExtents="8in" 
+	Node.YExtents="12in"
+END
+
+PRESET DIMENSION_WD DIMW12XD12 
+	Preset.Name="W12 x D12"
+	Node.XExtents="12in" 
+	Node.YExtents="12in"
+END
+
+PRESET DIMENSION_WD DIMW14XD14 
+	Preset.Name="W14 x D14"
+	Node.XExtents="14in" 
+	Node.YExtents="14in"
+END
+
+PRESET DIMENSION_WD DIMW16XD16 
+	Preset.Name="W16 x D16"
+	Node.XExtents="16in" 
+	Node.YExtents="16in"
+END
+
+PRESET DIMENSION_WD DIMW20XD20 
+	Preset.Name="W20 x D20"
+	Node.XExtents="20in" 
+	Node.YExtents="20in"
+END
+
+LIST BeamColumnWoodRectangularDims
+	DIMW6XD6, DIMW6XD8, DIMW8XD8, DIMW8XD12, DIMW12XD12
+END
+
+LIST BeamColumnStoneConcreteRectangularDims
+	DIMW6XD6, DIMW8XD8, DIMW8XD12, DIMW12XD12, DIMW14XD14, DIMW16XD16, DIMW20XD20
+END
+
+---
+---
+---
+
+DEFINE DIMENSION_DI
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		DIMENSION("Diameter",Node.Diameter)
+END
+
+PRESET DIMENSION_DI DIMDI3
+	Preset.Name="3in"
+	Node.Diameter="3in"
+END
+
+PRESET DIMENSION_DI DIMDI4
+	Preset.Name="4in"
+	Node.Diameter="4in"
+END
+
+PRESET DIMENSION_DI DIMDI6
+	Preset.Name="6in"
+	Node.Diameter="6in"
+END
+
+PRESET DIMENSION_DI DIMDI8
+	Preset.Name="8in"
+	Node.Diameter="8in"
+END
+
+PRESET DIMENSION_DI DIMDI10
+	Preset.Name="10in"
+	Node.Diameter="10in"
+END
+
+PRESET DIMENSION_DI DIMDI12
+	Preset.Name="12in"
+	Node.Diameter="12in"
+END
+
+PRESET DIMENSION_DI DIMDI14
+	Preset.Name="14in"
+	Node.Diameter="14in"
+END
+
+PRESET DIMENSION_DI DIMDI16
+	Preset.Name="16in"
+	Node.Diameter="16in"
+END
+
+PRESET DIMENSION_DI DIMDI18
+	Preset.Name="18in"
+	Node.Diameter="18in"
+END
+
+PRESET DIMENSION_DI DIMDI20
+	Preset.Name="20in"
+	Node.Diameter="20in"
+END
+
+PRESET DIMENSION_DI DIMDI24
+	Preset.Name="24in"
+	Node.Diameter="24in"
+END
+
+PRESET DIMENSION_DI DIMDI28
+	Preset.Name="28in"
+	Node.Diameter="28in"
+END
+
+PRESET DIMENSION_DI DIMDI30
+	Preset.Name="30in"
+	Node.Diameter="30in"
+END
+
+LIST BeamColumnWoodRoundDims
+	DIMDI3, DIMDI4, DIMDI6, DIMDI8, DIMDI10, DIMDI12, DIMDI14, DIMDI16, DIMDI18, DIMDI20
+END
+
+LIST BeamColumnStoneConcreteRoundDims
+	DIMDI8, DIMDI10, DIMDI12, DIMDI14, DIMDI16, DIMDI18, DIMDI20, DIMDI24, DIMDI28, DIMDI30
+END
+
+---
+---
+
+DEFINE DIMENSION_WDT
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		DIMENSION("Width",Node.XExtents)
+		DIMENSION("Depth",Node.YExtents)
+		DIMENSION("Thickness",Node.Thickness)	
+END
+
+PRESET DIMENSION_WD DIML12X12X1 
+	Preset.Name="L12X12X1"
+	Node.XExtents="12in" 
+	Node.YExtents="12in"
+	Node.Thickness="1in"
+END
+
+PRESET DIMENSION_WD DIML10X10X1 
+	Preset.Name="L10X10X1"
+	Node.XExtents="10in" 
+	Node.YExtents="10in"
+	Node.Thickness="1in"
+END
+
+PRESET DIMENSION_WD DIML8X8X75 
+	Preset.Name="L8X8X3/4"
+	Node.XExtents="8in" 
+	Node.YExtents="8in"
+	Node.Thickness="0.75in"
+END
+
+PRESET DIMENSION_WD DIML8X8X12 
+	Preset.Name="L8X8X1/2"
+	Node.XExtents="8in" 
+	Node.YExtents="8in"
+	Node.Thickness="0.5in"
+END
+
+PRESET DIMENSION_WD DIML6X6X1 
+	Preset.Name="L6X6X1"
+	Node.XExtents="6in" 
+	Node.YExtents="6in"
+	Node.Thickness="1in"
+END
+
+PRESET DIMENSION_WD DIML6X4X38 
+	Preset.Name="L6X4X3/8"
+	Node.XExtents="6in" 
+	Node.YExtents="4in"
+	Node.Thickness="0.375in"
+END
+
+PRESET DIMENSION_WD DIML5X312X34 
+	Preset.Name="L5X3-1/2X3/4"
+	Node.XExtents="5in" 
+	Node.YExtents="3.5in"
+	Node.Thickness="0.75in"
+END
+
+PRESET DIMENSION_WD DIML3X3X12 
+	Preset.Name="L3X3X1/2"
+	Node.XExtents="3in" 
+	Node.YExtents="3in"
+	Node.Thickness="0.5in"
+END
+
+PRESET DIMENSION_WD DIML3X2X14
+	Preset.Name="L3X2X1/4"
+	Node.XExtents="3in" 
+	Node.YExtents="2in"
+	Node.Thickness="0.25in"
+END
+
+PRESET DIMENSION_WD DIMHSS20X12X12
+	Preset.Name="HSS20X12X1/2"
+	Node.XExtents="12in" 
+	Node.YExtents="20in"
+	Node.Thickness="0.465in"
+END
+
+PRESET DIMENSION_WD DIMHSS18X6X58
+	Preset.Name="HSS18X6X5/8"
+	Node.XExtents="6in" 
+	Node.YExtents="18in"
+	Node.Thickness="0.581in"
+END
+
+PRESET DIMENSION_WD DIMHSS16X4X12
+	Preset.Name="HSS16X4X1/2"
+	Node.XExtents="4in" 
+	Node.YExtents="16in"
+	Node.Thickness="0.465in"
+END
+
+PRESET DIMENSION_WD DIMHSS14X10X14
+	Preset.Name="HSS14X10X1/4"
+	Node.XExtents="10in" 
+	Node.YExtents="14in"
+	Node.Thickness="0.233in"
+END
+
+PRESET DIMENSION_WD DIMHSS12X8X516
+	Preset.Name="HSS12X8X5/16"
+	Node.XExtents="8in" 
+	Node.YExtents="12in"
+	Node.Thickness="0.291in"
+END
+
+PRESET DIMENSION_WD DIMHSS10X10X34
+	Preset.Name="HSS10X10X3/4"
+	Node.XExtents="10in" 
+	Node.YExtents="10in"
+	Node.Thickness="0.698in"
+END
+
+PRESET DIMENSION_WD DIMHSS10X5X14
+	Preset.Name="HSS10X5X1/4"
+	Node.XExtents="5in" 
+	Node.YExtents="10in"
+	Node.Thickness="0.233in"
+END
+
+PRESET DIMENSION_WD DIMHSS9X7X12
+	Preset.Name="HSS9X7X1/2"
+	Node.XExtents="7in" 
+	Node.YExtents="9in"
+	Node.Thickness="0.465in"
+END
+
+PRESET DIMENSION_WD DIMHSS8X6X58
+	Preset.Name="HSS8X6X5/8"
+	Node.XExtents="6in" 
+	Node.YExtents="8in"
+	Node.Thickness="0.581in"
+END
+
+PRESET DIMENSION_WD DIMHSS7X5X316
+	Preset.Name="HSS7X5X3/16"
+	Node.XExtents="5in" 
+	Node.YExtents="7in"
+	Node.Thickness="0.174in"
+END
+
+PRESET DIMENSION_WD DIMHSS6X6X14
+	Preset.Name="HSS6X6X1/4"
+	Node.XExtents="6in" 
+	Node.YExtents="6in"
+	Node.Thickness="0.233in"
+END
+
+PRESET DIMENSION_WD DIMHSS5X5X12
+	Preset.Name="HSS5X5X1/2"
+	Node.XExtents="5in" 
+	Node.YExtents="5in"
+	Node.Thickness="0.465in"
+END
+
+PRESET DIMENSION_WD DIMHSS4X3X38
+	Preset.Name="HSS4X3X3/8"
+	Node.XExtents="3in" 
+	Node.YExtents="4in"
+	Node.Thickness="0.349in"
+END
+
+PRESET DIMENSION_WD DIMHSS3X3X14
+	Preset.Name="HSS3X3X1/4"
+	Node.XExtents="3in" 
+	Node.YExtents="3in"
+	Node.Thickness="0.233in"
+END
+
+LIST  BeamColumnLAngleDims
+	DIML12X12X1, DIML10X10X1, DIML8X8X75, DIML8X8X12, DIML6X6X1, DIML6X4X38, DIML5X312X34, DIML3X3X12, DIML3X2X14
+END
+
+LIST BeamColumnHSSDims
+	DIMHSS20X12X12, DIMHSS18X6X58, DIMHSS16X4X12, DIMHSS14X10X14, DIMHSS12X8X516, DIMHSS10X5X14
+	DIMHSS9X7X12, DIMHSS8X6X58, DIMHSS7X5X316, DIMHSS6X6X14, DIMHSS5X5X12, DIMHSS4X3X38, DIMHSS3X3X14
+END
+---
+---
+---
+
+DEFINE DIMENSION_DWWTFT
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		DIMENSION("Depth",Node.YExtents)	
+		DIMENSION("Width",Node.XExtents)
+		DIMENSION("Web Thickness",Node.WebThickness)	
+		DIMENSION("Flange Thickness",Node.FlangeThickness)	
+END
+
+PRESET DIMENSION_DWWTFT DIMW40X183
+	Preset.Name="W40X183"
+	Node.YExtents="39in"
+	Node.XExtents="11.8in" 
+	Node.WebThickness="1.2in"
+	Node.FlangeThickness="0.65in"
+END
+
+PRESET DIMENSION_DWWTFT DIMW36X361
+	Preset.Name="W36X361"
+	Node.YExtents="38in"
+	Node.XExtents="16.7in" 
+	Node.WebThickness="2.01in"
+	Node.FlangeThickness="1.12in"
+END
+
+PRESET DIMENSION_DWWTFT DIMW30X173
+	Preset.Name="W30X173"
+	Node.YExtents="30.4in"
+	Node.XExtents="15in" 
+	Node.WebThickness="1.07in"
+	Node.FlangeThickness="0.655in"
+END
+
+PRESET DIMENSION_DWWTFT DIMW27X161
+	Preset.Name="W27X161"
+	Node.YExtents="27.6in"
+	Node.XExtents="14in" 
+	Node.WebThickness="1.08in"
+	Node.FlangeThickness="0.66in"
+END
+
+PRESET DIMENSION_DWWTFT DIMW24X146
+	Preset.Name="W24X146"
+	Node.YExtents="24.7in"
+	Node.XExtents="12.9in" 
+	Node.WebThickness="1.09in"
+	Node.FlangeThickness="0.650in"
+END
+
+PRESET DIMENSION_DWWTFT DIMW21X101
+	Preset.Name="W21X101"
+	Node.YExtents="211.4in"
+	Node.XExtents="12.3in" 
+	Node.WebThickness="0.8in"
+	Node.FlangeThickness="0.50in"
+END
+
+PRESET DIMENSION_DWWTFT DIMW16X40
+	Preset.Name="W16X40"
+	Node.YExtents="16in"
+	Node.XExtents="7in" 
+	Node.WebThickness="0.505in"
+	Node.FlangeThickness="0.305in"
+END
+
+PRESET DIMENSION_DWWTFT DIMW14X26
+	Preset.Name="W14X26"
+	Node.YExtents="13.9in"
+	Node.XExtents="5.03in" 
+	Node.WebThickness="0.42in"
+	Node.FlangeThickness="0.255in"
+END
+
+PRESET DIMENSION_DWWTFT DIMW12X58
+	Preset.Name="W12X58"
+	Node.YExtents="12.2in"
+	Node.XExtents="10in" 
+	Node.WebThickness="0.64in"
+	Node.FlangeThickness="0.360in"
+END
+
+PRESET DIMENSION_DWWTFT DIMW10X30
+	Preset.Name="W10X30"
+	Node.YExtents="10.5in"
+	Node.XExtents="5.81in" 
+	Node.WebThickness="0.51in"
+	Node.FlangeThickness="0.300in"
+END
+
+PRESET DIMENSION_DWWTFT DIMW8X35
+	Preset.Name="W8X35"
+	Node.YExtents="8.12in"
+	Node.XExtents="8.02in" 
+	Node.WebThickness="0.495in"
+	Node.FlangeThickness="0.310in"
+END
+
+PRESET DIMENSION_DWWTFT DIMWT22X115
+	Preset.Name="WT22X115"
+	Node.YExtents="21.5in"
+	Node.XExtents="15.8in" 
+	Node.WebThickness="1.22in"
+	Node.FlangeThickness="0.710in"
+END
+
+PRESET DIMENSION_DWWTFT DIMWT20X147
+	Preset.Name="WT20X147"
+	Node.YExtents="20.2in"
+	Node.XExtents="12.0in" 
+	Node.WebThickness="1.93in"
+	Node.FlangeThickness="1.06in"
+END
+
+PRESET DIMENSION_DWWTFT DIMWT18X165
+	Preset.Name="WT18X165"
+	Node.YExtents="18.8in"
+	Node.XExtents="16.6in" 
+	Node.WebThickness="1.85in"
+	Node.FlangeThickness="1.02in"
+END
+
+PRESET DIMENSION_DWWTFT DIMWT15X74
+	Preset.Name="WT15X74"
+	Node.YExtents="15.3in"
+	Node.XExtents="10.5in" 
+	Node.WebThickness="1.18in"
+	Node.FlangeThickness="0.650in"
+END
+
+PRESET DIMENSION_DWWTFT DIMWT12X47
+	Preset.Name="WT12X47"
+	Node.YExtents="12.2in"
+	Node.XExtents="9.07in" 
+	Node.WebThickness="0.875in"
+	Node.FlangeThickness="0.515in"
+END
+
+PRESET DIMENSION_DWWTFT DIMWT9X53
+	Preset.Name="WT9X53"
+	Node.YExtents="9.37in"
+	Node.XExtents="11.2in" 
+	Node.WebThickness="0.940in"
+	Node.FlangeThickness="0.590in"
+END
+
+PRESET DIMENSION_DWWTFT DIMWT7X185
+	Preset.Name="WT7X185"
+	Node.YExtents="8.96in"
+	Node.XExtents="16.5in" 
+	Node.WebThickness="2.66in"
+	Node.FlangeThickness="1.66in"
+END
+
+PRESET DIMENSION_DWWTFT DIMWT6X48
+	Preset.Name="WT6X48"
+	Node.YExtents="6.36in"
+	Node.XExtents="12.2in" 
+	Node.WebThickness="0.900in"
+	Node.FlangeThickness="0.550in"
+END
+
+PRESET DIMENSION_DWWTFT DIMWT5X27
+	Preset.Name="WT5X27"
+	Node.YExtents="5.05in"
+	Node.XExtents="10in" 
+	Node.WebThickness="0.615in"
+	Node.FlangeThickness="0.370in"
+END
+PRESET DIMENSION_DWWTFT DIMC15X40
+	Preset.Name="C15X40"
+	Node.YExtents="15in"
+	Node.XExtents="3.52in" 
+	Node.WebThickness=".52in"
+	Node.FlangeThickness="0.65in"
+END
+
+PRESET DIMENSION_DWWTFT DIMC12X30
+	Preset.Name="C12X30"
+	Node.YExtents="12in"
+	Node.XExtents="3.17in" 
+	Node.WebThickness=".51in"
+	Node.FlangeThickness="0.501in"
+END
+
+PRESET DIMENSION_DWWTFT DIMC10X30
+	Preset.Name="C10X30"
+	Node.YExtents="10in"
+	Node.XExtents="3.03in" 
+	Node.WebThickness=".673in"
+	Node.FlangeThickness="0.436in"
+END
+
+PRESET DIMENSION_DWWTFT DIMC9X20
+	Preset.Name="C9X20"
+	Node.YExtents="9in"
+	Node.XExtents="2.65in" 
+	Node.WebThickness=".448in"
+	Node.FlangeThickness="0.413in"
+END
+
+PRESET DIMENSION_DWWTFT DIMC8X11
+	Preset.Name="C8X11.5"
+	Node.YExtents="8in"
+	Node.XExtents="2.26in" 
+	Node.WebThickness=".22in"
+	Node.FlangeThickness="0.39in"
+END
+
+PRESET DIMENSION_DWWTFT DIMC6X13
+	Preset.Name="C6X13"
+	Node.YExtents="6in"
+	Node.XExtents="2.16in" 
+	Node.WebThickness=".437in"
+	Node.FlangeThickness="0.343in"
+END
+
+PRESET DIMENSION_DWWTFT DIMC5X9
+	Preset.Name="C5X9"
+	Node.YExtents="5in"
+	Node.XExtents="1.89in" 
+	Node.WebThickness=".325in"
+	Node.FlangeThickness="0.32in"
+END
+
+PRESET DIMENSION_DWWTFT DIMC3X6
+	Preset.Name="C3X6"
+	Node.YExtents="3in"
+	Node.XExtents="1.6in" 
+	Node.WebThickness=".356in"
+	Node.FlangeThickness="0.273in"
+END
+
+LIST BeamColumnWideFlangeDimensions
+	DIMW40X183, DIMW36X361, DIMW30X173, DIMW27X161, DIMW24X146, DIMW21X101, DIMW16X40, DIMW14X26, DIMW12X58, DIMW10X30, DIMW8X35
+END
+
+LIST BeamColumnWTDimensions
+	DIMWT22X115, DIMWT20X147, DIMWT18X165, DIMWT15X74,  DIMWT12X47, DIMWT9X53, DIMWT7X185, DIMWT6X48, DIMWT5X27
+END
+
+LIST BeamColumnCChannelDimensions
+	DIMC15X40, DIMC12X30, DIMC10X30, DIMC9X20, DIMC8X11, DIMC6X13, DIMC5X9, DIMC3X6
+END
+
+---
+---
+---
+
+DEFINE DIMENSION_DIT
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		DIMENSION("Diameter",Node.Diameter)
+		DIMENSION("Thickness",Node.Thickness)	
+END
+
+PRESET DIMENSION_DIT DIMTD12X375
+	Preset.Name="12 X 0.375"
+	Node.Diameter="12.75in"
+	Node.Thickness="0.375in"
+END
+
+PRESET DIMENSION_DIT DIMTD10X365
+	Preset.Name="10 X 0.365"
+	Node.Diameter="10.75in"
+	Node.Thickness="0.365in"
+END
+
+PRESET DIMENSION_DIT DIMTD8X5
+	Preset.Name="8 X 0.5"
+	Node.Diameter="8.625in"
+	Node.Thickness="0.5in"
+END
+
+PRESET DIMENSION_DIT DIMTD6X0280
+	Preset.Name="6 X 0.280"
+	Node.Diameter="6.625in"
+	Node.Thickness="0.28in"
+END
+
+PRESET DIMENSION_DIT DIMTD4X237
+	Preset.Name="4 X 0.237"
+	Node.Diameter="4.5in"
+	Node.Thickness="0.237in"
+END
+
+PRESET DIMENSION_DIT DIMTD3X3
+	Preset.Name="3 X 0.3"
+	Node.Diameter="3.5in"
+	Node.Thickness="0.3in"
+END
+
+PRESET DIMENSION_DIT DIMTD2X218
+	Preset.Name="2 X 0.218"
+	Node.Diameter="2.375in"
+	Node.Thickness="0.218in"
+END
+
+PRESET DIMENSION_DIT DIMTD15X109
+	Preset.Name="1.5 X 0.109"
+	Node.Diameter="1.9in"
+	Node.Thickness="0.109in"
+END
+
+PRESET DIMENSION_DIT DIMTD125X140
+	Preset.Name="1.25 X 0.140"
+	Node.Diameter="1.66in"
+	Node.Thickness="0.140in"
+END
+
+PRESET DIMENSION_DIT DIMTD1X133
+	Preset.Name="1 X 0.133"
+	Node.Diameter="1.315in"
+	Node.Thickness="0.133in"
+END
+
+PRESET DIMENSION_DIT DIMTD5X147
+	Preset.Name="0.5 X 0.147"
+	Node.Diameter="0.84in"
+	Node.Thickness="0.147in"
+END
+LIST BeamColumnTubePipeDimensions
+	DIMTD12X375, DIMTD10X365, DIMTD8X5, DIMTD6X0280, DIMTD4X237, DIMTD3X3, DIMTD2X218, DIMTD15X109, DIMTD125X140, DIMTD1X133, DIMTD5X147
+END
+
+---
+---
+---
+
+DEFINE BEAMCOLUMN
+	OUTPUT: OTStructureLine
+	INPUT:
+		Layer->Dimensions[1..1]
+		Layer->Material[1..1]
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		STRING("Color",MaterialColor.HexValue)
+		PRIVATE("Mesh",Mesh.AssetID)
+END
+
+--
+
+PRESET BEAMCOLUMN W40X183
+	Preset.Name="W40X183" 
+	Dimensions=BeamColumnWideFlangeDimensions.DIMW40X183
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-W"
+END
+
+PRESET BEAMCOLUMN W36X361
+	Preset.Name="W36X361" 
+	Dimensions=BeamColumnWideFlangeDimensions.DIMW36X361
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-W"
+END
+
+PRESET BEAMCOLUMN W30X173
+	Preset.Name="W30X173" 
+	Dimensions=BeamColumnWideFlangeDimensions.DIMW30X173
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-W"
+END
+
+PRESET BEAMCOLUMN W27X161
+	Preset.Name="W27X161" 
+	Dimensions=BeamColumnWideFlangeDimensions.DIMW27X161
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-W"
+END
+
+PRESET BEAMCOLUMN W24X146
+	Preset.Name="W24X146" 
+	Dimensions=BeamColumnWideFlangeDimensions.DIMW24X146
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-W"
+END
+
+PRESET BEAMCOLUMN W21X101
+	Preset.Name="W21X101" 
+	Dimensions=BeamColumnWideFlangeDimensions.DIMW21X101
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-W"
+END
+
+PRESET BEAMCOLUMN W16X40
+	Preset.Name="W16X40" 
+	Dimensions=BeamColumnWideFlangeDimensions.DIMW16X40
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-W"
+END
+
+PRESET BEAMCOLUMN W14X26
+	Preset.Name="W14X26" 
+	Dimensions=BeamColumnWideFlangeDimensions.DIMW14X26
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-W"
+END
+
+PRESET BEAMCOLUMN W12X58
+	Preset.Name="W12X58" 
+	Dimensions=BeamColumnWideFlangeDimensions.DIMW12X58
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-W"
+END
+
+PRESET BEAMCOLUMN W10X30
+	Preset.Name="W10X30" 
+	Dimensions=BeamColumnWideFlangeDimensions.DIMW10X30
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-W"
+END
+
+PRESET BEAMCOLUMN W8X35
+	Preset.Name="W8X35" 
+	Dimensions=BeamColumnWideFlangeDimensions.DIMW8X35
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-W"
+END
+
+LIST SteelColumns_W
+	W40X183, W36X361, W30X173, W27X161, W24X146, W21X101, W16X40, W14X26, W12X58, W10X30, W8X35
+END
+
+---
+
+PRESET BEAMCOLUMN WT22X115
+	Preset.Name="WT22X115" 
+	Dimensions=BeamColumnWTDimensions.DIMWT22X115
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-WT"
+END
+
+PRESET BEAMCOLUMN WT20X147
+	Preset.Name="WT20X147" 
+	Dimensions=BeamColumnWTDimensions.DIMWT20X147
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-WT"
+END
+
+PRESET BEAMCOLUMN WT18X165
+	Preset.Name="WT18X165" 
+	Dimensions=BeamColumnWTDimensions.DIMWT18X165
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-WT"
+END
+
+PRESET BEAMCOLUMN WT15X74
+	Preset.Name="WT15X74" 
+	Dimensions=BeamColumnWTDimensions.DIMWT15X74
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-WT"
+END
+
+PRESET BEAMCOLUMN WT12X47
+	Preset.Name="WT12X47" 
+	Dimensions=BeamColumnWTDimensions.DIMWT12X47
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-WT"
+END
+
+PRESET BEAMCOLUMN WT9X53
+	Preset.Name="WT9X53" 
+	Dimensions=BeamColumnWTDimensions.DIMWT9X53
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-WT"
+END
+
+PRESET BEAMCOLUMN WT7X185
+	Preset.Name="WT7X185" 
+	Dimensions=BeamColumnWTDimensions.DIMWT7X185
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-WT"
+END
+
+PRESET BEAMCOLUMN WT6X48
+	Preset.Name="WT6X48" 
+	Dimensions=BeamColumnWTDimensions.DIMWT6X48
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-WT"
+END
+
+PRESET BEAMCOLUMN WT5X27
+	Preset.Name="WT5X27" 
+	Dimensions=BeamColumnWTDimensions.DIMWT5X27
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-WT"
+END
+
+LIST SteelColumns_WT
+	WT22X115, WT20X147, WT18X165, WT15X74, WT12X47, WT9X53, WT7X185, WT6X48, WT5X27
+END
+
+---
+
+PRESET BEAMCOLUMN L12X12X1
+	Preset.Name="L12X12X1" 
+	Dimensions=BeamColumnLAngleDims.DIML12X12X1
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-L"
+END
+
+PRESET BEAMCOLUMN L10X10X1
+	Preset.Name="L10X10X1" 
+	Dimensions=BeamColumnLAngleDims.DIML10X10X1
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-L"
+END
+
+PRESET BEAMCOLUMN L8X8X75
+	Preset.Name="L8X8X75" 
+	Dimensions=BeamColumnLAngleDims.DIML8X8X75
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-L"
+END
+
+PRESET BEAMCOLUMN L8X8X12
+	Preset.Name="L8X8X12" 
+	Dimensions=BeamColumnLAngleDims.DIML8X8X12
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-L"
+END
+
+PRESET BEAMCOLUMN L6X6X1
+	Preset.Name="L6X6X1" 
+	Dimensions=BeamColumnLAngleDims.DIML6X6X1
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-L"
+END
+
+PRESET BEAMCOLUMN L6X4X38
+	Preset.Name="L6X4X38" 
+	Dimensions=BeamColumnLAngleDims.DIML6X4X38
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-L"
+END
+
+PRESET BEAMCOLUMN L5X312X34
+	Preset.Name="L5X3-1/2X34" 
+	Dimensions=BeamColumnLAngleDims.DIML5X312X34
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-L"
+END
+
+PRESET BEAMCOLUMN L3X3X12
+	Preset.Name="L3X3X12" 
+	Dimensions=BeamColumnLAngleDims.DIML3X3X12
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-L"
+END
+
+PRESET BEAMCOLUMN L3X2X14
+	Preset.Name="L3X2X14" 
+	Dimensions=BeamColumnLAngleDims.DIML3X2X14
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-L"
+END
+LIST SteelColumns_L
+	L12X12X1, L10X10X1, L8X8X75, L8X8X12, L6X6X1, L6X4X38, L5X312X34, L3X3X12, L3X2X14
+---
+END
+
+
+
+PRESET BEAMCOLUMN HSS20X12X12
+	Preset.Name="HSS20X12X12" 
+	Dimensions=BeamColumnHSSDims.DIMHSS20X12X12
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+PRESET BEAMCOLUMN HSS18X6X58
+	Preset.Name="HSS18X6X58" 
+	Dimensions=BeamColumnHSSDims.DIMHSS18X6X58
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+PRESET BEAMCOLUMN HSS16X4X12
+	Preset.Name="HSS16X4X12" 
+	Dimensions=BeamColumnHSSDims.DIMHSS16X4X12
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+PRESET BEAMCOLUMN HSS14X10X14
+	Preset.Name="HSS14X10X14" 
+	Dimensions=BeamColumnHSSDims.DIMHSS14X10X14
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+PRESET BEAMCOLUMN HSS12X8X516
+	Preset.Name="HSS12X8X516" 
+	Dimensions=BeamColumnHSSDims.DIMHSS12X8X516
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+PRESET BEAMCOLUMN HSS10X5X14
+	Preset.Name="HSS10X5X14" 
+	Dimensions=BeamColumnHSSDims.DIMHSS10X5X14
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+PRESET BEAMCOLUMN HSS9X7X12
+	Preset.Name="HSS9X7X12" 
+	Dimensions=BeamColumnHSSDims.DIMHSS9X7X12
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+PRESET BEAMCOLUMN HSS8X6X58
+	Preset.Name="HSS8X6X58" 
+	Dimensions=BeamColumnHSSDims.DIMHSS8X6X58
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+PRESET BEAMCOLUMN HSS7X5X316
+	Preset.Name="HSS7X5X316" 
+	Dimensions=BeamColumnHSSDims.DIMHSS7X5X316
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+PRESET BEAMCOLUMN HSS6X6X14
+	Preset.Name="HSS6X6X14" 
+	Dimensions=BeamColumnHSSDims.DIMHSS6X6X14
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+PRESET BEAMCOLUMN HSS5X5X12
+	Preset.Name="HSS5X5X12" 
+	Dimensions=BeamColumnHSSDims.DIMHSS5X5X12
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+PRESET BEAMCOLUMN HSS4X3X38
+	Preset.Name="HSS4X3X38" 
+	Dimensions=BeamColumnHSSDims.DIMHSS4X3X38
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+PRESET BEAMCOLUMN HSS3X3X14
+	Preset.Name="HSS3X3X14" 
+	Dimensions=BeamColumnHSSDims.DIMHSS3X3X14
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-HSS-02"
+END
+
+LIST SteelColumns_HSS
+	HSS20X12X12, HSS18X6X58, HSS16X4X12, HSS14X10X14, HSS12X8X516, HSS10X5X14, HSS9X7X12, HSS8X6X58, HSS7X5X316, HSS6X6X14, HSS5X5X12, HSS4X3X38, HSS3X3X14
+END
+
+---
+
+PRESET BEAMCOLUMN C15X40
+	Preset.Name="C15X40" 
+	Dimensions=BeamColumnCChannelDimensions.DIMC15X40
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-C"
+END
+
+PRESET BEAMCOLUMN C12X30
+	Preset.Name="C12X30" 
+	Dimensions=BeamColumnCChannelDimensions.DIMC12X30
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-C"
+END
+
+PRESET BEAMCOLUMN C10X30
+	Preset.Name="C10X30" 
+	Dimensions=BeamColumnCChannelDimensions.DIMC10X30
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-C"
+END
+
+PRESET BEAMCOLUMN C9X20
+	Preset.Name="C9X20" 
+	Dimensions=BeamColumnCChannelDimensions.DIMC9X20
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-C"
+END
+
+PRESET BEAMCOLUMN C8X11
+	Preset.Name="C8X11" 
+	Dimensions=BeamColumnCChannelDimensions.DIMC8X11
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-C"
+END
+
+PRESET BEAMCOLUMN C6X13
+	Preset.Name="C6X13" 
+	Dimensions=BeamColumnCChannelDimensions.DIMC6X13
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-C"
+END
+
+PRESET BEAMCOLUMN C5X9
+	Preset.Name="C5X9" 
+	Dimensions=BeamColumnCChannelDimensions.DIMC5X9
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-C"
+END
+
+PRESET BEAMCOLUMN C3X6
+	Preset.Name="C3X6" 
+	Dimensions=BeamColumnCChannelDimensions.DIMC3X6
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-C"
+END
+
+LIST SteelColumns_C
+	C15X40, C12X30, C10X30, C9X20, C8X11, C6X13, C5X9, C3X6
+END
+
+---
+
+PRESET BEAMCOLUMN TD12X375
+	Preset.Name="12in Diameter" 
+	Dimensions=BeamColumnTubePipeDimensions.DIMTD12X375
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN TD10X365
+	Preset.Name="10in Diameter" 
+	Dimensions=BeamColumnTubePipeDimensions.DIMTD10X365
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN TD8X5
+	Preset.Name="8in Diameter" 
+	Dimensions=BeamColumnTubePipeDimensions.DIMTD8X5
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN TD6X0280
+	Preset.Name="6in Diameter0" 
+	Dimensions=BeamColumnTubePipeDimensions.DIMTD6X0280
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN TD4X237
+	Preset.Name="4in Diameter" 
+	Dimensions=BeamColumnTubePipeDimensions.DIMTD4X237
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN TD3X3
+	Preset.Name="3in Diameter" 
+	Dimensions=BeamColumnTubePipeDimensions.DIMTD3X3
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN TD2X218
+	Preset.Name="2in Diameter" 
+	Dimensions=BeamColumnTubePipeDimensions.DIMTD2X218
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN TD15X109
+	Preset.Name="1.5in Diameter" 
+	Dimensions=BeamColumnTubePipeDimensions.DIMTD15X109
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN TD125X140
+	Preset.Name="1.25in Diameter" 
+	Dimensions=BeamColumnTubePipeDimensions.DIMTD125X140
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN TD1X133
+	Preset.Name="1in Diameter" 
+	Dimensions=BeamColumnTubePipeDimensions.DIMTD1X133
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN TD5X147
+	Preset.Name="0.5in Diameter" 
+	Dimensions=BeamColumnTubePipeDimensions.DIMTD5X147
+	Material=BeamColumnSteelMaterials.Steel
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+LIST SteelColumns_Tube
+	TD12X375, TD10X365, TD8X5, TD6X0280, TD4X237, TD3X3, TD2X218, TD15X109, TD125X140, TD1X133, TD5X147
+END
+
+--
+
+PRESET BEAMCOLUMN WOOD_W6XD6 
+	Preset.Name="W6 X D6" 
+	Dimensions=BeamColumnWoodRectangularDims.DIMW6XD6
+	Material=BeamColumnWoodMaterials.WoodCedarWhite
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+PRESET BEAMCOLUMN WOOD_W6XD8 
+	Preset.Name="W6 X D8" 
+	Dimensions=BeamColumnWoodRectangularDims.DIMW6XD8
+	Material=BeamColumnWoodMaterials.WoodCedarWhite
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+PRESET BEAMCOLUMN WOOD_W8XD8 
+	Preset.Name="W8 X D8" 
+	Dimensions=BeamColumnWoodRectangularDims.DIMW8XD8
+	Material=BeamColumnWoodMaterials.WoodCedarWhite
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+LIST WoodColumns_Rectangular
+	WOOD_W6XD6, WOOD_W6XD8, WOOD_W8XD8
+END
+
+--
+
+PRESET BEAMCOLUMN CONC_W6XD6
+	Preset.Name="W6 X D6" 
+	Dimensions=BeamColumnStoneConcreteRectangularDims.DIMW6XD6
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+PRESET BEAMCOLUMN CONC_W8XD8
+	Preset.Name="W8 X D8" 
+	Dimensions=BeamColumnStoneConcreteRectangularDims.DIMW8XD8
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+PRESET BEAMCOLUMN CONC_W12XD12
+	Preset.Name="W12 X D12" 
+	Dimensions=BeamColumnStoneConcreteRectangularDims.DIMW12XD12
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+PRESET BEAMCOLUMN CONC_W14XD14
+	Preset.Name="W14 X D14" 
+	Dimensions=BeamColumnStoneConcreteRectangularDims.DIMW14XD14
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+PRESET BEAMCOLUMN CONC_W16XD16
+	Preset.Name="W16 X D16" 
+	Dimensions=BeamColumnStoneConcreteRectangularDims.DIMW16XD16
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+PRESET BEAMCOLUMN CONC_W20XD20
+	Preset.Name="W20 X D20" 
+	Dimensions=BeamColumnStoneConcreteRectangularDims.DIMW20XD20
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+LIST ConcreteColumns_Rectangular
+	CONC_W6XD6, CONC_W8XD8, CONC_W12XD12, CONC_W14XD14, CONC_W16XD16, CONC_W20XD20
+END
+
+PRESET BEAMCOLUMN STONE_W6XD6
+	Preset.Name="W6 X D6" 
+	Dimensions=BeamColumnStoneConcreteRectangularDims.DIMW6XD6
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+PRESET BEAMCOLUMN STONE_W8XD8
+	Preset.Name="W8 X D8" 
+	Dimensions=BeamColumnStoneConcreteRectangularDims.DIMW8XD8
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+PRESET BEAMCOLUMN STONE_W12XD12
+	Preset.Name="W12 X D12" 
+	Dimensions=BeamColumnStoneConcreteRectangularDims.DIMW12XD12
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+PRESET BEAMCOLUMN STONE_W14XD14
+	Preset.Name="W14 X D14" 
+	Dimensions=BeamColumnStoneConcreteRectangularDims.DIMW14XD14
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+PRESET BEAMCOLUMN STONE_W16XD16
+	Preset.Name="W16 X D16" 
+	Dimensions=BeamColumnStoneConcreteRectangularDims.DIMW16XD16
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+
+PRESET BEAMCOLUMN STONE_W20XD20
+	Preset.Name="W20 X D20" 
+	Dimensions=BeamColumnStoneConcreteRectangularDims.DIMW20XD20
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Plate"
+END
+LIST StoneColumns_Rectangular
+	STONE_W8XD8, STONE_W12XD12, STONE_W14XD14, STONE_W16XD16, STONE_W20XD20
+END
+
+---
+
+PRESET BEAMCOLUMN WOOD_DI6 
+	Preset.Name="6in Diameter" 
+	Dimensions=BeamColumnWoodRoundDims.DIMDI6
+	Material=BeamColumnWoodMaterials.WoodCedarWhite
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN WOOD_DI8 
+	Preset.Name="8in Diameter" 
+	Dimensions=BeamColumnWoodRoundDims.DIMDI8
+	Material=BeamColumnWoodMaterials.WoodCedarWhite
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN WOOD_DI10 
+	Preset.Name="10in Diameter" 
+	Dimensions=BeamColumnWoodRoundDims.DIMDI10
+	Material=BeamColumnWoodMaterials.WoodCedarWhite
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN WOOD_DI12 
+	Preset.Name="12in Diameter" 
+	Dimensions=BeamColumnWoodRoundDims.DIMDI12
+	Material=BeamColumnWoodMaterials.WoodCedarWhite
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN WOOD_DI14 
+	Preset.Name="14in Diameter" 
+	Dimensions=BeamColumnWoodRoundDims.DIMDI14
+	Material=BeamColumnWoodMaterials.WoodCedarWhite
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+ LIST WoodColumns_Round
+	WOOD_DI6, WOOD_DI8, WOOD_DI10, WOOD_DI12, WOOD_DI14
+END
+
+--
+
+PRESET BEAMCOLUMN CONC_DI8 
+	Preset.Name="8in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI8
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN CONC_DI10
+	Preset.Name="10in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI10
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN CONC_DI12
+	Preset.Name="12in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI12
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN CONC_DI14
+	Preset.Name="14in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI14
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN CONC_DI16
+	Preset.Name="16in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI16
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN CONC_DI18
+	Preset.Name="18in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI18
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN CONC_DI20
+	Preset.Name="20in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI20
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN CONC_DI24
+	Preset.Name="24in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI24
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN CONC_DI28
+	Preset.Name="28in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI28
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN CONC_DI30
+	Preset.Name="30in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI30
+	Material=BeamColumnConcreteMaterials.Concrete
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+LIST ConcreteColumns_Round
+	CONC_DI8, CONC_DI10, CONC_DI12, CONC_DI14, CONC_DI16, CONC_DI18, CONC_DI20, CONC_DI24, CONC_DI28, CONC_DI30
+END
+
+--
+
+PRESET BEAMCOLUMN STONE_DI8 
+	Preset.Name="8in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI8
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN STONE_DI10
+	Preset.Name="10in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI10
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN STONE_DI12
+	Preset.Name="12in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI12
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN STONE_DI14
+	Preset.Name="14in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI14
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN STONE_DI16
+	Preset.Name="16in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI16
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN STONE_DI18
+	Preset.Name="18in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI18
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN STONE_DI20
+	Preset.Name="20in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI20
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN STONE_DI24
+	Preset.Name="24in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI24
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN STONE_DI28
+	Preset.Name="28in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI28
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+PRESET BEAMCOLUMN STONE_DI30
+	Preset.Name="30in Diameter" 
+	Dimensions=BeamColumnStoneConcreteRoundDims.DIMDI30
+	Material=BeamColumnStoneMaterials.LimestoneBeige
+	MaterialColor.HexValue="ffffff"
+	Mesh.AssetID="SteelProfile-Tube"
+END
+
+LIST StoneColumns_Round
+	STONE_DI8, STONE_DI10, STONE_DI12, STONE_DI14, STONE_DI16, STONE_DI18, STONE_DI20, STONE_DI24, STONE_DI28, STONE_DI30
+END
+
+---
+---
+---
+
+
+DEFINE BEAMCOLUMN_SUBCATEGORY
+	INPUT:
+		Assembly->SelectedBeam[1..1]
+
+	PROPERTIES:
+		PRIVATE("Name",Preset.Name)
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY BEAMCOLUMN_SUBCATEGORY_STEEL_W READONLY
+	Preset.Name="Steel - W Wide Flange"
+	SelectedBeam=SteelColumns_W.W16X40
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY BEAMCOLUMN_SUBCATEGORY_STEEL_WT READONLY
+	Preset.Name="Steel - WT Tee"
+	SelectedBeam=SteelColumns_WT.WT15X74
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY BEAMCOLUMN_SUBCATEGORY_STEEL_L READONLY
+	Preset.Name="Steel - L Angle"
+	SelectedBeam=SteelColumns_L.L10X10X1
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY BEAMCOLUMN_SUBCATEGORY_STEEL_HSS READONLY
+	Preset.Name="Steel - HSS Hollow Structural Section"
+	SelectedBeam=SteelColumns_HSS.HSS20X12X12
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY BEAMCOLUMN_SUBCATEGORY_STEEL_C READONLY
+	Preset.Name="Steel - C Channel"
+	SelectedBeam=SteelColumns_C.C10X30
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY BEAMCOLUMN_SUBCATEGORY_STEEL_TUBE READONLY
+	Preset.Name="Steel - Tube / Pipe"
+	SelectedBeam=SteelColumns_Tube.TD12X375
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY BEAMCOLUMN_SUBCATEGORY_WOOD_RECTANGULAR READONLY
+	Preset.Name="Wood - Rectangular"
+	SelectedBeam=WoodColumns_Rectangular.WOOD_W6XD6
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY BEAMCOLUMN_SUBCATEGORY_CONC_RECTANGULAR READONLY
+	Preset.Name="Concrete - Rectangular"
+	SelectedBeam=ConcreteColumns_Rectangular.CONC_W12XD12
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY BEAMCOLUMN_SUBCATEGORY_STONE_RECTANGULAR READONLY
+	Preset.Name="Stone - Rectangular"
+	SelectedBeam=StoneColumns_Rectangular.STONE_W12XD12
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY BEAMCOLUMN_SUBCATEGORY_WOOD_ROUND READONLY
+	Preset.Name="Wood - Round"
+	SelectedBeam=WoodColumns_Round.WOOD_DI6
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY BEAMCOLUMN_SUBCATEGORY_CONCRETE_ROUND READONLY
+	Preset.Name="Concrete - Round"
+	SelectedBeam=ConcreteColumns_Round.CONC_DI12
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY BEAMCOLUMN_SUBCATEGORY_STONE_ROUND READONLY
+	Preset.Name="Stone - Round"
+	SelectedBeam=StoneColumns_Round.STONE_DI8
+END
+
+LIST BEAMCOLUMN_SUBCATEGORIES
+	BEAMCOLUMN_SUBCATEGORY_STEEL_W, BEAMCOLUMN_SUBCATEGORY_STEEL_WT, BEAMCOLUMN_SUBCATEGORY_STEEL_L, BEAMCOLUMN_SUBCATEGORY_STEEL_HSS, BEAMCOLUMN_SUBCATEGORY_STEEL_C, BEAMCOLUMN_SUBCATEGORY_STEEL_TUBE
+	BEAMCOLUMN_SUBCATEGORY_WOOD_RECTANGULAR, BEAMCOLUMN_SUBCATEGORY_CONC_RECTANGULAR, BEAMCOLUMN_SUBCATEGORY_STONE_RECTANGULAR
+	BEAMCOLUMN_SUBCATEGORY_WOOD_ROUND, BEAMCOLUMN_SUBCATEGORY_CONCRETE_ROUND, BEAMCOLUMN_SUBCATEGORY_STONE_ROUND
+END
+
+DEFINE BEAMCOLUMN_SUBCATEGORY_PICKER
+	INPUT:
+		Assembly->Subcategory[1..1]
+	PROPERTIES:
+		PRIVATE("Name",Preset.Name)
+END
+
+PRESET BEAMCOLUMN_SUBCATEGORY_PICKER BEAMCOLUMN_TYPE_PRESET READONLY
+	Preset.Name="Make A Beam Or Column"
+	Subcategory=BEAMCOLUMN_SUBCATEGORIES.BEAMCOLUMN_SUBCATEGORY_STEEL_W
+END
+
+LIST OTStructureLine
+	BEAMCOLUMN_TYPE_PRESET
+END
+
+---
+--- LAYERED ASSEMBLIES
+---
+
+-- Layers that have a presettable thickness and material (Abstract, Mass, Continuous)
+
+DEFINE LAYER_THICK
+	INPUT:
+		Layer->Material[1..1]
+		Layer->Thickness[1..1]
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		STRING("Comments",Preset.Comments)
+		PRIVATE("Color",MaterialColor.Color)
+		PRIVATE("Function",Layer.Function)
+END
+
+DEFINE DIMENSION_LAYER_THICKNESS
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		DIMENSION("Thickness",Layer.Thickness)
+END
+
+--
+-- TODO: Create local pattern object, in meantime use DDL 2.0 keys (which are guids)
+--
+
+DEFINE LAYER_PATTERN 
+	PROPERTIES:
+	STRING("Name",Preset.Name)
+	PRIVATE("PatternKey",Layer.Pattern)
+END
+
+-- LAYER_CATEGORY is used to group wall layers into categories and subcategories
+
+DEFINE LAYER_CATEGORY
+	INPUT:
+		Layer->Category[1..1]
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+END
+
+
+PRESET DIMENSION_LAYER_THICKNESS 0005THICK 
+	Preset.Name="Typical Coat"
+	Layer.Thickness="1/200in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 001THICK 
+	Preset.Name="Thick Coat"
+	Layer.Thickness="1/100in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 003125THICK 
+	Preset.Name="1/32in"
+	Layer.Thickness="1/32in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 00625THICK 
+	Preset.Name="1/16in"
+	Layer.Thickness="1/16in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 0125THICK 
+	Preset.Name="1/8in"
+	Layer.Thickness="1/8in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 01875THICK 
+	Preset.Name="3/16in"
+	Layer.Thickness="3/16in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 025THICK 
+	Preset.Name="1/4in"
+	Layer.Thickness="1/4in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 034375THICK 
+	Preset.Name="11/32in"
+	Layer.Thickness="11/32in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 0375THICK 
+	Preset.Name="3/8in"
+	Layer.Thickness="3/8in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 04375THICK 
+	Preset.Name="7/16in"
+	Layer.Thickness="7/16in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 046875THICK 
+	Preset.Name="15/32in"
+	Layer.Thickness="15/32in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 0625THICK 
+	Preset.Name="5/8in"
+	Layer.Thickness="5/8in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 05THICK 
+	Preset.Name="1/2in"
+	Layer.Thickness="1/2in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 071875THICK 
+	Preset.Name="23/32in"
+	Layer.Thickness="23/32in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 075THICK 
+	Preset.Name="3/4in"
+	Layer.Thickness="3/4in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 0875THICK 
+	Preset.Name="7/8in"
+	Layer.Thickness="7/8in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 1THICK 
+	Preset.Name="1in"
+	Layer.Thickness="1in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 1_5THICK 
+	Preset.Name="1 1/2in"
+	Layer.Thickness="1 1/2in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 1_5625THICK 
+	Preset.Name="1 9/16in"
+	Layer.Thickness="1 9/16in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 2THICK 
+	Preset.Name="2in"
+	Layer.Thickness="2in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 2_375THICK 
+	Preset.Name="2 3/8in"
+	Layer.Thickness="2 3/8in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 2_5THICK 
+	Preset.Name="2 1/2in"
+	Layer.Thickness="2 1/2in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 3THICK 
+	Preset.Name="3in"
+	Layer.Thickness="3in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 3_125THICK 
+	Preset.Name="3 1/8in"
+	Layer.Thickness="3 1/8in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 4THICK 
+	Preset.Name="4in"
+	Layer.Thickness="4in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 4_75THICK 
+	Preset.Name="4 3/4in"
+	Layer.Thickness="4 3/4in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 5_5THICK 
+	Preset.Name="5 1/2in"
+	Layer.Thickness="5 1/2in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 6THICK 
+	Preset.Name="6in"
+	Layer.Thickness="6in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 8THICK 
+	Preset.Name="8in"
+	Layer.Thickness="8in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 10THICK 
+	Preset.Name="10in"
+	Layer.Thickness="10in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 12THICK 
+	Preset.Name="12in"
+	Layer.Thickness="12in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 14THICK 
+	Preset.Name="14in"
+	Layer.Thickness="14in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 16THICK 
+	Preset.Name="16in"
+	Layer.Thickness="16in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 18THICK 
+	Preset.Name="18in"
+	Layer.Thickness="18in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 22THICK 
+	Preset.Name="22in"
+	Layer.Thickness="22in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 24THICK 
+	Preset.Name="24in"
+	Layer.Thickness="24in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 4_125THICK 
+	Preset.Name="3 PLY, 4 1/8in"
+	Layer.Thickness="4 1/8in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 6_875THICK 
+	Preset.Name="5 PLY, 6 7/8in"
+	Layer.Thickness="6 7/8in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 7_5THICK 
+	Preset.Name="7 1/2in"
+	Layer.Thickness="7 1/2in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 9_625THICK 
+	Preset.Name="7 PLY, 9 5/8in"
+	Layer.Thickness="9 5/8in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 12_375THICK 
+	Preset.Name="12 3/8in"
+	Layer.Thickness="12 3/8in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 3MMTHICK 
+	Preset.Name="3mm"
+	Layer.Thickness="3mm"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 5MMTHICK 
+	Preset.Name="5mm"
+	Layer.Thickness="5mm"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 15CMTHICK 
+	Preset.Name="15cm"
+	Layer.Thickness="15in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 30CMTHICK 
+	Preset.Name="30cm"
+	Layer.Thickness="30in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 40CMTHICK 
+	Preset.Name="40cm"
+	Layer.Thickness="40in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 50CMTHICK 
+	Preset.Name="50cm"
+	Layer.Thickness="50in"
+END
+
+PRESET DIMENSION_LAYER_THICKNESS 60CMTHICK 
+	Preset.Name="60cm"
+	Layer.Thickness="60in"
+END
+
+LIST Dimension_Abstract_Concrete
+	6THICK, 8THICK, 10THICK, 12THICK, 14THICK, 16THICK, 18THICK, 22THICK, 24THICK
+END
+
+LIST Dimension_RammedEarth
+	15CMTHICK, 30CMTHICK, 40CMTHICK, 50CMTHICK, 60CMTHICK
+END
+
+LIST Dimension_CrossLaminatedTimber
+	4_125THICK, 5_5THICK, 6_875THICK, 7_5THICK, 9_625THICK, 12_375THICK
+END
+
+LIST Dimension_GypsumBoard
+	025THICK, 0375THICK, 0625THICK, 05THICK, 1THICK
+END
+
+LIST Dimension_MediumDensityFiberboard
+	0125THICK, 025THICK, 05THICK, 075THICK, 1THICK
+END
+
+LIST Dimension_OrientedStrandBoard
+	0375THICK, 04375THICK, 046875THICK, 071875THICK, 0875THICK
+END
+
+LIST Dimension_PolystyreneFoamInsulation
+	05THICK, 075THICK, 1THICK, 2THICK
+END
+
+LIST Dimension_PolyisoFoamInsulation
+	1THICK, 2THICK, 3THICK, 4THICK
+END
+
+LIST Dimension_WoodFiberboardInsulation
+	1_5625THICK, 2_375THICK, 3_125THICK, 4_75THICK, 5_5THICK
+END
+
+LIST Dimension_Plywood
+	034375THICK, 046875THICK, 071875THICK
+END
+
+LIST Dimension_ParticleBoard
+	025THICK, 05THICK, 075THICK
+END
+
+LIST Dimension_Membrane
+	00625THICK
+END
+
+LIST Dimension_Void
+	075THICK, 1THICK, 1_5THICK, 2THICK, 3THICK, 6THICK
+END
+
+LIST Dimension_HardscapeSoftscape
+	3THICK, 6THICK, 8THICK, 12THICK
+END
+
+LIST Dimension_Plaster
+	0375THICK, 0625THICK, 05THICK, 075THICK
+END
+
+LIST Dimension_SelfLevelingConcrete
+	00625THICK, 0125THICK, 025THICK
+END
+
+LIST Dimension_Carpet
+	025THICK, 05THICK, 1THICK
+END
+
+LIST Dimension_Wallpaper
+	003125THICK
+END
+
+LIST Dimension_Cork
+	0125THICK, 01875THICK, 025THICK, 05THICK
+END
+
+-- Mass walls (Concrete, rammed earth, laminated timber)
+
+-- Precast Concrete
+
+PRESET LAYER_THICK LAYER_PRECAST6
+	Preset.Name="Precast Concrete 6in"
+	Preset.Comments="Comments"
+	Layer.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=DIMENSION_Abstract_Concrete.6THICK
+	Material=LayerConcreteMaterials.Concrete
+END
+
+PRESET LAYER_THICK LAYER_PRECAST8
+	Preset.Name="Precast Concrete 8in"
+	Preset.Comments="Comments"
+	Layer.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=DIMENSION_Abstract_Concrete.8THICK
+	Material=LayerConcreteMaterials.Concrete
+END
+
+LIST LAYER_PRECAST_LIST
+	LAYER_PRECAST6, LAYER_PRECAST8
+END
+
+PRESET LAYER_CATEGORY PRECAST_CONCRETE_SUBCATEGORY
+	Category=LAYER_PRECAST_LIST.LAYER_PRECAST6
+	Preset.Name="Precast Concrete"
+END	
+
+-- Cast in Place Concrete
+
+PRESET LAYER_THICK LAYER_CAST_IN_PLACE6
+	Preset.Name="Cast In Place Concrete 6in"
+	Preset.Comments="Comments"
+	Layer.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=DIMENSION_Abstract_Concrete.6THICK
+	Material=LayerConcreteMaterials.Concrete
+END
+
+PRESET LAYER_THICK LAYER_CAST_IN_PLACE8
+	Preset.Name="Cast In Place Concrete 8in"
+	Preset.Comments="Comments"
+	Layer.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=DIMENSION_Abstract_Concrete.8THICK
+	Material=LayerConcreteMaterials.Concrete
+END
+
+LIST LAYER_CAST_IN_PLACE_LIST
+	LAYER_CAST_IN_PLACE6, LAYER_CAST_IN_PLACE8
+END
+
+
+PRESET LAYER_CATEGORY CAST_IN_PLACE_SUBCATEGORY
+	Category=LAYER_CAST_IN_PLACE_LIST.LAYER_CAST_IN_PLACE6
+	Preset.Name="Cast In Place Concrete"
+END	
+
+-- Rammed Earth
+
+PRESET LAYER_THICK LAYER_RAMMED_EARTH15
+	Preset.Name="Rammed Earth 6in"
+	Preset.Comments="Comments"
+	Layer.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=Dimension_RammedEarth.15CMTHICK
+	Material=LayerRammedEarthMaterials.RammedEarth
+END
+
+PRESET LAYER_THICK LAYER_RAMMED_EARTH30
+	Preset.Name="Rammed Earth 8in"
+	Preset.Comments="Comments"
+	Layer.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=Dimension_RammedEarth.30CMTHICK
+	Material=LayerRammedEarthMaterials.RammedEarth
+END
+
+LIST LAYER_RAMMED_EARTH_LIST
+	LAYER_RAMMED_EARTH15, LAYER_RAMMED_EARTH30
+END
+
+PRESET LAYER_CATEGORY RAMMED_EARTH_SUBCATEGORY
+	Category=LAYER_RAMMED_EARTH_LIST.LAYER_RAMMED_EARTH15
+	Preset.Name="Rammed Earth"
+END	
+
+-- Cross Lainated Timber
+
+PRESET LAYER_THICK LAYER_CLT4_125
+	Preset.Name="CLT 3 Ply"
+	Preset.Comments="Comments"
+	Layer.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=Dimension_CrossLaminatedTimber.4_125THICK
+	Material=LayerCrossLaminatedTimberMaterials.WoodSprucePineFir
+END
+
+PRESET LAYER_THICK LAYER_CLT6_875
+	Preset.Name="CLT 5 Ply"
+	Preset.Comments="Comments"
+	Layer.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=Dimension_CrossLaminatedTimber.6_875THICK
+	Material=LayerCrossLaminatedTimberMaterials.WoodSprucePineFir
+END
+
+LIST LAYER_CLT_LIST
+	LAYER_CLT4_125, LAYER_CLT6_875
+END
+
+PRESET LAYER_CATEGORY CLT_SUBCATEGORY
+	Category=LAYER_CLT_LIST.LAYER_CLT4_125
+	Preset.Name="Cross Laminated Timber"
+END	
+
+-- All mass-type walls stored in this list and bound to the mass subcategory node
+
+LIST LAYER_MASS_SUBCATEGORIES
+	PRECAST_CONCRETE_SUBCATEGORY, CAST_IN_PLACE_SUBCATEGORY, RAMMED_EARTH_SUBCATEGORY, CLT_SUBCATEGORY
+END
+
+PRESET LAYER_CATEGORY LAYER_MASS_CATEGORY
+	Preset.Name="Structure - Mass"
+	Category=LAYER_MASS_SUBCATEGORIES.PRECAST_CONCRETE_SUBCATEGORY
+END
+
+-- Substrate- Continuous 
+
+-- Gypsum Board
+
+PRESET LAYER_THICK LAYER_GYPSUM0625
+	Preset.Name="5/8in Gypsum"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Substrate"
+	Thickness=Dimension_GypsumBoard.0625THICK
+	Material=LayerGypsumMaterials.Gypsum
+END
+
+LIST LAYER_GYPSUM_LIST
+	LAYER_GYPSUM0625
+END
+
+PRESET LAYER_CATEGORY GYPSUM_SUBCATEGORY
+	Category=LAYER_GYPSUM_LIST.LAYER_GYPSUM0625
+	Preset.Name="Gypsum Board"
+END	
+
+-- Meduim Density Fiberboard
+
+PRESET LAYER_THICK LAYER_MDF0125
+	Preset.Name="1/8in MDF"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Substrate"
+	Thickness=Dimension_MediumDensityFiberboard.0125THICK
+	Material=MediumDensityFiberboardMaterials.MediumDensityFiberboard
+END
+
+
+LIST LAYER_MEDIUM_DENSITY_FIBERBOARD_LIST
+	LAYER_MDF0125
+END
+
+PRESET LAYER_CATEGORY MEDIUM_DENSITY_FIBERBOARD_SUBCATEGORY
+	Category=LAYER_MEDIUM_DENSITY_FIBERBOARD_LIST.LAYER_MDF0125
+	Preset.Name="Medium Density Fiberboard"
+END
+
+-- Oriented Strand Board
+
+PRESET LAYER_THICK LAYER_OSB0375
+	Preset.Name="3/8in OSB"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Substrate"
+	Thickness=Dimension_OrientedStrandBoard.0375THICK
+	Material=OrientedStrandMaterials.OrientedStrand
+END
+
+
+LIST LAYER_ORIENTED_STRAND_BOARD_LIST
+	LAYER_OSB0375
+END
+
+PRESET LAYER_CATEGORY ORIENTED_STRAND_BOARD_SUBCATEGORY
+	Category=LAYER_ORIENTED_STRAND_BOARD_LIST.LAYER_OSB0375
+	Preset.Name="Oriented Strand Board"
+END
+
+-- Plywood
+
+PRESET LAYER_THICK LAYER_PLYWOOD034375
+	Preset.Name="11/32in Plywood"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Substrate"
+	Thickness=Dimension_Plywood.034375THICK
+	Material=LayerPlywoodMaterials.PlywoodSprucePineFir
+END
+
+LIST LAYER_PLYWOOD_LIST
+	LAYER_PLYWOOD034375
+END
+
+PRESET LAYER_CATEGORY PLYWOOD_SUBCATEGORY
+	Category=LAYER_PLYWOOD_LIST.LAYER_PLYWOOD034375
+	Preset.Name="Plywood"
+END	
+
+-- Particle Board
+
+PRESET LAYER_THICK LAYER_PARTICLE025
+	Preset.Name="1/4in Particle Board"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Substrate"
+	Thickness=Dimension_ParticleBoard.025THICK
+	Material=ParticleMaterials.ParticleBoard
+END
+
+LIST LAYER_PARTICLE_BOARD_LIST
+	LAYER_PARTICLE025
+END
+
+PRESET LAYER_CATEGORY PARTICLE_BOARD_SUBCATEGORY
+	Category=LAYER_PARTICLE_BOARD_LIST.LAYER_PARTICLE025
+	Preset.Name="Particle Board"
+END
+
+LIST LAYER_SUBSTRATE_CONTINUOUS_SUBCATEGORIES
+	GYPSUM_SUBCATEGORY, MEDIUM_DENSITY_FIBERBOARD_SUBCATEGORY, ORIENTED_STRAND_BOARD_SUBCATEGORY, PLYWOOD_SUBCATEGORY, PARTICLE_BOARD_SUBCATEGORY
+END
+
+PRESET LAYER_CATEGORY LAYER_SUBSTRATE_CONTINUOUS_CATEGORY
+	Preset.Name="Substrate - Continuous"
+	Category=LAYER_SUBSTRATE_CONTINUOUS_SUBCATEGORIES.GYPSUM_SUBCATEGORY
+END
+
+-- Membrane Category
+
+-- Waterproofing Plastic Membrane
+
+PRESET LAYER_THICK LAYER_PLASTIC_WATERPROOFING00625
+	Preset.Name="Waterproofing Plastic Membrane"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Membrane"
+	Thickness=Dimension_Membrane.00625THICK
+	Material=MembraneMaterials.Rubber
+END
+
+LIST LAYER_PLASTIC_WATERPROOFING_LIST
+	LAYER_PLASTIC_WATERPROOFING00625
+END
+
+PRESET LAYER_CATEGORY PLASTIC_WATERPROOFING_SUBCATEGORY
+	Category=LAYER_PLASTIC_WATERPROOFING_LIST.LAYER_PLASTIC_WATERPROOFING00625
+	Preset.Name="Waterproofing Plastic Membrane"
+END
+
+-- Polyethylene Vapor Barrier
+
+PRESET LAYER_THICK LAYER_VAPOR_BARRIER00625
+	Preset.Name="Polyethylene Vapor Barrier"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateGray3"
+	Layer.Function="Membrane"
+	Thickness=Dimension_Membrane.00625THICK
+	Material=MembraneMaterials.Rubber
+END
+
+LIST LAYER_VAPOR_BARRIER_LIST
+	LAYER_VAPOR_BARRIER00625
+END
+
+PRESET LAYER_CATEGORY VAPOR_BARRIER_SUBCATEGORY
+	Category=LAYER_VAPOR_BARRIER_LIST.LAYER_VAPOR_BARRIER00625
+	Preset.Name="Polyethylene Vapor Barrier"
+END
+
+-- Polyethylene Air Barrier
+
+PRESET LAYER_THICK LAYER_AIR_BARRIER00625
+	Preset.Name="Polyethylene Air Barrier"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateGray5"
+	Layer.Function="Membrane"
+	Thickness=Dimension_Membrane.00625THICK
+	Material=MembraneMaterials.Rubber
+END
+
+LIST LAYER_AIR_BARRIER_LIST
+	LAYER_AIR_BARRIER00625
+END
+
+PRESET LAYER_CATEGORY AIR_BARRIER_SUBCATEGORY
+	Category=LAYER_AIR_BARRIER_LIST.LAYER_AIR_BARRIER00625
+	Preset.Name="Polyethylene Air Barrier"
+END
+
+-- Bituminous Felt Membrane
+
+PRESET LAYER_THICK LAYER_FELT_MEMBRANE00625
+	Preset.Name="Bituminous Felt Membrane"
+	Preset.Comments="Comments"
+	MaterialColor.Color="MaterialsFeltBlack"
+	Layer.Function="Membrane"
+	Thickness=Dimension_Membrane.00625THICK
+	Material=FeltMaterials.Felt
+END
+
+LIST LAYER_FELT_MEMBRANE_LIST
+	LAYER_FELT_MEMBRANE00625
+END
+
+PRESET LAYER_CATEGORY FELT_MEMBRANE_SUBCATEGORY
+	Category=LAYER_FELT_MEMBRANE_LIST.LAYER_FELT_MEMBRANE00625
+	Preset.Name="Bituminous Felt Membrane"
+END
+
+--Fluid Rubberized Asphalt Membrane
+
+PRESET LAYER_THICK LAYER_ASPHALT_MEMBRANE00625
+	Preset.Name="Fluid Rubberized Asphalt Membrane"
+	Preset.Comments="Comments"
+	MaterialColor.Color="MaterialsAsphaltCharcoal"
+	Layer.Function="Membrane"
+	Thickness=Dimension_Membrane.00625THICK
+	Material=MembraneMaterials.Rubber
+END
+
+LIST LAYER_ASPHALT_MEMBRANE_LIST
+	LAYER_ASPHALT_MEMBRANE00625
+END
+
+PRESET LAYER_CATEGORY ASHPHALT_MEMBRANE_SUBCATEGORY
+	Category=LAYER_ASPHALT_MEMBRANE_LIST.LAYER_ASPHALT_MEMBRANE00625
+	Preset.Name="Fluid Rubberized Asphalt Membrane"
+END
+
+--
+
+LIST LAYER_MEMBRANE_SUBCATEGORIES
+	PLASTIC_WATERPROOFING_SUBCATEGORY, VAPOR_BARRIER_SUBCATEGORY, AIR_BARRIER_SUBCATEGORY, FELT_MEMBRANE_SUBCATEGORY, ASHPHALT_MEMBRANE_SUBCATEGORY
+END
+
+PRESET LAYER_CATEGORY LAYER_MEMBRANE_CATEGORY
+	Preset.Name="Membrane"
+	Category=LAYER_MEMBRANE_SUBCATEGORIES.PLASTIC_WATERPROOFING_SUBCATEGORY
+END
+
+--Insulation Category
+
+--Polystyrene Foam Insulation
+
+PRESET LAYER_THICK LAYER_POLYSTYRENE_FOAM05
+	Preset.Name="1/2in Polystyrene"
+	Preset.Comments="Comments"
+	MaterialColor.Color="MaterialsFoamPink"
+	Layer.Function="Insulation"
+	Thickness=Dimension_PolystyreneFoamInsulation.05THICK
+	Material=FoamExtrudedPolystyreneMaterials.FoamExtrudedPolystyrenePink
+END
+
+LIST LAYER_POLYSTYRENE_FOAM_LIST
+	LAYER_POLYSTYRENE_FOAM05
+END
+
+PRESET LAYER_CATEGORY POLYSTYRENE_FOAM_SUBCATEGORY
+	Category=LAYER_POLYSTYRENE_FOAM_LIST.LAYER_POLYSTYRENE_FOAM05
+	Preset.Name="Polystyrene Foam Insulation"
+END
+
+--Polyiso Foam Insulation
+
+PRESET LAYER_THICK LAYER_POLISO_FOAM1
+	Preset.Name="1in Polyiso"
+	Preset.Comments="Comments"
+	MaterialColor.Color="MaterialsFoamYellow"
+	Layer.Function="Insulation"
+	Thickness=Dimension_PolyisoFoamInsulation.1THICK
+	Material=FoamPolyisoMaterials.FoamPolyiso
+END
+
+LIST LAYER_POLYISO_FOAM_LIST
+	LAYER_POLISO_FOAM1
+END
+
+PRESET LAYER_CATEGORY POLYISO_FOAM_SUBCATEGORY
+	Category=LAYER_POLYISO_FOAM_LIST.LAYER_POLISO_FOAM1
+	Preset.Name="Polyiso Foam Insulation"
+END
+
+--Wood Fiberboard Insulation
+
+
+PRESET LAYER_THICK LAYER_WOOD_FIBERBOARD1_5625
+	Preset.Name="1 9/16in Wood Fiberboard"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Insulation"
+	Thickness=Dimension_WoodFiberboardInsulation.1_5625THICK
+	Material=ParticleMaterials.ParticleBoard
+END
+
+
+LIST LAYER_WOOD_FIBERBOARD_LIST
+	LAYER_WOOD_FIBERBOARD1_5625
+END
+
+PRESET LAYER_CATEGORY WOOD_FIBERBOARD_SUBCATEGORY
+	Category=LAYER_WOOD_FIBERBOARD_LIST.LAYER_WOOD_FIBERBOARD1_5625
+	Preset.Name="Wood Fiberboard Insulation"
+END
+
+LIST LAYER_INSULATION_SUBCATEGORIES
+	POLYSTYRENE_FOAM_SUBCATEGORY, POLYISO_FOAM_SUBCATEGORY, WOOD_FIBERBOARD_SUBCATEGORY
+END
+
+PRESET LAYER_CATEGORY LAYER_INSULATION_CATEGORY
+	Preset.Name="Insulation"
+	Category=LAYER_INSULATION_SUBCATEGORIES.POLYSTYRENE_FOAM_SUBCATEGORY
+END
+
+-- Categoty Sitework 
+
+-- Grass
+
+PRESET LAYER_THICK LAYER_SOFTSCAPE_GRASS_3
+	Preset.Name="3in Grass - Short"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=Dimension_HardscapeSoftscape.3THICK
+	Material=GrassMaterials.GrassShort
+END
+
+LIST LAYER_GRASS_LIST
+	LAYER_SOFTSCAPE_GRASS_3
+END
+
+PRESET LAYER_CATEGORY LAYER_GRASS_SUBCATEGORY
+	Category=LAYER_GRASS_LIST.LAYER_SOFTSCAPE_GRASS_3
+	Preset.Name="Grass"
+END
+
+-- Soil
+
+PRESET LAYER_THICK LAYER_SOFTSCAPE_SOIL_3
+	Preset.Name="3in Soil - Fine"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=Dimension_HardscapeSoftscape.3THICK
+	Material=SoilMaterials.SoilFine
+END
+
+LIST LAYER_SOIL_LIST
+	LAYER_SOFTSCAPE_SOIL_3
+END
+
+PRESET LAYER_CATEGORY LAYER_SOIL_SUBCATEGORY
+	Category=LAYER_SOIL_LIST.LAYER_SOFTSCAPE_SOIL_3
+	Preset.Name="Soil"
+END
+
+--Asphalt
+
+
+PRESET LAYER_THICK LAYER_HARDSCAPE_ASPHALT_3
+	Preset.Name="3in Asphalt"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=Dimension_HardscapeSoftscape.3THICK
+	Material=AsphaltMaterials.AsphaltBarkwood
+END
+
+LIST LAYER_ASPHALT_LIST
+	LAYER_HARDSCAPE_ASPHALT_3
+END
+
+PRESET LAYER_CATEGORY LAYER_ASPHALT_SUBCATEGORY
+	Category=LAYER_ASPHALT_LIST.LAYER_HARDSCAPE_ASPHALT_3
+	Preset.Name="Asphalt"
+END
+
+-- Gravel
+
+PRESET LAYER_THICK LAYER_HARDSCAPE_GRAVEL_3
+	Preset.Name="3in Gravel"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=Dimension_HardscapeSoftscape.3THICK
+	Material=GravelMaterials.Gravel
+END
+
+LIST LAYER_GRAVEL_LIST
+	LAYER_HARDSCAPE_GRAVEL_3
+END
+
+PRESET LAYER_CATEGORY LAYER_GRAVEL_SUBCATEGORY
+	Category=LAYER_GRAVEL_LIST.LAYER_HARDSCAPE_GRAVEL_3
+	Preset.Name="Gravel"
+END
+
+-- Sand
+
+PRESET LAYER_THICK LAYER_HARDSCAPE_SAND_3
+	Preset.Name="3in Sand"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=Dimension_HardscapeSoftscape.3THICK
+	Material=SandMaterials.Sand
+END
+
+LIST LAYER_SAND_LIST
+	LAYER_HARDSCAPE_SAND_3
+END
+
+PRESET LAYER_CATEGORY LAYER_SAND_SUBCATEGORY
+	Category=LAYER_SAND_LIST.LAYER_HARDSCAPE_SAND_3
+	Preset.Name="Sand"
+END
+
+-- Decomposed Granite
+
+PRESET LAYER_THICK LAYER_HARDSCAPE_DECOMPOSED_GRANITE_3
+	Preset.Name="3in Decomposed Granite"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=Dimension_HardscapeSoftscape.3THICK
+	Material=DecomposedGraniteMaterials.DecomposedGranite
+END
+
+LIST LAYER_DECOMPOSED_GRANITE_LIST
+	LAYER_HARDSCAPE_DECOMPOSED_GRANITE_3
+END
+
+PRESET LAYER_CATEGORY LAYER_DECOMPOSED_GRANITE_SUBCATEGORY
+	Category=LAYER_DECOMPOSED_GRANITE_LIST.LAYER_HARDSCAPE_DECOMPOSED_GRANITE_3
+	Preset.Name="Decomposed Granite"
+END
+
+LIST LAYER_SITEWORK_SUBCATEGORIES
+	LAYER_GRASS_SUBCATEGORY, LAYER_SOIL_SUBCATEGORY
+	LAYER_ASPHALT_SUBCATEGORY, LAYER_GRAVEL_SUBCATEGORY, LAYER_SAND_SUBCATEGORY, LAYER_DECOMPOSED_GRANITE_SUBCATEGORY
+END
+
+PRESET LAYER_CATEGORY LAYER_SITEWORK_CATEGORY
+	Preset.Name="Sitework"
+	Category=LAYER_SITEWORK_SUBCATEGORIES.LAYER_GRASS_SUBCATEGORY
+END
+
+--Air Gap
+
+PRESET LAYER_THICK LAYER_VOID075
+	Preset.Name="3/4in Air Gap"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Insulation"
+	Thickness=Dimension_Void.075THICK
+	Material=LayerAirMaterials.Air
+END
+
+LIST LAYER_VOID_LIST
+	LAYER_VOID075
+END
+
+PRESET LAYER_CATEGORY VOID_SUBCATEGORY
+	Preset.Name="Air Gap"
+	Category=LAYER_VOID_LIST.LAYER_VOID075
+END
+
+PRESET LAYER_CATEGORY LAYER_VOID_CATEGORY
+	Preset.Name="Void"
+	Category=LAYER_VOID_LIST.LAYER_VOID075
+END
+
+-- Stud wall layers
+
+DEFINE LAYER_STUD
+	INPUT:
+		Layer->Pattern[1..1]
+		Layer->Dimensions[1..1]
+		Gap->GapMaterial[1..1]
+		Module->ModuleMaterial[1..1]
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		STRING("Comments",Preset.Comments)
+		PRIVATE("Function",Layer.Function)
+END
+
+-- Still using DDL 1.0 pattern keys, which are guids
+PRESET LAYER_PATTERN PATTERN_6INOC
+	Preset.Name="6in O.C."
+	Layer.Pattern="bb61a40e"
+END
+
+PRESET LAYER_PATTERN PATTERN_12INOC
+	Preset.Name="12in O.C."
+	Layer.Pattern="b0909979"
+END
+
+PRESET LAYER_PATTERN PATTERN_16INOC
+	Preset.Name="16in O.C."
+	Layer.Pattern="578cb413"
+END
+
+PRESET LAYER_PATTERN PATTERN_19INOC
+	Preset.Name="19.2in O.C."
+	Layer.Pattern="019facaa"
+END
+
+PRESET LAYER_PATTERN PATTERN_24INOC
+	Preset.Name="24in O.C."
+	Layer.Pattern="d69b9e55"
+END
+
+PRESET LAYER_PATTERN PATTERN_16INOCSTAGGERED
+	Preset.Name="16in O.C. Staggered"
+	Layer.Pattern="68f2a10c"
+END
+
+PRESET LAYER_PATTERN PATTERN_19INOCSTAGGERED
+	Preset.Name="19.2in O.C. Staggered"
+	Layer.Pattern="f3d9836a"
+END
+
+PRESET LAYER_PATTERN PATTERN_24INOCSTAGGERED
+	Preset.Name="24in O.C. Staggered"
+	Layer.Pattern="c9b285a8"
+END
+
+PRESET LAYER_PATTERN PATTERN_3FTOC
+	Preset.Name="3ft O.C."
+	Layer.Pattern="2c5e915e"
+END
+
+PRESET LAYER_PATTERN PATTERN_4FTOC
+	Preset.Name="4ft O.C."
+	Layer.Pattern="ffcd9927"
+END
+
+PRESET LAYER_PATTERN PATTERN_5FTOC
+	Preset.Name="5ft O.C."
+	Layer.Pattern="3438ba6b"
+END
+
+-- TODO: patterns to be defined in script, use old 1.0 tables for now
+PRESET LAYER_PATTERN PATTERN_STACKBOND
+	Preset.Name="Stack Bond"
+	Preset.Comments="Comments"
+	Layer.Pattern="13f7835d"
+END
+
+PRESET LAYER_PATTERN PATTERN_SOLIDERBOND
+	Preset.Name="Soldier Bond"
+	Preset.Comments="Comments"
+	Layer.Pattern="a935af75"
+END
+
+PRESET LAYER_PATTERN PATTERN_RUNNINGBOND
+	Preset.Name="Running Bond"
+	Preset.Comments="Comments"
+	Layer.Pattern="38bebd81"
+END
+
+LIST Pattern_Masonry
+	PATTERN_STACKBOND, PATTERN_SOLIDERBOND, PATTERN_RUNNINGBOND
+END
+
+LIST Pattern_Stud
+	PATTERN_12INOC, PATTERN_16INOC, PATTERN_19INOC, PATTERN_24INOC, PATTERN_16INOCSTAGGERED, PATTERN_19INOCSTAGGERED, PATTERN_24INOCSTAGGERED
+END
+
+LIST Pattern_Substrate_Stud
+	PATTERN_6INOC, PATTERN_12INOC, PATTERN_16INOC, PATTERN_19INOC, PATTERN_24INOC
+END
+
+LIST Pattern_Joist
+	PATTERN_12INOC, PATTERN_16INOC, PATTERN_19INOC, PATTERN_24INOC, PATTERN_3FTOC, PATTERN_4FTOC, PATTERN_5FTOC
+END
+
+DEFINE DIMENSION_LAYER_STUD
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		DIMENSION("Width",Node.XExtents)
+		DIMENSION("Depth",Node.YExtents)
+--TODO: allow multiple bindings like DDL 1.0, so Thickness can be bound to Depth
+--meantime Layer.Thickness must be set manually
+		PRIVATE("Thickness",Layer.Thickness)
+END
+
+PRESET DIMENSION_LAYER_STUD STUD_1X2
+	Preset.Name="1x2"
+	Node.XExtents="0.75in"
+	Node.YExtents="1.5in"
+	Layer.Thickness="1.5in"
+END
+
+PRESET DIMENSION_LAYER_STUD STUD_1X3
+	Preset.Name="1x3"
+	Node.XExtents="0.75in"
+	Node.YExtents="2.5in"
+	Layer.Thickness="2.5in"
+END
+
+PRESET DIMENSION_LAYER_STUD STUD_2X2
+	Preset.Name="2x2"
+	Node.XExtents="1.5in"
+	Node.YExtents="1.5in"
+	Layer.Thickness="1.5in"
+END
+
+PRESET DIMENSION_LAYER_STUD STUD_2X4
+	Preset.Name="2x4"
+	Node.XExtents="1.5in"
+	Node.YExtents="3.5in"
+	Layer.Thickness="3.5in"
+END
+
+PRESET DIMENSION_LAYER_STUD STUD_2X6
+	Preset.Name="2x6"
+	Node.XExtents="1.5in"
+	Node.YExtents="5.5in"
+	Layer.Thickness="5.5in"
+END
+
+PRESET DIMENSION_LAYER_STUD STUD_2X8
+	Preset.Name="2x8"
+	Node.XExtents="1.5in"
+	Node.YExtents="7.25in"
+	Layer.Thickness="7.25in"
+END
+
+PRESET DIMENSION_LAYER_STUD STUD_2X10
+	Preset.Name="2x10"
+	Node.XExtents="1.5in"
+	Node.YExtents="9.25in"
+	Layer.Thickness="9.25in"
+END
+
+PRESET DIMENSION_LAYER_STUD STUD_2X12
+	Preset.Name="2x12"
+	Node.XExtents="1.5in"
+	Node.YExtents="11.25in"
+	Layer.Thickness="11.25in"
+END
+
+PRESET DIMENSION_LAYER_STUD C_STUD_158
+	Preset.Name="1 5/8in"
+	Node.XExtents="1.25in"
+	Node.YExtents="1.625in"
+	Layer.Thickness="1.625in"
+END
+
+PRESET DIMENSION_LAYER_STUD C_STUD_215
+	Preset.Name="2 1/2in"
+	Node.XExtents="1.25in"
+	Node.YExtents="2.5in"
+	Layer.Thickness="2.5in"
+END
+
+PRESET DIMENSION_LAYER_STUD C_STUD_358
+	Preset.Name="3 5/8in"
+	Node.XExtents="1.25in"
+	Node.YExtents="3.625in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET DIMENSION_LAYER_STUD C_STUD_4
+	Preset.Name="4in"
+	Node.XExtents="1.25in"
+	Node.YExtents="4in"
+	Layer.Thickness="4in"
+END
+
+PRESET DIMENSION_LAYER_STUD C_STUD_6
+	Preset.Name="6in"
+	Node.XExtents="1.25in"
+	Node.YExtents="6in"
+	Layer.Thickness="6in"
+END
+
+PRESET DIMENSION_LAYER_STUD CH_STUD_158
+	Preset.Name="1 5/8in"
+	Node.XExtents="1.625in"
+	Node.YExtents="1.625in"
+	Layer.Thickness="1.625in"
+END
+
+PRESET DIMENSION_LAYER_STUD CH_STUD_215
+	Preset.Name="2 1/2in"
+	Node.XExtents="1.625in"
+	Node.YExtents="2.5in"
+	Layer.Thickness="2.5in"
+END
+
+PRESET DIMENSION_LAYER_STUD CH_STUD_358
+	Preset.Name="3 5/8in"
+	Node.XExtents="1.625in"
+	Node.YExtents="3.625in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET DIMENSION_LAYER_STUD CH_STUD_4
+	Preset.Name="4in"
+	Node.XExtents="1.625in"
+	Node.YExtents="4in"
+	Layer.Thickness="4in"
+END
+
+PRESET DIMENSION_LAYER_STUD CH_STUD_6
+	Preset.Name="6in"
+	Node.XExtents="1.625in"
+	Node.YExtents="6in"
+	Layer.Thickness="6in"
+END
+
+PRESET DIMENSION_LAYER_STUD HAT_CHANNEL_012
+	Preset.Name="1/2in Deep"
+	Node.XExtents="1.25in"
+	Node.YExtents="0.5in"
+	Layer.Thickness="0.5in"
+END
+
+PRESET DIMENSION_LAYER_STUD HAT_CHANNEL_078
+	Preset.Name="7/8in Deep"
+	Node.XExtents="1.25in"
+	Node.YExtents="0.875in"
+	Layer.Thickness="0.875in"
+END
+
+PRESET DIMENSION_LAYER_STUD HAT_CHANNEL_112
+	Preset.Name="1 1/2in Deep"
+	Node.XExtents="1.25in"
+	Node.YExtents="1.5in"
+	Layer.Thickness="1.5in"
+END
+
+PRESET DIMENSION_LAYER_STUD Z_CHANNEL_2X1
+	Preset.Name="2in x 1in"
+	Node.XExtents="2in"
+	Node.YExtents="1in"
+	Layer.Thickness="1in"
+END
+
+PRESET DIMENSION_LAYER_STUD Z_CHANNEL_2X112
+	Preset.Name="2in x 1 1/2in"
+	Node.XExtents="2in"
+	Node.YExtents="1.5in"
+	Layer.Thickness="1.5in"
+END
+
+PRESET DIMENSION_LAYER_STUD Z_CHANNEL_2X2
+	Preset.Name="2in x 2in"
+	Node.XExtents="2in"
+	Node.YExtents="2in"
+	Layer.Thickness="2in"
+END
+
+PRESET DIMENSION_LAYER_STUD Z_CHANNEL_2X212
+	Preset.Name="2in x 2 1/2in"
+	Node.XExtents="2in"
+	Node.YExtents="2.5in"
+	Layer.Thickness="2.5in"
+END
+
+PRESET DIMENSION_LAYER_STUD Z_CHANNEL_2X3
+	Preset.Name="2in x 3in"
+	Node.XExtents="2in"
+	Node.YExtents="3in"
+	Layer.Thickness="3in"
+END
+
+PRESET DIMENSION_LAYER_STUD JOIST_12
+	Preset.Name="12in Deep"
+	Node.XExtents="3.5in"
+	Node.YExtents="12in"
+	Layer.Thickness="12in"
+END
+
+PRESET DIMENSION_LAYER_STUD JOIST_14
+	Preset.Name="14in Deep"
+	Node.XExtents="3.5in"
+	Node.YExtents="14in"
+	Layer.Thickness="14in"
+END
+
+PRESET DIMENSION_LAYER_STUD JOIST_16
+	Preset.Name="16in Deep"
+	Node.XExtents="3.5in"
+	Node.YExtents="16in"
+	Layer.Thickness="16in"
+END
+
+PRESET DIMENSION_LAYER_STUD JOIST_18
+	Preset.Name="18in Deep"
+	Node.XExtents="3.5in"
+	Node.YExtents="18in"
+	Layer.Thickness="18in"
+END
+
+PRESET DIMENSION_LAYER_STUD JOIST_20
+	Preset.Name="20in Deep"
+	Node.XExtents="3.5in"
+	Node.YExtents="20in"
+	Layer.Thickness="20in"
+END
+
+PRESET DIMENSION_LAYER_STUD JOIST_22
+	Preset.Name="22in Deep"
+	Node.XExtents="3.5in"
+	Node.YExtents="22in"
+	Layer.Thickness="22in"
+END
+
+PRESET DIMENSION_LAYER_STUD JOIST_24
+	Preset.Name="24in Deep"
+	Node.XExtents="3.5in"
+	Node.YExtents="24in"
+	Layer.Thickness="24in"
+END
+--TODO: Define deck dimensions and corrugations
+
+PRESET DIMENSION_LAYER_STUD DECK_112
+	Preset.Name="1 1/2in Deep"
+	Node.XExtents="6in"
+	Node.YExtents="1.5in"
+	Layer.Thickness="1.5in"
+END
+
+PRESET DIMENSION_LAYER_STUD DECK_2
+	Preset.Name="2in Deep"
+	Node.XExtents="6in"
+	Node.YExtents="2in"
+	Layer.Thickness="2in"
+END
+
+PRESET DIMENSION_LAYER_STUD DECK_3
+	Preset.Name="3in Deep"
+	Node.XExtents="6in"
+	Node.YExtents="3in"
+	Layer.Thickness="3in"
+END
+
+PRESET DIMENSION_LAYER_STUD DECK_412
+	Preset.Name="4 1/2in Deep"
+	Node.XExtents="6in"
+	Node.YExtents="4.5in"
+	Layer.Thickness="4.5in"
+END
+
+LIST Dimensions_Stud_Wood
+	STUD_1X2, STUD_2X4, STUD_2X6, STUD_2X8, STUD_2X10, STUD_2X12
+END
+
+LIST Dimensions_Stud_Metal_C
+	C_STUD_158, C_STUD_215, C_STUD_358, C_STUD_4, C_STUD_6
+END
+
+LIST Dimensions_Stud_Metal_CH
+	CH_STUD_158, CH_STUD_215, CH_STUD_358, CH_STUD_4, CH_STUD_6
+END
+
+LIST Dimensions_Deck_Steel
+	DECK_112, DECK_2, DECK_3, DECK_412
+END
+
+LIST Dimensions_Hat_Channel
+	HAT_CHANNEL_012, HAT_CHANNEL_078, HAT_CHANNEL_112
+END
+
+LIST Dimensions_Z_Channel
+	Z_CHANNEL_2X1, Z_CHANNEL_2X112, Z_CHANNEL_2X2, Z_CHANNEL_2X212, Z_CHANNEL_2X3
+END
+
+LIST Dimensions_Stud_Wood_Furring
+	STUD_1X2, STUD_1X3, STUD_2X2
+END
+
+LIST Dimensions_Joist
+	JOIST_12, JOIST_14, JOIST_16, JOIST_18, JOIST_20, JOIST_22, JOIST_24
+END
+
+PRESET LAYER_STUD LAYER_STUD_WOOD12
+	Pattern=Pattern_Stud.PATTERN_12INOC
+	Dimensions=Dimensions_Stud_Wood.STUD_2X4
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsWoodStud.WoodSprucePineFir
+	Preset.Name="2x4 Wood Stud, 12in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+PRESET LAYER_STUD LAYER_STUD_WOOD16
+	Pattern=Pattern_Stud.PATTERN_16INOC
+	Dimensions=Dimensions_Stud_Wood.STUD_2X4
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsWoodStud.WoodSprucePineFir
+	Preset.Name="2x4 Wood Stud, 16in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+PRESET LAYER_STUD LAYER_STUD_WOOD19
+	Pattern=Pattern_Stud.PATTERN_19INOC
+	Dimensions=Dimensions_Stud_Wood.STUD_2X4
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsWoodStud.WoodSprucePineFir
+	Preset.Name="2x4 Wood Stud, 19in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+LIST LayerStudWoodList
+	LAYER_STUD_WOOD12, LAYER_STUD_WOOD16, LAYER_STUD_WOOD19
+END
+
+PRESET LAYER_CATEGORY LAYER_STUD_WOOD_SUBCATEGORY
+	Category=LayerStudWoodList.LAYER_STUD_WOOD12
+	Preset.Name="Wood Stud"
+END	
+
+PRESET LAYER_STUD LAYER_STUD_ENGWOOD12
+	Pattern=Pattern_Stud.PATTERN_12INOC
+	Dimensions=Dimensions_Stud_Wood.STUD_2X4
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsEngineeredWoodStud.OrientedStrand
+	Preset.Name="2x4 Engineered Wood Stud, 12in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+LIST LayerStudEngineeredWoodList
+	LAYER_STUD_ENGWOOD12
+END
+
+PRESET LAYER_CATEGORY LAYER_STUD_ENGINEERED_WOOD_SUBCATEGORY
+	Category=LayerStudEngineeredWoodList.LAYER_STUD_ENGWOOD12
+	Preset.Name="Engineered Wood Stud"
+END	
+
+PRESET LAYER_STUD LAYER_STUD_METAL_C_12
+	Pattern=Pattern_Stud.PATTERN_12INOC
+	Dimensions=Dimensions_Stud_Metal_C.C_STUD_358
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsMetalStud.Steel
+	Preset.Name="3 5/8in Metal Stud, 12in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+PRESET LAYER_STUD LAYER_STUD_METAL_C_16
+	Pattern=Pattern_Stud.PATTERN_16INOC
+	Dimensions=Dimensions_Stud_Metal_C.C_STUD_358
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsMetalStud.Steel
+	Preset.Name="3 5/8in Metal Stud, 16in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+PRESET LAYER_STUD LAYER_STUD_METAL_C_19
+	Pattern=Pattern_Stud.PATTERN_19INOC
+	Dimensions=Dimensions_Stud_Metal_C.C_STUD_358
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsMetalStud.Steel
+	Preset.Name="3 5/8in Metal Stud, 19.2in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+LIST LayerStudMetalCList
+	LAYER_STUD_METAL_C_12, LAYER_STUD_METAL_C_16, LAYER_STUD_METAL_C_19
+END
+
+PRESET LAYER_CATEGORY LAYER_STUD_METAL_C_SUBCATEGORY
+	Category=LayerStudMetalCList.LAYER_STUD_METAL_C_12
+	Preset.Name="Metal C Stud"
+END	
+
+PRESET LAYER_STUD LAYER_STUD_METAL_CH_12
+	Pattern=Pattern_Stud.PATTERN_12INOC
+	Dimensions=Dimensions_Stud_Metal_CH.CH_STUD_358
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsMetalStud.Steel
+	Preset.Name="3 5/8in Metal CH Stud, 12in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+PRESET LAYER_STUD LAYER_STUD_METAL_CH_16
+	Pattern=Pattern_Stud.PATTERN_16INOC
+	Dimensions=Dimensions_Stud_Metal_CH.CH_STUD_358
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsMetalStud.Steel
+	Preset.Name="3 5/8in Metal CH Stud, 16in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+PRESET LAYER_STUD LAYER_STUD_METAL_CH_19
+	Pattern=Pattern_Stud.PATTERN_19INOC
+	Dimensions=Dimensions_Stud_Metal_CH.CH_STUD_358
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsMetalStud.Steel
+	Preset.Name="3 5/8in Metal CH Stud, 19.2in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+LIST LayerStudMetalCHList
+	LAYER_STUD_METAL_CH_12, LAYER_STUD_METAL_CH_16, LAYER_STUD_METAL_CH_19
+END
+
+PRESET LAYER_CATEGORY LAYER_STUD_METAL_CH_SUBCATEGORY
+	Category=LayerStudMetalCHList.LAYER_STUD_METAL_CH_12
+	Preset.Name="Metal CH Stud"
+END	
+
+-- Steel Web Joist
+
+PRESET LAYER_STUD LAYER_JOIST_STEELWEB_12_19
+	Pattern=Pattern_Joist.PATTERN_19INOC
+	Dimensions=Dimensions_Joist.JOIST_12
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsMetalStud.Steel
+	Preset.Name="12in Deep, 19.2in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+LIST LayerJoistSteelWebList
+	LAYER_JOIST_STEELWEB_12_19
+END
+
+PRESET LAYER_CATEGORY LAYER_JOIST_STEELWEB_SUBCATEGORY
+	Category=LayerJoistSteelWebList.LAYER_JOIST_STEELWEB_12_19
+	Preset.Name="Steel Web Joist"
+END	
+
+-- Wood Web Joist
+
+PRESET LAYER_STUD LAYER_JOIST_WOODWEB_12_19
+	Pattern=Pattern_Joist.PATTERN_19INOC
+	Dimensions=Dimensions_Joist.JOIST_12
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsWoodStud.WoodSprucePineFir
+	Preset.Name="12in Deep, 19.2in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+LIST LayerJoistWoodWebList
+	LAYER_JOIST_WOODWEB_12_19
+END
+
+PRESET LAYER_CATEGORY LAYER_JOIST_WOODWEB_SUBCATEGORY
+	Category=LayerJoistWoodWebList.LAYER_JOIST_WOODWEB_12_19
+	Preset.Name="Wood Web Joist"
+END	
+
+-- Wood Chord Steel Web Joist
+
+PRESET LAYER_STUD LAYER_JOIST_WOODCHORD_STEELWEB_12_19
+	Pattern=Pattern_Joist.PATTERN_19INOC
+	Dimensions=Dimensions_Joist.JOIST_12
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsWoodStud.WoodSprucePineFir
+	Preset.Name="12in Deep, 19.2in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+END
+
+LIST LayerJoistWoodChordSteelWebList
+	LAYER_JOIST_WOODCHORD_STEELWEB_12_19
+END
+
+PRESET LAYER_CATEGORY LAYER_JOIST_WOODCHORD_STEELWEB_SUBCATEGORY
+	Category=LayerJoistWoodChordSteelWebList.LAYER_JOIST_WOODCHORD_STEELWEB_12_19
+	Preset.Name="Wood Chord Steel Web Joist"
+END	
+
+LIST LayerStudSubcategories
+	LAYER_STUD_WOOD_SUBCATEGORY, LAYER_STUD_ENGINEERED_WOOD_SUBCATEGORY, LAYER_STUD_METAL_C_SUBCATEGORY, LAYER_STUD_METAL_CH_SUBCATEGORY
+END
+
+PRESET LAYER_CATEGORY LAYER_STUD_CATEGORY
+	Preset.Name="Structure - Stud"
+	Category=LayerStudSubcategories.LAYER_STUD_WOOD_SUBCATEGORY
+END
+
+LIST LayerJoistSubcategories
+	LAYER_STUD_WOOD_SUBCATEGORY, LAYER_STUD_ENGINEERED_WOOD_SUBCATEGORY, LAYER_STUD_METAL_C_SUBCATEGORY, LAYER_STUD_METAL_CH_SUBCATEGORY
+	LAYER_JOIST_STEELWEB_SUBCATEGORY, LAYER_JOIST_WOODWEB_SUBCATEGORY, LAYER_JOIST_WOODCHORD_STEELWEB_SUBCATEGORY
+END
+
+PRESET LAYER_CATEGORY LAYER_JOIST_CATEGORY
+	Preset.Name="Structure - Joist"
+	Category=LayerJoistSubcategories.LAYER_STUD_WOOD_SUBCATEGORY
+END
+
+--
+-- Category: Substrate - Stud 
+--
+
+PRESET LAYER_STUD LAYER_SUBSTRATE_STUD_STEEL_DECK_112
+	Pattern=Pattern_Substrate_Stud.PATTERN_12INOC
+	Dimensions=Dimensions_Deck_Steel.DECK_112
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsMetalStud.Steel
+	Preset.Name="1 1/2in Deep Steel Deck"
+	Preset.Comments="Comments"
+	Layer.Function="Substrate"
+END
+
+LIST LayerSubstrateStudSteelDeckList
+	LAYER_SUBSTRATE_STUD_STEEL_DECK_112
+END
+
+PRESET LAYER_CATEGORY LAYER_SUBSTRATE_STUD_STEEL_DECK_SUBCATEGORY
+	Category=LayerSubstrateStudSteelDeckList.LAYER_SUBSTRATE_STUD_STEEL_DECK_112
+	Preset.Name="Corrugated Steel Deck"
+END	
+
+-- Steel Hat Channel
+
+PRESET LAYER_STUD LAYER_SUBSTRATE_STUD_STEEL_HATCHANNEL_078
+	Pattern=Pattern_Substrate_Stud.PATTERN_12INOC
+	Dimensions=Dimensions_Hat_Channel.HAT_CHANNEL_078
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsMetalStud.Steel
+	Preset.Name="7/8in Deep Hat Channel, 12in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Substrate"
+END
+
+PRESET LAYER_STUD LAYER_SUBSTRATE_STUD_STEEL_HATCHANNEL_112
+	Pattern=Pattern_Substrate_Stud.PATTERN_12INOC
+	Dimensions=Dimensions_Hat_Channel.HAT_CHANNEL_112
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsMetalStud.Steel
+	Preset.Name="1 1/2in Deep Hat Channel, 12in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Substrate"
+END
+
+LIST LayerSubstrateStudSteelHatChannelList
+	LAYER_SUBSTRATE_STUD_STEEL_HATCHANNEL_078, LAYER_SUBSTRATE_STUD_STEEL_HATCHANNEL_112
+END
+
+PRESET LAYER_CATEGORY LAYER_SUBSTRATE_STUD_STEEL_HAT_CHANNEL_SUBCATEGORY
+	Category=LayerSubstrateStudSteelHatChannelList.LAYER_SUBSTRATE_STUD_STEEL_HATCHANNEL_078
+	Preset.Name="Steel Hat Channel"
+END	
+
+-- Steel Z Channel
+
+PRESET LAYER_STUD LAYER_SUBSTRATE_STUD_STEEL_ZCHANNEL_2X1
+	Pattern=Pattern_Substrate_Stud.PATTERN_12INOC
+	Dimensions=Dimensions_Z_Channel.Z_CHANNEL_2X1
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsMetalStud.Steel
+	Preset.Name="2x1 Z Channel, 12in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Substrate"
+END
+
+PRESET LAYER_STUD LAYER_SUBSTRATE_STUD_STEEL_ZCHANNEL_2X112
+	Pattern=Pattern_Substrate_Stud.PATTERN_12INOC
+	Dimensions=Dimensions_Z_Channel.Z_CHANNEL_2X112
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsMetalStud.Steel
+	Preset.Name="2x1 1/2 Z Channel, 12in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Substrate"
+END
+
+LIST LayerSubstrateStudSteelZChannelList
+	LAYER_SUBSTRATE_STUD_STEEL_ZCHANNEL_2X1, LAYER_SUBSTRATE_STUD_STEEL_ZCHANNEL_2X112
+END
+
+PRESET LAYER_CATEGORY LAYER_SUBSTRATE_STUD_STEEL_Z_CHANNEL_SUBCATEGORY
+	Category=LayerSubstrateStudSteelZChannelList.LAYER_SUBSTRATE_STUD_STEEL_ZCHANNEL_2X1
+	Preset.Name="Steel Z Channel"
+END	
+
+-- Wood Furring
+
+PRESET LAYER_STUD LAYER_SUBSTRATE_STUD_WOOD_FURRING_1X2
+	Pattern=Pattern_Substrate_Stud.PATTERN_12INOC
+	Dimensions=Dimensions_Stud_Wood_Furring.STUD_1X2
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsWoodStud.WoodSprucePineFir
+	Preset.Name="1x2 Wood Furring, 12in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Substrate"
+END
+
+PRESET LAYER_STUD LAYER_SUBSTRATE_STUD_WOOD_FURRING_1X3
+	Pattern=Pattern_Substrate_Stud.PATTERN_12INOC
+	Dimensions=Dimensions_Stud_Wood_Furring.STUD_1X3
+	GapMaterial=GapMaterialsStud.Air
+	ModuleMaterial=ModuleMaterialsWoodStud.WoodSprucePineFir
+	Preset.Name="1x3 Wood Furring, 12in OC"
+	Preset.Comments="Comments"
+	Layer.Function="Substrate"
+END
+
+LIST LayerSubstrateStudWoodFurringList
+	LAYER_SUBSTRATE_STUD_WOOD_FURRING_1X2, LAYER_SUBSTRATE_STUD_WOOD_FURRING_1X3
+END
+
+PRESET LAYER_CATEGORY LAYER_SUBSTRATE_STUD_WOOD_FURRING_SUBCATEGORY
+	Category=LayerSubstrateStudWoodFurringList.LAYER_SUBSTRATE_STUD_WOOD_FURRING_1X2
+	Preset.Name="Wood Furring"
+END	
+
+LIST LayerSubstrateStudSubcategories
+	LAYER_SUBSTRATE_STUD_STEEL_DECK_SUBCATEGORY, LAYER_SUBSTRATE_STUD_STEEL_HAT_CHANNEL_SUBCATEGORY
+	LAYER_SUBSTRATE_STUD_STEEL_Z_CHANNEL_SUBCATEGORY, LAYER_SUBSTRATE_STUD_WOOD_FURRING_SUBCATEGORY
+END
+
+PRESET LAYER_CATEGORY LAYER_SUBSTRATE_STUD_CATEGORY
+	Preset.Name="Substrate - Stud"
+	Category=LayerSubstrateStudSubcategories.LAYER_SUBSTRATE_STUD_STEEL_DECK_SUBCATEGORY
+END
+
+-- Masonry layers
+
+DEFINE LAYER_MODULE_DIMENSION
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		DIMENSION("Length",Node.XExtents)
+		DIMENSION("Width",Node.YExtents)
+		DIMENSION("Height",Node.ZExtents)
+		DIMENSION("Bevel Width",Node.BevelWidth)
+-- TODO: need formulas to bind layer thickness to a parameter, for now just code it directly
+		PRIVATE("Thickness",Layer.Thickness)
+END
+
+PRESET LAYER_MODULE_DIMENSION DimModularBrick8in
+	Preset.Name="8in Modular"
+	Node.XExtents="7.625in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="2.3125in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimModularBrick8inNarrow
+	Preset.Name=" Narrow 8in Modular"
+	Node.XExtents="7.625in"
+	Node.YExtents="3.125in"
+	Node.ZExtents="2.3125in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.125in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimModularBrick8inExtraNarrow
+	Preset.Name="Extra Narrow 8in Modular"
+	Node.XExtents="7.625in"
+	Node.YExtents="2.3125in"
+	Node.ZExtents="2.3125in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="2.3125in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimModularBrick8inTall
+	Preset.Name="Tall 8in Modular"
+	Node.XExtents="7.625in"
+	Node.YExtents="3.125in"
+	Node.ZExtents="2.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.125in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimModularBrick8inTallNarrow
+	Preset.Name="Tall Narrow 8in Modular"
+	Node.XExtents="7.625in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="2.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimModularBrick8inSquareHead
+	Preset.Name="8in Modular"
+	Node.XExtents="7.625in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="3.625in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimModularBrick8inTripleHeight
+	Preset.Name="Triple Height 8in Modular"
+	Node.XExtents="7.625in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="7.625in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimNorman
+	Preset.Name="Norman"
+	Node.XExtents="11.625in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="2.3125in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimNormanNarrow
+	Preset.Name="Narrow Norman"
+	Node.XExtents="11.625in"
+	Node.YExtents="3.125in"
+	Node.ZExtents="2.3125in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.125in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimNormanTall
+	Preset.Name="Tall Norman"
+	Node.XExtents="11.625in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="2.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimNormanTallNarrow
+	Preset.Name="Tall Narrow Norman"
+	Node.XExtents="11.625in"
+	Node.YExtents="3.125in"
+	Node.ZExtents="2.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.125in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimNormanSquareHead
+	Preset.Name="Square Head Norman"
+	Node.XExtents="11.625in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="3.625in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimNormanTripleHeight
+	Preset.Name="Triple Height Norman"
+	Node.XExtents="11.625in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="7.625in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimMonarch
+	Preset.Name="Monarch"
+	Node.XExtents="15.265in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="2.3125in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimMonarchNarrow
+	Preset.Name="Narrow Monarch"
+	Node.XExtents="15.265in"
+	Node.YExtents="3.125in"
+	Node.ZExtents="2.3125in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.125in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimMonarchTall
+	Preset.Name="Tall Monarch"
+	Node.XExtents="15.265in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="2.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimMonarchTripleHeight
+	Preset.Name="Triple Height Monarch"
+	Node.XExtents="15.265in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="7.625in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimRoman
+	Preset.Name="Norman"
+	Node.XExtents="11.625in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="1.625in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="3.625in"
+END
+
+LIST ModuleClayBrickDimensions
+	DimModularBrick8in, DimModularBrick8inNarrow, DimModularBrick8inExtraNarrow, DimModularBrick8inTall, DimModularBrick8inTallNarrow
+	DimModularBrick8inSquareHead, DimModularBrick8inTripleHeight
+	DimNorman, DimNormanNarrow, DimNormanTall, DimNormanTallNarrow, DimNormanTripleHeight
+	DimMonarch, DimMonarchNarrow, DimMonarchTall, DimMonarchTripleHeight
+	DimRoman
+END
+
+PRESET LAYER_MODULE_DIMENSION DimGlassBlock4x8x4
+	Preset.Name="4x8x4"
+	Node.XExtents="7.75in"
+	Node.YExtents="3.875in"
+	Node.ZExtents="3.75in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="3.875in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimGlassBlock6x6x4
+	Preset.Name="6x6x4"
+	Node.XExtents="5.75in"
+	Node.YExtents="3.875in"
+	Node.ZExtents="5.75in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="3.875in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimGlassBlock8x8x4
+	Preset.Name="8x8x4"
+	Node.XExtents="7.75in"
+	Node.YExtents="3.875in"
+	Node.ZExtents="7.75in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="3.875in"
+END
+
+LIST ModuleGlassBlockDimensions
+	DimGlassBlock4x8x4, DimGlassBlock6x6x4, DimGlassBlock8x8x4
+END
+
+PRESET LAYER_MODULE_DIMENSION DimCMU4x8x4
+	Preset.Name="4in Half Block, 4x8x4"
+	Node.XExtents="7.625in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="3.625in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimCMU8x16x4
+	Preset.Name="4in Full Block, 8x16x4"
+	Node.XExtents="15.625in"
+	Node.YExtents="3.625in"
+	Node.ZExtents="7.625in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="3.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimCMU8x8x6
+	Preset.Name="6in Half Block, 8x8x6"
+	Node.XExtents="7.625in"
+	Node.YExtents="5.625in"
+	Node.ZExtents="7.625in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="5.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimCMU8x16x6
+	Preset.Name="6in Full Block, 8x16x6"
+	Node.XExtents="15.625in"
+	Node.YExtents="5.625in"
+	Node.ZExtents="7.625in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="5.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimCMU8x8x8
+	Preset.Name="8in Half Block, 8x8x8"
+	Node.XExtents="7.625in"
+	Node.YExtents="7.625in"
+	Node.ZExtents="7.625in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="7.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimCMU8x16x8
+	Preset.Name="8in Full Block, 8x16x8"
+	Node.XExtents="15.625in"
+	Node.YExtents="7.625in"
+	Node.ZExtents="7.625in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="7.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimCMU8x8x10
+	Preset.Name="10in Half Block, 8x8x10"
+	Node.XExtents="7.625in"
+	Node.YExtents="9.625in"
+	Node.ZExtents="7.625in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="9.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimCMU8x16x10
+	Preset.Name="10in Full Block, 8x16x10"
+	Node.XExtents="15.625in"
+	Node.YExtents="9.625in"
+	Node.ZExtents="7.625in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="9.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimCMU8x8x12
+	Preset.Name="12in Half Block, 8x8x12"
+	Node.XExtents="7.625in"
+	Node.YExtents="11.625in"
+	Node.ZExtents="7.625in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="11.625in"
+END
+
+PRESET LAYER_MODULE_DIMENSION DimCMU8x16x12
+	Preset.Name="12in Full Block, 8x16x12"
+	Node.XExtents="15.625in"
+	Node.YExtents="11.625in"
+	Node.ZExtents="7.625in"
+	Node.BevelWidth="0.125in"
+	Layer.Thickness="11.625in"
+END
+
+LIST ModuleCMUDimensions
+	DimCMU4x8x4, DimCMU8x16x4
+	DimCMU8x8x6, DimCMU8x16x6
+	DimCMU8x8x8, DimCMU8x16x8
+	DimCMU8x8x10, DimCMU8x16x10
+	DimCMU8x8x12, DimCMU8x16x12
+END
+
+DEFINE LAYER_GAP_DIMENSION
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		DIMENSION("Width",Gap.XExtents)
+		DIMENSION("Depth",Gap.YExtents)
+END
+
+PRESET LAYER_GAP_DIMENSION Gapless
+	Preset.Name="Gapless"
+	Gap.XExtents="0in"
+	Gap.YExtents="0in"
+END
+
+PRESET LAYER_GAP_DIMENSION GapFlush0116
+	Preset.Name="1/16in Flush"
+	Gap.XExtents="0.0625in"
+	Gap.YExtents="0in"
+END
+
+PRESET LAYER_GAP_DIMENSION Gap0116x0116
+	Preset.Name="1/16in x 1/16in"
+	Gap.XExtents="0.0625in"
+	Gap.YExtents="0.0625in"
+END
+
+PRESET LAYER_GAP_DIMENSION GapFlush014
+	Preset.Name="1/4in Flush"
+	Gap.XExtents="0.25in"
+	Gap.YExtents="0in"
+END
+
+PRESET LAYER_GAP_DIMENSION Gap014x018
+	Preset.Name="1/4in x 1/8in"
+	Gap.XExtents="0.25in"
+	Gap.YExtents="0.125in"
+END
+
+PRESET LAYER_GAP_DIMENSION Gap014x014
+	Preset.Name="1/4in x 1/4in"
+	Gap.XExtents="0.25in"
+	Gap.YExtents="0.25in"
+END
+
+PRESET LAYER_GAP_DIMENSION GapFlush038
+	Preset.Name="3/8in Flush"
+	Gap.XExtents="0.375in"
+	Gap.YExtents="0in"
+END
+
+PRESET LAYER_GAP_DIMENSION GapFlush038x018
+	Preset.Name="3/8in x 1/8in"
+	Gap.XExtents="0.375in"
+	Gap.YExtents="0.125in"
+END
+
+PRESET LAYER_GAP_DIMENSION GapFlush038x014
+	Preset.Name="3/8in x 1/4in"
+	Gap.XExtents="0.375in"
+	Gap.YExtents="0.25in"
+END
+
+LIST FinishGapDimensions
+	Gapless, GapFlush0116, Gap0116x0116, Gap014x018
+END
+
+LIST GlassBlockGapDimensions
+	GapFlush014, Gap014x018, Gap014x014
+END
+
+LIST MasonryGapDimensions
+	GapFlush038, GapFlush038x018, GapFlush038x014
+END
+
+DEFINE LAYER_MODULE
+	INPUT:
+		Module->Dimensions[1..1]
+		Module->Material[1..1]		
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+END
+
+PRESET LAYER_MODULE NaturalClayBrick8InModule
+	Preset.Name="8in Natural Clay Brick"
+	Dimensions=ModuleClayBrickDimensions.DimModularBrick8in
+	Material=ModuleClayBrickMaterials.ClayBrickNatural
+END
+
+PRESET LAYER_MODULE NaturalClayBrick8InNarrowModule
+	Preset.Name="8in Narrow Natural Clay Brick"
+	Dimensions=ModuleClayBrickDimensions.DimModularBrick8inNarrow
+	Material=ModuleClayBrickMaterials.ClayBrickNatural
+END
+
+PRESET LAYER_MODULE YellowClayBrick8InModule
+	Preset.Name="8in Yellow Clay Brick"
+	Dimensions=ModuleClayBrickDimensions.DimModularBrick8in
+	Material=ModuleClayBrickMaterials.ClayBrickYellow
+END
+
+PRESET LAYER_MODULE YellowClayBrick8InNarrowModule
+	Preset.Name="8in Narrow Yellow Clay Brick"
+	Dimensions=ModuleClayBrickDimensions.DimModularBrick8inNarrow
+	Material=ModuleClayBrickMaterials.ClayBrickYellow
+END
+
+LIST ClayBrickModuleList
+	NaturalClayBrick8InModule, NaturalClayBrick8InNarrowModule
+	YellowClayBrick8InModule, YellowClayBrick8InNarrowModule
+END
+
+PRESET LAYER_MODULE CMUConcrete8x8x8
+	Preset.Name="8in Half Block"
+	Dimensions=ModuleCMUDimensions.DimCMU8x8x8
+	Material=ModuleCMUMaterials.Concrete
+END
+
+PRESET LAYER_MODULE CMUConcrete8x16x8Natural
+	Preset.Name="8in Full Block, Natural"
+	Dimensions=ModuleCMUDimensions.DimCMU8x16x8
+	Material=ModuleCMUMaterials.ConcreteNatural
+END
+
+PRESET LAYER_MODULE CMUConcrete8x8x10MediumGray
+	Preset.Name="10in Half Block, Medium Gray"
+	Dimensions=ModuleCMUDimensions.DimCMU8x8x10
+	Material=ModuleCMUMaterials.ConcreteMediumGray
+END
+
+PRESET LAYER_MODULE CMUConcrete8x16x10DarkGray
+	Preset.Name="10in Full Block, Dark Gray"
+	Dimensions=ModuleCMUDimensions.DimCMU8x16x10
+	Material=ModuleCMUMaterials.ConcreteDarkGray
+END
+
+PRESET LAYER_MODULE CMUConcrete8x8x12Olive
+	Preset.Name="12in Half Block, Olive"
+	Dimensions=ModuleCMUDimensions.DimCMU8x8x12
+	Material=ModuleCMUMaterials.ConcreteOlive
+END
+
+LIST CMUModuleList
+	CMUConcrete8x8x8, CMUConcrete8x16x8Natural, CMUConcrete8x8x10MediumGray
+	CMUConcrete8x16x10DarkGray, CMUConcrete8x8x12Olive
+END
+
+PRESET LAYER_MODULE GlassBlockClear484
+	Preset.Name="Clear Glass Block 4x8x4"
+	Dimensions=ModuleGlassBlockDimensions.DimGlassBlock4x8x4
+	Material=ModuleGlassBlockMaterials.GlassClear
+END
+
+PRESET LAYER_MODULE GlassBlockTeal664
+	Preset.Name="Clear Glass Block 6x6x4"
+	Dimensions=ModuleGlassBlockDimensions.DimGlassBlock6x6x4
+	Material=ModuleGlassBlockMaterials.GlassTeal
+END
+
+PRESET LAYER_MODULE GlassBlockGreen884
+	Preset.Name="Clear Glass Block 8x8x4"
+	Dimensions=ModuleGlassBlockDimensions.DimGlassBlock8x8x4
+	Material=ModuleGlassBlockMaterials.GlassGreen
+END
+
+LIST GlassBlockModuleList
+	GlassBlockClear484, GlassBlockTeal664, GlassBlockGreen884
+END
+
+DEFINE LAYER_MASONRY
+	INPUT:
+		Layer->Pattern[1..1]
+		Layer->Modules[1..1]
+		Gap->GapMaterial[1..1]
+		Gap->GapDimensions[1..1]
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		STRING("Comments",Preset.Comments)
+		PRIVATE("Function",Layer.Function)
+END
+
+-- Clay brick
+
+PRESET LAYER_MASONRY NaturalClayBrick8StackBond
+	Preset.Name="Natural 8in Clay Brick Stack Bond"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+	Pattern=Pattern_Masonry.PATTERN_STACKBOND
+	Modules=ClayBrickModuleList.NaturalClayBrick8InModule
+	GapMaterial=MasonryGapMaterials.Concrete
+	GapDimensions=MasonryGapDimensions.GapFlush038
+END
+
+
+PRESET LAYER_MASONRY NaturalClayBrick8inNarrowRunningBond
+	Preset.Name="Natural 8in Narrow Clay Brick Running Bond"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+	Pattern=Pattern_Masonry.PATTERN_RUNNINGBOND
+	Modules=ClayBrickModuleList.NaturalClayBrick8InNarrowModule
+	GapMaterial=MasonryGapMaterials.Concrete
+	GapDimensions=MasonryGapDimensions.GapFlush038
+END
+
+PRESET LAYER_MASONRY ClayBrickYellow8inSoldierBond
+	Preset.Name="Yelow 8in Narrow Clay Brick Soldier Bond"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+	Pattern=Pattern_Masonry.PATTERN_SOLIDERBOND
+	Modules=ClayBrickModuleList.YellowClayBrick8InModule
+	GapMaterial=MasonryGapMaterials.Concrete
+	GapDimensions=MasonryGapDimensions.GapFlush038
+END
+
+LIST MasonryClayBrickList
+	NaturalClayBrick8StackBond, NaturalClayBrick8inNarrowRunningBond, ClayBrickYellow8inSoldierBond
+END
+
+PRESET LAYER_CATEGORY LayerMasonryClayBrickSubcategory
+	Preset.Name="Clay Brick"
+	Category=MasonryClayBrickList.NaturalClayBrick8StackBond
+END	
+
+-- Concrete Masonry Unit
+
+PRESET LAYER_MASONRY CMUNatural8FullRunningBond
+	Preset.Name="8in Full Block, Natural, Running Bond"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+	Pattern=Pattern_Masonry.PATTERN_RUNNINGBOND
+	Modules=CMUModuleList.CMUConcrete8x16x8Natural
+	GapMaterial=MasonryGapMaterials.Concrete
+	GapDimensions=MasonryGapDimensions.GapFlush038
+END
+
+LIST MasonryCMUList
+	CMUNatural8FullRunningBond
+END
+
+PRESET LAYER_CATEGORY LayerMasonryCMUSubcategory
+	Preset.Name="Concrete Masonry Unit"
+	Category=MasonryCMUList.CMUNatural8FullRunningBond
+END	
+
+-- Glass Block
+
+PRESET LAYER_MASONRY ClearGlassBlockStackBond484
+	Preset.Name="Clear Glass Block Stack Bond 4x8x4"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+	Pattern=Pattern_Masonry.PATTERN_STACKBOND
+	Modules=GlassBlockModuleList.GlassBlockClear484
+	GapMaterial=MasonryGapMaterials.Concrete
+	GapDimensions=GlassBlockGapDimensions.GapFlush014
+END
+
+PRESET LAYER_MASONRY TealGlassBlockStackBond664
+	Preset.Name="Teal Glass Block Stack Bond 6x6x4"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+	Pattern=Pattern_Masonry.PATTERN_STACKBOND
+	Modules=GlassBlockModuleList.GlassBlockTeal664
+	GapMaterial=MasonryGapMaterials.Concrete
+	GapDimensions=GlassBlockGapDimensions.GapFlush014
+END
+
+PRESET LAYER_MASONRY GreenGlassBlockStackBond884
+	Preset.Name="Gree Glass Block Stack Bond 8x8x4"
+	Preset.Comments="Comments"
+	Layer.Function="Structure"
+	Pattern=Pattern_Masonry.PATTERN_STACKBOND
+	Modules=GlassBlockModuleList.GlassBlockGreen884
+	GapMaterial=MasonryGapMaterials.Concrete
+	GapDimensions=GlassBlockGapDimensions.GapFlush014
+END
+
+LIST MasonryGlassBlockList
+	ClearGlassBlockStackBond484, TealGlassBlockStackBond664, GreenGlassBlockStackBond884
+END
+
+PRESET LAYER_CATEGORY LayerMasonryGlassBlockSubcategory
+	Preset.Name="Glass Block"
+	Category=MasonryGlassBlockList.ClearGlassBlockStackBond484
+END	
+
+LIST LayerMasonrySubcategories
+	LayerMasonryClayBrickSubcategory, LayerMasonryCMUSubcategory, LayerMasonryGlassBlockSubcategory
+END
+
+PRESET LAYER_CATEGORY LAYER_MASONRY_CATEGORY
+	Preset.Name="Structure - Masonry"
+	Category=LayerMasonrySubcategories.LayerMasonryClayBrickSubcategory
+END
+
+---
+-- Abstract wall layers
+--
+
+PRESET LAYER_THICK LAYER_ABSTRACT6
+	Preset.Name="Abstract 6in"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=DIMENSION_Abstract_Concrete.6THICK
+	Material=LayerAbstractMaterials.Abstract
+END
+
+PRESET LAYER_THICK LAYER_ABSTRACT8
+	Preset.Name="Abstract 8in"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=DIMENSION_Abstract_Concrete.8THICK
+	Material=LayerAbstractMaterials.Abstract
+END
+
+PRESET LAYER_THICK LAYER_ABSTRACT10
+	Preset.Name="Abstract 10in"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=DIMENSION_Abstract_Concrete.10THICK
+	Material=LayerAbstractMaterials.Abstract
+END
+
+PRESET LAYER_THICK LAYER_ABSTRACT12
+	Preset.Name="Abstract 12in"
+	Preset.Comments="Comments"
+	MaterialColor.Color="ModumateWhite"
+	Layer.Function="Structure"
+	Thickness=DIMENSION_Abstract_Concrete.12THICK
+	Material=LayerAbstractMaterials.Abstract
+END
+
+LIST LAYER_ABSTRACT_LIST
+	LAYER_ABSTRACT6, LAYER_ABSTRACT8, LAYER_ABSTRACT10, LAYER_ABSTRACT12
+END
+
+PRESET LAYER_CATEGORY LAYER_ABSTRACT_CATEGORY
+	Preset.Name="Abstract"
+	Category=LAYER_ABSTRACT_LIST.LAYER_ABSTRACT6	
+END
+
+--
+LIST LAYER_WALL_CATEGORIES
+	LAYER_ABSTRACT_CATEGORY
+	LAYER_MASS_CATEGORY, LAYER_STUD_CATEGORY, LAYER_MASONRY_CATEGORY
+	LAYER_SUBSTRATE_CONTINUOUS_CATEGORY, LAYER_SUBSTRATE_STUD_CATEGORY
+	LAYER_MEMBRANE_CATEGORY, LAYER_INSULATION_CATEGORY
+	LAYER_VOID_CATEGORY
+END
+
+DEFINE WALL_ROOT
+	INPUT:
+		Assembly->Layers[1..]
+	OUTPUT: OTWallSegment
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+END
+
+PRESET WALL_ROOT DEFAULT_WALL_PRESET
+	Preset.Name="My Wall"
+	Layers=LAYER_WALL_CATEGORIES.LAYER_ABSTRACT_CATEGORY
+END
+
+LIST OTWallSegment
+	DEFAULT_WALL_PRESET
+END
+
+---
+--- Floors
+---
+
+DEFINE FLOOR_ROOT
+	INPUT:
+		Assembly->Layers[1..]
+	OUTPUT: OTFloorSegment
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+END
+
+LIST LAYER_FLOOR_CATEGORIES
+	LAYER_ABSTRACT_CATEGORY
+	LAYER_MASS_CATEGORY, LAYER_JOIST_CATEGORY
+	LAYER_SUBSTRATE_CONTINUOUS_CATEGORY, LAYER_SUBSTRATE_STUD_CATEGORY
+	LAYER_MEMBRANE_CATEGORY, LAYER_INSULATION_CATEGORY
+	LAYER_SITEWORK_CATEGORY
+	LAYER_VOID_CATEGORY
+END
+
+
+PRESET FLOOR_ROOT DEFAULT_FLOOR_PRESET
+	Preset.Name="My Floor"
+	Layers=LAYER_FLOOR_CATEGORIES.LAYER_ABSTRACT_CATEGORY
+END
+
+LIST OTFloorSegment
+	DEFAULT_FLOOR_PRESET
+END
+
+---
+--- Roofs
+---
+
+DEFINE ROOF_ROOT
+	INPUT:
+		Assembly->Layers[1..]
+	OUTPUT: OTRoof
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+END
+
+LIST LAYER_ROOF_CATEGORIES
+	LAYER_ABSTRACT_CATEGORY
+	LAYER_MASS_CATEGORY, LAYER_JOIST_CATEGORY
+	LAYER_SUBSTRATE_CONTINUOUS_CATEGORY, LAYER_SUBSTRATE_STUD_CATEGORY
+	LAYER_MEMBRANE_CATEGORY, LAYER_INSULATION_CATEGORY
+	LAYER_SITEWORK_CATEGORY
+	LAYER_VOID_CATEGORY
+END
+
+
+PRESET ROOF_ROOT DEFAULT_ROOF_PRESET
+	Preset.Name="My Roof"
+	Layers=LAYER_ROOF_CATEGORIES.LAYER_ABSTRACT_CATEGORY
+END
+
+LIST OTRoof
+	DEFAULT_ROOF_PRESET
+END
+
+
+---
+--- Finishes
+--- 
+
+-- Like LAYER_THICK but thickness is a dimension property, not a child
+
+DEFINE LAYER_CUSTOM_THICK
+	INPUT:
+		Layer->Material[1..1]
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		STRING("Comments",Preset.Comments)
+		DIMENSION("Thickness",Layer.Thickness)
+		PRIVATE("Function",Layer.Function)
+END
+
+-- Spread->Paint finishes
+
+PRESET LAYER_CUSTOM_THICK LayerFinishPaintMatteGentleWhite
+	Preset.Name="Gentle White Matte Paint Finish"
+	Preset.Comments="Comments"
+	Layer.Thickness="1/200in"
+	Layer.Function="Finish"
+	Material=PaintMaterials.PaintMatteGentleWhite
+END
+
+PRESET LAYER_CUSTOM_THICK LayerFinishPaintMatteBurgundy
+	Preset.Name="Burgundy Matte Paint Finish"
+	Preset.Comments="Comments"
+	Layer.Thickness="1/200in"
+	Layer.Function="Finish"
+	Material=PaintMaterials.PaintMatteBurgundy
+END
+
+PRESET LAYER_CUSTOM_THICK LayerFinishPaintMatteDarkLime
+	Preset.Name="Dark Lime Matte Paint Finish"
+	Preset.Comments="Comments"
+	Layer.Thickness="1/200in"
+	Layer.Function="Finish"
+	Material=PaintMaterials.PaintMatteDarkLime
+END
+
+LIST LayerFinishSpreadPaintList
+	LayerFinishPaintMatteGentleWhite
+	LayerFinishPaintMatteBurgundy
+	LayerFinishPaintMatteDarkLime
+END
+
+PRESET LAYER_CATEGORY LayerFinishSpreadPaintSubcategory
+	Preset.Name="Paint"
+	Category=LayerFinishSpreadPaintList.LayerFinishPaintMatteBurgundy
+END	
+
+-- Spread->Plaster
+
+PRESET LAYER_CUSTOM_THICK LayerFinishPlasterShell
+	Preset.Name="Shell Plaster Finish"
+	Preset.Comments="Comments"
+	Layer.Thickness="5/8in"
+	Layer.Function="Finish"
+	Material=PlasterMaterials.PlasterShell
+END
+
+PRESET LAYER_CUSTOM_THICK LayerFinishPlasterTan
+	Preset.Name="Tan Plaster Finish"
+	Preset.Comments="Comments"
+	Layer.Thickness="5/8in"
+	Layer.Function="Finish"
+	Material=PlasterMaterials.PlasterTan
+END
+
+PRESET LAYER_CUSTOM_THICK LayerFinishPlasterBlue
+	Preset.Name="Blue Plaster Finish"
+	Preset.Comments="Comments"
+	Layer.Thickness="5/8in"
+	Layer.Function="Finish"
+	Material=PlasterMaterials.PlasterBlue
+END
+
+LIST LayerFinishSpreadPlasterList
+	LayerFinishPlasterShell
+	LayerFinishPlasterTan
+	LayerFinishPlasterBlue
+END
+
+PRESET LAYER_CATEGORY LayerFinishSpreadPlasterSubcategory
+	Preset.Name="Plaster"
+	Category=LayerFinishSpreadPlasterList.LayerFinishPlasterShell
+END	
+
+LIST LayerFinishSpreadSubcategories
+	LayerFinishSpreadPaintSubcategory, LayerFinishSpreadPlasterSubcategory
+END
+
+PRESET LAYER_CATEGORY LayerFinishSpreadCategory
+	Preset.Name="Spread"
+	Category=LayerFinishSpreadSubcategories.LayerFinishSpreadPaintSubcategory
+END
+
+-- Roll->Carpet
+
+PRESET LAYER_CUSTOM_THICK LayerFinishCarpetSaddle
+	Preset.Name="Saddle Carpet"
+	Preset.Comments="Comments"
+	Layer.Thickness="5/8in"
+	Layer.Function="Finish"
+	Material=CarpetMaterials.CarpetSaddle
+END
+
+PRESET LAYER_CUSTOM_THICK LayerFinishCarpetWhite
+	Preset.Name="White Carpet"
+	Preset.Comments="Comments"
+	Layer.Thickness="5/8in"
+	Layer.Function="Finish"
+	Material=CarpetMaterials.CarpetWhite
+END
+
+PRESET LAYER_CUSTOM_THICK LayerFinishCarpetGreen
+	Preset.Name="Green Carpet"
+	Preset.Comments="Comments"
+	Layer.Thickness="5/8in"
+	Layer.Function="Finish"
+	Material=CarpetMaterials.CarpetOliveGreen
+END
+
+LIST LayerFinishRollCarpetList
+	LayerFinishCarpetSaddle, LayerFinishCarpetWhite, LayerFinishCarpetGreen
+END
+
+PRESET LAYER_CATEGORY LayerFinishRollCarpetSubcategory
+	Preset.Name="Carpet"
+	Category=LayerFinishRollCarpetList.LayerFinishCarpetSaddle
+END	
+
+-- Roll->Cork
+
+PRESET LAYER_CUSTOM_THICK LayerFinishCorkTan
+	Preset.Name="Tan Cork"
+	Preset.Comments="Comments"
+	Layer.Thickness="5/8in"
+	Layer.Function="Finish"
+	Material=CorkMaterials.CorkTan
+END
+
+PRESET LAYER_CUSTOM_THICK LayerFinishCorkRed
+	Preset.Name="Red Cork"
+	Preset.Comments="Comments"
+	Layer.Thickness="5/8in"
+	Layer.Function="Finish"
+	Material=CorkMaterials.CorkRed
+END
+
+PRESET LAYER_CUSTOM_THICK LayerFinishCorkBrown
+	Preset.Name="Brown Cork"
+	Preset.Comments="Comments"
+	Layer.Thickness="5/8in"
+	Layer.Function="Finish"
+	Material=CorkMaterials.CorkBrown
+END
+
+LIST LayerFinishRollCorkList
+	LayerFinishCorkTan, LayerFinishCorkRed, LayerFinishCorkBrown
+END
+
+PRESET LAYER_CATEGORY LayerFinishRollCorkSubcategory
+	Preset.Name="Cork"
+	Category=LayerFinishRollCorkList.LayerFinishCorkTan
+END	
+
+-- Roll->Felt
+
+
+PRESET LAYER_CUSTOM_THICK LayerFinishFeltKhaki
+	Preset.Name="Khaki Felt"
+	Preset.Comments="Comments"
+	Layer.Thickness="5/8in"
+	Layer.Function="Finish"
+	Material=FeltMaterials.FeltKhaki
+END
+
+PRESET LAYER_CUSTOM_THICK LayerFinishFeltEnglishGreen
+	Preset.Name="English Green Felt"
+	Preset.Comments="Comments"
+	Layer.Thickness="5/8in"
+	Layer.Function="Finish"
+	Material=FeltMaterials.FeltEnglishGreen
+END
+
+PRESET LAYER_CUSTOM_THICK LayerFinishFeltBurgundy
+	Preset.Name="Burgundy Felt"
+	Preset.Comments="Comments"
+	Layer.Thickness="5/8in"
+	Layer.Function="Finish"
+	Material=FeltMaterials.FeltBurgundy
+END
+
+LIST LayerFinishRollFeltList
+	LayerFinishFeltKhaki, LayerFinishFeltEnglishGreen, LayerFinishFeltBurgundy
+END
+
+PRESET LAYER_CATEGORY LayerFinishRollFeltSubcategory
+	Preset.Name="Felt"
+	Category=LayerFinishRollFeltList.LayerFinishFeltKhaki
+END	
+
+--- Finish Category
+
+LIST LayerFinishRollSubcategories
+	LayerFinishRollCarpetSubcategory, LayerFinishRollCorkSubcategory, LayerFinishRollFeltSubcategory
+END
+
+PRESET LAYER_CATEGORY LayerFinishRollCategory
+	Preset.Name="Roll"
+	Category=LayerFinishRollSubcategories.LayerFinishRollCarpetSubcategory
+END
+
+-- Board, Panel, Brick
+
+DEFINE FINISH_LAYER_MODULE_DIMENSION
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+		DIMENSION("Length",Node.XExtents)
+		DIMENSION("Width",Node.ZExtents)
+		DIMENSION("Thickness",Node.YExtents)
+		DIMENSION("Bevel Width",Node.BevelWidth)
+		PRIVATE("Thickness",Layer.Thickness)
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishModularBrick8in
+	Preset.Name="8in Modular"
+	Node.XExtents="7.625in"
+	Node.ZExtents="2.3125in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishModularBrick8inNarrow
+	Preset.Name="Narrow 8in Modular"
+	Node.XExtents="7.625in"
+	Node.ZExtents="2.3125in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishModularBrick8inExtraNarrow
+	Preset.Name="Extra Narrow 8in Modular"
+	Node.XExtents="7.625in"
+	Node.ZExtents="2.3125in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishModularBrick8inTall
+	Preset.Name="Tall 8in Modular"
+	Node.XExtents="7.625in"
+	Node.ZExtents="2.75in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishModularBrick8inTallNarrow
+	Preset.Name="Tall Narrow 8in Modular"
+	Node.XExtents="7.625in"
+	Node.ZExtents="2.75in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishModularBrick8inSquareHead
+	Preset.Name="8in Modular"
+	Node.XExtents="7.625in"
+	Node.ZExtents="3.625in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishModularBrick8inTripleHeight
+	Preset.Name="Triple Height 8in Modular"
+	Node.XExtents="7.625in"
+	Node.ZExtents="7.625in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishNorman
+	Preset.Name="Norman"
+	Node.XExtents="11.625in"
+	Node.ZExtents="2.3125in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishNormanNarrow
+	Preset.Name="Narrow Norman"
+	Node.XExtents="11.625in"
+	Node.ZExtents="2.3125in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishNormanTall
+	Preset.Name="Tall Norman"
+	Node.XExtents="11.625in"
+	Node.ZExtents="2.75in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishNormanTallNarrow
+	Preset.Name="Tall Narrow Norman"
+	Node.XExtents="11.625in"
+	Node.ZExtents="2.75in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishNormanSquareHead
+	Preset.Name="Square Head Norman"
+	Node.XExtents="11.625in"
+	Node.ZExtents="3.625in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishNormanTripleHeight
+	Preset.Name="Triple Height Norman"
+	Node.XExtents="11.625in"
+	Node.ZExtents="7.625in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishMonarch
+	Preset.Name="Monarch"
+	Node.XExtents="15.265in"
+	Node.ZExtents="2.3125in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishMonarchNarrow
+	Preset.Name="Narrow Monarch"
+	Node.XExtents="15.265in"
+	Node.ZExtents="2.3125in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishMonarchTall
+	Preset.Name="Tall Monarch"
+	Node.XExtents="15.265in"
+	Node.ZExtents="2.75in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishMonarchTripleHeight
+	Preset.Name="Triple Height Monarch"
+	Node.XExtents="15.265in"
+	Node.ZExtents="7.625in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+PRESET FINISH_LAYER_MODULE_DIMENSION DimFinishRoman
+	Preset.Name="Norman"
+	Node.XExtents="11.625in"
+	Node.ZExtents="1.625in"
+	Node.YExtents="0.75in"
+	Node.BevelWidth="0.1875in"
+	Layer.Thickness="0.75in"
+END
+
+LIST ModuleFinishClayBrickDimensions
+	DimFinishModularBrick8in, DimFinishModularBrick8inNarrow, DimFinishModularBrick8inExtraNarrow, DimFinishModularBrick8inTall, DimFinishModularBrick8inTallNarrow
+	DimFinishModularBrick8inSquareHead, DimFinishModularBrick8inTripleHeight
+	DimFinishNorman, DimFinishNormanNarrow, DimFinishNormanTall, DimFinishNormanTallNarrow, DimFinishNormanTripleHeight
+	DimFinishMonarch, DimFinishMonarchNarrow, DimFinishMonarchTall, DimFinishMonarchTripleHeight
+	DimFinishRoman
+END
+
+PRESET LAYER_MODULE NaturalClayThinBrick8InModule
+	Preset.Name="8in Natural Clay Thin Brick"
+	Dimensions=ModuleFinishClayBrickDimensions.DimFinishModularBrick8in
+	Material=ModuleClayBrickMaterials.ClayBrickNatural
+END
+
+PRESET LAYER_MODULE NaturalClayThinBrick8InNarrowModule
+	Preset.Name="8in Narrow Natural Clay Thin Brick"
+	Dimensions=ModuleFinishClayBrickDimensions.DimFinishModularBrick8inNarrow
+	Material=ModuleClayBrickMaterials.ClayBrickNatural
+END
+
+PRESET LAYER_MODULE YellowClayThinBrick8InModule
+	Preset.Name="8in Yellow Clay Thin Brick"
+	Dimensions=ModuleFinishClayBrickDimensions.DimFinishModularBrick8in
+	Material=ModuleClayBrickMaterials.ClayBrickYellow
+END
+
+PRESET LAYER_MODULE YellowClayThinBrick8InNarrowModule
+	Preset.Name="8in Narrow Yellow Clay Thin Brick"
+	Dimensions=ModuleFinishClayBrickDimensions.DimFinishModularBrick8inNarrow
+	Material=ModuleClayBrickMaterials.ClayBrickYellow
+END
+
+LIST ThinBrickModuleList
+	NaturalClayThinBrick8InModule, NaturalClayThinBrick8InNarrowModule
+	YellowClayThinBrick8InModule, YellowClayThinBrick8InNarrowModule
+END
+
+PRESET LAYER_MASONRY NaturalClayThinBrick8StackBond
+	Preset.Name="Natural 8in Clay Brick Stack Bond"
+	Preset.Comments="Comments"
+	Layer.Function="Finish"
+	Pattern=Pattern_Masonry.PATTERN_STACKBOND
+	Modules=ThinBrickModuleList.NaturalClayThinBrick8InModule
+	GapMaterial=MasonryGapMaterials.Concrete
+	GapDimensions=MasonryGapDimensions.GapFlush038
+END
+
+
+PRESET LAYER_MASONRY NaturalClayThinBrick8inNarrowRunningBond
+	Preset.Name="Natural 8in Narrow Clay Brick Running Bond"
+	Preset.Comments="Comments"
+	Layer.Function="Finish"
+	Pattern=Pattern_Masonry.PATTERN_RUNNINGBOND
+	Modules=ThinBrickModuleList.NaturalClayThinBrick8InNarrowModule
+	GapMaterial=MasonryGapMaterials.Concrete
+	GapDimensions=MasonryGapDimensions.GapFlush038
+END
+
+PRESET LAYER_MASONRY ClayThinBrickYellow8inSoldierBond
+	Preset.Name="Yelow 8in Narrow Clay Brick Soldier Bond"
+	Preset.Comments="Comments"
+	Layer.Function="Finish"
+	Pattern=Pattern_Masonry.PATTERN_SOLIDERBOND
+	Modules=ThinBrickModuleList.YellowClayThinBrick8InModule
+	GapMaterial=MasonryGapMaterials.Concrete
+	GapDimensions=MasonryGapDimensions.GapFlush038
+END
+
+LIST LayerThinBrickList
+	NaturalClayThinBrick8StackBond, NaturalClayThinBrick8inNarrowRunningBond, ClayThinBrickYellow8inSoldierBond
+END
+
+PRESET LAYER_CATEGORY LayerThinBrickSubcategory
+	Preset.Name="Brick Veneer"
+	Category=LayerThinBrickList.NaturalClayThinBrick8StackBond
+END	
+
+--- Finish Category
+
+LIST LayerFinishBoardPanelBrickSubcategories
+	LayerThinBrickSubcategory
+END
+
+PRESET LAYER_CATEGORY LayerFinishBoardPanelBrickCategory
+	Preset.Name="Board, Panel, Brick"
+	Category=LayerFinishBoardPanelBrickSubcategories.LayerThinBrickSubcategory
+END
+
+-- Finish Root
+
+DEFINE FINISH_ROOT
+	INPUT:
+		Assembly->Layers[1..]
+	OUTPUT: OTFinish
+	PROPERTIES:
+		STRING("Name",Preset.Name)
+END
+
+LIST LayerFinishCategories
+	LayerFinishSpreadCategory, LayerFinishRollCategory
+END
+
+PRESET FINISH_ROOT DefaultFinishPreset
+	Preset.Name="My Finish"
+	Layers=LayerFinishCategories.LayerFinishSpreadCategory
+END
+
+LIST OTFinish
+	DefaultFinishPreset
+END
+
+---
+
+LIST DefaultAssemblies
+	W40X183, WT22X115, L12X12X1
+END

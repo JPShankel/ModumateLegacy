@@ -1,0 +1,25 @@
+{
+	"FileVersion" : 1,
+	"Version" : 1,
+	"VersionName" : "1.0",
+	"FriendlyName" : "Modumate Analytics Provider",
+	"Description" : "Writes analytic API calls to the Google Analytics Measurement API",
+	"Category" : "Analytics",
+	"CreatedBy" : "Modumate, Inc.",
+	"CreatedByURL" : "http://www.modumate.com",
+	"DocsURL" : "",
+	"MarketplaceURL" : "",
+	"SupportURL" : "",
+	"EnabledByDefault" : false,
+	"CanContainContent" : false,
+	"IsBetaVersion" : false,
+	"Installed" : false,
+	"Modules" :
+	[
+		{
+			"Name" : "ModumateAnalytics",
+			"Type" : "Runtime",
+			"LoadingPhase" : "PreDefault"
+		}
+	]
+}

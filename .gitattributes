@@ -1,1 +1,16 @@
-Modumate/Content/Cursors/** filter=lfs diff=lfs merge=lfs -text
+*.exe filter=lfs diff=lfs merge=lfs -text
+*.lib filter=lfs diff=lfs merge=lfs -text
+*.dll filter=lfs diff=lfs merge=lfs -text
+*.pdb filter=lfs diff=lfs merge=lfs -text
+*.pfx filter=lfs diff=lfs merge=lfs -text
+Modumate/SourceAssets/** filter=lfs diff=lfs merge=lfs -text
+Modumate/SourceMeshes/** filter=lfs diff=lfs merge=lfs -text
+Modumate/WinLib/** filter=lfs diff=lfs merge=lfs -text
+Modumate/Content/Blueprints/** filter=lfs diff=lfs merge=lfs -text
+Modumate/Content/Fonts/** filter=lfs diff=lfs merge=lfs -text
+Modumate/Content/Levels/** filter=lfs diff=lfs merge=lfs -text
+Modumate/Content/Materials/** filter=lfs diff=lfs merge=lfs -text
+Modumate/Content/Meshes/** filter=lfs diff=lfs merge=lfs -text
+Modumate/Content/ShoppingData/** filter=lfs diff=lfs merge=lfs -text
+Modumate/Content/Splash/** filter=lfs diff=lfs merge=lfs -text
+Modumate/Content/Textures/** filter=lfs diff=lfs merge=lfs -text
