@@ -22,7 +22,7 @@ ECraftingResult UModumateDrawingSetWidget_CPP::GetInstantiatedNodes(TArray<FCraf
 	{
 		const BIM::FCraftingPresetCollection &presetCollection = GetDocumentPresetManager().DraftingNodePresets;
 		const FName rootNode = TEXT("DRAWINGSET_ROOT");
-		DraftingNodeInstances.CreateNodeInstanceFromPreset(presetCollection, 0, rootNode);
+		DraftingNodeInstances.CreateNodeInstanceFromPreset(presetCollection, 0, rootNode, true);
 	}
 
 	return UModumateCraftingNodeWidgetStatics::GetInstantiatedNodes(DraftingNodeInstances, GetDocumentPresetManager().DraftingNodePresets, OutNodes);

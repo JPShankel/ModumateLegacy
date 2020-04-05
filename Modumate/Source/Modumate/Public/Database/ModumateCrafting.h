@@ -372,13 +372,17 @@ namespace Modumate {
 
 		For example, a 3x4x7 inch red clay brick would be an instance of BRICK with clay, red and 3x4x7 child presets attached
 		*/
+		class MODUMATE_API FCraftingPresetCollection;
+
 		class MODUMATE_API FCraftingTreeNodePreset
 		{
 		public:
 			struct FPinSpec
 			{
 				int32 PinSetIndex, PinSetPosition;
-				FName ListID,PresetID;
+				
+				//A pin has zero or more ReadOnly presets terminated by a single writeable preset
+				TArray<FName> ListIDs,PresetIDs;
 				EBIMValueScope Scope = EBIMValueScope::None;
 			};
 
@@ -391,10 +395,10 @@ namespace Modumate {
 			FString GetDisplayName() const;
 
 			ECraftingResult ToDataRecord(FCraftingPresetRecord &OutRecord) const;
-			ECraftingResult FromDataRecord(const FCraftingPresetRecord &Records);
+			ECraftingResult FromDataRecord(const FCraftingPresetCollection &PresetCollection,const FCraftingPresetRecord &Records);
 
 			ECraftingResult ToParameterSet(FModumateFunctionParameterSet &OutParameterSet) const;
-			ECraftingResult FromParameterSet(const FModumateFunctionParameterSet &ParameterSet);
+			ECraftingResult FromParameterSet(const FCraftingPresetCollection &PresetCollection, const FModumateFunctionParameterSet &ParameterSet);
 		};
 
 		class MODUMATE_API FCraftingPresetCollection
@@ -502,7 +506,7 @@ namespace Modumate {
 
 			ECraftingResult ResetInstances();
 
-			FCraftingTreeNodeInstanceSharedPtr CreateNodeInstanceFromPreset(const FCraftingPresetCollection &PresetCollection, int32 ParentID, const FName &PresetID);
+			FCraftingTreeNodeInstanceSharedPtr CreateNodeInstanceFromPreset(const FCraftingPresetCollection &PresetCollection, int32 ParentID, const FName &PresetID, bool CreateDefaultReadOnlyChildren);
 			ECraftingResult SetNewPresetForNode(const FCraftingPresetCollection &PresetCollection, int32 InstanceID, const FName &PresetID);
 			
 			ECraftingResult DestroyNodeInstance(const FCraftingTreeNodeInstanceSharedPtr &Instance, TArray<int32> &OutDestroyed);
