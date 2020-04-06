@@ -171,7 +171,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	{
 		for (ALineActor3D_CPP *lineActor : emPlayerHUD->All3DLineActors)
 		{
-			if (lineActor && !lineActor->bHidden)
+			if (lineActor && !lineActor->IsHidden())
 			{
 				FModumateLines lineData;
 				lineData.Point1 = lineActor->Point1;

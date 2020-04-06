@@ -394,7 +394,7 @@ namespace Modumate
 	{
 		//UE_LOG(LogCallTrace, Display, TEXT("AdjustHeightHandle::GetAttachmentPoint"));
 		// Draw Dimension Strings
-		if (Handle->GetStaticMeshComponent()->bVisible)
+		if (Handle->GetStaticMeshComponent()->IsVisible())
 		{
 			Controller = Cast<AEditModelPlayerController_CPP>(MOI->GetActor()->GetWorld()->GetFirstPlayerController());
 			bool bIsParentMoiSelected = false;

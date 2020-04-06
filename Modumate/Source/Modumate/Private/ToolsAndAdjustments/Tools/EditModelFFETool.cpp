@@ -38,7 +38,8 @@ namespace Modumate {
 
 		CurrentFFEAssembly = *obAsmPtr;
 		CursorCompoundMesh->MakeFromAssembly(CurrentFFEAssembly, FVector::OneVector, false, false);
-		TArray<UActorComponent*> smcs = CursorCompoundMesh->GetComponentsByClass(UStaticMeshComponent::StaticClass());
+		TArray<UStaticMeshComponent*> smcs;
+		CursorCompoundMesh->GetComponents(smcs);
 		for (auto curSmc : smcs)
 		{
 			Cast<UStaticMeshComponent>(curSmc)->SetRelativeLocation(FVector::ZeroVector);
@@ -88,7 +89,8 @@ namespace Modumate {
 				if (CursorCompoundMesh != nullptr)
 				{
 					CursorCompoundMesh->MakeFromAssembly(*assembly, FVector::OneVector, false, false);
-					TArray<UActorComponent*> smcs = CursorCompoundMesh->GetComponentsByClass(UStaticMeshComponent::StaticClass());
+					TArray<UStaticMeshComponent*> smcs;
+					CursorCompoundMesh->GetComponents(smcs);
 					for (auto curSmc : smcs)
 					{
 						Cast<UStaticMeshComponent>(curSmc)->SetRelativeLocation(FVector::ZeroVector);
