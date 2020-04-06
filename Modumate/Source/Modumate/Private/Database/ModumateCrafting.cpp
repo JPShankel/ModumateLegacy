@@ -96,7 +96,7 @@ namespace Modumate {
 
 				// Not the same kind of child? Dirty preset!
 				if (ensureAlways(InputPins[setIndex].AttachedObjects[setPosition] != nullptr) &&
-					InputPins[setIndex].AttachedObjects[setPosition].Pin()->PresetID != preset->ChildNodes[i].PresetID)
+					InputPins[setIndex].AttachedObjects[setPosition].Pin()->PresetID != preset->ChildNodes[i].PresetIDs[0])
 				{
 					return ECraftingNodePresetStatus::Dirty;
 				}
@@ -449,10 +449,13 @@ namespace Modumate {
 			InputPins = descriptor->InputPins;
 			for (auto &ip : preset->ChildNodes)
 			{
-				if (ensureAlways(ip.PinSetIndex < InputPins.Num()))
+				if (ensureAlways(ip.PinSetIndex < InputPins.Num() && ip.ListIDs.Num() != 0))
 				{
 					FCraftingTreeNodePinSet &pinSet = InputPins[ip.PinSetIndex];
-					pinSet.AssignedList = ip.ListID;
+
+					// The first designated list in a sequence is assigned to the top of the pinset, not the last
+					// This ensures that categories will be chosen from a list of categories, not the user preset at the end of the sequence
+					pinSet.AssignedList = ip.ListIDs[0];
 				}
 			}
 
@@ -463,12 +466,22 @@ namespace Modumate {
 					FCraftingTreeNodePinSet &pinSet = InputPins[ip.PinSetIndex];
 					if (ip.PinSetPosition == pinSet.AttachedObjects.Num())
 					{
-						FCraftingTreeNodeInstanceSharedPtr child = InstancePool.CreateNodeInstanceFromPreset(PresetCollection, DataRecord.InstanceID, ip.PresetID);
-						ensureAlways(pinSet.AttachedObjects.Contains(child));
+						// Create nodes for every member of the sequence
+						int32 sequenceID = DataRecord.InstanceID;
+						FCraftingTreeNodeInstanceSharedPtr child;
+						for (auto &sequencePreset : ip.PresetIDs)
+						{ 
+							// Note: only create default children (if necessary) for the last item in the list, the other items are children of each other
+							child = InstancePool.CreateNodeInstanceFromPreset(PresetCollection, sequenceID, sequencePreset, sequencePreset == ip.PresetIDs.Last());
+							if (ensureAlways(child.IsValid()))
+							{
+								sequenceID = child->GetInstanceID();
+							}
+						}					
 					}
 					else
 					{
-						InstancePool.SetNewPresetForNode(PresetCollection, pinSet.AttachedObjects[ip.PinSetPosition].Pin()->GetInstanceID(), ip.PresetID);
+						InstancePool.SetNewPresetForNode(PresetCollection, pinSet.AttachedObjects[ip.PinSetPosition].Pin()->GetInstanceID(), ip.PresetIDs.Last());
 					}
 				}
 			}
@@ -496,8 +509,44 @@ namespace Modumate {
 					pinSpec.PinSetIndex = pinSetIndex;
 					pinSpec.Scope = pinSet.Scope;
 					pinSpec.PinSetPosition = pinSetPosition;
-					pinSpec.PresetID = pinSet.AttachedObjects[pinSetPosition].Pin()->PresetID;
-					pinSpec.ListID = pinSet.AssignedList;
+
+					FCraftingTreeNodeInstanceSharedPtr attachedOb = pinSet.AttachedObjects[pinSetPosition].Pin();
+					FName assignedList = pinSet.AssignedList;
+
+					// If an attached object is ReadOnly, it is a category selector
+					// In this case, iterate down the child list of ReadOnlies and record them all in the pin sequence
+					while (attachedOb.IsValid())
+					{ 
+						pinSpec.PresetIDs.Add(attachedOb->PresetID);
+						pinSpec.ListIDs.Add(assignedList);
+						
+						const FCraftingTreeNodePreset *attachedPreset = Presets.Find(attachedOb->PresetID);
+						if (ensureAlways(attachedPreset != nullptr))
+						{
+							//We hit a writeable preset, so we're done
+							if (!attachedPreset->IsReadOnly)
+							{
+								attachedOb = nullptr;
+							}
+							else
+							{
+								// Otherwise ensure this ReadOnly preset has only one child and iterate
+								if (ensureAlways(attachedOb->InputPins.Num() == 1 && attachedOb->InputPins[0].AttachedObjects.Num() == 1))
+								{
+									assignedList = attachedOb->InputPins[0].AssignedList;
+									attachedOb = attachedOb->InputPins[0].AttachedObjects[0].Pin();
+								}
+								else
+								{
+									attachedOb = nullptr;
+								}
+							}
+						}
+						else
+						{
+							attachedOb = nullptr;
+						}
+					}
 				}
 			}
 			return ECraftingResult::Success;
@@ -521,7 +570,7 @@ namespace Modumate {
 			for (auto &presetRecord : Records)
 			{
 				FCraftingTreeNodePreset newPreset;
-				newPreset.FromDataRecord(presetRecord);
+				newPreset.FromDataRecord(*this,presetRecord);
 				Presets.Add(newPreset.PresetID, newPreset);
 				TArray<FName> &customPresetMapArray = CustomPresetsByNodeType.FindOrAdd(newPreset.NodeType);
 				customPresetMapArray.Add(newPreset.PresetID);
@@ -544,18 +593,31 @@ namespace Modumate {
 
 			for (auto &childNode : ChildNodes)
 			{
-				OutRecord.ChildNodePinSetIndices.Add(childNode.PinSetIndex);
-				OutRecord.ChildNodePinSetPositions.Add(childNode.PinSetPosition);
-				OutRecord.ChildNodePinSetListIDs.Add(childNode.ListID);
-				OutRecord.ChildNodePinSetPresetIDs.Add(childNode.PresetID);
+				if (ensureAlways(childNode.ListIDs.Num() == childNode.PresetIDs.Num()))
+				{ 
+					for (int32 i = 0; i < childNode.ListIDs.Num(); ++i)
+					{
+						OutRecord.ChildNodePinSetIndices.Add(childNode.PinSetIndex);
+						OutRecord.ChildNodePinSetPositions.Add(childNode.PinSetPosition);
+						OutRecord.ChildNodePinSetListIDs.Add(childNode.ListIDs[i]);
+						OutRecord.ChildNodePinSetPresetIDs.Add(childNode.PresetIDs[i]);
+					}
+				}
 			}
 
 			return ECraftingResult::Success;
 		}
 
-		ECraftingResult FCraftingTreeNodePreset::FromDataRecord(const FCraftingPresetRecord &Record)
+		ECraftingResult FCraftingTreeNodePreset::FromDataRecord(const FCraftingPresetCollection &PresetCollection,const FCraftingPresetRecord &Record)
 		{
 			NodeType = Record.NodeType;
+
+			const FCraftingTreeNodeType *nodeType = PresetCollection.NodeDescriptors.Find(NodeType);
+			if (!ensureAlways(nodeType != nullptr))
+			{
+				return ECraftingResult::Error;
+			}
+
 			PresetID = Record.PresetID;
 			IsReadOnly = Record.IsReadOnly;
 
@@ -569,19 +631,35 @@ namespace Modumate {
 				Properties.SetValue(kvp.Key, param);
 			}
 
+
 			int32 numChildren = Record.ChildNodePinSetIndices.Num();
 			if (ensureAlways(
 				numChildren == Record.ChildNodePinSetPositions.Num() &&
 				numChildren == Record.ChildNodePinSetListIDs.Num() &&
 				numChildren == Record.ChildNodePinSetPresetIDs.Num()))
 			{
+				FPinSpec *pinSpec = nullptr;
 				for (int32 i = 0; i < numChildren; ++i)
 				{
-					FPinSpec &pinSpec = ChildNodes.AddDefaulted_GetRef();
-					pinSpec.PinSetIndex = Record.ChildNodePinSetIndices[i];
-					pinSpec.PinSetPosition = Record.ChildNodePinSetPositions[i];
-					pinSpec.ListID = Record.ChildNodePinSetListIDs[i];
-					pinSpec.PresetID = Record.ChildNodePinSetPresetIDs[i];
+					// Pin specs hold sequences of child presets
+					// A sequence is a list of zero or more ReadOnly presets followed by a single writable terminating preset
+					// When the record contains the same set index/set position pair multiple times in a row, this defines a sequence
+					if (pinSpec == nullptr || 
+						pinSpec->PinSetIndex != Record.ChildNodePinSetIndices[i] || 
+						pinSpec->PinSetPosition != Record.ChildNodePinSetPositions[i])
+					{ 
+						pinSpec = &ChildNodes.AddDefaulted_GetRef();
+						pinSpec->PinSetIndex = Record.ChildNodePinSetIndices[i];
+						pinSpec->PinSetPosition = Record.ChildNodePinSetPositions[i];
+
+						if (ensureAlways(pinSpec->PinSetIndex < nodeType->InputPins.Num()))
+						{ 
+							pinSpec->Scope = nodeType->InputPins[pinSpec->PinSetIndex].Scope;
+						}
+					}
+
+					pinSpec->ListIDs.Add(Record.ChildNodePinSetListIDs[i]);
+					pinSpec->PresetIDs.Add(Record.ChildNodePinSetPresetIDs[i]);
 				}
 			}
 
@@ -617,7 +695,7 @@ namespace Modumate {
 			return ECraftingResult::Success;
 		}
 
-		ECraftingResult FCraftingTreeNodePreset::FromParameterSet(const FModumateFunctionParameterSet &ParameterSet)
+		ECraftingResult FCraftingTreeNodePreset::FromParameterSet(const FCraftingPresetCollection &PresetCollection, const FModumateFunctionParameterSet &ParameterSet)
 		{
 			FCraftingPresetRecord dataRecord;
 
@@ -644,7 +722,7 @@ namespace Modumate {
 			dataRecord.ChildNodePinSetListIDs = ParameterSet.GetValue(Modumate::Parameters::kChildNodePinSetListIDs);
 			dataRecord.ChildNodePinSetPresetIDs = ParameterSet.GetValue(Modumate::Parameters::kChildNodePinSetPresetIDs);
 
-			return FromDataRecord(dataRecord);
+			return FromDataRecord(PresetCollection,dataRecord);
 		}
 
 		/*
@@ -665,10 +743,13 @@ namespace Modumate {
 				Only recurse if we haven't processed this ID yet
 				Even if the same preset appears multiple times in a tree, its children will always be the same
 				*/
-				if (!OutPresets.Contains(childNode.PresetID))
-				{
-					OutPresets.Add(childNode.PresetID);
-					GetDependentPresets(childNode.PresetID, OutPresets);
+				for (auto &presetID : childNode.PresetIDs)
+				{ 
+					if (!OutPresets.Contains(presetID))
+					{
+						OutPresets.Add(presetID);
+						GetDependentPresets(presetID, OutPresets);
+					}
 				}
 			}
 			return ECraftingResult::Success;
@@ -710,7 +791,7 @@ namespace Modumate {
 
 		FCraftingTreeNodeInstanceSharedPtr FCraftingTreeNodeInstancePool::CreateNodeInstanceFromDataRecord(const BIM::FCraftingPresetCollection &PresetCollection,const FCustomAssemblyCraftingNodeRecord &DataRecord)
 		{
-			FCraftingTreeNodeInstanceSharedPtr instance = InstancePool.Add_GetRef(MakeShareable(new FCraftingTreeNodeInstance(DataRecord.InstanceID)));
+			FCraftingTreeNodeInstanceSharedPtr &instance = InstancePool.Add_GetRef(MakeShareable(new FCraftingTreeNodeInstance(DataRecord.InstanceID)));
 
 			InstanceMap.Add(DataRecord.InstanceID, instance);
 			NextInstanceID = FMath::Max(NextInstanceID+1,DataRecord.InstanceID + 1);
@@ -751,7 +832,7 @@ namespace Modumate {
 			return inst->FromDataRecord(*this,PresetCollection,dataRecord);
 		}
 
-		FCraftingTreeNodeInstanceSharedPtr FCraftingTreeNodeInstancePool::CreateNodeInstanceFromPreset(const FCraftingPresetCollection &PresetCollection,int32 ParentID, const FName &PresetID)
+		FCraftingTreeNodeInstanceSharedPtr FCraftingTreeNodeInstancePool::CreateNodeInstanceFromPreset(const FCraftingPresetCollection &PresetCollection,int32 ParentID, const FName &PresetID, bool CreateDefaultReadOnlyChildren)
 		{
 			FCraftingTreeNodeInstanceSharedPtr parent = InstanceFromID(ParentID);
 			if (parent != nullptr && !parent->CanCreateChildOfType(PresetCollection, PresetID))
@@ -771,7 +852,7 @@ namespace Modumate {
 				return nullptr;
 			}
 
-			FCraftingTreeNodeInstanceSharedPtr instance = InstancePool.Add_GetRef(MakeShareable(new FCraftingTreeNodeInstance(NextInstanceID)));
+			FCraftingTreeNodeInstanceSharedPtr  &instance = InstancePool.Add_GetRef(MakeShareable(new FCraftingTreeNodeInstance(NextInstanceID)));
 			InstanceMap.Add(NextInstanceID, instance);
 			++NextInstanceID;
 
@@ -790,13 +871,43 @@ namespace Modumate {
 			{
 				if (ensureAlways(child.PinSetIndex < instance->InputPins.Num()))
 				{
-					instance->InputPins[child.PinSetIndex].AssignedList = child.ListID;
+					// The first item in the preset sequence is the one directly attached to the parent, so its list is the assigned list
+					// Subsequent category children are parented to each other and each carries the list of their immediate child
+					instance->InputPins[child.PinSetIndex].AssignedList = child.ListIDs[0];
 				}
+			}
+
+			// For a new widget edit, we want to go ahead and load the default children for ReadOnly nodes (specified in the script)
+			// For editing or loading an existing preset, we want to rely on the children specified in the pin sequence and not the default settings for the preset
+			if (preset->IsReadOnly && !CreateDefaultReadOnlyChildren)
+			{
+				return instance;
 			}
 
 			for (auto &child : preset->ChildNodes)
 			{
-				CreateNodeInstanceFromPreset(PresetCollection, instance->GetInstanceID(), child.PresetID);
+				// Only the last preset in the child list is presettable, the others are category selectors
+				FCraftingTreeNodeInstanceSharedPtr sequenceParent = instance;
+				for (auto &presetID : child.PresetIDs)
+				{
+					sequenceParent = CreateNodeInstanceFromPreset(PresetCollection, sequenceParent->GetInstanceID(), presetID, false);
+				}
+
+				// If the sequence ends with a ReadOnly preset (which will be the case for presets defined in the DDL script),
+				// then we march down the default child nodes (also defined in the DDL script) until we get to the end
+				// In serialized presets (saved by the user), these values will be present in the sequence looped through above
+				preset = PresetCollection.Presets.Find(sequenceParent->PresetID);
+				while (preset != nullptr && preset->IsReadOnly)
+				{
+					if (ensureAlways(preset->ChildNodes.Num()==1) && ensureAlways(preset->ChildNodes[0].PresetIDs.Num()==1))
+					{
+						sequenceParent = CreateNodeInstanceFromPreset(PresetCollection, sequenceParent->GetInstanceID(), preset->ChildNodes[0].PresetIDs[0],false);
+						if (ensureAlways(sequenceParent.IsValid()))
+						{
+							preset = PresetCollection.Presets.Find(sequenceParent->PresetID);
+						}
+					}
+				}
 			}
 
 			ValidatePool();
@@ -1131,8 +1242,8 @@ namespace Modumate {
 						FCraftingTreeNodePreset::FPinSpec newSpec;
 						newSpec.PinSetIndex = i;
 						newSpec.PinSetPosition = 0;
-						newSpec.PresetID = listValue;
-						newSpec.ListID = listID;
+						newSpec.PresetIDs.Add(listValue);
+						newSpec.ListIDs.Add(listID);
 						newSpec.Scope = nodeType->InputPins[i].Scope;
 						for (auto &pin : currentPreset.ChildNodes)
 						{
@@ -1583,7 +1694,7 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::CreateNewNodeInstanceFromPre
 		return ECraftingResult::Error;
 	}
 
-	BIM::FCraftingTreeNodeInstanceSharedPtr inst = NodeInstances.CreateNodeInstanceFromPreset(PresetCollection, ParentID, PresetID);
+	BIM::FCraftingTreeNodeInstanceSharedPtr inst = NodeInstances.CreateNodeInstanceFromPreset(PresetCollection, ParentID, PresetID, true);
 
 	if (ensureAlways(inst.IsValid()))
 	{

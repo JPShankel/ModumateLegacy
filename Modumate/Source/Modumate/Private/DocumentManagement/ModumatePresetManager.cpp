@@ -1835,7 +1835,8 @@ Preset - get, add, remove, update
 
 				for (auto &cn : preset->ChildNodes)
 				{
-					presetStack.Push(cn.PresetID);
+					// Only the last preset in a sequence contains pertinent data...the others are just category selectors
+					presetStack.Push(cn.PresetIDs.Last());
 					scopeStack.Push(cn.Scope != BIM::EScope::None ? cn.Scope : pinScope);
 				}
 			}
@@ -1856,7 +1857,7 @@ Preset - get, add, remove, update
 		Modumate::ModumateObjectDatabase &objectDB = *mode->ObjectDatabase;
 
 		BIM::FCraftingTreeNodePreset preset;
-		ECraftingResult result = preset.FromParameterSet(ParameterSet);
+		ECraftingResult result = preset.FromParameterSet(CraftingNodePresets,ParameterSet);
 
 		if (result != ECraftingResult::Success)
 		{

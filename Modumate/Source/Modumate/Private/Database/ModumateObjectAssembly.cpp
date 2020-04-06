@@ -1105,26 +1105,26 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 	layerMaker.CodeName = OutMOA.GetProperty(BIM::Parameters::Name);
 
 	FString diameterString;
-	FModumateFormattedDimension widthDim, depthDim;
+	FModumateFormattedDimension xDim, yDim;
 	if (OutMOA.Properties.TryGetProperty(BIM::EScope::Layer, BIM::Parameters::Diameter, diameterString))
 	{
-		widthDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Layer, BIM::Parameters::Diameter));
-		depthDim = widthDim;
+		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Layer, BIM::Parameters::Diameter));
+		yDim = xDim;
 	}
 	else
 	{
-		widthDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Layer, BIM::Parameters::Width));
-		depthDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Layer, BIM::Parameters::Depth));
+		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Layer, BIM::Parameters::XExtents));
+		yDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Layer, BIM::Parameters::YExtents));
 	}
 
-	if (ensureAlways(widthDim.Format != EDimensionFormat::Error))
+	if (ensureAlways(xDim.Format != EDimensionFormat::Error))
 	{
-		layerMaker.Dimensions.Add(BIM::Parameters::Width, widthDim);
+		layerMaker.Dimensions.Add(BIM::Parameters::XExtents, xDim);
 	}
 
-	if (ensureAlways(depthDim.Format != EDimensionFormat::Error))
+	if (ensureAlways(yDim.Format != EDimensionFormat::Error))
 	{
-		layerMaker.Dimensions.Add(BIM::Parameters::Depth, depthDim);
+		layerMaker.Dimensions.Add(BIM::Parameters::YExtents, yDim);
 	}
 
 	layerMaker.FormatEnum = ELayerFormat::None;
@@ -1144,7 +1144,7 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 	OutMOA.SetProperty(BIM::Parameters::Name, OutMOA.Properties.GetProperty(BIM::EScope::Preset, BIM::Parameters::Name));
 
 	// TODO: re-orient column meshes so width is along X instead of depth
-	FVector profileSize(depthDim.Centimeters, widthDim.Centimeters, 1);
+	FVector profileSize(xDim.Centimeters, yDim.Centimeters, 1);
 
 	if (ensureAlways(layer.SimpleMeshes.Num() > 0 && layer.SimpleMeshes[0].Asset.Get()->Polygons.Num() > 0))
 	{
