@@ -581,6 +581,9 @@ struct MODUMATE_API FCraftingNode
 	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
 	EConfiguratorNodeIconType NodeIconType;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
+	int32 EmbeddedParentInstanceID;
+
 	static FCraftingNode FromPreset(const Modumate::BIM::FCraftingTreeNodePreset &Preset);
 };
 
