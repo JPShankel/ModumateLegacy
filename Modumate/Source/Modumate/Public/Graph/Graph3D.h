@@ -13,7 +13,7 @@
 namespace Modumate
 {
 	class FGraph;
-	struct FGraph3DDelta;
+	class FGraph3DDelta;
 
 	class MODUMATE_API FGraph3D
 	{

@@ -1,4 +1,5 @@
 #include "Graph3DDelta.h"
+#include "ModumateDocument.h"
 
 namespace Modumate
 {
@@ -45,41 +46,6 @@ namespace Modumate
 		if (ParentIDUpdates.Num() > 0) return false;
 
 		return true;
-	}
-
-	FGraph3DDelta FGraph3DDelta::MakeInverse() const
-	{
-		FGraph3DDelta inverse;
-
-		for (const auto &kvp : VertexMovements)
-		{
-			int32 vertexID = kvp.Key;
-			const TPair<FVector, FVector> &vertexMovement = kvp.Value;
-
-			inverse.VertexMovements.Add(vertexID, TPair<FVector, FVector>(vertexMovement.Value, vertexMovement.Key));
-		}
-
-		inverse.VertexAdditions = VertexDeletions;
-		inverse.VertexDeletions = VertexAdditions;
-
-		inverse.EdgeAdditions = EdgeDeletions;
-		inverse.EdgeDeletions = EdgeAdditions;
-
-		inverse.FaceVertexAdditions = FaceVertexRemovals;
-		inverse.FaceVertexRemovals = FaceVertexAdditions;
-
-		inverse.FaceAdditions = FaceDeletions;
-		inverse.FaceDeletions = FaceAdditions;
-
-		for (const auto &kvp : ParentIDUpdates)
-		{
-			int32 parentID = kvp.Key;
-			const FGraph3DHostedObjectDelta &idUpdate = kvp.Value;
-
-			inverse.ParentIDUpdates.Add(parentID, FGraph3DHostedObjectDelta(idUpdate.PreviousHostedObjID, idUpdate.NextParentID, idUpdate.PreviousParentID));
-		}
-
-		return inverse;
 	}
 
 	int32 FGraph3DDelta::FindAddedVertex(FVector position)
@@ -145,5 +111,46 @@ namespace Modumate
 		{
 			OutAddedEdgeIDs.Remove(kvp.Key);
 		}
+	}
+
+	TSharedPtr<FDelta> FGraph3DDelta::MakeInverse() const
+	{
+		TSharedPtr<FGraph3DDelta> inverse = MakeShareable(new FGraph3DDelta());
+
+		for (const auto &kvp : VertexMovements)
+		{
+			int32 vertexID = kvp.Key;
+			const TPair<FVector, FVector> &vertexMovement = kvp.Value;
+
+			inverse->VertexMovements.Add(vertexID, TPair<FVector, FVector>(vertexMovement.Value, vertexMovement.Key));
+		}
+
+		inverse->VertexAdditions = VertexDeletions;
+		inverse->VertexDeletions = VertexAdditions;
+
+		inverse->EdgeAdditions = EdgeDeletions;
+		inverse->EdgeDeletions = EdgeAdditions;
+
+		inverse->FaceVertexAdditions = FaceVertexRemovals;
+		inverse->FaceVertexRemovals = FaceVertexAdditions;
+
+		inverse->FaceAdditions = FaceDeletions;
+		inverse->FaceDeletions = FaceAdditions;
+
+		for (const auto &kvp : ParentIDUpdates)
+		{
+			int32 parentID = kvp.Key;
+			const FGraph3DHostedObjectDelta &idUpdate = kvp.Value;
+
+			inverse->ParentIDUpdates.Add(parentID, FGraph3DHostedObjectDelta(idUpdate.PreviousHostedObjID, idUpdate.NextParentID, idUpdate.PreviousParentID));
+		}
+
+		return inverse;
+	}
+
+	bool FGraph3DDelta::ApplyTo(FModumateDocument *doc, UWorld *world) const
+	{
+		doc->ApplyGraph3DDelta(*this, world);
+		return true;
 	}
 }

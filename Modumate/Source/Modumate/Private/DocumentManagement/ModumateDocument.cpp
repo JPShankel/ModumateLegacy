@@ -22,6 +22,7 @@
 #include "DraftingManager.h"
 #include "EditModelGameMode_CPP.h"
 #include "EditModelGameState_CPP.h"
+#include "ModumateDelta.h"
 #include "ModumateDraftingView.h"
 #include "ModumateMitering.h"
 #include "EditModelPlayerState_CPP.h"
@@ -139,9 +140,13 @@ void FModumateDocument::EndUndoRedoMacro()
 		section.Add(UndoBuffer[i]);
 	}
 
-	UndoBuffer.SetNum(start, true);
-
 	UndoRedo *ur = new UndoRedo();
+	for (auto s : section)
+	{
+		ur->Deltas.Append(s->Deltas);
+	}
+
+	UndoBuffer.SetNum(start, true);
 
 	ur->Redo = [section]()
 	{
@@ -1452,43 +1457,36 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 	}
 }
 
-bool FModumateDocument::ApplyGraph3DDeltas(TArray <FGraph3DDelta> &Deltas, UWorld *World, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs)
+bool FModumateDocument::ApplyDeltas(TArray<TSharedPtr<FDelta>> &Deltas, UWorld *World)
 {
-	if (!FinalizeGraphDeltas(Deltas, OutAddedFaceIDs, OutAddedVertexIDs, OutAddedEdgeIDs))
-	{
-		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
-		return false;
-	}
-
-	// Surround delta operations with a macro, since it will do multiple undo-redo actions
 	BeginUndoRedoMacro();
 
-	// Step 1 - apply the deltas themselves
 	UndoRedo *ur = new UndoRedo();
 	ClearRedoBuffer();
 
-	ur->Redo = [this, ur, World, Deltas]()
-	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MoveMetaVertices::Redo"));
+	ur->Deltas = Deltas;
 
-		for (auto& graphDelta : Deltas)
+	ur->Redo = [this, ur, World]()
+	{
+		for (auto& delta : ur->Deltas)
 		{
-			ApplyGraph3DDelta(graphDelta, World);
+			delta->ApplyTo(this, World);
 		}
 
 		PostApplyDelta(World);
 
-		ur->Undo = [this, World, Deltas]()
+		ur->Undo = [this, ur, World]()
 		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MoveMetaVertices::Undo"));
-
-			auto inverseDeltas = Deltas;
+			auto inverseDeltas = ur->Deltas;
 			Algo::Reverse(inverseDeltas);
 
-			for (auto& graphDelta : inverseDeltas)
+			for (auto& delta : inverseDeltas)
 			{
-				FGraph3DDelta inverseDelta = graphDelta.MakeInverse();
-				ApplyGraph3DDelta(inverseDelta, World);
+				TSharedPtr<FDelta> inverseDelta = delta->MakeInverse();
+				if (inverseDelta != nullptr)
+				{
+					inverseDelta->ApplyTo(this, World);
+				}
 			}
 
 			PostApplyDelta(World);
@@ -1498,7 +1496,6 @@ bool FModumateDocument::ApplyGraph3DDeltas(TArray <FGraph3DDelta> &Deltas, UWorl
 	UndoBuffer.Add(ur);
 	ur->Redo();
 
-	// Step 2 - update room analysis, which can potentially create, update, and/or delete room objects
 	UpdateRoomAnalysis(World);
 	EndUndoRedoMacro();
 
@@ -1765,6 +1762,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &ob
 
 		if (bApplyDelta)
 		{
+			// TODO: fix
 			ApplyGraph3DDelta(graphDelta, world);
 			PostApplyDelta(world);
 		}
@@ -1829,8 +1827,8 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &ob
 
 			if (bApplyDelta)
 			{
-				FGraph3DDelta inverseDelta = graphDelta.MakeInverse();
-				ApplyGraph3DDelta(inverseDelta, world);
+				auto inverseDelta = graphDelta.MakeInverse();
+				inverseDelta->ApplyTo(this, world);
 				PostApplyDelta(world);
 			}
 
@@ -2246,7 +2244,19 @@ bool FModumateDocument::MoveMetaVertices(UWorld *World, const TArray<int32> &Ver
 	}
 
 	TArray<int32> faceIDs, vertexIDs, edgeIDs;
-	return ApplyGraph3DDeltas(deltas, World, faceIDs, vertexIDs, edgeIDs);
+	if (!FinalizeGraphDeltas(deltas, faceIDs, vertexIDs, edgeIDs))
+	{
+		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		return false;
+	}
+
+	TArray<TSharedPtr<FDelta>> deltaptrs;
+	for (auto& delta : deltas)
+	{
+		deltaptrs.Add(MakeShareable<FDelta>(new FGraph3DDelta(delta)));
+	}
+
+	return ApplyDeltas(deltaptrs, World);
 }
 
 bool FModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &ObjectIDs)
@@ -2270,7 +2280,18 @@ bool FModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &Obje
 	}
 
 	TArray<int32> faceIDs, vertexIDs, edgeIDs;
-	return ApplyGraph3DDeltas(graphDeltas, World, faceIDs, vertexIDs, edgeIDs);
+	if (!FinalizeGraphDeltas(graphDeltas, faceIDs, vertexIDs, edgeIDs))
+	{
+		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		return false;
+	}
+
+	TArray<TSharedPtr<FDelta>> deltaptrs;
+	for (auto& delta : graphDeltas)
+	{
+		deltaptrs.Add(MakeShareable<FDelta>(new FGraph3DDelta(delta)));
+	}
+	return ApplyDeltas(deltaptrs, World);
 }
 
 int32 FModumateDocument::MakeRailSection(UWorld *world, const TArray<int32> &ids, const TArray<FVector> &points, int32 parentID)
@@ -2508,7 +2529,18 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 	}
 
 	TArray<int32> faceIDs, vertexIDs, edgeIDs;
-	bool bSuccess = ApplyGraph3DDeltas(deltas, world, faceIDs, vertexIDs, edgeIDs);
+	if (!FinalizeGraphDeltas(deltas, faceIDs, vertexIDs, edgeIDs))
+	{
+		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		return false;
+	}
+
+	TArray<TSharedPtr<FDelta>> deltaptrs;
+	for (auto& delta : deltas)
+	{
+		deltaptrs.Add(MakeShareable<FDelta>(new FGraph3DDelta(delta)));
+	}
+	bool bSuccess = ApplyDeltas(deltaptrs, world);
 
 	switch (graphObjectType)
 	{

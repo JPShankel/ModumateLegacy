@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "ModumateTypes.h"
 #include "ModumateGraph3DTypes.h"
+#include "ModumateDelta.h"
 
 namespace Modumate
 {
@@ -34,8 +35,9 @@ namespace Modumate
 	};
 
 	// A struct that completely describes a change to the 3D graph
-	struct FGraph3DDelta
+	class FGraph3DDelta : public FDelta
 	{
+	public:
 		TMap<int32, TPair<FVector, FVector>> VertexMovements;
 		TMap<int32, FVector> VertexAdditions;
 		TMap<int32, FVector> VertexDeletions;
@@ -55,11 +57,12 @@ namespace Modumate
 		void Reset();
 		bool IsEmpty();
 
-		FGraph3DDelta MakeInverse() const;
-
 		int32 FindAddedVertex(FVector position);
 		int32 FindAddedEdge(FVertexPair edge);
 
 		void AggregateAddedObjects(TArray<int32> OutAddedFaceIDs, TArray<int32> OutAddedVertexIDs, TArray<int32> OutAddedEdgeIDs);
+
+		virtual TSharedPtr<FDelta> MakeInverse() const override;
+		virtual bool ApplyTo(FModumateDocument *doc, UWorld *world) const override;
 	};
 }

@@ -25,6 +25,7 @@ namespace Modumate
 {
 	class FModumateObjectInstance;
 	class FModumateDraftingView;
+	class FDelta;
 
 	class MODUMATE_API FModumateDocument
 	{
@@ -32,7 +33,11 @@ namespace Modumate
 
 		struct UndoRedo
 		{
+			// TODO: if Deltas are universally used and consistently applied, Undo and Redo functions
+			// should not be needed anymore
 			std::function<void()> Undo, Redo;
+
+			TArray<TSharedPtr<FDelta>> Deltas;
 		};
 
 		TArray<UndoRedo*> UndoBuffer, RedoBuffer;
@@ -200,9 +205,12 @@ namespace Modumate
 		void LoadVolumeGraph(const FGraph3DRecord &InGraph3DRecord);
 		void SaveVolumeGraph(FGraph3DRecord &OutGraph3DRecord) const;
 
+	public:
 		void ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World);
-		bool ApplyGraph3DDeltas(TArray <FGraph3DDelta> &Deltas, UWorld *World, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs);
+		bool ApplyDeltas(TArray<TSharedPtr<FDelta>> &Deltas, UWorld *World);
 		bool UpdateGraphObjects(UWorld *World);
+
+	private:
 		bool FinalizeGraphDeltas(TArray <FGraph3DDelta> &Deltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs);
 		bool PostApplyDelta(UWorld *World);
 

@@ -2,6 +2,7 @@
 #include "ModumateGraph.h"
 #include "Graph3D.h"
 #include "Graph3DDelta.h"
+#include "ModumateDelta.h"
 
 namespace Modumate
 {
@@ -143,7 +144,10 @@ namespace Modumate
 		bool bValidDelta = true;
 		for (int32 deltaIdx = Deltas.Num() - 1; deltaIdx >= 0; deltaIdx--)
 		{
-			bValidDelta = Graph.ApplyDelta(Deltas[deltaIdx].MakeInverse());
+			// this isn't great, but it is preferable to the unit test knowing about Document or World, 
+			// which are both required by FDelta::ApplyTo
+			TSharedPtr<FGraph3DDelta> delta = StaticCastSharedPtr<FGraph3DDelta>(Deltas[deltaIdx].MakeInverse());
+			bValidDelta = Graph.ApplyDelta(*delta);
 		}
 		FGraph3D::CloneFromGraph(TempGraph, Graph);
 
