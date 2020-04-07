@@ -791,7 +791,7 @@ namespace Modumate {
 
 		FCraftingTreeNodeInstanceSharedPtr FCraftingTreeNodeInstancePool::CreateNodeInstanceFromDataRecord(const BIM::FCraftingPresetCollection &PresetCollection,const FCustomAssemblyCraftingNodeRecord &DataRecord)
 		{
-			FCraftingTreeNodeInstanceSharedPtr &instance = InstancePool.Add_GetRef(MakeShareable(new FCraftingTreeNodeInstance(DataRecord.InstanceID)));
+			FCraftingTreeNodeInstanceSharedPtr instance = InstancePool.Add_GetRef(MakeShareable(new FCraftingTreeNodeInstance(DataRecord.InstanceID)));
 
 			InstanceMap.Add(DataRecord.InstanceID, instance);
 			NextInstanceID = FMath::Max(NextInstanceID+1,DataRecord.InstanceID + 1);
@@ -852,7 +852,7 @@ namespace Modumate {
 				return nullptr;
 			}
 
-			FCraftingTreeNodeInstanceSharedPtr  &instance = InstancePool.Add_GetRef(MakeShareable(new FCraftingTreeNodeInstance(NextInstanceID)));
+			FCraftingTreeNodeInstanceSharedPtr instance = InstancePool.Add_GetRef(MakeShareable(new FCraftingTreeNodeInstance(NextInstanceID)));
 			InstanceMap.Add(NextInstanceID, instance);
 			++NextInstanceID;
 
