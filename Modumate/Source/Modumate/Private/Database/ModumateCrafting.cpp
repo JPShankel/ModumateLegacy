@@ -1716,8 +1716,8 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::CraftingNodeFromInstance(
 	OutNode.CanAddToProject = false;
 	OutNode.PresetStatus = Instance->GetPresetStatus(PresetCollection);
 
-	//TODO: Return parent instance for now, but it should return which node should be embedded to
-	OutNode.EmbeddedParentInstanceID = OutNode.ParentInstanceID;
+	//TODO: Provide an array of ReadOnly nodes that can be embedded into this node
+	//OutNode.EmbeddedInstanceIDs = Array of embedded instances;
 	return ECraftingResult::Success;
 }
 
