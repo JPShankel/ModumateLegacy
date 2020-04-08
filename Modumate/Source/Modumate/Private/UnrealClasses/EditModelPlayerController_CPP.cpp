@@ -148,6 +148,7 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	EMPlayerState->ModeToTool.Add(EToolMode::VE_JOIN, MakeJoinTool(this));
 	EMPlayerState->ModeToTool.Add(EToolMode::VE_CREATESIMILAR, MakeCreateSimilarTool(this));
 	EMPlayerState->ModeToTool.Add(EToolMode::VE_STRUCTURELINE, MakeStructureLineTool(this));
+	EMPlayerState->ModeToTool.Add(EToolMode::VE_DRAWING, MakeDrawingTool(this));
 
 	for (auto &mtt : EMPlayerState->ModeToTool)
 	{

@@ -64,4 +64,5 @@ namespace Modumate {
 	IModumateEditorTool *MakeJoinTool(AEditModelPlayerController_CPP *controller);
 	IModumateEditorTool *MakeCreateSimilarTool(AEditModelPlayerController_CPP *controller);
 	IModumateEditorTool *MakeStructureLineTool(AEditModelPlayerController_CPP *controller);
+	IModumateEditorTool *MakeDrawingTool(AEditModelPlayerController_CPP *controller);
 }

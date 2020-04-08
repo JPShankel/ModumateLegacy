@@ -38,6 +38,7 @@ EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 	case EToolMode::VE_SCOPEBOX: return EObjectType::OTScopeBox;
 	case EToolMode::VE_JOIN: return EObjectType::OTUnknown;
 	case EToolMode::VE_STRUCTURELINE: return EObjectType::OTStructureLine;
+	case EToolMode::VE_DRAWING: return EObjectType::OTDrawing;
 	}
 	return EObjectType::OTUnknown;
 }
@@ -69,6 +70,7 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTCutPlane: return EToolMode::VE_CUTPLANE;
 	case EObjectType::OTScopeBox: return EToolMode::VE_SCOPEBOX;
 	case EObjectType::OTStructureLine: return EToolMode::VE_STRUCTURELINE;
+	case EObjectType::OTDrawing: return EToolMode::VE_DRAWING;
 	case EObjectType::OTUnknown: return EToolMode::VE_NONE;
 	};
 	return EToolMode::VE_NONE;
@@ -124,6 +126,8 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTScopeBoxes", "Scope Boxes") : LOCTEXT("OTScopeBox", "Scope Box");
 	case EObjectType::OTStructureLine:
 		return bPlural ? LOCTEXT("OTStructureLines", "Beams & Columns") : LOCTEXT("OTStructureLine", "Beam/Column");
+	case EObjectType::OTDrawing:
+		return bPlural ? LOCTEXT("OTDrawings", "Drawings") : LOCTEXT("OTDrawing", "Drawing");
 	case EObjectType::OTUnknown:
 	default:
 		return bPlural ? LOCTEXT("OTUnknowns", "Unknowns") : LOCTEXT("OTUnknown", "Unknown");

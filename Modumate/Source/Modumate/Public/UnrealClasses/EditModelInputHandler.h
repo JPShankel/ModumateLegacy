@@ -75,6 +75,7 @@ enum class EInputCommand : uint8
 	ActivateTool_Join,
 	ActivateTool_CreateSimilar,
 	ActivateTool_StructureLine,
+	ActivateTool_Drawing,
 	ActivateTool_END,
 
 	// Tool-related commands

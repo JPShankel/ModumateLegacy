@@ -151,6 +151,7 @@ enum class EToolMode : uint8
 	VE_JOIN,
 	VE_CREATESIMILAR,
 	VE_STRUCTURELINE,
+	VE_DRAWING
 };
 
 UENUM(BlueprintType)
@@ -180,6 +181,7 @@ enum class EObjectType : uint8
 	OTCutPlane,
 	OTScopeBox,
 	OTStructureLine,
+	OTDrawing,
 	OTUnknown
 };
 
