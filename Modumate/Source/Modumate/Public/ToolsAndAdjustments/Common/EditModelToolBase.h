@@ -2,55 +2,56 @@
 
 #pragma once
 
-#include "IModumateEditorTool.h"
+#include "EditModelToolInterface.h"
 #include "CoreMinimal.h"
 #include "Engine/Engine.h"
 #include "ModumateShoppingItem.h"
+
+#include "EditModelToolBase.generated.h"
 
 /**
  *
  */
 
-class AEditModelPlayerController_CPP;
-
-namespace Modumate
+UCLASS()
+class MODUMATE_API UEditModelToolBase : public UObject, public IEditModelToolInterface
 {
+	GENERATED_BODY()
 
-	class MODUMATE_API FEditModelToolBase : public IModumateEditorTool
-	{
-	protected:
-		bool InUse;
-		bool Active;
-		FShoppingItem Assembly;
-		TWeakObjectPtr<AEditModelPlayerController_CPP> Controller;
-		EAxisConstraint AxisConstraint;
-		EToolCreateObjectMode CreateObjectMode;
+protected:
+	bool InUse;
+	bool Active;
+	FShoppingItem Assembly;
 
-	public:
+	UPROPERTY()
+	class AEditModelPlayerController_CPP* Controller;
 
-		FEditModelToolBase(AEditModelPlayerController_CPP *pc);
+	EAxisConstraint AxisConstraint;
+	EToolCreateObjectMode CreateObjectMode;
 
-		virtual ~FEditModelToolBase() {}
+public:
 
-		virtual bool Activate() override;
-		virtual bool HandleInputNumber(double n) override;
-		virtual bool Deactivate() override;
-		virtual bool IsInUse() const override { return InUse; }
-		virtual bool IsActive() const override { return Active; }
-		virtual bool BeginUse() override;
-		virtual bool EnterNextStage() override;
-		virtual bool ScrollToolOption(int32 dir) override;
-		virtual bool FrameUpdate() override;
-		virtual bool EndUse() override;
-		virtual bool AbortUse() override;
-		virtual bool HandleSpacebar() override { return true; }
-		virtual bool HandleControlKey(bool pressed) override { return true; }
-		virtual bool HandleMouseUp() override { return true; }
-		virtual bool ShowSnapCursorAffordances() { return true; }
+	UEditModelToolBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-		virtual const FShoppingItem &GetAssembly() const override { return Assembly; }
-		virtual void SetAssembly(const FShoppingItem &key) override { Assembly = key; }
-		virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override { AxisConstraint = InAxisConstraint; }
-		virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override { CreateObjectMode = InCreateObjectMode; }
-	};
-}
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_NONE; }
+	virtual bool Activate() override;
+	virtual bool HandleInputNumber(double n) override;
+	virtual bool Deactivate() override;
+	virtual bool IsInUse() const override { return InUse; }
+	virtual bool IsActive() const override { return Active; }
+	virtual bool BeginUse() override;
+	virtual bool EnterNextStage() override;
+	virtual bool ScrollToolOption(int32 dir) override;
+	virtual bool FrameUpdate() override;
+	virtual bool EndUse() override;
+	virtual bool AbortUse() override;
+	virtual bool HandleSpacebar() override { return true; }
+	virtual bool HandleControlKey(bool pressed) override { return true; }
+	virtual bool HandleMouseUp() override { return true; }
+	virtual bool ShowSnapCursorAffordances() { return true; }
+
+	virtual const FShoppingItem &GetAssembly() const override { return Assembly; }
+	virtual void SetAssembly(const FShoppingItem &key) override { Assembly = key; }
+	virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override { AxisConstraint = InAxisConstraint; }
+	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override { CreateObjectMode = InCreateObjectMode; }
+};

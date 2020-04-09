@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "EditModelPlayerState_CPP.h"
+#include "EditModelToolInterface.h"
 #include "ModumateConsoleCommand.h"
 #include "ModumateSnappedCursor.h"
 #include "ModumateObjectEnums.h"
@@ -16,6 +16,7 @@
  *
  */
 
+class AAdjustmentHandleActor_CPP;
 class AEditModelPlayerState_CPP;
 class UDraftingPreviewWidget_CPP;
 class UEditModelInputAutomation;
@@ -56,10 +57,6 @@ private:
 	Modumate::FModumateDocument *Document;
 	Modumate::FModumateSnappingView *SnappingView;
 
-	FTransform ArrayableCommandTransform;
-	TArray<int32> ArrayableCommandInput;
-	TArray<int32> ArrayableCommandOutput;
-
 	TSet<int32> SnappingIDsToIgnore;
 	TArray<AActor*> SnappingActorsToIgnore;
 
@@ -85,8 +82,9 @@ private:
 	bool FindBestMousePointHit(const TArray<FVector> &Points, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, float &OutBestRayDist) const;
 	bool FindBestMouseLineHit(const TArray<TPair<FVector, FVector>> &Lines, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, FVector &OutBestIntersection, float &OutBestRayDist) const;
 
+	FMouseWorldHitType UpdateHandleHit(const FVector &mouseLoc, const FVector &mouseDir);
 	FMouseWorldHitType GetShiftConstrainedMouseHit(const FMouseWorldHitType &baseHit) const;
-	FMouseWorldHitType GetObjectMouseHit(const FVector &mouseLoc, const FVector &mouseDir, bool bCheckHandles, bool bCheckSnapping) const;
+	FMouseWorldHitType GetObjectMouseHit(const FVector &mouseLoc, const FVector &mouseDir, bool bCheckSnapping) const;
 	FMouseWorldHitType GetSketchPlaneMouseHit(const FVector &mouseLoc, const FVector &mouseDir) const;
 	FMouseWorldHitType GetUserSnapPointMouseHit(const FVector &mouseLoc, const FVector &mouseDir) const;
 
@@ -107,6 +105,17 @@ private:
 
 protected:
 	virtual void SetupInputComponent() override;
+
+	void CreateTools();
+
+	template<class T>
+	TScriptInterface<IEditModelToolInterface> CreateTool()
+	{
+		UObject *toolObject = NewObject<T>(this);
+		return TScriptInterface<IEditModelToolInterface>(toolObject);
+	}
+
+	void RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool);
 
 	FDateTime TimeOfLastAutoSave;
 	bool WantAutoSave = false;
@@ -249,11 +258,6 @@ public:
 
 	// Draw basic dimension string own by the PlayerController
 	void UpdateDimensionString(const FVector &p1, const FVector &p2, const FVector &normal, const int32 groupIndex = 0, const float offset = 50.f);
-
-	void SetArraybleCommand(const TArray<int32> &baseIds, const FTransform &t);
-	void ClearArraybleCommand();
-	bool HasArraybleCommand() const;
-	void ExecuteArraybleCommand(int32 count);
 
 	Modumate::FModumateFunctionParameterSet ModumateCommand(const Modumate::FModumateCommand &cmd);
 
@@ -523,6 +527,45 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input)
 	UEditModelInputHandler* InputHandlerComponent;
+
+	UPROPERTY()
+	TMap<EToolMode, TScriptInterface<IEditModelToolInterface>> ModeToTool;
+
+	UPROPERTY()
+	TScriptInterface<IEditModelToolInterface> CurrentTool;
+
+	UPROPERTY()
+	AAdjustmentHandleActor_CPP *InteractionHandle;
+
+	UPROPERTY()
+	AAdjustmentHandleActor_CPP *HoverHandle;
+
+	UPROPERTY()
+	float CurrentToolUseDuration;
+
+	UFUNCTION(BlueprintPure, Category = Tools)
+	bool ToolIsInUse() const;
+
+	UFUNCTION(BlueprintPure, Category = Tools)
+	EToolMode GetToolMode();
+
+	UFUNCTION()
+	void SetToolMode(EToolMode NewToolMode);
+
+	UFUNCTION(BlueprintCallable, Category = Tools)
+	void AbortUseTool();
+
+	UFUNCTION(BlueprintCallable, Category = Tools)
+	void SetToolAxisConstraint(EAxisConstraint AxisConstraint);
+
+	UFUNCTION(BlueprintCallable, Category = Tools)
+	void SetToolCreateObjectMode(EToolCreateObjectMode CreateObjectMode);
+
+	UFUNCTION(BlueprintCallable, Category = Tools)
+	bool HandleToolInputText(FString InputText);
+
+	UFUNCTION(BlueprintPure, Category = "Tools")
+	bool CanCurrentHandleShowRawInput();
 
 	// Input handling
 	UFUNCTION(BlueprintCallable, Category = Mouse)

@@ -5,40 +5,41 @@
 #include "EditModelPlayerState_CPP.h"
 #include "DynamicMeshActor.h"
 
+#include "EditModelCutPlaneTool.generated.h"
+
 class AEditModelGameMode_CPP;
 class AEditModelGameState_CPP;
 class ALineActor3D_CPP;
 
-namespace Modumate
+UCLASS()
+class MODUMATE_API UCutPlaneTool : public UEditModelToolBase
 {
-	class MODUMATE_API FCutPlaneTool : public FEditModelToolBase
-	{
-	public:
-		FCutPlaneTool(AEditModelPlayerController_CPP *InController);
-		virtual ~FCutPlaneTool();
+	GENERATED_BODY()
+public:
+	UCutPlaneTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-		virtual bool Activate() override;
-		virtual bool Deactivate() override;
-		virtual bool BeginUse() override;
-		virtual bool FrameUpdate() override;
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_CUTPLANE; }
+	virtual bool Activate() override;
+	virtual bool Deactivate() override;
+	virtual bool BeginUse() override;
+	virtual bool FrameUpdate() override;
 
-		virtual bool EnterNextStage() override;
+	virtual bool EnterNextStage() override;
 
-		virtual bool EndUse() override;
-		virtual bool AbortUse() override;
+	virtual bool EndUse() override;
+	virtual bool AbortUse() override;
 
-	protected:
-		TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
+protected:
+	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
 
-		TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
-		TWeakObjectPtr<ADynamicMeshActor> PendingPlane;
-		TArray<FVector> PendingPlanePoints;
-		FArchitecturalMaterial PendingPlaneMaterial;
+	TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
+	TWeakObjectPtr<ADynamicMeshActor> PendingPlane;
+	TArray<FVector> PendingPlanePoints;
+	FArchitecturalMaterial PendingPlaneMaterial;
 
-		FVector Origin;
-		FVector Normal;
-		EMouseMode OriginalMouseMode;
+	FVector Origin;
+	FVector Normal;
+	EMouseMode OriginalMouseMode;
 
-		float DefaultPlaneDimension = 100.0f;
-	};
-}
+	float DefaultPlaneDimension = 100.0f;
+};

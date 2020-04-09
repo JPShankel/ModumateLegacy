@@ -12,130 +12,122 @@
 #include "ModumateDocument.h"
 #include "ModumateCommands.h"
 
-namespace Modumate
+using namespace Modumate;
+
+UFinishTool::UFinishTool(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+	, FSelectedObjectToolMixin()
+{ }
+
+bool UFinishTool::Activate()
 {
-	FFinishTool::FFinishTool(AEditModelPlayerController_CPP *pc)
-		: FEditModelToolBase(pc)
-		, FSelectedObjectToolMixin(pc)
-	{ }
+	OriginalMouseMode = Controller->EMPlayerState->SnappedCursor.MouseMode;
+	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Object;
 
-	FFinishTool::~FFinishTool()
-	{ }
+	LastValidTarget = nullptr;
+	LastValidHitActor.Reset();
+	LastValidHitLocation = LastValidHitNormal = FVector::ZeroVector;
+	LastValidFaceIndex = INDEX_NONE;
 
-	bool FFinishTool::Activate()
+	return UEditModelToolBase::Activate();
+}
+
+bool UFinishTool::Deactivate()
+{
+	if (Controller)
 	{
-		OriginalMouseMode = Controller->EMPlayerState->SnappedCursor.MouseMode;
-		Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Object;
-
-		LastValidTarget = nullptr;
-		LastValidHitActor.Reset();
-		LastValidHitLocation = LastValidHitNormal = FVector::ZeroVector;
-		LastValidFaceIndex = INDEX_NONE;
-
-		return FEditModelToolBase::Activate();
+		Controller->EMPlayerState->SnappedCursor.MouseMode = OriginalMouseMode;
 	}
 
-	bool FFinishTool::Deactivate()
-	{
-		if (Controller.IsValid())
-		{
-			Controller->EMPlayerState->SnappedCursor.MouseMode = OriginalMouseMode;
-		}
+	return UEditModelToolBase::Deactivate();
+}
 
-		return FEditModelToolBase::Deactivate();
+bool UFinishTool::BeginUse()
+{
+	Super::BeginUse();
+
+	auto *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	if (gameState && LastValidTarget && (LastValidTarget->ID != 0) && (LastValidFaceIndex != INDEX_NONE))
+	{
+		Controller->ModumateCommand(
+			FModumateCommand(Commands::kAddFinish)
+			.Param(Parameters::kObjectID, LastValidTarget->ID)
+			.Param(Parameters::kIndex, LastValidFaceIndex)
+			.Param(Parameters::kAssembly, Assembly.Key)
+		);
 	}
 
-	bool FFinishTool::BeginUse()
+	EndUse();
+	return true;
+}
+
+bool UFinishTool::EnterNextStage()
+{
+	Super::EnterNextStage();
+	return false;
+}
+
+bool UFinishTool::EndUse()
+{
+	Super::EndUse();
+	return true;
+}
+
+bool UFinishTool::AbortUse()
+{
+	Super::AbortUse();
+	return true;
+}
+
+bool UFinishTool::FrameUpdate()
+{
+	Super::FrameUpdate();
+
+	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+	if (cursor.Actor && (cursor.SnapType == ESnapType::CT_FACESELECT))
 	{
-		FEditModelToolBase::BeginUse();
-
-		auto *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		if (gameState && LastValidTarget && (LastValidTarget->ID != 0) && (LastValidFaceIndex != INDEX_NONE))
-		{
-			Controller->ModumateCommand(
-				FModumateCommand(Commands::kAddFinish)
-				.Param(Parameters::kObjectID, LastValidTarget->ID)
-				.Param(Parameters::kIndex, LastValidFaceIndex)
-				.Param(Parameters::kAssembly, Assembly.Key)
-			);
-		}
-
-		EndUse();
-		return true;
-	}
-
-	bool FFinishTool::EnterNextStage()
-	{
-		FEditModelToolBase::EnterNextStage();
-		return false;
-	}
-
-	bool FFinishTool::EndUse()
-	{
-		FEditModelToolBase::EndUse();
-		return true;
-	}
-
-	bool FFinishTool::AbortUse()
-	{
-		FEditModelToolBase::AbortUse();
-		return true;
-	}
-
-	bool FFinishTool::FrameUpdate()
-	{
-		FEditModelToolBase::FrameUpdate();
-
-		const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
-		if (cursor.Actor && (cursor.SnapType == ESnapType::CT_FACESELECT))
-		{
-			if (!LastValidTarget || (cursor.Actor != LastValidHitActor.Get()) || !cursor.HitNormal.Equals(LastValidHitNormal))
-			{
-				LastValidTarget = nullptr;
-				LastValidHitActor.Reset();
-
-				auto *gameState = Cast<AEditModelGameState_CPP>(Controller->GetWorld()->GetGameState());
-				if (auto *moi = gameState->Document.ObjectFromActor(cursor.Actor))
-				{
-					LastValidFaceIndex = UModumateObjectStatics::GetFaceIndexFromTargetHit(moi, cursor.WorldPosition, cursor.HitNormal);
-
-					if (LastValidFaceIndex != INDEX_NONE)
-					{
-						LastValidTarget = moi;
-						LastValidHitActor = cursor.Actor;
-						LastValidHitNormal = cursor.HitNormal;
-					}
-				}
-			}
-
-			FVector faceNormal;
-			if (LastValidTarget && UModumateObjectStatics::GetGeometryFromFaceIndex(LastValidTarget, LastValidFaceIndex, LastCornerIndices, faceNormal))
-			{
-				int32 numCorners = LastCornerIndices.Num();
-				for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
-				{
-					int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
-
-					FVector curCornerPos = LastValidTarget->GetCorner(LastCornerIndices[curCornerIdx]);
-					FVector nextCornerPos = LastValidTarget->GetCorner(LastCornerIndices[nextCornerIdx]);
-
-					Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(
-						curCornerPos, nextCornerPos, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness)
-					);
-				}
-			}
-		}
-		else
+		if (!LastValidTarget || (cursor.Actor != LastValidHitActor.Get()) || !cursor.HitNormal.Equals(LastValidHitNormal))
 		{
 			LastValidTarget = nullptr;
+			LastValidHitActor.Reset();
+
+			auto *gameState = Cast<AEditModelGameState_CPP>(Controller->GetWorld()->GetGameState());
+			if (auto *moi = gameState->Document.ObjectFromActor(cursor.Actor))
+			{
+				LastValidFaceIndex = UModumateObjectStatics::GetFaceIndexFromTargetHit(moi, cursor.WorldPosition, cursor.HitNormal);
+
+				if (LastValidFaceIndex != INDEX_NONE)
+				{
+					LastValidTarget = moi;
+					LastValidHitActor = cursor.Actor;
+					LastValidHitNormal = cursor.HitNormal;
+				}
+			}
 		}
 
-		return true;
+		FVector faceNormal;
+		if (LastValidTarget && UModumateObjectStatics::GetGeometryFromFaceIndex(LastValidTarget, LastValidFaceIndex, LastCornerIndices, faceNormal))
+		{
+			int32 numCorners = LastCornerIndices.Num();
+			for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
+			{
+				int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
+
+				FVector curCornerPos = LastValidTarget->GetCorner(LastCornerIndices[curCornerIdx]);
+				FVector nextCornerPos = LastValidTarget->GetCorner(LastCornerIndices[nextCornerIdx]);
+
+				Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(
+					curCornerPos, nextCornerPos, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness)
+				);
+			}
+		}
 	}
-
-
-	IModumateEditorTool *MakeFinishTool(AEditModelPlayerController_CPP *controller)
+	else
 	{
-		return new FFinishTool(controller);
+		LastValidTarget = nullptr;
 	}
+
+	return true;
 }
+
+

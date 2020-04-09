@@ -4,6 +4,7 @@
 #include "ModumateFunctionLibrary.h"
 #include "ModumateCraftingWidget_CPP.h"
 #include "EditModelPlayerController_CPP.h"
+#include "EditModelPlayerState_CPP.h"
 #include "EditModelGameMode_CPP.h"
 #include "EditModelGameState_CPP.h"
 #include "UnrealClasses/CompoundMeshActor.h"

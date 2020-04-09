@@ -6,49 +6,49 @@
 #include "EditModelToolBase.h"
 #include "ModumateSerialization.h"
 
-namespace Modumate
+#include "EditModelSelectTool.generated.h"
+
+class MODUMATE_API FSelectedObjectToolMixin
 {
-	class MODUMATE_API FSelectedObjectToolMixin
-	{
-	protected:
+protected:
 
-		AEditModelPlayerController_CPP *SOTMController;
+	TMap<Modumate::FModumateObjectInstance*, FMOIDataRecordV1> OriginalObjectData;
 
-		TMap<FModumateObjectInstance*, FMOIDataRecordV1> OriginalObjectData;
+	void AcquireSelectedObjects();
+	void RestoreSelectedObjects();
+	void ReleaseSelectedObjects();
 
-		void AcquireSelectedObjects();
-		void RestoreSelectedObjects();
-		void ReleaseSelectedObjects();
+	FSelectedObjectToolMixin() {}
 
-		FSelectedObjectToolMixin(AEditModelPlayerController_CPP *pc) : SOTMController(pc) {}
-		virtual ~FSelectedObjectToolMixin() {}
+	static const FName StateRequestTag;
+};
 
-		static const FName StateRequestTag;
-	};
+UCLASS()
+class MODUMATE_API USelectTool : public UEditModelToolBase
+{
+	GENERATED_BODY()
 
-	class MODUMATE_API FSelectTool : public FEditModelToolBase
-	{
-	public:
-		FSelectTool(AEditModelPlayerController_CPP *pc);
-		virtual ~FSelectTool();
-		virtual bool Activate() override;
-		virtual bool Deactivate() override;
-		virtual bool BeginUse() override;
-		virtual bool HandleMouseUp() override;
-		virtual bool FrameUpdate() override;
-		virtual bool EndUse() override;
-		virtual bool ShowSnapCursorAffordances() override { return false; }
-		virtual bool HandleSpacebar() override;
+public:
+	USelectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-		bool ProcessDragSelect();
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_SELECT; }
+	virtual bool Activate() override;
+	virtual bool Deactivate() override;
+	virtual bool BeginUse() override;
+	virtual bool HandleMouseUp() override;
+	virtual bool FrameUpdate() override;
+	virtual bool EndUse() override;
+	virtual bool ShowSnapCursorAffordances() override { return false; }
+	virtual bool HandleSpacebar() override;
 
-		float DoubleClickTime = 0.2f;
-		float MinDragDist = 1.0f;
+	bool ProcessDragSelect();
 
-	protected:
-		TMap<const FModumateObjectInstance*, float> LastObjectSelectionAttemptTimes;
-		FModumateObjectInstance *InitialClickedObject;
-		FVector2D InitialClickLocation;
-		bool Dragging;
-	};
-}
+	float DoubleClickTime = 0.2f;
+	float MinDragDist = 1.0f;
+
+protected:
+	TMap<const Modumate::FModumateObjectInstance*, float> LastObjectSelectionAttemptTimes;
+	Modumate::FModumateObjectInstance *InitialClickedObject;
+	FVector2D InitialClickLocation;
+	bool Dragging;
+};

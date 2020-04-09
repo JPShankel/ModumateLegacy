@@ -51,8 +51,7 @@ void AAdjustmentHandleActor_CPP::EndPlay(const EEndPlayReason::Type EndPlayReaso
 	}
 
 	// If the adjust handle actor is destroyed while it's in use, then abort the handle usage.
-	if (Implementation && Controller && Controller->EMPlayerState &&
-		(Controller->EMPlayerState->InteractionHandle == this))
+	if (Implementation && Controller && Controller->EMPlayerState && (Controller->InteractionHandle == this))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Adjustment handle was destroyed while it was being used!"));
 		Implementation->OnAbortUse();

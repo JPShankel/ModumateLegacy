@@ -3,26 +3,28 @@
 
 #include "EditModelToolBase.h"
 
-namespace Modumate
+#include "EditModelDrawingTool.generated.h"
+
+UCLASS()
+class MODUMATE_API UDrawingTool : public UEditModelToolBase
 {
-	class MODUMATE_API FDrawingTool : public FEditModelToolBase
-	{
-	public:
-		FDrawingTool(AEditModelPlayerController_CPP *InController);
-		virtual ~FDrawingTool();
+	GENERATED_BODY()
 
-		virtual bool Activate() override;
-		virtual bool Deactivate() override;
-		virtual bool BeginUse() override;
-		virtual bool FrameUpdate() override;
+public:
+	UDrawingTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-		virtual bool EnterNextStage() override;
+	virtual bool Activate() override;
+	virtual bool Deactivate() override;
+	virtual bool BeginUse() override;
+	virtual bool FrameUpdate() override;
 
-		virtual bool EndUse() override;
-		virtual bool AbortUse() override;
+	virtual bool EnterNextStage() override;
 
-	protected:
-	
-		TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
-	};
-}
+	virtual bool EndUse() override;
+	virtual bool AbortUse() override;
+
+protected:
+
+	UPROPERTY()
+	class AEditModelGameMode_CPP* GameMode;
+};

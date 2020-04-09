@@ -8,71 +8,55 @@
 
 #include "ModumateCommands.h"
 
-namespace Modumate
+UDrawingTool::UDrawingTool(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	FDrawingTool::FDrawingTool(AEditModelPlayerController_CPP *InController)
-		: FEditModelToolBase(InController)
+	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
+	GameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+}
+
+bool UDrawingTool::Activate()
+{
+	if (!UEditModelToolBase::Activate())
 	{
-		UWorld *world = Controller.IsValid() ? Controller->GetWorld() : nullptr;
-		if (ensureAlways(world))
-		{
-			GameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
-		}
+		return false;
 	}
+	return true;
+}
 
-	FDrawingTool::~FDrawingTool()
-	{
-		// empty
-	}
+bool UDrawingTool::Deactivate()
+{
+	return UEditModelToolBase::Deactivate();
+}
 
-	bool FDrawingTool::Activate()
-	{
-		if (!FEditModelToolBase::Activate())
-		{
-			return false;
-		}
-		return true;
-	}
+bool UDrawingTool::BeginUse()
+{
+	UEditModelToolBase::BeginUse();
 
-	bool FDrawingTool::Deactivate()
-	{
-		return FEditModelToolBase::Deactivate();
-	}
+	return EnterNextStage();
+}
 
-	bool FDrawingTool::BeginUse()
-	{
-		FEditModelToolBase::BeginUse();
+bool UDrawingTool::FrameUpdate()
+{
+	UEditModelToolBase::FrameUpdate();
 
-		return EnterNextStage();
-	}
+	return true;
+}
 
-	bool FDrawingTool::FrameUpdate()
-	{
-		FEditModelToolBase::FrameUpdate();
+bool UDrawingTool::EnterNextStage()
+{
+	UEditModelToolBase::EnterNextStage();
 
-		return true;
-	}
+	return true;
+}
 
-	bool FDrawingTool::EnterNextStage()
-	{
-		FEditModelToolBase::EnterNextStage();
+bool UDrawingTool::EndUse()
+{
+	return UEditModelToolBase::EndUse();
+}
 
-		return true;
-	}
-
-	bool FDrawingTool::EndUse()
-	{
-		return FEditModelToolBase::EndUse();
-	}
-
-	bool FDrawingTool::AbortUse()
-	{
-		EndUse();
-		return FEditModelToolBase::AbortUse();
-	}
-
-	IModumateEditorTool *MakeDrawingTool(AEditModelPlayerController_CPP *controller)
-	{
-		return new FDrawingTool(controller);
-	}
+bool UDrawingTool::AbortUse()
+{
+	EndUse();
+	return UEditModelToolBase::AbortUse();
 }

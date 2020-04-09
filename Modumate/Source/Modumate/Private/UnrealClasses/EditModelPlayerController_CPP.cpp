@@ -12,6 +12,7 @@
 #include "EditModelInputAutomation.h"
 #include "EditModelInputHandler.h"
 #include "EditModelPlayerPawn_CPP.h"
+#include "EditModelPlayerState_CPP.h"
 #include "Engine/SceneCapture2D.h"
 #include "ModumateAnalyticsStatics.h"
 #include "ModumateCommands.h"
@@ -31,6 +32,30 @@
 #include "Algo/Transform.h"
 #include "Algo/Accumulate.h"
 #include "EditModelToggleGravityPawn_CPP.h"
+
+// Tools
+#include "ToolsAndAdjustments/Tools/EditModelCabinetTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelCountertopTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelCreateSimilarTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelCutPlaneTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelFFETool.h"
+#include "ToolsAndAdjustments/Tools/EditModelFinishTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelJoinTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelMetaPlaneTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelMoveTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelPlaneHostedObjTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelPortalTools.h"
+#include "ToolsAndAdjustments/Tools/EditModelRailTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelRoofTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelRotateTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelScopeBoxTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelSplitTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelStairTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelStructureLineTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelTrimTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelWandTool.h"
+
 
 static Modumate::PDF::PDFResult PDFLibrary;
 
@@ -125,37 +150,8 @@ void AEditModelPlayerController_CPP::BeginPlay()
 
 	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
 
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_SELECT, MakeSelectTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_PLACEOBJECT, MakePlaceObjectTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_MOVEOBJECT, MakeMoveObjectTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_ROTATE, MakeRotateObjectTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_SPLIT, MakeSplitObjectTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_WALL, MakeWallTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_FLOOR, MakeFloorTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_DOOR, MakeDoorTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_WINDOW, MakeWindowTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_STAIR, MakeStairTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_RAIL, MakeRailTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_CABINET, MakeCabinetTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_WAND, MakeWandTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_FINISH, MakeFinishTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_COUNTERTOP, MakeCountertopTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_TRIM, MakeTrimTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_ROOF, MakeRoofTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_METAPLANE, MakeMetaPlaneTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_CUTPLANE, MakeCutPlaneTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_SCOPEBOX, MakeScopeBoxTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_JOIN, MakeJoinTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_CREATESIMILAR, MakeCreateSimilarTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_STRUCTURELINE, MakeStructureLineTool(this));
-	EMPlayerState->ModeToTool.Add(EToolMode::VE_DRAWING, MakeDrawingTool(this));
-
-	for (auto &mtt : EMPlayerState->ModeToTool)
-	{
-		EMPlayerState->ToolToMode.Add(mtt.Value, mtt.Key);
-	}
-
-	EMPlayerState->SetToolModeDirect(EToolMode::VE_SELECT);
+	CreateTools();
+	SetToolMode(EToolMode::VE_SELECT);
 
 	UDraftingPreviewWidget_CPP *widget = CreateWidget<UDraftingPreviewWidget_CPP>(this, PreviewWidgetClass);
 	if (widget != nullptr)
@@ -243,6 +239,146 @@ void AEditModelPlayerController_CPP::EndPlay(const EEndPlayReason::Type EndPlayR
 	Super::EndPlay(EndPlayReason);
 }
 
+bool AEditModelPlayerController_CPP::ToolIsInUse() const
+{
+	return (CurrentTool && CurrentTool->IsInUse());
+}
+
+EToolMode AEditModelPlayerController_CPP::GetToolMode()
+{
+	return CurrentTool ? CurrentTool->GetToolMode() : EToolMode::VE_NONE;
+}
+
+void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
+{
+	// Don't do anything if we're trying to set the tool to our current one.
+	EToolMode curToolMode = GetToolMode();
+	if (curToolMode == NewToolMode)
+	{
+		return;
+	}
+
+	// Record how long we used the previous tool
+	if (curToolMode != EToolMode::VE_NONE)
+	{
+		UModumateAnalyticsStatics::RecordToolUsage(this, curToolMode, CurrentToolUseDuration);
+	}
+
+	if (CurrentTool)
+	{
+		if (CurrentTool->IsInUse())
+		{
+			CurrentTool->AbortUse();
+		}
+		CurrentTool->Deactivate();
+		CurrentToolUseDuration = 0.0f;
+	}
+
+	if (InteractionHandle != nullptr)
+	{
+		InteractionHandle->AbortUse();
+		InteractionHandle = nullptr;
+	}
+
+	CurrentTool = ModeToTool.FindRef(NewToolMode);
+	if (CurrentTool)
+	{
+		CurrentTool->Activate();
+	}
+
+	UpdateMouseTraceParams();
+	EMPlayerState->UpdateObjectVisibilityAndCollision();
+}
+
+void AEditModelPlayerController_CPP::AbortUseTool()
+{
+	if (InteractionHandle)
+	{
+		InteractionHandle->AbortUse();
+		InteractionHandle = nullptr;
+	}
+	else if (CurrentTool)
+	{
+		if (CurrentTool->IsInUse())
+		{
+			CurrentTool->AbortUse();
+		}
+		else
+		{
+			SetToolMode(EToolMode::VE_SELECT);
+		}
+	}
+}
+
+void AEditModelPlayerController_CPP::SetToolAxisConstraint(EAxisConstraint AxisConstraint)
+{
+	if (CurrentTool)
+	{
+		CurrentTool->SetAxisConstraint(AxisConstraint);
+	}
+}
+
+void AEditModelPlayerController_CPP::SetToolCreateObjectMode(EToolCreateObjectMode CreateObjectMode)
+{
+	if (CurrentTool)
+	{
+		CurrentTool->SetCreateObjectMode(CreateObjectMode);
+	}
+}
+
+bool AEditModelPlayerController_CPP::HandleToolInputText(FString InputText)
+{
+	EToolMode curToolMode = GetToolMode();
+	float v = 0.f;
+	// Most cases input is in imperial unit, unless is specific handle or tool mode
+	if (curToolMode == EToolMode::VE_ROTATE || // Rotate tool uses degree
+		(curToolMode == EToolMode::VE_FLOOR && EMPlayerState->CurrentDimensionStringGroupIndex == 1) || // Floor tool degree string uses degree
+		(curToolMode == EToolMode::VE_COUNTERTOP && EMPlayerState->CurrentDimensionStringGroupIndex == 1) || // CounterTop tool degree string uses degree
+		CanCurrentHandleShowRawInput())
+	{
+		v = FCString::Atof(*InputText);
+	}
+	else
+	{
+		v = UModumateDimensionStatics::StringToMetric(InputText, true);
+	}
+
+	const float MAX_DIMENSION = 525600 * 12 * 2.54;
+
+	if (v != 0.0f && v <= MAX_DIMENSION)
+	{
+		// First, try to use the player controller's input number handling,
+		// in case a user snap point is taking input.
+		if (HandleInputNumber(v))
+		{
+			return true;
+		}
+
+		if (InteractionHandle)
+		{
+			if (InteractionHandle->HandleInputNumber(v))
+			{
+				InteractionHandle = nullptr;
+				return true;
+			}
+		}
+		else if (CurrentTool && CurrentTool->IsInUse())
+		{
+			return CurrentTool->HandleInputNumber(v);
+		}
+	}
+
+	return false;
+}
+
+bool AEditModelPlayerController_CPP::CanCurrentHandleShowRawInput()
+{
+	if (InteractionHandle)
+	{
+		return InteractionHandle->AcceptRawInputNumber;
+	}
+	return false;
+}
 
 void AEditModelPlayerController_CPP::SetupInputComponent()
 {
@@ -272,6 +408,49 @@ void AEditModelPlayerController_CPP::SetupInputComponent()
 	}
 }
 
+void AEditModelPlayerController_CPP::CreateTools()
+{
+	RegisterTool(CreateTool<USelectTool>());
+	RegisterTool(CreateTool<UPlaceObjectTool>());
+	RegisterTool(CreateTool<UMoveObjectTool>());
+	RegisterTool(CreateTool<URotateObjectTool>());
+	RegisterTool(CreateTool<USplitObjectTool>());
+	RegisterTool(CreateTool<UWallTool>());
+	RegisterTool(CreateTool<UFloorTool>());
+	RegisterTool(CreateTool<UDoorTool>());
+	RegisterTool(CreateTool<UWindowTool>());
+	RegisterTool(CreateTool<UStairTool>());
+	RegisterTool(CreateTool<URailTool>());
+	RegisterTool(CreateTool<UCabinetTool>());
+	RegisterTool(CreateTool<UWandTool>());
+	RegisterTool(CreateTool<UFinishTool>());
+	RegisterTool(CreateTool<UCountertopTool>());
+	RegisterTool(CreateTool<UTrimTool>());
+	RegisterTool(CreateTool<URoofTool>());
+	RegisterTool(CreateTool<UMetaPlaneTool>());
+	RegisterTool(CreateTool<UCutPlaneTool>());
+	RegisterTool(CreateTool<UScopeBoxTool>());
+	RegisterTool(CreateTool<UJoinTool>());
+	RegisterTool(CreateTool<UCreateSimilarTool>());
+	RegisterTool(CreateTool<UStructureLineTool>());
+}
+
+void AEditModelPlayerController_CPP::RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool)
+{
+	if (!ensureAlways(NewTool))
+	{
+		return;
+	}
+
+	EToolMode newToolMode = NewTool->GetToolMode();
+	if (!ensureAlways((newToolMode != EToolMode::VE_NONE) && !ModeToTool.Contains(newToolMode)))
+	{
+		return;
+	}
+
+	ModeToTool.Add(newToolMode, NewTool);
+}
+
 void AEditModelPlayerController_CPP::OnLButtonDown()
 {
 	// TODO: for now, using tools may create dimension strings that are incompatible with those created
@@ -279,12 +458,49 @@ void AEditModelPlayerController_CPP::OnLButtonDown()
 	// all of these dimension strings consistently so that we can cycle between them.
 	ClearUserSnapPoints();
 
-	EMPlayerState->OnLButtonDown();
+	if (InteractionHandle)
+	{
+		InteractionHandle->EndUse();
+		InteractionHandle = nullptr;
+		return;
+	}
+
+	if (HoverHandle)
+	{
+		if (HoverHandle->BeginUse())
+		{
+			InteractionHandle = HoverHandle;
+		}
+		// If the handle reported failure beginning, but it is in use, then abort it.
+		else if (!ensureAlways(!HoverHandle->IsInUse()))
+		{
+			HoverHandle->AbortUse();
+		}
+		return;
+	}
+
+	if (CurrentTool)
+	{
+		if (CurrentTool->IsInUse())
+		{
+			if (!CurrentTool->EnterNextStage())
+			{
+				CurrentTool->EndUse();
+			}
+		}
+		else
+		{
+			CurrentTool->BeginUse();
+		}
+	}
 }
 
 void AEditModelPlayerController_CPP::OnLButtonUp()
 {
-	EMPlayerState->OnLButtonUp();
+	if (CurrentTool && CurrentTool->IsInUse())
+	{
+		CurrentTool->HandleMouseUp();
+	}
 }
 
 void AEditModelPlayerController_CPP::OnRButtonDown()
@@ -328,9 +544,9 @@ bool AEditModelPlayerController_CPP::SaveModelAs()
 		return false;
 	}
 
-	if (EMPlayerState->ToolIsInUse())
+	if (ToolIsInUse())
 	{
-		EMPlayerState->AbortUseTool();
+		AbortUseTool();
 	}
 
 	// Try to capture a thumbnail for the project
@@ -352,9 +568,9 @@ bool AEditModelPlayerController_CPP::SaveModelAs()
 
 bool AEditModelPlayerController_CPP::SaveModelFilePath(const FString &filepath)
 {
-	if (EMPlayerState->ToolIsInUse())
+	if (ToolIsInUse())
 	{
-		EMPlayerState->AbortUseTool();
+		AbortUseTool();
 	}
 
 	// Try to capture a thumbnail for the project	
@@ -384,9 +600,9 @@ bool AEditModelPlayerController_CPP::LoadModel()
 		return false;
 	}
 
-	if (EMPlayerState->ToolIsInUse())
+	if (ToolIsInUse())
 	{
-		EMPlayerState->AbortUseTool();
+		AbortUseTool();
 	}
 
 	if (!CheckSaveModel())
@@ -518,9 +734,9 @@ bool AEditModelPlayerController_CPP::GetScreenshotFileNameWithDialog(FString &fi
 		return false;
 	}
 
-	if (EMPlayerState->ToolIsInUse())
+	if (ToolIsInUse())
 	{
-		EMPlayerState->AbortUseTool();
+		AbortUseTool();
 	}
 
 	EMPlayerState->ShowingFileDialog = true;
@@ -565,9 +781,9 @@ bool AEditModelPlayerController_CPP::OnSavePDF()
 		return false;
 	}
 
-	if (EMPlayerState->ToolIsInUse())
+	if (ToolIsInUse())
 	{
-		EMPlayerState->AbortUseTool();
+		AbortUseTool();
 	}
 
 
@@ -610,9 +826,9 @@ bool AEditModelPlayerController_CPP::ExportPDF()
 {
 	if (DraftingPreview->GetVisibility() != ESlateVisibility::Visible)
 	{
-		if (EMPlayerState->ToolIsInUse())
+		if (ToolIsInUse())
 		{
-			EMPlayerState->AbortUseTool();
+			AbortUseTool();
 		}
 
 		DraftingPreview->SetVisibility(ESlateVisibility::Visible);
@@ -642,9 +858,9 @@ void AEditModelPlayerController_CPP::DeleteActionOnlySelected()
 
 bool AEditModelPlayerController_CPP::HandleBareControlKey(bool pressed)
 {
-	if (EMPlayerState->ToolIsInUse())
+	if (CurrentTool && CurrentTool->IsInUse())
 	{
-		EMPlayerState->CurrentTool->HandleControlKey(pressed);
+		CurrentTool->HandleControlKey(pressed);
 	}
 	return true;
 }
@@ -672,11 +888,11 @@ bool AEditModelPlayerController_CPP::HandleTabKeyForDimensionString()
 	}
 
 	// Allow switch between drawing delta and total dimension string based on current handle object type
-	if (!EMPlayerState->InteractionHandle)
+	if (!InteractionHandle)
 	{
 		return false;
 	}
-	if (!EMPlayerState->InteractionHandle->ParentMOI)
+	if (!InteractionHandle->ParentMOI)
 	{
 		return false;
 	}
@@ -713,11 +929,10 @@ bool AEditModelPlayerController_CPP::HandleInputNumber(double inputNumber)
 
 	// If there's an active tool or handle that can receive the user snap point input, then use it here.
 
-	AAdjustmentHandleActor_CPP *curHandle = EMPlayerState->InteractionHandle;
-	Modumate::IModumateEditorTool *curTool = EMPlayerState->CurrentTool;
+	AAdjustmentHandleActor_CPP *curHandle = InteractionHandle;
 
 	bool bUseHandle = (curHandle && curHandle->IsInUse());
-	bool bUseTool = (!bUseHandle && curTool && curTool->IsActive());
+	bool bUseTool = (!bUseHandle && CurrentTool && CurrentTool->IsActive());
 
 	FTransform activeUserSnapPoint;
 	FVector cursorPosFlat, cursorHeightDelta;
@@ -743,13 +958,13 @@ bool AEditModelPlayerController_CPP::HandleInputNumber(double inputNumber)
 			}
 			else if (bUseTool)
 			{
-				if (curTool->IsInUse())
+				if (CurrentTool->IsInUse())
 				{
-					return curTool->EnterNextStage();
+					return CurrentTool->EnterNextStage();
 				}
 				else
 				{
-					return curTool->BeginUse();
+					return CurrentTool->BeginUse();
 				}
 			}
 		}
@@ -788,12 +1003,12 @@ bool AEditModelPlayerController_CPP::HandleInputNumber(double inputNumber)
 
 bool AEditModelPlayerController_CPP::HandleSpacebar()
 {
-	if (EMPlayerState->InteractionHandle != nullptr)
+	if (InteractionHandle != nullptr)
 	{
-		EMPlayerState->InteractionHandle->HandleSpacebar();
+		InteractionHandle->HandleSpacebar();
 		return true;
 	}
-	else if (EMPlayerState->CurrentTool && EMPlayerState->CurrentTool->HandleSpacebar())
+	else if (CurrentTool && CurrentTool->HandleSpacebar())
 	{
 		return true;
 	}
@@ -808,19 +1023,19 @@ bool AEditModelPlayerController_CPP::HandleEscapeKey()
 	ClearUserSnapPoints();
 	EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
-	if (EMPlayerState->HoverHandle != nullptr)
+	if (HoverHandle != nullptr)
 	{
-		EMPlayerState->HoverHandle = nullptr;
+		HoverHandle = nullptr;
 	}
-	if (EMPlayerState->InteractionHandle != nullptr)
+	if (InteractionHandle != nullptr)
 	{
-		EMPlayerState->InteractionHandle->AbortUse();
-		EMPlayerState->InteractionHandle = nullptr;
+		InteractionHandle->AbortUse();
+		InteractionHandle = nullptr;
 		return true;
 	}
-	else if (EMPlayerState->CurrentTool && EMPlayerState->CurrentTool->IsInUse())
+	else if (CurrentTool && CurrentTool->IsInUse())
 	{
-		EMPlayerState->CurrentTool->AbortUse();
+		CurrentTool->AbortUse();
 		return true;
 	}
 	else if (EMPlayerState->SelectedObjects.Num() > 0)
@@ -832,9 +1047,9 @@ bool AEditModelPlayerController_CPP::HandleEscapeKey()
 	{
 		SetViewGroupObject(EMPlayerState->ViewGroupObject->GetParentObject());
 	}
-	else if (EMPlayerState->CurrentTool)
+	else if (CurrentTool)
 	{
-		EMPlayerState->SetToolModeDirect(EToolMode::VE_SELECT);
+		SetToolMode(EToolMode::VE_SELECT);
 		EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 		return true;
 	}
@@ -872,7 +1087,7 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 
 	if (WantAutoSave)
 	{
-		if (EMPlayerState->InteractionHandle == nullptr && !EMPlayerState->ToolIsInUse())
+		if (InteractionHandle == nullptr && !ToolIsInUse())
 		{
 			UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 
@@ -891,19 +1106,17 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 		}
 	}
 
+	// Keep track of how long we've been using the current tool
+	if (CurrentTool != nullptr)
+	{
+		CurrentToolUseDuration += DeltaTime;
+	}
+
 	TickInput(DeltaTime);
 
 	if (EMPlayerState->ShowDocumentDebug)
 	{
 		Document->DisplayDebugInfo(GetWorld());
-		if (HasArraybleCommand())
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("ARRAYABLE COMMAND AVAILABLE: %d : %d"), ArrayableCommandInput.Num(), ArrayableCommandOutput.Num()), false);
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("No arrayble command"), false);
-		}
 
 		AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
 		TArray<FString> dbstrs = gameMode->ObjectDatabase->GetDebugInfo();
@@ -947,19 +1160,19 @@ void AEditModelPlayerController_CPP::TickInput(float DeltaTime)
 		UpdateMouseHits(DeltaTime);
 		UpdateUserSnapPoint();
 
-		if (EMPlayerState->InteractionHandle != nullptr)
+		if (InteractionHandle != nullptr)
 		{
-			if (!EMPlayerState->InteractionHandle->UpdateUse())
+			if (!InteractionHandle->UpdateUse())
 			{
-				EMPlayerState->InteractionHandle->EndUse();
-				EMPlayerState->InteractionHandle = nullptr;
+				InteractionHandle->EndUse();
+				InteractionHandle = nullptr;
 			}
 			UpdateAffordances();
 		}
-		else if (EMPlayerState->CurrentTool != nullptr)
+		else if (CurrentTool != nullptr)
 		{
-			EMPlayerState->CurrentTool->FrameUpdate();
-			if (EMPlayerState->CurrentTool->IsInUse() && EMPlayerState->CurrentTool->ShowSnapCursorAffordances())
+			CurrentTool->FrameUpdate();
+			if (CurrentTool->IsInUse() && CurrentTool->ShowSnapCursorAffordances())
 			{
 				UpdateAffordances();
 			}
@@ -1084,7 +1297,7 @@ void AEditModelPlayerController_CPP::MakeRailsFromSegments()
 		TArray<int32> segIds;
 		Algo::Transform(segs,segIds,[](const FModumateObjectInstance *ob) {return ob->ID;});
 
-		FName assemblyKey = EMPlayerState->ModeToTool[EToolMode::VE_RAIL]->GetAssembly().Key;
+		FName assemblyKey = ModeToTool[EToolMode::VE_RAIL]->GetAssembly().Key;
 
 		ModumateCommand(
 			FModumateCommand(Modumate::Commands::kMakeRail)
@@ -1112,20 +1325,21 @@ bool AEditModelPlayerController_CPP::TryMakeCabinetFromSegments()
 
 		if (polyPoints.Num() > 2)
 		{
-			IModumateEditorTool **ppTool = EMPlayerState->ModeToTool.Find(EToolMode::VE_CABINET);
-			if (ppTool == nullptr)
+			TScriptInterface<IEditModelToolInterface> toolInterface = ModeToTool.FindRef(EToolMode::VE_CABINET);
+			if (!toolInterface)
 			{
 				return false;
 			}
-			FCabinetTool *tool = static_cast<FCabinetTool*>(*ppTool);
+
+			UCabinetTool *tool = Cast<UCabinetTool>(toolInterface.GetObject());
 			if (tool != nullptr)
 			{
-				if (EMPlayerState->CurrentTool != nullptr && EMPlayerState->CurrentTool != tool)
+				if (CurrentTool != nullptr && CurrentTool != tool)
 				{
-					EMPlayerState->CurrentTool->Deactivate();
+					CurrentTool->Deactivate();
 				}
 
-				EMPlayerState->CurrentTool = tool;
+				CurrentTool = tool;
 
 				tool->BeginSetHeightMode(polyPoints);
 				return true;
@@ -1342,11 +1556,11 @@ bool AEditModelPlayerController_CPP::CanMakeUserSnapPointAtCursor(const FSnapped
 	}
 
 	return (cursor.MouseMode == EMouseMode::Location) &&
-		(EMPlayerState->CurrentTool != nullptr) &&
-		EMPlayerState->CurrentTool->IsActive() &&
+		(CurrentTool != nullptr) &&
+		CurrentTool->IsActive() &&
 		// TODO: remove the requirement that the current tool is not in use;
 		// instead, disable their dimension strings while snap point dimension strings are enabled.
-		!EMPlayerState->CurrentTool->IsInUse() &&
+		!CurrentTool->IsInUse() &&
 		!HasUserSnapPointAtPos(potentialSnapPoint) &&
 		((cursor.SnapType == ESnapType::CT_CORNERSNAP) || (cursor.SnapType == ESnapType::CT_MIDSNAP));
 }
@@ -1595,7 +1809,7 @@ void AEditModelPlayerController_CPP::SetMetaPlaneHostedObjJustificationValue(flo
 
 void AEditModelPlayerController_CPP::ToolAbortUse()
 {
-	EMPlayerState->AbortUseTool();
+	AbortUseTool();
 }
 
 void AEditModelPlayerController_CPP::IgnoreObjectIDForSnapping(int32 ObjectID)
@@ -1630,7 +1844,7 @@ void AEditModelPlayerController_CPP::UpdateMouseTraceParams()
 	MOITraceObjectQueryParams = FCollisionObjectQueryParams(FCollisionObjectQueryParams::AllObjects);
 	MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_HANDLE);
 
-	EToolMode curToolMode = EMPlayerState->GetToolMode();
+	EToolMode curToolMode = CurrentTool ? CurrentTool->GetToolMode() : EToolMode::VE_NONE;
 	switch (curToolMode)
 	{
 	case EToolMode::VE_WALL:
@@ -1713,7 +1927,7 @@ bool AEditModelPlayerController_CPP::GetActiveUserSnapPoint(FTransform &outSnapP
 
 bool AEditModelPlayerController_CPP::IsHandleValid()
 {
-	return (EMPlayerState->InteractionHandle != nullptr);
+	return (InteractionHandle != nullptr);
 }
 
 float AEditModelPlayerController_CPP::DistanceBetweenWorldPointsInScreenSpace(const FVector &p1, const FVector &p2) const
@@ -1760,33 +1974,43 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 	if (EMPlayerState->SnappedCursor.MouseMode == EMouseMode::Object)
 	{
 		if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("MOUSE MODE: OBJECT")); }
-		baseHit = GetObjectMouseHit(mouseLoc, mouseDir, true, false);
+
+		baseHit = UpdateHandleHit(mouseLoc, mouseDir);
 		if (baseHit.Valid)
 		{
-			const FModumateObjectInstance *hitMOI = Document->ObjectFromActor(baseHit.Actor.Get());
-			if (EMPlayerState->ShowDebugSnaps && hitMOI)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("OBJECT HIT #%d, %s"),
-					hitMOI->ID, *EnumValueString(EObjectType, hitMOI->ObjectType)
-				));
-			}
-			projectedHit = GetShiftConstrainedMouseHit(baseHit);
-
-			// TODO Is getting attach actor the best way to get Moi from blueprint spawned windows and doors?
-		   // AActor* attachedActor = baseHit.Actor->GetOwner();
-
-			if (baseHit.Actor->IsA(AModumateObjectInstanceParts_CPP::StaticClass()))
-			{
-				actorUnderMouse = baseHit.Actor->GetOwner();
-			}
-			else
-			{
-				actorUnderMouse = baseHit.Actor.Get();
-			}
+			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("HANDLE HIT: %s"), *baseHit.Actor->GetName());
 		}
-		else if (EMPlayerState->ShowDebugSnaps)
+		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("NO OBJECT"));
+			baseHit = GetObjectMouseHit(mouseLoc, mouseDir, false);
+
+			if (baseHit.Valid)
+			{
+				const FModumateObjectInstance *hitMOI = Document->ObjectFromActor(baseHit.Actor.Get());
+				if (EMPlayerState->ShowDebugSnaps && hitMOI)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("OBJECT HIT #%d, %s"),
+						hitMOI->ID, *EnumValueString(EObjectType, hitMOI->ObjectType)
+					));
+				}
+				projectedHit = GetShiftConstrainedMouseHit(baseHit);
+
+				// TODO Is getting attach actor the best way to get Moi from blueprint spawned windows and doors?
+				// AActor* attachedActor = baseHit.Actor->GetOwner();
+
+				if (baseHit.Actor->IsA(AModumateObjectInstanceParts_CPP::StaticClass()))
+				{
+					actorUnderMouse = baseHit.Actor->GetOwner();
+				}
+				else
+				{
+					actorUnderMouse = baseHit.Actor.Get();
+				}
+			}
+			else if (EMPlayerState->ShowDebugSnaps)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("NO OBJECT"));
+			}
 		}
 	}
 	// Location based mouse hits check against structure and sketch plane, used by floor and wall tools and handles and other tools that want snap
@@ -1799,7 +2023,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 
 		userPointHit = GetUserSnapPointMouseHit(mouseLoc, mouseDir);
 		sketchHit = GetSketchPlaneMouseHit(mouseLoc, mouseDir);
-		structuralHit = GetObjectMouseHit(mouseLoc, mouseDir, false, true);
+		structuralHit = GetObjectMouseHit(mouseLoc, mouseDir, true);
 
 		float userPointDist = FLT_MAX;
 		float sketchDist = FLT_MAX;
@@ -1953,7 +2177,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 
 	FModumateObjectInstance *newHoveredObject = nullptr;
 
-	if (EMPlayerState->InteractionHandle == nullptr && !ShowingModalDialog && actorUnderMouse)
+	if (InteractionHandle == nullptr && !ShowingModalDialog && actorUnderMouse)
 	{
 		newHoveredObject = Document->ObjectFromActor(actorUnderMouse);
 	}
@@ -2243,44 +2467,8 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetUserSnapPointMouseHit(cons
 /*
 Support function returns an object face hit, using the engine's raycast
 */
-FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVector &mouseLoc, const FVector &mouseDir, bool bCheckHandles, bool bCheckSnapping) const
+FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVector &mouseLoc, const FVector &mouseDir, bool bCheckSnapping) const
 {
-	if (bCheckHandles)
-	{
-		// Check adjustment handle under cursor, return no snap if true.
-		// Also take this opportunity to maintain the current hover handle.
-		AAdjustmentHandleActor_CPP* newHoverHandle = nullptr;
-		FHitResult hitSingleResult;
-
-		if (GetWorld()->LineTraceSingleByObjectType(hitSingleResult, mouseLoc, mouseLoc + MaxRaycastDist * mouseDir, HandleTraceObjectQueryParams, HandleTraceQueryParams))
-		{
-			newHoverHandle = Cast<AAdjustmentHandleActor_CPP>(hitSingleResult.Actor);
-		}
-
-		if (EMPlayerState->HoverHandle != newHoverHandle)
-		{
-			if (EMPlayerState->HoverHandle)
-			{
-				EMPlayerState->HoverHandle->OnHover(false);
-			}
-
-			EMPlayerState->HoverHandle = newHoverHandle;
-
-			if (EMPlayerState->HoverHandle)
-			{
-				EMPlayerState->HoverHandle->OnHover(true);
-			}
-		}
-
-		if (newHoverHandle)
-		{
-			FMouseWorldHitType handleHit;
-			handleHit.Actor = newHoverHandle;
-			handleHit.SnapType = ESnapType::CT_NOSNAP;
-			return handleHit;
-		}
-	}
-
 	// Find the MOI (if any) that we hit
 	FMouseWorldHitType objectHit;
 	float objectHitDist = FLT_MAX;
@@ -2436,6 +2624,45 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 	return objectHit;
 }
 
+FMouseWorldHitType AEditModelPlayerController_CPP::UpdateHandleHit(const FVector &mouseLoc, const FVector &mouseDir)
+{
+	FMouseWorldHitType handleHit;
+
+	// Check adjustment handle under cursor, return no snap if true.
+	// Also take this opportunity to maintain the current hover handle.
+	AAdjustmentHandleActor_CPP* newHoverHandle = nullptr;
+	FHitResult hitSingleResult;
+
+	if (GetWorld()->LineTraceSingleByObjectType(hitSingleResult, mouseLoc, mouseLoc + MaxRaycastDist * mouseDir, HandleTraceObjectQueryParams, HandleTraceQueryParams))
+	{
+		newHoverHandle = Cast<AAdjustmentHandleActor_CPP>(hitSingleResult.Actor);
+	}
+
+	if (HoverHandle != newHoverHandle)
+	{
+		if (HoverHandle)
+		{
+			HoverHandle->OnHover(false);
+		}
+
+		HoverHandle = newHoverHandle;
+
+		if (HoverHandle)
+		{
+			HoverHandle->OnHover(true);
+		}
+	}
+
+	if (newHoverHandle)
+	{
+		handleHit.Valid = true;
+		handleHit.Actor = newHoverHandle;
+		handleHit.SnapType = ESnapType::CT_NOSNAP;
+	}
+
+	return handleHit;
+}
+
 /*
 Support function: given any of the hits (structural, object or sketch), if the user is holding shift, project either onto the custom affordance or the snapping span (axis aligned)
 */
@@ -2454,7 +2681,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetShiftConstrainedMouseHit(c
 	// If there are no snap points, then we require an active tool in order to get a shift-projected snap point.
 	bool bRequireToolInUse = (UserSnapPoints.Num() == 0);
 
-	if (UserSnapPoints.Num() == 0 && !EMPlayerState->ToolIsInUse() && EMPlayerState->InteractionHandle == nullptr)
+	if (UserSnapPoints.Num() == 0 && !ToolIsInUse() && InteractionHandle == nullptr)
 	{
 		return ret;
 	}
@@ -2709,58 +2936,6 @@ void AEditModelPlayerController_CPP::UpdateDimensionString(const FVector &p1, co
 		newDimensionString.Functionality = EEnterableField::NonEditableText;
 	}
 	EMPlayerState->DimensionStrings.Add(newDimensionString);
-}
-
-void AEditModelPlayerController_CPP::SetArraybleCommand(const TArray<int32> &baseIds, const FTransform &t)
-{
-	ArrayableCommandTransform = t;
-	ArrayableCommandInput = baseIds;
-	ArrayableCommandOutput.Empty();
-}
-
-void AEditModelPlayerController_CPP::ClearArraybleCommand()
-{
-	ArrayableCommandOutput.Empty();
-	ArrayableCommandInput.Empty();
-}
-
-bool AEditModelPlayerController_CPP::HasArraybleCommand() const
-{
-	return ArrayableCommandInput.Num() > 0;
-}
-
-void AEditModelPlayerController_CPP::ExecuteArraybleCommand(int32 count)
-{
-	Document->BeginUndoRedoMacro();
-
-	Document->DeleteObjects(ArrayableCommandOutput);
-	ArrayableCommandOutput.Empty();
-
-	TArray<FModumateObjectInstance *> inputObs;
-
-	Algo::TransformIf(
-		ArrayableCommandInput,
-		inputObs,
-		[this](int32 id){return Document->GetObjectById(id) != nullptr;},
-		[this](int32 id){return Document->GetObjectById(id);}
-	);
-
-	for (int32 i = 0; i < count - 1; ++i)
-	{
-		TArray<FModumateObjectInstance *> newObs = Document->CloneObjects(GetWorld(),inputObs);
-
-		TArray<int32> ids;
-		Algo::Transform(newObs,ids,[](FModumateObjectInstance *ob) { return ob->ID; });
-
-		ModumateCommand(
-			FModumateCommand("move_objects")
-			.Param("delta", ArrayableCommandTransform.GetTranslation() * (i + 1))
-			.Param("ids", ids));
-
-		ArrayableCommandOutput.Append(ids);
-	}
-
-	Document->EndUndoRedoMacro();
 }
 
 void AEditModelPlayerController_CPP::SetSelectionMode(ESelectObjectMode NewSelectionMode)

@@ -140,18 +140,20 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kUndo, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerController_CPP *playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
+		AEditModelPlayerState_CPP *playerState = playerController->EMPlayerState;
 
-		if (playerState->ToolIsInUse())
+		if (playerController->ToolIsInUse())
 		{
-			playerState->AbortUseTool();
+			playerController->AbortUseTool();
 			return true;
 		}
 
-		if (playerState->InteractionHandle != nullptr)
+		if (playerController->InteractionHandle)
 		{
 			return true;
 		}
+
 		GetDocument()->Undo(GetWorld());
 		playerState->ValidateSelectionsAndView();
 		return true;
@@ -159,15 +161,16 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kRedo, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerController_CPP *playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
+		AEditModelPlayerState_CPP *playerState = playerController->EMPlayerState;
 
-		if (playerState->ToolIsInUse())
+		if (playerController->ToolIsInUse())
 		{
-			playerState->AbortUseTool();
+			playerController->AbortUseTool();
 			return true;
 		}
 
-		if (playerState->InteractionHandle != nullptr)
+		if (playerController->InteractionHandle)
 		{
 			return true;
 		}
@@ -679,9 +682,9 @@ void UModumateGameInstance::RegisterAllCommands()
 		TArray<FModumateObjectInstance*> obs = playerState->SelectedObjects;
 		playerState->DeselectAll();
 
-		if (playerState->ToolIsInUse())
+		if (playerController->ToolIsInUse())
 		{
-			playerState->AbortUseTool();
+			playerController->AbortUseTool();
 		}
 
 		bool bAllowRoomAnalysis = true;
@@ -1149,7 +1152,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 		if (playerState && TryEnumValueByString(EToolMode, params.GetValue(Parameters::kToolMode).AsString(), toolMode))
 		{
-			playerState->SetToolModeDirect(toolMode);
+			playerController->SetToolMode(toolMode);
 			return true;
 		}
 
@@ -1250,13 +1253,14 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kSetCurrentAssembly, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerController_CPP *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+		AEditModelPlayerState_CPP *playerState = playerController->EMPlayerState;
 		AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
 		FModumateDocument *doc = GetDocument();
 
 		if (playerState && gameMode && doc)
 		{
-			EToolMode targetToolMode = playerState->ToolToMode.FindRef(playerState->CurrentTool);
+			EToolMode targetToolMode = playerController->GetToolMode();
 
 			FString toolModeString = params.GetValue(Parameters::kMode);
 			if (toolModeString.IsEmpty())

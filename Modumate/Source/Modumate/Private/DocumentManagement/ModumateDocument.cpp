@@ -22,6 +22,8 @@
 #include "DraftingManager.h"
 #include "EditModelGameMode_CPP.h"
 #include "EditModelGameState_CPP.h"
+#include "EditModelPlayerController_CPP.h"
+#include "EditModelToolInterface.h"
 #include "ModumateDelta.h"
 #include "ModumateDraftingView.h"
 #include "ModumateMitering.h"
@@ -3703,14 +3705,15 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 		EToolMode::VE_ROOF
 	};
 
-	AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
+	AEditModelPlayerController_CPP* emPlayerController = Cast<AEditModelPlayerController_CPP>(world->GetFirstPlayerController());
+	AEditModelPlayerState_CPP* emPlayerState = emPlayerController->EMPlayerState;
 
 	for (auto &mode : modes)
 	{
-		IModumateEditorTool **tool = emPlayerState->ModeToTool.Find(mode);
-		if (ensureAlways(tool != nullptr && (*tool) != nullptr))
+		TScriptInterface<IEditModelToolInterface> tool = emPlayerController->ModeToTool.FindRef(mode);
+		if (ensureAlways(tool))
 		{
-			docRec.CurrentToolAssemblyMap.Add(mode, (*tool)->GetAssembly().Key);
+			docRec.CurrentToolAssemblyMap.Add(mode, tool->GetAssembly().Key);
 		}
 	}
 
@@ -3776,7 +3779,8 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Load"));
 
 	//Get player state and tells it to empty selected object
-	AEditModelPlayerState_CPP* EMPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
+	AEditModelPlayerController_CPP* EMPlayerController = Cast<AEditModelPlayerController_CPP>(world->GetFirstPlayerController());
+	AEditModelPlayerState_CPP* EMPlayerState = EMPlayerController->EMPlayerState;
 	EMPlayerState->OnNewModel();
 
 	MakeNew(world);
@@ -3863,13 +3867,13 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 
 		for (auto &cta : docRec.CurrentToolAssemblyMap)
 		{
-			IModumateEditorTool **tool = EMPlayerState->ModeToTool.Find(cta.Key);
-			if (ensureAlways(tool != nullptr && *tool != nullptr))
+			TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(cta.Key);
+			if (ensureAlways(tool))
 			{
 				const FModumateObjectAssembly *obAsm = PresetManager.GetAssemblyByKey(cta.Key, cta.Value);
 				if (obAsm != nullptr)
 				{
-					(*tool)->SetAssembly(obAsm->AsShoppingItem());
+					tool->SetAssembly(obAsm->AsShoppingItem());
 				}
 			}
 		}

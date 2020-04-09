@@ -7,7 +7,7 @@
 #include "ModumateConsoleCommand.h"
 #include "ModumateCrafting.h"
 #include "Runtime/Engine/Classes/GameFramework/GameStateBase.h"
-#include "IModumateEditorTool.h"
+#include "EditModelToolInterface.h"
 #include "EditModelGameState_CPP.generated.h"
 
 

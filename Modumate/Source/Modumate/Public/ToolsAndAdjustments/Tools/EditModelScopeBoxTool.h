@@ -5,50 +5,52 @@
 #include "EditModelPlayerState_CPP.h"
 #include "DynamicMeshActor.h"
 
+#include "EditModelScopeBoxTool.generated.h"
+
 class AEditModelGameMode_CPP;
 class AEditModelGameState_CPP;
 class ALineActor3D_CPP;
 
-namespace Modumate
+UCLASS()
+class MODUMATE_API UScopeBoxTool : public UEditModelToolBase
 {
-	class MODUMATE_API FScopeBoxTool : public FEditModelToolBase
+	GENERATED_BODY()
+
+public:
+	UScopeBoxTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_SCOPEBOX; }
+	virtual bool Activate() override;
+	virtual bool Deactivate() override;
+	virtual bool BeginUse() override;
+	virtual bool FrameUpdate() override;
+
+	virtual bool EnterNextStage() override;
+
+	virtual bool EndUse() override;
+	virtual bool AbortUse() override;
+
+protected:
+	enum EState
 	{
-	public:
-		FScopeBoxTool(AEditModelPlayerController_CPP *InController);
-		virtual ~FScopeBoxTool();
-
-		virtual bool Activate() override;
-		virtual bool Deactivate() override;
-		virtual bool BeginUse() override;
-		virtual bool FrameUpdate() override;
-
-		virtual bool EnterNextStage() override;
-
-		virtual bool EndUse() override;
-		virtual bool AbortUse() override;
-
-	protected:
-		enum EState
-		{
-			SeekingCutPlane,
-			BasePending,
-			NormalPending
-		};
-
-		bool ResetState();
-
-		TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
-		TWeakObjectPtr<ADynamicMeshActor> PendingBox;
-		TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
-		FArchitecturalMaterial PendingBoxMaterial;
-
-		TArray<FVector> PendingBoxBasePoints;
-
-		FVector Origin;
-		FVector Normal;
-		float Extrusion;
-		EMouseMode OriginalMouseMode;
-
-		EState CurrentState;
+		SeekingCutPlane,
+		BasePending,
+		NormalPending
 	};
-}
+
+	bool ResetState();
+
+	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
+	TWeakObjectPtr<ADynamicMeshActor> PendingBox;
+	TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
+	FArchitecturalMaterial PendingBoxMaterial;
+
+	TArray<FVector> PendingBoxBasePoints;
+
+	FVector Origin;
+	FVector Normal;
+	float Extrusion;
+	EMouseMode OriginalMouseMode;
+
+	EState CurrentState;
+};

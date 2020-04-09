@@ -28,14 +28,9 @@ AEditModelPlayerState_CPP::AEditModelPlayerState_CPP()
 	, bDevelopDDL2Data(false)
 	, SelectedViewMode(EEditViewModes::ObjectEditing)
 	, ShowingFileDialog(false)
-	, CurrentTool(nullptr)
-	, ReturnToolMode(EToolMode::VE_SELECT)
-	, CurrentToolUseDuration(0.0f)
 	, HoveredObject(nullptr)
-	, HoverHandle(nullptr)
 	, DebugMouseHits(false)
 	, bShowSnappedCursor(true)
-	, InteractionHandle(nullptr)
 	, MetaPlaneHorizontalColor(0x30, 0xD0, 0x30)
 	, MetaPlaneVerticalColor(0x30, 0x30, 0xD0)
 	, MetaPlaneAskewColor(0xD0, 0xD0, 0xD0)
@@ -72,12 +67,6 @@ void AEditModelPlayerState_CPP::Tick(float DeltaSeconds)
 		TEXT("AEditModelPlayerController_CPP should have initialized AEditModelPlayerState_CPP!")))
 	{
 		return;
-	}
-
-	// Keep track of how long we've been using the current tool
-	if (CurrentTool != nullptr)
-	{
-		CurrentToolUseDuration += DeltaSeconds;
 	}
 
 	// Reset the HUD Draw Widget's lines now, so that we know they're all added during this tick function.
@@ -263,22 +252,6 @@ void AEditModelPlayerState_CPP::SetAssemblyForActor(AActor *actor, const FShoppi
 	}
 }
 
-void AEditModelPlayerState_CPP::SetToolAxisConstraint(EAxisConstraint AxisConstraint)
-{
-	if (CurrentTool)
-	{
-		CurrentTool->SetAxisConstraint(AxisConstraint);
-	}
-}
-
-void AEditModelPlayerState_CPP::SetToolCreateObjectMode(EToolCreateObjectMode CreateObjectMode)
-{
-	if (CurrentTool)
-	{
-		CurrentTool->SetCreateObjectMode(CreateObjectMode);
-	}
-}
-
 void AEditModelPlayerState_CPP::ToggleRoomViewMode()
 {
 	if (SelectedViewMode == EEditViewModes::Rooms)
@@ -343,215 +316,6 @@ FModumateObjectAssembly AEditModelPlayerState_CPP::SetTemporaryAssembly(
 const FModumateObjectAssembly *AEditModelPlayerState_CPP::GetTemporaryAssembly(EToolMode mode) const
 {
 	return TemporaryAssemblies.Find(mode);
-}
-
-EToolMode AEditModelPlayerState_CPP::GetToolMode()
-{
-//	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::GetToolMode"));
-	if (CurrentTool == nullptr)
-	{
-		return EToolMode::VE_NONE;
-	}
-	EToolMode *mode = ToolToMode.Find(CurrentTool);
-	if (mode != nullptr)
-	{
-		return *mode;
-	}
-	return EToolMode::VE_NONE;
-}
-
-void AEditModelPlayerState_CPP::SetToolModeDirect(EToolMode tm)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SetToolMode"));
-
-	// Don't do anything if we're trying to set the tool to our current one.
-	IModumateEditorTool *newTool = ModeToTool.FindRef(tm);
-	if (newTool == CurrentTool)
-	{
-		return;
-	}
-
-	// Record how long we used the previous tool
-	if ((ReturnToolMode != EToolMode::VE_NONE) && (CurrentTool != nullptr))
-	{
-		UModumateAnalyticsStatics::RecordToolUsage(this, ReturnToolMode, CurrentToolUseDuration);
-	}
-
-	EMPlayerController->ClearArraybleCommand();
-	ReturnToolMode = tm;
-
-	if (CurrentTool != nullptr)
-	{
-		if (CurrentTool->IsInUse())
-		{
-			CurrentTool->AbortUse();
-		}
-		CurrentTool->Deactivate();
-		CurrentToolUseDuration = 0.0f;
-	}
-
-	if (InteractionHandle != nullptr)
-	{
-		InteractionHandle->AbortUse();
-		InteractionHandle = nullptr;
-	}
-
-	CurrentTool = newTool;
-	if (CurrentTool != nullptr)
-	{
-		CurrentTool->Activate();
-	}
-
-	EMPlayerController->UpdateMouseTraceParams();
-	UpdateObjectVisibilityAndCollision();
-}
-
-void AEditModelPlayerState_CPP::SetToolModeCommand(EToolMode tm)
-{
-	EMPlayerController->ModumateCommand(
-		Modumate::FModumateCommand(Modumate::Commands::kSetToolMode, true)
-		.Param(Modumate::Parameters::kToolMode, EnumValueString(EToolMode, tm)));
-}
-
-void AEditModelPlayerState_CPP::AbortUseTool()
-{
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::AbortUseTool"));
-	EMPlayerController->ClearArraybleCommand();
-
-	if (InteractionHandle != nullptr)
-	{
-		InteractionHandle->AbortUse();
-		InteractionHandle = nullptr;
-	}
-	else
-	if (CurrentTool )
-	{
-		if (CurrentTool->IsInUse())
-		{
-			CurrentTool->AbortUse();
-		}
-		else
-		{
-			SetToolModeDirect(EToolMode::VE_SELECT);
-		}
-	}
-}
-
-bool AEditModelPlayerState_CPP::HandleToolInputText(FString inputText)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::HandleToolInputText"));
-
-	if (EMPlayerController->HasArraybleCommand())
-	{
-		int32 count = FCString::Atoi(*inputText);
-		const int32 MAX_OBJECTS = 100;
-		if (count > 0 && count <= MAX_OBJECTS)
-		{
-			EMPlayerController->ExecuteArraybleCommand(count);
-			return true;
-		}
-		return false;
-	}
-	float v = 0.f;
-	// Most cases input is in imperial unit, unless is specific handle or tool mode
-	if (ReturnToolMode == EToolMode::VE_ROTATE || // Rotate tool uses degree
-		(ReturnToolMode == EToolMode::VE_FLOOR && CurrentDimensionStringGroupIndex == 1) || // Floor tool degree string uses degree
-		(ReturnToolMode == EToolMode::VE_COUNTERTOP && CurrentDimensionStringGroupIndex == 1) || // CounterTop tool degree string uses degree
-		CanCurrentHandleShowRawInput())
-	{
-		v = FCString::Atof(*inputText);
-	}
-	else
-	{
-		v = UModumateDimensionStatics::StringToMetric(inputText, true);
-	}
-
-	const float MAX_DIMENSION = 525600 * 12 * 2.54;
-
-	if (v != 0.0f && v <= MAX_DIMENSION)
-	{
-		// First, try to use the player controller's input number handling,
-		// in case a user snap point is taking input.
-		if (EMPlayerController->HandleInputNumber(v))
-		{
-			return true;
-		}
-
-		if (InteractionHandle != nullptr)
-		{
-			if (InteractionHandle->HandleInputNumber(v))
-			{
-				InteractionHandle = nullptr;
-				return true;
-			}
-		}
-		else if (CurrentTool != nullptr && CurrentTool->IsInUse())
-		{
-			return CurrentTool->HandleInputNumber(v);
-		}
-	}
-
-	return false;
-}
-
-bool AEditModelPlayerState_CPP::CanCurrentHandleShowRawInput()
-{
-	if (InteractionHandle)
-	{
-		return InteractionHandle->AcceptRawInputNumber;
-	}
-	return false;
-}
-
-void AEditModelPlayerState_CPP::OnLButtonDown()
-{
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::OnLButtonDown"));
-	if (InteractionHandle != nullptr)
-	{
-		InteractionHandle->EndUse();
-		InteractionHandle = nullptr;
-		return;
-	}
-
-	if (HoverHandle != nullptr)
-	{
-		EMPlayerController->ClearArraybleCommand();
-
-		if (HoverHandle->BeginUse())
-		{
-			InteractionHandle = HoverHandle;
-		}
-		// If the handle reported failure beginning, but it is in use, then abort it.
-		else if (!ensureAlways(!HoverHandle->IsInUse()))
-		{
-			HoverHandle->AbortUse();
-		}
-		return;
-	}
-
-	if (CurrentTool != nullptr)
-	{
-		EMPlayerController->ClearArraybleCommand();
-		if (CurrentTool->IsInUse())
-		{
-			if (!CurrentTool->EnterNextStage())
-			{
-				CurrentTool->EndUse();
-			}
-		}
-		else
-		{
-			CurrentTool->BeginUse();
-		}
-	}
-}
-
-void AEditModelPlayerState_CPP::OnLButtonUp()
-{
-	if ((CurrentTool != nullptr) && CurrentTool->IsInUse())
-	{
-		CurrentTool->HandleMouseUp();
-	}
 }
 
 void AEditModelPlayerState_CPP::DebugShowWallProfiles(const TArray<FModumateObjectInstance *> &walls)
@@ -697,10 +461,10 @@ void AEditModelPlayerState_CPP::DeselectAll()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::DeselectAll"));
 
-	if (InteractionHandle != nullptr)
+	if (EMPlayerController->InteractionHandle)
 	{
-		InteractionHandle->AbortUse();
-		InteractionHandle = nullptr;
+		EMPlayerController->InteractionHandle->AbortUse();
+		EMPlayerController->InteractionHandle = nullptr;
 	}
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
@@ -839,14 +603,13 @@ void AEditModelPlayerState_CPP::PostSelectionOrViewChanged()
 void AEditModelPlayerState_CPP::OnNewModel()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::OnNewModel"));
-	if (ToolIsInUse())
+	if (EMPlayerController->ToolIsInUse())
 	{
-		AbortUseTool();
+		EMPlayerController->AbortUseTool();
 	}
-	SetToolModeDirect(EToolMode::VE_SELECT);
+	EMPlayerController->SetToolMode(EToolMode::VE_SELECT);
 
 	SnappedCursor.ClearAffordanceFrame();
-	EMPlayerController->ClearArraybleCommand();
 
 	// Reset fields that have pointers/references to MOIs
 	HoveredObject = nullptr;
@@ -1222,17 +985,6 @@ void AEditModelPlayerState_CPP::ClearSelectedPlacementErrorsAndHandles()
 	}
 }
 
-bool AEditModelPlayerState_CPP::GetHasActiveTool()
-{
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::GetHasActiveTool"));
-	return CurrentTool->IsInUse();
-}
-
-bool AEditModelPlayerState_CPP::ToolIsInUse() const
-{
-	return (CurrentTool != nullptr && CurrentTool->IsInUse());
-}
-
 void AEditModelPlayerState_CPP::CopySelectedToClipboard(const Modumate::FModumateDocument &document)
 {
 	ClipboardEntries.Reset();
@@ -1263,7 +1015,7 @@ void AEditModelPlayerState_CPP::Paste(Modumate::FModumateDocument &document) con
 
 const FShoppingItem &AEditModelPlayerState_CPP::GetAssemblyForToolMode(EToolMode mode)
 {
-	auto *tool = ModeToTool.FindRef(mode);
+	TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(mode);
 	if (ensureAlways(tool))
 	{
 		return tool->GetAssembly();
@@ -1274,7 +1026,7 @@ const FShoppingItem &AEditModelPlayerState_CPP::GetAssemblyForToolMode(EToolMode
 
 void AEditModelPlayerState_CPP::SetAssemblyForToolMode(EToolMode mode, const FShoppingItem &item)
 {
-	auto *tool = ModeToTool.FindRef(mode);
+	TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(mode);
 	if (ensureAlways(tool))
 	{
 		tool->SetAssembly(item);

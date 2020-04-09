@@ -5,6 +5,7 @@
 #include "CompoundMeshActor.h"
 #include "EditModelGameState_CPP.h"
 #include "EditModelPlayerController_CPP.h"
+#include "EditModelPlayerState_CPP.h"
 #include "ExpressionEvaluator.h"
 #include "Graph3D.h"
 #include "ModumateBIMSchema.h"
@@ -1128,7 +1129,7 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const Modumate::FModumateObj
 		const FGraph3D &volumeGraph = doc->GetVolumeGraph();
 
 		bool bInMetaToolMode = false;
-		EToolMode curToolMode = playerController->EMPlayerState->GetToolMode();
+		EToolMode curToolMode = playerController->GetToolMode();
 		switch (curToolMode)
 		{
 		case EToolMode::VE_WALL:

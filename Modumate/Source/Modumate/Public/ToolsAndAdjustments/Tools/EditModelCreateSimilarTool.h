@@ -5,29 +5,31 @@
 #include "EditModelPlayerState_CPP.h"
 #include "DynamicMeshActor.h"
 
+#include "EditModelCreateSimilarTool.generated.h"
+
 class AEditModelGameMode_CPP;
 class AEditModelGameState_CPP;
 class ALineActor3D_CPP;
 
-namespace Modumate
+UCLASS()
+class MODUMATE_API UCreateSimilarTool : public UEditModelToolBase
 {
-	class MODUMATE_API FCreateSimilarTool : public FEditModelToolBase
-	{
-	public:
-		FCreateSimilarTool(AEditModelPlayerController_CPP *InController);
-		virtual ~FCreateSimilarTool();
+	GENERATED_BODY()
 
-	public:
-		virtual bool Activate() override;
-		virtual bool Deactivate() override;
+public:
+	UCreateSimilarTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-		virtual bool BeginUse() override;
-		virtual bool HandleMouseUp() override;
-		virtual bool EnterNextStage() override;
-		virtual bool FrameUpdate() override;
-		virtual bool EndUse() override;
-		virtual bool AbortUse() override;
+public:
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_CREATESIMILAR; }
+	virtual bool Activate() override;
+	virtual bool Deactivate() override;
 
-		bool GetCreateSimilarActor(bool bUseMouseHoverObject);
-	};
-}
+	virtual bool BeginUse() override;
+	virtual bool HandleMouseUp() override;
+	virtual bool EnterNextStage() override;
+	virtual bool FrameUpdate() override;
+	virtual bool EndUse() override;
+	virtual bool AbortUse() override;
+
+	bool MatchTargetObject(bool bUseMouseHoverObject);
+};

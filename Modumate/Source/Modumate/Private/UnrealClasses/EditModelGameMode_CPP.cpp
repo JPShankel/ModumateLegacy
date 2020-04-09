@@ -4,7 +4,7 @@
 
 #include "EditModelPlayerState_CPP.h"
 #include "HAL/FileManager.h"
-#include "IModumateEditorTool.h"
+#include "EditModelToolInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "LineActor3D_CPP.h"
 #include "MOIGroupActor_CPP.h"

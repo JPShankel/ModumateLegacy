@@ -2,8 +2,8 @@
 
 #include "EditModelCabinetTool.h"
 #include "EditModelPlayerController_CPP.h"
-#include "EditModelGameState_CPP.h"
 #include "EditModelPlayerState_CPP.h"
+#include "EditModelGameState_CPP.h"
 #include "EditModelGameMode_CPP.h"
 #include "LineActor3D_CPP.h"
 #include "ModumateCommands.h"
@@ -11,340 +11,333 @@
 #include "ModumateObjectInstanceCabinets.h"
 #include "ModumateFunctionLibrary.h"
 
-namespace Modumate
+using namespace Modumate;
+
+UCabinetTool::UCabinetTool(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+	, State(Neutral)
 {
-	FCabinetTool::~FCabinetTool() {}
+	Controller->EMPlayerState;
+	CabinetPlane = FPlane(FVector::UpVector, 0.0f);
+}
 
-	FCabinetTool::FCabinetTool(AEditModelPlayerController_CPP *pc) :
-		FEditModelToolBase(pc)
-		, State(Neutral)
+bool UCabinetTool::Activate()
+{
+	Super::Activate();
+	Controller->DeselectAll();
+	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
+	return true;
+}
+
+bool UCabinetTool::BeginUse()
+{
+	Super::BeginUse();
+
+	if (!Controller->EMPlayerState->SnappedCursor.Visible)
 	{
-		Controller->EMPlayerState;
-		CabinetPlane = FPlane(FVector::UpVector, 0.0f);
+		return false;
 	}
 
-	bool FCabinetTool::Activate()
+	FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+
+	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector);
+
+	State = NewSegmentPending;
+
+	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+	PendingSegment->Point1 = hitLoc;
+	PendingSegment->Point2 = hitLoc;
+	PendingSegment->Color = FColor::Green;
+	PendingSegment->Thickness = 2;
+
+	LastPendingSegmentLoc = hitLoc;
+	LastPendingSegmentLocValid = true;
+
+	CabinetPlane = FPlane(hitLoc, FVector::UpVector);
+
+	return true;
+}
+
+bool UCabinetTool::FrameUpdate()
+{
+	Super::FrameUpdate();
+	if (!Controller->EMPlayerState->SnappedCursor.Visible)
 	{
-		FEditModelToolBase::Activate();
-		Controller->DeselectAll();
-		Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
-		return true;
+		return false;
 	}
 
-	bool FCabinetTool::BeginUse()
-	{
-		FEditModelToolBase::BeginUse();
+	const FSnappedCursor& snappedCursor = Controller->EMPlayerState->SnappedCursor;
+	FVector hitLoc = snappedCursor.WorldPosition;
 
-		if (!Controller->EMPlayerState->SnappedCursor.Visible)
+	if (State == NewSegmentPending && PendingSegment != nullptr)
+	{
+		FAffordanceLine affordance;
+		if (Controller->EMPlayerState->SnappedCursor.TryMakeAffordanceLineFromCursorToSketchPlane(affordance, hitLoc))
 		{
-			return false;
+			Controller->EMPlayerState->AffordanceLines.Add(affordance);
 		}
-
-		FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-
-		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector);
-
-		State = NewSegmentPending;
-
-		PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
-		PendingSegment->Point1 = hitLoc;
-		PendingSegment->Point2 = hitLoc;
-		PendingSegment->Color = FColor::Green;
-		PendingSegment->Thickness = 2;
 
 		LastPendingSegmentLoc = hitLoc;
 		LastPendingSegmentLocValid = true;
 
-		CabinetPlane = FPlane(hitLoc, FVector::UpVector);
-
-		return true;
+		PendingSegment->Point2 = hitLoc;
+		// TODO: non-horizontal dimensions
+		Controller->UpdateDimensionString(PendingSegment->Point1, PendingSegment->Point2, FVector::UpVector);
 	}
 
-	bool FCabinetTool::FrameUpdate()
+	if (State == SetHeight)
 	{
-		FEditModelToolBase::FrameUpdate();
-		if (!Controller->EMPlayerState->SnappedCursor.Visible)
-		{
-			return false;
-		}
+		FVector verticalPlaneOrigin = LastPendingSegmentLocValid ? LastPendingSegmentLoc : BaseSegs.Last()->Point2;
+		FVector projectedDeltaPos = hitLoc;
 
-		const FSnappedCursor& snappedCursor = Controller->EMPlayerState->SnappedCursor;
-		FVector hitLoc = snappedCursor.WorldPosition;
+		Controller->EMPlayerState->GetSnapCursorDeltaFromRay(verticalPlaneOrigin, CabinetPlane, projectedDeltaPos);
+		float newHeight = projectedDeltaPos | CabinetPlane;
 
-		if (State == NewSegmentPending && PendingSegment != nullptr)
-		{
-			FAffordanceLine affordance;
-			if (Controller->EMPlayerState->SnappedCursor.TryMakeAffordanceLineFromCursorToSketchPlane(affordance, hitLoc))
-			{
-				Controller->EMPlayerState->AffordanceLines.Add(affordance);
-			}
-
-			LastPendingSegmentLoc = hitLoc;
-			LastPendingSegmentLocValid = true;
-
-			PendingSegment->Point2 = hitLoc;
-			// TODO: non-horizontal dimensions
-			Controller->UpdateDimensionString(PendingSegment->Point1, PendingSegment->Point2, FVector::UpVector);
-		}
-
-		if (State == SetHeight)
-		{
-			FVector verticalPlaneOrigin = LastPendingSegmentLocValid ? LastPendingSegmentLoc : BaseSegs.Last()->Point2;
-			FVector projectedDeltaPos = hitLoc;
-
-			Controller->EMPlayerState->GetSnapCursorDeltaFromRay(verticalPlaneOrigin, CabinetPlane, projectedDeltaPos);
-			float newHeight = projectedDeltaPos | CabinetPlane;
-
-			FVector avgLocation(ForceInitToZero);
-			for (auto &seg : TopSegs)
-			{
-				seg->Point1.Z = newHeight;
-				seg->Point2.Z = newHeight;
-			}
-			for (auto &seg : ConnectSegs)
-			{
-				seg->Point2.Z = newHeight;
-				avgLocation = (avgLocation + seg->Point2) / 2.f;
-			}
-
-			avgLocation.Z = 0.f;
-			FVector newHeightLocation = avgLocation;
-			newHeightLocation.Z = newHeight;
-
-			FVector camDir = Controller->PlayerCameraManager->GetCameraRotation().Vector();
-			camDir.Z = 0.f;
-			camDir = camDir.RotateAngleAxis(-90.f, FVector::UpVector);
-			// Dim string for cabinet height - Delta Only
-			UModumateFunctionLibrary::AddNewDimensionString(
-				Controller.Get(),
-				avgLocation,
-				newHeightLocation,
-				camDir,
-				Controller->DimensionStringGroupID_PlayerController,
-				Controller->DimensionStringUniqueID_Delta,
-				0,
-				Controller.Get(),
-				EDimStringStyle::Fixed);
-		}
-
-		return true;
-	}
-
-	bool FCabinetTool::HandleInputNumber(double n)
-	{
-		if (State == NewSegmentPending && PendingSegment != nullptr)
-		{
-			FVector direction = (PendingSegment->Point2 - PendingSegment->Point1).GetSafeNormal();
-			FVector origin = PendingSegment->Point1 + direction * n;
-			HandleClick(origin);
-			Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(origin, direction);
-		}
-		if (State == SetHeight)
-		{
-			if (TopSegs[0]->Point1.Z > BaseSegs[0]->Point1.Z)
-			{
-				TopSegs[0]->Point1.Z = BaseSegs[0]->Point1.Z + n;
-			}
-			else
-			{
-				TopSegs[0]->Point1.Z = BaseSegs[0]->Point1.Z - n;
-			}
-			EnterNextStage();
-			EndUse();
-		}
-		return true;
-	}
-
-	bool FCabinetTool::AbortUse()
-	{
-		FEditModelToolBase::AbortUse();
-		if (PendingSegment != nullptr)
-		{
-			PendingSegment->Destroy();
-			PendingSegment = nullptr;
-		}
-
-		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-
-		for (auto &seg : BaseSegs)
-		{
-			Controller->ModumateCommand(
-				FModumateCommand(Modumate::Commands::kMakeLineSegment)
-				.Param(Modumate::Parameters::kAssembly,Assembly.Key)
-				.Param(Parameters::kPoint1, seg->Point1)
-				.Param(Parameters::kPoint2, seg->Point2)
-				.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
-			);
-		}
-
-		for (auto &seg : BaseSegs)
-		{
-			seg->Destroy();
-		}
-
+		FVector avgLocation(ForceInitToZero);
 		for (auto &seg : TopSegs)
 		{
-			seg->Destroy();
+			seg->Point1.Z = newHeight;
+			seg->Point2.Z = newHeight;
 		}
-
 		for (auto &seg : ConnectSegs)
 		{
-			seg->Destroy();
+			seg->Point2.Z = newHeight;
+			avgLocation = (avgLocation + seg->Point2) / 2.f;
 		}
 
-		ConnectSegs.Empty();
-		BaseSegs.Empty();
-		TopSegs.Empty();
-		State = Neutral;
-		LastPendingSegmentLocValid = false;
+		avgLocation.Z = 0.f;
+		FVector newHeightLocation = avgLocation;
+		newHeightLocation.Z = newHeight;
 
-		return true;
+		FVector camDir = Controller->PlayerCameraManager->GetCameraRotation().Vector();
+		camDir.Z = 0.f;
+		camDir = camDir.RotateAngleAxis(-90.f, FVector::UpVector);
+		// Dim string for cabinet height - Delta Only
+		UModumateFunctionLibrary::AddNewDimensionString(
+			Controller,
+			avgLocation,
+			newHeightLocation,
+			camDir,
+			Controller->DimensionStringGroupID_PlayerController,
+			Controller->DimensionStringUniqueID_Delta,
+			0,
+			Controller,
+			EDimStringStyle::Fixed);
 	}
 
-	bool FCabinetTool::EndUse()
+	return true;
+}
+
+bool UCabinetTool::HandleInputNumber(double n)
+{
+	if (State == NewSegmentPending && PendingSegment != nullptr)
 	{
-		FEditModelToolBase::EndUse();
+		FVector direction = (PendingSegment->Point2 - PendingSegment->Point1).GetSafeNormal();
+		FVector origin = PendingSegment->Point1 + direction * n;
+		HandleClick(origin);
+		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(origin, direction);
+	}
+	if (State == SetHeight)
+	{
+		if (TopSegs[0]->Point1.Z > BaseSegs[0]->Point1.Z)
+		{
+			TopSegs[0]->Point1.Z = BaseSegs[0]->Point1.Z + n;
+		}
+		else
+		{
+			TopSegs[0]->Point1.Z = BaseSegs[0]->Point1.Z - n;
+		}
+		EnterNextStage();
+		EndUse();
+	}
+	return true;
+}
+
+bool UCabinetTool::AbortUse()
+{
+	Super::AbortUse();
+	if (PendingSegment != nullptr)
+	{
+		PendingSegment->Destroy();
+		PendingSegment = nullptr;
+	}
+
+	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
+
+	for (auto &seg : BaseSegs)
+	{
+		Controller->ModumateCommand(
+			FModumateCommand(Modumate::Commands::kMakeLineSegment)
+			.Param(Modumate::Parameters::kAssembly,Assembly.Key)
+			.Param(Parameters::kPoint1, seg->Point1)
+			.Param(Parameters::kPoint2, seg->Point2)
+			.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
+		);
+	}
+
+	for (auto &seg : BaseSegs)
+	{
+		seg->Destroy();
+	}
+
+	for (auto &seg : TopSegs)
+	{
+		seg->Destroy();
+	}
+
+	for (auto &seg : ConnectSegs)
+	{
+		seg->Destroy();
+	}
+
+	ConnectSegs.Empty();
+	BaseSegs.Empty();
+	TopSegs.Empty();
+	State = Neutral;
+	LastPendingSegmentLocValid = false;
+
+	return true;
+}
+
+bool UCabinetTool::EndUse()
+{
+	Super::EndUse();
+	if (PendingSegment != nullptr)
+	{
+		PendingSegment->Destroy();
+		PendingSegment = nullptr;
+	}
+
+	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
+
+	for (auto &seg : BaseSegs)
+	{
+		seg->Destroy();
+	}
+
+	for (auto &seg : TopSegs)
+	{
+		seg->Destroy();
+	}
+
+	for (auto &seg : ConnectSegs)
+	{
+		seg->Destroy();
+	}
+
+	ConnectSegs.Empty();
+	BaseSegs.Empty();
+	TopSegs.Empty();
+
+	State = Neutral;
+	LastPendingSegmentLocValid = false;
+
+	return true;
+}
+
+void UCabinetTool::HandleClick(const FVector &p)
+{
+	if (State == NewSegmentPending && PendingSegment != nullptr)
+	{
+
+		Controller->ModumateCommand(
+			FModumateCommand(Modumate::Commands::kMakeLineSegment)
+			.Param(Parameters::kPoint1, PendingSegment->Point1)
+			.Param(Parameters::kPoint2, p)
+			.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
+		);
+
+
 		if (PendingSegment != nullptr)
 		{
-			PendingSegment->Destroy();
-			PendingSegment = nullptr;
+			FVector p1 = PendingSegment->Point1;
+			FVector p2 = PendingSegment->Point2;
+
+			PendingSegment->Point1 = p;
+			PendingSegment->Point2 = p;
+			Controller->TryMakeCabinetFromSegments();
 		}
-
-		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-
-		for (auto &seg : BaseSegs)
-		{
-			seg->Destroy();
-		}
-
-		for (auto &seg : TopSegs)
-		{
-			seg->Destroy();
-		}
-
-		for (auto &seg : ConnectSegs)
-		{
-			seg->Destroy();
-		}
-
-		ConnectSegs.Empty();
-		BaseSegs.Empty();
-		TopSegs.Empty();
-
-		State = Neutral;
-		LastPendingSegmentLocValid = false;
-
-		return true;
-	}
-
-	void FCabinetTool::HandleClick(const FVector &p)
-	{
-		if (State == NewSegmentPending && PendingSegment != nullptr)
-		{
-
-			Controller->ModumateCommand(
-				FModumateCommand(Modumate::Commands::kMakeLineSegment)
-				.Param(Parameters::kPoint1, PendingSegment->Point1)
-				.Param(Parameters::kPoint2, p)
-				.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
-			);
-
-
-			if (PendingSegment != nullptr)
-			{
-				FVector p1 = PendingSegment->Point1;
-				FVector p2 = PendingSegment->Point2;
-
-				PendingSegment->Point1 = p;
-				PendingSegment->Point2 = p;
-				Controller->TryMakeCabinetFromSegments();
-			}
-		}
-	}
-
-	bool FCabinetTool::EnterNextStage()
-	{
-		FEditModelToolBase::EnterNextStage();
-		if (!Controller->EMPlayerState->SnappedCursor.Visible)
-		{
-			return false;
-		}
-		if (State == NewSegmentPending)
-		{
-			FVector hitLoc = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
-			Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector, (PendingSegment->Point1 - PendingSegment->Point2).GetSafeNormal());
-			HandleClick(hitLoc);
-
-			return true;
-		}
-		if (State == SetHeight)
-		{
-			TArray<FVector> points;
-			Algo::Transform(BaseSegs,points,[](const ALineActor3D_CPP *seg) {return seg->Point1; });
-
-			float h = TopSegs[0]->Point1.Z - BaseSegs[0]->Point1.Z;
-
-			Controller->ModumateCommand(
-				FModumateCommand(Commands::kMakeCabinetFrame)
-				.Param(Parameters::kAssembly,Assembly.Key)
-				.Param(Parameters::kControlPoints, points)
-				.Param(Parameters::kHeight, h)
-				.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
-			);
-			return false;
-		}
-		return false;
-	}
-
-	void FCabinetTool::BeginSetHeightMode(const TArray<FVector> &basePoly)
-	{
-		FEditModelToolBase::BeginUse();
-
-		if (PendingSegment != nullptr)
-		{
-			PendingSegment->Destroy();
-			PendingSegment = nullptr;
-		}
-
-		for (int i = 0; i < basePoly.Num(); ++i)
-		{
-			ALineActor3D_CPP *actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
-			actor->Point1 = basePoly[i];
-			actor->Point2 = basePoly[(i + 1) % basePoly.Num()];
-			BaseSegs.Add(actor);
-
-			actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
-			actor->Point1 = basePoly[i];
-			actor->Point2 = basePoly[(i + 1) % basePoly.Num()];
-			TopSegs.Add(actor);
-
-			actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
-			actor->Point1 = basePoly[i];
-			actor->Point2 = basePoly[i];
-			ConnectSegs.Add(actor);
-		}
-
-		if (ensureAlways(basePoly.Num() > 0))
-		{
-			CabinetPlane = FPlane(basePoly[0], FVector::UpVector);
-		}
-
-		const FSnappedCursor& SnappedCursor = Controller->EMPlayerState->SnappedCursor;
-		if (SnappedCursor.Visible &&
-			SnappedCursor.SnapType != ESnapType::CT_NOSNAP)
-		{
-			LastPendingSegmentLoc = SnappedCursor.WorldPosition;
-			LastPendingSegmentLocValid = true;
-		}
-
-		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-		Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
-
-		State = SetHeight;
-	}
-
-	IModumateEditorTool *MakeCabinetTool(AEditModelPlayerController_CPP *controller)
-	{
-		return new FCabinetTool(controller);
 	}
 }
+
+bool UCabinetTool::EnterNextStage()
+{
+	Super::EnterNextStage();
+	if (!Controller->EMPlayerState->SnappedCursor.Visible)
+	{
+		return false;
+	}
+	if (State == NewSegmentPending)
+	{
+		FVector hitLoc = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
+		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector, (PendingSegment->Point1 - PendingSegment->Point2).GetSafeNormal());
+		HandleClick(hitLoc);
+
+		return true;
+	}
+	if (State == SetHeight)
+	{
+		TArray<FVector> points;
+		Algo::Transform(BaseSegs,points,[](const ALineActor3D_CPP *seg) {return seg->Point1; });
+
+		float h = TopSegs[0]->Point1.Z - BaseSegs[0]->Point1.Z;
+
+		Controller->ModumateCommand(
+			FModumateCommand(Commands::kMakeCabinetFrame)
+			.Param(Parameters::kAssembly,Assembly.Key)
+			.Param(Parameters::kControlPoints, points)
+			.Param(Parameters::kHeight, h)
+			.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
+		);
+		return false;
+	}
+	return false;
+}
+
+void UCabinetTool::BeginSetHeightMode(const TArray<FVector> &basePoly)
+{
+	Super::BeginUse();
+
+	if (PendingSegment != nullptr)
+	{
+		PendingSegment->Destroy();
+		PendingSegment = nullptr;
+	}
+
+	for (int i = 0; i < basePoly.Num(); ++i)
+	{
+		ALineActor3D_CPP *actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+		actor->Point1 = basePoly[i];
+		actor->Point2 = basePoly[(i + 1) % basePoly.Num()];
+		BaseSegs.Add(actor);
+
+		actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+		actor->Point1 = basePoly[i];
+		actor->Point2 = basePoly[(i + 1) % basePoly.Num()];
+		TopSegs.Add(actor);
+
+		actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+		actor->Point1 = basePoly[i];
+		actor->Point2 = basePoly[i];
+		ConnectSegs.Add(actor);
+	}
+
+	if (ensureAlways(basePoly.Num() > 0))
+	{
+		CabinetPlane = FPlane(basePoly[0], FVector::UpVector);
+	}
+
+	const FSnappedCursor& SnappedCursor = Controller->EMPlayerState->SnappedCursor;
+	if (SnappedCursor.Visible &&
+		SnappedCursor.SnapType != ESnapType::CT_NOSNAP)
+	{
+		LastPendingSegmentLoc = SnappedCursor.WorldPosition;
+		LastPendingSegmentLocValid = true;
+	}
+
+	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
+	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
+
+	State = SetHeight;
+}
+

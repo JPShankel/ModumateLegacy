@@ -4,96 +4,86 @@
 
 #include "EditModelGameState_CPP.h"
 #include "EditModelPlayerController_CPP.h"
+#include "EditModelPlayerState_CPP.h"
 
 #include "ModumateCommands.h"
 
-namespace Modumate
+using namespace Modumate;
+
+UCreateSimilarTool::UCreateSimilarTool(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	FCreateSimilarTool::FCreateSimilarTool(AEditModelPlayerController_CPP *InController)
-		: FEditModelToolBase(InController)
-	{
 
+}
+
+bool UCreateSimilarTool::Activate()
+{
+	MatchTargetObject(false);
+	return UEditModelToolBase::Activate();
+}
+
+bool UCreateSimilarTool::Deactivate()
+{
+	return UEditModelToolBase::Deactivate();
+}
+
+bool UCreateSimilarTool::BeginUse()
+{
+	return UEditModelToolBase::BeginUse();
+}
+
+bool UCreateSimilarTool::HandleMouseUp()
+{
+	MatchTargetObject(true);
+	return true;
+}
+
+bool UCreateSimilarTool::EnterNextStage()
+{
+	return true;
+}
+
+bool UCreateSimilarTool::FrameUpdate()
+{
+	Super::FrameUpdate();
+
+	return true;
+}
+
+bool UCreateSimilarTool::EndUse()
+{
+	return UEditModelToolBase::EndUse();
+}
+
+bool UCreateSimilarTool::AbortUse()
+{
+	EndUse();
+	return UEditModelToolBase::AbortUse();
+}
+
+
+bool UCreateSimilarTool::MatchTargetObject(bool bUseMouseHoverObject)
+{
+	FModumateObjectInstance *targetObj = nullptr;
+
+	if (bUseMouseHoverObject)
+	{
+		// Get MOI that's currently under mouse cursor
+		targetObj = Controller->EMPlayerState->HoveredObject;
+	}
+	else
+	{
+		const auto &selectedObjs = Controller->EMPlayerState->SelectedObjects;
+		targetObj = (selectedObjs.Num() > 0) ? selectedObjs[0] : nullptr;
 	}
 
-	FCreateSimilarTool::~FCreateSimilarTool() {}
-
-	bool FCreateSimilarTool::Activate()
+	if (targetObj)
 	{
-		GetCreateSimilarActor(false);
-		return FEditModelToolBase::Activate();
-	}
-
-	bool FCreateSimilarTool::Deactivate()
-	{
-		return FEditModelToolBase::Deactivate();
-	}
-
-	bool FCreateSimilarTool::BeginUse()
-	{
-		return FEditModelToolBase::BeginUse();
-	}
-
-	bool FCreateSimilarTool::HandleMouseUp()
-	{
-		GetCreateSimilarActor(true);
+		FShoppingItem targetShoppingItem = targetObj->ObjectAssembly.AsShoppingItem();
+		EToolMode targetToolMode = UModumateTypeStatics::ToolModeFromObjectType(targetObj->ObjectAssembly.ObjectType);
+		Controller->EMPlayerState->SetAssemblyForToolMode(targetToolMode, targetShoppingItem);
 		return true;
 	}
 
-	bool FCreateSimilarTool::EnterNextStage()
-	{
-		return true;
-	}
-
-	bool FCreateSimilarTool::FrameUpdate()
-	{
-		FEditModelToolBase::FrameUpdate();
-
-		return true;
-	}
-
-	bool FCreateSimilarTool::EndUse()
-	{
-		return FEditModelToolBase::EndUse();
-	}
-
-	bool FCreateSimilarTool::AbortUse()
-	{
-		EndUse();
-		return FEditModelToolBase::AbortUse();
-	}
-
-
-	bool FCreateSimilarTool::GetCreateSimilarActor(bool bUseMouseHoverObject)
-	{
-		if (bUseMouseHoverObject)
-		{
-			// Get actor that's currently under mouse cursor
-
-			FModumateObjectInstance *moi = Controller->EMPlayerState->HoveredObject;
-			if ((moi != nullptr) && (moi->GetActor() != nullptr))
-			{
-				Controller->EMPlayerState->RefreshCreateSimilarActor(moi->GetActor());
-				return true;
-			}
-		}
-		else
-		{
-			// Get currently selected actor. If there's more than one, use the first actor
-			TArray<AActor*> selectedActors;
-			Controller->EMPlayerState->GetSelectorModumateObjects(selectedActors);
-
-			if ((selectedActors.Num() > 0) && (selectedActors[0] != nullptr))
-			{
-				Controller->EMPlayerState->RefreshCreateSimilarActor(selectedActors[0]);
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	IModumateEditorTool *MakeCreateSimilarTool(AEditModelPlayerController_CPP *controller)
-	{
-		return new FCreateSimilarTool(controller);
-	}
+	return false;
 }

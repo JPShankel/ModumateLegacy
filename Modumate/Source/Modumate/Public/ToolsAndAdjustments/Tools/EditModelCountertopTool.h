@@ -2,38 +2,40 @@
 #pragma once
 #include "EditModelToolBase.h"
 
+#include "EditModelCountertopTool.generated.h"
+
 class ALineActor3D_CPP;
 
-namespace Modumate
+UCLASS()
+class MODUMATE_API UCountertopTool : public UEditModelToolBase
 {
-	class MODUMATE_API FCountertopTool : public FEditModelToolBase
+	GENERATED_BODY()
+
+private:
+	enum EState
 	{
-	private:
-		enum EState
-		{
-			Neutral = 0,
-			NewSegmentPending,
-		};
-		EState State;
-
-		TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
-		bool Inverted = true;
-		FVector AnchorPointDegree;
-
-	public:
-
-		FCountertopTool(AEditModelPlayerController_CPP *controller);
-		virtual ~FCountertopTool();
-		virtual bool HandleInputNumber(double n) override;
-		virtual bool Activate() override;
-		virtual bool Deactivate() override;
-		virtual bool BeginUse() override;
-		virtual bool EnterNextStage() override;
-		void HandleClick(const FVector &p);
-		virtual bool FrameUpdate() override;
-		virtual bool EndUse() override;
-		virtual bool AbortUse() override;
-		virtual bool HandleSpacebar() override;
-		void SegmentsConformInvert();
+		Neutral = 0,
+		NewSegmentPending,
 	};
-}
+	EState State;
+
+	TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
+	bool Inverted = true;
+	FVector AnchorPointDegree;
+
+public:
+	UCountertopTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_COUNTERTOP; }
+	virtual bool Activate() override;
+	virtual bool HandleInputNumber(double n) override;
+	virtual bool Deactivate() override;
+	virtual bool BeginUse() override;
+	virtual bool EnterNextStage() override;
+	void HandleClick(const FVector &p);
+	virtual bool FrameUpdate() override;
+	virtual bool EndUse() override;
+	virtual bool AbortUse() override;
+	virtual bool HandleSpacebar() override;
+	void SegmentsConformInvert();
+};

@@ -8,139 +8,132 @@
 #include "ModumateObjectDatabase.h"
 #include "ModumateObjectStatics.h"
 #include "EditModelPlayerController_CPP.h"
+#include "EditModelPlayerState_CPP.h"
 
-namespace Modumate {
+using namespace Modumate;
 
-	FPlaceObjectTool::FPlaceObjectTool(AEditModelPlayerController_CPP *pc) :
-		FEditModelToolBase(pc)
-		, Cursor(nullptr)
-	{}
+UPlaceObjectTool::UPlaceObjectTool(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+	, Cursor(nullptr)
+{}
 
-	FPlaceObjectTool::~FPlaceObjectTool() {}
+bool UPlaceObjectTool::Activate()
+{
+	Super::Activate();
 
+	// Spawn CompoundMeshActor as cursor
+	CursorCompoundMesh = Controller->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform::Identity);
+	CursorCompoundMesh->SetActorEnableCollision(false);
+	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	Modumate::FModumateDocument *doc = &gameState->Document;
+	FName key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT).Key;
+	const FModumateObjectAssembly *obAsmPtr = gameState->GetAssemblyByKey(key);
 
-	bool FPlaceObjectTool::Activate()
-	{
-		FEditModelToolBase::Activate();
-
-		// Spawn CompoundMeshActor as cursor
-		CursorCompoundMesh = Controller->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform::Identity);
-		CursorCompoundMesh->SetActorEnableCollision(false);
-		AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		Modumate::FModumateDocument *doc = &gameState->Document;
-		FName key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT).Key;
-		const FModumateObjectAssembly *obAsmPtr = gameState->GetAssemblyByKey(key);
-
-		if (!ensureAlways(obAsmPtr))
-		{
-			return false;
-		}
-
-		CurrentFFEAssembly = *obAsmPtr;
-		CursorCompoundMesh->MakeFromAssembly(CurrentFFEAssembly, FVector::OneVector, false, false);
-		TArray<UStaticMeshComponent*> smcs;
-		CursorCompoundMesh->GetComponents(smcs);
-		for (auto curSmc : smcs)
-		{
-			Cast<UStaticMeshComponent>(curSmc)->SetRelativeLocation(FVector::ZeroVector);
-		}
-
-		Controller->DeselectAll();
-		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-		Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
-
-		return true;
-	}
-
-	bool FPlaceObjectTool::ScrollToolOption(int32 dir)
+	if (!ensureAlways(obAsmPtr))
 	{
 		return false;
 	}
 
-	bool FPlaceObjectTool::Deactivate()
+	CurrentFFEAssembly = *obAsmPtr;
+	CursorCompoundMesh->MakeFromAssembly(CurrentFFEAssembly, FVector::OneVector, false, false);
+	TArray<UStaticMeshComponent*> smcs;
+	CursorCompoundMesh->GetComponents(smcs);
+	for (auto curSmc : smcs)
 	{
-		FEditModelToolBase::Deactivate();
-		if (Cursor != nullptr)
-		{
-			Cursor->Destroy();
-			Cursor = nullptr;
-		}
-		if (CursorCompoundMesh != nullptr)
-		{
-			CursorCompoundMesh->Destroy();
-			CursorCompoundMesh = nullptr;
-		}
-
-		return true;
+		Cast<UStaticMeshComponent>(curSmc)->SetRelativeLocation(FVector::ZeroVector);
 	}
 
-	bool FPlaceObjectTool::FrameUpdate()
+	Controller->DeselectAll();
+	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
+	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
+
+	return true;
+}
+
+bool UPlaceObjectTool::ScrollToolOption(int32 dir)
+{
+	return false;
+}
+
+bool UPlaceObjectTool::Deactivate()
+{
+	Super::Deactivate();
+	if (Cursor != nullptr)
 	{
-		AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		Modumate::FModumateDocument *doc = &gameState->Document;
-		FName key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT).Key;
-		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_PLACEOBJECT, key);
+		Cursor->Destroy();
+		Cursor = nullptr;
+	}
+	if (CursorCompoundMesh != nullptr)
+	{
+		CursorCompoundMesh->Destroy();
+		CursorCompoundMesh = nullptr;
+	}
+
+	return true;
+}
+
+bool UPlaceObjectTool::FrameUpdate()
+{
+	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	Modumate::FModumateDocument *doc = &gameState->Document;
+	FName key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT).Key;
+	const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_PLACEOBJECT, key);
 
 
-		if (assembly != nullptr)
+	if (assembly != nullptr)
+	{
+		if (CurrentFFEAssembly.DatabaseKey != assembly->DatabaseKey)
 		{
-			if (CurrentFFEAssembly.DatabaseKey != assembly->DatabaseKey)
+			if (CursorCompoundMesh != nullptr)
 			{
-				if (CursorCompoundMesh != nullptr)
+				CursorCompoundMesh->MakeFromAssembly(*assembly, FVector::OneVector, false, false);
+				TArray<UStaticMeshComponent*> smcs;
+				CursorCompoundMesh->GetComponents(smcs);
+				for (auto curSmc : smcs)
 				{
-					CursorCompoundMesh->MakeFromAssembly(*assembly, FVector::OneVector, false, false);
-					TArray<UStaticMeshComponent*> smcs;
-					CursorCompoundMesh->GetComponents(smcs);
-					for (auto curSmc : smcs)
-					{
-						Cast<UStaticMeshComponent>(curSmc)->SetRelativeLocation(FVector::ZeroVector);
-					}
+					Cast<UStaticMeshComponent>(curSmc)->SetRelativeLocation(FVector::ZeroVector);
 				}
 			}
-
-			CurrentFFEAssembly = *assembly;
 		}
 
-		FTransform mountedTransform;
-		if (UModumateObjectStatics::GetFFEMountedTransform(&CurrentFFEAssembly,
-			Controller->EMPlayerState->SnappedCursor, mountedTransform))
-		{
-			CursorCompoundMesh->SetActorTransform(mountedTransform);
-		}
-
-		return true;
+		CurrentFFEAssembly = *assembly;
 	}
 
-	bool FPlaceObjectTool::BeginUse()
+	FTransform mountedTransform;
+	if (UModumateObjectStatics::GetFFEMountedTransform(&CurrentFFEAssembly,
+		Controller->EMPlayerState->SnappedCursor, mountedTransform))
 	{
-		FEditModelToolBase::BeginUse();
-		FEditModelToolBase::EndUse();
-
-		const FSnappedCursor &snappedCursor = Controller->EMPlayerState->SnappedCursor;
-		FVector hitLoc = snappedCursor.WorldPosition;
-
-		AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		Modumate::FModumateDocument *doc = &gameState->Document;
-		FName key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT).Key;
-
-		FModumateObjectInstance *hitMOI = doc->ObjectFromActor(snappedCursor.Actor);
-		int32 parentID = hitMOI != nullptr ? hitMOI->ID : Controller->EMPlayerState->GetViewGroupObjectID();
-		int32 parentFaceIdx = UModumateObjectStatics::GetFaceIndexFromTargetHit(hitMOI, hitLoc, snappedCursor.HitNormal);
-
-		Controller->ModumateCommand(
-			FModumateCommand(Commands::kAddFFE)
-			.Param(Parameters::kAssembly, key)
-			.Param(Parameters::kLocation, hitLoc)
-			.Param(Parameters::kRotator, CursorCompoundMesh->GetActorRotation())
-			.Param(Parameters::kParent, parentID)
-			.Param(Parameters::kIndex, parentFaceIdx)
-		);
-
-		return true;
+		CursorCompoundMesh->SetActorTransform(mountedTransform);
 	}
 
-	IModumateEditorTool *MakePlaceObjectTool(AEditModelPlayerController_CPP *controller)
-	{
-		return new FPlaceObjectTool(controller);
-	}
-};
+	return true;
+}
+
+bool UPlaceObjectTool::BeginUse()
+{
+	Super::BeginUse();
+	Super::EndUse();
+
+	const FSnappedCursor &snappedCursor = Controller->EMPlayerState->SnappedCursor;
+	FVector hitLoc = snappedCursor.WorldPosition;
+
+	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	Modumate::FModumateDocument *doc = &gameState->Document;
+	FName key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT).Key;
+
+	FModumateObjectInstance *hitMOI = doc->ObjectFromActor(snappedCursor.Actor);
+	int32 parentID = hitMOI != nullptr ? hitMOI->ID : Controller->EMPlayerState->GetViewGroupObjectID();
+	int32 parentFaceIdx = UModumateObjectStatics::GetFaceIndexFromTargetHit(hitMOI, hitLoc, snappedCursor.HitNormal);
+
+	Controller->ModumateCommand(
+		FModumateCommand(Commands::kAddFFE)
+		.Param(Parameters::kAssembly, key)
+		.Param(Parameters::kLocation, hitLoc)
+		.Param(Parameters::kRotator, CursorCompoundMesh->GetActorRotation())
+		.Param(Parameters::kParent, parentID)
+		.Param(Parameters::kIndex, parentFaceIdx)
+	);
+
+	return true;
+}
+

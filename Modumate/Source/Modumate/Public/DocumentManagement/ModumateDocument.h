@@ -14,7 +14,6 @@
 #include "ModumateCameraView.h"
 
 class AEditModelPlayerState_CPP;
-class AEditModelPlayerState_CPP;
 
 /**
  *

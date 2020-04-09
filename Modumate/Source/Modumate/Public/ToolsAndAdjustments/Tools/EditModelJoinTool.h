@@ -5,41 +5,42 @@
 #include "EditModelPlayerState_CPP.h"
 #include "DynamicMeshActor.h"
 
+#include "EditModelJoinTool.generated.h"
+
 class AEditModelGameMode_CPP;
 class AEditModelGameState_CPP;
 class ALineActor3D_CPP;
 
-namespace Modumate
+UCLASS()
+class MODUMATE_API UJoinTool : public UEditModelToolBase
 {
-	class MODUMATE_API FJoinTool : public FEditModelToolBase
-	{
-	public:
-		FJoinTool(AEditModelPlayerController_CPP *InController);
-		virtual ~FJoinTool();
+	GENERATED_BODY()
 
-	public:
-		virtual bool Activate() override;
-		virtual bool Deactivate() override;
+public:
+	UJoinTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-		virtual bool BeginUse() override;
-		virtual bool HandleMouseUp() override;
-		virtual bool EnterNextStage() override;
-		virtual bool FrameUpdate() override;
-		virtual bool EndUse() override;
-		virtual bool AbortUse() override;
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_JOIN; }
+	virtual bool Activate() override;
+	virtual bool Deactivate() override;
 
-	private:
-		bool UpdateSelectedPlanes();
+	virtual bool BeginUse() override;
+	virtual bool HandleMouseUp() override;
+	virtual bool EnterNextStage() override;
+	virtual bool FrameUpdate() override;
+	virtual bool EndUse() override;
+	virtual bool AbortUse() override;
+
+private:
+	bool UpdateSelectedPlanes();
 		
-	private:
+private:
 
-		EObjectType ActiveObjectType = EObjectType::OTUnknown;
+	EObjectType ActiveObjectType = EObjectType::OTUnknown;
 
-		FPlane ActivePlane;
-		TPair<FVector, FVector> ActiveEdge;
+	FPlane ActivePlane;
+	TPair<FVector, FVector> ActiveEdge;
 
-		TSet<int32> PendingObjectIDs;
-		// Objects that are selectable for join given the starting object
-		TSet<int32> FrontierObjectIDs;
-	};
-}
+	TSet<int32> PendingObjectIDs;
+	// Objects that are selectable for join given the starting object
+	TSet<int32> FrontierObjectIDs;
+};

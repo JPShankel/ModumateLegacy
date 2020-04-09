@@ -6,36 +6,38 @@
 #include "UObject/WeakObjectPtr.h"
 #include "EditModelToolBase.h"
 
+#include "EditModelRoofTool.generated.h"
+
 class ALineActor3D_CPP;
 
-namespace Modumate
+UCLASS()
+class MODUMATE_API URoofTool : public UEditModelToolBase
 {
-	class MODUMATE_API FRoofTool : public FEditModelToolBase
+	GENERATED_BODY()
+
+private:
+	enum EState
 	{
-	private:
-		enum EState
-		{
-			Neutral = 0,
-			NewSegmentPending,
-		};
-
-		EState State;
-		TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
-		FVector LastPendingSegmentLoc;
-		bool bLastPendingSegmentLocValid;
-		float DefaultEdgeSlope;
-
-	public:
-		virtual ~FRoofTool();
-		FRoofTool(AEditModelPlayerController_CPP *pc);
-
-		virtual bool Activate() override;
-		virtual bool BeginUse() override;
-		virtual bool FrameUpdate() override;
-		void HandleClick(const FVector &p);
-		virtual bool HandleInputNumber(double n) override;
-		virtual bool AbortUse() override;
-		virtual bool EndUse() override;
-		virtual bool EnterNextStage() override;
+		Neutral = 0,
+		NewSegmentPending,
 	};
-}
+
+	EState State;
+	TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
+	FVector LastPendingSegmentLoc;
+	bool bLastPendingSegmentLocValid;
+	float DefaultEdgeSlope;
+
+public:
+	URoofTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_ROOF; }
+	virtual bool Activate() override;
+	virtual bool BeginUse() override;
+	virtual bool FrameUpdate() override;
+	void HandleClick(const FVector &p);
+	virtual bool HandleInputNumber(double n) override;
+	virtual bool AbortUse() override;
+	virtual bool EndUse() override;
+	virtual bool EnterNextStage() override;
+};

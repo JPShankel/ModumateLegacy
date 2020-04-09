@@ -11,15 +11,13 @@
 #include "ModumateObjectEnums.h"
 #include "ModumateObjectInstance.h"
 #include "ModumateSnappedCursor.h"
+#include "UObject/ScriptInterface.h"
 
 #include "EditModelPlayerState_CPP.generated.h"
-
-class AAdjustmentHandleActor_CPP;
 
 namespace Modumate
 {
 	class FModumateDocument;
-	class IModumateEditorTool;
 }
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionChanged);
@@ -69,20 +67,12 @@ public:
 
 	EEditViewModes SelectedViewMode;
 	bool ShowingFileDialog;
-	TMap<EToolMode, Modumate::IModumateEditorTool *> ModeToTool;
-	TMap<Modumate::IModumateEditorTool *, EToolMode> ToolToMode;
-	Modumate::IModumateEditorTool *CurrentTool;
-	EToolMode ReturnToolMode;
-	float CurrentToolUseDuration;
+
 	EEditViewModes PreviousModeFromToggleRoomView;
 
 	Modumate::FModumateObjectInstance *HoveredObject;
-	AAdjustmentHandleActor_CPP *HoverHandle;
 
 	bool DebugMouseHits;
-
-	UFUNCTION(BlueprintCallable, Category = "Tools")
-	bool ToolIsInUse() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Game")
 	AEditModelGameMode_CPP *GetEditModelGameMode();
@@ -131,19 +121,8 @@ public:
 
 	bool GetSnapCursorDeltaFromRay(const FVector& RayOrigin, const FVector& RayDir, FVector& OutPosition) const;
 
-	void SetToolModeDirect(EToolMode tm);
-
-	UFUNCTION(BlueprintCallable, Category = "Tools", DisplayName = "Set Tool Mode", meta = (ScriptMethod = "SetToolMode"))
-	void SetToolModeCommand(EToolMode tm);
-
-	UFUNCTION(BlueprintCallable, Category = "Tools")
-	EToolMode GetToolMode();
-
 	UFUNCTION(BlueprintPure, Category = "Tools")
 	EEditViewModes GetSelectedViewMode() { return SelectedViewMode; }
-
-	UFUNCTION(BlueprintCallable, Category = "Tools")
-	void AbortUseTool();
 
 	bool SetObjectHeight(Modumate::FModumateObjectInstance *obj, float newHeight, bool bSetBaseElevation, bool bUpdateGeometry);
 
@@ -154,31 +133,10 @@ public:
 	bool SetSelectedControlPointsHeight(float newCPHeight, bool bIsDelta, bool bUpdateGeometry);
 
 	UFUNCTION(BlueprintCallable, Category = "Tools")
-	bool GetHasActiveTool();
-
-	UFUNCTION(BlueprintCallable, Category = "Tools")
 	void SetAssemblyForActor(AActor *actor, const FShoppingItem &assembly);
 
 	UFUNCTION(BlueprintCallable, Category = "Tools")
-	void SetToolAxisConstraint(EAxisConstraint AxisConstraint);
-
-	UFUNCTION(BlueprintCallable, Category = "Tools")
-	void SetToolCreateObjectMode(EToolCreateObjectMode CreateObjectMode);
-
-	UFUNCTION(BlueprintCallable, Category = "Tools")
 	void ToggleRoomViewMode();
-
-	UPROPERTY()
-	AAdjustmentHandleActor_CPP *InteractionHandle;
-
-	UFUNCTION(BlueprintCallable, Category = "Tools")
-	bool HandleToolInputText(FString inputText);
-
-	UFUNCTION(BlueprintPure, Category = "Tools")
-	bool CanCurrentHandleShowRawInput();
-
-	void OnLButtonDown();
-	void OnLButtonUp();
 
 
 	void OnNewModel();

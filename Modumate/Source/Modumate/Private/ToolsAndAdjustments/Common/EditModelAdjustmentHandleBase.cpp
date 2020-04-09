@@ -5,7 +5,7 @@
 #include "AdjustmentHandleActor_CPP.h"
 #include "EditModelPlayerState_CPP.h"
 #include "EditModelPlayerController_CPP.h"
-#include "IModumateEditorTool.h"
+#include "EditModelToolInterface.h"
 #include "ModumateCommands.h"
 
 namespace Modumate
@@ -65,7 +65,7 @@ namespace Modumate
 
 		if (Controller.IsValid())
 		{
-			Controller->EMPlayerState->InteractionHandle = nullptr;
+			Controller->InteractionHandle = nullptr;
 			Controller->EMPlayerState->SnappedCursor.MouseMode = OriginalMouseMode;
 			bSuccess = true;
 		}
@@ -141,9 +141,9 @@ namespace Modumate
 		);
 
 		// TODO: allow this handle to be grabbed from the tool mode that created the line, rather than just from the Select tool
-		EToolMode curToolMode = Controller->EMPlayerState->GetToolMode();
+		EToolMode curToolMode = Controller->GetToolMode();
 		EObjectType curObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(curToolMode);
-		Controller->TryMakePrismFromSegments(curObjectType, Controller->EMPlayerState->CurrentTool->GetAssembly().Key, MOI->ObjectInverted, MOI);
+		Controller->TryMakePrismFromSegments(curObjectType, Controller->CurrentTool->GetAssembly().Key, MOI->ObjectInverted, MOI);
 
 		Controller->ModumateCommand(FModumateCommand(Commands::kEndUndoRedoMacro));
 

@@ -3,6 +3,7 @@
 #include "LineActor3D_CPP.h"
 #include "ProceduralMeshComponent.h"
 #include "EditModelGameMode_CPP.h"
+#include "EditModelPlayerController_CPP.h"
 #include "EditModelPlayerHUD_CPP.h"
 #include "EditModelPlayerState_CPP.h"
 #include "EditModelGameState_CPP.h"
@@ -53,7 +54,7 @@ void ALineActor3D_CPP::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (bDrawVerticalPlane && (EMPlayerState != nullptr) && (EMGameMode != nullptr))
 	{
-		FShoppingItem shopItem = EMPlayerState->GetAssemblyForToolMode(EMPlayerState->GetToolMode());
+		FShoppingItem shopItem = EMPlayerState->GetAssemblyForToolMode(EMPlayerState->EMPlayerController->GetToolMode());
 		if ((shopItem.FormattedKey != OldKey) || (shopItem.FormattedKey.Len() == 0) || (OldPoint1 != Point1) || (OldPoint2 != Point2))
 		{
 			UpdateVerticalPlane(shopItem);
@@ -63,7 +64,7 @@ void ALineActor3D_CPP::Tick(float DeltaTime)
 
 void ALineActor3D_CPP::UpdateVerticalPlane(FShoppingItem shopItem)
 {
-	AssemblyShoppingItems = EMGameState->GetComponentsForAssembly(EMPlayerState->GetToolMode(), shopItem);
+	AssemblyShoppingItems = EMGameState->GetComponentsForAssembly(EMPlayerState->EMPlayerController->GetToolMode(), shopItem);
 	TArray<FShoppingItem> revAssemblyShoppingItems;
 	float sumThickness = 0.f;
 	for (int32 i = AssemblyShoppingItems.Num() - 1; i >= 0; i--)
@@ -125,7 +126,7 @@ void ALineActor3D_CPP::UpdateVerticalPlane(FShoppingItem shopItem)
 
 void ALineActor3D_CPP::UpdateVerticalPlaneFromToolModeShopItem()
 {
-	FShoppingItem shopItem = EMPlayerState->GetAssemblyForToolMode(EMPlayerState->GetToolMode());
+	FShoppingItem shopItem = EMPlayerState->GetAssemblyForToolMode(EMPlayerState->EMPlayerController->GetToolMode());
 	UpdateVerticalPlane(shopItem);
 }
 

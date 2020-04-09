@@ -118,7 +118,7 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	EToolMode commandToolMode = ToolModeFromInputCommand(Command);
 	if (commandToolMode != EToolMode::VE_NONE)
 	{
-		Controller->EMPlayerState->SetToolModeDirect(commandToolMode);
+		Controller->SetToolMode(commandToolMode);
 		return true;
 	}
 
@@ -254,14 +254,14 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 		// TODO: remove this inconsistent behavior of activating a tool if a fire-and-forget action failed
 		else
 		{
-			Controller->EMPlayerState->SetToolModeDirect(EToolMode::VE_WAND);
+			Controller->SetToolMode(EToolMode::VE_WAND);
 			return true;
 		}
 	}
 	case EInputCommand::UnhideAll:
 	{
 		// TODO: move this logic somewhere reasonable
-		Controller->EMPlayerState->SetToolModeDirect(EToolMode::VE_SELECT);
+		Controller->SetToolMode(EToolMode::VE_SELECT);
 		UModumateFunctionLibrary::DocUnHideAllMoiActors(GetOwner());
 		return true;
 	}
@@ -285,24 +285,24 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 
 	case EInputCommand::MetaPlaneLine:
 	{
-		Controller->EMPlayerState->SetToolModeDirect(EToolMode::VE_METAPLANE);
-		Controller->EMPlayerState->SetToolAxisConstraint(EAxisConstraint::None);
+		Controller->SetToolMode(EToolMode::VE_METAPLANE);
+		Controller->SetToolAxisConstraint(EAxisConstraint::None);
 		// TODO: alert tool bar widget
 		return true;
 	}
 
 	case EInputCommand::MetaPlaneHorizontal:
 	{
-		Controller->EMPlayerState->SetToolModeDirect(EToolMode::VE_METAPLANE);
-		Controller->EMPlayerState->SetToolAxisConstraint(EAxisConstraint::AxesXY);
+		Controller->SetToolMode(EToolMode::VE_METAPLANE);
+		Controller->SetToolAxisConstraint(EAxisConstraint::AxesXY);
 		// TODO: alert tool bar widget
 		return true;
 	}
 
 	case EInputCommand::MetaPlaneVertical:
 	{
-		Controller->EMPlayerState->SetToolModeDirect(EToolMode::VE_METAPLANE);
-		Controller->EMPlayerState->SetToolAxisConstraint(EAxisConstraint::AxisZ);
+		Controller->SetToolMode(EToolMode::VE_METAPLANE);
+		Controller->SetToolAxisConstraint(EAxisConstraint::AxisZ);
 		// TODO: alert tool bar widget
 		return true;
 	}

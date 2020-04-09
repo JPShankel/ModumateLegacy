@@ -3,28 +3,30 @@
 
 #include "EditModelSelectTool.h"
 
+#include "EditModelMoveTool.generated.h"
+
 class ALineActor3D_CPP;
 
-namespace Modumate
+UCLASS()
+class MODUMATE_API UMoveObjectTool : public UEditModelToolBase, public FSelectedObjectToolMixin
 {
-	class FMoveObjectTool : public FEditModelToolBase, public FSelectedObjectToolMixin
-	{
-	private:
-		FVector AnchorPoint;
-		TMap<int32, FTransform> StartTransforms;
-		TWeakObjectPtr<ALineActor3D_CPP> PendingMoveLine;
+	GENERATED_BODY()
 
-	public:
-		FMoveObjectTool(AEditModelPlayerController_CPP *pc);
-		virtual ~FMoveObjectTool();
+private:
+	FVector AnchorPoint;
+	TMap<int32, FTransform> StartTransforms;
+	TWeakObjectPtr<ALineActor3D_CPP> PendingMoveLine;
 
-		virtual bool Activate() override;
-		virtual bool Deactivate() override;
-		virtual bool BeginUse() override;
-		virtual bool FrameUpdate() override;
-		virtual bool HandleInputNumber(double n) override;
-		virtual bool EndUse() override;
-		virtual bool AbortUse() override;
-		virtual bool HandleControlKey(bool pressed) override;
-	};
-}
+public:
+	UMoveObjectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_MOVEOBJECT; }
+	virtual bool Activate() override;
+	virtual bool Deactivate() override;
+	virtual bool BeginUse() override;
+	virtual bool FrameUpdate() override;
+	virtual bool HandleInputNumber(double n) override;
+	virtual bool EndUse() override;
+	virtual bool AbortUse() override;
+	virtual bool HandleControlKey(bool pressed) override;
+};
