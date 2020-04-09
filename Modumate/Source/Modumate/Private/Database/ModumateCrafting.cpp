@@ -1716,6 +1716,35 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::CraftingNodeFromInstance(
 	OutNode.CanAddToProject = false;
 	OutNode.PresetStatus = Instance->GetPresetStatus(PresetCollection);
 
+	if (Instance->InputPins.Num() == 0 && ensureAlways(OutNode.PresetStatus != ECraftingNodePresetStatus::ReadOnly))
+	{
+		OutNode.IsEmbeddedInParent = true;
+	}
+
+	if (Instance->ParentInstance.IsValid())
+	{
+		Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr parent = Instance->ParentInstance.Pin();
+		while (parent.IsValid())
+		{
+			if (parent->GetPresetStatus(PresetCollection) == ECraftingNodePresetStatus::ReadOnly)
+			{
+				OutNode.EmbeddedInstanceIDs.Add(parent->GetInstanceID());
+				if (parent->ParentInstance.IsValid())
+				{
+					parent = parent->ParentInstance.Pin();
+				}
+				else
+				{
+					parent = nullptr;
+				}
+			}
+			else
+			{
+				parent = nullptr;
+			}
+		}
+	}
+
 	//TODO: Provide an array of ReadOnly nodes that can be embedded into this node
 	//OutNode.EmbeddedInstanceIDs = Array of embedded instances;
 	return ECraftingResult::Success;

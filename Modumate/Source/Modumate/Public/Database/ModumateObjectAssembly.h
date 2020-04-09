@@ -262,6 +262,7 @@ class MODUMATE_API UModumateObjectAssemblyStatics : public UBlueprintFunctionLib
 			const int32 InShowOnlyLayerID = -1);
 
 		// TODO: remove after DDL2 migration
+		UFUNCTION(BlueprintPure, Category = "Crafting")
 		static bool ObjectTypeSupportsDDL2(EObjectType OT);
 
 };

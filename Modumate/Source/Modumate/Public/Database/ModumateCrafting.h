@@ -579,6 +579,9 @@ struct MODUMATE_API FCraftingNode
 	bool CanAddToProject;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
+	bool IsEmbeddedInParent = false;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
 	EConfiguratorNodeIconType NodeIconType;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Crafting")

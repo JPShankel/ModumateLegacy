@@ -1211,12 +1211,10 @@ bool UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(EObjectType OT)
 {
 	switch (OT) {
 	case EObjectType::OTStructureLine :
-#if DDL_WORK_IN_PROGRESS
-	case EObjectType::OTWallSegment :
-	case EObjectType::OTFloorSegment :
+	case EObjectType::OTWallSegment:
+	case EObjectType::OTFloorSegment:
 	case EObjectType::OTRoof:
 	case EObjectType::OTFinish:
-#endif
 		return true;
 	};
 
