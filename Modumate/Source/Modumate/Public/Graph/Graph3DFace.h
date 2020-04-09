@@ -32,6 +32,9 @@ namespace Modumate
 		bool IntersectsFace(const FGraph3DFace *OtherFace, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<FEdgeIntersection> &SourceIntersections, TArray<FEdgeIntersection> &DestIntersections, TPair<bool, bool> &bOutOnFaceEdge) const;
 		bool IntersectsPlane(const FPlane OtherPlane, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<TPair<FVector, FVector>> &IntersectingSegments) const;
 
+		// TODO: potentially make this static, and also cache this value during SetVertices
+		float CalculateArea();
+
 		void GetAdjacentFaceIDs(TSet<int32>& adjFaceIDs) const;
 
 		const bool FindVertex(FVector &Position) const;

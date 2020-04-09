@@ -2293,6 +2293,17 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 		objectHit.Actor = hitSingleResult.Actor.Get();
 		objectHit.Location = hitSingleResult.Location;
 		objectHit.Normal = hitSingleResult.Normal;
+
+		const FModumateObjectInstance* moi = Document->ObjectFromActor(objectHit.Actor.Get());
+		// TODO: this should be an interface function or there should be a way to find the planar object types
+		if (moi && moi->ObjectType == EObjectType::OTMetaPlane)
+		{
+			FVector moiNormal = moi->GetNormal();
+			FPlane plane = FPlane(moi->GetObjectLocation(), moiNormal);
+			objectHit.Normal = (moiNormal | objectHit.Normal) > 0 ? moiNormal : -moiNormal;
+			objectHit.Location = FVector::PointPlaneProject(objectHit.Location, plane);
+		}
+
 		objectHit.SnapType = ESnapType::CT_FACESELECT;
 		objectHitDist = FVector::Dist(objectHit.Location, mouseLoc);
 

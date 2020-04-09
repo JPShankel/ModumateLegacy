@@ -166,7 +166,7 @@ namespace Modumate
 		void UnmakeGroupObjects(UWorld *world, const TArray<int32> &groupIds);
 
 		FModumateObjectInstance *ObjectFromActor(AActor *actor);
-		const FModumateObjectInstance *ObjectFromActor(const AActor *actor);
+		const FModumateObjectInstance *ObjectFromActor(const AActor *actor) const;
 
 		void UpdateMitering(UWorld *world, const TArray<int32> &dirtyObjIDs);
 

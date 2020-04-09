@@ -110,7 +110,7 @@ namespace Modumate
 				continue;
 			}
 
-			if (!Graph->CheckFaceNormals(faceID))
+			if (Graph->FindOverlappingFace(faceID) != MOD_ID_NONE)
 			{
 				removeFaceDelta.FaceDeletions.Add(faceID, FGraph3DObjDelta(face->VertexIDs));
 			}
@@ -303,13 +303,61 @@ namespace Modumate
 		bool bFoundSplit = false;
 		OutDelta.Reset();
 
-		// TODO: split by set of edges? potentially, rewind faces based off the new edge
-		if (Graph->FindEdge(edgeID) != nullptr)
+		// subdivide faces
+		TArray <TArray<int32>> outFaceVertices;
+		Graph->TraverseFacesFromEdge(edgeID, outFaceVertices);
+		TMap<int32, TArray<int32>> oldToNewFaceIDs;
+		TSet<int32> oldFaces;
+
+		for (auto& faceVertices : outFaceVertices)
 		{
-			if (!GetDeltaForFaceSplitByEdge(Graph, OutDelta, NextID, existingID, edgeID, bFoundSplit))
+			FGraph3DDelta faceDelta;
+			int32 addedFaceID;
+			TArray<int32> parentIds = { MOD_ID_NONE };
+			TMap<int32, int32> edgeMap;
+			GetDeltaForFaceAddition(Graph, faceVertices, faceDelta, NextID, existingID, parentIds, edgeMap, addedFaceID);
+
+			Graph->ApplyDelta(faceDelta);
+			int32 coincidentFaceID = Graph->FindOverlappingFace(addedFaceID);
+			if (coincidentFaceID == MOD_ID_NONE)
 			{
-				return false;
+				OutDeltas.Add(faceDelta);
 			}
+			else
+			{
+				addedFaceID = FMath::Abs(addedFaceID);
+				coincidentFaceID = FMath::Abs(coincidentFaceID);
+
+				auto newFace = Graph->FindFace(addedFaceID);
+				auto oldFace = Graph->FindFace(coincidentFaceID);
+
+				if (newFace && oldFace)
+				{
+					float newArea = newFace->CalculateArea();
+					float oldArea = oldFace->CalculateArea();
+
+					if (newArea < oldArea - KINDA_SMALL_NUMBER)
+					{
+						faceDelta.FaceAdditions[addedFaceID].ParentFaceIDs = { coincidentFaceID };
+						OutDeltas.Add(faceDelta);
+						oldFaces.Add(coincidentFaceID);
+						TArray<int32> &faceIDs = oldToNewFaceIDs.FindOrAdd(coincidentFaceID);
+						faceIDs.Add(addedFaceID);
+					}
+				}
+			}
+		}
+
+		FGraph3DDelta deleteDelta;
+		GetDeltaForDeletions(Graph, {}, {}, oldFaces.Array(), deleteDelta);
+		for (int32 oldFaceID : oldFaces)
+		{
+			deleteDelta.FaceDeletions[oldFaceID].ParentFaceIDs = oldToNewFaceIDs[oldFaceID];
+		}
+
+		if (!deleteDelta.IsEmpty())
+		{
+			OutDeltas.Add(deleteDelta);
 		}
 
 		OutDeltas.Add(OutDelta);
@@ -387,6 +435,19 @@ namespace Modumate
 			for (int32 idx = 0; idx < vertices.Num() - 1; idx++)
 			{
 				faceVertices.Add(vertices[idx]);
+			}
+		}
+
+		// naive validation of face vertices
+		// TODO: detect sections of the vertex list that could be eliminated, instead of returning false
+		for (int32 idx1 = 0; idx1 < faceVertices.Num(); idx1++)
+		{
+			for (int32 idx2 = idx1+1; idx2 < faceVertices.Num(); idx2++)
+			{
+				if (faceVertices[idx1] == faceVertices[idx2])
+				{
+					return false;
+				}
 			}
 		}
 
@@ -675,62 +736,6 @@ namespace Modumate
 				}
 			}
 		}
-
-		return true;
-	}
-
-	bool FGraph3D::GetDeltaForFaceSplitByEdge(FGraph3D *Graph, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, int32 &EdgeID, bool &bOutFoundSplit)
-	{
-		FGraph3DEdge *newEdge = Graph->FindEdge(EdgeID);
-		if (newEdge == nullptr)
-		{
-			return false;
-		}
-
-		bool bFaceHasSplit = false;
-
-		for (auto &kvp : Graph->GetFaces())
-		{
-			const FGraph3DFace* otherFace = &kvp.Value;
-
-			FVector intersectingEdgeOrigin, intersectingEdgeDir;
-			TArray<FEdgeIntersection> intersections;
-			bool bOnFaceEdge;
-
-			if (newEdge->IntersectsFace(otherFace, intersectingEdgeOrigin, intersectingEdgeDir, intersections, bOnFaceEdge))
-			{
-				int32 currentFaceID = kvp.Key;
-
-				for (int segmentIdx = 0; segmentIdx < intersections.Num() - 1; segmentIdx += 2)
-				{
-					int32 idx1, idx2;
-					if (intersections[segmentIdx].EdgeIdxA < intersections[segmentIdx + 1].EdgeIdxA)
-					{
-						idx1 = segmentIdx;
-						idx2 = segmentIdx + 1;
-					}
-					else
-					{
-						idx1 = segmentIdx + 1;
-						idx2 = segmentIdx;
-					}
-
-					FEdgeIntersection i1 = intersections[idx1];
-					FEdgeIntersection i2 = intersections[idx2];
-
-					auto intersection = TPair<FVector, FVector>(i1.Point, i2.Point);
-					auto edgeIdx = TPair<int32, int32>(i1.EdgeIdxA, i2.EdgeIdxA);
-
-					bool bFoundSplit = false;
-					if (!GetDeltaForFaceSplit(Graph, OutDelta, NextID, ExistingID, currentFaceID, bFoundSplit, intersection, edgeIdx))
-					{
-						return false;
-					}
-				}
-
-			}
-		}
-
 
 		return true;
 	}

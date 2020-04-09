@@ -1598,7 +1598,7 @@ bool FModumateDocument::FinalizeGraphDeltas(TArray <FGraph3DDelta> &Deltas, TArr
 
 	for (int32 faceID : OutAddedFaceIDs)
 	{
-		if (!moiTempGraph.CheckFaceNormals(faceID))
+		if (moiTempGraph.FindOverlappingFace(faceID) != MOD_ID_NONE)
 		{
 			return false;
 		}
@@ -3586,9 +3586,9 @@ void FModumateDocument::GatherDocumentMetadata()
 	ProjectInfo.description = TEXT("A 4-bedroom, 3-bathroom new transitional home with a pool and freestanding poolhouse/garage. The living room has a billiard table with a 6-chair bar and a wine cabinet.");
 }
 
-const FModumateObjectInstance *FModumateDocument::ObjectFromActor(const AActor *actor)
+const FModumateObjectInstance *FModumateDocument::ObjectFromActor(const AActor *actor) const
 {
-	return ObjectFromActor(const_cast<AActor*>(actor));
+	return const_cast<FModumateDocument*>(this)->ObjectFromActor(const_cast<AActor*>(actor));
 }
 
 FModumateObjectInstance *FModumateDocument::ObjectFromSingleActor(AActor *actor)

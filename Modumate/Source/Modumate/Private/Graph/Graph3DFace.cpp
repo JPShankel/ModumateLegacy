@@ -279,6 +279,30 @@ namespace Modumate
 		return true;
 	}
 
+	float FGraph3DFace::CalculateArea()
+	{
+		TArray<FPolyHole2D> holes;
+		TArray<FVector2D> vertices, OutPerimeter;
+		TArray<int32> triangles, outholeidxs;
+		TArray<bool> outholes;
+		UModumateGeometryStatics::TriangulateVerticesPoly2Tri(Cached2DPositions, holes, vertices, triangles, OutPerimeter, outholes, outholeidxs);
+
+		float area = 0.0f;
+		for (int32 i = 0; i < triangles.Num(); i += 3)
+		{
+			const auto &p1 = vertices[triangles[i]], &p2 = vertices[triangles[i + 1]], &p3 = vertices[triangles[i + 2]];
+
+			FVector2D triBaseDelta = p2 - p1;
+			float triBaseLen = triBaseDelta.Size();
+			float triHeight = FMath::PointDistToLine(FVector(p3.X, p3.Y, 0.0f), FVector(triBaseDelta.X, triBaseDelta.Y, 0.0f), FVector(p2.X, p2.Y, 0.0f));
+			float triArea = 0.5f * triBaseLen * triHeight;
+
+			area += triArea;
+		}
+
+		return area;
+	}
+
 	void FGraph3DFace::GetAdjacentFaceIDs(TSet<int32>& OutFaceIDs) const
 	{
 		for (int32 edgeID : EdgeIDs)

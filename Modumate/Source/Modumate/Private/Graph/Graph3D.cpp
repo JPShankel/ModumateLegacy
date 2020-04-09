@@ -635,12 +635,12 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::CheckFaceNormals(int32 AddedFaceID) const
+	int32 FGraph3D::FindOverlappingFace(int32 AddedFaceID) const
 	{
 		auto newFace = FindFace(AddedFaceID);
 		if (newFace == nullptr)
 		{
-			return false;
+			return AddedFaceID;
 		}
 		// check for duplicate edge normals
 		int32 edgeIdx = 0;
@@ -653,13 +653,13 @@ namespace Modumate
 			{
 				if (FMath::Abs(connection.FaceID) != FMath::Abs(AddedFaceID) && FVector::Coincident(connection.EdgeFaceDir, edgeNormal))
 				{
-					return false;
+					return connection.FaceID;
 				}
 			}
 			edgeIdx++;
 		}
 
-		return true;
+		return MOD_ID_NONE;
 	}
 
 	bool FGraph3D::TraverseFacesFromEdge(int32 OriginalEdgeID, TArray<TArray<int32>> &OutVertexIDs) const

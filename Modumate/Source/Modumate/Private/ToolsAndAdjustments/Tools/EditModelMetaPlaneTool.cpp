@@ -209,7 +209,6 @@ namespace Modumate
 				objIDs = commandResult.GetValue(Parameters::kObjectIDs);
 				int32 endVertexID = objIDs[0];
 
-				TArray<TArray<int32>> outNewFaceVertexIDs;
 				if ((endVertexID != MOD_ID_NONE) && (startVertexID != MOD_ID_NONE))
 				{
 					TArray<int32> edgeVertexIDs;
@@ -234,93 +233,63 @@ namespace Modumate
 					{
 						edgeID = outEdgeIDs[0];
 					}
-					GameState->Document.GetVolumeGraph().TraverseFacesFromEdge(edgeID, outNewFaceVertexIDs);
 				}
 
+				// The segment-based plane updates the sketch plane on the first three clicks
+				FVector segmentDirection = FVector(constrainedEndPoint - constrainedStartPoint).GetSafeNormal();
+				FVector currentSketchPlaneNormal(Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Normal);
 
-				for (auto& vertexIDs : outNewFaceVertexIDs)
+				FVector tangentDir = !FVector::Parallel(currentSketchPlaneNormal, segmentDirection) ? segmentDirection : Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Tangent;
+
+				if (SketchPlanePoints.Num() == 0)
 				{
-					commandResult = Controller->ModumateCommand(
-						FModumateCommand(Commands::kMakeMetaPlane)
-						.Param(Parameters::kObjectIDs, vertexIDs)
-						.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID()));
-					if (!commandResult.GetValue(Parameters::kSuccess))
+					// If the two points are close together, ignore them and wait for the next segment
+					if (!FMath::IsNearlyZero(segmentDirection.Size()))
 					{
-						continue;
-					}
-					NewObjIDs = commandResult.GetValue(Parameters::kObjectIDs);
-					for (int32 edgeID : PendingPlaneEdgeIDs)
-					{
-						auto graphObj = doc.GetObjectById(edgeID);
-						if (graphObj)
+						// Otherwise, this is our first valid line segment, so adjust sketch plane normal to be perpendicular to this
+						SketchPlanePoints.Add(constrainedStartPoint);
+						SketchPlanePoints.Add(constrainedEndPoint);
+
+						// If we've selected a point along the sketch plane's Z, leave the sketch plane intact
+						// Note: it is all right to add the sketch plane points above as a vertical line is a legitimate basis for a new sketch plane
+						// which will be established with the next click, meantime a vertical click should just leave the original sketch plane in place
+						if (!FVector::Orthogonal(currentSketchPlaneNormal, tangentDir))
 						{
-							graphObj->UpdateGeometry();
+							FVector transverse = FVector::CrossProduct(currentSketchPlaneNormal, segmentDirection);
+							Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, FVector::CrossProduct(transverse, tangentDir).GetSafeNormal(), tangentDir);
+						}
+						else
+						{
+							Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, currentSketchPlaneNormal, tangentDir);
 						}
 					}
 				}
-
-				if (outNewFaceVertexIDs.Num() > 0) 
+				// If we've clicked our third point, establish a sketch plane from the three points and then constrain all future points to that plane
+				else if (SketchPlanePoints.Num() < 3)
 				{
-					EndUse();
+					// If the third point is colinear, skip it and wait for the next one
+					FVector firstSegmentDir = (SketchPlanePoints[1] - SketchPlanePoints[0]).GetSafeNormal();
+					if (!FMath::IsNearlyZero(FMath::PointDistToLine(SketchPlanePoints[0], firstSegmentDir, constrainedEndPoint)))
+					{
+						FVector thirdPointDir = constrainedEndPoint - SketchPlanePoints[0];
+						FVector n = FVector::CrossProduct(thirdPointDir, firstSegmentDir);
+						// we should not have gotten a degenerate point, ensure
+						if (ensureAlways(!FMath::IsNearlyZero(n.Size())))
+						{
+							Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, n.GetSafeNormal(), tangentDir);
+							SketchPlanePoints.Add(constrainedEndPoint);
+							constrainedEndPoint = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(constrainedEndPoint);
+						}
+					}
 				}
 				else
 				{
-					// The segment-based plane updates the sketch plane on the first three clicks
-					FVector segmentDirection = FVector(constrainedEndPoint - constrainedStartPoint).GetSafeNormal();
-					FVector currentSketchPlaneNormal(Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Normal);
-
-					FVector tangentDir = !FVector::Parallel(currentSketchPlaneNormal, segmentDirection) ? segmentDirection : Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Tangent;
-
-					if (SketchPlanePoints.Num() == 0)
-					{
-						// If the two points are close together, ignore them and wait for the next segment
-						if (!FMath::IsNearlyZero(segmentDirection.Size()))
-						{
-							// Otherwise, this is our first valid line segment, so adjust sketch plane normal to be perpendicular to this
-							SketchPlanePoints.Add(constrainedStartPoint);
-							SketchPlanePoints.Add(constrainedEndPoint);
-
-							// If we've selected a point along the sketch plane's Z, leave the sketch plane intact
-							// Note: it is all right to add the sketch plane points above as a vertical line is a legitimate basis for a new sketch plane
-							// which will be established with the next click, meantime a vertical click should just leave the original sketch plane in place
-							if (!FVector::Orthogonal(currentSketchPlaneNormal, tangentDir))
-							{
-								FVector transverse = FVector::CrossProduct(currentSketchPlaneNormal, segmentDirection);
-								Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, FVector::CrossProduct(transverse, tangentDir).GetSafeNormal(), tangentDir);
-							}
-							else
-							{
-								Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, currentSketchPlaneNormal, tangentDir);
-							}
-						}
-					}
-					// If we've clicked our third point, establish a sketch plane from the three points and then constrain all future points to that plane
-					else if (SketchPlanePoints.Num() < 3)
-					{
-						// If the third point is colinear, skip it and wait for the next one
-						FVector firstSegmentDir = (SketchPlanePoints[1] - SketchPlanePoints[0]).GetSafeNormal();
-						if (!FMath::IsNearlyZero(FMath::PointDistToLine(SketchPlanePoints[0], firstSegmentDir, constrainedEndPoint)))
-						{
-							FVector thirdPointDir = constrainedEndPoint - SketchPlanePoints[0];
-							FVector n = FVector::CrossProduct(thirdPointDir, firstSegmentDir);
-							// we should not have gotten a degenerate point, ensure
-							if (ensureAlways(!FMath::IsNearlyZero(n.Size())))
-							{
-								Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, n.GetSafeNormal(), tangentDir);
-								SketchPlanePoints.Add(constrainedEndPoint);
-								constrainedEndPoint = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(constrainedEndPoint);
-							}
-						}
-					}
-					else
-					{
-						Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, currentSketchPlaneNormal, tangentDir);
-					}
-
-					AnchorPointDegree = PendingSegment->Point1;
-					PendingSegment->Point1 = constrainedEndPoint;
-					PendingSegment->Point2 = constrainedEndPoint;
+					Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, currentSketchPlaneNormal, tangentDir);
 				}
+
+				AnchorPointDegree = PendingSegment->Point1;
+				PendingSegment->Point1 = constrainedEndPoint;
+				PendingSegment->Point2 = constrainedEndPoint;
 
 				Controller->ModumateCommand(FModumateCommand(Commands::kEndUndoRedoMacro));
 				break;
