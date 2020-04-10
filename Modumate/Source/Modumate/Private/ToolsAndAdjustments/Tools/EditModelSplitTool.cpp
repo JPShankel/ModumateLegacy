@@ -12,7 +12,7 @@ using namespace Modumate;
 
 USplitObjectTool::USplitObjectTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, FSelectedObjectToolMixin()
+	, FSelectedObjectToolMixin(Controller)
 	, LastValidTarget(nullptr)
 	, LastValidSplitStart(ForceInitToZero)
 	, LastValidSplitEnd(ForceInitToZero)

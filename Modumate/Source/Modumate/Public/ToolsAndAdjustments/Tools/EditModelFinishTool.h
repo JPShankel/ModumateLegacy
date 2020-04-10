@@ -9,7 +9,7 @@
 #include "EditModelFinishTool.generated.h"
 
 UCLASS()
-class MODUMATE_API UFinishTool : public UEditModelToolBase, public FSelectedObjectToolMixin
+class MODUMATE_API UFinishTool : public UEditModelToolBase
 {
 	GENERATED_BODY()
 

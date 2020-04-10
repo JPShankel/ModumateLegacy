@@ -13,12 +13,13 @@ class MODUMATE_API FSelectedObjectToolMixin
 protected:
 
 	TMap<Modumate::FModumateObjectInstance*, FMOIDataRecordV1> OriginalObjectData;
+	TWeakObjectPtr<class AEditModelPlayerController_CPP> ControllerPtr;
+
+	FSelectedObjectToolMixin(class AEditModelPlayerController_CPP *InController = nullptr);
 
 	void AcquireSelectedObjects();
 	void RestoreSelectedObjects();
 	void ReleaseSelectedObjects();
-
-	FSelectedObjectToolMixin() {}
 
 	static const FName StateRequestTag;
 };

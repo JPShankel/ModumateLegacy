@@ -14,8 +14,19 @@ using namespace Modumate;
 
 const FName FSelectedObjectToolMixin::StateRequestTag(TEXT("SelectedObjectTool"));
 
+FSelectedObjectToolMixin::FSelectedObjectToolMixin(AEditModelPlayerController_CPP *InController)
+	: ControllerPtr(InController)
+{
+
+}
+
 void FSelectedObjectToolMixin::AcquireSelectedObjects()
 {
+	if (!ControllerPtr.IsValid())
+	{
+		return;
+	}
+
 	ReleaseSelectedObjects();
 
 	auto addIfMeta = [this](FModumateObjectInstance *ob)
@@ -37,9 +48,7 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 		return false;
 	};
 
-	// TODO: fix
-	ensureAlways(false);
-	AEditModelPlayerState_CPP *playerState = nullptr;// SOTMController->EMPlayerState;
+	AEditModelPlayerState_CPP *playerState = ControllerPtr->EMPlayerState;
 
 	// This is for plane-hosted objects
 	// If a plane-hosted object is selected, we want to acquire its parent instead
@@ -67,8 +76,6 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 	for (auto &kvp : OriginalObjectData)
 	{
 		kvp.Key->RequestCollisionDisabled(StateRequestTag, true);
-		// TODO: fix
-		ensureAlways(false);
 		kvp.Key->ShowAdjustmentHandles(nullptr, false);
 		kvp.Key->SetPreviewOperationMode(true);
 	}
@@ -78,7 +85,7 @@ void FSelectedObjectToolMixin::RestoreSelectedObjects()
 {
 	for (auto kvp : OriginalObjectData)
 	{
-		kvp.Key->SetFromDataRecordAndRotation(kvp.Value,FVector::ZeroVector,FQuat::Identity);
+		kvp.Key->SetFromDataRecordAndRotation(kvp.Value, FVector::ZeroVector, FQuat::Identity);
 	}
 }
 
@@ -89,6 +96,7 @@ void FSelectedObjectToolMixin::ReleaseSelectedObjects()
 		kvp.Key->RequestCollisionDisabled(StateRequestTag, false);
 		kvp.Key->SetPreviewOperationMode(false);
 	}
+
 	OriginalObjectData.Empty();
 }
 
