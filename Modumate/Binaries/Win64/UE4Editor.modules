@@ -1,8 +1,0 @@
-{
-	"BuildId": "23650ca5-3d9f-406f-8d52-ab73be76a1a1",
-	"Modules": 
-	{
-		"Modumate": "UE4Editor-Modumate.dll",
-		"ModumateEditor": "UE4Editor-ModumateEditor.dll"
-	}
-}
