@@ -149,7 +149,7 @@ if opts[:upload_editor]
                 end
             end
 
-            cmd = "%{project_dir}/Plugins/BacktraceIntegration/Content/BacktraceIntegration/uploader.exe %{realm} %{symbols_token} \"#{ZIP_FILE}\"" % opts
+            cmd = "\"%{project_dir}/Plugins/BacktraceIntegration/Content/BacktraceIntegration/uploader.exe\" %{realm} %{symbols_token} \"#{ZIP_FILE}\"" % opts
             
             if zipped > 0 and system cmd
                 cfg['already_done'] = already_done.to_a
@@ -179,7 +179,7 @@ Dir.chdir(opts[:project_dir]) do
         end
     end
 
-    cmd = "%{project_dir}/Plugins/BacktraceIntegration/Content/BacktraceIntegration/uploader.exe %{realm} %{symbols_token} \"#{ZIP_FILE}\"" % opts
+    cmd = "\"%{project_dir}/Plugins/BacktraceIntegration/Content/BacktraceIntegration/uploader.exe\" %{realm} %{symbols_token} \"#{ZIP_FILE}\"" % opts
     puts cmd
     system cmd
     

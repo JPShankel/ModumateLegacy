@@ -10,6 +10,7 @@ namespace UnrealBuildTool.Rules
 
             PublicIncludePaths.AddRange(
                 new string[] {
+                    "BacktraceSettingsLibrary/Public"
                 }
                 );
 
