@@ -118,10 +118,10 @@ namespace Modumate
 
 		for (const FModumateObjectInstance *child : children)
 		{
-			if (child && (child->ObjectType == EObjectType::OTFinish) && ensureAlways(child->ControlIndices.Num() == 1))
+			if (child && (child->GetObjectType() == EObjectType::OTFinish) && ensureAlways(child->GetControlPointIndices().Num() == 1))
 			{
 				float finishThickness = child->CalculateThickness();
-				int32 finishSideIdx = child->ControlIndices[0];
+				int32 finishSideIdx = child->GetControlPointIndex(0);
 
 				if (finishSideIdx == 0)
 				{

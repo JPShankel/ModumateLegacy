@@ -26,12 +26,12 @@ namespace Modumate
 	FMOIPlaneHostedObjImpl::FMOIPlaneHostedObjImpl(FModumateObjectInstance *InMOI)
 		: FDynamicModumateObjectInstanceImpl(InMOI)
 	{
-		if (MOI->ObjectInverted)
+		if (MOI->GetObjectInverted())
 		{
-			MOI->ObjectAssembly.InvertLayers();
+			MOI->InvertAssemblyLayers();
 		}
 
-		CachedLayerDims.UpdateLayersFromAssembly(MOI->ObjectAssembly);
+		CachedLayerDims.UpdateLayersFromAssembly(MOI->GetAssembly());
 		CachedLayerDims.UpdateFinishFromObject(MOI);
 	}
 
@@ -42,7 +42,7 @@ namespace Modumate
 	FQuat FMOIPlaneHostedObjImpl::GetRotation() const
 	{
 		const FModumateObjectInstance *parent = MOI->GetParentObject();
-		if (ensure(parent && (parent->ObjectType == EObjectType::OTMetaPlane)))
+		if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
 			return parent->GetObjectRotation();
 		}
@@ -55,12 +55,12 @@ namespace Modumate
 	FVector FMOIPlaneHostedObjImpl::GetLocation() const
 	{
 		const FModumateObjectInstance *parent = MOI->GetParentObject();
-		if (ensure(parent && (parent->ObjectType == EObjectType::OTMetaPlane)))
+		if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
 			float thickness = MOI->CalculateThickness();
 			FVector planeNormal = parent->GetNormal();
 			FVector planeLocation = parent->GetObjectLocation();
-			float offsetPct = MOI->Extents.X;
+			float offsetPct = MOI->GetExtents().X;
 			return planeLocation + ((0.5f - offsetPct) * thickness * planeNormal);
 		}
 		else
@@ -73,14 +73,14 @@ namespace Modumate
 	{
 		// Handle the meta plane host case which just returns the meta plane with this MOI's offset
 		const FModumateObjectInstance *parent = MOI->GetParentObject();
-		if (ensure(parent && (parent->ObjectType == EObjectType::OTMetaPlane)))
+		if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
-			int32 numPlanePoints = parent->ControlPoints.Num();
+			int32 numPlanePoints = parent->GetControlPoints().Num();
 			bool bOnStartingSide = (CornerIndex < numPlanePoints);
 			int32 numLayers = LayerGeometries.Num();
 			int32 pointIndex = CornerIndex % numPlanePoints;
 
-			if (ensure((numLayers == MOI->ObjectAssembly.Layers.Num()) && numLayers > 0))
+			if (ensure((numLayers == MOI->GetAssembly().Layers.Num()) && numLayers > 0))
 			{
 				const FVector &layerGeomPoint = bOnStartingSide ?
 					LayerGeometries[0].PointsA[pointIndex] :
@@ -94,7 +94,7 @@ namespace Modumate
 
 	void FMOIPlaneHostedObjImpl::InvertObject()
 	{
-		MOI->ObjectAssembly.InvertLayers();
+		MOI->InvertAssemblyLayers();
 
 		MOI->MarkDirty(EObjectDirtyFlags::Structure);
 	}
@@ -103,16 +103,16 @@ namespace Modumate
 	{
 		FModumateObjectInstanceImplBase::OnAssemblyChanged();
 
-		if (MOI->ObjectInverted)
+		if (MOI->GetObjectInverted())
 		{
-			MOI->ObjectAssembly.InvertLayers();
+			MOI->InvertAssemblyLayers();
 		}
 	}
 
 	FVector FMOIPlaneHostedObjImpl::GetNormal() const
 	{
 		const FModumateObjectInstance *planeParent = MOI->GetParentObject();
-		if (ensureAlways(planeParent && (planeParent->ObjectType == EObjectType::OTMetaPlane)))
+		if (ensureAlways(planeParent && (planeParent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
 			return planeParent->GetNormal();
 		}
@@ -128,7 +128,7 @@ namespace Modumate
 		{
 		case EObjectDirtyFlags::Structure:
 		{
-			CachedLayerDims.UpdateLayersFromAssembly(MOI->ObjectAssembly);
+			CachedLayerDims.UpdateLayersFromAssembly(MOI->GetAssembly());
 			CachedLayerDims.UpdateFinishFromObject(MOI);
 
 			// When structure (assembly, offset, or plane structure) changes, mark neighboring
@@ -194,12 +194,12 @@ namespace Modumate
 
 	void FMOIPlaneHostedObjImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
-		int32 numCP = MOI->ControlPoints.Num();
+		int32 numCP = MOI->GetControlPoints().Num();
 		const FModumateObjectInstance *parent = MOI->GetParentObject();
 
-		if (ensure(parent && (parent->ObjectType == EObjectType::OTMetaPlane) && (numCP == 0)))
+		if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane) && (numCP == 0)))
 		{
-			numCP = parent->ControlPoints.Num();
+			numCP = parent->GetControlPoints().Num();
 
 			for (int32 i = 0; i < numCP; ++i)
 			{
@@ -227,8 +227,8 @@ namespace Modumate
 		// TODO: make sure children are portals
 
 		FModumateObjectInstance *parent = MOI->GetParentObject();
-		int32 numCP = MOI->ControlPoints.Num();
-		if (!(parent && (parent->ObjectType == EObjectType::OTMetaPlane) && (numCP == 0)))
+		int32 numCP = MOI->GetControlPoints().Num();
+		if (!(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane) && (numCP == 0)))
 		{
 			return;
 		}
@@ -268,7 +268,7 @@ namespace Modumate
 			DynamicMeshActor->HoleActors.Reset();
 			for (auto *child : children)
 			{
-				if ((child->ObjectType == EObjectType::OTDoor) || (child->ObjectType == EObjectType::OTWindow))
+				if ((child->GetObjectType() == EObjectType::OTDoor) || (child->GetObjectType() == EObjectType::OTWindow))
 				{
 					DynamicMeshActor->HoleActors.Add(child->GetActor());
 				}
@@ -279,7 +279,7 @@ namespace Modumate
 
 			for (auto *child : children)
 			{
-				if (child->ObjectType == EObjectType::OTFinish)
+				if (child->GetObjectType() == EObjectType::OTFinish)
 				{
 					if (auto *childMeshActor = Cast<ADynamicMeshActor>(child->GetActor()))
 					{
@@ -303,7 +303,7 @@ namespace Modumate
 	void FMOIPlaneHostedObjImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 	{
 		FModumateObjectInstance *parent = MOI->GetParentObject();
-		if (!ensureAlways(parent && (parent->ObjectType == EObjectType::OTMetaPlane)))
+		if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
 			return;
 		}
@@ -342,7 +342,7 @@ namespace Modumate
 			return impl;
 		};
 
-		int32 numParentCPs = parent->ControlPoints.Num();
+		int32 numParentCPs = parent->GetControlPoints().Num();
 		for (int32 i = 0; i < numParentCPs; ++i)
 		{
 			makeActor(new FAdjustPolyPointHandle(parent, i, (i + 1) % numParentCPs), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), -1, TArray<int32>{i, (i + 1) % numParentCPs}, 16.0f);
@@ -705,7 +705,7 @@ namespace Modumate
 			return;
 		}
 
-		DynamicMeshActor->Assembly = MOI->ObjectAssembly;
+		DynamicMeshActor->Assembly = MOI->GetAssembly();
 		DynamicMeshActor->LayerGeometries = LayerGeometries;
 
 		bool bEnableCollision = !MOI->GetPreviewOperationMode() && !parentPlane->GetPreviewOperationMode();
@@ -725,7 +725,7 @@ namespace Modumate
 		CachedConnectedEdges.Reset();
 		for (FModumateObjectInstance *planeConnectedMOI : CachedParentConnectedMOIs)
 		{
-			if (planeConnectedMOI && (planeConnectedMOI->ObjectType == EObjectType::OTMetaEdge))
+			if (planeConnectedMOI && (planeConnectedMOI->GetObjectType() == EObjectType::OTMetaEdge))
 			{
 				CachedConnectedEdges.Add(planeConnectedMOI);
 			}

@@ -19,12 +19,12 @@ namespace Modumate
 	TArray<FModelDimensionString> FMOILineSegment::GetDimensionStrings() const
 	{
 		TArray<FModelDimensionString> ret;
-		if (MOI->ControlPoints.Num() > 0)
+		if (MOI->GetControlPoints().Num() > 0)
 		{
 			FModelDimensionString ds;
 			ds.AngleDegrees = 0;
-			ds.Point1 = MOI->ControlPoints[0];
-			ds.Point2 = MOI->ControlPoints[1];
+			ds.Point1 = MOI->GetControlPoint(0);
+			ds.Point2 = MOI->GetControlPoint(1);
 			ds.Functionality = EEnterableField::None;
 			ds.Offset = 50;
 			ds.UniqueID = MOI->GetActor()->GetFName();
@@ -124,10 +124,10 @@ namespace Modumate
 
 	void FMOILineSegment::SetupDynamicGeometry()
 	{
-		if (MOI->ControlPoints.Num() >= 2)
+		if (MOI->GetControlPoints().Num() >= 2)
 		{
-			LineActor->Point1 = MOI->ControlPoints[0];
-			LineActor->Point2 = MOI->ControlPoints[1];
+			LineActor->Point1 = MOI->GetControlPoint(0);
+			LineActor->Point2 = MOI->GetControlPoint(1);
 		}
 	}
 
@@ -138,10 +138,10 @@ namespace Modumate
 
 	void FMOILineSegment::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
-		FVector dir = (MOI->ControlPoints[1] - MOI->ControlPoints[0]).GetSafeNormal();
+		FVector dir = (MOI->GetControlPoint(1) - MOI->GetControlPoint(0)).GetSafeNormal();
 
-		outPoints.Add(FStructurePoint(MOI->ControlPoints[0], dir, 0));
-		outPoints.Add(FStructurePoint(MOI->ControlPoints[1], dir, 1));
-		outLines.Add(FStructureLine(MOI->ControlPoints[0], MOI->ControlPoints[1], 0, 1));
+		outPoints.Add(FStructurePoint(MOI->GetControlPoint(0), dir, 0));
+		outPoints.Add(FStructurePoint(MOI->GetControlPoint(1), dir, 1));
+		outLines.Add(FStructureLine(MOI->GetControlPoint(0), MOI->GetControlPoint(1), 0, 1));
 	}
 }

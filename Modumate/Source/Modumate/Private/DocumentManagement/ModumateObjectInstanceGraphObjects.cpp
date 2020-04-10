@@ -8,16 +8,16 @@ namespace Modumate
 	{
 		if (ensureAlways(MOI))
 		{
-			MOI->ControlPoints.SetNum(1);
-			MOI->ControlPoints[0] = p;
+			MOI->SetControlPoints(TArray<FVector>());
+			MOI->AddControlPoint(p);
 		}
 	}
 
 	FVector FMOIGraphVertex::GetLocation() const
 	{
-		if (ensureAlways(MOI && (MOI->ControlPoints.Num() == 1)))
+		if (ensureAlways(MOI && (MOI->GetControlPoints().Num() == 1)))
 		{
-			return MOI->ControlPoints[0];
+			return MOI->GetControlPoint(0);
 		}
 
 		return FVector::ZeroVector;

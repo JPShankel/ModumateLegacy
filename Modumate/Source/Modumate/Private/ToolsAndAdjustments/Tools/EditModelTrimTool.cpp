@@ -97,15 +97,14 @@ void UTrimTool::OnAssemblySet()
 bool UTrimTool::ConstrainTargetToSolidEdge(float targetPosAlongEdge,int32 startIndex,int32 endIndex)
 {
 	// TODO: refactor contents of if statement for new wall geometry...just return true for now
-	if (CurrentTarget && (CurrentTargetChildren.Num() > 0) && (CurrentTarget->ObjectType == EObjectType::OTWallSegment))
+	if (CurrentTarget && (CurrentTargetChildren.Num() > 0) && (CurrentTarget->GetObjectType() == EObjectType::OTWallSegment))
 	{
 		const FModumateObjectInstance *parent = CurrentTarget->GetParentObject();
 		if (parent == nullptr)
 		{
 			return true;
 		}
-
-		int32 numCP = parent->ControlPoints.Num();
+		int32 numCP = parent->GetControlPoints().Num();
 
 		// No need to worry if the trim is on the interior of a portal hole
 		if ((endIndex % numCP) == (startIndex % numCP))
@@ -129,8 +128,8 @@ bool UTrimTool::ConstrainTargetToSolidEdge(float targetPosAlongEdge,int32 startI
 		TArray<FVector> portalHoleVerts;
 		for (const FModumateObjectInstance *targetChild : CurrentTargetChildren)
 		{
-			if (targetChild && ((targetChild->ObjectType == EObjectType::OTDoor) || (targetChild->ObjectType == EObjectType::OTWindow)) &&
-				UModumateObjectStatics::GetMoiHoleVertsWorld(&targetChild->ObjectAssembly, targetChild->GetActor()->GetActorTransform(), portalHoleVerts))
+			if (targetChild && ((targetChild->GetObjectType() == EObjectType::OTDoor) || (targetChild->GetObjectType() == EObjectType::OTWindow)) &&
+				UModumateObjectStatics::GetMoiHoleVertsWorld(&targetChild->GetAssembly(), targetChild->GetActor()->GetActorTransform(), portalHoleVerts))
 			{
 				FPolyHole2D wallRelativeHole;
 				for (const FVector &worldHoleVert : portalHoleVerts)
@@ -336,7 +335,7 @@ bool UTrimTool::FrameUpdate()
 				bool bTargetIsSolidEdge = true;
 
 				// use percent lengths on cabinet and portal edges, since they can be reshaped without preserving relative mounting info
-				switch (CurrentTarget->ObjectType)
+				switch (CurrentTarget->GetObjectType())
 				{
 				case EObjectType::OTCabinet:
 				case EObjectType::OTDoor:
@@ -366,8 +365,8 @@ bool UTrimTool::FrameUpdate()
 					bool bChildLengthAsPCT;
 					ETrimMiterOptions childMiterStart, childMiterEnd;
 
-					if (targetChild && (targetChild->ObjectType == EObjectType::OTTrim) &&
-						UModumateObjectStatics::GetTrimValuesFromControls(targetChild->ControlPoints, targetChild->ControlIndices,
+					if (targetChild && (targetChild->GetObjectType() == EObjectType::OTTrim) &&
+						UModumateObjectStatics::GetTrimValuesFromControls(targetChild->GetControlPoints(), targetChild->GetControlPointIndices(),
 							childStartLength, childEndLength, childIdx1, childIdx2,
 							childMountIdx, bChildLengthAsPCT, childMiterStart, childMiterEnd))
 					{

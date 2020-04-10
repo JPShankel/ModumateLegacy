@@ -125,12 +125,12 @@ static bool CalcPortalPositionOnHost(const FModumateObjectInstance *hostObj, con
 	bool bUseGroundOffset, const FVector &offsetFromGround, FTransform &outTransform)
 {
 	const FModumateObjectInstance *hostParent = hostObj->GetParentObject();
-	if (!(hostParent && (hostParent->ObjectType == EObjectType::OTMetaPlane)))
+	if (!(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return false;
 	}
 
-	FVector hostOrigin = hostParent->ControlPoints[0];
+	FVector hostOrigin = hostParent->GetControlPoint(0);
 	FVector positionOnHost = hitLoc;
 	if (bUseGroundOffset)
 	{
@@ -182,7 +182,7 @@ bool UPortalToolBase::FrameUpdate()
 		hitMOI = Document->ObjectFromActor(Controller->EMPlayerState->SnappedCursor.Actor);
 		FModumateObjectInstance *hitMOIParent = hitMOI ? hitMOI->GetParentObject() : nullptr;
 
-		while (hitMOIParent && (hitMOIParent->ObjectType != EObjectType::OTMetaPlane))
+		while (hitMOIParent && (hitMOIParent->GetObjectType() != EObjectType::OTMetaPlane))
 		{
 			hitMOI = hitMOIParent;
 			hitMOIParent = hitMOI->GetParentObject();

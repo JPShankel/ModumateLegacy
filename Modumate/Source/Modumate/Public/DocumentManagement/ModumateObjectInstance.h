@@ -238,14 +238,49 @@ namespace Modumate
 
 		EObjectDirtyFlags DirtyFlags = EObjectDirtyFlags::None;
 
+		TArray<FVector> ControlPoints;
+		TArray<int32> ControlIndices;
+
+		FModumateObjectAssembly ObjectAssembly;
+
+		//<Thickness, Height, UNUSED>
+		FVector Extents = FVector::ZeroVector;
+
+		bool ObjectInverted = false;
+		bool ObjectTransversed = false;
+
 		void MakeImplementation();
 		void MakeActor(const FVector &Loc, const FQuat &Rot);
 		void SetupMOIComponent();
 
 	public:
-		FModumateObjectInstance(UWorld *world, FModumateDocument *doc, EObjectType ot, const FModumateObjectAssembly &obAsm, int32 id);
+		FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FModumateObjectAssembly &obAsm, int32 id);
 		FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FMOIDataRecord &obRec);
 		~FModumateObjectInstance();
+
+		bool GetObjectInverted() const;
+		void SetObjectInverted(bool Inverted);
+
+		bool GetObjectTransversed() const;
+		void SetObjectTransversed(bool Transversed);
+
+		const FVector &GetExtents() const;
+		void SetExtents(const FVector &NewExtents);
+
+		void SetControlPoint(int32 Index, const FVector &Value);
+		const FVector &GetControlPoint(int32 Index) const;
+
+		void SetControlPointIndex(int32 IndexNum, int32 IndexVal);
+		int32 GetControlPointIndex(int32 IndexNum) const;
+
+		const TArray<FVector> &GetControlPoints() const;
+		const TArray<int32> &GetControlPointIndices() const;
+
+		void AddControlPoint(const FVector &ControlPoint);
+		void AddControlPointIndex(int32 Index);
+
+		void SetControlPoints(const TArray<FVector> &NewControlPoints);
+		void SetControlPointIndices(const TArray<int32> &NewControlPointIndices);
 
 		UWorld *GetWorld() const { return World.Get(); }
 		// Actor management
@@ -310,12 +345,15 @@ namespace Modumate
 		void AddDraftingLines(UHUDDrawWidget_CPP *HUDDrawWidget);
 		void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const;
 
-
 		TArray<FModelDimensionString> GetDimensionStrings() const;
 
 		// Wall interface
 		// TODO: move some of these to ILayeredObject, or make them more general
 		void OnAssemblyChanged();
+
+		const FModumateObjectAssembly &GetAssembly() const;
+		void SetAssembly(const FModumateObjectAssembly &NewAssembly);
+		void InvertAssemblyLayers();
 
 		// TODO: generalize or delete these functions, especially if they are
 		// only relevant for objects that will only be hosted by meta planes
@@ -391,31 +429,9 @@ namespace Modumate
 		void UpdateVisibilityAndCollision();
 
 		// Class Data
-		EObjectType ObjectType = EObjectType::OTUnknown;
-		FModumateObjectAssembly ObjectAssembly;
+		EObjectType GetObjectType() const;
 
 		// Instance Data
 		int32 ID = 0;
-		FVector UVAnchor = FVector::ZeroVector;
-		TArray<FVector> ControlPoints;
-		TArray<int32> ControlIndices;
-
-		//<Thickness, Height, UNUSED>
-		FVector Extents = FVector::ZeroVector;
-
-		// TODO: move to room analysis view
-		enum EWallProfile
-		{
-			Unknown = 0,
-			Interior,
-			Exterior,
-			FreeStanding
-		};
-
-		bool ExteriorIsToRight = false;
-		bool ObjectInverted = false;
-		bool ObjectTransversed = false;
-
-		EWallProfile WallProfile = EWallProfile::Unknown;
 	};
 }

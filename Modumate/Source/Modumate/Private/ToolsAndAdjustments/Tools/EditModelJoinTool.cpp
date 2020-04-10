@@ -46,9 +46,9 @@ bool UJoinTool::HandleMouseUp()
 
 	FModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
 		
-	if (newTarget && newTarget->ObjectType == EObjectType::OTMetaPlane)
+	if (newTarget && newTarget->GetObjectType() == EObjectType::OTMetaPlane)
 	{
-		ActiveObjectType = newTarget->ObjectType;
+		ActiveObjectType = newTarget->GetObjectType();
 
 		int32 newObjID = newTarget->ID;
 
@@ -82,9 +82,9 @@ bool UJoinTool::HandleMouseUp()
 		// preferably there would be a way to show the metaplane as selected without showing the adjustment handles
 		newTarget->ShowAdjustmentHandles(Controller, false);
 	}
-	else if (newTarget && newTarget->ObjectType == EObjectType::OTMetaEdge)
+	else if (newTarget && newTarget->GetObjectType() == EObjectType::OTMetaEdge)
 	{
-		ActiveObjectType = newTarget->ObjectType;
+		ActiveObjectType = newTarget->GetObjectType();
 
 		int32 newObjID = newTarget->ID;
 		const FGraph3D& volumeGraph = doc->GetVolumeGraph();

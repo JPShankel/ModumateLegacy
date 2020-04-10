@@ -100,7 +100,7 @@ namespace Modumate
 	FAdjustLineSegmentHandle::FAdjustLineSegmentHandle(FModumateObjectInstance *moi, int cp) : FEditModelAdjustmentHandleBase(moi)
 	{
 		CP = cp;
-		OriginalP = MOI->ControlPoints[CP];
+		OriginalP = MOI->GetControlPoint(CP);
 	}
 
 	bool FAdjustLineSegmentHandle::OnBeginUse()
@@ -110,9 +110,9 @@ namespace Modumate
 			return false;
 		}
 
-		OriginalP = MOI->ControlPoints[CP];
-		FVector lineDirection = (MOI->ControlPoints[1] - MOI->ControlPoints[0]).GetSafeNormal();
-		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(MOI->ControlPoints[(CP + 1) % 2], FVector::UpVector, lineDirection);
+		OriginalP = MOI->GetControlPoint(CP);
+		FVector lineDirection = (MOI->GetControlPoint(1) - MOI->GetControlPoint(0)).GetSafeNormal();
+		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(MOI->GetControlPoint((CP + 1) % 2), FVector::UpVector, lineDirection);
 
 		MOI->ShowAdjustmentHandles(Controller.Get(), false);
 
@@ -129,8 +129,8 @@ namespace Modumate
 		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 		MOI->ShowAdjustmentHandles(Controller.Get(), true);
 
-		TArray<FVector> points = MOI->ControlPoints;
-		MOI->ControlPoints[CP] = OriginalP;
+		TArray<FVector> points = MOI->GetControlPoints();
+		MOI->SetControlPoint(CP,OriginalP);
 
 		Controller->ModumateCommand(FModumateCommand(Commands::kBeginUndoRedoMacro));
 
@@ -143,7 +143,7 @@ namespace Modumate
 		// TODO: allow this handle to be grabbed from the tool mode that created the line, rather than just from the Select tool
 		EToolMode curToolMode = Controller->GetToolMode();
 		EObjectType curObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(curToolMode);
-		Controller->TryMakePrismFromSegments(curObjectType, Controller->CurrentTool->GetAssembly().Key, MOI->ObjectInverted, MOI);
+		Controller->TryMakePrismFromSegments(curObjectType, Controller->CurrentTool->GetAssembly().Key, MOI->GetObjectInverted(), MOI);
 
 		Controller->ModumateCommand(FModumateCommand(Commands::kEndUndoRedoMacro));
 
@@ -157,11 +157,12 @@ namespace Modumate
 		if (Controller.IsValid() && Controller->EMPlayerState->SnappedCursor.Visible)
 		{
 			FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-			MOI->ControlPoints[CP] = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-			MOI->ControlPoints[CP].Z = OriginalP.Z;
+			FVector newCP = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+			newCP.Z = OriginalP.Z;
+			MOI->SetControlPoint(CP, newCP);
 			MOI->UpdateGeometry();
 
-			Controller->UpdateDimensionString(MOI->ControlPoints[(CP + 1) % 2], MOI->ControlPoints[CP], FVector::UpVector);
+			Controller->UpdateDimensionString(MOI->GetControlPoint((CP + 1) % 2), MOI->GetControlPoint(CP), FVector::UpVector);
 			FAffordanceLine affordance;
 			if (Controller->EMPlayerState->SnappedCursor.TryMakeAffordanceLineFromCursorToSketchPlane(affordance, hitLoc))
 			{
@@ -182,7 +183,7 @@ namespace Modumate
 		if (Controller.IsValid())
 		{
 			MOI->ShowAdjustmentHandles(Controller.Get(), true);
-			MOI->ControlPoints[CP] = OriginalP;
+			MOI->SetControlPoint(CP,OriginalP);
 			MOI->UpdateGeometry();
 			Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 		}
@@ -192,6 +193,6 @@ namespace Modumate
 
 	FVector FAdjustLineSegmentHandle::GetAttachmentPoint()
 	{
-		return MOI->ControlPoints[CP] + FVector(0, 0, 0.25f);
+		return MOI->GetControlPoint(CP) + FVector(0, 0, 0.25f);
 	}
 }

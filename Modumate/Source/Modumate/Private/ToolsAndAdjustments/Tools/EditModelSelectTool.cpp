@@ -36,7 +36,7 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 			return false;
 		}
 
-		switch (ob->ObjectType)
+		switch (ob->GetObjectType())
 		{
 		case EObjectType::OTMetaEdge:
 		case EObjectType::OTMetaPlane:
@@ -181,7 +181,7 @@ bool USelectTool::HandleMouseUp()
 	if (doubleClicked)
 	{
 		if (newTarget && (newTarget->GetParentObject() == currentViewGroup) &&
-			(newTarget->ObjectType == EObjectType::OTGroup))
+			(newTarget->GetObjectType() == EObjectType::OTGroup))
 		{
 			Controller->DeselectAll();
 			Controller->SetViewGroupObject(newTarget);
@@ -212,7 +212,7 @@ bool USelectTool::HandleMouseUp()
 		else if (currentViewGroup && (numSelections == 0))
 		{
 			FModumateObjectInstance *currentViewGroupParent = currentViewGroup->GetParentObject();
-			if (currentViewGroupParent && (currentViewGroupParent->ObjectType == EObjectType::OTGroup))
+			if (currentViewGroupParent && (currentViewGroupParent->GetObjectType() == EObjectType::OTGroup))
 			{
 				Controller->SetViewGroupObject(currentViewGroupParent);
 			}

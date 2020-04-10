@@ -51,16 +51,16 @@ namespace Modumate
 	FModumateObjectInstance::FModumateObjectInstance(
 		UWorld *world,
 		FModumateDocument *doc,
-		EObjectType ot,
 		const FModumateObjectAssembly &obAsm,
 		int32 id)
 		: World(world)
 		, Document(doc)
 		, bDestroyed(false)
-		, ObjectType(ot)
 		, ObjectAssembly(obAsm)
 		, ID(id)
 	{
+		ensureAlways(obAsm.ObjectType != EObjectType::OTNone);
+
 		if (world == nullptr)
 		{
 			return;
@@ -80,7 +80,6 @@ namespace Modumate
 		, Document(doc)
 		, Parent(0)
 		, bDestroyed(false)
-		, ObjectType(EObjectType::OTUnknown)
 		, ObjectAssembly()
 	{
 		if (world == nullptr)
@@ -89,22 +88,21 @@ namespace Modumate
 		}
 
 		ID = obRec.ID;
-		ObjectType = obRec.ObjectType;
 		ObjectInverted = obRec.ObjectInverted;
 
 		if (obRec.AssemblyKey.Len() > 0 && obRec.AssemblyKey != TEXT("None"))
 		{
-			if (UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(ObjectType))
+			if (UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(obRec.ObjectType))
 			{
 				const FModumateObjectAssembly *obAsm;
-				if (ensureAlways(doc->PresetManager.TryGetProjectAssemblyForPreset(ObjectType, *obRec.AssemblyKey, obAsm)))
+				if (ensureAlways(doc->PresetManager.TryGetProjectAssemblyForPreset(obRec.ObjectType, *obRec.AssemblyKey, obAsm)))
 				{
 					ObjectAssembly = *obAsm;
 				}
 			}
 			else
 			{
-				const FModumateObjectAssembly *pObAsm = doc->PresetManager.GetAssemblyByKey(UModumateTypeStatics::ToolModeFromObjectType(ObjectType), FName(*obRec.AssemblyKey));
+				const FModumateObjectAssembly *pObAsm = doc->PresetManager.GetAssemblyByKey(UModumateTypeStatics::ToolModeFromObjectType(obRec.ObjectType), FName(*obRec.AssemblyKey));
 				ensureAlways(pObAsm != nullptr);
 				if (pObAsm != nullptr)
 				{
@@ -112,13 +110,17 @@ namespace Modumate
 				}
 			}
 		}
+		else
+		{
+			// Some MOI types don't have an assembly, so just set their object type directly
+			ObjectAssembly.ObjectType = obRec.ObjectType;
+		}
 
 		MakeImplementation();
 		MakeActor(obRec.Location, obRec.Rotation.Quaternion());
 
 		Extents = obRec.Extents;
 		Parent = obRec.ParentID;
-		UVAnchor = obRec.UVAnchor;
 		ControlPoints = obRec.ControlPoints;
 		ControlIndices = obRec.ControlIndices;
 		ObjectProperties.FromStringMap(obRec.ObjectProperties);
@@ -129,7 +131,7 @@ namespace Modumate
 
 	void FModumateObjectInstance::MakeImplementation()
 	{
-		switch (ObjectType)
+		switch (GetObjectType())
 		{
 		case EObjectType::OTWallSegment: Implementation = new FMOIPlaneHostedObjImpl(this); break;
 		case EObjectType::OTRailSegment: Implementation = new FMOIRailImpl(this); break;
@@ -156,7 +158,7 @@ namespace Modumate
 		case EObjectType::OTStructureLine: Implementation = new FMOIStructureLine(this); break;
 		default:
 		{
-			FString objectTypeString = EnumValueString(EObjectType, ObjectType);
+			FString objectTypeString = EnumValueString(EObjectType, GetObjectType());
 			ensureAlwaysMsgf(false, TEXT("Tried to create a MOI from an unsupported ObjectType: %s!"),
 				*objectTypeString);
 			Implementation = nullptr;
@@ -195,6 +197,11 @@ namespace Modumate
 	TArray<FModelDimensionString> FModumateObjectInstance::GetDimensionStrings() const
 	{
 		return Implementation->GetDimensionStrings();
+	}
+
+	EObjectType FModumateObjectInstance::GetObjectType() const
+	{
+		return ObjectAssembly.ObjectType;
 	}
 
 	FModumateObjectInstance::~FModumateObjectInstance()
@@ -336,7 +343,7 @@ namespace Modumate
 		connectedIDs.Reset();
 
 		const FGraph3D &graph = Document->GetVolumeGraph();
-		EGraph3DObjectType graphObjectType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(ObjectType);
+		EGraph3DObjectType graphObjectType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(GetObjectType());
 		switch (graphObjectType)
 		{
 		case EGraph3DObjectType::Vertex:
@@ -526,7 +533,7 @@ namespace Modumate
 
 	bool FModumateObjectInstance::CanBeSplit() const
 	{
-		switch (ObjectType)
+		switch (GetObjectType())
 		{
 		case EObjectType::OTWallSegment:
 		case EObjectType::OTRailSegment:
@@ -629,6 +636,109 @@ namespace Modumate
 		}
 
 		return bSuccess;
+	}
+
+	bool FModumateObjectInstance::GetObjectInverted() const
+	{
+		return ObjectInverted;
+	}
+
+	void FModumateObjectInstance::SetObjectInverted(bool Inverted)
+	{
+		ObjectInverted = Inverted;
+	}
+
+	bool FModumateObjectInstance::GetObjectTransversed() const
+	{
+		return ObjectTransversed;
+	}
+
+	void FModumateObjectInstance::SetObjectTransversed(bool Transversed)
+	{
+		ObjectTransversed = Transversed;
+	}
+
+	const FVector &FModumateObjectInstance::GetExtents() const
+	{
+		return Extents;
+	}
+
+	void FModumateObjectInstance::SetExtents(const FVector &NewExtents)
+	{
+		Extents = NewExtents;
+	}
+
+	const FModumateObjectAssembly &FModumateObjectInstance::GetAssembly() const
+	{
+		return ObjectAssembly;
+	}
+
+	void FModumateObjectInstance::SetAssembly(const FModumateObjectAssembly &NewAssembly)
+	{
+		ObjectAssembly = NewAssembly;
+	}
+
+	void FModumateObjectInstance::InvertAssemblyLayers()
+	{
+		ObjectAssembly.InvertLayers();
+	}
+
+	void FModumateObjectInstance::SetControlPoint(int32 Index, const FVector &Value)
+	{
+		if (ensureAlways(ControlPoints.Num() > Index))
+		{
+			ControlPoints[Index] = Value;
+		}
+	}
+
+	const FVector &FModumateObjectInstance::GetControlPoint(int32 Index) const
+	{
+		ensureAlways(Index < ControlPoints.Num());
+		return ControlPoints[Index];
+	}
+
+	void FModumateObjectInstance::SetControlPointIndex(int32 IndexNum, int32 IndexVal)
+	{
+		if (ensureAlways(ControlIndices.Num() > IndexNum))
+		{
+			ControlIndices[IndexNum] = IndexVal;
+		}
+	}
+
+	int32 FModumateObjectInstance::GetControlPointIndex(int32 IndexNum) const
+	{
+		ensureAlways(IndexNum < ControlIndices.Num());
+		return ControlIndices[IndexNum];
+	}
+
+	const TArray<FVector> &FModumateObjectInstance::GetControlPoints() const
+	{
+		return ControlPoints;
+	}
+
+	const TArray<int32> &FModumateObjectInstance::GetControlPointIndices() const
+	{
+		return ControlIndices;
+	}
+
+	void FModumateObjectInstance::AddControlPoint(const FVector &ControlPoint)
+	{
+		ControlPoints.Add(ControlPoint);
+	}
+
+	void FModumateObjectInstance::AddControlPointIndex(int32 Index)
+	{
+		ControlIndices.Add(Index);
+	}
+
+	void FModumateObjectInstance::SetControlPoints(const TArray<FVector> &NewControlPoints)
+	{
+		ControlPoints = NewControlPoints;
+	}
+
+	void FModumateObjectInstance::SetControlPointIndices(const TArray<int32> &NewControlPointIndices)
+	{
+		ControlIndices = NewControlPointIndices;
 	}
 
 	void FModumateObjectInstance::SetupGeometry()
@@ -814,13 +924,12 @@ namespace Modumate
 	{
 		FMOIDataRecord ret;
 		ret.ID = ID;
-		ret.ObjectType = ObjectType;
+		ret.ObjectType = GetObjectType();
 		ret.AssemblyKey = ObjectAssembly.UniqueKey().ToString();
 		ret.ParentID = Parent;
 		ret.ChildIDs = Children;
 		ret.Location = GetObjectLocation();
 		ret.Rotation = GetObjectRotation().Rotator();
-		ret.UVAnchor = UVAnchor;
 		ret.ControlPoints = ControlPoints;
 		ret.ControlIndices = ControlIndices;
 		ret.Extents = Extents;
@@ -831,7 +940,7 @@ namespace Modumate
 
 	FModumateWallMount FModumateObjectInstance::GetWallMountForChild(const FModumateObjectInstance *child, int32 originIndex) const
 	{
-		if ((ObjectType != EObjectType::OTWallSegment) || (child == nullptr))
+		if ((GetObjectType() != EObjectType::OTWallSegment) || (child == nullptr))
 		{
 			FModumateWallMount ret;
 			ret.OriginIndex = originIndex;
@@ -922,9 +1031,9 @@ namespace Modumate
 	{
 		if (ensureAlways((MOI != nullptr) && (index >= 0)))
 		{
-			if (index < MOI->ControlPoints.Num())
+			if (index < MOI->GetControlPoints().Num())
 			{
-				return MOI->ControlPoints[index];
+				return MOI->GetControlPoint(index);
 			}
 		}
 		return GetLocation();
@@ -936,7 +1045,7 @@ namespace Modumate
 		auto *controller = moiActor ? moiActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
 		if (controller)
 		{
-			bool bEnabledByViewMode = controller->EMPlayerState->IsObjectTypeEnabledByViewMode(MOI->ObjectType);
+			bool bEnabledByViewMode = controller->EMPlayerState->IsObjectTypeEnabledByViewMode(MOI->GetObjectType());
 			bOutVisible = !MOI->IsRequestedHidden() && bEnabledByViewMode;
 			bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bEnabledByViewMode;
 			moiActor->SetActorHiddenInGame(!bOutVisible);
@@ -1002,7 +1111,7 @@ namespace Modumate
 	FModumateWallMount FModumateObjectInstanceImplBase::GetWallMountForSelf(int32 originIndex) const
 	{
 		ensureMsgf(false, TEXT("Unimplemented GetWallMountForSelf for object type %s!"),
-			MOI ? *EnumValueString(EObjectType, MOI->ObjectType) : TEXT("?"));
+			MOI ? *EnumValueString(EObjectType, MOI->GetObjectType()) : TEXT("?"));
 
 		return FModumateWallMount();
 	}
@@ -1010,7 +1119,7 @@ namespace Modumate
 	void FModumateObjectInstanceImplBase::SetWallMountForSelf(const FModumateWallMount &wm)
 	{
 		ensureMsgf(false, TEXT("Unimplemented SetWallMountForSelf for object type %s!"),
-			MOI ? *EnumValueString(EObjectType, MOI->ObjectType) : TEXT("?"));
+			MOI ? *EnumValueString(EObjectType, MOI->GetObjectType()) : TEXT("?"));
 
 		return;
 	}

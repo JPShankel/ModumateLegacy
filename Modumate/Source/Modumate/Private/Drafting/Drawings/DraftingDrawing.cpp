@@ -70,13 +70,13 @@ namespace Modumate {
 		auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
 		auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
 
-		FVector cutPlaneOrigin = cutPlane->ControlPoints[0];
+		FVector cutPlaneOrigin = cutPlane->GetControlPoint(0);
 
-		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(scopeBox->ControlPoints[0], AxisX, AxisY, cutPlaneOrigin);
+		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(scopeBox->GetControlPoint(0), AxisX, AxisY, cutPlaneOrigin);
 		FVector scopeBoxOrigin = cutPlaneOrigin + (scopeBoxOrigin2D.X * AxisX) + (scopeBoxOrigin2D.Y * AxisY);
 
 		TArray<FVector2D> boxPoints;
-		for (auto& point : scopeBox->ControlPoints)
+		for (auto& point : scopeBox->GetControlPoints())
 		{
 			FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, AxisX, AxisY, scopeBoxOrigin);
 			boxPoints.Add(point2D);
@@ -159,7 +159,7 @@ namespace Modumate {
 		FVector scopeBoxNormal = scopeBox->GetNormal();
 
 
-		FPlane plane = FPlane(cutPlane->ControlPoints[0], cutPlane->GetNormal());
+		FPlane plane = FPlane(cutPlane->GetControlPoint(0), cutPlane->GetNormal());
 		bool bValidIntersection = true;
 		int32 numPoints = 4;
 		TArray<FVector> intersection;
@@ -167,7 +167,7 @@ namespace Modumate {
 		for (int32 cornerIdx = 0; cornerIdx < numPoints; cornerIdx++)
 		{
 			FVector corner = scopeBox->GetCorner(cornerIdx);
-			FVector extrudedCorner = corner + (scopeBoxNormal * scopeBox->Extents.Y);
+			FVector extrudedCorner = corner + (scopeBoxNormal * scopeBox->GetExtents().Y);
 
 			bool bIntersects = FMath::SegmentPlaneIntersection(corner, extrudedCorner, plane, intersection[cornerIdx]);
 			bValidIntersection = bValidIntersection && bIntersects;
@@ -236,7 +236,7 @@ namespace Modumate {
 		{
 			int32 roomID = room->ID;
 			TSet<int32> roomConnectedFaces;
-			for (int32 faceID : room->ControlIndices)
+			for (int32 faceID : room->GetControlPointIndices())
 			{
 				auto face = volumeGraph.FindFace(faceID);
 				if (!face)
@@ -264,16 +264,16 @@ namespace Modumate {
 		FPlane plane;
 		FVector axisX, axisY, center;
 		TArray<FVector2D> cached2DPositions;
-		FVector origin = cutPlane->ControlPoints[0];
-		UModumateGeometryStatics::AnalyzeCachedPositions(cutPlane->ControlPoints, plane, axisX, axisY, cached2DPositions, center);
+		FVector origin = cutPlane->GetControlPoint(0);
+		UModumateGeometryStatics::AnalyzeCachedPositions(cutPlane->GetControlPoints(), plane, axisX, axisY, cached2DPositions, center);
 		TMap<int32, int32> objMap;
 		FGraph graph;
 
-		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(scopeBox->ControlPoints[0], axisX, axisY, origin);
+		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(scopeBox->GetControlPoint(0), axisX, axisY, origin);
 		FVector scopeBoxOrigin = origin + (scopeBoxOrigin2D.X * axisX) + (scopeBoxOrigin2D.Y * axisY);
 
 		TArray<FVector2D> boxPoints;
-		for (auto& point : scopeBox->ControlPoints)
+		for (auto& point : scopeBox->GetControlPoints())
 		{
 			FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, axisX, axisY, scopeBoxOrigin);
 			boxPoints.Add(point2D);
@@ -311,7 +311,7 @@ namespace Modumate {
 				continue;
 			}
 
-			for (int32 faceID : room->ControlIndices)
+			for (int32 faceID : room->GetControlPointIndices())
 			{
 				auto face = volumeGraph.FindFace(faceID);
 				if (face == nullptr)
@@ -331,7 +331,6 @@ namespace Modumate {
 				}
 			}
 		}
-
 	}
 }
 

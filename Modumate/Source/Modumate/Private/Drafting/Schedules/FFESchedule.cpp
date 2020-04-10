@@ -30,11 +30,11 @@ namespace Modumate
 
 		for (auto& ffe : ffes)
 		{
-			FString codeName = ffe->ObjectAssembly.GetProperty(BIM::Parameters::Code);
+			FString codeName = ffe->GetAssembly().GetProperty(BIM::Parameters::Code);
 			if (!CodeNameToCount.Contains(codeName))
 			{
 				CodeNameToCount.Add(codeName, 1);
-				CodeNameToAssembly.Add(codeName, ffe->ObjectAssembly);
+				CodeNameToAssembly.Add(codeName, ffe->GetAssembly());
 			}
 			else
 			{

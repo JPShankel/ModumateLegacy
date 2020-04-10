@@ -14,7 +14,7 @@ namespace Modumate
 
 		for (const auto *object : objects)
 		{
-			ECollisionChannel objectCollisionType = UModumateTypeStatics::CollisionTypeFromObjectType(object->ObjectType);
+			ECollisionChannel objectCollisionType = UModumateTypeStatics::CollisionTypeFromObjectType(object->GetObjectType());
 			bool bObjectInMouseQuery = (collisionChannelMask & ECC_TO_BITFIELD(objectCollisionType)) != 0;
 
 			if (object && object->IsCollisionEnabled() && bObjectInMouseQuery && !idsToIgnore.Contains(object->ID))

@@ -26,13 +26,13 @@ namespace Modumate
 		AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
 		MaterialData.EngineMaterial = gameMode ? gameMode->ScopeBoxMaterial : nullptr;
 
-		float thickness = MOI->Extents.Y;
-		DynamicMeshActor->SetupPrismGeometry(MOI->ControlPoints, thickness, MaterialData);
+		float thickness = MOI->GetExtents().Y;
+		DynamicMeshActor->SetupPrismGeometry(MOI->GetControlPoints(), thickness, MaterialData);
 
 		MOI->UpdateVisibilityAndCollision();
 
 		FPlane outPlane;
-		UModumateGeometryStatics::GetPlaneFromPoints(MOI->ControlPoints, outPlane);
+		UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), outPlane);
 
 		Normal = FVector(outPlane);
 	}
@@ -44,15 +44,15 @@ namespace Modumate
 
 	FVector FMOIScopeBoxImpl::GetCorner(int32 index) const
 	{
-		int32 numCP = MOI->ControlPoints.Num();
+		int32 numCP = MOI->GetControlPoints().Num();
 
 		if (ensureAlways(numCP == 4) && index < numCP * 2)
 		{
-			FVector corner = MOI->ControlPoints[index % numCP];
+			FVector corner = MOI->GetControlPoint(index % numCP);
 
 			if (index >= numCP)
 			{
-				corner += Normal * MOI->Extents.Y;
+				corner += Normal * MOI->GetExtents().Y;
 			}
 
 			return corner;
@@ -75,14 +75,14 @@ namespace Modumate
 			return;
 		}
 
-		int32 numPolyPoints = MOI->ControlPoints.Num();
-		FVector offset = MOI->Extents.Y * Normal;
+		int32 numPolyPoints = MOI->GetControlPoints().Num();
+		FVector offset = MOI->GetExtents().Y * Normal;
  
 		for (int32 i = 0; i < numPolyPoints; ++i)
 		{
 			int32 nextI = (i + 1) % numPolyPoints;
-			const FVector &cp1 = MOI->ControlPoints[i];
-			const FVector &cp2 = MOI->ControlPoints[nextI];
+			const FVector &cp1 = MOI->GetControlPoint(i);
+			const FVector &cp2 = MOI->GetControlPoint(nextI);
 			FVector dir = (cp2 - cp1).GetSafeNormal();
 
 			const FVector &cp1n = cp1 + offset;
@@ -128,7 +128,7 @@ namespace Modumate
 			return;
 		}
 
-		int32 numCP = MOI->ControlPoints.Num();
+		int32 numCP = MOI->GetControlPoints().Num();
 		if (!ensureAlways(numCP == 4))
 		{
 			return;

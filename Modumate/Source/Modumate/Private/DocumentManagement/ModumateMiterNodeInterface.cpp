@@ -203,7 +203,7 @@ namespace Modumate
 	{
 		Reset();
 
-		if ((InMiterObject == nullptr) || (InMiterObject->ObjectType != EObjectType::OTMetaEdge))
+		if ((InMiterObject == nullptr) || (InMiterObject->GetObjectType() != EObjectType::OTMetaEdge))
 		{
 			return false;
 		}

@@ -21,8 +21,8 @@ namespace Modumate
 		, LocalHandlePos(ForceInitToZero)
 	{
 		bool bHaveMountingProperties =
-			MOI->ObjectAssembly.TryGetProperty(BIM::Parameters::Normal, AssemblyNormal) &&
-			MOI->ObjectAssembly.TryGetProperty(BIM::Parameters::Tangent, AssemblyTangent);
+			MOI->GetAssembly().TryGetProperty(BIM::Parameters::Normal, AssemblyNormal) &&
+			MOI->GetAssembly().TryGetProperty(BIM::Parameters::Tangent, AssemblyTangent);
 		ensure(bHaveMountingProperties);
 
 		AActor *moiActor = moi->GetActor();
@@ -138,7 +138,7 @@ namespace Modumate
 		FTransform newTransform = moiActor->GetActorTransform();
 
 		// If we have a hit normal, then compute a mounting transform based on the cursor.
-		if (UModumateObjectStatics::GetFFEMountedTransform(&MOI->ObjectAssembly, cursor, newTransform))
+		if (UModumateObjectStatics::GetFFEMountedTransform(&MOI->GetAssembly(), cursor, newTransform))
 		{
 			// If we hit a face that isn't coincident with the original mounting plane,
 			// then use the new mounting transform's rotation, as if we're placing the FF&E for the first time.
@@ -291,8 +291,8 @@ namespace Modumate
 		, Sign(sign)
 	{
 		bool bHaveMountingProperties =
-			MOI->ObjectAssembly.TryGetProperty(BIM::Parameters::Normal, AssemblyNormal) &&
-			MOI->ObjectAssembly.TryGetProperty(BIM::Parameters::Tangent, AssemblyTangent);
+			MOI->GetAssembly().TryGetProperty(BIM::Parameters::Normal, AssemblyNormal) &&
+			MOI->GetAssembly().TryGetProperty(BIM::Parameters::Tangent, AssemblyTangent);
 		ensure(bHaveMountingProperties);
 
 		AActor *moiActor = moi->GetActor();

@@ -89,7 +89,7 @@ bool UStairTool::FrameUpdate()
 		if ((cursor.SnapType == ESnapType::CT_FACESELECT) && cursor.Actor)
 		{
 			hitMOI = GameState->Document.ObjectFromActor(cursor.Actor);
-			if (hitMOI && (hitMOI->ObjectType == EObjectType::OTStaircase))
+			if (hitMOI && (hitMOI->GetObjectType() == EObjectType::OTStaircase))
 			{
 				hitMOI = hitMOI->GetParentObject();
 			}
@@ -102,7 +102,7 @@ bool UStairTool::FrameUpdate()
 
 		if (LastValidTargetID)
 		{
-			int32 numCorners = hitMOI->ControlPoints.Num();
+			int32 numCorners = hitMOI->GetControlPoints().Num();
 			for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
 			{
 				int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
@@ -544,7 +544,7 @@ bool UStairTool::MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID)
 	{
 		FModumateObjectInstance *parentPlaneObj = GameState->Document.GetObjectById(RefParentPlaneID);
 
-		if (parentPlaneObj && (parentPlaneObj->ObjectType == EObjectType::OTMetaPlane))
+		if (parentPlaneObj && (parentPlaneObj->GetObjectType() == EObjectType::OTMetaPlane))
 		{
 			OutStairsID = Controller->ModumateCommand(
 				FModumateCommand(Modumate::Commands::kMakeMetaPlaneHostedObj)
@@ -567,7 +567,7 @@ bool UStairTool::MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID)
 
 bool UStairTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
 {
-	if ((CurrentState != Starting) || (PlaneTarget == nullptr) || (PlaneTarget->ObjectType != EObjectType::OTMetaPlane))
+	if ((CurrentState != Starting) || (PlaneTarget == nullptr) || (PlaneTarget->GetObjectType() != EObjectType::OTMetaPlane))
 	{
 		return false;
 	}

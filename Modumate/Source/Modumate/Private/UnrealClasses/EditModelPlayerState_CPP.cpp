@@ -125,7 +125,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 		objectSelectionLine.Thickness = 2.0f;
 
 		bool inViewGroup = CurViewGroupObjects.Contains(lineObj);
-		if ((lineObj->ObjectType == EObjectType::OTGroup) || inViewGroup)
+		if ((lineObj->GetObjectType() == EObjectType::OTGroup) || inViewGroup)
 		{
 			objectSelectionLine.DashLength = 6.0f;
 			objectSelectionLine.DashSpacing = 10.0f;
@@ -237,7 +237,7 @@ void AEditModelPlayerState_CPP::SetAssemblyForActor(AActor *actor, const FShoppi
 	if (ob != nullptr)
 	{
 		// Search for the right assembly from the correct tool mode
-		EToolMode searchInToolMode = UModumateTypeStatics::ToolModeFromObjectType(ob->ObjectType);
+		EToolMode searchInToolMode = UModumateTypeStatics::ToolModeFromObjectType(ob->GetObjectType());
 
 		FName modeName = FindEnumValueFullName<EToolMode>(TEXT("EToolMode"), searchInToolMode);
 
@@ -641,7 +641,7 @@ FModumateObjectInstance *AEditModelPlayerState_CPP::GetValidHoveredObjectInView(
 
 	while (nextTarget && !newTargetInViewGroup)
 	{
-		if (nextTarget->ObjectType == EObjectType::OTGroup)
+		if (nextTarget->GetObjectType() == EObjectType::OTGroup)
 		{
 			highestGroupUnderViewGroup = nextTarget;
 		}
@@ -734,7 +734,7 @@ FModumateObjectInstance *AEditModelPlayerState_CPP::FindHighestParentGroupInView
 	FModumateObjectInstance *highestGroup = iter;
 	while (iter && (iter != ViewGroupObject))
 	{
-		if (iter->ObjectType == EObjectType::OTGroup)
+		if (iter->GetObjectType() == EObjectType::OTGroup)
 		{
 			highestGroup = iter;
 		}
@@ -772,7 +772,7 @@ void AEditModelPlayerState_CPP::FindReachableObjects(TSet<FModumateObjectInstanc
 		visited.Add(iter);
 		reachableObjs.Add(iter);
 
-		if (iter->ObjectType != EObjectType::OTGroup)
+		if (iter->GetObjectType() != EObjectType::OTGroup)
 		{
 			auto iterChildren = iter->GetChildObjects();
 			for (auto *iterChild : iterChildren)
@@ -796,11 +796,11 @@ bool AEditModelPlayerState_CPP::SetObjectHeight(FModumateObjectInstance *obj, fl
 	static const float minHeight = 0.1f;
 	static const FName invalidHeightErrorName(TEXT("InvalidHeight"));
 
-	if (obj && (obj->ControlPoints.Num() > 0))
+	if (obj && (obj->GetControlPoints().Num() > 0))
 	{
-		float oldBaseElevation = obj->ControlPoints[0].Z;
+		float oldBaseElevation = obj->GetControlPoint(0).Z;
 		float newBaseElevation = oldBaseElevation;
-		float oldHeight = obj->Extents.Y;
+		float oldHeight = obj->GetExtents().Y;
 		if (bSetBaseElevation)
 		{
 			newBaseElevation = newHeight;
@@ -821,12 +821,17 @@ bool AEditModelPlayerState_CPP::SetObjectHeight(FModumateObjectInstance *obj, fl
 
 		if (bSetBaseElevation)
 		{
-			for (FVector &cp : obj->ControlPoints)
+			for (int32 i=0;i<obj->GetControlPoints().Num();++i)
 			{
-				cp.Z = newBaseElevation;
+				FVector CP = obj->GetControlPoint(i);
+				CP.Z = newBaseElevation;
+				obj->SetControlPoint(i, CP);
 			}
 		}
-		obj->Extents.Y = newHeight;
+
+		FVector extents = obj->GetExtents();
+		extents.Y = newHeight;
+		obj->SetExtents(extents);
 
 		if (bUpdateGeometry)
 		{
@@ -847,13 +852,13 @@ bool AEditModelPlayerState_CPP::SetSelectedHeight(float HeightEntry, bool bIsDel
 	int32 numObjects = SelectedObjects.Num();
 	for (int32 i = 0; i < numObjects; i++)
 	{
-		if (SelectedObjects[i]->ObjectType == EObjectType::OTWallSegment)
+		if (SelectedObjects[i]->GetObjectType() == EObjectType::OTWallSegment)
 		{
 			FModumateObjectInstance *obj = SelectedObjects[i];
 			float newHeight = HeightEntry;
 			if (bIsDelta) // height implied as an increment to current height
 			{
-				newHeight = obj->Extents[1] + HeightEntry;
+				newHeight = obj->GetExtents()[1] + HeightEntry;
 			}
 
 			bool bSuccess = SetObjectHeight(obj, newHeight, false, bUpdateGeometry);
@@ -874,7 +879,7 @@ bool AEditModelPlayerState_CPP::SetSelectedControlPointsHeight(float newCPHeight
 	int32 numObjects = SelectedObjects.Num();
 	for (int32 i = 0; i < numObjects; i++)
 	{
-		if (SelectedObjects[i]->ObjectType == EObjectType::OTWallSegment)
+		if (SelectedObjects[i]->GetObjectType() == EObjectType::OTWallSegment)
 		{
 			FModumateObjectInstance *obj = SelectedObjects[i];
 

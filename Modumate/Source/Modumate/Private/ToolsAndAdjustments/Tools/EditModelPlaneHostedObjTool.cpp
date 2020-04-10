@@ -25,7 +25,7 @@ UPlaneHostedObjTool::UPlaneHostedObjTool(const FObjectInitializer& ObjectInitial
 
 bool UPlaneHostedObjTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
 {
-	return (PlaneTarget != nullptr) && (PlaneTarget->ObjectType == EObjectType::OTMetaPlane);
+	return (PlaneTarget != nullptr) && (PlaneTarget->GetObjectType() == EObjectType::OTMetaPlane);
 }
 
 float UPlaneHostedObjTool::GetDefaultJustificationValue()
@@ -104,7 +104,7 @@ bool UPlaneHostedObjTool::FrameUpdate()
 		if ((cursor.SnapType == ESnapType::CT_FACESELECT) && cursor.Actor)
 		{
 			hitMOI = GameState->Document.ObjectFromActor(cursor.Actor);
-			if (hitMOI && (hitMOI->ObjectType == ObjectType))
+			if (hitMOI && (hitMOI->GetObjectType() == ObjectType))
 			{
 				hitMOI = GameState->Document.GetObjectById(hitMOI->GetParentID());
 			}
@@ -117,7 +117,7 @@ bool UPlaneHostedObjTool::FrameUpdate()
 
 		if (LastValidTargetID)
 		{
-			int32 numCorners = hitMOI->ControlPoints.Num();
+			int32 numCorners = hitMOI->GetControlPoints().Num();
 			for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
 			{
 				int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
@@ -282,7 +282,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &new
 	{
 		FModumateObjectInstance *newPlaneObj = GameState->Document.GetObjectById(newPlaneID);
 
-		if (newPlaneObj && (newPlaneObj->ObjectType == EObjectType::OTMetaPlane))
+		if (newPlaneObj && (newPlaneObj->GetObjectType() == EObjectType::OTMetaPlane))
 		{
 			newObjID = Controller->ModumateCommand(
 				FModumateCommand(Modumate::Commands::kMakeMetaPlaneHostedObj)

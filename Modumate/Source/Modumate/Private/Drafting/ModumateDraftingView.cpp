@@ -303,7 +303,7 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 			continue;
 		}
 
-		FPlane plane = FPlane(cutPlane->ControlPoints[0], cutPlane->GetNormal());
+		FPlane plane = FPlane(cutPlane->GetControlPoint(0), cutPlane->GetNormal());
 
 		for (FModumateObjectInstance* scopeBox : scopeBoxes)
 		{
@@ -313,7 +313,7 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 			}
 
 			FVector scopeBoxNormal = scopeBox->GetNormal();
-			int32 numPoints = scopeBox->ControlPoints.Num();
+			int32 numPoints = scopeBox->GetControlPoints().Num();
 			// cut plane and scope box must be facing the same direction to produce a drawing
 			if (!FVector::Coincident(scopeBoxNormal, cutPlane->GetNormal()))
 			{
@@ -330,7 +330,7 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 			for (int32 cornerIdx = 0; cornerIdx < numPoints; cornerIdx++)
 			{
 				FVector corner = scopeBox->GetCorner(cornerIdx);
-				FVector extrudedCorner = corner + (scopeBoxNormal * scopeBox->Extents.Y);
+				FVector extrudedCorner = corner + (scopeBoxNormal * scopeBox->GetExtents().Y);
 
 				bool bIntersects = FMath::SegmentPlaneIntersection(corner, extrudedCorner, plane, intersection[cornerIdx]);
 				bValidIntersection = bValidIntersection && bIntersects;

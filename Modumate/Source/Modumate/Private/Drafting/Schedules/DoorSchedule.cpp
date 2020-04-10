@@ -93,7 +93,7 @@ namespace Modumate {
 			*/
 
 			// Dimensions
-			FVector doorDiagonal = door->ControlPoints[2] - door->ControlPoints[0];
+			FVector doorDiagonal = door->GetControlPoint(2) - door->GetControlPoint(0);
 			FWidth w = FWidth::WorldCentimeters(doorDiagonal.X);
 			FHeight h = FHeight::WorldCentimeters(doorDiagonal.Z);
 
@@ -107,7 +107,7 @@ namespace Modumate {
 			bool bAddSeparator = false;
 			FString separator = ", ";
 			// Create comma-separated list from the list of FPortalParts in the assembly
-			for (auto& partPair : door->ObjectAssembly.PortalParts)
+			for (auto& partPair : door->GetAssembly().PortalParts)
 			{
 				if (!bAddSeparator)
 				{

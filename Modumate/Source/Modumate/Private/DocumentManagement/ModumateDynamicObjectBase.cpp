@@ -18,7 +18,7 @@ namespace Modumate
 
 			if (MOI && DynamicMeshActor.IsValid() && DynamicMeshActor->Mesh)
 			{
-				ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->ObjectType);
+				ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->GetObjectType());
 				DynamicMeshActor->Mesh->SetCollisionObjectType(collisionObjType);
 			}
 		}
@@ -62,16 +62,16 @@ namespace Modumate
 
 	void FDynamicModumateObjectInstanceImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
-		int32 numPolyPoints = MOI->ControlPoints.Num();
+		int32 numPolyPoints = MOI->GetControlPoints().Num();
 
 		for (int32 i = 0; i < numPolyPoints; ++i)
 		{
 			int32 nextI = (i + 1) % numPolyPoints;
-			const FVector &cp1Bottom = MOI->ControlPoints[i];
-			const FVector &cp2Bottom = MOI->ControlPoints[nextI];
+			const FVector &cp1Bottom = MOI->GetControlPoint(i);
+			const FVector &cp2Bottom = MOI->GetControlPoint(nextI);
 			FVector dir = (cp2Bottom - cp1Bottom).GetSafeNormal();
 
-			FVector heightOffset = MOI->Extents.Y * FVector::UpVector;
+			FVector heightOffset = MOI->GetExtents().Y * FVector::UpVector;
 			FVector cp1Top = cp1Bottom + heightOffset;
 			FVector cp2Top = cp2Bottom + heightOffset;
 

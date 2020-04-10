@@ -434,7 +434,7 @@ void UModumateGameInstance::RegisterAllCommands()
 			if (target)
 			{
 				// Default to the existing extents, unless the parameter was passed in.
-				FVector extents = target->Extents;
+				FVector extents = target->GetExtents();
 				if (params.HasValue(kExtents))
 				{
 					extents = params.GetValue(kExtents);
@@ -937,7 +937,7 @@ void UModumateGameInstance::RegisterAllCommands()
 			TArray<int32> dirtyPlaneIDs;
 			for (const FModumateObjectInstance *obj : doc->GetObjectInstances())
 			{
-				if (obj && (obj->ObjectType == EObjectType::OTMetaPlane))
+				if (obj && (obj->GetObjectType() == EObjectType::OTMetaPlane))
 				{
 					dirtyPlaneIDs.Add(obj->ID);
 				}

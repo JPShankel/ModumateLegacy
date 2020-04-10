@@ -33,17 +33,17 @@ namespace Modumate
 
 	void FMOIObjectImpl::InvertObject()
 	{
-		if (MOI->ObjectInverted)
+		if (MOI->GetObjectInverted())
 		{
 			ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(MOI->GetActor());
-			FModumateObjectAssembly newMOA = MOI->ObjectAssembly;
+			FModumateObjectAssembly newMOA = MOI->GetAssembly();
 			newMOA.Layers[0].SlotScale = FVector(1.f, -1.f, 1.f);
 			cma->MakeFromAssembly(newMOA, FVector::OneVector, false, true);
 		}
 		else
 		{
 			ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(MOI->GetActor());
-			FModumateObjectAssembly newMOA = MOI->ObjectAssembly;
+			FModumateObjectAssembly newMOA = MOI->GetAssembly();
 			newMOA.Layers[0].SlotScale = FVector(1.f, 1.f, 1.f);
 			cma->MakeFromAssembly(newMOA, FVector::OneVector, false, true);
 		}
@@ -151,7 +151,7 @@ namespace Modumate
 	void FMOIObjectImpl::SetupDynamicGeometry()
 	{
 		// Normalize our position on the parent wall, if necessary
-		if (MOI && (MOI->GetParentID() != 0) && MOI->ObjectType == EObjectType::OTWallSegment)
+		if (MOI && (MOI->GetParentID() != 0) && MOI->GetObjectType() == EObjectType::OTWallSegment)
 		{
 			FModumateWallMount wallMount = GetWallMountForSelf(0);
 			SetWallMountForSelf(wallMount);
@@ -171,7 +171,7 @@ namespace Modumate
 		FVector assemblyNormal;
 		TArray<FVector> boxSidePoints;
 
-		if (cma && MOI->ObjectAssembly.TryGetProperty(BIM::Parameters::Normal, assemblyNormal) &&
+		if (cma && MOI->GetAssembly().TryGetProperty(BIM::Parameters::Normal, assemblyNormal) &&
 			UModumateObjectStatics::GetFFEBoxSidePoints(cma, assemblyNormal, boxSidePoints))
 		{
 			// For any structure line computation, we want the points and lines projected on the plane of the actor's origin
@@ -239,7 +239,7 @@ namespace Modumate
 		/*ret.OrientationDelta = MOI->GetObjectRotation() - parent->GetObjectRotation();
 		ret.OrientationDelta.Normalize();*/
 		ret.OrientationDelta = parent->GetObjectRotation().Inverse() * MOI->GetObjectRotation();
-		ret.OriginalControlPoints = MOI->ControlPoints;
+		ret.OriginalControlPoints = MOI->GetControlPoints();
 
 		return ret;
 	}
@@ -249,8 +249,8 @@ namespace Modumate
 		if (MOI)
 		{
 			FModumateObjectInstance *parent = MOI->GetParentObject();
-			if (parent == nullptr || (parent->ObjectType != EObjectType::OTWallSegment) &&
-				(parent->ObjectType != EObjectType::OTFloorSegment))
+			if (parent == nullptr || (parent->GetObjectType() != EObjectType::OTWallSegment) &&
+				(parent->GetObjectType() != EObjectType::OTFloorSegment))
 			{
 				return;
 			}
@@ -322,6 +322,6 @@ namespace Modumate
 	void FMOIObjectImpl::InternalUpdateGeometry()
 	{
 		ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(MOI->GetActor());
-		cma->MakeFromAssembly(MOI->ObjectAssembly, FVector::OneVector, MOI->ObjectInverted, true);
+		cma->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
 	}
 }

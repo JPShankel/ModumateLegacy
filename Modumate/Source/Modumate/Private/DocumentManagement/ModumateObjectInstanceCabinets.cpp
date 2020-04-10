@@ -31,17 +31,17 @@ namespace Modumate
 
 	FVector FMOICabinetImpl::GetCorner(int32 index) const
 	{
-		int32 numCP = MOI->ControlPoints.Num();
-		float thickness = MOI->Extents.Y;
+		int32 numCP = MOI->GetControlPoints().Num();
+		float thickness = MOI->GetExtents().Y;
 		FVector extrusionDir = FVector::UpVector;
 
 		FPlane plane;
-		UModumateGeometryStatics::GetPlaneFromPoints(MOI->ControlPoints, plane);
+		UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), plane);
 		// For now, make sure that the plane of the MOI is horizontal
 		if (ensureAlways((numCP >= 3) && FVector::Parallel(extrusionDir, plane)))
 
 		{
-			FVector corner = MOI->ControlPoints[index % numCP];
+			FVector corner = MOI->GetControlPoint(index % numCP);
 
 			if (index >= numCP)
 			{
@@ -76,10 +76,10 @@ namespace Modumate
 	{
 		UpdateToeKickDimensions();
 
-		int32 frontFaceIndex = (MOI->ControlIndices.Num() > 0) ? MOI->ControlIndices[0] : INDEX_NONE;
-		FArchitecturalMaterial materialData = MOI->ObjectAssembly.PortalConfiguration.MaterialsPerChannel.FindRef(CabinetGeometryMatName);
+		int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
+		FArchitecturalMaterial materialData = MOI->GetAssembly().PortalConfiguration.MaterialsPerChannel.FindRef(CabinetGeometryMatName);
 
-		DynamicMeshActor->SetupCabinetGeometry(MOI->ControlPoints, MOI->Extents.Y,
+		DynamicMeshActor->SetupCabinetGeometry(MOI->GetControlPoints(), MOI->GetExtents().Y,
 			materialData, ToeKickDimensions, frontFaceIndex);
 
 		// refresh handle visibility, don't destroy & recreate handles
@@ -98,17 +98,17 @@ namespace Modumate
 	{
 		FDynamicModumateObjectInstanceImpl::GetStructuralPointsAndLines(outPoints, outLines, bForSnapping, bForSelection);
 
-		int32 frontFaceIndex = (MOI->ControlIndices.Num() > 0) ? MOI->ControlIndices[0] : INDEX_NONE;
+		int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
 		if ((ToeKickDimensions.X > 0.0f) && (frontFaceIndex != INDEX_NONE))
 		{
-			int32 numCP = MOI->ControlPoints.Num();
+			int32 numCP = MOI->GetControlPoints().Num();
 			int32 frontFaceOtherIndex = (frontFaceIndex + 1) % numCP;
 
 			FVector frontFaceInNormal;
 			GetTriInternalNormalFromEdge(frontFaceIndex, frontFaceOtherIndex, frontFaceInNormal);
 
-			FVector toeKickP1 = MOI->ControlPoints[frontFaceIndex] + (ToeKickDimensions.X * frontFaceInNormal);
-			FVector toeKickP2 = MOI->ControlPoints[frontFaceOtherIndex] + (ToeKickDimensions.X * frontFaceInNormal);
+			FVector toeKickP1 = MOI->GetControlPoint(frontFaceIndex) + (ToeKickDimensions.X * frontFaceInNormal);
+			FVector toeKickP2 = MOI->GetControlPoint(frontFaceOtherIndex) + (ToeKickDimensions.X * frontFaceInNormal);
 			FVector dir = (toeKickP2 - toeKickP1).GetSafeNormal();
 
 			outPoints.Add(FStructurePoint(toeKickP1, dir, frontFaceIndex));
@@ -124,13 +124,13 @@ namespace Modumate
 
 		if (ensureAlways(MOI))
 		{
-			UModumateFunctionLibrary::GetCabinetToeKickDimensions(MOI->ObjectAssembly, ToeKickDimensions);
+			UModumateFunctionLibrary::GetCabinetToeKickDimensions(MOI->GetAssembly(), ToeKickDimensions);
 		}
 	}
 
 	void FMOICabinetImpl::UpdateCabinetPortal()
 	{
-		int32 frontFaceIndex = (MOI->ControlIndices.Num() > 0) ? MOI->ControlIndices[0] : INDEX_NONE;
+		int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
 		if ((frontFaceIndex < 0) && FrontFacePortalActor.IsValid())
 		{
 			FrontFacePortalActor->Destroy();
@@ -146,7 +146,7 @@ namespace Modumate
 			return;
 		}
 
-		if (!ensureAlways(MOI && MOI->ObjectAssembly.PortalConfiguration.IsValid()))
+		if (!ensureAlways(MOI && MOI->GetAssembly().PortalConfiguration.IsValid()))
 		{
 			return;
 		}
@@ -154,7 +154,7 @@ namespace Modumate
 		// Get enough geometric information to set up the portal assembly
 		FVector extrusionDir = FVector::UpVector;
 		FPlane plane;
-		if (!UModumateGeometryStatics::GetPlaneFromPoints(MOI->ControlPoints, plane))
+		if (!UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), plane))
 		{
 			return;
 		}
@@ -164,8 +164,8 @@ namespace Modumate
 		}
 		bool bCoincident = FVector::Coincident(FVector(plane), extrusionDir);
 
-		const FVector &p1 = MOI->ControlPoints[frontFaceIndex];
-		const FVector &p2 = MOI->ControlPoints[(frontFaceIndex + 1) % MOI->ControlPoints.Num()];
+		const FVector &p1 = MOI->GetControlPoint(frontFaceIndex);
+		const FVector &p2 = MOI->GetControlPoint((frontFaceIndex + 1) % MOI->GetControlPoints().Num());
 		FVector edgeDelta = p2 - p1;
 		float edgeLength = edgeDelta.Size();
 		if (!ensureAlways(!FMath::IsNearlyZero(edgeLength)))
@@ -177,18 +177,20 @@ namespace Modumate
 
 		FVector faceNormal = (edgeDir ^ extrusionDir) * (bCoincident ? 1.0f : -1.0f);
 
-		float cabinetHeight = MOI->Extents.Y;
+		float cabinetHeight = MOI->GetExtents().Y;
 		FVector toeKickOffset = ToeKickDimensions.Y * extrusionDir;
 
 		// Update the reference planes so the portal 9-slicing is correct
-		TMap<FName, FPortalReferencePlane> &refPlanes = MOI->ObjectAssembly.PortalConfiguration.ReferencePlanes;
+		FModumateObjectAssembly assembly = MOI->GetAssembly();
+		TMap<FName, FPortalReferencePlane> &refPlanes = assembly.PortalConfiguration.ReferencePlanes;
 		refPlanes[FPortalConfiguration::RefPlaneNameMinX].FixedValue = FUnitValue::WorldCentimeters(0.0f);
 		refPlanes[FPortalConfiguration::RefPlaneNameMaxX].FixedValue = FUnitValue::WorldCentimeters(edgeLength);
 		refPlanes[FPortalConfiguration::RefPlaneNameMinZ].FixedValue = FUnitValue::WorldCentimeters(0.0f);
 		refPlanes[FPortalConfiguration::RefPlaneNameMaxZ].FixedValue = FUnitValue::WorldCentimeters(cabinetHeight - ToeKickDimensions.Y);
-		MOI->ObjectAssembly.PortalConfiguration.CacheRefPlaneValues();
+		assembly.PortalConfiguration.CacheRefPlaneValues();
+		MOI->SetAssembly(assembly);
 
-		FrontFacePortalActor->MakeFromAssembly(MOI->ObjectAssembly, FVector::OneVector, MOI->ObjectInverted, true);
+		FrontFacePortalActor->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
 
 		// Now position the portal where it's supposed to go
 		FVector portalOrigin = toeKickOffset + (bCoincident ? p2 : p1);
@@ -226,12 +228,12 @@ namespace Modumate
 			AdjustmentHandles.Add(actor);
 		};
 
-		for (int32 i = 0; i < MOI->ControlPoints.Num(); ++i)
+		for (int32 i = 0; i < MOI->GetControlPoints().Num(); ++i)
 		{
-			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->ControlPoints.Num()), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f), { i, (i + 1) % MOI->ControlPoints.Num() }, 16.0f, 0.0f);
+			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->GetControlPoints().Num()), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f), { i, (i + 1) % MOI->GetControlPoints().Num() }, 16.0f, 0.0f);
 
 			auto *frontHandleImpl = new FSelectFrontAdjustmentHandle(MOI, i);
-			makeActor(frontHandleImpl, AEditModelGameMode_CPP::AnchorMesh, FVector(0.001f), { i, (i + 1) % MOI->ControlPoints.Num() }, 16.0f, 0.0f);
+			makeActor(frontHandleImpl, AEditModelGameMode_CPP::AnchorMesh, FVector(0.001f), { i, (i + 1) % MOI->GetControlPoints().Num() }, 16.0f, 0.0f);
 			FrontSelectionHandleImpls.Add(frontHandleImpl);
 		}
 
@@ -260,7 +262,7 @@ namespace Modumate
 		{
 			if (frontHandleImpl && frontHandleImpl->Handle.IsValid())
 			{
-				bool frontSelectHandleEnabled = show && ((MOI->ControlIndices.Num() == 0) || (MOI->ControlIndices[0] == frontHandleImpl->CP));
+				bool frontSelectHandleEnabled = show && ((MOI->GetControlPointIndices().Num() == 0) || (MOI->GetControlPointIndex(0) == frontHandleImpl->CP));
 
 				frontHandleImpl->Handle->GetStaticMeshComponent()->SetVisibility(frontSelectHandleEnabled);
 				frontHandleImpl->Handle->GetStaticMeshComponent()->SetCollisionEnabled(frontSelectHandleEnabled ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
@@ -286,7 +288,7 @@ namespace Modumate
 
 		TArray<int32> newControlIndices;
 
-		if ((MOI->ControlIndices.Num() == 0) || (MOI->ControlIndices[0] != CP))
+		if ((MOI->GetControlPointIndices().Num() == 0) || (MOI->GetControlPointIndex(0) != CP))
 		{
 			newControlIndices.Add(CP);
 		}
@@ -305,9 +307,9 @@ namespace Modumate
 
 	FVector FSelectFrontAdjustmentHandle::GetAttachmentPoint()
 	{
-		const auto &points = MOI->ControlPoints;
+		const auto &points = MOI->GetControlPoints();
 		FVector edgeCenter = 0.5f * (points[CP] + points[(CP + 1) % points.Num()]);
-		FVector heightOffset = FVector(0, 0, 0.5f * MOI->Extents.Y + FaceCenterHeightOffset);
+		FVector heightOffset = FVector(0, 0, 0.5f * MOI->GetExtents().Y + FaceCenterHeightOffset);
 		return MOI->GetObjectRotation().RotateVector(heightOffset + edgeCenter);
 	}
 }

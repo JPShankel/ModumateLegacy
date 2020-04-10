@@ -109,7 +109,7 @@ bool UModumateObjectStatics::GetTrimEdgePosition(const Modumate::FModumateObject
 	}
 
 	// trims can only be located on certain object types
-	switch (TargetObject->ObjectType)
+	switch (TargetObject->GetObjectType())
 	{
 	case EObjectType::OTCabinet:
 	case EObjectType::OTWallSegment:
@@ -236,15 +236,15 @@ bool UModumateObjectStatics::GetTrimGeometryOnEdge(const FModumateObjectInstance
 	FVector2D otherTrimUpperExtensions, otherTrimOuterExtensions;
 
 	// Based on the object type and edge indices, choose the trim orientation
-	switch (TargetObject->ObjectType)
+	switch (TargetObject->GetObjectType())
 	{
 	case EObjectType::OTCabinet:
 	{
-		int32 numCP = TargetObject->ControlPoints.Num();
+		int32 numCP = TargetObject->GetControlPoints().Num();
 
-		int32 frontFaceIdx = (TargetObject->ControlIndices.Num() == 1) ? TargetObject->ControlIndices[0] : INDEX_NONE;
+		int32 frontFaceIdx = (TargetObject->GetControlPointIndices().Num()== 1) ? TargetObject->GetControlPointIndex(0) : INDEX_NONE;
 		FVector2D toeKickDims;
-		UModumateFunctionLibrary::GetCabinetToeKickDimensions(TargetObject->ObjectAssembly, toeKickDims);
+		UModumateFunctionLibrary::GetCabinetToeKickDimensions(TargetObject->GetAssembly(), toeKickDims);
 
 		// If the points are on the same side of the prism (top/bottom), and next to each other
 		if (((EdgeStartIndex < numCP) == (EdgeEndIndex < numCP)) &&
@@ -315,7 +315,7 @@ bool UModumateObjectStatics::GetTrimGeometryOnEdge(const FModumateObjectInstance
 		}
 
 		// If the points are on the same side of the prism , and next to each other
-		int32 numCP = parent->ControlPoints.Num();
+		int32 numCP = parent->GetControlPoints().Num();
 
 		if (((EdgeStartIndex < numCP) == (EdgeEndIndex < numCP)) &&
 			(((EdgeStartIndex + 1) % numCP) == (EdgeEndIndex % numCP)))
@@ -367,7 +367,7 @@ bool UModumateObjectStatics::GetTrimGeometryOnEdge(const FModumateObjectInstance
 	case EObjectType::OTWindow:
 	case EObjectType::OTDoor:
 	{
-		int32 numSides = TargetObject->ControlPoints.Num();
+		int32 numSides = TargetObject->GetControlPoints().Num();
 		if (!ensureMsgf(numSides == 4, TEXT("Only portals with 4 sides are supported for now!")))
 		{
 			return false;
@@ -402,7 +402,7 @@ bool UModumateObjectStatics::GetTrimGeometryOnEdge(const FModumateObjectInstance
 			break;
 		case 3:	// bottom of portal
 			// Don't allow trims on the bottoms of doors that would extend below the floor
-			if (TargetObject->ObjectType == EObjectType::OTDoor)
+			if (TargetObject->GetObjectType() == EObjectType::OTDoor)
 			{
 				return false;
 			}
@@ -423,12 +423,12 @@ bool UModumateObjectStatics::GetTrimGeometryOnEdge(const FModumateObjectInstance
 			for (const FModumateObjectInstance *sibling : siblings)
 			{
 				// Find each sibling trim and their geometry values so that they can be mitered
-				if (sibling && (sibling->ObjectType == EObjectType::OTTrim) &&
-					UModumateObjectStatics::GetTrimValuesFromControls(sibling->ControlPoints, sibling->ControlIndices,
+				if (sibling && (sibling->GetObjectType() == EObjectType::OTTrim) &&
+					UModumateObjectStatics::GetTrimValuesFromControls(sibling->GetControlPoints(), sibling->GetControlPointIndices(),
 						otherTrimStartLength, otherTrimEndLength, otherEdgeStartIndex, otherEdgeEndIndex, otherMountIndex,
 						bOtherLengthAsPercent, otherMiterOptionStart, otherMiterOptionEnd) &&
 					(otherEdgeStartIndex != EdgeStartIndex) &&
-					UModumateObjectStatics::GetTrimGeometryOnEdge(TargetObject, &sibling->ObjectAssembly,
+					UModumateObjectStatics::GetTrimGeometryOnEdge(TargetObject, &sibling->GetAssembly(),
 						otherEdgeStartIndex, otherEdgeEndIndex, otherTrimStartLength, otherTrimEndLength, bOtherLengthAsPercent,
 						otherMiterOptionStart, otherMiterOptionEnd, otherTrimStart, otherTrimEnd, otherTrimNormal, otherTrimUp,
 						otherMountIndex, otherTrimUpperExtensions, otherTrimOuterExtensions,
@@ -438,7 +438,7 @@ bool UModumateObjectStatics::GetTrimGeometryOnEdge(const FModumateObjectInstance
 					if ((bOnFrontOfPortal == bOtherOnFrontOfPortal) && !FVector::Orthogonal(trimDir, otherTrimUp))
 					{
 						int32 otherSideIndex = otherEdgeStartIndex % numSides;
-						if (!UModumateObjectStatics::GetPolygonProfile(&sibling->ObjectAssembly, otherProfile))
+						if (!UModumateObjectStatics::GetPolygonProfile(&sibling->GetAssembly(), otherProfile))
 						{
 							continue;
 						}
@@ -610,7 +610,7 @@ bool UModumateObjectStatics::GetMoiHoleVerts(AActor *TargetActor, TArray<FVector
 		// If this actor belongs to a real MOI, then we can get its real assembly directly.
 		if (moi)
 		{
-			holeAssembly = &moi->ObjectAssembly;
+			holeAssembly = &moi->GetAssembly();
 		}
 		// Otherwise, the actor might be a temporary pending MOI, whose geometry we'll generate.
 		else if (auto *compoundMeshActor = Cast<ACompoundMeshActor>(TargetActor))
@@ -637,14 +637,14 @@ bool UModumateObjectStatics::FindPortalTrimOverlaps(FModumateObjectInstance *wal
 	outTrimsToSplit.Reset();
 	outTrimsToModify.Reset();
 
-	if ((wall == nullptr) || (wall->ControlPoints.Num() < 2))
+	if ((wall == nullptr) || (wall->GetControlPoints().Num() < 2))
 	{
 		return false;
 	}
 
 	// calculate common wall geometric properties
-	const FVector &wallStart = wall->ControlPoints[0];
-	const FVector &wallEnd = wall->ControlPoints[1];
+	const FVector &wallStart = wall->GetControlPoint(0);
+	const FVector &wallEnd = wall->GetControlPoint(1);
 	FVector wallDelta = wallEnd - wallStart;
 	float wallLength = wallDelta.Size();
 	if (FMath::IsNearlyZero(wallLength))
@@ -682,18 +682,18 @@ bool UModumateObjectStatics::FindPortalTrimOverlaps(FModumateObjectInstance *wal
 			TArray<FModumateObjectInstance *> wallChildren = wall->GetChildObjects();
 			for (FModumateObjectInstance *wallChild : wallChildren)
 			{
-				if (wallChild && (wallChild->ObjectType == EObjectType::OTTrim) &&
-					(wallChild->ControlPoints.Num() >= 2) && (wallChild->ControlIndices.Num() >= 2))
+				if (wallChild && (wallChild->GetObjectType() == EObjectType::OTTrim) &&
+					(wallChild->GetControlPoints().Num() >= 2) && (wallChild->GetControlPointIndices().Num() >= 2))
 				{
 					FModumateObjectInstance *trimObj = wallChild;
 
 					// Check if the trim is along one of the bottom long edges of the wall
-					int32 trimStartIdx = trimObj->ControlIndices[0];
-					int32 trimEndIdx = trimObj->ControlIndices[1];
+					int32 trimStartIdx = trimObj->GetControlPointIndex(0);
+					int32 trimEndIdx = trimObj->GetControlPointIndex(1);
 					if ((trimStartIdx + 1 == trimEndIdx) && (trimStartIdx % 2 == 0) && (trimStartIdx < 4))
 					{
-						float trimStartAlongWall = trimObj->ControlPoints[0].X;
-						float trimEndAlongWall = trimObj->ControlPoints[1].X;
+						float trimStartAlongWall = trimObj->GetControlPoint(0).X;
+						float trimEndAlongWall = trimObj->GetControlPoint(1).X;
 
 						// if the trim is on either side of the hole, skip it
 						if (((trimStartAlongWall < minVertexAlongWall) && (trimEndAlongWall < minVertexAlongWall)) ||
@@ -742,7 +742,7 @@ bool UModumateObjectStatics::GetRelativeTransformOnPlaneHostedObj(
 	FVector2D &OutRelativePos, FQuat &OutRelativeRot)
 {
 	const FModumateObjectInstance *hostParent = PlaneHostedObj->GetParentObject();
-	if (!(hostParent && (hostParent->ObjectType == EObjectType::OTMetaPlane)))
+	if (!(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return false;
 	}
@@ -819,7 +819,7 @@ bool UModumateObjectStatics::GetWorldTransformOnPlaneHostedObj(
 	FVector &OutWorldPos, FQuat &OutWorldRot)
 {
 	const FModumateObjectInstance *hostParent = PlaneHostedObj->GetParentObject();
-	if (!(hostParent && (hostParent->ObjectType == EObjectType::OTMetaPlane)))
+	if (!(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return false;
 	}
@@ -903,9 +903,9 @@ bool UModumateObjectStatics::GetRoofGeometryValues(
 
 int32 UModumateObjectStatics::GetFaceIndexFromFinishObj(const FModumateObjectInstance *FinishObject)
 {
-	if (FinishObject && (FinishObject->ObjectType == EObjectType::OTFinish) && (FinishObject->ControlIndices.Num() >= 1))
+	if (FinishObject && (FinishObject->GetObjectType() == EObjectType::OTFinish) && (FinishObject->GetControlPointIndices().Num() >= 1))
 	{
-		return FinishObject->ControlIndices[0];
+		return FinishObject->GetControlPointIndex(0);
 	}
 
 	return INDEX_NONE;
@@ -920,13 +920,13 @@ int32 UModumateObjectStatics::GetFaceIndexFromTargetHit(const FModumateObjectIns
 
 	const static float edgeTolerance = 0.01f;
 
-	switch (HitObject->ObjectType)
+	switch (HitObject->GetObjectType())
 	{
 	case EObjectType::OTWallSegment:
 	case EObjectType::OTFloorSegment:
 	{
 		const Modumate::FModumateObjectInstance *hostParent = HitObject->GetParentObject();
-		if (!ensure(hostParent && (hostParent->ObjectType == EObjectType::OTMetaPlane)))
+		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
 			return INDEX_NONE;
 		}
@@ -945,7 +945,7 @@ int32 UModumateObjectStatics::GetFaceIndexFromTargetHit(const FModumateObjectIns
 		{
 			TArray<FVector> sidePoints;
 			TArray<FVector2D> sidePoints2D;
-			int32 numCorners = hostParent->ControlPoints.Num();
+			int32 numCorners = hostParent->GetControlPoints().Num();
 			for (int32 curBottomIdx = 0; curBottomIdx < numCorners; ++curBottomIdx)
 			{
 				int32 nextBottomIdx = (curBottomIdx + 1) % numCorners;
@@ -1000,18 +1000,18 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateO
 		return false;
 	}
 
-	switch (FinishHost->ObjectType)
+	switch (FinishHost->GetObjectType())
 	{
 	case EObjectType::OTWallSegment:
 	case EObjectType::OTFloorSegment:
 	{
 		const Modumate::FModumateObjectInstance *hostParent = FinishHost->GetParentObject();
-		if (!ensure(hostParent && (hostParent->ObjectType == EObjectType::OTMetaPlane)))
+		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
 			return false;
 		}
 
-		const auto &cps = hostParent->ControlPoints;
+		const auto &cps = hostParent->GetControlPoints();
 		int32 numCorners = cps.Num();
 
 		FPlane plane;
@@ -1073,7 +1073,7 @@ void UModumateObjectStatics::EdgeConnectedToValidPlane(const Modumate::FGraph3DE
 	for (const auto &edgeFaceConn : GraphEdge->ConnectedFaces)
 	{
 		const auto *connectedFaceMOI = Doc->GetObjectById(FMath::Abs(edgeFaceConn.FaceID));
-		if (connectedFaceMOI && (connectedFaceMOI->ObjectType == EObjectType::OTMetaPlane))
+		if (connectedFaceMOI && (connectedFaceMOI->GetObjectType() == EObjectType::OTMetaPlane))
 		{
 			const TArray<int32> &faceMOIChildIDs = connectedFaceMOI->GetChildIDs();
 			int32 numChildren = faceMOIChildIDs.Num();
@@ -1124,7 +1124,7 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const Modumate::FModumateObj
 			return;
 		}
 
-		EObjectType objectType = MetaMOI->ObjectType;
+		EObjectType objectType = MetaMOI->GetObjectType();
 		int32 objID = MetaMOI->ID;
 		const FGraph3D &volumeGraph = doc->GetVolumeGraph();
 
@@ -1238,7 +1238,7 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const Modumate::FModumateObj
 void UModumateObjectStatics::GetPlaneHostedValues(const Modumate::FModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal)
 {
 	OutThickness = PlaneHostedObj->CalculateThickness();
-	float offsetPCT = PlaneHostedObj->Extents.X;
+	float offsetPCT = PlaneHostedObj->GetExtents().X;
 	OutStartOffset = -offsetPCT * OutThickness;
 	OutNormal = PlaneHostedObj->GetNormal();
 }

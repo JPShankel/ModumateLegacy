@@ -977,8 +977,8 @@ bool AEditModelPlayerController_CPP::HandleInputNumber(double inputNumber)
 		FModumateObjectInstance *moi = Document->ObjectFromActor(DimStringWidgetSelectedObject);
 		if (moi != nullptr)
 		{
-			if ((moi->ObjectType == EObjectType::OTDoor) ||
-				(moi->ObjectType == EObjectType::OTWindow))
+			if ((moi->GetObjectType() == EObjectType::OTDoor) ||
+				(moi->GetObjectType() == EObjectType::OTWindow))
 			{
 				bCanSetPortalDimension = true;
 			}
@@ -1134,7 +1134,7 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 			FVector d = sob->GetObjectRotation().RotateVector(FVector(40, 0, 0));
 			GetWorld()->LineBatcher->DrawLine(p, p + d, FColor::Green, SDPG_MAX, 2, 0.0);
 
-			for (auto &cp : sob->ControlPoints)
+			for (auto &cp : sob->GetControlPoints())
 			{
 				GetWorld()->LineBatcher->DrawLine(cp - FVector(20, 0, 0), cp + FVector(20, 0, 0), FColor::Blue, SDPG_MAX, 2, 0.0);
 				GetWorld()->LineBatcher->DrawLine(cp - FVector(0, 20, 0), cp + FVector(0, 20, 0), FColor::Blue, SDPG_MAX, 2, 0.0);
@@ -1288,9 +1288,9 @@ void AEditModelPlayerController_CPP::MakeRailsFromSegments()
 
 		for (auto &ob : rail)
 		{
-			if (ensureAlways(ob->ControlPoints.Num() == 2))
+			if (ensureAlways(ob->GetControlPoints().Num() == 2))
 			{
-				railPoints.Append(ob->ControlPoints);
+				railPoints.Append(ob->GetControlPoints());
 			}
 		}
 		
@@ -1669,7 +1669,7 @@ void AEditModelPlayerController_CPP::CleanSelectedObjects()
 
 void AEditModelPlayerController_CPP::SetViewGroupObject(const FModumateObjectInstance *ob)
 {
-	if (ob && (ob->ObjectType == EObjectType::OTGroup))
+	if (ob && (ob->GetObjectType() == EObjectType::OTGroup))
 	{
 		ModumateCommand(
 			FModumateCommand(Commands::kViewGroupObject)
@@ -1778,9 +1778,9 @@ bool AEditModelPlayerController_CPP::GetMetaPlaneHostedObjJustificationValue(AAc
 	{
 		FModumateObjectInstance *moi = Document->ObjectFromActor(actor);
 		FModumateObjectInstance *parentObj = moi ? moi->GetParentObject() : nullptr;
-		if (parentObj && (parentObj->ObjectType == EObjectType::OTMetaPlane))
+		if (parentObj && (parentObj->GetObjectType() == EObjectType::OTMetaPlane))
 		{
-			value = moi->Extents.X;
+			value = moi->GetExtents().X;
 			return true;
 		}
 	}
@@ -1794,7 +1794,7 @@ void AEditModelPlayerController_CPP::SetMetaPlaneHostedObjJustificationValue(flo
 	{
 		FModumateObjectInstance *moi = Document->ObjectFromActor(actor);
 		FModumateObjectInstance *parentObj = moi ? moi->GetParentObject() : nullptr;
-		if (parentObj && (parentObj->ObjectType == EObjectType::OTMetaPlane))
+		if (parentObj && (parentObj->GetObjectType() == EObjectType::OTMetaPlane))
 		{
 			TArray<FVector> points;
 			auto result = ModumateCommand(
@@ -1990,7 +1990,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 				if (EMPlayerState->ShowDebugSnaps && hitMOI)
 				{
 					GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("OBJECT HIT #%d, %s"),
-						hitMOI->ID, *EnumValueString(EObjectType, hitMOI->ObjectType)
+						hitMOI->ID, *EnumValueString(EObjectType, hitMOI->GetObjectType())
 					));
 				}
 				projectedHit = GetShiftConstrainedMouseHit(baseHit);
@@ -2061,7 +2061,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 					if (hitMOI)
 					{
 						GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("STRUCTURAL MOI %d, %s"),
-							hitMOI->ID, *EnumValueString(EObjectType, hitMOI->ObjectType)));
+							hitMOI->ID, *EnumValueString(EObjectType, hitMOI->GetObjectType())));
 					}
 				}
 
@@ -2484,7 +2484,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 
 		const FModumateObjectInstance* moi = Document->ObjectFromActor(objectHit.Actor.Get());
 		// TODO: this should be an interface function or there should be a way to find the planar object types
-		if (moi && moi->ObjectType == EObjectType::OTMetaPlane)
+		if (moi && moi->GetObjectType() == EObjectType::OTMetaPlane)
 		{
 			FVector moiNormal = moi->GetNormal();
 			FPlane plane = FPlane(moi->GetObjectLocation(), moiNormal);
@@ -2568,7 +2568,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 		{
 			if (moi && moi->IsCollisionEnabled())
 			{
-				switch (moi->ObjectType)
+				switch (moi->GetObjectType())
 				{
 				case EObjectType::OTMetaVertex:
 					CurHitPointMOIs.Add(moi);
@@ -2576,10 +2576,10 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 					break;
 				case EObjectType::OTLineSegment:
 				case EObjectType::OTMetaEdge:
-					if (moi->ControlPoints.Num() == 2)
+					if (moi->GetControlPoints().Num() == 2)
 					{
 						CurHitLineMOIs.Add(moi);
-						CurHitLineLocations.Add(TPair<FVector, FVector>(moi->ControlPoints[0], moi->ControlPoints[1]));
+						CurHitLineLocations.Add(TPair<FVector, FVector>(moi->GetControlPoint(0), moi->GetControlPoint(1)));
 					}
 					break;
 				default:
@@ -2987,7 +2987,7 @@ void AEditModelPlayerController_CPP::GroupSelected(bool makeGroup)
 		auto selIds = parentsToSelectedChildren.FindRef(parentWithMostChildren);
 
 		auto *parentObj = Document->GetObjectById(parentWithMostChildren);
-		if (parentObj && (parentObj->ObjectType == EObjectType::OTGroup) &&
+		if (parentObj && (parentObj->GetObjectType() == EObjectType::OTGroup) &&
 			(maxChildCount == parentObj->GetChildIDs().Num()))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Tried to group all of the children of an exist group, ID: %d"),
@@ -3024,7 +3024,7 @@ void AEditModelPlayerController_CPP::GroupSelected(bool makeGroup)
 			groupIds,
 			[](const FModumateObjectInstance *ob)
 			{
-				return ob->ObjectType == EObjectType::OTGroup;
+				return ob->GetObjectType() == EObjectType::OTGroup;
 			},
 			[](const FModumateObjectInstance *ob) 
 			{

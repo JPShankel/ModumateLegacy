@@ -25,11 +25,11 @@ namespace Modumate
 		OriginalP.Empty();
 		for (int32 cp : CP)
 		{
-			OriginalP.Add(MOI->ControlPoints[cp]);
-			LastValidPendingCPLocations.Add(MOI->ControlPoints[cp]);
+			OriginalP.Add(MOI->GetControlPoint(cp));
+			LastValidPendingCPLocations.Add(MOI->GetControlPoint(cp));
 		}
 
-		FPlane polyPlane(MOI->ControlPoints[0], MOI->ControlPoints[1], MOI->ControlPoints[2]);
+		FPlane polyPlane(MOI->GetControlPoint(0), MOI->GetControlPoint(1), MOI->GetControlPoint(2));
 		AnchorLoc = FVector::PointPlaneProject(Handle->Implementation->GetAttachmentPoint(), polyPlane);
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorLoc, FVector(polyPlane));
 
@@ -73,47 +73,47 @@ namespace Modumate
 		{
 			if (CP.Num() == 2)
 			{
-				int32 numTotalCPs = MOI->ControlPoints.Num();
+				int32 numTotalCPs = MOI->GetControlPoints().Num();
 				FVector closestPoint1, closestPoint2;
-				FVector currentEdgeDirection = (MOI->ControlPoints[CP[1]] - MOI->ControlPoints[CP[0]]).GetSafeNormal();
+				FVector currentEdgeDirection = (MOI->GetControlPoint(CP[1]) - MOI->GetControlPoint(CP[0])).GetSafeNormal();
 
 				// Intersection test for first CP
 				int32 startID0 = (CP[0] + numTotalCPs - 1) % numTotalCPs;
 				int32 endID0 = CP[0];
-				FVector lineDirection0 = (MOI->ControlPoints[endID0] - MOI->ControlPoints[startID0]).GetSafeNormal();
-				bool b1 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, hitPoint, currentEdgeDirection, MOI->ControlPoints[endID0], lineDirection0);
+				FVector lineDirection0 = (MOI->GetControlPoint(endID0) - MOI->GetControlPoint(startID0)).GetSafeNormal();
+				bool b1 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, hitPoint, currentEdgeDirection, MOI->GetControlPoint(endID0), lineDirection0);
 				FVector newCP0 = closestPoint1;
 
 				// Intersection test for second CP
 				int32 startID1 = (CP[1] + 1) % numTotalCPs;
 				int32 endID1 = CP[1];
-				FVector lineDirection1 = (MOI->ControlPoints[endID1] - MOI->ControlPoints[startID1]).GetSafeNormal();
-				bool b2 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, hitPoint, currentEdgeDirection, MOI->ControlPoints[endID1], lineDirection1);
+				FVector lineDirection1 = (MOI->GetControlPoint(endID1) - MOI->GetControlPoint(startID1)).GetSafeNormal();
+				bool b2 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, hitPoint, currentEdgeDirection, MOI->GetControlPoint(endID1), lineDirection1);
 				FVector newCP1 = closestPoint1;
 
 				// Set MOI control points to new CP
-				MOI->ControlPoints[CP[0]] = newCP0;
-				MOI->ControlPoints[CP[1]] = newCP1;
+				MOI->SetControlPoint(CP[0],newCP0);
+				MOI->SetControlPoint(CP[1],newCP1);
 
 				// Check if CPs are intersect. If it is, don't update geometry
 				TArray<int32> intersected, conflicted, triangles;
-				UModumateFunctionLibrary::CalculatePolygonTriangleWithError(MOI->ControlPoints, triangles, conflicted, intersected);
+				UModumateFunctionLibrary::CalculatePolygonTriangleWithError(MOI->GetControlPoints(), triangles, conflicted, intersected);
 
 				// Store last good locations to fall back on if the new floor lacks proper triangulation
 				if (conflicted.Num() == 0 && intersected.Num() == 0 && triangles.Num() > 2)
 				{
 					UpdateTargetGeometry();
-					LastValidPendingCPLocations = { MOI->ControlPoints[CP[0]] , MOI->ControlPoints[CP[1]] };
+					LastValidPendingCPLocations = { MOI->GetControlPoint(CP[0]) , MOI->GetControlPoint(CP[1]) };
 				}
 				else
 				{
-					MOI->ControlPoints[CP[0]] = LastValidPendingCPLocations[0];
-					MOI->ControlPoints[CP[1]] = LastValidPendingCPLocations[1];
+					MOI->SetControlPoint(CP[0],LastValidPendingCPLocations[0]);
+					MOI->SetControlPoint(CP[1],LastValidPendingCPLocations[1]);
 				}
 
 				HandleOriginalPoint = (OriginalP[0] + OriginalP[1]) / 2.f;
-				FVector curSideMidLoc = (MOI->ControlPoints[CP[0]] + MOI->ControlPoints[CP[1]]) / 2.f;
-				currentEdgeDirection = (MOI->ControlPoints[CP[1]] - MOI->ControlPoints[CP[0]]).GetSafeNormal();
+				FVector curSideMidLoc = (MOI->GetControlPoint(CP[0]) + MOI->GetControlPoint(CP[1])) / 2.f;
+				currentEdgeDirection = (MOI->GetControlPoint(CP[1]) - MOI->GetControlPoint(CP[0])).GetSafeNormal();
 				bool b3 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, HandleOriginalPoint, Handle->HandleDirection, curSideMidLoc, currentEdgeDirection);
 				HandleCurrentPoint = closestPoint1;
 
@@ -142,19 +142,19 @@ namespace Modumate
 			}
 			else if (CP.Num() == 1)
 			{
-				MOI->ControlPoints[CP[0]] = OriginalP[0] + dp;
+				MOI->SetControlPoint(CP[0],OriginalP[0] + dp);
 
 				TArray<int32> intersected, conflicted, triangles;
-				UModumateFunctionLibrary::CalculatePolygonTriangleWithError(MOI->ControlPoints, triangles, conflicted, intersected);
+				UModumateFunctionLibrary::CalculatePolygonTriangleWithError(MOI->GetControlPoints(), triangles, conflicted, intersected);
 
 				if (conflicted.Num() == 0 && intersected.Num() == 0)
 				{
 					UpdateTargetGeometry();
-					LastValidPendingCPLocations = { MOI->ControlPoints[CP[0]] };
+					LastValidPendingCPLocations = { MOI->GetControlPoint(CP[0]) };
 				}
 				else
 				{
-					MOI->ControlPoints[CP[0]] = LastValidPendingCPLocations[0];
+					MOI->SetControlPoint(CP[0],LastValidPendingCPLocations[0]);
 				}
 
 				FVector offsetDir = dp.GetSafeNormal() ^ FVector(Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Normal);
@@ -162,7 +162,7 @@ namespace Modumate
 				// Dim string between cursor pos and original point handle position. Delta only
 				UModumateFunctionLibrary::AddNewDimensionString(Controller.Get(),
 					OriginalP[0],
-					MOI->ControlPoints[CP[0]],
+					MOI->GetControlPoint(CP[0]),
 					offsetDir,
 					Controller->DimensionStringGroupID_Default,
 					Controller->DimensionStringUniqueID_Delta,
@@ -194,11 +194,11 @@ namespace Modumate
 			dynMeshActor->AdjustHandleFloor.Empty();
 		}
 
-		TArray<FVector> newPoints = MOI->ControlPoints;
+		TArray<FVector> newPoints = MOI->GetControlPoints();
 
 		for (size_t i = 0; i < CP.Num(); ++i)
 		{
-			MOI->ControlPoints[CP[i]] = OriginalP[i];
+			MOI->SetControlPoint(CP[i],OriginalP[i]);
 		}
 
 		auto result = Controller->ModumateCommand(
@@ -235,7 +235,7 @@ namespace Modumate
 
 		for (size_t i = 0; i < CP.Num(); ++i)
 		{
-			MOI->ControlPoints[CP[i]] = OriginalP[i];
+			MOI->SetControlPoint(CP[i],OriginalP[i]);
 		}
 
 		// Tell mesh it is done editing at handle
@@ -264,26 +264,26 @@ namespace Modumate
 		FVector averageTargetPos(ForceInitToZero);
 		for (int32 cpIndex : CP)
 		{
-			if (!ensure(MOI->ControlPoints.IsValidIndex(cpIndex)))
+			if (!ensure(MOI->GetControlPoints().IsValidIndex(cpIndex)))
 			{
 				return FVector::ZeroVector;
 			}
 
-			averageTargetPos += MOI->ControlPoints[cpIndex];
+			averageTargetPos += MOI->GetControlPoint(cpIndex);
 		}
 		averageTargetPos /= numTargetCP;
 
-		if (MOI->ObjectType == EObjectType::OTMetaPlane || MOI->ObjectType == EObjectType::OTCutPlane)
+		if (MOI->GetObjectType() == EObjectType::OTMetaPlane || MOI->GetObjectType() == EObjectType::OTCutPlane)
 		{
 			return averageTargetPos;
 		}
-		else if (MOI->ObjectType == EObjectType::OTScopeBox)
+		else if (MOI->GetObjectType() == EObjectType::OTScopeBox)
 		{
-			return MOI->GetObjectRotation().RotateVector(MOI->GetNormal() * 0.5f * MOI->Extents.Y + averageTargetPos);
+			return MOI->GetObjectRotation().RotateVector(MOI->GetNormal() * 0.5f * MOI->GetExtents().Y + averageTargetPos);
 		}
 		else
 		{
-			return MOI->GetObjectRotation().RotateVector(FVector(0, 0, 0.5f * MOI->Extents.Y) + averageTargetPos);
+			return MOI->GetObjectRotation().RotateVector(FVector(0, 0, 0.5f * MOI->GetExtents().Y) + averageTargetPos);
 		}
 	}
 
@@ -292,7 +292,7 @@ namespace Modumate
 		// Handle should only affect two control points
 		if (CP.Num() == 2)
 		{
-			TArray<FVector> proxyCPs = MOI->ControlPoints;
+			TArray<FVector> proxyCPs = MOI->GetControlPoints();
 			FVector newCP0;
 			FVector newCP1;
 			
@@ -311,8 +311,8 @@ namespace Modumate
 				{
 					FVector sideCP0 = OriginalP[0];
 					FVector sideCP1 = OriginalP[1];
-					FVector preCP0 = MOI->ControlPoints[(CP[0] + proxyCPs.Num() - 1) % proxyCPs.Num()];
-					FVector postCP1 = MOI->ControlPoints[(CP[1] + 1) % proxyCPs.Num()];
+					FVector preCP0 = MOI->GetControlPoint((CP[0] + proxyCPs.Num() - 1) % proxyCPs.Num());
+					FVector postCP1 = MOI->GetControlPoint((CP[1] + 1) % proxyCPs.Num());
 					FVector originalDir = (sideCP0 - preCP0).GetSafeNormal();
 					inputHandleLocation = ((preCP0 + postCP1) * 0.5f) + (originalDir * number);
 				}
@@ -328,14 +328,14 @@ namespace Modumate
 				// Intersection test for first CP
 				int32 startID0 = (CP[0] + proxyCPs.Num() - 1) % proxyCPs.Num();
 				int32 endID0 = CP[0];
-				FVector lineDirection0 = UKismetMathLibrary::GetDirectionUnitVector(MOI->ControlPoints[startID0], MOI->ControlPoints[endID0]);
+				FVector lineDirection0 = UKismetMathLibrary::GetDirectionUnitVector(MOI->GetControlPoint(startID0), MOI->GetControlPoint(endID0));
 				bool b1 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, inputHandleLocation, currentEdgeDirection, OriginalP[0], lineDirection0);
 				newCP0 = FVector(closestPoint1.X, closestPoint1.Y, closestPoint1.Z);
 
 				// Intersection test for second CP
 				int32 startID1 = (CP[1] + 1) % proxyCPs.Num();
 				int32 endID1 = CP[1];
-				FVector lineDirection1 = UKismetMathLibrary::GetDirectionUnitVector(MOI->ControlPoints[startID1], MOI->ControlPoints[endID1]);
+				FVector lineDirection1 = UKismetMathLibrary::GetDirectionUnitVector(MOI->GetControlPoint(startID1), MOI->GetControlPoint(endID1));
 				bool b2 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, inputHandleLocation, currentEdgeDirection, OriginalP[1], lineDirection1);
 				newCP1 = FVector(closestPoint1.X, closestPoint1.Y, closestPoint1.Z);
 
@@ -347,8 +347,8 @@ namespace Modumate
 			{
 				FVector sideCP0 = OriginalP[0];
 				FVector sideCP1 = OriginalP[1];
-				FVector preCP0 = MOI->ControlPoints[(CP[0] + proxyCPs.Num() - 1) % proxyCPs.Num()];
-				FVector postCP1 = MOI->ControlPoints[(CP[1] + 1) % proxyCPs.Num()];
+				FVector preCP0 = MOI->GetControlPoint((CP[0] + proxyCPs.Num() - 1) % proxyCPs.Num());
+				FVector postCP1 = MOI->GetControlPoint((CP[1] + 1) % proxyCPs.Num());
 				FVector edgeDir = (sideCP0 - sideCP1).GetSafeNormal();
 				FVector intersectPoint = FVector::ZeroVector;
 				
@@ -380,8 +380,8 @@ namespace Modumate
 			if (conflicted.Num() == 0 && intersected.Num() == 0 && triangles.Num() > 2)
 			{
 				// Set MOI control points to new CP
-				MOI->ControlPoints[CP[0]] = newCP0;
-				MOI->ControlPoints[CP[1]] = newCP1;
+				MOI->SetControlPoint(CP[0],newCP0);
+				MOI->SetControlPoint(CP[1],newCP1);
 				return OnEndUse();
 			}
 			else
@@ -402,15 +402,15 @@ namespace Modumate
 			return false;
 		}
 
-		if (!MOI || (MOI->ObjectType != EObjectType::OTCabinet && MOI->ObjectType != EObjectType::OTScopeBox))
+		if (!MOI || (MOI->GetObjectType() != EObjectType::OTCabinet && MOI->GetObjectType() != EObjectType::OTScopeBox))
 		{
 			UE_LOG(LogCallTrace, Error, TEXT("AdjustPolyExtrusionHandle only currently supported for Cabinets!"));
 			return false;
 		}
 
-		OriginalControlPoints = MOI->ControlPoints;
-		OriginalPlane = FPlane(MOI->ControlPoints.Num() > 0 ? MOI->ControlPoints[0] : MOI->GetObjectLocation(), MOI->GetNormal());
-		OriginalExtrusion = MOI->Extents.Y;
+		OriginalControlPoints = MOI->GetControlPoints();
+		OriginalPlane = FPlane(MOI->GetControlPoints().Num() > 0 ? MOI->GetControlPoint(0) : MOI->GetObjectLocation(), MOI->GetNormal());
+		OriginalExtrusion = MOI->GetExtents().Y;
 		LastValidExtrusion = OriginalExtrusion;
 		AnchorLoc = Handle->Implementation->GetAttachmentPoint();
 
@@ -460,14 +460,17 @@ namespace Modumate
 			float newExtrusion = OriginalExtrusion + extrusionDelta;
 			if ((newExtrusion > 0.0f) && (newExtrusion != LastValidExtrusion))
 			{
-				MOI->Extents.Y = newExtrusion;
+				FVector extents = MOI->GetExtents();
+				extents.Y = newExtrusion;
+				MOI->SetExtents(extents);
+
 				LastValidExtrusion = newExtrusion;
 
 				if (Sign < 0.0f)
 				{
-					for (int32 i = 0; i < MOI->ControlPoints.Num(); ++i)
+					for (int32 i = 0; i < MOI->GetControlPoints().Num(); ++i)
 					{
-						MOI->ControlPoints[i] = OriginalControlPoints[i] - (OriginalPlane * extrusionDelta);
+						MOI->SetControlPoint(i,OriginalControlPoints[i] - (OriginalPlane * extrusionDelta));
 					}
 				}
 
@@ -490,8 +493,8 @@ namespace Modumate
 			MOI->GetActor(),
 			EDimStringStyle::Fixed);
 
-		FVector bottomStringLoc = FVector(GetAttachmentPoint().X, GetAttachmentPoint().Y, MOI->ControlPoints[0].Z);
-		FVector topStringLoc = bottomStringLoc + FVector(0.f, 0.f, MOI->Extents.Y);
+		FVector bottomStringLoc = FVector(GetAttachmentPoint().X, GetAttachmentPoint().Y, MOI->GetControlPoint(0).Z);
+		FVector topStringLoc = bottomStringLoc + FVector(0.f, 0.f, MOI->GetExtents().Y);
 
 		// Dim string for vertical extrusion handle - Total
 		UModumateFunctionLibrary::AddNewDimensionString(
@@ -521,11 +524,13 @@ namespace Modumate
 			dynMeshActor->AdjustHandleFloor.Empty();
 		}
 
-		TArray<FVector> newPoints = MOI->ControlPoints;
-		FVector newExtents = MOI->Extents;
+		TArray<FVector> newPoints = MOI->GetControlPoints();
+		FVector newExtents = MOI->GetExtents();
+		FVector oldExtents = newExtents;
+		oldExtents.Y = OriginalExtrusion;
+		MOI->SetExtents(oldExtents);
 
-		MOI->ControlPoints = OriginalControlPoints;
-		MOI->Extents.Y = OriginalExtrusion;
+		MOI->SetControlPoints(OriginalControlPoints);
 
 		Controller->ModumateCommand(
 			FModumateCommand(Modumate::Commands::kSetGeometry)
@@ -555,8 +560,11 @@ namespace Modumate
 			dynMeshActor->AdjustHandleFloor.Empty();
 		}
 
-		MOI->ControlPoints = OriginalControlPoints;
-		MOI->Extents.Y = OriginalExtrusion;
+		MOI->SetControlPoints(OriginalControlPoints);
+		FVector extents = MOI->GetExtents();
+		extents.Y = OriginalExtrusion;
+		MOI->SetExtents(extents);
+
 		UpdateTargetGeometry();
 		MOI->ShowAdjustmentHandles(Controller.Get(), true);
 
@@ -567,14 +575,14 @@ namespace Modumate
 
 	FVector FAdjustPolyExtrusionHandle::GetAttachmentPoint()
 	{
-		if (MOI->ControlPoints.Num() > 0)
+		if (MOI->GetControlPoints().Num() > 0)
 		{
 			FVector objectNormal = MOI->GetNormal();
-			FVector offset = (Sign > 0.0f) ? (MOI->Extents.Y * objectNormal) : FVector::ZeroVector;
+			FVector offset = (Sign > 0.0f) ? (MOI->GetExtents().Y * objectNormal) : FVector::ZeroVector;
 			FVector centroid = Algo::Accumulate(
-				MOI->ControlPoints, 
+				MOI->GetControlPoints(), 
 				FVector::ZeroVector,
-				[](FVector centroid, const FVector &p) { return centroid + p; }) / MOI->ControlPoints.Num();
+				[](FVector centroid, const FVector &p) { return centroid + p; }) / MOI->GetControlPoints().Num();
 
 			return offset + centroid;
 		}
@@ -591,10 +599,10 @@ namespace Modumate
 
 		if (Controller->EMPlayerState->CurrentDimensionStringWithInputUniqueID == Controller->DimensionStringUniqueID_Delta)
 		{
-			float dir = FMath::Sign(MOI->Extents.Y - OriginalExtrusion);
+			float dir = FMath::Sign(MOI->GetExtents().Y - OriginalExtrusion);
 			if (Sign > 0.f)
 			{
-				newPoints = MOI->ControlPoints;
+				newPoints = MOI->GetControlPoints();
 			}
 			else
 			{
@@ -609,7 +617,7 @@ namespace Modumate
 		else
 		{
 			newExtents.Y = number;
-			newPoints = MOI->ControlPoints;
+			newPoints = MOI->GetControlPoints();
 		}
 
 		// Tell mesh it is done editing at handle
@@ -619,8 +627,10 @@ namespace Modumate
 			dynMeshActor->AdjustHandleFloor.Empty();
 		}
 
-		MOI->ControlPoints = OriginalControlPoints;
-		MOI->Extents.Y = OriginalExtrusion;
+		MOI->SetControlPoints(OriginalControlPoints);
+		FVector extents = MOI->GetExtents();
+		extents.Y = OriginalExtrusion;
+		MOI->SetExtents(extents);
 
 		Controller->ModumateCommand(
 			FModumateCommand(Modumate::Commands::kSetGeometry)

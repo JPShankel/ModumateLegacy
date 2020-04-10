@@ -90,7 +90,7 @@ void AAdjustmentHandleActor_CPP::Tick(float DeltaTime)
 
 			// Draw line from attachLocation to center of ParentMOI
 			Modumate::FModumateObjectInstance* parentMetaplane = ParentMOI->GetParentObject();
-			if (parentMetaplane != nullptr && parentMetaplane->ObjectType == EObjectType::OTMetaPlane)
+			if (parentMetaplane != nullptr && parentMetaplane->GetObjectType() == EObjectType::OTMetaPlane)
 			{
 				FVector metaPlaneMidpoint = parentMetaplane->GetObjectLocation();
 				if (!metaPlaneMidpoint.Equals(attachLocation))
@@ -110,7 +110,7 @@ void AAdjustmentHandleActor_CPP::Tick(float DeltaTime)
 		else
 		{
 			// BEGIN Implement screen location adjustment of Default handles
-			if (ParentMOI != nullptr && ParentMOI->ControlPoints.Num() > 0)
+			if (ParentMOI != nullptr && ParentMOI->GetControlPoints().Num() > 0)
 			{
 				if (OverrideHandleDirection.IsUnit())
 				{
@@ -118,8 +118,8 @@ void AAdjustmentHandleActor_CPP::Tick(float DeltaTime)
 				}
 				else if (SideCP.Num() > 1)
 				{
-					FVector sidePoint0 = ParentMOI->ControlPoints[SideCP[0]];
-					FVector sidePoint1 = ParentMOI->ControlPoints[SideCP[1]];
+					FVector sidePoint0 = ParentMOI->GetControlPoint(SideCP[0]);
+					FVector sidePoint1 = ParentMOI->GetControlPoint(SideCP[1]);
 					FVector sideDir = (sidePoint1 - sidePoint0).GetSafeNormal();
 					FVector sideNormal = sideDir ^ FVector(polyPlane);
 
@@ -127,35 +127,35 @@ void AAdjustmentHandleActor_CPP::Tick(float DeltaTime)
 				}
 				else if (Side == 0) // Side = which control point is the direction facing
 				{
-					if (ParentMOI->ControlPoints.Num() > 3)
+					if (ParentMOI->GetControlPoints().Num() > 3)
 					{
-						FVector vFrom = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->ControlPoints[3]);
-						FVector vTarget = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->ControlPoints[0]);
+						FVector vFrom = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->GetControlPoint(3));
+						FVector vTarget = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->GetControlPoint(0));
 						HandleDirection = UKismetMathLibrary::GetDirectionUnitVector(vFrom, vTarget);
 
 					}
 					else
-						if (ParentMOI->ControlPoints.Num() > 1)
+						if (ParentMOI->GetControlPoints().Num() > 1)
 						{
-							FVector vFrom = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->ControlPoints[1]);
-							FVector vTarget = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->ControlPoints[0]);
+							FVector vFrom = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->GetControlPoint(1));
+							FVector vTarget = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->GetControlPoint(0));
 							HandleDirection = UKismetMathLibrary::GetDirectionUnitVector(vFrom, vTarget);
 
 						}
 				}
 				else if (Side == 1)
 				{
-					if (ParentMOI->ControlPoints.Num() > 3)
+					if (ParentMOI->GetControlPoints().Num() > 3)
 					{
-						FVector vFrom = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->ControlPoints[0]);
-						FVector vTarget = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->ControlPoints[3]);
+						FVector vFrom = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->GetControlPoint(0));
+						FVector vTarget = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->GetControlPoint(3));
 						HandleDirection = UKismetMathLibrary::GetDirectionUnitVector(vFrom, vTarget);
 					}
 					else
-						if (ParentMOI->ControlPoints.Num() > 1)
+						if (ParentMOI->GetControlPoints().Num() > 1)
 						{
-							FVector vFrom = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->ControlPoints[0]);
-							FVector vTarget = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->ControlPoints[1]);
+							FVector vFrom = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->GetControlPoint(0));
+							FVector vTarget = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->GetControlPoint(1));
 							HandleDirection = UKismetMathLibrary::GetDirectionUnitVector(vFrom, vTarget);
 						}
 
@@ -170,8 +170,8 @@ void AAdjustmentHandleActor_CPP::Tick(float DeltaTime)
 				}
 				else if (Side == 4) // perpendicular to CP0 and CP1
 				{
-					FVector vFrom = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->ControlPoints[0]);
-					FVector vTarget = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->ControlPoints[1]);
+					FVector vFrom = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->GetControlPoint(0));
+					FVector vTarget = UKismetMathLibrary::TransformLocation(ParentMOI->GetActor()->GetActorTransform(), ParentMOI->GetControlPoint(1));
 					FVector vWallDir = UKismetMathLibrary::GetDirectionUnitVector(vFrom, vTarget);
 					HandleDirection = UKismetMathLibrary::RotateAngleAxis(vWallDir, 90.f, FVector::UpVector);
 					ScreenOffset = FVector(0.f, -40.f, 0.f); // Need to take spacing of surrounding handles into account. Size is close to screen space
@@ -260,7 +260,7 @@ void AAdjustmentHandleActor_CPP::Tick(float DeltaTime)
 		// Potentially show dim string
 		if (bIsHovered && ParentMOI && (HandleType == EHandleType::Default))
 		{
-			switch (ParentMOI->ObjectType)
+			switch (ParentMOI->GetObjectType())
 			{
 			case EObjectType::OTWallSegment:
 				ShowHoverWallDimensionString();
@@ -319,9 +319,9 @@ void AAdjustmentHandleActor_CPP::SetPolyHandleSide(const TArray<int32>& CP, Modu
 	SideCP = CP;
 	ParentMOI = MOI;
 
-	if (ParentMOI->ControlPoints.Num() >= 3)
+	if (ParentMOI->GetControlPoints().Num() >= 3)
 	{
-		UModumateGeometryStatics::GetPlaneFromPoints(ParentMOI->ControlPoints, polyPlane);
+		UModumateGeometryStatics::GetPlaneFromPoints(ParentMOI->GetControlPoints(), polyPlane);
 	}
 
 	OffSetScreenDistance = offsetDist;
@@ -440,12 +440,12 @@ void AAdjustmentHandleActor_CPP::ShowHoverWallDimensionString()
 {
 	if (bIsPointAdjuster)
 	{
-		FVector drawFrom = ParentMOI->ControlPoints[0];
-		FVector drawTo = ParentMOI->ControlPoints[1];
+		FVector drawFrom = ParentMOI->GetControlPoint(0);
+		FVector drawTo = ParentMOI->GetControlPoint(1);
 		if (Side == 2) // 0 = bottom point adjuster. 2 = top point adjuster
 		{
-			drawFrom += FVector(0.f, 0.f, ParentMOI->Extents.Y);
-			drawTo += FVector(0.f, 0.f, ParentMOI->Extents.Y);
+			drawFrom += FVector(0.f, 0.f, ParentMOI->GetExtents().Y);
+			drawTo += FVector(0.f, 0.f, ParentMOI->GetExtents().Y);
 		}
 		UModumateFunctionLibrary::AddNewDimensionString(
 			Controller,
@@ -469,8 +469,8 @@ void AAdjustmentHandleActor_CPP::ShowHoverWallDimensionString()
 		case 1:
 			UModumateFunctionLibrary::AddNewDimensionString(
 				Controller,
-				ParentMOI->ControlPoints[0] + FVector(0.f, 0.f, ParentMOI->Extents.Y / 2.f),
-				ParentMOI->ControlPoints[1] + FVector(0.f, 0.f, ParentMOI->Extents.Y / 2.f),
+				ParentMOI->GetControlPoint(0) + FVector(0.f, 0.f, ParentMOI->GetExtents().Y / 2.f),
+				ParentMOI->GetControlPoint(1) + FVector(0.f, 0.f, ParentMOI->GetExtents().Y / 2.f),
 				ParentMOI->GetObjectRotation().Vector(),
 				Controller->DimensionStringGroupID_Default,
 				Controller->DimensionStringUniqueID_Delta,
@@ -485,8 +485,8 @@ void AAdjustmentHandleActor_CPP::ShowHoverWallDimensionString()
 		case 3:
 			UModumateFunctionLibrary::AddNewDimensionString(
 				Controller,
-				(ParentMOI->ControlPoints[0] + ParentMOI->ControlPoints[1]) / 2.f,
-				FVector(0.f, 0.f, ParentMOI->Extents.Y) + (ParentMOI->ControlPoints[0] + ParentMOI->ControlPoints[1]) / 2.f,
+				(ParentMOI->GetControlPoint(0) + ParentMOI->GetControlPoint(1)) / 2.f,
+				FVector(0.f, 0.f, ParentMOI->GetExtents().Y) + (ParentMOI->GetControlPoint(0) + ParentMOI->GetControlPoint(1)) / 2.f,
 				Controller->PlayerCameraManager->GetActorRightVector() * FVector(-1.f),
 				Controller->DimensionStringGroupID_Default,
 				Controller->DimensionStringUniqueID_Delta,
@@ -503,13 +503,13 @@ void AAdjustmentHandleActor_CPP::ShowHoverWallDimensionString()
 
 void AAdjustmentHandleActor_CPP::ShowHoverFloorDimensionString(bool ShowCurrentSide)
 {
-	int32 numTotalCPs = ParentMOI->ControlPoints.Num();
+	int32 numTotalCPs = ParentMOI->GetControlPoints().Num();
 
 	if (SideCP.Num() == 1) // Create dim string on both side of the point adjust handle
 	{
-		FVector cornerCP = ParentMOI->ControlPoints[SideCP[0]];
-		FVector preCP = ParentMOI->ControlPoints[(SideCP[0] + numTotalCPs - 1) % numTotalCPs];
-		FVector postCP = ParentMOI->ControlPoints[(SideCP[0] + 1) % numTotalCPs];
+		FVector cornerCP = ParentMOI->GetControlPoint(SideCP[0]);
+		FVector preCP = ParentMOI->GetControlPoint((SideCP[0] + numTotalCPs - 1) % numTotalCPs);
+		FVector postCP = ParentMOI->GetControlPoint((SideCP[0] + 1) % numTotalCPs);
 
 		FVector preEdgeDir = (cornerCP - preCP).GetSafeNormal();
 		FVector preEdgeNormal = (preEdgeDir ^ FVector(polyPlane));
@@ -547,10 +547,10 @@ void AAdjustmentHandleActor_CPP::ShowHoverFloorDimensionString(bool ShowCurrentS
 	}
 	else if (SideCP.Num() == 2) // Create dim string on both side of the stretch handle
 	{
-		FVector sideCP0 = ParentMOI->ControlPoints[SideCP[0]];
-		FVector sideCP1 = ParentMOI->ControlPoints[SideCP[1]];
-		FVector preCP0 = ParentMOI->ControlPoints[(SideCP[0] + numTotalCPs - 1) % numTotalCPs];
-		FVector postCP1 = ParentMOI->ControlPoints[(SideCP[1] + 1) % numTotalCPs];
+		FVector sideCP0 = ParentMOI->GetControlPoint(SideCP[0]);
+		FVector sideCP1 = ParentMOI->GetControlPoint(SideCP[1]);
+		FVector preCP0 = ParentMOI->GetControlPoint((SideCP[0] + numTotalCPs - 1) % numTotalCPs);
+		FVector postCP1 = ParentMOI->GetControlPoint((SideCP[1] + 1) % numTotalCPs);
 
 		FVector preEdgeDir = (sideCP0 - preCP0).GetSafeNormal();
 		FVector preEdgeNormal = (preEdgeDir ^ FVector(polyPlane));
@@ -592,7 +592,7 @@ void AAdjustmentHandleActor_CPP::ShowHoverFloorDimensionString(bool ShowCurrentS
 		FVector camDir = Controller->PlayerCameraManager->GetCameraRotation().Vector();
 		camDir.Z = 0.f;
 		camDir = camDir.RotateAngleAxis(90.f, FVector::UpVector);
-		float height = ParentMOI->Extents.Y;
+		float height = ParentMOI->GetExtents().Y;
 
 		UModumateFunctionLibrary::AddNewDimensionString(
 			Controller,
@@ -637,8 +637,8 @@ void AAdjustmentHandleActor_CPP::ShowHoverCabinetDimensionString()
 	{
 		UModumateFunctionLibrary::AddNewDimensionString(
 			Controller,
-			(ParentMOI->ControlPoints[0] + ParentMOI->ControlPoints[1]) / 2.f,
-			FVector(0.f, 0.f, ParentMOI->Extents.Y) + (ParentMOI->ControlPoints[0] + ParentMOI->ControlPoints[1]) / 2.f,
+			(ParentMOI->GetControlPoint(0) + ParentMOI->GetControlPoint(1)) / 2.f,
+			FVector(0.f, 0.f, ParentMOI->GetExtents().Y) + (ParentMOI->GetControlPoint(0) + ParentMOI->GetControlPoint(1)) / 2.f,
 			Controller->PlayerCameraManager->GetActorRightVector() * FVector(-1.f),
 			Controller->DimensionStringGroupID_Default,
 			Controller->DimensionStringUniqueID_Delta,
@@ -660,22 +660,22 @@ void AAdjustmentHandleActor_CPP::ShowSideCPDimensionString(const int32 sideCPNum
 	}
 
 	// Get location and normal info from control point
-	int32 numTotalCPs = ParentMOI->ControlPoints.Num();
+	int32 numTotalCPs = ParentMOI->GetControlPoints().Num();
 	FVector vStart;
 	FVector vEnd;
 	FVector edgeNormal;
 
 	if (sideCPNum == 0)
 	{
-		vStart = ParentMOI->ControlPoints[SideCP[0]];
-		vEnd = ParentMOI->ControlPoints[(SideCP[0] + numTotalCPs - 1) % numTotalCPs];
+		vStart = ParentMOI->GetControlPoint(SideCP[0]);
+		vEnd = ParentMOI->GetControlPoint((SideCP[0] + numTotalCPs - 1) % numTotalCPs);
 		FVector edgeDir = (vStart - vEnd).GetSafeNormal();
 		edgeNormal = (edgeDir ^ FVector(polyPlane));
 	}
 	else if (sideCPNum == 1)
 	{
-		vStart = ParentMOI->ControlPoints[(SideCP[1] + 1) % numTotalCPs];
-		vEnd = ParentMOI->ControlPoints[SideCP[1]];
+		vStart = ParentMOI->GetControlPoint((SideCP[1] + 1) % numTotalCPs);
+		vEnd = ParentMOI->GetControlPoint(SideCP[1]);
 		FVector edgeDir = (vStart - vEnd).GetSafeNormal();
 		edgeNormal = (edgeDir ^ FVector(polyPlane));
 	}
@@ -703,12 +703,12 @@ void AAdjustmentHandleActor_CPP::ShowSideCPDimensionString(const int32 sideCPNum
 
 bool AAdjustmentHandleActor_CPP::ShowSideCPParallelDimensionString(const bool editable, const int32 groupIndex, const float offset, const float parallelThreshold)
 {
-	int32 numTotalCPs = ParentMOI->ControlPoints.Num();
+	int32 numTotalCPs = ParentMOI->GetControlPoints().Num();
 
-	FVector sideCP0 = ParentMOI->ControlPoints[SideCP[0]];
-	FVector sideCP1 = ParentMOI->ControlPoints[SideCP[1]];
-	FVector preCP0 = ParentMOI->ControlPoints[(SideCP[0] + numTotalCPs - 1) % numTotalCPs];
-	FVector postCP1 = ParentMOI->ControlPoints[(SideCP[1] + 1) % numTotalCPs];
+	FVector sideCP0 = ParentMOI->GetControlPoint(SideCP[0]);
+	FVector sideCP1 = ParentMOI->GetControlPoint(SideCP[1]);
+	FVector preCP0 = ParentMOI->GetControlPoint((SideCP[0] + numTotalCPs - 1) % numTotalCPs);
+	FVector postCP1 = ParentMOI->GetControlPoint((SideCP[1] + 1) % numTotalCPs);
 
 	FVector preEdgeDir = (sideCP0 - preCP0).GetSafeNormal();
 	FVector preEdgeNormal = (preEdgeDir ^ FVector(polyPlane));

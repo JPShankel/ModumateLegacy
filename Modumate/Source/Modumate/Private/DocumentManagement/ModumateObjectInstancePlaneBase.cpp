@@ -21,10 +21,10 @@ namespace Modumate
 
 	FVector FMOIPlaneImplBase::GetCorner(int32 index) const
 	{
-		int32 numCP = MOI->ControlPoints.Num();
+		int32 numCP = MOI->GetControlPoints().Num();
 		if (ensure(index < numCP))
 		{
-			return MOI->ControlPoints[index];
+			return MOI->GetControlPoint(index);
 		}
 
 		return GetLocation();
@@ -56,12 +56,12 @@ namespace Modumate
 	TArray<FModelDimensionString> FMOIPlaneImplBase::GetDimensionStrings() const
 	{
 		TArray<FModelDimensionString> ret;
-		for (int32 i = 0, numCP = MOI->ControlPoints.Num(); i < numCP; ++i)
+		for (int32 i = 0, numCP = MOI->GetControlPoints().Num(); i < numCP; ++i)
 		{
 			FModelDimensionString ds;
 			ds.AngleDegrees = 0;
-			ds.Point1 = MOI->ControlPoints[i];
-			ds.Point2 = MOI->ControlPoints[(i + 1) % numCP];
+			ds.Point1 = MOI->GetControlPoint(i);
+			ds.Point2 = MOI->GetControlPoint((i + 1) % numCP);
 			ds.Functionality = EEnterableField::None;
 			ds.Offset = 50;
 			ds.UniqueID = MOI->GetActor()->GetFName();
@@ -80,13 +80,13 @@ namespace Modumate
 			return;
 		}
 
-		int32 numPolyPoints = MOI->ControlPoints.Num();
+		int32 numPolyPoints = MOI->GetControlPoints().Num();
 
 		for (int32 i = 0; i < numPolyPoints; ++i)
 		{
 			int32 nextI = (i + 1) % numPolyPoints;
-			const FVector &cp1 = MOI->ControlPoints[i];
-			const FVector &cp2 = MOI->ControlPoints[nextI];
+			const FVector &cp1 = MOI->GetControlPoint(i);
+			const FVector &cp2 = MOI->GetControlPoint(nextI);
 			FVector dir = (cp2 - cp1).GetSafeNormal();
 
 			outPoints.Add(FStructurePoint(cp1, dir, i));
@@ -119,9 +119,9 @@ namespace Modumate
 			AdjustmentHandles.Add(actor);
 		};
 
-		for (size_t i = 0; i < MOI->ControlPoints.Num(); ++i)
+		for (size_t i = 0; i < MOI->GetControlPoints().Num(); ++i)
 		{
-			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->ControlPoints.Num()), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), TArray<int32>{int32(i), int32(i + 1) % MOI->ControlPoints.Num()}, 16.0f);
+			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->GetControlPoints().Num()), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), TArray<int32>{int32(i), int32(i + 1) % MOI->GetControlPoints().Num()}, 16.0f);
 		}
 	};
 

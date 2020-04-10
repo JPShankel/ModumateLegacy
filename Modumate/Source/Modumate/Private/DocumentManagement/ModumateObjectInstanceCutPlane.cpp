@@ -35,7 +35,7 @@ namespace Modumate
 		MaterialData.EngineMaterial = gameMode ? gameMode->CutPlaneMaterial : nullptr;
 
 		// TODO: can the cut plane do less?
-		DynamicMeshActor->SetupPlaneGeometry(MOI->ControlPoints, MaterialData, true, true);
+		DynamicMeshActor->SetupPlaneGeometry(MOI->GetControlPoints(), MaterialData, true, true);
 
 		if (bNewPlane)
 		{
@@ -70,7 +70,7 @@ namespace Modumate
 
 		UpdateCachedGeometryData();
 
-		DynamicMeshActor->SetupPlaneGeometry(MOI->ControlPoints, MaterialData, false, true);
+		DynamicMeshActor->SetupPlaneGeometry(MOI->GetControlPoints(), MaterialData, false, true);
 	}
 
 	void FMOICutPlaneImpl::OnSelected(bool bNewSelected)
@@ -207,14 +207,14 @@ namespace Modumate
 
 	void FMOICutPlaneImpl::UpdateCachedGeometryData()
 	{
-		if (!ensureAlways(MOI->ControlPoints.Num() > 0))
+		if (!ensureAlways(MOI->GetControlPoints().Num() > 0))
 		{
 			return;
 		}
 
-		CachedOrigin = MOI->ControlPoints[0];
+		CachedOrigin = MOI->GetControlPoint(0);
 		TArray<FVector2D> cached2DPositions;
-		UModumateGeometryStatics::AnalyzeCachedPositions(MOI->ControlPoints, CachedPlane, CachedAxisX, CachedAxisY, cached2DPositions, CachedCenter);
+		UModumateGeometryStatics::AnalyzeCachedPositions(MOI->GetControlPoints(), CachedPlane, CachedAxisX, CachedAxisY, cached2DPositions, CachedCenter);
 		UpdateDraftingPreview();
 	}
 
@@ -247,7 +247,7 @@ namespace Modumate
 		auto volumeGraph = doc.GetVolumeGraph();
 		TArray<FVector2D> boxPoints;
 
-		for (auto& point : MOI->ControlPoints)
+		for (auto& point : MOI->GetControlPoints())
 		{
 			FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, AxisX, AxisY, CachedOrigin);
 			boxPoints.Add(point2D);

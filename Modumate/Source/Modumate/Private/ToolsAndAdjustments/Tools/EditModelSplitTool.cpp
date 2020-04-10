@@ -176,7 +176,7 @@ bool USplitObjectTool::FrameUpdate()
 
 			if (HasValidEdgeSplitTarget() || HasValidCornerSplitTarget())
 			{
-				const auto& controlPoints = moi->ControlPoints;
+				const auto& controlPoints = moi->GetControlPoints();
 				auto& affordanceLines = Controller->EMPlayerState->AffordanceLines;
 
 				FAffordanceLine splitPlaneLine;
@@ -207,7 +207,7 @@ bool USplitObjectTool::FrameUpdate()
 				controlPointLine.Color = FLinearColor::Green;
 				controlPointLine.Interval = 6.0f;
 
-				switch (moi->ObjectType)
+				switch (moi->GetObjectType())
 				{
 				case EObjectType::OTWallSegment:
 				{
@@ -266,14 +266,14 @@ bool USplitObjectTool::PerformSplit() const
 		*LastValidTarget->GetActor()->GetName(),
 		LastValidStartCP1, LastValidStartCP2, LastValidEndCP1, LastValidEndCP2);
 
-	const TArray<FVector> &oldPoints = LastValidTarget->ControlPoints;
-	const TArray<int32> &oldIndices = LastValidTarget->ControlIndices;
+	const TArray<FVector> &oldPoints = LastValidTarget->GetControlPoints();
+	const TArray<int32> &oldIndices = LastValidTarget->GetControlPointIndices();
 
 	TArray<FVector> newPointsA, newPointsB;
 	TArray<int32> newIndicesA, newIndicesB;
 	bool validPoints = false;
 
-	switch (LastValidTarget->ObjectType)
+	switch (LastValidTarget->GetObjectType())
 	{
 	case EObjectType::OTWallSegment:
 	{
@@ -436,7 +436,7 @@ bool USplitObjectTool::HasValidEdgeSplitTarget() const
 {
 	if (LastValidTarget)
 	{
-		switch (LastValidTarget->ObjectType)
+		switch (LastValidTarget->GetObjectType())
 		{
 		case EObjectType::OTWallSegment:
 		case EObjectType::OTRailSegment:
@@ -462,7 +462,7 @@ bool USplitObjectTool::HasValidCornerHoverTarget() const
 {
 	if (LastValidTarget)
 	{
-		switch (LastValidTarget->ObjectType)
+		switch (LastValidTarget->GetObjectType())
 		{
 		case EObjectType::OTWallSegment:
 		case EObjectType::OTRailSegment:
@@ -487,7 +487,7 @@ bool USplitObjectTool::HasValidCornerSplitTarget() const
 {
 	if (LastValidTarget)
 	{
-		switch (LastValidTarget->ObjectType)
+		switch (LastValidTarget->GetObjectType())
 		{
 		case EObjectType::OTWallSegment:
 		case EObjectType::OTRailSegment:
@@ -517,7 +517,7 @@ bool USplitObjectTool::FindSplitTarget(const FModumateObjectInstance *moi, const
 		return false;
 	}
 
-	const TArray<FVector>& points = moi->ControlPoints;
+	const TArray<FVector>& points = moi->GetControlPoints();
 	int32 numPoints = points.Num();
 
 	ESnapType snapType = snapCursor.SnapType;
@@ -527,7 +527,7 @@ bool USplitObjectTool::FindSplitTarget(const FModumateObjectInstance *moi, const
 		refStartCP2 = snapCursor.CP2 % numPoints;
 	}
 
-	switch (moi->ObjectType)
+	switch (moi->GetObjectType())
 	{
 	case EObjectType::OTWallSegment:
 	{
@@ -536,7 +536,7 @@ bool USplitObjectTool::FindSplitTarget(const FModumateObjectInstance *moi, const
 			return false;
 		}
 
-		FVector wallHeightDelta = moi->Extents.Y * FVector::UpVector;
+		FVector wallHeightDelta = moi->GetExtents().Y * FVector::UpVector;
 
 		if (snapType == ESnapType::CT_FACESELECT)
 		{
@@ -629,7 +629,7 @@ bool USplitObjectTool::FindSplitTarget(const FModumateObjectInstance *moi, const
 	case EObjectType::OTCabinet:
 	{
 		FPlane objectPlane(points[0], FVector::UpVector);
-		FVector extrusionDelta = (moi->Extents.Y * objectPlane);
+		FVector extrusionDelta = (moi->GetExtents().Y * objectPlane);
 		FVector splitCursorPlaneProjected = FVector::PointPlaneProject(snapCursor.WorldPosition, objectPlane);
 		FVector goalSplitDir(ForceInitToZero);
 

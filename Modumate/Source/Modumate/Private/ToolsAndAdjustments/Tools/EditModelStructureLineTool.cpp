@@ -189,13 +189,13 @@ bool UStructureLineTool::FrameUpdate()
 		{
 			hitMOI = GameState->Document.ObjectFromActor(cursor.Actor);
 
-			if (hitMOI && (hitMOI->ObjectType == EObjectType::OTStructureLine))
+			if (hitMOI && (hitMOI->GetObjectType() == EObjectType::OTStructureLine))
 			{
 				hitMOI = hitMOI->GetParentObject();
 			}
 		}
 
-		if ((hitMOI != nullptr) && (hitMOI->ObjectType == EObjectType::OTMetaEdge))
+		if ((hitMOI != nullptr) && (hitMOI->GetObjectType() == EObjectType::OTMetaEdge))
 		{
 			newTargetID = hitMOI->ID;
 		}
@@ -278,13 +278,13 @@ void UStructureLineTool::SetTargetID(int32 NewTargetID)
 		int32 newTargetStructureLineID = MOD_ID_NONE;
 
 		FModumateObjectInstance *targetObj = GameState->Document.GetObjectById(NewTargetID);
-		if (targetObj && (targetObj->ObjectType == EObjectType::OTMetaEdge))
+		if (targetObj && (targetObj->GetObjectType() == EObjectType::OTMetaEdge))
 		{
 			// Find a child structure line on the target (that this tool didn't just create)
 			TArray<FModumateObjectInstance*> children = targetObj->GetChildObjects();
 			for (FModumateObjectInstance *child : children)
 			{
-				if (child && (child->ObjectType == EObjectType::OTStructureLine))
+				if (child && (child->GetObjectType() == EObjectType::OTStructureLine))
 				{
 					newTargetStructureLineID = child->ID;
 					break;
@@ -426,7 +426,7 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 	{
 		FModumateObjectInstance *parentEdgeObj = GameState->Document.GetObjectById(targetEdgeID);
 
-		if (parentEdgeObj && (parentEdgeObj->ObjectType == EObjectType::OTMetaEdge))
+		if (parentEdgeObj && (parentEdgeObj->GetObjectType() == EObjectType::OTMetaEdge))
 		{
 			auto commandResult = Controller->ModumateCommand(
 				FModumateCommand(Modumate::Commands::kMakeStructureLine)

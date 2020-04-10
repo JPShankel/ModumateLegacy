@@ -26,7 +26,7 @@ namespace Modumate
 	void FMOIStaircaseImpl::SetupDynamicGeometry()
 	{
 		FModumateObjectInstance *planeParent = MOI ? MOI->GetParentObject() : nullptr;
-		if (planeParent && (planeParent->ObjectType == EObjectType::OTMetaPlane))
+		if (planeParent && (planeParent->GetObjectType() == EObjectType::OTMetaPlane))
 		{
 			// TODO: get this material from a real assembly
 			FArchitecturalMaterial material;
@@ -40,7 +40,7 @@ namespace Modumate
 			float stepRun, stepRise;
 			FVector runDir(ForceInitToZero), stairOrigin(ForceInitToZero);
 			bool bStairSuccess = FStairStatics::CalculateLinearRunPolysFromPlane(
-				planeParent->ControlPoints, goalRunDepth, bCachedUseRisers, bCachedStartRiser, bCachedEndRiser,
+				planeParent->GetControlPoints(), goalRunDepth, bCachedUseRisers, bCachedStartRiser, bCachedEndRiser,
 				stepRun, stepRise, runDir, stairOrigin,
 				CachedTreadPolys, CachedRiserPolys);
 

@@ -25,16 +25,16 @@ namespace Modumate
 	FVector FMOIFlatPolyImpl::GetCorner(int32 index) const
 	{
 		float thickness = MOI->CalculateThickness();
-		int32 numCP = MOI->ControlPoints.Num();
+		int32 numCP = MOI->GetControlPoints().Num();
 		FVector extrusionDir = FVector::UpVector;
 
 		FPlane plane;
-		UModumateGeometryStatics::GetPlaneFromPoints(MOI->ControlPoints, plane);
+		UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), plane);
 
 		// For now, make sure that the plane of the flat poly MOI is horizontal
 		if (ensureAlways((numCP >= 3) && FVector::Parallel(extrusionDir, plane)))
 		{
-			FVector corner = MOI->ControlPoints[index % numCP];
+			FVector corner = MOI->GetControlPoint(index % numCP);
 
 			if (index >= numCP)
 			{
@@ -51,20 +51,24 @@ namespace Modumate
 
 	void FMOIFlatPolyImpl::InvertObject()
 	{
-		if (MOI->ObjectInverted)
+		if (MOI->GetObjectInverted())
 		{
-			for (auto &cp : MOI->ControlPoints)
+			for (int32 i=0;i<MOI->GetControlPoints().Num();++i)
 			{
+				FVector cp = MOI->GetControlPoint(i);
 				//cp.Z -= FloorThickness;
-				cp.Z -= CalcThickness(MOI->ObjectAssembly.Layers);
+				cp.Z -= CalcThickness(MOI->GetAssembly().Layers);
+				MOI->SetControlPoint(i, cp);
 			}
 		}
 		else
 		{
-			for (auto &cp : MOI->ControlPoints)
+			for (int32 i = 0; i < MOI->GetControlPoints().Num(); ++i)
 			{
+				FVector cp = MOI->GetControlPoint(i);
 				//cp.Z += FloorThickness;
-				cp.Z += CalcThickness(MOI->ObjectAssembly.Layers);
+				cp.Z += CalcThickness(MOI->GetAssembly().Layers);
+				MOI->SetControlPoint(i, cp);
 			}
 		}
 		UpdateDynamicGeometry();
@@ -88,23 +92,23 @@ namespace Modumate
 	void FMOIFlatPolyImpl::SetupDynamicGeometry()
 	{
 		GotGeometry = true;
-		if (MOI->ObjectInverted && DynamicMeshActor->Assembly.Layers.Num() > 0)
+		if (MOI->GetObjectInverted() && DynamicMeshActor->Assembly.Layers.Num() > 0)
 		{
-			float sketchPlaneHeight = DynamicMeshActor->GetActorLocation().Z + MOI->Extents.Y;
-			float newThickness = CalcThickness(MOI->ObjectAssembly.Layers);
+			float sketchPlaneHeight = DynamicMeshActor->GetActorLocation().Z + MOI->GetExtents().Y;
+			float newThickness = CalcThickness(MOI->GetAssembly().Layers);
 
-			TArray<FVector> newCPS = MOI->ControlPoints;
+			TArray<FVector> newCPS = MOI->GetControlPoints();
 			float newZ = sketchPlaneHeight - newThickness;
 			for (int32 i = 0; i < newCPS.Num(); ++i)
 			{
-				newCPS[i] = FVector(MOI->ControlPoints[i].X, MOI->ControlPoints[i].Y, newZ);
+				newCPS[i] = FVector(MOI->GetControlPoint(i).X, MOI->GetControlPoint(i).Y, newZ);
 			}
-			MOI->ControlPoints = newCPS;
+			MOI->SetControlPoints(newCPS);
 		}
-		DynamicMeshActor->UVFloorAnchors = MOI->ControlPoints;
+		DynamicMeshActor->UVFloorAnchors = MOI->GetControlPoints();
 		DynamicMeshActor->TopUVFloorAnchor = FVector::ZeroVector;
-		DynamicMeshActor->SetupFlatPolyGeometry(MOI->ControlPoints, MOI->ObjectAssembly);
-		MOI->Extents = FVector(0.0f, CalcThickness(MOI->ObjectAssembly.Layers), 0.0f);
+		DynamicMeshActor->SetupFlatPolyGeometry(MOI->GetControlPoints(), MOI->GetAssembly());
+		MOI->SetExtents(FVector(0.0f, CalcThickness(MOI->GetAssembly().Layers), 0.0f));
 
 		auto children = MOI->GetChildObjects();
 		for (auto *child : children)
@@ -117,7 +121,7 @@ namespace Modumate
 	{
 		if (!GotGeometry) return;
 
-		DynamicMeshActor->UpdateFlatPolyGeometry(MOI->ControlPoints, MOI->ObjectAssembly);
+		DynamicMeshActor->UpdateFlatPolyGeometry(MOI->GetControlPoints(), MOI->GetAssembly());
 
 		auto children = MOI->GetChildObjects();
 		for (auto *child : children)
@@ -151,10 +155,10 @@ namespace Modumate
 			AdjustmentHandles.Add(actor);
 		};
 
-		for (size_t i = 0; i < MOI->ControlPoints.Num(); ++i)
+		for (size_t i = 0; i < MOI->GetControlPoints().Num(); ++i)
 		{
 			makeActor(new FAdjustPolyPointHandle(MOI, i), AEditModelGameMode_CPP::PointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f), TArray<int32>{int32(i)}, 0.0f);
-			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->ControlPoints.Num()), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), TArray<int32>{int32(i), int32(i + 1) % MOI->ControlPoints.Num()}, 16.0f);
+			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->GetControlPoints().Num()), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), TArray<int32>{int32(i), int32(i + 1) % MOI->GetControlPoints().Num()}, 16.0f);
 		}
 
 		if (WantsInvertHandle)
@@ -166,12 +170,12 @@ namespace Modumate
 	TArray<FModelDimensionString> FMOIFlatPolyImpl::GetDimensionStrings() const
 	{
 		TArray<FModelDimensionString> ret;
-		for (size_t i = 0, iend = MOI->ControlPoints.Num(); i < iend; ++i)
+		for (size_t i = 0, iend = MOI->GetControlPoints().Num(); i < iend; ++i)
 		{
 			FModelDimensionString ds;
 			ds.AngleDegrees = 0;
-			ds.Point1 = MOI->ControlPoints[i];
-			ds.Point2 = MOI->ControlPoints[(i + 1) % iend];
+			ds.Point1 = MOI->GetControlPoint(i);
+			ds.Point2 = MOI->GetControlPoint((i + 1) % iend);
 			ds.Functionality = EEnterableField::None;
 			ds.Offset = 50;
 			ds.UniqueID = MOI->GetActor()->GetFName();

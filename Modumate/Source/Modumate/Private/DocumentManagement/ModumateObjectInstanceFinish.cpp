@@ -32,10 +32,10 @@ namespace Modumate
 		}
 
 		float thickness = MOI->CalculateThickness();
-		int32 numCP = MOI->ControlPoints.Num();
+		int32 numCP = MOI->GetControlPoints().Num();
 		FVector cornerOffset = (index < numCP) ? FVector::ZeroVector : (CachedNormal * thickness);
 
-		return MOI->ControlPoints[index % numCP] + cornerOffset;
+		return MOI->GetControlPoint(index % numCP) + cornerOffset;
 	}
 
 	FVector FMOIFinishImpl::GetNormal() const
@@ -80,22 +80,22 @@ namespace Modumate
 
 		if (hostObj && (faceIndex != INDEX_NONE))
 		{
-			MOI->ControlPoints.Reset();
+			MOI->SetControlPoints(TArray<FVector>());
 			CachedNormal = FVector::ZeroVector;
 			float finishThickness = MOI->CalculateThickness();
 
-			switch (hostObj->ObjectType)
+			switch (hostObj->GetObjectType())
 			{
 			case EObjectType::OTWallSegment:
 			case EObjectType::OTFloorSegment:
 			{
 				const auto *hostObjParent = hostObj->GetParentObject();
-				if (!(hostObjParent && (hostObjParent->ObjectType == EObjectType::OTMetaPlane)))
+				if (!(hostObjParent && (hostObjParent->GetObjectType() == EObjectType::OTMetaPlane)))
 				{
 					return;
 				}
 
-				int32 numPoints = hostObjParent->ControlPoints.Num();
+				int32 numPoints = hostObjParent->GetControlPoints().Num();
 				float hostObjThickness = hostObj->CalculateThickness();
 				FVector hostNormal = hostObj->GetNormal();
 
@@ -115,7 +115,7 @@ namespace Modumate
 					for (int32 pointIdx = 0; pointIdx < numPoints; ++pointIdx)
 					{
 						int32 cornerIdx = pointIdx + cornerOffset;
-						MOI->ControlPoints.Add(hostObj->GetCorner(cornerIdx));
+						MOI->AddControlPoint(hostObj->GetCorner(cornerIdx));
 					}
 
 					CachedNormal = hostNormal * (bOnFront ? 1.0f : -1.0f);
@@ -132,7 +132,7 @@ namespace Modumate
 					FVector edgeDir = (point2A - point1A).GetSafeNormal();
 					CachedNormal = edgeDir ^ hostNormal;
 
-					MOI->ControlPoints = { point1A, point2A, point2B, point1B };
+					MOI->SetControlPoints({ point1A, point2A, point2B, point1B });
 				}
 			}
 			break;
@@ -141,11 +141,11 @@ namespace Modumate
 			}
 
 			ADynamicMeshActor *parentMeshActor = Cast<ADynamicMeshActor>(hostObj->GetActor());
-			if ((MOI->ControlPoints.Num() >= 3) && CachedNormal.IsNormalized() && parentMeshActor)
+			if ((MOI->GetControlPoints().Num() >= 3) && CachedNormal.IsNormalized() && parentMeshActor)
 			{
 				DynamicMeshActor->HoleActors = parentMeshActor->HoleActors;
 				bool bToleratePlanarErrors = true;
-				bool bLayerSetupSuccess = DynamicMeshActor->CreateBasicLayerDefs(MOI->ControlPoints, CachedNormal, MOI->ObjectAssembly,
+				bool bLayerSetupSuccess = DynamicMeshActor->CreateBasicLayerDefs(MOI->GetControlPoints(), CachedNormal, MOI->GetAssembly(),
 					0.0f, FVector::ZeroVector, 0.0f, bToleratePlanarErrors);
 
 				if (bLayerSetupSuccess)
@@ -179,7 +179,7 @@ namespace Modumate
 
 	void FMOIFinishImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
-		int32 numCP = MOI->ControlPoints.Num();
+		int32 numCP = MOI->GetControlPoints().Num();
 
 		for (int32 i = 0; i < numCP; ++i)
 		{

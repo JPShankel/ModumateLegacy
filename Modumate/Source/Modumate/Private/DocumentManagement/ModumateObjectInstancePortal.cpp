@@ -62,30 +62,35 @@ namespace Modumate
 
 	void FMOIPortalImpl::SetControlPointsFromAssembly()
 	{
-		GetControlPointsFromAssembly(MOI->ObjectAssembly, MOI->ControlPoints);
+		TArray<FVector> controlPoints;
+		GetControlPointsFromAssembly(MOI->GetAssembly(), controlPoints);
+		MOI->SetControlPoints(controlPoints);
 	}
 
 	void FMOIPortalImpl::UpdateAssemblyFromControlPoints()
 	{
-		if (MOI->ControlPoints.Num() < 4)
+		if (MOI->GetControlPoints().Num() < 4)
 		{
 			return;
 		}
 
-		auto &portalConfig = MOI->ObjectAssembly.PortalConfiguration;
-		if (portalConfig.IsValid())
+		if (MOI->GetAssembly().PortalConfiguration.IsValid())
 		{
+			FModumateObjectAssembly assembly = MOI->GetAssembly();
+			auto &portalConfig = assembly.PortalConfiguration;
+
 			FPortalReferencePlane &minXPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMinX];
 			FPortalReferencePlane &maxXPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMaxX];
 			FPortalReferencePlane &minZPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMinZ];
 			FPortalReferencePlane &maxZPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMaxZ];
 
-			minXPlane.FixedValue = Units::FUnitValue::WorldCentimeters(MOI->ControlPoints[0].X);
-			maxXPlane.FixedValue = Units::FUnitValue::WorldCentimeters(MOI->ControlPoints[2].X);
-			minZPlane.FixedValue = Units::FUnitValue::WorldCentimeters(MOI->ControlPoints[0].Z);
-			maxZPlane.FixedValue = Units::FUnitValue::WorldCentimeters(MOI->ControlPoints[2].Z);
+			minXPlane.FixedValue = Units::FUnitValue::WorldCentimeters(MOI->GetControlPoint(0).X);
+			maxXPlane.FixedValue = Units::FUnitValue::WorldCentimeters(MOI->GetControlPoint(2).X);
+			minZPlane.FixedValue = Units::FUnitValue::WorldCentimeters(MOI->GetControlPoint(0).Z);
+			maxZPlane.FixedValue = Units::FUnitValue::WorldCentimeters(MOI->GetControlPoint(2).Z);
 
 			portalConfig.CacheRefPlaneValues();
+			MOI->SetAssembly(assembly);
 		}
 	}
 
@@ -146,7 +151,7 @@ namespace Modumate
 	void FMOIPortalImpl::SetupDynamicGeometry()
 	{
 		// If the MOI's control points got reset, then we need to recreate them here before they're used.
-		if (MOI->ControlPoints.Num() == 0)
+		if (MOI->GetControlPoints().Num() == 0)
 		{
 			SetControlPointsFromAssembly();
 		}
@@ -165,7 +170,7 @@ namespace Modumate
 	{
 		if (ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(MOI->GetActor()))
 		{
-			cma->MakeFromAssembly(MOI->ObjectAssembly, FVector::OneVector, MOI->ObjectInverted, true);
+			cma->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
 		}
 	}
 
@@ -208,11 +213,11 @@ namespace Modumate
 		float parentThickness = MOI->GetParentObject()->CalculateThickness();
 		FVector portalNormal = portalTransform.GetUnitAxis(EAxis::Y);
 		FVector oppositeSideDelta = -parentThickness * portalNormal;
-		int32 numCP = MOI->ControlPoints.Num();
+		int32 numCP = MOI->GetControlPoints().Num();
 
 		for (int32 i = 0; i < 2 * numCP; ++i)
 		{
-			const FVector &cp = MOI->ControlPoints[i % numCP];
+			const FVector &cp = MOI->GetControlPoint(i % numCP);
 			FVector corner = portalTransform.TransformPosition(cp);
 			if (i >= numCP)
 			{
@@ -227,7 +232,7 @@ namespace Modumate
 
 	void FMOIPortalImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
-		int32 numCP = MOI->ControlPoints.Num();
+		int32 numCP = MOI->GetControlPoints().Num();
 		if (!ensure(CachedCorners.Num() == (2 * numCP)))
 		{
 			return;
@@ -266,7 +271,7 @@ namespace Modumate
 
 	FVector FMOIPortalImpl::GetCorner(int32 index) const
 	{
-		int32 numCP = MOI->ControlPoints.Num();
+		int32 numCP = MOI->GetControlPoints().Num();
 		if (!ensureAlways(CachedCorners.Num() == (2 * numCP)))
 		{
 			return CachedWorldPos;
@@ -398,20 +403,20 @@ namespace Modumate
 	{
 		TArray<FModelDimensionString> ret;
 
-		if (MOI->ControlPoints.Num() > 3)
+		if (MOI->GetControlPoints().Num() > 3)
 		{
 			FModelDimensionString ds;
 			ds.AngleDegrees = 0;
-			ds.Point1 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[2]);
-			ds.Point2 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[1]);
+			ds.Point1 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(2));
+			ds.Point2 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(1));
 			ds.Functionality = EEnterableField::EditableText_ImperialUnits_UserInput;
 			ds.Offset = 50;
 			ds.UniqueID = MOI->GetActor()->GetFName();
 			ds.Owner = MOI->GetActor();
 			ret.Add(ds);
 
-			ds.Point1 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[3]);
-			ds.Point2 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[0]);
+			ds.Point1 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(3));
+			ds.Point2 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(0));
 			ds.Functionality = EEnterableField::EditableText_ImperialUnits_UserInput;
 			ds.Offset = 100;
 			ds.UniqueID = MOI->GetActor()->GetFName();
@@ -465,8 +470,8 @@ namespace Modumate
 			FQuat parentRot = parent->GetObjectRotation();
 			FVector parentAxisX = parentRot.GetAxisX();
 
-			FVector portalOriginOffset = MOI->ControlPoints[0];
-			FVector portalSize = MOI->ControlPoints[2] - MOI->ControlPoints[0];
+			FVector portalOriginOffset = MOI->GetControlPoint(0);
+			FVector portalSize = MOI->GetControlPoint(2) - MOI->GetControlPoint(0);
 			FVector portalXDir = CachedWorldRot.GetAxisX();
 			float translationSign = parentAxisX | portalXDir;
 			float flipXOffset = 2.0f * portalOriginOffset.X + portalSize.X;
@@ -510,7 +515,7 @@ namespace Modumate
 		/*ret.OrientationDelta = MOI->GetObjectRotation() - parent->GetObjectRotation();
 		ret.OrientationDelta.Normalize();*/
 		ret.OrientationDelta = MOI->GetObjectRotation().Inverse() * parent->GetObjectRotation();
-		ret.OriginalControlPoints = MOI->ControlPoints;
+		ret.OriginalControlPoints = MOI->GetControlPoints();
 
 		return ret;
 	}
@@ -520,14 +525,14 @@ namespace Modumate
 		if (MOI)
 		{
 			FModumateObjectInstance *parent = MOI->GetParentObject();
-			if (parent == nullptr || parent->ObjectType != EObjectType::OTWallSegment)
+			if (parent == nullptr || parent->GetObjectType() != EObjectType::OTWallSegment)
 			{
 				return;
 			}
 
 			// First, restore original control points before applying the relative wall mount,
 			// in case they are used or modified during location/rotation setting.
-			MOI->ControlPoints = wm.OriginalControlPoints;
+			MOI->SetControlPoints(wm.OriginalControlPoints);
 
 			// Use the stored position that was relative to the corner that wasn't supposed to change
 			// to set the new position for the wall mounted object.
@@ -539,7 +544,7 @@ namespace Modumate
 			FVector objectWorldPos = wallTransform.TransformPosition(objectRelPos);
 
 			// For doors, constrain the mounted position to be at the wall's base, to prevent unnecessary hole boring errors
-			if (MOI->ObjectType == EObjectType::OTDoor)
+			if (MOI->GetObjectType() == EObjectType::OTDoor)
 			{
 				FVector baseCornerWorldPos = parent->GetCorner(0);
 				objectWorldPos.Z = baseCornerWorldPos.Z;
@@ -579,9 +584,9 @@ namespace Modumate
 		}
 
 		// draw door swing lines if the cut plane intersects the door's mesh
-		if (MOI->ObjectType == EObjectType::OTDoor && OutEdges.Num() > 0)
+		if (MOI->GetObjectType() == EObjectType::OTDoor && OutEdges.Num() > 0)
 		{
-			auto assembly = MOI->ObjectAssembly;
+			auto assembly = MOI->GetAssembly();
 			auto portalConfig = assembly.PortalConfiguration;
 			auto portalFunction = portalConfig.PortalFunction;
 
@@ -606,7 +611,7 @@ namespace Modumate
 				}
 
 				int32 numPanels = panelSlotIndices.Num();
-				FVector windowDiagonal = MOI->ControlPoints[2] - MOI->ControlPoints[0];
+				FVector windowDiagonal = MOI->GetControlPoint(2) - MOI->GetControlPoint(0);
 
 				FVector p1 = FVector::PointPlaneProject(GetCorner(0), Plane);
 				FVector p2 = FVector::PointPlaneProject(GetCorner(2), Plane);
@@ -622,10 +627,10 @@ namespace Modumate
 
 					// angle offset represents how much the arc needs to be rotated to accommodate for -
 					// the panel being flipped in the assembly, whether it is positioned with RXLeft or RXRight, 
-					// and whether the moi is inverted (for portals, transverse flips MOI->ObjectInverted)
+					// and whether the moi is inverted (for portals, transverse flips MOI->GetObjectInverted())
 					// angle offset is used when the door swing arc is rotated
 					float angleOffset = panel.FlipX ? 0.5f : 0.0f;
-					if (MOI->ObjectInverted) 
+					if (MOI->GetObjectInverted()) 
 					{
 						angleOffset -= panel.FlipX ? -0.5f : 0.5f;
 					}
@@ -635,11 +640,11 @@ namespace Modumate
 					FVector hingeLocation;
 					if (panel.LocationX == FPortalConfiguration::RefPlaneNameMinX.ToString())
 					{
-						hingeLocation = !MOI->ObjectInverted ? p1 : p2;
+						hingeLocation = !MOI->GetObjectInverted() ? p1 : p2;
 					}
 					else if (panel.LocationX == FPortalConfiguration::RefPlaneNameMaxX.ToString())
 					{
-						hingeLocation = !MOI->ObjectInverted ? p2 : p1;
+						hingeLocation = !MOI->GetObjectInverted() ? p2 : p1;
 
 						angleOffset += 1.0f;
 					}

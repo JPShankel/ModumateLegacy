@@ -59,8 +59,8 @@ namespace Modumate
 				[](const FModumateObjectInstance *ob)
 				{
 					FSegment ret;
-					ret.Points[0] = ob->ControlPoints[0];
-					ret.Points[1] = ob->ControlPoints[1];
+					ret.Points[0] = ob->GetControlPoint(0);
+					ret.Points[1] = ob->GetControlPoint(1);
 					ret.Valid = true;
 					ret.ObjID = ob->ID;
 					return ret;
@@ -111,7 +111,7 @@ namespace Modumate
 				for (int32 cpIdx = 0; cpIdx < 2; ++cpIdx)
 				{
 					FNetworkNode *newStartNode = getNodeAt(nodes,
-						FVector2D(startObj->ControlPoints[cpIdx].X, startObj->ControlPoints[cpIdx].Y));
+						FVector2D(startObj->GetControlPoint(cpIdx).X, startObj->GetControlPoint(cpIdx).Y));
 					if (newStartNode)
 					{
 						startNode = newStartNode;
@@ -211,10 +211,13 @@ namespace Modumate
 
 			auto areConnected = [](const FModumateObjectInstance &ob1, const FModumateObjectInstance &ob2)
 			{
-				for (auto &cp1 : ob1.ControlPoints) {
-					for (auto &cp2 : ob2.ControlPoints)
+				int32 numOb1ControlPoints = ob1.GetControlPoints().Num();
+				int32 numOb2ControlPoints = ob2.GetControlPoints().Num();
+				for (int32 cp1=0;cp1<numOb1ControlPoints;++cp1)
+				{ 
+					for (int32 cp2 = 0; cp2 < numOb2ControlPoints; ++cp2)
 					{
-						if (pointsClose(cp1, cp2))
+						if (pointsClose(ob1.GetControlPoint(cp1), ob2.GetControlPoint(cp2)))
 						{
 							return true;
 						}

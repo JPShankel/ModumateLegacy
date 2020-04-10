@@ -197,9 +197,14 @@ namespace Modumate
 		bool RestoreObjectImpl(FModumateObjectInstance *ob);
 		bool RestoreChildrenImpl(FModumateObjectInstance *obj);
 
-		FModumateObjectInstance* CreateOrRestoreObj(UWorld *world, EObjectType ot, const FModumateObjectAssembly &obAsm,
-			int32 id, int32 parentID = 0, const FVector &extents = FVector::ZeroVector,
-			const TArray<FVector> *cps = nullptr, const TArray<int32> *cpi = nullptr);
+		FModumateObjectInstance* CreateOrRestoreObjFromAssembly(UWorld *World, const FModumateObjectAssembly &Assembly,
+			int32 ID, int32 ParentID = 0, const FVector &Extents = FVector::ZeroVector,
+			const TArray<FVector> *CPS = nullptr, const TArray<int32> *CPI = nullptr);
+
+		FModumateObjectInstance* CreateOrRestoreObjFromObjectType(UWorld *World, EObjectType OT,
+			int32 ID, int32 ParentID = 0, const FVector &Extents = FVector::ZeroVector,
+			const TArray<FVector> *CPS = nullptr, const TArray<int32> *CPI = nullptr);
+
 
 		void LoadVolumeGraph(const FGraph3DRecord &InGraph3DRecord);
 		void SaveVolumeGraph(FGraph3DRecord &OutGraph3DRecord) const;

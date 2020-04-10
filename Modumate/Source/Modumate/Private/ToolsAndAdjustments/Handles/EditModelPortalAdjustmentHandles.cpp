@@ -33,15 +33,15 @@ namespace Modumate
 		FVector dir, projectLoc;
 		Controller->DeprojectScreenPositionToWorld(mousex, mousey, projectLoc, dir);
 
-		BeginUpdateHolePonts = MOI->ControlPoints;
+		BeginUpdateHolePonts = MOI->GetControlPoints();
 		HoleActorBeginLocation = MOI->GetActor()->GetActorLocation();
 
 		if (Side >= 0 && Side <= 3)
 		{
 			TArray<FVector> worldCPs;
-			for (int32 i = 0; i < MOI->ControlPoints.Num(); ++i)
+			for (int32 i = 0; i < MOI->GetControlPoints().Num(); ++i)
 			{
-				worldCPs.Add(UKismetMathLibrary::TransformLocation(MOI->GetActor()->GetActorTransform(), MOI->ControlPoints[i]));
+				worldCPs.Add(UKismetMathLibrary::TransformLocation(MOI->GetActor()->GetActorTransform(), MOI->GetControlPoint(i)));
 			}
 			if (Side == 0)
 			{
@@ -68,26 +68,26 @@ namespace Modumate
 
 			if (Side == 0)
 			{
-				MOI->ControlPoints[0] = BeginUpdateHolePonts[0] + FVector(0.0, transformedDH.Y, 0.0);
-				MOI->ControlPoints[1] = BeginUpdateHolePonts[1] + FVector(0.0, transformedDH.Y, 0.0);
+				MOI->SetControlPoint(0, BeginUpdateHolePonts[0] + FVector(0.0, transformedDH.Y, 0.0));
+				MOI->SetControlPoint(1, BeginUpdateHolePonts[1] + FVector(0.0, transformedDH.Y, 0.0));
 				MOI->UpdateGeometry();
 			}
 			else if (Side == 1)
 			{
-				MOI->ControlPoints[2] = BeginUpdateHolePonts[2];
-				MOI->ControlPoints[3] = BeginUpdateHolePonts[3];
+				MOI->SetControlPoint(2, BeginUpdateHolePonts[2]);
+				MOI->SetControlPoint(3, BeginUpdateHolePonts[3]);
 				MOI->UpdateGeometry();
 			}
 			else if (Side == 2)
 			{
-				MOI->ControlPoints[1] = BeginUpdateHolePonts[1] + FVector(0.0, 0.0, dH.Z);
-				MOI->ControlPoints[2] = BeginUpdateHolePonts[2] + FVector(0.0, 0.0, dH.Z);
+				MOI->SetControlPoint(1,BeginUpdateHolePonts[1] + FVector(0.0, 0.0, dH.Z));
+				MOI->SetControlPoint(2,BeginUpdateHolePonts[2] + FVector(0.0, 0.0, dH.Z));
 				MOI->UpdateGeometry();
 			}
 			else if (Side == 3)
 			{
-				MOI->ControlPoints[0] = BeginUpdateHolePonts[0];
-				MOI->ControlPoints[3] = BeginUpdateHolePonts[3];
+				MOI->SetControlPoint(0,BeginUpdateHolePonts[0]);
+				MOI->SetControlPoint(3,BeginUpdateHolePonts[3]);
 				MOI->UpdateGeometry();
 			}
 		}
@@ -129,7 +129,7 @@ namespace Modumate
 		{
 			structuralHit = true;
 			bool drawAffordanceLine = false;
-			bool cpEdgeCheck = UModumateFunctionLibrary::IsTargetCloseToControlPointEdges(hitPoint, MOI->ControlPoints, MOI->GetActor()->GetActorTransform(), 10.f);
+			bool cpEdgeCheck = UModumateFunctionLibrary::IsTargetCloseToControlPointEdges(hitPoint, MOI->GetControlPoints(), MOI->GetActor()->GetActorTransform(), 10.f);
 			if (Side == 2 || Side == 3) // Change Z axis only for vertical stretch handles
 			{
 				if ((!cpEdgeCheck) || (Controller->EMPlayerState->SnappedCursor.SnapType != ESnapType::CT_FACESELECT))
@@ -164,10 +164,10 @@ namespace Modumate
 		default: break;
 		}
 
-		FVector cpPortal0 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[0]);
-		FVector cpPortal1 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[1]);
-		FVector cpPortal2 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[2]);
-		FVector cpPortal3 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[3]);
+		FVector cpPortal0 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(0));
+		FVector cpPortal1 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(1));
+		FVector cpPortal2 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(2));
+		FVector cpPortal3 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(3));
 		float cpPortalHalfHeight = (cpPortal1 + cpPortal0).Z / 2.f;
 
 		if (Side == 0) // Horizontal Side Left
@@ -176,8 +176,8 @@ namespace Modumate
 			FVector transformedDH = (MOI->GetActor()->GetActorRotation().UnrotateVector(dH));
 			if (dH.Size() > 1.0f)
 			{
-				MOI->ControlPoints[0] = BeginUpdateHolePonts[0] + FVector(transformedDH.X, 0.0f, 0.0f);
-				MOI->ControlPoints[1] = BeginUpdateHolePonts[1] + FVector(transformedDH.X, 0.0f, 0.0f);
+				MOI->SetControlPoint(0,BeginUpdateHolePonts[0] + FVector(transformedDH.X, 0.0f, 0.0f));
+				MOI->SetControlPoint(1,BeginUpdateHolePonts[1] + FVector(transformedDH.X, 0.0f, 0.0f));
 			}
 			// Dim String - total
 			FVector offsetDirTotal = MOI->GetActor()->GetActorUpVector();
@@ -216,8 +216,8 @@ namespace Modumate
 			FVector transformedDH = (MOI->GetActor()->GetActorRotation().UnrotateVector(dH));
 			if (dH.Size() > 1.0f)
 			{
-				MOI->ControlPoints[2] = BeginUpdateHolePonts[2] + FVector(transformedDH.X, 0.0f, 0.0f);
-				MOI->ControlPoints[3] = BeginUpdateHolePonts[3] + FVector(transformedDH.X, 0.0f, 0.0f);
+				MOI->SetControlPoint(2,BeginUpdateHolePonts[2] + FVector(transformedDH.X, 0.0f, 0.0f));
+				MOI->SetControlPoint(3,BeginUpdateHolePonts[3] + FVector(transformedDH.X, 0.0f, 0.0f));
 			}
 			// Dim String - total
 			FVector offsetDirTotal = MOI->GetActor()->GetActorUpVector();
@@ -255,8 +255,8 @@ namespace Modumate
 			FVector dV = hitPoint - AnchorPoint;
 			if (dV.Size() > 1.0f)
 			{
-				MOI->ControlPoints[1] = BeginUpdateHolePonts[1] + FVector(0.0, 0.0, dV.Z);
-				MOI->ControlPoints[2] = BeginUpdateHolePonts[2] + FVector(0.0, 0.0, dV.Z);
+				MOI->SetControlPoint(1,BeginUpdateHolePonts[1] + FVector(0.0, 0.0, dV.Z));
+				MOI->SetControlPoint(2,BeginUpdateHolePonts[2] + FVector(0.0, 0.0, dV.Z));
 			}
 			FVector offsetDir = MOI->GetActor()->GetActorForwardVector() * FVector(-1.f);
 			// Dim string - total
@@ -291,13 +291,13 @@ namespace Modumate
 		{
 			FVector dV = hitPoint - AnchorPoint;
 			// Min. height limit
-			float heightDiff = MOI->ControlPoints[1].Z - MOI->ControlPoints[0].Z;
-			float moveIncrement = hitPoint.Z - MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[0]).Z;
+			float heightDiff = MOI->GetControlPoint(1).Z - MOI->GetControlPoint(0).Z;
+			float moveIncrement = hitPoint.Z - MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(0)).Z;
 			// Limit handle to move down only if portal size is too small.
 			if ((dV.Size() > 1.0f && heightDiff > 1.0f) || moveIncrement < 0)
 			{
-				MOI->ControlPoints[0] = BeginUpdateHolePonts[0] + FVector(0.0, 0.0, dV.Z);
-				MOI->ControlPoints[3] = BeginUpdateHolePonts[3] + FVector(0.0, 0.0, dV.Z);
+				MOI->SetControlPoint(0,BeginUpdateHolePonts[0] + FVector(0.0, 0.0, dV.Z));
+				MOI->SetControlPoint(3,BeginUpdateHolePonts[3] + FVector(0.0, 0.0, dV.Z));
 			}
 			FVector offsetDir = MOI->GetActor()->GetActorForwardVector() * FVector(-1.f);
 			// Dim string - total
@@ -331,7 +331,7 @@ namespace Modumate
 		MOI->UpdateGeometry();
 
 		auto *wallParent = MOI->GetParentObject();
-		if (wallParent && wallParent->ObjectType == EObjectType::OTWallSegment)
+		if (wallParent && wallParent->GetObjectType() == EObjectType::OTWallSegment)
 		{
 			wallParent->UpdateGeometry();
 		}
@@ -355,10 +355,10 @@ namespace Modumate
 		MOI->ShowAdjustmentHandles(Controller.Get(), true);
 
 		// Console Command to get to undo/redo
-		FVector newMoiActorLocation = UKismetMathLibrary::TransformLocation(MOI->GetActor()->GetActorTransform(), MOI->ControlPoints[3]);
+		FVector newMoiActorLocation = UKismetMathLibrary::TransformLocation(MOI->GetActor()->GetActorTransform(), MOI->GetControlPoint(3));
 
-		TArray<FVector> newPoints = MOI->ControlPoints;
-		MOI->ControlPoints = BeginUpdateHolePonts;
+		TArray<FVector> newPoints = MOI->GetControlPoints();
+		MOI->SetControlPoints(BeginUpdateHolePonts);
 
 		Controller->ModumateCommand(FModumateCommand(Commands::kUpdateMOIHoleParams)
 			.Param(Parameters::kObjectID, MOI->ID)
@@ -378,11 +378,11 @@ namespace Modumate
 		}
 
 		MOI->ShowAdjustmentHandles(Controller.Get(), true);
-		MOI->ControlPoints = BeginUpdateHolePonts;
+		MOI->SetControlPoints(BeginUpdateHolePonts);
 		MOI->UpdateGeometry();
 
 		auto *wallParent = MOI->GetParentObject();
-		if (wallParent && wallParent->ObjectType == EObjectType::OTWallSegment)
+		if (wallParent && wallParent->GetObjectType() == EObjectType::OTWallSegment)
 		{
 			wallParent->UpdateGeometry();
 		}
@@ -422,8 +422,8 @@ namespace Modumate
 
 			if (Side == 1) // Horizontal Dim string text field, always on
 			{
-				FVector cpPortal1 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[1]);
-				FVector cpPortal2 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[2]);
+				FVector cpPortal1 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(1));
+				FVector cpPortal2 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(2));
 				FVector offsetDir = MOI->GetActor()->GetActorUpVector();
 				UModumateFunctionLibrary::AddNewDimensionString(
 					Controller.Get(),
@@ -442,8 +442,8 @@ namespace Modumate
 			}
 			if (Side == 0) // Vertical Dim string text field, always on
 			{
-				FVector cpPortal0 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[0]);
-				FVector cpPortal1 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[1]);
+				FVector cpPortal0 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(0));
+				FVector cpPortal1 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(1));
 				FVector offsetDir = MOI->GetActor()->GetActorForwardVector() * FVector(-1.f);
 				UModumateFunctionLibrary::AddNewDimensionString(
 					Controller.Get(),
@@ -462,12 +462,12 @@ namespace Modumate
 			}
 		}
 
-		if (MOI->GetActor() != nullptr && ((MOI->ObjectType == EObjectType::OTDoor) || (MOI->ObjectType == EObjectType::OTWindow)))
+		if (MOI->GetActor() != nullptr && ((MOI->GetObjectType() == EObjectType::OTDoor) || (MOI->GetObjectType() == EObjectType::OTWindow)))
 		{
 			TArray<FVector> worldCPs;
-			for (int32 i = 0; i < MOI->ControlPoints.Num(); ++i)
+			for (int32 i = 0; i < MOI->GetControlPoints().Num(); ++i)
 			{
-				worldCPs.Add(UKismetMathLibrary::TransformLocation(MOI->GetActor()->GetActorTransform(), MOI->ControlPoints[i]));
+				worldCPs.Add(UKismetMathLibrary::TransformLocation(MOI->GetActor()->GetActorTransform(), MOI->GetControlPoint(i)));
 			}
 			// Side 0 = Right : 1 = Left : 2 = UP : 3 = DOWN
 			switch (Side)
@@ -501,24 +501,24 @@ namespace Modumate
 			{
 				int32 thisCpId = Side == 0 ? 0 : 3;
 				int32 otherCpId = Side == 0 ? 3 : 0;
-				FVector delta = (MOI->ControlPoints[thisCpId] - MOI->ControlPoints[otherCpId]).GetSafeNormal() * number;
+				FVector delta = (MOI->GetControlPoint(thisCpId) - MOI->GetControlPoint(otherCpId)).GetSafeNormal() * number;
 				if (Controller->EnableDrawTotalLine && number > 0.f)
 				{
 					// this is to use delta as total length
 					if (Side == 0)
 					{
-						MOI->ControlPoints[0] = MOI->ControlPoints[3] + delta;
-						MOI->ControlPoints[1] = MOI->ControlPoints[2] + delta;
+						MOI->SetControlPoint(0,MOI->GetControlPoint(3) + delta);
+						MOI->SetControlPoint(1,MOI->GetControlPoint(2) + delta);
 					}
 					else
 					{
-						MOI->ControlPoints[2] = MOI->ControlPoints[1] + delta;
-						MOI->ControlPoints[3] = MOI->ControlPoints[0] + delta;
+						MOI->SetControlPoint(2,MOI->GetControlPoint(1) + delta);
+						MOI->SetControlPoint(3,MOI->GetControlPoint(0) + delta);
 					}
 				}
 				else if (Controller->EnableDrawDeltaLine)
 				{
-					bool bPositive = (MOI->ControlPoints[thisCpId] - MOI->ControlPoints[otherCpId]).Size() >= (BeginUpdateHolePonts[thisCpId] - BeginUpdateHolePonts[otherCpId]).Size();
+					bool bPositive = (MOI->GetControlPoint(thisCpId) - MOI->GetControlPoint(otherCpId)).Size() >= (BeginUpdateHolePonts[thisCpId] - BeginUpdateHolePonts[otherCpId]).Size();
 					if (!bPositive)
 					{
 						delta = delta * -1.f;
@@ -526,13 +526,13 @@ namespace Modumate
 					// this is to add delta height
 					if (Side == 0)
 					{
-						MOI->ControlPoints[0] = BeginUpdateHolePonts[0] + delta;
-						MOI->ControlPoints[1] = BeginUpdateHolePonts[1] + delta;
+						MOI->SetControlPoint(0,BeginUpdateHolePonts[0] + delta);
+						MOI->SetControlPoint(1,BeginUpdateHolePonts[1] + delta);
 					}
 					else
 					{
-						MOI->ControlPoints[2] = BeginUpdateHolePonts[2] + delta;
-						MOI->ControlPoints[3] = BeginUpdateHolePonts[3] + delta;
+						MOI->SetControlPoint(2,BeginUpdateHolePonts[2] + delta);
+						MOI->SetControlPoint(3,BeginUpdateHolePonts[3] + delta);
 					}
 				}
 				OnEndUse();
@@ -543,16 +543,27 @@ namespace Modumate
 				if (Controller->EnableDrawTotalLine && number > 0.f)
 				{
 					// this is use as total height
-					MOI->ControlPoints[1].Z = MOI->ControlPoints[0].Z + number;
-					MOI->ControlPoints[2].Z = MOI->ControlPoints[3].Z + number;
+					FVector CP = MOI->GetControlPoint(1);
+					CP.Z = MOI->GetControlPoint(0).Z + number;
+					MOI->SetControlPoint(1, CP);
+
+					CP = MOI->GetControlPoint(1);
+					CP.Z = MOI->GetControlPoint(3).Z + number;
+					MOI->SetControlPoint(2, CP);
 				}
 				else if (Controller->EnableDrawDeltaLine)
 				{
 					// this is to add delta height
-					bool bPositive = MOI->ControlPoints[1].Z >= BeginUpdateHolePonts[1].Z;
+					bool bPositive = MOI->GetControlPoint(1).Z >= BeginUpdateHolePonts[1].Z;
 					float numberAdjusted = bPositive ? number : number * -1.f;
-					MOI->ControlPoints[1].Z = BeginUpdateHolePonts[1].Z + numberAdjusted;
-					MOI->ControlPoints[2].Z = BeginUpdateHolePonts[2].Z + numberAdjusted;
+
+					FVector CP = MOI->GetControlPoint(1);
+					CP.Z = BeginUpdateHolePonts[1].Z + numberAdjusted;
+					MOI->SetControlPoint(1, CP);
+
+					CP = MOI->GetControlPoint(2);
+					CP.Z = BeginUpdateHolePonts[2].Z + numberAdjusted;
+					MOI->SetControlPoint(2, CP);
 				}
 				OnEndUse();
 				return true;
@@ -562,16 +573,27 @@ namespace Modumate
 				if (Controller->EnableDrawTotalLine && number > 0.f)
 				{
 					// this is use as total height
-					MOI->ControlPoints[0].Z = MOI->ControlPoints[1].Z - number;
-					MOI->ControlPoints[3].Z = MOI->ControlPoints[2].Z - number;
+					FVector CP = MOI->GetControlPoint(0);
+					CP.Z = MOI->GetControlPoint(1).Z - number;
+					MOI->SetControlPoint(0, CP);
+
+					CP = MOI->GetControlPoint(3);
+					CP.Z = MOI->GetControlPoint(2).Z - number;
+					MOI->SetControlPoint(3, CP);
 				}
 				else if (Controller->EnableDrawDeltaLine)
 				{
 					// this is to add delta height
-					bool bPositive = MOI->ControlPoints[0].Z >= BeginUpdateHolePonts[0].Z;
+					bool bPositive = MOI->GetControlPoint(0).Z >= BeginUpdateHolePonts[0].Z;
 					float numberAdjusted = bPositive ? number : number * -1.f;
-					MOI->ControlPoints[0].Z = BeginUpdateHolePonts[0].Z + numberAdjusted;
-					MOI->ControlPoints[3].Z = BeginUpdateHolePonts[3].Z + numberAdjusted;
+
+					FVector CP = MOI->GetControlPoint(0);
+					CP.Z = BeginUpdateHolePonts[0].Z + numberAdjusted;
+					MOI->SetControlPoint(0, CP);
+
+					CP = MOI->GetControlPoint(3);
+					CP.Z = BeginUpdateHolePonts[3].Z + numberAdjusted;
+					MOI->SetControlPoint(3, CP);
 				}
 				OnEndUse();
 				return true;
@@ -610,8 +632,8 @@ namespace Modumate
 
 	FVector FAdjustPortalInvertHandle::GetAttachmentPoint()
 	{
-		FVector cpPortal0 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[0]);
-		FVector cpPortal3 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->ControlPoints[3]);
+		FVector cpPortal0 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(0));
+		FVector cpPortal3 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(3));
 		FVector cpMid = (cpPortal0 + cpPortal3) / 2.f;
 		FVector cpMid0 = (cpPortal0 + (cpPortal0 + cpPortal3) / 2.f) / 2.f;
 		FVector cpMid3 = (cpPortal3 + (cpPortal0 + cpPortal3) / 2.f) / 2.f;
@@ -619,7 +641,7 @@ namespace Modumate
 		if (Sign > 0.f)
 		{
 			Handle->HandleDirection = (cpPortal3 - cpPortal0).GetSafeNormal();
-			if (MOI->ObjectTransversed)
+			if (MOI->GetObjectTransversed())
 			{
 				return cpMid3;
 			}
@@ -632,7 +654,7 @@ namespace Modumate
 		{
 			FVector portalDir = (cpPortal3 - cpPortal0).GetSafeNormal();
 			Handle->HandleDirection = UKismetMathLibrary::RotateAngleAxis(portalDir, 90.f, FVector::UpVector);
-			if (MOI->ObjectTransversed)
+			if (MOI->GetObjectTransversed())
 			{
 				return cpMid0;
 			}
@@ -654,7 +676,7 @@ namespace Modumate
 
 		OriginalLocHandle = GetAttachmentPoint();
 		OrginalLoc = MOI->GetActor()->GetActorLocation();
-		OriginalP = MOI->ControlPoints;
+		OriginalP = MOI->GetControlPoints();
 		FVector actorLoc = Handle->Implementation->GetAttachmentPoint();
 		AnchorLoc = FVector(actorLoc.X, actorLoc.Y, MOI->GetActor()->GetActorLocation().Z);
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorLoc, FVector::UpVector);
@@ -670,7 +692,7 @@ namespace Modumate
 
 		FEditModelAdjustmentHandleBase::OnUpdateUse();
 		auto *wallParent = MOI->GetParentObject();
-		bool bValidParentWall = wallParent && wallParent->ObjectType == EObjectType::OTWallSegment;
+		bool bValidParentWall = wallParent && wallParent->GetObjectType() == EObjectType::OTWallSegment;
 
 		if (!Controller->EMPlayerState->SnappedCursor.Visible)
 		{
@@ -685,8 +707,8 @@ namespace Modumate
 		}
 
 		FVector hitPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-		FVector worldCP0 = UKismetMathLibrary::TransformLocation(MOI->GetActor()->GetActorTransform(), MOI->ControlPoints[0]);
-		FVector worldCP3 = UKismetMathLibrary::TransformLocation(MOI->GetActor()->GetActorTransform(), MOI->ControlPoints[3]);
+		FVector worldCP0 = UKismetMathLibrary::TransformLocation(MOI->GetActor()->GetActorTransform(), MOI->GetControlPoint(0));
+		FVector worldCP3 = UKismetMathLibrary::TransformLocation(MOI->GetActor()->GetActorTransform(), MOI->GetControlPoint(3));
 
 		// Limit hit to plane form by MOI toward the camera
 		FVector dir, projectLoc;
@@ -701,7 +723,7 @@ namespace Modumate
 		{
 			return true;
 		}
-		bool cpEdgeCheck = UModumateFunctionLibrary::IsTargetCloseToControlPointEdges(hitIntersection, MOI->ControlPoints, MOI->GetActor()->GetActorTransform(), 10.f);
+		bool cpEdgeCheck = UModumateFunctionLibrary::IsTargetCloseToControlPointEdges(hitIntersection, MOI->GetControlPoints(), MOI->GetActor()->GetActorTransform(), 10.f);
 		if (Controller->EMPlayerState->SnappedCursor.Visible && !cpEdgeCheck)
 		{
 			switch (Controller->EMPlayerState->SnappedCursor.SnapType)
@@ -733,32 +755,38 @@ namespace Modumate
 			}
 		}
 
-		if (MOI->ObjectType == EObjectType::OTDoor) // Doors cannot move vertically, limit movement to control point 0 and 1
+		if (MOI->GetObjectType() == EObjectType::OTDoor) // Doors cannot move vertically, limit movement to control point 0 and 1
 		{
 			hitIntersection.Z = worldCP0.Z;
 			FVector moveDiff;
 			if (HandleID == 0 || HandleID == 1 || HandleID == 4 || HandleID == 5)
 			{
-				moveDiff = MOI->ControlPoints[0] - UKismetMathLibrary::InverseTransformLocation(MOI->GetActor()->GetActorTransform(), hitIntersection);
+				moveDiff = MOI->GetControlPoint(0) - UKismetMathLibrary::InverseTransformLocation(MOI->GetActor()->GetActorTransform(), hitIntersection);
 			}
 			else
 			{
-				moveDiff = MOI->ControlPoints[3] - UKismetMathLibrary::InverseTransformLocation(MOI->GetActor()->GetActorTransform(), hitIntersection);
+				moveDiff = MOI->GetControlPoint(3) - UKismetMathLibrary::InverseTransformLocation(MOI->GetActor()->GetActorTransform(), hitIntersection);
 			}
-			MOI->ControlPoints[0].X -= moveDiff.X;
-			MOI->ControlPoints[1].X -= moveDiff.X;
-			MOI->ControlPoints[2].X -= moveDiff.X;
-			MOI->ControlPoints[3].X -= moveDiff.X;
+
+			for (int32 i = 0; i < 4; ++i)
+			{
+				FVector cp = MOI->GetControlPoint(i);
+				cp.X -= moveDiff.X;
+				MOI->SetControlPoint(i, cp);
+			}
 		}
 		else
 		{
 			FVector moveDiff;
 			int32 handleCPConvert = HandleID % 4;
-			moveDiff = MOI->ControlPoints[handleCPConvert] - UKismetMathLibrary::InverseTransformLocation(MOI->GetActor()->GetActorTransform(), hitIntersection);
-			MOI->ControlPoints[0].X -= moveDiff.X;
-			MOI->ControlPoints[1].X -= moveDiff.X;
-			MOI->ControlPoints[2].X -= moveDiff.X;
-			MOI->ControlPoints[3].X -= moveDiff.X;
+			moveDiff = MOI->GetControlPoint(handleCPConvert) - UKismetMathLibrary::InverseTransformLocation(MOI->GetActor()->GetActorTransform(), hitIntersection);
+
+			for (int32 i = 0; i < 4; ++i)
+			{
+				FVector cp = MOI->GetControlPoint(i);
+				cp.X -= moveDiff.X;
+				MOI->SetControlPoint(i, cp);
+			}
 			//Replace with below if want to freely move vertically
 			//MOI->ControlPoints[0] -= moveDiff;
 			//MOI->ControlPoints[1] -= moveDiff;
@@ -794,8 +822,8 @@ namespace Modumate
 			return false;
 		}
 
-		TArray<FVector> newCPs = MOI->ControlPoints;
-		MOI->ControlPoints = OriginalP;
+		TArray<FVector> newCPs = MOI->GetControlPoints();
+		MOI->SetControlPoints(OriginalP);
 
 		Controller->ModumateCommand(
 			FModumateCommand(Commands::kUpdateMOIHoleParams)
@@ -815,10 +843,10 @@ namespace Modumate
 			return false;
 		}
 
-		MOI->ControlPoints = OriginalP;
+		MOI->SetControlPoints(OriginalP);
 		MOI->UpdateGeometry();
 		auto *wallParent = MOI->GetParentObject();
-		bool bValidParentWall = wallParent && wallParent->ObjectType == EObjectType::OTWallSegment;
+		bool bValidParentWall = wallParent && wallParent->GetObjectType() == EObjectType::OTWallSegment;
 		if (bValidParentWall)
 		{
 			wallParent->UpdateGeometry();
@@ -837,7 +865,7 @@ namespace Modumate
 			return FVector::ZeroVector;
 		}
 		FVector portalSideDir = MOI->GetNormal();
-		if (wallParent && wallParent->ObjectType == EObjectType::OTWallSegment)
+		if (wallParent && wallParent->GetObjectType() == EObjectType::OTWallSegment)
 		{
 			parentWallThickness = wallParent->CalculateThickness();
 		}
@@ -845,7 +873,7 @@ namespace Modumate
 		// Get location of handles regardless which side of the parent wall
 		int32 cpIndex = HandleID % 4;
 		FTransform portalTransform = MOI->GetActor()->GetActorTransform();
-		attachPoint = portalTransform.TransformPosition(MOI->ControlPoints[cpIndex]);
+		attachPoint = portalTransform.TransformPosition(MOI->GetControlPoint(cpIndex));
 
 		APlayerCameraManager* cameraActor = UGameplayStatics::GetPlayerCameraManager(Handle.Get(), 0);
 		FVector cameraLoc = cameraActor->GetCameraLocation();
@@ -866,14 +894,14 @@ namespace Modumate
 
 	bool FAdjustPortalPointHandle::HandleInputNumber(float number)
 	{
-		FVector currentDirection = (MOI->ControlPoints[0] - OriginalP[0]).GetSafeNormal();
+		FVector currentDirection = (MOI->GetControlPoint(0) - OriginalP[0]).GetSafeNormal();
 
 		TArray<FVector> newCPs;
 		for (int32 i = 0; i < OriginalP.Num(); ++i)
 		{
 			newCPs.Add(OriginalP[i] + (currentDirection * number));
 		}
-		MOI->ControlPoints = OriginalP;
+		MOI->SetControlPoints(OriginalP);
 
 		Controller->ModumateCommand(
 			FModumateCommand(Commands::kUpdateMOIHoleParams)

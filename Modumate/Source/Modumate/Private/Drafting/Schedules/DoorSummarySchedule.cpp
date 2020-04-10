@@ -29,13 +29,13 @@ namespace Modumate {
 		TMap<FName, TPair<int32, FModumateObjectAssembly>> doorsByKey;
 		for (auto& door : doors)
 		{
-			if (!doorsByKey.Contains(door->ObjectAssembly.DatabaseKey))
+			if (!doorsByKey.Contains(door->GetAssembly().DatabaseKey))
 			{
-				doorsByKey.Add(door->ObjectAssembly.DatabaseKey, TPair<int32, FModumateObjectAssembly>(1, door->ObjectAssembly));
+				doorsByKey.Add(door->GetAssembly().DatabaseKey, TPair<int32, FModumateObjectAssembly>(1, door->GetAssembly()));
 			}
 			else
 			{
-				doorsByKey[door->ObjectAssembly.DatabaseKey].Key++;
+				doorsByKey[door->GetAssembly().DatabaseKey].Key++;
 			}
 		}
 

@@ -44,7 +44,7 @@ namespace Modumate
 		MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
 		bool bEnableCollision = !MOI->GetPreviewOperationMode();
-		DynamicMeshActor->SetupMetaPlaneGeometry(MOI->ControlPoints, MaterialData, GetAlpha(), true, bEnableCollision);
+		DynamicMeshActor->SetupMetaPlaneGeometry(MOI->GetControlPoints(), MaterialData, GetAlpha(), true, bEnableCollision);
 
 		MOI->UpdateVisibilityAndCollision();
 
@@ -58,11 +58,11 @@ namespace Modumate
 
 	void FMOIMetaPlaneImpl::SetFromDataRecordAndRotation(const FMOIDataRecordV1 &dataRec, const FVector &origin, const FQuat &rotation)
 	{
-		if (ensure(dataRec.ControlPoints.Num() == MOI->ControlPoints.Num()))
+		if (ensure(dataRec.ControlPoints.Num() == MOI->GetControlPoints().Num()))
 		{
 			for (int32 i = 0; i < dataRec.ControlPoints.Num(); ++i)
 			{
-				MOI->ControlPoints[i] = origin + rotation.RotateVector(dataRec.ControlPoints[i] - origin);
+				MOI->SetControlPoint(i,origin + rotation.RotateVector(dataRec.ControlPoints[i] - origin));
 			}
 
 			const FGraph3DFace *graphFace = MOI ? MOI->GetDocument()->GetVolumeGraph().FindFace(MOI->ID) : nullptr;
@@ -86,11 +86,11 @@ namespace Modumate
 
 	void FMOIMetaPlaneImpl::SetFromDataRecordAndDisplacement(const FMOIDataRecordV1 &dataRec, const FVector &displacement)
 	{
-		if (ensure(dataRec.ControlPoints.Num() == MOI->ControlPoints.Num()))
+		if (ensure(dataRec.ControlPoints.Num() == MOI->GetControlPoints().Num()))
 		{
 			for (int32 i = 0; i < dataRec.ControlPoints.Num(); ++i)
 			{
-				MOI->ControlPoints[i] = dataRec.ControlPoints[i] + displacement;
+				MOI->SetControlPoint(i,dataRec.ControlPoints[i] + displacement);
 			}
 
 			const FGraph3DFace *graphFace = MOI ? MOI->GetDocument()->GetVolumeGraph().FindFace(MOI->ID) : nullptr;
@@ -117,7 +117,7 @@ namespace Modumate
 
 		UpdateCachedGraphData();
 
-		DynamicMeshActor->SetupMetaPlaneGeometry(MOI->ControlPoints, MaterialData, GetAlpha(), false, true);
+		DynamicMeshActor->SetupMetaPlaneGeometry(MOI->GetControlPoints(), MaterialData, GetAlpha(), false, true);
 		auto children = MOI->GetChildObjects();
 
 		for (auto *child : children)

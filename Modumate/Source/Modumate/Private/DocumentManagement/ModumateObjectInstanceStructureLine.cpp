@@ -60,7 +60,7 @@ namespace Modumate
 
 			if (MOI && DynamicMeshActor.IsValid() && DynamicMeshActor->Mesh)
 			{
-				ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->ObjectType);
+				ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->GetObjectType());
 				DynamicMeshActor->Mesh->SetCollisionObjectType(collisionObjType);
 			}
 		}
@@ -81,7 +81,7 @@ namespace Modumate
 	void FMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
 		const FSimplePolygon* profile = nullptr;
-		if (!UModumateObjectStatics::GetPolygonProfile(&MOI->ObjectAssembly, profile))
+		if (!UModumateObjectStatics::GetPolygonProfile(&MOI->GetAssembly(), profile))
 		{
 			return;
 		}
@@ -100,7 +100,7 @@ namespace Modumate
 			FVector2D profileSize = profile->Extents.GetSize();
 
 			FVector2D scaleVector;
-			if (MOI->ObjectAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
+			if (MOI->GetAssembly().TryGetProperty(BIM::Parameters::Scale, scaleVector))
 			{
 				profileSize *= scaleVector;
 			}
@@ -115,7 +115,7 @@ namespace Modumate
 
 	void FMOIStructureLine::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 	{
-		if (!ensure(DynamicMeshActor.IsValid() && MOI && (MOI->ObjectAssembly.Layers.Num() == 1)))
+		if (!ensure(DynamicMeshActor.IsValid() && MOI && (MOI->GetAssembly().Layers.Num() == 1)))
 		{
 			return;
 		}
@@ -134,12 +134,12 @@ namespace Modumate
 
 		FVector scaleVector;
 
-		if (!MOI->ObjectAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
+		if (!MOI->GetAssembly().TryGetProperty(BIM::Parameters::Scale, scaleVector))
 		{
 			scaleVector = FVector::OneVector;
 		}
 
-		DynamicMeshActor->SetupExtrudedPolyGeometry(MOI->ObjectAssembly, LineStartPos, LineEndPos,
+		DynamicMeshActor->SetupExtrudedPolyGeometry(MOI->GetAssembly(), LineStartPos, LineEndPos,
 			LineNormal, LineUp, UpperExtensions, OuterExtensions, scaleVector, bRecreate, bCreateCollision);
 	}
 }

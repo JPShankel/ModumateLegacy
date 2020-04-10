@@ -52,7 +52,7 @@ namespace Modumate
 		// TODO: preserve rotation if it was already set
 		MOI->SetObjectLocation(groupAABB.GetCenter());
 		MOI->SetObjectRotation(FQuat::Identity);
-		MOI->Extents = groupAABB.GetSize();
+		MOI->SetExtents(groupAABB.GetSize());
 
 		return true;
 	}
@@ -80,7 +80,7 @@ namespace Modumate
 
 	void FMOIGroupImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
-		if (MOI && !MOI->Extents.IsZero())
+		if (MOI && !MOI->GetExtents().IsZero())
 		{
 			// Don't use groups for snapping
 			if (bForSnapping)
@@ -102,7 +102,7 @@ namespace Modumate
 			{
 				FVector center = GetLocation();
 
-				FVector halfExtents = 0.5f * MOI->Extents;
+				FVector halfExtents = 0.5f * MOI->GetExtents();
 				halfExtents += FVector(StructuralExtentsExpansion);
 
 				FQuat rot = GetRotation();

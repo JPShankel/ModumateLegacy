@@ -25,27 +25,27 @@ namespace Modumate
 		, HoverColor(FColor::White)
 		, HoverThickness(3.0f)
 	{
-		MOI->ControlPoints.SetNum(2);
-		MOI->ControlPoints[0] = FVector::ZeroVector;
-		MOI->ControlPoints[1] = FVector::ZeroVector;
+		MOI->SetControlPoints(TArray<FVector>());
+		MOI->AddControlPoint(FVector::ZeroVector);
+		MOI->AddControlPoint(FVector::ZeroVector);
 	}
 
 	void FMOIMetaEdgeImpl::SetLocation(const FVector &p)
 	{
 		FVector midPoint = GetLocation();
 		FVector delta = p - midPoint;
-		MOI->ControlPoints[0] += delta;
-		MOI->ControlPoints[1] += delta;
+		MOI->SetControlPoint(0,MOI->GetControlPoint(0) + delta);
+		MOI->SetControlPoint(1,MOI->GetControlPoint(1) + delta);
 	}
 
 	FVector FMOIMetaEdgeImpl::GetLocation() const
 	{
-		return 0.5f * (MOI->ControlPoints[0] + MOI->ControlPoints[1]);
+		return 0.5f * (MOI->GetControlPoint(0) + MOI->GetControlPoint(1));
 	}
 
 	FVector FMOIMetaEdgeImpl::GetCorner(int32 index) const
 	{
-		return MOI->ControlPoints[index];
+		return MOI->GetControlPoint(index);
 	}
 
 	void FMOIMetaEdgeImpl::ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller)
@@ -131,7 +131,7 @@ namespace Modumate
 			MOI->GetConnectedMOIs(CachedConnectedMOIs);
 			for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
 			{
-				if (connectedMOI->ObjectType == EObjectType::OTMetaPlane)
+				if (connectedMOI->GetObjectType() == EObjectType::OTMetaPlane)
 				{
 					connectedMOI->MarkDirty(DirtyFlag);
 				}
@@ -143,10 +143,10 @@ namespace Modumate
 
 	void FMOIMetaEdgeImpl::SetupDynamicGeometry()
 	{
-		if (ensureAlways((MOI->ControlPoints.Num() == 2) && LineActor.IsValid()))
+		if (ensureAlways((MOI->GetControlPoints().Num() == 2) && LineActor.IsValid()))
 		{
-			LineActor->Point1 = MOI->ControlPoints[0];
-			LineActor->Point2 = MOI->ControlPoints[1];
+			LineActor->Point1 = MOI->GetControlPoint(0);
+			LineActor->Point2 = MOI->GetControlPoint(1);
 			MOI->UpdateVisibilityAndCollision();
 		}
 	}
@@ -219,13 +219,13 @@ namespace Modumate
 		// Don't report edge points for snapping, otherwise they will conflict with vertices
 		if (!bForSnapping)
 		{
-			FVector edgeDir = (MOI->ControlPoints[1] - MOI->ControlPoints[0]).GetSafeNormal();
+			FVector edgeDir = (MOI->GetControlPoint(1) - MOI->GetControlPoint(0)).GetSafeNormal();
 
-			outPoints.Add(FStructurePoint(MOI->ControlPoints[0], edgeDir, 0));
-			outPoints.Add(FStructurePoint(MOI->ControlPoints[1], edgeDir, 1));
+			outPoints.Add(FStructurePoint(MOI->GetControlPoint(0), edgeDir, 0));
+			outPoints.Add(FStructurePoint(MOI->GetControlPoint(1), edgeDir, 1));
 		}
 
-		outLines.Add(FStructureLine(MOI->ControlPoints[0], MOI->ControlPoints[1], 0, 1));
+		outLines.Add(FStructureLine(MOI->GetControlPoint(0), MOI->GetControlPoint(1), 0, 1));
 	}
 
 	const FMiterData& FMOIMetaEdgeImpl::GetMiterData() const

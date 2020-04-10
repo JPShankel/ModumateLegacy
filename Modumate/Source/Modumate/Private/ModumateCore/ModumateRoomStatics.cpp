@@ -223,7 +223,7 @@ bool UModumateRoomStatics::CanRoomContainFace(const Modumate::FModumateDocument 
 	for (int32 planeChildID : planeChildIDs)
 	{
 		const FModumateObjectInstance *planeChildObj = Document->GetObjectById(planeChildID);
-		if (planeChildObj && (planeChildObj->ObjectType == EObjectType::OTFloorSegment))
+		if (planeChildObj && (planeChildObj->GetObjectType() == EObjectType::OTFloorSegment))
 		{
 			return true;
 		}
@@ -255,7 +255,7 @@ void UModumateRoomStatics::CalculateRoomChanges(const Modumate::FModumateDocumen
 	TArray<const FModumateObjectInstance *> curRoomObjs = Document->GetObjectsOfType(EObjectType::OTRoom);
 	for (const FModumateObjectInstance *curRoomObj : curRoomObjs)
 	{
-		TArray<FSignedID> roomFaceIDs = curRoomObj->ControlIndices;
+		TArray<FSignedID> roomFaceIDs = curRoomObj->GetControlPointIndices();
 		roomFaceIDs.Sort();
 		oldRoomsFaceIDs.Add(curRoomObj->ID, roomFaceIDs);
 	}

@@ -79,7 +79,7 @@ namespace Modumate
 	{
 		UE_LOG(LogCallTrace, Display, TEXT("FAdjustMetaEdgeHandle::OnBeginUse"));
 
-		if (!FEditModelAdjustmentHandleBase::OnBeginUse() || (MOI->ControlPoints.Num() != 2))
+		if (!FEditModelAdjustmentHandleBase::OnBeginUse() || (MOI->GetControlPoints().Num() != 2))
 		{
 			return false;
 		}
@@ -128,8 +128,8 @@ namespace Modumate
 			return false;
 		}
 
-		OriginalEdgeStart = MOI->ControlPoints[0];
-		OriginalEdgeEnd = MOI->ControlPoints[1];
+		OriginalEdgeStart = MOI->GetControlPoint(0);
+		OriginalEdgeEnd = MOI->GetControlPoint(1);
 		OriginalEdgeCenter = 0.5f * (OriginalEdgeStart + OriginalEdgeEnd);
 		EdgeDir = (OriginalEdgeEnd - OriginalEdgeStart).GetSafeNormal();
 
@@ -157,8 +157,8 @@ namespace Modumate
 
 		if (!dp.IsNearlyZero())
 		{
-			MOI->ControlPoints[0] = OriginalEdgeStart + dp;
-			MOI->ControlPoints[1] = OriginalEdgeEnd + dp;
+			MOI->SetControlPoint(0,OriginalEdgeStart + dp);
+			MOI->SetControlPoint(1,OriginalEdgeEnd + dp);
 			MOI->UpdateGeometry();
 		}
 
@@ -179,27 +179,27 @@ namespace Modumate
 		{
 			if (CP.Num() == 2)
 			{
-				int32 numTotalCPs = MOI->ControlPoints.Num();
+				int32 numTotalCPs = MOI->GetControlPoints().Num();
 				FVector closestPoint1, closestPoint2;
-				FVector currentEdgeDirection = (MOI->ControlPoints[CP[1]] - MOI->ControlPoints[CP[0]]).GetSafeNormal();
+				FVector currentEdgeDirection = (MOI->GetControlPoint(CP[1]) - MOI->GetControlPoint(CP[0])).GetSafeNormal();
 
 				// Intersection test for first CP
 				int32 startID0 = (CP[0] + numTotalCPs - 1) % numTotalCPs;
 				int32 endID0 = CP[0];
-				FVector lineDirection0 = (MOI->ControlPoints[endID0] - MOI->ControlPoints[startID0]).GetSafeNormal();
-				bool b1 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, hitPoint, currentEdgeDirection, MOI->ControlPoints[endID0], lineDirection0);
+				FVector lineDirection0 = (MOI->GetControlPoint(endID0) - MOI->GetControlPoint(startID0).GetSafeNormal();
+				bool b1 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, hitPoint, currentEdgeDirection, MOI->GetControlPoint(endID0), lineDirection0);
 				FVector newCP0 = closestPoint1;
 
 				// Intersection test for second CP
 				int32 startID1 = (CP[1] + 1) % numTotalCPs;
 				int32 endID1 = CP[1];
-				FVector lineDirection1 = (MOI->ControlPoints[endID1] - MOI->ControlPoints[startID1]).GetSafeNormal();
-				bool b2 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, hitPoint, currentEdgeDirection, MOI->ControlPoints[endID1], lineDirection1);
+				FVector lineDirection1 = (MOI->GetControlPoint(endID1) - MOI->GetControlPoint(startID1)).GetSafeNormal();
+				bool b2 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, hitPoint, currentEdgeDirection, MOI->GetControlPoint(endID1), lineDirection1);
 				FVector newCP1 = closestPoint1;
 
 				// Set MOI control points to new CP
-				MOI->ControlPoints[CP[0]] = newCP0;
-				MOI->ControlPoints[CP[1]] = newCP1;
+				MOI->GetControlPoints(CP[0]) = newCP0;
+				MOI->GetControlPoints(CP[1]) = newCP1;
 
 				// Check if CPs are intersect. If it is, don't update geometry
 				TArray<int32> intersected, conflicted, triangles;
@@ -209,17 +209,17 @@ namespace Modumate
 				if (conflicted.Num() == 0 && intersected.Num() == 0 && triangles.Num() > 2)
 				{
 					UpdateTargetGeometry();
-					LastValidPendingCPLocations = { MOI->ControlPoints[CP[0]] , MOI->ControlPoints[CP[1]] };
+					LastValidPendingCPLocations = { MOI->GetControlPoints(CP[0]] , MOI->GetControlPoints(CP[1]] };
 				}
 				else
 				{
-					MOI->ControlPoints[CP[0]] = LastValidPendingCPLocations[0];
-					MOI->ControlPoints[CP[1]] = LastValidPendingCPLocations[1];
+					MOI->GetControlPoints(CP[0]] = LastValidPendingCPLocations[0];
+					MOI->GetControlPoints(CP[1]] = LastValidPendingCPLocations[1];
 				}
 
 				HandleOriginalPoint = (OriginalP[0] + OriginalP[1]) / 2.f;
-				FVector curSideMidLoc = (MOI->ControlPoints[CP[0]] + MOI->ControlPoints[CP[1]]) / 2.f;
-				currentEdgeDirection = (MOI->ControlPoints[CP[1]] - MOI->ControlPoints[CP[0]]).GetSafeNormal();
+				FVector curSideMidLoc = (MOI->GetControlPoints(CP[0]) + MOI->GetControlPoints(CP[1])) / 2.f;
+				currentEdgeDirection = (MOI->GetControlPoints(CP[1]) - MOI->GetControlPoints(CP[0])).GetSafeNormal();
 				bool b3 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, HandleOriginalPoint, Handle->HandleDirection, curSideMidLoc, currentEdgeDirection);
 				HandleCurrentPoint = closestPoint1;
 
@@ -239,7 +239,7 @@ namespace Modumate
 			}
 			else if (CP.Num() == 1)
 			{
-				MOI->ControlPoints[CP[0]] = OriginalP[0] + dp;
+				MOI->SetControlPoints(CP[0],OriginalP[0] + dp);
 
 				TArray<int32> intersected, conflicted, triangles;
 				UModumateFunctionLibrary::CalculatePolygonTriangleWithError(MOI->ControlPoints, triangles, conflicted, intersected);
@@ -247,11 +247,11 @@ namespace Modumate
 				if (conflicted.Num() == 0 && intersected.Num() == 0)
 				{
 					UpdateTargetGeometry();
-					LastValidPendingCPLocations = { MOI->ControlPoints[CP[0]] };
+					LastValidPendingCPLocations = { MOI->GetControlPoints(CP[0]) };
 				}
 				else
 				{
-					MOI->ControlPoints[CP[0]] = LastValidPendingCPLocations[0];
+					MOI->SetControlPoints(CP[0], LastValidPendingCPLocations[0]);
 				}
 
 				FVector offsetDir = dp.GetSafeNormal() ^ FVector(Controller->EMPlayerState->SketchPlane);
@@ -259,7 +259,7 @@ namespace Modumate
 				// Dim string between cursor pos and original point handle position. Delta only
 				UModumateFunctionLibrary::AddNewDimensionString(Controller.Get(),
 					OriginalP[0],
-					MOI->ControlPoints[CP[0]],
+					MOI->GetControlPoints(CP[0]),
 					offsetDir,
 					Controller->DimensionStringGroupID_Default,
 					Controller->DimensionStringUniqueID_Delta,
@@ -286,10 +286,10 @@ namespace Modumate
 		}
 
 		TArray<int32> vertexIDs = { StartVertexID, EndVertexID };
-		TArray<FVector> vertexPositions = { MOI->ControlPoints[0], MOI->ControlPoints[1] };
+		TArray<FVector> vertexPositions = { MOI->GetControlPoint(0), MOI->GetControlPoint(1) };
 
-		MOI->ControlPoints[0] = OriginalEdgeStart;
-		MOI->ControlPoints[1] = OriginalEdgeEnd;
+		MOI->SetControlPoint(0,OriginalEdgeStart);
+		MOI->SetControlPoint(1,OriginalEdgeEnd);
 
 		Controller->ModumateCommand(
 			FModumateCommand(Commands::kMoveMetaVertices)
@@ -311,8 +311,8 @@ namespace Modumate
 			return false;
 		}
 
-		MOI->ControlPoints[0] = OriginalEdgeStart;
-		MOI->ControlPoints[1] = OriginalEdgeEnd;
+		MOI->SetControlPoint(0,OriginalEdgeStart);
+		MOI->SetControlPoint(1,OriginalEdgeEnd);
 
 		UpdateTargetGeometry();
 		MOI->ShowAdjustmentHandles(Controller.Get(), true);
@@ -324,7 +324,7 @@ namespace Modumate
 
 	FVector FAdjustMetaEdgeHandle::GetAttachmentPoint()
 	{
-		return 0.5f * (MOI->ControlPoints[0] + MOI->ControlPoints[1]);
+		return 0.5f * (MOI->GetControlPoint(0) + MOI->GetControlPoint(1));
 	}
 
 	bool FAdjustMetaEdgeHandle::HandleInputNumber(float number)
@@ -347,18 +347,18 @@ namespace Modumate
 			FVector closestPoint1, closestPoint2;
 
 			// Intersection test for first CP
-			int32 startID0 = UModumateFunctionLibrary::LoopArrayGetPreviousIndex(CP[0], MOI->ControlPoints.Num());
+			int32 startID0 = UModumateFunctionLibrary::LoopArrayGetPreviousIndex(CP[0], MOI->GetControlPoints().Num());
 			int32 endID0 = CP[0];
-			FVector lineDirection0 = UKismetMathLibrary::GetDirectionUnitVector(MOI->ControlPoints[startID0], MOI->ControlPoints[endID0]);
+			FVector lineDirection0 = UKismetMathLibrary::GetDirectionUnitVector(MOI->GetControlPoint(startID0), MOI->GetControlPoint(endID0));
 			bool b1 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, inputHandleLocation, currentEdgeDirection, OriginalP[0], lineDirection0);
-			FVector newCP0 = FVector(closestPoint1.X, closestPoint1.Y, MOI->ControlPoints[CP[0]].Z);
+			FVector newCP0 = FVector(closestPoint1.X, closestPoint1.Y, MOI->GetControlPoint(CP[0]).Z);
 
 			// Intersection test for second CP
-			int32 startID1 = UModumateFunctionLibrary::LoopArrayGetNextIndex(CP[1], MOI->ControlPoints.Num());
+			int32 startID1 = UModumateFunctionLibrary::LoopArrayGetNextIndex(CP[1], MOI->GetControlPoints().Num());
 			int32 endID1 = CP[1];
-			FVector lineDirection1 = UKismetMathLibrary::GetDirectionUnitVector(MOI->ControlPoints[startID1], MOI->ControlPoints[endID1]);
+			FVector lineDirection1 = UKismetMathLibrary::GetDirectionUnitVector(MOI->GetControlPoint(startID1), MOI->GetControlPoint(endID1));
 			bool b2 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, inputHandleLocation, currentEdgeDirection, OriginalP[1], lineDirection1);
-			FVector newCP1 = FVector(closestPoint1.X, closestPoint1.Y, MOI->ControlPoints[CP[1]].Z);
+			FVector newCP1 = FVector(closestPoint1.X, closestPoint1.Y, MOI->GetControlPoint(CP[1]).Z);
 
 			// Check if CPs are intersect. If it is, don't update geometry
 			TArray<FVector> proxyCPs = MOI->ControlPoints;
@@ -369,14 +369,14 @@ namespace Modumate
 			if (conflicted.Num() == 0 && intersected.Num() == 0 && triangles.Num() > 2)
 			{
 				// Set MOI control points to new CP
-				MOI->ControlPoints[CP[0]] = newCP0;
-				MOI->ControlPoints[CP[1]] = newCP1;
+				MOI->SetControlPoint(CP[0],newCP0);
+				MOI->SetControlPoint(CP[1],newCP1);
 
 				// Setup for ModumateCommand
 				TArray<FVector> newPoints = MOI->ControlPoints;
 				for (size_t i = 0; i < CP.Num(); ++i)
 				{
-					MOI->ControlPoints[CP[i]] = OriginalP[i];
+					MOI->SetControlPoint(CP[i],OriginalP[i]);
 				}
 
 				Controller->ModumateCommand(

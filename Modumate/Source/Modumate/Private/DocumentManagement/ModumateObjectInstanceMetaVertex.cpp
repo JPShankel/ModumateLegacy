@@ -15,13 +15,13 @@ namespace Modumate
 		, DefaultHandleSize(0.0006f)
 		, SelectedHandleSize(0.001f)
 	{
-		MOI->ControlPoints.SetNum(1);
-		MOI->ControlPoints[0] = FVector::ZeroVector;
+		MOI->SetControlPoints(TArray<FVector>());
+		MOI->AddControlPoint(FVector::ZeroVector);
 	}
 
 	void FMOIMetaVertexImpl::SetLocation(const FVector &p)
 	{
-		MOI->ControlPoints[0] = p;
+		MOI->SetControlPoint(0,p);
 		if (VertexActor.IsValid())
 		{
 			VertexActor->SetMOILocation(p);
@@ -30,7 +30,7 @@ namespace Modumate
 
 	FVector FMOIMetaVertexImpl::GetLocation() const
 	{
-		return MOI->ControlPoints[0];
+		return MOI->GetControlPoint(0);
 	}
 
 	FVector FMOIMetaVertexImpl::GetCorner(int32 index) const
@@ -55,7 +55,7 @@ namespace Modumate
 
 	void FMOIMetaVertexImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
-		outPoints.Add(FStructurePoint(MOI->ControlPoints[0], FVector::ZeroVector, 0));
+		outPoints.Add(FStructurePoint(MOI->GetControlPoint(0), FVector::ZeroVector, 0));
 	}
 
 	AActor *FMOIMetaVertexImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
@@ -83,7 +83,7 @@ namespace Modumate
 			MOI->GetConnectedMOIs(CachedConnectedMOIs);
 			for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
 			{
-				if (connectedMOI->ObjectType == EObjectType::OTMetaEdge)
+				if (connectedMOI->GetObjectType() == EObjectType::OTMetaEdge)
 				{
 					connectedMOI->MarkDirty(DirtyFlag);
 				}
@@ -95,9 +95,9 @@ namespace Modumate
 
 	void FMOIMetaVertexImpl::SetupDynamicGeometry()
 	{
-		if (ensureAlways((MOI->ControlPoints.Num() == 1) && VertexActor.IsValid()))
+		if (ensureAlways((MOI->GetControlPoints().Num() == 1) && VertexActor.IsValid()))
 		{
-			VertexActor->SetMOILocation(MOI->ControlPoints[0]);
+			VertexActor->SetMOILocation(MOI->GetControlPoint(0));
 			MOI->UpdateVisibilityAndCollision();
 		}
 	}

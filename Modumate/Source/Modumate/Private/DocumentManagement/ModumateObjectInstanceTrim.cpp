@@ -57,9 +57,9 @@ namespace Modumate
 
 	FVector FMOITrimImpl::GetLocation() const
 	{
-		if (MOI && MOI->ControlPoints.Num() >= 2)
+		if (MOI && MOI->GetControlPoints().Num() >= 2)
 		{
-			return 0.5f * (MOI->ControlPoints[0] + MOI->ControlPoints[1]);
+			return 0.5f * (MOI->GetControlPoint(0) + MOI->GetControlPoint(1));
 		}
 
 		return FVector::ZeroVector;
@@ -76,7 +76,7 @@ namespace Modumate
 
 			if (MOI && DynamicMeshActor.IsValid() && DynamicMeshActor->Mesh)
 			{
-				ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->ObjectType);
+				ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->GetObjectType());
 				DynamicMeshActor->Mesh->SetCollisionObjectType(collisionObjType);
 			}
 		}
@@ -97,7 +97,7 @@ namespace Modumate
 	void FMOITrimImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
 		const FSimplePolygon* profile = nullptr;
-		if (UModumateObjectStatics::GetPolygonProfile(&MOI->ObjectAssembly, profile))
+		if (UModumateObjectStatics::GetPolygonProfile(&MOI->GetAssembly(), profile))
 		{
 			FVector2D profileSize = profile->Extents.GetSize();
 
@@ -145,8 +145,8 @@ namespace Modumate
 			return ret;
 		}
 
-		int32 edgeStartIndex = MOI->ControlIndices[0];
-		int32 edgeEndIndex = MOI->ControlIndices[1];
+		int32 edgeStartIndex = MOI->GetControlPointIndex(0);
+		int32 edgeEndIndex = MOI->GetControlPointIndex(1);
 		FVector edgeStartPos, edgeEndPos;
 		if (!UModumateObjectStatics::GetTrimEdgePosition(parent, edgeStartIndex, edgeEndIndex, edgeStartPos, edgeEndPos))
 		{
@@ -157,7 +157,7 @@ namespace Modumate
 		float edgeLength = edgeDelta.Size();
 
 		ret.RelativePosition.X = edgeLength;
-		ret.OriginalControlPoints = MOI->ControlPoints;
+		ret.OriginalControlPoints = MOI->GetControlPoints();
 
 		return ret;
 	}
@@ -175,8 +175,8 @@ namespace Modumate
 			return;
 		}
 
-		int32 edgeStartIndex = MOI->ControlIndices[0];
-		int32 edgeEndIndex = MOI->ControlIndices[1];
+		int32 edgeStartIndex = MOI->GetControlPointIndex(0);
+		int32 edgeEndIndex = MOI->GetControlPointIndex(1);
 		FVector edgeStartPos, edgeEndPos;
 		if (!UModumateObjectStatics::GetTrimEdgePosition(parent, edgeStartIndex, edgeEndIndex, edgeStartPos, edgeEndPos))
 		{
@@ -192,18 +192,21 @@ namespace Modumate
 		FVector edgeDir = edgeDelta / edgeLength;
 
 		// Restore original control points here, since they're being read/modified in order to adhere to wall edges.
-		MOI->ControlPoints = wm.OriginalControlPoints;
+		MOI->SetControlPoints(wm.OriginalControlPoints);
 
-		float origStartAlongEdge = MOI->ControlPoints[0].X;
-		float origEndAlongEdge = MOI->ControlPoints[1].X;
+		float origStartAlongEdge = MOI->GetControlPoint(0).X;
+		float origEndAlongEdge = MOI->GetControlPoint(1).X;
 		float origEdgeLength = wm.RelativePosition.X;
 
 		float edgeLengthDelta = edgeLength - origEdgeLength;
 
-		float &curStartAlongEdge = MOI->ControlPoints[0].X;
-		float &curEndAlongEdge = MOI->ControlPoints[1].X;
+//		float &curStartAlongEdge = MOI->GetControlPoint(0).X;
+//		float &curEndAlongEdge = MOI->GetControlPoint(1).X;
 
-		curStartAlongEdge = FMath::Clamp(curStartAlongEdge, 0.0f, edgeLength);
+		FVector curStartAlongEdge = MOI->GetControlPoint(0);
+		FVector curEndAlongEdge = MOI->GetControlPoint(1);
+
+		curStartAlongEdge.X = FMath::Clamp(curStartAlongEdge.X, 0.0f, edgeLength);
 
 		// If the start of the edge is being changed, then modify the start/end positions accordingly
 		if (wm.OriginIndex == 0)
@@ -211,11 +214,11 @@ namespace Modumate
 			// If the original end point was at the end of the edge, then keep it there and extend the trim
 			if (FMath::IsNearlyEqual(origEndAlongEdge, origEdgeLength))
 			{
-				curEndAlongEdge = FMath::Clamp(origEndAlongEdge + edgeLengthDelta, curStartAlongEdge, edgeLength);
+				curEndAlongEdge.X = FMath::Clamp(origEndAlongEdge + edgeLengthDelta, curStartAlongEdge.X, edgeLength);
 			}
 			else
 			{
-				curEndAlongEdge = FMath::Clamp(origEndAlongEdge, curStartAlongEdge, edgeLength);
+				curEndAlongEdge.X = FMath::Clamp(origEndAlongEdge, curStartAlongEdge.X, edgeLength);
 			}
 		}
 		else if (wm.OriginIndex == 1)
@@ -223,9 +226,9 @@ namespace Modumate
 			// If the original start point was at the beginning of the edge, then keep it there and extend the trim
 			if (!FMath::IsNearlyZero(origStartAlongEdge))
 			{
-				curStartAlongEdge = FMath::Clamp(origStartAlongEdge + edgeLengthDelta, 0.0f, edgeLength);
+				curStartAlongEdge.X = FMath::Clamp(origStartAlongEdge + edgeLengthDelta, 0.0f, edgeLength);
 			}
-			curEndAlongEdge = FMath::Clamp(origEndAlongEdge + edgeLengthDelta, curStartAlongEdge, edgeLength);
+			curEndAlongEdge.X = FMath::Clamp(origEndAlongEdge + edgeLengthDelta, curStartAlongEdge.X, edgeLength);
 		}
 
 		// Set the error state for this object, so that it can be deleted if it's rendered invalid by the current size
@@ -233,7 +236,7 @@ namespace Modumate
 		if (controller && controller->EMPlayerState)
 		{
 			static const FName zeroLengthErrorTag(TEXT("TrimZeroLength"));
-			bool bZeroLengthError = FMath::IsNearlyEqual(curStartAlongEdge, curEndAlongEdge);
+			bool bZeroLengthError = FMath::IsNearlyEqual(curStartAlongEdge.X, curEndAlongEdge.X);
 				controller->EMPlayerState->SetErrorForObject(MOI->ID, zeroLengthErrorTag, bZeroLengthError);
 		}
 
@@ -243,8 +246,8 @@ namespace Modumate
 	void FMOITrimImpl::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 	{
 		// Updated cached values for this trim
-		if (!ensure(DynamicMeshActor.IsValid() && MOI && (MOI->ObjectAssembly.Layers.Num() == 1) &&
-			UModumateObjectStatics::GetTrimValuesFromControls(MOI->ControlPoints, MOI->ControlIndices,
+		if (!ensure(DynamicMeshActor.IsValid() && MOI && (MOI->GetAssembly().Layers.Num() == 1) &&
+			UModumateObjectStatics::GetTrimValuesFromControls(MOI->GetControlPoints(), MOI->GetControlPointIndices(),
 				StartAlongEdge, EndAlongEdge, EdgeStartIndex, EdgeEndIndex, EdgeMountIndex,
 				bUseLengthAsPercent, MiterOptionStart, MiterOptionEnd)))
 		{
@@ -260,7 +263,7 @@ namespace Modumate
 
 		// Get the trim geometry, using the saved mounting index in order to
 		// provide a hint about which world normal and up vectors to use.
-		if (ensure(UModumateObjectStatics::GetTrimGeometryOnEdge(parentMOI, &MOI->ObjectAssembly, EdgeStartIndex, EdgeEndIndex,
+		if (ensure(UModumateObjectStatics::GetTrimGeometryOnEdge(parentMOI, &MOI->GetAssembly(), EdgeStartIndex, EdgeEndIndex,
 			StartAlongEdge, EndAlongEdge, bUseLengthAsPercent, MiterOptionStart, MiterOptionEnd,
 			TrimStartPos, TrimEndPos, TrimNormal, TrimUp, EdgeMountIndex,
 			UpperExtensions, OuterExtensions, FVector::ZeroVector, EdgeMountIndex, true)))
@@ -268,12 +271,12 @@ namespace Modumate
 			TrimDir = (TrimEndPos - TrimStartPos).GetSafeNormal();
 
 			FVector scaleVector;
-			if (!MOI->ObjectAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
+			if (!MOI->GetAssembly().TryGetProperty(BIM::Parameters::Scale, scaleVector))
 			{
 				scaleVector = FVector::OneVector;
 			}
 
-			DynamicMeshActor->SetupExtrudedPolyGeometry(MOI->ObjectAssembly, TrimStartPos, TrimEndPos,
+			DynamicMeshActor->SetupExtrudedPolyGeometry(MOI->GetAssembly(), TrimStartPos, TrimEndPos,
 				TrimNormal, TrimUp, UpperExtensions, OuterExtensions, scaleVector, bRecreate, bCreateCollision);
 		}
 	}

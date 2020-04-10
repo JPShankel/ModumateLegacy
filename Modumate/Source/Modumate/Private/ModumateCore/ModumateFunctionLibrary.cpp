@@ -1142,7 +1142,7 @@ TArray<FVector> UModumateFunctionLibrary::GetMOIControlPointsFromActor(AActor * 
 	if (Actor != nullptr)
 	{
 		FModumateObjectInstance *moi = GameState->Document.ObjectFromActor(Actor);
-		moiControlPoints = moi->ControlPoints;
+		moiControlPoints = moi->GetControlPoints();
 	}
 	return moiControlPoints;
 }
@@ -1685,9 +1685,9 @@ bool UModumateFunctionLibrary::MoiPortalSetNewWidth(AActor* targetActor, float n
 	{
 		return false;
 	}
-	TArray<FVector> proxyCPs = moi->ControlPoints;
+	TArray<FVector> proxyCPs = moi->GetControlPoints();
 	float midPoint = (proxyCPs[0].X + proxyCPs[3].X) / 2.f;
-	if (moi->ObjectType == EObjectType::OTDoor || moi->ObjectType == EObjectType::OTWindow)
+	if (moi->GetObjectType() == EObjectType::OTDoor || moi->GetObjectType() == EObjectType::OTWindow)
 	{
 		proxyCPs[0].X = midPoint - newWidth * 0.5f;
 		proxyCPs[1].X = midPoint - newWidth * 0.5f;
@@ -1718,8 +1718,8 @@ bool UModumateFunctionLibrary::MoiPortalSetNewHeight(AActor* targetActor, float 
 	{
 		return false;
 	}
-	TArray<FVector> proxyCPs = moi->ControlPoints;
-	if ((moi->ObjectType == EObjectType::OTDoor) || (moi->ObjectType == EObjectType::OTWindow))
+	TArray<FVector> proxyCPs = moi->GetControlPoints();
+	if ((moi->GetObjectType() == EObjectType::OTDoor) || (moi->GetObjectType() == EObjectType::OTWindow))
 	{
 		proxyCPs[1].Z = proxyCPs[0].Z + newHeight;
 		proxyCPs[2].Z = proxyCPs[3].Z + newHeight;
@@ -2286,7 +2286,7 @@ EObjectType UModumateFunctionLibrary::GetMOITypeFromActor(AActor * MOIActor)
 		}
 		else
 		{
-			return moi->ObjectType;
+			return moi->GetObjectType();
 		}
 	}
 	else
@@ -2312,7 +2312,7 @@ FVector UModumateFunctionLibrary::GetMOIActorsCenter(TArray<AActor*> MOIActors)
 		FModumateObjectInstance *moi = gameState->Document.ObjectFromActor(curActor);
 		if (moi != nullptr)
 		{
-			switch (moi->ObjectType)
+			switch (moi->GetObjectType())
 			{
 			case EObjectType::OTDoor:
 			case EObjectType::OTWindow:
@@ -2324,12 +2324,12 @@ FVector UModumateFunctionLibrary::GetMOIActorsCenter(TArray<AActor*> MOIActors)
 			case EObjectType::OTFloorSegment:
 			case EObjectType::OTRailSegment:
 			case EObjectType::OTCabinet:
-				allCenterLocations.Add(UKismetMathLibrary::GetVectorArrayAverage(moi->ControlPoints) + FVector(0.f, 0.f, moi->Extents.Y / 2.f));
+				allCenterLocations.Add(UKismetMathLibrary::GetVectorArrayAverage(moi->GetControlPoints()) + FVector(0.f, 0.f, moi->GetExtents().Y / 2.f));
 				break;
 			case EObjectType::OTFurniture:
-				if (moi->ObjectAssembly.AsShoppingItem().EngineMesh != nullptr)
+				if (moi->GetAssembly().AsShoppingItem().EngineMesh != nullptr)
 				{
-					FVector objExtent = moi->ObjectAssembly.AsShoppingItem().EngineMesh->GetBounds().BoxExtent;
+					FVector objExtent = moi->GetAssembly().AsShoppingItem().EngineMesh->GetBounds().BoxExtent;
 					FVector actorOrigin = moi->GetObjectLocation();
 					allCenterLocations.Add(actorOrigin + FVector(0.f, 0.f, objExtent.Z));
 				}
@@ -2579,7 +2579,7 @@ FShoppingItem UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor
 		AEditModelGameState_CPP *gameState = TargetActor->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 		Modumate::FModumateDocument *doc = &gameState->Document;
 		FModumateObjectInstance *moi = doc->ObjectFromActor(TargetActor);
-		FShoppingItem returnShoppingItem = moi->ObjectAssembly.AsShoppingItem();
+		FShoppingItem returnShoppingItem = moi->GetAssembly().AsShoppingItem();
 		bSuccess = !returnShoppingItem.Key.IsNone();
 		return returnShoppingItem;
 	}

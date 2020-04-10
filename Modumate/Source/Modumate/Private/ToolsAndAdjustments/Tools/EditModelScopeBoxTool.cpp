@@ -153,7 +153,7 @@ bool UScopeBoxTool::EnterNextStage()
 	case SeekingCutPlane:
 	{
 		FModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject; 
-		if (newTarget != nullptr && newTarget->ObjectType == EObjectType::OTCutPlane)
+		if (newTarget != nullptr && newTarget->GetObjectType() == EObjectType::OTCutPlane)
 		{
 			if (!GameMode.IsValid())
 			{

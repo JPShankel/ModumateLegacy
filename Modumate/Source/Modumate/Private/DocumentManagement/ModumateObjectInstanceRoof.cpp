@@ -30,17 +30,17 @@ namespace Modumate
 
 	FVector FMOIRoofImpl::GetCorner(int32 index) const
 	{
-		int32 numCP = MOI->ControlPoints.Num();
-		float thickness = MOI->Extents.Y;
+		int32 numCP = MOI->GetControlPoints().Num();
+		float thickness = MOI->GetExtents().Y;
 		FVector extrusionDir = FVector::UpVector;
 
 		FPlane plane;
-		UModumateGeometryStatics::GetPlaneFromPoints(MOI->ControlPoints, plane);
+		UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), plane);
 
 		// For now, make sure that the plane of the MOI is horizontal
 		if (ensureAlways((numCP >= 3) && FVector::Parallel(extrusionDir, plane)))
 		{
-			FVector corner = MOI->ControlPoints[index % numCP];
+			FVector corner = MOI->GetControlPoint(index % numCP);
 
 			if (index >= numCP)
 			{
@@ -59,13 +59,13 @@ namespace Modumate
 	{
 		GotGeometry = true;
 
-		if (UModumateObjectStatics::GetRoofGeometryValues(MOI->ControlPoints, MOI->ControlIndices, EdgePoints, EdgeSlopes, EdgesHaveFaces))
+		if (UModumateObjectStatics::GetRoofGeometryValues(MOI->GetControlPoints(), MOI->GetControlPointIndices(), EdgePoints, EdgeSlopes, EdgesHaveFaces))
 		{
 			TArray<FVector> CombinedPolyVerts;
 			TArray<int32> PolyVertIndices;
 			if (UModumateGeometryStatics::TessellateSlopedEdges(EdgePoints, EdgeSlopes, EdgesHaveFaces, CombinedPolyVerts, PolyVertIndices))
 			{
-				DynamicMeshActor->SetupRoofGeometry(MOI->ObjectAssembly, CombinedPolyVerts, PolyVertIndices, EdgesHaveFaces);
+				DynamicMeshActor->SetupRoofGeometry(MOI->GetAssembly(), CombinedPolyVerts, PolyVertIndices, EdgesHaveFaces);
 			}
 		}
 
@@ -161,7 +161,7 @@ namespace Modumate
 
 		if ((CP >= 0) && (CP < EdgeSlopes.Num()))
 		{
-			UModumateObjectStatics::GetRoofGeometryValues(MOI->ControlPoints, MOI->ControlIndices, EdgePoints, EdgeSlopes, EdgesHaveFaces);
+			UModumateObjectStatics::GetRoofGeometryValues(MOI->GetControlPoints(), MOI->GetControlPointIndices(), EdgePoints, EdgeSlopes, EdgesHaveFaces);
 			EdgesHaveFaces[CP] = !EdgesHaveFaces[CP];
 
 			TArray<FVector> newCPs;
@@ -185,11 +185,11 @@ namespace Modumate
 
 	FVector FSetSegmentSlopeHandle::GetAttachmentPoint()
 	{
-		if (UModumateObjectStatics::GetRoofGeometryValues(MOI->ControlPoints, MOI->ControlIndices, EdgePoints, EdgeSlopes, EdgesHaveFaces))
+		if (UModumateObjectStatics::GetRoofGeometryValues(MOI->GetControlPoints(), MOI->GetControlPointIndices(), EdgePoints, EdgeSlopes, EdgesHaveFaces))
 		{
 			int32 numPoints = EdgePoints.Num();
 			FVector edgeCenter = 0.5f * (EdgePoints[CP] + EdgePoints[(CP + 1) % EdgePoints.Num()]);
-			FVector heightOffset = FVector(0, 0, 0.5f * MOI->Extents.Y + FaceCenterHeightOffset);
+			FVector heightOffset = FVector(0, 0, 0.5f * MOI->GetExtents().Y + FaceCenterHeightOffset);
 			return MOI->GetObjectRotation().RotateVector(heightOffset + edgeCenter);
 		}
 
