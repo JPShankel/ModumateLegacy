@@ -1,9 +1,0 @@
-{
-	"BuildId": "1d23dae0-a562-41cc-bcc5-033cfc8de50e",
-	"Modules": 
-	{
-		"BacktraceBlueprintLibrary": "UE4Editor-BacktraceBlueprintLibrary.dll",
-		"BacktraceIntegration": "UE4Editor-BacktraceIntegration.dll",
-		"BacktraceSettingsLibrary": "UE4Editor-BacktraceSettingsLibrary.dll"
-	}
-}
