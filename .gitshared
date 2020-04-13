@@ -1,0 +1,4 @@
+[core]
+	autocrlf = true
+[submodule]
+	recurse = true

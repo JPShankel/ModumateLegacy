@@ -1,3 +1,4 @@
 [submodule "UE4"]
 	path = UE4
 	url = https://github.com/Modumate/Modumate-UE4
+	branch = Modumate
