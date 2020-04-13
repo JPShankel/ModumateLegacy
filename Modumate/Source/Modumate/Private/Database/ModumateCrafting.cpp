@@ -1887,8 +1887,6 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetPinGroupsForNode(
 		group.MaxPins = pin.MaxCount;
 		group.MinPins = pin.MinCount;
 		group.OwnerInstance = NodeID;
-		// TODO: Get this from DDL
-		group.IsEmbedded = false;
 
 		const TArray<FName> *assignedList = PresetCollection.Lists.Find(pin.AssignedList);
 		if (ensureAlways(assignedList != nullptr))
@@ -1904,6 +1902,12 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetPinGroupsForNode(
 			group.AttachedChildren.Add(ao.Pin()->GetInstanceID());
 		}
 
+		// TODO: GroupName is used to pass SetName for now. Will determine which approach is more appropriate in the future 
+		if (group.GroupName.IsNone())
+		{
+			group.GroupName = pin.SetName;
+		}
+#if 0
 		// TODO: variable length pin lists will need a per-pin naming scheme, not just per-group
 		if (group.AttachedChildren.Num() > 0)
 		{
@@ -1918,7 +1922,7 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetPinGroupsForNode(
 		{
 			group.GroupName = pin.AssignedList;
 		}
-
+#endif
 		const TArray<FName> *customPresets = PresetCollection.CustomPresetsByNodeType.Find(group.GroupName);
 		if (customPresets != nullptr)
 		{
@@ -1931,4 +1935,34 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetPinGroupsForNode(
 	return ECraftingResult::Success;
 }
 
+ECraftingResult UModumateCraftingNodeWidgetStatics::DragMovePinChild(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, int32 InstanceID, const FName &PinGroup, int32 From, int32 To)
+{
+	BIM::FCraftingTreeNodeInstanceSharedPtr node = NodeInstances.InstanceFromID(InstanceID);
+	if (!node.IsValid())
+	{
+		return ECraftingResult::Error;
+	}
 
+	Modumate::BIM::FCraftingTreeNodePinSet *pinSet = nullptr;
+	for (auto &pin : node->InputPins)
+	{
+		if (pin.SetName == PinGroup)
+		{
+			pinSet = &pin;
+			break;
+		}
+	}
+	if (pinSet == nullptr)
+	{
+		return ECraftingResult::Error;
+	}
+
+	//Reorder at AttachedObjects;
+	if (pinSet->AttachedObjects.IsValidIndex(From) && pinSet->AttachedObjects.IsValidIndex(To))
+	{
+		Modumate::BIM::FCraftingTreeNodeInstanceWeakPtr nodeInstPtr = pinSet->AttachedObjects[From];
+		pinSet->AttachedObjects.RemoveAt(From);
+		pinSet->AttachedObjects.Insert(nodeInstPtr, To);
+	}
+	return ECraftingResult::Success;
+}

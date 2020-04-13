@@ -60,6 +60,9 @@ public:
 	ECraftingResult GetPinGroupsForNode(EToolMode ToolMode, int32 NodeID, TArray<FCraftingNodePinGroup> &OutPins);
 
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
+	ECraftingResult DragDropPinForNode(EToolMode ToolMode, int32 NodeID, const FName &PinGroup, int32 From, int32 To);
+
+	UFUNCTION(BlueprintCallable, Category = "Crafting")
 	ECraftingResult SetNewPresetForNode(EToolMode ToolMode, int32 InstanceID, const FName &PresetID);
 
 	UFUNCTION(BlueprintCallable, Category = "Crafting")

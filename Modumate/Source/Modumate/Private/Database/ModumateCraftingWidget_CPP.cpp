@@ -179,6 +179,11 @@ ECraftingResult UModumateCraftingWidget_CPP::GetPinGroupsForNode(EToolMode ToolM
 	return UModumateCraftingNodeWidgetStatics::GetPinGroupsForNode(CraftingTreeNodeInstances, GetDocumentPresetManager().CraftingNodePresets,NodeID,OutPins);
 }
 
+ECraftingResult UModumateCraftingWidget_CPP::DragDropPinForNode(EToolMode ToolMode, int32 NodeID, const FName &PinGroup, int32 From, int32 To)
+{
+	return UModumateCraftingNodeWidgetStatics::DragMovePinChild(CraftingTreeNodeInstances, NodeID, PinGroup, From, To);
+}
+
 ECraftingResult UModumateCraftingWidget_CPP::IsCraftingAssemblyValid(EToolMode ToolMode, bool& OutIsValid)
 {
 	OutIsValid = CraftingAssembly.ObjectType != EObjectType::OTUnknown;

@@ -612,9 +612,6 @@ struct MODUMATE_API FCraftingNodePinGroup
 
 	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
 	int32 OwnerInstance;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	bool IsEmbedded;
 };
 
 /*
@@ -641,6 +638,8 @@ public:
 	static ECraftingResult RemoveNodeInstance(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, int32 ParentID, int32 InstanceID);
 
 	static ECraftingResult GetPinGroupsForNode(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, const Modumate::BIM::FCraftingPresetCollection &PresetCollection, int32 NodeID, TArray<FCraftingNodePinGroup> &OutPins);
+
+	static ECraftingResult DragMovePinChild(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, int32 InstanceID, const FName &PinGroup, int32 From, int32 To);
 };
 
 
