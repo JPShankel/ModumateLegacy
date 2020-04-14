@@ -1,11 +1,15 @@
 #include "ModumateSnappingView.h"
 #include "ModumateDocument.h"
 #include "ModumateObjectInstance.h"
+#include "ModumateStats.h"
+
+DECLARE_CYCLE_STAT(TEXT("Snap-points"), STAT_ModumateSnapPoints, STATGROUP_Modumate)
 
 namespace Modumate
 {
 	void FModumateSnappingView::UpdateSnapPoints(const TSet<int32> &idsToIgnore, int32 collisionChannelMask, bool bForSnapping, bool bForSelection)
 	{
+		SCOPE_CYCLE_COUNTER(STAT_ModumateSnapPoints);
 		Corners.Reset();
 		LineSegments.Reset();
 		SnapIndicesByObjectID.Reset();

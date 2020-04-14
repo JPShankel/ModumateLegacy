@@ -20,6 +20,7 @@
 #include "ModumateGeometryStatics.h"
 #include "ModumateObjectDatabase.h"
 #include "ModumateObjectStatics.h"
+#include "ModumateStats.h"
 #include "PlatformFunctions.h"
 #include "Runtime/Core/Public/Misc/FileHelper.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
@@ -1297,8 +1298,12 @@ void UModumateGameInstance::RegisterAllCommands()
 	});
 }
 
+DECLARE_CYCLE_STAT(TEXT("Process app command queue"), STAT_ModumateProcessCommandQueue, STATGROUP_Modumate)
+
 void UModumateGameInstance::ProcessCommandQueue()
 {
+	SCOPE_CYCLE_COUNTER(STAT_ModumateProcessCommandQueue);
+
 	static bool reenter = false;
 	if (reenter)
 	{

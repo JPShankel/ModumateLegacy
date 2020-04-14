@@ -32,6 +32,8 @@
 #include "Algo/Transform.h"
 #include "Algo/Accumulate.h"
 #include "EditModelToggleGravityPawn_CPP.h"
+#include "ModumateStats.h"
+
 
 // Tools
 #include "ToolsAndAdjustments/Tools/EditModelCabinetTool.h"
@@ -1081,9 +1083,12 @@ void AEditModelPlayerController_CPP::OnControllerTimer()
 	}
 }
 
+DECLARE_CYCLE_STAT(TEXT("Edit tick"), STAT_ModumateEditTick, STATGROUP_Modumate)
+
 void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	SCOPE_CYCLE_COUNTER(STAT_ModumateEditTick);
 
 	if (WantAutoSave)
 	{

@@ -1,6 +1,7 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
 #include "ModumateConsoleCommand.h"
+#include "ModumateStats.h"
 #include "Runtime/JsonUtilities/Public/JsonObjectConverter.h"
 
 namespace Modumate
@@ -249,8 +250,11 @@ namespace Modumate
 		return *this;
 	}
 
+	DECLARE_CYCLE_STAT(TEXT("Command to JSON"), STAT_CommandToJSON, STATGROUP_Modumate)
+
 	FString FModumateCommand::GetJSONString() const
 	{
+		SCOPE_CYCLE_COUNTER(STAT_CommandToJSON);
 		FString jsonString;
 		FJsonObjectConverter::UStructToJsonObjectString<FModumateCommandJSON>(JSONValue, jsonString,0,0,0,nullptr,false);
 		return jsonString;
@@ -279,8 +283,11 @@ namespace Modumate
 		return Contains(key);
 	}
 
+	DECLARE_CYCLE_STAT(TEXT("Command from JSON"), STAT_CommandFromJSON, STATGROUP_Modumate)
+
 	FModumateCommand FModumateCommand::FromJSONString(const FString &jsonString)
 	{
+		SCOPE_CYCLE_COUNTER(STAT_CommandFromJSON);
 		FModumateCommand cmd;
 		FModumateCommandJSON val;
 		FJsonObjectConverter::JsonObjectStringToUStruct<FModumateCommandJSON>(jsonString, &cmd.JSONValue,0,0);
