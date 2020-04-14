@@ -31,14 +31,14 @@ namespace Modumate
 		DirtyFaces.Reset();
 	}
 
-	FGraph3DEdge* FGraph3D::FindEdge(FSignedID EdgeID) 
-	{ 
-		return Edges.Find(FMath::Abs(EdgeID)); 
+	FGraph3DEdge* FGraph3D::FindEdge(FSignedID EdgeID)
+	{
+		return Edges.Find(FMath::Abs(EdgeID));
 	}
 
-	const FGraph3DEdge* FGraph3D::FindEdge(FSignedID EdgeID) const 
-	{ 
-		return Edges.Find(FMath::Abs(EdgeID)); 
+	const FGraph3DEdge* FGraph3D::FindEdge(FSignedID EdgeID) const
+	{
+		return Edges.Find(FMath::Abs(EdgeID));
 	}
 
 	FGraph3DEdge *FGraph3D::FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward)
@@ -65,13 +65,14 @@ namespace Modumate
 		return nullptr;
 	}
 
-	const FGraph3DEdge *FGraph3D::FindEdge(const FVector &Position, int32 ExistingID) const
+	const void FGraph3D::FindEdges(const FVector &Position, int32 ExistingID, TArray<int32>& OutEdgeIDs) const
 	{
+		OutEdgeIDs.Reset();
+
 		auto vertex = FindVertex(Position);
 		if (vertex != nullptr && vertex->ID != ExistingID)
 		{
-			// Position is on a vertex, not an edge
-			return nullptr;
+			return;
 		}
 
 		for (auto &kvp : Edges)
@@ -84,16 +85,16 @@ namespace Modumate
 			{
 				continue;
 			}
+			if (startVertex->ID == ExistingID || endVertex->ID == ExistingID)
+			{
+				continue;
+			}
 
 			if (FMath::PointDistToSegment(Position, startVertex->Position, endVertex->Position) < Epsilon)
 			{
-				if (vertex != nullptr && startVertex->ID != ExistingID && endVertex->ID != ExistingID)
-				{
-					return &edge;
-				}
+				OutEdgeIDs.Add(kvp.Key);
 			}
 		}
-		return nullptr;
 	}
 
 	FGraph3DVertex* FGraph3D::FindVertex(int32 VertexID) 
@@ -324,6 +325,12 @@ namespace Modumate
 			FGraph3DVertex *endVertex = FindVertex(edgeToRemove->EndVertexID);
 			ensureAlways(endVertex && endVertex->RemoveEdge(-EdgeID));
 		}
+
+		FVertexPair vertexPair(
+			FMath::Min(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID),
+			FMath::Max(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID)
+		);
+		EdgeIDsByVertexPair.Remove(vertexPair);
 
 		return Edges.Remove(EdgeID) > 0;
 	}

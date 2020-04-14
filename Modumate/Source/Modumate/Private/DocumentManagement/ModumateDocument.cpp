@@ -2498,10 +2498,12 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 		if (numIDs == 2)
 		{
 			bValidDelta = FGraph3D::GetDeltaForEdgeAdditionWithSplit(&VolumeGraph, &TempVolumeGraph, FVertexPair(IDs[0], IDs[1]), deltas, NextID, id);
+			bValidDelta = bValidDelta && FGraph3D::GetDeltasForUpdateFaces(&TempVolumeGraph, deltas, NextID, id);
 		}
 		else if (numPoints == 2)
 		{
 			bValidDelta = FGraph3D::GetDeltaForEdgeAdditionWithSplit(&VolumeGraph, &TempVolumeGraph, points[0], points[1], deltas, NextID, id);
+			bValidDelta = bValidDelta && FGraph3D::GetDeltasForUpdateFaces(&TempVolumeGraph, deltas, NextID, id);
 		}
 		else
 		{
@@ -2541,7 +2543,7 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 	}
 
 	TArray<int32> faceIDs, vertexIDs, edgeIDs;
-	if (!FinalizeGraphDeltas(deltas, faceIDs, vertexIDs, edgeIDs))
+	if (!ensureAlways(FinalizeGraphDeltas(deltas, faceIDs, vertexIDs, edgeIDs)))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;

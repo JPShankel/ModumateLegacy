@@ -298,14 +298,19 @@ namespace Modumate
 		{
 			return false;
 		}
+		ExistingID = edgeID;
 
+		return true;
+	}
+
+	bool FGraph3D::GetDeltasForUpdateFaces(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 EdgeID)
+	{
 		int32 existingID;
 		bool bFoundSplit = false;
-		OutDelta.Reset();
 
 		// subdivide faces
 		TArray <TArray<int32>> outFaceVertices;
-		Graph->TraverseFacesFromEdge(edgeID, outFaceVertices);
+		Graph->TraverseFacesFromEdge(EdgeID, outFaceVertices);
 		TMap<int32, TArray<int32>> oldToNewFaceIDs;
 		TSet<int32> oldFaces;
 
@@ -315,7 +320,10 @@ namespace Modumate
 			int32 addedFaceID;
 			TArray<int32> parentIds = { MOD_ID_NONE };
 			TMap<int32, int32> edgeMap;
-			GetDeltaForFaceAddition(Graph, faceVertices, faceDelta, NextID, existingID, parentIds, edgeMap, addedFaceID);
+			if (!GetDeltaForFaceAddition(Graph, faceVertices, faceDelta, NextID, existingID, parentIds, edgeMap, addedFaceID))
+			{
+				return false;
+			}
 
 			Graph->ApplyDelta(faceDelta);
 			int32 coincidentFaceID = Graph->FindOverlappingFace(addedFaceID);
@@ -336,7 +344,7 @@ namespace Modumate
 					float newArea = newFace->CalculateArea();
 					float oldArea = oldFace->CalculateArea();
 
-					if (newArea < oldArea - KINDA_SMALL_NUMBER)
+					if (newArea < oldArea - Graph->Epsilon)
 					{
 						faceDelta.FaceAdditions[addedFaceID].ParentFaceIDs = { coincidentFaceID };
 						OutDeltas.Add(faceDelta);
@@ -359,8 +367,6 @@ namespace Modumate
 		{
 			OutDeltas.Add(deleteDelta);
 		}
-
-		OutDeltas.Add(OutDelta);
 
 		return true;
 	}
@@ -484,14 +490,12 @@ namespace Modumate
 			return false;
 		}
 
-		bDeltaCreationSuccess = GetDeltaForFaceSplit(Graph, OutDelta, NextID, ExistingID, addedFaceID, bFoundSplit);
+		bDeltaCreationSuccess = GetDeltasForEdgeAtSplit(OldGraph, Graph, OutDeltas, NextID, ExistingID, addedFaceID);
 		if (!bDeltaCreationSuccess)
 		{
 			FGraph3D::CloneFromGraph(*Graph, *OldGraph);
 			return false;
 		}
-
-		OutDeltas.Add(OutDelta);
 
 		return bDeltaCreationSuccess;
 	}
@@ -507,28 +511,28 @@ namespace Modumate
 				return false;
 			}
 
-			auto edge = Graph->FindEdge(pos, vertex->ID);
-			if (edge == nullptr)
-			{
-				continue;
-			}
+			TArray<int32> edgeIDsToSplit;
+			Graph->FindEdges(pos, vertex->ID, edgeIDsToSplit);
 
-			FGraph3DDelta splitEdgeDelta;
-			int32 ExistingID = MOD_ID_NONE;
-
-			if (!GetDeltaForEdgeSplit(Graph, splitEdgeDelta, edge->ID, vertex->ID, NextID, ExistingID))
+			for (int32 edgeID : edgeIDsToSplit)
 			{
-				return false;
-			}
+				FGraph3DDelta splitEdgeDelta;
+				int32 ExistingID = MOD_ID_NONE;
 
-			if (!splitEdgeDelta.IsEmpty())
-			{
-				OutDeltas.Add(splitEdgeDelta);
-			}
+				if (!GetDeltaForEdgeSplit(Graph, splitEdgeDelta, edgeID, vertex->ID, NextID, ExistingID))
+				{
+					return false;
+				}
 
-			if (!Graph->ApplyDelta(splitEdgeDelta))
-			{
-				return false;
+				if (!splitEdgeDelta.IsEmpty())
+				{
+					OutDeltas.Add(splitEdgeDelta);
+				}
+
+				if (!Graph->ApplyDelta(splitEdgeDelta))
+				{
+					return false;
+				}
 			}
 		}
 
@@ -734,6 +738,74 @@ namespace Modumate
 				{
 					OutDelta.FaceDeletions[newFacekvp.Key].ParentFaceIDs = newFacekvp.Value;
 				}
+			}
+		}
+
+		return true;
+	}
+
+	bool FGraph3D::GetDeltasForEdgeAtSplit(FGraph3D *OldGraph, FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID, int32 &FaceID)
+	{
+		FGraph3DFace *newFace = Graph->FindFace(FaceID);
+		if (newFace == nullptr)
+		{
+			return false;
+		}
+
+		TArray<int32> newEdges;
+		for (auto &kvp : Graph->GetFaces())
+		{
+			const FGraph3DFace* otherFace = &kvp.Value;
+
+			if (kvp.Key == FaceID)
+			{
+				continue;
+			}
+			FVector intersectingEdgeOrigin, intersectingEdgeDir;
+			TArray<FEdgeIntersection> sourceIntersections;
+			TArray<FEdgeIntersection> destIntersections;
+			TPair<bool, bool> bOnFaceEdges;
+
+			if (newFace->IntersectsFace(otherFace, intersectingEdgeOrigin, intersectingEdgeDir, sourceIntersections, destIntersections, bOnFaceEdges))
+			{
+				auto intersections = sourceIntersections;
+				for (int segmentIdx = 0; segmentIdx < intersections.Num() - 1; segmentIdx += 2)
+				{
+					TArray<FGraph3DDelta> addEdgeDeltas;
+					FVector startPosition = intersections[segmentIdx].Point;
+					FVector endPosition = intersections[segmentIdx + 1].Point;
+
+					int32 existingID = MOD_ID_NONE;
+					if (!FGraph3D::GetDeltaForEdgeAdditionWithSplit(OldGraph, Graph, startPosition, endPosition, addEdgeDeltas, NextID, existingID))
+					{
+						if (existingID == MOD_ID_NONE)
+						{
+							continue;
+						}
+					}
+					else
+					{
+						OutDeltas.Append(addEdgeDeltas);
+					}
+
+					newEdges.Add(existingID);
+					
+				}
+			}
+		}
+
+		for (int32 addedEdgeID : newEdges)
+		{
+			TArray<FGraph3DDelta> updateFaceDeltas;
+			if (!FGraph3D::GetDeltasForUpdateFaces(Graph, updateFaceDeltas, NextID, addedEdgeID))
+			{
+				continue;
+			}
+			OutDeltas.Append(updateFaceDeltas);
+
+			for (auto& delta : updateFaceDeltas)
+			{
+				Graph->ApplyDelta(delta);
 			}
 		}
 

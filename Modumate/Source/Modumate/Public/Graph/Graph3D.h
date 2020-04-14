@@ -26,7 +26,6 @@ namespace Modumate
 		const FGraph3DEdge* FindEdge(FSignedID EdgeID) const;
 		FGraph3DEdge *FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward);
 		const FGraph3DEdge *FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward) const;
-		const FGraph3DEdge *FindEdge(const FVector &Position, int32 ExistingID) const;
 
 		FGraph3DVertex* FindVertex(int32 VertexID);
 		const FGraph3DVertex* FindVertex(int32 VertexID) const;
@@ -89,6 +88,10 @@ namespace Modumate
 
 		bool Validate();
 
+	private:
+		const void FindEdges(const FVector &Position, int32 ExistingID, TArray<int32>& OutEdgeIDs) const;
+
+	public:
 		float Epsilon;
 		bool bDebugCheck;
 
@@ -125,6 +128,8 @@ namespace Modumate
 		static bool GetDeltaForEdgeAdditionWithSplit(FGraph3D *OldGraph, FGraph3D *Graph, const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID);
 		static bool GetDeltaForFaceAddition(FGraph3D *OldGraph, FGraph3D *Graph, const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID);
 
+		static bool GetDeltasForUpdateFaces(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 EdgeID);
+
 		// provides deltas for splitting edges and adjusting faces after a graph operation
 		static bool GetDeltasForEdgeSplits(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID); 
 
@@ -135,6 +140,7 @@ namespace Modumate
 
 		static bool GetDeltaForFaceSplit(FGraph3D *Graph, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, int32 &FaceID, bool &bOutFoundSplit, TPair<FVector, FVector> &Intersection, TPair<int32, int32> &EdgeIdxs);
 		static bool GetDeltaForFaceSplit(FGraph3D *Graph, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, int32 &FaceID, bool &bOutFoundSplit);
+		static bool GetDeltasForEdgeAtSplit(FGraph3D *OldGraph, FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID, int32 &FaceID);
 
 		static bool GetDeltaForEdgeSplit(FGraph3D *Graph, FGraph3DDelta &OutDelta, int32 edgeID, int32 vertexID, int32 &NextID, int32 &ExistingID);
 

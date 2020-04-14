@@ -641,6 +641,8 @@ namespace Modumate
 
 		TestTrue(TEXT("split face with edge"),
 			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, FVertexPair(startID,endID), OutDeltas, NextID, ExistingID));
+		TestTrue(TEXT("update faces"), 
+			FGraph3D::GetDeltasForUpdateFaces(&tempGraph, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
 
 		return true;
