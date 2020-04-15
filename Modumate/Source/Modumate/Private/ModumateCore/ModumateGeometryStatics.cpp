@@ -1921,14 +1921,17 @@ bool UModumateGeometryStatics::CompareVectors(const TArray<FVector2D> &vectorsA,
 	return true;
 }
 
-bool UModumateGeometryStatics::AnalyzeCachedPositions(const TArray<FVector> &InPositions, FPlane &OutPlane, FVector &OutAxis2DX, FVector &OutAxis2DY, TArray<FVector2D> &Out2DPositions, FVector &OutCenter)
+bool UModumateGeometryStatics::AnalyzeCachedPositions(const TArray<FVector> &InPositions, FPlane &OutPlane, FVector &OutAxis2DX, FVector &OutAxis2DY, TArray<FVector2D> &Out2DPositions, FVector &OutCenter, bool bUpdatePlane)
 {
 	// Find the plane that defines this face's points, in which they are oriented clockwise
-	bool bPlanar = UModumateGeometryStatics::GetPlaneFromPoints(InPositions, OutPlane);
-
-	if (!(bPlanar && OutPlane.IsNormalized()))
+	if (bUpdatePlane)
 	{
-		return false;
+		bool bPlanar = UModumateGeometryStatics::GetPlaneFromPoints(InPositions, OutPlane);
+
+		if (!(bPlanar && OutPlane.IsNormalized()))
+		{
+			return false;
+		}
 	}
 
 	// Find the 2D projection of our points, for convenient intersection/triangulation computation later

@@ -240,7 +240,7 @@ public:
 	static bool CompareVectors(const TArray<FVector2D> &vectorsA, const TArray<FVector2D> &vectorsB, float tolerance = KINDA_SMALL_NUMBER);
 
 	UFUNCTION(Category = "Modumate | Geometry")
-	static bool AnalyzeCachedPositions(const TArray<FVector> &InPositions, FPlane &OutPlane, FVector &OutAxis2DX, FVector &OutAxis2DY, TArray<FVector2D> &Out2DPositions, FVector &OutCenter);
+	static bool AnalyzeCachedPositions(const TArray<FVector> &InPositions, FPlane &OutPlane, FVector &OutAxis2DX, FVector &OutAxis2DY, TArray<FVector2D> &Out2DPositions, FVector &OutCenter, bool bUpdatePlane = true);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool SliceBoxWithPlane(const FBox &InBox, const FVector &InOrigin, const FVector &InNormal, FVector &OutAxisX, FVector &OutAxisY, FBox2D &OutSlice);

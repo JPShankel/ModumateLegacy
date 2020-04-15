@@ -12,7 +12,8 @@ namespace Modumate
 		: IGraph3DObject(InID, InGraph)
 		, CachedPlane(ForceInitToZero)
 	{
-		SetVertices(InVertexIDs);
+		UpdatePlane(InVertexIDs);
+		UpdateVerticesAndEdges(InVertexIDs, false);
 	}
 
 	FGraph3DFace::FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<FVector> &VertexPositions)
@@ -34,7 +35,8 @@ namespace Modumate
 			vertexIDs.Add(vertex->ID);
 		}
 
-		SetVertices(vertexIDs);
+		UpdatePlane(VertexIDs);
+		UpdateVerticesAndEdges(vertexIDs, false);
 	}
 
 	FVector2D FGraph3DFace::ProjectPosition2D(const FVector &Position) const
@@ -58,7 +60,7 @@ namespace Modumate
 		return CachedPositions[0] + (ProjectedPos.X * Cached2DX) + (ProjectedPos.Y * Cached2DY);
 	}
 
-	bool FGraph3DFace::SetVertices(const TArray<int32> &InVertexIDs)
+	bool FGraph3DFace::AssignVertices(const TArray<int32> &InVertexIDs)
 	{
 		VertexIDs = InVertexIDs;
 		int32 numVertices = VertexIDs.Num();
@@ -82,7 +84,39 @@ namespace Modumate
 			CachedPositions.Add(vertex->Position);
 		}
 
-		if (!UModumateGeometryStatics::AnalyzeCachedPositions(CachedPositions,CachedPlane,Cached2DX,Cached2DY,Cached2DPositions,CachedCenter))
+		return true;
+	}
+
+	bool FGraph3DFace::UpdatePlane(const TArray<int32> &InVertexIDs)
+	{
+		if (!AssignVertices(InVertexIDs))
+		{
+			return false;
+		}
+
+		bool bPlanar = UModumateGeometryStatics::GetPlaneFromPoints(CachedPositions, CachedPlane);
+
+		if (!(bPlanar && CachedPlane.IsNormalized()))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool FGraph3DFace::UpdateVerticesAndEdges(const TArray<int32> &InVertexIDs, bool bAssignVertices)
+	{
+		if (bAssignVertices)
+		{
+			if (!AssignVertices(InVertexIDs))
+			{
+				return false;
+			}
+		}
+
+		int32 numVertices = VertexIDs.Num();
+
+		if (!UModumateGeometryStatics::AnalyzeCachedPositions(CachedPositions, CachedPlane, Cached2DX, Cached2DY, Cached2DPositions, CachedCenter, false))
 		{
 			bValid = false;
 			return bValid;

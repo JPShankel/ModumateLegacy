@@ -27,7 +27,8 @@ namespace Modumate
 
 		FVector2D ProjectPosition2D(const FVector &Position) const;
 		FVector DeprojectPosition(const FVector2D &ProjectedPos) const;
-		bool SetVertices(const TArray<int32> &InVertexIDs);
+		bool UpdatePlane(const TArray<int32> &InVertexIDs);
+		bool UpdateVerticesAndEdges(const TArray<int32> &InVertexIDs, bool bAssignVertices = true);
 		bool NormalHitsFace(const FGraph3DFace *OtherFace, float Sign) const;
 		bool IntersectsFace(const FGraph3DFace *OtherFace, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<FEdgeIntersection> &SourceIntersections, TArray<FEdgeIntersection> &DestIntersections, TPair<bool, bool> &bOutOnFaceEdge) const;
 		bool IntersectsPlane(const FPlane OtherPlane, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<TPair<FVector, FVector>> &IntersectingSegments) const;
@@ -43,5 +44,8 @@ namespace Modumate
 
 		virtual void Dirty(bool bConnected = true) override;
 		virtual bool ValidateForTests() const override;
+
+	private:
+		bool AssignVertices(const TArray<int32> &InVertexIDs);
 	};
 }
