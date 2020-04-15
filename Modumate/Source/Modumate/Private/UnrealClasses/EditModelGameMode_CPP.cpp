@@ -95,29 +95,37 @@ void AEditModelGameMode_CPP::InitGame(const FString& MapName, const FString& Opt
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
-	ObjectDatabase->ReadAMaterialData(MaterialTable);
-	ObjectDatabase->ReadColorData(ColorTable);
-	ObjectDatabase->ReadMeshData(MeshTable);
-	ObjectDatabase->ReadPortalPartData(PortalPartsTable);
-	ObjectDatabase->ReadLightConfigData(LightConfigTable);
-	ObjectDatabase->ReadRoomConfigurations(RoomConfigurationTable);
+	double databaseLoadTime = 0.0;
+	{
+		SCOPE_SECONDS_COUNTER(databaseLoadTime);
 
-	ObjectDatabase->ReadCraftingSubcategoryData(CraftingSubcategoryTable);
+		ObjectDatabase->ReadAMaterialData(MaterialTable);
+		ObjectDatabase->ReadColorData(ColorTable);
+		ObjectDatabase->ReadMeshData(MeshTable);
+		ObjectDatabase->ReadPortalPartData(PortalPartsTable);
+		ObjectDatabase->ReadLightConfigData(LightConfigTable);
+		ObjectDatabase->ReadRoomConfigurations(RoomConfigurationTable);
 
-	ObjectDatabase->ReadCraftingPatternOptionSet(PatternOptionSetDataTable);
-	ObjectDatabase->ReadCraftingPortalPartOptionSet(PortalPartOptionSetDataTable);
+		ObjectDatabase->ReadCraftingSubcategoryData(CraftingSubcategoryTable);
 
-	ObjectDatabase->ReadCraftingMaterialAndColorOptionSet(MaterialsAndColorsOptionSetDataTable);
-	ObjectDatabase->ReadCraftingDimensionalOptionSet(DimensionalOptionSetDataTable);
-	ObjectDatabase->ReadCraftingLayerThicknessOptionSet(LayerThicknessOptionSetTable);
-	ObjectDatabase->ReadPortalConfigurationData(PortalConfigurationTable);
+		ObjectDatabase->ReadCraftingPatternOptionSet(PatternOptionSetDataTable);
+		ObjectDatabase->ReadCraftingPortalPartOptionSet(PortalPartOptionSetDataTable);
 
-	ObjectDatabase->ReadFFEPartData(FFEPartTable);
-	ObjectDatabase->ReadFFEAssemblyData(FFEAssemblyTable);
+		ObjectDatabase->ReadCraftingMaterialAndColorOptionSet(MaterialsAndColorsOptionSetDataTable);
+		ObjectDatabase->ReadCraftingDimensionalOptionSet(DimensionalOptionSetDataTable);
+		ObjectDatabase->ReadCraftingLayerThicknessOptionSet(LayerThicknessOptionSetTable);
+		ObjectDatabase->ReadPortalConfigurationData(PortalConfigurationTable);
 
-	ObjectDatabase->ReadCraftingProfileOptionSet(ProfileMeshDataTable);
+		ObjectDatabase->ReadFFEPartData(FFEPartTable);
+		ObjectDatabase->ReadFFEAssemblyData(FFEAssemblyTable);
 
-	ObjectDatabase->ReadMarketplace(GetWorld());
+		ObjectDatabase->ReadCraftingProfileOptionSet(ProfileMeshDataTable);
+
+		ObjectDatabase->ReadMarketplace(GetWorld());
+
+	}
+	databaseLoadTime *= 1000.0;
+	UE_LOG(LogPerformance, Log, TEXT("Object database loaded in %d ms"), int(databaseLoadTime + 0.5));
 
 	const FString projectPathKey(TEXT("LoadFile"));
 	if (UGameplayStatics::HasOption(Options, projectPathKey))

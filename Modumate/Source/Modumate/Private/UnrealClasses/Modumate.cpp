@@ -13,6 +13,7 @@ DEFINE_LOG_CATEGORY(LogAutoDrafting);
 DEFINE_LOG_CATEGORY(LogUnitTest);
 DEFINE_LOG_CATEGORY(LogCallTrace);
 DEFINE_LOG_CATEGORY(LogCommand);
+DEFINE_LOG_CATEGORY(LogPerformance);
 
 const FString FModumateModule::OverrideVersionPath(TEXT("Modumate.version"));
 

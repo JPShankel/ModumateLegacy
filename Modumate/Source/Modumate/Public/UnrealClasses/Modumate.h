@@ -11,6 +11,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogAutoDrafting, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogUnitTest, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogCallTrace, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogCommand, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogPerformance, Log, All);
 
 class IModumateModule : public IModuleInterface
 {
