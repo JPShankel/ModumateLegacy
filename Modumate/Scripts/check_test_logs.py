@@ -4,11 +4,12 @@ import re
 import shutil
 import sys
 
-log_pat = re.compile(r'.*LogAutomationController: .*Automation Test '
-                     '(?P<result>\w+) \((?P<shortname>.+) - (?P<longname>.+)\)')
-success_result = "Succeeded"
+log_pat = re.compile(r'.*LogAutomationController: .*Test Completed.*'
+                     'Result={(?P<result>\w+)}.*Name={(?P<shortname>.+)}.*Path={(?P<longname>.+)}')
+success_result = "Passed"
 
 def check_test_logs(log_path, build_id):
+    passed_tests = []
     failed_tests = []
     file_exists = False
 
@@ -20,7 +21,9 @@ def check_test_logs(log_path, build_id):
                 test_name = m.group('longname')
                 result = m.group('result')
 
-                if result != success_result:
+                if result == success_result:
+                    passed_tests.append(test_name)
+                else:
                     failed_tests.append(test_name)
 
                 print("Test result for %s: %s" % (m.group('longname'), m.group('result')))
@@ -31,17 +34,21 @@ def check_test_logs(log_path, build_id):
         log_copy_path = "%s-build-%s-%s%s" % (path_base, build_id, time_str, path_ext)
         shutil.copy(log_path, log_copy_path)
 
-    return failed_tests
+    return passed_tests, failed_tests
 
 if __name__ == '__main__':
     if len(sys.argv) > 2:
-        failed_tests = check_test_logs(sys.argv[1], sys.argv[2])
+        passed_tests, failed_tests = check_test_logs(sys.argv[1], sys.argv[2])
+        num_passed_tests = len(passed_tests)
         num_failed_tests = len(failed_tests)
 
         if num_failed_tests > 0:
-            print("ERROR: %d tests failed!" % num_failed_tests)
+            print("ERROR: %d test(s) failed!" % num_failed_tests)
             sys.exit(1)
+        elif num_passed_tests == 0:
+            print("ERROR: no tests found!")
+            sys.exit(2)
         else:
-            print("SUCCESS: all tests passed!")
+            print("SUCCESS: all %d tests passed!" % num_passed_tests)
     else:
         sys.exit(-1)
