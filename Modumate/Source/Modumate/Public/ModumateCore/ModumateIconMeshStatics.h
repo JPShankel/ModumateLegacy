@@ -98,6 +98,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
 		static bool GetEngineMaterialByKey(AEditModelPlayerController_CPP *Controller, const FName &Key, UMaterialInterface* &ModuleMaterial);
+	
+	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
+		static bool GetEngineCustomColorByKey(AEditModelPlayerController_CPP *Controller, const FName &Key, FCustomColor &ModuleColor);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
 		static bool MakeIconMeshFromPofileKey(
@@ -107,4 +110,14 @@ public:
 			const FName &ProfileKey,
 			const FVector &RootLoation,
 			float Length = 25.f);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate IconMesh")
+		static bool GetModuleIconParamsFromPreset(
+			UObject* WorldContextObject,
+			UModumateCraftingWidget_CPP* CraftingWidget,
+			EToolMode FromToolMode,
+			const FName &PresetKey,
+			FVector &ModuleExtent,
+			UMaterialInterface* &ModuleMaterial,
+			FCustomColor &ModuleColor);
 };

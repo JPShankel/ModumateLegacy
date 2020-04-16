@@ -1021,10 +1021,11 @@ namespace Modumate {
 			static const FString kInput = TEXT("INPUT:");
 			static const FString kScope = TEXT("SCOPE:");
 			static const FString kOutput = TEXT("OUTPUT:");
+			static const FString kIconType = TEXT("ICON:");
 			static const FString kProperties = TEXT("PROPERTIES:");
 			static const FString kNodeName = TEXT("[A-Z][A-Z0-9_]+");
 			static const FString kNumberMatch = TEXT("[0-9]+");
-			static const FString kWhitespace = TEXT("\\s+");
+			static const FString kWhitespace = TEXT("\\s*");
 			static const FString kElipsesMatch = TEXT("\\.\\.");
 
 			static const FString kVariable = TEXT("\\w+\\.\\w+");
@@ -1304,6 +1305,29 @@ namespace Modumate {
 					errorReporter(*FString::Printf(TEXT("Unexpected PROPERTIES at line %d"), lineNum));
 				}
 				state = ReadingProperties;
+			},
+				false);
+
+			//Match ICON:<iconType>
+			static const FString kIconMatch = kIconType + kWhitespace + TEXT("(") + kSimpleWord + TEXT(")");
+			compiler.AddRule(kIconMatch, [&state,&currentNode](
+				const TCHAR *originalLine,
+				const FModumateScriptProcessor::TRegularExpressionMatch &match,
+				int32 lineNum,
+				FModumateScriptProcessor::TErrorReporter errorReporter)
+			{
+				if (state != ReadingDefinition)
+				{
+					errorReporter(*FString::Printf(TEXT("Unexpected ICON at line %d"), lineNum));
+				}
+				if (match.size() > 1 && match[1].matched)
+				{
+					currentNode.IconType = FindEnumValueByName<EConfiguratorNodeIconType>(TEXT("EConfiguratorNodeIconType"), match[1].str().c_str());
+				}
+				else
+				{
+					errorReporter(*FString::Printf(TEXT("Badly formed ICON at line %d"), lineNum));
+				}
 			},
 				false);
 
@@ -1742,6 +1766,16 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::CraftingNodeFromInstance(
 			{
 				parent = nullptr;
 			}
+		}
+	}
+
+	const Modumate::BIM::FCraftingTreeNodePreset *preset = PresetCollection.Presets.Find(Instance->PresetID);
+	if (ensureAlways(preset != nullptr))
+	{
+		const Modumate::BIM::FCraftingTreeNodeType *nodeType = PresetCollection.NodeDescriptors.Find(preset->NodeType);
+		if (ensureAlways(nodeType != nullptr))
+		{
+			OutNode.NodeIconType = nodeType->IconType;
 		}
 	}
 

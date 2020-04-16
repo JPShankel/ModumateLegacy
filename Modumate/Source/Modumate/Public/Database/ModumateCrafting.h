@@ -360,6 +360,8 @@ namespace Modumate {
 		public:
 			FName TypeName;
 			EObjectType ObjectType = EObjectType::OTNone;
+
+			EConfiguratorNodeIconType IconType = EConfiguratorNodeIconType::None;
 			
 			FBIMPropertySheet Properties;
 			TMap<FString, FNameType> FormItemToProperty;

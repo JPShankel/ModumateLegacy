@@ -628,6 +628,22 @@ bool UModumateIconMeshStatics::GetEngineMaterialByKey(AEditModelPlayerController
 	return false;
 }
 
+bool UModumateIconMeshStatics::GetEngineCustomColorByKey(AEditModelPlayerController_CPP *Controller, const FName &Key, FCustomColor &ModuleColor)
+{
+	if (Controller != nullptr)
+	{
+		ModumateObjectDatabase *db = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+		const FCustomColor *color = db->GetCustomColorByKey(Key);
+		if (ensureAlways(color != nullptr))
+		{
+			ModuleColor = *color;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool UModumateIconMeshStatics::MakeIconMeshFromPofileKey(AEditModelPlayerController_CPP *Controller, ADynamicMeshActor *DynamicMeshActor, EToolMode FromToolMode, const FName &ProfileKey, const FVector &RootLoation, float Length)
 {
 	if (Controller != nullptr)
@@ -656,4 +672,48 @@ bool UModumateIconMeshStatics::MakeIconMeshFromPofileKey(AEditModelPlayerControl
 		}
 	}
 	return false;
+}
+
+bool UModumateIconMeshStatics::GetModuleIconParamsFromPreset(UObject* WorldContextObject, UModumateCraftingWidget_CPP* CraftingWidget, EToolMode FromToolMode, const FName &PresetKey, FVector &ModuleExtent, UMaterialInterface* &ModuleMaterial, FCustomColor &ModuleColor)
+{
+	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
+	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	ModumateObjectDatabase *db = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase : nullptr;
+	if (gameState == nullptr && db == nullptr)
+	{
+		return false;
+	}
+	const FPresetManager &presetManager = gameState->Document.PresetManager;
+
+	BIM::FModumateAssemblyPropertySpec presetSpec;
+	presetManager.PresetToSpec(PresetKey, presetSpec);
+
+	// Module extents
+	FString xExtentName, yExtentName, zExtentName;
+	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Module, BIM::Parameters::XExtents, xExtentName);
+	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Module, BIM::Parameters::YExtents, yExtentName);
+	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Module, BIM::Parameters::ZExtents, zExtentName);
+
+	FModumateFormattedDimension dimX = UModumateDimensionStatics::StringToFormattedDimension(xExtentName);
+	FModumateFormattedDimension dimY = UModumateDimensionStatics::StringToFormattedDimension(xExtentName);
+	FModumateFormattedDimension dimZ = UModumateDimensionStatics::StringToFormattedDimension(xExtentName);
+	ModuleExtent = FVector(dimX.Centimeters, dimY.Centimeters, dimZ.Centimeters);
+
+	// Material and color
+	FString colorName, materialName;
+	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Module, BIM::Parameters::Color, colorName);
+	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Module, BIM::Parameters::Material, materialName);
+
+	const FArchitecturalMaterial *mat = db->GetArchitecturalMaterialByKey(FName(*materialName));
+	if (ensureAlways(mat != nullptr) && ensureAlways(mat->EngineMaterial.IsValid()))
+	{
+		ModuleMaterial = mat->EngineMaterial.Get();
+	}
+	const FCustomColor *color = db->GetCustomColorByKey(FName(*colorName));
+	if (ensureAlways(color != nullptr))
+	{
+		ModuleColor = *color;
+	}
+
+	return true;
 }

@@ -181,7 +181,12 @@ ECraftingResult UModumateCraftingWidget_CPP::GetPinGroupsForNode(EToolMode ToolM
 
 ECraftingResult UModumateCraftingWidget_CPP::DragDropPinForNode(EToolMode ToolMode, int32 NodeID, const FName &PinGroup, int32 From, int32 To)
 {
-	return UModumateCraftingNodeWidgetStatics::DragMovePinChild(CraftingTreeNodeInstances, NodeID, PinGroup, From, To);
+	ECraftingResult result = UModumateCraftingNodeWidgetStatics::DragMovePinChild(CraftingTreeNodeInstances, NodeID, PinGroup, From, To);
+	if (result == ECraftingResult::Success)
+	{
+		UpdateCraftingAssembly(ToolMode);
+	}
+	return result;
 }
 
 ECraftingResult UModumateCraftingWidget_CPP::IsCraftingAssemblyValid(EToolMode ToolMode, bool& OutIsValid)

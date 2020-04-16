@@ -3,6 +3,7 @@
 --
 
 DEFINE MATERIAL_COLOR
+	ICON: Material
 	PROPERTIES:
 		PRIVATE("Display Name",Preset.Name)
 		PRIVATE("Material",Node.Material)
@@ -5362,6 +5363,7 @@ LIST List_Categories_Wall
 END
 
 DEFINE WALL_ROOT
+	ICON: LayerVertical
 	INPUT:
 		Assembly->Layers[1..]
 	OUTPUT: OTWallSegment
@@ -5383,6 +5385,7 @@ END
 ---
 
 DEFINE FLOOR_ROOT
+	ICON: LayerHorizontal
 	INPUT:
 		Assembly->Layers[1..]
 	OUTPUT: OTFloorSegment
