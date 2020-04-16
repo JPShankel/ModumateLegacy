@@ -21,7 +21,6 @@ namespace Modumate
 			return false;
 		}
 
-
 		OriginalP.Empty();
 		for (int32 cp : CP)
 		{
@@ -177,79 +176,6 @@ namespace Modumate
 				Handle->ShowHoverFloorDimensionString(false);
 			}
 		}
-		return true;
-	}
-
-	bool FAdjustPolyPointHandle::OnEndUse()
-	{
-		if (!FEditModelAdjustmentHandleBase::OnEndUse())
-		{
-			return false;
-		}
-
-		// Tell mesh it is done editing at handle
-		ADynamicMeshActor* dynMeshActor = Cast<ADynamicMeshActor>(MOI->GetActor());
-		if (dynMeshActor != nullptr)
-		{
-			dynMeshActor->AdjustHandleFloor.Empty();
-		}
-
-		TArray<FVector> newPoints = MOI->GetControlPoints();
-
-		for (size_t i = 0; i < CP.Num(); ++i)
-		{
-			MOI->SetControlPoint(CP[i],OriginalP[i]);
-		}
-
-		auto result = Controller->ModumateCommand(
-			FModumateCommand(Modumate::Commands::kSetGeometry)
-			.Param("id", MOI->ID)
-			.Param("points", newPoints)
-		);
-
-		// If the set geometry command failed, then we need to update target geometry since the command didn't do it.
-		bool bCommandSuccess = result.GetValue(Parameters::kSuccess);
-		if (!bCommandSuccess)
-		{
-			UpdateTargetGeometry();
-		}
-
-		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-
-		if (!MOI->IsDestroyed())
-		{
-			MOI->ShowAdjustmentHandles(Controller.Get(), true);
-		}
-
-		// TODO: deselect everything if this object is destroyed
-
-		return true;
-	}
-
-	bool FAdjustPolyPointHandle::OnAbortUse()
-	{
-		if (!FEditModelAdjustmentHandleBase::OnAbortUse())
-		{
-			return false;
-		}
-
-		for (size_t i = 0; i < CP.Num(); ++i)
-		{
-			MOI->SetControlPoint(CP[i],OriginalP[i]);
-		}
-
-		// Tell mesh it is done editing at handle
-		ADynamicMeshActor* dynMeshActor = Cast<ADynamicMeshActor>(MOI->GetActor());
-		if (dynMeshActor != nullptr)
-		{
-			dynMeshActor->AdjustHandleFloor.Empty();
-		}
-
-		UpdateTargetGeometry();
-		MOI->ShowAdjustmentHandles(Controller.Get(), true);
-
-		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-
 		return true;
 	}
 
@@ -418,12 +344,6 @@ namespace Modumate
 
 		MOI->ShowAdjustmentHandles(Controller.Get(), false);
 
-		// Tell mesh it is being edited at handle
-		ADynamicMeshActor* dynMeshActor = Cast<ADynamicMeshActor>(MOI->GetActor());
-		if (dynMeshActor != nullptr)
-		{
-			//dynMeshActor->AdjustHandleFloor = CP;
-		}
 		return true;
 	}
 
@@ -510,69 +430,6 @@ namespace Modumate
 		return true;
 	}
 
-	bool FAdjustPolyExtrusionHandle::OnEndUse()
-	{
-		if (!FEditModelAdjustmentHandleBase::OnEndUse())
-		{
-			return false;
-		}
-
-		// Tell mesh it is done editing at handle
-		ADynamicMeshActor* dynMeshActor = Cast<ADynamicMeshActor>(MOI->GetActor());
-		if (dynMeshActor != nullptr)
-		{
-			dynMeshActor->AdjustHandleFloor.Empty();
-		}
-
-		TArray<FVector> newPoints = MOI->GetControlPoints();
-		FVector newExtents = MOI->GetExtents();
-		FVector oldExtents = newExtents;
-		oldExtents.Y = OriginalExtrusion;
-		MOI->SetExtents(oldExtents);
-
-		MOI->SetControlPoints(OriginalControlPoints);
-
-		Controller->ModumateCommand(
-			FModumateCommand(Modumate::Commands::kSetGeometry)
-			.Param("id", MOI->ID)
-			.Param("points", newPoints)
-			.Param("extents", newExtents)
-		);
-
-		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-
-		MOI->ShowAdjustmentHandles(Controller.Get(), true);
-
-		return true;
-	}
-
-	bool FAdjustPolyExtrusionHandle::OnAbortUse()
-	{
-		if (!FEditModelAdjustmentHandleBase::OnAbortUse())
-		{
-			return false;
-		}
-
-		// Tell mesh it is done editing at handle
-		ADynamicMeshActor* dynMeshActor = Cast<ADynamicMeshActor>(MOI->GetActor());
-		if (dynMeshActor != nullptr)
-		{
-			dynMeshActor->AdjustHandleFloor.Empty();
-		}
-
-		MOI->SetControlPoints(OriginalControlPoints);
-		FVector extents = MOI->GetExtents();
-		extents.Y = OriginalExtrusion;
-		MOI->SetExtents(extents);
-
-		UpdateTargetGeometry();
-		MOI->ShowAdjustmentHandles(Controller.Get(), true);
-
-		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-
-		return true;
-	}
-
 	FVector FAdjustPolyExtrusionHandle::GetAttachmentPoint()
 	{
 		if (MOI->GetControlPoints().Num() > 0)
@@ -627,23 +484,9 @@ namespace Modumate
 			dynMeshActor->AdjustHandleFloor.Empty();
 		}
 
-		MOI->SetControlPoints(OriginalControlPoints);
-		FVector extents = MOI->GetExtents();
-		extents.Y = OriginalExtrusion;
-		MOI->SetExtents(extents);
-
-		Controller->ModumateCommand(
-			FModumateCommand(Modumate::Commands::kSetGeometry)
-			.Param("id", MOI->ID)
-			.Param("points", newPoints)
-			.Param("extents", newExtents)
-		);
-
-		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-		MOI->ShowAdjustmentHandles(Controller.Get(), true);
-
-		FEditModelAdjustmentHandleBase::OnEndUse();
-		return true;
+		MOI->SetControlPoints(newPoints);
+		MOI->SetExtents(newExtents);
+		return FEditModelAdjustmentHandleBase::OnEndUse();
 	}
 
 	bool FAdjustInvertHandle::OnBeginUse()
@@ -655,10 +498,7 @@ namespace Modumate
 			return false;
 		}
 
-		TArray<int32> ids = { MOI->ID };
-				Controller->ModumateCommand(
-			FModumateCommand(Commands::kInvertObjects)
-			.Param(Parameters::kObjectIDs, ids));
+		MOI->SetObjectInverted(!MOI->GetObjectInverted());
 
 		OnEndUse();
 		return false;
@@ -702,13 +542,7 @@ namespace Modumate
 		}
 		else
 		{
-			TArray<FVector> points;
-			auto result = Controller->ModumateCommand(
-				FModumateCommand(Commands::kSetGeometry)
-				.Param(Parameters::kObjectID, MOI->ID)
-				.Param(Parameters::kControlPoints, points)
-				.Param(Parameters::kExtents, FVector(LayerPercentage, 0.0f, 0.0f))
-			);
+			MOI->SetExtents(FVector(LayerPercentage, 0.0f, 0.0f));
 		}
 
 		OnEndUse();
@@ -737,7 +571,5 @@ namespace Modumate
 			attachLocation = FMath::Lerp(worldP1, worldP0, LayerPercentage);
 		}
 		return attachLocation;
-
 	}
-
 }

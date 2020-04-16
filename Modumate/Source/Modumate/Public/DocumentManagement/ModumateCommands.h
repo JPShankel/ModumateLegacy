@@ -71,6 +71,7 @@ namespace Modumate
 		MODUMATE_COMMAND(kInvertObjects, "invert_objects");
 		MODUMATE_COMMAND(kTransverseObjects, "transverse_objects");
 		MODUMATE_COMMAND(kSetAssemblyForObjects, "set_assembly_for_objects");
+		MODUMATE_COMMAND(kApplyObjectDelta, "apply_object_delta");
 
 		// Selected Objects
 		MODUMATE_COMMAND(kDeleteSelectedObjects, "delete_selected");
@@ -173,6 +174,7 @@ namespace Modumate
 		MODUMATE_PARAM(kSuccess, "success");
 		MODUMATE_PARAM(kText, "text");
 		MODUMATE_PARAM(kToolMode, "tool_mode");
+		MODUMATE_PARAM(kTransversed, "transversed");
 		MODUMATE_PARAM(kType, "type");
 		MODUMATE_PARAM(kUserName, "user_name");
 		MODUMATE_PARAM(kValues, "values");

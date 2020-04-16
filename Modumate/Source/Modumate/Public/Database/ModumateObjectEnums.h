@@ -344,10 +344,10 @@ enum class EHandleType : uint8
 UENUM(BlueprintType, meta = (Bitflags))
 enum class EObjectDirtyFlags : uint8
 {
-	None =		0x00,
+	None = 0x00,
 	Structure = 0x01,
-	Mitering =	0x02,
-	Visuals =	0x04,
+	Mitering = 0x02,
+	Visuals = 0x04
 };
 ENUM_CLASS_FLAGS(EObjectDirtyFlags);
 

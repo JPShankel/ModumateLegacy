@@ -641,27 +641,13 @@ namespace Modumate
 		if (Sign > 0.f)
 		{
 			Handle->HandleDirection = (cpPortal3 - cpPortal0).GetSafeNormal();
-			if (MOI->GetObjectTransversed())
-			{
-				return cpMid3;
-			}
-			else
-			{
-				return cpMid0;
-			}
+			return cpMid0;
 		}
 		else
 		{
 			FVector portalDir = (cpPortal3 - cpPortal0).GetSafeNormal();
 			Handle->HandleDirection = UKismetMathLibrary::RotateAngleAxis(portalDir, 90.f, FVector::UpVector);
-			if (MOI->GetObjectTransversed())
-			{
-				return cpMid0;
-			}
-			else
-			{
-				return cpMid3;
-			}
+			return cpMid3;
 		}
 	}
 

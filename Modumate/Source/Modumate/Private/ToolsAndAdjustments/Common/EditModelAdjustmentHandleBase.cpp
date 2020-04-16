@@ -30,6 +30,7 @@ namespace Modumate
 
 		if (MOI)
 		{
+			MOI->BeginPreviewOperation();
 			MOI->RequestCollisionDisabled(StateRequestTag, true);
 
 			auto descendents = MOI->GetAllDescendents();
@@ -51,12 +52,81 @@ namespace Modumate
 
 	bool FEditModelAdjustmentHandleBase::OnEndUse()
 	{
-		return OnEndOrAbort();
+		// TODO: subclass handles to support meta and non-meta objects separately
+		TArray<FVector> metaControlPoints;
+
+		switch (MOI->GetObjectType())
+		{
+		case EObjectType::OTMetaPlane:
+			metaControlPoints = MOI->GetControlPoints();
+			break;
+		};
+
+		if (OnEndOrAbort())
+		{
+			bool bCommandSuccess;
+
+			// If we are a meta-object, use the kSetGeometry command which creates graph deltas
+			if (metaControlPoints.Num() > 0)
+			{
+				bCommandSuccess = Controller->ModumateCommand(
+					FModumateCommand(Modumate::Commands::kSetGeometry)
+					.Param(Parameters::kObjectID, MOI->ID)
+					.Param(Parameters::kControlPoints, metaControlPoints)
+				).GetValue(Parameters::kSuccess);
+			}
+			else
+			{
+				TSharedPtr<FMOIDelta> delta = MOI->MakeDelta();
+
+				FModumateFunctionParameterSet params;
+				delta->ToParameterSet(params);
+
+				FModumateCommand command(Modumate::Commands::kApplyObjectDelta);
+				command.SetParameterSet(params);
+
+				bCommandSuccess = Controller->ModumateCommand(command).GetValue(Parameters::kSuccess);
+			}
+
+			if (!bCommandSuccess)
+			{
+				UpdateTargetGeometry();
+			}
+
+			ADynamicMeshActor* dynMeshActor = Cast<ADynamicMeshActor>(MOI->GetActor());
+			if (dynMeshActor != nullptr)
+			{
+				dynMeshActor->AdjustHandleFloor.Empty();
+			}
+
+			Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
+
+			if (!MOI->IsDestroyed())
+			{
+				MOI->ShowAdjustmentHandles(Controller.Get(), true);
+			}
+
+		}
+		return true;
 	}
 
 	bool FEditModelAdjustmentHandleBase::OnAbortUse()
 	{
-		return OnEndOrAbort();
+		if (OnEndOrAbort())
+		{
+			// Tell mesh it is done editing at handle
+			ADynamicMeshActor* dynMeshActor = Cast<ADynamicMeshActor>(MOI->GetActor());
+			if (dynMeshActor != nullptr)
+			{
+				dynMeshActor->AdjustHandleFloor.Empty();
+			}
+
+			UpdateTargetGeometry();
+			MOI->ShowAdjustmentHandles(Controller.Get(), true);
+
+			Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
+		}
+		return true;
 	}
 
 	bool FEditModelAdjustmentHandleBase::OnEndOrAbort()
@@ -72,6 +142,7 @@ namespace Modumate
 
 		if (MOI)
 		{
+			MOI->EndPreviewOperation();
 			MOI->RequestCollisionDisabled(StateRequestTag, false);
 
 			auto descendents = MOI->GetAllDescendents();
@@ -129,23 +200,10 @@ namespace Modumate
 		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 		MOI->ShowAdjustmentHandles(Controller.Get(), true);
 
-		TArray<FVector> points = MOI->GetControlPoints();
-		MOI->SetControlPoint(CP,OriginalP);
-
-		Controller->ModumateCommand(FModumateCommand(Commands::kBeginUndoRedoMacro));
-
-		Controller->ModumateCommand(FModumateCommand(Commands::kSetLineSegmentPoints)
-			.Param(Parameters::kObjectID, MOI->ID)
-			.Param(Parameters::kPoint1, points[0])
-			.Param(Parameters::kPoint2, points[1])
-		);
-
 		// TODO: allow this handle to be grabbed from the tool mode that created the line, rather than just from the Select tool
 		EToolMode curToolMode = Controller->GetToolMode();
 		EObjectType curObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(curToolMode);
 		Controller->TryMakePrismFromSegments(curObjectType, Controller->CurrentTool->GetAssembly().Key, MOI->GetObjectInverted(), MOI);
-
-		Controller->ModumateCommand(FModumateCommand(Commands::kEndUndoRedoMacro));
 
 		return true;
 	}

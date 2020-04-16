@@ -34,8 +34,6 @@ namespace Modumate
 
 		virtual bool OnBeginUse() override;
 		virtual bool OnUpdateUse() override;
-		virtual bool OnEndUse() override;
-		virtual bool OnAbortUse() override;
 		virtual FVector GetAttachmentPoint() override;
 		virtual bool HandleInputNumber(float number) override;
 	};
@@ -59,8 +57,6 @@ namespace Modumate
 
 		virtual bool OnBeginUse() override;
 		virtual bool OnUpdateUse() override;
-		virtual bool OnEndUse() override;
-		virtual bool OnAbortUse() override;
 		virtual FVector GetAttachmentPoint() override;
 		virtual bool HandleInputNumber(float number) override;
 	};

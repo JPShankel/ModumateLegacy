@@ -43,7 +43,7 @@ namespace Modumate
 		AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
 		MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
-		bool bEnableCollision = !MOI->GetPreviewOperationMode();
+		bool bEnableCollision = !MOI->GetIsInPreviewMode();
 		DynamicMeshActor->SetupMetaPlaneGeometry(MOI->GetControlPoints(), MaterialData, GetAlpha(), true, bEnableCollision);
 
 		MOI->UpdateVisibilityAndCollision();
@@ -169,7 +169,7 @@ namespace Modumate
 	{
 		// Don't update from the graph directly if we're in preview mode
 		// TODO: we shouldn't be calling this anyway in that situation
-		if (MOI->GetPreviewOperationMode())
+		if (MOI->GetIsInPreviewMode())
 		{
 			return;
 		}

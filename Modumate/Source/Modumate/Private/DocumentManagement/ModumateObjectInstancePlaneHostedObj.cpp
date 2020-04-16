@@ -182,7 +182,7 @@ namespace Modumate
 
 		// If our parent metaplane is being adjusted, then just update our own mesh to match rather than derive points from the doc graph
 		const FModumateObjectInstance *parent = MOI->GetParentObject();
-		if (ensure(parent != nullptr) && parent->GetPreviewOperationMode())
+		if (ensure(parent != nullptr) && parent->GetIsInPreviewMode())
 		{
 			UpdateMeshWithLayers(false, true);
 		}
@@ -708,7 +708,7 @@ namespace Modumate
 		DynamicMeshActor->Assembly = MOI->GetAssembly();
 		DynamicMeshActor->LayerGeometries = LayerGeometries;
 
-		bool bEnableCollision = !MOI->GetPreviewOperationMode() && !parentPlane->GetPreviewOperationMode();
+		bool bEnableCollision = !MOI->GetIsInPreviewMode() && !parentPlane->GetIsInPreviewMode();
 		DynamicMeshActor->UpdatePlaneHostedMesh(bRecreateMesh, bEnableCollision, bEnableCollision);
 	}
 

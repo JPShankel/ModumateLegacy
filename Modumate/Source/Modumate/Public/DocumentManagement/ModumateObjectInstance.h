@@ -13,6 +13,7 @@
 #include "ModumateDimensionString.h"
 #include "DynamicMeshActor.h"
 #include "ModumateTypes.h"
+#include "ModumateDelta.h"
 
 /**
  *
@@ -102,7 +103,6 @@ namespace Modumate
 		virtual void OnSelected(bool bNewSelected) = 0;
 
 		virtual void OnAssemblyChanged() = 0;
-
 
 		virtual AActor *RestoreActor() = 0;
 		virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) = 0;
@@ -208,18 +208,53 @@ namespace Modumate
 
 	class FModumateDocument;
 
+	struct MODUMATE_API FMOIStateData
+	{
+		// TODO: use this for instance-level overrides
+		BIM::FBIMPropertySheet ObjectProperties;
+
+		//<Thickness, Height, UNUSED>
+		FVector Extents = FVector::ZeroVector;
+
+		TArray<FVector> ControlPoints;
+		TArray<int32> ControlIndices;
+		bool ObjectInverted = false;
+
+		// Store key instead of whole assembly to avoid old versions of an assembly from being re-applied
+		FName ObjectAssemblyKey;
+
+		// TODO: to be deprecated when Commands 2.0 is developed, meantime...
+		bool ToParameterSet(const FString &Prefix,FModumateFunctionParameterSet &OutParameterSet) const;
+		bool FromParameterSet(const FString &Prefix,const FModumateFunctionParameterSet &ParameterSet);
+	};
+
+	class MODUMATE_API FMOIDelta : public FDelta
+	{
+	public:
+		virtual bool ApplyTo(FModumateDocument *doc, UWorld *world) const override;
+		virtual TSharedPtr<FDelta> MakeInverse() const override;
+
+		FMOIStateData BaseState, TargetState;
+		int32 InstanceID;
+
+		// TODO: to be deprecated when Commands 2.0 is developed, meantime...
+		bool ToParameterSet(FModumateFunctionParameterSet &OutParameterSet) const;
+		bool FromParameterSet(const FModumateFunctionParameterSet &ParameterSet);
+	};
+
 	class MODUMATE_API FModumateObjectInstance
 	{
-		friend class FModumateDocument;
-
 	private:
 		TWeakObjectPtr<AActor> MeshActor = nullptr;
 		TWeakObjectPtr<UWorld> World = nullptr;
 		IModumateObjectInstanceImpl *Implementation = nullptr;
 		Modumate::FModumateDocument *Document = nullptr;
 
-		// TODO: use this for instance-level overrides
-		BIM::FBIMPropertySheet ObjectProperties;
+		FMOIStateData CurrentState, PreviewState;
+
+		// TODO: refactor for shared pointers held in the preset manager
+		// First preset manager must become responsible for "trivial" assemblies used by abstract MOIs like metaplanes
+		FModumateObjectAssembly ObjectAssembly;
 
 		int32 Parent = 0;
 		TArray<int32> Children;
@@ -233,21 +268,14 @@ namespace Modumate
 		// default state of this object without them knowing about each other.
 		bool bVisible = false;
 		TSet<FName> HideRequests;
+
 		bool bCollisionEnabled = false;
 		TSet<FName> CollisionDisabledRequests;
 
 		EObjectDirtyFlags DirtyFlags = EObjectDirtyFlags::None;
 
-		TArray<FVector> ControlPoints;
-		TArray<int32> ControlIndices;
-
-		FModumateObjectAssembly ObjectAssembly;
-
-		//<Thickness, Height, UNUSED>
-		FVector Extents = FVector::ZeroVector;
-
-		bool ObjectInverted = false;
-		bool ObjectTransversed = false;
+		FMOIStateData &GetDataState();
+		const FMOIStateData &GetDataState() const;
 
 		void MakeImplementation();
 		void MakeActor(const FVector &Loc, const FQuat &Rot);
@@ -260,9 +288,6 @@ namespace Modumate
 
 		bool GetObjectInverted() const;
 		void SetObjectInverted(bool Inverted);
-
-		bool GetObjectTransversed() const;
-		void SetObjectTransversed(bool Transversed);
 
 		const FVector &GetExtents() const;
 		void SetExtents(const FVector &NewExtents);
@@ -282,6 +307,20 @@ namespace Modumate
 		void SetControlPoints(const TArray<FVector> &NewControlPoints);
 		void SetControlPointIndices(const TArray<int32> &NewControlPointIndices);
 
+		const TArray<int32> &GetChildren() const {return Children;}
+
+		bool BeginPreviewOperation();
+		bool EndPreviewOperation();
+		bool GetIsInPreviewMode() const;
+
+		TSharedPtr<FMOIDelta> MakeDelta() const;
+		void ApplyDelta(const TSharedPtr<FMOIDelta> &Delta);
+
+		bool SetDataState(const FMOIStateData &DataState);
+
+		int32 GetParentID() const {return Parent;}
+		void SetParentID(int32 NewID) { Parent = NewID; }
+
 		UWorld *GetWorld() const { return World.Get(); }
 		// Actor management
 		bool HasActor(const AActor *actor) const { return MeshActor == actor; }
@@ -295,7 +334,7 @@ namespace Modumate
 
 		void SetParentObject(FModumateObjectInstance *parent, bool bForceUpdate = false);
 		FModumateObjectInstance *GetParentObject();
-		int32 GetParentID() const { return Parent; }
+
 		const FModumateObjectInstance *GetParentObject() const;
 		TArray<FModumateObjectInstance *> GetChildObjects();
 		TArray<const FModumateObjectInstance *> GetChildObjects() const;
@@ -382,9 +421,6 @@ namespace Modumate
 		void SetObjectRotation(const FQuat &r);
 		void SetWorldTransform(const FTransform &NewTransform);
 		FTransform GetWorldTransform() const;
-
-		void SetPreviewOperationMode(bool mode) { bPreviewOperationMode = mode; }
-		bool GetPreviewOperationMode() const { return bPreviewOperationMode; }
 
 		FVector GetNormal() const;
 

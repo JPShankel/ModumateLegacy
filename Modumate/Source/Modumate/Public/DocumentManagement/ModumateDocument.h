@@ -10,6 +10,7 @@
 #include "ModumateGraph.h"
 #include "ModumatePresetManager.h"
 #include "Graph3D.h"
+#include "ModumateObjectInstance.h"
 #include "Runtime/Engine/Classes/Debug/ReporterGraph.h"
 #include "ModumateCameraView.h"
 
@@ -210,8 +211,9 @@ namespace Modumate
 		void SaveVolumeGraph(FGraph3DRecord &OutGraph3DRecord) const;
 
 	public:
+		bool ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World);
 		void ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World);
-		bool ApplyDeltas(TArray<TSharedPtr<FDelta>> &Deltas, UWorld *World);
+		bool ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UWorld *World);
 		bool UpdateGraphObjects(UWorld *World);
 
 	private:

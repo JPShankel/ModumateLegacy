@@ -77,7 +77,7 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 	{
 		kvp.Key->RequestCollisionDisabled(StateRequestTag, true);
 		kvp.Key->ShowAdjustmentHandles(nullptr, false);
-		kvp.Key->SetPreviewOperationMode(true);
+		kvp.Key->BeginPreviewOperation();
 	}
 }
 
@@ -94,7 +94,7 @@ void FSelectedObjectToolMixin::ReleaseSelectedObjects()
 	for (auto &kvp : OriginalObjectData)
 	{
 		kvp.Key->RequestCollisionDisabled(StateRequestTag, false);
-		kvp.Key->SetPreviewOperationMode(false);
+		kvp.Key->EndPreviewOperation();
 	}
 
 	OriginalObjectData.Empty();

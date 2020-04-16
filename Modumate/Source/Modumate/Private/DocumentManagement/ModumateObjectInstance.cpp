@@ -20,6 +20,7 @@
 #include "EditModelPlayerState_CPP.h"
 #include "HUDDrawWidget_CPP.h"
 #include "LineActor3D_CPP.h"
+#include "ModumateCommands.h"
 #include "ModumateDraftingElements.h"
 #include "ModumateObjectDatabase.h"
 #include "ModumateObjectGroup.h"
@@ -55,8 +56,8 @@ namespace Modumate
 		int32 id)
 		: World(world)
 		, Document(doc)
-		, bDestroyed(false)
 		, ObjectAssembly(obAsm)
+		, bDestroyed(false)
 		, ID(id)
 	{
 		ensureAlways(obAsm.ObjectType != EObjectType::OTNone);
@@ -78,9 +79,9 @@ namespace Modumate
 		const FMOIDataRecord &obRec)
 		: World(world)
 		, Document(doc)
+		, ObjectAssembly()
 		, Parent(0)
 		, bDestroyed(false)
-		, ObjectAssembly()
 	{
 		if (world == nullptr)
 		{
@@ -88,7 +89,6 @@ namespace Modumate
 		}
 
 		ID = obRec.ID;
-		ObjectInverted = obRec.ObjectInverted;
 
 		if (obRec.AssemblyKey.Len() > 0 && obRec.AssemblyKey != TEXT("None"))
 		{
@@ -116,17 +116,27 @@ namespace Modumate
 			ObjectAssembly.ObjectType = obRec.ObjectType;
 		}
 
+		//Update inversion/transversion state after implementation is in place
+		CurrentState.ObjectInverted = false; 
+
 		MakeImplementation();
 		MakeActor(obRec.Location, obRec.Rotation.Quaternion());
 
-		Extents = obRec.Extents;
+		CurrentState.Extents = obRec.Extents;
 		Parent = obRec.ParentID;
-		ControlPoints = obRec.ControlPoints;
-		ControlIndices = obRec.ControlIndices;
-		ObjectProperties.FromStringMap(obRec.ObjectProperties);
+		CurrentState.ControlPoints = obRec.ControlPoints;
+		CurrentState.ControlIndices = obRec.ControlIndices;
+		CurrentState.ObjectProperties.FromStringMap(obRec.ObjectProperties);
+
+		PreviewState = CurrentState;
 
 		SetObjectRotation(obRec.Rotation.Quaternion());
 		SetObjectLocation(obRec.Location);
+
+		if (obRec.ObjectInverted)
+		{
+			InvertObject();
+		}
 	}
 
 	void FModumateObjectInstance::MakeImplementation()
@@ -638,34 +648,176 @@ namespace Modumate
 		return bSuccess;
 	}
 
+	bool FMOIDelta::ApplyTo(FModumateDocument *doc, UWorld *world) const
+	{
+		return doc->ApplyMOIDelta(*this, world);
+	}
+
+	TSharedPtr<FDelta> FMOIDelta::MakeInverse() const
+	{
+		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta());
+		delta->BaseState = TargetState;
+		delta->TargetState = BaseState;
+		delta->InstanceID = InstanceID;
+		return delta;
+	}
+
+	bool FMOIStateData::ToParameterSet(const FString &Prefix, FModumateFunctionParameterSet &OutParameterSet) const
+	{
+		TMap<FString, FString> propertyMap;
+		if (!ObjectProperties.ToStringMap(propertyMap))
+		{
+			return false;
+		}
+
+		TArray<FString> propertyNames, propertyValues;
+
+		propertyMap.GenerateKeyArray(propertyNames);
+		propertyMap.GenerateValueArray(propertyValues);
+
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kPropertyNames, propertyNames);
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kPropertyValues, propertyValues);
+
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kExtents, Extents);
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kControlPoints, ControlPoints);
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kIndices, ControlIndices);
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kInverted, ObjectInverted);
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kAssembly, ObjectAssemblyKey);
+
+		return true;
+	}
+
+	bool FMOIStateData::FromParameterSet(const FString &Prefix, const FModumateFunctionParameterSet &ParameterSet)
+	{
+		TArray<FString> propertyNames, propertyValues;
+		propertyNames = ParameterSet.GetValue(Prefix + Modumate::Parameters::kPropertyNames, propertyNames);
+		propertyValues = ParameterSet.GetValue(Prefix + Modumate::Parameters::kPropertyValues, propertyValues);
+
+		if (!ensureAlways(propertyNames.Num() == propertyValues.Num()))
+		{
+			return false;
+		}
+
+		FModumateFunctionParameterSet::FStringMap propertyMap;
+		for (int32 i = 0; propertyNames.Num(); ++i)
+		{
+			propertyMap.Add(propertyNames[i], propertyValues[i]);
+		}
+
+		ObjectProperties.FromStringMap(propertyMap);
+
+		Extents = ParameterSet.GetValue(Prefix + Modumate::Parameters::kExtents);
+		ControlPoints = ParameterSet.GetValue(Prefix + Modumate::Parameters::kControlPoints);
+		ControlIndices = ParameterSet.GetValue(Prefix + Modumate::Parameters::kIndices);
+		ObjectInverted = ParameterSet.GetValue(Prefix + Modumate::Parameters::kInverted);
+		ObjectAssemblyKey = ParameterSet.GetValue(Prefix + Modumate::Parameters::kAssembly);
+
+		return true;
+	}
+
+	const TCHAR *BaseStatePrefix = TEXT("BaseState_");
+	const TCHAR *TargetStatePrefix = TEXT("TargetState_");
+
+	bool FMOIDelta::ToParameterSet(FModumateFunctionParameterSet &OutParameterSet) const
+	{
+		OutParameterSet.SetValue(Modumate::Parameters::kObjectID, InstanceID);
+		BaseState.ToParameterSet(BaseStatePrefix, OutParameterSet);
+		TargetState.ToParameterSet(TargetStatePrefix, OutParameterSet);
+		return true;
+	}
+
+	bool FMOIDelta::FromParameterSet(const FModumateFunctionParameterSet &ParameterSet)
+	{
+		InstanceID = ParameterSet.GetValue(Modumate::Parameters::kObjectID);
+		BaseState.FromParameterSet(BaseStatePrefix,ParameterSet);
+		TargetState.FromParameterSet(TargetStatePrefix,ParameterSet);
+		return true;
+	}
+
+	bool FModumateObjectInstance::SetDataState(const FMOIStateData &DataState)
+	{
+		if (!ensureAlways(!GetIsInPreviewMode()))
+		{
+			return false;
+		}
+		CurrentState = DataState;
+		PreviewState = DataState; 
+		MarkDirty(EObjectDirtyFlags::Structure);
+
+		return true;
+	}
+
+	FMOIStateData &FModumateObjectInstance::GetDataState()
+	{
+		return GetIsInPreviewMode() ? PreviewState : CurrentState;
+	}
+
+	const FMOIStateData &FModumateObjectInstance::GetDataState() const
+	{
+		return GetIsInPreviewMode() ? PreviewState : CurrentState;
+	}
+
+	TSharedPtr<FMOIDelta> FModumateObjectInstance::MakeDelta() const
+	{
+		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta());
+		delta->BaseState = CurrentState;
+		delta->TargetState = PreviewState;
+		delta->InstanceID = ID;
+		return delta;
+	}
+
+	void FModumateObjectInstance::ApplyDelta(const TSharedPtr<FMOIDelta> &Delta)
+	{
+		CurrentState = Delta->TargetState;
+		PreviewState = CurrentState;
+		MarkDirty(EObjectDirtyFlags::Structure);
+	}
+
+	bool FModumateObjectInstance::BeginPreviewOperation()
+	{
+		if (!ensureAlways(!GetIsInPreviewMode()))
+		{
+			return false;
+		}
+		PreviewState = CurrentState;
+		bPreviewOperationMode = true;
+		return true;
+	}
+
+	bool FModumateObjectInstance::EndPreviewOperation()
+	{
+		if (!ensureAlways(GetIsInPreviewMode()))
+		{
+			return false;
+		}
+		bPreviewOperationMode = false;
+		MarkDirty(EObjectDirtyFlags::Structure);
+		return true;
+	}
+
+	bool FModumateObjectInstance::GetIsInPreviewMode() const
+	{
+		return bPreviewOperationMode;
+	}
+
 	bool FModumateObjectInstance::GetObjectInverted() const
 	{
-		return ObjectInverted;
+		return GetDataState().ObjectInverted;
 	}
 
 	void FModumateObjectInstance::SetObjectInverted(bool Inverted)
 	{
-		ObjectInverted = Inverted;
-	}
-
-	bool FModumateObjectInstance::GetObjectTransversed() const
-	{
-		return ObjectTransversed;
-	}
-
-	void FModumateObjectInstance::SetObjectTransversed(bool Transversed)
-	{
-		ObjectTransversed = Transversed;
+		GetDataState().ObjectInverted = Inverted;
 	}
 
 	const FVector &FModumateObjectInstance::GetExtents() const
 	{
-		return Extents;
+		return GetDataState().Extents;
 	}
 
 	void FModumateObjectInstance::SetExtents(const FVector &NewExtents)
 	{
-		Extents = NewExtents;
+		GetDataState().Extents = NewExtents;
 	}
 
 	const FModumateObjectAssembly &FModumateObjectInstance::GetAssembly() const
@@ -685,60 +837,60 @@ namespace Modumate
 
 	void FModumateObjectInstance::SetControlPoint(int32 Index, const FVector &Value)
 	{
-		if (ensureAlways(ControlPoints.Num() > Index))
+		if (ensureAlways(CurrentState.ControlPoints.Num() > Index))
 		{
-			ControlPoints[Index] = Value;
+			GetDataState().ControlPoints[Index] = Value;
 		}
 	}
 
 	const FVector &FModumateObjectInstance::GetControlPoint(int32 Index) const
 	{
-		ensureAlways(Index < ControlPoints.Num());
-		return ControlPoints[Index];
+		ensureAlways(Index < GetDataState().ControlPoints.Num());
+		return GetDataState().ControlPoints[Index];
 	}
 
 	void FModumateObjectInstance::SetControlPointIndex(int32 IndexNum, int32 IndexVal)
 	{
-		if (ensureAlways(ControlIndices.Num() > IndexNum))
+		if (ensureAlways(GetDataState().ControlIndices.Num() > IndexNum))
 		{
-			ControlIndices[IndexNum] = IndexVal;
+			GetDataState().ControlIndices[IndexNum] = IndexVal;
 		}
 	}
 
 	int32 FModumateObjectInstance::GetControlPointIndex(int32 IndexNum) const
 	{
-		ensureAlways(IndexNum < ControlIndices.Num());
-		return ControlIndices[IndexNum];
+		ensureAlways(IndexNum < GetDataState().ControlIndices.Num());
+		return GetDataState().ControlIndices[IndexNum];
 	}
 
 	const TArray<FVector> &FModumateObjectInstance::GetControlPoints() const
 	{
-		return ControlPoints;
+		return GetDataState().ControlPoints;
 	}
 
 	const TArray<int32> &FModumateObjectInstance::GetControlPointIndices() const
 	{
-		return ControlIndices;
+		return GetDataState().ControlIndices;
 	}
 
 	void FModumateObjectInstance::AddControlPoint(const FVector &ControlPoint)
 	{
-		ControlPoints.Add(ControlPoint);
+		GetDataState().ControlPoints.Add(ControlPoint);
 	}
 
 	void FModumateObjectInstance::AddControlPointIndex(int32 Index)
 	{
-		ControlIndices.Add(Index);
+		GetDataState().ControlIndices.Add(Index);
 	}
 
 	void FModumateObjectInstance::SetControlPoints(const TArray<FVector> &NewControlPoints)
 	{
-		ControlPoints = NewControlPoints;
+		GetDataState().ControlPoints = NewControlPoints;
 	}
 
 	void FModumateObjectInstance::SetControlPointIndices(const TArray<int32> &NewControlPointIndices)
 	{
-		ControlIndices = NewControlPointIndices;
+		GetDataState().ControlIndices = NewControlPointIndices;
 	}
 
 	void FModumateObjectInstance::SetupGeometry()
@@ -788,9 +940,9 @@ namespace Modumate
 
 	FVector FModumateObjectInstance::GetWallDirection() const
 	{
-		if (ControlPoints.Num() >= 2)
+		if (CurrentState.ControlPoints.Num() >= 2)
 		{
-			FVector delta = (ControlPoints[1] - ControlPoints[0]).GetSafeNormal();
+			FVector delta = (CurrentState.ControlPoints[1] - CurrentState.ControlPoints[0]).GetSafeNormal();
 			return FVector::CrossProduct(FVector(0, 0, 1), delta);
 		}
 		else
@@ -854,13 +1006,12 @@ namespace Modumate
 
 	void FModumateObjectInstance::InvertObject()
 	{
-		ObjectInverted = !ObjectInverted;
+		CurrentState.ObjectInverted = !CurrentState.ObjectInverted;
 		Implementation->InvertObject();
 	}
 
 	void FModumateObjectInstance::TransverseObject()
 	{
-		ObjectTransversed = !ObjectTransversed;
 		Implementation->TransverseObject();
 	}
 
@@ -896,17 +1047,17 @@ namespace Modumate
 
 	bool FModumateObjectInstance::HasProperty(BIM::EScope Scope, const BIM::FNameType &Name) const
 	{
-		return ObjectProperties.HasProperty(Scope, Name);
+		return CurrentState.ObjectProperties.HasProperty(Scope, Name);
 	}
 
 	FModumateCommandParameter FModumateObjectInstance::GetProperty(BIM::EScope Scope, const BIM::FNameType &Name) const
 	{
-		return ObjectProperties.GetProperty(Scope, Name);
+		return CurrentState.ObjectProperties.GetProperty(Scope, Name);
 	}
 
 	void FModumateObjectInstance::SetProperty(BIM::EScope Scope, const BIM::FNameType &Name, const FModumateCommandParameter &Param)
 	{
-		ObjectProperties.SetProperty(Scope, Name, Param);
+		CurrentState.ObjectProperties.SetProperty(Scope, Name, Param);
 	}
 
 	void FModumateObjectInstance::SetFromDataRecordAndRotation(const FMOIDataRecordV1 &dataRec, const FVector &origin, const FQuat &rotation)
@@ -930,11 +1081,11 @@ namespace Modumate
 		ret.ChildIDs = Children;
 		ret.Location = GetObjectLocation();
 		ret.Rotation = GetObjectRotation().Rotator();
-		ret.ControlPoints = ControlPoints;
-		ret.ControlIndices = ControlIndices;
-		ret.Extents = Extents;
-		ObjectProperties.ToStringMap(ret.ObjectProperties);
-		ret.ObjectInverted = ObjectInverted;
+		ret.ControlPoints = CurrentState.ControlPoints;
+		ret.ControlIndices = CurrentState.ControlIndices;
+		ret.Extents = CurrentState.Extents;
+		CurrentState.ObjectProperties.ToStringMap(ret.ObjectProperties);
+		ret.ObjectInverted = CurrentState.ObjectInverted;
 		return ret;
 	}
 
@@ -946,7 +1097,7 @@ namespace Modumate
 			ret.OriginIndex = originIndex;
 			ret.RelativePosition = FVector::ZeroVector;
 			ret.OrientationDelta = FQuat::Identity;
-			ret.OriginalControlPoints = child->ControlPoints;
+			ret.OriginalControlPoints = child->GetControlPoints();
 			return ret;
 		}
 

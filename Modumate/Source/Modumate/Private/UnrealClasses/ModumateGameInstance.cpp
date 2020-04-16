@@ -90,6 +90,15 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
+	RegisterCommand(kApplyObjectDelta, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
+	{
+		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta());
+		delta->FromParameterSet(params);
+
+		TArray<TSharedPtr<FDelta>> deltas({ delta });
+		return GetDocument()->ApplyDeltas(deltas, GetWorld());
+	});
+
 	RegisterCommand(kMakeNew, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
