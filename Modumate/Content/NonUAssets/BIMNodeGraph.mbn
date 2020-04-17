@@ -883,6 +883,7 @@ END
 ---
 
 DEFINE DIMENSION_WD
+	ICON: Dimension
 	PROPERTIES:
 		STRING("Name",Preset.Name)
 		DIMENSION("Width",Node.XExtents)
@@ -950,6 +951,7 @@ END
 ---
 
 DEFINE DIMENSION_DI
+	ICON: Dimension
 	PROPERTIES:
 		STRING("Name",Preset.Name)
 		DIMENSION("Diameter",Node.Diameter)
@@ -1032,6 +1034,7 @@ END
 ---
 
 DEFINE DIMENSION_WDT
+	ICON: Dimension
 	PROPERTIES:
 		STRING("Name",Preset.Name)
 		DIMENSION("Width",Node.XExtents)
@@ -1213,6 +1216,7 @@ END
 ---
 
 DEFINE DIMENSION_DWWTFT
+	ICON: Dimension
 	PROPERTIES:
 		STRING("Name",Preset.Name)
 		DIMENSION("Depth",Node.YExtents)	
@@ -1461,6 +1465,7 @@ END
 ---
 
 DEFINE DIMENSION_DIT
+	ICON: Dimension
 	PROPERTIES:
 		STRING("Name",Preset.Name)
 		DIMENSION("Diameter",Node.Diameter)
@@ -1542,6 +1547,7 @@ END
 ---
 
 DEFINE BEAMCOLUMN
+	ICON: ExtrudedProfile
 	OUTPUT: OTStructureLine
 	INPUT:
 		Layer->Dimensions[1..1]
@@ -2436,6 +2442,7 @@ END
 
 
 DEFINE SUBCATEGORY_BEAMCOLUMN
+	ICON: None
 	INPUT:
 		Assembly->SelectedBeam[1..1]
 
@@ -2510,6 +2517,7 @@ LIST List_Subcategory_BeamColumn
 END
 
 DEFINE SUBCATEGORY_BEAMCOLUMN_PICKER
+	ICON: None
 	INPUT:
 		Assembly->Subcategory[1..1]
 	PROPERTIES:
@@ -2532,6 +2540,7 @@ END
 -- Layers that have a presettable thickness and material (Abstract, Mass, Continuous)
 
 DEFINE LAYER_THICK
+	ICON: Layer
 	INPUT:
 		Layer->Material[1..1]
 		Layer->Thickness[1..1]
@@ -2542,6 +2551,7 @@ DEFINE LAYER_THICK
 END
 
 DEFINE DIMENSION_THICKNESS
+	ICON: Dimension
 	PROPERTIES:
 		STRING("Name",Preset.Name)
 		DIMENSION("Thickness",Layer.Thickness)
@@ -2550,6 +2560,7 @@ END
 -- LAYER_CATEGORY is used to group wall layers into categories and subcategories
 
 DEFINE LAYER_CATEGORY
+	ICON: None
 	INPUT:
 		Layer->Category[1..1]
 	PROPERTIES:
@@ -3438,6 +3449,7 @@ END
 -- Stud wall layers
 
 DEFINE LAYER_MODULE2D
+	ICON: Layer
 	INPUT:
 		Layer->Pattern[1..1]
 		Layer->Modules[1..1]
@@ -3453,6 +3465,7 @@ END
 --
 
 DEFINE PATTERN 
+	ICON: Pattern
 	PROPERTIES:
 	STRING("Name",Preset.Name)
 	PRIVATE("PatternKey",Layer.Pattern)
@@ -3560,6 +3573,7 @@ LIST List_Pattern_Finish
 END
 
 DEFINE DIMENSION_MODULE_2D
+	ICON: Dimension
 	PROPERTIES:
 		STRING("Name",Preset.Name)
 		DIMENSION("Width",Node.XExtents)
@@ -3858,6 +3872,7 @@ LIST List_DimensionModule2D_Joist
 END
 
 DEFINE MODULE_3D
+	ICON: Module
 	INPUT:
 		Module->Dimensions[1..1]
 		Module->Material[1..1]		
@@ -4534,6 +4549,7 @@ END
 -- Masonry layers
 
 DEFINE DIMENSION_MODULE_3D
+	ICON: Dimension
 	PROPERTIES:
 		STRING("Name",Preset.Name)
 		DIMENSION("Length",Node.XExtents)
@@ -4844,6 +4860,7 @@ LIST List_DimensionModule3D_ConcreteMasonryUnit
 END
 
 DEFINE DIMENSION_GAP_2D
+	ICON: Dimension
 	PROPERTIES:
 		STRING("Name",Preset.Name)
 		DIMENSION("Width",Gap.XExtents)
@@ -4949,6 +4966,7 @@ LIST List_DimensionGap2D_ClayBrickCMU
 END
 
 DEFINE GAP_2D
+	ICON: Gap2D
 	INPUT:
 		Gap->GapMaterial[1..1]
 		Gap->GapDimensions[1..1]	
@@ -5193,6 +5211,7 @@ LIST List_Modules3D_GlassBlock
 END
 
 DEFINE LAYER_MODULE3D
+	ICON: Layer
 	INPUT:
 		Layer->Pattern[1..1]
 		Layer->Modules[1..1]
@@ -5417,6 +5436,7 @@ END
 ---
 
 DEFINE ROOF_ROOT
+	ICON: LayerHorizontal
 	INPUT:
 		Assembly->Layers[1..]
 	OUTPUT: OTRoof
@@ -5451,6 +5471,7 @@ END
 -- Like LAYER_THICK but thickness is a dimension property, not a child
 
 DEFINE LAYER_CUSTOM_THICK
+	ICON: Layer
 	INPUT:
 		Layer->Material[1..1]
 	PROPERTIES:
@@ -5663,6 +5684,7 @@ END
 -- Board, Panel, Brick
 
 DEFINE DIMENSION_MODULE_FINISH_3D
+	ICON: Dimension
 	PROPERTIES:
 		STRING("Name",Preset.Name)
 		DIMENSION("Length",Node.XExtents)
@@ -7081,6 +7103,7 @@ END
 -- Finish Root
 
 DEFINE FINISH_ROOT
+	ICON: LayerVertical
 	INPUT:
 		Assembly->Layers[1..]
 	OUTPUT: OTFinish
