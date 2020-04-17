@@ -3,6 +3,7 @@
 #include "Graph3D.h"
 #include "Graph3DDelta.h"
 #include "ModumateDelta.h"
+#include "JsonObjectConverter.h"
 
 namespace Modumate
 {
@@ -124,6 +125,86 @@ namespace Modumate
 
 		int32 numPolys = graph.CalculatePolygons();
 		return (numPolys == 6);
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphSerialization, "Modumate.Graph.2D.Serialization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphSerialization::RunTest(const FString& Parameters)
+	{
+		Modumate::FGraph graph;
+
+		int32 p1ID = graph.AddVertex(FVector2D(0.0f, 0.0f))->ID;
+		int32 p2ID = graph.AddVertex(FVector2D(10.0f, 0.0f))->ID;
+		int32 p3ID = graph.AddVertex(FVector2D(10.0f, 10.0f))->ID;
+		int32 p4ID = graph.AddVertex(FVector2D(0.0f, 10.0f))->ID;
+		int32 p5ID = graph.AddVertex(FVector2D(15.0f, 0.0f))->ID;
+		int32 p6ID = graph.AddVertex(FVector2D(15.0f, 10.0f))->ID;
+
+		graph.AddEdge(p1ID, p2ID);
+		graph.AddEdge(p2ID, p3ID);
+		graph.AddEdge(p3ID, p4ID);
+		graph.AddEdge(p4ID, p1ID);
+		graph.AddEdge(p2ID, p5ID);
+		graph.AddEdge(p5ID, p6ID);
+		graph.AddEdge(p6ID, p3ID);
+
+		graph.CalculatePolygons();
+		TestEqual((TEXT("Num Computed Polygons")), graph.GetPolygons().Num(), 3);
+
+		FGraph2DRecord graphRecord;
+		bool bSaveSuccess = graph.ToDataRecord(graphRecord);
+		TestTrue(TEXT("Graph Save Success"), bSaveSuccess);
+
+		FString graphJSONString;
+		bool bJSONSuccess = FJsonObjectConverter::UStructToJsonObjectString(graphRecord, graphJSONString);
+		TestTrue(TEXT("Graph Record JSON Success"), bJSONSuccess);
+
+		FString expectedJSONString(TEXT(
+"{"
+"	\"vertices\":"
+"	{"
+"		\"1\": {\"x\": 0, \"y\": 0},"
+"		\"2\": {\"x\": 10, \"y\": 0},"
+"		\"3\": {\"x\": 10, \"y\": 10},"
+"		\"4\": {\"x\": 0, \"y\": 10},"
+"		\"5\": {\"x\": 15, \"y\": 0},"
+"		\"6\": {\"x\": 15, \"y\": 10}"
+"	},"
+"	\"edges\":"
+"	{"
+"		\"1\": {\"vertexIds\": [1, 2]},"
+"		\"2\": {\"vertexIds\": [2, 3]},"
+"		\"3\": {\"vertexIds\": [3, 4]},"
+"		\"4\": {\"vertexIds\": [4, 1]},"
+"		\"5\": {\"vertexIds\": [2, 5]},"
+"		\"6\": {\"vertexIds\": [5, 6]},"
+"		\"7\": {\"vertexIds\": [6, 3]}"
+"	},"
+"	\"polygons\":"
+"	{"
+"		\"2\": {\"edgeIds\": [-1, -4, -3, -2]},"
+"		\"3\": {\"edgeIds\": [2, -7, -6, -5]}"
+"	}"
+"}"
+		));
+
+		expectedJSONString.ReplaceInline(TEXT(" "), TEXT(""));
+		expectedJSONString.ReplaceInline(TEXT("\t"), TEXT(""));
+		expectedJSONString.ReplaceInline(TEXT("\r"), TEXT(""));
+		expectedJSONString.ReplaceInline(TEXT("\n"), TEXT(""));
+		graphJSONString.ReplaceInline(TEXT(" "), TEXT(""));
+		graphJSONString.ReplaceInline(TEXT("\t"), TEXT(""));
+		graphJSONString.ReplaceInline(TEXT("\r"), TEXT(""));
+		graphJSONString.ReplaceInline(TEXT("\n"), TEXT(""));
+
+		TestEqualInsensitive(TEXT("Graph JSON string"), *expectedJSONString, *graphJSONString);
+
+		Modumate::FGraph deserializedGraph;
+		bool bLoadSuccess = deserializedGraph.FromDataRecord(graphRecord);
+		TestTrue(TEXT("Graph Load Success"), bLoadSuccess);
+
+		TestEqual(TEXT("Num Loaded Polygons"), deserializedGraph.GetPolygons().Num(), 2);
+
+		return true;
 	}
 
 	// 3D graph test helper functions

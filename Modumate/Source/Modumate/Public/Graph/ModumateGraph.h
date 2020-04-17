@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "ModumateTypes.h"
+#include "ModumateSerialization.h"
 
 namespace Modumate
 {
@@ -109,6 +111,9 @@ namespace Modumate
 		const TMap<int32, FGraphEdge> &GetEdges() const { return Edges; }
 		const TMap<int32, FGraphVertex> &GetVertices() const { return Vertices; }
 		const TMap<int32, FGraphPolygon> &GetPolygons() const { return Polygons; }
+
+		bool ToDataRecord(FGraph2DRecord &OutRecord, bool bSaveOpenPolygons = false, bool bSaveExteriorPolygons = false) const;
+		bool FromDataRecord(const FGraph2DRecord &InRecord);
 
 		float Epsilon;
 		bool bDebugCheck;

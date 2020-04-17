@@ -583,4 +583,112 @@ namespace Modumate
 		NextPolyID = 1;
 		bDirty = true;
 	}
+
+	bool FGraph::ToDataRecord(FGraph2DRecord &OutRecord, bool bSaveOpenPolygons, bool bSaveExteriorPolygons) const
+	{
+		OutRecord.Vertices.Reset();
+		OutRecord.Edges.Reset();
+		OutRecord.Polygons.Reset();
+
+		for (const auto &kvp : Vertices)
+		{
+			const FGraphVertex &vertex = kvp.Value;
+			OutRecord.Vertices.Add(vertex.ID, vertex.Position);
+		}
+
+		for (const auto &kvp : Edges)
+		{
+			const FGraphEdge &edge = kvp.Value;
+			TArray<int32> vertexIDs({ edge.StartVertexID, edge.EndVertexID });
+			FGraph2DEdgeRecord edgeRecord({ vertexIDs });
+			OutRecord.Edges.Add(edge.ID, edgeRecord);
+		}
+
+		for (const auto &kvp : Polygons)
+		{
+			const FGraphPolygon &poly = kvp.Value;
+
+			if ((!poly.bClosed && !bSaveOpenPolygons) || (!poly.bInterior && !bSaveExteriorPolygons))
+			{
+				continue;
+			}
+
+			FGraph2DPolygonRecord polyRecord({ poly.Edges });
+			OutRecord.Polygons.Add(poly.ID, polyRecord);
+		}
+
+		return true;
+	}
+
+	bool FGraph::FromDataRecord(const FGraph2DRecord &InRecord)
+	{
+		Reset();
+
+		for (const auto &kvp : InRecord.Vertices)
+		{
+			FGraphVertex *newVertex = AddVertex(kvp.Value, kvp.Key);
+			if (newVertex == nullptr)
+			{
+				return false;
+			}
+
+			NextVertexID = FMath::Max(NextVertexID, newVertex->ID + 1);
+		}
+
+		for (const auto &kvp : InRecord.Edges)
+		{
+			const FGraph2DEdgeRecord &edgeRecord = kvp.Value;
+			if (edgeRecord.VertexIDs.Num() != 2)
+			{
+				return false;
+			}
+
+			FGraphEdge *newEdge = AddEdge(edgeRecord.VertexIDs[0], edgeRecord.VertexIDs[1], kvp.Key);
+			if (newEdge == nullptr)
+			{
+				return false;
+			}
+
+			NextEdgeID = FMath::Max(NextEdgeID, newEdge->ID + 1);
+		}
+
+		for (const auto &kvp : InRecord.Polygons)
+		{
+			const FGraph2DPolygonRecord &polyRecord = kvp.Value;
+
+			FGraphPolygon poly(kvp.Key, this);
+			poly.Edges = polyRecord.EdgeIDs;
+
+			// TODO: use the polygon calculation to compute this data, and verify the integrity of the input.
+			// For now, we have to assume it was input correctly.
+			
+			poly.bClosed = true;
+			poly.bInterior = true;
+
+			// At least make sure all of the referenced edges and vertices are correct, also to update the AABB and cached points.
+			for (FEdgeID edgeID : poly.Edges)
+			{
+				const FGraphEdge *edge = FindEdge(edgeID);
+				if (edge == nullptr)
+				{
+					return false;
+				}
+
+				FGraphVertex *vertex = FindVertex(edge->StartVertexID);
+				if (vertex == nullptr)
+				{
+					return false;
+				}
+
+				poly.Points.Add(vertex->Position);
+			}
+
+			poly.AABB = FBox2D(poly.Points);
+			Polygons.Add(poly.ID, poly);
+
+			NextPolyID = FMath::Max(NextPolyID, poly.ID + 1);
+		}
+
+		return true;
+	}
 }

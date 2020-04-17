@@ -137,6 +137,42 @@ struct FMOIDataRecordV1
 typedef FMOIDataRecordV1 FMOIDataRecord;
 
 
+// ---------------- Graph2D serialization ----------------
+
+USTRUCT()
+struct FGraph2DEdgeRecord
+{
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY()
+	TArray<int32> VertexIDs;
+};
+
+USTRUCT()
+struct FGraph2DPolygonRecord
+{
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY()
+	TArray<int32> EdgeIDs;
+};
+
+USTRUCT()
+struct FGraph2DRecord
+{
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY()
+	TMap<int32, FVector2D> Vertices;
+
+	UPROPERTY()
+	TMap<int32, FGraph2DEdgeRecord> Edges;
+
+	UPROPERTY()
+	TMap<int32, FGraph2DPolygonRecord> Polygons;
+};
+
+
 // ---------------- Graph3D serialization ----------------
 
 USTRUCT()
