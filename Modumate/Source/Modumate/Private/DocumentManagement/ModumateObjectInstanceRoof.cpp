@@ -168,17 +168,24 @@ namespace Modumate
 			TArray<int32> newCIs;
 			UModumateObjectStatics::GetRoofControlValues(EdgePoints, EdgeSlopes, EdgesHaveFaces, newCPs, newCIs);
 
-			Controller->ModumateCommand(
-				FModumateCommand(Commands::kUpdateControlValues)
-				.Param(Parameters::kObjectID, MOI->ID)
-				.Param(Parameters::kControlPoints, newCPs)
-				.Param(Parameters::kIndices, newCIs)
-			);
+			MOI->SetControlPoints(newCPs);
+			MOI->SetControlPointIndices(newCIs);
+
+			TSharedPtr<FMOIDelta> delta = FMOIDelta::MakeDeltaForObjects({MOI});
+
+			MOI->ShowAdjustmentHandles(Controller.Get(), true);
+
+			OnEndUse();
+
+			Controller->ModumateCommand(delta->AsCommand());
+
+			return false;
 		}
-
-		OnEndUse();
-
-		MOI->ShowAdjustmentHandles(Controller.Get(), true);
+		else
+		{
+			MOI->ShowAdjustmentHandles(Controller.Get(), true);
+			OnEndUse();
+		}
 
 		return false;
 	}

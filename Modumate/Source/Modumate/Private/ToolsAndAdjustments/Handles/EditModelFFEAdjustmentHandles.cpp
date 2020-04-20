@@ -530,12 +530,10 @@ namespace Modumate
 			return false;
 		}
 
-		TArray<int32> ids = { MOI->ID };
-		Controller->ModumateCommand(
-			FModumateCommand(Commands::kInvertObjects)
-			.Param(Parameters::kObjectIDs, ids));
+		MOI->InvertObject();
 
 		OnEndUse();
+
 		return false;
 	}
 

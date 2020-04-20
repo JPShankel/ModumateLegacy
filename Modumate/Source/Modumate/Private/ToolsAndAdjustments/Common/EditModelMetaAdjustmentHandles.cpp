@@ -379,6 +379,7 @@ namespace Modumate
 					MOI->SetControlPoint(CP[i],OriginalP[i]);
 				}
 
+				// TODO: if this is re-activated, refactor for kApplyObjectDelta
 				Controller->ModumateCommand(
 					FModumateCommand(Modumate::Commands::kSetGeometry)
 					.Param("id", MOI->ID)

@@ -14,6 +14,7 @@
 #include "DynamicMeshActor.h"
 #include "ModumateTypes.h"
 #include "ModumateDelta.h"
+#include "ModumateCommands.h"
 
 /**
  *
@@ -228,23 +229,30 @@ namespace Modumate
 		bool FromParameterSet(const FString &Prefix,const FModumateFunctionParameterSet &ParameterSet);
 	};
 
+	class MODUMATE_API FModumateObjectInstance;
+
 	class MODUMATE_API FMOIDelta : public FDelta
 	{
 	public:
 		virtual bool ApplyTo(FModumateDocument *doc, UWorld *world) const override;
 		virtual TSharedPtr<FDelta> MakeInverse() const override;
 
-		FMOIStateData BaseState, TargetState;
-		int32 InstanceID;
+		TMap<int32,FMOIStateData> BaseStateMap, TargetStateMap;
 
 		// TODO: to be deprecated when Commands 2.0 is developed, meantime...
 		bool ToParameterSet(FModumateFunctionParameterSet &OutParameterSet) const;
 		bool FromParameterSet(const FModumateFunctionParameterSet &ParameterSet);
+
+		FModumateCommand AsCommand(const FString &CommandID = Modumate::Commands::kApplyObjectDelta) const;
+		static TSharedPtr<FMOIDelta> MakeDeltaForObjects(const TArray<FModumateObjectInstance*> &Objects);
 	};
 
 	class MODUMATE_API FModumateObjectInstance
 	{
 	private:
+
+		friend class FMOIDelta;
+
 		TWeakObjectPtr<AActor> MeshActor = nullptr;
 		TWeakObjectPtr<UWorld> World = nullptr;
 		IModumateObjectInstanceImpl *Implementation = nullptr;
@@ -312,9 +320,6 @@ namespace Modumate
 		bool BeginPreviewOperation();
 		bool EndPreviewOperation();
 		bool GetIsInPreviewMode() const;
-
-		TSharedPtr<FMOIDelta> MakeDelta() const;
-		void ApplyDelta(const TSharedPtr<FMOIDelta> &Delta);
 
 		bool SetDataState(const FMOIStateData &DataState);
 

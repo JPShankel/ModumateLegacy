@@ -299,10 +299,16 @@ bool USelectTool::HandleSpacebar()
 		return false;
 	}
 
-	TArray<int32> ids;
-	Algo::Transform(Controller->EMPlayerState->SelectedObjects,ids,[](const FModumateObjectInstance *ob) {return ob->ID; });
+	// Put selected objects into preview mode and invert
+	for (auto &ob : Controller->EMPlayerState->SelectedObjects)
+	{
+		ob->BeginPreviewOperation();
+		ob->InvertObject();
+		ob->EndPreviewOperation();
+	}
 
-	Controller->ModumateCommand(FModumateCommand(Commands::kInvertObjects).Param(Parameters::kObjectIDs, ids));
+	// Capture inversion as a MOI delta
+	Controller->ModumateCommand(FMOIDelta::MakeDeltaForObjects(Controller->EMPlayerState->SelectedObjects)->AsCommand());
 
 	return true;
 }

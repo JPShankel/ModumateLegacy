@@ -293,15 +293,12 @@ namespace Modumate
 			newControlIndices.Add(CP);
 		}
 
-		Controller->ModumateCommand
-		(
-			FModumateCommand(Modumate::Commands::kSetControlIndices)
-			.Param("id", MOI->ID)
-			.Param("indices", newControlIndices)
-		);
+		MOI->SetControlPointIndices(newControlIndices);
+		TSharedPtr<FMOIDelta> delta = FMOIDelta::MakeDeltaForObjects({MOI});
 
 		OnEndUse();
 
+		Controller->ModumateCommand(delta->AsCommand());
 		return false;
 	}
 

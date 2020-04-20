@@ -94,7 +94,6 @@ void UModumateGameInstance::RegisterAllCommands()
 	{
 		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta());
 		delta->FromParameterSet(params);
-
 		TArray<TSharedPtr<FDelta>> deltas({ delta });
 		return GetDocument()->ApplyDeltas(deltas, GetWorld());
 	});
@@ -481,34 +480,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return false;
 	});
 
-	RegisterCommand(kSetControlIndices, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-
-		int32 id = params.GetValue(kObjectID);
-		TArray<int32> indices = params.GetValue(TEXT("indices"));
-
-		FModumateDocument *doc = GetDocument();
-		if (doc)
-		{
-			doc->UpdateControlIndices(id, indices);
-			return true;
-		}
-		return false;
-	});
-
-	RegisterCommand(kUpdateControlValues, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		int32 id = params.GetValue(kObjectID);
-		TArray<FVector> controlPoints = params.GetValue(kControlPoints);
-		TArray<int32> controlIndices = params.GetValue(kIndices);
-
-		FModumateDocument *doc = GetDocument();
-		if (doc)
-		{
-			doc->UpdateControlValues(id, controlPoints, controlIndices);
-			return true;
-		}
-		return false;
-	});
-
 	RegisterCommand(kSplit, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 
 		int32 id = params.GetValue(kObjectID);
@@ -524,11 +495,6 @@ void UModumateGameInstance::RegisterAllCommands()
 			return true;
 		}
 		return false;
-	});
-
-	RegisterCommand(kSetLineSegmentPoints, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &FModumateFunctionParameterSet) {
-		GetDocument()->UpdateLineSegment(params.GetValue(kObjectID), params.GetValue(kPoint1), params.GetValue(kPoint2));
-		return true;
 	});
 
 	auto makePortal = [this](EObjectType ot, EToolMode tool, const FModumateFunctionParameterSet &params)
@@ -814,11 +780,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		int32 objID = GetDocument()->CreateLineSegmentObject(GetWorld(), params.GetValue(kPoint1), params.GetValue(kPoint2), params.GetValue(kParent));
 		output.SetValue(kObjectID, objID);
 		return (objID != 0);
-	});
-
-	RegisterCommand(kDecomposeObject, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		GetDocument()->DecomposeObject(GetWorld(), params.GetValue(kObjectID));
-		return true;
 	});
 
 	RegisterCommand(Commands::kAddFFE, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {

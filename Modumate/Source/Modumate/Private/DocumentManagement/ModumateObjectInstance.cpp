@@ -128,8 +128,6 @@ namespace Modumate
 		CurrentState.ControlIndices = obRec.ControlIndices;
 		CurrentState.ObjectProperties.FromStringMap(obRec.ObjectProperties);
 
-		PreviewState = CurrentState;
-
 		SetObjectRotation(obRec.Rotation.Quaternion());
 		SetObjectLocation(obRec.Location);
 
@@ -137,6 +135,8 @@ namespace Modumate
 		{
 			InvertObject();
 		}
+
+		PreviewState = CurrentState;
 	}
 
 	void FModumateObjectInstance::MakeImplementation()
@@ -653,13 +653,35 @@ namespace Modumate
 		return doc->ApplyMOIDelta(*this, world);
 	}
 
+	TSharedPtr<FMOIDelta> FMOIDelta::MakeDeltaForObjects(const TArray<FModumateObjectInstance*> &Objects)
+	{
+		ensureAlways(Objects.Num() > 0);
+		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta());
+		for (auto &ob : Objects)
+		{
+			delta->BaseStateMap.Add(ob->ID, ob->CurrentState);
+			delta->TargetStateMap.Add(ob->ID, ob->PreviewState);
+		}
+		return delta;
+	}
+
 	TSharedPtr<FDelta> FMOIDelta::MakeInverse() const
 	{
 		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta());
-		delta->BaseState = TargetState;
-		delta->TargetState = BaseState;
-		delta->InstanceID = InstanceID;
+		delta->BaseStateMap = TargetStateMap;
+		delta->TargetStateMap = BaseStateMap;
 		return delta;
+	}
+
+	FModumateCommand FMOIDelta::AsCommand(const FString &CommandID) const
+	{
+		FModumateFunctionParameterSet params;
+		ToParameterSet(params);
+
+		FModumateCommand command(CommandID);
+		command.SetParameterSet(params);
+
+		return command;
 	}
 
 	bool FMOIStateData::ToParameterSet(const FString &Prefix, FModumateFunctionParameterSet &OutParameterSet) const
@@ -715,22 +737,63 @@ namespace Modumate
 		return true;
 	}
 
-	const TCHAR *BaseStatePrefix = TEXT("BaseState_");
-	const TCHAR *TargetStatePrefix = TEXT("TargetState_");
+	static const FString BaseStatePrefix = TEXT("BaseState");
+	static const FString TargetStatePrefix = TEXT("TargetState");
+
+	static inline FString MakeInstancePrefix(const FString &Prefix, int32 ID)
+	{
+		return Prefix + FString::Printf(TEXT("%d_"), ID);
+	}
 
 	bool FMOIDelta::ToParameterSet(FModumateFunctionParameterSet &OutParameterSet) const
 	{
-		OutParameterSet.SetValue(Modumate::Parameters::kObjectID, InstanceID);
-		BaseState.ToParameterSet(BaseStatePrefix, OutParameterSet);
-		TargetState.ToParameterSet(TargetStatePrefix, OutParameterSet);
+		TArray<int32> keys;
+		BaseStateMap.GenerateKeyArray(keys);
+
+		if (!ensureAlwaysMsgf(keys.Num() == TargetStateMap.Num(), TEXT("Inconsistent maps in MOI delta")))
+		{
+			return false;
+		}
+
+		OutParameterSet.SetValue(Modumate::Parameters::kObjectIDs, keys);
+
+		for (auto &key : keys)
+		{
+			const FMOIStateData *baseState = BaseStateMap.Find(key);
+			const FMOIStateData *targetState = TargetStateMap.Find(key);
+
+			if (!ensureAlwaysMsgf(targetState!=nullptr && baseState!=nullptr,TEXT("Inconsistent maps in MOI delta")))
+			{
+				return false;
+			}
+
+			baseState->ToParameterSet(MakeInstancePrefix(BaseStatePrefix,key), OutParameterSet);
+			targetState->ToParameterSet(MakeInstancePrefix(TargetStatePrefix,key), OutParameterSet);
+		}
+
 		return true;
 	}
 
 	bool FMOIDelta::FromParameterSet(const FModumateFunctionParameterSet &ParameterSet)
 	{
-		InstanceID = ParameterSet.GetValue(Modumate::Parameters::kObjectID);
-		BaseState.FromParameterSet(BaseStatePrefix,ParameterSet);
-		TargetState.FromParameterSet(TargetStatePrefix,ParameterSet);
+		TArray<int32> objectIDs = ParameterSet.GetValue(Modumate::Parameters::kObjectIDs);
+		if (!ensureAlwaysMsgf(objectIDs.Num() > 0, TEXT("Empty MOI Delta sent to FromParameterSet")))
+		{
+			return false;
+		}
+
+		BaseStateMap.Empty();
+		TargetStateMap.Empty();
+
+		for (auto obID : objectIDs)
+		{
+			FMOIStateData &baseState = BaseStateMap.Add(obID, FMOIStateData());
+			baseState.FromParameterSet(MakeInstancePrefix(BaseStatePrefix, obID), ParameterSet);
+
+			FMOIStateData &targetState = TargetStateMap.Add(obID, FMOIStateData());
+			targetState.FromParameterSet(MakeInstancePrefix(TargetStatePrefix,obID), ParameterSet);
+		}
+
 		return true;
 	}
 
@@ -755,22 +818,6 @@ namespace Modumate
 	const FMOIStateData &FModumateObjectInstance::GetDataState() const
 	{
 		return GetIsInPreviewMode() ? PreviewState : CurrentState;
-	}
-
-	TSharedPtr<FMOIDelta> FModumateObjectInstance::MakeDelta() const
-	{
-		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta());
-		delta->BaseState = CurrentState;
-		delta->TargetState = PreviewState;
-		delta->InstanceID = ID;
-		return delta;
-	}
-
-	void FModumateObjectInstance::ApplyDelta(const TSharedPtr<FMOIDelta> &Delta)
-	{
-		CurrentState = Delta->TargetState;
-		PreviewState = CurrentState;
-		MarkDirty(EObjectDirtyFlags::Structure);
 	}
 
 	bool FModumateObjectInstance::BeginPreviewOperation()
@@ -837,7 +884,7 @@ namespace Modumate
 
 	void FModumateObjectInstance::SetControlPoint(int32 Index, const FVector &Value)
 	{
-		if (ensureAlways(CurrentState.ControlPoints.Num() > Index))
+		if (ensureAlways(GetDataState().ControlPoints.Num() > Index))
 		{
 			GetDataState().ControlPoints[Index] = Value;
 		}
@@ -940,9 +987,9 @@ namespace Modumate
 
 	FVector FModumateObjectInstance::GetWallDirection() const
 	{
-		if (CurrentState.ControlPoints.Num() >= 2)
+		if (GetDataState().ControlPoints.Num() >= 2)
 		{
-			FVector delta = (CurrentState.ControlPoints[1] - CurrentState.ControlPoints[0]).GetSafeNormal();
+			FVector delta = (GetDataState().ControlPoints[1] - GetDataState().ControlPoints[0]).GetSafeNormal();
 			return FVector::CrossProduct(FVector(0, 0, 1), delta);
 		}
 		else
@@ -1006,7 +1053,7 @@ namespace Modumate
 
 	void FModumateObjectInstance::InvertObject()
 	{
-		CurrentState.ObjectInverted = !CurrentState.ObjectInverted;
+		GetDataState().ObjectInverted = !GetDataState().ObjectInverted;
 		Implementation->InvertObject();
 	}
 
@@ -1047,17 +1094,17 @@ namespace Modumate
 
 	bool FModumateObjectInstance::HasProperty(BIM::EScope Scope, const BIM::FNameType &Name) const
 	{
-		return CurrentState.ObjectProperties.HasProperty(Scope, Name);
+		return GetDataState().ObjectProperties.HasProperty(Scope, Name);
 	}
 
 	FModumateCommandParameter FModumateObjectInstance::GetProperty(BIM::EScope Scope, const BIM::FNameType &Name) const
 	{
-		return CurrentState.ObjectProperties.GetProperty(Scope, Name);
+		return GetDataState().ObjectProperties.GetProperty(Scope, Name);
 	}
 
 	void FModumateObjectInstance::SetProperty(BIM::EScope Scope, const BIM::FNameType &Name, const FModumateCommandParameter &Param)
 	{
-		CurrentState.ObjectProperties.SetProperty(Scope, Name, Param);
+		GetDataState().ObjectProperties.SetProperty(Scope, Name, Param);
 	}
 
 	void FModumateObjectInstance::SetFromDataRecordAndRotation(const FMOIDataRecordV1 &dataRec, const FVector &origin, const FQuat &rotation)

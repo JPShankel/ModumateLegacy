@@ -77,15 +77,8 @@ namespace Modumate
 			}
 			else
 			{
-				TSharedPtr<FMOIDelta> delta = MOI->MakeDelta();
-
-				FModumateFunctionParameterSet params;
-				delta->ToParameterSet(params);
-
-				FModumateCommand command(Modumate::Commands::kApplyObjectDelta);
-				command.SetParameterSet(params);
-
-				bCommandSuccess = Controller->ModumateCommand(command).GetValue(Parameters::kSuccess);
+				TSharedPtr<FMOIDelta> delta = FMOIDelta::MakeDeltaForObjects({ MOI });
+				bCommandSuccess = Controller->ModumateCommand(delta->AsCommand()).GetValue(Parameters::kSuccess);
 			}
 
 			if (!bCommandSuccess)

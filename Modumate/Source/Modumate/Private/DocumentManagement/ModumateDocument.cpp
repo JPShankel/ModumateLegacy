@@ -1337,27 +1337,42 @@ void FModumateDocument::SaveVolumeGraph(FGraph3DRecord &OutGraph3DRecord) const
 
 bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 {
-	FModumateObjectInstance *MOI = GetObjectById(Delta.InstanceID);
-	if (MOI == nullptr)
+	if (!ensureAlwaysMsgf(Delta.BaseStateMap.Num() == Delta.TargetStateMap.Num(),TEXT("Invalid MOI Delta")))
 	{
 		return false;
 	}
 
-	switch (MOI->GetObjectType())
+	for (auto &kvp : Delta.TargetStateMap)
 	{
-	case EObjectType::OTMetaPlane:
-		ensureAlwaysMsgf(false,TEXT("Illegal MOI type sent to ApplyMOIDelta"));
-		return false;
-	};
+		FModumateObjectInstance *MOI = GetObjectById(kvp.Key);
 
-	// TODO: refactor for delta-based Undo/Redo
-	// This function affects the undo/redo buffer so it can't be called from ApplyDeltas Redo()
-	if (Delta.TargetState.ObjectInverted != Delta.BaseState.ObjectInverted)
-	{
-		MOI->InvertObject();
+		if (MOI == nullptr)
+		{
+			return false;
+		}
+
+		switch (MOI->GetObjectType())
+		{
+			case EObjectType::OTMetaPlane:
+				ensureAlwaysMsgf(false, TEXT("Illegal MOI type sent to ApplyMOIDelta"));
+				return false;
+		};
+
+		const FMOIStateData *baseState = Delta.BaseStateMap.Find(kvp.Key);
+		if (!ensureAlwaysMsgf(baseState != nullptr, TEXT("Iconsistent MOI delta sent to ApplyMOIDelta")))
+		{
+			return false;
+		}
+
+		// TODO: refactor for delta-based Undo/Redo
+		// This function affects the undo/redo buffer so it can't be called from ApplyDeltas Redo()
+		if (kvp.Value.ObjectInverted != baseState->ObjectInverted)
+		{
+			MOI->InvertObject();
+		}
+
+		MOI->SetDataState(kvp.Value);
 	}
-
-	MOI->SetDataState(Delta.TargetState);
 
 	return true;
 }

@@ -63,11 +63,7 @@ namespace Modumate
 		MODUMATE_COMMAND(kSetGeometry, "set_geometry");
 		MODUMATE_COMMAND(kMoveMetaVertices, "move_vertices");
 		MODUMATE_COMMAND(kJoinMetaObjects, "join_objects");
-		MODUMATE_COMMAND(kSetControlIndices, "set_control_indices");
-		MODUMATE_COMMAND(kUpdateControlValues, "update_control_values");
 		MODUMATE_COMMAND(kSplit, "split");
-		MODUMATE_COMMAND(kSetLineSegmentPoints, "set_line_points");
-		MODUMATE_COMMAND(kDecomposeObject, "decompose_object");
 		MODUMATE_COMMAND(kInvertObjects, "invert_objects");
 		MODUMATE_COMMAND(kTransverseObjects, "transverse_objects");
 		MODUMATE_COMMAND(kSetAssemblyForObjects, "set_assembly_for_objects");
