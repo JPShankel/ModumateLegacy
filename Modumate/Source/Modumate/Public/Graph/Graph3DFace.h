@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ModumateGraph3DTypes.h"
+#include "ModumateGeometryStatics.h"
 
 namespace Modumate
 {
@@ -22,6 +23,10 @@ namespace Modumate
 		FVector CachedCenter = FVector::ZeroVector;		// The central position to use for casting rays from the plane; intended to lie inside the polygon
 		TArray<FVector2D> Cached2DPositions;			// The positions of this face's vertices, projected in 2D
 
+		TArray<FVector2D> CachedPerimeter;
+		TArray<FPolyHole2D> CachedHoles;
+		float CachedArea;
+
 		FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<FVector> &VertexPositions);
 		FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs);
 
@@ -33,8 +38,8 @@ namespace Modumate
 		bool IntersectsFace(const FGraph3DFace *OtherFace, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<FEdgeIntersection> &SourceIntersections, TArray<FEdgeIntersection> &DestIntersections, TPair<bool, bool> &bOutOnFaceEdge) const;
 		bool IntersectsPlane(const FPlane OtherPlane, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<TPair<FVector, FVector>> &IntersectingSegments) const;
 
-		// TODO: potentially make this static, and also cache this value during SetVertices
-		float CalculateArea();
+		// TODO: potentially make this static
+		void CalculateArea();
 
 		void GetAdjacentFaceIDs(TSet<int32>& adjFaceIDs) const;
 

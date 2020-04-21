@@ -3,8 +3,7 @@
 #include "Graph3DDelta.h"
 
 #include "ModumateFunctionLibrary.h"
-#include "ModumateGeometryStatics.h"
-
+#include "ModumateGraph.h"
 
 namespace Modumate 
 {
@@ -158,6 +157,8 @@ namespace Modumate
 			FSignedID signedFaceID = ID * (bEdgeForward ? 1 : -1);
 			edge->AddFace(signedFaceID, edgeNormal);
 		}
+
+		CalculateArea();
 
 		bValid = true;
 		return bValid;
@@ -313,28 +314,70 @@ namespace Modumate
 		return true;
 	}
 
-	float FGraph3DFace::CalculateArea()
+	void FGraph3DFace::CalculateArea()
 	{
-		TArray<FPolyHole2D> holes;
-		TArray<FVector2D> vertices, OutPerimeter;
-		TArray<int32> triangles, outholeidxs;
-		TArray<bool> outholes;
-		UModumateGeometryStatics::TriangulateVerticesPoly2Tri(Cached2DPositions, holes, vertices, triangles, OutPerimeter, outholes, outholeidxs);
-
-		float area = 0.0f;
-		for (int32 i = 0; i < triangles.Num(); i += 3)
+		// create 2D graph
+		FGraph graph2D;
+		for (int32 vertexIdx = 0; vertexIdx < VertexIDs.Num(); vertexIdx++)
 		{
-			const auto &p1 = vertices[triangles[i]], &p2 = vertices[triangles[i + 1]], &p3 = vertices[triangles[i + 2]];
+			graph2D.AddVertex(Cached2DPositions[vertexIdx], VertexIDs[vertexIdx]);
+		}
+		for (int32 edgeID : EdgeIDs)
+		{
+			auto edge = Graph->FindEdge(edgeID);
+			if (!ensureAlways(edge != nullptr)) return;
+			graph2D.AddEdge(edge->StartVertexID, edge->EndVertexID, edge->ID);
+		}
+
+		graph2D.CalculatePolygons();
+		CachedPerimeter.Reset();
+		CachedHoles.Reset();
+
+		for (auto& kvp : graph2D.GetPolygons())
+		{
+			auto& poly = kvp.Value;
+			if (!poly.bInterior)
+			{
+				CachedPerimeter = poly.Points;
+			}
+			else
+			{
+				bool bEnclosedPoly = true;
+				for (auto& edgeID : poly.Edges)
+				{
+					auto edge = graph2D.FindEdge(edgeID);
+					auto leftPoly = graph2D.FindPolygon(edge->LeftPolyID);
+					auto rightPoly = graph2D.FindPolygon(edge->RightPolyID);
+					if (!leftPoly->bInterior || !rightPoly->bInterior)
+					{
+						bEnclosedPoly = false;
+						break;
+					}
+				}
+				if (bEnclosedPoly)
+				{
+					CachedHoles.Add(FPolyHole2D(poly.Points));
+				}
+			}
+		}
+
+		TArray<FVector2D> OutVertices, OutPerimeter;
+		TArray<int32> OutTriangles, outholeidxs;
+		TArray<bool> outholes;
+		UModumateGeometryStatics::TriangulateVerticesPoly2Tri(CachedPerimeter, CachedHoles, OutVertices, OutTriangles, OutPerimeter, outholes, outholeidxs);
+
+		CachedArea = 0.0f;
+		for (int32 i = 0; i < OutTriangles.Num(); i += 3)
+		{
+			const auto &p1 = OutVertices[OutTriangles[i]], &p2 = OutVertices[OutTriangles[i + 1]], &p3 = OutVertices[OutTriangles[i + 2]];
 
 			FVector2D triBaseDelta = p2 - p1;
 			float triBaseLen = triBaseDelta.Size();
 			float triHeight = FMath::PointDistToLine(FVector(p3.X, p3.Y, 0.0f), FVector(triBaseDelta.X, triBaseDelta.Y, 0.0f), FVector(p2.X, p2.Y, 0.0f));
 			float triArea = 0.5f * triBaseLen * triHeight;
 
-			area += triArea;
+			CachedArea += triArea;
 		}
-
-		return area;
 	}
 
 	void FGraph3DFace::GetAdjacentFaceIDs(TSet<int32>& OutFaceIDs) const

@@ -1603,7 +1603,10 @@ bool FModumateDocument::UpdateGraphObjects(UWorld *World)
 				continue;
 			}
 
+			// TODO: using perimeter instead of cached positions would help adjustment handles
+			// show up on only exterior edges
 			faceObj->SetControlPoints(graphFace->CachedPositions);
+			
 			faceObj->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 	}

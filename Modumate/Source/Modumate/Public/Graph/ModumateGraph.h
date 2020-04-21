@@ -76,6 +76,7 @@ namespace Modumate
 		TArray<FVector2D> Points;				// The list of vertex positions in this polygon
 
 		FGraphPolygon(int32 InID, FGraph* InGraph) : ID(InID), Graph(InGraph) { }
+		FGraphPolygon() { };
 
 		bool IsInside(const FGraphPolygon &otherPoly) const;
 		void SetParent(int32 inParentID);

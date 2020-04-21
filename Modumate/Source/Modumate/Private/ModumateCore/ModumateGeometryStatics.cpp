@@ -632,8 +632,6 @@ template <class C> void FreeClear(C & cntr) {
 	cntr.clear();
 }
 
-#define CHECK_REPEAT_POINTS (UE_BUILD_DEBUG)
-
 bool UModumateGeometryStatics::TriangulateVerticesPoly2Tri(const TArray<FVector2D> &Vertices, const TArray<FPolyHole2D> &Holes,
 	TArray<FVector2D> &OutVertices, TArray<int32> &OutTriangles, TArray<FVector2D> &OutPerimeter, TArray<bool> &OutMergedHoles,
 	TArray<int32> &OutPerimeterVertexHoleIndices)
@@ -726,18 +724,6 @@ bool UModumateGeometryStatics::TriangulateVerticesPoly2Tri(const TArray<FVector2
 		TArray<FVector2D> holeVertices = Holes[i].Points;
 		for (int32 j = 0; j < holeVertices.Num(); j++)
 		{
-#if CHECK_REPEAT_POINTS
-			// Debug check for repeating points in holes
-			for (int32 k = 0; k < holeVertices.Num(); k++)
-			{
-				if (!ensureAlwaysMsgf((j == k) || !holeVertices[j].Equals(holeVertices[k], SMALL_NUMBER),
-					TEXT("Error: tried to create a hole with identical vertices #%d and #%d: %s"),
-					j, k, *holeVertices[j].ToString()))
-				{
-					bValidHole = false;
-				}
-			}
-#endif
 			p2t::Point *holePoint = new p2t::Point(holeVertices[j].X, holeVertices[j].Y);
 			vector_hole.push_back(holePoint);
 		}

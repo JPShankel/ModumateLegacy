@@ -341,8 +341,8 @@ namespace Modumate
 
 				if (newFace && oldFace)
 				{
-					float newArea = newFace->CalculateArea();
-					float oldArea = oldFace->CalculateArea();
+					float newArea = newFace->CachedArea;
+					float oldArea = oldFace->CachedArea;
 
 					if (newArea < oldArea - Graph->Epsilon)
 					{
@@ -441,19 +441,6 @@ namespace Modumate
 			for (int32 idx = 0; idx < vertices.Num() - 1; idx++)
 			{
 				faceVertices.Add(vertices[idx]);
-			}
-		}
-
-		// naive validation of face vertices
-		// TODO: detect sections of the vertex list that could be eliminated, instead of returning false
-		for (int32 idx1 = 0; idx1 < faceVertices.Num(); idx1++)
-		{
-			for (int32 idx2 = idx1+1; idx2 < faceVertices.Num(); idx2++)
-			{
-				if (faceVertices[idx1] == faceVertices[idx2])
-				{
-					return false;
-				}
 			}
 		}
 

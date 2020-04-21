@@ -117,6 +117,7 @@ namespace Modumate
 
 		UpdateCachedGraphData();
 
+		// TODO: needs to take an argument for holes, once holes can be provided by faces
 		DynamicMeshActor->SetupMetaPlaneGeometry(MOI->GetControlPoints(), MaterialData, GetAlpha(), false, true);
 		auto children = MOI->GetChildObjects();
 
@@ -183,6 +184,7 @@ namespace Modumate
 			CachedAxisY = graphFace->Cached2DY;
 			CachedOrigin = graphFace->CachedPositions[0];
 			CachedCenter = graphFace->CachedCenter;
+			// TODO: update holes
 		}
 	}
 
