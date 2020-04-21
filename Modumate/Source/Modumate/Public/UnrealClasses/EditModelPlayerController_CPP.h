@@ -19,6 +19,7 @@
 class AAdjustmentHandleActor_CPP;
 class AEditModelPlayerState_CPP;
 class UDraftingPreviewWidget_CPP;
+class UEditModelCameraController;
 class UEditModelInputAutomation;
 class UEditModelInputHandler;
 class UModumateCraftingWidget_CPP;
@@ -367,20 +368,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 	bool CameraInputLock = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
-	ECameraMode CameraMode = ECameraMode::None;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
-	bool CameraMoving;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Cursor)
-	FVector bpCursorLocation;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Cursor)
 	bool bIsCursorAtAnyWidget;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Cursor)
-	bool bpCursorLocationOverride;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Cursor)
 	ESelectObjectMode SelectionMode;
@@ -413,9 +402,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Camera)
 	bool ZoomToSelection();
-
-	UFUNCTION(BlueprintCallable, Category = Camera)
-	bool ChangeCameraMode(ECameraMode NewMode);
 
 	// Calculate the location needed to view the boundary set by TargetSphere
 	FVector CalculateViewLocationForSphere(const FSphere &TargetSphere, const FVector &ViewVector, float AspectRatio, float FOV);
@@ -527,6 +513,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input)
 	UEditModelInputHandler* InputHandlerComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UEditModelCameraController* CameraController;
 
 	UPROPERTY()
 	TMap<EToolMode, TScriptInterface<IEditModelToolInterface>> ModeToTool;

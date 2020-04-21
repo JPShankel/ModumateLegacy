@@ -3,35 +3,35 @@
 #include "EditModelPlayerController_CPP.h"
 
 #include "AdjustmentHandleActor_CPP.h"
+#include "Algo/Accumulate.h"
+#include "Algo/Transform.h"
 #include "DraftingPreviewWidget_CPP.h"
-#include "ModumateCraftingWidget_CPP.h"
-#include "ModumateDrawingSetWidget_CPP.h"
-#include "EditModelCabinetTool.h"
+#include "EditModelCameraController.h"
 #include "EditModelGameMode_CPP.h"
 #include "EditModelGameState_CPP.h"
 #include "EditModelInputAutomation.h"
 #include "EditModelInputHandler.h"
 #include "EditModelPlayerPawn_CPP.h"
 #include "EditModelPlayerState_CPP.h"
+#include "EditModelToggleGravityPawn_CPP.h"
 #include "Engine/SceneCapture2D.h"
 #include "ModumateAnalyticsStatics.h"
 #include "ModumateCommands.h"
 #include "ModumateConsole.h"
+#include "ModumateCrafting.h"
+#include "ModumateCraftingWidget_CPP.h"
+#include "ModumateDimensionStatics.h"
+#include "ModumateDrawingSetWidget_CPP.h"
 #include "ModumateFunctionLibrary.h"
 #include "ModumateGameInstance.h"
-#include "ModumateCrafting.h"
 #include "ModumateNetworkView.h"
 #include "ModumateObjectDatabase.h"
-#include "ModumateDimensionStatics.h"
 #include "ModumateObjectInstanceParts_CPP.h"
 #include "ModumateSnappingView.h"
 #include "ModumateThumbnailHelpers.h"
 #include "ModumateViewportClient.h"
 #include "PlatformFunctions.h"
 #include "SlateApplication.h"
-#include "Algo/Transform.h"
-#include "Algo/Accumulate.h"
-#include "EditModelToggleGravityPawn_CPP.h"
 #include "ModumateStats.h"
 
 
@@ -76,8 +76,7 @@ AEditModelPlayerController_CPP::AEditModelPlayerController_CPP()
 	, EMPlayerState(nullptr)
 	, TestBox(ForceInitToZero)
 	, ShowingModalDialog(false)
-	, CameraMoving(false)
-	, bpCursorLocationOverride(false)
+	, CameraInputLock(false)
 	, SelectionMode(ESelectObjectMode::DefaultObjects)
 	, MaxRaycastDist(100000.0f)
 	, PreviewWidgetClass(UDraftingPreviewWidget_CPP::StaticClass())
@@ -89,6 +88,7 @@ AEditModelPlayerController_CPP::AEditModelPlayerController_CPP()
 #endif
 
 	InputHandlerComponent = CreateDefaultSubobject<UEditModelInputHandler>(TEXT("InputHandlerComponent"));
+	CameraController = CreateDefaultSubobject<UEditModelCameraController>(TEXT("CameraController"));
 }
 
 AEditModelPlayerController_CPP::~AEditModelPlayerController_CPP()
@@ -387,6 +387,7 @@ void AEditModelPlayerController_CPP::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	InputHandlerComponent->SetupBindings();
+	CameraController->Init();
 
 	if (InputComponent)
 	{
@@ -1158,7 +1159,7 @@ void AEditModelPlayerController_CPP::TickInput(float DeltaTime)
 	bIsCursorAtAnyWidget = IsCursorOverWidget();
 	FSnappedCursor &cursor = EMPlayerState->SnappedCursor;
 
-	if (!CameraMoving && !CameraInputLock)
+	if (!CameraInputLock && (CameraController->GetMovementState() == ECameraMovementState::Default))
 	{
 		GetMousePosition(cursor.ScreenPosition.X, cursor.ScreenPosition.Y);
 
@@ -1251,21 +1252,6 @@ bool AEditModelPlayerController_CPP::ZoomToSelection()
 		EMPlayerPawn->GetEditCameraComponent()->FieldOfView);
 
 	EMPlayerPawn->GetEditCameraComponent()->SetWorldLocation(captureOrigin);
-	return true;
-}
-
-bool AEditModelPlayerController_CPP::ChangeCameraMode(ECameraMode NewMode)
-{
-	if (NewMode == CameraMode)
-	{
-		return false;
-	}
-	if (EMPlayerPawn)
-	{
-		EMPlayerPawn->OrbitCursorActor->SetActorHiddenInGame(NewMode != ECameraMode::Orbit);
-	}
-	CameraMode = NewMode;
-	CameraMoving = CameraMode != ECameraMode::None;
 	return true;
 }
 
@@ -1960,6 +1946,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 	baseHit.Actor = nullptr;
 	projectedHit.Actor = nullptr;
 
+	EMPlayerState->SnappedCursor.bValid = false;
 	EMPlayerState->SnappedCursor.Visible = false;
 	EMPlayerState->SnappedCursor.SnapType = ESnapType::CT_NOSNAP;
 
@@ -2012,7 +1999,17 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 					actorUnderMouse = baseHit.Actor.Get();
 				}
 			}
-			else if (EMPlayerState->ShowDebugSnaps)
+			else
+			{
+				baseHit = GetSketchPlaneMouseHit(mouseLoc, mouseDir);
+
+				if (baseHit.Valid && EMPlayerState->ShowDebugSnaps)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("SKETCH HIT")));
+				}
+			}
+
+			if (!baseHit.Valid && EMPlayerState->ShowDebugSnaps)
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("NO OBJECT"));
 			}
@@ -2127,6 +2124,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 	if (projectedHit.Valid)
 	{
 		if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("HAVE PROJECTED")); }
+		EMPlayerState->SnappedCursor.bValid = true;
 		EMPlayerState->SnappedCursor.WorldPosition = projectedHit.Location;
 		EMPlayerState->SnappedCursor.Actor = projectedHit.Actor.Get();
 		ProjectWorldLocationToScreen(projectedHit.Location, EMPlayerState->SnappedCursor.ScreenPosition);
@@ -2144,6 +2142,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 		if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("NOT PROJECTED")); }
 		if (baseHit.Valid)
 		{
+			EMPlayerState->SnappedCursor.bValid = true;
 			EMPlayerState->SnappedCursor.WorldPosition = baseHit.Location;
 			EMPlayerState->SnappedCursor.Actor = baseHit.Actor.Get();
 			EMPlayerState->SnappedCursor.SnapType = baseHit.SnapType;

@@ -10,6 +10,25 @@ void UModumateViewportClient::Init(struct FWorldContext& WorldContext, UGameInst
 	Super::Init(WorldContext, OwningGameInstance, bCreateNewAudioDevice);
 
 	SetCaptureMouseOnClick(EMouseCaptureMode::CaptureDuringRightMouseDown);
+	SetHideCursorDuringCapture(true);
+}
+
+void UModumateViewportClient::MouseEnter(FViewport* InViewport, int32 x, int32 y)
+{
+	Super::MouseEnter(InViewport, x, y);
+
+	OnMouseEnterDelegate.Broadcast(FIntPoint(x, y));
+}
+
+void UModumateViewportClient::MouseLeave(FViewport* InViewport)
+{
+	Super::MouseLeave(InViewport);
+
+	FVector2D absCursorPos = FSlateApplication::Get().GetCursorPos();
+	FSceneViewport *sceneViewport = static_cast<FSceneViewport*>(InViewport);
+	FVector2D localCursorPos = sceneViewport->GetCachedGeometry().AbsoluteToLocal(absCursorPos);
+
+	OnMouseLeaveDelegate.Broadcast(localCursorPos.IntPoint());
 }
 
 void UModumateViewportClient::LostFocus(FViewport* InViewport)

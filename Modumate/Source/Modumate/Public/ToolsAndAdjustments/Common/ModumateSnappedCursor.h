@@ -62,6 +62,9 @@ struct MODUMATE_API FSnappedCursor
 	// These values are set in EditModelPlayerController::UpdateMouseHits
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
+	bool bValid;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	FVector2D ScreenPosition;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
@@ -128,7 +131,8 @@ struct MODUMATE_API FSnappedCursor
 
 	bool operator ==(const FSnappedCursor &other) const
 	{
-		return (ScreenPosition == other.ScreenPosition) &&
+		return (bValid == other.bValid) &&
+			(ScreenPosition == other.ScreenPosition) &&
 			(AxisOrigin == other.AxisOrigin) &&
 			(SnapType == other.SnapType) &&
 			(Visible == other.Visible) &&
