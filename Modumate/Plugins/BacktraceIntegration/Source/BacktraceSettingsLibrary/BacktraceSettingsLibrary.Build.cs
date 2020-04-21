@@ -8,11 +8,15 @@ namespace UnrealBuildTool.Rules
         {
             PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
+            //@third party BEGIN MODUMATE - remove reference to missing directory
+#if false
             PublicIncludePaths.AddRange(
                 new string[] {
                     "BacktraceSettingsLibrary/Public"
                 }
                 );
+#endif
+            //@third party END MODUMATE
 
             PrivateIncludePaths.AddRange(
                 new string[] {
