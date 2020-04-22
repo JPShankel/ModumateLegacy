@@ -138,9 +138,7 @@ namespace Modumate
 
 		static bool GetDeltaForVertexList(FGraph3D *Graph, TArray<int32> &OutVertexIDs, const TArray<FVector> &InVertexPositions, FGraph3DDelta &OutDelta, int32 &NextID);
 
-		static bool GetDeltaForFaceSplit(FGraph3D *Graph, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, int32 &FaceID, bool &bOutFoundSplit, TPair<FVector, FVector> &Intersection, TPair<int32, int32> &EdgeIdxs);
-		static bool GetDeltaForFaceSplit(FGraph3D *Graph, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, int32 &FaceID, bool &bOutFoundSplit);
-		static bool GetDeltasForEdgeAtSplit(FGraph3D *OldGraph, FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID, int32 &FaceID);
+		static bool GetDeltasForEdgeAtSplit(FGraph3D *OldGraph, FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &FaceID, TSet<int32> &OutEdges);
 
 		static bool GetDeltaForEdgeSplit(FGraph3D *Graph, FGraph3DDelta &OutDelta, int32 edgeID, int32 vertexID, int32 &NextID, int32 &ExistingID);
 

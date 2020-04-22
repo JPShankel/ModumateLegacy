@@ -40,8 +40,6 @@ namespace Modumate
 
 		void GetAdjacentEdgeIDs(TSet<int32>& OutAdjEdgeIDs) const;
 
-		bool IntersectsFace(const FGraph3DFace *OtherFace, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<FEdgeIntersection> &DestIntersections, bool &bOutOnFaceEdge) const;
-
 		virtual void Dirty(bool bConnected = true) override;
 		virtual bool ValidateForTests() const override;
 	};

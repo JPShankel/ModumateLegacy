@@ -103,6 +103,24 @@ namespace Modumate
 		return true;
 	}
 
+	bool FGraph3DFace::ShouldUpdatePlane() const
+	{
+		for (int32 vertexID : VertexIDs)
+		{
+			auto vertex = Graph->FindVertex(vertexID);
+			if (!ensureAlways(vertex != nullptr))
+			{
+				continue;
+			}
+
+			if (FMath::Abs(CachedPlane.PlaneDot(vertex->Position)) > KINDA_SMALL_NUMBER)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	bool FGraph3DFace::UpdateVerticesAndEdges(const TArray<int32> &InVertexIDs, bool bAssignVertices)
 	{
 		if (bAssignVertices)
@@ -186,8 +204,11 @@ namespace Modumate
 		return UModumateFunctionLibrary::PointInPoly2D(intersection2D, OtherFace->Cached2DPositions);
 	}
 
-	bool FGraph3DFace::IntersectsFace(const FGraph3DFace *OtherFace, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<FEdgeIntersection> &SourceIntersections, TArray<FEdgeIntersection> &DestIntersections, TPair<bool, bool> &bOutOnFaceEdge) const
+	bool FGraph3DFace::IntersectsFace(const FGraph3DFace *OtherFace, TArray<TPair<FVector, FVector>> &OutEdges) const
 	{
+		FVector IntersectingEdgeOrigin, IntersectingEdgeDir;
+		TArray<FEdgeIntersection> SourceIntersections, DestIntersections;
+
 		// Make sure that this faces plane at least intersects with the other face, before finding shared edge segments
 		if (!FMath::IntersectPlanes2(IntersectingEdgeOrigin, IntersectingEdgeDir, CachedPlane, OtherFace->CachedPlane))
 		{
@@ -198,97 +219,67 @@ namespace Modumate
 		UModumateGeometryStatics::GetEdgeIntersections(CachedPositions, IntersectingEdgeOrigin, IntersectingEdgeDir, SourceIntersections, Graph->Epsilon);
 		UModumateGeometryStatics::GetEdgeIntersections(OtherFace->CachedPositions, IntersectingEdgeOrigin, IntersectingEdgeDir, DestIntersections, Graph->Epsilon);
 
-		// TODO: only allows one intersecting segment per face
-		if (SourceIntersections.Num() != 2)
+		// TODO: ensure that GetEdgeIntersections can only return an even amount of intersections through a unit test
+		if (SourceIntersections.Num() % 2 != 0 || DestIntersections.Num() % 2 != 0)
 		{
 			return false;
 		}
 
-		TArray<FEdgeIntersection> trimmedDestIntersections;
-		for (auto sourceIntersection : SourceIntersections)
+		// the faces intersect, and an edge needs to be drawn, across the ranges that are in both the source and dest intersections
+		// a range is the area along the ray that intersects with the face
+		TArray<TPair<float, float>> sourceRanges;
+		for (int32 sourceIdx = 0; sourceIdx < SourceIntersections.Num(); sourceIdx+=2)
 		{
-			for (auto destIntersection : DestIntersections)
-			{
-				if (FMath::Abs(sourceIntersection.DistAlongRay - destIntersection.DistAlongRay) < Graph->Epsilon)
-				{
-					trimmedDestIntersections.Add(destIntersection);
-				}
-			}
+			sourceRanges.Add(TPair<float, float>(SourceIntersections[sourceIdx].DistAlongRay, SourceIntersections[sourceIdx + 1].DistAlongRay));
 		}
 
-		if (trimmedDestIntersections.Num() != 2)
+		TArray<TPair<float, float>> destRanges;
+		for (int32 destIdx = 0; destIdx < DestIntersections.Num(); destIdx+=2)
 		{
-			return false;
+			destRanges.Add(TPair<float, float>(DestIntersections[destIdx].DistAlongRay, DestIntersections[destIdx + 1].DistAlongRay));
 		}
 
-		DestIntersections = trimmedDestIntersections;
+		// Takes the source ranges and dest ranges and merges them into a list of ranges that are in both
+		int32 sourceIdx = 0;
+		int32 destIdx = 0;
+		TArray<TPair<float, float>> outRanges;
 
-		// return false if faces share an edge, so neither face should be split
-		bool bFacesShareEdge = false;
-
-		// TODO: change this when more than one intersection segment is allowed per face
-		auto vertexA = Graph->FindVertex(SourceIntersections[0].Point);
-		auto vertexB = Graph->FindVertex(SourceIntersections[1].Point);
-
-		if (vertexA != nullptr && vertexB != nullptr)
+		while (sourceIdx < sourceRanges.Num() && destIdx < destRanges.Num())
 		{
-			bool bForward;
-			auto edge = Graph->FindEdgeByVertices(vertexA->ID, vertexB->ID, bForward);
-			if (edge != nullptr)
+			float sourceMin = sourceRanges[sourceIdx].Key;
+			float sourceMax = sourceRanges[sourceIdx].Value;
+
+			float destMin = destRanges[destIdx].Key;
+			float destMax = destRanges[destIdx].Value;
+
+			if (sourceMax >= destMin && destMax >= sourceMin)
 			{
-				bool bFaceContainsEdge = EdgeIDs.Contains(edge->ID) || EdgeIDs.Contains(edge->ID * -1);
-				bool bOtherFaceContainsEdge = OtherFace->EdgeIDs.Contains(edge->ID) || OtherFace->EdgeIDs.Contains(edge->ID * -1);
-				bOutOnFaceEdge.Key = bFaceContainsEdge;
-				bOutOnFaceEdge.Value = bOtherFaceContainsEdge;
+				TArray<float> vals = { sourceMin, sourceMax, destMin, destMax };
+				vals.Sort();
+	
+				// (vals[0], vals[1]) and (vals[2], vals[3]) could potentially be added as well to create edges that 
+				// go all the way across the faces.
+				// TODO: using these values would require some input validation that is missing
+				outRanges.Add(TPair<float, float>(vals[1], vals[2]));
 			}
-			// if the edge doesn't exist directly, see if other edges sum to the edge between the intersections by 
-			// attempting to add an edge there
+
+			if (sourceMax < destMax)
+			{
+				sourceIdx++;
+			}
 			else
 			{
-				FGraph3DDelta testAddEdgeDelta;
-				TArray<int32> OutVertexIDs;
-				TArray<int32> parentIDs;
-				int32 NextID, ExistingID;
-				Graph->GetDeltaForMultipleEdgeAdditions(Graph, FVertexPair(vertexA->ID, vertexB->ID), testAddEdgeDelta, NextID, ExistingID, OutVertexIDs, parentIDs);
-
-				if (testAddEdgeDelta.EdgeAdditions.Num() == 0)
-				{
-					return false;
-				}
+				destIdx++;
 			}
+		}
 
-			// if faces don't contain edge, make sure that the edge is inside the face
-			int32 intersectionIdx = 0;
-			for (auto intersection : { DestIntersections, SourceIntersections })
-			{
-				if ((intersectionIdx == 0 && !bOutOnFaceEdge.Value) || (intersectionIdx == 1 && !bOutOnFaceEdge.Key))
-				{
-					FVector diff = (intersection[1].Point - intersection[0].Point).GetSafeNormal();
+		// convert from ranges to edges
+		for (auto& range : outRanges)
+		{
+			FVector edgeStart = IntersectingEdgeOrigin + IntersectingEdgeDir * range.Key;
+			FVector edgeEnd = IntersectingEdgeOrigin + IntersectingEdgeDir * range.Value;
 
-					// idx is iterating across both directions of the edge
-					for (int32 idx = 0; idx < 2; idx++)
-					{
-						// TODO: faces and intersections are created so that EdgeIdxA is the necessary value here
-						// EdgeIdxB is currently unused and may be unnecessary
-						int32 edgeIdx = intersection[idx].EdgeIdxA;
-						FVector edgeNormal = intersectionIdx == 0 ? OtherFace->CachedEdgeNormals[edgeIdx] : CachedEdgeNormals[edgeIdx];
-
-						// flip the intersection direction to evaluate the second vertex of the intersection
-						if (idx == 1)
-						{
-							diff *= -1.0f;
-						}
-
-						// edge normals are pointing towards the interior of the face, so the intersection is outside of the face
-						// if the projection is in the opposite direction of the edge normal
-						if ((diff | edgeNormal) < 0)
-						{
-							return false;
-						}
-					}
-				}
-				intersectionIdx++;
-			}
+			OutEdges.Add(TPair<FVector, FVector>(edgeStart, edgeEnd));
 		}
 
 		return true;
@@ -423,59 +414,6 @@ namespace Modumate
 			}
 		}
 		return INDEX_NONE;
-	}
-
-	const bool FGraph3DFace::SplitFace(TArray<int32> EdgeIdxs, TArray<int32> NewVertexIDs, TArray<TArray<int32>>& OutVertexIDs) const
-	{
-		// malformed inputs
-		if (EdgeIdxs.Num() != NewVertexIDs.Num())
-		{
-			return false;
-		}
-		if (EdgeIdxs.Num() != 2)
-		{
-			return false;
-		}
-
-		OutVertexIDs.Reset();
-		OutVertexIDs.Init(TArray<int32>(), 2);
-
-		int32 startSplitEdgeID = EdgeIdxs[0];
-		int32 endSplitEdgeID = EdgeIdxs[1];
-
-		for (int32 vertexIdx = 0; vertexIdx < VertexIDs.Num(); vertexIdx++)
-		{
-			if (vertexIdx <= startSplitEdgeID)
-			{
-				OutVertexIDs[0].Add(VertexIDs[vertexIdx]);
-			}
-			if (vertexIdx == startSplitEdgeID)
-			{
-				if (VertexIDs[vertexIdx] != NewVertexIDs[0])
-				{
-					OutVertexIDs[0].Add(NewVertexIDs[0]);
-				}
-				OutVertexIDs[1].Add(NewVertexIDs[0]);
-			}
-			if (vertexIdx > startSplitEdgeID && vertexIdx <= endSplitEdgeID)
-			{
-				OutVertexIDs[1].Add(VertexIDs[vertexIdx]);
-			}
-			if (vertexIdx == endSplitEdgeID)
-			{
-				OutVertexIDs[0].Add(NewVertexIDs[1]);
-				if (VertexIDs[vertexIdx] != NewVertexIDs[1])
-				{
-					OutVertexIDs[1].Add(NewVertexIDs[1]);
-				}
-			}
-			if (vertexIdx > endSplitEdgeID)
-			{
-				OutVertexIDs[0].Add(VertexIDs[vertexIdx]);
-			}
-		}
-
-		return true;
 	}
 
 	void FGraph3DFace::Dirty(bool bConnected)

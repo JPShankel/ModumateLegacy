@@ -438,7 +438,6 @@ namespace Modumate
 	{
 		// TODO: updating planes could be a part of Dirty instead of 
 		// part of applying the deltas
-		TSet<int32> facePlanesToUpdate;
 
 		for (auto &kvp : Delta.VertexMovements)
 		{
@@ -452,10 +451,6 @@ namespace Modumate
 
 			TSet<int32> connectedFaces, connectedEdges;
 			vertex->GetConnectedFacesAndEdges(connectedFaces, connectedEdges);
-			for (int32 faceID : connectedFaces)
-			{
-				facePlanesToUpdate.Add(faceID);
-			}
 
 			// this also sets all connected edges and faces dirty
 			vertex->Dirty(true);
@@ -560,16 +555,18 @@ namespace Modumate
 		for (auto &kvp : Faces)
 		{
 			FGraph3DFace &face = kvp.Value;
-			bool bUpdatePlanes = facePlanesToUpdate.Contains(kvp.Key);
-			if (bUpdatePlanes)
-			{
-				if (!face.UpdatePlane(face.VertexIDs))
-				{
-					return false;
-				}
-			}
+
 			if (face.bDirty)
 			{
+				bool bUpdatePlanes = face.ShouldUpdatePlane();
+				if (bUpdatePlanes)
+				{
+					if (!face.UpdatePlane(face.VertexIDs))
+					{
+						return false;
+					}
+				}
+
 				// Not ensuring here in favor of ensuring if the delta is expected to be correct
 				// If UpdatePlanes is called, it will assign the vertices correctly, if it isn't called
 				// it needs to be updated through UpdateVerticesAndEdges

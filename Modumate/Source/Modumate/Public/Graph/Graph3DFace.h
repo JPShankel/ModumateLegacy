@@ -33,9 +33,10 @@ namespace Modumate
 		FVector2D ProjectPosition2D(const FVector &Position) const;
 		FVector DeprojectPosition(const FVector2D &ProjectedPos) const;
 		bool UpdatePlane(const TArray<int32> &InVertexIDs);
+		bool ShouldUpdatePlane() const;
 		bool UpdateVerticesAndEdges(const TArray<int32> &InVertexIDs, bool bAssignVertices = true);
 		bool NormalHitsFace(const FGraph3DFace *OtherFace, float Sign) const;
-		bool IntersectsFace(const FGraph3DFace *OtherFace, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<FEdgeIntersection> &SourceIntersections, TArray<FEdgeIntersection> &DestIntersections, TPair<bool, bool> &bOutOnFaceEdge) const;
+		bool IntersectsFace(const FGraph3DFace *OtherFace, TArray<TPair<FVector, FVector>> &OutEdges) const;
 		bool IntersectsPlane(const FPlane OtherPlane, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<TPair<FVector, FVector>> &IntersectingSegments) const;
 
 		// TODO: potentially make this static
@@ -45,7 +46,6 @@ namespace Modumate
 
 		const bool FindVertex(FVector &Position) const;
 		const int32 FindEdgeIndex(FSignedID edgeID, bool &bOutSameDirection) const;
-		const bool SplitFace(TArray<int32> EdgeIdxs, TArray<int32> NewVertexIDs, TArray<TArray<int32>>& OutVertexIDs) const;
 
 		virtual void Dirty(bool bConnected = true) override;
 		virtual bool ValidateForTests() const override;
