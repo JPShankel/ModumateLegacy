@@ -46,8 +46,8 @@ bool URotateObjectTool::BeginUse()
 
 	AcquireSelectedObjects();
 
-	PendingSegmentStart = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
-	PendingSegmentEnd = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+	PendingSegmentStart = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
+	PendingSegmentEnd = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
 	if (Controller->EMPlayerState->SnappedCursor.Visible)
 	{
 		Stage = AnchorPlaced;

@@ -44,7 +44,7 @@ bool UCabinetTool::BeginUse()
 
 	State = NewSegmentPending;
 
-	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
 	PendingSegment->Point1 = hitLoc;
 	PendingSegment->Point2 = hitLoc;
 	PendingSegment->Color = FColor::Green;
@@ -304,19 +304,21 @@ void UCabinetTool::BeginSetHeightMode(const TArray<FVector> &basePoly)
 		PendingSegment = nullptr;
 	}
 
+	UClass *lineClass = Controller->EMPlayerState->GetEditModelGameMode()->LineClass;
+
 	for (int i = 0; i < basePoly.Num(); ++i)
 	{
-		ALineActor3D_CPP *actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+		ALineActor3D_CPP *actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(lineClass);
 		actor->Point1 = basePoly[i];
 		actor->Point2 = basePoly[(i + 1) % basePoly.Num()];
 		BaseSegs.Add(actor);
 
-		actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+		actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(lineClass);
 		actor->Point1 = basePoly[i];
 		actor->Point2 = basePoly[(i + 1) % basePoly.Num()];
 		TopSegs.Add(actor);
 
-		actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+		actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(lineClass);
 		actor->Point1 = basePoly[i];
 		actor->Point2 = basePoly[i];
 		ConnectSegs.Add(actor);

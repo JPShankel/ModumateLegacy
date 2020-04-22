@@ -43,7 +43,7 @@ bool UMoveObjectTool::BeginUse()
 	{
 		AnchorPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorPoint, Controller->EMPlayerState->SnappedCursor.HitNormal, Controller->EMPlayerState->SnappedCursor.HitTangent);
-		PendingMoveLine = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+		PendingMoveLine = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
 		return true;
 	}
 	return false;

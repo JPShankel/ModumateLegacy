@@ -113,6 +113,7 @@ namespace Modumate
 		};
 
 		int32 numEdges = EdgePoints.Num();
+		UStaticMesh *anchorMesh = controller->EMPlayerState->GetEditModelGameMode()->AnchorMesh;
 		for (int32 i = 0; i < numEdges; ++i)
 		{
 			int32 nextI = (i + 1) % numEdges;
@@ -120,7 +121,7 @@ namespace Modumate
 			//makeActor(new FAdjustPolyPointHandle(MOI, i, nextI), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f), { i, nextI }, 16.0f, 0.0f);
 
 			auto *frontHandleImpl = new FSetSegmentSlopeHandle(MOI, i);
-			makeActor(frontHandleImpl, AEditModelGameMode_CPP::AnchorMesh, FVector(0.001f), { i, nextI }, 16.0f, 0.0f);
+			makeActor(frontHandleImpl, anchorMesh, FVector(0.001f), { i, nextI }, 16.0f, 0.0f);
 			SetSlopeHandleImpls.Add(frontHandleImpl);
 		}
 

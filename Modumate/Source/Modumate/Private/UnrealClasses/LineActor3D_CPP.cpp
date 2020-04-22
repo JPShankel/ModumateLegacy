@@ -113,7 +113,10 @@ void ALineActor3D_CPP::UpdateVerticalPlane(FShoppingItem shopItem)
 		}
 		else
 		{
-			DynamicMaterials.Add(UMaterialInstanceDynamic::Create(AEditModelGameMode_CPP::LinePlaneSegmentMaterial, ProceduralMesh));
+			if (EMGameMode != nullptr)
+			{
+				DynamicMaterials.Add(UMaterialInstanceDynamic::Create(EMGameMode->LinePlaneSegmentMaterial, ProceduralMesh));
+			}
 		}
 		ProceduralMesh->SetMaterial(i, DynamicMaterials[i]);
 		DynamicMaterials[i]->SetTextureParameterValue(FName("Texture"), revAssemblyShoppingItems[i].Icon.Get());

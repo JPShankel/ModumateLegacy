@@ -134,6 +134,7 @@ namespace Modumate
 			return;
 		}
 
+		UStaticMesh *faceAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->FaceAdjusterMesh;
 
 		for (int32 idx = 0; idx < numCP; idx++)
 		{
@@ -141,7 +142,7 @@ namespace Modumate
 			FAdjustPolyPointHandle *handle = new FAdjustPolyPointHandle(MOI, cornerIdxs[0], cornerIdxs[1]);
 
 			AAdjustmentHandleActor_CPP *actor = DynamicMeshActor->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-			actor->SetActorMesh(AEditModelGameMode_CPP::FaceAdjusterMesh);
+			actor->SetActorMesh(faceAdjusterMesh);
 			actor->SetHandleScale(HandleScale);
 			actor->SetHandleScaleScreenSize(HandleScale);
 
@@ -158,7 +159,7 @@ namespace Modumate
 			FAdjustPolyExtrusionHandle *handle = new FAdjustPolyExtrusionHandle(MOI, sign);
 
 			AAdjustmentHandleActor_CPP *actor = DynamicMeshActor->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-			actor->SetActorMesh(AEditModelGameMode_CPP::FaceAdjusterMesh);
+			actor->SetActorMesh(faceAdjusterMesh);
 			actor->SetHandleScale(HandleScale);
 			actor->SetHandleScaleScreenSize(HandleScale);
 

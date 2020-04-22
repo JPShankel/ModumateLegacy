@@ -91,7 +91,7 @@ namespace Modumate
 	AActor *FMOIMetaEdgeImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 	{
 		World = world;
-		LineActor = world->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+		LineActor = world->SpawnActor<ALineActor3D_CPP>(world->GetAuthGameMode<AEditModelGameMode_CPP>()->LineClass);
 		LineActor->bDrawVerticalPlane = false;
 		LineActor->UpdateMetaEdgeVisuals(false);
 		return LineActor.Get();

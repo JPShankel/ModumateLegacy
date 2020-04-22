@@ -27,13 +27,36 @@ public:
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 	//~ End AGameModeBase Interface
 
-	static UMaterialInterface *VolumeHoverMaterial;
-	static UMaterialInterface *RoomHandleMaterial;
-	static UMaterialInterface *RoomHandleMaterialNoDepth;
-	static UMaterialInterface *LinePlaneSegmentMaterial;
 
-	static UMaterialInterface *GreenMaterial;
-	static UMaterialInterface *HideMaterial;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UClass *LineClass;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UClass *PortalFrameActorClass;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UClass *MOIGroupActorClass;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface *GreenMaterial;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface *HideMaterial;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UStaticMesh *AnchorMesh;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface *VolumeHoverMaterial;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface *RoomHandleMaterial;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface *RoomHandleMaterialNoDepth;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface *LinePlaneSegmentMaterial;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UStaticMesh *SphereMesh;
@@ -62,16 +85,18 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UStaticMesh *JustificationHandleChildMesh;
 
-	static UStaticMesh *AnchorMesh;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UStaticMesh *FaceAdjusterMesh;
 
-	static UStaticMesh *FaceAdjusterMesh;
-	static UStaticMesh *PointAdjusterMesh;
-	static UStaticMesh *RotateHandleMesh;
-	static UStaticMesh *InvertHandleMesh;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UStaticMesh *PointAdjusterMesh;
 
-	static UClass *LineClass;
-	static UClass *PortalFrameActorClass;
-	static UClass *MOIGroupActorClass;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UStaticMesh *RotateHandleMesh;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UStaticMesh *InvertHandleMesh;
+
 
 	Modumate::ModumateObjectDatabase *ObjectDatabase;
 

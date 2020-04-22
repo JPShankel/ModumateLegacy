@@ -128,13 +128,17 @@ namespace Modumate
 				AdjustmentHandles.Add(actor);
 			};
 
+			UStaticMesh *pointAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->PointAdjusterMesh;
+			UStaticMesh *invertHandleMesh = controller->EMPlayerState->GetEditModelGameMode()->InvertHandleMesh;
+			UStaticMesh *rotateHandleMesh = controller->EMPlayerState->GetEditModelGameMode()->RotateHandleMesh;
+
 			for (int32 i = 0; i < 4; ++i)
 			{
-				makeActor(new FAdjustFFEPointHandle(MOI, i), AEditModelGameMode_CPP::PointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f), TArray<int32>{}, 0.0f, false);
+				makeActor(new FAdjustFFEPointHandle(MOI, i), pointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f), TArray<int32>{}, 0.0f, false);
 			}
 
-			makeActor(new FAdjustFFERotateHandle(MOI, 1.f), AEditModelGameMode_CPP::RotateHandleMesh, FVector(0.006f, 0.006f, 0.006f), TArray<int32>{}, 0.0f, true);
-			makeActor(new FAdjustFFEInvertHandle(MOI), AEditModelGameMode_CPP::InvertHandleMesh, FVector(0.004f, 0.004f, 0.004f), TArray<int32>{}, 0.0f, false, 1);
+			makeActor(new FAdjustFFERotateHandle(MOI, 1.f), rotateHandleMesh, FVector(0.006f, 0.006f, 0.006f), TArray<int32>{}, 0.0f, true);
+			makeActor(new FAdjustFFEInvertHandle(MOI), invertHandleMesh, FVector(0.004f, 0.004f, 0.004f), TArray<int32>{}, 0.0f, false, 1);
 		}
 		else
 		{

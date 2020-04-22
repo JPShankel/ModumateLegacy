@@ -4,6 +4,7 @@
 
 #include "AdjustmentHandleActor_CPP.h"
 #include "EditModelGameMode_CPP.h"
+#include "EditModelPlayerController_CPP.h"
 #include "EditModelPolyAdjustmentHandles.h"
 
 namespace Modumate
@@ -119,9 +120,10 @@ namespace Modumate
 			AdjustmentHandles.Add(actor);
 		};
 
+		UStaticMesh *faceAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->FaceAdjusterMesh;
 		for (size_t i = 0; i < MOI->GetControlPoints().Num(); ++i)
 		{
-			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->GetControlPoints().Num()), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), TArray<int32>{int32(i), int32(i + 1) % MOI->GetControlPoints().Num()}, 16.0f);
+			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->GetControlPoints().Num()), faceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), TArray<int32>{int32(i), int32(i + 1) % MOI->GetControlPoints().Num()}, 16.0f);
 		}
 	};
 

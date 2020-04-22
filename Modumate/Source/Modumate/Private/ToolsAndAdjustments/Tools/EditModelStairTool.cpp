@@ -580,7 +580,7 @@ bool UStairTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
 
 void UStairTool::MakePendingSegment(TWeakObjectPtr<ALineActor3D_CPP> &TargetSegment, const FVector &StartingPoint, const FColor &SegmentColor)
 {
-	TargetSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+	TargetSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
 	TargetSegment->Point1 = StartingPoint;
 	TargetSegment->Point2 = StartingPoint;
 	TargetSegment->Color = SegmentColor;

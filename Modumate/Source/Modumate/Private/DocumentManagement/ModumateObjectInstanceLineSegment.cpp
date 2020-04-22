@@ -109,14 +109,16 @@ namespace Modumate
 			AdjustmentHandles.Add(actor);
 		};
 
-		makeActor(MakeAdjustmentHandle(MOI, 0), AEditModelGameMode_CPP::PointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f));
-		makeActor(MakeAdjustmentHandle(MOI, 1), AEditModelGameMode_CPP::PointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f));
+		UStaticMesh *pointAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->PointAdjusterMesh;
+
+		makeActor(MakeAdjustmentHandle(MOI, 0), pointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f));
+		makeActor(MakeAdjustmentHandle(MOI, 1), pointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f));
 	};
 
 	AActor *FMOILineSegment::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 	{
 		World = world;
-		LineActor = world->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+		LineActor = world->SpawnActor<ALineActor3D_CPP>(world->GetAuthGameMode<AEditModelGameMode_CPP>()->LineClass);
 		LineActor->Color = BaseColor;
 		LineActor->Thickness = 2.0f;
 		return LineActor.Get();

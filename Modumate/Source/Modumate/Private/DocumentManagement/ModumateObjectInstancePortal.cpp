@@ -339,17 +339,22 @@ namespace Modumate
 			actor->AttachToActor(MOI->GetActor(), FAttachmentTransformRules::KeepRelativeTransform);
 			AdjustmentHandles.Add(actor);
 		};
+
+		UStaticMesh *pointAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->PointAdjusterMesh;
+		UStaticMesh *faceAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->FaceAdjusterMesh;
+		UStaticMesh *invertHandleMesh = controller->EMPlayerState->GetEditModelGameMode()->InvertHandleMesh;
+
 		for (size_t i = 0; i < 8; ++i)
 		{
-			makeActor(new FAdjustPortalPointHandle(MOI, i), AEditModelGameMode_CPP::PointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f), -1, 0.0f);
+			makeActor(new FAdjustPortalPointHandle(MOI, i), pointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f), -1, 0.0f);
 		}
 
-		makeActor(new FAdjustPortalSideHandle(MOI, 0), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015, 0.0015, 0.0015), 0, 12.0);
-		makeActor(new FAdjustPortalSideHandle(MOI, 1), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015, 0.0015, 0.0015), 1, 12.0);
-		makeActor(new FAdjustPortalSideHandle(MOI, 2), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015, 0.0015, 0.0015), 2, 12.0);
-		makeActor(new FAdjustPortalSideHandle(MOI, 3), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015, 0.0015, 0.0015), 3, 12.0);
+		makeActor(new FAdjustPortalSideHandle(MOI, 0), faceAdjusterMesh, FVector(0.0015, 0.0015, 0.0015), 0, 12.0);
+		makeActor(new FAdjustPortalSideHandle(MOI, 1), faceAdjusterMesh, FVector(0.0015, 0.0015, 0.0015), 1, 12.0);
+		makeActor(new FAdjustPortalSideHandle(MOI, 2), faceAdjusterMesh, FVector(0.0015, 0.0015, 0.0015), 2, 12.0);
+		makeActor(new FAdjustPortalSideHandle(MOI, 3), faceAdjusterMesh, FVector(0.0015, 0.0015, 0.0015), 3, 12.0);
 		//Side needs to be manually calculated in the invertPortalHandle b/c control points aren't following the same as walls
-		makeActor(new FAdjustPortalInvertHandle(MOI, 1), AEditModelGameMode_CPP::InvertHandleMesh, FVector(0.003f, 0.003f, 0.003f), -1, 0.f);
+		makeActor(new FAdjustPortalInvertHandle(MOI, 1), invertHandleMesh, FVector(0.003f, 0.003f, 0.003f), -1, 0.f);
 
 		// Flip handle for transverse is removed until functionality is fixed 
 		makeActor(new FAdjustPortalInvertHandle(MOI, -1), controller->EMPlayerState->GetEditModelGameMode()->FlipHandleMesh, FVector(0.003f, 0.003f, 0.003f), -1, 0.f);

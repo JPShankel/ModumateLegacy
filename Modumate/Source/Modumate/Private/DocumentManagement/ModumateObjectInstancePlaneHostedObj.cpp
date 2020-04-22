@@ -342,10 +342,12 @@ namespace Modumate
 			return impl;
 		};
 
+		UStaticMesh *faceAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->FaceAdjusterMesh;
+
 		int32 numParentCPs = parent->GetControlPoints().Num();
 		for (int32 i = 0; i < numParentCPs; ++i)
 		{
-			makeActor(new FAdjustPolyPointHandle(parent, i, (i + 1) % numParentCPs), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), -1, TArray<int32>{i, (i + 1) % numParentCPs}, 16.0f);
+			makeActor(new FAdjustPolyPointHandle(parent, i, (i + 1) % numParentCPs), faceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), -1, TArray<int32>{i, (i + 1) % numParentCPs}, 16.0f);
 		}
 
 		// Make justification handles
@@ -385,7 +387,8 @@ namespace Modumate
 		newHandleChildren.Add(backJustificationHandle->Handle.Get());
 
 		// Make the invert handle, as a part of the justification handle
-		auto *invertHandle = makeActor(new FAdjustInvertHandle(MOI), AEditModelGameMode_CPP::InvertHandleMesh, FVector(0.003f, 0.003f, 0.003f), 4, TArray<int32>(), 0.0f);
+		UStaticMesh *invertHandleMesh = gameMode->InvertHandleMesh;
+		auto *invertHandle = makeActor(new FAdjustInvertHandle(MOI), invertHandleMesh, FVector(0.003f, 0.003f, 0.003f), 4, TArray<int32>(), 0.0f);
 		if (ensureAlways(invertHandle))
 		{
 			newHandleChildren.Add(invertHandle->Handle.Get());

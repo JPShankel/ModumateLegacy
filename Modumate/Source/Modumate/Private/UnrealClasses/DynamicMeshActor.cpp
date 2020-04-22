@@ -7,6 +7,7 @@
 #include "ModumateGeometryStatics.h"
 #include "ModumateObjectStatics.h"
 #include "EditModelPlayerController_CPP.h"
+#include "EditModelPlayerState_CPP.h"
 #include "Algo/Transform.h"
 #include "Algo/Accumulate.h"
 #include "EditModelGameState_CPP.h"
@@ -257,8 +258,10 @@ void ADynamicMeshActor::SetupRailGeometry(const TArray<FVector> &points, float h
 		MakeTriangle(points[i] - centroid, points[i] + FVector(0, 0, height) - centroid, points[i + 1] + FVector(0, 0, height) - centroid, 0, 1);
 	}
 
+	UMaterialInterface *greenMaterial = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->GreenMaterial;
+
 	Mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, true);
-	Mesh->SetMaterial(0, AEditModelGameMode_CPP::GreenMaterial);
+	Mesh->SetMaterial(0, greenMaterial);
 }
 
 void ADynamicMeshActor::UpdateRailGeometry(const TArray<FVector> &points, float height)

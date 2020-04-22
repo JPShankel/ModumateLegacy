@@ -163,7 +163,7 @@ bool UScopeBoxTool::EnterNextStage()
 			PendingBox->SetActorHiddenInGame(true);
 			PendingBox->SetActorEnableCollision(false);
 
-			PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(AEditModelGameMode_CPP::LineClass);
+			PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
 
 			PendingBoxMaterial.EngineMaterial = GameMode->ScopeBoxMaterial;
 

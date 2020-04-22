@@ -228,17 +228,20 @@ namespace Modumate
 			AdjustmentHandles.Add(actor);
 		};
 
+		UStaticMesh *faceAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->FaceAdjusterMesh;
+		UStaticMesh *anchorMesh = controller->EMPlayerState->GetEditModelGameMode()->AnchorMesh;
+
 		for (int32 i = 0; i < MOI->GetControlPoints().Num(); ++i)
 		{
-			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->GetControlPoints().Num()), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f), { i, (i + 1) % MOI->GetControlPoints().Num() }, 16.0f, 0.0f);
+			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->GetControlPoints().Num()), faceAdjusterMesh, FVector(0.0015f), { i, (i + 1) % MOI->GetControlPoints().Num() }, 16.0f, 0.0f);
 
 			auto *frontHandleImpl = new FSelectFrontAdjustmentHandle(MOI, i);
-			makeActor(frontHandleImpl, AEditModelGameMode_CPP::AnchorMesh, FVector(0.001f), { i, (i + 1) % MOI->GetControlPoints().Num() }, 16.0f, 0.0f);
+			makeActor(frontHandleImpl, anchorMesh, FVector(0.001f), { i, (i + 1) % MOI->GetControlPoints().Num() }, 16.0f, 0.0f);
 			FrontSelectionHandleImpls.Add(frontHandleImpl);
 		}
 
-		makeActor(new FAdjustPolyExtrusionHandle(MOI, 1.0f), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f), {}, 0.0f, 1.0f);
-		makeActor(new FAdjustPolyExtrusionHandle(MOI, -1.0f), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f), {}, 0.0f, -1.0f);
+		makeActor(new FAdjustPolyExtrusionHandle(MOI, 1.0f), faceAdjusterMesh, FVector(0.0015f), {}, 0.0f, 1.0f);
+		makeActor(new FAdjustPolyExtrusionHandle(MOI, -1.0f), faceAdjusterMesh, FVector(0.0015f), {}, 0.0f, -1.0f);
 
 		ShowAdjustmentHandles(controller, true);
 	}

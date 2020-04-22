@@ -155,15 +155,19 @@ namespace Modumate
 			AdjustmentHandles.Add(actor);
 		};
 
+		UStaticMesh *pointAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->PointAdjusterMesh;
+		UStaticMesh *faceAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->FaceAdjusterMesh;
+		UStaticMesh *invertHandleMesh = controller->EMPlayerState->GetEditModelGameMode()->InvertHandleMesh;
+
 		for (size_t i = 0; i < MOI->GetControlPoints().Num(); ++i)
 		{
-			makeActor(new FAdjustPolyPointHandle(MOI, i), AEditModelGameMode_CPP::PointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f), TArray<int32>{int32(i)}, 0.0f);
-			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->GetControlPoints().Num()), AEditModelGameMode_CPP::FaceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), TArray<int32>{int32(i), int32(i + 1) % MOI->GetControlPoints().Num()}, 16.0f);
+			makeActor(new FAdjustPolyPointHandle(MOI, i), pointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f), TArray<int32>{int32(i)}, 0.0f);
+			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->GetControlPoints().Num()), faceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), TArray<int32>{int32(i), int32(i + 1) % MOI->GetControlPoints().Num()}, 16.0f);
 		}
 
 		if (WantsInvertHandle)
 		{
-			makeActor(new FAdjustInvertHandle(MOI), AEditModelGameMode_CPP::InvertHandleMesh, FVector(0.003f, 0.003f, 0.003f), TArray<int32>{}, 0.0f, 2);
+			makeActor(new FAdjustInvertHandle(MOI), invertHandleMesh, FVector(0.003f, 0.003f, 0.003f), TArray<int32>{}, 0.0f, 2);
 		}
 	};
 

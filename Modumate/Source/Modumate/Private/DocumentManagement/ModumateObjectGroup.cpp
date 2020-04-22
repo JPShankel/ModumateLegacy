@@ -60,8 +60,8 @@ namespace Modumate
 	AActor *FMOIGroupImpl::RestoreActor()
 	{
 		if (World.IsValid())
-		{
-			AMOIGroupActor_CPP *groupActor = World->SpawnActor<AMOIGroupActor_CPP>(AEditModelGameMode_CPP::MOIGroupActorClass);
+		{			
+			AMOIGroupActor_CPP *groupActor = World->SpawnActor<AMOIGroupActor_CPP>(World->GetAuthGameMode<AEditModelGameMode_CPP>()->MOIGroupActorClass);
 			groupActor->MOI = MOI;
 			groupActor->SetActorLocation(Location);
 
