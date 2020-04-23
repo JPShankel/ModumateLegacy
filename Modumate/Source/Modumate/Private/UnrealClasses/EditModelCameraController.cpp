@@ -3,9 +3,11 @@
 #include "EditModelCameraController.h"
 
 #include "Application/SlateApplication.h"
+#include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Curves/CurveFloat.h"
 #include "EditModelPlayerController_CPP.h"
+#include "EditModelInputHandler.h"
 #include "EditModelPlayerPawn_CPP.h"
 #include "EditModelPlayerState_CPP.h"
 #include "Engine/StaticMeshActor.h"
@@ -18,30 +20,26 @@
 UEditModelCameraController::UEditModelCameraController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, RotateSpeed(5.0f)
-	, OrbitZoomPercentSpeed(0.2f)
-	, OrbitZoomMinStepDist(10.0f)
-	, OrbitZoomMinDistance(10.0f)
+	, bUseSmoothZoom(true)
+	, SmoothZoomSpeed(25.0f)
+	, ZoomPercentSpeed(0.2f)
+	, ZoomMinStepDist(10.0f)
+	, ZoomMinDistance(20.0f)
 	, OrbitMovementLerpCurve(nullptr)
 	, OrbitMaxPitch(88.0f)
-	, FreeZoomMinStepDist(50.0f)
-	, FreeZoomInteriorDist(1000.0f)
-	, FreeZoomExponent(1.2f)
-	, bUseSmoothZoom(true)
-	, SmoothZoomSpeed(100.0f)
 	, OrbitAnchorScreenSize(0.25f)
 	, FlyingSpeed(15.0f)
 	, Controller(nullptr)
 	, CurMovementState(ECameraMovementState::Default)
 	, OrbitTarget(ForceInitToZero)
 	, OrbitStartProxyTarget(ForceInitToZero)
-	, PanOriginTarget(ForceInitToZero)
-	, FreeZoomTargetDelta(ForceInitToZero)
+	, FreeZoomDeltaAccumulated(ForceInitToZero)
 	, PanLastMousePos(ForceInitToZero)
 	, PanFactors(ForceInitToZero)
 	, OrbitZoomDistance(0.0f)
 	, OrbitZoomTargetDistance(0.0f)
-	, OrbitZoomDeltaAccumulated(0.0f)
 	, OrbitMovementElapsed(0.0f)
+	, OrbitZoomDeltaAccumulated(0.0f)
 	, RotationDeltasAccumulated(ForceInitToZero)
 	, FlyingDeltasAccumulated(ForceInitToZero)
 {
@@ -49,19 +47,47 @@ UEditModelCameraController::UEditModelCameraController(const FObjectInitializer&
 	PrimaryComponentTick.bStartWithTickEnabled = true;
 }
 
+void UEditModelCameraController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	UWorld *world = GetWorld();
+	Controller = Cast<AEditModelPlayerController_CPP>(GetOwner());
+	ViewportClient = Cast<UModumateViewportClient>(GetWorld()->GetGameViewport());
+
+	if (ensure(ViewportClient))
+	{
+		ViewportClient->OnMouseLeaveDelegate.AddUObject(this, &UEditModelCameraController::OnMouseLeave);
+	}
+
+	if (ensure(world && OrbitAnchorMesh))
+	{
+		FActorSpawnParameters spawnParams;
+		spawnParams.Name = FName(TEXT("OrbitAnchorActor"));
+		spawnParams.Owner = GetOwner();
+		OrbitAnchorActor = world->SpawnActor<AStaticMeshActor>(spawnParams);
+
+		OrbitAnchorActor->GetStaticMeshComponent()->SetStaticMesh(OrbitAnchorMesh);
+		OrbitAnchorActor->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
+		OrbitAnchorActor->SetActorEnableCollision(false);
+		OrbitAnchorActor->SetActorHiddenInGame(true);
+	}
+}
+
 void UEditModelCameraController::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// TODO: only update this when it's changed, but it's owned by Blueprint at the moment so we don't know when that can happen.
-	Camera = Controller->EMPlayerPawn->GetEditCameraComponent();
-	if (!ensure(Camera))
+	if (!Controller || !Controller->EMPlayerPawn)
 	{
 		return;
 	}
 
-	const FTransform oldTransform = Camera->GetComponentToWorld();
+	const FTransform oldTransform = Controller->EMPlayerPawn->GetActorTransform();
 	CamTransform = oldTransform;
+
+	FVector pawnCamPos = CamTransform.GetLocation();
+	FVector managedCamPos = UGameplayStatics::GetPlayerCameraManager(this, 0)->GetCameraLocation();
 
 	switch (CurMovementState)
 	{
@@ -83,50 +109,31 @@ void UEditModelCameraController::TickComponent(float DeltaTime, enum ELevelTick 
 
 	if (!CamTransform.EqualsNoScale(oldTransform))
 	{
-		Camera->SetWorldLocationAndRotation(CamTransform.GetLocation(), CamTransform.GetRotation());
+		Controller->EMPlayerPawn->SetActorLocationAndRotation(CamTransform.GetLocation(), CamTransform.GetRotation());
 	}
 }
 
-void UEditModelCameraController::Init()
+void UEditModelCameraController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	UWorld *world = GetWorld();
-	Controller = Cast<AEditModelPlayerController_CPP>(GetOwner());
-	ViewportClient = Cast<UModumateViewportClient>(GetWorld()->GetGameViewport());
-
-	if (ensureAlways(Controller && Controller->InputComponent && ViewportClient))
+	if (ensure(PlayerInputComponent))
 	{
 		static const FName orbitActionName(TEXT("CameraOrbit"));
-		Controller->InputComponent->BindAction(orbitActionName, EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionOrbitPressed);
-		Controller->InputComponent->BindAction(orbitActionName, EInputEvent::IE_Released, this, &UEditModelCameraController::OnActionOrbitReleased);
+		PlayerInputComponent->BindAction(orbitActionName, EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionOrbitPressed);
+		PlayerInputComponent->BindAction(orbitActionName, EInputEvent::IE_Released, this, &UEditModelCameraController::OnActionOrbitReleased);
 
 		static const FName panActionName(TEXT("CameraPan"));
-		Controller->InputComponent->BindAction(panActionName, EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionPanPressed);
-		Controller->InputComponent->BindAction(panActionName, EInputEvent::IE_Released, this, &UEditModelCameraController::OnActionPanReleased);
+		PlayerInputComponent->BindAction(panActionName, EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionPanPressed);
+		PlayerInputComponent->BindAction(panActionName, EInputEvent::IE_Released, this, &UEditModelCameraController::OnActionPanReleased);
 
-		Controller->InputComponent->BindAction(FName(TEXT("CameraZoomIn")), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionZoomIn);
-		Controller->InputComponent->BindAction(FName(TEXT("CameraZoomOut")), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionZoomOut);
+		PlayerInputComponent->BindAction(FName(TEXT("CameraZoomIn")), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionZoomIn);
+		PlayerInputComponent->BindAction(FName(TEXT("CameraZoomOut")), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionZoomOut);
 
-		Controller->InputComponent->BindAxis(FName(TEXT("CameraOrbitYaw")), this, &UEditModelCameraController::OnAxisRotateYaw);
-		Controller->InputComponent->BindAxis(FName(TEXT("CameraOrbitPitch")), this, &UEditModelCameraController::OnAxisRotatePitch);
+		PlayerInputComponent->BindAxis(FName(TEXT("MoveYaw")), this, &UEditModelCameraController::OnAxisRotateYaw);
+		PlayerInputComponent->BindAxis(FName(TEXT("MovePitch")), this, &UEditModelCameraController::OnAxisRotatePitch);
 
-		Controller->InputComponent->BindAxis(FName(TEXT("MoveForward")), this, &UEditModelCameraController::OnAxisMoveForward);
-		Controller->InputComponent->BindAxis(FName(TEXT("MoveRight")), this, &UEditModelCameraController::OnAxisMoveRight);
-		Controller->InputComponent->BindAxis(FName(TEXT("MoveUp")), this, &UEditModelCameraController::OnAxisMoveUp);
-
-		ViewportClient->OnMouseLeaveDelegate.AddUObject(this, &UEditModelCameraController::OnMouseLeave);
-	}
-
-	if (ensure(world && OrbitAnchorMesh))
-	{
-		FActorSpawnParameters spawnParams;
-		spawnParams.Name = FName(TEXT("OrbitAnchorActor"));
-		spawnParams.Owner = GetOwner();
-		OrbitAnchorActor = world->SpawnActor<AStaticMeshActor>(spawnParams);
-
-		OrbitAnchorActor->GetStaticMeshComponent()->SetStaticMesh(OrbitAnchorMesh);
-		OrbitAnchorActor->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
-		OrbitAnchorActor->SetActorEnableCollision(false);
-		OrbitAnchorActor->SetActorHiddenInGame(true);
+		PlayerInputComponent->BindAxis(FName(TEXT("MoveForward")), this, &UEditModelCameraController::OnAxisMoveForward);
+		PlayerInputComponent->BindAxis(FName(TEXT("MoveRight")), this, &UEditModelCameraController::OnAxisMoveRight);
+		PlayerInputComponent->BindAxis(FName(TEXT("MoveUp")), this, &UEditModelCameraController::OnAxisMoveUp);
 	}
 }
 
@@ -203,17 +210,23 @@ void UEditModelCameraController::OnMouseLeave(FIntPoint MousePos)
 
 bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMovementState)
 {
-	if ((CurMovementState == NewMovementState) || !ensure(Camera))
+	if (CurMovementState == NewMovementState)
 	{
 		return false;
 	}
 
 	FVector camPos = CamTransform.GetLocation();
 	FQuat camRot = CamTransform.GetRotation();
+	bool bShouldInputHaveBeenDisabled = true;
 
 	// End the previous movement state
 	switch (CurMovementState)
 	{
+	case ECameraMovementState::Default:
+	{
+		bShouldInputHaveBeenDisabled = false;
+		break;
+	}
 	case ECameraMovementState::Orbiting:
 	{
 		// Restore the mouse cursor to the screen position of the orbit target,
@@ -236,7 +249,6 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 	case ECameraMovementState::Panning:
 	{
 		CurMovementState = ECameraMovementState::Default;
-		PanOriginTarget = FVector::ZeroVector;
 		PanLastMousePos = FIntPoint::ZeroValue;
 
 		Controller->CurrentMouseCursor = EMouseCursor::Default;
@@ -246,13 +258,23 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 		break;
 	}
 
+	if (bShouldInputHaveBeenDisabled && Controller->InputHandlerComponent)
+	{
+		Controller->InputHandlerComponent->RequestInputDisabled(StaticClass()->GetFName(), false);
+	}
+
 	// Begin the new movement state
 	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+	bool bShouldInputBeDisabled = true;
 
 	switch (NewMovementState)
 	{
 	case ECameraMovementState::Default:
+	{
+		bShouldInputBeDisabled = false;
+		OrbitZoomDeltaAccumulated = 0.0f;
 		break;
+	}
 	case ECameraMovementState::Orbiting:
 	{
 		if (Controller->IsCursorOverWidget() || !cursor.bValid)
@@ -292,13 +314,13 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 			return false;
 		}
 
-		PanOriginTarget = cursor.WorldPosition;
+		FVector panOriginTarget = cursor.WorldPosition;
 		ViewportClient->Viewport->GetMousePos(PanLastMousePos, true);
 
 		FVector2D screenPosOrigin, offsetScreenPosRight, offsetScreenPosUp, screenOffsets;
-		if (Controller->ProjectWorldLocationToScreen(PanOriginTarget, screenPosOrigin) &&
-			Controller->ProjectWorldLocationToScreen(PanOriginTarget + camRot.GetRightVector(), offsetScreenPosRight) &&
-			Controller->ProjectWorldLocationToScreen(PanOriginTarget + camRot.GetUpVector(), offsetScreenPosUp))
+		if (Controller->ProjectWorldLocationToScreen(panOriginTarget, screenPosOrigin) &&
+			Controller->ProjectWorldLocationToScreen(panOriginTarget + camRot.GetRightVector(), offsetScreenPosRight) &&
+			Controller->ProjectWorldLocationToScreen(panOriginTarget + camRot.GetUpVector(), offsetScreenPosUp))
 		{
 			screenOffsets.X = offsetScreenPosRight.X - screenPosOrigin.X;
 			screenOffsets.Y = offsetScreenPosUp.Y - screenPosOrigin.Y;
@@ -319,6 +341,12 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 	}
 
 	CurMovementState = NewMovementState;
+
+	if (bShouldInputBeDisabled && Controller->InputHandlerComponent)
+	{
+		Controller->InputHandlerComponent->RequestInputDisabled(StaticClass()->GetFName(), true);
+	}
+
 	return true;
 }
 
@@ -348,38 +376,68 @@ void UEditModelCameraController::SetPanning(bool bNewPanning)
 
 void UEditModelCameraController::OnZoom(float ZoomSign)
 {
-	if (!ensure(Camera))
+	if (!ensure(Controller))
 	{
 		return;
 	}
 
 	switch (CurMovementState)
 	{
-	case ECameraMovementState::Orbiting:
-	{
-		// For orbiting, zooming just changes the distance 
-		OrbitZoomDeltaAccumulated += ZoomSign * OrbitZoomPercentSpeed;
-		break;
-	}
 	case ECameraMovementState::Default:
 	{
-		// For free-zooming, accumulate remaining distance to travel along the axis pointed to by the cursor,
-		// increasing the zoom step exponentially as the distance from the project increases.
-		FVector camPos = CamTransform.GetLocation();
-
-		FVector cursorWorldPos, cursorWorldDir;
-		if (!Controller->DeprojectMousePositionToWorld(cursorWorldPos, cursorWorldDir))
+		if (!Controller->EMPlayerState)
 		{
 			return;
 		}
 
-		// TODO: have a cached project bounds, so we can use zoom distance relative to the outside of the project, rather than the origin.
-		float zoomTotalDist = FVector::Distance(camPos, FVector::ZeroVector);
-		float zoomExteriorDist = zoomTotalDist - FreeZoomInteriorDist;
-		float zoomExpBase = FMath::Max(1.0f, zoomExteriorDist / FreeZoomInteriorDist);
-		float zoomStepDist = -ZoomSign * FreeZoomMinStepDist * FMath::Pow(zoomExpBase, FreeZoomExponent);
+		// Don't allow zooming when hovering over a widget, or without a valid world-space target
+		const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+		if (Controller->IsCursorOverWidget() || !cursor.bValid)
+		{
+			return;
+		}
 
-		FreeZoomTargetDelta += zoomStepDist * cursorWorldDir;
+		// Don't allow zooming closer than MinOrbitDistance
+		const FVector origin = CamTransform.GetLocation();
+		const FVector target = cursor.WorldPosition;
+		const FVector deltaToTarget = target - origin;
+		const float distToTarget = deltaToTarget.Size();
+		if (FMath::IsNearlyZero(distToTarget))
+		{
+			return;
+		}
+		const FVector dirToTarget = deltaToTarget / distToTarget;
+
+		// Zoom closer to/further from the target by ZoomDeltaAccumulated percent
+		float zoomDistDelta = -ZoomSign * ZoomPercentSpeed * distToTarget;
+
+		// Zoom in distances at least ZoomMinStepDist in size
+		zoomDistDelta = FMath::Sign(zoomDistDelta) * FMath::Max(FMath::Abs(zoomDistDelta), ZoomMinStepDist);
+
+		// Accumulate the free zoom target delta
+		FVector newZoomDelta = FreeZoomDeltaAccumulated + (zoomDistDelta * dirToTarget);
+
+		// But don't zoom closer than ZoomMinDistance to the target if we're zooming in
+		const FVector accumulatedGoalPos = origin + newZoomDelta;
+		const FVector accumulatedDeltaFromTarget = target - accumulatedGoalPos;
+		const float accumulatedDistFromTarget = accumulatedDeltaFromTarget | dirToTarget;
+		if ((accumulatedDistFromTarget < ZoomMinDistance) && (ZoomSign < 0.0f))
+		{
+			newZoomDelta = (target - ZoomMinDistance * dirToTarget) - origin;
+			float newZoomForwardDist = newZoomDelta | dirToTarget;
+			if (newZoomForwardDist < 0.0f)
+			{
+				newZoomDelta = FVector::ZeroVector;
+			}
+		}
+
+		FreeZoomDeltaAccumulated = newZoomDelta;
+
+		break;
+	}
+	case ECameraMovementState::Orbiting:
+	{
+		OrbitZoomDeltaAccumulated += ZoomSign * ZoomPercentSpeed;
 		break;
 	}
 	default:
@@ -402,21 +460,21 @@ void UEditModelCameraController::OnMoveValue(FVector LocalMoveValue)
 
 void UEditModelCameraController::UpdateFreeZooming(float DeltaTime)
 {
-	if (FreeZoomTargetDelta.IsNearlyZero())
+	if (FreeZoomDeltaAccumulated.IsNearlyZero())
 	{
 		return;
 	}
 
 	// If smooth zooming, use the desired zoom delta over time; otherwise use it all immediately
-	float zoomLerpAlpha = bUseSmoothZoom ? SmoothZoomSpeed * DeltaTime : 1.0f;
-	FVector curZoomDelta = FMath::Lerp(FVector::ZeroVector, FreeZoomTargetDelta, zoomLerpAlpha);
+	float zoomLerpAlpha = bUseSmoothZoom ? FMath::Clamp(SmoothZoomSpeed * DeltaTime, 0.0f, 1.0f) : 1.0f;
+	FVector curZoomDelta = FMath::Lerp(FVector::ZeroVector, FreeZoomDeltaAccumulated, zoomLerpAlpha);
 	if (curZoomDelta.IsNearlyZero())
 	{
 		return;
 	}
 
 	CamTransform.SetLocation(CamTransform.GetLocation() + curZoomDelta);
-	FreeZoomTargetDelta -= curZoomDelta;
+	FreeZoomDeltaAccumulated *= (1.0f - zoomLerpAlpha);
 }
 
 void UEditModelCameraController::UpdateRotating(float DeltaTime)
@@ -444,9 +502,7 @@ void UEditModelCameraController::UpdateRotating(float DeltaTime)
 
 void UEditModelCameraController::UpdateOrbiting(float DeltaTime)
 {
-	// First, figure out how much orbit movement has just happen, so we can use it to lerp towards the real target
-	const float zoomProgressFactor = 20.0f;
-	float newOrbitMovement = RotationDeltasAccumulated.Size() + zoomProgressFactor * FMath::Abs(OrbitZoomDeltaAccumulated);
+	float newOrbitMovement = RotationDeltasAccumulated.Size();
 
 	// Update rotation so that we can adjust the target based on that
 	UpdateRotating(DeltaTime);
@@ -459,8 +515,8 @@ void UEditModelCameraController::UpdateOrbiting(float DeltaTime)
 	// Make the zoom distance delta at least MinOrbitZoomStepDist in size,
 	// but don't allow zooming closer than MinOrbitDistance
 	float distDelta = OrbitZoomDeltaAccumulated * OrbitZoomTargetDistance;
-	distDelta = FMath::Sign(distDelta) * FMath::Max(FMath::Abs(distDelta), OrbitZoomMinStepDist);
-	OrbitZoomTargetDistance = FMath::Max(OrbitZoomTargetDistance + distDelta, OrbitZoomMinDistance);
+	distDelta = FMath::Sign(distDelta) * FMath::Max(FMath::Abs(distDelta), ZoomMinStepDist);
+	OrbitZoomTargetDistance = FMath::Max(OrbitZoomTargetDistance + distDelta, ZoomMinDistance);
 	OrbitZoomDeltaAccumulated = 0.0f;
 
 	// If smooth zooming, approach the desired zoom distance over time; otherwise snap to it
@@ -522,9 +578,13 @@ void UEditModelCameraController::UpdateFlying(float DeltaTime)
 	{
 		FVector camPos = CamTransform.GetLocation();
 		FQuat camRot = CamTransform.GetRotation();
-		FVector worldFlyingDelta = FlyingSpeed * camRot.RotateVector(FlyingDeltasAccumulated);
 
-		CamTransform.SetLocation(camPos + worldFlyingDelta);
+		FVector flyingInputX = camRot.GetAxisX() * FlyingDeltasAccumulated.X;
+		FVector flyingInputY = camRot.GetAxisY() * FlyingDeltasAccumulated.Y;
+		FVector flyingInputZ = FVector::UpVector * FlyingDeltasAccumulated.Z;
+		FVector flyingInput = flyingInputX + flyingInputY + flyingInputZ;
+		Controller->EMPlayerPawn->AddMovementInput(flyingInput, FlyingSpeed);
+
 		FlyingDeltasAccumulated = FVector::ZeroVector;
 	}
 }
@@ -550,14 +610,11 @@ bool UEditModelCameraController::TryWrapCursor(FIntPoint CurCursorPos)
 	for (int32 axisIdx = 0; axisIdx < 2; ++axisIdx)
 	{
 		int32 axisSize = viewportSize(axisIdx);
+		int32 curPosValue = CurCursorPos(axisIdx);
 
-		if (CurCursorPos(axisIdx) <= 0)
+		if ((curPosValue <= 0) || (curPosValue >= (axisSize - 1)))
 		{
-			newMousePos(axisIdx) = axisSize - 1;
-		}
-		else if (CurCursorPos(axisIdx) >= (axisSize - 1))
-		{
-			newMousePos(axisIdx) = 0;
+			newMousePos(axisIdx) = (curPosValue + axisSize) % axisSize;
 		}
 	}
 

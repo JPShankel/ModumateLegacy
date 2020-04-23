@@ -421,8 +421,42 @@ EInputCommand UEditModelInputHandler::InputCommandFromToolMode(EToolMode ToolMod
 	return EInputCommand::None;
 }
 
+void UEditModelInputHandler::RequestInputDisabled(const FName &Requester, bool bShouldDisable)
+{
+	bool bWasInputEnabled = IsInputEnabled();
+
+	if (bShouldDisable)
+	{
+		bool bDuplicateRequest = false;
+		InputDisabledRequests.Add(Requester, &bDuplicateRequest);
+		ensureAlwaysMsgf(!bDuplicateRequest, TEXT("%s already requested that input be disabled!"), *Requester.ToString());
+	}
+	else
+	{
+		int32 numRemoved = InputDisabledRequests.Remove(Requester);
+		ensureAlwaysMsgf(numRemoved == 1, TEXT("%s revoked an input disabled request that was never set!"), *Requester.ToString());
+	}
+
+	bool bShouldInputBeEnabled = IsInputEnabled();
+
+	if (bShouldInputBeEnabled != bWasInputEnabled)
+	{
+		SetInputEnabled(bShouldInputBeEnabled);
+	}
+}
+
+bool UEditModelInputHandler::IsInputEnabled() const
+{
+	return (InputDisabledRequests.Num() == 0);
+}
+
 void UEditModelInputHandler::HandleBoundChord(FInputChord Chord)
 {
+	if (!IsInputEnabled())
+	{
+		return;
+	}
+
 	// When handling any chord, set a timer to reset the current command sequence, so that we don't get stuck.
 	GetWorld()->GetTimerManager().SetTimer(SequenceResetTimer, this, &UEditModelInputHandler::OnCommandReset, SequenceResetTime);
 
@@ -462,4 +496,12 @@ void UEditModelInputHandler::HandleBoundChord(FInputChord Chord)
 void UEditModelInputHandler::OnCommandReset()
 {
 	CurCommandNode = RootCommandTrie;
+}
+
+void UEditModelInputHandler::SetInputEnabled(bool bNewEnabled)
+{
+	if (!bNewEnabled)
+	{
+		OnCommandReset();
+	}
 }

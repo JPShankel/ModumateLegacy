@@ -19,6 +19,20 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION()
+	void OnAxisRotateYaw(float RotateYawValue);
+
+	UFUNCTION()
+	void OnAxisRotatePitch(float RotatePitchValue);
+
+	UFUNCTION()
+	void OnAxisMoveForward(float MoveForwardValue);
+
+	UFUNCTION()
+	void OnAxisMoveRight(float MoveRightValue);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

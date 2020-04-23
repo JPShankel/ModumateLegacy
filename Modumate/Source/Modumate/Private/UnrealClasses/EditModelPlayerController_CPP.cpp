@@ -144,7 +144,6 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	EMPlayerPawn = Cast<AEditModelPlayerPawn_CPP>(GetPawn());
 	if (ensure(EMPlayerPawn))
 	{
-		CurrentCamera = EMPlayerPawn->GetEditCameraComponent();
 		SetViewTargetWithBlend(EMPlayerPawn);
 	}
 
@@ -387,19 +386,12 @@ void AEditModelPlayerController_CPP::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	InputHandlerComponent->SetupBindings();
-	CameraController->Init();
 
 	if (InputComponent)
 	{
 		// Bind raw inputs, so that we have better control over input logging and forwarding than we do in Blueprint.
 		InputComponent->BindKey(EKeys::LeftMouseButton, EInputEvent::IE_Pressed, this, &AEditModelPlayerController_CPP::HandleRawLeftMouseButtonPressed);
 		InputComponent->BindKey(EKeys::LeftMouseButton, EInputEvent::IE_Released, this, &AEditModelPlayerController_CPP::HandleRawLeftMouseButtonReleased);
-		InputComponent->BindKey(EKeys::MiddleMouseButton, EInputEvent::IE_Pressed, this, &AEditModelPlayerController_CPP::HandleRawMiddleMouseButtonPressed);
-		InputComponent->BindKey(EKeys::MiddleMouseButton, EInputEvent::IE_Released, this, &AEditModelPlayerController_CPP::HandleRawMiddleMouseButtonReleased);
-		InputComponent->BindKey(EKeys::MouseScrollDown, EInputEvent::IE_Pressed, this, &AEditModelPlayerController_CPP::HandleRawScrollDownPressed);
-		InputComponent->BindKey(EKeys::MouseScrollUp, EInputEvent::IE_Pressed, this, &AEditModelPlayerController_CPP::HandleRawScrollUpPressed);
-		InputComponent->BindKey(EKeys::RightMouseButton, EInputEvent::IE_Pressed, this, &AEditModelPlayerController_CPP::HandleRawRightMouseButtonPressed);
-		InputComponent->BindKey(EKeys::RightMouseButton, EInputEvent::IE_Released, this, &AEditModelPlayerController_CPP::HandleRawRightMouseButtonReleased);
 
 		// Add an input to test a crash.
 		InputComponent->BindKey(FInputChord(EKeys::Backslash, true, true, true, false), EInputEvent::IE_Pressed, this, &AEditModelPlayerController_CPP::DebugCrash);
@@ -1050,11 +1042,15 @@ bool AEditModelPlayerController_CPP::HandleEscapeKey()
 	{
 		SetViewGroupObject(EMPlayerState->ViewGroupObject->GetParentObject());
 	}
-	else if (CurrentTool)
+	else if (CurrentTool && (CurrentTool->GetToolMode() != EToolMode::VE_SELECT))
 	{
 		SetToolMode(EToolMode::VE_SELECT);
 		EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 		return true;
+	}
+	else if (GetPawn<AEditModelToggleGravityPawn_CPP>())
+	{
+		ToggleGravityPawn();
 	}
 	return false;
 }
@@ -1223,11 +1219,11 @@ bool AEditModelPlayerController_CPP::ZoomToProjectExtents()
 	}
 	FVector captureOrigin = CalculateViewLocationForSphere(
 			projectBounds, 
-			EMPlayerPawn->GetEditCameraComponent()->GetForwardVector(), 
-			EMPlayerPawn->GetEditCameraComponent()->AspectRatio,
-			EMPlayerPawn->GetEditCameraComponent()->FieldOfView);
+			EMPlayerPawn->CameraComponent->GetForwardVector(), 
+			EMPlayerPawn->CameraComponent->AspectRatio,
+			EMPlayerPawn->CameraComponent->FieldOfView);
 
-	EMPlayerPawn->GetEditCameraComponent()->SetWorldLocation(captureOrigin);
+	EMPlayerPawn->CameraComponent->SetWorldLocation(captureOrigin);
 	return true;
 }
 
@@ -1247,11 +1243,11 @@ bool AEditModelPlayerController_CPP::ZoomToSelection()
 
 	FVector captureOrigin = CalculateViewLocationForSphere(
 		selectedBound.GetSphere(),
-		EMPlayerPawn->GetEditCameraComponent()->GetForwardVector(),
-		EMPlayerPawn->GetEditCameraComponent()->AspectRatio,
-		EMPlayerPawn->GetEditCameraComponent()->FieldOfView);
+		EMPlayerPawn->CameraComponent->GetForwardVector(),
+		EMPlayerPawn->CameraComponent->AspectRatio,
+		EMPlayerPawn->CameraComponent->FieldOfView);
 
-	EMPlayerPawn->GetEditCameraComponent()->SetWorldLocation(captureOrigin);
+	EMPlayerPawn->CameraComponent->SetWorldLocation(captureOrigin);
 	return true;
 }
 
@@ -1424,54 +1420,9 @@ void AEditModelPlayerController_CPP::HandleRawLeftMouseButtonReleased()
 	HandleLeftMouseButton(false);
 }
 
-void AEditModelPlayerController_CPP::HandleRawMiddleMouseButtonPressed()
-{
-	HandleMiddleMouseButton(true);
-}
-
-void AEditModelPlayerController_CPP::HandleRawMiddleMouseButtonReleased()
-{
-	HandleMiddleMouseButton(false);
-}
-
-void AEditModelPlayerController_CPP::HandleRawScrollUpPressed()
-{
-	HandleScroll(true);
-}
-
-void AEditModelPlayerController_CPP::HandleRawScrollDownPressed()
-{
-	HandleScroll(false);
-}
-
-void AEditModelPlayerController_CPP::HandleRawRightMouseButtonPressed()
-{
-	HandleRightMouseButton(true);
-}
-
-void AEditModelPlayerController_CPP::HandleRawRightMouseButtonReleased()
-{
-	HandleRightMouseButton(false);
-}
-
 void AEditModelPlayerController_CPP::HandleLeftMouseButton_Implementation(bool bPressed)
 {
 	// TODO: handle input logic here, see OnLButtonDown, OnLButtonUp
-}
-
-void AEditModelPlayerController_CPP::HandleMiddleMouseButton_Implementation(bool bPressed)
-{
-	// TODO: handle input logic here, see Blueprint
-}
-
-void AEditModelPlayerController_CPP::HandleScroll_Implementation(bool bScrollUp)
-{
-	// TODO: handle input logic here, see Blueprint
-}
-
-void AEditModelPlayerController_CPP::HandleRightMouseButton_Implementation(bool bPressed)
-{
-	// TODO: handle input logic here, see Blueprint
 }
 
 void AEditModelPlayerController_CPP::SelectAll()

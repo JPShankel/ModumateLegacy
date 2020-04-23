@@ -6,6 +6,7 @@
 #include "EditModelGameMode_CPP.h"
 #include "EditModelGameState_CPP.h"
 #include "EditModelPlayerController_CPP.h"
+#include "EditModelPlayerPawn_CPP.h"
 #include "EditModelPlayerState_CPP.h"
 #include "ModumateCommands.h"
 #include "ModumateGeometryStatics.h"
@@ -320,7 +321,7 @@ bool UTrimTool::FrameUpdate()
 			if (!cursor.HitNormal.IsUnit())
 			{
 				// Otherwise, use whichever is closer to the user.
-				choiceNormal = (Controller->CurrentCamera->GetComponentLocation() - cursor.WorldPosition).GetSafeNormal();
+				choiceNormal = (Controller->EMPlayerPawn->CameraComponent->GetComponentLocation() - cursor.WorldPosition).GetSafeNormal();
 			}
 
 			if (UModumateObjectStatics::GetTrimGeometryOnEdge(CurrentTarget, &TrimAssembly, cursor.CP1, cursor.CP2,

@@ -213,12 +213,17 @@ public:
 	UPROPERTY()
 	TMap<EInputCommand, FInputCommandData> AllInputCommandData;
 
+	void RequestInputDisabled(const FName &Requester, bool bShouldDisable);
+	bool IsInputEnabled() const;
+
 protected:
 	UFUNCTION()
 	void HandleBoundChord(FInputChord Chord);
 
 	UFUNCTION()
 	void OnCommandReset();
+
+	void SetInputEnabled(bool bNewEnabled);
 
 	UPROPERTY()
 	TArray<FInputChord> PendingPressedChords;
@@ -227,4 +232,5 @@ protected:
 	TSharedPtr<FCommandTrieNode> RootCommandTrie;
 	TSet<FInputChord> BoundChords;
 	FTimerHandle SequenceResetTimer;
+	TSet<FName> InputDisabledRequests;
 };

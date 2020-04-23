@@ -184,18 +184,6 @@ public:
 	void HandleRawLeftMouseButtonPressed();
 	UFUNCTION(Category = Input)
 	void HandleRawLeftMouseButtonReleased();
-	UFUNCTION(Category = Input)
-	void HandleRawMiddleMouseButtonPressed();
-	UFUNCTION(Category = Input)
-	void HandleRawMiddleMouseButtonReleased();
-	UFUNCTION(Category = Input)
-	void HandleRawScrollUpPressed();
-	UFUNCTION(Category = Input)
-	void HandleRawScrollDownPressed();
-	UFUNCTION(Category = Input)
-	void HandleRawRightMouseButtonPressed();
-	UFUNCTION(Category = Input)
-	void HandleRawRightMouseButtonReleased();
 
 	// Logical mouse input handling events
 	// TODO: They are BlueprintNativeEvents for now, so that Blueprint can still authoritatively
@@ -204,12 +192,6 @@ public:
 	//       and these should replace those other OnLButtonDown functions.
 	UFUNCTION(BlueprintNativeEvent, Category = Input)
 	void HandleLeftMouseButton(bool bPressed);
-	UFUNCTION(BlueprintNativeEvent, Category = Input)
-	void HandleMiddleMouseButton(bool bPressed);
-	UFUNCTION(BlueprintNativeEvent, Category = Input)
-	void HandleScroll(bool bScrollUp);
-	UFUNCTION(BlueprintNativeEvent, Category = Input)
-	void HandleRightMouseButton(bool bPressed);
 
 	UFUNCTION(BlueprintCallable, Category = Selection)
 	void SelectAll();
@@ -355,9 +337,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, DisplayName = "Set Field of View", meta = (ScriptMethod = "SetFieldOfView"))
 	void SetFieldOfViewCommand(float FieldOfView);
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class UCameraComponent *CurrentCamera;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 	FBox TestBox;

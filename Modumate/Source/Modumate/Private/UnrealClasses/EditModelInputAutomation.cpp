@@ -137,7 +137,7 @@ bool UEditModelInputAutomation::BeginRecording()
 	CurPacketIndex = 0;
 	CurInputLogData.Reset();
 	EMPlayerController->GetViewportSize(CurInputLogData.ViewportSize.X, CurInputLogData.ViewportSize.Y);
-	CurInputLogData.StartCameraTransform = EMPlayerController->CurrentCamera->GetComponentTransform();
+	CurInputLogData.StartCameraTransform = EMPlayerController->EMPlayerPawn->CameraComponent->GetComponentTransform();
 
 	UE_LOG(LogInputAutomation, Log, TEXT("Started recording!"));
 
@@ -204,7 +204,7 @@ bool UEditModelInputAutomation::BeginPlayback(const FString& InputLogPath, bool 
 	UE_LOG(LogInputAutomation, Log, TEXT("Starting playback from file: %s"), *FPaths::GetCleanFilename(InputLogPath));
 
 	ResizeWindowForViewportSize(CurInputLogData.ViewportSize.X, CurInputLogData.ViewportSize.Y);
-	EMPlayerController->CurrentCamera->SetComponentToWorld(CurInputLogData.StartCameraTransform);
+	EMPlayerController->EMPlayerPawn->CameraComponent->SetComponentToWorld(CurInputLogData.StartCameraTransform);
 
 	CurState = EInputAutomationState::Playing;
 	CurAutomationTime = 0.0f;
@@ -294,7 +294,7 @@ FEditModelInputPacket &UEditModelInputAutomation::AddRecordingPacket(EInputPacke
 	if (Type == EInputPacketType::FrameState)
 	{
 		// Populate the packet with the current frame state values we can retrieve from here.
-		newPacket.CameraTransform = EMPlayerController->CurrentCamera->GetComponentTransform();
+		newPacket.CameraTransform = EMPlayerController->EMPlayerPawn->CameraComponent->GetComponentTransform();
 		EMPlayerController->GetMousePosition(newPacket.MouseScreenPos.X, newPacket.MouseScreenPos.Y);
 
 		// Keep track of whether the mouse cursor is visible.
@@ -325,7 +325,7 @@ bool UEditModelInputAutomation::PlayBackPacket(const FEditModelInputPacket &Inpu
 	case EInputPacketType::FrameState:
 	{
 		// Update state that's captured every frame
-		EMPlayerController->CurrentCamera->SetComponentToWorld(InputPacket.CameraTransform);
+		EMPlayerController->EMPlayerPawn->CameraComponent->SetComponentToWorld(InputPacket.CameraTransform);
 		EMPlayerController->SetMouseLocation(InputPacket.MouseScreenPos.X, InputPacket.MouseScreenPos.Y);
 		EMPlayerController->bShowMouseCursor = InputPacket.bCursorVisible;
 

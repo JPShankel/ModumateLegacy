@@ -3,12 +3,18 @@
 #include "EditModelPlayerPawn_CPP.h"
 
 #include "CollisionShape.h"
+#include "EditModelCameraController.h"
+#include "EditModelInputHandler.h"
+#include "EditModelPlayerController_CPP.h"
 #include "ModumateObjectEnums.h"
 
 // Sets default values
-AEditModelPlayerPawn_CPP::AEditModelPlayerPawn_CPP()
+AEditModelPlayerPawn_CPP::AEditModelPlayerPawn_CPP(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+	, EMPlayerController(nullptr)
+	, bHaveEverBeenPossessed(false)
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	CachedCollisionObjQueryParams = FCollisionObjectQueryParams(FCollisionObjectQueryParams::AllObjects);
@@ -21,6 +27,9 @@ AEditModelPlayerPawn_CPP::AEditModelPlayerPawn_CPP()
 	static const FName ObjectComplexTraceTag(TEXT("CollisionComplexTrace"));
 	CachedCollisionQueryComplexParams = FCollisionQueryParams(ObjectComplexTraceTag, SCENE_QUERY_STAT_ONLY(EditModelPlayerPawn), true);
 	CachedCollisionQueryComplexParams.AddIgnoredActor(this);
+
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	CameraComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -33,7 +42,34 @@ void AEditModelPlayerPawn_CPP::BeginPlay()
 void AEditModelPlayerPawn_CPP::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
 
+void AEditModelPlayerPawn_CPP::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	EMPlayerController = Cast<AEditModelPlayerController_CPP>(NewController);
+
+	// Stop disabling InputHandler commands when we're possessed
+	if (EMPlayerController && EMPlayerController->InputHandlerComponent && bHaveEverBeenPossessed)
+	{
+		EMPlayerController->InputHandlerComponent->RequestInputDisabled(StaticClass()->GetFName(), false);
+	}
+
+	bHaveEverBeenPossessed = true;
+}
+
+void AEditModelPlayerPawn_CPP::UnPossessed()
+{
+	// Disable InputHandler commands when we're not possessed
+	if (EMPlayerController && EMPlayerController->InputHandlerComponent)
+	{
+		EMPlayerController->InputHandlerComponent->RequestInputDisabled(StaticClass()->GetFName(), true);
+	}
+
+	EMPlayerController = nullptr;
+
+	Super::UnPossessed();
 }
 
 // Called to bind functionality to input
@@ -41,6 +77,10 @@ void AEditModelPlayerPawn_CPP::SetupPlayerInputComponent(UInputComponent* Player
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (ensure(EMPlayerController && EMPlayerController->CameraController))
+	{
+		EMPlayerController->CameraController->SetupPlayerInputComponent(PlayerInputComponent);
+	}
 }
 
 bool AEditModelPlayerPawn_CPP::SphereTraceForZoomLocation(const FVector &Start, const FVector &End, float Radius, FHitResult& OutHit)
@@ -62,9 +102,9 @@ bool AEditModelPlayerPawn_CPP::LineTraceForCollisionLocation(const FVector &Star
 
 bool AEditModelPlayerPawn_CPP::SetCameraFOV(float NewFOV)
 {
-	if (UCameraComponent *editCameraComponent = GetEditCameraComponent())
+	if (CameraComponent)
 	{
-		editCameraComponent->SetFieldOfView(NewFOV);
+		CameraComponent->SetFieldOfView(NewFOV);
 		return true;
 	}
 
@@ -73,13 +113,13 @@ bool AEditModelPlayerPawn_CPP::SetCameraFOV(float NewFOV)
 
 bool AEditModelPlayerPawn_CPP::SetCameraTransform(const FTransform &PlayerActorTransform, const FTransform &CameraTransform, const FRotator &ControlRotation)
 {
-	if (GetEditCameraComponent() == nullptr)
+	if (CameraComponent == nullptr)
 	{
 		return false;
 	}
 
 	SetActorTransform(PlayerActorTransform);
-	GetEditCameraComponent()->SetWorldTransform(CameraTransform);
+	CameraComponent->SetWorldTransform(CameraTransform);
 	Controller->SetControlRotation(ControlRotation);
 
 	return true;
