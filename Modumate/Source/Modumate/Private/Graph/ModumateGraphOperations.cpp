@@ -309,14 +309,14 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltasForUpdateFaces(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 EdgeID)
+	bool FGraph3D::GetDeltasForUpdateFaces(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 EdgeID, FPlane InPlane)
 	{
 		int32 existingID;
 		bool bFoundSplit = false;
 
 		// subdivide faces
 		TArray <TArray<int32>> outFaceVertices;
-		Graph->TraverseFacesFromEdge(EdgeID, outFaceVertices);
+		Graph->TraverseFacesFromEdge(EdgeID, outFaceVertices, InPlane);
 		TMap<int32, TArray<int32>> oldToNewFaceIDs;
 		TSet<int32> oldFaces;
 
@@ -332,17 +332,37 @@ namespace Modumate
 			}
 
 			Graph->ApplyDelta(faceDelta);
-			int32 coincidentFaceID = Graph->FindOverlappingFace(addedFaceID);
-			if (coincidentFaceID == MOD_ID_NONE)
+			TSet<int32> coincidentFaceIDs;
+			Graph->FindOverlappingFaces(addedFaceID, coincidentFaceIDs);
+			if (coincidentFaceIDs.Num() == 0)
 			{
 				OutDeltas.Add(faceDelta);
 			}
 			else
 			{
+				auto newFace = Graph->FindFace(addedFaceID);
+				float minArea = BIG_NUMBER;
+
+				int32 coincidentFaceID = MOD_ID_NONE;
+
+				for (int32 id : coincidentFaceIDs)
+				{
+					auto face = Graph->FindFace(id);
+					if (face == nullptr)
+					{
+						continue;
+					}
+
+					if (face->CachedArea < minArea)
+					{
+						minArea = face->CachedArea;
+						coincidentFaceID = id;
+					}
+				}
+
 				addedFaceID = FMath::Abs(addedFaceID);
 				coincidentFaceID = FMath::Abs(coincidentFaceID);
 
-				auto newFace = Graph->FindFace(addedFaceID);
 				auto oldFace = Graph->FindFace(coincidentFaceID);
 
 				if (newFace && oldFace)
@@ -364,6 +384,12 @@ namespace Modumate
 						TSharedPtr<FGraph3DDelta> delta = StaticCastSharedPtr<FGraph3DDelta>(faceDelta.MakeInverse());
 						Graph->ApplyDelta(*delta);
 					}
+				}
+				else
+				{
+					// TODO: version of MakeInverse that doesn't require cast
+					TSharedPtr<FGraph3DDelta> delta = StaticCastSharedPtr<FGraph3DDelta>(faceDelta.MakeInverse());
+					Graph->ApplyDelta(*delta);
 				}
 			}
 		}
@@ -482,6 +508,11 @@ namespace Modumate
 		GetDeltaForFaceAddition(Graph, newVertices, OutDelta, NextID, ExistingID, parentIds, edgeMap, addedFaceID);
 		Graph->ApplyDelta(OutDelta);
 		OutDeltas.Add(OutDelta);
+
+		// Edges that are added by the face search to add new faces on the same plane as the added face
+		TArray<int32> faceEdgeIDs;
+		OutDelta.EdgeAdditions.GenerateKeyArray(faceEdgeIDs);
+
 		OutDelta.Reset();
 
 		if (!GetDeltasForEdgeSplits(Graph, OutDeltas, NextID))
@@ -490,17 +521,40 @@ namespace Modumate
 		}
 
 		TSet<int32> newEdges;
-		bDeltaCreationSuccess = GetDeltasForEdgeAtSplit(OldGraph, Graph, OutDeltas, NextID, addedFaceID, newEdges);
+		for (int32 edgeID : faceEdgeIDs)
+		{
+			newEdges.Add(edgeID);
+		}
+
+		TSet<int32> splitEdges;
+		bDeltaCreationSuccess = GetDeltasForEdgeAtSplit(OldGraph, Graph, OutDeltas, NextID, addedFaceID, splitEdges);
 		if (!bDeltaCreationSuccess)
 		{
 			FGraph3D::CloneFromGraph(*Graph, *OldGraph);
 			return false;
 		}
 
+		// Edges that are added by intersections search to add new faces on all planes that include the edge (and at least one other edge)
+		newEdges.Append(splitEdges);
+
+		auto addedFace = Graph->FindFace(addedFaceID);
+		if (!ensureAlways(addedFace != nullptr))
+		{
+			return false;
+		}
+		FPlane addedPlane = addedFace->CachedPlane;
+
 		for (int32 addedEdgeID : newEdges)
 		{
+			// If an edge is only added from the face, provide a plane to constrain finding new faces
+			FPlane planeConstraint = FPlane(ForceInitToZero);
+			if (faceEdgeIDs.Contains(addedEdgeID) && !splitEdges.Contains(addedEdgeID))
+			{
+				planeConstraint = addedPlane;
+			}
+
 			TArray<FGraph3DDelta> updateFaceDeltas;
-			if (!FGraph3D::GetDeltasForUpdateFaces(Graph, updateFaceDeltas, NextID, addedEdgeID))
+			if (!FGraph3D::GetDeltasForUpdateFaces(Graph, updateFaceDeltas, NextID, addedEdgeID, planeConstraint))
 			{
 				continue;
 			}

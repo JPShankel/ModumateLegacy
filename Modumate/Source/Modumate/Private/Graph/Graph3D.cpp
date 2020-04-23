@@ -661,6 +661,32 @@ namespace Modumate
 		return true;
 	}
 
+	void FGraph3D::FindOverlappingFaces(int32 AddedFaceID, TSet<int32> &OutOverlappingFaces) const
+	{
+		auto newFace = FindFace(AddedFaceID);
+		if (newFace == nullptr)
+		{
+			return;
+		}
+
+		// check for duplicate edge normals
+		int32 edgeIdx = 0;
+		for (int32 edgeID : newFace->EdgeIDs)
+		{
+			FVector edgeNormal = newFace->CachedEdgeNormals[edgeIdx];
+			auto edge = FindEdge(edgeID);
+
+			for (auto connection : edge->ConnectedFaces)
+			{
+				if (FMath::Abs(connection.FaceID) != FMath::Abs(AddedFaceID) && FVector::Coincident(connection.EdgeFaceDir, edgeNormal))
+				{
+					OutOverlappingFaces.Add(connection.FaceID);
+				}
+			}
+			edgeIdx++;
+		}
+	}
+
 	int32 FGraph3D::FindOverlappingFace(int32 AddedFaceID) const
 	{
 		auto newFace = FindFace(AddedFaceID);
@@ -688,10 +714,18 @@ namespace Modumate
 		return MOD_ID_NONE;
 	}
 
-	bool FGraph3D::TraverseFacesFromEdge(int32 OriginalEdgeID, TArray<TArray<int32>> &OutVertexIDs) const
+	bool FGraph3D::TraverseFacesFromEdge(int32 OriginalEdgeID, TArray<TArray<int32>> &OutVertexIDs, FPlane InPlane) const
 	{
+		// A plane can be provided to force the search to only be on that plane
 		TArray<FPlane> planes;
-		GetPlanesForEdge(OriginalEdgeID, planes);
+		if (InPlane.Equals(FPlane(ForceInitToZero)))
+		{
+			GetPlanesForEdge(OriginalEdgeID, planes);
+		}
+		else
+		{
+			planes = { InPlane };
+		}
 
 		auto edge = FindEdge(OriginalEdgeID);
 		if (edge == nullptr)
