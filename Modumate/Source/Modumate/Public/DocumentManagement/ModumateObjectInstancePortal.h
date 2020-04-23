@@ -62,5 +62,8 @@ namespace Modumate
 		static void GetControlPointsFromAssembly(const FModumateObjectAssembly &ObjectAssembly, TArray<FVector> &ControlPoints);
 
 		virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override;
+
+		virtual void SetIsDynamic(bool bIsDynamic) override;
+		virtual bool GetIsDynamic() const override;
 	};
 }

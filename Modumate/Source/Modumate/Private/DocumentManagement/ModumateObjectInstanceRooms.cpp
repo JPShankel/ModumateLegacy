@@ -158,4 +158,17 @@ namespace Modumate
 			UModumateFunctionLibrary::SetMeshMaterial(DynamicMeshActor->Mesh, Material, 0, &DynamicMeshActor->CachedMIDs[0]);
 		}
 	}
+
+	void FMOIRoomImpl::SetIsDynamic(bool bIsDynamic)
+	{
+		if (DynamicMeshActor.IsValid())
+		{
+			DynamicMeshActor->SetIsDynamic(bIsDynamic);
+		}
+	}
+
+	bool FMOIRoomImpl::GetIsDynamic() const
+	{
+		return DynamicMeshActor.IsValid() && DynamicMeshActor->GetIsDynamic();
+	}
 }

@@ -11,6 +11,7 @@
 #include "Algo/Transform.h"
 #include "Algo/Accumulate.h"
 #include "EditModelGameState_CPP.h"
+#include "EditModelPlayerState_CPP.h"
 
 // Sets default values
 ADynamicMeshActor::ADynamicMeshActor()
@@ -21,6 +22,7 @@ ADynamicMeshActor::ADynamicMeshActor()
 	RootComponent = Mesh;
 
 	Mesh->bUseAsyncCooking = true;
+	Mesh->SetMobility(bIsDynamic ? EComponentMobility::Movable : EComponentMobility::Static);
 
 	Height = 0;
 }
@@ -1024,6 +1026,8 @@ void ADynamicMeshActor::DynamicMeshActorRotated(const FRotator& newRotation)
 
 void ADynamicMeshActor::SetupProceduralLayers(int32 numProceduralLayers)
 {
+	const EComponentMobility::Type newMobility = bIsDynamic ? EComponentMobility::Movable : EComponentMobility::Static;
+
 	// Potentially create more procedural meshes for the desired number of layers
 	if (numProceduralLayers > ProceduralSubLayers.Num())
 	{
@@ -1034,6 +1038,7 @@ void ADynamicMeshActor::SetupProceduralLayers(int32 numProceduralLayers)
 			newProceduralMesh->bUseAsyncCooking = true;
 			newProceduralMesh->SetCollisionObjectType(Mesh->GetCollisionObjectType());
 			newProceduralMesh->SetupAttachment(this->GetRootComponent());
+			newProceduralMesh->SetMobility(newMobility);
 			newProceduralMesh->RegisterComponent();
 			ProceduralSubLayers.Add(newProceduralMesh);
 		}
@@ -1519,4 +1524,22 @@ bool ADynamicMeshActor::SetPlacementError(FName errorTag, bool bIsError)
 	}
 
 	return bChanged;
+}
+
+void ADynamicMeshActor::SetIsDynamic(bool DynamicStatus)
+{
+	if (bIsDynamic != DynamicStatus)
+	{
+		bIsDynamic = DynamicStatus;
+		EComponentMobility::Type newMobility = DynamicStatus ? EComponentMobility::Movable : EComponentMobility::Static;
+		if (Mesh)
+		{
+			Mesh->SetMobility(newMobility);
+		}
+
+		for (UProceduralMeshComponent* mesh : ProceduralSubLayers)
+		{
+			mesh->SetMobility(newMobility);
+		}
+	}
 }

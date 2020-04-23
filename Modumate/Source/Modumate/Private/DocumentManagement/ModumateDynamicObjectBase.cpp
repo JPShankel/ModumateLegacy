@@ -133,6 +133,20 @@ namespace Modumate
 				}
 			}
 		}
+
+	}
+
+	void FDynamicModumateObjectInstanceImpl::SetIsDynamic(bool bIsDynamic)
+	{
+		if (DynamicMeshActor.IsValid())
+		{
+			DynamicMeshActor->SetIsDynamic(bIsDynamic);
+		}
+	}
+
+	bool FDynamicModumateObjectInstanceImpl::GetIsDynamic() const
+	{
+		return DynamicMeshActor.IsValid() && DynamicMeshActor->GetIsDynamic();
 	}
 
 	void FDynamicModumateObjectInstanceImpl::GetAdjustmentHandleActors(TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>>& outHandleActors)

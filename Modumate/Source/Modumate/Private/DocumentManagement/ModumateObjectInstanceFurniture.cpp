@@ -328,4 +328,23 @@ namespace Modumate
 		ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(MOI->GetActor());
 		cma->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
 	}
+
+	void Modumate::FMOIObjectImpl::SetIsDynamic(bool bIsDynamic)
+	{
+		auto meshActor = Cast<ACompoundMeshActor>(MOI->GetActor());
+		if (meshActor)
+		{
+			meshActor->SetIsDynamic(bIsDynamic);
+		}
+	}
+
+	bool Modumate::FMOIObjectImpl::GetIsDynamic() const
+	{
+		auto meshActor = Cast<ACompoundMeshActor>(MOI->GetActor());
+		if (meshActor)
+		{
+			return meshActor->GetIsDynamic();
+		}
+		return false;
+	}
 }

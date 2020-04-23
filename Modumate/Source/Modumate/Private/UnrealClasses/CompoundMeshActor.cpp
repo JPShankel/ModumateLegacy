@@ -74,6 +74,9 @@ void ACompoundMeshActor::MakeFromAssembly(const FModumateObjectAssembly &obAsm, 
 
 	USceneComponent* rootComp = GetRootComponent();
 
+	const bool origDynamicStatus = GetIsDynamic();
+	SetIsDynamic(true);
+
 	// Now, set up portal meshes
 	if (portalConfig.IsValid())
 	{
@@ -103,7 +106,6 @@ void ACompoundMeshActor::MakeFromAssembly(const FModumateObjectAssembly &obAsm, 
 				if (partStaticMeshComp == nullptr)
 				{
 					partStaticMeshComp = NewObject<UStaticMeshComponent>(this);
-					partStaticMeshComp->SetMobility(EComponentMobility::Movable);
 					partStaticMeshComp->SetupAttachment(rootComp);
 					AddOwnedComponent(partStaticMeshComp);
 					partStaticMeshComp->RegisterComponent();
@@ -112,6 +114,8 @@ void ACompoundMeshActor::MakeFromAssembly(const FModumateObjectAssembly &obAsm, 
 				}
 
 				bool bMeshChanged = partStaticMeshComp->SetStaticMesh(partMesh);
+				partStaticMeshComp->SetMobility(EComponentMobility::Movable);
+
 
 				// Evaluate the part's location and size in its slot
 				FVector partLocation(ForceInitToZero), partDesiredSize(ForceInitToZero);
@@ -453,7 +457,6 @@ void ACompoundMeshActor::MakeFromAssembly(const FModumateObjectAssembly &obAsm, 
 			if (layerStaticMeshComp == nullptr)
 			{
 				layerStaticMeshComp = NewObject<UStaticMeshComponent>(this);
-				layerStaticMeshComp->SetMobility(EComponentMobility::Movable);
 				layerStaticMeshComp->SetupAttachment(rootComp);
 				AddOwnedComponent(layerStaticMeshComp);
 				layerStaticMeshComp->RegisterComponent();
@@ -465,6 +468,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FModumateObjectAssembly &obAsm, 
 			layerStaticMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			layerStaticMeshComp->SetRelativeLocation(FVector::ZeroVector);
 			layerStaticMeshComp->SetRelativeScale3D(layerScale);
+			layerStaticMeshComp->SetMobility(EComponentMobility::Movable);
 
 			// Light parameters
 			if (!layer.LightConfiguration.Key.IsNone())
@@ -485,6 +489,8 @@ void ACompoundMeshActor::MakeFromAssembly(const FModumateObjectAssembly &obAsm, 
 			UModumateFunctionLibrary::SetMeshMaterialsFromAssemblyLayer(layerStaticMeshComp, layer);
 		}
 	}
+
+	SetIsDynamic(origDynamicStatus);
 }
 
 bool ACompoundMeshActor::ConvertProcMeshToLinesOnPlane(const FVector &PlanePosition, const FVector &PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges)
@@ -670,3 +676,18 @@ void ACompoundMeshActor::CalculateNineSliceComponents(TArray<UProceduralMeshComp
 	sliceProcMesh(5, 8, nineSliceInterior.Max, sliceDirDown);
 }
 
+void ACompoundMeshActor::SetIsDynamic(bool dynamicStatus)
+{
+	if (dynamicStatus != bIsDynamic)
+	{
+		bIsDynamic = dynamicStatus;
+		const EComponentMobility::Type newMobility = bIsDynamic ? EComponentMobility::Movable : EComponentMobility::Static;
+		for (UStaticMeshComponent* mesh: StaticMeshComps)
+		{
+			if (mesh)
+			{
+				mesh->SetMobility(newMobility);
+			}
+		}
+	}
+}

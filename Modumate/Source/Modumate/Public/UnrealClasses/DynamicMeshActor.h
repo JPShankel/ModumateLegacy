@@ -151,6 +151,9 @@ public:
 	float GetBaseArea() const { return baseArea; }
 	float GetMeshVolume() const { return meshVolume; }
 
+	void SetIsDynamic(bool DynamicStatus);
+	bool GetIsDynamic() const { return bIsDynamic; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -238,6 +241,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMaterialInterface *MasterPBRMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bIsDynamic = true;
 };
 
 class UTexture;

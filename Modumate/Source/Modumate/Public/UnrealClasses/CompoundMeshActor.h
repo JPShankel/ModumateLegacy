@@ -38,6 +38,9 @@ public:
 
 	bool ConvertProcMeshToLinesOnPlane(const FVector &PlanePosition, const FVector &PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges);
 
+	void SetIsDynamic(bool DynamicStatus);
+	bool GetIsDynamic() const { return bIsDynamic; }
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<UStaticMeshComponent*> StaticMeshComps;
 
@@ -54,6 +57,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USpotLightComponent* SpotLightComp;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool bIsDynamic = true;
+
 
 	// Temporary MOI data, used for objects to refer to the data they would use
 	// if they were to become a fully-fledged MOI, by systems like tools.

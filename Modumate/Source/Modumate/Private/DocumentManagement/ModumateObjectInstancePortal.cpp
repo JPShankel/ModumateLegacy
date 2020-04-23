@@ -684,4 +684,23 @@ namespace Modumate
 			}
 		}
 	}
+
+	void Modumate::FMOIPortalImpl::SetIsDynamic(bool bIsDynamic)
+	{
+		auto meshActor = Cast<ACompoundMeshActor>(MOI->GetActor());
+		if (meshActor)
+		{
+			meshActor->SetIsDynamic(bIsDynamic);
+		}
+	}
+
+	bool Modumate::FMOIPortalImpl::GetIsDynamic() const
+	{
+		auto meshActor = Cast<ACompoundMeshActor>(MOI->GetActor());
+		if (meshActor)
+		{
+			return meshActor->GetIsDynamic();
+		}
+		return false;
+	}
 }

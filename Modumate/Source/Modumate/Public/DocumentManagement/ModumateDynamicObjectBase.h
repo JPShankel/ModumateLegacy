@@ -43,5 +43,8 @@ namespace Modumate
 		virtual void ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show) override;
 		virtual void GetAdjustmentHandleActors(TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>>& outHandleActors) override;
+
+		virtual void SetIsDynamic(bool bIsDynamic) override;
+		virtual bool GetIsDynamic() const override;
 	};
 }

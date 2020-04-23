@@ -135,7 +135,8 @@ namespace Modumate
 		{
 			InvertObject();
 		}
-
+	
+		Implementation->SetIsDynamic(false);
 		PreviewState = CurrentState;
 	}
 
@@ -577,6 +578,7 @@ namespace Modumate
 		{
 			DirtyFlags |= DirtyFlag;
 			Document->RegisterDirtyObject(DirtyFlag, this, true);
+			Implementation->SetIsDynamic(true);
 		}
 	}
 
@@ -645,6 +647,10 @@ namespace Modumate
 			}
 		}
 
+		if (DirtyFlags == EObjectDirtyFlags::None && !GetIsInPreviewMode())
+		{
+			Implementation->SetIsDynamic(false);
+		}
 		return bSuccess;
 	}
 
@@ -828,6 +834,7 @@ namespace Modumate
 		}
 		PreviewState = CurrentState;
 		bPreviewOperationMode = true;
+		Implementation->SetIsDynamic(true);
 		return true;
 	}
 
@@ -947,7 +954,10 @@ namespace Modumate
 
 	void FModumateObjectInstance::UpdateGeometry()
 	{
+		const bool origDynamicStatus = Implementation->GetIsDynamic();
+		Implementation->SetIsDynamic(true);
 		Implementation->UpdateDynamicGeometry();
+		Implementation->SetIsDynamic(origDynamicStatus);
 	}
 
 	void FModumateObjectInstance::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const

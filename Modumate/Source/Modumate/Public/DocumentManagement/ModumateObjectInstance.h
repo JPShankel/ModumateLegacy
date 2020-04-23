@@ -137,6 +137,9 @@ namespace Modumate
 
 		virtual void AddDraftingLines(UHUDDrawWidget_CPP *HUDDrawWidget) = 0;
 		virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const = 0;
+
+		virtual void SetIsDynamic(bool bIsDynamic) = 0;
+		virtual bool GetIsDynamic() const = 0;
 	};
 
 	class MODUMATE_API FModumateObjectInstanceImplBase : public IModumateObjectInstanceImpl
@@ -205,6 +208,9 @@ namespace Modumate
 
 		virtual void AddDraftingLines(UHUDDrawWidget_CPP *HUDDrawWidget) override { };
 		virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override { };
+
+		virtual void SetIsDynamic(bool bIsDynamic) override { }
+		virtual bool GetIsDynamic() const override { return false; }
 	};
 
 	class FModumateDocument;

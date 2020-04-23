@@ -280,4 +280,17 @@ namespace Modumate
 				TrimNormal, TrimUp, UpperExtensions, OuterExtensions, scaleVector, bRecreate, bCreateCollision);
 		}
 	}
+
+	void FMOITrimImpl::SetIsDynamic(bool bIsDynamic)
+	{
+		if (DynamicMeshActor.IsValid())
+		{
+			DynamicMeshActor->SetIsDynamic(bIsDynamic);
+		}
+	}
+
+	bool FMOITrimImpl::GetIsDynamic() const
+	{
+		return DynamicMeshActor.IsValid() && DynamicMeshActor->GetIsDynamic();
+	}
 }

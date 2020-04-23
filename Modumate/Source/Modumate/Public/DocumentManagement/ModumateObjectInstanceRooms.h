@@ -31,6 +31,9 @@ namespace Modumate
 		virtual void UpdateDynamicGeometry() override;
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
 
+		virtual void SetIsDynamic(bool bIsDynamic) override;
+		virtual bool GetIsDynamic() const override;
+
 	protected:
 		// Only used temporarily inside of GetStructuralPointsAndLines
 		mutable TArray<FStructurePoint> TempPoints;
