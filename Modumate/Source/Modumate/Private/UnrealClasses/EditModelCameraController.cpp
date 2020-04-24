@@ -398,7 +398,9 @@ void UEditModelCameraController::OnZoom(float ZoomSign)
 		}
 
 		// Don't allow zooming closer than MinOrbitDistance
-		const FVector origin = CamTransform.GetLocation();
+		// Zoom as if the current camera transform with the intended zoom delta is the origin,
+		// to be consistent between smooth zooming and not-smooth zooming with quick zoom actions.
+		const FVector origin = CamTransform.GetLocation() + FreeZoomDeltaAccumulated;
 		const FVector target = cursor.WorldPosition;
 		const FVector deltaToTarget = target - origin;
 		const float distToTarget = deltaToTarget.Size();
@@ -409,13 +411,16 @@ void UEditModelCameraController::OnZoom(float ZoomSign)
 		const FVector dirToTarget = deltaToTarget / distToTarget;
 
 		// Zoom closer to/further from the target by ZoomDeltaAccumulated percent
-		float zoomDistDelta = -ZoomSign * ZoomPercentSpeed * distToTarget;
+		// Rather than adding/subtracting ZoomPercent directly from the current distance, invert the percentage change
+		// so that zooming in and out cover the same distance.
+		float distPercentChange = ((ZoomSign < 0.0f) ? (1.0f / (1.0f + ZoomPercentSpeed)) : (1.0f + ZoomPercentSpeed)) - 1.0f;
+		float zoomDistDelta = distPercentChange * distToTarget;
 
 		// Zoom in distances at least ZoomMinStepDist in size
 		zoomDistDelta = FMath::Sign(zoomDistDelta) * FMath::Max(FMath::Abs(zoomDistDelta), ZoomMinStepDist);
 
 		// Accumulate the free zoom target delta
-		FVector newZoomDelta = FreeZoomDeltaAccumulated + (zoomDistDelta * dirToTarget);
+		FVector newZoomDelta = FreeZoomDeltaAccumulated - (zoomDistDelta * dirToTarget);
 
 		// But don't zoom closer than ZoomMinDistance to the target if we're zooming in
 		const FVector accumulatedGoalPos = origin + newZoomDelta;
@@ -514,10 +519,16 @@ void UEditModelCameraController::UpdateOrbiting(float DeltaTime)
 
 	// Make the zoom distance delta at least MinOrbitZoomStepDist in size,
 	// but don't allow zooming closer than MinOrbitDistance
-	float distDelta = OrbitZoomDeltaAccumulated * OrbitZoomTargetDistance;
-	distDelta = FMath::Sign(distDelta) * FMath::Max(FMath::Abs(distDelta), ZoomMinStepDist);
-	OrbitZoomTargetDistance = FMath::Max(OrbitZoomTargetDistance + distDelta, ZoomMinDistance);
-	OrbitZoomDeltaAccumulated = 0.0f;
+
+	if (!FMath::IsNearlyZero(OrbitZoomDeltaAccumulated))
+	{
+		float distPercentChange = ((OrbitZoomDeltaAccumulated < 0.0f) ? (1.0f / (1.0f - OrbitZoomDeltaAccumulated)) : (1.0f + OrbitZoomDeltaAccumulated)) - 1.0f;
+		float distDelta = distPercentChange * OrbitZoomTargetDistance;
+
+		distDelta = FMath::Sign(distDelta) * FMath::Max(FMath::Abs(distDelta), ZoomMinStepDist);
+		OrbitZoomTargetDistance = FMath::Max(OrbitZoomTargetDistance + distDelta, ZoomMinDistance);
+		OrbitZoomDeltaAccumulated = 0.0f;
+	}
 
 	// If smooth zooming, approach the desired zoom distance over time; otherwise snap to it
 	float zoomLerpAlpha = bUseSmoothZoom ? SmoothZoomSpeed * DeltaTime : 1.0f;
