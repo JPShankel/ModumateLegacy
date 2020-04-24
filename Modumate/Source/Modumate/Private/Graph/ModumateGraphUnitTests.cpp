@@ -362,6 +362,217 @@ namespace Modumate
 		return true;
 	}
 
+	// Create several parallel vertical walls, then test basic interactions with them
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphBasicMultiSplits, "Modumate.Graph.3D.BasicMultiSplits", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphBasicMultiSplits::RunTest(const FString& Parameters)
+	{
+		int32 numSplitFaces = 10;
+
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 100.0f),
+			FVector(0.0f, 0.0f, 100.0f)
+		};
+
+		TArray<FGraph3DDelta> OutDeltas;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+
+		for (int32 i = 1; i <= numSplitFaces; i++)
+		{
+			for (auto& vertex : vertices)
+			{
+				vertex.Y += 100.0f;
+			}
+
+			TestTrue(TEXT("Add face for splitting"),
+				FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			TestDeltas(this, OutDeltas, graph, tempGraph, i, 4*i, 4*i);
+		}
+
+		// wall through the faces (same height)
+		vertices = {
+			FVector(50.0f, -100.0f, 0.0f),
+			FVector(50.0f, (numSplitFaces+1)*100.0f, 0.0f),
+			FVector(50.0f, (numSplitFaces+1)*100.0f, 100.0f),
+			FVector(50.0f, -100.0f, 100.0f)
+		};
+
+		// numSplitFace * 2 -> at each intersection the new face and the existing face split into two faces
+		int32 numFaces = (numSplitFaces + 1) + numSplitFaces * 2;
+
+		// 4 vertices per existing rectangular face, 2 vertices per intersection
+		int32 numVertices = ((numSplitFaces+1) * 4) + numSplitFaces * 2;
+
+		// numSplitFaces * 5 -> 2 on the new face, 2 on the existing face, 1 at the intersection
+		int32 numEdges = ((numSplitFaces+1) * 4) + numSplitFaces * 5;
+
+		TestTrue(TEXT("split all faces (walls same height)"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, numFaces, numVertices, numEdges);
+
+		// wall through the faces (new face is taller)
+		vertices = {
+			FVector(50.0f, -100.0f, 0.0f),
+			FVector(50.0f, (numSplitFaces+1)*100.0f, 0.0f),
+			FVector(50.0f, (numSplitFaces+1)*100.0f, 125.0f),
+			FVector(50.0f, -100.0f, 125.0f)
+		};
+
+		// at each intersection the existing face splits into two faces
+		numFaces = (numSplitFaces + 1) + numSplitFaces;
+
+		// 4 vertices per existing rectangular face, 2 vertices per intersection
+		numVertices = ((numSplitFaces+1) * 4) + numSplitFaces * 2;
+
+		// numSplitFaces * 4 -> 1 on the new face, 2 on the existing face, 1 at the intersection
+		numEdges = ((numSplitFaces+1) * 4) + numSplitFaces * 4;
+
+		TestTrue(TEXT("split all faces (walls same height)"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, numFaces, numVertices, numEdges);
+
+		// wall through the faces (new face is shorter)
+		vertices = {
+			FVector(50.0f, -100.0f, 0.0f),
+			FVector(50.0f, (numSplitFaces+1)*100.0f, 0.0f),
+			FVector(50.0f, (numSplitFaces+1)*100.0f, 75.0f),
+			FVector(50.0f, -100.0f, 75.0f)
+		};
+
+		// at each intersection the new face splits into two faces
+		numFaces = (numSplitFaces + 1) + numSplitFaces;
+
+		// 4 vertices per existing rectangular face, 2 vertices per intersection
+		numVertices = ((numSplitFaces+1) * 4) + numSplitFaces * 2;
+
+		// numSplitFaces * 4 -> 2 on the new face, 1 on the existing face, 1 at the intersection
+		numEdges = ((numSplitFaces+1) * 4) + numSplitFaces * 4;
+
+		TestTrue(TEXT("split all faces (walls same height)"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, numFaces, numVertices, numEdges);
+
+		// wall through the faces (no intersection splits an intersecting edge)
+		vertices = {
+			FVector(50.0f, -100.0f, 25.0f),
+			FVector(50.0f, (numSplitFaces+1)*100.0f, 25.0f),
+			FVector(50.0f, (numSplitFaces+1)*100.0f, 75.0f),
+			FVector(50.0f, -100.0f, 75.0f)
+		};
+
+		// at each intersection the new face splits into two faces
+		numFaces = (numSplitFaces + 1) + numSplitFaces;
+
+		// 4 vertices per existing rectangular face, 2 vertices per intersection
+		numVertices = ((numSplitFaces+1) * 4) + numSplitFaces * 2;
+
+		// numSplitFaces * 3 -> 2 on the new face, 1 at the intersection
+		numEdges = ((numSplitFaces+1) * 4) + numSplitFaces * 3;
+
+		TestTrue(TEXT("split all faces (walls same height)"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, numFaces, numVertices, numEdges);
+
+		// wall tangent to a side of the faces (same height)
+		vertices = {
+			FVector(0.0f, -100.0f, 0.0f),
+			FVector(0.0f, (numSplitFaces+1)*100.0f, 0.0f),
+			FVector(0.0f, (numSplitFaces+1)*100.0f, 100.0f),
+			FVector(0.0f, -100.0f, 100.0f)
+		};
+
+		// numSplitFace * 2 -> at each intersection the new face splits into two faces
+		numFaces = (numSplitFaces + 1) + numSplitFaces;
+
+		// 4 vertices per existing rectangular face, vertices at the intersections already exist
+		numVertices = ((numSplitFaces+1) * 4);
+
+		// numSplitFaces * 2 -> 2 on the new face, edges at the intersections already exist
+		numEdges = ((numSplitFaces+1) * 4) + numSplitFaces * 2;
+
+		TestTrue(TEXT("split all faces (walls same height)"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, numFaces, numVertices, numEdges);
+
+
+		return true;
+	}
+
+	// Add two faces that cross in the middle
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphComplexMultiSplits, "Modumate.Graph.3D.ComplexMultiSplits", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphComplexMultiSplits::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(100.0f, 100.0f, 100.0f),
+			FVector(0.0f, 0.0f, 100.0f)
+		};
+
+
+		TArray<FGraph3DDelta> OutDeltas;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+
+		TestTrue(TEXT("Add first face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
+
+		vertices = {
+			FVector(0.0f, 100.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 100.0f),
+			FVector(0.0f, 100.0f, 100.0f)
+		};
+
+		TestTrue(TEXT("Add second face that splits both faces in half"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 4, 10, 13);
+
+		vertices = {
+			FVector(0.0f, 100.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(0.0f, 0.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Horizontal plane - split into four pieces along the existing bottom edges"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 8, 10, 17);
+
+		vertices = {
+			FVector(-50.0f, 150.0f, 10.0f),
+			FVector(150.0f, 150.0f, 10.0f),
+			FVector(150.0f, -50.0f, 10.0f),
+			FVector(-50.0f, -50.0f, 10.0f)
+		};
+
+		TestTrue(TEXT("Horizontal plane - splits vertical planes into two"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 13, 19, 30);
+
+		vertices = {
+			FVector(-25.0f, 25.0f, 20.0f),
+			FVector(25.0f, 25.0f, 20.0f),
+			FVector(25.0f, -25.0f, 20.0f),
+			FVector(-25.0f, -25.0f, 20.0f)
+		};
+
+		TestTrue(TEXT("Horizontal plane - intersection exists but doesn't split any faces"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 14, 24, 36);
+
+		return true;
+	}
+
 	// Draw three planes, a floor, and two vertical walls making a t-shape
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphFloorSplit, "Modumate.Graph.3D.FloorSplit", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphFloorSplit::RunTest(const FString& Parameters)
@@ -725,6 +936,192 @@ namespace Modumate
 		TestTrue(TEXT("update faces"), 
 			FGraph3D::GetDeltasForUpdateFaces(&tempGraph, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphFaceSubdivision, "Modumate.Graph.3D.FaceSubdivision", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphFaceSubdivision::RunTest(const FString& Parameters)
+	{
+		// original face setup
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> OutDeltas;
+		FGraph3DDelta OutDelta;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f)
+		};
+
+		// draw first face with edges
+		TestTrue(TEXT("edge 1"),
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[0], vertices[1], OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 2, 1);
+
+		TestTrue(TEXT("edge 2"),
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[1], vertices[2], OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 3, 2);
+
+		TestTrue(TEXT("edge 3"),
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[2], vertices[3], OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 4, 3);
+
+		TestTrue(TEXT("edge 4"),
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[3], vertices[0], OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 4, 4);
+
+		TestTrue(TEXT("find face"),
+			FGraph3D::GetDeltasForUpdateFaces(&graph, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
+
+		// start adding edges across face, checking for faces each time
+
+		// single edge across face
+		TArray<FVector> edgeVertices = {
+			FVector(50.0f, 0.0f, 0.0f),
+			FVector(50.0f, 100.0f, 0.0f)
+		};
+		TestTrue(TEXT("split edge"),
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[0], edgeVertices[1], OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 6, 7);
+		TestTrue(TEXT("find face"),
+			FGraph3D::GetDeltasForUpdateFaces(&graph, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
+
+		// draw box in corner
+		edgeVertices = {
+			FVector(90.0f, 0.0f, 0.0f),
+			FVector(90.0f, 10.0f, 0.0f),
+			FVector(100.0f, 10.0f, 0.0f)
+		};
+		TestTrue(TEXT("box edge 1"),
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[0], edgeVertices[1], OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 8, 9);
+		TestTrue(TEXT("box edge 2"),
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[1], edgeVertices[2], OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 9, 11);
+		TestTrue(TEXT("find face"),
+			FGraph3D::GetDeltasForUpdateFaces(&graph, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 9, 11);
+
+		// draw a few edges across face, and verify no extra faces are found
+		edgeVertices = {
+			FVector(25.0f, 0.0f, 0.0f),
+			FVector(25.0f, 10.0f, 0.0f),
+			FVector(25.0f, 20.0f, 0.0f),
+			FVector(25.0f, 100.0f, 0.0f),
+		};
+		TestTrue(TEXT("edge 1"),
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[0], edgeVertices[1], OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 11, 13);
+		TestTrue(TEXT("find face"),
+			FGraph3D::GetDeltasForUpdateFaces(&graph, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 11, 13);
+		
+		TestTrue(TEXT("edge 2"),
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[1], edgeVertices[2], OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 12, 14);
+		TestTrue(TEXT("find face"),
+			FGraph3D::GetDeltasForUpdateFaces(&graph, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 12, 14);
+
+		TestTrue(TEXT("edge 3"),
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[2], edgeVertices[3], OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 13, 16);
+		TestTrue(TEXT("find face"),
+			FGraph3D::GetDeltasForUpdateFaces(&graph, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 4, 13, 16);
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphOverlappingFaces, "Modumate.Graph.3D.OverlappingFaces", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphOverlappingFaces::RunTest(const FString& Parameters)
+	{
+		// original face setup
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> OutDeltas;
+		FGraph3DDelta OutDelta;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add first face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
+
+		vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(0.0f, 10.0f, 0.0f),
+			FVector(10.0f, 10.0f, 0.0f),
+			FVector(10.0f, 0.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add overlapping face, making box in corner"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 7, 8);
+
+		vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f),
+			FVector(50.0f, 100.0f, 0.0f),
+			FVector(50.0f, 0.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add overlapping face, covering half the existing face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 6, 7);
+
+		// TODO: fix ensureAlways when face matches exactly and add unit test
+
+		/*
+		vertices = {
+			FVector(50.0f, 0.0f, 0.0f),
+			FVector(50.0f, 100.0f, 0.0f),
+			FVector(150.0f, 100.0f, 0.0f),
+			FVector(150.0f, 0.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add overlapping face that should create three even faces"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 3, 8, 10);
+
+		vertices = {
+			FVector(-50.0f, 0.0f, 0.0f),
+			FVector(-50.0f, 100.0f, 0.0f),
+			FVector(150.0f, 100.0f, 0.0f),
+			FVector(150.0f, 0.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add completely overlapping face that should create three even faces"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 3, 8, 10);
+
+		vertices = {
+			FVector(-50.0f, -50.0f, 0.0f),
+			FVector(-50.0f, 150.0f, 0.0f),
+			FVector(150.0f, 150.0f, 0.0f),
+			FVector(150.0f, -50.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add completely overlapping face that does not intersect with existing face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 8, 8);
+		//*/
 
 		return true;
 	}

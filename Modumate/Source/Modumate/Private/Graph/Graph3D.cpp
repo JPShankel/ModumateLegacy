@@ -700,6 +700,10 @@ namespace Modumate
 		{
 			FVector edgeNormal = newFace->CachedEdgeNormals[edgeIdx];
 			auto edge = FindEdge(edgeID);
+			if (!ensure(edge != nullptr))
+			{
+				continue;
+			}
 
 			for (auto connection : edge->ConnectedFaces)
 			{
