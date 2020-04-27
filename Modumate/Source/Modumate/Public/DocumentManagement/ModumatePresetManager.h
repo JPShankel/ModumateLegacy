@@ -7,6 +7,7 @@
 #include "ModumateDecisionTree.h"
 #include "ModumateCrafting.h"
 #include "ModumateObjectAssembly.h"
+#include "ModumateSerialization.h"
 
 namespace Modumate
 {
@@ -19,6 +20,10 @@ namespace Modumate
 
 		typedef DataCollection<FModumateObjectAssembly> FAssemblyDataCollection;
 		TMap<EObjectType, FAssemblyDataCollection> AssembliesByObjectType;
+
+		typedef TMap<FName, FGraph2DRecord> FGraphCollection;
+		FGraphCollection GraphCollection;
+
 		TSet<FName> KeyStore;
 
 	public:
@@ -44,6 +49,10 @@ namespace Modumate
 		ECraftingResult MakeNewOrUpdateExistingPresetFromParameterSet(UWorld *World,const FModumateFunctionParameterSet &ParameterSet, FName &OutKey);
 
 		ECraftingResult GetProjectAssembliesForObjectType(EObjectType ObjectType, TArray<FModumateObjectAssembly> &OutAssemblies) const;
+
+		ECraftingResult AddOrUpdateGraph2DRecord(FName Key, const FGraph2DRecord &Graph, FName &OutKey);
+		ECraftingResult RemoveGraph2DRecord(const FName &Key);
+		ECraftingResult GetGraph2DRecord(const FName &Key, FGraph2DRecord &OutGraph) const;
 
 		// Intended as a general way to generate keys: given a base name, append with increment integers until an unused name is found
 		// This pattern is used through out the app, particularly in FModumateDocument, to generate IDs for new objects

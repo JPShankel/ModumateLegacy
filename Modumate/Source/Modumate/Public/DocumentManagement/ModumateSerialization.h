@@ -372,6 +372,9 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 	UPROPERTY()
 	TArray<FModumateCameraView> CameraViews;
 
+	UPROPERTY()
+	TMap<FName, FGraph2DRecord> CustomGraph2DRecords;
+
 	void FromVersion3(const FMOIDocumentRecordV3 &v3);
 };
 

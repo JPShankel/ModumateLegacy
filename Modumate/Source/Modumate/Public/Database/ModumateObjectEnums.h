@@ -150,7 +150,8 @@ enum class EToolMode : uint8
 	VE_JOIN,
 	VE_CREATESIMILAR,
 	VE_STRUCTURELINE,
-	VE_DRAWING
+	VE_DRAWING,
+	VE_GRAPH2D
 };
 
 UENUM(BlueprintType)

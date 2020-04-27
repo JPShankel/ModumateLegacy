@@ -112,7 +112,10 @@ namespace Modumate
 			{
 				return ECraftingResult::Error;
 			}
-		} 
+		}
+
+		GraphCollection = DocumentRecord.CustomGraph2DRecords;
+
 		return ECraftingResult::Success;
 	}
 
@@ -138,6 +141,8 @@ namespace Modumate
 				OutRecord.ProjectAssemblyPresets.Add(preset.Key);
 			}
 		}
+
+		OutRecord.CustomGraph2DRecords = GraphCollection;
 
 		return ECraftingResult::Success;
 	}
@@ -167,6 +172,37 @@ namespace Modumate
 			OutAssemblies.Add(kvp.Value);
 		}
 		return ECraftingResult::Success;
+	}
+
+	ECraftingResult FPresetManager::AddOrUpdateGraph2DRecord(FName Key, const FGraph2DRecord &Graph, FName &OutKey)
+	{
+		if (Key.IsNone())
+		{
+			static const FName defaultGraphBaseKey(TEXT("Graph2D"));
+			Key = GetAvailableKey(defaultGraphBaseKey);
+		}
+
+		OutKey = Key;
+
+		GraphCollection.Emplace(Key, Graph);
+		return ECraftingResult::Success;
+	}
+
+	ECraftingResult FPresetManager::RemoveGraph2DRecord(const FName &Key)
+	{
+		int32 numRemoved = GraphCollection.Remove(Key);
+		return (numRemoved > 0) ? ECraftingResult::Success : ECraftingResult::Error;
+	}
+
+	ECraftingResult FPresetManager::GetGraph2DRecord(const FName &Key, FGraph2DRecord &OutGraph) const
+	{
+		if (GraphCollection.Contains(Key))
+		{
+			OutGraph = GraphCollection.FindChecked(Key);
+			return ECraftingResult::Success;
+		}
+
+		return ECraftingResult::Error;
 	}
 
 	ECraftingResult FPresetManager::RemoveProjectAssemblyForPreset(const FName &PresetID)

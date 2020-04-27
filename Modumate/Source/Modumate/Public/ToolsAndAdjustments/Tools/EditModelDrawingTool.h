@@ -13,6 +13,7 @@ class MODUMATE_API UDrawingTool : public UEditModelToolBase
 public:
 	UDrawingTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_DRAWING; }
 	virtual bool Activate() override;
 	virtual bool Deactivate() override;
 	virtual bool BeginUse() override;

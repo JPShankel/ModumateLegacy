@@ -40,8 +40,10 @@
 #include "ToolsAndAdjustments/Tools/EditModelCountertopTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelCreateSimilarTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelCutPlaneTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelDrawingTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelFFETool.h"
 #include "ToolsAndAdjustments/Tools/EditModelFinishTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelGraph2DTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelJoinTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelMetaPlaneTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelMoveTool.h"
@@ -428,6 +430,8 @@ void AEditModelPlayerController_CPP::CreateTools()
 	RegisterTool(CreateTool<UJoinTool>());
 	RegisterTool(CreateTool<UCreateSimilarTool>());
 	RegisterTool(CreateTool<UStructureLineTool>());
+	RegisterTool(CreateTool<UDrawingTool>());
+	RegisterTool(CreateTool<UGraph2DTool>());
 }
 
 void AEditModelPlayerController_CPP::RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool)
