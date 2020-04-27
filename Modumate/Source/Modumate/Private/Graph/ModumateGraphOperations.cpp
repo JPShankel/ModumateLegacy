@@ -1130,6 +1130,23 @@ namespace Modumate
 			edgeIdx %= face->EdgeIDs.Num();
 		}
 
+		// verify that the shared edges can be removed
+		for (int32 edgeID : sharedEdgeIDs)
+		{
+			auto edge = Graph->FindEdge(edgeID);
+
+			// only checks faces that are connected to the edge
+			// joins are allowed when the edge is free within the face
+			for (auto& connection : edge->ConnectedFaces)
+			{
+				auto connectedFace = Graph->FindFace(connection.FaceID);
+				if (!FVector::Parallel(connectedFace->CachedPlane, face->CachedPlane))
+				{
+					return false;
+				}
+			}
+		}
+
 		// create a vertex ids loop for the new face resulting from the join by iterating through the 
 		// parts of each face that are not on the seam
 

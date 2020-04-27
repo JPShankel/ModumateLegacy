@@ -283,6 +283,12 @@ namespace Modumate
 		Deltas.Reset();
 	}
 
+	void ResetGraph(FAutomationTestBase *Test, TArray<FGraph3DDelta> &Deltas, FGraph3D& Graph, FGraph3D& TempGraph)
+	{
+		FGraph3D::CloneFromGraph(TempGraph, Graph);
+		Deltas.Reset();
+	}
+
 	void SetupOneFace(FAutomationTestBase *Test, FGraph3D &Graph, FGraph3D& TempGraph, int32 &NextID)
 	{
 		FGraph3D tempGraph;
@@ -1241,4 +1247,64 @@ namespace Modumate
 
 		return true;
 	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphBasicFaceJoinTool, "Modumate.Graph.3D.BasicFaceJoinTool", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphBasicFaceJoinTool::RunTest(const FString& Parameters)
+	{
+		// original face setup
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> OutDeltas;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f),
+			FVector(50.0f, 100.0f, 0.0f),
+			FVector(50.0f, 0.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add first face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
+
+		vertices = {
+			FVector(50.0f, 0.0f, 0.0f),
+			FVector(50.0f, 100.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add second face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
+		
+		TArray<int32> faceIDs;
+		graph.GetFaces().GenerateKeyArray(faceIDs);
+
+		TestTrue(TEXT("join faces"),
+			FGraph3D::GetDeltasForObjectJoin(&tempGraph, OutDeltas, faceIDs, NextID, EGraph3DObjectType::Face));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 4, 4);
+
+
+		vertices = {
+			FVector(50.0f, 0.0f, 0.0f),
+			FVector(50.0f, 100.0f, 0.0f),
+			FVector(50.0f, 100.0f, 100.0f),
+			FVector(50.0f, 0.0f, 100.0f)
+		};
+
+		TestTrue(TEXT("Add third face that prevents the original join"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 8, 10);
+
+		TestTrue(TEXT("fail to join faces when there is another face connected to the edge"),
+			!FGraph3D::GetDeltasForObjectJoin(&tempGraph, OutDeltas, faceIDs, NextID, EGraph3DObjectType::Face));
+		ResetGraph(this, OutDeltas, graph, tempGraph);
+
+		return true;
+	}
+
 }
