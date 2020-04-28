@@ -570,10 +570,12 @@ namespace Modumate {
 			for (auto &presetRecord : Records)
 			{
 				FCraftingTreeNodePreset newPreset;
-				newPreset.FromDataRecord(*this,presetRecord);
-				Presets.Add(newPreset.PresetID, newPreset);
-				TArray<FName> &customPresetMapArray = CustomPresetsByNodeType.FindOrAdd(newPreset.NodeType);
-				customPresetMapArray.Add(newPreset.PresetID);
+				if (newPreset.FromDataRecord(*this, presetRecord) == ECraftingResult::Success)
+				{
+					Presets.Add(newPreset.PresetID, newPreset);
+					TArray<FName> &customPresetMapArray = CustomPresetsByNodeType.FindOrAdd(newPreset.NodeType);
+					customPresetMapArray.Add(newPreset.PresetID);
+				}
 			}
 
 			return ECraftingResult::Success;
@@ -613,6 +615,7 @@ namespace Modumate {
 			NodeType = Record.NodeType;
 
 			const FCraftingTreeNodeType *nodeType = PresetCollection.NodeDescriptors.Find(NodeType);
+			// TODO: this ensure will fire if expected presets have become obsolete, resave to fix
 			if (!ensureAlways(nodeType != nullptr))
 			{
 				return ECraftingResult::Error;

@@ -91,6 +91,12 @@ namespace Modumate
 		// In the DDL2verse, assemblies are stored solely by their root preset ID then rebaked into runtime assemblies on load
 		for (auto &presetID : DocumentRecord.ProjectAssemblyPresets)
 		{
+			// this ensure will fire if expected presets have become obsolete, resave to fix
+			if (!ensureAlways(CraftingNodePresets.Presets.Contains(presetID)))
+			{
+				continue;
+			}
+
 			EObjectType objectType = CraftingNodePresets.GetPresetObjectType(presetID);
 			if (ensureAlways(UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(objectType)))
 			{
@@ -138,7 +144,10 @@ namespace Modumate
 		{
 			for (auto &preset : db.Value.DataMap)
 			{
-				OutRecord.ProjectAssemblyPresets.Add(preset.Key);
+				if (ensureAlways(CraftingNodePresets.Presets.Contains(preset.Key)))
+				{
+					OutRecord.ProjectAssemblyPresets.Add(preset.Key);
+				}
 			}
 		}
 
