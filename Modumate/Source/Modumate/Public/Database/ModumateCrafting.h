@@ -323,6 +323,9 @@ namespace Modumate {
 		typedef TSharedPtr<FCraftingTreeNodeInstance> FCraftingTreeNodeInstanceSharedPtr;
 		typedef TWeakPtr<FCraftingTreeNodeInstance> FCraftingTreeNodeInstanceWeakPtr;
 
+		typedef TSharedPtr<const FCraftingTreeNodeInstance> FCraftingTreeNodeInstanceSharedPtrConst;
+		typedef TWeakPtr<const FCraftingTreeNodeInstance> FCraftingTreeNodeInstanceWeakPtrConst;
+
 		/*
 		A pin set defines a minimum and maximum number of attached children (each child is a pin), which lists define legal
 		children for this pin (ie a list of colors or materials available for a given object) and pointers to node instances
@@ -362,6 +365,9 @@ namespace Modumate {
 			EObjectType ObjectType = EObjectType::OTNone;
 
 			EConfiguratorNodeIconType IconType = EConfiguratorNodeIconType::None;
+			EConfiguratorNodeIconOrientation Orientation = EConfiguratorNodeIconOrientation::Inherited;
+
+			bool CanFlipOrientation = false;
 			
 			FBIMPropertySheet Properties;
 			TMap<FString, FNameType> FormItemToProperty;
@@ -396,6 +402,8 @@ namespace Modumate {
 
 			FString GetDisplayName() const;
 
+			bool Matches(const FCraftingTreeNodePreset &OtherPreset) const;
+
 			ECraftingResult ToDataRecord(FCraftingPresetRecord &OutRecord) const;
 			ECraftingResult FromDataRecord(const FCraftingPresetCollection &PresetCollection,const FCraftingPresetRecord &Records);
 
@@ -423,7 +431,7 @@ namespace Modumate {
 
 			bool ParseScriptFile(const FString &FilePath, TArray<FString> &OutMessages);
 
-			ECraftingResult GetInstanceDataAsPreset(const FCraftingTreeNodeInstanceSharedPtr &Instance, FCraftingTreeNodePreset &OutPreset) const;
+			ECraftingResult GetInstanceDataAsPreset(const FCraftingTreeNodeInstanceSharedPtrConst &Instance, FCraftingTreeNodePreset &OutPreset) const;
 		};
 
 		/*
@@ -466,14 +474,19 @@ namespace Modumate {
 			TArray<FCraftingTreeNodePinSet> InputPins;
 			FBIMPropertySheet InstanceProperties;
 
+			// May be fixed in type definition, inherited from parent or switchable
+			EConfiguratorNodeIconOrientation CurrentOrientation;
+
+			bool CanFlipOrientation = false;
+
 			int32 GetInstanceID() const;
 
 			ECraftingNodePresetStatus GetPresetStatus(const FCraftingPresetCollection &PresetCollection) const;
 
 			ECraftingResult ToDataRecord(FCustomAssemblyCraftingNodeRecord &OutRecord) const;
-			ECraftingResult FromDataRecord(FCraftingTreeNodeInstancePool &InstancePool, const FCraftingPresetCollection &PresetCollection,const FCustomAssemblyCraftingNodeRecord &DataRecord);
+			ECraftingResult FromDataRecord(FCraftingTreeNodeInstancePool &InstancePool, const FCraftingPresetCollection &PresetCollection,const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets);
 
-			bool CanRemoveChild(const FCraftingTreeNodeInstanceSharedPtr &Child) const;
+			bool CanRemoveChild(const FCraftingTreeNodeInstanceSharedPtrConst &Child) const;
 			bool CanCreateChildOfType(const FCraftingPresetCollection &PresetCollection, const FName &TypeID) const;
 
 			ECraftingResult GetAvailableChildTypes(const FCraftingPresetCollection &PresetCollection, TArray<FName> &OutTypes) const;
@@ -482,6 +495,7 @@ namespace Modumate {
 
 			ECraftingResult AttachChild(const FCraftingPresetCollection &PresetCollection, const FCraftingTreeNodeInstanceSharedPtr &Child);
 			ECraftingResult FindChild(int32 ChildID, int32 &OutPinSetIndex, int32 &OutPinSetPosition);
+			ECraftingResult FindChildOrder(int32 ChildID, int32 &Order);
 		};
 
 		/*
@@ -500,7 +514,7 @@ namespace Modumate {
 			TArray<FCraftingTreeNodeInstanceSharedPtr> InstancePool;
 
 			// Does not create a fully resolved node, used in FromDataRecord only
-			FCraftingTreeNodeInstanceSharedPtr CreateNodeInstanceFromDataRecord(const FCraftingPresetCollection &PresetCollection,const FCustomAssemblyCraftingNodeRecord &DataRecord);
+			FCraftingTreeNodeInstanceSharedPtr CreateNodeInstanceFromDataRecord(const FCraftingPresetCollection &PresetCollection,const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets);
 
 		public:
 
@@ -521,7 +535,7 @@ namespace Modumate {
 			const FCraftingTreeNodeInstanceSharedPtr InstanceFromID(int32 InstanceID) const;
 			FCraftingTreeNodeInstanceSharedPtr InstanceFromID(int32 InstanceID);
 
-			bool FromDataRecord(const FCraftingPresetCollection &PresetCollection, const TArray<FCustomAssemblyCraftingNodeRecord> &InDataRecords);
+			bool FromDataRecord(const FCraftingPresetCollection &PresetCollection, const TArray<FCustomAssemblyCraftingNodeRecord> &InDataRecords, bool RecursePresets);
 			bool ToDataRecord(TArray<FCustomAssemblyCraftingNodeRecord> &OutDataRecords) const;
 
 			bool ValidatePool() const;
@@ -587,7 +601,16 @@ struct MODUMATE_API FCraftingNode
 	EConfiguratorNodeIconType NodeIconType;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
+	EConfiguratorNodeIconOrientation NodeIconOrientation;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
+	bool CanSwitchOrientation;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
 	TArray<int32> EmbeddedInstanceIDs;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
+	int32 ChildOrder;
 
 	static FCraftingNode FromPreset(const Modumate::BIM::FCraftingTreeNodePreset &Preset);
 };
@@ -635,13 +658,20 @@ public:
 
 	static ECraftingResult GetFormItemsForCraftingNode(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, const Modumate::BIM::FCraftingPresetCollection &PresetCollection,int32 InstanceID, TArray<FCraftingNodeFormItem> &OutForm);
 
+	static ECraftingResult GetFormItemsForPreset(const Modumate::BIM::FCraftingPresetCollection &PresetCollection, const FName &PresetID, TArray<FCraftingNodeFormItem> &OutForm);
+
 	static ECraftingResult SetValueForFormItem(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, const FCraftingNodeFormItem &FormItem, const FString &Value);
+
+	static ECraftingResult SetValueForPreset(const FName &PresetID, const FString &Value);
 
 	static ECraftingResult RemoveNodeInstance(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, int32 ParentID, int32 InstanceID);
 
 	static ECraftingResult GetPinGroupsForNode(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, const Modumate::BIM::FCraftingPresetCollection &PresetCollection, int32 NodeID, TArray<FCraftingNodePinGroup> &OutPins);
 
 	static ECraftingResult DragMovePinChild(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, int32 InstanceID, const FName &PinGroup, int32 From, int32 To);
+
+	static ECraftingResult GetLayerIDFromNodeInstanceID(const Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, const Modumate::BIM::FCraftingPresetCollection &PresetCollection, int32 InstanceID, int32 &OutLayerID, int32 &NumberOfLayers);
+
 };
 
 

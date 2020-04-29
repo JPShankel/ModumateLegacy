@@ -51,7 +51,14 @@ public:
 	ECraftingResult GetFormItemsForCraftingNode(EToolMode ToolMode, int32 InstanceID, TArray<FCraftingNodeFormItem> &OutForm);
 
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
+	ECraftingResult GetFormItemsForPresetID(EToolMode ToolMode, const FName &PresetID, TArray<FCraftingNodeFormItem> &OutForm);
+
+	UFUNCTION(BlueprintCallable, Category = "Crafting")
 	ECraftingResult SetValueForFormItem(EToolMode ToolMode, const FCraftingNodeFormItem &FormItem,const FString &Value);
+
+	// TODO: Support changing preset value
+	UFUNCTION(BlueprintCallable, Category = "Crafting")
+	ECraftingResult SetValueForPreset(EToolMode ToolMode, const FName &PresetID, const FString &Value);
 
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
 	ECraftingResult RemoveNodeInstance(EToolMode ToolMode, int32 ParentID, int32 InstanceID);
@@ -88,6 +95,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
 	ECraftingResult UpdateNodePreviewAssemblyWithPreset(EToolMode ToolMode, int32 InstanceID, const FName &PresetKey);
+
+	// Assuming current configuration is layered assembly, return the layer ID the current node is in
+	UFUNCTION(BlueprintCallable, Category = "Crafting")
+	ECraftingResult GetLayerIDFromNodeInstanceID(int32 InstanceID, int32 &LayerID, int32 &NumberOfLayers);
 
 	ECraftingResult TryMakeNodeAssembly(EToolMode ToolMode, const Modumate::BIM::FCraftingTreeNodeInstancePool &InNodes, FModumateObjectAssembly &OutAssembly);
 	ECraftingResult GetAvailableStarterNodes(EToolMode ToolMode, TArray<FCraftingNode> &OutNode) const;

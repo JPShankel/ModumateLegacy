@@ -40,6 +40,7 @@ namespace Modumate
 		DataCollection<FModumateObjectAssembly> FFEAssemblies;
 		DataCollection<FPortalPart> PortalParts;
 		DataCollection<FRoomConfiguration> RoomConfigurations;
+		DataCollection<FStaticIconTexture> StaticIconTextures;
 
 
 		// Option sets
@@ -86,6 +87,7 @@ namespace Modumate
 		const FPortalPart *GetPortalPartByKey(const FName &Key) const;
 		const FSimpleMeshRef *GetSimpleMeshByKey(const FName &Key) const;
 		const FRoomConfiguration *GetRoomConfigByKey(const FName &Key) const;
+		const FStaticIconTexture *GetStaticIconTextureByKey(const FName &Key) const;
 
 		bool ParseColorFromField(FCustomColor &OutColor, const FString &Field);
 		bool ParsePortalConfigDimensionSets(FName configKey, const FString &typeString, const TArray<FString> &setStrings, TArray<FPortalConfigDimensionSet> &outSets);

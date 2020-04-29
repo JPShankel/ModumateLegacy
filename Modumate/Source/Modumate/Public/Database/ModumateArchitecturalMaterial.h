@@ -12,7 +12,7 @@ struct MODUMATE_API FCustomColor
 {
 	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		FName Key;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -73,4 +73,24 @@ struct FArchitecturalMaterial
 	// Whether this material has been created with real data.
 	// TODO: make this more accurate once the underlying materials are lazy-loaded.
 	bool IsValid() const { return EngineMaterial.IsValid(); }
+};
+
+USTRUCT(BlueprintType)
+struct MODUMATE_API FStaticIconTexture
+{
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		FName Key;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		FText DisplayName = FText::GetEmpty();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		TWeakObjectPtr<UTexture2D> Texture;
+
+	FName UniqueKey() const { return Key; }
+
+	// TODO: Like FArchitecturalMaterial, check if texture will be lazy-loaded.
+	bool IsValid() const { return Texture.IsValid(); }
 };

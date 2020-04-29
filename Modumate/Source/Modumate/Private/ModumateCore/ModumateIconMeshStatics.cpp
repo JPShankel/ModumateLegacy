@@ -560,29 +560,34 @@ bool UModumateIconMeshStatics::GetModuleGapIconParamsFromCrafting(
 	UMaterialInterface* &ModuleMaterial,
 	FCustomColor &ModuleColor,
 	FCustomColor &GapColor,
-	bool bMarketplaceAsm)
+	bool bMarketplaceAsm,
+	int32 InLayerID)
 {
 	FModumateObjectAssembly obAsm;
 	if (CraftingWidget)
 	{
 		// Since modules don't appear in 3D crafting, use PreviewAssembly only
-		obAsm = CraftingWidget->PreviewAssembly;
-		if (obAsm.Layers.Num() > 0)
+		obAsm = CraftingWidget->CraftingAssembly;
+		if (AssemblyKey == TEXT("Preview"))
 		{
-			if (obAsm.Layers[0].Modules.Num() > 0)
+			obAsm = CraftingWidget->PreviewAssembly;
+		}
+		if (obAsm.Layers.Num() > 0 && obAsm.Layers.IsValidIndex(InLayerID))
+		{
+			if (obAsm.Layers[InLayerID].Modules.Num() > 0)
 			{
-				ModuleExtent = obAsm.Layers[0].Modules[0].ModuleExtents;
+				ModuleExtent = obAsm.Layers[InLayerID].Modules[0].ModuleExtents;
 				
-				GapExtent = FVector(obAsm.Layers[0].Gap.GapExtents.X, obAsm.Layers[0].Gap.GapExtents.Y, 0.f);
+				GapExtent = FVector(obAsm.Layers[InLayerID].Gap.GapExtents.X, obAsm.Layers[InLayerID].Gap.GapExtents.Y, 0.f);
 
 				// Colors
-				ModuleColor = obAsm.Layers[0].BaseColor;
-				GapColor = obAsm.Layers[0].Gap.BaseColor;
+				ModuleColor = obAsm.Layers[InLayerID].BaseColor;
+				GapColor = obAsm.Layers[InLayerID].Gap.BaseColor;
 
 				// Materials
-				if (obAsm.Layers[0].Material.EngineMaterial.IsValid())
+				if (obAsm.Layers[InLayerID].Material.EngineMaterial.IsValid())
 				{
-					ModuleMaterial = obAsm.Layers[0].Material.EngineMaterial.Get();
+					ModuleMaterial = obAsm.Layers[InLayerID].Material.EngineMaterial.Get();
 				}
 				return true;
 			}
@@ -644,6 +649,22 @@ bool UModumateIconMeshStatics::GetEngineCustomColorByKey(AEditModelPlayerControl
 	return false;
 }
 
+bool UModumateIconMeshStatics::GetEngineStaticIconTextureByKey(AEditModelPlayerController_CPP *Controller, const FName &Key, FStaticIconTexture &StaticIcon)
+{
+	if (Controller != nullptr)
+	{
+		ModumateObjectDatabase *db = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+		const FStaticIconTexture *icon = db->GetStaticIconTextureByKey(Key);
+		if (ensureAlways(icon != nullptr))
+		{
+			StaticIcon = *icon;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool UModumateIconMeshStatics::MakeIconMeshFromPofileKey(AEditModelPlayerController_CPP *Controller, ADynamicMeshActor *DynamicMeshActor, EToolMode FromToolMode, const FName &ProfileKey, const FVector &RootLoation, float Length)
 {
 	if (Controller != nullptr)
@@ -672,6 +693,38 @@ bool UModumateIconMeshStatics::MakeIconMeshFromPofileKey(AEditModelPlayerControl
 		}
 	}
 	return false;
+}
+
+bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContextObject, const FName &PresetKey, UMaterialInterface* &ModuleMaterial, FCustomColor &ModuleColor)
+{
+	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
+	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	ModumateObjectDatabase *db = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase : nullptr;
+	if (gameState == nullptr && db == nullptr)
+	{
+		return false;
+	}
+	const FPresetManager &presetManager = gameState->Document.PresetManager;
+
+	BIM::FModumateAssemblyPropertySpec presetSpec;
+	presetManager.PresetToSpec(PresetKey, presetSpec);
+
+	FString materialName, colorName;
+	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::Material, materialName);
+	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::Color, colorName);
+
+	const FArchitecturalMaterial *mat = db->GetArchitecturalMaterialByKey(FName(*materialName));
+	if (ensureAlways(mat != nullptr) && ensureAlways(mat->EngineMaterial.IsValid()))
+	{
+		ModuleMaterial = mat->EngineMaterial.Get();
+	}
+	const FCustomColor *color = db->GetCustomColorByKey(FName(*colorName));
+	if (ensureAlways(color != nullptr))
+	{
+		ModuleColor = *color;
+	}
+
+	return true;
 }
 
 bool UModumateIconMeshStatics::GetModuleIconParamsFromPreset(UObject* WorldContextObject, UModumateCraftingWidget_CPP* CraftingWidget, EToolMode FromToolMode, const FName &PresetKey, FVector &ModuleExtent, UMaterialInterface* &ModuleMaterial, FCustomColor &ModuleColor)

@@ -214,6 +214,13 @@ namespace Modumate
 						{
 							// TODO: replace with proper asset reference and lazy-loading solution
 							option.Icon->AddToRoot();
+
+							FStaticIconTexture staticIcon;
+							staticIcon.Texture = option.Icon;
+							// Uses name of texture asset as key
+							staticIcon.Key = option.Icon->GetFName();
+							staticIcon.DisplayName = option.DisplayName;
+							StaticIconTextures.AddData(staticIcon);
 						}
 
 						FString rowPropName;
@@ -1052,6 +1059,11 @@ namespace Modumate
 	const Modumate::FRoomConfiguration * ModumateObjectDatabase::GetRoomConfigByKey(const FName &Key) const
 	{
 		return RoomConfigurations.GetData(Key);
+	}
+
+	const FStaticIconTexture * ModumateObjectDatabase::GetStaticIconTextureByKey(const FName &Key) const
+	{
+		return StaticIconTextures.GetData(Key);
 	}
 
 	bool ModumateObjectDatabase::ParseColorFromField(FCustomColor &OutColor, const FString &Field)

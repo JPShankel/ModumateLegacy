@@ -363,20 +363,15 @@ UENUM(BlueprintType)
 enum class EConfiguratorNodeIconType : uint8
 {
 	None = 0,
-	LayeredAssemblyVertical,
-	LayeredAssemblyHorizontal,
+	LayeredAssembly,
 	Stair,
 	OpeningSystem,
 	FFEConfig,
 	ExtrudedProfile,
 	LayerVertical,
 	LayerHorizontal,
-	Module2DVertical,
-	Module2DHorizontal,
-	ModuleLWHVertical,
-	ModuleLWHHorizontal,
-	ModuleLWTVertical,
-	ModuleLWTHorizontal,
+	Layer,
+	Module,
 	Gap2D,
 	StaticMesh,
 	Profile,
@@ -386,7 +381,17 @@ enum class EConfiguratorNodeIconType : uint8
 	Material,
 	SrfTreatment,
 	Color,
-	StaticIcon
+	Dimension,
+	Pattern,
+};
+
+UENUM(BlueprintType)
+enum class EConfiguratorNodeIconOrientation : uint8
+{
+	None = 0,
+	Horizontal,
+	Vertical,
+	Inherited
 };
 
 UENUM(BlueprintType)

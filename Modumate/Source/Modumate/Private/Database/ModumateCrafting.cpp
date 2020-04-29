@@ -64,44 +64,15 @@ namespace Modumate {
 				return ECraftingNodePresetStatus::ReadOnly;
 			}
 
-			// If any instance properties are different than the preset's copy, the preset is dirty
-			if (!InstanceProperties.Matches(preset->Properties))
+			FCraftingTreeNodePreset instanceAsPreset;
+			PresetCollection.GetInstanceDataAsPreset(AsShared(), instanceAsPreset);
+
+			if (preset->Matches(instanceAsPreset))
 			{
-				return ECraftingNodePresetStatus::Dirty;
+				return ECraftingNodePresetStatus::UpToDate;
 			}
 
-			// If the layout of children is different, the preset is dirty
-			int32 numChildren = Algo::TransformAccumulate(InputPins, [](const FCraftingTreeNodePinSet &pinSet) {return pinSet.AttachedObjects.Num(); }, 0);
-
-			if (numChildren != preset->ChildNodes.Num())
-			{
-				return ECraftingNodePresetStatus::Dirty;
-			}
-
-			for (int32 i = 0; i < numChildren; ++i)
-			{
-				int32 setIndex = preset->ChildNodes[i].PinSetIndex;
-				int32 setPosition = preset->ChildNodes[i].PinSetPosition;
-
-				// Badly specified children mean the preset is dirty
-				if (!ensureAlways(setIndex < InputPins.Num()))
-				{
-					return ECraftingNodePresetStatus::Dirty;
-				}
-
-				if (!ensureAlways(setPosition < InputPins[setIndex].AttachedObjects.Num()))
-				{
-					return ECraftingNodePresetStatus::Dirty;
-				}
-
-				// Not the same kind of child? Dirty preset!
-				if (ensureAlways(InputPins[setIndex].AttachedObjects[setPosition] != nullptr) &&
-					InputPins[setIndex].AttachedObjects[setPosition].Pin()->PresetID != preset->ChildNodes[i].PresetIDs[0])
-				{
-					return ECraftingNodePresetStatus::Dirty;
-				}
-			}
-			return ECraftingNodePresetStatus::UpToDate;
+			return ECraftingNodePresetStatus::Dirty;
 		}
 
 		ECraftingResult FCraftingTreeNodeInstancePool::ResetInstances()
@@ -233,7 +204,7 @@ namespace Modumate {
 			return ECraftingResult::Success;
 		}
 
-		bool FCraftingTreeNodeInstance::CanRemoveChild(const FCraftingTreeNodeInstanceSharedPtr &Child) const
+		bool FCraftingTreeNodeInstance::CanRemoveChild(const FCraftingTreeNodeInstanceSharedPtrConst &Child) const
 		{
 			for (auto &pin : InputPins)
 			{
@@ -284,6 +255,22 @@ namespace Modumate {
 			TArray<FName> supportedChildren;
 			GetAvailableChildTypes(PresetCollection, supportedChildren);
 			return supportedChildren.Contains(TypeID);
+		}
+
+		ECraftingResult FCraftingTreeNodeInstance::FindChildOrder(int32 ChildID, int32 &Order)
+		{
+			int32 pinSetIndex=-1, pinSetPosition=-1;
+			ECraftingResult result = FindChild(ChildID, pinSetIndex, pinSetPosition);
+			if (result == ECraftingResult::Success)
+			{
+				Order = 0;
+				for (int32 i = 0; i < pinSetIndex - 1; ++i)
+				{
+					Order += InputPins[i].AttachedObjects.Num();
+				}
+				Order += pinSetPosition;
+			}
+			return result;
 		}
 
 		ECraftingResult FCraftingTreeNodeInstance::FindChild(int32 ChildID, int32 &OutPinSetIndex, int32 &OutPinSetPosition)
@@ -372,6 +359,10 @@ namespace Modumate {
 					{ 
 						pin.AttachedObjects.Add(Child);
 						Child->ParentInstance = AsShared();
+						if (Child->CurrentOrientation == EConfiguratorNodeIconOrientation::Inherited)
+						{
+							Child->CurrentOrientation = CurrentOrientation;
+						}
 						return ECraftingResult::Success;
 					}
 					else
@@ -413,7 +404,8 @@ namespace Modumate {
 		ECraftingResult FCraftingTreeNodeInstance::FromDataRecord(
 			FCraftingTreeNodeInstancePool &InstancePool, 
 			const FCraftingPresetCollection &PresetCollection, 
-			const FCustomAssemblyCraftingNodeRecord &DataRecord)
+			const FCustomAssemblyCraftingNodeRecord &DataRecord,
+			bool RecursePresets)
 		{
 			const FCraftingTreeNodePreset *preset = PresetCollection.Presets.Find(DataRecord.PresetID);
 			if (preset == nullptr)
@@ -459,36 +451,47 @@ namespace Modumate {
 				}
 			}
 
-			for (auto &ip : preset->ChildNodes)
+			if (!RecursePresets)
 			{
-				if (ensureAlways(ip.PinSetIndex < InputPins.Num()))
+				FCraftingTreeNodeInstanceSharedPtr parent = InstancePool.InstanceFromID(DataRecord.ParentID);
+				if (parent.IsValid())
 				{
-					FCraftingTreeNodePinSet &pinSet = InputPins[ip.PinSetIndex];
-					if (ip.PinSetPosition == pinSet.AttachedObjects.Num())
+					parent->AttachChild(PresetCollection, AsShared());
+				}
+			}
+			else
+			{
+				for (auto &ip : preset->ChildNodes)
+				{
+					if (ensureAlways(ip.PinSetIndex < InputPins.Num()))
 					{
-						// Create nodes for every member of the sequence
-						int32 sequenceID = DataRecord.InstanceID;
-						FCraftingTreeNodeInstanceSharedPtr child;
-						for (auto &sequencePreset : ip.PresetIDs)
-						{ 
-							// Note: only create default children (if necessary) for the last item in the list, the other items are children of each other
-							child = InstancePool.CreateNodeInstanceFromPreset(PresetCollection, sequenceID, sequencePreset, sequencePreset == ip.PresetIDs.Last());
-							if (ensureAlways(child.IsValid()))
+						FCraftingTreeNodePinSet &pinSet = InputPins[ip.PinSetIndex];
+						if (ip.PinSetPosition == pinSet.AttachedObjects.Num())
+						{
+							// Create nodes for every member of the sequence
+							int32 sequenceID = DataRecord.InstanceID;
+							FCraftingTreeNodeInstanceSharedPtr child;
+							for (auto &sequencePreset : ip.PresetIDs)
 							{
-								sequenceID = child->GetInstanceID();
+								// Note: only create default children (if necessary) for the last item in the list, the other items are children of each other
+								child = InstancePool.CreateNodeInstanceFromPreset(PresetCollection, sequenceID, sequencePreset, sequencePreset == ip.PresetIDs.Last());
+								if (ensureAlways(child.IsValid()))
+								{
+									sequenceID = child->GetInstanceID();
+								}
 							}
-						}					
-					}
-					else
-					{
-						InstancePool.SetNewPresetForNode(PresetCollection, pinSet.AttachedObjects[ip.PinSetPosition].Pin()->GetInstanceID(), ip.PresetIDs.Last());
+						}
+						else
+						{
+							InstancePool.SetNewPresetForNode(PresetCollection, pinSet.AttachedObjects[ip.PinSetPosition].Pin()->GetInstanceID(), ip.PresetIDs.Last());
+						}
 					}
 				}
 			}
 			return ECraftingResult::Success;
 		}
 
-		ECraftingResult FCraftingPresetCollection::GetInstanceDataAsPreset(const FCraftingTreeNodeInstanceSharedPtr &Instance, FCraftingTreeNodePreset &OutPreset) const
+		ECraftingResult FCraftingPresetCollection::GetInstanceDataAsPreset(const FCraftingTreeNodeInstanceSharedPtrConst &Instance, FCraftingTreeNodePreset &OutPreset) const
 		{
 			const FCraftingTreeNodePreset *basePreset = Presets.Find(Instance->PresetID);
 			if (basePreset == nullptr)
@@ -579,6 +582,98 @@ namespace Modumate {
 			}
 
 			return ECraftingResult::Success;
+		}
+
+		bool FCraftingTreeNodePreset::Matches(const FCraftingTreeNodePreset &OtherPreset) const
+		{
+			if (!Properties.Matches(OtherPreset.Properties))
+			{
+				return false;
+			}
+
+			FCraftingPresetRecord thisRecord, thatRecord;
+			ToDataRecord(thisRecord);
+			OtherPreset.ToDataRecord(thatRecord);
+
+			if (thisRecord.DisplayName != thatRecord.DisplayName)
+			{
+				return false;
+			}
+
+			if (thisRecord.NodeType != thatRecord.NodeType)
+			{
+				return false;
+			}
+
+			if (thisRecord.PresetID != thatRecord.PresetID)
+			{
+				return false;
+			}
+
+			if (thisRecord.IsReadOnly != thatRecord.IsReadOnly)
+			{
+				return false;
+			}
+
+			if (thisRecord.ChildNodePinSetIndices.Num() != thatRecord.ChildNodePinSetIndices.Num())
+			{
+				return false;
+			}
+
+			// If we pass the indices count test above, we should always pass this one
+			if (!ensureAlways(thisRecord.ChildNodePinSetPositions.Num() == thatRecord.ChildNodePinSetPositions.Num()))
+			{
+				return false;
+			}
+
+			// index/position pairs may be in different orders, make sure they appear in matching pairs
+			for (int32 i = 0; i < thisRecord.ChildNodePinSetIndices.Num(); ++i)
+			{
+				bool found = false;
+				int32 thisIndex = thisRecord.ChildNodePinSetIndices[i];
+				int32 thisPosition = thisRecord.ChildNodePinSetPositions[i];
+				for (int32 j = 0; j < thatRecord.ChildNodePinSetIndices.Num(); ++j)
+				{
+					if (thisIndex == thatRecord.ChildNodePinSetIndices[j] && thisPosition == thatRecord.ChildNodePinSetPositions[j])
+					{
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+				{
+					return false;
+				}
+			}
+
+			// list and preset arrays may be in different orders
+			auto arrayMatch = [](const TArray<FName> &Array1,const TArray<FName> &Array2)
+			{
+				if (Array1.Num() != Array2.Num())
+				{
+					return false;
+				}
+				for (int32 i = 0; i < Array1.Num(); ++i)
+				{
+					if (!Array2.Contains(Array1[i]))
+					{
+						return false;
+					}
+				}
+				return true;			
+			};
+
+			if (!arrayMatch(thisRecord.ChildNodePinSetListIDs, thatRecord.ChildNodePinSetListIDs))
+			{
+				return false;
+			}
+
+			if (!arrayMatch(thisRecord.ChildNodePinSetPresetIDs, thatRecord.ChildNodePinSetPresetIDs))
+			{
+				return false;
+			}
+
+			return true;
 		}
 
 		ECraftingResult FCraftingTreeNodePreset::ToDataRecord(FCraftingPresetRecord &OutRecord) const
@@ -792,19 +887,22 @@ namespace Modumate {
 		}
 
 
-		FCraftingTreeNodeInstanceSharedPtr FCraftingTreeNodeInstancePool::CreateNodeInstanceFromDataRecord(const BIM::FCraftingPresetCollection &PresetCollection,const FCustomAssemblyCraftingNodeRecord &DataRecord)
+		FCraftingTreeNodeInstanceSharedPtr FCraftingTreeNodeInstancePool::CreateNodeInstanceFromDataRecord(const BIM::FCraftingPresetCollection &PresetCollection,const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets)
 		{
 			FCraftingTreeNodeInstanceSharedPtr instance = InstancePool.Add_GetRef(MakeShareable(new FCraftingTreeNodeInstance(DataRecord.InstanceID)));
 
 			InstanceMap.Add(DataRecord.InstanceID, instance);
 			NextInstanceID = FMath::Max(NextInstanceID+1,DataRecord.InstanceID + 1);
 
-			instance->FromDataRecord(*this,PresetCollection,DataRecord);
+			instance->FromDataRecord(*this,PresetCollection,DataRecord,RecursePresets);
 
 			return instance;
 		}
 
-		ECraftingResult FCraftingTreeNodeInstancePool::SetNewPresetForNode(const FCraftingPresetCollection &PresetCollection, int32 InstanceID, const FName &PresetID)
+		ECraftingResult FCraftingTreeNodeInstancePool::SetNewPresetForNode(
+			const FCraftingPresetCollection &PresetCollection, 
+			int32 InstanceID, 
+			const FName &PresetID)
 		{
 			BIM::FCraftingTreeNodeInstanceSharedPtr inst = InstanceFromID(InstanceID);
 
@@ -832,7 +930,7 @@ namespace Modumate {
 				return result;
 			}
 
-			return inst->FromDataRecord(*this,PresetCollection,dataRecord);
+			return inst->FromDataRecord(*this, PresetCollection, dataRecord, true);
 		}
 
 		FCraftingTreeNodeInstanceSharedPtr FCraftingTreeNodeInstancePool::CreateNodeInstanceFromPreset(const FCraftingPresetCollection &PresetCollection,int32 ParentID, const FName &PresetID, bool CreateDefaultReadOnlyChildren)
@@ -860,9 +958,10 @@ namespace Modumate {
 			++NextInstanceID;
 
 			instance->PresetID = preset->PresetID;
-
+			instance->CurrentOrientation = descriptor->Orientation;
 			instance->InstanceProperties = preset->Properties;
 			instance->InputPins = descriptor->InputPins;
+			instance->CanFlipOrientation = descriptor->CanFlipOrientation;
 
 			if (parent != nullptr)
 			{
@@ -917,7 +1016,7 @@ namespace Modumate {
 			return instance;
 		}
 
-		bool FCraftingTreeNodeInstancePool::FromDataRecord(const FCraftingPresetCollection &PresetCollection, const TArray<FCustomAssemblyCraftingNodeRecord> &InDataRecords)
+		bool FCraftingTreeNodeInstancePool::FromDataRecord(const FCraftingPresetCollection &PresetCollection, const TArray<FCustomAssemblyCraftingNodeRecord> &InDataRecords,bool RecursePresets)
 		{
 			ResetInstances();
 
@@ -926,7 +1025,7 @@ namespace Modumate {
 				// Parents recursively create their children who might also be in the data record array already, so make sure we don't double up
 				if (InstanceFromID(dr.InstanceID) == nullptr)
 				{ 
-					FCraftingTreeNodeInstanceSharedPtr inst = CreateNodeInstanceFromDataRecord(PresetCollection,dr);
+					FCraftingTreeNodeInstanceSharedPtr inst = CreateNodeInstanceFromDataRecord(PresetCollection,dr,RecursePresets);
 					NextInstanceID = FMath::Max(dr.InstanceID + 1, NextInstanceID);
 				}
 			}
@@ -982,11 +1081,19 @@ namespace Modumate {
 				return false;
 			};
 
+			int32 parentlessNodes = 0;
+
 			for (auto inst : InstancePool)
 			{
 				ret = ensureAlways(myParentPointsToMe(inst)) && ret;
 				ret = ensureAlways(myChildrenPointToMe(inst)) && ret;
+				if (!inst->ParentInstance.IsValid())
+				{
+					++parentlessNodes;
+				}
 			}
+
+			ret = ensureAlways(parentlessNodes < 2) && ret;
 
 			ret = ensureAlways(InstancePool.Num() == InstanceMap.Num()) && ret;
 
@@ -996,6 +1103,7 @@ namespace Modumate {
 			}
 
 			ensureAlways(ret);
+
 #endif
 			return ret;
 		}
@@ -1331,8 +1439,27 @@ namespace Modumate {
 				{
 					errorReporter(*FString::Printf(TEXT("Badly formed ICON at line %d"), lineNum));
 				}
+
+				TArray<FString> suffices;
+				FString(match.suffix().str().c_str()).ParseIntoArray(suffices, TEXT(" "));
+				for (auto &suffix : suffices)
+				{
+					EConfiguratorNodeIconOrientation orientation;
+					if (TryFindEnumValueByName<EConfiguratorNodeIconOrientation>(TEXT("EConfiguratorNodeIconOrientation"), *suffix, orientation))
+					{
+						currentNode.Orientation = orientation;
+					}
+					else if (suffix == TEXT("CanSwitch"))
+					{
+						currentNode.CanFlipOrientation = true;
+					}
+					else
+					{
+						errorReporter(*FString::Printf(TEXT("Unrecognized ICON directive %s at line %d"), *suffix, lineNum));
+					}
+				}
 			},
-				false);
+				true);
 
 			static const FString kQuotedString = TEXT("\"([\\w\\s\\-\\.\\,\"/:]+)\"");
 			static const FString kPropertyMatch = TEXT("\\w+\\.\\w+");
@@ -1748,9 +1875,24 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::CraftingNodeFromInstance(
 		OutNode.IsEmbeddedInParent = true;
 	}
 
+	OutNode.NodeIconOrientation = Instance->CurrentOrientation;
+
+	const Modumate::BIM::FCraftingTreeNodePreset *preset = PresetCollection.Presets.Find(Instance->PresetID);
+	if (ensureAlways(preset != nullptr))
+	{
+		const Modumate::BIM::FCraftingTreeNodeType *nodeType = PresetCollection.NodeDescriptors.Find(preset->NodeType);
+		if (ensureAlways(nodeType != nullptr))
+		{
+			OutNode.NodeIconType = nodeType->IconType;
+			OutNode.CanSwitchOrientation = nodeType->CanFlipOrientation;
+		}
+	}
+
 	if (Instance->ParentInstance.IsValid())
 	{
 		Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr parent = Instance->ParentInstance.Pin();
+		parent->FindChildOrder(Instance->GetInstanceID(),OutNode.ChildOrder);
+
 		while (parent.IsValid())
 		{
 			if (parent->GetPresetStatus(PresetCollection) == ECraftingNodePresetStatus::ReadOnly)
@@ -1771,19 +1913,11 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::CraftingNodeFromInstance(
 			}
 		}
 	}
-
-	const Modumate::BIM::FCraftingTreeNodePreset *preset = PresetCollection.Presets.Find(Instance->PresetID);
-	if (ensureAlways(preset != nullptr))
+	else
 	{
-		const Modumate::BIM::FCraftingTreeNodeType *nodeType = PresetCollection.NodeDescriptors.Find(preset->NodeType);
-		if (ensureAlways(nodeType != nullptr))
-		{
-			OutNode.NodeIconType = nodeType->IconType;
-		}
+		OutNode.ChildOrder = 0;
 	}
 
-	//TODO: Provide an array of ReadOnly nodes that can be embedded into this node
-	//OutNode.EmbeddedInstanceIDs = Array of embedded instances;
 	return ECraftingResult::Success;
 }
 
@@ -1869,6 +2003,31 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetFormItemsForCraftingNode(
 	return ECraftingResult::Success;
 }
 
+ECraftingResult UModumateCraftingNodeWidgetStatics::GetFormItemsForPreset(const Modumate::BIM::FCraftingPresetCollection &PresetCollection, const FName &PresetID, TArray<FCraftingNodeFormItem> &OutForm)
+{
+	const BIM::FCraftingTreeNodePreset *preset = PresetCollection.Presets.Find(PresetID);
+	const BIM::FCraftingTreeNodeType *descriptor = preset != nullptr ? PresetCollection.NodeDescriptors.Find(preset->NodeType) : nullptr;
+
+	if (!ensureAlways(descriptor != nullptr))
+	{
+		return ECraftingResult::Error;
+	}
+
+	for (auto &kvp : descriptor->FormItemToProperty)
+	{
+		BIM::FValueSpec vs(*kvp.Value.ToString());
+		FString outVal;
+		if (ensureAlways(preset->Properties.TryGetProperty(vs.Scope, vs.Name, outVal)))
+		{
+			FCraftingNodeFormItem &temp = OutForm.AddDefaulted_GetRef();
+			temp.ItemValue = outVal;
+			temp.DisplayLabel = FText::FromString(kvp.Key);
+			temp.PropertyBindingQN = vs.QN().ToString();
+		}
+	}
+	return ECraftingResult::Success;
+}
+
 ECraftingResult UModumateCraftingNodeWidgetStatics::SetValueForFormItem(
 	Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, 
 	const FCraftingNodeFormItem &FormItem, 
@@ -1881,6 +2040,11 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::SetValueForFormItem(
 		node->InstanceProperties.SetProperty(vs.Scope, vs.Name, Value);
 		return ECraftingResult::Success;
 	}
+	return ECraftingResult::Error;
+}
+
+ECraftingResult UModumateCraftingNodeWidgetStatics::SetValueForPreset(const FName &PresetID, const FString &Value)
+{
 	return ECraftingResult::Error;
 }
 
@@ -1970,6 +2134,48 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetPinGroupsForNode(
 		}
 	}
 	return ECraftingResult::Success;
+}
+
+ECraftingResult UModumateCraftingNodeWidgetStatics::GetLayerIDFromNodeInstanceID(
+	const Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, 
+	const Modumate::BIM::FCraftingPresetCollection &PresetCollection, 
+	int32 InstanceID,
+	int32 &OutLayerID, 
+	int32 &NumberOfLayers)
+{
+	BIM::FCraftingTreeNodeInstanceSharedPtr thisNode = NodeInstances.InstanceFromID(InstanceID);
+	BIM::FCraftingTreeNodeInstanceSharedPtr rootNode = thisNode;
+
+	int32 childPinset=-1, childPinPosition = -1;
+
+	while (rootNode.IsValid())
+	{
+		const Modumate::BIM::FCraftingTreeNodePreset *preset = PresetCollection.Presets.Find(rootNode->PresetID);
+		if (preset != nullptr)
+		{
+			const Modumate::BIM::FCraftingTreeNodeType *descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
+			if (descriptor != nullptr)
+			{
+				if (descriptor->ObjectType != EObjectType::OTNone)
+				{
+					break;
+				}
+			}
+		}
+
+		int32 childID = rootNode->GetInstanceID();
+
+		rootNode = rootNode->ParentInstance.Pin();
+		if (rootNode.IsValid())
+		{
+			rootNode->FindChild(childID, childPinset, childPinPosition);
+			NumberOfLayers = rootNode->InputPins[childPinset].AttachedObjects.Num();
+		}
+	}
+
+	OutLayerID = childPinPosition;
+
+	return rootNode != nullptr && childPinPosition != -1 ? ECraftingResult::Success : ECraftingResult::Error;
 }
 
 ECraftingResult UModumateCraftingNodeWidgetStatics::DragMovePinChild(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, int32 InstanceID, const FName &PinGroup, int32 From, int32 To)

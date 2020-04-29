@@ -91,7 +91,8 @@ public:
 			UMaterialInterface* &ModuleMaterial,
 			FCustomColor &ModuleColor,
 			FCustomColor &GapColor,
-			bool bMarketplaceAsm = false);
+			bool bMarketplaceAsm = false,
+			int32 InLayerID = 0);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
 		static bool GetMeshesFromShoppingItem(AEditModelPlayerController_CPP *Controller, const FName &AsmKey, EToolMode FromToolMode, TArray<UStaticMesh*>& TargetComps, bool bMarketplaceAsm = false);
@@ -103,6 +104,9 @@ public:
 		static bool GetEngineCustomColorByKey(AEditModelPlayerController_CPP *Controller, const FName &Key, FCustomColor &ModuleColor);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
+		static bool GetEngineStaticIconTextureByKey(AEditModelPlayerController_CPP *Controller, const FName &Key, FStaticIconTexture &StaticIcon);
+
+	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
 		static bool MakeIconMeshFromPofileKey(
 			AEditModelPlayerController_CPP *Controller,
 			ADynamicMeshActor *DynamicMeshActor,
@@ -110,6 +114,13 @@ public:
 			const FName &ProfileKey,
 			const FVector &RootLoation,
 			float Length = 25.f);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate IconMesh")
+		static bool GetEngineMaterialByPresetKey(
+			UObject* WorldContextObject, 
+			const FName &PresetKey, 
+			UMaterialInterface* &ModuleMaterial,
+			FCustomColor &ModuleColor);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate IconMesh")
 		static bool GetModuleIconParamsFromPreset(

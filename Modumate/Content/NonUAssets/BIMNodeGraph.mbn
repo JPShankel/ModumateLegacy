@@ -2560,7 +2560,7 @@ END
 -- LAYER_CATEGORY is used to group wall layers into categories and subcategories
 
 DEFINE LAYER_CATEGORY
-	ICON: None
+	ICON: None Inherited
 	INPUT:
 		Layer->Category[1..1]
 	PROPERTIES:
@@ -5382,7 +5382,7 @@ LIST List_Categories_Wall
 END
 
 DEFINE WALL_ROOT
-	ICON: LayerVertical
+	ICON: LayerVertical Vertical
 	INPUT:
 		Assembly->Layers[1..]
 	OUTPUT: OTWallSegment
@@ -5404,7 +5404,7 @@ END
 ---
 
 DEFINE FLOOR_ROOT
-	ICON: LayerHorizontal
+	ICON: LayerHorizontal Horizontal
 	INPUT:
 		Assembly->Layers[1..]
 	OUTPUT: OTFloorSegment
@@ -5436,7 +5436,7 @@ END
 ---
 
 DEFINE ROOF_ROOT
-	ICON: LayerHorizontal
+	ICON: LayerHorizontal Horizontal
 	INPUT:
 		Assembly->Layers[1..]
 	OUTPUT: OTRoof
@@ -7103,7 +7103,7 @@ END
 -- Finish Root
 
 DEFINE FINISH_ROOT
-	ICON: LayerVertical
+	ICON: LayerVertical Vertical CanSwitch
 	INPUT:
 		Assembly->Layers[1..]
 	OUTPUT: OTFinish

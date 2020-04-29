@@ -212,9 +212,21 @@ ECraftingResult UModumateCraftingWidget_CPP::GetFormItemsForCraftingNode(EToolMo
 	return UModumateCraftingNodeWidgetStatics::GetFormItemsForCraftingNode(CraftingTreeNodeInstances,GetDocumentPresetManager().CraftingNodePresets,InstanceID, OutForm);
 }
 
+ECraftingResult UModumateCraftingWidget_CPP::GetFormItemsForPresetID(EToolMode ToolMode, const FName &PresetID, TArray<FCraftingNodeFormItem> &OutForm)
+{
+	return UModumateCraftingNodeWidgetStatics::GetFormItemsForPreset(GetDocumentPresetManager().CraftingNodePresets, PresetID, OutForm);
+}
+
 ECraftingResult UModumateCraftingWidget_CPP::SetValueForFormItem(EToolMode ToolMode, const FCraftingNodeFormItem &FormItem, const FString &Value)
 {
 	ECraftingResult result = UModumateCraftingNodeWidgetStatics::SetValueForFormItem(CraftingTreeNodeInstances,FormItem,Value);
+	UpdateCraftingAssembly(ToolMode);
+	return result;
+}
+
+ECraftingResult UModumateCraftingWidget_CPP::SetValueForPreset(EToolMode ToolMode, const FName &PresetID, const FString &Value)
+{
+	ECraftingResult result = UModumateCraftingNodeWidgetStatics::SetValueForPreset(PresetID, Value);
 	UpdateCraftingAssembly(ToolMode);
 	return result;
 }
@@ -259,6 +271,11 @@ ECraftingResult UModumateCraftingWidget_CPP::SaveOrCreateCraftingPreset(EToolMod
 	if (!ensureAlways(!OutKey.IsNone()))
 	{
 		return ECraftingResult::Error;
+	}
+
+	if (OutKey != PresetKey)
+	{
+		instance->PresetID = OutKey;
 	}
 
 	return ECraftingResult::Success;
@@ -404,7 +421,7 @@ ECraftingResult UModumateCraftingWidget_CPP::UpdateNodePreviewAssemblyWithPreset
 	BIM::FCraftingTreeNodeInstancePool tempPool;
 
 	// Make preset change
-	tempPool.FromDataRecord(presetCollection,tempDataRecord);
+	tempPool.FromDataRecord(presetCollection,tempDataRecord,false);
 
 	ECraftingResult result = tempPool.SetNewPresetForNode(presetCollection, InstanceID, PresetKey);
 
@@ -414,6 +431,13 @@ ECraftingResult UModumateCraftingWidget_CPP::UpdateNodePreviewAssemblyWithPreset
 	}
 
 	return result;
+}
+
+ECraftingResult UModumateCraftingWidget_CPP::GetLayerIDFromNodeInstanceID(int32 InstanceID, int32 &LayerID, int32 &NumberOfLayers)
+{
+	const FPresetManager &presetManager = GetDocumentPresetManager();
+	const BIM::FCraftingPresetCollection &presetCollection = presetManager.CraftingNodePresets;
+	return UModumateCraftingNodeWidgetStatics::GetLayerIDFromNodeInstanceID(CraftingTreeNodeInstances, presetCollection, InstanceID, LayerID, NumberOfLayers);
 }
 
 FCraftingNode FCraftingNode::FromPreset(const BIM::FCraftingTreeNodePreset &Preset)
