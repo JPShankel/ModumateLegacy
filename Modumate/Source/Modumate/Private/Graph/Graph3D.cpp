@@ -164,7 +164,7 @@ namespace Modumate
 		}
 	}
 
-	FGraph3DVertex *FGraph3D::AddVertex(const FVector &Position, int32 InID)
+	FGraph3DVertex *FGraph3D::AddVertex(const FVector &Position, int32 InID, const TSet<int32> &InGroupIDs)
 	{
 		int32 newID = InID;
 		if (newID == MOD_ID_NONE)
@@ -185,7 +185,7 @@ namespace Modumate
 			}
 		}
 
-		FGraph3DVertex newVertex = FGraph3DVertex(newID, this, Position);
+		FGraph3DVertex newVertex = FGraph3DVertex(newID, this, Position, InGroupIDs);
 		if (!ensureAlways(newVertex.bValid))
 		{
 			return nullptr;
@@ -197,7 +197,7 @@ namespace Modumate
 		return &Vertices.Add(newID, MoveTemp(newVertex));
 	}
 
-	FGraph3DEdge *FGraph3D::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID)
+	FGraph3DEdge *FGraph3D::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID, const TSet<int32> &InGroupIDs)
 	{
 		int32 newID = InID;
 		if (newID == MOD_ID_NONE)
@@ -207,10 +207,10 @@ namespace Modumate
 
 		if (Edges.Contains(newID))
 		{
-			return nullptr;
+			return FindEdge(newID);
 		}
 
-		FGraph3DEdge newEdge = FGraph3DEdge(newID, this, StartVertexID, EndVertexID);
+		FGraph3DEdge newEdge = FGraph3DEdge(newID, this, StartVertexID, EndVertexID, InGroupIDs);
 		if (!ensureAlways(newEdge.bValid))
 		{
 			return nullptr;
@@ -228,7 +228,7 @@ namespace Modumate
 		return &Edges.Add(newID, MoveTemp(newEdge));
 	}
 
-	FGraph3DFace *FGraph3D::AddFace(const TArray<FVector> &VertexPositions, int32 InID)
+	FGraph3DFace *FGraph3D::AddFace(const TArray<int32> &VertexIDs, int32 InID, const TSet<int32> &InGroupIDs)
 	{
 		int32 newID = InID;
 		if (newID == MOD_ID_NONE)
@@ -238,35 +238,10 @@ namespace Modumate
 
 		if (Faces.Contains(newID))
 		{
-			return nullptr;
+			return FindFace(newID);
 		}
 
-		FGraph3DFace newFace = FGraph3DFace(newID, this, VertexPositions);
-		if (!ensureAlways(newFace.bValid))
-		{
-			return nullptr;
-		}
-
-		newFace.Dirty();
-		bDirty = true;
-
-		return &Faces.Add(newID, MoveTemp(newFace));
-	}
-
-	FGraph3DFace *FGraph3D::AddFace(const TArray<int32> &VertexIDs, int32 InID)
-	{
-		int32 newID = InID;
-		if (newID == MOD_ID_NONE)
-		{
-			return nullptr;
-		}
-
-		if (Faces.Contains(newID))
-		{
-			return nullptr;
-		}
-
-		FGraph3DFace newFace = FGraph3DFace(newID, this, VertexIDs);
+		FGraph3DFace newFace = FGraph3DFace(newID, this, VertexIDs, InGroupIDs);
 		if (!ensureAlways(newFace.bValid))
 		{
 			return nullptr;
@@ -458,7 +433,9 @@ namespace Modumate
 
 		for (auto &kvp : Delta.VertexAdditions)
 		{
-			FGraph3DVertex *newVertex = AddVertex(kvp.Value, kvp.Key);
+			// GroupIDs are currently unused with graph vertices
+			TSet<int32> GroupIDs;
+			FGraph3DVertex *newVertex = AddVertex(kvp.Value, kvp.Key, GroupIDs);
 		}
 
 		for (auto &kvp : Delta.VertexDeletions)
@@ -472,7 +449,16 @@ namespace Modumate
 			int32 edgeID = kvp.Key;
 			const TArray<int32> &edgeVertexIDs = kvp.Value.Vertices;
 			ensureAlways(edgeVertexIDs.Num() == 2);
-			FGraph3DEdge *newEdge = AddEdge(edgeVertexIDs[0], edgeVertexIDs[1], edgeID);
+			FGraph3DEdge *newEdge = AddEdge(edgeVertexIDs[0], edgeVertexIDs[1], edgeID, kvp.Value.GroupIDs);
+
+			for(int32 parentID : kvp.Value.ParentObjIDs)
+			{
+				auto edge = FindEdge(parentID);
+				if (edge != nullptr)
+				{
+					newEdge->GroupIDs.Append(edge->GroupIDs);
+				}
+			}
 		}
 
 		for (auto &kvp : Delta.EdgeDeletions)
@@ -485,7 +471,16 @@ namespace Modumate
 		{
 			int32 faceID = kvp.Key;
 			const TArray<int32> &faceVertexIDs = kvp.Value.Vertices;
-			FGraph3DFace *newFace = AddFace(faceVertexIDs, faceID);
+			FGraph3DFace *newFace = AddFace(faceVertexIDs, faceID, kvp.Value.GroupIDs);
+
+			for(int32 parentID : kvp.Value.ParentObjIDs)
+			{
+				auto face = FindFace(parentID);
+				if (face != nullptr)
+				{
+					newFace->GroupIDs.Append(face->GroupIDs);
+				}
+			}
 		}
 
 		for (auto &kvp : Delta.FaceDeletions)

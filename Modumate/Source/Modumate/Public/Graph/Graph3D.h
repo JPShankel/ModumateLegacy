@@ -40,12 +40,11 @@ namespace Modumate
 
 		bool ContainsObject(int32 ID, EGraph3DObjectType GraphObjectType) const;
 
-		FGraph3DVertex *AddVertex(const FVector &Position, int32 InID);
+		FGraph3DVertex *AddVertex(const FVector &Position, int32 InID, const TSet<int32> &InGroupIDs);
 
-		FGraph3DEdge *AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID);
+		FGraph3DEdge *AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID, const TSet<int32> &InGroupIDs);
 
-		FGraph3DFace *AddFace(const TArray<FVector> &VertexPositions, int32 InID);
-		FGraph3DFace *AddFace(const TArray<int32> &VertexIDs, int32 InID);
+		FGraph3DFace *AddFace(const TArray<int32> &VertexIDs, int32 InID, const TSet<int32> &InGroupIDs);
 
 		bool RemoveVertex(int32 VertexID);
 		bool RemoveEdge(int32 EdgeID);

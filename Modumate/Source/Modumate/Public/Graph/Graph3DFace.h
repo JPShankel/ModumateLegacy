@@ -27,8 +27,7 @@ namespace Modumate
 		TArray<FPolyHole2D> CachedHoles;
 		float CachedArea;
 
-		FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<FVector> &VertexPositions);
-		FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs);
+		FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs, const TSet<int32> &InGroupIDs);
 
 		FVector2D ProjectPosition2D(const FVector &Position) const;
 		FVector DeprojectPosition(const FVector2D &ProjectedPos) const;

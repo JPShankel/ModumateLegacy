@@ -30,7 +30,7 @@ namespace Modumate
 		FVector CachedRefNorm = FVector::ZeroVector;	// The cached normal, an arbitrary reference vector that is normal to the direction, used for sorting angles
 		FVector CachedMidpoint = FVector::ZeroVector;	// The cached midpoint between the start and end vertices.
 
-		FGraph3DEdge(int32 InID, FGraph3D* InGraph, int32 InStart, int32 InEnd);
+		FGraph3DEdge(int32 InID, FGraph3D* InGraph, int32 InStart, int32 InEnd, const TSet<int32> &InGroupIDs);
 
 		void SetVertices(int32 InStart, int32 InEnd);
 		bool AddFace(FSignedID FaceID, const FVector &EdgeFaceDir);

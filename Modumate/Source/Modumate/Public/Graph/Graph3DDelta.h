@@ -9,14 +9,15 @@
 
 namespace Modumate
 {
-	// A struct that describes a change to a face
+	// A struct that describes a change to a graph object (currently edges and faces)
 	struct FGraph3DObjDelta
 	{
-		TArray<int32> Vertices;
-		TArray<int32> ParentFaceIDs;
+		TArray<int32> Vertices;		// vertex IDs that define the positions for this object
+		TArray<int32> ParentObjIDs; // objects that were deleted to make this object
+		TSet<int32> GroupIDs;		// group objects that this object is related to
 
 		FGraph3DObjDelta(TArray<int32> vertices) : Vertices(vertices) {}
-		FGraph3DObjDelta(TArray<int32> vertices, TArray<int32> parents) : Vertices(vertices), ParentFaceIDs(parents) {}
+		FGraph3DObjDelta(TArray<int32> vertices, TArray<int32> parents) : Vertices(vertices), ParentObjIDs(parents) {}
 
 		FGraph3DObjDelta(FVertexPair vertexPair);
 		FGraph3DObjDelta(FVertexPair vertexPair, TArray<int32> parents);

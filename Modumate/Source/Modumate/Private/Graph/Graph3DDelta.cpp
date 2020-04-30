@@ -11,7 +11,7 @@ namespace Modumate
 	FGraph3DObjDelta::FGraph3DObjDelta(FVertexPair vertexPair, TArray<int32> parents)
 	{
 		Vertices = { vertexPair.Key, vertexPair.Value };
-		ParentFaceIDs = parents;
+		ParentObjIDs = parents;
 	}
 
 	void FGraph3DDelta::Reset()

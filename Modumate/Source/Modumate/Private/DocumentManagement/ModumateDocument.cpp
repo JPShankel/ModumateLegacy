@@ -1295,17 +1295,17 @@ void FModumateDocument::LoadVolumeGraph(const FGraph3DRecord &InGraph3DRecord)
 
 	for (auto &kvp : InGraph3DRecord.Vertices)
 	{
-		VolumeGraph.AddVertex(kvp.Value.Position, kvp.Key);
+		VolumeGraph.AddVertex(kvp.Value.Position, kvp.Key, TSet<int32>());
 	}
 
 	for (auto &kvp : InGraph3DRecord.Edges)
 	{
-		VolumeGraph.AddEdge(kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Key);
+		VolumeGraph.AddEdge(kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Key, kvp.Value.GroupIDs);
 	}
 
 	for (auto &kvp : InGraph3DRecord.Faces)
 	{
-		VolumeGraph.AddFace(kvp.Value.VertexIDs, kvp.Key);
+		VolumeGraph.AddFace(kvp.Value.VertexIDs, kvp.Key, kvp.Value.GroupIDs);
 	}
 
 	TArray<int32> cleanedVertices, cleanedEdges, cleanedFaces;
@@ -1325,13 +1325,13 @@ void FModumateDocument::SaveVolumeGraph(FGraph3DRecord &OutGraph3DRecord) const
 	OutGraph3DRecord.Edges.Reset();
 	for (auto &kvp : VolumeGraph.GetEdges())
 	{
-		OutGraph3DRecord.Edges.Add(kvp.Key, { kvp.Key, kvp.Value.StartVertexID, kvp.Value.EndVertexID });
+		OutGraph3DRecord.Edges.Add(kvp.Key, { kvp.Key, kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Value.GroupIDs });
 	}
 
 	OutGraph3DRecord.Faces.Reset();
 	for (auto &kvp : VolumeGraph.GetFaces())
 	{
-		OutGraph3DRecord.Faces.Add(kvp.Key, { kvp.Key, kvp.Value.VertexIDs });
+		OutGraph3DRecord.Faces.Add(kvp.Key, { kvp.Key, kvp.Value.VertexIDs, kvp.Value.GroupIDs });
 	}
 }
 
@@ -1380,6 +1380,48 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World)
 {
 	TArray<FVector> controlPoints;
+
+	// TODO: the graph may need an understanding of "net" deleted objects
+	// objects that are deleted, but their metadata (like hosted obj) is not
+	// passed on to another object
+	// if it is passed on to another object, the MarkDirty here is redundant
+	TSet<int32> dirtyGroupIDs;
+	for (auto& kvp : Delta.VertexDeletions)
+	{
+		auto vertex = VolumeGraph.FindVertex(kvp.Key);
+		if (vertex == nullptr)
+		{
+			continue;
+		}
+		dirtyGroupIDs.Append(vertex->GroupIDs);
+	}
+	for (auto& kvp : Delta.EdgeDeletions)
+	{
+		auto edge = VolumeGraph.FindEdge(kvp.Key);
+		if (edge == nullptr)
+		{
+			continue;
+		}
+		dirtyGroupIDs.Append(edge->GroupIDs);
+	}
+	for (auto& kvp : Delta.FaceDeletions)
+	{
+		auto face = VolumeGraph.FindFace(kvp.Key);
+		if (face == nullptr)
+		{
+			continue;
+		}
+		dirtyGroupIDs.Append(face->GroupIDs);
+	}
+
+	for (int32 groupID : dirtyGroupIDs)
+	{
+		auto groupObj = GetObjectById(groupID);
+		if (groupObj != nullptr)
+		{
+			groupObj->MarkDirty(EObjectDirtyFlags::Structure);
+		}
+	}
 
 	VolumeGraph.ApplyDelta(Delta);
 
@@ -1561,6 +1603,7 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 
 bool FModumateDocument::UpdateGraphObjects(UWorld *World)
 {
+	TSet<int32> dirtyGroupIDs;
 	TArray<int32> cleanedVertices, cleanedEdges, cleanedFaces;
 	if (VolumeGraph.CleanGraph(cleanedVertices, cleanedEdges, cleanedFaces))
 	{
@@ -1572,6 +1615,7 @@ bool FModumateDocument::UpdateGraphObjects(UWorld *World)
 			{
 				vertexObj->SetObjectLocation(graphVertex->Position);
 			}
+			dirtyGroupIDs.Append(graphVertex->GroupIDs);
 		}
 
 		for (int32 edgeID : cleanedEdges)
@@ -1592,6 +1636,8 @@ bool FModumateDocument::UpdateGraphObjects(UWorld *World)
 
 			edgeObj->SetControlPoints({ startVertex->Position, endVertex->Position });
 			edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
+			dirtyGroupIDs.Append(graphEdge->GroupIDs);
+
 		}
 
 		for (int32 faceID : cleanedFaces)
@@ -1608,6 +1654,17 @@ bool FModumateDocument::UpdateGraphObjects(UWorld *World)
 			faceObj->SetControlPoints(graphFace->CachedPositions);
 			
 			faceObj->MarkDirty(EObjectDirtyFlags::Structure);
+			dirtyGroupIDs.Append(graphFace->GroupIDs);
+		}
+	}
+
+	// dirty group objects that are related to dirtied graph objects
+	for (int32 groupID : dirtyGroupIDs)
+	{
+		FModumateObjectInstance *groupObj = GetObjectById(groupID);
+		if (groupObj != nullptr)
+		{
+			groupObj->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 	}
 
@@ -1628,7 +1685,7 @@ bool FModumateDocument::FinalizeGraphDeltas(TArray <FGraph3DDelta> &Deltas, TArr
 
 		for (auto &kvp : delta.FaceAdditions)
 		{
-			if (kvp.Value.ParentFaceIDs.Num() == 1 && GetObjectById(kvp.Value.ParentFaceIDs[0]) == nullptr)
+			if (kvp.Value.ParentObjIDs.Num() == 1 && GetObjectById(kvp.Value.ParentObjIDs[0]) == nullptr)
 			{
 				OutAddedFaceIDs.Add(kvp.Key);
 			}
@@ -2778,7 +2835,7 @@ bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &D
 
 	for (auto &kvp : Delta.FaceAdditions)
 	{
-		for (int32 parentID : kvp.Value.ParentFaceIDs)
+		for (int32 parentID : kvp.Value.ParentObjIDs)
 		{
 			if (parentIDToChildrenIDs.Contains(parentID))
 			{
@@ -2793,7 +2850,7 @@ bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &D
 
 	for (auto &kvp : Delta.EdgeAdditions)
 	{
-		for (int32 parentID : kvp.Value.ParentFaceIDs)
+		for (int32 parentID : kvp.Value.ParentObjIDs)
 		{
 			parentID = FMath::Abs(parentID);
 			if (parentIDToChildrenIDs.Contains(parentID))

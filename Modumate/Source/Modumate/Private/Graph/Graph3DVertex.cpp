@@ -2,8 +2,8 @@
 #include "Graph3D.h"
 
 namespace Modumate {
-	FGraph3DVertex::FGraph3DVertex(int32 InID, FGraph3D* InGraph, const FVector &InPos)
-		: IGraph3DObject(InID, InGraph)
+	FGraph3DVertex::FGraph3DVertex(int32 InID, FGraph3D* InGraph, const FVector &InPos, const TSet<int32> &InGroupIDs)
+		: IGraph3DObject(InID, InGraph, InGroupIDs)
 		, Position(InPos)
 	{
 		bValid = true;

@@ -7,35 +7,12 @@
 
 namespace Modumate 
 {
-	FGraph3DFace::FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs)
-		: IGraph3DObject(InID, InGraph)
+	FGraph3DFace::FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs, const TSet<int32> &InGroupIDs)
+		: IGraph3DObject(InID, InGraph, InGroupIDs)
 		, CachedPlane(ForceInitToZero)
 	{
 		UpdatePlane(InVertexIDs);
 		UpdateVerticesAndEdges(InVertexIDs, false);
-	}
-
-	FGraph3DFace::FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<FVector> &VertexPositions)
-		: IGraph3DObject(InID, InGraph)
-		, CachedPlane(ForceInitToZero)
-	{
-		TArray<int32> vertexIDs;
-
-		for (const FVector &vertexPos : VertexPositions)
-		{
-			auto vertex = Graph->FindVertex(vertexPos);
-			if (!ensureAlways(vertex != nullptr))
-			{
-				bValid = false;
-				vertexIDs.Reset();
-				return;
-			}
-
-			vertexIDs.Add(vertex->ID);
-		}
-
-		UpdatePlane(VertexIDs);
-		UpdateVerticesAndEdges(vertexIDs, false);
 	}
 
 	FVector2D FGraph3DFace::ProjectPosition2D(const FVector &Position) const

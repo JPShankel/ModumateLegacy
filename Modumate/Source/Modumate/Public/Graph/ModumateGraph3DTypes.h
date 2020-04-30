@@ -62,7 +62,7 @@ namespace Modumate
 	class IGraph3DObject
 	{
 	public:
-		IGraph3DObject(int32 InID, FGraph3D *InGraph) : ID(InID), Graph(InGraph) {}
+		IGraph3DObject(int32 InID, FGraph3D *InGraph, const TSet<int32> &InGroupIDs) : ID(InID), Graph(InGraph), GroupIDs(InGroupIDs) {}
 		virtual ~IGraph3DObject() {}
 
 	public:
@@ -76,5 +76,7 @@ namespace Modumate
 		bool bDirty = false;	// Whether this object needs to be updated
 
 		FGraph3D *Graph = nullptr; // The graph that owns this object
+
+		TSet<int32> GroupIDs; // IDs of groups that contain this graph object
 	};
 }

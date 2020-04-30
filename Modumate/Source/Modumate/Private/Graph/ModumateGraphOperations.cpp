@@ -371,7 +371,7 @@ namespace Modumate
 
 					if (newArea < oldArea - Graph->Epsilon)
 					{
-						faceDelta.FaceAdditions[addedFaceID].ParentFaceIDs = { coincidentFaceID };
+						faceDelta.FaceAdditions[addedFaceID].ParentObjIDs = { coincidentFaceID };
 						OutDeltas.Add(faceDelta);
 						oldFaces.Add(coincidentFaceID);
 						TArray<int32> &faceIDs = oldToNewFaceIDs.FindOrAdd(coincidentFaceID);
@@ -397,7 +397,7 @@ namespace Modumate
 		GetDeltaForDeletions(Graph, {}, {}, oldFaces.Array(), deleteDelta);
 		for (int32 oldFaceID : oldFaces)
 		{
-			deleteDelta.FaceDeletions[oldFaceID].ParentFaceIDs = oldToNewFaceIDs[oldFaceID];
+			deleteDelta.FaceDeletions[oldFaceID].ParentObjIDs = oldToNewFaceIDs[oldFaceID];
 		}
 
 		if (!deleteDelta.IsEmpty())
@@ -1308,7 +1308,7 @@ namespace Modumate
 		GetDeltaForDeletions(Graph, sharedVertexIDs, sharedEdgeIDs, parentFaceIDs, OutDelta);
 		for (auto faceID : parentFaceIDs)
 		{
-			OutDelta.FaceDeletions[faceID].ParentFaceIDs = { addedID };
+			OutDelta.FaceDeletions[faceID].ParentObjIDs = { addedID };
 		}
 
 		return true;

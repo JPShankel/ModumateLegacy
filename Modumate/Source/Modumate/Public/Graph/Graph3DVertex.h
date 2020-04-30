@@ -10,7 +10,7 @@ namespace Modumate
 		FVector Position = FVector::ZeroVector;	// The position of the vertex
 		TArray<FSignedID> ConnectedEdgeIDs;		// The set of IDs of connected edges connected to this vertex, unsorted
 
-		FGraph3DVertex(int32 InID, FGraph3D* InGraph, const FVector &InPos);
+		FGraph3DVertex(int32 InID, FGraph3D* InGraph, const FVector &InPos, const TSet<int32> &InGroupIDs);
 
 		void AddEdge(FSignedID EdgeID);
 		bool RemoveEdge(FSignedID EdgeID);

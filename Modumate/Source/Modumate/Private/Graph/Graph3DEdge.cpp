@@ -4,8 +4,8 @@
 
 namespace Modumate
 {
-	FGraph3DEdge::FGraph3DEdge(int32 InID, FGraph3D* InGraph, int32 InStart, int32 InEnd)
-		: IGraph3DObject(InID, InGraph)
+	FGraph3DEdge::FGraph3DEdge(int32 InID, FGraph3D* InGraph, int32 InStart, int32 InEnd, const TSet<int32> &InGroupIDs)
+		: IGraph3DObject(InID, InGraph, InGroupIDs)
 		, CachedDir(ForceInitToZero)
 		, CachedRefNorm(ForceInitToZero)
 		, CachedMidpoint(ForceInitToZero)

@@ -185,6 +185,9 @@ struct FGraph3DVertexRecordV1
 
 	UPROPERTY()
 	FVector Position;
+
+	// Currently, vertices to not take advantage of group ids
+	// if that changes, the data record will need a property for them here
 };
 typedef FGraph3DVertexRecordV1 FGraph3DVertexRecord;
 
@@ -201,6 +204,9 @@ struct FGraph3DEdgeRecordV1
 
 	UPROPERTY()
 	int32 EndVertexID;
+
+	UPROPERTY()
+	TSet<int32> GroupIDs;
 };
 typedef FGraph3DEdgeRecordV1 FGraph3DEdgeRecord;
 
@@ -214,6 +220,9 @@ struct FGraph3DFaceRecordV1
 
 	UPROPERTY()
 	TArray<int32> VertexIDs;
+
+	UPROPERTY()
+	TSet<int32> GroupIDs;
 };
 typedef FGraph3DFaceRecordV1 FGraph3DFaceRecord;
 
