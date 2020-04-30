@@ -736,12 +736,21 @@ namespace Modumate
 		{
 			return false;
 		}
+		auto startVertex = FindVertex(edge->StartVertexID);
+		auto endVertex = FindVertex(edge->EndVertexID);
+		if (startVertex == nullptr || endVertex == nullptr)
+		{
+			return false;
+		}
 
 		for (auto& plane : planes)
 		{
 			FGraph graph2D;
 
-			if (!Create2DGraph(edge->StartVertexID, plane, graph2D))
+			bool startVertexDistance = FMath::IsNearlyZero(plane.PlaneDot(startVertex->Position), Epsilon);
+			bool endVertexDistance = FMath::IsNearlyZero(plane.PlaneDot(startVertex->Position), Epsilon);
+			if (!startVertexDistance || !endVertexDistance || 
+				!Create2DGraph(edge->StartVertexID, plane, graph2D))
 			{
 				continue;
 			}
@@ -1160,7 +1169,8 @@ namespace Modumate
 
 				auto nextVertex = FindVertex(nextVertexID);
 
-				if (FMath::Abs(CutPlane.PlaneDot(nextVertex->Position)) > Epsilon)
+				bool distanceFromPlane = FMath::IsNearlyZero(CutPlane.PlaneDot(nextVertex->Position), Epsilon);
+				if (!distanceFromPlane)
 				{
 					continue;
 				}

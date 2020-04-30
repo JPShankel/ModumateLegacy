@@ -190,44 +190,17 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 		{
 			Controller->ModumateCommand(FModumateCommand(Commands::kBeginUndoRedoMacro));
 
+			TArray<FVector> points = { constrainedStartPoint, constrainedEndPoint };
 			auto commandResult = Controller->ModumateCommand(
-				FModumateCommand(Commands::kMakeMetaVertex)
-				.Param(Parameters::kLocation, constrainedStartPoint)
+				FModumateCommand(Commands::kMakeMetaEdge)
+				.Param(Parameters::kControlPoints, points)
 				.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID()));
-			TArray<int32> objIDs = commandResult.GetValue(Parameters::kObjectIDs);
-			int32 startVertexID = objIDs[0];
 
-			commandResult = Controller->ModumateCommand(
-				FModumateCommand(Commands::kMakeMetaVertex)
-				.Param(Parameters::kLocation, constrainedEndPoint)
-				.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID()));
-			objIDs = commandResult.GetValue(Parameters::kObjectIDs);
-			int32 endVertexID = objIDs[0];
-
-			if ((endVertexID != MOD_ID_NONE) && (startVertexID != MOD_ID_NONE))
+			bool bCommandSuccess = commandResult.GetValue(Parameters::kSuccess);
+			TArray<int32> outEdgeIDs = commandResult.GetValue(Parameters::kObjectIDs);
+			for (auto id : outEdgeIDs)
 			{
-				TArray<int32> edgeVertexIDs;
-				edgeVertexIDs.Add(startVertexID);
-				edgeVertexIDs.Add(endVertexID);
-
-				// TODO: there will be situations where we neither create nor find an edge, and that needs to be handled here
-				// potentially the MakeObject functions should return true if they find an object as opposed to make an object
-				TArray<int32> outEdgeIDs;
-				outEdgeIDs = Controller->ModumateCommand(
-					FModumateCommand(Commands::kMakeMetaEdge)
-					.Param(Parameters::kObjectIDs, edgeVertexIDs)
-					.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
-				).GetValue(Parameters::kObjectIDs);
-
-				for (auto id : outEdgeIDs)
-				{
-					PendingPlaneEdgeIDs.Add(id);
-				}
-				int32 edgeID = MOD_ID_NONE;
-				if (outEdgeIDs.Num() > 0)
-				{
-					edgeID = outEdgeIDs[0];
-				}
+				PendingPlaneEdgeIDs.Add(id);
 			}
 
 			// The segment-based plane updates the sketch plane on the first three clicks

@@ -339,6 +339,10 @@ namespace Modumate
 					auto edge = graph2D.FindEdge(edgeID);
 					auto leftPoly = graph2D.FindPolygon(edge->LeftPolyID);
 					auto rightPoly = graph2D.FindPolygon(edge->RightPolyID);
+					if (!ensure(leftPoly != nullptr && rightPoly != nullptr))
+					{
+						continue;
+					}
 					if (!leftPoly->bInterior || !rightPoly->bInterior)
 					{
 						bEnclosedPoly = false;

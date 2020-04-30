@@ -125,14 +125,14 @@ namespace Modumate
 
 		// calculates splits, etc. then will call the direct versions of the function
 		static bool GetDeltaForMultipleEdgeAdditions(FGraph3D *Graph, const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> ParentIDs = TArray<int32>());
-		static bool GetDeltaForEdgeAdditionWithSplit(FGraph3D *OldGraph, FGraph3D *Graph, const FVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID);
-		static bool GetDeltaForEdgeAdditionWithSplit(FGraph3D *OldGraph, FGraph3D *Graph, const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID);
+		static bool GetDeltaForEdgeAdditionWithSplit(FGraph3D *OldGraph, FGraph3D *Graph, const FVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs);
+		static bool GetDeltaForEdgeAdditionWithSplit(FGraph3D *OldGraph, FGraph3D *Graph, const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs, bool bCheckFaces = false);
 		static bool GetDeltaForFaceAddition(FGraph3D *OldGraph, FGraph3D *Graph, const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID);
 
 		static bool GetDeltasForUpdateFaces(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 EdgeID, FPlane InPlane = FPlane(EForceInit::ForceInitToZero));
 
 		// provides deltas for splitting edges and adjusting faces after a graph operation
-		static bool GetDeltasForEdgeSplits(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID); 
+		static bool GetDeltasForEdgeSplits(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, TArray<int32> &AddedEdgeIDs, int32 &NextID); 
 
 		static bool GetDeltaForFaceVertexAddition(FGraph3D *Graph, int32 EdgeIDToRemove, int32 FaceID, int32 VertexIDToAdd, FGraph3DDelta &OutDelta);
 		static bool GetDeltaForFaceVertexRemoval(FGraph3D *Graph, int32 VertexIDToRemove, FGraph3DDelta &OutDelta);

@@ -323,6 +323,90 @@ namespace Modumate
 		return true;
 	}
 
+	// Add one edge
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphAddEdge, "Modumate.Graph.3D.AddEdge", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphAddEdge::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> OutDeltas;
+		int32 NextID = 1;
+		TArray<int32> OutEdgeIDs;
+
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("add edge"),
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 2, 1);
+
+		return true;
+	}
+
+	// Add grid of edges
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphAddEdges, "Modumate.Graph.3D.AddEdges", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphAddEdges::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> OutDeltas;
+		int32 NextID = 1;
+		TArray<int32> OutEdgeIDs;
+
+		TArray<FVector> vertices;
+
+		int32 dim = 3;
+
+		// add horizontal edges
+		for (int32 idx = 0; idx <= dim; idx++)
+		{
+			vertices = {
+				FVector(0.0f, idx * 100.0f, 0.0f),
+				FVector(dim * 100.0f, idx * 100.0f, 0.0f),
+			};
+
+			TestTrue(TEXT("add horizontal edge"),
+				FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
+			TestDeltas(this, OutDeltas, graph, tempGraph, 0, 2*(idx+1), idx+1);
+		}
+
+		int32 numEdges = dim+1;
+		int32 numVertices = 2 * (dim+1);
+		// add vertical edges, which complete faces along the way
+		for (int32 idx = 0; idx <= dim; idx++)
+		{
+			vertices = {
+				FVector(idx * 100.0f, 0.0f, 0.0f),
+				FVector(idx * 100.0f, dim * 100.0f, 0.0f),
+			};
+
+			if (idx == 0 || idx == dim)
+			{
+				// edge won't split other edges
+				numEdges += dim;
+				// vertices exist already
+				// numVertices += 0;
+			}
+			else
+			{
+				// edge splits other edges
+				numEdges += (2 * dim) +1;
+				// vertices don't exist already
+				numVertices += dim+1;
+			}
+
+			TestTrue(TEXT("add vertical edge"),
+				FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
+			TestDeltas(this, OutDeltas, graph, tempGraph, dim * idx, numVertices, numEdges);
+		}
+
+		return true;
+	}
+
 	// Add two faces that cross in the middle
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphBasicSplit, "Modumate.Graph.3D.BasicSplit", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphBasicSplit::RunTest(const FString& Parameters)
@@ -918,29 +1002,19 @@ namespace Modumate
 		FGraph3D tempGraph;
 
 		TArray<FGraph3DDelta> OutDeltas;
-		FGraph3DDelta OutDelta;
 		int32 NextID = 1;
-		int32 ExistingID = 0;
+		TArray<int32> OutEdgeIDs;
 
 		// default horizontal first face
 		SetupOneFace(this, graph, tempGraph, NextID);
 
-		//FVertexPair newEdge = FVertexPair(NextID++, NextID++);
-		FGraph3D::GetDeltaForVertexAddition(&tempGraph, FVector(50.0f, 0.0f, 0.0f), OutDelta, NextID, ExistingID);
-		FGraph3D::GetDeltaForVertexAddition(&tempGraph, FVector(50.0f, 100.0f, 0.0f), OutDelta, NextID, ExistingID);
-		graph.ApplyDelta(OutDelta);
-
-		int32 startID = graph.FindVertex(FVector(50.0f, 0.0f, 0.0f))->ID;
-		int32 endID = graph.FindVertex(FVector(50.0f, 100.0f, 0.0f))->ID;
-		TestGraph(this, graph, 1, 6, 4);
-
-		FGraph3D::CloneFromGraph(tempGraph, graph);
-		OutDelta.Reset();
+		TArray<FVector> vertices = {
+			FVector(50.0f, 0.0f, 0.0f),
+			FVector(50.0f, 100.0f, 0.0f)
+		};
 
 		TestTrue(TEXT("split face with edge"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, FVertexPair(startID,endID), OutDeltas, NextID, ExistingID));
-		TestTrue(TEXT("update faces"), 
-			FGraph3D::GetDeltasForUpdateFaces(&tempGraph, OutDeltas, NextID, ExistingID));
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
 
 		return true;
@@ -957,6 +1031,7 @@ namespace Modumate
 		FGraph3DDelta OutDelta;
 		int32 NextID = 1;
 		int32 ExistingID = 0;
+		TArray<int32> OutEdgeIDs;
 
 		TArray<FVector> vertices = {
 			FVector(0.0f, 0.0f, 0.0f),
@@ -967,26 +1042,20 @@ namespace Modumate
 
 		// draw first face with edges
 		TestTrue(TEXT("edge 1"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[0], vertices[1], OutDeltas, NextID, ExistingID));
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 2, 1);
 
 		TestTrue(TEXT("edge 2"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[1], vertices[2], OutDeltas, NextID, ExistingID));
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[1], vertices[2], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 3, 2);
 
 		TestTrue(TEXT("edge 3"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[2], vertices[3], OutDeltas, NextID, ExistingID));
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[2], vertices[3], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 4, 3);
 
 		TestTrue(TEXT("edge 4"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[3], vertices[0], OutDeltas, NextID, ExistingID));
-		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 4, 4);
-
-		TestTrue(TEXT("find face"),
-			FGraph3D::GetDeltasForUpdateFaces(&graph, OutDeltas, NextID, ExistingID));
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[3], vertices[0], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
-
-		// start adding edges across face, checking for faces each time
 
 		// single edge across face
 		TArray<FVector> edgeVertices = {
@@ -994,10 +1063,7 @@ namespace Modumate
 			FVector(50.0f, 100.0f, 0.0f)
 		};
 		TestTrue(TEXT("split edge"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[0], edgeVertices[1], OutDeltas, NextID, ExistingID));
-		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 6, 7);
-		TestTrue(TEXT("find face"),
-			FGraph3D::GetDeltasForUpdateFaces(&graph, OutDeltas, NextID, ExistingID));
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[0], edgeVertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
 
 		// draw box in corner
@@ -1007,13 +1073,10 @@ namespace Modumate
 			FVector(100.0f, 10.0f, 0.0f)
 		};
 		TestTrue(TEXT("box edge 1"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[0], edgeVertices[1], OutDeltas, NextID, ExistingID));
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[0], edgeVertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 8, 9);
 		TestTrue(TEXT("box edge 2"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[1], edgeVertices[2], OutDeltas, NextID, ExistingID));
-		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 9, 11);
-		TestTrue(TEXT("find face"),
-			FGraph3D::GetDeltasForUpdateFaces(&graph, OutDeltas, NextID, ExistingID));
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[1], edgeVertices[2], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 9, 11);
 
 		// draw a few edges across face, and verify no extra faces are found
@@ -1023,25 +1086,17 @@ namespace Modumate
 			FVector(25.0f, 20.0f, 0.0f),
 			FVector(25.0f, 100.0f, 0.0f),
 		};
+
 		TestTrue(TEXT("edge 1"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[0], edgeVertices[1], OutDeltas, NextID, ExistingID));
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[0], edgeVertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 11, 13);
-		TestTrue(TEXT("find face"),
-			FGraph3D::GetDeltasForUpdateFaces(&graph, OutDeltas, NextID, ExistingID));
-		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 11, 13);
-		
+
 		TestTrue(TEXT("edge 2"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[1], edgeVertices[2], OutDeltas, NextID, ExistingID));
-		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 12, 14);
-		TestTrue(TEXT("find face"),
-			FGraph3D::GetDeltasForUpdateFaces(&graph, OutDeltas, NextID, ExistingID));
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[1], edgeVertices[2], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 12, 14);
 
 		TestTrue(TEXT("edge 3"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[2], edgeVertices[3], OutDeltas, NextID, ExistingID));
-		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 13, 16);
-		TestTrue(TEXT("find face"),
-			FGraph3D::GetDeltasForUpdateFaces(&graph, OutDeltas, NextID, ExistingID));
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[2], edgeVertices[3], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 4, 13, 16);
 
 		return true;
@@ -1094,7 +1149,6 @@ namespace Modumate
 
 		// TODO: fix ensureAlways when face matches exactly and add unit test
 
-		/*
 		vertices = {
 			FVector(50.0f, 0.0f, 0.0f),
 			FVector(50.0f, 100.0f, 0.0f),
@@ -1127,7 +1181,17 @@ namespace Modumate
 		TestTrue(TEXT("Add completely overlapping face that does not intersect with existing face"),
 			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 8, 8);
-		//*/
+
+		vertices = {
+			FVector(50.0f, 50.0f, 0.0f),
+			FVector(50.0f, 150.0f, 0.0f),
+			FVector(150.0f, 150.0f, 0.0f),
+			FVector(150.0f, 50.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add first face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 3, 10, 12);
 
 		return true;
 	}
@@ -1287,7 +1351,6 @@ namespace Modumate
 		TestTrue(TEXT("join faces"),
 			FGraph3D::GetDeltasForObjectJoin(&tempGraph, OutDeltas, faceIDs, NextID, EGraph3DObjectType::Face));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 4, 4);
-
 
 		vertices = {
 			FVector(50.0f, 0.0f, 0.0f),

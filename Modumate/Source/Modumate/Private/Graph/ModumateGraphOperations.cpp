@@ -131,13 +131,14 @@ namespace Modumate
 			vertex->GetConnectedFacesAndEdges(connectedFaceIDs, connectedEdgeIDs);
 		}
 
-		if (!GetDeltasForEdgeSplits(Graph, OutDeltas, NextID))
+		TArray<int32> connectedEdgeIDsArray = connectedEdgeIDs.Array();
+		if (!GetDeltasForEdgeSplits(Graph, OutDeltas, connectedEdgeIDsArray, NextID))
 		{
 			return false;
 		}
 
 
-		TSet<int32> newEdges;
+		TSet<int32> newEdges(connectedEdgeIDsArray);
 		for (int32 faceID : connectedFaceIDs)
 		{
 			// Intersection checks
@@ -271,11 +272,13 @@ namespace Modumate
 		return bAddedEdge;
 	}
 
-	bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(FGraph3D *OldGraph, FGraph3D *Graph, const FVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID)
+	bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(FGraph3D *OldGraph, FGraph3D *Graph, const FVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs)
 	{
 		FGraph3DDelta OutDelta;
+		int32 ExistingID;
 		if (!GetDeltaForEdgeAddition(Graph, VertexPair, OutDelta, NextID, ExistingID))
 		{
+			OutEdgeIDs = { ExistingID };
 			return false;
 		}
 
@@ -283,13 +286,9 @@ namespace Modumate
 		OutDeltas.Add(OutDelta);
 
 		int32 edgeID = MOD_ID_NONE;
-		if (OutDelta.EdgeAdditions.Num() == 0)
+		if (OutDelta.EdgeAdditions.Num() != 1)
 		{
 			return false;
-		}
-		else if (OutDelta.EdgeAdditions.Num() > 1)
-		{
-			return true;
 		}
 		else
 		{
@@ -300,11 +299,11 @@ namespace Modumate
 			}
 		}
 
-		if (!GetDeltasForEdgeSplits(Graph, OutDeltas, NextID))
+		OutEdgeIDs = { edgeID };
+		if (!GetDeltasForEdgeSplits(Graph, OutDeltas, OutEdgeIDs, NextID))
 		{
 			return false;
 		}
-		ExistingID = edgeID;
 
 		return true;
 	}
@@ -409,8 +408,10 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(FGraph3D *OldGraph, FGraph3D *Graph, const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID)
+	bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(FGraph3D *OldGraph, FGraph3D *Graph, const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs, bool bCheckFaces)
 	{
+		OutEdgeIDs.Reset();
+
 		FVector vertexPositions[2] = { EdgeStartPos, EdgeEndPos };
 		int32 vertexIDs[2] = { MOD_ID_NONE, MOD_ID_NONE };
 
@@ -446,7 +447,27 @@ namespace Modumate
 		}
 
 		FVertexPair vertexPair(vertexIDs[0], vertexIDs[1]);
-		return GetDeltaForEdgeAdditionWithSplit(OldGraph, Graph, vertexPair, OutDeltas, NextID, ExistingID);
+		GetDeltaForEdgeAdditionWithSplit(OldGraph, Graph, vertexPair, OutDeltas, NextID, OutEdgeIDs);
+
+		if (bCheckFaces)
+		{
+			for (int32 edgeID : OutEdgeIDs)
+			{
+				TArray<FGraph3DDelta> updateFaceDeltas;
+				if (!FGraph3D::GetDeltasForUpdateFaces(Graph, updateFaceDeltas, NextID, edgeID))
+				{
+					continue;
+				}
+				OutDeltas.Append(updateFaceDeltas);
+
+				for (auto& delta : updateFaceDeltas)
+				{
+					Graph->ApplyDelta(delta);
+				}
+			}
+		}
+
+		return true;
 	}
 
 	bool FGraph3D::GetDeltaForFaceAddition(FGraph3D *Graph, const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID)
@@ -515,7 +536,7 @@ namespace Modumate
 
 		OutDelta.Reset();
 
-		if (!GetDeltasForEdgeSplits(Graph, OutDeltas, NextID))
+		if (!GetDeltasForEdgeSplits(Graph, OutDeltas, faceEdgeIDs, NextID))
 		{
 			return false;
 		}
@@ -569,8 +590,66 @@ namespace Modumate
 		return bDeltaCreationSuccess;
 	}
 
-	bool FGraph3D::GetDeltasForEdgeSplits(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID)
+	bool FGraph3D::GetDeltasForEdgeSplits(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, TArray<int32> &AddedEdgeIDs, int32 &NextID)
 	{
+		for (int32 edgeID : AddedEdgeIDs)
+		{
+			auto edge = Graph->FindEdge(edgeID);
+			if (!ensure(edge != nullptr))
+			{
+				continue;
+			}
+
+			int32 startVertexID = edge->StartVertexID;
+			int32 endVertexID = edge->EndVertexID;
+			auto startVertex = Graph->FindVertex(startVertexID);
+			auto endVertex = Graph->FindVertex(endVertexID);
+			if (!ensure(startVertex != nullptr && endVertex != nullptr))
+			{
+				continue;
+			}
+
+			for (auto& edgekvp : Graph->Edges)
+			{
+				int32 otherEdgeID = edgekvp.Key;
+				auto otherEdge = Graph->FindEdge(otherEdgeID);
+				if (!ensure(otherEdge != nullptr))
+				{
+					continue;
+				}
+
+				int32 otherStartVertexID = otherEdge->StartVertexID;
+				int32 otherEndVertexID = otherEdge->EndVertexID;
+				auto otherStartVertex = Graph->FindVertex(otherStartVertexID);
+				auto otherEndVertex = Graph->FindVertex(otherEndVertexID);
+				if (!ensure(otherStartVertex != nullptr && otherEndVertex != nullptr))
+				{
+					continue;
+				}
+				
+				FVector currentPoint, otherPoint;
+				FMath::SegmentDistToSegmentSafe(
+					startVertex->Position,
+					endVertex->Position,
+					otherStartVertex->Position,
+					otherEndVertex->Position,
+					currentPoint,
+					otherPoint
+				);
+
+				if (currentPoint.Equals(otherPoint, Graph->Epsilon))
+				{
+					int32 existingID;
+					FGraph3DDelta OutDelta;
+					if (GetDeltaForVertexAddition(Graph, currentPoint, OutDelta, NextID, existingID))
+					{
+						Graph->ApplyDelta(OutDelta);
+						OutDeltas.Add(OutDelta);
+					}
+				}
+			}
+		}
+
 		for (auto& kvp : Graph->GetVertices())
 		{
 			auto vertex = &kvp.Value;
@@ -596,6 +675,12 @@ namespace Modumate
 				if (!splitEdgeDelta.IsEmpty())
 				{
 					OutDeltas.Add(splitEdgeDelta);
+
+					AddedEdgeIDs.Remove(edgeID);
+
+					TArray<int32> edgesAddedFromSplit;
+					splitEdgeDelta.EdgeAdditions.GenerateKeyArray(edgesAddedFromSplit);
+					AddedEdgeIDs.Append(edgesAddedFromSplit);
 				}
 
 				if (!Graph->ApplyDelta(splitEdgeDelta))
@@ -744,10 +829,10 @@ namespace Modumate
 					FVector startPosition = edgePoints.Key;
 					FVector endPosition = edgePoints.Value;
 
-					int32 edgeID = MOD_ID_NONE;
-					if (!FGraph3D::GetDeltaForEdgeAdditionWithSplit(OldGraph, Graph, startPosition, endPosition, addEdgeDeltas, NextID, edgeID))
+					TArray<int32> OutEdgeIDs;
+					if (!FGraph3D::GetDeltaForEdgeAdditionWithSplit(OldGraph, Graph, startPosition, endPosition, addEdgeDeltas, NextID, OutEdgeIDs))
 					{
-						if (edgeID == MOD_ID_NONE)
+						if (OutEdgeIDs.Num() == 0 || OutEdgeIDs[0] == MOD_ID_NONE)
 						{
 							continue;
 						}
@@ -757,7 +842,7 @@ namespace Modumate
 						OutDeltas.Append(addEdgeDeltas);
 					}
 					
-					OutEdges.Add(edgeID);
+					OutEdges.Append(OutEdgeIDs);
 				}
 			}
 		}
