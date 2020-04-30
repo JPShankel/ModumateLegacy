@@ -27,6 +27,8 @@ UEditModelCameraController::UEditModelCameraController(const FObjectInitializer&
 	, ZoomMinDistance(20.0f)
 	, OrbitMovementLerpCurve(nullptr)
 	, OrbitMaxPitch(88.0f)
+	, OrbitDriftPitchRange(20.0f, 70.0f)
+	, OrbitCursorMaxHeightPCT(0.9f)
 	, OrbitAnchorScreenSize(0.25f)
 	, FlyingSpeed(15.0f)
 	, Controller(nullptr)
@@ -40,6 +42,7 @@ UEditModelCameraController::UEditModelCameraController(const FObjectInitializer&
 	, OrbitZoomTargetDistance(0.0f)
 	, OrbitMovementElapsed(0.0f)
 	, OrbitZoomDeltaAccumulated(0.0f)
+	, OrbitRelativeDir(FVector::ForwardVector)
 	, RotationDeltasAccumulated(ForceInitToZero)
 	, FlyingDeltasAccumulated(ForceInitToZero)
 {
@@ -239,6 +242,7 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 
 		OrbitTarget = FVector::ZeroVector;
 		OrbitStartProxyTarget = FVector::ZeroVector;
+		OrbitRelativeDir = FVector::ForwardVector;
 
 		if (OrbitAnchorActor)
 		{
@@ -284,15 +288,27 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 
 		OrbitTarget = cursor.WorldPosition;
 
-		FVector camFwd = camRot.GetForwardVector();
-		if (FMath::IsNearlyZero(camFwd.Z))
-		{
-			OrbitStartProxyTarget = OrbitTarget;
-		}
-		else
-		{
-			OrbitStartProxyTarget = FMath::RayPlaneIntersection(camPos, camFwd, FPlane(FVector::UpVector, OrbitTarget.Z));
-		}
+		// Calculate the direction from the camera that points at or below the center of the screen, horizontally centered, towards the orbit target.
+		// This direction is the one that can be used for orbiting around a point, rather than the forward vector, so it can be fixed about
+		// a point in screen space that's not only the center of the screen.
+		FVector2D viewportSize(ViewportClient->Viewport->GetSizeXY());
+
+		// At the time that we start orbiting, we will cap the cursor height based on the pitch of the camera.
+		// Below a given minimum pitch, we will cap it to a given percentage of the viewport height,
+		// Below a given maximum pitch, we will cap it linearly towards the center of the viewport,
+		// And above a maximum pitch, it will be set to the center of the viewport.
+		FVector2D maxCursorHeightRange(FMath::Min(OrbitCursorMaxHeightPCT * viewportSize.Y, cursor.ScreenPosition.Y), viewportSize.Y / 2);
+		float curCamPitch = FMath::Abs(camRot.Rotator().Pitch);
+		float maxCursorHeight = FMath::GetMappedRangeValueClamped(OrbitDriftPitchRange, maxCursorHeightRange, curCamPitch);
+		FVector2D centeredCursorPos(viewportSize.X / 2, FMath::Max(viewportSize.Y / 2, maxCursorHeight));
+
+		FVector orbitCamWorldOrigin, orbitCamWorldDir;
+		Controller->DeprojectScreenPositionToWorld(centeredCursorPos.X, centeredCursorPos.Y, orbitCamWorldOrigin, orbitCamWorldDir);
+		OrbitRelativeDir = camRot.UnrotateVector(orbitCamWorldDir);
+
+		// Determine the proxy target, from which we will determine the intended orbit distance and interpolate towards the true OrbitTarget,
+		// based on the intersection of the centered orbit direction and the plane on which the orbit target lies.
+		OrbitStartProxyTarget = FMath::RayPlaneIntersection(camPos, orbitCamWorldDir, FPlane(OrbitTarget, -orbitCamWorldDir));
 
 		OrbitZoomDistance = OrbitZoomTargetDistance = FVector::Dist(OrbitStartProxyTarget, camPos);
 		OrbitMovementElapsed = 0.0f;
@@ -315,7 +331,7 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 		}
 
 		FVector panOriginTarget = cursor.WorldPosition;
-		ViewportClient->Viewport->GetMousePos(PanLastMousePos, true);
+		PanLastMousePos = cursor.ScreenPosition.IntPoint();
 
 		FVector2D screenPosOrigin, offsetScreenPosRight, offsetScreenPosUp, screenOffsets;
 		if (Controller->ProjectWorldLocationToScreen(panOriginTarget, screenPosOrigin) &&
@@ -513,7 +529,7 @@ void UEditModelCameraController::UpdateOrbiting(float DeltaTime)
 	UpdateRotating(DeltaTime);
 
 	const FVector camPos = CamTransform.GetLocation();
-	const FVector newCamFwd = CamTransform.GetRotation().GetForwardVector();
+	const FVector orbitDir = CamTransform.GetRotation().RotateVector(OrbitRelativeDir);
 	
 	// Accumulate camera distance
 
@@ -540,7 +556,7 @@ void UEditModelCameraController::UpdateOrbiting(float DeltaTime)
 
 	// Lerp camera position based on original position and orbiting position
 	FVector lerpedOrbitTarget = FMath::Lerp(OrbitStartProxyTarget, OrbitTarget, orbitLerpProgress);
-	FVector newCamPos = lerpedOrbitTarget - (OrbitZoomDistance * newCamFwd);
+	FVector newCamPos = lerpedOrbitTarget - (OrbitZoomDistance * orbitDir);
 
 	// Set the final orbit camera transform
 	CamTransform.SetLocation(newCamPos);

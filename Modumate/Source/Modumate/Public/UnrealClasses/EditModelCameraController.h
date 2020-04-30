@@ -53,6 +53,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The maximum pitch, in degrees, that we allow the camera to reach while orbiting"))
 	float OrbitMaxPitch;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The range of (absolute value of) camera pitch values between which the orbit center will choose between the center and bottom of the screen"))
+	FVector2D OrbitDriftPitchRange;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "When orbiting around a position towards the bottom of the screen, the percentage of the viewport height we should clamp to"))
+	float OrbitCursorMaxHeightPCT;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The static mesh that is used to show the orbit target anchor"))
 	class UStaticMesh *OrbitAnchorMesh;
 
@@ -158,6 +164,10 @@ protected:
 
 	// Between each frame, the amount of distance (in percent of distance to the orbit target) that we want to zoom, while in ECameraMovementState::Orbiting
 	float OrbitZoomDeltaAccumulated;
+
+	// While orbiting, this is the relative direction from the camera's position to the orbit target. If the orbit target is intended for the center of the screen,
+	// then it would be FVector::ForwardVector, but if the orbit target is intended below the center, for example, then the Z value would be < 0.
+	FVector OrbitRelativeDir;
 
 	// Between each frame, the amount of yaw/pitch (in degrees) of movement that we want to apply to the camera, while in ECameraMovementState::Orbiting
 	FVector2D RotationDeltasAccumulated;
