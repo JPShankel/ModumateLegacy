@@ -290,7 +290,8 @@ struct FPortalPartOptionsSetDataTable : public FTableRowBase
 		FName Caster;
 };
 
-USTRUCT()
+
+USTRUCT() // To be deprecated with DDL 1.0, used for DDL 1.0 decision trees, renamed below
 struct FDecisionTreeDataTable : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY();
@@ -324,6 +325,42 @@ struct FDecisionTreeDataTable : public FTableRowBase
 
 	UPROPERTY(EditAnywhere)
 	FString C9;
+};
+
+USTRUCT() 
+struct FTenColumnTable : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY(EditAnywhere)
+		FString C0;
+
+	UPROPERTY(EditAnywhere)
+		FString C1;
+
+	UPROPERTY(EditAnywhere)
+		FString C2;
+
+	UPROPERTY(EditAnywhere)
+		FString C3;
+
+	UPROPERTY(EditAnywhere)
+		FString C4;
+
+	UPROPERTY(EditAnywhere)
+		FString C5;
+
+	UPROPERTY(EditAnywhere)
+		FString C6;
+
+	UPROPERTY(EditAnywhere)
+		FString C7;
+
+	UPROPERTY(EditAnywhere)
+		FString C8;
+
+	UPROPERTY(EditAnywhere)
+		FString C9;
 };
 
 USTRUCT()

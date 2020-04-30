@@ -429,7 +429,8 @@ namespace Modumate {
 
 			ECraftingResult GetDependentPresets(const FName &PresetID, TSet<FName> &OutPresets) const;
 
-			bool ParseScriptFile(const FString &FilePath, TArray<FString> &OutMessages);
+			ECraftingResult ReadDataTable(UDataTable *DataTable, TArray<FString> &OutMessages);
+			ECraftingResult ParseScriptFile(const FString &FilePath, TArray<FString> &OutMessages);
 
 			ECraftingResult GetInstanceDataAsPreset(const FCraftingTreeNodeInstanceSharedPtrConst &Instance, FCraftingTreeNodePreset &OutPreset) const;
 		};

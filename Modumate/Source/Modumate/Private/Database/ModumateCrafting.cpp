@@ -1123,7 +1123,164 @@ namespace Modumate {
 			return EObjectType::OTNone;
 		}
 
-		bool FCraftingPresetCollection::ParseScriptFile(const FString &FilePath, TArray<FString> &OutMessages)
+		ECraftingResult FCraftingPresetCollection::ReadDataTable(UDataTable *DataTable, TArray<FString> &OutMessages)
+		{
+			if (!ensureAlways(DataTable))
+			{
+				return ECraftingResult::Error;
+			}
+
+			enum ETableReadState
+			{
+				Neutral,
+				ReadingDefinition,
+				ReadingPresets,
+				ReadingLists
+			};
+
+			ETableReadState state = ETableReadState::Neutral;
+
+			FCraftingTreeNodeType nodeType;
+
+			TArray<FString> propertyTypes = { TEXT("PRIVATE"),TEXT("STRING"),TEXT("DIMENSION") };
+
+			TArray<FValueSpec> propList;
+
+			DataTable->ForeachRow<FTenColumnTable>(TEXT("FTenColumnTable"),
+				[this,&state, &nodeType, &OutMessages, &propList, propertyTypes](
+					const FName &Key,
+					const FTenColumnTable &data)
+			{
+				if (state == ETableReadState::Neutral)
+				{
+					if (!data.C0.IsEmpty())
+					{
+						nodeType.TypeName = *data.C0;
+						state = ETableReadState::ReadingDefinition;
+					}
+				}
+				else if (state == ETableReadState::ReadingDefinition)
+				{
+					if (data.C0.IsEmpty())
+					{
+						return;
+					}
+					if (propertyTypes.Contains(data.C0))
+					{
+						if (data.C1.IsEmpty() || data.C2.IsEmpty())
+						{
+							OutMessages.Add(FString::Printf(TEXT("Bad property format at %s"), *Key.ToString()));
+						}
+						else
+						{
+							FValueSpec spec(*data.C2);
+							nodeType.Properties.SetProperty(spec.Scope, spec.Name, TEXT(""));
+							if (data.C0 != TEXT("PRIVATE"))
+							{
+								nodeType.FormItemToProperty.Add(data.C1, spec.QN());
+							}
+						}
+					}
+					else if (data.C0 == TEXT("Presets"))
+					{
+						NodeDescriptors.Add(nodeType.TypeName, nodeType);
+						state = ETableReadState::ReadingPresets;
+					}
+				}
+				else if (state == ETableReadState::ReadingPresets)
+				{
+					if (data.C0 == TEXT("Lists"))
+					{
+						state = ETableReadState::ReadingLists;
+					}
+					else
+					if (data.C0 == TEXT("ID"))
+					{
+						propList = { 
+							FValueSpec(*data.C1),FValueSpec(*data.C2),FValueSpec(*data.C3),
+							FValueSpec(*data.C4),FValueSpec(*data.C5),FValueSpec(*data.C6),
+							FValueSpec(*data.C7),FValueSpec(*data.C8),FValueSpec(*data.C9) };
+
+					}
+					else if (data.C0.Mid(0, 2) != TEXT("--"))
+					{
+						if (propList.Num() == 0)
+						{
+							OutMessages.Add(FString::Printf(TEXT("No structure for preset at %s"), *Key.ToString()));
+						}
+
+						if (data.C0.IsEmpty())
+						{
+							return;
+						}
+
+						FCraftingTreeNodePreset newPreset;
+
+						if (nodeType.TypeName.IsNone())
+						{
+							OutMessages.Add(FString::Printf(TEXT("Found preset for unidentified node type %s"), *Key.ToString()));
+							return;
+						}
+
+						newPreset.NodeType = nodeType.TypeName;
+						newPreset.PresetID = *data.C0;
+
+						if (Presets.Contains(newPreset.PresetID))
+						{
+							OutMessages.Add(FString::Printf(TEXT("Preset %s redfined at %s"), *newPreset.PresetID.ToString(),*Key.ToString()));
+							return;
+						}
+
+						TArray<FString> values = { data.C1,data.C2,data.C3,data.C4,data.C5,data.C6,data.C7,data.C8,data.C9 };
+
+						for (int32 i = 0; i < values.Num(); ++i)
+						{
+							if (propList[i].Scope == EScope::None)
+							{
+								break;
+							}
+							if (nodeType.Properties.HasProperty(propList[i].Scope, propList[i].Name))
+							{
+								newPreset.Properties.SetProperty(propList[i].Scope, propList[i].Name, values[i]);
+							}
+							else
+							{
+								OutMessages.Add(FString::Printf(TEXT("Unidentified property for preset at %s"), *Key.ToString()));
+							}
+						}
+
+						Presets.Add(newPreset.PresetID, newPreset);
+					}
+				}
+				else if (state == ETableReadState::ReadingLists)
+				{
+					if (data.C0 == TEXT("ID"))
+					{
+						return;
+					}
+
+					if (data.C0.IsEmpty())
+					{
+						return;
+					}
+					
+					if (Lists.Contains(*data.C0))
+					{
+						OutMessages.Add(FString::Printf(TEXT("List %s redefined at %s"),*data.C0, *Key.ToString()));
+						return;
+					}
+
+					TArray<FString> stringMembers;
+					TArray<FName> nameMembers;
+					data.C2.ParseIntoArray(stringMembers, TEXT(","));
+					Algo::Transform(stringMembers, nameMembers, [](const FString &Member) {return *Member; });
+					Lists.Add(*data.C0, nameMembers);
+				}
+			});
+			return ECraftingResult::Success;
+		}
+
+		ECraftingResult FCraftingPresetCollection::ParseScriptFile(const FString &FilePath, TArray<FString> &OutMessages)
 		{
 			FModumateScriptProcessor compiler;
 
@@ -1615,7 +1772,7 @@ namespace Modumate {
 				return;
 			}, false);
 
-			return compiler.ParseFile(FilePath, [&OutMessages](const FString &msg) {OutMessages.Add(msg); });
+			return compiler.ParseFile(FilePath, [&OutMessages](const FString &msg) {OutMessages.Add(msg); }) ? ECraftingResult::Success : ECraftingResult::Error;
 		}
 } }
 

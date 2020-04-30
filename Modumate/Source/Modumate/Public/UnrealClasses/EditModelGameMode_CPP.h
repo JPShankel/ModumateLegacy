@@ -100,6 +100,8 @@ public:
 
 	Modumate::ModumateObjectDatabase *ObjectDatabase;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
+	UObjectLibrary* BIMTableLibrary;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* RoomConfigurationTable;

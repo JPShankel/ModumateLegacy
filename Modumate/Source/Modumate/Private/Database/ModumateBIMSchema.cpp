@@ -23,12 +23,20 @@ namespace Modumate {
 
 		FValueSpec::FValueSpec(EValueType InType, const FNameType &InQN) : Type(InType), Value(0)
 		{
-			TArray<FString> split;
-			InQN.ToString().ParseIntoArray(split, TEXT("."));
-			if (ensureAlways(split.Num() == 2))
+			if (InQN.IsNone())
 			{
-				Scope = ScopeFromName(*split[0]);
-				Name = *split[1];
+				Scope = EScope::None;
+				Name = NAME_None;
+			}
+			else
+			{
+				TArray<FString> split;
+				InQN.ToString().ParseIntoArray(split, TEXT("."));
+				if (ensureAlways(split.Num() == 2))
+				{
+					Scope = ScopeFromName(*split[0]);
+					Name = *split[1];
+				}
 			}
 		}
 

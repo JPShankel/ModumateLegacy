@@ -26,6 +26,8 @@ namespace Modumate
 
 		TSet<FName> KeyStore;
 
+		ECraftingResult ReadBIMTable(UDataTable *DataTable, BIM::FCraftingPresetCollection &Target);
+
 	public:
 		TMap<EToolMode, FAssemblyDataCollection > AssemblyDBs_DEPRECATED;
 
