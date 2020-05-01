@@ -64,7 +64,7 @@ namespace Modumate
 		int32 FindOverlappingFace(int32 AddedFaceID) const;
 		void FindOverlappingFaces(int32 AddedFaceID, TSet<int32> &OutOverlappingFaces) const;
 
-		bool TraverseFacesFromEdge(int32 OriginalEdgeID, TArray<TArray<int32>> &OutVertexIDs, FPlane InPlane = FPlane(EForceInit::ForceInitToZero)) const;
+		bool TraverseFacesFromEdge(int32 OriginalEdgeID, TArray<TArray<int32>> &OutVertexIDs) const;
 
 		static bool AlwaysPassPredicate(FSignedID GraphObjID) { return true; }
 		void TraverseFacesGeneric(const TSet<FSignedID> &StartingFaceIDs, TArray<FGraph3DTraversal> &OutTraversals,

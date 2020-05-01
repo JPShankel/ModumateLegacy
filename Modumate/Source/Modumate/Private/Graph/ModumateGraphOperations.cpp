@@ -313,9 +313,11 @@ namespace Modumate
 		int32 existingID;
 		bool bFoundSplit = false;
 
+		bool bHasPlaneConstraint = !InPlane.Equals(FPlane(EForceInit::ForceInitToZero));
+
 		// subdivide faces
 		TArray <TArray<int32>> outFaceVertices;
-		Graph->TraverseFacesFromEdge(EdgeID, outFaceVertices, InPlane);
+		Graph->TraverseFacesFromEdge(EdgeID, outFaceVertices);
 		TMap<int32, TArray<int32>> oldToNewFaceIDs;
 		TSet<int32> oldFaces;
 
@@ -331,15 +333,20 @@ namespace Modumate
 			}
 
 			Graph->ApplyDelta(faceDelta);
+			bool bAddedToDeltas = false;
+			auto newFace = Graph->FindFace(addedFaceID);
+
 			TSet<int32> coincidentFaceIDs;
 			Graph->FindOverlappingFaces(addedFaceID, coincidentFaceIDs);
-			if (coincidentFaceIDs.Num() == 0)
+
+			// If the plane is constrained (used when a face is added) only add the new faces that are found if they are subdividing another face
+			if (coincidentFaceIDs.Num() == 0 && (!bHasPlaneConstraint || FVector::Parallel(newFace->CachedPlane, InPlane, PLANAR_DOT_EPSILON)))
 			{
 				OutDeltas.Add(faceDelta);
+				bAddedToDeltas = true;
 			}
 			else
 			{
-				auto newFace = Graph->FindFace(addedFaceID);
 				float minArea = BIG_NUMBER;
 
 				int32 coincidentFaceID = MOD_ID_NONE;
@@ -376,20 +383,15 @@ namespace Modumate
 						oldFaces.Add(coincidentFaceID);
 						TArray<int32> &faceIDs = oldToNewFaceIDs.FindOrAdd(coincidentFaceID);
 						faceIDs.Add(addedFaceID);
-					}
-					else
-					{
-						// TODO: version of MakeInverse that doesn't require cast
-						TSharedPtr<FGraph3DDelta> delta = StaticCastSharedPtr<FGraph3DDelta>(faceDelta.MakeInverse());
-						Graph->ApplyDelta(*delta);
+						bAddedToDeltas = true;
 					}
 				}
-				else
-				{
-					// TODO: version of MakeInverse that doesn't require cast
-					TSharedPtr<FGraph3DDelta> delta = StaticCastSharedPtr<FGraph3DDelta>(faceDelta.MakeInverse());
-					Graph->ApplyDelta(*delta);
-				}
+			}
+			if (!bAddedToDeltas)
+			{
+				// TODO: version of MakeInverse that doesn't require cast
+				TSharedPtr<FGraph3DDelta> delta = StaticCastSharedPtr<FGraph3DDelta>(faceDelta.MakeInverse());
+				Graph->ApplyDelta(*delta);
 			}
 		}
 

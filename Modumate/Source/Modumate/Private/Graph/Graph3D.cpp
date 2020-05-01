@@ -713,18 +713,10 @@ namespace Modumate
 		return MOD_ID_NONE;
 	}
 
-	bool FGraph3D::TraverseFacesFromEdge(int32 OriginalEdgeID, TArray<TArray<int32>> &OutVertexIDs, FPlane InPlane) const
+	bool FGraph3D::TraverseFacesFromEdge(int32 OriginalEdgeID, TArray<TArray<int32>> &OutVertexIDs) const
 	{
-		// A plane can be provided to force the search to only be on that plane
 		TArray<FPlane> planes;
-		if (InPlane.Equals(FPlane(ForceInitToZero)))
-		{
-			GetPlanesForEdge(OriginalEdgeID, planes);
-		}
-		else
-		{
-			planes = { InPlane };
-		}
+		GetPlanesForEdge(OriginalEdgeID, planes);
 
 		auto edge = FindEdge(OriginalEdgeID);
 		if (edge == nullptr)

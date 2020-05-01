@@ -456,7 +456,9 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphBasicMultiSplits, "Modumate.Graph.3D.BasicMultiSplits", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphBasicMultiSplits::RunTest(const FString& Parameters)
 	{
-		int32 numSplitFaces = 10;
+		// if this number gets much larger, this test takes long enough that it triggers warnings in other tests
+		// TODO: can this be run as a stress test elsewhere?
+		int32 numSplitFaces = 5;
 
 		FGraph3D graph;
 		FGraph3D tempGraph;
@@ -1098,6 +1100,68 @@ namespace Modumate
 		TestTrue(TEXT("edge 3"),
 			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, edgeVertices[2], edgeVertices[3], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 4, 13, 16);
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphFaceSubdivisionWithFaces, "Modumate.Graph.3D.FaceSubdivisionWithFaces", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphFaceSubdivisionWithFaces::RunTest(const FString& Parameters)
+	{
+		// original face setup
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> OutDeltas;
+		FGraph3DDelta OutDelta;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+		TArray<int32> OutEdgeIDs;
+
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(0.0f, 50.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(100.0f, 50.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f)
+		};
+
+		FVector offset = FVector(0.0f, 0.0f, 100.0f);
+
+		TestTrue(TEXT("Add first face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 6, 6);
+
+		// add some vertical faces around the perimeter
+		TestTrue(TEXT("Add vertical face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, { vertices[0], vertices[1], vertices[1] + offset, vertices[0] + offset }, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 8, 9);
+
+		TestTrue(TEXT("Add vertical face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, { vertices[1], vertices[2], vertices[2] + offset, vertices[1] + offset }, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 9, 11);
+
+		TestTrue(TEXT("Add vertical face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, { vertices[3], vertices[4], vertices[4] + offset, vertices[3] + offset }, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 4, 11, 14);
+
+		TestTrue(TEXT("Add vertical face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, { vertices[4], vertices[5], vertices[5] + offset, vertices[4] + offset }, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 5, 12, 16);
+		
+		// add vertical faces through the center
+		FVector middlePoint = FVector(50.0f, 60.0f, 0.0f);
+		TArray<FVector> middleVertices = { vertices[1], middlePoint, middlePoint + offset, vertices[1] + offset };
+
+		TestTrue(TEXT("Add middle face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, middleVertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 6, 14, 19);
+
+		// second vertical face should split first face
+		middleVertices = { vertices[4], middlePoint, middlePoint + offset, vertices[4] + offset };
+		TestTrue(TEXT("Add middle face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, middleVertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 8, 14, 21);
 
 		return true;
 	}
