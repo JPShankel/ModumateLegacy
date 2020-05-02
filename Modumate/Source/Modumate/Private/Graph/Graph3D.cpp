@@ -2,6 +2,7 @@
 
 #include "Graph3D.h"
 
+#include "Algo/Transform.h"
 #include "Graph3DDelta.h"
 
 #include "ModumateGraph.h"
@@ -1108,19 +1109,165 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::Create2DGraph(int32 startVertexID, const FPlane &CutPlane, FGraph &OutGraph) const
+	bool FGraph3D::Create2DGraph(TSet<int32> &VertexIDs, TSet<int32> &EdgeIDs, TSet<int32> &FaceIDs,
+		FGraph &OutGraph, bool bRequireConnected, bool bRequireComplete) const
+	{
+		FPlane sharedPlane(ForceInitToZero);
+
+		// First, try to get the shared plane by finding the common plane for the given faces, if they are given.
+		// Additionally, expand the sets of vertices and edges to include those that are part of the provided faces.
+		for (int32 faceID : FaceIDs)
+		{
+			const FGraph3DFace *face = FindFace(faceID);
+			if (!ensure(face))
+			{
+				return false;
+			}
+
+			if (sharedPlane.IsZero())
+			{
+				sharedPlane = face->CachedPlane;
+			}
+			else if (!face->CachedPlane.Equals(sharedPlane, PLANAR_DOT_EPSILON) &&
+				!face->CachedPlane.Equals(sharedPlane.Flip(), PLANAR_DOT_EPSILON))
+			{
+				return false;
+			}
+
+			VertexIDs.Append(face->VertexIDs);
+			Algo::Transform(face->EdgeIDs, EdgeIDs, [](const FSignedID &edgeID) { return FMath::Abs(edgeID); });
+		}
+
+		// Expand the sets of vertices to include those that are part of the provided edges.
+		for (int32 edgeID : EdgeIDs)
+		{
+			const FGraph3DEdge *edge = FindEdge(edgeID);
+			if (!ensure(edge))
+			{
+				return false;
+			}
+
+			VertexIDs.Add(edge->StartVertexID);
+			VertexIDs.Add(edge->EndVertexID);
+		}
+
+		// Find an initial vertex to use as a starting point for traversing a new Graph2D.
+		// Also, we may need to derive the shared plane from the provided vertex positions.
+		int32 initialVertexID = MOD_ID_NONE;
+		TArray<FVector> vertexPositions;
+		for (int32 vertexID : VertexIDs)
+		{
+			const FGraph3DVertex *vertex = FindVertex(vertexID);
+			if (!ensure(vertex))
+			{
+				return false;
+			}
+
+			if (initialVertexID == MOD_ID_NONE)
+			{
+				initialVertexID = vertexID;
+			}
+
+			vertexPositions.Add(vertex->Position);
+		}
+
+		// If we still haven't found a plane, then use the provided vertices to find one. Otherwise, we have no other means of finding a shared plane.
+		if (sharedPlane.IsZero())
+		{
+			bool bFoundPlane = UModumateGeometryStatics::GetPlaneFromPoints(vertexPositions, sharedPlane);
+			if (!bFoundPlane)
+			{
+				return false;
+			}
+		}
+
+		TSet<int32> whitelistIDs;
+		whitelistIDs.Append(VertexIDs);
+		whitelistIDs.Append(EdgeIDs);
+		whitelistIDs.Append(FaceIDs);
+
+		// Now that we've found a shared plane and have collected all of the graph objects that are part of the initially provided selection,
+		// go ahead and create a graph using these objects as a whitelist.
+		TMap<int32, int32> face3DToPoly2D;
+		bool bCreatedGraph = Create2DGraph(initialVertexID, sharedPlane, OutGraph, &whitelistIDs, &face3DToPoly2D);
+
+		if (!bCreatedGraph)
+		{
+			return false;
+		}
+
+		int32 numInteriorPolygons = 0, numExteriorPolygons = 0;
+		for (auto &kvp : OutGraph.GetPolygons())
+		{
+			const FGraphPolygon &polygon = kvp.Value;
+			if (polygon.bClosed)
+			{
+				if (polygon.bInterior)
+				{
+					++numInteriorPolygons;
+				}
+				else
+				{
+					++numExteriorPolygons;
+				}
+			}
+		}
+		bool bFullyConnected = (numExteriorPolygons == 1);
+
+		// Check the connected requirement, which detects if there are multiple exterior polygons that indicate disconnected graphs
+		if (bRequireConnected && !bFullyConnected)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to be fully connected, but it contains %d exterior polygons!"), numExteriorPolygons);
+			return false;
+		}
+
+		// Check the completeness requirement, which fails if there were any input 3D graph objects that didn't make it into the output 2D graph
+		if (bRequireComplete)
+		{
+			for (int32 faceID : FaceIDs)
+			{
+				if (!face3DToPoly2D.Contains(faceID))
+				{
+					UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Face #%d was missing!"), faceID);
+					return false;
+				}
+			}
+
+			for (int32 edgeID : EdgeIDs)
+			{
+				if (OutGraph.FindEdge(edgeID) == nullptr)
+				{
+					UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Edge #%d was missing!"), edgeID);
+					return false;
+				}
+			}
+
+			for (int32 vertexID : VertexIDs)
+			{
+				if (OutGraph.FindVertex(vertexID) == nullptr)
+				{
+					UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Vertex #%d was missing!"), vertexID);
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph &OutGraph, const TSet<int32> *WhitelistIDs, TMap<int32, int32> *OutFace3DToPoly2D) const
 	{
 		OutGraph.Reset();
 
 		TQueue<int32> frontierVertexIDs;
-		frontierVertexIDs.Enqueue(startVertexID);
+		frontierVertexIDs.Enqueue(StartVertexID);
 
-		TSet<int32> visitedVertexIDs;
+		TSet<int32> visitedVertexIDs, adjacentFaceIDs;
 
 		FVector Cached2DX, Cached2DY;
-		UModumateGeometryStatics::FindBasisVectors(Cached2DX, Cached2DY, CutPlane);
+		UModumateGeometryStatics::FindBasisVectors(Cached2DX, Cached2DY, Plane);
 
-		auto startVertex = FindVertex(startVertexID);
+		auto startVertex = FindVertex(StartVertexID);
 		if (startVertex == nullptr)
 		{
 			return false;
@@ -1146,17 +1293,22 @@ namespace Modumate
 
 			for (int32 edgeID : currentVertex->ConnectedEdgeIDs)
 			{
+				if (WhitelistIDs && !WhitelistIDs->Contains(FMath::Abs(edgeID)))
+				{
+					continue;
+				}
+
 				auto edge = FindEdge(edgeID);
 				int32 nextVertexID = (edge->StartVertexID == currentVertexID) ? edge->EndVertexID : edge->StartVertexID;
 
-				if (visitedVertexIDs.Contains(nextVertexID))
+				if (visitedVertexIDs.Contains(nextVertexID) || (WhitelistIDs && !WhitelistIDs->Contains(nextVertexID)))
 				{
 					continue;
 				}
 
 				auto nextVertex = FindVertex(nextVertexID);
 
-				bool distanceFromPlane = FMath::IsNearlyZero(CutPlane.PlaneDot(nextVertex->Position), Epsilon);
+				bool distanceFromPlane = FMath::IsNearlyZero(Plane.PlaneDot(nextVertex->Position), Epsilon);
 				if (!distanceFromPlane)
 				{
 					continue;
@@ -1177,10 +1329,20 @@ namespace Modumate
 				{
 					OutGraph.AddEdge(currentVertexID, nextVertexID, edgeID);
 				}
+
+				for (auto edgeFace : edge->ConnectedFaces)
+				{
+					adjacentFaceIDs.Add(FMath::Abs(edgeFace.FaceID));
+				}
 			}
 		}
 
 		OutGraph.CalculatePolygons();
+
+		if (OutFace3DToPoly2D && !Find2DGraphFaceMapping(adjacentFaceIDs, OutGraph, *OutFace3DToPoly2D))
+		{
+			return false;
+		}
 
 		return true;
 	}
@@ -1248,5 +1410,58 @@ namespace Modumate
 		}
 		
 		return false;
+	}
+
+	bool FGraph3D::Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const FGraph &Graph, TMap<int32, int32> &OutFace3DToPoly2D) const
+	{
+		const TMap<int32, FGraphPolygon> &graphPolys = Graph.GetPolygons();
+
+		// Compare 2D polygon vertex lists with 3D face vertex lists in order to create a mapping between the face IDs.
+		// Only consider interior, closed 2D polygons, since those are the only ones that can exist as 3D faces in the volume graph.
+		// TODO: cache faster unique comparison values that correspond to vertex IDs
+		TMap<int32, TArray<int32>> sortedVertsBy3DFace, sortedVertsBy2DPoly;
+		for (int32 faceID : FaceIDsToSearch)
+		{
+			auto *face = FindFace(faceID);
+			TArray<int32> sortedVerts(face->VertexIDs);
+			sortedVerts.Sort();
+			sortedVertsBy3DFace.Add(faceID, MoveTemp(sortedVerts));
+		}
+		for (auto &kvp : graphPolys)
+		{
+			int32 polyID = kvp.Key;
+			const FGraphPolygon &polygon = kvp.Value;
+			if (polygon.bClosed && polygon.bInterior)
+			{
+				TArray<int32> sortedVerts;
+				Algo::Transform(polygon.Edges, sortedVerts, [&Graph](const FEdgeID &EdgeID) {
+					const FGraphEdge *edge = Graph.FindEdge(EdgeID);
+					return (EdgeID > 0) ? edge->StartVertexID : edge->EndVertexID;
+				});
+				sortedVerts.Sort();
+				sortedVertsBy2DPoly.Add(polyID, MoveTemp(sortedVerts));
+			}
+		}
+
+		for (auto &poly2DKVP : sortedVertsBy2DPoly)
+		{
+			int32 polyID = poly2DKVP.Key;
+			for (auto &face3DKVP : sortedVertsBy3DFace)
+			{
+				int32 faceID = face3DKVP.Key;
+				if (poly2DKVP.Value == face3DKVP.Value)
+				{
+					// Make sure there's only one 2D poly for a given 3D face
+					if (!ensure(!OutFace3DToPoly2D.Contains(faceID)))
+					{
+						return false;
+					}
+
+					OutFace3DToPoly2D.Add(faceID, polyID);
+				}
+			}
+		}
+
+		return (OutFace3DToPoly2D.Num() == sortedVertsBy2DPoly.Num());
 	}
 }

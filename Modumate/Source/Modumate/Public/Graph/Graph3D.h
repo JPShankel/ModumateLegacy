@@ -78,11 +78,21 @@ namespace Modumate
 
 		bool GetPlanesForEdge(int32 OriginalEdgeID, TArray<FPlane> &OutPlanes) const;
 
-		// Create 2D graph representing the connecting set of vertices and edges that are on the cut plane and contain the starting vertex
-		bool Create2DGraph(int32 startVertexID, const FPlane &CutPlane, FGraph &OutGraph) const;
+		// Create 2D graph representing the connecting set of vertices and edges that are part of the given selection of 3D graph object IDs, and allows some requirements:
+		// bRequireConnected - that the graph is fully connected (only one exterior polygonal perimeter)
+		// bRequireComplete - there are no extra 3D graph objects supplied that don't correspond to a 2D graph object
+		bool Create2DGraph(TSet<int32> &VertexIDs, TSet<int32> &EdgeIDs, TSet<int32> &FaceIDs,
+			FGraph &OutGraph, bool bRequireConnected, bool bRequireComplete) const;
+
+		// Create 2D graph representing the connecting set of vertices and edges that are on the cut plane and contain the starting vertex,
+		// optionally only traversing the whitelisted IDs, if a set is provided, and optionally creating a mapping from 3D Face IDs to 2D Poly IDs
+		bool Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph &OutGraph, const TSet<int32> *WhitelistIDs = nullptr, TMap<int32, int32> *OutFace3DToPoly2D = nullptr) const;
 
 		// Create 2D graph representing faces, edges, and vertices that are sliced by the cut plane
 		bool Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, FGraph &OutGraph, TMap<int32, int32> &OutGraphIDToObjID) const;
+
+		// Find a mapping between this 3D graph's faces and the given 2D graph's polygons, assuming the underlying vertex IDs are the same.
+		bool Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const FGraph &Graph, TMap<int32, int32> &OutFace3DToPoly2D) const;
 
 		static void CloneFromGraph(FGraph3D &tempGraph, const FGraph3D &graph);
 

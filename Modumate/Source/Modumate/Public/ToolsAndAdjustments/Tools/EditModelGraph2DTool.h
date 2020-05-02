@@ -31,7 +31,4 @@ public:
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_GRAPH2D; }
 	virtual bool Activate() override;
 	virtual bool Deactivate() override;
-
-	static bool GetGraph2DFromObjs(const Modumate::FGraph3D &VolumeGraph, const TArray<Modumate::FModumateObjectInstance*> Objects,
-		FPlane &OutPlane, Modumate::FGraph &OutGraph, bool bRequireConnected = true);
 };
