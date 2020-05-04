@@ -157,7 +157,7 @@ namespace Modumate
 
 		static bool GetDeltaForVertexJoin(FGraph3D *Graph, FGraph3DDelta &OutDelta, int32 &NextID, int32 SavedVertexID, int32 RemovedVertexID);
 		static bool GetDeltaForEdgeJoin(FGraph3D *Graph, FGraph3DDelta &OutDelta, int32 &NextID, TPair<int32, int32> EdgeIDs);
-		static bool GetDeltaForFaceJoin(FGraph3D *Graph, FGraph3DDelta &OutDelta, const TArray<int32> &FaceIDs, int32 &NextID);
+		static bool GetDeltasForFaceJoin(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, const TArray<int32> &FaceIDs, int32 &NextID);
 		static bool GetSharedSeamForFaces(FGraph3D *Graph, const int32 FaceID, const int32 OtherFaceID, const int32 SharedIdx, int32 &SeamStartIdx, int32 &SeamEndIdx, int32 &SeamLength);
 	};
 }

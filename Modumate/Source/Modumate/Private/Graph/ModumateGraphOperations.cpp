@@ -3,6 +3,7 @@
 #include "Graph3D.h"
 
 #include "ModumateGeometryStatics.h"
+#include "ModumateGraph.h"
 
 #include "Graph3DDelta.h"
 
@@ -1121,7 +1122,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltaForFaceJoin(FGraph3D *Graph, FGraph3DDelta &OutDelta, const TArray<int32> &FaceIDs, int32 &NextID)
+	bool FGraph3D::GetDeltasForFaceJoin(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, const TArray<int32> &FaceIDs, int32 &NextID)
 	{
 		if (FaceIDs.Num() != 2)
 		{
@@ -1234,83 +1235,90 @@ namespace Modumate
 			}
 		}
 
-		// create a vertex ids loop for the new face resulting from the join by iterating through the 
-		// parts of each face that are not on the seam
-
-		// the directions of each edge on the seam are arbitrary, so the direction is always used to 
-		// choose either the start or end vertex id of an edge
-		auto startEdgeID = face->EdgeIDs[startIdx];
-		auto startEdge = Graph->FindEdge(startEdgeID);
-		int32 sharedStartVertexID = startEdgeID > 0 ? startEdge->StartVertexID : startEdge->EndVertexID;
-
-		auto endEdgeID = face->EdgeIDs[endIdx];
-		auto endEdge = Graph->FindEdge(endEdgeID);
-		int32 sharedEndVertexID = endEdgeID > 0 ? endEdge->EndVertexID : endEdge->StartVertexID;
-
-		TArray<int32> newVertexIDs;
-
-		// loop through the vertices on the first face not contained in the seam
-		int32 currentIdx = face->VertexIDs.Find(sharedEndVertexID);
-		while (true)
-		{
-			int32 currentID = face->VertexIDs[currentIdx];
-			if (currentID == sharedStartVertexID)
-			{
-				break;
-			}
-
-			newVertexIDs.Add(currentID);
-
-			currentIdx++;
-			currentIdx %= face->VertexIDs.Num();
-		}
-
-		// continue from where the previous loop ended, through the second face
-		currentIdx = otherFace->VertexIDs.Find(sharedStartVertexID);
-
-		// detect the direction of the iteration by attempting to iterate forward and determining whether
-		// the next vertex ID would be on the shared seam, and iterating in the opposite direction if it is
-		int32 nextIdx = (currentIdx + 1) % otherFace->VertexIDs.Num();
-		int32 nextID = otherFace->VertexIDs[nextIdx];
-		int32 secondFaceEndID = sharedEndVertexID;
-
-		int32 secondFaceIncrement = 1;
-		if (nextID == sharedEndVertexID || sharedVertexIDs.Find(nextID) != INDEX_NONE)
-		{
-			secondFaceIncrement = -1;
-		}
-			
-		while (true)
-		{
-			int32 currentID = otherFace->VertexIDs[currentIdx];
-			if (currentID == secondFaceEndID)
-			{
-				break;
-			}
-
-			newVertexIDs.Add(currentID);
-
-			currentIdx += secondFaceIncrement;
-			if (currentIdx < 0)
-			{
-				currentIdx = otherFace->VertexIDs.Num() - 1;
-			}
-			else
-			{
-				currentIdx %= otherFace->VertexIDs.Num();
-			}
-		}
-
 		// create deltas from adding the new face, deleting the old faces, 
 		// and deleting the vertices and edges contained in the shared seam
-		int32 ExistingID, addedID;
+		//int32 ExistingID, addedID;
+		TSet<int32> whiteListEdges;
+		for (int32 edgeID : face->EdgeIDs)
+		{
+			whiteListEdges.Add(FMath::Abs(edgeID));
+		}
+		for (int32 edgeID : otherFace->EdgeIDs)
+		{
+			whiteListEdges.Add(FMath::Abs(edgeID));
+		}
+		for (int32 edgeID : sharedEdgeIDs)
+		{
+			whiteListEdges.Remove(FMath::Abs(edgeID));
+		}
+		if (!ensureAlways(whiteListEdges.Num() >= 3))
+		{
+			return false;
+		}
+
+		int32 seedEdgeID = whiteListEdges.Array()[0];
+
+		FGraph3DDelta deleteDelta;
 		TArray<int32> parentFaceIDs = { face->ID, otherFace->ID };
+
+		GetDeltaForDeletions(Graph, sharedVertexIDs, sharedEdgeIDs, parentFaceIDs, deleteDelta);
+		Graph->ApplyDelta(deleteDelta);
+
+		// TODO: this kind of code may be useful somewhere else, and could be generalized to be 
+		// similar in use to GetDeltaForUpdateFaces
+		// only edges need to actually be calculated to use Create2DGraph
+		TSet<int32> whiteListVertices, whiteListFaces;
+		FGraph joinGraph;
+		TArray<int32> newFaceVertexIDs;
+		Graph->Create2DGraph(whiteListVertices, whiteListEdges, whiteListFaces, joinGraph, true, true);
+		for (auto &kvp : joinGraph.GetPolygons())
+		{
+			const FGraphPolygon &polygon = kvp.Value;
+			if (polygon.bClosed)
+			{
+				if (!polygon.bInterior)
+				{
+					for (int32 edgeID : polygon.Edges)
+					{
+						auto edge = joinGraph.FindEdge(edgeID);
+						int32 vertexID = edgeID < 0 ? edge->EndVertexID : edge->StartVertexID;
+						newFaceVertexIDs.Add(vertexID);
+					}
+					break;
+				}
+			}
+		}
+
+		FGraph3DDelta addFaceDelta;
+		int32 addedFaceID, existingID;
 		TMap<int32, int32> edgeMap;
-		GetDeltaForFaceAddition(Graph, newVertexIDs, OutDelta, NextID, ExistingID, parentFaceIDs, edgeMap, addedID);
-		GetDeltaForDeletions(Graph, sharedVertexIDs, sharedEdgeIDs, parentFaceIDs, OutDelta);
+		if (!Graph->GetDeltaForFaceAddition(Graph, newFaceVertexIDs, addFaceDelta, NextID, existingID, parentFaceIDs, edgeMap, addedFaceID))
+		{
+			return false;
+		}
+
+		TArray<int32> addedFaces;
+		addFaceDelta.FaceAdditions.GenerateKeyArray(addedFaces);
+		if (addedFaces.Num() != 1)
+		{
+			return false;
+		}
+
+		// Once the new face is added, update the deleted-face delta with the necessary face relationship
 		for (auto faceID : parentFaceIDs)
 		{
-			OutDelta.FaceDeletions[faceID].ParentObjIDs = { addedID };
+			deleteDelta.FaceDeletions[faceID].ParentObjIDs = { addedFaceID };
+		}
+		addFaceDelta.FaceAdditions[addedFaceID].ParentObjIDs = parentFaceIDs;
+
+		OutDeltas.Add(deleteDelta);
+
+		Graph->ApplyDelta(addFaceDelta);
+		OutDeltas.Add(addFaceDelta);
+
+		if (!GetDeltasForReduceEdges(Graph, OutDeltas, addedFaceID, NextID))
+		{
+			return false;
 		}
 
 		return true;
@@ -1320,29 +1328,7 @@ namespace Modumate
 	{
 		if (ObjectType == EGraph3DObjectType::Face)
 		{
-			FGraph3DDelta OutDelta;
-			if (!GetDeltaForFaceJoin(Graph, OutDelta, ObjectIDs, NextID))
-			{
-				return false;
-			}
-
-			Graph->ApplyDelta(OutDelta);
-			OutDeltas.Add(OutDelta);
-
-			TArray<int32> addedFaces;
-			OutDelta.FaceAdditions.GenerateKeyArray(addedFaces);
-
-			if (addedFaces.Num() != 1)
-			{
-				return false;
-			}
-
-			if (!GetDeltasForReduceEdges(Graph, OutDeltas, addedFaces[0], NextID))
-			{
-				return false;
-			}
-
-			return true;
+			return GetDeltasForFaceJoin(Graph, OutDeltas, ObjectIDs, NextID);
 		}
 		else if (ObjectType == EGraph3DObjectType::Edge)
 		{
