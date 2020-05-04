@@ -726,32 +726,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
-
-	RegisterCommand(kMakeStairs, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		GetDocument()->MakeStairs(GetWorld(), params.GetValue(kOrigin), params.GetValue(kProjection), params.GetValue(kHeight), params.GetValue(kWidth), params.GetValue(kParent));
-		return true;
-	});
-
-	RegisterCommand(kMakeStructureLine, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		FName assemblyKey = params.GetValue(Parameters::kAssembly);
-		int32 hostParentID = params.GetValue(Parameters::kParent);
-
-		UWorld *world = GetWorld();
-		AEditModelGameState_CPP *gameState = world ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
-		FModumateDocument *doc = gameState ? &gameState->Document : nullptr;
-		const FModumateObjectAssembly *assembly = gameState ? gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_STRUCTURELINE, assemblyKey) : nullptr;
-		int32 newObjID = MOD_ID_NONE;
-
-		if (doc && assembly)
-		{
-			newObjID = doc->MakeStructureLine(world, *assembly, hostParentID);
-		}
-
-		output.SetValue(kObjectID, newObjID);
-
-		return (newObjID != MOD_ID_NONE);
-	});
-
 	RegisterCommand(kInvertObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		TArray<int32> objIDs = params.GetValue(kObjectIDs);
@@ -774,32 +748,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		}
 		GetDocument()->TransverseObjects(curMOIs);
 		return true;
-	});
-
-	RegisterCommand(kMakeLineSegment, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		int32 objID = GetDocument()->CreateLineSegmentObject(GetWorld(), params.GetValue(kPoint1), params.GetValue(kPoint2), params.GetValue(kParent));
-		output.SetValue(kObjectID, objID);
-		return (objID != 0);
-	});
-
-	RegisterCommand(Commands::kAddFFE, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
-
-		FName assemblyKey = params.GetValue(Parameters::kAssembly);
-		FVector location = params.GetValue(Parameters::kLocation);
-		FRotator rotator = params.GetValue(Parameters::kRotator);
-		int32 parentID = params.GetValue(Parameters::kParent);
-		int32 parentFaceIdx = params.GetValue(Parameters::kIndex, INDEX_NONE);
-
-		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_PLACEOBJECT, assemblyKey);
-
-		if (assembly != nullptr)
-		{
-			GetDocument()->CreateFFE(GetWorld(), parentID, location, rotator.Quaternion(), *assembly, parentFaceIdx);
-			return true;
-		}
-		return false;
 	});
 
 	auto copySelected = [this]()
@@ -835,22 +783,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
-	RegisterCommand(kMakeCabinetFrame, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		Modumate::FModumateDocument *doc = &gameState->Document;
-
-		FName assemblyKey = params.GetValue(kAssembly);
-
-		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_CABINET, assemblyKey);
-
-		if (assembly != nullptr)
-		{
-			doc->MakeCabinetFrame(GetWorld(),params.GetValue(kControlPoints), params.GetValue(kHeight),*assembly, params.GetValue(kParent));
-			return true;
-		}
-		return false;
-	});
-
 	RegisterCommand(kGroup, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		if (params.GetValue(Parameters::kMake))
 		{
@@ -863,32 +795,6 @@ void UModumateGameInstance::RegisterAllCommands()
 			GetDocument()->UnmakeGroupObjects(GetWorld(), params.GetValue(kObjectIDs));
 		}
 		return true;
-	});
-
-	RegisterCommand(kLoadTestFile, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		FString filePath = FPaths::ProjectDir() / TestScriptRelativePath / params.GetValue(Parameters::kFilename);
-		GetDocument()->Load(GetWorld(), filePath,false);
-		return true;
-	});
-
-	RegisterCommand(kSmokeTest, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		FString filePath = FPaths::ProjectDir() / TestScriptRelativePath / FString(TEXT("smoketest.txt"));
-
-		TArray<FString> lines;
-		if (FFileHelper::LoadFileToStringArray(lines, *filePath))
-		{
-			for (auto &l : lines)
-			{
-				if (l.Len() > 0 && l[0] != TCHAR(';'))
-				{
-					DoModumateCommand(FModumateCommand::FromJSONString(l));
-				}
-			}
-
-			return true;
-		}
-
-		return false;
 	});
 
 	RegisterCommand(kDraft, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {

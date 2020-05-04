@@ -217,6 +217,9 @@ namespace Modumate
 
 	struct MODUMATE_API FMOIStateData
 	{
+		EMOIDeltaType StateType = EMOIDeltaType::Mutate;
+		int32 ObjectID = -1;
+
 		// TODO: use this for instance-level overrides
 		BIM::FBIMPropertySheet ObjectProperties;
 
@@ -227,8 +230,15 @@ namespace Modumate
 		TArray<int32> ControlIndices;
 		bool ObjectInverted = false;
 
+		FVector Location = FVector::ZeroVector;
+		FQuat Orientation = FQuat::Identity;
+
+		int32 ParentID = -1;
+
 		// Store key instead of whole assembly to avoid old versions of an assembly from being re-applied
 		FName ObjectAssemblyKey;
+
+		EObjectType ObjectType = EObjectType::OTNone;
 
 		// TODO: to be deprecated when Commands 2.0 is developed, meantime...
 		bool ToParameterSet(const FString &Prefix,FModumateFunctionParameterSet &OutParameterSet) const;
@@ -240,6 +250,9 @@ namespace Modumate
 	class MODUMATE_API FMOIDelta : public FDelta
 	{
 	public:
+
+		static FMOIDelta MakeCreateObjectDelta(const FMOIStateData &StateData);
+
 		virtual bool ApplyTo(FModumateDocument *doc, UWorld *world) const override;
 		virtual TSharedPtr<FDelta> MakeInverse() const override;
 
@@ -270,7 +283,6 @@ namespace Modumate
 		// First preset manager must become responsible for "trivial" assemblies used by abstract MOIs like metaplanes
 		FModumateObjectAssembly ObjectAssembly;
 
-		int32 Parent = 0;
 		TArray<int32> Children;
 		bool bDestroyed = false;
 		bool bHovered = false;
@@ -329,8 +341,8 @@ namespace Modumate
 
 		bool SetDataState(const FMOIStateData &DataState);
 
-		int32 GetParentID() const {return Parent;}
-		void SetParentID(int32 NewID) { Parent = NewID; }
+		int32 GetParentID() const;
+		void SetParentID(int32 NewID);
 
 		UWorld *GetWorld() const { return World.Get(); }
 		// Actor management

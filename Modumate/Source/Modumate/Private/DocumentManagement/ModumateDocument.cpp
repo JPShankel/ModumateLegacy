@@ -70,7 +70,6 @@ FModumateDocument::~FModumateDocument()
 {
 }
 
-
 void FModumateDocument::Undo(UWorld *world)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Undo"));
@@ -1344,34 +1343,83 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 
 	for (auto &kvp : Delta.TargetStateMap)
 	{
-		FModumateObjectInstance *MOI = GetObjectById(kvp.Key);
-
-		if (MOI == nullptr)
+		switch (kvp.Value.StateType)
 		{
-			return false;
-		}
+			case EMOIDeltaType::Create:
+			{
+				/*
+				TODO: consolidate all object creation code here
+				*/
+				EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(kvp.Value.ObjectType);
 
-		switch (MOI->GetObjectType())
-		{
-			case EObjectType::OTMetaPlane:
-				ensureAlwaysMsgf(false, TEXT("Illegal MOI type sent to ApplyMOIDelta"));
-				return false;
+				// No tool mode implies a line segment (used by multiple tools with no assembly)
+				// TODO: generalize assemblyless/tool modeless non-graph MOIs
+				const FModumateObjectAssembly *assembly = toolMode != EToolMode::VE_NONE ? PresetManager.GetAssemblyByKey(toolMode, kvp.Value.ObjectAssemblyKey) : nullptr;
+
+				// If we got an assembly, build the object with it, otherwise by type
+				FModumateObjectInstance *newInstance = (assembly != nullptr) ?
+					CreateOrRestoreObjFromAssembly(World, *assembly, kvp.Value.ObjectID, kvp.Value.ParentID, kvp.Value.Extents, &kvp.Value.ControlPoints, &kvp.Value.ControlIndices) :
+					CreateOrRestoreObjFromObjectType(World, kvp.Value.ObjectType, kvp.Value.ObjectID, kvp.Value.ParentID, FVector::ZeroVector, &kvp.Value.ControlPoints);
+
+				if (newInstance != nullptr)
+				{
+					if (NextID <= newInstance->ID)
+					{
+						NextID = newInstance->ID + 1;
+					}
+					newInstance->SetObjectLocation(kvp.Value.Location);
+					newInstance->SetObjectRotation(kvp.Value.Orientation);
+				}
+			}
+			break;
+
+			case EMOIDeltaType::Destroy:
+			{
+				FModumateObjectInstance *obj = GetObjectById(kvp.Value.ObjectID);
+				if (ensureAlways(obj != nullptr))
+				{
+					DeleteObjectImpl(obj);
+				}
+			}
+			break;
+
+			case EMOIDeltaType::Mutate:
+			{
+				FModumateObjectInstance *MOI = GetObjectById(kvp.Key);
+
+				if (!ensureAlways(MOI != nullptr))
+				{
+					return false;
+				}
+
+				switch (MOI->GetObjectType())
+				{
+				case EObjectType::OTMetaPlane:
+					ensureAlwaysMsgf(false, TEXT("Illegal MOI type sent to ApplyMOIDelta"));
+					return false;
+				};
+
+				const FMOIStateData *baseState = Delta.BaseStateMap.Find(kvp.Key);
+				if (!ensureAlwaysMsgf(baseState != nullptr, TEXT("Iconsistent MOI delta sent to ApplyMOIDelta")))
+				{
+					return false;
+				}
+
+				// TODO: refactor for delta-based Undo/Redo
+				// This function affects the undo/redo buffer so it can't be called from ApplyDeltas Redo()
+				if (kvp.Value.ObjectInverted != baseState->ObjectInverted)
+				{
+					MOI->InvertObject();
+				}
+
+				MOI->SetDataState(kvp.Value);
+			}
+			break;
+
+			default:
+				ensureAlways(false);
+			break;
 		};
-
-		const FMOIStateData *baseState = Delta.BaseStateMap.Find(kvp.Key);
-		if (!ensureAlwaysMsgf(baseState != nullptr, TEXT("Iconsistent MOI delta sent to ApplyMOIDelta")))
-		{
-			return false;
-		}
-
-		// TODO: refactor for delta-based Undo/Redo
-		// This function affects the undo/redo buffer so it can't be called from ApplyDeltas Redo()
-		if (kvp.Value.ObjectInverted != baseState->ObjectInverted)
-		{
-			MOI->InvertObject();
-		}
-
-		MOI->SetDataState(kvp.Value);
 	}
 
 	return true;
@@ -2999,87 +3047,6 @@ bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &D
 	return true;
 }
 
-int32 FModumateDocument::MakeStairs(UWorld *world, const FVector &runOrigin, const FVector &runProjection, float height, float width, int32 parentID)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeStairs"));
-	UndoRedo *ur = new UndoRedo();
-	ClearRedoBuffer();
-	int32 id = NextID++;
-
-	ur->Redo = [this, ur, id, world, runOrigin, runProjection, height, width, parentID]()
-	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeStairs::Redo"));
-
-		TArray<FVector> cps({ runOrigin, runProjection });
-		FModumateObjectInstance *newOb = CreateOrRestoreObjFromObjectType(world, EObjectType::OTStaircase,id, parentID, FVector(width, height, 0), &cps);
-
-		ur->Undo = [newOb, this]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeStairs::Undo"));
-			DeleteObjectImpl(newOb);
-		};
-	};
-	UndoBuffer.Add(ur);
-	ur->Redo();
-	return id;
-}
-
-int32 FModumateDocument::MakeStructureLine(
-	UWorld *World,
-	const FModumateObjectAssembly &Assembly,
-	int32 HostParentID)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeStructureLine"));
-
-	// Make sure the parent is an edge that can host a structure line
-	FModumateObjectInstance *hostParentObj = GetObjectById(HostParentID);
-	if ((hostParentObj == nullptr) || (hostParentObj->GetObjectType() != EObjectType::OTMetaEdge))
-	{
-		return MOD_ID_NONE;
-	}
-
-	// See if we just want to replace the assembly on an existing structure line
-	TArray<FModumateObjectInstance*> siblings = hostParentObj->GetChildObjects();
-	int32 existingStructureLineID = MOD_ID_NONE;
-	for (FModumateObjectInstance *sibling : siblings)
-	{
-		if (sibling && (sibling->GetObjectType() == EObjectType::OTStructureLine))
-		{
-			existingStructureLineID = sibling->ID;
-			break;
-		}
-	}
-
-	// Just replace the assembly, rather than make a new object
-	if (existingStructureLineID != MOD_ID_NONE)
-	{
-		SetAssemblyForObjects(World, TArray<int32>({ existingStructureLineID }), Assembly);
-		return existingStructureLineID;
-	}
-
-	// Otherwise, make a new structure line on the given host parent
-	UndoRedo *ur = new UndoRedo();
-	ClearRedoBuffer();
-	int32 id = NextID++;
-
-	ur->Redo = [this, ur, id, World, Assembly, HostParentID]()
-	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeStructureLine::Redo"));
-
-		FModumateObjectInstance *newObj = CreateOrRestoreObjFromAssembly(World, Assembly, id, HostParentID);
-
-		ur->Undo = [this, newObj]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeStructureLine::Undo"));
-			DeleteObjectImpl(newObj);
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
-
-	return id;
-}
 
 int32 FModumateDocument::MakeFinish(
 	UWorld *world,

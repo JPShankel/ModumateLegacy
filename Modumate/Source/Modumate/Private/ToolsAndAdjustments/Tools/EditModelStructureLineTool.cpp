@@ -428,16 +428,17 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 
 		if (parentEdgeObj && (parentEdgeObj->GetObjectType() == EObjectType::OTMetaEdge))
 		{
-			auto commandResult = Controller->ModumateCommand(
-				FModumateCommand(Modumate::Commands::kMakeStructureLine)
-				.Param(Parameters::kAssembly, Assembly.Key)
-				.Param(Parameters::kParent, targetEdgeID)
-			);
+			FMOIStateData stateData;
+			stateData.ObjectType = EObjectType::OTStructureLine;
+			stateData.ObjectAssemblyKey = Assembly.Key;
+			stateData.ParentID = targetEdgeID;
+			stateData.ObjectID = GameState->Document.GetNextAvailableID();
 
-			bool bCommandSuccess = commandResult.GetValue(Parameters::kSuccess);
-			int32 newStructureLineID = commandResult.GetValue(Parameters::kObjectID);
+			FMOIDelta delta = FMOIDelta::MakeCreateObjectDelta(stateData);
 
-			if (!bCommandSuccess || (newStructureLineID == MOD_ID_NONE))
+			auto commandResult = Controller->ModumateCommand(delta.AsCommand());
+
+			if (!commandResult.GetValue(Parameters::kSuccess).AsBool())
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Failed to create StructureLine on edge ID %d!"), targetEdgeID);
 				bAnyFailure = true;

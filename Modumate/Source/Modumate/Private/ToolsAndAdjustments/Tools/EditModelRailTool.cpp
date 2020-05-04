@@ -58,12 +58,15 @@ bool URailTool::EnterNextStage()
 	{
 		FVector hitLoc = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
 
+		// TODO: refactor for MOI delta when rail tool is reactivated
+#if 0
 		Controller->ModumateCommand(
 			FModumateCommand(Modumate::Commands::kMakeLineSegment)
 			.Param(Parameters::kPoint1, PendingSegment->Point1)
 			.Param(Parameters::kPoint2, hitLoc)
 			.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
 		);
+#endif
 
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, (hitLoc - PendingSegment->Point1).GetSafeNormal());
 
@@ -145,12 +148,15 @@ bool URailTool::HandleInputNumber(double n)
 	}
 	FVector dir = (PendingSegment->Point2 - PendingSegment->Point1).GetSafeNormal() * n;
 
+	// TODO: refactor for MOI delta when rail tool is reactivated
+#if 0
 	Controller->ModumateCommand(
 		FModumateCommand(Modumate::Commands::kMakeLineSegment)
 		.Param(Parameters::kPoint1, PendingSegment->Point1)
 		.Param(Parameters::kPoint2, PendingSegment->Point1 + dir)
 		.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
 	);
+#endif
 
 	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(PendingSegment->Point1 + dir, dir.GetSafeNormal());
 

@@ -80,7 +80,6 @@ namespace Modumate
 		: World(world)
 		, Document(doc)
 		, ObjectAssembly()
-		, Parent(0)
 		, bDestroyed(false)
 	{
 		if (world == nullptr)
@@ -123,7 +122,7 @@ namespace Modumate
 		MakeActor(obRec.Location, obRec.Rotation.Quaternion());
 
 		CurrentState.Extents = obRec.Extents;
-		Parent = obRec.ParentID;
+		CurrentState.ParentID = obRec.ParentID;
 		CurrentState.ControlPoints = obRec.ControlPoints;
 		CurrentState.ControlIndices = obRec.ControlIndices;
 		CurrentState.ObjectProperties.FromStringMap(obRec.ObjectProperties);
@@ -240,9 +239,9 @@ namespace Modumate
 	void FModumateObjectInstance::SetParentObject(FModumateObjectInstance *newParentObj, bool bForceUpdate)
 	{
 		int32 newParentID = newParentObj ? newParentObj->ID : 0;
-		if ((Parent != newParentID) || bForceUpdate)
+		if ((GetParentID() != newParentID) || bForceUpdate)
 		{
-			FModumateObjectInstance *oldParent = Document->GetObjectById(Parent);
+			FModumateObjectInstance *oldParent = Document->GetObjectById(GetParentID());
 			if (oldParent != nullptr)
 			{
 				oldParent->RemoveChild(this, false);
@@ -251,9 +250,9 @@ namespace Modumate
 			{
 				newParentObj->AddChild(this, false);
 			}
-			if (Parent != newParentID)
+			if (GetParentID() != newParentID)
 			{
-				Parent = newParentID;
+				SetParentID(newParentID);
 			}
 
 			MarkDirty(EObjectDirtyFlags::Structure);
@@ -262,12 +261,12 @@ namespace Modumate
 
 	FModumateObjectInstance *FModumateObjectInstance::GetParentObject()
 	{
-		return Document->GetObjectById(Parent);
+		return Document->GetObjectById(GetParentID());
 	}
 
 	const FModumateObjectInstance *FModumateObjectInstance::GetParentObject() const
 	{
-		return Document->GetObjectById(Parent);
+		return Document->GetObjectById(GetParentID());
 	}
 
 	TArray<FModumateObjectInstance *> FModumateObjectInstance::GetChildObjects()
@@ -294,7 +293,7 @@ namespace Modumate
 	{
 		if (child)
 		{
-			if (child->Parent == ID)
+			if (child->GetParentID() == ID)
 			{
 				return false;
 			}
@@ -304,7 +303,7 @@ namespace Modumate
 				oldParent->RemoveChild(child, bUpdateChildHierarchy);
 			}
 
-			child->Parent = ID;
+			child->SetParentID(ID);
 
 			if (Children.AddUnique(child->ID) != INDEX_NONE)
 			{
@@ -326,12 +325,12 @@ namespace Modumate
 	{
 		if (child)
 		{
-			if (child->Parent != ID)
+			if (child->GetParentID() != ID)
 			{
 				return false;
 			}
 
-			child->Parent = 0;
+			child->SetParentID(MOD_ID_NONE);
 
 			if (Children.Remove(child->ID) > 0)
 			{
@@ -618,9 +617,9 @@ namespace Modumate
 			// If we have a parent assigned, then by assume that
 			// it needs to be exist and be clean before we can clean ourselves.
 			// NOTE: this is expected if we try to clean children before parents, like during loading.
-			if (Parent != MOD_ID_NONE)
+			if (GetParentID() != MOD_ID_NONE)
 			{
-				const FModumateObjectInstance *parentObj = Document->GetObjectById(Parent);
+				const FModumateObjectInstance *parentObj = Document->GetObjectById(GetParentID());
 				if ((parentObj == nullptr) || parentObj->IsDirty(DirtyFlag))
 				{
 					bValidObjectToClean = false;
@@ -690,6 +689,20 @@ namespace Modumate
 		return command;
 	}
 
+	FMOIDelta FMOIDelta::MakeCreateObjectDelta(const FMOIStateData &StateData)
+	{
+		FMOIDelta createObjectDelta;
+		FMOIStateData createDestroyState = StateData;
+		
+		createDestroyState.StateType = EMOIDeltaType::Create;
+		createObjectDelta.TargetStateMap.Add(StateData.ObjectID, createDestroyState);
+
+		createDestroyState.StateType = EMOIDeltaType::Destroy;
+		createObjectDelta.BaseStateMap.Add(StateData.ObjectID, createDestroyState);
+
+		return createObjectDelta;
+	}
+
 	bool FMOIStateData::ToParameterSet(const FString &Prefix, FModumateFunctionParameterSet &OutParameterSet) const
 	{
 		TMap<FString, FString> propertyMap;
@@ -711,6 +724,12 @@ namespace Modumate
 		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kIndices, ControlIndices);
 		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kInverted, ObjectInverted);
 		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kAssembly, ObjectAssemblyKey);
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kParent, ParentID);
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kLocation, Location);
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kQuaternion, Orientation);
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kType, EnumValueString(EMOIDeltaType,StateType));
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kObjectType, EnumValueString(EObjectType, ObjectType));
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kObjectID, ObjectID);
 
 		return true;
 	}
@@ -739,6 +758,12 @@ namespace Modumate
 		ControlIndices = ParameterSet.GetValue(Prefix + Modumate::Parameters::kIndices);
 		ObjectInverted = ParameterSet.GetValue(Prefix + Modumate::Parameters::kInverted);
 		ObjectAssemblyKey = ParameterSet.GetValue(Prefix + Modumate::Parameters::kAssembly);
+		ParentID = ParameterSet.GetValue(Prefix + Modumate::Parameters::kParent);
+		Location = ParameterSet.GetValue(Prefix + Modumate::Parameters::kLocation);
+		Orientation = ParameterSet.GetValue(Prefix + Modumate::Parameters::kQuaternion);
+		StateType = EnumValueByString(EMOIDeltaType,ParameterSet.GetValue(Prefix + Modumate::Parameters::kType).AsString());
+		ObjectID = ParameterSet.GetValue(Prefix + Modumate::Parameters::kObjectID);
+		ObjectType = EnumValueByString(EObjectType, ParameterSet.GetValue(Prefix + Modumate::Parameters::kObjectType).AsString());
 
 		return true;
 	}
@@ -761,8 +786,7 @@ namespace Modumate
 			return false;
 		}
 
-		OutParameterSet.SetValue(Modumate::Parameters::kObjectIDs, keys);
-
+		OutParameterSet.SetValue(Modumate::Parameters::kObjectIDs, keys);		
 		for (auto &key : keys)
 		{
 			const FMOIStateData *baseState = BaseStateMap.Find(key);
@@ -872,6 +896,16 @@ namespace Modumate
 	void FModumateObjectInstance::SetExtents(const FVector &NewExtents)
 	{
 		GetDataState().Extents = NewExtents;
+	}
+
+	int32 FModumateObjectInstance::GetParentID() const 
+	{ 
+		return GetDataState().ParentID;
+	}
+
+	void FModumateObjectInstance::SetParentID(int32 NewID) 
+	{ 
+		GetDataState().ParentID = NewID;
 	}
 
 	const FModumateObjectAssembly &FModumateObjectInstance::GetAssembly() const
@@ -1134,7 +1168,7 @@ namespace Modumate
 		ret.ID = ID;
 		ret.ObjectType = GetObjectType();
 		ret.AssemblyKey = ObjectAssembly.UniqueKey().ToString();
-		ret.ParentID = Parent;
+		ret.ParentID = GetParentID();
 		ret.ChildIDs = Children;
 		ret.Location = GetObjectLocation();
 		ret.Rotation = GetObjectRotation().Rotator();

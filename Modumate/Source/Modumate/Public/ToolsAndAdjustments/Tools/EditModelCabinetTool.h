@@ -33,6 +33,8 @@ private:
 	FVector LastPendingSegmentLoc = FVector::ZeroVector;
 	bool LastPendingSegmentLocValid = false;
 
+	void DoMakeLineSegmentCommand(const FVector &P1, const FVector &P2);
+
 public:
 	UCabinetTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 

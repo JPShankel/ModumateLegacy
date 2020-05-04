@@ -118,26 +118,27 @@ void UCountertopTool::HandleClick(const FVector &p)
 {
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	Modumate::FModumateDocument &doc = gameState->Document;
+	FMOIStateData state;
 
-	if (State == NewSegmentPending && PendingSegment.IsValid())
+	state.ControlPoints = { PendingSegment->Point1, p };
+	state.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
+	state.ObjectType = EObjectType::OTLineSegment;
+	state.ObjectID = doc.GetNextAvailableID();
+
+	FMOIDelta delta = FMOIDelta::MakeCreateObjectDelta(state);
+
+	Controller->ModumateCommand(delta.AsCommand());
+
+	if (Controller->TryMakePrismFromSegments(EObjectType::OTCountertop, Assembly.Key, Inverted))
 	{
-		Controller->ModumateCommand(
-			FModumateCommand(Commands::kMakeLineSegment)
-			.Param(Parameters::kPoint1, PendingSegment->Point1)
-			.Param(Parameters::kPoint2, p)
-			.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID()));
-
-		if (Controller->TryMakePrismFromSegments(EObjectType::OTCountertop, Assembly.Key, Inverted))
-		{
-			EndUse();
-		}
-		else
-		{
-			AnchorPointDegree = PendingSegment->Point1;
-			Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(p, FVector::UpVector, (PendingSegment->Point1 - PendingSegment->Point2).GetSafeNormal());
-			PendingSegment->Point1 = p;
-			PendingSegment->Point2 = p;
-		}
+		EndUse();
+	}
+	else
+	{
+		AnchorPointDegree = PendingSegment->Point1;
+		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(p, FVector::UpVector, (PendingSegment->Point1 - PendingSegment->Point2).GetSafeNormal());
+		PendingSegment->Point1 = p;
+		PendingSegment->Point2 = p;
 	}
 	SegmentsConformInvert();
 }

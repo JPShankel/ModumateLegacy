@@ -143,12 +143,18 @@ void URoofTool::HandleClick(const FVector &p)
 		Controller->ModumateCommand(FModumateCommand(Commands::kBeginUndoRedoMacro));
 
 		// Make the new line segment
-		int32 newLineID = Controller->ModumateCommand(
-			FModumateCommand(Commands::kMakeLineSegment)
-			.Param(Parameters::kPoint1, PendingSegment->Point1)
-			.Param(Parameters::kPoint2, p)
-			.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
-		).GetValue(Parameters::kObjectID);
+		int32 newLineID = doc.GetNextAvailableID();
+
+		FMOIStateData state;
+
+		state.ControlPoints = { PendingSegment->Point1, p };
+		state.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
+		state.ObjectType = EObjectType::OTLineSegment;
+		state.ObjectID = newLineID;
+
+		FMOIDelta delta = FMOIDelta::MakeCreateObjectDelta(state);
+
+		Controller->ModumateCommand(delta.AsCommand());
 
 		const FModumateObjectInstance *newLineObj = doc.GetObjectById(newLineID);
 

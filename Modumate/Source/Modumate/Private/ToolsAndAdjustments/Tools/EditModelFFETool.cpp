@@ -125,14 +125,19 @@ bool UPlaceObjectTool::BeginUse()
 	int32 parentID = hitMOI != nullptr ? hitMOI->ID : Controller->EMPlayerState->GetViewGroupObjectID();
 	int32 parentFaceIdx = UModumateObjectStatics::GetFaceIndexFromTargetHit(hitMOI, hitLoc, snappedCursor.HitNormal);
 
-	Controller->ModumateCommand(
-		FModumateCommand(Commands::kAddFFE)
-		.Param(Parameters::kAssembly, key)
-		.Param(Parameters::kLocation, hitLoc)
-		.Param(Parameters::kRotator, CursorCompoundMesh->GetActorRotation())
-		.Param(Parameters::kParent, parentID)
-		.Param(Parameters::kIndex, parentFaceIdx)
-	);
+	FMOIStateData state;
+
+	state.ControlIndices = { parentFaceIdx };
+	state.Location = hitLoc;
+	state.Orientation = CursorCompoundMesh->GetActorRotation().Quaternion();
+	state.ParentID = parentID;
+	state.ObjectAssemblyKey = key;
+	state.ObjectType = EObjectType::OTFurniture;
+	state.ObjectID = doc->GetNextAvailableID();
+
+	FMOIDelta delta = FMOIDelta::MakeCreateObjectDelta(state);
+
+	Controller->ModumateCommand(delta.AsCommand());
 
 	return true;
 }

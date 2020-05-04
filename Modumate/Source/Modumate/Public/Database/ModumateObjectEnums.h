@@ -58,6 +58,14 @@ static FORCEINLINE bool TryFindEnumValueByName(const TCHAR* TypeName, FName Name
 #define COLLISION_META_MOI			ECC_GameTraceChannel3 
 #define COLLISION_DECORATOR_MOI		ECC_GameTraceChannel4 
 
+UENUM()
+enum class EMOIDeltaType : uint8
+{
+	None = 0,
+	Mutate,
+	Create,
+	Destroy
+};
 
 UENUM()
 enum class EBIMValueType : uint8

@@ -15,8 +15,6 @@ namespace Modumate
 		// System commands
 		MODUMATE_COMMAND(kRunScript, "run_script");
 		MODUMATE_COMMAND(kMakeNew, "make_new");
-		MODUMATE_COMMAND(kLoadTestFile, "load_test_file");
-		MODUMATE_COMMAND(kSmokeTest, "smoketest");
 		MODUMATE_COMMAND(kDraft, "draft");
 		MODUMATE_COMMAND(kDebug, "debug");
 		MODUMATE_COMMAND(kValidateData, "validate_data");
@@ -33,18 +31,13 @@ namespace Modumate
 		MODUMATE_COMMAND(kSetFOV, "set_fov");
 
 		// Object creators
-		MODUMATE_COMMAND(kMakeRoom, "make_room");
 		MODUMATE_COMMAND(kAddDoor, "add_door");
 		MODUMATE_COMMAND(kAddWindow, "add_window");
 		MODUMATE_COMMAND(kAddFinish, "add_finish");
-		MODUMATE_COMMAND(kMakeLineSegment, "make_line_segment");
-		MODUMATE_COMMAND(kMakeCabinetFrame, "make_cabinet_frame");
-		MODUMATE_COMMAND(kMakeStairs, "make_stairs");
 		MODUMATE_COMMAND(kMakeRail, "make_rail");
 		MODUMATE_COMMAND(kMakeFloor, "make_floor");
 		MODUMATE_COMMAND(kMakeCountertop, "make_countertop");
 		MODUMATE_COMMAND(kMakeTrim, "make_trim");
-		MODUMATE_COMMAND(kAddFFE, "add_ffe");
 		MODUMATE_COMMAND(kMakeRoof, "make_roof");
 		MODUMATE_COMMAND(kMakeMetaVertex, "make_vertex");
 		MODUMATE_COMMAND(kMakeMetaEdge, "make_edge");
@@ -52,7 +45,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kMakeMetaPlaneHostedObj, "make_plane_hosted_obj");
 		MODUMATE_COMMAND(kMakeCutPlane, "make_cutplane");
 		MODUMATE_COMMAND(kMakeScopeBox, "make_scopebox");
-		MODUMATE_COMMAND(kMakeStructureLine, "make_structure_line");
 
 		// Groups
 		MODUMATE_COMMAND(kViewGroupObject, "view_group_object");

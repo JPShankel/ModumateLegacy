@@ -84,6 +84,10 @@ namespace Modumate
 		TSet<int32> HiddenObjectsID;
 		TArray<FModumateCameraView> SavedCameraViews;
 
+		// TODO: resolve how best to get IDs for created objects into MOI deltas
+		// For now, just ask what the next ID will be
+		int32 GetNextAvailableID() const { return NextID; }
+
 		// Document modifiers
 		int32 CreateFFE(UWorld *world, int32 parentID, const FVector &loc, const FQuat &rot, const FModumateObjectAssembly &obAsm, int32 parentFaceIdx = INDEX_NONE);
 
@@ -157,10 +161,6 @@ namespace Modumate
 
 		int32 MakeRailSection(UWorld *world, const TArray<int32> &ids, const TArray<FVector> &points, int32 parentID);
 		int32 MakeCabinetFrame(UWorld *world, const TArray<FVector> &points, float height, const FModumateObjectAssembly &cal, int32 parentID);
-
-		int32 MakeStairs(UWorld *world, const FVector &runOrigin, const FVector &runProjection, float height, float width, int32 parentID);
-
-		int32 MakeStructureLine(UWorld *World, const FModumateObjectAssembly &Assembly, int32 HostParentID);
 
 		int32 MakeGroupObject(UWorld *world, const TArray<int32> &ids, bool combineWithExistingGroups, int32 parentID);
 		void UnmakeGroupObjects(UWorld *world, const TArray<int32> &groupIds);

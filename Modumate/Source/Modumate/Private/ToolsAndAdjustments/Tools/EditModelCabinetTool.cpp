@@ -166,13 +166,7 @@ bool UCabinetTool::AbortUse()
 
 	for (auto &seg : BaseSegs)
 	{
-		Controller->ModumateCommand(
-			FModumateCommand(Modumate::Commands::kMakeLineSegment)
-			.Param(Modumate::Parameters::kAssembly,Assembly.Key)
-			.Param(Parameters::kPoint1, seg->Point1)
-			.Param(Parameters::kPoint2, seg->Point2)
-			.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
-		);
+		DoMakeLineSegmentCommand(seg->Point1, seg->Point2);
 	}
 
 	for (auto &seg : BaseSegs)
@@ -239,14 +233,7 @@ void UCabinetTool::HandleClick(const FVector &p)
 {
 	if (State == NewSegmentPending && PendingSegment != nullptr)
 	{
-
-		Controller->ModumateCommand(
-			FModumateCommand(Modumate::Commands::kMakeLineSegment)
-			.Param(Parameters::kPoint1, PendingSegment->Point1)
-			.Param(Parameters::kPoint2, p)
-			.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
-		);
-
+		DoMakeLineSegmentCommand(p, PendingSegment->Point1);
 
 		if (PendingSegment != nullptr)
 		{
@@ -280,15 +267,22 @@ bool UCabinetTool::EnterNextStage()
 		TArray<FVector> points;
 		Algo::Transform(BaseSegs,points,[](const ALineActor3D_CPP *seg) {return seg->Point1; });
 
+		FModumateDocument &doc = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+
 		float h = TopSegs[0]->Point1.Z - BaseSegs[0]->Point1.Z;
 
-		Controller->ModumateCommand(
-			FModumateCommand(Commands::kMakeCabinetFrame)
-			.Param(Parameters::kAssembly,Assembly.Key)
-			.Param(Parameters::kControlPoints, points)
-			.Param(Parameters::kHeight, h)
-			.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID())
-		);
+		FMOIStateData stateData;
+		stateData.ObjectType = EObjectType::OTCabinet;
+		stateData.ObjectAssemblyKey = Assembly.Key;
+		stateData.ControlPoints = points;
+		stateData.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
+		stateData.ObjectID = doc.GetNextAvailableID();
+		stateData.Extents = FVector(0, h, 0);
+
+		FMOIDelta delta = FMOIDelta::MakeCreateObjectDelta(stateData);
+
+		Controller->ModumateCommand(delta.AsCommand());
+		
 		return false;
 	}
 	return false;
@@ -343,3 +337,18 @@ void UCabinetTool::BeginSetHeightMode(const TArray<FVector> &basePoly)
 	State = SetHeight;
 }
 
+void UCabinetTool::DoMakeLineSegmentCommand(const FVector &P1, const FVector &P2)
+{
+	FModumateDocument &doc = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+
+	FMOIStateData state;
+
+	state.ControlPoints = { P1, P2 };
+	state.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
+	state.ObjectType = EObjectType::OTLineSegment;
+	state.ObjectID = doc.GetNextAvailableID();
+
+	FMOIDelta delta = FMOIDelta::MakeCreateObjectDelta(state);
+
+	Controller->ModumateCommand(delta.AsCommand());
+}
