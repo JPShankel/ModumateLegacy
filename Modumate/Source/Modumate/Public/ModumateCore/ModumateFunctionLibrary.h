@@ -166,14 +166,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
 	static bool PointInPoly2D(const FVector2D &p, const TArray<FVector2D> &poly);
 
-	// Get wall direction and corners as ModumateObjectInstance, access through doc from game state
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static void GetWallActorInfo(AActor* WallActor, AEditModelGameState_CPP* GameState, FVector& WallDirection, TArray<FVector>& WallCorners);
-
-	// Get control points from an actor's moi
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static TArray<FVector> GetMOIControlPointsFromActor(AActor* Actor, AEditModelGameState_CPP* GameState);
-
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static FVector2D RotateVector2D(const FVector2D &vec,float angle);
 

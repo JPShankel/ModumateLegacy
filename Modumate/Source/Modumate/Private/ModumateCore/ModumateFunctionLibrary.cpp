@@ -1117,36 +1117,6 @@ bool UModumateFunctionLibrary::IsVectorInArray(const TArray<FVector>& Array, con
 	return bResult;
 }
 
-void UModumateFunctionLibrary::GetWallActorInfo(AActor * WallActor, AEditModelGameState_CPP * GameState, FVector& WallDirection, TArray<FVector>& WallCorners)
-{
-	TArray<FVector> cornersArray;
-	if (WallActor != nullptr)
-	{
-		FModumateObjectInstance *moi = GameState->Document.ObjectFromActor(WallActor);
-		if (moi != nullptr)
-		{
-			WallDirection = moi->GetWallDirection();
-			for (int32 i = 0; i < 8; i++)
-			{
-				cornersArray.Add(moi->GetCorner(i));
-			}
-			WallCorners = cornersArray;
-		}
-	}
-
-}
-
-TArray<FVector> UModumateFunctionLibrary::GetMOIControlPointsFromActor(AActor * Actor, AEditModelGameState_CPP * GameState)
-{
-	TArray<FVector> moiControlPoints;
-	if (Actor != nullptr)
-	{
-		FModumateObjectInstance *moi = GameState->Document.ObjectFromActor(Actor);
-		moiControlPoints = moi->GetControlPoints();
-	}
-	return moiControlPoints;
-}
-
 FVector2D UModumateFunctionLibrary::RotateVector2D(const FVector2D &vec, float angle)
 {
 	float c = cosf(angle);
