@@ -32,10 +32,10 @@ using namespace Modumate::Parameters;
 using namespace Modumate;
 
 
+const FString UModumateGameInstance::TestScriptRelativePath(TEXT("TestScripts"));
 
 UModumateGameInstance::UModumateGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, TestScriptRelativePath(TEXT("TestScripts"))
 {}
 
 Modumate::FModumateDocument *UModumateGameInstance::GetDocument()

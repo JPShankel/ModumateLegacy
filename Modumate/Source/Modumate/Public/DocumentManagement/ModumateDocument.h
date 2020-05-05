@@ -206,10 +206,6 @@ namespace Modumate
 			int32 ID, int32 ParentID = 0, const FVector &Extents = FVector::ZeroVector,
 			const TArray<FVector> *CPS = nullptr, const TArray<int32> *CPI = nullptr);
 
-
-		void LoadVolumeGraph(const FGraph3DRecord &InGraph3DRecord);
-		void SaveVolumeGraph(FGraph3DRecord &OutGraph3DRecord) const;
-
 	public:
 		bool ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World);
 		void ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World);

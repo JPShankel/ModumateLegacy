@@ -10,6 +10,9 @@
 #include "Graph3DFace.h"
 #include "Graph3DPolyhedron.h"
 
+struct FGraph3DRecordV1;
+typedef FGraph3DRecordV1 FGraph3DRecord;
+
 namespace Modumate
 {
 	class FGraph;
@@ -95,6 +98,9 @@ namespace Modumate
 		bool Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const FGraph &Graph, TMap<int32, int32> &OutFace3DToPoly2D) const;
 
 		static void CloneFromGraph(FGraph3D &tempGraph, const FGraph3D &graph);
+
+		void Load(const FGraph3DRecord* InGraph3DRecord);
+		void Save(FGraph3DRecord* OutGraph3DRecord);
 
 		bool Validate();
 

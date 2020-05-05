@@ -1127,7 +1127,7 @@ namespace Modumate
 
 		FModumateDocumentHeader docHeader;
 		FMOIDocumentRecord docRecord;
-		if (ensure(FModumateSerializationStatics::TryReadModumateDocumentRecord(world, defaultAssemblyPath, docHeader, docRecord)))
+		if (ensure(FModumateSerializationStatics::TryReadModumateDocumentRecord(defaultAssemblyPath, docHeader, docRecord)))
 		{
 			PresetManager.CraftingPresetArray = docRecord.CraftingPresetArray;
 			PresetManager.CraftingNodePresets.FromDataRecords(docRecord.CraftingPresetArrayV2);

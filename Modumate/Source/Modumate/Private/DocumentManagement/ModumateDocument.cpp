@@ -1288,52 +1288,6 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
 	}
 }
 
-void FModumateDocument::LoadVolumeGraph(const FGraph3DRecord &InGraph3DRecord)
-{
-	VolumeGraph.Reset();
-
-	for (auto &kvp : InGraph3DRecord.Vertices)
-	{
-		VolumeGraph.AddVertex(kvp.Value.Position, kvp.Key, TSet<int32>());
-	}
-
-	for (auto &kvp : InGraph3DRecord.Edges)
-	{
-		VolumeGraph.AddEdge(kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Key, kvp.Value.GroupIDs);
-	}
-
-	for (auto &kvp : InGraph3DRecord.Faces)
-	{
-		VolumeGraph.AddFace(kvp.Value.VertexIDs, kvp.Key, kvp.Value.GroupIDs);
-	}
-
-	TArray<int32> cleanedVertices, cleanedEdges, cleanedFaces;
-	VolumeGraph.CleanGraph(cleanedVertices, cleanedEdges, cleanedFaces);
-
-	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
-}
-
-void FModumateDocument::SaveVolumeGraph(FGraph3DRecord &OutGraph3DRecord) const
-{
-	OutGraph3DRecord.Vertices.Reset();
-	for (auto &kvp : VolumeGraph.GetVertices())
-	{
-		OutGraph3DRecord.Vertices.Add(kvp.Key, { kvp.Key, kvp.Value.Position });
-	}
-
-	OutGraph3DRecord.Edges.Reset();
-	for (auto &kvp : VolumeGraph.GetEdges())
-	{
-		OutGraph3DRecord.Edges.Add(kvp.Key, { kvp.Key, kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Value.GroupIDs });
-	}
-
-	OutGraph3DRecord.Faces.Reset();
-	for (auto &kvp : VolumeGraph.GetFaces())
-	{
-		OutGraph3DRecord.Faces.Add(kvp.Key, { kvp.Key, kvp.Value.VertexIDs, kvp.Value.GroupIDs });
-	}
-}
-
 bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 {
 	if (!ensureAlwaysMsgf(Delta.BaseStateMap.Num() == Delta.TargetStateMap.Num(),TEXT("Invalid MOI Delta")))
@@ -3804,7 +3758,7 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 			}
 		);
 
-	SaveVolumeGraph(docRec.VolumeGraph);
+	VolumeGraph.Save(&docRec.VolumeGraph);
 
 	docRec.CameraViews = SavedCameraViews;
 
@@ -3863,7 +3817,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 	FModumateDocumentHeader docHeader;
 	FMOIDocumentRecord docRec;
 
-	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(world,path,docHeader, docRec))
+	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(path, docHeader, docRec))
 	{
 		DataCollection<FModumateObjectAssembly> *ffeDB = PresetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
 
@@ -3881,7 +3835,8 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.
-		LoadVolumeGraph(docRec.VolumeGraph);
+		VolumeGraph.Load(&docRec.VolumeGraph);
+		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 
 		SavedCameraViews = docRec.CameraViews;
 

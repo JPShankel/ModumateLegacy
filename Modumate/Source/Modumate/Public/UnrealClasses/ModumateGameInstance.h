@@ -176,8 +176,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UDraftingManager* DraftingManager;
 
-	UPROPERTY()
-	FString TestScriptRelativePath;
+	static const FString TestScriptRelativePath;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool RecoveringFromCrash = false;

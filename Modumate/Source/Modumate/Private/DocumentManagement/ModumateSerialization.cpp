@@ -40,7 +40,7 @@ FString FCustomAssemblyProperty::ToCompactString() const
 /*
 Used by Document::Load and the object database which uses a saved game as a proxy for a future cache of downloaded shopping assemblies
 */
-bool FModumateSerializationStatics::TryReadModumateDocumentRecord(UWorld *world, const FString &filePath, FModumateDocumentHeader &OutHeader, FMOIDocumentRecord &OutRecord)
+bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString &filePath, FModumateDocumentHeader &OutHeader, FMOIDocumentRecord &OutRecord)
 {
 	FString FileJsonString;
 	bool bLoadFileSuccess = FFileHelper::LoadFileToString(FileJsonString, *filePath);

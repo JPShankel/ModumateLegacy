@@ -1,9 +1,12 @@
 #include "CoreMinimal.h"
-#include "ModumateGraph.h"
+
 #include "Graph3D.h"
 #include "Graph3DDelta.h"
-#include "ModumateDelta.h"
 #include "JsonObjectConverter.h"
+#include "ModumateDelta.h"
+#include "ModumateGameInstance.h"
+#include "ModumateGraph.h"
+#include "ModumateSerialization.h"
 
 namespace Modumate
 {
@@ -307,6 +310,54 @@ namespace Modumate
 			Graph.GetDeltaForFaceAddition(&Graph, &TempGraph, vertices, OutDeltas, NextID, ExistingID));
 
 		ApplyDeltas(Test, Graph, TempGraph, OutDeltas);
+	}
+
+	bool LoadGraph(const FString &path, FGraph3D &OutGraph, int32 &NextID)
+	{
+		FString scenePathname = FPaths::ProjectDir() / UModumateGameInstance::TestScriptRelativePath / path;
+		FModumateDocumentHeader docHeader;
+		FMOIDocumentRecord docRec;
+
+		// TODO: potentially more of this document record could be used as well for some testing of the document,
+		// even with a null rhi
+		if (!FModumateSerializationStatics::TryReadModumateDocumentRecord(scenePathname, docHeader, docRec))
+		{
+			return false;
+		}
+
+		OutGraph.Load(&docRec.VolumeGraph);
+
+		// find max ID of an object in the graph, and set NextID to be greater than that
+		for (auto& kvp : OutGraph.GetFaces())
+		{
+			NextID = FMath::Max(NextID, kvp.Key);
+		}
+
+		for (auto& kvp : OutGraph.GetEdges())
+		{
+			NextID = FMath::Max(NextID, kvp.Key);
+		}
+
+		for (auto& kvp : OutGraph.GetVertices())
+		{
+			NextID = FMath::Max(NextID, kvp.Key);
+		}
+		NextID++;
+
+		return true;
+	}
+
+	// Add one face
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphLoad, "Modumate.Graph.3D.Load", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphLoad::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		int32 NextID = 1;
+	
+		TestTrue(TEXT("load file"), LoadGraph(TEXT("Graph/load-test.mdmt"), graph, NextID));
+		TestGraph(this, graph, 1, 4, 4);
+
+		return true;
 	}
 
 	// Add one face
@@ -1166,6 +1217,65 @@ namespace Modumate
 		return true;
 	}
 
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphInteriorWallSubdivision, "Modumate.Graph.3D.InteriorWallSubdivision", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphInteriorWallSubdivision::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> OutDeltas;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+	
+		int32 expectedFaces = 15;
+		int32 expectedVertices = 31;
+		int32 expectedEdges = 48;
+
+		// this file has a house with the exterior wall metaplanes and the floor metaplane created
+		// when drawing two walls across the floor connecting two corners of the exterior, make sure that the floor splits
+		TestTrue(TEXT("load file"), LoadGraph(TEXT("Graph/bug - interior walls not subdividing floor.mdmt"), graph, NextID));
+		TestGraph(this, graph, expectedFaces, expectedVertices, expectedEdges);
+		FGraph3D::CloneFromGraph(tempGraph, graph);
+
+		auto vertex1 = graph.FindVertex(14);
+		auto vertex2 = graph.FindVertex(91);
+		auto vertex3 = graph.FindVertex(15);
+
+		TestTrue(TEXT("vertex 1"), vertex1 != nullptr);
+		TestTrue(TEXT("vertex 2"), vertex2 != nullptr);
+		TestTrue(TEXT("vertex 3"), vertex3 != nullptr);
+
+		// new faces connect two exterior corners in a rectangular way
+		// corner1 is the bottom right, corner2 is the top left, new corners are added at the top right
+		FVector corner1 = vertex1->Position;
+		FVector corner2 = vertex2->Position;
+		float offsetZ = vertex3->Position.Z;
+		FVector cornert1 = FVector(corner1.X, corner1.Y, corner1.Z + offsetZ);
+		FVector cornert2 = FVector(corner2.X, corner2.Y, corner2.Z + offsetZ);
+		FVector newCorner = FVector(corner1.X, corner2.Y, corner1.Z);
+		FVector newCornerTop = FVector(corner1.X, corner2.Y, cornert1.Z);
+
+		TestTrue(TEXT("face one"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, { corner1, cornert1, newCornerTop, newCorner },OutDeltas, NextID, ExistingID));
+
+		expectedFaces += 1;
+		expectedVertices += 2;
+		expectedEdges += 3;
+		TestDeltas(this, OutDeltas, graph, tempGraph, expectedFaces, expectedVertices, expectedEdges);
+
+		//*
+		TestTrue(TEXT("face two, which should split the floor"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, { corner2, newCorner, newCornerTop, cornert2 },OutDeltas, NextID, ExistingID));
+
+		expectedFaces += 2;
+		expectedVertices += 0;
+		expectedEdges += 2;
+		TestDeltas(this, OutDeltas, graph, tempGraph, expectedFaces, expectedVertices, expectedEdges);
+		//*/
+
+		return true;
+	}
+
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphOverlappingFaces, "Modumate.Graph.3D.OverlappingFaces", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphOverlappingFaces::RunTest(const FString& Parameters)
 	{
@@ -1434,4 +1544,67 @@ namespace Modumate
 		return true;
 	}
 
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphJoinFacesSchool, "Modumate.Graph.3D.JoinFacesSchool", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphJoinFacesSchool::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> OutDeltas;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+	
+		int32 expectedFaces = 168;
+		int32 expectedVertices = 214;
+		int32 expectedEdges = 381;
+
+		TestTrue(TEXT("load file"), LoadGraph(TEXT("Graph/join_bug.mdmt"), graph, NextID));
+		TestGraph(this, graph, expectedFaces, expectedVertices, expectedEdges);
+		FGraph3D::CloneFromGraph(tempGraph, graph);
+
+		// this test file has a large face that is meant to be hexagonal.  To make it hexagonal, the two smaller
+		// faces need to be joined with it.
+		int32 bigJoinFaceID = 2455;
+		int32 smallJoinFaceID1 = 2451;
+		int32 smallJoinFaceID2 = 2430;
+
+		TestTrue(TEXT("join one"),
+			FGraph3D::GetDeltasForFaceJoin(&tempGraph, OutDeltas, { bigJoinFaceID, smallJoinFaceID1 }, NextID));
+
+		// verify there is one added face and find it
+		// TODO: potentially more functions to help verify the deletions as well
+		int32 addedFaceID = MOD_ID_NONE;
+		for (auto& delta : OutDeltas)
+		{
+			if (delta.FaceAdditions.Num() > 0)
+			{
+				TestTrue(TEXT("make sure face isn't assigned"), addedFaceID == MOD_ID_NONE);
+				TestTrue(TEXT("make sure only one face is added"), delta.FaceAdditions.Num() == 1);
+
+				for (auto& kvp : delta.FaceAdditions)
+				{
+					addedFaceID = kvp.Key;
+				}
+			}
+		}
+		TestTrue(TEXT("make sure face is assigned"), addedFaceID != MOD_ID_NONE);
+
+		expectedFaces -= 1;
+		expectedVertices -= 1;
+		expectedEdges -= 2;
+		TestDeltas(this, OutDeltas, graph, tempGraph, expectedFaces, expectedVertices, expectedEdges);
+
+		TestTrue(TEXT("join two"),
+			FGraph3D::GetDeltasForFaceJoin(&tempGraph, OutDeltas, { addedFaceID, smallJoinFaceID2 }, NextID));
+
+		expectedFaces -= 1;
+		expectedVertices -= 1;
+		expectedEdges -= 2;
+		TestDeltas(this, OutDeltas, graph, tempGraph, expectedFaces, expectedVertices, expectedEdges);
+
+		// the basic verification above was necessary to get the addedFaceID for the second join
+		// TODO: generalize/add verification methods that test added/removed objects and find their IDs
+
+		return true;
+	}
 }

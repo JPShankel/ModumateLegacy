@@ -429,5 +429,5 @@ namespace Modumate
 
 struct MODUMATE_API FModumateSerializationStatics
 {
-	static bool TryReadModumateDocumentRecord(UWorld *world,const FString &filePath, FModumateDocumentHeader &OutHeader, FMOIDocumentRecord &OutRecord);
+	static bool TryReadModumateDocumentRecord(const FString &filePath, FModumateDocumentHeader &OutHeader, FMOIDocumentRecord &OutRecord);
 };

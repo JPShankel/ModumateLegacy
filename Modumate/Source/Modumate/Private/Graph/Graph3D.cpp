@@ -9,6 +9,7 @@
 
 #include "ModumateFunctionLibrary.h"
 #include "ModumateGeometryStatics.h"
+#include "ModumateSerialization.h"
 
 namespace Modumate
 {
@@ -1029,6 +1030,50 @@ namespace Modumate
 		}
 
 		return true;
+	}
+
+	void FGraph3D::Load(const FGraph3DRecord* InGraph3DRecord)
+	{
+		Reset();
+
+		for (auto &kvp : InGraph3DRecord->Vertices)
+		{
+			AddVertex(kvp.Value.Position, kvp.Key, TSet<int32>());
+		}
+
+		for (auto &kvp : InGraph3DRecord->Edges)
+		{
+			AddEdge(kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Key, kvp.Value.GroupIDs);
+		}
+
+		for (auto &kvp : InGraph3DRecord->Faces)
+		{
+			AddFace(kvp.Value.VertexIDs, kvp.Key, kvp.Value.GroupIDs);
+		}
+		
+		TArray<int32> cleanedVertices, cleanedEdges, cleanedFaces;
+		CleanGraph(cleanedVertices, cleanedEdges, cleanedFaces);
+	}
+	
+	void FGraph3D::Save(FGraph3DRecord* OutGraph3DRecord)
+	{
+		OutGraph3DRecord->Vertices.Reset();
+		for (auto &kvp : Vertices)
+		{
+			OutGraph3DRecord->Vertices.Add(kvp.Key, { kvp.Key, kvp.Value.Position });
+		}
+
+		OutGraph3DRecord->Edges.Reset();
+		for (auto &kvp : Edges)
+		{
+			OutGraph3DRecord->Edges.Add(kvp.Key, { kvp.Key, kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Value.GroupIDs });
+		}
+
+		OutGraph3DRecord->Faces.Reset();
+		for (auto &kvp : Faces)
+		{
+			OutGraph3DRecord->Faces.Add(kvp.Key, { kvp.Key, kvp.Value.VertexIDs, kvp.Value.GroupIDs });
+		}
 	}
 
 	bool FGraph3D::GetPlanesForEdge(int32 OriginalEdgeID, TArray<FPlane> &OutPlanes) const
