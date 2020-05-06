@@ -354,7 +354,11 @@ namespace Modumate
 		FGraph3D graph;
 		int32 NextID = 1;
 	
-		TestTrue(TEXT("load file"), LoadGraph(TEXT("Graph/load-test.mdmt"), graph, NextID));
+		if (!LoadGraph(TEXT("Graph/load-test.mdmt"), graph, NextID))
+		{
+			return false;
+		}
+
 		TestGraph(this, graph, 1, 4, 4);
 
 		return true;
@@ -1233,7 +1237,11 @@ namespace Modumate
 
 		// this file has a house with the exterior wall metaplanes and the floor metaplane created
 		// when drawing two walls across the floor connecting two corners of the exterior, make sure that the floor splits
-		TestTrue(TEXT("load file"), LoadGraph(TEXT("Graph/bug - interior walls not subdividing floor.mdmt"), graph, NextID));
+		if (!LoadGraph(TEXT("Graph/bug - interior walls not subdividing floor.mdmt"), graph, NextID))
+		{
+			return false;
+		}
+
 		TestGraph(this, graph, expectedFaces, expectedVertices, expectedEdges);
 		FGraph3D::CloneFromGraph(tempGraph, graph);
 
@@ -1244,6 +1252,11 @@ namespace Modumate
 		TestTrue(TEXT("vertex 1"), vertex1 != nullptr);
 		TestTrue(TEXT("vertex 2"), vertex2 != nullptr);
 		TestTrue(TEXT("vertex 3"), vertex3 != nullptr);
+
+		if (vertex1 == nullptr || vertex2 == nullptr || vertex3 == nullptr)
+		{
+			return false;
+		}
 
 		// new faces connect two exterior corners in a rectangular way
 		// corner1 is the bottom right, corner2 is the top left, new corners are added at the top right
@@ -1558,7 +1571,10 @@ namespace Modumate
 		int32 expectedVertices = 214;
 		int32 expectedEdges = 381;
 
-		TestTrue(TEXT("load file"), LoadGraph(TEXT("Graph/join_bug.mdmt"), graph, NextID));
+		if (!LoadGraph(TEXT("Graph/join_bug.mdmt"), graph, NextID))
+		{
+			return false;
+		}
 		TestGraph(this, graph, expectedFaces, expectedVertices, expectedEdges);
 		FGraph3D::CloneFromGraph(tempGraph, graph);
 
@@ -1567,6 +1583,10 @@ namespace Modumate
 		int32 bigJoinFaceID = 2455;
 		int32 smallJoinFaceID1 = 2451;
 		int32 smallJoinFaceID2 = 2430;
+		if (graph.FindFace(bigJoinFaceID) == nullptr || graph.FindFace(smallJoinFaceID2) == nullptr || graph.FindFace(smallJoinFaceID1))
+		{
+			return false;
+		}
 
 		TestTrue(TEXT("join one"),
 			FGraph3D::GetDeltasForFaceJoin(&tempGraph, OutDeltas, { bigJoinFaceID, smallJoinFaceID1 }, NextID));
