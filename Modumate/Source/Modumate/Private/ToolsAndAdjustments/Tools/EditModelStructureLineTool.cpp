@@ -8,7 +8,7 @@
 #include "EditModelGameMode_CPP.h"
 #include "EditModelGameState_CPP.h"
 #include "Graph3D.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ModumateDocument.h"
 #include "ModumateCommands.h"
 #include "ModumateStairStatics.h"
@@ -112,15 +112,13 @@ bool UStructureLineTool::BeginUse()
 
 		if (!PendingSegment.IsValid())
 		{
-			PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
+			PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
 		}
 
 		PendingSegment->Point1 = LineStartPos;
 		PendingSegment->Point2 = LineStartPos;
 		PendingSegment->Color = FColor::White;
 		PendingSegment->Thickness = 2;
-		PendingSegment->Inverted = false;
-		PendingSegment->bDrawVerticalPlane = false;
 	}
 	break;
 	case EToolCreateObjectMode::Apply:

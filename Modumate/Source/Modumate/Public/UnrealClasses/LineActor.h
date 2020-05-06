@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ModumateTypes.h"
 #include "ModumateShoppingItem.h"
-#include "LineActor3D_CPP.generated.h"
+#include "LineActor.generated.h"
 
 class AEditModelPlayerState_CPP;
 class AEditModelGameMode_CPP;
@@ -16,13 +16,13 @@ class UMaterialInstanceDynamic;
 class AEditModelGameState_CPP;
 
 UCLASS()
-class MODUMATE_API ALineActor3D_CPP : public AActor
+class MODUMATE_API ALineActor : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	ALineActor3D_CPP(const FObjectInitializer& ObjectInitializer);
+	ALineActor(const FObjectInitializer& ObjectInitializer);
 
 protected:
 	// Called when the game starts or when spawned
@@ -71,25 +71,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drawing")
 	float Thickness = 1.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drawing")
-	bool AntiAliasing = false; // Turning this on will have thickness = 0
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drawing")
-	bool IsAnchor = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drawing")
-	bool ScreenSize = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drawing")
-	bool Inverted = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drawing")
-	bool bDrawVerticalPlane = true;
-
-	UFUNCTION(BlueprintImplementableEvent, Category = "Tools")
-	void OnDrawVerticalPreview();
-
-	void UpdateVerticalPlane(FShoppingItem shopItem);
-	void UpdateVerticalPlaneFromToolModeShopItem();
 	void UpdateMetaEdgeVisuals(bool bConnected, float ThicknessMultiplier = 1.0f);
 };

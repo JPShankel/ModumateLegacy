@@ -6,7 +6,7 @@
 #include "HAL/FileManager.h"
 #include "EditModelToolInterface.h"
 #include "Kismet/GameplayStatics.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "MOIGroupActor_CPP.h"
 #include "ModumateObjectDatabase.h"
 #include "PortalFrameActor_CPP.h"

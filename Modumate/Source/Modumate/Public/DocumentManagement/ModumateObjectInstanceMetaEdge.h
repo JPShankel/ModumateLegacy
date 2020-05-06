@@ -7,7 +7,7 @@
 
 class UWorld;
 class AAdjustmentHandleActor_CPP;
-class ALineActor3D_CPP;
+class ALineActor;
 
 namespace Modumate
 {
@@ -44,7 +44,7 @@ namespace Modumate
 		TWeakObjectPtr<UWorld> World;
 		TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>> AdjustmentHandles;
 		TArray<FModumateObjectInstance*> CachedConnectedMOIs;
-		TWeakObjectPtr<ALineActor3D_CPP> LineActor;
+		TWeakObjectPtr<ALineActor> LineActor;
 		FColor HoverColor;
 		float HoverThickness;
 		FMiterData CachedMiterData;

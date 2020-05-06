@@ -4,7 +4,7 @@
 #include "EditModelPlayerController_CPP.h"
 #include "EditModelPlayerState_CPP.h"
 #include "HUDDrawWidget_CPP.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ThumbnailCacheManager.h"
 #include "Image.h"
 

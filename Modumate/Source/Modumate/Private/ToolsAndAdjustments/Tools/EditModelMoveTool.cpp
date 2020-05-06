@@ -4,7 +4,7 @@
 #include "EditModelGameState_CPP.h"
 #include "ModumateCommands.h"
 #include "EditModelGameMode_CPP.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 
 using namespace Modumate;
 
@@ -43,7 +43,7 @@ bool UMoveObjectTool::BeginUse()
 	{
 		AnchorPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorPoint, Controller->EMPlayerState->SnappedCursor.HitNormal, Controller->EMPlayerState->SnappedCursor.HitTangent);
-		PendingMoveLine = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
+		PendingMoveLine = Controller->GetWorld()->SpawnActor<ALineActor>();
 		return true;
 	}
 	return false;
@@ -63,8 +63,6 @@ bool UMoveObjectTool::FrameUpdate()
 			PendingMoveLine->Point2 = hitLoc;
 			PendingMoveLine->Color = FColor::Black;
 			PendingMoveLine->Thickness = 3.0f;
-			PendingMoveLine->AntiAliasing = false;
-			PendingMoveLine->ScreenSize = false;
 		}
 		else
 		{

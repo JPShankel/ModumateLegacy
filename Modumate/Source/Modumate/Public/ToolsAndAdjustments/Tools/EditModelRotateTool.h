@@ -7,7 +7,7 @@
 
 #include "EditModelRotateTool.generated.h"
 
-class ALineActor3D_CPP;
+class ALineActor;
 class AEditModelPlayerController_CPP;
 
 UCLASS()
@@ -26,8 +26,8 @@ private:
 
 	eStages Stage;
 
-	TWeakObjectPtr<ALineActor3D_CPP> PendingSegmentStart;
-	TWeakObjectPtr<ALineActor3D_CPP> PendingSegmentEnd;
+	TWeakObjectPtr<ALineActor> PendingSegmentStart;
+	TWeakObjectPtr<ALineActor> PendingSegmentEnd;
 	bool bOverrideAngleWithInput = false;
 	float InputAngle = 0.f;
 

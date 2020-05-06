@@ -11,7 +11,7 @@ class AEditModelGameMode_CPP;
 class AEditModelGameState_CPP;
 class AEditModelPlayerState_CPP;
 class ADynamicMeshActor;
-class ALineActor3D_CPP;
+class ALineActor;
 
 namespace Modumate {
 	class FModumateObjectInstance;
@@ -48,7 +48,7 @@ protected:
 	bool UpdatePreviewStairs();
 	bool MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID);
 	bool ValidatePlaneTarget(const Modumate::FModumateObjectInstance *PlaneTarget);
-	void MakePendingSegment(TWeakObjectPtr<ALineActor3D_CPP> &TargetSegment, const FVector &StartingPoint, const FColor &SegmentColor);
+	void MakePendingSegment(TWeakObjectPtr<ALineActor> &TargetSegment, const FVector &StartingPoint, const FColor &SegmentColor);
 	void ResetState();
 
 	EState CurrentState;
@@ -57,7 +57,7 @@ protected:
 	bool bWantedVerticalSnap;
 	int32 LastValidTargetID;
 	FModumateObjectAssembly ObjAssembly;
-	TWeakObjectPtr<ALineActor3D_CPP> RunSegment, RiseSegment, WidthSegment;
+	TWeakObjectPtr<ALineActor> RunSegment, RiseSegment, WidthSegment;
 	TWeakObjectPtr<ADynamicMeshActor> PendingObjMesh;
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
 	TWeakObjectPtr<AEditModelGameState_CPP> GameState;

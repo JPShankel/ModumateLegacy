@@ -7,7 +7,7 @@
 #include "EditModelGameState_CPP.h"
 #include "EditModelPlayerController_CPP.h"
 #include "EditModelPlayerHUD_CPP.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ModumateAnalyticsStatics.h"
 #include "ModumateCommands.h"
 #include "ModumateConsoleCommand.h"
@@ -158,7 +158,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	AEditModelPlayerHUD_CPP *emPlayerHUD = Cast<AEditModelPlayerHUD_CPP>(EMPlayerController->GetHUD());
 	if (emPlayerHUD)
 	{
-		for (ALineActor3D_CPP *lineActor : emPlayerHUD->All3DLineActors)
+		for (ALineActor *lineActor : emPlayerHUD->All3DLineActors)
 		{
 			if (lineActor && !lineActor->IsHidden())
 			{

@@ -5,7 +5,7 @@
 
 #include "EditModelRailTool.generated.h"
 
-class ALineActor3D_CPP;
+class ALineActor;
 
 UCLASS()
 class MODUMATE_API URailTool : public UEditModelToolBase
@@ -13,7 +13,7 @@ class MODUMATE_API URailTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 private:
-	ALineActor3D_CPP * PendingSegment;
+	ALineActor * PendingSegment;
 
 public:
 	URailTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());

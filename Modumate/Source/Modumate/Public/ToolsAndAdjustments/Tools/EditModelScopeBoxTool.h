@@ -9,7 +9,7 @@
 
 class AEditModelGameMode_CPP;
 class AEditModelGameState_CPP;
-class ALineActor3D_CPP;
+class ALineActor;
 
 UCLASS()
 class MODUMATE_API UScopeBoxTool : public UEditModelToolBase
@@ -42,7 +42,7 @@ protected:
 
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
 	TWeakObjectPtr<ADynamicMeshActor> PendingBox;
-	TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
+	TWeakObjectPtr<ALineActor> PendingSegment;
 	FArchitecturalMaterial PendingBoxMaterial;
 
 	TArray<FVector> PendingBoxBasePoints;

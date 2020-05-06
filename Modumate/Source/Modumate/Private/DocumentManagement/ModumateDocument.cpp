@@ -7,7 +7,7 @@
 #include "ModumateGameInstance.h"
 #include "ModumateGeometryStatics.h"
 #include "ModumateObjectStatics.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 
 #include "Internationalization/Internationalization.h"
 #include "Misc/FileHelper.h"

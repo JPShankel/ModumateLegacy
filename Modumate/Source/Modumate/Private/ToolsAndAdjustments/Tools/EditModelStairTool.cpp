@@ -7,7 +7,7 @@
 #include "EditModelPlayerState_CPP.h"
 #include "EditModelGameMode_CPP.h"
 #include "EditModelGameState_CPP.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ModumateDocument.h"
 #include "ModumateCommands.h"
 #include "ModumateStairStatics.h"
@@ -578,20 +578,18 @@ bool UStairTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
 	return FMath::IsWithinInclusive(normalUpDot, THRESH_NORMALS_ARE_ORTHOGONAL, THRESH_NORMALS_ARE_PARALLEL);
 }
 
-void UStairTool::MakePendingSegment(TWeakObjectPtr<ALineActor3D_CPP> &TargetSegment, const FVector &StartingPoint, const FColor &SegmentColor)
+void UStairTool::MakePendingSegment(TWeakObjectPtr<ALineActor> &TargetSegment, const FVector &StartingPoint, const FColor &SegmentColor)
 {
-	TargetSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
+	TargetSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
 	TargetSegment->Point1 = StartingPoint;
 	TargetSegment->Point2 = StartingPoint;
 	TargetSegment->Color = SegmentColor;
 	TargetSegment->Thickness = 2;
-	TargetSegment->Inverted = false;
-	TargetSegment->bDrawVerticalPlane = false;
 }
 
 void UStairTool::ResetState()
 {
-	TWeakObjectPtr<ALineActor3D_CPP> pendingSegments[] = { RunSegment, RiseSegment, WidthSegment };
+	TWeakObjectPtr<ALineActor> pendingSegments[] = { RunSegment, RiseSegment, WidthSegment };
 	for (auto &pendingSegment : pendingSegments)
 	{
 		if (pendingSegment.IsValid())

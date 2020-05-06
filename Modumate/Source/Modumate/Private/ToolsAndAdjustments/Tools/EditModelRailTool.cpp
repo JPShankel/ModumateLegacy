@@ -1,7 +1,7 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #include "EditModelRailTool.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "EditModelPlayerController_CPP.h"
 #include "EditModelPlayerState_CPP.h"
 #include "ModumateCommands.h"
@@ -37,7 +37,7 @@ bool URailTool::BeginUse()
 
 	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector);
 
-	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
+	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
 	PendingSegment->Point1 = hitLoc;
 	PendingSegment->Point2 = hitLoc;
 	PendingSegment->Color = FColor::Green;

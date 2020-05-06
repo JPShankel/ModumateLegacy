@@ -2,7 +2,7 @@
 
 #include "EditModelCountertopTool.h"
 
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ModumateFunctionLibrary.h"
 #include "EditModelPlayerController_CPP.h"
 #include "EditModelPlayerState_CPP.h"
@@ -85,12 +85,11 @@ bool UCountertopTool::BeginUse()
 
 	State = NewSegmentPending;
 
-	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
+	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
 	PendingSegment->Point1 = hitLoc;
 	PendingSegment->Point2 = hitLoc;
 	PendingSegment->Color = FColor::Green;
 	PendingSegment->Thickness = 2;
-	PendingSegment->Inverted = Inverted;
 
 	AnchorPointDegree = hitLoc + FVector(0.f, -1.f, 0.f); // Make north as AnchorPointDegree at new segment
 	return true;
@@ -222,19 +221,14 @@ bool UCountertopTool::HandleSpacebar()
 
 void UCountertopTool::SegmentsConformInvert()
 {
-	if (PendingSegment.IsValid())
-	{
-		PendingSegment->Inverted = Inverted;
-		PendingSegment->UpdateVerticalPlaneFromToolModeShopItem();
-	}
+	// TODO: UpdateVerticalPlane was taken out of line actor, countertops won't work until this is reimplemented
+
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	Modumate::FModumateDocument *doc = &gameState->Document;
 	TArray<FModumateObjectInstance*> segmentMoi = doc->GetObjectsOfType(EObjectType::OTLineSegment);
 	for (auto curSegment : segmentMoi)
 	{
-		ALineActor3D_CPP* lineSegment = Cast<ALineActor3D_CPP>(curSegment->GetActor());
-		lineSegment->Inverted = Inverted;
-		lineSegment->UpdateVerticalPlaneFromToolModeShopItem();
+		ALineActor* lineSegment = Cast<ALineActor>(curSegment->GetActor());
 	}
 }
 

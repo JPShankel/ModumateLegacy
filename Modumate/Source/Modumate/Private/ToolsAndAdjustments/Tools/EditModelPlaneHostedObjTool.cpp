@@ -6,7 +6,7 @@
 #include "EditModelPlayerState_CPP.h"
 #include "EditModelGameState_CPP.h"
 #include "EditModelGameMode_CPP.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ModumateDocument.h"
 #include "ModumateCommands.h"
 

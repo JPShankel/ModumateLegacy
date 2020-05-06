@@ -8,7 +8,7 @@
 
 #include "EditModelRoofFaceTool.generated.h"
 
-class ALineActor3D_CPP;
+class ALineActor;
 
 UCLASS()
 class MODUMATE_API URoofFaceTool : public UPlaneHostedObjTool
@@ -24,7 +24,7 @@ private:
 	};
 
 	EState State;
-	TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
+	TWeakObjectPtr<ALineActor> PendingSegment;
 	FVector LastPendingSegmentLoc;
 	bool bLastPendingSegmentLocValid;
 	float DefaultEdgeSlope;

@@ -29,9 +29,6 @@ public:
 
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UClass *LineClass;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UClass *PortalFrameActorClass;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
@@ -54,9 +51,6 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UMaterialInterface *RoomHandleMaterialNoDepth;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UMaterialInterface *LinePlaneSegmentMaterial;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UStaticMesh *SphereMesh;

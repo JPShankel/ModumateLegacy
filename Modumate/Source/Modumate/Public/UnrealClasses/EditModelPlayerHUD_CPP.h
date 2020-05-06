@@ -53,7 +53,7 @@ public:
 	virtual void DrawHUD() override;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	TArray<class ALineActor3D_CPP*> All3DLineActors;
+	TArray<class ALineActor*> All3DLineActors;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	bool RequestStaticCameraView = false;

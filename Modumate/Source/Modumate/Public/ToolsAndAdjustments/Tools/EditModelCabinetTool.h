@@ -8,7 +8,7 @@
 
 #include "EditModelCabinetTool.generated.h"
 
-class ALineActor3D_CPP;
+class ALineActor;
 
 UCLASS()
 class MODUMATE_API UCabinetTool : public UEditModelToolBase
@@ -25,9 +25,9 @@ private:
 
 	EState State;
 
-	TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
+	TWeakObjectPtr<ALineActor> PendingSegment;
 
-	TArray<ALineActor3D_CPP*> BaseSegs, TopSegs, ConnectSegs;
+	TArray<ALineActor*> BaseSegs, TopSegs, ConnectSegs;
 	FPlane CabinetPlane = FPlane(ForceInitToZero);
 
 	FVector LastPendingSegmentLoc = FVector::ZeroVector;

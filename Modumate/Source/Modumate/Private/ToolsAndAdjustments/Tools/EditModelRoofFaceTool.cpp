@@ -6,7 +6,7 @@
 #include "EditModelPlayerState_CPP.h"
 #include "EditModelGameState_CPP.h"
 #include "EditModelGameMode_CPP.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ModumateCommands.h"
 #include "ModumateFunctionLibrary.h"
 #include "ModumateNetworkView.h"
@@ -52,7 +52,7 @@ bool URoofFaceTool::BeginUse()
 
 	State = NewSegmentPending;
 
-	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
+	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
 	PendingSegment->Point1 = hitLoc;
 	PendingSegment->Point2 = hitLoc;
 	PendingSegment->Color = FColor::Green;

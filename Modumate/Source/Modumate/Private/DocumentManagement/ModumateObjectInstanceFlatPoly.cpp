@@ -8,7 +8,7 @@
 #include "EditModelPlayerController_CPP.h"
 #include "EditModelPolyAdjustmentHandles.h"
 #include "HUDDrawWidget_CPP.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ModumateGeometryStatics.h"
 
 class AEditModelPlayerController_CPP;

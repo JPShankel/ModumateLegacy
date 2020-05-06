@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 #include "ModumateObjectInstance.h"
 
-class ALineActor3D_CPP;
+class ALineActor;
 
 namespace Modumate
 {
@@ -29,7 +29,7 @@ namespace Modumate
 	protected:
 		TWeakObjectPtr<UWorld> World;
 		TWeakObjectPtr<AActor> PerimeterActor;
-		TMap<int32, TWeakObjectPtr<ALineActor3D_CPP>> LineActors;
+		TMap<int32, TWeakObjectPtr<ALineActor>> LineActors;
 		TArray<FModumateObjectInstance*> CachedConnectedMOIs;
 
 		void UpdateLineActors();

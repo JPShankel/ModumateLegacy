@@ -5,7 +5,7 @@
 #include "EditModelPlayerController_CPP.h"
 #include "EditModelPlayerState_CPP.h"
 
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 
 #include "ModumateCommands.h"
 
@@ -163,7 +163,7 @@ bool UScopeBoxTool::EnterNextStage()
 			PendingBox->SetActorHiddenInGame(true);
 			PendingBox->SetActorEnableCollision(false);
 
-			PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
+			PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
 
 			PendingBoxMaterial.EngineMaterial = GameMode->ScopeBoxMaterial;
 

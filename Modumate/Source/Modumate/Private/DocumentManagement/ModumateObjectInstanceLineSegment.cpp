@@ -1,6 +1,6 @@
 #include "ModumateObjectInstanceLineSegment.h"
 #include "EditModelGameMode_CPP.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "AdjustmentHandleActor_CPP.h"
 #include "EditModelPlayerController_CPP.h"
 #include "EditModelAdjustmentHandleBase.h"
@@ -118,7 +118,7 @@ namespace Modumate
 	AActor *FMOILineSegment::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 	{
 		World = world;
-		LineActor = world->SpawnActor<ALineActor3D_CPP>(world->GetAuthGameMode<AEditModelGameMode_CPP>()->LineClass);
+		LineActor = world->SpawnActor<ALineActor>();
 		LineActor->Color = BaseColor;
 		LineActor->Thickness = 2.0f;
 		return LineActor.Get();

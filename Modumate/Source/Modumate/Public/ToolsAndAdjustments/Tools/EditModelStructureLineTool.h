@@ -11,7 +11,7 @@ class AEditModelGameMode_CPP;
 class AEditModelGameState_CPP;
 class AEditModelPlayerState_CPP;
 class ADynamicMeshActor;
-class ALineActor3D_CPP;
+class ALineActor;
 
 UCLASS()
 class MODUMATE_API UStructureLineTool : public UEditModelToolBase
@@ -47,7 +47,7 @@ protected:
 	int32 LastValidTargetID;
 	int32 LastTargetStructureLineID;
 	FModumateObjectAssembly ObjAssembly;
-	TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
+	TWeakObjectPtr<ALineActor> PendingSegment;
 	TWeakObjectPtr<ADynamicMeshActor> PendingObjMesh;
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
 	TWeakObjectPtr<AEditModelGameState_CPP> GameState;

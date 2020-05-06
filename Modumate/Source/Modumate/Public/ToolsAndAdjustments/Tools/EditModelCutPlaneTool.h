@@ -9,7 +9,7 @@
 
 class AEditModelGameMode_CPP;
 class AEditModelGameState_CPP;
-class ALineActor3D_CPP;
+class ALineActor;
 
 UCLASS()
 class MODUMATE_API UCutPlaneTool : public UEditModelToolBase
@@ -32,7 +32,7 @@ public:
 protected:
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
 
-	TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
+	TWeakObjectPtr<ALineActor> PendingSegment;
 	TWeakObjectPtr<ADynamicMeshActor> PendingPlane;
 	TArray<FVector> PendingPlanePoints;
 	FArchitecturalMaterial PendingPlaneMaterial;

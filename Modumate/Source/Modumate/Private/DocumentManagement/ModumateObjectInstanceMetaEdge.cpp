@@ -7,7 +7,7 @@
 #include "EditModelMetaAdjustmentHandles.h"
 #include "EditModelPlayerController_CPP.h"
 #include "EditModelPlayerState_CPP.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ModumateDocument.h"
 #include "ModumateMiterNodeInterface.h"
 #include "ModumateObjectStatics.h"
@@ -91,8 +91,7 @@ namespace Modumate
 	AActor *FMOIMetaEdgeImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 	{
 		World = world;
-		LineActor = world->SpawnActor<ALineActor3D_CPP>(world->GetAuthGameMode<AEditModelGameMode_CPP>()->LineClass);
-		LineActor->bDrawVerticalPlane = false;
+		LineActor = world->SpawnActor<ALineActor>();
 		LineActor->UpdateMetaEdgeVisuals(false);
 		return LineActor.Get();
 	}

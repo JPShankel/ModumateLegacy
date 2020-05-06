@@ -5,7 +5,7 @@
 #include "EditModelPlayerState_CPP.h"
 #include "EditModelGameState_CPP.h"
 #include "EditModelGameMode_CPP.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ModumateCommands.h"
 #include "Algo/Transform.h"
 #include "ModumateObjectInstanceCabinets.h"
@@ -44,7 +44,7 @@ bool UCabinetTool::BeginUse()
 
 	State = NewSegmentPending;
 
-	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
+	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
 	PendingSegment->Point1 = hitLoc;
 	PendingSegment->Point2 = hitLoc;
 	PendingSegment->Color = FColor::Green;
@@ -265,7 +265,7 @@ bool UCabinetTool::EnterNextStage()
 	if (State == SetHeight)
 	{
 		TArray<FVector> points;
-		Algo::Transform(BaseSegs,points,[](const ALineActor3D_CPP *seg) {return seg->Point1; });
+		Algo::Transform(BaseSegs,points,[](const ALineActor *seg) {return seg->Point1; });
 
 		FModumateDocument &doc = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 
@@ -298,21 +298,19 @@ void UCabinetTool::BeginSetHeightMode(const TArray<FVector> &basePoly)
 		PendingSegment = nullptr;
 	}
 
-	UClass *lineClass = Controller->EMPlayerState->GetEditModelGameMode()->LineClass;
-
 	for (int i = 0; i < basePoly.Num(); ++i)
 	{
-		ALineActor3D_CPP *actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(lineClass);
+		ALineActor *actor = Controller->GetWorld()->SpawnActor<ALineActor>();
 		actor->Point1 = basePoly[i];
 		actor->Point2 = basePoly[(i + 1) % basePoly.Num()];
 		BaseSegs.Add(actor);
 
-		actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(lineClass);
+		actor = Controller->GetWorld()->SpawnActor<ALineActor>();
 		actor->Point1 = basePoly[i];
 		actor->Point2 = basePoly[(i + 1) % basePoly.Num()];
 		TopSegs.Add(actor);
 
-		actor = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(lineClass);
+		actor = Controller->GetWorld()->SpawnActor<ALineActor>();
 		actor->Point1 = basePoly[i];
 		actor->Point2 = basePoly[i];
 		ConnectSegs.Add(actor);

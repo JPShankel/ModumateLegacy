@@ -8,7 +8,7 @@
 class AEditModelPlayerController_CPP;
 class UWorld;
 class AAdjustmentHandleActor_CPP;
-class ALineActor3D_CPP;
+class ALineActor;
 class UMaterialInterface;
 class AActor;
 
@@ -26,7 +26,7 @@ namespace Modumate
 		TWeakObjectPtr<UMaterialInterface> Material;
 
 	protected:
-		TWeakObjectPtr<ALineActor3D_CPP> LineActor;
+		TWeakObjectPtr<ALineActor> LineActor;
 		FColor BaseColor;
 
 		virtual FAdjustLineSegmentHandle *MakeAdjustmentHandle(FModumateObjectInstance *handleMOI, int cp);

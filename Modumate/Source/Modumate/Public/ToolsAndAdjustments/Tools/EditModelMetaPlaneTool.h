@@ -10,7 +10,7 @@
 
 class AEditModelGameMode_CPP;
 class AEditModelGameState_CPP;
-class ALineActor3D_CPP;
+class ALineActor;
 
 UCLASS()
 class MODUMATE_API UMetaPlaneTool : public UEditModelToolBase
@@ -29,7 +29,7 @@ protected:
 	TWeakObjectPtr<AEditModelGameState_CPP> GameState;
 
 	EMouseMode OriginalMouseMode;
-	TWeakObjectPtr<ALineActor3D_CPP> PendingSegment;
+	TWeakObjectPtr<ALineActor> PendingSegment;
 	TWeakObjectPtr<ADynamicMeshActor> PendingPlane;
 	FVector AnchorPointDegree;
 	TArray<FVector> PendingPlanePoints, SketchPlanePoints;

@@ -11,7 +11,7 @@
 
 class AEditModelGameMode_CPP;
 class AEditModelGameState_CPP;
-class ALineActor3D_CPP;
+class ALineActor;
 
 namespace Modumate
 {

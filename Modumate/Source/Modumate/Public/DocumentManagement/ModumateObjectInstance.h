@@ -24,7 +24,7 @@
 class AAdjustmentHandleActor_CPP;
 class UIMaterialInterface;
 class AEditModelPlayerController_CPP;
-class ALineActor3D_CPP;
+class ALineActor;
 class UHUDDrawWidget_CPP;
 
 struct FMOIDataRecordV1;

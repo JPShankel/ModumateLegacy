@@ -3,7 +3,7 @@
 #include "EditModelMetaPlaneTool.h"
 
 #include "DynamicMeshActor.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ModumateFunctionLibrary.h"
 #include "EditModelPlayerController_CPP.h"
 #include "EditModelPlayerState_CPP.h"
@@ -132,13 +132,11 @@ bool UMetaPlaneTool::BeginUse()
 
 	State = NewSegmentPending;
 
-	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
+	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
 	PendingSegment->Point1 = hitLoc;
 	PendingSegment->Point2 = hitLoc;
 	PendingSegment->Color = FColor::White;
 	PendingSegment->Thickness = 2;
-	PendingSegment->Inverted = false;
-	PendingSegment->bDrawVerticalPlane = false;
 
 	AnchorPointDegree = hitLoc + FVector(0.f, -1.f, 0.f); // Make north as AnchorPointDegree at new segment
 

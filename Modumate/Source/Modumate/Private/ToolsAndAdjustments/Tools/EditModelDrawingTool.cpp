@@ -4,7 +4,7 @@
 #include "EditModelGameMode_CPP.h"
 #include "EditModelPlayerController_CPP.h"
 
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 
 #include "ModumateCommands.h"
 

@@ -6,7 +6,7 @@
 #include "EditModelGameMode_CPP.h"
 #include "EditModelPlayerController_CPP.h"
 #include "Graph3D.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ModumateDocument.h"
 #include "ModumateObjectStatics.h"
 #include "ModumateVertexActor_CPP.h"
@@ -145,7 +145,7 @@ namespace Modumate
 		// Delete outdated line actors
 		for (int32 edgeIDToRemove : edgeIDsToRemove)
 		{
-			TWeakObjectPtr<ALineActor3D_CPP> lineToRemove;
+			TWeakObjectPtr<ALineActor> lineToRemove;
 			if (LineActors.RemoveAndCopyValue(edgeIDToRemove, lineToRemove) && lineToRemove.IsValid())
 			{
 				lineToRemove->Destroy();
@@ -159,13 +159,13 @@ namespace Modumate
 			const FGraph3DVertex *endVertex = volumeGraph.FindVertex(edgeToAdd->EndVertexID);
 			if (startVertex && endVertex)
 			{
-				ALineActor3D_CPP *newLine = World->SpawnActor<ALineActor3D_CPP>(ALineActor3D_CPP::StaticClass());
+				ALineActor *newLine = World->SpawnActor<ALineActor>();
 				newLine->Point1 = startVertex->Position;
 				newLine->Point2 = endVertex->Position;
 				newLine->Color = FColor::Purple;
 				newLine->Thickness = 4.0f;
 
-				TWeakObjectPtr<ALineActor3D_CPP> newLinePtr(newLine);
+				TWeakObjectPtr<ALineActor> newLinePtr(newLine);
 				LineActors.Add(edgeToAdd->ID, newLinePtr);
 			}
 		}

@@ -9,7 +9,7 @@
 #include "EditModelGameState_CPP.h"
 #include "EditModelGameMode_CPP.h"
 #include "ModumateCommands.h"
-#include "LineActor3D_CPP.h"
+#include "LineActor.h"
 #include "ModumateFunctionLibrary.h"
 
 using namespace Modumate;
@@ -46,8 +46,8 @@ bool URotateObjectTool::BeginUse()
 
 	AcquireSelectedObjects();
 
-	PendingSegmentStart = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
-	PendingSegmentEnd = Controller->GetWorld()->SpawnActor<ALineActor3D_CPP>(Controller->EMPlayerState->GetEditModelGameMode()->LineClass);
+	PendingSegmentStart = Controller->GetWorld()->SpawnActor<ALineActor>();
+	PendingSegmentEnd = Controller->GetWorld()->SpawnActor<ALineActor>();
 	if (Controller->EMPlayerState->SnappedCursor.Visible)
 	{
 		Stage = AnchorPlaced;
@@ -192,8 +192,6 @@ bool URotateObjectTool::FrameUpdate()
 			PendingSegmentStart->Point2 = hitLoc;
 			PendingSegmentStart->Color = FColor::White;
 			PendingSegmentStart->Thickness = 1;
-			PendingSegmentStart->AntiAliasing = true;
-			PendingSegmentStart->ScreenSize = false;
 			// Draw a single line with tick mark for rotate tool
 			UModumateFunctionLibrary::AddNewDimensionString(
 				Controller,
@@ -219,8 +217,6 @@ bool URotateObjectTool::FrameUpdate()
 			PendingSegmentStart->Point2 = hitLoc;
 			PendingSegmentStart->Color = FColor::White;
 			PendingSegmentStart->Thickness = 1;
-			PendingSegmentStart->AntiAliasing = true;
-			PendingSegmentEnd->ScreenSize = false;
 			// Add line between anchor point and cursor pos - Delta Only
 			UModumateFunctionLibrary::AddNewDimensionString(
 				Controller,
@@ -242,9 +238,6 @@ bool URotateObjectTool::FrameUpdate()
 			PendingSegmentEnd->Point2 = AngleAnchor;
 			PendingSegmentEnd->Color = FColor::Green;
 			PendingSegmentEnd->Thickness = 1;
-			PendingSegmentEnd->AntiAliasing = true;
-			PendingSegmentEnd->IsAnchor = true;
-			PendingSegmentEnd->ScreenSize = true;
 			// Add line between anchor point and location of angle anchor - Delta only
 			UModumateFunctionLibrary::AddNewDimensionString(
 				Controller,
