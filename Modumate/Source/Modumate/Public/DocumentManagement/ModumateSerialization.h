@@ -420,7 +420,7 @@ typedef FModumateDocumentHeaderV2 FModumateDocumentHeader;
 namespace Modumate
 {
 	// Version 5: portal locations and rotations are now relative to their parent, rather than in world space.
-	// Version 6: VE_ROOF split into VE_ROOF_FACE and VE_ROOF_PERIMETER
+	// Version 6: Roof was split into RoofFace and RoofPerimeter (EToolMode VE_ROOF -> VE_ROOF_FACE and EObjectType OTRoof -> OTRoofFace)
 	static const int32 DocVersion = 6;
 
 	static const TCHAR * DocObjectInstanceField = TEXT("ModumateObjects");

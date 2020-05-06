@@ -134,8 +134,8 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 		OutHeader.Version = 5;
 	}
 
-	// Version 5 -> 6: EToolMode VE_ROOF -> VE_ROOF_FACE and EObjectType OTRoof -> OTRoofFace,
-	// but the change is handled by EnumRedirects in DefaultEngine.ini.
+	// Version 5 -> 6: Roof was split into RoofFace and RoofPerimeter (EToolMode VE_ROOF -> VE_ROOF_FACE and EObjectType OTRoof -> OTRoofFace),
+	// but the serialization change is handled by EnumRedirects in DefaultEngine.ini.
 	// The version change is here so we know when to stop supporting the enum redirection,
 	// or in case we need to root out nested serialized values (i.e. commands) with text replacement.
 	if (OutHeader.Version == 5)

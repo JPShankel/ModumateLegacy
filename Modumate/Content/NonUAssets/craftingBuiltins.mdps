@@ -572,7 +572,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofWaterproofingPlasticMembrane",
 			"formName": "LAYER_ROOF_MEMBRANE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"LAYER_ROOF_MEMBRANE\"}",
@@ -587,7 +587,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofWaterproofingPlasticMembrane",
 			"formName": "ROOF_MEMBRANE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_MEMBRANE_STYLE\"}",
@@ -607,7 +607,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofPolyethyleneVaporBarrier",
 			"formName": "LAYER_ROOF_MEMBRANE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"LAYER_ROOF_MEMBRANE\"}",
@@ -622,7 +622,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofPolyethyleneVaporBarrier",
 			"formName": "ROOF_MEMBRANE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_MEMBRANE_STYLE\"}",
@@ -642,7 +642,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofPolyethyleneAirBarrier",
 			"formName": "LAYER_ROOF_MEMBRANE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"LAYER_ROOF_MEMBRANE\"}",
@@ -657,7 +657,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofPolyethyleneAirBarrier",
 			"formName": "ROOF_MEMBRANE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_MEMBRANE_STYLE\"}",
@@ -677,7 +677,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofBituminousFeltMembrane",
 			"formName": "LAYER_ROOF_MEMBRANE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"LAYER_ROOF_MEMBRANE\"}",
@@ -692,7 +692,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofBituminousFeltMembrane",
 			"formName": "ROOF_MEMBRANE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_MEMBRANE_STYLE\"}",
@@ -712,7 +712,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofFluidRubberizedAsphaltMembrane",
 			"formName": "LAYER_ROOF_MEMBRANE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"LAYER_ROOF_MEMBRANE\"}",
@@ -727,7 +727,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofFluidRubberizedAsphaltMembrane",
 			"formName": "ROOF_MEMBRANE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_MEMBRANE_STYLE\"}",
@@ -747,7 +747,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofRubberAnti-FractureMembrane",
 			"formName": "LAYER_ROOF_MEMBRANE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"LAYER_ROOF_MEMBRANE\"}",
@@ -762,7 +762,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofRubberAnti-FractureMembrane",
 			"formName": "ROOF_MEMBRANE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_MEMBRANE_STYLE\"}",
@@ -782,7 +782,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofPolystyreneFoamInsulation",
 			"formName": "LAYER_ROOF_INSULATION",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"LAYER_ROOF_INSULATION\"}",
@@ -4275,7 +4275,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofAbstract",
 			"formName": "ROOF_ABSTRACT_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_ABSTRACT_STYLE\"}",
@@ -4295,7 +4295,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofAbstract",
 			"formName": "ROOF_ABSTRACT_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_ABSTRACT_STYLE\"}",
@@ -4315,7 +4315,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofAbstract",
 			"formName": "ROOF_ABSTRACT_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_ABSTRACT_STYLE\"}",
@@ -4335,7 +4335,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofAbstract",
 			"formName": "ROOF_ABSTRACT_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_ABSTRACT_STYLE\"}",
@@ -4355,7 +4355,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofCast-In-PlaceConcrete",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -4375,7 +4375,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofCast-In-PlaceConcrete",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -4395,7 +4395,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofCast-In-PlaceConcrete",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -4415,7 +4415,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofCast-In-PlaceConcrete",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -4435,7 +4435,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofCast-In-PlaceConcrete",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -4455,7 +4455,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_GAP_STYLE\"}",
@@ -4471,7 +4471,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofEngineeredWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_GAP_STYLE\"}",
@@ -4487,7 +4487,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_GAP_STYLE\"}",
@@ -4503,7 +4503,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_GAP_STYLE\"}",
@@ -4519,7 +4519,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_GAP_STYLE\"}",
@@ -4535,7 +4535,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_GAP_STYLE\"}",
@@ -4551,7 +4551,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofPolystyreneFoamInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -4571,7 +4571,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofPolystyreneFoamInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -4591,7 +4591,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofPolystyreneFoamInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -4611,7 +4611,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesWallFloorRoofPolystyreneFoamInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -4631,7 +4631,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofWoodFiberboardInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -4651,7 +4651,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofWoodFiberboardInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -4671,7 +4671,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofWoodFiberboardInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -4691,7 +4691,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesWallFloorRoofWoodFiberboardInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -4711,7 +4711,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesWallFloorRoofWoodFiberboardInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -4731,7 +4731,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWoodJoist",
 			"formName": "ROOF_STRUCTURETRUSS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_STYLE\"}",
@@ -4750,7 +4750,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWoodJoist",
 			"formName": "ROOF_STRUCTURETRUSS_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_MODULE_STYLE\"}",
@@ -4767,7 +4767,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWoodJoist",
 			"formName": "ROOF_STRUCTURETRUSS_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_GAP_STYLE\"}",
@@ -4783,7 +4783,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofEngineeredWoodJoist",
 			"formName": "ROOF_STRUCTURETRUSS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_STYLE\"}",
@@ -4802,7 +4802,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofEngineeredWoodJoist",
 			"formName": "ROOF_STRUCTURETRUSS_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_MODULE_STYLE\"}",
@@ -4819,7 +4819,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofEngineeredWoodJoist",
 			"formName": "ROOF_STRUCTURETRUSS_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_GAP_STYLE\"}",
@@ -4835,7 +4835,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTURETRUSS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_STYLE\"}",
@@ -4854,7 +4854,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTURETRUSS_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_MODULE_STYLE\"}",
@@ -4871,7 +4871,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTURETRUSS_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_GAP_STYLE\"}",
@@ -4887,7 +4887,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTURETRUSS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_STYLE\"}",
@@ -4906,7 +4906,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTURETRUSS_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_MODULE_STYLE\"}",
@@ -4923,7 +4923,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTURETRUSS_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_GAP_STYLE\"}",
@@ -4939,7 +4939,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTURETRUSS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_STYLE\"}",
@@ -4958,7 +4958,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTURETRUSS_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_MODULE_STYLE\"}",
@@ -4975,7 +4975,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTURETRUSS_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_GAP_STYLE\"}",
@@ -4991,7 +4991,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTURETRUSS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_STYLE\"}",
@@ -5010,7 +5010,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTURETRUSS_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_MODULE_STYLE\"}",
@@ -5027,7 +5027,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTURETRUSS_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTURETRUSS_GAP_STYLE\"}",
@@ -5043,7 +5043,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofCorrugatedSteelDeck",
 			"formName": "ROOF_SUBSTRATESTUD_CORRUGATED_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_CORRUGATED_STYLE\"}",
@@ -5062,7 +5062,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofCorrugatedSteelDeck",
 			"formName": "ROOF_SUBSTRATESTUD_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -5083,7 +5083,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofSteelHatChannel",
 			"formName": "ROOF_SUBSTRATESTUD_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_GAP_STYLE\"}",
@@ -5101,7 +5101,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofSteelZ-Channel",
 			"formName": "ROOF_SUBSTRATESTUD_GAP_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_GAP_STYLE\"}",
@@ -5119,7 +5119,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofGypsumBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5139,7 +5139,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofGypsumBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5159,7 +5159,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofGypsumBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5179,7 +5179,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofGypsumBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5199,7 +5199,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesWallFloorRoofGypsumBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5219,7 +5219,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofMedium-DensityFiberboard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5239,7 +5239,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofMedium-DensityFiberboard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5259,7 +5259,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofMedium-DensityFiberboard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5279,7 +5279,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesWallFloorRoofMedium-DensityFiberboard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5299,7 +5299,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesWallFloorRoofMedium-DensityFiberboard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5319,7 +5319,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofOrientedStrandBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5339,7 +5339,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofOrientedStrandBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5359,7 +5359,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofOrientedStrandBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5379,7 +5379,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesWallFloorRoofOrientedStrandBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5399,7 +5399,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesWallFloorRoofOrientedStrandBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5419,7 +5419,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofPlywood",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5439,7 +5439,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofPlywood",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5459,7 +5459,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofPlywood",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5479,7 +5479,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofParticleBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5499,7 +5499,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofParticleBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -5519,7 +5519,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofParticleBoard",
 			"formName": "ROOF_SUBSTRATECONTINUOUS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATECONTINUOUS_STYLE\"}",
@@ -6209,7 +6209,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofPrecastConcrete",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -6229,7 +6229,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofPrecastConcrete",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -6249,7 +6249,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofPrecastConcrete",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -6269,7 +6269,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofPrecastConcrete",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -6289,7 +6289,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofPrecastConcrete",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -6309,7 +6309,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofCross-LaminatedTimber",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -6329,7 +6329,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofCross-LaminatedTimber",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -6349,7 +6349,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofCross-LaminatedTimber",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -6369,7 +6369,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofCross-LaminatedTimber",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -6389,7 +6389,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofCross-LaminatedTimber",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -6409,7 +6409,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofCross-LaminatedTimber",
 			"formName": "ROOF_STRUCTUREMASS_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREMASS_STYLE\"}",
@@ -12112,7 +12112,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12130,7 +12130,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12148,7 +12148,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12166,7 +12166,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12184,7 +12184,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12213,7 +12213,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12242,7 +12242,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12271,7 +12271,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12300,7 +12300,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofEngineeredWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12318,7 +12318,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12336,7 +12336,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12354,7 +12354,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12372,7 +12372,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12390,7 +12390,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12408,7 +12408,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12437,7 +12437,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12466,7 +12466,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12495,7 +12495,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12524,7 +12524,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12553,7 +12553,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofEngineeredWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12582,7 +12582,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofEngineeredWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12600,7 +12600,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofEngineeredWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12629,7 +12629,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofEngineeredWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12647,7 +12647,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofEngineeredWoodJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12676,7 +12676,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12694,7 +12694,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12712,7 +12712,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12730,7 +12730,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12748,7 +12748,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12766,7 +12766,7 @@
 			"sequenceCode": "06",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12784,7 +12784,7 @@
 			"sequenceCode": "07",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12802,7 +12802,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12831,7 +12831,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12860,7 +12860,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -12889,7 +12889,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofCorrugatedSteelDeck",
 			"formName": "ROOF_CORRUGATED_STEEL_DECK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_CORRUGATED_STEEL_DECK_STYLE\"}",
@@ -12909,7 +12909,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofCorrugatedSteelDeck",
 			"formName": "ROOF_CORRUGATED_STEEL_DECK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_CORRUGATED_STEEL_DECK_STYLE\"}",
@@ -12929,7 +12929,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesWallFloorRoofCorrugatedSteelDeck",
 			"formName": "ROOF_CORRUGATED_STEEL_DECK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_CORRUGATED_STEEL_DECK_STYLE\"}",
@@ -12949,7 +12949,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesWallFloorRoofCorrugatedSteelDeck",
 			"formName": "ROOF_CORRUGATED_STEEL_DECK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_CORRUGATED_STEEL_DECK_STYLE\"}",
@@ -13377,7 +13377,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofSteelHatChannel",
 			"formName": "ROOF_SUBSTRATESTUD_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13399,7 +13399,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofSteelHatChannel",
 			"formName": "ROOF_SUBSTRATESTUD_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13428,7 +13428,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofSteelHatChannel",
 			"formName": "ROOF_SUBSTRATESTUD_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13450,7 +13450,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofSteelHatChannel",
 			"formName": "ROOF_SUBSTRATESTUD_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13479,7 +13479,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofSteelHatChannel",
 			"formName": "ROOF_SUBSTRATESTUD_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13501,7 +13501,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofSteelHatChannel",
 			"formName": "ROOF_SUBSTRATESTUD_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13530,7 +13530,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofSteelZ-Channel",
 			"formName": "ROOF_SUBSTRATESTUD_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13552,7 +13552,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofSteelZ-Channel",
 			"formName": "ROOF_SUBSTRATESTUD_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13581,7 +13581,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofSteelZ-Channel",
 			"formName": "ROOF_SUBSTRATESTUD_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13603,7 +13603,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofSteelZ-Channel",
 			"formName": "ROOF_SUBSTRATESTUD_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13632,7 +13632,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofSteelZ-Channel",
 			"formName": "ROOF_SUBSTRATESTUD_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13654,7 +13654,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofSteelZ-Channel",
 			"formName": "ROOF_SUBSTRATESTUD_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13683,7 +13683,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesWallFloorRoofSteelZ-Channel",
 			"formName": "ROOF_SUBSTRATESTUD_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13705,7 +13705,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesWallFloorRoofSteelZ-Channel",
 			"formName": "ROOF_SUBSTRATESTUD_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13734,7 +13734,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesWallFloorRoofSteelZ-Channel",
 			"formName": "ROOF_SUBSTRATESTUD_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -13756,7 +13756,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesWallFloorRoofSteelZ-Channel",
 			"formName": "ROOF_SUBSTRATESTUD_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SUBSTRATESTUD_MODULE_STYLE\"}",
@@ -25430,7 +25430,7 @@
 			"sequenceCode": "07",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25459,7 +25459,7 @@
 			"sequenceCode": "08",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25488,7 +25488,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25517,7 +25517,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofSteelWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25546,7 +25546,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25568,7 +25568,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25590,7 +25590,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25612,7 +25612,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25634,7 +25634,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25656,7 +25656,7 @@
 			"sequenceCode": "06",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25678,7 +25678,7 @@
 			"sequenceCode": "07",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25700,7 +25700,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25731,7 +25731,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25762,7 +25762,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25793,7 +25793,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25824,7 +25824,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25855,7 +25855,7 @@
 			"sequenceCode": "06",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25886,7 +25886,7 @@
 			"sequenceCode": "07",
 			"subcategory": "SubcategoriesFloorRoofWoodWebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25917,7 +25917,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25939,7 +25939,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25961,7 +25961,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -25983,7 +25983,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -26005,7 +26005,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -26027,7 +26027,7 @@
 			"sequenceCode": "06",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -26049,7 +26049,7 @@
 			"sequenceCode": "07",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -26071,7 +26071,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -26102,7 +26102,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -26133,7 +26133,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -26164,7 +26164,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -26195,7 +26195,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -26226,7 +26226,7 @@
 			"sequenceCode": "06",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -26257,7 +26257,7 @@
 			"sequenceCode": "07",
 			"subcategory": "SubcategoriesFloorRoofWood-ChordSteel-WebJoist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -27089,7 +27089,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofAirGap",
 			"formName": "ROOF_VOID_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_VOID_STYLE\"}",
@@ -27109,7 +27109,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofAirGap",
 			"formName": "ROOF_VOID_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_VOID_STYLE\"}",
@@ -27129,7 +27129,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofAirGap",
 			"formName": "ROOF_VOID_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_VOID_STYLE\"}",
@@ -27149,7 +27149,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesWallFloorRoofAirGap",
 			"formName": "ROOF_VOID_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_VOID_STYLE\"}",
@@ -27189,7 +27189,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofPVCMembrane",
 			"formName": "ROOF_MEMBRANE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_MEMBRANE_STYLE\"}",
@@ -27209,7 +27209,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofTPOMembrane",
 			"formName": "ROOF_MEMBRANE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_MEMBRANE_STYLE\"}",
@@ -27229,7 +27229,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofEPDMMembrane",
 			"formName": "ROOF_MEMBRANE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_MEMBRANE_STYLE\"}",
@@ -27469,7 +27469,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesWallFloorRoofPolyisoFoamInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -27489,7 +27489,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesWallFloorRoofPolyisoFoamInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -27509,7 +27509,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesWallFloorRoofPolyisoFoamInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -27529,7 +27529,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesWallFloorRoofPolyisoFoamInsulation",
 			"formName": "ROOF_INSULATION_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_INSULATION_STYLE\"}",
@@ -27940,7 +27940,7 @@
 			"sequenceCode": "06",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -27965,7 +27965,7 @@
 			"sequenceCode": "06",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -28002,7 +28002,7 @@
 			"sequenceCode": "07",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -28027,7 +28027,7 @@
 			"sequenceCode": "07",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -28064,7 +28064,7 @@
 			"sequenceCode": "08",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -28089,7 +28089,7 @@
 			"sequenceCode": "08",
 			"subcategory": "SubcategoriesFloorRoofSteelC-Joist",
 			"formName": "ROOF_STRUCTUREJOIST_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_STRUCTUREJOIST_MODULE_STYLE\"}",
@@ -28126,7 +28126,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28148,7 +28148,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_GAP_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28167,7 +28167,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_GAP_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28186,7 +28186,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28208,7 +28208,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28230,7 +28230,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28252,7 +28252,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28282,7 +28282,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28324,7 +28324,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28354,7 +28354,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28396,7 +28396,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28426,7 +28426,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28468,7 +28468,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28498,7 +28498,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesRoofWoodShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28540,7 +28540,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofAsphaltShingle",
 			"formName": "ROOF_SHINGLE_GAP_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28559,7 +28559,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofAsphaltShingle",
 			"formName": "ROOF_SHINGLE_GAP_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28578,7 +28578,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofAsphaltShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28600,7 +28600,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofAsphaltShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28630,7 +28630,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofAsphaltShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28672,7 +28672,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofAsphaltShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28694,7 +28694,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofAsphaltShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28724,7 +28724,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofAsphaltShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28766,7 +28766,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofAsphaltShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28788,7 +28788,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofAsphaltShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28818,7 +28818,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofAsphaltShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28860,7 +28860,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_GAP_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28879,7 +28879,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_GAP_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28898,7 +28898,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28920,7 +28920,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -28950,7 +28950,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -28992,7 +28992,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29014,7 +29014,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29044,7 +29044,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29086,7 +29086,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29108,7 +29108,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29138,7 +29138,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29180,7 +29180,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29202,7 +29202,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29232,7 +29232,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29274,7 +29274,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29296,7 +29296,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29326,7 +29326,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesRoofSlateShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29368,7 +29368,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_GAP_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29387,7 +29387,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_GAP_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29406,7 +29406,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29428,7 +29428,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29458,7 +29458,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29500,7 +29500,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29522,7 +29522,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29552,7 +29552,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29594,7 +29594,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29616,7 +29616,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29646,7 +29646,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29688,7 +29688,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29710,7 +29710,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29740,7 +29740,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29782,7 +29782,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29804,7 +29804,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29834,7 +29834,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesRoofMetalShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29876,7 +29876,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_GAP_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29895,7 +29895,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_GAP_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29914,7 +29914,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29936,7 +29936,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_GAP_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -29955,7 +29955,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -29985,7 +29985,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -30027,7 +30027,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -30049,7 +30049,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -30079,7 +30079,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -30121,7 +30121,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -30143,7 +30143,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -30173,7 +30173,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -30215,7 +30215,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -30237,7 +30237,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -30267,7 +30267,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -30309,7 +30309,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_MODULE_DIMENSIONS",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -30331,7 +30331,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_MODULE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_MODULE_DIMENSIONS\"}",
@@ -30361,7 +30361,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesRoofClayShingle",
 			"formName": "ROOF_SHINGLE_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SHINGLE_GAP_DIMENSIONS\"}",
@@ -31123,7 +31123,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofHardscape",
 			"formName": "ROOF_SITEWORK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SITEWORK_STYLE\"}",
@@ -31147,7 +31147,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofHardscape",
 			"formName": "ROOF_SITEWORK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SITEWORK_STYLE\"}",
@@ -31171,7 +31171,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofHardscape",
 			"formName": "ROOF_SITEWORK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SITEWORK_STYLE\"}",
@@ -31195,7 +31195,7 @@
 			"sequenceCode": "04",
 			"subcategory": "SubcategoriesFloorRoofHardscape",
 			"formName": "ROOF_SITEWORK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SITEWORK_STYLE\"}",
@@ -31219,7 +31219,7 @@
 			"sequenceCode": "05",
 			"subcategory": "SubcategoriesFloorRoofHardscape",
 			"formName": "ROOF_SITEWORK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SITEWORK_STYLE\"}",
@@ -31243,7 +31243,7 @@
 			"sequenceCode": "06",
 			"subcategory": "SubcategoriesFloorRoofHardscape",
 			"formName": "ROOF_SITEWORK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SITEWORK_STYLE\"}",
@@ -31267,7 +31267,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofSoftscape",
 			"formName": "ROOF_SITEWORK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SITEWORK_STYLE\"}",
@@ -31291,7 +31291,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofSoftscape",
 			"formName": "ROOF_SITEWORK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SITEWORK_STYLE\"}",
@@ -31315,7 +31315,7 @@
 			"sequenceCode": "03",
 			"subcategory": "SubcategoriesFloorRoofSoftscape",
 			"formName": "ROOF_SITEWORK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SITEWORK_STYLE\"}",
@@ -31387,7 +31387,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofGeotextileFabric",
 			"formName": "ROOF_SITEWORK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SITEWORK_STYLE\"}",
@@ -31411,7 +31411,7 @@
 			"sequenceCode": "02",
 			"subcategory": "SubcategoriesFloorRoofDrainageBoard",
 			"formName": "ROOF_SITEWORK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SITEWORK_STYLE\"}",
@@ -31435,7 +31435,7 @@
 			"sequenceCode": "01",
 			"subcategory": "SubcategoriesFloorRoofDrainageBoard",
 			"formName": "ROOF_SITEWORK_STYLE",
-			"toolMode": "VE_ROOF",
+			"toolMode": "VE_ROOF_FACE",
 			"propertyArchive":
 			{
 				"Layer.Form": "{\"value\":\"ROOF_SITEWORK_STYLE\"}",
