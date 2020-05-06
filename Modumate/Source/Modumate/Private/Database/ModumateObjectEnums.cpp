@@ -32,7 +32,8 @@ EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 	case EToolMode::VE_FINISH: return EObjectType::OTFinish;
 	case EToolMode::VE_COUNTERTOP: return EObjectType::OTCountertop;
 	case EToolMode::VE_TRIM: return EObjectType::OTTrim;
-	case EToolMode::VE_ROOF: return EObjectType::OTRoof;
+	case EToolMode::VE_ROOF_FACE: return EObjectType::OTRoofFace;
+	case EToolMode::VE_ROOF_PERIMETER: return EObjectType::OTRoofPerimeter;
 	case EToolMode::VE_METAPLANE: return EObjectType::OTMetaPlane;
 	case EToolMode::VE_CUTPLANE: return EObjectType::OTCutPlane;
 	case EToolMode::VE_SCOPEBOX: return EObjectType::OTScopeBox;
@@ -50,7 +51,7 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTWallSegment: return EToolMode::VE_WALL;
 	case EObjectType::OTRailSegment: return EToolMode::VE_RAIL;
 	case EObjectType::OTFloorSegment: return EToolMode::VE_FLOOR;
-	case EObjectType::OTRoof: return EToolMode::VE_ROOF;
+	case EObjectType::OTRoofFace: return EToolMode::VE_ROOF_FACE;
 	case EObjectType::OTDoor: return EToolMode::VE_DOOR;
 	case EObjectType::OTWindow: return EToolMode::VE_WINDOW;
 	case EObjectType::OTFurniture: return EToolMode::VE_PLACEOBJECT;
@@ -71,6 +72,7 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTScopeBox: return EToolMode::VE_SCOPEBOX;
 	case EObjectType::OTStructureLine: return EToolMode::VE_STRUCTURELINE;
 	case EObjectType::OTDrawing: return EToolMode::VE_DRAWING;
+	case EObjectType::OTRoofPerimeter: return EToolMode::VE_ROOF_PERIMETER;
 	case EObjectType::OTUnknown: return EToolMode::VE_NONE;
 	};
 	return EToolMode::VE_NONE;
@@ -86,7 +88,7 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTRailSegments", "Rails") : LOCTEXT("OTRailSegment", "Rail");
 	case EObjectType::OTFloorSegment:
 		return bPlural ? LOCTEXT("OTFloorSegments", "Floors") : LOCTEXT("OTFloorSegment", "Floor");
-	case EObjectType::OTRoof:
+	case EObjectType::OTRoofFace:
 		return bPlural ? LOCTEXT("OTRoofs", "Roofs") : LOCTEXT("OTRoof", "Roof");
 	case EObjectType::OTDoor:
 		return bPlural ? LOCTEXT("OTDoors", "Doors") : LOCTEXT("OTDoor", "Door");

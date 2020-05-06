@@ -50,7 +50,8 @@
 #include "ToolsAndAdjustments/Tools/EditModelPlaneHostedObjTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelPortalTools.h"
 #include "ToolsAndAdjustments/Tools/EditModelRailTool.h"
-#include "ToolsAndAdjustments/Tools/EditModelRoofTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelRoofFaceTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelRoofPerimeterTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelRotateTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelScopeBoxTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
@@ -423,7 +424,8 @@ void AEditModelPlayerController_CPP::CreateTools()
 	RegisterTool(CreateTool<UFinishTool>());
 	RegisterTool(CreateTool<UCountertopTool>());
 	RegisterTool(CreateTool<UTrimTool>());
-	RegisterTool(CreateTool<URoofTool>());
+	RegisterTool(CreateTool<URoofFaceTool>());
+	RegisterTool(CreateTool<URoofPerimeterTool>());
 	RegisterTool(CreateTool<UMetaPlaneTool>());
 	RegisterTool(CreateTool<UCutPlaneTool>());
 	RegisterTool(CreateTool<UScopeBoxTool>());
@@ -1807,7 +1809,7 @@ void AEditModelPlayerController_CPP::UpdateMouseTraceParams()
 	case EToolMode::VE_WINDOW:
 	case EToolMode::VE_CABINET:
 	case EToolMode::VE_COUNTERTOP:
-	case EToolMode::VE_ROOF:
+	case EToolMode::VE_ROOF_FACE:
 		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_META_MOI);
 		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_DECORATOR_MOI);
 		break;

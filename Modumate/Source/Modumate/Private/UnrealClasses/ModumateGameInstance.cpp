@@ -266,7 +266,7 @@ void UModumateGameInstance::RegisterAllCommands()
 		int32 parentID = params.GetValue(kParent);
 
 		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_ROOF, assemblyKey);
+		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_ROOF_FACE, assemblyKey);
 
 		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		ensureAlways(playerState != nullptr);
@@ -280,7 +280,7 @@ void UModumateGameInstance::RegisterAllCommands()
 		if ((assembly != nullptr) && (points.Num() > 2) &&
 			UModumateObjectStatics::GetRoofControlValues(points, edgeSlopes, edgesHaveFaces, controlPoints, controlIndices))
 		{
-			int32 newObjectID = GetDocument()->MakePointsObject(GetWorld(), ids, controlPoints, controlIndices, EObjectType::OTRoof, false, *assembly, parentID);
+			int32 newObjectID = GetDocument()->MakePointsObject(GetWorld(), ids, controlPoints, controlIndices, EObjectType::OTRoofFace, false, *assembly, parentID);
 			output.SetValue(kObjectID, newObjectID);
 
 			return true;

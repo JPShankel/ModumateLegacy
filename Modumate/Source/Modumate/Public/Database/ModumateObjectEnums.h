@@ -151,7 +151,8 @@ enum class EToolMode : uint8
 	VE_FINISH,
 	VE_COUNTERTOP,
 	VE_TRIM,
-	VE_ROOF,
+	VE_ROOF_FACE,
+	VE_ROOF_PERIMETER,
 	VE_METAPLANE,
 	VE_CUTPLANE,
 	VE_SCOPEBOX,
@@ -159,7 +160,7 @@ enum class EToolMode : uint8
 	VE_CREATESIMILAR,
 	VE_STRUCTURELINE,
 	VE_DRAWING,
-	VE_GRAPH2D
+	VE_GRAPH2D,
 };
 
 UENUM(BlueprintType)
@@ -169,7 +170,7 @@ enum class EObjectType : uint8
 	OTWallSegment,
 	OTRailSegment,
 	OTFloorSegment,
-	OTRoof,
+	OTRoofFace,
 	OTDoor,
 	OTWindow,
 	OTFurniture,
@@ -190,6 +191,7 @@ enum class EObjectType : uint8
 	OTScopeBox,
 	OTStructureLine,
 	OTDrawing,
+	OTRoofPerimeter,
 	OTUnknown
 };
 

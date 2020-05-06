@@ -1235,6 +1235,33 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const Modumate::FModumateObj
 	}
 }
 
+void UModumateObjectStatics::GetGraphIDsFromMOIs(const TArray<Modumate::FModumateObjectInstance *> &MOIs, TSet<int32> &OutVertexIDs, TSet<int32> &OutEdgeIDs, TSet<int32> &OutFaceIDs)
+{
+	OutVertexIDs.Reset();
+	OutEdgeIDs.Reset();
+	OutFaceIDs.Reset();
+
+	for (FModumateObjectInstance *obj : MOIs)
+	{
+		EObjectType objectType = obj ? obj->GetObjectType() : EObjectType::OTNone;
+		int32 objectID = obj ? obj->ID : MOD_ID_NONE;
+		switch (objectType)
+		{
+		case EObjectType::OTMetaVertex:
+			OutVertexIDs.Add(objectID);
+			break;
+		case EObjectType::OTMetaEdge:
+			OutEdgeIDs.Add(objectID);
+			break;
+		case EObjectType::OTMetaPlane:
+			OutFaceIDs.Add(objectID);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 void UModumateObjectStatics::GetPlaneHostedValues(const Modumate::FModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal)
 {
 	OutThickness = PlaneHostedObj->CalculateThickness();

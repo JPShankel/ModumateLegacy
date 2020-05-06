@@ -729,7 +729,7 @@ bool FModumateDocument::UpdateGeometry(UWorld *world, int32 id, const TArray<FVe
 	case EObjectType::OTCabinet:
 	case EObjectType::OTCountertop:
 	case EObjectType::OTTrim:
-	case EObjectType::OTRoof:
+	case EObjectType::OTRoofFace:
 	case EObjectType::OTMetaPlane:
 	case EObjectType::OTCutPlane:
 	case EObjectType::OTScopeBox:
@@ -1313,7 +1313,7 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 				// If we got an assembly, build the object with it, otherwise by type
 				FModumateObjectInstance *newInstance = (assembly != nullptr) ?
 					CreateOrRestoreObjFromAssembly(World, *assembly, kvp.Value.ObjectID, kvp.Value.ParentID, kvp.Value.Extents, &kvp.Value.ControlPoints, &kvp.Value.ControlIndices) :
-					CreateOrRestoreObjFromObjectType(World, kvp.Value.ObjectType, kvp.Value.ObjectID, kvp.Value.ParentID, FVector::ZeroVector, &kvp.Value.ControlPoints);
+					CreateOrRestoreObjFromObjectType(World, kvp.Value.ObjectType, kvp.Value.ObjectID, kvp.Value.ParentID, FVector::ZeroVector, &kvp.Value.ControlPoints, &kvp.Value.ControlIndices);
 
 				if (newInstance != nullptr)
 				{
@@ -3727,7 +3727,7 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 		EToolMode::VE_COUNTERTOP,
 		EToolMode::VE_STRUCTURELINE,
 		EToolMode::VE_TRIM,
-		EToolMode::VE_ROOF
+		EToolMode::VE_ROOF_FACE
 	};
 
 	AEditModelPlayerController_CPP* emPlayerController = Cast<AEditModelPlayerController_CPP>(world->GetFirstPlayerController());
@@ -4340,7 +4340,7 @@ void FModumateDocument::DisplayDebugInfo(UWorld* world)
 	displayObjectCount(EObjectType::OTWallSegment, TEXT("OTWallSegment"));
 	displayObjectCount(EObjectType::OTRailSegment, TEXT("OTRailSegment"));
 	displayObjectCount(EObjectType::OTFloorSegment, TEXT("OTFloorSegment"));
-	displayObjectCount(EObjectType::OTRoof, TEXT("OTRoof"));
+	displayObjectCount(EObjectType::OTRoofFace, TEXT("OTRoof"));
 	displayObjectCount(EObjectType::OTDoor, TEXT("OTDoor"));
 	displayObjectCount(EObjectType::OTWindow, TEXT("OTWindow"));
 	displayObjectCount(EObjectType::OTFurniture, TEXT("OTFurniture"));

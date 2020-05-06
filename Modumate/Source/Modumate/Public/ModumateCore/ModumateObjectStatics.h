@@ -108,6 +108,8 @@ public:
 	static void ShouldMetaObjBeEnabled(const Modumate::FModumateObjectInstance *MetaMOI,
 		bool &bOutShouldBeVisible, bool &bOutShouldCollisionBeEnabled, bool &bOutIsConnected);
 
+	static void GetGraphIDsFromMOIs(const TArray<Modumate::FModumateObjectInstance *> &MOIs, TSet<int32> &OutVertexIDs, TSet<int32> &OutEdgeIDs, TSet<int32> &OutFaceIDs);
+
 	// Given a plane hosted object, find some basic values:
 	// the thickness of the assembly,
 	// the distance along its normal vector from which the rest of its layers are positioned,

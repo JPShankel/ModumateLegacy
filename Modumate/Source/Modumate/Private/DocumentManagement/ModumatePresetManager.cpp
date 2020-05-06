@@ -521,7 +521,7 @@ namespace Modumate
 		{
 			case EToolMode::VE_WALL: formName = TEXT("WALL_ROOT"); break;
 			case EToolMode::VE_FLOOR: formName = TEXT("FLOOR_ROOT"); break;
-			case EToolMode::VE_ROOF: formName = TEXT("ROOF_ROOT"); break;
+			case EToolMode::VE_ROOF_FACE: formName = TEXT("ROOF_ROOT"); break;
 			case EToolMode::VE_FINISH: formName = TEXT("FINISH_ROOT"); break;
 			case EToolMode::VE_TRIM: formName = TEXT("TRIM_ROOT"); break;
 			case EToolMode::VE_WINDOW: formName = TEXT("WINDOW_ROOT"); break;
@@ -608,7 +608,7 @@ namespace Modumate
 		FPresetManager::Result ret = NoError;
 		PSMLOADDECISIONTREE(EToolMode::VE_WALL);
 		PSMLOADDECISIONTREE(EToolMode::VE_FLOOR);
-		PSMLOADDECISIONTREE(EToolMode::VE_ROOF);
+		PSMLOADDECISIONTREE(EToolMode::VE_ROOF_FACE);
 		PSMLOADDECISIONTREE(EToolMode::VE_FINISH);
 		PSMLOADDECISIONTREE(EToolMode::VE_TRIM);
 		PSMLOADDECISIONTREE(EToolMode::VE_WINDOW);
@@ -633,7 +633,7 @@ namespace Modumate
 		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_FINISH, DataCollection<FModumateObjectAssembly>());
 		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_PLACEOBJECT, DataCollection<FModumateObjectAssembly>());
 		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_TRIM, DataCollection<FModumateObjectAssembly>());
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_ROOF, DataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_ROOF_FACE, DataCollection<FModumateObjectAssembly>());
 
 		AssembliesByObjectType.Add(EObjectType::OTStructureLine, DataCollection<FModumateObjectAssembly>());
 

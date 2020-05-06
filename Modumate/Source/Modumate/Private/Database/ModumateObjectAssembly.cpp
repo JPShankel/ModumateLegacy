@@ -1175,7 +1175,7 @@ ECraftingResult UModumateObjectAssemblyStatics::DoMakeAssembly(
 
 		case EObjectType::OTFloorSegment:
 		case EObjectType::OTWallSegment:
-		case EObjectType::OTRoof:
+		case EObjectType::OTRoofFace:
 		case EObjectType::OTFinish:
 			return MakeLayeredAssembly(InDB,InSpec,OutMOA);
 
@@ -1213,7 +1213,7 @@ bool UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(EObjectType OT)
 	case EObjectType::OTStructureLine :
 	case EObjectType::OTWallSegment:
 	case EObjectType::OTFloorSegment:
-	case EObjectType::OTRoof:
+	case EObjectType::OTRoofFace:
 	case EObjectType::OTFinish:
 		return true;
 	};

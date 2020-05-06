@@ -37,7 +37,8 @@
 #include "ModumateObjectInstancePlaneHostedObj.h"
 #include "ModumateObjectInstancePortal.h"
 #include "ModumateObjectInstanceRails.h"
-#include "ModumateObjectInstanceRoof.h"
+#include "ModumateObjectInstanceRoofFace.h"
+#include "ModumateObjectInstanceRoofPerimeter.h"
 #include "ModumateObjectInstanceRooms.h"
 #include "ModumateObjectInstanceScopeBox.h"
 #include "ModumateObjectInstanceStairs.h"
@@ -146,7 +147,7 @@ namespace Modumate
 		case EObjectType::OTWallSegment: Implementation = new FMOIPlaneHostedObjImpl(this); break;
 		case EObjectType::OTRailSegment: Implementation = new FMOIRailImpl(this); break;
 		case EObjectType::OTFloorSegment: Implementation = new FMOIPlaneHostedObjImpl(this); break;
-		case EObjectType::OTRoof: Implementation = new FMOIRoofImpl(this); break;
+		case EObjectType::OTRoofFace: Implementation = new FMOIRoofFaceImpl(this); break;
 		case EObjectType::OTCountertop: Implementation = new FMOIFlatPolyImpl(this,false); break; // false = no invert handle
 		case EObjectType::OTDoor:
 		case EObjectType::OTWindow: Implementation = new FMOIPortalImpl(this); break;
@@ -166,6 +167,7 @@ namespace Modumate
 		case EObjectType::OTCutPlane: Implementation = new FMOICutPlaneImpl(this); break;
 		case EObjectType::OTScopeBox: Implementation = new FMOIScopeBoxImpl(this); break;
 		case EObjectType::OTStructureLine: Implementation = new FMOIStructureLine(this); break;
+		case EObjectType::OTRoofPerimeter: Implementation = new FMOIRoofPerimeterImpl(this); break;
 		default:
 		{
 			FString objectTypeString = EnumValueString(EObjectType, GetObjectType());
