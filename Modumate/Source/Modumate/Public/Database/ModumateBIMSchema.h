@@ -62,6 +62,7 @@ namespace Modumate {
 			extern const FNameType DimensionSetComments;
 			extern const FNameType DimensionSetName;
 			extern const FNameType Dimensions;
+			extern const FNameType EngineMaterial;
 			extern const FNameType Extents;
 			extern const FNameType Form;
 			extern const FNameType Function;
@@ -69,7 +70,7 @@ namespace Modumate {
 			extern const FNameType HexValue;
 			extern const FNameType Length;
 			extern const FNameType LoadFactorSpecialCalc;
-			extern const FNameType Material;
+			extern const FNameType MaterialKey;
 			extern const FNameType MaterialColor;
 			extern const FNameType Mesh;
 			extern const FNameType ModuleCount;

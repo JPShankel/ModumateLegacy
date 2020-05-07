@@ -384,7 +384,7 @@ public:
 			{
 				LayerColorKey = value;
 			}
-			else if (var.Name == BIM::Parameters::Material)
+			else if (var.Name == BIM::Parameters::MaterialKey)
 			{
 				LayerMaterialKey = value;
 			}
@@ -395,7 +395,7 @@ public:
 			{
 				LayerColorKey = value;
 			}
-			else if (var.Name == BIM::Parameters::Material)
+			else if (var.Name == BIM::Parameters::MaterialKey)
 			{
 				LayerMaterialKey = value;
 			}
@@ -421,7 +421,7 @@ public:
 		}
 		else if (var.Scope == BIM::EScope::Module)
 		{
-			if (var.Name == BIM::Parameters::Material)
+			if (var.Name == BIM::Parameters::MaterialKey)
 			{
 				ModuleMaterialKey = value;
 				LayerMaterialKey = ModuleMaterialKey;
@@ -454,7 +454,7 @@ public:
 			{
 				GapColorKey = value;
 			}
-			else if (var.Name == BIM::Parameters::Material)
+			else if (var.Name == BIM::Parameters::MaterialKey)
 			{
 				GapMaterialKey = value;
 			}
@@ -543,6 +543,7 @@ public:
 				ret.SimpleMeshes.Add(*trimMesh);
 			}
 		}
+
 		if (!LayerMaterialKey.IsEmpty())
 		{
 			const FArchitecturalMaterial *mat = db.GetArchitecturalMaterialByKey(*LayerMaterialKey);
@@ -866,7 +867,7 @@ bool FModumateObjectAssembly::FromCraftingProperties_DEPRECATED(
 				{
 					FString colorName, materialName;
 					if (l.TryGetProperty(finishEnum, BIM::Parameters::Color, colorName) &&
-						l.TryGetProperty(finishEnum, BIM::Parameters::Material, materialName))
+						l.TryGetProperty(finishEnum, BIM::Parameters::MaterialKey, materialName))
 					{
 						const FArchitecturalMaterial *channelMat = db.GetArchitecturalMaterialByKey(*materialName);
 						const FCustomColor *channelColor = db.GetCustomColorByKey(*colorName);
@@ -1129,7 +1130,7 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 
 	layerMaker.FormatEnum = ELayerFormat::None;
 	layerMaker.FunctionEnum = ELayerFunction::Structure;
-	layerMaker.LayerMaterialKey = OutMOA.Properties.GetProperty(BIM::EScope::Layer, BIM::Parameters::Material);
+	layerMaker.LayerMaterialKey = OutMOA.Properties.GetProperty(BIM::EScope::Layer, BIM::Parameters::MaterialKey);
 
 	layerMaker.ProfileKey = OutMOA.Properties.GetProperty(BIM::EScope::Mesh, BIM::Parameters::AssetID);
 	layerMaker.Subcategories.Add(TEXT("SubcategoryNone"));

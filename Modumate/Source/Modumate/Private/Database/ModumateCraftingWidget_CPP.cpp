@@ -1008,7 +1008,7 @@ TArray<FCraftingItem> UModumateCraftingWidget_CPP::GetDecisionsForDynamicListEle
 			// They also have a corresponding <channel>.Material property where <channel> is one of the material channel types (ie Finish_Interior)
 			// TODO: The slotted/portal material channels are currently defined as scopes in the BIM system .. when slotted assemblies are 
 			// refactored these scopes will be retired
-			if (node.Properties.HasProperty(BIM::EScope::MaterialColor, BIM::Parameters::Material))
+			if (node.Properties.HasProperty(BIM::EScope::MaterialColor, BIM::Parameters::MaterialKey))
 			{
 				// If we are a MaterialColor node, iterate over all the supported channels and see if we have the corresponding property
 				for (auto &sc : supportedChannels)
@@ -1016,7 +1016,7 @@ TArray<FCraftingItem> UModumateCraftingWidget_CPP::GetDecisionsForDynamicListEle
 					EBIMValueScope channelScope;
 					if (TryFindEnumValueByName<EBIMValueScope>(TEXT("EBIMValueScope"), sc, channelScope))
 					{
-						if (node.Properties.HasProperty(channelScope, BIM::Parameters::Material))
+						if (node.Properties.HasProperty(channelScope, BIM::Parameters::MaterialKey))
 						{
 							return true;
 						}

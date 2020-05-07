@@ -397,7 +397,7 @@ namespace Modumate {
 											matColNode.Data.SubCategory = matSetNode.Data.SubCategory;
 											bindNodeMetaData(matColNode, matSetNode, matCol);
 											matColNode.Data.SetProperty(materialScope, BIM::Parameters::Color.ToString(), matCol.CraftingParameters.GetValue(TEXT("MaterialColor.Color")));
-											matColNode.Data.SetProperty(materialScope, BIM::Parameters::Material.ToString(), matCol.CraftingParameters.GetValue(TEXT("MaterialColor.Material")));
+											matColNode.Data.SetProperty(materialScope, BIM::Parameters::MaterialKey.ToString(), matCol.CraftingParameters.GetValue(TEXT("MaterialColor.Material")));
 										}
 										matSetNode.SetSelectedSubfield(0);
 									}
@@ -506,7 +506,7 @@ namespace Modumate {
 						TDecisionTreeNode<FCraftingItem> &newNode = node.Subfields.AddDefaulted_GetRef();
 						bindNodeMetaData(newNode, node, option);
 						newNode.Data.SetProperty(valueSpec.Scope, BIM::Parameters::Color.ToString(), option.CraftingParameters.GetValue(TEXT("MaterialColor.Color")));
-						newNode.Data.SetProperty(valueSpec.Scope, BIM::Parameters::Material.ToString(), option.CraftingParameters.GetValue(TEXT("MaterialColor.Material")));
+						newNode.Data.SetProperty(valueSpec.Scope, BIM::Parameters::MaterialKey.ToString(), option.CraftingParameters.GetValue(TEXT("MaterialColor.Material")));
 					}
 				}
 				else

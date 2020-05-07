@@ -940,7 +940,7 @@ Starting point: get a tree
 						isPortal = true;
 						// "MaterialColor" value interferes with some color channels and should only apply to layered assemblies
 						props.RemoveProperty(BIM::EScope::MaterialColor, BIM::Parameters::Color);
-						props.RemoveProperty(BIM::EScope::MaterialColor, BIM::Parameters::Material);
+						props.RemoveProperty(BIM::EScope::MaterialColor, BIM::Parameters::MaterialKey);
 
 						const BIM::FNameType params[] = { BIM::Parameters::Configuration,BIM::Parameters::PartSet };
 

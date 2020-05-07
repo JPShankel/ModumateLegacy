@@ -193,6 +193,7 @@ namespace Modumate {
 			const FNameType DimensionSetComments = TEXT("DimensionSetComments");
 			const FNameType DimensionSetName = TEXT("DimensionSetName");
 			const FNameType Dimensions = TEXT("Dimensions");
+			const FNameType EngineMaterial = TEXT("EngineMaterial");
 			const FNameType Extents = TEXT("Extents");
 			const FNameType Form = TEXT("Form");
 			const FNameType Function = TEXT("Function");
@@ -200,7 +201,7 @@ namespace Modumate {
 			const FNameType HexValue = TEXT("HexValue");
 			const FNameType Length = TEXT("Length");
 			const FNameType LoadFactorSpecialCalc = TEXT("LoadFactorSpecialCalc");
-			const FNameType Material = TEXT("Material");
+			const FNameType MaterialKey = TEXT("MaterialKey");
 			const FNameType MaterialColor = TEXT("MaterialColor");
 			const FNameType Mesh = TEXT("Mesh");
 			const FNameType ModuleCount = TEXT("ModuleCount");

@@ -710,7 +710,7 @@ bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContex
 	presetManager.PresetToSpec(PresetKey, presetSpec);
 
 	FString materialName, colorName;
-	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::Material, materialName);
+	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::MaterialKey, materialName);
 	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::Color, colorName);
 
 	const FArchitecturalMaterial *mat = db->GetArchitecturalMaterialByKey(FName(*materialName));
@@ -755,7 +755,7 @@ bool UModumateIconMeshStatics::GetModuleIconParamsFromPreset(UObject* WorldConte
 	// Material and color
 	FString colorName, materialName;
 	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Module, BIM::Parameters::Color, colorName);
-	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Module, BIM::Parameters::Material, materialName);
+	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Module, BIM::Parameters::MaterialKey, materialName);
 
 	const FArchitecturalMaterial *mat = db->GetArchitecturalMaterialByKey(FName(*materialName));
 	if (ensureAlways(mat != nullptr) && ensureAlways(mat->EngineMaterial.IsValid()))

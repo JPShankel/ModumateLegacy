@@ -6,7 +6,7 @@ DEFINE MATERIAL_COLOR
 	ICON: Material
 	PROPERTIES:
 		PRIVATE("Display Name",Preset.Name)
-		PRIVATE("Material",Node.Material)
+		PRIVATE("Material",Node.MaterialKey)
 		PRIVATE("Color",Node.Color)
 END
 
@@ -15,583 +15,583 @@ END
 
 PRESET MATERIAL_COLOR AsphaltBarkwood
 	Preset.Name="Asphalt - Barkwood"
-	Node.Material="Asphalt"
+	Node.MaterialKey="Asphalt"
 	Node.Color="MaterialsAsphaltBarkwood"
 END
 
 PRESET MATERIAL_COLOR AsphaltPewterGray
 	Preset.Name="Asphalt - Pewter Gray"
-	Node.Material="Asphalt"
+	Node.MaterialKey="Asphalt"
 	Node.Color="MaterialsAsphaltPewterGray"
 END
 
 PRESET MATERIAL_COLOR CementSalt
 	Preset.Name="Cement - Salt"
-	Node.Material="Cement"
+	Node.MaterialKey="Cement"
 	Node.Color="MaterialsCementSalt"
 END
 
 PRESET MATERIAL_COLOR CementBlonde
 	Preset.Name="Cement - Blonde"
-	Node.Material="Cement"
+	Node.MaterialKey="Cement"
 	Node.Color="MaterialsCementBlonde"
 END
 
 PRESET MATERIAL_COLOR CementEarth
 	Preset.Name="Cement - Earth"
-	Node.Material="Cement"
+	Node.MaterialKey="Cement"
 	Node.Color="MaterialsCementEarth"
 END
 
 PRESET MATERIAL_COLOR Concrete 
 	Preset.Name="Concrete"
-	Node.Material="Concrete-NormalAggregate"
+	Node.MaterialKey="Concrete-NormalAggregate"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR ConcreteNatural 
 	Preset.Name="Concrete, Natural"
-	Node.Material="Concrete-NormalAggregate"
+	Node.MaterialKey="Concrete-NormalAggregate"
 	Node.Color="MaterialsConcreteNatural"
 END
 
 PRESET MATERIAL_COLOR ConcreteMediumGray
 	Preset.Name="Concrete, Medium Gray"
-	Node.Material="Concrete-NormalAggregate"
+	Node.MaterialKey="Concrete-NormalAggregate"
 	Node.Color="MaterialsConcreteMediumGray"
 END
 
 PRESET MATERIAL_COLOR ConcreteDarkGray
 	Preset.Name="Concrete, Dark Gray"
-	Node.Material="Concrete-NormalAggregate"
+	Node.MaterialKey="Concrete-NormalAggregate"
 	Node.Color="MaterialsConcreteDarkGray"
 END
 
 PRESET MATERIAL_COLOR ConcreteOlive
 	Preset.Name="Concrete, Olive"
-	Node.Material="Concrete-NormalAggregate"
+	Node.MaterialKey="Concrete-NormalAggregate"
 	Node.Color="MaterialsConcreteOlive"
 END
 
 PRESET MATERIAL_COLOR ConcreteFineAggregate 
 	Preset.Name="Concrete, Fine Aggregate"
-	Node.Material="Concrete-FineAggregate"
+	Node.MaterialKey="Concrete-FineAggregate"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR ConcreteCoarseAggregate 
 	Preset.Name="Concrete, Coarse Aggregate"
-	Node.Material="Concrete-CoarseAggregate"
+	Node.MaterialKey="Concrete-CoarseAggregate"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR FiberCement
 	Preset.Name="Fiber Cement"
-	Node.Material="FibreCement"
+	Node.MaterialKey="FibreCement"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR FiberCementSalt
 	Preset.Name="Fiber Cement - Salt"
-	Node.Material="FibreCement"
+	Node.MaterialKey="FibreCement"
 	Node.Color="MaterialsCementSalt"
 END
 
 PRESET MATERIAL_COLOR FiberCementBlonde
 	Preset.Name="Fiber Cement - Blonde"
-	Node.Material="FibreCement"
+	Node.MaterialKey="FibreCement"
 	Node.Color="MaterialsCementBlonde"
 END
 
 PRESET MATERIAL_COLOR FiberCementEarth
 	Preset.Name="Fiber Cement - Earth"
-	Node.Material="FibreCement"
+	Node.MaterialKey="FibreCement"
 	Node.Color="MaterialsCementEarth"
 END
 
 PRESET MATERIAL_COLOR GroutCream 
 	Preset.Name="Grout, Cream"
-	Node.Material="Grout"
+	Node.MaterialKey="Grout"
 	Node.Color="MaterialsGroutCream"
 END
 
 PRESET MATERIAL_COLOR GroutWarmGrey
 	Preset.Name="Grout, Warm Grey"
-	Node.Material="Grout"
+	Node.MaterialKey="Grout"
 	Node.Color="MaterialsGroutWarmGrey"
 END
 
 PRESET MATERIAL_COLOR GroutDarkGrey
 	Preset.Name="Grout, Dark Grey"
-	Node.Material="Grout"
+	Node.MaterialKey="Grout"
 	Node.Color="MaterialsGroutDarkGrey"
 END
 
 PRESET MATERIAL_COLOR MortarNatural 
 	Preset.Name="Mortar, Natural"
-	Node.Material="Mortar"
+	Node.MaterialKey="Mortar"
 	Node.Color="MaterialsMortarNatural"
 END
 
 PRESET MATERIAL_COLOR MortarBlack
 	Preset.Name="Mortar, Black"
-	Node.Material="Mortar"
+	Node.MaterialKey="Mortar"
 	Node.Color="MaterialsMortarBlack"
 END
 
 PRESET MATERIAL_COLOR MortarDarkBrown
 	Preset.Name="Mortar, Dark Brown"
-	Node.Material="Mortar"
+	Node.MaterialKey="Mortar"
 	Node.Color="MaterialsMortarDarkBrown"
 END
 
 PRESET MATERIAL_COLOR PlasterShell
 	Preset.Name="Shell Plaster"
-	Node.Material="Plaster"
+	Node.MaterialKey="Plaster"
 	Node.Color="MaterialsPlasterShell"
 END
 
 PRESET MATERIAL_COLOR PlasterTan
 	Preset.Name="Brown Plaster"
-	Node.Material="Plaster"
+	Node.MaterialKey="Plaster"
 	Node.Color="MaterialsPlasterTan"
 END
 
 PRESET MATERIAL_COLOR PlasterBlue
 	Preset.Name="Blue Plaster"
-	Node.Material="Plaster"
+	Node.MaterialKey="Plaster"
 	Node.Color="MaterialsPlasterBlue"
 END
 
 PRESET MATERIAL_COLOR CarpetSaddle
 	Preset.Name="Carpet Saddle"
-	Node.Material="Carpet-LowProfile"
+	Node.MaterialKey="Carpet-LowProfile"
 	Node.Color="MaterialsCarpetSaddle"
 END
 
 PRESET MATERIAL_COLOR CarpetWhite
 	Preset.Name="Carpet White"
-	Node.Material="Carpet-LowProfile"
+	Node.MaterialKey="Carpet-LowProfile"
 	Node.Color="MaterialsCarpetWhite"
 END
 
 PRESET MATERIAL_COLOR CarpetOliveGreen
 	Preset.Name="Carpet Olive Green"
-	Node.Material="Carpet-LowProfile"
+	Node.MaterialKey="Carpet-LowProfile"
 	Node.Color="MaterialsCarpetOliveGreen"
 END
 
 PRESET MATERIAL_COLOR FabricCamel
 	Preset.Name="Fabric, Camel"
-	Node.Material="Fabric"
+	Node.MaterialKey="Fabric"
 	Node.Color="MaterialsFeltCamel"
 END
 
 PRESET MATERIAL_COLOR FeltKhaki
 	Preset.Name="Khaki Felt"
-	Node.Material="Felt"
+	Node.MaterialKey="Felt"
 	Node.Color="MaterialsFeltKhaki"
 END
 
 PRESET MATERIAL_COLOR FeltEnglishGreen
 	Preset.Name="English Green Felt"
-	Node.Material="Felt"
+	Node.MaterialKey="Felt"
 	Node.Color="MaterialsFeltOlive"
 END
 
 PRESET MATERIAL_COLOR FeltBurgundy
 	Preset.Name="Burgundy Felt"
-	Node.Material="Felt"
+	Node.MaterialKey="Felt"
 	Node.Color="MaterialsFeltBurgundy"
 END
 
 PRESET MATERIAL_COLOR ClayBrickNatural
 	Preset.Name="Natural Brick"
-	Node.Material="Clay"
+	Node.MaterialKey="Clay"
 	Node.Color="MaterialsClayBrickNatural"
 END
 
 PRESET MATERIAL_COLOR ClayBrickTan
 	Preset.Name="Tan Brick"
-	Node.Material="Clay"
+	Node.MaterialKey="Clay"
 	Node.Color="MaterialsClayBrickTan"
 END
 
 PRESET MATERIAL_COLOR ClayBrickYellow
 	Preset.Name="Yellow Brick"
-	Node.Material="Clay"
+	Node.MaterialKey="Clay"
 	Node.Color="MaterialsClayBrickYellow"
 END
 
 PRESET MATERIAL_COLOR PorcelainMint
 	Preset.Name="Porcelain, Mint"
-	Node.Material="Porcelain"
+	Node.MaterialKey="Porcelain"
 	Node.Color="MaterialsPorcelainMint"
 END
 
 PRESET MATERIAL_COLOR PorcelainPeach
 	Preset.Name="Porcelain, Peach"
-	Node.Material="Porcelain"
+	Node.MaterialKey="Porcelain"
 	Node.Color="MaterialsPorcelainPeach"
 END
 
 PRESET MATERIAL_COLOR PorcelainWhite
 	Preset.Name="Porcelain, White"
-	Node.Material="Porcelain"
+	Node.MaterialKey="Porcelain"
 	Node.Color="MaterialsPorcelainWhite"
 END
 
 PRESET MATERIAL_COLOR GlassClear
 	Preset.Name="Clear Glass"
-	Node.Material="Glass-Block"
+	Node.MaterialKey="Glass-Block"
 	Node.Color="MaterialsGlassClear"
 END
 
 PRESET MATERIAL_COLOR GlassGreen
 	Preset.Name="Green Glass"
-	Node.Material="Glass-Block"
+	Node.MaterialKey="Glass-Block"
 	Node.Color="MaterialsGlassGreen"
 END
 
 PRESET MATERIAL_COLOR GlassTeal
 	Preset.Name="Teal Glass"
-	Node.Material="Glass-Block"
+	Node.MaterialKey="Glass-Block"
 	Node.Color="MaterialsGlassTeal"
 END
 
 PRESET MATERIAL_COLOR MetalAluminumAnodized 
 	Preset.Name="Aluminum, Anodized"
-	Node.Material="Metal-Aluminum-Anodized"
+	Node.MaterialKey="Metal-Aluminum-Anodized"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR MetalAluminumBrushed 
 	Preset.Name="Aluminum, Brushed"
-	Node.Material="Metal-Aluminum-Brushed"
+	Node.MaterialKey="Metal-Aluminum-Brushed"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR MetalChrome 
 	Preset.Name="Chrome"
-	Node.Material="Metal-Chrome"
+	Node.MaterialKey="Metal-Chrome"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR MetalCastIron
 	Preset.Name="Cast Iron"
-	Node.Material="Metal-Iron-Cast"
+	Node.MaterialKey="Metal-Iron-Cast"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR MetalCopper
 	Preset.Name="Copper"
-	Node.Material="Metal-Copper"
+	Node.MaterialKey="Metal-Copper"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR MetalNickelBrushed
 	Preset.Name="Nickel, Brushed"
-	Node.Material="Metal-Nickel-Brushed"
+	Node.MaterialKey="Metal-Nickel-Brushed"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR Steel 
 	Preset.Name="Steel"
-	Node.Material="Metal-Steel-ZincPlated"
+	Node.MaterialKey="Metal-Steel-ZincPlated"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR StainlessSteelAnodized 
 	Preset.Name="Stainless Steel, Anodized"
-	Node.Material="Metal-StainlessSteel-Anodized"
+	Node.MaterialKey="Metal-StainlessSteel-Anodized"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR StainlessSteelBrushed 
 	Preset.Name="Stainless Steel, Brushed"
-	Node.Material="Metal-StainlessSteel-Brushed"
+	Node.MaterialKey="Metal-StainlessSteel-Brushed"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR StainlessSteelPowderCoated
 	Preset.Name="Stainless Steel, Powder Coated"
-	Node.Material="Metal-StainlessSteel-PowderCoated"
+	Node.MaterialKey="Metal-StainlessSteel-PowderCoated"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR PaintMatteGentleWhite
 	Preset.Name="Gentle White Matte Paint"
-	Node.Material="Paint-Matte"
+	Node.MaterialKey="Paint-Matte"
 	Node.Color="MaterialsPaintGentleWhite"
 END
 
 PRESET MATERIAL_COLOR PaintMatteBurgundy
 	Preset.Name="Burgundy Matte Paint"
-	Node.Material="Paint-Matte"
+	Node.MaterialKey="Paint-Matte"
 	Node.Color="MaterialsPaintBurgundy"
 END
 
 PRESET MATERIAL_COLOR PaintMatteDarkLime
 	Preset.Name="Lime Green Matte Paint"
-	Node.Material="Paint-Matte"
+	Node.MaterialKey="Paint-Matte"
 	Node.Color="ModumateLimeDark"
 END
 
 PRESET MATERIAL_COLOR FoamExtrudedPolystyreneWhite
 	Preset.Name="Foam - Extruded Polystyrene, White"
-	Node.Material="Foam-ExtrudedPolystyrene"
+	Node.MaterialKey="Foam-ExtrudedPolystyrene"
 	Node.Color="MaterialsFoamWhite"
 END
 
 PRESET MATERIAL_COLOR FoamExtrudedPolystyrenePink
 	Preset.Name="Foam - Extruded Polystyrene, Pink"
-	Node.Material="Foam-ExtrudedPolystyrene"
+	Node.MaterialKey="Foam-ExtrudedPolystyrene"
 	Node.Color="MaterialsFoamPink"
 END
 
 PRESET MATERIAL_COLOR FoamExtrudedPolystyreneBlue
 	Preset.Name="Foam - Extruded Polystyrene, Blue"
-	Node.Material="Foam-ExtrudedPolystyrene"
+	Node.MaterialKey="Foam-ExtrudedPolystyrene"
 	Node.Color="MaterialsFoamBlue"
 END
 
 PRESET MATERIAL_COLOR FoamPolyethylene 
 	Preset.Name="Foam - Polyethylene"
-	Node.Material="Foam-Polyethylene"
+	Node.MaterialKey="Foam-Polyethylene"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR FoamPolyiso 
 	Preset.Name="Foam - Polyiso"
-	Node.Material="Foam-Polyiso"
+	Node.MaterialKey="Foam-Polyiso"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR VinylComposite
 	Preset.Name="Vinyl Composite"
-	Node.Material="Vinyl-Composite"
+	Node.MaterialKey="Vinyl-Composite"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR MarbleCalacatta 
 	Preset.Name="Calcatta Marble"
-	Node.Material="Stone-Marble-Calacatta"
+	Node.MaterialKey="Stone-Marble-Calacatta"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR MarbleCarrara 
 	Preset.Name="Carrara Marble"
-	Node.Material="Stone-Marble-Carrara"
+	Node.MaterialKey="Stone-Marble-Carrara"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR LimestoneWhite
 	Preset.Name="Limestone"
-	Node.Material="Stone-Limestone-White-1"
+	Node.MaterialKey="Stone-Limestone-White-1"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR LimestoneBeige
 	Preset.Name="Limestone, Beige"
-	Node.Material="Stone-Limestone-Beige-1"
+	Node.MaterialKey="Stone-Limestone-Beige-1"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR Basalt 
 	Preset.Name="Basalt"
-	Node.Material="Stone-Basalt"
+	Node.MaterialKey="Stone-Basalt"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR GraniteGrey1 
 	Preset.Name="Granite, Grey"
-	Node.Material="Stone-Granite-Grey-1"
+	Node.MaterialKey="Stone-Granite-Grey-1"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR GraniteBlack1 
 	Preset.Name="Granite, Black"
-	Node.Material="Stone-Granite-Black-1"
+	Node.MaterialKey="Stone-Granite-Black-1"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR SlateModumateGray1
 	Preset.Name="Slate, Gray 1"
-	Node.Material="Stone-Slate"
+	Node.MaterialKey="Stone-Slate"
 	Node.Color="ModumateGray1"
 END
 
 PRESET MATERIAL_COLOR SlateModumateGray3
 	Preset.Name="Slate, Gray 3"
-	Node.Material="Stone-Slate"
+	Node.MaterialKey="Stone-Slate"
 	Node.Color="ModumateGray3"
 END
 
 PRESET MATERIAL_COLOR SlateModumateGray5
 	Preset.Name="Slate, Gray 5"
-	Node.Material="Stone-Slate"
+	Node.MaterialKey="Stone-Slate"
 	Node.Color="ModumateGray5"
 END
 
 PRESET MATERIAL_COLOR WoodAsh
 	Preset.Name="Ash"
-	Node.Material="Wood-Ash"
+	Node.MaterialKey="Wood-Ash"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodBamboo
 	Preset.Name="Bamboo"
-	Node.Material="Wood-Bamboo"
+	Node.MaterialKey="Wood-Bamboo"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodBeech
 	Preset.Name="Beech"
-	Node.Material="Wood-Beech"
+	Node.MaterialKey="Wood-Beech"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodBirchYellow
 	Preset.Name="Yellow Birch"
-	Node.Material="Wood-Birch-Yellow"
+	Node.MaterialKey="Wood-Birch-Yellow"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodCedarWhite
 	Preset.Name="White Cedar"
-	Node.Material="Wood-Cedar-White"
+	Node.MaterialKey="Wood-Cedar-White"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodCedarWesternRed
 	Preset.Name="Western Red Cedar"
-	Node.Material="Wood-Cedar-WesternRed"
+	Node.MaterialKey="Wood-Cedar-WesternRed"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodCherry
 	Preset.Name="Cherry"
-	Node.Material="Wood-Cherry"
+	Node.MaterialKey="Wood-Cherry"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodCypressBald
 	Preset.Name="Bald Cypress"
 	Node.Color="ModumateWhite"
-	Node.Material="Wood-Cypress-Bald"
+	Node.MaterialKey="Wood-Cypress-Bald"
 END
 
 PRESET MATERIAL_COLOR WoodIpe
 	Preset.Name="IPE"
-	Node.Material="Wood-Ipe"
+	Node.MaterialKey="Wood-Ipe"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodMahogany
 	Preset.Name="Mahogany"
-	Node.Material="Wood-Mahogany"
+	Node.MaterialKey="Wood-Mahogany"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodMapleHard
 	Preset.Name="Hard Maple"
-	Node.Material="Wood-Maple-Hard"
+	Node.MaterialKey="Wood-Maple-Hard"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodOakRed
 	Preset.Name="Red Oak"
-	Node.Material="Wood-Oak-Red"
+	Node.MaterialKey="Wood-Oak-Red"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodOakWhite
 	Preset.Name="White Oak"
-	Node.Material="Wood-Oak-White"
+	Node.MaterialKey="Wood-Oak-White"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodRedwood
 	Preset.Name="Redwood"
-	Node.Material="Wood-Redwood"
+	Node.MaterialKey="Wood-Redwood"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodSprucePineFir
 	Preset.Name="Spruce Pine Fir"
-	Node.Material="Wood-SprucePineFir"
+	Node.MaterialKey="Wood-SprucePineFir"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR PlywoodSprucePineFir
 	Preset.Name="Plywood Spruce Pine Fir"
-	Node.Material="Plywood-SprucePineFir"
+	Node.MaterialKey="Plywood-SprucePineFir"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodSycamore
 	Preset.Name="Sycamore"
-	Node.Material="Wood-Sycamore"
+	Node.MaterialKey="Wood-Sycamore"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodTeak
 	Preset.Name="Teak"
-	Node.Material="Wood-Teak"
+	Node.MaterialKey="Wood-Teak"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR WoodWalnut
 	Preset.Name="Walnut"
-	Node.Material="Wood-Walnut"
+	Node.MaterialKey="Wood-Walnut"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR ParticleBoard
 	Preset.Name="Particle Board"
-	Node.Material="Particle"
+	Node.MaterialKey="Particle"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR CorkTan
 	Preset.Name="Tan Cork"
-	Node.Material="Cork"
+	Node.MaterialKey="Cork"
 	Node.Color="ModumateBrownLight"
 END
 
 PRESET MATERIAL_COLOR CorkRed
 	Preset.Name="Red Cork"
-	Node.Material="Cork"
+	Node.MaterialKey="Cork"
 	Node.Color="ModumateRed"
 END
 
 PRESET MATERIAL_COLOR CorkBrown
 	Preset.Name="Brown Cork"
-	Node.Material="Cork"
+	Node.MaterialKey="Cork"
 	Node.Color="ModumateBrown"
 END
 
 PRESET MATERIAL_COLOR DecomposedGraniteGray
 	Preset.Name="Decomposed Granite - Gray"
-	Node.Material="DecomposedGranite"
+	Node.MaterialKey="DecomposedGranite"
 	Node.Color="ModumateGray2"
 END
 
 PRESET MATERIAL_COLOR SoilCoarse
 	Preset.Name="Soil - Coarse"
-	Node.Material="Soil-Coarse"
+	Node.MaterialKey="Soil-Coarse"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR SoilFine
 	Preset.Name="Soil - Fine"
-	Node.Material="Soil-Fine"
+	Node.MaterialKey="Soil-Fine"
 	Node.Color="ModumateWhite"
 END
 
 PRESET MATERIAL_COLOR GrassShort
 	Preset.Name="Grass - Short"
-	Node.Material="Grass-Short"
+	Node.MaterialKey="Grass-Short"
 	Node.Color="ModumateWhite"
 END
 
