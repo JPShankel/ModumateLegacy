@@ -4,6 +4,8 @@
 #include "ModumateBIMSchema.h"
 #include "ModumateSerialization.h"
 
+struct MODUMATE_API FBIMPropertySheetRecord;
+
 namespace Modumate {
 	namespace BIM {
 
@@ -83,7 +85,17 @@ namespace Modumate {
 
 		void FBIMPropertySheet::SetProperty(EScope InScope, const FNameType &InName, const FValue &InParam)
 		{
-			FModumateFunctionParameterSet::SetValue(FValueSpec(InScope, EValueType::None, InName).QN().ToString(), InParam);
+			FNameType QN = FValueSpec(InScope, EValueType::None, InName).QN();
+			FModumateFunctionParameterSet::SetValue(QN.ToString(), InParam);
+			TArray<FNameType> *boundProps = PropertyBindings.Find(QN);
+			if (boundProps != nullptr)
+			{
+				for (auto &prop : *boundProps)
+				{
+					FValueSpec vs(prop);
+					FModumateFunctionParameterSet::SetValue(vs.QN().ToString(), InParam);
+				}
+			}
 		}
 
 		bool FBIMPropertySheet::HasProperty(EScope InScope, const FNameType &InName) const
@@ -93,7 +105,74 @@ namespace Modumate {
 
 		void FBIMPropertySheet::RemoveProperty(EScope InScope, const FNameType &InName)
 		{
-			FModumateFunctionParameterSet::Remove(FValueSpec(InScope, EValueType::None, InName).QN().ToString());
+			FNameType QN = FValueSpec(InScope, EValueType::None, InName).QN();
+			PropertyBindings.Remove(QN);
+			FModumateFunctionParameterSet::Remove(QN.ToString());
+		}
+
+		bool FBIMPropertySheet::BindProperty(EScope SourceScope, const FNameType &SourceName, EScope TargetScope, const FNameType &TargetName)
+		{
+			// Bound properties cannot pre-exist with their own values
+			if (HasProperty(TargetScope, TargetName))
+			{
+				return false;
+			}
+
+			// The source for a bound property must exist
+			if (!HasProperty(SourceScope, SourceName))
+			{
+				return false;
+			}
+
+			SetProperty(TargetScope, TargetName, GetProperty(SourceScope,SourceName));
+			
+			FValueSpec source(SourceScope, EValueType::None, SourceName);
+			FValueSpec target(TargetScope, EValueType::None, TargetName);
+
+			TArray<FNameType> &targets = PropertyBindings.FindOrAdd(source.QN());
+			if (!targets.Contains(target.QN()))
+			{
+				targets.Add(target.QN());
+				return true;
+			}
+			return false;
+		}
+
+		bool FBIMPropertySheet::FromDataRecord(const FBIMPropertySheetRecord &InRecord)
+		{
+			Empty();
+			PropertyBindings.Empty();
+
+			if (!ensureAlways(InRecord.BindingSources.Num() == InRecord.BindingTargets.Num()))
+			{
+				return false;
+			}
+
+			FromStringMap(InRecord.Properties);
+
+			for (int32 i = 0; i < InRecord.BindingSources.Num(); ++i)
+			{
+				FValueSpec source(InRecord.BindingSources[i]);
+				FValueSpec target(InRecord.BindingTargets[i]);
+				TArray<FNameType> &targets = PropertyBindings.FindOrAdd(source.QN());
+				targets.Add(target.QN());
+			}
+
+			return true;
+		}
+
+		bool FBIMPropertySheet::ToDataRecord(FBIMPropertySheetRecord &OutRecord) const
+		{
+			ToStringMap(OutRecord.Properties);
+			for (auto &sourceProp : PropertyBindings)
+			{
+				for (auto &targetProp : sourceProp.Value)
+				{
+					OutRecord.BindingSources.Add(sourceProp.Key);
+					OutRecord.BindingTargets.Add(targetProp);
+				}
+			}
+			return true;
 		}
 
 		// Todo: re-evaluate as an enum when variable catalog stabilizes

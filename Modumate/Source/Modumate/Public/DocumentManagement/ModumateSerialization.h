@@ -58,6 +58,21 @@ struct FCustomAssemblyProperty
 };
 
 USTRUCT()
+struct MODUMATE_API FBIMPropertySheetRecord
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	TMap<FString, FString> Properties;
+
+	UPROPERTY()
+	TArray<FName> BindingSources;
+
+	UPROPERTY()
+	TArray<FName> BindingTargets;
+};
+
+USTRUCT()
 struct MODUMATE_API FCraftingPresetRecord
 {
 	GENERATED_USTRUCT_BODY();
@@ -75,7 +90,7 @@ struct MODUMATE_API FCraftingPresetRecord
 	bool IsReadOnly;
 
 	UPROPERTY()
-	TMap<FString,FString> PropertyMap;
+	FBIMPropertySheetRecord PropertyRecord;
 
 	UPROPERTY()
 	TArray<int32> ChildNodePinSetIndices;
@@ -287,7 +302,7 @@ struct FCustomAssemblyCraftingNodeRecord
 	int32 ParentID;
 
 	UPROPERTY()
-	TMap<FString, FString> Properties;
+	FBIMPropertySheetRecord PropertyRecord;
 
 	UPROPERTY()
 	int32 PinSetIndex;
@@ -295,7 +310,6 @@ struct FCustomAssemblyCraftingNodeRecord
 	UPROPERTY()
 	int32 PinSetPosition;
 };
-
 
 USTRUCT()
 struct FCustomAssemblyRecordV4

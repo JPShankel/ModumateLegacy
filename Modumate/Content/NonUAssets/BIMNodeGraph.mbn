@@ -4448,8 +4448,7 @@ DEFINE DIMENSION_MODULE_3D
 		DIMENSION("Width",Node.YExtents)
 		DIMENSION("Height",Node.ZExtents)
 		DIMENSION("Bevel Width",Node.BevelWidth)
--- TODO: need formulas to bind layer thickness to a parameter, for now just code it directly
-		PRIVATE("Thickness",Layer.Thickness)
+		BIND(Node.YExtents,Layer.Thickness)
 END
 
 PRESET DIMENSION_MODULE_3D DimModularBrick8in
@@ -4458,16 +4457,14 @@ PRESET DIMENSION_MODULE_3D DimModularBrick8in
 	Node.YExtents="3.625in"
 	Node.ZExtents="2.3125in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimModularBrick8inNarrow
-	Preset.Name=" Narrow 8in Modular"
+	Preset.Name="Narrow 8in Modular"
 	Node.XExtents="7.625in"
 	Node.YExtents="3.125in"
 	Node.ZExtents="2.3125in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.125in"
 END
 
 PRESET DIMENSION_MODULE_3D DimModularBrick8inExtraNarrow
@@ -4476,7 +4473,6 @@ PRESET DIMENSION_MODULE_3D DimModularBrick8inExtraNarrow
 	Node.YExtents="2.3125in"
 	Node.ZExtents="2.3125in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="2.3125in"
 END
 
 PRESET DIMENSION_MODULE_3D DimModularBrick8inTall
@@ -4485,7 +4481,6 @@ PRESET DIMENSION_MODULE_3D DimModularBrick8inTall
 	Node.YExtents="3.125in"
 	Node.ZExtents="2.75in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.125in"
 END
 
 PRESET DIMENSION_MODULE_3D DimModularBrick8inTallNarrow
@@ -4494,7 +4489,6 @@ PRESET DIMENSION_MODULE_3D DimModularBrick8inTallNarrow
 	Node.YExtents="3.625in"
 	Node.ZExtents="2.75in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimModularBrick8inSquareHead
@@ -4503,7 +4497,6 @@ PRESET DIMENSION_MODULE_3D DimModularBrick8inSquareHead
 	Node.YExtents="3.625in"
 	Node.ZExtents="3.625in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimModularBrick8inTripleHeight
@@ -4512,7 +4505,6 @@ PRESET DIMENSION_MODULE_3D DimModularBrick8inTripleHeight
 	Node.YExtents="3.625in"
 	Node.ZExtents="7.625in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimNorman
@@ -4521,7 +4513,6 @@ PRESET DIMENSION_MODULE_3D DimNorman
 	Node.YExtents="3.625in"
 	Node.ZExtents="2.3125in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimNormanNarrow
@@ -4530,7 +4521,6 @@ PRESET DIMENSION_MODULE_3D DimNormanNarrow
 	Node.YExtents="3.125in"
 	Node.ZExtents="2.3125in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.125in"
 END
 
 PRESET DIMENSION_MODULE_3D DimNormanTall
@@ -4539,7 +4529,6 @@ PRESET DIMENSION_MODULE_3D DimNormanTall
 	Node.YExtents="3.625in"
 	Node.ZExtents="2.75in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimNormanTallNarrow
@@ -4548,7 +4537,6 @@ PRESET DIMENSION_MODULE_3D DimNormanTallNarrow
 	Node.YExtents="3.125in"
 	Node.ZExtents="2.75in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.125in"
 END
 
 PRESET DIMENSION_MODULE_3D DimNormanSquareHead
@@ -4557,7 +4545,6 @@ PRESET DIMENSION_MODULE_3D DimNormanSquareHead
 	Node.YExtents="3.625in"
 	Node.ZExtents="3.625in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimNormanTripleHeight
@@ -4566,7 +4553,6 @@ PRESET DIMENSION_MODULE_3D DimNormanTripleHeight
 	Node.YExtents="3.625in"
 	Node.ZExtents="7.625in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimMonarch
@@ -4575,7 +4561,6 @@ PRESET DIMENSION_MODULE_3D DimMonarch
 	Node.YExtents="3.625in"
 	Node.ZExtents="2.3125in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimMonarchNarrow
@@ -4584,7 +4569,6 @@ PRESET DIMENSION_MODULE_3D DimMonarchNarrow
 	Node.YExtents="3.125in"
 	Node.ZExtents="2.3125in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.125in"
 END
 
 PRESET DIMENSION_MODULE_3D DimMonarchTall
@@ -4593,7 +4577,6 @@ PRESET DIMENSION_MODULE_3D DimMonarchTall
 	Node.YExtents="3.625in"
 	Node.ZExtents="2.75in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimMonarchTripleHeight
@@ -4602,7 +4585,6 @@ PRESET DIMENSION_MODULE_3D DimMonarchTripleHeight
 	Node.YExtents="3.625in"
 	Node.ZExtents="7.625in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimRoman
@@ -4611,7 +4593,6 @@ PRESET DIMENSION_MODULE_3D DimRoman
 	Node.YExtents="3.625in"
 	Node.ZExtents="1.625in"
 	Node.BevelWidth="0.1875in"
-	Layer.Thickness="3.625in"
 END
 
 LIST List_DimensionModule3D_ClayBrick
@@ -4628,7 +4609,6 @@ PRESET DIMENSION_MODULE_3D DimGlassBlock4x8x4
 	Node.YExtents="3.875in"
 	Node.ZExtents="3.75in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="3.875in"
 END
 
 PRESET DIMENSION_MODULE_3D DimGlassBlock6x6x4
@@ -4637,7 +4617,6 @@ PRESET DIMENSION_MODULE_3D DimGlassBlock6x6x4
 	Node.YExtents="3.875in"
 	Node.ZExtents="5.75in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="3.875in"
 END
 
 PRESET DIMENSION_MODULE_3D DimGlassBlock8x8x4
@@ -4646,7 +4625,6 @@ PRESET DIMENSION_MODULE_3D DimGlassBlock8x8x4
 	Node.YExtents="3.875in"
 	Node.ZExtents="7.75in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="3.875in"
 END
 
 LIST List_DimensionModule3D_GlassBlock
@@ -4659,7 +4637,6 @@ PRESET DIMENSION_MODULE_3D DimCMU4x8x4
 	Node.YExtents="3.625in"
 	Node.ZExtents="3.625in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimCMU8x16x4
@@ -4668,7 +4645,6 @@ PRESET DIMENSION_MODULE_3D DimCMU8x16x4
 	Node.YExtents="3.625in"
 	Node.ZExtents="7.625in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="3.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimCMU8x8x6
@@ -4677,7 +4653,6 @@ PRESET DIMENSION_MODULE_3D DimCMU8x8x6
 	Node.YExtents="5.625in"
 	Node.ZExtents="7.625in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="5.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimCMU8x16x6
@@ -4686,7 +4661,6 @@ PRESET DIMENSION_MODULE_3D DimCMU8x16x6
 	Node.YExtents="5.625in"
 	Node.ZExtents="7.625in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="5.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimCMU8x8x8
@@ -4695,7 +4669,6 @@ PRESET DIMENSION_MODULE_3D DimCMU8x8x8
 	Node.YExtents="7.625in"
 	Node.ZExtents="7.625in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="7.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimCMU8x16x8
@@ -4704,7 +4677,6 @@ PRESET DIMENSION_MODULE_3D DimCMU8x16x8
 	Node.YExtents="7.625in"
 	Node.ZExtents="7.625in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="7.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimCMU8x8x10
@@ -4713,7 +4685,6 @@ PRESET DIMENSION_MODULE_3D DimCMU8x8x10
 	Node.YExtents="9.625in"
 	Node.ZExtents="7.625in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="9.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimCMU8x16x10
@@ -4722,7 +4693,6 @@ PRESET DIMENSION_MODULE_3D DimCMU8x16x10
 	Node.YExtents="9.625in"
 	Node.ZExtents="7.625in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="9.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimCMU8x8x12
@@ -4731,7 +4701,6 @@ PRESET DIMENSION_MODULE_3D DimCMU8x8x12
 	Node.YExtents="11.625in"
 	Node.ZExtents="7.625in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="11.625in"
 END
 
 PRESET DIMENSION_MODULE_3D DimCMU8x16x12
@@ -4740,7 +4709,6 @@ PRESET DIMENSION_MODULE_3D DimCMU8x16x12
 	Node.YExtents="11.625in"
 	Node.ZExtents="7.625in"
 	Node.BevelWidth="0.125in"
-	Layer.Thickness="11.625in"
 END
 
 LIST List_DimensionModule3D_ConcreteMasonryUnit

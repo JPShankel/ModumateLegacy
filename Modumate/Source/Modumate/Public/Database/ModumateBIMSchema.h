@@ -6,6 +6,7 @@
 #include "ModumateObjectEnums.h"
 #include "ModumateConsoleCommand.h"
 
+struct MODUMATE_API FBIMPropertySheetRecord;
 
 namespace Modumate {
 	namespace BIM {
@@ -98,25 +99,33 @@ namespace Modumate {
 
 		class MODUMATE_API FBIMPropertySheet : public FModumateFunctionParameterSet
 		{
+		private:
+			TMap<FNameType, TArray<FNameType>> PropertyBindings;
 		public:
 			// Scope-aware 'Property' set/get helper functions
 			// Use get/set value in parent for qualified variable strings (ie 'Module.Count')
-			FValue GetProperty(EScope scope, const FNameType &name) const;
-			void SetProperty(EScope scope, const FNameType &name, const FValue &param);
-			bool HasProperty(EScope scope, const FNameType &name) const;
+			FValue GetProperty(EScope Scope, const FNameType &Name) const;
+			void SetProperty(EScope Scope, const FNameType &Name, const FValue &Param);
+			bool HasProperty(EScope Scope, const FNameType &Name) const;
 
-			void RemoveProperty(EScope scope, const FNameType &name);
+			void RemoveProperty(EScope Scope, const FNameType &Name);
+
+			// When a target property is bound to a source, it is updated with the value of the source
+			bool BindProperty(EScope SourceScope, const FNameType &SourceName, EScope TargetScope, const FNameType &TargetName);
 
 			template<class T>
-			bool TryGetProperty(EScope scope, const FNameType &name, T &outT) const
+			bool TryGetProperty(EScope Scope, const FNameType &Name, T &OutT) const
 			{
-				if (HasProperty(scope, name))
+				if (HasProperty(Scope, Name))
 				{
-					outT = GetProperty(scope, name);
+					OutT = GetProperty(Scope, Name);
 					return true;
 				}
 				return false;
 			}
+
+			bool FromDataRecord(const FBIMPropertySheetRecord &InRecord);
+			bool ToDataRecord(FBIMPropertySheetRecord &OutRecord) const;
 		};
 	}
 }

@@ -393,10 +393,7 @@ namespace Modumate {
 				OutRecord.ParentID = 0;
 			}
 
-			InstanceProperties.ForEachProperty([&OutRecord](const FString &name, const Modumate::FModumateCommandParameter &param)
-			{
-				OutRecord.Properties.Add(*name, param);
-			});
+			InstanceProperties.ToDataRecord(OutRecord.PropertyRecord);
 
 			return ECraftingResult::Success;
 		}
@@ -430,13 +427,7 @@ namespace Modumate {
 			}
 
 			PresetID = DataRecord.PresetID;
-			InstanceProperties = preset->Properties;
-
-			for (auto &prop : DataRecord.Properties)
-			{
-				FValueSpec vs(*prop.Key, prop.Value);
-				InstanceProperties.SetProperty(vs.Scope, vs.Name, vs.Value);
-			}
+			InstanceProperties.FromDataRecord(DataRecord.PropertyRecord);
 
 			InputPins = descriptor->InputPins;
 			for (auto &ip : preset->ChildNodes)
@@ -683,10 +674,7 @@ namespace Modumate {
 			OutRecord.PresetID = PresetID;
 			OutRecord.IsReadOnly = IsReadOnly;
 
-			Properties.ForEachProperty([&OutRecord](const FString &Name, const FModumateCommandParameter &Param) {
-
-				OutRecord.PropertyMap.Add(Name,Param.AsJSON());
-			});
+			Properties.ToDataRecord(OutRecord.PropertyRecord);
 
 			for (auto &childNode : ChildNodes)
 			{
@@ -722,13 +710,7 @@ namespace Modumate {
 			Properties.Empty();
 			ChildNodes.Empty();
 
-			for (auto &kvp : Record.PropertyMap)
-			{
-				FModumateCommandParameter param;
-				param.FromJSON(kvp.Value);
-				Properties.SetValue(kvp.Key, param);
-			}
-
+			Properties.FromDataRecord(Record.PropertyRecord);
 
 			int32 numChildren = Record.ChildNodePinSetIndices.Num();
 			if (ensureAlways(
@@ -783,11 +765,11 @@ namespace Modumate {
 			OutParameterSet.SetValue(Modumate::Parameters::kChildNodePinSetPresetIDs, dataRecord.ChildNodePinSetPresetIDs);
 
 			TArray<FString> propertyNames;
-			dataRecord.PropertyMap.GenerateKeyArray(propertyNames);
+			dataRecord.PropertyRecord.Properties.GenerateKeyArray(propertyNames);
 			OutParameterSet.SetValue(Modumate::Parameters::kPropertyNames, propertyNames);
 
 			TArray<FString> propertyValues;
-			dataRecord.PropertyMap.GenerateValueArray(propertyValues);
+			dataRecord.PropertyRecord.Properties.GenerateValueArray(propertyValues);
 			OutParameterSet.SetValue(Modumate::Parameters::kPropertyValues, propertyValues);
 
 			return ECraftingResult::Success;
@@ -797,6 +779,15 @@ namespace Modumate {
 		{
 			FCraftingPresetRecord dataRecord;
 
+			// Get base properties, including property bindings that set one property's value to another
+			dataRecord.NodeType = ParameterSet.GetValue(Modumate::Parameters::kNodeType);
+			const FCraftingTreeNodeType *nodeType = PresetCollection.NodeDescriptors.Find(dataRecord.NodeType);
+			if (ensureAlways(nodeType != nullptr))
+			{
+				nodeType->Properties.ToDataRecord(dataRecord.PropertyRecord);
+			}
+
+			// Get local overrides of properties
 			TArray<FString> propertyNames = ParameterSet.GetValue(Modumate::Parameters::kPropertyNames);
 			TArray<FString> propertyValues = ParameterSet.GetValue(Modumate::Parameters::kPropertyValues);
 
@@ -808,11 +799,10 @@ namespace Modumate {
 			int32 numProps = propertyNames.Num();
 			for (int32 i = 0; i < numProps; ++i)
 			{
-				dataRecord.PropertyMap.Add(propertyNames[i], propertyValues[i]);
+				dataRecord.PropertyRecord.Properties.Add(propertyNames[i], propertyValues[i]);
 			}
 
 			dataRecord.DisplayName = ParameterSet.GetValue(Modumate::Parameters::kDisplayName);
-			dataRecord.NodeType = ParameterSet.GetValue(Modumate::Parameters::kNodeType);
 			dataRecord.PresetID = ParameterSet.GetValue(Modumate::Parameters::kPresetKey);
 			dataRecord.IsReadOnly = ParameterSet.GetValue(Modumate::Parameters::kReadOnly);
 			dataRecord.ChildNodePinSetIndices = ParameterSet.GetValue(Modumate::Parameters::kChildNodePinSetIndices);
@@ -1644,6 +1634,31 @@ namespace Modumate {
 			},
 				false);
 
+			// Match BIND(Scope.Property,OtherScope.OtherProperty)
+			// Used to bind properties like Layer.Thickness to child values like Node.Depth
+			static const FString kBindPattern = TEXT("BIND\\((") + kPropertyMatch + TEXT(")\\,(") + kPropertyMatch + TEXT(")\\)");
+			compiler.AddRule(kBindPattern, [&state, &currentNode](
+				const TCHAR *originalLine,
+				const FModumateScriptProcessor::TRegularExpressionMatch &match,
+				int32 lineNum,
+				FModumateScriptProcessor::TErrorReporter errorReporter)
+			{
+				if (state != ReadingProperties)
+				{
+					errorReporter(*FString::Printf(TEXT("Unexpected BIND spec at line %d"), lineNum));
+				}
+
+				FValueSpec source(match[1].str().c_str());
+				FValueSpec target(match[2].str().c_str());
+
+				if (!currentNode.Properties.BindProperty(source.Scope,source.Name,target.Scope,target.Name))
+				{
+					errorReporter(*FString::Printf(TEXT("Could not bind property at %d"), lineNum));
+				}
+
+			},
+			false);
+
 			static const FString kRangeMatch = TEXT("\\[(") + kNumberMatch + TEXT(")") + kElipsesMatch + TEXT("(") + kNumberMatch + TEXT(")\\]");
 			static const FString kOpenRangeMatch = TEXT("\\[(") + kNumberMatch + TEXT(")") + kElipsesMatch + TEXT("\\]");
 			static const FString kScopeMatch = TEXT("(") + kSimpleWord + TEXT(")->");
@@ -1730,13 +1745,15 @@ namespace Modumate {
 				}
 
 				currentPreset.NodeType = match[1].str().c_str();
-				FCraftingTreeNodeType *pBaseDescriptor = NodeDescriptors.Find(currentPreset.NodeType);
+				FCraftingTreeNodeType *baseDescriptor = NodeDescriptors.Find(currentPreset.NodeType);
 
-				if (pBaseDescriptor == nullptr)
+				if (baseDescriptor == nullptr)
 				{
 					errorReporter(*FString::Printf(TEXT("Unrecognized PRESET type %s at line %d"), *currentPreset.NodeType.ToString(), lineNum));
 					return;
 				}
+
+				currentPreset.Properties = baseDescriptor->Properties;
 
 				TArray<FString> suffices;
 				FString(match.suffix().str().c_str()).ParseIntoArray(suffices, TEXT(" "));
