@@ -24,6 +24,8 @@ namespace Modumate
 		Polyhedron
 	};
 
+	typedef TPair<int32, EGraph3DObjectType> FTypedGraphObjID;
+
 	struct FEdgeIntersection
 	{
 		int32 EdgeIdxA;
@@ -69,6 +71,9 @@ namespace Modumate
 		virtual void Dirty(bool bConnected = true) = 0;
 		// Thorough validation function used as a success metric for unit tests
 		virtual bool ValidateForTests() const = 0;
+
+		virtual EGraph3DObjectType GetType() const = 0;
+		FTypedGraphObjID GetTypedID() const { return FTypedGraphObjID(ID, GetType()); }
 
 	public:
 		int32 ID = MOD_ID_NONE; // The ID of the object, should match a corresponding MOI

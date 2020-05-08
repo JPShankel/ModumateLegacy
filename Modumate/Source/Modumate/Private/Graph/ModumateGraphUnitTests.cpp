@@ -1230,7 +1230,7 @@ namespace Modumate
 		TArray<FGraph3DDelta> OutDeltas;
 		int32 NextID = 1;
 		int32 ExistingID = 0;
-	
+
 		int32 expectedFaces = 15;
 		int32 expectedVertices = 31;
 		int32 expectedEdges = 48;
@@ -1419,12 +1419,12 @@ namespace Modumate
 
 		OutDeltas.AddDefaulted();
 		TestTrue(TEXT("Delete face, including connected edges and vertices"),
-			FGraph3D::GetDeltaForDeleteObjects(&tempGraph, {}, {}, { firstFaceID }, OutDeltas[0], true));
+			FGraph3D::GetDeltaForDeleteObjects(&tempGraph, {}, {}, { firstFaceID }, {}, OutDeltas[0], true));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 4, 4);
 
 		OutDeltas.AddDefaulted();
 		TestTrue(TEXT("Delete face, excluding connected edges and vertices"),
-			FGraph3D::GetDeltaForDeleteObjects(&tempGraph, {}, {}, { firstFaceID }, OutDeltas[0], false));
+			FGraph3D::GetDeltaForDeleteObjects(&tempGraph, {}, {}, { firstFaceID }, {}, OutDeltas[0], false));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 6, 7);
 
 		return true;
@@ -1583,7 +1583,9 @@ namespace Modumate
 		int32 bigJoinFaceID = 2455;
 		int32 smallJoinFaceID1 = 2451;
 		int32 smallJoinFaceID2 = 2430;
-		if (graph.FindFace(bigJoinFaceID) == nullptr || graph.FindFace(smallJoinFaceID2) == nullptr || graph.FindFace(smallJoinFaceID1))
+		if (!graph.ContainsObject(FTypedGraphObjID(bigJoinFaceID, EGraph3DObjectType::Face)) ||
+			!graph.ContainsObject(FTypedGraphObjID(smallJoinFaceID2, EGraph3DObjectType::Face)) ||
+			!graph.ContainsObject(FTypedGraphObjID(smallJoinFaceID1, EGraph3DObjectType::Face)))
 		{
 			return false;
 		}
@@ -1624,6 +1626,93 @@ namespace Modumate
 
 		// the basic verification above was necessary to get the addedFaceID for the second join
 		// TODO: generalize/add verification methods that test added/removed objects and find their IDs
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphGroupIDsChange, "Modumate.Graph.3D.GroupIDsChange", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphGroupIDsChange::RunTest(const FString& Parameters)
+	{
+		// test adding edges, then changing group IDs, then test adding edges and setting group IDs with the same delta
+		// test adding edge/face, changing group IDs, splitting them, making sure group IDs are split properly
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+
+		// First, add a simple square face
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, deltas, nextID, existingID));
+		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
+
+		int32 groupID = 1337;
+
+		// Add the face's edge's to a group
+		deltas.Reset();
+		FGraph3DDelta &groupIDsDelta = deltas.AddDefaulted_GetRef();
+		TSet<int32> groupIDsToAdd({ groupID }), groupIDsToRemove;
+		for (auto &kvp : graph.GetEdges())
+		{
+			int32 edgeID = kvp.Key;
+			auto &graphEdge = kvp.Value;
+			groupIDsDelta.GroupIDsUpdates.Add(FTypedGraphObjID(edgeID, EGraph3DObjectType::Edge), FGraph3DGroupIDsDelta(groupIDsToAdd, groupIDsToRemove));
+		}
+
+		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
+
+		TSet<int32> originalEdgeIDs;
+		for (auto &kvp : graph.GetEdges())
+		{
+			originalEdgeIDs.Add(kvp.Key);
+			auto &graphEdge = kvp.Value;
+			TestTrue(TEXT("Edge has GroupID"), graphEdge.GroupIDs.Contains(groupID) && (graphEdge.GroupIDs.Num() == 1));
+		}
+
+		TSet<FTypedGraphObjID> groupMembers;
+		TestTrue(TEXT("Graph has cached group"), graph.GetGroup(groupID, groupMembers) && (groupMembers.Num() == 4));
+
+		// Add another face, adjacent to the first
+		vertices = {
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(200.0f, 0.0f, 0.0f),
+			FVector(200.0f, 100.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add second face"),
+			FGraph3D::GetDeltaForFaceAddition(&graph, &tempGraph, vertices, deltas, nextID, existingID));
+		TestDeltas(this, deltas, graph, tempGraph, 2, 6, 7);
+
+		// Make sure the new edges didn't inherit the group, and the old edges kept it
+		for (auto &kvp : graph.GetEdges())
+		{
+			int32 edgeID = kvp.Key;
+			auto &graphEdge = kvp.Value;
+			TestTrue(TEXT("Only original edges have GroupID"), graphEdge.GroupIDs.Contains(groupID) == originalEdgeIDs.Contains(edgeID));
+		}
+
+		// Add an edge that should split both faces
+		deltas.Reset();
+		vertices = {
+			FVector(0.0f, 25.0f, 0.0f),
+			FVector(200.0f, 75.0f, 0.0f)
+		};
+		TArray<int32> newEdgeIDs;
+		TestTrue(TEXT("Split faces with new edge"),
+			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&graph, &tempGraph, vertices[0], vertices[1], deltas, nextID, newEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 4, 9, 12);
+
+		// And make sure that the group still has the right number of members, including split edges
+		TestTrue(TEXT("Graph group was split"), graph.GetGroup(groupID, groupMembers) && (groupMembers.Num() == 6));
 
 		return true;
 	}

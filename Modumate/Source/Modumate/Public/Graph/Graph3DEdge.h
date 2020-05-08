@@ -42,5 +42,6 @@ namespace Modumate
 
 		virtual void Dirty(bool bConnected = true) override;
 		virtual bool ValidateForTests() const override;
+		virtual EGraph3DObjectType GetType() const override { return EGraph3DObjectType::Edge; }
 	};
 }

@@ -135,10 +135,8 @@ bool UPlaceObjectTool::BeginUse()
 	state.ObjectType = EObjectType::OTFurniture;
 	state.ObjectID = doc->GetNextAvailableID();
 
-	FMOIDelta delta = FMOIDelta::MakeCreateObjectDelta(state);
-
-	Controller->ModumateCommand(delta.AsCommand());
+	auto delta = FMOIDelta::MakeCreateObjectDelta(state);
+	Controller->ModumateCommand(delta->AsCommand());
 
 	return true;
 }
-

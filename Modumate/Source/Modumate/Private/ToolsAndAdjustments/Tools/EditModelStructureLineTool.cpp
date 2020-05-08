@@ -432,9 +432,8 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 			stateData.ParentID = targetEdgeID;
 			stateData.ObjectID = GameState->Document.GetNextAvailableID();
 
-			FMOIDelta delta = FMOIDelta::MakeCreateObjectDelta(stateData);
-
-			auto commandResult = Controller->ModumateCommand(delta.AsCommand());
+			auto delta = FMOIDelta::MakeCreateObjectDelta(stateData);
+			auto commandResult = Controller->ModumateCommand(delta->AsCommand());
 
 			if (!commandResult.GetValue(Parameters::kSuccess).AsBool())
 			{

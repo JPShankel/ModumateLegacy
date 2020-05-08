@@ -30,9 +30,29 @@ namespace Modumate
 		int32 NextParentID;
 
 		FGraph3DHostedObjectDelta(int32 prevHostedObjID, int32 prevParentID, int32 nextParentID)
-			: PreviousHostedObjID(prevHostedObjID),
-			PreviousParentID(prevParentID),
-			NextParentID(nextParentID) {}
+			: PreviousHostedObjID(prevHostedObjID)
+			, PreviousParentID(prevParentID)
+			, NextParentID(nextParentID)
+		{ }
+	};
+
+	struct FGraph3DGroupIDsDelta
+	{
+		TSet<int32> GroupIDsToAdd, GroupIDsToRemove;
+
+		FGraph3DGroupIDsDelta() { }
+
+		FGraph3DGroupIDsDelta(const FGraph3DGroupIDsDelta &Other)
+			: GroupIDsToAdd(Other.GroupIDsToAdd)
+			, GroupIDsToRemove(Other.GroupIDsToRemove)
+		{ }
+
+		FGraph3DGroupIDsDelta(const TSet<int32> &InGroupIDsToAdd, const TSet<int32> &InGroupIDsToRemove)
+			: GroupIDsToAdd(InGroupIDsToAdd)
+			, GroupIDsToRemove(InGroupIDsToRemove)
+		{ }
+
+		FGraph3DGroupIDsDelta MakeInverse() const;
 	};
 
 	// A struct that completely describes a change to the 3D graph
@@ -54,6 +74,9 @@ namespace Modumate
 		TMap<int32, TMap<int32, int32>> FaceVertexRemovals;
 
 		TMap<int32, FGraph3DHostedObjectDelta> ParentIDUpdates;
+
+		// Updates to GroupIDs for graph objects
+		TMap<FTypedGraphObjID, FGraph3DGroupIDsDelta> GroupIDsUpdates;
 
 		void Reset();
 		bool IsEmpty();

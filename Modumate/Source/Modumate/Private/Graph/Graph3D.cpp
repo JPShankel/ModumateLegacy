@@ -31,6 +31,7 @@ namespace Modumate
 		Faces.Reset();
 		Polyhedra.Reset();
 		DirtyFaces.Reset();
+		CachedGroups.Reset();
 	}
 
 	FGraph3DEdge* FGraph3D::FindEdge(FSignedID EdgeID)
@@ -99,6 +100,60 @@ namespace Modumate
 		}
 	}
 
+	void FGraph3D::AddObjectToGroups(const IGraph3DObject *GraphObject)
+	{
+		int32 objectID = GraphObject->ID;
+		for (int32 groupID : GraphObject->GroupIDs)
+		{
+			auto &groupMembers = CachedGroups.FindOrAdd(groupID);
+			groupMembers.Add(GraphObject->GetTypedID());
+		}
+	}
+
+	void FGraph3D::RemoveObjectFromGroups(const IGraph3DObject *GraphObject)
+	{
+		int32 objectID = GraphObject->ID;
+		for (int32 groupID : GraphObject->GroupIDs)
+		{
+			auto &groupMembers = CachedGroups.FindOrAdd(groupID);
+			groupMembers.Remove(GraphObject->GetTypedID());
+
+			// Remove empty groups now to keep the map clean whenever possible
+			if (groupMembers.Num() == 0)
+			{
+				CachedGroups.Remove(groupID);
+			}
+		}
+	}
+
+	void FGraph3D::ApplyGroupIDsDelta(FTypedGraphObjID TypedObjectID, const FGraph3DGroupIDsDelta &GroupDelta)
+	{
+		IGraph3DObject *GraphObject = FindObject(TypedObjectID);
+
+		if (!ensure(GraphObject))
+		{
+			return;
+		}
+
+		int32 objectID = GraphObject->ID;
+
+		// Remove this element from the membership of groups that it used to belong to
+		RemoveObjectFromGroups(GraphObject);
+
+		// Apply the delta to this object's own GroupIDs list
+		GraphObject->GroupIDs.Append(GroupDelta.GroupIDsToAdd);
+		for (int32 groupIDToRemove : GroupDelta.GroupIDsToRemove)
+		{
+			GraphObject->GroupIDs.Remove(groupIDToRemove);
+		}
+
+		// Add this element as a member of groups that it now belongs to
+		AddObjectToGroups(GraphObject);
+
+		// Mark the element as dirty, so that it can be cleaned and alert connected group objects
+		GraphObject->Dirty(false);
+	}
+
 	FGraph3DVertex* FGraph3D::FindVertex(int32 VertexID) 
 	{ 
 		return Vertices.Find(VertexID); 
@@ -149,21 +204,33 @@ namespace Modumate
 		return Polyhedra.Find(PolyhedronID); 
 	}
 
-	bool FGraph3D::ContainsObject(int32 ID, EGraph3DObjectType GraphObjectType) const
+	
+	IGraph3DObject* FGraph3D::FindObject(FTypedGraphObjID TypedObjID)
 	{
-		switch (GraphObjectType)
+		return const_cast<IGraph3DObject*>(static_cast<const FGraph3D *>(this)->FindObject(TypedObjID));
+	}
+
+	const IGraph3DObject* FGraph3D::FindObject(FTypedGraphObjID TypedObjID) const
+	{
+		int32 objID = TypedObjID.Key;
+		switch (TypedObjID.Value)
 		{
 		case EGraph3DObjectType::Vertex:
-			return Vertices.Contains(ID);
+			return FindVertex(objID);
 		case EGraph3DObjectType::Edge:
-			return Edges.Contains(ID);
+			return FindEdge(objID);
 		case EGraph3DObjectType::Face:
-			return Faces.Contains(ID);
+			return FindFace(objID);
 		case EGraph3DObjectType::Polyhedron:
-			return Polyhedra.Contains(ID);
+			return FindPolyhedron(objID);
 		default:
-			return false;
+			return nullptr;
 		}
+	}
+
+	bool FGraph3D::ContainsObject(FTypedGraphObjID TypedObjID) const
+	{
+		return (FindObject(TypedObjID) != nullptr);
 	}
 
 	FGraph3DVertex *FGraph3D::AddVertex(const FVector &Position, int32 InID, const TSet<int32> &InGroupIDs)
@@ -196,7 +263,10 @@ namespace Modumate
 		newVertex.Dirty();
 		bDirty = true;
 
-		return &Vertices.Add(newID, MoveTemp(newVertex));
+		FGraph3DVertex *vertexPtr = &Vertices.Add(newID, MoveTemp(newVertex));
+		AddObjectToGroups(vertexPtr);
+
+		return vertexPtr;
 	}
 
 	FGraph3DEdge *FGraph3D::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID, const TSet<int32> &InGroupIDs)
@@ -227,7 +297,10 @@ namespace Modumate
 		);
 		EdgeIDsByVertexPair.Add(vertexPair, newID);
 
-		return &Edges.Add(newID, MoveTemp(newEdge));
+		FGraph3DEdge *edgePtr = &Edges.Add(newID, MoveTemp(newEdge));
+		AddObjectToGroups(edgePtr);
+
+		return edgePtr;
 	}
 
 	FGraph3DFace *FGraph3D::AddFace(const TArray<int32> &VertexIDs, int32 InID, const TSet<int32> &InGroupIDs)
@@ -252,7 +325,10 @@ namespace Modumate
 		newFace.Dirty();
 		bDirty = true;
 
-		return &Faces.Add(newID, MoveTemp(newFace));
+		FGraph3DFace *facePtr = &Faces.Add(newID, MoveTemp(newFace));
+		AddObjectToGroups(facePtr);
+
+		return facePtr;
 	}
 
 	bool FGraph3D::RemoveVertex(int32 VertexID)
@@ -264,6 +340,7 @@ namespace Modumate
 		}
 
 		vertexToRemove->Dirty();
+		RemoveObjectFromGroups(vertexToRemove);
 
 		for (FSignedID connectedEdgeID : vertexToRemove->ConnectedEdgeIDs)
 		{
@@ -290,6 +367,7 @@ namespace Modumate
 		}
 
 		edgeToRemove->Dirty();
+		RemoveObjectFromGroups(edgeToRemove);
 
 		if (edgeToRemove->StartVertexID != 0)
 		{
@@ -322,6 +400,7 @@ namespace Modumate
 		}
 
 		faceToRemove->Dirty();
+		RemoveObjectFromGroups(faceToRemove);
 
 		for (FSignedID edgeID : faceToRemove->EdgeIDs)
 		{
@@ -411,6 +490,20 @@ namespace Modumate
 		return Polyhedra; 
 	}
 
+	bool FGraph3D::GetGroup(int32 GroupID, TSet<FTypedGraphObjID> &OutGroupMembers) const
+	{
+		OutGroupMembers.Reset();
+
+		auto *groupMemberIDs = CachedGroups.Find(GroupID);
+		if (groupMemberIDs && (groupMemberIDs->Num() > 0))
+		{
+			OutGroupMembers.Append(*groupMemberIDs);
+			return true;
+		}
+
+		return false;
+	}
+
 	bool FGraph3D::ApplyDelta(const FGraph3DDelta &Delta)
 	{
 		// TODO: updating planes could be a part of Dirty instead of 
@@ -433,6 +526,10 @@ namespace Modumate
 			vertex->Dirty(true);
 		}
 
+		// Use a persistent cached set for keeping track of group IDs that are being inherited from parent IDs
+		// e.g. splitting edges that belong to one or more groups
+		TempInheritedGroupIDs.Reset();
+
 		for (auto &kvp : Delta.VertexAdditions)
 		{
 			// GroupIDs are currently unused with graph vertices
@@ -451,16 +548,18 @@ namespace Modumate
 			int32 edgeID = kvp.Key;
 			const TArray<int32> &edgeVertexIDs = kvp.Value.Vertices;
 			ensureAlways(edgeVertexIDs.Num() == 2);
-			FGraph3DEdge *newEdge = AddEdge(edgeVertexIDs[0], edgeVertexIDs[1], edgeID, kvp.Value.GroupIDs);
 
-			for(int32 parentID : kvp.Value.ParentObjIDs)
+			TempInheritedGroupIDs = kvp.Value.GroupIDs;
+			for (int32 parentID : kvp.Value.ParentObjIDs)
 			{
 				auto edge = FindEdge(parentID);
 				if (edge != nullptr)
 				{
-					newEdge->GroupIDs.Append(edge->GroupIDs);
+					TempInheritedGroupIDs.Append(edge->GroupIDs);
 				}
 			}
+
+			AddEdge(edgeVertexIDs[0], edgeVertexIDs[1], edgeID, TempInheritedGroupIDs);
 		}
 
 		for (auto &kvp : Delta.EdgeDeletions)
@@ -547,6 +646,12 @@ namespace Modumate
 				face->VertexIDs = newVertexIDs;
 				face->Dirty(false);
 			}
+		}
+
+		// Apply changes to the GroupIDs field of vertices, edges, and faces
+		for (auto &kvp : Delta.GroupIDsUpdates)
+		{
+			ApplyGroupIDsDelta(kvp.Key, kvp.Value);
 		}
 
 		for (auto &kvp : Faces)
@@ -1233,36 +1338,23 @@ namespace Modumate
 
 		// Now that we've found a shared plane and have collected all of the graph objects that are part of the initially provided selection,
 		// go ahead and create a graph using these objects as a whitelist.
+		// Only populate the 3D Face -> 2D Poly mapping if completeness was required.
 		TMap<int32, int32> face3DToPoly2D;
-		bool bCreatedGraph = Create2DGraph(initialVertexID, sharedPlane, OutGraph, &whitelistIDs, &face3DToPoly2D);
+		bool bCreatedGraph = Create2DGraph(initialVertexID, sharedPlane, OutGraph, &whitelistIDs,
+			bRequireComplete ? &face3DToPoly2D : nullptr);
 
 		if (!bCreatedGraph)
 		{
 			return false;
 		}
 
-		int32 numInteriorPolygons = 0, numExteriorPolygons = 0;
-		for (auto &kvp : OutGraph.GetPolygons())
-		{
-			const FGraphPolygon &polygon = kvp.Value;
-			if (polygon.bClosed)
-			{
-				if (polygon.bInterior)
-				{
-					++numInteriorPolygons;
-				}
-				else
-				{
-					++numExteriorPolygons;
-				}
-			}
-		}
-		bool bFullyConnected = (numExteriorPolygons == 1);
+		int32 exteriorPolyID = OutGraph.GetExteriorPolygonID();
+		bool bFullyConnected = (exteriorPolyID != MOD_ID_NONE);
 
 		// Check the connected requirement, which detects if there are multiple exterior polygons that indicate disconnected graphs
 		if (bRequireConnected && !bFullyConnected)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to be fully connected, but it contains %d exterior polygons!"), numExteriorPolygons);
+			UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to be fully connected, but it didn't have a singular exterior polygon!"));
 			return false;
 		}
 

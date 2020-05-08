@@ -465,6 +465,11 @@ namespace Modumate
 		return Implementation && Implementation->ShowStructureOnSelection();
 	}
 
+	bool FModumateObjectInstance::UseStructureDataForCollision() const
+	{
+		return Implementation && Implementation->UseStructureDataForCollision();
+	}
+
 	UMaterialInterface *FModumateObjectInstance::GetMaterial()
 	{
 		return Implementation->GetMaterial();
@@ -691,16 +696,15 @@ namespace Modumate
 		return command;
 	}
 
-	FMOIDelta FMOIDelta::MakeCreateObjectDelta(const FMOIStateData &StateData)
+	TSharedPtr<FMOIDelta> FMOIDelta::MakeCreateObjectDelta(const FMOIStateData &StateData)
 	{
-		FMOIDelta createObjectDelta;
-		FMOIStateData createDestroyState = StateData;
-		
-		createDestroyState.StateType = EMOIDeltaType::Create;
-		createObjectDelta.TargetStateMap.Add(StateData.ObjectID, createDestroyState);
+		TSharedPtr<FMOIDelta> createObjectDelta = MakeShareable(new FMOIDelta());
 
-		createDestroyState.StateType = EMOIDeltaType::Destroy;
-		createObjectDelta.BaseStateMap.Add(StateData.ObjectID, createDestroyState);
+		FMOIStateData &createState = createObjectDelta->TargetStateMap.Add(StateData.ObjectID, StateData);
+		createState.StateType = EMOIDeltaType::Create;
+
+		FMOIStateData &destroyState = createObjectDelta->BaseStateMap.Add(StateData.ObjectID, StateData);
+		destroyState.StateType = EMOIDeltaType::Destroy;
 
 		return createObjectDelta;
 	}

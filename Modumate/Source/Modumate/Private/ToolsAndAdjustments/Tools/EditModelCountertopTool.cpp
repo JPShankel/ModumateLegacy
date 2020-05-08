@@ -124,9 +124,8 @@ void UCountertopTool::HandleClick(const FVector &p)
 	state.ObjectType = EObjectType::OTLineSegment;
 	state.ObjectID = doc.GetNextAvailableID();
 
-	FMOIDelta delta = FMOIDelta::MakeCreateObjectDelta(state);
-
-	Controller->ModumateCommand(delta.AsCommand());
+	auto delta = FMOIDelta::MakeCreateObjectDelta(state);
+	Controller->ModumateCommand(delta->AsCommand());
 
 	if (Controller->TryMakePrismFromSegments(EObjectType::OTCountertop, Assembly.Key, Inverted))
 	{

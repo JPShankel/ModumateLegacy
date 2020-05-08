@@ -160,6 +160,7 @@ ECollisionChannel UModumateTypeStatics::CollisionTypeFromObjectType(EObjectType 
 	case EObjectType::OTMetaVertex:
 	case EObjectType::OTMetaEdge:
 	case EObjectType::OTMetaPlane:
+	case EObjectType::OTRoofPerimeter:
 		return COLLISION_META_MOI;
 	case EObjectType::OTFinish:
 	case EObjectType::OTTrim:

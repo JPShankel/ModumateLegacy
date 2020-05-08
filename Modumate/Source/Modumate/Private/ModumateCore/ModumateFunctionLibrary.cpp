@@ -1096,13 +1096,6 @@ float UModumateFunctionLibrary::GetDegreeAtIndex(TArray<FVector> PolygonVerts, i
 	return degreeNext - degreeLast;
 }
 
-bool UModumateFunctionLibrary::IsLocationInLine(FVector Start, FVector End, FVector Point, float Tolerance)
-{
-	float diffA = (Start - End).Size();
-	float diffB = (Start - Point).Size() + (End - Point).Size();
-	return FMath::IsNearlyEqual(diffA, diffB, Tolerance);
-}
-
 bool UModumateFunctionLibrary::IsVectorInArray(const TArray<FVector>& Array, const FVector& TargetVector, float Tolerance)
 {
 	bool bResult = false;

@@ -279,9 +279,8 @@ bool UCabinetTool::EnterNextStage()
 		stateData.ObjectID = doc.GetNextAvailableID();
 		stateData.Extents = FVector(0, h, 0);
 
-		FMOIDelta delta = FMOIDelta::MakeCreateObjectDelta(stateData);
-
-		Controller->ModumateCommand(delta.AsCommand());
+		auto delta = FMOIDelta::MakeCreateObjectDelta(stateData);
+		Controller->ModumateCommand(delta->AsCommand());
 		
 		return false;
 	}
@@ -346,7 +345,6 @@ void UCabinetTool::DoMakeLineSegmentCommand(const FVector &P1, const FVector &P2
 	state.ObjectType = EObjectType::OTLineSegment;
 	state.ObjectID = doc.GetNextAvailableID();
 
-	FMOIDelta delta = FMOIDelta::MakeCreateObjectDelta(state);
-
-	Controller->ModumateCommand(delta.AsCommand());
+	auto delta = FMOIDelta::MakeCreateObjectDelta(state);
+	Controller->ModumateCommand(delta->AsCommand());
 }

@@ -636,6 +636,7 @@ namespace Modumate
 		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_ROOF_FACE, DataCollection<FModumateObjectAssembly>());
 
 		AssembliesByObjectType.Add(EObjectType::OTStructureLine, DataCollection<FModumateObjectAssembly>());
+		AssembliesByObjectType.Add(EObjectType::OTRoofPerimeter, DataCollection<FModumateObjectAssembly>());
 
 		LoadCraftingBuiltins(GetDefaultCraftingBuiltinPresetFilePath());
 		return NoError;

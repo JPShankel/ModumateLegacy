@@ -119,6 +119,7 @@ namespace Modumate
 
 		virtual bool IsSelectableByUser() const = 0;
 		virtual bool ShowStructureOnSelection() const = 0;
+		virtual bool UseStructureDataForCollision() const = 0;
 
 		virtual void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation) = 0;
 		virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) = 0;
@@ -190,6 +191,7 @@ namespace Modumate
 
 		virtual bool IsSelectableByUser() const override { return true; }
 		virtual bool ShowStructureOnSelection() const override { return true; }
+		virtual bool UseStructureDataForCollision() const override { return false; }
 
 		virtual void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation) override;
 		virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) override;
@@ -251,7 +253,7 @@ namespace Modumate
 	{
 	public:
 
-		static FMOIDelta MakeCreateObjectDelta(const FMOIStateData &StateData);
+		static TSharedPtr<FMOIDelta> MakeCreateObjectDelta(const FMOIStateData &StateData);
 
 		virtual bool ApplyTo(FModumateDocument *doc, UWorld *world) const override;
 		virtual TSharedPtr<FDelta> MakeInverse() const override;
@@ -455,6 +457,7 @@ namespace Modumate
 
 		bool IsSelectableByUser() const;
 		bool ShowStructureOnSelection() const;
+		bool UseStructureDataForCollision() const;
 
 		void InvertObject();
 		void TransverseObject();

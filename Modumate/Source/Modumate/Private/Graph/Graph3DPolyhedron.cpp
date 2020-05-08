@@ -3,9 +3,8 @@
 
 namespace Modumate
 {
-	FGraph3DPolyhedron::FGraph3DPolyhedron(int32 InID, FGraph3D* InGraph)
-		: ID(InID)
-		, Graph(InGraph)
+	FGraph3DPolyhedron::FGraph3DPolyhedron(int32 InID, FGraph3D* InGraph, const TSet<int32> &InGroupIDs)
+		: IGraph3DObject(InID, InGraph, InGroupIDs)
 		, ParentID(MOD_ID_NONE)
 		, bClosed(false)
 		, bInterior(false)

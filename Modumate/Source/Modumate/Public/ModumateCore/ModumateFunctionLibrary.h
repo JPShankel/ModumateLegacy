@@ -158,9 +158,6 @@ public:
 	static float GetDegreeAtIndex(TArray<FVector> PolygonVerts, int32 CurrentIndex);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static bool IsLocationInLine(FVector Start, FVector End, FVector Point, float Tolerance = 2.0);
-
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static bool IsVectorInArray(const TArray<FVector>& Array, const FVector& TargetVector, float Tolerance);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")

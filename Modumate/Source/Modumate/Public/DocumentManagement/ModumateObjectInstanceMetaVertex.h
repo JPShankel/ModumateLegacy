@@ -25,6 +25,7 @@ namespace Modumate
 		virtual void UpdateDynamicGeometry() override;
 		virtual void OnSelected(bool bNewSelected) override;
 		virtual bool ShowStructureOnSelection() const override { return false; }
+		virtual bool UseStructureDataForCollision() const override { return true; }
 	
 	protected:
 		TWeakObjectPtr<UWorld> World;

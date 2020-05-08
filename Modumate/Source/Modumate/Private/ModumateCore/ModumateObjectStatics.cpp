@@ -1204,10 +1204,20 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const Modumate::FModumateObj
 			bOutIsConnected = (graphEdge->ConnectedFaces.Num() > 0);
 			EdgeConnectedToValidPlane(graphEdge, doc, bConnectedToEmptyPlane, bConnectedToSelectedPlane);
 
-			bOutShouldBeVisible = (bConnectedToSelectedPlane || bEdgeHasSelectedChild ||
-				bConnectedToEmptyPlane || bEnabledByViewMode || MetaMOI->IsSelected() ||
-				(!bOutIsConnected && !bEdgeHasChild));
-			bOutShouldCollisionBeEnabled = bOutShouldBeVisible || bInMetaToolMode;
+			// Edges with GroupIDs should be hidden outside of meta-plane view mode
+			// TODO: add more sophistication to this, based on how GroupIDs are used besides Roof Perimeters
+			if (!bEnabledByViewMode && (graphEdge->GroupIDs.Num() > 0))
+			{
+				bOutShouldBeVisible = false;
+				bOutShouldCollisionBeEnabled = false;
+			}
+			else
+			{
+				bOutShouldBeVisible = (bConnectedToSelectedPlane || bEdgeHasSelectedChild ||
+					bConnectedToEmptyPlane || bEnabledByViewMode || MetaMOI->IsSelected() ||
+					(!bOutIsConnected && !bEdgeHasChild));
+				bOutShouldCollisionBeEnabled = bOutShouldBeVisible || bInMetaToolMode;
+			}
 			break;
 		}
 		case EObjectType::OTMetaPlane:

@@ -108,6 +108,9 @@ namespace Modumate
 		bool RemoveObject(int32 ID, EGraphObjectType GraphObjectType);
 		int32 CalculatePolygons();
 		void ClearPolygons();
+		int32 GetExteriorPolygonID() const;
+		FGraphPolygon *GetExteriorPolygon();
+		const FGraphPolygon *GetExteriorPolygon() const;
 
 		const TMap<int32, FGraphEdge> &GetEdges() const { return Edges; }
 		const TMap<int32, FGraphVertex> &GetVertices() const { return Vertices; }

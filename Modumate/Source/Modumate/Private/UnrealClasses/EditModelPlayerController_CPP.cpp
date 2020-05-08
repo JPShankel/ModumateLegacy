@@ -2275,7 +2275,8 @@ bool AEditModelPlayerController_CPP::FindBestMouseLineHit(const TArray<TPair<FVe
 		}
 
 		// Make sure the intercept point is on the line segment, otherwise we're just "close" to the infinite line defined by the segment
-		if (!UModumateFunctionLibrary::IsLocationInLine(lineStart, lineEnd, lineIntercept, KINDA_SMALL_NUMBER))
+		float intersectLengthOnLine = (lineIntercept - lineStart) | lineDir;
+		if (!FMath::IsWithin(intersectLengthOnLine, -KINDA_SMALL_NUMBER, lineLength + KINDA_SMALL_NUMBER))
 		{
 			continue;
 		}
@@ -2523,28 +2524,32 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 		CurHitPointLocations.Reset();
 		CurHitLineMOIs.Reset();
 		CurHitLineLocations.Reset();
+		static TArray<FStructurePoint> tempPointsForCollision;
+		static TArray<FStructureLine> tempLinesForCollision;
 		// TODO: we know this is inefficient, should replace with an interface that allows for optimization
-		// (like get objects by type that doesn't allocate arrays)
+		// (like not needing to iterate over every single object in the scene)
 		for (FModumateObjectInstance *moi : Document->GetObjectInstances())
 		{
-			if (moi && moi->IsCollisionEnabled())
+			if (moi && moi->IsCollisionEnabled() && moi->UseStructureDataForCollision())
 			{
-				switch (moi->GetObjectType())
+				moi->GetStructuralPointsAndLines(tempPointsForCollision, tempLinesForCollision, false, false);
+
+				// Structural points and lines used for cursor hit collision are mutually exclusive
+				if (tempLinesForCollision.Num() > 0)
 				{
-				case EObjectType::OTMetaVertex:
-					CurHitPointMOIs.Add(moi);
-					CurHitPointLocations.Add(moi->GetObjectLocation());
-					break;
-				case EObjectType::OTLineSegment:
-				case EObjectType::OTMetaEdge:
-					if (moi->GetControlPoints().Num() == 2)
+					for (auto line : tempLinesForCollision)
 					{
 						CurHitLineMOIs.Add(moi);
-						CurHitLineLocations.Add(TPair<FVector, FVector>(moi->GetControlPoint(0), moi->GetControlPoint(1)));
+						CurHitLineLocations.Add(TPair<FVector, FVector>(line.P1, line.P2));
 					}
-					break;
-				default:
-					break;
+				}
+				else
+				{
+					for (auto point : tempPointsForCollision)
+					{
+						CurHitPointMOIs.Add(moi);
+						CurHitPointLocations.Add(point.Point);
+					}
 				}
 			}
 		}

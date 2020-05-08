@@ -1639,7 +1639,6 @@ bool FModumateDocument::UpdateGraphObjects(UWorld *World)
 			edgeObj->SetControlPoints({ startVertex->Position, endVertex->Position });
 			edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
 			dirtyGroupIDs.Append(graphEdge->GroupIDs);
-
 		}
 
 		for (int32 faceID : cleanedFaces)
@@ -1763,7 +1762,8 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &ob
 		return;
 	}
 
-	TArray<int32> vertex3DDeletions, edge3DDeletions, face3DDeletions;
+	TArray<int32> vertex3DDeletions, edge3DDeletions, face3DDeletions, graphGroupDeletions;
+	TSet<FTypedGraphObjID> graphGroupMembers;
 	bool bDeletingObjectsInGraph = false;
 	bool bDeletingNavigableObjects = false;
 	for (int32 i = obs.Num() - 1; i >= 0; --i)
@@ -1794,6 +1794,12 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &ob
 		{
 			bDeletingNavigableObjects = true;
 		}
+
+		if (VolumeGraph.GetGroup(ob->ID, graphGroupMembers))
+		{
+			graphGroupDeletions.Add(ob->ID);
+			bDeletingObjectsInGraph = true;
+		}
 	}
 
 	// Do room analysis if we're affecting any room-related objects, such as meta graph objects or navigable objects
@@ -1805,7 +1811,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &ob
 	bool bApplyDelta = false;
 	if (bDeletingObjectsInGraph)
 	{
-		bApplyDelta = FGraph3D::GetDeltaForDeleteObjects(&TempVolumeGraph, vertex3DDeletions, edge3DDeletions, face3DDeletions, graphDelta, bDeleteConnected);
+		bApplyDelta = FGraph3D::GetDeltaForDeleteObjects(&TempVolumeGraph, vertex3DDeletions, edge3DDeletions, face3DDeletions, graphGroupDeletions, graphDelta, bDeleteConnected);
 	}
 
 	// If we're allowing room analysis, then start a macro since it may have side effects
@@ -3847,7 +3853,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 			EGraph3DObjectType graphObjectType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectRecord.ObjectType);
 			if (graphObjectType != EGraph3DObjectType::None)
 			{
-				if (!VolumeGraph.ContainsObject(objectRecord.ID, graphObjectType))
+				if (!VolumeGraph.ContainsObject(FTypedGraphObjID(objectRecord.ID, graphObjectType)))
 				{
 					UE_LOG(LogTemp, Warning, TEXT("MOI #%d was skipped because its corresponding %s was missing from the graph!"),
 						objectRecord.ID, *EnumValueString(EGraph3DObjectType, graphObjectType));
@@ -4311,7 +4317,7 @@ bool FModumateDocument::IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &O
 
 	OutObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType());
 	bool bIsVolumeGraphType = (OutObjType != EGraph3DObjectType::None);
-	bIsInGraph = VolumeGraph.ContainsObject(ObjID, OutObjType);
+	bIsInGraph = VolumeGraph.ContainsObject(FTypedGraphObjID(ObjID, OutObjType));
 	ensureAlways(bIsVolumeGraphType == bIsInGraph);
 
 	return bIsInGraph;

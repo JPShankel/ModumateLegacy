@@ -584,6 +584,41 @@ namespace Modumate
 		bDirty = true;
 	}
 
+	int32 FGraph::GetExteriorPolygonID() const
+	{
+		int32 resultID = MOD_ID_NONE;
+
+		for (auto &kvp : Polygons)
+		{
+			auto &polygon = kvp.Value;
+			if (polygon.bClosed && !polygon.bInterior)
+			{
+				if (resultID == MOD_ID_NONE)
+				{
+					resultID = polygon.ID;
+					
+				}
+				// If there's already another exterior polygon, then there's no singular exterior polygon, so return neither.
+				else
+				{
+					return MOD_ID_NONE;
+				}
+			}
+		}
+
+		return resultID;
+	}
+
+	FGraphPolygon *FGraph::GetExteriorPolygon()
+	{
+		return FindPolygon(GetExteriorPolygonID());
+	}
+
+	const FGraphPolygon *FGraph::GetExteriorPolygon() const
+	{
+		return FindPolygon(GetExteriorPolygonID());
+	}
+
 	bool FGraph::ToDataRecord(FGraph2DRecord &OutRecord, bool bSaveOpenPolygons, bool bSaveExteriorPolygons) const
 	{
 		OutRecord.Vertices.Reset();

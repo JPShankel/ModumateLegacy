@@ -17,6 +17,7 @@ namespace Modumate
 {
 	class FGraph;
 	class FGraph3DDelta;
+	struct FGraph3DGroupIDsDelta;
 
 	class MODUMATE_API FGraph3D
 	{
@@ -41,7 +42,9 @@ namespace Modumate
 		FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID);
 		const FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID) const;
 
-		bool ContainsObject(int32 ID, EGraph3DObjectType GraphObjectType) const;
+		IGraph3DObject* FindObject(FTypedGraphObjID TypedObjID);
+		const IGraph3DObject* FindObject(FTypedGraphObjID TypedObjID) const;
+		bool ContainsObject(FTypedGraphObjID TypedObjID) const;
 
 		FGraph3DVertex *AddVertex(const FVector &Position, int32 InID, const TSet<int32> &InGroupIDs);
 
@@ -59,6 +62,7 @@ namespace Modumate
 		const TMap<int32, FGraph3DVertex> &GetVertices() const;
 		const TMap<int32, FGraph3DFace> &GetFaces() const;
 		const TMap<int32, FGraph3DPolyhedron> &GetPolyhedra() const;
+		bool GetGroup(int32 GroupID, TSet<FTypedGraphObjID> &OutGroupMembers) const;
 
 		bool ApplyDelta(const FGraph3DDelta &Delta);
 
@@ -107,6 +111,10 @@ namespace Modumate
 	private:
 		const void FindEdges(const FVector &Position, int32 ExistingID, TArray<int32>& OutEdgeIDs) const;
 
+		void AddObjectToGroups(const IGraph3DObject *GraphObject);
+		void RemoveObjectFromGroups(const IGraph3DObject *GraphObject);
+		void ApplyGroupIDsDelta(FTypedGraphObjID TypedObjectID, const FGraph3DGroupIDsDelta &GroupDelta);
+
 	public:
 		float Epsilon;
 		bool bDebugCheck;
@@ -121,6 +129,8 @@ namespace Modumate
 		TMap<int32, FGraph3DFace> Faces;
 		TMap<int32, FGraph3DPolyhedron> Polyhedra;
 		TSet<FSignedID> DirtyFaces;
+		TMap<int32, TSet<FTypedGraphObjID>> CachedGroups;
+		TSet<int32> TempInheritedGroupIDs;
 
 	public:
 
@@ -130,7 +140,7 @@ namespace Modumate
 		static bool GetDeltaForFaceAddition(FGraph3D *Graph, const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID);
 
 		// Propagates deletion to connected objects
-		static bool GetDeltaForDeleteObjects(FGraph3D *Graph, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs, const TArray<int32> &FaceIDs, FGraph3DDelta &OutDelta, bool bGatherEdgesFromFaces);
+		static bool GetDeltaForDeleteObjects(FGraph3D *Graph, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs, const TArray<int32> &FaceIDs, const TArray<int32> &GroupIDs, FGraph3DDelta &OutDelta, bool bGatherEdgesFromFaces);
 		// Deletes only the provided objects, used as in intermediate stage in other delta functions
 		static bool GetDeltaForDeletions(FGraph3D *Graph, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs, const TArray<int32> &FaceIDs, FGraph3DDelta &OutDelta);
 		// Creates Delta based on pending deleted objects

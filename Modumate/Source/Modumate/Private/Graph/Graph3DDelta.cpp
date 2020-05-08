@@ -3,6 +3,12 @@
 
 namespace Modumate
 {
+	FGraph3DGroupIDsDelta FGraph3DGroupIDsDelta::MakeInverse() const
+	{
+		return FGraph3DGroupIDsDelta(GroupIDsToRemove, GroupIDsToAdd);
+	}
+
+
 	FGraph3DObjDelta::FGraph3DObjDelta(FVertexPair vertexPair)
 	{
 		Vertices = { vertexPair.Key, vertexPair.Value };
@@ -143,6 +149,11 @@ namespace Modumate
 			const FGraph3DHostedObjectDelta &idUpdate = kvp.Value;
 
 			inverse->ParentIDUpdates.Add(parentID, FGraph3DHostedObjectDelta(idUpdate.PreviousHostedObjID, idUpdate.NextParentID, idUpdate.PreviousParentID));
+		}
+
+		for (const auto &kvp : GroupIDsUpdates)
+		{
+			inverse->GroupIDsUpdates.Add(kvp.Key, kvp.Value.MakeInverse());
 		}
 
 		return inverse;

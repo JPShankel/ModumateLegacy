@@ -31,12 +31,9 @@ namespace Modumate
 	{
 		const FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
 
-		const auto &perimeterEdgeIDs = MOI->GetControlPointIndices();
-		int32 numEdges = perimeterEdgeIDs.Num();
-
-		if (perimeterEdgeIDs.IsValidIndex(index))
+		if (CachedEdgeIDs.IsValidIndex(index))
 		{
-			auto edgeID = perimeterEdgeIDs[index];
+			auto edgeID = CachedEdgeIDs[index];
 			const FGraph3DEdge *edge = volumeGraph.FindEdge(edgeID);
 			if (edge)
 			{
@@ -53,21 +50,31 @@ namespace Modumate
 
 	void FMOIRoofPerimeterImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
 	{
+		// TODO: update visibility/collision based on edit mode, whether roof faces have been created, etc.
 		FModumateObjectInstanceImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
+		UpdateLineActors();
+	}
 
-		// TODO: update based on edit mode, whether roof faces have been created, etc.
+	void FMOIRoofPerimeterImpl::OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover)
+	{
+		FModumateObjectInstanceImplBase::OnCursorHoverActor(controller, EnableHover);
+		UpdateLineActors();
+	}
+
+	void FMOIRoofPerimeterImpl::OnSelected(bool bNewSelected)
+	{
+		FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
+		UpdateLineActors();
 	}
 
 	void FMOIRoofPerimeterImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
 		const FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
 
-		const auto &perimeterEdgeIDs = MOI->GetControlPointIndices();
-		int32 numEdges = perimeterEdgeIDs.Num();
-
+		int32 numEdges = CachedEdgeIDs.Num();
 		for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
 		{
-			auto edgeID = perimeterEdgeIDs[edgeIdx];
+			auto edgeID = CachedEdgeIDs[edgeIdx];
 			const FGraph3DEdge *edge = volumeGraph.FindEdge(edgeID);
 			if (edge)
 			{
@@ -82,91 +89,206 @@ namespace Modumate
 		}
 	}
 
+	AActor *FMOIRoofPerimeterImpl::RestoreActor()
+	{
+		LineActors.Reset();
+		return FModumateObjectInstanceImplBase::RestoreActor();
+	}
+
 	AActor *FMOIRoofPerimeterImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 	{
 		World = world;
-		PerimeterActor = World->SpawnActor<AActor>(AActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
+		PerimeterActor = World->SpawnActor<AActor>();
+		PerimeterActor->SetRootComponent(NewObject<USceneComponent>(PerimeterActor.Get(), USceneComponent::GetDefaultSceneRootVariableName()));
 
 		return PerimeterActor.Get();
 	}
 
 	bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag)
 	{
-		return FModumateObjectInstanceImplBase::CleanObject(DirtyFlag);
+		if (MOI == nullptr)
+		{
+			return false;
+		}
+
+		switch (DirtyFlag)
+		{
+		case EObjectDirtyFlags::Structure:
+		{
+			// TODO: we shouldn't have to update the perimeter IDs every time we change geometry,
+			// but we don't have a better time to do it besides cleaning structural flags.
+			if (!UpdatePerimeterIDs())
+			{
+				return false;
+			}
+
+			MOI->MarkDirty(EObjectDirtyFlags::Visuals);
+			break;
+		}
+		case EObjectDirtyFlags::Visuals:
+			MOI->UpdateVisibilityAndCollision();
+			break;
+		default:
+			break;
+		}
+
+		return true;
 	}
 
-	void FMOIRoofPerimeterImpl::SetupDynamicGeometry()
+	bool FMOIRoofPerimeterImpl::UpdatePerimeterIDs()
 	{
-		UpdateLineActors();
-	}
+		if (!ensure(MOI))
+		{
+			return false;
+		}
 
-	void FMOIRoofPerimeterImpl::UpdateDynamicGeometry()
-	{
-		SetupDynamicGeometry();
-	}
+		const FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
 
-	void FMOIRoofPerimeterImpl::OnSelected(bool bNewSelected)
-	{
-		FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
+		// Ask the graph what IDs belong to this roof perimeter group object
+		TSet<FTypedGraphObjID> groupMembers;
+		if (!volumeGraph.GetGroup(MOI->ID, groupMembers))
+		{
+			return false;
+		}
 
-		MOI->UpdateVisibilityAndCollision();
+		// Sort the group member IDs by graph type
+		TSet<int32> vertexIDs, edgeIDs, faceIDs;
+		for (auto &groupMember : groupMembers)
+		{
+			switch (groupMember.Value)
+			{
+			case EGraph3DObjectType::Vertex:
+				vertexIDs.Add(groupMember.Key);
+				break;
+			case EGraph3DObjectType::Edge:
+				edgeIDs.Add(groupMember.Key);
+				break;
+			case EGraph3DObjectType::Face:
+				faceIDs.Add(groupMember.Key);
+				break;
+			default:
+				break;
+			}
+		}
+
+		CachedEdgeIDs.Reset();
+		FGraph updatedPerimeterGraph;
+		if (volumeGraph.Create2DGraph(vertexIDs, edgeIDs, faceIDs, updatedPerimeterGraph, true, false))
+		{
+			const FGraphPolygon *perimeterPoly = updatedPerimeterGraph.GetExteriorPolygon();
+			if (ensure(perimeterPoly))
+			{
+				for (auto signedEdgeID : perimeterPoly->Edges)
+				{
+					const FGraph3DEdge *graphEdge = volumeGraph.FindEdge(signedEdgeID);
+					if (graphEdge && graphEdge->GroupIDs.Contains(MOI->ID))
+					{
+						// Perimeters may double back if they're not a closed loop, but we still want to only include each edge once.
+						// However, rather than just storing their unsigned IDs, we want to preserve the directions of the edges so that the traversal order is preserved.
+						if (!CachedEdgeIDs.Contains(-signedEdgeID) && !CachedEdgeIDs.Contains(signedEdgeID))
+						{
+							CachedEdgeIDs.Add(signedEdgeID);
+						}
+					}
+					else
+					{
+						return false;
+					}
+				}
+			}
+		}
+
+		return (CachedEdgeIDs.Num() > 0);
 	}
 
 	void FMOIRoofPerimeterImpl::UpdateLineActors()
 	{
+		if (!ensure(MOI))
+		{
+			return;
+		}
+
 		// Keep track of which edges we already have actors for,
 		// which edges we need to create actors for,
 		// and which edges no longer need actors.
-		TSet<int32> previousEdgeIDs, edgeIDsToRemove;
+		TempEdgeIDsToAdd.Reset();
+		TempEdgeIDsToRemove.Reset();
+
 		for (auto &kvp : LineActors)
 		{
-			previousEdgeIDs.Add(kvp.Key);
+			TempEdgeIDsToRemove.Add(kvp.Key);
 		}
-		edgeIDsToRemove.Append(previousEdgeIDs);
-		TArray<const FGraph3DEdge*> edgesToAdd;
 
 		const FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
 
-		const TArray<int32> &perimeterEdgeIDs = MOI->GetControlPointIndices();
-		for (int32 edgeID : perimeterEdgeIDs)
+		for (FSignedID edgeID : CachedEdgeIDs)
 		{
-			const FGraph3DEdge *edge = volumeGraph.FindEdge(edgeID);
-			if (edge)
+			if (volumeGraph.ContainsObject(FTypedGraphObjID(edgeID, EGraph3DObjectType::Edge)))
 			{
-				if (!previousEdgeIDs.Contains(edgeID))
+				if (!LineActors.Contains(edgeID))
 				{
-					edgesToAdd.Add(edge);
+					TempEdgeIDsToAdd.Add(edgeID);
 				}
 
-				edgeIDsToRemove.Remove(edgeID);
+				TempEdgeIDsToRemove.Remove(edgeID);
+			}
+			else
+			{
+				TempEdgeIDsToRemove.Remove(edgeID);
 			}
 		}
 
 		// Delete outdated line actors
-		for (int32 edgeIDToRemove : edgeIDsToRemove)
+		for (FSignedID edgeIDToRemove : TempEdgeIDsToRemove)
 		{
 			TWeakObjectPtr<ALineActor> lineToRemove;
-			if (LineActors.RemoveAndCopyValue(edgeIDToRemove, lineToRemove) && lineToRemove.IsValid())
+			LineActors.RemoveAndCopyValue(edgeIDToRemove, lineToRemove);
+			if (lineToRemove.IsValid())
 			{
 				lineToRemove->Destroy();
 			}
 		}
 
-		// Add new line actors
-		for (const FGraph3DEdge *edgeToAdd : edgesToAdd)
+		// Add new line actors, just the key so we can spawn them all later
+		for (FSignedID edgeIDToAdd : TempEdgeIDsToAdd)
 		{
-			const FGraph3DVertex *startVertex = volumeGraph.FindVertex(edgeToAdd->StartVertexID);
-			const FGraph3DVertex *endVertex = volumeGraph.FindVertex(edgeToAdd->EndVertexID);
-			if (startVertex && endVertex)
-			{
-				ALineActor *newLine = World->SpawnActor<ALineActor>();
-				newLine->Point1 = startVertex->Position;
-				newLine->Point2 = endVertex->Position;
-				newLine->Color = FColor::Purple;
-				newLine->Thickness = 4.0f;
+			LineActors.Add(edgeIDToAdd);
+		}
 
-				TWeakObjectPtr<ALineActor> newLinePtr(newLine);
-				LineActors.Add(edgeToAdd->ID, newLinePtr);
+		// Update existing line actors
+		bool bMOIVisible = MOI->IsVisible();
+		bool bMOICollisionEnabled = MOI->IsCollisionEnabled();
+		bool bMOISelected = MOI->IsSelected();
+		bool bMOIHovered = MOI->IsHovered();
+		FColor lineColor = bMOIHovered ? FColor::White : FColor::Purple;
+		float lineThickness = bMOISelected ? 6.0f : 3.0f;
+
+		for (auto &kvp : LineActors)
+		{
+			FSignedID edgeID = kvp.Key;
+			TWeakObjectPtr<ALineActor> &lineActor = kvp.Value;
+			const FGraph3DEdge *graphEdge = volumeGraph.FindEdge(edgeID);
+			if (graphEdge)
+			{
+				const FGraph3DVertex *startVertex = volumeGraph.FindVertex(graphEdge->StartVertexID);
+				const FGraph3DVertex *endVertex = volumeGraph.FindVertex(graphEdge->EndVertexID);
+				if (startVertex && endVertex)
+				{
+					// Spawn the actor now, expected if it's new, or if it became stale
+					if (!lineActor.IsValid())
+					{
+						lineActor = World->SpawnActor<ALineActor>();
+						lineActor->AttachToActor(PerimeterActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
+					}
+
+					// Keep the line actor with the same direction as the original graph edge, for consistency
+					lineActor->SetActorHiddenInGame(!bMOIVisible);
+					lineActor->SetActorEnableCollision(bMOICollisionEnabled);
+					lineActor->Point1 = (edgeID > 0) ? startVertex->Position : endVertex->Position;
+					lineActor->Point2 = (edgeID > 0) ? endVertex->Position : startVertex->Position;
+					lineActor->Color = lineColor;
+					lineActor->Thickness = lineThickness;
+				}
 			}
 		}
 	}

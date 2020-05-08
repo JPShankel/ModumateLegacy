@@ -5,6 +5,7 @@
 #include "EditModelGameState_CPP.h"
 #include "EditModelPlayerController_CPP.h"
 #include "EditModelPlayerState_CPP.h"
+#include "Graph3DDelta.h"
 #include "ModumateGraph.h"
 #include "ModumateObjectStatics.h"
 
@@ -31,25 +32,15 @@ bool URoofPerimeterTool::Activate()
 	FGraph selectedGraph;
 	if (volumeGraph.Create2DGraph(vertexIDs, edgeIDs, faceIDs, selectedGraph, true, true))
 	{
-		const FGraphPolygon *perimeterPoly = nullptr;
-
-		auto &polygons = selectedGraph.GetPolygons();
-		for (auto &kvp : polygons)
+		const FGraphPolygon *perimeterPoly = selectedGraph.GetExteriorPolygon();
+		if (ensure(perimeterPoly))
 		{
-			auto &polygon = kvp.Value;
-			if (polygon.bClosed && !polygon.bInterior)
+			for (auto signedEdgeID : perimeterPoly->Edges)
 			{
-				perimeterPoly = &polygon;
-				break;
-			}
-		}
-
-		if (perimeterPoly)
-		{
-			for (auto edgeID : perimeterPoly->Edges)
-			{
-				FModumateObjectInstance *metaEdge = gameState->Document.GetObjectById(FMath::Abs(edgeID));
-				if (metaEdge && (metaEdge->GetObjectType() == EObjectType::OTMetaEdge))
+				int32 edgeID = FMath::Abs(signedEdgeID);
+				FModumateObjectInstance *metaEdge = gameState->Document.GetObjectById(edgeID);
+				const FGraph3DEdge *graphEdge = volumeGraph.FindEdge(edgeID);
+				if (metaEdge && graphEdge && (metaEdge->GetObjectType() == EObjectType::OTMetaEdge))
 				{
 					perimeterEdgeIDs.Add(edgeID);
 				}
@@ -65,17 +56,30 @@ bool URoofPerimeterTool::Activate()
 	// If we've found a perimeter from the 2D graph that has enough valid meta edges, then we can try to make the perimeter object
 	if (perimeterEdgeIDs.Num() >= 3)
 	{
-		FMOIStateData state;
+		int32 perimeterID = doc.GetNextAvailableID();
+		TArray<TSharedPtr<FDelta>> deltasToApply;
 
-		state.ControlPoints = { };
-		state.ControlIndices = perimeterEdgeIDs;
+		// Create the MOI delta for constructing the perimeter object
+		FMOIStateData state;
 		state.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
 		state.ObjectType = EObjectType::OTRoofPerimeter;
-		state.ObjectID = doc.GetNextAvailableID();
+		state.ObjectID = perimeterID;
 
-		FMOIDelta delta = FMOIDelta::MakeCreateObjectDelta(state);
+		TSharedPtr<FMOIDelta> perimeterCreationDelta = FMOIDelta::MakeCreateObjectDelta(state);
+		deltasToApply.Add(perimeterCreationDelta);
 
-		Controller->ModumateCommand(delta.AsCommand());
+		// Now create the graph delta to assign the perimeter object to the GroupIDs of its edges
+		TSharedPtr<FGraph3DDelta> graphDelta = MakeShareable(new FGraph3DDelta());
+		FGraph3DGroupIDsDelta groupIDsDelta(TSet<int32>({ perimeterID }), TSet<int32>());
+		for (int32 edgeID : perimeterEdgeIDs)
+		{
+			FTypedGraphObjID typedEdgeID(edgeID, EGraph3DObjectType::Edge);
+			graphDelta->GroupIDsUpdates.Add(typedEdgeID, groupIDsDelta);
+		}
+		deltasToApply.Add(graphDelta);
+
+		// Apply the deltas to create the perimeter and modify the associated graph objects
+		doc.ApplyDeltas(deltasToApply, GetWorld());
 	}
 
 	Deactivate();
