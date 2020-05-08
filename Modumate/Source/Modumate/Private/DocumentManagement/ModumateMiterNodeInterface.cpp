@@ -66,6 +66,10 @@ namespace Modumate
 		bPlaneNormalCW = ((WorldNormal ^ WorldMiterDir) | InMiterData->EdgeDir) > 0.0f;
 
 		LayerDims = MOI->GetLayeredInterface()->GetCachedLayerDims();
+		if (!ensure(LayerDims.NumLayers > 0))
+		{
+			return;
+		}
 
 		for (int32 layerGroupIdx = 0; layerGroupIdx < (int32)EMiterLayerGroup::Num; ++layerGroupIdx)
 		{
