@@ -76,6 +76,9 @@ public:
 	ECraftingResult GetPropertiesForPresetID(EToolMode ToolMode, FName PresetID, TMap<FString, FString> &OutPropertyMap);
 
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
+	ECraftingResult GetPropertyTipsForPresetByIconType(EConfiguratorNodeIconType IconType, const FName &PresetID, TArray<FString> &OutTips);
+
+	UFUNCTION(BlueprintCallable, Category = "Crafting")
 	ECraftingResult IsCraftingAssemblyValid(EToolMode ToolMode, bool& OutIsValid);
 
 	UFUNCTION(BlueprintCallable, Category = "Crafting")

@@ -2352,6 +2352,65 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetLayerIDFromNodeInstanceID
 	return rootNode != nullptr && childPinPosition != -1 ? ECraftingResult::Success : ECraftingResult::Error;
 }
 
+ECraftingResult UModumateCraftingNodeWidgetStatics::GetPropertyTipsByIconType(const Modumate::ModumateObjectDatabase &InDB, EConfiguratorNodeIconType IconType, const Modumate::BIM::FModumateAssemblyPropertySpec &PresetProperties, TArray<FString> &OutTips)
+{
+	if (IconType == EConfiguratorNodeIconType::Module || IconType == EConfiguratorNodeIconType::Gap2D)
+	{
+		BIM::EScope scope = IconType == EConfiguratorNodeIconType::Module ? BIM::EScope::Module : BIM::EScope::Gap;
+
+		FString xExtentName, yExtentName, zExtentName, dimension;
+		PresetProperties.RootProperties.TryGetProperty(scope, BIM::Parameters::XExtents, xExtentName);
+		PresetProperties.RootProperties.TryGetProperty(scope, BIM::Parameters::YExtents, yExtentName);
+		PresetProperties.RootProperties.TryGetProperty(scope, BIM::Parameters::ZExtents, zExtentName);
+		if (IconType == EConfiguratorNodeIconType::Module)
+		{
+			dimension = xExtentName + ", " + yExtentName + ", " + zExtentName;
+		}
+		else
+		{
+			dimension = xExtentName;
+		}
+
+		FString colorName, materialName, color, material;
+		PresetProperties.RootProperties.TryGetProperty(scope, BIM::Parameters::Color, colorName);
+		PresetProperties.RootProperties.TryGetProperty(scope, BIM::Parameters::MaterialKey, materialName);
+		const FCustomColor *customColor = InDB.GetCustomColorByKey(FName(*colorName));
+		if (ensureAlways(customColor != nullptr))
+		{
+			color = customColor->DisplayName.ToString();
+		}
+		const FArchitecturalMaterial *mat = InDB.GetArchitecturalMaterialByKey(FName(*materialName));
+		if (ensureAlways(mat != nullptr))
+		{
+			material = mat->DisplayName.ToString();
+		}
+		OutTips = TArray<FString> { dimension, material, color };
+		return ECraftingResult::Success;
+	}
+	if (IconType == EConfiguratorNodeIconType::Layer)
+	{
+		FString layerFunction, thickness, materialName, material;
+		for (auto &curLayerProperties : PresetProperties.LayerProperties)
+		{
+			curLayerProperties.TryGetProperty(BIM::EScope::Layer, BIM::Parameters::Function, layerFunction);
+			curLayerProperties.TryGetProperty(BIM::EScope::Layer, BIM::Parameters::Thickness, thickness);
+			curLayerProperties.TryGetProperty(BIM::EScope::Module, BIM::Parameters::MaterialKey, materialName);
+			if (materialName.IsEmpty())
+			{
+				curLayerProperties.TryGetProperty(BIM::EScope::Gap, BIM::Parameters::MaterialKey, materialName);
+			}
+			const FArchitecturalMaterial *mat = InDB.GetArchitecturalMaterialByKey(FName(*materialName));
+			if (ensureAlways(mat != nullptr))
+			{
+				material = mat->DisplayName.ToString();
+			}
+		}
+		OutTips = TArray<FString>{ layerFunction, thickness, material };
+		return ECraftingResult::Success;
+	}
+	return ECraftingResult::Error;
+}
+
 ECraftingResult UModumateCraftingNodeWidgetStatics::DragMovePinChild(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, int32 InstanceID, const FName &PinGroup, int32 From, int32 To)
 {
 	BIM::FCraftingTreeNodeInstanceSharedPtr node = NodeInstances.InstanceFromID(InstanceID);
