@@ -822,8 +822,7 @@ void ADynamicMeshActor::SetupPlaneGeometry(const TArray<FVector> &points, const 
 		// the order of vertices did not change as a result of re-triangulation
 		Mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, bCreateCollision);
 	}
-	CachedMIDs.SetNumZeroed(1);
-	UModumateFunctionLibrary::SetMeshMaterial(Mesh, material, 0, &CachedMIDs[0]);
+	Mesh->SetMaterial(0, material.EngineMaterial.Get());
 }
 
 void ADynamicMeshActor::SetupMetaPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, float alpha, bool bRecreateMesh, bool bCreateCollision)
@@ -864,21 +863,7 @@ void ADynamicMeshActor::SetupMetaPlaneGeometry(const TArray<FVector> &points, co
 		Mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, bCreateCollision);
 	}
 
-	UpdateMetaPlaneMaterial(FVector(pointsPlane), material, alpha);
-}
-
-void ADynamicMeshActor::UpdateMetaPlaneMaterial(const FVector &planeNormal, const FArchitecturalMaterial &material, float alpha)
-{
-	FArchitecturalMaterial modifiedMaterial = material;
-
-	AEditModelPlayerController_CPP *controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-	AEditModelPlayerState_CPP *playerState = controller->EMPlayerState;
-	modifiedMaterial.DefaultBaseColor.Color = playerState->GetMetaPlaneColor(planeNormal, true);
-	modifiedMaterial.DefaultBaseColor.Color.A = FMath::Clamp(alpha, 0.0f, 1.0f) * 0xFF;
-	modifiedMaterial.DefaultBaseColor.bValid = true;
-
-	CachedMIDs.SetNumZeroed(1);
-	UModumateFunctionLibrary::SetMeshMaterial(Mesh, modifiedMaterial, 0, &CachedMIDs[0]);
+	Mesh->SetMaterial(0, material.EngineMaterial.Get());
 }
 
 void ADynamicMeshActor::SetupRoomGeometry(const TArray<TArray<FVector>> &Polygons, const FArchitecturalMaterial &Material)

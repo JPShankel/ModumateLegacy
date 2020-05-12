@@ -92,6 +92,7 @@ namespace Modumate
 	{
 		World = world;
 		LineActor = world->SpawnActor<ALineActor>();
+		LineActor->SetIsHUD(false);
 		LineActor->UpdateMetaEdgeVisuals(false);
 		return LineActor.Get();
 	}

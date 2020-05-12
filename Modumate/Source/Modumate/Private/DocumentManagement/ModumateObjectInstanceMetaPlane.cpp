@@ -133,22 +133,9 @@ namespace Modumate
 
 		if (MOI && DynamicMeshActor.IsValid())
 		{
-			DynamicMeshActor->UpdateMetaPlaneMaterial(FVector(CachedPlane), MaterialData, GetAlpha());
-
 			UpdateConnectedVisuals();
 		}
 	}
-
-	void FMOIMetaPlaneImpl::OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bEnableHover)
-	{
-		FModumateObjectInstanceImplBase::OnCursorHoverActor(controller, bEnableHover);
-
-		if (MOI && DynamicMeshActor.IsValid())
-		{
-			DynamicMeshActor->UpdateMetaPlaneMaterial(CachedPlane, MaterialData, GetAlpha());
-		}
-	}
-
 
 	void FMOIMetaPlaneImpl::UpdateConnectedVisuals()
 	{
@@ -190,6 +177,6 @@ namespace Modumate
 
 	float FMOIMetaPlaneImpl::GetAlpha() const
 	{
-		return FMOIPlaneImplBase::GetAlpha() * ((MOI && MOI->IsSelected()) ? 0.8f : 0.4f);
+		return 1.0f;
 	}
 }

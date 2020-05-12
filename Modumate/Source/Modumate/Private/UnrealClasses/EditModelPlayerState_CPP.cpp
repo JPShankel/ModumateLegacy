@@ -31,9 +31,6 @@ AEditModelPlayerState_CPP::AEditModelPlayerState_CPP()
 	, HoveredObject(nullptr)
 	, DebugMouseHits(false)
 	, bShowSnappedCursor(true)
-	, MetaPlaneHorizontalColor(0x30, 0xD0, 0x30)
-	, MetaPlaneVerticalColor(0x30, 0x30, 0xD0)
-	, MetaPlaneAskewColor(0xD0, 0xD0, 0xD0)
 	, ShowHoverEffects(false)
 {
 	//DimensionString.Visible = false;
@@ -321,26 +318,6 @@ const FModumateObjectAssembly *AEditModelPlayerState_CPP::GetTemporaryAssembly(E
 void AEditModelPlayerState_CPP::DebugShowWallProfiles(const TArray<FModumateObjectInstance *> &walls)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::DebugShowWallProfiles"));
-}
-
-FColor AEditModelPlayerState_CPP::GetMetaPlaneColor(FVector Normal, bool bSwapVerticalHorizontal, bool bConnected)
-{
-	if (!bConnected)
-	{
-		return MetaPlaneDisconnectedColor;
-	}
-	else if (FMath::IsNearlyZero(Normal.Z, KINDA_SMALL_NUMBER))
-	{
-		return bSwapVerticalHorizontal ? MetaPlaneVerticalColor : MetaPlaneHorizontalColor;
-	}
-	else if (FMath::IsNearlyEqual(FMath::Abs(Normal.Z), 1.0f, KINDA_SMALL_NUMBER))
-	{
-		return bSwapVerticalHorizontal ? MetaPlaneHorizontalColor : MetaPlaneVerticalColor;
-	}
-	else
-	{
-		return MetaPlaneAskewColor;
-	}
 }
 
 bool AEditModelPlayerState_CPP::ValidateSelectionsAndView()

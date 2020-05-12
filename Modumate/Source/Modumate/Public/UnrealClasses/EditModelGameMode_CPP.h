@@ -71,6 +71,9 @@ public:
 	UMaterialInterface *ScopeBoxMaterial;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface *LineMaterial;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UStaticMesh *FlipHandleMesh;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")

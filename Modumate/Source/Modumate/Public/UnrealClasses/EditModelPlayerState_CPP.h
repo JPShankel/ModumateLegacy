@@ -171,21 +171,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UMaterialParameterCollection *MetaPlaneMatParamCollection;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FColor MetaPlaneHorizontalColor;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FColor MetaPlaneVerticalColor;
-
-	UPROPERTY(EditAnywhere, BluePrintReadWrite)
-	FColor MetaPlaneDisconnectedColor;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FColor MetaPlaneAskewColor;
-
-	UFUNCTION()
-	FColor GetMetaPlaneColor(FVector Normal, bool bSwapVerticalHorizontal = false, bool bConnected = true);
-
 	// The MOI of type Group that is the current selection view scope.
 	// Clicking outside of it or escaping will go to the next highest group in the hierarchy,
 	// so normally only its children can be selected directly with the tool.

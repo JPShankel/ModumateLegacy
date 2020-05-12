@@ -89,7 +89,6 @@ public:
 
 	void SetupPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, bool bRecreateMesh, bool bCreateCollision = true);
 	void SetupMetaPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, float alpha, bool bRecreateMesh, bool bCreateCollision = true);
-	void UpdateMetaPlaneMaterial(const FVector &planeNormal, const FArchitecturalMaterial &material, float alpha);
 
 	void SetupRoomGeometry(const TArray<TArray<FVector>> &Polygons, const FArchitecturalMaterial &Material);
 

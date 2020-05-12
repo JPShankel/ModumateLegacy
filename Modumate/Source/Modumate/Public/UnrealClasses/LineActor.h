@@ -29,9 +29,23 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	bool MakeGeometry();
+	bool UpdateGeometry();
+	bool CalculateVertices();
+
+	TArray<FVector> Vertices;
+	TArray<FVector> Normals;
+	TArray<FVector2D> ScreenVertices;
+	TArray<FVector2D> Uvs;
+	TArray<int32> Tris;
+	TArray<FProcMeshTangent> Tangents;
+	TArray<FLinearColor> Colors;
+
 	FString OldKey;
 	FVector OldPoint1;
 	FVector OldPoint2;
+
+	bool bCreate = false;
 
 public:
 	UPROPERTY()
@@ -55,6 +69,10 @@ public:
 	UPROPERTY()
 	TArray<UMaterialInstanceDynamic*> DynamicMaterials;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TArray<UMaterialInstanceDynamic*> CachedMIDs;
+
+	APlayerCameraManager* CameraManager;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -71,5 +89,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drawing")
 	float Thickness = 1.f;
 
+	bool bIsHUD = true;
+
+	void SetIsHUD(bool bRenderScreenSpace);
 	void UpdateMetaEdgeVisuals(bool bConnected, float ThicknessMultiplier = 1.0f);
 };
