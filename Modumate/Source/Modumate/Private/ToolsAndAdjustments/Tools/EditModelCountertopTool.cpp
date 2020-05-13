@@ -118,13 +118,13 @@ void UCountertopTool::HandleClick(const FVector &p)
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	Modumate::FModumateDocument &doc = gameState->Document;
 	FMOIStateData state;
-
+	state.StateType = EMOIDeltaType::Create;
 	state.ControlPoints = { PendingSegment->Point1, p };
 	state.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
 	state.ObjectType = EObjectType::OTLineSegment;
 	state.ObjectID = doc.GetNextAvailableID();
 
-	auto delta = FMOIDelta::MakeCreateObjectDelta(state);
+	TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ state }));
 	Controller->ModumateCommand(delta->AsCommand());
 
 	if (Controller->TryMakePrismFromSegments(EObjectType::OTCountertop, Assembly.Key, Inverted))

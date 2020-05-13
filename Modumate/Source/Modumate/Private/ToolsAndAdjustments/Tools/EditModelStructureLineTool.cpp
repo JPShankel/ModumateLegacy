@@ -427,12 +427,13 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 		if (parentEdgeObj && (parentEdgeObj->GetObjectType() == EObjectType::OTMetaEdge))
 		{
 			FMOIStateData stateData;
+			stateData.StateType = EMOIDeltaType::Create;
 			stateData.ObjectType = EObjectType::OTStructureLine;
 			stateData.ObjectAssemblyKey = Assembly.Key;
 			stateData.ParentID = targetEdgeID;
 			stateData.ObjectID = GameState->Document.GetNextAvailableID();
 
-			auto delta = FMOIDelta::MakeCreateObjectDelta(stateData);
+			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ stateData }));
 			auto commandResult = Controller->ModumateCommand(delta->AsCommand());
 
 			if (!commandResult.GetValue(Parameters::kSuccess).AsBool())

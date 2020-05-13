@@ -297,7 +297,7 @@ namespace Modumate
 		}
 
 		MOI->SetControlPointIndices(newControlIndices);
-		TSharedPtr<FMOIDelta> delta = FMOIDelta::MakeDeltaForObjects({MOI});
+		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({MOI}));
 
 		OnEndUse();
 

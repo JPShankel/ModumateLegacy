@@ -42,7 +42,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kMakeMetaVertex, "make_vertex");
 		MODUMATE_COMMAND(kMakeMetaEdge, "make_edge");
 		MODUMATE_COMMAND(kMakeMetaPlane, "make_plane");
-		MODUMATE_COMMAND(kMakeMetaPlaneHostedObj, "make_plane_hosted_obj");
 		MODUMATE_COMMAND(kMakeCutPlane, "make_cutplane");
 		MODUMATE_COMMAND(kMakeScopeBox, "make_scopebox");
 

@@ -172,10 +172,8 @@ namespace Modumate
 			MOI->SetControlPoints(newCPs);
 			MOI->SetControlPointIndices(newCIs);
 
-			TSharedPtr<FMOIDelta> delta = FMOIDelta::MakeDeltaForObjects({MOI});
-
+			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta(TArray<FModumateObjectInstance*>({ MOI })));
 			MOI->ShowAdjustmentHandles(Controller.Get(), true);
-
 			OnEndUse();
 
 			Controller->ModumateCommand(delta->AsCommand());

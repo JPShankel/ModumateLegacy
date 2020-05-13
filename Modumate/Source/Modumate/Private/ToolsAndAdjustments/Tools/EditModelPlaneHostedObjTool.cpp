@@ -189,17 +189,63 @@ bool UPlaneHostedObjTool::BeginUse()
 			return false;
 		}
 
-		FModumateFunctionParameterSet result = Controller->ModumateCommand(
-			FModumateCommand(Modumate::Commands::kMakeMetaPlaneHostedObj)
-			.Param(Parameters::kObjectType, EnumValueString(EObjectType, ObjectType))
-			.Param(Parameters::kParent, LastValidTargetID)
-			.Param(Parameters::kAssembly, Assembly.Key)
-			.Param(Parameters::kOffset, GetDefaultJustificationValue())
-			.Param(Parameters::kInverted, bInverted)
-		);
+		FModumateObjectInstance *parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
 
-		EndUse();
-		return result.GetValue(Parameters::kSuccess);
+		if (ensureAlways(parentMOI != nullptr))
+		{
+			TArray<FMOIStateData> deltaStates;
+			for (auto &childID : parentMOI->GetChildren())
+			{
+				FModumateObjectInstance *child = GameState->Document.GetObjectById(childID);
+				if (ensureAlways(child != nullptr))
+				{
+					if (child->GetObjectType() == ObjectType)
+					{
+						child->BeginPreviewOperation();
+						child->SetAssembly(ObjAssembly);
+
+						TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ child }));
+						child->EndPreviewOperation();
+
+						FModumateFunctionParameterSet result = Controller->ModumateCommand(delta->AsCommand());
+
+						EndUse();
+						return result.GetValue(Parameters::kSuccess);
+					}
+					else if (child->GetLayeredInterface() != nullptr)
+					{
+						FMOIStateData &newMOIData = deltaStates.AddDefaulted_GetRef();
+						newMOIData.StateType = EMOIDeltaType::Destroy;
+						newMOIData.ObjectType = ObjectType;
+						newMOIData.ParentID = LastValidTargetID;
+						newMOIData.ObjectAssemblyKey = Assembly.Key;
+						newMOIData.ObjectInverted = bInverted;
+						newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
+						newMOIData.ObjectID = child->ID;
+					}
+				}
+			}
+
+			FMOIStateData &newMOIData = deltaStates.AddDefaulted_GetRef();
+			newMOIData.StateType = EMOIDeltaType::Create;
+			newMOIData.ObjectType = ObjectType;
+			newMOIData.ParentID = LastValidTargetID;
+			newMOIData.ObjectAssemblyKey = Assembly.Key;
+			newMOIData.ObjectInverted = bInverted;
+			newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
+			newMOIData.ObjectID = GameState->Document.GetNextAvailableID();
+
+			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta(deltaStates));
+			FModumateFunctionParameterSet result = Controller->ModumateCommand(delta->AsCommand());
+
+			EndUse();
+			return result.GetValue(Parameters::kSuccess);
+		}
+		else
+		{
+			EndUse();
+			return false;
+		}
 	}
 	else if (!bRequireHoverMetaPlane)
 	{
@@ -284,15 +330,20 @@ bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &new
 
 		if (newPlaneObj && (newPlaneObj->GetObjectType() == EObjectType::OTMetaPlane))
 		{
-			newObjID = Controller->ModumateCommand(
-				FModumateCommand(Modumate::Commands::kMakeMetaPlaneHostedObj)
-				.Param(Parameters::kObjectType, EnumValueString(EObjectType, ObjectType))
-				.Param(Parameters::kParent, newPlaneID)
-				.Param(Parameters::kAssembly, Assembly.Key)
-				.Param(Parameters::kOffset, GetDefaultJustificationValue())
-				.Param(Parameters::kInverted, bInverted)
-			).GetValue(Parameters::kObjectID);
+			newObjID = GameState->Document.GetNextAvailableID();
 
+			FMOIStateData newMOIData;
+			newMOIData.StateType = EMOIDeltaType::Create;
+			newMOIData.ObjectType = ObjectType;
+			newMOIData.ParentID = newPlaneID;
+			newMOIData.ObjectAssemblyKey = Assembly.Key;
+			newMOIData.ObjectInverted = bInverted; 
+			newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
+			newMOIData.ObjectID = newObjID;
+			
+			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ newMOIData }));
+			Controller->ModumateCommand(delta->AsCommand());
+		
 			newObjIDs.Add(newObjID);
 		}
 	}

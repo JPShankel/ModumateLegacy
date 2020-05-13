@@ -352,50 +352,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return bSuccess;
 	});
 
-	RegisterCommand(kMakeMetaPlaneHostedObj, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		FModumateDocument *doc = GetDocument();
-		if ((gameState == nullptr) || (doc == nullptr))
-		{
-			return false;
-		}
-
-		FString objectTypeStr = params.GetValue(kObjectType);
-		EObjectType objectType = EnumValueByString(EObjectType, objectTypeStr);
-		EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(objectType);
-
-		int32 parentID = params.GetValue(kParent);
-		if (parentID == MOD_ID_NONE)
-		{
-			return false;
-		}
-
-		FName assemblyKey = params.GetValue(kAssembly);
-		const FModumateObjectAssembly *assemblyPtr = gameState->GetAssemblyByKey_DEPRECATED(toolMode, assemblyKey);
-
-		// TODO: once staircases can actually have valid crafted assemblies, always return false if the assembly is missing.
-		FModumateObjectAssembly assemblyValue;
-		if (assemblyPtr)
-		{
-			assemblyValue = *assemblyPtr;
-		}
-		else if (objectType == EObjectType::OTStaircase)
-		{
-			assemblyValue.ObjectType = EObjectType::OTStaircase;
-		}
-		else
-		{
-			return false;
-		}
-
-		float planeOffsetPCT = params.GetValue(kOffset);
-		bool bInverted = params.GetValue(kInverted);
-
-		int32 newObjectID = GetDocument()->MakeMetaPlaneHostedObject(GetWorld(), parentID, objectType, assemblyValue, planeOffsetPCT, bInverted);
-		output.SetValue(kObjectID, newObjectID);
-		return (newObjectID != MOD_ID_NONE);
-	});
-
 	RegisterCommand(kMakeCutPlane, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		FModumateDocument *doc = GetDocument();
 		if (doc == nullptr)

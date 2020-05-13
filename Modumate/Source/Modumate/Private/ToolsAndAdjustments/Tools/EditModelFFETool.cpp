@@ -127,6 +127,7 @@ bool UPlaceObjectTool::BeginUse()
 
 	FMOIStateData state;
 
+	state.StateType = EMOIDeltaType::Create;
 	state.ControlIndices = { parentFaceIdx };
 	state.Location = hitLoc;
 	state.Orientation = CursorCompoundMesh->GetActorRotation().Quaternion();
@@ -135,7 +136,7 @@ bool UPlaceObjectTool::BeginUse()
 	state.ObjectType = EObjectType::OTFurniture;
 	state.ObjectID = doc->GetNextAvailableID();
 
-	auto delta = FMOIDelta::MakeCreateObjectDelta(state);
+	TSharedPtr <FMOIDelta> delta = MakeShareable(new FMOIDelta({ state }));
 	Controller->ModumateCommand(delta->AsCommand());
 
 	return true;

@@ -56,16 +56,20 @@ bool URoofPerimeterTool::Activate()
 	// If we've found a perimeter from the 2D graph that has enough valid meta edges, then we can try to make the perimeter object
 	if (perimeterEdgeIDs.Num() >= 3)
 	{
-		int32 perimeterID = doc.GetNextAvailableID();
-		TArray<TSharedPtr<FDelta>> deltasToApply;
-
 		// Create the MOI delta for constructing the perimeter object
 		FMOIStateData state;
+		state.StateType = EMOIDeltaType::Create;
+		state.ControlPoints = { };
+		state.ControlIndices = perimeterEdgeIDs;
+
+		int32 perimeterID = doc.GetNextAvailableID();
 		state.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
 		state.ObjectType = EObjectType::OTRoofPerimeter;
 		state.ObjectID = perimeterID;
 
-		TSharedPtr<FMOIDelta> perimeterCreationDelta = FMOIDelta::MakeCreateObjectDelta(state);
+		TSharedPtr<FMOIDelta> perimeterCreationDelta = MakeShareable(new FMOIDelta({ state }));
+
+		TArray<TSharedPtr<FDelta>> deltasToApply;
 		deltasToApply.Add(perimeterCreationDelta);
 
 		// Now create the graph delta to assign the perimeter object to the GroupIDs of its edges

@@ -272,6 +272,7 @@ bool UCabinetTool::EnterNextStage()
 		float h = TopSegs[0]->Point1.Z - BaseSegs[0]->Point1.Z;
 
 		FMOIStateData stateData;
+		stateData.StateType = EMOIDeltaType::Create;
 		stateData.ObjectType = EObjectType::OTCabinet;
 		stateData.ObjectAssemblyKey = Assembly.Key;
 		stateData.ControlPoints = points;
@@ -279,7 +280,7 @@ bool UCabinetTool::EnterNextStage()
 		stateData.ObjectID = doc.GetNextAvailableID();
 		stateData.Extents = FVector(0, h, 0);
 
-		auto delta = FMOIDelta::MakeCreateObjectDelta(stateData);
+		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ stateData }));
 		Controller->ModumateCommand(delta->AsCommand());
 		
 		return false;
@@ -339,12 +340,12 @@ void UCabinetTool::DoMakeLineSegmentCommand(const FVector &P1, const FVector &P2
 	FModumateDocument &doc = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 
 	FMOIStateData state;
-
+	state.StateType = EMOIDeltaType::Create;
 	state.ControlPoints = { P1, P2 };
 	state.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
 	state.ObjectType = EObjectType::OTLineSegment;
 	state.ObjectID = doc.GetNextAvailableID();
 
-	auto delta = FMOIDelta::MakeCreateObjectDelta(state);
+	TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ state }));
 	Controller->ModumateCommand(delta->AsCommand());
 }

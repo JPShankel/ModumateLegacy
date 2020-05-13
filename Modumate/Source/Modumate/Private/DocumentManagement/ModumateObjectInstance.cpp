@@ -70,6 +70,10 @@ namespace Modumate
 		FQuat rot = FQuat::Identity;
 		FVector loc(ForceInitToZero);
 
+		PreviewState.ObjectID = CurrentState.ObjectID = ID;
+		PreviewState.ObjectAssemblyKey = CurrentState.ObjectAssemblyKey = ObjectAssembly.UniqueKey();
+		PreviewState.ObjectType = CurrentState.ObjectType = obAsm.ObjectType;
+
 		MakeImplementation();
 		MakeActor(loc, rot);
 	}
@@ -90,11 +94,14 @@ namespace Modumate
 
 		ID = obRec.ID;
 
+		PreviewState.ObjectID = CurrentState.ObjectID = ID;
+
+		// TODO: refactor assembly keys to use FName
 		if (obRec.AssemblyKey.Len() > 0 && obRec.AssemblyKey != TEXT("None"))
 		{
+			const FModumateObjectAssembly *obAsm;
 			if (UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(obRec.ObjectType))
 			{
-				const FModumateObjectAssembly *obAsm;
 				if (ensureAlways(doc->PresetManager.TryGetProjectAssemblyForPreset(obRec.ObjectType, *obRec.AssemblyKey, obAsm)))
 				{
 					ObjectAssembly = *obAsm;
@@ -102,11 +109,11 @@ namespace Modumate
 			}
 			else
 			{
-				const FModumateObjectAssembly *pObAsm = doc->PresetManager.GetAssemblyByKey(UModumateTypeStatics::ToolModeFromObjectType(obRec.ObjectType), FName(*obRec.AssemblyKey));
-				ensureAlways(pObAsm != nullptr);
-				if (pObAsm != nullptr)
+				obAsm = doc->PresetManager.GetAssemblyByKey(UModumateTypeStatics::ToolModeFromObjectType(obRec.ObjectType), FName(*obRec.AssemblyKey));
+				ensureAlways(obAsm != nullptr);
+				if (obAsm != nullptr)
 				{
-					ObjectAssembly = *pObAsm;
+					ObjectAssembly = *obAsm;
 				}
 			}
 		}
@@ -115,6 +122,9 @@ namespace Modumate
 			// Some MOI types don't have an assembly, so just set their object type directly
 			ObjectAssembly.ObjectType = obRec.ObjectType;
 		}
+
+		PreviewState.ObjectAssemblyKey = CurrentState.ObjectAssemblyKey = ObjectAssembly.UniqueKey();
+		PreviewState.ObjectType = CurrentState.ObjectType = ObjectAssembly.ObjectType;
 
 		//Update inversion/transversion state after implementation is in place
 		CurrentState.ObjectInverted = false; 
@@ -660,28 +670,30 @@ namespace Modumate
 		return bSuccess;
 	}
 
+	FMOIDelta::FMOIDelta(const TArray<FMOIStateData> &States)
+	{
+		AddCreateDestroyStates(States);
+	}
+
+	FMOIDelta::FMOIDelta(const TArray<FModumateObjectInstance*> &Objects)
+	{
+		AddMutationStates(Objects);
+	}
+
 	bool FMOIDelta::ApplyTo(FModumateDocument *doc, UWorld *world) const
 	{
 		return doc->ApplyMOIDelta(*this, world);
 	}
 
-	TSharedPtr<FMOIDelta> FMOIDelta::MakeDeltaForObjects(const TArray<FModumateObjectInstance*> &Objects)
-	{
-		ensureAlways(Objects.Num() > 0);
-		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta());
-		for (auto &ob : Objects)
-		{
-			delta->BaseStateMap.Add(ob->ID, ob->CurrentState);
-			delta->TargetStateMap.Add(ob->ID, ob->PreviewState);
-		}
-		return delta;
-	}
-
 	TSharedPtr<FDelta> FMOIDelta::MakeInverse() const
 	{
 		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta());
-		delta->BaseStateMap = TargetStateMap;
-		delta->TargetStateMap = BaseStateMap;
+
+		for (auto &sp : StatePairs)
+		{
+			delta->StatePairs.Add(FStatePair(sp.Value, sp.Key));
+		}
+
 		return delta;
 	}
 
@@ -696,17 +708,30 @@ namespace Modumate
 		return command;
 	}
 
-	TSharedPtr<FMOIDelta> FMOIDelta::MakeCreateObjectDelta(const FMOIStateData &StateData)
+	void FMOIDelta::AddCreateDestroyStates(const TArray<FMOIStateData> &States)
 	{
-		TSharedPtr<FMOIDelta> createObjectDelta = MakeShareable(new FMOIDelta());
+		for (auto &state : States)
+		{
+			if (ensureAlways(state.StateType == EMOIDeltaType::Create || state.StateType == EMOIDeltaType::Destroy))
+			{
+				FMOIStateData baseState = state;
+				FMOIStateData targetState = state;
+				baseState.StateType = targetState.StateType == EMOIDeltaType::Create ? EMOIDeltaType::Destroy : EMOIDeltaType::Create;
+				StatePairs.Add(FStatePair(baseState, targetState));
+			}
+		}
+	}
 
-		FMOIStateData &createState = createObjectDelta->TargetStateMap.Add(StateData.ObjectID, StateData);
-		createState.StateType = EMOIDeltaType::Create;
-
-		FMOIStateData &destroyState = createObjectDelta->BaseStateMap.Add(StateData.ObjectID, StateData);
-		destroyState.StateType = EMOIDeltaType::Destroy;
-
-		return createObjectDelta;
+	void FMOIDelta::AddMutationStates(const TArray<FModumateObjectInstance*> &Objects)
+	{
+		for (auto &ob : Objects)
+		{
+			FMOIStateData baseState = ob->CurrentState;
+			FMOIStateData targetState = ob->PreviewState;
+			baseState.StateType = EMOIDeltaType::Mutate;
+			targetState.StateType = EMOIDeltaType::Mutate;
+			StatePairs.Add(FStatePair(baseState, targetState));
+		}
 	}
 
 	bool FMOIStateData::ToParameterSet(const FString &Prefix, FModumateFunctionParameterSet &OutParameterSet) const
@@ -785,26 +810,14 @@ namespace Modumate
 	bool FMOIDelta::ToParameterSet(FModumateFunctionParameterSet &OutParameterSet) const
 	{
 		TArray<int32> keys;
-		BaseStateMap.GenerateKeyArray(keys);
-
-		if (!ensureAlwaysMsgf(keys.Num() == TargetStateMap.Num(), TEXT("Inconsistent maps in MOI delta")))
-		{
-			return false;
-		}
+		Algo::Transform(StatePairs, keys, [](const FStatePair &Pair) {return Pair.Key.ObjectID; });
 
 		OutParameterSet.SetValue(Modumate::Parameters::kObjectIDs, keys);		
-		for (auto &key : keys)
+		for (auto &statePair : StatePairs)
 		{
-			const FMOIStateData *baseState = BaseStateMap.Find(key);
-			const FMOIStateData *targetState = TargetStateMap.Find(key);
-
-			if (!ensureAlwaysMsgf(targetState!=nullptr && baseState!=nullptr,TEXT("Inconsistent maps in MOI delta")))
-			{
-				return false;
-			}
-
-			baseState->ToParameterSet(MakeInstancePrefix(BaseStatePrefix,key), OutParameterSet);
-			targetState->ToParameterSet(MakeInstancePrefix(TargetStatePrefix,key), OutParameterSet);
+			int32 key = statePair.Key.ObjectID;
+			statePair.Key.ToParameterSet(MakeInstancePrefix(BaseStatePrefix,key), OutParameterSet);
+			statePair.Value.ToParameterSet(MakeInstancePrefix(TargetStatePrefix,key), OutParameterSet);
 		}
 
 		return true;
@@ -818,16 +831,13 @@ namespace Modumate
 			return false;
 		}
 
-		BaseStateMap.Empty();
-		TargetStateMap.Empty();
+		StatePairs.Empty();
 
 		for (auto obID : objectIDs)
 		{
-			FMOIStateData &baseState = BaseStateMap.Add(obID, FMOIStateData());
-			baseState.FromParameterSet(MakeInstancePrefix(BaseStatePrefix, obID), ParameterSet);
-
-			FMOIStateData &targetState = TargetStateMap.Add(obID, FMOIStateData());
-			targetState.FromParameterSet(MakeInstancePrefix(TargetStatePrefix,obID), ParameterSet);
+			FStatePair &statePair = StatePairs.AddDefaulted_GetRef();
+			statePair.Key.FromParameterSet(MakeInstancePrefix(BaseStatePrefix, obID), ParameterSet);
+			statePair.Value.FromParameterSet(MakeInstancePrefix(TargetStatePrefix,obID), ParameterSet);
 		}
 
 		return true;
@@ -921,6 +931,7 @@ namespace Modumate
 
 	void FModumateObjectInstance::SetAssembly(const FModumateObjectAssembly &NewAssembly)
 	{
+		GetDataState().ObjectAssemblyKey = NewAssembly.UniqueKey();
 		ObjectAssembly = NewAssembly;
 	}
 

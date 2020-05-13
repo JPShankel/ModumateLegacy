@@ -219,7 +219,7 @@ namespace Modumate
 
 	struct MODUMATE_API FMOIStateData
 	{
-		EMOIDeltaType StateType = EMOIDeltaType::Mutate;
+		EMOIDeltaType StateType = EMOIDeltaType::None;
 		int32 ObjectID = -1;
 
 		// TODO: use this for instance-level overrides
@@ -253,19 +253,24 @@ namespace Modumate
 	{
 	public:
 
-		static TSharedPtr<FMOIDelta> MakeCreateObjectDelta(const FMOIStateData &StateData);
+		FMOIDelta() {}
+		FMOIDelta(const TArray<FMOIStateData> &States);
+		FMOIDelta(const TArray<FModumateObjectInstance*> &Objects);
+
+		void AddCreateDestroyStates(const TArray<FMOIStateData> &States);
+		void AddMutationStates(const TArray<FModumateObjectInstance*> &Objects);
 
 		virtual bool ApplyTo(FModumateDocument *doc, UWorld *world) const override;
 		virtual TSharedPtr<FDelta> MakeInverse() const override;
 
-		TMap<int32,FMOIStateData> BaseStateMap, TargetStateMap;
+		typedef TPair<FMOIStateData, FMOIStateData> FStatePair;
+		TArray<FStatePair> StatePairs;
 
 		// TODO: to be deprecated when Commands 2.0 is developed, meantime...
 		bool ToParameterSet(FModumateFunctionParameterSet &OutParameterSet) const;
 		bool FromParameterSet(const FModumateFunctionParameterSet &ParameterSet);
 
 		FModumateCommand AsCommand(const FString &CommandID = Modumate::Commands::kApplyObjectDelta) const;
-		static TSharedPtr<FMOIDelta> MakeDeltaForObjects(const TArray<FModumateObjectInstance*> &Objects);
 	};
 
 	class MODUMATE_API FModumateObjectInstance

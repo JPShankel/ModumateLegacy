@@ -1290,13 +1290,11 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
 
 bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 {
-	if (!ensureAlwaysMsgf(Delta.BaseStateMap.Num() == Delta.TargetStateMap.Num(),TEXT("Invalid MOI Delta")))
+	for (auto &kvp : Delta.StatePairs)
 	{
-		return false;
-	}
+		const FMOIStateData &baseState = kvp.Key;
+		const FMOIStateData &targetState = kvp.Value;
 
-	for (auto &kvp : Delta.TargetStateMap)
-	{
 		switch (kvp.Value.StateType)
 		{
 			case EMOIDeltaType::Create:
@@ -1304,16 +1302,16 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 				/*
 				TODO: consolidate all object creation code here
 				*/
-				EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(kvp.Value.ObjectType);
+				EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(targetState.ObjectType);
 
 				// No tool mode implies a line segment (used by multiple tools with no assembly)
 				// TODO: generalize assemblyless/tool modeless non-graph MOIs
-				const FModumateObjectAssembly *assembly = toolMode != EToolMode::VE_NONE ? PresetManager.GetAssemblyByKey(toolMode, kvp.Value.ObjectAssemblyKey) : nullptr;
+				const FModumateObjectAssembly *assembly = toolMode != EToolMode::VE_NONE ? PresetManager.GetAssemblyByKey(toolMode, targetState.ObjectAssemblyKey) : nullptr;
 
 				// If we got an assembly, build the object with it, otherwise by type
 				FModumateObjectInstance *newInstance = (assembly != nullptr) ?
-					CreateOrRestoreObjFromAssembly(World, *assembly, kvp.Value.ObjectID, kvp.Value.ParentID, kvp.Value.Extents, &kvp.Value.ControlPoints, &kvp.Value.ControlIndices) :
-					CreateOrRestoreObjFromObjectType(World, kvp.Value.ObjectType, kvp.Value.ObjectID, kvp.Value.ParentID, FVector::ZeroVector, &kvp.Value.ControlPoints, &kvp.Value.ControlIndices);
+					CreateOrRestoreObjFromAssembly(World, *assembly, targetState.ObjectID, targetState.ParentID, targetState.Extents, &targetState.ControlPoints, &targetState.ControlIndices) :
+					CreateOrRestoreObjFromObjectType(World, targetState.ObjectType, targetState.ObjectID, targetState.ParentID, FVector::ZeroVector, &targetState.ControlPoints, &targetState.ControlIndices);
 
 				if (newInstance != nullptr)
 				{
@@ -1321,15 +1319,15 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 					{
 						NextID = newInstance->ID + 1;
 					}
-					newInstance->SetObjectLocation(kvp.Value.Location);
-					newInstance->SetObjectRotation(kvp.Value.Orientation);
+					newInstance->SetObjectLocation(targetState.Location);
+					newInstance->SetObjectRotation(targetState.Orientation);
 				}
 			}
 			break;
 
 			case EMOIDeltaType::Destroy:
 			{
-				FModumateObjectInstance *obj = GetObjectById(kvp.Value.ObjectID);
+				FModumateObjectInstance *obj = GetObjectById(targetState.ObjectID);
 				if (ensureAlways(obj != nullptr))
 				{
 					DeleteObjectImpl(obj);
@@ -1339,7 +1337,7 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 
 			case EMOIDeltaType::Mutate:
 			{
-				FModumateObjectInstance *MOI = GetObjectById(kvp.Key);
+				FModumateObjectInstance *MOI = GetObjectById(targetState.ObjectID);
 
 				if (!ensureAlways(MOI != nullptr))
 				{
@@ -1353,20 +1351,27 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 					return false;
 				};
 
-				const FMOIStateData *baseState = Delta.BaseStateMap.Find(kvp.Key);
-				if (!ensureAlwaysMsgf(baseState != nullptr, TEXT("Iconsistent MOI delta sent to ApplyMOIDelta")))
-				{
-					return false;
-				}
-
 				// TODO: refactor for delta-based Undo/Redo
 				// This function affects the undo/redo buffer so it can't be called from ApplyDeltas Redo()
-				if (kvp.Value.ObjectInverted != baseState->ObjectInverted)
+				if (targetState.ObjectInverted != baseState.ObjectInverted)
 				{
 					MOI->InvertObject();
 				}
 
-				MOI->SetDataState(kvp.Value);
+				EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(targetState.ObjectType);
+				if (toolMode != EToolMode::VE_NONE)
+				{
+					FName assemblyKey = MOI->GetAssembly().DatabaseKey;
+					if (targetState.ObjectAssemblyKey != assemblyKey)
+					{
+						const FModumateObjectAssembly *obAsm = PresetManager.GetAssemblyByKey(toolMode, targetState.ObjectAssemblyKey);
+						if (ensureAlwaysMsgf(obAsm != nullptr, TEXT("Could not find assembly by key %s"), *targetState.ObjectAssemblyKey.ToString()))
+						{
+							MOI->SetAssembly(*obAsm);
+						}
+					}
+				}
+				MOI->SetDataState(targetState);
 			}
 			break;
 
@@ -2734,107 +2739,6 @@ bool FModumateDocument::MakeScopeBoxObject(UWorld *world, const TArray<FVector> 
 	OutObjIDs.Add(id);
 
 	return true;
-}
-
-int32 FModumateDocument::MakeMetaPlaneHostedObject(UWorld *World, int32 MetaPlaneID, EObjectType ObjectType, const FModumateObjectAssembly &Assembly, float PlaneOffsetPCT, bool bInverted)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeMetaPlaneHostedObject"));
-
-	// TODO: update room analysis based on the creation of any navigable plane-hosted object; are non-floor objects allowed?
-	bool bDoRoomAnalysis = (ObjectType == EObjectType::OTFloorSegment);
-
-	// Surround room-modifying creation operations with a macro, since it will do multiple undo-redo actions
-	if (bDoRoomAnalysis)
-	{
-		BeginUndoRedoMacro();
-	}
-
-	// Step 1 - apply the deltas themselves
-
-	UndoRedo *ur = new UndoRedo();
-	ClearRedoBuffer();
-	int32 id = NextID++;
-
-	ur->Redo = [this, ur, id, World, MetaPlaneID, ObjectType, Assembly, PlaneOffsetPCT, bInverted]()
-	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeMetaPlaneHostedObject::Redo"));
-
-		FModumateObjectInstance *planeObj = GetObjectById(MetaPlaneID);
-		if (!ensureAlways(planeObj != nullptr))
-		{
-			return;
-		}
-
-		if (!ensureAlways(planeObj->GetChildren().Num() <= 1))
-		{
-			return;
-		}
-
-		// it is unclear if the reparenting is necessary - it can allow the hosted object to be replaced
-		// with an object of a different type, but it may be easier to only switch the assemblies
-		FModumateObjectInstance *previousObj = nullptr;
-		if (planeObj->GetChildren().Num() == 1)
-		{
-			previousObj = GetObjectById(planeObj->GetChildren()[0]);
-			if (!ensureAlways(previousObj != nullptr))
-			{
-				return;
-			}
-		}
-
-		FVector extents(PlaneOffsetPCT, 0.0f, 0.0f);
-		FModumateObjectInstance *hostedObj = CreateOrRestoreObjFromAssembly(World, Assembly, id, MetaPlaneID, extents);
-		if (hostedObj->GetObjectInverted() != bInverted)
-		{
-			hostedObj->InvertObject();
-		}
-
-		if (previousObj)
-		{
-			// TODO: move this to a function ReparentAllChildren
-			TArray<int32> prevChildIDs = previousObj->GetChildren();
-			for (int32 prevChildID : prevChildIDs)
-			{
-				hostedObj->AddChild(GetObjectById(prevChildID));
-			}
-
-			DeleteObjectImpl(previousObj);
-		}
-
-		UpdateMitering(World, { MetaPlaneID });
-
-		ur->Undo = [this, World, MetaPlaneID, hostedObj, previousObj]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeMetaPlaneHostedObject::Undo"));
-
-			if (previousObj)
-			{
-				RestoreObjectImpl(previousObj);
-
-				TArray<int32> hostChildIDs = hostedObj->GetChildren();
-				for (int32 hostChildID : hostChildIDs)
-				{
-					previousObj->AddChild(GetObjectById(hostChildID));
-				}
-			}
-
-			DeleteObjectImpl(hostedObj);
-
-			UpdateMitering(World, { MetaPlaneID });
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
-
-	// Step 2 - update room analysis, which can potentially create, update, and/or delete room objects
-	if (bDoRoomAnalysis)
-	{
-		UpdateRoomAnalysis(World);
-		EndUndoRedoMacro();
-	}
-
-	return id;
 }
 
 bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &Delta)

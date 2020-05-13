@@ -308,7 +308,8 @@ bool USelectTool::HandleSpacebar()
 	}
 
 	// Capture inversion as a MOI delta
-	Controller->ModumateCommand(FMOIDelta::MakeDeltaForObjects(Controller->EMPlayerState->SelectedObjects)->AsCommand());
+	TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta(Controller->EMPlayerState->SelectedObjects));
+	Controller->ModumateCommand(delta->AsCommand());
 
 	return true;
 }

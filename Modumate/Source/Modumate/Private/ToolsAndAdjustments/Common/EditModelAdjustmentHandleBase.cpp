@@ -77,7 +77,7 @@ namespace Modumate
 			}
 			else
 			{
-				TSharedPtr<FMOIDelta> delta = FMOIDelta::MakeDeltaForObjects({ MOI });
+				TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta(TArray<FModumateObjectInstance*>({ MOI })));
 				bCommandSuccess = Controller->ModumateCommand(delta->AsCommand()).GetValue(Parameters::kSuccess);
 			}
 

@@ -546,14 +546,20 @@ bool UStairTool::MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID)
 
 		if (parentPlaneObj && (parentPlaneObj->GetObjectType() == EObjectType::OTMetaPlane))
 		{
-			OutStairsID = Controller->ModumateCommand(
-				FModumateCommand(Modumate::Commands::kMakeMetaPlaneHostedObj)
-				.Param(Parameters::kObjectType, EnumValueString(EObjectType, EObjectType::OTStaircase))
-				.Param(Parameters::kParent, RefParentPlaneID)
-				.Param(Parameters::kAssembly, Assembly.Key)
-				.Param(Parameters::kOffset, 0.5f)
-				.Param(Parameters::kInverted, false)
-			).GetValue(Parameters::kObjectID);
+			OutStairsID = GameState->Document.GetNextAvailableID();
+
+			FMOIStateData newMOIData;
+			newMOIData.StateType = EMOIDeltaType::Create;
+			newMOIData.ObjectType = EObjectType::OTStaircase;
+			newMOIData.ParentID = RefParentPlaneID;
+			newMOIData.ObjectAssemblyKey = Assembly.Key;
+			newMOIData.ObjectInverted = false;
+			newMOIData.Extents = FVector(0.5f, 0, 0);
+			newMOIData.ObjectID = OutStairsID;
+
+			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ newMOIData }));
+
+			Controller->ModumateCommand(delta->AsCommand());
 		}
 	}
 

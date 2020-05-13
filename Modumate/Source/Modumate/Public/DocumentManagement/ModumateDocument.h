@@ -137,7 +137,6 @@ namespace Modumate
 			EObjectType objectType, bool inverted, const FModumateObjectAssembly &assembly, int32 parentID, bool bUpdateSiblingGeometry = false);
 
 		bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, const TArray<int32> &IDs, EObjectType objectType, int32 parentID, TArray<int32> &OutObjIDs);
-		int32 MakeMetaPlaneHostedObject(UWorld *World, int32 MetaPlaneID, EObjectType ObjectType, const FModumateObjectAssembly &Assembly, float PlaneOffsetPCT, bool bInverted);
 
 		bool MakeCutPlaneObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs);
 		bool MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height);
