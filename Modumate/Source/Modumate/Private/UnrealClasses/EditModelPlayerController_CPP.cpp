@@ -1927,7 +1927,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 		baseHit = UpdateHandleHit(mouseLoc, mouseDir);
 		if (baseHit.Valid)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("HANDLE HIT: %s"), *baseHit.Actor->GetName());
+			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("HANDLE HIT: %s"), *baseHit.Actor->GetName()));
 		}
 		else
 		{

@@ -1245,29 +1245,19 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const Modumate::FModumateObj
 	}
 }
 
-void UModumateObjectStatics::GetGraphIDsFromMOIs(const TArray<Modumate::FModumateObjectInstance *> &MOIs, TSet<int32> &OutVertexIDs, TSet<int32> &OutEdgeIDs, TSet<int32> &OutFaceIDs)
+void UModumateObjectStatics::GetGraphIDsFromMOIs(const TArray<Modumate::FModumateObjectInstance *> &MOIs, TSet<FTypedGraphObjID> &OutGraphObjIDs)
 {
-	OutVertexIDs.Reset();
-	OutEdgeIDs.Reset();
-	OutFaceIDs.Reset();
+	OutGraphObjIDs.Reset();
 
 	for (FModumateObjectInstance *obj : MOIs)
 	{
 		EObjectType objectType = obj ? obj->GetObjectType() : EObjectType::OTNone;
+		EGraph3DObjectType graphObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
 		int32 objectID = obj ? obj->ID : MOD_ID_NONE;
-		switch (objectType)
+
+		if (graphObjType != EGraph3DObjectType::None)
 		{
-		case EObjectType::OTMetaVertex:
-			OutVertexIDs.Add(objectID);
-			break;
-		case EObjectType::OTMetaEdge:
-			OutEdgeIDs.Add(objectID);
-			break;
-		case EObjectType::OTMetaPlane:
-			OutFaceIDs.Add(objectID);
-			break;
-		default:
-			break;
+			OutGraphObjIDs.Add(FTypedGraphObjID(objectID, graphObjType));
 		}
 	}
 }

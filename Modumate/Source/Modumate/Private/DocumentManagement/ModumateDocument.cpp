@@ -4315,8 +4315,9 @@ void FModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 		FVector vertexDrawPos = graphVertex.Position;
 
 		world->LineBatcher->DrawPoint(vertexDrawPos, FLinearColor::Red, pointThickness, 0);
-		FString vertexString = FString::Printf(TEXT("Vertex #%d: [%s]"), graphVertex.ID,
-			*FString::JoinBy(graphVertex.ConnectedEdgeIDs, TEXT(", "), [](const FSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); })
+		FString vertexString = FString::Printf(TEXT("Vertex #%d: [%s]%s"), graphVertex.ID,
+			*FString::JoinBy(graphVertex.ConnectedEdgeIDs, TEXT(", "), [](const FSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }),
+			(graphVertex.GroupIDs.Num() == 0) ? TEXT("") : *FString::Printf(TEXT(" {%s}"), *FString::JoinBy(graphVertex.GroupIDs, TEXT(", "), [](const int32 &GroupID) { return FString::Printf(TEXT("%d"), GroupID); }))
 		);
 
 		DrawDebugString(world, vertexDrawPos + textOffset, vertexString, nullptr, FColor::White, 0.0f, true);
@@ -4333,7 +4334,8 @@ void FModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 			FVector endDrawPos = endGraphVertex->Position;
 
 			DrawDebugDirectionalArrow(world, startDrawPos, endDrawPos, arrowSize, FColor::Blue, false, -1.f, 0xFF, lineThickness);
-			FString edgeString = FString::Printf(TEXT("Edge #%d: [%d, %d]"), graphEdge.ID, graphEdge.StartVertexID, graphEdge.EndVertexID);
+			FString edgeString = FString::Printf(TEXT("Edge #%d: [%d, %d]%s"), graphEdge.ID, graphEdge.StartVertexID, graphEdge.EndVertexID,
+				(graphEdge.GroupIDs.Num() == 0) ? TEXT("") : *FString::Printf(TEXT(" {%s}"), *FString::JoinBy(graphEdge.GroupIDs, TEXT(", "), [](const int32 &GroupID) { return FString::Printf(TEXT("%d"), GroupID); })));
 			DrawDebugString(world, 0.5f * (startDrawPos + endDrawPos) + textOffset, edgeString, nullptr, FColor::White, 0.0f, true);
 		}
 	}
@@ -4367,8 +4369,9 @@ void FModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 			DrawDebugDirectionalArrow(world, edgeNStartPos, edgeNEndPos, arrowSize, FColor::Blue, false, -1.f, 0, lineThickness);
 		}
 
-		FString faceString = FString::Printf(TEXT("Face #%d: [%s]"), face.ID,
-			*FString::JoinBy(face.EdgeIDs, TEXT(", "), [](const FSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); })
+		FString faceString = FString::Printf(TEXT("Face #%d: [%s]%s"), face.ID,
+			*FString::JoinBy(face.EdgeIDs, TEXT(", "), [](const FSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }),
+			(face.GroupIDs.Num() == 0) ? TEXT("") : *FString::Printf(TEXT(" {%s}"), *FString::JoinBy(face.GroupIDs, TEXT(", "), [](const int32 &GroupID) { return FString::Printf(TEXT("%d"), GroupID); }))
 		);
 		DrawDebugString(world, face.CachedCenter, faceString, nullptr, FColor::White, 0.0f, true);
 

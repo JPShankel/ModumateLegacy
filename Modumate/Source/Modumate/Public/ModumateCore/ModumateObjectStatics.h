@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "ModumateGraph3DTypes.h"
 #include "ModumateTypes.h"
 #include "ModumateSnappedCursor.h"
 #include "Object.h"
@@ -108,7 +109,7 @@ public:
 	static void ShouldMetaObjBeEnabled(const Modumate::FModumateObjectInstance *MetaMOI,
 		bool &bOutShouldBeVisible, bool &bOutShouldCollisionBeEnabled, bool &bOutIsConnected);
 
-	static void GetGraphIDsFromMOIs(const TArray<Modumate::FModumateObjectInstance *> &MOIs, TSet<int32> &OutVertexIDs, TSet<int32> &OutEdgeIDs, TSet<int32> &OutFaceIDs);
+	static void GetGraphIDsFromMOIs(const TArray<Modumate::FModumateObjectInstance *> &MOIs, TSet<Modumate::FTypedGraphObjID> &OutGraphObjIDs);
 
 	// Given a plane hosted object, find some basic values:
 	// the thickness of the assembly,

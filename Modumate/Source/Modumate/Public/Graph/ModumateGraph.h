@@ -70,7 +70,7 @@ namespace Modumate
 		TArray<FEdgeID> Edges;					// The list of edges that make up this polygon
 
 		// Cached derived data
-		bool bClosed = false;					// Whether this is a closed polygon (its final edge connects to its first edge)
+		bool bHasDuplicateEdge = false;			// Whether this polygon has any edges that double back on themselves
 		bool bInterior = false;					// Whether this is an interior (simple, solid) polygon; otherwise it is a perimeter
 		FBox2D AABB = FBox2D(ForceInitToZero);	// The axis-aligned bounding box for the polygon
 		TArray<FVector2D> Points;				// The list of vertex positions in this polygon
@@ -98,6 +98,7 @@ namespace Modumate
 
 		FGraphVertex* FindVertex(const FVector2D &Position);
 
+		bool ContainsObject(const FTypedGraphObjID &GraphObjID) const;
 		bool ContainsObject(int32 ID, EGraphObjectType GraphObjectType) const;
 		bool GetEdgeAngle(FEdgeID EdgeID, float &outEdgeAngle);
 

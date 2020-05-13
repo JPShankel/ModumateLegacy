@@ -9,15 +9,28 @@ namespace Modumate
 	}
 
 
-	FGraph3DObjDelta::FGraph3DObjDelta(FVertexPair vertexPair)
+	FGraph3DObjDelta::FGraph3DObjDelta(const TArray<int32> &InVertices)
+		: Vertices(InVertices)
 	{
-		Vertices = { vertexPair.Key, vertexPair.Value };
 	}
 
-	FGraph3DObjDelta::FGraph3DObjDelta(FVertexPair vertexPair, TArray<int32> parents)
+	FGraph3DObjDelta::FGraph3DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents, const TSet<int32> &InGroupIDs)
+		: Vertices(InVertices)
+		, ParentObjIDs(InParents)
+		, GroupIDs(InGroupIDs)
 	{
-		Vertices = { vertexPair.Key, vertexPair.Value };
-		ParentObjIDs = parents;
+	}
+
+	FGraph3DObjDelta::FGraph3DObjDelta(const FVertexPair &VertexPair)
+		: Vertices({ VertexPair.Key, VertexPair.Value })
+	{
+	}
+
+	FGraph3DObjDelta::FGraph3DObjDelta(const FVertexPair &VertexPair, const TArray<int32> &InParents, const TSet<int32> &InGroupIDs)
+		: Vertices({ VertexPair.Key, VertexPair.Value })
+		, ParentObjIDs(InParents)
+		, GroupIDs(InGroupIDs)
+	{
 	}
 
 	void FGraph3DDelta::Reset()

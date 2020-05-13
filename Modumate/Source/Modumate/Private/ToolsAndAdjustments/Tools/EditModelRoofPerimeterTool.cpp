@@ -24,16 +24,20 @@ bool URoofPerimeterTool::Activate()
 	FModumateDocument &doc = gameState->Document;
 	const FGraph3D &volumeGraph = doc.GetVolumeGraph();
 
-	TSet<int32> vertexIDs, edgeIDs, faceIDs;
-	UModumateObjectStatics::GetGraphIDsFromMOIs(Controller->EMPlayerState->SelectedObjects, vertexIDs, edgeIDs, faceIDs);
+	TSet<FTypedGraphObjID> graphObjIDs, connectedGraphIDs;
+	UModumateObjectStatics::GetGraphIDsFromMOIs(Controller->EMPlayerState->SelectedObjects, graphObjIDs);
 
 	// Try to make a 2D graph from the selected objects, in order to find a perimeter
 	TArray<int32> perimeterEdgeIDs;
 	FGraph selectedGraph;
-	if (volumeGraph.Create2DGraph(vertexIDs, edgeIDs, faceIDs, selectedGraph, true, true))
+	FPlane perimeterPlane;
+	if (volumeGraph.Create2DGraph(graphObjIDs, connectedGraphIDs, selectedGraph, perimeterPlane, true, true))
 	{
+		// Consider polygons with duplicate edges as invalid loops.
+		// TODO: this liberally invalidates polygons that have area, but also extra "peninsula" edges that double back on themselves;
+		// we could remove those duplicate edges from the loop and use the rest of the edges as a perimeter in the future.
 		const FGraphPolygon *perimeterPoly = selectedGraph.GetExteriorPolygon();
-		if (ensure(perimeterPoly))
+		if (ensure(perimeterPoly) && !perimeterPoly->bHasDuplicateEdge)
 		{
 			for (auto signedEdgeID : perimeterPoly->Edges)
 			{

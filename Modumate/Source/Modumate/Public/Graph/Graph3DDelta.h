@@ -16,11 +16,11 @@ namespace Modumate
 		TArray<int32> ParentObjIDs; // objects that were deleted to make this object
 		TSet<int32> GroupIDs;		// group objects that this object is related to
 
-		FGraph3DObjDelta(TArray<int32> vertices) : Vertices(vertices) {}
-		FGraph3DObjDelta(TArray<int32> vertices, TArray<int32> parents) : Vertices(vertices), ParentObjIDs(parents) {}
+		FGraph3DObjDelta(const TArray<int32> &InVertices);
+		FGraph3DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents, const TSet<int32> &InGroupIDs = TSet<int32>());
 
-		FGraph3DObjDelta(FVertexPair vertexPair);
-		FGraph3DObjDelta(FVertexPair vertexPair, TArray<int32> parents);
+		FGraph3DObjDelta(const FVertexPair &VertexPair);
+		FGraph3DObjDelta(const FVertexPair &VertexPair, const TArray<int32> &InParents, const TSet<int32> &InGroupIDs = TSet<int32>());
 	};
 
 	struct FGraph3DHostedObjectDelta

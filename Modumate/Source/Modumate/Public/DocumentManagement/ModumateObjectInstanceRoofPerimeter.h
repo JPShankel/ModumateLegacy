@@ -1,9 +1,12 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "CoreMinimal.h"
+#include "EditModelAdjustmentHandleBase.h"
 #include "ModumateObjectInstance.h"
+#include "ModumateGraph.h"
+#include "ModumateGraph3DTypes.h"
 
+class AAdjustmentHandleActor_CPP;
 class ALineActor;
 
 namespace Modumate
@@ -18,7 +21,10 @@ namespace Modumate
 		virtual FQuat GetRotation() const override { return FQuat::Identity; }
 		virtual FVector GetCorner(int32 index) const override;
 		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
-		virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover) override;
+		void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller);
+		virtual void ClearAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override;
+		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) override;
+		virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
 		virtual void OnSelected(bool bNewSelected) override;
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 		virtual AActor *RestoreActor() override;
@@ -26,15 +32,27 @@ namespace Modumate
 		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag) override;
 		virtual bool ShowStructureOnSelection() const override { return false; }
 		virtual bool UseStructureDataForCollision() const override { return true; }
-	
+
 	protected:
 		TWeakObjectPtr<UWorld> World;
-		TWeakObjectPtr<AActor> PerimeterActor;
-		TMap<FSignedID, TWeakObjectPtr<ALineActor>> LineActors;
+		bool bValidPerimeterLoop;
 		TArray<FSignedID> CachedEdgeIDs;
-		TSet<FSignedID> TempEdgeIDsToAdd, TempEdgeIDsToRemove;
+		TArray<FVector> CachedPerimeterPoints;
+		FVector CachedPerimeterCenter;
+		FGraph CachedPerimeterGraph;
+		FPlane CachedPlane;
+
+		TSet<FTypedGraphObjID> TempGroupMembers, TempConnectedGraphIDs;
+		TArray<FVector2D> TempPerimeterPoints2D;
+
+		TWeakObjectPtr<AActor> PerimeterActor;
+		TMap<int32, TWeakObjectPtr<ALineActor>> LineActors;
+		TSet<int32> TempEdgeIDsToAdd, TempEdgeIDsToRemove;
+
+		TWeakObjectPtr<AAdjustmentHandleActor_CPP> CreateFacesHandleActor;
 
 		bool UpdatePerimeterIDs();
+		void UpdatePerimeterGeometry();
 		void UpdateLineActors();
 	};
 }

@@ -88,12 +88,12 @@ namespace Modumate
 		// Create 2D graph representing the connecting set of vertices and edges that are part of the given selection of 3D graph object IDs, and allows some requirements:
 		// bRequireConnected - that the graph is fully connected (only one exterior polygonal perimeter)
 		// bRequireComplete - there are no extra 3D graph objects supplied that don't correspond to a 2D graph object
-		bool Create2DGraph(TSet<int32> &VertexIDs, TSet<int32> &EdgeIDs, TSet<int32> &FaceIDs,
-			FGraph &OutGraph, bool bRequireConnected, bool bRequireComplete) const;
+		bool Create2DGraph(const TSet<FTypedGraphObjID> &InitialGraphObjIDs, TSet<FTypedGraphObjID> &OutContainedGraphObjIDs,
+			FGraph &OutGraph, FPlane &OutPlane, bool bRequireConnected, bool bRequireComplete) const;
 
 		// Create 2D graph representing the connecting set of vertices and edges that are on the cut plane and contain the starting vertex,
 		// optionally only traversing the whitelisted IDs, if a set is provided, and optionally creating a mapping from 3D Face IDs to 2D Poly IDs
-		bool Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph &OutGraph, const TSet<int32> *WhitelistIDs = nullptr, TMap<int32, int32> *OutFace3DToPoly2D = nullptr) const;
+		bool Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph &OutGraph, const TSet<FTypedGraphObjID> *WhitelistIDs = nullptr, TMap<int32, int32> *OutFace3DToPoly2D = nullptr) const;
 
 		// Create 2D graph representing faces, edges, and vertices that are sliced by the cut plane
 		bool Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, FGraph &OutGraph, TMap<int32, int32> &OutGraphIDToObjID) const;
@@ -136,7 +136,7 @@ namespace Modumate
 
 		// direct addition functions
 		static bool GetDeltaForVertexAddition(FGraph3D *Graph, const FVector &VertexPos, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID);
-		static bool GetDeltaForEdgeAddition(FGraph3D *Graph, const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> ParentIDs = TArray<int32>());
+		static bool GetDeltaForEdgeAddition(FGraph3D *Graph, const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> &ParentIDs = TArray<int32>());
 		static bool GetDeltaForFaceAddition(FGraph3D *Graph, const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID);
 
 		// Propagates deletion to connected objects
@@ -144,12 +144,12 @@ namespace Modumate
 		// Deletes only the provided objects, used as in intermediate stage in other delta functions
 		static bool GetDeltaForDeletions(FGraph3D *Graph, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs, const TArray<int32> &FaceIDs, FGraph3DDelta &OutDelta);
 		// Creates Delta based on pending deleted objects
-		static bool GetDeltaForDeleteObjects(const TSet<const FGraph3DVertex *> VerticesToDelete, const TSet<const FGraph3DEdge *> EdgesToDelete, const TSet<const FGraph3DFace *> FacesToDelete, FGraph3DDelta &OutDelta);
+		static bool GetDeltaForDeleteObjects(const TSet<const FGraph3DVertex *> &VerticesToDelete, const TSet<const FGraph3DEdge *> &EdgesToDelete, const TSet<const FGraph3DFace *> &FacesToDelete, FGraph3DDelta &OutDelta);
 
 		static bool GetDeltaForVertexMovements(FGraph3D *OldGraph, FGraph3D *Graph, const TArray<int32> &VertexIDs, const TArray<FVector> &NewVertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID);
 
 		// calculates splits, etc. then will call the direct versions of the function
-		static bool GetDeltaForMultipleEdgeAdditions(FGraph3D *Graph, const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> ParentIDs = TArray<int32>());
+		static bool GetDeltaForMultipleEdgeAdditions(FGraph3D *Graph, const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> &ParentIDs = TArray<int32>());
 		static bool GetDeltaForEdgeAdditionWithSplit(FGraph3D *OldGraph, FGraph3D *Graph, const FVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs);
 		static bool GetDeltaForEdgeAdditionWithSplit(FGraph3D *OldGraph, FGraph3D *Graph, const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs, bool bCheckFaces = false);
 		static bool GetDeltaForFaceAddition(FGraph3D *OldGraph, FGraph3D *Graph, const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID);

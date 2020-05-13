@@ -21,11 +21,12 @@ bool UGraph2DTool::Activate()
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	const FGraph3D &volumeGraph = gameState->Document.GetVolumeGraph();
 
-	TSet<int32> vertexIDs, edgeIDs, faceIDs;
-	UModumateObjectStatics::GetGraphIDsFromMOIs(Controller->EMPlayerState->SelectedObjects, vertexIDs, edgeIDs, faceIDs);
+	TSet<FTypedGraphObjID> graphObjIDs, connectedGraphIDs;
+	UModumateObjectStatics::GetGraphIDsFromMOIs(Controller->EMPlayerState->SelectedObjects, graphObjIDs);
 
 	FGraph selectedGraph;
-	if (volumeGraph.Create2DGraph(vertexIDs, edgeIDs, faceIDs, selectedGraph, true, true))
+	FPlane graphPlane;
+	if (volumeGraph.Create2DGraph(graphObjIDs, connectedGraphIDs, selectedGraph, graphPlane, true, true))
 	{
 		FGraph2DRecord graphRecord;
 		FName graphKey;

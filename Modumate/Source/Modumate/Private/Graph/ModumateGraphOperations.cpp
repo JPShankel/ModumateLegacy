@@ -168,7 +168,7 @@ namespace Modumate
 		return bJoined || (OutDelta.VertexMovements.Num() > 0);
 	}
 
-	bool FGraph3D::GetDeltaForEdgeAddition(FGraph3D *Graph, const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> ParentIDs)
+	bool FGraph3D::GetDeltaForEdgeAddition(FGraph3D *Graph, const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> &ParentIDs)
 	{
 		bool bExistingEdgeForward = true;
 		const FGraph3DEdge *existingEdge = Graph->FindEdgeByVertices(VertexPair.Key, VertexPair.Value, bExistingEdgeForward);
@@ -200,7 +200,7 @@ namespace Modumate
 
 	// Checks against the current graph and makes edges to connect the provided vertices.  OutVertexIDs is a list of vertices
 	// along the edges that connect the two vertices in VertexPair
-	bool FGraph3D::GetDeltaForMultipleEdgeAdditions(FGraph3D *Graph, const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, TArray<int32> ParentIDs)
+	bool FGraph3D::GetDeltaForMultipleEdgeAdditions(FGraph3D *Graph, const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> &ParentIDs)
 	{
 		bool bAddedEdge = false;
 
@@ -1238,25 +1238,30 @@ namespace Modumate
 		// create deltas from adding the new face, deleting the old faces, 
 		// and deleting the vertices and edges contained in the shared seam
 		//int32 ExistingID, addedID;
-		TSet<int32> whiteListEdges;
+		TSet<FTypedGraphObjID> whitelistIDs, connectedGraphIDs;
 		for (int32 edgeID : face->EdgeIDs)
 		{
-			whiteListEdges.Add(FMath::Abs(edgeID));
+			whitelistIDs.Add(FTypedGraphObjID(FMath::Abs(edgeID), EGraph3DObjectType::Edge));
 		}
 		for (int32 edgeID : otherFace->EdgeIDs)
 		{
-			whiteListEdges.Add(FMath::Abs(edgeID));
+			whitelistIDs.Add(FTypedGraphObjID(FMath::Abs(edgeID), EGraph3DObjectType::Edge));
 		}
 		for (int32 edgeID : sharedEdgeIDs)
 		{
-			whiteListEdges.Remove(FMath::Abs(edgeID));
+			whitelistIDs.Remove(FTypedGraphObjID(FMath::Abs(edgeID), EGraph3DObjectType::Edge));
 		}
-		if (!ensureAlways(whiteListEdges.Num() >= 3))
+		if (!ensureAlways(whitelistIDs.Num() >= 3))
 		{
 			return false;
 		}
 
-		int32 seedEdgeID = whiteListEdges.Array()[0];
+		int32 seedEdgeID = MOD_ID_NONE;
+		for (auto whitelistID : whitelistIDs)
+		{
+			seedEdgeID = whitelistID.Key;
+			break;
+		}
 
 		FGraph3DDelta deleteDelta;
 		TArray<int32> parentFaceIDs = { face->ID, otherFace->ID };
@@ -1267,25 +1272,22 @@ namespace Modumate
 		// TODO: this kind of code may be useful somewhere else, and could be generalized to be 
 		// similar in use to GetDeltaForUpdateFaces
 		// only edges need to actually be calculated to use Create2DGraph
-		TSet<int32> whiteListVertices, whiteListFaces;
 		FGraph joinGraph;
+		FPlane graphPlane;
 		TArray<int32> newFaceVertexIDs;
-		Graph->Create2DGraph(whiteListVertices, whiteListEdges, whiteListFaces, joinGraph, true, true);
+		Graph->Create2DGraph(whitelistIDs, connectedGraphIDs, joinGraph, graphPlane, true, true);
 		for (auto &kvp : joinGraph.GetPolygons())
 		{
 			const FGraphPolygon &polygon = kvp.Value;
-			if (polygon.bClosed)
+			if (!polygon.bInterior)
 			{
-				if (!polygon.bInterior)
+				for (int32 edgeID : polygon.Edges)
 				{
-					for (int32 edgeID : polygon.Edges)
-					{
-						auto edge = joinGraph.FindEdge(edgeID);
-						int32 vertexID = edgeID < 0 ? edge->EndVertexID : edge->StartVertexID;
-						newFaceVertexIDs.Add(vertexID);
-					}
-					break;
+					auto edge = joinGraph.FindEdge(edgeID);
+					int32 vertexID = edgeID < 0 ? edge->EndVertexID : edge->StartVertexID;
+					newFaceVertexIDs.Add(vertexID);
 				}
+				break;
 			}
 		}
 
@@ -1589,12 +1591,15 @@ namespace Modumate
 		return GetDeltaForDeleteObjects(allVerticesToDelete, allEdgesToDelete, allFacesToDelete, OutDelta);
 	}
 
-	bool FGraph3D::GetDeltaForDeleteObjects(const TSet<const FGraph3DVertex *> VerticesToDelete, const TSet<const FGraph3DEdge *> EdgesToDelete, const TSet<const FGraph3DFace *> FacesToDelete, FGraph3DDelta &OutDelta)
+	bool FGraph3D::GetDeltaForDeleteObjects(const TSet<const FGraph3DVertex *> &VerticesToDelete, const TSet<const FGraph3DEdge *> &EdgesToDelete, const TSet<const FGraph3DFace *> &FacesToDelete, FGraph3DDelta &OutDelta)
 	{
 		for (const FGraph3DVertex *vertex : VerticesToDelete)
 		{
 			if (OutDelta.VertexAdditions.Remove(vertex->ID) == 0)
 			{
+				// TODO: keep track of GroupIDs in vertex deletions/additions, if they can ever support it.
+				// For now, it's easier to leave it as-is and only keep an FVector in the delta.
+				ensure(vertex->GroupIDs.Num() == 0);
 				OutDelta.VertexDeletions.Add(vertex->ID, vertex->Position);
 			}
 		}
@@ -1603,7 +1608,7 @@ namespace Modumate
 		{
 			if (OutDelta.EdgeAdditions.Remove(edge->ID) == 0)
 			{
-				OutDelta.EdgeDeletions.Add(edge->ID, FVertexPair(edge->StartVertexID, edge->EndVertexID));
+				OutDelta.EdgeDeletions.Add(edge->ID, FGraph3DObjDelta(FVertexPair(edge->StartVertexID, edge->EndVertexID), {}, edge->GroupIDs));
 			}
 		}
 
@@ -1611,7 +1616,7 @@ namespace Modumate
 		{
 			if (OutDelta.FaceAdditions.Remove(face->ID) == 0)
 			{
-				OutDelta.FaceDeletions.Add(face->ID, FGraph3DObjDelta(face->VertexIDs));
+				OutDelta.FaceDeletions.Add(face->ID, FGraph3DObjDelta(face->VertexIDs, {}, face->GroupIDs));
 			}
 		}
 		return true;

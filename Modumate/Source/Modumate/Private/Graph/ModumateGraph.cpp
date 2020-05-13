@@ -485,6 +485,7 @@ namespace Modumate
 		for (FEdgeID curEdgeID : DirtyEdges)
 		{
 			float curPolyTotalAngle = 0.0f;
+			bool bPolyHasDuplicateEdge = false;
 			FBox2D polyAABB(ForceInitToZero);
 			curPolyEdges.Reset();
 			curPolyPoints.Reset();
@@ -511,6 +512,11 @@ namespace Modumate
 
 				if (ensureAlways(nextVertex) && nextVertex->GetNextEdge(curEdgeID, nextEdgeID, angleDelta))
 				{
+					if (curEdgeID == -nextEdgeID)
+					{
+						bPolyHasDuplicateEdge = true;
+					}
+
 					curPolyTotalAngle += angleDelta;
 					curEdgeID = nextEdgeID;
 					curEdge = FindEdge(nextEdgeID);
@@ -522,7 +528,7 @@ namespace Modumate
 			{
 				bool bPolyClosed = (curPolyEdges[0] == curEdgeID);
 				if (ensureAlways(bPolyClosed))
-				{ 
+				{
 					float expectedInteriorAngle = 180.0f * (numPolyEdges - 2);
 					const static float polyAngleEpsilon = 0.1f;
 					bool bPolyInterior = FMath::IsNearlyEqual(expectedInteriorAngle, curPolyTotalAngle, polyAngleEpsilon);
@@ -530,7 +536,7 @@ namespace Modumate
 					int32 newID = NextPolyID++;
 					FGraphPolygon newPolygon(newID, this);
 					newPolygon.Edges = curPolyEdges;
-					newPolygon.bClosed = bPolyClosed;
+					newPolygon.bHasDuplicateEdge = bPolyHasDuplicateEdge;
 					newPolygon.bInterior = bPolyInterior;
 					newPolygon.AABB = FBox2D(curPolyPoints);
 					newPolygon.Points = curPolyPoints;
@@ -591,7 +597,7 @@ namespace Modumate
 		for (auto &kvp : Polygons)
 		{
 			auto &polygon = kvp.Value;
-			if (polygon.bClosed && !polygon.bInterior)
+			if (!polygon.bInterior)
 			{
 				if (resultID == MOD_ID_NONE)
 				{
@@ -643,7 +649,7 @@ namespace Modumate
 		{
 			const FGraphPolygon &poly = kvp.Value;
 
-			if ((!poly.bClosed && !bSaveOpenPolygons) || (!poly.bInterior && !bSaveExteriorPolygons))
+			if (!poly.bInterior && !bSaveExteriorPolygons)
 			{
 				continue;
 			}
@@ -696,8 +702,6 @@ namespace Modumate
 
 			// TODO: use the polygon calculation to compute this data, and verify the integrity of the input.
 			// For now, we have to assume it was input correctly.
-			
-			poly.bClosed = true;
 			poly.bInterior = true;
 
 			// At least make sure all of the referenced edges and vertices are correct, also to update the AABB and cached points.

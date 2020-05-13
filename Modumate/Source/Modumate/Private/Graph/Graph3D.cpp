@@ -1259,88 +1259,98 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::Create2DGraph(TSet<int32> &VertexIDs, TSet<int32> &EdgeIDs, TSet<int32> &FaceIDs,
-		FGraph &OutGraph, bool bRequireConnected, bool bRequireComplete) const
+	bool FGraph3D::Create2DGraph(const TSet<FTypedGraphObjID> &InitialGraphObjIDs, TSet<FTypedGraphObjID> &OutContainedGraphObjIDs,
+		FGraph &OutGraph, FPlane &OutPlane, bool bRequireConnected, bool bRequireComplete) const
 	{
-		FPlane sharedPlane(ForceInitToZero);
+		OutPlane = FPlane(ForceInitToZero);
+
+		OutContainedGraphObjIDs = InitialGraphObjIDs;
 
 		// First, try to get the shared plane by finding the common plane for the given faces, if they are given.
 		// Additionally, expand the sets of vertices and edges to include those that are part of the provided faces.
-		for (int32 faceID : FaceIDs)
+		for (const FTypedGraphObjID &graphObjID : InitialGraphObjIDs)
 		{
-			const FGraph3DFace *face = FindFace(faceID);
-			if (!ensure(face))
+			switch (graphObjID.Value)
 			{
-				return false;
-			}
-
-			if (sharedPlane.IsZero())
+			case EGraph3DObjectType::Face:
 			{
-				sharedPlane = face->CachedPlane;
+				const FGraph3DFace *face = FindFace(graphObjID.Key);
+				if (!ensure(face))
+				{
+					return false;
+				}
+
+				if (OutPlane.IsZero())
+				{
+					OutPlane = face->CachedPlane;
+				}
+				else if (!face->CachedPlane.Equals(OutPlane, PLANAR_DOT_EPSILON) &&
+					!face->CachedPlane.Equals(OutPlane.Flip(), PLANAR_DOT_EPSILON))
+				{
+					return false;
+				}
+
+				Algo::Transform(face->VertexIDs, OutContainedGraphObjIDs, [](const int32 &VertexID) { return FTypedGraphObjID(VertexID, EGraph3DObjectType::Vertex); });
+				Algo::Transform(face->EdgeIDs, OutContainedGraphObjIDs, [](const FSignedID &EdgeID) { return FTypedGraphObjID(FMath::Abs(EdgeID), EGraph3DObjectType::Edge); });
+				break;
 			}
-			else if (!face->CachedPlane.Equals(sharedPlane, PLANAR_DOT_EPSILON) &&
-				!face->CachedPlane.Equals(sharedPlane.Flip(), PLANAR_DOT_EPSILON))
+			// Expand the sets of vertices to include those that are part of the provided edges.
+			case EGraph3DObjectType::Edge:
 			{
-				return false;
+				const FGraph3DEdge *edge = FindEdge(graphObjID.Key);
+				if (!ensure(edge))
+				{
+					return false;
+				}
+
+				OutContainedGraphObjIDs.Add(FTypedGraphObjID(edge->StartVertexID, EGraph3DObjectType::Vertex));
+				OutContainedGraphObjIDs.Add(FTypedGraphObjID(edge->EndVertexID, EGraph3DObjectType::Vertex));
+				break;
 			}
-
-			VertexIDs.Append(face->VertexIDs);
-			Algo::Transform(face->EdgeIDs, EdgeIDs, [](const FSignedID &edgeID) { return FMath::Abs(edgeID); });
-		}
-
-		// Expand the sets of vertices to include those that are part of the provided edges.
-		for (int32 edgeID : EdgeIDs)
-		{
-			const FGraph3DEdge *edge = FindEdge(edgeID);
-			if (!ensure(edge))
-			{
-				return false;
+			default:
+				break;
 			}
-
-			VertexIDs.Add(edge->StartVertexID);
-			VertexIDs.Add(edge->EndVertexID);
 		}
 
 		// Find an initial vertex to use as a starting point for traversing a new Graph2D.
 		// Also, we may need to derive the shared plane from the provided vertex positions.
 		int32 initialVertexID = MOD_ID_NONE;
 		TArray<FVector> vertexPositions;
-		for (int32 vertexID : VertexIDs)
+		for (const FTypedGraphObjID &graphObjID : OutContainedGraphObjIDs)
 		{
-			const FGraph3DVertex *vertex = FindVertex(vertexID);
-			if (!ensure(vertex))
+			if (graphObjID.Value == EGraph3DObjectType::Vertex)
 			{
-				return false;
-			}
+				int32 vertexID = graphObjID.Key;
+				const FGraph3DVertex *vertex = FindVertex(vertexID);
+				if (!ensure(vertex))
+				{
+					return false;
+				}
 
-			if (initialVertexID == MOD_ID_NONE)
-			{
-				initialVertexID = vertexID;
-			}
+				if (initialVertexID == MOD_ID_NONE)
+				{
+					initialVertexID = vertexID;
+				}
 
-			vertexPositions.Add(vertex->Position);
+				vertexPositions.Add(vertex->Position);
+			}
 		}
 
 		// If we still haven't found a plane, then use the provided vertices to find one. Otherwise, we have no other means of finding a shared plane.
-		if (sharedPlane.IsZero())
+		if (OutPlane.IsZero())
 		{
-			bool bFoundPlane = UModumateGeometryStatics::GetPlaneFromPoints(vertexPositions, sharedPlane);
+			bool bFoundPlane = UModumateGeometryStatics::GetPlaneFromPoints(vertexPositions, OutPlane);
 			if (!bFoundPlane)
 			{
 				return false;
 			}
 		}
 
-		TSet<int32> whitelistIDs;
-		whitelistIDs.Append(VertexIDs);
-		whitelistIDs.Append(EdgeIDs);
-		whitelistIDs.Append(FaceIDs);
-
 		// Now that we've found a shared plane and have collected all of the graph objects that are part of the initially provided selection,
 		// go ahead and create a graph using these objects as a whitelist.
 		// Only populate the 3D Face -> 2D Poly mapping if completeness was required.
 		TMap<int32, int32> face3DToPoly2D;
-		bool bCreatedGraph = Create2DGraph(initialVertexID, sharedPlane, OutGraph, &whitelistIDs,
+		bool bCreatedGraph = Create2DGraph(initialVertexID, OutPlane, OutGraph, &OutContainedGraphObjIDs,
 			bRequireComplete ? &face3DToPoly2D : nullptr);
 
 		if (!bCreatedGraph)
@@ -1361,30 +1371,39 @@ namespace Modumate
 		// Check the completeness requirement, which fails if there were any input 3D graph objects that didn't make it into the output 2D graph
 		if (bRequireComplete)
 		{
-			for (int32 faceID : FaceIDs)
+			for (const FTypedGraphObjID &graphObjID : OutContainedGraphObjIDs)
 			{
-				if (!face3DToPoly2D.Contains(faceID))
+				switch (graphObjID.Value)
 				{
-					UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Face #%d was missing!"), faceID);
-					return false;
+				case EGraph3DObjectType::Vertex:
+				{
+					if (!OutGraph.ContainsObject(graphObjID.Key, EGraphObjectType::Vertex))
+					{
+						UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Vertex #%d was missing!"), graphObjID.Key);
+						return false;
+					}
+					break;
 				}
-			}
-
-			for (int32 edgeID : EdgeIDs)
-			{
-				if (OutGraph.FindEdge(edgeID) == nullptr)
+				case EGraph3DObjectType::Edge:
 				{
-					UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Edge #%d was missing!"), edgeID);
-					return false;
+					if (!OutGraph.ContainsObject(graphObjID.Key, EGraphObjectType::Edge))
+					{
+						UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Edge #%d was missing!"), graphObjID.Key);
+						return false;
+					}
+					break;
 				}
-			}
-
-			for (int32 vertexID : VertexIDs)
-			{
-				if (OutGraph.FindVertex(vertexID) == nullptr)
+				case EGraph3DObjectType::Face:
 				{
-					UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Vertex #%d was missing!"), vertexID);
-					return false;
+					if (!face3DToPoly2D.Contains(graphObjID.Key))
+					{
+						UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Face #%d was missing!"), graphObjID.Key);
+						return false;
+					}
+					break;
+				}
+				default:
+					break;
 				}
 			}
 		}
@@ -1392,7 +1411,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph &OutGraph, const TSet<int32> *WhitelistIDs, TMap<int32, int32> *OutFace3DToPoly2D) const
+	bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph &OutGraph, const TSet<FTypedGraphObjID> *WhitelistIDs, TMap<int32, int32> *OutFace3DToPoly2D) const
 	{
 		OutGraph.Reset();
 
@@ -1430,7 +1449,7 @@ namespace Modumate
 
 			for (int32 edgeID : currentVertex->ConnectedEdgeIDs)
 			{
-				if (WhitelistIDs && !WhitelistIDs->Contains(FMath::Abs(edgeID)))
+				if (WhitelistIDs && !WhitelistIDs->Contains(FTypedGraphObjID(FMath::Abs(edgeID), EGraph3DObjectType::Edge)))
 				{
 					continue;
 				}
@@ -1438,7 +1457,8 @@ namespace Modumate
 				auto edge = FindEdge(edgeID);
 				int32 nextVertexID = (edge->StartVertexID == currentVertexID) ? edge->EndVertexID : edge->StartVertexID;
 
-				if (visitedVertexIDs.Contains(nextVertexID) || (WhitelistIDs && !WhitelistIDs->Contains(nextVertexID)))
+				if (visitedVertexIDs.Contains(nextVertexID) ||
+					(WhitelistIDs && !WhitelistIDs->Contains(FTypedGraphObjID(nextVertexID, EGraph3DObjectType::Vertex))))
 				{
 					continue;
 				}
@@ -1568,7 +1588,7 @@ namespace Modumate
 		{
 			int32 polyID = kvp.Key;
 			const FGraphPolygon &polygon = kvp.Value;
-			if (polygon.bClosed && polygon.bInterior)
+			if (polygon.bInterior)
 			{
 				TArray<int32> sortedVerts;
 				Algo::Transform(polygon.Edges, sortedVerts, [&Graph](const FEdgeID &EdgeID) {

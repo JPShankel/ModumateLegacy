@@ -8,13 +8,18 @@
 #include "Graph3D.h"
 #include "LineActor.h"
 #include "ModumateDocument.h"
+#include "ModumateGeometryStatics.h"
 #include "ModumateObjectStatics.h"
 #include "ModumateVertexActor_CPP.h"
+#include "RoofPerimeterHandles.h"
 
 namespace Modumate
 {
 	FMOIRoofPerimeterImpl::FMOIRoofPerimeterImpl(FModumateObjectInstance *moi)
 		: FModumateObjectInstanceImplBase(moi)
+		, bValidPerimeterLoop(false)
+		, CachedPerimeterCenter(ForceInitToZero)
+		, CachedPlane(ForceInitToZero)
 	{
 	}
 
@@ -24,7 +29,7 @@ namespace Modumate
 
 	FVector FMOIRoofPerimeterImpl::GetLocation() const
 	{
-		return FVector::ZeroVector;
+		return CachedPerimeterCenter;
 	}
 
 	FVector FMOIRoofPerimeterImpl::GetCorner(int32 index) const
@@ -55,9 +60,49 @@ namespace Modumate
 		UpdateLineActors();
 	}
 
-	void FMOIRoofPerimeterImpl::OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover)
+	void FMOIRoofPerimeterImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller)
 	{
-		FModumateObjectInstanceImplBase::OnCursorHoverActor(controller, EnableHover);
+		if (CreateFacesHandleActor.IsValid())
+		{
+			return;
+		}
+
+		UStaticMesh *anchorMesh = Controller->EMPlayerState->GetEditModelGameMode()->AnchorMesh;
+
+		FCreateRoofFacesHandle *handleImpl = new FCreateRoofFacesHandle(MOI);
+		CreateFacesHandleActor = Controller->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>();
+		CreateFacesHandleActor->SetActorMesh(anchorMesh);
+		CreateFacesHandleActor->SetHandleScale(FVector(0.001f));
+		CreateFacesHandleActor->SetHandleScaleScreenSize(FVector(0.001f));
+
+		handleImpl->Handle = CreateFacesHandleActor.Get();
+		CreateFacesHandleActor->Implementation = handleImpl;
+		CreateFacesHandleActor->AttachToActor(PerimeterActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
+	}
+
+	void FMOIRoofPerimeterImpl::ClearAdjustmentHandles(AEditModelPlayerController_CPP *Controller)
+	{
+		if (CreateFacesHandleActor.IsValid())
+		{
+			CreateFacesHandleActor->Destroy();
+		}
+	}
+
+	void FMOIRoofPerimeterImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
+	{
+		SetupAdjustmentHandles(Controller);
+
+		if (!ensure(CreateFacesHandleActor.IsValid()))
+		{
+			return;
+		}
+
+		CreateFacesHandleActor->SetEnabled(bShow);
+	}
+
+	void FMOIRoofPerimeterImpl::OnCursorHoverActor(AEditModelPlayerController_CPP *Controller, bool bIsHovered)
+	{
+		FModumateObjectInstanceImplBase::OnCursorHoverActor(Controller, bIsHovered);
 		UpdateLineActors();
 	}
 
@@ -69,23 +114,17 @@ namespace Modumate
 
 	void FMOIRoofPerimeterImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
-		const FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
-
-		int32 numEdges = CachedEdgeIDs.Num();
-		for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
+		int32 numPoints = CachedPerimeterPoints.Num();
+		for (int32 pointAIdx = 0; pointAIdx < numPoints; ++pointAIdx)
 		{
-			auto edgeID = CachedEdgeIDs[edgeIdx];
-			const FGraph3DEdge *edge = volumeGraph.FindEdge(edgeID);
-			if (edge)
-			{
-				const FGraph3DVertex *startVertex = volumeGraph.FindVertex(edge->StartVertexID);
-				const FGraph3DVertex *endVertex = volumeGraph.FindVertex(edge->EndVertexID);
-				if (startVertex && endVertex)
-				{
-					outPoints.Add(FStructurePoint(startVertex->Position, edge->CachedDir, edgeIdx));
-					outLines.Add(FStructureLine(startVertex->Position, endVertex->Position, edgeIdx, (edgeIdx + 1) % numEdges));
-				}
-			}
+			int32 pointBIdx = (pointAIdx + 1) % numPoints;
+
+			const FVector &pointA = CachedPerimeterPoints[pointAIdx];
+			const FVector &pointB = CachedPerimeterPoints[pointBIdx];
+			FVector dir = (pointB - pointA).GetSafeNormal();
+
+			outPoints.Add(FStructurePoint(pointA, dir, pointAIdx));
+			outLines.Add(FStructureLine(pointA, pointB, pointAIdx, pointBIdx));
 		}
 	}
 
@@ -122,6 +161,7 @@ namespace Modumate
 				return false;
 			}
 
+			UpdatePerimeterGeometry();
 			MOI->MarkDirty(EObjectDirtyFlags::Visuals);
 			break;
 		}
@@ -145,50 +185,26 @@ namespace Modumate
 		const FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
 
 		// Ask the graph what IDs belong to this roof perimeter group object
-		TSet<FTypedGraphObjID> groupMembers;
-		if (!volumeGraph.GetGroup(MOI->ID, groupMembers))
+		if (!volumeGraph.GetGroup(MOI->ID, TempGroupMembers))
 		{
 			return false;
 		}
 
-		// Sort the group member IDs by graph type
-		TSet<int32> vertexIDs, edgeIDs, faceIDs;
-		for (auto &groupMember : groupMembers)
-		{
-			switch (groupMember.Value)
-			{
-			case EGraph3DObjectType::Vertex:
-				vertexIDs.Add(groupMember.Key);
-				break;
-			case EGraph3DObjectType::Edge:
-				edgeIDs.Add(groupMember.Key);
-				break;
-			case EGraph3DObjectType::Face:
-				faceIDs.Add(groupMember.Key);
-				break;
-			default:
-				break;
-			}
-		}
-
 		CachedEdgeIDs.Reset();
-		FGraph updatedPerimeterGraph;
-		if (volumeGraph.Create2DGraph(vertexIDs, edgeIDs, faceIDs, updatedPerimeterGraph, true, false))
+		if (volumeGraph.Create2DGraph(TempGroupMembers, TempConnectedGraphIDs, CachedPerimeterGraph, CachedPlane, true, false))
 		{
-			const FGraphPolygon *perimeterPoly = updatedPerimeterGraph.GetExteriorPolygon();
+			const FGraphPolygon *perimeterPoly = CachedPerimeterGraph.GetExteriorPolygon();
 			if (ensure(perimeterPoly))
 			{
+				bValidPerimeterLoop = !perimeterPoly->bHasDuplicateEdge;
 				for (auto signedEdgeID : perimeterPoly->Edges)
 				{
+					// Make sure that each edge in the perimeter is actually associated with this perimeter's group ID,
+					// otherwise the perimeter can't be created.
 					const FGraph3DEdge *graphEdge = volumeGraph.FindEdge(signedEdgeID);
 					if (graphEdge && graphEdge->GroupIDs.Contains(MOI->ID))
 					{
-						// Perimeters may double back if they're not a closed loop, but we still want to only include each edge once.
-						// However, rather than just storing their unsigned IDs, we want to preserve the directions of the edges so that the traversal order is preserved.
-						if (!CachedEdgeIDs.Contains(-signedEdgeID) && !CachedEdgeIDs.Contains(signedEdgeID))
-						{
-							CachedEdgeIDs.Add(signedEdgeID);
-						}
+						CachedEdgeIDs.Add(signedEdgeID);
 					}
 					else
 					{
@@ -199,6 +215,37 @@ namespace Modumate
 		}
 
 		return (CachedEdgeIDs.Num() > 0);
+	}
+
+	void FMOIRoofPerimeterImpl::UpdatePerimeterGeometry()
+	{
+		if (!ensure(MOI) || CachedPlane.IsZero())
+		{
+			return;
+		}
+
+		CachedPerimeterPoints.Reset();
+		CachedPerimeterCenter = FVector::ZeroVector;
+		const FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
+
+		int32 numEdges = CachedEdgeIDs.Num();
+		for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
+		{
+			auto edgeID = CachedEdgeIDs[edgeIdx];
+			const FGraph3DEdge *edge = volumeGraph.FindEdge(edgeID);
+			if (edge)
+			{
+				int32 vertexID = (edgeID > 0) ? edge->StartVertexID : edge->EndVertexID;
+				const FGraph3DVertex *vertex = volumeGraph.FindVertex(vertexID);
+				if (vertex)
+				{
+					CachedPerimeterPoints.Add(vertex->Position);
+				}
+			}
+		}
+
+		FVector perimeterAxisX, perimeterAxisY;
+		UModumateGeometryStatics::AnalyzeCachedPositions(CachedPerimeterPoints, CachedPlane, perimeterAxisX, perimeterAxisY, TempPerimeterPoints2D, CachedPerimeterCenter, false);
 	}
 
 	void FMOIRoofPerimeterImpl::UpdateLineActors()
@@ -221,8 +268,9 @@ namespace Modumate
 
 		const FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
 
-		for (FSignedID edgeID : CachedEdgeIDs)
+		for (FSignedID signedEdgeID : CachedEdgeIDs)
 		{
+			int32 edgeID = FMath::Abs(signedEdgeID);
 			if (volumeGraph.ContainsObject(FTypedGraphObjID(edgeID, EGraph3DObjectType::Edge)))
 			{
 				if (!LineActors.Contains(edgeID))
@@ -239,7 +287,7 @@ namespace Modumate
 		}
 
 		// Delete outdated line actors
-		for (FSignedID edgeIDToRemove : TempEdgeIDsToRemove)
+		for (int32 edgeIDToRemove : TempEdgeIDsToRemove)
 		{
 			TWeakObjectPtr<ALineActor> lineToRemove;
 			LineActors.RemoveAndCopyValue(edgeIDToRemove, lineToRemove);
@@ -250,7 +298,7 @@ namespace Modumate
 		}
 
 		// Add new line actors, just the key so we can spawn them all later
-		for (FSignedID edgeIDToAdd : TempEdgeIDsToAdd)
+		for (int32 edgeIDToAdd : TempEdgeIDsToAdd)
 		{
 			LineActors.Add(edgeIDToAdd);
 		}
@@ -260,12 +308,12 @@ namespace Modumate
 		bool bMOICollisionEnabled = MOI->IsCollisionEnabled();
 		bool bMOISelected = MOI->IsSelected();
 		bool bMOIHovered = MOI->IsHovered();
-		FColor lineColor = bMOIHovered ? FColor::White : FColor::Purple;
+		FColor lineColor = bMOIHovered ? FColor::White : (bValidPerimeterLoop ? FColor::Purple : FColor::Red);
 		float lineThickness = bMOISelected ? 6.0f : 3.0f;
 
 		for (auto &kvp : LineActors)
 		{
-			FSignedID edgeID = kvp.Key;
+			int32 edgeID = kvp.Key;
 			TWeakObjectPtr<ALineActor> &lineActor = kvp.Value;
 			const FGraph3DEdge *graphEdge = volumeGraph.FindEdge(edgeID);
 			if (graphEdge)
@@ -284,8 +332,8 @@ namespace Modumate
 					// Keep the line actor with the same direction as the original graph edge, for consistency
 					lineActor->SetActorHiddenInGame(!bMOIVisible);
 					lineActor->SetActorEnableCollision(bMOICollisionEnabled);
-					lineActor->Point1 = (edgeID > 0) ? startVertex->Position : endVertex->Position;
-					lineActor->Point2 = (edgeID > 0) ? endVertex->Position : startVertex->Position;
+					lineActor->Point1 = startVertex->Position;
+					lineActor->Point2 = endVertex->Position;
 					lineActor->Color = lineColor;
 					lineActor->Thickness = lineThickness;
 				}
