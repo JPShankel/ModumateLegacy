@@ -702,12 +702,12 @@ void UModumateCraftingWidget_CPP::OverwritePreset(EToolMode mode, const FName &f
 
 bool UModumateCraftingWidget_CPP::GetBuiltinsForForm(EToolMode mode, const FName &formGUID, TArray<FCraftingItem> &outPresets)
 {
-	return GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document.PresetManager.GetBuiltinsForForm(mode, CurrentCraftingTree, formGUID, outPresets);
+	return (GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document.PresetManager.GetBuiltinsForForm(mode, CurrentCraftingTree, formGUID, outPresets) == FPresetManager::Result::NoError);
 }
 
 bool UModumateCraftingWidget_CPP::GetPresetsForForm(EToolMode mode, const FName &formGUID, TArray<FCraftingItem> &outPresets)
 {
-	return GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document.PresetManager.GetPresetsForForm(mode, CurrentCraftingTree, formGUID, outPresets);
+	return (GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document.PresetManager.GetPresetsForForm(mode, CurrentCraftingTree, formGUID, outPresets) == FPresetManager::Result::NoError);
 }
 
 FName UModumateCraftingWidget_CPP::GetSelectedPresetForForm(EToolMode mode, const FName &formGUID)

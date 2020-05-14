@@ -259,7 +259,7 @@ bool URotateObjectTool::FrameUpdate()
 				AnchorPoint, // location
 				hitLoc, // start
 				AngleAnchor, // end
-				CalcToolAngle(),
+				false, // TODO: this was CalcToolAngle(), which was clearly wrong, but needs to be refactored with new dimension strings soon
 				FName(TEXT("RotateTool")),
 				FName(TEXT("Degree")),
 				0,

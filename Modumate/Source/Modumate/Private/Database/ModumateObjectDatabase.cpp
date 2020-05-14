@@ -152,9 +152,9 @@ namespace Modumate
 				static const FName configsNameProp(TEXT("ConfigurationWhitelist"));
 				static const EPropertyFlags skipFlags = CPF_Deprecated | CPF_Transient;
 				const UStruct* rowStructDef = FPortalPartOptionsSetDataTable::StaticStruct();
-				for (TFieldIterator<UProperty> propIter(rowStructDef); propIter; ++propIter)
+				for (TFieldIterator<FProperty> propIter(rowStructDef); propIter; ++propIter)
 				{
-					UProperty* rowProp = *propIter;
+					FProperty* rowProp = *propIter;
 					if ((rowProp == nullptr) || rowProp->HasAnyPropertyFlags(skipFlags))
 					{
 						continue;
@@ -225,9 +225,9 @@ namespace Modumate
 
 						FString rowPropName;
 						const UStruct* rowStructDef = FPatternOptionSetDataTable::StaticStruct();
-						for (TFieldIterator<UProperty> propIter(rowStructDef); propIter; ++propIter)
+						for (TFieldIterator<FProperty> propIter(rowStructDef); propIter; ++propIter)
 						{
-							UProperty* rowProp = *propIter;
+							FProperty* rowProp = *propIter;
 
 							static const FString modulePropertyPrefix(TEXT("Module"));
 							static const FString modulePropertySuffix(TEXT("Dimensions"));
