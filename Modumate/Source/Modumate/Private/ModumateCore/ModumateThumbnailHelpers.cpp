@@ -40,20 +40,20 @@ TSharedPtr<FSlateDynamicImageBrush> FModumateThumbnailHelpers::LoadProjectThumbn
 		{
 			int32 imageWidth = imageWrapper->GetWidth();
 			int32 imageHeight = imageWrapper->GetHeight();
-			const TArray<uint8> *imageRawBytesPtr = nullptr;
+			TArray64<uint8> imageRawBytes;
 
-			if (imageWrapper->GetRaw(ERGBFormat::RGBA, 8, imageRawBytesPtr) &&
-				ensureAlways((4 * imageWidth * imageHeight) == imageRawBytesPtr->Num()))
+			if (imageWrapper->GetRaw(ERGBFormat::RGBA, 8, imageRawBytes) &&
+				ensureAlways((4 * imageWidth * imageHeight) == imageRawBytes.Num()))
 			{
 				// Reorder the image bytes to BGRA for the slate resource generation.
 				// See FSlateRHIResourceManager::MakeDynamicTextureResource for details.
 				TArray<uint8> imageRawBytesReordered;
-				for (int32 i = 0; i < imageRawBytesPtr->Num(); i += 4)
+				for (int32 i = 0; i < imageRawBytes.Num(); i += 4)
 				{
-					imageRawBytesReordered.Add((*imageRawBytesPtr)[i + 2]);
-					imageRawBytesReordered.Add((*imageRawBytesPtr)[i + 1]);
-					imageRawBytesReordered.Add((*imageRawBytesPtr)[i]);
-					imageRawBytesReordered.Add((*imageRawBytesPtr)[i + 3]);
+					imageRawBytesReordered.Add(imageRawBytes[i + 2]);
+					imageRawBytesReordered.Add(imageRawBytes[i + 1]);
+					imageRawBytesReordered.Add(imageRawBytes[i]);
+					imageRawBytesReordered.Add(imageRawBytes[i + 3]);
 				}
 
 				const static FString resourceSuffix(TEXT("_Thumbnail"));
@@ -71,14 +71,14 @@ TSharedPtr<FSlateDynamicImageBrush> FModumateThumbnailHelpers::LoadProjectThumbn
 	return thumbnailBrush;
 }
 
-bool FModumateThumbnailHelpers::GetRenderTextureData(UTextureRenderTarget2D* RenderTarget, TArray<uint8>& RawData)
+bool FModumateThumbnailHelpers::GetRenderTextureData(UTextureRenderTarget2D* RenderTarget, TArray64<uint8>& OutRawData)
 {
 	// Taken from GetRawData in ImageUtils
 	FRenderTarget* renderTargetResource = RenderTarget->GameThread_GetRenderTargetResource();
 	EPixelFormat renderTargetFormat = RenderTarget->GetFormat();
 
 	int32 numTextureBytes = CalculateImageBytes(RenderTarget->SizeX, RenderTarget->SizeY, 0, renderTargetFormat);
-	RawData.AddUninitialized(numTextureBytes);
+	OutRawData.AddUninitialized(numTextureBytes);
 	bool bReadSuccess = false;
 	switch (renderTargetFormat)
 	{
@@ -86,17 +86,17 @@ bool FModumateThumbnailHelpers::GetRenderTextureData(UTextureRenderTarget2D* Ren
 	{
 		TArray<FFloat16Color> floatColors;
 		bReadSuccess = renderTargetResource->ReadFloat16Pixels(floatColors);
-		FMemory::Memcpy(RawData.GetData(), floatColors.GetData(), numTextureBytes);
+		FMemory::Memcpy(OutRawData.GetData(), floatColors.GetData(), numTextureBytes);
 	}
 	break;
 	case PF_B8G8R8A8:
-		bReadSuccess = renderTargetResource->ReadPixelsPtr((FColor*)RawData.GetData());
+		bReadSuccess = renderTargetResource->ReadPixelsPtr((FColor*)OutRawData.GetData());
 		break;
 	}
 
 	if (!bReadSuccess)
 	{
-		RawData.Empty();
+		OutRawData.Empty();
 	}
 
 	return bReadSuccess;
@@ -104,7 +104,7 @@ bool FModumateThumbnailHelpers::GetRenderTextureData(UTextureRenderTarget2D* Ren
 
 bool FModumateThumbnailHelpers::CreateProjectThumbnail(class UTextureRenderTarget2D* textureTarget, FString &thumbnailBase64)
 {
-	TArray<uint8> rawTextureTargetData;
+	TArray64<uint8> rawTextureTargetData;
 	if (FModumateThumbnailHelpers::GetRenderTextureData(textureTarget, rawTextureTargetData))
 	{
 		// Mostly taken from FImageUtils::ExportRenderTarget
@@ -119,7 +119,7 @@ bool FModumateThumbnailHelpers::CreateProjectThumbnail(class UTextureRenderTarge
 			textureTarget->SizeX, textureTarget->SizeY, textureRGBFormat, bitsPerPixel))
 		{
 			// Compress the render target teture with our default compression format, and then encode it as a Base64 string
-			const TArray<uint8>& imageCompressedBytes = imageWrapper->GetCompressed(DefaultThumbCompression);
+			const TArray64<uint8>& imageCompressedBytes = imageWrapper->GetCompressed(DefaultThumbCompression);
 			if (imageCompressedBytes.Num() > 0)
 			{
 				thumbnailBase64 = FBase64::Encode(imageCompressedBytes.GetData(), imageCompressedBytes.Num());

@@ -14,7 +14,7 @@ class MODUMATE_API FModumateThumbnailHelpers
 public:
 	static TSharedPtr<struct FSlateDynamicImageBrush> LoadProjectThumbnail(const FString &thumbnailBase64, const FString &thumbnailName);
 
-	static bool GetRenderTextureData(class UTextureRenderTarget2D* RenderTarget, TArray<uint8>& RawData);
+	static bool GetRenderTextureData(class UTextureRenderTarget2D* RenderTarget, TArray64<uint8>& OutRawData);
 	static bool CreateProjectThumbnail(class UTextureRenderTarget2D* textureTarget, FString &thumbnailBase64);
 
 	static class UTexture2D* CreateTexture(int32 SizeX, int32 SizeY, int32 NumMips = 1, EPixelFormat Format = PF_B8G8R8A8, UObject* Outer = nullptr, FName Name = NAME_None, EObjectFlags ObjectFlags = EObjectFlags::RF_Transient);

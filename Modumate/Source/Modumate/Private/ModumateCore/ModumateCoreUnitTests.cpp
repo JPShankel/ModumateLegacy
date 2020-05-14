@@ -613,7 +613,7 @@ namespace Modumate
 		}
 
 		uint32 finalRandInt = rand.GetUnsignedInt();
-		TestTrue(TEXT("Consistent final random uint"), (finalRandInt == 4241033748));
+		TestTrue(TEXT("Consistent final random uint"), (finalRandInt == 597090039));
 
 		return true;
 	}
