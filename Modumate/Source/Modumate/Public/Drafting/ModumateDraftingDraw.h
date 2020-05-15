@@ -74,6 +74,7 @@ namespace Modumate
 		float DrawingScale = 48.0f;
 
 	public:
+		virtual ~IModumateDraftingDraw() { };
 		virtual EDrawError DrawLine(
 			const Units::FXCoord &x1,
 			const Units::FYCoord &y1,
