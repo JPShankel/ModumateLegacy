@@ -82,6 +82,7 @@ AEditModelPlayerController_CPP::AEditModelPlayerController_CPP()
 	, CameraInputLock(false)
 	, SelectionMode(ESelectObjectMode::DefaultObjects)
 	, MaxRaycastDist(100000.0f)
+	, HUDDrawWidgetClass(UHUDDrawWidget_CPP::StaticClass())
 	, PreviewWidgetClass(UDraftingPreviewWidget_CPP::StaticClass())
 	, CraftingWidgetClass(UModumateCraftingWidget_CPP::StaticClass())
 	, DrawingSetWidgetClass(UModumateDrawingSetWidget_CPP::StaticClass())
@@ -157,32 +158,36 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	CreateTools();
 	SetToolMode(EToolMode::VE_SELECT);
 
-	UDraftingPreviewWidget_CPP *widget = CreateWidget<UDraftingPreviewWidget_CPP>(this, PreviewWidgetClass);
-	if (widget != nullptr)
+	DraftingPreview = CreateWidget<UDraftingPreviewWidget_CPP>(this, PreviewWidgetClass);
+	if (DraftingPreview != nullptr)
 	{
-		widget->AddToViewport();
-		widget->Document = Document;
-		widget->SetVisibility(ESlateVisibility::Hidden);
-		DraftingPreview = widget;
+		DraftingPreview->AddToViewport();
+		DraftingPreview->Document = Document;
+		DraftingPreview->SetVisibility(ESlateVisibility::Hidden);
 		DraftingPreview->Controller = this;
-		widget->InitDecisionTree();
+		DraftingPreview->InitDecisionTree();
 	}
 
-	UModumateCraftingWidget_CPP *craftingWidget = CreateWidget<UModumateCraftingWidget_CPP>(this, CraftingWidgetClass);
-	if (craftingWidget != nullptr)
+	CraftingWidget = CreateWidget<UModumateCraftingWidget_CPP>(this, CraftingWidgetClass);
+	if (CraftingWidget != nullptr)
 	{
-		CraftingWidget = craftingWidget;
 		CraftingWidget->InitDecisionTrees();
 		CraftingWidget->AddToViewport();
 		CraftingWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-	UModumateDrawingSetWidget_CPP *drawingSetWidget = CreateWidget<UModumateDrawingSetWidget_CPP>(this, DrawingSetWidgetClass);
-	if (drawingSetWidget != nullptr)
+	DrawingSetWidget = CreateWidget<UModumateDrawingSetWidget_CPP>(this, DrawingSetWidgetClass);
+	if (DrawingSetWidget != nullptr)
 	{
-		DrawingSetWidget = drawingSetWidget;
 		DrawingSetWidget->AddToViewport();
 		DrawingSetWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	HUDDrawWidget = CreateWidget<UHUDDrawWidget_CPP>(this, HUDDrawWidgetClass);
+	if (HUDDrawWidget != nullptr)
+	{
+		HUDDrawWidget->AddToViewport();
+		HUDDrawWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 
 	// If we have a crash recovery, load that 

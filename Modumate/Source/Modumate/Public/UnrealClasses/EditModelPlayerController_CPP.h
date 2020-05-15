@@ -428,6 +428,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
 	UTexture2D* StaticCamTexture;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
+	TSubclassOf<UHUDDrawWidget_CPP> HUDDrawWidgetClass;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Drafting)
 	TSubclassOf<UDraftingPreviewWidget_CPP> PreviewWidgetClass;
 

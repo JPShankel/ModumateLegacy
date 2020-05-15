@@ -67,9 +67,13 @@ void AEditModelPlayerState_CPP::Tick(float DeltaSeconds)
 	}
 
 	// Reset the HUD Draw Widget's lines now, so that we know they're all added during this tick function.
-	EMPlayerController->HUDDrawWidget->LinesToDraw.Reset();
-	BatchRenderLines();
-	AddDimensionStringsToHUDDrawWidget();
+	// TODO: should this even be here
+	if (EMPlayerController->HUDDrawWidget != nullptr)
+	{
+		EMPlayerController->HUDDrawWidget->LinesToDraw.Reset();
+		BatchRenderLines();
+		AddDimensionStringsToHUDDrawWidget();
+	}
 }
 
 void AEditModelPlayerState_CPP::BatchRenderLines()
