@@ -85,6 +85,7 @@ namespace Modumate
 		if (CreateFacesHandleActor.IsValid())
 		{
 			CreateFacesHandleActor->Destroy();
+			CreateFacesHandleActor.Reset();
 		}
 	}
 
@@ -214,7 +215,17 @@ namespace Modumate
 			}
 		}
 
-		return (CachedEdgeIDs.Num() > 0);
+		// TODO: don't store the ordered edge list and edge data in ControlIndices; use strongly-typed BIM values instead somehow
+		int32 numEdges = CachedEdgeIDs.Num();
+		TArray<int32> controlIndices;
+		for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
+		{
+			controlIndices.Add(1);
+		}
+		controlIndices.Append(CachedEdgeIDs);
+		MOI->SetControlPointIndices(controlIndices);
+
+		return (numEdges > 0);
 	}
 
 	void FMOIRoofPerimeterImpl::UpdatePerimeterGeometry()
@@ -243,6 +254,15 @@ namespace Modumate
 				}
 			}
 		}
+
+		// TODO: don't store the cached edge positions and edge slopes in ControlPoints; use strongly-typed BIM values instead somehow
+		TArray<FVector> controlPoints = CachedPerimeterPoints;
+		for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
+		{
+			controlPoints.Add(FVector(1.0f, 0.0f, 0.0f));
+		}
+
+		MOI->SetControlPoints(controlPoints);
 
 		FVector perimeterAxisX, perimeterAxisY;
 		UModumateGeometryStatics::AnalyzeCachedPositions(CachedPerimeterPoints, CachedPlane, perimeterAxisX, perimeterAxisY, TempPerimeterPoints2D, CachedPerimeterCenter, false);

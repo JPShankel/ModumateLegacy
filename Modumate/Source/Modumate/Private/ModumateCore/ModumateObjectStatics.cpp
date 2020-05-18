@@ -876,12 +876,12 @@ bool UModumateObjectStatics::GetRoofControlValues(
 
 bool UModumateObjectStatics::GetRoofGeometryValues(
 	const TArray<FVector> &ControlPoints, const TArray<int32> &ControlIndices,
-	TArray<FVector> &OutEdgePoints, TArray<float> &OutEdgeSlopes, TArray<bool> &OutEdgesHaveFaces)
+	TArray<FVector> &OutEdgePoints, TArray<float> &OutEdgeSlopes, TArray<bool> &OutEdgesHaveFaces, TArray<int32> &OutEdgeIDs)
 {
 	int32 numCP = ControlPoints.Num();
 	int32 numCI = ControlIndices.Num();
 
-	if (!ensureAlways(((numCP % 2) == 0) && ((numCP / 2) >= 3) && (numCI == (numCP / 2))))
+	if (!ensureAlways(((numCP % 2) == 0) && ((numCP / 2) >= 3) && (numCI == numCP)))
 	{
 		return false;
 	}
@@ -890,12 +890,14 @@ bool UModumateObjectStatics::GetRoofGeometryValues(
 	OutEdgePoints.Reset(numEdges);
 	OutEdgeSlopes.Reset(numEdges);
 	OutEdgesHaveFaces.Reset(numEdges);
+	OutEdgeIDs.Reset(numEdges);
 
 	for (int32 i = 0; i < numEdges; ++i)
 	{
 		OutEdgePoints.Add(ControlPoints[i]);
 		OutEdgeSlopes.Add(ControlPoints[i + numEdges].X);
 		OutEdgesHaveFaces.Add(ControlIndices[i] != 0);
+		OutEdgeIDs.Add(ControlIndices[i + numEdges]);
 	}
 
 	return true;

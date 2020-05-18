@@ -59,7 +59,7 @@ namespace Modumate
 	{
 		GotGeometry = true;
 
-		if (UModumateObjectStatics::GetRoofGeometryValues(MOI->GetControlPoints(), MOI->GetControlPointIndices(), EdgePoints, EdgeSlopes, EdgesHaveFaces))
+		if (false)//UModumateObjectStatics::GetRoofGeometryValues(MOI->GetControlPoints(), MOI->GetControlPointIndices(), EdgePoints, EdgeSlopes, EdgesHaveFaces))
 		{
 			TArray<FVector> CombinedPolyVerts;
 			TArray<int32> PolyVertIndices;
@@ -162,7 +162,7 @@ namespace Modumate
 
 		if ((CP >= 0) && (CP < EdgeSlopes.Num()))
 		{
-			UModumateObjectStatics::GetRoofGeometryValues(MOI->GetControlPoints(), MOI->GetControlPointIndices(), EdgePoints, EdgeSlopes, EdgesHaveFaces);
+			//UModumateObjectStatics::GetRoofGeometryValues(MOI->GetControlPoints(), MOI->GetControlPointIndices(), EdgePoints, EdgeSlopes, EdgesHaveFaces);
 			EdgesHaveFaces[CP] = !EdgesHaveFaces[CP];
 
 			TArray<FVector> newCPs;
@@ -191,7 +191,7 @@ namespace Modumate
 
 	FVector FSetSegmentSlopeHandle::GetAttachmentPoint()
 	{
-		if (UModumateObjectStatics::GetRoofGeometryValues(MOI->GetControlPoints(), MOI->GetControlPointIndices(), EdgePoints, EdgeSlopes, EdgesHaveFaces))
+		//if (UModumateObjectStatics::GetRoofGeometryValues(MOI->GetControlPoints(), MOI->GetControlPointIndices(), EdgePoints, EdgeSlopes, EdgesHaveFaces))
 		{
 			int32 numPoints = EdgePoints.Num();
 			FVector edgeCenter = 0.5f * (EdgePoints[CP] + EdgePoints[(CP + 1) % EdgePoints.Num()]);

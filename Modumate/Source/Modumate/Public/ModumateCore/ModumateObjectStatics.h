@@ -96,7 +96,7 @@ public:
 
 	UFUNCTION(Category = "Modumate | Objects | Roofs")
 	static bool GetRoofGeometryValues(const TArray<FVector> &ControlPoints, const TArray<int32> &ControlIndices,
-		TArray<FVector> &OutEdgePoints, TArray<float> &OutEdgeSlopes, TArray<bool> &OutEdgesHaveFaces);
+		TArray<FVector> &OutEdgePoints, TArray<float> &OutEdgeSlopes, TArray<bool> &OutEdgesHaveFaces, TArray<int32> &OutEdgeIDs);
 
 	// Finishes
 	static int32 GetFaceIndexFromFinishObj(const Modumate::FModumateObjectInstance *FinishObject);

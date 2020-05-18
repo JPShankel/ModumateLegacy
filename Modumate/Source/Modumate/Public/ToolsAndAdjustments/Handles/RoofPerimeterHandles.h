@@ -15,7 +15,17 @@ namespace Modumate
 		{ }
 
 		virtual bool OnBeginUse() override;
+		virtual bool OnEndUse() override;
 		virtual FVector GetAttachmentPoint() override;
+
+	protected:
+		TArray<FVector> EdgePoints;
+		TArray<float> EdgeSlopes;
+		TArray<bool> EdgesHaveFaces;
+		TArray<int32> EdgeIDs;
+
+		TArray<FVector> CombinedPolyVerts;
+		TArray<int32> PolyVertIndices;
 	};
 
 	class MODUMATE_API FRetractRoofFacesHandle : public FEditModelAdjustmentHandleBase
@@ -26,6 +36,7 @@ namespace Modumate
 		{ }
 
 		virtual bool OnBeginUse() override;
+		virtual bool OnEndUse() override;
 		virtual FVector GetAttachmentPoint() override;
 	};
 }

@@ -173,6 +173,12 @@ namespace Modumate
 		void UpdateRoomAnalysis(UWorld *world);
 
 		const FGraph3D &GetVolumeGraph() const { return VolumeGraph; }
+
+		// TODO: we should remove the TempVolumeGraph entirely if we can rely on inverting deltas,
+		// or give graph delta creators their own copy of a graph to modify if we still need to use it for delta creation.
+		const FGraph3D &GetTempVolumeGraph() const { return TempVolumeGraph; }
+		FGraph3D &GetTempVolumeGraph() { return TempVolumeGraph; }
+
 		int32 CalculatePolyhedra() { return VolumeGraph.CalculatePolyhedra(); }
 		bool IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &OutObjType) const;
 
