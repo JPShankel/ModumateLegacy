@@ -15,9 +15,9 @@
 // Sets default values
 ALineActor::ALineActor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
+	, Tris({ 2, 1, 0, 3, 2, 0 })
 	, Color(FColor::Black)
 	, Thickness(1.0f)
-	, Tris({2, 1, 0, 3, 2, 0})
 {
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
 	RootComponent = ProceduralMesh;

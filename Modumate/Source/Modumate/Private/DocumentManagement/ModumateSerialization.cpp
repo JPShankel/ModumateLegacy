@@ -25,9 +25,9 @@ FString FCustomAssemblyProperty::ToCompactString() const
 	const UStruct* traceStructDefinition = FCustomAssemblyProperty::StaticStruct();
 	static const FString propSeparator(TEXT(";"));
 
-	for (TFieldIterator<UProperty> propIter(traceStructDefinition); propIter; ++propIter)
+	for (TFieldIterator<FProperty> propIter(traceStructDefinition); propIter; ++propIter)
 	{
-		UProperty* structPropDef = *propIter;
+		FProperty* structPropDef = *propIter;
 		const void* structPropValue = structPropDef->ContainerPtrToValuePtr<uint8>(this);
 		FString structPropString;
 		structPropDef->ExportTextItem(structPropString, structPropValue, NULL, NULL, PPF_None);
