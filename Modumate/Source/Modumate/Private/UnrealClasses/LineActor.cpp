@@ -41,6 +41,8 @@ void ALineActor::BeginPlay()
 		EMGameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
 
 		CameraManager = playerController->PlayerCameraManager;
+
+		SetIsHUD(bIsHUD);
 	}
 }
 
@@ -157,25 +159,17 @@ void ALineActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (!bIsHUD)
 	{
-		bool bSuccess = false;
 		if (bCreate)
 		{
-			bSuccess = MakeGeometry();
+			bLastRenderValid = MakeGeometry();
 			bCreate = false;
 		}
 		else
 		{
-			bSuccess = UpdateGeometry();
+			bLastRenderValid = UpdateGeometry();
 		}
 
-		if (!bSuccess)
-		{
-			SetHidden(true);
-		}
-		else if (IsHidden())
-		{
-			SetHidden(false);
-		}
+		SetActorHiddenInGame(!(bVisibleInApp && bLastRenderValid));
 	}
 }
 
@@ -195,6 +189,12 @@ void ALineActor::SetIsHUD(bool bRenderScreenSpace)
 		EMPlayerHUD->All3DLineActors.Add(this);
 		ProceduralMesh->ClearAllMeshSections();
 	}
+}
+
+void ALineActor::SetVisibilityInApp(bool bVisible)
+{
+	bVisibleInApp = bVisible;
+	SetActorHiddenInGame(!(bVisibleInApp && bLastRenderValid));
 }
 
 void ALineActor::UpdateMetaEdgeVisuals(bool bConnected, float ThicknessMultiplier)

@@ -167,7 +167,7 @@ namespace Modumate
 			bOutVisible = !MOI->IsRequestedHidden() && bShouldBeVisible;
 			bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bShouldCollisionBeEnabled;
 
-			LineActor->SetActorHiddenInGame(!bOutVisible);
+			LineActor->SetVisibilityInApp(bOutVisible);
 			if (bOutVisible)
 			{
 				float thicknessMultiplier = GetThicknessMultiplier();

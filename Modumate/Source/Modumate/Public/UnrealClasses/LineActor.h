@@ -89,8 +89,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drawing")
 	float Thickness = 1.f;
 
-	bool bIsHUD = true;
-
 	void SetIsHUD(bool bRenderScreenSpace);
+	void SetVisibilityInApp(bool bVisible);
+
 	void UpdateMetaEdgeVisuals(bool bConnected, float ThicknessMultiplier = 1.0f);
+
+private:
+	bool bIsHUD = true;
+	bool bVisibleInApp = true;
+	bool bLastRenderValid = true;
 };
