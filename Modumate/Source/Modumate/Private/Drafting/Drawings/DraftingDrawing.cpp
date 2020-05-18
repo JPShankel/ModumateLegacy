@@ -68,15 +68,23 @@ namespace Modumate {
 	void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting)
 	{
 		auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
-		auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
+		TArray<FVector> controlPoints;
 
 		FVector cutPlaneOrigin = cutPlane->GetControlPoint(0);
 
-		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(scopeBox->GetControlPoint(0), AxisX, AxisY, cutPlaneOrigin);
+		// for now, the entire cut plane is used instead of using the scope box at all
+#if 0
+		auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
 		FVector scopeBoxOrigin = cutPlaneOrigin + (scopeBoxOrigin2D.X * AxisX) + (scopeBoxOrigin2D.Y * AxisY);
+		controlPoints = scopeBox->GetControlPoints();
+#else
+		FVector scopeBoxOrigin = cutPlaneOrigin;
+		controlPoints = cutPlane->GetControlPoints();
+#endif
+		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(controlPoints[0], AxisX, AxisY, cutPlaneOrigin);
 
 		TArray<FVector2D> boxPoints;
-		for (auto& point : scopeBox->GetControlPoints())
+		for (auto& point : controlPoints)
 		{
 			FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, AxisX, AxisY, scopeBoxOrigin);
 			boxPoints.Add(point2D);
@@ -155,14 +163,19 @@ namespace Modumate {
 		UDraftingManager::GetImageFullPath(CaptureObjID, file);
 
 		auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
+#if 0
 		auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
 		FVector scopeBoxNormal = scopeBox->GetNormal();
-
+#else
+		FVector scopeBoxNormal = cutPlane->GetNormal();
+#endif
+		
 
 		FPlane plane = FPlane(cutPlane->GetControlPoint(0), cutPlane->GetNormal());
 		bool bValidIntersection = true;
 		int32 numPoints = 4;
 		TArray<FVector> intersection;
+#if 0
 		intersection.SetNumZeroed(numPoints);
 		for (int32 cornerIdx = 0; cornerIdx < numPoints; cornerIdx++)
 		{
@@ -172,6 +185,9 @@ namespace Modumate {
 			bool bIntersects = FMath::SegmentPlaneIntersection(corner, extrudedCorner, plane, intersection[cornerIdx]);
 			bValidIntersection = bValidIntersection && bIntersects;
 		}
+#else
+		intersection = cutPlane->GetControlPoints();
+#endif
 
 		FVector axisX, axisY, center;
 		TArray<FVector2D> cached2DPositions;

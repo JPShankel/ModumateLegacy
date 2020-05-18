@@ -305,6 +305,9 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 
 		FPlane plane = FPlane(cutPlane->GetControlPoint(0), cutPlane->GetNormal());
 
+
+// disabled implementation of scope boxes determining drawing transforms, extents
+#if 0
 		for (FModumateObjectInstance* scopeBox : scopeBoxes)
 		{
 			if (scopeBox == nullptr)
@@ -361,6 +364,21 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 			
 
 		}
+#else
+		// TODO: normally would be the intersection between the scope box and this cut plane. 
+		// currently the entire cut plane area is used
+		sceneCaptureInterface->AddCaptureArea(MOD_ID_NONE, {});
+
+		auto page = CreateAndAddPage();
+		TSharedPtr<FFloorplan> floorplan = MakeShareable(new FFloorplan(Document, world, TPair<int32, int32>(cutPlane->ID, MOD_ID_NONE)));
+		floorplan->InitializeDimensions(presentationSeriesSize - (drawingMargin*2.0f), drawingMargin);
+		floorplan->SetLocalPosition(pageMargin);
+
+		page->Children.Add(floorplan);
+		page->Dimensions = presentationSeriesSize;
+		draftMan->RequestRender(TPair<int32, int32>(cutPlane->ID, MOD_ID_NONE));
+		sceneCaptureInterface->CaptureDelegate.AddSP(floorplan.Get(), &FFloorplan::OnPageCompleted);
+#endif
 		sceneCaptureInterface->StartRender();
 	}
 

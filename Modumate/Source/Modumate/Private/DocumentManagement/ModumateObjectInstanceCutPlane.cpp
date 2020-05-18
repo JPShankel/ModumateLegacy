@@ -136,8 +136,13 @@ namespace Modumate
 
 		auto nextRenderAreaKvp = PendingCaptureAreas.Pop();
 
+		// for now, using the entire cut plane area instead of the scope box intersection
 		CaptureActor->ScopeBoxID = nextRenderAreaKvp.Key;
+#if 0
 		auto CaptureArea = nextRenderAreaKvp.Value;
+#else
+		auto CaptureArea = MOI->GetControlPoints();
+#endif
 
 		float pixelsPerWorldCentimeter = 2.0f;
 
