@@ -825,53 +825,6 @@ bool AEditModelPlayerState_CPP::SetObjectHeight(FModumateObjectInstance *obj, fl
 	return false;
 }
 
-bool AEditModelPlayerState_CPP::SetSelectedHeight(float HeightEntry, bool bIsDelta, bool bUpdateGeometry)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SetSelectedHeight"));
-
-	bool bAnySuccess = false;
-	int32 numObjects = SelectedObjects.Num();
-	for (int32 i = 0; i < numObjects; i++)
-	{
-		if (SelectedObjects[i]->GetObjectType() == EObjectType::OTWallSegment)
-		{
-			FModumateObjectInstance *obj = SelectedObjects[i];
-			float newHeight = HeightEntry;
-			if (bIsDelta) // height implied as an increment to current height
-			{
-				newHeight = obj->GetExtents()[1] + HeightEntry;
-			}
-
-			bool bSuccess = SetObjectHeight(obj, newHeight, false, bUpdateGeometry);
-			bAnySuccess = bAnySuccess || bSuccess;
-		}
-	}
-
-	OnHeightUpdate();
-
-	return bAnySuccess;
-}
-
-bool AEditModelPlayerState_CPP::SetSelectedControlPointsHeight(float newCPHeight, bool bIsDelta, bool bUpdateGeometry)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SetSelectedControlPointsFreezeHeight"));
-
-	bool bAnySuccess = false;
-	int32 numObjects = SelectedObjects.Num();
-	for (int32 i = 0; i < numObjects; i++)
-	{
-		if (SelectedObjects[i]->GetObjectType() == EObjectType::OTWallSegment)
-		{
-			FModumateObjectInstance *obj = SelectedObjects[i];
-
-			bool bSuccess = SetObjectHeight(obj, newCPHeight, true, bUpdateGeometry);
-			bAnySuccess = bAnySuccess || bSuccess;
-		}
-	}
-
-	return bAnySuccess;
-}
-
 void AEditModelPlayerState_CPP::GetSelectorModumateObjects(TArray<AActor*>& ModumateObjects)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::GetSelectorModumateObjects"));
@@ -945,32 +898,6 @@ bool AEditModelPlayerState_CPP::DoesObjectHaveAnyError(int32 ObjectID) const
 	return (objectErrors && (objectErrors->Num() > 0));
 }
 
-bool AEditModelPlayerState_CPP::AnySelectedPlacementErrors() const
-{
-	for (const FModumateObjectInstance *selectedObj : SelectedObjects)
-	{
-		const ADynamicMeshActor *meshActor = Cast<ADynamicMeshActor>(selectedObj->GetActor());
-		if (meshActor && meshActor->HasPlacementError())
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void AEditModelPlayerState_CPP::ClearSelectedPlacementErrorsAndHandles()
-{
-	for (FModumateObjectInstance *selectedObj : SelectedObjects)
-	{
-		if (ADynamicMeshActor *meshActor = Cast<ADynamicMeshActor>(selectedObj->GetActor()))
-		{
-			meshActor->ClearPlacementErrors();
-			meshActor->AdjustHandleSide = -1;
-		}
-	}
-}
-
 void AEditModelPlayerState_CPP::CopySelectedToClipboard(const Modumate::FModumateDocument &document)
 {
 	ClipboardEntries.Reset();
@@ -1017,22 +944,6 @@ void AEditModelPlayerState_CPP::SetAssemblyForToolMode(EToolMode mode, const FSh
 	{
 		tool->SetAssembly(item);
 	}
-}
-
-TArray<FModelDimensionString> AEditModelPlayerState_CPP::GetDimensionStringFromGroupID(const FName &groupID, int32 &maxIndexInGroup)
-{
-	TArray<FModelDimensionString> returnDimString;
-	int32 returnMaxIndex = 0;
-	for (auto curDimStirng : DimensionStrings)
-	{
-		if (curDimStirng.GroupID == groupID)
-		{
-			returnMaxIndex = FMath::Max(returnMaxIndex, curDimStirng.GroupIndex);
-			returnDimString.Add(curDimStirng);
-		}
-	}
-	maxIndexInGroup = returnMaxIndex;
-	return returnDimString;
 }
 
 void AEditModelPlayerState_CPP::AddDimensionStringsToHUDDrawWidget()

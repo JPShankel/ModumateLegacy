@@ -127,12 +127,6 @@ public:
 	bool SetObjectHeight(Modumate::FModumateObjectInstance *obj, float newHeight, bool bSetBaseElevation, bool bUpdateGeometry);
 
 	UFUNCTION(BlueprintCallable, Category = "Tools")
-	bool SetSelectedHeight(float HeightEntry, bool bIsDelta, bool bUpdateGeometry);
-
-	UFUNCTION(BlueprintCallable, Category = "Tools")
-	bool SetSelectedControlPointsHeight(float newCPHeight, bool bIsDelta, bool bUpdateGeometry);
-
-	UFUNCTION(BlueprintCallable, Category = "Tools")
 	void SetAssemblyForActor(AActor *actor, const FShoppingItem &assembly);
 
 	UFUNCTION(BlueprintCallable, Category = "Tools")
@@ -203,15 +197,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
 	void RefreshActiveAssembly();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Tools")
-	void OnHeightUpdate();
-
-	UFUNCTION(BlueprintImplementableEvent, Category = "Tools")
-	void OnWallUpdate();
-
-	UFUNCTION(BlueprintImplementableEvent, Category = "Tools")
-	void RefreshCreateSimilarActor(AActor* TargetActor);
-
 	UFUNCTION(BlueprintCallable, Category = "Tools")
 	bool SetErrorForObject(int32 ObjectID, FName ErrorTag, bool bIsError);
 
@@ -225,12 +210,6 @@ public:
 	bool DoesObjectHaveAnyError(int32 ObjectID) const;
 
 	UFUNCTION(BlueprintPure, Category = "Tools")
-	bool AnySelectedPlacementErrors() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Tools")
-	void ClearSelectedPlacementErrorsAndHandles();
-
-	UFUNCTION(BlueprintPure, Category = "Tools")
 	int32 GetViewGroupObjectID() const { return ViewGroupObject ? ViewGroupObject->ID : 0; }
 
 	UFUNCTION(BlueprintCallable, Category = "Shopping")
@@ -238,9 +217,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Shopping")
 	const FShoppingItem &GetAssemblyForToolMode(EToolMode mode);
-
-	UFUNCTION(BlueprintCallable, Category = "Tools")
-	TArray<FModelDimensionString> GetDimensionStringFromGroupID(const FName &groupID, int32 &maxIndexInGroup);
 
 	UFUNCTION(BlueprintCallable, Category = Keyboard)
 	void AddDimensionStringsToHUDDrawWidget();

@@ -976,95 +976,6 @@ int32 UModumateFunctionLibrary::LoopArrayGetNextIndex(int32 CurrentIndex, int32 
 	return result;
 }
 
-TArray<int32> UModumateFunctionLibrary::LoopArrayReverseIndices(int32 FirstIndex, int32 LastIndex, int32 LengthOfArray)
-{
-	int32 curIndex = FirstIndex;
-	TArray<int32> resultArray;
-	resultArray.Add(FirstIndex);
-	while (curIndex != LastIndex)
-	{
-		if ((curIndex - 1) < 0)
-		{
-			resultArray.Add(LengthOfArray - 1);
-			curIndex = LengthOfArray - 1;
-		}
-		else
-		{
-			resultArray.Add(curIndex - 1);
-			curIndex = curIndex - 1;
-		}
-	}
-	return resultArray;
-}
-
-TArray<int32> UModumateFunctionLibrary::LoopArrayIndices(int32 FirstIndex, int32 LastIndex, int32 LengthOfArray)
-{
-	int32 curIndex = FirstIndex;
-	TArray<int32> resultArray;
-	resultArray.Add(FirstIndex);
-	while (curIndex != LastIndex)
-	{
-		if ((curIndex + 1) > LengthOfArray - 1)
-		{
-			curIndex = 0;
-			resultArray.Add(0);
-		}
-		else
-		{
-			resultArray.Add(curIndex + 1);
-			curIndex = curIndex + 1;
-		}
-	}
-	return resultArray;
-}
-
-int32 UModumateFunctionLibrary::FindClockwiseNextIndex(FVector Location, TArray<FVector> PolygonVerts, float Tolerance)
-{
-	FVector lineStart = FVector::ZeroVector, lineEnd = FVector::ZeroVector, clockwiseLocation = FVector::ZeroVector;
-
-	for (int32 i = 0; i < PolygonVerts.Num(); i++)
-	{
-		lineStart = PolygonVerts[i];
-		lineEnd = PolygonVerts[LoopArrayGetNextIndex(i, PolygonVerts.Num())];
-		if (UKismetMathLibrary::GetPointDistanceToSegment(Location, lineStart, lineEnd) <= Tolerance)
-		{
-			FVector directionComparison = UKismetMathLibrary::GetDirectionUnitVector(lineStart, lineEnd) - UKismetMathLibrary::GetDirectionUnitVector(lineStart, Location);
-			if (directionComparison.Size() <= 0.5)
-			{
-				clockwiseLocation = lineEnd;
-			}
-		}
-	}
-	int32 closestIndex;
-	int32 farestIndex;
-	GetClosestLocationToTargetFromArray(clockwiseLocation, PolygonVerts, closestIndex, farestIndex);
-
-	return closestIndex;
-}
-
-TArray<FVector> UModumateFunctionLibrary::SortLocationByTarget(FVector Target, TArray<FVector> LocationsArray)
-{
-	TArray<FVector> unsortedArray = LocationsArray;
-	TArray<FVector> sortedArray;
-	TArray<float> unsortedDistances;
-	float minValue = 0.0;
-	int32 minIndex = 0;
-
-	while (unsortedArray.Num() > 0)
-	{
-		unsortedDistances.Reset();
-		for (FVector& curLocation : unsortedArray)
-		{
-			unsortedDistances.Add((curLocation - Target).Size());
-		}
-		UKismetMathLibrary::MinOfFloatArray(unsortedDistances, minIndex, minValue);
-		sortedArray.Add(unsortedArray[minIndex]);
-		unsortedArray.RemoveAt(minIndex);
-	}
-
-	return sortedArray;
-}
-
 float UModumateFunctionLibrary::YawToDegree(float YawFloat)
 {
 	if ((YawFloat + 90.0) <= 0.0)
@@ -1084,18 +995,6 @@ int32 UModumateFunctionLibrary::LoopArrayGetPreviousIndex(int32 CurrentIndex, in
 	return result;
 }
 
-float UModumateFunctionLibrary::GetDegreeAtIndex(TArray<FVector> PolygonVerts, int32 CurrentIndex)
-{
-	FVector currentLocation = PolygonVerts[CurrentIndex];
-	FVector nextLocation = PolygonVerts[LoopArrayGetNextIndex(CurrentIndex, PolygonVerts.Num())];
-	FVector lastLocation = PolygonVerts[LoopArrayGetPreviousIndex(CurrentIndex, PolygonVerts.Num())];
-
-	float degreeNext = YawToDegree(UKismetMathLibrary::GetDirectionUnitVector(currentLocation, nextLocation).Z);
-	float degreeLast = YawToDegree(UKismetMathLibrary::GetDirectionUnitVector(currentLocation, lastLocation).Z);
-
-	return degreeNext - degreeLast;
-}
-
 bool UModumateFunctionLibrary::IsVectorInArray(const TArray<FVector>& Array, const FVector& TargetVector, float Tolerance)
 {
 	bool bResult = false;
@@ -1108,13 +1007,6 @@ bool UModumateFunctionLibrary::IsVectorInArray(const TArray<FVector>& Array, con
 		}
 	}
 	return bResult;
-}
-
-FVector2D UModumateFunctionLibrary::RotateVector2D(const FVector2D &vec, float angle)
-{
-	float c = cosf(angle);
-	float s = sinf(angle);
-	return FVector2D(vec.X*c - vec.Y*s, vec.Y*c + vec.X*s);
 }
 
 TArray<int32> UModumateFunctionLibrary::ConformTriangleClockwise(TArray<FVector> Vertices, TArray<int32> Triangles)
@@ -1705,28 +1597,6 @@ float SignCheckIfPointInTri(FVector p1, FVector p2, FVector p3)
 	return (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y);
 }
 
-FVector UModumateFunctionLibrary::GetPointSetExtents(const TArray<FVector> &points)
-{
-	FBox aabb = GetPointSetAABB(points);
-	return aabb.Max - aabb.Min;
-}
-
-FBox UModumateFunctionLibrary::GetPointSetAABB(const TArray<FVector> &points)
-{
-	return Algo::Accumulate(
-		points,
-		FBox(FVector(FLT_MAX,FLT_MAX,FLT_MAX),FVector(-FLT_MAX,-FLT_MAX,-FLT_MAX)),
-		[](FBox box,const FVector &p)
-		{
-			return FBox(
-				FVector(FMath::Min(box.Min.X, p.X), FMath::Min(box.Min.Y, p.Y), FMath::Min(box.Min.Z, p.Z)),
-				FVector(FMath::Max(box.Max.X, p.X), FMath::Max(box.Max.Y, p.Y), FMath::Max(box.Max.Z, p.Z))
-			);
-		}
-	);
-}
-
-
 bool UModumateFunctionLibrary::IsPointInTri(FVector pt, FVector v1, FVector v2, FVector v3)
 {
 	bool b1, b2, b3;
@@ -1830,36 +1700,6 @@ bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVec
 	{
 		return true;
 	}
-}
-
-TArray<int32> UModumateFunctionLibrary::MatchVector2DForPolygonTriangulation(TArray<FVector2D> TriangulatedLocations, TArray<FVector2D> OriginalVerts)
-{
-	TArray<int32> outTri;
-	for (FVector2D& curVector2D : TriangulatedLocations)
-	{
-		outTri.Add(OriginalVerts.Find(curVector2D));
-	}
-	return outTri;
-}
-
-TArray<FTriangle2D> UModumateFunctionLibrary::ConvertTriangleInt32ToTriangle2D(TArray<int32> Triangles)
-{
-	TArray<FTriangle2D> returnTri2D;
-	for (int32 i = 0; i < Triangles.Num(); i++)
-	{
-		if (((i + 3) % 3) == 0)
-		{
-			//returnTri2D.Add(FTriangle2D{ Triangles[i], Triangles[i + 1], Triangles[i + 2] });
-			returnTri2D.Add(FTriangle2D{ Triangles[i + 1], Triangles[i + 2], Triangles[i] });
-		}
-	}
-	TArray<FTriangle2D> returnTri2DReverse;
-	for (int32 i = returnTri2D.Num() - 1; i >= 0; i--)
-	{
-		returnTri2DReverse.Add(returnTri2D[i]);
-	}
-
-	return returnTri2DReverse;
 }
 
 void UModumateFunctionLibrary::ScreenLineExtend(FVector2D & ReturnStart, FVector2D & ReturnEnd, FVector2D Start, FVector2D End, float StartExtendDistance, float EndExtendDistance)
@@ -2151,92 +1991,6 @@ FVector UModumateFunctionLibrary::WallUpdateUVAnchor(FVector currentAnchorOrigin
 	return returnAnchorLocation;
 }
 
-bool UModumateFunctionLibrary::IsPointInBetween(FVector pC, FVector pA, FVector pB)
-{
-	float lengthA = (pC - pA).Size() + (pC - pB).Size();
-	float lengthB = (pA - pB).Size();
-
-	return FMath::IsNearlyEqual(lengthA, lengthB, 0.1f);
-}
-
-TArray<FVector2D> UModumateFunctionLibrary::MatchUVToUVAnchor(FVector uvAnchor, FVector currentP1, FVector currentP2, float wallBaseHeight, TArray<FVector2D> oldUV, TArray<FVector> refNormals, bool IsTopAdjustChange)
-{
-	TArray<FVector2D> newUV;
-	FVector curP1 = currentP1 * FVector(1.0f, 1.0f, 0.0f);
-	FVector curP2 = currentP2 * FVector(1.0f, 1.0f, 0.0f);
-	FVector anchorDifference = uvAnchor - curP1;
-	FVector2D uvDiff = FVector2D((anchorDifference.Size() / 100.0f), (wallBaseHeight / -100.0f));
-	bool b1 = IsPointInBetween(uvAnchor, curP1, curP2);
-	bool b2 = IsPointInBetween(curP2, uvAnchor, curP1);
-	if (b1 || b2)
-	{
-		uvDiff = uvDiff * FVector2D(-1.0f, 1.0f);
-	}
-	//////
-	TArray<int32> sideIndices;
-	TArray<int32> topBottomIndices;
-	TArray<int32> nonChangeIndices;
-	FindWallSideIndices(sideIndices, topBottomIndices, refNormals, curP1, curP2);
-	if (IsTopAdjustChange)
-	{
-		nonChangeIndices = topBottomIndices;
-	}
-	else
-	{
-		nonChangeIndices = sideIndices;
-	}
-	for (int32 i = 0; i < oldUV.Num(); i++)
-	{
-		if (nonChangeIndices.Contains(i))
-		{
-			if (IsTopAdjustChange)
-			{
-				newUV.Add(oldUV[i] + uvDiff);
-			}
-			else
-			{
-				newUV.Add(oldUV[i]);
-			}
-		}
-		else
-		{
-			newUV.Add(oldUV[i] + uvDiff);
-		}
-	}
-	//////
-	//for (int32 i = 0; i < oldUV.Num(); i++)
-	//{
-	//    newUV.Add(oldUV[i] + uvDiff);
-	//}
-
-	return newUV;
-}
-
-void UModumateFunctionLibrary::FindWallSideIndices(TArray<int32>& sideIndices, TArray<int32>& topBottomIndices, TArray<FVector> refNormals, FVector p1, FVector p2)
-{
-	TArray<int32> returnTopBottomID;
-	TArray<int32> returnSideID;
-	FVector nonAbsWallDirection = UKismetMathLibrary::GetDirectionUnitVector(p1, p2);
-	FVector wallDirection = FVector(abs(nonAbsWallDirection.X), abs(nonAbsWallDirection.Y), 0.f);
-	for (int32 i = 0; i < refNormals.Num(); i++)
-	{
-		if (FMath::IsNearlyEqual(abs(refNormals[i].Z), 1.0f, 0.1f))
-		{
-			returnTopBottomID.Add(i);
-		}
-		else
-		{
-			FVector curNormal = FVector(abs(refNormals[i].X), abs(refNormals[i].Y), 0.f);
-			if (curNormal.Equals(wallDirection, 0.1f))
-			{
-				returnSideID.Add(i);
-			}
-		}
-	}
-	sideIndices = returnSideID;
-	topBottomIndices = returnTopBottomID;
-}
-
 EObjectType UModumateFunctionLibrary::GetMOITypeFromActor(AActor * MOIActor)
 {
 	if (MOIActor != nullptr)
@@ -2256,60 +2010,6 @@ EObjectType UModumateFunctionLibrary::GetMOITypeFromActor(AActor * MOIActor)
 	{
 		return EObjectType::OTUnknown;
 	}
-}
-
-FVector UModumateFunctionLibrary::GetMOIActorsCenter(TArray<AActor*> MOIActors)
-{
-	if (MOIActors[0] == nullptr)
-	{
-		return FVector::ZeroVector;
-	}
-	if (MOIActors[0]->GetWorld() == nullptr)
-	{
-		return FVector::ZeroVector;
-	}
-	AEditModelGameState_CPP *gameState = MOIActors[0]->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	TArray<FVector> allCenterLocations;
-	for (auto& curActor : MOIActors)
-	{
-		FModumateObjectInstance *moi = gameState->Document.ObjectFromActor(curActor);
-		if (moi != nullptr)
-		{
-			switch (moi->GetObjectType())
-			{
-			case EObjectType::OTDoor:
-			case EObjectType::OTWindow:
-				allCenterLocations.Add(UKismetMathLibrary::GetVectorArrayAverage(UModumateObjectStatics::GetMoiActorHoleVertsWorldLocations(curActor)));
-				break;
-			case EObjectType::OTRoom:
-			case EObjectType::OTWallSegment:
-			case EObjectType::OTFinish:
-			case EObjectType::OTFloorSegment:
-			case EObjectType::OTRailSegment:
-			case EObjectType::OTCabinet:
-				allCenterLocations.Add(UKismetMathLibrary::GetVectorArrayAverage(moi->GetControlPoints()) + FVector(0.f, 0.f, moi->GetExtents().Y / 2.f));
-				break;
-			case EObjectType::OTFurniture:
-				if (moi->GetAssembly().AsShoppingItem().EngineMesh != nullptr)
-				{
-					FVector objExtent = moi->GetAssembly().AsShoppingItem().EngineMesh->GetBounds().BoxExtent;
-					FVector actorOrigin = moi->GetObjectLocation();
-					allCenterLocations.Add(actorOrigin + FVector(0.f, 0.f, objExtent.Z));
-				}
-				else
-				{
-					FVector actorOrigin; FVector actorBound;
-					moi->GetActor()->GetActorBounds(true, actorOrigin, actorBound);
-					allCenterLocations.Add(actorOrigin);
-				}
-			case EObjectType::OTGroup:
-				allCenterLocations.Add(moi->GetObjectLocation());
-				break;
-			}
-		}
-	}
-
-	return UKismetMathLibrary::GetVectorArrayAverage(allCenterLocations);
 }
 
 void UModumateFunctionLibrary::AddNewDimensionString(const AEditModelPlayerController_CPP *controller, const FVector &p1, const FVector &p2, const FVector &offsetDir, const FName &groupID, const FName &uniqueID, const int32 groupIndex, const AActor* owner, EDimStringStyle style, EEnterableField functionality, const float offset, EAutoEditableBox autoTextBox, const bool alwaysVisible, const FLinearColor &color)
@@ -2512,27 +2212,6 @@ void UModumateFunctionLibrary::DocUnHideAllMoiActors(const AActor* Owner)
 		Modumate::FModumateDocument *doc = &gameState->Document;
 		doc->UnhideAllObjects(Owner->GetWorld());
 	}
-}
-
-TArray<AActor*> UModumateFunctionLibrary::GetDocHiddenActors(const AActor* Owner)
-{
-	TArray<AActor*> returnActors;
-
-	if (Owner != nullptr)
-	{
-		AEditModelGameState_CPP *gameState = Owner->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		Modumate::FModumateDocument *doc = &gameState->Document;
-
-		for (auto curID : doc->HiddenObjectsID)
-		{
-			FModumateObjectInstance* moi = doc->GetObjectById(curID);
-			if (moi->GetActor() != nullptr)
-			{
-				returnActors.Add(moi->GetActor());
-			}
-		}
-	}
-	return returnActors;
 }
 
 FShoppingItem UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& bSuccess)

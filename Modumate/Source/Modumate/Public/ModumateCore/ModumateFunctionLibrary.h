@@ -130,22 +130,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static int32 LoopArrayGetNextIndex(int32 CurrentIndex, int32 LengthOfArray);
 
-	// Provide with first and last index, return an array of that number of index in array in reverse
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static TArray<int32> LoopArrayReverseIndices(int32 FirstIndex, int32 LastIndex, int32 LengthOfArray);
-
-	// Provide with first and last index, return an array of that number of index in array
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static TArray<int32> LoopArrayIndices(int32 FirstIndex, int32 LastIndex, int32 LengthOfArray);
-
-	// Use in hole calculation, find the next vert index in clockwise
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static int32 FindClockwiseNextIndex(FVector Location, TArray<FVector> PolygonVerts, float Tolerance);
-
-	// Provided with a target, sort locations in array from closest first to farest
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static TArray<FVector> SortLocationByTarget(FVector Target, TArray<FVector> LocationsArray);
-
 	// Turn float of angle (Yaw) into degree
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static float YawToDegree(float YawFloat);
@@ -153,18 +137,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static int32 LoopArrayGetPreviousIndex(int32 CurrentIndex, int32 LengthOfArray);
 
-	// Assuming the next and previous verts do form triangle with current vert, get its degree at current vert
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static float GetDegreeAtIndex(TArray<FVector> PolygonVerts, int32 CurrentIndex);
-
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static bool IsVectorInArray(const TArray<FVector>& Array, const FVector& TargetVector, float Tolerance);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
 	static bool PointInPoly2D(const FVector2D &p, const TArray<FVector2D> &poly);
-
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static FVector2D RotateVector2D(const FVector2D &vec,float angle);
 
 	// Make sure triangles are clockwise
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
@@ -221,22 +198,10 @@ public:
 	static bool MoiPortalSetNewHeight(AActor* targetActor, float newHeight);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static FVector GetPointSetExtents(const TArray<FVector> &points);
-
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static FBox GetPointSetAABB(const TArray<FVector> &points);
-
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static bool IsPointInTri(FVector pt, FVector v1, FVector v2, FVector v3);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static bool LineBoxIntersection(const FBox2D &box, const FVector2D &start, const FVector2D &end);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static TArray<int32> MatchVector2DForPolygonTriangulation(TArray<FVector2D> TriangulatedLocations, TArray<FVector2D> OriginalVerts);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static TArray<FTriangle2D> ConvertTriangleInt32ToTriangle2D(TArray<int32> Triangles);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static void ScreenLineExtend(FVector2D& ReturnStart, FVector2D& ReturnEnd, FVector2D Start, FVector2D End, float StartExtendDistance, float EndExtendDistance);
@@ -263,22 +228,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Modumate Wall")
 	static FVector WallUpdateUVAnchor(FVector currentAnchorOrigin, int32 anchorSide, FVector newP1, FVector newP2, FVector oldP1, FVector oldP2);
 
-	// Is pointC between pointA and pointB
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static bool IsPointInBetween(FVector pC, FVector pA, FVector pB);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Wall")
-	static TArray<FVector2D> MatchUVToUVAnchor(FVector uvAnchor, FVector currentP1, FVector currentP2, float wallBaseHeight, TArray<FVector2D> oldUV, TArray<FVector> refNormals, bool IsTopAdjustChange);
-
-	// Get indices of verts that aren't front or back side of the wall (left, right, top, down)
-	UFUNCTION(BlueprintCallable, Category = "Modumate Wall")
-	static void FindWallSideIndices(TArray<int32>& sideIndices, TArray<int32>& topBottomIndices, TArray<FVector> refNormals, FVector p1, FVector p2);
-
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
 	static EObjectType GetMOITypeFromActor(AActor* MOIActor);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static FVector GetMOIActorsCenter(TArray<AActor*> MOIActors);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
 	static void AddNewDimensionString(const AEditModelPlayerController_CPP *controller,
@@ -323,9 +274,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
 	static void DocUnHideAllMoiActors(const AActor* Owner);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static TArray<AActor*> GetDocHiddenActors(const AActor* Owner);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
 	static FShoppingItem GetShopItemFromActor(AActor* TargetActor, bool& bSuccess);

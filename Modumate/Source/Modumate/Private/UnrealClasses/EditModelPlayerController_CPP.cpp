@@ -509,27 +509,6 @@ void AEditModelPlayerController_CPP::OnLButtonUp()
 	}
 }
 
-void AEditModelPlayerController_CPP::OnRButtonDown()
-{
-}
-
-void AEditModelPlayerController_CPP::OnRButtonUp()
-{
-}
-
-void AEditModelPlayerController_CPP::OnMButtonDown()
-{
-}
-
-void AEditModelPlayerController_CPP::OnMButtonUp()
-{
-}
-
-void AEditModelPlayerController_CPP::OnMouseMove()
-{
-}
-
-
 /*
 Load/Save menu
 */
@@ -862,15 +841,6 @@ void AEditModelPlayerController_CPP::DeleteActionOnlySelected()
 	);
 }
 
-bool AEditModelPlayerController_CPP::HandleBareControlKey(bool pressed)
-{
-	if (CurrentTool && CurrentTool->IsInUse())
-	{
-		CurrentTool->HandleControlKey(pressed);
-	}
-	return true;
-}
-
 bool AEditModelPlayerController_CPP::HandleTabKeyForDimensionString()
 {
 	// Loop through dimension strings from the same groupID
@@ -917,14 +887,6 @@ void AEditModelPlayerController_CPP::ResetDimensionStringTabState()
 {
 	EnableDrawDeltaLine = true;
 	EnableDrawTotalLine = false;
-	EMPlayerState->CurrentDimensionStringGroupIndex = 0;
-}
-
-void AEditModelPlayerController_CPP::ResetDimensionStringTabStatePortal()
-{
-	DimStringWidgetSelectedObject = nullptr;
-	EnablePortalVerticalInput = false;
-	EnablePortalHorizontalInput = false;
 	EMPlayerState->CurrentDimensionStringGroupIndex = 0;
 }
 
@@ -1197,14 +1159,6 @@ void AEditModelPlayerController_CPP::TickInput(float DeltaTime)
 	}
 
 	Document->CleanObjects();
-}
-
-/*
-Custom point gathering - needs header
-*/
-FVector AEditModelPlayerController_CPP::GetZoomLocation(float dir)
-{
-	return EMPlayerState->SnappedCursor.WorldPosition;
 }
 
 FVector AEditModelPlayerController_CPP::CalculateViewLocationForSphere(const FSphere &TargetSphere, const FVector &ViewVector, float AspectRatio, float FOV)
@@ -1569,18 +1523,6 @@ void AEditModelPlayerController_CPP::ClearUserSnapPoints()
 	UserSnapPoints.Reset();
 }
 
-bool AEditModelPlayerController_CPP::SelectGroupObject(const AActor* MoiActor)
-{
-	const FModumateObjectInstance *moi = Document->ObjectFromActor(MoiActor);
-	if (moi == nullptr)
-	{
-		return false;
-	}
-	DeselectAll();
-	SetViewGroupObject(moi);
-	return true;
-}
-
 namespace { volatile char* ptr; }
 void AEditModelPlayerController_CPP::DebugCrash()
 {
@@ -1655,41 +1597,6 @@ float AEditModelPlayerController_CPP::GetDefaultWallHeightFromDoc() const
 	return 0.f;
 }
 
-void AEditModelPlayerController_CPP::UpdateDefaultRailHeight(float newHeight)
-{
-	Document->SetDefaultRailHeight(newHeight);
-}
-
-float AEditModelPlayerController_CPP::GetDefaultRailHeightFromDoc() const
-{
-	return Document->GetDefaultRailHeight();
-}
-
-void AEditModelPlayerController_CPP::UpdateDefaultCabinetHeight(float newHeight)
-{
-	Document->SetDefaultCabinetHeight(newHeight);
-}
-
-float AEditModelPlayerController_CPP::GetDefaultCabinetHeightFromDoc() const
-{
-	return Document->GetDefaultCabinetHeight();
-}
-
-void AEditModelPlayerController_CPP::UpdateDefaultDoorHeightWidth(float newHeight, float newWidth)
-{
-	Document->SetDefaultDoorHeightWidth(newHeight, newWidth);
-}
-
-float AEditModelPlayerController_CPP::GetDefaultDoorHeightFromDoc() const
-{
-	return Document->GetDefaultDoorHeight();
-}
-
-float AEditModelPlayerController_CPP::GetDefaultDoorWidthFromDoc() const
-{
-	return Document->GetDefaultDoorWidth();
-}
-
 void AEditModelPlayerController_CPP::UpdateDefaultWindowHeightWidth(float newHeight, float newWidth)
 {
 	Document->SetDefaultWindowHeightWidth(newHeight, newWidth);
@@ -1698,11 +1605,6 @@ void AEditModelPlayerController_CPP::UpdateDefaultWindowHeightWidth(float newHei
 float AEditModelPlayerController_CPP::GetDefaultWindowHeightFromDoc() const
 {
 	return Document->GetDefaultWindowHeight();
-}
-
-float AEditModelPlayerController_CPP::GetDefaultWindowWidthFromDoc() const
-{
-	return Document->GetDefaultWindowWidth();
 }
 
 void AEditModelPlayerController_CPP::UpdateDefaultJustificationZ(float newValue)
@@ -1876,11 +1778,6 @@ bool AEditModelPlayerController_CPP::GetActiveUserSnapPoint(FTransform &outSnapP
 	}
 
 	return false;
-}
-
-bool AEditModelPlayerController_CPP::IsHandleValid()
-{
-	return (InteractionHandle != nullptr);
 }
 
 float AEditModelPlayerController_CPP::DistanceBetweenWorldPointsInScreenSpace(const FVector &p1, const FVector &p2) const

@@ -220,9 +220,6 @@ public:
 	UFUNCTION(Category = Selection)
 	void ClearUserSnapPoints();
 
-	UFUNCTION(BlueprintCallable, Category = Selection)
-	bool SelectGroupObject(const AActor* MoiActor);
-
 	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite)
 	bool bAllowDebugCrash = false;
 
@@ -254,34 +251,10 @@ public:
 	float GetDefaultWallHeightFromDoc() const;
 
 	UFUNCTION(BlueprintCallable, Category = Assembly)
-	void UpdateDefaultRailHeight(float newHeight);
-
-	UFUNCTION(BlueprintCallable, Category = Assembly)
-	float GetDefaultRailHeightFromDoc() const;
-
-	UFUNCTION(BlueprintCallable, Category = Assembly)
-	void UpdateDefaultCabinetHeight(float newHeight);
-
-	UFUNCTION(BlueprintCallable, Category = Assembly)
-	float GetDefaultCabinetHeightFromDoc() const;
-
-	UFUNCTION(BlueprintCallable, Category = Assembly)
-	void UpdateDefaultDoorHeightWidth(float newHeight, float newWidth);
-
-	UFUNCTION(BlueprintCallable, Category = Assembly)
-	float GetDefaultDoorHeightFromDoc() const;
-
-	UFUNCTION(BlueprintCallable, Category = Assembly)
-	float GetDefaultDoorWidthFromDoc() const;
-
-	UFUNCTION(BlueprintCallable, Category = Assembly)
 	void UpdateDefaultWindowHeightWidth(float newHeight, float newWidth);
 
 	UFUNCTION(BlueprintCallable, Category = Assembly)
 	float GetDefaultWindowHeightFromDoc() const;
-
-	UFUNCTION(BlueprintCallable, Category = Assembly)
-	float GetDefaultWindowWidthFromDoc() const;
 
 	// Layer Justification
 	UFUNCTION(BlueprintCallable, Category = Justification)
@@ -356,25 +329,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Cursor)
 	void SetSelectionMode(ESelectObjectMode NewSelectionMode);
 
-	// Override default hole vertices for furnitures by user
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
-	bool bOverrideDefaultHoleVertices;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
 	float MaxRaycastDist;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Snap)
 	TArray<FTransform> UserSnapPoints;
 
-	// Hole Vertices use for override
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
-	TArray<FVector> HoleVerticesOverride;
-
 	UFUNCTION(BlueprintCallable, Category = Modeling)
 	void GroupSelected(bool makeGroup);
-
-	UFUNCTION(BlueprintCallable, Category = Mouse)
-	FVector GetZoomLocation(float dir); //grab target for zoom animation
 
 	UFUNCTION(BlueprintCallable, Category = Camera)
 	bool ZoomToProjectExtents();
@@ -384,18 +346,6 @@ public:
 
 	// Calculate the location needed to view the boundary set by TargetSphere
 	FVector CalculateViewLocationForSphere(const FSphere &TargetSphere, const FVector &ViewVector, float AspectRatio, float FOV);
-
-	// Set the scale of window preview model
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
-	FVector WindowPreviewScale = FVector(1.f, 1.f, 1.f);
-
-	// Hole Vertices use for override
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
-	TArray<FVector> HoleVerticesDoorOverride;
-
-	// Set the scale of door preview model
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
-	FVector DoorPreviewScale = FVector(1.f, 1.213f, 1.0668f);
 
 	// Draw "Total Line" during interaction with adjustment handle
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
@@ -540,28 +490,10 @@ public:
 
 	// Input handling
 	UFUNCTION(BlueprintCallable, Category = Mouse)
-	void OnMButtonDown();
-
-	UFUNCTION(BlueprintCallable, Category = Mouse)
-	void OnMButtonUp();
-
-	UFUNCTION(BlueprintCallable, Category = Mouse)
 	void OnLButtonDown();
 
 	UFUNCTION(BlueprintCallable, Category = Mouse)
 	void OnLButtonUp();
-
-	UFUNCTION(BlueprintCallable, Category = Mouse)
-	void OnRButtonDown();
-
-	UFUNCTION(BlueprintCallable, Category = Mouse)
-	void OnRButtonUp();
-
-	UFUNCTION(BlueprintCallable, Category = Mouse)
-	void OnMouseMove();
-
-	UFUNCTION(BlueprintCallable, Category = Mouse)
-	bool IsHandleValid();
 
 	bool IsShiftDown() const;
 	bool IsControlDown() const;
@@ -573,18 +505,11 @@ public:
 	bool HandleEscapeKey();
 
 	UFUNCTION(BlueprintCallable, Category = Keyboard)
-	bool HandleBareControlKey(bool pressed);
-
-	UFUNCTION(BlueprintCallable, Category = Keyboard)
 	bool HandleTabKeyForDimensionString();
 
 	// Set dim. string tab state back to default
 	UFUNCTION(BlueprintCallable, Category = Keyboard)
 	void ResetDimensionStringTabState();
-
-	// Set dim. string tab state in portal back to default
-	UFUNCTION(BlueprintCallable, Category = Keyboard)
-	void ResetDimensionStringTabStatePortal();
 
 	UFUNCTION(BlueprintPure, Category = Keyboard)
 	FString GetTextBoxUserInput() { return TextBoxUserInput; }
