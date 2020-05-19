@@ -1816,7 +1816,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &ob
 	bool bApplyDelta = false;
 	if (bDeletingObjectsInGraph)
 	{
-		bApplyDelta = FGraph3D::GetDeltaForDeleteObjects(&TempVolumeGraph, vertex3DDeletions, edge3DDeletions, face3DDeletions, graphGroupDeletions, graphDelta, bDeleteConnected);
+		bApplyDelta = TempVolumeGraph.GetDeltaForDeleteObjects(vertex3DDeletions, edge3DDeletions, face3DDeletions, graphGroupDeletions, graphDelta, bDeleteConnected);
 	}
 
 	// If we're allowing room analysis, then start a macro since it may have side effects
@@ -2364,7 +2364,7 @@ bool FModumateDocument::MoveMetaVertices(UWorld *World, const TArray<int32> &Ver
 
 	TArray<FGraph3DDelta> deltas;
 
-	if (!FGraph3D::GetDeltaForVertexMovements(&TempVolumeGraph, VertexIDs, VertexPositions, deltas, NextID))
+	if (!TempVolumeGraph.GetDeltaForVertexMovements(VertexIDs, VertexPositions, deltas, NextID))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
@@ -2400,7 +2400,7 @@ bool FModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &Obje
 	}
 
 	TArray<FGraph3DDelta> graphDeltas;
-	if (!FGraph3D::GetDeltasForObjectJoin(&TempVolumeGraph, graphDeltas, ObjectIDs, NextID, objectType))
+	if (!TempVolumeGraph.GetDeltasForObjectJoin(graphDeltas, ObjectIDs, NextID, objectType))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
@@ -2603,7 +2603,7 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 	{
 	case EGraph3DObjectType::Vertex:
 	{
-		bValidDelta = (numPoints == 1) && FGraph3D::GetDeltaForVertexAddition(&TempVolumeGraph, points[0], graphDelta, NextID, id);
+		bValidDelta = (numPoints == 1) && TempVolumeGraph.GetDeltaForVertexAddition(points[0], graphDelta, NextID, id);
 		deltas = { graphDelta };
 	}
 		break;
@@ -2612,7 +2612,7 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 		TArray<int32> OutEdgeIDs;
 		if (numPoints == 2)
 		{
-			bValidDelta = FGraph3D::GetDeltaForEdgeAdditionWithSplit(&TempVolumeGraph, points[0], points[1], deltas, NextID, OutEdgeIDs, true);
+			bValidDelta = TempVolumeGraph.GetDeltaForEdgeAdditionWithSplit(points[0], points[1], deltas, NextID, OutEdgeIDs, true);
 		}
 		else
 		{
@@ -2627,12 +2627,12 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 			int32 addedFaceID;
 			TArray<int32> parentIds = { MOD_ID_NONE };
 			TMap<int32, int32> edgeMap;
-			bValidDelta = FGraph3D::GetDeltaForFaceAddition(&TempVolumeGraph, IDs, graphDelta, NextID, id, parentIds, edgeMap, addedFaceID);
+			bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(IDs, graphDelta, NextID, id, parentIds, edgeMap, addedFaceID);
 			deltas = { graphDelta };
 		}
 		else if (numPoints >= 3)
 		{
-			bValidDelta = FGraph3D::GetDeltaForFaceAddition(&TempVolumeGraph, points, deltas, NextID, id);
+			bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, deltas, NextID, id);
 		}
 	}
 		break;

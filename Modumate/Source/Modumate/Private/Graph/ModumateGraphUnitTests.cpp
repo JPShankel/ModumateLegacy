@@ -294,8 +294,6 @@ namespace Modumate
 
 	void SetupOneFace(FAutomationTestBase *Test, FGraph3D &Graph, FGraph3D& TempGraph, int32 &NextID)
 	{
-		FGraph3D tempGraph;
-
 		TArray<FVector> vertices = {
 			FVector(0.0f, 0.0f, 0.0f),
 			FVector(0.0f, 100.0f, 0.0f),
@@ -307,7 +305,7 @@ namespace Modumate
 		int32 ExistingID = 0;
 
 		Test->TestTrue(TEXT("Add Face"),
-			Graph.GetDeltaForFaceAddition(&TempGraph, vertices, OutDeltas, NextID, ExistingID));
+			Graph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 
 		ApplyDeltas(Test, Graph, TempGraph, OutDeltas);
 	}
@@ -395,7 +393,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("add edge"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 2, 1);
 
 		return true;
@@ -417,12 +415,12 @@ namespace Modumate
 
 		OutDeltas.SetNumZeroed(1);
 		TestTrue(TEXT("add vertex"),
-			FGraph3D::GetDeltaForVertexAddition(&tempGraph, position, OutDeltas[0], NextID, ExistingID));
+			tempGraph.GetDeltaForVertexAddition(position, OutDeltas[0], NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 1, 0);
 
 		OutDelta.Reset();
 		TestTrue(TEXT("attempt to add duplicate vertex"),
-			!FGraph3D::GetDeltaForVertexAddition(&tempGraph, position, OutDelta, NextID, ExistingID));
+			!tempGraph.GetDeltaForVertexAddition(position, OutDelta, NextID, ExistingID));
 
 		return true;
 	}
@@ -451,7 +449,7 @@ namespace Modumate
 			};
 
 			TestTrue(TEXT("add horizontal edge"),
-				FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
+				tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 			TestDeltas(this, OutDeltas, graph, tempGraph, 0, 2*(idx+1), idx+1);
 		}
 
@@ -481,7 +479,7 @@ namespace Modumate
 			}
 
 			TestTrue(TEXT("add vertical edge"),
-				FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
+				tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 			TestDeltas(this, OutDeltas, graph, tempGraph, dim * idx, numVertices, numEdges);
 		}
 
@@ -515,19 +513,19 @@ namespace Modumate
 		int32 ExistingID = 0;
 
 		TestTrue(TEXT("Add first face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { v1, v2, v3, v4 }, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ v1, v2, v3, v4 }, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
 
 		TestTrue(TEXT("Add second face that splits both faces in half"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { v5, v6, v7, v8 }, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ v5, v6, v7, v8 }, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 4, 10, 13);
 
 		TestTrue(TEXT("Add third face connecting two existing edges"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { v1, v5, v8, v4 }, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ v1, v5, v8, v4 }, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 5, 10, 15);
 
 		TestTrue(TEXT("Add fourth face "),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { v9, v10, v11, v12 }, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ v9, v10, v11, v12 }, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 7, 12, 20);
 
 		return true;
@@ -563,7 +561,7 @@ namespace Modumate
 			}
 
 			TestTrue(TEXT("Add face for splitting"),
-				FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+				tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 			TestDeltas(this, OutDeltas, graph, tempGraph, i, 4*i, 4*i);
 		}
 
@@ -585,7 +583,7 @@ namespace Modumate
 		int32 numEdges = ((numSplitFaces+1) * 4) + numSplitFaces * 5;
 
 		TestTrue(TEXT("split all faces (walls same height)"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, numFaces, numVertices, numEdges);
 
 		// wall through the faces (new face is taller)
@@ -606,7 +604,7 @@ namespace Modumate
 		numEdges = ((numSplitFaces+1) * 4) + numSplitFaces * 4;
 
 		TestTrue(TEXT("split all faces (walls same height)"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, numFaces, numVertices, numEdges);
 
 		// wall through the faces (new face is shorter)
@@ -627,7 +625,7 @@ namespace Modumate
 		numEdges = ((numSplitFaces+1) * 4) + numSplitFaces * 4;
 
 		TestTrue(TEXT("split all faces (walls same height)"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, numFaces, numVertices, numEdges);
 
 		// wall through the faces (no intersection splits an intersecting edge)
@@ -648,7 +646,7 @@ namespace Modumate
 		numEdges = ((numSplitFaces+1) * 4) + numSplitFaces * 3;
 
 		TestTrue(TEXT("split all faces (walls same height)"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, numFaces, numVertices, numEdges);
 
 		// wall tangent to a side of the faces (same height)
@@ -669,7 +667,7 @@ namespace Modumate
 		numEdges = ((numSplitFaces+1) * 4) + numSplitFaces * 2;
 
 		TestTrue(TEXT("split all faces (walls same height)"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, numFaces, numVertices, numEdges);
 
 
@@ -696,7 +694,7 @@ namespace Modumate
 		int32 ExistingID = 0;
 
 		TestTrue(TEXT("Add first face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
 
 		vertices = {
@@ -707,7 +705,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add second face that splits both faces in half"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 4, 10, 13);
 
 		vertices = {
@@ -718,7 +716,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Horizontal plane - split into four pieces along the existing bottom edges"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 8, 10, 17);
 
 		vertices = {
@@ -729,7 +727,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Horizontal plane - splits vertical planes into two"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 13, 19, 30);
 
 		vertices = {
@@ -740,7 +738,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Horizontal plane - intersection exists but doesn't split any faces"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 14, 24, 36);
 
 		return true;
@@ -773,15 +771,15 @@ namespace Modumate
 		int32 ExistingID = 0;
 
 		TestTrue(TEXT("Add first face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { v1, v2, v3, v4 }, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ v1, v2, v3, v4 }, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
 
 		TestTrue(TEXT("Add second face, splitting first face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { v5, v6, v7, v8 }, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ v5, v6, v7, v8 }, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 8, 10);
 
 		TestTrue(TEXT("Add third face, splitting first face and second face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { v9, v10, v11, v12 }, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ v9, v10, v11, v12 }, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 6, 12, 17);
 
 		return true;
@@ -823,7 +821,7 @@ namespace Modumate
 
 		TArray<FGraph3DDelta> OutDeltas;
 		TestTrue(TEXT("move face"),
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, vertexIDs, newPositions, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements(vertexIDs, newPositions, OutDeltas, NextID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
 
 		// verify vertex positions
@@ -832,7 +830,7 @@ namespace Modumate
 		// test that non-planar move fails
 		OutDeltas.Reset();
 		TestTrue(TEXT("move face"),
-			!FGraph3D::GetDeltaForVertexMovements(&tempGraph, { vertexIDs[0] }, { newPositions[0] }, OutDeltas, NextID));
+			!tempGraph.GetDeltaForVertexMovements({ vertexIDs[0] }, { newPositions[0] }, OutDeltas, NextID));
 
 		return true;
 	}
@@ -865,7 +863,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("add second face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, secondVertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(secondVertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 8, 8);
 
 		TestKnownVertexLocations(this, graph, firstVertices);
@@ -874,7 +872,7 @@ namespace Modumate
 		auto vertex = graph.FindVertex(FVector(200.0f, 200.0f, 0.0f));
 
 		TestTrue(TEXT("join vertex"),
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, { vertex->ID }, { FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements({ vertex->ID }, { FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 7, 8);
 
 		// verify against correct set of positions	
@@ -910,7 +908,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("add second face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, secondVertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(secondVertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 8, 8);
 
 		TestKnownVertexLocations(this, graph, secondVertices);
@@ -918,7 +916,7 @@ namespace Modumate
 		auto secondVertex = graph.FindVertex(FVector(300.0f, 200.0f, 100.0f));
 
 		TestTrue(TEXT("join edges"),
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, { vertex->ID, secondVertex->ID }, { FVector(0.0f, 100.0f, 0.0f), FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements({ vertex->ID, secondVertex->ID }, { FVector(0.0f, 100.0f, 0.0f), FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
 
 		return true;
@@ -948,7 +946,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("add second face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, secondVertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(secondVertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 8, 8);
 
 		TestKnownVertexLocations(this, graph, secondVertices);
@@ -958,27 +956,27 @@ namespace Modumate
 		TArray<int32> moveVertexIDs = { vertex->ID, secondVertex->ID };
 		
 		TestTrue(TEXT("Non-planar join edge and vertices."),
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, moveVertexIDs, { FVector(100.0f, 0.0f, 0.0f), FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, 0.0f, 0.0f), FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 6, 7);
 
 		TestTrue(TEXT("Split edge twice."), 
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, moveVertexIDs, { FVector(100.0f, 25.0f, 0.0f), FVector(100.0f, 75.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, 25.0f, 0.0f), FVector(100.0f, 75.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 8, 9);
 
 		TestTrue(TEXT("Join one vertex and split edge."),
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, moveVertexIDs, { FVector(100.0f, 25.0f, 0.0f), FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, 25.0f, 0.0f), FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 7, 8);
 
 		TestTrue(TEXT("Moved edge gets split twice."), 
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, moveVertexIDs, { FVector(100.0f, -25.0f, 0.0f), FVector(100.0f, 125.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, -25.0f, 0.0f), FVector(100.0f, 125.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 8, 9);
 
 		TestTrue(TEXT("Join one vertex and split moved edge."),
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, moveVertexIDs, { FVector(100.0f, -25.0f, 0.0f), FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, -25.0f, 0.0f), FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 7, 8);
 
 		TestTrue(TEXT("Split moved edge and original edge."),
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, moveVertexIDs, { FVector(100.0f, -25.0f, 0.0f), FVector(100.0f, 25.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, -25.0f, 0.0f), FVector(100.0f, 25.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 8, 9);
 
 		// horizontal face separate from the first face
@@ -990,7 +988,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("add third face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, thirdVertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(thirdVertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 12, 12);
 
 		// vertical face on the edge of the third face that is involved in the joins/splits
@@ -1002,27 +1000,27 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("add fourth face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, fourthVertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(fourthVertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 4, 14, 15);
 
 		TestTrue(TEXT("join with two edges, make edge connecting the faces"),
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, moveVertexIDs, { FVector(100.0f, 0.0f, 0.0f), FVector(100.0f, 225.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, 0.0f, 0.0f), FVector(100.0f, 225.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 4, 12, 15);
 		
 		TestTrue(TEXT("join with one edge"),
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, moveVertexIDs, { FVector(100.0f, 0.0f, 0.0f), FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, 0.0f, 0.0f), FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 4, 12, 14);
 
 		TestTrue(TEXT("join with two vertices, zero edges"),
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, moveVertexIDs, { FVector(100.0f, 100.0f, 0.0f), FVector(100.0f, 125.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, 100.0f, 0.0f), FVector(100.0f, 125.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 4, 12, 15);
 
 		TestTrue(TEXT("split edge on one face, join vertex on other face"),
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, moveVertexIDs, { FVector(100.0f, 100.0f, 0.0f), FVector(100.0f, 200.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, 100.0f, 0.0f), FVector(100.0f, 200.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 4, 13, 16);
 
 		TestTrue(TEXT("split edge on two faces"),
-			FGraph3D::GetDeltaForVertexMovements(&tempGraph, moveVertexIDs, { FVector(100.0f, 75.0f, 0.0f), FVector(100.0f, 200.0f, 0.0f) }, OutDeltas, NextID));
+			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, 75.0f, 0.0f), FVector(100.0f, 200.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 4, 14, 17);
 
 		return true;
@@ -1039,22 +1037,22 @@ namespace Modumate
 		int32 NextID = 1;
 		int32 ExistingID = 0;
 
-		FGraph3D::GetDeltaForVertexAddition(&tempGraph, FVector(0.0f, 0.0f, 0.0f), OutDelta, NextID, ExistingID);
-		FGraph3D::GetDeltaForVertexAddition(&tempGraph, FVector(0.0f, 100.0f, 0.0f), OutDelta, NextID, ExistingID);
-		FGraph3D::GetDeltaForVertexAddition(&tempGraph, FVector(0.0f, 100.0f, 100.0f), OutDelta, NextID, ExistingID);
+		tempGraph.GetDeltaForVertexAddition(FVector(0.0f, 0.0f, 0.0f), OutDelta, NextID, ExistingID);
+		tempGraph.GetDeltaForVertexAddition(FVector(0.0f, 100.0f, 0.0f), OutDelta, NextID, ExistingID);
+		tempGraph.GetDeltaForVertexAddition(FVector(0.0f, 100.0f, 100.0f), OutDelta, NextID, ExistingID);
 		graph.ApplyDelta(OutDelta);
 
 		TestGraph(this, graph, 0, 3, 0);
 		OutDelta.Reset();
 
-		FGraph3D::GetDeltaForEdgeAddition(&tempGraph, FVertexPair(1, 2), OutDelta, NextID, ExistingID);
-		FGraph3D::GetDeltaForEdgeAddition(&tempGraph, FVertexPair(2, 3), OutDelta, NextID, ExistingID);
+		tempGraph.GetDeltaForEdgeAddition(FVertexPair(1, 2), OutDelta, NextID, ExistingID);
+		tempGraph.GetDeltaForEdgeAddition(FVertexPair(2, 3), OutDelta, NextID, ExistingID);
 		graph.ApplyDelta(OutDelta);
 
 		TestGraph(this, graph, 0, 3, 2);
 		OutDelta.Reset();
 
-		FGraph3D::GetDeltaForEdgeAddition(&tempGraph, FVertexPair(1, 3), OutDelta, NextID, ExistingID);
+		tempGraph.GetDeltaForEdgeAddition(FVertexPair(1, 3), OutDelta, NextID, ExistingID);
 		graph.ApplyDelta(OutDelta);
 		TestGraph(this, graph, 0, 3, 3);
 		OutDelta.Reset();
@@ -1070,7 +1068,7 @@ namespace Modumate
 		TMap<int32, int32> edgeMap;
 		int32 AddedFaceID;
 		FGraph3D::CloneFromGraph(tempGraph, graph);
-		FGraph3D::GetDeltaForFaceAddition(&tempGraph, OutVertexIDs[0], OutDelta, NextID, ExistingID, InParentIDs, edgeMap, AddedFaceID);
+		tempGraph.GetDeltaForFaceAddition(OutVertexIDs[0], OutDelta, NextID, ExistingID, InParentIDs, edgeMap, AddedFaceID);
 		OutDeltas = { OutDelta };
 
 		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 3, 3);
@@ -1102,7 +1100,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("split face with edge"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
 
 		return true;
@@ -1130,19 +1128,19 @@ namespace Modumate
 
 		// draw first face with edges
 		TestTrue(TEXT("edge 1"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[0], vertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 2, 1);
 
 		TestTrue(TEXT("edge 2"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, vertices[1], vertices[2], OutDeltas, NextID, OutEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[1], vertices[2], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 3, 2);
 
 		TestTrue(TEXT("edge 3"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, vertices[2], vertices[3], OutDeltas, NextID, OutEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[2], vertices[3], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 0, 4, 3);
 
 		TestTrue(TEXT("edge 4"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, vertices[3], vertices[0], OutDeltas, NextID, OutEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[3], vertices[0], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
 
 		// single edge across face
@@ -1151,7 +1149,7 @@ namespace Modumate
 			FVector(50.0f, 100.0f, 0.0f)
 		};
 		TestTrue(TEXT("split edge"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, edgeVertices[0], edgeVertices[1], OutDeltas, NextID, OutEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(edgeVertices[0], edgeVertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
 
 		// draw box in corner
@@ -1161,10 +1159,10 @@ namespace Modumate
 			FVector(100.0f, 10.0f, 0.0f)
 		};
 		TestTrue(TEXT("box edge 1"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, edgeVertices[0], edgeVertices[1], OutDeltas, NextID, OutEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(edgeVertices[0], edgeVertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 8, 9);
 		TestTrue(TEXT("box edge 2"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, edgeVertices[1], edgeVertices[2], OutDeltas, NextID, OutEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(edgeVertices[1], edgeVertices[2], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 9, 11);
 
 		// draw a few edges across face, and verify no extra faces are found
@@ -1176,15 +1174,15 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("edge 1"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, edgeVertices[0], edgeVertices[1], OutDeltas, NextID, OutEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(edgeVertices[0], edgeVertices[1], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 11, 13);
 
 		TestTrue(TEXT("edge 2"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, edgeVertices[1], edgeVertices[2], OutDeltas, NextID, OutEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(edgeVertices[1], edgeVertices[2], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 12, 14);
 
 		TestTrue(TEXT("edge 3"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, edgeVertices[2], edgeVertices[3], OutDeltas, NextID, OutEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(edgeVertices[2], edgeVertices[3], OutDeltas, NextID, OutEdgeIDs, true));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 4, 13, 16);
 
 		return true;
@@ -1215,24 +1213,24 @@ namespace Modumate
 		FVector offset = FVector(0.0f, 0.0f, 100.0f);
 
 		TestTrue(TEXT("Add first face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 6, 6);
 
 		// add some vertical faces around the perimeter
 		TestTrue(TEXT("Add vertical face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { vertices[0], vertices[1], vertices[1] + offset, vertices[0] + offset }, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ vertices[0], vertices[1], vertices[1] + offset, vertices[0] + offset }, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 8, 9);
 
 		TestTrue(TEXT("Add vertical face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { vertices[1], vertices[2], vertices[2] + offset, vertices[1] + offset }, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ vertices[1], vertices[2], vertices[2] + offset, vertices[1] + offset }, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 9, 11);
 
 		TestTrue(TEXT("Add vertical face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { vertices[3], vertices[4], vertices[4] + offset, vertices[3] + offset }, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ vertices[3], vertices[4], vertices[4] + offset, vertices[3] + offset }, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 4, 11, 14);
 
 		TestTrue(TEXT("Add vertical face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { vertices[4], vertices[5], vertices[5] + offset, vertices[4] + offset }, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ vertices[4], vertices[5], vertices[5] + offset, vertices[4] + offset }, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 5, 12, 16);
 		
 		// add vertical faces through the center
@@ -1240,13 +1238,13 @@ namespace Modumate
 		TArray<FVector> middleVertices = { vertices[1], middlePoint, middlePoint + offset, vertices[1] + offset };
 
 		TestTrue(TEXT("Add middle face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, middleVertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(middleVertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 6, 14, 19);
 
 		// second vertical face should split first face
 		middleVertices = { vertices[4], middlePoint, middlePoint + offset, vertices[4] + offset };
 		TestTrue(TEXT("Add middle face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, middleVertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(middleVertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 8, 14, 21);
 
 		return true;
@@ -1300,7 +1298,7 @@ namespace Modumate
 		FVector newCornerTop = FVector(corner1.X, corner2.Y, cornert1.Z);
 
 		TestTrue(TEXT("face one"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { corner1, cornert1, newCornerTop, newCorner },OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ corner1, cornert1, newCornerTop, newCorner },OutDeltas, NextID, ExistingID));
 
 		expectedFaces += 1;
 		expectedVertices += 2;
@@ -1309,7 +1307,7 @@ namespace Modumate
 
 		//*
 		TestTrue(TEXT("face two, which should split the floor"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, { corner2, newCorner, newCornerTop, cornert2 },OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition({ corner2, newCorner, newCornerTop, cornert2 },OutDeltas, NextID, ExistingID));
 
 		expectedFaces += 2;
 		expectedVertices += 0;
@@ -1340,7 +1338,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add first face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
 
 		vertices = {
@@ -1351,7 +1349,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add overlapping face, making box in corner"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 7, 8);
 
 		vertices = {
@@ -1362,7 +1360,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add overlapping face, covering half the existing face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 6, 7);
 
 		// TODO: fix ensureAlways when face matches exactly and add unit test
@@ -1375,7 +1373,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add overlapping face that should create three even faces"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 3, 8, 10);
 
 		vertices = {
@@ -1386,7 +1384,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add completely overlapping face that should create three even faces"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 3, 8, 10);
 
 		vertices = {
@@ -1397,7 +1395,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add completely overlapping face that does not intersect with existing face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 8, 8);
 
 		vertices = {
@@ -1408,7 +1406,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add first face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 3, 10, 12);
 
 		return true;
@@ -1445,17 +1443,17 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add second face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, secondVertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(secondVertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
 
 		OutDeltas.AddDefaulted();
 		TestTrue(TEXT("Delete face, including connected edges and vertices"),
-			FGraph3D::GetDeltaForDeleteObjects(&tempGraph, {}, {}, { firstFaceID }, {}, OutDeltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({}, {}, { firstFaceID }, {}, OutDeltas[0], true));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 4, 4);
 
 		OutDeltas.AddDefaulted();
 		TestTrue(TEXT("Delete face, excluding connected edges and vertices"),
-			FGraph3D::GetDeltaForDeleteObjects(&tempGraph, {}, {}, { firstFaceID }, {}, OutDeltas[0], false));
+			tempGraph.GetDeltaForDeleteObjects({}, {}, { firstFaceID }, {}, OutDeltas[0], false));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 6, 7);
 
 		return true;
@@ -1487,7 +1485,7 @@ namespace Modumate
 		for (auto vertex : vertices)
 		{
 			TestTrue(TEXT("Add vertex"),
-				FGraph3D::GetDeltaForVertexAddition(&tempGraph, vertex, deltas[0], NextID, ExistingID));
+				tempGraph.GetDeltaForVertexAddition(vertex, deltas[0], NextID, ExistingID));
 		}
 		TestDeltas(this, deltas, graph, tempGraph, 0, 6, 0);
 
@@ -1498,19 +1496,19 @@ namespace Modumate
 
 			OutDeltas.AddDefaulted(2);
 			TestTrue(TEXT("Add edge"),
-				FGraph3D::GetDeltaForEdgeAddition(&tempGraph, edge1, OutDeltas[0], NextID, ExistingID));
+				tempGraph.GetDeltaForEdgeAddition(edge1, OutDeltas[0], NextID, ExistingID));
 			TestTrue(TEXT("Add edge"),
-				FGraph3D::GetDeltaForEdgeAddition(&tempGraph, edge2, OutDeltas[0], NextID, ExistingID));
+				tempGraph.GetDeltaForEdgeAddition(edge2, OutDeltas[0], NextID, ExistingID));
 			ApplyDeltas(this, graph, tempGraph, OutDeltas);
 			TestTrue(TEXT("Join edge"),
-				FGraph3D::GetDeltaForEdgeJoin(&tempGraph, OutDeltas[1], NextID, TPair<int32, int32>(NextID - 1, NextID - 2)));
+				tempGraph.GetDeltaForEdgeJoin(OutDeltas[1], NextID, TPair<int32, int32>(NextID - 1, NextID - 2)));
 			TArray<FGraph3DDelta> partial = { OutDeltas[0] };
 			ApplyInverseDeltas(this, graph, tempGraph, partial);
 			TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 0, 5, 1);
 		}
 
 		TestTrue(TEXT("Add face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 6, 6);
 
 		// only one face
@@ -1522,7 +1520,7 @@ namespace Modumate
 			{
 				OutDeltas.AddDefaulted();
 				TestTrue(TEXT("Join edge"),
-					FGraph3D::GetDeltaForEdgeJoin(&tempGraph, OutDeltas[0], NextID, TPair<int32, int32>(face.EdgeIDs[edgeIdx], face.EdgeIDs[(edgeIdx + 1) % face.EdgeIDs.Num()])));
+					tempGraph.GetDeltaForEdgeJoin(OutDeltas[0], NextID, TPair<int32, int32>(face.EdgeIDs[edgeIdx], face.EdgeIDs[(edgeIdx + 1) % face.EdgeIDs.Num()])));
 				TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 5, 5);
 			}
 		}
@@ -1549,7 +1547,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add first face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
 
 		vertices = {
@@ -1560,14 +1558,14 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add second face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
 		
 		TArray<int32> faceIDs;
 		graph.GetFaces().GenerateKeyArray(faceIDs);
 
 		TestTrue(TEXT("join faces"),
-			FGraph3D::GetDeltasForObjectJoin(&tempGraph, OutDeltas, faceIDs, NextID, EGraph3DObjectType::Face));
+			tempGraph.GetDeltasForObjectJoin(OutDeltas, faceIDs, NextID, EGraph3DObjectType::Face));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 4, 4);
 
 		vertices = {
@@ -1578,11 +1576,11 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add third face that prevents the original join"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, OutDeltas, NextID, ExistingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 8, 10);
 
 		TestTrue(TEXT("fail to join faces when there is another face connected to the edge"),
-			!FGraph3D::GetDeltasForObjectJoin(&tempGraph, OutDeltas, faceIDs, NextID, EGraph3DObjectType::Face));
+			!tempGraph.GetDeltasForObjectJoin(OutDeltas, faceIDs, NextID, EGraph3DObjectType::Face));
 		ResetGraph(this, OutDeltas, graph, tempGraph);
 
 		return true;
@@ -1622,7 +1620,7 @@ namespace Modumate
 		}
 
 		TestTrue(TEXT("join one"),
-			FGraph3D::GetDeltasForFaceJoin(&tempGraph, OutDeltas, { bigJoinFaceID, smallJoinFaceID1 }, NextID));
+			tempGraph.GetDeltasForFaceJoin(OutDeltas, { bigJoinFaceID, smallJoinFaceID1 }, NextID));
 
 		// verify there is one added face and find it
 		// TODO: potentially more functions to help verify the deletions as well
@@ -1648,7 +1646,7 @@ namespace Modumate
 		TestDeltas(this, OutDeltas, graph, tempGraph, expectedFaces, expectedVertices, expectedEdges);
 
 		TestTrue(TEXT("join two"),
-			FGraph3D::GetDeltasForFaceJoin(&tempGraph, OutDeltas, { addedFaceID, smallJoinFaceID2 }, NextID));
+			tempGraph.GetDeltasForFaceJoin(OutDeltas, { addedFaceID, smallJoinFaceID2 }, NextID));
 
 		expectedFaces -= 1;
 		expectedVertices -= 1;
@@ -1682,7 +1680,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, deltas, nextID, existingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, deltas, nextID, existingID));
 		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
 
 		int32 groupID = 1337;
@@ -1720,7 +1718,7 @@ namespace Modumate
 		};
 
 		TestTrue(TEXT("Add second face"),
-			FGraph3D::GetDeltaForFaceAddition(&tempGraph, vertices, deltas, nextID, existingID));
+			tempGraph.GetDeltaForFaceAddition(vertices, deltas, nextID, existingID));
 		TestDeltas(this, deltas, graph, tempGraph, 2, 6, 7);
 
 		// Make sure the new edges didn't inherit the group, and the old edges kept it
@@ -1739,7 +1737,7 @@ namespace Modumate
 		};
 		TArray<int32> newEdgeIDs;
 		TestTrue(TEXT("Split faces with new edge"),
-			FGraph3D::GetDeltaForEdgeAdditionWithSplit(&tempGraph, vertices[0], vertices[1], deltas, nextID, newEdgeIDs, true));
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[0], vertices[1], deltas, nextID, newEdgeIDs, true));
 		TestDeltas(this, deltas, graph, tempGraph, 4, 9, 12);
 
 		// And make sure that the group still has the right number of members, including split edges

@@ -135,45 +135,45 @@ namespace Modumate
 	public:
 
 		// direct addition functions
-		static bool GetDeltaForVertexAddition(FGraph3D *Graph, const FVector &VertexPos, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID);
-		static bool GetDeltaForEdgeAddition(FGraph3D *Graph, const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> &ParentIDs = TArray<int32>());
-		static bool GetDeltaForFaceAddition(FGraph3D *Graph, const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID);
+		bool GetDeltaForVertexAddition(const FVector &VertexPos, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID);
+		bool GetDeltaForEdgeAddition(const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> &ParentIDs = TArray<int32>());
+		bool GetDeltaForFaceAddition(const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID);
 
 		// Propagates deletion to connected objects
-		static bool GetDeltaForDeleteObjects(FGraph3D *Graph, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs, const TArray<int32> &FaceIDs, const TArray<int32> &GroupIDs, FGraph3DDelta &OutDelta, bool bGatherEdgesFromFaces);
+		bool GetDeltaForDeleteObjects(const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs, const TArray<int32> &FaceIDs, const TArray<int32> &GroupIDs, FGraph3DDelta &OutDelta, bool bGatherEdgesFromFaces);
 		// Deletes only the provided objects, used as in intermediate stage in other delta functions
-		static bool GetDeltaForDeletions(FGraph3D *Graph, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs, const TArray<int32> &FaceIDs, FGraph3DDelta &OutDelta);
+		bool GetDeltaForDeletions(const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs, const TArray<int32> &FaceIDs, FGraph3DDelta &OutDelta);
 		// Creates Delta based on pending deleted objects
-		static bool GetDeltaForDeleteObjects(const TSet<const FGraph3DVertex *> &VerticesToDelete, const TSet<const FGraph3DEdge *> &EdgesToDelete, const TSet<const FGraph3DFace *> &FacesToDelete, FGraph3DDelta &OutDelta);
+		bool GetDeltaForDeleteObjects(const TSet<const FGraph3DVertex *> &VerticesToDelete, const TSet<const FGraph3DEdge *> &EdgesToDelete, const TSet<const FGraph3DFace *> &FacesToDelete, FGraph3DDelta &OutDelta);
 
-		static bool GetDeltaForVertexMovements(FGraph3D *Graph, const TArray<int32> &VertexIDs, const TArray<FVector> &NewVertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID);
+		bool GetDeltaForVertexMovements(const TArray<int32> &VertexIDs, const TArray<FVector> &NewVertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID);
 
 		// calculates splits, etc. then will call the direct versions of the function
-		static bool GetDeltaForMultipleEdgeAdditions(FGraph3D *Graph, const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> &ParentIDs = TArray<int32>());
-		static bool GetDeltaForEdgeAdditionWithSplit(FGraph3D *Graph, const FVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs);
-		static bool GetDeltaForEdgeAdditionWithSplit(FGraph3D *Graph, const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs, bool bCheckFaces = false);
-		static bool GetDeltaForFaceAddition(FGraph3D *Graph, const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID);
+		bool GetDeltaForMultipleEdgeAdditions(const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> &ParentIDs = TArray<int32>());
+		bool GetDeltaForEdgeAdditionWithSplit(const FVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs);
+		bool GetDeltaForEdgeAdditionWithSplit(const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs, bool bCheckFaces = false);
+		bool GetDeltaForFaceAddition(const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID);
 
-		static bool GetDeltasForUpdateFaces(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 EdgeID, FPlane InPlane = FPlane(EForceInit::ForceInitToZero));
+		bool GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 EdgeID, FPlane InPlane = FPlane(EForceInit::ForceInitToZero));
 
 		// provides deltas for splitting edges and adjusting faces after a graph operation
-		static bool GetDeltasForEdgeSplits(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, TArray<int32> &AddedEdgeIDs, int32 &NextID); 
+		bool GetDeltasForEdgeSplits(TArray<FGraph3DDelta> &OutDeltas, TArray<int32> &AddedEdgeIDs, int32 &NextID); 
 
-		static bool GetDeltaForFaceVertexAddition(FGraph3D *Graph, int32 EdgeIDToRemove, int32 FaceID, int32 VertexIDToAdd, FGraph3DDelta &OutDelta);
-		static bool GetDeltaForFaceVertexRemoval(FGraph3D *Graph, int32 VertexIDToRemove, FGraph3DDelta &OutDelta);
+		bool GetDeltaForFaceVertexAddition(int32 EdgeIDToRemove, int32 FaceID, int32 VertexIDToAdd, FGraph3DDelta &OutDelta);
+		bool GetDeltaForFaceVertexRemoval(int32 VertexIDToRemove, FGraph3DDelta &OutDelta);
 
-		static bool GetDeltaForVertexList(FGraph3D *Graph, TArray<int32> &OutVertexIDs, const TArray<FVector> &InVertexPositions, FGraph3DDelta &OutDelta, int32 &NextID);
+		bool GetDeltaForVertexList(TArray<int32> &OutVertexIDs, const TArray<FVector> &InVertexPositions, FGraph3DDelta &OutDelta, int32 &NextID);
 
-		static bool GetDeltasForEdgeAtSplit(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &FaceID, TSet<int32> &OutEdges);
+		bool GetDeltasForEdgeAtSplit(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &FaceID, TSet<int32> &OutEdges);
 
-		static bool GetDeltaForEdgeSplit(FGraph3D *Graph, FGraph3DDelta &OutDelta, int32 edgeID, int32 vertexID, int32 &NextID, int32 &ExistingID);
+		bool GetDeltaForEdgeSplit(FGraph3DDelta &OutDelta, int32 edgeID, int32 vertexID, int32 &NextID, int32 &ExistingID);
 
-		static bool GetDeltasForObjectJoin(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, const TArray<int32> &ObjectIDs, int32 &NextID, EGraph3DObjectType ObjectType);
-		static bool GetDeltasForReduceEdges(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, int32 FaceID, int32 &NextID);
+		bool GetDeltasForObjectJoin(TArray<FGraph3DDelta> &OutDeltas, const TArray<int32> &ObjectIDs, int32 &NextID, EGraph3DObjectType ObjectType);
+		bool GetDeltasForReduceEdges(TArray<FGraph3DDelta> &OutDeltas, int32 FaceID, int32 &NextID);
 
-		static bool GetDeltaForVertexJoin(FGraph3D *Graph, FGraph3DDelta &OutDelta, int32 &NextID, int32 SavedVertexID, int32 RemovedVertexID);
-		static bool GetDeltaForEdgeJoin(FGraph3D *Graph, FGraph3DDelta &OutDelta, int32 &NextID, TPair<int32, int32> EdgeIDs);
-		static bool GetDeltasForFaceJoin(FGraph3D *Graph, TArray<FGraph3DDelta> &OutDeltas, const TArray<int32> &FaceIDs, int32 &NextID);
-		static bool GetSharedSeamForFaces(FGraph3D *Graph, const int32 FaceID, const int32 OtherFaceID, const int32 SharedIdx, int32 &SeamStartIdx, int32 &SeamEndIdx, int32 &SeamLength);
+		bool GetDeltaForVertexJoin(FGraph3DDelta &OutDelta, int32 &NextID, int32 SavedVertexID, int32 RemovedVertexID);
+		bool GetDeltaForEdgeJoin(FGraph3DDelta &OutDelta, int32 &NextID, TPair<int32, int32> EdgeIDs);
+		bool GetDeltasForFaceJoin(TArray<FGraph3DDelta> &OutDeltas, const TArray<int32> &FaceIDs, int32 &NextID);
+		bool GetSharedSeamForFaces(const int32 FaceID, const int32 OtherFaceID, const int32 SharedIdx, int32 &SeamStartIdx, int32 &SeamEndIdx, int32 &SeamLength);
 	};
 }
