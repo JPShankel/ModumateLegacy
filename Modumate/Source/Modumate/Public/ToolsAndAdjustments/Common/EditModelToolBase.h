@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "EditModelToolInterface.h"
+#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "CoreMinimal.h"
 #include "Engine/Engine.h"
-#include "ModumateShoppingItem.h"
+#include "Database/ModumateShoppingItem.h"
 
 #include "EditModelToolBase.generated.h"
 

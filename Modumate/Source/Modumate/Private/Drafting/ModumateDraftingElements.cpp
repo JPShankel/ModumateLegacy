@@ -1,5 +1,5 @@
-#include "ModumateDraftingElements.h"
-#include "ModumateFunctionLibrary.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 
 namespace Modumate
 {

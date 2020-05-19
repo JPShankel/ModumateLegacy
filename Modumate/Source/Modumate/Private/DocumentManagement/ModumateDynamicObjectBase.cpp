@@ -1,9 +1,9 @@
-#include "ModumateDynamicObjectBase.h"
-#include "AdjustmentHandleActor_CPP.h"
+#include "DocumentManagement/ModumateDynamicObjectBase.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
-#include "HUDDrawWidget_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelGameMode_CPP.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
 
 namespace Modumate
 {

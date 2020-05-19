@@ -1,15 +1,15 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelCabinetTool.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "LineActor.h"
-#include "ModumateCommands.h"
+#include "ToolsAndAdjustments/Tools/EditModelCabinetTool.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/LineActor.h"
+#include "DocumentManagement/ModumateCommands.h"
 #include "Algo/Transform.h"
-#include "ModumateObjectInstanceCabinets.h"
-#include "ModumateFunctionLibrary.h"
+#include "DocumentManagement/ModumateObjectInstanceCabinets.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 
 using namespace Modumate;
 

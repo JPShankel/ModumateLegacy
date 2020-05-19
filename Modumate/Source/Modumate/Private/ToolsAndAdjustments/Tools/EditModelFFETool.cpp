@@ -1,14 +1,14 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelFFETool.h"
-#include "CompoundMeshActor.h"
-#include "EditModelGameState_CPP.h"
-#include "ModumateCommands.h"
-#include "EditModelGameMode_CPP.h"
-#include "ModumateObjectDatabase.h"
-#include "ModumateObjectStatics.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
+#include "ToolsAndAdjustments/Tools/EditModelFFETool.h"
+#include "UnrealClasses/CompoundMeshActor.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "Database/ModumateObjectDatabase.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 using namespace Modumate;
 

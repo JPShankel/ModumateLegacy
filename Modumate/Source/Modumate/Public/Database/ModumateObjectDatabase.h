@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include <functional>
-#include "ModumateObjectAssembly.h"
-#include "ModumateLayerPattern.h"
-#include "ModumateDecisionTree.h"
-#include "ModumateDataCollection.h"
-#include "ModumateSerialization.h"
-#include "ModumateTypes.h"
-#include "ModumateBIMSchema.h"
+#include "Database/ModumateObjectAssembly.h"
+#include "Database/ModumateLayerPattern.h"
+#include "ModumateCore/ModumateDecisionTree.h"
+#include "Database/ModumateDataCollection.h"
+#include "DocumentManagement/ModumateSerialization.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "Database/ModumateBIMSchema.h"
 #include "ModumateDataTables.h"
-#include "ModumatePresetManager.h"
-#include "ModumateRoomStatics.h"
+#include "DocumentManagement/ModumatePresetManager.h"
+#include "ModumateCore/ModumateRoomStatics.h"
 
 /**
  *

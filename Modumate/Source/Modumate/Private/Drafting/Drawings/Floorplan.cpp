@@ -1,9 +1,9 @@
-#include "Floorplan.h"
+#include "Drafting/Drawings/Floorplan.h"
 
-#include "DraftingManager.h"
-#include "DrawingArea.h"
-#include "ModumateDocument.h"
-#include "ModumateObjectInstance.h"
+#include "Drafting/DraftingManager.h"
+#include "Drafting/Drawings/DrawingArea.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 
 using namespace Modumate::Units;
 

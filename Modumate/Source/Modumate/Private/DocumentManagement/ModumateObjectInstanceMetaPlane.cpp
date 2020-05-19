@@ -1,12 +1,12 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceMetaPlane.h"
+#include "DocumentManagement/ModumateObjectInstanceMetaPlane.h"
 
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "ModumateDocument.h"
-#include "ModumateObjectStatics.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 
 namespace Modumate
 {

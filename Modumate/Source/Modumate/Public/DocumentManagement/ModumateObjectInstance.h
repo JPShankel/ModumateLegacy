@@ -6,15 +6,15 @@
 
 #include "CoreMinimal.h"
 #include "Runtime/Engine/Classes/Materials/MaterialInterface.h"
-#include "Object.h"
+#include "UObject/Object.h"
 #include "Engine/StaticMeshActor.h"
 
-#include "ModumateSerialization.h"
-#include "ModumateDimensionString.h"
-#include "DynamicMeshActor.h"
-#include "ModumateTypes.h"
-#include "ModumateDelta.h"
-#include "ModumateCommands.h"
+#include "DocumentManagement/ModumateSerialization.h"
+#include "ModumateCore/ModumateDimensionString.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "DocumentManagement/ModumateDelta.h"
+#include "DocumentManagement/ModumateCommands.h"
 
 /**
  *

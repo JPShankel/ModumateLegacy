@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EditModelToolBase.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 
 #include "EditModelWandTool.generated.h"
 

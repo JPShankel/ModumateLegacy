@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "EditModelToolbase.h"
-#include "EditModelSelectTool.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
 
 #include "EditModelRotateTool.generated.h"
 

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateGameModeBase.h"
+#include "UnrealClasses/ModumateGameModeBase.h"
 #include "Styling/SlateBrush.h"
 #include "Templates/SharedPointer.h"
 

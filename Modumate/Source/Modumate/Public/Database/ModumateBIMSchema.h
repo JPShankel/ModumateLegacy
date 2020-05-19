@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateObjectEnums.h"
-#include "ModumateConsoleCommand.h"
+#include "Database/ModumateObjectEnums.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
 
 struct MODUMATE_API FBIMPropertySheetRecord;
 

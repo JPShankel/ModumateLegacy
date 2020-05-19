@@ -1,8 +1,8 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "ModumateDraftingElements.h"
-#include "DraftingManager.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "Drafting/DraftingManager.h"
 
 class UWorld;
 

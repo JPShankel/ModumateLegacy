@@ -1,5 +1,5 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
-#include "Modumate.h"
+#include "UnrealClasses/Modumate.h"
 
 #include "GeneralProjectSettings.h"
 #include "Modules/ModuleManager.h"

@@ -1,19 +1,19 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstancePlaneHostedObj.h"
+#include "DocumentManagement/ModumateObjectInstancePlaneHostedObj.h"
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelAdjustmentHandleBase.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPolyAdjustmentHandles.h"
-#include "HUDDrawWidget_CPP.h"
-#include "Graph3D.h"
-#include "ModumateDocument.h"
-#include "ModumateDraftingElements.h"
-#include "ModumateMitering.h"
-#include "ModumateObjectInstance.h"
-#include "ModumateFunctionLibrary.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "Graph/Graph3D.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "ModumateCore/ModumateMitering.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Algo/Transform.h"
 
 

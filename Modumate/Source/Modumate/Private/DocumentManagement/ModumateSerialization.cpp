@@ -1,6 +1,6 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateSerialization.h"
+#include "DocumentManagement/ModumateSerialization.h"
 
 
 void FMOIDocumentRecordV4::FromVersion3(const FMOIDocumentRecordV3 &v3)

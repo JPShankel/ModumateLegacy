@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateObjectAssembly.h"
+#include "Database/ModumateObjectAssembly.h"
 #include "IImageWrapper.h"
 #include "UObject/Object.h"
 

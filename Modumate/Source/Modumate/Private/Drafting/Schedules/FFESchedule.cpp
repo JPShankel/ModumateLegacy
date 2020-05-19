@@ -1,10 +1,10 @@
-#include "FFESchedule.h"
+#include "Drafting/Schedules/FFESchedule.h"
 
-#include "IconElement.h"
-#include "ModumateDocument.h"
-#include "ModumateDraftingTags.h"
-#include "ModumateObjectInstance.h"
-#include "ThumbnailCacheManager.h"
+#include "Drafting/Schedules/IconElement.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "Drafting/ModumateDraftingTags.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "UnrealClasses/ThumbnailCacheManager.h"
 
 using namespace Modumate::Units;
 

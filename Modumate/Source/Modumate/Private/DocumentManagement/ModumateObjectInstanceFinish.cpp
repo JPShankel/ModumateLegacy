@@ -1,15 +1,15 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceFinish.h"
+#include "DocumentManagement/ModumateObjectInstanceFinish.h"
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelAdjustmentHandleBase.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "HUDDrawWidget_CPP.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateObjectStatics.h"
-#include "ModumateObjectInstance.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 
 
 namespace Modumate

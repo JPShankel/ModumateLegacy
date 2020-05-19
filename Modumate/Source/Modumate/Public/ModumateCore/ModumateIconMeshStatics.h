@@ -3,7 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "DynamicMeshActor.h"
+#include "UnrealClasses/DynamicMeshActor.h"
 #include "ModumateIconMeshStatics.generated.h"
 
 

@@ -1,21 +1,21 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstancePortal.h"
+#include "DocumentManagement/ModumateObjectInstancePortal.h"
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "CompoundMeshActor.h"
-#include "EditModelAdjustmentHandleBase.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPortalAdjustmentHandles.h"
-#include "ExpressionEvaluator.h"
-#include "HUDDrawWidget_CPP.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateDraftingElements.h"
-#include "ModumateObjectInstanceParts_CPP.h"
-#include "ModumateObjectStatics.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/CompoundMeshActor.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
+#include "ModumateCore/ExpressionEvaluator.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
-#include "WidgetBlueprintLibrary.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 
 class AEditModelPlayerController_CPP;

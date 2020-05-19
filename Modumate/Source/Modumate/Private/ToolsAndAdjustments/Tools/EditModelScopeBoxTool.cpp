@@ -1,13 +1,13 @@
-#include "EditModelScopeBoxTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelScopeBoxTool.h"
 
-#include "EditModelGameState_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
-#include "LineActor.h"
+#include "UnrealClasses/LineActor.h"
 
-#include "ModumateCommands.h"
+#include "DocumentManagement/ModumateCommands.h"
 
 using namespace Modumate;
 

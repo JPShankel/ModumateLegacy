@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 
-#include "ModumateArchitecturalMaterial.h"
-#include "ModumateUnits.h"
-#include "ModumateObjectEnums.h"
-#include "ModumateConsoleCommand.h"
+#include "Database/ModumateArchitecturalMaterial.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "Database/ModumateObjectEnums.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
 #include "ModumateLayerPattern.generated.h"
 
 namespace Modumate

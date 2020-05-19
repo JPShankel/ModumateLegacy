@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "InputChord.h"
+#include "Framework/Commands/InputChord.h"
 
 #include "EditModelInputAutomation.generated.h"
 

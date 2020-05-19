@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateTypes.h"
-#include "ModumateGraph3DTypes.h"
-#include "ModumateDelta.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "Graph/ModumateGraph3DTypes.h"
+#include "DocumentManagement/ModumateDelta.h"
 
 namespace Modumate
 {

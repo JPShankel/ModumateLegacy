@@ -1,10 +1,10 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 #include "Kismet/KismetMathLibrary.h"
 #include "KismetProceduralMeshLibrary.h"
-#include "ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Algo/Accumulate.h"
 #include "DrawDebugHelpers.h"
 
@@ -13,8 +13,8 @@
 #include <iostream>
 using namespace std;
 
-#include "poly2tri/poly2tri.h"
-#include "Reverse.h"
+#include "../../poly2tri/poly2tri.h"
+#include "Algo/Reverse.h"
 
 #define DEBUG_CHECK_LAYERS (!UE_BUILD_SHIPPING)
 

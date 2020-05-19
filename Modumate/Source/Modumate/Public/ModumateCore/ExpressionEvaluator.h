@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateUnits.h"
+#include "ModumateCore/ModumateUnits.h"
 
 namespace Modumate
 {

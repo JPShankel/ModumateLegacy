@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "EditModelToolInterface.h"
-#include "ModumateConsoleCommand.h"
-#include "ModumateSnappedCursor.h"
-#include "ModumateObjectEnums.h"
-#include "Sphere.h"
+#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
+#include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
+#include "Database/ModumateObjectEnums.h"
+#include "Math/Sphere.h"
 
 #include "EditModelPlayerController_CPP.generated.h"
 

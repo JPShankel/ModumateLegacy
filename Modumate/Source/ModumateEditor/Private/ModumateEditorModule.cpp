@@ -10,7 +10,7 @@
 #include "Misc/CoreDelegates.h"
 #include "Misc/EngineVersion.h"
 #include "Misc/Paths.h"
-#include "Modumate.h"
+#include "UnrealClasses/Modumate.h"
 #include "ModumateAssetFactories.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 

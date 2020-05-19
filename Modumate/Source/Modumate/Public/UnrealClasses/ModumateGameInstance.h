@@ -5,8 +5,8 @@
 #include "Engine/GameInstance.h"
 #include "Runtime/Online/HTTP/Public/Http.h"
 #include "Runtime/Engine/Public/TimerManager.h"
-#include "ModumateConsoleCommand.h"
-#include "ModumateUserSettings.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
+#include "ModumateCore/ModumateUserSettings.h"
 
 #include "ModumateGameInstance.generated.h"
 

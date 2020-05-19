@@ -1,10 +1,10 @@
-#include "WallSummarySchedule.h"
+#include "Drafting/Schedules/WallSummarySchedule.h"
 
-#include "ModumateDimensionStatics.h"
-#include "ModumateDocument.h"
-#include "ModumateDraftingElements.h"
-#include "ModumateDraftingTags.h"
-#include "ScheduleGrid.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "Drafting/ModumateDraftingTags.h"
+#include "Drafting/Schedules/ScheduleGrid.h"
 
 using namespace Modumate::Units;
 

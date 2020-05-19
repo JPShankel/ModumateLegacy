@@ -1,8 +1,8 @@
-#include "DraftingSchedule.h"
+#include "Drafting/Schedules/DraftingSchedule.h"
 
-#include "ModumateDraftingElements.h"
-#include "ModumateUnits.h"
-#include "Modumate.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "UnrealClasses/Modumate.h"
 
 #define LOCTEXT_NAMESPACE "ModumateSchedule"
 

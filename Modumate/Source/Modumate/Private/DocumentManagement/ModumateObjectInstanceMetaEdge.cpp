@@ -1,16 +1,16 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceMetaEdge.h"
+#include "DocumentManagement/ModumateObjectInstanceMetaEdge.h"
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelMetaAdjustmentHandles.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "LineActor.h"
-#include "ModumateDocument.h"
-#include "ModumateMiterNodeInterface.h"
-#include "ModumateObjectStatics.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "ToolsAndAdjustments/Common/EditModelMetaAdjustmentHandles.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/LineActor.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateMiterNodeInterface.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 
 // Edge-specific handles still have some design and geometry issues,
 // that are worth keeping in code but not having active by default

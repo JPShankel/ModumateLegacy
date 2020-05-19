@@ -1,14 +1,14 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelPlaneHostedObjTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelPlaneHostedObjTool.h"
 
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "LineActor.h"
-#include "ModumateDocument.h"
-#include "ModumateCommands.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/LineActor.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateCommands.h"
 
 using namespace Modumate;
 

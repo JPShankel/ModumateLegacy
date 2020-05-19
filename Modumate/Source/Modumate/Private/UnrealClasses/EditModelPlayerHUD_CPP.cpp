@@ -1,12 +1,12 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
-#include "EditModelPlayerHUD_CPP.h"
+#include "UnrealClasses/EditModelPlayerHUD_CPP.h"
 
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "HUDDrawWidget_CPP.h"
-#include "LineActor.h"
-#include "ThumbnailCacheManager.h"
-#include "Image.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/ThumbnailCacheManager.h"
+#include "Components/Image.h"
 
 
 FAffordanceLine::FAffordanceLine(const FVector &InStartPoint, const FVector &InEndPoint,

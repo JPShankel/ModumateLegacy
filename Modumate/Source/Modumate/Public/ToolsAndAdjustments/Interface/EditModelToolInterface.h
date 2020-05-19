@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine.h"
-#include "ModumateObjectEnums.h"
+#include "Database/ModumateObjectEnums.h"
 
 #include "EditModelToolInterface.generated.h"
 

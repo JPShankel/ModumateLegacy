@@ -1,12 +1,12 @@
-#include "EditModelDrawingTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelDrawingTool.h"
 
-#include "EditModelGameState_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
-#include "LineActor.h"
+#include "UnrealClasses/LineActor.h"
 
-#include "ModumateCommands.h"
+#include "DocumentManagement/ModumateCommands.h"
 
 UDrawingTool::UDrawingTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

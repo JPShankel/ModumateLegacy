@@ -1,6 +1,6 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ThumbnailCacheManager.h"
+#include "UnrealClasses/ThumbnailCacheManager.h"
 
 #include "Async/Async.h"
 #include "HAL/FileManager.h"

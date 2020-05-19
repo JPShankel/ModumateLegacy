@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateBIMSchema.h"
-#include "ModumateCrafting.h"
+#include "Database/ModumateBIMSchema.h"
+#include "Database/ModumateCrafting.h"
 
 namespace Modumate
 {

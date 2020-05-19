@@ -3,8 +3,8 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "ModumateTypes.h"
-#include "Object.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "UObject/Object.h"
 
 #include "ModumateDimensionStatics.generated.h"
 

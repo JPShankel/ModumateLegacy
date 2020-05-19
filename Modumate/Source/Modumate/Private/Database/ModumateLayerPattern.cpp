@@ -1,8 +1,8 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateLayerPattern.h"
+#include "Database/ModumateLayerPattern.h"
 #include "Algo/Transform.h"
-#include "ModumateCrafting.h"
+#include "Database/ModumateCrafting.h"
 
 using namespace Modumate::Units;
 

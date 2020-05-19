@@ -1,20 +1,20 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceCutPlane.h"
+#include "DocumentManagement/ModumateObjectInstanceCutPlane.h"
 
-#include "CutPlaneCaptureActor.h"
-#include "DraftingManager.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelGameState_CPP.h"
-#include "Graph3DFace.h"
+#include "UnrealClasses/CutPlaneCaptureActor.h"
+#include "Drafting/DraftingManager.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "Graph/Graph3DFace.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "ModumateCore/ModumateUserSettings.h"
-#include "ModumateDraftingElements.h"
-#include "ModumateDraftingView.h"
-#include "ModumateLayeredObjectInterface.h"
-#include "ModumateUnits.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "Drafting/ModumateDraftingView.h"
+#include "DocumentManagement/ModumateLayeredObjectInterface.h"
+#include "ModumateCore/ModumateUnits.h"
 
-#include "ModumateGameInstance.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 namespace Modumate
 {

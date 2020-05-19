@@ -1,7 +1,7 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateLayeredObjectInterface.h"
-#include "ModumateObjectInstance.h"
+#include "DocumentManagement/ModumateLayeredObjectInterface.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 
 namespace Modumate
 {

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "HUDDrawWidget_CPP.h"
-#include "ModumateFunctionLibrary.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
 

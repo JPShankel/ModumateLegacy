@@ -1,11 +1,11 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelWandTool.h"
-#include "ModumateFunctionLibrary.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "ModumateSnappingView.h"
+#include "ToolsAndAdjustments/Tools/EditModelWandTool.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "DocumentManagement/ModumateSnappingView.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 
 using namespace Modumate;

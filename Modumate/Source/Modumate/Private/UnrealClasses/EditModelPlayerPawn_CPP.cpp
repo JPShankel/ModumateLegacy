@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "EditModelPlayerPawn_CPP.h"
+#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
 
 #include "CollisionShape.h"
-#include "EditModelCameraController.h"
-#include "EditModelInputHandler.h"
-#include "EditModelPlayerController_CPP.h"
-#include "ModumateObjectEnums.h"
+#include "UnrealClasses/EditModelCameraController.h"
+#include "UnrealClasses/EditModelInputHandler.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "Database/ModumateObjectEnums.h"
 
 // Sets default values
 AEditModelPlayerPawn_CPP::AEditModelPlayerPawn_CPP(const FObjectInitializer& ObjectInitializer)

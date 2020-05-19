@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateGameModeBase.h"
-#include "ModumateShoppingItem.h"
+#include "UnrealClasses/ModumateGameModeBase.h"
+#include "Database/ModumateShoppingItem.h"
 #include "EditModelGameMode_CPP.generated.h"
 
 namespace Modumate {

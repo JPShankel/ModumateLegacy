@@ -1,10 +1,10 @@
-#include "ModumateMitering.h"
+#include "ModumateCore/ModumateMitering.h"
 
-#include "ModumateDocument.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateMiterNodeInterface.h"
-#include "ModumateObjectStatics.h"
-#include "ModumateObjectInstance.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "DocumentManagement/ModumateMiterNodeInterface.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 #include "DrawDebugHelpers.h"
 
 namespace Modumate

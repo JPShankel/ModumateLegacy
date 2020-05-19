@@ -1,18 +1,18 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
 
-#include "DynamicIconGenerator.h"
+#include "UnrealClasses/DynamicIconGenerator.h"
 #include "Runtime/Engine/Classes/GameFramework/SpringArmComponent.h"
 #include "Runtime/Engine/Classes/Components/SceneCaptureComponent2D.h"
 #include "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
-#include "ConstructorHelpers.h"
+#include "UObject//ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/RectLightComponent.h"
 #include "ProceduralMeshComponent.h"
 #include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/KismetRenderingLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
-#include "ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 
 //C:\Program Files\Epic Games\UE_4.22\Engine\Source\Runtime\Engine\Classes\Kismet\KismetRenderingLibrary.h
 

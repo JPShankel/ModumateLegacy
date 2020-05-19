@@ -1,8 +1,8 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ExpressionEvaluator.h"
+#include "ModumateCore/ExpressionEvaluator.h"
 #include <regex>
-#include "Modumate.h"
+#include "UnrealClasses/Modumate.h"
 #include "Math/BasicMathExpressionEvaluator.h"
 
 #define USE_UE4_EVALUATOR 1

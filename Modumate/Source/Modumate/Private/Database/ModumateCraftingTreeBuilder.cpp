@@ -1,9 +1,9 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
 
-#include "ModumateCraftingTreeBuilder.h"
-#include "ModumateObjectDatabase.h"
-#include "ModumateScriptProcessor.h"
+#include "Database/ModumateCraftingTreeBuilder.h"
+#include "Database/ModumateObjectDatabase.h"
+#include "ModumateCore/ModumateScriptProcessor.h"
 #include "Algo/Transform.h"
 
 using namespace Modumate;

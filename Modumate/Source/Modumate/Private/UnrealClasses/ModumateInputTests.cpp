@@ -1,12 +1,12 @@
 #include "CoreMinimal.h"
-#include "EditModelInputAutomation.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelInputAutomation.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "Misc/AutomationTest.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Paths.h"
-#include "ModumateCommands.h"
-#include "ModumateGameInstance.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "Tests/AutomationCommon.h"
 
 namespace Modumate

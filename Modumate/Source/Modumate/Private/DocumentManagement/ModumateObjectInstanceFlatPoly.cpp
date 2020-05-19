@@ -1,15 +1,15 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceFlatPoly.h"
+#include "DocumentManagement/ModumateObjectInstanceFlatPoly.h"
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelAdjustmentHandleBase.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPolyAdjustmentHandles.h"
-#include "HUDDrawWidget_CPP.h"
-#include "LineActor.h"
-#include "ModumateGeometryStatics.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "UnrealClasses/LineActor.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 class AEditModelPlayerController_CPP;
 

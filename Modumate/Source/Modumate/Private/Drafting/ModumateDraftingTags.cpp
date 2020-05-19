@@ -1,12 +1,12 @@
 ﻿// Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateDraftingTags.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateDraftingView.h"
-#include "ModumateUnits.h"
-#include "ModumateDimensionStatics.h"
+#include "Drafting/ModumateDraftingTags.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Drafting/ModumateDraftingView.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "CoreMinimal.h"
-#include "Modumate.h"
+#include "UnrealClasses/Modumate.h"
 
 using namespace Modumate::Units;
 using namespace Modumate::PDF;

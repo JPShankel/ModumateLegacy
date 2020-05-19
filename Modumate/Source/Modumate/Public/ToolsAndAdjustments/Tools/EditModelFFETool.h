@@ -1,8 +1,8 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #pragma once
-#include "ModumateObjectAssembly.h"
-#include "EditModelToolBase.h"
+#include "Database/ModumateObjectAssembly.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 
 #include "EditModelFFETool.generated.h"
 

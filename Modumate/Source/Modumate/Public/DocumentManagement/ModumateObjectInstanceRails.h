@@ -1,8 +1,8 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "ModumateDynamicObjectBase.h"
-#include "EditModelAdjustmentHandleBase.h"
+#include "DocumentManagement/ModumateDynamicObjectBase.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 
 namespace Modumate
 {

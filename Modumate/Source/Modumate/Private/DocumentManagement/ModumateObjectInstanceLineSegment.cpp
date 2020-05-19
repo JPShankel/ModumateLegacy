@@ -1,9 +1,11 @@
-#include "ModumateObjectInstanceLineSegment.h"
-#include "EditModelGameMode_CPP.h"
-#include "LineActor.h"
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelAdjustmentHandleBase.h"
+// Copyright 2019 Modumate, Inc. All Rights Reserved.
+
+#include "DocumentManagement/ModumateObjectInstanceLineSegment.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 
 namespace Modumate
 {

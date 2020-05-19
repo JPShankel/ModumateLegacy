@@ -1,17 +1,17 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "DynamicMeshActor.h"
+#include "UnrealClasses/DynamicMeshActor.h"
 
-#include "EditModelGameMode_CPP.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateObjectStatics.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Algo/Transform.h"
 #include "Algo/Accumulate.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 // Sets default values
 ADynamicMeshActor::ADynamicMeshActor()

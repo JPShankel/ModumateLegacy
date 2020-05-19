@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateTypes.h"
+#include "ModumateCore/ModumateTypes.h"
 #include <functional>
 
 #define DEFAULT_GRAPH3D_EPSILON 0.05f

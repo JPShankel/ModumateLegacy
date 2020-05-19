@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Runtime/Core/Public/Containers/Array.h"
-#include "ModumateObjectInstance.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 
 namespace Modumate
 {

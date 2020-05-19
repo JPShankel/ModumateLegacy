@@ -1,10 +1,10 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceStairs.h"
+#include "DocumentManagement/ModumateObjectInstanceStairs.h"
 
-#include "ModumateObjectInstance.h"
-#include "ModumateStairStatics.h"
-#include "ModumateUnits.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "ModumateCore/ModumateStairStatics.h"
+#include "ModumateCore/ModumateUnits.h"
 
 class AEditModelPlayerController_CPP;
 

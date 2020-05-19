@@ -1,13 +1,13 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateDocument.h"
+#include "DocumentManagement/ModumateDocument.h"
 
-#include "ModumateAnalyticsStatics.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateGameInstance.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateObjectStatics.h"
-#include "LineActor.h"
+#include "Online/ModumateAnalyticsStatics.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "UnrealClasses/LineActor.h"
 
 #include "Internationalization/Internationalization.h"
 #include "Misc/FileHelper.h"
@@ -15,19 +15,19 @@
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonSerializer.h"
 
-#include "ModumateGraph.h"
-#include "Graph3DDelta.h"
+#include "Graph/ModumateGraph.h"
+#include "Graph/Graph3DDelta.h"
 
-#include "PlatformFunctions.h"
-#include "DraftingManager.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelToolInterface.h"
-#include "ModumateDelta.h"
-#include "ModumateDraftingView.h"
-#include "ModumateMitering.h"
-#include "EditModelPlayerState_CPP.h"
+#include "ModumateCore/PlatformFunctions.h"
+#include "Drafting/DraftingManager.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
+#include "DocumentManagement/ModumateDelta.h"
+#include "Drafting/ModumateDraftingView.h"
+#include "ModumateCore/ModumateMitering.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 #include "Algo/Transform.h"
 #include "Algo/Accumulate.h"
@@ -37,10 +37,10 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
-#include "ModumateObjectDatabase.h"
+#include "Database/ModumateObjectDatabase.h"
 #include "UnrealClasses/ModumateObjectComponent_CPP.h"
 
-#include "Modumate.h"
+#include "UnrealClasses/Modumate.h"
 
 using namespace Modumate::Mitering;
 

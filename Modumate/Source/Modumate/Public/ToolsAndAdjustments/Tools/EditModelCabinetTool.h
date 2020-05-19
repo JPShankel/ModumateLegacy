@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
 #include "UObject/WeakObjectPtr.h"
-#include "EditModelToolBase.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 
 #include "EditModelCabinetTool.generated.h"
 

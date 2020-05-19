@@ -8,7 +8,7 @@
 #include "Runtime/Engine/Classes/Engine/StaticMeshActor.h"
 #include "UObject/Object.h"
 #include "UObject/WeakObjectPtr.h"
-#include "ModumateObjectEnums.h"
+#include "Database/ModumateObjectEnums.h"
 
 #include "AdjustmentHandleActor_CPP.generated.h"
 

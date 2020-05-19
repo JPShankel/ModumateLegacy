@@ -1,12 +1,12 @@
 #include "CoreMinimal.h"
 
-#include "Graph3D.h"
-#include "Graph3DDelta.h"
+#include "Graph/Graph3D.h"
+#include "Graph/Graph3DDelta.h"
 #include "JsonObjectConverter.h"
-#include "ModumateDelta.h"
-#include "ModumateGameInstance.h"
-#include "ModumateGraph.h"
-#include "ModumateSerialization.h"
+#include "DocumentManagement/ModumateDelta.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "Graph/ModumateGraph.h"
+#include "DocumentManagement/ModumateSerialization.h"
 
 namespace Modumate
 {

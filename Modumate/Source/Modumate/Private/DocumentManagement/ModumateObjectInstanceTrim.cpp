@@ -1,12 +1,12 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceTrim.h"
+#include "DocumentManagement/ModumateObjectInstanceTrim.h"
 
-#include "DynamicMeshActor.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "ModumateSnappingView.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "DocumentManagement/ModumateSnappingView.h"
 
 namespace Modumate
 {

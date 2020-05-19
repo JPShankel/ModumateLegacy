@@ -1,3 +1,3 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateCameraViewBrowserWidget_CPP.h"
+#include "UnrealClasses/UI/ModumateCameraViewBrowserWidget_CPP.h"

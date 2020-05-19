@@ -1,15 +1,15 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelFFEAdjustmentHandles.h"
+#include "ToolsAndAdjustments/Handles/EditModelFFEAdjustmentHandles.h"
 #include "Algo/Accumulate.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateObjectStatics.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "DrawDebugHelpers.h"
-#include "ModumateCommands.h"
+#include "DocumentManagement/ModumateCommands.h"
 
 namespace Modumate
 {

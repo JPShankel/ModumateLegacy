@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include "ModumateObjectEnums.h"
-#include "ModumateDecisionTree.h"
-#include "ModumateCrafting.h"
+#include "Database/ModumateObjectEnums.h"
+#include "ModumateCore/ModumateDecisionTree.h"
+#include "Database/ModumateCrafting.h"
 #include "Serialization/JsonReader.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonSerializer.h"
 #include "JsonObjectConverter.h"
-#include "ModumateCameraView.h"
+#include "DocumentManagement/ModumateCameraView.h"
 
 #include "ModumateSerialization.generated.h"
 

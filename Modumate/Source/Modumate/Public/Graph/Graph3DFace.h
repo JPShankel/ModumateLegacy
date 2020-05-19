@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "ModumateGraph3DTypes.h"
-#include "ModumateGeometryStatics.h"
+#include "Graph/ModumateGraph3DTypes.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 namespace Modumate
 {

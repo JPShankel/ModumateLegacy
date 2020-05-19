@@ -1,17 +1,17 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceRoofPerimeter.h"
+#include "DocumentManagement/ModumateObjectInstanceRoofPerimeter.h"
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "Graph3D.h"
-#include "LineActor.h"
-#include "ModumateDocument.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateObjectStatics.h"
-#include "ModumateVertexActor_CPP.h"
-#include "RoofPerimeterHandles.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "Graph/Graph3D.h"
+#include "UnrealClasses/LineActor.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "UnrealClasses/ModumateVertexActor_CPP.h"
+#include "ToolsAndAdjustments/Handles/RoofPerimeterHandles.h"
 
 namespace Modumate
 {

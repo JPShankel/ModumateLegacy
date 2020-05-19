@@ -1,16 +1,16 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelToolBase.h"
-#include "EditModelSelectTool.h"
-#include "ModumateFunctionLibrary.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Runtime/Engine/Classes/Components/LineBatchComponent.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
-#include "ModumateConsoleCommand.h"
-#include "ModumateCommands.h"
-#include "CompoundMeshActor.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/CompoundMeshActor.h"
 
 /*
 * Tool Modes

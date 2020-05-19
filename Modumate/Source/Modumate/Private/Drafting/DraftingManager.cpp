@@ -1,11 +1,11 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "DraftingManager.h"
+#include "Drafting/DraftingManager.h"
 
 #include "HAL/FileManager.h"
 #include "Misc/Paths.h"
 #include "ModumateCore/ModumateUserSettings.h"
-#include "ModumateDraftingView.h"
+#include "Drafting/ModumateDraftingView.h"
 
 const FString UDraftingManager::CutPlaneDirName(TEXT("CutPlaneRenders"));
 const FString UDraftingManager::CutPlaneImageExt(TEXT(".png"));

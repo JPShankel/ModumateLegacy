@@ -2,8 +2,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateObjectInstancePlaneBase.h"
-#include "Graph3D.h"
+#include "DocumentManagement/ModumateObjectInstancePlaneBase.h"
+#include "Graph/Graph3D.h"
 
 
 namespace Modumate

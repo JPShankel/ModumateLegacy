@@ -1,16 +1,16 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelInputAutomation.h"
+#include "UnrealClasses/EditModelInputAutomation.h"
 
 #include "Backends/CborStructDeserializerBackend.h"
 #include "Backends/CborStructSerializerBackend.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerPawn_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
 #include "HAL/FileManager.h"
 #include "Misc/Compression.h"
 #include "Misc/FileHelper.h"
-#include "ModumateConsoleCommand.h"
-#include "PlatformFunctions.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
+#include "ModumateCore/PlatformFunctions.h"
 #include "Slate/SceneViewport.h"
 #include "StructDeserializer.h"
 #include "StructSerializer.h"

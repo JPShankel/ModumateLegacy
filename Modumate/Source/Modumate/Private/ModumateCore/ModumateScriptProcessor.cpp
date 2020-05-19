@@ -1,7 +1,7 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateScriptProcessor.h"
-#include "AutomationTest.h"
+#include "ModumateCore/ModumateScriptProcessor.h"
+#include "Misc/AutomationTest.h"
 #include "Misc/FileHelper.h"
 
 FModumateScriptProcessor::~FModumateScriptProcessor()

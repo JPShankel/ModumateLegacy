@@ -1,16 +1,16 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelRoofFaceTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelRoofFaceTool.h"
 
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "LineActor.h"
-#include "ModumateCommands.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateNetworkView.h"
-#include "ModumateObjectInstanceCabinets.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/LineActor.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "DocumentManagement/ModumateNetworkView.h"
+#include "DocumentManagement/ModumateObjectInstanceCabinets.h"
 
 using namespace Modumate;
 

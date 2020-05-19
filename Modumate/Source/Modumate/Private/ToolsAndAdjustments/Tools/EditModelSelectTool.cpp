@@ -1,12 +1,12 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelSelectTool.h"
-#include "ModumateFunctionLibrary.h"
-#include "EditModelGameState_CPP.h"
-#include "ModumateCommands.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "ModumateSnappingView.h"
+#include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "DocumentManagement/ModumateSnappingView.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "Algo/Transform.h"
 

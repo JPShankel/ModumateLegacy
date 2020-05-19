@@ -1,5 +1,5 @@
-#include "ModumateUnits.h"
-#include "ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "CoreMinimal.h"
 
 namespace Modumate

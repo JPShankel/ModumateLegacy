@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ModumateTypes.h"
-#include "ModumateShoppingItem.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "Database/ModumateShoppingItem.h"
 #include "LineActor.generated.h"
 
 class AEditModelPlayerState_CPP;

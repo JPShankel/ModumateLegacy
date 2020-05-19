@@ -1,11 +1,11 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelGraph2DTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelGraph2DTool.h"
 
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "ModumateObjectStatics.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 
 using namespace Modumate;
 

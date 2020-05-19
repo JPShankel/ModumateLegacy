@@ -6,9 +6,9 @@
 
 #include "ModumateGraph3DTypes.h"
 #include "Graph3DVertex.h"
-#include "Graph3DEdge.h"
-#include "Graph3DFace.h"
-#include "Graph3DPolyhedron.h"
+#include "Graph/Graph3DEdge.h"
+#include "Graph/Graph3DFace.h"
+#include "Graph/Graph3DPolyhedron.h"
 
 struct FGraph3DRecordV1;
 typedef FGraph3DRecordV1 FGraph3DRecord;

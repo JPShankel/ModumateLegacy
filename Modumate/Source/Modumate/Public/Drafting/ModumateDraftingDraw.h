@@ -2,7 +2,7 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
 #include <vector>
-#include "ModumateUnits.h"
+#include "ModumateCore/ModumateUnits.h"
 
 namespace Modumate
 {

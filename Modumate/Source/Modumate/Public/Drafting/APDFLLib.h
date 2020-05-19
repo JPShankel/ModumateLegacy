@@ -4,8 +4,8 @@
 
 #include <vector>
 #include "CoreMinimal.h"
-#include "ModumateUnits.h"
-#include "ModumateDraftingDraw.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "Drafting/ModumateDraftingDraw.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogPDFTron, Log, All);
 

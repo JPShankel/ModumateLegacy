@@ -1,8 +1,8 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateGraph.h"
+#include "Graph/ModumateGraph.h"
 
-#include "ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 
 #define LOG_MDM_GRAPH 0
 

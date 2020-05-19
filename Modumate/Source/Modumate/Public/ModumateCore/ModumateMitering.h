@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Database/ModumateObjectAssembly.h"
-#include "ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 namespace Modumate
 {

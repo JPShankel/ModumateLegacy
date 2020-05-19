@@ -1,7 +1,7 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateSnappedCursor.h"
-#include "EditModelPlayerHUD_CPP.h"
+#include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
+#include "UnrealClasses/EditModelPlayerHUD_CPP.h"
 
 bool FSnappedCursor::TryMakeAffordanceLineFromCursorToSketchPlane(FAffordanceLine &outAffordance, FVector &outHitPoint) const
 {

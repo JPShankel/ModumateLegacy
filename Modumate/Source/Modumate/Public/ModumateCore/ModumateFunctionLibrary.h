@@ -2,12 +2,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DynamicMeshActor.h"
+#include "UnrealClasses/DynamicMeshActor.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Math/Box.h"
-#include "ModumateTypes.h"
-#include "ModumateDimensionString.h"
-#include "Object.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "ModumateCore/ModumateDimensionString.h"
+#include "UObject/Object.h"
 
 #include "ModumateFunctionLibrary.generated.h"
 

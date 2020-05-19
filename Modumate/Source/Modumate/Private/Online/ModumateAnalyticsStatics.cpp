@@ -1,10 +1,10 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateAnalyticsStatics.h"
+#include "Online/ModumateAnalyticsStatics.h"
 
 #include "Analytics.h"
 #include "Interfaces/IAnalyticsProvider.h"
-#include "ModumateGameInstance.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 
 // Made to be consistent with those interpreted by FAnalyticsProviderRevulytics::RecordEvent

@@ -1,19 +1,19 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelCameraController.h"
+#include "UnrealClasses/EditModelCameraController.h"
 
-#include "Application/SlateApplication.h"
+#include "Framework/Application/SlateApplication.h"
 #include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Curves/CurveFloat.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelInputHandler.h"
-#include "EditModelPlayerPawn_CPP.h"
-#include "EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelInputHandler.h"
+#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Engine/StaticMeshActor.h"
 #include "Kismet/GameplayStatics.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateViewportClient.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UnrealClasses/ModumateViewportClient.h"
 #include "Slate/SceneViewport.h"
 #include "UnrealClient.h"
 

@@ -1,10 +1,10 @@
-#include "DraftingDrawing.h"
-#include "DraftingManager.h"
-#include "DrawingArea.h"
-#include "ModumateDocument.h"
-#include "ModumateDraftingTags.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateObjectInstance.h"
+#include "Drafting/Drawings/DraftingDrawing.h"
+#include "Drafting/DraftingManager.h"
+#include "Drafting/Drawings/DrawingArea.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "Drafting/ModumateDraftingTags.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDefaultDrawing"
 

@@ -3,10 +3,10 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "ModumateGraph3DTypes.h"
-#include "ModumateTypes.h"
-#include "ModumateSnappedCursor.h"
-#include "Object.h"
+#include "Graph/ModumateGraph3DTypes.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
+#include "UObject/Object.h"
 
 #include "ModumateObjectStatics.generated.h"
 

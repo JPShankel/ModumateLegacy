@@ -1,15 +1,15 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelInputHandler.h"
+#include "UnrealClasses/EditModelInputHandler.h"
 
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerPawn_CPP.h"
-#include "EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "GameFramework/InputSettings.h"
-#include "ModumateCommands.h"
-#include "ModumateDataTables.h"
-#include "ModumateFunctionLibrary.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "Database/ModumateDataTables.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 
 
 using namespace Modumate;

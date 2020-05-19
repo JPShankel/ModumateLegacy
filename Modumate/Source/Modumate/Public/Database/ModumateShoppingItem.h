@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "Runtime/Engine/Classes/Engine/StaticMesh.h"
 #include "Runtime/Engine/Classes/Materials/Material.h"
-#include "ModumateArchitecturalMaterial.h"
-#include "ModumateObjectEnums.h"
+#include "Database/ModumateArchitecturalMaterial.h"
+#include "Database/ModumateObjectEnums.h"
 #include "ModumateShoppingItem.generated.h"
 
 /*

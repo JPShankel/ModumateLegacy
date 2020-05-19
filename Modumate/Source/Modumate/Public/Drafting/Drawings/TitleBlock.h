@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 
-#include "ModumateDocument.h"
-#include "ModumateUnits.h"
-#include "DraftingDrawing.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "Drafting/Drawings/DraftingDrawing.h"
 
 namespace Modumate
 {

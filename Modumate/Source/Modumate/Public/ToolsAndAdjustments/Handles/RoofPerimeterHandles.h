@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelAdjustmentHandleBase.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 
 namespace Modumate
 {

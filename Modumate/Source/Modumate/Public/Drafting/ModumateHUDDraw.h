@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateDraftingDraw.h"
-#include "HUDDrawWidget_CPP.h"
+#include "Drafting/ModumateDraftingDraw.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
 
 namespace Modumate
 {

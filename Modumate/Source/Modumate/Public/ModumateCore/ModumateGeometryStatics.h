@@ -4,9 +4,9 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "ProceduralMeshComponent.h"
-#include "ModumateSimpleMesh.h"
-#include "ModumateTypes.h"
-#include "ModumateGraph3DTypes.h"
+#include "Database/ModumateSimpleMesh.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "Graph/ModumateGraph3DTypes.h"
 
 #include "ModumateGeometryStatics.generated.h"
 

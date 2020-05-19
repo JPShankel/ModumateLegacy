@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "ModumateTypes.h"
+#include "ModumateCore/ModumateTypes.h"
 #include "EditModelPlayerHUD_CPP.generated.h"
 
 class UImage;

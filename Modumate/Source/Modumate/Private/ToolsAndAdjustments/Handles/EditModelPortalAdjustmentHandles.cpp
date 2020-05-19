@@ -1,10 +1,10 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelPortalAdjustmentHandles.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelGameState_CPP.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateCommands.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "DocumentManagement/ModumateCommands.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Core/Public/Misc/OutputDeviceNull.h"

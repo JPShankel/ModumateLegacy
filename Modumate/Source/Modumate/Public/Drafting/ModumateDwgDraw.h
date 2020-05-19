@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateUnits.h"
-#include "ModumateDraftingDraw.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "Drafting/ModumateDraftingDraw.h"
 #include "Json/Public/Json.h"
 
 namespace Modumate

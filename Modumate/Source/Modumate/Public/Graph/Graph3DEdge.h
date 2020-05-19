@@ -1,4 +1,4 @@
-#include "ModumateGraph3DTypes.h"
+#include "Graph/ModumateGraph3DTypes.h"
 
 #pragma once
 

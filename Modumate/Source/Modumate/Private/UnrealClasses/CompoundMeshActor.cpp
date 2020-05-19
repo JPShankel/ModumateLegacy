@@ -1,16 +1,16 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "CompoundMeshActor.h"
+#include "UnrealClasses/CompoundMeshActor.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "DrawDebugHelpers.h"
-#include "EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "Engine/Engine.h"
-#include "ExpressionEvaluator.h"
+#include "ModumateCore/ExpressionEvaluator.h"
 #include "KismetProceduralMeshLibrary.h"
 #include "Materials/MaterialInstanceDynamic.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateUnits.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateUnits.h"
 #include "ProceduralMeshComponent.h"
 #include "Components/PointLightComponent.h"
 #include "Components/SpotLightComponent.h"

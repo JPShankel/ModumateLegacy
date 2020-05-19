@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateObjectInstance.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 #include "DocumentManagement/ModumateMiterNodeInterface.h"
 
 class UWorld;

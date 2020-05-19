@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ModumateTypes.h"
-#include "ModumateDimensionString.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "ModumateCore/ModumateDimensionString.h"
 #include "HUDDrawWidget_CPP.generated.h"
 
 

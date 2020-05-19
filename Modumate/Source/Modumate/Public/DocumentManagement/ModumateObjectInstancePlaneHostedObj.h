@@ -1,9 +1,9 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "ModumateDynamicObjectBase.h"
-#include "DynamicMeshActor.h"
-#include "ModumateLayeredObjectInterface.h"
+#include "DocumentManagement/ModumateDynamicObjectBase.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "DocumentManagement/ModumateLayeredObjectInterface.h"
 
 class AEditModelPlayerController_CPP;
 

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine.h"
 #include "Runtime/Engine/Classes/Engine/DataTable.h"
-#include "ModumateObjectEnums.h"
+#include "Database/ModumateObjectEnums.h"
 #include "ModumateDataTables.generated.h"
 
 

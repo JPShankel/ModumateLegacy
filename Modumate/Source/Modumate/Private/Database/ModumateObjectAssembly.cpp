@@ -1,15 +1,15 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectAssembly.h"
+#include "Database/ModumateObjectAssembly.h"
 
-#include "ExpressionEvaluator.h"
-#include "ModumateDocument.h"
-#include "ModumateDecisionTree.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateDimensionStatics.h"
-#include "ModumateCommands.h"
-#include "EditModelGameState_CPP.h"
-#include "ModumateObjectDatabase.h"
+#include "ModumateCore/ExpressionEvaluator.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "Database/ModumateObjectDatabase.h"
 #include "Algo/Accumulate.h"
 #include "Algo/Reverse.h"
 

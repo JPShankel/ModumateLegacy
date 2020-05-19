@@ -1,13 +1,13 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "RoofPerimeterHandles.h"
+#include "ToolsAndAdjustments/Handles/RoofPerimeterHandles.h"
 
-#include "EditModelGameState_CPP.h"
-#include "Graph3D.h"
-#include "Graph3DDelta.h"
-#include "ModumateDocument.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateObjectStatics.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "Graph/Graph3D.h"
+#include "Graph/Graph3DDelta.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 
 namespace Modumate
 {

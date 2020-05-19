@@ -1,10 +1,10 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "EditModelToolBase.h"
-#include "EditModelPlayerState_CPP.h"
-#include "DynamicMeshActor.h"
-#include "ModumateArchitecturalMaterial.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "Database/ModumateArchitecturalMaterial.h"
 
 #include "EditModelMetaPlaneTool.generated.h"
 

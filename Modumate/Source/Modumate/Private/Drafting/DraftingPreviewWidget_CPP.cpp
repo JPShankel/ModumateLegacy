@@ -1,10 +1,10 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "DraftingPreviewWidget_CPP.h"
-#include "ModumateDocument.h"
-#include "ModumateDraftingDraw.h"
-#include "ModumateDecisionTreeImpl.h"
-#include "EditModelPlayerController_CPP.h"
+#include "Drafting/DraftingPreviewWidget_CPP.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "Drafting/ModumateDraftingDraw.h"
+#include "ModumateCore/ModumateDecisionTreeImpl.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 
 namespace Modumate

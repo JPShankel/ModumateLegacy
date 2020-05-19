@@ -1,12 +1,12 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelAdjustmentHandleBase.h"
+#include "ToolsAndAdjustments/Common/EditModelAdjustmentHandleBase.h"
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelToolInterface.h"
-#include "ModumateCommands.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
+#include "DocumentManagement/ModumateCommands.h"
 
 namespace Modumate
 {

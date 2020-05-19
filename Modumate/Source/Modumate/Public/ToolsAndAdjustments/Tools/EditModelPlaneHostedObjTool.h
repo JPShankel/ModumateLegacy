@@ -1,9 +1,9 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #pragma once
-#include "EditModelMetaPlaneTool.h"
-#include "EditModelPlayerState_CPP.h"
-#include "ModumateObjectAssembly.h"
+#include "ToolsAndAdjustments/Tools/EditModelMetaPlaneTool.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "Database/ModumateObjectAssembly.h"
 
 #include "EditModelPlaneHostedObjTool.generated.h"
 

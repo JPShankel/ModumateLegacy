@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateUnits.h"
-#include "ModumateDraftingTags.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "Drafting/ModumateDraftingTags.h"
 
 namespace Modumate {
 

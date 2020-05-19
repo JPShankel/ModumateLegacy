@@ -1,5 +1,5 @@
-#include "Graph3DVertex.h"
-#include "Graph3D.h"
+#include "Graph/Graph3DVertex.h"
+#include "Graph/Graph3D.h"
 
 namespace Modumate {
 	FGraph3DVertex::FGraph3DVertex(int32 InID, FGraph3D* InGraph, const FVector &InPos, const TSet<int32> &InGroupIDs)

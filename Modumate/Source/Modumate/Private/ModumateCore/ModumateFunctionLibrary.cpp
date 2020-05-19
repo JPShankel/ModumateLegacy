@@ -1,39 +1,39 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 
 #include "Components/SkyLightComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "DocumentManagement/ModumateObjectInstancePortal.h"
 #include "DrawDebugHelpers.h"
-#include "DynamicMeshActor.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Engine/Engine.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/UserInterfaceSettings.h"
 #include "EngineGlobals.h"
-#include "ExpressionEvaluator.h"
+#include "ModumateCore/ExpressionEvaluator.h"
 #include "GameFramework/PlayerController.h"
 #include "HAL/PlatformApplicationMisc.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "KismetProceduralMeshLibrary.h"
-#include "Modumate.h"
-#include "ModumateDocument.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateObjectDatabase.h"
-#include "ModumateObjectInstance.h"
-#include "ModumateObjectStatics.h"
+#include "UnrealClasses/Modumate.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "Database/ModumateObjectDatabase.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "Runtime/Core/Public/Math/RandomStream.h"
 #include "UnrealClasses/CompoundMeshActor.h"
-#include "ModumateCommands.h"
-#include "ModumateUnits.h"
-#include "ModumateDimensionStatics.h"
-#include "ModumateCraftingWidget_CPP.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
+#include "Database/ModumateCraftingWidget_CPP.h"
 #include "Algo/Accumulate.h"
 
 #include <algorithm>
@@ -42,7 +42,7 @@
 #include <regex>
 
 using namespace std;
-#include "poly2tri/poly2tri.h"
+#include "../../poly2tri/poly2tri.h"
 using namespace p2t;
 
 

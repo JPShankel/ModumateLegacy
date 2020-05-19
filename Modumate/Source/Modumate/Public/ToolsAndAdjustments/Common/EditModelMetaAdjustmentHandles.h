@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "EditModelAdjustmentHandleBase.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 
 
 namespace Modumate

@@ -1,12 +1,12 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceScopeBox.h"
+#include "DocumentManagement/ModumateObjectInstanceScopeBox.h"
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPolyAdjustmentHandles.h"
-#include "HUDDrawWidget_CPP.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
 
 namespace Modumate
 {

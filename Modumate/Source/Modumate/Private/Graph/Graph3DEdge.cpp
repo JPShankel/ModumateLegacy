@@ -1,6 +1,6 @@
-#include "Graph3DEdge.h"
-#include "Graph3D.h"
-#include "ModumateGeometryStatics.h"
+#include "Graph/Graph3DEdge.h"
+#include "Graph/Graph3D.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 namespace Modumate
 {

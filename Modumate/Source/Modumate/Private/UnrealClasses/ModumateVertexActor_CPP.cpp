@@ -1,12 +1,12 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 
-#include "ModumateVertexActor_CPP.h"
+#include "UnrealClasses/ModumateVertexActor_CPP.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Engine/StaticMesh.h"
-#include "ModumateObjectInstanceMetaVertex.h"
-#include "ModumateFunctionLibrary.h"
-#include "EditModelPlayerController_CPP.h"
+#include "DocumentManagement/ModumateObjectInstanceMetaVertex.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 // Sets default values
 AModumateVertexActor_CPP::AModumateVertexActor_CPP()

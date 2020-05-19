@@ -1,13 +1,13 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelRoofPerimeterTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelRoofPerimeterTool.h"
 
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "Graph3DDelta.h"
-#include "ModumateGraph.h"
-#include "ModumateObjectStatics.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "Graph/Graph3DDelta.h"
+#include "Graph/ModumateGraph.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 
 using namespace Modumate;
 

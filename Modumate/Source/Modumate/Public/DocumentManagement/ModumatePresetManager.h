@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateDataCollection.h"
-#include "ModumateDecisionTree.h"
-#include "ModumateCrafting.h"
-#include "ModumateObjectAssembly.h"
-#include "ModumateSerialization.h"
+#include "Database/ModumateDataCollection.h"
+#include "ModumateCore/ModumateDecisionTree.h"
+#include "Database/ModumateCrafting.h"
+#include "Database/ModumateObjectAssembly.h"
+#include "DocumentManagement/ModumateSerialization.h"
 
 namespace Modumate
 {

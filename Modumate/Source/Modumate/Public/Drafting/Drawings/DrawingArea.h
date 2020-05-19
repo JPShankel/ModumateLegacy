@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "ModumateDraftingElements.h"
+#include "Drafting/ModumateDraftingElements.h"
 
 namespace Modumate {
 

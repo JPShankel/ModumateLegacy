@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateDocument.h"
-#include "ModumateConsoleCommand.h"
-#include "ModumateCrafting.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
+#include "Database/ModumateCrafting.h"
 #include "Runtime/Engine/Classes/GameFramework/GameStateBase.h"
-#include "EditModelToolInterface.h"
+#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "EditModelGameState_CPP.generated.h"
 
 

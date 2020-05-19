@@ -1,7 +1,7 @@
-#include "ModumateSnappingView.h"
-#include "ModumateDocument.h"
-#include "ModumateObjectInstance.h"
-#include "ModumateStats.h"
+#include "DocumentManagement/ModumateSnappingView.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "ModumateCore/ModumateStats.h"
 
 DECLARE_CYCLE_STAT(TEXT("Snap-points"), STAT_ModumateSnapPoints, STATGROUP_Modumate)
 

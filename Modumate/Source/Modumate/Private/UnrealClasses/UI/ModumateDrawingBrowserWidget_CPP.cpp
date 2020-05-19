@@ -1,3 +1,3 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateDrawingBrowserWidget_CPP.h"
+#include "UnrealClasses/UI/ModumateDrawingBrowserWidget_CPP.h"

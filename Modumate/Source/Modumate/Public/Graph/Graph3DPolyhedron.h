@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 
-#include "ModumateGraph3DTypes.h"
+#include "Graph/ModumateGraph3DTypes.h"
 
 namespace Modumate
 {

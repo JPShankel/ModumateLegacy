@@ -1,6 +1,6 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateControlPointObjectBase.h"
+#include "DocumentManagement/ModumateControlPointObjectBase.h"
 #include "Algo/Accumulate.h"
 
 namespace Modumate

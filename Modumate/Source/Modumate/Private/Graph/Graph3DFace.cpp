@@ -1,9 +1,9 @@
-#include "Graph3DFace.h"
-#include "Graph3D.h"
-#include "Graph3DDelta.h"
+#include "Graph/Graph3DFace.h"
+#include "Graph/Graph3D.h"
+#include "Graph/Graph3DDelta.h"
 
-#include "ModumateFunctionLibrary.h"
-#include "ModumateGraph.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Graph/ModumateGraph.h"
 
 namespace Modumate 
 {

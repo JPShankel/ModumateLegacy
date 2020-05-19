@@ -1,16 +1,16 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateMiterNodeInterface.h"
+#include "DocumentManagement/ModumateMiterNodeInterface.h"
 
-#include "Graph3D.h"
-#include "Graph3DEdge.h"
-#include "ModumateDocument.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateGraph3DTypes.h"
-#include "ModumateLayeredObjectInterface.h"
-#include "ModumateMitering.h"
-#include "ModumateObjectInstance.h"
-#include "ModumateObjectStatics.h"
+#include "Graph/Graph3D.h"
+#include "Graph/Graph3DEdge.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "Graph/ModumateGraph3DTypes.h"
+#include "DocumentManagement/ModumateLayeredObjectInterface.h"
+#include "ModumateCore/ModumateMitering.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 
 
 namespace Modumate

@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "Engine/Texture2D.h"
 
-#include "ModumateUnits.h"
-#include "ModumateConsoleCommand.h"
-#include "ModumateArchitecturalMaterial.h"
-#include "ModumateObjectEnums.h"
-#include "ModumateSimpleMesh.h"
-#include "ModumateBIMSchema.h"
-#include "ModumateDecisionTree.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
+#include "Database/ModumateArchitecturalMaterial.h"
+#include "Database/ModumateObjectEnums.h"
+#include "Database/ModumateSimpleMesh.h"
+#include "Database/ModumateBIMSchema.h"
+#include "ModumateCore/ModumateDecisionTree.h"
 #include "ModumateCrafting.generated.h"
 
 

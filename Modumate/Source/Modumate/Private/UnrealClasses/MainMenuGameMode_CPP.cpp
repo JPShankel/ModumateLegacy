@@ -1,18 +1,18 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
-#include "MainMenuGameMode_CPP.h"
+#include "UnrealClasses/MainMenuGameMode_CPP.h"
 
 #include "HAL/FileManager.h"
 #include "JsonObjectConverter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/CommandLine.h"
 #include "Misc/FileHelper.h"
-#include "PlatformFunctions.h"
+#include "ModumateCore/PlatformFunctions.h"
 
-#include "ModumateDocument.h"
-#include "ModumateGameInstance.h"
-#include "ModumateSerialization.h"
-#include "ModumateThumbnailHelpers.h"
-#include "ModumateUserSettings.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "DocumentManagement/ModumateSerialization.h"
+#include "ModumateCore/ModumateThumbnailHelpers.h"
+#include "ModumateCore/ModumateUserSettings.h"
 
 
 void AMainMenuGameMode_CPP::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)

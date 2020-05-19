@@ -2,9 +2,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateObjectInstancePlaneBase.h"
-#include "ModumateHUDDraw.h"
-#include "ModumateSceneCaptureObjectInterface.h"
+#include "DocumentManagement/ModumateObjectInstancePlaneBase.h"
+#include "Drafting/ModumateHUDDraw.h"
+#include "DocumentManagement/ModumateSceneCaptureObjectInterface.h"
 
 class ACutPlaneCaptureActor;
 

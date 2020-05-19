@@ -1,7 +1,7 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "EditModelSelectTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
 
 #include "EditModelMoveTool.generated.h"
 

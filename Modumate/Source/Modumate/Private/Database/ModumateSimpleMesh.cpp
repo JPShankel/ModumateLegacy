@@ -1,6 +1,6 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateSimpleMesh.h"
+#include "Database/ModumateSimpleMesh.h"
 
 #include "Misc/FeedbackContext.h"
 #include "Misc/Paths.h"

@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateDynamicObjectBase.h"
+#include "DocumentManagement/ModumateDynamicObjectBase.h"
 
 namespace Modumate
 {

@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
 #include "UObject/WeakObjectPtr.h"
-#include "Tools/EditModelPlaneHostedObjTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelPlaneHostedObjTool.h"
 
 #include "EditModelRoofFaceTool.generated.h"
 

@@ -1,19 +1,19 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectDatabase.h"
+#include "Database/ModumateObjectDatabase.h"
 
 #include "Components/StaticMeshComponent.h"
-#include "EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "Engine/StaticMeshActor.h"
-#include "ExpressionEvaluator.h"
+#include "ModumateCore/ExpressionEvaluator.h"
 #include "HAL/FileManager.h"
 #include "Misc/Paths.h"
-#include "ModumateDecisionTreeImpl.h"
-#include "ModumateDataTables.h"
-#include "ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateDecisionTreeImpl.h"
+#include "Database/ModumateDataTables.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UObject/ConstructorHelpers.h"
 #include "UObject/ConstructorHelpers.h"
-#include "ModumateCraftingTreeBuilder.h"
+#include "Database/ModumateCraftingTreeBuilder.h"
 
 #include "Misc/FileHelper.h"
 #include "Serialization/JsonReader.h"

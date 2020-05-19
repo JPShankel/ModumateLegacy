@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "CompoundMeshActor.h"
+#include "UnrealClasses/CompoundMeshActor.h"
 #include "CoreMinimal.h"
-#include "EditModelAdjustmentHandleBase.h"
-#include "ModumateArchitecturalMaterial.h"
-#include "ModumateDynamicObjectBase.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
+#include "Database/ModumateArchitecturalMaterial.h"
+#include "DocumentManagement/ModumateDynamicObjectBase.h"
 
 class AEditModelPlayerController_CPP;
 

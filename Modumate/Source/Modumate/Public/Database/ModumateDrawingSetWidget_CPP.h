@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ModumateCrafting.h"
-#include "ModumatePresetManager.h"
+#include "Database/ModumateCrafting.h"
+#include "DocumentManagement/ModumatePresetManager.h"
 #include "ModumateDrawingSetWidget_CPP.generated.h"
 
 /**

@@ -1,9 +1,9 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #pragma once
-#include "EditModelToolBase.h"
-#include "ModumateSnappedCursor.h"
-#include "ModumateObjectAssembly.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
+#include "Database/ModumateObjectAssembly.h"
 
 #include "EditModelStairTool.generated.h"
 

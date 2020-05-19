@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "IModumateAdjustmentHandle.h"
-#include "EditModelPlayerState_CPP.h"
+#include "ToolsAndAdjustments/Interface/IModumateAdjustmentHandle.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "CoreMinimal.h"
 
 namespace Modumate

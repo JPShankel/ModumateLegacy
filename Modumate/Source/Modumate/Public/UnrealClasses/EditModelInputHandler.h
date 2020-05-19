@@ -5,7 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "Framework/Commands/InputChord.h"
-#include "ModumateObjectEnums.h"
+#include "Database/ModumateObjectEnums.h"
 
 #include "EditModelInputHandler.generated.h"
 

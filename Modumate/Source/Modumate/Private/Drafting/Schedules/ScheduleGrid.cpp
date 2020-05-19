@@ -1,5 +1,5 @@
-#include "ScheduleGrid.h"
-#include "ModumateDraftingElements.h"
+#include "Drafting/Schedules/ScheduleGrid.h"
+#include "Drafting/ModumateDraftingElements.h"
 
 using namespace Modumate::Units;
 

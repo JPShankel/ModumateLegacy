@@ -1,13 +1,13 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectGroup.h"
+#include "DocumentManagement/ModumateObjectGroup.h"
 #include "CoreMinimal.h"
 #include "DocumentManagement/ModumateSnappingView.h"
-#include "ModumateObjectGroup.h"
-#include "EditModelGameMode_CPP.h"
-#include "MOIGroupActor_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "HUDDrawWidget_CPP.h"
+#include "DocumentManagement/ModumateObjectGroup.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/MOIGroupActor_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
 
 namespace Modumate
 {

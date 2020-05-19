@@ -1,17 +1,17 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelStructureLineTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelStructureLineTool.h"
 
-#include "DynamicMeshActor.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelGameState_CPP.h"
-#include "Graph3D.h"
-#include "LineActor.h"
-#include "ModumateDocument.h"
-#include "ModumateCommands.h"
-#include "ModumateStairStatics.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "Graph/Graph3D.h"
+#include "UnrealClasses/LineActor.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "ModumateCore/ModumateStairStatics.h"
 
 using namespace Modumate;
 

@@ -1,14 +1,14 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateRoomStatics.h"
+#include "ModumateCore/ModumateRoomStatics.h"
 
 #include "Algo/LevenshteinDistance.h"
-#include "DynamicMeshActor.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelGameState_CPP.h"
-#include "Graph3D.h"
-#include "ModumateObjectDatabase.h"
-#include "ModumateObjectInstance.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "Graph/Graph3D.h"
+#include "Database/ModumateObjectDatabase.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 
 using namespace Modumate;
 

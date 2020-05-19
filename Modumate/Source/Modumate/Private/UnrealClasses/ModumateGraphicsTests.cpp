@@ -1,15 +1,15 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "Tests/AutomationCommon.h"
-#include "EditModelInputAutomation.h"
-#include "stats.h"
-#include "CsvProfiler.h"
-#include "Csv/CsvParser.h"
+#include "UnrealClasses/EditModelInputAutomation.h"
+#include "Stats/Stats.h"
+#include "ProfilingDebugging/CsvProfiler.h"
+#include "Serialization/Csv/CsvParser.h"
 #include "HAL/FileManager.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "ModumateCommands.h"
-#include "ModumateGameInstance.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 
 namespace Modumate

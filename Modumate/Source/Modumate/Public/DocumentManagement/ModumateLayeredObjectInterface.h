@@ -1,7 +1,7 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "ModumateObjectAssembly.h"
+#include "Database/ModumateObjectAssembly.h"
 
 namespace Modumate
 {

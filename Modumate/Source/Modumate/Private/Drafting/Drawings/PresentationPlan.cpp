@@ -1,13 +1,13 @@
-#include "PresentationPlan.h"
-#include "ModumateDocument.h"
-#include "ModumateDraftingTags.h"
-#include "ModumateObjectInstance.h"
-#include "ModumateObjectInstanceCutPlane.h"
-#include "ModumateGraph.h"
-#include "DrawingArea.h"
-#include "DraftingManager.h"
-#include "ScheduleGrid.h"
-#include "RoomLegend.h"
+#include "Drafting/Drawings/PresentationPlan.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "Drafting/ModumateDraftingTags.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "DocumentManagement/ModumateObjectInstanceCutPlane.h"
+#include "Graph/ModumateGraph.h"
+#include "Drafting/Drawings/DrawingArea.h"
+#include "Drafting/DraftingManager.h"
+#include "Drafting/Schedules/ScheduleGrid.h"
+#include "Drafting/Schedules/RoomLegend.h"
 
 using namespace Modumate::Units;
 

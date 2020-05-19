@@ -1,7 +1,7 @@
-#include "RoomLegend.h"
+#include "Drafting/Schedules/RoomLegend.h"
 
-#include "ModumateDraftingElements.h"
-#include "ScheduleGrid.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "Drafting/Schedules/ScheduleGrid.h"
 
 using namespace Modumate::Units;
 

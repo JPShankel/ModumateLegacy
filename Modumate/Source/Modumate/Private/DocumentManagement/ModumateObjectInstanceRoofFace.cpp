@@ -1,17 +1,17 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceRoofFace.h"
+#include "DocumentManagement/ModumateObjectInstanceRoofFace.h"
 
-#include "AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
 #include "DrawDebugHelpers.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPolyAdjustmentHandles.h"
-#include "HUDDrawWidget_CPP.h"
-#include "ModumateCommands.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateObjectStatics.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 
 namespace Modumate
 {

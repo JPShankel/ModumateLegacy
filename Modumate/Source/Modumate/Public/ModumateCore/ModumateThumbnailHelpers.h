@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 #include "IImageWrapper.h"
 #include "ImagePixelData.h"
-#include "Object.h"
+#include "UObject/Object.h"
 #include "PixelFormat.h"
 #include "Styling/SlateBrush.h"
 #include "Templates/SharedPointer.h"

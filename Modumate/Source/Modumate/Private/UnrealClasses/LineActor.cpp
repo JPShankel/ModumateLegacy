@@ -1,16 +1,16 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "LineActor.h"
+#include "UnrealClasses/LineActor.h"
 #include "ProceduralMeshComponent.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerHUD_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerHUD_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Materials/MaterialInstanceDynamic.h"
-#include "ModumateFunctionLibrary.h"
-#include "Graph3D.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Graph/Graph3D.h"
 
 // Sets default values
 ALineActor::ALineActor(const FObjectInitializer& ObjectInitializer)

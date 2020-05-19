@@ -1,7 +1,7 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "ModumateObjectInstance.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 #include "CoreMinimal.h"
 
 class AAdjustmentHandleActor_CPP;

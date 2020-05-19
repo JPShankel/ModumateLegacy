@@ -2,10 +2,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateShoppingItem.h"
+#include "Database/ModumateShoppingItem.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Object.h"
-#include "ModumateCameraView.h"
+#include "UObject/Object.h"
+#include "DocumentManagement/ModumateCameraView.h"
 #include "ModumateBrowserStatics.generated.h"
 
 // Helper functions for accessing / editing browser menu related data.

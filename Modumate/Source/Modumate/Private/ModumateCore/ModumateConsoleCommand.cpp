@@ -1,7 +1,7 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateConsoleCommand.h"
-#include "ModumateStats.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
+#include "ModumateCore/ModumateStats.h"
 #include "Runtime/JsonUtilities/Public/JsonObjectConverter.h"
 
 namespace Modumate

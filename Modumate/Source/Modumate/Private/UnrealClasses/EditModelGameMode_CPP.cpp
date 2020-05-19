@@ -1,15 +1,15 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
 
-#include "EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "HAL/FileManager.h"
-#include "EditModelToolInterface.h"
+#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "Kismet/GameplayStatics.h"
-#include "LineActor.h"
-#include "MOIGroupActor_CPP.h"
-#include "ModumateObjectDatabase.h"
-#include "PortalFrameActor_CPP.h"
+#include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/MOIGroupActor_CPP.h"
+#include "Database/ModumateObjectDatabase.h"
+#include "UnrealClasses/PortalFrameActor_CPP.h"
 #include "UObject/ConstructorHelpers.h"
 
 using namespace Modumate;

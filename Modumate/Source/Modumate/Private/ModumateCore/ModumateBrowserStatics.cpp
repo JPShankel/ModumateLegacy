@@ -1,9 +1,9 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateBrowserStatics.h"
-#include "EditModelGameState_CPP.h"
-#include "ModumateObjectInstance.h"
-#include "EditModelGameState_CPP.h"
+#include "ModumateCore/ModumateBrowserStatics.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 
 using namespace Modumate;
 

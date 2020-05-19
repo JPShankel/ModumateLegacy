@@ -1,11 +1,11 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateConsole.h"
+#include "UnrealClasses/ModumateConsole.h"
 
 #include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
-#include "ModumateCommands.h"
-#include "ModumateGameInstance.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 
 UModumateConsole::UModumateConsole(const FObjectInitializer& ObjectInitializer)

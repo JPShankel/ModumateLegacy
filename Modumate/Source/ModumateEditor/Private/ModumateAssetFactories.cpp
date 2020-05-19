@@ -9,7 +9,7 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "ModumateEditorModule.h"
-#include "ModumateUnits.h"
+#include "ModumateCore/ModumateUnits.h"
 #include "Subsystems/ImportSubsystem.h"
 
 #define LOCTEXT_NAMESPACE "ModumateEditor"

@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ModumateBIMSchema.h"
-#include "ModumateCrafting.h"
-#include "ModumatePresetManager.h"
-#include "ModumateObjectAssembly.h"
-#include "DynamicMeshActor.h"
+#include "Database/ModumateBIMSchema.h"
+#include "Database/ModumateCrafting.h"
+#include "DocumentManagement/ModumatePresetManager.h"
+#include "Database/ModumateObjectAssembly.h"
+#include "UnrealClasses/DynamicMeshActor.h"
 #include "ModumateCraftingWidget_CPP.generated.h"
 
 /**

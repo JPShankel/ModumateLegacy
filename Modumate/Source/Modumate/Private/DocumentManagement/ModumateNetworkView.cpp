@@ -1,12 +1,12 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateNetworkView.h"
+#include "DocumentManagement/ModumateNetworkView.h"
 #include <functional>
-#include "PlatformFunctions.h"
-#include "Modumate.h"
-#include "ModumateDocument.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateObjectInstance.h"
+#include "ModumateCore/PlatformFunctions.h"
+#include "UnrealClasses/Modumate.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 #include "Algo/Transform.h"
 
 namespace Modumate

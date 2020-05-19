@@ -5,10 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
-#include "ModumateTypes.h"
-#include "ModumateArchitecturalMaterial.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateObjectAssembly.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "Database/ModumateArchitecturalMaterial.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "Database/ModumateObjectAssembly.h"
 #include "DynamicMeshActor.generated.h"
 
 

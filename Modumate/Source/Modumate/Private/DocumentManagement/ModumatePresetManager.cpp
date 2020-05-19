@@ -1,15 +1,15 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumatePresetManager.h"
-#include "ModumateSerialization.h"
-#include "PlatformFunctions.h"
-#include "ModumateGameInstance.h"
-#include "ModumateCommands.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelGameState_CPP.h"
-#include "ModumateObjectEnums.h"
-#include "ModumateCraftingTreeBuilder.h"
-#include "EditModelPlayerState_CPP.h"
+#include "DocumentManagement/ModumatePresetManager.h"
+#include "DocumentManagement/ModumateSerialization.h"
+#include "ModumateCore/PlatformFunctions.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "Database/ModumateObjectEnums.h"
+#include "Database/ModumateCraftingTreeBuilder.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Algo/Transform.h"
 
 using namespace Modumate;

@@ -1,19 +1,19 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 
-#include "CompoundMeshActor.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "ExpressionEvaluator.h"
-#include "Graph3D.h"
-#include "ModumateBIMSchema.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateObjectInstance.h"
-#include "ModumateSimpleMesh.h"
-#include "ModumateSnappingView.h"
+#include "UnrealClasses/CompoundMeshActor.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "ModumateCore/ExpressionEvaluator.h"
+#include "Graph/Graph3D.h"
+#include "Database/ModumateBIMSchema.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Database/ModumateSimpleMesh.h"
+#include "DocumentManagement/ModumateSnappingView.h"
 
 using namespace Modumate;
 

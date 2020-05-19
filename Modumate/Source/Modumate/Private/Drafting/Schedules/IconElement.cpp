@@ -1,5 +1,5 @@
-#include "IconElement.h"
-#include "ModumateDraftingElements.h"
+#include "Drafting/Schedules/IconElement.h"
+#include "Drafting/ModumateDraftingElements.h"
 
 using namespace Modumate::Units;
 

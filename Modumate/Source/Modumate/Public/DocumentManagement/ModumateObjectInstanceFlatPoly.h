@@ -1,7 +1,7 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "ModumateDynamicObjectBase.h"
+#include "DocumentManagement/ModumateDynamicObjectBase.h"
 
 namespace Modumate
 {

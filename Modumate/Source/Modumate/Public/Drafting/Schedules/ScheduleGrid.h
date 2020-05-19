@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "DraftingSchedule.h"
+#include "Drafting/Schedules/DraftingSchedule.h"
 
 namespace Modumate {
 

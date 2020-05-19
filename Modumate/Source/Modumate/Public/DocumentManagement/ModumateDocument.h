@@ -3,16 +3,16 @@
 #pragma once
 
 #include <functional>
-#include "DynamicMeshActor.h"
-#include "ModumateSerialization.h"
-#include "ModumateObjectDatabase.h"
-#include "ModumateCrafting.h"
-#include "ModumateGraph.h"
-#include "ModumatePresetManager.h"
-#include "Graph3D.h"
-#include "ModumateObjectInstance.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "DocumentManagement/ModumateSerialization.h"
+#include "Database/ModumateObjectDatabase.h"
+#include "Database/ModumateCrafting.h"
+#include "Graph/ModumateGraph.h"
+#include "DocumentManagement/ModumatePresetManager.h"
+#include "Graph/Graph3D.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 #include "Runtime/Engine/Classes/Debug/ReporterGraph.h"
-#include "ModumateCameraView.h"
+#include "DocumentManagement/ModumateCameraView.h"
 
 class AEditModelPlayerState_CPP;
 

@@ -1,11 +1,11 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "EditModelToolBase.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "Engine/Engine.h"
-#include "ModumateObjectAssembly.h"
-#include "ModumateObjectStatics.h"
-#include "EditModelPlayerState_CPP.h"
+#include "Database/ModumateObjectAssembly.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 #include "EditModelTrimTool.generated.h"
 

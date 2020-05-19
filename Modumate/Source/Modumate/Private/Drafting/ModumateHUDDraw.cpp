@@ -1,5 +1,5 @@
-#include "ModumateHUDDraw.h"
-#include "ModumateGeometryStatics.h"
+#include "Drafting/ModumateHUDDraw.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 namespace Modumate
 {

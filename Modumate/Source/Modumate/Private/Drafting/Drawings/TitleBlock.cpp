@@ -1,8 +1,8 @@
-#include "TitleBlock.h"
+#include "Drafting/Drawings/TitleBlock.h"
 
-#include "ModumateDraftingDraw.h"
-#include "ModumateDraftingTags.h"
-#include "ScheduleGrid.h"
+#include "Drafting/ModumateDraftingDraw.h"
+#include "Drafting/ModumateDraftingTags.h"
+#include "Drafting/Schedules/ScheduleGrid.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDraftingTitleBlock"
 

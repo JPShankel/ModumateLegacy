@@ -1,19 +1,19 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceFurniture.h"
+#include "DocumentManagement/ModumateObjectInstanceFurniture.h"
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "CompoundMeshActor.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/CompoundMeshActor.h"
 #include "DocumentManagement/ModumateSnappingView.h"
-#include "EditModelAdjustmentHandleBase.h"
-#include "EditModelFFEAdjustmentHandles.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "HUDDrawWidget_CPP.h"
-#include "ModumateBIMSchema.h"
-#include "ModumateDocument.h"
-#include "ModumateObjectInstanceParts_CPP.h"
-#include "ModumateObjectStatics.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
+#include "ToolsAndAdjustments/Handles/EditModelFFEAdjustmentHandles.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "Database/ModumateBIMSchema.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
 class AEditModelPlayerController_CPP;

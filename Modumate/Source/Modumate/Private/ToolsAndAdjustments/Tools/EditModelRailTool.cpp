@@ -1,13 +1,13 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelRailTool.h"
-#include "LineActor.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "ModumateCommands.h"
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "ModumateObjectInstanceRails.h"
+#include "ToolsAndAdjustments/Tools/EditModelRailTool.h"
+#include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "DocumentManagement/ModumateObjectInstanceRails.h"
 
 using namespace Modumate;
 

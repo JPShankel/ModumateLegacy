@@ -5,12 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
 
-#include "EditModelPlayerHUD_CPP.h"
+#include "UnrealClasses/EditModelPlayerHUD_CPP.h"
 #include "HUDDrawWidget_CPP.h"
-#include "ModumateDimensionString.h"
-#include "ModumateObjectEnums.h"
-#include "ModumateObjectInstance.h"
-#include "ModumateSnappedCursor.h"
+#include "ModumateCore/ModumateDimensionString.h"
+#include "Database/ModumateObjectEnums.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UObject/ScriptInterface.h"
 
 #include "EditModelPlayerState_CPP.generated.h"

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "ObjectMacros.h"
+#include "UObject/ObjectMacros.h"
 #include "Graph/Graph3D.h"
 
 #include "ModumateObjectEnums.generated.h"

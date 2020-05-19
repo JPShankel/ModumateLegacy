@@ -1,9 +1,9 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
-#include "APDFLLib.h"
-#include "ModumateUnits.h"
-#include "ModumateDraftingDraw.h"
-#include "ModumateDraftingElements.h"
+#include "Drafting/APDFLLib.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "Drafting/ModumateDraftingDraw.h"
+#include "Drafting/ModumateDraftingElements.h"
 
 namespace Modumate {
 

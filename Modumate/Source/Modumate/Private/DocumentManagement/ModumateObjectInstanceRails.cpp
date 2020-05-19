@@ -1,10 +1,10 @@
-#include "ModumateObjectInstanceRails.h"
-#include "EditModelAdjustmentHandleBase.h"
-#include "EditModelPlayerController_CPP.h"
-#include "AdjustmentHandleActor_CPP.h"
-#include "HUDDrawWidget_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelGameState_CPP.h"
+#include "DocumentManagement/ModumateObjectInstanceRails.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 
 
 namespace Modumate

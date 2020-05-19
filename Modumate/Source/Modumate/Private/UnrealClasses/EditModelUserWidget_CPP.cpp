@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "EditModelUserWidget_CPP.h"
+#include "UnrealClasses/EditModelUserWidget_CPP.h"
 
 
 

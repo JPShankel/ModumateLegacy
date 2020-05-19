@@ -1,11 +1,11 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateCrafting.h"
-#include "ModumateObjectDatabase.h"
-#include "ModumateArchitecturalMaterial.h"
-#include "ModumateScriptProcessor.h"
-#include "ModumateDecisionTreeImpl.h"
-#include "ModumateCommands.h"
+#include "Database/ModumateCrafting.h"
+#include "Database/ModumateObjectDatabase.h"
+#include "Database/ModumateArchitecturalMaterial.h"
+#include "ModumateCore/ModumateScriptProcessor.h"
+#include "ModumateCore/ModumateDecisionTreeImpl.h"
+#include "DocumentManagement/ModumateCommands.h"
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
 

@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "SummaryList.h"
+#include "Drafting/Schedules/SummaryList.h"
 
 namespace Modumate {
 

@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EditModelToolBase.h"
-#include "ModumateSerialization.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "DocumentManagement/ModumateSerialization.h"
 
 #include "EditModelSelectTool.generated.h"
 

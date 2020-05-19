@@ -1,6 +1,6 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateViewportClient.h"
+#include "UnrealClasses/ModumateViewportClient.h"
 
 #include "Engine.h"
 #include "Slate/SceneViewport.h"

@@ -1,9 +1,9 @@
-#include "DoorSchedule.h"
+#include "Drafting/Schedules/DoorSchedule.h"
 
-#include "ModumateDimensionStatics.h"
-#include "ModumateDocument.h"
-#include "ModumateObjectInstance.h"
-#include "ScheduleGrid.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Drafting/Schedules/ScheduleGrid.h"
 
 using namespace Modumate::Units;
 

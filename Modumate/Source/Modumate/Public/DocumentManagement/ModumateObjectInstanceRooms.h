@@ -2,8 +2,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateObjectInstance.h"
-#include "ModumateShoppingItem.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Database/ModumateShoppingItem.h"
 
 
 class AEditModelPlayerController_CPP;

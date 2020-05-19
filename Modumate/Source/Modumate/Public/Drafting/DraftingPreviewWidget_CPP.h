@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ModumateDraftingView.h"
-#include "ModumateDecisionTree.h"
-#include "ModumateObjectEnums.h"
-#include "ModumateCrafting.h"
+#include "Drafting/ModumateDraftingView.h"
+#include "ModumateCore/ModumateDecisionTree.h"
+#include "Database/ModumateObjectEnums.h"
+#include "Database/ModumateCrafting.h"
 #include "Runtime/UMG/Public/Components/Border.h"
 #include "DraftingPreviewWidget_CPP.generated.h"
 

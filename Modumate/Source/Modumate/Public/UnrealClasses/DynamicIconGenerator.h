@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ModumateShoppingItem.h"
+#include "Database/ModumateShoppingItem.h"
 #include "DynamicIconGenerator.generated.h"
 
 

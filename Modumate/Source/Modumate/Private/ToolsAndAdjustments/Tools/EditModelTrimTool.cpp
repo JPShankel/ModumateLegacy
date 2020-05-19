@@ -1,15 +1,15 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelTrimTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelTrimTool.h"
 
-#include "DynamicMeshActor.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerPawn_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "ModumateCommands.h"
-#include "ModumateGeometryStatics.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 using namespace Modumate;
 

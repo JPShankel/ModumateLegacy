@@ -1,9 +1,9 @@
 #include "CoreMinimal.h"
 
-#include "APDFLLib.h"
-#include "ModumateDraftingElements.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateUnits.h"
+#include "Drafting/APDFLLib.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateUnits.h"
 
 namespace Modumate
 {

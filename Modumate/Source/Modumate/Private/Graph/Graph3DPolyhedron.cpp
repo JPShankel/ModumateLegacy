@@ -1,5 +1,5 @@
-#include "Graph3DPolyhedron.h"
-#include "Graph3D.h"
+#include "Graph/Graph3DPolyhedron.h"
+#include "Graph/Graph3D.h"
 
 namespace Modumate
 {

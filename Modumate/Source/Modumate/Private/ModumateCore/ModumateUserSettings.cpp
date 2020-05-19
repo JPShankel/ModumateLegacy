@@ -1,6 +1,6 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateUserSettings.h"
+#include "ModumateCore/ModumateUserSettings.h"
 
 #include "JsonObjectConverter.h"
 #include "Misc/App.h"

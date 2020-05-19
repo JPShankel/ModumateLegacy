@@ -1,13 +1,13 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelPolyAdjustmentHandles.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "ModumateFunctionLibrary.h"
+#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "DrawDebugHelpers.h"
-#include "AdjustmentHandleActor_CPP.h"
-#include "ModumateCommands.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "DocumentManagement/ModumateCommands.h"
 #include "Algo/Accumulate.h"
 
 namespace Modumate

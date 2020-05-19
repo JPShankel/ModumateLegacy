@@ -1,9 +1,9 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "EditModelToolBase.h"
-#include "EditModelPlayerState_CPP.h"
-#include "DynamicMeshActor.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/DynamicMeshActor.h"
 #include "Graph/Graph3D.h"
 #include "Graph/ModumateGraph.h"
 

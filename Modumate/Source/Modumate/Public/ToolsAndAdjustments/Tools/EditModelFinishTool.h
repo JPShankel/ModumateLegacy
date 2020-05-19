@@ -1,10 +1,10 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "EditModelToolbase.h"
-#include "EditModelSelectTool.h"
-#include "EditModelGameState_CPP.h"
-#include "EditModelPlayerController_CPP.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 #include "EditModelFinishTool.generated.h"
 

@@ -1,6 +1,6 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateSlateHelper.h"
+#include "ModumateCore/ModumateSlateHelper.h"
 #include "Rendering/DrawElements.h"
 #include "Framework/Application/SlateApplication.h"
 

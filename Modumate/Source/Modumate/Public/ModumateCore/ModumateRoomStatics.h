@@ -2,12 +2,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateDataTables.h"
-#include "ModumateGraph3DTypes.h"
-#include "ModumateShoppingItem.h"
-#include "ModumateTypes.h"
+#include "Database/ModumateDataTables.h"
+#include "Graph/ModumateGraph3DTypes.h"
+#include "Database/ModumateShoppingItem.h"
+#include "ModumateCore/ModumateTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Object.h"
+#include "UObject/Object.h"
 
 #include "ModumateRoomStatics.generated.h"
 

@@ -1,15 +1,15 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "Graph3D.h"
+#include "Graph/Graph3D.h"
 
 #include "Algo/Transform.h"
-#include "Graph3DDelta.h"
+#include "Graph/Graph3DDelta.h"
 
-#include "ModumateGraph.h"
+#include "Graph/ModumateGraph.h"
 
-#include "ModumateFunctionLibrary.h"
-#include "ModumateGeometryStatics.h"
-#include "ModumateSerialization.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "DocumentManagement/ModumateSerialization.h"
 
 namespace Modumate
 {

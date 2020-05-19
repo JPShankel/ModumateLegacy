@@ -1,14 +1,14 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateIconMeshStatics.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateCraftingWidget_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelGameState_CPP.h"
+#include "ModumateCore/ModumateIconMeshStatics.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Database/ModumateCraftingWidget_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/CompoundMeshActor.h"
-#include "ModumateDimensionStatics.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 
 using namespace Modumate;
 

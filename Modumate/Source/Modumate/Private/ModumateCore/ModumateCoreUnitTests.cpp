@@ -1,11 +1,11 @@
 #include "CoreMinimal.h"
 
 #include "Algo/Transform.h"
-#include "ExpressionEvaluator.h"
-#include "ModumateConsoleCommand.h"
-#include "ModumateDimensionStatics.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateGeometryStatics.h"
+#include "ModumateCore/ExpressionEvaluator.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 namespace Modumate
 {

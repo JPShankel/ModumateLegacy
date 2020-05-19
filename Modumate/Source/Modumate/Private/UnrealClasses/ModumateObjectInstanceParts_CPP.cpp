@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "ModumateObjectInstanceParts_CPP.h"
+#include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
 
 
 // Sets default values

@@ -1,7 +1,7 @@
-#include "ModumateStairStatics.h"
+#include "ModumateCore/ModumateStairStatics.h"
 
 #include "Algo/Transform.h"
-#include "ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 namespace Modumate
 {

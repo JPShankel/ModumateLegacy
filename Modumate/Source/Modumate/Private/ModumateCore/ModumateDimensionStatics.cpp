@@ -1,9 +1,9 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateDimensionStatics.h"
-#include "ModumateTypes.h"
-#include "ModumateUnits.h"
-#include "ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
 #include <regex>
 

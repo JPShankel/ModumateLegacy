@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 
-#include "ModumateUnits.h"
-#include "ModumateConsoleCommand.h"
-#include "ModumateArchitecturalMaterial.h"
-#include "ModumateArchitecturalMesh.h"
-#include "ModumateSimpleMesh.h"
-#include "ModumateLayerPattern.h"
-#include "ModumateShoppingItem.h"
-#include "ModumateCrafting.h"
-#include "ModumateSerialization.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
+#include "Database/ModumateArchitecturalMaterial.h"
+#include "Database/ModumateArchitecturalMesh.h"
+#include "Database/ModumateSimpleMesh.h"
+#include "Database/ModumateLayerPattern.h"
+#include "Database/ModumateShoppingItem.h"
+#include "Database/ModumateCrafting.h"
+#include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateObjectAssembly.generated.h"
 
 

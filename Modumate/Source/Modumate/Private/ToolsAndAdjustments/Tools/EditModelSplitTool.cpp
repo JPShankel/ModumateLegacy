@@ -1,11 +1,11 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelSplitTool.h"
-#include "ModumateCommands.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "EditModelGameState_CPP.h"
-#include "Modumate.h"
+#include "ToolsAndAdjustments/Tools/EditModelSplitTool.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/Modumate.h"
 #include "Runtime/Engine/Classes/Components/LineBatchComponent.h"
 
 using namespace Modumate;

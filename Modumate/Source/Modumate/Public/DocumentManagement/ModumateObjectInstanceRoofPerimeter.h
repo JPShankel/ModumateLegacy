@@ -1,10 +1,10 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "EditModelAdjustmentHandleBase.h"
-#include "ModumateObjectInstance.h"
-#include "ModumateGraph.h"
-#include "ModumateGraph3DTypes.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Graph/ModumateGraph.h"
+#include "Graph/ModumateGraph3DTypes.h"
 
 class AAdjustmentHandleActor_CPP;
 class ALineActor;

@@ -1,11 +1,11 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstancePlaneBase.h"
+#include "DocumentManagement/ModumateObjectInstancePlaneBase.h"
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPolyAdjustmentHandles.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
 
 namespace Modumate
 {

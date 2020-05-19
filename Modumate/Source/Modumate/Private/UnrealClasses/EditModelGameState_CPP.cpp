@@ -1,18 +1,18 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "EditModelGameState_CPP.h"
-#include "ModumateDraftingView.h"
-#include "ModumateGameInstance.h"
-#include "ModumateFunctionLibrary.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "ModumateCommands.h"
-#include "ModumateObjectDatabase.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "Drafting/ModumateDraftingView.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "Database/ModumateObjectDatabase.h"
 #include "Algo/Reverse.h"
 #include "Algo/Transform.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
-#include "ModumateObjectInstance.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 
 
 AEditModelGameState_CPP::AEditModelGameState_CPP()

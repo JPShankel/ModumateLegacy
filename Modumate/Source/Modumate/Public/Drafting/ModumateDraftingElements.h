@@ -1,8 +1,8 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #pragma once
-#include "APDFLLib.h"
-#include "ModumateUnits.h"
-#include "ModumateDraftingDraw.h"
+#include "Drafting/APDFLLib.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "Drafting/ModumateDraftingDraw.h"
 
 #define DEFAULT_OBJECT_EPSILON 0.1f
 

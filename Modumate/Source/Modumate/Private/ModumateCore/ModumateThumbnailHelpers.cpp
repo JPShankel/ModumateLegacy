@@ -1,6 +1,6 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateThumbnailHelpers.h"
+#include "ModumateCore/ModumateThumbnailHelpers.h"
 
 #include "Engine/GameViewportClient.h"
 #include "Engine/Texture2D.h"
@@ -11,7 +11,7 @@
 #include "IImageWrapperModule.h"
 #include "ImageUtils.h"
 #include "Misc/Base64.h"
-#include "ModumateViewportClient.h"
+#include "UnrealClasses/ModumateViewportClient.h"
 #include "Rendering/SlateRenderer.h"
 
 

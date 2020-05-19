@@ -1,6 +1,6 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceGraphObjects.h"
+#include "DocumentManagement/ModumateObjectInstanceGraphObjects.h"
 
 namespace Modumate
 {

@@ -4,10 +4,10 @@
 
 #include <functional>
 #include "CoreMinimal.h"
-#include "ModumateUnits.h"
+#include "ModumateCore/ModumateUnits.h"
 #include "ModumateDraftingPage.h"
-#include "TitleBlock.h"
-#include "ModumateDraftingTags.h"
+#include "Drafting/Drawings/TitleBlock.h"
+#include "Drafting/ModumateDraftingTags.h"
 #include "Runtime/Engine/Classes/Debug/ReporterGraph.h"
 
 namespace Modumate

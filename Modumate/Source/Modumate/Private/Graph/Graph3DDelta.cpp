@@ -1,5 +1,5 @@
-#include "Graph3DDelta.h"
-#include "ModumateDocument.h"
+#include "Graph/Graph3DDelta.h"
+#include "DocumentManagement/ModumateDocument.h"
 
 namespace Modumate
 {

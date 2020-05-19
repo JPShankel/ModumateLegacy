@@ -1,11 +1,11 @@
-#include "CutPlaneCaptureActor.h"
+#include "UnrealClasses/CutPlaneCaptureActor.h"
 
 #include "Components/SceneCaptureComponent2D.h"
-#include "DraftingManager.h"
-#include "EditModelGameMode_CPP.h"
+#include "Drafting/DraftingManager.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "Kismet/KismetRenderingLibrary.h"
-#include "ModumateSceneCaptureObjectInterface.h"
-#include "ModumateUserSettings.h"
+#include "DocumentManagement/ModumateSceneCaptureObjectInterface.h"
+#include "ModumateCore/ModumateUserSettings.h"
 #include "UObject/Object.h"
 
 // Called when the game starts or when spawned

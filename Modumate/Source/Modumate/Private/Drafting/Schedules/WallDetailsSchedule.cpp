@@ -1,12 +1,12 @@
-#include "WallDetailsSchedule.h"
+#include "Drafting/Schedules/WallDetailsSchedule.h"
 
-#include "ModumateDimensionStatics.h"
-#include "ModumateDocument.h"
-#include "ModumateDraftingElements.h"
-#include "ModumateDraftingTags.h"
-#include "ModumateObjectAssembly.h"
-#include "ScheduleGrid.h"
-#include "ThumbnailCacheManager.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "Drafting/ModumateDraftingTags.h"
+#include "Database/ModumateObjectAssembly.h"
+#include "Drafting/Schedules/ScheduleGrid.h"
+#include "UnrealClasses/ThumbnailCacheManager.h"
 
 using namespace Modumate::Units;
 

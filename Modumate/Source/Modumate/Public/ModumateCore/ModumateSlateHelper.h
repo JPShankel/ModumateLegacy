@@ -3,7 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "UserWidget.h"
+#include "Blueprint/UserWidget.h"
 #include "ModumateSlateHelper.generated.h"
 
 

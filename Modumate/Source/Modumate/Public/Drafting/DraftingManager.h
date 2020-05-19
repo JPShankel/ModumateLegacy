@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateGameInstance.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "UObject/Object.h"
 
 #include "DraftingManager.generated.h"

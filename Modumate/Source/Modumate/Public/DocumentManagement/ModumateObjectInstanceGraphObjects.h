@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateControlPointObjectBase.h"
+#include "DocumentManagement/ModumateControlPointObjectBase.h"
 
 
 namespace Modumate

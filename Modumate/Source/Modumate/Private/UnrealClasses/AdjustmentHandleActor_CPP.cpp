@@ -1,14 +1,14 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "ModumateFunctionLibrary.h"
-#include "EditModelAdjustmentHandleBase.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "ModumateFunctionLibrary.h"
-#include "ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
 // Sets default values

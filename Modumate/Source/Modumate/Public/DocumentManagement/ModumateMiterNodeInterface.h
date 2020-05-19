@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved
 #pragma once
 
-#include "ModumateLayeredObjectInterface.h"
+#include "DocumentManagement/ModumateLayeredObjectInterface.h"
 
 namespace Modumate
 {

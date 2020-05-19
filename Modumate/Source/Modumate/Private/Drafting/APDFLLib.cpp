@@ -1,6 +1,6 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "APDFLLib.h"
+#include "Drafting/APDFLLib.h"
 
 #pragma warning (disable:4456)	// declaration of 'identifier' hides previous local declaration
 #pragma warning (disable:4458)	// declaration of 'identifier' hides class member
@@ -22,7 +22,7 @@
 #include <PDF/CADModule.h>
 #include <PDF/CADConvertOptions.h>
 
-#include "PlatformFunctions.h"
+#include "ModumateCore/PlatformFunctions.h"
 
 #include "HAL/FileManager.h"
 

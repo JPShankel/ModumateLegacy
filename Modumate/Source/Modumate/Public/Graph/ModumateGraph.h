@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 
-#include "ModumateTypes.h"
-#include "ModumateSerialization.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "DocumentManagement/ModumateSerialization.h"
 
 namespace Modumate
 {

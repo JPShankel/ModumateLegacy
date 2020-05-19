@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateDrawingSetWidget_CPP.h"
-#include "EditModelGameState_CPP.h"
+#include "Database/ModumateDrawingSetWidget_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 
 using namespace Modumate;
 

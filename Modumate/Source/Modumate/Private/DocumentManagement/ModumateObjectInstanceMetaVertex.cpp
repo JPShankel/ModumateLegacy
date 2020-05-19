@@ -1,12 +1,12 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateObjectInstanceMetaVertex.h"
+#include "DocumentManagement/ModumateObjectInstanceMetaVertex.h"
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelGameMode_CPP.h"
-#include "EditModelPlayerController_CPP.h"
-#include "ModumateObjectStatics.h"
-#include "ModumateVertexActor_CPP.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "UnrealClasses/ModumateVertexActor_CPP.h"
 
 namespace Modumate
 {

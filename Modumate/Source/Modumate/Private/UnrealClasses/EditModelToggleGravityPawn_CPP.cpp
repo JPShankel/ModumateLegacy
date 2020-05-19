@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "EditModelToggleGravityPawn_CPP.h"
+#include "UnrealClasses/EditModelToggleGravityPawn_CPP.h"
 #include "Components/InputComponent.h"
 
 // Sets default values

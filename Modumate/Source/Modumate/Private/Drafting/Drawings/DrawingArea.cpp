@@ -1,4 +1,4 @@
-#include "DrawingArea.h"
+#include "Drafting/Drawings/DrawingArea.h"
 
 namespace Modumate {
 	EDrawError FDrawingArea::Draw(IModumateDraftingDraw *drawingInterface,

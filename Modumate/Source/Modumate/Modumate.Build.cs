@@ -37,8 +37,9 @@ public class Modumate : ModuleRules
 		PrivatePCHHeaderFile = "Private/ModumatePCH.h";
 
 		bEnableExceptions = true;
+        bLegacyPublicIncludePaths = false;
 
-		OptimizeCode = CodeOptimization.InShippingBuildsOnly;
+        OptimizeCode = CodeOptimization.InShippingBuildsOnly;
 
 		PublicDependencyModuleNames.AddRange(new string[] {
 			"Core",

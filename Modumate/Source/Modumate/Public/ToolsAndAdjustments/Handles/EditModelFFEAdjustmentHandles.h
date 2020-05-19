@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "AdjustmentHandleActor_CPP.h"
-#include "EditModelPlayerState_CPP.h"
-#include "DynamicMeshActor.h"
-#include "EditModelAdjustmentHandleBase.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 
 
 namespace Modumate
