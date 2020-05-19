@@ -2364,7 +2364,7 @@ bool FModumateDocument::MoveMetaVertices(UWorld *World, const TArray<int32> &Ver
 
 	TArray<FGraph3DDelta> deltas;
 
-	if (!FGraph3D::GetDeltaForVertexMovements(&VolumeGraph, &TempVolumeGraph, VertexIDs, VertexPositions, deltas, NextID))
+	if (!FGraph3D::GetDeltaForVertexMovements(&TempVolumeGraph, VertexIDs, VertexPositions, deltas, NextID))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
@@ -2612,7 +2612,7 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 		TArray<int32> OutEdgeIDs;
 		if (numPoints == 2)
 		{
-			bValidDelta = FGraph3D::GetDeltaForEdgeAdditionWithSplit(&VolumeGraph, &TempVolumeGraph, points[0], points[1], deltas, NextID, OutEdgeIDs, true);
+			bValidDelta = FGraph3D::GetDeltaForEdgeAdditionWithSplit(&TempVolumeGraph, points[0], points[1], deltas, NextID, OutEdgeIDs, true);
 		}
 		else
 		{
@@ -2632,7 +2632,7 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 		}
 		else if (numPoints >= 3)
 		{
-			bValidDelta = FGraph3D::GetDeltaForFaceAddition(&VolumeGraph, &TempVolumeGraph, points, deltas, NextID, id);
+			bValidDelta = FGraph3D::GetDeltaForFaceAddition(&TempVolumeGraph, points, deltas, NextID, id);
 		}
 	}
 		break;

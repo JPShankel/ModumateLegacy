@@ -246,14 +246,6 @@ namespace Modumate
 			return nullptr;
 		}
 
-		if (bDebugCheck)
-		{
-			if (!ensureAlways(FindVertex(Position) == nullptr))
-			{
-				return nullptr;
-			}
-		}
-
 		FGraph3DVertex newVertex = FGraph3DVertex(newID, this, Position, InGroupIDs);
 		if (!ensureAlways(newVertex.bValid))
 		{
@@ -654,6 +646,7 @@ namespace Modumate
 			ApplyGroupIDsDelta(kvp.Key, kvp.Value);
 		}
 
+		bool bValidFaces = true;
 		for (auto &kvp : Faces)
 		{
 			FGraph3DFace &face = kvp.Value;
@@ -665,7 +658,7 @@ namespace Modumate
 				{
 					if (!face.UpdatePlane(face.VertexIDs))
 					{
-						return false;
+						bValidFaces = false;
 					}
 				}
 
@@ -674,11 +667,11 @@ namespace Modumate
 				// it needs to be updated through UpdateVerticesAndEdges
 				if (!face.UpdateVerticesAndEdges(face.VertexIDs, !bUpdatePlanes))
 				{
-					return false;
+					bValidFaces = false;
 				}
 			}
 		}
-		return true;
+		return bValidFaces;
 	}
 
 	bool FGraph3D::CalculateVerticesOnLine(const FVertexPair &VertexPair, const FVector& StartPos, const FVector& EndPos, TArray<int32> &OutVertexIDs, TPair<int32, int32> &OutSplitEdgeIDs) const

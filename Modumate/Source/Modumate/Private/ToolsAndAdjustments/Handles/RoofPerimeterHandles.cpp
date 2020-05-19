@@ -54,7 +54,7 @@ namespace Modumate
 
 						UE_LOG(LogTemp, Log, TEXT("Add roof face #%d with %d verts"), edgeIdx + 1, numPolyVerts);
 						int32 existingFaceID;
-						bool bAddedFace = FGraph3D::GetDeltaForFaceAddition(volumeGraph, tempVolumeGraph, polyVerts, graphDeltas, nextID, existingFaceID);
+						bool bAddedFace = FGraph3D::GetDeltaForFaceAddition(tempVolumeGraph, polyVerts, graphDeltas, nextID, existingFaceID);
 						if (!bAddedFace)
 						{
 							bFaceAdditionFailure = true;
