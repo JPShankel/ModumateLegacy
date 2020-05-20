@@ -17,6 +17,7 @@ static const TCHAR *kModumateCleanShutdownFile = TEXT("_modumateDidNotShutDownCl
 namespace Modumate
 {
 	class FModumateDocument;
+	class FModumateAccountManager;
 }
 
 class IAnalyticsProvider;
@@ -26,100 +27,16 @@ enum class ELoginStatus : uint8
 {
 	None = 0,
 	Disconnected,
+	ValidRefreshToken,
 	Connected,
-	WaitingForServer,
+	WaitingForRefreshToken,
+	WaitingForAuthId,
 	InvalidEmail,
 	InvalidPassword,
 	UserDisabled,
 	ConnectionError,
 	UnknownError
 };
-
-
-USTRUCT()
-struct MODUMATE_API FGoogleEmailPasswordLoginParams
-{
-	GENERATED_USTRUCT_BODY();
-
-	UPROPERTY()
-	FString email;
-
-	UPROPERTY()
-	FString password;
-
-	UPROPERTY()
-	bool returnSecureToken = true;
-};
-
-USTRUCT()
-struct MODUMATE_API FGoogleErrorType
-{
-	GENERATED_USTRUCT_BODY();
-	
-	UPROPERTY()
-	FString message;
-
-	UPROPERTY()
-	FString domain;
-
-	UPROPERTY()
-	FString reason;
-};
-
-USTRUCT()
-struct MODUMATE_API FGoogleErrorMessage
-{
-	GENERATED_USTRUCT_BODY();
-
-	UPROPERTY()
-	int32 code;
-
-	UPROPERTY()
-	FString message;
-
-	UPROPERTY()
-	TArray<FGoogleErrorType> errors;
-};
-
-USTRUCT()
-struct MODUMATE_API FGoogleErrorResponse
-{
-	GENERATED_USTRUCT_BODY();
-
-	UPROPERTY()
-	FGoogleErrorMessage error;
-};
-
-USTRUCT()
-struct MODUMATE_API FGoogleEmailPasswordLoginResponse
-{
-	GENERATED_USTRUCT_BODY();
-
-	UPROPERTY()
-	FString kind;
-
-	UPROPERTY()
-	FString localId;
-
-	UPROPERTY()
-	FString email;
-
-	UPROPERTY()
-	FString displayName;
-
-	UPROPERTY()
-	FString idToken;
-
-	UPROPERTY()
-	bool registered;
-
-	UPROPERTY()
-	FString refreshToken;
-
-	UPROPERTY()
-	FString expiresIn;
-};
-
 
 /**
  *
@@ -135,10 +52,12 @@ private:
 	void ProcessCommandQueue();
 	TMap<FString, Modumate::FModumateFunction*> CommandMap;
 	TSharedPtr<IAnalyticsProvider> AnalyticsInstance;
+	TSharedPtr<Modumate::FModumateAccountManager> AccountManager;
 
 	Modumate::FModumateDocument *GetDocument();
 
 	void OnLoginResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	void ProcessLogin(const FHttpResponsePtr Response);
 	void CheckCrashRecovery();
 
 public:
@@ -155,11 +74,8 @@ public:
 
 	IAnalyticsProvider *GetAnalytics() const { return AnalyticsInstance.Get(); }
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	ELoginStatus LoginStatus = ELoginStatus::Disconnected;
-
-	FString GoogleLocalId;
-	FString GoogleRefreshToken;
+	UFUNCTION(BlueprintCallable)
+	ELoginStatus LoginStatus() const;
 
 	UFUNCTION(BlueprintCallable, Category = ModumateLogin)
 	void Login(const FString &userName, const FString &password);

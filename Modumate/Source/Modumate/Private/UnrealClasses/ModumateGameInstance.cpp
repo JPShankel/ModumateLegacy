@@ -26,6 +26,8 @@
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "Algo/Transform.h"
+#include "Dom/JsonObject.h"
+#include "Online/ModumateAccountManager.h"
 
 using namespace Modumate::Commands;
 using namespace Modumate::Parameters;
@@ -53,6 +55,7 @@ Modumate::FModumateDocument *UModumateGameInstance::GetDocument()
 void UModumateGameInstance::Init()
 {
 	AnalyticsInstance = UModumateAnalyticsStatics::InitAnalytics();
+	AccountManager = MakeShared<Modumate::FModumateAccountManager>();
 
 	UModumateFunctionLibrary::SetWindowTitle();
 
@@ -1285,85 +1288,12 @@ void UModumateGameInstance::CheckCrashRecovery()
 			TEXT("Recovery"), Modumate::PlatformFunctions::YesNo) == Modumate::PlatformFunctions::Yes);
 }
 
-void UModumateGameInstance::OnLoginResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
-{
-	if (bWasSuccessful)
-	{
-		FString content = Response->GetContentAsString();
-
-		int32 code = Response->GetResponseCode();
-		if (code == 200)
-		{
-			FGoogleEmailPasswordLoginResponse responseStruct;
-			FJsonObjectConverter::JsonObjectStringToUStruct<FGoogleEmailPasswordLoginResponse>(content, &responseStruct, 0, 0);
-			LoginStatus = ELoginStatus::Connected;
-			GoogleLocalId = responseStruct.localId;
-			GoogleRefreshToken = responseStruct.refreshToken;
-		}
-		else
-		{
-			FGoogleErrorResponse responseStruct;
-			FJsonObjectConverter::JsonObjectStringToUStruct<FGoogleErrorResponse>(content, &responseStruct, 0, 0);
-			if (responseStruct.error.message == TEXT("INVALID_PASSWORD"))
-			{
-				LoginStatus = ELoginStatus::InvalidPassword;
-			}
-			else
-			if (responseStruct.error.message == TEXT("USER_DISABLED"))
-			{
-				LoginStatus = ELoginStatus::UserDisabled;
-			}
-			else
-			if (responseStruct.error.message == TEXT("INVALID_EMAIL"))
-			{
-				LoginStatus = ELoginStatus::InvalidEmail;
-			}
-			else
-			{
-				LoginStatus = ELoginStatus::UnknownError;
-			}
-		}
-
-		CheckCrashRecovery();
-
-	}
-	else
-	{
-		LoginStatus = ELoginStatus::ConnectionError;
-	}
-}
-
-static FString MakeGoogleIdentityEndpoint(const FString &api)
-{
-	static const FString GoogleIdentityAccountBaseURL = TEXT("https://identitytoolkit.googleapis.com/v1/accounts:");
-	static const FString GoogleIdentityKey = TEXT("AIzaSyCH-6fFntnSbCQfv1vHA_mwBS4_htOIX_c");
-	return GoogleIdentityAccountBaseURL + api + TEXT("?key=") + GoogleIdentityKey;
-}
-
 void UModumateGameInstance::Login(const FString &userName, const FString &password)
 {
-	FGoogleEmailPasswordLoginParams params;
-	params.email = userName;
-	params.password = password;
+	AccountManager->Login(userName, password);
+}
 
-	FString payload;
-
-	LoginStatus = ELoginStatus::WaitingForServer;
-
-	GoogleLocalId.Reset();
-	GoogleRefreshToken.Reset();
-
-	FJsonObjectConverter::UStructToJsonObjectString<FGoogleEmailPasswordLoginParams>(params, payload, 0, 0, 0, nullptr, false);
-
-	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest();
-	Request->OnProcessRequestComplete().BindUObject(this, &UModumateGameInstance::OnLoginResponseReceived);
-
-	Request->SetURL(MakeGoogleIdentityEndpoint(TEXT("signInWithPassword")));
-
-	Request->SetVerb(TEXT("POST"));
-	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-	Request->SetHeader(TEXT("Accepts"), TEXT("application/json"));
-	Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
-	Request->SetContentAsString(payload);
-	Request->ProcessRequest();
+ELoginStatus UModumateGameInstance::LoginStatus() const
+{
+	return AccountManager->GetLoginStatus();
 }
