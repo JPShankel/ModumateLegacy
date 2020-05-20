@@ -335,6 +335,7 @@ namespace Modumate
 			FGraph3DDelta faceDelta;
 			int32 addedFaceID;
 			TArray<int32> parentIds = { MOD_ID_NONE };
+			TSet<int32> groupIDs;
 			TMap<int32, int32> edgeMap;
 			if (!GetDeltaForFaceAddition(faceVertices, faceDelta, NextID, existingID, parentIds, edgeMap, addedFaceID))
 			{
@@ -483,7 +484,8 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltaForFaceAddition(const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID)
+	bool FGraph3D::GetDeltaForFaceAddition(const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID,
+		TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID, const TSet<int32> &InGroupIDs)
 	{
 		TArray<int32> faceVertices;
 
@@ -517,12 +519,12 @@ namespace Modumate
 		}
 
 		AddedFaceID = NextID++;
-		OutDelta.FaceAdditions.Add(AddedFaceID, FGraph3DObjDelta(faceVertices, ParentFaceIDs));
+		OutDelta.FaceAdditions.Add(AddedFaceID, FGraph3DObjDelta(faceVertices, ParentFaceIDs, InGroupIDs));
 
 		return true;
 	}
 
-	bool FGraph3D::GetDeltaForFaceAddition(const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID)
+	bool FGraph3D::GetDeltaForFaceAddition(const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID, const TSet<int32> &InGroupIDs)
 	{
 		TArray<int32> newVertices;
 		FGraph3DDelta OutDelta;
@@ -539,7 +541,7 @@ namespace Modumate
 		int32 addedFaceID;
 		TArray<int32> parentIds = { MOD_ID_NONE };
 		TMap<int32, int32> edgeMap;
-		GetDeltaForFaceAddition(newVertices, OutDelta, NextID, ExistingID, parentIds, edgeMap, addedFaceID);
+		GetDeltaForFaceAddition(newVertices, OutDelta, NextID, ExistingID, parentIds, edgeMap, addedFaceID, InGroupIDs);
 		ApplyDelta(OutDelta);
 		OutDeltas.Add(OutDelta);
 
@@ -1278,6 +1280,7 @@ namespace Modumate
 
 		FGraph3DDelta deleteDelta;
 		TArray<int32> parentFaceIDs = { face->ID, otherFace->ID };
+		TSet<int32> groupIDs = face->GroupIDs.Union(otherFace->GroupIDs);
 
 		GetDeltaForDeletions(sharedVertexIDs, sharedEdgeIDs, parentFaceIDs, deleteDelta);
 		ApplyDelta(deleteDelta);
@@ -1307,7 +1310,7 @@ namespace Modumate
 		FGraph3DDelta addFaceDelta;
 		int32 addedFaceID, existingID;
 		TMap<int32, int32> edgeMap;
-		if (!GetDeltaForFaceAddition(newFaceVertexIDs, addFaceDelta, NextID, existingID, parentFaceIDs, edgeMap, addedFaceID))
+		if (!GetDeltaForFaceAddition(newFaceVertexIDs, addFaceDelta, NextID, existingID, parentFaceIDs, edgeMap, addedFaceID, groupIDs))
 		{
 			return false;
 		}

@@ -16,13 +16,6 @@ using namespace Modumate;
 
 URoofFaceTool::URoofFaceTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-#if 0
-	, State(Neutral)
-	, PendingSegment(nullptr)
-	, LastPendingSegmentLoc(ForceInitToZero)
-	, bLastPendingSegmentLocValid(false)
-	, DefaultEdgeSlope(0.5f)
-#endif
 {
 	ObjectType = EObjectType::OTRoofFace;
 	SetAxisConstraint(EAxisConstraint::None);

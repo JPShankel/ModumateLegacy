@@ -8,6 +8,7 @@
 
 class AAdjustmentHandleActor_CPP;
 class ALineActor;
+class URoofPerimeterPropertiesWidget;
 
 namespace Modumate
 {
@@ -37,21 +38,24 @@ namespace Modumate
 		TWeakObjectPtr<UWorld> World;
 		bool bValidPerimeterLoop;
 		TArray<FSignedID> CachedEdgeIDs;
+		TArray<int32> CachedFaceIDs;
 		TArray<FVector> CachedPerimeterPoints;
 		FVector CachedPerimeterCenter;
 		FGraph CachedPerimeterGraph;
 		FPlane CachedPlane;
 
-		TSet<FTypedGraphObjID> TempGroupMembers, TempConnectedGraphIDs;
+		TSet<FTypedGraphObjID> TempGroupMembers, TempGroupEdges, TempGroupFaces, TempConnectedGraphIDs;
 		TArray<FVector2D> TempPerimeterPoints2D;
 
 		TWeakObjectPtr<AActor> PerimeterActor;
 		TMap<int32, TWeakObjectPtr<ALineActor>> LineActors;
 		TSet<int32> TempEdgeIDsToAdd, TempEdgeIDsToRemove;
 
-		TWeakObjectPtr<AAdjustmentHandleActor_CPP> CreateFacesHandleActor;
+		TWeakObjectPtr<AAdjustmentHandleActor_CPP> CreateFacesHandleActor, RetractFacesHandleActor;
+		TWeakObjectPtr<URoofPerimeterPropertiesWidget> DefaultPropertiesWidget;
+		TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>> EdgeHandleActors;
 
-		bool UpdatePerimeterIDs();
+		bool UpdateConnectedIDs();
 		void UpdatePerimeterGeometry();
 		void UpdateLineActors();
 	};

@@ -8,6 +8,7 @@
 #include "EditModelPlayerHUD_CPP.generated.h"
 
 class UImage;
+class URoofPerimeterPropertiesWidget;
 
 USTRUCT(BlueprintType)
 struct FAffordanceLine
@@ -57,6 +58,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	bool RequestStaticCameraView = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<URoofPerimeterPropertiesWidget> RoofPerimeterPropertiesClass;
 
 	// Take a viewport screenshot, saves it in the playerController, then applies it to an UImage.
 	// Should only be used during viewport draw, else there will be a TextureRHI ensure

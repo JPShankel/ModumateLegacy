@@ -94,6 +94,15 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UStaticMesh *InvertHandleMesh;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface *BillboardTextureMaterial;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UTexture2D *ButtonEditGreenTexture;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UTexture2D *ButtonEditRedTexture;
+
 
 	Modumate::ModumateObjectDatabase *ObjectDatabase;
 

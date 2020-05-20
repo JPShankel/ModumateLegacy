@@ -2,8 +2,9 @@
 
 #pragma once
 
+#include "Graph/ModumateGraph3DTypes.h"
+#include "ToolsAndAdjustments/Common/EditModelAdjustmentHandleBase.h"
 #include "UnrealClasses/AdjustmentHandleActor_CPP.h"
-#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 
 namespace Modumate
 {
@@ -38,5 +39,26 @@ namespace Modumate
 		virtual bool OnBeginUse() override;
 		virtual bool OnEndUse() override;
 		virtual FVector GetAttachmentPoint() override;
+
+	protected:
+		TSet<FTypedGraphObjID> TempGroupMembers;
+		TArray<int32> TempFaceIDs;
+	};
+
+	class MODUMATE_API FEditRoofEdgeHandle : public FEditModelAdjustmentHandleBase
+	{
+	public:
+		FEditRoofEdgeHandle(FModumateObjectInstance *MOI, FSignedID InTargetEdgeID)
+			: FEditModelAdjustmentHandleBase(MOI)
+			, TargetEdgeID(InTargetEdgeID)
+		{ }
+
+		virtual bool OnBeginUse() override;
+		virtual bool OnUpdateUse() override;
+		virtual bool OnEndUse() override;
+		virtual FVector GetAttachmentPoint() override;
+
+		FSignedID TargetEdgeID;
+		TWeakObjectPtr<URoofPerimeterPropertiesWidget> PropertiesWidget;
 	};
 }

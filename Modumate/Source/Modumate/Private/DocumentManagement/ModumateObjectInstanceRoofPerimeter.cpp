@@ -12,6 +12,7 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/ModumateVertexActor_CPP.h"
 #include "ToolsAndAdjustments/Handles/RoofPerimeterHandles.h"
+#include "UnrealClasses/UI/RoofPerimeterPropertiesWidget.h"
 
 namespace Modumate
 {
@@ -69,15 +70,42 @@ namespace Modumate
 
 		UStaticMesh *anchorMesh = Controller->EMPlayerState->GetEditModelGameMode()->AnchorMesh;
 
-		FCreateRoofFacesHandle *handleImpl = new FCreateRoofFacesHandle(MOI);
+		// Handle for creating roof faces
+		FCreateRoofFacesHandle *createFacesHandle = new FCreateRoofFacesHandle(MOI);
 		CreateFacesHandleActor = Controller->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>();
 		CreateFacesHandleActor->SetActorMesh(anchorMesh);
 		CreateFacesHandleActor->SetHandleScale(FVector(0.001f));
 		CreateFacesHandleActor->SetHandleScaleScreenSize(FVector(0.001f));
 
-		handleImpl->Handle = CreateFacesHandleActor.Get();
-		CreateFacesHandleActor->Implementation = handleImpl;
+		createFacesHandle->Handle = CreateFacesHandleActor.Get();
+		CreateFacesHandleActor->Implementation = createFacesHandle;
 		CreateFacesHandleActor->AttachToActor(PerimeterActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
+
+		// Handle for retracting roof faces
+		FRetractRoofFacesHandle *retractFacesHandle = new FRetractRoofFacesHandle(MOI);
+		RetractFacesHandleActor = Controller->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>();
+		RetractFacesHandleActor->SetActorMesh(anchorMesh);
+		RetractFacesHandleActor->SetHandleScale(FVector(0.001f));
+		RetractFacesHandleActor->SetHandleScaleScreenSize(FVector(0.001f));
+
+		retractFacesHandle->Handle = RetractFacesHandleActor.Get();
+		RetractFacesHandleActor->Implementation = retractFacesHandle;
+		RetractFacesHandleActor->AttachToActor(PerimeterActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
+
+		// Handles for modifying roof edges
+		for (FSignedID edgeID : CachedEdgeIDs)
+		{
+			FEditRoofEdgeHandle *editEdgeHandle = new FEditRoofEdgeHandle(MOI, edgeID);
+			AAdjustmentHandleActor_CPP *edgeHandleActor = Controller->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>();
+			edgeHandleActor->SetActorMesh(anchorMesh);
+			edgeHandleActor->SetHandleScale(FVector(0.001f));
+			edgeHandleActor->SetHandleScaleScreenSize(FVector(0.001f));
+
+			editEdgeHandle->Handle = edgeHandleActor;
+			edgeHandleActor->Implementation = editEdgeHandle;
+			edgeHandleActor->AttachToActor(PerimeterActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
+			EdgeHandleActors.Add(edgeHandleActor);
+		}
 	}
 
 	void FMOIRoofPerimeterImpl::ClearAdjustmentHandles(AEditModelPlayerController_CPP *Controller)
@@ -86,6 +114,22 @@ namespace Modumate
 		{
 			CreateFacesHandleActor->Destroy();
 			CreateFacesHandleActor.Reset();
+		}
+
+		if (DefaultPropertiesWidget.IsValid())
+		{
+			DefaultPropertiesWidget->RemoveFromViewport();
+			DefaultPropertiesWidget->ConditionalBeginDestroy();
+			DefaultPropertiesWidget.Reset();
+		}
+
+		for (TWeakObjectPtr<AAdjustmentHandleActor_CPP> &edgeHandleActor : EdgeHandleActors)
+		{
+			if (edgeHandleActor.IsValid())
+			{
+				edgeHandleActor->Destroy();
+				edgeHandleActor.Reset();
+			}
 		}
 	}
 
@@ -98,7 +142,18 @@ namespace Modumate
 			return;
 		}
 
-		CreateFacesHandleActor->SetEnabled(bShow);
+		bool bCreatedRoofFaces = (CachedFaceIDs.Num() > 0);
+
+		CreateFacesHandleActor->SetEnabled(bShow && !bCreatedRoofFaces);
+		RetractFacesHandleActor->SetEnabled(bShow && bCreatedRoofFaces);
+
+		for (TWeakObjectPtr<AAdjustmentHandleActor_CPP> &edgeHandleActor : EdgeHandleActors)
+		{
+			if (edgeHandleActor.IsValid())
+			{
+				edgeHandleActor->SetEnabled(bShow);
+			}
+		}
 	}
 
 	void FMOIRoofPerimeterImpl::OnCursorHoverActor(AEditModelPlayerController_CPP *Controller, bool bIsHovered)
@@ -157,7 +212,7 @@ namespace Modumate
 		{
 			// TODO: we shouldn't have to update the perimeter IDs every time we change geometry,
 			// but we don't have a better time to do it besides cleaning structural flags.
-			if (!UpdatePerimeterIDs())
+			if (!UpdateConnectedIDs())
 			{
 				return false;
 			}
@@ -176,7 +231,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FMOIRoofPerimeterImpl::UpdatePerimeterIDs()
+	bool FMOIRoofPerimeterImpl::UpdateConnectedIDs()
 	{
 		if (!ensure(MOI))
 		{
@@ -191,8 +246,26 @@ namespace Modumate
 			return false;
 		}
 
+		// Separate the edges from the faces, so the perimeter is only calculated out of the edges
+		TempGroupEdges.Reset();
+		CachedFaceIDs.Reset();
+		for (const FTypedGraphObjID &groupMember : TempGroupMembers)
+		{
+			switch (groupMember.Value)
+			{
+			case EGraph3DObjectType::Edge:
+				TempGroupEdges.Add(groupMember);
+				break;
+			case EGraph3DObjectType::Face:
+				CachedFaceIDs.Add(groupMember.Key);
+				break;
+			default:
+				break;
+			}
+		}
+
 		CachedEdgeIDs.Reset();
-		if (volumeGraph.Create2DGraph(TempGroupMembers, TempConnectedGraphIDs, CachedPerimeterGraph, CachedPlane, true, false))
+		if (volumeGraph.Create2DGraph(TempGroupEdges, TempConnectedGraphIDs, CachedPerimeterGraph, CachedPlane, true, false))
 		{
 			const FGraphPolygon *perimeterPoly = CachedPerimeterGraph.GetExteriorPolygon();
 			if (ensure(perimeterPoly))
@@ -266,6 +339,8 @@ namespace Modumate
 
 		FVector perimeterAxisX, perimeterAxisY;
 		UModumateGeometryStatics::AnalyzeCachedPositions(CachedPerimeterPoints, CachedPlane, perimeterAxisX, perimeterAxisY, TempPerimeterPoints2D, CachedPerimeterCenter, false);
+
+		PerimeterActor->SetActorLocation(CachedPerimeterCenter);
 	}
 
 	void FMOIRoofPerimeterImpl::UpdateLineActors()
@@ -352,6 +427,7 @@ namespace Modumate
 					// Keep the line actor with the same direction as the original graph edge, for consistency
 					lineActor->SetActorHiddenInGame(!bMOIVisible);
 					lineActor->SetActorEnableCollision(bMOICollisionEnabled);
+					lineActor->SetIsHUD(false);
 					lineActor->Point1 = startVertex->Position;
 					lineActor->Point2 = endVertex->Position;
 					lineActor->Color = lineColor;
