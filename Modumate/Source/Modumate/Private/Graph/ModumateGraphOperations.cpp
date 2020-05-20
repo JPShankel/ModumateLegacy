@@ -56,7 +56,7 @@ namespace Modumate
 			// save vertices that are at the same position - after the moveVertexDelta
 			// has been applied, FindVertex will not reliably find the existingVertex
 			const FGraph3DVertex *existingVertex = FindVertex(newPos);
-			if (existingVertex != nullptr)
+			if (existingVertex != nullptr && existingVertex->ID != vertexID)
 			{
 				joinableVertexIDs.Add(vertexID, existingVertex->ID);
 			}
@@ -269,36 +269,50 @@ namespace Modumate
 
 	bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(const FVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs)
 	{
-		FGraph3DDelta OutDelta;
 		int32 ExistingID;
-		if (!GetDeltaForEdgeAddition(VertexPair, OutDelta, NextID, ExistingID))
+
+		// all deltas created by the graph operations within this function will be added to 
+		// splitEdgeDeltas, and if this function failed these deltas can be safely reverted.
+		// if the function will succeed, splitEdgeDeltas is appended to the output deltas
+		TArray<FGraph3DDelta> splitEdgeDeltas;
+
+		// add edge
+		FGraph3DDelta addEdgeDelta;
+		if (!GetDeltaForEdgeAddition(VertexPair, addEdgeDelta, NextID, ExistingID))
 		{
 			OutEdgeIDs = { ExistingID };
 			return false;
 		}
 
-		ApplyDelta(OutDelta);
-		OutDeltas.Add(OutDelta);
 
 		int32 edgeID = MOD_ID_NONE;
-		if (OutDelta.EdgeAdditions.Num() != 1)
+		if (addEdgeDelta.EdgeAdditions.Num() != 1)
 		{
 			return false;
 		}
 		else
 		{
-			for (auto& kvp : OutDelta.EdgeAdditions)
+			for (auto& kvp : addEdgeDelta.EdgeAdditions)
 			{
 				edgeID = kvp.Key;
 				break;
 			}
 		}
 
+		ApplyDelta(addEdgeDelta);
+		splitEdgeDeltas.Add(addEdgeDelta);
+
+		// check for splits with added edge
 		OutEdgeIDs = { edgeID };
-		if (!GetDeltasForEdgeSplits(OutDeltas, OutEdgeIDs, NextID))
+		if (!GetDeltasForEdgeSplits(splitEdgeDeltas, OutEdgeIDs, NextID))
 		{
+			for (auto& splitDelta : splitEdgeDeltas)
+			{
+				ApplyDelta(*splitDelta.MakeGraphInverse());
+			}
 			return false;
 		}
+		OutDeltas.Append(splitEdgeDeltas);
 
 		return true;
 	}
@@ -384,9 +398,7 @@ namespace Modumate
 			}
 			if (!bAddedToDeltas)
 			{
-				// TODO: version of MakeInverse that doesn't require cast
-				TSharedPtr<FGraph3DDelta> delta = StaticCastSharedPtr<FGraph3DDelta>(faceDelta.MakeInverse());
-				ApplyDelta(*delta);
+				ApplyDelta(*faceDelta.MakeGraphInverse());
 			}
 		}
 
@@ -444,7 +456,11 @@ namespace Modumate
 		}
 
 		FVertexPair vertexPair(vertexIDs[0], vertexIDs[1]);
-		GetDeltaForEdgeAdditionWithSplit(vertexPair, OutDeltas, NextID, OutEdgeIDs);
+		TArray<FGraph3DDelta> splitEdgeDeltas;
+		if (GetDeltaForEdgeAdditionWithSplit(vertexPair, splitEdgeDeltas, NextID, OutEdgeIDs))
+		{
+			OutDeltas.Append(splitEdgeDeltas);
+		}
 
 		if (bCheckFaces)
 		{
@@ -906,6 +922,10 @@ namespace Modumate
 		auto oldVertex = FindVertex(RemovedVertexID);
 
 		if (joinVertex == nullptr || oldVertex == nullptr)
+		{
+			return false;
+		}
+		if (joinVertex->ID == oldVertex->ID)
 		{
 			return false;
 		}

@@ -86,6 +86,7 @@ namespace Modumate
 
 		void AggregateAddedObjects(TArray<int32> OutAddedFaceIDs, TArray<int32> OutAddedVertexIDs, TArray<int32> OutAddedEdgeIDs);
 
+		TSharedPtr<FGraph3DDelta> MakeGraphInverse() const;
 		virtual TSharedPtr<FDelta> MakeInverse() const override;
 		virtual bool ApplyTo(FModumateDocument *doc, UWorld *world) const override;
 	};

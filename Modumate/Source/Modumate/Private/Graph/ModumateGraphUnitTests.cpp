@@ -228,10 +228,7 @@ namespace Modumate
 		bool bValidDelta = true;
 		for (int32 deltaIdx = Deltas.Num() - 1; deltaIdx >= 0; deltaIdx--)
 		{
-			// this isn't great, but it is preferable to the unit test knowing about Document or World, 
-			// which are both required by FDelta::ApplyTo
-			TSharedPtr<FGraph3DDelta> delta = StaticCastSharedPtr<FGraph3DDelta>(Deltas[deltaIdx].MakeInverse());
-			bValidDelta = Graph.ApplyDelta(*delta);
+			bValidDelta = Graph.ApplyDelta(*Deltas[deltaIdx].MakeGraphInverse());
 		}
 		FGraph3D::CloneFromGraph(TempGraph, Graph);
 
@@ -829,8 +826,53 @@ namespace Modumate
 
 		// test that non-planar move fails
 		OutDeltas.Reset();
-		TestTrue(TEXT("move face"),
-			!tempGraph.GetDeltaForVertexMovements({ vertexIDs[0] }, { newPositions[0] }, OutDeltas, NextID));
+		TestTrue(TEXT("fail to move face"),
+			!tempGraph.GetDeltaForVertexMovements({ vertexIDs[0] }, { FVector(0.0f, 0.0f, 100.0f) }, OutDeltas, NextID));
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphMoveWithDeltaReset, "Modumate.Graph.3D.MoveWithDeltaReset", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphMoveWithDeltaReset::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> OutDeltas;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+
+		int32 expectedFaces = 6;
+		int32 expectedVertices = 19;
+		int32 expectedEdges = 24;
+
+		if (!LoadGraph(TEXT("Graph/move_delta_bug.mdmt"), graph, NextID))
+		{
+			return false;
+		}
+		TestGraph(this, graph, expectedFaces, expectedVertices, expectedEdges);
+		FGraph3D::CloneFromGraph(tempGraph, graph);
+
+		// setup move that reproduced bug
+		auto movedVertex1 = graph.FindVertex(29);
+		auto movedVertex2 = graph.FindVertex(27);
+		auto staticVertex1 = graph.FindVertex(31);
+		auto staticVertex2 = graph.FindVertex(12);
+
+		TArray<int32> vertexIDs = { 29, 27, 31, 12 };
+		FVector offset = FVector(0.0f, 0.0f, 100.0f);
+		TArray<FVector> moves = {
+			movedVertex1->Position + offset,
+			movedVertex2->Position + offset,
+			staticVertex1->Position,
+			staticVertex2->Position
+		};
+
+		TestTrue(TEXT("move bottom edge"),
+			tempGraph.GetDeltaForVertexMovements(vertexIDs, moves, OutDeltas, NextID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, expectedFaces, expectedVertices, expectedEdges);
+
+		TestKnownVertexLocations(this, graph, moves);
 
 		return true;
 	}

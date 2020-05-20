@@ -132,7 +132,7 @@ namespace Modumate
 		}
 	}
 
-	TSharedPtr<FDelta> FGraph3DDelta::MakeInverse() const
+	TSharedPtr<FGraph3DDelta> FGraph3DDelta::MakeGraphInverse() const
 	{
 		TSharedPtr<FGraph3DDelta> inverse = MakeShareable(new FGraph3DDelta());
 
@@ -170,6 +170,11 @@ namespace Modumate
 		}
 
 		return inverse;
+	}
+
+	TSharedPtr<FDelta> FGraph3DDelta::MakeInverse() const
+	{
+		return MakeGraphInverse();
 	}
 
 	bool FGraph3DDelta::ApplyTo(FModumateDocument *doc, UWorld *world) const
