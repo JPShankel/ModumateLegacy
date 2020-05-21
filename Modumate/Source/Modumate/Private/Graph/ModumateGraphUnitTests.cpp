@@ -342,7 +342,7 @@ namespace Modumate
 		return true;
 	}
 
-	// Add one face
+	// Load simple file with one face
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphLoad, "Modumate.Graph.3D.Load", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphLoad::RunTest(const FString& Parameters)
 	{
@@ -369,6 +369,41 @@ namespace Modumate
 
 		SetupOneFace(this, graph, tempGraph, NextID);
 		TestGraph(this, graph, 1, 4, 4);
+
+		return true;
+	}
+
+	// Add three constrained faces
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphAddConstrainedFaces, "Modumate.Graph.3D.AddConstrainedFaces", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphAddConstrainedFaces::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+
+		TArray<FGraph3DDelta> OutDeltas;
+
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f),
+			FVector(0.0f, 0.0f, 150.0f),
+			FVector(100.0f, 0.0f, 100.0f),
+			FVector(0.0f, 100.0f, 10.0f)
+		};
+
+		TestTrue(TEXT("Add first face"),
+			tempGraph.GetDeltaForFaceAddition({ vertices[0], vertices[1], vertices[4], vertices[3] }, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
+
+		TestTrue(TEXT("Add second face"),
+			tempGraph.GetDeltaForFaceAddition({ vertices[1], vertices[2], vertices[5], vertices[4] }, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
+
+		TestTrue(TEXT("Add third face"),
+			tempGraph.GetDeltaForFaceAddition({ vertices[2], vertices[0], vertices[3], vertices[5] }, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 6, 9);
 
 		return true;
 	}

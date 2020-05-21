@@ -350,7 +350,8 @@ namespace Modumate
 			FindOverlappingFaces(addedFaceID, coincidentFaceIDs);
 
 			// If the plane is constrained (used when a face is added) only add the new faces that are found if they are subdividing another face
-			if (coincidentFaceIDs.Num() == 0 && (!bHasPlaneConstraint || FVector::Parallel(newFace->CachedPlane, InPlane, PLANAR_DOT_EPSILON)))
+			bool bParallel = FVector::Parallel(FVector(newFace->CachedPlane), FVector(InPlane));
+			if (coincidentFaceIDs.Num() == 0 && (!bHasPlaneConstraint || bParallel))
 			{
 				OutDeltas.Add(faceDelta);
 				bAddedToDeltas = true;
