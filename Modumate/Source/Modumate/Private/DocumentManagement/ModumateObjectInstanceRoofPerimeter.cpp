@@ -296,6 +296,14 @@ namespace Modumate
 			controlIndices.Add(1);
 		}
 		controlIndices.Append(CachedEdgeIDs);
+
+		// TODO: may not need to destroy -all- of the existing handles
+		if (controlIndices != MOI->GetControlPointIndices())
+		{
+			auto playerController = Cast<AEditModelPlayerController_CPP>(World->GetFirstPlayerController());
+			ClearAdjustmentHandles(playerController);
+		}
+
 		MOI->SetControlPointIndices(controlIndices);
 
 		return (numEdges > 0);
