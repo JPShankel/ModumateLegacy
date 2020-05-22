@@ -1704,6 +1704,7 @@ void AEditModelPlayerController_CPP::UpdateMouseTraceParams()
 	{
 	case EToolMode::VE_WALL:
 	case EToolMode::VE_FLOOR:
+	case EToolMode::VE_ROOF_FACE:
 	case EToolMode::VE_RAIL:
 	case EToolMode::VE_STAIR:
 	case EToolMode::VE_METAPLANE:
@@ -1716,7 +1717,6 @@ void AEditModelPlayerController_CPP::UpdateMouseTraceParams()
 	case EToolMode::VE_WINDOW:
 	case EToolMode::VE_CABINET:
 	case EToolMode::VE_COUNTERTOP:
-	case EToolMode::VE_ROOF_FACE:
 		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_META_MOI);
 		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_DECORATOR_MOI);
 		break;

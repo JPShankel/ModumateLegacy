@@ -66,6 +66,7 @@ namespace Modumate {
 			extern const FNameType Extents;
 			extern const FNameType Form;
 			extern const FNameType Function;
+			extern const FNameType HasFace;
 			extern const FNameType Height;
 			extern const FNameType HexValue;
 			extern const FNameType Length;
@@ -79,10 +80,13 @@ namespace Modumate {
 			extern const FNameType Number;
 			extern const FNameType OccupantLoadFactor;
 			extern const FNameType OccupantsNumber;
+			extern const FNameType Overhang;
+			extern const FNameType Override;
 			extern const FNameType PartSet;
 			extern const FNameType Pattern;
 			extern const FNameType Preset;
 			extern const FNameType Scale;
+			extern const FNameType Slope;
 			extern const FNameType StyleComments;
 			extern const FNameType StyleName;
 			extern const FNameType Subcategory;

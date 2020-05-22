@@ -8,6 +8,7 @@
 #include "Graph/Graph3DDelta.h"
 #include "Graph/ModumateGraph.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "ModumateCore/ModumateRoofStatics.h"
 
 using namespace Modumate;
 
@@ -58,7 +59,8 @@ bool URoofPerimeterTool::Activate()
 	}
 
 	// If we've found a perimeter from the 2D graph that has enough valid meta edges, then we can try to make the perimeter object
-	if (perimeterEdgeIDs.Num() >= 3)
+	int32 numEdges = perimeterEdgeIDs.Num();
+	if (numEdges >= 3)
 	{
 		// Create the MOI delta for constructing the perimeter object
 		FMOIStateData state;
@@ -70,6 +72,7 @@ bool URoofPerimeterTool::Activate()
 		state.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
 		state.ObjectType = EObjectType::OTRoofPerimeter;
 		state.ObjectID = perimeterID;
+		UModumateRoofStatics::InitializeProperties(&state.ObjectProperties, numEdges);
 
 		TSharedPtr<FMOIDelta> perimeterCreationDelta = MakeShareable(new FMOIDelta({ state }));
 

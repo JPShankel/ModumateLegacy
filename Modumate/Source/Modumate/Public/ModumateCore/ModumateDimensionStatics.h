@@ -16,6 +16,9 @@ class MODUMATE_API UModumateDimensionStatics : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "Modumate Unit Conversion", meta = (ToolTip = "Try to parse a string that contains a number input from a user, in a localization-aware manner."))
+	static bool TryParseInputNumber(const FString &NumberString, float &OutValue);
+
 	UFUNCTION(BlueprintCallable, Category = "Modumate Unit Conversion")
 	static FModumateFormattedDimension StringToFormattedDimension(const FString &dimStr);
 

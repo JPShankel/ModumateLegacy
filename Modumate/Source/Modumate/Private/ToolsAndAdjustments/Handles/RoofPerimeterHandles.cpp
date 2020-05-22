@@ -7,8 +7,7 @@
 #include "Graph/Graph3D.h"
 #include "Graph/Graph3DDelta.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "ModumateCore/ModumateGeometryStatics.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "ModumateCore/ModumateRoofStatics.h"
 #include "UnrealClasses/UI/RoofPerimeterPropertiesWidget.h"
 
 namespace Modumate
@@ -26,8 +25,8 @@ namespace Modumate
 			return OnEndUse();
 		}
 
-		if (UModumateObjectStatics::GetRoofGeometryValues(MOI->GetControlPoints(), MOI->GetControlPointIndices(), EdgePoints, EdgeSlopes, EdgesHaveFaces, EdgeIDs) &&
-			UModumateGeometryStatics::TessellateSlopedEdges(EdgePoints, EdgeSlopes, EdgesHaveFaces, CombinedPolyVerts, PolyVertIndices))
+		if (UModumateRoofStatics::GetAllProperties(MOI, EdgePoints, EdgeIDs, DefaultEdgeProperties, EdgeProperties) &&
+			UModumateRoofStatics::TessellateSlopedEdges(EdgePoints, EdgeProperties, CombinedPolyVerts, PolyVertIndices))
 		{
 			int32 numEdges = EdgeIDs.Num();
 			int32 numCalculatedPolys = PolyVertIndices.Num();
@@ -49,7 +48,7 @@ namespace Modumate
 				{
 					vertIdxEnd = PolyVertIndices[edgeIdx];
 
-					if (EdgesHaveFaces[edgeIdx])
+					if (EdgeProperties[edgeIdx].bHasFace)
 					{
 						int32 numPolyVerts = (vertIdxEnd - vertIdxStart) + 1;
 						TArray<FVector> polyVerts(combinedPolyVertsPtr + vertIdxStart, numPolyVerts);
@@ -179,7 +178,7 @@ namespace Modumate
 		bIsInUse = true;
 
 		PropertiesWidget = CreateWidget<URoofPerimeterPropertiesWidget>(Controller->HUDDrawWidget, playerHUD->RoofPerimeterPropertiesClass);
-		PropertiesWidget->TargetObjID = FMath::Abs(TargetEdgeID);
+		PropertiesWidget->SetTarget(MOI->ID, TargetEdgeID, Handle.Get());
 		PropertiesWidget->AddToViewport();
 		PropertiesWidget->SetPositionInViewport(FVector2D(0.0f, 0.0f));
 
@@ -194,6 +193,11 @@ namespace Modumate
 	bool FEditRoofEdgeHandle::OnEndUse()
 	{
 		// TODO: we should be able to rely on FEditModelAdjustmentHandleBase's OnEndUse, but it currently creates an FMOIDelta unconditionally
+		return OnAbortUse();
+	}
+
+	bool FEditRoofEdgeHandle::OnAbortUse()
+	{
 		bIsInUse = false;
 
 		if (PropertiesWidget.IsValid())

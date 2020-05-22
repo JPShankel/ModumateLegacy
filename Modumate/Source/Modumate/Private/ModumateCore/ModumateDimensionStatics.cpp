@@ -1,6 +1,10 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #include "ModumateCore/ModumateDimensionStatics.h"
+
+#include "Internationalization/Text.h"
+#include "Internationalization/Culture.h"
+#include "Internationalization/FastDecimalFormat.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
@@ -8,6 +12,13 @@
 #include <regex>
 
 using namespace Modumate;
+
+bool UModumateDimensionStatics::TryParseInputNumber(const FString &NumberString, float &OutValue)
+{
+	FCultureRef culture = FInternationalization::Get().GetCurrentCulture();
+
+	return FastDecimalFormat::StringToNumber(*NumberString, culture->GetDecimalNumberFormattingRules(), FNumberParsingOptions::DefaultWithGrouping(), OutValue);
+}
 
 FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimension(const FString &dimStr)
 {

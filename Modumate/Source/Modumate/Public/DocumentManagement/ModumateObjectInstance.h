@@ -384,17 +384,14 @@ namespace Modumate
 		// TODO: use these for instance-level overrides, where they pass through to the assembly.
 		bool HasProperty(BIM::EScope Scope, const BIM::FNameType &Name) const;
 		FModumateCommandParameter GetProperty(BIM::EScope Scope, const BIM::FNameType &Name) const;
+		const BIM::FBIMPropertySheet &GetProperties() const;
 		void SetProperty(BIM::EScope Scope, const BIM::FNameType &Name, const FModumateCommandParameter &Param);
+		void SetAllProperties(const BIM::FBIMPropertySheet &NewProperties);
 
 		template<class T>
 		bool TryGetProperty(BIM::EScope Scope, const BIM::FNameType &Name, T &OutT) const
 		{
-			if (HasProperty(Scope, Name))
-			{
-				OutT = GetProperty(Scope, Name);
-				return true;
-			}
-			return false;
+			return GetProperties().TryGetProperty(Scope, Name, OutT);
 		}
 
 		TArray<FModumateObjectInstance *> GetAllDescendents();

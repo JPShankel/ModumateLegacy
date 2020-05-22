@@ -37,7 +37,6 @@
 #include "DocumentManagement/ModumateObjectInstancePlaneHostedObj.h"
 #include "DocumentManagement/ModumateObjectInstancePortal.h"
 #include "DocumentManagement/ModumateObjectInstanceRails.h"
-#include "DocumentManagement/ModumateObjectInstanceRoofFace.h"
 #include "DocumentManagement/ModumateObjectInstanceRoofPerimeter.h"
 #include "DocumentManagement/ModumateObjectInstanceRooms.h"
 #include "DocumentManagement/ModumateObjectInstanceScopeBox.h"
@@ -157,7 +156,7 @@ namespace Modumate
 		case EObjectType::OTWallSegment: Implementation = new FMOIPlaneHostedObjImpl(this); break;
 		case EObjectType::OTRailSegment: Implementation = new FMOIRailImpl(this); break;
 		case EObjectType::OTFloorSegment: Implementation = new FMOIPlaneHostedObjImpl(this); break;
-		case EObjectType::OTRoofFace: Implementation = new FMOIRoofFaceImpl(this); break;
+		case EObjectType::OTRoofFace: Implementation = new FMOIPlaneHostedObjImpl(this); break;
 		case EObjectType::OTCountertop: Implementation = new FMOIFlatPolyImpl(this,false); break; // false = no invert handle
 		case EObjectType::OTDoor:
 		case EObjectType::OTWindow: Implementation = new FMOIPortalImpl(this); break;
@@ -1163,9 +1162,19 @@ namespace Modumate
 		return GetDataState().ObjectProperties.GetProperty(Scope, Name);
 	}
 
+	const BIM::FBIMPropertySheet &FModumateObjectInstance::GetProperties() const
+	{
+		return GetDataState().ObjectProperties;
+	}
+
 	void FModumateObjectInstance::SetProperty(BIM::EScope Scope, const BIM::FNameType &Name, const FModumateCommandParameter &Param)
 	{
 		GetDataState().ObjectProperties.SetProperty(Scope, Name, Param);
+	}
+
+	void FModumateObjectInstance::SetAllProperties(const BIM::FBIMPropertySheet &NewProperties)
+	{
+		GetDataState().ObjectProperties = NewProperties;
 	}
 
 	void FModumateObjectInstance::SetFromDataRecordAndRotation(const FMOIDataRecordV1 &dataRec, const FVector &origin, const FQuat &rotation)

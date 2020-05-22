@@ -38,7 +38,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kMakeFloor, "make_floor");
 		MODUMATE_COMMAND(kMakeCountertop, "make_countertop");
 		MODUMATE_COMMAND(kMakeTrim, "make_trim");
-		MODUMATE_COMMAND(kMakeRoof, "make_roof");
 		MODUMATE_COMMAND(kMakeMetaVertex, "make_vertex");
 		MODUMATE_COMMAND(kMakeMetaEdge, "make_edge");
 		MODUMATE_COMMAND(kMakeMetaPlane, "make_plane");

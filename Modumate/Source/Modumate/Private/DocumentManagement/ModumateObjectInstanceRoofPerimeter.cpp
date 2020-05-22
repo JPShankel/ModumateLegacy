@@ -9,7 +9,6 @@
 #include "UnrealClasses/LineActor.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/ModumateVertexActor_CPP.h"
 #include "ToolsAndAdjustments/Handles/RoofPerimeterHandles.h"
 #include "UnrealClasses/UI/RoofPerimeterPropertiesWidget.h"
@@ -151,7 +150,7 @@ namespace Modumate
 		{
 			if (edgeHandleActor.IsValid())
 			{
-				edgeHandleActor->SetEnabled(bShow);
+				edgeHandleActor->SetEnabled(bShow && !bCreatedRoofFaces);
 			}
 		}
 	}
@@ -288,25 +287,17 @@ namespace Modumate
 			}
 		}
 
-		// TODO: don't store the ordered edge list and edge data in ControlIndices; use strongly-typed BIM values instead somehow
-		int32 numEdges = CachedEdgeIDs.Num();
-		TArray<int32> controlIndices;
-		for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
-		{
-			controlIndices.Add(1);
-		}
-		controlIndices.Append(CachedEdgeIDs);
-
 		// TODO: may not need to destroy -all- of the existing handles
-		if (controlIndices != MOI->GetControlPointIndices())
+		if (CachedEdgeIDs != MOI->GetControlPointIndices())
 		{
 			auto playerController = Cast<AEditModelPlayerController_CPP>(World->GetFirstPlayerController());
 			ClearAdjustmentHandles(playerController);
 		}
 
-		MOI->SetControlPointIndices(controlIndices);
+		// TODO: maybe don't store the ordered edge list in ControlIndices?
+		MOI->SetControlPointIndices(CachedEdgeIDs);
 
-		return (numEdges > 0);
+		return (CachedEdgeIDs.Num() > 0);
 	}
 
 	void FMOIRoofPerimeterImpl::UpdatePerimeterGeometry()
@@ -336,14 +327,7 @@ namespace Modumate
 			}
 		}
 
-		// TODO: don't store the cached edge positions and edge slopes in ControlPoints; use strongly-typed BIM values instead somehow
-		TArray<FVector> controlPoints = CachedPerimeterPoints;
-		for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
-		{
-			controlPoints.Add(FVector(1.0f, 0.0f, 0.0f));
-		}
-
-		MOI->SetControlPoints(controlPoints);
+		MOI->SetControlPoints(CachedPerimeterPoints);
 
 		FVector perimeterAxisX, perimeterAxisY;
 		UModumateGeometryStatics::AnalyzeCachedPositions(CachedPerimeterPoints, CachedPlane, perimeterAxisX, perimeterAxisY, TempPerimeterPoints2D, CachedPerimeterCenter, false);

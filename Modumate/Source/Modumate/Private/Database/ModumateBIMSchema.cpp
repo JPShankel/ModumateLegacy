@@ -197,6 +197,7 @@ namespace Modumate {
 			const FNameType Extents = TEXT("Extents");
 			const FNameType Form = TEXT("Form");
 			const FNameType Function = TEXT("Function");
+			const FNameType HasFace = TEXT("HasFace");
 			const FNameType Height = TEXT("Height");
 			const FNameType HexValue = TEXT("HexValue");
 			const FNameType Length = TEXT("Length");
@@ -210,10 +211,13 @@ namespace Modumate {
 			const FNameType Number = TEXT("Number");
 			const FNameType OccupantLoadFactor = TEXT("OccupantLoadFactor");
 			const FNameType OccupantsNumber = TEXT("OccupantsNumber");
+			const FNameType Overhang = TEXT("Overhang");
+			const FNameType Override = TEXT("Override");
 			const FNameType PartSet = TEXT("PartSet");
 			const FNameType Pattern = TEXT("Pattern");
 			const FNameType Preset = TEXT("Preset");
 			const FNameType Scale = TEXT("Scale");
+			const FNameType Slope = TEXT("Slope");
 			const FNameType StyleComments = TEXT("StyleComments");
 			const FNameType StyleName = TEXT("StyleName");
 			const FNameType Subcategory = TEXT("Subcategory");

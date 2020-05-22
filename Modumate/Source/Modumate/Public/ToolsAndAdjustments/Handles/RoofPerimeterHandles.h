@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Graph/ModumateGraph3DTypes.h"
+#include "ModumateCore/ModumateRoofStatics.h"
 #include "ToolsAndAdjustments/Common/EditModelAdjustmentHandleBase.h"
 #include "UnrealClasses/AdjustmentHandleActor_CPP.h"
 
@@ -21,9 +22,9 @@ namespace Modumate
 
 	protected:
 		TArray<FVector> EdgePoints;
-		TArray<float> EdgeSlopes;
-		TArray<bool> EdgesHaveFaces;
 		TArray<int32> EdgeIDs;
+		FRoofEdgeProperties DefaultEdgeProperties;
+		TArray<FRoofEdgeProperties> EdgeProperties;
 
 		TArray<FVector> CombinedPolyVerts;
 		TArray<int32> PolyVertIndices;
@@ -56,6 +57,7 @@ namespace Modumate
 		virtual bool OnBeginUse() override;
 		virtual bool OnUpdateUse() override;
 		virtual bool OnEndUse() override;
+		virtual bool OnAbortUse() override;
 		virtual FVector GetAttachmentPoint() override;
 
 		FSignedID TargetEdgeID;

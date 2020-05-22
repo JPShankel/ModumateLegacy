@@ -1321,6 +1321,12 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 					}
 					newInstance->SetObjectLocation(targetState.Location);
 					newInstance->SetObjectRotation(targetState.Orientation);
+
+					// TODO: this is relatively safe, but shouldn't be necessary; either
+					// - properties should be in the construct explicitly,
+					// - the FModumateObjectInstance constructor should accept FMOIStateData,
+					// - or the creation flow should allow setting the entire state, as Mutate does, except after creation.
+					newInstance->SetAllProperties(targetState.ObjectProperties);
 				}
 			}
 			break;

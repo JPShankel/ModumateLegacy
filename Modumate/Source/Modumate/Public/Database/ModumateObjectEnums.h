@@ -106,6 +106,7 @@ enum class EBIMValueScope : uint8
 	Preset,
 	Room,
 	Drawing,
+	Roof,
 	//NOTE: finish bindings to be refactored, supporting old version as scopes for now
 	//Underscores appear in metadata table so maintaining here
 	Interior_Finish,

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "ModumateCore/ModumateRoofStatics.h"
+
 #include "RoofPerimeterPropertiesWidget.generated.h"
 
 /**
@@ -20,13 +22,21 @@ public:
 	URoofPerimeterPropertiesWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
+	void SetTarget(int32 InTargetPerimeterID, int32 InTargetEdgeID, class AAdjustmentHandleActor_CPP *InOwningHandle);
+
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 
 public:
 	UPROPERTY()
-	int32 TargetObjID;
+	int32 TargetPerimeterID;
+
+	UPROPERTY()
+	int32 TargetEdgeID;
+
+	UPROPERTY()
+	class AAdjustmentHandleActor_CPP *OwningHandle;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UBorder *RootBorder;
@@ -38,7 +48,7 @@ public:
 	class UCheckBox *ControlGabled;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UCheckBox *ControlFlat;
+	class UCheckBox *ControlHasFace;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UEditableTextBox *SlopeEditorFraction;
@@ -55,10 +65,41 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UButton *ButtonCancel;
 
+	UPROPERTY(VisibleAnywhere)
+	FRoofEdgeProperties InitialProperties;
+
+	UPROPERTY(VisibleAnywhere)
+	FRoofEdgeProperties CurrentProperties;
+
 protected:
+	UPROPERTY()
+	class AEditModelGameState_CPP *GameState;
+
 	UFUNCTION()
 	void OnControlChangedGabled(bool bIsChecked);
 
 	UFUNCTION()
-	void OnControlChangedFlat(bool bIsChecked);
+	void OnControlChangedHasFace(bool bIsChecked);
+
+	UFUNCTION()
+	void OnSlopeEditorFractionTextChanged(const FText& NewText);
+
+	UFUNCTION()
+	void OnSlopeEditorFractionTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void OnSlopeEditorDegreesTextChanged(const FText& NewText);
+
+	UFUNCTION()
+	void OnSlopeEditorDegreesTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void OnButtonPressedCommit();
+
+	UFUNCTION()
+	void OnButtonPressedCancel();
+
+	void SetEdgeFaceControl(bool bNewHasFace);
+	void SetEdgeSlope(float SlopeValue);
+	void SaveEdgeProperties();
 };

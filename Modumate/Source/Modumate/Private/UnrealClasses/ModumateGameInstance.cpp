@@ -260,38 +260,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return false;
 	});
 
-	RegisterCommand(kMakeRoof, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		TArray<FVector> points = params.GetValue(kControlPoints);
-		FName assemblyKey = params.GetValue(kAssembly);
-		TArray<int32> ids = params.GetValue(kObjectIDs);
-		TArray<float> edgeSlopes = params.GetValue(kValues);
-		TArray<bool> edgesHaveFaces = params.GetValue(kEdgesHaveFaces);
-		int32 parentID = params.GetValue(kParent);
-
-		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_ROOF_FACE, assemblyKey);
-
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		ensureAlways(playerState != nullptr);
-		if (playerState != nullptr)
-		{
-			playerState->DeselectAll();
-		}
-
-		TArray<FVector> controlPoints;
-		TArray<int32> controlIndices;
-		if ((assembly != nullptr) && (points.Num() > 2) &&
-			UModumateObjectStatics::GetRoofControlValues(points, edgeSlopes, edgesHaveFaces, controlPoints, controlIndices))
-		{
-			int32 newObjectID = GetDocument()->MakePointsObject(GetWorld(), ids, controlPoints, controlIndices, EObjectType::OTRoofFace, false, *assembly, parentID);
-			output.SetValue(kObjectID, newObjectID);
-
-			return true;
-		}
-
-		return false;
-	});
-
 	RegisterCommand(kMakeTrim, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		TArray<FVector> points = params.GetValue(kControlPoints);
 		TArray<int32> controlIndices = params.GetValue(kIndices);

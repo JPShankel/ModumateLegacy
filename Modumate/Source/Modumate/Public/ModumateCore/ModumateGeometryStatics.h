@@ -15,30 +15,6 @@
 #define PLANAR_DOT_EPSILON	(1.e-3f)
 
 USTRUCT()
-struct MODUMATE_API FTessellationPolygon
-{
-	GENERATED_USTRUCT_BODY();
-
-	FTessellationPolygon() {};
-
-	FTessellationPolygon(const FVector &InBaseUp, const FVector &InPolyNormal,
-		const FVector &InStartPoint, const FVector &InStartDir,
-		const FVector &InEndPoint, const FVector &InEndDir);
-
-	FVector BaseUp, PolyNormal, StartPoint, StartDir, EndPoint, EndDir, CachedEdgeDir, CachedEdgeIntersection;
-
-	FPlane CachedPlane;
-	float CachedStartRayDist, CachedEndRayDist;
-	bool bCachedEndsConverge;
-	TArray<FVector> ClippingPoints, PolygonVerts;
-
-	bool ClipWithPolygon(const FTessellationPolygon &ClippingPolygon);
-	bool UpdatePolygonVerts();
-
-	void DrawDebug(const FColor &Color, class UWorld* World = nullptr, const FTransform &Transform = FTransform::Identity);
-};
-
-USTRUCT()
 struct MODUMATE_API FPolyHoleIndices
 {
 	GENERATED_USTRUCT_BODY();
@@ -221,10 +197,6 @@ public:
 	static bool GetSegmentPolygonIntersections(const FVector2D &SegmentStart, const FVector2D &SegmentEnd, const TArray<FPolyHole2D> &Polygons,
 		TArray<FVector2D> &OutPoints, TArray<int32> &OutMergedPolyIndices, TArray<bool> &OutMergedPolygons, TArray<FVector2D> &OutSplitSegments,
 		TArray<int32> &OutPointsHoleIndices);
-
-	UFUNCTION(Category = "Modumate | Geometry")
-	static bool TessellateSlopedEdges(const TArray<FVector> &EdgePoints, const TArray<float> &EdgeSlopes, const TArray<bool> &EdgesHaveFaces,
-		TArray<FVector> &OutCombinedPolyVerts, TArray<int32> &OutPolyVertIndices, const FVector &NormalHint = FVector::UpVector);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static void FindBasisVectors(FVector &OutAxisX, FVector &OutAxisY, const FVector &AxisZ);

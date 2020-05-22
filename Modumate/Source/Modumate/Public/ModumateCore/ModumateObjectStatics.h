@@ -89,15 +89,6 @@ public:
 		const FVector2D &RelativePos, const FQuat &RelativeRot,
 		FVector &OutWorldPos, FQuat &OutWorldRot);
 
-	// Roofs
-	UFUNCTION(Category = "Modumate | Objects | Roofs")
-	static bool GetRoofControlValues(const TArray<FVector> &EdgePoints, const TArray<float> &EdgeSlopes, const TArray<bool> &EdgesHaveFaces,
-		TArray<FVector> &OutControlPoints, TArray<int32> &OutControlIndices);
-
-	UFUNCTION(Category = "Modumate | Objects | Roofs")
-	static bool GetRoofGeometryValues(const TArray<FVector> &ControlPoints, const TArray<int32> &ControlIndices,
-		TArray<FVector> &OutEdgePoints, TArray<float> &OutEdgeSlopes, TArray<bool> &OutEdgesHaveFaces, TArray<int32> &OutEdgeIDs);
-
 	// Finishes
 	static int32 GetFaceIndexFromFinishObj(const Modumate::FModumateObjectInstance *FinishObject);
 	static int32 GetFaceIndexFromTargetHit(const Modumate::FModumateObjectInstance *HitObject, const FVector &HitLocation, const FVector &HitNormal);

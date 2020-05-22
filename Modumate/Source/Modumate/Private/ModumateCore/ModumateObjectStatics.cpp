@@ -846,63 +846,6 @@ bool UModumateObjectStatics::GetWorldTransformOnPlaneHostedObj(
 	return true;
 }
 
-bool UModumateObjectStatics::GetRoofControlValues(
-	const TArray<FVector> &EdgePoints, const TArray<float> &EdgeSlopes, const TArray<bool> &EdgesHaveFaces,
-	TArray<FVector> &OutControlPoints, TArray<int32> &OutControlIndices)
-{
-	if (!ensureAlways((EdgePoints.Num() == EdgeSlopes.Num()) &&
-		(EdgePoints.Num() >= 3) && (EdgesHaveFaces.Num() == EdgeSlopes.Num())))
-	{
-		return false;
-	}
-
-	int32 numEdges = EdgePoints.Num();
-	OutControlPoints.Reset(2 * numEdges);
-	OutControlIndices.Reset(numEdges);
-
-	for (int32 i = 0; i < numEdges; ++i)
-	{
-		OutControlPoints.Add(EdgePoints[i]);
-		OutControlIndices.Add(EdgesHaveFaces[i] ? 1 : 0);
-	}
-
-	for (int32 i = 0; i < numEdges; ++i)
-	{
-		OutControlPoints.Add(FVector(EdgeSlopes[i], 0.0f, 0.0f));
-	}
-
-	return true;
-}
-
-bool UModumateObjectStatics::GetRoofGeometryValues(
-	const TArray<FVector> &ControlPoints, const TArray<int32> &ControlIndices,
-	TArray<FVector> &OutEdgePoints, TArray<float> &OutEdgeSlopes, TArray<bool> &OutEdgesHaveFaces, TArray<int32> &OutEdgeIDs)
-{
-	int32 numCP = ControlPoints.Num();
-	int32 numCI = ControlIndices.Num();
-
-	if (!ensureAlways(((numCP % 2) == 0) && ((numCP / 2) >= 3) && (numCI == numCP)))
-	{
-		return false;
-	}
-
-	int32 numEdges = numCP / 2;
-	OutEdgePoints.Reset(numEdges);
-	OutEdgeSlopes.Reset(numEdges);
-	OutEdgesHaveFaces.Reset(numEdges);
-	OutEdgeIDs.Reset(numEdges);
-
-	for (int32 i = 0; i < numEdges; ++i)
-	{
-		OutEdgePoints.Add(ControlPoints[i]);
-		OutEdgeSlopes.Add(ControlPoints[i + numEdges].X);
-		OutEdgesHaveFaces.Add(ControlIndices[i] != 0);
-		OutEdgeIDs.Add(ControlIndices[i + numEdges]);
-	}
-
-	return true;
-}
-
 int32 UModumateObjectStatics::GetFaceIndexFromFinishObj(const FModumateObjectInstance *FinishObject)
 {
 	if (FinishObject && (FinishObject->GetObjectType() == EObjectType::OTFinish) && (FinishObject->GetControlPointIndices().Num() >= 1))
@@ -1136,6 +1079,7 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const Modumate::FModumateObj
 		{
 		case EToolMode::VE_WALL:
 		case EToolMode::VE_FLOOR:
+		case EToolMode::VE_ROOF_FACE:
 		case EToolMode::VE_STAIR:
 		case EToolMode::VE_METAPLANE:
 		case EToolMode::VE_STRUCTURELINE:
