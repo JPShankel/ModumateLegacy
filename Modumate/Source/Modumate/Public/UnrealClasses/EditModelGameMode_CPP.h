@@ -89,6 +89,9 @@ public:
 	UStaticMesh *PointAdjusterMesh;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UStaticMesh *MetaPlaneVertexIconMesh;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UStaticMesh *RotateHandleMesh;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")

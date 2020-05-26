@@ -12,7 +12,7 @@ namespace Modumate
 {
 	FMOIMetaVertexImpl::FMOIMetaVertexImpl(FModumateObjectInstance *moi)
 		: FModumateObjectInstanceImplBase(moi)
-		, DefaultHandleSize(0.0006f)
+		, DefaultHandleSize(0.0008f)
 		, SelectedHandleSize(0.001f)
 	{
 		MOI->SetControlPoints(TArray<FVector>());
@@ -65,7 +65,7 @@ namespace Modumate
 
 		// Set appearance
 		AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
-		VertexActor->SetActorMesh(gameMode->PointAdjusterMesh);
+		VertexActor->SetActorMesh(gameMode->MetaPlaneVertexIconMesh);
 		VertexActor->SetHandleScaleScreenSize(DefaultHandleSize);
 
 		return VertexActor.Get();
