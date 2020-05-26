@@ -177,7 +177,7 @@ namespace Modumate
 
 		bIsInUse = true;
 
-		PropertiesWidget = CreateWidget<URoofPerimeterPropertiesWidget>(Controller->HUDDrawWidget, playerHUD->RoofPerimeterPropertiesClass);
+		PropertiesWidget = Controller->HUDDrawWidget->UserWidgetPool.GetOrCreateInstance<URoofPerimeterPropertiesWidget>(playerHUD->RoofPerimeterPropertiesClass);
 		PropertiesWidget->SetTarget(MOI->ID, TargetEdgeID, Handle.Get());
 		PropertiesWidget->AddToViewport();
 		PropertiesWidget->SetPositionInViewport(FVector2D(0.0f, 0.0f));

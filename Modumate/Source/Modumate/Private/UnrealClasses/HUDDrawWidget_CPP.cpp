@@ -5,6 +5,12 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
 
+UHUDDrawWidget_CPP::UHUDDrawWidget_CPP(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+	, UserWidgetPool(*this)
+{
+}
+
 void UHUDDrawWidget_CPP::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	LinesWithText.Reset();
@@ -131,4 +137,11 @@ int32 UHUDDrawWidget_CPP::NativePaint(const FPaintArgs& Args, const FGeometry& A
 	}
 
 	return FMath::Max(parentMaxLayerID, selfPaintLayerID);
+}
+
+void UHUDDrawWidget_CPP::ReleaseSlateResources(bool bReleaseChildren)
+{
+	Super::ReleaseSlateResources(bReleaseChildren);
+
+	UserWidgetPool.ReleaseAllSlateResources();
 }

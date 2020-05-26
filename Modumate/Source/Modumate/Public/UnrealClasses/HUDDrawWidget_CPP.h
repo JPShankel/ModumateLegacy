@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/UserWidgetPool.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "ModumateCore/ModumateDimensionString.h"
 #include "HUDDrawWidget_CPP.generated.h"
@@ -82,10 +83,14 @@ class MODUMATE_API UHUDDrawWidget_CPP : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	UHUDDrawWidget_CPP(const FObjectInitializer& ObjectInitializer);
+
 protected:
 	//~ Begin UUserWidget Interface
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
+	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
 	//~ End UUserWidget Interface
 
 	UPROPERTY()
@@ -116,4 +121,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Tools")
 	void DrawLines(const TArray<FModumateLines>& Lines);
+
+public:
+
+	UPROPERTY(Transient)
+	FUserWidgetPool UserWidgetPool;
 };
