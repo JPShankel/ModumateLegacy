@@ -145,7 +145,7 @@ namespace Modumate
 		}
 
 		TArray<FGraph3DDelta> updateFaceDeltas;
-		if (GetDeltasForUpdateFaces(updateFaceDeltas, NextID, newEdges.Array()))
+		if (GetDeltasForUpdateFaces(updateFaceDeltas, NextID, newEdges.Array(), {}, false))
 		{
 			OutDeltas.Append(updateFaceDeltas);
 		}
@@ -308,7 +308,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, const TArray<int32>& EdgeIDs, const TArray<FPlane>& InPlanes)
+	bool FGraph3D::GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, const TArray<int32>& EdgeIDs, const TArray<FPlane>& InPlanes, bool bAddNewFaces)
 	{
 		int32 existingID;
 
@@ -346,7 +346,9 @@ namespace Modumate
 
 				// If the plane is constrained (used when a face is added) only add the new faces that are found if they are subdividing another face
 				bool bParallel = FVector::Parallel(FVector(newFace->CachedPlane), FVector(currentPlane));
-				if (coincidentFaceIDs.Num() == 0 && (!bHasPlaneConstraint || bParallel))
+				bool bHasCoincidentFaceIDs = coincidentFaceIDs.Num() != 0;
+				// bAddNewFaces exists because because certain graph operations only want to make faces that are created from overlapping faces
+				if (bAddNewFaces && !bHasCoincidentFaceIDs && (!bHasPlaneConstraint || bParallel))
 				{
 					OutDeltas.Add(faceDelta);
 					bAddedToDeltas = true;

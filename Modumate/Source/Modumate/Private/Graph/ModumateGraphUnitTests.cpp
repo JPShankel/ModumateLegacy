@@ -416,6 +416,20 @@ namespace Modumate
 			tempGraph.GetDeltaForFaceAddition({ vertices[2], vertices[0], vertices[3], vertices[5] }, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 6, 9);
 
+		// Test moving the three faces together, and make sure that the topology hasn't changed
+		TArray<int32> vertexIDs;
+		TArray<FVector> newPositions;
+		FVector offset = FVector(50.0f, 0.0f, 0.0f);
+		for (auto& kvp : graph.GetVertices())
+		{
+			vertexIDs.Add(kvp.Key);
+			newPositions.Add(kvp.Value.Position + offset);
+		}
+
+		TestTrue(TEXT("move face"),
+			tempGraph.GetDeltaForVertexMovements(vertexIDs, newPositions, OutDeltas, NextID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 6, 9);
+
 		return true;
 	}
 
@@ -1868,7 +1882,7 @@ namespace Modumate
 		return true;
 	}
 
-	// Add one face with GroupID
+	// Add two faces with two different groupIDs
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphTwoGroupIDs, "Modumate.Graph.3D.TwoGroupIDs", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphTwoGroupIDs::RunTest(const FString& Parameters)
 	{
@@ -1914,6 +1928,7 @@ namespace Modumate
 			tempGraph.GetDeltaForFaceAddition(vertices, deltas, nextID, existingID, secondGroupIDs));
 		TestDeltas(this, deltas, graph, tempGraph, 4, 8, 11);
 
+		// The faces have split each other, so there should be four faces, two with each groupID
 		knownGroupAmounts[1] = 2;
 		knownGroupAmounts.Add(2, 2);
 		TestKnownGroups(this, graph, knownGroupAmounts);
