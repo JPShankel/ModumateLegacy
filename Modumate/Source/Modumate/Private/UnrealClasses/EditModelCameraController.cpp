@@ -25,6 +25,7 @@ UEditModelCameraController::UEditModelCameraController(const FObjectInitializer&
 	, ZoomPercentSpeed(0.2f)
 	, ZoomMinStepDist(10.0f)
 	, ZoomMinDistance(20.0f)
+	, ZoomMaxTotalDistance(525600.0f)
 	, OrbitMovementLerpCurve(nullptr)
 	, OrbitMaxPitch(88.0f)
 	, OrbitDriftPitchRange(20.0f, 70.0f)
@@ -89,9 +90,6 @@ void UEditModelCameraController::TickComponent(float DeltaTime, enum ELevelTick 
 	const FTransform oldTransform = Controller->EMPlayerPawn->GetActorTransform();
 	CamTransform = oldTransform;
 
-	FVector pawnCamPos = CamTransform.GetLocation();
-	FVector managedCamPos = UGameplayStatics::GetPlayerCameraManager(this, 0)->GetCameraLocation();
-
 	switch (CurMovementState)
 	{
 	case ECameraMovementState::Default:
@@ -109,6 +107,11 @@ void UEditModelCameraController::TickComponent(float DeltaTime, enum ELevelTick 
 	default:
 		break;
 	}
+
+	// Clamp the camera position based on the maximum total zoom distance from the origin
+	FVector curCamPos = CamTransform.GetLocation();
+	FVector clampedCamPos = curCamPos.GetClampedToMaxSize(ZoomMaxTotalDistance);
+	CamTransform.SetLocation(clampedCamPos);
 
 	if (!CamTransform.EqualsNoScale(oldTransform))
 	{

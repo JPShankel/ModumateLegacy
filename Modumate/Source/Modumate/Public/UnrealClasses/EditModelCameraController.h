@@ -47,6 +47,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The minimum distance to the zoom target allowed, after which we are no longer able to zoom closer"))
 	float ZoomMinDistance;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The maximum total distance from the origin we are allowed to be zoomed out"))
+	float ZoomMaxTotalDistance;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The function of OrbitMovementElapsed to how close to OrbitTarget from OrbitStartProxyTarget we should be orbiting"))
 	class UCurveFloat* OrbitMovementLerpCurve;
 
