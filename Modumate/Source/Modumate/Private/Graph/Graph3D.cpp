@@ -564,16 +564,18 @@ namespace Modumate
 		{
 			int32 faceID = kvp.Key;
 			const TArray<int32> &faceVertexIDs = kvp.Value.Vertices;
-			FGraph3DFace *newFace = AddFace(faceVertexIDs, faceID, kvp.Value.GroupIDs);
 
+			TempInheritedGroupIDs = kvp.Value.GroupIDs;
 			for(int32 parentID : kvp.Value.ParentObjIDs)
 			{
 				auto face = FindFace(parentID);
 				if (face != nullptr)
 				{
-					newFace->GroupIDs.Append(face->GroupIDs);
+					TempInheritedGroupIDs.Append(face->GroupIDs);
 				}
 			}
+
+			AddFace(faceVertexIDs, faceID, TempInheritedGroupIDs);
 		}
 
 		for (auto &kvp : Delta.FaceDeletions)

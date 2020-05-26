@@ -2628,15 +2628,7 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 		break;
 	case EGraph3DObjectType::Face:
 	{
-		if (numIDs >= 3)
-		{
-			int32 addedFaceID;
-			TArray<int32> parentIds = { MOD_ID_NONE };
-			TMap<int32, int32> edgeMap;
-			bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(IDs, graphDelta, NextID, id, parentIds, edgeMap, addedFaceID);
-			deltas = { graphDelta };
-		}
-		else if (numPoints >= 3)
+		if (numPoints >= 3)
 		{
 			bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, deltas, NextID, id);
 		}

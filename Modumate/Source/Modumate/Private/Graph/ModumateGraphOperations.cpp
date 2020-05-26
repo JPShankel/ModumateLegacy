@@ -144,19 +144,10 @@ namespace Modumate
 			}
 		}
 
-		for (int32 addedEdgeID : newEdges)
+		TArray<FGraph3DDelta> updateFaceDeltas;
+		if (GetDeltasForUpdateFaces(updateFaceDeltas, NextID, newEdges.Array()))
 		{
-			TArray<FGraph3DDelta> updateFaceDeltas;
-			if (!GetDeltasForUpdateFaces(updateFaceDeltas, NextID, addedEdgeID))
-			{
-				continue;
-			}
 			OutDeltas.Append(updateFaceDeltas);
-
-			for (auto& delta : updateFaceDeltas)
-			{
-				ApplyDelta(delta);
-			}
 		}
 
 		return true;
@@ -317,90 +308,95 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 EdgeID, FPlane InPlane)
+	bool FGraph3D::GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, const TArray<int32>& EdgeIDs, const TArray<FPlane>& InPlanes)
 	{
 		int32 existingID;
-		bool bFoundSplit = false;
 
-		bool bHasPlaneConstraint = !InPlane.Equals(FPlane(EForceInit::ForceInitToZero));
-
-		// subdivide faces
-		TArray <TArray<int32>> outFaceVertices;
-		TraverseFacesFromEdge(EdgeID, outFaceVertices);
-		TMap<int32, TArray<int32>> oldToNewFaceIDs;
 		TSet<int32> oldFaces;
+		TMap<int32, TArray<int32>> oldToNewFaceIDs;
 
-		for (auto& faceVertices : outFaceVertices)
+		for (int32 edgeIdx = 0; edgeIdx < EdgeIDs.Num(); edgeIdx++)
 		{
-			FGraph3DDelta faceDelta;
-			int32 addedFaceID;
-			TArray<int32> parentIds = { MOD_ID_NONE };
-			TSet<int32> groupIDs;
-			TMap<int32, int32> edgeMap;
-			if (!GetDeltaForFaceAddition(faceVertices, faceDelta, NextID, existingID, parentIds, edgeMap, addedFaceID))
+			int32 edgeID = EdgeIDs[edgeIdx];
+			FPlane currentPlane = InPlanes.Num() == 0 ? FPlane(EForceInit::ForceInitToZero) : InPlanes[edgeIdx];
+			bool bHasPlaneConstraint = !currentPlane.Equals(FPlane(EForceInit::ForceInitToZero));
+
+			// subdivide faces
+			TArray <TArray<int32>> outFaceVertices;
+			TraverseFacesFromEdge(edgeID, outFaceVertices);
+
+			for (auto& faceVertices : outFaceVertices)
 			{
-				continue;
-			}
-
-			ApplyDelta(faceDelta);
-			bool bAddedToDeltas = false;
-			auto newFace = FindFace(addedFaceID);
-
-			TSet<int32> coincidentFaceIDs;
-			FindOverlappingFaces(addedFaceID, coincidentFaceIDs);
-
-			// If the plane is constrained (used when a face is added) only add the new faces that are found if they are subdividing another face
-			bool bParallel = FVector::Parallel(FVector(newFace->CachedPlane), FVector(InPlane));
-			if (coincidentFaceIDs.Num() == 0 && (!bHasPlaneConstraint || bParallel))
-			{
-				OutDeltas.Add(faceDelta);
-				bAddedToDeltas = true;
-			}
-			else
-			{
-				float minArea = BIG_NUMBER;
-
-				int32 coincidentFaceID = MOD_ID_NONE;
-
-				for (int32 id : coincidentFaceIDs)
+				FGraph3DDelta faceDelta;
+				int32 addedFaceID;
+				TArray<int32> parentIds = { MOD_ID_NONE };
+				TSet<int32> groupIDs;
+				TMap<int32, int32> edgeMap;
+				if (!GetDeltaForFaceAddition(faceVertices, faceDelta, NextID, existingID, parentIds, edgeMap, addedFaceID))
 				{
-					auto face = FindFace(id);
-					if (face == nullptr)
-					{
-						continue;
-					}
-
-					if (face->CachedArea < minArea)
-					{
-						minArea = face->CachedArea;
-						coincidentFaceID = id;
-					}
+					continue;
 				}
 
-				addedFaceID = FMath::Abs(addedFaceID);
-				coincidentFaceID = FMath::Abs(coincidentFaceID);
+				ApplyDelta(faceDelta);
+				bool bAddedToDeltas = false;
+				auto newFace = FindFace(addedFaceID);
 
-				auto oldFace = FindFace(coincidentFaceID);
+				TSet<int32> coincidentFaceIDs;
+				FindOverlappingFaces(addedFaceID, coincidentFaceIDs);
 
-				if (newFace && oldFace)
+				// If the plane is constrained (used when a face is added) only add the new faces that are found if they are subdividing another face
+				bool bParallel = FVector::Parallel(FVector(newFace->CachedPlane), FVector(currentPlane));
+				if (coincidentFaceIDs.Num() == 0 && (!bHasPlaneConstraint || bParallel))
 				{
-					float newArea = newFace->CachedArea;
-					float oldArea = oldFace->CachedArea;
+					OutDeltas.Add(faceDelta);
+					bAddedToDeltas = true;
+				}
+				else
+				{
+					float minArea = BIG_NUMBER;
 
-					if (newArea < oldArea - Epsilon)
+					int32 coincidentFaceID = MOD_ID_NONE;
+
+					for (int32 id : coincidentFaceIDs)
 					{
-						faceDelta.FaceAdditions[addedFaceID].ParentObjIDs = { coincidentFaceID };
-						OutDeltas.Add(faceDelta);
-						oldFaces.Add(coincidentFaceID);
-						TArray<int32> &faceIDs = oldToNewFaceIDs.FindOrAdd(coincidentFaceID);
-						faceIDs.Add(addedFaceID);
-						bAddedToDeltas = true;
+						auto face = FindFace(id);
+						if (face == nullptr)
+						{
+							continue;
+						}
+
+						if (face->CachedArea < minArea)
+						{
+							minArea = face->CachedArea;
+							coincidentFaceID = id;
+						}
+					}
+
+					addedFaceID = FMath::Abs(addedFaceID);
+					coincidentFaceID = FMath::Abs(coincidentFaceID);
+
+					auto oldFace = FindFace(coincidentFaceID);
+
+					if (newFace && oldFace)
+					{
+						float newArea = newFace->CachedArea;
+						float oldArea = oldFace->CachedArea;
+
+						if (newArea < oldArea - Epsilon)
+						{
+							faceDelta.FaceAdditions[addedFaceID].ParentObjIDs = { coincidentFaceID };
+							OutDeltas.Add(faceDelta);
+							oldFaces.Add(coincidentFaceID);
+							TArray<int32> &faceIDs = oldToNewFaceIDs.FindOrAdd(coincidentFaceID);
+							faceIDs.Add(addedFaceID);
+							bAddedToDeltas = true;
+						}
 					}
 				}
-			}
-			if (!bAddedToDeltas)
-			{
-				ApplyDelta(*faceDelta.MakeGraphInverse());
+				if (!bAddedToDeltas)
+				{
+					ApplyDelta(*faceDelta.MakeGraphInverse());
+				}
 			}
 		}
 
@@ -415,6 +411,7 @@ namespace Modumate
 		{
 			OutDeltas.Add(deleteDelta);
 		}
+		ApplyDelta(deleteDelta);
 
 		return true;
 	}
@@ -466,19 +463,10 @@ namespace Modumate
 
 		if (bCheckFaces)
 		{
-			for (int32 edgeID : OutEdgeIDs)
+			TArray<FGraph3DDelta> updateFaceDeltas;
+			if (GetDeltasForUpdateFaces(updateFaceDeltas, NextID, OutEdgeIDs))
 			{
-				TArray<FGraph3DDelta> updateFaceDeltas;
-				if (!GetDeltasForUpdateFaces(updateFaceDeltas, NextID, edgeID))
-				{
-					continue;
-				}
 				OutDeltas.Append(updateFaceDeltas);
-
-				for (auto& delta : updateFaceDeltas)
-				{
-					ApplyDelta(delta);
-				}
 			}
 		}
 
@@ -536,9 +524,6 @@ namespace Modumate
 
 		TArray<int32> sharedEdgeIDs;
 
-		// TODO: currently only supports the added face being split once
-		bool bFoundSplit = false;
-
 		int32 addedFaceID;
 		TArray<int32> parentIds = { MOD_ID_NONE };
 		TMap<int32, int32> edgeMap;
@@ -580,6 +565,7 @@ namespace Modumate
 		}
 		FPlane addedPlane = addedFace->CachedPlane;
 
+		TArray<FPlane> planeConstraints;
 		for (int32 addedEdgeID : newEdges)
 		{
 			// If an edge is only added from the face, provide a plane to constrain finding new faces
@@ -588,18 +574,12 @@ namespace Modumate
 			{
 				planeConstraint = addedPlane;
 			}
-
-			TArray<FGraph3DDelta> updateFaceDeltas;
-			if (!GetDeltasForUpdateFaces(updateFaceDeltas, NextID, addedEdgeID, planeConstraint))
-			{
-				continue;
-			}
+			planeConstraints.Add(planeConstraint);
+		}
+		TArray<FGraph3DDelta> updateFaceDeltas;
+		if (GetDeltasForUpdateFaces(updateFaceDeltas, NextID, newEdges.Array(), planeConstraints))
+		{
 			OutDeltas.Append(updateFaceDeltas);
-
-			for (auto& delta : updateFaceDeltas)
-			{
-				ApplyDelta(delta);
-			}
 		}
 
 		return bDeltaCreationSuccess;

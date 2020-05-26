@@ -261,6 +261,17 @@ namespace Modumate
 		}
 	}
 
+	void TestKnownGroups(FAutomationTestBase *Test, FGraph3D& Graph, TMap<int32, int32> &InKnownGroupAmounts)
+	{
+		for (auto& kvp : InKnownGroupAmounts)
+		{
+			TSet<FTypedGraphObjID> OutCompare;
+			Graph.GetGroup(kvp.Key, OutCompare);
+			Test->TestTrue(TEXT("group set magnitude equality"), OutCompare.Num() == kvp.Value);
+		}
+	}
+
+
 	void TestDeltas(FAutomationTestBase *Test, TArray<FGraph3DDelta> &Deltas, FGraph3D& Graph, FGraph3D& TempGraph, int32 TestNumFaces = -1, int32 TestNumVertices = -1, int32 TestNumEdges = -1)
 	{
 		ApplyDeltas(Test, Graph, TempGraph, Deltas);
@@ -1819,6 +1830,93 @@ namespace Modumate
 
 		// And make sure that the group still has the right number of members, including split edges
 		TestTrue(TEXT("Graph group was split"), graph.GetGroup(groupID, groupMembers) && (groupMembers.Num() == 6));
+
+		return true;
+	}
+
+	// Add one face with GroupID
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphBasicGroupID, "Modumate.Graph.3D.BasicGroupID", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphBasicGroupID::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+		int32 NextID = 1;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+
+		TArray<FVector> vertices = {
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(200.0f, 0.0f, 0.0f),
+			FVector(200.0f, 100.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f)
+		};
+
+		TSet<int32> groupIDs = { nextID };
+		nextID++;
+
+		TestTrue(TEXT("Add face with groupID"),
+			tempGraph.GetDeltaForFaceAddition(vertices, deltas, nextID, existingID, groupIDs));
+		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
+
+		TMap<int32, int32> knownGroupAmounts;
+		knownGroupAmounts.Add(1, 1);
+
+		TestKnownGroups(this, graph, knownGroupAmounts);
+
+		return true;
+	}
+
+	// Add one face with GroupID
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphTwoGroupIDs, "Modumate.Graph.3D.TwoGroupIDs", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphTwoGroupIDs::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+		int32 NextID = 1;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 50.0f),
+			FVector(100.0f, 0.0f, 50.0f),
+			FVector(100.0f, 100.0f, 50.0f),
+			FVector(0.0f, 100.0f, 50.0f)
+		};
+
+		TSet<int32> groupIDs = { nextID };
+		nextID++;
+
+		// group ID for second face
+		TSet<int32> secondGroupIDs = { nextID };
+		nextID++;
+
+		TestTrue(TEXT("Add face with groupID"),
+			tempGraph.GetDeltaForFaceAddition(vertices, deltas, nextID, existingID, groupIDs));
+		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
+
+		TMap<int32, int32> knownGroupAmounts;
+		knownGroupAmounts.Add(1, 1);
+		TestKnownGroups(this, graph, knownGroupAmounts);
+
+		// second face
+		vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(100.0f, 100.0f, 100.0f),
+			FVector(0.0f, 0.0f, 100.0f)
+		};
+
+		TestTrue(TEXT("Add second face with groupID"),
+			tempGraph.GetDeltaForFaceAddition(vertices, deltas, nextID, existingID, secondGroupIDs));
+		TestDeltas(this, deltas, graph, tempGraph, 4, 8, 11);
+
+		knownGroupAmounts[1] = 2;
+		knownGroupAmounts.Add(2, 2);
+		TestKnownGroups(this, graph, knownGroupAmounts);
 
 		return true;
 	}
