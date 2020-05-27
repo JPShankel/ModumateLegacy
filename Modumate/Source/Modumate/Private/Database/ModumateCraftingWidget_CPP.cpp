@@ -364,59 +364,7 @@ ECraftingResult UModumateCraftingWidget_CPP::GetEligiblePresetsForSwap(EToolMode
 {
 	const FPresetManager &presetManager = GetDocumentPresetManager();
 	const BIM::FCraftingPresetCollection &presetCollection = presetManager.CraftingNodePresets;
-
-	BIM::FCraftingTreeNodeInstanceSharedPtr instance = CraftingTreeNodeInstances.InstanceFromID(InstanceID);
-	if (!ensureAlways(instance.IsValid()))
-	{
-		return ECraftingResult::Error;
-	}
-
-	const BIM::FCraftingTreeNodePreset *currentPreset = presetCollection.Presets.Find(instance->PresetID);
-
-	if (!ensureAlways(currentPreset != nullptr))
-	{
-		return ECraftingResult::Error;
-	}
-
-	const TArray<FName> *parentList = presetCollection.Lists.Find(CraftingTreeNodeInstances.GetListForParentPin(InstanceID));
-
-	if (parentList != nullptr)
-	{
-		FName nodeType = NAME_None;
-		for (auto &presetID : *parentList)
-		{
-			const BIM::FCraftingTreeNodePreset *preset = presetCollection.Presets.Find(presetID);
-			if (ensureAlways(preset != nullptr))
-			{
-				nodeType = preset->NodeType;
-				OutPresets.Add(FCraftingNode::FromPreset(*preset));
-			}
-		}
-
-		const TArray<FName> *customs = presetCollection.CustomPresetsByNodeType.Find(nodeType);
-		if (customs != nullptr)
-		{
-			for (auto &presetID : *customs)
-			{
-				const BIM::FCraftingTreeNodePreset *preset = presetCollection.Presets.Find(presetID);
-				if (ensureAlways(preset != nullptr))
-				{
-					OutPresets.Add(FCraftingNode::FromPreset(*preset));
-				}
-			}
-		}
-	}
-	else
-	{
-		for (auto &kvp : presetCollection.Presets)
-		{
-			if (kvp.Value.NodeType == currentPreset->NodeType)
-			{
-				OutPresets.Add(FCraftingNode::FromPreset(kvp.Value));
-			}
-		}
-	}
-	return ECraftingResult::Success;
+	return UModumateCraftingNodeWidgetStatics::GetEligiblePresetsForSwap(CraftingTreeNodeInstances, presetCollection, InstanceID, OutPresets);
 }
 
 ECraftingResult UModumateCraftingWidget_CPP::UpdateNodePreviewAssemblyWithPreset(EToolMode ToolMode, int32 InstanceID, const FName &PresetKey)

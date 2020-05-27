@@ -697,6 +697,11 @@ bool UModumateIconMeshStatics::MakeIconMeshFromPofileKey(AEditModelPlayerControl
 
 bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContextObject, const FName &PresetKey, UMaterialInterface* &ModuleMaterial, FCustomColor &ModuleColor)
 {
+	if (PresetKey.IsNone())
+	{
+		return false;
+	}
+
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
 	ModumateObjectDatabase *db = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase : nullptr;
@@ -709,19 +714,24 @@ bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContex
 	BIM::FModumateAssemblyPropertySpec presetSpec;
 	presetManager.PresetToSpec(PresetKey, presetSpec);
 
-	FString materialName, colorName;
-	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::MaterialKey, materialName);
-	presetSpec.RootProperties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::Color, colorName);
+	FName materialName, colorName;
 
-	const FArchitecturalMaterial *mat = db->GetArchitecturalMaterialByKey(FName(*materialName));
-	if (ensureAlways(mat != nullptr) && ensureAlways(mat->EngineMaterial.IsValid()))
+	if (presetSpec.RootProperties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::MaterialKey, materialName))
 	{
-		ModuleMaterial = mat->EngineMaterial.Get();
+		const FArchitecturalMaterial *mat = db->GetArchitecturalMaterialByKey(materialName);
+		if (ensureAlways(mat != nullptr) && ensureAlways(mat->EngineMaterial.IsValid()))
+		{
+			ModuleMaterial = mat->EngineMaterial.Get();
+		}
 	}
-	const FCustomColor *color = db->GetCustomColorByKey(FName(*colorName));
-	if (ensureAlways(color != nullptr))
+
+	if (presetSpec.RootProperties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::Color, colorName))
 	{
-		ModuleColor = *color;
+		const FCustomColor *color = db->GetCustomColorByKey(colorName);
+		if (ensureAlways(color != nullptr))
+		{
+			ModuleColor = *color;
+		}
 	}
 
 	return true;

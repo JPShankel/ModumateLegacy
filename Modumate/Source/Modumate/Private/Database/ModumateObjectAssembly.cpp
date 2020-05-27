@@ -547,8 +547,7 @@ public:
 		if (!LayerMaterialKey.IsEmpty())
 		{
 			const FArchitecturalMaterial *mat = db.GetArchitecturalMaterialByKey(*LayerMaterialKey);
-			ensureAlways(mat != nullptr);
-			if (mat != nullptr)
+			if (ensureAlways(mat != nullptr))
 			{
 				ret.Material = *mat;
 				ensureAlways(ret.Material.EngineMaterial != nullptr);
@@ -1168,22 +1167,30 @@ ECraftingResult UModumateObjectAssemblyStatics::DoMakeAssembly(
 	// TODO: move assembly synthesis to each tool mode or MOI implementation (TBD)
 	if (UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(InSpec.ObjectType))
 	{
+		ECraftingResult result = ECraftingResult::Error;
 		switch(InSpec.ObjectType)
 		{
 
 		case EObjectType::OTStructureLine:
-			return MakeStructureLineAssembly(InDB,InSpec,OutMOA);
+			result = MakeStructureLineAssembly(InDB,InSpec,OutMOA);
+			break;
 
 		case EObjectType::OTFloorSegment:
 		case EObjectType::OTWallSegment:
 		case EObjectType::OTRoofFace:
 		case EObjectType::OTFinish:
-			return MakeLayeredAssembly(InDB,InSpec,OutMOA);
+			result =  MakeLayeredAssembly(InDB,InSpec,OutMOA);
+			break;
 
 		default:
 			ensureAlways(false);
+		};
+
+		if (result != ECraftingResult::Error)
+		{			
+			OutMOA.SetProperty(BIM::Parameters::Name, InSpec.RootProperties.GetProperty(BIM::EScope::Preset, BIM::Parameters::Name));
 		}
-		return ECraftingResult::Error;
+		return result;
 	}
 	else
 	{

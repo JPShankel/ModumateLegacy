@@ -60,10 +60,16 @@ namespace Modumate
 	FPresetManager::~FPresetManager()
 	{}
 
-	ECraftingResult FPresetManager::FromDocumentRecord(UWorld *World,const FMOIDocumentRecord &DocumentRecord)
+	ECraftingResult FPresetManager::FromDocumentRecord(UWorld *World, const FModumateDocumentHeader &DocumentHeader, const FMOIDocumentRecord &DocumentRecord)
 	{
 		AEditModelGameMode_CPP *mode = Cast<AEditModelGameMode_CPP>(World->GetAuthGameMode());
 		AssembliesByObjectType.Empty();
+
+		if (DocumentHeader.Version < MinimumReadableVersion)
+		{
+			mode->ObjectDatabase->InitPresetManagerForNewDocument(*this);
+			return ECraftingResult::Success;
+		}
 
 		// TODO: deprecate when we no longer serialize assemblies
 		for (auto &ca : DocumentRecord.CustomAssemblies)
@@ -1929,7 +1935,10 @@ Preset - get, add, remove, update
 				for (auto &cn : preset->ChildNodes)
 				{
 					// Only the last preset in a sequence contains pertinent data...the others are just category selectors
-					presetStack.Push(cn.PresetIDs.Last());
+					if (ensureAlways(cn.PresetSequence.Num() > 0))
+					{
+						presetStack.Push(cn.PresetSequence.Last().SelectedPresetID);
+					}
 					scopeStack.Push(cn.Scope != BIM::EScope::None ? cn.Scope : pinScope);
 				}
 			}
@@ -1969,9 +1978,6 @@ Preset - get, add, remove, update
 		CraftingNodePresets.Presets.Add(preset.PresetID, preset);
 
 		EObjectType objectType = CraftingNodePresets.GetPresetObjectType(preset.PresetID);
-
-		TArray<FName> &customPresets = CraftingNodePresets.CustomPresetsByNodeType.FindOrAdd(preset.NodeType);
-		customPresets.AddUnique(preset.PresetID);
 
 		// if this preset is bound to an object type, create or update its associated project assembly
 		if (UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(objectType))

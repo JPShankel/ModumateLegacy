@@ -3729,17 +3729,18 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 	{
 		DataCollection<FModumateObjectAssembly> *ffeDB = PresetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
 
-		PresetManager.CraftingPresetArray = docRec.CraftingPresetArray;
 		CommandHistory = docRec.CommandHistory;
 
-		// TODO: DDL 1.0, to be deprecated
+		// Note: will check version against header and simply init from db if presets are out of date
+		PresetManager.FromDocumentRecord(world, docHeader, docRec);
+
+		// DDL 1.0, to be deprecated
+		PresetManager.CraftingPresetArray = docRec.CraftingPresetArray;
 		for (auto &preset : PresetManager.CraftingPresetArray)
 		{
 			preset.UpdatePropertiesFromArchive();
 			preset.UpdatePresetNameFromProperties();
 		}
-
-		PresetManager.FromDocumentRecord(world,docRec);
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.

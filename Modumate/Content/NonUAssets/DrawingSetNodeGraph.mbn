@@ -5,13 +5,13 @@ DEFINE DRAWINGSCALE
 		FIXED("World Scale",Drawing.WorldScale)
 END
 
-PRESET DRAWINGSCALE 1_1000 READONLY
+PRESET DRAWINGSCALE 1_1000
 	Preset.Name="1:1000"
 	Drawing.PaperScale="1"
 	Drawing.WorldScale="1000"
 END
 
-PRESET DRAWINGSCALE 1_768 READONLY
+PRESET DRAWINGSCALE 1_768
 	Preset.Name="1:768"
 	Drawing.PaperScale="1"
 	Drawing.WorldScale="768"

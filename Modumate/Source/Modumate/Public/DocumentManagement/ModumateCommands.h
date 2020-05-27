@@ -105,7 +105,9 @@ namespace Modumate
 		MODUMATE_PARAM(kChildNodePinSetIndices, "child_node_pinset_indices");
 		MODUMATE_PARAM(kChildNodePinSetPositions, "child_node_pinset_positions");
 		MODUMATE_PARAM(kChildNodePinSetListIDs, "child_node_pinset_listids");
+		MODUMATE_PARAM(kChildNodePinSetNodeTypes, "child_node_pinset_node_types");
 		MODUMATE_PARAM(kChildNodePinSetPresetIDs, "child_node_pinset_presetids");
+		MODUMATE_PARAM(kChildNodePinSetTags, "child_node_pinset_tags");
 		MODUMATE_PARAM(kCount, "count");
 		MODUMATE_PARAM(kControlPoints, "points");
 		MODUMATE_PARAM(kDelta, "delta");
@@ -113,6 +115,7 @@ namespace Modumate
 		MODUMATE_PARAM(kDynamicLists, "dynamic_lists");
 		MODUMATE_PARAM(kEdgesHaveFaces, "edges_have_faces");
 		MODUMATE_PARAM(kEditViewMode, "edit_view_mode");
+		MODUMATE_PARAM(kExcluded, "excluded");
 		MODUMATE_PARAM(kExtents, "extents");
 		MODUMATE_PARAM(kFieldOfView, "fov");
 		MODUMATE_PARAM(kFilename, "filename");
@@ -121,6 +124,7 @@ namespace Modumate
 		MODUMATE_PARAM(kHeight, "height");
 		MODUMATE_PARAM(kHeights, "heights");
 		MODUMATE_PARAM(kIncludeConnected, "include_connected");
+		MODUMATE_PARAM(kIncluded, "included");
 		MODUMATE_PARAM(kIndex, "index");
 		MODUMATE_PARAM(kIndices, "indices");
 		MODUMATE_PARAM(kInterval, "interval");
@@ -159,6 +163,7 @@ namespace Modumate
 		MODUMATE_PARAM(kSkip, "skip");
 		MODUMATE_PARAM(kSuccess, "success");
 		MODUMATE_PARAM(kText, "text");
+		MODUMATE_PARAM(kTags, "tags");
 		MODUMATE_PARAM(kToolMode, "tool_mode");
 		MODUMATE_PARAM(kTransversed, "transversed");
 		MODUMATE_PARAM(kType, "type");

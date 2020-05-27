@@ -34,6 +34,8 @@ namespace Modumate
 		FPresetManager();
 		virtual ~FPresetManager();
 
+		static const int32 MinimumReadableVersion = 7;
+
 		// DDL 2.0
 		BIM::FCraftingPresetCollection CraftingNodePresets,DraftingNodePresets;
 
@@ -62,7 +64,7 @@ namespace Modumate
 		// TODO: the key store is likely to grow, so we may need to add some scope discrimination or a more complex scheme down the road
 		FName GetAvailableKey(const FName &BaseKey);
 
-		ECraftingResult FromDocumentRecord(UWorld *World, const FMOIDocumentRecord &DocumentRecord);
+		ECraftingResult FromDocumentRecord(UWorld *World, const FModumateDocumentHeader &DocumentHeader, const FMOIDocumentRecord &DocumentRecord);
 		ECraftingResult ToDocumentRecord(FMOIDocumentRecord &OutRecord) const;
 
 		// DDL 1.0 - all to be deprecated

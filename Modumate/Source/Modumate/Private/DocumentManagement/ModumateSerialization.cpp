@@ -1,6 +1,7 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #include "DocumentManagement/ModumateSerialization.h"
+#include "DocumentManagement/ModumatePresetManager.h"
 
 
 void FMOIDocumentRecordV4::FromVersion3(const FMOIDocumentRecordV3 &v3)
@@ -141,6 +142,25 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 	if (OutHeader.Version == 5)
 	{
 		OutHeader.Version = 6;
+	}
+
+	//If the preset manager is out of date, load a new one and throw out MOI types that depend on presets (leave graph)
+	if (OutHeader.Version < Modumate::FPresetManager::MinimumReadableVersion)
+	{
+		TArray<EObjectType> whiteList = {
+			EObjectType::OTMetaVertex,
+			EObjectType::OTMetaEdge,
+			EObjectType::OTMetaPlane,
+			EObjectType::OTCutPlane,
+			EObjectType::OTScopeBox,
+			EObjectType::OTDrawing,
+			EObjectType::OTRoom };
+
+		OutRecord.ObjectInstances = OutRecord.ObjectInstances.FilterByPredicate(
+			[&whiteList](const FMOIDataRecord &Record)
+		{
+			return whiteList.Contains(Record.ObjectType);
+		});
 	}
 
 	return true;
