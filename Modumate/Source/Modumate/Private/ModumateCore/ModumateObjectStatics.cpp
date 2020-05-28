@@ -867,6 +867,7 @@ int32 UModumateObjectStatics::GetFaceIndexFromTargetHit(const FModumateObjectIns
 
 	switch (HitObject->GetObjectType())
 	{
+	case EObjectType::OTRoofFace:
 	case EObjectType::OTWallSegment:
 	case EObjectType::OTFloorSegment:
 	{
@@ -947,6 +948,7 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateO
 
 	switch (FinishHost->GetObjectType())
 	{
+	case EObjectType::OTRoofFace:
 	case EObjectType::OTWallSegment:
 	case EObjectType::OTFloorSegment:
 	{

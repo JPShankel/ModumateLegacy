@@ -86,6 +86,7 @@ namespace Modumate
 
 			switch (hostObj->GetObjectType())
 			{
+			case EObjectType::OTRoofFace:
 			case EObjectType::OTWallSegment:
 			case EObjectType::OTFloorSegment:
 			{
