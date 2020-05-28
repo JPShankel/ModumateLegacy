@@ -1567,11 +1567,19 @@ namespace Modumate {
 				{
 					if (nodeType->InputPins[i].SetName == nodeTarget)
 					{
+						// New children are added to front of list
+						for (auto &childNode : currentPreset.ChildNodes)
+						{
+							if (childNode.PinSetIndex == i)
+							{
+								++childNode.PinSetPosition;
+							}
+						}
+
 						FCraftingTreeNodePreset::FPinSpec newSpec;
 						newSpec.PinSetIndex = i;
 						newSpec.PinSetPosition = 0;
 						newSpec.Scope = nodeType->InputPins[i].Scope;
-
 						newSpec.PinSpecSearchTags = *searchTags;
 
 						TArray<FString> presetPath;
@@ -1616,13 +1624,6 @@ namespace Modumate {
 							}
 						} 
 
-						for (auto &pin : currentPreset.ChildNodes)
-						{
-							if (pin.PinSetIndex == i && pin.PinSetPosition >= newSpec.PinSetPosition)
-							{
-								newSpec.PinSetPosition = pin.PinSetPosition + 1;
-							}
-						}
 						currentPreset.ChildNodes.Add(newSpec);
 						foundSet = true;
 					}
@@ -2748,15 +2749,30 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 		return false;
 	}
 
-	/*
-	Check that preset matches itself
-	*/
-	Modumate::BIM::FCraftingTreeNodePreset *preset = presetCollection.Presets.Find(outPresets[0]);
-	if (!ensureAlways(preset != nullptr))
+	// Find a multilayer preset
+	Modumate::BIM::FCraftingTreeNodePreset *preset = nullptr;
+	for (auto &presetID : outPresets)
+	{
+		preset = presetCollection.Presets.Find(presetID);
+		if (!ensureAlways(preset != nullptr))
+		{
+			return false;
+		}
+
+		if (preset->ChildNodes.Num() > 1)
+		{
+			break;
+		}
+	}
+
+	if (!ensureAlways(preset != nullptr && preset->ChildNodes.Num() > 1))
 	{
 		return false;
 	}
 
+	/*
+	Check that preset matches itself
+	*/
 	if (!ensureAlways(preset->Matches(*preset)))
 	{
 		return false;
