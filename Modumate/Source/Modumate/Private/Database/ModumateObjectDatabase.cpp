@@ -1101,8 +1101,7 @@ namespace Modumate
 			OutManager.AssembliesByObjectType = PresetManager.AssembliesByObjectType;
 			OutManager.KeyStore = PresetManager.KeyStore;
 
-			//We don't copy all of the deprecated assemblies because they are the "marketplace" 
-			//Instead, import the first entry in each as a default assembly available to the project
+			// Add all DDL 1.0 assemblies to project as marketplace has been deactivated and there are no presets
 			for (auto &kvp : PresetManager.AssemblyDBs_DEPRECATED)
 			{
 				if (!UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(UModumateTypeStatics::ObjectTypeFromToolMode(kvp.Key)))
@@ -1111,9 +1110,8 @@ namespace Modumate
 					{
 						continue;
 					}
-					auto iterator = kvp.Value.DataMap.CreateConstIterator();
 					DataCollection<FModumateObjectAssembly> &db = OutManager.AssemblyDBs_DEPRECATED.FindOrAdd(kvp.Key);
-					db.AddData((*iterator).Value);
+					db = kvp.Value;
 				}
 			}
 		}
