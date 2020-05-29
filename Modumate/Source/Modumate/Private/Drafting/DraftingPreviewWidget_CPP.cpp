@@ -230,7 +230,7 @@ void UDraftingPreviewWidget_CPP::SetupDocument()
 {
 	delete View;
 
-	View = new Modumate::FModumateDraftingView(GetWorld(), Document);
+	View = new Modumate::FModumateDraftingView(GetWorld(), Document, Modumate::FModumateDraftingView::kPDF);
 
 	CurrentPage = 0;
 

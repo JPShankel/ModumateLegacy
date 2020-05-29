@@ -3586,7 +3586,16 @@ bool FModumateDocument::ExportPDF(UWorld *world, const TCHAR *filepath, const FV
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ExportPDF"));
 
-	CurrentDraftingView = MakeShareable(new FModumateDraftingView(world, this));
+	CurrentDraftingView = MakeShareable(new FModumateDraftingView(world, this, FModumateDraftingView::kPDF));
+	CurrentDraftingView->CurrentFilePath = FString(filepath);
+
+	return true;
+}
+
+bool Modumate::FModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
+{
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ExportDWG"));
+	CurrentDraftingView = MakeShareable(new FModumateDraftingView(world, this, FModumateDraftingView::kDWG));
 	CurrentDraftingView->CurrentFilePath = FString(filepath);
 
 	return true;

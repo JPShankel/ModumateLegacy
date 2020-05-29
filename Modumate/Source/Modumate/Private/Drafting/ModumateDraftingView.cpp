@@ -14,6 +14,7 @@
 #include "ModumateCore/ModumateRoomStatics.h"
 #include "DocumentManagement/ModumateSceneCaptureObjectInterface.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Drafting/ModumateDwgDraw.h"
 #include "Drafting/ModumateDraftingDraw.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
@@ -46,19 +47,15 @@ namespace Modumate {
 FModumateDraftingView::~FModumateDraftingView()
 {
 	DraftingPages.Empty();
-
-	ClosePDF(DrawingInterface.Doc.Object);
 }
 
 
-FModumateDraftingView::FModumateDraftingView(UWorld *world, Modumate::FModumateDocument *doc) :
+FModumateDraftingView::FModumateDraftingView(UWorld *world, Modumate::FModumateDocument *doc, DraftType draftType) :
 	World(world),
-	Document(doc)
+	Document(doc),
+	ExportType(draftType)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDraftingView::ModumateDraftingView"));
-
-	PDFResult ob = CreatePDF();
-	DrawingInterface.Doc = ob;
 
 	// TODO: this should be temporary - potentially the cut planes will have some data that populates the
 	// type of drawing they represent (floorplane, elevation, section), the name of the drawing,
@@ -66,44 +63,27 @@ FModumateDraftingView::FModumateDraftingView(UWorld *world, Modumate::FModumateD
 	GeneratePagesFromCutPlanes(world);
 }
 
-bool FModumateDraftingView::ExportPDF(UWorld *world,const TCHAR *filepath)
+bool FModumateDraftingView::ExportDraft(UWorld *world,const TCHAR *filepath)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDraftingView::ExportPDF"));
 
 	UE_LOG(LogAutoDrafting, Display, TEXT("STARTED AUTODRAFTING"));
 	UE_LOG(LogAutoDrafting, Display, TEXT("Filename: %s"), filepath);
 
-	PDFResult doc = CreatePDF();
-	if (doc.ErrorCode != EDrawError::ErrorNone)
-	{
-		return false;
-	}
-
-	FModumatePDFDraw drawingInterface;
-	drawingInterface.Doc = doc;
-
 	for (auto &page : DraftingPages)
 	{
-		doc = AddPage(doc.Object, page->Dimensions.X.AsFloorplanInches(), page->Dimensions.Y.AsFloorplanInches());
 
-		if (doc.ErrorCode != EDrawError::ErrorNone)
+		if (!DrawingInterface->StartPage(page->PageNumber,
+			page->Dimensions.X.AsFloorplanInches(), page->Dimensions.Y.AsFloorplanInches()) )
 		{
-			doc = SavePDF(doc.Object, filepath);
-			ClosePDF(doc.Object);
 			return false;
 		}
-
-		// TODO: Why does the drawing interface need to have these members?
-		DrawingInterface.Doc = doc;
-		DrawingInterface.PageNum = page->PageNumber;
-
-		page->Draw(&DrawingInterface);
+		page->Draw(DrawingInterface.Get());
 	}
 
-	doc = SavePDF(doc.Object, filepath);
-	ClosePDF(doc.Object);
-
-	return doc.ErrorCode == EDrawError::ErrorNone;
+	bool result = DrawingInterface->SaveDocument(filepath);
+	DrawingInterface.Reset();
+	return result;
 }
 
 TSharedPtr<FDraftingPage> FModumateDraftingView::CreateAndAddPage(FText name, FText number)
@@ -134,7 +114,7 @@ void FModumateDraftingView::GenerateScheduleViews()
 	auto doors = Document->GetObjectsOfType(EObjectType::OTDoor);
 	if (doors.Num() > 0)
 	{
-		TSharedPtr<FDoorSummarySchedule> doorSummarySchedule = MakeShareable(new FDoorSummarySchedule(Document, &DrawingInterface));
+		TSharedPtr<FDoorSummarySchedule> doorSummarySchedule = MakeShareable(new FDoorSummarySchedule(Document, DrawingInterface.Get()));
 		Schedules.Add(doorSummarySchedule);
 
 		TSharedPtr<FDoorSchedule> doorSchedule = MakeShareable(new FDoorSchedule(Document));
@@ -148,11 +128,11 @@ void FModumateDraftingView::GenerateScheduleViews()
 	if (assemblies.Num() > 0)
 	{
 		// Wall Assembly Summaries Schedule
-		TSharedPtr<FWallSummarySchedule> summarySchedule = MakeShareable(new FWallSummarySchedule(Document, World.Get(), &DrawingInterface));
+		TSharedPtr<FWallSummarySchedule> summarySchedule = MakeShareable(new FWallSummarySchedule(Document, World.Get(), DrawingInterface.Get()));
 		Schedules.Add(summarySchedule);
 
 		// Wall Assembly Details Schedule
-		TSharedPtr<FWallDetailsSchedule> detailsSchedule = MakeShareable(new FWallDetailsSchedule(Document, World.Get(), &DrawingInterface));
+		TSharedPtr<FWallDetailsSchedule> detailsSchedule = MakeShareable(new FWallDetailsSchedule(Document, World.Get(), DrawingInterface.Get()));
 		Schedules.Add(detailsSchedule);
 	}
 
@@ -160,11 +140,11 @@ void FModumateDraftingView::GenerateScheduleViews()
 	auto ffes = Document->GetObjectsOfType(EObjectType::OTFurniture);
 	if (ffes.Num() > 0)
 	{
-		TSharedPtr<FFFESchedule> ffeschedule = MakeShareable(new FFFESchedule(Document, &DrawingInterface));
+		TSharedPtr<FFFESchedule> ffeschedule = MakeShareable(new FFFESchedule(Document, DrawingInterface.Get()));
 		Schedules.Add(ffeschedule);
 	}
 
-	PaginateScheduleViews(&DrawingInterface);
+	PaginateScheduleViews(DrawingInterface.Get());
 }
 
 void FModumateDraftingView::PaginateScheduleViews(IModumateDraftingDraw *drawingInterface)
@@ -290,6 +270,15 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 	TArray<FModumateObjectInstance*> cutPlanes = Document->GetObjectsOfType(EObjectType::OTCutPlane);
 	TArray<FModumateObjectInstance*> scopeBoxes = Document->GetObjectsOfType(EObjectType::OTScopeBox);
 
+	if (ExportType == kPDF)
+	{
+		DrawingInterface = MakeShared<FModumatePDFDraw>();
+	}
+	else
+	{
+		DrawingInterface = MakeShared<FModumateDwgDraw>();
+	}
+
 	for (FModumateObjectInstance* cutPlane : cutPlanes)
 	{
 		if (cutPlane == nullptr)
@@ -388,7 +377,7 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 	if (UDraftingManager::IsRenderPending(world))
 	{
 		draftMan->CurrentDraftingView = this;
-		draftMan->CurrentDrawingInterface = &DrawingInterface;
+		draftMan->CurrentDrawingInterface = DrawingInterface.Get();
 	}
 }
 
@@ -398,7 +387,7 @@ void FModumateDraftingView::FinishDraft()
 	// re-enable these conditionally based on what the drawing type
 //	GenerateScheduleViews();
 
-	ExportPDF(World.Get(), *CurrentFilePath);
+	ExportDraft(World.Get(), *CurrentFilePath);
 }
 
 }

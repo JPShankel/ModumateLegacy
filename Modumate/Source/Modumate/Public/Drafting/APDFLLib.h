@@ -104,11 +104,25 @@ namespace Modumate
 			const float scale);
 	}
 
+	namespace PDF
+	{
+		PDFResult InitLibrary();
+		PDFResult ShutdownLibrary(PDFOBJECT ob);
+
+		PDFResult CreatePDF();
+		PDFResult ClosePDF(PDFOBJECT ob);
+		PDFResult AddPage(PDFOBJECT ob, float widthInches, float heightInches);
+		PDFResult SavePDF(PDFOBJECT ob, const TCHAR *path);
+		void Test3D();
+	}
+
 	class FModumatePDFDraw : public IModumateDraftingDraw
 	{
 	public:
 		Modumate::PDF::PDFResult Doc;
-		int32 PageNum;
+		int32 PageNum { 0 };
+
+		FModumatePDFDraw() : Doc(PDF::CreatePDF()) { }
 
 		virtual EDrawError DrawLine(
 			const Units::FXCoord &x1,
@@ -173,17 +187,8 @@ namespace Modumate
 			const Units::FYCoord &cy,
 			const Units::FRadius &radius,
 			const FMColor &color) override;
+
+		virtual bool StartPage(int32 pageNumber, float widthInches, float heightInches) override;
+		virtual bool SaveDocument(const FString& filename) override;
 	};
-
-	namespace PDF
-	{
-		PDFResult InitLibrary();
-		PDFResult ShutdownLibrary(PDFOBJECT ob);
-
-		PDFResult CreatePDF();
-		PDFResult ClosePDF(PDFOBJECT ob);
-		PDFResult AddPage(PDFOBJECT ob, float widthInches, float heightInches);
-		PDFResult SavePDF(PDFOBJECT ob, const TCHAR *path);
-		void Test3D();
-    }
 }

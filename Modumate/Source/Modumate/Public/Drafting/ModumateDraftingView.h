@@ -5,7 +5,7 @@
 #include <functional>
 #include "CoreMinimal.h"
 #include "ModumateCore/ModumateUnits.h"
-#include "ModumateDraftingPage.h"
+#include "Drafting/ModumateDraftingPage.h"
 #include "Drafting/Drawings/TitleBlock.h"
 #include "Drafting/ModumateDraftingTags.h"
 #include "Runtime/Engine/Classes/Debug/ReporterGraph.h"
@@ -23,13 +23,14 @@ namespace Modumate
 	class MODUMATE_API FModumateDraftingView
 	{
 	public:
+		enum DraftType {kPDF, kDWG};
+		FModumateDraftingView(UWorld *world, FModumateDocument *doc, DraftType draftType);
 		virtual ~FModumateDraftingView();
-		FModumateDraftingView(UWorld *world, FModumateDocument *doc);
 
 	public:
 		 FString CurrentFilePath;
 	private:
-		bool ExportPDF(UWorld *world, const TCHAR *filepath);
+		bool ExportDraft(UWorld *world, const TCHAR *filepath);
 
 	public:
 		TArray<TSharedPtr<FDraftingPage>> DraftingPages;
@@ -37,8 +38,7 @@ namespace Modumate
 		// List of all schedules; arranged on pages in PaginateScheduleViews
 		TArray<TSharedPtr<FDraftingSchedule>> Schedules;
 
-		//
-		FModumatePDFDraw DrawingInterface;
+		TSharedPtr<IModumateDraftingDraw> DrawingInterface;
 
 		void PaginateScheduleViews(IModumateDraftingDraw *drawingInterface);
 
@@ -60,6 +60,7 @@ namespace Modumate
 	private:
 		TWeakObjectPtr<UWorld> World;
 		FModumateDocument * Document;
+		const DraftType ExportType;
 
 	public:
 		// TODO: this stuff should probably be a setting, as opposed to hard-coded here

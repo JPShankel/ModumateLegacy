@@ -12,7 +12,10 @@
 				"Engine",
 				"ProceduralMeshComponent",
 				"CoreUObject",
-				"UMG"
+				"UMG",
+				"Sockets",
+				"Networking",
+				"zlib"
 			]
 		},
 		{

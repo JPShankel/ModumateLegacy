@@ -1,41 +1,24 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "Drafting/ModumateDwgDraw.h"
+#include "Drafting/ModumateDwgConnect.h"
 
 #include "Core/Public/Misc/FileHelper.h"
 
 namespace Modumate
 {
-	FModumateDwgDraw::FModumateDwgDraw()
+	FModumateDwgDraw::FJsonValuePtr FModumateDwgDraw::ColorToJson(const FMColor& color)
 	{
-	}
-
-
-	FModumateDwgDraw::~FModumateDwgDraw()
-	{
-		static const TCHAR filenamePart[] { TEXT("DwgDraw") };
-		static int fileNumber = 0;
-
-		FString filename = FString::Printf(TEXT("%s%d.json"), filenamePart, ++fileNumber);
-		FString serializedJson;
-		auto serializer = TJsonWriterFactory<>::Create(&serializedJson);
-		FJsonSerializer::Serialize(JsonDocument, serializer);
-
-		FFileHelper::SaveStringToFile(serializedJson, *filename, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
-	}
-
-	FModumateDwgDraw::JsonValuePtr FModumateDwgDraw::ColorToJson(const FMColor& color)
-	{
-		ValueArray colorComponents;
+		FValueArray colorComponents;
 		colorComponents.Add(MakeShared<FJsonValueNumber>(color.R));
 		colorComponents.Add(MakeShared<FJsonValueNumber>(color.G));
 		colorComponents.Add(MakeShared<FJsonValueNumber>(color.B));
 		return MakeShared<FJsonValueArray>(colorComponents);
 	}
 
-	FModumateDwgDraw::JsonValuePtr FModumateDwgDraw::LinePatternToJson(const LinePattern& linePattern)
+	FModumateDwgDraw::FJsonValuePtr FModumateDwgDraw::LinePatternToJson(const LinePattern& linePattern)
 	{
-		ValueArray lineComponents;
+		FValueArray lineComponents;
 		lineComponents.Add(MakeShared<FJsonValueNumber>(int(linePattern.LineStyle)) );
 		for (double d: linePattern.DashPattern)
 		{
@@ -54,7 +37,7 @@ namespace Modumate
 		const LinePattern& linePattern,
 		const Units::FPhase& phase)
 	{
-		ValueArray lineParams;
+		FValueArray lineParams;
 		lineParams.Add(MakeShared<FJsonValueNumber>(x1.AsWorldInches()) );
 		lineParams.Add(MakeShared<FJsonValueNumber>(y1.AsWorldInches()) );
 		lineParams.Add(MakeShared<FJsonValueNumber>(x2.AsWorldInches()) );
@@ -69,7 +52,7 @@ namespace Modumate
 
 		auto lineJsonObject = MakeShared<FJsonObject>();
 		lineJsonObject->SetArrayField("line", lineParams);
-		JsonDocument.Add(MakeShared<FJsonValueObject>(lineJsonObject));
+		JsonDocument.Last().Add(MakeShared<FJsonValueObject>(lineJsonObject));
 		
 		return EDrawError::ErrorNone;
 	}
@@ -87,7 +70,7 @@ namespace Modumate
 	{
 		FString textString(text);
 		
-		ValueArray textParams;
+		FValueArray textParams;
 		textParams.Add(MakeShared<FJsonValueString>(textString.ReplaceCharWithEscapedChar()) );
 		textParams.Add(MakeShared<FJsonValueNumber>(fontSize.AsWorldInches()) );
 		textParams.Add(MakeShared<FJsonValueNumber>(xpos.AsWorldInches()) );
@@ -99,7 +82,7 @@ namespace Modumate
 
 		auto textJsonObject = MakeShared<FJsonObject>();
 		textJsonObject->SetArrayField("text", textParams);
-		JsonDocument.Add(MakeShared<FJsonValueObject>(textJsonObject));
+		JsonDocument.Last().Add(MakeShared<FJsonValueObject>(textJsonObject));
 
 		return EDrawError::ErrorNone;
 	}
@@ -125,7 +108,7 @@ namespace Modumate
 		const LinePattern& linePattern,
 		int slices)
 	{
-		ValueArray arcParams;
+		FValueArray arcParams;
 		arcParams.Add(MakeShared<FJsonValueNumber>(x.AsWorldInches()));
 		arcParams.Add(MakeShared<FJsonValueNumber>(y.AsWorldInches()));
 		arcParams.Add(MakeShared<FJsonValueNumber>(a1.AsRadians()));
@@ -141,7 +124,7 @@ namespace Modumate
 
 		auto arcJsonObject = MakeShared<FJsonObject>();
 		arcJsonObject->SetArrayField("arc", arcParams);
-		JsonDocument.Add(MakeShared<FJsonValueObject>(arcJsonObject));
+		JsonDocument.Last().Add(MakeShared<FJsonValueObject>(arcJsonObject));
 
 		return EDrawError::ErrorNone;
 	}
@@ -154,8 +137,10 @@ namespace Modumate
 		const Units::FHeight& height)
 	{
 		FString filePath(imageFileFullPath);
+		ImageFilepaths.Add(filePath);
+		filePath = FPaths::GetCleanFilename(filePath);
 
-		ValueArray imageParams;
+		FValueArray imageParams;
 		imageParams.Add(MakeShared<FJsonValueString>(filePath.ReplaceCharWithEscapedChar()) );
 		imageParams.Add(MakeShared<FJsonValueNumber>(x.AsWorldInches()) );
 		imageParams.Add(MakeShared<FJsonValueNumber>(y.AsWorldInches()) );
@@ -164,7 +149,7 @@ namespace Modumate
 
 		auto imageJsonObject = MakeShared<FJsonObject>();
 		imageJsonObject->SetArrayField("image", imageParams);
-		JsonDocument.Add(MakeShared<FJsonValueObject>(imageJsonObject));
+		JsonDocument.Last().Add(MakeShared<FJsonValueObject>(imageJsonObject));
 
 		return EDrawError::ErrorNone;
 	}
@@ -176,7 +161,7 @@ namespace Modumate
 	{
 		const double scaleFactor = DrawingScale / defaultScaleFactor;
 
-		ValueArray fillPolyParams;
+		FValueArray fillPolyParams;
 		fillPolyParams.Add(ColorToJson(color));
 
 		for (int p = 0; p < numPoints * 2; ++p)
@@ -187,7 +172,7 @@ namespace Modumate
 
 		auto filledPolyJsonObject = MakeShared<FJsonObject>();
 		filledPolyJsonObject->SetArrayField("fillpoly", fillPolyParams);
-		JsonDocument.Add(MakeShared<FJsonValueObject>(filledPolyJsonObject));
+		JsonDocument.Last().Add(MakeShared<FJsonValueObject>(filledPolyJsonObject));
 
 		return EDrawError::ErrorNone;
 	}
@@ -200,7 +185,7 @@ namespace Modumate
 		const LinePattern& linePattern,
 		const FMColor& color)
 	{
-		ValueArray circleParams;
+		FValueArray circleParams;
 		circleParams.Add(MakeShared<FJsonValueNumber>(cx.AsWorldInches()) );
 		circleParams.Add(MakeShared<FJsonValueNumber>(cy.AsWorldInches()) );
 		circleParams.Add(MakeShared<FJsonValueNumber>(radius.AsWorldInches()) );
@@ -214,7 +199,7 @@ namespace Modumate
 
 		auto circleJsonObject = MakeShared<FJsonObject>();
 		circleJsonObject->SetArrayField("circle", circleParams);
-		JsonDocument.Add(MakeShared<FJsonValueObject>(circleJsonObject));
+		JsonDocument.Last().Add(MakeShared<FJsonValueObject>(circleJsonObject));
 
 		return EDrawError::ErrorNone;
 	}
@@ -225,7 +210,7 @@ namespace Modumate
 		const Units::FRadius& radius,
 		const FMColor& color)
 	{
-		ValueArray fillCircleParams;
+		FValueArray fillCircleParams;
 		fillCircleParams.Add(MakeShared<FJsonValueNumber>(cx.AsWorldInches()) );
 		fillCircleParams.Add(MakeShared<FJsonValueNumber>(cy.AsWorldInches()) );
 		fillCircleParams.Add(MakeShared<FJsonValueNumber>(radius.AsWorldInches()) );
@@ -233,9 +218,51 @@ namespace Modumate
 
 		auto fillCircleJsonObject = MakeShared<FJsonObject>();
 		fillCircleJsonObject->SetArrayField("fillcircle", fillCircleParams);
-		JsonDocument.Add(MakeShared<FJsonValueObject>(fillCircleJsonObject));
+		JsonDocument.Last().Add(MakeShared<FJsonValueObject>(fillCircleJsonObject));
 
 		return EDrawError::ErrorNone;
 	}
 
+	bool FModumateDwgDraw::StartPage(int32 pageNumber, float widthInches, float heightInches)
+	{
+		JsonDocument.Push(FValueArray());
+		return true;
+	}
+
+	FString Modumate::FModumateDwgDraw::GetJsonAsString(int index) const
+	{
+		if (index >= JsonDocument.Num())
+		{
+			return FString();
+		}
+
+		FString serializedJson;
+		auto serializer = TJsonWriterFactory<>::Create(&serializedJson);
+		FJsonSerializer::Serialize(JsonDocument[index], serializer);
+
+		return serializedJson;
+	}
+
+	bool FModumateDwgDraw::SaveDocument(const FString& filename)
+	{
+#if 0
+		// Save out JSON for debugging ...
+		static int fileNumber = 0;
+
+		for (auto& page: JsonDocument)
+		{
+			FString filenameJson = FString::Printf(TEXT("%s%d.json"), *filename, ++fileNumber);
+			FString serializedJson;
+			auto serializer = TJsonWriterFactory<>::Create(&serializedJson);
+			FJsonSerializer::Serialize(page, serializer);
+
+			FFileHelper::SaveStringToFile(serializedJson, *filenameJson, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
+		}
+#endif
+
+		FModumateDwgConnect dwgConnect(*this);
+		dwgConnect.ConvertJsonToDwg(filename);
+
+		return true;
+	}
 }

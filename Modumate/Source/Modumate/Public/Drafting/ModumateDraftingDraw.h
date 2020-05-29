@@ -140,5 +140,11 @@ namespace Modumate
 			const Units::FYCoord &cy,
 			const Units::FRadius &radius,
 			const FMColor &color) = 0;
+
+		virtual bool StartPage(int32 pageNumber, float widthInches, float heightInches)
+		{ return true; }
+
+		virtual bool SaveDocument(const FString& filename)
+		{ return true; }
 	};
 }

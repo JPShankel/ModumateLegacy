@@ -27,7 +27,8 @@ namespace Modumate
 	{
 		{ L"Modumate Project Files (*.mdmt)", pszModProjExtWildcard },
 		{ L"PDF Files (*.pdf)",       L"*.pdf"  },
-		{ L"PNG Files (*.png)",       L"*.png"  }
+		{ L"PNG Files (*.png)",       L"*.png"  },
+		{ L"DWG Files (*.zip)",       L"*.zip"  }
 	};
 
 	const COMDLG_FILTERSPEC c_rgSaveProjectFileType[] =
@@ -44,6 +45,12 @@ namespace Modumate
 	{
 		{ L"PNG Files (*.png)",       L"*.png"  }
 	};
+
+	const COMDLG_FILTERSPEC c_rgSaveDwgFileType[] =
+	{
+		{ L"AutoCAD DWG Bundle (*.zip)",    L"*.zip"  }
+	};
+
 
 	/* File Dialog Event Handler *****************************************************************************************************/
 
@@ -319,6 +326,11 @@ namespace Modumate
 							{
 								hr = pfd->SetFileTypes(ARRAYSIZE(c_rgSavePngFileType), c_rgSavePngFileType);
 							}
+							else if (fileType == INDEX_DWGFILE)
+							{
+								hr = pfd->SetFileTypes(ARRAYSIZE(c_rgSaveDwgFileType), c_rgSaveDwgFileType);
+							}
+
 
 							if (SUCCEEDED(hr))
 							{

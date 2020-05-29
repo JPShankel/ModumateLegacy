@@ -13,9 +13,6 @@ namespace Modumate
 	class FModumateDwgDraw: public IModumateDraftingDraw
 	{
 	public:
-		FModumateDwgDraw();
-		virtual ~FModumateDwgDraw();
-
 		virtual EDrawError DrawLine(
 			const Units::FXCoord &x1,
 			const Units::FYCoord &y1,
@@ -82,14 +79,25 @@ namespace Modumate
 			const Units::FRadius &radius,
 			const FMColor &color) override;
 
+		virtual bool StartPage(int32 pageNumber, float widthInches, float heightInches) override;
+		virtual bool SaveDocument(const FString& filename) override;
+
+		int GetNumPages() const { return JsonDocument.Num(); }
+		FString GetJsonAsString(int index) const;
+
+		const TArray<FString>& GetImages() const { return ImageFilepaths; }
+
 	private:
-		using JsonValuePtr = TSharedPtr<FJsonValue>;
-		using ValueArray = TArray<JsonValuePtr>;
+		using FJsonValuePtr = TSharedPtr<FJsonValue>;
+		using FValueArray = TArray<FJsonValuePtr>;
 
-		static JsonValuePtr ColorToJson(const FMColor& color);
-		static JsonValuePtr LinePatternToJson(const LinePattern& linePattern);
+		static FJsonValuePtr ColorToJson(const FMColor& color);
+		static FJsonValuePtr LinePatternToJson(const LinePattern& linePattern);
 
-		ValueArray JsonDocument;
+		TArray<FValueArray> JsonDocument;
+
+		TArray<FString> ImageFilepaths;
+
 		static constexpr double defaultScaleFactor = 48.0;
 	};
 

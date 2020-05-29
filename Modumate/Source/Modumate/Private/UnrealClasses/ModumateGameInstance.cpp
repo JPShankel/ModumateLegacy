@@ -650,6 +650,10 @@ void UModumateGameInstance::RegisterAllCommands()
 		{
 			playerState->bDevelopDDL2Data = hasShow ? show : !playerState->bDevelopDDL2Data;
 		}
+		else if (type.Equals(TEXT("dwg")))
+		{
+			Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController())->OnCreateDwg();
+		}
 		return true;
 	});
 

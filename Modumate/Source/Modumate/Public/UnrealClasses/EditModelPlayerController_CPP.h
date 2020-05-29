@@ -549,6 +549,7 @@ public:
 
 	bool OnSavePDF();
 	bool OnCancelPDF();
+	bool OnCreateDwg();
 
 	UFUNCTION(BlueprintCallable, Category = Persistence)
 	void TrySavePDF();

@@ -836,6 +836,37 @@ bool AEditModelPlayerController_CPP::ExportPDF()
 	return true;
 }
 
+bool AEditModelPlayerController_CPP::OnCreateDwg()
+{
+	EMPlayerState->ShowingFileDialog = true;
+
+	if (ToolIsInUse())
+	{
+		AbortUseTool();
+	}
+
+	bool retValue = true;
+
+	FString filename;
+	if (Modumate::PlatformFunctions::GetSaveFilename(filename, INDEX_DWGFILE))
+	{
+		EMPlayerState->ShowingFileDialog = false;
+
+		if (!Document->ExportDWG(GetWorld(), *filename))
+		{
+			FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString("DWG Creation Failed")));
+			retValue = false;
+		}
+
+	}
+	else
+	{
+		EMPlayerState->ShowingFileDialog = false;
+	}
+
+	return retValue;
+}
+
 void AEditModelPlayerController_CPP::DeleteActionDefault()
 {
 	ModumateCommand(

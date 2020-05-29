@@ -246,6 +246,7 @@ namespace Modumate
 		int32 CloneObject(UWorld *world, const FModumateObjectInstance *original);
 
 		bool ExportPDF(UWorld *world, const TCHAR *filepath, const FVector &origin, const FVector &normal);
+		bool ExportDWG(UWorld *world, const TCHAR *filepath);
 
 		void Undo(UWorld *world);
 		void Redo(UWorld *world);

@@ -1010,6 +1010,23 @@ namespace Modumate
 	{
 		return PDF::FillCircle(Doc.Object, PageNum, cx, cy, radius, color, DrawingScale).ErrorCode;
 	}
+
+	using namespace PDF;
+
+	bool Modumate::FModumatePDFDraw::StartPage(int32 pageNumber, float widthInches, float heightInches)
+	{
+		PageNum = pageNumber;
+		AddPage(Doc.Object, widthInches, heightInches);
+		return true;
+	}
+
+	bool Modumate::FModumatePDFDraw::SaveDocument(const FString& filename)
+	{
+		auto doc = SavePDF(Doc.Object, *filename);
+		ClosePDF(doc.Object);
+
+		return doc.ErrorCode == EDrawError::ErrorNone;
+	}
 }
 
 #pragma warning (default:4456)
