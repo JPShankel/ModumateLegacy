@@ -392,11 +392,11 @@ bool AAdjustmentHandleActor_CPP::HandleInputNumber(float number)
 	return false;
 }
 
-bool AAdjustmentHandleActor_CPP::HandleSpacebar()
+bool AAdjustmentHandleActor_CPP::HandleInvert()
 {
 	if (Implementation)
 	{
-		return Implementation->HandleSpacebar();
+		return Implementation->HandleInvert();
 	}
 	return false;
 }

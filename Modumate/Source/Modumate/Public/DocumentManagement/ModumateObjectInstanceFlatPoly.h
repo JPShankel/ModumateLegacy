@@ -14,7 +14,6 @@ namespace Modumate
 		bool WantsInvertHandle;
 
 		virtual FVector GetCorner(int32 index) const override;
-		virtual void InvertObject() override;
 		float CalcThickness(const TArray<FModumateObjectAssemblyLayer> &floorLayers) const;
 		virtual void SetupDynamicGeometry() override;
 		virtual void UpdateDynamicGeometry() override;

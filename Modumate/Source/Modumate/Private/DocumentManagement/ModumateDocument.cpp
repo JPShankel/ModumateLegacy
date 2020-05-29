@@ -1230,11 +1230,12 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromObjectType(
 	int32 ParentID,
 	const FVector &Extents,
 	const TArray<FVector> *CPS,
-	const TArray<int32> *CPI)
+	const TArray<int32> *CPI,
+	bool bInverted)
 {
 	FModumateObjectAssembly obAsm;
 	obAsm.ObjectType = OT;
-	return CreateOrRestoreObjFromAssembly(World, obAsm, ID, ParentID, Extents, CPS, CPI);
+	return CreateOrRestoreObjFromAssembly(World, obAsm, ID, ParentID, Extents, CPS, CPI, bInverted);
 }
 
 FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
@@ -1244,7 +1245,8 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
 	int32 ParentID,
 	const FVector &Extents,
 	const TArray<FVector> *CPS,
-	const TArray<int32> *CPI)
+	const TArray<int32> *CPI,
+	bool bInverted)
 {
 	// Check to make sure NextID represents the next highest ID we can allocate to a new object.
 	if (ID >= NextID)
@@ -1277,6 +1279,7 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
 		{
 			obj->SetControlPointIndices(*CPI);
 		}
+		obj->SetObjectInverted(bInverted);
 		obj->SetExtents(Extents);
 		obj->SetupGeometry();
 		obj->SetParentObject(GetObjectById(ParentID));
@@ -1310,8 +1313,8 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 
 				// If we got an assembly, build the object with it, otherwise by type
 				FModumateObjectInstance *newInstance = (assembly != nullptr) ?
-					CreateOrRestoreObjFromAssembly(World, *assembly, targetState.ObjectID, targetState.ParentID, targetState.Extents, &targetState.ControlPoints, &targetState.ControlIndices) :
-					CreateOrRestoreObjFromObjectType(World, targetState.ObjectType, targetState.ObjectID, targetState.ParentID, FVector::ZeroVector, &targetState.ControlPoints, &targetState.ControlIndices);
+					CreateOrRestoreObjFromAssembly(World, *assembly, targetState.ObjectID, targetState.ParentID, targetState.Extents, &targetState.ControlPoints, &targetState.ControlIndices, targetState.bObjectInverted) :
+					CreateOrRestoreObjFromObjectType(World, targetState.ObjectType, targetState.ObjectID, targetState.ParentID, FVector::ZeroVector, &targetState.ControlPoints, &targetState.ControlIndices, targetState.bObjectInverted);
 
 				if (newInstance != nullptr)
 				{
@@ -1357,13 +1360,6 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 					return false;
 				};
 
-				// TODO: refactor for delta-based Undo/Redo
-				// This function affects the undo/redo buffer so it can't be called from ApplyDeltas Redo()
-				if (targetState.ObjectInverted != baseState.ObjectInverted)
-				{
-					MOI->InvertObject();
-				}
-
 				EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(targetState.ObjectType);
 				if (toolMode != EToolMode::VE_NONE)
 				{
@@ -1377,6 +1373,7 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 						}
 					}
 				}
+
 				MOI->SetDataState(targetState);
 			}
 			break;
@@ -1512,11 +1509,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 			auto hostedObj = GetObjectById(objUpdate.PreviousHostedObjID);
 			if (hostedObj)
 			{
-				auto newObj = CreateOrRestoreObjFromAssembly(World, hostedObj->GetAssembly(), kvp.Key, objUpdate.NextParentID, hostedObj->GetExtents(), nullptr, &hostedObj->GetControlPointIndices());
-				if (newObj && newObj->GetObjectInverted() != hostedObj->GetObjectInverted())
-				{
-					newObj->InvertObject();
-				}
+				auto newObj = CreateOrRestoreObjFromAssembly(World, hostedObj->GetAssembly(), kvp.Key, objUpdate.NextParentID, hostedObj->GetExtents(), nullptr, &hostedObj->GetControlPointIndices(), hostedObj->GetObjectInverted());
 			}
 			// Otherwise, attempt to restore the previous object (during undo)
 			else
@@ -2538,12 +2531,7 @@ int32 FModumateDocument::MakePointsObject(
 		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakePointsObject::Redo"));
 
 		FModumateObjectInstance *newOb = CreateOrRestoreObjFromAssembly(
-			world, assembly, id, parentID, FVector::ZeroVector, &points, &controlIndices);
-
-		if (inverted)
-		{
-			newOb->InvertObject();
-		}
+			world, assembly, id, parentID, FVector::ZeroVector, &points, &controlIndices, inverted);
 
 		TArray<FModumateObjectInstance*> objectsToDelete;
 		Algo::Transform(idsToDelete,objectsToDelete,[this](int32 id){return GetObjectById(id);});

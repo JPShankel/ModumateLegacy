@@ -23,6 +23,6 @@ namespace Modumate {
 		virtual FVector GetAttachmentPoint() = 0;
 		virtual bool GetOverrideHandleRotation(FQuat &OutRotation) = 0;
 		TWeakObjectPtr<AAdjustmentHandleActor_CPP> Handle;
-		virtual bool HandleSpacebar() = 0;
+		virtual bool HandleInvert() = 0;
 	};
 }

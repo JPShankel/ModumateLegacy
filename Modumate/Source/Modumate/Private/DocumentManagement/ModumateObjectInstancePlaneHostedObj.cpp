@@ -26,11 +26,6 @@ namespace Modumate
 	FMOIPlaneHostedObjImpl::FMOIPlaneHostedObjImpl(FModumateObjectInstance *InMOI)
 		: FDynamicModumateObjectInstanceImpl(InMOI)
 	{
-		if (MOI->GetObjectInverted())
-		{
-			MOI->InvertAssemblyLayers();
-		}
-
 		CachedLayerDims.UpdateLayersFromAssembly(MOI->GetAssembly());
 		CachedLayerDims.UpdateFinishFromObject(MOI);
 	}
@@ -92,23 +87,6 @@ namespace Modumate
 		return GetLocation();
 	}
 
-	void FMOIPlaneHostedObjImpl::InvertObject()
-	{
-		MOI->InvertAssemblyLayers();
-
-		MOI->MarkDirty(EObjectDirtyFlags::Structure);
-	}
-
-	void FMOIPlaneHostedObjImpl::OnAssemblyChanged()
-	{
-		FModumateObjectInstanceImplBase::OnAssemblyChanged();
-
-		if (MOI->GetObjectInverted())
-		{
-			MOI->InvertAssemblyLayers();
-		}
-	}
-
 	FVector FMOIPlaneHostedObjImpl::GetNormal() const
 	{
 		const FModumateObjectInstance *planeParent = MOI->GetParentObject();
@@ -128,6 +106,11 @@ namespace Modumate
 		{
 		case EObjectDirtyFlags::Structure:
 		{
+			// TODO: as long as the assembly is not stored inside of the data state, and its layers can be reversed,
+			// then this is the centralized opportunity to match up the reversal of layers with whatever the intended inversion state is,
+			// based on preview/current state changing, assembly changing, object creation, etc.
+			MOI->SetAssemblyLayersReversed(MOI->GetObjectInverted());
+
 			CachedLayerDims.UpdateLayersFromAssembly(MOI->GetAssembly());
 			CachedLayerDims.UpdateFinishFromObject(MOI);
 

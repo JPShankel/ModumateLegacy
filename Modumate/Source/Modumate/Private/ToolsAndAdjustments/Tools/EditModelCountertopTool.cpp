@@ -207,7 +207,7 @@ bool UCountertopTool::AbortUse()
 }
 
 
-bool UCountertopTool::HandleSpacebar()
+bool UCountertopTool::HandleInvert()
 {
 	if (!IsInUse())
 	{

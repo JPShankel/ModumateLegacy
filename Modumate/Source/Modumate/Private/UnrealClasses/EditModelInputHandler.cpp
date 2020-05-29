@@ -278,6 +278,10 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	{
 		return Controller->ZoomToSelection();
 	}
+	case EInputCommand::Invert:
+	{
+		return Controller->HandleInvert();
+	}
 
 	// Tool activation commands are handled before the switch statement!
 

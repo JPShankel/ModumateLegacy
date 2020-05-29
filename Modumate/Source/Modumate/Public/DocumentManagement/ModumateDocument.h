@@ -205,11 +205,11 @@ namespace Modumate
 
 		FModumateObjectInstance* CreateOrRestoreObjFromAssembly(UWorld *World, const FModumateObjectAssembly &Assembly,
 			int32 ID, int32 ParentID = 0, const FVector &Extents = FVector::ZeroVector,
-			const TArray<FVector> *CPS = nullptr, const TArray<int32> *CPI = nullptr);
+			const TArray<FVector> *CPS = nullptr, const TArray<int32> *CPI = nullptr, bool bInverted = false);
 
 		FModumateObjectInstance* CreateOrRestoreObjFromObjectType(UWorld *World, EObjectType OT,
 			int32 ID, int32 ParentID = 0, const FVector &Extents = FVector::ZeroVector,
-			const TArray<FVector> *CPS = nullptr, const TArray<int32> *CPI = nullptr);
+			const TArray<FVector> *CPS = nullptr, const TArray<int32> *CPI = nullptr, bool bInverted = false);
 
 	public:
 		bool ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World);

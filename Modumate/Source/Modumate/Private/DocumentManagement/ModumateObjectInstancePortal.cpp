@@ -462,11 +462,6 @@ namespace Modumate
 		}
 	}
 
-	void FMOIPortalImpl::InvertObject()
-	{
-		MOI->MarkDirty(EObjectDirtyFlags::Structure);
-	}
-
 	void FMOIPortalImpl::TransverseObject()
 	{
 		FModumateObjectInstance *parent = MOI ? MOI->GetParentObject() : nullptr;

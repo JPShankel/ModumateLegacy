@@ -25,7 +25,7 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
-	virtual bool HandleSpacebar() override;
+	virtual bool HandleInvert() override;
 	virtual bool HandleControlKey(bool pressed) override;
 	bool HandleInputNumber(double n) override;
 };

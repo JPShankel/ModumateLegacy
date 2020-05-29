@@ -49,6 +49,9 @@ namespace Modumate
 		}
 	}
 
+// This method of inverting objects was doomed to begin with; it has been outdated by plane-hosted objects,
+// which countertops will almost certainly need to be (or borrow from).
+#if 0
 	void FMOIFlatPolyImpl::InvertObject()
 	{
 		if (MOI->GetObjectInverted())
@@ -73,6 +76,7 @@ namespace Modumate
 		}
 		UpdateDynamicGeometry();
 	}
+#endif
 
 	float FMOIFlatPolyImpl::CalcThickness(const TArray<FModumateObjectAssemblyLayer> &floorLayers) const
 	{

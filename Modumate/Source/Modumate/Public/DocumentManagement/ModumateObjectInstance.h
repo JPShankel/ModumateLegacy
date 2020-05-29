@@ -124,7 +124,6 @@ namespace Modumate
 		virtual void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation) = 0;
 		virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) = 0;
 
-		virtual void InvertObject() = 0;
 		virtual void TransverseObject() = 0;
 
 		virtual FModumateWallMount GetWallMountForSelf(int32 originIndex) const = 0;
@@ -196,7 +195,6 @@ namespace Modumate
 		virtual void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation) override;
 		virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) override;
 
-		virtual void InvertObject() override { }
 		virtual void TransverseObject() override { }
 
 		virtual FModumateWallMount GetWallMountForSelf(int32 originIndex) const override;
@@ -230,7 +228,7 @@ namespace Modumate
 
 		TArray<FVector> ControlPoints;
 		TArray<int32> ControlIndices;
-		bool ObjectInverted = false;
+		bool bObjectInverted = false;
 
 		FVector Location = FVector::ZeroVector;
 		FQuat Orientation = FQuat::Identity;
@@ -289,6 +287,9 @@ namespace Modumate
 		// TODO: refactor for shared pointers held in the preset manager
 		// First preset manager must become responsible for "trivial" assemblies used by abstract MOIs like metaplanes
 		FModumateObjectAssembly ObjectAssembly;
+		// TODO: this flag is helpful to keep the above ObjectAssembly layer orders correct, especially because the assembly
+		// itself isn't stored in the FMOIStateData. So if CurrentState / PreviewState get modified (or swapped), this flag lets us maintain the layer order.
+		bool bAssemblyLayersReversed = false;
 
 		TArray<int32> Children;
 		bool bDestroyed = false;
@@ -320,7 +321,7 @@ namespace Modumate
 		~FModumateObjectInstance();
 
 		bool GetObjectInverted() const;
-		void SetObjectInverted(bool Inverted);
+		void SetObjectInverted(bool bNewInverted);
 
 		const FVector &GetExtents() const;
 		void SetExtents(const FVector &NewExtents);
@@ -419,7 +420,7 @@ namespace Modumate
 
 		const FModumateObjectAssembly &GetAssembly() const;
 		void SetAssembly(const FModumateObjectAssembly &NewAssembly);
-		void InvertAssemblyLayers();
+		void SetAssemblyLayersReversed(bool bNewLayersReversed);
 
 		// TODO: generalize or delete these functions, especially if they are
 		// only relevant for objects that will only be hosted by meta planes

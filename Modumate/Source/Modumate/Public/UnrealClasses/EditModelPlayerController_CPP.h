@@ -498,8 +498,8 @@ public:
 	bool IsShiftDown() const;
 	bool IsControlDown() const;
 
-	UFUNCTION(BlueprintCallable, Category = Keyboard)
-	bool HandleSpacebar();
+	UFUNCTION()
+	bool HandleInvert();
 
 	UFUNCTION(BlueprintCallable, Category = Keyboard)
 	bool HandleEscapeKey();

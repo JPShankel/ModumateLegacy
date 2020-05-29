@@ -553,7 +553,7 @@ bool UStairTool::MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID)
 			newMOIData.ObjectType = EObjectType::OTStaircase;
 			newMOIData.ParentID = RefParentPlaneID;
 			newMOIData.ObjectAssemblyKey = Assembly.Key;
-			newMOIData.ObjectInverted = false;
+			newMOIData.bObjectInverted = false;
 			newMOIData.Extents = FVector(0.5f, 0, 0);
 			newMOIData.ObjectID = OutStairsID;
 

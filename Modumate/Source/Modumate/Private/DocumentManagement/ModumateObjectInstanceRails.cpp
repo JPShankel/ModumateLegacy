@@ -50,8 +50,6 @@ namespace Modumate
 		}
 	}
 
-	void FMOIRailImpl::InvertObject() {}
-
 	TArray<FModelDimensionString> FMOIRailImpl::GetDimensionStrings() const
 	{
 		TArray<FModelDimensionString> ret;

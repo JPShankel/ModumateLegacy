@@ -39,7 +39,7 @@ public:
 	virtual bool AbortUse() = 0;
 	virtual bool ScrollToolOption(int32 dir) = 0;
 	virtual bool HandleInputNumber(double n) = 0;
-	virtual bool HandleSpacebar() = 0;
+	virtual bool HandleInvert() = 0;
 	virtual bool HandleControlKey(bool pressed) = 0;
 	virtual bool HandleMouseUp() = 0;
 	virtual bool ShowSnapCursorAffordances() = 0;

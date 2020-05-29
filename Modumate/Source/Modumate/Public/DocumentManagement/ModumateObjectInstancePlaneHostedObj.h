@@ -19,9 +19,6 @@ namespace Modumate
 		virtual FQuat GetRotation() const override;
 		virtual FVector GetLocation() const override;
 		virtual FVector GetCorner(int32 index) const override;
-		virtual void InvertObject() override;
-		virtual void TransverseObject() override {};
-		virtual void OnAssemblyChanged() override;
 		virtual FVector GetNormal() const override;
 		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag) override;
 		virtual void SetupDynamicGeometry() override;

@@ -453,7 +453,7 @@ bool UTrimTool::AbortUse()
 	return UEditModelToolBase::AbortUse();
 }
 
-bool UTrimTool::HandleSpacebar()
+bool UTrimTool::HandleInvert()
 {
 	if (!IsActive())
 	{
@@ -470,5 +470,3 @@ void UTrimTool::SetAssembly(const FShoppingItem &key)
 	Super::SetAssembly(key);
 	OnAssemblySet();
 }
-
-

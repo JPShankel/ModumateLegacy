@@ -36,6 +36,6 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
-	virtual bool HandleSpacebar() override;
+	virtual bool HandleInvert() override;
 	void SegmentsConformInvert();
 };

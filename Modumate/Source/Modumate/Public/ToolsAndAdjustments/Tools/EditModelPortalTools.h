@@ -49,7 +49,7 @@ public:
 	virtual bool ScrollToolOption(int32 dir) override;
 	virtual bool HandleInputNumber(double n) override;
 	virtual bool AbortUse() override;
-	virtual bool HandleSpacebar() override;
+	virtual bool HandleInvert() override;
 	virtual bool HandleControlKey(bool pressed) override;
 	virtual bool HandleMouseUp() override { return true; }
 	virtual bool ShowSnapCursorAffordances() override { return true; }

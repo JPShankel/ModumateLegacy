@@ -125,7 +125,7 @@ bool URailTool::AbortUse()
 	return UEditModelToolBase::AbortUse();
 }
 
-bool URailTool::HandleSpacebar()
+bool URailTool::HandleInvert()
 {
 	if (!IsInUse())
 	{

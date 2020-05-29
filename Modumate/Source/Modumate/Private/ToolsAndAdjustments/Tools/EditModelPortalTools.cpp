@@ -291,7 +291,7 @@ bool UPortalToolBase::AbortUse()
 	return true;
 }
 
-bool UPortalToolBase::HandleSpacebar()
+bool UPortalToolBase::HandleInvert()
 {
 	if (!IsInUse())
 	{

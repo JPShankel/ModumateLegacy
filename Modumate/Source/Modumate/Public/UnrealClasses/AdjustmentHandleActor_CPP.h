@@ -106,7 +106,7 @@ public:
 	bool AbortUse();
 	bool IsInUse() const;
 	bool HandleInputNumber(float number);
-	bool HandleSpacebar();
+	bool HandleInvert();
 	void SetEnabled(bool bNewEnabled);
 
 	void ShowHoverWallDimensionString();

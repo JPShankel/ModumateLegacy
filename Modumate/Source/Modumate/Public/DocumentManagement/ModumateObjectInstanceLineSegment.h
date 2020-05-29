@@ -58,8 +58,6 @@ namespace Modumate
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 		virtual bool GetTriInternalNormalFromEdge(int32 cp1, int32 cp2, FVector &outNormal) const override { return false; }
 		virtual bool UseStructureDataForCollision() const override { return true; }
-		virtual void InvertObject() override {};
-		virtual void TransverseObject() override {};
 
 		virtual TArray<FModelDimensionString> GetDimensionStrings() const override;
 	};

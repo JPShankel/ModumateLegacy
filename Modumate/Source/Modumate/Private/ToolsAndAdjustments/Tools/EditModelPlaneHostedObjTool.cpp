@@ -28,6 +28,12 @@ bool UPlaneHostedObjTool::ValidatePlaneTarget(const FModumateObjectInstance *Pla
 	return (PlaneTarget != nullptr) && (PlaneTarget->GetObjectType() == EObjectType::OTMetaPlane);
 }
 
+bool UPlaneHostedObjTool::IsTargetFacingDown()
+{
+	FModumateObjectInstance *parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
+	return (parentMOI && (parentMOI->GetNormal().Z < 0.0f));
+}
+
 float UPlaneHostedObjTool::GetDefaultJustificationValue()
 {
 	if (GameState == nullptr)
@@ -35,13 +41,42 @@ float UPlaneHostedObjTool::GetDefaultJustificationValue()
 		return 0.5f;
 	}
 
-	if (ObjectType == EObjectType::OTFloorSegment 
-		|| ObjectType == EObjectType::OTStaircase)
+	// For walls, use the default justification for vertically-oriented objects
+	if (ObjectType == EObjectType::OTWallSegment)
 	{
-		return GameState->Document.GetDefaultJustificationXY();
+		return GameState->Document.GetDefaultJustificationZ();
 	}
-		
-	return GameState->Document.GetDefaultJustificationZ();
+
+	// Otherwise, start with the default justification for horizontally-oriented objects
+	float defaultJustificationXY = GameState->Document.GetDefaultJustificationXY();
+
+	// Now flip the justification if the target plane is not facing downwards
+	if (!IsTargetFacingDown())
+	{
+		defaultJustificationXY = (1.0f - defaultJustificationXY);
+	}
+
+	return defaultJustificationXY;
+}
+
+bool UPlaneHostedObjTool::GetAppliedInversionValue()
+{
+	// When applying walls to meta planes, keep the original inversion value
+	if (ObjectType == EObjectType::OTWallSegment)
+	{
+		return bInverted;
+	}
+
+	// Otherwise, use the same criteria as justification values, where if the target is not facing down,
+	// flip the inversion value so that it matches the intent for object types that lie flat by default.
+	bool bInversionValue = bInverted;
+
+	if (!IsTargetFacingDown())
+	{
+		bInversionValue = !bInversionValue;
+	}
+
+	return bInversionValue;
 }
 
 bool UPlaneHostedObjTool::Activate()
@@ -92,6 +127,11 @@ bool UPlaneHostedObjTool::FrameUpdate()
 		{
 			PendingObjMesh->SetActorHiddenInGame(true);
 			PendingSegment->SetActorHiddenInGame(true);
+		}
+
+		if (PendingPlane.IsValid())
+		{
+			PendingPlane->SetActorHiddenInGame(true);
 		}
 	}
 	else
@@ -159,7 +199,7 @@ bool UPlaneHostedObjTool::HandleInputNumber(double n)
 	return UMetaPlaneTool::HandleInputNumber(n);
 }
 
-bool UPlaneHostedObjTool::HandleSpacebar()
+bool UPlaneHostedObjTool::HandleInvert()
 {
 	if (!IsInUse())
 	{
@@ -168,7 +208,7 @@ bool UPlaneHostedObjTool::HandleSpacebar()
 	if (PendingObjMesh.IsValid())
 	{
 		bInverted = !bInverted;
-		ObjAssembly.InvertLayers();
+		ObjAssembly.ReverseLayers();
 	}
 	return true;
 }
@@ -214,14 +254,14 @@ bool UPlaneHostedObjTool::BeginUse()
 					}
 					else if (child->GetLayeredInterface() != nullptr)
 					{
-						FMOIStateData &newMOIData = deltaStates.AddDefaulted_GetRef();
-						newMOIData.StateType = EMOIDeltaType::Destroy;
-						newMOIData.ObjectType = ObjectType;
-						newMOIData.ParentID = LastValidTargetID;
-						newMOIData.ObjectAssemblyKey = Assembly.Key;
-						newMOIData.ObjectInverted = bInverted;
-						newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
-						newMOIData.ObjectID = child->ID;
+						FMOIStateData &replacedMOIData = deltaStates.AddDefaulted_GetRef();
+						replacedMOIData.StateType = EMOIDeltaType::Destroy;
+						replacedMOIData.ObjectType = child->GetObjectType();
+						replacedMOIData.ParentID = LastValidTargetID;
+						replacedMOIData.ObjectAssemblyKey = child->GetAssembly().UniqueKey();
+						replacedMOIData.bObjectInverted = child->GetObjectInverted();
+						replacedMOIData.Extents = child->GetExtents();
+						replacedMOIData.ObjectID = child->ID;
 					}
 				}
 			}
@@ -231,7 +271,7 @@ bool UPlaneHostedObjTool::BeginUse()
 			newMOIData.ObjectType = ObjectType;
 			newMOIData.ParentID = LastValidTargetID;
 			newMOIData.ObjectAssemblyKey = Assembly.Key;
-			newMOIData.ObjectInverted = bInverted;
+			newMOIData.bObjectInverted = GetAppliedInversionValue();
 			newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
 			newMOIData.ObjectID = GameState->Document.GetNextAvailableID();
 
@@ -309,7 +349,7 @@ void UPlaneHostedObjTool::SetAssembly(const FShoppingItem &key)
 		// then we need to make sure the layers are inverted now.
 		if (bInverted)
 		{
-			ObjAssembly.InvertLayers();
+			ObjAssembly.ReverseLayers();
 		}
 	}
 
@@ -337,7 +377,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &new
 			newMOIData.ObjectType = ObjectType;
 			newMOIData.ParentID = newPlaneID;
 			newMOIData.ObjectAssemblyKey = Assembly.Key;
-			newMOIData.ObjectInverted = bInverted; 
+			newMOIData.bObjectInverted = bInverted; 
 			newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
 			newMOIData.ObjectID = newObjID;
 			

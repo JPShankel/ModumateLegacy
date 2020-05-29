@@ -83,11 +83,6 @@ namespace Modumate
 		}
 	}
 
-	void FMOIStaircaseImpl::InvertObject()
-	{
-
-	}
-
 	TArray<FModelDimensionString> FMOIStaircaseImpl::GetDimensionStrings() const
 	{
 		TArray<FModelDimensionString> ret;

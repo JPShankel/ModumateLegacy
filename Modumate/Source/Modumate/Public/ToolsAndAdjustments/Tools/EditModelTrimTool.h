@@ -46,7 +46,7 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
-	virtual bool HandleSpacebar() override;
+	virtual bool HandleInvert() override;
 	virtual void SetAssembly(const FShoppingItem &key) override;
 
 	FColor AffordanceLineColor = FColor::Orange;

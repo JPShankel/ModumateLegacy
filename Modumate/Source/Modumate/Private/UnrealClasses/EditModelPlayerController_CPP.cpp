@@ -969,14 +969,14 @@ bool AEditModelPlayerController_CPP::HandleInputNumber(double inputNumber)
 	return false;
 }
 
-bool AEditModelPlayerController_CPP::HandleSpacebar()
+bool AEditModelPlayerController_CPP::HandleInvert()
 {
 	if (InteractionHandle != nullptr)
 	{
-		InteractionHandle->HandleSpacebar();
+		InteractionHandle->HandleInvert();
 		return true;
 	}
-	else if (CurrentTool && CurrentTool->HandleSpacebar())
+	else if (CurrentTool && CurrentTool->HandleInvert())
 	{
 		return true;
 	}

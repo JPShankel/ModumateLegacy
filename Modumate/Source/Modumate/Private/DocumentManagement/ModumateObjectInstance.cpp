@@ -125,9 +125,6 @@ namespace Modumate
 		PreviewState.ObjectAssemblyKey = CurrentState.ObjectAssemblyKey = ObjectAssembly.UniqueKey();
 		PreviewState.ObjectType = CurrentState.ObjectType = ObjectAssembly.ObjectType;
 
-		//Update inversion/transversion state after implementation is in place
-		CurrentState.ObjectInverted = false; 
-
 		MakeImplementation();
 		MakeActor(obRec.Location, obRec.Rotation.Quaternion());
 
@@ -135,16 +132,12 @@ namespace Modumate
 		CurrentState.ParentID = obRec.ParentID;
 		CurrentState.ControlPoints = obRec.ControlPoints;
 		CurrentState.ControlIndices = obRec.ControlIndices;
+		CurrentState.bObjectInverted = obRec.ObjectInverted;
 		CurrentState.ObjectProperties.FromStringMap(obRec.ObjectProperties);
 
 		SetObjectRotation(obRec.Rotation.Quaternion());
 		SetObjectLocation(obRec.Location);
 
-		if (obRec.ObjectInverted)
-		{
-			InvertObject();
-		}
-	
 		Implementation->SetIsDynamic(false);
 		PreviewState = CurrentState;
 	}
@@ -752,7 +745,7 @@ namespace Modumate
 		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kExtents, Extents);
 		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kControlPoints, ControlPoints);
 		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kIndices, ControlIndices);
-		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kInverted, ObjectInverted);
+		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kInverted, bObjectInverted);
 		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kAssembly, ObjectAssemblyKey);
 		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kParent, ParentID);
 		OutParameterSet.SetValue(Prefix + Modumate::Parameters::kLocation, Location);
@@ -786,7 +779,7 @@ namespace Modumate
 		Extents = ParameterSet.GetValue(Prefix + Modumate::Parameters::kExtents);
 		ControlPoints = ParameterSet.GetValue(Prefix + Modumate::Parameters::kControlPoints);
 		ControlIndices = ParameterSet.GetValue(Prefix + Modumate::Parameters::kIndices);
-		ObjectInverted = ParameterSet.GetValue(Prefix + Modumate::Parameters::kInverted);
+		bObjectInverted = ParameterSet.GetValue(Prefix + Modumate::Parameters::kInverted);
 		ObjectAssemblyKey = ParameterSet.GetValue(Prefix + Modumate::Parameters::kAssembly);
 		ParentID = ParameterSet.GetValue(Prefix + Modumate::Parameters::kParent);
 		Location = ParameterSet.GetValue(Prefix + Modumate::Parameters::kLocation);
@@ -849,7 +842,7 @@ namespace Modumate
 			return false;
 		}
 		CurrentState = DataState;
-		PreviewState = DataState; 
+		PreviewState = DataState;
 		MarkDirty(EObjectDirtyFlags::Structure);
 
 		return true;
@@ -895,12 +888,15 @@ namespace Modumate
 
 	bool FModumateObjectInstance::GetObjectInverted() const
 	{
-		return GetDataState().ObjectInverted;
+		return GetDataState().bObjectInverted;
 	}
 
-	void FModumateObjectInstance::SetObjectInverted(bool Inverted)
+	void FModumateObjectInstance::SetObjectInverted(bool bNewInverted)
 	{
-		GetDataState().ObjectInverted = Inverted;
+		if (GetObjectInverted() != bNewInverted)
+		{
+			InvertObject();
+		}
 	}
 
 	const FVector &FModumateObjectInstance::GetExtents() const
@@ -932,11 +928,16 @@ namespace Modumate
 	{
 		GetDataState().ObjectAssemblyKey = NewAssembly.UniqueKey();
 		ObjectAssembly = NewAssembly;
+		bAssemblyLayersReversed = false;
 	}
 
-	void FModumateObjectInstance::InvertAssemblyLayers()
+	void FModumateObjectInstance::SetAssemblyLayersReversed(bool bNewLayersReversed)
 	{
-		ObjectAssembly.InvertLayers();
+		if (bNewLayersReversed != bAssemblyLayersReversed)
+		{
+			ObjectAssembly.ReverseLayers();
+			bAssemblyLayersReversed = bNewLayersReversed;
+		}
 	}
 
 	void FModumateObjectInstance::SetControlPoint(int32 Index, const FVector &Value)
@@ -1113,8 +1114,8 @@ namespace Modumate
 
 	void FModumateObjectInstance::InvertObject()
 	{
-		GetDataState().ObjectInverted = !GetDataState().ObjectInverted;
-		Implementation->InvertObject();
+		GetDataState().bObjectInverted = !GetDataState().bObjectInverted;
+		MarkDirty(EObjectDirtyFlags::Structure);
 	}
 
 	void FModumateObjectInstance::TransverseObject()
@@ -1202,7 +1203,7 @@ namespace Modumate
 		ret.ControlIndices = CurrentState.ControlIndices;
 		ret.Extents = CurrentState.Extents;
 		CurrentState.ObjectProperties.ToStringMap(ret.ObjectProperties);
-		ret.ObjectInverted = CurrentState.ObjectInverted;
+		ret.ObjectInverted = CurrentState.bObjectInverted;
 		return ret;
 	}
 

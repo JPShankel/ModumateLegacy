@@ -390,11 +390,6 @@ bool UMetaPlaneTool::AbortUse()
 	return UEditModelToolBase::AbortUse();
 }
 
-bool UMetaPlaneTool::HandleSpacebar()
-{
-	return false;
-}
-
 void UMetaPlaneTool::SetAxisConstraint(EAxisConstraint InAxisConstraint)
 {
 	Super::SetAxisConstraint(InAxisConstraint);

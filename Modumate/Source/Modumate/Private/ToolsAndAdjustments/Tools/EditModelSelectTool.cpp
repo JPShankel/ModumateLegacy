@@ -287,7 +287,7 @@ bool USelectTool::FrameUpdate()
 	return true;
 }
 
-bool USelectTool::HandleSpacebar()
+bool USelectTool::HandleInvert()
 {
 	if (!Active)
 	{

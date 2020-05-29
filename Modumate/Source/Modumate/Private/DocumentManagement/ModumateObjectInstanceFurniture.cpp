@@ -31,24 +31,6 @@ namespace Modumate
 	FMOIObjectImpl::~FMOIObjectImpl()
 	{}
 
-	void FMOIObjectImpl::InvertObject()
-	{
-		if (MOI->GetObjectInverted())
-		{
-			ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(MOI->GetActor());
-			FModumateObjectAssembly newMOA = MOI->GetAssembly();
-			newMOA.Layers[0].SlotScale = FVector(1.f, -1.f, 1.f);
-			cma->MakeFromAssembly(newMOA, FVector::OneVector, false, true);
-		}
-		else
-		{
-			ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(MOI->GetActor());
-			FModumateObjectAssembly newMOA = MOI->GetAssembly();
-			newMOA.Layers[0].SlotScale = FVector(1.f, 1.f, 1.f);
-			cma->MakeFromAssembly(newMOA, FVector::OneVector, false, true);
-		}
-	}
-
 	AActor *FMOIObjectImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 	{
 		World = world;

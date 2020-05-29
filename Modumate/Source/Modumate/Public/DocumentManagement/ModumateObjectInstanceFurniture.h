@@ -25,7 +25,6 @@ namespace Modumate
 
 		FMOIObjectImpl(FModumateObjectInstance *moi);
 		virtual ~FMOIObjectImpl();
-		virtual void InvertObject() override;
 		virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 		virtual void SetRotation(const FQuat &r) override;
 		virtual FQuat GetRotation() const override;

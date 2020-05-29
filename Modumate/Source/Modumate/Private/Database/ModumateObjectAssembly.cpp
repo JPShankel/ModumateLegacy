@@ -1042,7 +1042,7 @@ void FModumateObjectAssembly::GatherPresets_DEPRECATED(const Modumate::FPresetMa
 	}
 }
 
-void FModumateObjectAssembly::InvertLayers()
+void FModumateObjectAssembly::ReverseLayers()
 {
 	Algo::Reverse(Layers);
 }

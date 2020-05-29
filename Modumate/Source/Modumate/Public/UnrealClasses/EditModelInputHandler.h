@@ -47,6 +47,7 @@ enum class EInputCommand : uint8
 	ToggleUserSnapPoint,
 	ZoomExtents,
 	ZoomSelected,
+	Invert,
 
 	// Tool activation commands
 	// MUST BE CONSISTENT WITH EToolMode!

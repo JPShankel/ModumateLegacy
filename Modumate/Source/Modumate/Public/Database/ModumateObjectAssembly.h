@@ -210,7 +210,7 @@ struct FModumateObjectAssembly
 	// Reverse the assembly's layer list. This modification has no connection to the assembly's crafting/BIM definition,
 	// and is purely meant to serve as a reinterpretation of cached layer properties by an assembly's owner.
 	// As such, the owner needs to keep track of whether the layers have been reversed.
-	void InvertLayers();
+	void ReverseLayers();
 
 	//TODO: move to UModumateObjectAssemblyStatics and refactor each object type to do its own assembly synthesis/analysis
 	static bool FromCraftingProperties_DEPRECATED(

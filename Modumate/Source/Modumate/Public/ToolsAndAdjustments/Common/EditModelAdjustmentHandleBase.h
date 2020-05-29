@@ -24,7 +24,7 @@ namespace Modumate
 		virtual bool OnAbortUse() override;
 		virtual bool IsInUse() const { return bIsInUse; }
 		virtual bool HandleInputNumber(float number) override { return false; }
-		virtual bool HandleSpacebar() override { return false; }
+		virtual bool HandleInvert() override { return false; }
 		virtual bool GetOverrideHandleRotation(FQuat &OutRotation) override { return false; }
 
 		const static FName StateRequestTag;
