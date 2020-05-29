@@ -12,8 +12,8 @@ namespace Modumate
 {
 	FMOIMetaVertexImpl::FMOIMetaVertexImpl(FModumateObjectInstance *moi)
 		: FModumateObjectInstanceImplBase(moi)
-		, DefaultHandleSize(0.0008f)
-		, SelectedHandleSize(0.001f)
+		, DefaultHandleSize(0.0004f)
+		, SelectedHandleSize(0.0006f)
 	{
 		MOI->SetControlPoints(TArray<FVector>());
 		MOI->AddControlPoint(FVector::ZeroVector);
