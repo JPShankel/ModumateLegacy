@@ -26,7 +26,7 @@ struct FLayerPatternModule
 
 	TArray<ELayerFormat> SupportedFormats;
 
-	FVector ModuleExtents;
+	FVector ModuleExtents = FVector::ZeroVector;
 
 	Modumate::Units::FUnitValue BevelWidth = Modumate::Units::FUnitValue::WorldCentimeters(0);
 
