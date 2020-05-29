@@ -2347,9 +2347,43 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetInstantiatedNodes(
 	const Modumate::BIM::FCraftingPresetCollection &PresetCollection,
 	TArray<FCraftingNode> &OutNodes)
 {
-	if (ensureAlways(NodeInstances.GetInstancePool().Num() > 0))
+	/*
+	The widget depends on nodes being in depth-first pin/child order,
+	which they naturally are when first established, but when pins are
+	reordered the contract breaks, so we explicitly sort here
+	*/
+	TArray<Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr> nodeStack;
+	for (auto nodeInstance : NodeInstances.GetInstancePool())
 	{
-		Algo::Transform(NodeInstances.GetInstancePool(),OutNodes,[&PresetCollection,&NodeInstances](const Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr &Node)
+		if (!nodeInstance->ParentInstance.IsValid())
+		{
+			nodeStack.Push(nodeInstance);
+			break;
+		}
+	}
+
+	if (!ensureAlways(nodeStack.Num() == 1))
+	{
+		return ECraftingResult::Error;
+	}
+
+	TArray<Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr> nodeArray;
+	while (nodeStack.Num() > 0)
+	{
+		Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr nodeInstance = nodeStack.Pop();
+		nodeArray.Push(nodeInstance);
+		for (auto &ip : nodeInstance->InputPins)
+		{
+			for (int32 i=0; i<ip.AttachedObjects.Num(); ++i)
+			{
+				nodeStack.Push(ip.AttachedObjects[ip.AttachedObjects.Num() - 1 - i].Pin());
+			}
+		}
+	}
+
+	if (ensureAlways(nodeArray.Num() > 0))
+	{
+		Algo::Transform(nodeArray,OutNodes,[&PresetCollection,&NodeInstances](const Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr &Node)
 		{
 			FCraftingNode outNode;
 			CraftingNodeFromInstance(NodeInstances,Node->GetInstanceID(), PresetCollection, outNode);
@@ -2666,12 +2700,14 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::DragMovePinChild(
 		return ECraftingResult::Error;
 	}
 
-	//Reorder at AttachedObjects;
-	if (pinSet->AttachedObjects.IsValidIndex(From) && pinSet->AttachedObjects.IsValidIndex(To))
+	// The widget reckons children in reverse order, so invert the inputs
+	int32 reorderFrom = pinSet->AttachedObjects.Num() - From - 1;
+	int32 reorderTo = pinSet->AttachedObjects.Num() - To - 1;
+	if (pinSet->AttachedObjects.IsValidIndex(reorderFrom) && pinSet->AttachedObjects.IsValidIndex(reorderTo))
 	{
-		Modumate::BIM::FCraftingTreeNodeInstanceWeakPtr nodeInstPtr = pinSet->AttachedObjects[From];
-		pinSet->AttachedObjects.RemoveAt(From);
-		pinSet->AttachedObjects.Insert(nodeInstPtr, To);
+		Modumate::BIM::FCraftingTreeNodeInstanceWeakPtr nodeInstPtr = pinSet->AttachedObjects[reorderFrom];
+		pinSet->AttachedObjects.RemoveAt(reorderFrom);
+		pinSet->AttachedObjects.Insert(nodeInstPtr, reorderTo);
 	}
 	return ECraftingResult::Success;
 }
