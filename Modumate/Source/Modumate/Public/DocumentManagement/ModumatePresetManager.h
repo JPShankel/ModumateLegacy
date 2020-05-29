@@ -47,6 +47,7 @@ namespace Modumate
 		ECraftingResult FetchAllPresetsForObjectType(EObjectType ObjectType, TSet<FName> &OutPresets) const;
 
 		bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FName &PresetID, const FModumateObjectAssembly *&OutAssembly) const;
+		bool TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FModumateObjectAssembly &OutAssembly) const;
 		
 		ECraftingResult UpdateProjectAssembly(const FModumateObjectAssembly &Assembly);
 		ECraftingResult RemoveProjectAssemblyForPreset(const FName &PresetID);

@@ -292,6 +292,17 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 	CurrentTool = ModeToTool.FindRef(NewToolMode);
 	if (CurrentTool)
 	{
+		// TODO: runtime assemblies to be replaced with presets 
+		// meantime this will ensure tools start with a default assembly
+		if (CurrentTool->GetAssembly().Key.IsNone())
+		{
+			FModumateObjectAssembly assembly;
+			AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+			if (gameState->Document.PresetManager.TryGetDefaultAssemblyForToolMode(NewToolMode, assembly))
+			{
+				CurrentTool->SetAssembly(assembly.AsShoppingItem());
+			}
+		}
 		CurrentTool->Activate();
 	}
 

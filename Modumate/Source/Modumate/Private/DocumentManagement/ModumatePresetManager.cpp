@@ -498,6 +498,20 @@ namespace Modumate
 		return ECraftingResult::Success;
 	}
 
+	bool FPresetManager::TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FModumateObjectAssembly &OutAssembly) const
+	{
+		EObjectType objectType = UModumateTypeStatics::ObjectTypeFromToolMode(ToolMode);
+		const FAssemblyDataCollection *db = AssembliesByObjectType.Find(objectType);
+		if (db != nullptr && db->DataMap.Num() > 0)
+		{
+			auto iterator = db->DataMap.CreateConstIterator();
+			OutAssembly = iterator->Value;
+			return true;
+		}
+		return false;
+	}
+
+
 	bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FName &PresetID, const FModumateObjectAssembly *&OutAssembly) const
 	{
 		const DataCollection<FModumateObjectAssembly> *db = AssembliesByObjectType.Find(ObjectType);
