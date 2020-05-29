@@ -53,7 +53,6 @@ namespace Modumate
 						int32 numPolyVerts = (vertIdxEnd - vertIdxStart) + 1;
 						TArray<FVector> polyVerts(combinedPolyVertsPtr + vertIdxStart, numPolyVerts);
 
-						UE_LOG(LogTemp, Log, TEXT("Add roof face #%d with %d verts"), edgeIdx + 1, numPolyVerts);
 						int32 existingFaceID;
 						bool bAddedFace = tempVolumeGraph.GetDeltaForFaceAddition(polyVerts, graphDeltas, nextID, existingFaceID, groupIDs);
 						if (!bAddedFace)

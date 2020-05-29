@@ -103,7 +103,7 @@ namespace Modumate
 			editEdgeHandle->Handle = edgeHandleActor;
 			edgeHandleActor->Implementation = editEdgeHandle;
 			edgeHandleActor->AttachToActor(PerimeterActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
-			EdgeHandleActors.Add(edgeHandleActor);
+			EdgeHandleActors.Add(edgeID, edgeHandleActor);
 		}
 	}
 
@@ -122,8 +122,9 @@ namespace Modumate
 			DefaultPropertiesWidget.Reset();
 		}
 
-		for (TWeakObjectPtr<AAdjustmentHandleActor_CPP> &edgeHandleActor : EdgeHandleActors)
+		for (auto &kvp : EdgeHandleActors)
 		{
+			TWeakObjectPtr<AAdjustmentHandleActor_CPP> &edgeHandleActor = kvp.Value;
 			if (edgeHandleActor.IsValid())
 			{
 				edgeHandleActor->Destroy();
@@ -134,20 +135,28 @@ namespace Modumate
 
 	void FMOIRoofPerimeterImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
 	{
-		SetupAdjustmentHandles(Controller);
+		bAdjustmentHandlesVisible = bShow;
 
-		if (!ensure(CreateFacesHandleActor.IsValid()))
+		if (bShow)
 		{
-			return;
+			SetupAdjustmentHandles(Controller);
 		}
 
 		bool bCreatedRoofFaces = (CachedFaceIDs.Num() > 0);
 
-		CreateFacesHandleActor->SetEnabled(bShow && !bCreatedRoofFaces);
-		RetractFacesHandleActor->SetEnabled(bShow && bCreatedRoofFaces);
-
-		for (TWeakObjectPtr<AAdjustmentHandleActor_CPP> &edgeHandleActor : EdgeHandleActors)
+		if (CreateFacesHandleActor.IsValid())
 		{
+			CreateFacesHandleActor->SetEnabled(bShow && !bCreatedRoofFaces);
+		}
+		
+		if (RetractFacesHandleActor.IsValid())
+		{
+			RetractFacesHandleActor->SetEnabled(bShow && bCreatedRoofFaces);
+		}
+
+		for (auto &kvp : EdgeHandleActors)
+		{
+			TWeakObjectPtr<AAdjustmentHandleActor_CPP> &edgeHandleActor = kvp.Value;
 			if (edgeHandleActor.IsValid())
 			{
 				edgeHandleActor->SetEnabled(bShow && !bCreatedRoofFaces);
@@ -287,11 +296,34 @@ namespace Modumate
 			}
 		}
 
-		// TODO: may not need to destroy -all- of the existing handles
-		if (CachedEdgeIDs != MOI->GetControlPointIndices())
+		// Now that we've updated the connected edge IDs for this perimeter, if either the object's previous cached edges
+		// (saved as control indices) or the handles that were last created (saved in EdgeHandleActors) are out of date,
+		// then we know we need to recreate the correct handles.
+		bool bEdgesMatchHandles = true;
+		TSet<int32> cachedEdgeIDSet(CachedEdgeIDs);
+		for (auto &kvp : EdgeHandleActors)
 		{
+			if (!cachedEdgeIDSet.Contains(kvp.Key))
+			{
+				bEdgesMatchHandles = false;
+				break;
+			}
+		}
+		for (int32 cachedEdgeID : CachedEdgeIDs)
+		{
+			if (!EdgeHandleActors.Contains(cachedEdgeID))
+			{
+				bEdgesMatchHandles = false;
+				break;
+			}
+		}
+
+		if (!bEdgesMatchHandles || (CachedEdgeIDs != MOI->GetControlPointIndices()))
+		{
+			// TODO: may not need to destroy -all- of the existing handles
 			auto playerController = Cast<AEditModelPlayerController_CPP>(World->GetFirstPlayerController());
 			ClearAdjustmentHandles(playerController);
+			ShowAdjustmentHandles(playerController, bAdjustmentHandlesVisible);
 		}
 
 		// TODO: maybe don't store the ordered edge list in ControlIndices?

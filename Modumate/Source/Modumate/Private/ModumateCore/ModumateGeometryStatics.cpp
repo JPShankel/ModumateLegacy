@@ -1466,6 +1466,11 @@ bool UModumateGeometryStatics::CompareVectors(const TArray<FVector2D> &vectorsA,
 
 bool UModumateGeometryStatics::AnalyzeCachedPositions(const TArray<FVector> &InPositions, FPlane &OutPlane, FVector &OutAxis2DX, FVector &OutAxis2DY, TArray<FVector2D> &Out2DPositions, FVector &OutCenter, bool bUpdatePlane)
 {
+	if (InPositions.Num() < 3)
+	{
+		return false;
+	}
+
 	// Find the plane that defines this face's points, in which they are oriented clockwise
 	if (bUpdatePlane)
 	{

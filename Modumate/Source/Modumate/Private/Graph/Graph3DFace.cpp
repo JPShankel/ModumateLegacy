@@ -108,8 +108,6 @@ namespace Modumate
 			}
 		}
 
-		int32 numVertices = VertexIDs.Num();
-
 		if (!UModumateGeometryStatics::AnalyzeCachedPositions(CachedPositions, CachedPlane, Cached2DX, Cached2DY, Cached2DPositions, CachedCenter, false))
 		{
 			bValid = false;
@@ -126,6 +124,7 @@ namespace Modumate
 			}
 		}
 
+		int32 numVertices = VertexIDs.Num();
 		EdgeIDs.Reset(numVertices);
 		CachedEdgeNormals.Reset(numVertices);
 		for (int32 idxA = 0; idxA < numVertices; ++idxA)

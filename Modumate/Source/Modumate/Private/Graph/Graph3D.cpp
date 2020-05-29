@@ -526,13 +526,20 @@ namespace Modumate
 		{
 			// GroupIDs are currently unused with graph vertices
 			TSet<int32> GroupIDs;
-			FGraph3DVertex *newVertex = AddVertex(kvp.Value, kvp.Key, GroupIDs);
+			auto newVertex = AddVertex(kvp.Value, kvp.Key, GroupIDs);
+			if (!ensure(newVertex))
+			{
+				return false;
+			}
 		}
 
 		for (auto &kvp : Delta.VertexDeletions)
 		{
 			bool bRemovedVertex = RemoveVertex(kvp.Key);
-			ensureAlways(bRemovedVertex);
+			if (!ensure(bRemovedVertex))
+			{
+				return false;
+			}
 		}
 
 		for (auto &kvp : Delta.EdgeAdditions)
@@ -551,13 +558,20 @@ namespace Modumate
 				}
 			}
 
-			AddEdge(edgeVertexIDs[0], edgeVertexIDs[1], edgeID, TempInheritedGroupIDs);
+			auto newEdge = AddEdge(edgeVertexIDs[0], edgeVertexIDs[1], edgeID, TempInheritedGroupIDs);
+			if (!ensure(newEdge))
+			{
+				return false;
+			}
 		}
 
 		for (auto &kvp : Delta.EdgeDeletions)
 		{
 			bool bRemovedEdge = RemoveEdge(kvp.Key);
-			ensureAlways(bRemovedEdge);
+			if (!ensure(bRemovedEdge))
+			{
+				return false;
+			}
 		}
 
 		for (auto &kvp : Delta.FaceAdditions)
@@ -575,13 +589,20 @@ namespace Modumate
 				}
 			}
 
-			AddFace(faceVertexIDs, faceID, TempInheritedGroupIDs);
+			auto newFace = AddFace(faceVertexIDs, faceID, TempInheritedGroupIDs);
+			if (!ensure(newFace))
+			{
+				return false;
+			}
 		}
 
 		for (auto &kvp : Delta.FaceDeletions)
 		{
 			bool bRemovedFace = RemoveFace(kvp.Key);
-			ensureAlways(bRemovedFace);
+			if (!ensure(bRemovedFace))
+			{
+				return false;
+			}
 		}
 
 		for (auto &kvp : Delta.FaceVertexAdditions)
@@ -624,22 +645,24 @@ namespace Modumate
 		for (auto &kvp : Delta.FaceVertexRemovals)
 		{
 			auto face = FindFace(kvp.Key);
-			if (ensureAlways(face != nullptr))
+			if (!ensure(face))
 			{
-				TArray<int32> removeIDs;
-				kvp.Value.GenerateValueArray(removeIDs);
-
-				TArray<int32> newVertexIDs;
-				for (int32 vertexIdx = 0; vertexIdx < face->VertexIDs.Num(); vertexIdx++)
-				{
-					if (!removeIDs.Contains(face->VertexIDs[vertexIdx]))
-					{
-						newVertexIDs.Add(face->VertexIDs[vertexIdx]);
-					}
-				}
-				face->VertexIDs = newVertexIDs;
-				face->Dirty(false);
+				return false;
 			}
+
+			TArray<int32> removeIDs;
+			kvp.Value.GenerateValueArray(removeIDs);
+
+			TArray<int32> newVertexIDs;
+			for (int32 vertexIdx = 0; vertexIdx < face->VertexIDs.Num(); vertexIdx++)
+			{
+				if (!removeIDs.Contains(face->VertexIDs[vertexIdx]))
+				{
+					newVertexIDs.Add(face->VertexIDs[vertexIdx]);
+				}
+			}
+			face->VertexIDs = newVertexIDs;
+			face->Dirty(false);
 		}
 
 		// Apply changes to the GroupIDs field of vertices, edges, and faces

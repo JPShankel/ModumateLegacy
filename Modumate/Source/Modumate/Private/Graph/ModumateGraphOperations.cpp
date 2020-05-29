@@ -521,16 +521,25 @@ namespace Modumate
 		FGraph3DDelta OutDelta;
 		GetDeltaForVertexList(newVertices, VertexPositions, OutDelta, NextID);
 
-		bool bFoundIntersection = false;
-		bool bDeltaCreationSuccess = true;
-
 		TArray<int32> sharedEdgeIDs;
 
 		int32 addedFaceID;
 		TArray<int32> parentIds = { MOD_ID_NONE };
 		TMap<int32, int32> edgeMap;
-		GetDeltaForFaceAddition(newVertices, OutDelta, NextID, ExistingID, parentIds, edgeMap, addedFaceID, InGroupIDs);
-		ApplyDelta(OutDelta);
+
+		if (!GetDeltaForFaceAddition(newVertices, OutDelta, NextID, ExistingID, parentIds, edgeMap, addedFaceID, InGroupIDs))
+		{
+			return false;
+		}
+
+		// If we failed to apply a low-level face addition delta for the desired face vertices,
+		// then do our best to undo whatever delta we may have gotten and bail out now.
+		if (!ApplyDelta(OutDelta))
+		{
+			ApplyDelta(*OutDelta.MakeGraphInverse());
+			return false;
+		}
+
 		OutDeltas.Add(OutDelta);
 
 		// Edges that are added by the face search to add new faces on the same plane as the added face
@@ -544,21 +553,20 @@ namespace Modumate
 			return false;
 		}
 
-		TSet<int32> newEdges;
+		TSet<int32> newFaceEdges;
 		for (int32 edgeID : faceEdgeIDs)
 		{
-			newEdges.Add(edgeID);
+			newFaceEdges.Add(edgeID);
 		}
 
 		TSet<int32> splitEdges;
-		bDeltaCreationSuccess = GetDeltasForEdgeAtSplit(OutDeltas, NextID, addedFaceID, splitEdges);
-		if (!bDeltaCreationSuccess)
+		if (!GetDeltasForEdgeAtSplit(OutDeltas, NextID, addedFaceID, splitEdges))
 		{
 			return false;
 		}
 
 		// Edges that are added by intersections search to add new faces on all planes that include the edge (and at least one other edge)
-		newEdges.Append(splitEdges);
+		newFaceEdges.Append(splitEdges);
 
 		auto addedFace = FindFace(addedFaceID);
 		if (!ensureAlways(addedFace != nullptr))
@@ -567,24 +575,27 @@ namespace Modumate
 		}
 		FPlane addedPlane = addedFace->CachedPlane;
 
+		TArray<int32> newFaceEdgesArray;
 		TArray<FPlane> planeConstraints;
-		for (int32 addedEdgeID : newEdges)
+		for (int32 newFaceEdgeID : newFaceEdges)
 		{
 			// If an edge is only added from the face, provide a plane to constrain finding new faces
 			FPlane planeConstraint = FPlane(ForceInitToZero);
-			if (faceEdgeIDs.Contains(addedEdgeID) && !splitEdges.Contains(addedEdgeID))
+			if (faceEdgeIDs.Contains(newFaceEdgeID) && !splitEdges.Contains(newFaceEdgeID))
 			{
 				planeConstraint = addedPlane;
 			}
+
+			newFaceEdgesArray.Add(newFaceEdgeID);
 			planeConstraints.Add(planeConstraint);
 		}
 		TArray<FGraph3DDelta> updateFaceDeltas;
-		if (GetDeltasForUpdateFaces(updateFaceDeltas, NextID, newEdges.Array(), planeConstraints))
+		if (GetDeltasForUpdateFaces(updateFaceDeltas, NextID, newFaceEdgesArray, planeConstraints, false))
 		{
 			OutDeltas.Append(updateFaceDeltas);
 		}
 
-		return bDeltaCreationSuccess;
+		return true;
 	}
 
 	bool FGraph3D::GetDeltasForEdgeSplits(TArray<FGraph3DDelta> &OutDeltas, TArray<int32> &AddedEdgeIDs, int32 &NextID)

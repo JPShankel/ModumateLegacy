@@ -313,7 +313,7 @@ namespace Modumate
 		int32 ExistingID = 0;
 
 		Test->TestTrue(TEXT("Add Face"),
-			Graph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
+			TempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 
 		ApplyDeltas(Test, Graph, TempGraph, OutDeltas);
 	}

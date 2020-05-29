@@ -51,9 +51,10 @@ namespace Modumate
 		TMap<int32, TWeakObjectPtr<ALineActor>> LineActors;
 		TSet<int32> TempEdgeIDsToAdd, TempEdgeIDsToRemove;
 
+		bool bAdjustmentHandlesVisible = false;
 		TWeakObjectPtr<AAdjustmentHandleActor_CPP> CreateFacesHandleActor, RetractFacesHandleActor;
 		TWeakObjectPtr<URoofPerimeterPropertiesWidget> DefaultPropertiesWidget;
-		TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>> EdgeHandleActors;
+		TMap<int32, TWeakObjectPtr<AAdjustmentHandleActor_CPP>> EdgeHandleActors;
 
 		bool UpdateConnectedIDs();
 		void UpdatePerimeterGeometry();

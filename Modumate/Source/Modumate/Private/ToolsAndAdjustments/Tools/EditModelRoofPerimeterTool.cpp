@@ -32,7 +32,7 @@ bool URoofPerimeterTool::Activate()
 	TArray<int32> perimeterEdgeIDs;
 	FGraph selectedGraph;
 	FPlane perimeterPlane;
-	if (volumeGraph.Create2DGraph(graphObjIDs, connectedGraphIDs, selectedGraph, perimeterPlane, true, true))
+	if (volumeGraph.Create2DGraph(graphObjIDs, connectedGraphIDs, selectedGraph, perimeterPlane, true, false))
 	{
 		// Consider polygons with duplicate edges as invalid loops.
 		// TODO: this liberally invalidates polygons that have area, but also extra "peninsula" edges that double back on themselves;
@@ -90,7 +90,15 @@ bool URoofPerimeterTool::Activate()
 		deltasToApply.Add(graphDelta);
 
 		// Apply the deltas to create the perimeter and modify the associated graph objects
-		doc.ApplyDeltas(deltasToApply, GetWorld());
+		bool bAppliedDeltas = doc.ApplyDeltas(deltasToApply, GetWorld());
+
+		// If we succeeded, then select the new roof perimeter object (and only that object)
+		FModumateObjectInstance *roofPerimObj = bAppliedDeltas ? doc.GetObjectById(perimeterID) : nullptr;
+		if (roofPerimObj)
+		{
+			Controller->DeselectAll();
+			Controller->SetObjectSelected(roofPerimObj, true);
+		}
 	}
 
 	Deactivate();
