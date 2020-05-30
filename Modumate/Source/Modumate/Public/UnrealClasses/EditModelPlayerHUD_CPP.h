@@ -9,6 +9,7 @@
 
 class UImage;
 class URoofPerimeterPropertiesWidget;
+class UDimensionWidget;
 
 USTRUCT(BlueprintType)
 struct FAffordanceLine
@@ -61,6 +62,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<URoofPerimeterPropertiesWidget> RoofPerimeterPropertiesClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<UDimensionWidget> DimensionClass;
 
 	// Take a viewport screenshot, saves it in the playerController, then applies it to an UImage.
 	// Should only be used during viewport draw, else there will be a TextureRHI ensure

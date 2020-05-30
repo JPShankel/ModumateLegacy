@@ -9,7 +9,6 @@
 #include "ModumateCore/ModumateDimensionString.h"
 #include "HUDDrawWidget_CPP.generated.h"
 
-
 USTRUCT(BlueprintType)
 struct FModumateLines
 {

@@ -19,6 +19,7 @@ namespace Modumate
 {
 	class FModumateDocument;
 }
+class ADimensionActor;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionObjectChanged);
@@ -150,6 +151,7 @@ public:
 	void DeselectAll();
 	void SetActorRenderValues(AActor* actor, int32 stencilValue, bool bNeverCull);
 	void PostSelectionOrViewChanged();
+	void UpdateGraphDimensionStrings();
 
 	void CopySelectedToClipboard(const Modumate::FModumateDocument &document);
 	void Paste(Modumate::FModumateDocument &document) const;
@@ -241,4 +243,12 @@ protected:
 	TArray<Modumate::FStructureLine> TempObjectStructureLines, CurSelectionStructureLines;
 	TSet<Modumate::FModumateObjectInstance *> CurViewGroupObjects;
 	TMap<EToolMode, FModumateObjectAssembly> TemporaryAssemblies;
+
+	UPROPERTY()
+	TArray<ADimensionActor*> DimensionActors;
+
+	int32 LastSelectedObjID;
+	// if there is one selected object, save the ID.  If it's a graph object, dimension strings
+	// will be displayed
+	TSet<int32> LastSelectedVertexIDs;
 };

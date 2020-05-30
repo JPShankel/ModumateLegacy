@@ -3,6 +3,8 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 #include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "UnrealClasses/DimensionActor.h"
+#include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -579,6 +581,78 @@ void AEditModelPlayerState_CPP::PostSelectionOrViewChanged()
 	// underneath the current view group (if it's set), and are not underneath a group.
 	// TODO: only call this when necessary (when ViewGroupObject or the object list/hierarchy changes).
 	FindReachableObjects(LastReachableObjectSet);
+
+	UpdateGraphDimensionStrings();
+
+}
+
+void AEditModelPlayerState_CPP::UpdateGraphDimensionStrings()
+{
+	// find which vertices are currently selected and create measuring dimension strings
+	auto &doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+	auto volumeGraph = doc.GetVolumeGraph();
+
+	EGraph3DObjectType type;
+	bool bClearActors = true;
+	int32 currentSelectedObjID = MOD_ID_NONE;
+	LastSelectedVertexIDs.Reset();
+
+	if (SelectedObjects.Num() == 1)
+	{
+		// aggregate the unique selected vertices
+		auto obj = SelectedObjects[0];
+		currentSelectedObjID = obj->ID;
+		if (doc.IsObjectInVolumeGraph(currentSelectedObjID, type))
+		{
+			switch (type)
+			{
+			case EGraph3DObjectType::Vertex:
+			{
+				LastSelectedVertexIDs.Add(currentSelectedObjID);
+			} break;
+			case EGraph3DObjectType::Edge:
+			{
+				auto edge = volumeGraph.FindEdge(currentSelectedObjID);
+				LastSelectedVertexIDs.Add(edge->StartVertexID);
+				LastSelectedVertexIDs.Add(edge->EndVertexID);
+			} break;
+			case EGraph3DObjectType::Face:
+			{
+				auto face = volumeGraph.FindFace(currentSelectedObjID);
+				LastSelectedVertexIDs.Append(face->VertexIDs);
+			} break;
+			}
+		}
+	}
+
+	if (currentSelectedObjID != LastSelectedObjID)
+	{
+		for (ADimensionActor* actor : DimensionActors)
+		{
+			actor->Destroy();
+		}
+		DimensionActors.Empty();
+
+		if (SelectedObjects.Num() == 1)
+		{
+			// find edges connected to the selection
+			TSet<int32> connectedEdges, connectedFaces;
+			for (int32 vertexID : LastSelectedVertexIDs)
+			{
+				auto vertex = volumeGraph.FindVertex(vertexID);
+				vertex->GetConnectedFacesAndEdges(connectedFaces, connectedEdges);
+			}
+
+			for (int32 edgeID : connectedEdges)
+			{
+				ADimensionActor* dimensionActor = GetWorld()->SpawnActor<ADimensionActor>(ADimensionActor::StaticClass());
+				dimensionActor->DimensionText->SetTarget(edgeID, currentSelectedObjID);
+				DimensionActors.Add(dimensionActor);
+			}
+		}
+
+		LastSelectedObjID = currentSelectedObjID;
+	}
 }
 
 void AEditModelPlayerState_CPP::OnNewModel()
