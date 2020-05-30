@@ -63,6 +63,7 @@ namespace Modumate
 		const TMap<int32, FGraph3DFace> &GetFaces() const;
 		const TMap<int32, FGraph3DPolyhedron> &GetPolyhedra() const;
 		bool GetGroup(int32 GroupID, TSet<FTypedGraphObjID> &OutGroupMembers) const;
+		const TMap<int32, TSet<FTypedGraphObjID>> &GetGroups() const;
 
 		bool ApplyDelta(const FGraph3DDelta &Delta);
 

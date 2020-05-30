@@ -496,6 +496,11 @@ namespace Modumate
 		return false;
 	}
 
+	const TMap<int32, TSet<FTypedGraphObjID>> &FGraph3D::GetGroups() const
+	{
+		return CachedGroups;
+	}
+
 	bool FGraph3D::ApplyDelta(const FGraph3DDelta &Delta)
 	{
 		// TODO: updating planes could be a part of Dirty instead of 

@@ -2,6 +2,7 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelRoofPerimeterTool.h"
 
+#include "Algo/Transform.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -58,9 +59,28 @@ bool URoofPerimeterTool::Activate()
 		}
 	}
 
-	// If we've found a perimeter from the 2D graph that has enough valid meta edges, then we can try to make the perimeter object
 	int32 numEdges = perimeterEdgeIDs.Num();
-	if (numEdges >= 3)
+
+	TSet<FTypedGraphObjID> newPerimeterGroup;
+	Algo::Transform(perimeterEdgeIDs, newPerimeterGroup, [](const int32 &EdgeID) { return FTypedGraphObjID(EdgeID, EGraph3DObjectType::Edge); });
+
+	// Make sure that the resulting perimeter edge IDs aren't redundant with an existing one.
+	int32 existingPerimeterID = MOD_ID_NONE;
+	auto &groups = volumeGraph.GetGroups();
+	for (auto &kvp : groups)
+	{
+		// Check for equality between sets with intersection
+		// TODO: if there are many groups or roof perimeters, optimize this by searching for group members a different way
+		const TSet<FTypedGraphObjID> &groupMembers = kvp.Value;
+		if ((groupMembers.Num() == numEdges) && (groupMembers.Intersect(newPerimeterGroup).Num() == numEdges))
+		{
+			existingPerimeterID = kvp.Key;
+			break;
+		}
+	}
+
+	// If we've found a perimeter from the 2D graph that has enough valid meta edges, then we can try to make the perimeter object
+	if ((numEdges >= 3) && (existingPerimeterID == MOD_ID_NONE))
 	{
 		// Create the MOI delta for constructing the perimeter object
 		FMOIStateData state;

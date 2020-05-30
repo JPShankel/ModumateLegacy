@@ -101,8 +101,6 @@ namespace Modumate
 		// TODO: we should be able to rely on FEditModelAdjustmentHandleBase's OnEndUse, but it currently creates an FMOIDelta unconditionally
 		bIsInUse = false;
 
-		MOI->ShowAdjustmentHandles(Controller.Get(), false);
-
 		return false;
 	}
 
@@ -151,8 +149,6 @@ namespace Modumate
 	{
 		// TODO: we should be able to rely on FEditModelAdjustmentHandleBase's OnEndUse, but it currently creates an FMOIDelta unconditionally
 		bIsInUse = false;
-
-		MOI->ShowAdjustmentHandles(Controller.Get(), false);
 
 		return false;
 	}

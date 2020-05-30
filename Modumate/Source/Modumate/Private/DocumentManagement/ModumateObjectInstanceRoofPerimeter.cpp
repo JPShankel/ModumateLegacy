@@ -318,13 +318,16 @@ namespace Modumate
 			}
 		}
 
+		// If edges are out of date, then clear out the handles
+		auto playerController = Cast<AEditModelPlayerController_CPP>(World->GetFirstPlayerController());
 		if (!bEdgesMatchHandles || (CachedEdgeIDs != MOI->GetControlPointIndices()))
 		{
 			// TODO: may not need to destroy -all- of the existing handles
-			auto playerController = Cast<AEditModelPlayerController_CPP>(World->GetFirstPlayerController());
 			ClearAdjustmentHandles(playerController);
-			ShowAdjustmentHandles(playerController, bAdjustmentHandlesVisible);
 		}
+
+		// Update the handles regardless; this is the last opportunity to toggle visibility between face creation / retraction handles, etc.
+		ShowAdjustmentHandles(playerController, bAdjustmentHandlesVisible);
 
 		// TODO: maybe don't store the ordered edge list in ControlIndices?
 		MOI->SetControlPointIndices(CachedEdgeIDs);
