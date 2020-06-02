@@ -8,7 +8,7 @@
 #include "Graph/Graph3DDelta.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateRoofStatics.h"
-#include "UnrealClasses/UI/RoofPerimeterPropertiesWidget.h"
+#include "UI/RoofPerimeterPropertiesWidget.h"
 
 namespace Modumate
 {
@@ -164,7 +164,7 @@ namespace Modumate
 		// TODO: we should be able to rely on FEditModelAdjustmentHandleBase's OnBeginUse, but it currently sets preview state on the target MOI unconditionally
 		UWorld *world = Handle.IsValid() ? Handle->GetWorld() : nullptr;
 		Controller = world ? world->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
-		AEditModelPlayerHUD_CPP *playerHUD = Controller.IsValid() ? Cast<AEditModelPlayerHUD_CPP>(Controller->GetHUD()) : nullptr;
+		AEditModelPlayerHUD *playerHUD = Controller.IsValid() ? Cast<AEditModelPlayerHUD>(Controller->GetHUD()) : nullptr;
 		if (playerHUD == nullptr)
 		{
 			return false;

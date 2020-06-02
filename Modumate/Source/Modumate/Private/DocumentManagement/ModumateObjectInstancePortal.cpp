@@ -9,7 +9,6 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "ModumateCore/ExpressionEvaluator.h"
-#include "UnrealClasses/HUDDrawWidget_CPP.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"

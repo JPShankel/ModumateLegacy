@@ -3,14 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerState.h"
-
-#include "UnrealClasses/EditModelPlayerHUD_CPP.h"
-#include "HUDDrawWidget_CPP.h"
-#include "ModumateCore/ModumateDimensionString.h"
 #include "Database/ModumateObjectEnums.h"
 #include "DocumentManagement/ModumateObjectInstance.h"
+#include "GameFramework/PlayerState.h"
+#include "ModumateCore/ModumateDimensionString.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
+#include "UI/EditModelPlayerHUD.h"
+#include "UI/HUDDrawWidget.h"
 #include "UObject/ScriptInterface.h"
 
 #include "EditModelPlayerState_CPP.generated.h"

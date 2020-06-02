@@ -10,7 +10,7 @@
 
 class AEditModelPlayerState_CPP;
 class AEditModelGameMode_CPP;
-class AEditModelPlayerHUD_CPP;
+class AEditModelPlayerHUD;
 class UProceduralMeshComponent;
 class UMaterialInstanceDynamic;
 class AEditModelGameState_CPP;
@@ -61,7 +61,7 @@ public:
 	AEditModelGameState_CPP* EMGameState;
 
 	UPROPERTY()
-	AEditModelPlayerHUD_CPP* EMPlayerHUD;
+	AEditModelPlayerHUD* EMPlayerHUD;
 
 	UPROPERTY()
 	TArray<FShoppingItem> AssemblyShoppingItems;

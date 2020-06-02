@@ -11,7 +11,7 @@
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "UnrealClasses/ModumateVertexActor_CPP.h"
 #include "ToolsAndAdjustments/Handles/RoofPerimeterHandles.h"
-#include "UnrealClasses/UI/RoofPerimeterPropertiesWidget.h"
+#include "UI/RoofPerimeterPropertiesWidget.h"
 
 namespace Modumate
 {

@@ -7,7 +7,6 @@
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/MOIGroupActor_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/HUDDrawWidget_CPP.h"
 
 namespace Modumate
 {

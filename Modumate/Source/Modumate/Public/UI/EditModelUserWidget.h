@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "EditModelUserWidget_CPP.generated.h"
+#include "EditModelUserWidget.generated.h"
 
 /**
  *
  */
 UCLASS()
-class MODUMATE_API UEditModelUserWidget_CPP : public UUserWidget
+class MODUMATE_API UEditModelUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 

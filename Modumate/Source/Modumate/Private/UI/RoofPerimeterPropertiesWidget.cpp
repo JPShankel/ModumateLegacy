@@ -1,6 +1,6 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "UnrealClasses/UI/RoofPerimeterPropertiesWidget.h"
+#include "UI/RoofPerimeterPropertiesWidget.h"
 
 #include "Blueprint/WidgetTree.h"
 #include "Components/Border.h"

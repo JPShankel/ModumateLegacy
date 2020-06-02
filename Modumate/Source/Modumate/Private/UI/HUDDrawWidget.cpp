@@ -1,17 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "UI/HUDDrawWidget.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
 
-UHUDDrawWidget_CPP::UHUDDrawWidget_CPP(const FObjectInitializer& ObjectInitializer)
+UHUDDrawWidget::UHUDDrawWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, UserWidgetPool(*this)
 {
 }
 
-void UHUDDrawWidget_CPP::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void UHUDDrawWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	LinesWithText.Reset();
 	LinesWithTextEditable.Reset();
@@ -44,7 +44,7 @@ void UHUDDrawWidget_CPP::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
-int32 UHUDDrawWidget_CPP::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
+int32 UHUDDrawWidget::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
 {
 	int32 parentMaxLayerID = Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
 	int32 selfPaintLayerID = LayerId;
@@ -139,7 +139,7 @@ int32 UHUDDrawWidget_CPP::NativePaint(const FPaintArgs& Args, const FGeometry& A
 	return FMath::Max(parentMaxLayerID, selfPaintLayerID);
 }
 
-void UHUDDrawWidget_CPP::ReleaseSlateResources(bool bReleaseChildren)
+void UHUDDrawWidget::ReleaseSlateResources(bool bReleaseChildren)
 {
 	Super::ReleaseSlateResources(bReleaseChildren);
 

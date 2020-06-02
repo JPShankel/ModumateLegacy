@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Drafting/ModumateDraftingDraw.h"
-#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "UI/HUDDrawWidget.h"
 
 namespace Modumate
 {
 	class FModumateHUDDraw : public IModumateDraftingDraw
 	{
 	public:
-		UHUDDrawWidget_CPP* HUDDrawWidget;
+		UHUDDrawWidget* HUDDrawWidget;
 		FVector CurrentOrigin;
 		FVector CurrentAxisX, CurrentAxisY;
 

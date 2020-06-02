@@ -7,7 +7,7 @@
 #include "Blueprint/UserWidgetPool.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "ModumateCore/ModumateDimensionString.h"
-#include "HUDDrawWidget_CPP.generated.h"
+#include "HUDDrawWidget.generated.h"
 
 USTRUCT(BlueprintType)
 struct FModumateLines
@@ -78,12 +78,12 @@ struct FModumateLines
  *
  */
 UCLASS()
-class MODUMATE_API UHUDDrawWidget_CPP : public UUserWidget
+class MODUMATE_API UHUDDrawWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	UHUDDrawWidget_CPP(const FObjectInitializer& ObjectInitializer);
+	UHUDDrawWidget(const FObjectInitializer& ObjectInitializer);
 
 protected:
 	//~ Begin UUserWidget Interface

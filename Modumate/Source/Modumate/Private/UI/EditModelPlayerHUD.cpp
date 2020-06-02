@@ -1,9 +1,8 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
-#include "UnrealClasses/EditModelPlayerHUD_CPP.h"
+#include "UI/EditModelPlayerHUD.h"
 
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UnrealClasses/HUDDrawWidget_CPP.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "Components/Image.h"
@@ -20,17 +19,17 @@ FAffordanceLine::FAffordanceLine(const FVector &InStartPoint, const FVector &InE
 {
 }
 
-AEditModelPlayerHUD_CPP::AEditModelPlayerHUD_CPP(const FObjectInitializer& ObjectInitializer)
+AEditModelPlayerHUD::AEditModelPlayerHUD(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-void AEditModelPlayerHUD_CPP::DrawHUD()
+void AEditModelPlayerHUD::DrawHUD()
 {
 	Super::DrawHUD();
 }
 
-bool AEditModelPlayerHUD_CPP::StaticCameraViewScreenshot(const FVector2D &ViewportSize, AEditModelPlayerController_CPP *EMPlayerController, UImage *ImageUI)
+bool AEditModelPlayerHUD::StaticCameraViewScreenshot(const FVector2D &ViewportSize, AEditModelPlayerController_CPP *EMPlayerController, UImage *ImageUI)
 {
 	if (!EMPlayerController)
 	{

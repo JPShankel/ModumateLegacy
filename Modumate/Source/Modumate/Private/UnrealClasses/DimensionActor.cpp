@@ -4,13 +4,13 @@
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerHUD_CPP.h"
-#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "UI/EditModelPlayerHUD.h"
+#include "UI/HUDDrawWidget.h"
 
 void ADimensionActor::CreateWidget()
 {
 	TWeakObjectPtr<AEditModelPlayerController_CPP> playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-	AEditModelPlayerHUD_CPP *playerHUD = playerController.IsValid() ? Cast<AEditModelPlayerHUD_CPP>(playerController->GetHUD()) : nullptr;
+	AEditModelPlayerHUD *playerHUD = playerController.IsValid() ? Cast<AEditModelPlayerHUD>(playerController->GetHUD()) : nullptr;
 	DimensionText = playerController->HUDDrawWidget->UserWidgetPool.GetOrCreateInstance<UDimensionWidget>(playerHUD->DimensionClass);
 
 	DimensionText->AddToViewport();

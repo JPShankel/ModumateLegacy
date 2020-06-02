@@ -25,7 +25,7 @@ class AAdjustmentHandleActor_CPP;
 class UIMaterialInterface;
 class AEditModelPlayerController_CPP;
 class ALineActor;
-class UHUDDrawWidget_CPP;
+class UHUDDrawWidget;
 
 struct FMOIDataRecordV1;
 
@@ -135,7 +135,7 @@ namespace Modumate
 		virtual const IMiterNode* GetMiterInterface() const = 0;
 		virtual ISceneCaptureObject* GetSceneCaptureInterface() = 0;
 
-		virtual void AddDraftingLines(UHUDDrawWidget_CPP *HUDDrawWidget) = 0;
+		virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) = 0;
 		virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const = 0;
 
 		virtual void SetIsDynamic(bool bIsDynamic) = 0;
@@ -206,7 +206,7 @@ namespace Modumate
 		virtual const IMiterNode* GetMiterInterface() const override { return nullptr; }
 		virtual ISceneCaptureObject* GetSceneCaptureInterface() override { return nullptr; }
 
-		virtual void AddDraftingLines(UHUDDrawWidget_CPP *HUDDrawWidget) override { };
+		virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) override { };
 		virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override { };
 
 		virtual void SetIsDynamic(bool bIsDynamic) override { }
@@ -409,7 +409,7 @@ namespace Modumate
 		bool GetTriInternalNormalFromEdge(int32 cp1, int32 cp2, FVector &outNormal) const;
 
 		// Drafting
-		void AddDraftingLines(UHUDDrawWidget_CPP *HUDDrawWidget);
+		void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget);
 		void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const;
 
 		TArray<FModelDimensionString> GetDimensionStrings() const;

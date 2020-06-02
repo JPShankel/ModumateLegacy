@@ -18,7 +18,7 @@
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "UI/HUDDrawWidget.h"
 #include "UnrealClasses/LineActor.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "Drafting/ModumateDraftingElements.h"
@@ -1036,7 +1036,7 @@ namespace Modumate
 		return Implementation->GetTriInternalNormalFromEdge(cp1, cp2, outNormal);
 	}
 
-	void FModumateObjectInstance::AddDraftingLines(UHUDDrawWidget_CPP *HUDDrawWidget)
+	void FModumateObjectInstance::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 	{
 		Implementation->AddDraftingLines(HUDDrawWidget);
 	}

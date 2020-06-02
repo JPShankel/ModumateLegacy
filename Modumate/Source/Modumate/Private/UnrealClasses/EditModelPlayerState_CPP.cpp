@@ -8,7 +8,7 @@
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerHUD_CPP.h"
+#include "UI/EditModelPlayerHUD.h"
 #include "UnrealClasses/LineActor.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "DocumentManagement/ModumateCommands.h"
@@ -158,7 +158,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	}
 
 	// Queue up the lines managed by the PlayerHUD, so that all lines added to the HUD Draw Widget happen here.
-	AEditModelPlayerHUD_CPP *emPlayerHUD = Cast<AEditModelPlayerHUD_CPP>(EMPlayerController->GetHUD());
+	AEditModelPlayerHUD *emPlayerHUD = Cast<AEditModelPlayerHUD>(EMPlayerController->GetHUD());
 	if (emPlayerHUD)
 	{
 		for (ALineActor *lineActor : emPlayerHUD->All3DLineActors)

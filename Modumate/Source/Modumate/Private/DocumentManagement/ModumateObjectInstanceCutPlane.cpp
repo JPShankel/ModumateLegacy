@@ -87,7 +87,7 @@ namespace Modumate
 		}
 	}
 
-	void FMOICutPlaneImpl::AddDraftingLines(UHUDDrawWidget_CPP *HUDDrawWidget)
+	void FMOICutPlaneImpl::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 	{
 
 		TArray<Modumate::FStructurePoint> CutPlaneStructurePoints;

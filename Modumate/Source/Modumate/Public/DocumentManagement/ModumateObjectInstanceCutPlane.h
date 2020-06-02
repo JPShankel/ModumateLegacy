@@ -21,7 +21,7 @@ namespace Modumate
 		virtual void SetupDynamicGeometry() override;
 		virtual void UpdateDynamicGeometry() override;
 		virtual void OnSelected(bool bNewSelected) override;
-		virtual void AddDraftingLines(UHUDDrawWidget_CPP *HUDDrawWidget) override;
+		virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) override;
 		virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override;
 		virtual ISceneCaptureObject* GetSceneCaptureInterface() override { return this; }
 

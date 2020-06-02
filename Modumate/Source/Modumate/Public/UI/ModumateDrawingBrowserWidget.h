@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ModumateCameraViewBrowserWidget_CPP.generated.h"
+#include "ModumateDrawingBrowserWidget.generated.h"
 
 /**
  *
@@ -12,11 +12,12 @@
 
 
 UCLASS()
-class MODUMATE_API UModumateCameraViewBrowserWidget_CPP : public UUserWidget
+class MODUMATE_API UModumateDrawingBrowserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 
 public:
+
 
 };

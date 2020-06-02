@@ -82,7 +82,7 @@ AEditModelPlayerController_CPP::AEditModelPlayerController_CPP()
 	, CameraInputLock(false)
 	, SelectionMode(ESelectObjectMode::DefaultObjects)
 	, MaxRaycastDist(100000.0f)
-	, HUDDrawWidgetClass(UHUDDrawWidget_CPP::StaticClass())
+	, HUDDrawWidgetClass(UHUDDrawWidget::StaticClass())
 	, PreviewWidgetClass(UDraftingPreviewWidget_CPP::StaticClass())
 	, CraftingWidgetClass(UModumateCraftingWidget_CPP::StaticClass())
 	, DrawingSetWidgetClass(UModumateDrawingSetWidget_CPP::StaticClass())
@@ -183,7 +183,7 @@ void AEditModelPlayerController_CPP::BeginPlay()
 		DrawingSetWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-	HUDDrawWidget = CreateWidget<UHUDDrawWidget_CPP>(this, HUDDrawWidgetClass);
+	HUDDrawWidget = CreateWidget<UHUDDrawWidget>(this, HUDDrawWidgetClass);
 	if (HUDDrawWidget != nullptr)
 	{
 		HUDDrawWidget->AddToViewport();

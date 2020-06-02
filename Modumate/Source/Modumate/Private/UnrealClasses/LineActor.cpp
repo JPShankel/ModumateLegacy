@@ -4,7 +4,7 @@
 #include "ProceduralMeshComponent.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerHUD_CPP.h"
+#include "UI/EditModelPlayerHUD.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -37,7 +37,7 @@ void ALineActor::BeginPlay()
 	{
 		EMPlayerState = Cast<AEditModelPlayerState_CPP>(playerController->PlayerState);
 		EMGameMode = EMPlayerState->GetEditModelGameMode();
-		EMPlayerHUD = Cast<AEditModelPlayerHUD_CPP>(playerController->GetHUD());
+		EMPlayerHUD = Cast<AEditModelPlayerHUD>(playerController->GetHUD());
 		EMGameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
 
 		CameraManager = playerController->PlayerCameraManager;

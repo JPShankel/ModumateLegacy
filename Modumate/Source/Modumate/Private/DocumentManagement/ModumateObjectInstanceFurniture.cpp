@@ -9,7 +9,6 @@
 #include "ToolsAndAdjustments/Handles/EditModelFFEAdjustmentHandles.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/HUDDrawWidget_CPP.h"
 #include "Database/ModumateBIMSchema.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"

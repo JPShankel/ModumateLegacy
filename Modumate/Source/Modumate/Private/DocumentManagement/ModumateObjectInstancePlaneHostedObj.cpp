@@ -7,7 +7,6 @@
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
-#include "UnrealClasses/HUDDrawWidget_CPP.h"
 #include "Graph/Graph3D.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Drafting/ModumateDraftingElements.h"

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "ModumateCore/ModumateTypes.h"
-#include "EditModelPlayerHUD_CPP.generated.h"
+#include "EditModelPlayerHUD.generated.h"
 
 class UImage;
 class URoofPerimeterPropertiesWidget;
@@ -47,7 +47,7 @@ public:
  *
  */
 UCLASS()
-class MODUMATE_API AEditModelPlayerHUD_CPP : public AHUD
+class MODUMATE_API AEditModelPlayerHUD : public AHUD
 {
 	GENERATED_UCLASS_BODY()
 

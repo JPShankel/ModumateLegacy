@@ -6,7 +6,6 @@
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UnrealClasses/HUDDrawWidget_CPP.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "DocumentManagement/ModumateObjectInstance.h"

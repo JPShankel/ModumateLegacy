@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ModumateBrowserWidget_CPP.generated.h"
+#include "ModumateScopeBoxBrowserWidget.generated.h"
 
 /**
  *
@@ -12,7 +12,7 @@
 
 
 UCLASS()
-class MODUMATE_API UModumateBrowserWidget_CPP : public UUserWidget
+class MODUMATE_API UModumateScopeBoxBrowserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 

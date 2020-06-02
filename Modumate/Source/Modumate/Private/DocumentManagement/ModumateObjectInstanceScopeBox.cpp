@@ -6,7 +6,7 @@
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
-#include "UnrealClasses/HUDDrawWidget_CPP.h"
+#include "UI/HUDDrawWidget.h"
 
 namespace Modumate
 {
@@ -96,7 +96,7 @@ namespace Modumate
 		}
 	}
 
-	void FMOIScopeBoxImpl::AddDraftingLines(UHUDDrawWidget_CPP *HUDDrawWidget)
+	void FMOIScopeBoxImpl::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 	{
 		TArray<Modumate::FStructurePoint> ScopeBoxStructurePoints;
 		TArray<Modumate::FStructureLine> ScopeBoxStructureLines;

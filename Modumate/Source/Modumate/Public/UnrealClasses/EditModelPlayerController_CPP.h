@@ -23,7 +23,7 @@ class UEditModelCameraController;
 class UEditModelInputAutomation;
 class UEditModelInputHandler;
 class UModumateCraftingWidget_CPP;
-class UHUDDrawWidget_CPP;
+class UHUDDrawWidget;
 class UModumateDrawingSetWidget_CPP;
 
 namespace Modumate
@@ -370,7 +370,7 @@ public:
 	AActor* DimStringWidgetSelectedObject;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
-	UHUDDrawWidget_CPP* HUDDrawWidget;
+	UHUDDrawWidget* HUDDrawWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
 	bool RenderPreviewAssembly = false;
@@ -379,7 +379,7 @@ public:
 	UTexture2D* StaticCamTexture;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
-	TSubclassOf<UHUDDrawWidget_CPP> HUDDrawWidgetClass;
+	TSubclassOf<UHUDDrawWidget> HUDDrawWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Drafting)
 	TSubclassOf<UDraftingPreviewWidget_CPP> PreviewWidgetClass;

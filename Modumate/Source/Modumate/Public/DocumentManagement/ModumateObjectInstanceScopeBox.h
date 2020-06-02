@@ -19,7 +19,7 @@ namespace Modumate
 
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
 		virtual bool ShowStructureOnSelection() const override;
-		virtual void AddDraftingLines(UHUDDrawWidget_CPP *HUDDrawWidget) override;
+		virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) override;
 
 		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 

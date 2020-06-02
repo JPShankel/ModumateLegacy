@@ -2,7 +2,6 @@
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/AdjustmentHandleActor_CPP.h"
-#include "UnrealClasses/HUDDrawWidget_CPP.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 
