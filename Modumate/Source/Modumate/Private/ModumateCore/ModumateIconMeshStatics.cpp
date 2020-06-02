@@ -9,6 +9,7 @@
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 using namespace Modumate;
 
@@ -84,7 +85,7 @@ bool UModumateIconMeshStatics::GetWallIconParamsFromShopItem(AActor* IconGenerat
 
 		TArray<FProceduralMeshParams> returnParams;
 		TArray<FVector> controlPoints = { worldCp1, worldCp2 };
-		TArray<FWallAssemblyLayerControlPoints> wallLayerCPs = UModumateFunctionLibrary::GetWallAssemblyLayerControlPoints(controlPoints, wallLayers, worldLayerHeight, ManualLayerCPs);
+		TArray<FWallAssemblyLayerControlPoints> wallLayerCPs = GetWallAssemblyLayerControlPoints(controlPoints, wallLayers, worldLayerHeight, ManualLayerCPs);
 
 		for (int32 i = 0; i < wallLayerCPs.Num(); ++i)
 		{
@@ -92,7 +93,7 @@ bool UModumateIconMeshStatics::GetWallIconParamsFromShopItem(AActor* IconGenerat
 			TArray<int32> returnTris;
 			TArray<FVector> returnNormals;
 			TArray<FVector2D> returnUVs;
-			UModumateFunctionLibrary::GetWallVertsParamFromAssemblyLayerControlPoints(worldCp1, wallLayerCPs[i], IconGenerator, returnVerts, returnTris, returnNormals, returnUVs);
+			GetWallVertsParamFromAssemblyLayerControlPoints(worldCp1, wallLayerCPs[i], IconGenerator, returnVerts, returnTris, returnNormals, returnUVs);
 			if (UVScale != 1.f)
 			{
 				for (int32 j = 0; j < returnUVs.Num(); ++j)
@@ -779,4 +780,211 @@ bool UModumateIconMeshStatics::GetModuleIconParamsFromPreset(UObject* WorldConte
 	}
 
 	return true;
+}
+
+void UModumateIconMeshStatics::CalculateWallParam(FVector UVAnchorRelative, TArray<FVector> RefFaceVerts, TArray<int32> RefFaceTris, TArray<FVector> WallCorners, FVector WorldLocation, FVector WallFrontDirection, TArray<FVector2D> RefFaceUV, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUVs)
+{
+	TArray<FVector> backVerts, leftVerts, rightVerts, topVerts, bottomVerts, tempCornerVerts;
+	TArray<int32> backTris, leftTris, rightTris, topTris, bottomTris;
+	TArray<FVector> backNormals, leftNormals, rightNormals, topNormals, bottomNormals;
+	TArray<FVector2D> backUVs, leftUVs, rightUVs, topUVs, bottomUVs;
+	FVector2D uv0 = FVector2D::ZeroVector, uv1 = FVector2D::ZeroVector, uv2 = FVector2D::ZeroVector, uv3 = FVector2D::ZeroVector;
+
+	// Add front face parameters to array
+	ReturnVerts.Append(RefFaceVerts);
+	ReturnTris.Append(RefFaceTris);
+	ReturnUVs.Append(RefFaceUV);
+	for (int32 i = 0; i < RefFaceVerts.Num(); i++)
+	{
+		ReturnNormals.Add(WallFrontDirection);
+	}
+
+	// Back face
+	tempCornerVerts = { WallCorners[4], WallCorners[5], WallCorners[1], WallCorners[0] };
+	for (FVector& curVector : tempCornerVerts)
+	{
+		backVerts.Add(curVector - WorldLocation);
+		backNormals.Add(-WallFrontDirection);
+	}
+	backTris = RefFaceTris;
+	Algo::Reverse(backTris);
+	backUVs = UVCalculateWithAnchor(backVerts, UVAnchorRelative, UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, 0.0, FVector(0.0, 0.0, 1.0)), UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)));
+
+	ReturnTris.Append(UModumateFunctionLibrary::IntegerArrayReplaceHighest(ReturnTris, backTris));
+	ReturnVerts.Append(backVerts);
+	ReturnNormals.Append(backNormals);
+	ReturnUVs.Append(backUVs);
+
+	// Left face
+	tempCornerVerts = { WallCorners[4], WallCorners[6], WallCorners[2], WallCorners[0] };
+	for (FVector& curVector : tempCornerVerts)
+	{
+		leftVerts.Add(curVector - WorldLocation);
+		leftNormals.Add(UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, 90.0, FVector(0.0, 0.0, 1.0)));
+	}
+	leftTris = { 2, 1, 3, 1, 0, 3 };
+	leftUVs = UVCalculateWithAnchor(leftVerts, UVAnchorRelative, UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, 90.0, FVector(0.0, 0.0, 1.0)), UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)));
+
+	ReturnTris.Append(UModumateFunctionLibrary::IntegerArrayReplaceHighest(ReturnTris, leftTris));
+	ReturnVerts.Append(leftVerts);
+	ReturnNormals.Append(leftNormals);
+	ReturnUVs.Append(leftUVs);
+
+	// Right face
+	tempCornerVerts = { WallCorners[5], WallCorners[7], WallCorners[3], WallCorners[1] };
+	for (FVector& curVector : tempCornerVerts)
+	{
+		rightVerts.Add(curVector - WorldLocation);
+		rightNormals.Add(UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)));
+	}
+	rightTris = { 3, 0, 1, 3, 1, 2 };
+	rightUVs = UVCalculateWithAnchor(rightVerts, UVAnchorRelative, UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)), UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)));
+
+	ReturnTris.Append(UModumateFunctionLibrary::IntegerArrayReplaceHighest(ReturnTris, rightTris));
+	ReturnVerts.Append(rightVerts);
+	ReturnNormals.Append(rightNormals);
+	ReturnUVs.Append(rightUVs);
+
+	// Top face
+	tempCornerVerts = { WallCorners[4], WallCorners[5], WallCorners[7], WallCorners[6] };
+	for (FVector& curVector : tempCornerVerts)
+	{
+		topVerts.Add(curVector - WorldLocation);
+		topNormals.Add(FVector(0.0, 0.0, 1.0));
+	}
+	topTris = { 2, 1, 3, 1, 0, 3 };
+	topUVs = UVCalculateWithAnchor(topVerts, UVAnchorRelative, FVector(0.0, 0.0, 1.0), UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)));
+
+	ReturnTris.Append(UModumateFunctionLibrary::IntegerArrayReplaceHighest(ReturnTris, topTris));
+	ReturnVerts.Append(topVerts);
+	ReturnNormals.Append(topNormals);
+	ReturnUVs.Append(topUVs);
+
+	// Bottom face
+	tempCornerVerts = { WallCorners[0], WallCorners[1], WallCorners[3], WallCorners[2] };
+	for (FVector& curVector : tempCornerVerts)
+	{
+		bottomVerts.Add(curVector - WorldLocation);
+		bottomNormals.Add(FVector(0.0, 0.0, -1.0));
+	}
+	bottomTris = { 3, 0, 1, 3, 1, 2 };
+	bottomUVs = UVCalculateWithAnchor(bottomVerts, UVAnchorRelative, FVector(0.0, 0.0, -1.0), UKismetMathLibrary::RotateAngleAxis(WallFrontDirection, -90.0, FVector(0.0, 0.0, 1.0)));
+
+	ReturnTris.Append(UModumateFunctionLibrary::IntegerArrayReplaceHighest(ReturnTris, bottomTris));
+	ReturnVerts.Append(bottomVerts);
+	ReturnNormals.Append(bottomNormals);
+	ReturnUVs.Append(bottomUVs);
+}
+
+TArray<FWallAssemblyLayerControlPoints> UModumateIconMeshStatics::GetWallAssemblyLayerControlPoints(const TArray<FVector> &controlPoints, const TArray<FModumateObjectAssemblyLayer> &layers, float height, bool ManualLayerCPs /*= false*/)
+{
+	TArray<FWallAssemblyLayerControlPoints> assemblyLayerControlPoints;
+	TArray<FVector> wallAssemblyLayerControlPoints;
+	const FVector wallUp = FVector::UpVector;
+	const FVector wallHeightDelta = height * wallUp;
+	const FVector &p1 = controlPoints[0], &p2 = controlPoints[1];
+	FVector wallDelta = (p2 - p1);
+	FVector wallDir = wallDelta.GetSafeNormal();
+	if (wallDir.IsZero())
+	{
+		wallDir = FVector::ForwardVector;
+	}
+	FVector wallNormal = FVector::CrossProduct(wallUp, wallDir);
+
+	bool bHasCornerPoints = (controlPoints.Num() == 6);
+	const FVector &wallStart = bHasCornerPoints ? controlPoints[2] : p1;
+	const FVector &wallEnd = bHasCornerPoints ? controlPoints[3] : p2;
+	FVector wallStartSideDir = bHasCornerPoints ? (controlPoints[4] - controlPoints[2]).GetSafeNormal() : wallNormal;
+	FVector wallEndSideDir = bHasCornerPoints ? (controlPoints[5] - controlPoints[3]).GetSafeNormal() : wallNormal;
+	float wallStartOffsetFactor = 1.0f / (wallNormal | wallStartSideDir);
+	float wallEndOffsetFactor = 1.0f / (wallNormal | wallEndSideDir);
+	FVector wallStartSideDelta = wallStartOffsetFactor * wallStartSideDir;
+	FVector wallEndSideDelta = wallEndOffsetFactor * wallEndSideDir;
+
+	float curLayerOffset = 0.0f;
+	FWallAssemblyLayerControlPoints curLayerPoints;
+
+	for (int32 i = 0; i < layers.Num(); i++)
+	{
+		const auto &layer = layers[i];
+		float layerThickness = layer.Thickness.AsWorldCentimeters();
+
+		auto &layerPointArray = curLayerPoints.LayerControlPoints;
+		layerPointArray.Reset(8);
+
+		layerPointArray.Add(wallStart + curLayerOffset * wallStartSideDelta);
+		layerPointArray.Add(wallEnd + curLayerOffset * wallEndSideDelta);
+		layerPointArray.Add(wallStart + (curLayerOffset + layerThickness) * wallStartSideDelta);
+		layerPointArray.Add(wallEnd + (curLayerOffset + layerThickness) * wallEndSideDelta);
+
+		layerPointArray.Add(layerPointArray[0] + wallHeightDelta);
+		layerPointArray.Add(layerPointArray[1] + wallHeightDelta);
+		layerPointArray.Add(layerPointArray[2] + wallHeightDelta);
+		layerPointArray.Add(layerPointArray[3] + wallHeightDelta);
+
+		assemblyLayerControlPoints.Add(curLayerPoints);
+		if (!ManualLayerCPs)
+		{
+			curLayerOffset += layerThickness;
+		}
+	}
+
+	return assemblyLayerControlPoints;
+}
+
+void UModumateIconMeshStatics::GetWallVertsParamFromAssemblyLayerControlPoints(FVector UVAnchor, FWallAssemblyLayerControlPoints AssemblyLayer, AActor * CurrentWallActor, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUVs)
+{
+	TArray<FVector> layerCorners = AssemblyLayer.LayerControlPoints;
+	TArray<FVector> frontVerts = { layerCorners[6], layerCorners[7], layerCorners[3], layerCorners[2] };
+	TArray<FVector> frontLayerRef;
+	FVector wallDirection = (AssemblyLayer.LayerControlPoints[1] - AssemblyLayer.LayerControlPoints[0]).GetSafeNormal();
+	FVector wallFrontFaceDirection = FVector::UpVector ^ wallDirection;
+
+	for (FVector& curVector : frontVerts)
+	{
+		frontLayerRef.Add(curVector - CurrentWallActor->GetActorLocation());
+	}
+
+	// Note: The purpose of this function is to generate static wall icons, so triangle order is always same
+	TArray<int32> triangles2D = { 1, 0, 3, 2, 1, 3 };
+
+	FVector UVAnchorRelative = CurrentWallActor->GetActorLocation() - UVAnchor;
+	TArray<FVector2D> UVs = UVCalculateWithAnchor(frontLayerRef, UVAnchorRelative, wallFrontFaceDirection, wallDirection);
+
+	CalculateWallParam(UVAnchorRelative, frontLayerRef, triangles2D, layerCorners, CurrentWallActor->GetActorLocation(), wallFrontFaceDirection, UVs, ReturnVerts, ReturnTris, ReturnNormals, ReturnUVs);
+}
+
+TArray<FVector2D> UModumateIconMeshStatics::UVCalculateWithAnchor(TArray<FVector> faceVertsRelative, FVector anchorRelative, FVector faceDirection, FVector horizontalDirection)
+{
+	TArray<FVector> verts3D;
+	TArray<FVector2D> vertsUVs;
+	if ((faceDirection.Equals(FVector(0.f, 0.f, 1.f), 0.1f)) || (faceDirection.Equals(FVector(0.f, 0.f, -1.f), 0.1f)))
+	{
+		FRotator faceRot = UKismetMathLibrary::MakeRotFromX(horizontalDirection);
+		for (int32 i = 0; i < faceVertsRelative.Num(); i++)
+		{
+			verts3D.Add(UKismetMathLibrary::LessLess_VectorRotator(faceVertsRelative[i], faceRot));
+		}
+		FVector unRotatedAnchor = UKismetMathLibrary::LessLess_VectorRotator(anchorRelative, faceRot);
+		for (int32 i = 0; i < verts3D.Num(); i++)
+		{
+			FVector unRotatedVert = verts3D[i] + unRotatedAnchor;
+			vertsUVs.Add(FVector2D(unRotatedVert.X * 0.01f, unRotatedVert.Y * 0.01f));
+		}
+	}
+	else
+	{
+		FRotator faceRot = UKismetMathLibrary::MakeRotFromX(faceDirection);
+		for (int32 i = 0; i < faceVertsRelative.Num(); i++)
+		{
+			verts3D.Add(UKismetMathLibrary::LessLess_VectorRotator(faceVertsRelative[i], faceRot));
+		}
+		FVector unRotatedAnchor = UKismetMathLibrary::LessLess_VectorRotator(anchorRelative, faceRot);
+		for (int32 i = 0; i < verts3D.Num(); i++)
+		{
+			FVector unRotatedVert = verts3D[i] + unRotatedAnchor;
+			vertsUVs.Add(FVector2D(unRotatedVert.Y * -0.01f, unRotatedVert.Z * -0.01f));
+		}
+	}
+	return vertsUVs;
 }

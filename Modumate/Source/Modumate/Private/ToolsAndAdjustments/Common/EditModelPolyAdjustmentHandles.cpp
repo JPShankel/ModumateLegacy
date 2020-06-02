@@ -95,11 +95,8 @@ namespace Modumate
 				MOI->SetControlPoint(CP[1],newCP1);
 
 				// Check if CPs are intersect. If it is, don't update geometry
-				TArray<int32> intersected, conflicted, triangles;
-				UModumateFunctionLibrary::CalculatePolygonTriangleWithError(MOI->GetControlPoints(), triangles, conflicted, intersected);
-
 				// Store last good locations to fall back on if the new floor lacks proper triangulation
-				if (conflicted.Num() == 0 && intersected.Num() == 0 && triangles.Num() > 2)
+				if (UModumateGeometryStatics::ArePolygonEdgesValid(MOI->GetControlPoints()))
 				{
 					UpdateTargetGeometry();
 					LastValidPendingCPLocations = { MOI->GetControlPoint(CP[0]) , MOI->GetControlPoint(CP[1]) };
@@ -142,11 +139,7 @@ namespace Modumate
 			else if (CP.Num() == 1)
 			{
 				MOI->SetControlPoint(CP[0],OriginalP[0] + dp);
-
-				TArray<int32> intersected, conflicted, triangles;
-				UModumateFunctionLibrary::CalculatePolygonTriangleWithError(MOI->GetControlPoints(), triangles, conflicted, intersected);
-
-				if (conflicted.Num() == 0 && intersected.Num() == 0)
+				if (UModumateGeometryStatics::ArePolygonEdgesValid(MOI->GetControlPoints()))
 				{
 					UpdateTargetGeometry();
 					LastValidPendingCPLocations = { MOI->GetControlPoint(CP[0]) };
@@ -301,9 +294,7 @@ namespace Modumate
 			}
 
 			// Check if CPs are intersect. If it is, don't update geometry
-			TArray<int32> intersected, conflicted, triangles;
-			UModumateFunctionLibrary::CalculatePolygonTriangleWithError(proxyCPs, triangles, conflicted, intersected);
-			if (conflicted.Num() == 0 && intersected.Num() == 0 && triangles.Num() > 2)
+			if (UModumateGeometryStatics::ArePolygonEdgesValid(proxyCPs))
 			{
 				// Set MOI control points to new CP
 				MOI->SetControlPoint(CP[0],newCP0);

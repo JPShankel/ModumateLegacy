@@ -32,66 +32,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
 	static FVector V3dToV2d(TArray<FVector2D> & OutV2d, TArray<FVector> InV3d);
 
-	// Pan array through cycle.
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static int32 LoopArrayIndex(int32 Index, int32 Length, int32 Panner);
-
-	// Get the shortest distance between two lines
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static float TwoLineDistance(FVector& PointOfIntersection, FVector Line1Point, FVector Line1Direction, FVector Line2Point, FVector Line2Direction);
-
-	// Find if a point is in both line segments
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static bool IsPointInBothLineSegments(FVector2D Point, FVector2D Line1A, FVector2D Line1B, FVector2D Line2A, FVector2D Line2B, float DotError);
-
-	// Find if a point is in A SINGLE line segment
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static bool IsPointInLineSegments(FVector2D Point, FVector2D Line1A, FVector2D Line1B, float ErrorTolerance);
-
-	// Get 2 points, then give out its midpoint and direction
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static FVector MakeStraightLine(FVector& OutDirection, FVector Point1, FVector Point2);
-
-	// Find if two lines are intersected
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static bool TwoLineSegmentIntersection(FVector2D & PointOfIntersection, FVector2D LineAStart, FVector2D LineAEnd, FVector2D LineBStart, FVector2D LineBEnd, float EdgeError, float DotError);
-
-	// Make sure we are doing the vertices are going clockwise
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static bool ClockwiseRedirector(bool& Clockwise, TArray<FVector2D> Vertex);
-
-	// Find if location is within a triangle (3 vertices)
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static bool IsPointInTriangle(float& Distance, FVector TriangleA, FVector TriangleB, FVector TriangleC, FVector Point, float EdgeTolerance);
-
-	// Check Vertex
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static bool DoVertexCheck(TArray<FVector2D> Polygon, int32 B, int32 A, int32 CheckC, TArray<FLineIndex> ExtraLineList, bool IsClockwise, TArray<int32> ProcessedList);
-
-	// Find number for recurse
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static int32 RecurseLoopIndex(int32 V2DLength, int32 PA, int32 PB);
-
-	//Make sure pB always greater than pA
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static void PointLimiter(int32& PA, int32& PB, int32 inPA, int32 inPB);
-
-	// 2D Version of polygon triangulation
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static TArray<FTriangle2D> PolygonTriangulation2D(TArray<FVector2D> Vertex, TArray<FLineIndex>CreatedLine, TArray<int32> ExcludedIndex, int32 Skipper, TArray<int32>& IntersectIDs, TArray<int32>& ConflictIDs);
-
-	// Polygon triangulation of a given vertices, and return its face normal
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static FVector PolygonTriangulation(TArray<FTriangle2D>& Triangle, TArray<FVector> Vertices, TArray<int32>& intersectedIDs, TArray<int32>& conflictedIDs);
-
-	// Convert FTriangle2D structs to int32 accepted by UE4 "CreateMeshSection"
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static TArray<int32> ConvertTri2DToInt(TArray<FTriangle2D>& InTri, FVector Normal);
-
-	// Given Vertices Location, calculate the Triangles needed to construct procedural mesh
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static void CalculatePolygonTriangle(TArray<FVector> Vertices, TArray<int32>& Triangles);
-
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static bool IsWithEditor();
 
@@ -119,20 +59,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
 	static TArray<int32> IntegerArrayReplaceHighest(TArray<int32> ExistingInt, TArray<int32> NewInt);
 
-	// Same with normal CalculatePolygonTriangle, but give you ID for conflicting and intersecting vertices
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static void CalculatePolygonTriangleWithError(TArray<FVector> Vertices, TArray<int32>& Triangles, TArray<int32>& ConflictID, TArray<int32>& IntersectID);
-
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static FVector GetClosestLocationToTargetFromArray(FVector Target, TArray<FVector>Array, int32& ClosestIndex, int32& FarestIndex);
 
 	// Get the next index in the array assuming this is in a loop
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static int32 LoopArrayGetNextIndex(int32 CurrentIndex, int32 LengthOfArray);
-
-	// Turn float of angle (Yaw) into degree
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static float YawToDegree(float YawFloat);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static int32 LoopArrayGetPreviousIndex(int32 CurrentIndex, int32 LengthOfArray);
@@ -147,23 +79,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
 	static TArray<int32> ConformTriangleClockwise(TArray<FVector> Vertices, TArray<int32> Triangles);
 
-	// Calculate UV with UV origin at designated local (relative to mesh) anchor.
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static TArray<FVector2D> UVCalculateWithAnchor(TArray<FVector> faceVertsRelative, FVector anchorRelative, FVector faceDirection, FVector horizontalDirection);
-
 	// Debug Version: Calculate UV with UV origin at designated local (relative to mesh) anchor.
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
 	static TArray<FVector2D> FloorUVCalculateWithAnchor(TArray<FVector> faceVertsRelative, FVector anchorRelative, FVector faceDirection, FVector horizontalDirection);
-
-	// Provided with the front face parameters as reference, this will give the rest of the parameters to build a wall
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static void CalculateWallParam(FVector UVAnchorRelative, TArray<FVector> RefFaceVerts, TArray<int32> RefFaceTris, TArray<FVector> WallCorners, FVector WorldLocation, FVector WallFrontDirection, TArray<FVector2D> RefFaceUV, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUV);
-
-	//UFUNCTION(BlueprintCallable, Category = "Modumate Assembly")
-	static TArray<FWallAssemblyLayerControlPoints> GetWallAssemblyLayerControlPoints(const TArray<FVector> &controlPoints, const TArray<FModumateObjectAssemblyLayer> &wal, float height, bool ManualLayerCPs = false);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Assembly")
-	static void GetWallVertsParamFromAssemblyLayerControlPoints(FVector UVAnchor, FWallAssemblyLayerControlPoints AssemblyLayer, AActor * CurrentWallActor, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUVs);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Assembly")
 	static void CalculateFloorParam(FVector Origin, TArray<FVector> anchorUV, FVector topAnchorUV, FRotator topUvRotation, TArray<FVector> InTopVerts, TArray<FVector> InBottomVerts, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUV, TArray<int32>& ReturnTopTris);

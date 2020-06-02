@@ -131,4 +131,14 @@ public:
 			FVector &ModuleExtent,
 			UMaterialInterface* &ModuleMaterial,
 			FCustomColor &ModuleColor);
+
+	// Provided with the front face parameters as reference, this will give the rest of the parameters to build a wall
+	static void CalculateWallParam(FVector UVAnchorRelative, TArray<FVector> RefFaceVerts, TArray<int32> RefFaceTris, TArray<FVector> WallCorners, FVector WorldLocation, FVector WallFrontDirection, TArray<FVector2D> RefFaceUV, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUVs);
+
+	static TArray<FWallAssemblyLayerControlPoints> GetWallAssemblyLayerControlPoints(const TArray<FVector> &controlPoints, const TArray<FModumateObjectAssemblyLayer> &layers, float height, bool ManualLayerCPs = false);
+
+	static void GetWallVertsParamFromAssemblyLayerControlPoints(FVector UVAnchor, FWallAssemblyLayerControlPoints AssemblyLayer, AActor * CurrentWallActor, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUVs);
+
+	// Calculate UV with UV origin at designated local (relative to mesh) anchor.
+	static TArray<FVector2D> UVCalculateWithAnchor(TArray<FVector> faceVertsRelative, FVector anchorRelative, FVector faceDirection, FVector horizontalDirection);
 };

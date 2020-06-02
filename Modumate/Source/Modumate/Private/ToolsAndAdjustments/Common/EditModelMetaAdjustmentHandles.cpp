@@ -203,6 +203,8 @@ namespace Modumate
 
 				// Check if CPs are intersect. If it is, don't update geometry
 				TArray<int32> intersected, conflicted, triangles;
+				// CalculatePolygonTriangleWithError should be replaced with poly2tri version
+				// or UModumateFunctionLibrary::IsPolygonSelfIntersect to check for intersections
 				UModumateFunctionLibrary::CalculatePolygonTriangleWithError(MOI->ControlPoints, triangles, conflicted, intersected);
 
 				// Store last good locations to fall back on if the new floor lacks proper triangulation
@@ -239,9 +241,10 @@ namespace Modumate
 			}
 			else if (CP.Num() == 1)
 			{
-				MOI->SetControlPoints(CP[0],OriginalP[0] + dp);
+				MOI->SetControlPoints(CP[0], OriginalP[0] + dp);
 
 				TArray<int32> intersected, conflicted, triangles;
+				// CalculatePolygonTriangleWithError should be replaced with UModumateFunctionLibrary::IsPolygonSelfIntersect to check for intersections
 				UModumateFunctionLibrary::CalculatePolygonTriangleWithError(MOI->ControlPoints, triangles, conflicted, intersected);
 
 				if (conflicted.Num() == 0 && intersected.Num() == 0)
@@ -365,18 +368,20 @@ namespace Modumate
 			proxyCPs[CP[0]] = newCP0;
 			proxyCPs[CP[1]] = newCP1;
 			TArray<int32> intersected, conflicted, triangles;
+			// CalculatePolygonTriangleWithError should be replaced with poly2tri version
+			// or UModumateFunctionLibrary::IsPolygonSelfIntersect to check for intersections
 			UModumateFunctionLibrary::CalculatePolygonTriangleWithError(proxyCPs, triangles, conflicted, intersected);
 			if (conflicted.Num() == 0 && intersected.Num() == 0 && triangles.Num() > 2)
 			{
 				// Set MOI control points to new CP
-				MOI->SetControlPoint(CP[0],newCP0);
-				MOI->SetControlPoint(CP[1],newCP1);
+				MOI->SetControlPoint(CP[0], newCP0);
+				MOI->SetControlPoint(CP[1], newCP1);
 
 				// Setup for ModumateCommand
 				TArray<FVector> newPoints = MOI->ControlPoints;
 				for (size_t i = 0; i < CP.Num(); ++i)
 				{
-					MOI->SetControlPoint(CP[i],OriginalP[i]);
+					MOI->SetControlPoint(CP[i], OriginalP[i]);
 				}
 
 				// TODO: if this is re-activated, refactor for kApplyObjectDelta

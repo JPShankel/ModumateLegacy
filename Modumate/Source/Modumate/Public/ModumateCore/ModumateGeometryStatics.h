@@ -222,4 +222,8 @@ public:
 	static bool GetAxisForVector(const FVector &Normal, EAxis::Type &OutAxis, float &OutSign);
 
 	static bool GetEdgeIntersections(const TArray<FVector> &Positions, const FVector &IntersectionOrigin, const FVector &IntersectionDir, TArray<Modumate::FEdgeIntersection> &OutEdgeIntersections, float Epsilon = DEFAULT_GRAPH3D_EPSILON);
+
+	static bool ArePolygonEdgesValid2D(const TArray<FVector2D> &Points2D, class FFeedbackContext* InWarn = nullptr);
+	
+	static bool ArePolygonEdgesValid(const TArray<FVector> &Points, class FFeedbackContext* InWarn = nullptr);
 };

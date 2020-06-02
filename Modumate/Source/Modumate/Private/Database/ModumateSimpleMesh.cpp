@@ -4,6 +4,7 @@
 
 #include "Misc/FeedbackContext.h"
 #include "Misc/Paths.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 
 void FSimplePolygon::Reset()
@@ -20,41 +21,7 @@ void FSimplePolygon::UpdateExtents()
 
 bool FSimplePolygon::ValidateSimple(FFeedbackContext* InWarn) const
 {
-	int32 numPoints = Points.Num();
-	for (int32 segIdxAStart = 0; segIdxAStart < numPoints; ++segIdxAStart)
-	{
-		int32 segIdxAEnd = (segIdxAStart + 1) % numPoints;
-		const FVector2D &segAStart = Points[segIdxAStart];
-		const FVector2D &segAEnd = Points[segIdxAEnd];
-
-		for (int32 segIdxBStart = 0; segIdxBStart < numPoints; ++segIdxBStart)
-		{
-			int32 segIdxBEnd = (segIdxBStart + 1) % numPoints;
-			const FVector2D &segBStart = Points[segIdxBStart];
-			const FVector2D &segBEnd = Points[segIdxBEnd];
-			FVector intersectionPoint;
-
-			if ((segIdxAStart != segIdxBStart) &&
-				!segAStart.Equals(segBStart) && !segAStart.Equals(segBEnd) &&
-				!segAEnd.Equals(segBStart) && !segAEnd.Equals(segBEnd))
-			{
-				FVector segAStart3D(segAStart, 0.0f), segAEnd3D(segAEnd, 0.0f);
-				FVector segBStart3D(segBStart, 0.0f), segBEnd3D(segBEnd, 0.0f);
-
-				if (FMath::SegmentIntersection2D(segAStart3D, segAEnd3D, segBStart3D, segBEnd3D, intersectionPoint))
-				{
-					if (InWarn)
-					{
-						InWarn->Logf(ELogVerbosity::Error, TEXT("Line segments (%s, %s) and (%s, %s) intersect; invalid simple polygon!"),
-							*segAStart.ToString(), *segAEnd.ToString(), *segBStart.ToString(), *segBEnd.ToString());
-					}
-					return false;
-				}
-			}
-		}
-	}
-
-	return true;
+	return UModumateGeometryStatics::ArePolygonEdgesValid2D(Points, InWarn);
 }
 
 bool USimpleMeshData::SetSourcePath(const FString &FullFilePath)

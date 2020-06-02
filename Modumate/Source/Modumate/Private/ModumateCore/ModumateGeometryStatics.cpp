@@ -1801,3 +1801,49 @@ bool UModumateGeometryStatics::GetEdgeIntersections(const TArray<FVector> &Posit
 	return (OutEdgeIntersections.Num() > 0);
 	
 }
+
+bool UModumateGeometryStatics::ArePolygonEdgesValid2D(const TArray<FVector2D> &Points2D, FFeedbackContext* InWarn)
+{
+	TArray<FVector> points3D;
+	for (const FVector2D& curPoint2D : Points2D)
+	{
+		points3D.Add(FVector(curPoint2D, 0.f));
+	}
+	return ArePolygonEdgesValid(points3D);
+}
+
+bool UModumateGeometryStatics::ArePolygonEdgesValid(const TArray<FVector> &Points, FFeedbackContext* InWarn)
+{
+	int32 numPoints = Points.Num();
+	for (int32 segIdxAStart = 0; segIdxAStart < numPoints; ++segIdxAStart)
+	{
+		int32 segIdxAEnd = (segIdxAStart + 1) % numPoints;
+		const FVector &segAStart = Points[segIdxAStart];
+		const FVector &segAEnd = Points[segIdxAEnd];
+
+		for (int32 segIdxBStart = 0; segIdxBStart < numPoints; ++segIdxBStart)
+		{
+			int32 segIdxBEnd = (segIdxBStart + 1) % numPoints;
+			const FVector &segBStart = Points[segIdxBStart];
+			const FVector &segBEnd = Points[segIdxBEnd];
+			FVector intersectionPoint;
+
+			if ((segIdxAStart != segIdxBStart) &&
+				!segAStart.Equals(segBStart) && !segAStart.Equals(segBEnd) &&
+				!segAEnd.Equals(segBStart) && !segAEnd.Equals(segBEnd))
+			{
+				if (FMath::SegmentIntersection2D(segAStart, segAEnd, segBStart, segBEnd, intersectionPoint))
+				{
+					if (InWarn)
+					{
+						InWarn->Logf(ELogVerbosity::Error, TEXT("Line segments (%s, %s) and (%s, %s) intersect; invalid simple polygon!"),
+							*segAStart.ToString(), *segAEnd.ToString(), *segBStart.ToString(), *segBEnd.ToString());
+					}
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}

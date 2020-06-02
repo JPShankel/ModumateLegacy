@@ -446,39 +446,35 @@ void ADynamicMeshActor::AddPrismGeometry(const TArray<FVector> &points, const FV
 
 	TArray<int32> tris, perimeterVertexHoleIndices;
 	TArray<FVector> bottomPoints;
+
+	auto projectPoint2D = [](const FVector &point) { return FVector2D(point); };
+
+	TArray<FVector2D> triangulatedPoints2D;
+	TArray<FVector2D> points2D;
+	TArray<FPolyHole2D> holes2D;
+
+	Algo::Transform(points, points2D, projectPoint2D);
 	if (holes)
 	{
-		auto projectPoint2D = [](const FVector &point) { return FVector2D(point); };
-
-		TArray<FVector2D> triangulatedPoints2D;
-		TArray<FVector2D> points2D;
-		TArray<FPolyHole2D> holes2D;
-
-		Algo::Transform(points, points2D, projectPoint2D);
 		Algo::Transform(*holes, holes2D, [projectPoint2D](const FPolyHole3D &hole3D) {
 			FPolyHole2D hole2D;
 			Algo::Transform(hole3D.Points, hole2D.Points, projectPoint2D);
 			return hole2D;
 		});
-
-		TArray<FVector2D> perimeter2D;
-		TArray<bool> mergedHoles;
-		if (UModumateGeometryStatics::TriangulateVerticesPoly2Tri(points2D, holes2D,
-			triangulatedPoints2D, tris, perimeter2D, mergedHoles, perimeterVertexHoleIndices))
-		{
-			Algo::Transform(
-				triangulatedPoints2D, 
-				bottomPoints,
-				[centroid](const FVector2D &triangulatedPoint2D)
-				{ 
-					return FVector(triangulatedPoint2D, centroid.Z) - centroid; 
-				});
-		}
 	}
-	else
+
+	TArray<FVector2D> perimeter2D;
+	TArray<bool> mergedHoles;
+	if (UModumateGeometryStatics::TriangulateVerticesPoly2Tri(points2D, holes2D,
+		triangulatedPoints2D, tris, perimeter2D, mergedHoles, perimeterVertexHoleIndices))
 	{
-		bottomPoints = perimeterPoints;
-		UModumateFunctionLibrary::CalculatePolygonTriangle(bottomPoints, tris);
+		Algo::Transform(
+			triangulatedPoints2D,
+			bottomPoints,
+			[centroid](const FVector2D &triangulatedPoint2D)
+		{
+			return FVector(triangulatedPoint2D, centroid.Z) - centroid;
+		});
 	}
 
 	TArray<FVector> topPoints;
