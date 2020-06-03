@@ -8,12 +8,9 @@
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "HAL/FileManager.h"
 #include "Misc/Paths.h"
-#include "ModumateCore/ModumateDecisionTreeImpl.h"
 #include "Database/ModumateDataTables.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UObject/ConstructorHelpers.h"
-#include "UObject/ConstructorHelpers.h"
-#include "Database/ModumateCraftingTreeBuilder.h"
 
 #include "Misc/FileHelper.h"
 #include "Serialization/JsonReader.h"
@@ -24,115 +21,59 @@
 
 namespace Modumate
 {
-	ModumateObjectDatabase::ModumateObjectDatabase() {}
 
-	void ModumateObjectDatabase::ReadCraftingSubcategoryData(UDataTable *data)
+	template<class T, class O, class OS>
+	void ReadOptionSet(
+		UDataTable *data,
+		std::function<bool(const T &row, O &ot)> readOptionData,
+		std::function<void(const OS &o)> addOptionSet
+	)
 	{
 		if (!ensureAlways(data))
 		{
 			return;
 		}
-		data->ForeachRow<FCraftingSubcategoryDataTable>(TEXT("FCraftingSubcategoryData"),
-			[this](
-				const FName &Key,
-				const FCraftingSubcategoryDataTable &data)
+
+		OS optionSet;
+		TArray<FString> supportedSubcategories;
+
+		data->ForeachRow<T>(TEXT("OPTIONSET"),
+			[&optionSet, &supportedSubcategories, readOptionData, addOptionSet](const FName &Key, const T &row)
 		{
-			FCraftingSubcategoryData newData;
-			newData.Key = Key;
-			newData.SheetName = data.SheetName;
-			newData.DisplayName = data.DisplayName;
-			newData.IDCodeLine1 = data.IDCodeLine1;
-			newData.LayerFormat = data.Format;
-			newData.LayerFunction = data.LayerFunction;
-
-			if (data.CraftingIconAssetFilePath != nullptr)
+			if (row.SupportedSubcategories.Num() > 0)
 			{
-				newData.Icon = Cast<UTexture2D>(data.CraftingIconAssetFilePath.TryLoad());
-				if (ensureMsgf(newData.Icon.IsValid(),
-					TEXT("Failed to load icon %s"), *data.CraftingIconAssetFilePath.ToString()))
+				if (optionSet.Options.Num() > 0)
 				{
-					// TODO: replace with proper asset reference and lazy-loading solution
-					newData.Icon->AddToRoot();
+					for (auto &sc : supportedSubcategories)
+					{
+						optionSet.Key = *sc;
+						addOptionSet(optionSet);
+					}
 				}
+				optionSet.Options.Empty();
+				supportedSubcategories = row.SupportedSubcategories;
 			}
 
-			CraftingSubcategoryData.AddData(newData);
+			O option;
+			option.Key = Key;
+			if (readOptionData(row, option))
+			{
+				optionSet.Options.Add(option);
+			}
 		});
-	}
 
-	void ModumateObjectDatabase::ReadCraftingMaterialAndColorOptionSet(UDataTable *data)
-	{
-		TArray<FString> supportedSets;
-
-		ReadOptionSet<
-			FMaterialsAndColorsOptionSetDataTable,
-			FCraftingOptionBase,
-			FCraftingOptionSet>(data,
-				[&supportedSets,this](const FMaterialsAndColorsOptionSetDataTable &row, FCraftingOptionBase &matcol)
+		if (optionSet.Options.Num() > 0)
+		{
+			for (auto &sc : supportedSubcategories)
 			{
-				if (row.SupportedOptionSets.Num() > 0)
-				{
-					supportedSets = row.SupportedOptionSets;
-				}
-
-				if (row.Material.IsEmpty())
-				{
-					return false;
-				}
-
-				const FArchitecturalMaterial *mat = AMaterials.GetData(*row.Material);
-
-				if (ensureAlwaysMsgf(mat != nullptr, TEXT("Could not find material %s in material and color %s"), *row.Material, *row.DisplayName.ToString()))
-				{
-					matcol.EngineMaterial = mat->EngineMaterial;
-						
-					const FCustomColor *col = NamedColors.GetData(*row.BaseColor);
-					if (ensureAlwaysMsgf(col != nullptr, TEXT("Could not find color %s in material and color %s"), *row.BaseColor, *row.DisplayName.ToString()))
-					{
-						matcol.DisplayName = FText::FromString(mat->DisplayName.ToString() + TEXT(", ")+col->DisplayName.ToString());
-						matcol.CustomColor = *col;
-					}
-					else
-					{
-						matcol.DisplayName = mat->DisplayName;
-					}
-				}
-				else
-				{
-					matcol.DisplayName = FText::FromString(row.Material + row.BaseColor);
-				}
-
-				matcol.CraftingParameters.SetValue(Modumate::CraftingParameters::MaterialColorMaterial, row.Material);
-				matcol.CraftingParameters.SetValue(Modumate::CraftingParameters::MaterialColorColor, row.BaseColor);
-				return true;
-			},
-				[this, &supportedSets](const FCraftingOptionSet &os)
-			{
-				for (auto &sos : supportedSets)
-				{
-					if (sos.Contains(TEXT("Finish")))
-					{
-						FCraftingOptionSet finishSet = os;
-						finishSet.Key = *sos;
-						FinishMaterialColors.AddData(finishSet);
-					}
-					else
-					if (sos.Contains(TEXT("Module")))
-					{
-						ModuleMaterialColors.AddData(os);
-					}
-					else if (sos.Contains(TEXT("Gap")))
-					{
-						GapMaterialColors.AddData(os);
-					}
-					else
-					{
-						LayerMaterialColors.AddData(os);
-					}
-				}
+				optionSet.Key = *sc;
+				addOptionSet(optionSet);
 			}
-		);
+		}
 	}
+
+
+	ModumateObjectDatabase::ModumateObjectDatabase() {}	
 
 	void ModumateObjectDatabase::ReadCraftingPortalPartOptionSet(UDataTable *data)
 	{
@@ -309,94 +250,6 @@ namespace Modumate
 						PatternOptionSets.AddData(os);
 					}
 				});
-	}
-
-	void ModumateObjectDatabase::ReadCraftingDimensionalOptionSet(UDataTable *data)
-	{
-		static const FName optionTypeModule(TEXT("Module"));
-		static const FName optionTypeGap(TEXT("Gap"));
-		static const FName optionTypeToeKick(TEXT("Toe Kick"));
-		FName dimensionalOptionType;
-
-		ReadOptionSet<FDimensionalOptionSetDataTable,
-			FCraftingOptionBase,
-			FCraftingOptionSet>(data,
-				[&dimensionalOptionType,this](const FDimensionalOptionSetDataTable &row, FCraftingOptionBase &option)
-				{
-					if (!row.DimensionalOptionType.IsNone())
-					{
-						dimensionalOptionType = row.DimensionalOptionType;
-					}
-
-					auto getUnitValue = [](float v, const FString &u)
-					{
-						if (u == TEXT("cm"))
-						{
-							return Modumate::Units::FUnitValue::WorldCentimeters(v);
-						}
-						return Modumate::Units::FUnitValue::WorldInches(v);
-					};
-
-					option.DisplayName = row.DisplayName;
-
-					option.CraftingParameters.SetValue(Modumate::CraftingParameters::DimensionLength, getUnitValue(row.Length, row.LUnits).AsWorldCentimeters());
-					option.CraftingParameters.SetValue(Modumate::CraftingParameters::DimensionWidth, getUnitValue(row.Width, row.WUnits).AsWorldCentimeters());
-					option.CraftingParameters.SetValue(Modumate::CraftingParameters::DimensionHeight, getUnitValue(row.Height, row.HUnits).AsWorldCentimeters());
-					option.CraftingParameters.SetValue(Modumate::CraftingParameters::DimensionDepth, getUnitValue(row.Depth, row.DUnits).AsWorldCentimeters());
-					option.CraftingParameters.SetValue(Modumate::CraftingParameters::DimensionThickness, getUnitValue(row.Thickness, row.TUnits).AsWorldCentimeters());
-					option.CraftingParameters.SetValue(Modumate::CraftingParameters::DimensionBevelWidth, getUnitValue(row.BevelWidth, row.BevelUnit).AsWorldCentimeters());
-
-					if (row.CraftingIconAssetFilePath != nullptr)
-					{
-						option.Icon = Cast<UTexture2D>(row.CraftingIconAssetFilePath.TryLoad());
-						if (ensureMsgf(option.Icon.IsValid(),
-							TEXT("Failed to load icon %s"), *row.CraftingIconAssetFilePath.ToString()))
-						{
-							// TODO: replace with proper asset reference and lazy-loading solution
-							option.Icon->AddToRoot();
-						}
-					}
-					return true;
-				},
-				[this,&dimensionalOptionType](const FCraftingOptionSet &os)
-				{
-					if (dimensionalOptionType == optionTypeModule)
-					{
-						LayerModuleOptionSets.AddData(os);
-					}
-					else if (dimensionalOptionType == optionTypeGap)
-					{
-						LayerGapOptionSets.AddData(os);
-					}
-					else if (dimensionalOptionType == optionTypeToeKick)
-					{
-						ToeKickOptionSets.AddData(os);
-					}
-				});
-	}
-
-	void ModumateObjectDatabase::ReadCraftingLayerThicknessOptionSet(UDataTable *data)
-	{
-		if (!ensureAlways(data))
-		{
-			return;
-		}
-
-		ReadOptionSet<
-			FLayerThicknessOptionSetDataTable,
-			FCraftingOptionBase,
-			FCraftingOptionSet>(data,
-				[this](const FLayerThicknessOptionSetDataTable &row, FCraftingOptionBase &option)
-		{
-			option.DisplayName = row.DisplayName;
-			option.CraftingParameters.SetValue(Modumate::CraftingParameters::ThicknessValue, row.Thickness);
-			option.CraftingParameters.SetValue(Modumate::CraftingParameters::ThicknessUnits, row.ThicknessUnits);
-			return true;
-		},
-				[this](const FCraftingOptionSet &optionSet)
-		{
-			LayerThicknessOptionSets.AddData(optionSet);
-		});
 	}
 
 	void ModumateObjectDatabase::ReadCraftingProfileOptionSet(UDataTable *data)
@@ -1093,9 +946,6 @@ namespace Modumate
 		if (ensureAlways(&OutManager != &PresetManager))
 		{
 			OutManager.InitAssemblyDBs();
-			OutManager.CraftingPresetArray = PresetManager.CraftingPresetArray;
-			OutManager.CraftingDecisionTrees = PresetManager.CraftingDecisionTrees;
-			OutManager.CraftingBuiltins = PresetManager.CraftingBuiltins;
 			OutManager.CraftingNodePresets = PresetManager.CraftingNodePresets;
 			OutManager.DraftingNodePresets = PresetManager.DraftingNodePresets;
 			OutManager.AssembliesByObjectType = PresetManager.AssembliesByObjectType;
@@ -1127,14 +977,7 @@ namespace Modumate
 		FMOIDocumentRecord docRecord;
 		if (ensure(FModumateSerializationStatics::TryReadModumateDocumentRecord(defaultAssemblyPath, docHeader, docRecord)))
 		{
-			PresetManager.CraftingPresetArray = docRecord.CraftingPresetArray;
 			PresetManager.CraftingNodePresets.FromDataRecords(docRecord.CraftingPresetArrayV2);
-		}
-
-		for (auto &ps : PresetManager.CraftingPresetArray)
-		{
-			ps.UpdatePropertiesFromArchive();
-			ps.UpdatePresetNameFromProperties();
 		}
 
 		for (auto &car : docRecord.CustomAssemblies)

@@ -3649,9 +3649,6 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 
 	docRec.CommandHistory = CommandHistory;
 
-	// TODO: this is DDL 1.0, deprecate
-	docRec.CraftingPresetArray = PresetManager.CraftingPresetArray;
-
 	// DDL 2.0
 	PresetManager.ToDocumentRecord(docRec);
 
@@ -3730,14 +3727,6 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 
 		// Note: will check version against header and simply init from db if presets are out of date
 		PresetManager.FromDocumentRecord(world, docHeader, docRec);
-
-		// DDL 1.0, to be deprecated
-		PresetManager.CraftingPresetArray = docRec.CraftingPresetArray;
-		for (auto &preset : PresetManager.CraftingPresetArray)
-		{
-			preset.UpdatePropertiesFromArchive();
-			preset.UpdatePresetNameFromProperties();
-		}
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.
@@ -4506,19 +4495,6 @@ Assembly Mutators
 */
 void FModumateDocument::ImportPresetsIfMissing_DEPRECATED(UWorld *world, const TArray<FName> &presets)
 {
-	FPresetManager &odbPresetManager = world->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase->PresetManager;
-
-	for (auto &preset : presets)
-	{
-		if (PresetManager.GetPresetByKey(preset) == nullptr)
-		{
-			const FCraftingPreset *odbPreset = odbPresetManager.GetPresetByKey(preset);
-			if (ensureAlways(odbPreset != nullptr))
-			{
-				PresetManager.CraftingPresetArray.Add(*odbPreset);
-			}
-		}
-	}
 }
 
 FModumateObjectAssembly FModumateDocument::OverwriteAssembly_DEPRECATED(

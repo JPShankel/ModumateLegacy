@@ -87,10 +87,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kRemovePresetProjectAssembly, "remove_preset_project_assembly");
 		MODUMATE_COMMAND(kSetCurrentAssembly, "set_current_assembly");
 		MODUMATE_COMMAND(kCreateNewAssembly_DEPRECATED, "create_new_assembly");
-		MODUMATE_COMMAND(kOverwriteAssembly_DEPRECATED, "overwrite_assembly");
-		MODUMATE_COMMAND(kSaveCraftingBuiltins_DEPRECATED, "save_crafting_builtins");
-		MODUMATE_COMMAND(kCreateOrUpdatePreset_DEPRECATED, "create_or_update_preset");
-		MODUMATE_COMMAND(kRemovePreset_DEPRECATED, "remove_preset");
 		MODUMATE_COMMAND(kRemoveAssembly_DEPRECATED, "remove_assembly");
 	}
 

@@ -359,8 +359,6 @@ public:
 
 	FName ProfileKey;
 
-	FCraftingPreset Preset;
-
 	BIM::FBIMPropertySheet Properties;
 	TMap<Modumate::BIM::FNameType, FModumateFormattedDimension> Dimensions;
 
@@ -503,21 +501,10 @@ public:
 		ret.DisplayName = CodeName;
 
 		ret.CodeName = CodeName;
-		ret.PresetSequence = Preset.SequenceCode.ToString();
-		ret.PresetKey = Preset.Key;
 
 		ret.Modules.Add(Module);
 		ret.Gap = Gap;
 		ret.Pattern = Pattern;
-
-		for (auto &sc : Subcategories)
-		{
-			const Modumate::FCraftingSubcategoryData *scd = db.CraftingSubcategoryData.GetData(sc);
-			if (ensureAlways(scd != nullptr))
-			{
-				ret.SubcategoryDisplayNames.Add(scd->DisplayName.ToString());
-			}
-		}
 
 		if (!ProfileKey.IsNone())
 		{
@@ -680,29 +667,6 @@ bool FModumateObjectAssembly::FromCraftingProperties_DEPRECATED(
 
 	outMOA.Properties = spec.RootProperties;
 	outMOA.RootPreset = spec.RootPreset;
-
-	auto assignSubcategory = [&db](FLayerMaker &layerMaker,const FString &catKey)
-	{
-		layerMaker.Subcategories.Add(*catKey);
-		const Modumate::FCraftingSubcategoryData *subCat = db.CraftingSubcategoryData.GetData(*catKey);
-		if (subCat != nullptr)
-		{
-			if (!subCat->IDCodeLine1.IsEmpty())
-			{
-				layerMaker.CodeName = subCat->IDCodeLine1;
-			}
-			if (subCat->LayerFunction != ELayerFunction::None)
-			{
-				layerMaker.FunctionEnum = subCat->LayerFunction;
-				layerMaker.FunctionName = subCat->DisplayName;
-			}
-			if (subCat->LayerFormat != ELayerFormat::None)
-			{
-				layerMaker.FormatEnum = subCat->LayerFormat;
-				layerMaker.FormatName = subCat->DisplayName;
-			}
-		}
-	};
 
 	for (const auto &l : spec.LayerProperties)
 	{
@@ -885,42 +849,7 @@ bool FModumateObjectAssembly::FromCraftingProperties_DEPRECATED(
 			// Get new maker and reset params
 			FLayerMaker layerMaker;
 
-			BIM::FBIMPropertySheet props;
-
-			// If the property sheet specifies a preset, use its values
-			FString presetName;
-			if (l.TryGetProperty(BIM::EScope::Layer, BIM::Parameters::Preset, presetName))
-			{
-				if (presetManager.TryGetPresetPropertiesRecurse(*presetName, props))
-				{
-					const FCraftingPreset *pPreset = presetManager.GetPresetByKey(*presetName);
-					props.SetProperty(BIM::EScope::Layer, BIM::Parameters::Preset, *presetName);
-					if (ensureAlways(pPreset != nullptr))
-					{
-						layerMaker.Preset = *pPreset;
-					}
-				}
-				else
-				{
-					props = l;
-				}
-			}
-			else
-			{
-				props = l;
-			}
-
-
-			FString subCatKey;
-			if (props.TryGetProperty(BIM::EScope::Layer, BIM::Parameters::Category, subCatKey))
-			{
-				assignSubcategory(layerMaker, subCatKey);
-			}
-
-			if (props.TryGetProperty(BIM::EScope::Layer, BIM::Parameters::Subcategory, subCatKey))
-			{
-				assignSubcategory(layerMaker, subCatKey);
-			}
+			BIM::FBIMPropertySheet props = l;
 
 			// Set pattern data
 			if (props.HasProperty(BIM::EScope::Pattern, BIM::Parameters::ModuleCount))
@@ -1022,24 +951,7 @@ bool FModumateObjectAssembly::FromDataRecord_DEPRECATED(
 
 void FModumateObjectAssembly::GatherPresets_DEPRECATED(const Modumate::FPresetManager &presetManager, TArray<FName> &presetKeys) const
 {
-	BIM::FModumateAssemblyPropertySpec spec;
-	FillSpec(spec);
 
-	auto gatherPresets = [&presetKeys, presetManager](const BIM::FBIMPropertySheet &ps)
-	{
-		FName presetKey;
-		if (ps.TryGetProperty(BIM::EScope::Layer, BIM::Parameters::Preset, presetKey))
-		{
-			presetKeys.AddUnique(presetKey);
-			presetManager.GetChildPresets(presetKey, presetKeys);
-		}
-	};
-
-	gatherPresets(spec.RootProperties);
-	for (auto &lp : spec.LayerProperties)
-	{
-		gatherPresets(lp);
-	}
 }
 
 void FModumateObjectAssembly::ReverseLayers()

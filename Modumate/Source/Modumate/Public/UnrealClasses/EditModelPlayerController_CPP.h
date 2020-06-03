@@ -96,9 +96,6 @@ private:
 	mutable TArray<TPair<FVector, FVector>> CurHitLineLocations;
 
 	UPROPERTY()
-	UDraftingPreviewWidget_CPP *DraftingPreview;
-
-	UPROPERTY()
 	UModumateCraftingWidget_CPP *CraftingWidget;
 
 	UPROPERTY()
@@ -381,8 +378,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
 	TSubclassOf<UHUDDrawWidget> HUDDrawWidgetClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Drafting)
-	TSubclassOf<UDraftingPreviewWidget_CPP> PreviewWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Drafting)
 	TSubclassOf<UModumateCraftingWidget_CPP> CraftingWidgetClass;
@@ -544,11 +539,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Persistence)
 	bool CheckSaveModel();
 
-	UFUNCTION(BlueprintCallable, Category = Persistence)
-	bool ExportPDF();
-
 	bool OnSavePDF();
-	bool OnCancelPDF();
 	bool OnCreateDwg();
 
 	UFUNCTION(BlueprintCallable, Category = Persistence)

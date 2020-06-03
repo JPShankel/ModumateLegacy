@@ -6,7 +6,6 @@
 #include <functional>
 #include "Database/ModumateObjectAssembly.h"
 #include "Database/ModumateLayerPattern.h"
-#include "ModumateCore/ModumateDecisionTree.h"
 #include "Database/ModumateDataCollection.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateTypes.h"
@@ -36,17 +35,12 @@ namespace Modumate
 
 	public:
 
-		DataCollection<FCraftingSubcategoryData> CraftingSubcategoryData;
 		DataCollection<FModumateObjectAssembly> FFEAssemblies;
 		DataCollection<FPortalPart> PortalParts;
 		DataCollection<FRoomConfiguration> RoomConfigurations;
 		DataCollection<FStaticIconTexture> StaticIconTextures;
 
-
 		// Option sets
-		DataCollection<FCraftingOptionSet> LayerMaterialColors, ModuleMaterialColors, GapMaterialColors, FinishMaterialColors;
-		DataCollection<FCraftingOptionSet> LayerModuleOptionSets, LayerGapOptionSets, ToeKickOptionSets;
-		DataCollection<FCraftingOptionSet> LayerThicknessOptionSets;
 		DataCollection<FCraftingOptionSet> PatternOptionSets;
 		DataCollection<FCraftingOptionSet> ProfileOptionSets;
 
@@ -69,10 +63,6 @@ namespace Modumate
 		void ReadPortalPartData(UDataTable *data);
 		void ReadRoomConfigurations(UDataTable *data);
 		void ReadPortalConfigurationData(UDataTable *data);
-		void ReadCraftingSubcategoryData(UDataTable *data);
-		void ReadCraftingLayerThicknessOptionSet(UDataTable *data);
-		void ReadCraftingDimensionalOptionSet(UDataTable *data);
-		void ReadCraftingMaterialAndColorOptionSet(UDataTable *data);
 		void ReadCraftingPatternOptionSet(UDataTable *data);
 		void ReadCraftingPortalPartOptionSet(UDataTable *data);
 		void ReadCraftingProfileOptionSet(UDataTable *data);
@@ -91,7 +81,6 @@ namespace Modumate
 
 		bool ParseColorFromField(FCustomColor &OutColor, const FString &Field);
 		bool ParsePortalConfigDimensionSets(FName configKey, const FString &typeString, const TArray<FString> &setStrings, TArray<FPortalConfigDimensionSet> &outSets);
-
 
 		TArray<FString> GetDebugInfo();
 	};

@@ -5,7 +5,6 @@
 #include "UnrealClasses/AdjustmentHandleActor_CPP.h"
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
-#include "Drafting/DraftingPreviewWidget_CPP.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -83,7 +82,6 @@ AEditModelPlayerController_CPP::AEditModelPlayerController_CPP()
 	, SelectionMode(ESelectObjectMode::DefaultObjects)
 	, MaxRaycastDist(100000.0f)
 	, HUDDrawWidgetClass(UHUDDrawWidget::StaticClass())
-	, PreviewWidgetClass(UDraftingPreviewWidget_CPP::StaticClass())
 	, CraftingWidgetClass(UModumateCraftingWidget_CPP::StaticClass())
 	, DrawingSetWidgetClass(UModumateDrawingSetWidget_CPP::StaticClass())
 {
@@ -158,20 +156,9 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	CreateTools();
 	SetToolMode(EToolMode::VE_SELECT);
 
-	DraftingPreview = CreateWidget<UDraftingPreviewWidget_CPP>(this, PreviewWidgetClass);
-	if (DraftingPreview != nullptr)
-	{
-		DraftingPreview->AddToViewport();
-		DraftingPreview->Document = Document;
-		DraftingPreview->SetVisibility(ESlateVisibility::Hidden);
-		DraftingPreview->Controller = this;
-		DraftingPreview->InitDecisionTree();
-	}
-
 	CraftingWidget = CreateWidget<UModumateCraftingWidget_CPP>(this, CraftingWidgetClass);
 	if (CraftingWidget != nullptr)
 	{
-		CraftingWidget->InitDecisionTrees();
 		CraftingWidget->AddToViewport();
 		CraftingWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
@@ -755,15 +742,6 @@ void AEditModelPlayerController_CPP::SetCutPlaneVisibility(bool bVisible)
 	EMPlayerState->UpdateObjectVisibilityAndCollision();
 }
 
-bool AEditModelPlayerController_CPP::OnCancelPDF()
-{
-	if (DraftingPreview->GetVisibility() == ESlateVisibility::Visible)
-	{
-		DraftingPreview->SetVisibility(ESlateVisibility::Hidden);
-	}
-	return true;
-}
-
 void AEditModelPlayerController_CPP::TrySavePDF()
 {
 	OnSavePDF();
@@ -771,7 +749,6 @@ void AEditModelPlayerController_CPP::TrySavePDF()
 
 bool AEditModelPlayerController_CPP::OnSavePDF()
 {
-	OnCancelPDF();
 	if (EMPlayerState->ShowingFileDialog)
 	{
 		return false;
@@ -816,24 +793,6 @@ bool AEditModelPlayerController_CPP::OnSavePDF()
 
 	EMPlayerState->ShowingFileDialog = false;
 	return ret;
-}
-
-bool AEditModelPlayerController_CPP::ExportPDF()
-{
-	if (DraftingPreview->GetVisibility() != ESlateVisibility::Visible)
-	{
-		if (ToolIsInUse())
-		{
-			AbortUseTool();
-		}
-
-		DraftingPreview->SetVisibility(ESlateVisibility::Visible);
-		DraftingPreview->Ready = false;
-		DraftingPreview->DrawSize = FVector2D(0, 0);
-		DraftingPreview->RefreshUI();
-	}
-
-	return true;
 }
 
 bool AEditModelPlayerController_CPP::OnCreateDwg()

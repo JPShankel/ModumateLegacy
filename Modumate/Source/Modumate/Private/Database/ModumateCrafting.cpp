@@ -4,7 +4,6 @@
 #include "Database/ModumateObjectDatabase.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "ModumateCore/ModumateScriptProcessor.h"
-#include "ModumateCore/ModumateDecisionTreeImpl.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
@@ -2024,9 +2023,6 @@ namespace Modumate {
 
 namespace Modumate
 {
-	template class TDecisionTree<FCraftingItem>;
-	template class TDecisionTreeNode<FCraftingItem>;
-
 	namespace CraftingParameters
 	{
 		const FString ThicknessValue = TEXT("Thickness.Value");
@@ -2053,100 +2049,6 @@ namespace Modumate
 		const FString TrimProfileNativeSizeY = TEXT("TrimProfile.NativeSizeY");
 	}
 
-	/*
-	AddSelfToDecisionNode and SetSelfToPrivateNode are used by the Object Database to reconcile
-	private nodes (which have a single hidden meta value) and Table Selects (which build Select
-	nodes out of option sets.)
-	*/
-
-	static auto getNewNode = [](const FCraftingDecisionTreeNode &parent,
-		const FName &luid,
-		const FText &label,
-		EDecisionType decisionType)
-	{
-		FCraftingDecisionTreeNode ret;
-		ret.Data.GUID = *FString::Printf(TEXT("%s:%s"), *luid.ToString(), *parent.Data.GUID.ToString());
-		ret.Data.ParentGUID = parent.Data.GUID;
-		ret.Data.Label = label;
-		ret.Data.Key = luid.ToString();
-		ret.Data.Type = decisionType;
-		return ret;
-	};
-
-	void FCraftingOptionBase::AddSelfToDecisionNode(const ModumateObjectDatabase *db, FCraftingDecisionTreeNode &parent) const
-	{
-		FCraftingDecisionTreeNode newTree = getNewNode(parent, Key, DisplayName, EDecisionType::Terminal);
-		newTree.Data.Properties = CraftingParameters;
-		newTree.Data.Icon = Icon;
-		newTree.Data.EngineMaterial = EngineMaterial;
-		newTree.Data.Color = CustomColor;
-		newTree.Data.ProfileMesh = ProfileMesh;
-		parent.Subfields.Add(newTree);
-	}
-
-	void FCraftingOptionBase::SetSelfToPrivateNode(FCraftingDecisionTreeNode &privateNode) const
-	{
-		ensureAlways(privateNode.Data.Type == EDecisionType::Private);
-		privateNode.Subfields[0].Data.Properties = CraftingParameters;
-		privateNode.Subfields[0].Data.Icon = Icon;
-		privateNode.Subfields[0].Data.EngineMaterial = EngineMaterial;
-		privateNode.Subfields[0].Data.Color = CustomColor;
-		privateNode.Subfields[0].Data.ProfileMesh = ProfileMesh;
-		privateNode.SetSelectedSubfield(0);
-	}
-
-	const FString FCraftingPortalPartOption::TableName = TEXT("PortalPartSets");
-	void FCraftingPortalPartOption::AddSelfToDecisionNode(const ModumateObjectDatabase *db, FCraftingDecisionTreeNode &parent) const
-	{
-		FCraftingDecisionTreeNode newTree = getNewNode(parent, Key, DisplayName, EDecisionType::Terminal);
-		newTree.Data.PortalPartOption = *this;
-		parent.Subfields.Add(newTree);
-	}
-
-	const FString FPortalAssemblyConfigurationOption::TableName = TEXT("PortalConfigurations");
-	void FPortalAssemblyConfigurationOption::AddSelfToDecisionNode(const ModumateObjectDatabase *db, FCraftingDecisionTreeNode &parent) const
-	{
-		FCraftingDecisionTreeNode newTree = getNewNode(parent, Key, DisplayName, EDecisionType::Form);
-		newTree.Data.PortalConfigurationOption = *this;
-
-		// Portal configurations have both a width and a height option set
-		FCraftingDecisionTreeNode widthTree = getNewNode(newTree, "Width", FText::FromString("Width"), EDecisionType::Select);
-
-		for (auto &sw : SupportedWidths)
-		{
-			FCraftingDecisionTreeNode widthOption = getNewNode(widthTree, sw.Key, sw.DisplayName, EDecisionType::Terminal);
-			widthOption.Data.PortalDimension = sw;
-			widthTree.Subfields.Add(widthOption);
-		}
-
-		if (widthTree.Subfields.Num() > 0)
-		{
-			newTree.Subfields.Add(widthTree);
-		}
-
-		FCraftingDecisionTreeNode heightTree = getNewNode(newTree, "Height", FText::FromString("Height"), EDecisionType::Select);
-
-		for (auto &sh : SupportedHeights)
-		{
-			FCraftingDecisionTreeNode heightOption = getNewNode(heightTree, sh.Key, sh.DisplayName, EDecisionType::Terminal);
-			heightOption.Data.PortalDimension = sh;
-			heightTree.Subfields.Add(heightOption);
-		}
-
-		if (heightTree.Subfields.Num() > 0)
-		{
-			newTree.Subfields.Add(heightTree);
-		}
-
-		parent.Subfields.Add(newTree);
-	}
-	void FPortalAssemblyConfigurationOption::SetSelfToPrivateNode(FCraftingDecisionTreeNode &privateNode) const
-	{
-		ensureAlways(privateNode.Data.Type == EDecisionType::Private);
-		privateNode.Subfields[0].Data.PortalConfigurationOption = *this;
-		privateNode.SetSelectedSubfield(0);
-	}
-
 	bool FPortalAssemblyConfigurationOption::IsValid() const
 	{
 		return (PortalFunction != EPortalFunction::None) && !Key.IsNone() && !DisplayName.IsEmpty() &&
@@ -2155,87 +2057,6 @@ namespace Modumate
 }
 
 using namespace Modumate;
-
-void FCraftingItem::UpdateMetaValue()
-{
-	for (auto &pvb : PropertyValueBindings)
-	{
-		Properties.SetValue(pvb, Value);
-	}
-}
-
-
-// When the child of a Select is chosen, its data are promoted to parent
-void FCraftingItem::AssimilateSubfieldValues(const FCraftingItem &sf)
-{
-	LayerFunction = sf.LayerFunction;
-	LayerFormat = sf.LayerFormat;
-
-	SelectedSubnodeGUID = sf.GUID;
-
-	// Display your selected child's name in your input field if you're a dropdown or icon select
-	Value = sf.Label.ToString();
-
-	PortalPartOption = sf.PortalPartOption;
-	PortalDimension = sf.PortalDimension;
-	PortalConfigurationOption = sf.PortalConfigurationOption;
-
-	Modumate::BIM::FValueSpec idCodeLine1(BIM::EScope::Layer, BIM::EValueType::FixedText, BIM::Parameters::Code);
-
-	Properties = sf.Properties;
-
-	if (HasProperty(idCodeLine1.QN().ToString()))
-	{
-		Tag = FText::FromString(GetProperty(idCodeLine1.QN().ToString()));
-	}
-
-	Icon = sf.Icon;
-	Color = sf.Color;
-	EngineMaterial = sf.EngineMaterial;
-	ProfileMesh = sf.ProfileMesh;
-}
-
-Modumate::FModumateCommandParameter FCraftingItem::GetProperty(
-	Modumate::BIM::EScope scope,
-	const FString &name) const
-{
-	return GetProperty(BIM::FValueSpec(scope, BIM::EValueType::None, *name).QN().ToString());
-}
-
-Modumate::FModumateCommandParameter FCraftingItem::GetProperty(const FString &qualifiedName) const
-{
-	return Properties.GetValue(qualifiedName, FString(TEXT("")));
-}
-
-void FCraftingItem::SetProperty(
-	Modumate::BIM::EScope scope,
-	const FString &param,
-	const Modumate::FModumateCommandParameter &value)
-{
-	SetProperty(BIM::FValueSpec(scope, BIM::EValueType::None, *param).QN().ToString(), value);
-}
-
-void FCraftingItem::SetProperty(
-	const FString &qualifiedName,
-	const Modumate::FModumateCommandParameter &value)
-{
-	Properties.SetValue(qualifiedName, value);
-}
-
-const void FCraftingItem::GetPropertyNames(TArray<FString> &outNames) const
-{
-	Properties.GetValueNames(outNames);
-}
-
-bool FCraftingItem::HasProperty(const FString &qualifiedName) const
-{
-	return Properties.HasValue(qualifiedName);
-}
-
-bool FCraftingItem::HasProperty(Modumate::BIM::EScope scope, const FString &name) const
-{
-	return HasProperty(BIM::FValueSpec(scope, BIM::EValueType::None, *name).QN().ToString());
-}
 
 ECraftingResult UModumateCraftingNodeWidgetStatics::CreateNewNodeInstanceFromPreset(
 	Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances,

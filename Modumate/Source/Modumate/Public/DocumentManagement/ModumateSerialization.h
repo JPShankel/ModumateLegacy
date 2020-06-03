@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Database/ModumateObjectEnums.h"
-#include "ModumateCore/ModumateDecisionTree.h"
 #include "Database/ModumateCrafting.h"
 #include "Serialization/JsonReader.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
@@ -20,20 +19,6 @@ typedef TJsonWriter< TCHAR, TPrettyJsonPrintPolicy<TCHAR> > FPrettyJsonStringWri
 
 // ---------------- Object serialization ----------------
 
-
-/*
-DDL 1.0 preset record, to be deprecated
-Future note: keep runtime objects like FCraftingPreset out of serialization because it creates cyclical include dependencies
-*/
-struct FCraftingPreset;
-USTRUCT()
-struct MODUMATE_API FModumatePresetRecord_DEPRECATED
-{
-	GENERATED_USTRUCT_BODY();
-
-	UPROPERTY()
-	TArray<FCraftingPreset> CraftingPresetArray;
-};
 
 /*
 DDL 2.0
@@ -380,10 +365,6 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 
 	UPROPERTY()
 	TArray<FCustomAssemblyRecordV4> CustomAssemblies;
-
-	// DDL 1.0, to be deprecated
-	UPROPERTY()
-	TArray<FCraftingPreset> CraftingPresetArray;
 
 	UPROPERTY()
 	TMap<EToolMode, FName> CurrentToolAssemblyMap;

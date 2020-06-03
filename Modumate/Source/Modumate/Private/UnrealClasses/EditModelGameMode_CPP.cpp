@@ -45,23 +45,16 @@ void AEditModelGameMode_CPP::InitGame(const FString& MapName, const FString& Opt
 		ObjectDatabase->ReadLightConfigData(LightConfigTable);
 		ObjectDatabase->ReadRoomConfigurations(RoomConfigurationTable);
 
-		ObjectDatabase->ReadCraftingSubcategoryData(CraftingSubcategoryTable);
-
 		ObjectDatabase->ReadCraftingPatternOptionSet(PatternOptionSetDataTable);
-		ObjectDatabase->ReadCraftingPortalPartOptionSet(PortalPartOptionSetDataTable);
+		ObjectDatabase->ReadCraftingProfileOptionSet(ProfileMeshDataTable);
 
-		ObjectDatabase->ReadCraftingMaterialAndColorOptionSet(MaterialsAndColorsOptionSetDataTable);
-		ObjectDatabase->ReadCraftingDimensionalOptionSet(DimensionalOptionSetDataTable);
-		ObjectDatabase->ReadCraftingLayerThicknessOptionSet(LayerThicknessOptionSetTable);
+		ObjectDatabase->ReadCraftingPortalPartOptionSet(PortalPartOptionSetDataTable);
 		ObjectDatabase->ReadPortalConfigurationData(PortalConfigurationTable);
 
 		ObjectDatabase->ReadFFEPartData(FFEPartTable);
 		ObjectDatabase->ReadFFEAssemblyData(FFEAssemblyTable);
 
-		ObjectDatabase->ReadCraftingProfileOptionSet(ProfileMeshDataTable);
-
 		ObjectDatabase->ReadMarketplace(GetWorld());
-
 	}
 	databaseLoadTime *= 1000.0;
 	UE_LOG(LogPerformance, Log, TEXT("Object database loaded in %d ms"), int(databaseLoadTime + 0.5));

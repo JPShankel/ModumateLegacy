@@ -812,37 +812,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		});
 	};
 
-	RegisterCommand(kOverwriteAssembly_DEPRECATED, [this, getAssemblySpec](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		int32 version = params.GetValue(FModumateCommand::VersionString);
-		FString oldAsm = params.GetValue(kAssembly);
-
-		if (ensureAlways(version == 3))
-		{
-			FString tmStr = params.GetValue(kObjectType);
-			EObjectType objectType = FindEnumValueByName<EObjectType>(TEXT("EObjectType"), *tmStr);
-			EToolMode mode = UModumateTypeStatics::ToolModeFromObjectType(objectType);
-
-			const FModumateObjectAssembly *pOldAsm = GetDocument()->PresetManager.GetAssemblyByKey(mode, *oldAsm);
-			if (ensureAlways(pOldAsm != nullptr))
-			{
-				BIM::FModumateAssemblyPropertySpec spec;
-				getAssemblySpec(params, spec);
-
-				AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
-				FModumateObjectAssembly newAsm;
-				if (UModumateObjectAssemblyStatics::DoMakeAssembly(*gameMode->ObjectDatabase, GetDocument()->PresetManager, spec, newAsm) == ECraftingResult::Success)
-				{
-					newAsm.DatabaseKey = pOldAsm->DatabaseKey;
-					newAsm = GetDocument()->OverwriteAssembly_DEPRECATED(GetWorld(), mode, newAsm);
-					output.SetValue(kAssembly, newAsm.DatabaseKey.ToString());
-					return true;
-				}
-			}
-		}
-	return false;
-	});
-
 	RegisterCommand(kRemovePresetProjectAssembly, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		// TODO: undo/redoable
@@ -924,28 +893,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return false;
 	});
 
-	RegisterCommand(kSaveCraftingBuiltins_DEPRECATED, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-
-		FString filepath = params.GetValue(kFilename, gameState->Document.PresetManager.GetDefaultCraftingBuiltinPresetFileName());
-		filepath = FPaths::Combine(gameState->Document.PresetManager.GetDefaultCraftingBuiltinPresetDirectory(), filepath);
-
-		if (Modumate::PlatformFunctions::ShowMessageBox(TEXT("WARNING: About to overwrite builtins. Proceed?"),
-			TEXT("Built Ins"), Modumate::PlatformFunctions::YesNo) == Modumate::PlatformFunctions::Yes)
-		{
-			if (GetDocument()->PresetManager.SaveBuiltins(GetWorld(), filepath))
-			{
-				Modumate::PlatformFunctions::ShowMessageBox(FString::Printf(TEXT("Presets saved at %s"), *filepath), TEXT("Built Ins"), Modumate::PlatformFunctions::Okay);
-			}
-			else
-			{
-				Modumate::PlatformFunctions::ShowMessageBox(FString::Printf(TEXT("Could not save %s!"), *filepath), TEXT("Built Ins"), Modumate::PlatformFunctions::Okay);
-			}
-		}
-		return true;
-	});
-
 	RegisterCommand(kLogin, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		Login(params.GetValue(Parameters::kUserName), params.GetValue(Parameters::kPassword));
@@ -995,61 +942,7 @@ void UModumateGameInstance::RegisterAllCommands()
 		}
 
 		return false;
-	});
-
-	RegisterCommand(kRemovePreset_DEPRECATED, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		EToolMode toolMode = EnumValueByString(EToolMode, params.GetValue(Parameters::kToolMode).AsString());
-		FName presetKey = params.GetValue(Parameters::kPresetKey);
-		FName replacementKey = params.GetValue(Parameters::kReplacementKey);
-		return ensureAlways(GetDocument()->PresetManager.HandleRemovePresetCommand(GetWorld(), toolMode, presetKey, replacementKey) == FPresetManager::NoError);
-	});
-
-	RegisterCommand(kCreateOrUpdatePreset_DEPRECATED, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		TArray<FString> keys = params.GetValue(Parameters::kKeys);
-		TArray<FString> vals = params.GetValue(Parameters::kValues);
-
-		if (keys.Num() != vals.Num() || keys.Num() == 0)
-		{
-			ensureAlways(false);
-			return false;
-		}
-
-		BIM::FBIMPropertySheet props;
-		for (int32 i = 0; i < keys.Num(); ++i)
-		{
-			FModumateCommandParameter val;
-			val.FromJSON(vals[i]);
-			props.SetValue(keys[i], val);
-		}
-
-		TArray<FName> childPresets;
-		Algo::Transform(params.GetValue(Parameters::kChildPresets).AsStringArray(), childPresets, [](const FString &n) {return *n; });
-
-		FName presetKey = params.GetValue(Parameters::kPresetKey);		
-		EToolMode toolMode = EnumValueByString(EToolMode, params.GetValue(Parameters::kToolMode).AsString());
-
-		FPresetManager &presetManager = GetDocument()->PresetManager;
-		if (presetKey.IsNone())
-		{
-			FName newPresetKey;
-			if (ensureAlways(presetManager.HandleCreatePresetCommand(toolMode, props, childPresets, newPresetKey) == FPresetManager::NoError))
-			{
-				output.SetValue(kPresetKey, newPresetKey.ToString());
-				return true;
-			}
-		}
-		else
-		{
-			if (ensureAlways(presetManager.HandleUpdatePresetCommand(toolMode, props, childPresets, presetKey) == FPresetManager::NoError))
-			{
-				output.SetValue(kPresetKey, presetKey);
-				return true;
-			}
-		}
-		return false;
-	});
+	});	
 
 	RegisterCommand(kRemoveAssembly_DEPRECATED, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{

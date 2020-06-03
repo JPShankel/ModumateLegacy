@@ -11,7 +11,6 @@
 #include "Database/ModumateObjectEnums.h"
 #include "Database/ModumateSimpleMesh.h"
 #include "Database/ModumateBIMSchema.h"
-#include "ModumateCore/ModumateDecisionTree.h"
 #include "ModumateCrafting.generated.h"
 
 
@@ -19,56 +18,9 @@
 // TODO: FCraftingItem, FCraftingPreset and the various option sets are DDL 1.0, to be deprecated as DDL 2.0 definitions come on line
 struct FCraftingItem;
 
-USTRUCT()
-struct MODUMATE_API FCraftingPreset
-{
-	GENERATED_USTRUCT_BODY();
-
-	UPROPERTY()
-	FName Key;
-
-	UPROPERTY()
-	FString PresetName;
-
-	UPROPERTY()
-	FName SequenceCode;
-
-	UPROPERTY()
-	FName Subcategory;
-
-	UPROPERTY()
-	FName FormName;
-
-	UPROPERTY()
-	EToolMode ToolMode;
-
-	UPROPERTY()
-	TMap<FString, FString> PropertyArchive;
-
-	UPROPERTY()
-	TArray<FName> ChildPresets;
-
-	void UpdateArchiveFromProperties();
-	void UpdatePropertiesFromArchive();
-
-	void UpdatePresetNameFromProperties();
-
-	const FName &UniqueKey() const { return Key; }
-
-	static FName MakePresetFamilyName(const FName &subcategory, const FName &form)
-	{
-		return FName(*FString::Printf(TEXT("%s:%s"), *subcategory.ToString(), *form.ToString()));
-	}
-
-	Modumate::BIM::FBIMPropertySheet Properties;
-};
-
 namespace Modumate
 {
 	class ModumateObjectDatabase;
-
-	typedef TDecisionTree<FCraftingItem> FCraftingDecisionTree;
-	typedef TDecisionTreeNode<FCraftingItem> FCraftingDecisionTreeNode;
 
 	struct MODUMATE_API FCraftingOptionBase
 	{
@@ -81,9 +33,6 @@ namespace Modumate
 		FSimpleMeshRef ProfileMesh;
 
 		Modumate::BIM::FBIMPropertySheet CraftingParameters;
-
-		void AddSelfToDecisionNode(const ModumateObjectDatabase *db, FCraftingDecisionTreeNode &parent) const;
-		void SetSelfToPrivateNode(FCraftingDecisionTreeNode &privateNode) const;
 
 		FName UniqueKey() const { return Key; }
 	};
@@ -134,7 +83,6 @@ namespace Modumate
 		TSet<FName> ConfigurationWhitelist;
 		TMap<EPortalSlotType, FName> PartsBySlotType;
 		static const FString TableName;
-		void AddSelfToDecisionNode(const ModumateObjectDatabase *db, FCraftingDecisionTreeNode &parent) const;
 	};
 
 	typedef TCraftingOptionSet<FCraftingPortalPartOption> FCraftingPortalPartOptionSet;
@@ -173,8 +121,6 @@ namespace Modumate
 		TArray<FPortalConfigDimensionSet> SupportedHeights;
 
 		static const FString TableName;
-		void AddSelfToDecisionNode(const ModumateObjectDatabase *db, FCraftingDecisionTreeNode &parent) const;
-		void SetSelfToPrivateNode(FCraftingDecisionTreeNode &privateNode) const;
 
 		bool IsValid() const;
 	};
@@ -182,114 +128,6 @@ namespace Modumate
 	typedef TCraftingOptionSet<FPortalAssemblyConfigurationOption> FPortalAssemblyConfigurationOptionSet;
 
 }
-
-USTRUCT(BlueprintType)
-struct MODUMATE_API FCraftingItem
-{
-	GENERATED_USTRUCT_BODY();
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	EDecisionType Type;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	FText Label;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	FString Value;
-
-	// TODO: convert to FName after transition to DDL crafting
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	FString Key;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	bool Valid = true;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	bool Collapsible = false;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	FCustomColor Color;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	TWeakObjectPtr<UTexture2D> Icon;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	FName GUID;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	FName ParentGUID;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	EDecisionSelectStyle SelectStyle = EDecisionSelectStyle::Icons;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	ECraftingPresetType PresetType = ECraftingPresetType::None;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	EBIMValueScope BIMScope = EBIMValueScope::None;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	FText Tag;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	FString PresetDisplayName;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	FString PresetComments;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
-	FString PresetSequenceCode;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crafting")
-	TWeakObjectPtr<UMaterialInterface> EngineMaterial;
-
-	// Tree value locations
-	FName DynamicList = NAME_None;
-	int32 DynamicListElementIndex = 0;
-	FName SubCategory;
-	FName SelectedSubnodeGUID;
-	FString DefaultSelectedSubnodeGUID;
-
-	FSimpleMeshRef ProfileMesh;
-
-	bool HasPreset = false;
-	FName PresetFormKey;
-	FName SelectedPreset = NAME_None;
-
-	// internal fields from Subcategories table
-	ELayerFunction LayerFunction;
-	ELayerFormat LayerFormat;
-
-	// Properties - eventually everything should end up here
-	Modumate::BIM::FBIMPropertySheet Properties;
-	TArray<FString> PropertyValueBindings; // which properties our 'value' is assigned to
-
-	Modumate::FModumateCommandParameter GetProperty(Modumate::BIM::EScope scope, const FString &name) const;
-	Modumate::FModumateCommandParameter GetProperty(const FString &qualifiedName) const;
-
-	void SetProperty(Modumate::BIM::EScope scope, const FString &param, const Modumate::FModumateCommandParameter &value);
-	void SetProperty(const FString &qualifiedName, const Modumate::FModumateCommandParameter &value);
-
-	const void GetPropertyNames(TArray<FString> &outNames) const;
-	bool HasProperty(const FString &qualifiedName) const;
-	bool HasProperty(Modumate::BIM::EScope scope, const FString &name) const;
-
-	// Extended metadata for portals
-	Modumate::FCraftingPortalPartOption PortalPartOption;
-	Modumate::FPortalConfigDimensionSet PortalDimension;
-	Modumate::FPortalAssemblyConfigurationOption PortalConfigurationOption;
-
-	// When the child of a Select is chosen, it's data are promoted to parent
-	void AssimilateSubfieldValues(const FCraftingItem &sf);
-	void UpdateMetaValue();
-
-	FCraftingItem AsError() const
-	{
-		FCraftingItem ret = *this;
-		ret.Valid = false;
-		return ret;
-	}
-};
 
 struct FCustomAssemblyCraftingNodeRecord;
 struct FCraftingPresetRecord;
