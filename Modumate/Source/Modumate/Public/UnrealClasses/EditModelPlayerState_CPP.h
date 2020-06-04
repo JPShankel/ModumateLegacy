@@ -249,5 +249,5 @@ protected:
 	int32 LastSelectedObjID;
 	// if there is one selected object, save the ID.  If it's a graph object, dimension strings
 	// will be displayed
-	TSet<int32> LastSelectedVertexIDs;
+	TArray<int32> LastSelectedVertexIDs;
 };

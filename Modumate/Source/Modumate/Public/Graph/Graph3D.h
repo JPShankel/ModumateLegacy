@@ -109,6 +109,8 @@ namespace Modumate
 
 		bool Validate();
 
+		void CheckTranslationValidity(const TArray<int32> &InVertexIDs, TMap<int32, bool> &OutEdgeIDToValidity) const;
+
 	private:
 		const void FindEdges(const FVector &Position, int32 ExistingID, TArray<int32>& OutEdgeIDs) const;
 

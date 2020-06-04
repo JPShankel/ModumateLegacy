@@ -1160,6 +1160,73 @@ namespace Modumate
 		return true;
 	}
 
+	void FGraph3D::CheckTranslationValidity(const TArray<int32> &InVertexIDs, TMap<int32, bool> &OutEdgeIDToValidity) const
+	{
+		TSet<int32> connectedEdges, connectedFaces;
+		for (int32 id : InVertexIDs)
+		{
+			auto vertex = FindVertex(id);
+			if (vertex == nullptr)
+			{
+				continue;
+			}
+
+			vertex->GetConnectedFacesAndEdges(connectedFaces, connectedEdges);
+		}
+
+		for (int32 edgeID : connectedEdges)
+		{
+			auto currentEdge = FindEdge(edgeID);
+			bool bHasStartVertexID = InVertexIDs.Find(currentEdge->StartVertexID) != INDEX_NONE;
+			bool bHasEndVertexID = InVertexIDs.Find(currentEdge->EndVertexID) != INDEX_NONE;
+			if (bHasStartVertexID && bHasEndVertexID)
+			{
+				OutEdgeIDToValidity.Add(edgeID, false);
+				continue;
+			}
+
+			FVector offsetDir = bHasStartVertexID ? currentEdge->CachedDir : currentEdge->CachedDir * -1.0f;
+
+			bool bValidDirection = true;
+
+			for (int32 faceID : connectedFaces)
+			{
+				auto face = FindFace(faceID);
+				if (FVector::Orthogonal(offsetDir, face->CachedPlane))
+				{
+					continue;
+				}
+				else if (face->VertexIDs.Num() == 3)
+				{
+					continue;
+				}
+
+				TArray<FVector> newVertices;
+				for (int32 idx = 0; idx < face->VertexIDs.Num(); idx++)
+				{
+					if (InVertexIDs.Find(face->VertexIDs[idx]) != INDEX_NONE)
+					{
+						newVertices.Add(face->CachedPositions[idx] + offsetDir);
+					}
+					else
+					{
+						newVertices.Add(face->CachedPositions[idx]);
+					}
+				}
+
+				FPlane newPlane;
+				bValidDirection = UModumateGeometryStatics::GetPlaneFromPoints(newVertices, newPlane);
+				if (!bValidDirection)
+				{
+					break;
+				}
+			}
+
+			OutEdgeIDToValidity.Add(edgeID, bValidDirection);
+		}
+
+	}
+
 	void FGraph3D::Load(const FGraph3DRecord* InGraph3DRecord)
 	{
 		Reset();

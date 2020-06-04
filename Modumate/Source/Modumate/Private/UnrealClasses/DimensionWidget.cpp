@@ -1,21 +1,40 @@
 #include "UnrealClasses/DimensionWidget.h"
 
-#include "Components/Border.h"
-#include "Components/TextBlock.h"
+#include "Components/EditableTextBox.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "Graph/Graph3D.h"
+#include "Graph/Graph3DDelta.h"
+#include "Graph/ModumateGraph3DTypes.h"
+
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateUnits.h"
 
 #define LOCTEXT_NAMESPACE "UDimensionWidget"
 
 UDimensionWidget::UDimensionWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, OffsetFromEdge(3.0f)
 {
 
 }
 
-void UDimensionWidget::SetTarget(int32 InTargetEdgeID, int32 InTargetObjID)
+bool UDimensionWidget::Initialize()
+{
+	if (!Super::Initialize())
+	{
+		return false;
+	}
+
+	if (!Measurement)
+	{
+		return false;
+	}
+
+	Measurement->OnTextCommitted.AddDynamic(this, &UDimensionWidget::OnMeasurementTextCommitted);
+
+	return true;
+}
+
+void UDimensionWidget::SetTarget(int32 InTargetEdgeID, int32 InTargetObjID, bool bIsEditable)
 {
 	TargetEdgeID = InTargetEdgeID;
 	TargetObjID = InTargetObjID;
@@ -26,26 +45,26 @@ void UDimensionWidget::SetTarget(int32 InTargetEdgeID, int32 InTargetObjID)
 	{
 		return;
 	}
+	Graph = &GameState->Document.GetVolumeGraph();
+
+	Measurement->SetIsReadOnly(!bIsEditable);
+	!bIsEditable ? Measurement->WidgetStyle.SetFont(ReadOnlyFont) : Measurement->WidgetStyle.SetFont(EditableFont);
+
+	UpdateText();
 }
 
 void UDimensionWidget::UpdateTransform()
 {
-	auto volumeGraph = GameState->Document.GetVolumeGraph();
-	auto targetEdge = volumeGraph.FindEdge(FMath::Abs(TargetEdgeID));
+	auto targetEdge = Graph->FindEdge(FMath::Abs(TargetEdgeID));
 
 	auto controller = GetOwningPlayer();
 
 	FVector2D targetScreenPosition;
-	if (targetEdge && controller && controller->ProjectWorldLocationToScreen(targetEdge->CachedMidpoint, targetScreenPosition))
+	if (targetEdge && controller && 
+		controller->ProjectWorldLocationToScreen(targetEdge->CachedMidpoint, targetScreenPosition))
 	{
-		auto startVertex = volumeGraph.FindVertex(targetEdge->StartVertexID);
-		auto endVertex = volumeGraph.FindVertex(targetEdge->EndVertexID);
-
-		float length = (endVertex->Position - startVertex->Position).Size();
-
-		FText lengthText;
-		SanitizeInput(length, lengthText);
-		Measurement->SetText(lengthText);
+		auto startVertex = Graph->FindVertex(targetEdge->StartVertexID);
+		auto endVertex = Graph->FindVertex(targetEdge->EndVertexID);
 
 		// Calculate angle/offset
 		// if the target object is a face, determine the offset direction from the cached edge normals 
@@ -54,10 +73,11 @@ void UDimensionWidget::UpdateTransform()
 		FVector2D projStart, projEnd, edgeDirection;
 		controller->ProjectWorldLocationToScreen(startVertex->Position, projStart);
 		controller->ProjectWorldLocationToScreen(endVertex->Position, projEnd);
+
 		edgeDirection = projEnd - projStart;
 		edgeDirection.Normalize();
 
-		auto targetFace = volumeGraph.FindFace(TargetObjID);
+		auto targetFace = Graph->FindFace(TargetObjID);
 		bool bOutSameDirection;
 		int32 edgeIdx = targetFace ? targetFace->FindEdgeIndex(TargetEdgeID, bOutSameDirection) : INDEX_NONE;
 		if (targetFace && edgeIdx != INDEX_NONE)
@@ -75,7 +95,7 @@ void UDimensionWidget::UpdateTransform()
 		}
 		FVector2D widgetSize = GetCachedGeometry().GetAbsoluteSize();
 
-		SetPositionInViewport(targetScreenPosition - ((OffsetFromEdge + widgetSize.Y / 2.0f) * offsetDirection));
+		SetPositionInViewport(targetScreenPosition - ((PixelOffset + widgetSize.Y / 2.0f) * offsetDirection));
 		float angle = FMath::RadiansToDegrees(FMath::Atan2(edgeDirection.Y, edgeDirection.X));
 		angle = FRotator::ClampAxis(angle);
 
@@ -84,7 +104,11 @@ void UDimensionWidget::UpdateTransform()
 			angle -= 180.0f;
 		}
 
-		RootBorder->SetRenderTransformAngle(angle);
+		Measurement->SetRenderTransformAngle(angle);
+
+		// Update text is called here to make sure that the text matches the current length
+		// even if something else changed the length (ex. Undo)
+		UpdateText();
 	}
 }
 
@@ -146,6 +170,92 @@ void UDimensionWidget::SanitizeInput(float InLength, FText &OutText)
 
 	// if there are both feet and inches, separate with a dash, otherwise use the one that exists
 	OutText = FText::Format(LOCTEXT("feet_and_inches", "{0}{1}"), feetText, inchesText);
+}
+
+void UDimensionWidget::OnMeasurementTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	bool bVerticesMoved = false;
+	if (CommitMethod == ETextCommit::OnEnter)
+	{
+		float lengthValue;
+		// get the desired length from the text (assuming the text is entered in feet)
+		// shrinking the edge be zero length is not allowed
+		if (UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), lengthValue) && lengthValue > Graph->Epsilon)
+		{
+			lengthValue *= Modumate::InchesPerFoot * Modumate::InchesToCentimeters;
+
+			// construct deltas
+
+			TArray<int32> vertexIDs;
+
+			// gather vertices that will be translated (all vertices contained within the selected object)
+			if (auto vertex = Graph->FindVertex(TargetObjID))
+			{
+				vertexIDs = { TargetObjID };
+			}
+			else if (auto edge = Graph->FindEdge(TargetObjID))
+			{
+				vertexIDs = { edge->StartVertexID, edge->EndVertexID };
+			}
+			else if (auto face = Graph->FindFace(TargetObjID))
+			{
+				vertexIDs = face->VertexIDs;
+			}
+
+			// the selected object will be translated towards the vertex that it does not contain
+			auto edge = Graph->FindEdge(TargetEdgeID);
+			auto startVertex = Graph->FindVertex(edge->StartVertexID);
+			auto endVertex = Graph->FindVertex(edge->EndVertexID);
+			FVector offsetDir = vertexIDs.Find(startVertex->ID) != INDEX_NONE ?
+				edge->CachedDir : edge->CachedDir * -1.0f;
+
+			// lengthValue is the desired resulting length of the edge after the translation,
+			// so subtract from the current value to translate by the difference
+			float edgeLength = (endVertex->Position - startVertex->Position).Size();
+			float offsetMagnitude = edgeLength - lengthValue;
+			FVector offset = offsetDir * offsetMagnitude;
+
+			TArray<FVector> positions;
+			for (int32 vertexID : vertexIDs)
+			{
+				auto vertex = Graph->FindVertex(vertexID);
+				positions.Add(vertex->Position + offset);
+			}
+
+			auto &doc = GameState->Document;
+			bVerticesMoved = doc.MoveMetaVertices(GetWorld(), vertexIDs, positions);
+
+		}
+	}
+
+	if (bVerticesMoved)
+	{
+		UpdateText();
+	}
+	else
+	{
+		Measurement->SetText(LastCommittedText);
+	}
+
+}
+
+void UDimensionWidget::UpdateText()
+{
+	// check current edge length against value saved in text
+	auto targetEdge = Graph->FindEdge(FMath::Abs(TargetEdgeID));
+	auto startVertex = Graph->FindVertex(targetEdge->StartVertexID);
+	auto endVertex = Graph->FindVertex(targetEdge->EndVertexID);
+
+	float currentLength = (endVertex->Position - startVertex->Position).Size();
+
+	if (currentLength != LastLength)
+	{
+		FText newText;
+		SanitizeInput(currentLength, newText);
+		Measurement->SetText(newText);
+		LastCommittedText = newText;
+		LastLength = currentLength;
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

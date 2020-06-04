@@ -589,39 +589,26 @@ void AEditModelPlayerState_CPP::PostSelectionOrViewChanged()
 void AEditModelPlayerState_CPP::UpdateGraphDimensionStrings()
 {
 	// find which vertices are currently selected and create measuring dimension strings
-	auto &doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-	auto volumeGraph = doc.GetVolumeGraph();
+	auto& graph = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document.GetVolumeGraph();
 
-	EGraph3DObjectType type;
-	bool bClearActors = true;
 	int32 currentSelectedObjID = MOD_ID_NONE;
 	LastSelectedVertexIDs.Reset();
 
 	if (SelectedObjects.Num() == 1)
 	{
 		// aggregate the unique selected vertices
-		auto obj = SelectedObjects[0];
-		currentSelectedObjID = obj->ID;
-		if (doc.IsObjectInVolumeGraph(currentSelectedObjID, type))
+		currentSelectedObjID = SelectedObjects[0]->ID;
+		if (auto vertex = graph.FindVertex(currentSelectedObjID))
 		{
-			switch (type)
-			{
-			case EGraph3DObjectType::Vertex:
-			{
-				LastSelectedVertexIDs.Add(currentSelectedObjID);
-			} break;
-			case EGraph3DObjectType::Edge:
-			{
-				auto edge = volumeGraph.FindEdge(currentSelectedObjID);
-				LastSelectedVertexIDs.Add(edge->StartVertexID);
-				LastSelectedVertexIDs.Add(edge->EndVertexID);
-			} break;
-			case EGraph3DObjectType::Face:
-			{
-				auto face = volumeGraph.FindFace(currentSelectedObjID);
-				LastSelectedVertexIDs.Append(face->VertexIDs);
-			} break;
-			}
+			LastSelectedVertexIDs = { currentSelectedObjID };
+		}
+		else if (auto edge = graph.FindEdge(currentSelectedObjID))
+		{
+			LastSelectedVertexIDs = { edge->StartVertexID, edge->EndVertexID };
+		}
+		else if (auto face = graph.FindFace(currentSelectedObjID))
+		{
+			LastSelectedVertexIDs = face->VertexIDs;
 		}
 	}
 
@@ -635,18 +622,14 @@ void AEditModelPlayerState_CPP::UpdateGraphDimensionStrings()
 
 		if (SelectedObjects.Num() == 1)
 		{
-			// find edges connected to the selection
-			TSet<int32> connectedEdges, connectedFaces;
-			for (int32 vertexID : LastSelectedVertexIDs)
-			{
-				auto vertex = volumeGraph.FindVertex(vertexID);
-				vertex->GetConnectedFacesAndEdges(connectedFaces, connectedEdges);
-			}
+			// edges are editable when translating the selected object along that edge is valid
+			TMap<int32, bool> edgeIDToEditability;
+			graph.CheckTranslationValidity(LastSelectedVertexIDs, edgeIDToEditability);
 
-			for (int32 edgeID : connectedEdges)
+			for (auto kvp : edgeIDToEditability)
 			{
 				ADimensionActor* dimensionActor = GetWorld()->SpawnActor<ADimensionActor>(ADimensionActor::StaticClass());
-				dimensionActor->DimensionText->SetTarget(edgeID, currentSelectedObjID);
+				dimensionActor->DimensionText->SetTarget(kvp.Key, currentSelectedObjID, kvp.Value);
 				DimensionActors.Add(dimensionActor);
 			}
 		}
