@@ -50,6 +50,10 @@ namespace Modumate
 		return false;
 	}
 
+	void FEditModelAdjustmentHandleBase::Tick(float DeltaTime)
+	{
+	}
+
 	bool FEditModelAdjustmentHandleBase::OnEndUse()
 	{
 		// TODO: subclass handles to support meta and non-meta objects separately

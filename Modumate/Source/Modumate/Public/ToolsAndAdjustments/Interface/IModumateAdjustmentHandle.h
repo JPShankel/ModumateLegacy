@@ -16,6 +16,7 @@ namespace Modumate {
 		virtual ~IAdjustmentHandleImpl() {}
 		virtual bool OnBeginUse() = 0;
 		virtual bool OnUpdateUse() = 0;
+		virtual void Tick(float DeltaTime) = 0;
 		virtual bool OnEndUse() = 0;
 		virtual bool OnAbortUse() = 0;
 		virtual bool IsInUse() const = 0;

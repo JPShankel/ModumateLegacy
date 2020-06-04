@@ -23,10 +23,10 @@ public:
 	virtual bool Initialize() override;
 
 	void SetTarget(int32 InTargetPerimeterID, int32 InTargetEdgeID, class AAdjustmentHandleActor_CPP *InOwningHandle);
+	void UpdateTransform();
 
 protected:
 	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 
 public:
 	UPROPERTY()

@@ -16,6 +16,8 @@ class MODUMATE_API ADimensionActor : public AActor
 	GENERATED_BODY()
 
 public:
+	ADimensionActor(const FObjectInitializer& ObjectInitializer);
+
 	void CreateWidget();
 	void ReleaseWidget();
 

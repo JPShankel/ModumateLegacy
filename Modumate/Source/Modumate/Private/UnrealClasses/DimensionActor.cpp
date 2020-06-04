@@ -7,6 +7,12 @@
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/HUDDrawWidget.h"
 
+ADimensionActor::ADimensionActor(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
 void ADimensionActor::CreateWidget()
 {
 	TWeakObjectPtr<AEditModelPlayerController_CPP> playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
@@ -45,4 +51,9 @@ void ADimensionActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void ADimensionActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (DimensionText)
+	{
+		DimensionText->UpdateTransform();
+	}
 }

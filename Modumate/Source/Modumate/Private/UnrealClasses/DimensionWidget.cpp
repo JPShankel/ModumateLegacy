@@ -28,10 +28,8 @@ void UDimensionWidget::SetTarget(int32 InTargetEdgeID, int32 InTargetObjID)
 	}
 }
 
-void UDimensionWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void UDimensionWidget::UpdateTransform()
 {
-	Super::NativeTick(MyGeometry, InDeltaTime);
-
 	auto volumeGraph = GameState->Document.GetVolumeGraph();
 	auto targetEdge = volumeGraph.FindEdge(FMath::Abs(TargetEdgeID));
 
@@ -75,7 +73,7 @@ void UDimensionWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 			// rotate by 90 degrees in 2D
 			offsetDirection = FVector2D(edgeDirection.Y, -edgeDirection.X);
 		}
-		FVector2D widgetSize = MyGeometry.GetAbsoluteSize();
+		FVector2D widgetSize = GetCachedGeometry().GetAbsoluteSize();
 
 		SetPositionInViewport(targetScreenPosition - ((OffsetFromEdge + widgetSize.Y / 2.0f) * offsetDirection));
 		float angle = FMath::RadiansToDegrees(FMath::Atan2(edgeDirection.Y, edgeDirection.X));

@@ -185,6 +185,16 @@ namespace Modumate
 		return PropertiesWidget.IsValid();
 	}
 
+	void FEditRoofEdgeHandle::Tick(float DeltaTime)
+	{
+		FEditModelAdjustmentHandleBase::Tick(DeltaTime);
+
+		if (PropertiesWidget.IsValid())
+		{
+			PropertiesWidget->UpdateTransform();
+		}
+	}
+
 	bool FEditRoofEdgeHandle::OnEndUse()
 	{
 		// TODO: we should be able to rely on FEditModelAdjustmentHandleBase's OnEndUse, but it currently creates an FMOIDelta unconditionally

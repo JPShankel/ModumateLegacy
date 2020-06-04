@@ -15,9 +15,9 @@ public:
 	UDimensionWidget(const FObjectInitializer& ObjectInitializer);
 
 	void SetTarget(int32 InTargetEdgeID, int32 InTargetObjID);
+	void UpdateTransform();
 
 protected:
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 	virtual void InitializeNativeClassData() override;
 
 	// TODO: potentially have this used by more things depending on how 

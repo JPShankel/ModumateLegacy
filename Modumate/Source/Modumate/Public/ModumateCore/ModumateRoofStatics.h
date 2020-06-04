@@ -54,7 +54,12 @@ struct MODUMATE_API FRoofEdgeProperties
 {
 	GENERATED_USTRUCT_BODY()
 
-	FRoofEdgeProperties() {}
+	FRoofEdgeProperties()
+		: bOverridden(false)
+		, Slope(0.0f)
+		, bHasFace(true)
+		, Overhang(0.0f)
+	{ }
 
 	FRoofEdgeProperties(bool bInOverridden, float InSlope, bool bInHasFace, float InOverhang)
 		: bOverridden(bInOverridden)

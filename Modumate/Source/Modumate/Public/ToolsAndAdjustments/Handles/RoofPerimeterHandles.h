@@ -56,6 +56,7 @@ namespace Modumate
 
 		virtual bool OnBeginUse() override;
 		virtual bool OnUpdateUse() override;
+		virtual void Tick(float DeltaTime) override;
 		virtual bool OnEndUse() override;
 		virtual bool OnAbortUse() override;
 		virtual FVector GetAttachmentPoint() override;

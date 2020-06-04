@@ -82,6 +82,8 @@ void AAdjustmentHandleActor_CPP::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (Implementation)
 	{
+		Implementation->Tick(DeltaTime);
+
 		if (ParentMOI && HandleType == EHandleType::Justification)
 		{
 			HandleDirection = ParentMOI->GetNormal();

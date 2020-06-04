@@ -86,25 +86,23 @@ void URoofPerimeterPropertiesWidget::SetTarget(int32 InTargetPerimeterID, int32 
 	//OverhangEditor->SetText(FText::AsNumber(CurrentProperties.Overhang));
 }
 
-void URoofPerimeterPropertiesWidget::NativeConstruct()
+void URoofPerimeterPropertiesWidget::UpdateTransform()
 {
-	Super::NativeConstruct();
-}
-
-void URoofPerimeterPropertiesWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-
 	const FModumateObjectInstance *targetObj = GameState->Document.GetObjectById(FMath::Abs(TargetEdgeID));
 	auto controller = GetOwningPlayer();
 
 	FVector2D targetScreenPosition;
 	if (targetObj && controller && controller->ProjectWorldLocationToScreen(targetObj->GetObjectLocation(), targetScreenPosition))
 	{
-		FVector2D widgetSize = MyGeometry.GetAbsoluteSize();
+		FVector2D widgetSize = GetCachedGeometry().GetAbsoluteSize();
 		FVector2D widgetOffset(-0.5f * widgetSize.X, -widgetSize.Y - 16.0f);
 		SetPositionInViewport(targetScreenPosition + widgetOffset);
 	}
+}
+
+void URoofPerimeterPropertiesWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
 }
 
 void URoofPerimeterPropertiesWidget::OnControlChangedGabled(bool bIsChecked)
