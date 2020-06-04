@@ -13,11 +13,6 @@
 #include "Database/ModumateBIMSchema.h"
 #include "ModumateCrafting.generated.h"
 
-
-
-// TODO: FCraftingItem, FCraftingPreset and the various option sets are DDL 1.0, to be deprecated as DDL 2.0 definitions come on line
-struct FCraftingItem;
-
 namespace Modumate
 {
 	class ModumateObjectDatabase;

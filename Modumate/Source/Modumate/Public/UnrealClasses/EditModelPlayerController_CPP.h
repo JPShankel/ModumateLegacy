@@ -18,7 +18,6 @@
 
 class AAdjustmentHandleActor_CPP;
 class AEditModelPlayerState_CPP;
-class UDraftingPreviewWidget_CPP;
 class UEditModelCameraController;
 class UEditModelInputAutomation;
 class UEditModelInputHandler;
