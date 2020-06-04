@@ -360,7 +360,7 @@ TArray<FVector2D> UModumateFunctionLibrary::FloorUVCalculateWithAnchor(TArray<FV
 void UModumateFunctionLibrary::CalculateFloorParam(FVector Origin, TArray<FVector> anchorUV, FVector topAnchorUV, FRotator topUvRotation, TArray<FVector> InTopVerts, TArray<FVector> InBottomVerts, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUV, TArray<int32>& ReturnTopTris)
 {
 	float bottomHeight = InBottomVerts[0].Z;
-	TArray<FVector> topVerts, topNormals, sideVertsPending, sideVerts, sideNormals, bottomVerts, bottomNormals, inAnchorUV;
+	TArray<FVector> topVerts, topVertsOut, topNormals, sideVertsPending, sideVerts, sideNormals, bottomVerts, bottomNormals, inAnchorUV;
 	TArray<int32> topTris, conflictID, intersectID, sideTris, bottomTris;
 	TArray<FVector2D> topUVs, verts2D, sideUVsPending, sideUVs, bottomUVs;
 	FVector topVert1(ForceInitToZero);
@@ -399,10 +399,14 @@ void UModumateFunctionLibrary::CalculateFloorParam(FVector Origin, TArray<FVecto
 		topVerts2D.Add(FVector2D(curVert));
 	}
 	UModumateGeometryStatics::TriangulateVerticesPoly2Tri(topVerts2D, holes2D, topVerts2DOut, topTris, outPerimeter, outMergedHoles, outPerimeterVertexHoleIndices);
-	topTris = ConformTriangleClockwise(topVerts, topTris);
-	V3dToV2d(verts2D, topVerts);
-	topUVs = GetPolygonUVWith3DXY(Origin - topAnchorUV, topVerts, FVector2D(100.0, 100.0), topUvRotation);
-	for (int32 i = 0; i < topVerts.Num(); i++)
+	for (int32 i = 0; i < topVerts2DOut.Num(); i++)
+	{
+		topVertsOut.Add(FVector(topVerts2DOut[i], topVerts[i].Z));
+	}
+	topTris = ConformTriangleClockwise(topVertsOut, topTris);
+	V3dToV2d(verts2D, topVertsOut);
+	topUVs = GetPolygonUVWith3DXY(Origin - topAnchorUV, topVertsOut, FVector2D(100.0, 100.0), topUvRotation);
+	for (int32 i = 0; i < topVertsOut.Num(); i++)
 	{
 		topNormals.Add(FVector(0.0, 0.0, 1.0));
 	}
@@ -432,7 +436,7 @@ void UModumateFunctionLibrary::CalculateFloorParam(FVector Origin, TArray<FVecto
 		if (anchorUV.Num() > 0)
 		{
 			int32 curIndex = LoopArrayGetNextIndex(i, topVerts.Num());
-			FVector UVAnchorRelative = inAnchorUV[curIndex];
+			FVector UVAnchorRelative = inAnchorUV[curIndex] + Origin;
 
 			TArray<FVector> sideVertsPendingUnOrigin;
 			for (int32 j = 0; j < sideVertsPending.Num(); j++)
@@ -450,7 +454,7 @@ void UModumateFunctionLibrary::CalculateFloorParam(FVector Origin, TArray<FVecto
 		}
 	}
 	// bottom faces
-	for (FVector& curVector : topVerts)
+	for (FVector& curVector : topVertsOut)
 	{
 		bottomVerts.Add(FVector(curVector.X, curVector.Y, bottomHeight));
 		bottomNormals.Add(FVector(0.0, 0.0, -1.0));
@@ -460,7 +464,7 @@ void UModumateFunctionLibrary::CalculateFloorParam(FVector Origin, TArray<FVecto
 	bottomUVs = topUVs;
 
 	// Append all procedural mesh faces parameters
-	ReturnVerts.Append(topVerts);
+	ReturnVerts.Append(topVertsOut);
 	ReturnVerts.Append(sideVerts);
 	ReturnVerts.Append(bottomVerts);
 
