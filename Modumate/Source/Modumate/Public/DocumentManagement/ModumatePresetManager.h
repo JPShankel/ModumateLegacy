@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Database/ModumateDataCollection.h"
-#include "Database/ModumateCrafting.h"
+#include "BIMKernel/BIMLegacyPortals.h"
 #include "Database/ModumateObjectAssembly.h"
 #include "DocumentManagement/ModumateSerialization.h"
 

@@ -8,7 +8,7 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "Graph/Graph3D.h"
-#include "Database/ModumateBIMSchema.h"
+#include "BIMKernel/BIMProperties.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "DocumentManagement/ModumateObjectInstance.h"

@@ -1,7 +1,6 @@
-// Copyright 2019 Modumate, Inc. All Rights Reserved.
+// Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-
-#include "Database/ModumateBIMSchema.h"
+#include "BIMKernel/BIMProperties.h"
 #include "DocumentManagement/ModumateSerialization.h"
 
 struct MODUMATE_API FBIMPropertySheetRecord;

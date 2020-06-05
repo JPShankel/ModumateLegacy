@@ -67,70 +67,6 @@ enum class EMOIDeltaType : uint8
 	Destroy
 };
 
-UENUM()
-enum class EBIMValueType : uint8
-{
-	None = 0,
-	UserString,
-	FixedText,
-	Number,
-	Integer,
-	Bool,
-	Color,
-	Dimension,
-	Material,
-	Formula,
-	Subcategory,
-	Select,
-	TableSelect,
-	DynamicList,
-	Form,
-	Error=255
-};
-
-UENUM(BlueprintType)
-enum class EBIMValueScope : uint8
-{
-	None = 0,
-	Assembly,
-	Layer,
-	Pattern,
-	Module,
-	Gap,
-	ToeKick,
-	Node,
-	Mesh,
-	Portal,
-	MaterialColor,
-	Form,
-	Preset,
-	Room,
-	Drawing,
-	Roof,
-	//NOTE: finish bindings to be refactored, supporting old version as scopes for now
-	//Underscores appear in metadata table so maintaining here
-	Interior_Finish,
-	Exterior_Finish,
-	Glass_Finish,
-	Frame_Finish,
-	Hardware_Finish,
-	Cabinet_Interior_Finish,
-	Cabinet_Exterior_Finish,
-	Cabinet_Glass_Finish,
-	Cabinet_Hardware_Finish,
-	Error=255
-};
-
-UENUM(BlueprintType)
-enum class ECraftingNodePresetStatus : uint8
-{
-	None = 0,
-	UpToDate,
-	Dirty,
-	Pending,
-	ReadOnly
-};
-
 UENUM(BlueprintType)
 enum class EToolMode : uint8
 {
@@ -196,106 +132,6 @@ enum class EObjectType : uint8
 	OTUnknown
 };
 
-UENUM(BlueprintType)
-enum class ELayerFormat : uint8
-{
-	None,
-	Block,
-	Board,
-	Brick,
-	Channel,
-	Deck,
-	Joist,
-	Masonry,
-	Mass,
-	Panel,
-	Plank,
-	Roll,
-	Spread,
-	Stud,
-	Sheet,
-	Shingle,
-	Tile
-};
-
-UENUM(BlueprintType)
-enum class ELayerFunction : uint8
-{
-	None,
-	Void,
-	Insulation,
-	Structure,
-	Substrate,
-	Membrane,
-	// Items below are for finishes, for now
-	Adhesive,
-	Underlayment,
-	Finish,
-	Abstract
-};
-
-UENUM(BlueprintType)
-enum class EPortalFunction : uint8
-{
-	None,
-	CasedOpening,
-	Swing,
-	Barn,
-	Pocket,
-	Sliding,
-	Folding,
-	Fixed,
-	Casement,
-	Awning,
-	Hopper,
-	Hung,
-	Jalousie,
-	Cabinet
-};
-
-UENUM(BlueprintType)
-enum class EPortalSlotType : uint8
-{
-	None,
-	Frame,
-	Panel,
-	Hinge,
-	Handle,
-	Lock,
-	Closer,
-	Knocker,
-	Peephole,
-	Protection,
-	Silencer,
-	Stop,
-	DogDoor,
-	MailSlot,
-	Astragal,
-	Sidelite,
-	Transom,
-	Screen,
-	Hole,
-	Mullion,
-	Track,
-	Caster
-};
-
-UENUM(BlueprintType)
-enum class EDecisionType : uint8
-{
-	None = 0,
-	Form,
-	Select,
-	YesNo,
-	String,
-	Dimension,
-	TableSelect,
-	Derived,
-	Private,
-	Terminal,
-	DynamicList,
-	Preset
-};
 
 UENUM(BlueprintType)
 enum class EEditObjectStatus : uint8
@@ -303,14 +139,6 @@ enum class EEditObjectStatus : uint8
 	None = 0,
 	CanSave,
 	CannotSave
-};
-
-UENUM(BlueprintType)
-enum class ECraftingPresetType : uint8
-{
-	None = 0,
-	User,
-	BuiltIn
 };
 
 UENUM(BlueprintType)
@@ -361,49 +189,6 @@ enum class EObjectDirtyFlags : uint8
 	Visuals = 0x04
 };
 ENUM_CLASS_FLAGS(EObjectDirtyFlags);
-
-UENUM(BlueprintType)
-enum class ECraftingResult : uint8
-{
-	None = 0,
-	Success,
-	Error
-};
-
-UENUM(BlueprintType)
-enum class EConfiguratorNodeIconType : uint8
-{
-	None = 0,
-	LayeredAssembly,
-	Stair,
-	OpeningSystem,
-	FFEConfig,
-	ExtrudedProfile,
-	LayerVertical,
-	LayerHorizontal,
-	Layer,
-	Module,
-	Gap2D,
-	StaticMesh,
-	Profile,
-	SawtoothStringer,
-	StairNosing,
-	GraphConfig2D,
-	Material,
-	SrfTreatment,
-	Color,
-	Dimension,
-	Pattern,
-};
-
-UENUM(BlueprintType)
-enum class EConfiguratorNodeIconOrientation : uint8
-{
-	None = 0,
-	Horizontal,
-	Vertical,
-	Inherited
-};
 
 UENUM(BlueprintType)
 enum class EAreaType : uint8

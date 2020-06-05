@@ -2,7 +2,7 @@
 
 #include "ModumateCore/ModumateRoofStatics.h"
 
-#include "Database/ModumateBIMSchema.h"
+#include "BIMKernel/BIMProperties.h"
 #include "DocumentManagement/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 

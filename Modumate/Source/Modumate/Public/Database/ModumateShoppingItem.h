@@ -7,6 +7,7 @@
 #include "Runtime/Engine/Classes/Materials/Material.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "Database/ModumateObjectEnums.h"
+#include "BIMKernel/BIMLegacyPortals.h"
 #include "ModumateShoppingItem.generated.h"
 
 /*

@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include <functional>
 #include "Database/ModumateObjectAssembly.h"
-#include "Database/ModumateLayerPattern.h"
+#include "BIMKernel/BIMLegacyPattern.h"
 #include "Database/ModumateDataCollection.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateTypes.h"
-#include "Database/ModumateBIMSchema.h"
+#include "BIMKernel/BIMProperties.h"
 #include "ModumateDataTables.h"
 #include "DocumentManagement/ModumatePresetManager.h"
 #include "ModumateCore/ModumateRoomStatics.h"

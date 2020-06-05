@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Database/ModumateBIMSchema.h"
-#include "Database/ModumateCrafting.h"
+#include "BIMKernel/BIMProperties.h"
+#include "BIMKernel/BIMLegacyPortals.h"
 #include "DocumentManagement/ModumatePresetManager.h"
 #include "Database/ModumateObjectAssembly.h"
 #include "UnrealClasses/DynamicMeshActor.h"

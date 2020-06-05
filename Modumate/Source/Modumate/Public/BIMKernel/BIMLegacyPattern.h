@@ -8,7 +8,8 @@
 #include "ModumateCore/ModumateUnits.h"
 #include "Database/ModumateObjectEnums.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
-#include "ModumateLayerPattern.generated.h"
+#include "BIMKernel/BIMDataModel.h"
+#include "BIMLegacyPattern.generated.h"
 
 namespace Modumate
 {
@@ -44,7 +45,6 @@ struct FLayerPatternGap
 
 	FName Key = FName();
 	FText DisplayName = FText::GetEmpty();
-
 
 	FVector2D GapExtents;
 

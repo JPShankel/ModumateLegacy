@@ -1,11 +1,10 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "Database/ModumateLayerPattern.h"
+#include "BIMKernel/BIMLegacyPattern.h"
 #include "Algo/Transform.h"
-#include "Database/ModumateCrafting.h"
+#include "BIMKernel/BIMLegacyPortals.h"
 
 using namespace Modumate::Units;
-
 
 void FLayerPatternModule::InitFromCraftingParameters(const Modumate::FModumateFunctionParameterSet &params)
 {

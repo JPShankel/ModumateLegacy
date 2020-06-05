@@ -3,10 +3,76 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Database/ModumateObjectEnums.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
+#include "Database/ModumateObjectEnums.h"
+#include "BIMProperties.generated.h"
 
 struct MODUMATE_API FBIMPropertySheetRecord;
+
+UENUM()
+enum class EBIMValueType : uint8
+{
+	None = 0,
+	UserString,
+	FixedText,
+	Number,
+	Integer,
+	Bool,
+	Color,
+	Dimension,
+	Material,
+	Formula,
+	Subcategory,
+	Select,
+	TableSelect,
+	DynamicList,
+	Form,
+	Error = 255
+};
+
+
+UENUM(BlueprintType)
+enum class EBIMValueScope : uint8
+{
+	None = 0,
+	Assembly,
+	Layer,
+	Pattern,
+	Module,
+	Gap,
+	ToeKick,
+	Node,
+	Mesh,
+	Portal,
+	MaterialColor,
+	Form,
+	Preset,
+	Room,
+	Drawing,
+	Roof,
+	//NOTE: finish bindings to be refactored, supporting old version as scopes for now
+	//Underscores appear in metadata table so maintaining here
+	Interior_Finish,
+	Exterior_Finish,
+	Glass_Finish,
+	Frame_Finish,
+	Hardware_Finish,
+	Cabinet_Interior_Finish,
+	Cabinet_Exterior_Finish,
+	Cabinet_Glass_Finish,
+	Cabinet_Hardware_Finish,
+	Error = 255
+};
+
+UENUM(BlueprintType)
+enum class ECraftingNodePresetStatus : uint8
+{
+	None = 0,
+	UpToDate,
+	Dirty,
+	Pending,
+	ReadOnly
+};
 
 namespace Modumate {
 	namespace BIM {
@@ -132,5 +198,14 @@ namespace Modumate {
 			bool FromDataRecord(const FBIMPropertySheetRecord &InRecord);
 			bool ToDataRecord(FBIMPropertySheetRecord &OutRecord) const;
 		};
+
+		struct MODUMATE_API FModumateAssemblyPropertySpec
+		{
+			EObjectType ObjectType = EObjectType::OTNone;
+			FName RootPreset;
+			FBIMPropertySheet RootProperties;
+			TArray<FBIMPropertySheet> LayerProperties;
+		};
+
 	}
 }

@@ -17,7 +17,7 @@
 #include "Online/ModumateAnalyticsStatics.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "UnrealClasses/ModumateConsole.h"
-#include "Database/ModumateCrafting.h"
+#include "BIMKernel/BIMLegacyPortals.h"
 #include "Database/ModumateCraftingWidget_CPP.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Database/ModumateDrawingSetWidget_CPP.h"

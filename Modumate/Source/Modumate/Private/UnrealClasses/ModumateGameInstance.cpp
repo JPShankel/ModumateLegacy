@@ -13,7 +13,7 @@
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "Misc/Crc.h"
 #include "Online/ModumateAnalyticsStatics.h"
-#include "Database/ModumateBIMSchema.h"
+#include "BIMKernel/BIMProperties.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "Drafting/ModumateDraftingView.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"

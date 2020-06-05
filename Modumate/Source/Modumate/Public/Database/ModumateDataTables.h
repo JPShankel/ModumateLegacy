@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "Runtime/Engine/Classes/Engine/DataTable.h"
 #include "Database/ModumateObjectEnums.h"
+#include "BIMKernel/BIMLegacyPortals.h"
 #include "ModumateDataTables.generated.h"
 
 

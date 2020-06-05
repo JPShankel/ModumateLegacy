@@ -1,5 +1,5 @@
 #include "CoreMinimal.h"
-#include "Database/ModumateBIMSchema.h"
+#include "BIMKernel/BIMProperties.h"
 
 namespace Modumate
 {

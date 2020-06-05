@@ -2,7 +2,7 @@
 
 #include "Database/ModumateCraftingWidget_CPP.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "Database/ModumateBIMSchema.h"
+#include "BIMKernel/BIMProperties.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "Database/ModumateObjectEnums.h"

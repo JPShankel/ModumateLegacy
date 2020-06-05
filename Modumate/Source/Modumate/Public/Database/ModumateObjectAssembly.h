@@ -9,9 +9,9 @@
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "Database/ModumateArchitecturalMesh.h"
 #include "Database/ModumateSimpleMesh.h"
-#include "Database/ModumateLayerPattern.h"
+#include "BIMKernel/BIMLegacyPattern.h"
 #include "Database/ModumateShoppingItem.h"
-#include "Database/ModumateCrafting.h"
+#include "BIMKernel/BIMLegacyPortals.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateObjectAssembly.generated.h"
 
