@@ -453,25 +453,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return makePortal(EObjectType::OTDoor, EToolMode::VE_DOOR, params);
 	});
 
-	RegisterCommand(kAddFinish, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		int32 targetObjectID = params.GetValue(kObjectID);
-		int32 faceIndex = params.GetValue(kIndex);
-		FName assemblyKey = params.GetValue(kAssembly);
-
-		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_FINISH, assemblyKey);
-
-		if (assembly)
-		{
-			int32 finishID = GetDocument()->MakeFinish(GetWorld(), targetObjectID, faceIndex, *assembly);
-			return (finishID != 0);
-		}
-
-		return false;
-
-	});
-
 	RegisterCommand(kDumpScript, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		TArray<FString> inputHistory = GetDocument()->GetCommandHistory();

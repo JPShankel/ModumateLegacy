@@ -46,14 +46,54 @@ bool UFinishTool::BeginUse()
 	Super::BeginUse();
 
 	auto *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+
 	if (gameState && LastValidTarget && (LastValidTarget->ID != 0) && (LastValidFaceIndex != INDEX_NONE))
 	{
-		Controller->ModumateCommand(
-			FModumateCommand(Commands::kAddFinish)
-			.Param(Parameters::kObjectID, LastValidTarget->ID)
-			.Param(Parameters::kIndex, LastValidFaceIndex)
-			.Param(Parameters::kAssembly, Assembly.Key)
-		);
+		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_FINISH, Assembly.Key);
+		const FModumateObjectInstance *parentMOI = gameState->Document.GetObjectById(LastValidTarget->ID);
+
+		// If we're replacing an existing finish, just swap its assembly
+		if (ensureAlways(assembly != nullptr && parentMOI != nullptr))
+		{
+			for (auto &childID : parentMOI->GetChildren())
+			{
+				FModumateObjectInstance *child = gameState->Document.GetObjectById(childID);
+				if (ensureAlways(child != nullptr))
+				{
+					if (child->GetObjectType() == EObjectType::OTFinish)
+					{
+						int32 existingFinishFace = UModumateObjectStatics::GetFaceIndexFromFinishObj(child);
+
+						if (existingFinishFace != LastValidFaceIndex)
+						{
+							continue;
+						}
+
+						child->BeginPreviewOperation();
+						child->SetAssembly(*assembly);
+
+						TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ child }));
+						child->EndPreviewOperation();
+
+						FModumateFunctionParameterSet result = Controller->ModumateCommand(delta->AsCommand());
+
+						EndUse();
+						return result.GetValue(Parameters::kSuccess);
+					}
+				}
+			}
+
+			FMOIStateData stateData;
+			stateData.StateType = EMOIDeltaType::Create;
+			stateData.ObjectType = EObjectType::OTFinish;
+			stateData.ObjectAssemblyKey = Assembly.Key;
+			stateData.ParentID = LastValidTarget->ID;
+			stateData.ControlIndices = { LastValidFaceIndex };
+			stateData.ObjectID = gameState->Document.GetNextAvailableID();
+
+			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ stateData }));
+			Controller->ModumateCommand(delta->AsCommand());
+		}
 	}
 
 	EndUse();

@@ -123,8 +123,6 @@ namespace Modumate
 		void SetDefaultJustificationXY(float newValue);
 		float GetDefaultJustificationXY() const { return DefaultJustificationXY; } // return DJXY from private;
 
-		int32 MakeFinish(UWorld *world, int32 targetObjectID, int32 faceIndex, const FModumateObjectAssembly &newFinishAssembly);
-
 		void AdjustMoiHoleVerts(int32 id, const FVector &location, const TArray<FVector> &holeVerts);
 
 		int32 MakePortalAt(UWorld *world, EObjectType portalType, int32 parentID, const FVector2D &relativePos, const FQuat &relativeRot, bool inverted, const FModumateObjectAssembly &pal);
