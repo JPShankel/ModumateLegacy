@@ -2,32 +2,33 @@
 
 #include "UnrealClasses/ModumateGameInstance.h"
 
+#include "Algo/Transform.h"
+#include "BIMKernel/BIMProperties.h"
+#include "Database/ModumateObjectDatabase.h"
 #include "Drafting/APDFLLib.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "Dom/JsonObject.h"
 #include "Drafting/DraftingManager.h"
+#include "Drafting/ModumateDraftingView.h"
+#include "Misc/Crc.h"
+#include "ModumateCore/ExpressionEvaluator.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "ModumateCore/ModumateStats.h"
+#include "ModumateCore/PlatformFunctions.h"
+#include "Online/ModumateAccountManager.h"
+#include "Online/ModumateAnalyticsStatics.h"
+#include "Runtime/Core/Public/Misc/FileHelper.h"
+#include "Runtime/Engine/Classes/Engine/Engine.h"
+#include "UI/DimensionManager.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelInputAutomation.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerPawn_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "ModumateCore/ExpressionEvaluator.h"
-#include "Misc/Crc.h"
-#include "Online/ModumateAnalyticsStatics.h"
-#include "BIMKernel/BIMProperties.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "Drafting/ModumateDraftingView.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "ModumateCore/ModumateGeometryStatics.h"
-#include "Database/ModumateObjectDatabase.h"
-#include "ModumateCore/ModumateObjectStatics.h"
-#include "ModumateCore/ModumateStats.h"
-#include "ModumateCore/PlatformFunctions.h"
-#include "Runtime/Core/Public/Misc/FileHelper.h"
-#include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
-#include "Algo/Transform.h"
-#include "Dom/JsonObject.h"
-#include "Online/ModumateAccountManager.h"
 
 using namespace Modumate::Commands;
 using namespace Modumate::Parameters;
@@ -70,6 +71,9 @@ void UModumateGameInstance::Init()
 
 	DraftingManager = NewObject<UDraftingManager>(this);
 	DraftingManager->Init();
+
+	DimensionManager = NewObject<UDimensionManager>(this);
+	DimensionManager->Init();
 }
 
 void UModumateGameInstance::RegisterAllCommands()
@@ -1114,6 +1118,11 @@ void UModumateGameInstance::Shutdown()
 	if (DraftingManager)
 	{
 		DraftingManager->Shutdown();
+	}
+
+	if (DimensionManager)
+	{
+		DimensionManager->Shutdown();
 	}
 
 	UModumateAnalyticsStatics::ShutdownAnalytics(AnalyticsInstance);

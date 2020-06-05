@@ -7,11 +7,6 @@
 
 #include "DimensionWidget.generated.h"
 
-namespace Modumate 
-{
-	class FGraph3D;
-}
-
 UCLASS()
 class MODUMATE_API UDimensionWidget : public UUserWidget
 {
@@ -19,24 +14,17 @@ class MODUMATE_API UDimensionWidget : public UUserWidget
 
 public:
 	UDimensionWidget(const FObjectInitializer& ObjectInitializer);
-	virtual bool Initialize() override;
 
-	void SetTarget(int32 InTargetEdgeID, int32 InTargetObjID, bool bIsEditable);
+	void SetIsEditable(bool bIsEditable);
 
-	void SetTarget(int32 InTargetEdgeID, int32 InTargetObjID);
-	void UpdateTransform();
+	void UpdateTransform(const FVector2D position, FVector2D edgeDirection, FVector2D offsetDirection, float length);
+	void UpdateText(float length);
+	void ResetText();
 
 protected:
-	virtual void InitializeNativeClassData() override;
-
 	// TODO: potentially have this used by more things depending on how 
 	// unique this format is
 	void SanitizeInput(float InLength, FText &OutText);
-
-	UFUNCTION()
-	void OnMeasurementTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
-
-	void UpdateText();
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -51,15 +39,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	int32 PixelOffset;
 
-	int32 TargetEdgeID;
-	int32 TargetObjID;
-
-	UPROPERTY()
-	class AEditModelGameState_CPP *GameState;
-
 private:
 	FText LastCommittedText;
 	float LastLength;
-
-	const Modumate::FGraph3D *Graph;
 };

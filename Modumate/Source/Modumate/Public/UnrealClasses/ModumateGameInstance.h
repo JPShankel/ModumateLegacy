@@ -92,6 +92,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UDraftingManager* DraftingManager;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UDimensionManager* DimensionManager;
+
 	static const FString TestScriptRelativePath;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)

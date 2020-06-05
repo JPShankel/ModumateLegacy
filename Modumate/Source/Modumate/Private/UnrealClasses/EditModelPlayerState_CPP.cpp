@@ -8,7 +8,9 @@
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/EditModelPlayerHUD.h"
+#include "UI/DimensionManager.h"
 #include "UnrealClasses/LineActor.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "DocumentManagement/ModumateCommands.h"
@@ -582,60 +584,16 @@ void AEditModelPlayerState_CPP::PostSelectionOrViewChanged()
 	// TODO: only call this when necessary (when ViewGroupObject or the object list/hierarchy changes).
 	FindReachableObjects(LastReachableObjectSet);
 
-	UpdateGraphDimensionStrings();
-
-}
-
-void AEditModelPlayerState_CPP::UpdateGraphDimensionStrings()
-{
-	// find which vertices are currently selected and create measuring dimension strings
-	auto& graph = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document.GetVolumeGraph();
-
-	int32 currentSelectedObjID = MOD_ID_NONE;
-	LastSelectedVertexIDs.Reset();
-
+	auto gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 	if (SelectedObjects.Num() == 1)
 	{
-		// aggregate the unique selected vertices
-		currentSelectedObjID = SelectedObjects[0]->ID;
-		if (auto vertex = graph.FindVertex(currentSelectedObjID))
-		{
-			LastSelectedVertexIDs = { currentSelectedObjID };
-		}
-		else if (auto edge = graph.FindEdge(currentSelectedObjID))
-		{
-			LastSelectedVertexIDs = { edge->StartVertexID, edge->EndVertexID };
-		}
-		else if (auto face = graph.FindFace(currentSelectedObjID))
-		{
-			LastSelectedVertexIDs = face->VertexIDs;
-		}
+		gameInstance->DimensionManager->UpdateGraphDimensionStrings(SelectedObjects[0]->ID);
 	}
-
-	if (currentSelectedObjID != LastSelectedObjID)
+	else
 	{
-		for (ADimensionActor* actor : DimensionActors)
-		{
-			actor->Destroy();
-		}
-		DimensionActors.Empty();
-
-		if (SelectedObjects.Num() == 1)
-		{
-			// edges are editable when translating the selected object along that edge is valid
-			TMap<int32, bool> edgeIDToEditability;
-			graph.CheckTranslationValidity(LastSelectedVertexIDs, edgeIDToEditability);
-
-			for (auto kvp : edgeIDToEditability)
-			{
-				ADimensionActor* dimensionActor = GetWorld()->SpawnActor<ADimensionActor>(ADimensionActor::StaticClass());
-				dimensionActor->DimensionText->SetTarget(kvp.Key, currentSelectedObjID, kvp.Value);
-				DimensionActors.Add(dimensionActor);
-			}
-		}
-
-		LastSelectedObjID = currentSelectedObjID;
+		gameInstance->DimensionManager->Reset();
 	}
+
 }
 
 void AEditModelPlayerState_CPP::OnNewModel()

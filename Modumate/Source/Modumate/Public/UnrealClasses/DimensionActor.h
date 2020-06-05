@@ -4,11 +4,16 @@
 #include "CoreMinimal.h"
 
 #include "GameFramework/Actor.h"
+#include "Input/Events.h"
 
 #include "DimensionActor.generated.h"
 
 class UDimensionWidget;
-class ALineActor;
+
+namespace Modumate 
+{
+	class FGraph3D;
+}
 
 UCLASS()
 class MODUMATE_API ADimensionActor : public AActor
@@ -21,6 +26,8 @@ public:
 	void CreateWidget();
 	void ReleaseWidget();
 
+	void SetTarget(int32 InTargetEdgeID, int32 InTargetObjID, bool bIsEditable);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -28,7 +35,19 @@ protected:
 
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void OnMeasurementTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
 public:
 	UPROPERTY()
 	UDimensionWidget* DimensionText;
+
+	UPROPERTY()
+	class AEditModelGameState_CPP *GameState;
+
+private:
+	int32 TargetEdgeID;
+	int32 TargetObjID;
+
+	const Modumate::FGraph3D *Graph;
 };

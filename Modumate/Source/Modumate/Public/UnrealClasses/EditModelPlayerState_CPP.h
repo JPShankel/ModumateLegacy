@@ -242,12 +242,4 @@ protected:
 	TArray<Modumate::FStructureLine> TempObjectStructureLines, CurSelectionStructureLines;
 	TSet<Modumate::FModumateObjectInstance *> CurViewGroupObjects;
 	TMap<EToolMode, FModumateObjectAssembly> TemporaryAssemblies;
-
-	UPROPERTY()
-	TArray<ADimensionActor*> DimensionActors;
-
-	int32 LastSelectedObjID;
-	// if there is one selected object, save the ID.  If it's a graph object, dimension strings
-	// will be displayed
-	TArray<int32> LastSelectedVertexIDs;
 };
