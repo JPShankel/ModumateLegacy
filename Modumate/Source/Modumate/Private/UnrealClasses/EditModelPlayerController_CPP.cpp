@@ -806,6 +806,21 @@ bool AEditModelPlayerController_CPP::OnCreateDwg()
 
 	bool retValue = true;
 
+	UModumateGameInstance* gameInstance = dynamic_cast<UModumateGameInstance*>(GetGameInstance());
+	if (!gameInstance)
+	{
+		return false;
+	}
+
+	static const FText dialogTitle = FText::FromString(FString(TEXT("DWG Creation")));
+	if (gameInstance->LoginStatus() != ELoginStatus::Connected)
+	{
+		FMessageDialog::Open(EAppMsgType::Ok,
+			FText::FromString(FString(TEXT("You must be logged in to use the DWG server")) ),
+			&dialogTitle);
+		return false;
+	}
+
 	FString filename;
 	if (Modumate::PlatformFunctions::GetSaveFilename(filename, INDEX_DWGFILE))
 	{
@@ -813,7 +828,8 @@ bool AEditModelPlayerController_CPP::OnCreateDwg()
 
 		if (!Document->ExportDWG(GetWorld(), *filename))
 		{
-			FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString("DWG Creation Failed")));
+			FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString(TEXT("DWG Creation Failed")) ),
+				&dialogTitle);
 			retValue = false;
 		}
 

@@ -579,6 +579,7 @@ namespace Modumate
 				Units::FCoordinates2D::WorldCentimeters(start),
 				Units::FCoordinates2D::WorldCentimeters(end),
 				defaultThickness, defaultColor));
+			line->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemCutLine);
 			ParentPage->Children.Add(line);
 		}
 
@@ -662,6 +663,7 @@ namespace Modumate
 						Units::FAngle::Degrees(defaultDoorOpeningDegrees),
 						defaultThickness,
 						swingColor));
+					doorSwing->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemOperatorLine);
 
 					FVector2D hingeLocation2D = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, hingeLocation);
 					doorSwing->SetLocalPosition(Units::FCoordinates2D::WorldCentimeters(hingeLocation2D));
@@ -672,6 +674,7 @@ namespace Modumate
 					TSharedPtr<FDraftingLine> doorLine = MakeShareable(new FDraftingLine(Units::FLength::WorldCentimeters(width), defaultThickness, swingColor));
 					doorLine->SetLocalPosition(Units::FCoordinates2D::WorldCentimeters(hingeLocation2D));
 					doorLine->SetLocalOrientation(Units::FAngle::Radians(angle + (PI*-0.5f)));
+					doorLine->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemOperatorLine);
 
 					ParentPage->Children.Add(doorLine);
 				}

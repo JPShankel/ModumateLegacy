@@ -2,19 +2,19 @@
 
 #include "Drafting/ModumateDwgConnect.h"
 
-#include "IPAddress.h"
 #include "Logging/LogMacros.h"
 #include "Misc/Paths.h"
-#include "Misc/Timespan.h"
 #include "HAL/PlatformFilemanager.h"
-#include "GenericPlatform/GenericPlatformFile.h"
+#include "Misc/Base64.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "Online/ModumateAccountManager.h"
 
 #include "Drafting/MiniZip.h"
 
 namespace Modumate
 {
-	// Hard-coded address for initial tests:
-	const FString FModumateDwgConnect::ServerAddress { "127.0.0.1:8080" };
+	//const FString FModumateDwgConnect::ServerAddress { TEXT("http://127.0.0.1:8080") };
+	const FString FModumateDwgConnect::ServerAddress { TEXT("https://account.modumate.com") };
 
 	FModumateDwgConnect::FModumateDwgConnect(const FModumateDwgDraw& dwgDraw)
 		: DwgDraw(dwgDraw)
@@ -22,28 +22,103 @@ namespace Modumate
 
 	Modumate::FModumateDwgConnect::~FModumateDwgConnect()
 	{
-		Socket->Close();
+	}
+
+	class FModumateDwgConnect::DwgSaver
+	{
+	public:
+		FString ZipDirectory;
+		TAtomic<int> NumPages;
+		bool Successful { true };
+		void OnHttpReply(FHttpRequestPtr Request, FHttpResponsePtr Response,
+			bool bWasSuccessful, FString saveFilename);
+
+	};
+
+	void FModumateDwgConnect::DwgSaver::OnHttpReply(FHttpRequestPtr Request, FHttpResponsePtr Response,
+		bool bWasSuccessful, FString saveFilename)
+	{
+		if (bWasSuccessful)
+		{
+			int32 code = Response->GetResponseCode();
+			if (code == EHttpResponseCodes::Ok)
+			{
+				const TArray<uint8>& dwgContents = Response->GetContent();
+				if (!FFileHelper::SaveArrayToFile(dwgContents, *saveFilename))
+				{
+					UE_LOG(LogAutoDrafting, Error, TEXT("Couldn't save DWG file to %s"), *saveFilename);
+					Successful = false;
+					return;
+				}
+			}
+			else
+			{
+				Successful = false;
+				UE_LOG(LogAutoDrafting, Error, TEXT("DWG Server returned status %d for file %s"),
+					code, *saveFilename);
+			}
+
+		}
+		else
+		{
+			Successful = false;
+			UE_LOG(LogAutoDrafting, Error, TEXT("DWG Server reply unsuccessful for file %s"),
+				*saveFilename);
+		}
+		if (Successful && --NumPages == 0)
+		{
+			FMiniZip miniZip;
+			struct ListFilesVisitor : IPlatformFile::FDirectoryVisitor
+			{
+				FMiniZip * zipper;
+
+				virtual bool Visit(const TCHAR* FilenameOrDirectory, bool bIsDirectory) override
+				{
+					if (!bIsDirectory)
+					{
+						zipper->AddFile(FilenameOrDirectory);
+					}
+					return true;
+				}
+			} listFilesVisitor;
+			listFilesVisitor.zipper = &miniZip;
+
+			IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+			platformFile.IterateDirectory(*ZipDirectory, listFilesVisitor);
+
+			if (miniZip.CreateArchive(ZipDirectory + TEXT(".zip")))
+			{
+				UE_LOG(LogAutoDrafting, Display, TEXT("Saved DWG bundle to %s.zip"), *ZipDirectory);
+			}
+			else
+			{
+				UE_LOG(LogAutoDrafting, Error, TEXT("Failed to create DWG bundle from %s"), *ZipDirectory);
+			}
+
+		}
+
+		return;
 	}
 
 	bool FModumateDwgConnect::ConvertJsonToDwg(FString filename)
 	{
 		Filename = filename;
 
-		FTcpSocketBuilder socketBuilder(TEXT("DwgServer"));
-		socketBuilder.Build();
-		Socket = socketBuilder;
-		Socket->SetNonBlocking(false);
-
-		FIPv4Endpoint address;
-		FIPv4Endpoint::Parse(ServerAddress, address);
-		auto internetAddr = address.ToInternetAddr();
-		Socket->Connect(*internetAddr);
-
-		if (Socket->GetConnectionState() != ESocketConnectionState::SCS_Connected)
+		UModumateGameInstance* gameInstance = nullptr;
+		const auto& worlds = GEngine->GetWorldContexts();
+		for (const auto& worldContext : worlds)
 		{
-			UE_LOG(LogAutoDrafting, Error, TEXT("Couldn't connect to DWG server at %s"), *ServerAddress);
+			gameInstance = worldContext.World()->GetGameInstance<UModumateGameInstance>();
+			if (gameInstance)
+			{
+				break;
+			}
+		}
+		if (gameInstance == nullptr)
+		{
 			return false;
 		}
+		AccountManager = gameInstance->GetAccountManager();
 
 		return UploadJsonAndSave();
 	}
@@ -52,7 +127,6 @@ namespace Modumate
 	{
 		FString basename = FPaths::GetBaseFilename(Filename, true);
 		FString zipDirectory = FPaths::GetBaseFilename(Filename, false);
-		TArray<FString> dwgFilenames;
 
 		IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
 		if (!platformFile.CreateDirectory(*zipDirectory))
@@ -62,45 +136,18 @@ namespace Modumate
 		}
 
 		int numPages = DwgDraw.GetNumPages();
+		ResponseSaver = MakeShared<DwgSaver>();
+		ResponseSaver->NumPages = numPages;
+		ResponseSaver->ZipDirectory = zipDirectory;
+		
 		for (int page = 0; page < numPages; ++page)
 		{
-			ServerCommand cmnd = ServerCommand::kConvertPage;
-			int32 bytesSent;
-			Send(cmnd);
+			FString filenameDwg = FString::Printf(TEXT("%s/%s%d.dwg"), *zipDirectory, *basename, page + 1);
 			FString pageJson = DwgDraw.GetJsonAsString(page);
-			int32 jsonLength = pageJson.Len();
-			Send(jsonLength);
-			Socket->Send((uint8*) TCHAR_TO_ANSI(*pageJson), jsonLength, bytesSent);
-			int32 dwgLength = 0;
-			if (!Recv(&dwgLength) || dwgLength <= 0)
-			{
-				UE_LOG(LogAutoDrafting, Error, TEXT("Couldn't receive DWG length"));
-				return false;
-			}
-			
-			TArray<uint8> dwgContents;
-			dwgContents.Init(0, dwgLength);
-
-			if (!Recv(dwgContents.GetData(), dwgLength))
-			{
-				UE_LOG(LogAutoDrafting, Error, TEXT("Couldn't receive DWG contents"));
-				return false;
-			}
-
-			{
-				FString filenameDwg = FString::Printf(TEXT("%s/%s%d.dwg"), *zipDirectory, *basename, page + 1);
-
-				if (!FFileHelper::SaveArrayToFile(dwgContents, *filenameDwg))
-				{
-					UE_LOG(LogAutoDrafting, Error, TEXT("Couldn't save DWG file to %s"), *filenameDwg);
-					return false;
-				}
-
-				dwgFilenames.Add(filenameDwg);
-			}
+			CallDwgServer(pageJson, filenameDwg);
 		}
 
-		for (auto image: DwgDraw.GetImages())
+		for (auto& image: DwgDraw.GetImages())
 		{
 			FString imageDestination = zipDirectory / FPaths::GetCleanFilename(image);
 			if (!platformFile.CopyFile(*imageDestination, *image))
@@ -109,50 +156,41 @@ namespace Modumate
 			}
 		}
 		
-		FMiniZip miniZip;
-		struct ListFilesVisitor : IPlatformFile::FDirectoryVisitor
-		{
-			FMiniZip * zipper;
-
-			virtual bool Visit(const TCHAR* FilenameOrDirectory, bool bIsDirectory) override
-			{
-				if (!bIsDirectory)
-				{
-					zipper->AddFile(FilenameOrDirectory);
-				}
-				return true;
-			}
-		} listFilesVisitor;
-		listFilesVisitor.zipper = &miniZip;
-
-		platformFile.IterateDirectory(*zipDirectory, listFilesVisitor);
-
-		bool zipResult = miniZip.CreateArchive(zipDirectory + TEXT(".zip"));
-
-		if (zipResult)
-		{
-			UE_LOG(LogAutoDrafting, Display, TEXT("Saved DWG bundle to %s.zip"), *zipDirectory);
-		}
-		else
-		{
-			UE_LOG(LogAutoDrafting, Error, TEXT("Failed to create DWG bundle from %s"), *zipDirectory);
-		}
-		return zipResult;
+		return true;
 	}
 
-	bool Modumate::FModumateDwgConnect::Recv(uint8 * buffer, int length)
+	bool FModumateDwgConnect::CallDwgServer(const FString& jsonString, const FString& saveFilename)
 	{
-		int bytesRecvd = 0;
-		while (bytesRecvd < length)
-		{
-			int bytes;
-			bool result = Socket->Recv(buffer + bytesRecvd, length - bytesRecvd, bytes);
-			if (!result || bytes <= 0)
+		TSharedRef<IHttpRequest> request = FHttpModule::Get().CreateRequest();
+		TSharedPtr<DwgSaver> responseSaver = ResponseSaver;
+		request->OnProcessRequestComplete().BindLambda([responseSaver, saveFilename](FHttpRequestPtr Request,
+			FHttpResponsePtr Response, bool bWasSuccessful)
 			{
-				return false;
-			}
-			bytesRecvd += bytes;
-		}
+				responseSaver->OnHttpReply(Request, Response, bWasSuccessful, saveFilename);
+			});
+
+		request->SetVerb(TEXT("POST"));
+		request->SetURL(ServerAddress + TEXT("/api/v1/service/jsontodwg"));
+		request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
+		request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+
+#if 0
+		// Send directly to DWG Server.
+		request->SetHeader(TEXT("Authorization"), TEXT("Basic YW1zOnRydXN0bm8x"));  // For direct connection to DWG server.
+		request->SetContentAsString(jsonString);
+#else
+		// Send via AMS public web-server.
+		auto contentJsonObject = MakeShared<FJsonObject>();
+		contentJsonObject->SetStringField(TEXT("key"), AccountManager->GetApiKey());
+		contentJsonObject->SetStringField(TEXT("idToken"), AccountManager->GetIdToken());
+		contentJsonObject->SetStringField(TEXT("json"), FBase64::Encode(jsonString));
+		FString contentjson;
+		auto serializer = TJsonWriterFactory<>::Create(&contentjson);
+		FJsonSerializer::Serialize(contentJsonObject, serializer);
+		request->SetContentAsString(contentjson);
+#endif
+
+		request->ProcessRequest();
 
 		return true;
 	}

@@ -570,6 +570,16 @@ namespace Modumate
 			bool usePointsA = layerIdx < LayerGeometries.Num();
 			auto& layer = usePointsA ? LayerGeometries[layerIdx] : LayerGeometries[layerIdx-1];
 
+			auto dwgLayerType = FModumateLayerType::kSeparatorCutStructuralLayer;
+			if (layerIdx == 0)
+			{
+				dwgLayerType = FModumateLayerType::kSeparatorCutOuterSurface;
+			}
+			else if (layerIdx == LayerGeometries.Num())
+			{
+				dwgLayerType = FModumateLayerType::kSeparatorCutMinorLayer;
+			}
+
 			TArray<FVector> intersections;
 			GetPlaneIntersections(intersections, usePointsA ? layer.PointsA : layer.PointsB, Plane);
 
@@ -648,6 +658,7 @@ namespace Modumate
 							Units::FCoordinates2D::WorldCentimeters(clippedEnd), 
 							lineThickness, lineColor));
 						ParentPage->Children.Add(line);
+						line->SetLayerTypeRecursive(dwgLayerType);
 					}
 				}
 			}

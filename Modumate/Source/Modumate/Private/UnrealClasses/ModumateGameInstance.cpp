@@ -76,6 +76,11 @@ void UModumateGameInstance::Init()
 	DimensionManager->Init();
 }
 
+TSharedPtr<Modumate::FModumateAccountManager> UModumateGameInstance::GetAccountManager() const
+{
+	return AccountManager;
+}
+
 void UModumateGameInstance::RegisterAllCommands()
 {
 	RegisterCommand(kYield, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)

@@ -60,12 +60,15 @@ namespace Modumate
 		void TranslateBy(Units::FYCoord y) { Position.Y += y; }
 
 		void SetLocalTransform(Units::FCoordinates2D position, Units::FAngle orientation, float scale);
+		FModumateLayerType GetLayerType() const { return LayerType; }
+		void SetLayerTypeRecursive(FModumateLayerType layerType);
 
 	protected:
 		Units::FCoordinates2D Position;
 		Units::FAngle Orientation = Units::FAngle::Radians(0);
 		// TODO: while scale is applied during Draw, it isn't respected at the primitive level
 		float Scale = 1.0f;
+		FModumateLayerType LayerType { FModumateLayerType::kDefault };
 
 	public:
 		Units::FCoordinates2D Dimensions;

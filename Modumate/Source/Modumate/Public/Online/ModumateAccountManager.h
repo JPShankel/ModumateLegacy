@@ -100,6 +100,8 @@ namespace Modumate
 		FString GetFirstname() const { return UserInfo.firstname; }
 		FString GetLastname() const { return UserInfo.lastname; }
 		FString GetEmail() const { return UserInfo.email; }
+		FString GetIdToken() const { return IdToken; }
+		static const FString& GetApiKey() { return ApiKey; }
 
 	private:
 		void OnLoginResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);

@@ -21,7 +21,8 @@ namespace Modumate
 			const Units::FThickness &thickness,
 			const FMColor &color,
 			const LinePattern &linePattern,
-			const Units::FPhase &phase
+			const Units::FPhase &phase,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
 		) override;
 
 		virtual EDrawError AddText(
@@ -33,7 +34,8 @@ namespace Modumate
 			const FMColor &color,
 			DraftingAlignment textJustify,
 			const Units::FWidth &containingRectWidth,
-			FontType type = FontType::Standard
+			FontType type = FontType::Standard,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
 		) override;
 
 		virtual EDrawError GetTextLength(
@@ -51,19 +53,25 @@ namespace Modumate
 			const Units::FThickness &lineWidth,
 			const FMColor &color,
 			const LinePattern &linePattern,
-			int slices) override;
+			int slices,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) override;
 
 		virtual EDrawError AddImage(
 			const TCHAR *imageFileFullPath,
 			const Units::FXCoord &x,
 			const Units::FYCoord &y,
 			const Units::FWidth &width,
-			const Units::FHeight &height) override;
+			const Units::FHeight &height,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) override;
 
 		virtual EDrawError FillPoly(
 			const float *points,
 			int numPoints,
-			const FMColor &color) override;
+			const FMColor &color,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) override;
 
 		virtual EDrawError DrawCircle(
 			const Units::FXCoord &cx,
@@ -71,13 +79,17 @@ namespace Modumate
 			const Units::FRadius &radius,
 			const Units::FThickness &lineWidth,
 			const LinePattern &linePattern,
-			const FMColor &color) override;
+			const FMColor &color,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) override;
 
 		virtual EDrawError FillCircle(
 			const Units::FXCoord &cx,
 			const Units::FYCoord &cy,
 			const Units::FRadius &radius,
-			const FMColor &color) override;
+			const FMColor &color,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) override;
 
 		virtual bool StartPage(int32 pageNumber, float widthInches, float heightInches) override;
 		virtual bool SaveDocument(const FString& filename) override;

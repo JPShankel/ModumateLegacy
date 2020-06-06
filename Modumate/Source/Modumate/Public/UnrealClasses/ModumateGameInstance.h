@@ -74,6 +74,8 @@ public:
 
 	IAnalyticsProvider *GetAnalytics() const { return AnalyticsInstance.Get(); }
 
+	TSharedPtr<Modumate::FModumateAccountManager> GetAccountManager() const;
+
 	UFUNCTION(BlueprintCallable)
 	ELoginStatus LoginStatus() const;
 

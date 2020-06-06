@@ -35,7 +35,8 @@ namespace Modumate
 		const Units::FThickness& thickness,
 		const FMColor& color,
 		const LinePattern& linePattern,
-		const Units::FPhase& phase)
+		const Units::FPhase& phase,
+		FModumateLayerType layerType)
 	{
 		FValueArray lineParams;
 		lineParams.Add(MakeShared<FJsonValueNumber>(x1.AsWorldInches()) );
@@ -45,6 +46,7 @@ namespace Modumate
 		lineParams.Add(MakeShared<FJsonValueNumber>(thickness.AsFloorplanInches()) );
 
 		lineParams.Add(ColorToJson(color));
+		lineParams.Add(MakeShared<FJsonValueNumber>(int(layerType)) );
 		if (linePattern.LineStyle != DraftingLineStyle::Solid)
 		{
 			lineParams.Add(LinePatternToJson(linePattern));
@@ -66,7 +68,8 @@ namespace Modumate
 		const FMColor& color,
 		DraftingAlignment textJustify,
 		const Units::FWidth& containingRectWidth,
-		FontType type)
+		FontType type,
+		FModumateLayerType layerType)
 	{
 		FString textString(text);
 		
@@ -79,6 +82,7 @@ namespace Modumate
 		textParams.Add(ColorToJson(color));
 		textParams.Add(MakeShared<FJsonValueNumber>(int(textJustify)) );
 		textParams.Add(MakeShared<FJsonValueNumber>(int(type)) );
+		textParams.Add(MakeShared<FJsonValueNumber>(int(layerType)));
 
 		auto textJsonObject = MakeShared<FJsonObject>();
 		textJsonObject->SetArrayField("text", textParams);
@@ -106,7 +110,8 @@ namespace Modumate
 		const Units::FThickness& lineWidth,
 		const FMColor& color,
 		const LinePattern& linePattern,
-		int slices)
+		int slices,
+		FModumateLayerType layerType)
 	{
 		FValueArray arcParams;
 		arcParams.Add(MakeShared<FJsonValueNumber>(x.AsWorldInches()));
@@ -116,6 +121,7 @@ namespace Modumate
 		arcParams.Add(MakeShared<FJsonValueNumber>(radius.AsWorldInches()));
 		arcParams.Add(MakeShared<FJsonValueNumber>(lineWidth.AsFloorplanInches()));
 		arcParams.Add(ColorToJson(color));
+		arcParams.Add(MakeShared<FJsonValueNumber>(int(layerType)));
 
 		if (linePattern.LineStyle != DraftingLineStyle::Solid)
 		{
@@ -134,7 +140,8 @@ namespace Modumate
 		const Units::FXCoord& x,
 		const Units::FYCoord& y,
 		const Units::FWidth& width,
-		const Units::FHeight& height)
+		const Units::FHeight& height,
+		FModumateLayerType layerType)
 	{
 		FString filePath(imageFileFullPath);
 		ImageFilepaths.Add(filePath);
@@ -146,6 +153,7 @@ namespace Modumate
 		imageParams.Add(MakeShared<FJsonValueNumber>(y.AsWorldInches()) );
 		imageParams.Add(MakeShared<FJsonValueNumber>(width.AsWorldInches()) );
 		imageParams.Add(MakeShared<FJsonValueNumber>(height.AsWorldInches()) );
+		imageParams.Add(MakeShared<FJsonValueNumber>(int(layerType)));
 
 		auto imageJsonObject = MakeShared<FJsonObject>();
 		imageJsonObject->SetArrayField("image", imageParams);
@@ -157,12 +165,14 @@ namespace Modumate
 	EDrawError FModumateDwgDraw::FillPoly(
 		const float * points,
 		int numPoints,
-		const FMColor& color)
+		const FMColor& color,
+		FModumateLayerType layerType)
 	{
 		const double scaleFactor = DrawingScale / defaultScaleFactor;
 
 		FValueArray fillPolyParams;
 		fillPolyParams.Add(ColorToJson(color));
+		fillPolyParams.Add(MakeShared<FJsonValueNumber>(int(layerType)));
 
 		for (int p = 0; p < numPoints * 2; ++p)
 		{
@@ -183,7 +193,8 @@ namespace Modumate
 		const Units::FRadius& radius,
 		const Units::FThickness& lineWidth,
 		const LinePattern& linePattern,
-		const FMColor& color)
+		const FMColor& color,
+		FModumateLayerType layerType)
 	{
 		FValueArray circleParams;
 		circleParams.Add(MakeShared<FJsonValueNumber>(cx.AsWorldInches()) );
@@ -191,6 +202,7 @@ namespace Modumate
 		circleParams.Add(MakeShared<FJsonValueNumber>(radius.AsWorldInches()) );
 		circleParams.Add(MakeShared<FJsonValueNumber>(lineWidth.AsFloorplanInches()) );
 		circleParams.Add(ColorToJson(color));
+		circleParams.Add(MakeShared<FJsonValueNumber>(int(layerType)));
 
 		if (linePattern.LineStyle != DraftingLineStyle::Solid)
 		{
@@ -208,13 +220,15 @@ namespace Modumate
 		const Units::FXCoord& cx,
 		const Units::FYCoord& cy,
 		const Units::FRadius& radius,
-		const FMColor& color)
+		const FMColor& color,
+		FModumateLayerType layerType)
 	{
 		FValueArray fillCircleParams;
 		fillCircleParams.Add(MakeShared<FJsonValueNumber>(cx.AsWorldInches()) );
 		fillCircleParams.Add(MakeShared<FJsonValueNumber>(cy.AsWorldInches()) );
 		fillCircleParams.Add(MakeShared<FJsonValueNumber>(radius.AsWorldInches()) );
 		fillCircleParams.Add(ColorToJson(color));
+		fillCircleParams.Add(MakeShared<FJsonValueNumber>(int(layerType)));
 
 		auto fillCircleJsonObject = MakeShared<FJsonObject>();
 		fillCircleJsonObject->SetArrayField("fillcircle", fillCircleParams);

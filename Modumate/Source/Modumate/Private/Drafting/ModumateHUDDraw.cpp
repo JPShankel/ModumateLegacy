@@ -11,7 +11,8 @@ namespace Modumate
 		const Units::FThickness &thickness,
 		const FMColor &color,
 		const LinePattern &linePattern,
-		const Units::FPhase &phase)
+		const Units::FPhase &phase,
+		FModumateLayerType layerType)
 	{
 		FModumateLines line;
 		line.Thickness = thickness.AsWorldCentimeters();
@@ -38,7 +39,8 @@ namespace Modumate
 		const FMColor &color,
 		DraftingAlignment textJustify,
 		const Units::FWidth &containingRectWidth,
-		FontType type)
+		FontType type,
+		FModumateLayerType layerType)
 	{
 		return EDrawError::ErrorUnimplemented;
 	}
@@ -61,7 +63,8 @@ namespace Modumate
 		const Units::FThickness &lineWidth,
 		const FMColor &color,
 		const LinePattern &linePattern,
-		int slices)
+		int slices,
+		FModumateLayerType layerType)
 	{
 		return EDrawError::ErrorUnimplemented;
 	}
@@ -71,7 +74,8 @@ namespace Modumate
 		const Units::FXCoord &x,
 		const Units::FYCoord &y,
 		const Units::FWidth &width,
-		const Units::FHeight &height)
+		const Units::FHeight &height,
+		FModumateLayerType layerType)
 	{
 		return EDrawError::ErrorUnimplemented;
 	}
@@ -79,7 +83,8 @@ namespace Modumate
 	EDrawError FModumateHUDDraw::FillPoly(
 		const float *points,
 		int numPoints,
-		const FMColor &color)
+		const FMColor &color,
+		FModumateLayerType layerType)
 	{
 		return EDrawError::ErrorUnimplemented;
 	}
@@ -90,7 +95,8 @@ namespace Modumate
 		const Units::FRadius &radius,
 		const Units::FThickness &lineWidth,
 		const LinePattern &linePattern,
-		const FMColor &color)
+		const FMColor &color,
+		FModumateLayerType layerType)
 	{
 		return EDrawError::ErrorUnimplemented;
 	}
@@ -99,7 +105,8 @@ namespace Modumate
 		const Units::FXCoord &cx,
 		const Units::FYCoord &cy,
 		const Units::FRadius &radius,
-		const FMColor &color)
+		const FMColor &color,
+		FModumateLayerType layerType)
 	{
 		return EDrawError::ErrorUnimplemented;
 	}

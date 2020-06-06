@@ -74,6 +74,20 @@ namespace Modumate
 		return BoundingBox;
 	}
 
+	void FDraftingElement::ClearChildren()
+	{
+		Children.Empty();
+	}
+
+	void FDraftingElement::SetLayerTypeRecursive(FModumateLayerType layerType)
+	{
+		LayerType = layerType;
+		for (auto& child: Children)
+		{
+			child->SetLayerTypeRecursive(layerType);
+		}
+	}
+
 	EDrawError FDraftingComposite::Draw(IModumateDraftingDraw *drawingInterface,
 		Units::FCoordinates2D position,
 		Units::FAngle orientation,
@@ -136,11 +150,6 @@ namespace Modumate
 		}
 
 		return error;
-	}
-
-	void FDraftingElement::ClearChildren()
-	{
-		Children.Empty();
 	}
 
 	FBox2D FDraftingComposite::MakeAABB(IModumateDraftingDraw *drawingInterface,
@@ -221,7 +230,8 @@ namespace Modumate
 
 		// TODO: if AddText can take a vertical alignment value, then FDraftingText::Draw can be removed
 		//		 if AddText rendering is centered by default, the extra code in this function above can be removed as well
-		error = drawingInterface->AddText(*Text, FontSize, position.X, position.Y, orientation, Color, TextAlignment, ContainerWidth, TextFontName);
+		error = drawingInterface->AddText(*Text, FontSize, position.X, position.Y, orientation, Color, TextAlignment,
+			ContainerWidth, TextFontName, LayerType);
 
 		return error;
 	}
@@ -570,13 +580,15 @@ namespace Modumate
 			{
 				position = Units::FCoordinates2D(Units::FXCoord::WorldCentimeters(clippedStart.X), Units::FYCoord::WorldCentimeters(clippedStart.Y));
 				TopRight = Units::FCoordinates2D(Units::FXCoord::WorldCentimeters(clippedEnd.X), Units::FYCoord::WorldCentimeters(clippedEnd.Y));
-				error = drawingInterface->DrawLine(position.X, position.Y, TopRight.X, TopRight.Y, LineWidth, Color, Pattern, Phase);
+				error = drawingInterface->DrawLine(position.X, position.Y, TopRight.X, TopRight.Y, LineWidth, Color,
+					Pattern, Phase, LayerType);
 			}
 
 		}
 		else
 		{
-			error = drawingInterface->DrawLine(position.X, position.Y, TopRight.X, TopRight.Y, LineWidth, Color, Pattern, Phase);
+			error = drawingInterface->DrawLine(position.X, position.Y, TopRight.X, TopRight.Y, LineWidth, Color,
+				Pattern, Phase, LayerType);
 		}
 
 		return error;
@@ -640,7 +652,8 @@ namespace Modumate
 		float end = FRotator::ClampAxis(orientation.AsDegrees() + Angle.AsDegrees());
 		int slices = (int)(Angle.AsDegrees() * 0.2f);
 
-		error = drawingInterface->DrawArc(position.X, position.Y, orientation, Units::FAngle::Degrees(end), Radius, LineWidth, Color, Pattern, slices);
+		error = drawingInterface->DrawArc(position.X, position.Y, orientation, Units::FAngle::Degrees(end), Radius,
+			LineWidth, Color, Pattern, slices, LayerType);
 
 		return error;
 	}
@@ -705,7 +718,7 @@ namespace Modumate
 			return error;
 		}
 
-		drawingInterface->FillCircle(position.X, position.Y, Radius, Color);
+		drawingInterface->FillCircle(position.X, position.Y, Radius, Color, LayerType);
 
 		return error;
 	}
@@ -733,7 +746,7 @@ namespace Modumate
 			return EDrawError::ErrorNone;
 		}
 
-		drawingInterface->DrawCircle(position.X, position.Y, Radius, LineWidth, Pattern, Color);
+		drawingInterface->DrawCircle(position.X, position.Y, Radius, LineWidth, Pattern, Color, LayerType);
 
 		return EDrawError::ErrorNone;
 	}
@@ -780,7 +793,7 @@ namespace Modumate
 			points.Add(coord.Y.AsPoints(drawingInterface->DrawingScale));
 		}
 
-		drawingInterface->FillPoly(points.GetData(), points.Num()/2, Color);
+		drawingInterface->FillPoly(points.GetData(), points.Num()/2, Color, LayerType);
 
 		return error;
 	}
@@ -855,7 +868,7 @@ namespace Modumate
 
 		if (points.Num() / 2 >= 3)
 		{
-			drawingInterface->FillPoly(points.GetData(), points.Num()/2, Color);
+			drawingInterface->FillPoly(points.GetData(), points.Num()/2, Color, LayerType);
 		}
 
 		return EDrawError::ErrorNone;
@@ -879,7 +892,7 @@ namespace Modumate
 			return EDrawError::ErrorNone;
 		}
 
-		drawingInterface->AddImage(*Path, position.X, position.Y, Dimensions.X, Dimensions.Y);
+		drawingInterface->AddImage(*Path, position.X, position.Y, Dimensions.X, Dimensions.Y, LayerType);
 
 		return EDrawError::ErrorNone;
 	}

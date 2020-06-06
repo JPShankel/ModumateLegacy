@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "ModumateCore/ModumateUnits.h"
+#include "Drafting/ModumateLayerType.h"
 
 namespace Modumate
 {
@@ -83,7 +84,8 @@ namespace Modumate
 			const Units::FThickness &thickness,
 			const FMColor &color,
 			const LinePattern &linePattern,
-			const Units::FPhase &phase
+			const Units::FPhase &phase,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
 		) = 0;
 
 		virtual EDrawError AddText(
@@ -95,7 +97,8 @@ namespace Modumate
 			const FMColor &color,
 			DraftingAlignment textJustify,
 			const Units::FWidth &containingRectWidth,
-			FontType type = FontType::Standard
+			FontType type,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
 		) = 0;
 
 		virtual EDrawError GetTextLength(
@@ -113,19 +116,25 @@ namespace Modumate
 			const Units::FThickness &lineWidth,
 			const FMColor &color,
 			const LinePattern &linePattern,
-			int slices) = 0;
+			int slices,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) = 0;
 
 		virtual EDrawError AddImage(
 			const TCHAR *imageFileFullPath,
 			const Units::FXCoord &x,
 			const Units::FYCoord &y,
 			const Units::FWidth &width,
-			const Units::FHeight &height) = 0;
+			const Units::FHeight &height,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) = 0;
 
 		virtual EDrawError FillPoly(
 			const float *points,
 			int numPoints,
-			const FMColor &color) = 0;
+			const FMColor &color,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) = 0;
 
 		virtual EDrawError DrawCircle(
 			const Units::FXCoord &cx,
@@ -133,13 +142,17 @@ namespace Modumate
 			const Units::FRadius &radius,
 			const Units::FThickness &lineWidth,
 			const LinePattern &linePattern,
-			const FMColor &color) = 0;
+			const FMColor &color,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) = 0;
 
 		virtual EDrawError FillCircle(
 			const Units::FXCoord &cx,
 			const Units::FYCoord &cy,
 			const Units::FRadius &radius,
-			const FMColor &color) = 0;
+			const FMColor &color,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) = 0;
 
 		virtual bool StartPage(int32 pageNumber, float widthInches, float heightInches)
 		{ return true; }

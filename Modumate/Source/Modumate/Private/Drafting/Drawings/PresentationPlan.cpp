@@ -48,6 +48,7 @@ namespace Modumate {
 		scaleTag->TranslateBy(FXCoord::FloorplanInches(-16.0f / 64.0f));
 		scaleTag->TranslateBy(FYCoord::FloorplanInches(2.0f / 64.0f));
 
+		scaleTag->SetLayerTypeRecursive(FModumateLayerType::kDefault);
 		Children.Add(scaleTag);
 
 		return true;
