@@ -262,6 +262,30 @@ namespace Modumate {
 			return ECraftingResult::Success;
 		}
 
+		ECraftingResult FCraftingTreeNodeInstance::AttachChildAt(const FCraftingPresetCollection &PresetCollection, const FCraftingTreeNodeInstanceSharedPtr &Child, int32 PinSetIndex, int32 PinSetPosition)
+		{
+			if (ensureAlways(PinSetIndex < InputPins.Num()))
+			{
+				Child->ParentInstance = AsShared();
+				if (Child->CurrentOrientation == EConfiguratorNodeIconOrientation::Inherited)
+				{
+					Child->CurrentOrientation = CurrentOrientation;
+				}
+
+				// Children may be attached out of order during deserialization
+				FCraftingTreeNodePinSet &pinSet = InputPins[PinSetIndex];
+				if (PinSetPosition >= pinSet.AttachedObjects.Num())
+				{
+					pinSet.AttachedObjects.SetNum(PinSetPosition + 1);
+				}
+
+				pinSet.AttachedObjects[PinSetPosition] = Child;
+
+				return ECraftingResult::Success;
+			}
+			return ECraftingResult::Error;
+		}
+
 		ECraftingResult FCraftingTreeNodeInstance::AttachChild(const FCraftingPresetCollection &PresetCollection, const FCraftingTreeNodeInstanceSharedPtr &Child)
 		{
 			const FCraftingTreeNodePreset *childPreset = PresetCollection.Presets.Find(Child->PresetID);
@@ -373,7 +397,7 @@ namespace Modumate {
 				FCraftingTreeNodeInstanceSharedPtr parent = InstancePool.InstanceFromID(DataRecord.ParentID);
 				if (parent.IsValid())
 				{
-					parent->AttachChild(PresetCollection, AsShared());
+					parent->AttachChildAt(PresetCollection, AsShared(), DataRecord.PinSetIndex, DataRecord.PinSetPosition);
 				}
 			}
 			else

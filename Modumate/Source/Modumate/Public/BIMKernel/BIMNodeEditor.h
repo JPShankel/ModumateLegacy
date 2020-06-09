@@ -10,7 +10,8 @@ namespace Modumate { namespace BIM {
 		Crafting trees are acyclical networks of crafting node instances
 		They have their own input pin sets and properties, both of which are inherited from the preset used to create the node
 		If a node's properties or child configuration are inconsistent with the base preset, the preset is considered 'dirty' and must be updated or branched
-		*/
+*/
+
 class MODUMATE_API FCraftingTreeNodeInstance : public TSharedFromThis<FCraftingTreeNodeInstance>
 {
 	friend class MODUMATE_API FCraftingTreeNodeInstancePool;
@@ -25,7 +26,6 @@ private:
 	FCraftingTreeNodeInstance(const FCraftingTreeNodeInstance &rhs) = delete;
 	FCraftingTreeNodeInstance &operator=(const FCraftingTreeNodeInstance &rhs) = delete;
 	FCraftingTreeNodeInstance(int32 instanceID);
-
 
 	int32 InstanceID;
 
@@ -63,6 +63,7 @@ public:
 	ECraftingResult DetachSelfFromParent();
 
 	ECraftingResult AttachChild(const FCraftingPresetCollection &PresetCollection, const FCraftingTreeNodeInstanceSharedPtr &Child);
+	ECraftingResult AttachChildAt(const FCraftingPresetCollection &PresetCollection, const FCraftingTreeNodeInstanceSharedPtr &Child, int32 PinSetIndex, int32 PinSetPosition);
 	ECraftingResult FindChild(int32 ChildID, int32 &OutPinSetIndex, int32 &OutPinSetPosition);
 	ECraftingResult FindChildOrder(int32 ChildID, int32 &Order);
 };
