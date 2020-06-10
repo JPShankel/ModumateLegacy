@@ -9,7 +9,6 @@
 #include "UnrealClasses/LineActor.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "DocumentManagement/ModumateNetworkView.h"
 #include "DocumentManagement/ModumateObjectInstanceCabinets.h"
 
 using namespace Modumate;

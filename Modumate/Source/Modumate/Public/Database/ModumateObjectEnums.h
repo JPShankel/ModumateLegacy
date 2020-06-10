@@ -114,7 +114,6 @@ enum class EObjectType : uint8
 	OTCabinet,
 	OTStaircase,
 	OTFinish,
-	OTLineSegment,
 	OTGroup,
 	OTRoom,
 	OTCountertop,

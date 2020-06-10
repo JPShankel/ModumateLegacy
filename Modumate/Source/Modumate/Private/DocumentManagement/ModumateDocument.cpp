@@ -1034,65 +1034,6 @@ bool FModumateDocument::InvertObjects(const TArray<FModumateObjectInstance*> &ob
 	return true;
 }
 
-void FModumateDocument::DecomposeObject(UWorld *world, int32 id)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::DecomposeObjects"));
-
-	UndoRedo *ur = new UndoRedo();
-	ClearRedoBuffer();
-
-	AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
-
-	ur->Redo = [this, ur, world, gameMode, id]()
-	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::DecomposeObjects::Redo"));
-		TArray<FModumateObjectInstance*> pendingObs;
-		FModumateObjectInstance *ob = GetObjectById(id);
-		if ((ob != nullptr) && (
-			(ob->GetObjectType() == EObjectType::OTFloorSegment) ||
-			(ob->GetObjectType() == EObjectType::OTRailSegment) ||
-			(ob->GetObjectType() == EObjectType::OTCabinet) ||
-			(ob->GetObjectType() == EObjectType::OTCountertop)))
-		{
-			for (int32 i = 0; i < ob->GetControlPoints().Num(); ++i)
-			{
-				++NextID;
-				FModumateObjectAssembly assembly;
-				assembly.ObjectType = EObjectType::OTLineSegment;
-				FModumateObjectInstance *newOb = new FModumateObjectInstance(world, this,  assembly, NextID);
-				newOb->SetControlPoints({
-					ob->GetControlPoint(i),
-					ob->GetControlPoint((i + 1) % ob->GetControlPoints().Num())
-				});
-				newOb->SetupGeometry();
-				pendingObs.Add(newOb);
-				ObjectInstanceArray.Add(newOb);
-				ObjectsByID.Add(newOb->ID, newOb);
-			}
-			DeleteObjectImpl(ob);
-		}
-
-		ur->Undo = [pendingObs, ob, this]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::DecomposeObjects::Undo"));
-
-			// note: we actually delete the line segments instead of adding them to the deleted list
-			// because we're not tracking their ids and all the data needed to recreate them is in the decomp object
-			for (auto pob : pendingObs)
-			{
-				DeleteObjectImpl(pob, false);
-			}
-			if (ob != nullptr)
-			{
-				RestoreObjectImpl(ob);
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
-}
-
 void FModumateDocument::RestoreDeletedObjects(const TArray<int32> &ids)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::RestoreDeletedObjects"));
@@ -2010,31 +1951,6 @@ FModumateObjectInstance *FModumateDocument::TryGetDeletedObject(int32 id)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::TryGetDeletedObject"));
 	return DeletedObjects.FindRef(id);
-}
-
-int32 FModumateDocument::CreateLineSegmentObject(UWorld *world, const FVector &p1, const FVector &p2, int32 parentID)
-{
-	UndoRedo *ur = new UndoRedo();
-	ClearRedoBuffer();
-
-	int32 id = NextID++;
-
-	ur->Redo = [this, ur, world, id, p1, p2, parentID]()
-	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::CreateLineSegmentObject::Redo"));
-
-		TArray<FVector> cps({ p1, p2 });
-		FModumateObjectInstance *newOb = CreateOrRestoreObjFromObjectType(world, EObjectType::OTLineSegment, id, parentID, FVector::ZeroVector, &cps);
-
-		ur->Undo = [newOb, this]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::CreateLineSegmentObject::Undo"));
-			DeleteObjectImpl(newOb);
-		};
-	};
-	UndoBuffer.Add(ur);
-	ur->Redo();
-	return id;
 }
 
 int32 FModumateDocument::MakeGroupObject(UWorld *world, const TArray<int32> &ids, bool combineWithExistingGroups, int32 parentID)
@@ -4157,7 +4073,6 @@ void FModumateDocument::DisplayDebugInfo(UWorld* world)
 	displayObjectCount(EObjectType::OTCabinet, TEXT("OTCabinet"));
 	displayObjectCount(EObjectType::OTStaircase, TEXT("OTStaircase"));
 	displayObjectCount(EObjectType::OTFinish, TEXT("OTFinish"));
-	displayObjectCount(EObjectType::OTLineSegment, TEXT("OTLineSegment"));
 	displayObjectCount(EObjectType::OTGroup, TEXT("OTGroup"));
 	displayObjectCount(EObjectType::OTRoom, TEXT("OTRoom"));
 

@@ -166,7 +166,7 @@ bool UCabinetTool::AbortUse()
 
 	for (auto &seg : BaseSegs)
 	{
-		DoMakeLineSegmentCommand(seg->Point1, seg->Point2);
+		// TODO: make segment
 	}
 
 	for (auto &seg : BaseSegs)
@@ -233,7 +233,7 @@ void UCabinetTool::HandleClick(const FVector &p)
 {
 	if (State == NewSegmentPending && PendingSegment != nullptr)
 	{
-		DoMakeLineSegmentCommand(p, PendingSegment->Point1);
+		// TODO: make segment
 
 		if (PendingSegment != nullptr)
 		{
@@ -242,7 +242,7 @@ void UCabinetTool::HandleClick(const FVector &p)
 
 			PendingSegment->Point1 = p;
 			PendingSegment->Point2 = p;
-			Controller->TryMakeCabinetFromSegments();
+			// TODO: check closed poly
 		}
 	}
 }
@@ -333,19 +333,4 @@ void UCabinetTool::BeginSetHeightMode(const TArray<FVector> &basePoly)
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
 
 	State = SetHeight;
-}
-
-void UCabinetTool::DoMakeLineSegmentCommand(const FVector &P1, const FVector &P2)
-{
-	FModumateDocument &doc = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-
-	FMOIStateData state;
-	state.StateType = EMOIDeltaType::Create;
-	state.ControlPoints = { P1, P2 };
-	state.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
-	state.ObjectType = EObjectType::OTLineSegment;
-	state.ObjectID = doc.GetNextAvailableID();
-
-	TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ state }));
-	Controller->ModumateCommand(delta->AsCommand());
 }

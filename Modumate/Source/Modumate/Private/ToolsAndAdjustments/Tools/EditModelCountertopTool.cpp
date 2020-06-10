@@ -115,19 +115,8 @@ bool UCountertopTool::EnterNextStage()
 
 void UCountertopTool::HandleClick(const FVector &p)
 {
-	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Modumate::FModumateDocument &doc = gameState->Document;
-	FMOIStateData state;
-	state.StateType = EMOIDeltaType::Create;
-	state.ControlPoints = { PendingSegment->Point1, p };
-	state.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
-	state.ObjectType = EObjectType::OTLineSegment;
-	state.ObjectID = doc.GetNextAvailableID();
-
-	TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ state }));
-	Controller->ModumateCommand(delta->AsCommand());
-
-	if (Controller->TryMakePrismFromSegments(EObjectType::OTCountertop, Assembly.Key, Inverted))
+	//if (Controller->TryMakePrismFromSegments(EObjectType::OTCountertop, Assembly.Key, Inverted))
+	if (false)
 	{
 		EndUse();
 	}
@@ -138,7 +127,6 @@ void UCountertopTool::HandleClick(const FVector &p)
 		PendingSegment->Point1 = p;
 		PendingSegment->Point2 = p;
 	}
-	SegmentsConformInvert();
 }
 
 bool UCountertopTool::FrameUpdate()
@@ -214,20 +202,5 @@ bool UCountertopTool::HandleInvert()
 		return false;
 	}
 	Inverted = !Inverted;
-	SegmentsConformInvert();
 	return true;
 }
-
-void UCountertopTool::SegmentsConformInvert()
-{
-	// TODO: UpdateVerticalPlane was taken out of line actor, countertops won't work until this is reimplemented
-
-	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Modumate::FModumateDocument *doc = &gameState->Document;
-	TArray<FModumateObjectInstance*> segmentMoi = doc->GetObjectsOfType(EObjectType::OTLineSegment);
-	for (auto curSegment : segmentMoi)
-	{
-		ALineActor* lineSegment = Cast<ALineActor>(curSegment->GetActor());
-	}
-}
-

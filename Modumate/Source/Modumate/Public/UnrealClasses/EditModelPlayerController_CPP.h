@@ -227,11 +227,6 @@ public:
 
 	void SetViewGroupObject(const Modumate::FModumateObjectInstance *ob);
 
-	bool TryMakePrismFromSegments(EObjectType objectType, const FName &assemblyKey, bool inverted, const Modumate::FModumateObjectInstance *startSegment = nullptr);
-	bool TryMakeCabinetFromSegments();
-
-	void MakeRailsFromSegments();
-
 	// Draw basic dimension string own by the PlayerController
 	void UpdateDimensionString(const FVector &p1, const FVector &p2, const FVector &normal, const int32 groupIndex = 0, const float offset = 50.f);
 

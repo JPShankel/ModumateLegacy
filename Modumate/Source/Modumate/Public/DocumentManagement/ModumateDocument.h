@@ -128,8 +128,6 @@ namespace Modumate
 		int32 MakePortalAt(UWorld *world, EObjectType portalType, int32 parentID, const FVector2D &relativePos, const FQuat &relativeRot, bool inverted, const FModumateObjectAssembly &pal);
 		void TransverseObjects(const TArray<FModumateObjectInstance*> &obs);
 
-		int32 CreateLineSegmentObject(UWorld *world, const FVector &p1, const FVector &p2, int32 parentID);
-
 		int32 MakeRoom(UWorld *World, const TArray<FSignedID> &FaceIDs);
 		int32 MakePointsObject(UWorld *world, const TArray<int32> &idsToDelete, const TArray<FVector> &points, const TArray<int32> &controlIndices,
 			EObjectType objectType, bool inverted, const FModumateObjectAssembly &assembly, int32 parentID, bool bUpdateSiblingGeometry = false);
@@ -228,7 +226,6 @@ namespace Modumate
 
 		void DeleteObjects(const TArray<FModumateObjectInstance*> &obs, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
 		bool InvertObjects(const TArray<FModumateObjectInstance*> &obs);
-		void DecomposeObject(UWorld *world, int32 id);
 		void RestoreDeletedObjects(const TArray<int32> &ids);
 		void DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
 

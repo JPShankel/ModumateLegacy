@@ -37,5 +37,4 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual bool HandleInvert() override;
-	void SegmentsConformInvert();
 };

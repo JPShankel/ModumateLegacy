@@ -2,9 +2,24 @@
 
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
+#include "BIMKernel/BIMLegacyPortals.h"
+#include "Database/ModumateCraftingWidget_CPP.h"
+#include "Database/ModumateDrawingSetWidget_CPP.h"
+#include "Database/ModumateObjectDatabase.h"
+#include "Drafting/APDFLLib.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "DocumentManagement/ModumateSnappingView.h"
+#include "Engine/SceneCapture2D.h"
+#include "Framework/Application/SlateApplication.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateStats.h"
+#include "ModumateCore/ModumateThumbnailHelpers.h"
+#include "ModumateCore/PlatformFunctions.h"
+#include "Online/ModumateAnalyticsStatics.h"
+#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -13,25 +28,10 @@
 #include "UnrealClasses/EditModelPlayerPawn_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelToggleGravityPawn_CPP.h"
-#include "Engine/SceneCapture2D.h"
-#include "Online/ModumateAnalyticsStatics.h"
-#include "DocumentManagement/ModumateCommands.h"
 #include "UnrealClasses/ModumateConsole.h"
-#include "BIMKernel/BIMLegacyPortals.h"
-#include "Database/ModumateCraftingWidget_CPP.h"
-#include "ModumateCore/ModumateDimensionStatics.h"
-#include "Database/ModumateDrawingSetWidget_CPP.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UnrealClasses/ModumateGameInstance.h"
-#include "DocumentManagement/ModumateNetworkView.h"
-#include "Database/ModumateObjectDatabase.h"
 #include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
-#include "DocumentManagement/ModumateSnappingView.h"
-#include "ModumateCore/ModumateThumbnailHelpers.h"
 #include "UnrealClasses/ModumateViewportClient.h"
-#include "ModumateCore/PlatformFunctions.h"
-#include "Framework/Application/SlateApplication.h"
-#include "ModumateCore/ModumateStats.h"
 
 
 // Tools
@@ -1238,135 +1238,6 @@ bool AEditModelPlayerController_CPP::ZoomToSelection()
 /*
 * Mouse Functions
 */
-
-void AEditModelPlayerController_CPP::MakeRailsFromSegments()
-{
-	TArray<const FModumateObjectInstance *> segs = ((const FModumateDocument *)Document)->GetObjectsOfType(EObjectType::OTLineSegment);
-
-	if (segs.Num() == 0)
-	{
-		return;
-	}
-
-	TArray<TArray<const FModumateObjectInstance *>> rails;
-	FModumateNetworkView::MakeSegmentGroups(segs, rails);
-
-	for (auto &rail : rails)
-	{
-		TArray<FVector> railPoints;
-
-		for (auto &ob : rail)
-		{
-			if (ensureAlways(ob->GetControlPoints().Num() == 2))
-			{
-				railPoints.Append(ob->GetControlPoints());
-			}
-		}
-		
-		TArray<int32> segIds;
-		Algo::Transform(segs,segIds,[](const FModumateObjectInstance *ob) {return ob->ID;});
-
-		FName assemblyKey = ModeToTool[EToolMode::VE_RAIL]->GetAssembly().Key;
-
-		ModumateCommand(
-			FModumateCommand(Modumate::Commands::kMakeRail)
-			.Param(Modumate::Parameters::kAssembly,assemblyKey)
-			.Param(Modumate::Parameters::kControlPoints,railPoints)
-			.Param(Modumate::Parameters::kObjectIDs,segIds)
-			.Param(Modumate::Parameters::kParent,EMPlayerState->GetViewGroupObjectID()));
-	}
-}
-
-bool AEditModelPlayerController_CPP::TryMakeCabinetFromSegments()
-{
-	TArray<const FModumateObjectInstance *> segs = ((const FModumateDocument *)Document)->GetObjectsOfType(EObjectType::OTLineSegment);
-
-	TArray<FVector> polyPoints;
-
-	if (FModumateNetworkView::TryMakePolygon(segs, polyPoints))
-	{
-		TArray<int32> segIds;
-		Algo::Transform(segs,segIds,[](const FModumateObjectInstance *ob) {return ob->ID; });
-
-		ModumateCommand(
-			FModumateCommand(Commands::kDeleteObjects)
-			.Param(Parameters::kObjectIDs,segIds));
-
-		if (polyPoints.Num() > 2)
-		{
-			TScriptInterface<IEditModelToolInterface> toolInterface = ModeToTool.FindRef(EToolMode::VE_CABINET);
-			if (!toolInterface)
-			{
-				return false;
-			}
-
-			UCabinetTool *tool = Cast<UCabinetTool>(toolInterface.GetObject());
-			if (tool != nullptr)
-			{
-				if (CurrentTool != nullptr && CurrentTool != tool)
-				{
-					CurrentTool->Deactivate();
-				}
-
-				CurrentTool = tool;
-
-				tool->BeginSetHeightMode(polyPoints);
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
-bool AEditModelPlayerController_CPP::TryMakePrismFromSegments(EObjectType objectType, const FName &assemblyKey, bool inverted, const FModumateObjectInstance *startSegment)
-{
-	TArray<const FModumateObjectInstance *> allSegments = ((const FModumateDocument *)Document)->GetObjectsOfType(EObjectType::OTLineSegment);
-	TArray<FVector> polyPoints;
-	TArray<int32> connectedSegmentIDs;
-	if (FModumateNetworkView::TryMakePolygon(allSegments, polyPoints, startSegment, &connectedSegmentIDs))
-	{
-		if (polyPoints.Num() > 2)
-		{
-			const TCHAR *commandType = nullptr;
-
-			switch (objectType)
-			{
-			case EObjectType::OTFloorSegment:
-				commandType = Commands::kMakeFloor;
-				break;
-			case EObjectType::OTCountertop:
-				commandType = Commands::kMakeCountertop;
-				break;
-			case EObjectType::OTMetaPlane:
-				commandType = Commands::kMakeMetaPlane;
-				break;
-			default:
-				ensureAlwaysMsgf(false, TEXT("Tried to make a prism from an unsupported object type: %s!"),
-					*EnumValueString(EObjectType, objectType));
-				break;
-			}
-
-			if (commandType)
-			{
-				ModumateCommand(
-					FModumateCommand(commandType)
-					.Param(Parameters::kControlPoints, polyPoints)
-					.Param(Parameters::kAssembly, assemblyKey)
-					.Param(Parameters::kObjectIDs, connectedSegmentIDs)
-					.Param(Parameters::kInverted, inverted)
-					.Param(Parameters::kParent, EMPlayerState->GetViewGroupObjectID())
-				);
-
-				DeselectAll();
-			}
-
-			return true;
-		}
-	}
-
-	return false;
-}
 
 void AEditModelPlayerController_CPP::SetObjectSelected(const FModumateObjectInstance *ob, bool selected)
 {

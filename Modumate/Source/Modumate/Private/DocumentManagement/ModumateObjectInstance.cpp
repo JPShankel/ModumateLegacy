@@ -30,7 +30,6 @@
 #include "DocumentManagement/ModumateObjectInstanceFlatPoly.h"
 #include "DocumentManagement/ModumateObjectInstanceFurniture.h"
 #include "DocumentManagement/ModumateObjectInstanceGraphObjects.h"
-#include "DocumentManagement/ModumateObjectInstanceLineSegment.h"
 #include "DocumentManagement/ModumateObjectInstanceMetaEdge.h"
 #include "DocumentManagement/ModumateObjectInstanceMetaPlane.h"
 #include "DocumentManagement/ModumateObjectInstanceMetaVertex.h"
@@ -157,7 +156,6 @@ namespace Modumate
 		case EObjectType::OTCabinet: Implementation = new FMOICabinetImpl(this); break;
 		case EObjectType::OTStaircase: Implementation = new FMOIStaircaseImpl(this); break;
 		case EObjectType::OTFinish: Implementation = new FMOIFinishImpl(this); break;
-		case EObjectType::OTLineSegment: Implementation = new FMOILineSegment(this); break;
 		case EObjectType::OTGroup: Implementation = new FMOIGroupImpl(this); break;
 		case EObjectType::OTRoom: Implementation = new FMOIRoomImpl(this); break;
 		case EObjectType::OTTrim: Implementation = new FMOITrimImpl(this); break;
