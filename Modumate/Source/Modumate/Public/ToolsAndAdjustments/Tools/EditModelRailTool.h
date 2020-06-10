@@ -5,15 +5,10 @@
 
 #include "EditModelRailTool.generated.h"
 
-class ALineActor;
-
 UCLASS()
 class MODUMATE_API URailTool : public UEditModelToolBase
 {
 	GENERATED_BODY()
-
-private:
-	ALineActor * PendingSegment;
 
 public:
 	URailTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
@@ -25,7 +20,5 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
-	virtual bool HandleInvert() override;
-	virtual bool HandleControlKey(bool pressed) override;
 	bool HandleInputNumber(double n) override;
 };
