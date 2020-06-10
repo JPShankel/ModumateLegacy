@@ -2,19 +2,23 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelCountertopTool.h"
 
-#include "UnrealClasses/LineActor.h"
+#include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "UI/DimensionManager.h"
+#include "UI/PendingSegmentActor.h"
 
 using namespace Modumate;
 
 UCountertopTool::UCountertopTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, State(Neutral)
+	, PendingSegmentID(MOD_ID_NONE)
 {}
 
 bool UCountertopTool::HandleInputNumber(double n)
@@ -27,29 +31,34 @@ bool UCountertopTool::HandleInputNumber(double n)
 	switch (Controller->EMPlayerState->CurrentDimensionStringGroupIndex)
 	{
 	case 0:
-		if ((State == NewSegmentPending) && PendingSegment.IsValid())
+		if ((State == NewSegmentPending) && PendingSegmentID != MOD_ID_NONE)
 		{
-			FVector dir = (PendingSegment->Point2 - PendingSegment->Point1).GetSafeNormal() * n;
-			HandleClick(PendingSegment->Point1 + dir);
+			auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+			FVector dir = (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal() * n;
+			HandleClick(pendingSegment->Point1 + dir);
 		}
 		return true;
 	case 1:
-		// Project segment to degree defined by user input
-		float currentSegmentLength = FMath::Max((PendingSegment->Point1 - PendingSegment->Point2).Size(), 100.f);
-
-		FVector startPos = PendingSegment->Point1;
-		FVector degreeDir = (AnchorPointDegree - startPos).GetSafeNormal();
-		degreeDir = degreeDir.RotateAngleAxis(n + 180.f, FVector::UpVector);
-
-		FVector projectedInputPoint = startPos + degreeDir * currentSegmentLength;
-
-		FVector2D projectedCursorScreenPos;
-		if (Controller->ProjectWorldLocationToScreen(projectedInputPoint, projectedCursorScreenPos))
+		if (PendingSegmentID != MOD_ID_NONE)
 		{
-			Controller->SetMouseLocation(projectedCursorScreenPos.X, projectedCursorScreenPos.Y);
-			Controller->ClearUserSnapPoints();
+			auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+			// Project segment to degree defined by user input
+			float currentSegmentLength = FMath::Max((pendingSegment->Point1 - pendingSegment->Point2).Size(), 100.f);
 
-			Controller->EMPlayerState->SnappedCursor.WorldPosition = projectedInputPoint;
+			FVector startPos = pendingSegment->Point1;
+			FVector degreeDir = (AnchorPointDegree - startPos).GetSafeNormal();
+			degreeDir = degreeDir.RotateAngleAxis(n + 180.f, FVector::UpVector);
+
+			FVector projectedInputPoint = startPos + degreeDir * currentSegmentLength;
+
+			FVector2D projectedCursorScreenPos;
+			if (Controller->ProjectWorldLocationToScreen(projectedInputPoint, projectedCursorScreenPos))
+			{
+				Controller->SetMouseLocation(projectedCursorScreenPos.X, projectedCursorScreenPos.Y);
+				Controller->ClearUserSnapPoints();
+
+				Controller->EMPlayerState->SnappedCursor.WorldPosition = projectedInputPoint;
+			}
 		}
 		return true;
 	}
@@ -85,11 +94,14 @@ bool UCountertopTool::BeginUse()
 
 	State = NewSegmentPending;
 
-	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
-	PendingSegment->Point1 = hitLoc;
-	PendingSegment->Point2 = hitLoc;
-	PendingSegment->Color = FColor::Green;
-	PendingSegment->Thickness = 2;
+	auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+	PendingSegmentID = dimensionActor->ID;
+
+	auto pendingSegment = dimensionActor->GetLineActor();
+	pendingSegment->Point1 = hitLoc;
+	pendingSegment->Point2 = hitLoc;
+	pendingSegment->Color = FColor::Green;
+	pendingSegment->Thickness = 2;
 
 	AnchorPointDegree = hitLoc + FVector(0.f, -1.f, 0.f); // Make north as AnchorPointDegree at new segment
 	return true;
@@ -116,16 +128,17 @@ bool UCountertopTool::EnterNextStage()
 void UCountertopTool::HandleClick(const FVector &p)
 {
 	//if (Controller->TryMakePrismFromSegments(EObjectType::OTCountertop, Assembly.Key, Inverted))
+	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 	if (false)
 	{
 		EndUse();
 	}
 	else
 	{
-		AnchorPointDegree = PendingSegment->Point1;
-		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(p, FVector::UpVector, (PendingSegment->Point1 - PendingSegment->Point2).GetSafeNormal());
-		PendingSegment->Point1 = p;
-		PendingSegment->Point2 = p;
+		AnchorPointDegree = pendingSegment->Point1;
+		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(p, FVector::UpVector, (pendingSegment->Point1 - pendingSegment->Point2).GetSafeNormal());
+		pendingSegment->Point1 = p;
+		pendingSegment->Point2 = p;
 	}
 }
 
@@ -140,7 +153,14 @@ bool UCountertopTool::FrameUpdate()
 
 	FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 
-	if (State == NewSegmentPending && PendingSegment.IsValid())
+	if (PendingSegmentID == MOD_ID_NONE)
+	{
+		return false;
+	}
+
+	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+
+	if (State == NewSegmentPending && pendingSegment != nullptr)
 	{
 		FAffordanceLine affordance;
 		if (Controller->EMPlayerState->SnappedCursor.TryMakeAffordanceLineFromCursorToSketchPlane(affordance, hitLoc))
@@ -148,20 +168,18 @@ bool UCountertopTool::FrameUpdate()
 			Controller->EMPlayerState->AffordanceLines.Add(affordance);
 		}
 
-		PendingSegment->Point2 = hitLoc;
-		// TODO: non-horizontal sketch
-		Controller->UpdateDimensionString(PendingSegment->Point1, PendingSegment->Point2, FVector::UpVector);
+		pendingSegment->Point2 = hitLoc;
 	}
-	if (PendingSegment.Get())
+	if (pendingSegment != nullptr)
 	{
-		if ((PendingSegment->Point1 - PendingSegment->Point2).Size() > 25.f) // Add degree string when segment is greater than certain length
+		if ((pendingSegment->Point1 - pendingSegment->Point2).Size() > 25.f) // Add degree string when segment is greater than certain length
 		{
-			bool clockwise = FVector::CrossProduct(AnchorPointDegree - PendingSegment->Point1, PendingSegment->Point2 - PendingSegment->Point1).Z < 0.0f;
+			bool clockwise = FVector::CrossProduct(AnchorPointDegree - pendingSegment->Point1, pendingSegment->Point2 - pendingSegment->Point1).Z < 0.0f;
 			UModumateFunctionLibrary::AddNewDegreeString(
 				Controller,
-				PendingSegment->Point1, //degree location
+				pendingSegment->Point1, //degree location
 				AnchorPointDegree, // start
-				PendingSegment->Point2, // end
+				pendingSegment->Point2, // end
 				clockwise,
 				FName(TEXT("PlayerController")),
 				FName(TEXT("Degree")),
@@ -179,11 +197,9 @@ bool UCountertopTool::FrameUpdate()
 bool UCountertopTool::EndUse()
 {
 	State = Neutral;
-	if (PendingSegment.IsValid())
-	{
-		PendingSegment->Destroy();
-		PendingSegment.Reset();
-	}
+
+	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+	PendingSegmentID = MOD_ID_NONE;
 
 	return UEditModelToolBase::EndUse();
 }

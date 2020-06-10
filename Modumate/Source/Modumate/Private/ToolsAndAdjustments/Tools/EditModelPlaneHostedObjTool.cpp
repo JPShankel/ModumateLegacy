@@ -2,13 +2,16 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelPlaneHostedObjTool.h"
 
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateCommands.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/LineActor.h"
-#include "DocumentManagement/ModumateDocument.h"
-#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "UI/DimensionManager.h"
+#include "UI/PendingSegmentActor.h"
 
 using namespace Modumate;
 
@@ -97,19 +100,20 @@ bool UPlaneHostedObjTool::FrameUpdate()
 		return false;
 	}
 
-	if (PendingObjMesh.IsValid() && PendingSegment.IsValid())
+	if (PendingObjMesh.IsValid() && PendingSegmentID != MOD_ID_NONE)
 	{
+		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 		bool bSegmentValid = false;
 		switch (AxisConstraint)
 		{
 		case EAxisConstraint::AxisZ:
-			bSegmentValid = !PendingSegment->Point1.Equals(PendingSegment->Point2) &&
-				FMath::IsNearlyEqual(PendingSegment->Point1.Z, PendingSegment->Point2.Z);// , KINDA_SMALL_NUMBER);
+			bSegmentValid = !pendingSegment->Point1.Equals(pendingSegment->Point2) &&
+				FMath::IsNearlyEqual(pendingSegment->Point1.Z, pendingSegment->Point2.Z);// , KINDA_SMALL_NUMBER);
 			break;
 		case EAxisConstraint::AxesXY:
-			bSegmentValid = !FMath::IsNearlyEqual(PendingSegment->Point1.X, PendingSegment->Point2.X) &&
-				!FMath::IsNearlyEqual(PendingSegment->Point1.Y, PendingSegment->Point2.Y) &&
-				FMath::IsNearlyEqual(PendingSegment->Point1.Z, PendingSegment->Point2.Z);// , KINDA_SMALL_NUMBER);
+			bSegmentValid = !FMath::IsNearlyEqual(pendingSegment->Point1.X, pendingSegment->Point2.X) &&
+				!FMath::IsNearlyEqual(pendingSegment->Point1.Y, pendingSegment->Point2.Y) &&
+				FMath::IsNearlyEqual(pendingSegment->Point1.Z, pendingSegment->Point2.Z);// , KINDA_SMALL_NUMBER);
 			break;
 		default:
 			bSegmentValid = true;
@@ -120,13 +124,13 @@ bool UPlaneHostedObjTool::FrameUpdate()
 		{
 			bool bRecreatingGeometry = (PendingObjMesh->LayerGeometries.Num() == 0);
 			PendingObjMesh->CreateBasicLayerDefs(PendingPlanePoints, FVector::ZeroVector, ObjAssembly, GetDefaultJustificationValue());
-			PendingObjMesh->UpdatePlaneHostedMesh(bRecreatingGeometry, false, false, PendingSegment->Point1);
+			PendingObjMesh->UpdatePlaneHostedMesh(bRecreatingGeometry, false, false, pendingSegment->Point1);
 			PendingObjMesh->SetActorHiddenInGame(false);
 		}
 		else
 		{
 			PendingObjMesh->SetActorHiddenInGame(true);
-			PendingSegment->SetActorHiddenInGame(true);
+			pendingSegment->SetActorHiddenInGame(true);
 		}
 
 		if (PendingPlane.IsValid())
@@ -221,7 +225,7 @@ bool UPlaneHostedObjTool::BeginUse()
 		return false;
 	}
 
-	if (!PendingObjMesh.IsValid() && !PendingSegment.IsValid() && (LastValidTargetID != MOD_ID_NONE))
+	if (!PendingObjMesh.IsValid() && (LastValidTargetID != MOD_ID_NONE))
 	{
 		// Skip FMetaPlaneTool::BeginUse because we don't want to create any line segments in plane-application / "paint bucket" mode
 		if (!UEditModelToolBase::BeginUse())

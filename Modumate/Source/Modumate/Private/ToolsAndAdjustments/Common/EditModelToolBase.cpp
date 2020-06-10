@@ -1,29 +1,36 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
-#include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
+
+#include "DocumentManagement/ModumateCommands.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Runtime/Engine/Classes/Components/LineBatchComponent.h"
+#include "Runtime/Engine/Classes/Engine/Engine.h"
+#include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "Runtime/Engine/Classes/Components/LineBatchComponent.h"
-#include "Runtime/Engine/Classes/Engine/Engine.h"
-#include "ModumateCore/ModumateConsoleCommand.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "UnrealClasses/CompoundMeshActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 /*
 * Tool Modes
 */
 UEditModelToolBase::UEditModelToolBase(const FObjectInitializer& ObjectInitializer)
-	: InUse(false)
+	: Super(ObjectInitializer)
+	, InUse(false)
 	, Active(false)
 	, Assembly(false)
 	, Controller(nullptr)
+	, GameInstance(nullptr)
 	, AxisConstraint(EAxisConstraint::None)
 	, CreateObjectMode(EToolCreateObjectMode::Draw)
 {
 	Controller = Cast<AEditModelPlayerController_CPP>(GetOuter());
+	if (auto world = GetWorld())
+	{
+		GameInstance = Cast<UModumateGameInstance>(GetWorld()->GetGameInstance());
+	}
 }
 
 bool UEditModelToolBase::Activate()

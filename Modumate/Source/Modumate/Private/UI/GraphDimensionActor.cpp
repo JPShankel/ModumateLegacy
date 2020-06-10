@@ -1,4 +1,4 @@
-#include "UnrealClasses/DimensionActor.h"
+#include "UI/GraphDimensionActor.h"
 
 #include "Components/EditableTextBox.h"
 #include "Graph/Graph3D.h"
@@ -6,39 +6,15 @@
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UI/EditModelPlayerHUD.h"
-#include "UI/HUDDrawWidget.h"
+#include "UnrealClasses/LineActor.h"
 
-ADimensionActor::ADimensionActor(const FObjectInitializer& ObjectInitializer)
+AGraphDimensionActor::AGraphDimensionActor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ADimensionActor::CreateWidget()
-{
-	TWeakObjectPtr<AEditModelPlayerController_CPP> playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-	AEditModelPlayerHUD *playerHUD = playerController.IsValid() ? Cast<AEditModelPlayerHUD>(playerController->GetHUD()) : nullptr;
-	DimensionText = playerController->HUDDrawWidget->UserWidgetPool.GetOrCreateInstance<UDimensionWidget>(playerHUD->DimensionClass);
-
-	DimensionText->AddToViewport();
-	DimensionText->SetPositionInViewport(FVector2D(0.0f, 0.0f));
-
-	DimensionText->Measurement->OnTextCommitted.AddDynamic(this, &ADimensionActor::OnMeasurementTextCommitted);
-}
-
-void ADimensionActor::ReleaseWidget()
-{
-	DimensionText->RemoveFromViewport();
-
-	TWeakObjectPtr<AEditModelPlayerController_CPP> playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-	if (playerController != nullptr)
-	{
-		playerController->HUDDrawWidget->UserWidgetPool.Release(DimensionText);
-	}
-}
-
-void ADimensionActor::SetTarget(int32 InTargetEdgeID, int32 InTargetObjID, bool bIsEditable)
+void AGraphDimensionActor::SetTarget(int32 InTargetEdgeID, int32 InTargetObjID, bool bIsEditable)
 {
 	TargetEdgeID = InTargetEdgeID;
 	TargetObjID = InTargetObjID;
@@ -57,21 +33,34 @@ void ADimensionActor::SetTarget(int32 InTargetEdgeID, int32 InTargetObjID, bool 
 	}
 }
 
-void ADimensionActor::BeginPlay()
+ALineActor* AGraphDimensionActor::GetLineActor()
+{
+	// the relevant actor for this implementation of the dimension interface is contained within the 
+	// associated graph edge
+
+	// TODO: this could be useful if something externally should set properties of the line, following the interface
+	//return Cast<ALineActor>(GameState->Document.GetObjectById(TargetEdgeID)->GetActor());
+
+	ensureAlways(false);
+	return nullptr;
+}
+
+void AGraphDimensionActor::BeginPlay()
 {
 	Super::BeginPlay();
 
 	CreateWidget();
+	DimensionText->Measurement->OnTextCommitted.AddDynamic(this, &AGraphDimensionActor::OnMeasurementTextCommitted);
 }
 
-void ADimensionActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void AGraphDimensionActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	ReleaseWidget();
 
 	Super::EndPlay(EndPlayReason);
 }
 
-void ADimensionActor::Tick(float DeltaTime)
+void AGraphDimensionActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -89,8 +78,7 @@ void ADimensionActor::Tick(float DeltaTime)
 		// Calculate angle/offset
 		// if the target object is a face, determine the offset direction from the cached edge normals 
 		// so that the measurement doesn't overlap with the handles
-		FVector2D offsetDirection;
-		FVector2D projStart, projEnd, edgeDirection;
+		FVector2D projStart, projEnd, edgeDirection, offsetDirection;
 		controller->ProjectWorldLocationToScreen(startVertex->Position, projStart);
 		controller->ProjectWorldLocationToScreen(endVertex->Position, projEnd);
 
@@ -122,7 +110,7 @@ void ADimensionActor::Tick(float DeltaTime)
 	}
 }
 
-void ADimensionActor::OnMeasurementTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+void AGraphDimensionActor::OnMeasurementTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	bool bVerticesMoved = false;
 	if (CommitMethod == ETextCommit::OnEnter)

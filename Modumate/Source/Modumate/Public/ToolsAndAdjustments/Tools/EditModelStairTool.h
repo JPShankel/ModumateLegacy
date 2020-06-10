@@ -49,6 +49,7 @@ protected:
 	bool MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID);
 	bool ValidatePlaneTarget(const Modumate::FModumateObjectInstance *PlaneTarget);
 	void MakePendingSegment(TWeakObjectPtr<ALineActor> &TargetSegment, const FVector &StartingPoint, const FColor &SegmentColor);
+	void MakePendingSegment(int32 &TargetSegmentID, const FVector &StartingPoint, const FColor &SegmentColor);
 	void ResetState();
 
 	EState CurrentState;
@@ -57,7 +58,7 @@ protected:
 	bool bWantedVerticalSnap;
 	int32 LastValidTargetID;
 	FModumateObjectAssembly ObjAssembly;
-	TWeakObjectPtr<ALineActor> RunSegment, RiseSegment, WidthSegment;
+	int32 RunSegmentID, RiseSegmentID, WidthSegmentID;
 	TWeakObjectPtr<ADynamicMeshActor> PendingObjMesh;
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
 	TWeakObjectPtr<AEditModelGameState_CPP> GameState;

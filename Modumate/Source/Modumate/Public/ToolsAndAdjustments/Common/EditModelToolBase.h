@@ -26,6 +26,9 @@ protected:
 	UPROPERTY()
 	class AEditModelPlayerController_CPP* Controller;
 
+	UPROPERTY()
+	class UModumateGameInstance *GameInstance;
+
 	EAxisConstraint AxisConstraint;
 	EToolCreateObjectMode CreateObjectMode;
 

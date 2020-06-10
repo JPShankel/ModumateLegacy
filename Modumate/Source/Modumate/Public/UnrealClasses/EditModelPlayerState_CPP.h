@@ -18,7 +18,7 @@ namespace Modumate
 {
 	class FModumateDocument;
 }
-class ADimensionActor;
+class AGraphDimensionActor;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionObjectChanged);
@@ -150,7 +150,6 @@ public:
 	void DeselectAll();
 	void SetActorRenderValues(AActor* actor, int32 stencilValue, bool bNeverCull);
 	void PostSelectionOrViewChanged();
-	void UpdateGraphDimensionStrings();
 
 	void CopySelectedToClipboard(const Modumate::FModumateDocument &document);
 	void Paste(Modumate::FModumateDocument &document) const;

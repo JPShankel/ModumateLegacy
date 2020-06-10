@@ -1,10 +1,15 @@
 #include "ToolsAndAdjustments/Tools/EditModelMoveTool.h"
+
+#include "DocumentManagement/ModumateCommands.h"
+#include "UI/PendingSegmentActor.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/LineActor.h"
+#include "UI/DimensionManager.h"
+#include "UI/PendingSegmentActor.h"
 
 using namespace Modumate;
 
@@ -43,7 +48,7 @@ bool UMoveObjectTool::BeginUse()
 	{
 		AnchorPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorPoint, Controller->EMPlayerState->SnappedCursor.HitNormal, Controller->EMPlayerState->SnappedCursor.HitTangent);
-		PendingMoveLine = Controller->GetWorld()->SpawnActor<ALineActor>();
+		PendingSegmentID = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass())->ID;
 		return true;
 	}
 	return false;
@@ -57,12 +62,17 @@ bool UMoveObjectTool::FrameUpdate()
 	{
 		const FVector &hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 
-		if (PendingMoveLine.IsValid())
+		ALineActor *pendingSegment = nullptr;
+		if (auto dimensionActor = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID))
 		{
-			PendingMoveLine->Point1 = AnchorPoint;
-			PendingMoveLine->Point2 = hitLoc;
-			PendingMoveLine->Color = FColor::Black;
-			PendingMoveLine->Thickness = 3.0f;
+			pendingSegment = dimensionActor->GetLineActor();
+		}
+		if (pendingSegment != nullptr)
+		{
+			pendingSegment->Point1 = AnchorPoint;
+			pendingSegment->Point2 = hitLoc;
+			pendingSegment->Color = FColor::Black;
+			pendingSegment->Thickness = 3.0f;
 		}
 		else
 		{
@@ -79,14 +89,12 @@ bool UMoveObjectTool::FrameUpdate()
 			case ESnapType::CT_CUSTOMSNAPX:
 			case ESnapType::CT_CUSTOMSNAPY:
 			case ESnapType::CT_CUSTOMSNAPZ:
-				PendingMoveLine->SetActorHiddenInGame(true);
+				pendingSegment->SetActorHiddenInGame(true);
 				break;
 			default:
-				PendingMoveLine->SetActorHiddenInGame(false);
+				pendingSegment->SetActorHiddenInGame(false);
 				break;
 		};
-
-		Controller->UpdateDimensionString(hitLoc, AnchorPoint, Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Normal);
 
 		for (auto &kvp : OriginalObjectData)
 		{
@@ -134,10 +142,9 @@ bool UMoveObjectTool::EndUse()
 			.Param(Parameters::kObjectIDs, ids));
 	}
 
-	if (PendingMoveLine.IsValid())
-	{
-		PendingMoveLine->Destroy();
-	}
+	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+	PendingSegmentID = MOD_ID_NONE;
+
 	ReleaseSelectedObjects();
 
 	return Super::EndUse();
@@ -150,10 +157,8 @@ bool UMoveObjectTool::AbortUse()
 
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
-	if (PendingMoveLine.IsValid())
-	{
-		PendingMoveLine->Destroy();
-	}
+	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+	PendingSegmentID = MOD_ID_NONE;
 
 	return UEditModelToolBase::AbortUse();
 }

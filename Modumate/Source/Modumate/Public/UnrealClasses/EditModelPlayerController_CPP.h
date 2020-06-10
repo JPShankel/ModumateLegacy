@@ -227,9 +227,6 @@ public:
 
 	void SetViewGroupObject(const Modumate::FModumateObjectInstance *ob);
 
-	// Draw basic dimension string own by the PlayerController
-	void UpdateDimensionString(const FVector &p1, const FVector &p2, const FVector &normal, const int32 groupIndex = 0, const float offset = 50.f);
-
 	Modumate::FModumateFunctionParameterSet ModumateCommand(const Modumate::FModumateCommand &cmd);
 
 	Modumate::FModumateSnappingView *GetSnappingView() const { return SnappingView; }

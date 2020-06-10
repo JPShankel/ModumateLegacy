@@ -4,8 +4,6 @@
 
 #include "EditModelCountertopTool.generated.h"
 
-class ALineActor;
-
 UCLASS()
 class MODUMATE_API UCountertopTool : public UEditModelToolBase
 {
@@ -19,7 +17,7 @@ private:
 	};
 	EState State;
 
-	TWeakObjectPtr<ALineActor> PendingSegment;
+	int32 PendingSegmentID;
 	bool Inverted = true;
 	FVector AnchorPointDegree;
 

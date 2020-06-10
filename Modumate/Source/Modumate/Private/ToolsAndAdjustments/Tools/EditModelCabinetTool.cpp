@@ -1,21 +1,26 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #include "ToolsAndAdjustments/Tools/EditModelCabinetTool.h"
+
+#include "Algo/Transform.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "DocumentManagement/ModumateObjectInstanceCabinets.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/LineActor.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "Algo/Transform.h"
-#include "DocumentManagement/ModumateObjectInstanceCabinets.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UI/DimensionManager.h"
+#include "UI/PendingSegmentActor.h"
 
 using namespace Modumate;
 
 UCabinetTool::UCabinetTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, State(Neutral)
+	, PendingSegmentID(MOD_ID_NONE)
 {
 	Controller->EMPlayerState;
 	CabinetPlane = FPlane(FVector::UpVector, 0.0f);
@@ -44,11 +49,14 @@ bool UCabinetTool::BeginUse()
 
 	State = NewSegmentPending;
 
-	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
-	PendingSegment->Point1 = hitLoc;
-	PendingSegment->Point2 = hitLoc;
-	PendingSegment->Color = FColor::Green;
-	PendingSegment->Thickness = 2;
+	auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+	PendingSegmentID = dimensionActor->ID;
+
+	auto pendingSegment = dimensionActor->GetLineActor();
+	pendingSegment->Point1 = hitLoc;
+	pendingSegment->Point2 = hitLoc;
+	pendingSegment->Color = FColor::Green;
+	pendingSegment->Thickness = 2;
 
 	LastPendingSegmentLoc = hitLoc;
 	LastPendingSegmentLocValid = true;
@@ -69,8 +77,9 @@ bool UCabinetTool::FrameUpdate()
 	const FSnappedCursor& snappedCursor = Controller->EMPlayerState->SnappedCursor;
 	FVector hitLoc = snappedCursor.WorldPosition;
 
-	if (State == NewSegmentPending && PendingSegment != nullptr)
+	if (State == NewSegmentPending && PendingSegmentID != MOD_ID_NONE)
 	{
+		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 		FAffordanceLine affordance;
 		if (Controller->EMPlayerState->SnappedCursor.TryMakeAffordanceLineFromCursorToSketchPlane(affordance, hitLoc))
 		{
@@ -80,9 +89,7 @@ bool UCabinetTool::FrameUpdate()
 		LastPendingSegmentLoc = hitLoc;
 		LastPendingSegmentLocValid = true;
 
-		PendingSegment->Point2 = hitLoc;
-		// TODO: non-horizontal dimensions
-		Controller->UpdateDimensionString(PendingSegment->Point1, PendingSegment->Point2, FVector::UpVector);
+		pendingSegment->Point2 = hitLoc;
 	}
 
 	if (State == SetHeight)
@@ -113,16 +120,9 @@ bool UCabinetTool::FrameUpdate()
 		camDir.Z = 0.f;
 		camDir = camDir.RotateAngleAxis(-90.f, FVector::UpVector);
 		// Dim string for cabinet height - Delta Only
-		UModumateFunctionLibrary::AddNewDimensionString(
-			Controller,
-			avgLocation,
-			newHeightLocation,
-			camDir,
-			Controller->DimensionStringGroupID_PlayerController,
-			Controller->DimensionStringUniqueID_Delta,
-			0,
-			Controller,
-			EDimStringStyle::Fixed);
+		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+		pendingSegment->Point1 = ConnectSegs[0]->Point1;
+		pendingSegment->Point2 = ConnectSegs[0]->Point2;
 	}
 
 	return true;
@@ -130,10 +130,11 @@ bool UCabinetTool::FrameUpdate()
 
 bool UCabinetTool::HandleInputNumber(double n)
 {
-	if (State == NewSegmentPending && PendingSegment != nullptr)
+	if (State == NewSegmentPending && PendingSegmentID != MOD_ID_NONE)
 	{
-		FVector direction = (PendingSegment->Point2 - PendingSegment->Point1).GetSafeNormal();
-		FVector origin = PendingSegment->Point1 + direction * n;
+		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+		FVector direction = (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal();
+		FVector origin = pendingSegment->Point1 + direction * n;
 		HandleClick(origin);
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(origin, direction);
 	}
@@ -156,11 +157,9 @@ bool UCabinetTool::HandleInputNumber(double n)
 bool UCabinetTool::AbortUse()
 {
 	Super::AbortUse();
-	if (PendingSegment != nullptr)
-	{
-		PendingSegment->Destroy();
-		PendingSegment = nullptr;
-	}
+
+	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+	PendingSegmentID = MOD_ID_NONE;
 
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
@@ -196,11 +195,9 @@ bool UCabinetTool::AbortUse()
 bool UCabinetTool::EndUse()
 {
 	Super::EndUse();
-	if (PendingSegment != nullptr)
-	{
-		PendingSegment->Destroy();
-		PendingSegment = nullptr;
-	}
+
+	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+	PendingSegmentID = MOD_ID_NONE;
 
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
@@ -231,18 +228,19 @@ bool UCabinetTool::EndUse()
 
 void UCabinetTool::HandleClick(const FVector &p)
 {
-	if (State == NewSegmentPending && PendingSegment != nullptr)
+	if (State == NewSegmentPending && PendingSegmentID != MOD_ID_NONE)
 	{
 		// TODO: make segment
+		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 
-		if (PendingSegment != nullptr)
+		if (pendingSegment != nullptr)
 		{
-			FVector p1 = PendingSegment->Point1;
-			FVector p2 = PendingSegment->Point2;
+			FVector p1 = pendingSegment->Point1;
+			FVector p2 = pendingSegment->Point2;
 
-			PendingSegment->Point1 = p;
-			PendingSegment->Point2 = p;
 			// TODO: check closed poly
+			pendingSegment->Point1 = p;
+			pendingSegment->Point2 = p;
 		}
 	}
 }
@@ -254,10 +252,11 @@ bool UCabinetTool::EnterNextStage()
 	{
 		return false;
 	}
-	if (State == NewSegmentPending)
+	if (State == NewSegmentPending && PendingSegmentID != MOD_ID_NONE)
 	{
+		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 		FVector hitLoc = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
-		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector, (PendingSegment->Point1 - PendingSegment->Point2).GetSafeNormal());
+		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector, (pendingSegment->Point1 - pendingSegment->Point2).GetSafeNormal());
 		HandleClick(hitLoc);
 
 		return true;
@@ -291,12 +290,6 @@ bool UCabinetTool::EnterNextStage()
 void UCabinetTool::BeginSetHeightMode(const TArray<FVector> &basePoly)
 {
 	Super::BeginUse();
-
-	if (PendingSegment != nullptr)
-	{
-		PendingSegment->Destroy();
-		PendingSegment = nullptr;
-	}
 
 	for (int i = 0; i < basePoly.Num(); ++i)
 	{

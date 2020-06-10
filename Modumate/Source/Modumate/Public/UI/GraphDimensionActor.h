@@ -3,12 +3,10 @@
 
 #include "CoreMinimal.h"
 
-#include "GameFramework/Actor.h"
 #include "Input/Events.h"
+#include "UI/DimensionActor.h"
 
-#include "DimensionActor.generated.h"
-
-class UDimensionWidget;
+#include "GraphDimensionActor.generated.h"
 
 namespace Modumate 
 {
@@ -16,17 +14,16 @@ namespace Modumate
 }
 
 UCLASS()
-class MODUMATE_API ADimensionActor : public AActor
+class MODUMATE_API AGraphDimensionActor : public ADimensionActor
 {
 	GENERATED_BODY()
 
 public:
-	ADimensionActor(const FObjectInitializer& ObjectInitializer);
-
-	void CreateWidget();
-	void ReleaseWidget();
+	AGraphDimensionActor(const FObjectInitializer& ObjectInitializer);
 
 	void SetTarget(int32 InTargetEdgeID, int32 InTargetObjID, bool bIsEditable);
+
+	virtual ALineActor* GetLineActor() override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,9 +36,6 @@ protected:
 	void OnMeasurementTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
 public:
-	UPROPERTY()
-	UDimensionWidget* DimensionText;
-
 	UPROPERTY()
 	class AEditModelGameState_CPP *GameState;
 

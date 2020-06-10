@@ -1,7 +1,8 @@
 #include "UI/DimensionManager.h"
 
-#include "UnrealClasses/DimensionActor.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UI/DimensionActor.h"
+#include "UI/GraphDimensionActor.h"
 
 UDimensionManager::UDimensionManager(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -15,14 +16,15 @@ void UDimensionManager::Init()
 
 void UDimensionManager::Reset()
 {
-	for (ADimensionActor* actor : DimensionActors)
+	for (auto& kvp : DimensionActors)
 	{
-		actor->Destroy();
+		kvp.Value->Destroy();
 	}
 	DimensionActors.Empty();
 
 	LastSelectedObjID = MOD_ID_NONE;
 	LastSelectedVertexIDs.Reset();
+	CurrentGraphDimensionStrings.Reset();
 }
 
 void UDimensionManager::Shutdown()
@@ -57,11 +59,12 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 
 	if (selectedGraphObjID != LastSelectedObjID)
 	{
-		for (ADimensionActor* actor : DimensionActors)
+		for (auto& kvp : DimensionActors)
 		{
-			actor->Destroy();
+			kvp.Value->Destroy();
 		}
 		DimensionActors.Empty();
+		CurrentGraphDimensionStrings.Reset();
 
 		// edges are editable when translating the selected object along that edge is valid
 		TMap<int32, bool> edgeIDToEditability;
@@ -71,11 +74,34 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 
 		for (auto kvp : edgeIDToEditability)
 		{
-			ADimensionActor* dimensionActor = GetWorld()->SpawnActor<ADimensionActor>(ADimensionActor::StaticClass());
+			auto dimensionActor = Cast<AGraphDimensionActor>(AddDimensionActor(AGraphDimensionActor::StaticClass()));
 			dimensionActor->SetTarget(kvp.Key, selectedGraphObjID, kvp.Value);
-			DimensionActors.Add(dimensionActor);
+			CurrentGraphDimensionStrings.Add(dimensionActor->ID);
 		}
 
 		LastSelectedObjID = selectedGraphObjID;
+	}
+}
+
+void UDimensionManager::ClearGraphDimensionStrings()
+{
+	for (int32 id : CurrentGraphDimensionStrings)
+	{
+		ReleaseDimensionActor(id);
+	}
+	CurrentGraphDimensionStrings.Reset();
+}
+
+ADimensionActor *UDimensionManager::GetDimensionActor(int32 id)
+{ 
+	return DimensionActors.Contains(id) ? DimensionActors[id] : nullptr; 
+}
+
+void UDimensionManager::ReleaseDimensionActor(int32 id)
+{
+	if (DimensionActors.Contains(id))
+	{
+		DimensionActors[id]->Destroy();
+		DimensionActors.Remove(id);
 	}
 }

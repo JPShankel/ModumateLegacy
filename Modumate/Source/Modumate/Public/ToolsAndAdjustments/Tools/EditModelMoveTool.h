@@ -5,7 +5,7 @@
 
 #include "EditModelMoveTool.generated.h"
 
-class ALineActor;
+class APendingSegmentActor;
 
 UCLASS()
 class MODUMATE_API UMoveObjectTool : public UEditModelToolBase, public FSelectedObjectToolMixin
@@ -15,7 +15,7 @@ class MODUMATE_API UMoveObjectTool : public UEditModelToolBase, public FSelected
 private:
 	FVector AnchorPoint;
 	TMap<int32, FTransform> StartTransforms;
-	TWeakObjectPtr<ALineActor> PendingMoveLine;
+	int32 PendingSegmentID;
 
 public:
 	UMoveObjectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());

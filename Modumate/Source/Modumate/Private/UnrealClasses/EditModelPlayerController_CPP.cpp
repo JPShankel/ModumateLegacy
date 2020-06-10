@@ -2609,7 +2609,6 @@ void AEditModelPlayerController_CPP::UpdateUserSnapPoint()
 		FVector userSnapPointPos = activeUserSnapPoint.GetLocation();
 
 		// TODO: non-horizontal dimensions
-		UpdateDimensionString(userSnapPointPos, cursorPosFlat, FVector::UpVector);
 		AddSnapAffordance(cursorPosFlat, EMPlayerState->SnappedCursor.WorldPosition);
 
 		FLinearColor userPointSnapColor = (EMPlayerState->SnappedCursor.SnapType == ESnapType::CT_NOSNAP) ?
@@ -2628,70 +2627,6 @@ void AEditModelPlayerController_CPP::UpdateUserSnapPoint()
 	{
 		ClearUserSnapPoints();
 	}
-}
-
-void AEditModelPlayerController_CPP::UpdateDimensionString(const FVector &p1, const FVector &p2, const FVector &normal,const int32 groupIndex, const float offset)
-{
-	FVector dir = (p2 - p1).GetSafeNormal();
-
-	FVector2D sp1, sp2;
-	ProjectWorldLocationToScreen(p1, sp1);
-	ProjectWorldLocationToScreen(p2, sp2);
-	
-	FModelDimensionString newDimensionString;
-	newDimensionString.Point1 =  p1;
-	newDimensionString.Point2 =  p2;
-
-	// If we're drawing a dimension along the normal, the singularity creates ambiguity in the preferred direction of the dimension offset, so pick the one to our left in screen space
-	if (FVector::Parallel(p2 - p1, normal))
-	{
-		FVector offsetLoc, offsetDir;
-		DeprojectScreenPositionToWorld(sp1.X - 10.0f, sp1.Y, offsetLoc, offsetDir);
-
-		FVector anchorLoc, anchorDir;
-		DeprojectScreenPositionToWorld(sp1.X, sp1.Y, anchorLoc, anchorDir);
-		newDimensionString.OffsetDirection = (offsetLoc - anchorLoc).GetSafeNormal();
-	}
-	// Otherwise pick a direction orthogonal to the normal and the line direction
-	else
-	{
-		newDimensionString.OffsetDirection = FVector::CrossProduct(normal, dir).GetSafeNormal();
-
-		// Flip the offset direction so it points downward in screen space
-		FVector2D offsetPos;
-		ProjectWorldLocationToScreen(newDimensionString.OffsetDirection + p1, offsetPos);
-		offsetPos -= sp1;
-
-		if (offsetPos.Y < 0)
-		{
-			dir *= -1.0f;
-			newDimensionString.OffsetDirection *= -1.0f;
-		}
-	}
-
-	newDimensionString.Owner = this;
-	newDimensionString.Offset = offset;
-	newDimensionString.Style = EDimStringStyle::Fixed;
-	newDimensionString.Color = FLinearColor::White;
-
-	newDimensionString.UniqueID = DimensionStringUniqueID_ControllerLine;
-	newDimensionString.GroupID = DimensionStringGroupID_PlayerController;
-	newDimensionString.GroupIndex = 0;
-
-	// Dimension strings do not have angles
-	// TODO: merge DegreeString from ModumateFunctionLibrary into this scheme, to be refactored for multi-dimensional strings with angles
-	newDimensionString.AngleDegrees = 0.0f;
-
-
-	if (HasPendingTextBoxUserInput())
-	{
-		newDimensionString.Functionality = EEnterableField::EditableText_ImperialUnits_UserInput;
-	}
-	else
-	{
-		newDimensionString.Functionality = EEnterableField::NonEditableText;
-	}
-	EMPlayerState->DimensionStrings.Add(newDimensionString);
 }
 
 void AEditModelPlayerController_CPP::SetSelectionMode(ESelectObjectMode NewSelectionMode)

@@ -2,21 +2,24 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelMetaPlaneTool.h"
 
-#include "UnrealClasses/DynamicMeshActor.h"
-#include "UnrealClasses/LineActor.h"
+#include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "DocumentManagement/ModumateCommands.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/LineActor.h"
+#include "UI/DimensionManager.h"
+#include "UI/PendingSegmentActor.h"
 
 using namespace Modumate;
 
 UMetaPlaneTool::UMetaPlaneTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, State(Neutral)
-	, PendingSegment(nullptr)
+	, PendingSegmentID(MOD_ID_NONE)
 	, PendingPlane(nullptr)
 	, AnchorPointDegree(ForceInitToZero)
 	, MinPlaneSize(1.0f)
@@ -38,12 +41,14 @@ bool UMetaPlaneTool::HandleInputNumber(double n)
 	}
 	NewObjIDs.Reset();
 
+	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+
 	switch (Controller->EMPlayerState->CurrentDimensionStringGroupIndex)
 	{
 	case 0:
-		if ((State == NewSegmentPending) && PendingSegment.IsValid())
+		if ((State == NewSegmentPending) && pendingSegment != nullptr)
 		{
-			FVector dir = (PendingSegment->Point2 - PendingSegment->Point1).GetSafeNormal() * n;
+			FVector dir = (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal() * n;
 
 			// TODO: until the UI flow can allow for separate X and Y distances, do not respond
 			// to typing a number for XY planes
@@ -52,14 +57,14 @@ bool UMetaPlaneTool::HandleInputNumber(double n)
 				return false;
 			}
 
-			return MakeObject(PendingSegment->Point1 + dir, NewObjIDs);
+			return MakeObject(pendingSegment->Point1 + dir, NewObjIDs);
 		}
 		return true;
 	case 1:
 		// Project segment to degree defined by user input
-		float currentSegmentLength = FMath::Max((PendingSegment->Point1 - PendingSegment->Point2).Size(), 100.f);
+		float currentSegmentLength = FMath::Max((pendingSegment->Point1 - pendingSegment->Point2).Size(), 100.f);
 
-		FVector startPos = PendingSegment->Point1;
+		FVector startPos = pendingSegment->Point1;
 		FVector degreeDir = (AnchorPointDegree - startPos).GetSafeNormal();
 		degreeDir = degreeDir.RotateAngleAxis(n + 180.f, FVector::UpVector);
 
@@ -132,11 +137,14 @@ bool UMetaPlaneTool::BeginUse()
 
 	State = NewSegmentPending;
 
-	PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
-	PendingSegment->Point1 = hitLoc;
-	PendingSegment->Point2 = hitLoc;
-	PendingSegment->Color = FColor::White;
-	PendingSegment->Thickness = 2;
+	auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+	PendingSegmentID = dimensionActor->ID;
+
+	auto pendingSegment = dimensionActor->GetLineActor();
+	pendingSegment->Point1 = hitLoc;
+	pendingSegment->Point2 = hitLoc;
+	pendingSegment->Color = FColor::White;
+	pendingSegment->Thickness = 2;
 
 	AnchorPointDegree = hitLoc + FVector(0.f, -1.f, 0.f); // Make north as AnchorPointDegree at new segment
 
@@ -173,13 +181,14 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 	Modumate::FModumateDocument &doc = GameState->Document;
 
 	int32 newObjectID = MOD_ID_NONE;
-	FVector constrainedStartPoint = PendingSegment->Point1;
+	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+	FVector constrainedStartPoint = pendingSegment->Point1;
 	FVector constrainedEndPoint = Location;
 	ConstrainHitPoint(constrainedStartPoint);
 	ConstrainHitPoint(constrainedEndPoint);
 	NewObjIDs.Reset();
 
-	if (State == NewSegmentPending && PendingSegment.IsValid() &&
+	if (State == NewSegmentPending && pendingSegment != nullptr &&
 		(FVector::Dist(constrainedStartPoint, constrainedEndPoint) >= MinPlaneSize))
 	{
 		switch (AxisConstraint)
@@ -253,9 +262,9 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 				Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, currentSketchPlaneNormal, tangentDir);
 			}
 
-			AnchorPointDegree = PendingSegment->Point1;
-			PendingSegment->Point1 = constrainedEndPoint;
-			PendingSegment->Point2 = constrainedEndPoint;
+			AnchorPointDegree = pendingSegment->Point1;
+			pendingSegment->Point1 = constrainedEndPoint;
+			pendingSegment->Point2 = constrainedEndPoint;
 
 			Controller->ModumateCommand(FModumateCommand(Commands::kEndUndoRedoMacro));
 			break;
@@ -263,7 +272,7 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 		case EAxisConstraint::AxisZ:
 		{
 			// set end of the segment to the hit location
-			PendingSegment->Point2 = constrainedEndPoint;
+			pendingSegment->Point2 = constrainedEndPoint;
 			UpdatePendingPlane();
 
 			// create meta plane
@@ -278,11 +287,11 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 			NewObjIDs = commandResult.GetValue(Parameters::kObjectIDs);
 
 			// set up cursor affordance so snapping works on the next chained segment
-			Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, FVector::UpVector, (PendingSegment->Point1 - PendingSegment->Point2).GetSafeNormal());
+			Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, FVector::UpVector, (pendingSegment->Point1 - pendingSegment->Point2).GetSafeNormal());
 
 			// continue plane creation starting from the hit location
-			AnchorPointDegree = PendingSegment->Point1;
-			PendingSegment->Point1 = constrainedEndPoint;
+			AnchorPointDegree = pendingSegment->Point1;
+			pendingSegment->Point1 = constrainedEndPoint;
 			break;
 		}
 		case EAxisConstraint::AxesXY:
@@ -319,59 +328,42 @@ bool UMetaPlaneTool::FrameUpdate()
 
 	FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 
-	if (State == NewSegmentPending && PendingSegment.IsValid())
+	if (State == NewSegmentPending)
 	{
-		if (ConstrainHitPoint(hitLoc))
+		auto dimensionActor = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID);
+		ALineActor *pendingSegment = nullptr;
+		if (dimensionActor != nullptr)
 		{
-			FAffordanceLine affordance;
-			affordance.Color = FLinearColor::Blue;
-			affordance.EndPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-			affordance.StartPoint = hitLoc;
-			affordance.Interval = 4.0f;
-			Controller->EMPlayerState->AffordanceLines.Add(affordance);
+			pendingSegment = dimensionActor->GetLineActor();
 		}
 
-		PendingSegment->Point2 = hitLoc;
-		PendingSegment->UpdateMetaEdgeVisuals(false);
-		// TODO: handle non-horizontal dimensions
-		Controller->UpdateDimensionString(PendingSegment->Point1, PendingSegment->Point2, FVector::UpVector);
-		UpdatePendingPlane();
-	}
-
-	if (PendingSegment.Get())
-	{
-		if ((PendingSegment->Point1 - PendingSegment->Point2).Size() > 25.f) // Add degree string when segment is greater than certain length
+		if (pendingSegment != nullptr)
 		{
-			// TODO: refactor for non-horizontal sketching
-			bool clockwise = FVector::CrossProduct(AnchorPointDegree - PendingSegment->Point1, PendingSegment->Point2 - PendingSegment->Point1).Z < 0.0f;
+			if (ConstrainHitPoint(hitLoc))
+			{
+				FAffordanceLine affordance;
+				affordance.Color = FLinearColor::Blue;
+				affordance.EndPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+				affordance.StartPoint = hitLoc;
+				affordance.Interval = 4.0f;
+				Controller->EMPlayerState->AffordanceLines.Add(affordance);
+			}
 
-			UModumateFunctionLibrary::AddNewDegreeString(
-				Controller,
-				PendingSegment->Point1, //degree location
-				AnchorPointDegree, // start
-				PendingSegment->Point2, // end
-				clockwise,
-				FName(TEXT("PlayerController")),
-				FName(TEXT("Degree")),
-				1,
-				Controller,
-				EDimStringStyle::DegreeString,
-				EEnterableField::NonEditableText,
-				EAutoEditableBox::UponUserInput,
-				true);
+			pendingSegment->Point2 = hitLoc;
+			pendingSegment->UpdateMetaEdgeVisuals(false);
+
+			UpdatePendingPlane();
 		}
 	}
+
 	return true;
 }
 
 bool UMetaPlaneTool::EndUse()
 {
 	State = Neutral;
-	if (PendingSegment.IsValid())
-	{
-		PendingSegment->Destroy();
-		PendingSegment.Reset();
-	}
+	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+	PendingSegmentID = MOD_ID_NONE;
 
 	if (PendingPlane.IsValid())
 	{
@@ -401,8 +393,10 @@ void UMetaPlaneTool::UpdatePendingPlane()
 {
 	if (PendingPlane.IsValid())
 	{
-		if (State == NewSegmentPending && PendingSegment.IsValid() &&
-			(FVector::Dist(PendingSegment->Point1, PendingSegment->Point2) >= MinPlaneSize))
+
+		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+		if (State == NewSegmentPending && pendingSegment != nullptr &&
+			(FVector::Dist(pendingSegment->Point1, pendingSegment->Point2) >= MinPlaneSize))
 		{
 			switch (AxisConstraint)
 			{
@@ -414,10 +408,10 @@ void UMetaPlaneTool::UpdatePendingPlane()
 				FVector verticalRectOffset = FVector::UpVector * Controller->GetDefaultWallHeightFromDoc();
 
 				PendingPlanePoints = {
-					PendingSegment->Point1,
-					PendingSegment->Point2,
-					PendingSegment->Point2 + verticalRectOffset,
-					PendingSegment->Point1 + verticalRectOffset
+					pendingSegment->Point1,
+					pendingSegment->Point2,
+					pendingSegment->Point2 + verticalRectOffset,
+					pendingSegment->Point1 + verticalRectOffset
 				};
 
 				PendingPlane->SetActorHiddenInGame(false);
@@ -428,9 +422,9 @@ void UMetaPlaneTool::UpdatePendingPlane()
 			case EAxisConstraint::AxesXY:
 			{
 				FBox2D pendingRect(ForceInitToZero);
-				pendingRect += FVector2D(PendingSegment->Point1);
-				pendingRect += FVector2D(PendingSegment->Point2);
-				float planeHeight = PendingSegment->Point1.Z;
+				pendingRect += FVector2D(pendingSegment->Point1);
+				pendingRect += FVector2D(pendingSegment->Point2);
+				float planeHeight = pendingSegment->Point1.Z;
 
 				PendingPlanePoints = {
 					FVector(pendingRect.Min.X, pendingRect.Min.Y, planeHeight),
@@ -461,7 +455,7 @@ bool UMetaPlaneTool::ConstrainHitPoint(FVector &hitPoint)
 		return false;
 	}
 
-	if (Controller && PendingSegment.IsValid())
+	if (Controller != nullptr)
 	{
 		FVector sketchPlanePoint = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(hitPoint);
 		bool returnValue = !sketchPlanePoint.Equals(hitPoint);

@@ -25,7 +25,7 @@ private:
 
 	EState State;
 
-	TWeakObjectPtr<ALineActor> PendingSegment;
+	int32 PendingSegmentID;
 
 	TArray<ALineActor*> BaseSegs, TopSegs, ConnectSegs;
 	FPlane CabinetPlane = FPlane(ForceInitToZero);

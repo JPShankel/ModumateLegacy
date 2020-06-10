@@ -2,16 +2,19 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelStructureLineTool.h"
 
+#include "DocumentManagement/ModumateCommands.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "Graph/Graph3D.h"
+#include "ModumateCore/ModumateStairStatics.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
-#include "Graph/Graph3D.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/LineActor.h"
-#include "DocumentManagement/ModumateDocument.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "ModumateCore/ModumateStairStatics.h"
+#include "UI/DimensionManager.h"
+#include "UI/PendingSegmentActor.h"
 
 using namespace Modumate;
 
@@ -23,7 +26,7 @@ UStructureLineTool::UStructureLineTool(const FObjectInitializer& ObjectInitializ
 	, bWantedVerticalSnap(false)
 	, LastValidTargetID(MOD_ID_NONE)
 	, LastTargetStructureLineID(MOD_ID_NONE)
-	, PendingSegment(nullptr)
+	, PendingSegmentID(MOD_ID_NONE)
 	, PendingObjMesh(nullptr)
 	, GameMode(nullptr)
 	, GameState(nullptr)
@@ -110,15 +113,14 @@ bool UStructureLineTool::BeginUse()
 		LineStartPos = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 		LineEndPos = LineStartPos;
 
-		if (!PendingSegment.IsValid())
-		{
-			PendingSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
-		}
+		auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+		PendingSegmentID = dimensionActor->ID;
 
-		PendingSegment->Point1 = LineStartPos;
-		PendingSegment->Point2 = LineStartPos;
-		PendingSegment->Color = FColor::White;
-		PendingSegment->Thickness = 2;
+		auto pendingSegment = dimensionActor->GetLineActor();
+		pendingSegment->Point1 = LineStartPos;
+		pendingSegment->Point2 = LineStartPos;
+		pendingSegment->Color = FColor::White;
+		pendingSegment->Thickness = 2;
 	}
 	break;
 	case EToolCreateObjectMode::Apply:
@@ -140,8 +142,9 @@ bool UStructureLineTool::EnterNextStage()
 {
 	FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
 
+	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 	if ((CreateObjectMode == EToolCreateObjectMode::Draw) &&
-		PendingSegment.IsValid() && !PendingSegment->Point1.Equals(PendingSegment->Point2))
+		pendingSegment != nullptr && !pendingSegment->Point1.Equals(pendingSegment->Point2))
 	{
 		bool bCreationSuccess = MakeStructureLine();
 		return false;
@@ -163,17 +166,14 @@ bool UStructureLineTool::FrameUpdate()
 	{
 	case EToolCreateObjectMode::Draw:
 	{
-		if (IsInUse() && PendingSegment.IsValid())
+		auto dimensionActor = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID);
+		if (IsInUse() && dimensionActor != nullptr)
 		{
+			auto pendingSegment = dimensionActor->GetLineActor();
 			LineEndPos = cursor.WorldPosition;
-			PendingSegment->Point2 = LineEndPos;
+			pendingSegment->Point2 = LineEndPos;
 			LineDir = (LineEndPos - LineStartPos).GetSafeNormal();
 			UModumateGeometryStatics::FindBasisVectors(ObjNormal, ObjUp, LineDir);
-
-			if (!LineStartPos.Equals(LineEndPos))
-			{
-				Controller->UpdateDimensionString(LineStartPos, LineEndPos, ObjNormal);
-			}
 		}
 	}
 	break;
@@ -459,11 +459,8 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 
 void UStructureLineTool::ResetState()
 {
-	if (PendingSegment.IsValid())
-	{
-		PendingSegment->Destroy();
-		PendingSegment.Reset();
-	}
+	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+	PendingSegmentID = MOD_ID_NONE;
 
 	bHaveSetUpGeometry = false;
 	SetTargetID(MOD_ID_NONE);

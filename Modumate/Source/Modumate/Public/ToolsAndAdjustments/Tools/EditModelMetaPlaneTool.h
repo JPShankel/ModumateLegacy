@@ -29,7 +29,7 @@ protected:
 	TWeakObjectPtr<AEditModelGameState_CPP> GameState;
 
 	EMouseMode OriginalMouseMode;
-	TWeakObjectPtr<ALineActor> PendingSegment;
+	int32 PendingSegmentID;
 	TWeakObjectPtr<ADynamicMeshActor> PendingPlane;
 	FVector AnchorPointDegree;
 	TArray<FVector> PendingPlanePoints, SketchPlanePoints;

@@ -2,16 +2,19 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelStairTool.h"
 
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "ModumateCore/ModumateStairStatics.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UI/DimensionManager.h"
+#include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/LineActor.h"
-#include "DocumentManagement/ModumateDocument.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "ModumateCore/ModumateStairStatics.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 using namespace Modumate;
 
@@ -22,9 +25,9 @@ UStairTool::UStairTool(const FObjectInitializer& ObjectInitializer)
 	, OriginalMouseMode(EMouseMode::Location)
 	, bWantedVerticalSnap(false)
 	, LastValidTargetID(MOD_ID_NONE)
-	, RunSegment(nullptr)
-	, RiseSegment(nullptr)
-	, WidthSegment(nullptr)
+	, RunSegmentID(MOD_ID_NONE)
+	, RiseSegmentID(MOD_ID_NONE)
+	, WidthSegmentID(MOD_ID_NONE)
 	, PendingObjMesh(nullptr)
 	, GameMode(nullptr)
 	, GameState(nullptr)
@@ -122,13 +125,14 @@ bool UStairTool::FrameUpdate()
 	break;
 	case RunPending:
 	{
-		if (RunSegment.IsValid() && cursor.Visible)
+		auto runSegment = GameInstance->DimensionManager->GetDimensionActor(RunSegmentID)->GetLineActor();
+		if (cursor.Visible && runSegment != nullptr)
 		{
 			FVector projectedCursor = cursor.SketchPlaneProject(cursor.WorldPosition);
 			FVector rawRunDelta = projectedCursor - RunStartPos;
 			float rawRunLength = rawRunDelta.Size();
 
-			RunSegment->Point2 = RunStartPos;
+			runSegment->Point2 = RunStartPos;
 			RunDir = FVector::ZeroVector;
 			CurrentTreadDepth = 0.0f;
 			CurrentTreadNum = 0;
@@ -143,45 +147,24 @@ bool UStairTool::FrameUpdate()
 					CurrentTreadDepth = DesiredTreadDepth;
 					CurrentTreadNum = FMath::FloorToInt(rawRunLength / DesiredTreadDepth);
 					float quantizedRunLength = DesiredTreadDepth * CurrentTreadNum;
-					RunSegment->Point2 = RunStartPos + (quantizedRunLength * RunDir);
+					runSegment->Point2 = RunStartPos + (quantizedRunLength * RunDir);
 				}
 				else if (!bFixTreadDepth && (DesiredTreadNum > 0))
 				{
 					CurrentTreadDepth = rawRunLength / DesiredTreadNum;
 					CurrentTreadNum = DesiredTreadNum;
-					RunSegment->Point2 = projectedCursor;
+					runSegment->Point2 = projectedCursor;
 				}
-			}
-
-			if (CurrentTreadNum > 0)
-			{
-				Controller->UpdateDimensionString(RunSegment->Point1, RunSegment->Point2, FVector::UpVector);
 			}
 		}
 	}
 	break;
 	case RisePending:
 	{
-		if (RunSegment.IsValid() && (CurrentTreadNum > 0))
+		auto riseSegment = GameInstance->DimensionManager->GetDimensionActor(RiseSegmentID)->GetLineActor();
+		if (riseSegment != nullptr && cursor.Visible)
 		{
-			UModumateFunctionLibrary::AddNewDimensionString(
-				Controller,
-				RunSegment->Point1,
-				RunSegment->Point2,
-				FVector::UpVector,
-				Controller->DimensionStringGroupID_Default,
-				Controller->DimensionStringUniqueID_Total,
-				0,
-				Controller,
-				EDimStringStyle::Fixed,
-				EEnterableField::NonEditableText,
-				0.f,
-				EAutoEditableBox::Never);
-		}
-
-		if (RiseSegment.IsValid() && cursor.Visible)
-		{
-			RiseSegment->Point2 = RiseStartPos;
+			riseSegment->Point2 = RiseStartPos;
 			CurrentRiserHeight = 0.0f;
 			CurrentRiserNum = (CurrentTreadNum - 1) +
 				(bWantStartRiser ? 1 : 0) +
@@ -196,86 +179,21 @@ bool UStairTool::FrameUpdate()
 				FVector projectedRiseDelta = (totalRise * FVector::UpVector);
 				CurrentRiserHeight = totalRise / CurrentRiserNum;
 
-				RiseSegment->Point2 = RiseStartPos + projectedRiseDelta;
-				UModumateFunctionLibrary::AddNewDimensionString(
-					Controller,
-					RiseSegment->Point1,
-					RiseSegment->Point2,
-					RunDir,
-					Controller->DimensionStringGroupID_Default,
-					Controller->DimensionStringUniqueID_Total,
-					0,
-					Controller,
-					EDimStringStyle::Fixed,
-					EEnterableField::NonEditableText,
-					0.f,
-					EAutoEditableBox::UponUserInput);
+				riseSegment->Point2 = RiseStartPos + projectedRiseDelta;
 			}
 		}
 	}
 	break;
 	case WidthPending:
 	{
-		if (RunSegment.IsValid() && (CurrentTreadNum > 0))
-		{
-			UModumateFunctionLibrary::AddNewDimensionString(
-				Controller,
-				RunSegment->Point1,
-				RunSegment->Point2,
-				FVector::UpVector,
-				Controller->DimensionStringGroupID_Default,
-				Controller->DimensionStringUniqueID_Total,
-				0,
-				Controller,
-				EDimStringStyle::Fixed,
-				EEnterableField::NonEditableText,
-				0.f,
-				EAutoEditableBox::Never);
-		}
-
-		if (RiseSegment.IsValid() && (CurrentRiserNum > 0))
-		{
-			UModumateFunctionLibrary::AddNewDimensionString(
-				Controller,
-				RiseSegment->Point1,
-				RiseSegment->Point2,
-				FVector::UpVector,
-				Controller->DimensionStringGroupID_Default,
-				Controller->DimensionStringUniqueID_Total,
-				0,
-				Controller,
-				EDimStringStyle::Fixed,
-				EEnterableField::NonEditableText,
-				0.f,
-				EAutoEditableBox::Never);
-		}
-
-		if (WidthSegment.IsValid() && cursor.Visible)
+		auto widthSegment = GameInstance->DimensionManager->GetDimensionActor(WidthSegmentID)->GetLineActor();
+		if (widthSegment != nullptr && cursor.Visible)
 		{
 			FVector rawWidthDelta = (cursor.WorldPosition - RiseEndPos);
 			CurrentWidth = rawWidthDelta | WidthDir;
 			FVector projectedWidthDelta = (CurrentWidth * WidthDir);
-			FVector projectedCursor = RiseEndPos + projectedWidthDelta;
 
-			WidthSegment->Point2 = RiseEndPos;
-
-			if (!FMath::IsNearlyZero(CurrentWidth))
-			{
-				WidthSegment->Point2 = projectedCursor;
-				UModumateFunctionLibrary::AddNewDimensionString(
-					Controller,
-					WidthSegment->Point1,
-					WidthSegment->Point2,
-					FVector::UpVector,
-					Controller->DimensionStringGroupID_Default,
-					Controller->DimensionStringUniqueID_Total,
-					0,
-					Controller,
-					EDimStringStyle::Fixed,
-					EEnterableField::NonEditableText,
-					0.f,
-					EAutoEditableBox::UponUserInput);
-			}
+			widthSegment->Point2 = RiseEndPos + projectedWidthDelta;
 		}
 	}
 	break;
@@ -343,22 +261,16 @@ bool UStairTool::AbortUse()
 	case RisePending:
 	{
 		PendingObjMesh->SetActorHiddenInGame(true);
-		if (RiseSegment.IsValid())
-		{
-			RiseSegment->Destroy();
-			RiseSegment.Reset();
-		}
+		GameInstance->DimensionManager->ReleaseDimensionActor(RiseSegmentID);
+		RiseSegmentID = 0;
 		cursor.SetAffordanceFrame(RunStartPos, FVector::UpVector);
 		CurrentState = RunPending;
 	}
 	break;
 	case WidthPending:
 	{
-		if (WidthSegment.IsValid())
-		{
-			WidthSegment->Destroy();
-			WidthSegment.Reset();
-		}
+		GameInstance->DimensionManager->ReleaseDimensionActor(WidthSegmentID);
+		WidthSegmentID = 0;
 		cursor.SetAffordanceFrame(RiseStartPos, RunDir, WidthDir);
 		CurrentWidth = 0.0f;
 		CurrentState = RisePending;
@@ -391,7 +303,7 @@ bool UStairTool::EnterNextStage()
 		{
 			RunStartPos = cursor.WorldPosition;
 			cursor.SetAffordanceFrame(RunStartPos, FVector::UpVector);
-			MakePendingSegment(RunSegment, RunStartPos, RunSegmentColor);
+			MakePendingSegment(RunSegmentID, RunStartPos, RunSegmentColor);
 			CurrentState = RunPending;
 		}
 	}
@@ -400,9 +312,10 @@ bool UStairTool::EnterNextStage()
 	{
 		if (CurrentTreadNum > 0)
 		{
-			RiseStartPos = RunSegment->Point2;
+			auto runSegment = GameInstance->DimensionManager->GetDimensionActor(RunSegmentID)->GetLineActor();
+			RiseStartPos = runSegment->Point2;
 			cursor.SetAffordanceFrame(RiseStartPos, RunDir, WidthDir);
-			MakePendingSegment(RiseSegment, RiseStartPos, RiseSegmentColor);
+			MakePendingSegment(RiseSegmentID, RiseStartPos, RiseSegmentColor);
 			PendingObjMesh->SetActorHiddenInGame(false);
 			CurrentState = RisePending;
 		}
@@ -412,9 +325,10 @@ bool UStairTool::EnterNextStage()
 	{
 		if (!FMath::IsNearlyZero(CurrentRiserHeight))
 		{
-			RiseEndPos = RiseSegment->Point2;
+			auto riseSegment = GameInstance->DimensionManager->GetDimensionActor(RiseSegmentID)->GetLineActor();
+			RiseEndPos = riseSegment->Point2;
 			cursor.SetAffordanceFrame(RiseEndPos, RunDir, WidthDir);
-			MakePendingSegment(WidthSegment, RiseEndPos, WidthSegmentColor);
+			MakePendingSegment(WidthSegmentID, RiseEndPos, WidthSegmentColor);
 			CurrentState = WidthPending;
 		}
 	}
@@ -584,25 +498,25 @@ bool UStairTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
 	return FMath::IsWithinInclusive(normalUpDot, THRESH_NORMALS_ARE_ORTHOGONAL, THRESH_NORMALS_ARE_PARALLEL);
 }
 
-void UStairTool::MakePendingSegment(TWeakObjectPtr<ALineActor> &TargetSegment, const FVector &StartingPoint, const FColor &SegmentColor)
+void UStairTool::MakePendingSegment(int32 &TargetSegmentID, const FVector &StartingPoint, const FColor &SegmentColor)
 {
-	TargetSegment = Controller->GetWorld()->SpawnActor<ALineActor>();
-	TargetSegment->Point1 = StartingPoint;
-	TargetSegment->Point2 = StartingPoint;
-	TargetSegment->Color = SegmentColor;
-	TargetSegment->Thickness = 2;
+	auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+	TargetSegmentID = dimensionActor->ID;
+
+	auto segment = dimensionActor->GetLineActor();
+	segment->Point1 = StartingPoint;
+	segment->Point2 = StartingPoint;
+	segment->Color = SegmentColor;
+	segment->Thickness = 2;
 }
 
 void UStairTool::ResetState()
 {
-	TWeakObjectPtr<ALineActor> pendingSegments[] = { RunSegment, RiseSegment, WidthSegment };
-	for (auto &pendingSegment : pendingSegments)
+	TArray<int32> pendingSegmentIDs = { RunSegmentID, RiseSegmentID, WidthSegmentID };
+	for (int32 &pendingSegmentID : pendingSegmentIDs)
 	{
-		if (pendingSegment.IsValid())
-		{
-			pendingSegment->Destroy();
-			pendingSegment.Reset();
-		}
+		GameInstance->DimensionManager->ReleaseDimensionActor(pendingSegmentID);
+		pendingSegmentID = 0;
 	}
 
 	if (PendingObjMesh.IsValid())

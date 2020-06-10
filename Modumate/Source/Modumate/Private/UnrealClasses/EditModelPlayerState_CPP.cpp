@@ -3,7 +3,6 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 #include "UnrealClasses/AdjustmentHandleActor_CPP.h"
-#include "UnrealClasses/DimensionActor.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -591,7 +590,7 @@ void AEditModelPlayerState_CPP::PostSelectionOrViewChanged()
 	}
 	else
 	{
-		gameInstance->DimensionManager->Reset();
+		gameInstance->DimensionManager->ClearGraphDimensionStrings();
 	}
 
 }
@@ -620,6 +619,10 @@ void AEditModelPlayerState_CPP::OnNewModel()
 	LastFilePath.Empty();
 
 	PostSelectionOrViewChanged();
+
+	auto gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
+	gameInstance->DimensionManager->Reset();
+
 	PostOnNewModel.Broadcast();
 }
 

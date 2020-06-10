@@ -47,7 +47,7 @@ protected:
 	int32 LastValidTargetID;
 	int32 LastTargetStructureLineID;
 	FModumateObjectAssembly ObjAssembly;
-	TWeakObjectPtr<ALineActor> PendingSegment;
+	int32 PendingSegmentID;
 	TWeakObjectPtr<ADynamicMeshActor> PendingObjMesh;
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
 	TWeakObjectPtr<AEditModelGameState_CPP> GameState;
