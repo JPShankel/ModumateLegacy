@@ -16,7 +16,6 @@ namespace Modumate
 {
 
 	class FModumateObjectInstance;
-	class FAdjustLineSegmentHandle;
 
 	class MODUMATE_API FMOILineSegment : public FModumateControlPointObjectBase
 	{
@@ -28,8 +27,6 @@ namespace Modumate
 	protected:
 		TWeakObjectPtr<ALineActor> LineActor;
 		FColor BaseColor;
-
-		virtual FAdjustLineSegmentHandle *MakeAdjustmentHandle(FModumateObjectInstance *handleMOI, int cp);
 
 	public:
 		FMOILineSegment(FModumateObjectInstance *moi)
@@ -50,7 +47,6 @@ namespace Modumate
 		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show) override;
 		virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover) override {};
 		virtual void GetAdjustmentHandleActors(TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>>& outHandleActors) override;
-		void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller);
 		virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 		virtual void OnAssemblyChanged() override {};
 		virtual void SetupDynamicGeometry() override;

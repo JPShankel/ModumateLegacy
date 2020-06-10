@@ -9,11 +9,6 @@
 
 namespace Modumate
 {
-	FAdjustLineSegmentHandle *FMOILineSegment::MakeAdjustmentHandle(FModumateObjectInstance *handleMOI, int cp)
-	{
-		return new FAdjustLineSegmentHandle(handleMOI, cp);
-	}
-
 	void FMOILineSegment::SetMaterial(UMaterialInterface *m)
 	{
 	}
@@ -74,10 +69,6 @@ namespace Modumate
 
 	void FMOILineSegment::ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show)
 	{
-		if (AdjustmentHandles.Num() == 0)
-		{
-			SetupAdjustmentHandles(controller);
-		}
 		for (auto &ah : AdjustmentHandles)
 		{
 			if (ah.IsValid())
@@ -91,31 +82,6 @@ namespace Modumate
 	{
 		outHandleActors = AdjustmentHandles;
 	}
-
-	void FMOILineSegment::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
-	{
-		if (AdjustmentHandles.Num() > 0)
-		{
-			return;
-		}
-		auto makeActor = [this, controller](IAdjustmentHandleImpl *impl, UStaticMesh *mesh, const FVector &s)
-		{
-			AAdjustmentHandleActor_CPP *actor = World->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-			actor->SetActorMesh(mesh);
-			actor->SetHandleScale(s);
-			actor->SetHandleScaleScreenSize(s);
-
-			impl->Handle = actor;
-			actor->Implementation = impl;
-			actor->AttachToActor(MOI->GetActor(), FAttachmentTransformRules::KeepRelativeTransform);
-			AdjustmentHandles.Add(actor);
-		};
-
-		UStaticMesh *pointAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->PointAdjusterMesh;
-
-		makeActor(MakeAdjustmentHandle(MOI, 0), pointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f));
-		makeActor(MakeAdjustmentHandle(MOI, 1), pointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f));
-	};
 
 	AActor *FMOILineSegment::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 	{

@@ -36,20 +36,4 @@ namespace Modumate
 	private:
 		bool OnEndOrAbort();
 	};
-
-	class MODUMATE_API FAdjustLineSegmentHandle : public FEditModelAdjustmentHandleBase
-	{
-	protected:
-		FVector OriginalP;
-		int CP;
-
-	public:
-		FAdjustLineSegmentHandle(FModumateObjectInstance *moi, int cp);
-
-		virtual bool OnBeginUse() override;
-		virtual bool OnUpdateUse() override;
-		virtual bool OnAbortUse() override;
-		virtual bool OnEndUse();
-		virtual FVector GetAttachmentPoint() override;
-	};
 }
