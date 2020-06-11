@@ -6,6 +6,8 @@
 #include "Runtime/Core/Public/Containers/Array.h"
 #include "DocumentManagement/ModumateObjectInstance.h"
 
+class AEditModelPlayerController_CPP;
+
 namespace Modumate
 {
 	class FModumateDocument;
@@ -14,14 +16,18 @@ namespace Modumate
 	class MODUMATE_API FModumateSnappingView
 	{
 	private:
-		FModumateDocument * Document;
+		FModumateDocument *Document;
+		AEditModelPlayerController_CPP *Controller;
 
 		TArray<FStructurePoint> CurObjCorners;
 		TArray<FStructureLine> CurObjLineSegments;
 
+		TArray<FVector> CurrentToolPoints;
+		TArray<TPair<FVector, FVector>> CurrentToolLines;
+
 	public:
-		FModumateSnappingView(FModumateDocument *document) : Document(document) {};
-		~FModumateSnappingView() {};
+		FModumateSnappingView(FModumateDocument *document, AEditModelPlayerController_CPP *controller);
+		~FModumateSnappingView();
 
 		TArray<FStructurePoint> Corners;
 		TArray<FStructureLine> LineSegments;

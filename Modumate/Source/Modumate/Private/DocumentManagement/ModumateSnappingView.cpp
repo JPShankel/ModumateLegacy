@@ -1,12 +1,27 @@
 #include "DocumentManagement/ModumateSnappingView.h"
+
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateStats.h"
+#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 DECLARE_CYCLE_STAT(TEXT("Snap-points"), STAT_ModumateSnapPoints, STATGROUP_Modumate)
 
 namespace Modumate
 {
+	FModumateSnappingView::FModumateSnappingView(FModumateDocument *document, AEditModelPlayerController_CPP *controller)
+		: Document(document)
+		, Controller(controller)
+	{
+
+	}
+
+	FModumateSnappingView::~FModumateSnappingView()
+	{
+
+	}
+
 	void FModumateSnappingView::UpdateSnapPoints(const TSet<int32> &idsToIgnore, int32 collisionChannelMask, bool bForSnapping, bool bForSelection)
 	{
 		SCOPE_CYCLE_COUNTER(STAT_ModumateSnapPoints);
@@ -45,6 +60,27 @@ namespace Modumate
 		for (const FStructureLine &ls : LineSegments)
 		{
 			Corners.Add(FStructurePoint((ls.P1 + ls.P2) * 0.5f, (ls.P2 - ls.P1).GetSafeNormal(), ls.CP1, ls.CP2, ls.ObjID));
+		}
+
+		if (!bForSelection)
+		{
+			// Also ask the current tool
+			if (auto tool = Controller->CurrentTool)
+			{
+				CurrentToolPoints.Reset();
+				CurrentToolLines.Reset();
+				tool->GetSnappingPointsAndLines(CurrentToolPoints, CurrentToolLines);
+
+				for (FVector point : CurrentToolPoints)
+				{
+					Corners.Add(FStructurePoint(point, FVector::ZeroVector, INDEX_NONE, INDEX_NONE));
+				}
+
+				for (auto& line : CurrentToolLines)
+				{
+					LineSegments.Add(FStructureLine(line.Key, line.Value, INDEX_NONE, INDEX_NONE));
+				}
+			}
 		}
 	}
 

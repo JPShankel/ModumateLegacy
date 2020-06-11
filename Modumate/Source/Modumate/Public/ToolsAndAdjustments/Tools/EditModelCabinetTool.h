@@ -28,6 +28,7 @@ private:
 	int32 PendingSegmentID;
 
 	TArray<ALineActor*> BaseSegs, TopSegs, ConnectSegs;
+	TArray<FVector> BasePoints;
 	FPlane CabinetPlane = FPlane(ForceInitToZero);
 
 	FVector LastPendingSegmentLoc = FVector::ZeroVector;
@@ -40,11 +41,13 @@ public:
 	virtual bool Activate() override;
 	virtual bool BeginUse() override;
 	virtual bool FrameUpdate() override;
-	void HandleClick(const FVector &p);
 	virtual bool HandleInputNumber(double n) override;
 	virtual bool AbortUse() override;
 	virtual bool EndUse() override;
 	virtual bool EnterNextStage() override;
 
+	virtual void GetSnappingPointsAndLines(TArray<FVector> &OutPoints, TArray<TPair<FVector, FVector>> &OutLines) override;
+
+	void MakeSegment(const FVector &hitLoc);
 	void BeginSetHeightMode(const TArray<FVector> &basePoly);
 };

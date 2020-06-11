@@ -149,7 +149,7 @@ void AEditModelPlayerController_CPP::BeginPlay()
 		SetViewTargetWithBlend(EMPlayerPawn);
 	}
 
-	SnappingView = new Modumate::FModumateSnappingView(Document);
+	SnappingView = new Modumate::FModumateSnappingView(Document, this);
 
 	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
 
@@ -2286,6 +2286,15 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 					objectHit.Normal = directHitNormal;
 				}
 			}
+			else if (bestPoint.ObjID == MOD_ID_NONE)
+			{
+				objectHit.Valid = true;
+				objectHit.Location = bestPoint.Point;
+				objectHit.EdgeDir = bestPoint.Direction;
+				objectHit.SnapType = ESnapType::CT_CORNERSNAP;
+				objectHit.CP1 = bestPoint.CP1;
+				objectHit.CP2 = bestPoint.CP2;
+			}
 		}
 		else if (FindBestMouseLineHit(CurHitLineLocations, mouseLoc, mouseDir, objectHitDist, bestVirtualHitIndex, bestLineIntersection, bestVirtualHitDist))
 		{
@@ -2304,6 +2313,15 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 				{
 					objectHit.Normal = directHitNormal;
 				}
+			}
+			else if (bestLine.ObjID == MOD_ID_NONE)
+			{
+				objectHit.Valid = true;
+				objectHit.Location = bestLineIntersection;
+				objectHit.EdgeDir = (bestLine.P2 - bestLine.P1).GetSafeNormal();
+				objectHit.SnapType = ESnapType::CT_CORNERSNAP;
+				objectHit.CP1 = bestLine.CP1;
+				objectHit.CP2 = bestLine.CP2;
 			}
 		}
 	}

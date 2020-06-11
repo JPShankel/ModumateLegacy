@@ -28,9 +28,14 @@ UCabinetTool::UCabinetTool(const FObjectInitializer& ObjectInitializer)
 
 bool UCabinetTool::Activate()
 {
-	Super::Activate();
+	if (!Super::Activate())
+	{
+		return false;
+	}
+
 	Controller->DeselectAll();
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
+
 	return true;
 }
 
@@ -43,7 +48,7 @@ bool UCabinetTool::BeginUse()
 		return false;
 	}
 
-	FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+	const FVector &hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 
 	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector);
 
@@ -80,9 +85,16 @@ bool UCabinetTool::FrameUpdate()
 	if (State == NewSegmentPending && PendingSegmentID != MOD_ID_NONE)
 	{
 		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-		FAffordanceLine affordance;
-		if (Controller->EMPlayerState->SnappedCursor.TryMakeAffordanceLineFromCursorToSketchPlane(affordance, hitLoc))
+
+		FVector sketchPlanePoint = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(hitLoc);
+		if (!sketchPlanePoint.Equals(hitLoc))
 		{
+			hitLoc = sketchPlanePoint;
+			FAffordanceLine affordance;
+			affordance.Color = FLinearColor::Blue;
+			affordance.EndPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+			affordance.StartPoint = hitLoc;
+			affordance.Interval = 4.0f;
 			Controller->EMPlayerState->AffordanceLines.Add(affordance);
 		}
 
@@ -135,7 +147,8 @@ bool UCabinetTool::HandleInputNumber(double n)
 		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 		FVector direction = (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal();
 		FVector origin = pendingSegment->Point1 + direction * n;
-		HandleClick(origin);
+		pendingSegment->Point2 = origin;
+		MakeSegment(origin);
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(origin, direction);
 	}
 	if (State == SetHeight)
@@ -156,38 +169,40 @@ bool UCabinetTool::HandleInputNumber(double n)
 
 bool UCabinetTool::AbortUse()
 {
-	Super::AbortUse();
-
-	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
-	PendingSegmentID = MOD_ID_NONE;
-
-	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-
-	for (auto &seg : BaseSegs)
+	if (State == SetHeight)
 	{
-		// TODO: make segment
-	}
+		for (auto &seg : TopSegs)
+		{
+			seg->Destroy();
+		}
 
-	for (auto &seg : BaseSegs)
+		for (auto &seg : ConnectSegs)
+		{
+			seg->Destroy();
+		}
+
+		ConnectSegs.Empty();
+		TopSegs.Empty();
+
+		State = NewSegmentPending;
+	} 
+
+	// even if the state was set height, the most recent base segment should be reverted as well
+	if (BaseSegs.Num() == 0)
 	{
-		seg->Destroy();
+		return EndUse();
 	}
+	
+	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+	auto poppedSegment = BaseSegs.Pop();
+	pendingSegment->Point1 = poppedSegment->Point1;
+	pendingSegment->Point2 = poppedSegment->Point2;
+	pendingSegment->Color = poppedSegment->Color;
+	pendingSegment->Thickness = poppedSegment->Thickness;
 
-	for (auto &seg : TopSegs)
-	{
-		seg->Destroy();
-	}
+	poppedSegment->Destroy();
 
-	for (auto &seg : ConnectSegs)
-	{
-		seg->Destroy();
-	}
-
-	ConnectSegs.Empty();
-	BaseSegs.Empty();
-	TopSegs.Empty();
-	State = Neutral;
-	LastPendingSegmentLocValid = false;
+	BasePoints.Pop();
 
 	return true;
 }
@@ -219,6 +234,7 @@ bool UCabinetTool::EndUse()
 	ConnectSegs.Empty();
 	BaseSegs.Empty();
 	TopSegs.Empty();
+	BasePoints.Reset();
 
 	State = Neutral;
 	LastPendingSegmentLocValid = false;
@@ -226,23 +242,33 @@ bool UCabinetTool::EndUse()
 	return true;
 }
 
-void UCabinetTool::HandleClick(const FVector &p)
+void UCabinetTool::MakeSegment(const FVector &hitLoc)
 {
-	if (State == NewSegmentPending && PendingSegmentID != MOD_ID_NONE)
+	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+	if (pendingSegment == nullptr)
 	{
-		// TODO: make segment
-		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-
-		if (pendingSegment != nullptr)
-		{
-			FVector p1 = pendingSegment->Point1;
-			FVector p2 = pendingSegment->Point2;
-
-			// TODO: check closed poly
-			pendingSegment->Point1 = p;
-			pendingSegment->Point2 = p;
-		}
+		return;
 	}
+
+	// TODO: copy constructor(?)
+	auto baseSegment = GetWorld()->SpawnActor<ALineActor>();
+	baseSegment->Point1 = pendingSegment->Point1;
+	baseSegment->Point2 = pendingSegment->Point2;
+	baseSegment->Color = pendingSegment->Color;
+	baseSegment->Thickness = pendingSegment->Thickness;
+
+	// update base stacks
+	BaseSegs.Push(baseSegment);
+	BasePoints.Push(baseSegment->Point1);
+
+	bool bClosedLoop = BaseSegs[0]->Point1.Equals(BaseSegs[BaseSegs.Num() - 1]->Point2);
+	if (bClosedLoop && UModumateGeometryStatics::ArePolygonEdgesValid(BasePoints))
+	{
+		BeginSetHeightMode(BasePoints);
+	}
+
+	pendingSegment->Point1 = hitLoc;
+	pendingSegment->Point2 = hitLoc;
 }
 
 bool UCabinetTool::EnterNextStage()
@@ -257,15 +283,12 @@ bool UCabinetTool::EnterNextStage()
 		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 		FVector hitLoc = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector, (pendingSegment->Point1 - pendingSegment->Point2).GetSafeNormal());
-		HandleClick(hitLoc);
+		MakeSegment(hitLoc);
 
 		return true;
 	}
 	if (State == SetHeight)
 	{
-		TArray<FVector> points;
-		Algo::Transform(BaseSegs,points,[](const ALineActor *seg) {return seg->Point1; });
-
 		FModumateDocument &doc = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 
 		float h = TopSegs[0]->Point1.Z - BaseSegs[0]->Point1.Z;
@@ -274,7 +297,7 @@ bool UCabinetTool::EnterNextStage()
 		stateData.StateType = EMOIDeltaType::Create;
 		stateData.ObjectType = EObjectType::OTCabinet;
 		stateData.ObjectAssemblyKey = Assembly.Key;
-		stateData.ControlPoints = points;
+		stateData.ControlPoints = BasePoints;
 		stateData.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
 		stateData.ObjectID = doc.GetNextAvailableID();
 		stateData.Extents = FVector(0, h, 0);
@@ -287,18 +310,29 @@ bool UCabinetTool::EnterNextStage()
 	return false;
 }
 
+void UCabinetTool::GetSnappingPointsAndLines(TArray<FVector> &OutPoints, TArray<TPair<FVector, FVector>> &OutLines)
+{
+	OutPoints = BasePoints;
+
+	for (int32 idx = 0; idx < BasePoints.Num() - 1; idx++)
+	{
+		OutLines.Add(TPair<FVector, FVector>(BasePoints[idx], BasePoints[idx + 1]));
+	}
+
+	// if there is currently a closed loop, create the last line to close the loop
+	if (State == SetHeight)
+	{
+		OutLines.Add(TPair<FVector, FVector>(BasePoints[BasePoints.Num() - 1], BasePoints[0]));
+	}
+}
+
 void UCabinetTool::BeginSetHeightMode(const TArray<FVector> &basePoly)
 {
 	Super::BeginUse();
 
 	for (int i = 0; i < basePoly.Num(); ++i)
 	{
-		ALineActor *actor = Controller->GetWorld()->SpawnActor<ALineActor>();
-		actor->Point1 = basePoly[i];
-		actor->Point2 = basePoly[(i + 1) % basePoly.Num()];
-		BaseSegs.Add(actor);
-
-		actor = Controller->GetWorld()->SpawnActor<ALineActor>();
+		auto actor = Controller->GetWorld()->SpawnActor<ALineActor>();
 		actor->Point1 = basePoly[i];
 		actor->Point2 = basePoly[(i + 1) % basePoly.Num()];
 		TopSegs.Add(actor);

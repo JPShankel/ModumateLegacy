@@ -52,6 +52,7 @@ public:
 	virtual bool HandleControlKey(bool pressed) override { return true; }
 	virtual bool HandleMouseUp() override { return true; }
 	virtual bool ShowSnapCursorAffordances() { return true; }
+	virtual void GetSnappingPointsAndLines(TArray<FVector> &OutPoints, TArray<TPair<FVector, FVector>> &OutLines) {};
 
 	virtual const FShoppingItem &GetAssembly() const override { return Assembly; }
 	virtual void SetAssembly(const FShoppingItem &key) override { Assembly = key; }

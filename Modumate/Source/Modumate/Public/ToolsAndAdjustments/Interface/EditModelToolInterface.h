@@ -43,6 +43,7 @@ public:
 	virtual bool HandleControlKey(bool pressed) = 0;
 	virtual bool HandleMouseUp() = 0;
 	virtual bool ShowSnapCursorAffordances() = 0;
+	virtual void GetSnappingPointsAndLines(TArray<FVector> &OutPoints, TArray<TPair<FVector, FVector>> &OutLines) = 0;
 	virtual const FShoppingItem &GetAssembly() const = 0;
 	virtual void SetAssembly(const FShoppingItem &str) = 0;
 	virtual void SetAxisConstraint(EAxisConstraint AxisConstraint) = 0;
