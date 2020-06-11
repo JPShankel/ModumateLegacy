@@ -144,7 +144,6 @@ namespace Modumate
 		void UpdateControlIndices(int32 id, const TArray<int32> &indices);
 		void UpdateControlValues(int32 id, const TArray<FVector> &controlPoints, const TArray<int32> &controlIndices);
 		void Split(int32 id, const TArray<FVector> &pointsA, const TArray<FVector> &pointsB, const TArray<int32> &indicesA, const TArray<int32> &indicesB);
-		void UpdateLineSegment(int32 id, const FVector &p1, const FVector &p2);
 
 		bool RotateMetaObjectsAboutOrigin(UWorld *World, const TArray<int32> &ObjectIDs, const FVector &origin, const FQuat &rotation);
 
@@ -153,9 +152,6 @@ namespace Modumate
 		bool MoveMetaVertices(UWorld *World, const TArray<int32> &VertexIDs, const TArray<FVector> &VertexPositions);
 
 		bool JoinMetaObjects(UWorld *World, const TArray<int32> &ObjectIDs);
-
-		int32 MakeRailSection(UWorld *world, const TArray<int32> &ids, const TArray<FVector> &points, int32 parentID);
-		int32 MakeCabinetFrame(UWorld *world, const TArray<FVector> &points, float height, const FModumateObjectAssembly &cal, int32 parentID);
 
 		int32 MakeGroupObject(UWorld *world, const TArray<int32> &ids, bool combineWithExistingGroups, int32 parentID);
 		void UnmakeGroupObjects(UWorld *world, const TArray<int32> &groupIds);

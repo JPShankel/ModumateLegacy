@@ -2043,63 +2043,6 @@ void FModumateDocument::UnmakeGroupObjects(UWorld *world, const TArray<int32> &g
 	ur->Redo();
 }
 
-int32 FModumateDocument::MakeCabinetFrame(UWorld *world, const TArray<FVector> &points, float height, const FModumateObjectAssembly &cal, int32 parentID)
-{
-	UndoRedo *ur = new UndoRedo();
-	ClearRedoBuffer();
-
-	int id = NextID++;
-
-	ur->Redo = [this, ur, world, id, cal, points, height, parentID]()
-	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeCabinetFrame::Redo"));
-
-		FModumateObjectInstance *newOb = CreateOrRestoreObjFromAssembly(world,cal, id, parentID, FVector(0.0f, height, 0.0f), &points);
-
-		ur->Undo = [newOb, this]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeCabinetFrame::Undo"));
-			DeleteObjectImpl(newOb);
-		};
-	};
-	UndoBuffer.Add(ur);
-	ur->Redo();
-	return id;
-}
-
-void FModumateDocument::UpdateLineSegment(int32 id, const FVector &p1, const FVector &p2)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UpdateLineSegment"));
-	FModumateObjectInstance *ob = GetObjectById(id);
-	if (ob == nullptr || ob->GetControlPoints().Num() < 2)
-	{
-		return;
-	}
-
-	UndoRedo *ur = new UndoRedo();
-	ClearRedoBuffer();
-
-	ur->Redo = [this, p1, p2, ob, ur]()
-	{
-		FVector oldP1 = ob->GetControlPoint(0);
-		FVector oldP2 = ob->GetControlPoint(1);
-
-		ob->SetControlPoint(0,p1);
-		ob->SetControlPoint(1,p2);
-		ob->UpdateGeometry();
-
-		ur->Undo = [oldP1, oldP2, ob]()
-		{
-			ob->SetControlPoint(0,oldP1);
-			ob->SetControlPoint(0,oldP2);
-			ob->UpdateGeometry();
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
-}
-
 // TODO: we should merge this with MoveMetaObjects and make it a general transformation operation
 bool FModumateDocument::RotateMetaObjectsAboutOrigin(UWorld *World, const TArray<int32> &ObjectIDs, const FVector &origin, const FQuat &rotation)
 {
@@ -2334,46 +2277,6 @@ bool FModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &Obje
 		deltaptrs.Add(MakeShareable<FDelta>(new FGraph3DDelta(delta)));
 	}
 	return ApplyDeltas(deltaptrs, World);
-}
-
-int32 FModumateDocument::MakeRailSection(UWorld *world, const TArray<int32> &ids, const TArray<FVector> &points, int32 parentID)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeRailSection"));
-
-	UndoRedo *ur = new UndoRedo();
-	ClearRedoBuffer();
-
-	int id = NextID++;
-
-	ur->Redo = [this, points, id, ur, ids, world, parentID]()
-	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeRailSection::Redo"));
-
-		FModumateObjectInstance *newOb = CreateOrRestoreObjFromObjectType(world, EObjectType::OTRailSegment, id, parentID, FVector::ZeroVector, &points);
-
-		TArray<FModumateObjectInstance *> segObs;
-		Algo::Transform(ids,segObs,[this](int32 id){return GetObjectById(id);});
-
-		for (auto &seg : segObs)
-		{
-			DeleteObjectImpl(seg);
-		}
-
-		ur->Undo = [newOb, segObs, this]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeRailSection::Undo"));
-			DeleteObjectImpl(newOb);
-			for (auto &seg : segObs)
-			{
-				RestoreObjectImpl(seg);
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
-
-	return id;
 }
 
 int32 FModumateDocument::MakeRoom(UWorld *World, const TArray<FSignedID> &FaceIDs)

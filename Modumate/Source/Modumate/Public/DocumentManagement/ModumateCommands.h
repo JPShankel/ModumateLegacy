@@ -33,9 +33,6 @@ namespace Modumate
 		// Object creators
 		MODUMATE_COMMAND(kAddDoor, "add_door");
 		MODUMATE_COMMAND(kAddWindow, "add_window");
-		MODUMATE_COMMAND(kMakeRail, "make_rail");
-		MODUMATE_COMMAND(kMakeFloor, "make_floor");
-		MODUMATE_COMMAND(kMakeCountertop, "make_countertop");
 		MODUMATE_COMMAND(kMakeTrim, "make_trim");
 		MODUMATE_COMMAND(kMakeMetaVertex, "make_vertex");
 		MODUMATE_COMMAND(kMakeMetaEdge, "make_edge");

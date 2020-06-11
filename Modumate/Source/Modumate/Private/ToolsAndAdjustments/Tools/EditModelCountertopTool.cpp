@@ -2,6 +2,7 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelCountertopTool.h"
 
+#include "Database/ModumateObjectAssembly.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -35,7 +36,8 @@ bool UCountertopTool::HandleInputNumber(double n)
 		{
 			auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 			FVector dir = (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal() * n;
-			HandleClick(pendingSegment->Point1 + dir);
+			pendingSegment->Point2 = pendingSegment->Point1 + dir;
+			return EnterNextStage();
 		}
 		return true;
 	case 1:
@@ -70,7 +72,6 @@ bool UCountertopTool::Activate()
 	Controller->DeselectAll();
 	Controller->EMPlayerState->SetHoveredObject(nullptr);
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
-	Inverted = false;
 	return UEditModelToolBase::Activate();
 }
 
@@ -103,6 +104,8 @@ bool UCountertopTool::BeginUse()
 	pendingSegment->Color = FColor::Green;
 	pendingSegment->Thickness = 2;
 
+	BasePoints.Push(hitLoc);
+
 	AnchorPointDegree = hitLoc + FVector(0.f, -1.f, 0.f); // Make north as AnchorPointDegree at new segment
 	return true;
 }
@@ -118,28 +121,61 @@ bool UCountertopTool::EnterNextStage()
 	if (State == NewSegmentPending)
 	{
 		FVector hitLoc = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
-		HandleClick(hitLoc);
+		if (MakeSegment(hitLoc))
+		{
+			FModumateDocument &doc = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+
+			FMOIStateData stateData;
+			stateData.StateType = EMOIDeltaType::Create;
+			stateData.ObjectType = EObjectType::OTCountertop;
+			stateData.ObjectAssemblyKey = Assembly.Key;
+			stateData.ControlPoints = BasePoints;
+			stateData.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
+			stateData.ObjectID = doc.GetNextAvailableID();
+			stateData.bObjectInverted = Inverted;
+
+			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ stateData }));
+			Controller->ModumateCommand(delta->AsCommand());
+
+			return false;
+		}
 		return true;
 	}
 
 	return false;
 }
 
-void UCountertopTool::HandleClick(const FVector &p)
+bool UCountertopTool::MakeSegment(const FVector &hitLoc)
 {
-	//if (Controller->TryMakePrismFromSegments(EObjectType::OTCountertop, Assembly.Key, Inverted))
 	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-	if (false)
+	if (pendingSegment == nullptr)
 	{
-		EndUse();
+		return false;
+	}
+
+	auto baseSegment = GetWorld()->SpawnActor<ALineActor>();
+	baseSegment->Point1 = pendingSegment->Point1;
+	baseSegment->Point2 = pendingSegment->Point2;
+	baseSegment->Color = pendingSegment->Color;
+	baseSegment->Thickness = pendingSegment->Thickness;
+
+	// update base stacks
+	BaseSegs.Push(baseSegment);
+
+	bool bClosedLoop = BaseSegs[0]->Point1.Equals(BaseSegs[BaseSegs.Num() - 1]->Point2);
+	if (bClosedLoop && UModumateGeometryStatics::ArePolygonEdgesValid(BasePoints))
+	{
+		return true;
 	}
 	else
 	{
-		AnchorPointDegree = pendingSegment->Point1;
-		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(p, FVector::UpVector, (pendingSegment->Point1 - pendingSegment->Point2).GetSafeNormal());
-		pendingSegment->Point1 = p;
-		pendingSegment->Point2 = p;
+		BasePoints.Push(baseSegment->Point2);
 	}
+
+	pendingSegment->Point1 = hitLoc;
+	pendingSegment->Point2 = hitLoc;
+
+	return false;
 }
 
 bool UCountertopTool::FrameUpdate()
@@ -201,13 +237,46 @@ bool UCountertopTool::EndUse()
 	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 	PendingSegmentID = MOD_ID_NONE;
 
+	for (auto &seg : BaseSegs)
+	{
+		seg->Destroy();
+	}
+
+	BaseSegs.Empty();
+	BasePoints.Reset();
+
 	return UEditModelToolBase::EndUse();
 }
 
 bool UCountertopTool::AbortUse()
 {
-	EndUse();
-	return UEditModelToolBase::AbortUse();
+	if (BaseSegs.Num() == 0)
+	{
+		return EndUse();
+	}
+	
+	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+	auto poppedSegment = BaseSegs.Pop();
+	pendingSegment->Point1 = poppedSegment->Point1;
+	pendingSegment->Point2 = poppedSegment->Point2;
+	pendingSegment->Color = poppedSegment->Color;
+	pendingSegment->Thickness = poppedSegment->Thickness;
+
+	poppedSegment->Destroy();
+
+	BasePoints.Pop();
+
+	return true;
+}
+
+void UCountertopTool::GetSnappingPointsAndLines(TArray<FVector> &OutPoints, TArray<TPair<FVector, FVector>> &OutLines)
+{
+	OutPoints = BasePoints;
+
+	for (int32 idx = 0; idx < BasePoints.Num() - 1; idx++)
+	{
+		OutLines.Add(TPair<FVector, FVector>(BasePoints[idx], BasePoints[idx + 1]));
+	}
 }
 
 

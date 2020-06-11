@@ -213,62 +213,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
-	RegisterCommand(kMakeFloor, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		TArray<FVector> points = params.GetValue(kControlPoints);
-		TArray<int32> ids = params.GetValue(kObjectIDs);
-		FName assemblyKey = params.GetValue(kAssembly);
-		bool inverted = params.GetValue(kInverted);
-		int32 parentID = params.GetValue(kParent);
-
-		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_FLOOR, assemblyKey);
-
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		ensureAlways(playerState != nullptr);
-		if (playerState != nullptr)
-		{
-			playerState->DeselectAll();
-		}
-
-		if (assembly != nullptr && points.Num() > 2)
-		{
-			TArray<int32> controlIndices;
-			int32 newObjectID = GetDocument()->MakePointsObject(GetWorld(), ids, points, controlIndices, EObjectType::OTFloorSegment, inverted, *assembly, parentID);
-			output.SetValue(kObjectID, newObjectID);
-
-			return true;
-		}
-		return false;
-	});
-
-	RegisterCommand(kMakeCountertop, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		TArray<FVector> points = params.GetValue(kControlPoints);
-		TArray<int32> ids = params.GetValue(kObjectIDs);
-		FName assemblyKey = params.GetValue(kAssembly);
-		bool inverted = params.GetValue(kInverted);
-		int32 parentID = params.GetValue(kParent);
-
-		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_COUNTERTOP, assemblyKey);
-
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		ensureAlways(playerState != nullptr);
-		if (playerState != nullptr)
-		{
-			playerState->DeselectAll();
-		}
-
-		if (assembly != nullptr && points.Num() > 2)
-		{
-			TArray<int32> controlIndices;
-			int32 newObjectID = GetDocument()->MakePointsObject(GetWorld(), ids, points, controlIndices, EObjectType::OTCountertop, inverted, *assembly, parentID);
-			output.SetValue(kObjectID, newObjectID);
-
-			return true;
-		}
-		return false;
-	});
-
 	RegisterCommand(kMakeTrim, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		TArray<FVector> points = params.GetValue(kControlPoints);
 		TArray<int32> controlIndices = params.GetValue(kIndices);
@@ -561,11 +505,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		AEditModelPlayerController_CPP *playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
 		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(playerController->PlayerState);
 		GetDocument()->DeleteObjects(params.GetValue(kObjectIDs), true, params.GetValue(kIncludeConnected));
-		return true;
-	});
-
-	RegisterCommand(kMakeRail, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		GetDocument()->MakeRailSection(GetWorld(),params.GetValue(kObjectIDs),params.GetValue(kControlPoints),params.GetValue(kParent));
 		return true;
 	});
 

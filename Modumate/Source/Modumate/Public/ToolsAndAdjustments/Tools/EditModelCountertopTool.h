@@ -4,6 +4,8 @@
 
 #include "EditModelCountertopTool.generated.h"
 
+class ALineActor;
+
 UCLASS()
 class MODUMATE_API UCountertopTool : public UEditModelToolBase
 {
@@ -21,6 +23,9 @@ private:
 	bool Inverted = true;
 	FVector AnchorPointDegree;
 
+	TArray<ALineActor*> BaseSegs;
+	TArray<FVector> BasePoints;
+
 public:
 	UCountertopTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
@@ -30,9 +35,10 @@ public:
 	virtual bool Deactivate() override;
 	virtual bool BeginUse() override;
 	virtual bool EnterNextStage() override;
-	void HandleClick(const FVector &p);
+	bool MakeSegment(const FVector &hitLoc);
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
+	virtual void GetSnappingPointsAndLines(TArray<FVector> &OutPoints, TArray<TPair<FVector, FVector>> &OutLines) override;
 	virtual bool HandleInvert() override;
 };
