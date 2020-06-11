@@ -3,12 +3,11 @@
 #include "Revulytics.h"
 
 #include "AnalyticsEventAttribute.h"
-#include "App.h"
-#include "Core.h"
-#include "EngineVersion.h"
 #include "GeneralProjectSettings.h"
 #include "HAL/FileManager.h"
 #include "Interfaces/IPluginManager.h"
+#include "Misc/ConfigCacheIni.h"
+#include "Misc/EngineVersion.h"
 #include "Misc/Paths.h"
 #include "RevulyticsProvider.h"
 

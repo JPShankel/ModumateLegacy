@@ -32,14 +32,11 @@ public class Modumate : ModuleRules
 
 	public Modumate(ReadOnlyTargetRules Target) : base(Target)
 	{
-		bEnforceIWYU = true;
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-		PrivatePCHHeaderFile = "Private/ModumatePCH.h";
-
+		// Exceptions enabled for third party libraries that rely on our code catching their exceptions.
 		bEnableExceptions = true;
-        bLegacyPublicIncludePaths = false;
 
-        OptimizeCode = CodeOptimization.InShippingBuildsOnly;
+		PrivatePCHHeaderFile = "Private/ModumatePCH.h";
+		OptimizeCode = CodeOptimization.InShippingBuildsOnly;
 
 		PublicDependencyModuleNames.AddRange(new string[] {
 			"Core",
