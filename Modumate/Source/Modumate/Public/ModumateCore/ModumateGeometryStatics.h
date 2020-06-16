@@ -172,7 +172,7 @@ public:
 		FVector2D& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool &bOutColinear, bool bRequirePositive = true, float Tolerance = RAY_INTERSECT_TOLERANCE);
 
 	UFUNCTION(Category = "Modumate | Geometry")
-	static bool IsPointInPolygon(const FVector2D &Point, const TArray<FVector2D> &Polygon, float Tolerance = RAY_INTERSECT_TOLERANCE);
+	static bool IsPointInPolygon(const FVector2D &Point, const TArray<FVector2D> &Polygon, float Tolerance = RAY_INTERSECT_TOLERANCE, bool bInclusive = true);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static void PolyIntersection(const TArray<FVector2D> &PolyA, const TArray<FVector2D> &PolyB,

@@ -5,10 +5,13 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Graph/ModumateGraph.h"
 
-namespace Modumate 
+namespace Modumate
 {
-	FGraph3DFace::FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs, const TSet<int32> &InGroupIDs)
+	FGraph3DFace::FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs,
+		const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TArray<int32> &InContainedFaceIDs)
 		: IGraph3DObject(InID, InGraph, InGroupIDs)
+		, ContainingFaceID(InContainingFaceID)
+		, ContainedFaceIDs(InContainedFaceIDs)
 		, CachedPlane(ForceInitToZero)
 	{
 		UpdatePlane(InVertexIDs);
@@ -34,6 +37,18 @@ namespace Modumate
 		}
 
 		return CachedPositions[0] + (ProjectedPos.X * Cached2DX) + (ProjectedPos.Y * Cached2DY);
+	}
+
+	bool FGraph3DFace::ContainsPosition(const FVector &Position, FVector2D &OutProjectedPos) const
+	{
+		float planeDist = CachedPlane.PlaneDot(Position);
+		if (!FMath::IsNearlyZero(planeDist, Graph->Epsilon))
+		{
+			return false;
+		}
+
+		OutProjectedPos = ProjectPosition2D(Position);
+		return UModumateGeometryStatics::IsPointInPolygon(OutProjectedPos, Cached2DPositions, Graph->Epsilon, false);
 	}
 
 	bool FGraph3DFace::AssignVertices(const TArray<int32> &InVertexIDs)

@@ -509,8 +509,68 @@ namespace Modumate
 			}
 		}
 
+		// Make the actual delta for the face addition
 		AddedFaceID = NextID++;
-		OutDelta.FaceAdditions.Add(AddedFaceID, FGraph3DObjDelta(faceVertices, ParentFaceIDs, InGroupIDs));
+		FGraph3DObjDelta &faceAdditionDelta = OutDelta.FaceAdditions.Add(AddedFaceID, FGraph3DObjDelta(faceVertices, ParentFaceIDs, InGroupIDs));
+
+
+		// Try to find an existing face that contains the new face's vertices,
+		// and any faces contained by the new face's vertices.
+		// TODO: refactor this whole section into a helper function?
+
+		// First, translate the vertex IDs that were either added or found into positions
+		bool bValidVertices = true;
+		TArray<FVector> vertexPositions;
+		for (int32 vertexID : VertexIDs)
+		{
+			const FGraph3DVertex *existingVertex = FindVertex(vertexID);
+			if (existingVertex)
+			{
+				vertexPositions.Add(existingVertex->Position);
+			}
+			else if (OutDelta.VertexAdditions.Contains(vertexID))
+			{
+				vertexPositions.Add(OutDelta.VertexAdditions[vertexID]);
+			}
+			else
+			{
+				bValidVertices = false;
+				break;
+			}
+		}
+
+		// Next, search the graph for containing and contained faces
+		int32 containingFaceID = MOD_ID_NONE;
+		TArray<int32> containedFaceIDs;
+		if (ensure(bValidVertices))
+		{
+			containingFaceID = FindFaceContainingPolygon(vertexPositions, TempProjectedPoints);
+			FindFacesContainedByPolygon(vertexPositions, containedFaceIDs);
+
+			// Update the face addition delta with the containment values
+			faceAdditionDelta.ContainingObjID = containingFaceID;
+			faceAdditionDelta.ContainedObjIDs = containedFaceIDs;
+
+			const FGraph3DFace *containingFace = FindFace(containingFaceID);
+			if (containingFace)
+			{
+				OutDelta.FaceContainmentUpdates.Add(containingFaceID, FGraph3DFaceContainmentDelta(
+					containingFace->ContainingFaceID, containingFace->ContainingFaceID,
+					TSet<int32>({ AddedFaceID })
+				));
+			}
+
+			for (int32 containedFaceID : containedFaceIDs)
+			{
+				const FGraph3DFace *containedFace = FindFace(containedFaceID);
+				if (ensure(containedFace))
+				{
+					OutDelta.FaceContainmentUpdates.Add(containedFaceID, FGraph3DFaceContainmentDelta(
+						containedFace->ContainingFaceID, AddedFaceID
+					));
+				}
+			}
+		}
 
 		return true;
 	}

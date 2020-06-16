@@ -1935,4 +1935,142 @@ namespace Modumate
 
 		return true;
 	}
+
+	// Add two faces, the second one inside the first one
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphFaceContainmentAddInner, "Modumate.Graph.3D.FaceContainmentAddInner", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphFaceContainmentAddInner::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+		int32 NextID = 1;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+
+		TArray<FVector> outerVertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add outer face"),
+			tempGraph.GetDeltaForFaceAddition(outerVertices, deltas, nextID, existingID));
+		if ((deltas.Num() != 1) || (deltas[0].FaceAdditions.Num() != 1))
+		{
+			return false;
+		}
+		auto outerFaceDeltaKVP = *deltas[0].FaceAdditions.CreateConstIterator();
+		int32 outerFaceID = outerFaceDeltaKVP.Key;
+		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
+
+		// second face
+		TArray<FVector> innerVertices = {
+			FVector(25.0f, 25.0f, 0.0f),
+			FVector(75.0f, 25.0f, 0.0f),
+			FVector(75.0f, 75.0f, 0.0f),
+			FVector(25.0f, 75.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add inner face"),
+			tempGraph.GetDeltaForFaceAddition(innerVertices, deltas, nextID, existingID));
+		if ((deltas.Num() != 1) || (deltas[0].FaceAdditions.Num() != 1))
+		{
+			return false;
+		}
+		auto innerFaceDeltaKVP = *deltas[0].FaceAdditions.CreateConstIterator();
+		int32 innerFaceID = innerFaceDeltaKVP.Key;
+
+		const auto &faceUpdates = deltas[0].FaceContainmentUpdates;
+		TestTrue(TEXT("Outer face containment update is in the face addition delta"), faceUpdates.Contains(outerFaceID));
+
+		TestDeltas(this, deltas, graph, tempGraph, 2, 8, 8);
+
+		const FGraph3DFace *outerFace = graph.FindFace(outerFaceID);
+		const FGraph3DFace *innerFace = graph.FindFace(innerFaceID);
+		if (!(outerFace && innerFace))
+		{
+			return false;
+		}
+
+		if (!TestEqual(TEXT("OuterFace contains 1 face"), outerFace->ContainedFaceIDs.Num(), 1))
+		{
+			return false;
+		}
+
+		TestEqual(TEXT("OuterFace contains InnerFace"), *outerFace->ContainedFaceIDs.CreateConstIterator(), innerFaceID);
+		TestEqual(TEXT("InnerFace is contained by OuterFace"), innerFace->ContainingFaceID, outerFaceID);
+
+		return true;
+	}
+
+	// Add two faces, the second one outside the first one
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphFaceContainmentAddOuter, "Modumate.Graph.3D.FaceContainmentAddOuter", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphFaceContainmentAddOuter::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+		int32 NextID = 1;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+
+		TArray<FVector> innerVertices = {
+			FVector(25.0f, 25.0f, 0.0f),
+			FVector(75.0f, 25.0f, 0.0f),
+			FVector(75.0f, 75.0f, 0.0f),
+			FVector(25.0f, 75.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add inner face"),
+			tempGraph.GetDeltaForFaceAddition(innerVertices, deltas, nextID, existingID));
+		if ((deltas.Num() != 1) || (deltas[0].FaceAdditions.Num() != 1))
+		{
+			return false;
+		}
+		auto innerFaceDeltaKVP = *deltas[0].FaceAdditions.CreateConstIterator();
+		int32 innerFaceID = innerFaceDeltaKVP.Key;
+		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
+
+		// second face
+		TArray<FVector> outerVertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add outer face"),
+			tempGraph.GetDeltaForFaceAddition(outerVertices, deltas, nextID, existingID));
+		if ((deltas.Num() != 1) || (deltas[0].FaceAdditions.Num() != 1))
+		{
+			return false;
+		}
+		auto outerFaceDeltaKVP = *deltas[0].FaceAdditions.CreateConstIterator();
+		int32 outerFaceID = outerFaceDeltaKVP.Key;
+
+		const auto &faceUpdates = deltas[0].FaceContainmentUpdates;
+		TestTrue(TEXT("Inner face containment update is in the face addition delta"), faceUpdates.Contains(innerFaceID));
+
+		TestDeltas(this, deltas, graph, tempGraph, 2, 8, 8);
+
+		const FGraph3DFace *outerFace = graph.FindFace(outerFaceID);
+		const FGraph3DFace *innerFace = graph.FindFace(innerFaceID);
+		if (!(outerFace && innerFace))
+		{
+			return false;
+		}
+
+		if (!TestEqual(TEXT("OuterFace contains 1 face"), outerFace->ContainedFaceIDs.Num(), 1))
+		{
+			return false;
+		}
+
+		TestEqual(TEXT("OuterFace contains InnerFace"), *outerFace->ContainedFaceIDs.CreateConstIterator(), innerFaceID);
+		TestEqual(TEXT("InnerFace is contained by OuterFace"), innerFace->ContainingFaceID, outerFaceID);
+
+		return true;
+	}
 }

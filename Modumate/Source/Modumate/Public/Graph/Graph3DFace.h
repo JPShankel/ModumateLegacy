@@ -14,6 +14,8 @@ namespace Modumate
 		TArray<FSignedID> EdgeIDs;						// The IDs of edges that define this face's polygon's edges
 		int32 FrontPolyhedronID = MOD_ID_NONE;			// The ID of the polyhedron that contains the front of this face, if any
 		int32 BackPolyhedronID = MOD_ID_NONE;			// The ID of the polyhedron that contains the back of this face, if any
+		int32 ContainingFaceID = MOD_ID_NONE;			// The ID of the face that contains this one, if any
+		TSet<int32> ContainedFaceIDs;					// The IDs of faces that are fully contained within this face, such as holes
 
 		TArray<FVector> CachedPositions;				// The positions of this face's vertices
 		TArray<FVector> CachedEdgeNormals;				// The normals of this face's edges, pointing inward
@@ -27,10 +29,12 @@ namespace Modumate
 		TArray<FPolyHole2D> CachedHoles;
 		float CachedArea;
 
-		FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs, const TSet<int32> &InGroupIDs);
+		FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs,
+			const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TArray<int32> &InContainedFaceIDs);
 
 		FVector2D ProjectPosition2D(const FVector &Position) const;
 		FVector DeprojectPosition(const FVector2D &ProjectedPos) const;
+		bool ContainsPosition(const FVector &Position, FVector2D &OutProjectedPos) const;
 		bool UpdatePlane(const TArray<int32> &InVertexIDs);
 		bool ShouldUpdatePlane() const;
 		bool UpdateVerticesAndEdges(const TArray<int32> &InVertexIDs, bool bAssignVertices = true);

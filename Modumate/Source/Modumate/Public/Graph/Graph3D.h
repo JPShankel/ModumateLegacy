@@ -38,6 +38,7 @@ namespace Modumate
 
 		FGraph3DFace* FindFace(FSignedID FaceID);
 		const FGraph3DFace* FindFace(FSignedID FaceID) const;
+		int32 FindFaceContainingPosition(const FVector &Position, FVector2D &OutPosition2D) const;
 
 		FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID);
 		const FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID) const;
@@ -50,7 +51,7 @@ namespace Modumate
 
 		FGraph3DEdge *AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID, const TSet<int32> &InGroupIDs);
 
-		FGraph3DFace *AddFace(const TArray<int32> &VertexIDs, int32 InID, const TSet<int32> &InGroupIDs);
+		FGraph3DFace *AddFace(const TArray<int32> &VertexIDs, int32 InID, const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TArray<int32> &InContainedFaceIDs);
 
 		bool RemoveVertex(int32 VertexID);
 		bool RemoveEdge(int32 EdgeID);
@@ -112,7 +113,9 @@ namespace Modumate
 		void CheckTranslationValidity(const TArray<int32> &InVertexIDs, TMap<int32, bool> &OutEdgeIDToValidity) const;
 
 	private:
-		const void FindEdges(const FVector &Position, int32 ExistingID, TArray<int32>& OutEdgeIDs) const;
+		void FindEdges(const FVector &Position, int32 ExistingID, TArray<int32>& OutEdgeIDs) const;
+		int32 FindFaceContainingPolygon(const TArray<FVector> &InPolyPoints, TArray<FVector2D> &OutProjectedPoints) const;
+		void FindFacesContainedByPolygon(const TArray<FVector> &InPolyPoints, TArray<int32> &OutContainedFaces) const;
 
 		void AddObjectToGroups(const IGraph3DObject *GraphObject);
 		void RemoveObjectFromGroups(const IGraph3DObject *GraphObject);
@@ -133,7 +136,9 @@ namespace Modumate
 		TMap<int32, FGraph3DPolyhedron> Polyhedra;
 		TSet<FSignedID> DirtyFaces;
 		TMap<int32, TSet<FTypedGraphObjID>> CachedGroups;
+
 		TSet<int32> TempInheritedGroupIDs;
+		mutable TArray<FVector2D> TempProjectedPoints;
 
 	public:
 

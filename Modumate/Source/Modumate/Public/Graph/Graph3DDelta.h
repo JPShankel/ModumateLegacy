@@ -12,15 +12,20 @@ namespace Modumate
 	// A struct that describes a change to a graph object (currently edges and faces)
 	struct FGraph3DObjDelta
 	{
-		TArray<int32> Vertices;		// vertex IDs that define the positions for this object
-		TArray<int32> ParentObjIDs; // objects that were deleted to make this object
-		TSet<int32> GroupIDs;		// group objects that this object is related to
+		TArray<int32> Vertices;					// vertex IDs that define the positions for this object
+		TArray<int32> ParentObjIDs;				// objects that were deleted to make this object
+		TSet<int32> GroupIDs;					// group objects that this object is related to
+		int32 ContainingObjID = MOD_ID_NONE;	// the ID of the object that contains this object, if any
+		TArray<int32> ContainedObjIDs;			// the IDs of objects that are contained by this object
 
 		FGraph3DObjDelta(const TArray<int32> &InVertices);
-		FGraph3DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents, const TSet<int32> &InGroupIDs = TSet<int32>());
+		FGraph3DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents,
+			const TSet<int32> &InGroupIDs = TSet<int32>(),
+			int32 InContainingObjID = MOD_ID_NONE, const TArray<int32> &InContainedObjIDs = TArray<int32>());
 
 		FGraph3DObjDelta(const FVertexPair &VertexPair);
-		FGraph3DObjDelta(const FVertexPair &VertexPair, const TArray<int32> &InParents, const TSet<int32> &InGroupIDs = TSet<int32>());
+		FGraph3DObjDelta(const FVertexPair &VertexPair, const TArray<int32> &InParents,
+			const TSet<int32> &InGroupIDs = TSet<int32>());
 	};
 
 	struct FGraph3DHostedObjectDelta
@@ -40,19 +45,25 @@ namespace Modumate
 	{
 		TSet<int32> GroupIDsToAdd, GroupIDsToRemove;
 
-		FGraph3DGroupIDsDelta() { }
-
-		FGraph3DGroupIDsDelta(const FGraph3DGroupIDsDelta &Other)
-			: GroupIDsToAdd(Other.GroupIDsToAdd)
-			, GroupIDsToRemove(Other.GroupIDsToRemove)
-		{ }
-
-		FGraph3DGroupIDsDelta(const TSet<int32> &InGroupIDsToAdd, const TSet<int32> &InGroupIDsToRemove)
-			: GroupIDsToAdd(InGroupIDsToAdd)
-			, GroupIDsToRemove(InGroupIDsToRemove)
-		{ }
+		FGraph3DGroupIDsDelta();
+		FGraph3DGroupIDsDelta(const FGraph3DGroupIDsDelta &Other);
+		FGraph3DGroupIDsDelta(const TSet<int32> &InGroupIDsToAdd, const TSet<int32> &InGroupIDsToRemove);
 
 		FGraph3DGroupIDsDelta MakeInverse() const;
+	};
+
+	struct FGraph3DFaceContainmentDelta
+	{
+		int32 PrevContainingFaceID, NextContainingFaceID;
+		TSet<int32> ContainedFaceIDsToAdd, ContainedFaceIDsToRemove;
+
+		FGraph3DFaceContainmentDelta();
+		FGraph3DFaceContainmentDelta(const FGraph3DFaceContainmentDelta &Other);
+		FGraph3DFaceContainmentDelta(int32 InPrevContainingFaceID, int32 InNextContainingFaceID,
+			const TSet<int32> &InContainedFaceIDsToAdd = TSet<int32>(),
+			const TSet<int32> &InContainedFaceIDsToRemove = TSet<int32>());
+
+		FGraph3DFaceContainmentDelta MakeInverse() const;
 	};
 
 	// A struct that completely describes a change to the 3D graph
@@ -68,6 +79,7 @@ namespace Modumate
 
 		TMap<int32, FGraph3DObjDelta> FaceAdditions;
 		TMap<int32, FGraph3DObjDelta> FaceDeletions;
+		TMap<int32, FGraph3DFaceContainmentDelta> FaceContainmentUpdates;
 
 		// map from faceID to a map from vertex index to new ID
 		TMap<int32, TMap<int32, int32>> FaceVertexAdditions;

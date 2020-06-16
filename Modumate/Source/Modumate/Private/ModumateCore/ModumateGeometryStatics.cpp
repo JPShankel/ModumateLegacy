@@ -1017,7 +1017,7 @@ bool UModumateGeometryStatics::RayIntersection2D(const FVector2D& RayOriginA, co
 
 // Test whether a point is inside a polygon, within Tolerance distance of an edge (inclusive).
 // It assumes a valid, simple polygon input (convex or concave, no holes, closed).
-bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D &Point, const TArray<FVector2D> &Polygon, float Tolerance)
+bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D &Point, const TArray<FVector2D> &Polygon, float Tolerance, bool bInclusive)
 {
 	int32 numPolyPoints = Polygon.Num();
 
@@ -1049,17 +1049,17 @@ bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D &Point, const TA
 		}
 		FVector2D edgeDir = edgeDelta / edgeLen;
 
-		// Since this is inclusive, early return true if the test point is close to a polygon point
+		// If the test point is close to a polygon point, return whether we're inclusive
 		if (FVector2D::Distance(Point, edgePoint1) <= Tolerance)
 		{
-			return true;
+			return bInclusive;
 		}
 
-		// Since this is inclusive, early return true if the test point is close to a polygon edge
+		// If the test point is close to a polygon edge, return whether we're inclusive
 		FVector2D projectedPoint = edgePoint1 + edgeDir * ((Point - edgePoint1) | edgeDir);
 		if (FVector2D::Distance(Point, projectedPoint) <= Tolerance)
 		{
-			return true;
+			return bInclusive;
 		}
 
 		FVector2D edgeIntersection;

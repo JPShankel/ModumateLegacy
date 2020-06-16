@@ -3,9 +3,50 @@
 
 namespace Modumate
 {
+	FGraph3DGroupIDsDelta::FGraph3DGroupIDsDelta()
+	{ }
+
+	FGraph3DGroupIDsDelta::FGraph3DGroupIDsDelta(const FGraph3DGroupIDsDelta &Other)
+		: GroupIDsToAdd(Other.GroupIDsToAdd)
+		, GroupIDsToRemove(Other.GroupIDsToRemove)
+	{ }
+
+	FGraph3DGroupIDsDelta::FGraph3DGroupIDsDelta(const TSet<int32> &InGroupIDsToAdd, const TSet<int32> &InGroupIDsToRemove)
+		: GroupIDsToAdd(InGroupIDsToAdd)
+		, GroupIDsToRemove(InGroupIDsToRemove)
+	{ }
+
 	FGraph3DGroupIDsDelta FGraph3DGroupIDsDelta::MakeInverse() const
 	{
 		return FGraph3DGroupIDsDelta(GroupIDsToRemove, GroupIDsToAdd);
+	}
+
+
+	FGraph3DFaceContainmentDelta::FGraph3DFaceContainmentDelta()
+	{ }
+
+	FGraph3DFaceContainmentDelta::FGraph3DFaceContainmentDelta(const FGraph3DFaceContainmentDelta &Other)
+		: PrevContainingFaceID(Other.PrevContainingFaceID)
+		, NextContainingFaceID(Other.NextContainingFaceID)
+		, ContainedFaceIDsToAdd(Other.ContainedFaceIDsToAdd)
+		, ContainedFaceIDsToRemove(Other.ContainedFaceIDsToRemove)
+	{
+	}
+
+	FGraph3DFaceContainmentDelta::FGraph3DFaceContainmentDelta(int32 InPrevContainingFaceID, int32 InNextContainingFaceID,
+		const TSet<int32> &InContainedFaceIDsToAdd, const TSet<int32> &InContainedFaceIDsToRemove)
+		: PrevContainingFaceID(InPrevContainingFaceID)
+		, NextContainingFaceID(InNextContainingFaceID)
+		, ContainedFaceIDsToAdd(InContainedFaceIDsToAdd)
+		, ContainedFaceIDsToRemove(InContainedFaceIDsToRemove)
+	{
+	}
+
+	FGraph3DFaceContainmentDelta FGraph3DFaceContainmentDelta::MakeInverse() const
+	{
+		return FGraph3DFaceContainmentDelta(
+			NextContainingFaceID, PrevContainingFaceID,
+			ContainedFaceIDsToRemove, ContainedFaceIDsToAdd);
 	}
 
 
@@ -14,10 +55,13 @@ namespace Modumate
 	{
 	}
 
-	FGraph3DObjDelta::FGraph3DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents, const TSet<int32> &InGroupIDs)
+	FGraph3DObjDelta::FGraph3DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents,
+		const TSet<int32> &InGroupIDs, int32 InContainingObjID, const TArray<int32> &InContainedObjIDs)
 		: Vertices(InVertices)
 		, ParentObjIDs(InParents)
 		, GroupIDs(InGroupIDs)
+		, ContainingObjID(InContainingObjID)
+		, ContainedObjIDs(InContainedObjIDs)
 	{
 	}
 
@@ -26,10 +70,12 @@ namespace Modumate
 	{
 	}
 
-	FGraph3DObjDelta::FGraph3DObjDelta(const FVertexPair &VertexPair, const TArray<int32> &InParents, const TSet<int32> &InGroupIDs)
+	FGraph3DObjDelta::FGraph3DObjDelta(const FVertexPair &VertexPair, const TArray<int32> &InParents,
+		const TSet<int32> &InGroupIDs)
 		: Vertices({ VertexPair.Key, VertexPair.Value })
 		, ParentObjIDs(InParents)
 		, GroupIDs(InGroupIDs)
+		, ContainingObjID(MOD_ID_NONE)
 	{
 	}
 
@@ -152,6 +198,11 @@ namespace Modumate
 
 		inverse->FaceVertexAdditions = FaceVertexRemovals;
 		inverse->FaceVertexRemovals = FaceVertexAdditions;
+
+		for (const auto &kvp : FaceContainmentUpdates)
+		{
+			inverse->FaceContainmentUpdates.Add(kvp.Key, kvp.Value.MakeInverse());
+		}
 
 		inverse->FaceAdditions = FaceDeletions;
 		inverse->FaceDeletions = FaceAdditions;
