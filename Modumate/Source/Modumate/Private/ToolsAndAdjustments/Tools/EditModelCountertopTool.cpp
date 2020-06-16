@@ -13,6 +13,7 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
+#include "UI/AngleDimensionActor.h"
 
 using namespace Modumate;
 

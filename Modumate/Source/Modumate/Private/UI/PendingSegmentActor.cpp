@@ -61,6 +61,6 @@ void APendingSegmentActor::Tick(float DeltaTime)
 		offsetDirection = FVector2D(edgeDirection.Y, -edgeDirection.X);
 
 		float length = (PendingSegment->Point2 - PendingSegment->Point1).Size();
-		DimensionText->UpdateTransform(targetScreenPosition, edgeDirection, offsetDirection, length);
+		DimensionText->UpdateLengthTransform(targetScreenPosition, edgeDirection, offsetDirection, length);
 	}
 }

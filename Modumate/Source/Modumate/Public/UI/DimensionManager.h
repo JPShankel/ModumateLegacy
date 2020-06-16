@@ -26,12 +26,12 @@ public:
 	void ClearGraphDimensionStrings();
 
 	template <typename DimensionActorT = ADimensionActor>
-	ADimensionActor *AddDimensionActor(TSubclassOf<ADimensionActor> ActorClass)
+	DimensionActorT *AddDimensionActor(TSubclassOf<ADimensionActor> ActorClass = DimensionActorT::StaticClass())
 	{
 		auto actor = GetWorld()->SpawnActor<ADimensionActor>(ActorClass.Get());
 		actor->ID = NextID++;
 		DimensionActors.Add(actor->ID, actor);
-		return actor;
+		return Cast<DimensionActorT>(actor);
 	}
 
 	ADimensionActor *GetDimensionActor(int32 id);
@@ -43,6 +43,7 @@ private:
 	// if there is one selected object, save the ID.  If it's a graph object, dimension strings
 	// will be displayed
 	TArray<int32> LastSelectedVertexIDs;
+	TArray<int32> LastSelectedEdgeIDs;
 	TArray<int32> CurrentGraphDimensionStrings;
 
 	TMap<int32, ADimensionActor*> DimensionActors;

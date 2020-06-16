@@ -17,7 +17,7 @@ void UDimensionWidget::SetIsEditable(bool bIsEditable)
 	!bIsEditable ? Measurement->WidgetStyle.SetFont(ReadOnlyFont) : Measurement->WidgetStyle.SetFont(EditableFont);
 }
 
-void UDimensionWidget::UpdateTransform(const FVector2D position, FVector2D edgeDirection, FVector2D offsetDirection, float length)
+void UDimensionWidget::UpdateLengthTransform(const FVector2D position, FVector2D edgeDirection, FVector2D offsetDirection, float length)
 {
 	FVector2D widgetSize = GetCachedGeometry().GetAbsoluteSize();
 
@@ -37,6 +37,31 @@ void UDimensionWidget::UpdateTransform(const FVector2D position, FVector2D edgeD
 	// Update text is called here to make sure that the text matches the current length
 	// even if something else changed the length (ex. Undo)
 	UpdateText(length);
+}
+
+void UDimensionWidget::UpdateDegreeTransform(const FVector2D position, FVector2D offsetDirection, float angle)
+{
+	FVector2D widgetSize = GetCachedGeometry().GetAbsoluteSize();
+
+	// TODO: offset scaling widgetSize is currently hard-coded, angle dimension widgets should probably
+	// have a different pixel offset than the length dimension widgets
+	SetPositionInViewport(position - ((PixelOffset + 2.0f*widgetSize.Y) * offsetDirection));
+
+	// rotation is value for the transform - math functions supply radians, and the render transform requires degrees
+	float rotation = FMath::RadiansToDegrees(FMath::Atan2(offsetDirection.Y, offsetDirection.X));
+
+	// the widget should be orthogonal to the direction of the offset and have the text pointing upwards
+	rotation += 90.0f;
+	rotation = FRotator::ClampAxis(rotation);
+	if (rotation > 90.0f && rotation <= 270.0f)
+	{
+		rotation -= 180.0f;
+	}
+	Measurement->SetRenderTransformAngle(rotation);
+
+	// set text using the angle argument
+	angle = FRotator::ClampAxis(FMath::RadiansToDegrees(angle));
+	UpdateDegreeText(angle);
 }
 
 void UDimensionWidget::SanitizeInput(float InLength, FText &OutText)
@@ -96,13 +121,26 @@ void UDimensionWidget::SanitizeInput(float InLength, FText &OutText)
 
 void UDimensionWidget::UpdateText(float length)
 {
-	if (length != LastLength)
+	if (length != LastMeasurement)
 	{
 		FText newText;
 		SanitizeInput(length, newText);
 		Measurement->SetText(newText);
 		LastCommittedText = newText;
-		LastLength = length;
+		LastMeasurement = length;
+	}
+}
+
+void UDimensionWidget::UpdateDegreeText(float angle)
+{
+	if (angle != LastMeasurement)
+	{
+		FNumberFormattingOptions options;
+		options.MaximumFractionalDigits = 1;
+		FText newText = FText::Format(LOCTEXT("degrees", "{0}°"), FText::AsNumber(angle, &options));
+		Measurement->SetText(newText);
+		LastCommittedText = newText;
+		LastMeasurement = angle;
 	}
 }
 

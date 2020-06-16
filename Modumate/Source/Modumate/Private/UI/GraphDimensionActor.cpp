@@ -105,7 +105,7 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 		if (DimensionText != nullptr)
 		{
 			float length = (endVertex->Position - startVertex->Position).Size();
-			DimensionText->UpdateTransform(targetScreenPosition, edgeDirection, offsetDirection, length);
+			DimensionText->UpdateLengthTransform(targetScreenPosition, edgeDirection, offsetDirection, length);
 		}
 	}
 }

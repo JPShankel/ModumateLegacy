@@ -17,8 +17,10 @@ public:
 
 	void SetIsEditable(bool bIsEditable);
 
-	void UpdateTransform(const FVector2D position, FVector2D edgeDirection, FVector2D offsetDirection, float length);
+	void UpdateLengthTransform(const FVector2D position, const FVector2D edgeDirection, const FVector2D offsetDirection, float length);
+	void UpdateDegreeTransform(const FVector2D position, const FVector2D offsetDirection, float angle);
 	void UpdateText(float length);
+	void UpdateDegreeText(float angle);
 	void ResetText();
 
 protected:
@@ -41,5 +43,5 @@ public:
 
 private:
 	FText LastCommittedText;
-	float LastLength;
+	float LastMeasurement;
 };
