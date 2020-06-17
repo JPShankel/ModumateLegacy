@@ -341,37 +341,10 @@
 		<col def="S0">ISDotNetInstallerArgsCommit</col>
 		<col def="S0">ISDotNetInstallerArgsUninstall</col>
 		<col def="S0">ISDotNetInstallerArgsRollback</col>
-		<row><td>APEX_Clothing</td><td>{A05C3209-C337-4C17-BDC1-BB6EAEB64427}</td><td>_8DC8F1CF9DEE4F2FAC60BCE96D3EE782</td><td>256</td><td/><td>_3AC64D89F6214DB6AEDF9888AAE12E7C</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>AllOtherFiles6</td><td>{46142B0E-0362-491B-9402-8BA141AEE9CB}</td><td>THIRDPARTY</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>AllOtherFiles7</td><td>{C0218C1D-55E9-40E9-B9C4-4D522B97012C}</td><td>BINARIES</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>AllOtherFiles8</td><td>{15FD02E1-7319-4410-BD3F-3EF90B50627E}</td><td>REVULYTICSLIBRARY</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>AllOtherFiles9</td><td>{8C6CF9B3-6811-45E1-8C6D-68D234E42646}</td><td>WIN641</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>ApexFramework</td><td>{63849345-B277-4D2C-A338-ABBABD68A78A}</td><td>_8DC8F1CF9DEE4F2FAC60BCE96D3EE782</td><td>256</td><td/><td>_296A2A7D383E4B15A6D04D72D0F2AD4B</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>ApexLegacy</td><td>{26167BA8-98CA-4DE8-B5AB-B78E6A7C85F7}</td><td>_8DC8F1CF9DEE4F2FAC60BCE96D3EE782</td><td>256</td><td/><td>_ADF84E06659F4276BBEB3B40D2CE435C</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>ClientCrashReporter</td><td>{DEB4A6A3-A1CB-47D1-84F0-9AACCDFF0C29}</td><td>WIN64</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>ApplicationFiles</td><td>{F0D4915C-A110-4968-8ECD-245876029535}</td><td>_479F08BFDBBC4C048CDAD9E946787AEE</td><td>8</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>CoffeeShopAndHouse</td><td>{FE554232-EF47-4B21-9B2D-59361A9D87A8}</td><td>MODUMATE2</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>CrashReporterPak</td><td>{AED51DFA-D4C6-45B1-ABE3-BBAED8DC42CA}</td><td>CONTENT1</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>GFSDK</td><td>{E8D69B24-F60E-4EEC-9BB4-6D9CF99EAECB}</td><td>_AC48DAF423D646039618CB4740673858</td><td>256</td><td/><td>_BC4E098CBA9A406AAD22454770CA684E</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>MainContentPakAndSig</td><td>{0F0B2C6A-2EE8-4826-AE8A-767337459BE3}</td><td>_71A78DDF19C34D4DA6F6A12DBC59A206</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>ModumateEXE</td><td>{9910F94E-24E0-491A-91C7-DDFEFD66EF3C}</td><td>INSTALLDIR</td><td>256</td><td/><td>_1351B6D8CD98495391F1BF4E8AC247F9</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>ModumateWin64Shipping</td><td>{99948F53-3CD0-4C78-A3FC-A2CDA44ADDE3}</td><td>_1B95F038902541BB9E83E6239462FD13</td><td>256</td><td/><td>_B9A5AD6053804AC894AF7E96455E68CC</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>NonUSFManifest</td><td>{789B6DD3-423B-4F12-BBBA-C29528C9CB96}</td><td>INSTALLDIR</td><td>256</td><td/><td>_B342932902F74B38BD2B3DCCC6894896</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>NvCloth</td><td>{46558F7E-E2D1-47B6-A284-3F8E3BBAC6FE}</td><td>_8DC8F1CF9DEE4F2FAC60BCE96D3EE782</td><td>256</td><td/><td>_DB37C4AECCBD4EDE8371C2963F06C945</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>PDFNet</td><td>{4C10EDD7-6E76-48C4-99B9-DC16CAB7036A}</td><td>_1B95F038902541BB9E83E6239462FD13</td><td>256</td><td/><td>_B53211AD57A34096ADAD3EE7ACC2769F</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>Phys3</td><td>{529A5293-A9B8-4FD5-8F18-73694DAD5782}</td><td>_8DC8F1CF9DEE4F2FAC60BCE96D3EE782</td><td>256</td><td/><td>_CDA304F8ABF34FA888DDA09F245A25E4</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>PhysX3</td><td>{7520E00A-36A9-4F9E-9D2A-F50905F62B68}</td><td>_8DC8F1CF9DEE4F2FAC60BCE96D3EE782</td><td>256</td><td/><td>_960BAD814DCF4FE5851424984CE66004</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>PhysX364</td><td>{21BE9152-2431-4DAC-AE91-A97E9F144166}</td><td>_8DC8F1CF9DEE4F2FAC60BCE96D3EE782</td><td>256</td><td/><td>_3647DF51780D429D98479A2F4C664848</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>PxFoundation</td><td>{61638C8B-E067-4F1B-9003-A08DC74DBA7C}</td><td>_8DC8F1CF9DEE4F2FAC60BCE96D3EE782</td><td>256</td><td/><td>_2B38A6F144C34D81A644FB74E2CF1907</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>PxPVD</td><td>{F89641C7-D1C2-4D10-982C-2FB44E32364E}</td><td>_8DC8F1CF9DEE4F2FAC60BCE96D3EE782</td><td>256</td><td/><td>_A91E0569980D4AD99D4B37C8DB0313F5</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>Revulytics</td><td>{AF4FADB4-D0FB-4FBD-9898-A37B371C87C9}</td><td>PLUGINS</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>RevulyticsBinaries</td><td>{9BF39D2B-8773-4B8F-A558-413A1B288434}</td><td>REVULYTICS</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>SplashBMP</td><td>{8CE7C004-9883-4394-AB9F-DB1087CCFE5C}</td><td>SPLASH1</td><td>264</td><td/><td>splash.bmp1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>UE4PrereqSetup_x64.exe1</td><td>{B11088FC-DE34-4726-A3A2-C9361611C245}</td><td>_2EA0927DAF934F78A61B0523DA1A27D4</td><td>264</td><td/><td>ue4prereqsetup_x64.exe</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>WinPixEventRuntime</td><td>{385F3C39-0D82-4191-859B-3E7B846C44F8}</td><td>_4E9775F31CD647AC90CEC0DE280075BE</td><td>256</td><td/><td>_46B7932306824A4BB58A50A2FAABC5C1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>libogg</td><td>{0FB66DA7-9283-41B2-9047-9A7F71D42AD0}</td><td>_FBB4AFDA7504446DBEEDF3E2F597FB6F</td><td>256</td><td/><td>_136C0837441B4C4CACC5ABD72AD047AE</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>liborvis</td><td>{675B8B28-4095-4857-8A45-1152F6161330}</td><td>_265829D5D121424E99A072F096ADE6BE</td><td>256</td><td/><td>_A70CC8341EBB4939B1AACFF5D39A618A</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>liborvisfile</td><td>{DA5EA601-F23D-4F0F-9E65-C3296392611B}</td><td>_265829D5D121424E99A072F096ADE6BE</td><td>256</td><td/><td>_D03E39728BFA4741A48E8F330D36F021</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>ruiSDK_5.5.1.x64.dll</td><td>{89E01EE1-FF6D-442F-9446-E6F1E4F3C3DC}</td><td>WIN641</td><td>264</td><td/><td>ruisdk_5.5.1.x64.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>EngineFiles</td><td>{29230FEE-DB5B-4E5A-ADDB-D2FADB2C6C11}</td><td>_90232056FD41428C94DCD4E57B4D3D25</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Modumate.exe</td><td>{7C476FA9-B125-44B8-AE45-7094ABBC3EF7}</td><td>INSTALLDIR</td><td>264</td><td/><td>modumate.exe</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 	</table>
 
 	<table name="Condition">
@@ -1044,8 +1017,6 @@
 	<table name="CreateFolder">
 		<col key="yes" def="s72">Directory_</col>
 		<col key="yes" def="s72">Component_</col>
-		<row><td>REVULYTICSLIBRARY</td><td>AllOtherFiles8</td></row>
-		<row><td>WIN641</td><td>AllOtherFiles9</td></row>
 	</table>
 
 	<table name="CustomAction">
@@ -1127,9 +1098,7 @@
 		<row><td>ALLUSERSPROFILE</td><td>TARGETDIR</td><td>.:ALLUSE~1|All Users</td><td/><td>0</td><td/></row>
 		<row><td>AdminToolsFolder</td><td>TARGETDIR</td><td>.:Admint~1|AdminTools</td><td/><td>0</td><td/></row>
 		<row><td>AppDataFolder</td><td>TARGETDIR</td><td>.:APPLIC~1|Application Data</td><td/><td>0</td><td/></row>
-		<row><td>BINARIES</td><td>REVULYTICS</td><td>Binaries</td><td/><td>0</td><td/></row>
 		<row><td>CONTENT</td><td>_90232056FD41428C94DCD4E57B4D3D25</td><td>Content</td><td/><td>0</td><td/></row>
-		<row><td>CONTENT1</td><td>CRASHREPORTCLIENT</td><td>Content</td><td/><td>0</td><td/></row>
 		<row><td>CRASHREPORTCLIENT</td><td>PROGRAMS</td><td>CRASHR~1|CrashReportClient</td><td/><td>0</td><td/></row>
 		<row><td>CommonAppDataFolder</td><td>TARGETDIR</td><td>.:Common~1|CommonAppData</td><td/><td>0</td><td/></row>
 		<row><td>CommonFiles64Folder</td><td>TARGETDIR</td><td>.:Common64</td><td/><td>0</td><td/></row>
@@ -1150,7 +1119,6 @@
 		<row><td>MODUMATE2</td><td>PersonalFolder</td><td>Modumate</td><td/><td>0</td><td/></row>
 		<row><td>MODUMATESETUP</td><td>MODUMATE</td><td>MODUMA~1|ModumateSetup</td><td/><td>0</td><td/></row>
 		<row><td>MyPicturesFolder</td><td>TARGETDIR</td><td>.:MyPict~1|MyPictures</td><td/><td>0</td><td/></row>
-		<row><td>PLUGINS</td><td>_479F08BFDBBC4C048CDAD9E946787AEE</td><td>Plugins</td><td/><td>0</td><td/></row>
 		<row><td>PROGRAMS</td><td>_90232056FD41428C94DCD4E57B4D3D25</td><td>Programs</td><td/><td>0</td><td/></row>
 		<row><td>PUBLIC</td><td>TARGETDIR</td><td>.:PUBLIC~1|Public</td><td/><td>0</td><td/></row>
 		<row><td>PersonalFolder</td><td>TARGETDIR</td><td>.:Personal</td><td/><td>0</td><td/></row>
@@ -1158,9 +1126,6 @@
 		<row><td>ProgramFiles64Folder</td><td>TARGETDIR</td><td>.:Prog64~1|Program Files 64</td><td/><td>0</td><td/></row>
 		<row><td>ProgramFilesFolder</td><td>TARGETDIR</td><td>.:PROGRA~1|program files</td><td/><td>0</td><td/></row>
 		<row><td>ProgramMenuFolder</td><td>TARGETDIR</td><td>.:Programs</td><td/><td>3</td><td/></row>
-		<row><td>REVULYTICS</td><td>PLUGINS</td><td>REVULY~1|Revulytics</td><td/><td>0</td><td/></row>
-		<row><td>REVULYTICSLIBRARY</td><td>THIRDPARTY</td><td>REVULY~1|RevulyticsLibrary</td><td/><td>0</td><td/></row>
-		<row><td>SPLASH1</td><td>_7B028A788668430ABF0AB4E2156FDC82</td><td>Splash</td><td/><td>0</td><td/></row>
 		<row><td>SendToFolder</td><td>TARGETDIR</td><td>.:SendTo</td><td/><td>3</td><td/></row>
 		<row><td>StartMenuFolder</td><td>TARGETDIR</td><td>.:STARTM~1|Start Menu</td><td/><td>3</td><td/></row>
 		<row><td>StartupFolder</td><td>TARGETDIR</td><td>.:StartUp</td><td/><td>3</td><td/></row>
@@ -1168,40 +1133,30 @@
 		<row><td>System64Folder</td><td>TARGETDIR</td><td>.:System64</td><td/><td>0</td><td/></row>
 		<row><td>SystemFolder</td><td>TARGETDIR</td><td>.:System32</td><td/><td>0</td><td/></row>
 		<row><td>TARGETDIR</td><td/><td>SourceDir</td><td/><td>0</td><td/></row>
-		<row><td>THIRDPARTY</td><td>BINARIES</td><td>THIRDP~1|ThirdParty</td><td/><td>0</td><td/></row>
 		<row><td>TempFolder</td><td>TARGETDIR</td><td>.:Temp</td><td/><td>0</td><td/></row>
 		<row><td>TemplateFolder</td><td>TARGETDIR</td><td>.:ShellNew</td><td/><td>0</td><td/></row>
 		<row><td>USERPROFILE</td><td>TARGETDIR</td><td>.:USERPR~1|UserProfile</td><td/><td>0</td><td/></row>
-		<row><td>WIN64</td><td>_B03244EC16B3490E9825BD0053327D45</td><td>Win64</td><td/><td>0</td><td/></row>
-		<row><td>WIN641</td><td>REVULYTICSLIBRARY</td><td>Win64</td><td/><td>0</td><td/></row>
 		<row><td>WindowsFolder</td><td>TARGETDIR</td><td>.:Windows</td><td/><td>0</td><td/></row>
 		<row><td>WindowsVolume</td><td>TARGETDIR</td><td>.:WinRoot</td><td/><td>0</td><td/></row>
 		<row><td>_0523A2C74E4344039FBE693755AE143B</td><td>_90232056FD41428C94DCD4E57B4D3D25</td><td>Extras</td><td/><td>0</td><td/></row>
 		<row><td>_0A91AFAC54A548B98F3711F56766CB7A</td><td>_C96241646E5D4A97987710EFB5608ED2</td><td>PhysX3</td><td/><td>0</td><td/></row>
 		<row><td>_15D4FD9499B843D9B4B0F089F51D7625</td><td>_B61536AB12D24743BF1C758D848412C1</td><td>Win64</td><td/><td>0</td><td/></row>
 		<row><td>_184923DFD64B499FBC86C8F19F1E9A10</td><td>_2D866923251F462DB51BD0983A84E001</td><td>NVAFTE~1|NVaftermath</td><td/><td>0</td><td/></row>
-		<row><td>_1B95F038902541BB9E83E6239462FD13</td><td>_AFB1AD7E37F14C9C9DB24BC6BD6EFC2B</td><td>Win64</td><td/><td>0</td><td/></row>
 		<row><td>_1E1C1D5182C94711AF511DEDB5E1BD69</td><td>_0523A2C74E4344039FBE693755AE143B</td><td>Redist</td><td/><td>0</td><td/></row>
 		<row><td>_2575734CBC574C5DABCDFD792FF49F9D</td><td>_C96241646E5D4A97987710EFB5608ED2</td><td>Ogg</td><td/><td>0</td><td/></row>
-		<row><td>_265829D5D121424E99A072F096ADE6BE</td><td>_15D4FD9499B843D9B4B0F089F51D7625</td><td>VS2015</td><td/><td>0</td><td/></row>
 		<row><td>_2D759D2FE02E496D9D32B6DBC4F28130</td><td>_2575734CBC574C5DABCDFD792FF49F9D</td><td>Win64</td><td/><td>0</td><td/></row>
 		<row><td>_2D866923251F462DB51BD0983A84E001</td><td>_C96241646E5D4A97987710EFB5608ED2</td><td>NVIDIA</td><td/><td>0</td><td/></row>
-		<row><td>_2EA0927DAF934F78A61B0523DA1A27D4</td><td>_1E1C1D5182C94711AF511DEDB5E1BD69</td><td>en-us</td><td/><td>0</td><td/></row>
 		<row><td>_393C6F551FD44C208CA7EF642F7CE0DE</td><td>_6710AB2E305B42B3B7EE0F511BE0B419</td><td>DirectX</td><td/><td>0</td><td/></row>
 		<row><td>_479F08BFDBBC4C048CDAD9E946787AEE</td><td>INSTALLDIR</td><td>Modumate</td><td/><td>0</td><td/></row>
-		<row><td>_4E9775F31CD647AC90CEC0DE280075BE</td><td>_393C6F551FD44C208CA7EF642F7CE0DE</td><td>x64</td><td/><td>0</td><td/></row>
 		<row><td>_6710AB2E305B42B3B7EE0F511BE0B419</td><td>_C96241646E5D4A97987710EFB5608ED2</td><td>Windows</td><td/><td>0</td><td/></row>
 		<row><td>_71755EE8343F4863995DF27EDA29FD44</td><td>_0A91AFAC54A548B98F3711F56766CB7A</td><td>Win64</td><td/><td>0</td><td/></row>
-		<row><td>_71A78DDF19C34D4DA6F6A12DBC59A206</td><td>_7B028A788668430ABF0AB4E2156FDC82</td><td>Paks</td><td/><td>0</td><td/></row>
 		<row><td>_7B028A788668430ABF0AB4E2156FDC82</td><td>_479F08BFDBBC4C048CDAD9E946787AEE</td><td>Content</td><td/><td>0</td><td/></row>
-		<row><td>_8DC8F1CF9DEE4F2FAC60BCE96D3EE782</td><td>_71755EE8343F4863995DF27EDA29FD44</td><td>VS2015</td><td/><td>0</td><td/></row>
 		<row><td>_90232056FD41428C94DCD4E57B4D3D25</td><td>INSTALLDIR</td><td>Engine</td><td/><td>0</td><td/></row>
-		<row><td>_AC48DAF423D646039618CB4740673858</td><td>_184923DFD64B499FBC86C8F19F1E9A10</td><td>Win64</td><td/><td>0</td><td/></row>
 		<row><td>_AFB1AD7E37F14C9C9DB24BC6BD6EFC2B</td><td>_479F08BFDBBC4C048CDAD9E946787AEE</td><td>Binaries</td><td/><td>0</td><td/></row>
 		<row><td>_B03244EC16B3490E9825BD0053327D45</td><td>_90232056FD41428C94DCD4E57B4D3D25</td><td>Binaries</td><td/><td>0</td><td/></row>
 		<row><td>_B61536AB12D24743BF1C758D848412C1</td><td>_C96241646E5D4A97987710EFB5608ED2</td><td>Vorbis</td><td/><td>0</td><td/></row>
 		<row><td>_C96241646E5D4A97987710EFB5608ED2</td><td>_B03244EC16B3490E9825BD0053327D45</td><td>THIRDP~1|ThirdParty</td><td/><td>0</td><td/></row>
-		<row><td>_FBB4AFDA7504446DBEEDF3E2F597FB6F</td><td>_2D759D2FE02E496D9D32B6DBC4F28130</td><td>VS2015</td><td/><td>0</td><td/></row>
+		<row><td>newfolder1</td><td>ProgramMenuFolder</td><td>##ID_STRING11##</td><td/><td>1</td><td/></row>
 	</table>
 
 	<table name="DrLocator">
@@ -1872,7 +1827,6 @@
 		<col def="S255">ProgId_</col>
 		<col def="S64">MIME_</col>
 		<col def="s38">Feature_</col>
-		<row><td>mdmt</td><td>ModumateEXE</td><td/><td/><td>DefaultFeature</td></row>
 	</table>
 
 	<table name="Feature">
@@ -1894,37 +1848,10 @@
 	<table name="FeatureComponents">
 		<col key="yes" def="s38">Feature_</col>
 		<col key="yes" def="s72">Component_</col>
-		<row><td>DefaultFeature</td><td>APEX_Clothing</td></row>
-		<row><td>DefaultFeature</td><td>AllOtherFiles6</td></row>
-		<row><td>DefaultFeature</td><td>AllOtherFiles7</td></row>
-		<row><td>DefaultFeature</td><td>AllOtherFiles8</td></row>
-		<row><td>DefaultFeature</td><td>AllOtherFiles9</td></row>
-		<row><td>DefaultFeature</td><td>ApexFramework</td></row>
-		<row><td>DefaultFeature</td><td>ApexLegacy</td></row>
-		<row><td>DefaultFeature</td><td>ClientCrashReporter</td></row>
+		<row><td>DefaultFeature</td><td>ApplicationFiles</td></row>
 		<row><td>DefaultFeature</td><td>CoffeeShopAndHouse</td></row>
-		<row><td>DefaultFeature</td><td>CrashReporterPak</td></row>
-		<row><td>DefaultFeature</td><td>GFSDK</td></row>
-		<row><td>DefaultFeature</td><td>MainContentPakAndSig</td></row>
-		<row><td>DefaultFeature</td><td>ModumateEXE</td></row>
-		<row><td>DefaultFeature</td><td>ModumateWin64Shipping</td></row>
-		<row><td>DefaultFeature</td><td>NonUSFManifest</td></row>
-		<row><td>DefaultFeature</td><td>NvCloth</td></row>
-		<row><td>DefaultFeature</td><td>PDFNet</td></row>
-		<row><td>DefaultFeature</td><td>Phys3</td></row>
-		<row><td>DefaultFeature</td><td>PhysX3</td></row>
-		<row><td>DefaultFeature</td><td>PhysX364</td></row>
-		<row><td>DefaultFeature</td><td>PxFoundation</td></row>
-		<row><td>DefaultFeature</td><td>PxPVD</td></row>
-		<row><td>DefaultFeature</td><td>Revulytics</td></row>
-		<row><td>DefaultFeature</td><td>RevulyticsBinaries</td></row>
-		<row><td>DefaultFeature</td><td>SplashBMP</td></row>
-		<row><td>DefaultFeature</td><td>UE4PrereqSetup_x64.exe1</td></row>
-		<row><td>DefaultFeature</td><td>WinPixEventRuntime</td></row>
-		<row><td>DefaultFeature</td><td>libogg</td></row>
-		<row><td>DefaultFeature</td><td>liborvis</td></row>
-		<row><td>DefaultFeature</td><td>liborvisfile</td></row>
-		<row><td>DefaultFeature</td><td>ruiSDK_5.5.1.x64.dll</td></row>
+		<row><td>DefaultFeature</td><td>EngineFiles</td></row>
+		<row><td>DefaultFeature</td><td>Modumate.exe</td></row>
 	</table>
 
 	<table name="File">
@@ -1939,32 +1866,9 @@
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I4">ISAttributes</col>
 		<col def="S72">ISComponentSubFolder_</col>
-		<row><td>_1351B6D8CD98495391F1BF4E8AC247F9</td><td>ModumateEXE</td><td>Modumate.exe</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;WindowsNoEditor&gt;\Modumate.exe</td><td>5</td><td/></row>
-		<row><td>_136C0837441B4C4CACC5ABD72AD047AE</td><td>libogg</td><td>libogg_64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;VS2015&gt;\libogg_64.dll</td><td>5</td><td/></row>
-		<row><td>_296A2A7D383E4B15A6D04D72D0F2AD4B</td><td>ApexFramework</td><td>ApexFramework_x64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;VS20151&gt;\ApexFramework_x64.dll</td><td>5</td><td/></row>
-		<row><td>_2B38A6F144C34D81A644FB74E2CF1907</td><td>PxFoundation</td><td>PxFoundation_x64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;VS20151&gt;\PxFoundation_x64.dll</td><td>5</td><td/></row>
-		<row><td>_3647DF51780D429D98479A2F4C664848</td><td>PhysX364</td><td>PhysX3_x64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;VS20151&gt;\PhysX3_x64.dll</td><td>5</td><td/></row>
-		<row><td>_3AC64D89F6214DB6AEDF9888AAE12E7C</td><td>APEX_Clothing</td><td>APEX_Clothing_x64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;VS20151&gt;\APEX_Clothing_x64.dll</td><td>5</td><td/></row>
-		<row><td>_46B7932306824A4BB58A50A2FAABC5C1</td><td>WinPixEventRuntime</td><td>WinPixEventRuntime.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;x64&gt;\WinPixEventRuntime.dll</td><td>5</td><td/></row>
-		<row><td>_960BAD814DCF4FE5851424984CE66004</td><td>PhysX3</td><td>PhysX3Common_x64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;VS20151&gt;\PhysX3Common_x64.dll</td><td>5</td><td/></row>
-		<row><td>_A70CC8341EBB4939B1AACFF5D39A618A</td><td>liborvis</td><td>libvorbis_64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;VS20152&gt;\libvorbis_64.dll</td><td>5</td><td/></row>
-		<row><td>_A91E0569980D4AD99D4B37C8DB0313F5</td><td>PxPVD</td><td>PxPvdSDK_x64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;VS20151&gt;\PxPvdSDK_x64.dll</td><td>5</td><td/></row>
-		<row><td>_ADF84E06659F4276BBEB3B40D2CE435C</td><td>ApexLegacy</td><td>APEX_Legacy_x64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;VS20151&gt;\APEX_Legacy_x64.dll</td><td>5</td><td/></row>
-		<row><td>_B342932902F74B38BD2B3DCCC6894896</td><td>NonUSFManifest</td><td>Manifest_NonUFSFiles_Win64.txt</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;WindowsNoEditor&gt;\Manifest_NonUFSFiles_Win64.txt</td><td>5</td><td/></row>
-		<row><td>_B53211AD57A34096ADAD3EE7ACC2769F</td><td>PDFNet</td><td>PDFNetC.dll</td><td>0</td><td>65535.0.0.0</td><td/><td>512</td><td>1</td><td>&lt;PATH_TO_WIN64_FILES1&gt;\PDFNetC.dll</td><td>21</td><td/></row>
-		<row><td>_B9A5AD6053804AC894AF7E96455E68CC</td><td>ModumateWin64Shipping</td><td>Modumate-Win64-Shipping.exe</td><td>0</td><td>65535.0.0.0</td><td/><td>512</td><td>1</td><td>&lt;PATH_TO_WIN64_FILES1&gt;\Modumate-Win64-Shipping.exe</td><td>21</td><td/></row>
-		<row><td>_BC4E098CBA9A406AAD22454770CA684E</td><td>GFSDK</td><td>GFSDK_Aftermath_Lib.x64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;Win64&gt;\GFSDK_Aftermath_Lib.x64.dll</td><td>5</td><td/></row>
-		<row><td>_CDA304F8ABF34FA888DDA09F245A25E4</td><td>Phys3</td><td>PhysX3Cooking_x64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;VS20151&gt;\PhysX3Cooking_x64.dll</td><td>5</td><td/></row>
-		<row><td>_D03E39728BFA4741A48E8F330D36F021</td><td>liborvisfile</td><td>libvorbisfile_64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;VS20152&gt;\libvorbisfile_64.dll</td><td>5</td><td/></row>
-		<row><td>_DB37C4AECCBD4EDE8371C2963F06C945</td><td>NvCloth</td><td>NvCloth_x64.dll</td><td>0</td><td/><td/><td>512</td><td>1</td><td>&lt;VS20151&gt;\NvCloth_x64.dll</td><td>5</td><td/></row>
 		<row><td>coffeeshop.mdmt</td><td>CoffeeShopAndHouse</td><td>COFFEE~1.MDM|CoffeeShop.mdmt</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;PATH_TO_REFERENCEPROJEC_FILES&gt;\CoffeeShop.mdmt</td><td>1</td><td/></row>
 		<row><td>housewithinternalcourtyard.m</td><td>CoffeeShopAndHouse</td><td>HOUSEW~1.MDM|HouseWithInternalCourtyard.mdmt</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;PATH_TO_REFERENCEPROJEC_FILES&gt;\HouseWithInternalCourtyard.mdmt</td><td>1</td><td/></row>
-		<row><td>pakchunk0_windowsnoeditor.pa</td><td>MainContentPakAndSig</td><td>pakchunk0-WindowsNoEditor.pak</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;PATH_TO_PAKS_FILES&gt;\pakchunk0-WindowsNoEditor.pak</td><td>1</td><td/></row>
-		<row><td>pakchunk0_windowsnoeditor.si</td><td>MainContentPakAndSig</td><td>pakchunk0-WindowsNoEditor.sig</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;PATH_TO_PAKS_FILES&gt;\pakchunk0-WindowsNoEditor.sig</td><td>1</td><td/></row>
-		<row><td>pdfnetdotnetcore.dll</td><td>PDFNet</td><td>PDFNET~1.DLL|PDFNetDotNetCore.dll</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;PATH_TO_WIN64_FILES1&gt;\PDFNetDotNetCore.dll</td><td>1</td><td/></row>
-		<row><td>ruisdk_5.5.1.x64.dll</td><td>ruiSDK_5.5.1.x64.dll</td><td>RUISDK~1.DLL|ruiSDK_5.5.1.x64.dll</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Modumate&gt;\Plugins\Revulytics\Binaries\ThirdParty\RevulyticsLibrary\Win64\ruiSDK_5.5.1.x64.dll</td><td>1</td><td/></row>
-		<row><td>splash.bmp1</td><td>SplashBMP</td><td>Splash.bmp</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;PATH_TO_SPLASH_FILES&gt;\Splash.bmp</td><td>1</td><td/></row>
-		<row><td>ue4prereqsetup_x64.exe</td><td>UE4PrereqSetup_x64.exe1</td><td>UE4PrereqSetup_x64.exe</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;PATH_TO_EN-US_FILES1&gt;\UE4PrereqSetup_x64.exe</td><td>1</td><td/></row>
+		<row><td>modumate.exe</td><td>Modumate.exe</td><td>Modumate.exe</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;PATH_TO_WINDOWSNOEDITOR_FILES&gt;\Modumate.exe</td><td>1</td><td/></row>
 	</table>
 
 	<table name="FileSFPCatalog">
@@ -2110,37 +2014,10 @@
 		<col def="S0">FTPLocation</col>
 		<col def="S0">HTTPLocation</col>
 		<col def="S0">Miscellaneous</col>
-		<row><td>APEX_Clothing</td><td/><td/><td>_A960EDAE_5F87_4C2C_873D_119141C0B9CB_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>AllOtherFiles6</td><td/><td/><td>_CCE0A89E_B272_49CF_A204_A466849FB881_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>AllOtherFiles7</td><td/><td/><td>_0C0D4730_4F97_4813_A5CF_36081FDEFEA9_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>AllOtherFiles8</td><td/><td/><td>_2660B7BE_9960_42BA_967E_70BFC1C35E7D_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>AllOtherFiles9</td><td/><td/><td>_38D4FE56_488C_4009_9AEF_D650A1839528_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>ApexFramework</td><td/><td/><td>_5F1F3C3A_2926_46CD_B59A_3013D03ACAFD_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>ApexLegacy</td><td/><td/><td>_037A8512_D6FC_450F_961D_6658AA57843E_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>ClientCrashReporter</td><td/><td/><td>_572B33C9_E802_4E33_8D99_F81DBB0F1033_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>ApplicationFiles</td><td/><td/><td>_8782A632_44BB_4007_9134_B2F79DAFB2A2_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>CoffeeShopAndHouse</td><td/><td/><td>_05585B86_8380_431B_9425_43E7FFE8C159_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>CrashReporterPak</td><td/><td/><td>_30B2AF47_53D3_42CF_871C_EB410561142F_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>GFSDK</td><td/><td/><td>_DF151BBF_F54B_4F3E_A7B0_AFAB9793A93A_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>MainContentPakAndSig</td><td/><td/><td>_7EDA2EC2_403F_4C40_8C2A_9CB53C842B7B_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>ModumateEXE</td><td/><td/><td>_D9C92C9B_47AD_43D5_914A_7EDB31FCAFE0_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>ModumateWin64Shipping</td><td/><td/><td>_1D426320_05F9_48E3_AD78_270FC2FF853B_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>NonUSFManifest</td><td/><td/><td>_59F108CA_B5CF_405A_B287_4731C5941DFC_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>NvCloth</td><td/><td/><td>_7FE49A45_27FC_4022_9C04_43DD52D065DE_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>PDFNet</td><td/><td/><td>_7C3D2AA8_EC69_40A9_9BEC_54CF23038E5E_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>Phys3</td><td/><td/><td>_92195957_34A0_4738_8A24_482BB1F40789_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>PhysX3</td><td/><td/><td>_4FD724E2_6A55_44BE_ACBE_F61CD4A0F3B6_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>PhysX364</td><td/><td/><td>_6D6EE504_8B87_408E_A594_D923B26E69FE_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>PxFoundation</td><td/><td/><td>_74B5BABD_6E6D_46DA_A343_D086D21B8813_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>PxPVD</td><td/><td/><td>_C59AF0E3_B9E1_4414_95C2_F5D7EC64682A_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>Revulytics</td><td/><td/><td>_BC7C75C7_5BCE_4D15_AABF_A8817AB986B7_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>RevulyticsBinaries</td><td/><td/><td>_5CF6BD24_A6AF_48CB_A133_A631EFCBC46A_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>SplashBMP</td><td/><td/><td>_A6CD89BA_12AA_42C2_875F_4FAE91B9B892_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>UE4PrereqSetup_x64.exe1</td><td/><td/><td>_F8F854E6_1FBB_42AE_8ED4_6270CE972A5D_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>WinPixEventRuntime</td><td/><td/><td>_5FB7875C_13D6_45F4_9C6A_FB4984795C75_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>libogg</td><td/><td/><td>_39D0C14F_E166_4425_A313_BE431F820691_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>liborvis</td><td/><td/><td>_DFA8A560_AC7D_445E_9200_B51E8B6BAB7C_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>liborvisfile</td><td/><td/><td>_2BCC3910_7B4D_482A_B4F8_793864A62161_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>ruiSDK_5.5.1.x64.dll</td><td/><td/><td>_34836AC1_D2AA_4F0D_AD90_B4852CE1AC2A_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>EngineFiles</td><td/><td/><td>_2BC19099_38EE_45A6_819C_85D443DF394A_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Modumate.exe</td><td/><td/><td>_3E7D0B3D_6525_4758_9F37_3569FC77FAF0_FILTER</td><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="ISCustomActionReference">
@@ -2210,12 +2087,8 @@
 		<col def="S0">IncludeFiles</col>
 		<col def="S0">ExcludeFiles</col>
 		<col def="I4">ISAttributes</col>
-		<row><td>AllOtherFiles6</td><td>&lt;Modumate&gt;\Plugins\Revulytics\Binaries\ThirdParty</td><td>4</td><td/><td/><td>8</td></row>
-		<row><td>AllOtherFiles7</td><td>&lt;Modumate&gt;\Plugins\Revulytics\Binaries</td><td>4</td><td/><td/><td>8</td></row>
-		<row><td>ClientCrashReporter</td><td>&lt;PATH_TO_WIN64_FILES&gt;</td><td>4</td><td/><td/><td>8</td></row>
-		<row><td>CrashReporterPak</td><td>&lt;PATH_TO_PROGRAMS_FILES&gt;\CrashReportClient\Content</td><td>4</td><td/><td/><td>10</td></row>
-		<row><td>Revulytics</td><td>&lt;Modumate&gt;\Plugins</td><td>4</td><td/><td/><td>8</td></row>
-		<row><td>RevulyticsBinaries</td><td>&lt;Modumate&gt;\Plugins\Revulytics</td><td>4</td><td/><td/><td>8</td></row>
+		<row><td>ApplicationFiles</td><td>&lt;PATH_TO_WINDOWSNOEDITOR_FILES&gt;\Modumate</td><td>4</td><td/><td/><td>10</td></row>
+		<row><td>EngineFiles</td><td>&lt;PATH_TO_WINDOWSNOEDITOR_FILES&gt;\Engine</td><td>4</td><td/><td/><td>10</td></row>
 	</table>
 
 	<table name="ISFeatureDIMReferences">
@@ -2487,6 +2360,7 @@
 		<row><td>PATH_TO_SPLASH_FILES</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Modumate\Content\Splash</td><td/><td>2</td></row>
 		<row><td>PATH_TO_WIN64_FILES</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\Win64</td><td/><td>2</td></row>
 		<row><td>PATH_TO_WIN64_FILES1</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Modumate\Binaries\Win64</td><td/><td>2</td></row>
+		<row><td>PATH_TO_WINDOWSNOEDITOR_FILES</td><td>C:\Jenkins\workspace\Modumate_pkg\Modumate\Saved\StagedBuilds\WindowsNoEditor</td><td/><td>2</td></row>
 		<row><td>PhysX3</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\ThirdParty\PhysX3</td><td/><td>2</td></row>
 		<row><td>ProgramFilesFolder</td><td/><td/><td>1</td></row>
 		<row><td>SystemFolder</td><td/><td/><td>1</td></row>
@@ -2557,7 +2431,7 @@
 		<col def="S255">MsiCommandLine</col>
 		<col def="I4">ISSetupPrerequisiteLocation</col>
 		<row><td>Debug</td><td>Default Configuration</td><td>&lt;ISProjectDataFolder&gt;</td><td>PackageName</td><td>1</td><td>1033</td><td>2</td><td>2</td><td>Intel</td><td/><td>1033</td><td>0</td><td>0</td><td>0</td><td>0</td><td/><td>0</td><td/><td>MediaLocation</td><td/><td>http://</td><td/><td/><td/><td/><td>8464397</td><td/><td/><td/><td/></row>
-		<row><td>Release</td><td>Default Configuration</td><td>&lt;ISProjectDataFolder&gt;</td><td>PackageName</td><td>4</td><td>1033</td><td>2</td><td>1</td><td>Intel</td><td/><td>1033</td><td>2</td><td>0</td><td>1</td><td>0</td><td/><td>0</td><td/><td>MediaLocation</td><td/><td>http://www.modumate.com</td><td/><td>&lt;PATH_TO_SIGNING_FILES1&gt;\ModumateCert.pfx?auto</td><td/><td/><td>8462349</td><td/><td/><td/><td/></row>
+		<row><td>Release</td><td>Default Configuration</td><td>&lt;ISProjectDataFolder&gt;</td><td>PackageName</td><td>3</td><td>1033</td><td>0</td><td>2</td><td>Intel</td><td/><td>1033</td><td>2</td><td>8.75</td><td>1</td><td>2048</td><td/><td>0</td><td/><td>MediaLocation</td><td/><td>http://www.modumate.com</td><td/><td>&lt;PATH_TO_SIGNING_FILES1&gt;\ModumateCert.pfx?auto</td><td/><td/><td>8462349</td><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="ISReleaseASPublishInfo">
@@ -3980,6 +3854,9 @@
 		<row><td>IDS__TargetReq_DESC_RESOLUTION</td><td>1033</td><td>The screen resolution is not adequate for running [ProductName].</td><td>0</td><td/><td>1923520529</td></row>
 		<row><td>ID_STRING1</td><td>1033</td><td>Modumate</td><td>0</td><td/><td>-198779027</td></row>
 		<row><td>ID_STRING10</td><td>1033</td><td>MODUMA~1|Modumate VMWare</td><td>0</td><td/><td>816326799</td></row>
+		<row><td>ID_STRING11</td><td>1033</td><td>Modumate</td><td>0</td><td/><td>-1960295892</td></row>
+		<row><td>ID_STRING12</td><td>1033</td><td>Modumate</td><td>0</td><td/><td>-1960273364</td></row>
+		<row><td>ID_STRING13</td><td>1033</td><td>Modumate</td><td>0</td><td/><td>-1960252884</td></row>
 		<row><td>ID_STRING2</td><td>1033</td><td>The Modumate App</td><td>0</td><td/><td>-198779027</td></row>
 		<row><td>ID_STRING3</td><td>1033</td><td>http://www.modumate.com</td><td>0</td><td/><td>-198783153</td></row>
 		<row><td>ID_STRING4</td><td>1033</td><td>http://www.modumate.com</td><td>0</td><td/><td>-1842900464</td></row>
@@ -4121,6 +3998,8 @@
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I2">ISIconIndex</col>
 		<row><td>ARPPRODUCTICON.exe</td><td/><td>&lt;PATH_TO_BUILD_FILES&gt;\Windows\Application.ico</td><td>0</td></row>
+		<row><td>NewShortcut1_27251C89C32F4330B0785691FDCFEBE9.exe</td><td/><td>&lt;PATH_TO_WINDOWSNOEDITOR_FILES&gt;\Modumate.exe</td><td>0</td></row>
+		<row><td>NewShortcut2_E2B119CB837249818C62A3D018EFCB43.exe</td><td/><td>&lt;PATH_TO_WINDOWSNOEDITOR_FILES&gt;\Modumate.exe</td><td>0</td></row>
 		<row><td>_A90100B155264298B_784FDDFE6B9F427AAEB4EF850EC30EB3.exe</td><td/><td>&lt;WindowsNoEditor&gt;\Modumate.exe</td><td>0</td></row>
 		<row><td>_FDB9745D78A24A69B_9BFDCB3208BC4C639400E0D4829A2CD4.exe</td><td/><td>[INSTALLDIR]\Modumate.exe</td><td>0</td></row>
 		<row><td>_FDB9745D78A24A69B_C6C241F08D324990927983FF10AE48D6.exe</td><td/><td>&lt;WindowsNoEditor&gt;\Modumate.exe</td><td>0</td></row>
@@ -4638,7 +4517,7 @@ UgBlAGwAZQBhAHMAZQABAEQAZQBmAGEAdQBsAHQAIABDAG8AbgBmAGkAZwB1AHIAYQB0AGkAbwBuAA==
 		<row><td>ProductID</td><td>none</td><td/></row>
 		<row><td>ProductLanguage</td><td>1033</td><td/></row>
 		<row><td>ProductName</td><td>ModumateSetup</td><td/></row>
-		<row><td>ProductVersion</td><td>0.7.0.1</td><td/></row>
+		<row><td>ProductVersion</td><td>0.7.0.2</td><td/></row>
 		<row><td>ProgressType0</td><td>install</td><td/></row>
 		<row><td>ProgressType1</td><td>Installing</td><td/></row>
 		<row><td>ProgressType2</td><td>installed</td><td/></row>
@@ -4714,7 +4593,7 @@ UgBlAGwAZQBhAHMAZQABAEQAZQBmAGEAdQBsAHQAIABDAG8AbgBmAGkAZwB1AHIAYQB0AGkAbwBuAA==
 		<col def="L255">FileName</col>
 		<col def="s72">DirProperty</col>
 		<col def="i2">InstallMode</col>
-		<row><td>RemoveFile1</td><td>ClientCrashReporter</td><td/><td>WIN64</td><td>2</td></row>
+		<row><td>NewShortcut1</td><td>Modumate.exe</td><td/><td>newfolder1</td><td>2</td></row>
 	</table>
 
 	<table name="RemoveIniFile">
@@ -4800,8 +4679,8 @@ UgBlAGwAZQBhAHMAZQABAEQAZQBmAGEAdQBsAHQAIABDAG8AbgBmAGkAZwB1AHIAYQB0AGkAbwBuAA==
 		<col def="S255">ISComments</col>
 		<col def="S255">ISShortcutName</col>
 		<col def="I4">ISAttributes</col>
-		<row><td>_A90100B155264298B189BF0C53867BD8</td><td>ProgramMenuFolder</td><td>Modumate</td><td>ModumateEXE</td><td>DefaultFeature</td><td/><td/><td/><td>_A90100B155264298B_784FDDFE6B9F427AAEB4EF850EC30EB3.exe</td><td>1</td><td>1</td><td>INSTALLDIR</td><td/><td/><td/><td/><td/><td/><td>0</td></row>
-		<row><td>_FDB9745D78A24A69B156373167BDA939</td><td>DesktopFolder</td><td>Modumate</td><td>ModumateEXE</td><td>DefaultFeature</td><td/><td/><td/><td>_FDB9745D78A24A69B_C6C241F08D324990927983FF10AE48D6.exe</td><td>1</td><td>1</td><td>INSTALLDIR</td><td/><td/><td/><td/><td/><td/><td>0</td></row>
+		<row><td>NewShortcut1</td><td>newfolder1</td><td>##ID_STRING12##</td><td>Modumate.exe</td><td>[INSTALLDIR]Modumate.exe</td><td/><td/><td/><td>NewShortcut1_27251C89C32F4330B0785691FDCFEBE9.exe</td><td>1</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
+		<row><td>NewShortcut2</td><td>DesktopFolder</td><td>##ID_STRING13##</td><td>Modumate.exe</td><td>[INSTALLDIR]Modumate.exe</td><td/><td/><td/><td>NewShortcut2_E2B119CB837249818C62A3D018EFCB43.exe</td><td>1</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="Signature">
@@ -4930,7 +4809,6 @@ UgBlAGwAZQBhAHMAZQABAEQAZQBmAGEAdQBsAHQAIABDAG8AbgBmAGkAZwB1AHIAYQB0AGkAbwBuAA==
 		<col def="I2">Sequence</col>
 		<col def="L255">Command</col>
 		<col def="L255">Argument</col>
-		<row><td>mdmt</td><td>Open</td><td/><td/><td>##ID_STRING8##</td></row>
 	</table>
 
 	<table name="_Validation">
