@@ -100,11 +100,12 @@ namespace Modumate
 		}
 	}
 
-	int32 FGraph3D::FindFaceContainingPolygon(const TArray<FVector> &InPolyPoints, TArray<FVector2D> &OutProjectedPoints) const
+	int32 FGraph3D::FindFaceContainingFace(const int32 FaceID, TArray<FVector2D> &OutProjectedPoints) const
 	{
 		int32 faceIDContainingPoly = MOD_ID_NONE;
 
-		int32 numPolyPoints = InPolyPoints.Num();
+		auto face = FindFace(FaceID);
+		int32 numPolyPoints = face->VertexIDs.Num();
 		if (!ensureAlwaysMsgf(numPolyPoints >= 3, TEXT("Can only test for faces containing a valid polygon with >= 3 points!")))
 		{
 			return MOD_ID_NONE;
@@ -113,10 +114,11 @@ namespace Modumate
 		OutProjectedPoints.Reset(numPolyPoints);
 
 		// First, find a face that all of these vertices are contained by
-		for (const FVector &polyPoint : InPolyPoints)
+		for (int32 vertexID : face->VertexIDs)
 		{
+			auto vertex = FindVertex(vertexID);
 			FVector2D &projectedPosition = OutProjectedPoints.AddDefaulted_GetRef();
-			int32 faceIDContainingPoint = FindFaceContainingPosition(polyPoint, projectedPosition);
+			int32 faceIDContainingPoint = FindFaceContainingPosition(vertex->Position, projectedPosition);
 
 			if ((faceIDContainingPoint == MOD_ID_NONE) ||
 				((faceIDContainingPoly != MOD_ID_NONE) && (faceIDContainingPoint != faceIDContainingPoly)))
@@ -154,13 +156,20 @@ namespace Modumate
 		return faceIDContainingPoly;
 	}
 
-	void FGraph3D::FindFacesContainedByPolygon(const TArray<FVector> &InPolyPoints, TArray<int32> &OutContainedFaces) const
+	void FGraph3D::FindFacesContainedByFace(const int32 FaceID, TSet<int32> &OutContainedFaces) const
 	{
+		auto containedFace = FindFace(FaceID);
+		if (containedFace == nullptr)
+		{
+			return;
+		}
+
+		OutContainedFaces.Reset();
 		// TODO: the plane of the points should be an input to this function,
 		// since it's necessary to call this before we can construct a valid FGraph3DFace,
 		// and we shouldn't rely on this function to be as accurate as it needs to be for comparison against other faces in the graph.
 		FPlane polyPlane, polyAntiPlane;
-		if (!UModumateGeometryStatics::GetPlaneFromPoints(InPolyPoints, polyPlane, Epsilon))
+		if (!UModumateGeometryStatics::GetPlaneFromPoints(containedFace->CachedPositions, polyPlane, Epsilon))
 		{
 			return;
 		}
@@ -176,8 +185,8 @@ namespace Modumate
 			}
 
 			// First, project the input polygon to the space of the face candidate
-			TempProjectedPoints.Reset(InPolyPoints.Num());
-			for (const FVector &polyPoint : InPolyPoints)
+			TempProjectedPoints.Reset(containedFace->CachedPositions.Num());
+			for (const FVector &polyPoint : containedFace->CachedPositions)
 			{
 				TempProjectedPoints.Add(face.ProjectPosition2D(polyPoint));
 			}
@@ -292,27 +301,44 @@ namespace Modumate
 	{
 		int32 containingFaceID = MOD_ID_NONE;
 
+		TSet<int32> containingFaceIDs;
 		for (auto &kvp : Faces)
 		{
 			if (kvp.Value.ContainsPosition(Position, OutPosition2D))
 			{
-				if (bDebugCheck)
+				if (ensureAlways(containingFaceID == MOD_ID_NONE))
 				{
-					if (ensureAlways(containingFaceID == MOD_ID_NONE))
-					{
-						containingFaceID = kvp.Key;
-					}
-					else
-					{
-						UE_LOG(LogTemp, Error, TEXT("Faces %d and %d both containing position %s; they shouldn't be overlapping!"),
-							kvp.Key, containingFaceID, *Position.ToString());
-					}
-				}
-				else
-				{
-					return kvp.Key;
+					containingFaceIDs.Add(kvp.Key);
 				}
 			}
+		}
+
+		// find the minimum containing face ID
+		if (containingFaceIDs.Num() != 0)
+		{
+			int32 currentID = containingFaceIDs.Array()[0];
+			bool bFoundChildContainingFace = true;
+			while (bFoundChildContainingFace)
+			{
+				bFoundChildContainingFace = false;
+				auto face = FindFace(currentID);
+				if (face != nullptr)
+				{
+					for (int32 faceID : face->ContainedFaceIDs)
+					{
+						if (containingFaceIDs.Contains(faceID))
+						{
+							currentID = faceID;
+							bFoundChildContainingFace = true;
+							break;
+						}
+					}
+				}
+			}
+			auto face = FindFace(currentID);
+			face->ContainsPosition(Position, OutPosition2D);
+
+			return currentID;
 		}
 
 		return containingFaceID;

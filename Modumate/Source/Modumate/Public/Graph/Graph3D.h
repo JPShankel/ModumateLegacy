@@ -114,8 +114,8 @@ namespace Modumate
 
 	private:
 		void FindEdges(const FVector &Position, int32 ExistingID, TArray<int32>& OutEdgeIDs) const;
-		int32 FindFaceContainingPolygon(const TArray<FVector> &InPolyPoints, TArray<FVector2D> &OutProjectedPoints) const;
-		void FindFacesContainedByPolygon(const TArray<FVector> &InPolyPoints, TArray<int32> &OutContainedFaces) const;
+		int32 FindFaceContainingFace(const int32 FaceID, TArray<FVector2D> &OutProjectedPoints) const;
+		void FindFacesContainedByFace(const int32 FaceID, TSet<int32> &OutContainedFaces) const;
 
 		void AddObjectToGroups(const IGraph3DObject *GraphObject);
 		void RemoveObjectFromGroups(const IGraph3DObject *GraphObject);
@@ -139,6 +139,7 @@ namespace Modumate
 
 		TSet<int32> TempInheritedGroupIDs;
 		mutable TArray<FVector2D> TempProjectedPoints;
+		mutable TSet<int32> TempContainingFaceIDs;
 
 	public:
 
@@ -162,7 +163,7 @@ namespace Modumate
 		bool GetDeltaForEdgeAdditionWithSplit(const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs, bool bCheckFaces = false);
 		bool GetDeltaForFaceAddition(const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID, const TSet<int32> &InGroupIDs = TSet<int32>());
 
-		bool GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, const TArray<int32>& EdgeIDs, const TArray<FPlane>& InPlanes = TArray<FPlane>(), bool bAddNewFaces = true);
+		bool GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, const TArray<int32>& EdgeIDs, const TArray<int32>& FaceIDs, const TArray<FPlane>& InPlanes = TArray<FPlane>(), bool bAddNewFaces = true);
 
 		// provides deltas for splitting edges and adjusting faces after a graph operation
 		bool GetDeltasForEdgeSplits(TArray<FGraph3DDelta> &OutDeltas, TArray<int32> &AddedEdgeIDs, int32 &NextID); 

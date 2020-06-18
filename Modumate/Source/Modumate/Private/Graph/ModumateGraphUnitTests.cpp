@@ -1957,7 +1957,7 @@ namespace Modumate
 
 		TestTrue(TEXT("Add outer face"),
 			tempGraph.GetDeltaForFaceAddition(outerVertices, deltas, nextID, existingID));
-		if ((deltas.Num() != 1) || (deltas[0].FaceAdditions.Num() != 1))
+		if ((deltas.Num() < 1) || (deltas[0].FaceAdditions.Num() != 1))
 		{
 			return false;
 		}
@@ -1975,15 +1975,12 @@ namespace Modumate
 
 		TestTrue(TEXT("Add inner face"),
 			tempGraph.GetDeltaForFaceAddition(innerVertices, deltas, nextID, existingID));
-		if ((deltas.Num() != 1) || (deltas[0].FaceAdditions.Num() != 1))
+		if ((deltas.Num() < 1) || (deltas[0].FaceAdditions.Num() != 1))
 		{
 			return false;
 		}
 		auto innerFaceDeltaKVP = *deltas[0].FaceAdditions.CreateConstIterator();
 		int32 innerFaceID = innerFaceDeltaKVP.Key;
-
-		const auto &faceUpdates = deltas[0].FaceContainmentUpdates;
-		TestTrue(TEXT("Outer face containment update is in the face addition delta"), faceUpdates.Contains(outerFaceID));
 
 		TestDeltas(this, deltas, graph, tempGraph, 2, 8, 8);
 
@@ -2001,6 +1998,18 @@ namespace Modumate
 
 		TestEqual(TEXT("OuterFace contains InnerFace"), *outerFace->ContainedFaceIDs.CreateConstIterator(), innerFaceID);
 		TestEqual(TEXT("InnerFace is contained by OuterFace"), innerFace->ContainingFaceID, outerFaceID);
+
+		deltas.Reset();
+		deltas.AddDefaulted();
+		TestTrue(TEXT("Delete face, including connected edges and vertices"),
+			tempGraph.GetDeltaForDeleteObjects({}, {}, { innerFaceID }, {}, deltas[0], true));
+
+		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
+
+		if (!TestEqual(TEXT("OuterFace contains 0 faces"), outerFace->ContainedFaceIDs.Num(), 0))
+		{
+			return false;
+		}
 
 		return true;
 	}
@@ -2026,7 +2035,7 @@ namespace Modumate
 
 		TestTrue(TEXT("Add inner face"),
 			tempGraph.GetDeltaForFaceAddition(innerVertices, deltas, nextID, existingID));
-		if ((deltas.Num() != 1) || (deltas[0].FaceAdditions.Num() != 1))
+		if ((deltas.Num() < 1) || (deltas[0].FaceAdditions.Num() != 1))
 		{
 			return false;
 		}
@@ -2044,15 +2053,12 @@ namespace Modumate
 
 		TestTrue(TEXT("Add outer face"),
 			tempGraph.GetDeltaForFaceAddition(outerVertices, deltas, nextID, existingID));
-		if ((deltas.Num() != 1) || (deltas[0].FaceAdditions.Num() != 1))
+		if ((deltas.Num() < 1) || (deltas[0].FaceAdditions.Num() != 1))
 		{
 			return false;
 		}
 		auto outerFaceDeltaKVP = *deltas[0].FaceAdditions.CreateConstIterator();
 		int32 outerFaceID = outerFaceDeltaKVP.Key;
-
-		const auto &faceUpdates = deltas[0].FaceContainmentUpdates;
-		TestTrue(TEXT("Inner face containment update is in the face addition delta"), faceUpdates.Contains(innerFaceID));
 
 		TestDeltas(this, deltas, graph, tempGraph, 2, 8, 8);
 
@@ -2070,6 +2076,18 @@ namespace Modumate
 
 		TestEqual(TEXT("OuterFace contains InnerFace"), *outerFace->ContainedFaceIDs.CreateConstIterator(), innerFaceID);
 		TestEqual(TEXT("InnerFace is contained by OuterFace"), innerFace->ContainingFaceID, outerFaceID);
+
+		deltas.Reset();
+		deltas.AddDefaulted();
+		TestTrue(TEXT("Delete outer face"),
+			tempGraph.GetDeltaForDeleteObjects({}, {}, { outerFaceID }, {}, deltas[0], true));
+
+		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
+
+		if (!TestTrue(TEXT("inner face is not contained"), innerFace->ContainingFaceID == 0))
+		{
+			return false;
+		}
 
 		return true;
 	}

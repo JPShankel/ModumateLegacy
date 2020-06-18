@@ -23,6 +23,8 @@ namespace Modumate
 
 
 	FGraph3DFaceContainmentDelta::FGraph3DFaceContainmentDelta()
+		: PrevContainingFaceID(MOD_ID_NONE)
+		, NextContainingFaceID(MOD_ID_NONE)
 	{ }
 
 	FGraph3DFaceContainmentDelta::FGraph3DFaceContainmentDelta(const FGraph3DFaceContainmentDelta &Other)
@@ -90,6 +92,7 @@ namespace Modumate
 
 		FaceAdditions.Reset();
 		FaceDeletions.Reset();
+		FaceContainmentUpdates.Reset();
 
 		FaceVertexAdditions.Reset();
 		FaceVertexRemovals.Reset();
@@ -106,6 +109,7 @@ namespace Modumate
 		if (EdgeDeletions.Num() > 0) return false;
 		if (FaceAdditions.Num() > 0) return false;
 		if (FaceDeletions.Num() > 0) return false;
+		if (FaceContainmentUpdates.Num() > 0) return false;
 		if (FaceVertexAdditions.Num() > 0) return false;
 		if (FaceVertexRemovals.Num() > 0) return false;
 		if (ParentIDUpdates.Num() > 0) return false;
