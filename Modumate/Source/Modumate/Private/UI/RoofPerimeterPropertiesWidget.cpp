@@ -10,7 +10,7 @@
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
@@ -47,7 +47,7 @@ bool URoofPerimeterPropertiesWidget::Initialize()
 	return true;
 }
 
-void URoofPerimeterPropertiesWidget::SetTarget(int32 InTargetPerimeterID, int32 InTargetEdgeID, AAdjustmentHandleActor_CPP *InOwningHandle)
+void URoofPerimeterPropertiesWidget::SetTarget(int32 InTargetPerimeterID, int32 InTargetEdgeID, AAdjustmentHandleActor *InOwningHandle)
 {
 	TargetPerimeterID = InTargetPerimeterID;
 	TargetEdgeID = InTargetEdgeID;

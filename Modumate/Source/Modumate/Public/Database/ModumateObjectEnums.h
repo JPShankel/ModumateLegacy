@@ -172,13 +172,6 @@ enum class ESelectObjectMode : uint8
 	Advanced,
 };
 
-UENUM(BlueprintType)
-enum class EHandleType : uint8
-{
-	Default,
-	Justification
-};
-
 UENUM(BlueprintType, meta = (Bitflags))
 enum class EObjectDirtyFlags : uint8
 {

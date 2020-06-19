@@ -2,9 +2,10 @@
 
 #include "DocumentManagement/ModumateObjectInstanceRoofPerimeter.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Graph/Graph3D.h"
 #include "UnrealClasses/LineActor.h"
 #include "DocumentManagement/ModumateDocument.h"
@@ -62,104 +63,46 @@ namespace Modumate
 
 	void FMOIRoofPerimeterImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller)
 	{
-		if (CreateFacesHandleActor.IsValid())
+		if (CreateFacesHandle.IsValid())
 		{
 			return;
 		}
 
 		UStaticMesh *anchorMesh = Controller->EMPlayerState->GetEditModelGameMode()->AnchorMesh;
 
-		// Handle for creating roof faces
-		FCreateRoofFacesHandle *createFacesHandle = new FCreateRoofFacesHandle(MOI);
-		CreateFacesHandleActor = Controller->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>();
-		CreateFacesHandleActor->SetActorMesh(anchorMesh);
-		CreateFacesHandleActor->SetHandleScale(FVector(0.001f));
-		CreateFacesHandleActor->SetHandleScaleScreenSize(FVector(0.001f));
-
-		createFacesHandle->Handle = CreateFacesHandleActor.Get();
-		CreateFacesHandleActor->Implementation = createFacesHandle;
-		CreateFacesHandleActor->AttachToActor(PerimeterActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
-
-		// Handle for retracting roof faces
-		FRetractRoofFacesHandle *retractFacesHandle = new FRetractRoofFacesHandle(MOI);
-		RetractFacesHandleActor = Controller->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>();
-		RetractFacesHandleActor->SetActorMesh(anchorMesh);
-		RetractFacesHandleActor->SetHandleScale(FVector(0.001f));
-		RetractFacesHandleActor->SetHandleScaleScreenSize(FVector(0.001f));
-
-		retractFacesHandle->Handle = RetractFacesHandleActor.Get();
-		RetractFacesHandleActor->Implementation = retractFacesHandle;
-		RetractFacesHandleActor->AttachToActor(PerimeterActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
+		CreateFacesHandle = MOI->MakeHandle<ACreateRoofFacesHandle>();
+		RetractFacesHandle = MOI->MakeHandle<ARetractRoofFacesHandle>();
 
 		// Handles for modifying roof edges
 		for (FSignedID edgeID : CachedEdgeIDs)
 		{
-			FEditRoofEdgeHandle *editEdgeHandle = new FEditRoofEdgeHandle(MOI, edgeID);
-			AAdjustmentHandleActor_CPP *edgeHandleActor = Controller->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>();
-			edgeHandleActor->SetActorMesh(anchorMesh);
-			edgeHandleActor->SetHandleScale(FVector(0.001f));
-			edgeHandleActor->SetHandleScaleScreenSize(FVector(0.001f));
+			AEditRoofEdgeHandle *editEdgeHandle = MOI->MakeHandle<AEditRoofEdgeHandle>();
+			editEdgeHandle->SetTargetEdge(edgeID);
 
-			editEdgeHandle->Handle = edgeHandleActor;
-			edgeHandleActor->Implementation = editEdgeHandle;
-			edgeHandleActor->AttachToActor(PerimeterActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
-			EdgeHandleActors.Add(edgeID, edgeHandleActor);
-		}
-	}
-
-	void FMOIRoofPerimeterImpl::ClearAdjustmentHandles(AEditModelPlayerController_CPP *Controller)
-	{
-		if (CreateFacesHandleActor.IsValid())
-		{
-			CreateFacesHandleActor->Destroy();
-			CreateFacesHandleActor.Reset();
-		}
-
-		if (DefaultPropertiesWidget.IsValid())
-		{
-			DefaultPropertiesWidget->RemoveFromViewport();
-			DefaultPropertiesWidget->ConditionalBeginDestroy();
-			DefaultPropertiesWidget.Reset();
-		}
-
-		for (auto &kvp : EdgeHandleActors)
-		{
-			TWeakObjectPtr<AAdjustmentHandleActor_CPP> &edgeHandleActor = kvp.Value;
-			if (edgeHandleActor.IsValid())
-			{
-				edgeHandleActor->Destroy();
-				edgeHandleActor.Reset();
-			}
+			EdgeHandlesByID.Add(edgeID, editEdgeHandle);
 		}
 	}
 
 	void FMOIRoofPerimeterImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
 	{
-		bAdjustmentHandlesVisible = bShow;
-
-		if (bShow)
-		{
-			SetupAdjustmentHandles(Controller);
-		}
-
 		bool bCreatedRoofFaces = (CachedFaceIDs.Num() > 0);
 
-		if (CreateFacesHandleActor.IsValid())
+		if (CreateFacesHandle.IsValid())
 		{
-			CreateFacesHandleActor->SetEnabled(bShow && !bCreatedRoofFaces);
+			CreateFacesHandle->SetEnabled(bShow && !bCreatedRoofFaces);
 		}
 		
-		if (RetractFacesHandleActor.IsValid())
+		if (RetractFacesHandle.IsValid())
 		{
-			RetractFacesHandleActor->SetEnabled(bShow && bCreatedRoofFaces);
+			RetractFacesHandle->SetEnabled(bShow && bCreatedRoofFaces);
 		}
 
-		for (auto &kvp : EdgeHandleActors)
+		for (auto &kvp : EdgeHandlesByID)
 		{
-			TWeakObjectPtr<AAdjustmentHandleActor_CPP> &edgeHandleActor = kvp.Value;
-			if (edgeHandleActor.IsValid())
+			TWeakObjectPtr<AEditRoofEdgeHandle> &editEdgeHandle = kvp.Value;
+			if (editEdgeHandle.IsValid())
 			{
-				edgeHandleActor->SetEnabled(bShow && !bCreatedRoofFaces);
+				editEdgeHandle->SetEnabled(bShow && !bCreatedRoofFaces);
 			}
 		}
 	}
@@ -301,7 +244,7 @@ namespace Modumate
 		// then we know we need to recreate the correct handles.
 		bool bEdgesMatchHandles = true;
 		TSet<int32> cachedEdgeIDSet(CachedEdgeIDs);
-		for (auto &kvp : EdgeHandleActors)
+		for (auto &kvp : EdgeHandlesByID)
 		{
 			if (!cachedEdgeIDSet.Contains(kvp.Key))
 			{
@@ -311,7 +254,7 @@ namespace Modumate
 		}
 		for (int32 cachedEdgeID : CachedEdgeIDs)
 		{
-			if (!EdgeHandleActors.Contains(cachedEdgeID))
+			if (!EdgeHandlesByID.Contains(cachedEdgeID))
 			{
 				bEdgesMatchHandles = false;
 				break;
@@ -323,11 +266,11 @@ namespace Modumate
 		if (!bEdgesMatchHandles || (CachedEdgeIDs != MOI->GetControlPointIndices()))
 		{
 			// TODO: may not need to destroy -all- of the existing handles
-			ClearAdjustmentHandles(playerController);
+			MOI->ClearAdjustmentHandles();
 		}
 
 		// Update the handles regardless; this is the last opportunity to toggle visibility between face creation / retraction handles, etc.
-		ShowAdjustmentHandles(playerController, bAdjustmentHandlesVisible);
+		MOI->ShowAdjustmentHandles(playerController, bAdjustmentHandlesVisible);
 
 		// TODO: maybe don't store the ordered edge list in ControlIndices?
 		MOI->SetControlPointIndices(CachedEdgeIDs);

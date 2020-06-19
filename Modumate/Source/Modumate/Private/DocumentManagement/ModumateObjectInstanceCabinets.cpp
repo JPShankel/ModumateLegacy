@@ -2,7 +2,7 @@
 
 #include "DocumentManagement/ModumateObjectInstanceCabinets.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "DrawDebugHelpers.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -10,6 +10,8 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
+#include "UI/AdjustmentHandleAssetData.h"
+#include "UI/EditModelPlayerHUD.h"
 
 namespace Modumate
 {
@@ -83,7 +85,8 @@ namespace Modumate
 
 		// refresh handle visibility, don't destroy & recreate handles
 		AEditModelPlayerController_CPP *controller = DynamicMeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-		ShowAdjustmentHandles(controller, AdjustmentHandlesVisible);
+		// TODO: revisit the handle paradigm for cabinets
+		MOI->ShowAdjustmentHandles(controller, AdjustmentHandlesVisible);
 
 		UpdateCabinetPortal();
 	}
@@ -201,114 +204,84 @@ namespace Modumate
 
 	void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 	{
-		if (AdjustmentHandles.Num() > 0)
+		int32 numCP = MOI->GetControlPoints().Num();
+		for (int32 i = 0; i < numCP; ++i)
 		{
-			return;
+			auto pointHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+			pointHandle->SetTargetIndex(i);
+
+			auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+			edgeHandle->SetTargetIndex(i);
+			edgeHandle->SetAdjustPolyEdge(true);
+
+			auto selectFrontHandle = MOI->MakeHandle<ASelectCabinetFrontHandle>();
+			selectFrontHandle->SetTargetIndex(i);
+
+			FrontSelectionHandles.Add(selectFrontHandle);
 		}
 
-		auto makeActor = [this, controller](IAdjustmentHandleImpl *impl, UStaticMesh *mesh, const FVector &s, const TArray<int32>& CP, float offsetDist, float planeSign)
-		{
-			AAdjustmentHandleActor_CPP *actor = DynamicMeshActor->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-			actor->SetActorMesh(mesh);
-			actor->SetHandleScale(s);
-			actor->SetHandleScaleScreenSize(s);
-			if (CP.Num() > 0)
-			{
-				actor->SetPolyHandleSide(CP, MOI, offsetDist);
-			}
-			else if (planeSign != 0.0f)
-			{
-				actor->SetOverrideHandleDirection(planeSign * FVector::UpVector, MOI, offsetDist);
-			}
+		auto topExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
+		topExtrusionHandle->SetSign(1.0f);
 
-			impl->Handle = actor;
-			actor->Implementation = impl;
-			actor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
-			AdjustmentHandles.Add(actor);
-		};
-
-		UStaticMesh *faceAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->FaceAdjusterMesh;
-		UStaticMesh *anchorMesh = controller->EMPlayerState->GetEditModelGameMode()->AnchorMesh;
-
-		for (int32 i = 0; i < MOI->GetControlPoints().Num(); ++i)
-		{
-			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->GetControlPoints().Num()), faceAdjusterMesh, FVector(0.0015f), { i, (i + 1) % MOI->GetControlPoints().Num() }, 16.0f, 0.0f);
-
-			auto *frontHandleImpl = new FSelectFrontAdjustmentHandle(MOI, i);
-			makeActor(frontHandleImpl, anchorMesh, FVector(0.001f), { i, (i + 1) % MOI->GetControlPoints().Num() }, 16.0f, 0.0f);
-			FrontSelectionHandleImpls.Add(frontHandleImpl);
-		}
-
-		makeActor(new FAdjustPolyExtrusionHandle(MOI, 1.0f), faceAdjusterMesh, FVector(0.0015f), {}, 0.0f, 1.0f);
-		makeActor(new FAdjustPolyExtrusionHandle(MOI, -1.0f), faceAdjusterMesh, FVector(0.0015f), {}, 0.0f, -1.0f);
-
-		ShowAdjustmentHandles(controller, true);
+		auto bottomExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
+		bottomExtrusionHandle->SetSign(-1.0f);
 	}
 
-	void FMOICabinetImpl::ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+	void FMOICabinetImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
 	{
-		FrontSelectionHandleImpls.Empty();
-		AdjustmentHandlesVisible = false;
+		FDynamicModumateObjectInstanceImpl::ShowAdjustmentHandles(Controller, bShow);
 
-		FDynamicModumateObjectInstanceImpl::ClearAdjustmentHandles(controller);
-	}
-
-	void FMOICabinetImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show)
-	{
-		FDynamicModumateObjectInstanceImpl::ShowAdjustmentHandles(controller, show);
-
-		AdjustmentHandlesVisible = show;
+		AdjustmentHandlesVisible = bShow;
 
 		// make sure that front selection handles are only visible if they are valid choices
-		for (auto *frontHandleImpl : FrontSelectionHandleImpls)
+		for (auto frontHandle : FrontSelectionHandles)
 		{
-			if (frontHandleImpl && frontHandleImpl->Handle.IsValid())
+			if (frontHandle.IsValid())
 			{
-				bool frontSelectHandleEnabled = show && ((MOI->GetControlPointIndices().Num() == 0) || (MOI->GetControlPointIndex(0) == frontHandleImpl->CP));
-
-				frontHandleImpl->Handle->GetStaticMeshComponent()->SetVisibility(frontSelectHandleEnabled);
-				frontHandleImpl->Handle->GetStaticMeshComponent()->SetCollisionEnabled(frontSelectHandleEnabled ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
+				bool bHandleEnabled = bShow && ((MOI->GetControlPointIndices().Num() == 0) || (MOI->GetControlPointIndex(0) == frontHandle->TargetIndex));
+				frontHandle->SetEnabled(bHandleEnabled);
 			}
 		}
 	}
+}
 
+using namespace Modumate;
 
+const float ASelectCabinetFrontHandle::FaceCenterHeightOffset = 20.0f;
 
-	const float FSelectFrontAdjustmentHandle::FaceCenterHeightOffset = 20.0f;
-
-	FSelectFrontAdjustmentHandle::FSelectFrontAdjustmentHandle(FModumateObjectInstance *moi, int32 cp)
-		: FEditModelAdjustmentHandleBase(moi)
-		, CP(cp)
-	{ }
-
-	bool FSelectFrontAdjustmentHandle::OnBeginUse()
+bool ASelectCabinetFrontHandle::BeginUse()
+{
+	if (!Super::BeginUse())
 	{
-		if (!FEditModelAdjustmentHandleBase::OnBeginUse())
-		{
-			return false;
-		}
-
-		TArray<int32> newControlIndices;
-
-		if ((MOI->GetControlPointIndices().Num() == 0) || (MOI->GetControlPointIndex(0) != CP))
-		{
-			newControlIndices.Add(CP);
-		}
-
-		MOI->SetControlPointIndices(newControlIndices);
-		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({MOI}));
-
-		OnEndUse();
-
-		Controller->ModumateCommand(delta->AsCommand());
 		return false;
 	}
 
-	FVector FSelectFrontAdjustmentHandle::GetAttachmentPoint()
+	TArray<int32> newControlIndices;
+
+	if ((TargetMOI->GetControlPointIndices().Num() == 0) || (TargetMOI->GetControlPointIndex(0) != TargetIndex))
 	{
-		const auto &points = MOI->GetControlPoints();
-		FVector edgeCenter = 0.5f * (points[CP] + points[(CP + 1) % points.Num()]);
-		FVector heightOffset = FVector(0, 0, 0.5f * MOI->GetExtents().Y + FaceCenterHeightOffset);
-		return MOI->GetObjectRotation().RotateVector(heightOffset + edgeCenter);
+		newControlIndices.Add(TargetIndex);
 	}
+
+	TargetMOI->SetControlPointIndices(newControlIndices);
+	TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ TargetMOI }));
+
+	EndUse();
+
+	Controller->ModumateCommand(delta->AsCommand());
+	return false;
+}
+
+FVector ASelectCabinetFrontHandle::GetHandlePosition() const
+{
+	const auto &points = TargetMOI->GetControlPoints();
+	FVector edgeCenter = 0.5f * (points[TargetIndex] + points[(TargetIndex + 1) % points.Num()]);
+	FVector heightOffset = FVector(0, 0, 0.5f * TargetMOI->GetExtents().Y + FaceCenterHeightOffset);
+	return TargetMOI->GetObjectRotation().RotateVector(heightOffset + edgeCenter);
+}
+
+bool ASelectCabinetFrontHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
+{
+	OutButtonStyle = PlayerHUD->HandleAssets->CabinetFrontFaceStyle;
+	return true;
 }

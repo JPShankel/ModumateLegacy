@@ -2,7 +2,7 @@
 
 #include "DocumentManagement/ModumateObjectInstanceFlatPoly.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -136,43 +136,18 @@ namespace Modumate
 	// Adjustment Handles
 	void FMOIFlatPolyImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 	{
-		if (AdjustmentHandles.Num() > 0)
+		// Make the polygon adjustment handles, for modifying the polygonal shape
+		int32 numCP = MOI->GetControlPoints().Num();
+		for (int32 i = 0; i < numCP; ++i)
 		{
-			return;
+			auto cornerHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+			cornerHandle->SetTargetIndex(i);
+
+			auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+			edgeHandle->SetTargetIndex(i);
+			edgeHandle->SetAdjustPolyEdge(true);
 		}
-		auto makeActor = [this, controller](IAdjustmentHandleImpl *impl, UStaticMesh *mesh, const FVector &s, const TArray<int32>& CP, float offsetDist, const int32& side = -1)
-		{
-			AAdjustmentHandleActor_CPP *actor = DynamicMeshActor->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-			actor->SetActorMesh(mesh);
-			actor->SetHandleScale(s);
-			actor->SetHandleScaleScreenSize(s);
-			actor->Side = side;
-			if (CP.Num() > 0)
-			{
-				actor->SetPolyHandleSide(CP, MOI, offsetDist);
-			}
-
-			impl->Handle = actor;
-			actor->Implementation = impl;
-			actor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
-			AdjustmentHandles.Add(actor);
-		};
-
-		UStaticMesh *pointAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->PointAdjusterMesh;
-		UStaticMesh *faceAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->FaceAdjusterMesh;
-		UStaticMesh *invertHandleMesh = controller->EMPlayerState->GetEditModelGameMode()->InvertHandleMesh;
-
-		for (size_t i = 0; i < MOI->GetControlPoints().Num(); ++i)
-		{
-			makeActor(new FAdjustPolyPointHandle(MOI, i), pointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f), TArray<int32>{int32(i)}, 0.0f);
-			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->GetControlPoints().Num()), faceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), TArray<int32>{int32(i), int32(i + 1) % MOI->GetControlPoints().Num()}, 16.0f);
-		}
-
-		if (WantsInvertHandle)
-		{
-			makeActor(new FAdjustInvertHandle(MOI), invertHandleMesh, FVector(0.003f, 0.003f, 0.003f), TArray<int32>{}, 0.0f, 2);
-		}
-	};
+	}
 
 	TArray<FModelDimensionString> FMOIFlatPolyImpl::GetDimensionStrings() const
 	{

@@ -2,7 +2,7 @@
 
 #include "DocumentManagement/ModumateObjectInstancePlaneBase.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
@@ -98,34 +98,23 @@ namespace Modumate
 	// Adjustment Handles
 	void FMOIPlaneImplBase::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 	{
-		if (AdjustmentHandles.Num() > 0)
+		if (MOI->HasAdjustmentHandles())
 		{
 			return;
 		}
-		auto makeActor = [this, controller](IAdjustmentHandleImpl *impl, UStaticMesh *mesh, const FVector &s, const TArray<int32>& CP, float offsetDist, const int32& side = -1)
-		{
-			AAdjustmentHandleActor_CPP *actor = DynamicMeshActor->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-			actor->SetActorMesh(mesh);
-			actor->SetHandleScale(s);
-			actor->SetHandleScaleScreenSize(s);
-			actor->Side = side;
-			if (CP.Num() > 0)
-			{
-				actor->SetPolyHandleSide(CP, MOI, offsetDist);
-			}
 
-			impl->Handle = actor;
-			actor->Implementation = impl;
-			actor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
-			AdjustmentHandles.Add(actor);
-		};
+		int32 numCP = MOI->GetControlPoints().Num();
 
-		UStaticMesh *faceAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->FaceAdjusterMesh;
-		for (size_t i = 0; i < MOI->GetControlPoints().Num(); ++i)
+		for (int32 i = 0; i < numCP; ++i)
 		{
-			makeActor(new FAdjustPolyPointHandle(MOI, i, (i + 1) % MOI->GetControlPoints().Num()), faceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), TArray<int32>{int32(i), int32(i + 1) % MOI->GetControlPoints().Num()}, 16.0f);
+			auto vertexHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+			vertexHandle->SetTargetIndex(i);
+
+			auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+			edgeHandle->SetTargetIndex(i);
+			edgeHandle->SetAdjustPolyEdge(true);
 		}
-	};
+	}
 
 	bool FMOIPlaneImplBase::ShowStructureOnSelection() const
 	{

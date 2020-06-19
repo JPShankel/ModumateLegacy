@@ -21,7 +21,7 @@
  */
 
 
-class AAdjustmentHandleActor_CPP;
+class AAdjustmentHandleActor;
 class UIMaterialInterface;
 class AEditModelPlayerController_CPP;
 class ALineActor;
@@ -97,9 +97,8 @@ namespace Modumate
 
 		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) = 0;
 
-		virtual void ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller) = 0;
-		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show) = 0;
-		virtual void GetAdjustmentHandleActors(TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>>& outHandleActors) = 0;
+		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) = 0;
+		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) = 0;
 		virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover) = 0;
 		virtual void OnSelected(bool bNewSelected) = 0;
 
@@ -168,9 +167,8 @@ namespace Modumate
 
 		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
-		virtual void ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
-		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show) override;
-		virtual void GetAdjustmentHandleActors(TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>>& outHandleActors) override { }
+		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override { }
+		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) override;
 		virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover) override { }
 		virtual void OnSelected(bool bNewSelected) override;
 
@@ -243,6 +241,8 @@ namespace Modumate
 		// TODO: to be deprecated when Commands 2.0 is developed, meantime...
 		bool ToParameterSet(const FString &Prefix,FModumateFunctionParameterSet &OutParameterSet) const;
 		bool FromParameterSet(const FString &Prefix,const FModumateFunctionParameterSet &ParameterSet);
+
+		bool operator==(const FMOIStateData& Other) const;
 	};
 
 	class MODUMATE_API FModumateObjectInstance;
@@ -309,16 +309,19 @@ namespace Modumate
 		EObjectDirtyFlags DirtyFlags = EObjectDirtyFlags::None;
 
 		FMOIStateData &GetDataState();
-		const FMOIStateData &GetDataState() const;
 
 		void MakeImplementation();
 		void MakeActor(const FVector &Loc, const FQuat &Rot);
 		void SetupMOIComponent();
 
+		TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
+
 	public:
 		FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FModumateObjectAssembly &obAsm, int32 id);
 		FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FMOIDataRecord &obRec);
 		~FModumateObjectInstance();
+
+		const FMOIStateData &GetDataState() const;
 
 		bool GetObjectInverted() const;
 		void SetObjectInverted(bool bNewInverted);
@@ -466,9 +469,18 @@ namespace Modumate
 		void TransverseObject();
 
 		// Manipulation
-		void ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show);
-		void ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller);
-		void GetAdjustmentHandleActors(TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>>& outHandleActors);
+		void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);
+		void ClearAdjustmentHandles();
+		const TArray<TWeakObjectPtr<AAdjustmentHandleActor>> &GetAdjustmentHandles() const;
+		bool HasAdjustmentHandles() const;
+
+		AAdjustmentHandleActor *MakeHandle(TSubclassOf<AAdjustmentHandleActor> HandleClass);
+
+		template< typename THandleClass >
+		THandleClass* MakeHandle()
+		{
+			return CastChecked<THandleClass>(MakeHandle(THandleClass::StaticClass()), ECastCheckedType::NullAllowed);
+		}
 
 		// Whether it can be split - called by both the Document and the SplitTool
 		bool CanBeSplit() const;

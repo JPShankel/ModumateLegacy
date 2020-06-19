@@ -1,5 +1,5 @@
 #include "DocumentManagement/ModumateDynamicObjectBase.h"
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
@@ -88,53 +88,6 @@ namespace Modumate
 		return DynamicMeshActor.IsValid() ? DynamicMeshActor->GetTriInternalNormalFromEdge(cp1, cp2, outNormal) : false;
 	}
 
-	void FDynamicModumateObjectInstanceImpl::ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller)
-	{
-		for (auto &ah : AdjustmentHandles)
-		{
-			if (ah.IsValid())
-			{
-				ah->Destroy();
-			}
-		}
-		AdjustmentHandles.Empty();
-	}
-
-	void FDynamicModumateObjectInstanceImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show)
-	{
-		if (show)
-		{
-			SetupAdjustmentHandles(controller);
-		}
-
-		for (auto &ah : AdjustmentHandles)
-		{
-			if (ah.IsValid())
-			{
-				// If this handle has children, show or hide as intended
-				if (ah->HandleChildren.Num() > 0)
-				{
-					ah->SetEnabled(show);
-					// If hide, children should also hide children
-					if (!show)
-					{
-						ah->bShowHandleChildren = show;
-					}
-				}
-				// If this handle is a child, show only when bool show is true
-				else if (ah->HandleChildren.Num() == 0 && ah->HandleParent && show == true)
-				{
-					ah->SetEnabled(ah->HandleParent->bShowHandleChildren);
-				}
-				else
-				{
-					ah->SetEnabled(show);
-				}
-			}
-		}
-
-	}
-
 	void FDynamicModumateObjectInstanceImpl::SetIsDynamic(bool bIsDynamic)
 	{
 		if (DynamicMeshActor.IsValid())
@@ -146,10 +99,5 @@ namespace Modumate
 	bool FDynamicModumateObjectInstanceImpl::GetIsDynamic() const
 	{
 		return DynamicMeshActor.IsValid() && DynamicMeshActor->GetIsDynamic();
-	}
-
-	void FDynamicModumateObjectInstanceImpl::GetAdjustmentHandleActors(TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>>& outHandleActors)
-	{
-		outHandleActors = AdjustmentHandles;
 	}
 }

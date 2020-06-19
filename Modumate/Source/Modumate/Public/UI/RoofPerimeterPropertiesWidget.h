@@ -22,7 +22,7 @@ public:
 	URoofPerimeterPropertiesWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
-	void SetTarget(int32 InTargetPerimeterID, int32 InTargetEdgeID, class AAdjustmentHandleActor_CPP *InOwningHandle);
+	void SetTarget(int32 InTargetPerimeterID, int32 InTargetEdgeID, class AAdjustmentHandleActor *InOwningHandle);
 	void UpdateTransform();
 
 protected:
@@ -36,7 +36,7 @@ public:
 	int32 TargetEdgeID;
 
 	UPROPERTY()
-	class AAdjustmentHandleActor_CPP *OwningHandle;
+	class AAdjustmentHandleActor *OwningHandle;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UBorder *RootBorder;

@@ -19,7 +19,7 @@
 #include "ModumateCore/ModumateThumbnailHelpers.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAnalyticsStatics.h"
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -32,6 +32,7 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
 #include "UnrealClasses/ModumateViewportClient.h"
+#include "UI/AdjustmentHandleWidget.h"
 
 
 // Tools
@@ -81,9 +82,6 @@ AEditModelPlayerController_CPP::AEditModelPlayerController_CPP()
 	, CameraInputLock(false)
 	, SelectionMode(ESelectObjectMode::DefaultObjects)
 	, MaxRaycastDist(100000.0f)
-	, HUDDrawWidgetClass(UHUDDrawWidget::StaticClass())
-	, CraftingWidgetClass(UModumateCraftingWidget_CPP::StaticClass())
-	, DrawingSetWidgetClass(UModumateDrawingSetWidget_CPP::StaticClass())
 {
 #if !UE_BUILD_SHIPPING
 	InputAutomationComponent = CreateDefaultSubobject<UEditModelInputAutomation>(TEXT("InputAutomationComponent"));
@@ -151,31 +149,12 @@ void AEditModelPlayerController_CPP::BeginPlay()
 
 	SnappingView = new Modumate::FModumateSnappingView(Document, this);
 
-	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
-
 	CreateTools();
 	SetToolMode(EToolMode::VE_SELECT);
 
-	CraftingWidget = CreateWidget<UModumateCraftingWidget_CPP>(this, CraftingWidgetClass);
-	if (CraftingWidget != nullptr)
-	{
-		CraftingWidget->AddToViewport();
-		CraftingWidget->SetVisibility(ESlateVisibility::Hidden);
-	}
-
-	DrawingSetWidget = CreateWidget<UModumateDrawingSetWidget_CPP>(this, DrawingSetWidgetClass);
-	if (DrawingSetWidget != nullptr)
-	{
-		DrawingSetWidget->AddToViewport();
-		DrawingSetWidget->SetVisibility(ESlateVisibility::Hidden);
-	}
-
-	HUDDrawWidget = CreateWidget<UHUDDrawWidget>(this, HUDDrawWidgetClass);
-	if (HUDDrawWidget != nullptr)
-	{
-		HUDDrawWidget->AddToViewport();
-		HUDDrawWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
-	}
+	auto* playerHUD = GetEditModelHUD();
+	playerHUD->Initialize();
+	HUDDrawWidget = playerHUD->HUDDrawWidget;
 
 	// If we have a crash recovery, load that 
 	// otherwise if the game mode started with a pending project (if it came from the command line, for example) then load it immediately. 
@@ -184,6 +163,8 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	bool addToRecents = true;
 
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+
 	FString recoveryFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateRecoveryFile);
 		
 	if (gameInstance->RecoveringFromCrash)
@@ -455,6 +436,64 @@ void AEditModelPlayerController_CPP::RegisterTool(TScriptInterface<IEditModelToo
 	ModeToTool.Add(newToolMode, NewTool);
 }
 
+void AEditModelPlayerController_CPP::OnHoverHandleWidget(UAdjustmentHandleWidget* HandleWidget, bool bIsHovered)
+{
+	if (!(HandleWidget && HandleWidget->HandleActor))
+	{
+		return;
+	}
+
+	// Maintain a stack of hovered handle widgets, so we can easily access the latest hovered one for input purposes,
+	// but allow the handle widgets to use their own hover system for individual hover state.
+	if (bIsHovered)
+	{
+		if (ensure(!HoverHandleActors.Contains(HandleWidget->HandleActor)))
+		{
+			HoverHandleActors.Push(HandleWidget->HandleActor);
+		}
+
+		HoverHandleActor = HandleWidget->HandleActor;
+	}
+	else
+	{
+		HoverHandleActors.RemoveSingle(HandleWidget->HandleActor);
+		HoverHandleActor = (HoverHandleActors.Num() > 0) ? HoverHandleActors.Last() : nullptr;
+	}
+
+	if ((HoverHandleActors.Num() > 0) && HoverHandleActor == nullptr)
+	{
+		ensureAlways(false);
+	}
+}
+
+void AEditModelPlayerController_CPP::OnPressHandleWidget(UAdjustmentHandleWidget* HandleWidget, bool bIsPressed)
+{
+	if (!(HandleWidget && HandleWidget->HandleActor))
+	{
+		return;
+	}
+
+	if (bIsPressed)
+	{
+		if (InteractionHandle == HandleWidget->HandleActor)
+		{
+			InteractionHandle->EndUse();
+			InteractionHandle = nullptr;
+		}
+		else if (HoverHandleActor == HandleWidget->HandleActor)
+		{
+			if (HoverHandleActor->BeginUse())
+			{
+				InteractionHandle = HoverHandleActor;
+			}
+			else if (HoverHandleActor->IsInUse())
+			{
+				HoverHandleActor->AbortUse();
+			}
+		}
+	}
+}
+
 void AEditModelPlayerController_CPP::OnLButtonDown()
 {
 	// TODO: for now, using tools may create dimension strings that are incompatible with those created
@@ -462,25 +501,29 @@ void AEditModelPlayerController_CPP::OnLButtonDown()
 	// all of these dimension strings consistently so that we can cycle between them.
 	ClearUserSnapPoints();
 
-	if (InteractionHandle)
+	static bool bOldHandleBehavior = false;
+	if (bOldHandleBehavior)
 	{
-		InteractionHandle->EndUse();
-		InteractionHandle = nullptr;
-		return;
-	}
+		if (InteractionHandle)
+		{
+			InteractionHandle->EndUse();
+			InteractionHandle = nullptr;
+			return;
+		}
 
-	if (HoverHandle)
-	{
-		if (HoverHandle->BeginUse())
+		if (HoverHandleActor)
 		{
-			InteractionHandle = HoverHandle;
+			if (HoverHandleActor->BeginUse())
+			{
+				InteractionHandle = HoverHandleActor;
+			}
+			// If the handle reported failure beginning, but it is in use, then abort it.
+			else if (!ensureAlways(!HoverHandleActor->IsInUse()))
+			{
+				HoverHandleActor->AbortUse();
+			}
+			return;
 		}
-		// If the handle reported failure beginning, but it is in use, then abort it.
-		else if (!ensureAlways(!HoverHandle->IsInUse()))
-		{
-			HoverHandle->AbortUse();
-		}
-		return;
 	}
 
 	if (CurrentTool)
@@ -505,6 +548,11 @@ void AEditModelPlayerController_CPP::OnLButtonUp()
 	{
 		CurrentTool->HandleMouseUp();
 	}
+}
+
+AEditModelPlayerHUD* AEditModelPlayerController_CPP::GetEditModelHUD() const
+{
+	return GetHUD<AEditModelPlayerHUD>();
 }
 
 /*
@@ -885,7 +933,7 @@ bool AEditModelPlayerController_CPP::HandleTabKeyForDimensionString()
 	{
 		return false;
 	}
-	if (!InteractionHandle->ParentMOI)
+	if (!InteractionHandle->TargetMOI)
 	{
 		return false;
 	}
@@ -914,7 +962,7 @@ bool AEditModelPlayerController_CPP::HandleInputNumber(double inputNumber)
 
 	// If there's an active tool or handle that can receive the user snap point input, then use it here.
 
-	AAdjustmentHandleActor_CPP *curHandle = InteractionHandle;
+	AAdjustmentHandleActor *curHandle = InteractionHandle;
 
 	bool bUseHandle = (curHandle && curHandle->IsInUse());
 	bool bUseTool = (!bUseHandle && CurrentTool && CurrentTool->IsActive());
@@ -939,7 +987,8 @@ bool AEditModelPlayerController_CPP::HandleInputNumber(double inputNumber)
 
 			if (bUseHandle)
 			{
-				return curHandle->EndUse();
+				curHandle->EndUse();
+				return true;
 			}
 			else if (bUseTool)
 			{
@@ -1008,9 +1057,9 @@ bool AEditModelPlayerController_CPP::HandleEscapeKey()
 	ClearUserSnapPoints();
 	EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
-	if (HoverHandle != nullptr)
+	if (HoverHandleActor != nullptr)
 	{
-		HoverHandle = nullptr;
+		HoverHandleActor = nullptr;
 	}
 	if (InteractionHandle != nullptr)
 	{
@@ -1265,12 +1314,56 @@ bool AEditModelPlayerController_CPP::InputKey(FKey Key, EInputEvent EventType, f
 
 void AEditModelPlayerController_CPP::HandleRawLeftMouseButtonPressed()
 {
-	HandleLeftMouseButton(true);
+	ClearUserSnapPoints();
+
+	// If we have a hover handle, then it should have processed the mouse click in its own widget's button press response,
+	// immediately during Slate's input routing rather than in player input tick.
+	if (!ensure(HoverHandleActor == nullptr))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hovered handle \"%s\" didn't process button press!"), *HoverHandleActor->GetName());
+		return;
+	}
+
+	// If we have a handle in-use that didn't process the mouse click because it wasn't hovered, then process it here.
+	if (InteractionHandle && ensure(InteractionHandle->IsInUse() && InteractionHandle->Widget))
+	{
+		ensure(!InteractionHandle->Widget->IsButtonHovered());
+		InteractionHandle->EndUse();
+		InteractionHandle = nullptr;
+		return;
+	}
+
+	// TODO: this should no longer be necessary once all reachable leaf widgets handle mouse input.
+	// This should only block input from getting handled while we're hovering over benign, non-interactive widgets like borders,
+	// as opposed to handles or buttons which should capture the input immediately at the Slate level before
+	// the input action has a chance to get processed by the PlayerController.
+	if (IsCursorOverWidget())
+	{
+		return;
+	}
+
+	if (CurrentTool)
+	{
+		if (CurrentTool->IsInUse())
+		{
+			if (!CurrentTool->EnterNextStage())
+			{
+				CurrentTool->EndUse();
+			}
+		}
+		else
+		{
+			CurrentTool->BeginUse();
+		}
+	}
 }
 
 void AEditModelPlayerController_CPP::HandleRawLeftMouseButtonReleased()
 {
-	HandleLeftMouseButton(false);
+	if (CurrentTool && CurrentTool->IsInUse())
+	{
+		CurrentTool->HandleMouseUp();
+	}
 }
 
 void AEditModelPlayerController_CPP::HandleLeftMouseButton_Implementation(bool bPressed)
@@ -1641,12 +1734,40 @@ bool AEditModelPlayerController_CPP::IsCursorOverWidget() const
 		return false;
 	}
 
+	// If the widget that is underneath the cursor is reporting as neither hovered, having mouse capture, nor having focus,
+	// then it can be ignored for the purposes of mouse input.
+	if (!hoverWidget->IsHovered() && !hoverWidget->HasMouseCapture() && !hoverWidget->HasAnyUserFocus().IsSet())
+	{
+		return false;
+	}
+
+	// If we're hovering over the widget for an object's handle, then don't consider that as a widget that would consume or block the mouse input.
+	// TODO: we probably shouldn't rely on Slate widget tags, but for now it's better than making an engine change to add a function like Advanced_IsUwerWidget()
+	if ((hoverWidget->GetTag() == UAdjustmentHandleWidget::SlateTag) ||
+		(hoverWidget->IsParentValid() && (hoverWidget->GetParentWidget()->GetTag() == UAdjustmentHandleWidget::SlateTag)))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 bool AEditModelPlayerController_CPP::IsCraftingWidgetActive() const
 {
-	return CraftingWidget && CraftingWidget->IsVisible();
+	auto *hud = GetEditModelHUD();
+	return hud && hud->CraftingWidget && hud->CraftingWidget->IsVisible();
+}
+
+UModumateCraftingWidget_CPP* AEditModelPlayerController_CPP::GetCraftingWidget() const
+{
+	auto *hud = GetEditModelHUD();
+	return hud ? hud->CraftingWidget : nullptr;
+}
+
+UModumateDrawingSetWidget_CPP* AEditModelPlayerController_CPP::GetDrawingSetWidget() const
+{
+	auto *hud = GetEditModelHUD();
+	return hud ? hud->DrawingSetWidget : nullptr;
 }
 
 void AEditModelPlayerController_CPP::SetFieldOfViewCommand(float FieldOfView)
@@ -1675,6 +1796,58 @@ float AEditModelPlayerController_CPP::DistanceBetweenWorldPointsInScreenSpace(co
 	ProjectWorldLocationToScreen(p2, sp2);
 
 	return (sp1 - sp2).Size();
+}
+
+bool AEditModelPlayerController_CPP::GetScreenScaledDelta(const FVector &Origin, const FVector &Normal, const float DesiredWorldDist, const float MaxScreenDist,
+	FVector &OutWorldPos, FVector2D &OutScreenPos) const
+{
+	if (!ensure(MaxScreenDist >= 0.0f))
+	{
+		return false;
+	}
+
+	FVector endPoint = Origin + DesiredWorldDist * Normal;
+
+	FVector2D origin2D, endPoint2D;
+	if (!ProjectWorldLocationToScreen(Origin, origin2D) ||
+		!ProjectWorldLocationToScreen(endPoint, endPoint2D))
+	{
+		return false;
+	}
+
+	OutWorldPos = endPoint;
+	OutScreenPos = endPoint2D;
+
+	FVector2D endPointDelta2D = endPoint2D - origin2D;
+	float endPointScreenDist = endPointDelta2D.Size();
+	if (FMath::IsNearlyZero(endPointScreenDist) || (endPointScreenDist < MaxScreenDist))
+	{
+		return true;
+	}
+
+	FVector2D normal2D = endPointDelta2D / endPointScreenDist;
+	OutScreenPos = origin2D + MaxScreenDist * normal2D;
+
+	FVector clampedWorldPos, clampedWorldDir;
+	if (!DeprojectScreenPositionToWorld(OutScreenPos.X, OutScreenPos.Y, clampedWorldPos, clampedWorldDir))
+	{
+		return false;
+	}
+
+	if (FVector::Parallel(Normal, clampedWorldDir))
+	{
+		return true;
+	}
+
+	FVector tangent = (Normal ^ clampedWorldDir).GetSafeNormal();
+	FVector planeNormal = (tangent ^ Normal).GetSafeNormal();
+	if (!planeNormal.IsNormalized() || FVector::Orthogonal(clampedWorldDir, planeNormal))
+	{
+		return false;
+	}
+
+	OutWorldPos = FMath::RayPlaneIntersection(clampedWorldPos, clampedWorldDir, FPlane(Origin, planeNormal));
+	return true;
 }
 
 /*
@@ -1714,52 +1887,44 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 	{
 		if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("MOUSE MODE: OBJECT")); }
 
-		baseHit = UpdateHandleHit(mouseLoc, mouseDir);
+		baseHit = GetObjectMouseHit(mouseLoc, mouseDir, false);
+
 		if (baseHit.Valid)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("HANDLE HIT: %s"), *baseHit.Actor->GetName()));
-		}
-		else
-		{
-			baseHit = GetObjectMouseHit(mouseLoc, mouseDir, false);
-
-			if (baseHit.Valid)
+			const FModumateObjectInstance *hitMOI = Document->ObjectFromActor(baseHit.Actor.Get());
+			if (EMPlayerState->ShowDebugSnaps && hitMOI)
 			{
-				const FModumateObjectInstance *hitMOI = Document->ObjectFromActor(baseHit.Actor.Get());
-				if (EMPlayerState->ShowDebugSnaps && hitMOI)
-				{
-					GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("OBJECT HIT #%d, %s"),
-						hitMOI->ID, *EnumValueString(EObjectType, hitMOI->GetObjectType())
-					));
-				}
-				projectedHit = GetShiftConstrainedMouseHit(baseHit);
+				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("OBJECT HIT #%d, %s"),
+					hitMOI->ID, *EnumValueString(EObjectType, hitMOI->GetObjectType())
+				));
+			}
+			projectedHit = GetShiftConstrainedMouseHit(baseHit);
 
-				// TODO Is getting attach actor the best way to get Moi from blueprint spawned windows and doors?
-				// AActor* attachedActor = baseHit.Actor->GetOwner();
+			// TODO Is getting attach actor the best way to get Moi from blueprint spawned windows and doors?
+			// AActor* attachedActor = baseHit.Actor->GetOwner();
 
-				if (baseHit.Actor->IsA(AModumateObjectInstanceParts_CPP::StaticClass()))
-				{
-					actorUnderMouse = baseHit.Actor->GetOwner();
-				}
-				else
-				{
-					actorUnderMouse = baseHit.Actor.Get();
-				}
+			if (baseHit.Actor->IsA(AModumateObjectInstanceParts_CPP::StaticClass()))
+			{
+				actorUnderMouse = baseHit.Actor->GetOwner();
 			}
 			else
 			{
-				baseHit = GetSketchPlaneMouseHit(mouseLoc, mouseDir);
-
-				if (baseHit.Valid && EMPlayerState->ShowDebugSnaps)
-				{
-					GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("SKETCH HIT")));
-				}
+				actorUnderMouse = baseHit.Actor.Get();
 			}
+		}
+		else
+		{
+			baseHit = GetSketchPlaneMouseHit(mouseLoc, mouseDir);
 
-			if (!baseHit.Valid && EMPlayerState->ShowDebugSnaps)
+			if (baseHit.Valid && EMPlayerState->ShowDebugSnaps)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("NO OBJECT"));
+				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("SKETCH HIT")));
 			}
+		}
+
+		if (!baseHit.Valid && EMPlayerState->ShowDebugSnaps)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("NO OBJECT"));
 		}
 	}
 	// Location based mouse hits check against structure and sketch plane, used by floor and wall tools and handles and other tools that want snap
@@ -2396,45 +2561,6 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 	}
 
 	return objectHit;
-}
-
-FMouseWorldHitType AEditModelPlayerController_CPP::UpdateHandleHit(const FVector &mouseLoc, const FVector &mouseDir)
-{
-	FMouseWorldHitType handleHit;
-
-	// Check adjustment handle under cursor, return no snap if true.
-	// Also take this opportunity to maintain the current hover handle.
-	AAdjustmentHandleActor_CPP* newHoverHandle = nullptr;
-	FHitResult hitSingleResult;
-
-	if (GetWorld()->LineTraceSingleByObjectType(hitSingleResult, mouseLoc, mouseLoc + MaxRaycastDist * mouseDir, HandleTraceObjectQueryParams, HandleTraceQueryParams))
-	{
-		newHoverHandle = Cast<AAdjustmentHandleActor_CPP>(hitSingleResult.Actor);
-	}
-
-	if (HoverHandle != newHoverHandle)
-	{
-		if (HoverHandle)
-		{
-			HoverHandle->OnHover(false);
-		}
-
-		HoverHandle = newHoverHandle;
-
-		if (HoverHandle)
-		{
-			HoverHandle->OnHover(true);
-		}
-	}
-
-	if (newHoverHandle)
-	{
-		handleHit.Valid = true;
-		handleHit.Actor = newHoverHandle;
-		handleHit.SnapType = ESnapType::CT_NOSNAP;
-	}
-
-	return handleHit;
 }
 
 /*

@@ -13,7 +13,6 @@ namespace Modumate
 	protected:
 		TWeakObjectPtr<ADynamicMeshActor> DynamicMeshActor;
 		TWeakObjectPtr<UWorld> World;
-		TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>> AdjustmentHandles;
 		bool bDrawHUDTags;
 
 	public:
@@ -36,13 +35,6 @@ namespace Modumate
 		virtual FVector GetLocation() const override;
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 		virtual bool GetTriInternalNormalFromEdge(int32 cp1, int32 cp2, FVector &outNormal) const override;
-
-
-		// Adjustment Handles
-		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) = 0;
-		virtual void ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
-		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show) override;
-		virtual void GetAdjustmentHandleActors(TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>>& outHandleActors) override;
 
 		virtual void SetIsDynamic(bool bIsDynamic) override;
 		virtual bool GetIsDynamic() const override;

@@ -2,7 +2,7 @@
 
 #include "DocumentManagement/ModumateObjectInstanceFinish.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -65,14 +65,8 @@ namespace Modumate
 	void FMOIFinishImpl::SetupDynamicGeometry()
 	{
 		// Clear adjustment handle without clearing the object tag
-		for (auto &ah : AdjustmentHandles)
-		{
-			if (ah.IsValid())
-			{
-				ah->Destroy();
-			}
-		}
-		AdjustmentHandles.Empty();
+		// TODO: why is this necessary?
+		MOI->ClearAdjustmentHandles();
 
 		int32 faceIndex = UModumateObjectStatics::GetFaceIndexFromFinishObj(MOI);
 		auto *hostObj = MOI->GetParentObject();

@@ -16,7 +16,7 @@
  *
  */
 
-class AAdjustmentHandleActor_CPP;
+class AAdjustmentHandleActor;
 class AEditModelPlayerState_CPP;
 class UEditModelCameraController;
 class UEditModelInputAutomation;
@@ -82,7 +82,6 @@ private:
 	bool FindBestMousePointHit(const TArray<FVector> &Points, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, float &OutBestRayDist) const;
 	bool FindBestMouseLineHit(const TArray<TPair<FVector, FVector>> &Lines, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, FVector &OutBestIntersection, float &OutBestRayDist) const;
 
-	FMouseWorldHitType UpdateHandleHit(const FVector &mouseLoc, const FVector &mouseDir);
 	FMouseWorldHitType GetShiftConstrainedMouseHit(const FMouseWorldHitType &baseHit) const;
 	FMouseWorldHitType GetObjectMouseHit(const FVector &mouseLoc, const FVector &mouseDir, bool bCheckSnapping) const;
 	FMouseWorldHitType GetSketchPlaneMouseHit(const FVector &mouseLoc, const FVector &mouseDir) const;
@@ -93,12 +92,6 @@ private:
 	mutable TArray<FVector> CurHitPointLocations;
 	mutable TArray<Modumate::FModumateObjectInstance *> CurHitLineMOIs;
 	mutable TArray<TPair<FVector, FVector>> CurHitLineLocations;
-
-	UPROPERTY()
-	UModumateCraftingWidget_CPP *CraftingWidget;
-
-	UPROPERTY()
-	UModumateDrawingSetWidget_CPP *DrawingSetWidget;
 
 protected:
 	virtual void SetupInputComponent() override;
@@ -147,6 +140,9 @@ protected:
 public:
 
 	float DistanceBetweenWorldPointsInScreenSpace(const FVector &p1, const FVector &p2) const;
+
+	bool GetScreenScaledDelta(const FVector &Origin, const FVector &Normal, const float DesiredWorldDist, const float MaxScreenDist,
+		FVector &OutWorldPos, FVector2D &OutScreenPos) const;
 
 	UPROPERTY()
 	AEditModelPlayerState_CPP *EMPlayerState;
@@ -229,6 +225,7 @@ public:
 
 	Modumate::FModumateFunctionParameterSet ModumateCommand(const Modumate::FModumateCommand &cmd);
 
+	Modumate::FModumateDocument *GetDocument() const { return Document; }
 	Modumate::FModumateSnappingView *GetSnappingView() const { return SnappingView; }
 
 	/*  Assembly Layer Inputs */
@@ -288,10 +285,10 @@ public:
 	bool IsCraftingWidgetActive() const;
 
 	UFUNCTION(BlueprintPure)
-	UModumateCraftingWidget_CPP* GetCraftingWidget() const { return CraftingWidget; }
+	UModumateCraftingWidget_CPP* GetCraftingWidget() const;
 
 	UFUNCTION(BlueprintPure)
-	UModumateDrawingSetWidget_CPP* GetDrawingSetWidget() const { return DrawingSetWidget; }
+	UModumateDrawingSetWidget_CPP* GetDrawingSetWidget() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = HUD)
 	void ClearTextInputs();
@@ -357,7 +354,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
 	AActor* DimStringWidgetSelectedObject;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD, meta = (DeprecatedProperty))
 	UHUDDrawWidget* HUDDrawWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
@@ -365,16 +362,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
 	UTexture2D* StaticCamTexture;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
-	TSubclassOf<UHUDDrawWidget> HUDDrawWidgetClass;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Drafting)
-	TSubclassOf<UModumateCraftingWidget_CPP> CraftingWidgetClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Drafting)
-	TSubclassOf<UModumateDrawingSetWidget_CPP> DrawingSetWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Category = Snap, ToolTip = "The distance bias at which we will prefer hits against virtual objects (snaps, MOIs that are just points/lines) to direct hits."))
 	float VirtualHitBias = 0.1f;
@@ -442,10 +429,13 @@ public:
 	TScriptInterface<IEditModelToolInterface> CurrentTool;
 
 	UPROPERTY()
-	AAdjustmentHandleActor_CPP *InteractionHandle;
+	AAdjustmentHandleActor *InteractionHandle;
 
 	UPROPERTY()
-	AAdjustmentHandleActor_CPP *HoverHandle;
+	TArray<AAdjustmentHandleActor *> HoverHandleActors;
+
+	UPROPERTY()
+	AAdjustmentHandleActor *HoverHandleActor;
 
 	UPROPERTY()
 	float CurrentToolUseDuration;
@@ -475,6 +465,9 @@ public:
 	bool CanCurrentHandleShowRawInput();
 
 	// Input handling
+	void OnHoverHandleWidget(class UAdjustmentHandleWidget* HandleWidget, bool bIsHovered);
+	void OnPressHandleWidget(class UAdjustmentHandleWidget* HandleWidget, bool bIsPressed);
+
 	UFUNCTION(BlueprintCallable, Category = Mouse)
 	void OnLButtonDown();
 
@@ -510,6 +503,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = Draw)
 	void DrawRotateToolDegree(const float Degree, const FVector Location, const AActor* DrawLine1, const AActor* DrawLine2);
+
+	UFUNCTION(BlueprintPure)
+	class AEditModelPlayerHUD* GetEditModelHUD() const;
 
 	// Persistence
 

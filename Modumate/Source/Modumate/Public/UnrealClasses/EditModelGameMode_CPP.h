@@ -27,7 +27,6 @@ public:
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 	//~ End AGameModeBase Interface
 
-
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UClass *PortalFrameActorClass;
 

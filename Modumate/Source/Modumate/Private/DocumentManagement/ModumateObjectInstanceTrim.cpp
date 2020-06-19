@@ -113,20 +113,6 @@ namespace Modumate
 		}
 	}
 
-	void FMOITrimImpl::ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller)
-	{
-		FModumateObjectInstanceImplBase::ClearAdjustmentHandles(controller);
-
-		// TODO: clear extension/retraction handles
-	}
-
-	void FMOITrimImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show)
-	{
-		FModumateObjectInstanceImplBase::ShowAdjustmentHandles(controller, show);
-
-		// TODO: setup and show extension/retraction handles
-	}
-
 	FModumateWallMount FMOITrimImpl::GetWallMountForSelf(int32 originIndex) const
 	{
 		FModumateWallMount ret;

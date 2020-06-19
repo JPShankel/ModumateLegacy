@@ -4,6 +4,7 @@
 #include "UnrealClasses/DimensionWidget.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/HUDDrawWidget.h"
+#include "UI/WidgetClassAssetData.h"
 
 ADimensionActor::ADimensionActor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -15,7 +16,7 @@ void ADimensionActor::CreateWidget()
 {
 	TWeakObjectPtr<AEditModelPlayerController_CPP> playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 	AEditModelPlayerHUD *playerHUD = playerController.IsValid() ? Cast<AEditModelPlayerHUD>(playerController->GetHUD()) : nullptr;
-	DimensionText = playerController->HUDDrawWidget->UserWidgetPool.GetOrCreateInstance<UDimensionWidget>(playerHUD->DimensionClass);
+	DimensionText = playerController->HUDDrawWidget->UserWidgetPool.GetOrCreateInstance<UDimensionWidget>(playerHUD->WidgetClasses->DimensionClass);
 
 	DimensionText->AddToViewport();
 	DimensionText->SetPositionInViewport(FVector2D(0.0f, 0.0f));

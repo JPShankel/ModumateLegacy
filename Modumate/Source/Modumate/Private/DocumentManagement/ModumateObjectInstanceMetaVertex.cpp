@@ -2,7 +2,7 @@
 
 #include "DocumentManagement/ModumateObjectInstanceMetaVertex.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "ModumateCore/ModumateObjectStatics.h"

@@ -2,7 +2,7 @@
 
 #include "DocumentManagement/ModumateObjectInstanceFurniture.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
@@ -70,67 +70,16 @@ namespace Modumate
 		return CachedLocation;
 	}
 
-	void FMOIObjectImpl::ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+	void FMOIObjectImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 	{
-		for (auto &ah : AdjustmentHandles)
+		for (int32 i = 0; i < 4; ++i)
 		{
-			if (ah.IsValid())
-			{
-				ah->Destroy();
-			}
+			auto ffePointHandle = MOI->MakeHandle<AAdjustFFEPointHandle>();
+			ffePointHandle->SetTargetIndex(i);
 		}
-		AdjustmentHandles.Empty();
-	}
 
-	void FMOIObjectImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show)
-	{
-		if ((AdjustmentHandles.Num() == 0) && show)
-		{
-			auto makeActor = [this, controller](IAdjustmentHandleImpl *impl, UStaticMesh *mesh, const FVector &s, const TArray<int32>& CP, float offsetDist, bool upwardBillboard, const int32& side = -1)
-			{
-				AAdjustmentHandleActor_CPP *actor = MOI->GetActor()->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-				actor->SetActorMesh(mesh);
-				actor->SetHandleScale(s);
-				actor->SetHandleScaleScreenSize(s);
-				actor->AsUpwardBillboard = upwardBillboard;
-				actor->AcceptRawInputNumber = upwardBillboard;
-				if (side >= 0)
-				{
-					actor->Side = side;
-				}
-				if (MOI)
-				{
-					actor->ParentMOI = MOI;
-				}
-
-				impl->Handle = actor;
-				actor->Implementation = impl;
-				actor->AttachToActor(MOI->GetActor(), FAttachmentTransformRules::KeepRelativeTransform);
-				AdjustmentHandles.Add(actor);
-			};
-
-			UStaticMesh *pointAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->PointAdjusterMesh;
-			UStaticMesh *invertHandleMesh = controller->EMPlayerState->GetEditModelGameMode()->InvertHandleMesh;
-			UStaticMesh *rotateHandleMesh = controller->EMPlayerState->GetEditModelGameMode()->RotateHandleMesh;
-
-			for (int32 i = 0; i < 4; ++i)
-			{
-				makeActor(new FAdjustFFEPointHandle(MOI, i), pointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f), TArray<int32>{}, 0.0f, false);
-			}
-
-			makeActor(new FAdjustFFERotateHandle(MOI, 1.f), rotateHandleMesh, FVector(0.006f, 0.006f, 0.006f), TArray<int32>{}, 0.0f, true);
-			makeActor(new FAdjustFFEInvertHandle(MOI), invertHandleMesh, FVector(0.004f, 0.004f, 0.004f), TArray<int32>{}, 0.0f, false, 1);
-		}
-		else
-		{
-			for (auto &ah : AdjustmentHandles)
-			{
-				if (ah.IsValid())
-				{
-					ah->SetEnabled(show);
-				}
-			}
-		}
+		auto ffeRotateHandle = MOI->MakeHandle<AAdjustFFERotateHandle>();
+		auto ffeInvertHandle = MOI->MakeHandle<AAdjustFFEInvertHandle>();
 	}
 
 	void FMOIObjectImpl::SetupDynamicGeometry()
@@ -308,6 +257,13 @@ namespace Modumate
 	{
 		ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(MOI->GetActor());
 		cma->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
+
+		FTransform dataStateTransform;
+		const FMOIStateData &dataState = ((const FModumateObjectInstance*)MOI)->GetDataState();
+		dataStateTransform.SetLocation(dataState.Location);
+		dataStateTransform.SetRotation(dataState.Orientation);
+
+		cma->SetActorTransform(dataStateTransform);
 	}
 
 	void Modumate::FMOIObjectImpl::SetIsDynamic(bool bIsDynamic)

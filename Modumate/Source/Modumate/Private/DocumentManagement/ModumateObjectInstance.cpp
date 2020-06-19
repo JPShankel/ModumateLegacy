@@ -13,7 +13,7 @@
 #include "Algo/Transform.h"
 #include "Algo/Accumulate.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -533,19 +533,56 @@ namespace Modumate
 		Implementation->UpdateVisibilityAndCollision(bVisible, bCollisionEnabled);
 	}
 
-	void FModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show)
+	void FModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
 	{
-		Implementation->ShowAdjustmentHandles(controller, show);
+		if (bShow && !HasAdjustmentHandles() && ensure(Implementation))
+		{
+			Implementation->SetupAdjustmentHandles(Controller);
+		}
+
+		Implementation->ShowAdjustmentHandles(Controller, bShow);
 	}
 
-	void FModumateObjectInstance::ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+	void FModumateObjectInstance::ClearAdjustmentHandles()
 	{
-		Implementation->ClearAdjustmentHandles(controller);
+		for (auto &ah : AdjustmentHandles)
+		{
+			if (ah.IsValid())
+			{
+				ah->Destroy();
+			}
+		}
+
+		AdjustmentHandles.Reset();
 	}
 
-	void FModumateObjectInstance::GetAdjustmentHandleActors(TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>>& outHandleActors)
+	const TArray<TWeakObjectPtr<AAdjustmentHandleActor>> &FModumateObjectInstance::GetAdjustmentHandles() const
 	{
-		Implementation->GetAdjustmentHandleActors(outHandleActors);
+		return AdjustmentHandles;
+	}
+
+	bool FModumateObjectInstance::HasAdjustmentHandles() const
+	{
+		return (AdjustmentHandles.Num() > 0);
+	}
+
+	AAdjustmentHandleActor *FModumateObjectInstance::MakeHandle(TSubclassOf<AAdjustmentHandleActor> HandleClass)
+	{
+		if (!MeshActor.IsValid() || !World.IsValid())
+		{
+			return nullptr;
+		}
+
+		FActorSpawnParameters spawnParams;
+		spawnParams.Owner = MeshActor.Get();
+		AAdjustmentHandleActor *handleActor = World->SpawnActor<AAdjustmentHandleActor>(HandleClass.Get(), FTransform::Identity, spawnParams);
+
+		handleActor->SourceMOI = this;
+		handleActor->TargetMOI = this;
+		handleActor->AttachToActor(MeshActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
+		AdjustmentHandles.Add(handleActor);
+
+		return handleActor;
 	}
 
 	bool FModumateObjectInstance::CanBeSplit() const
@@ -714,10 +751,23 @@ namespace Modumate
 
 	void FMOIDelta::AddMutationStates(const TArray<FModumateObjectInstance*> &Objects)
 	{
-		for (auto &ob : Objects)
+		for (auto *ob : Objects)
 		{
+			if (!ob->GetIsInPreviewMode())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Tried to add mutation state for MOI #%d, but it wasn't in preview mode!"), ob->ID);
+				continue;
+			}
+
 			FMOIStateData baseState = ob->CurrentState;
 			FMOIStateData targetState = ob->PreviewState;
+
+			if (baseState == targetState)
+			{
+				UE_LOG(LogTemp, Log, TEXT("Tried to add mutation state for MOI #%d, but its preview state is identical to its saved state!"), ob->ID);
+				continue;
+			}
+
 			baseState.StateType = EMOIDeltaType::Mutate;
 			targetState.StateType = EMOIDeltaType::Mutate;
 			StatePairs.Add(FStatePair(baseState, targetState));
@@ -787,6 +837,20 @@ namespace Modumate
 		ObjectType = EnumValueByString(EObjectType, ParameterSet.GetValue(Prefix + Modumate::Parameters::kObjectType).AsString());
 
 		return true;
+	}
+
+	bool FMOIStateData::operator==(const FMOIStateData& Other) const
+	{
+		// TODO: replace with better per-property equality checks, when we no longer use FModumateFunctionParameterSet for serialization.
+		FModumateFunctionParameterSet thisParamSet, otherParamSet;
+		TMap<FString, FString> thisStringMap, otherStringMap;
+		if (ToParameterSet(TEXT(""), thisParamSet) && Other.ToParameterSet(TEXT(""), otherParamSet) &&
+			thisParamSet.ToStringMap(thisStringMap) && otherParamSet.ToStringMap(otherStringMap))
+		{
+			return thisStringMap.OrderIndependentCompareEqual(otherStringMap);
+		}
+
+		return false;
 	}
 
 	static const FString BaseStatePrefix = TEXT("BaseState");
@@ -1081,7 +1145,7 @@ namespace Modumate
 	{
 		if (MeshActor.IsValid())
 		{
-			ClearAdjustmentHandles(MeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>());
+			ClearAdjustmentHandles();
 
 			TArray<AActor*> attachedActors;
 			MeshActor->GetAttachedActors(attachedActors);
@@ -1128,6 +1192,7 @@ namespace Modumate
 
 	void FModumateObjectInstance::SetObjectLocation(const FVector &p)
 	{
+		GetDataState().Location = p;
 		Implementation->SetLocation(p);
 	}
 
@@ -1138,11 +1203,14 @@ namespace Modumate
 
 	void FModumateObjectInstance::SetObjectRotation(const FQuat &r)
 	{
+		GetDataState().Orientation = r;
 		Implementation->SetRotation(r);
 	}
 
 	void FModumateObjectInstance::SetWorldTransform(const FTransform &NewTransform)
 	{
+		GetDataState().Location = NewTransform.GetLocation();
+		GetDataState().Orientation = NewTransform.GetRotation();
 		return Implementation->SetWorldTransform(NewTransform);
 	}
 
@@ -1320,12 +1388,16 @@ namespace Modumate
 		}
 	}
 
-	void FModumateObjectInstanceImplBase::ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+	void FModumateObjectInstanceImplBase::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
 	{
-	}
-
-	void FModumateObjectInstanceImplBase::ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show)
-	{
+		// By default, only show top-level handles, and allow them to hide or show their children appropriately.
+		for (auto &ah : MOI->GetAdjustmentHandles())
+		{
+			if (ah.IsValid() && (ah->HandleParent == nullptr))
+			{
+				ah->SetEnabled(bShow);
+			}
+		}
 	}
 
 	void FModumateObjectInstanceImplBase::OnSelected(bool bNewSelected)
@@ -1334,7 +1406,7 @@ namespace Modumate
 		auto *controller = moiActor ? moiActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
 		if (controller)
 		{
-			ShowAdjustmentHandles(controller, bNewSelected);
+			MOI->ShowAdjustmentHandles(controller, bNewSelected);
 		}
 	}
 

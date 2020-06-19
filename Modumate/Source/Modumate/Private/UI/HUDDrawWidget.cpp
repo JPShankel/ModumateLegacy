@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UI/HUDDrawWidget.h"
+
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
@@ -137,6 +138,12 @@ int32 UHUDDrawWidget::NativePaint(const FPaintArgs& Args, const FGeometry& Allot
 	}
 
 	return FMath::Max(parentMaxLayerID, selfPaintLayerID);
+}
+
+FReply UHUDDrawWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	FReply parentReply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	return parentReply;
 }
 
 void UHUDDrawWidget::ReleaseSlateResources(bool bReleaseChildren)

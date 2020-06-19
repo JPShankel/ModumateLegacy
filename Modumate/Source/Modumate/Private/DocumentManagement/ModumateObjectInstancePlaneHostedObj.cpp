@@ -2,10 +2,11 @@
 
 #include "DocumentManagement/ModumateObjectInstancePlaneHostedObj.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
 #include "Graph/Graph3D.h"
 #include "DocumentManagement/ModumateDocument.h"
@@ -290,118 +291,46 @@ namespace Modumate
 			return;
 		}
 
-		if (AdjustmentHandles.Num() > 0)
+		// Make the polygon adjustment handles, for modifying the parent plane's polygonal shape
+		int32 numCP = parent->GetControlPoints().Num();
+		for (int32 i = 0; i < numCP; ++i)
 		{
-			return;
-		}
-
-		auto makeActor = [this, controller](FEditModelAdjustmentHandleBase *impl, UStaticMesh *mesh, const FVector &s, const int32& side, const TArray<int32>& CP, float offsetDist)
-		{
-			if (!ensureAlways(World.IsValid() && DynamicMeshActor.IsValid()))
+			// Don't allow adjusting wall corners, since they're more likely to be edited edge-by-edge.
+			if (MOI->GetObjectType() != EObjectType::OTWallSegment)
 			{
-				return impl;
+				auto cornerHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+				cornerHandle->SetTargetIndex(i);
+				cornerHandle->SetTargetMOI(parent);
 			}
 
-			AAdjustmentHandleActor_CPP *actor = World->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-			actor->SetActorMesh(mesh);
-			actor->SetHandleScaleScreenSize(s);
-			if (CP.Num() > 0)
-			{
-				actor->SetPolyHandleSide(CP, impl->MOI, offsetDist);
-			}
-			else if (side >= 0)
-			{
-				actor->SetWallHandleSide(side, impl->MOI, offsetDist);
-			}
-
-			actor->bIsPointAdjuster = false;
-
-			impl->Handle = actor;
-			impl->Controller = controller;
-			actor->Implementation = impl;
-			actor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
-			AdjustmentHandles.Add(actor);
-			return impl;
-		};
-
-		UStaticMesh *faceAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->FaceAdjusterMesh;
-
-		int32 numParentCPs = parent->GetControlPoints().Num();
-		for (int32 i = 0; i < numParentCPs; ++i)
-		{
-			makeActor(new FAdjustPolyPointHandle(parent, i, (i + 1) % numParentCPs), faceAdjusterMesh, FVector(0.0015f, 0.0015f, 0.0015f), -1, TArray<int32>{i, (i + 1) % numParentCPs}, 16.0f);
+			auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+			edgeHandle->SetTargetIndex(i);
+			edgeHandle->SetAdjustPolyEdge(true);
+			edgeHandle->SetTargetMOI(parent);
 		}
 
 		// Make justification handles
-		auto makeJusticationHandleActor = [this, controller](FJustificationHandle *impl, UStaticMesh *mesh, const FVector &size, float layerPercentage)
+		TArray<AAdjustmentHandleActor*> rootHandleChildren;
+
+		auto frontJustificationHandle = MOI->MakeHandle<AJustificationHandle>();
+		frontJustificationHandle->SetJustification(0.0f);
+		rootHandleChildren.Add(frontJustificationHandle);
+
+		auto backJustificationHandle = MOI->MakeHandle<AJustificationHandle>();
+		backJustificationHandle->SetJustification(1.0f);
+		rootHandleChildren.Add(backJustificationHandle);
+
+		// Make the invert handle, as a child of the justification handle root
+		auto invertHandle = MOI->MakeHandle<AAdjustInvertHandle>();
+		rootHandleChildren.Add(invertHandle);
+
+		auto rootJustificationHandle = MOI->MakeHandle<AJustificationHandle>();
+		rootJustificationHandle->SetJustification(0.5f);
+		rootJustificationHandle->HandleChildren = rootHandleChildren;
+		for (auto& child : rootHandleChildren)
 		{
-			if (!ensureAlways(World.IsValid() && DynamicMeshActor.IsValid()))
-			{
-				return impl;
-			}
-
-			AAdjustmentHandleActor_CPP *actor = World->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-			actor->SetActorMesh(mesh);
-			actor->SetHandleScaleScreenSize(size);
-			actor->HandleType = EHandleType::Justification;
-			actor->ParentMOI = MOI;
-			actor->Controller = controller;
-
-			impl->Handle = actor;
-			actor->Implementation = impl;
-			impl->Controller = controller;
-			impl->LayerPercentage = layerPercentage;
-			actor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
-			AdjustmentHandles.Add(actor);
-
-			return impl;
-		};
-
-		AEditModelGameMode_CPP *gameMode = controller->EMPlayerState->GetEditModelGameMode();
-		static const FVector justificationHandleChildSize(0.0008f);
-		static const FVector justificationHandleBaseSize(0.003f);
-
-		// Make the two justification handles for setting the plane hosted object on either side of the plane
-		FJustificationHandle *frontJustificationHandle = makeJusticationHandleActor(new FJustificationHandle(MOI), gameMode->JustificationHandleChildMesh, justificationHandleChildSize, 0.f);
-		FJustificationHandle *backJustificationHandle = makeJusticationHandleActor(new FJustificationHandle(MOI), gameMode->JustificationHandleChildMesh, justificationHandleChildSize, 1.f);
-		TArray<AAdjustmentHandleActor_CPP*> newHandleChildren;
-		newHandleChildren.Add(frontJustificationHandle->Handle.Get());
-		newHandleChildren.Add(backJustificationHandle->Handle.Get());
-
-		// Make the invert handle, as a part of the justification handle
-		UStaticMesh *invertHandleMesh = gameMode->InvertHandleMesh;
-		auto *invertHandle = makeActor(new FAdjustInvertHandle(MOI), invertHandleMesh, FVector(0.003f, 0.003f, 0.003f), 4, TArray<int32>(), 0.0f);
-		if (ensureAlways(invertHandle))
-		{
-			newHandleChildren.Add(invertHandle->Handle.Get());
+			child->HandleParent = rootJustificationHandle;
 		}
-
-		FJustificationHandle* justificationBase = makeJusticationHandleActor(new FJustificationHandle(MOI), gameMode->JustificationHandleMesh, justificationHandleBaseSize, 0.5f);
-		justificationBase->Handle->HandleChildren = newHandleChildren;
-		for (auto& child : newHandleChildren)
-		{
-			child->HandleParent = justificationBase->Handle.Get();
-		}
-	}
-
-	void FMOIPlaneHostedObjImpl::ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller)
-	{
-		if (FModumateObjectInstance *parentObj = MOI ? MOI->GetParentObject() : nullptr)
-		{
-			parentObj->ClearAdjustmentHandles(controller);
-		}
-
-		FDynamicModumateObjectInstanceImpl::ClearAdjustmentHandles(controller);
-	}
-
-	void FMOIPlaneHostedObjImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show)
-	{
-		if (FModumateObjectInstance *parentObj = MOI ? MOI->GetParentObject() : nullptr)
-		{
-			parentObj->ShowAdjustmentHandles(controller, show);
-		}
-
-		FDynamicModumateObjectInstanceImpl::ShowAdjustmentHandles(controller, show);
 	}
 
 	void FMOIPlaneHostedObjImpl::OnSelected(bool bNewSelected)

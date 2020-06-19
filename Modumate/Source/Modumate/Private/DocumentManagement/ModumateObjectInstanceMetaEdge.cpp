@@ -2,9 +2,7 @@
 
 #include "DocumentManagement/ModumateObjectInstanceMetaEdge.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "ToolsAndAdjustments/Common/EditModelMetaAdjustmentHandles.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/LineActor.h"
@@ -12,9 +10,6 @@
 #include "DocumentManagement/ModumateMiterNodeInterface.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 
-// Edge-specific handles still have some design and geometry issues,
-// that are worth keeping in code but not having active by default
-#define EXPERIMENTAL_EDGE_HANDLES 0
 
 namespace Modumate
 {
@@ -46,39 +41,6 @@ namespace Modumate
 	FVector FMOIMetaEdgeImpl::GetCorner(int32 index) const
 	{
 		return MOI->GetControlPoint(index);
-	}
-
-	void FMOIMetaEdgeImpl::ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller)
-	{
-		for (auto &ah : AdjustmentHandles)
-		{
-			if (ah.IsValid())
-			{
-				ah->Destroy();
-			}
-		}
-		AdjustmentHandles.Reset();
-	}
-
-	void FMOIMetaEdgeImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show)
-	{
-		if (show)
-		{
-			SetupAdjustmentHandles(controller);
-		}
-
-		for (auto &ah : AdjustmentHandles)
-		{
-			if (ah.IsValid())
-			{
-				ah->SetEnabled(show);
-			}
-		}
-	}
-
-	void FMOIMetaEdgeImpl::GetAdjustmentHandleActors(TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>>& outHandleActors)
-	{
-		outHandleActors = AdjustmentHandles;
 	}
 
 	void FMOIMetaEdgeImpl::OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bEnableHover)
@@ -184,27 +146,6 @@ namespace Modumate
 
 			LineActor->SetActorEnableCollision(bOutCollisionEnabled);
 		}
-	}
-
-	void FMOIMetaEdgeImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
-	{
-		if ((AdjustmentHandles.Num() > 0) || !World.IsValid())
-		{
-			return;
-		}
-
-#if EXPERIMENTAL_EDGE_HANDLES
-		AAdjustmentHandleActor_CPP *actor = World->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-		actor->SetActorMesh(AEditModelGameMode_CPP::FaceAdjusterMesh);
-		FVector scale(0.0015f);
-		actor->SetHandleScale(scale);
-		actor->SetHandleScaleScreenSize(scale);
-
-		actor->Implementation = new FAdjustMetaEdgeHandle(MOI);
-		actor->Implementation->Handle = actor;
-		actor->AttachToActor(LineActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
-		AdjustmentHandles.Add(actor);
-#endif
 	}
 
 	void FMOIMetaEdgeImpl::OnSelected(bool bNewSelected)

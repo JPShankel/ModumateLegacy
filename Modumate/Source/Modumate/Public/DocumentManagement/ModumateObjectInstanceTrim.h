@@ -4,7 +4,6 @@
 
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "CoreMinimal.h"
-#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "DocumentManagement/ModumateDynamicObjectBase.h"
 #include "ModumateCore/ModumateObjectStatics.h"
@@ -47,9 +46,6 @@ namespace Modumate
 		virtual void SetupDynamicGeometry() override;
 		virtual void UpdateDynamicGeometry() override;
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
-
-		virtual void ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
-		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show) override;
 
 		virtual FModumateWallMount GetWallMountForSelf(int32 originIndex) const override;
 		virtual void SetWallMountForSelf(const FModumateWallMount &wm) override;

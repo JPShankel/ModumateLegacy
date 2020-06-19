@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 class AStaticMeshActor;
-class AAdjustmentHandleActor_CPP;
+class AAdjustmentHandleActor;
 
 namespace Modumate
 {
@@ -15,7 +15,7 @@ namespace Modumate
 	{
 	protected:
 		TWeakObjectPtr<UWorld> World;
-		TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>> AdjustmentHandles;
+		TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
 		FVector CachedLocation;
 		FQuat CachedRotation;
 		FVector CachedFaceNormal;
@@ -30,8 +30,7 @@ namespace Modumate
 		virtual FQuat GetRotation() const override;
 		virtual void SetLocation(const FVector &p) override;
 		virtual FVector GetLocation() const override;
-		virtual void ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
-		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show) override;
+		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override;
 		virtual void SetupDynamicGeometry() override;
 		virtual void UpdateDynamicGeometry() override;
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;

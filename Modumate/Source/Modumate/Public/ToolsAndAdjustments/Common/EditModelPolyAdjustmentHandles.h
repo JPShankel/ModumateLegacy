@@ -2,88 +2,100 @@
 
 #pragma once
 
-#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+
+#include "EditModelPolyAdjustmentHandles.generated.h"
 
 
-namespace Modumate
+UCLASS()
+class MODUMATE_API AAdjustPolyPointHandle : public AAdjustmentHandleActor
 {
-	class MODUMATE_API FAdjustPolyPointHandle : public FEditModelAdjustmentHandleBase
-	{
-	private:
-		TArray<int32> CP;
-		TArray<FVector> OriginalP;
-		FVector AnchorLoc;
-		TArray<FVector> LastValidPendingCPLocations;
-		FVector HandleOriginalPoint;
-		FVector HandleCurrentPoint;
+	GENERATED_BODY()
 
-	public:
+public:
+	AAdjustPolyPointHandle(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-		FAdjustPolyPointHandle(FModumateObjectInstance *moi, int32 cp) :
-			FEditModelAdjustmentHandleBase(moi)
-		{
-			CP.Add(cp);
-		}
+	virtual bool BeginUse() override;
+	virtual bool UpdateUse() override;
+	virtual FVector GetHandlePosition() const override;
+	virtual FVector GetHandleDirection() const override;
+	virtual bool HandleInputNumber(float number) override;
 
-		FAdjustPolyPointHandle(FModumateObjectInstance *moi, int32 cp, int32 cp2) :
-			FEditModelAdjustmentHandleBase(moi)
-		{
-			CP.Add(cp);
-			CP.Add(cp2);
-		}
+	void SetAdjustPolyEdge(bool bInAdjustPolyEdge);
 
-		virtual bool OnBeginUse() override;
-		virtual bool OnUpdateUse() override;
-		virtual FVector GetAttachmentPoint() override;
-		virtual bool HandleInputNumber(float number) override;
-	};
+protected:
+	virtual void Initialize() override;
+	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 
-	class MODUMATE_API FAdjustPolyExtrusionHandle : public FEditModelAdjustmentHandleBase
-	{
-	private:
-		float Sign;
-		TArray<FVector> OriginalControlPoints;
-		FPlane OriginalPlane;
-		float OriginalExtrusion;
-		float LastValidExtrusion;
-		FVector AnchorLoc;
+	bool bAdjustPolyEdge;
+	FPlane PolyPlane;
+	TArray<int32> CP;
+	TArray<FVector> OriginalP;
+	FVector AnchorLoc;
+	TArray<FVector> LastValidPendingCPLocations;
+	FVector HandleOriginalPoint;
+	FVector HandleCurrentPoint;
+};
 
-	public:
+UCLASS()
+class MODUMATE_API AAdjustPolyExtrusionHandle : public AAdjustmentHandleActor
+{
+	GENERATED_BODY()
 
-		FAdjustPolyExtrusionHandle(FModumateObjectInstance *moi, float sign = 1.0f)
-			: FEditModelAdjustmentHandleBase(moi)
-			, Sign(sign)
-		{ }
+public:
+	virtual bool BeginUse() override;
+	virtual bool UpdateUse() override;
+	virtual FVector GetHandlePosition() const override;
+	virtual FVector GetHandleDirection() const override;
+	virtual bool HandleInputNumber(float number) override;
 
-		virtual bool OnBeginUse() override;
-		virtual bool OnUpdateUse() override;
-		virtual FVector GetAttachmentPoint() override;
-		virtual bool HandleInputNumber(float number) override;
-	};
+protected:
+	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 
-	class MODUMATE_API FAdjustInvertHandle : public FEditModelAdjustmentHandleBase
-	{
-	public:
+	TArray<FVector> OriginalControlPoints;
+	FPlane OriginalPlane;
+	float OriginalExtrusion;
+	float LastValidExtrusion;
+	FVector AnchorLoc;
+};
 
-		FAdjustInvertHandle(FModumateObjectInstance *moi) :
-			FEditModelAdjustmentHandleBase(moi)
-		{}
+UCLASS()
+class MODUMATE_API AAdjustInvertHandle : public AAdjustmentHandleActor
+{
+	GENERATED_BODY()
 
-		virtual bool OnBeginUse() override;
-		virtual FVector GetAttachmentPoint() override;
-	};
+public:
+	virtual bool BeginUse() override;
+	virtual FVector GetHandlePosition() const override;
+	virtual FVector GetHandleDirection() const override;
 
-	class MODUMATE_API FJustificationHandle : public FEditModelAdjustmentHandleBase
-	{
-	public:
+protected:
+	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 
-		FJustificationHandle(FModumateObjectInstance *moi) :
-			FEditModelAdjustmentHandleBase(moi)
-		{}
+	const static float DesiredWorldDist;
+	const static float MaxScreenDist;
+};
 
-		float LayerPercentage = 0.f;
+UCLASS()
+class MODUMATE_API AJustificationHandle : public AAdjustmentHandleActor
+{
+	GENERATED_BODY()
 
-		virtual bool OnBeginUse() override;
-		virtual FVector GetAttachmentPoint() override;
-	};
-}
+public:
+	virtual bool BeginUse() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual FVector GetHandlePosition() const override;
+	virtual FVector GetHandleDirection() const override;
+
+	void SetJustification(float InJustificationValue);
+
+protected:
+	virtual void SetEnabled(bool bNewEnabled) override;
+	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
+
+	const static float DesiredWorldDist;
+	const static float MaxScreenDist;
+
+	float JustificationValue = 0.f;
+	bool bRootExpanded = false;
+};

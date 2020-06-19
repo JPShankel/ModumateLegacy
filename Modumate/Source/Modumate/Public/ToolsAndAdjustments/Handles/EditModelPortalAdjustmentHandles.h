@@ -2,80 +2,49 @@
 
 #pragma once
 
-#include "ToolsAndAdjustments/Common/EditModelAdjustmentHandleBase.h"
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
-#include "UnrealClasses/DynamicMeshActor.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 
-namespace Modumate
+#include "EditModelPortalAdjustmentHandles.generated.h"
+
+
+UCLASS()
+class MODUMATE_API AAdjustPortalInvertHandle : public AAdjustmentHandleActor
 {
-	class MODUMATE_API FAdjustPortalSideHandle : public FEditModelAdjustmentHandleBase
-	{
-	private:
-		FVector PlanePoint, PlaneNormal, AnchorPoint;
-		int32 Side;
-		TArray<FVector> BeginUpdateHolePonts;
-		FVector HoleActorBeginLocation;
+	GENERATED_BODY()
 
-	public:
+public:
+	virtual bool BeginUse() override;
+	virtual FVector GetHandlePosition() const override;
+	virtual FVector GetHandleDirection() const override;
+	void SetTransvert(bool bInShouldTransvert);
 
-		FAdjustPortalSideHandle(FModumateObjectInstance *moi, int32 side)
-			: FEditModelAdjustmentHandleBase(moi)
-			, PlanePoint(ForceInitToZero)
-			, PlaneNormal(ForceInitToZero)
-			, AnchorPoint(ForceInitToZero)
-			, Side(side)
-			, HoleActorBeginLocation(ForceInitToZero)
-		{ }
+protected:
+	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
+	bool GetBottomCorners(FVector &OutCorner0, FVector &OutCorner1) const;
 
-		virtual ~FAdjustPortalSideHandle() {}
-		virtual bool OnBeginUse() override;
-		virtual bool OnUpdateUse() override;
-		virtual bool OnEndUse() override;
-		virtual bool OnAbortUse() override;
-		virtual FVector GetAttachmentPoint() override;
-		virtual bool HandleInputNumber(float number) override;
+	bool bShouldTransvert = false;
+};
 
-	};
+UCLASS()
+class MODUMATE_API AAdjustPortalPointHandle : public AAdjustmentHandleActor
+{
+	GENERATED_BODY()
 
-	class MODUMATE_API FAdjustPortalInvertHandle : public FEditModelAdjustmentHandleBase
-	{
-	private:
-		float Sign;
+public:
+	virtual bool BeginUse() override;
+	virtual bool UpdateUse() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void EndUse() override;
+	virtual FVector GetHandlePosition() const override;
+	virtual bool HandleInputNumber(float number) override;
 
-	public:
+protected:
+	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 
-		FAdjustPortalInvertHandle(FModumateObjectInstance *moi, float sign = 1.f) :
-			FEditModelAdjustmentHandleBase(moi), Sign(sign)
-		{}
-
-		virtual bool OnBeginUse() override;
-		virtual FVector GetAttachmentPoint() override;
-	};
-
-	class MODUMATE_API FAdjustPortalPointHandle : public FEditModelAdjustmentHandleBase
-	{
-	private:
-		TArray<int32> CP;
-		TArray<FVector> OriginalP;
-		FVector AnchorLoc;
-		FVector OrginalLoc;
-		FVector OriginalLocHandle;
-		TArray<FVector> LastValidPendingCPLocations;
-		int HandleID = 0;
-
-	public:
-		FAdjustPortalPointHandle(FModumateObjectInstance *moi, int cp) :
-			FEditModelAdjustmentHandleBase(moi)
-		{
-			CP.Add(cp);
-			HandleID = cp;
-		}
-
-		virtual bool OnBeginUse() override;
-		virtual bool OnUpdateUse() override;
-		virtual bool OnEndUse() override;
-		virtual bool OnAbortUse() override;
-		virtual FVector GetAttachmentPoint() override;
-		virtual bool HandleInputNumber(float number) override;
-	};
-}
+	TArray<int32> CP;
+	TArray<FVector> OriginalP;
+	FVector AnchorLoc;
+	FVector OrginalLoc;
+	FVector OriginalLocHandle;
+	TArray<FVector> LastValidPendingCPLocations;
+};

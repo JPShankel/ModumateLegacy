@@ -197,9 +197,6 @@ public:
 	FRotator TopUVFloorRot = FRotator::ZeroRotator;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<int32> AdjustHandleFloor;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 AdjustHandleSide = -1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

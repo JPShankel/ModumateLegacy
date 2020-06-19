@@ -3,10 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "Blueprint/UserWidget.h"
 #include "GameFramework/HUD.h"
 #include "ModumateCore/ModumateTypes.h"
+#include "UI/HUDDrawWidget.h"
+
 #include "EditModelPlayerHUD.generated.h"
 
+class UAdjustmentHandleWidget;
 class UImage;
 class URoofPerimeterPropertiesWidget;
 class UDimensionWidget;
@@ -53,19 +58,30 @@ class MODUMATE_API AEditModelPlayerHUD : public AHUD
 	GENERATED_UCLASS_BODY()
 
 public:
+	void Initialize();
+
 	virtual void DrawHUD() override;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Assets)
+	class UWidgetClassAssetData* WidgetClasses;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Assets)
+	class UAdjustmentHandleAssetData* HandleAssets;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widgets)
+	UHUDDrawWidget *HUDDrawWidget;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widgets)
+	class UModumateCraftingWidget_CPP *CraftingWidget;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widgets)
+	class UModumateDrawingSetWidget_CPP *DrawingSetWidget;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<class ALineActor*> All3DLineActors;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Tools)
 	bool RequestStaticCameraView = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<URoofPerimeterPropertiesWidget> RoofPerimeterPropertiesClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<UDimensionWidget> DimensionClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Actors")
 	TSubclassOf<AArcActor> ArcClass;
@@ -74,4 +90,11 @@ public:
 	// Should only be used during viewport draw, else there will be a TextureRHI ensure
 	UFUNCTION(BlueprintCallable, Category = HUD)
 	bool StaticCameraViewScreenshot(const FVector2D &ViewportSize, AEditModelPlayerController_CPP *EMPlayerController, UImage *ImageUI);
+
+	// Pass-through convenience function for using the HUD's widget pool
+	template <typename UserWidgetT = UUserWidget>
+	UserWidgetT* GetOrCreateWidgetInstance(TSubclassOf<UserWidgetT> WidgetClass)
+	{
+		return HUDDrawWidget->UserWidgetPool.GetOrCreateInstance<UserWidgetT>(WidgetClass);
+	}
 };

@@ -6,8 +6,11 @@
 #include "Graph/ModumateGraph.h"
 #include "Graph/ModumateGraph3DTypes.h"
 
-class AAdjustmentHandleActor_CPP;
+class AAdjustmentHandleActor;
+class ACreateRoofFacesHandle;
+class AEditRoofEdgeHandle;
 class ALineActor;
+class ARetractRoofFacesHandle;
 class URoofPerimeterPropertiesWidget;
 
 namespace Modumate
@@ -22,8 +25,7 @@ namespace Modumate
 		virtual FQuat GetRotation() const override { return FQuat::Identity; }
 		virtual FVector GetCorner(int32 index) const override;
 		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
-		void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller);
-		virtual void ClearAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override;
+		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override;
 		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) override;
 		virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
 		virtual void OnSelected(bool bNewSelected) override;
@@ -52,9 +54,10 @@ namespace Modumate
 		TSet<int32> TempEdgeIDsToAdd, TempEdgeIDsToRemove;
 
 		bool bAdjustmentHandlesVisible = false;
-		TWeakObjectPtr<AAdjustmentHandleActor_CPP> CreateFacesHandleActor, RetractFacesHandleActor;
+		TWeakObjectPtr<ACreateRoofFacesHandle> CreateFacesHandle;
+		TWeakObjectPtr<ARetractRoofFacesHandle> RetractFacesHandle;
 		TWeakObjectPtr<URoofPerimeterPropertiesWidget> DefaultPropertiesWidget;
-		TMap<int32, TWeakObjectPtr<AAdjustmentHandleActor_CPP>> EdgeHandleActors;
+		TMap<int32, TWeakObjectPtr<AEditRoofEdgeHandle>> EdgeHandlesByID;
 
 		bool UpdateConnectedIDs();
 		void UpdatePerimeterGeometry();

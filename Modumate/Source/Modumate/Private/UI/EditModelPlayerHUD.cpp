@@ -1,11 +1,14 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #include "UI/EditModelPlayerHUD.h"
 
+#include "Components/Image.h"
+#include "Database/ModumateCraftingWidget_CPP.h"
+#include "Database/ModumateDrawingSetWidget_CPP.h"
+#include "UI/WidgetClassAssetData.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
-#include "Components/Image.h"
 
 
 FAffordanceLine::FAffordanceLine(const FVector &InStartPoint, const FVector &InEndPoint,
@@ -22,6 +25,40 @@ FAffordanceLine::FAffordanceLine(const FVector &InStartPoint, const FVector &InE
 AEditModelPlayerHUD::AEditModelPlayerHUD(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+}
+
+void AEditModelPlayerHUD::Initialize()
+{
+	auto *controller = Cast<AEditModelPlayerController_CPP>(PlayerOwner);
+
+	if (!ensure(controller && WidgetClasses &&
+		WidgetClasses->CraftingWidgetClass &&
+		WidgetClasses->DrawingSetWidgetClass &&
+		WidgetClasses->HUDDrawWidgetClass))
+	{
+		return;
+	}
+
+	CraftingWidget = CreateWidget<UModumateCraftingWidget_CPP>(controller, WidgetClasses->CraftingWidgetClass);
+	if (CraftingWidget != nullptr)
+	{
+		CraftingWidget->AddToViewport();
+		CraftingWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	DrawingSetWidget = CreateWidget<UModumateDrawingSetWidget_CPP>(controller, WidgetClasses->DrawingSetWidgetClass);
+	if (DrawingSetWidget != nullptr)
+	{
+		DrawingSetWidget->AddToViewport();
+		DrawingSetWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	HUDDrawWidget = CreateWidget<UHUDDrawWidget>(controller, WidgetClasses->HUDDrawWidgetClass);
+	if (HUDDrawWidget != nullptr)
+	{
+		HUDDrawWidget->AddToViewport();
+		HUDDrawWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+	}
 }
 
 void AEditModelPlayerHUD::DrawHUD()

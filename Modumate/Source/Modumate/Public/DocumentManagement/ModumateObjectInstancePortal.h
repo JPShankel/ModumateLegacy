@@ -4,7 +4,7 @@
 #include "DocumentManagement/ModumateObjectInstance.h"
 #include "CoreMinimal.h"
 
-class AAdjustmentHandleActor_CPP;
+class AAdjustmentHandleActor;
 
 namespace Modumate
 {
@@ -12,7 +12,7 @@ namespace Modumate
 	class MODUMATE_API FMOIPortalImpl : public FModumateObjectInstanceImplBase
 	{
 	protected:
-		TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>> AdjustmentHandles;
+		TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
 		TWeakObjectPtr<AEditModelPlayerController_CPP> Controller;
 
 		void SetControlPointsFromAssembly();
@@ -40,10 +40,7 @@ namespace Modumate
 		virtual void SetWorldTransform(const FTransform &NewTransform) override;
 		virtual FTransform GetWorldTransform() const override;
 		virtual FVector GetCorner(int32 index) const override;
-		virtual void ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
-		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller);
-		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show) override;
-		virtual void GetAdjustmentHandleActors(TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>>& outHandleActors) override;
+		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 
 		virtual void OnAssemblyChanged() override;
 		virtual FVector GetNormal() const;

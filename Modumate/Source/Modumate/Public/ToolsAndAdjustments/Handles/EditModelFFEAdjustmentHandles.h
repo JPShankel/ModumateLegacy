@@ -2,84 +2,85 @@
 
 #pragma once
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 
+#include "EditModelFFEAdjustmentHandles.generated.h"
 
-namespace Modumate
+
+UCLASS()
+class MODUMATE_API AAdjustFFEPointHandle : public AAdjustmentHandleActor
 {
-	class MODUMATE_API FAdjustFFEPointHandle : public FEditModelAdjustmentHandleBase
-	{
-	private:
-		int32 HandleID;
-		FVector AssemblyNormal;
-		FVector AssemblyTangent;
-		FVector LocalHandlePos;
+	GENERATED_BODY()
 
-		FVector AnchorLoc;
-		FVector OriginalObjectLoc;
-		FQuat OriginalObjectRot;
-		FVector OriginalHandleLoc;
+public:
+	AAdjustFFEPointHandle(const FObjectInitializer &ObjectInitializer = FObjectInitializer::Get());
+
+	virtual bool BeginUse() override;
+	virtual bool UpdateUse() override;
+	virtual void EndUse() override;
+	virtual void AbortUse() override;
+	virtual FVector GetHandlePosition() const override;
+	virtual bool HandleInputNumber(float number) override;
+
+protected:
+	virtual void Initialize() override;
+	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
+
+	FVector AssemblyNormal;
+	FVector AssemblyTangent;
+	FVector LocalHandlePos;
+
+	FVector AnchorLoc;
+	FVector OriginalObjectLoc;
+	FQuat OriginalObjectRot;
+	FVector OriginalHandleLoc;
 		
-		TArray<FVector> LastValidPendingCPLocations;
-		FVector MeshExtent;
+	TArray<FVector> LastValidPendingCPLocations;
+	FVector MeshExtent;
 
-		bool UpdateTarget();
+	bool UpdateTarget();
+};
 
-	public:
+UCLASS()
+class MODUMATE_API AAdjustFFERotateHandle : public AAdjustmentHandleActor
+{
+	GENERATED_BODY()
 
-		FAdjustFFEPointHandle(FModumateObjectInstance *moi, int32 cp);
+public:
+	virtual bool BeginUse() override;
+	virtual bool UpdateUse() override;
+	virtual FVector GetHandlePosition() const override;
+	virtual FVector GetHandleDirection() const override;
+	virtual bool HandleInputNumber(float number) override;
+	FQuat GetAnchorQuatFromCursor();
 
-		virtual bool OnBeginUse() override;
-		virtual bool OnUpdateUse() override;
-		virtual bool OnEndUse() override;
-		virtual bool OnAbortUse() override;
-		virtual FVector GetAttachmentPoint() override;
-		virtual bool HandleInputNumber(float number) override;
-	};
+protected:
+	virtual void Initialize() override;
+	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 
-	class MODUMATE_API FAdjustFFERotateHandle : public FEditModelAdjustmentHandleBase
-	{
-	private:
-		float Sign;
-		FVector AssemblyNormal;
-		FVector AssemblyTangent;
-		FVector LocalHandlePos;
+	FVector AssemblyNormal;
+	FVector AssemblyTangent;
+	FVector LocalHandlePos;
 
-		TArray<FVector> OriginalControlPoints;
-		FPlane OriginalPlane;
-		float OriginalExtrusion;
-		float LastValidExtrusion;
-		FVector AnchorDirLocation; // a proxy location that defines the starting direction
-		FVector AnchorLoc; // pivot of the rotation handle
-		FQuat OriginalRotation;
-		bool bClockwise = true;
+	FVector AnchorDirLocation; // a proxy location that defines the starting direction
+	FVector AnchorLoc; // pivot of the rotation handle
+	FQuat OriginalRotation;
+	bool bClockwise = true;
+};
 
-	public:
+UCLASS()
+class MODUMATE_API AAdjustFFEInvertHandle : public AAdjustmentHandleActor
+{
+	GENERATED_BODY()
 
-		FAdjustFFERotateHandle(FModumateObjectInstance *moi, float sign = 1.0f);
+public:
+	virtual bool BeginUse() override;
+	virtual FVector GetHandlePosition() const override;
+	virtual FVector GetHandleDirection() const override;
 
-		virtual bool OnBeginUse() override;
-		virtual bool OnUpdateUse() override;
-		virtual bool OnEndUse() override;
-		virtual bool OnAbortUse() override;
-		virtual FVector GetAttachmentPoint() override;
-		virtual bool GetOverrideHandleRotation(FQuat &OutRotation) override;
-		virtual bool HandleInputNumber(float number) override;
-		FQuat GetAnchorQuatFromCursor();
-	};
-
-	class MODUMATE_API FAdjustFFEInvertHandle : public FEditModelAdjustmentHandleBase
-	{
-	public:
-
-		FAdjustFFEInvertHandle(FModumateObjectInstance *moi) :
-			FEditModelAdjustmentHandleBase(moi)
-		{}
-
-		virtual bool OnBeginUse() override;
-		virtual FVector GetAttachmentPoint() override;
-	};
-}
+protected:
+	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
+};

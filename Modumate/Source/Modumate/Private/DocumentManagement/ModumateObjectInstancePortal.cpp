@@ -2,7 +2,7 @@
 
 #include "DocumentManagement/ModumateObjectInstancePortal.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
@@ -305,102 +305,21 @@ namespace Modumate
 		return FTransform(CachedWorldRot, CachedWorldPos);
 	}
 
-	void FMOIPortalImpl::ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller)
-	{
-		if (AdjustmentHandles.Num() > 0)
-		{
-			for (auto &ah : AdjustmentHandles)
-			{
-				ah->Destroy();
-			}
-			AdjustmentHandles.Empty();
-		}
-	}
-
 	void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 	{
 		Controller = controller;
-		if (AdjustmentHandles.Num() > 0)
+
+		for (int32 i = 0; i < 8; ++i)
 		{
-			return;
+			auto portalPointHandle = MOI->MakeHandle<AAdjustPortalPointHandle>();
+			portalPointHandle->SetTargetIndex(i);
 		}
 
-		auto makeActor = [this, controller](FEditModelAdjustmentHandleBase *impl, UStaticMesh *mesh, const FVector &s, const int32& side, float offsetDist)
-		{
-			AAdjustmentHandleActor_CPP *actor = MOI->GetActor()->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-			actor->SetActorMesh(mesh);
-			//actor->SetHandleScale(s);
-			actor->SetHandleScaleScreenSize(s);
-			actor->SetWallHandleSide(side, MOI, offsetDist);
+		auto portalInvertHandle = MOI->MakeHandle<AAdjustPortalInvertHandle>();
+		portalInvertHandle->SetTransvert(false);
 
-			impl->Handle = actor;
-			actor->Implementation = impl;
-			actor->AttachToActor(MOI->GetActor(), FAttachmentTransformRules::KeepRelativeTransform);
-			AdjustmentHandles.Add(actor);
-		};
-
-		UStaticMesh *pointAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->PointAdjusterMesh;
-		UStaticMesh *faceAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->FaceAdjusterMesh;
-		UStaticMesh *invertHandleMesh = controller->EMPlayerState->GetEditModelGameMode()->InvertHandleMesh;
-
-		for (size_t i = 0; i < 8; ++i)
-		{
-			makeActor(new FAdjustPortalPointHandle(MOI, i), pointAdjusterMesh, FVector(0.0007f, 0.0007f, 0.0007f), -1, 0.0f);
-		}
-
-		makeActor(new FAdjustPortalSideHandle(MOI, 0), faceAdjusterMesh, FVector(0.0015, 0.0015, 0.0015), 0, 12.0);
-		makeActor(new FAdjustPortalSideHandle(MOI, 1), faceAdjusterMesh, FVector(0.0015, 0.0015, 0.0015), 1, 12.0);
-		makeActor(new FAdjustPortalSideHandle(MOI, 2), faceAdjusterMesh, FVector(0.0015, 0.0015, 0.0015), 2, 12.0);
-		makeActor(new FAdjustPortalSideHandle(MOI, 3), faceAdjusterMesh, FVector(0.0015, 0.0015, 0.0015), 3, 12.0);
-		//Side needs to be manually calculated in the invertPortalHandle b/c control points aren't following the same as walls
-		makeActor(new FAdjustPortalInvertHandle(MOI, 1), invertHandleMesh, FVector(0.003f, 0.003f, 0.003f), -1, 0.f);
-
-		// Flip handle for transverse is removed until functionality is fixed 
-		makeActor(new FAdjustPortalInvertHandle(MOI, -1), controller->EMPlayerState->GetEditModelGameMode()->FlipHandleMesh, FVector(0.003f, 0.003f, 0.003f), -1, 0.f);
-	}
-
-	void FMOIPortalImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show)
-	{
-		Controller = controller;
-		AModumateObjectInstanceParts_CPP* objPartsActor = nullptr;
-		TArray<AActor*> attachActors;
-		MOI->GetActor()->GetAttachedActors(attachActors);
-
-		for (int32 i = 0; i < attachActors.Num(); i++)
-		{
-			if (attachActors[i]->IsA(AModumateObjectInstanceParts_CPP::StaticClass()))
-			{
-				objPartsActor = Cast<AModumateObjectInstanceParts_CPP>(attachActors[i]);
-			}
-		}
-
-		if (show)
-		{
-			if (objPartsActor != nullptr)
-			{
-				if (objPartsActor->bIsPartBeingSelected == false)
-				{
-					SetupAdjustmentHandles(controller);
-				}
-			}
-			else
-			{
-				SetupAdjustmentHandles(controller);
-			}
-		}
-
-		for (auto &ah : AdjustmentHandles)
-		{
-			if (ah.IsValid())
-			{
-				ah->SetEnabled(show);
-			}
-		}
-	}
-
-	void FMOIPortalImpl::GetAdjustmentHandleActors(TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>>& outHandleActors)
-	{
-		outHandleActors = AdjustmentHandles;
+		auto portalTransvertHandle = MOI->MakeHandle<AAdjustPortalInvertHandle>();
+		portalTransvertHandle->SetTransvert(true);
 	}
 
 	TArray<FModelDimensionString> FMOIPortalImpl::GetDimensionStrings() const

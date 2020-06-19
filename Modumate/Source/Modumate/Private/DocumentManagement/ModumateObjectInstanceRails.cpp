@@ -1,7 +1,7 @@
 #include "DocumentManagement/ModumateObjectInstanceRails.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 
@@ -65,34 +65,5 @@ namespace Modumate
 			ret.Add(ds);
 		}
 		return ret;
-	}
-
-
-	void FMOIRailImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
-	{
-		if (AdjustmentHandles.Num() > 0)
-		{
-			return;
-		}
-		auto makeActor = [this, controller](IAdjustmentHandleImpl *impl, UStaticMesh *mesh, const FVector &s, const TArray<int32>& CP)
-		{
-			AAdjustmentHandleActor_CPP *actor = DynamicMeshActor->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-			actor->SetActorMesh(mesh);
-
-#if 0
-			actor->SetHandleScale(FVector(1, 1, 1));
-			actor->SetHandleScaleScreenSize(FVector(1, 1, 1));
-			actor->SetHandleScale(s);
-			actor->SetHandleScaleScreenSize(s);
-#endif
-
-			impl->Handle = actor;
-			actor->Implementation = impl;
-			actor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepRelativeTransform);
-			actor->SetActorScale3D(s);
-			AdjustmentHandles.Add(TWeakObjectPtr<AAdjustmentHandleActor_CPP>(actor));
-		};
-
-		AEditModelGameMode_CPP *gameMode = controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
 	}
 }

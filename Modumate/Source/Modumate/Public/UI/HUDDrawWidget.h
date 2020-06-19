@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/UserWidgetPool.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "ModumateCore/ModumateDimensionString.h"
+
 #include "HUDDrawWidget.generated.h"
 
 USTRUCT(BlueprintType)
@@ -89,6 +91,7 @@ protected:
 	//~ Begin UUserWidget Interface
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
 	//~ End UUserWidget Interface
 

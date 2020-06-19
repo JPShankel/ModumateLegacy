@@ -2,7 +2,7 @@
 
 #include "DocumentManagement/ModumateObjectInstanceScopeBox.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
@@ -123,54 +123,26 @@ namespace Modumate
 
 	void FMOIScopeBoxImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 	{
-		if (AdjustmentHandles.Num() > 0)
-		{
-			return;
-		}
-
 		int32 numCP = MOI->GetControlPoints().Num();
 		if (!ensureAlways(numCP == 4))
 		{
 			return;
 		}
 
-		UStaticMesh *faceAdjusterMesh = controller->EMPlayerState->GetEditModelGameMode()->FaceAdjusterMesh;
-
-		for (int32 idx = 0; idx < numCP; idx++)
+		for (int32 i = 0; i < numCP; ++i)
 		{
-			TArray<int32> cornerIdxs = { idx, (idx + 1) % numCP };
-			FAdjustPolyPointHandle *handle = new FAdjustPolyPointHandle(MOI, cornerIdxs[0], cornerIdxs[1]);
+			auto pointHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+			pointHandle->SetTargetIndex(i);
 
-			AAdjustmentHandleActor_CPP *actor = DynamicMeshActor->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-			actor->SetActorMesh(faceAdjusterMesh);
-			actor->SetHandleScale(HandleScale);
-			actor->SetHandleScaleScreenSize(HandleScale);
-
-			actor->SetPolyHandleSide({ cornerIdxs[0], cornerIdxs[1] }, MOI, PolyPointHandleOffset);
-
-			handle->Handle = actor;
-			actor->Implementation = handle;
-			actor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
-			AdjustmentHandles.Add(actor);
+			auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+			edgeHandle->SetTargetIndex(i);
+			edgeHandle->SetAdjustPolyEdge(true);
 		}
 
-		for (float sign : { 1.0f, -1.0f })
-		{
-			FAdjustPolyExtrusionHandle *handle = new FAdjustPolyExtrusionHandle(MOI, sign);
+		auto topExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
+		topExtrusionHandle->SetSign(1.0f);
 
-			AAdjustmentHandleActor_CPP *actor = DynamicMeshActor->GetWorld()->SpawnActor<AAdjustmentHandleActor_CPP>(AAdjustmentHandleActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-			actor->SetActorMesh(faceAdjusterMesh);
-			actor->SetHandleScale(HandleScale);
-			actor->SetHandleScaleScreenSize(HandleScale);
-
-			actor->SetOverrideHandleDirection(sign * Normal, MOI, ExtrusionHandleOffset);
-
-			handle->Handle = actor;
-			actor->Implementation = handle;
-			actor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
-			AdjustmentHandles.Add(actor);
-		}
-
-		ShowAdjustmentHandles(controller, true);
+		auto bottomExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
+		bottomExtrusionHandle->SetSign(-1.0f);
 	}
 }

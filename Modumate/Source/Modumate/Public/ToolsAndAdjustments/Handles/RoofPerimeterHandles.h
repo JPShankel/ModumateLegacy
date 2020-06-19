@@ -4,64 +4,70 @@
 
 #include "Graph/ModumateGraph3DTypes.h"
 #include "ModumateCore/ModumateRoofStatics.h"
-#include "ToolsAndAdjustments/Common/EditModelAdjustmentHandleBase.h"
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 
-namespace Modumate
+#include "RoofPerimeterHandles.generated.h"
+
+
+UCLASS()
+class MODUMATE_API ACreateRoofFacesHandle : public AAdjustmentHandleActor
 {
-	class MODUMATE_API FCreateRoofFacesHandle : public FEditModelAdjustmentHandleBase
-	{
-	public:
-		FCreateRoofFacesHandle(FModumateObjectInstance *MOI)
-			: FEditModelAdjustmentHandleBase(MOI)
-		{ }
+	GENERATED_BODY()
 
-		virtual bool OnBeginUse() override;
-		virtual bool OnEndUse() override;
-		virtual FVector GetAttachmentPoint() override;
+public:
+	virtual bool BeginUse() override;
+	virtual FVector GetHandlePosition() const override;
 
-	protected:
-		TArray<FVector> EdgePoints;
-		TArray<int32> EdgeIDs;
-		FRoofEdgeProperties DefaultEdgeProperties;
-		TArray<FRoofEdgeProperties> EdgeProperties;
+protected:
+	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 
-		TArray<FVector> CombinedPolyVerts;
-		TArray<int32> PolyVertIndices;
-	};
+	TArray<FVector> EdgePoints;
+	TArray<int32> EdgeIDs;
+	FRoofEdgeProperties DefaultEdgeProperties;
+	TArray<FRoofEdgeProperties> EdgeProperties;
 
-	class MODUMATE_API FRetractRoofFacesHandle : public FEditModelAdjustmentHandleBase
-	{
-	public:
-		FRetractRoofFacesHandle(FModumateObjectInstance *MOI)
-			: FEditModelAdjustmentHandleBase(MOI)
-		{ }
+	TArray<FVector> CombinedPolyVerts;
+	TArray<int32> PolyVertIndices;
+};
 
-		virtual bool OnBeginUse() override;
-		virtual bool OnEndUse() override;
-		virtual FVector GetAttachmentPoint() override;
+UCLASS()
+class MODUMATE_API ARetractRoofFacesHandle : public AAdjustmentHandleActor
+{
+	GENERATED_BODY()
 
-	protected:
-		TSet<FTypedGraphObjID> TempGroupMembers;
-		TArray<int32> TempFaceIDs;
-	};
+public:
+	virtual bool BeginUse() override;
+	virtual FVector GetHandlePosition() const override;
 
-	class MODUMATE_API FEditRoofEdgeHandle : public FEditModelAdjustmentHandleBase
-	{
-	public:
-		FEditRoofEdgeHandle(FModumateObjectInstance *MOI, FSignedID InTargetEdgeID)
-			: FEditModelAdjustmentHandleBase(MOI)
-			, TargetEdgeID(InTargetEdgeID)
-		{ }
+protected:
+	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 
-		virtual bool OnBeginUse() override;
-		virtual bool OnUpdateUse() override;
-		virtual void Tick(float DeltaTime) override;
-		virtual bool OnEndUse() override;
-		virtual bool OnAbortUse() override;
-		virtual FVector GetAttachmentPoint() override;
+	TSet<Modumate::FTypedGraphObjID> TempGroupMembers;
+	TArray<int32> TempFaceIDs;
+};
 
-		FSignedID TargetEdgeID;
-		TWeakObjectPtr<URoofPerimeterPropertiesWidget> PropertiesWidget;
-	};
-}
+UCLASS()
+class MODUMATE_API AEditRoofEdgeHandle : public AAdjustmentHandleActor
+{
+	GENERATED_BODY()
+
+public:
+	AEditRoofEdgeHandle(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	virtual bool BeginUse() override;
+	virtual bool UpdateUse() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void EndUse() override;
+	virtual void AbortUse() override;
+	virtual FVector GetHandlePosition() const override;
+
+	void SetTargetEdge(Modumate::FSignedID InTargetEdgeID);
+
+protected:
+	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
+
+	Modumate::FSignedID TargetEdgeID;
+
+	UPROPERTY()
+	class URoofPerimeterPropertiesWidget* PropertiesWidget;
+};

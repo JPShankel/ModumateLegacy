@@ -33,12 +33,12 @@ void ALineActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (auto *playerController = GetWorld()->GetFirstPlayerController())
+	if (auto *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>())
 	{
-		EMPlayerState = Cast<AEditModelPlayerState_CPP>(playerController->PlayerState);
+		EMPlayerState = playerController->EMPlayerState;
 		EMGameMode = EMPlayerState->GetEditModelGameMode();
-		EMPlayerHUD = Cast<AEditModelPlayerHUD>(playerController->GetHUD());
-		EMGameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
+		EMPlayerHUD = playerController->GetEditModelHUD();
+		EMGameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 
 		CameraManager = playerController->PlayerCameraManager;
 

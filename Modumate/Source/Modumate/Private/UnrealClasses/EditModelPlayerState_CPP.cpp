@@ -2,7 +2,7 @@
 
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
-#include "UnrealClasses/AdjustmentHandleActor_CPP.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -159,7 +159,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	}
 
 	// Queue up the lines managed by the PlayerHUD, so that all lines added to the HUD Draw Widget happen here.
-	AEditModelPlayerHUD *emPlayerHUD = Cast<AEditModelPlayerHUD>(EMPlayerController->GetHUD());
+	AEditModelPlayerHUD *emPlayerHUD = EMPlayerController->GetEditModelHUD();
 	if (emPlayerHUD)
 	{
 		for (ALineActor *lineActor : emPlayerHUD->All3DLineActors)
@@ -536,7 +536,7 @@ void AEditModelPlayerState_CPP::PostSelectionOrViewChanged()
 	allChangedObjects.Append(LastErrorObjectSet);
 
 	// Iterate through all objects whose render mode may have changed due to either selection or view group hierarchy
-	TArray<TWeakObjectPtr<AAdjustmentHandleActor_CPP>> adjustHandleActors;
+	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> adjustHandleActors;
 	for (FModumateObjectInstance *moi : allChangedObjects)
 	{
 		if (moi && !moi->IsDestroyed())
@@ -550,11 +550,6 @@ void AEditModelPlayerState_CPP::PostSelectionOrViewChanged()
 			int32 stencilValue = selectionValue | viewGroupValue | hoverValue | errorValue;
 
 			SetActorRenderValues(moi->GetActor(), stencilValue, bHovered);
-			moi->GetAdjustmentHandleActors(adjustHandleActors);
-			for (auto& adjustHandleActor : adjustHandleActors)
-			{
-				SetActorRenderValues(adjustHandleActor.Get(), stencilValue, bHovered);
-			}
 		}
 	}
 

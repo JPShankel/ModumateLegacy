@@ -762,13 +762,6 @@ void ADynamicMeshActor::SetupFlatPolyGeometry(const TArray<FVector> &points, con
 		newCPNext.Add(points[nextId]);
 	}
 
-	for (int32 i = 0; i < AdjustHandleFloor.Num(); i++)
-	{
-		int32 currentHandleID = AdjustHandleFloor[i];
-		int32 nextHandleID = UModumateFunctionLibrary::LoopArrayGetPreviousIndex(currentHandleID, UVFloorAnchors.Num());
-		UVFloorAnchors[currentHandleID] = UModumateFunctionLibrary::WallUpdateUVAnchor(UVFloorAnchors[currentHandleID], 0, points[currentHandleID], newCPNext[currentHandleID], OldFloorCP1[currentHandleID], OldFloorCP2[currentHandleID]);
-		UVFloorAnchors[nextHandleID] = UModumateFunctionLibrary::WallUpdateUVAnchor(UVFloorAnchors[nextHandleID], 1, points[nextHandleID], newCPNext[nextHandleID], OldFloorCP1[nextHandleID], OldFloorCP2[nextHandleID]);
-	}
 	OldFloorCP1 = points;
 	OldFloorCP2 = newCPNext;
 

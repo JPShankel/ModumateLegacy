@@ -25,8 +25,6 @@ namespace Modumate
 		virtual void UpdateDynamicGeometry() override;
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
-		virtual void ClearAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
-		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *controller, bool show) override;
 		virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover) override {};
 		virtual void OnSelected(bool bNewSelected) override;
 
