@@ -31,7 +31,7 @@ void AEditModelPlayerHUD::Initialize()
 {
 	auto *controller = Cast<AEditModelPlayerController_CPP>(PlayerOwner);
 
-	if (!ensure(controller && WidgetClasses &&
+	if (!ensureAlways(controller && WidgetClasses &&
 		WidgetClasses->CraftingWidgetClass &&
 		WidgetClasses->DrawingSetWidgetClass &&
 		WidgetClasses->HUDDrawWidgetClass))
