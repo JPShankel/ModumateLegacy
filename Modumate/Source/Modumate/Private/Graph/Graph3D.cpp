@@ -100,7 +100,7 @@ namespace Modumate
 		}
 	}
 
-	int32 FGraph3D::FindFaceContainingFace(const int32 FaceID, TArray<FVector2D> &OutProjectedPoints) const
+	int32 FGraph3D::FindFaceContainingFace(const int32 FaceID) const
 	{
 		int32 faceIDContainingPoly = MOD_ID_NONE;
 
@@ -111,47 +111,48 @@ namespace Modumate
 			return MOD_ID_NONE;
 		}
 
-		OutProjectedPoints.Reset(numPolyPoints);
-
 		// First, find a face that all of these vertices are contained by
+		TSet<int32> facesContainingPolygon;
+		TSet<int32> facesContainingVertex;
 		for (int32 vertexID : face->VertexIDs)
 		{
+			facesContainingVertex.Reset();
 			auto vertex = FindVertex(vertexID);
-			FVector2D &projectedPosition = OutProjectedPoints.AddDefaulted_GetRef();
-			int32 faceIDContainingPoint = FindFaceContainingPosition(vertex->Position, projectedPosition);
+			FindFacesContainingPosition(vertex->Position, facesContainingVertex);
 
-			if ((faceIDContainingPoint == MOD_ID_NONE) ||
-				((faceIDContainingPoly != MOD_ID_NONE) && (faceIDContainingPoint != faceIDContainingPoly)))
+			if (facesContainingPolygon.Num() == 0)
 			{
-				// If one of the vertices isn't contained in any face,
-				// or if it's contained in a different face than another vertex,
-				// then the input vertices aren't contained in the same face.
-
-				// TODO: this really wants to find the "leaf-most" containing face,
-				// because this face can be contained by a face that's contained by another face.
-				return MOD_ID_NONE;
+				facesContainingPolygon = facesContainingVertex;
+			}
+			else
+			{
+				facesContainingPolygon = facesContainingPolygon.Intersect(facesContainingVertex);
 			}
 
-			faceIDContainingPoly = faceIDContainingPoint;
+			if (facesContainingPolygon.Num() == 0)
+			{
+				return MOD_ID_NONE;
+			}
 		}
 
-		// If there is a common containing face, make sure that its edges don't intersect the edges
-		// of the input polygon.
-		// TODO: this is only strictly necessary if both polygons are not convex, which is a property we don't keep track of yet.
-		if (faceIDContainingPoly != MOD_ID_NONE)
+		int32 minID = MOD_ID_NONE;
+		float minArea = 0;
+		for (int32 faceID : facesContainingPolygon)
 		{
-			const FGraph3DFace *containingFace = FindFace(faceIDContainingPoly);
-			const TArray<FVector2D> &faceProjectedPositions = containingFace->Cached2DPositions;
-
-			bool bPolygonInFace = false, bPolygonsOverlapping = false, bPolygonsTouching = false;
-			UModumateGeometryStatics::PolyIntersection(OutProjectedPoints, faceProjectedPositions,
-				bPolygonInFace, bPolygonsOverlapping, bPolygonsTouching);
-
-			if (!bPolygonInFace || bPolygonsOverlapping || bPolygonsTouching)
+			auto containingFace = FindFace(faceID);
+			if (containingFace == nullptr)
 			{
-				return MOD_ID_NONE;
+				continue;
+			}
+
+			if ((minID == MOD_ID_NONE) || (containingFace->CachedArea < minArea))
+			{
+				minArea = containingFace->CachedArea;
+				minID = faceID;
 			}
 		}
+
+		faceIDContainingPoly = minID;
 
 		return faceIDContainingPoly;
 	}
@@ -164,7 +165,6 @@ namespace Modumate
 			return;
 		}
 
-		OutContainedFaces.Reset();
 		// TODO: the plane of the points should be an input to this function,
 		// since it's necessary to call this before we can construct a valid FGraph3DFace,
 		// and we shouldn't rely on this function to be as accurate as it needs to be for comparison against other faces in the graph.
@@ -297,51 +297,15 @@ namespace Modumate
 		return Faces.Find(FMath::Abs(FaceID)); 
 	}
 
-	int32 FGraph3D::FindFaceContainingPosition(const FVector &Position, FVector2D &OutPosition2D) const
+	void FGraph3D::FindFacesContainingPosition(const FVector &Position, TSet<int32> &ContainingFaces) const
 	{
-		int32 containingFaceID = MOD_ID_NONE;
-
-		TSet<int32> containingFaceIDs;
 		for (auto &kvp : Faces)
 		{
-			if (kvp.Value.ContainsPosition(Position, OutPosition2D))
+			if (kvp.Value.ContainsPosition(Position))
 			{
-				if (ensureAlways(containingFaceID == MOD_ID_NONE))
-				{
-					containingFaceIDs.Add(kvp.Key);
-				}
+				ContainingFaces.Add(kvp.Key);
 			}
 		}
-
-		// find the minimum containing face ID
-		if (containingFaceIDs.Num() != 0)
-		{
-			int32 currentID = containingFaceIDs.Array()[0];
-			bool bFoundChildContainingFace = true;
-			while (bFoundChildContainingFace)
-			{
-				bFoundChildContainingFace = false;
-				auto face = FindFace(currentID);
-				if (face != nullptr)
-				{
-					for (int32 faceID : face->ContainedFaceIDs)
-					{
-						if (containingFaceIDs.Contains(faceID))
-						{
-							currentID = faceID;
-							bFoundChildContainingFace = true;
-							break;
-						}
-					}
-				}
-			}
-			auto face = FindFace(currentID);
-			face->ContainsPosition(Position, OutPosition2D);
-
-			return currentID;
-		}
-
-		return containingFaceID;
 	}
 
 	FGraph3DPolyhedron* FGraph3D::FindPolyhedron(int32 PolyhedronID) 

@@ -312,6 +312,7 @@ namespace Modumate
 	{
 		int32 existingID;
 
+		// this function is intended to be called once per graph operation, so it makes containers instead of having mutable members
 		TSet<int32> oldFaces;
 		TSet<int32> newFaces;
 		TMap<int32, TArray<int32>> oldToNewFaceIDs;
@@ -420,6 +421,9 @@ namespace Modumate
 		}
 		ApplyDelta(deleteDelta);
 
+		// The initial group of faces that need to be updated contains
+		// the faces provided as an argument (FaceIDs) by the graph operation
+		// that were not deleted through the update (oldFaces), and faces created through the update (newFaces)
 		TSet<int32> updateContainmentFaceIDs;
 		updateContainmentFaceIDs.Append(newFaces);
 		for (int32 faceID : FaceIDs)
@@ -429,39 +433,93 @@ namespace Modumate
 				updateContainmentFaceIDs.Add(faceID);
 			}
 		}
-		// Check containment
+
 		FGraph3DDelta containmentDelta;
+
+		// the side effect faces are the faces that either contain or are contained by the initial faces
+		TSet<int32> sideEffectContainedFaceIDs;
+		TSet<int32> sideEffectContainingFaceIDs;
+
+		// faces are contained by at most one face.  If several faces mathematically contain a face,
+		// the containing face with the minimum area is used.  The relationships in this map are 
+		// sufficient for populating the delta.
+		TMap<int32, int32> facesContainedByFace;
+
 		for (int32 updateFaceID : updateContainmentFaceIDs)
 		{
 			auto face = FindFace(updateFaceID);
-			int32 containingFaceID = FindFaceContainingFace(face->ID, TempProjectedPoints);
-			FindFacesContainedByFace(face->ID, TempContainingFaceIDs);
-
-			auto containingFace = FindFace(containingFaceID);
-			int32 nextContainingFaceID = face->ContainingFaceID;
-			if (containingFace)
+			if (!ensure(face != nullptr))
 			{
-				containmentDelta.FaceContainmentUpdates.Add(containingFaceID, FGraph3DFaceContainmentDelta(
-					containingFace->ContainingFaceID, containingFace->ContainingFaceID,
-					TSet<int32>({ updateFaceID })
-				));
-				nextContainingFaceID = containingFace->ID;
+				continue;
 			}
 
-			for (int32 containedFaceID : TempContainingFaceIDs)
+			int32 containingFaceID = FindFaceContainingFace(face->ID);
+			FindFacesContainedByFace(face->ID, sideEffectContainedFaceIDs);
+
+			sideEffectContainedFaceIDs.Append(face->ContainedFaceIDs);
+
+			if (auto oldContainingFace = FindFace(face->ContainingFaceID))
 			{
-				const FGraph3DFace *containedFace = FindFace(containedFaceID);
-				if (ensure(containedFace))
+				sideEffectContainingFaceIDs.Add(face->ContainingFaceID);
+			}
+			if (auto containingFace = FindFace(containingFaceID))
+			{
+				sideEffectContainingFaceIDs.Add(containingFaceID);
+			}
+
+			facesContainedByFace.Add(updateFaceID, containingFaceID);
+		}
+		sideEffectContainedFaceIDs = sideEffectContainedFaceIDs.Difference(updateContainmentFaceIDs);
+
+		// add default deltas for all involved faces
+		for (auto& setInDelta : { updateContainmentFaceIDs, sideEffectContainedFaceIDs, sideEffectContainingFaceIDs })
+		{
+			for (int32 id : setInDelta)
+			{
+				if (auto face = FindFace(id))
 				{
-					containmentDelta.FaceContainmentUpdates.Add(containedFaceID, FGraph3DFaceContainmentDelta(
-						containedFace->ContainingFaceID, updateFaceID
+					containmentDelta.FaceContainmentUpdates.Add(id, FGraph3DFaceContainmentDelta(
+						face->ContainingFaceID, face->ContainingFaceID
 					));
 				}
 			}
-			containmentDelta.FaceContainmentUpdates.Add(updateFaceID, FGraph3DFaceContainmentDelta(
-				face->ContainingFaceID, nextContainingFaceID, 
-				TempContainingFaceIDs.Difference(face->ContainedFaceIDs), 
-				face->ContainedFaceIDs.Difference(TempContainingFaceIDs)));
+		}
+
+		// update new containment relationship for side effect contained faces
+		for (int32 id : sideEffectContainedFaceIDs)
+		{
+			if (auto face = FindFace(id))
+			{
+				int32 containingFaceID = FindFaceContainingFace(face->ID);
+				facesContainedByFace.Add(id, containingFaceID);
+			}
+		}
+
+		for (auto& kvp : facesContainedByFace)
+		{
+			int32 faceID = kvp.Key;
+			int32 containingFaceID = kvp.Value;
+			auto face = FindFace(faceID);
+
+			auto& faceDelta  = containmentDelta.FaceContainmentUpdates[faceID];
+			faceDelta.PrevContainingFaceID = face->ContainingFaceID;
+			faceDelta.NextContainingFaceID = containingFaceID;
+			if (face->ContainingFaceID != containingFaceID)
+			{
+				auto oldContainingFace = FindFace(face->ContainingFaceID);
+				if (oldContainingFace != nullptr)
+				{
+					auto& oldContainingFaceDelta = containmentDelta.FaceContainmentUpdates[face->ContainingFaceID];
+					oldContainingFaceDelta.ContainedFaceIDsToRemove.Add(faceID);
+				}
+			}
+
+			auto containingFace = FindFace(containingFaceID);
+			if (containingFace != nullptr)
+			{
+				auto& containDelta = containmentDelta.FaceContainmentUpdates[containingFaceID];
+				containDelta.ContainedFaceIDsToAdd.Add(faceID);
+			}
 		}
 
 		if (!containmentDelta.IsEmpty())

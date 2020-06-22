@@ -38,7 +38,7 @@ namespace Modumate
 
 		FGraph3DFace* FindFace(FSignedID FaceID);
 		const FGraph3DFace* FindFace(FSignedID FaceID) const;
-		int32 FindFaceContainingPosition(const FVector &Position, FVector2D &OutPosition2D) const;
+		void FindFacesContainingPosition(const FVector &Position, TSet<int32> &ContainingFaces) const;
 
 		FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID);
 		const FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID) const;
@@ -114,7 +114,7 @@ namespace Modumate
 
 	private:
 		void FindEdges(const FVector &Position, int32 ExistingID, TArray<int32>& OutEdgeIDs) const;
-		int32 FindFaceContainingFace(const int32 FaceID, TArray<FVector2D> &OutProjectedPoints) const;
+		int32 FindFaceContainingFace(const int32 FaceID) const;
 		void FindFacesContainedByFace(const int32 FaceID, TSet<int32> &OutContainedFaces) const;
 
 		void AddObjectToGroups(const IGraph3DObject *GraphObject);
@@ -139,7 +139,6 @@ namespace Modumate
 
 		TSet<int32> TempInheritedGroupIDs;
 		mutable TArray<FVector2D> TempProjectedPoints;
-		mutable TSet<int32> TempContainingFaceIDs;
 
 	public:
 
