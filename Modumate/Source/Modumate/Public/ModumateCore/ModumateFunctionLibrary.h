@@ -25,9 +25,6 @@ class MODUMATE_API UModumateFunctionLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static bool ClosestPointsOnTwoLines(FVector& closestPointLine1, FVector& closestPointLine2, FVector linePoint1, FVector lineVec1, FVector linePoint2, FVector lineVec2);
-
 	// Convert Vector3D to 2D.
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
 	static FVector V3dToV2d(TArray<FVector2D> & OutV2d, TArray<FVector> InV3d);

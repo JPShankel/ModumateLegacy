@@ -199,6 +199,9 @@ public:
 		TArray<int32> &OutPointsHoleIndices);
 
 	UFUNCTION(Category = "Modumate | Geometry")
+	static bool TranslatePolygonEdge(const TArray<FVector> &PolyPoints, const FVector &PolyNormal, int32 EdgeStartIdx, float Translation, FVector &OutStartPoint, FVector &OutEndPoint);
+
+	UFUNCTION(Category = "Modumate | Geometry")
 	static void FindBasisVectors(FVector &OutAxisX, FVector &OutAxisY, const FVector &AxisZ);
 
 	UFUNCTION(Category = "Modumate | Geometry")
@@ -225,5 +228,5 @@ public:
 
 	static bool ArePolygonEdgesValid2D(const TArray<FVector2D> &Points2D, class FFeedbackContext* InWarn = nullptr);
 	
-	static bool ArePolygonEdgesValid(const TArray<FVector> &Points, class FFeedbackContext* InWarn = nullptr);
+	static bool ArePolygonEdgesValid(const TArray<FVector> &Points, FPlane PolyPlane = FPlane(ForceInitToZero), class FFeedbackContext* InWarn = nullptr);
 };

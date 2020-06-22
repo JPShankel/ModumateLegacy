@@ -32,21 +32,17 @@ bool AAdjustPolyPointHandle::BeginUse()
 		return false;
 	}
 
-	OriginalP.Reset();
-	for (int32 cp : CP)
-	{
-		OriginalP.Add(TargetMOI->GetControlPoint(cp));
-		LastValidPendingCPLocations.Add(TargetMOI->GetControlPoint(cp));
-	}
+	OriginalDirection = GetHandleDirection();
+	OriginalPolyPoints = TargetMOI->GetControlPoints();
+	LastValidPolyPoints = OriginalPolyPoints;
 
 	FVector targetNormal = TargetMOI->GetNormal();
-	if (!targetNormal.IsNormalized() || (OriginalP.Num() == 0))
+	if (!targetNormal.IsNormalized() || (OriginalPolyPoints.Num() == 0))
 	{
 		return false;
 	}
 
-	PolyPlane = FPlane(OriginalP[0], targetNormal);
-
+	PolyPlane = FPlane(OriginalPolyPoints[0], targetNormal);
 	AnchorLoc = FVector::PointPlaneProject(GetHandlePosition(), PolyPlane);
 	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorLoc, FVector(PolyPlane));
 
@@ -78,97 +74,36 @@ bool AAdjustPolyPointHandle::UpdateUse()
 		Controller->EMPlayerState->AffordanceLines.Add(affordance);
 	}
 
-	if (OriginalP.Num() == CP.Num())
+	if (bAdjustPolyEdge)
 	{
-		if (CP.Num() == 2)
+		int32 numPolyPoints = OriginalPolyPoints.Num();
+		int32 edgeStartIdx = TargetIndex;
+		int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
+
+		float translation = (dp | OriginalDirection);
+		FVector edgeStartPoint, edgeEndPoint;
+		if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
 		{
-			int32 numTotalCPs = TargetMOI->GetControlPoints().Num();
-			FVector closestPoint1, closestPoint2;
-			FVector currentEdgeDirection = (TargetMOI->GetControlPoint(CP[1]) - TargetMOI->GetControlPoint(CP[0])).GetSafeNormal();
-
-			// Intersection test for first CP
-			int32 startID0 = (CP[0] + numTotalCPs - 1) % numTotalCPs;
-			int32 endID0 = CP[0];
-			FVector lineDirection0 = (TargetMOI->GetControlPoint(endID0) - TargetMOI->GetControlPoint(startID0)).GetSafeNormal();
-			bool b1 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, hitPoint, currentEdgeDirection, TargetMOI->GetControlPoint(endID0), lineDirection0);
-			FVector newCP0 = closestPoint1;
-
-			// Intersection test for second CP
-			int32 startID1 = (CP[1] + 1) % numTotalCPs;
-			int32 endID1 = CP[1];
-			FVector lineDirection1 = (TargetMOI->GetControlPoint(endID1) - TargetMOI->GetControlPoint(startID1)).GetSafeNormal();
-			bool b2 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, hitPoint, currentEdgeDirection, TargetMOI->GetControlPoint(endID1), lineDirection1);
-			FVector newCP1 = closestPoint1;
-
-			// Set MOI control points to new CP
-			TargetMOI->SetControlPoint(CP[0],newCP0);
-			TargetMOI->SetControlPoint(CP[1],newCP1);
-
-			// Check if CPs are intersect. If it is, don't update geometry
-			// Store last good locations to fall back on if the new floor lacks proper triangulation
-			if (UModumateGeometryStatics::ArePolygonEdgesValid(TargetMOI->GetControlPoints()))
-			{
-				UpdateTargetGeometry();
-				LastValidPendingCPLocations = { TargetMOI->GetControlPoint(CP[0]) , TargetMOI->GetControlPoint(CP[1]) };
-			}
-			else
-			{
-				TargetMOI->SetControlPoint(CP[0],LastValidPendingCPLocations[0]);
-				TargetMOI->SetControlPoint(CP[1],LastValidPendingCPLocations[1]);
-			}
-
-			HandleOriginalPoint = (OriginalP[0] + OriginalP[1]) / 2.f;
-			FVector curSideMidLoc = (TargetMOI->GetControlPoint(CP[0]) + TargetMOI->GetControlPoint(CP[1])) / 2.f;
-			currentEdgeDirection = (TargetMOI->GetControlPoint(CP[1]) - TargetMOI->GetControlPoint(CP[0])).GetSafeNormal();
-			FVector edgeNormal = GetHandleDirection();
-			bool b3 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, HandleOriginalPoint, edgeNormal, curSideMidLoc, currentEdgeDirection);
-			HandleCurrentPoint = closestPoint1;
-
-			// Dim string. between cursor pos and original handle pos. Delta only
-			UModumateFunctionLibrary::AddNewDimensionString(Controller,
-				HandleOriginalPoint,
-				HandleCurrentPoint,
-				currentEdgeDirection,
-				Controller->DimensionStringGroupID_Default,
-				Controller->DimensionStringUniqueID_Delta,
-				0,
-				TargetMOI->GetActor(),
-				EDimStringStyle::HCamera,
-				EEnterableField::NonEditableText,
-				20.f,
-				EAutoEditableBox::UponUserInput_SameGroupIndex,
-				true);
-		}
-		else if (CP.Num() == 1)
-		{
-			TargetMOI->SetControlPoint(CP[0],OriginalP[0] + dp);
-			if (UModumateGeometryStatics::ArePolygonEdgesValid(TargetMOI->GetControlPoints()))
-			{
-				UpdateTargetGeometry();
-				LastValidPendingCPLocations = { TargetMOI->GetControlPoint(CP[0]) };
-			}
-			else
-			{
-				TargetMOI->SetControlPoint(CP[0],LastValidPendingCPLocations[0]);
-			}
-
-			FVector offsetDir = dp.GetSafeNormal() ^ FVector(Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Normal);
-
-			// Dim string between cursor pos and original point handle position. Delta only
-			UModumateFunctionLibrary::AddNewDimensionString(Controller,
-				OriginalP[0],
-				TargetMOI->GetControlPoint(CP[0]),
-				offsetDir,
-				Controller->DimensionStringGroupID_Default,
-				Controller->DimensionStringUniqueID_Delta,
-				0,
-				TargetMOI->GetActor(),
-				EDimStringStyle::HCamera,
-				EEnterableField::NonEditableText,
-				40.f,
-				EAutoEditableBox::Never);
+			TargetMOI->SetControlPoint(edgeStartIdx, edgeStartPoint);
+			TargetMOI->SetControlPoint(edgeEndIdx, edgeEndPoint);
 		}
 	}
+	else
+	{
+		TargetMOI->SetControlPoint(TargetIndex, OriginalPolyPoints[TargetIndex] + dp);
+	}
+
+	const TArray<FVector> &newPolyPoints = TargetMOI->GetControlPoints();
+	if (UModumateGeometryStatics::ArePolygonEdgesValid(newPolyPoints, PolyPlane))
+	{
+		LastValidPolyPoints = newPolyPoints;
+		UpdateTargetGeometry();
+	}
+	else
+	{
+		TargetMOI->SetControlPoints(LastValidPolyPoints);
+	}
+
 	return true;
 }
 
@@ -179,18 +114,19 @@ FVector AAdjustPolyPointHandle::GetHandlePosition() const
 		return FVector::ZeroVector;
 	}
 
-	int32 numTargetCP = CP.Num();
 	FVector averageTargetPos(ForceInitToZero);
-	for (int32 cpIndex : CP)
-	{
-		if (!ensure(TargetMOI->GetControlPoints().IsValidIndex(cpIndex)))
-		{
-			return FVector::ZeroVector;
-		}
+	const TArray<FVector> &controlPoints = TargetMOI->GetControlPoints();
+	int32 numPoints = controlPoints.Num();
 
-		averageTargetPos += TargetMOI->GetControlPoint(cpIndex);
+	if (bAdjustPolyEdge)
+	{
+		int32 edgeEndIdx = (TargetIndex + 1) % numPoints;
+		averageTargetPos = 0.5f * (controlPoints[TargetIndex] + controlPoints[edgeEndIdx]);
 	}
-	averageTargetPos /= numTargetCP;
+	else
+	{
+		averageTargetPos = controlPoints[TargetIndex];
+	}
 
 	if (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane || TargetMOI->GetObjectType() == EObjectType::OTCutPlane)
 	{
@@ -213,152 +149,33 @@ FVector AAdjustPolyPointHandle::GetHandleDirection() const
 		return FVector::ZeroVector;
 	}
 
-	const TArray<FVector> &targetCPs = TargetMOI->GetControlPoints();
-	int32 numCPs = targetCPs.Num();
-	if (!ensure(numCPs >= 2) || (CP.Num() != 2) || (CP[1] != ((CP[0] + 1) % targetCPs.Num())))
+	if (!bAdjustPolyEdge)
 	{
 		return FVector::ZeroVector;
 	}
 
-	FVector sidePoint0 = TargetMOI->GetControlPoint(CP[0]);
-	FVector sidePoint1 = TargetMOI->GetControlPoint(CP[1]);
-	FVector sideDir = (sidePoint1 - sidePoint0).GetSafeNormal();
-	FVector sideNormal = sideDir ^ TargetMOI->GetNormal();
+	const TArray<FVector> &targetCPs = TargetMOI->GetControlPoints();
+	int32 numPolyPoints = targetCPs.Num();
+	int32 edgeStartIdx = TargetIndex;
+	int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
 
-	return sideNormal;
+	const FVector &edgeStartPoint = TargetMOI->GetControlPoint(edgeStartIdx);
+	const FVector &edgeEndPoint = TargetMOI->GetControlPoint(edgeEndIdx);
+	FVector edgeDir = (edgeEndPoint - edgeStartPoint).GetSafeNormal();
+	FVector edgeNormal = edgeDir ^ TargetMOI->GetNormal();
+
+	return edgeNormal;
 }
 
 bool AAdjustPolyPointHandle::HandleInputNumber(float number)
 {
-	// Handle should only affect two control points
-	if (CP.Num() == 2)
-	{
-		TArray<FVector> proxyCPs = TargetMOI->GetControlPoints();
-		FVector newCP0;
-		FVector newCP1;
-			
-		FName curDimStringID = Controller->EMPlayerState->CurrentDimensionStringWithInputUniqueID;
-		// Identify if the current dim string is parallel to both edges control by this handle, or is it only changing delta length
-		if (curDimStringID == Controller->DimensionStringUniqueID_Delta || curDimStringID == Controller->DimensionStringUniqueID_Total)
-		{
-			FVector pendingHandleDirection = (HandleCurrentPoint - HandleOriginalPoint).GetSafeNormal();
-			// Calculate where the handle will be if it travels the input distance
-			FVector curHandleLocation = (OriginalP[0] + OriginalP[1]) / 2.f;
-			FVector inputHandleLocation = curHandleLocation;
-
-			// Calculate length from handle location to opposite edge of the polygon
-			// This methods treats both edges control by this handle are parallel
-			if (curDimStringID == Controller->DimensionStringUniqueID_Total)
-			{
-				FVector sideCP0 = OriginalP[0];
-				FVector sideCP1 = OriginalP[1];
-				FVector preCP0 = TargetMOI->GetControlPoint((CP[0] + proxyCPs.Num() - 1) % proxyCPs.Num());
-				FVector postCP1 = TargetMOI->GetControlPoint((CP[1] + 1) % proxyCPs.Num());
-				FVector originalDir = (sideCP0 - preCP0).GetSafeNormal();
-				inputHandleLocation = ((preCP0 + postCP1) * 0.5f) + (originalDir * number);
-			}
-			// else the input is added to original handle location (delta)
-			else
-			{
-				inputHandleLocation = curHandleLocation + (pendingHandleDirection * number);
-			}
-
-			FVector currentEdgeDirection = UKismetMathLibrary::GetDirectionUnitVector(OriginalP[0], OriginalP[1]);
-			FVector closestPoint1, closestPoint2;
-
-			// Intersection test for first CP
-			int32 startID0 = (CP[0] + proxyCPs.Num() - 1) % proxyCPs.Num();
-			int32 endID0 = CP[0];
-			FVector lineDirection0 = UKismetMathLibrary::GetDirectionUnitVector(TargetMOI->GetControlPoint(startID0), TargetMOI->GetControlPoint(endID0));
-			bool b1 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, inputHandleLocation, currentEdgeDirection, OriginalP[0], lineDirection0);
-			newCP0 = FVector(closestPoint1.X, closestPoint1.Y, closestPoint1.Z);
-
-			// Intersection test for second CP
-			int32 startID1 = (CP[1] + 1) % proxyCPs.Num();
-			int32 endID1 = CP[1];
-			FVector lineDirection1 = UKismetMathLibrary::GetDirectionUnitVector(TargetMOI->GetControlPoint(startID1), TargetMOI->GetControlPoint(endID1));
-			bool b2 = UModumateFunctionLibrary::ClosestPointsOnTwoLines(closestPoint1, closestPoint2, inputHandleLocation, currentEdgeDirection, OriginalP[1], lineDirection1);
-			newCP1 = FVector(closestPoint1.X, closestPoint1.Y, closestPoint1.Z);
-
-			proxyCPs[CP[0]] = newCP0;
-			proxyCPs[CP[1]] = newCP1;
-		}
-		// Edges aren't parallel. Set the length of one of the side edges while preserving the direction of the handle
-		else if (curDimStringID == Controller->DimensionStringUniqueID_SideEdge0 || curDimStringID == Controller->DimensionStringUniqueID_SideEdge1)
-		{
-			FVector sideCP0 = OriginalP[0];
-			FVector sideCP1 = OriginalP[1];
-			FVector preCP0 = TargetMOI->GetControlPoint((CP[0] + proxyCPs.Num() - 1) % proxyCPs.Num());
-			FVector postCP1 = TargetMOI->GetControlPoint((CP[1] + 1) % proxyCPs.Num());
-			FVector edgeDir = (sideCP0 - sideCP1).GetSafeNormal();
-			FVector intersectPoint = FVector::ZeroVector;
-				
-			if (curDimStringID == Controller->DimensionStringUniqueID_SideEdge0)
-			{
-				FVector dir = (sideCP0 - preCP0).GetSafeNormal();
-				newCP0 = preCP0 + (dir * number);
-				UModumateFunctionLibrary::ClosestPointsOnTwoLines(newCP1, intersectPoint, newCP0, edgeDir, sideCP1, (sideCP1 - postCP1).GetSafeNormal());
-			}
-			else
-			{
-				FVector dir = (sideCP1 - postCP1).GetSafeNormal();
-				newCP1 = postCP1 + (dir * number);
-				UModumateFunctionLibrary::ClosestPointsOnTwoLines(newCP0, intersectPoint, newCP1, edgeDir, sideCP0, (sideCP0 - preCP0).GetSafeNormal());
-			}
-
-			proxyCPs[CP[0]] = newCP0;
-			proxyCPs[CP[1]] = newCP1;
-		}
-		// Cannot determine method of calculating new length based on dim string UniqueID
-		else
-		{
-			return false;
-		}
-
-		// Check if CPs are intersect. If it is, don't update geometry
-		if (UModumateGeometryStatics::ArePolygonEdgesValid(proxyCPs))
-		{
-			// Set MOI control points to new CP
-			TargetMOI->SetControlPoint(CP[0],newCP0);
-			TargetMOI->SetControlPoint(CP[1],newCP1);
-			EndUse();
-			return true;
-		}
-		else
-		{
-			// The result triangulation will create invalid geometry
-			return false;
-		}
-	}
-	return false; // false by default if not handling numbers
+	// TODO: reimplement with UModumateGeometryStatics::TranslatePolygonEdge and new dimension string manager
+	return false;
 }
 
 void AAdjustPolyPointHandle::SetAdjustPolyEdge(bool bInAdjustPolyEdge)
 {
 	bAdjustPolyEdge = bInAdjustPolyEdge;
-}
-
-void AAdjustPolyPointHandle::Initialize()
-{
-	Super::Initialize();
-
-	if (TargetMOI)
-	{
-		const TArray<FVector> &targetCPs = TargetMOI->GetControlPoints();
-		int32 numCPs = targetCPs.Num();
-
-		// TODO: remove this when 'CP' is no longer used, as it's the deprecated way to keep track of handle target side/index
-		CP.Reset();
-		if (bAdjustPolyEdge)
-		{
-			CP.Add(TargetIndex);
-			CP.Add((TargetIndex + 1) % numCPs);
-		}
-		else
-		{
-			CP.Add(TargetIndex);
-		}
-	}
 }
 
 bool AAdjustPolyPointHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const

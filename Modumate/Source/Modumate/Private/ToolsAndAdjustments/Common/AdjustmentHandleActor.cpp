@@ -220,12 +220,14 @@ bool AAdjustmentHandleActor::BeginUse()
 		return false;
 	}
 
+	// TODO: refactor with new dimension string manager
 	Controller->DimStringWidgetSelectedObject = nullptr; // Reset reference to object that was selected from widget
 	UWidgetBlueprintLibrary::SetFocusToGameViewport(); // Takes keyboard focus away from any potential widget text field
 
 	OriginalMouseMode = Controller->EMPlayerState->SnappedCursor.MouseMode;
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
 
+	// By default, disable collision on the target MOI so that its current modified state doesn't interfere with handle usage
 	if (TargetMOI)
 	{
 		TargetMOI->BeginPreviewOperation();
@@ -236,6 +238,12 @@ bool AAdjustmentHandleActor::BeginUse()
 		{
 			descendent->RequestCollisionDisabled(StateRequestTag, true);
 		}
+	}
+
+	// By default, hide all adjustment handles while one is in use
+	if (SourceMOI)
+	{
+		SourceMOI->ShowAdjustmentHandles(Controller, false);
 	}
 
 	bIsInUse = true;

@@ -49,35 +49,6 @@ using namespace p2t;
 
 using namespace Modumate;
 
-bool UModumateFunctionLibrary::ClosestPointsOnTwoLines(FVector& closestPointLine1, FVector& closestPointLine2, FVector linePoint1, FVector lineVec1, FVector linePoint2, FVector lineVec2)
-{
-	float a = FVector::DotProduct(lineVec1, lineVec1);
-	float b = FVector::DotProduct(lineVec1, lineVec2);
-	float e = FVector::DotProduct(lineVec2, lineVec2);
-
-	float d = a * e - b * b;
-
-	//lines are not parallel
-	if (d != 0.0f)
-	{
-		FVector r = linePoint1 - linePoint2;
-		float c = FVector::DotProduct(lineVec1, r);
-		float f = FVector::DotProduct(lineVec2, r);
-
-		float s = (b*f - c * e) / d;
-		float t = (a*f - c * b) / d;
-
-		closestPointLine1 = linePoint1 + lineVec1 * s;
-		closestPointLine2 = linePoint2 + lineVec2 * t;
-
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
 FVector UModumateFunctionLibrary::V3dToV2d(TArray<FVector2D> & OutV2d, TArray<FVector> InV3d)
 {
 	TArray<FVector2D> V;

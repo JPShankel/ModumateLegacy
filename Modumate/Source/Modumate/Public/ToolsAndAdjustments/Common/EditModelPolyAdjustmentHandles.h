@@ -24,17 +24,14 @@ public:
 	void SetAdjustPolyEdge(bool bInAdjustPolyEdge);
 
 protected:
-	virtual void Initialize() override;
 	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 
 	bool bAdjustPolyEdge;
 	FPlane PolyPlane;
-	TArray<int32> CP;
-	TArray<FVector> OriginalP;
+	FVector OriginalDirection;
+	TArray<FVector> OriginalPolyPoints;
+	TArray<FVector> LastValidPolyPoints;
 	FVector AnchorLoc;
-	TArray<FVector> LastValidPendingCPLocations;
-	FVector HandleOriginalPoint;
-	FVector HandleCurrentPoint;
 };
 
 UCLASS()

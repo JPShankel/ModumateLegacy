@@ -1357,6 +1357,104 @@ bool UModumateGeometryStatics::GetSegmentPolygonIntersections(const FVector2D &S
 	return true;
 }
 
+bool UModumateGeometryStatics::TranslatePolygonEdge(const TArray<FVector> &PolyPoints, const FVector &PolyNormal, int32 EdgeStartIdx, float Translation, FVector &OutStartPoint, FVector &OutEndPoint)
+{
+	// Make sure we can at least index the polygon
+	if ((PolyPoints.Num() < 3) || !PolyPoints.IsValidIndex(EdgeStartIdx))
+	{
+		return false;
+	}
+
+	int32 numPoints = PolyPoints.Num();
+	int32 edgeEndIdx = (EdgeStartIdx + 1) % numPoints;
+	int32 preEdgeIdx = (EdgeStartIdx + numPoints - 1) % numPoints;
+	int32 postEdgeIdx = (edgeEndIdx + 1) % numPoints;
+
+	const FVector &preEdgePoint = PolyPoints[preEdgeIdx];
+	const FVector &edgeStartPoint = PolyPoints[EdgeStartIdx];
+	const FVector &edgeEndPoint = PolyPoints[edgeEndIdx];
+	const FVector &postEdgePoint = PolyPoints[postEdgeIdx];
+
+	OutStartPoint = edgeStartPoint;
+	OutEndPoint = edgeEndPoint;
+
+	// Get the target edge, the edge leading up to its start point, and the edge leading up to its end point
+	FVector edgeDelta = (edgeEndPoint - edgeStartPoint);
+	float edgeLength = edgeDelta.Size();
+	FVector preEdgeDelta = (edgeStartPoint - preEdgePoint);
+	float preEdgeLength = preEdgeDelta.Size();
+	FVector postEdgeDelta = (edgeEndPoint - postEdgePoint);
+	float postEdgeLength = postEdgeDelta.Size();
+
+	// First, make sure that the edge before and after the target extrusion edge are not parallel, otherwise the edge between them can't be extruded.
+	if (FMath::IsNearlyZero(edgeLength) || FMath::IsNearlyZero(preEdgeLength) || FMath::IsNearlyZero(postEdgeLength))
+	{
+		return false;
+	}
+
+	FVector edgeDir = edgeDelta / edgeLength;
+	FVector preEdgeDir = preEdgeDelta / preEdgeLength;
+	FVector postEdgeDir = postEdgeDelta / postEdgeLength;
+	if (FVector::Parallel(preEdgeDir, edgeDir) || FVector::Parallel(edgeDir, postEdgeDir))
+	{
+		return false;
+	}
+
+	// Make sure the edges involved are all coplanar
+	FVector preEdgeCross = (preEdgeDir ^ edgeDir).GetSafeNormal();
+	FVector postEdgeCross = (edgeDir ^ postEdgeDir).GetSafeNormal();
+	if (!FVector::Parallel(preEdgeCross, PolyNormal) || !FVector::Parallel(postEdgeCross, PolyNormal) || !FVector::Orthogonal(edgeDir, PolyNormal))
+	{
+		return false;
+	}
+
+	// Early-exit if we aren't actually doing the translation, since we've verified planarity
+	if (Translation == 0.0f)
+	{
+		return true;
+	}
+
+	// Double check that our edge extension won't result in any divisions by zero, would should have been caught by the earlier checks
+	FVector edgeNormal = edgeDir ^ PolyNormal;
+	float preEdgeInvExtension = edgeNormal | preEdgeDir;
+	float postEdgeInvExtension = edgeNormal | postEdgeDir;
+	if (!ensure(!FMath::IsNearlyZero(preEdgeInvExtension) && !FMath::IsNearlyZero(postEdgeInvExtension)))
+	{
+		return false;
+	}
+
+	float preEdgeExtension = Translation / preEdgeInvExtension;
+	float postEdgeExtension = Translation / postEdgeInvExtension;
+	float newPreEdgeLength = preEdgeLength + preEdgeExtension;
+	float newPostEdgeLength = postEdgeLength + postEdgeExtension;
+
+	// Check if either of the pre- or post- edges would have been removed by the translation
+	if ((newPreEdgeLength < KINDA_SMALL_NUMBER) || (newPostEdgeLength < KINDA_SMALL_NUMBER))
+	{
+		return false;
+	}
+
+	OutStartPoint = preEdgePoint + newPreEdgeLength * preEdgeDir;
+	OutEndPoint = postEdgePoint + newPostEdgeLength * postEdgeDir;
+
+	// Don't allow removing the edge that's being translated, if its points come together to a single point
+	FVector newEdgeDelta = OutEndPoint - OutStartPoint;
+	float newEdgeLength = newEdgeDelta.Size();
+	if (FMath::IsNearlyZero(newEdgeLength))
+	{
+		return false;
+	}
+
+	// Don't allow the points to pass each other, which would result in the edge flipping direction
+	FVector newEdgeDir = newEdgeDelta / newEdgeLength;
+	if (!FVector::Coincident(newEdgeDir, edgeDir))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 void UModumateGeometryStatics::FindBasisVectors(FVector &OutAxisX, FVector &OutAxisY, const FVector &AxisZ)
 {
 	// If the Z basis is vertical, then we can pick some simple X and Y basis vectors
@@ -1802,37 +1900,33 @@ bool UModumateGeometryStatics::GetEdgeIntersections(const TArray<FVector> &Posit
 	
 }
 
-bool UModumateGeometryStatics::ArePolygonEdgesValid2D(const TArray<FVector2D> &Points2D, FFeedbackContext* InWarn)
-{
-	TArray<FVector> points3D;
-	for (const FVector2D& curPoint2D : Points2D)
-	{
-		points3D.Add(FVector(curPoint2D, 0.f));
-	}
-	return ArePolygonEdgesValid(points3D);
-}
-
-bool UModumateGeometryStatics::ArePolygonEdgesValid(const TArray<FVector> &Points, FFeedbackContext* InWarn)
+bool UModumateGeometryStatics::ArePolygonEdgesValid2D(const TArray<FVector2D> &Points, FFeedbackContext* InWarn)
 {
 	int32 numPoints = Points.Num();
+
+	if (numPoints < 3)
+	{
+		return false;
+	}
+
 	for (int32 segIdxAStart = 0; segIdxAStart < numPoints; ++segIdxAStart)
 	{
 		int32 segIdxAEnd = (segIdxAStart + 1) % numPoints;
-		const FVector &segAStart = Points[segIdxAStart];
-		const FVector &segAEnd = Points[segIdxAEnd];
+		const FVector2D &segAStart = Points[segIdxAStart];
+		const FVector2D &segAEnd = Points[segIdxAEnd];
 
 		for (int32 segIdxBStart = 0; segIdxBStart < numPoints; ++segIdxBStart)
 		{
 			int32 segIdxBEnd = (segIdxBStart + 1) % numPoints;
-			const FVector &segBStart = Points[segIdxBStart];
-			const FVector &segBEnd = Points[segIdxBEnd];
-			FVector intersectionPoint;
+			const FVector2D &segBStart = Points[segIdxBStart];
+			const FVector2D &segBEnd = Points[segIdxBEnd];
+			FVector2D intersectionPoint;
 
 			if ((segIdxAStart != segIdxBStart) &&
 				!segAStart.Equals(segBStart) && !segAStart.Equals(segBEnd) &&
 				!segAEnd.Equals(segBStart) && !segAEnd.Equals(segBEnd))
 			{
-				if (FMath::SegmentIntersection2D(segAStart, segAEnd, segBStart, segBEnd, intersectionPoint))
+				if (UModumateGeometryStatics::SegmentIntersection2D(segAStart, segAEnd, segBStart, segBEnd, intersectionPoint, RAY_INTERSECT_TOLERANCE))
 				{
 					if (InWarn)
 					{
@@ -1846,4 +1940,43 @@ bool UModumateGeometryStatics::ArePolygonEdgesValid(const TArray<FVector> &Point
 	}
 
 	return true;
+}
+
+bool UModumateGeometryStatics::ArePolygonEdgesValid(const TArray<FVector> &Points3D, FPlane PolyPlane, FFeedbackContext* InWarn)
+{
+	if (Points3D.Num() < 3)
+	{
+		return false;
+	}
+
+	FVector polyOrigin = Points3D[0];
+
+	// If a plane is provided, make sure the provided polygon points all lie on it
+	if (!PolyPlane.IsZero())
+	{
+		for (const FVector& point3D : Points3D)
+		{
+			if (!FMath::IsNearlyZero(PolyPlane.PlaneDot(point3D), PLANAR_DOT_EPSILON))
+			{
+				return false;
+			}
+		}
+	}
+	// Otherwise, make sure we can compute one from the given points
+	else if (!UModumateGeometryStatics::GetPlaneFromPoints(Points3D, PolyPlane))
+	{
+		return false;
+	}
+
+	// Now, project the points to a plane so we can more easily compute segment intersection
+	FVector axisX, axisY;
+	UModumateGeometryStatics::FindBasisVectors(axisX, axisY, FVector(PolyPlane));
+
+	TArray<FVector2D> points2D;
+	for (const FVector& point3D : Points3D)
+	{
+		points2D.Add(UModumateGeometryStatics::ProjectPoint2D(point3D, axisX, axisY, polyOrigin));
+	}
+
+	return ArePolygonEdgesValid2D(points2D);
 }
