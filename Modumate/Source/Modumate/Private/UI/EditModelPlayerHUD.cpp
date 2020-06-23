@@ -9,6 +9,7 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
+#include "UnrealClasses/DynamicIconGenerator.h"
 
 
 FAffordanceLine::FAffordanceLine(const FVector &InStartPoint, const FVector &InEndPoint,
@@ -58,6 +59,14 @@ void AEditModelPlayerHUD::Initialize()
 	{
 		HUDDrawWidget->AddToViewport();
 		HUDDrawWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+	}
+
+	// Create icon generator in the farthest corner of the universe
+	// TODO: Ideally the scene capture comp should capture itself only, but UE4 lacks that feature, for now...
+	DynamicIconGenerator = GetWorld()->SpawnActor<ADynamicIconGenerator>(DynamicIconGeneratorClass);
+	if (DynamicIconGenerator != nullptr)
+	{
+		DynamicIconGenerator->SetActorLocation(FVector(-100000.f, -100000.f, -100000.f));
 	}
 }
 

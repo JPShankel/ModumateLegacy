@@ -1,20 +1,18 @@
-// Copyright 2018 Modumate, Inc. All Rights Reserved.
+// Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 
 #include "UnrealClasses/DynamicIconGenerator.h"
-#include "Runtime/Engine/Classes/GameFramework/SpringArmComponent.h"
-#include "Runtime/Engine/Classes/Components/SceneCaptureComponent2D.h"
-#include "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
-#include "Engine/StaticMesh.h"
-#include "UObject//ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/RectLightComponent.h"
-#include "ProceduralMeshComponent.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "UnrealClasses/CompoundMeshActor.h"
+#include "ModumateCore/ModumateIconMeshStatics.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
-#include "Runtime/Engine/Classes/Kismet/KismetRenderingLibrary.h"
-#include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 
-//C:\Program Files\Epic Games\UE_4.22\Engine\Source\Runtime\Engine\Classes\Kismet\KismetRenderingLibrary.h
+using namespace Modumate;
 
 // Sets default values
 ADynamicIconGenerator::ADynamicIconGenerator()
@@ -27,123 +25,36 @@ ADynamicIconGenerator::ADynamicIconGenerator()
 	// Setup spring arm and capture
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(Root);
-	SpringArm->TargetArmLength = 550.f;
-	SpringArm->bDoCollisionTest = false;
-	SpringArm->SetRelativeLocationAndRotation(FVector(0.f, 0.f, 6.f), FRotator(-0.13f, -30.f, -66.72f));
 
 	SceneCaptureComp = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCaptureComp"));
 	SceneCaptureComp->SetupAttachment(SpringArm);
-	SceneCaptureComp->FOVAngle = 5.f;
-	SceneCaptureComp->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
-	SceneCaptureComp->bCaptureEveryFrame = false;
-	SceneCaptureComp->bCaptureOnMovement = false;
-	SceneCaptureComp->bAlwaysPersistRenderingState = true;
-	SceneCaptureComp->ShowFlags.Fog = false;
-	SceneCaptureComp->ShowFlags.Atmosphere = false;
-	SceneCaptureComp->ShowFlags.TemporalAA = false;
-	SceneCaptureComp->ShowFlags.SkyLighting = false;
-	SceneCaptureComp->ShowFlags.LightShafts = false;
-	SceneCaptureComp->ShowFlags.VolumetricFog = false;
-	static ConstructorHelpers::FObjectFinder<UMaterialInterface> PostProcessAsset(TEXT("Material'/Game/Materials/MaterialAffordance/PP_IconGenMeshPass.PP_IconGenMeshPass'"));
-	SceneCaptureComp->PostProcessSettings.AddBlendable(PostProcessAsset.Object, 1.f);
-	SceneCaptureComp->PostProcessSettings.AutoExposureMinBrightness = 1.f;
-	SceneCaptureComp->PostProcessSettings.AutoExposureMaxBrightness = 1.f;
-	SceneCaptureComp->PostProcessSettings.AmbientCubemapIntensity = 3.f;
-	static ConstructorHelpers::FObjectFinder<UTextureCube> CubeMapTextureAsset(TEXT("TextureCube'/Game/Textures/HDR/HDRI_Epic_Courtyard_Daylight.HDRI_Epic_Courtyard_Daylight'"));
-	SceneCaptureComp->PostProcessSettings.AmbientCubemap = CubeMapTextureAsset.Object;
-	SceneCaptureComp->PostProcessSettings.AmbientOcclusionIntensity = 1.f;
-	SceneCaptureComp->PostProcessSettings.AmbientOcclusionRadius = 10.f;
-	SceneCaptureComp->PostProcessSettings.AmbientOcclusionStaticFraction = 0.5f;
-	SceneCaptureComp->PostProcessSettings.AmbientOcclusionRadiusInWS = false;
-	SceneCaptureComp->PostProcessSettings.AmbientOcclusionFadeRadius = 20000.f;
-	SceneCaptureComp->PostProcessSettings.AmbientOcclusionPower = 20.f;
-	SceneCaptureComp->PostProcessSettings.AmbientOcclusionQuality = 100.f;
-	SceneCaptureComp->PostProcessSettings.AmbientOcclusionMipScale = 0.5f;
-
-
-	GroundPlane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GroundPlane"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> GroundPlaneAsset(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
-	static ConstructorHelpers::FObjectFinder<UMaterialInterface> GroundPlaneMatAsset(TEXT("Material'/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial'"));
-	GroundPlane->SetMaterial(0, GroundPlaneMatAsset.Object);
-	GroundPlane->SetupAttachment(Root);
-	GroundPlane->SetStaticMesh(GroundPlaneAsset.Object);
-	GroundPlane->SetRelativeLocation(FVector(0.f, 100.f, 0.f));
-	GroundPlane->SetRelativeScale3D(FVector(1.f, 2.f, 1.f));
-	GroundPlane->Mobility = EComponentMobility::Movable;
-	GroundPlane->LightingChannels.bChannel0 = false;
-	GroundPlane->LightingChannels.bChannel2 = true;
-	GroundPlane->bRenderCustomDepth = true;
-	GroundPlane->CustomDepthStencilValue = 2;
-
-	// Cps are reference for walls that need control points
-	CpRef1 = CreateDefaultSubobject<USceneComponent>(TEXT("CpRef1"));
-	CpRef1->SetupAttachment(Root);
-	CpRef1->SetRelativeLocation(FVector(-20.f, 0.f, 0.f));
-	CpRef2 = CreateDefaultSubobject<USceneComponent>(TEXT("CpRef2"));
-	CpRef2->SetupAttachment(Root);
-	CpRef2->SetRelativeLocation(FVector(20.f, 0.f, 0.f));
 
 	// Create lights
 	RectLight = CreateDefaultSubobject<URectLightComponent>(TEXT("RectLight"));
 	RectLight->SetupAttachment(Root);
-	RectLight->SetMobility(EComponentMobility::Movable);
-	RectLight->IntensityUnits = ELightUnits::Candelas;
-	RectLight->SetIntensity(4.f);
-	RectLight->LightingChannels.bChannel0 = false;
-	RectLight->LightingChannels.bChannel2 = true;
-	RectLight->SetRelativeTransform(
-		FTransform(
-			//FRotator(0.f, 0.f, -26.59f),
-			FRotator(0.f, -26.59f, 0.f),
-			FVector(-119.33f, 68.6448f, 149.8512f), //translation
-			FVector(34.f, 34.f, 34.f))
-	);
 	RectLight1 = CreateDefaultSubobject<URectLightComponent>(TEXT("RectLight1"));
 	RectLight1->SetupAttachment(Root);
-	RectLight->SetMobility(EComponentMobility::Movable);
-	RectLight1->IntensityUnits = ELightUnits::Candelas;
-	RectLight1->SetIntensity(2.f);
-	RectLight1->LightingChannels.bChannel0 = false;
-	RectLight1->LightingChannels.bChannel2 = true;
-	RectLight1->CastShadows = false;
-	RectLight1->SetRelativeTransform(
-		FTransform(
-			FRotator(-27.03f, -131.37f, -1.32f),
-			FVector(44.125f, 128.83f, 233.419f), //translation
-			FVector(34.f, 34.f, 34.f))
-	);
 
-	// Create Procedural meshes pool. This is limited because scene capture can only capture itself
-	for (int32 i = 0; i < 10; ++i)
-	{
-		FName name = *FString::Printf(TEXT("ProceduralMesh %i"), i);
-		UProceduralMeshComponent* curProcMesh = CreateDefaultSubobject<UProceduralMeshComponent>(name);
-		curProcMesh->LightingChannels.bChannel0 = false;
-		curProcMesh->LightingChannels.bChannel2 = true;
-		curProcMesh->bUseAsOccluder = false;
-		curProcMesh->bRenderCustomDepth = true;
-		curProcMesh->CustomDepthStencilValue = 1;
-		curProcMesh->BoundsScale = 10000.f;
-		Procedurallayers.Add(curProcMesh);
-	}
-	// Create static meshes pool. Same limit as procedural mesh
-	for (int32 i = 0; i < 20; ++i)
-	{
-		FName name = *FString::Printf(TEXT("StaticMesh %i"), i);
-		StaticMeshes.Add(CreateDefaultSubobject<UStaticMeshComponent>(name));
-	}
-
-	//SceneCaptureComp->ShowOnlyActorComponents(this);
+	// Static Mesh
+	IconStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("IconStaticMesh"));
+	IconStaticMesh->SetupAttachment(Root);
+	IconStaticMesh->SetMobility(EComponentMobility::Movable);
+	IconStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	IconStaticMesh->CastShadow = false;
 }
 
 // Called when the game starts or when spawned
 void ADynamicIconGenerator::BeginPlay()
 {
 	Super::BeginPlay();
-	for (int32 i = 0; i < 162; ++i)
-	{
-		RenderTargetPool.Add(UKismetRenderingLibrary::CreateRenderTarget2D(this, 128, 128, RTF_RGBA8));
-	}
+
+	AEditModelGameMode_CPP* gamemode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+
+	IconDynamicMeshActor = GetWorld()->SpawnActor<ADynamicMeshActor>(gamemode->DynamicMeshActorClass.Get());
+	IconDynamicMeshActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
+
+	IconCompoundMeshActor = GetWorld()->SpawnActor<ACompoundMeshActor>();
+	IconCompoundMeshActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
 }
 
 // Called every frame
@@ -153,74 +64,438 @@ void ADynamicIconGenerator::Tick(float DeltaTime)
 
 }
 
-void ADynamicIconGenerator::GetWallSliceParam(FVector& Location, FVector& Normal, int32 CurrentLayer, int32 NumberOfLayers, FVector Cp1, FVector Cp2, float Height)
+bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
 {
-	FVector start = Cp2;
-	FVector end = FVector(Cp1.X, Cp1.Y, Cp1.Z + Height);
-	float lerpAlpha = float(CurrentLayer + 2) / float(NumberOfLayers + 1);
-	Location = UKismetMathLibrary::VLerp(start, end, lerpAlpha);
-	Normal = UKismetMathLibrary::GetDirectionUnitVector(end, start);
-}
+	// Step 1: Generate model
+	////////////////////////////////////////////////////////////////////
+	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 
-TArray<FColor> ADynamicIconGenerator::GetFColorFromRenderTarget(UTextureRenderTarget2D* RenderTarget)
-{
-	//UKismetRenderingLibrary::ReadRenderTargetPixel()
-	return TArray<FColor>{};
-}
-
-TArray<FColor> ADynamicIconGenerator::DownsampleTextureData(TArray<FColor>& Data, int32 Width, int32 Kernel)
-{
-	int32 Len = Data.Num();
-	int32 W = Width;
-	TArray<FColor> Downsampled;
-	Downsampled.Init(FColor(), Len / (Kernel * Kernel));
-
-	int32 Row = 0;
-	for (int32 i = 0; i < Downsampled.Num(); i++)
+	const FModumateObjectAssembly *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
+	if (!assembly)
 	{
-		TArray<FColor> KernelColors;
-		KernelColors.Init(FColor(0, 0, 0, 255), Kernel * Kernel);
+		return false;
+	}
+	////////////////////////////////////////////////////////////////////
+	FVector p1 = FVector(WallLength * 0.5f, 0.f, 0.f) + Root->GetComponentLocation();
+	FVector p2 = FVector(WallLength * -0.5f, 0.f, 0.f) + Root->GetComponentLocation();
+	FVector p3 = FVector(WallLength * -0.5f, 0.f, WallHeight) + Root->GetComponentLocation();
+	FVector p4 = FVector(WallLength * 0.5f, 0.f, WallHeight) + Root->GetComponentLocation();
+	TArray<FVector> planePoints = { p1, p2, p3, p4};
 
-		int32 KernelIndex = i * Kernel;
-		if (KernelIndex % W == 0 && i != 0)
+	IconDynamicMeshActor->CreateBasicLayerDefs(planePoints, FVector::ZeroVector, *assembly, 0.5f, FVector::ZeroVector);
+	IconDynamicMeshActor->Assembly = *assembly;
+	IconDynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
+
+	// Slice each layer, assuming each layer is successfully made
+	for (int32 i = 0; i < assembly->Layers.Num(); ++i)
+	{
+		if (IconDynamicMeshActor->ProceduralSubLayers[i])
 		{
-			Row++;
+			FVector sliceLocation, sliceNormal;
+			GetWallSliceLocationNormal(i, assembly->Layers.Num(), p2, p1, WallHeight, sliceLocation, sliceNormal);
+			UProceduralMeshComponent* otherHalfProcMesh;
+			UKismetProceduralMeshLibrary::SliceProceduralMesh(
+				IconDynamicMeshActor->ProceduralSubLayers[i],
+				sliceLocation,
+				sliceNormal,
+				false,
+				otherHalfProcMesh,
+				EProcMeshSliceCapOption::UseLastSectionForCap,
+				IconDynamicMeshActor->ProceduralSubLayers[i]->GetMaterial(0));
 		}
+	}
+	SetIconDynamicMeshLayersForCapture(true);
 
-		KernelIndex += Row * W * (Kernel - 1);
+	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
+	FVector meshOrigin, meshExtent;
+	IconDynamicMeshActor->GetActorBounds(true, meshOrigin, meshExtent, true);
+	meshExtent.Normalize();
+	FVector meshSize = FVector(meshExtent.Size()) * WallIconScaleFactor;
+	FVector meshLocation = (meshOrigin - GetActorLocation()) * meshExtent * -1.f;
+	IconDynamicMeshActor->SetActorRelativeLocation(FVector(meshLocation.X, meshLocation.Y, 0.f));
+	IconDynamicMeshActor->SetActorScale3D(meshSize);
+	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->CaptureScene();
 
-		for (int32 k = 0; k < Kernel; ++k)
+	// Step 3: Cleanup
+	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
+	IconDynamicMeshActor->SetActorScale3D(FVector::OneVector);
+	SetIconDynamicMeshLayersForCapture(false);
+	return true;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+{
+	// Step 1: Generate model
+	////////////////////////////////////////////////////////////////////
+	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+
+	const FModumateObjectAssembly *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
+	if (!assembly)
+	{
+		return false;
+	}
+	////////////////////////////////////////////////////////////////////
+	FVector p1 = FVector(FloorLength * -0.5f, FloorDepth * 0.5f, 0.f) + Root->GetComponentLocation();
+	FVector p2 = FVector(FloorLength * 0.5f, FloorDepth * 0.5f, 0.f) + Root->GetComponentLocation();
+	FVector p3 = FVector(FloorLength * 0.5f, FloorDepth * -0.5f, 0.f) + Root->GetComponentLocation();
+	FVector p4 = FVector(FloorLength * -0.5f, FloorDepth * -0.5f, 0.f) + Root->GetComponentLocation();
+	TArray<FVector> planePoints = { p1, p2, p3, p4 };
+
+	IconDynamicMeshActor->CreateBasicLayerDefs(planePoints, FVector::ZeroVector, *assembly, 1.f, FVector::ZeroVector);
+	IconDynamicMeshActor->Assembly = *assembly;
+	IconDynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
+
+	// Slice each layer, assuming each layer is successfully made
+	for (int32 i = 0; i < assembly->Layers.Num(); ++i)
+	{
+		if (IconDynamicMeshActor->ProceduralSubLayers[i])
 		{
-			for (int32 kr = 0; kr < Kernel; ++kr)
+			FVector sliceLocation, sliceNormal;
+			bool bSliced;
+			float layerRatio = 1.f / assembly->Layers.Num();
+			FVector sliceStart = p4 + layerRatio * (p3 - p4);
+			FVector sliceEnd = p2 + layerRatio * (p1 - p2);
+
+			GetFloorSliceLocationNormal(i, assembly->Layers.Num(), sliceStart, sliceEnd, 0.f, sliceLocation, sliceNormal, bSliced);
+			if (bSliced)
 			{
-				int32 c = KernelIndex + k + (W * kr);
-				if (c > 0 && c < Len)
-				{
-					KernelColors[k * Kernel + kr] = Data[c];
-				}
+				UProceduralMeshComponent* otherHalfProcMesh;
+				UKismetProceduralMeshLibrary::SliceProceduralMesh(
+					IconDynamicMeshActor->ProceduralSubLayers[i],
+					sliceLocation,
+					sliceNormal,
+					false,
+					otherHalfProcMesh,
+					EProcMeshSliceCapOption::UseLastSectionForCap,
+					IconDynamicMeshActor->ProceduralSubLayers[i]->GetMaterial(0));
 			}
 		}
-
-		int32 AvR = 0;
-		int32 AvG = 0;
-		int32 AvB = 0;
-		int32 AvA = 0;
-		for (int32 j = 0; j < KernelColors.Num(); ++j)
-		{
-			AvR += KernelColors[j].R;
-			AvG += KernelColors[j].G;
-			AvB += KernelColors[j].B;
-			AvA += KernelColors[j].A;
-		}
-
-		FColor KernelAvarage;
-		KernelAvarage.R = (uint8)(AvR / KernelColors.Num());
-		KernelAvarage.G = (uint8)(AvG / KernelColors.Num());
-		KernelAvarage.B = (uint8)(AvB / KernelColors.Num());
-		KernelAvarage.A = (uint8)(AvA / KernelColors.Num());
-		Downsampled[i] = KernelAvarage;
 	}
+	SetIconDynamicMeshLayersForCapture(true);
 
-	return Downsampled;
+	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
+	FVector meshOrigin, meshExtent;
+	IconDynamicMeshActor->GetActorBounds(true, meshOrigin, meshExtent, true);
+	meshExtent.Normalize();
+	FVector meshSize = FVector(meshExtent.Size()) * FloorIconScaleFactor;
+	FVector meshLocation = (meshOrigin - GetActorLocation())* meshSize * -1.f;
+	IconDynamicMeshActor->SetActorRelativeLocation(FVector(0.f, 0.f, meshLocation.Z));
+	IconDynamicMeshActor->SetActorScale3D(meshSize);
+
+	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->CaptureScene();
+
+	// Step 3: Cleanup
+	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
+	IconDynamicMeshActor->SetActorScale3D(FVector::OneVector);
+	SetIconDynamicMeshLayersForCapture(false);
+	return true;
 }
 
+bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+{
+	// Step 1: Generate model
+	////////////////////////////////////////////////////////////////////
+	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+
+	const FModumateObjectAssembly *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
+	if (!assembly)
+	{
+		return false;
+	}
+	////////////////////////////////////////////////////////////////////
+	IconCompoundMeshActor->MakeFromAssembly(*assembly, FVector::OneVector, false, true);
+
+	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
+	float portalMinX = assembly->PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinX).AsWorldCentimeters();
+	float portalMaxX = assembly->PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMaxX).AsWorldCentimeters();
+	float portalMinZ = assembly->PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinZ).AsWorldCentimeters();
+	float portalMaxZ = assembly->PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMaxZ).AsWorldCentimeters();
+	float portalWidth = portalMaxX - portalMinX;
+	float portalHeight = portalMaxZ - portalMinZ;
+
+	FVector meshSize = (PortalIconScaleFactor / FVector(portalWidth, 0.f, portalHeight).Size()) * FVector::OneVector;
+	FVector meshLocation = (FVector(portalWidth, 0.f, portalHeight)) * meshSize * -0.5f;
+
+	IconCompoundMeshActor->SetActorRelativeLocation(meshLocation);
+	IconCompoundMeshActor->SetActorRelativeScale3D(meshSize);
+
+	// Set bound render to prevent mesh from being occluded by front mesh
+	SetIconCompoundMeshActorForCapture(true);
+
+	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->CaptureScene();
+
+	// Step 3: Cleanup
+	IconCompoundMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
+	IconCompoundMeshActor->SetActorScale3D(FVector::OneVector);
+	SetIconCompoundMeshActorForCapture(false);
+	return true;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FName &AsmKey, UTextureRenderTarget2D* RenderTarget)
+{
+	// Step 1: Generate model
+////////////////////////////////////////////////////////////////////
+	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+
+	const FModumateObjectAssembly *assemblyPtr = doc->PresetManager.GetAssemblyByKey(AsmKey);
+	if (!assemblyPtr)
+	{
+		return false;
+	}
+	FModumateObjectAssembly assembly = *assemblyPtr;
+	////////////////////////////////////////////////////////////////////
+	// Now that we have a cabinet assembly, a DynamicMeshActor, and CompoundMeshActor,
+	// we can make a fake cabinet for icon generation the same way that FMOICabinetImpl does.
+
+	// Get the toe kick dimensions from the assembly
+	FVector2D toeKickDimensions;
+	UModumateFunctionLibrary::GetCabinetToeKickDimensions(assembly, toeKickDimensions);
+
+	// Get the exterior finish material for the cabinet
+	static const FName cabinetGeomMatName(TEXT("Cabinet_Exterior_Finish"));
+	FArchitecturalMaterial materialData;
+	if (assembly.PortalConfiguration.IsValid())
+	{
+		materialData = assembly.PortalConfiguration.MaterialsPerChannel.FindRef(cabinetGeomMatName);
+	}
+
+	// Get the cabinet dimensions
+	Units::FUnitValue cabinetWidthUnit(CabinetDimension.X, Units::EUnitType::WorldInches);
+	Units::FUnitValue cabinetHeightUnit(CabinetDimension.Z, Units::EUnitType::WorldInches);
+	Units::FUnitValue cabinetDepthUnit(CabinetDimension.Y, Units::EUnitType::WorldInches);
+
+	if (assembly.PortalConfiguration.IsValid())
+	{
+		cabinetWidthUnit = assembly.PortalConfiguration.ReferencePlanes[FPortalConfiguration::RefPlaneNameMaxX].FixedValue;
+		cabinetHeightUnit = assembly.PortalConfiguration.ReferencePlanes[FPortalConfiguration::RefPlaneNameMaxZ].FixedValue;
+	}
+
+	float cabinetWidth = cabinetWidthUnit.AsWorldCentimeters();
+	float cabinetHeight = cabinetHeightUnit.AsWorldCentimeters();
+	float cabinetDepth = cabinetDepthUnit.AsWorldCentimeters();
+
+	// Make the cabinet base + box geometry
+	TArray<FVector> cabinetCPs = {
+		FVector::ZeroVector,
+		FVector(cabinetWidth, 0.0f, 0.0f),
+		FVector(cabinetWidth, cabinetDepth, 0.0f),
+		FVector(0.0f, cabinetDepth, 0.0f),
+	};
+	IconDynamicMeshActor->SetupCabinetGeometry(cabinetCPs, cabinetHeight, materialData, toeKickDimensions, 2);
+
+	// Now make the cabinet portal geometry
+	if (assembly.PortalConfiguration.IsValid())
+	{
+		// Update the reference planes so the portal 9-slicing is correct
+		TMap<FName, FPortalReferencePlane> &refPlanes = assembly.PortalConfiguration.ReferencePlanes;
+		refPlanes[FPortalConfiguration::RefPlaneNameMinX].FixedValue = Units::FUnitValue::WorldCentimeters(0.0f);
+		refPlanes[FPortalConfiguration::RefPlaneNameMaxX].FixedValue = Units::FUnitValue::WorldCentimeters(cabinetWidth);
+		refPlanes[FPortalConfiguration::RefPlaneNameMinZ].FixedValue = Units::FUnitValue::WorldCentimeters(0.0f);
+		refPlanes[FPortalConfiguration::RefPlaneNameMaxZ].FixedValue = Units::FUnitValue::WorldCentimeters(cabinetHeight - toeKickDimensions.Y);
+		assembly.PortalConfiguration.CacheRefPlaneValues();
+	}
+
+	IconCompoundMeshActor->MakeFromAssembly(assembly, FVector::OneVector, false, false);
+
+	if (assembly.PortalConfiguration.IsValid())
+	{
+		// Now position the portal where it's supposed to go
+		FVector portalOrigin = cabinetCPs[3] + (toeKickDimensions.Y * FVector::UpVector);
+		FQuat portalRot = FRotationMatrix::MakeFromYZ(FVector(0.0f, 1.0f, 0.0f), FVector::UpVector).ToQuat();
+
+		IconCompoundMeshActor->SetActorLocationAndRotation(portalOrigin, portalRot);
+	}
+
+	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
+	// Scale IconDynamicMeshActor to fit
+	FVector meshExtent = IconDynamicMeshActor->Mesh->Bounds.BoxExtent;
+	FVector meshOrigin = IconDynamicMeshActor->Mesh->Bounds.Origin;
+	FVector meshSize = ((CabinetIconScaleFactor / meshExtent.Size()) * FVector::OneVector);
+	FVector meshLocation = FVector(0.f, 0.f, cabinetHeight * meshSize.Z * -0.5f);
+	IconDynamicMeshActor->SetActorRelativeLocation(meshLocation);
+	IconDynamicMeshActor->SetActorRelativeScale3D(meshSize);
+
+	// Scale IconCompoundMeshActor to fit
+	FTransform dynTransform = IconDynamicMeshActor->GetTransform();
+	FVector newDynLocation = dynTransform.TransformPosition(IconCompoundMeshActor->GetTargetLocation());
+	IconCompoundMeshActor->SetActorLocation(newDynLocation - FVector(meshSize.X * cabinetWidth, meshSize.Y * cabinetDepth, 0.f) * 0.5f);
+	IconCompoundMeshActor->SetActorRelativeScale3D(meshSize);
+
+	// Set bound render to prevent mesh from being occluded by front mesh
+	SetIconCompoundMeshActorForCapture(true);
+	IconDynamicMeshActor->Mesh->SetVisibility(true);
+	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, true);
+
+	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->CaptureScene();
+
+	// Step 3: Cleanup
+	IconCompoundMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
+	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
+	IconCompoundMeshActor->SetActorScale3D(FVector::OneVector);
+	IconDynamicMeshActor->SetActorScale3D(FVector::OneVector);
+	SetIconCompoundMeshActorForCapture(false);
+	IconDynamicMeshActor->Mesh->SetVisibility(false);
+	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, false);
+	return true;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+{
+	// Step 1: Generate model
+	////////////////////////////////////////////////////////////////////
+	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+
+	const FModumateObjectAssembly *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
+	if (!assembly)
+	{
+		return false;
+	}
+	////////////////////////////////////////////////////////////////////
+	// Now that we have an assembly, a DynamicMeshActor, and CompoundMeshActor,
+	// we can make a mesh for icon generation.
+	FVector meshStartPos = FVector(TrimLength * 0.5f, 0.f, 0.f);
+	FVector meshEndPos = FVector(TrimLength * -0.5f, 0.f, 0.f);
+	FVector meshNormal = mode == EToolMode::VE_STRUCTURELINE ? FVector::LeftVector : FVector::RightVector;
+	FVector meshUp = mode == EToolMode::VE_STRUCTURELINE ? FVector::DownVector : FVector::UpVector;
+
+	FVector2D upperExtensions = FVector2D::ZeroVector;
+	FVector2D outerExtensions = FVector2D::ZeroVector;
+
+	FVector scaleVector;
+	if (!assembly->TryGetProperty(BIM::Parameters::Scale, scaleVector))
+	{
+		scaleVector = FVector::OneVector;
+	}
+	IconDynamicMeshActor->SetupExtrudedPolyGeometry(*assembly, meshStartPos, meshEndPos,
+		meshNormal, meshUp, upperExtensions, outerExtensions, scaleVector, true, false);
+
+	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
+	FVector meshExtent = IconDynamicMeshActor->Mesh->Bounds.BoxExtent;
+	FVector meshOrigin = IconDynamicMeshActor->Mesh->Bounds.Origin;
+	FVector meshSize = ((TrimIconScaleFactor / meshExtent.Size()) * FVector::OneVector);
+	FVector meshLocation = meshOrigin * meshSize * -1.f;
+
+	IconDynamicMeshActor->SetActorRelativeLocation(meshLocation);
+	IconDynamicMeshActor->SetActorRelativeScale3D(meshSize);
+
+	// Set bound render to prevent mesh from being occluded by front mesh
+	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, true);
+	IconDynamicMeshActor->Mesh->SetVisibility(true);
+
+	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->CaptureScene();
+
+	// Step 3: Cleanup
+	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
+	IconDynamicMeshActor->SetActorScale3D(FVector::OneVector);
+	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, false);
+	IconDynamicMeshActor->Mesh->SetVisibility(false);
+	return true;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FName &AsmKey, UTextureRenderTarget2D* RenderTarget)
+{
+	// Step 1: Generate model
+	////////////////////////////////////////////////////////////////////
+	TArray<UStaticMesh*> meshes;
+	AEditModelPlayerController_CPP *controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
+	UModumateIconMeshStatics::GetMeshesFromShoppingItem(controller, AsmKey, EToolMode::VE_PLACEOBJECT, meshes, false);
+	if (meshes.Num() == 0)
+	{
+		return false;
+	}
+	UStaticMesh* mesh = meshes[0];
+	////////////////////////////////////////////////////////////////////
+
+	IconStaticMesh->SetStaticMesh(mesh);
+
+	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
+	FVector meshScale = ((FFEIconScaleFactor / mesh->GetBounds().SphereRadius) * FVector::OneVector);
+	FVector meshLocation = (mesh->GetBounds().Origin * meshScale) * -1.f;
+
+	IconStaticMesh->SetRelativeLocation(meshLocation);
+	IconStaticMesh->SetRelativeScale3D(meshScale);
+
+	SetComponentForIconCapture(IconStaticMesh, true);
+	IconStaticMesh->SetVisibility(true);
+	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->CaptureScene();
+
+	// Step 3: Cleanup
+	IconStaticMesh->ResetRelativeTransform();
+	SetComponentForIconCapture(IconStaticMesh, false);
+	IconStaticMesh->SetVisibility(false);
+	return true;
+}
+
+void ADynamicIconGenerator::GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal)
+{
+	FVector endPt = FVector(Cp1.X, Cp1.Y, Cp1.Z + Height);
+	float sliceLocationAlpha = (NumberOfLayers - CurrentLayer + 1.f) / (NumberOfLayers + 1.f);
+	OutNormal = (Cp2 - endPt).GetSafeNormal();
+	OutLocation = Cp2 + sliceLocationAlpha * (endPt - Cp2);
+}
+
+void ADynamicIconGenerator::GetFloorSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& StartPt, const FVector& EndPt, float Height, FVector& OutLocation, FVector& OutNormal, bool& OutSliced)
+{
+	int32 sliceId = NumberOfLayers - 1 - CurrentLayer;
+	if (sliceId == 0)
+	{
+		OutLocation = FVector::ZeroVector;
+		OutNormal = FVector::ZeroVector;
+		OutSliced = false;
+	}
+	else
+	{
+		float sliceLocationAlpha = sliceId / (NumberOfLayers + 1.f);
+		OutLocation = EndPt + sliceLocationAlpha * (StartPt - EndPt);
+		OutNormal = FVector(-.5f, -.55f, 0.f);
+		OutSliced = true;
+	}
+}
+
+bool ADynamicIconGenerator::SetComponentForIconCapture(UPrimitiveComponent* Comp, bool CanCapture)
+{
+	if (Comp)
+	{
+		if (CanCapture)
+		{
+			Comp->SetBoundsScale(1000);
+			Comp->LightingChannels.bChannel0 = false;
+			Comp->LightingChannels.bChannel2 = true;
+			Comp->SetRenderCustomDepth(true);
+			Comp->CustomDepthStencilValue = 1;
+		}
+		else
+		{
+			Comp->SetBoundsScale(1);
+		}
+
+		return true;
+	}
+	return false;
+}
+
+void ADynamicIconGenerator::SetIconDynamicMeshLayersForCapture(bool Visible)
+{
+	for (auto& curLayer : IconDynamicMeshActor->ProceduralSubLayers)
+	{
+		SetComponentForIconCapture(curLayer, Visible);
+		curLayer->SetVisibility(Visible);
+	}
+}
+
+void ADynamicIconGenerator::SetIconCompoundMeshActorForCapture(bool Visible)
+{
+	TArray<UPrimitiveComponent*> comps;
+	IconCompoundMeshActor->GetComponents<UPrimitiveComponent>(comps);
+	for (auto& curComp : comps)
+	{
+		SetComponentForIconCapture(curComp, Visible);
+	}
+	IconCompoundMeshActor->SetActorHiddenInGame(!Visible);
+}
