@@ -1789,13 +1789,18 @@ bool AEditModelPlayerController_CPP::GetActiveUserSnapPoint(FTransform &outSnapP
 	return false;
 }
 
-float AEditModelPlayerController_CPP::DistanceBetweenWorldPointsInScreenSpace(const FVector &p1, const FVector &p2) const
+bool AEditModelPlayerController_CPP::DistanceBetweenWorldPointsInScreenSpace(const FVector &Point1, const FVector &Point2, float &OutScreenDist) const
 {
-	FVector2D sp1, sp2;
-	ProjectWorldLocationToScreen(p1, sp1);
-	ProjectWorldLocationToScreen(p2, sp2);
+	OutScreenDist = FLT_MAX;
 
-	return (sp1 - sp2).Size();
+	FVector2D screenPoint1, screenPoint2;
+	if (ProjectWorldLocationToScreen(Point1, screenPoint1) && ProjectWorldLocationToScreen(Point2, screenPoint2))
+	{
+		OutScreenDist = FVector2D::Distance(screenPoint1, screenPoint2);
+		return true;
+	}
+
+	return false;
 }
 
 bool AEditModelPlayerController_CPP::GetScreenScaledDelta(const FVector &Origin, const FVector &Normal, const float DesiredWorldDist, const float MaxScreenDist,
@@ -2155,8 +2160,9 @@ bool AEditModelPlayerController_CPP::ValidateVirtualHit(const FVector &MouseOrig
 {
 	// The virtual hit point needs to be within a maximum screen distance, and ahead of the mouse
 	OutRayDist = (HitPoint - MouseOrigin) | MouseDir;
-	float screenSpaceDist = DistanceBetweenWorldPointsInScreenSpace(HitPoint, MouseOrigin);
-	if ((screenSpaceDist < MaxScreenDist) && (OutRayDist > KINDA_SMALL_NUMBER) && (OutRayDist < CurVirtualHitDist))
+	float screenSpaceDist;
+	if (DistanceBetweenWorldPointsInScreenSpace(HitPoint, MouseOrigin, screenSpaceDist) &&
+		(screenSpaceDist < MaxScreenDist) && (OutRayDist > KINDA_SMALL_NUMBER) && (OutRayDist < CurVirtualHitDist))
 	{
 		// If virtual hit point is a candidate, make sure it's either
 		// in front of our current object hit distance, or verify that it's not occluded.
@@ -2262,7 +2268,8 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetAffordanceHit(const FVecto
 	int32 affordanceDimensions = allowZSnap ? 3 : 2;
 
 	// If we're near the affordance origin, snap to it
-	if (DistanceBetweenWorldPointsInScreenSpace(mouseLoc, affordance.Origin) < SnapPointMaxScreenDistance)
+	float screenSpaceDist;
+	if (DistanceBetweenWorldPointsInScreenSpace(mouseLoc, affordance.Origin, screenSpaceDist) && (screenSpaceDist < SnapPointMaxScreenDistance))
 	{
 		ret.Valid = true;
 		ret.SnapType = ESnapType::CT_WORLDSNAPXY;
@@ -2284,7 +2291,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetAffordanceHit(const FVecto
 			float distance = 0.0f;
 			if (UModumateGeometryStatics::FindShortestDistanceBetweenRays(affordance.Origin, customBasis[i], mouseLoc, mouseDir, affordanceIntercept, mouseIntercept, distance))
 			{
-				if (DistanceBetweenWorldPointsInScreenSpace(affordanceIntercept, mouseIntercept) < SnapLineMaxScreenDistance)
+				if (DistanceBetweenWorldPointsInScreenSpace(affordanceIntercept, mouseIntercept, screenSpaceDist) && (screenSpaceDist < SnapLineMaxScreenDistance))
 				{
 					// If this is the first hit or closer than the last one...
 					if (!ret.Valid || (affordanceIntercept - mouseLoc).Size() < (ret.Location - mouseLoc).Size())
@@ -2356,7 +2363,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetUserSnapPointMouseHit(cons
 	ret.Actor = nullptr;
 	ret.SnapType = ESnapType::CT_NOSNAP;
 
-	float bestDir = 0;
+	float bestScreenDist = 0;
 	for (auto &userSnapPoint : UserSnapPoints)
 	{
 		FAffordanceFrame affordance;
@@ -2368,10 +2375,10 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetUserSnapPointMouseHit(cons
 		if (trySnap.Valid)
 		{
 			trySnap.SnapType = ESnapType::CT_USERPOINTSNAP;
-			float d = DistanceBetweenWorldPointsInScreenSpace(mouseLoc, trySnap.Location);
-			if (ret.Valid || d < bestDir)
+			float screenSpaceDist = FLT_MAX;
+			if (!ret.Valid || (DistanceBetweenWorldPointsInScreenSpace(mouseLoc, trySnap.Location, screenSpaceDist) && (screenSpaceDist < bestScreenDist)))
 			{
-				bestDir = d;
+				bestScreenDist = screenSpaceDist;
 				ret = trySnap;
 				ret.EdgeDir = userSnapPoint.GetRotation().GetAxisX();
 				ret.Normal = userSnapPoint.GetRotation().GetAxisZ();

@@ -139,7 +139,7 @@ protected:
 
 public:
 
-	float DistanceBetweenWorldPointsInScreenSpace(const FVector &p1, const FVector &p2) const;
+	bool DistanceBetweenWorldPointsInScreenSpace(const FVector &Point1, const FVector &Point2, float &OutScreenDist) const;
 
 	bool GetScreenScaledDelta(const FVector &Origin, const FVector &Normal, const float DesiredWorldDist, const float MaxScreenDist,
 		FVector &OutWorldPos, FVector2D &OutScreenPos) const;

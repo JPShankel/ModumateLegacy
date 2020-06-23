@@ -57,51 +57,51 @@ struct FAffordanceLine;
 USTRUCT(BlueprintType)
 struct MODUMATE_API FSnappedCursor
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
 	// These values are set in EditModelPlayerController::UpdateMouseHits
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	bool bValid;
+	bool bValid = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	FVector2D ScreenPosition;
+	FVector2D ScreenPosition = FVector2D::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	FVector OriginPosition;
+	FVector OriginPosition = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	FVector OriginDirection;
+	FVector OriginDirection = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	FVector2D AxisOrigin;
+	FVector2D AxisOrigin = FVector2D::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	ESnapType SnapType;
+	ESnapType SnapType = ESnapType::CT_NOSNAP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	bool Visible;
+	bool Visible = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	FVector WorldPosition;
+	FVector WorldPosition = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	bool HasProjectedPosition;
+	bool HasProjectedPosition = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	FVector ProjectedPosition;
+	FVector ProjectedPosition = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	AActor *Actor;
+	AActor *Actor = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	int32 CP1;
+	int32 CP1 = INDEX_NONE;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	int32 CP2;
+	int32 CP2 = INDEX_NONE;
 
-	FVector HitNormal;
-	FVector HitTangent;
+	FVector HitNormal = FVector::ZeroVector;
+	FVector HitTangent = FVector::ZeroVector;
 
 	// Affordance values are NOT updated every frame but are established on an initiating event (ie BeginUse in a tool)
 	// These values are then used on subsequent frames to reconcile the mouse's world position against an anchored reference frame
@@ -117,7 +117,10 @@ struct MODUMATE_API FSnappedCursor
 
 	// Set in the controller on a per-frame basis
 	bool ShiftLocked = false;
-	FVector ShiftLockOrigin, ShiftLockDirection; // defines the line for a shift-constrained projection
+
+	// defines the line for a shift-constrained projection
+	FVector ShiftLockOrigin = FVector::ZeroVector;
+	FVector ShiftLockDirection = FVector::ZeroVector;
 
 	// Almost DEPRECATED: most tools use Location mouse mode, but the select tool still uses Object for single object selection
 	EMouseMode MouseMode = EMouseMode::Location;	
