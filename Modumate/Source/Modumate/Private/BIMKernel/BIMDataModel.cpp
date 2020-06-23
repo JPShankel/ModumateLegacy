@@ -10,6 +10,9 @@
 #include "Algo/Transform.h"
 
 namespace Modumate { namespace BIM {
+
+static const FString MissingTags(TEXT("MISSING.TAGS"));
+
 ECraftingResult FCraftingPresetCollection::GetInstanceDataAsPreset(const FCraftingTreeNodeInstanceSharedPtrConst &Instance, FCraftingTreeNodePreset &OutPreset) const
 {
 	const FCraftingTreeNodePreset *basePreset = Presets.Find(Instance->PresetID);
@@ -199,14 +202,26 @@ ECraftingResult FCraftingTreeNodePreset::ToDataRecord(FCraftingPresetRecord &Out
 
 	for (auto &childNode : ChildNodes)
 	{
+		// TODO: deprecated in ddl 2.0 table read in favor of new tag system, patched here for release 6/23/20
 		for (int32 i = 0; i < childNode.PresetSequence.Num(); ++i)
 		{
-			for (int32 j = 0; j < childNode.PinSpecSearchTags.Num(); ++j)
+			if (childNode.PinSpecSearchTags.Num() > 0)
+			{
+				for (int32 j = 0; j < childNode.PinSpecSearchTags.Num(); ++j)
+				{
+					OutRecord.ChildNodePinSetIndices.Add(childNode.PinSetIndex);
+					OutRecord.ChildNodePinSetPositions.Add(childNode.PinSetPosition);
+					OutRecord.ChildNodePinSetPresetIDs.Add(childNode.PresetSequence[i].SelectedPresetID);
+					OutRecord.ChildNodePinSetTags.Add(childNode.PinSpecSearchTags[j].GetQualifiedString());
+					OutRecord.ChildNodePinSetNodeTypes.Add(childNode.PresetSequence[i].NodeType);
+				}
+			}
+			else
 			{
 				OutRecord.ChildNodePinSetIndices.Add(childNode.PinSetIndex);
 				OutRecord.ChildNodePinSetPositions.Add(childNode.PinSetPosition);
 				OutRecord.ChildNodePinSetPresetIDs.Add(childNode.PresetSequence[i].SelectedPresetID);
-				OutRecord.ChildNodePinSetTags.Add(childNode.PinSpecSearchTags[j].GetQualifiedString());
+				OutRecord.ChildNodePinSetTags.Add(MissingTags);
 				OutRecord.ChildNodePinSetNodeTypes.Add(childNode.PresetSequence[i].NodeType);
 			}
 		}
@@ -301,6 +316,7 @@ ECraftingResult FCraftingTreeNodePreset::FromDataRecord(const FCraftingPresetCol
 				pinSpec->PinSpecSearchTags.AddUnique(FCraftingPresetTag(Record.ChildNodePinSetTags[i]));
 				++i;
 			}
+			pinSpec->PinSpecSearchTags.Remove(FCraftingPresetTag(MissingTags));
 		}
 	}
 
