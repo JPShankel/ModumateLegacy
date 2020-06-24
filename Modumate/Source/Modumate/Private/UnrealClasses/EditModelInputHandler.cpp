@@ -2,6 +2,7 @@
 
 #include "UnrealClasses/EditModelInputHandler.h"
 
+#include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerPawn_CPP.h"
@@ -272,11 +273,11 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	}
 	case EInputCommand::ZoomExtents:
 	{
-		return Controller->ZoomToProjectExtents();
+		return Controller->CameraController->ZoomToProjectExtents();
 	}
 	case EInputCommand::ZoomSelected:
 	{
-		return Controller->ZoomToSelection();
+		return Controller->CameraController->ZoomToSelection();
 	}
 	case EInputCommand::Invert:
 	{

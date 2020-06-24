@@ -323,12 +323,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Modeling)
 	void GroupSelected(bool makeGroup);
 
-	UFUNCTION(BlueprintCallable, Category = Camera)
-	bool ZoomToProjectExtents();
-
-	UFUNCTION(BlueprintCallable, Category = Camera)
-	bool ZoomToSelection();
-
 	// Calculate the location needed to view the boundary set by TargetSphere
 	FVector CalculateViewLocationForSphere(const FSphere &TargetSphere, const FVector &ViewVector, float AspectRatio, float FOV);
 

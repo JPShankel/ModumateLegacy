@@ -14,6 +14,7 @@ enum class ECameraMovementState : uint8
 	Orbiting,
 	Panning,
 	Flying,
+	Retargeting,
 };
 
 UCLASS()
@@ -71,8 +72,20 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "A multiplier on flight speed, subject to the flying movement variables in EditModelPlayerPawn"))
 	float FlyingSpeed;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "While retargeting, the new transform that the camera should lerp to"))
+	FTransform NewTargetTransform;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The amount of time that it takes for the camera to reach its destination while in the Retargeting movement state"))
+	float RetargetingDuration;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The exponent of the retargeting easing function while retargeting"))
+	float RetargetingEaseExp;
+
 	UFUNCTION(BlueprintPure)
 	ECameraMovementState GetMovementState() const { return CurMovementState; }
+
+	bool ZoomToProjectExtents();
+	bool ZoomToSelection();
 
 protected:
 	// Begin input binding functions
@@ -125,6 +138,7 @@ protected:
 	void UpdateOrbiting(float DeltaTime);
 	void UpdatePanning(float DeltaTime);
 	void UpdateFlying(float DeltaTime);
+	void UpdateRetargeting(float DeltaTime);
 	bool GetRealMouseCursorInViewport(FIntPoint &OutPosition);
 	bool TryWrapCursor(FIntPoint CurCursorPos);
 	void UpdateOrbitAnchorScale();
@@ -178,6 +192,12 @@ protected:
 	// Between each frame, the amount of movement input that we want to apply to the camera's location while in ECameraMovementState::Flying
 	// X and Y are relative to the camera's forward and right vectors, Z is in world space
 	FVector FlyingDeltasAccumulated;
+
+	// The camera transform when we start to set a new target to interpolate to
+	FTransform PreRetargetTransform;
+
+	// The time that we have spent so far in the Retargeting movement state
+	float RetargetingTimeElapsed;
 
 	// The current world-space transform of the camera (and pawn, meant to be identical), which is modified during a frame to be the new intended transform
 	FTransform CamTransform;

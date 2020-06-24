@@ -6,6 +6,7 @@
 #include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Curves/CurveFloat.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "UnrealClasses/EditModelPlayerPawn_CPP.h"
@@ -32,6 +33,8 @@ UEditModelCameraController::UEditModelCameraController(const FObjectInitializer&
 	, OrbitCursorMaxHeightPCT(0.9f)
 	, OrbitAnchorScreenSize(0.25f)
 	, FlyingSpeed(15.0f)
+	, RetargetingDuration(0.25f)
+	, RetargetingEaseExp(4.0f)
 	, Controller(nullptr)
 	, CurMovementState(ECameraMovementState::Default)
 	, OrbitTarget(ForceInitToZero)
@@ -46,6 +49,7 @@ UEditModelCameraController::UEditModelCameraController(const FObjectInitializer&
 	, OrbitRelativeDir(FVector::ForwardVector)
 	, RotationDeltasAccumulated(ForceInitToZero)
 	, FlyingDeltasAccumulated(ForceInitToZero)
+	, RetargetingTimeElapsed(0.0f)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = true;
@@ -104,6 +108,9 @@ void UEditModelCameraController::TickComponent(float DeltaTime, enum ELevelTick 
 	case ECameraMovementState::Flying:
 		UpdateFlying(DeltaTime);
 		break;
+	case ECameraMovementState::Retargeting:
+		UpdateRetargeting(DeltaTime);
+		break;
 	default:
 		break;
 	}
@@ -141,6 +148,56 @@ void UEditModelCameraController::SetupPlayerInputComponent(UInputComponent* Play
 		PlayerInputComponent->BindAxis(FName(TEXT("MoveRight")), this, &UEditModelCameraController::OnAxisMoveRight);
 		PlayerInputComponent->BindAxis(FName(TEXT("MoveUp")), this, &UEditModelCameraController::OnAxisMoveUp);
 	}
+}
+
+bool UEditModelCameraController::ZoomToProjectExtents()
+{
+	if (CurMovementState != ECameraMovementState::Default)
+	{
+		return false;
+	}
+
+	// Calculate project bound, perform no action if it's too small
+	FSphere projectBounds = Controller->GetDocument()->CalculateProjectBounds().GetSphere();
+	if (projectBounds.W <= 1.f)
+	{
+		return false;
+	}
+
+	FVector projectViewOrigin = Controller->CalculateViewLocationForSphere(
+		projectBounds,
+		CamTransform.GetRotation().GetForwardVector(),
+		Controller->EMPlayerPawn->CameraComponent->AspectRatio,
+		Controller->EMPlayerPawn->CameraComponent->FieldOfView);
+
+	NewTargetTransform.SetComponents(CamTransform.GetRotation(), projectViewOrigin, CamTransform.GetScale3D());
+	SetMovementState(ECameraMovementState::Retargeting);
+	return true;
+}
+
+bool UEditModelCameraController::ZoomToSelection()
+{
+	if (CurMovementState != ECameraMovementState::Default)
+	{
+		return false;
+	}
+
+	// Calculate selection bound, perform no action if it's too small
+	FSphere selectedBounds = UModumateFunctionLibrary::GetSelectedExtents(Controller).GetSphere();
+	if (selectedBounds.W <= 1.f)
+	{
+		return false;
+	}
+
+	FVector selectionViewOrigin = Controller->CalculateViewLocationForSphere(
+		selectedBounds,
+		CamTransform.GetRotation().GetForwardVector(),
+		Controller->EMPlayerPawn->CameraComponent->AspectRatio,
+		Controller->EMPlayerPawn->CameraComponent->FieldOfView);
+
+	NewTargetTransform.SetComponents(CamTransform.GetRotation(), selectionViewOrigin, CamTransform.GetScale3D());
+	SetMovementState(ECameraMovementState::Retargeting);
+	return true;
 }
 
 void UEditModelCameraController::OnActionOrbitPressed()
@@ -263,6 +320,9 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 	}
 	case ECameraMovementState::Flying:
 		break;
+	case ECameraMovementState::Retargeting:
+		NewTargetTransform = CamTransform;
+		break;
 	}
 
 	if (bShouldInputHaveBeenDisabled && Controller->InputHandlerComponent)
@@ -355,6 +415,10 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 		RotationDeltasAccumulated = FVector2D::ZeroVector;
 		break;
 	}
+	case ECameraMovementState::Retargeting:
+		PreRetargetTransform = CamTransform;
+		RetargetingTimeElapsed = 0.0f;
+		break;
 	default:
 		break;
 	}
@@ -616,6 +680,22 @@ void UEditModelCameraController::UpdateFlying(float DeltaTime)
 		Controller->EMPlayerPawn->AddMovementInput(flyingInput, FlyingSpeed);
 
 		FlyingDeltasAccumulated = FVector::ZeroVector;
+	}
+}
+
+void UEditModelCameraController::UpdateRetargeting(float DeltaTime)
+{
+	if (RetargetingTimeElapsed >= RetargetingDuration)
+	{
+		CamTransform = NewTargetTransform;
+		SetMovementState(ECameraMovementState::Default);
+	}
+	else
+	{
+		RetargetingTimeElapsed += DeltaTime;
+		float lerpAlpha = FMath::InterpEaseOut(0.0f, 1.0f, FMath::Clamp(RetargetingTimeElapsed / RetargetingDuration, 0.0f, 1.0f), RetargetingEaseExp);
+		CamTransform.SetLocation(FMath::Lerp(PreRetargetTransform.GetLocation(), NewTargetTransform.GetLocation(), lerpAlpha));
+		CamTransform.SetRotation(FQuat::Slerp(PreRetargetTransform.GetRotation(), NewTargetTransform.GetRotation(), lerpAlpha));
 	}
 }
 

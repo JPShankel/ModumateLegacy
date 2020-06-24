@@ -1234,54 +1234,6 @@ FVector AEditModelPlayerController_CPP::CalculateViewLocationForSphere(const FSp
 	return TargetSphere.Center - captureDistance * ViewVector;
 }
 
-bool AEditModelPlayerController_CPP::ZoomToProjectExtents()
-{
-	// Only perform zoom to extent when controller is using EMPlayerPawn
-	if (UGameplayStatics::GetPlayerPawn(this, 0) != EMPlayerPawn)
-	{
-		return false;
-	}
-
-	// Calculate project bound, perform no action if it's too small
-	FSphere projectBounds = Document->CalculateProjectBounds().GetSphere();
-	if (projectBounds.W <= 1.f)
-	{
-		return false;
-	}
-	FVector captureOrigin = CalculateViewLocationForSphere(
-			projectBounds, 
-			EMPlayerPawn->CameraComponent->GetForwardVector(), 
-			EMPlayerPawn->CameraComponent->AspectRatio,
-			EMPlayerPawn->CameraComponent->FieldOfView);
-
-	EMPlayerPawn->CameraComponent->SetWorldLocation(captureOrigin);
-	return true;
-}
-
-bool AEditModelPlayerController_CPP::ZoomToSelection()
-{
-	// Only perform zoom to extent when controller is using EMPlayerPawn
-	if (UGameplayStatics::GetPlayerPawn(this, 0) != EMPlayerPawn)
-	{
-		return false;
-	}
-	// Calculate selection bound, perform no action if it's too small
-	FBoxSphereBounds selectedBound = UModumateFunctionLibrary::GetSelectedExtents(this);
-	if (selectedBound.SphereRadius <= 1.f)
-	{
-		return false;
-	}
-
-	FVector captureOrigin = CalculateViewLocationForSphere(
-		selectedBound.GetSphere(),
-		EMPlayerPawn->CameraComponent->GetForwardVector(),
-		EMPlayerPawn->CameraComponent->AspectRatio,
-		EMPlayerPawn->CameraComponent->FieldOfView);
-
-	EMPlayerPawn->CameraComponent->SetWorldLocation(captureOrigin);
-	return true;
-}
-
 ////
 
 /*
