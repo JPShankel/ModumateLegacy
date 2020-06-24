@@ -182,7 +182,7 @@ struct FGraph3DFaceRecordV1
 	int32 ContainingFaceID;
 
 	UPROPERTY()
-	TArray<int32> ContainedFaceIDs;
+	TSet<int32> ContainedFaceIDs;
 };
 typedef FGraph3DFaceRecordV1 FGraph3DFaceRecord;
 

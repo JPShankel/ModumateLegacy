@@ -1389,8 +1389,29 @@ namespace Modumate
 		FGraph3DDelta deleteDelta;
 		TArray<int32> parentFaceIDs = { face->ID, otherFace->ID };
 		TSet<int32> groupIDs = face->GroupIDs.Union(otherFace->GroupIDs);
+		int32 containingFaceID = MOD_ID_NONE;
+		TSet<int32> containedFaceIDs;
 
 		GetDeltaForDeletions(sharedVertexIDs, sharedEdgeIDs, parentFaceIDs, deleteDelta);
+
+		for (int32 parentIdx = 0; parentIdx < parentFaceIDs.Num(); parentIdx++)
+		{
+			auto parentFace = FindFace(parentFaceIDs[parentIdx]);
+
+			// all of the faces being joined should be contained by the same face
+			if (parentIdx == 0)
+			{
+				containingFaceID = parentFace->ContainingFaceID;
+			}
+			else
+			{
+				ensure(containingFaceID == parentFace->ContainingFaceID);
+			}
+
+			// all of the faces contained by a face being joined should be contained by the resulting face
+			containedFaceIDs.Append(parentFace->ContainedFaceIDs);
+		}
+
 		ApplyDelta(deleteDelta);
 
 		// TODO: this kind of code may be useful somewhere else, and could be generalized to be 
@@ -1435,7 +1456,21 @@ namespace Modumate
 		{
 			deleteDelta.FaceDeletions[faceID].ParentObjIDs = { addedFaceID };
 		}
-		addFaceDelta.FaceAdditions[addedFaceID].ParentObjIDs = parentFaceIDs;
+		auto &faceAddition = addFaceDelta.FaceAdditions[addedFaceID];
+		faceAddition.ParentObjIDs = parentFaceIDs;
+		faceAddition.ContainingObjID = containingFaceID;
+		faceAddition.ContainedObjIDs = containedFaceIDs;
+
+		for (int32 faceID : containedFaceIDs)
+		{
+			auto containedFace = FindFace(faceID);
+			if (containedFace != nullptr)
+			{
+				auto &containmentDelta = addFaceDelta.FaceContainmentUpdates.FindOrAdd(faceID);
+				containmentDelta.PrevContainingFaceID = containedFace->ContainingFaceID;
+				containmentDelta.NextContainingFaceID = addedFaceID;
+			}
+		}
 
 		OutDeltas.Add(deleteDelta);
 
@@ -1740,7 +1775,7 @@ namespace Modumate
 		{
 			if (OutDelta.FaceAdditions.Remove(face->ID) == 0)
 			{
-				OutDelta.FaceDeletions.Add(face->ID, FGraph3DObjDelta(face->VertexIDs, {}, face->GroupIDs));
+				OutDelta.FaceDeletions.Add(face->ID, FGraph3DObjDelta(face->VertexIDs, {}, face->GroupIDs, face->ContainingFaceID, face->ContainedFaceIDs));
 			}
 
 			// find next containingID by traversing
@@ -1762,13 +1797,29 @@ namespace Modumate
 
 			for (int32 containedFaceID : face->ContainedFaceIDs)
 			{
-				auto& containmentDelta = OutDelta.FaceContainmentUpdates.FindOrAdd(containedFaceID);
-				containmentDelta.PrevContainingFaceID = face->ID;
-				containmentDelta.NextContainingFaceID = nextContainingFaceID;
+				auto containedFace = FindFace(containedFaceID);
+				if (containedFace != nullptr && !FacesToDelete.Contains(containedFace))
+				{
+					auto& containmentDelta = OutDelta.FaceContainmentUpdates.FindOrAdd(containedFaceID);
+					containmentDelta.PrevContainingFaceID = face->ID;
+					containmentDelta.NextContainingFaceID = nextContainingFaceID;
+
+					auto nextContainingFace = FindFace(nextContainingFaceID);
+					if (nextContainingFace != nullptr)
+					{
+						auto& nextContainmentDelta = OutDelta.FaceContainmentUpdates.FindOrAdd(nextContainingFaceID);
+						nextContainmentDelta.PrevContainingFaceID = nextContainingFace->ContainingFaceID;
+						nextContainmentDelta.NextContainingFaceID = nextContainingFace->ContainingFaceID;
+						nextContainmentDelta.ContainedFaceIDsToAdd.Add(containedFaceID);
+					}
+				}
 			}
-			if (FindFace(face->ContainingFaceID) != nullptr)
+			auto containingFace = FindFace(face->ContainingFaceID);
+			if (containingFace != nullptr && !FacesToDelete.Contains(containingFace))
 			{
 				auto& containmentDelta = OutDelta.FaceContainmentUpdates.FindOrAdd(face->ContainingFaceID);
+				containmentDelta.PrevContainingFaceID = containingFace->ContainingFaceID;
+				containmentDelta.NextContainingFaceID = containingFace->ContainingFaceID;
 				containmentDelta.ContainedFaceIDsToRemove.Add(face->ID);
 			}
 		}

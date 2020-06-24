@@ -30,7 +30,7 @@ namespace Modumate
 		float CachedArea;
 
 		FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs,
-			const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TArray<int32> &InContainedFaceIDs);
+			const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs);
 
 		FVector2D ProjectPosition2D(const FVector &Position) const;
 		FVector DeprojectPosition(const FVector2D &ProjectedPos) const;

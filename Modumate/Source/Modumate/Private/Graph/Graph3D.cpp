@@ -410,7 +410,7 @@ namespace Modumate
 	}
 
 	FGraph3DFace *FGraph3D::AddFace(const TArray<int32> &VertexIDs, int32 InID,
-		const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TArray<int32> &InContainedFaceIDs)
+		const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs)
 	{
 		int32 newID = InID;
 		if (newID == MOD_ID_NONE)
@@ -730,7 +730,7 @@ namespace Modumate
 		{
 			auto *face = FindFace(kvp.Key);
 			auto &delta = kvp.Value;
-			if (ensure(face))
+			if (ensureAlways(face))
 			{
 				face->ContainingFaceID = delta.NextContainingFaceID;
 				face->ContainedFaceIDs.Append(delta.ContainedFaceIDsToAdd);

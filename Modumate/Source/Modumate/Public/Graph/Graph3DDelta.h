@@ -16,12 +16,12 @@ namespace Modumate
 		TArray<int32> ParentObjIDs;				// objects that were deleted to make this object
 		TSet<int32> GroupIDs;					// group objects that this object is related to
 		int32 ContainingObjID = MOD_ID_NONE;	// the ID of the object that contains this object, if any
-		TArray<int32> ContainedObjIDs;			// the IDs of objects that are contained by this object
+		TSet<int32> ContainedObjIDs;			// the IDs of objects that are contained by this object
 
 		FGraph3DObjDelta(const TArray<int32> &InVertices);
 		FGraph3DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents,
 			const TSet<int32> &InGroupIDs = TSet<int32>(),
-			int32 InContainingObjID = MOD_ID_NONE, const TArray<int32> &InContainedObjIDs = TArray<int32>());
+			int32 InContainingObjID = MOD_ID_NONE, const TSet<int32> &InContainedObjIDs = TSet<int32>());
 
 		FGraph3DObjDelta(const FVertexPair &VertexPair);
 		FGraph3DObjDelta(const FVertexPair &VertexPair, const TArray<int32> &InParents,

@@ -58,7 +58,7 @@ namespace Modumate
 	}
 
 	FGraph3DObjDelta::FGraph3DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents,
-		const TSet<int32> &InGroupIDs, int32 InContainingObjID, const TArray<int32> &InContainedObjIDs)
+		const TSet<int32> &InGroupIDs, int32 InContainingObjID, const TSet<int32> &InContainedObjIDs)
 		: Vertices(InVertices)
 		, ParentObjIDs(InParents)
 		, GroupIDs(InGroupIDs)

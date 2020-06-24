@@ -272,11 +272,14 @@ namespace Modumate
 	}
 
 
-	void TestDeltas(FAutomationTestBase *Test, TArray<FGraph3DDelta> &Deltas, FGraph3D& Graph, FGraph3D& TempGraph, int32 TestNumFaces = -1, int32 TestNumVertices = -1, int32 TestNumEdges = -1)
+	void TestDeltas(FAutomationTestBase *Test, TArray<FGraph3DDelta> &Deltas, FGraph3D& Graph, FGraph3D& TempGraph, int32 TestNumFaces = -1, int32 TestNumVertices = -1, int32 TestNumEdges = -1, bool bResetDeltas = true)
 	{
 		ApplyDeltas(Test, Graph, TempGraph, Deltas);
 		TestGraph(Test, Graph, TestNumFaces, TestNumVertices, TestNumEdges);
-		Deltas.Reset();
+		if (bResetDeltas)
+		{
+			Deltas.Reset();
+		}
 	}
 
 	void TestDeltasAndResetGraph(FAutomationTestBase *Test, TArray<FGraph3DDelta> &Deltas, FGraph3D& Graph, FGraph3D& TempGraph, int32 TestNumFaces = -1, int32 TestNumVertices = -1, int32 TestNumEdges = -1)
@@ -2129,7 +2132,7 @@ namespace Modumate
 			OutFaceIDs.Add(faceDeltaKVP.Key);
 
 			// each face does not share edges or vertices
-			TestDeltas(Test, deltas, graph, tempGraph, faceIdx+1, (faceIdx+1)*4, (faceIdx+1)*4);
+			TestDeltas(Test, deltas, graph, tempGraph, faceIdx + 1, (faceIdx + 1) * 4, (faceIdx + 1) * 4);
 		}
 
 		return true;
@@ -2432,7 +2435,7 @@ namespace Modumate
 
 		TestTrue(TEXT("Middle face is not contained"), 
 			middleFace->ContainingFaceID == MOD_ID_NONE);
-		TestTrue(TEXT("Middle face contains no faces"),
+		TestTrue(TEXT("Middle face contains inner faces"),
 			middleFace->ContainedFaceIDs.Num() == 2);
 
 		TestTrue(TEXT("move outer face back to original spot"),
@@ -2531,4 +2534,306 @@ namespace Modumate
 		return true;
 	}
 
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphFaceContainmentSplits, "Modumate.Graph.3D.FaceContainmentSplits", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphFaceContainmentSplits::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+
+		TArray<int32> faceIDs;
+		if (!SetupContainedFace(this, graph, tempGraph, nextID, faceIDs))
+		{
+			return false;
+		}
+
+		int32 outerFaceID = faceIDs[0];
+		int32 innerFaceID = faceIDs[1];
+		auto outerFace = graph.FindFace(outerFaceID);
+		auto innerFace = graph.FindFace(innerFaceID);
+
+		// add a face in the corner of the outer face
+		TArray<FVector> cornerVertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(5.0f, 0.0f, 0.0f),
+			FVector(5.0f, 5.0f, 0.0f),
+			FVector(0.0f, 5.0f, 0.0f)
+		};
+
+		// add a face in the corner of the outer face that does not intersect with the inner face,
+		// making sure that the containing face changes from the outer face to the new split face
+		TestTrue(TEXT("Add face"),
+			tempGraph.GetDeltaForFaceAddition(cornerVertices, deltas, nextID, existingID));
+		TestDeltas(this, deltas, graph, tempGraph, 3, 11, 12, false);
+
+		TestTrue(TEXT("Inner face is contained"),
+			innerFace->ContainingFaceID != MOD_ID_NONE &&
+			graph.FindFace(innerFace->ContainingFaceID) != nullptr &&
+			innerFace->ContainingFaceID != outerFaceID);
+
+		ApplyInverseDeltas(this, graph, tempGraph, deltas);
+		deltas.Reset();
+
+		// add an edge that splits both faces and make sure nothing is contained
+		TArray<FVector> splitEdgeVertices = {
+			FVector(50.0f, 0.0f, 0.0f),
+			FVector(50.0f, 100.0f, 0.0f)
+		};
+
+		TArray<int32> outEdgeIDs;
+		TestTrue(TEXT("Add splitting edge"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(splitEdgeVertices[0], splitEdgeVertices[1], deltas, nextID, outEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 4, 12, 15, false);
+
+		for (auto& kvp : graph.GetFaces())
+		{
+			TestTrue(TEXT("face is not contained"),
+				kvp.Value.ContainingFaceID == MOD_ID_NONE);
+			TestTrue(TEXT("face contains no faces"),
+				kvp.Value.ContainedFaceIDs.Num() == 0);
+		}
+
+		ApplyInverseDeltas(this, graph, tempGraph, deltas);
+		deltas.Reset();
+
+		// split inner face and make sure both faces are contained
+		splitEdgeVertices = {
+			FVector(50.0f, 10.0f, 0.0f),
+			FVector(50.0f, 90.0f, 0.0f)
+		};
+		TestTrue(TEXT("Add splitting edge"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(splitEdgeVertices[0], splitEdgeVertices[1], deltas, nextID, outEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 3, 10, 11, false);
+
+		TestTrue(TEXT("Outer face contains two faces"),
+			graph.FindFace(outerFaceID)->ContainedFaceIDs.Num() == 2);
+
+		ApplyInverseDeltas(this, graph, tempGraph, deltas);
+		deltas.Reset();
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphFaceContainmentTreeDeletes, "Modumate.Graph.3D.FaceContainmentTreeDeletes", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphFaceContainmentTreeDeletes::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+		int32 NextID = 1;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+
+		TArray<int32> faceIDs;
+		if (!SetupContainmentTree(this, graph, tempGraph, NextID, faceIDs))
+		{
+			return false;
+		}
+
+		int32 outerFaceID = faceIDs[0];
+		int32 middleFaceID = faceIDs[1];
+		int32 innerLeftFaceID = faceIDs[2];
+		int32 innerRightFaceID = faceIDs[3];
+		auto outerFace = graph.FindFace(outerFaceID);
+		auto middleFace = graph.FindFace(middleFaceID);
+		auto innerLeftFace = graph.FindFace(innerLeftFaceID);
+		auto innerRightFace = graph.FindFace(innerRightFaceID);
+
+		// remove and undo remove outer face
+		deltas.AddDefaulted();
+		TestTrue(TEXT("Delete outer face"),
+			tempGraph.GetDeltaForDeleteObjects({}, {}, { outerFaceID }, {}, deltas[0], true));
+		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12, false);
+
+		TestTrue(TEXT("Middle face is not contained"), 
+			middleFace->ContainingFaceID == MOD_ID_NONE);
+		TestTrue(TEXT("Middle face contains inner faces"),
+			middleFace->ContainedFaceIDs.Num() == 2);
+
+		ApplyInverseDeltas(this, graph, tempGraph, deltas);
+		deltas.Reset();
+
+		TestTrue(TEXT("Middle face is contained by outer face"), 
+			middleFace->ContainingFaceID == outerFaceID);
+		TestTrue(TEXT("Outer face contains middle face"),
+			outerFace->ContainedFaceIDs.Num() == 1);
+
+		// remove and undo remove middle face
+		deltas.AddDefaulted();
+		TestTrue(TEXT("Delete middle face"),
+			tempGraph.GetDeltaForDeleteObjects({}, {}, { middleFaceID }, {}, deltas[0], true));
+		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12, false);
+
+		TestTrue(TEXT("Inner faces are contained by outer face"), 
+			innerLeftFace->ContainingFaceID == outerFaceID && innerRightFace->ContainingFaceID == outerFaceID);
+		TestTrue(TEXT("Outer face contains inner faces"),
+			outerFace->ContainedFaceIDs.Num() == 2);
+
+		ApplyInverseDeltas(this, graph, tempGraph, deltas);
+		deltas.Reset();
+
+		TestTrue(TEXT("middle face is contained by outer face"), 
+			middleFace->ContainingFaceID == outerFaceID);
+		TestTrue(TEXT("Outer face contains middle face"),
+			outerFace->ContainedFaceIDs.Num() == 1);
+
+		// remove and undo remove inner face
+		deltas.AddDefaulted();
+		TestTrue(TEXT("Delete inner face"),
+			tempGraph.GetDeltaForDeleteObjects({}, {}, { innerLeftFaceID }, {}, deltas[0], true));
+		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12, false);
+
+		TestTrue(TEXT("Middle face contains remaining inner face"),
+			middleFace->ContainedFaceIDs.Num() == 1);
+
+		ApplyInverseDeltas(this, graph, tempGraph, deltas);
+		deltas.Reset();
+
+		TestTrue(TEXT("Middle face contains inner faces"),
+			middleFace->ContainedFaceIDs.Num() == 2);
+
+		TestTrue(TEXT("inner face is contained by middle face"), 
+			innerLeftFace->ContainingFaceID == middleFaceID);
+
+		TestTrue(TEXT("middle face is contained by outer face"), 
+			middleFace->ContainingFaceID == outerFaceID);
+
+		// remove and undo remove two faces, one that contains the other
+		deltas.AddDefaulted();
+		TestTrue(TEXT("Delete two faces"),
+			tempGraph.GetDeltaForDeleteObjects({}, {}, { middleFaceID, innerLeftFaceID }, {}, deltas[0], true));
+		TestDeltas(this, deltas, graph, tempGraph, 2, 8, 8, false);
+
+		TestTrue(TEXT("Outer face contains remaining inner face"),
+			outerFace->ContainedFaceIDs.Num() == 1);
+
+		TestTrue(TEXT("Remaining inner face is contained by outer face"),
+			innerRightFace->ContainingFaceID == outerFaceID);
+
+		ApplyInverseDeltas(this, graph, tempGraph, deltas);
+		deltas.Reset();
+
+		TestTrue(TEXT("Outer face contains middle face"),
+			outerFace->ContainedFaceIDs.Num() == 1);
+
+		TestTrue(TEXT("Remaining inner face is contained by middle face"),
+			innerRightFace->ContainingFaceID == middleFaceID);
+
+		middleFace = graph.FindFace(middleFaceID);
+		innerLeftFace = graph.FindFace(innerLeftFaceID);
+		TestTrue(TEXT("Middle face is contained by outer face"),
+			middleFace->ContainingFaceID == outerFaceID);
+
+		TestTrue(TEXT("Middle face is contains inner faces"),
+			middleFace->ContainedFaceIDs.Num() == 2);
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphFaceContainmentJoins, "Modumate.Graph.3D.FaceContainmentJoins", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphFaceContainmentJoins::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+
+		TArray<int32> faceIDs;
+		if (!SetupContainedFace(this, graph, tempGraph, nextID, faceIDs))
+		{
+			return false;
+		}
+
+		int32 outerFaceID = faceIDs[0];
+		int32 innerFaceID = faceIDs[1];
+		auto outerFace = graph.FindFace(outerFaceID);
+		auto innerFace = graph.FindFace(innerFaceID);
+
+		TArray<int32> joinFaceIDs;
+		FVector offset = FVector(100.0f, 0.0f, 0.0f);
+		TArray<FVector> outerVertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		TArray<FVector> middleVertices = {
+			FVector(10.0f, 10.0f, 0.0f),
+			FVector(90.0f, 10.0f, 0.0f),
+			FVector(90.0f, 90.0f, 0.0f),
+			FVector(10.0f, 90.0f, 0.0f)
+		};
+
+		for (int32 idx = 0; idx < outerVertices.Num(); idx++)
+		{
+			outerVertices[idx] += offset;
+			middleVertices[idx] += offset;
+		}
+
+		TestTrue(TEXT("Add face"),
+			tempGraph.GetDeltaForFaceAddition(middleVertices, deltas, nextID, existingID));
+		if ((deltas.Num() < 1) || (deltas[0].FaceAdditions.Num() != 1))
+		{
+			return false;
+		}
+
+		auto faceDeltaKVP = *deltas[0].FaceAdditions.CreateConstIterator();
+		joinFaceIDs.Add(faceDeltaKVP.Key);
+
+		// each face does not share edges or vertices
+		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12);
+
+		//*/
+		TestTrue(TEXT("Add face"),
+			tempGraph.GetDeltaForFaceAddition(outerVertices, deltas, nextID, existingID));
+		if ((deltas.Num() < 1) || (deltas[0].FaceAdditions.Num() != 1))
+		{
+			return false;
+		}
+
+		faceDeltaKVP = *deltas[0].FaceAdditions.CreateConstIterator();
+		joinFaceIDs.Add(faceDeltaKVP.Key);
+
+		// each face does not share edges or vertices
+		TestDeltas(this, deltas, graph, tempGraph, 4, 14, 15);
+
+		int32 joinInnerFaceID = joinFaceIDs[0];
+		int32 joinOuterFaceID = joinFaceIDs[1];
+		auto joinInnerFace = graph.FindFace(joinInnerFaceID);
+		auto joinOuterFace = graph.FindFace(joinOuterFaceID);
+
+		TestTrue(TEXT("join faces"),
+			tempGraph.GetDeltasForObjectJoin(deltas, { outerFaceID, joinOuterFaceID }, nextID, EGraph3DObjectType::Face));
+		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12);
+
+		TestTrue(TEXT("inner faces are contained by new face"),
+			innerFace->ContainingFaceID != MOD_ID_NONE &&
+			innerFace->ContainingFaceID != outerFaceID &&
+			innerFace->ContainingFaceID == joinInnerFace->ContainingFaceID &&
+			joinInnerFace->ContainingFaceID != joinOuterFaceID);
+
+		int32 joinedOuterID = innerFace->ContainingFaceID;
+		auto joinedOuterFace = graph.FindFace(joinedOuterID);
+		TestTrue(TEXT("joined face is in graph"),
+			joinedOuterFace != nullptr);
+		if (joinedOuterFace == nullptr)
+		{
+			return false;
+		}
+
+		TestTrue(TEXT("new joined face contains both inner faces"),
+			joinedOuterFace->ContainedFaceIDs.Num() == 2 &&
+			joinedOuterFace->ContainedFaceIDs.Contains(innerFaceID) &&
+			joinedOuterFace->ContainedFaceIDs.Contains(joinInnerFaceID));
+
+			//*/
+		return true;
+	}
 }
