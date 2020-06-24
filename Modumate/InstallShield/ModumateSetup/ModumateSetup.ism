@@ -341,10 +341,10 @@
 		<col def="S0">ISDotNetInstallerArgsCommit</col>
 		<col def="S0">ISDotNetInstallerArgsUninstall</col>
 		<col def="S0">ISDotNetInstallerArgsRollback</col>
-		<row><td>ApplicationFiles</td><td>{F0D4915C-A110-4968-8ECD-245876029535}</td><td>_479F08BFDBBC4C048CDAD9E946787AEE</td><td>8</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>CoffeeShopAndHouse</td><td>{FE554232-EF47-4B21-9B2D-59361A9D87A8}</td><td>MODUMATE2</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>EngineFiles</td><td>{29230FEE-DB5B-4E5A-ADDB-D2FADB2C6C11}</td><td>_90232056FD41428C94DCD4E57B4D3D25</td><td>264</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>Modumate.exe</td><td>{7C476FA9-B125-44B8-AE45-7094ABBC3EF7}</td><td>INSTALLDIR</td><td>264</td><td/><td>modumate.exe</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>ApplicationFiles</td><td>{F0D4915C-A110-4968-8ECD-245876029535}</td><td>_479F08BFDBBC4C048CDAD9E946787AEE</td><td>1280</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>EngineFiles</td><td>{29230FEE-DB5B-4E5A-ADDB-D2FADB2C6C11}</td><td>_90232056FD41428C94DCD4E57B4D3D25</td><td>1280</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>EngineRemovals</td><td>{66E299D2-6896-44F0-8336-92DC4074AABE}</td><td>WIN641</td><td>1288</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Modumate.exe</td><td>{7C476FA9-B125-44B8-AE45-7094ABBC3EF7}</td><td>INSTALLDIR</td><td>1280</td><td/><td>modumate.exe</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 	</table>
 
 	<table name="Condition">
@@ -1017,6 +1017,7 @@
 	<table name="CreateFolder">
 		<col key="yes" def="s72">Directory_</col>
 		<col key="yes" def="s72">Component_</col>
+		<row><td>WIN641</td><td>EngineRemovals</td></row>
 	</table>
 
 	<table name="CustomAction">
@@ -1031,8 +1032,9 @@
 		<row><td>ISSelfRegisterCosting</td><td>1</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterCosting</td><td/><td/></row>
 		<row><td>ISSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFiles</td><td/><td/></row>
 		<row><td>ISSelfRegisterFinalize</td><td>1</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFinalize</td><td/><td/></row>
+		<row><td>ISSetAllUsers</td><td>257</td><td>SetAllUsers.dll</td><td>SetAllUsers</td><td/><td/></row>
 		<row><td>ISUnSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISUnSelfRegisterFiles</td><td/><td/></row>
-		<row><td>IS_LAUNCH_MY_PROGRAM_PLEASE</td><td>210</td><td>_1351B6D8CD98495391F1BF4E8AC247F9</td><td/><td/><td/></row>
+		<row><td>IS_LAUNCH_MY_PROGRAM_PLEASE</td><td>210</td><td>modumate.exe</td><td/><td/><td/></row>
 		<row><td>SetARPINSTALLLOCATION</td><td>51</td><td>ARPINSTALLLOCATION</td><td>[INSTALLDIR]</td><td/><td/></row>
 		<row><td>SetAllUsersProfileNT</td><td>51</td><td>ALLUSERSPROFILE</td><td>[%SystemRoot]\Profiles\All Users</td><td/><td/></row>
 		<row><td>ShowMsiLog</td><td>226</td><td>SystemFolder</td><td>[SystemFolder]notepad.exe "[MsiLogFileLocation]"</td><td/><td>Shows Property-driven MSI Log</td></row>
@@ -1098,6 +1100,8 @@
 		<row><td>ALLUSERSPROFILE</td><td>TARGETDIR</td><td>.:ALLUSE~1|All Users</td><td/><td>0</td><td/></row>
 		<row><td>AdminToolsFolder</td><td>TARGETDIR</td><td>.:Admint~1|AdminTools</td><td/><td>0</td><td/></row>
 		<row><td>AppDataFolder</td><td>TARGETDIR</td><td>.:APPLIC~1|Application Data</td><td/><td>0</td><td/></row>
+		<row><td>BINARIES</td><td>_90232056FD41428C94DCD4E57B4D3D25</td><td>Binaries</td><td/><td>0</td><td/></row>
+		<row><td>BINARIES1</td><td>_90232056FD41428C94DCD4E57B4D3D25</td><td>Binaries</td><td/><td>0</td><td/></row>
 		<row><td>CONTENT</td><td>_90232056FD41428C94DCD4E57B4D3D25</td><td>Content</td><td/><td>0</td><td/></row>
 		<row><td>CRASHREPORTCLIENT</td><td>PROGRAMS</td><td>CRASHR~1|CrashReportClient</td><td/><td>0</td><td/></row>
 		<row><td>CommonAppDataFolder</td><td>TARGETDIR</td><td>.:Common~1|CommonAppData</td><td/><td>0</td><td/></row>
@@ -1136,6 +1140,8 @@
 		<row><td>TempFolder</td><td>TARGETDIR</td><td>.:Temp</td><td/><td>0</td><td/></row>
 		<row><td>TemplateFolder</td><td>TARGETDIR</td><td>.:ShellNew</td><td/><td>0</td><td/></row>
 		<row><td>USERPROFILE</td><td>TARGETDIR</td><td>.:USERPR~1|UserProfile</td><td/><td>0</td><td/></row>
+		<row><td>WIN64</td><td>BINARIES</td><td>Win64</td><td/><td>0</td><td/></row>
+		<row><td>WIN641</td><td>BINARIES1</td><td>Win64</td><td/><td>0</td><td/></row>
 		<row><td>WindowsFolder</td><td>TARGETDIR</td><td>.:Windows</td><td/><td>0</td><td/></row>
 		<row><td>WindowsVolume</td><td>TARGETDIR</td><td>.:WinRoot</td><td/><td>0</td><td/></row>
 		<row><td>_0523A2C74E4344039FBE693755AE143B</td><td>_90232056FD41428C94DCD4E57B4D3D25</td><td>Extras</td><td/><td>0</td><td/></row>
@@ -1849,8 +1855,8 @@
 		<col key="yes" def="s38">Feature_</col>
 		<col key="yes" def="s72">Component_</col>
 		<row><td>DefaultFeature</td><td>ApplicationFiles</td></row>
-		<row><td>DefaultFeature</td><td>CoffeeShopAndHouse</td></row>
 		<row><td>DefaultFeature</td><td>EngineFiles</td></row>
+		<row><td>DefaultFeature</td><td>EngineRemovals</td></row>
 		<row><td>DefaultFeature</td><td>Modumate.exe</td></row>
 	</table>
 
@@ -1866,8 +1872,6 @@
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I4">ISAttributes</col>
 		<col def="S72">ISComponentSubFolder_</col>
-		<row><td>coffeeshop.mdmt</td><td>CoffeeShopAndHouse</td><td>COFFEE~1.MDM|CoffeeShop.mdmt</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;PATH_TO_REFERENCEPROJEC_FILES&gt;\CoffeeShop.mdmt</td><td>1</td><td/></row>
-		<row><td>housewithinternalcourtyard.m</td><td>CoffeeShopAndHouse</td><td>HOUSEW~1.MDM|HouseWithInternalCourtyard.mdmt</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;PATH_TO_REFERENCEPROJEC_FILES&gt;\HouseWithInternalCourtyard.mdmt</td><td>1</td><td/></row>
 		<row><td>modumate.exe</td><td>Modumate.exe</td><td>Modumate.exe</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;PATH_TO_WINDOWSNOEDITOR_FILES&gt;\Modumate.exe</td><td>1</td><td/></row>
 	</table>
 
@@ -2015,8 +2019,8 @@
 		<col def="S0">HTTPLocation</col>
 		<col def="S0">Miscellaneous</col>
 		<row><td>ApplicationFiles</td><td/><td/><td>_8782A632_44BB_4007_9134_B2F79DAFB2A2_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>CoffeeShopAndHouse</td><td/><td/><td>_05585B86_8380_431B_9425_43E7FFE8C159_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>EngineFiles</td><td/><td/><td>_2BC19099_38EE_45A6_819C_85D443DF394A_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>EngineRemovals</td><td/><td/><td>_B00FC274_6912_417C_A057_73010627332E_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Modumate.exe</td><td/><td/><td>_3E7D0B3D_6525_4758_9F37_3569FC77FAF0_FILTER</td><td/><td/><td/><td/></row>
 	</table>
 
@@ -2334,46 +2338,29 @@
 		<col def="S255">TestValue</col>
 		<col def="i4">Type</col>
 		<row><td>CommonFilesFolder</td><td/><td/><td>1</td></row>
-		<row><td>Engine</td><td>C:\Modumate\Builds\\Modumate_packaged_mainWindowsNoEditor\Engine</td><td/><td>2</td></row>
+		<row><td>Engine</td><td>C:\Modumate\Builds\Release\WindowsNoEditor\Engine</td><td/><td>2</td></row>
 		<row><td>ISPROJECTDIR</td><td/><td/><td>1</td></row>
 		<row><td>ISProductFolder</td><td/><td/><td>1</td></row>
 		<row><td>ISProjectDataFolder</td><td/><td/><td>1</td></row>
 		<row><td>ISProjectFolder</td><td/><td/><td>1</td></row>
-		<row><td>Modumate</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Modumate</td><td/><td>2</td></row>
-		<row><td>NVIDIA</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\ThirdParty\NVIDIA</td><td/><td>2</td></row>
-		<row><td>Ogg</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\ThirdParty\Ogg</td><td/><td>2</td></row>
-		<row><td>PATH_TO_BUILD_FILES</td><td>C:\Modumate\main\Modumate\Build</td><td/><td>2</td></row>
-		<row><td>PATH_TO_BUILD_FILES1</td><td>C:\Modumate\main\Modumate\Build</td><td/><td>2</td></row>
-		<row><td>PATH_TO_CONFIG_FILES</td><td>C:\Modumate\main\UE4\Engine\Programs\CrashReportClient\Config</td><td/><td>2</td></row>
-		<row><td>PATH_TO_CONTENT_FILES</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Content</td><td/><td>2</td></row>
-		<row><td>PATH_TO_DISTRIBUTION_FILES</td><td>G:\Shared drives\Modumate\ENGINEERING\Distribution</td><td/><td>2</td></row>
-		<row><td>PATH_TO_EN-US_FILES</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Extras\Redist\en-us</td><td/><td>2</td></row>
-		<row><td>PATH_TO_EN-US_FILES1</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Extras\Redist\en-us</td><td/><td>2</td></row>
-		<row><td>PATH_TO_INSTALLSHIELD_FILES</td><td>C:\Modumate\main\Modumate\InstallShield</td><td/><td>2</td></row>
-		<row><td>PATH_TO_LASTRELEASE_FILES</td><td>G:\Shared drives\Modumate\ENGINEERING\Distribution\LastRelease</td><td/><td>2</td></row>
-		<row><td>PATH_TO_PAKS_FILES</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Modumate\Content\Paks</td><td/><td>2</td></row>
-		<row><td>PATH_TO_PROGRAMS_FILES</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Programs</td><td/><td>2</td></row>
-		<row><td>PATH_TO_REFERENCEPROJEC_FILES</td><td>C:\Modumate\main\Modumate\ReferenceProjects</td><td/><td>2</td></row>
-		<row><td>PATH_TO_SIGNING_FILES</td><td>C:\Modumate\main\Modumate\Build\Signing</td><td/><td>2</td></row>
-		<row><td>PATH_TO_SIGNING_FILES1</td><td>C:\Modumate\main\Modumate\Build\Signing</td><td/><td>2</td></row>
+		<row><td>Modumate</td><td>C:\Modumate\Builds\Release\WindowsNoEditor\Modumate</td><td/><td>2</td></row>
+		<row><td>NVIDIA</td><td>C:\Modumate\Builds\Release\WindowsNoEditor\Engine\Binaries\ThirdParty\NVIDIA</td><td/><td>2</td></row>
+		<row><td>Ogg</td><td>C:\Modumate\Builds\Release\WindowsNoEditor\Engine\Binaries\ThirdParty\Ogg</td><td/><td>2</td></row>
+		<row><td>PATH_TO_BUILD_FILES</td><td>C:\GitHub\Modumate\Modumate\Modumate\Build</td><td/><td>2</td></row>
+		<row><td>PATH_TO_BUILD_FILES1</td><td>C:\GitHub\Modumate\Modumate\Modumate\Build</td><td/><td>2</td></row>
+		<row><td>PATH_TO_DOWNLOADS_FILES</td><td>C:\Users\build\Downloads</td><td/><td>2</td></row>
+		<row><td>PATH_TO_PATCH_FILES</td><td>C:\Patch</td><td/><td>2</td></row>
+		<row><td>PATH_TO_SIGNING_FILES</td><td>C:\Modumate\Signing</td><td/><td>2</td></row>
+		<row><td>PATH_TO_SIGNING_FILES1</td><td>C:\Modumate\Signing</td><td/><td>2</td></row>
 		<row><td>PATH_TO_SIGNIT_FILES</td><td>C:\SignTest\SignIt</td><td/><td>2</td></row>
-		<row><td>PATH_TO_SPLASH_FILES</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Modumate\Content\Splash</td><td/><td>2</td></row>
-		<row><td>PATH_TO_WIN64_FILES</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\Win64</td><td/><td>2</td></row>
-		<row><td>PATH_TO_WIN64_FILES1</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Modumate\Binaries\Win64</td><td/><td>2</td></row>
-		<row><td>PATH_TO_WINDOWSNOEDITOR_FILES</td><td>C:\Jenkins\workspace\Modumate_pkg\Modumate\Saved\StagedBuilds\WindowsNoEditor</td><td/><td>2</td></row>
-		<row><td>PhysX3</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\ThirdParty\PhysX3</td><td/><td>2</td></row>
+		<row><td>PATH_TO_WINDOWSNOEDITOR_FILES</td><td>C:\Modumate\Builds\Release\WindowsNoEditor</td><td/><td>2</td></row>
+		<row><td>PhysX3</td><td>C:\Modumate\Builds\Release\WindowsNoEditor\Engine\Binaries\ThirdParty\PhysX3</td><td/><td>2</td></row>
 		<row><td>ProgramFilesFolder</td><td/><td/><td>1</td></row>
 		<row><td>SystemFolder</td><td/><td/><td>1</td></row>
-		<row><td>ThirdParty</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\ThirdParty</td><td/><td>2</td></row>
-		<row><td>VS2015</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\ThirdParty\Ogg\Win64\VS2015</td><td/><td>2</td></row>
-		<row><td>VS20151</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\ThirdParty\PhysX3\Win64\VS2015</td><td/><td>2</td></row>
-		<row><td>VS20152</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\ThirdParty\Vorbis\Win64\VS2015</td><td/><td>2</td></row>
-		<row><td>Vorbis</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\ThirdParty\Vorbis</td><td/><td>2</td></row>
-		<row><td>Win64</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\ThirdParty\NVIDIA\NVaftermath\Win64</td><td/><td>2</td></row>
-		<row><td>Windows</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\ThirdParty\Windows</td><td/><td>2</td></row>
+		<row><td>Vorbis</td><td>C:\Modumate\Builds\Release\WindowsNoEditor\Engine\Binaries\ThirdParty\Vorbis</td><td/><td>2</td></row>
+		<row><td>Win64</td><td>C:\Modumate\Builds\Release\WindowsNoEditor\Engine\Binaries\ThirdParty\NVIDIA\NVaftermath\Win64</td><td/><td>2</td></row>
+		<row><td>Windows</td><td>C:\Modumate\Builds\Release\WindowsNoEditor\Engine\Binaries\ThirdParty\Windows</td><td/><td>2</td></row>
 		<row><td>WindowsFolder</td><td/><td/><td>1</td></row>
-		<row><td>WindowsNoEditor</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor</td><td/><td>2</td></row>
-		<row><td>x64</td><td>C:\Modumate\Builds\Modumate_packaged_main\WindowsNoEditor\Engine\Binaries\ThirdParty\Windows\DirectX\x64</td><td/><td>2</td></row>
 	</table>
 
 	<table name="ISProductConfiguration">
@@ -2431,7 +2418,7 @@
 		<col def="S255">MsiCommandLine</col>
 		<col def="I4">ISSetupPrerequisiteLocation</col>
 		<row><td>Debug</td><td>Default Configuration</td><td>&lt;ISProjectDataFolder&gt;</td><td>PackageName</td><td>1</td><td>1033</td><td>2</td><td>2</td><td>Intel</td><td/><td>1033</td><td>0</td><td>0</td><td>0</td><td>0</td><td/><td>0</td><td/><td>MediaLocation</td><td/><td>http://</td><td/><td/><td/><td/><td>8464397</td><td/><td/><td/><td/></row>
-		<row><td>Release</td><td>Default Configuration</td><td>&lt;ISProjectDataFolder&gt;</td><td>PackageName</td><td>3</td><td>1033</td><td>0</td><td>2</td><td>Intel</td><td/><td>1033</td><td>2</td><td>8.75</td><td>1</td><td>2048</td><td/><td>0</td><td/><td>MediaLocation</td><td/><td>http://www.modumate.com</td><td/><td>&lt;PATH_TO_SIGNING_FILES1&gt;\ModumateCert.pfx?auto</td><td/><td/><td>8462349</td><td/><td/><td/><td/></row>
+		<row><td>Release</td><td>Default Configuration</td><td>&lt;ISProjectDataFolder&gt;</td><td>PackageName</td><td>3</td><td>1033</td><td>0</td><td>2</td><td>Intel</td><td/><td>1033</td><td>2</td><td>8.75</td><td>1</td><td>2048</td><td/><td>0</td><td/><td>MediaLocation</td><td/><td>http://www.modumate.com</td><td/><td>&lt;PATH_TO_SIGNING_FILES1&gt;\ModumateCert.pfx?auto</td><td/><td/><td>545333263</td><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="ISReleaseASPublishInfo">
@@ -4047,6 +4034,7 @@
 		<row><td>ISSelfRegisterCosting</td><td/><td>2201</td><td/><td/></row>
 		<row><td>ISSelfRegisterFiles</td><td/><td>5601</td><td/><td/></row>
 		<row><td>ISSelfRegisterFinalize</td><td/><td>6601</td><td/><td/></row>
+		<row><td>ISSetAllUsers</td><td>Not Installed</td><td>10</td><td/><td/></row>
 		<row><td>ISUnSelfRegisterFiles</td><td/><td>2202</td><td/><td/></row>
 		<row><td>InstallFiles</td><td/><td>4000</td><td>InstallFiles</td><td/></row>
 		<row><td>InstallFinalize</td><td/><td>6600</td><td>InstallFinalize</td><td/></row>
@@ -4164,6 +4152,7 @@ UgBlAGwAZQBhAHMAZQABAEQAZQBmAGEAdQBsAHQAIABDAG8AbgBmAGkAZwB1AHIAYQB0AGkAbwBuAA==
 		<row><td>FileCost</td><td/><td>900</td><td>FileCost</td><td/></row>
 		<row><td>FindRelatedProducts</td><td/><td>430</td><td>FindRelatedProducts</td><td/></row>
 		<row><td>ISPreventDowngrade</td><td>ISFOUNDNEWERPRODUCTVERSION</td><td>450</td><td>ISPreventDowngrade</td><td/></row>
+		<row><td>ISSetAllUsers</td><td>Not Installed</td><td>10</td><td/><td/></row>
 		<row><td>InstallWelcome</td><td>Not Installed</td><td>1210</td><td>InstallWelcome</td><td/></row>
 		<row><td>IsolateComponents</td><td/><td>950</td><td>IsolateComponents</td><td/></row>
 		<row><td>LaunchConditions</td><td>Not Installed</td><td>410</td><td>LaunchConditions</td><td/></row>
@@ -4530,7 +4519,7 @@ UgBlAGwAZQBhAHMAZQABAEQAZQBmAGEAdQBsAHQAIABDAG8AbgBmAGkAZwB1AHIAYQB0AGkAbwBuAA==
 		<row><td>SUITE_FLOOR</td><td/><td/></row>
 		<row><td>SecureCustomProperties</td><td>ISFOUNDNEWERPRODUCTVERSION;SUPPORTDIR;INSTALLDIR;COMPANY_NAME;STREET_NAME;SUITE_FLOOR;PROVINCE_STATE;CITY_NAME;POSTAL_CODE;COUNTRY_NAME;_BrowseProperty;LAUNCHPROGRAM</td><td/></row>
 		<row><td>SetupType</td><td>Typical</td><td/></row>
-		<row><td>UpgradeCode</td><td>{71776BDD-BC5C-461A-B501-C0D6A1DDD87E}</td><td/></row>
+		<row><td>UpgradeCode</td><td>{E37FE1AB-4E29-4535-B3D5-B24B18005FDE}</td><td/></row>
 		<row><td>_IsMaintenance</td><td>Change</td><td/></row>
 		<row><td>_IsSetupTypeMin</td><td>Typical</td><td/></row>
 		<row><td>dfgseyfgsuy</td><td>0</td><td/></row>
@@ -4594,6 +4583,7 @@ UgBlAGwAZQBhAHMAZQABAEQAZQBmAGEAdQBsAHQAIABDAG8AbgBmAGkAZwB1AHIAYQB0AGkAbwBuAA==
 		<col def="s72">DirProperty</col>
 		<col def="i2">InstallMode</col>
 		<row><td>NewShortcut1</td><td>Modumate.exe</td><td/><td>newfolder1</td><td>2</td></row>
+		<row><td>RemoveFile1</td><td>EngineRemovals</td><td/><td>WIN641</td><td>2</td></row>
 	</table>
 
 	<table name="RemoveIniFile">
@@ -4800,7 +4790,7 @@ UgBlAGwAZQBhAHMAZQABAEQAZQBmAGEAdQBsAHQAIABDAG8AbgBmAGkAZwB1AHIAYQB0AGkAbwBuAA==
 		<col def="S255">Remove</col>
 		<col def="s72">ActionProperty</col>
 		<col def="S72">ISDisplayName</col>
-		<row><td>{00000000-0000-0000-0000-000000000000}</td><td>***ALL_VERSIONS***</td><td></td><td></td><td>2</td><td/><td>ISFOUNDNEWERPRODUCTVERSION</td><td>ISPreventDowngrade</td></row>
+		<row><td>{00000000-0000-0000-0000-000000000000}</td><td></td><td>***ALL_VERSIONS***</td><td></td><td>258</td><td/><td>ISFOUNDNEWERPRODUCTVERSION</td><td>ISPreventDowngrade</td></row>
 	</table>
 
 	<table name="Verb">
