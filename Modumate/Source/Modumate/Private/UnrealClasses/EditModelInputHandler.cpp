@@ -120,6 +120,8 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	if (commandToolMode != EToolMode::VE_NONE)
 	{
 		Controller->SetToolMode(commandToolMode);
+		//TODO: Call change from EMUserWidget
+		OnToolModeChangedFromInput.Broadcast();
 		return true;
 	}
 
@@ -292,7 +294,8 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	{
 		Controller->SetToolMode(EToolMode::VE_METAPLANE);
 		Controller->SetToolAxisConstraint(EAxisConstraint::None);
-		// TODO: alert tool bar widget
+		//TODO: Call change from EMUserWidget
+		OnToolModeChangedFromInput.Broadcast();
 		return true;
 	}
 
@@ -300,7 +303,8 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	{
 		Controller->SetToolMode(EToolMode::VE_METAPLANE);
 		Controller->SetToolAxisConstraint(EAxisConstraint::AxesXY);
-		// TODO: alert tool bar widget
+		//TODO: Call change from EMUserWidget
+		OnToolModeChangedFromInput.Broadcast();
 		return true;
 	}
 
@@ -308,7 +312,8 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	{
 		Controller->SetToolMode(EToolMode::VE_METAPLANE);
 		Controller->SetToolAxisConstraint(EAxisConstraint::AxisZ);
-		// TODO: alert tool bar widget
+		//TODO: Call change from EMUserWidget
+		OnToolModeChangedFromInput.Broadcast();
 		return true;
 	}
 
