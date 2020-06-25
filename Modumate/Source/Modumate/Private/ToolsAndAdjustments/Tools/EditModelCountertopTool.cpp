@@ -164,7 +164,7 @@ bool UCountertopTool::MakeSegment(const FVector &hitLoc)
 	BaseSegs.Push(baseSegment);
 
 	bool bClosedLoop = BaseSegs[0]->Point1.Equals(BaseSegs[BaseSegs.Num() - 1]->Point2);
-	if (bClosedLoop && UModumateGeometryStatics::ArePolygonEdgesValid(BasePoints))
+	if (bClosedLoop && UModumateGeometryStatics::IsPolygonValid(BasePoints))
 	{
 		return true;
 	}

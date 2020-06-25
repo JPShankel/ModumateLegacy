@@ -21,7 +21,7 @@ void FSimplePolygon::UpdateExtents()
 
 bool FSimplePolygon::ValidateSimple(FFeedbackContext* InWarn) const
 {
-	return UModumateGeometryStatics::ArePolygonEdgesValid2D(Points, InWarn);
+	return UModumateGeometryStatics::IsPolygon2DValid(Points, InWarn);
 }
 
 bool USimpleMeshData::SetSourcePath(const FString &FullFilePath)

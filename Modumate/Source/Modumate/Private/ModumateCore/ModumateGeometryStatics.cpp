@@ -26,6 +26,12 @@ FLayerGeomDef::FLayerGeomDef(const TArray<FVector> &Points, float InThickness, c
 {
 	int32 numPoints = Points.Num();
 
+	// First, make sure we have a polygon that has a chance of being triangulated
+	if ((numPoints < 3) || UModumateGeometryStatics::AreConsecutivePointsRepeated(Points))
+	{
+		return;
+	}
+
 	FPlane sourcePlane;
 	bool bSuccess = UModumateGeometryStatics::GetPlaneFromPoints(Points, sourcePlane);
 	if (!ensure(bSuccess && FVector::Parallel(Normal, sourcePlane)))
@@ -45,8 +51,7 @@ FLayerGeomDef::FLayerGeomDef(const TArray<FVector> &Points, float InThickness, c
 	Origin = PointsA[0];
 	AxisX = (Points[1] - Points[0]).GetSafeNormal();
 	AxisY = (AxisX ^ Normal).GetSafeNormal();
-	CachePoints2D();
-	bValid = true;
+	bValid = CachePoints2D();
 }
 
 FLayerGeomDef::FLayerGeomDef(const TArray<FVector> &InPointsA, const TArray<FVector> &InPointsB,
@@ -92,6 +97,14 @@ void FLayerGeomDef::Init(const TArray<FVector> &InPointsA, const TArray<FVector>
 	}
 #endif
 
+	// Make sure that we have polygon points that we expect to be able to triangulate
+	if (UModumateGeometryStatics::AreConsecutivePointsRepeated(PointsA) ||
+		UModumateGeometryStatics::AreConsecutivePointsRepeated(PointsB))
+	{
+		return;
+	}
+
+	// Now, we expect to be able to find a plane from the given points
 	FPlane planeA, planeB;
 	bool bSuccessA = UModumateGeometryStatics::GetPlaneFromPoints(PointsA, planeA);
 	bool bSuccessB = UModumateGeometryStatics::GetPlaneFromPoints(PointsB, planeB);
@@ -118,8 +131,7 @@ void FLayerGeomDef::Init(const TArray<FVector> &InPointsA, const TArray<FVector>
 		Holes3D = *InHoles;
 	}
 
-	CachePoints2D();
-	bValid = true;
+	bValid = CachePoints2D();
 }
 
 FVector2D FLayerGeomDef::ProjectPoint2D(const FVector &Point3D) const
@@ -133,7 +145,7 @@ FVector FLayerGeomDef::ProjectPoint3D(const FVector2D &Point2D, bool bSideA) con
 		(bSideA ? FVector::ZeroVector : (Thickness * Normal));
 }
 
-void FLayerGeomDef::CachePoints2D()
+bool FLayerGeomDef::CachePoints2D()
 {
 	// Simply project the 3D layer pairs into 2D for triangulation
 	CachedPointsA2D.Reset(PointsA.Num());
@@ -146,6 +158,13 @@ void FLayerGeomDef::CachePoints2D()
 	for (const FVector &pointB : PointsB)
 	{
 		CachedPointsB2D.Add(ProjectPoint2D(pointB));
+	}
+
+	// Make sure the polygons' edges are valid
+	if (!UModumateGeometryStatics::IsPolygon2DValid(CachedPointsA2D) ||
+		!UModumateGeometryStatics::IsPolygon2DValid(CachedPointsB2D))
+	{
+		return false;
 	}
 
 	// Project the 3D holes into 2D, and make sure that they don't overlap with the layer points or each other.
@@ -192,6 +211,8 @@ void FLayerGeomDef::CachePoints2D()
 			ValidHoles2D.Add(hole2D);
 		}
 	}
+
+	return true;
 }
 
 void FLayerGeomDef::AppendTriangles(const TArray<FVector> &Verts, const TArray<int32> &SourceTriIndices,
@@ -636,6 +657,18 @@ bool UModumateGeometryStatics::TriangulateVerticesPoly2Tri(const TArray<FVector2
 	TArray<FVector2D> &OutVertices, TArray<int32> &OutTriangles, TArray<FVector2D> &OutPerimeter, TArray<bool> &OutMergedHoles,
 	TArray<int32> &OutPerimeterVertexHoleIndices)
 {
+	if (!ensure(Vertices.Num() >= 3))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Input polygon only has %d vertices!"), Vertices.Num());
+		return false;
+	}
+
+	if (!ensure(!UModumateGeometryStatics::AreConsecutivePoints2DRepeated(Vertices)))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Input polygon has consecutive repeating points!"));
+		return false;
+	}
+
 	OutVertices.Reset();
 	OutTriangles.Reset();
 	OutPerimeter.Reset();
@@ -709,6 +742,13 @@ bool UModumateGeometryStatics::TriangulateVerticesPoly2Tri(const TArray<FVector2
 
 		polyline.push_back(new p2t::Point(OutPerimeter[i].X, OutPerimeter[i].Y));
 	}
+
+	if (!ensure(polyline.size() >= 3))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Input polygon only has %d vertices after duplicates were removed!"), polyline.size());
+		return false;
+	}
+
 	p2t::CDT* cdt = new p2t::CDT(polyline);
 
 	// Step 3: Add holes or Steiner points if necessary
@@ -1900,7 +1940,37 @@ bool UModumateGeometryStatics::GetEdgeIntersections(const TArray<FVector> &Posit
 	
 }
 
-bool UModumateGeometryStatics::ArePolygonEdgesValid2D(const TArray<FVector2D> &Points, FFeedbackContext* InWarn)
+bool UModumateGeometryStatics::AreConsecutivePoints2DRepeated(const TArray<FVector2D> &Points, float Tolerance)
+{
+	int32 numPoints = Points.Num();
+	for (int32 pointIdxA = 0; pointIdxA < numPoints; ++pointIdxA)
+	{
+		int32 pointIdxB = (pointIdxA + 1) % numPoints;
+		if (Points[pointIdxA].Equals(Points[pointIdxB], Tolerance))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UModumateGeometryStatics::AreConsecutivePointsRepeated(const TArray<FVector> &Points, float Tolerance)
+{
+	int32 numPoints = Points.Num();
+	for (int32 pointIdxA = 0; pointIdxA < numPoints; ++pointIdxA)
+	{
+		int32 pointIdxB = (pointIdxA + 1) % numPoints;
+		if (Points[pointIdxA].Equals(Points[pointIdxB], Tolerance))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UModumateGeometryStatics::IsPolygon2DValid(const TArray<FVector2D> &Points, FFeedbackContext* InWarn)
 {
 	int32 numPoints = Points.Num();
 
@@ -1914,6 +1984,15 @@ bool UModumateGeometryStatics::ArePolygonEdgesValid2D(const TArray<FVector2D> &P
 		int32 segIdxAEnd = (segIdxAStart + 1) % numPoints;
 		const FVector2D &segAStart = Points[segIdxAStart];
 		const FVector2D &segAEnd = Points[segIdxAEnd];
+
+		if (segAStart.Equals(segAEnd))
+		{
+			if (InWarn)
+			{
+				InWarn->Logf(ELogVerbosity::Error, TEXT("Line segment (%s, %s) is zero-length!"), *segAStart.ToString(), *segAEnd.ToString());
+			}
+			return false;
+		}
 
 		for (int32 segIdxBStart = 0; segIdxBStart < numPoints; ++segIdxBStart)
 		{
@@ -1942,7 +2021,7 @@ bool UModumateGeometryStatics::ArePolygonEdgesValid2D(const TArray<FVector2D> &P
 	return true;
 }
 
-bool UModumateGeometryStatics::ArePolygonEdgesValid(const TArray<FVector> &Points3D, FPlane PolyPlane, FFeedbackContext* InWarn)
+bool UModumateGeometryStatics::IsPolygonValid(const TArray<FVector> &Points3D, FPlane PolyPlane, FFeedbackContext* InWarn)
 {
 	if (Points3D.Num() < 3)
 	{
@@ -1978,5 +2057,5 @@ bool UModumateGeometryStatics::ArePolygonEdgesValid(const TArray<FVector> &Point
 		points2D.Add(UModumateGeometryStatics::ProjectPoint2D(point3D, axisX, axisY, polyOrigin));
 	}
 
-	return ArePolygonEdgesValid2D(points2D);
+	return IsPolygon2DValid(points2D);
 }

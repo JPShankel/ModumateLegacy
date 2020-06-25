@@ -396,6 +396,7 @@ bool ADynamicMeshActor::UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCo
 
 	for (int32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
 	{
+		UProceduralMeshComponent *procMeshComp = ProceduralSubLayers[layerIdx];
 		const FLayerGeomDef &layerGeomDef = LayerGeometries[layerIdx];
 
 		vertices.Reset();
@@ -407,8 +408,6 @@ bool ADynamicMeshActor::UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCo
 
 		if (layerGeomDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents, UVAnchor, UVRotOffset))
 		{
-			UProceduralMeshComponent *procMeshComp = ProceduralSubLayers[layerIdx];
-
 			// TODO: enable iterative mesh section updates when we can know that
 			// the order of vertices did not change as a result of re-triangulation
 			//if (bRecreateMesh || (procMeshComp->GetNumSections() == 0) || (numHoles > 0))
@@ -421,6 +420,11 @@ bool ADynamicMeshActor::UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCo
 			}*/
 
 			procMeshComp->SetCollisionEnabled(bEnableCollision ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
+			procMeshComp->SetVisibility(true);
+		}
+		else
+		{
+			procMeshComp->SetVisibility(false);
 		}
 	}
 

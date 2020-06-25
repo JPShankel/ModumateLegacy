@@ -112,7 +112,7 @@ struct MODUMATE_API FLayerGeomDef
 		const FVector &InAxisX = FVector::ZeroVector, const TArray<FPolyHole3D> *InHoles = nullptr);
 	FVector2D ProjectPoint2D(const FVector &Point3D) const;
 	FVector ProjectPoint3D(const FVector2D &Point2D, bool bSideA) const;
-	void CachePoints2D();
+	bool CachePoints2D();
 
 	static void AppendTriangles(const TArray<FVector> &Verts, const TArray<int32> &SourceTriIndices,
 		TArray<int32> &OutTris, bool bReverseTris);
@@ -226,7 +226,9 @@ public:
 
 	static bool GetEdgeIntersections(const TArray<FVector> &Positions, const FVector &IntersectionOrigin, const FVector &IntersectionDir, TArray<Modumate::FEdgeIntersection> &OutEdgeIntersections, float Epsilon = DEFAULT_GRAPH3D_EPSILON);
 
-	static bool ArePolygonEdgesValid2D(const TArray<FVector2D> &Points2D, class FFeedbackContext* InWarn = nullptr);
-	
-	static bool ArePolygonEdgesValid(const TArray<FVector> &Points, FPlane PolyPlane = FPlane(ForceInitToZero), class FFeedbackContext* InWarn = nullptr);
+	static bool AreConsecutivePoints2DRepeated(const TArray<FVector2D> &Points, float Tolerance = KINDA_SMALL_NUMBER);
+	static bool AreConsecutivePointsRepeated(const TArray<FVector> &Points, float Tolerance = KINDA_SMALL_NUMBER);
+
+	static bool IsPolygon2DValid(const TArray<FVector2D> &Points2D, class FFeedbackContext* InWarn = nullptr);
+	static bool IsPolygonValid(const TArray<FVector> &Points, FPlane PolyPlane = FPlane(ForceInitToZero), class FFeedbackContext* InWarn = nullptr);
 };

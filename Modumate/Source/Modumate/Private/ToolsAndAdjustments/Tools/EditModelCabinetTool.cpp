@@ -262,7 +262,7 @@ void UCabinetTool::MakeSegment(const FVector &hitLoc)
 	BasePoints.Push(baseSegment->Point1);
 
 	bool bClosedLoop = BaseSegs[0]->Point1.Equals(BaseSegs[BaseSegs.Num() - 1]->Point2);
-	if (bClosedLoop && UModumateGeometryStatics::ArePolygonEdgesValid(BasePoints))
+	if (bClosedLoop && UModumateGeometryStatics::IsPolygonValid(BasePoints))
 	{
 		BeginSetHeightMode(BasePoints);
 	}

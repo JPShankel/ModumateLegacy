@@ -94,7 +94,7 @@ bool AAdjustPolyPointHandle::UpdateUse()
 	}
 
 	const TArray<FVector> &newPolyPoints = TargetMOI->GetControlPoints();
-	if (UModumateGeometryStatics::ArePolygonEdgesValid(newPolyPoints, PolyPlane))
+	if (UModumateGeometryStatics::IsPolygonValid(newPolyPoints, PolyPlane))
 	{
 		LastValidPolyPoints = newPolyPoints;
 		UpdateTargetGeometry();
