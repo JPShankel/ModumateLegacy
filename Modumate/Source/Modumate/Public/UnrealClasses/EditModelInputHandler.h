@@ -163,9 +163,6 @@ struct MODUMATE_API FCommandTrieNode : public TSharedFromThis<FCommandTrieNode>
 DECLARE_DELEGATE_OneParam(FInputCommandDelegate, EInputCommand);
 DECLARE_DELEGATE_OneParam(FInputChordDelegate, FInputChord);
 
-// Delegates for menu changes
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMenuChangedEvent);
-
 
 // The central input handler, whose purpose is to:
 // - handle mappable input commands via key chords and/or key sequences
@@ -219,9 +216,6 @@ public:
 
 	UPROPERTY()
 	TMap<EInputCommand, FInputCommandData> AllInputCommandData;
-
- 	UPROPERTY(VisibleAnywhere, BlueprintAssignable, Category = "Tools")
- 	FOnMenuChangedEvent OnToolModeChangedFromInput;
 
 	void RequestInputDisabled(const FName &Requester, bool bShouldDisable);
 	bool IsInputEnabled() const;

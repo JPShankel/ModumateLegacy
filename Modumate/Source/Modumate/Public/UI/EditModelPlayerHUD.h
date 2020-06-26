@@ -77,9 +77,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widgets)
 	class UModumateDrawingSetWidget_CPP *DrawingSetWidget;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widgets)
-	class ADynamicIconGenerator *DynamicIconGenerator;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<class ALineActor*> All3DLineActors;
 
@@ -88,9 +85,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Actors")
 	TSubclassOf<AArcActor> ArcClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Actors")
-	TSubclassOf<class ADynamicIconGenerator> DynamicIconGeneratorClass;
 
 	// Take a viewport screenshot, saves it in the playerController, then applies it to an UImage.
 	// Should only be used during viewport draw, else there will be a TextureRHI ensure

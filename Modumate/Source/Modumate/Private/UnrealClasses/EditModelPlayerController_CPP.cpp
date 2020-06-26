@@ -33,6 +33,8 @@
 #include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
 #include "UnrealClasses/ModumateViewportClient.h"
 #include "UI/AdjustmentHandleWidget.h"
+#include "UnrealClasses/DynamicIconGenerator.h"
+#include "UI/EditModelUserWidget.h"
 
 
 // Tools
@@ -197,6 +199,19 @@ void AEditModelPlayerController_CPP::BeginPlay()
 
 	TimeOfLastAutoSave = FDateTime::Now();
 
+	// Create icon generator in the farthest corner of the universe
+	// TODO: Ideally the scene capture comp should capture itself only, but UE4 lacks that feature, for now...
+	DynamicIconGenerator = GetWorld()->SpawnActor<ADynamicIconGenerator>(DynamicIconGeneratorClass);
+	if (ensureAlways(DynamicIconGenerator))
+	{
+		DynamicIconGenerator->SetActorLocation(FVector(-100000.f, -100000.f, -100000.f));
+	}
+	EditModelUserWidget = CreateWidget<UEditModelUserWidget>(this, EditModelUserWidgetClass);
+	if (ensureAlways(EditModelUserWidget))
+	{
+		EditModelUserWidget->AddToViewport();
+	}
+
 #if !UE_BUILD_SHIPPING
 	// Now that we've registered our commands, register them in the UE4 console's autocompletion list
 	UModumateConsole *console = Cast<UModumateConsole>(GEngine->GameViewport ? GEngine->GameViewport->ViewportConsole : nullptr);
@@ -276,6 +291,10 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 
 	UpdateMouseTraceParams();
 	EMPlayerState->UpdateObjectVisibilityAndCollision();
+	if (EditModelUserWidget)
+	{
+		EditModelUserWidget->EMOnToolModeChanged();
+	}
 }
 
 void AEditModelPlayerController_CPP::AbortUseTool()

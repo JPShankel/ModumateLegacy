@@ -25,12 +25,6 @@ bool UEditModelUserWidget::Initialize()
 	ToolbarWidget->EditModelUserWidget = this;
 	ToolTrayWidget->EditModelUserWidget = this;
 
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	if (controller)
-	{
-		controller->InputHandlerComponent->OnToolModeChangedFromInput.AddDynamic(this, &UEditModelUserWidget::EMOnToolModeChanged);
-	}
-
 	return true;
 }
 

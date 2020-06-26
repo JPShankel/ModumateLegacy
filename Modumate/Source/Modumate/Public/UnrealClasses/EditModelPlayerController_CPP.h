@@ -552,4 +552,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = CameraViewMenu)
 	bool ToggleGravityPawn();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Menu)
+	TSubclassOf<class UEditModelUserWidget> EditModelUserWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Menu)
+	TSubclassOf<class ADynamicIconGenerator> DynamicIconGeneratorClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Menu)
+	class UEditModelUserWidget *EditModelUserWidget;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Menu)
+	class ADynamicIconGenerator *DynamicIconGenerator;
+
+
 };
