@@ -21,11 +21,8 @@ public:
 	virtual void ShutdownModule() override;
 
 	void QueryVersionInfo();
-	void UpdateProjectVersion(const FString& branch, uint32 changelist);
+	void UpdateProjectVersion(const FString& Branch);
 
 	static const FName AssetCategoryName;
 	EAssetTypeCategories::Type ModumateAssetCategory = EAssetTypeCategories::FirstUser;
-
-protected:
-	void SourceControlOperationComplete(const FSourceControlOperationRef& Operation, ECommandResult::Type InResult);
 };

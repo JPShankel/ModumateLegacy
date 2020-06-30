@@ -45,17 +45,22 @@ void FModumateModule::ShutdownModule()
 
 void FModumateModule::UpdateProjectDisplayVersion(const FEngineVersion &engineVersion)
 {
-	FString versionSuffix = FString::Printf(TEXT(".%d"), engineVersion.GetChangelist());
-
-	FString shortBranchName;
-	engineVersion.GetBranchDescriptor().Split(TEXT("+"), nullptr, &shortBranchName, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-	if (!shortBranchName.Equals(FString(TEXT("main"))))
-	{
-		versionSuffix += FString::Printf(TEXT("-%s"), *shortBranchName.Left(3));
-	}
-
 	const auto *projectSettings = GetDefault<UGeneralProjectSettings>();
-	ProjectDisplayVersion = projectSettings->ProjectVersion + versionSuffix;
+	const FString &projectVersion = projectSettings->ProjectVersion;
+	FString fullBranch = engineVersion.GetBranchDescriptor();
+
+	FString branchName, branchCommit, versionSuffix;
+	fullBranch.Split(TEXT("+"), &branchName, &branchCommit, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+#if !UE_BUILD_SHIPPING
+	if (!branchName.Contains(projectVersion))
+	{
+		ProjectDisplayVersion = FString::Printf(TEXT("%s %s+%s"), *branchName, *projectVersion, *branchCommit);
+	}
+	else
+#endif
+	{
+		ProjectDisplayVersion = FString::Printf(TEXT("%s+%s"), *projectVersion, *branchCommit);
+	}
 
 	UE_LOG(LogTemp, Log, TEXT("Updated project version: %s"), *ProjectDisplayVersion);
 }
