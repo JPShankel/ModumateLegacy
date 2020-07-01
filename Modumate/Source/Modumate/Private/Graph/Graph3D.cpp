@@ -832,6 +832,34 @@ namespace Modumate
 				}
 			}
 		}
+
+		TSet<int32> updatedHoles;
+		for (auto &kvp : Delta.FaceContainmentUpdates)
+		{
+			auto *face = FindFace(kvp.Key);
+			if (!updatedHoles.Contains(face->ID))
+			{
+				face->UpdateHoles();
+			}
+			if (auto containingFace = FindFace(face->ContainingFaceID))
+			{
+				if (!updatedHoles.Contains(containingFace->ID))
+				{
+					containingFace->UpdateHoles();
+				}
+			}
+			for (int32 containedFaceID : face->ContainedFaceIDs)
+			{
+				if (auto containedFace = FindFace(containedFaceID))
+				{
+					if (!updatedHoles.Contains(containedFace->ID))
+					{
+						containedFace->UpdateHoles();
+					}
+				}
+			}
+		}
+
 		return bValidFaces;
 	}
 

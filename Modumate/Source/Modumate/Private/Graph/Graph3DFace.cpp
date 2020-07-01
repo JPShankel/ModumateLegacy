@@ -117,6 +117,28 @@ namespace Modumate
 		return false;
 	}
 
+	void FGraph3DFace::UpdateHoles()
+	{
+		CachedHoles3D.Reset();
+
+		TArray<FVector> holePoints;
+		TArray<FVector2D> holePoints2D;
+		for (int32 containedFaceID : ContainedFaceIDs)
+		{
+			holePoints.Reset();
+			auto containedFace = Graph->FindFace(containedFaceID);
+
+			for (FVector& position : containedFace->CachedPositions)
+			{
+				holePoints2D.Add(ProjectPosition2D(position));
+				holePoints.Add(position);
+			}
+
+			CachedHoles3D.Add(FPolyHole3D(holePoints));
+			CachedHoles.Add(FPolyHole2D(holePoints2D));
+		}
+	}
+
 	bool FGraph3DFace::UpdateVerticesAndEdges(const TArray<int32> &InVertexIDs, bool bAssignVertices)
 	{
 		if (bAssignVertices)

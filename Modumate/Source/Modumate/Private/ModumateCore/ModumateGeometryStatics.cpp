@@ -18,6 +18,10 @@ using namespace std;
 
 #define DEBUG_CHECK_LAYERS (!UE_BUILD_SHIPPING)
 
+FLayerGeomDef::FLayerGeomDef()
+{
+
+}
 
 FLayerGeomDef::FLayerGeomDef(const TArray<FVector> &Points, float InThickness, const FVector &InNormal)
 	: PointsA(Points)

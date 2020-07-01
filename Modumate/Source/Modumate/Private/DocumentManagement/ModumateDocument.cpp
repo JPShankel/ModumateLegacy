@@ -1550,6 +1550,29 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 
 bool FModumateDocument::UpdateGraphObjects(UWorld *World)
 {
+	// TODO: unclear whether this is correct or the best place -
+	// set the faces containing or contained by dirty faces dirty as well	
+	for (auto& kvp : VolumeGraph.GetFaces())
+	{
+		auto& face = kvp.Value;
+		if (!face.bDirty)
+		{
+			continue;
+		}
+
+		if (auto containingFace = VolumeGraph.FindFace(face.ContainingFaceID))
+		{
+			containingFace->Dirty(false);
+		}
+		for (int32 containedFaceID : face.ContainedFaceIDs)
+		{
+			if (auto containedFace = VolumeGraph.FindFace(containedFaceID))
+			{
+				containedFace->Dirty(false);
+			}
+		}
+	}
+
 	TSet<int32> dirtyGroupIDs;
 	TArray<int32> cleanedVertices, cleanedEdges, cleanedFaces;
 	if (VolumeGraph.CleanGraph(cleanedVertices, cleanedEdges, cleanedFaces))

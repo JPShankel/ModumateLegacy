@@ -28,5 +28,6 @@ namespace Modumate
 		FArchitecturalMaterial MaterialData;
 		FPlane CachedPlane;
 		FVector CachedAxisX, CachedAxisY, CachedOrigin, CachedCenter;
+		TArray<FPolyHole3D> CachedHoles;
 	};
 }

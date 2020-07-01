@@ -47,6 +47,9 @@ namespace Modumate
 		bool bGeometryDirty = false;
 		FCachedLayerDimsByType CachedLayerDims;
 		TArray<FLayerGeomDef> LayerGeometries;
+		TArray<FPolyHole3D> CachedHoles;
+		mutable TArray<FVector> TempHoleRelativePoints;
+
 		TArray<FVector2D> CachedLayerEdgeExtensions;
 		TArray<FModumateObjectInstance *> CachedParentConnectedMOIs;
 		TArray<FModumateObjectInstance *> CachedConnectedEdges;

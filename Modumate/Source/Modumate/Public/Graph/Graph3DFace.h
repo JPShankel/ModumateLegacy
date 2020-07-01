@@ -27,6 +27,7 @@ namespace Modumate
 
 		TArray<FVector2D> CachedPerimeter;
 		TArray<FPolyHole2D> CachedHoles;
+		TArray<FPolyHole3D> CachedHoles3D;
 		float CachedArea;
 
 		FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs,
@@ -42,6 +43,7 @@ namespace Modumate
 		bool IntersectsFace(const FGraph3DFace *OtherFace, TArray<TPair<FVector, FVector>> &OutEdges) const;
 		bool IntersectsPlane(const FPlane OtherPlane, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<TPair<FVector, FVector>> &IntersectingSegments) const;
 
+		void UpdateHoles();
 		// TODO: potentially make this static
 		bool CalculateArea();
 

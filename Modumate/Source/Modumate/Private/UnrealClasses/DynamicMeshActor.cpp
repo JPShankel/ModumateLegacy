@@ -818,7 +818,7 @@ void ADynamicMeshActor::SetupPlaneGeometry(const TArray<FVector> &points, const 
 	Mesh->SetMaterial(0, material.EngineMaterial.Get());
 }
 
-void ADynamicMeshActor::SetupMetaPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, float alpha, bool bRecreateMesh, bool bCreateCollision)
+void ADynamicMeshActor::SetupMetaPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, float alpha, bool bRecreateMesh, const TArray<FPolyHole3D> *holes, bool bCreateCollision)
 {
 	FPlane pointsPlane;
 	if (!UModumateGeometryStatics::GetPlaneFromPoints(points, pointsPlane))
@@ -840,8 +840,20 @@ void ADynamicMeshActor::SetupMetaPlaneGeometry(const TArray<FVector> &points, co
 	TArray<FVector> relativePoints;
 	Algo::Transform(points, relativePoints, [centroid](const FVector &worldPoint) { return worldPoint - centroid; });
 
+	TArray<FVector> holeRelativePoints;
+	TArray<FPolyHole3D> relativeHoles;
+	if (holes != nullptr)
+	{
+		for (auto& hole : *holes)
+		{
+			holeRelativePoints.Reset();
+			Algo::Transform(hole.Points, holeRelativePoints, [centroid](const FVector &worldPoint) { return worldPoint - centroid; });
+			relativeHoles.Add(FPolyHole3D(holeRelativePoints));
+		}
+	}
+
 	FLayerGeomDef &layerGeomDef = LayerGeometries.AddDefaulted_GetRef();
-	layerGeomDef.Init(relativePoints, relativePoints, planeNormal);
+	layerGeomDef.Init(relativePoints, relativePoints, planeNormal, FVector::ZeroVector, &relativeHoles);
 
 	vertices.Reset();
 	normals.Reset();

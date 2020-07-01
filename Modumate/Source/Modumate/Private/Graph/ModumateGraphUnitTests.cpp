@@ -2597,7 +2597,8 @@ namespace Modumate
 		TestTrue(TEXT("Middle face is not contained"), 
 			middleFace->ContainingFaceID == MOD_ID_NONE);
 		TestTrue(TEXT("Middle face contains inner faces"),
-			middleFace->ContainedFaceIDs.Num() == 2);
+			middleFace->ContainedFaceIDs.Num() == 2 &&
+			middleFace->CachedHoles3D.Num() == 2);
 
 		ApplyInverseDeltas(this, graph, tempGraph, deltas);
 		deltas.Reset();
@@ -2605,7 +2606,8 @@ namespace Modumate
 		TestTrue(TEXT("Middle face is contained by outer face"), 
 			middleFace->ContainingFaceID == outerFaceID);
 		TestTrue(TEXT("Outer face contains middle face"),
-			outerFace->ContainedFaceIDs.Num() == 1);
+			outerFace->ContainedFaceIDs.Num() == 1 &&
+			outerFace->CachedHoles3D.Num() == 1);
 
 		// remove and undo remove middle face
 		deltas.AddDefaulted();
@@ -2616,7 +2618,8 @@ namespace Modumate
 		TestTrue(TEXT("Inner faces are contained by outer face"), 
 			innerLeftFace->ContainingFaceID == outerFaceID && innerRightFace->ContainingFaceID == outerFaceID);
 		TestTrue(TEXT("Outer face contains inner faces"),
-			outerFace->ContainedFaceIDs.Num() == 2);
+			outerFace->ContainedFaceIDs.Num() == 2 &&
+			outerFace->CachedHoles3D.Num() == 2);
 
 		ApplyInverseDeltas(this, graph, tempGraph, deltas);
 		deltas.Reset();
@@ -2624,7 +2627,8 @@ namespace Modumate
 		TestTrue(TEXT("middle face is contained by outer face"), 
 			middleFace->ContainingFaceID == outerFaceID);
 		TestTrue(TEXT("Outer face contains middle face"),
-			outerFace->ContainedFaceIDs.Num() == 1);
+			outerFace->ContainedFaceIDs.Num() == 1 &&
+			outerFace->CachedHoles3D.Num() == 1);
 
 		// remove and undo remove inner face
 		deltas.AddDefaulted();
@@ -2633,13 +2637,15 @@ namespace Modumate
 		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12, false);
 
 		TestTrue(TEXT("Middle face contains remaining inner face"),
-			middleFace->ContainedFaceIDs.Num() == 1);
+			middleFace->ContainedFaceIDs.Num() == 1 &&
+			middleFace->CachedHoles3D.Num() == 1);
 
 		ApplyInverseDeltas(this, graph, tempGraph, deltas);
 		deltas.Reset();
 
 		TestTrue(TEXT("Middle face contains inner faces"),
-			middleFace->ContainedFaceIDs.Num() == 2);
+			middleFace->ContainedFaceIDs.Num() == 2 &&
+			middleFace->CachedHoles3D.Num() == 2);
 
 		TestTrue(TEXT("inner face is contained by middle face"), 
 			innerLeftFace->ContainingFaceID == middleFaceID);
@@ -2654,7 +2660,8 @@ namespace Modumate
 		TestDeltas(this, deltas, graph, tempGraph, 2, 8, 8, false);
 
 		TestTrue(TEXT("Outer face contains remaining inner face"),
-			outerFace->ContainedFaceIDs.Num() == 1);
+			outerFace->ContainedFaceIDs.Num() == 1 &&
+			outerFace->CachedHoles3D.Num() == 1);
 
 		TestTrue(TEXT("Remaining inner face is contained by outer face"),
 			innerRightFace->ContainingFaceID == outerFaceID);
@@ -2663,7 +2670,8 @@ namespace Modumate
 		deltas.Reset();
 
 		TestTrue(TEXT("Outer face contains middle face"),
-			outerFace->ContainedFaceIDs.Num() == 1);
+			outerFace->ContainedFaceIDs.Num() == 1 &&
+			outerFace->CachedHoles3D.Num() == 1);
 
 		TestTrue(TEXT("Remaining inner face is contained by middle face"),
 			innerRightFace->ContainingFaceID == middleFaceID);
@@ -2674,7 +2682,8 @@ namespace Modumate
 			middleFace->ContainingFaceID == outerFaceID);
 
 		TestTrue(TEXT("Middle face is contains inner faces"),
-			middleFace->ContainedFaceIDs.Num() == 2);
+			middleFace->ContainedFaceIDs.Num() == 2 &&
+			middleFace->CachedHoles3D.Num() == 2);
 
 		return true;
 	}

@@ -44,7 +44,8 @@ namespace Modumate
 		MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
 		bool bEnableCollision = !MOI->GetIsInPreviewMode();
-		DynamicMeshActor->SetupMetaPlaneGeometry(MOI->GetControlPoints(), MaterialData, GetAlpha(), true, bEnableCollision);
+
+		DynamicMeshActor->SetupMetaPlaneGeometry(MOI->GetControlPoints(), MaterialData, GetAlpha(), true, &CachedHoles, bEnableCollision);
 
 		MOI->UpdateVisibilityAndCollision();
 
@@ -78,6 +79,7 @@ namespace Modumate
 				CachedAxisY = rotation.RotateVector(graphFace->Cached2DY);
 				CachedOrigin = origin + rotation.RotateVector(graphFace->CachedPositions[0] - origin);
 				CachedCenter = origin + rotation.RotateVector(graphFace->CachedCenter - origin);
+				CachedHoles = graphFace->CachedHoles3D;
 			}
 
 			MOI->MarkDirty(EObjectDirtyFlags::Structure);
@@ -102,6 +104,7 @@ namespace Modumate
 				CachedPlane = FPlane(planeBase + displacement, planeNormal);
 				CachedOrigin = graphFace->CachedPositions[0] + displacement;
 				CachedCenter = graphFace->CachedCenter + displacement;
+				CachedHoles = graphFace->CachedHoles3D;
 			}
 
 			MOI->MarkDirty(EObjectDirtyFlags::Structure);
@@ -117,8 +120,8 @@ namespace Modumate
 
 		UpdateCachedGraphData();
 
-		// TODO: needs to take an argument for holes, once holes can be provided by faces
-		DynamicMeshActor->SetupMetaPlaneGeometry(MOI->GetControlPoints(), MaterialData, GetAlpha(), false, true);
+		DynamicMeshActor->SetupMetaPlaneGeometry(MOI->GetControlPoints(), MaterialData, GetAlpha(), false, &CachedHoles, true);
+
 		auto children = MOI->GetChildObjects();
 
 		for (auto *child : children)
@@ -171,7 +174,7 @@ namespace Modumate
 			CachedAxisY = graphFace->Cached2DY;
 			CachedOrigin = graphFace->CachedPositions[0];
 			CachedCenter = graphFace->CachedCenter;
-			// TODO: update holes
+			CachedHoles = graphFace->CachedHoles3D;
 		}
 	}
 

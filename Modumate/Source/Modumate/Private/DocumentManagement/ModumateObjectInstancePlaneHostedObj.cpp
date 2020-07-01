@@ -2,19 +2,21 @@
 
 #include "DocumentManagement/ModumateObjectInstancePlaneHostedObj.h"
 
+#include "Algo/Transform.h"
+#include "Algo/Accumulate.h"
+
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "Graph/Graph3D.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateMitering.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
-#include "Graph/Graph3D.h"
-#include "DocumentManagement/ModumateDocument.h"
-#include "Drafting/ModumateDraftingElements.h"
-#include "ModumateCore/ModumateMitering.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "Algo/Transform.h"
 
 
 class AEditModelPlayerController_CPP;
@@ -623,9 +625,18 @@ namespace Modumate
 		DynamicMeshActor->SetActorLocation(parentPlane->GetObjectLocation());
 		DynamicMeshActor->SetActorRotation(FQuat::Identity);
 		DynamicMeshActor->UpdateHolesFromActors();
-		const TArray<FPolyHole3D> &holes = DynamicMeshActor->GetHoles3D();
 
-		if (!FMiterHelpers::UpdateMiteredLayerGeoms(MOI, planeFace, &holes, LayerGeometries))
+		CachedHoles.Reset();
+		for (auto& hole : planeFace->CachedHoles3D)
+		{
+			TempHoleRelativePoints.Reset();
+			Algo::Transform(hole.Points, TempHoleRelativePoints, [planeFace](const FVector &worldPoint) { return worldPoint - planeFace->CachedCenter; });
+			CachedHoles.Add(FPolyHole3D(TempHoleRelativePoints));
+		}
+
+		CachedHoles.Append(DynamicMeshActor->GetHoles3D());
+
+		if (!FMiterHelpers::UpdateMiteredLayerGeoms(MOI, planeFace, &CachedHoles, LayerGeometries))
 		{
 			return;
 		}

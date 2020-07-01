@@ -100,7 +100,7 @@ struct MODUMATE_API FLayerGeomDef
 
 	mutable TArray<FVector> TempSidePoints;
 
-	FLayerGeomDef() { }
+	FLayerGeomDef();
 
 	// A simplified constructor, for non-mitered, hole-less layers
 	FLayerGeomDef(const TArray<FVector> &Points, float InThickness, const FVector &InNormal);
