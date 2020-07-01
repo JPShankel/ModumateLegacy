@@ -1131,60 +1131,6 @@ namespace Modumate
 		return true;
 	}
 
-	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphTraversePlanes, "Modumate.Graph.3D.TraversePlanes", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
-		bool FModumateGraphTraversePlanes::RunTest(const FString& Parameters)
-	{
-		FGraph3D graph;
-		FGraph3D tempGraph;
-
-		TArray<FGraph3DDelta> OutDeltas;
-		FGraph3DDelta OutDelta;
-		int32 NextID = 1;
-		int32 ExistingID = 0;
-
-		tempGraph.GetDeltaForVertexAddition(FVector(0.0f, 0.0f, 0.0f), OutDelta, NextID, ExistingID);
-		tempGraph.GetDeltaForVertexAddition(FVector(0.0f, 100.0f, 0.0f), OutDelta, NextID, ExistingID);
-		tempGraph.GetDeltaForVertexAddition(FVector(0.0f, 100.0f, 100.0f), OutDelta, NextID, ExistingID);
-		graph.ApplyDelta(OutDelta);
-
-		TestGraph(this, graph, 0, 3, 0);
-		OutDelta.Reset();
-
-		tempGraph.GetDeltaForEdgeAddition(FVertexPair(1, 2), OutDelta, NextID, ExistingID);
-		tempGraph.GetDeltaForEdgeAddition(FVertexPair(2, 3), OutDelta, NextID, ExistingID);
-		graph.ApplyDelta(OutDelta);
-
-		TestGraph(this, graph, 0, 3, 2);
-		OutDelta.Reset();
-
-		tempGraph.GetDeltaForEdgeAddition(FVertexPair(1, 3), OutDelta, NextID, ExistingID);
-		graph.ApplyDelta(OutDelta);
-		TestGraph(this, graph, 0, 3, 3);
-		OutDelta.Reset();
-
-		bool bForward;
-		auto edge = graph.FindEdgeByVertices(1, 3, bForward);
-		TArray<TArray<int32>> OutVertexIDs;
-		graph.TraverseFacesFromEdge(edge->ID, OutVertexIDs);
-
-		TestTrue(TEXT("Found face"), OutVertexIDs.Num() > 0);
-
-		TArray<int32> InParentIDs;
-		TMap<int32, int32> edgeMap;
-		int32 AddedFaceID;
-		FGraph3D::CloneFromGraph(tempGraph, graph);
-		tempGraph.GetDeltaForFaceAddition(OutVertexIDs[0], OutDelta, NextID, ExistingID, InParentIDs, edgeMap, AddedFaceID);
-		OutDeltas = { OutDelta };
-
-		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 3, 3);
-
-		// TODO: enhance the usage of CheckFaceNormals to automatically check if the face is a duplicate in GetDeltaForFaceAddition,
-		// and then add to this test
-
-
-		return true;
-	}
-
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphFaceSplitByEdge, "Modumate.Graph.3D.FaceSplitByEdge", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphFaceSplitByEdge::RunTest(const FString& Parameters)
 	{
@@ -1574,6 +1520,7 @@ namespace Modumate
 		TArray<FGraph3DDelta> OutDeltas;
 		int32 NextID = 1;
 		int32 ExistingID = 0;
+		TArray<int32> OutEdgeIDs;
 
 		TArray<FVector> vertices = {
 			FVector(0.0f, 0.0f, 0.0f),
@@ -1596,20 +1543,19 @@ namespace Modumate
 
 		for (int i = 0; i < 4; i++)
 		{
-			TPair<int32, int32> edge1 = (i % 2 == 0) ? (TPair<int32, int32>(1, 2)) : (TPair<int32, int32>(2, 1));
-			TPair<int32, int32> edge2 = (i / 2 == 0) ? (TPair<int32, int32>(2, 3)) : (TPair<int32, int32>(3, 2));
+			TPair<int32, int32> edge1 = (i % 2 == 0) ? (TPair<int32, int32>(0, 1)) : (TPair<int32, int32>(1, 0));
+			TPair<int32, int32> edge2 = (i / 2 == 0) ? (TPair<int32, int32>(1, 2)) : (TPair<int32, int32>(2, 1));
 
-			OutDeltas.AddDefaulted(2);
 			TestTrue(TEXT("Add edge"),
-				tempGraph.GetDeltaForEdgeAddition(edge1, OutDeltas[0], NextID, ExistingID));
+				tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[edge1.Key], vertices[edge1.Value], OutDeltas, NextID, OutEdgeIDs));
 			TestTrue(TEXT("Add edge"),
-				tempGraph.GetDeltaForEdgeAddition(edge2, OutDeltas[0], NextID, ExistingID));
-			ApplyDeltas(this, graph, tempGraph, OutDeltas);
+				tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[edge2.Key], vertices[edge2.Value], OutDeltas, NextID, OutEdgeIDs));
 			TestTrue(TEXT("Join edge"),
-				tempGraph.GetDeltaForEdgeJoin(OutDeltas[1], NextID, TPair<int32, int32>(NextID - 1, NextID - 2)));
-			TArray<FGraph3DDelta> partial = { OutDeltas[0] };
-			ApplyInverseDeltas(this, graph, tempGraph, partial);
-			TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 0, 5, 1);
+				tempGraph.GetDeltasForObjectJoin(OutDeltas, { NextID - 1, NextID - 2 }, NextID, EGraph3DObjectType::Edge));
+			TestDeltas(this, OutDeltas, graph, tempGraph, 0, 5, 1, false);
+
+			ApplyInverseDeltas(this, graph, tempGraph, OutDeltas);
+			OutDeltas.Reset();
 		}
 
 		TestTrue(TEXT("Add face"),
@@ -1623,9 +1569,8 @@ namespace Modumate
 
 			for (int32 edgeIdx = 0; edgeIdx < face.EdgeIDs.Num(); edgeIdx++)
 			{
-				OutDeltas.AddDefaulted();
 				TestTrue(TEXT("Join edge"),
-					tempGraph.GetDeltaForEdgeJoin(OutDeltas[0], NextID, TPair<int32, int32>(face.EdgeIDs[edgeIdx], face.EdgeIDs[(edgeIdx + 1) % face.EdgeIDs.Num()])));
+					tempGraph.GetDeltasForObjectJoin(OutDeltas, { face.EdgeIDs[edgeIdx], face.EdgeIDs[(edgeIdx + 1) % face.EdgeIDs.Num()] }, NextID, EGraph3DObjectType::Edge));
 				TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 5, 5);
 			}
 		}
@@ -1725,7 +1670,7 @@ namespace Modumate
 		}
 
 		TestTrue(TEXT("join one"),
-			tempGraph.GetDeltasForFaceJoin(OutDeltas, { bigJoinFaceID, smallJoinFaceID1 }, NextID));
+			tempGraph.GetDeltasForObjectJoin(OutDeltas, { bigJoinFaceID, smallJoinFaceID1 }, NextID, EGraph3DObjectType::Face));
 
 		// verify there is one added face and find it
 		// TODO: potentially more functions to help verify the deletions as well
@@ -1751,7 +1696,7 @@ namespace Modumate
 		TestDeltas(this, OutDeltas, graph, tempGraph, expectedFaces, expectedVertices, expectedEdges);
 
 		TestTrue(TEXT("join two"),
-			tempGraph.GetDeltasForFaceJoin(OutDeltas, { addedFaceID, smallJoinFaceID2 }, NextID));
+			tempGraph.GetDeltasForObjectJoin(OutDeltas, { addedFaceID, smallJoinFaceID2 }, NextID, EGraph3DObjectType::Face));
 
 		expectedFaces -= 1;
 		expectedVertices -= 1;
