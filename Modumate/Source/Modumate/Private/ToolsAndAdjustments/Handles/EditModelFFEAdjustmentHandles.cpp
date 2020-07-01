@@ -268,7 +268,7 @@ void AAdjustFFEPointHandle::Initialize()
 bool AAdjustFFEPointHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
 {
 	OutButtonStyle = PlayerHUD->HandleAssets->GenericPointStyle;
-	OutWidgetSize = FVector2D(16.0f, 16.0f);
+	OutWidgetSize = FVector2D(12.0f, 12.0f);
 	return true;
 }
 
@@ -478,7 +478,7 @@ void AAdjustFFERotateHandle::Initialize()
 bool AAdjustFFERotateHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
 {
 	OutButtonStyle = PlayerHUD->HandleAssets->RotateStyle;
-	OutWidgetSize = FVector2D(64.0f, 64.0f);
+	OutWidgetSize = FVector2D(48.0f, 48.0f);
 	return true;
 }
 

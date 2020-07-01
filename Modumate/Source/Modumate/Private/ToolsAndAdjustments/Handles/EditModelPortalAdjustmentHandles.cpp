@@ -303,6 +303,6 @@ bool AAdjustPortalPointHandle::HandleInputNumber(float number)
 bool AAdjustPortalPointHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
 {
 	OutButtonStyle = PlayerHUD->HandleAssets->GenericPointStyle;
-	OutWidgetSize = FVector2D(16.0f, 16.0f);
+	OutWidgetSize = FVector2D(12.0f, 12.0f);
 	return true;
 }

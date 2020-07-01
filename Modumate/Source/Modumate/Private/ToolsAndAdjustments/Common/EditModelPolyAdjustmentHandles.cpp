@@ -183,13 +183,13 @@ bool AAdjustPolyPointHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*&
 	if (bAdjustPolyEdge)
 	{
 		OutButtonStyle = PlayerHUD->HandleAssets->GenericArrowStyle;
-		OutWidgetSize = FVector2D(32.0f, 32.0f);
+		OutWidgetSize = FVector2D(16.0f, 16.0f);
 		OutMainButtonOffset = FVector2D(16.0f, 0.0f);
 	}
 	else
 	{
 		OutButtonStyle = PlayerHUD->HandleAssets->GenericPointStyle;
-		OutWidgetSize = FVector2D(16.0f, 16.0f);
+		OutWidgetSize = FVector2D(12.0f, 12.0f);
 	}
 
 	return true;
@@ -364,7 +364,7 @@ bool AAdjustPolyExtrusionHandle::HandleInputNumber(float number)
 bool AAdjustPolyExtrusionHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
 {
 	OutButtonStyle = PlayerHUD->HandleAssets->GenericArrowStyle;
-	OutWidgetSize = FVector2D(32.0f, 32.0f);
+	OutWidgetSize = FVector2D(16.0f, 16.0f);
 	OutMainButtonOffset = FVector2D(16.0f, 0.0f);
 	return true;
 }
@@ -532,12 +532,12 @@ bool AJustificationHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& O
 	if ((HandleChildren.Num() > 0) && !bRootExpanded)
 	{
 		OutButtonStyle = PlayerHUD->HandleAssets->JustificationRootStyle;
-		OutWidgetSize = FVector2D(64.0f, 64.0f);
+		OutWidgetSize = FVector2D(32.0f, 32.0f);
 	}
 	else
 	{
 		OutButtonStyle = PlayerHUD->HandleAssets->GenericPointStyle;
-		OutWidgetSize = FVector2D(16.0f, 16.0f);
+		OutWidgetSize = FVector2D(12.0f, 12.0f);
 	}
 
 	return true;
