@@ -24,72 +24,87 @@ bool ACreateRoofFacesHandle::BeginUse()
 		return false;
 	}
 
-	if (UModumateRoofStatics::GetAllProperties(TargetMOI, EdgePoints, EdgeIDs, DefaultEdgeProperties, EdgeProperties) &&
-		UModumateRoofStatics::TessellateSlopedEdges(EdgePoints, EdgeProperties, CombinedPolyVerts, PolyVertIndices))
+	UWorld *world = GetWorld();
+
+	// Get the hint normal for the roof, assuming it's erring on the side of Z+
+	FVector roofNormal = TargetMOI->GetNormal();
+	if (roofNormal.Z < 0.0f)
 	{
-		int32 numEdges = EdgeIDs.Num();
-		int32 numCalculatedPolys = PolyVertIndices.Num();
-		if (numEdges == numCalculatedPolys)
+		roofNormal *= -1.0f;
+	}
+
+	if (!UModumateRoofStatics::GetAllProperties(TargetMOI, EdgePoints, EdgeIDs, DefaultEdgeProperties, EdgeProperties))
+	{
+		return false;
+	}
+
+	if (!UModumateRoofStatics::TessellateSlopedEdges(EdgePoints, EdgeProperties, CombinedPolyVerts, PolyVertIndices, roofNormal, world))
+	{
+		return false;
+	}
+
+	int32 numEdges = EdgeIDs.Num();
+	int32 numCalculatedPolys = PolyVertIndices.Num();
+	if (numEdges == numCalculatedPolys)
+	{
+		const FVector *combinedPolyVertsPtr = CombinedPolyVerts.GetData();
+		int32 vertIdxStart = 0, vertIdxEnd = 0;
+
+		FModumateDocument &doc = GameState->Document;
+		const FGraph3D &volumeGraph = doc.GetVolumeGraph();
+		FGraph3D &tempVolumeGraph = doc.GetTempVolumeGraph();
+		int32 nextID = doc.GetNextAvailableID();
+		TSet<int32> groupIDs({ TargetMOI->ID });
+
+		bool bFaceAdditionFailure = false;
+		TArray<FGraph3DDelta> graphDeltas;
+
+		for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
 		{
-			const FVector *combinedPolyVertsPtr = CombinedPolyVerts.GetData();
-			int32 vertIdxStart = 0, vertIdxEnd = 0;
+			vertIdxEnd = PolyVertIndices[edgeIdx];
 
-			FModumateDocument &doc = GameState->Document;
-			const FGraph3D &volumeGraph = doc.GetVolumeGraph();
-			FGraph3D &tempVolumeGraph = doc.GetTempVolumeGraph();
-			int32 nextID = doc.GetNextAvailableID();
-			TSet<int32> groupIDs({ TargetMOI->ID });
-
-			bool bFaceAdditionFailure = false;
-			TArray<FGraph3DDelta> graphDeltas;
-
-			for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
+			if (EdgeProperties[edgeIdx].bHasFace)
 			{
-				vertIdxEnd = PolyVertIndices[edgeIdx];
+				int32 numPolyVerts = (vertIdxEnd - vertIdxStart) + 1;
+				TArray<FVector> polyVerts(combinedPolyVertsPtr + vertIdxStart, numPolyVerts);
 
-				if (EdgeProperties[edgeIdx].bHasFace)
+				int32 existingFaceID;
+				bool bAddedFace = tempVolumeGraph.GetDeltaForFaceAddition(polyVerts, graphDeltas, nextID, existingFaceID, groupIDs);
+				if (!bAddedFace)
 				{
-					int32 numPolyVerts = (vertIdxEnd - vertIdxStart) + 1;
-					TArray<FVector> polyVerts(combinedPolyVertsPtr + vertIdxStart, numPolyVerts);
-
-					int32 existingFaceID;
-					bool bAddedFace = tempVolumeGraph.GetDeltaForFaceAddition(polyVerts, graphDeltas, nextID, existingFaceID, groupIDs);
-					if (!bAddedFace)
-					{
-						bFaceAdditionFailure = true;
-						break;
-					}
+					bFaceAdditionFailure = true;
+					break;
 				}
-
-				vertIdxStart = vertIdxEnd + 1;
 			}
 
-			if (graphDeltas.Num() == 0)
-			{
-				bFaceAdditionFailure = true;
-			}
+			vertIdxStart = vertIdxEnd + 1;
+		}
 
-			FGraph3D::CloneFromGraph(tempVolumeGraph, volumeGraph);
+		if (graphDeltas.Num() == 0)
+		{
+			bFaceAdditionFailure = true;
+		}
 
-			if (bFaceAdditionFailure)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Failed to generate graph deltas for all requested roof faces :("));
-				EndUse();
-				return false;
-			}
+		FGraph3D::CloneFromGraph(tempVolumeGraph, volumeGraph);
 
-			TArray<TSharedPtr<FDelta>> deltaPtrs;
-			for (const FGraph3DDelta &graphDelta : graphDeltas)
-			{
-				deltaPtrs.Add(MakeShareable(new FGraph3DDelta(graphDelta)));
-			}
+		if (bFaceAdditionFailure)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to generate graph deltas for all requested roof faces :("));
+			EndUse();
+			return false;
+		}
 
-			bool bAppliedDeltas = doc.ApplyDeltas(deltaPtrs, GetWorld());
+		TArray<TSharedPtr<FDelta>> deltaPtrs;
+		for (const FGraph3DDelta &graphDelta : graphDeltas)
+		{
+			deltaPtrs.Add(MakeShareable(new FGraph3DDelta(graphDelta)));
+		}
 
-			if (!bAppliedDeltas)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Failed to apply graph deltas for all requested roof faces :("));
-			}
+		bool bAppliedDeltas = doc.ApplyDeltas(deltaPtrs, world);
+
+		if (!bAppliedDeltas)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to apply graph deltas for all requested roof faces :("));
 		}
 	}
 

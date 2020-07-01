@@ -150,6 +150,11 @@ namespace Modumate
 		return PerimeterActor.Get();
 	}
 
+	FVector FMOIRoofPerimeterImpl::GetNormal() const
+	{
+		return CachedPlane;
+	}
+
 	bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag)
 	{
 		if (MOI == nullptr)

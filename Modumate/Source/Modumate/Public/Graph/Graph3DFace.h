@@ -43,7 +43,7 @@ namespace Modumate
 		bool IntersectsPlane(const FPlane OtherPlane, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<TPair<FVector, FVector>> &IntersectingSegments) const;
 
 		// TODO: potentially make this static
-		void CalculateArea();
+		bool CalculateArea();
 
 		void GetAdjacentFaceIDs(TSet<int32>& adjFaceIDs) const;
 

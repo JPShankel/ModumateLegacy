@@ -342,6 +342,10 @@ namespace Modumate
 				ApplyDelta(faceDelta);
 				bool bAddedToDeltas = false;
 				auto newFace = FindFace(addedFaceID);
+				if (!ensure(newFace))
+				{
+					continue;
+				}
 
 				TSet<int32> coincidentFaceIDs;
 				FindOverlappingFaces(addedFaceID, coincidentFaceIDs);

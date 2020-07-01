@@ -14,7 +14,12 @@ namespace Modumate
 		, ContainedFaceIDs(InContainedFaceIDs)
 		, CachedPlane(ForceInitToZero)
 	{
-		UpdatePlane(InVertexIDs);
+		if (!UpdatePlane(InVertexIDs))
+		{
+			bValid = false;
+			return;
+		}
+
 		UpdateVerticesAndEdges(InVertexIDs, false);
 	}
 
@@ -118,7 +123,8 @@ namespace Modumate
 		{
 			if (!AssignVertices(InVertexIDs))
 			{
-				return false;
+				bValid = false;
+				return bValid;
 			}
 		}
 
@@ -166,7 +172,11 @@ namespace Modumate
 			edge->AddFace(signedFaceID, edgeNormal);
 		}
 
-		CalculateArea();
+		if (!CalculateArea())
+		{
+			bValid = false;
+			return bValid;
+		}
 
 		bValid = true;
 		return bValid;
@@ -295,7 +305,7 @@ namespace Modumate
 		return true;
 	}
 
-	void FGraph3DFace::CalculateArea()
+	bool FGraph3DFace::CalculateArea()
 	{
 		// create 2D graph
 		FGraph graph2D;
@@ -306,13 +316,21 @@ namespace Modumate
 		for (int32 edgeID : EdgeIDs)
 		{
 			auto edge = Graph->FindEdge(edgeID);
-			if (!ensureAlways(edge != nullptr)) return;
+			if (!ensureAlways(edge != nullptr))
+			{
+				return false;
+			}
 			graph2D.AddEdge(edge->StartVertexID, edge->EndVertexID, edge->ID);
 		}
 
-		graph2D.CalculatePolygons();
+		int32 numPolygons = graph2D.CalculatePolygons();
 		CachedPerimeter.Reset();
 		CachedHoles.Reset();
+
+		if (numPolygons == 0)
+		{
+			return false;
+		}
 
 		for (auto& kvp : graph2D.GetPolygons())
 		{
@@ -349,7 +367,10 @@ namespace Modumate
 		TArray<FVector2D> OutVertices, OutPerimeter;
 		TArray<int32> OutTriangles, outholeidxs;
 		TArray<bool> outholes;
-		UModumateGeometryStatics::TriangulateVerticesPoly2Tri(CachedPerimeter, CachedHoles, OutVertices, OutTriangles, OutPerimeter, outholes, outholeidxs);
+		if (!UModumateGeometryStatics::TriangulateVerticesPoly2Tri(CachedPerimeter, CachedHoles, OutVertices, OutTriangles, OutPerimeter, outholes, outholeidxs))
+		{
+			return false;
+		}
 
 		CachedArea = 0.0f;
 		for (int32 i = 0; i < OutTriangles.Num(); i += 3)
@@ -363,6 +384,8 @@ namespace Modumate
 
 			CachedArea += triArea;
 		}
+
+		return (CachedArea > 0.0f);
 	}
 
 	void FGraph3DFace::GetAdjacentFaceIDs(TSet<int32>& OutFaceIDs) const

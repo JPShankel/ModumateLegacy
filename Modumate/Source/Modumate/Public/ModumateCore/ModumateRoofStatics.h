@@ -103,7 +103,7 @@ public:
 	static bool UpdateRoofEdgeProperties(Modumate::FModumateObjectInstance *RoofObject, const TArray<int32> &NewEdgeIDs);
 
 	static bool TessellateSlopedEdges(const TArray<FVector> &EdgePoints, const TArray<FRoofEdgeProperties> &EdgeProperties,
-		TArray<FVector> &OutCombinedPolyVerts, TArray<int32> &OutPolyVertIndices, const FVector &NormalHint = FVector::UpVector);
+		TArray<FVector> &OutCombinedPolyVerts, TArray<int32> &OutPolyVertIndices, const FVector &NormalHint = FVector::UpVector, UWorld *DebugDrawWorld = nullptr);
 
 	static FRoofEdgeProperties DefaultEdgeProperties;
 

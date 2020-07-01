@@ -96,8 +96,9 @@ bool FTessellationPolygon::ClipWithPolygon(const FTessellationPolygon &ClippingP
 		FVector clipStartPoint = planeIntersectPoint + lineStartLength * planeIntersectDir;
 		FVector clipEndPoint = planeIntersectPoint + lineEndLength * planeIntersectDir;
 
-		float edgeHeight = StartPoint | BaseUp;
-		if (((clipStartPoint | BaseUp) < edgeHeight) || ((clipEndPoint | BaseUp) < edgeHeight))
+		// Make sure that the lines aren't clipped below (or at) the height of the edge
+		float edgeHeightFudged = (StartPoint | BaseUp) + RAY_INTERSECT_TOLERANCE;
+		if (((clipStartPoint | BaseUp) < edgeHeightFudged) || ((clipEndPoint | BaseUp) < edgeHeightFudged))
 		{
 			return false;
 		}
@@ -107,7 +108,7 @@ bool FTessellationPolygon::ClipWithPolygon(const FTessellationPolygon &ClippingP
 		{
 			FVector clipStartBary = FMath::ComputeBaryCentric2D(clipStartPoint, StartPoint, EndPoint, CachedEdgeIntersection);
 			FVector clipEndBary = FMath::ComputeBaryCentric2D(clipEndPoint, StartPoint, EndPoint, CachedEdgeIntersection);
-			if ((clipStartBary.GetMin() < -KINDA_SMALL_NUMBER) || clipEndBary.GetMin() < -KINDA_SMALL_NUMBER)
+			if ((clipStartBary.GetMin() < -RAY_INTERSECT_TOLERANCE) || clipEndBary.GetMin() < -RAY_INTERSECT_TOLERANCE)
 			{
 				return false;
 			}
@@ -139,7 +140,7 @@ bool FTessellationPolygon::UpdatePolygonVerts()
 
 			PolygonVerts.Add(StartPoint);
 			PolygonVerts.Add(EndPoint);
-			PolygonVerts.Add(EndPoint + trapezoidWidth * StartDir);
+			PolygonVerts.Add(EndPoint + trapezoidWidth * EndDir);
 			PolygonVerts.Add(StartPoint + trapezoidWidth * StartDir);
 		}
 	}
@@ -483,7 +484,7 @@ bool UModumateRoofStatics::UpdateRoofEdgeProperties(Modumate::FModumateObjectIns
 }
 
 bool UModumateRoofStatics::TessellateSlopedEdges(const TArray<FVector> &EdgePoints, const TArray<FRoofEdgeProperties> &EdgeProperties,
-	TArray<FVector> &OutCombinedPolyVerts, TArray<int32> &OutPolyVertIndices, const FVector &NormalHint)
+	TArray<FVector> &OutCombinedPolyVerts, TArray<int32> &OutPolyVertIndices, const FVector &NormalHint, UWorld *DebugDrawWorld)
 {
 	OutCombinedPolyVerts.Reset();
 	OutPolyVertIndices.Reset();
@@ -624,11 +625,12 @@ bool UModumateRoofStatics::TessellateSlopedEdges(const TArray<FVector> &EdgePoin
 			}
 		}
 
-		/* Draw debug lines to diagnose tessellation issues
+		//Draw debug lines to diagnose tessellation issues
+#if UE_BUILD_DEBUG
 		float debugHue = FMath::Frac(edgeIdx * UE_GOLDEN_RATIO);
 		FLinearColor debugColor = FLinearColor::MakeFromHSV8(debugHue * 0xFF, 0xFF, 0xFF);
-		edgePoly.DrawDebug(debugColor.ToFColor(false));
-		//*/
+		edgePoly.DrawDebug(debugColor.ToFColor(false), DebugDrawWorld);
+#endif
 
 		edgePoly.UpdatePolygonVerts();
 	}

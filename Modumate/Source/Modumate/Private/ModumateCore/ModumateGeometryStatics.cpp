@@ -1626,7 +1626,7 @@ bool UModumateGeometryStatics::AnalyzeCachedPositions(const TArray<FVector> &InP
 	Out2DPositions.Reset(InPositions.Num());
 	for (const FVector &position : InPositions)
 	{
-		Out2DPositions.Add(ProjectPoint2D(position, OutAxis2DX, OutAxis2DY,InPositions[0]));
+		Out2DPositions.Add(ProjectPoint2D(position, OutAxis2DX, OutAxis2DY, InPositions[0]));
 	}
 
 	// Find a central point to use for casting rays
