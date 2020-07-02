@@ -205,6 +205,7 @@ namespace Modumate
 
 	public:
 		bool ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World);
+		void ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World);
 		void ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World);
 		bool ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UWorld *World);
 		bool UpdateGraphObjects(UWorld *World);

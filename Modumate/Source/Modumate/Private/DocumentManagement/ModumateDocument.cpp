@@ -1328,6 +1328,13 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 	return true;
 }
 
+void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World)
+{
+	// TODO: surface graph object and storage in document
+	// auto surfaceGraph = GetObjectByID(Delta.ID);
+	// surfaceGraph->Graph->ApplyDelta(Delta);
+}
+
 void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World)
 {
 	TArray<FVector> controlPoints;

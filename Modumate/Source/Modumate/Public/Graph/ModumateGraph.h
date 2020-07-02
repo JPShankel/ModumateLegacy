@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 
-#include "ModumateCore/ModumateTypes.h"
 #include "DocumentManagement/ModumateSerialization.h"
+#include "ModumateCore/ModumateTypes.h"
+#include "Graph/Graph2DDelta.h"
 
 namespace Modumate
 {
@@ -119,6 +120,8 @@ namespace Modumate
 
 		bool ToDataRecord(FGraph2DRecord &OutRecord, bool bSaveOpenPolygons = false, bool bSaveExteriorPolygons = false) const;
 		bool FromDataRecord(const FGraph2DRecord &InRecord);
+
+		bool ApplyDelta(const FGraph2DDelta &Delta);
 
 		float Epsilon;
 		bool bDebugCheck;

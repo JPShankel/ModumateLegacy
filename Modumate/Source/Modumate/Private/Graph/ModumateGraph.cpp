@@ -730,4 +730,65 @@ namespace Modumate
 
 		return true;
 	}
+
+	bool FGraph::ApplyDelta(const FGraph2DDelta &Delta)
+	{
+		// TODO: do graph objects need dirty capabilities?
+
+		for (auto &kvp : Delta.VertexMovements)
+		{
+			int32 vertexID = kvp.Key;
+			const TPair<FVector2D, FVector2D> &vertexDelta = kvp.Value;
+			FGraphVertex *vertex = FindVertex(vertexID);
+			if (ensureAlways(vertex))
+			{
+				vertex->Position = vertexDelta.Value;
+			}
+		}
+
+		for (auto &kvp : Delta.VertexAdditions)
+		{
+			auto newVertex = AddVertex(kvp.Value, kvp.Key);
+			if (!ensure(newVertex))
+			{
+				return false;
+			}
+		}
+
+		for (auto &kvp : Delta.VertexDeletions)
+		{
+			bool bRemovedVertex = RemoveVertex(kvp.Key);
+			if (!ensure(bRemovedVertex))
+			{
+				return false;
+			}
+		}
+
+		for (auto &kvp : Delta.EdgeAdditions)
+		{
+			int32 edgeID = kvp.Key;
+			const TArray<int32> &edgeVertexIDs = kvp.Value.Vertices;
+			if (!ensureAlways(edgeVertexIDs.Num() == 2))
+			{
+				return false;
+			}
+
+			auto newEdge = AddEdge(edgeVertexIDs[0], edgeVertexIDs[1], edgeID);
+			if (!ensure(newEdge))
+			{
+				return false;
+			}
+		}
+
+		for (auto &kvp : Delta.EdgeDeletions)
+		{
+			bool bRemovedEdge = RemoveEdge(kvp.Key);
+			if (!ensure(bRemovedEdge))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 }
