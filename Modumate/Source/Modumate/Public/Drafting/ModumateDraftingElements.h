@@ -3,6 +3,7 @@
 #include "Drafting/APDFLLib.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "Drafting/ModumateDraftingDraw.h"
+#include "Drafting/ModumateClippingTriangles.h"
 
 #define DEFAULT_OBJECT_EPSILON 0.1f
 
@@ -17,7 +18,7 @@ namespace Modumate
 	{
 	public:
 		FDraftingElement() {};
-		virtual ~FDraftingElement() { ClearChildren(); };
+		virtual ~FDraftingElement();
 		virtual void ClearChildren();
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
@@ -78,6 +79,8 @@ namespace Modumate
 		TArray<TSharedPtr<FDraftingElement>> Children;
 
 		FBox2D BoundingBox = FBox2D(EForceInit::ForceInitToZero);
+
+		TUniquePtr<FModumateClippingTriangles> lineClipping;
 	};
 
 	// represents a "node" of an object tree

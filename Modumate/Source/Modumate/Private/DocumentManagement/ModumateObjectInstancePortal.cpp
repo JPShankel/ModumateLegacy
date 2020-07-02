@@ -15,6 +15,8 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Algo/ForEach.h"
+#include "Algo/Unique.h"
 
 
 class AEditModelPlayerController_CPP;
@@ -488,117 +490,127 @@ namespace Modumate
 		FMColor defaultColor = FMColor::Gray64;
 		FMColor swingColor = FMColor(0.0f, 0.0f, 0.0f);
 		float defaultDoorOpeningDegrees = 90;
-
-		for (auto& edge : OutEdges)
+		
+		bool bGetFarLines = ParentPage->lineClipping.IsValid();
+		if (bGetFarLines)
 		{
-			FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Key);
-			FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Value);
-
-			TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
-				Units::FCoordinates2D::WorldCentimeters(start),
-				Units::FCoordinates2D::WorldCentimeters(end),
-				defaultThickness, defaultColor));
-			line->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemCutLine);
-			ParentPage->Children.Add(line);
+				GetFarDraftingLines(ParentPage, Plane, BoundingBox);
 		}
-
-		// draw door swing lines if the cut plane intersects the door's mesh
-		if (MOI->GetObjectType() == EObjectType::OTDoor && OutEdges.Num() > 0)
+		else
 		{
-			auto assembly = MOI->GetAssembly();
-			auto portalConfig = assembly.PortalConfiguration;
-			auto portalFunction = portalConfig.PortalFunction;
 
-			// we only draw arcs for swing doors, where the cut plane's normal is vertical and the door is vertical
-			bool bFloorplanPlane = FVector::Coincident(FVector::DownVector, FVector(Plane));
-			FVector rotationAxis = CachedWorldRot.GetRotationAxis();
-			bool bWallVertical = FVector::Parallel(FVector::UpVector, rotationAxis) || CachedWorldRot.IsIdentity(KINDA_SMALL_NUMBER);
-			if (portalFunction == EPortalFunction::Swing && bFloorplanPlane && bWallVertical)
+			for (auto& edge : OutEdges)
 			{
-				auto parent = MOI->GetParentObject();
+				FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Key);
+				FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Value);
 
-				// Get amount of panels
-				TArray<int32> panelSlotIndices;
+				TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
+					Units::FCoordinates2D::WorldCentimeters(start),
+					Units::FCoordinates2D::WorldCentimeters(end),
+					defaultThickness, defaultColor));
+				line->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemCutLine);
+				ParentPage->Children.Add(line);
+			}
 
-				for (int32 idx = 0; idx < portalConfig.Slots.Num(); idx++)
+			// draw door swing lines if the cut plane intersects the door's mesh
+			if (MOI->GetObjectType() == EObjectType::OTDoor && OutEdges.Num() > 0)
+			{
+				auto assembly = MOI->GetAssembly();
+				auto portalConfig = assembly.PortalConfiguration;
+				auto portalFunction = portalConfig.PortalFunction;
+
+				// we only draw arcs for swing doors, where the cut plane's normal is vertical and the door is vertical
+				bool bFloorplanPlane = FVector::Coincident(FVector::DownVector, FVector(Plane));
+				FVector rotationAxis = CachedWorldRot.GetRotationAxis();
+				bool bWallVertical = FVector::Parallel(FVector::UpVector, rotationAxis) || CachedWorldRot.IsIdentity(KINDA_SMALL_NUMBER);
+				if (portalFunction == EPortalFunction::Swing && bFloorplanPlane && bWallVertical)
 				{
-					auto& slot = portalConfig.Slots[idx];
-					if (slot.Type == EPortalSlotType::Panel)
+					auto parent = MOI->GetParentObject();
+
+					// Get amount of panels
+					TArray<int32> panelSlotIndices;
+
+					for (int32 idx = 0; idx < portalConfig.Slots.Num(); idx++)
 					{
-						panelSlotIndices.Add(idx);
-					}
-				}
-
-				int32 numPanels = panelSlotIndices.Num();
-				FVector windowDiagonal = MOI->GetControlPoint(2) - MOI->GetControlPoint(0);
-
-				FVector p1 = FVector::PointPlaneProject(GetCorner(0), Plane);
-				FVector p2 = FVector::PointPlaneProject(GetCorner(2), Plane);
-
-				float angle = -CachedWorldRot.GetAngle();
-				angle *= FVector::DotProduct(FVector::UpVector, rotationAxis);
-				// TODO: enable if door swing arcs should show when plans are facing the ceiling
-				//angle *= FVector::DotProduct(FVector::DownVector, FVector(Plane));
-
-				for (int32 panelIdx : panelSlotIndices)
-				{
-					auto& panel = portalConfig.Slots[panelIdx];
-
-					// angle offset represents how much the arc needs to be rotated to accommodate for -
-					// the panel being flipped in the assembly, whether it is positioned with RXLeft or RXRight, 
-					// and whether the moi is inverted (for portals, transverse flips MOI->GetObjectInverted())
-					// angle offset is used when the door swing arc is rotated
-					float angleOffset = panel.FlipX ? 0.5f : 0.0f;
-					if (MOI->GetObjectInverted()) 
-					{
-						angleOffset -= panel.FlipX ? -0.5f : 0.5f;
+						auto& slot = portalConfig.Slots[idx];
+						if (slot.Type == EPortalSlotType::Panel)
+						{
+							panelSlotIndices.Add(idx);
+						}
 					}
 
-					// TODO: this logic has already been solved in CompoundMeshActor.  Given an understanding of 2D
-					// sub-graphs, make sure that the portal transforms work the same way for drafting and for the models
-					FVector hingeLocation;
-					if (panel.LocationX == FPortalConfiguration::RefPlaneNameMinX.ToString())
+					int32 numPanels = panelSlotIndices.Num();
+					FVector windowDiagonal = MOI->GetControlPoint(2) - MOI->GetControlPoint(0);
+
+					FVector p1 = FVector::PointPlaneProject(GetCorner(0), Plane);
+					FVector p2 = FVector::PointPlaneProject(GetCorner(2), Plane);
+
+					float angle = -CachedWorldRot.GetAngle();
+					angle *= FVector::DotProduct(FVector::UpVector, rotationAxis);
+					// TODO: enable if door swing arcs should show when plans are facing the ceiling
+					//angle *= FVector::DotProduct(FVector::DownVector, FVector(Plane));
+
+					for (int32 panelIdx : panelSlotIndices)
 					{
-						hingeLocation = !MOI->GetObjectInverted() ? p1 : p2;
+						auto& panel = portalConfig.Slots[panelIdx];
+
+						// angle offset represents how much the arc needs to be rotated to accommodate for -
+						// the panel being flipped in the assembly, whether it is positioned with RXLeft or RXRight, 
+						// and whether the moi is inverted (for portals, transverse flips MOI->GetObjectInverted())
+						// angle offset is used when the door swing arc is rotated
+						float angleOffset = panel.FlipX ? 0.5f : 0.0f;
+						if (MOI->GetObjectInverted())
+						{
+							angleOffset -= panel.FlipX ? -0.5f : 0.5f;
+						}
+
+						// TODO: this logic has already been solved in CompoundMeshActor.  Given an understanding of 2D
+						// sub-graphs, make sure that the portal transforms work the same way for drafting and for the models
+						FVector hingeLocation;
+						if (panel.LocationX == FPortalConfiguration::RefPlaneNameMinX.ToString())
+						{
+							hingeLocation = !MOI->GetObjectInverted() ? p1 : p2;
+						}
+						else if (panel.LocationX == FPortalConfiguration::RefPlaneNameMaxX.ToString())
+						{
+							hingeLocation = !MOI->GetObjectInverted() ? p2 : p1;
+
+							angleOffset += 1.0f;
+						}
+						// TODO: handle panel positions other than RXLeft (RefPlaneNameMinX) and RXRight (RefPlaneNameMaxX)
+						else
+						{
+							continue;
+						}
+
+						// TODO: this is only correct as long as each panel is the same size
+						float width = windowDiagonal.X / numPanels;
+
+						// create arc object
+						TSharedPtr<FDraftingArc> doorSwing = MakeShareable(new FDraftingArc(
+							Units::FRadius::WorldCentimeters(width),
+							Units::FAngle::Degrees(defaultDoorOpeningDegrees),
+							defaultThickness,
+							swingColor));
+						doorSwing->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemOperatorLine);
+
+						FVector2D hingeLocation2D = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, hingeLocation);
+						doorSwing->SetLocalPosition(Units::FCoordinates2D::WorldCentimeters(hingeLocation2D));
+						doorSwing->SetLocalOrientation(Units::FAngle::Radians(angle + (PI*(-0.5f + angleOffset))));
+
+						ParentPage->Children.Add(doorSwing);
+
+						TSharedPtr<FDraftingLine> doorLine = MakeShareable(new FDraftingLine(Units::FLength::WorldCentimeters(width), defaultThickness, swingColor));
+						doorLine->SetLocalPosition(Units::FCoordinates2D::WorldCentimeters(hingeLocation2D));
+						doorLine->SetLocalOrientation(Units::FAngle::Radians(angle + (PI*-0.5f)));
+						doorLine->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemOperatorLine);
+
+						ParentPage->Children.Add(doorLine);
 					}
-					else if (panel.LocationX == FPortalConfiguration::RefPlaneNameMaxX.ToString())
-					{
-						hingeLocation = !MOI->GetObjectInverted() ? p2 : p1;
-
-						angleOffset += 1.0f;
-					}
-					// TODO: handle panel positions other than RXLeft (RefPlaneNameMinX) and RXRight (RefPlaneNameMaxX)
-					else
-					{
-						continue;
-					}
-
-					// TODO: this is only correct as long as each panel is the same size
-					float width = windowDiagonal.X / numPanels;
-				
-					// create arc object
-					TSharedPtr<FDraftingArc> doorSwing = MakeShareable(new FDraftingArc(
-						Units::FRadius::WorldCentimeters(width),
-						Units::FAngle::Degrees(defaultDoorOpeningDegrees),
-						defaultThickness,
-						swingColor));
-					doorSwing->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemOperatorLine);
-
-					FVector2D hingeLocation2D = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, hingeLocation);
-					doorSwing->SetLocalPosition(Units::FCoordinates2D::WorldCentimeters(hingeLocation2D));
-					doorSwing->SetLocalOrientation(Units::FAngle::Radians(angle + (PI*(-0.5f + angleOffset))));
-
-					ParentPage->Children.Add(doorSwing);
-
-					TSharedPtr<FDraftingLine> doorLine = MakeShareable(new FDraftingLine(Units::FLength::WorldCentimeters(width), defaultThickness, swingColor));
-					doorLine->SetLocalPosition(Units::FCoordinates2D::WorldCentimeters(hingeLocation2D));
-					doorLine->SetLocalOrientation(Units::FAngle::Radians(angle + (PI*-0.5f)));
-					doorLine->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemOperatorLine);
-
-					ParentPage->Children.Add(doorLine);
 				}
 			}
 		}
+
 	}
 
 	void Modumate::FMOIPortalImpl::SetIsDynamic(bool bIsDynamic)
@@ -619,4 +631,171 @@ namespace Modumate
 		}
 		return false;
 	}
+
+	void FMOIPortalImpl::GetFarDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane &Plane, const FBox2D& BoundingBox) const
+	{
+		const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(MOI->GetActor());
+		const FTransform& localToWorld = actor->ActorToWorld();
+		const FVector viewNormal = Plane;
+		const FVector localViewNormal(localToWorld.ToMatrixWithScale().GetTransposed().TransformVector(viewNormal));
+
+		TArray<FEdge> portalEdges;
+		for (auto meshComp : actor->NineSliceLowLODComps)
+		{
+			if (meshComp == nullptr)
+			{
+				continue;
+			}
+			int numSections = meshComp->GetNumSections();
+			for (int section = 0; section < numSections; ++section)
+			{
+				const FProcMeshSection* meshSection = meshComp->GetProcMeshSection(section);
+				if (meshSection == nullptr)
+				{
+					continue;
+				}
+				const auto& vertices = meshSection->ProcVertexBuffer;
+				const auto& indices = meshSection->ProcIndexBuffer;
+				const int numIndices = indices.Num();
+				ensure(numIndices % 3 == 0);
+
+				if (numIndices > 0)
+				{
+					// Delete any edge that's in neighbouring triangles on assumption it's a quad.
+					static const int Invalid = -1;
+					struct LineIndices
+					{
+						int A { Invalid };
+						int B { Invalid };
+						void Normalize() { if (A > B) { Swap(A, B); } }
+						bool operator==(const LineIndices& rhs) const { return A == rhs.A && B == rhs.B; }
+					} lineIndices[6];
+
+					for (int triangle = 0; triangle < numIndices; triangle += 3)
+					{
+						bool bBackFacing = true;
+						for (int vert = 0; bBackFacing && vert < 3; ++vert)
+						{
+							bBackFacing &= (vertices[indices[triangle + vert]].Normal | localViewNormal) > 0;
+						}
+						if (bBackFacing)
+						{
+							continue;
+						}
+
+						for (int edge = 0; edge < 3; ++edge)
+						{
+							lineIndices[edge + 3] = { (int) indices[triangle + edge], (int) indices[triangle + (edge + 1) % 3] };
+							lineIndices[edge + 3].Normalize();
+						}
+
+						for (int edge = 0; edge < 3; ++edge)
+						{
+							if (lineIndices[edge] == lineIndices[3])
+							{
+								lineIndices[edge].A = -1; lineIndices[3].A = -1;
+							}
+							else if (lineIndices[edge] == lineIndices[4])
+							{
+								lineIndices[edge].A = -1; lineIndices[4].A = -1;
+							}
+							else if (lineIndices[edge] == lineIndices[5])
+							{
+								lineIndices[edge].A = -1; lineIndices[5].A = -1;
+							}
+						}
+
+						for (int edge = 0; edge < 3; ++edge)
+						{
+							if (lineIndices[edge].A != Invalid)
+							{
+								portalEdges.Emplace(vertices[lineIndices[edge].A].Position, vertices[lineIndices[edge].B].Position);
+							}
+							lineIndices[edge] = lineIndices[3 + edge];
+						}
+
+					}
+					for (int edge = 0; edge < 3; ++edge)
+					{
+						if (lineIndices[edge].A != -1)
+						{
+							portalEdges.Emplace(vertices[lineIndices[edge].A].Position, vertices[lineIndices[edge].B].Position);
+						}
+					}
+
+				}
+
+			}
+		}
+
+		Algo::ForEach(portalEdges, [localToWorld](FEdge& edge) {edge.Vertex[0] = localToWorld.TransformPosition(edge.Vertex[0]);
+		    edge.Vertex[1] = localToWorld.TransformPosition(edge.Vertex[1]); });
+
+		TArray<FEdge> clippedLines;
+		for (const auto& edge: portalEdges)
+		{
+			clippedLines.Append(ParentPage->lineClipping->ClipWorldLineToView(edge));
+		}
+
+		// Eliminate identical lines in 2D...
+
+		for (auto& edge: clippedLines)
+		{   // Canonical form:
+			if (edge.Vertex[0].X > edge.Vertex[1].X ||
+				(edge.Vertex[0].X == edge.Vertex[1].X && edge.Vertex[0].Y > edge.Vertex[1].Y))
+			{
+				Swap(edge.Vertex[0], edge.Vertex[1]);
+			}
+		}
+		Algo::Sort(clippedLines, [](const FEdge& a, const FEdge& b)
+			{   // Sort lexicographically.
+				for (int v = 0; v < 2; ++v)
+				{
+					if (a.Vertex[v].X < b.Vertex[v].X)
+					{
+						return true;
+					}
+					else if (a.Vertex[v].X > b.Vertex[v].X)
+					{
+						return false;
+					}
+					else if (a.Vertex[v].Y < b.Vertex[v].Y)
+					{
+						return true;
+					}
+					else if (a.Vertex[v].Y > b.Vertex[v].Y)
+					{
+						return false;
+					}
+				}
+				return false;  // False if equal.
+			});
+
+		int32 eraseIndex = Algo::Unique(clippedLines, [](const FEdge& a, const FEdge& b)
+			{
+				return a.Vertex[0].X == b.Vertex[0].X && a.Vertex[0].Y == b.Vertex[0].Y
+					&& a.Vertex[1].X == b.Vertex[1].X && a.Vertex[1].Y == b.Vertex[1].Y;
+			});
+		clippedLines.RemoveAt(eraseIndex, clippedLines.Num() - eraseIndex);
+
+		FVector2D boxClipped0;
+		FVector2D boxClipped1;
+		for (const auto& clippedLine: clippedLines)
+		{
+			FVector2D vert0(clippedLine.Vertex[0]);
+			FVector2D vert1(clippedLine.Vertex[1]);
+
+			if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
+			{
+
+				TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
+					Units::FCoordinates2D::WorldCentimeters(boxClipped0),
+					Units::FCoordinates2D::WorldCentimeters(boxClipped1),
+					Units::FThickness::Points(0.125f), FMColor::Gray64));
+				ParentPage->Children.Add(line);
+				line->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemBeyond);
+			}
+		}
+	}
+
 }

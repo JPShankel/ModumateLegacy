@@ -494,107 +494,163 @@ namespace Modumate
 			return true;
 		};
 
-		float currentThickness = 0.0f;
-		int32 numLines = LayerGeometries.Num() + 1;
-		for (int32 layerIdx = 0; layerIdx < numLines; layerIdx++)
+		bool bGetFarLines = ParentPage->lineClipping.IsValid();
+
+		if (!bGetFarLines)
 		{
-			bool usePointsA = layerIdx < LayerGeometries.Num();
-			auto& layer = usePointsA ? LayerGeometries[layerIdx] : LayerGeometries[layerIdx-1];
+			float currentThickness = 0.0f;
+			int32 numLines = LayerGeometries.Num() + 1;
+			for (int32 layerIdx = 0; layerIdx < numLines; layerIdx++)
+			{
+				bool usePointsA = layerIdx < LayerGeometries.Num();
+				auto& layer = usePointsA ? LayerGeometries[layerIdx] : LayerGeometries[layerIdx - 1];
 
-			auto dwgLayerType = FModumateLayerType::kSeparatorCutStructuralLayer;
-			if (layerIdx == 0)
-			{
-				dwgLayerType = FModumateLayerType::kSeparatorCutOuterSurface;
-			}
-			else if (layerIdx == LayerGeometries.Num())
-			{
-				dwgLayerType = FModumateLayerType::kSeparatorCutMinorLayer;
-			}
-
-			TArray<FVector> intersections;
-			GetPlaneIntersections(intersections, usePointsA ? layer.PointsA : layer.PointsB, Plane);
-
-			intersections.Sort(sorter);
-			// we can make mask perimeters when there are an even amount of intersection between a simple polygon and a plane
-			bool bMakeMaskPerimeter = (intersections.Num() % 2 == 0);
-
-			Units::FThickness lineThickness;
-			FMColor lineColor = innerColor;
-			if (FMath::IsNearlyEqual(currentThickness, CachedLayerDims.StructureWidthStart) ||
-				FMath::IsNearlyEqual(currentThickness, CachedLayerDims.StructureWidthEnd, KINDA_SMALL_NUMBER))
-			{
-				lineThickness = structureThickness;
-				lineColor = structureColor;
-			}
-			// TODO: currently, finishes are not rendered in drawings.  Given finish lines are implemented,
-			// the wall needs to check whether there is a finish on the outside before choosing to use the
-			// outer layer weight as opposed to the inner layer weight.
-			// Finish lines are not considered structural, they are all inner except for the outermost layer
-			else if (layerIdx == 0 || layerIdx == LayerGeometries.Num())
-			{
-				lineThickness = outerThickness;
-				lineColor = outerColor;
-			}
-			else
-			{
-				lineThickness = innerThickness;
-				lineColor = innerColor;
-			}
-
-			for (int32 idx = 0; idx < intersections.Num() - 1; idx += 2)
-			{
-				// find vertices for the stencil masks, to hide geometry behind the object from the edge detection custom shader
-				if (bMakeMaskPerimeter)
+				auto dwgLayerType = FModumateLayerType::kSeparatorCutMinorLayer;
+				if (layerIdx == 0 || layerIdx == LayerGeometries.Num())
 				{
-					if (layerIdx == 0)
+					dwgLayerType = FModumateLayerType::kSeparatorCutOuterSurface;
+				}
+
+				TArray<FVector> intersections;
+				GetPlaneIntersections(intersections, usePointsA ? layer.PointsA : layer.PointsB, Plane);
+
+				intersections.Sort(sorter);
+				// we can make mask perimeters when there are an even amount of intersection between a simple polygon and a plane
+				bool bMakeMaskPerimeter = (intersections.Num() % 2 == 0);
+
+				Units::FThickness lineThickness;
+				FMColor lineColor = innerColor;
+				if (FMath::IsNearlyEqual(currentThickness, CachedLayerDims.StructureWidthStart) ||
+					FMath::IsNearlyEqual(currentThickness, CachedLayerDims.StructureWidthEnd, KINDA_SMALL_NUMBER))
+				{
+					lineThickness = structureThickness;
+					lineColor = structureColor;
+				}
+				// TODO: currently, finishes are not rendered in drawings.  Given finish lines are implemented,
+				// the wall needs to check whether there is a finish on the outside before choosing to use the
+				// outer layer weight as opposed to the inner layer weight.
+				// Finish lines are not considered structural, they are all inner except for the outermost layer
+				else if (layerIdx == 0 || layerIdx == LayerGeometries.Num())
+				{
+					lineThickness = outerThickness;
+					lineColor = outerColor;
+				}
+				else
+				{
+					lineThickness = innerThickness;
+					lineColor = innerColor;
+				}
+
+				for (int32 idx = 0; idx < intersections.Num() - 1; idx += 2)
+				{
+					// find vertices for the stencil masks, to hide geometry behind the object from the edge detection custom shader
+					if (bMakeMaskPerimeter)
 					{
-						OutPerimeters.Add(TArray<FVector>());
-						OutPerimeters[idx / 2].Add(intersections[idx]);
-						OutPerimeters[idx / 2].Add(intersections[idx + 1]);
-					}
-					else if (layerIdx == numLines - 1)
-					{
-						// TODO: remove this constraint, potentially need to figure out where the ray would intersect with the plane
-						// sometimes only some of the layers of a wall intersect the plane, resulting in a discrepancy in the amount 
-						// of intersection points.  Currently, the mask geometry expects 4 points
-						if (intersections.Num() / 2 == OutPerimeters.Num())
+						if (layerIdx == 0)
 						{
-							OutPerimeters[idx / 2].Add(intersections[idx + 1]);
+							OutPerimeters.Add(TArray<FVector>());
 							OutPerimeters[idx / 2].Add(intersections[idx]);
+							OutPerimeters[idx / 2].Add(intersections[idx + 1]);
+						}
+						else if (layerIdx == numLines - 1)
+						{
+							// TODO: remove this constraint, potentially need to figure out where the ray would intersect with the plane
+							// sometimes only some of the layers of a wall intersect the plane, resulting in a discrepancy in the amount 
+							// of intersection points.  Currently, the mask geometry expects 4 points
+							if (intersections.Num() / 2 == OutPerimeters.Num())
+							{
+								OutPerimeters[idx / 2].Add(intersections[idx + 1]);
+								OutPerimeters[idx / 2].Add(intersections[idx]);
+							}
+						}
+					}
+
+					TArray<TPair<float, float>> lineRanges;
+					FVector intersectionStart = intersections[idx];
+					FVector intersectionEnd = intersections[idx + 1];
+					TPair<FVector, FVector> currentIntersection = TPair<FVector, FVector>(intersectionStart, intersectionEnd);
+					GetRangesForHolesOnPlane(lineRanges, currentIntersection, layer, currentThickness, Plane, -AxisX, -AxisY, Origin);
+
+					// TODO: unclear why the axes need to be flipped here, could be because of the different implementation of finding intersections
+					FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersectionStart);
+					FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersectionEnd);
+					FVector2D delta = end - start;
+
+					for (auto& range : lineRanges)
+					{
+						FVector2D clippedStart, clippedEnd;
+						FVector2D rangeStart = start + delta * range.Key;
+						FVector2D rangeEnd = start + delta * range.Value;
+
+						if (UModumateFunctionLibrary::ClipLine2DToRectangle(rangeStart, rangeEnd, BoundingBox, clippedStart, clippedEnd))
+						{
+							TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
+								Units::FCoordinates2D::WorldCentimeters(clippedStart),
+								Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+								lineThickness, lineColor));
+							ParentPage->Children.Add(line);
+							line->SetLayerTypeRecursive(dwgLayerType);
 						}
 					}
 				}
 
-				TArray<TPair<float, float>> lineRanges;
-				FVector intersectionStart = intersections[idx];
-				FVector intersectionEnd = intersections[idx+1];
-				TPair<FVector, FVector> currentIntersection = TPair<FVector, FVector>(intersectionStart, intersectionEnd);
-				GetRangesForHolesOnPlane(lineRanges, currentIntersection, layer, currentThickness, Plane, -AxisX, -AxisY, Origin);
+				currentThickness += layer.Thickness;
 
-				// TODO: unclear why the axes need to be flipped here, could be because of the different implementation of finding intersections
-				FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersectionStart);
-				FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersectionEnd);
-				FVector2D delta = end - start;
+			}
+		}
+		else  // Get far lines.
+		{
+			struct ClippedLine
+			{
+				TArray<FEdge> LineSections;
+				FModumateLayerType LayerType { FModumateLayerType::kDefault };
+			};
+			TArray<ClippedLine> backgroundLines;
 
-				for (auto& range : lineRanges)
+			if (LayerGeometries.Num() > 0)
+			{
+				auto& pointsA = LayerGeometries[0].PointsA;
+				int numPoints = pointsA.Num();
+				for (int i = 0; i < numPoints; ++i)
 				{
-					FVector2D clippedStart, clippedEnd;
-					FVector2D rangeStart = start + delta * range.Key;
-					FVector2D rangeEnd = start + delta * range.Value;
+					FEdge line(pointsA[i] + parentLocation,
+						pointsA[(i + 1) % numPoints] + parentLocation);
+					ClippedLine clippedLine{ ParentPage->lineClipping->ClipWorldLineToView(line), FModumateLayerType::kSeparatorBeyondSurfaceEdges };
+					backgroundLines.Emplace(MoveTemp(clippedLine));
+				}
 
-					if (UModumateFunctionLibrary::ClipLine2DToRectangle(rangeStart, rangeEnd, BoundingBox, clippedStart, clippedEnd))
+				auto& pointsB = LayerGeometries[LayerGeometries.Num() - 1].PointsB;
+				for (int i = 0; i < numPoints; ++i)
+				{
+					FEdge line(pointsB[i] + parentLocation,
+						pointsB[(i + 1) % numPoints] + parentLocation);
+					ClippedLine clippedLine{ ParentPage->lineClipping->ClipWorldLineToView(line), FModumateLayerType::kSeparatorBeyondSurfaceEdges };
+					backgroundLines.Emplace(MoveTemp(clippedLine));
+				}
+
+				FVector2D boxClipped0;
+				FVector2D boxClipped1;
+				for (const auto& line: backgroundLines)
+				{
+					for (const auto& lineSection: line.LineSections)
 					{
-						TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
-							Units::FCoordinates2D::WorldCentimeters(clippedStart), 
-							Units::FCoordinates2D::WorldCentimeters(clippedEnd), 
-							lineThickness, lineColor));
-						ParentPage->Children.Add(line);
-						line->SetLayerTypeRecursive(dwgLayerType);
+						FVector2D vert0(lineSection.Vertex[0]);
+						FVector2D vert1(lineSection.Vertex[1]);
+						
+						if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
+						{
+							TSharedPtr<FDraftingLine> draftingLine = MakeShareable(new FDraftingLine(
+								Units::FCoordinates2D::WorldCentimeters(boxClipped0),
+								Units::FCoordinates2D::WorldCentimeters(boxClipped1),
+								structureThickness, FMColor::Black));
+							ParentPage->Children.Add(draftingLine);
+							draftingLine->SetLayerTypeRecursive(line.LayerType);
+						}
 					}
 				}
 			}
 
-			currentThickness += layer.Thickness;
+
 		}
 	}
 

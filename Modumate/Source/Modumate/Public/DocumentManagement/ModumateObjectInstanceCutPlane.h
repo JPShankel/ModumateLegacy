@@ -26,7 +26,7 @@ namespace Modumate
 		virtual ISceneCaptureObject* GetSceneCaptureInterface() override { return this; }
 
 		virtual bool AddCaptureArea(int32 ScopeBoxID, TArray<FVector> CaptureArea) override;
-		virtual bool StartRender() override;
+		virtual bool StartRender(FModumateDocument* doc = nullptr) override;
 		virtual void PublishPage() override;
 
 		FModumateHUDDraw DrawingInterface;

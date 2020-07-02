@@ -12,7 +12,7 @@ namespace Modumate
 	public:
 		virtual ~ISceneCaptureObject() {};
 
-		virtual bool StartRender() = 0;
+		virtual bool StartRender(FModumateDocument* doc = nullptr) = 0;
 		virtual void PublishPage() = 0;
 
 		virtual bool AddCaptureArea(int32 ScopeBoxID, TArray<FVector> CaptureArea) = 0;

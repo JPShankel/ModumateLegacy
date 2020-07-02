@@ -294,7 +294,6 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 
 		FPlane plane = FPlane(cutPlane->GetControlPoint(0), cutPlane->GetNormal());
 
-
 // disabled implementation of scope boxes determining drawing transforms, extents
 #if 0
 		for (FModumateObjectInstance* scopeBox : scopeBoxes)
@@ -368,7 +367,7 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 		draftMan->RequestRender(TPair<int32, int32>(cutPlane->ID, MOD_ID_NONE));
 		sceneCaptureInterface->CaptureDelegate.AddSP(floorplan.Get(), &FFloorplan::OnPageCompleted);
 #endif
-		sceneCaptureInterface->StartRender();
+		sceneCaptureInterface->StartRender(Document);
 	}
 
 	// TODO: potentially, FDraftingView doesn't exist at all anymore, if

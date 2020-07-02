@@ -5,6 +5,7 @@
 #include "Drafting/ModumateDraftingTags.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "DocumentManagement/ModumateObjectInstance.h"
+#include "Algo/Copy.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDefaultDrawing"
 
@@ -151,6 +152,25 @@ namespace Modumate {
 			}
 		}
 
+		// Clipping of beyond-cut-plane lines.
+		ParentPage->lineClipping.Reset(new FModumateClippingTriangles(*cutPlane));
+		ParentPage->lineClipping->SetTransform(cutPlane->GetControlPoint(0), AxisX, 1.0f);
+		ParentPage->lineClipping->AddTrianglesFromDoc(Doc);
+
+		// Draw all separators, portals.
+		TArray<const FModumateObjectInstance*> beyondCutObjects;
+		Algo::CopyIf(Doc->GetObjectInstances(), beyondCutObjects, [](const FModumateObjectInstance* moi)
+			{ auto t = moi->GetObjectType(); return t == EObjectType::OTWallSegment
+				|| t == EObjectType::OTFloorSegment || t == EObjectType::OTRoofFace
+				|| t == EObjectType::OTWindow || t == EObjectType::OTDoor; });
+
+		TArray<TArray<FVector>> WallCutPerimeters;
+
+		for (auto object: beyondCutObjects)
+		{
+			object->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
+		}
+
 	}
 
 	bool FDraftingDrawing::MakeWorldObjects()
@@ -223,6 +243,7 @@ namespace Modumate {
 		GetForegroundLines(foregroundLines, axisX, axisY, true);
 
 		foregroundLines->SetLocalPosition(Units::FCoordinates2D::WorldCentimeters(drawingBox.Min) * -1.0f);
+
 		if (!FVector::Parallel(FVector(plane), FVector::UpVector))
 		{
 			foregroundLines->MoveXTo(dimensions.X);

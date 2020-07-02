@@ -20,6 +20,7 @@ namespace Modumate
 		void SetupCompoundActor();
 		bool SetRelativeTransform(const FVector2D &InRelativePos, const FQuat &InRelativeRot);
 		bool CacheCorners();
+		void GetFarDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane &Plane, const FBox2D& BoundingBox) const;
 
 		FVector2D CachedRelativePos;
 		FVector CachedWorldPos;

@@ -13,7 +13,7 @@
 
 namespace Modumate
 {
-	//const FString FModumateDwgConnect::ServerAddress { TEXT("http://127.0.0.1:8080") };
+	//const FString FModumateDwgConnect::ServerAddress { TEXT("http://192.168.124.98:8080") };
 	const FString FModumateDwgConnect::ServerAddress { TEXT("https://account.modumate.com") };
 
 	FModumateDwgConnect::FModumateDwgConnect(const FModumateDwgDraw& dwgDraw)
@@ -176,8 +176,9 @@ namespace Modumate
 
 #if 0
 		// Send directly to DWG Server.
-		request->SetHeader(TEXT("Authorization"), TEXT("Basic YW1zOnRydXN0bm8x"));  // For direct connection to DWG server.
+		request->SetHeader(TEXT("Authorization"), TEXT("Basic YW1zOmtpZ2VibXk2dWtrNzN3"));  // For direct connection to DWG server.
 		request->SetContentAsString(jsonString);
+		request->SetURL(ServerAddress + TEXT("/jsontodwg"));
 #else
 		// Send via AMS public web-server.
 		auto contentJsonObject = MakeShared<FJsonObject>();

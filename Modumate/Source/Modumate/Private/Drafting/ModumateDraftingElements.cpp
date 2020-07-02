@@ -3,6 +3,8 @@
 
 namespace Modumate
 {
+	FDraftingElement::~FDraftingElement() { ClearChildren(); }
+
 	void FDraftingElement::SetLocalTransform(Units::FCoordinates2D position, Units::FAngle orientation, float scale) {
 		SetLocalPosition(position);
 		SetLocalOrientation(orientation);

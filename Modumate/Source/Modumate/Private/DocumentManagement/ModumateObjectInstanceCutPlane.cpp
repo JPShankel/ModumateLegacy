@@ -127,8 +127,8 @@ namespace Modumate
 		return true;
 	}
 
-	bool FMOICutPlaneImpl::StartRender()
-	{
+	bool FMOICutPlaneImpl::StartRender(FModumateDocument* doc /*= nullptr*/)
+{
 		if (PendingCaptureAreas.Num() == 0)
 		{
 			return false;
@@ -187,20 +187,21 @@ namespace Modumate
 		captureComponent->OrthoWidth = orthoWidth;
 		captureComponent->SetWorldTransform(cutPlaneTransform);
 
+		// Setup scene.
+		if (doc)
+		{
+			captureComponent->ClearShowOnlyComponents();
+			auto bitmapObjects = doc->GetObjectsOfType(EObjectType::OTFurniture)
+				+= doc->GetObjectsOfType(EObjectType::OTCabinet);
+			for (FModumateObjectInstance* moi : bitmapObjects)
+			{
+				captureComponent->ShowOnlyActorComponents(moi->GetActor(), true);
+			}
+		}
+
 		// capture scene
 		captureComponent->bCaptureEveryFrame = true;
 		CaptureActor->bRenderOnTick = true;
-
-		FVector AxisX = CachedAxisX;
-		FVector AxisY = CachedAxisY;
-		if (!FVector::Parallel(GetNormal(), FVector::UpVector))
-		{
-			AxisX *= -1.0f;
-			AxisY *= -1.0f;
-		}
-		// Reset and then populate the drafting page, it will remain accessible by any drawing until the next render
-		DraftingForegroundLines = MakeShareable(new FDraftingComposite());
-		GetForegroundLines(DraftingForegroundLines, AxisX, AxisY, true);
 
 		return true;
 	}

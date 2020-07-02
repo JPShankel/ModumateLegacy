@@ -30,7 +30,7 @@ void ACutPlaneCaptureActor::Tick(float DeltaTime)
 	{
 		bRenderOnTick = false;
 	}
-	// TODO: SceneCaptureComponent2D::TickComponent calls CaptureSceneDeferred is bCaptureEveryFrame is true.
+	// TODO: SceneCaptureComponent2D::TickComponent calls CaptureSceneDeferred if bCaptureEveryFrame is true.
 	// we should be able to call CaptureSceneDeferred during StartRender and call ExportRenderTarget
 	// once the scene is captured
 	else if (CaptureComponent->bCaptureEveryFrame)
