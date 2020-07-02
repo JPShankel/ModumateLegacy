@@ -21,7 +21,7 @@ public:
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class USlateWidgetStyleAsset *CustomTextBlockStyle;
+	class USlateWidgetStyleAsset *CustomTextBlockStyle;
 
 	bool ApplyCustomStyle();
 

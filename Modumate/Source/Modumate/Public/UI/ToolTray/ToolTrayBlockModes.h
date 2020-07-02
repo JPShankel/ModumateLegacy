@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Database/ModumateObjectEnums.h"
 
 #include "ToolTrayBlockModes.generated.h"
 
@@ -36,20 +37,23 @@ public:
 	class UModumateButtonUserWidget *ButtonMPHorizontal;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *ButtonAxesNone;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *ButtonAxesXY;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *ButtonAxesZ;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonMPBucket;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonRoofPerimeter;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonOpeningStamp;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonOpeningSystem;
-
 	UFUNCTION(BlueprintCallable)
 	void ChangeToMetaPlaneToolsButtons();
 
 	UFUNCTION(BlueprintCallable)
-	void ChangeToSeparatorToolsButtons();
+	void ChangeToSeparatorToolsButtons(EToolMode mode);
 };

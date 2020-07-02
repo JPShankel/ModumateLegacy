@@ -40,27 +40,18 @@ void UEditModelUserWidget::EMOnToolModeChanged()
 	{
 		return;
 	}
-	switch (controller->GetToolMode())
+	switch (UModumateTypeStatics::GetToolCategory(controller->GetToolMode()))
 	{
-	case EToolMode::VE_METAPLANE:
+	case EToolCategories::MetaGraph:
 		ToolTrayWidget->ChangeBlockToMetaPlaneTools();
 		break;
-	case EToolMode::VE_WALL:
-	case EToolMode::VE_FLOOR:
-	case EToolMode::VE_ROOF_FACE:
-	case EToolMode::VE_RAIL:
-	case EToolMode::VE_STAIR:
-	case EToolMode::VE_DOOR:
-	case EToolMode::VE_WINDOW:
-	case EToolMode::VE_STRUCTURELINE:
-		ToolTrayWidget->ChangeBlockToSeparatorTools();
+	case EToolCategories::Separators:
+		ToolTrayWidget->ChangeBlockToSeparatorTools(controller->GetToolMode());
 		break;
-	case EToolMode::VE_FINISH:
-	case EToolMode::VE_TRIM:
-	case EToolMode::VE_CABINET:
-	case EToolMode::VE_COUNTERTOP:
-	case EToolMode::VE_PLACEOBJECT:
-		ToolTrayWidget->ChangeBlockToAttachmentTools();
+	case EToolCategories::Attachments:
+		ToolTrayWidget->ChangeBlockToAttachmentTools(controller->GetToolMode());
 		break;
+	default:
+		ToolTrayWidget->CloseToolTray();
 	}
 }

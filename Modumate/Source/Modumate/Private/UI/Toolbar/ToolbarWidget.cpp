@@ -21,14 +21,13 @@ bool UToolbarWidget::Initialize()
 		return false;
 	}
 
-	if (!(Button_Metaplanes && Button_Separators && Button_SurfaceGraphs && Button_Attachments))
+	if (!(Button_Metaplanes && Button_Separators && Button_Attachments))
 	{
 		return false;
 	}
 
 	Button_Metaplanes->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonPressMetaPlane);
 	Button_Separators->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonPressSeparators);
-	Button_SurfaceGraphs->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonPressSurfaceGraphs);
 	Button_Attachments->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonPressAttachments);
 
 	return true;
@@ -51,7 +50,7 @@ void UToolbarWidget::OnButtonPressSeparators()
 {
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
-		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSeparatorTools();
+		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSeparatorTools(EToolMode::VE_NONE);
 	}
 }
 
@@ -67,6 +66,6 @@ void UToolbarWidget::OnButtonPressAttachments()
 {
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
-		EditModelUserWidget->ToolTrayWidget->ChangeBlockToAttachmentTools();
+		EditModelUserWidget->ToolTrayWidget->ChangeBlockToAttachmentTools(EToolMode::VE_NONE);
 	}
 }

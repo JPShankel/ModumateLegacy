@@ -85,6 +85,9 @@ enum class EInputCommand : uint8
 	MetaPlaneLine,
 	MetaPlaneHorizontal,
 	MetaPlaneVertical,
+	ConstraintAxesNone,
+	ConstraintAxesXY,
+	ConstraintAxesZ,
 
 	// Non-tool modal commands
 	CycleEditModes,

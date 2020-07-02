@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Database/ModumateObjectEnums.h"
 
 #include "ToolTrayWidget.generated.h"
 
@@ -23,6 +24,8 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+
+	EToolCategories CurrentToolCategory;
 
 public:
 
@@ -48,15 +51,18 @@ public:
 	bool ChangeBlockToMetaPlaneTools();
 
 	UFUNCTION(BlueprintCallable)
-	bool ChangeBlockToSeparatorTools();
+	bool ChangeBlockToSeparatorTools(EToolMode Toolmode);
 
 	UFUNCTION(BlueprintCallable)
 	bool ChangeBlockToSurfaceGraphTools();
 
 	UFUNCTION(BlueprintCallable)
-	bool ChangeBlockToAttachmentTools();
+	bool ChangeBlockToAttachmentTools(EToolMode Toolmode);
 
 	void HideAllToolTrayBlocks();
+	bool IsToolTrayVisible();
+	void OpenToolTray();
+	void CloseToolTray();
 
 protected:
 

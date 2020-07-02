@@ -190,6 +190,16 @@ enum class EAreaType : uint8
 	Gross
 };
 
+UENUM(BlueprintType)
+enum class EToolCategories : uint8
+{
+	Unknown,
+	MetaGraph,
+	Separators,
+	SurfaceGraphs,
+	Attachments
+};
+
 UCLASS()
 class MODUMATE_API UModumateTypeStatics : public UBlueprintFunctionLibrary
 {
@@ -214,4 +224,10 @@ public:
 	static FText GetAreaTypeText(EAreaType AreaType);
 
 	static const EObjectDirtyFlags OrderedDirtyFlags[3];
+
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static EToolCategories GetToolCategory(EToolMode ToolMode);
+
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static FText GetToolCategoryText(EToolCategories ToolCategory);
 };

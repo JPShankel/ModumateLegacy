@@ -25,6 +25,8 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
+	UPROPERTY()
+	class UToolTrayWidget *ToolTray;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox *AssembliesList;
@@ -32,6 +34,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UComponentAssemblyListItem> ComponentAssemblyListItemClass;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *ButtonAdd;
+
 	UFUNCTION(BlueprintCallable)
 	void CreateAssembliesListForCurrentToolMode();
+
+	UFUNCTION()
+	void OnButtonAddReleased();
 };

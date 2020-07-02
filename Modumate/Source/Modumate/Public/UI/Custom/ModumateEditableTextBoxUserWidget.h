@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 
-#include "ModumateTextBlockUserWidget.generated.h"
+#include "ModumateEditableTextBoxUserWidget.generated.h"
 
 /**
  *
@@ -13,12 +13,12 @@
 
 
 UCLASS()
-class MODUMATE_API UModumateTextBlockUserWidget : public UUserWidget
+class MODUMATE_API UModumateEditableTextBoxUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	UModumateTextBlockUserWidget(const FObjectInitializer& ObjectInitializer);
+	UModumateEditableTextBoxUserWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
 protected:
@@ -27,7 +27,7 @@ protected:
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateTextBlock *ModumateTextBlock;
+	class UModumateEditableTextBox *ModumateEditableTextBox;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText TextOverride;

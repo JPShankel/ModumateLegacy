@@ -24,10 +24,16 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
 	FName AsmKey;
+	class AEditModelPlayerController_CPP *EMPlayerController;
+	EToolMode ToolMode;
+	class UTextureRenderTarget2D *IconRenderTarget;
 
 public:
+	UPROPERTY()
+	class UToolTrayBlockAssembliesList *ToolTrayBlockAssembliesList;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlockUserWidget *MainText;
@@ -35,9 +41,26 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButton *ModumateButtonMain;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *ButtonEdit;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UImage *IconImage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UVerticalBox *VerticalBoxProperties;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UModumateTextBlockUserWidget> ModumateTextBlockUserWidgetClass;
+
 	UFUNCTION()
 	void OnModumateButtonMainReleased();
 
-	bool BuildFromAssembly(const FModumateObjectAssembly *Asm);
+	UFUNCTION()
+	void OnButtonEditReleased();
+
+	bool BuildFromAssembly(AEditModelPlayerController_CPP *Controller, EToolMode mode, const FModumateObjectAssembly *Asm);
+	bool CaptureIconRenderTarget();
+	bool GetItemTips(TArray<FString> &OutTips);
 
 };

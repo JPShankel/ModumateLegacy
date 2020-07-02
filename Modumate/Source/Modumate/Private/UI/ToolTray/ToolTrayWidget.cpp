@@ -19,6 +19,12 @@ bool UToolTrayWidget::Initialize()
 	{
 		return false;
 	}
+	if (!ToolTrayBlockAssembliesList)
+	{
+		return false;
+	}
+
+	ToolTrayBlockAssembliesList->ToolTray = this;
 
 	return true;
 }
@@ -30,29 +36,41 @@ void UToolTrayWidget::NativeConstruct()
 
 bool UToolTrayWidget::ChangeBlockToMetaPlaneTools()
 {
-	ToolTrayMainTitleBlock->SetText(FText::FromString("Meta-Plane Tools"));
+	OpenToolTray();
+	ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetToolCategoryText(EToolCategories::MetaGraph));
 	HideAllToolTrayBlocks();
+	CurrentToolCategory = EToolCategories::MetaGraph;
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockModes->ChangeToMetaPlaneToolsButtons();
+
 	return true;
 }
 
-bool UToolTrayWidget::ChangeBlockToSeparatorTools()
+bool UToolTrayWidget::ChangeBlockToSeparatorTools(EToolMode Toolmode)
 {
 	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	if (controller)
+	if (!controller)
 	{
-		ToolTrayMainTitleBlock->SetText(
-			UModumateTypeStatics::GetTextForObjectType(
-				UModumateTypeStatics::ObjectTypeFromToolMode(controller->GetToolMode())));
+		return false;
 	}
-	HideAllToolTrayBlocks();
 
+	OpenToolTray();
+	HideAllToolTrayBlocks();
+	CurrentToolCategory = EToolCategories::Separators;
 	ToolTrayBlockTools->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockTools->ChangeToSeparatorToolsButtons();
+	if (UModumateTypeStatics::GetToolCategory(Toolmode) != CurrentToolCategory)
+	{
+		ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetToolCategoryText(EToolCategories::Separators));
+		return false;
+	}
+	ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetTextForObjectType(UModumateTypeStatics::ObjectTypeFromToolMode(controller->GetToolMode())));
 
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockModes->ChangeToSeparatorToolsButtons();
+	ToolTrayBlockModes->ChangeToSeparatorToolsButtons(controller->GetToolMode());
+
+	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ToolTrayBlockProperties->ChangeBlockProperties(controller->GetToolMode());
 
 	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockAssembliesList->CreateAssembliesListForCurrentToolMode();
@@ -62,32 +80,42 @@ bool UToolTrayWidget::ChangeBlockToSeparatorTools()
 
 bool UToolTrayWidget::ChangeBlockToSurfaceGraphTools()
 {
-	ToolTrayMainTitleBlock->SetText(FText::FromString("Surface Graph Tools"));
+	OpenToolTray();
+	CurrentToolCategory = EToolCategories::SurfaceGraphs;
+	ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetToolCategoryText(EToolCategories::SurfaceGraphs));
 	HideAllToolTrayBlocks();
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockModes->ChangeToMetaPlaneToolsButtons();
+
 	return true;
 }
 
-bool UToolTrayWidget::ChangeBlockToAttachmentTools()
+bool UToolTrayWidget::ChangeBlockToAttachmentTools(EToolMode Toolmode)
 {
 	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	if (controller)
+	if (!controller)
 	{
-		ToolTrayMainTitleBlock->SetText(
-			UModumateTypeStatics::GetTextForObjectType(
-				UModumateTypeStatics::ObjectTypeFromToolMode(controller->GetToolMode())));
+		return false;
 	}
-	HideAllToolTrayBlocks();
 
+	OpenToolTray();
+	HideAllToolTrayBlocks();
+	CurrentToolCategory = EToolCategories::Attachments;
 	ToolTrayBlockTools->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockTools->ChangeToAttachmentToolsButtons();
+	if (UModumateTypeStatics::GetToolCategory(Toolmode) != CurrentToolCategory)
+	{
+		ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetToolCategoryText(EToolCategories::Attachments));
+		return false;
+	}
+	ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetTextForObjectType(UModumateTypeStatics::ObjectTypeFromToolMode(controller->GetToolMode())));
 
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockModes->ChangeToSeparatorToolsButtons();
+	ToolTrayBlockModes->ChangeToSeparatorToolsButtons(controller->GetToolMode());
 
 	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockAssembliesList->CreateAssembliesListForCurrentToolMode();
+
 	return true;
 }
 
@@ -97,4 +125,23 @@ void UToolTrayWidget::HideAllToolTrayBlocks()
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::Collapsed);
 	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::Collapsed);
 	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+bool UToolTrayWidget::IsToolTrayVisible()
+{
+	return (GetVisibility() == ESlateVisibility::SelfHitTestInvisible ||
+		GetVisibility() == ESlateVisibility::Visible ||
+		GetVisibility() == ESlateVisibility::HitTestInvisible);
+}
+
+void UToolTrayWidget::OpenToolTray()
+{
+	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	// TODO: Set menu animation here
+}
+
+void UToolTrayWidget::CloseToolTray()
+{
+	// TODO: Set menu animation here
+	SetVisibility(ESlateVisibility::Collapsed);
 }

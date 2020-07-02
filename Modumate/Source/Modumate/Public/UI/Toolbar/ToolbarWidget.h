@@ -36,9 +36,6 @@ public:
 	class UModumateButtonUserWidget *Button_Separators;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_SurfaceGraphs;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *Button_Attachments;
 
 	UFUNCTION()

@@ -309,6 +309,24 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 		return true;
 	}
 
+	case EInputCommand::ConstraintAxesNone:
+	{
+		Controller->SetToolAxisConstraint(EAxisConstraint::None);
+		return true;
+	}
+
+	case EInputCommand::ConstraintAxesXY:
+	{
+		Controller->SetToolAxisConstraint(EAxisConstraint::AxesXY);
+		return true;
+	}
+
+	case EInputCommand::ConstraintAxesZ:
+	{
+		Controller->SetToolAxisConstraint(EAxisConstraint::AxisZ);
+		return true;
+	}
+
 	// Non-tool modal commands
 
 	case EInputCommand::CycleEditModes:

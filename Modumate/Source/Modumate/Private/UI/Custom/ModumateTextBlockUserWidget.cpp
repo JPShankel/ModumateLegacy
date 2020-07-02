@@ -2,6 +2,7 @@
 
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/Custom//ModumateTextBlock.h"
+#include "UI/ModumateUIStatics.h"
 
 UModumateTextBlockUserWidget::UModumateTextBlockUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -23,7 +24,21 @@ void UModumateTextBlockUserWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UModumateTextBlockUserWidget::ChangeText(FText NewText)
+void UModumateTextBlockUserWidget::ChangeText(const FText &NewText, bool EllipsizeText)
 {
-	ModumateTextBlock->SetText(NewText);
+	if (!ModumateTextBlock)
+	{
+		return;
+	}
+
+	if (EllipsizeText)
+	{
+		FString textEllipsized = UModumateUIStatics::GetEllipsizeString(NewText.ToString(), EllipsizeWordAt);
+		ModumateTextBlock->SetText(FText::FromString(textEllipsized)); // Potential loss of auto localization
+	}
+	else
+	{
+		ModumateTextBlock->SetText(NewText);
+	}
+
 }

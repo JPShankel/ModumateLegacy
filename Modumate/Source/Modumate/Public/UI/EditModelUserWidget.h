@@ -31,4 +31,12 @@ public:
 
 	UFUNCTION()
 	void EMOnToolModeChanged();
+
+	// Blueprint event for opening BIM configurator
+	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
+	void EventNewCraftingAssembly(EToolMode ToolMode);
+
+	// Blueprint event for opening BIM configurator for crafting existing assembly
+	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
+	void EventEditExistingAssembly(EToolMode ToolMode, FName AssemblyKey);
 };

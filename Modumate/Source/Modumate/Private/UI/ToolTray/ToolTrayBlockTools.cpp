@@ -24,10 +24,8 @@ void UToolTrayBlockTools::ChangeToSeparatorToolsButtons()
 	Button_Floor->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	Button_Roof->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	Button_Stair->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	Button_Railing->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	Button_Door->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	Button_Window->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	Button_CurtainSystem->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	Button_BeamColumn->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	Button_Finish->SetVisibility(ESlateVisibility::Collapsed);
 	Button_Trim->SetVisibility(ESlateVisibility::Collapsed);
@@ -42,10 +40,8 @@ void UToolTrayBlockTools::ChangeToAttachmentToolsButtons()
 	Button_Floor->SetVisibility(ESlateVisibility::Collapsed);
 	Button_Roof->SetVisibility(ESlateVisibility::Collapsed);
 	Button_Stair->SetVisibility(ESlateVisibility::Collapsed);
-	Button_Railing->SetVisibility(ESlateVisibility::Collapsed);
 	Button_Door->SetVisibility(ESlateVisibility::Collapsed);
 	Button_Window->SetVisibility(ESlateVisibility::Collapsed);
-	Button_CurtainSystem->SetVisibility(ESlateVisibility::Collapsed);
 	Button_BeamColumn->SetVisibility(ESlateVisibility::Collapsed);
 	Button_Finish->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	Button_Trim->SetVisibility(ESlateVisibility::SelfHitTestInvisible);

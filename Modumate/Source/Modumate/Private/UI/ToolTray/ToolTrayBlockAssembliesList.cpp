@@ -5,7 +5,11 @@
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "Components/VerticalBox.h"
-
+#include "UI/EditModelPlayerHUD.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/Custom/ModumateButton.h"
+#include "UI/ToolTray/ToolTrayWidget.h"
+#include "UI/EditModelUserWidget.h"
 
 UToolTrayBlockAssembliesList::UToolTrayBlockAssembliesList(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -18,6 +22,12 @@ bool UToolTrayBlockAssembliesList::Initialize()
 	{
 		return false;
 	}
+	if (!ButtonAdd)
+	{
+		return false;
+	}
+
+	ButtonAdd->ModumateButton->OnReleased.AddDynamic(this, &UToolTrayBlockAssembliesList::OnButtonAddReleased);
 
 	return true;
 }
@@ -40,10 +50,20 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 			const FModumateObjectAssembly *assembly = gameState->Document.PresetManager.GetAssemblyByKey(controller->GetToolMode(), curItem.Key);
 			if (assembly)
 			{
-				UComponentAssemblyListItem *newWidgetListItem = CreateWidget<UComponentAssemblyListItem>(this, ComponentAssemblyListItemClass);
-				newWidgetListItem->BuildFromAssembly(assembly);
+				UComponentAssemblyListItem *newWidgetListItem = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UComponentAssemblyListItem>(ComponentAssemblyListItemClass);
+				newWidgetListItem->ToolTrayBlockAssembliesList = this;
+				newWidgetListItem->BuildFromAssembly(controller, controller->GetToolMode(), assembly);
 				AssembliesList->AddChildToVerticalBox(newWidgetListItem);
 			}
 		}
+	}
+}
+
+void UToolTrayBlockAssembliesList::OnButtonAddReleased()
+{
+	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	if (controller && ToolTray && ToolTray->EditModelUserWidget)
+	{
+		ToolTray->EditModelUserWidget->EventNewCraftingAssembly(controller->GetToolMode());
 	}
 }

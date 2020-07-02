@@ -81,6 +81,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")
+	bool SetIconMeshForAssemblyByToolMode(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
+
+	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")
 	bool SetIconMeshForWallAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
 
 	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")

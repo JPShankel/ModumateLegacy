@@ -10,6 +10,40 @@ const EObjectDirtyFlags UModumateTypeStatics::OrderedDirtyFlags[3] = {
 	EObjectDirtyFlags::Visuals,
 };
 
+EToolCategories UModumateTypeStatics::GetToolCategory(EToolMode ToolMode)
+{
+	switch (ToolMode)
+	{
+	case EToolMode::VE_NONE:return EToolCategories::Unknown;
+	case EToolMode::VE_SELECT:return EToolCategories::Unknown;
+	case EToolMode::VE_PLACEOBJECT:return EToolCategories::Attachments;
+	case EToolMode::VE_MOVEOBJECT: return EToolCategories::Unknown;
+	case EToolMode::VE_ROTATE: return EToolCategories::Unknown;
+	case EToolMode::VE_SCALE: return EToolCategories::Unknown;
+	case EToolMode::VE_SPLIT: return EToolCategories::Unknown;
+	case EToolMode::VE_WALL: return EToolCategories::Separators;
+	case EToolMode::VE_FLOOR: return EToolCategories::Separators;
+	case EToolMode::VE_DOOR: return EToolCategories::Separators;
+	case EToolMode::VE_WINDOW: return EToolCategories::Separators;
+	case EToolMode::VE_STAIR: return EToolCategories::Separators;
+	case EToolMode::VE_RAIL: return EToolCategories::Separators;
+	case EToolMode::VE_CABINET: return EToolCategories::Attachments;
+	case EToolMode::VE_WAND: return EToolCategories::Unknown;
+	case EToolMode::VE_FINISH: return EToolCategories::Attachments;
+	case EToolMode::VE_COUNTERTOP: return EToolCategories::Attachments;
+	case EToolMode::VE_TRIM: return EToolCategories::Attachments;
+	case EToolMode::VE_ROOF_FACE: return EToolCategories::Separators;
+	case EToolMode::VE_ROOF_PERIMETER: return EToolCategories::Unknown;
+	case EToolMode::VE_METAPLANE: return EToolCategories::MetaGraph;
+	case EToolMode::VE_CUTPLANE: return EToolCategories::Unknown;
+	case EToolMode::VE_SCOPEBOX: return EToolCategories::Unknown;
+	case EToolMode::VE_JOIN: return EToolCategories::Unknown;
+	case EToolMode::VE_STRUCTURELINE: return EToolCategories::Separators;
+	case EToolMode::VE_DRAWING: return EToolCategories::Unknown;
+	}
+	return EToolCategories::Unknown;
+}
+
 EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 {
 	switch (tm)
@@ -177,6 +211,25 @@ FText UModumateTypeStatics::GetAreaTypeText(EAreaType AreaType)
 		return LOCTEXT("AreaType_Net", "Net");
 	case EAreaType::Gross:
 		return LOCTEXT("AreaType_Gross", "Gross");
+	default:
+		return FText::GetEmpty();
+	}
+}
+
+FText UModumateTypeStatics::GetToolCategoryText(EToolCategories ToolCategory)
+{
+	switch (ToolCategory)
+	{
+	case EToolCategories::Unknown:
+		return LOCTEXT("ToolCategory_Unknown", "Unknown");
+	case EToolCategories::MetaGraph:
+		return LOCTEXT("ToolCategory_MetaGraph", "MetaGraph");
+	case EToolCategories::Separators:
+		return LOCTEXT("ToolCategory_Separators", "Separators");
+	case EToolCategories::SurfaceGraphs:
+		return LOCTEXT("ToolCategory_SurfaceGraphs", "SurfaceGraphs");
+	case EToolCategories::Attachments:
+		return LOCTEXT("ToolCategory_Attachments", "Attachments");
 	default:
 		return FText::GetEmpty();
 	}

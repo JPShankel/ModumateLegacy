@@ -28,19 +28,28 @@ void UToolTrayBlockModes::ChangeToMetaPlaneToolsButtons()
 	ButtonMPLine->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ButtonMPVertical->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ButtonMPHorizontal->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ButtonAxesNone->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonAxesXY->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonAxesZ->SetVisibility(ESlateVisibility::Collapsed);
 	ButtonMPBucket->SetVisibility(ESlateVisibility::Collapsed);
 	ButtonRoofPerimeter->SetVisibility(ESlateVisibility::Collapsed);
-	ButtonOpeningStamp->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonOpeningSystem->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
-void UToolTrayBlockModes::ChangeToSeparatorToolsButtons()
+void UToolTrayBlockModes::ChangeToSeparatorToolsButtons(EToolMode mode)
 {
-	ButtonMPLine->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonMPVertical->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonMPHorizontal->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ButtonMPLine->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonMPVertical->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonMPHorizontal->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonAxesNone->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ButtonAxesXY->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ButtonAxesZ->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ButtonMPBucket->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonRoofPerimeter->SetVisibility(ESlateVisibility::Collapsed);
-	ButtonOpeningStamp->SetVisibility(ESlateVisibility::Collapsed);
-	ButtonOpeningSystem->SetVisibility(ESlateVisibility::Collapsed);
+	if (mode == EToolMode::VE_ROOF_FACE || mode == EToolMode::VE_ROOF_PERIMETER)
+	{
+		ButtonRoofPerimeter->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	else
+	{
+		ButtonRoofPerimeter->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }

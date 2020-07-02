@@ -64,6 +64,37 @@ void ADynamicIconGenerator::Tick(float DeltaTime)
 
 }
 
+bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+{
+	switch (mode)
+	{
+	case EToolMode::VE_WALL:
+	case EToolMode::VE_FINISH:
+		SetIconMeshForWallAssembly(AsmKey, mode, RenderTarget);
+		return true;
+	case EToolMode::VE_FLOOR:
+	case EToolMode::VE_ROOF_FACE:
+	case EToolMode::VE_COUNTERTOP:
+		SetIconMeshForFloorAssembly(AsmKey, mode, RenderTarget);
+		return true;
+	case EToolMode::VE_DOOR:
+	case EToolMode::VE_WINDOW:
+		SetIconMeshForPortalAssembly(AsmKey, mode, RenderTarget);
+		return true;
+	case EToolMode::VE_STRUCTURELINE:
+	case EToolMode::VE_TRIM:
+		SetIconMeshForTrimAssembly(AsmKey, mode, RenderTarget);
+		return true;
+	case EToolMode::VE_CABINET:
+		SetIconMeshForCabinetAssembly(AsmKey, RenderTarget);
+		return true;
+	case EToolMode::VE_PLACEOBJECT:
+		SetIconMeshForFFEAssembly(AsmKey, RenderTarget);
+		return true;
+	}
+	return false;
+}
+
 bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
 {
 	// Step 1: Generate model
