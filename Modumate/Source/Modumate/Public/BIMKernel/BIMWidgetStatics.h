@@ -11,11 +11,14 @@ namespace Modumate
 	class MODUMATE_API ModumateObjectDatabase;
 }
 
+/*
+TODO: Rename these blueprint structs to reflect intent that they are used for UI crafting
+*/
+
 USTRUCT(BlueprintType)
 struct MODUMATE_API FCraftingNodeFormItem
 {
 	GENERATED_USTRUCT_BODY();
-
 
 	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
 	FText DisplayLabel;
@@ -122,7 +125,7 @@ private:
 
 public:
 
-	static ECraftingResult CreateNewNodeInstanceFromPreset(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, const Modumate::BIM::FCraftingPresetCollection &PresetCollection, int32 ParentID, const FName &PresetID, FCraftingNode &OutNode);
+	static ECraftingResult CreateNewNodeInstanceFromPreset(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, const Modumate::BIM::FCraftingPresetCollection &PresetCollection, int32 ParentID, int32 ParentPinIndex,int32 ParentPinPosition,const FName &PresetID, FCraftingNode &OutNode);
 	static ECraftingResult GetInstantiatedNodes(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, const Modumate::BIM::FCraftingPresetCollection &PresetCollection, TArray<FCraftingNode> &OutNodes);
 	static ECraftingResult GetPinAttachmentToParentForNode(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, int32 InstanceID, int32 &OutPinGroupIndex, int32 &OutPinIndex);
 	static ECraftingResult GetFormItemsForCraftingNode(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, const Modumate::BIM::FCraftingPresetCollection &PresetCollection, int32 InstanceID, TArray<FCraftingNodeFormItem> &OutForm);

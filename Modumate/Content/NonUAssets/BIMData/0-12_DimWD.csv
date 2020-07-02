@@ -1,0 +1,243 @@
+TYPENAME,,,,0DimWD,,,,,,,,,,,,,,,,,,,,,
+,,,,Definition,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Preset.Name,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Width,,Preset.Width,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Depth,,Preset.Depth,,,,,,,,,,,,,,,,,,,
+,,,,Presets,,,,,,1,4,8,0,0,11,5,0,0,11,11,0,0,13,13,9
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Node.Width,Node.Depth,DataType=TG_Parent Node+CategoryPath,2ModuleWDProfile --> Corrugated Plastic Sheet,2ModuleWDProfile --> Corrugated Steel Deck,2ModuleWDProfile --> Steel C-Channel,2ModuleWDProfile --> Steel C-H Channel,2ModuleWDProfile --> Steel Hat Channel,2ModuleWDProfile --> Steel Web Joist,2ModuleWDProfile --> Steel Z Channel,#REF!,2ModuleWDProfile --> Wood Lumber,2ModuleWDProfile --> Wood Web Joist,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",2Gap2D --> Tile Gaps,2Gap2D --> Masonry Gaps,2ExtrudedProfile --> Beam/Column --> Concrete Rectangular,2ExtrudedProfile --> Beam/Column --> Stone Rectangular,2ExtrudedProfile --> Beam/Column --> Wood Rectangular
+PRESET,,"0DimWD
+0.125inW
+0inD",,0DimWD,,0.125in x 0in,0.125in,0in,,,,,,,,,,,,,X,,,,
+PRESET,,"0DimWD
+0.125inW
+0.0625inD",,0DimWD,,0.125in x 0.0625in,0.125in,0.0625in,,,,,,,,,,,,,X,,,,
+PRESET,,"0DimWD
+0.25inW
+0inD",,0DimWD,,0.25in x 0in,0.25in,0in,,,,,,,,,,,,,X,,,,
+PRESET,,"0DimWD
+0.25inW
+0.0625inD",,0DimWD,,0.25in x 0.0625in,0.25in,0.0625in,,,,,,,,,,,,,X,,,,
+PRESET,,"0DimWD
+0.25inW
+0.125inD",,0DimWD,,0.25in x 0.125in,0.25in,0.125in,,,,,,,,,,,,,X,,,,
+PRESET,,"0DimWD
+0.25inW
+0.1875inD",,0DimWD,,0.25in x 0.1875in,0.25in,0.1875in,,,,,,,,,,,,,X,,,,
+PRESET,,"0DimWD
+0.25inW
+0.25inD",,0DimWD,,0.25in x 0.25in,0.25in,0.25in,,,,,,,,,,,,,X,,,,
+PRESET,,"0DimWD
+0.375inW
+0inD",,0DimWD,,0.375in x 0in,0.375in,0in,,,,,,,,,,,,,,X,,,
+PRESET,,"0DimWD
+0.375inW
+0.125inD",,0DimWD,,0.375in x 0.125in,0.375in,0.125in,,,,,,,,,,,,,,X,,,
+PRESET,,"0DimWD
+0.375inW
+0.1875inD",,0DimWD,,0.375in x 0.1875in,0.375in,0.1875in,,,,,,,,,,,,,X,,,,
+PRESET,,"0DimWD
+0.375inW
+0.25inD",,0DimWD,,0.375in x 0.25in,0.375in,0.25in,,,,,,,,,,,,,,X,,,
+PRESET,,"0DimWD
+0.375inW
+0.375inD",,0DimWD,,0.375in x 0.375in,0.375in,0.375in,,,,,,,,,,,,,,X,,,
+PRESET,,"0DimWD
+0.5inW
+0.5inD",,0DimWD,,0.5in x 0.5in,0.5in,0.5in,,X,,,,,,,,,,,,,,,
+PRESET,,"0DimWD
+0.75inW
+0.75inD",,0DimWD,,0.75in x 0.75in,0.75in,0.75in,,X,,,,,,,,,,,,,,,
+PRESET,,"0DimWD
+0.75inW
+1.5inD",,0DimWD,,0.75in x 1.5in,0.75in,1.5in,,,,,,,,,X,,,,,,,,
+PRESET,,"0DimWD
+0.75inW
+2.5inD",,0DimWD,,0.75in x 2.5in,0.75in,2.5in,,,,,,,,,X,,,,,,,,
+PRESET,,"0DimWD
+0.75inW
+3.5inD",,0DimWD,,0.75in x 3.5in,0.75in,3.5in,,,,,,,,,X,,,,,,,,
+PRESET,,"0DimWD
+1.25inW
+0.5inD",,0DimWD,,1.25in x 0.5in,1.25in,0.5in,,,,,,X,,,,,,,,,,,
+PRESET,,"0DimWD
+1.25inW
+0.875inD",,0DimWD,,1.25in x 0.875in,1.25in,0.875in,,,,,,X,,,,,,,,,,,
+PRESET,,"0DimWD
+1.25inW
+1.5inD",,0DimWD,,1.25in x 1.5in,1.25in,1.5in,,,,,,X,,,,,,,,,,,
+PRESET,,"0DimWD
+1.5inW
+1.5inD",,0DimWD,,1.5in x 1.5in,1.5in,1.5in,,X,,,,,,,X,X,,,,,,,
+PRESET,,"0DimWD
+1.5inW
+2.5inD",,0DimWD,,1.5in x 2.5in,1.5in,2.5in,,,,,X,,,,X,X,,,,,,,
+PRESET,,"0DimWD
+1.5inW
+3.5inD",,0DimWD,,1.5in x 3.5in,1.5in,3.5in,,,,,,,,,,X,,,,,,,
+PRESET,,"0DimWD
+1.5inW
+4inD",,0DimWD,,1.5in x 4in,1.5in,4in,,,,,X,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.5inW
+5.5inD",,0DimWD,,1.5in x 5.5in,1.5in,5.5in,,,,,,,,,,X,,,,,,,
+PRESET,,"0DimWD
+1.5inW
+6inD",,0DimWD,,1.5in x 6in,1.5in,6in,,,,,X,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.5inW
+7.25inD",,0DimWD,,1.5in x 7.25in,1.5in,7.25in,,,,,,,,,,X,,,,,,,
+PRESET,,"0DimWD
+1.5inW
+9.25inD",,0DimWD,,1.5in x 9.25in,1.5in,9.25in,,,,,,,,,,X,,,,,,,
+PRESET,,"0DimWD
+1.5inW
+11.25inD",,0DimWD,,1.5in x 11.25in,1.5in,11.25in,,,,,,,,,,X,,,,,,,
+PRESET,,"0DimWD
+1.625inW
+1.625inD",,0DimWD,,1.625in x 1.625in,1.625in,1.625in,,,,X,,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.625inW
+2inD",,0DimWD,,1.625in x 2in,1.625in,2in,,,,X,,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.625inW
+2.5inD",,0DimWD,,1.625in x 2.5in,1.625in,2.5in,,,,X,,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.625inW
+3inD",,0DimWD,,1.625in x 3in,1.625in,3in,,,,X,,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.625inW
+3.5inD",,0DimWD,,1.625in x 3.5in,1.625in,3.5in,,,,X,,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.625inW
+3.625inD",,0DimWD,,1.625in x 3.625in,1.625in,3.625in,,,,X,,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.625inW
+4inD",,0DimWD,,1.625in x 4in,1.625in,4in,,,,X,,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.625inW
+5.5inD",,0DimWD,,1.625in x 5.5in,1.625in,5.5in,,,,X,,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.625inW
+6inD",,0DimWD,,1.625in x 6in,1.625in,6in,,,,X,,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.625inW
+8inD",,0DimWD,,1.625in x 8in,1.625in,8in,,,,X,,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.625inW
+10inD",,0DimWD,,1.625in x 10in,1.625in,10in,,,,X,,,,,,,,,,,,,
+PRESET,,"0DimWD
+1.625inW
+14inD",,0DimWD,,1.625in x 14in,1.625in,14in,,,,X,,,,,,,,,,,,,
+PRESET,,"0DimWD
+10inW
+10inD",,0DimWD,,10in x 10in,10in,10in,,,,,,,,,,,,,,,X,X,X
+PRESET,,"0DimWD
+12inW
+12inD",,0DimWD,,12in x 12in,12in,12in,,,,,,,,,,,,,,,X,X,X
+PRESET,,"0DimWD
+12inW
+18inD",,0DimWD,,12in x 18in,12in,18in,,,,,,,,,,,,,,,X,X,
+PRESET,,"0DimWD
+12inW
+24inD",,0DimWD,,12in x 24in,12in,24in,,,,,,,,,,,,,,,X,X,
+PRESET,,"0DimWD
+18inW
+18inD",,0DimWD,,18in x 18in,18in,18in,,,,,,,,,,,,,,,X,X,
+PRESET,,"0DimWD
+18inW
+24inD",,0DimWD,,18in x 24in,18in,24in,,,,,,,,,,,,,,,X,X,
+PRESET,,"0DimWD
+18inW
+36inD",,0DimWD,,18in x 36in,18in,36in,,,,,,,,,,,,,,,X,X,
+PRESET,,"0DimWD
+1inW
+1inD",,0DimWD,,1in x 1in,1in,1in,,X,,,,,,,,,,,,,,,
+PRESET,,"0DimWD
+24inW
+24inD",,0DimWD,,24in x 24in,24in,24in,,,,,,,,,,,,,,,X,X,
+PRESET,,"0DimWD
+2inW
+1inD",,0DimWD,,2in x 1in,2in,1in,,,,,,,,X,,,,,,,,,
+PRESET,,"0DimWD
+2inW
+1.5inD",,0DimWD,,2in x 1.5in,2in,1.5in,,,,,,,,X,,,,,,,,,
+PRESET,,"0DimWD
+2inW
+2inD",,0DimWD,,2in x 2in,2in,2in,,,,,,,,X,,,,,,,,,
+PRESET,,"0DimWD
+2inW
+2.5inD",,0DimWD,,2in x 2.5in,2in,2.5in,,,,,,,,X,,,,,,,,,
+PRESET,,"0DimWD
+2inW
+3inD",,0DimWD,,2in x 3in,2in,3in,,,,,,,,X,,,,,,,,,
+PRESET,,"0DimWD
+3.5inW
+9.5inD",,0DimWD,,3.5in x 9.5in,3.5in,9.5in,,,,,,,X,,,,X,X,,,,,
+PRESET,,"0DimWD
+3.5inW
+11.875inD",,0DimWD,,3.5in x 11.875in,3.5in,11.875in,,,,,,,X,,,,X,X,,,,,
+PRESET,,"0DimWD
+3.5inW
+12inD",,0DimWD,,3.5in x 12in,3.5in,12in,,,,,,,X,,,,X,X,,,,,
+PRESET,,"0DimWD
+3.5inW
+14inD",,0DimWD,,3.5in x 14in,3.5in,14in,,,,,,,X,,,,X,X,,,,,
+PRESET,,"0DimWD
+3.5inW
+16inD",,0DimWD,,3.5in x 16in,3.5in,16in,,,,,,,X,,,,X,X,,,,,
+PRESET,,"0DimWD
+3.5inW
+18inD",,0DimWD,,3.5in x 18in,3.5in,18in,,,,,,,X,,,,X,X,,,,,
+PRESET,,"0DimWD
+3.5inW
+20inD",,0DimWD,,3.5in x 20in,3.5in,20in,,,,,,,X,,,,X,X,,,,,
+PRESET,,"0DimWD
+3.5inW
+22inD",,0DimWD,,3.5in x 22in,3.5in,22in,,,,,,,X,,,,X,X,,,,,
+PRESET,,"0DimWD
+3.5inW
+24inD",,0DimWD,,3.5in x 24in,3.5in,24in,,,,,,,X,,,,X,X,,,,,
+PRESET,,"0DimWD
+3.5inW
+26inD",,0DimWD,,3.5in x 26in,3.5in,26in,,,,,,,X,,,,X,X,,,,,
+PRESET,,"0DimWD
+3.5inW
+28inD",,0DimWD,,3.5in x 28in,3.5in,28in,,,,,,,X,,,,X,X,,,,,
+PRESET,,"0DimWD
+36inW
+36inD",,0DimWD,,36in x 36in,36in,36in,,,,,,,,,,,,,,,X,,
+PRESET,,"0DimWD
+4inW
+4inD",,0DimWD,,4in x 4in,4in,4in,,,,,,,,,,,,,,,,,X
+PRESET,,"0DimWD
+4inW
+6inD",,0DimWD,,4in x 6in,4in,6in,,,,,,,,,,,,,,,,,X
+PRESET,,"0DimWD
+6inW
+1.5inD",,0DimWD,,6in x 1.5in,6in,1.5in,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimWD
+6inW
+2inD",,0DimWD,,6in x 2in,6in,2in,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimWD
+6inW
+3inD",,0DimWD,,6in x 3in,6in,3in,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimWD
+6inW
+4.5inD",,0DimWD,,6in x 4.5in,6in,4.5in,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimWD
+6inW
+6inD",,0DimWD,,6in x 6in,6in,6in,,,,,,,,,,,,,,,,X,X
+PRESET,,"0DimWD
+6inW
+8inD",,0DimWD,,6in x 8in,6in,8in,,,,,,,,,,,,,,,X,X,X
+PRESET,,"0DimWD
+7inW
+9inD",,0DimWD,,7in x 9in,7in,9in,,,,,,,,,,,,,,,X,X,X
+PRESET,,"0DimWD
+8inW
+10inD",,0DimWD,,8in x 10in,8in,10in,,,,,,,,,,,,,,,X,X,X
+PRESET,,"0DimWD
+8inW
+8inD",,0DimWD,,8in x 8in,8in,8in,,,,,,,,,,,,,,,X,X,X
+,,,,,,,,,,,,,,,,,,,,,,,,,

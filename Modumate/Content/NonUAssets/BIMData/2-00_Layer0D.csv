@@ -1,0 +1,2837 @@
+TYPENAME,,,,2Layer0D,,,,,,,,,,,,,,,,,
+,,,,Definition,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Preset.DisplayName,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Anchor Point,,Preset.AnchorPoint,,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,Child1Material,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,Child0DimThk,,,,,,,,,,,,,,,,,
+,,,,Presets,,,,,,,,64,64,64,61,50,9,0,3,3,34
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.DisplayName,Preset.AnchorPoint,DataType=InputPins,Child1Material,Child0DimThk,DataType=TG_Parent Node+CategoryPath,4LayeredAssembly --> Wall,4LayeredAssembly --> Floor,4LayeredAssembly --> Roof,4LayeredAssembly --> Ceiling,4LayeredAssembly --> Finish,4LayeredAssembly --> System Panel,4LayeredAssembly --> Countertop,4LayeredAssembly --> Layered Tread,4LayeredAssembly --> Layered Riser,4LayeredAssembly --> Landscape
+PRESET,,"2Layer0D --> Abstract
+1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+6inT",,2Layer0D --> Abstract,,2Layer0D-11,"0,0,0",,"1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+6inT",,X,X,X,X,,X,,X,X,
+PRESET,,"2Layer0D --> Abstract
+1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+8inT",,2Layer0D --> Abstract,,2Layer0D-12,"0,0,0",,"1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+8inT",,X,X,X,X,,X,,,,
+PRESET,,"2Layer0D --> Abstract
+1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+10inT",,2Layer0D --> Abstract,,2Layer0D-13,"0,0,0",,"1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+10inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract
+1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+12inT",,2Layer0D --> Abstract,,2Layer0D-14,"0,0,0",,"1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+12inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract
+1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+14inT",,2Layer0D --> Abstract,,2Layer0D-15,"0,0,0",,"1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+14inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract
+1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+16inT",,2Layer0D --> Abstract,,2Layer0D-16,"0,0,0",,"1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+16inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract
+1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+18inT",,2Layer0D --> Abstract,,2Layer0D-17,"0,0,0",,"1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+18inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract
+1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+20inT",,2Layer0D --> Abstract,,2Layer0D-18,"0,0,0",,"1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+20inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract
+1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+22inT",,2Layer0D --> Abstract,,2Layer0D-19,"0,0,0",,"1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+22inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract
+1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+24inT",,2Layer0D --> Abstract,,2Layer0D-20,"0,0,0",,"1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+24inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+6inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-21,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+6inT",,X,X,X,X,,,,X,X,
+PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+8inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-22,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+8inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+10inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-23,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+10inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+12inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-24,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+12inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-25,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+14inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+16inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-26,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+16inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+18inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-27,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+18inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+20inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-28,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+20inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+22inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-29,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+22inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+24inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-30,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+24inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+3inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-31,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+3inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+6inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-32,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+6inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+8inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-33,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+8inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+10inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-34,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+10inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+12inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-35,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+12inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-36,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+14inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+16inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-37,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+16inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+18inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-38,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+18inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+20inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-39,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+20inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+22inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-40,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+22inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
+1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished
+0DimThk
+3.5inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-41,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished","0DimThk
+3.5inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
+1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished
+0DimThk
+4.125inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-42,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished","0DimThk
+4.125inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
+1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished
+0DimThk
+5.5inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-43,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished","0DimThk
+5.5inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
+1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished
+0DimThk
+6.875inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-44,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished","0DimThk
+6.875inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
+1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished
+0DimThk
+7.5inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-45,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished","0DimThk
+7.5inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
+1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished
+0DimThk
+9.5inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-46,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished","0DimThk
+9.5inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
+1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished
+0DimThk
+9.625inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-47,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished","0DimThk
+9.625inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
+1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished
+0DimThk
+12.375inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-48,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+SprucePineFir
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Unfinished","0DimThk
+12.375inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> RammedEarth
+1Material --> Aggregates --> Rammed Earth
+0RawMaterial
+RammedEarth
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+15cmT",,2Layer0D --> Mass --> RammedEarth,,2Layer0D-49,"0,0,0",,"1Material --> Aggregates --> Rammed Earth
+0RawMaterial
+RammedEarth
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+15cmT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> RammedEarth
+1Material --> Aggregates --> Rammed Earth
+0RawMaterial
+RammedEarth
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+30cmT",,2Layer0D --> Mass --> RammedEarth,,2Layer0D-50,"0,0,0",,"1Material --> Aggregates --> Rammed Earth
+0RawMaterial
+RammedEarth
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+30cmT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> RammedEarth
+1Material --> Aggregates --> Rammed Earth
+0RawMaterial
+RammedEarth
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+40cmT",,2Layer0D --> Mass --> RammedEarth,,2Layer0D-51,"0,0,0",,"1Material --> Aggregates --> Rammed Earth
+0RawMaterial
+RammedEarth
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+40cmT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> RammedEarth
+1Material --> Aggregates --> Rammed Earth
+0RawMaterial
+RammedEarth
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+50cmT",,2Layer0D --> Mass --> RammedEarth,,2Layer0D-52,"0,0,0",,"1Material --> Aggregates --> Rammed Earth
+0RawMaterial
+RammedEarth
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+50cmT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Mass --> RammedEarth
+1Material --> Aggregates --> Rammed Earth
+0RawMaterial
+RammedEarth
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+60cmT",,2Layer0D --> Mass --> RammedEarth,,2Layer0D-53,"0,0,0",,"1Material --> Aggregates --> Rammed Earth
+0RawMaterial
+RammedEarth
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+60cmT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Membrane --> BitumenousFelt
+1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+B9A081-Khaki
+0SrfTreatment
+Standard
+0DimThk
+0.0625inT",,2Layer0D --> Membrane --> BitumenousFelt,,2Layer0D-54,"0,0,0",,"1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+B9A081-Khaki
+0SrfTreatment
+Standard","0DimThk
+0.0625inT",,X,X,X,X,,X,,,,
+PRESET,,"2Layer0D --> Membrane --> TPO
+1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.0625inT",,2Layer0D --> Membrane --> TPO,,2Layer0D-55,"0,0,0",,"1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.0625inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Membrane --> PVC
+1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.0625inT",,2Layer0D --> Membrane --> PVC,,2Layer0D-56,"0,0,0",,"1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.0625inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
+1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.0625inT",,2Layer0D --> Membrane --> PolyethyleneVaporBarrier,,2Layer0D-57,"0,0,0",,"1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.0625inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Membrane --> EPDMRubber
+1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.0625inT",,2Layer0D --> Membrane --> EPDMRubber,,2Layer0D-58,"0,0,0",,"1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.0625inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Membrane --> RubberizedAsphalt
+1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.0625inT",,2Layer0D --> Membrane --> RubberizedAsphalt,,2Layer0D-59,"0,0,0",,"1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.0625inT",,,,,,,,,,,
+PRESET,,"2Layer0D --> Roll --> Carpet
+1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetLowProfile
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.25inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-60,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetLowProfile
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.25inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Carpet
+1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetLowProfile
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.5inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-61,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetLowProfile
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.5inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Carpet
+1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetLowProfile
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.75inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-62,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetLowProfile
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.75inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Carpet
+1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetLowProfile
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+1inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-63,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetLowProfile
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+1inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Carpet
+1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetMediumProfile
+0Color --> Fabric and Upholstery --> Carpet
+7A878F-SilverBlue
+0SrfTreatment
+Standard
+0DimThk
+0.25inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-64,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetMediumProfile
+0Color --> Fabric and Upholstery --> Carpet
+7A878F-SilverBlue
+0SrfTreatment
+Standard","0DimThk
+0.25inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Carpet
+1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetMediumProfile
+0Color --> Fabric and Upholstery --> Carpet
+7A878F-SilverBlue
+0SrfTreatment
+Standard
+0DimThk
+0.5inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-65,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetMediumProfile
+0Color --> Fabric and Upholstery --> Carpet
+7A878F-SilverBlue
+0SrfTreatment
+Standard","0DimThk
+0.5inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Carpet
+1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetMediumProfile
+0Color --> Fabric and Upholstery --> Carpet
+7A878F-SilverBlue
+0SrfTreatment
+Standard
+0DimThk
+0.75inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-66,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetMediumProfile
+0Color --> Fabric and Upholstery --> Carpet
+7A878F-SilverBlue
+0SrfTreatment
+Standard","0DimThk
+0.75inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Carpet
+1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetMediumProfile
+0Color --> Fabric and Upholstery --> Carpet
+7A878F-SilverBlue
+0SrfTreatment
+Standard
+0DimThk
+1inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-67,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+CarpetMediumProfile
+0Color --> Fabric and Upholstery --> Carpet
+7A878F-SilverBlue
+0SrfTreatment
+Standard","0DimThk
+1inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Cork
+1Material --> Fibrous --> Cork
+0RawMaterial
+Cork
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.125inT",,2Layer0D --> Roll --> Cork,,2Layer0D-68,"0,0,0",,"1Material --> Fibrous --> Cork
+0RawMaterial
+Cork
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.125inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Cork
+1Material --> Fibrous --> Cork
+0RawMaterial
+Cork
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.1875inT",,2Layer0D --> Roll --> Cork,,2Layer0D-69,"0,0,0",,"1Material --> Fibrous --> Cork
+0RawMaterial
+Cork
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.1875inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Cork
+1Material --> Fibrous --> Cork
+0RawMaterial
+Cork
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.25inT",,2Layer0D --> Roll --> Cork,,2Layer0D-70,"0,0,0",,"1Material --> Fibrous --> Cork
+0RawMaterial
+Cork
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.25inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Cork
+1Material --> Fibrous --> Cork
+0RawMaterial
+Cork
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.5inT",,2Layer0D --> Roll --> Cork,,2Layer0D-71,"0,0,0",,"1Material --> Fibrous --> Cork
+0RawMaterial
+Cork
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.5inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Felt
+1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+B9A081-Khaki
+0SrfTreatment
+Standard
+0DimThk
+2mmT",,2Layer0D --> Roll --> Felt,,2Layer0D-72,"0,0,0",,"1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+B9A081-Khaki
+0SrfTreatment
+Standard","0DimThk
+2mmT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Felt
+1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+B9A081-Khaki
+0SrfTreatment
+Standard
+0DimThk
+3mmT",,2Layer0D --> Roll --> Felt,,2Layer0D-73,"0,0,0",,"1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+B9A081-Khaki
+0SrfTreatment
+Standard","0DimThk
+3mmT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Felt
+1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+B9A081-Khaki
+0SrfTreatment
+Standard
+0DimThk
+5mmT",,2Layer0D --> Roll --> Felt,,2Layer0D-74,"0,0,0",,"1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+B9A081-Khaki
+0SrfTreatment
+Standard","0DimThk
+5mmT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard
+0DimThk
+0.125inT",,2Layer0D --> Roll --> Foam,,2Layer0D-75,"0,0,0",,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard","0DimThk
+0.125inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard
+0DimThk
+0.1875inT",,2Layer0D --> Roll --> Foam,,2Layer0D-76,"0,0,0",,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard","0DimThk
+0.1875inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard
+0DimThk
+0.25inT",,2Layer0D --> Roll --> Foam,,2Layer0D-77,"0,0,0",,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard","0DimThk
+0.25inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard
+0DimThk
+0.5inT",,2Layer0D --> Roll --> Foam,,2Layer0D-78,"0,0,0",,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard","0DimThk
+0.5inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> LathMetal
+1Material --> Metal --> Aluminum
+0RawMaterial
+Aluminum
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard
+0DimThk
+0.125inT",,2Layer0D --> Roll --> LathMetal,,2Layer0D-79,"0,0,0",,"1Material --> Metal --> Aluminum
+0RawMaterial
+Aluminum
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard","0DimThk
+0.125inT",,X,X,X,X,X,,,,,
+PRESET,,"2Layer0D --> Roll --> PlasticAdhesive
+1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.09375inT",,2Layer0D --> Roll --> PlasticAdhesive,,2Layer0D-80,"0,0,0",,"1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.09375inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> PlasticUnderlayment
+1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.0625inT",,2Layer0D --> Roll --> PlasticUnderlayment,,2Layer0D-81,"0,0,0",,"1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.0625inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> PlasticUnderlayment
+1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.09375inT",,2Layer0D --> Roll --> PlasticUnderlayment,,2Layer0D-82,"0,0,0",,"1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.09375inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> PlasticUnderlayment
+1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+0.125inT",,2Layer0D --> Roll --> PlasticUnderlayment,,2Layer0D-83,"0,0,0",,"1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.125inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Roll --> Wallpaper
+1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard
+0DimThk
+0.03125inT",,2Layer0D --> Roll --> Wallpaper,,2Layer0D-84,"0,0,0",,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.03125inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Sitework --> Gravel
+2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT
+0DimThk
+1inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-85,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT","0DimThk
+1inT",,,,,,X,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Gravel
+2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT
+0DimThk
+2inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-86,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT","0DimThk
+2inT",,,,,,X,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Gravel
+2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT
+0DimThk
+3inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-87,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT","0DimThk
+3inT",,,,,,X,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Gravel
+2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT
+0DimThk
+4inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-88,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT","0DimThk
+4inT",,,,,,X,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Gravel
+2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT
+0DimThk
+6inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-89,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT","0DimThk
+6inT",,,,,,X,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Gravel
+2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT
+0DimThk
+8inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-90,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT","0DimThk
+8inT",,,,,,X,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Gravel
+2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT
+0DimThk
+12inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-91,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteNormalAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+14inT","0DimThk
+12inT",,,,,,X,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Grass
+1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+1inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-92,"0,0,0",,"1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+1inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Grass
+1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+2inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-93,"0,0,0",,"1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+2inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Grass
+1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+3inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-94,"0,0,0",,"1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+3inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Grass
+1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+4inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-95,"0,0,0",,"1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+4inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Grass
+1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+6inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-96,"0,0,0",,"1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+6inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Grass
+1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+8inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-97,"0,0,0",,"1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+8inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Grass
+1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+12inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-98,"0,0,0",,"1Material --> Fibrous --> Wood Particles
+0RawMaterial
+WoodParticles
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+12inT",,,,,,,,,,,X
+PRESET,,#REF!,,2Layer0D --> Sitework --> DecomposedGranite,,2Layer0D-99,"0,0,0",,#REF!,"0DimThk
+1inT",,,X,X,,X,,,,,X
+PRESET,,#REF!,,2Layer0D --> Sitework --> DecomposedGranite,,2Layer0D-100,"0,0,0",,#REF!,"0DimThk
+2inT",,,X,X,,X,,,,,X
+PRESET,,#REF!,,2Layer0D --> Sitework --> DecomposedGranite,,2Layer0D-101,"0,0,0",,#REF!,"0DimThk
+3inT",,,X,X,,X,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Sand
+1Material --> Aggregates --> Sand
+0RawMaterial
+Sand
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+1inT",,2Layer0D --> Sitework --> Sand,,2Layer0D-102,"0,0,0",,"1Material --> Aggregates --> Sand
+0RawMaterial
+Sand
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+1inT",,,X,X,X,X,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Sand
+1Material --> Aggregates --> Sand
+0RawMaterial
+Sand
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+2inT",,2Layer0D --> Sitework --> Sand,,2Layer0D-103,"0,0,0",,"1Material --> Aggregates --> Sand
+0RawMaterial
+Sand
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+2inT",,,X,X,X,X,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Sand
+1Material --> Aggregates --> Sand
+0RawMaterial
+Sand
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+3inT",,2Layer0D --> Sitework --> Sand,,2Layer0D-104,"0,0,0",,"1Material --> Aggregates --> Sand
+0RawMaterial
+Sand
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+3inT",,,X,X,X,X,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+1inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-105,"0,0,0",,"1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+1inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+2inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-106,"0,0,0",,"1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+2inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+3inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-107,"0,0,0",,"1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+3inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+4inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-108,"0,0,0",,"1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+4inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+6inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-109,"0,0,0",,"1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+6inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+8inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-110,"0,0,0",,"1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+8inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+12inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-111,"0,0,0",,"1Material --> Fibrous --> Wood Strands
+0RawMaterial
+WoodStrands
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+12inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+1inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-112,"0,0,0",,"1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+1inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+2inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-113,"0,0,0",,"1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+2inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+3inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-114,"0,0,0",,"1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+3inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+4inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-115,"0,0,0",,"1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+4inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+6inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-116,"0,0,0",,"1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+6inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+8inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-117,"0,0,0",,"1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+8inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Sitework --> Soil
+1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard
+0DimThk
+12inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-118,"0,0,0",,"1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+12inT",,,,,,,,,,,X
+PRESET,,"2Layer0D --> Spread --> Asphalt
+1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard
+0DimThk
+1inT",,2Layer0D --> Spread --> Asphalt,,2Layer0D-119,"0,0,0",,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard","0DimThk
+1inT",,X,X,X,X,,,,X,X,
+PRESET,,"2Layer0D --> Spread --> Asphalt
+1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard
+0DimThk
+2inT",,2Layer0D --> Spread --> Asphalt,,2Layer0D-120,"0,0,0",,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard","0DimThk
+2inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> Asphalt
+1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard
+0DimThk
+3inT",,2Layer0D --> Spread --> Asphalt,,2Layer0D-121,"0,0,0",,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard","0DimThk
+3inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> Asphalt
+1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard
+0DimThk
+4inT",,2Layer0D --> Spread --> Asphalt,,2Layer0D-122,"0,0,0",,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard","0DimThk
+4inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> Asphalt
+1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard
+0DimThk
+6inT",,2Layer0D --> Spread --> Asphalt,,2Layer0D-123,"0,0,0",,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard","0DimThk
+6inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> Asphalt
+1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard
+0DimThk
+8inT",,2Layer0D --> Spread --> Asphalt,,2Layer0D-124,"0,0,0",,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard","0DimThk
+8inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> Asphalt
+1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard
+0DimThk
+12inT",,2Layer0D --> Spread --> Asphalt,,2Layer0D-125,"0,0,0",,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard","0DimThk
+12inT",,X,X,X,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> Plaster
+1Material --> Spread --> Plaster
+0RawMaterial
+Plaster
+0Color --> Spread --> Plaster
+F7EBDB-Shell
+0SrfTreatment
+Standard
+0DimThk
+0.375inT",,2Layer0D --> Spread --> Plaster,,2Layer0D-126,"0,0,0",,"1Material --> Spread --> Plaster
+0RawMaterial
+Plaster
+0Color --> Spread --> Plaster
+F7EBDB-Shell
+0SrfTreatment
+Standard","0DimThk
+0.375inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Spread --> Plaster
+1Material --> Spread --> Plaster
+0RawMaterial
+Plaster
+0Color --> Spread --> Plaster
+F7EBDB-Shell
+0SrfTreatment
+Standard
+0DimThk
+0.5inT",,2Layer0D --> Spread --> Plaster,,2Layer0D-127,"0,0,0",,"1Material --> Spread --> Plaster
+0RawMaterial
+Plaster
+0Color --> Spread --> Plaster
+F7EBDB-Shell
+0SrfTreatment
+Standard","0DimThk
+0.5inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Spread --> Plaster
+1Material --> Spread --> Plaster
+0RawMaterial
+Plaster
+0Color --> Spread --> Plaster
+F7EBDB-Shell
+0SrfTreatment
+Standard
+0DimThk
+0.625inT",,2Layer0D --> Spread --> Plaster,,2Layer0D-128,"0,0,0",,"1Material --> Spread --> Plaster
+0RawMaterial
+Plaster
+0Color --> Spread --> Plaster
+F7EBDB-Shell
+0SrfTreatment
+Standard","0DimThk
+0.625inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Spread --> Plaster
+1Material --> Spread --> Plaster
+0RawMaterial
+Plaster
+0Color --> Spread --> Plaster
+F7EBDB-Shell
+0SrfTreatment
+Standard
+0DimThk
+0.75inT",,2Layer0D --> Spread --> Plaster,,2Layer0D-129,"0,0,0",,"1Material --> Spread --> Plaster
+0RawMaterial
+Plaster
+0Color --> Spread --> Plaster
+F7EBDB-Shell
+0SrfTreatment
+Standard","0DimThk
+0.75inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Spread --> JointCompound
+1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard
+0DimThk
+0.03125inT",,2Layer0D --> Spread --> JointCompound,,2Layer0D-130,"0,0,0",,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.03125inT",,X,X,X,X,X,,,,,
+PRESET,,"2Layer0D --> Spread --> Paint
+1Material --> Spread --> Paint
+0RawMaterial
+Paint
+0Color --> Spread --> Paint
+F3F1ED-GentleWhite
+0SrfTreatment
+BuffPolished
+0DimThk
+0.02inT",,2Layer0D --> Spread --> Paint,,2Layer0D-131,"0,0,0",,"1Material --> Spread --> Paint
+0RawMaterial
+Paint
+0Color --> Spread --> Paint
+F3F1ED-GentleWhite
+0SrfTreatment
+BuffPolished","0DimThk
+0.02inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Spread --> Paint
+1Material --> Spread --> Paint
+0RawMaterial
+Paint
+0Color --> Spread --> Paint
+F3F1ED-GentleWhite
+0SrfTreatment
+BuffPolished
+0DimThk
+0.01inT",,2Layer0D --> Spread --> Paint,,2Layer0D-132,"0,0,0",,"1Material --> Spread --> Paint
+0RawMaterial
+Paint
+0Color --> Spread --> Paint
+F3F1ED-GentleWhite
+0SrfTreatment
+BuffPolished","0DimThk
+0.01inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Spread --> ThinsetCement
+1Material --> Aggregates --> Mortar
+0RawMaterial
+Mortar
+0Color --> Aggregates --> Mortar
+C6C6C6-Natural
+0SrfTreatment
+Standard
+0DimThk
+0.1875inT",,2Layer0D --> Spread --> ThinsetCement,,2Layer0D-133,"0,0,0",,"1Material --> Aggregates --> Mortar
+0RawMaterial
+Mortar
+0Color --> Aggregates --> Mortar
+C6C6C6-Natural
+0SrfTreatment
+Standard","0DimThk
+0.1875inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Spread --> ThinsetCement
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteFineAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+0.0625inT",,2Layer0D --> Spread --> ThinsetCement,,2Layer0D-134,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteFineAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+0.0625inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Spread --> ThinsetCement
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteFineAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+0.09375inT",,2Layer0D --> Spread --> ThinsetCement,,2Layer0D-135,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteFineAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+0.09375inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Spread --> ThinsetCement
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteFineAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+0.125inT",,2Layer0D --> Spread --> ThinsetCement,,2Layer0D-136,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteFineAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+0.125inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Spread --> ThinsetCement
+1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteFineAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard
+0DimThk
+0.25inT",,2Layer0D --> Spread --> ThinsetCement,,2Layer0D-137,"0,0,0",,"1Material --> Aggregates --> Concrete
+0RawMaterial
+ConcreteFineAggregate
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard","0DimThk
+0.25inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Spread --> MasticResin
+1Material --> Aggregates --> Mortar
+0RawMaterial
+Mortar
+0Color --> Aggregates --> Mortar
+C6C6C6-Natural
+0SrfTreatment
+Standard
+0DimThk
+0.25inT",,2Layer0D --> Spread --> MasticResin,,2Layer0D-138,"0,0,0",,"1Material --> Aggregates --> Mortar
+0RawMaterial
+Mortar
+0Color --> Aggregates --> Mortar
+C6C6C6-Natural
+0SrfTreatment
+Standard","0DimThk
+0.25inT",,,,,,X,,,,,
+PRESET,,"2Layer0D --> Void --> Air
+1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard
+0DimThk
+0.75inT",,2Layer0D --> Void --> Air,,2Layer0D-139,"0,0,0",,"1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard","0DimThk
+0.75inT",,X,,,,,X,,,,
+PRESET,,"2Layer0D --> Void --> Air
+1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard
+0DimThk
+1inT",,2Layer0D --> Void --> Air,,2Layer0D-140,"0,0,0",,"1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard","0DimThk
+1inT",,X,,,,,X,,,,
+PRESET,,"2Layer0D --> Void --> Air
+1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard
+0DimThk
+1.5inT",,2Layer0D --> Void --> Air,,2Layer0D-141,"0,0,0",,"1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard","0DimThk
+1.5inT",,X,,,,,X,,,,
+PRESET,,"2Layer0D --> Void --> Air
+1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard
+0DimThk
+2inT",,2Layer0D --> Void --> Air,,2Layer0D-142,"0,0,0",,"1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard","0DimThk
+2inT",,X,,,,,X,,,,
+PRESET,,"2Layer0D --> Void --> Air
+1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard
+0DimThk
+3inT",,2Layer0D --> Void --> Air,,2Layer0D-143,"0,0,0",,"1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard","0DimThk
+3inT",,X,,,,,X,,,,
+PRESET,,"2Layer0D --> Void --> Air
+1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard
+0DimThk
+6inT",,2Layer0D --> Void --> Air,,2Layer0D-144,"0,0,0",,"1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard","0DimThk
+6inT",,X,,,,,X,,,,
+,,#REF!,,,,,,,,,,,,,,,,,,,
+,,"1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard-0DimThk
+0.0625inT",,,,2Layer0D-146,,,"1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard","0DimThk
+0.0625inT",,,,,,,,,,,
+,,#REF!,,,,,,,,,,,,,,,,,,,
+,,#REF!,,,,2Layer0D-148,,,#REF!,"0DimThk
+1.5625inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-149,,,#REF!,"0DimThk
+2.375inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-150,,,#REF!,"0DimThk
+3.125inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-151,,,#REF!,"0DimThk
+3.935inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-152,,,#REF!,"0DimThk
+4.75inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-153,,,#REF!,"0DimThk
+5.5inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-154,,,#REF!,"0DimThk
+6.3125inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-155,,,#REF!,"0DimThk
+7.0625inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-156,,,#REF!,"0DimThk
+7.875inT",,,,,,,,,,,
+,,#REF!,,,,,,,,,,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+0.25inT",,,,2Layer0D-158,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.25inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+0.375inT",,,,2Layer0D-159,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.375inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+0.5inT",,,,2Layer0D-160,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.5inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+0.625inT",,,,2Layer0D-161,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.625inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+1inT",,,,2Layer0D-162,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+1inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumMoistureResistant
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+0.25inT",,,,2Layer0D-163,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumMoistureResistant
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.25inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumMoistureResistant
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+0.375inT",,,,2Layer0D-164,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumMoistureResistant
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.375inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumMoistureResistant
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+0.5inT",,,,2Layer0D-165,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumMoistureResistant
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.5inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumMoistureResistant
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+0.625inT",,,,2Layer0D-166,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumMoistureResistant
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.625inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumMoistureResistant
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+1inT",,,,2Layer0D-167,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumMoistureResistant
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+1inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumTypeX
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+0.25inT",,,,2Layer0D-168,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumTypeX
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.25inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumTypeX
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+0.375inT",,,,2Layer0D-169,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumTypeX
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.375inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumTypeX
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+0.5inT",,,,2Layer0D-170,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumTypeX
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.5inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumTypeX
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+0.625inT",,,,2Layer0D-171,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumTypeX
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+0.625inT",,,,,,,,,,,
+,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumTypeX
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard-0DimThk
+1inT",,,,2Layer0D-172,,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+GypsumTypeX
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard","0DimThk
+1inT",,,,,,,,,,,
+,,#REF!,,,,,,,,,,,,,,,,,,,
+,,#REF!,,,,2Layer0D-174,,,#REF!,"0DimThk
+0.125inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-175,,,#REF!,"0DimThk
+0.25inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-176,,,#REF!,"0DimThk
+0.34375inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-177,,,#REF!,"0DimThk
+0.5inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-178,,,#REF!,"0DimThk
+0.75inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-179,,,#REF!,"0DimThk
+1inT",,,,,,,,,,,
+,,#REF!,,,,,,,,,,,,,,,,,,,
+,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+CementitiousWoodFiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+FFFFFF-White
+0SrfTreatment
+Standard-0DimThk
+0.375inT",,,,2Layer0D-181,,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+CementitiousWoodFiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+0.375inT",,,,,,,,,,,
+,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+CementitiousWoodFiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+FFFFFF-White
+0SrfTreatment
+Standard-0DimThk
+0.4375inT",,,,2Layer0D-182,,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+CementitiousWoodFiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+0.4375inT",,,,,,,,,,,
+,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+CementitiousWoodFiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+FFFFFF-White
+0SrfTreatment
+Standard-0DimThk
+0.46875inT",,,,2Layer0D-183,,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+CementitiousWoodFiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+0.46875inT",,,,,,,,,,,
+,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+CementitiousWoodFiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+FFFFFF-White
+0SrfTreatment
+Standard-0DimThk
+0.71875inT",,,,2Layer0D-184,,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+CementitiousWoodFiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+0.71875inT",,,,,,,,,,,
+,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+CementitiousWoodFiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+FFFFFF-White
+0SrfTreatment
+Standard-0DimThk
+0.875inT",,,,2Layer0D-185,,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+CementitiousWoodFiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
+0.875inT",,,,,,,,,,,
+,,#REF!,,,,,,,,,,,,,,,,,,,
+,,#REF!,,,,2Layer0D-187,,,#REF!,"0DimThk
+0.375inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-188,,,#REF!,"0DimThk
+0.5inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-189,,,#REF!,"0DimThk
+0.625inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-190,,,#REF!,"0DimThk
+0.6875inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-191,,,#REF!,"0DimThk
+0.75inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-192,,,#REF!,"0DimThk
+1inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-193,,,#REF!,"0DimThk
+1.125inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-194,,,#REF!,"0DimThk
+1.5inT",,,,,,,,,,,
+,,#REF!,,,,,,,,,,,,,,,,,,,
+,,#REF!,,,,2Layer0D-196,,,#REF!,"0DimThk
+0.125inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-197,,,#REF!,"0DimThk
+0.25inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-198,,,#REF!,"0DimThk
+0.3125inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-199,,,#REF!,"0DimThk
+0.34375inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-200,,,#REF!,"0DimThk
+0.46875inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-201,,,#REF!,"0DimThk
+0.71875inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-202,,,#REF!,"0DimThk
+1.125inT",,,,,,,,,,,
+,,#REF!,,,,2Layer0D-203,,,#REF!,"0DimThk
+1.25inT",,,,,,,,,,,
+,,#REF!,,,,,,,,,,,,,,,,,,,
+,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
+0RawMaterial
+FoamPolyisocyanurate
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+FAF1D0-Yellow
+0SrfTreatment
+Standard-0DimThk
+1inT",,,,2Layer0D-205,,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
+0RawMaterial
+FoamPolyisocyanurate
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+FAF1D0-Yellow
+0SrfTreatment
+Standard","0DimThk
+1inT",,,,,,,,,,,
+,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
+0RawMaterial
+FoamPolyisocyanurate
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+FAF1D0-Yellow
+0SrfTreatment
+Standard-0DimThk
+2inT",,,,2Layer0D-206,,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
+0RawMaterial
+FoamPolyisocyanurate
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+FAF1D0-Yellow
+0SrfTreatment
+Standard","0DimThk
+2inT",,,,,,,,,,,
+,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
+0RawMaterial
+FoamPolyisocyanurate
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+FAF1D0-Yellow
+0SrfTreatment
+Standard-0DimThk
+3inT",,,,2Layer0D-207,,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
+0RawMaterial
+FoamPolyisocyanurate
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+FAF1D0-Yellow
+0SrfTreatment
+Standard","0DimThk
+3inT",,,,,,,,,,,
+,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
+0RawMaterial
+FoamPolyisocyanurate
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+FAF1D0-Yellow
+0SrfTreatment
+Standard-0DimThk
+4inT",,,,2Layer0D-208,,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
+0RawMaterial
+FoamPolyisocyanurate
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+FAF1D0-Yellow
+0SrfTreatment
+Standard","0DimThk
+4inT",,,,,,,,,,,
+,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
+0RawMaterial
+FoamPolyisocyanurate
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+FAF1D0-Yellow
+0SrfTreatment
+Standard-0DimThk
+6inT",,,,2Layer0D-209,,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
+0RawMaterial
+FoamPolyisocyanurate
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+FAF1D0-Yellow
+0SrfTreatment
+Standard","0DimThk
+6inT",,,,,,,,,,,
+,,#REF!,,,,,,,,,,,,,,,,,,,
+,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard-0DimThk
+0.5inT",,,,2Layer0D-211,,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard","0DimThk
+0.5inT",,,,,,,,,,,
+,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard-0DimThk
+0.75inT",,,,2Layer0D-212,,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard","0DimThk
+0.75inT",,,,,,,,,,,
+,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard-0DimThk
+1inT",,,,2Layer0D-213,,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard","0DimThk
+1inT",,,,,,,,,,,
+,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard-0DimThk
+2inT",,,,2Layer0D-214,,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard","0DimThk
+2inT",,,,,,,,,,,
+,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard-0DimThk
+3inT",,,,2Layer0D-215,,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard","0DimThk
+3inT",,,,,,,,,,,
+,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard-0DimThk
+4inT",,,,2Layer0D-216,,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+0RawMaterial
+FoamExtrudedPolystyrene
+0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+ECB9BE-Pink
+0SrfTreatment
+Standard","0DimThk
+4inT",,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,

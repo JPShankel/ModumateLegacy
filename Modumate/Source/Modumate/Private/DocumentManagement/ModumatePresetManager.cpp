@@ -23,6 +23,8 @@ namespace Modumate
 
 	ECraftingResult FPresetManager::FromDocumentRecord(UWorld *World, const FModumateDocumentHeader &DocumentHeader, const FMOIDocumentRecord &DocumentRecord)
 	{
+		//TODO: deactivated for DDL 2.0 refactor, crafting disabled 
+		return ECraftingResult::Success;
 		AEditModelGameMode_CPP *mode = Cast<AEditModelGameMode_CPP>(World->GetAuthGameMode());
 		AssembliesByObjectType.Empty();
 
@@ -94,6 +96,8 @@ namespace Modumate
 
 	ECraftingResult FPresetManager::ToDocumentRecord(FMOIDocumentRecord &OutRecord) const
 	{
+		//TODO: deactivated for DDL 2.0 refactor, crafting disabled 
+		return ECraftingResult::Success;
 		CraftingNodePresets.ToDataRecords(OutRecord.CraftingPresetArrayV2);
 		OutRecord.KeyStore = KeyStore;
 
@@ -206,143 +210,7 @@ namespace Modumate
 		FAssemblyDataCollection &db = AssembliesByObjectType.FindOrAdd(Assembly.ObjectType);
 		db.AddData(Assembly);
 		return ECraftingResult::Success;
-	}
-
-	
-	/*
-	Initializers
-	*/
-
-	ECraftingResult FPresetManager::ReadBIMTable(UDataTable *DataTable, BIM::FCraftingPresetCollection &Target)
-	{
-		if (!ensureAlways(DataTable != nullptr))
-		{
-			return ECraftingResult::Error;
-		}
-
-		TArray<FString> errors;
-		FString tableName;
-		DataTable->GetName(tableName);
-
-		if (Target.ReadDataTable(DataTable, errors) == ECraftingResult::Success)
-		{
-			if (errors.Num() > 0)
-			{
-				for (auto &msg : errors)
-				{
-					UE_LOG(LogTemp, Display, TEXT(" - OBJECT TABLE ERROR %s"), *msg);
-				}
-				ensureAlwaysMsgf(false, TEXT("COMPILE ERRORS IN NODE TABLE %s"),*tableName);
-				return ECraftingResult::Error;
-			}
-			return ECraftingResult::Success;
-		}
-		return ECraftingResult::Error;
-	}
-
-	ECraftingResult FPresetManager::LoadObjectNodeSet(UWorld *world)
-	{
-		TArray<FString> errors;
-		CraftingNodePresets = BIM::FCraftingPresetCollection();
-		/*
-		TODO: eventually this wants to be compiled into a binary format so we're not parsing scripts, but during development we still parse on load
-		We want a good deal of error checking here, with ensures, because this is how the designers debug their code
-		*/
-
-		UObjectLibrary *bimTables = FindObject<UObjectLibrary>(ANY_PACKAGE, TEXT("/Game/Tables/BIM/BIMTables.BIMTables"));
-
-		if (!ensureAlwaysMsgf(bimTables != nullptr, TEXT("Could not find BIM table library")))
-		{
-			return ECraftingResult::Error;
-		}
-
-		TArray<UDataTable*> objects;
-		bimTables->GetObjects(objects);
-
-		for (auto &dataTable : objects)
-		{
-			ECraftingResult result = ReadBIMTable(dataTable, CraftingNodePresets);
-			if (result != ECraftingResult::Success)
-			{
-				return result;
-			}
-		}
-
-		if (CraftingNodePresets.ParseScriptFile(FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMNodeGraph.mbn"), errors) == ECraftingResult::Success)
-		{
-			if (errors.Num() > 0)
-			{
-				for (auto &msg : errors)
-				{
-					UE_LOG(LogTemp, Display, TEXT(" - OBJECT NODE ERROR %s"), *msg);
-				}
-				ensureAlwaysMsgf(false, TEXT("COMPILE ERRORS IN OBJECT NODE SCRIPT"));
-				return ECraftingResult::Error;
-			}
-
-			// TODO: extend syntax to mark assembly presets for import, for now get well known list
-			TArray<FName> *defaultAssemblies = CraftingNodePresets.Lists.Find(TEXT("DefaultAssemblies"));
-			AEditModelGameMode_CPP *mode = Cast<AEditModelGameMode_CPP>(world->GetAuthGameMode());
-			if (defaultAssemblies != nullptr)
-			{
-				for (auto &presetID : *defaultAssemblies)
-				{
-					BIM::FModumateAssemblyPropertySpec spec;
-					PresetToSpec(presetID, spec);
-
-					if (ensureAlways(spec.ObjectType != EObjectType::OTNone))
-					{ 
-						FModumateObjectAssembly outAssembly;
-
-						UModumateObjectAssemblyStatics::DoMakeAssembly(*mode->ObjectDatabase, *this, spec, outAssembly);
-						outAssembly.DatabaseKey = presetID;
-
-						ECraftingResult result = UpdateProjectAssembly(outAssembly);
-						if (result != ECraftingResult::Success)
-						{
-							UE_LOG(LogTemp, Display, TEXT("FAILED TO MAKE ASSEMBLY FOR PRESET %s"), *presetID.ToString());
-							ensureAlwaysMsgf(false, TEXT("FAILED TO MAKE ASSEMBLY FOR PRESET %s"), *presetID.ToString());
-							return result;
-						}
-					}
-					else
-					{
-						UE_LOG(LogTemp, Display, TEXT("NO OBJECT TYPE FOR PRESET %s"),*presetID.ToString());
-						ensureAlwaysMsgf(false, TEXT("NO OBJECT TYPE FOR PRESET %s"), *presetID.ToString());
-						return ECraftingResult::Error;
-					}
-				}
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Display, TEXT("CRAFTING NODE SCRIPT PARSE FAILURE"));
-			ensureAlwaysMsgf(false, TEXT("CRAFTING NODE SCRIPT PARSE FAILURE"));
-			return ECraftingResult::Error;
-		}
-
-		DraftingNodePresets = BIM::FCraftingPresetCollection();
-		if (DraftingNodePresets.ParseScriptFile(FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("DrawingSetNodeGraph.mbn"), errors) == ECraftingResult::Success)
-		{
-			if (errors.Num() > 0)
-			{
-				for (auto &msg : errors)
-				{
-					UE_LOG(LogTemp, Display, TEXT(" - DRAWING SET NODE ERROR %s"), *msg);
-				}
-				UE_LOG(LogTemp, Display, TEXT("COMPILE ERRORS IN DRAWING SET NODE SCRIPT"));
-				ensureAlwaysMsgf(false, TEXT("COMPILE ERRORS IN DRAWING SET NODE SCRIPT"));
-				return ECraftingResult::Error;
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Display, TEXT("DRAWING SET NODE SCRIPT PARSE FAILURE"));
-			ensureAlwaysMsgf(false, TEXT("DRAWING SET NODE SCRIPT PARSE FAILURE"));
-		}
-
-		return ECraftingResult::Success;
-	}
+	}	
 
 	bool FPresetManager::TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FModumateObjectAssembly &OutAssembly) const
 	{
@@ -357,7 +225,6 @@ namespace Modumate
 		return false;
 	}
 
-
 	bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FName &PresetID, const FModumateObjectAssembly *&OutAssembly) const
 	{
 		const DataCollection<FModumateObjectAssembly> *db = AssembliesByObjectType.Find(ObjectType);
@@ -370,10 +237,15 @@ namespace Modumate
 		}
 
 		OutAssembly = db->GetData(PresetID);
+
+		// TODO: temp patch to support missing assemblies prior to assemblies being retired
+		if (OutAssembly == nullptr)
+		{
+			OutAssembly = db->GetData(TEXT("default"));
+		}
+
 		return (OutAssembly != nullptr);
 	}
-
-
 
 	FPresetManager::Result FPresetManager::InitAssemblyDBs()
 	{
@@ -487,11 +359,18 @@ Starting point: get a tree
 			}
 			else
 			{
-				// Nodes with a layer function constitute a new layer
-				if (preset->Properties.HasProperty(BIM::EScope::Layer, BIM::Parameters::Function))
+				const BIM::FCraftingTreeNodeType *nodeType = CraftingNodePresets.NodeDescriptors.Find(preset->NodeType);
+				if (ensureAlways(nodeType != nullptr))
 				{
-					OutPropertySpec.LayerProperties.AddDefaulted();
-					currentSheet = &OutPropertySpec.LayerProperties.Last();
+					if (nodeType->Scope == EBIMValueScope::Layer)
+					{
+						OutPropertySpec.LayerProperties.AddDefaulted();
+						currentSheet = &OutPropertySpec.LayerProperties.Last();
+					}
+					if (nodeType->Scope != EBIMValueScope::None)
+					{
+						pinScope = nodeType->Scope;
+					}
 				}
 
 				EObjectType objectType = CraftingNodePresets.GetPresetObjectType(presetID);
@@ -514,14 +393,10 @@ Starting point: get a tree
 					}
 				});
 
-				for (auto &cn : preset->ChildNodes)
+				for (auto &childPreset : preset->ChildPresets)
 				{
-					// Only the last preset in a sequence contains pertinent data...the others are just category selectors
-					if (ensureAlways(cn.PresetSequence.Num() > 0))
-					{
-						presetStack.Push(cn.PresetSequence.Last().SelectedPresetID);
-					}
-					scopeStack.Push(cn.Scope != BIM::EScope::None ? cn.Scope : pinScope);
+					presetStack.Push(childPreset.PresetID);
+					scopeStack.Push(pinScope);
 				}
 			}
 		}

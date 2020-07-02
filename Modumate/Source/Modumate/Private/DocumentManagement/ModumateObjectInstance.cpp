@@ -122,7 +122,8 @@ namespace Modumate
 		}
 
 		PreviewState.ObjectAssemblyKey = CurrentState.ObjectAssemblyKey = ObjectAssembly.UniqueKey();
-		PreviewState.ObjectType = CurrentState.ObjectType = ObjectAssembly.ObjectType;
+		PreviewState.ObjectType = obRec.ObjectType;
+		CurrentState.ObjectType = obRec.ObjectType;
 
 		MakeImplementation();
 		MakeActor(obRec.Location, obRec.Rotation.Quaternion());

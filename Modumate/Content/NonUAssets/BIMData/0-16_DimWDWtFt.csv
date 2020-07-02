@@ -1,0 +1,134 @@
+TYPENAME,,,,2ModuleLWH,,,,,,,
+,,,,Definition,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,
+PROPERTY,,STRING,,Name,,Preset.ColloquialName,,,,,
+PROPERTY,,DIMENSION,,Length,,Node.Length,,,,,
+PROPERTY,,DIMENSION,,Width,,Node.Width,,,,,
+PROPERTY,,DIMENSION,,Height,,Node.Height,,,,,
+,,,,Presets,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.ColloquialName,Node.Length,Node.Width,Node.Height,DataType=TG_Parent Node+CategoryPath,
+PRESET,,"0DimLWH --> ClayBrick
+7.625inL
+3.625inW
+2.29167inH",,0DimLWH --> ClayBrick,,8in Modular,7.625in,3.625in,2.29167in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+7.625inL
+3.125inW
+2.29167inH",,0DimLWH --> ClayBrick,,Narrow 8in Modular,7.625in,3.125in,2.29167in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+7.625inL
+2.29167inW
+2.29167inH",,0DimLWH --> ClayBrick,,Extra-Narrow 8in Modular,7.625in,2.29167in,2.29167in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+7.625inL
+3.625inW
+2.75inH",,0DimLWH --> ClayBrick,,Tall 8in Modular,7.625in,3.625in,2.75in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+7.625inL
+3.125inW
+2.75inH",,0DimLWH --> ClayBrick,,Tall Narrow 8in Modular,7.625in,3.125in,2.75in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+7.625inL
+3.625inW
+3.625inH",,0DimLWH --> ClayBrick,,Square-Head 8in Modular,7.625in,3.625in,3.625in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+7.625inL
+3.625inW
+7.625inH",,0DimLWH --> ClayBrick,,Triple-Height 8in Modular,7.625in,3.625in,7.625in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+11.625inL
+3.625inW
+2.29167inH",,0DimLWH --> ClayBrick,,Norman,11.625in,3.625in,2.29167in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+11.625inL
+3.125inW
+2.29167inH",,0DimLWH --> ClayBrick,,Narrow Norman,11.625in,3.125in,2.29167in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+11.625inL
+3.625inW
+2.75inH",,0DimLWH --> ClayBrick,,Tall Norman,11.625in,3.625in,2.75in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+11.625inL
+3.125inW
+2.75inH",,0DimLWH --> ClayBrick,,Tall Narrow Norman,11.625in,3.125in,2.75in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+11.625inL
+3.625inW
+3.625inH",,0DimLWH --> ClayBrick,,Square-Head Norman,11.625in,3.625in,3.625in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+11.625inL
+3.625inW
+7.625inH",,0DimLWH --> ClayBrick,,Triple-Height Norman,11.625in,3.625in,7.625in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+15.625inL
+3.625inW
+2.29167inH",,0DimLWH --> ClayBrick,,Monarch,15.625in,3.625in,2.29167in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+15.625inL
+3.125inW
+2.29167inH",,0DimLWH --> ClayBrick,,Narrow Monarch,15.625in,3.125in,2.29167in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+15.625inL
+3.625inW
+2.75inH",,0DimLWH --> ClayBrick,,Tall Monarch,15.625in,3.625in,2.75in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+15.625inL
+3.625inW
+7.625inH",,0DimLWH --> ClayBrick,,Triple-Height Monarch,15.625in,3.625in,7.625in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> ClayBrick
+11.625inL
+3.625inW
+1.625inH",,0DimLWH --> ClayBrick,,Roman,11.625in,3.625in,1.625in,,2ModuleLWH --> Clay Brick
+PRESET,,"0DimLWH --> CMU
+7.625inL
+3.625inW
+3.625inH",,0DimLWH --> CMU,,"4in Half Block, 4in x 8in x 4in",7.625in,3.625in,3.625in,,2ModuleLWH --> Concrete Masonry Unit
+PRESET,,"0DimLWH --> CMU
+15.625inL
+3.625inW
+7.625inH",,0DimLWH --> CMU,,"4in Full Block, 8in x 16in x 4in",15.625in,3.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
+PRESET,,"0DimLWH --> CMU
+7.625inL
+5.625inW
+7.625inH",,0DimLWH --> CMU,,"6in Half Block, 8in x 8in x 6in",7.625in,5.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
+PRESET,,"0DimLWH --> CMU
+15.625inL
+5.625inW
+7.625inH",,0DimLWH --> CMU,,"6in Full Block, 8in x 16in x 6in",15.625in,5.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
+PRESET,,"0DimLWH --> CMU
+7.625inL
+7.625inW
+7.625inH",,0DimLWH --> CMU,,"8in Half Block, 8in x 8in x 8in",7.625in,7.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
+PRESET,,"0DimLWH --> CMU
+15.625inL
+7.625inW
+7.625inH",,0DimLWH --> CMU,,"8in Full Block, 8in x 16in x 8in",15.625in,7.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
+PRESET,,"0DimLWH --> CMU
+7.625inL
+9.625inW
+7.625inH",,0DimLWH --> CMU,,"10in Half Block, 8in x 8in x 10in",7.625in,9.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
+PRESET,,"0DimLWH --> CMU
+15.625inL
+9.625inW
+7.625inH",,0DimLWH --> CMU,,"10in Full Block, 8in x 16in x 10in",15.625in,9.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
+PRESET,,"0DimLWH --> CMU
+7.625inL
+11.625inW
+7.625inH",,0DimLWH --> CMU,,"12in Half Block, 8in x 8in x 12in",7.625in,11.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
+PRESET,,"0DimLWH --> CMU
+15.625inL
+11.625inW
+7.625inH",,0DimLWH --> CMU,,"12in Full Block, 8in x 16in x 12in",15.625in,11.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
+PRESET,,"0DimLWH --> GlassBlock
+7.75inL
+3.875inW
+3.75inH",,0DimLWH --> GlassBlock,,4in x 8in x 4in,7.75in,3.875in,3.75in,,2ModuleLWH --> Glass Block
+PRESET,,"0DimLWH --> GlassBlock
+5.75inL
+3.875inW
+5.75inH",,0DimLWH --> GlassBlock,,6in x 6in x 4in,5.75in,3.875in,5.75in,,2ModuleLWH --> Glass Block
+PRESET,,"0DimLWH --> GlassBlock
+7.75inL
+3.875inW
+7.75inH",,0DimLWH --> GlassBlock,,8in x 8in x 4in,7.75in,3.875in,7.75in,,2ModuleLWH --> Glass Block
+,,,,,,,,,,,

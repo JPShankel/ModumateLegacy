@@ -54,7 +54,6 @@ namespace Modumate
 		void Shutdown();
 
 		// Read database
-		void ReadAMaterialData(UDataTable *data);
 		void ReadMeshData(UDataTable *data);
 		void ReadFFEPartData(UDataTable *data);
 		void ReadLightConfigData(UDataTable *data);
@@ -67,9 +66,12 @@ namespace Modumate
 		void ReadCraftingPortalPartOptionSet(UDataTable *data);
 		void ReadCraftingProfileOptionSet(UDataTable *data);
 
-		void ReadMarketplace(UWorld *world);
+		void AddArchitecturalMaterial(const FName Key, const FString &Name, const FSoftObjectPath &AssetPath);
+
+		void ReadPresetData();
 		void InitPresetManagerForNewDocument(FPresetManager &OutManager) const;
 		FPresetManager PresetManager;
+		void ReadMarketplace(UWorld *world);
 
 		// Data Access
 		const FArchitecturalMaterial *GetArchitecturalMaterialByKey(const FName &name) const;

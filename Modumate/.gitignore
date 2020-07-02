@@ -78,3 +78,6 @@ DerivedDataCache/*
 
 # Modules
 *.modules
+
+# Temporary Excel files
+~*

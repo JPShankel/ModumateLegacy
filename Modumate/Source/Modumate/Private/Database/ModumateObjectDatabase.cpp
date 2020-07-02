@@ -9,6 +9,7 @@
 #include "HAL/FileManager.h"
 #include "Misc/Paths.h"
 #include "Database/ModumateDataTables.h"
+#include "Database/ModumateObjectAssembly.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -18,10 +19,8 @@
 #include "Serialization/JsonSerializer.h"
 #include "JsonObjectConverter.h"
 
-
 namespace Modumate
 {
-
 	template<class T, class O, class OS>
 	void ReadOptionSet(
 		UDataTable *data,
@@ -577,6 +576,102 @@ namespace Modumate
 		}
 
 	}
+	void ModumateObjectDatabase::AddArchitecturalMaterial(const FName Key, const FString &Name, const FSoftObjectPath &AssetPath)
+	{
+		if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
+		{
+			return;
+		}
+
+		FArchitecturalMaterial mat;
+		mat.Key = Key;
+		mat.DisplayName = FText::FromString(Name);
+
+		mat.EngineMaterial = Cast<UMaterialInterface>(AssetPath.TryLoad());
+		if (ensure(mat.EngineMaterial.IsValid()))
+		{
+			mat.EngineMaterial->AddToRoot();
+		}
+
+		mat.UVScaleFactor = 1;
+		AMaterials.AddData(mat);
+	}
+
+	void ModumateObjectDatabase::ReadPresetData()
+	{
+		FString manifestPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
+		TArray<FString> errors;
+		if (!ensureAlways(PresetManager.CraftingNodePresets.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), errors) == ECraftingResult::Success))
+		{
+			return;
+		}
+
+		BIM::FCraftingTreeNodeType *layerNode = PresetManager.CraftingNodePresets.NodeDescriptors.Find(TEXT("2Layer0D"));
+		layerNode->Scope = EBIMValueScope::Layer;
+
+		FName rawMaterialType = TEXT("0RawMaterial");
+		for (auto &kvp : PresetManager.CraftingNodePresets.Presets)
+		{
+			if (kvp.Value.NodeType == rawMaterialType)
+			{
+				FString matName = kvp.Value.Properties.GetProperty(BIM::EScope::Preset, BIM::Parameters::Name);
+				FName matKey = kvp.Value.Properties.GetProperty(BIM::EScope::Node, BIM::Parameters::MaterialKey);
+				FString assetPathStr = kvp.Value.Properties.GetProperty(BIM::EScope::Node, BIM::Parameters::EngineMaterial);
+				AddArchitecturalMaterial(matKey, matName, assetPathStr);
+			}
+		}
+
+		/*
+		TODO: prior to refactor, we must produce assemblies from presets with known tag paths...to be removed
+		*/
+		TMap<FString, EObjectType> objectMap;
+		objectMap.Add(FString(TEXT("4LayeredAssembly-->Wall")), EObjectType::OTWallSegment);
+		objectMap.Add(FString(TEXT("4LayeredAssembly-->Floor")), EObjectType::OTFloorSegment);
+		objectMap.Add(FString(TEXT("4LayeredAssembly-->Roof")), EObjectType::OTRoofFace);
+		objectMap.Add(FString(TEXT("4LayeredAssembly-->Finish")), EObjectType::OTFinish);
+		objectMap.Add(FString(TEXT("4LayeredAssembly-->Countertop")), EObjectType::OTCountertop);
+
+		FName layeredType = TEXT("4LayeredAssembly");
+		TSet<EObjectType> gotDefault;
+		for (auto &kvp : PresetManager.CraftingNodePresets.Presets)
+		{
+			if (kvp.Value.NodeType == layeredType)
+			{
+				FString myPath;
+				kvp.Value.MyTagPath.ToString(myPath);
+
+				EObjectType *ot = objectMap.Find(myPath);
+				if (ot == nullptr)
+				{
+					continue;
+				}
+
+				kvp.Value.ObjectType = *ot;
+
+				if (!PresetManager.StarterPresetsByObjectType.Contains(*ot))
+				{
+					PresetManager.StarterPresetsByObjectType.Add(*ot, kvp.Key);
+				}
+
+				FModumateObjectAssembly outAssembly;
+				BIM::FModumateAssemblyPropertySpec outSpec;
+				PresetManager.PresetToSpec(kvp.Key, outSpec);
+				outSpec.ObjectType = *ot;
+				UModumateObjectAssemblyStatics::DoMakeAssembly(*this, PresetManager, outSpec, outAssembly);
+				outAssembly.DatabaseKey = kvp.Key;
+				PresetManager.UpdateProjectAssembly(outAssembly);
+
+				// TODO: default assemblies added to allow interim loading during assembly refactor, to be eliminated
+				if (!gotDefault.Contains(outSpec.ObjectType))
+				{
+					gotDefault.Add(outSpec.ObjectType);
+					outAssembly.DatabaseKey = TEXT("default");
+					PresetManager.UpdateProjectAssembly(outAssembly);
+				}
+			}
+		}
+		ensureAlways(errors.Num() == 0);
+	}
 
 	/*
 	Read Data Tables
@@ -610,52 +705,6 @@ namespace Modumate
 				}
 			}
 		);
-	}
-
-	void ModumateObjectDatabase::ReadAMaterialData(UDataTable *data)
-	{
-		if (!data)
-		{
-			return;
-		}
-
-		AMaterials = DataCollection<FArchitecturalMaterial>();
-
-		data->ForeachRow<FMaterialTableRow>(TEXT("FMaterialTableRow"),
-			[this](const FName &Key, const FMaterialTableRow &data)
-		{
-			if (ensure(data.EngineMaterialPath.IsValid() && data.EngineMaterialPath.IsAsset()))
-			{
-				FArchitecturalMaterial mat;
-				mat.Key = *data.AssetName;
-				mat.DisplayName = data.DisplayName;
-
-				mat.EngineMaterial = Cast<UMaterialInterface>(data.EngineMaterialPath.TryLoad());
-				if (ensure(mat.EngineMaterial.IsValid()))
-				{
-					mat.EngineMaterial->AddToRoot();
-				}
-
-				if (auto *baseColorPtr = NamedColors.GetData(*data.DefaultBaseColor))
-				{
-					mat.DefaultBaseColor = *baseColorPtr;
-				}
-
-				for (const auto &supportedBaseColorString : data.SupportedBaseColors)
-				{
-					if (auto *supportedColorPtr = NamedColors.GetData(*supportedBaseColorString))
-					{
-						mat.SupportedBaseColors.Add(*supportedColorPtr);
-					}
-				}
-
-				mat.bSupportsColorPicker = data.SupportsRGBColorPicker;
-				mat.UVScaleFactor = (data.TextureTilingSize > 0.0f) ? (1.0f / data.TextureTilingSize) : 1.0f;
-				mat.HSVRangeWhenTiled = data.HSVRangeWhenTiled;
-
-				AMaterials.AddData(mat);
-			}
-		});
 	}
 
 	void ModumateObjectDatabase::ReadFFEPartData(UDataTable *data)
@@ -950,6 +999,7 @@ namespace Modumate
 			OutManager.DraftingNodePresets = PresetManager.DraftingNodePresets;
 			OutManager.AssembliesByObjectType = PresetManager.AssembliesByObjectType;
 			OutManager.KeyStore = PresetManager.KeyStore;
+			OutManager.StarterPresetsByObjectType = PresetManager.StarterPresetsByObjectType;
 
 			// Add all DDL 1.0 assemblies to project as marketplace has been deactivated and there are no presets
 			for (auto &kvp : PresetManager.AssemblyDBs_DEPRECATED)
@@ -994,7 +1044,7 @@ namespace Modumate
 
 		PresetManager.AssemblyDBs_DEPRECATED.Add(EToolMode::VE_PLACEOBJECT, FFEAssemblies);
 
-		PresetManager.LoadObjectNodeSet(world);
+		ReadPresetData();
 	}
 
 	void ModumateObjectDatabase::Init()

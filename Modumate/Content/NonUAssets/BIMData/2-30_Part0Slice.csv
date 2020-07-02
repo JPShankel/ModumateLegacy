@@ -1,0 +1,586 @@
+TYPENAME,2Part0Slice,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,PropertyType,PropertyName,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,STRING,Name,Preset.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,InputExtensibility,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildMesh,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Presets,,,,,,,,,2,2,2,3,2,1,0,1,1,0,2,2,2,0,1,0,1,0,2,0,1,1,1,1,1,1,2,2,2,2,2,2,2,2
+TAGPATHS,ID,,,DataType=Properties,Preset.Name,DataType=InputPins,ChildMaterial,ChildMesh,DataType=TG_MyNode+CategoryPath,2Part0Slice --> Door --> Handle --> Knob,2Part0Slice --> Door --> Handle --> Lever,2Part0Slice --> Door --> Handle --> Pull,2Part0Slice --> Door --> Handle --> Lateral Pull,2Part0Slice --> Door --> Swing --> Hinge,2Part0Slice --> Door --> Lock --> Bolt,2Part0Slice --> Door --> Lock --> Latch,2Part0Slice --> Door --> Lock --> Surface Chain,2Part0Slice --> Door --> Lock --> Surface Bolt,2Part0Slice --> Door --> Lock --> Bolt,2Part0Slice --> Door --> Swing --> Mail Slot,2Part0Slice --> Door --> Swing --> Knocker,2Part0Slice --> Door --> Swing --> Bell,2Part0Slice --> Door --> Sliding --> Handle Set,2Part0Slice --> Door --> Folding --> Caster,2Part0Slice --> Door --> Folding --> Handle Set,2Part0Slice --> Door --> Folding --> Lock,2Part0Slice --> Door --> Pocket --> Handle Set,2Part0Slice --> Door --> Barn --> Caster,2Part0Slice --> Door --> Barn --> Handle Set,2Part0Slice --> Window --> Hinge,2Part0Slice --> Window --> Handle,2Part0Slice --> Window --> Lock,2Part0Slice --> Cabinet --> Hinge,2Part0Slice --> Cabinet --> Handle,2Part0Slice --> Cabinet --> Lock,2Part0Slice --> FF&E --> Plug-In Appliance,2Part0Slice --> FF&E --> Decoration --> Sculptural,2Part0Slice --> FF&E --> Light --> Recessed Can,2Part0Slice --> FF&E --> Light --> Sconce,2Part0Slice --> FF&E --> Faucet,2Part0Slice --> FF&E --> Plant --> Potted,2Part0Slice --> FF&E --> Plant --> Shrub,2Part0Slice --> FF&E --> Plant --> Tree
+PRESET,"TraditionalKnobHandleSet-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Traditional Knob Handle Set,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Knob Handle Set,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"ModernKnobHandleSet-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Modern Knob Handle Set,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Knob Handle Set,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"TraditionalLeverHandleSet-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Traditional Lever Handle Set,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Lever Handle Set,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"ModernLeverHandleSet-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Modern Lever Handle Set,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Lever Handle Set,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"TraditionalPullHandleSet-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Traditional Pull Handle Set,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Pull Handle Set,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"ModernPullHandleSet-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Modern Pull Handle Set,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Pull Handle Set,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"TraditionalLateralPullHandleSet-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Traditional Lateral Pull Handle Set,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Lateral Pull Handle Set,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"ModernLateralPullHandleSet-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Modern Lateral Pull Handle Set,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Lateral Pull Handle Set,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"FlushLateralPullHandleSet-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Flush Lateral Pull Handle Set,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Flush Lateral Pull Handle Set,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"ShortHinge-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Short Hinge,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Short Hinge,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"LongHinge-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Long Hinge,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Long Hinge,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"LockSet-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Lock Set,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Lock Set,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"SurfaceLock-Chain-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Surface Lock - Chain,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Surface Lock - Chain,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"SurfaceLock-Bolt-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Surface Lock - Bolt,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Surface Lock - Bolt,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"TraditionalMailSlot-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Mail Slot,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Mail Slot,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"ModernMailSlot-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Mail Slot,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Mail Slot,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"TraditionalKnocker-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Knocker,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Knocker,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"ModernKnocker-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Knocker,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Knocker,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"TraditionalBell-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Bell,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Bell,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,
+PRESET,"ModernBell-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Bell,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Bell,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,
+PRESET,"FoldingDoorCaster-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Sliding Door Caster,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Folding Door Caster,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,
+PRESET,"FoldingDoorLock-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Folding Door Lock,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Folding Door Lock,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
+PRESET,"TraditionalBarnDoorCaster-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Barn Door Caster,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Barn Door Caster,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,
+PRESET,"ModernBarnDoorCaster-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Barn Door Caster,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Barn Door Caster,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,
+PRESET,"ModernWindowHinge-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Hinge,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Window Hinge,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,
+PRESET,"ModernWindowHandle-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Handle,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Window Handle,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,
+PRESET,"ModernWindowLock-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Lock,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Window Lock,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,
+PRESET,"ModernCabinetHinge-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Hinge,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Cabinet Hinge,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,
+PRESET,"ModernCabinetHandle-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Handle,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Cabinet Handle,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
+PRESET,"ModernCabinetLock-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Lock,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Cabinet Lock,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,
+PRESET,"Toaster-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Toaster,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Toaster,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,
+PRESET,"Blender-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Blender,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Blender,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,
+PRESET,"StackofBooks-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Stack of Books,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Stack of Books,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,
+PRESET,"Vase-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Vase,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Vase,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,
+PRESET,"4""RecessedCan-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,"4"" Recessed Canister",,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard","4"" Recessed Can",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,"3""RecessedCan-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,"3"" Recessed Canister",,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard","3"" Recessed Can",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,TraditionalSconce-Base,,,,Sconce,,Base,Traditional Sconce,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,
+PRESET,,,,,,,Shade,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,ModernSconce-Base,,,,Sconce,,Base,Modern Sconce,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,
+PRESET,,,,,,,Shade,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,"KitchenSinkFaucet-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Faucet,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Kitchen Sink Faucet,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,"BathroomSinkFaucet-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Faucet,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Bathroom Sink Faucet,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,"TabletopPlant-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Small Potted Plant,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Tabletop Plant,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,
+PRESET,"FloorPlant-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Large Potted Plant,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Floor Plant,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,
+PRESET,"Rosemary-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Rosemary Shrub,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Rosemary,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,
+PRESET,"Blackberry-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Blackberry Shrub,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Blackberry,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,
+PRESET,"Oak-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Oak Tree,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Oak,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X
+PRESET,"JapaneseMaple-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,Japanese Maple Tree,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Japanese Maple,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

@@ -1,0 +1,84 @@
+TYPENAME,,0SrfTreatment,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,,,PropertyName,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,,,Display Name,Preset.ColloquialName,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,,,Albedo Modifier,Preset.AlbedoModifierFilePath,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,,,MRSA Modifier,Preset.MRSAModifierFilePath,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,,,AO Modifier,Preset.AOModifierFilePath,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,5,1,1,1,1,10,10,10,10,10,10,10,10,6,1,1,1,1,1,1,1,1,9,9,9,9,9,9,9,9,9,9,9,9,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,1,1,1,1,1,1,1,1,1,1,1
+TAGPATHS,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=ID,ID,DataType=Properties,Preset.ColloquialName,Preset.AlbedoModifierFilePath,Preset.MRSAModifierFilePath,Preset.AOModifierFilePath,DataType=TG_Parent Node+CategoryPath,1Material --> Abstract,1Material --> Aggregates --> Asphalt,1Material --> Aggregates --> Concrete,1Material --> Aggregates --> Decomposed Granite,1Material --> Aggregates --> Fiber-Cement,1Material --> Aggregates --> Gravel,1Material --> Aggregates --> Grout,1Material --> Aggregates --> Gypsum,1Material --> Aggregates --> Mortar,1Material --> Aggregates --> Rammed Earth,1Material --> Aggregates --> Sand,1Material --> Aggregates --> Terrazzo,1Material --> Fabric and Upholstery --> Carpet,1Material --> Fabric and Upholstery --> Cotton,1Material --> Fabric and Upholstery --> Felt,1Material --> Fabric and Upholstery --> Leather,1Material --> Fabric and Upholstery --> Silk,1Material --> Fabric and Upholstery --> Velvet,1Material --> Fabric and Upholstery --> Vinyl,1Material --> Ceramic --> Clay,1Material --> Ceramic --> Porcelain,1Material --> Glass and Transparent --> Air,1Material --> Glass and Transparent --> Glass Block,1Material --> Glass and Transparent --> Glass,1Material --> Glass and Transparent --> Mesh Fly Screen,1Material --> Metal --> Aluminum,1Material --> Metal --> Chrome,1Material --> Metal --> Copper,1Material --> Metal --> Iron,1Material --> Metal --> Nickel,1Material --> Metal --> Steel,1Material --> Metal --> Tin,1Material --> Metal --> Zinc,1Material --> Spread --> Paint,1Material --> Spread --> Plaster,#REF!,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene,1Material --> Synthetic and Polymer --> Foam - Polyethylene,1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate,1Material --> Synthetic and Polymer --> Plastic,1Material --> Synthetic and Polymer --> Rubber,1Material --> Synthetic and Polymer --> Vinyl Composite,1Material --> Stone --> Alabaster,1Material --> Stone --> Basalt,1Material --> Stone --> Granite,1Material --> Stone --> Lava Stone,1Material --> Stone --> Limestone,1Material --> Stone --> Marble,1Material --> Stone --> Onyx,1Material --> Stone --> Quartzite,1Material --> Stone --> Sandstone,1Material --> Stone --> Slate,1Material --> Stone --> Soapstone,1Material --> Stone --> Travertine,1Material --> Wood --> Ash,1Material --> Wood --> Bamboo,1Material --> Wood --> Beech,1Material --> Wood --> Birch,1Material --> Wood --> Cedar - Western Red,1Material --> Wood --> Cedar - White,1Material --> Wood --> Cherry,1Material --> Wood --> Cypress - Bald,1Material --> Wood --> Ipe,1Material --> Wood --> Mahogany,1Material --> Wood --> Maple,1Material --> Wood --> Oak - Red,1Material --> Wood --> Oak - White,1Material --> Wood --> Redwood,1Material --> Wood --> Spruce-Pine-Fir,1Material --> Wood --> Sycamore,1Material --> Wood --> Teak,1Material --> Wood --> Walnut,1Material --> Fibrous --> Cork,1Material --> Fibrous --> Cementitious Wood Fiber,1Material --> Fibrous --> Mineral Fiber,1Material --> Fibrous --> Plywood,1Material --> Fibrous --> Wood Fibers,1Material --> Fibrous --> Wood Strands,#REF!,1Material --> Sitework --> Grass,#REF!,1Material --> Sitework --> Moss,1Material --> Sitework --> Soil
+,,,,--Standard,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Standard",,Standard,,,,,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+,,,,--Concrete,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Rough",,Rough,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Aged",,Aged,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Sealed",,Sealed,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Smooth",,Smooth,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,--Metal,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+MetalPlated",,Metal Plated,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Brushed",,Brushed,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+BuffPolished",,Buff Polished,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+SandblastedMetal",,Sandblasted Metal,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+PowderCoated",,Powder Coated,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Blackened",,Blackened,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Patina",,Patina,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Rusted",,Rusted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Anodized",,Anodized,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,--Paint,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Glossy",,Glossy,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Semi-Gloss",,Semi-Gloss,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Satin",,Satin,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Eggshell",,Eggshell,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Matte",,Matte,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,--Stone,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+NaturalCleft",,Natural Cleft,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Polished",,Polished,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Honed",,Honed,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Flamed",,Flamed,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+SandblastedStone",,Sandblasted Stone,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Leather",,Leather,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Split-Face",,Split-Face,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Tumbled",,Tumbled,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,--Wood,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Unfinished",,Unfinished,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+LinseedOil",,Linseed Oil,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+TungOil",,Tung Oil,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+DanishOil",,Danish Oil,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+Polyurethane",,Polyurethane,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+ShellacLacquer",,Shellac Lacquer,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,
+PRESET,,0SrfTreatment,,"0SrfTreatment
+ResinVarnish",,Resin Varnish,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

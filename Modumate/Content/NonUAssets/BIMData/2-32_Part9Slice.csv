@@ -1,0 +1,452 @@
+TYPENAME,2Part9Slice,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,PropertyType,PropertyName,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,STRING,Name,Preset.Name,,,,,,,,,,,,,,,,,,,,,,,,,,
+,InputExtensibility,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildMesh,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Presets,,,,,,,,,2,3,1,3,3,1,1,3,2,3,0,3,1,2,1,2,1,3,2,2
+TAGPATHS,ID,,,DataType=Properties,Preset.Name,DataType=InputPins,ChildMaterial,ChildMesh,DataType=TG_MyNode+CategoryPath,2Part9Slice --> Door --> Swing --> Frame,2Part9Slice --> Door --> Swing --> Panel,2Part9Slice --> Door --> Swing --> Screen Panel,2Part9Slice --> Door --> Sliding --> Frame,2Part9Slice --> Door --> Sliding --> Panel,2Part9Slice --> Door --> Sliding --> Screen Panel,2Part9Slice --> Door --> Folding --> Frame,2Part9Slice --> Door --> Folding --> Panel,2Part9Slice --> Door --> Pocket --> Frame,2Part9Slice --> Door --> Pocket --> Panel,2Part9Slice --> Door --> Barn --> Frame,2Part9Slice --> Door --> Barn --> Panel,2Part9Slice --> Window --> Frame,2Part9Slice --> Window --> Panel,2Part9Slice --> Window --> Screen,2Part9Slice --> Window --> Shutter,2Part9Slice --> Cabinet --> Frame,2Part9Slice --> Cabinet --> Panel,2Part9Slice --> Light --> Track,2Part9Slice --> Decoration --> Framed
+PRESET,"FlatDoorFrame-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Flat Door Frame,,X,,,,,,,,,,X,,,,,,,,,
+PRESET,"Double-RabbetDoorFrame-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Double-Rabbet Door Frame,,X,,,,,,,,,,,,,,,,,,,
+PRESET,"Single-RabbetDoorFrame-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Single-Rabbet Door Frame,,X,,,,,,,,,,,,,,,,,,,
+PRESET,"FlushPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Flush Panel,,,X,,,,,,,,X,,X,,,,,,,,
+PRESET,"CofferedPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Coffered Panel,,,X,,,,,,,,X,,X,,,,,,,,
+PRESET,"PanelWithGlass-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Panel With Glass,,,X,,,,,,,,X,,X,,,,,,,,
+PRESET,"ScreenDoorPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Screen Door Panel,,,,X,,,,,,,,,,,,,,,,,
+PRESET,"2-TrackSlidingDoorFrame-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",2-Track Sliding Door Frame,,,,,X,,,,,,,,,,,,,,,,
+PRESET,"3-TrackSlidingDoorFrame-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",3-Track Sliding Door Frame,,,,,X,,,,,,,,,,,,,,,,
+PRESET,"4-TrackSlidingDoorFrame-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",4-Track Sliding Door Frame,,,,,X,,,,,,,,,,,,,,,,
+PRESET,"TraditionalSlidingDoorPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Sliding Door Panel,,,,,,X,,,,,,,,,,,,,,,
+PRESET,"ModernSlidingDoorPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Sliding Door Panel,,,,,,X,,,,,,,,,,,,,,,
+PRESET,"SolidSlidingDoorPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Solid Sliding Door Panel,,,,,,X,,,,,,,,,,,,,,,
+PRESET,"SlidingDoorScreen-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Sliding Door Screen,,,,,,,X,,,,,,,,,,,,,,
+PRESET,"FoldingDoorFrame-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Folding Door Frame,,,,,,,,X,,,,,,,,,,,,,
+PRESET,"ModernFoldingDoorPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Folding Door Panel,,,,,,,,,X,,,,,,,,,,,,
+PRESET,"TraditionalFoldingDoorPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Folding Door Panel,,,,,,,,,X,,,,,,,,,,,,
+PRESET,"SolidFoldingDoorPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Solid Folding Door Panel,,,,,,,,,X,,,,,,,,,,,,
+PRESET,"PocketDoorFrame(One-Sided)-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Pocket Door Frame (One-Sided),,,,,,,,,,X,,,,,,,,,,,
+PRESET,"PocketDoorFrame(Two-Sided)-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Pocket Door Frame (Two-Sided),,,,,,,,,,X,,,,,,,,,,,
+PRESET,"WindowFrame-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Window Frame,,,,,,,,,,,,,,X,,,,,,,
+PRESET,"ModernWindowPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Window Panel,,,,,,,,,,,,,,,X,,,,,,
+PRESET,"TraditionalWindowPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Window Panel,,,,,,,,,,,,,,,X,,,,,,
+PRESET,"WindowScreen-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Window Screen,,,,,,,,,,,,,,,,X,,,,,
+PRESET,"Shutter1-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Shutter 1,,,,,,,,,,,,,,,,,X,,,,
+PRESET,"Shutter2-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Shutter 2,,,,,,,,,,,,,,,,,X,,,,
+PRESET,"CabinetFaceFrame-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Cabinet Face Frame,,,,,,,,,,,,,,,,,,X,,,
+PRESET,"ModernCabinetPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Cabinet Panel,,,,,,,,,,,,,,,,,,,X,,
+PRESET,"TraditionalCabinetPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Cabinet Panel,,,,,,,,,,,,,,,,,,,X,,
+PRESET,"ShakerCabinetPanel-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Shaker Cabinet Panel,,,,,,,,,,,,,,,,,,,X,,
+PRESET,"SmallTrackLights-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Small Track Lights,,,,,,,,,,,,,,,,,,,,X,
+PRESET,"LargeTrackLights-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Large Track Lights,,,,,,,,,,,,,,,,,,,,X,
+PRESET,"FramedPicture-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Framed Picture,,,,,,,,,,,,,,,,,,,,,X
+PRESET,"FramedPainting-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Framed Painting,,,,,,,,,,,,,,,,,,,,,X
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

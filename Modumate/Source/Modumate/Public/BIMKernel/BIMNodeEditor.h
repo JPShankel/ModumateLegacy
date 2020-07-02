@@ -3,14 +3,22 @@
 #pragma once
 
 #include "Database/ModumateObjectEnums.h"
-#include "BIMKernel/BIMDataModel.h"
+#include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/BIMPresets.h"
 
 namespace Modumate { namespace BIM {
-/*
+
+	/*
 		Crafting trees are acyclical networks of crafting node instances
 		They have their own input pin sets and properties, both of which are inherited from the preset used to create the node
 		If a node's properties or child configuration are inconsistent with the base preset, the preset is considered 'dirty' and must be updated or branched
-*/
+	*/
+
+struct  MODUMATE_API FCraftingTreeNodeAttachedChildren
+{
+	FChildAttachmentType SetType;
+	TArray<FCraftingTreeNodeInstanceWeakPtr> Children;
+};
 
 class MODUMATE_API FCraftingTreeNodeInstance : public TSharedFromThis<FCraftingTreeNodeInstance>
 {
@@ -27,6 +35,7 @@ private:
 	FCraftingTreeNodeInstance &operator=(const FCraftingTreeNodeInstance &rhs) = delete;
 	FCraftingTreeNodeInstance(int32 instanceID);
 
+
 	int32 InstanceID;
 
 	ECraftingResult GatherAllChildNodes(TArray<FCraftingTreeNodeInstanceSharedPtr> &OutChildren);
@@ -42,8 +51,7 @@ public:
 	FName PresetID;
 	FCraftingTreeNodeInstanceWeakPtr ParentInstance;
 
-	// TODO: privatize and report 'preset dirty' state
-	TArray<FCraftingTreeNodePinSet> InputPins;
+	TArray<FCraftingTreeNodeAttachedChildren> AttachedChildren;
 	FBIMPropertySheet InstanceProperties;
 
 	// May be fixed in type definition, inherited from parent or switchable
@@ -92,7 +100,7 @@ public:
 
 	ECraftingResult ResetInstances();
 
-	FCraftingTreeNodeInstanceSharedPtr CreateNodeInstanceFromPreset(const FCraftingPresetCollection &PresetCollection, int32 ParentID, const FName &PresetID, bool CreateDefaultReadOnlyChildren);
+	FCraftingTreeNodeInstanceSharedPtr CreateNodeInstanceFromPreset(const FCraftingPresetCollection &PresetCollection, int32 ParentID, const FName &PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
 	ECraftingResult SetNewPresetForNode(const FCraftingPresetCollection &PresetCollection, int32 InstanceID, const FName &PresetID);
 
 	ECraftingResult DestroyNodeInstance(const FCraftingTreeNodeInstanceSharedPtr &Instance, TArray<int32> &OutDestroyed);

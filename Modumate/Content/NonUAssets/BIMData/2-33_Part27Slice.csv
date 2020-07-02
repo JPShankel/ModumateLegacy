@@ -1,0 +1,153 @@
+TYPENAME,2Part9Slice,,,,,,,,,,,,,,,,,,,,,,,,
+,Definition,,,,,,,,,,,,,,,,,,,,,,,,
+,PropertyType,PropertyName,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,STRING,Name,Preset.Name,,,,,,,,,,,,,,,,,,,,,,
+,InputExtensibility,InputPreset,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildMesh,,,,,,,,,,,,,,,,,,,,,,,
+,Presets,,,,,,,,,1,3,3,2,1,1,,,,,,,,,,
+TAGPATHS,ID,,,DataType=Properties,Preset.Name,DataType=InputPins,ChildMaterial,ChildMesh,DataType=TG_MyNode+CategoryPath,2Part27Slice --> Furniture --> Table,2Part27Slice --> Furniture --> Chair,2Part27Slice --> Furniture --> Sofa,2Part27Slice --> Furniture --> Bed,2Part27Slice --> Appliance --> Oven,2Part27Slice --> Appliance --> Refrigerator,DataType=TG_Parent Node+CategoryPath,,,,,,,,,
+PRESET,"SquareTable-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Square Table,,X,,,,,,,,,,,,,,,
+PRESET,"Chair1-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Chair 1,,,X,,,,,,,,,,,,,,
+PRESET,"Chair2-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Chair 2 ,,,X,,,,,,,,,,,,,,
+PRESET,"Chair3-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Chair 3,,,X,,,,,,,,,,,,,,
+PRESET,"Sofa1-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Sofa 1,,,,X,,,,,,,,,,,,,
+PRESET,"Sofa2-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Sofa 2,,,,X,,,,,,,,,,,,,
+PRESET,"Sofa3-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Sofa 3,,,,X,,,,,,,,,,,,,
+PRESET,"BedWithPosts-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Bed With Posts,,,,,X,,,,,,,,,,,,
+PRESET,"MinimalBed-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Minimal Bed,,,,,X,,,,,,,,,,,,
+PRESET,"Oven-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Oven,,,,,,X,,,,,,,,,,,
+PRESET,"Refrigerator-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Refrigerator,,,,,,,X,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,

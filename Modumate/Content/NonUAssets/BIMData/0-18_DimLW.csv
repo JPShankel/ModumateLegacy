@@ -1,0 +1,303 @@
+TYPENAME,,,,0DimLW,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Preset.ColloquialName,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Width,,Preset.Width,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Length,,Preset.Length,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,Presets,,,,,,7,16,6,6,6,6,32,6,6,6,7,7,11,13,35,12,35,21,33,35,35,33,4,4,4,4,4
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.ColloquialName,Preset.Width,Preset.Length,DataType=TG_Parent Node+CategoryPath,2ModuleLWT --> Board/Panel --> Cement,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,2ModuleLWT --> Board/Panel --> Foam,2ModuleLWT --> Board/Panel --> Wood Fiber,2ModuleLWT --> Board/Panel --> Gypsum,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),2ModuleLWT --> Board/Panel --> Metal,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),2ModuleLWT --> Board/Panel --> Particle Board,2ModuleLWT --> Board/Panel --> Plywood,2ModuleLWT --> Plank --> Engineered Wood,2ModuleLWT --> Plank --> Wood,2ModuleLWT --> Tile --> Brick Veneer,2ModuleLWT --> Tile --> Carpet,2ModuleLWT --> Tile --> Clay,2ModuleLWT --> Tile --> Cork,2ModuleLWT --> Tile --> Glass,2ModuleLWT --> Tile --> Laminate,2ModuleLWT --> Tile --> Luxury Vinyl,2ModuleLWT --> Tile --> Porcelain,2ModuleLWT --> Tile --> Stone,2ModuleLWT --> Tile --> Vinyl Composite,2ModuleLWT --> Shingle --> Asphalt,2ModuleLWT --> Shingle --> Clay,2ModuleLWT --> Shingle --> Metal,2ModuleLWT --> Shingle --> Stone,2ModuleLWT --> Shingle --> Wood
+PRESET,,"0DimLW
+1inL
+1inW",,0DimLW,,1in x 1in,1in,1in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+2inL
+1inW",,0DimLW,,1in x 2in,1in,2in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+3inL
+1inW",,0DimLW,,1in x 3in,1in,3in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+4inL
+1inW",,0DimLW,,1in x 4in,1in,4in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+6inL
+1inW",,0DimLW,,1in x 6in,1in,6in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+48inL
+1.5inW",,0DimLW,,1.5in x 48in,1.5in,48in,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+2inL
+2inW",,0DimLW,,2in x 2in,2in,2in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+3inL
+2inW",,0DimLW,,2in x 3in,2in,3in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+4inL
+2inW",,0DimLW,,2in x 4in,2in,4in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+6inL
+2inW",,0DimLW,,2in x 6in,2in,6in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+8inL
+2inW",,0DimLW,,2in x 8in,2in,8in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+3inL
+3inW",,0DimLW,,3in x 3in,3in,3in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+4inL
+3inW",,0DimLW,,3in x 4in,3in,4in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+6inL
+3inW",,0DimLW,,3in x 6in,3in,6in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+4inL
+4inW",,0DimLW,,4in x 4in,4in,4in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+6inL
+4inW",,0DimLW,,4in x 6in,4in,6in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+8inL
+4inW",,0DimLW,,4in x 8in,4in,8in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+1inL
+1inW",,0DimLW,,1in x 1in,1in,1in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+2inL
+1inW",,0DimLW,,1in x 2in,1in,2in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+3inL
+1inW",,0DimLW,,1in x 3in,1in,3in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+4inL
+1inW",,0DimLW,,1in x 4in,1in,4in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+6inL
+1inW",,0DimLW,,1in x 6in,1in,6in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+2inL
+2inW",,0DimLW,,2in x 2in,2in,2in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+3inL
+2inW",,0DimLW,,2in x 3in,2in,3in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+4inL
+2inW",,0DimLW,,2in x 4in,2in,4in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+6inL
+2inW",,0DimLW,,2in x 6in,2in,6in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+8inL
+2inW",,0DimLW,,2in x 8in,2in,8in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+12inL
+2inW",,0DimLW,,2in x 12in,2in,12in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+7.625inL
+2.29167inW",,0DimLW,,2.29167in x 7.625in,2.29167in,7.625in,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+11.625inL
+2.29167inW",,0DimLW,,2.29167in x 11.625in,2.29167in,11.625in,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+3inL
+3inW",,0DimLW,,3in x 3in,3in,3in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+4inL
+3inW",,0DimLW,,3in x 4in,3in,4in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+6inL
+3inW",,0DimLW,,3in x 6in,3in,6in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+12inL
+3inW",,0DimLW,,3in x 12in,3in,12in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+7.625inL
+3.125inW",,0DimLW,,3.125in x 7.625in,3.125in,7.625in,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+9.625inL
+3.125inW",,0DimLW,,3.125in x 9.625in,3.125in,9.625in,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+11.625inL
+3.125inW",,0DimLW,,3.125in x 11.625in,3.125in,11.625in,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+3.625inL
+3.625inW",,0DimLW,,3.625in x 3.625in,3.625in,3.625in,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+7.625inL
+3.625inW",,0DimLW,,3.625in x 7.625in,3.625in,7.625in,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+9.625inL
+3.625inW",,0DimLW,,3.625in x 9.625in,3.625in,9.625in,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+11.625inL
+3.625inW",,0DimLW,,3.625in x 11.625in,3.625in,11.625in,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+15.625inL
+3.625inW",,0DimLW,,3.625in x 15.625in,3.625in,15.625in,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+4inL
+4inW",,0DimLW,,4in x 4in,4in,4in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+6inL
+4inW",,0DimLW,,4in x 6in,4in,6in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+8inL
+4inW",,0DimLW,,4in x 8in,4in,8in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+12inL
+4inW",,0DimLW,,4in x 12in,4in,12in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
+PRESET,,"0DimLW
+32inL
+5inW",,0DimLW,,5in x 32in,5in,32in,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+48inL
+5inW",,0DimLW,,5in x 48in,5in,48in,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+60inL
+5inW",,0DimLW,,5in x 60in,5in,60in,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+6inL
+6inW",,0DimLW,,6in x 6in,6in,6in,,,,,,,,,,,,,,,,,X,,,X,,,X,,,,,
+PRESET,,"0DimLW
+9inL
+6inW",,0DimLW,,6in x 9in,6in,9in,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
+PRESET,,"0DimLW
+12inL
+6inW",,0DimLW,,6in x 12in,6in,12in,,,,,,,,,,,,,,,,,X,,,X,,,X,,,,,
+PRESET,,"0DimLW
+18inL
+6inW",,0DimLW,,6in x 18in,6in,18in,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
+PRESET,,"0DimLW
+24inL
+6inW",,0DimLW,,6in x 24in,6in,24in,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
+PRESET,,"0DimLW
+12inL
+7inW",,0DimLW,,7in x 12in,7in,12in,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X
+PRESET,,"0DimLW
+48inL
+7inW",,0DimLW,,7in x 48in,7in,48in,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+60inL
+7inW",,0DimLW,,7in x 60in,7in,60in,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+72inL
+7inW",,0DimLW,,7in x 72in,7in,72in,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+7.625inL
+7.625inW",,0DimLW,,7.625in x 7.625in,7.625in,7.625in,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+8inL
+8inW",,0DimLW,,8in x 8in,8in,8in,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
+PRESET,,"0DimLW
+12inL
+8inW",,0DimLW,,8in x 12in,8in,12in,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
+PRESET,,"0DimLW
+16inL
+8inW",,0DimLW,,8in x 16in,8in,16in,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
+PRESET,,"0DimLW
+24inL
+8inW",,0DimLW,,8in x 24in,8in,24in,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
+PRESET,,"0DimLW
+24inL
+8inW",,0DimLW,,8in x 24in,8in,24in,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
+PRESET,,"0DimLW
+10inL
+10inW",,0DimLW,,10in x 10in,10in,10in,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
+PRESET,,"0DimLW
+20inL
+10inW",,0DimLW,,10in x 20in,10in,20in,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
+PRESET,,"0DimLW
+12inL
+12inW",,0DimLW,,12in x 12in,12in,12in,,,,,,,,X,,,,,,,X,,X,,X,X,,,X,X,X,X,X,X
+PRESET,,"0DimLW
+16inL
+12inW",,0DimLW,,12in x 16in,12in,16in,,,,,,,,X,,,,,,,,,,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+18inL
+12inW",,0DimLW,,12in x 18in,12in,18in,,,,,,,,X,,,,,,,X,,X,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+24inL
+12inW",,0DimLW,,12in x 24in,12in,24in,,,,,,,,X,,,,,,,,,X,,X,X,,,X,X,X,X,X,X
+PRESET,,"0DimLW
+30inL
+12inW",,0DimLW,,12in x 30in,12in,30in,,,,,,,,X,,,,,,,,,,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+36inL
+12inW",,0DimLW,,12in x 36in,12in,36in,,,,,,,,X,,,,,,,X,,X,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+16inL
+16inW",,0DimLW,,16in x 16in,16in,16in,,,,,,,,X,,,,,,,X,,X,,X,X,,,X,X,X,X,X,X
+PRESET,,"0DimLW
+24inL
+16inW",,0DimLW,,16in x 24in,16in,24in,,,,,,,,X,,,,,,,,,,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+32inL
+16inW",,0DimLW,,16in x 32in,16in,32in,,,,,,,,X,,,,,,,X,,X,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+48inL
+16inW",,0DimLW,,16in x 48in,16in,48in,,,,,,,,X,,,,,,,X,,X,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+18inL
+18inW",,0DimLW,,18in x 18in,18in,18in,,,,,,,,X,,,,,,,X,,X,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+24inL
+18inW",,0DimLW,,18in x 24in,18in,24in,,,,,,,,X,,,,,,,X,,,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+36inL
+18inW",,0DimLW,,18in x 36in,18in,36in,,,,,,,,X,,,,,,,X,,,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+20inL
+20inW",,0DimLW,,20in x 20in,20in,20in,,,,,,,,X,,,,,,,,,X,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+24inL
+20inW",,0DimLW,,20in x 24in,20in,24in,,,,,,,,X,,,,,,,,,,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+30inL
+20inW",,0DimLW,,20in x 30in,20in,30in,,,,,,,,X,,,,,,,,,,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+24inL
+24inW",,0DimLW,,24in x 24in,24in,24in,,,X,X,X,X,X,X,X,X,X,,,,X,,X,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+30inL
+24inW",,0DimLW,,24in x 30in,24in,30in,,,X,,,,,X,,,,,,,,,,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+36inL
+24inW",,0DimLW,,24in x 36in,24in,36in,,,X,,,,,X,,,,,,,X,,,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+48inL
+24inW",,0DimLW,,24in x 48in,24in,48in,,,X,X,X,X,X,X,X,X,X,,,,X,,,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+96inL
+24inW",,0DimLW,,24in x 96in,24in,96in,,,X,X,X,X,X,X,X,X,X,,,,X,,,,X,X,,,X,,,,,
+PRESET,,"0DimLW
+30inL
+30inW",,0DimLW,,30in x 30in,30in,30in,,,X,,,,,X,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+32inL
+32inW",,0DimLW,,32in x 32in,32in,32in,,,X,,,,,X,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+64inL
+32inW",,0DimLW,,32in x 64in,32in,64in,,,X,,,,,X,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+96inL
+32inW",,0DimLW,,32in x 96in,32in,96in,,,X,,,,,X,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+36inL
+36inW",,0DimLW,,36in x 36in,36in,36in,,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+48inL
+36inW",,0DimLW,,36in x 48in,36in,48in,,X,X,,,,,X,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+60inL
+36inW",,0DimLW,,36in x 60in,36in,60in,,X,X,,,,,X,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+72inL
+36inW",,0DimLW,,36in x 72in,36in,72in,,X,X,,,,,X,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+96inL
+36inW",,0DimLW,,36in x 96in,36in,96in,,X,X,,,,,X,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+48inL
+48inW",,0DimLW,,48in x 48in,48in,48in,,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,
+PRESET,,"0DimLW
+96inL
+48inW",,0DimLW,,48in x 96in,48in,96in,,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

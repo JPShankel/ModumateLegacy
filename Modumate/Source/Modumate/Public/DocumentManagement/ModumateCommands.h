@@ -96,10 +96,9 @@ namespace Modumate
 		MODUMATE_PARAM(kChildPresets, "child_presets");
 		MODUMATE_PARAM(kChildNodePinSetIndices, "child_node_pinset_indices");
 		MODUMATE_PARAM(kChildNodePinSetPositions, "child_node_pinset_positions");
-		MODUMATE_PARAM(kChildNodePinSetListIDs, "child_node_pinset_listids");
-		MODUMATE_PARAM(kChildNodePinSetNodeTypes, "child_node_pinset_node_types");
 		MODUMATE_PARAM(kChildNodePinSetPresetIDs, "child_node_pinset_presetids");
-		MODUMATE_PARAM(kChildNodePinSetTags, "child_node_pinset_tags");
+		MODUMATE_PARAM(kParentTagPaths, "parent_tag_paths");
+		MODUMATE_PARAM(kMyTagPath, "my_tag_path");
 		MODUMATE_PARAM(kCount, "count");
 		MODUMATE_PARAM(kControlPoints, "points");
 		MODUMATE_PARAM(kDelta, "delta");

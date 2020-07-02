@@ -2,29 +2,28 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include <functional>
 #include <regex>
 
 /*
 A simple script processor that reads files one line at a time and attempts to apply rules
 */
 
-class FModumateScriptProcessor
+class MODUMATE_API FModumateScriptProcessor
 {
 public:
 
-	typedef std::wregex TRegularExpression;
-	typedef std::wsmatch TRegularExpressionMatch;
+	typedef std::wregex FRegularExpression;
+	typedef std::wsmatch FRegularExpressionMatch;
 
-	typedef std::function<void(const FString &err)> TErrorReporter;
-	typedef std::function<void(const TCHAR *originalLine, const TRegularExpressionMatch &match, int32 lineNum, TErrorReporter errorReporter)> TRuleHandler;
+	typedef TFunction<void(const FString &Err)> FErrorReporter;
+	typedef TFunction<void(const TCHAR *OriginalLine, const FRegularExpressionMatch &Match, int32 LineNum, const FErrorReporter &ErrorReporter)> FRuleHandler;
 
 	//Some rules allow suffixes (additional text after the match) and some require exact matches
-	bool AddRule(const FString &rule, TRuleHandler onRule, bool allowSuffix = true);
-	bool ParseFile(const FString &filepath, TErrorReporter errorReporter);
-	bool ParseLines(const TArray<FString> &lines, TErrorReporter errorReporter);
+	bool AddRule(const FString &Rule, const FRuleHandler &RuleHandler, bool AllowSuffix = true);
+	bool ParseFile(const FString &Filepath, const FErrorReporter &ErrorReporter);
+	bool ParseLines(const TArray<FString> &Lines, const FErrorReporter &ErrorReporter);
 
-	~FModumateScriptProcessor();
+	~FModumateScriptProcessor() {};
 	FModumateScriptProcessor() {};
 
 private:
@@ -37,13 +36,33 @@ private:
 	{
 		bool AllowSuffix;
 		FString RuleString;
-		TRegularExpression RulePattern;
-		TRuleHandler *Action;
+		FRegularExpression RulePattern;
+		FRuleHandler Action;
 	};
 
 	// Rules stored in array so they will be tried in their order they are declared
 	TArray<FRuleMapping> Rules;
 
-	bool TryRule(const FRuleMapping *ruleMapping, const FString &line, int32 lineNum, TErrorReporter errorReporter) const;
-	bool TryRules(const FString &rule, int32 lineNum, TErrorReporter errorReporter) const;
+	bool TryRule(const FRuleMapping *RuleMapping, const FString &Line, int32 LineNum, const FErrorReporter &ErrorReporter) const;
+	bool TryRules(const FString &Rule, int32 LineNum, const FErrorReporter &ErrorReporter) const;
+};
+
+/*
+A processor for CSV scripts where the first item in a row is the command
+*/
+
+class MODUMATE_API FModumateCSVScriptProcessor
+{
+public:
+
+	FModumateCSVScriptProcessor() {}
+	~FModumateCSVScriptProcessor() {};
+
+	typedef TFunction<void(const TArray<const TCHAR*> &Row, int32 RowNumber)> FRuleHandler;
+
+	bool AddRule(const FName &Rule, const FRuleHandler &RuleHandler);
+	bool ParseFile(const FString &Filepath) const;
+
+private:
+	TMap<FName, FRuleHandler> RuleMap;
 };

@@ -1,167 +1,271 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "CoreMinimal.h"
-#include "BIMKernel/BIMDataModel.h"
+#include "BIMKernel/BIMTagPath.h"
 #include "BIMKernel/BIMNodeEditor.h"
 #include "BIMKernel/BIMWidgetStatics.h"
+
+static bool testTags()
+{
+	Modumate::BIM::FTagGroup group1, group2;
+
+	group1.Add(TEXT("TAG1"));
+	group1.Add(TEXT("TAG2"));
+	group1.Add(TEXT("TAG3"));
+
+	group2.Add(TEXT("TAG1"));
+	group2.Add(TEXT("TAG2"));
+	group2.Add(TEXT("TAG3"));
+
+	if (!ensureAlways(group1.MatchesAll(group2)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(group1.MatchesAny(group2)))
+	{
+		return false;
+	}
+
+	group1 = Modumate::BIM::FTagGroup();
+	group2 = Modumate::BIM::FTagGroup();
+
+	group1.Add(TEXT("TAG1"));
+	group1.Add(TEXT("TAG2"));
+
+	group2.Add(TEXT("TAG1"));
+	group2.Add(TEXT("TAG2"));
+	group2.Add(TEXT("TAG3"));
+
+	if (!ensureAlways(!group1.MatchesAll(group2)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(group1.MatchesAny(group2)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(!group2.MatchesAll(group1)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(group2.MatchesAny(group1)))
+	{
+		return false;
+	}
+
+	group1 = Modumate::BIM::FTagGroup();
+	group2 = Modumate::BIM::FTagGroup();
+
+	group1.Add(TEXT("TAG1"));
+	group1.Add(TEXT("TAG2"));
+
+	group2.Add(TEXT("TAG1"));
+	group2.Add(TEXT("TAG2"));
+	group2.Add(TEXT("TAG3"));
+
+	if (!ensureAlways(!group1.MatchesAll(group2)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(group1.MatchesAny(group2)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(!group2.MatchesAll(group1)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(group2.MatchesAny(group1)))
+	{
+		return false;
+	}
+
+	group1 = Modumate::BIM::FTagGroup();
+	group2 = Modumate::BIM::FTagGroup();
+
+	group1.Add(TEXT("TAG1"));
+	group1.Add(TEXT("G1TAG2"));
+
+	group2.Add(TEXT("G2TAG1"));
+	group2.Add(TEXT("TAG1"));
+	group2.Add(TEXT("TAG3"));
+
+	if (!ensureAlways(!group1.MatchesAll(group2)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(group1.MatchesAny(group2)))
+	{
+		return false;
+	}
+
+	FString outString1,outString2;
+
+	Modumate::BIM::FTagPath path1, path2;
+	path1.Add(group1);
+	path1.Add(group2);
+
+	if (!ensureAlways(path1.ToString(outString1) == ECraftingResult::Success))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(path2.FromString(outString1) == ECraftingResult::Success))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(path2.ToString(outString2) == ECraftingResult::Success))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(outString1.Len() > 0 && outString1 == outString2))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(path1.Matches(path2)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(path2.Matches(path1)))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool testPreset(const Modumate::BIM::FCraftingPresetCollection &PresetCollection, const FName &PresetID)
+{
+	const Modumate::BIM::FCraftingTreeNodePreset *preset = PresetCollection.Presets.Find(PresetID);
+	if (preset == nullptr)
+	{
+		return false;
+	}
+
+	Modumate::BIM::FCraftingTreeNodePreset outPreset;
+	FCraftingPresetRecord record;
+
+	if (preset->ToDataRecord(record) != ECraftingResult::Success)
+	{
+		return false;
+	}
+
+	if (outPreset.FromDataRecord(PresetCollection, record) != ECraftingResult::Success)
+	{
+		return false;
+	}
+
+	if (!ensureAlways(outPreset.Matches(*preset)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(preset->Matches(outPreset)))
+	{
+		return false;
+	}
+	return true;
+}
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateCraftingUnitTest, "Modumate.Database.ModumateCrafting.UnitTest", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 {
-	/*
-	Load WALL_ROOT preset
-	*/
+	if (!testTags())
+	{
+		return false;
+	}
+
+	FString manifestPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
+
 	TArray<FString> errors;
 	Modumate::BIM::FCraftingPresetCollection presetCollection;
-	if (!ensureAlways(presetCollection.ParseScriptFile(FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMNodeGraph.mbn"), errors) == ECraftingResult::Success))
+
+	if (presetCollection.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), errors) != ECraftingResult::Success)
 	{
 		return false;
 	}
 
-	TArray<FName> outPresets;
-	if (!ensureAlways(presetCollection.SearchPresets(FName(TEXT("WALL_ROOT")), { Modumate::BIM::FCraftingPresetTag(TEXT("Assembly.Default")) }, {}, outPresets) == ECraftingResult::Success))
+	TArray<FName> layeredAssemblies,materialColorPresets,layerPresets;
+	FName layeredType = TEXT("4LayeredAssembly");
+	FName layer0Type = TEXT("2Layer0D");
+	FName materialColorType = TEXT("1Material");
+	for (auto &kvp : presetCollection.Presets)
 	{
-		return false;
-	}
-
-	if (!ensureAlways(outPresets.Num() != 0))
-	{
-		return false;
-	}
-
-	// Find a multilayer preset
-	Modumate::BIM::FCraftingTreeNodePreset *preset = nullptr;
-	for (auto &presetID : outPresets)
-	{
-		preset = presetCollection.Presets.Find(presetID);
-		if (!ensureAlways(preset != nullptr))
+		if (kvp.Value.NodeType == layeredType)
 		{
-			return false;
+			kvp.Value.ObjectType = EObjectType::OTWallSegment;
+			layeredAssemblies.Add(kvp.Key);
 		}
-
-		if (preset->ChildNodes.Num() > 1)
+		else if (kvp.Value.NodeType == materialColorType)
 		{
-			break;
+			materialColorPresets.Add(kvp.Key);
+		}
+		else if (kvp.Value.NodeType == layer0Type)
+		{
+			layerPresets.Add(kvp.Key);
 		}
 	}
 
-	if (!ensureAlways(preset != nullptr && preset->ChildNodes.Num() > 1))
+	for (auto &kvp : presetCollection.NodeDescriptors)
+	{
+		if (kvp.Value.TypeName == layer0Type)
+		{
+			kvp.Value.Scope = EBIMValueScope::Layer;
+		}
+	}
+
+	if (!ensureAlways(layeredAssemblies.Num() > 0) || !ensureAlways(materialColorPresets.Num() > 0))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(testPreset(presetCollection, layeredAssemblies[0])))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(testPreset(presetCollection, materialColorPresets[0])))
 	{
 		return false;
 	}
 
 	/*
-	Check that preset matches itself
+	Make sure preset keys are consistent between known parents and children
 	*/
-	if (!ensureAlways(preset->Matches(*preset)))
+	Modumate::BIM::FCraftingTreeNodePreset *assemblyPreset = presetCollection.Presets.Find(layeredAssemblies[0]);
+	Modumate::BIM::FCraftingTreeNodePreset *layerPreset = presetCollection.Presets.Find(layerPresets[0]);
+	FName assemblyPresetFirstLayer = assemblyPreset->ChildPresets[0].PresetID;
+
+	FString str1 = assemblyPresetFirstLayer.ToString();
+	FString str2 = layerPresets[0].ToString();
+
+	if (!ensureAlways(layerPresets[0].IsEqual(assemblyPresetFirstLayer)))
 	{
 		return false;
 	}
 
-	/*
-	Check that serialized preset matches original when deserialized
-	*/
-	FCraftingPresetRecord record;
-	preset->ToDataRecord(record);
-	Modumate::BIM::FCraftingTreeNodePreset instancePreset;
-	instancePreset.FromDataRecord(presetCollection, record);
+	Modumate::BIM::FCraftingTreeNodeType *nodeType = presetCollection.NodeDescriptors.Find(assemblyPreset->NodeType);
 
-	if (!ensureAlways(preset->Matches(instancePreset)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(instancePreset.Matches(*preset)))
-	{
-		return false;
-	}
-
-	/*
-	Check that preset matches original when built from command parameters
-	*/
-	Modumate::FModumateFunctionParameterSet parameterSet;
-	preset->ToParameterSet(parameterSet);
-	instancePreset = Modumate::BIM::FCraftingTreeNodePreset();
-
-	instancePreset.FromParameterSet(presetCollection, parameterSet);
-
-	if (!ensureAlways(preset->Matches(instancePreset)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(instancePreset.Matches(*preset)))
-	{
-		return false;
-	}
-
-
-	/*
-	Create the first default wall preset as a node
-	*/
 	Modumate::BIM::FCraftingTreeNodeInstancePool instancePool;
-	Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr instance = instancePool.CreateNodeInstanceFromPreset(presetCollection, 0, preset->PresetID, true);
+	Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr node = instancePool.CreateNodeInstanceFromPreset(presetCollection, 0, layeredAssemblies[0],0,0);
 
-	if (!ensureAlways(instance.IsValid()))
+	Modumate::BIM::FModumateAssemblyPropertySpec outSpec;
+	if (!ensureAlways(instancePool.PresetToSpec(layeredAssemblies[0], presetCollection, outSpec) == ECraftingResult::Success))
 	{
 		return false;
 	}
-
-	/*
-	Convert node to preset and verify it matches the original
-	*/
-	instancePreset = Modumate::BIM::FCraftingTreeNodePreset();
-	if (!ensureAlways(presetCollection.GetInstanceDataAsPreset(instance, instancePreset) == ECraftingResult::Success))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(instancePreset.Matches(*preset)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(preset->Matches(instancePreset)))
-	{
-		return false;
-	}
-
-	/*
-	Verify that input pins generate the correct list of eligible presets
-	*/
-
-	// Make a wood stud wall
-	instancePool.ResetInstances();
-	instance = instancePool.CreateNodeInstanceFromPreset(presetCollection, 0, FName(TEXT("Default2x4InteriorWoodStudWallPreset")), true);
-	if (!ensureAlways(instance.IsValid()))
-	{
-		return false;
-	}
-
-	// Find the material node
-	Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr materialNode = instancePool.FindInstanceByPredicate(
-		[](const Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr &Instance)
-	{
-		return (Instance->PresetID.IsEqual(FName(TEXT("WoodSprucePineFir"))));
-	});
-
-	if (!ensureAlways(materialNode.IsValid()))
-	{
-		return false;
-	}
-
-	// Ask for eligible swaps of material node (should only be WoodSprucePineFir)
-	TArray<FCraftingNode> craftingNodes;
-	UModumateCraftingNodeWidgetStatics::GetEligiblePresetsForSwap(instancePool, presetCollection, materialNode->GetInstanceID(), craftingNodes);
-
-	if (!ensureAlways(craftingNodes.Num() == 1))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(craftingNodes[0].PresetID.IsEqual(FName(TEXT("WoodSprucePineFir")))))
-	{
-		return false;
-	}
+	
 	return true;
 }

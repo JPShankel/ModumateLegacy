@@ -13,7 +13,7 @@ const Modumate::FPresetManager &UModumateDrawingSetWidget_CPP::GetDocumentPreset
 
 ECraftingResult UModumateDrawingSetWidget_CPP::CreateNewNodeInstanceFromPreset(int32 ParentID, const FName &PresetID, FCraftingNode &OutNode)
 {
-	return UModumateCraftingNodeWidgetStatics::CreateNewNodeInstanceFromPreset(DraftingNodeInstances, GetDocumentPresetManager().DraftingNodePresets,ParentID,PresetID,OutNode);
+	return UModumateCraftingNodeWidgetStatics::CreateNewNodeInstanceFromPreset(DraftingNodeInstances, GetDocumentPresetManager().DraftingNodePresets,ParentID,0,0,PresetID,OutNode);
 }
 
 ECraftingResult UModumateDrawingSetWidget_CPP::GetInstantiatedNodes(TArray<FCraftingNode> &OutNodes)
@@ -22,7 +22,7 @@ ECraftingResult UModumateDrawingSetWidget_CPP::GetInstantiatedNodes(TArray<FCraf
 	{
 		const BIM::FCraftingPresetCollection &presetCollection = GetDocumentPresetManager().DraftingNodePresets;
 		const FName rootNode = TEXT("DRAWINGSET_ROOT");
-		DraftingNodeInstances.CreateNodeInstanceFromPreset(presetCollection, 0, rootNode, true);
+		DraftingNodeInstances.CreateNodeInstanceFromPreset(presetCollection, 0, rootNode, 0, 0);
 	}
 
 	return UModumateCraftingNodeWidgetStatics::GetInstantiatedNodes(DraftingNodeInstances, GetDocumentPresetManager().DraftingNodePresets, OutNodes);

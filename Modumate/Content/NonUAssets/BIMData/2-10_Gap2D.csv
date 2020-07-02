@@ -1,0 +1,64 @@
+TYPENAME,2Gap2D,,,,,,,,,,,,,,
+,Definition,,,,,,,,,,,,,,
+,PropertyType,PropertyName,PropertyScope.Value,,,,,,,,,,,,
+PROPERTY,STRING,Name,Preset.Name,,,,,,,,,,,,
+,InputExtensibility,InputPreset,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildMaterial,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildDimension,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildProfile,,,,,,,,,,,,,
+,Presets,,,,,,,,,,12,12,,24,24
+TAGPATHS,ID,,,DataType=Properties,Preset.Name,DataType=InputPins,ChildMaterial,ChildDimension,ChildProfile,DataType=TG_MyNode+CategoryPath,2Gap2D --> Tile Gaps,2Gap2D --> Masonry Gaps,DataType=TG_Parent Node+CategoryPath,3Layer2D,3Layer3D
+PRESET,#REF!,,,,"3/8"" x 1/4""",,"1Material --> Aggregates --> Mortar
+0RawMaterial
+Mortar
+0Color --> Aggregates --> Mortar
+C6C6C6-Natural
+0SrfTreatment
+Standard",#REF!,"0Profile
+Flat",,X,,,X,X
+PRESET,#REF!,,,,"1/4"" x 1/8""",,"1Material --> Aggregates --> Mortar
+0RawMaterial
+Mortar
+0Color --> Aggregates --> Mortar
+C6C6C6-Natural
+0SrfTreatment
+Standard",#REF!,"0Profile
+Flat",,X,,,X,X
+PRESET,,,,,,,,,,,X,,,X,X
+PRESET,,,,,,,,,,,X,,,X,X
+PRESET,,,,,,,,,,,X,,,X,X
+PRESET,,,,,,,,,,,X,,,X,X
+PRESET,,,,,,,,,,,X,,,X,X
+PRESET,,,,,,,,,,,X,,,X,X
+PRESET,,,,,,,,,,,X,,,X,X
+PRESET,,,,,,,,,,,X,,,X,X
+PRESET,,,,,,,,,,,X,,,X,X
+PRESET,,,,,,,,,,,X,,,X,X
+PRESET,,,,,,,,,,,,,,,
+PRESET,#REF!,,,,"1/8"" x 1/16"" Grout",,"1Material --> Aggregates --> Grout
+0RawMaterial
+Grout
+0Color --> Aggregates --> Grout
+EAECE7-White
+0SrfTreatment
+Standard",#REF!,"0Profile
+Flat",,,X,,X,X
+PRESET,#REF!,,,,"1/4"" Flush",,"1Material --> Aggregates --> Grout
+0RawMaterial
+Grout
+0Color --> Aggregates --> Grout
+EAECE7-White
+0SrfTreatment
+Standard",#REF!,"0Profile
+Flat",,,X,,X,X
+PRESET,,,,,,,,,,,,X,,X,X
+PRESET,,,,,,,,,,,,X,,X,X
+PRESET,,,,,,,,,,,,X,,X,X
+PRESET,,,,,,,,,,,,X,,X,X
+PRESET,,,,,,,,,,,,X,,X,X
+PRESET,,,,,,,,,,,,X,,X,X
+PRESET,,,,,,,,,,,,X,,X,X
+PRESET,,,,,,,,,,,,X,,X,X
+PRESET,,,,,,,,,,,,X,,X,X
+PRESET,,,,,,,,,,,,X,,X,X
+,,,,,,,,,,,,,,,

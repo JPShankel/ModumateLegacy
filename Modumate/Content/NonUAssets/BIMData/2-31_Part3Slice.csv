@@ -1,0 +1,144 @@
+TYPENAME,2Part3Slice,,,,,,,,,,,,,,,,,,,,,
+,Definition,,,,,,,,,,,,,,,,,,,,,
+,PropertyType,PropertyName,PropertyScope.Value,,,,,,,,,,,,,,,,,,,
+PROPERTY,STRING,Name,Preset.Name,,,,,,,,,,,,,,,,,,,
+,InputExtensibility,InputPreset,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildMaterial,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildMesh,,,,,,,,,,,,,,,,,,,,
+,Presets,,,,,,,,,2,2,1,1,1,2,,,,,,,
+TAGPATHS,ID,,,DataType=Properties,Preset.Name,DataType=InputPins,ChildMaterial,ChildMesh,DataType=TG_MyNode+CategoryPath,2Part3Slice --> Door --> Swing --> Handle --> Linear Pull,2Part3Slice --> Door --> Barn --> Track,2Part3Slice --> Window --> Handle --> Linear Pull,2Part3Slice --> Cabinet --> Handle --> Linear Pull,2Part3Slice --> Protection Plate,2Part3Slice --> Light --> Pendant,DataType=TG_Parent Node+CategoryPath,,,,,,
+PRESET,2-HingeSet---,,,,2-Hinge Set,,--,2-Hinge Set,,,,,,,,,,,,,,
+PRESET,3-HingeSet---,,,,3-Hinge Set,,--,3-Hinge Set,,,,,,,,,,,,,,
+PRESET,4-HingeSet---,,,,4-Hinge Set,,--,4-Hinge Set,,,,,,,,,,,,,,
+PRESET,"TraditionalDoorPull-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Traditional Door Pull,,X,,,,,,,,,,,,
+PRESET,"ModernDoorPull-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Door Pull,,X,,,,,,,,,,,,
+PRESET,"ModernBarnDoorTrack(One-Sided)-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Barn Door Track (One-Sided),,,X,,,,,,,,,,,
+PRESET,"ModernBarnDoorTrack(Two-Sided)-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Barn Door Track (Two-Sided),,,X,,,,,,,,,,,
+PRESET,"ModernWindowLinearPull-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Window Linear Pull,,,,X,,,,,,,,,,
+PRESET,"ModernCabinetLinearPull-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Modern Cabinet Linear Pull,,,,,X,,,,,,,,,
+PRESET,"DoorProtectionPlate-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Door Protection Plate,,,,,,X,,,,,,,,
+PRESET,"PendantLight1-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Pendant Light 1,,,,,,,X,,,,,,,
+PRESET,,,,,,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,,,,,,,,,,,,
+PRESET,"PendantLight2-1Material-->Metal-->Steel
+0RawMaterial
+Steel
+0Color-->Metal-->Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,#N/A,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",Pendant Light 2,,,,,,,X,,,,,,,
+PRESET,,,,,,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,

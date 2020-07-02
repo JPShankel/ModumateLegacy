@@ -30,7 +30,6 @@ enum class EBIMValueType : uint8
 	Error = 255
 };
 
-
 UENUM(BlueprintType)
 enum class EBIMValueScope : uint8
 {
@@ -70,8 +69,7 @@ enum class ECraftingNodePresetStatus : uint8
 	None = 0,
 	UpToDate,
 	Dirty,
-	Pending,
-	ReadOnly
+	Pending
 };
 
 namespace Modumate {
@@ -198,14 +196,5 @@ namespace Modumate {
 			bool FromDataRecord(const FBIMPropertySheetRecord &InRecord);
 			bool ToDataRecord(FBIMPropertySheetRecord &OutRecord) const;
 		};
-
-		struct MODUMATE_API FModumateAssemblyPropertySpec
-		{
-			EObjectType ObjectType = EObjectType::OTNone;
-			FName RootPreset;
-			FBIMPropertySheet RootProperties;
-			TArray<FBIMPropertySheet> LayerProperties;
-		};
-
 	}
 }

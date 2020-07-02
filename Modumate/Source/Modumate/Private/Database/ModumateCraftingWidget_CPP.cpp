@@ -80,24 +80,23 @@ ECraftingResult UModumateCraftingWidget_CPP::GetAvailableStarterNodes(EToolMode 
 	const FPresetManager &presetManager = GetDocumentPresetManager();
 	const BIM::FCraftingPresetCollection &presetCollection = presetManager.CraftingNodePresets;
 
-	// the starter nodes for a given object type are contained in a list of that object type's name
 	EObjectType objectType = UModumateTypeStatics::ObjectTypeFromToolMode(ToolMode);
-	const TArray<FName> *starters = presetCollection.Lists.Find(*EnumValueString(EObjectType, objectType));
 
-	if (starters == nullptr)
+	const FName *presetID = presetManager.StarterPresetsByObjectType.Find(objectType);
+
+	if (presetID == nullptr)
 	{
-		return ECraftingResult::Error;
+		ECraftingResult::Error;
 	}
 
-	for (auto &starter : *starters)
+	const BIM::FCraftingTreeNodePreset *preset = presetCollection.Presets.Find(*presetID);
+	if (preset != nullptr)
 	{
-		const BIM::FCraftingTreeNodePreset *preset = presetCollection.Presets.Find(starter);
-		if (preset != nullptr)
-		{
-			OutStarterNodes.Add(FCraftingNode::FromPreset(*preset));
-		}
+		OutStarterNodes.Add(FCraftingNode::FromPreset(*preset));
+		return ECraftingResult::Success;
 	}
-	return ECraftingResult::Success;
+
+	return ECraftingResult::Error;
 }
 
 ECraftingResult UModumateCraftingWidget_CPP::CreateNewNodeInstanceFromPreset(EToolMode ToolMode, int32 ParentID, const FName &PresetID, FCraftingNode &OutNode)
@@ -105,7 +104,7 @@ ECraftingResult UModumateCraftingWidget_CPP::CreateNewNodeInstanceFromPreset(ETo
 	const FPresetManager &presetManager = GetDocumentPresetManager();
 	const BIM::FCraftingPresetCollection &presetCollection = presetManager.CraftingNodePresets;
 
-	ECraftingResult result = UModumateCraftingNodeWidgetStatics::CreateNewNodeInstanceFromPreset(CraftingTreeNodeInstances, presetCollection, ParentID, PresetID, OutNode);
+	ECraftingResult result = UModumateCraftingNodeWidgetStatics::CreateNewNodeInstanceFromPreset(CraftingTreeNodeInstances, presetCollection, ParentID, 0, 0, PresetID, OutNode);
 	if (result == ECraftingResult::Success)
 	{
 		EObjectType objectType = presetManager.CraftingNodePresets.GetPresetObjectType(PresetID);
@@ -286,7 +285,6 @@ ECraftingResult UModumateCraftingWidget_CPP::SaveOrCreateCraftingPreset(EToolMod
 	{
 		instance->PresetID = OutKey;
 	}
-
 	return ECraftingResult::Success;
 }
 

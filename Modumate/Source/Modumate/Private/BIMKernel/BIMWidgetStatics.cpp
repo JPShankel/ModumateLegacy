@@ -12,10 +12,12 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::CreateNewNodeInstanceFromPre
 	Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances,
 	const Modumate::BIM::FCraftingPresetCollection &PresetCollection,
 	int32 ParentID,
+	int32 ParentPinIndex,
+	int32 ParentPinPosition,
 	const FName &PresetID,
 	FCraftingNode &OutNode)
 {
-	BIM::FCraftingTreeNodeInstanceSharedPtr inst = NodeInstances.CreateNodeInstanceFromPreset(PresetCollection, ParentID, PresetID, true);
+	BIM::FCraftingTreeNodeInstanceSharedPtr inst = NodeInstances.CreateNodeInstanceFromPreset(PresetCollection, ParentID, PresetID, ParentPinIndex, ParentPinPosition);
 
 	if (ensureAlways(inst.IsValid()))
 	{
@@ -43,7 +45,7 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::CraftingNodeFromInstance(
 	OutNode.PresetStatus = instance->GetPresetStatus(PresetCollection);
 	OutNode.ParentPinLabel = FText::FromString(OutNode.Label.ToString() + TEXT("ON A PIN!"));
 
-	if (instance->InputPins.Num() == 0 && ensureAlways(OutNode.PresetStatus != ECraftingNodePresetStatus::ReadOnly))
+	if (instance->AttachedChildren.Num() == 0)
 	{
 		OutNode.IsEmbeddedInParent = true;
 	}
@@ -54,20 +56,12 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::CraftingNodeFromInstance(
 		const Modumate::BIM::FCraftingTreeNodeType *nodeType = PresetCollection.NodeDescriptors.Find(preset->NodeType);
 		if (ensureAlways(nodeType != nullptr))
 		{
-			OutNode.NodeIconType = nodeType->IconType;
-			OutNode.CanSwitchOrientation = nodeType->CanFlipOrientation;
+			OutNode.NodeIconType = preset->IconType;
+			OutNode.CanSwitchOrientation = preset->CanFlipOrientation;
 		}
 
 		OutNode.Label = FText::FromString(preset->GetDisplayName());
 		BIM::FCraftingTreeNodeInstanceSharedPtr instIter = instance;
-		while (preset != nullptr && preset->IsReadOnly)
-		{
-			if (ensureAlways(instIter->InputPins.Num() == 1) && ensureAlways(instIter->InputPins[0].AttachedObjects.Num() == 1))
-			{
-				instIter = instIter->InputPins[0].AttachedObjects[0].Pin();
-				preset = PresetCollection.Presets.Find(instIter->PresetID);
-			}
-		}
 		if (preset != nullptr)
 		{
 			OutNode.ParentPinLabel = FText::FromString(preset->GetDisplayName());
@@ -84,26 +78,6 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::CraftingNodeFromInstance(
 	{
 		Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr parent = instance->ParentInstance.Pin();
 		parent->FindChildOrder(instance->GetInstanceID(), OutNode.ChildOrder);
-
-		while (parent.IsValid())
-		{
-			if (parent->GetPresetStatus(PresetCollection) == ECraftingNodePresetStatus::ReadOnly)
-			{
-				OutNode.EmbeddedInstanceIDs.Add(parent->GetInstanceID());
-				if (parent->ParentInstance.IsValid())
-				{
-					parent = parent->ParentInstance.Pin();
-				}
-				else
-				{
-					parent = nullptr;
-				}
-			}
-			else
-			{
-				parent = nullptr;
-			}
-		}
 	}
 	else
 	{
@@ -143,11 +117,11 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetInstantiatedNodes(
 	{
 		Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr nodeInstance = nodeStack.Pop();
 		nodeArray.Push(nodeInstance);
-		for (auto &ip : nodeInstance->InputPins)
+		for (auto &ip : nodeInstance->AttachedChildren)
 		{
-			for (int32 i = 0; i < ip.AttachedObjects.Num(); ++i)
+			for (int32 i = 0; i < ip.Children.Num(); ++i)
 			{
-				nodeStack.Push(ip.AttachedObjects[ip.AttachedObjects.Num() - 1 - i].Pin());
+				nodeStack.Push(ip.Children[ip.Children.Num() - 1 - i].Pin());
 			}
 		}
 	}
@@ -178,12 +152,12 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetPinAttachmentToParentForN
 		return ECraftingResult::Error;
 	}
 
-	for (int32 p = 0; p < inst->ParentInstance.Pin()->InputPins.Num(); ++p)
+	for (int32 p = 0; p < inst->ParentInstance.Pin()->AttachedChildren.Num(); ++p)
 	{
-		auto &pg = inst->ParentInstance.Pin()->InputPins[p];
-		for (int32 i = 0; i < pg.AttachedObjects.Num(); ++i)
+		auto &pg = inst->ParentInstance.Pin()->AttachedChildren[p];
+		for (int32 i = 0; i < pg.Children.Num(); ++i)
 		{
-			if (pg.AttachedObjects[i].HasSameObject(inst.Get()))
+			if (pg.Children[i].HasSameObject(inst.Get()))
 			{
 				OutPinGroupIndex = p;
 				OutPinIndex = i;
@@ -308,17 +282,14 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetPinGroupsForNode(
 	{
 		return ECraftingResult::Error;
 	}
-	for (auto &pin : node->InputPins)
+	for (auto &pin : node->AttachedChildren)
 	{
 		FCraftingNodePinGroup &group = OutPins.AddDefaulted_GetRef();
-		group.MaxPins = pin.MaxCount;
-		group.MinPins = pin.MinCount;
-		group.NodeType = pin.EligiblePresetSearch.NodeType;
+		group.MaxPins = pin.SetType.MaxCount;
+		group.MinPins = pin.SetType.MinCount;
 		group.OwnerInstance = NodeID;
 
-		PresetCollection.SearchPresets(pin.EligiblePresetSearch.NodeType, pin.EligiblePresetSearch.SelectionSearchTags, TArray<Modumate::BIM::FCraftingPresetTag>(), group.SupportedTypePins);
-
-		for (auto &ao : pin.AttachedObjects)
+		for (auto &ao : pin.Children)
 		{
 			group.AttachedChildren.Add(ao.Pin()->GetInstanceID());
 		}
@@ -326,7 +297,7 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetPinGroupsForNode(
 		// TODO: GroupName is used to pass SetName for now. Will determine which approach is more appropriate in the future 
 		if (group.GroupName.IsNone())
 		{
-			group.GroupName = pin.SetName;
+			group.GroupName = pin.SetType.SetName;
 		}
 	}
 	return ECraftingResult::Success;
@@ -349,13 +320,9 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetLayerIDFromNodeInstanceID
 		const Modumate::BIM::FCraftingTreeNodePreset *preset = PresetCollection.Presets.Find(rootNode->PresetID);
 		if (preset != nullptr)
 		{
-			const Modumate::BIM::FCraftingTreeNodeType *descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
-			if (descriptor != nullptr)
+			if (preset->ObjectType != EObjectType::OTNone)
 			{
-				if (descriptor->ObjectType != EObjectType::OTNone)
-				{
-					break;
-				}
+				break;
 			}
 		}
 
@@ -365,7 +332,7 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetLayerIDFromNodeInstanceID
 		if (rootNode.IsValid())
 		{
 			rootNode->FindChild(childID, childPinset, childPinPosition);
-			NumberOfLayers = rootNode->InputPins[childPinset].AttachedObjects.Num();
+			NumberOfLayers = rootNode->AttachedChildren[childPinset].Children.Num();
 		}
 	}
 
@@ -457,10 +424,10 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::DragMovePinChild(
 		return ECraftingResult::Error;
 	}
 
-	Modumate::BIM::FCraftingTreeNodePinSet *pinSet = nullptr;
-	for (auto &pin : node->InputPins)
+	Modumate::BIM::FCraftingTreeNodeAttachedChildren *pinSet = nullptr;
+	for (auto &pin : node->AttachedChildren)
 	{
-		if (pin.SetName == PinGroup)
+		if (pin.SetType.SetName == PinGroup)
 		{
 			pinSet = &pin;
 			break;
@@ -472,13 +439,13 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::DragMovePinChild(
 	}
 
 	// The widget reckons children in reverse order, so invert the inputs
-	int32 reorderFrom = pinSet->AttachedObjects.Num() - From - 1;
-	int32 reorderTo = pinSet->AttachedObjects.Num() - To - 1;
-	if (pinSet->AttachedObjects.IsValidIndex(reorderFrom) && pinSet->AttachedObjects.IsValidIndex(reorderTo))
+	int32 reorderFrom = pinSet->Children.Num() - From - 1;
+	int32 reorderTo = pinSet->Children.Num() - To - 1;
+	if (pinSet->Children.IsValidIndex(reorderFrom) && pinSet->Children.IsValidIndex(reorderTo))
 	{
-		Modumate::BIM::FCraftingTreeNodeInstanceWeakPtr nodeInstPtr = pinSet->AttachedObjects[reorderFrom];
-		pinSet->AttachedObjects.RemoveAt(reorderFrom);
-		pinSet->AttachedObjects.Insert(nodeInstPtr, reorderTo);
+		Modumate::BIM::FCraftingTreeNodeInstanceWeakPtr nodeInstPtr = pinSet->Children[reorderFrom];
+		pinSet->Children.RemoveAt(reorderFrom);
+		pinSet->Children.Insert(nodeInstPtr, reorderTo);
 	}
 	return ECraftingResult::Success;
 }
@@ -502,7 +469,7 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetEligiblePresetsForSwap(
 		return ECraftingResult::Error;
 	}
 	TArray<FName> eligiblePresets;
-	TArray<Modumate::BIM::FCraftingPresetTag> tags;
+	TArray<Modumate::BIM::FTag> tags;
 
 	// If we have a parent, check its pin for search terms, otherwise use our own tags
 	if (instance->ParentInstance.IsValid())
@@ -513,21 +480,6 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetEligiblePresetsForSwap(
 		{
 			return result;
 		}
-		tags = instance->ParentInstance.Pin()->InputPins[pinGroup].EligiblePresetSearch.SelectionSearchTags;
 	}
-	else
-	{
-		for (auto &kvp : currentPreset->Tags)
-		{
-			tags.Append(kvp.Value);
-		}
-	}
-	PresetCollection.SearchPresets(currentPreset->NodeType, tags, TArray<Modumate::BIM::FCraftingPresetTag>(), eligiblePresets);
-	Algo::Transform(eligiblePresets, OutPresets,
-		[&PresetCollection](const FName &PresetID)
-	{
-		return FCraftingNode::FromPreset(*PresetCollection.Presets.Find(PresetID));
-	});
-
 	return ECraftingResult::Success;
 }

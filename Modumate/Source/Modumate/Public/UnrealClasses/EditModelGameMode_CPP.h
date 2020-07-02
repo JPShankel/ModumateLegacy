@@ -109,9 +109,6 @@ public:
 	Modumate::ModumateObjectDatabase *ObjectDatabase;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
-	UObjectLibrary* BIMTableLibrary;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* RoomConfigurationTable;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
@@ -131,9 +128,6 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* ColorTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
-	UDataTable* MaterialTable;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* LightConfigTable;

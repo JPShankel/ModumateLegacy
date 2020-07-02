@@ -1,0 +1,14 @@
+TYPENAME,3Layer2D,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,PropertyType,PropertyName,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,STRING,Name,Preset.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,STRING,Comments,Preset.Comments,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,InputExtensibility,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildLayerPattern,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,1..,ChildModuleLWTArray,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,1..1,ChildGap2D,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Presets,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,,0,0,0,0,0,0,0,0,0,0
+TAGPATHS,ID,,,DataType=Properties,Preset.Name,DataType=InputPins,ChildLayerPattern,ChildModuleLWTArray,ChildGap2D,DataType=TG_MyNode+CategoryPath,3Layer2D --> Board and Panel --> Cement,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,3Layer2D --> Board and Panel --> Insulation,3Layer2D --> Board and Panel --> Gypsum,3Layer2D --> Board and Panel --> MDF (Medium-Density Fiberboard),3Layer2D --> Board and Panel --> Metal,3Layer2D --> Board and Panel --> OSB (Oriented Strand Board),3Layer2D --> Board and Panel --> Particle Board,3Layer2D --> Board and Panel --> Plywood,3Layer2D --> Plank --> Engineered Wood,3Layer2D --> Plank --> Wood,3Layer2D --> Tile --> Brick Veneer,3Layer2D --> Tile --> Carpet,3Layer2D --> Tile --> Clay,3Layer2D --> Tile --> Cork,3Layer2D --> Tile --> Glass,3Layer2D --> Tile --> Laminate,3Layer2D --> Tile --> Luxury Vinyl,3Layer2D --> Tile --> Porcelain,3Layer2D --> Tile --> Stone,3Layer2D --> Tile --> Vinyl Composite,3Layer2D --> Shingle --> Asphalt,3Layer2D --> Shingle --> Clay,3Layer2D --> Shingle --> Metal,3Layer2D --> Shingle --> Stone,3Layer2D --> Shingle --> Wood,DataType=TG_Parent Node+CategoryPath,4LayeredAssembly --> Wall,4LayeredAssembly --> Floor,4LayeredAssembly --> Roof,4LayeredAssembly --> Ceiling,4LayeredAssembly --> Finish,4LayeredAssembly --> System Panel,4LayeredAssembly --> Countertop,4LayeredAssembly --> Layered Tread,4LayeredAssembly --> Layered Riser,4LayeredAssembly --> Landscape
+PRESET,#REF!,,,,2x2 Running Bond Porcelain,,#REF!,#REF!,#REF!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,#REF!,,,,2x2 Running Bond Porcelain,,#REF!,#REF!,#REF!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

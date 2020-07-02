@@ -534,7 +534,10 @@ public:
 		if (!LayerMaterialKey.IsEmpty())
 		{
 			const FArchitecturalMaterial *mat = db.GetArchitecturalMaterialByKey(*LayerMaterialKey);
-			if (ensureAlways(mat != nullptr))
+
+			//TODO: ensure removed for DDL 2.0 refactor, missing materials okay in interim
+			//if (ensureAlways(mat != nullptr))
+			if (mat != nullptr)
 			{
 				ret.Material = *mat;
 				ensureAlways(ret.Material.EngineMaterial != nullptr);
@@ -826,6 +829,7 @@ bool FModumateObjectAssembly::FromCraftingProperties_DEPRECATED(
 					BIM::EScope::Cabinet_Hardware_Finish
 				};
 
+#if 0 // TODO: removal in anticipation of DDL 2.0 opening system refactor
 				for (auto &finishEnum : finishEnums)
 				{
 					FString colorName, materialName;
@@ -842,6 +846,7 @@ bool FModumateObjectAssembly::FromCraftingProperties_DEPRECATED(
 						}
 					}
 				}
+#endif
 			}
 		}
 		else

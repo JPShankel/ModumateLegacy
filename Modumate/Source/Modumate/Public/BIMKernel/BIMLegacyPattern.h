@@ -8,7 +8,7 @@
 #include "ModumateCore/ModumateUnits.h"
 #include "Database/ModumateObjectEnums.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
-#include "BIMKernel/BIMDataModel.h"
+#include "BIMKernel/BIMEnums.h"
 #include "BIMLegacyPattern.generated.h"
 
 namespace Modumate

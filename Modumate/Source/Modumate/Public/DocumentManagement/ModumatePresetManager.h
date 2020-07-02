@@ -37,6 +37,7 @@ namespace Modumate
 
 		// DDL 2.0
 		BIM::FCraftingPresetCollection CraftingNodePresets,DraftingNodePresets;
+		TMap<EObjectType, FName> StarterPresetsByObjectType;
 
 		ECraftingResult LoadObjectNodeSet(UWorld *world);
 		ECraftingResult PresetToSpec(const FName &PresetID, BIM::FModumateAssemblyPropertySpec &OutPropertySpec) const;
