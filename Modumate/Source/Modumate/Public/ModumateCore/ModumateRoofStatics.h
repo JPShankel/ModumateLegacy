@@ -27,11 +27,12 @@ struct MODUMATE_API FTessellationPolygon
 {
 	GENERATED_USTRUCT_BODY();
 
-	FTessellationPolygon() {};
+	FTessellationPolygon();
 
 	FTessellationPolygon(const FVector &InBaseUp, const FVector &InPolyNormal,
 		const FVector &InStartPoint, const FVector &InStartDir,
-		const FVector &InEndPoint, const FVector &InEndDir);
+		const FVector &InEndPoint, const FVector &InEndDir,
+		float InStartExtensionDist, float InEndExtensionDist);
 
 	FVector BaseUp, PolyNormal, StartPoint, StartDir, EndPoint, EndDir, CachedEdgeDir, CachedEdgeIntersection;
 
@@ -39,6 +40,7 @@ struct MODUMATE_API FTessellationPolygon
 	float CachedStartRayDist, CachedEndRayDist;
 	bool bCachedEndsConverge;
 	TArray<FVector> ClippingPoints, PolygonVerts;
+	float StartExtensionDist, EndExtensionDist;
 
 	bool ClipWithPolygon(const FTessellationPolygon &ClippingPolygon);
 	bool UpdatePolygonVerts();

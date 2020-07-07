@@ -85,6 +85,8 @@ namespace Modumate
 
 	void FMOIRoofPerimeterImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
 	{
+		bAdjustmentHandlesVisible = bShow;
+
 		bool bCreatedRoofFaces = (CachedFaceIDs.Num() > 0);
 
 		if (CreateFacesHandle.IsValid())

@@ -253,6 +253,8 @@ bool AAdjustmentHandleActor::BeginUse()
 
 bool AAdjustmentHandleActor::UpdateUse()
 {
+	Controller->AddAllOriginAffordances();
+
 	return true;
 }
 

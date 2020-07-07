@@ -41,6 +41,8 @@ bool URoofPerimeterPropertiesWidget::Initialize()
 	SlopeEditorFraction->OnTextCommitted.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnSlopeEditorFractionTextCommitted);
 	SlopeEditorDegrees->OnTextChanged.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnSlopeEditorDegreesTextChanged);
 	SlopeEditorDegrees->OnTextCommitted.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnSlopeEditorDegreesTextCommitted);
+	OverhangEditor->OnTextChanged.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnOverhangEditorTextChanged);
+	OverhangEditor->OnTextCommitted.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnOverhangEditorTextCommitted);
 	ButtonCommit->OnPressed.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnButtonPressedCommit);
 	ButtonCancel->OnPressed.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnButtonPressedCancel);
 
@@ -82,8 +84,8 @@ void URoofPerimeterPropertiesWidget::SetTarget(int32 InTargetPerimeterID, int32 
 	float slopeDegreesValue = FMath::RadiansToDegrees(FMath::Atan(CurrentProperties.Slope));
 	SlopeEditorDegrees->SetText(FText::AsNumber(slopeDegreesValue));
 
-	OverhangEditor->SetIsEnabled(false);
-	//OverhangEditor->SetText(FText::AsNumber(CurrentProperties.Overhang));
+	// TODO: set the text to a formatted dimension, rather than the raw cm value
+	OverhangEditor->SetText(FText::AsNumber(CurrentProperties.Overhang));
 }
 
 void URoofPerimeterPropertiesWidget::UpdateTransform()
@@ -92,11 +94,17 @@ void URoofPerimeterPropertiesWidget::UpdateTransform()
 	auto controller = GetOwningPlayer();
 
 	FVector2D targetScreenPosition;
-	if (targetObj && controller && controller->ProjectWorldLocationToScreen(targetObj->GetObjectLocation(), targetScreenPosition))
+	FVector2D widgetSize = GetCachedGeometry().GetAbsoluteSize();
+	if (!widgetSize.IsZero() && targetObj && controller && controller->ProjectWorldLocationToScreen(targetObj->GetObjectLocation(), targetScreenPosition))
 	{
-		FVector2D widgetSize = GetCachedGeometry().GetAbsoluteSize();
+		SetColorAndOpacity(FLinearColor::White);
+
 		FVector2D widgetOffset(-0.5f * widgetSize.X, -widgetSize.Y - 16.0f);
 		SetPositionInViewport(targetScreenPosition + widgetOffset);
+	}
+	else
+	{
+		SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 0.0f));
 	}
 }
 
@@ -155,6 +163,26 @@ void URoofPerimeterPropertiesWidget::OnSlopeEditorDegreesTextCommitted(const FTe
 		{
 			float slopeValue = FMath::Tan(FMath::DegreesToRadians(degreesValue));
 			SetEdgeSlope(slopeValue);
+		}
+	}
+}
+
+void URoofPerimeterPropertiesWidget::OnOverhangEditorTextChanged(const FText& NewText)
+{
+
+}
+
+void URoofPerimeterPropertiesWidget::OnOverhangEditorTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	if (CommitMethod == ETextCommit::OnEnter)
+	{
+		// TODO: parse the text from a formatted dimension, rather than the raw cm value
+		float OverhangValueCM;
+		if (UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), OverhangValueCM) && (OverhangValueCM >= 0.0f))
+		{
+			CurrentProperties.bOverridden = true;
+			CurrentProperties.Overhang = OverhangValueCM;
+			SaveEdgeProperties();
 		}
 	}
 }

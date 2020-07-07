@@ -301,6 +301,8 @@ bool AAdjustFFERotateHandle::UpdateUse()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AAdjustFFERotateHandle::UpdateUse"));
 
+	Super::UpdateUse();
+
 	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
 	FVector projectedCursorPos = cursor.SketchPlaneProject(cursor.WorldPosition);
 

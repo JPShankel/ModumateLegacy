@@ -17,8 +17,6 @@ using namespace Modumate;
 
 bool ACreateRoofFacesHandle::BeginUse()
 {
-	Super::BeginUse();
-
 	if (!ensure(TargetMOI && GameState))
 	{
 		return false;
@@ -45,7 +43,7 @@ bool ACreateRoofFacesHandle::BeginUse()
 
 	int32 numEdges = EdgeIDs.Num();
 	int32 numCalculatedPolys = PolyVertIndices.Num();
-	if (numEdges == numCalculatedPolys)
+	if (numCalculatedPolys > 0)
 	{
 		const FVector *combinedPolyVertsPtr = CombinedPolyVerts.GetData();
 		int32 vertIdxStart = 0, vertIdxEnd = 0;
@@ -59,22 +57,19 @@ bool ACreateRoofFacesHandle::BeginUse()
 		bool bFaceAdditionFailure = false;
 		TArray<FGraph3DDelta> graphDeltas;
 
-		for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
+		for (int32 polyIdx = 0; polyIdx < numCalculatedPolys; ++polyIdx)
 		{
-			vertIdxEnd = PolyVertIndices[edgeIdx];
+			vertIdxEnd = PolyVertIndices[polyIdx];
 
-			if (EdgeProperties[edgeIdx].bHasFace)
+			int32 numPolyVerts = (vertIdxEnd - vertIdxStart) + 1;
+			TArray<FVector> polyVerts(combinedPolyVertsPtr + vertIdxStart, numPolyVerts);
+
+			int32 existingFaceID;
+			bool bAddedFace = tempVolumeGraph.GetDeltaForFaceAddition(polyVerts, graphDeltas, nextID, existingFaceID, groupIDs);
+			if (!bAddedFace)
 			{
-				int32 numPolyVerts = (vertIdxEnd - vertIdxStart) + 1;
-				TArray<FVector> polyVerts(combinedPolyVertsPtr + vertIdxStart, numPolyVerts);
-
-				int32 existingFaceID;
-				bool bAddedFace = tempVolumeGraph.GetDeltaForFaceAddition(polyVerts, graphDeltas, nextID, existingFaceID, groupIDs);
-				if (!bAddedFace)
-				{
-					bFaceAdditionFailure = true;
-					break;
-				}
+				bFaceAdditionFailure = true;
+				break;
 			}
 
 			vertIdxStart = vertIdxEnd + 1;
@@ -126,8 +121,6 @@ bool ACreateRoofFacesHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*&
 
 bool ARetractRoofFacesHandle::BeginUse()
 {
-	Super::BeginUse();
-
 	if (!ensure(TargetMOI && GameState))
 	{
 		return false;
@@ -152,7 +145,6 @@ bool ARetractRoofFacesHandle::BeginUse()
 	// TODO: migrate this to one or more deltas, when we can delete objects that way.
 	doc.DeleteObjects(TempFaceIDs, true, true);
 
-	AbortUse();
 	return false;
 }
 
@@ -184,7 +176,8 @@ bool AEditRoofEdgeHandle::BeginUse()
 	PropertiesWidget = PlayerHUD->GetOrCreateWidgetInstance<URoofPerimeterPropertiesWidget>(PlayerHUD->WidgetClasses->RoofPerimeterPropertiesClass);
 	PropertiesWidget->SetTarget(TargetMOI->ID, TargetEdgeID, this);
 	PropertiesWidget->AddToViewport();
-	PropertiesWidget->SetPositionInViewport(FVector2D(0.0f, 0.0f));
+	PropertiesWidget->SetPositionInViewport(FVector2D::ZeroVector);
+	PropertiesWidget->UpdateTransform();
 
 	return true;
 }

@@ -94,6 +94,12 @@ protected:
 	void OnSlopeEditorDegreesTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
 	UFUNCTION()
+	void OnOverhangEditorTextChanged(const FText& NewText);
+
+	UFUNCTION()
+	void OnOverhangEditorTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
 	void OnButtonPressedCommit();
 
 	UFUNCTION()

@@ -6,12 +6,32 @@
 #include "DocumentManagement/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 
+#define DEBUG_ROOFS UE_BUILD_DEBUG
+
 using namespace Modumate;
 
 
+FTessellationPolygon::FTessellationPolygon()
+	: BaseUp(ForceInitToZero)
+	, PolyNormal(ForceInitToZero)
+	, StartPoint(ForceInitToZero)
+	, StartDir(ForceInitToZero)
+	, EndPoint(ForceInitToZero)
+	, EndDir(ForceInitToZero)
+	, CachedEdgeDir(ForceInitToZero)
+	, CachedEdgeIntersection(ForceInitToZero)
+	, CachedPlane(ForceInitToZero)
+	, CachedStartRayDist(0.0f)
+	, CachedEndRayDist(0.0f)
+	, bCachedEndsConverge(false)
+	, StartExtensionDist(0.0f)
+	, EndExtensionDist(0.0f)
+{
+}
+
 FTessellationPolygon::FTessellationPolygon(const FVector &InBaseUp, const FVector &InPolyNormal,
 	const FVector &InStartPoint, const FVector &InStartDir,
-	const FVector &InEndPoint, const FVector &InEndDir)
+	const FVector &InEndPoint, const FVector &InEndDir, float InStartExtensionDist, float InEndExtensionDist)
 	: BaseUp(InBaseUp)
 	, PolyNormal(InPolyNormal)
 	, StartPoint(InStartPoint)
@@ -24,6 +44,8 @@ FTessellationPolygon::FTessellationPolygon(const FVector &InBaseUp, const FVecto
 	, CachedStartRayDist(0.0f)
 	, CachedEndRayDist(0.0f)
 	, bCachedEndsConverge(false)
+	, StartExtensionDist(InStartExtensionDist)
+	, EndExtensionDist(InEndExtensionDist)
 {
 	bCachedEndsConverge = UModumateGeometryStatics::RayIntersection3D(StartPoint, StartDir, EndPoint, EndDir,
 		CachedEdgeIntersection, CachedStartRayDist, CachedEndRayDist, true);
@@ -128,7 +150,7 @@ bool FTessellationPolygon::UpdatePolygonVerts()
 
 	if (ClippingPoints.Num() == 0)
 	{
-		if (bCachedEndsConverge)
+		if (bCachedEndsConverge && (StartExtensionDist == 0.0f) && (EndExtensionDist == 0.0f))
 		{
 			PolygonVerts.Add(StartPoint);
 			PolygonVerts.Add(EndPoint);
@@ -136,12 +158,11 @@ bool FTessellationPolygon::UpdatePolygonVerts()
 		}
 		else
 		{
-			static float trapezoidWidth = 500.0f;
-
 			PolygonVerts.Add(StartPoint);
 			PolygonVerts.Add(EndPoint);
-			PolygonVerts.Add(EndPoint + trapezoidWidth * EndDir);
-			PolygonVerts.Add(StartPoint + trapezoidWidth * StartDir);
+
+			PolygonVerts.Add(EndPoint + EndExtensionDist * EndDir);
+			PolygonVerts.Add(StartPoint + StartExtensionDist * StartDir);
 		}
 	}
 	else
@@ -584,7 +605,7 @@ bool UModumateRoofStatics::TessellateSlopedEdges(const TArray<FVector> &EdgePoin
 	}
 
 	// Create tessellation polygons for each edge of the base polygon
-	TArray<FTessellationPolygon> edgePolygons;
+	TArray<FTessellationPolygon> clippingPolygons, combinedPolygons;
 	for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
 	{
 		int32 edgeStartIdx = edgeIdx;
@@ -598,9 +619,20 @@ bool UModumateRoofStatics::TessellateSlopedEdges(const TArray<FVector> &EdgePoin
 
 		const FVector &edgeNormal = edgeNormals[edgeIdx];
 
-		FTessellationPolygon edgePoly(baseNormal, edgeNormal, edgeStartPoint, edgeStartRidgeDir, edgeEndPoint, edgeEndRidgeDir);
+		clippingPolygons.Add(FTessellationPolygon(baseNormal, edgeNormal, edgeStartPoint, edgeStartRidgeDir, edgeEndPoint, edgeEndRidgeDir, 0.0f, 0.0f));
 
-		edgePolygons.Add(MoveTemp(edgePoly));
+		float edgeOverhang = EdgeProperties[edgeIdx].Overhang;
+		if (edgeOverhang > 0.0f)
+		{
+			const FVector &edgeInsideDir = edgeInsideDirs[edgeIdx];
+			if (!FVector::Parallel(edgeStartRidgeDir, edgeInsideDir) && !FVector::Parallel(edgeEndRidgeDir, edgeInsideDir))
+			{
+				float startExtensionDist = edgeOverhang / (edgeStartRidgeDir | edgeInsideDir);
+				float endExtensionDist = edgeOverhang / (edgeEndRidgeDir | edgeInsideDir);
+
+				combinedPolygons.Add(FTessellationPolygon(baseNormal, edgeNormal, edgeStartPoint, -edgeStartRidgeDir, edgeEndPoint, -edgeEndRidgeDir, startExtensionDist, endExtensionDist));
+			}
+		}
 	}
 
 	// Clip edge polygons by non-adjacent polygons
@@ -609,13 +641,13 @@ bool UModumateRoofStatics::TessellateSlopedEdges(const TArray<FVector> &EdgePoin
 	{
 		int32 prevEdgeIdx = (edgeIdx + numEdges - 1) % numEdges;
 		int32 nextEdgeIdx = (edgeIdx + 1) % numEdges;
-		FTessellationPolygon &edgePoly = edgePolygons[edgeIdx];
+		FTessellationPolygon &edgePoly = clippingPolygons[edgeIdx];
 
 		for (int32 otherEdgeIdx = 0; otherEdgeIdx < numEdges; ++otherEdgeIdx)
 		{
 			if ((otherEdgeIdx != edgeIdx) && (otherEdgeIdx != prevEdgeIdx) && (otherEdgeIdx != nextEdgeIdx))
 			{
-				const FTessellationPolygon &otherEdgePoly = edgePolygons[otherEdgeIdx];
+				const FTessellationPolygon &otherEdgePoly = clippingPolygons[otherEdgeIdx];
 				bool bClip = edgePoly.ClipWithPolygon(otherEdgePoly);
 
 				if (bClip)
@@ -626,20 +658,31 @@ bool UModumateRoofStatics::TessellateSlopedEdges(const TArray<FVector> &EdgePoin
 		}
 
 		//Draw debug lines to diagnose tessellation issues
-#if UE_BUILD_DEBUG
+#if DEBUG_ROOFS
 		float debugHue = FMath::Frac(edgeIdx * UE_GOLDEN_RATIO);
 		FLinearColor debugColor = FLinearColor::MakeFromHSV8(debugHue * 0xFF, 0xFF, 0xFF);
 		edgePoly.DrawDebug(debugColor.ToFColor(false), DebugDrawWorld);
 #endif
 
+		if (!ensureAlways(edgePoly.bCachedEndsConverge || (edgePoly.ClippingPoints.Num() > 0)))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Edge #%d's clipping face doesn't converge and wasn't clipped!"));
+#if !DEBUG_ROOFS
+			continue;
+#endif
+		}
+
 		edgePoly.UpdatePolygonVerts();
+
+		if (EdgeProperties[edgeIdx].bHasFace)
+		{
+			combinedPolygons.Add(edgePoly);
+		}
 	}
 
 	// Collect the vertices for each edge tessellation polygon
-	for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
+	for (auto &edgePoly : combinedPolygons)
 	{
-		const FTessellationPolygon &edgePoly = edgePolygons[edgeIdx];
-
 		OutCombinedPolyVerts.Append(edgePoly.PolygonVerts);
 		OutPolyVertIndices.Add(OutCombinedPolyVerts.Num() - 1);
 	}

@@ -496,11 +496,22 @@ void AEditModelPlayerController_CPP::OnPressHandleWidget(UAdjustmentHandleWidget
 	{
 		if (InteractionHandle == HandleWidget->HandleActor)
 		{
+			// If we clicked on the handle we're already using, then end its use
 			InteractionHandle->EndUse();
 			InteractionHandle = nullptr;
+			return;
 		}
-		else if (HoverHandleActor == HandleWidget->HandleActor)
+
+		if (InteractionHandle && InteractionHandle->IsInUse())
 		{
+			// If we clicked on a different handle than the one that's in use, then first abort the previous one
+			InteractionHandle->AbortUse();
+			InteractionHandle = nullptr;
+		}
+
+		if (HoverHandleActor == HandleWidget->HandleActor)
+		{
+			// If we clicked on the handle that we're hovering over, then set it as the new interaction handle
 			if (HoverHandleActor->BeginUse())
 			{
 				InteractionHandle = HoverHandleActor;
@@ -1227,14 +1238,13 @@ void AEditModelPlayerController_CPP::TickInput(float DeltaTime)
 				InteractionHandle->EndUse();
 				InteractionHandle = nullptr;
 			}
-			UpdateAffordances();
 		}
 		else if (CurrentTool != nullptr)
 		{
 			CurrentTool->FrameUpdate();
 			if (CurrentTool->IsInUse() && CurrentTool->ShowSnapCursorAffordances())
 			{
-				UpdateAffordances();
+				AddAllOriginAffordances();
 			}
 		}
 	}
@@ -1251,6 +1261,32 @@ FVector AEditModelPlayerController_CPP::CalculateViewLocationForSphere(const FSp
 	float captureHalfFOV = 0.5f * FMath::DegreesToRadians(FOV);
 	float captureDistance = AspectRatio * TargetSphere.W / FMath::Tan(captureHalfFOV);
 	return TargetSphere.Center - captureDistance * ViewVector;
+}
+
+/*
+ * This function draws affordances based on the data in the snapped cursor
+ */
+void AEditModelPlayerController_CPP::AddAllOriginAffordances() const
+{
+	if (EMPlayerState->SnappedCursor.HasProjectedPosition)
+	{
+		AddSnapAffordancesToOrigin(EMPlayerState->SnappedCursor.WorldPosition, EMPlayerState->SnappedCursor.ProjectedPosition);
+		AddSnapAffordancesToOrigin(EMPlayerState->SnappedCursor.WorldPosition, EMPlayerState->SnappedCursor.AffordanceFrame.Origin);
+	}
+	else
+	{
+		switch (EMPlayerState->SnappedCursor.SnapType)
+		{
+			case ESnapType::CT_CUSTOMSNAPX:
+			case ESnapType::CT_CUSTOMSNAPY:
+			case ESnapType::CT_CUSTOMSNAPZ:
+			case ESnapType::CT_WORLDSNAPX:
+			case ESnapType::CT_WORLDSNAPY:
+			case ESnapType::CT_WORLDSNAPZ:
+				AddSnapAffordancesToOrigin(EMPlayerState->SnappedCursor.AffordanceFrame.Origin, EMPlayerState->SnappedCursor.WorldPosition);
+				break;
+		};
+	}
 }
 
 ////
@@ -2694,32 +2730,6 @@ bool AEditModelPlayerController_CPP::HasUserSnapPointAtPos(const FVector &snapPo
 	}
 
 	return false;
-}
-
-/*
-Called after UpdateMouseHits, this function draws affordances based on the data in the snapped cursor
-*/
-void AEditModelPlayerController_CPP::UpdateAffordances() const
-{
-	if (EMPlayerState->SnappedCursor.HasProjectedPosition)
-	{
-		AddSnapAffordancesToOrigin(EMPlayerState->SnappedCursor.WorldPosition, EMPlayerState->SnappedCursor.ProjectedPosition);
-		AddSnapAffordancesToOrigin(EMPlayerState->SnappedCursor.WorldPosition, EMPlayerState->SnappedCursor.AffordanceFrame.Origin);
-	}
-	else
-	{
-		switch (EMPlayerState->SnappedCursor.SnapType)
-		{
-			case ESnapType::CT_CUSTOMSNAPX:
-			case ESnapType::CT_CUSTOMSNAPY:
-			case ESnapType::CT_CUSTOMSNAPZ:
-			case ESnapType::CT_WORLDSNAPX:
-			case ESnapType::CT_WORLDSNAPY:
-			case ESnapType::CT_WORLDSNAPZ:
-				AddSnapAffordancesToOrigin(EMPlayerState->SnappedCursor.AffordanceFrame.Origin, EMPlayerState->SnappedCursor.WorldPosition);
-				break;
-		};
-	}
 }
 
 void AEditModelPlayerController_CPP::UpdateUserSnapPoint()

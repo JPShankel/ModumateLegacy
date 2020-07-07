@@ -50,7 +50,6 @@ class MODUMATE_API AEditModelPlayerController_CPP : public APlayerController
 	AEditModelPlayerController_CPP();
 	virtual ~AEditModelPlayerController_CPP();
 	virtual void PostInitializeComponents() override;
-	FMouseWorldHitType GetAffordanceHit(const FVector &mouseLoc,const FVector &mouseDir,const FAffordanceFrame &affordance,bool allowZSnap) const;
 
 private:
 
@@ -72,7 +71,6 @@ private:
 	bool HasUserSnapPointAtPos(const FVector &snapPointPos, float tolerance = KINDA_SMALL_NUMBER) const;
 
 	void UpdateMouseHits(float DeltaTime);
-	void UpdateAffordances() const;
 	void UpdateUserSnapPoint();
 
 	FTimerHandle ControllerTimer;
@@ -81,6 +79,7 @@ private:
 		float CurObjectHitDist, float CurVirtualHitDist, float MaxScreenDist, float &OutRayDist) const;
 	bool FindBestMousePointHit(const TArray<FVector> &Points, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, float &OutBestRayDist) const;
 	bool FindBestMouseLineHit(const TArray<TPair<FVector, FVector>> &Lines, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, FVector &OutBestIntersection, float &OutBestRayDist) const;
+	FMouseWorldHitType GetAffordanceHit(const FVector &mouseLoc, const FVector &mouseDir, const FAffordanceFrame &affordance, bool allowZSnap) const;
 
 	FMouseWorldHitType GetShiftConstrainedMouseHit(const FMouseWorldHitType &baseHit) const;
 	FMouseWorldHitType GetObjectMouseHit(const FVector &mouseLoc, const FVector &mouseDir, bool bCheckSnapping) const;
@@ -140,7 +139,6 @@ protected:
 public:
 
 	bool DistanceBetweenWorldPointsInScreenSpace(const FVector &Point1, const FVector &Point2, float &OutScreenDist) const;
-
 	bool GetScreenScaledDelta(const FVector &Origin, const FVector &Normal, const float DesiredWorldDist, const float MaxScreenDist,
 		FVector &OutWorldPos, FVector2D &OutScreenPos) const;
 
@@ -160,6 +158,7 @@ public:
 
 	void TickInput(float DeltaTime);
 
+	void AddAllOriginAffordances() const;
 	void SetObjectSelected(const Modumate::FModumateObjectInstance *ob, bool selected);
 
 	UFUNCTION()
