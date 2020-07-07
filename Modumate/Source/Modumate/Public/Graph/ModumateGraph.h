@@ -90,14 +90,17 @@ namespace Modumate
 
 		void Reset();
 
-		FGraphEdge* FindEdge(FEdgeID EdgeID);
-		const FGraphEdge* FindEdge(FEdgeID EdgeID) const;
 		FGraphVertex* FindVertex(int32 ID);
 		const FGraphVertex* FindVertex(int32 ID) const;
+		FGraphVertex* FindVertex(const FVector2D &Position);
+
+		FGraphEdge* FindEdge(FEdgeID EdgeID);
+		const FGraphEdge* FindEdge(FEdgeID EdgeID) const;
+		const FGraphEdge* FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward);
+
 		FGraphPolygon* FindPolygon(int32 ID);
 		const FGraphPolygon* FindPolygon(int32 ID) const;
 
-		FGraphVertex* FindVertex(const FVector2D &Position);
 
 		bool ContainsObject(const FTypedGraphObjID &GraphObjID) const;
 		bool ContainsObject(int32 ID, EGraphObjectType GraphObjectType) const;
@@ -121,8 +124,8 @@ namespace Modumate
 		bool ToDataRecord(FGraph2DRecord &OutRecord, bool bSaveOpenPolygons = false, bool bSaveExteriorPolygons = false) const;
 		bool FromDataRecord(const FGraph2DRecord &InRecord);
 
-		bool ApplyDelta(const FGraph2DDelta &Delta);
 
+	public:
 		float Epsilon;
 		bool bDebugCheck;
 
@@ -137,5 +140,57 @@ namespace Modumate
 		TMap<int32, FGraphPolygon> Polygons;
 
 		TSet<FEdgeID> DirtyEdges;
+
+		TMap<FVertexPair, int32> EdgeIDsByVertexPair;
+
+		// 2D Graph Deltas
+		// The graph operations create a list of deltas that represent instructions for applying the operation.
+		// Creating a list of deltas is undo/redo-able, and the public graph operations will leave the graph in the same state
+		// that it entered.
+	public:
+		bool ApplyDelta(const FGraph2DDelta &Delta);
+
+	private:
+		// The graph operation functions test out individual deltas by applying them as they are generated.
+		// A common flow is to make basic deltas for adding objects, apply them, and then create more deltas
+		// for handling the side-effects.  Graph operation functions should keep track of the deltas that have been applied,
+		// so that they can use ApplyInverseDeltas to reset the graph to its initial state before failing out.
+		bool ApplyDeltas(const TArray<FGraph2DDelta> &Deltas);
+		void ApplyInverseDeltas(const TArray<FGraph2DDelta> &Deltas);
+
+	public:
+		// outputs objects that would be added by the list of deltas.
+		// TODO: this returns all added objects - it will be useful to figure out which edges were added 
+		// constrained by a line segment to figure out which edges would need to host an object
+		void AggregateAddedObjects(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices, TSet<int32> &OutEdges);
+
+		// 2D Graph Operations
+		// All graph operations should leave the graph in the same state that it entered if the function failed or if the function
+		// is public, even though it needs to be modified to set up all of the deltas.
+
+		/* Common arguments in all 2D Graph Operations
+			@param[in] NextID: next available ID to assign to created objects.  NextID will be incremented 
+			as needed when new graph objects are created, and NextID is shared with the document so that 
+			the graph objects can match a backing object instance.
+			@param[out] OutDeltas: list of deltas that result in the desired operation applied to the graph
+		*/
+		
+		// Graph operations return true when they are able to create applicable deltas.  This can be vacuously true when 
+		// no deltas are needed, for example when the graph object already exists.
+
+		// The public functions are what should be used externally by tools (and by unit tests) because they 
+		// properly handle the side effects that are required to maintain assumptions about the graph.
+	public:
+		// Create Deltas resulting in a new vertex added to the graph at the input position
+		bool AddVertex(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D Position);
+
+		// Create Deltas resulting in new edge(s) added to the graph connecting vertices at the two input positions
+		// the 2D graph must not have edges intersecting, so if the line segment connecting the two input positions
+		// crosses any existing edges, (TODO) several edges will be created 
+		bool AddEdge(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D StartPosition, const FVector2D EndPosition);
+
+	private:
+		// Create Deltas resulting in a new edge connecting two existing vertices
+		bool AddEdge(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const int32 StartVertexID, const int32 EndVertexID);
 	};
 }

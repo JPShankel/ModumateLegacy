@@ -2,10 +2,9 @@
 
 #include "Graph/Graph3D.h"
 
-#include "ModumateCore/ModumateGeometryStatics.h"
-#include "Graph/ModumateGraph.h"
-
 #include "Graph/Graph3DDelta.h"
+#include "Graph/ModumateGraph.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 namespace Modumate
 {

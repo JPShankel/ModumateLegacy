@@ -257,6 +257,25 @@ namespace Modumate
 		return Edges.Find(FMath::Abs(EdgeID)); 
 	}
 
+	const FGraphEdge* FGraph::FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward)
+	{
+		FVertexPair vertexPair(
+			FMath::Min(VertexIDA, VertexIDB),
+			FMath::Max(VertexIDA, VertexIDB)
+		);
+
+		if (const int32 *edgeIDPtr = EdgeIDsByVertexPair.Find(vertexPair))
+		{
+			if (const FGraphEdge *edge = Edges.Find(*edgeIDPtr))
+			{
+				bOutForward = (edge->StartVertexID == VertexIDA);
+				return edge;
+			}
+		}
+
+		return nullptr;
+	}
+
 	FGraphVertex* FGraph::FindVertex(int32 ID) 
 	{ 
 		return Vertices.Find(ID); 
@@ -380,6 +399,12 @@ namespace Modumate
 			endVertex->AddEdge(-newID);
 		}
 
+		FVertexPair vertexPair(
+			FMath::Min(newEdge.StartVertexID, newEdge.EndVertexID),
+			FMath::Max(newEdge.StartVertexID, newEdge.EndVertexID)
+		);
+		EdgeIDsByVertexPair.Add(vertexPair, newEdge.ID);
+
 		return &newEdge;
 	}
 
@@ -434,6 +459,12 @@ namespace Modumate
 				bDirty = true;
 			}
 		}
+
+		FVertexPair vertexPair(
+			FMath::Min(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID),
+			FMath::Max(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID)
+		);
+		EdgeIDsByVertexPair.Remove(vertexPair);
 
 		Edges.Remove(EdgeID);
 
@@ -790,5 +821,57 @@ namespace Modumate
 		}
 
 		return true;
+	}
+
+	bool FGraph::ApplyDeltas(const TArray<FGraph2DDelta> &Deltas)
+	{
+		TArray<FGraph2DDelta> appliedDeltas;
+		for (auto& delta : Deltas)
+		{
+			if (!ApplyDelta(delta))
+			{
+				ApplyInverseDeltas(appliedDeltas);
+				return false;
+			}
+			appliedDeltas.Add(delta);
+		}
+		return true;
+	}
+
+	void FGraph::ApplyInverseDeltas(const TArray<FGraph2DDelta> &Deltas)
+	{
+		auto inverseDeltas = Deltas;
+		Algo::Reverse(inverseDeltas);
+
+		for (auto& delta : inverseDeltas)
+		{
+			ApplyDelta(*delta.MakeGraphInverse());
+		}
+	}
+
+	void FGraph::AggregateAddedObjects(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices, TSet<int32> &OutEdges)
+	{
+		for (auto& delta : Deltas)
+		{
+			for (auto& kvp : delta.VertexAdditions)
+			{
+				OutVertices.Add(kvp.Key);
+			}
+
+			for (auto& kvp : delta.EdgeAdditions)
+			{
+				OutEdges.Add(kvp.Key);
+			}
+
+			for (auto& kvp : delta.VertexDeletions)
+			{
+				OutVertices.Remove(kvp.Key);
+			}
+
+			for (auto& kvp : delta.EdgeDeletions)
+			{
+				OutEdges.Remove(kvp.Key);
+			}
+		}
 	}
 }
