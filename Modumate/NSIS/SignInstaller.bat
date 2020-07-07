@@ -1,0 +1,1 @@
+Signtool.exe sign /f ..\Build\Signing\ModumateCert.pfx /p M0dum8te! /tr http://timestamp.digicert.com /td sha256 /fd sha256 %1
