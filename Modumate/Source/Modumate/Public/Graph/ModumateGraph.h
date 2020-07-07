@@ -124,6 +124,8 @@ namespace Modumate
 		bool ToDataRecord(FGraph2DRecord &OutRecord, bool bSaveOpenPolygons = false, bool bSaveExteriorPolygons = false) const;
 		bool FromDataRecord(const FGraph2DRecord &InRecord);
 
+	private:
+		FVertexPair MakeVertexPair(int32 VertexIDA, int32 VertexIDB);
 
 	public:
 		float Epsilon;
@@ -168,7 +170,7 @@ namespace Modumate
 		// All graph operations should leave the graph in the same state that it entered if the function failed or if the function
 		// is public, even though it needs to be modified to set up all of the deltas.
 
-		/* Common arguments in all 2D Graph Operations
+		/* Common arguments in 2D Graph Operations
 			@param[in] NextID: next available ID to assign to created objects.  NextID will be incremented 
 			as needed when new graph objects are created, and NextID is shared with the document so that 
 			the graph objects can match a backing object instance.
@@ -189,8 +191,18 @@ namespace Modumate
 		// crosses any existing edges, (TODO) several edges will be created 
 		bool AddEdge(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D StartPosition, const FVector2D EndPosition);
 
+		// Create Deltas that delete all objects provided and also all objects that are invalidated by the deletions -
+		// For example, vertices that are no longer connected to any edges are also deleted
+		bool DeleteObjects(TArray<FGraph2DDelta> &OutDeltas, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs);
+
 	private:
-		// Create Deltas resulting in a new edge connecting two existing vertices
-		bool AddEdge(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const int32 StartVertexID, const int32 EndVertexID);
+		// Create Delta resulting in a new vertex added to the graph at the input position
+		bool AddVertexDirect(FGraph2DDelta &OutDelta, int32 &NextID, const FVector2D Position);
+
+		// Create Delta resulting in a new edge connecting two existing vertices
+		bool AddEdgeDirect(FGraph2DDelta &OutDelta, int32 &NextID, const int32 StartVertexID, const int32 EndVertexID);
+
+		// Create Delta that delete precisely the provided objects
+		bool DeleteObjectsDirect(FGraph2DDelta &OutDelta, const TSet<int32> &VertexIDs, const TSet<int32> &EdgeIDs);
 	};
 }

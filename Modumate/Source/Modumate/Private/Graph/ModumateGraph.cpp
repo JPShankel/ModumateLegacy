@@ -259,12 +259,7 @@ namespace Modumate
 
 	const FGraphEdge* FGraph::FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward)
 	{
-		FVertexPair vertexPair(
-			FMath::Min(VertexIDA, VertexIDB),
-			FMath::Max(VertexIDA, VertexIDB)
-		);
-
-		if (const int32 *edgeIDPtr = EdgeIDsByVertexPair.Find(vertexPair))
+		if (const int32 *edgeIDPtr = EdgeIDsByVertexPair.Find(MakeVertexPair(VertexIDA, VertexIDB)))
 		{
 			if (const FGraphEdge *edge = Edges.Find(*edgeIDPtr))
 			{
@@ -399,11 +394,7 @@ namespace Modumate
 			endVertex->AddEdge(-newID);
 		}
 
-		FVertexPair vertexPair(
-			FMath::Min(newEdge.StartVertexID, newEdge.EndVertexID),
-			FMath::Max(newEdge.StartVertexID, newEdge.EndVertexID)
-		);
-		EdgeIDsByVertexPair.Add(vertexPair, newEdge.ID);
+		EdgeIDsByVertexPair.Add(MakeVertexPair(newEdge.StartVertexID, newEdge.EndVertexID), newEdge.ID);
 
 		return &newEdge;
 	}
@@ -460,11 +451,7 @@ namespace Modumate
 			}
 		}
 
-		FVertexPair vertexPair(
-			FMath::Min(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID),
-			FMath::Max(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID)
-		);
-		EdgeIDsByVertexPair.Remove(vertexPair);
+		EdgeIDsByVertexPair.Remove(MakeVertexPair(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID));
 
 		Edges.Remove(EdgeID);
 
@@ -760,6 +747,11 @@ namespace Modumate
 		}
 
 		return true;
+	}
+
+	FVertexPair FGraph::MakeVertexPair(int32 VertexIDA, int32 VertexIDB)
+	{
+		return FVertexPair(FMath::Min(VertexIDA, VertexIDB), FMath::Max(VertexIDA, VertexIDB));
 	}
 
 	bool FGraph::ApplyDelta(const FGraph2DDelta &Delta)

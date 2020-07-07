@@ -253,6 +253,21 @@ namespace Modumate
 		}
 	}
 
+	void TestDeltasAndResetGraph(FAutomationTestBase *Test, TArray<FGraph2DDelta> &Deltas, FGraph& Graph, int32 TestNumFaces = -1, int32 TestNumVertices = -1, int32 TestNumEdges = -1)
+	{
+		// make sure amounts of objects match before and after the test
+		int32 resetNumFaces = Graph.GetPolygons().Num();
+		int32 resetNumVertices = Graph.GetVertices().Num();
+		int32 resetNumEdges = Graph.GetEdges().Num();
+
+		ApplyDeltas(Test, Graph, Deltas);
+		TestGraph(Test, Graph, TestNumFaces, TestNumVertices, TestNumEdges);
+		ApplyInverseDeltas(Test, Graph, Deltas);
+		TestGraph(Test, Graph, resetNumFaces, resetNumVertices, resetNumEdges);
+
+		Deltas.Reset();
+	}
+
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DAddVertex, "Modumate.Graph.2D.AddVertex", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraph2DAddVertex::RunTest(const FString& Parameters)
 	{
@@ -296,6 +311,57 @@ namespace Modumate
 			graph.AddEdge(deltas, NextID, positions[0], positions[1]));
 
 		TestDeltas(this, deltas, graph, 0, 2, 1);
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DDeleteObjects, "Modumate.Graph.2D.DeleteObjects", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DDeleteObjects::RunTest(const FString& Parameters)
+	{
+		FGraph graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+
+		TArray<FVector2D> positions = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(100.0f, 100.0f),
+			FVector2D(200.0f, 200.0f)
+		};
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, positions[0], positions[1]));
+		TestDeltas(this, deltas, graph, 0, 2, 1);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, positions[1], positions[2]));
+		TestDeltas(this, deltas, graph, 0, 3, 2);
+
+		for (auto& edgekvp : graph.GetEdges())
+		{
+			TestTrue(TEXT("Delete Edge"),
+				graph.DeleteObjects(deltas, {}, { edgekvp.Key }));
+			TestDeltasAndResetGraph(this, deltas, graph, 0, 2, 1);
+		}
+
+		for (auto& vertexkvp : graph.GetVertices())
+		{
+			TestTrue(TEXT("Delete Vertex"),
+				graph.DeleteObjects(deltas, { vertexkvp.Key }, {}));
+
+			int32 numConnectedEdges = vertexkvp.Value.Edges.Num();
+			int32 expectedNumEdges = numConnectedEdges == 2 ? 0 : 1;
+			int32 expectedNumVertices = numConnectedEdges == 2 ? 0 : 2;
+
+			TestDeltasAndResetGraph(this, deltas, graph, 0, expectedNumVertices, expectedNumEdges);
+		}
+
+		TArray<int32> allEdges, allVertices;
+		graph.GetEdges().GenerateKeyArray(allEdges);
+		graph.GetVertices().GenerateKeyArray(allVertices);
+
+		TestTrue(TEXT("Delete All Objects"),
+			graph.DeleteObjects(deltas, allVertices, allEdges));
+		TestDeltasAndResetGraph(this, deltas, graph, 0, 0, 0);
 
 		return true;
 	}

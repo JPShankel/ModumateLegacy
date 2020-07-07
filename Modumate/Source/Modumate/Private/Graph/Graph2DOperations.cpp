@@ -6,6 +6,14 @@
 
 namespace Modumate
 {
+	bool FGraph::AddVertexDirect(FGraph2DDelta &OutDelta, int32 &NextID, const FVector2D Position)
+	{
+		int32 addedVertexID = NextID++;
+		OutDelta.VertexAdditions.Add(addedVertexID, Position);
+
+		return true;
+	}
+
 	bool FGraph::AddVertex(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D Position)
 	{
 		const FGraphVertex *existingVertex = FindVertex(Position);
@@ -13,8 +21,7 @@ namespace Modumate
 		if (existingVertex == nullptr)
 		{
 			FGraph2DDelta addVertexDelta;
-			int32 addedVertexID = NextID++;
-			addVertexDelta.VertexAdditions.Add(addedVertexID, Position);
+			AddVertexDirect(addVertexDelta, NextID, Position);
 
 			OutDeltas.Add(addVertexDelta);
 		}
@@ -22,7 +29,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph::AddEdge(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const int32 StartVertexID, const int32 EndVertexID)
+	bool FGraph::AddEdgeDirect(FGraph2DDelta &OutDelta, int32 &NextID, const int32 StartVertexID, const int32 EndVertexID)
 	{
 		bool bOutForward;
 		const FGraphEdge *existingEdge = FindEdgeByVertices(StartVertexID, EndVertexID, bOutForward);
@@ -36,11 +43,8 @@ namespace Modumate
 
 		if (existingEdge == nullptr)
 		{
-			FGraph2DDelta addEdgeDelta;
 			int32 addedEdgeID = NextID++;
-			addEdgeDelta.EdgeAdditions.Add(addedEdgeID, FGraph2DObjDelta({ StartVertexID, EndVertexID }));
-
-			OutDeltas.Add(addEdgeDelta);
+			OutDelta.EdgeAdditions.Add(addedEdgeID, FGraph2DObjDelta({ StartVertexID, EndVertexID }));
 		}
 
 		return true;
@@ -91,19 +95,113 @@ namespace Modumate
 			return false;
 		}
 
-		TArray<FGraph2DDelta> addEdgeDeltas;
-		AddEdge(addEdgeDeltas, NextID, addedIDs[0], addedIDs[1]);
+		FGraph2DDelta addEdgeDelta;
+		AddEdgeDirect(addEdgeDelta, NextID, addedIDs[0], addedIDs[1]);
 
-		if (!ApplyDeltas(addEdgeDeltas))
+		if (!ApplyDelta(addEdgeDelta))
 		{
 			return false;
 		}
-		OutDeltas.Append(addEdgeDeltas);
+		OutDeltas.Add(addEdgeDelta);
 
 		// TODO: deltas for side-effects of adding the edge (splitting)
 
 		// return graph in its original state
 		ApplyInverseDeltas(OutDeltas);
+
+		return true;
+	}
+
+	bool FGraph::DeleteObjects(TArray<FGraph2DDelta> &OutDeltas, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs)
+	{
+		// the ids that are considered for deletion starts with the input arguments and grows based on object connectivity
+		TSet<int32> vertexIDsToDelete;
+		for (int32 vertexID : VertexIDs)
+		{
+			vertexIDsToDelete.Add(FMath::Abs(vertexID));
+		}
+
+		TSet<int32> edgeIDsToDelete = TSet<int32>(EdgeIDs);
+		for (int32 edgeID : EdgeIDs)
+		{
+			edgeIDsToDelete.Add(FMath::Abs(edgeID));
+		}
+
+		for (int32 vertexID : vertexIDsToDelete)
+		{
+			auto vertex = FindVertex(vertexID);
+			if (vertex != nullptr)
+			{
+				// consider all edges that are connected to the vertex for deletion
+				for (int32 connectedEdgeID : vertex->Edges)
+				{
+					edgeIDsToDelete.Add(FMath::Abs(connectedEdgeID));
+				}
+			}
+		}
+
+		for (int32 edgeID : edgeIDsToDelete)
+		{
+			auto edge = FindEdge(edgeID);
+			if (edge != nullptr)
+			{
+				// delete connected vertices that are not connected to any edge that is not being deleted
+				for (auto vertexID : { edge->StartVertexID, edge->EndVertexID })
+				{
+					auto vertex = FindVertex(vertexID);
+					if (vertex != nullptr)
+					{
+						bool bDeleteVertex = true;
+						for (int32 connectedEdgeID : vertex->Edges)
+						{
+							if (!edgeIDsToDelete.Contains(FMath::Abs(connectedEdgeID)))
+							{
+								bDeleteVertex = false;
+							}
+						}
+
+						if (bDeleteVertex)
+						{
+							vertexIDsToDelete.Add(FMath::Abs(vertexID));
+						}
+					}
+				}
+			}
+		}
+
+		FGraph2DDelta deleteDelta;
+		if (!DeleteObjectsDirect(deleteDelta, vertexIDsToDelete, edgeIDsToDelete))
+		{
+			return false;
+		}
+		OutDeltas.Add(deleteDelta);
+
+		return true;
+	}
+
+	bool FGraph::DeleteObjectsDirect(FGraph2DDelta &OutDelta, const TSet<int32> &VertexIDs, const TSet<int32> &EdgeIDs)
+	{
+		for (int32 vertexID : VertexIDs)
+		{
+			auto vertex = FindVertex(vertexID);
+			if (!ensureAlways(vertex != nullptr))
+			{
+				continue;
+			}
+
+			OutDelta.VertexDeletions.Add(vertexID, vertex->Position);
+		}
+
+		for (int32 edgeID : EdgeIDs)
+		{
+			auto edge = FindEdge(edgeID);
+			if (!ensureAlways(edge != nullptr))
+			{
+				continue;
+			}
+
+			OutDelta.EdgeDeletions.Add(edgeID, FGraph2DObjDelta({ edge->StartVertexID, edge->EndVertexID }));
+		}
 
 		return true;
 	}
