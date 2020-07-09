@@ -1039,7 +1039,7 @@ namespace Modumate
 
 			for (int32 polyID : { originalEdge2D->LeftPolyID, originalEdge2D->RightPolyID })
 			{
-				FGraphPolygon *face = graph2D.FindPolygon(polyID);
+				FGraph2DPolygon *face = graph2D.FindPolygon(polyID);
 				if (face == nullptr)
 				{
 					continue;
@@ -1820,7 +1820,7 @@ namespace Modumate
 
 	bool FGraph3D::Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const FGraph2D &Graph, TMap<int32, int32> &OutFace3DToPoly2D) const
 	{
-		const TMap<int32, FGraphPolygon> &graphPolys = Graph.GetPolygons();
+		const TMap<int32, FGraph2DPolygon> &graphPolys = Graph.GetPolygons();
 
 		// Compare 2D polygon vertex lists with 3D face vertex lists in order to create a mapping between the face IDs.
 		// Only consider interior, closed 2D polygons, since those are the only ones that can exist as 3D faces in the volume graph.
@@ -1836,12 +1836,12 @@ namespace Modumate
 		for (auto &kvp : graphPolys)
 		{
 			int32 polyID = kvp.Key;
-			const FGraphPolygon &polygon = kvp.Value;
+			const FGraph2DPolygon &polygon = kvp.Value;
 			if (polygon.bInterior)
 			{
 				TArray<int32> sortedVerts;
 				Algo::Transform(polygon.Edges, sortedVerts, [&Graph](const FEdgeID &EdgeID) {
-					const FGraphEdge *edge = Graph.FindEdge(EdgeID);
+					const FGraph2DEdge *edge = Graph.FindEdge(EdgeID);
 					return (EdgeID > 0) ? edge->StartVertexID : edge->EndVertexID;
 				});
 				sortedVerts.Sort();

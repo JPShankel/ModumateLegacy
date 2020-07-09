@@ -16,7 +16,7 @@ namespace Modumate
 
 	bool FGraph2D::AddVertex(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D Position)
 	{
-		const FGraphVertex *existingVertex = FindVertex(Position);
+		const FGraph2DVertex *existingVertex = FindVertex(Position);
 
 		if (existingVertex == nullptr)
 		{
@@ -39,7 +39,7 @@ namespace Modumate
 		}
 
 		bool bOutForward;
-		const FGraphEdge *existingEdge = FindEdgeByVertices(StartVertexID, EndVertexID, bOutForward);
+		const FGraph2DEdge *existingEdge = FindEdgeByVertices(StartVertexID, EndVertexID, bOutForward);
 		if (existingEdge == nullptr)
 		{
 			int32 addedEdgeID = NextID++;
@@ -60,7 +60,7 @@ namespace Modumate
 			TArray<FGraph2DDelta> addVertexDeltas;
 			addedVertexIDs.Reset();
 
-			const FGraphVertex *existingVertex = FindVertex(position);
+			const FGraph2DVertex *existingVertex = FindVertex(position);
 
 			if (existingVertex == nullptr)
 			{

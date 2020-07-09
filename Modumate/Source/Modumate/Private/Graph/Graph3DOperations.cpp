@@ -1426,7 +1426,7 @@ namespace Modumate
 		Create2DGraph(whitelistIDs, connectedGraphIDs, joinGraph, graphPlane, true, true);
 		for (auto &kvp : joinGraph.GetPolygons())
 		{
-			const FGraphPolygon &polygon = kvp.Value;
+			const FGraph2DPolygon &polygon = kvp.Value;
 			if (!polygon.bInterior)
 			{
 				for (int32 edgeID : polygon.Edges)

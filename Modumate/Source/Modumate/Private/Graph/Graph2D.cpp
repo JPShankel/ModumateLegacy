@@ -15,220 +15,6 @@
 
 namespace Modumate
 {
-
-	FGraphEdge::FGraphEdge(int32 InID, FGraph2D* InGraph, int32 InStart, int32 InEnd)
-		: ID(InID)
-		, Graph(InGraph)
-		, LeftPolyID(0)
-		, RightPolyID(0)
-		, Angle(0.0f)
-		, EdgeDir(ForceInitToZero)
-		, bValid(false)
-	{
-		SetVertices(InStart, InEnd);
-	}
-
-	void FGraphEdge::SetVertices(int32 InStart, int32 InEnd)
-	{
-		StartVertexID = InStart;
-		EndVertexID = InEnd;
-		bValid = CacheAngle();
-	}
-
-	bool FGraphEdge::CacheAngle()
-	{
-		Angle = 0.0f;
-
-		if (ensureAlways(Graph) && (StartVertexID != 0) && (EndVertexID != 0))
-		{
-			FGraphVertex *startVertex = Graph->FindVertex(StartVertexID);
-			FGraphVertex *endVertex = Graph->FindVertex(EndVertexID);
-			if (ensureAlways(startVertex && endVertex))
-			{
-				FVector2D edgeDelta = endVertex->Position - startVertex->Position;
-				float edgeLength = edgeDelta.Size();
-				if (ensureAlways(edgeLength > Graph->Epsilon))
-				{
-					EdgeDir = edgeDelta / edgeLength;
-					Angle = FRotator::ClampAxis(FMath::RadiansToDegrees(FMath::Atan2(EdgeDir.Y, EdgeDir.X)));
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-
-	void FGraphVertex::AddEdge(FEdgeID EdgeID)
-	{
-		Edges.AddUnique(EdgeID);
-		bDirty = true;
-	}
-
-	bool FGraphVertex::RemoveEdge(FEdgeID EdgeID)
-	{
-		int32 numRemoved = Edges.Remove(EdgeID);
-		if (numRemoved != 0)
-		{
-			bDirty = true;
-			return true;
-		}
-
-		return false;
-	}
-
-	void FGraphVertex::SortEdges()
-	{
-		if (bDirty)
-		{
-			if (Graph->bDebugCheck)
-			{
-				for (FEdgeID edgeID : Edges)
-				{
-					FGraphEdge *edge = Graph->FindEdge(edgeID);
-					if (ensureAlways(edge && edge->bValid))
-					{
-						int32 connectedVertexID = (edgeID > 0) ? edge->StartVertexID : edge->EndVertexID;
-						ensureAlways(connectedVertexID == ID);
-					}
-				}
-			}
-
-			auto edgeSorter = [this](const FEdgeID &edgeID1, const FEdgeID &edgeID2) {
-				float angle1 = 0.0f, angle2 = 0.0f;
-				if (ensureAlways(Graph->GetEdgeAngle(edgeID1, angle1) && Graph->GetEdgeAngle(edgeID2, angle2)))
-				{
-					return angle1 < angle2;
-				}
-				else
-				{
-					return false;
-				}
-			};
-
-			Edges.Sort(edgeSorter);
-			bDirty = false;
-		}
-	}
-
-	bool FGraphVertex::GetNextEdge(FEdgeID curEdgeID, FEdgeID &outNextEdgeID, float &outAngleDelta, int32 indexDelta) const
-	{
-		outNextEdgeID = 0;
-		outAngleDelta = 0.0f;
-
-		FEdgeID curEdgeFromVertexID = -curEdgeID;
-		int32 curEdgeIdx = Edges.Find(curEdgeFromVertexID);
-		if (curEdgeIdx == INDEX_NONE)
-		{
-			return false;
-		}
-
-		if (indexDelta == 0)
-		{
-			return false;
-		}
-
-		int32 numEdges = Edges.Num();
-		int32 nextEdgeIdx = (curEdgeIdx + indexDelta) % numEdges;
-		outNextEdgeID = Edges[nextEdgeIdx];
-		if (outNextEdgeID == 0)
-		{
-			return false;
-		}
-
-		// If we're doubling back on the same edge, then consider it a full rotation
-		if (curEdgeFromVertexID == outNextEdgeID)
-		{
-			outAngleDelta = 360.0f;
-			return true;
-		}
-
-		float curEdgeAngle = 0.0f, nextEdgeAngle = 0.0f;
-		if (Graph->GetEdgeAngle(curEdgeFromVertexID, curEdgeAngle) &&
-			Graph->GetEdgeAngle(outNextEdgeID, nextEdgeAngle) &&
-			ensureAlways(!FMath::IsNearlyEqual(curEdgeAngle, nextEdgeAngle)))
-		{
-			outAngleDelta = nextEdgeAngle - curEdgeAngle;
-			if (outAngleDelta < 0.0f)
-			{
-				outAngleDelta += 360.0f;
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
-
-	bool FGraphPolygon::IsInside(const FGraphPolygon &otherPoly) const
-	{
-		// Polygons cannot be contained inside exterior polygons
-		if (!otherPoly.bInterior)
-		{
-			return false;
-		}
-
-		// If we've already established the other poly as a parent, return the cached result
-		if (ParentID == otherPoly.ID)
-		{
-			return true;
-		}
-
-		// If this is a parent of the other polygon, the parent cannot be contained within the child
-		if (otherPoly.ParentID == ID)
-		{
-			return false;
-		}
-
-		// Early out by checking the AABBs
-		if (!otherPoly.AABB.IsInside(AABB))
-		{
-			return false;
-		}
-
-		for (const FVector2D &point : Points)
-		{
-			if (UModumateFunctionLibrary::PointInPoly2D(point, otherPoly.Points))
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	void FGraphPolygon::SetParent(int32 inParentID)
-	{
-		if (ParentID != inParentID)
-		{
-			// remove self from old parent
-			if (ParentID != 0)
-			{
-				FGraphPolygon *parentPoly = Graph->FindPolygon(ParentID);
-				if (ensureAlways(parentPoly))
-				{
-					int32 numRemoved = parentPoly->InteriorPolygons.Remove(ID);
-					ensureAlways(numRemoved == 1);
-				}
-			}
-
-			ParentID = inParentID;
-
-			// add self to new parent
-			if (ParentID != 0)
-			{
-				FGraphPolygon *parentPoly = Graph->FindPolygon(ParentID);
-				if (ensureAlways(parentPoly && !parentPoly->InteriorPolygons.Contains(ID)))
-				{
-					parentPoly->InteriorPolygons.Add(ID);
-				}
-			}
-		}
-	}
-
-
 	FGraph2D::FGraph2D(float InEpsilon, bool bInDebugCheck)
 		: Epsilon(InEpsilon)
 		, bDebugCheck(bInDebugCheck)
@@ -247,21 +33,21 @@ namespace Modumate
 		DirtyEdges.Reset();
 	}
 
-	FGraphEdge* FGraph2D::FindEdge(FEdgeID EdgeID) 
+	FGraph2DEdge* FGraph2D::FindEdge(FEdgeID EdgeID) 
 	{ 
 		return Edges.Find(FMath::Abs(EdgeID)); 
 	}
 
-	const FGraphEdge* FGraph2D::FindEdge(FEdgeID EdgeID) const 
+	const FGraph2DEdge* FGraph2D::FindEdge(FEdgeID EdgeID) const 
 	{ 
 		return Edges.Find(FMath::Abs(EdgeID)); 
 	}
 
-	const FGraphEdge* FGraph2D::FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward)
+	const FGraph2DEdge* FGraph2D::FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward)
 	{
 		if (const int32 *edgeIDPtr = EdgeIDsByVertexPair.Find(MakeVertexPair(VertexIDA, VertexIDB)))
 		{
-			if (const FGraphEdge *edge = Edges.Find(*edgeIDPtr))
+			if (const FGraph2DEdge *edge = Edges.Find(*edgeIDPtr))
 			{
 				bOutForward = (edge->StartVertexID == VertexIDA);
 				return edge;
@@ -271,27 +57,27 @@ namespace Modumate
 		return nullptr;
 	}
 
-	FGraphVertex* FGraph2D::FindVertex(int32 ID) 
+	FGraph2DVertex* FGraph2D::FindVertex(int32 ID) 
 	{ 
 		return Vertices.Find(ID); 
 	}
 
-	const FGraphVertex* FGraph2D::FindVertex(int32 ID) const 
+	const FGraph2DVertex* FGraph2D::FindVertex(int32 ID) const 
 	{ 
 		return Vertices.Find(ID); 
 	}
 
-	FGraphPolygon* FGraph2D::FindPolygon(int32 ID) 
+	FGraph2DPolygon* FGraph2D::FindPolygon(int32 ID) 
 	{ 
 		return Polygons.Find(ID); 
 	}
 
-	const FGraphPolygon* FGraph2D::FindPolygon(int32 ID) const 
+	const FGraph2DPolygon* FGraph2D::FindPolygon(int32 ID) const 
 	{ 
 		return Polygons.Find(ID); 
 	}
 
-	FGraphVertex* FGraph2D::FindVertex(const FVector2D &Position)
+	FGraph2DVertex* FGraph2D::FindVertex(const FVector2D &Position)
 	{
 		for (auto& vertexkvp : Vertices)
 		{
@@ -321,7 +107,7 @@ namespace Modumate
 
 	bool FGraph2D::GetEdgeAngle(FEdgeID EdgeID, float &outEdgeAngle)
 	{
-		FGraphEdge *edge = FindEdge(EdgeID);
+		FGraph2DEdge *edge = FindEdge(EdgeID);
 		if (edge && edge->bValid)
 		{
 			outEdgeAngle = edge->Angle;
@@ -336,7 +122,7 @@ namespace Modumate
 		return false;
 	}
 
-	FGraphVertex *FGraph2D::AddVertex(const FVector2D &Position, int32 InID)
+	FGraph2DVertex *FGraph2D::AddVertex(const FVector2D &Position, int32 InID)
 	{
 		int32 newID = InID;
 		if (newID == 0)
@@ -353,7 +139,7 @@ namespace Modumate
 		{
 			for (auto &kvp : Vertices)
 			{
-				FGraphVertex &otherVertex = kvp.Value;
+				FGraph2DVertex &otherVertex = kvp.Value;
 				if (!ensureAlways(!Position.Equals(otherVertex.Position, Epsilon)))
 				{
 					return nullptr;
@@ -361,13 +147,13 @@ namespace Modumate
 			}
 		}
 
-		FGraphVertex &newVertex = Vertices.Add(newID, FGraphVertex(newID, this, Position));
+		FGraph2DVertex &newVertex = Vertices.Add(newID, FGraph2DVertex(newID, this, Position));
 		bDirty = true;
 
 		return &newVertex;
 	}
 
-	FGraphEdge *FGraph2D::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID)
+	FGraph2DEdge *FGraph2D::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID)
 	{
 		int32 newID = InID;
 		if (newID == 0)
@@ -380,14 +166,14 @@ namespace Modumate
 			return nullptr;
 		}
 
-		FGraphEdge &newEdge = Edges.Add(newID, FGraphEdge(newID, this, StartVertexID, EndVertexID));
+		FGraph2DEdge &newEdge = Edges.Add(newID, FGraph2DEdge(newID, this, StartVertexID, EndVertexID));
 
 		bDirty = true;
 		DirtyEdges.Add(newID);
 		DirtyEdges.Add(-newID);
 
-		FGraphVertex *startVertex = FindVertex(StartVertexID);
-		FGraphVertex *endVertex = FindVertex(EndVertexID);
+		FGraph2DVertex *startVertex = FindVertex(StartVertexID);
+		FGraph2DVertex *endVertex = FindVertex(EndVertexID);
 		if (startVertex && endVertex)
 		{
 			startVertex->AddEdge(newID);
@@ -401,7 +187,7 @@ namespace Modumate
 
 	bool FGraph2D::RemoveVertex(int32 VertexID)
 	{
-		FGraphVertex *vertexToRemove = FindVertex(VertexID);
+		FGraph2DVertex *vertexToRemove = FindVertex(VertexID);
 		if (!vertexToRemove)
 		{
 			return false;
@@ -410,7 +196,7 @@ namespace Modumate
 		for (FEdgeID connectedEdgeID : vertexToRemove->Edges)
 		{
 			bool bEdgeStartsFromVertex = (connectedEdgeID > 0);
-			FGraphEdge *connectedEdge = FindEdge(connectedEdgeID);
+			FGraph2DEdge *connectedEdge = FindEdge(connectedEdgeID);
 			if (ensureAlways(connectedEdge))
 			{
 				int32 &vertexIDRef = bEdgeStartsFromVertex ? connectedEdge->StartVertexID : connectedEdge->EndVertexID;
@@ -427,7 +213,7 @@ namespace Modumate
 	bool FGraph2D::RemoveEdge(int32 EdgeID)
 	{
 		EdgeID = FMath::Abs(EdgeID);
-		FGraphEdge *edgeToRemove = FindEdge(EdgeID);
+		FGraph2DEdge *edgeToRemove = FindEdge(EdgeID);
 		if (!edgeToRemove)
 		{
 			return false;
@@ -435,7 +221,7 @@ namespace Modumate
 
 		if (edgeToRemove->StartVertexID != 0)
 		{
-			FGraphVertex *startVertex = FindVertex(edgeToRemove->StartVertexID);
+			FGraph2DVertex *startVertex = FindVertex(edgeToRemove->StartVertexID);
 			if (ensureAlways(startVertex && startVertex->RemoveEdge(EdgeID)))
 			{
 				bDirty = true;
@@ -444,7 +230,7 @@ namespace Modumate
 
 		if (edgeToRemove->EndVertexID != 0)
 		{
-			FGraphVertex *endVertex = FindVertex(edgeToRemove->EndVertexID);
+			FGraph2DVertex *endVertex = FindVertex(edgeToRemove->EndVertexID);
 			if (ensureAlways(endVertex && endVertex->RemoveEdge(-EdgeID)))
 			{
 				bDirty = true;
@@ -483,7 +269,7 @@ namespace Modumate
 			DirtyEdges.Add(kvp.Key);
 			DirtyEdges.Add(-kvp.Key);
 
-			FGraphEdge &edge = kvp.Value;
+			FGraph2DEdge &edge = kvp.Value;
 			edge.LeftPolyID = 0;
 			edge.RightPolyID = 0;
 		}
@@ -491,7 +277,7 @@ namespace Modumate
 		// make sure all vertex-edge connections are sorted
 		for (auto &kvp : Vertices)
 		{
-			FGraphVertex &vertex = kvp.Value;
+			FGraph2DVertex &vertex = kvp.Value;
 			vertex.SortEdges();
 		}
 
@@ -508,7 +294,7 @@ namespace Modumate
 			curPolyEdges.Reset();
 			curPolyPoints.Reset();
 
-			FGraphEdge *curEdge = FindEdge(curEdgeID);
+			FGraph2DEdge *curEdge = FindEdge(curEdgeID);
 
 			while (!visitedEdges.Contains(curEdgeID) && curEdge)
 			{
@@ -518,8 +304,8 @@ namespace Modumate
 				// choose the next vertex based on whether we are traversing the current edge forwards or backwards
 				int32 prevVertexID = (curEdgeID > 0) ? curEdge->StartVertexID : curEdge->EndVertexID;
 				int32 nextVertexID = (curEdgeID > 0) ? curEdge->EndVertexID : curEdge->StartVertexID;
-				FGraphVertex *prevVertex = FindVertex(prevVertexID);
-				FGraphVertex *nextVertex = FindVertex(nextVertexID);
+				FGraph2DVertex *prevVertex = FindVertex(prevVertexID);
+				FGraph2DVertex *nextVertex = FindVertex(nextVertexID);
 				FEdgeID nextEdgeID = 0;
 				float angleDelta = 0.0f;
 
@@ -552,7 +338,7 @@ namespace Modumate
 					bool bPolyInterior = FMath::IsNearlyEqual(expectedInteriorAngle, curPolyTotalAngle, polyAngleEpsilon);
 
 					int32 newID = NextPolyID++;
-					FGraphPolygon newPolygon(newID, this);
+					FGraph2DPolygon newPolygon(newID, this);
 					newPolygon.Edges = curPolyEdges;
 					newPolygon.bHasDuplicateEdge = bPolyHasDuplicateEdge;
 					newPolygon.bInterior = bPolyInterior;
@@ -561,7 +347,7 @@ namespace Modumate
 
 					for (FEdgeID edgeID : curPolyEdges)
 					{
-						if (FGraphEdge *edge = FindEdge(edgeID))
+						if (FGraph2DEdge *edge = FindEdge(edgeID))
 						{
 							// determine which side of the edge this new polygon is on
 							int32 &adjacentPolyID = (edgeID > 0) ? edge->LeftPolyID : edge->RightPolyID;
@@ -578,11 +364,11 @@ namespace Modumate
 		// determine which polygons are inside of others
 		for (auto &childKVP : Polygons)
 		{
-			FGraphPolygon &childPoly = childKVP.Value;
+			FGraph2DPolygon &childPoly = childKVP.Value;
 
 			for (auto &parentKVP : Polygons)
 			{
-				FGraphPolygon &parentPoly = parentKVP.Value;
+				FGraph2DPolygon &parentPoly = parentKVP.Value;
 
 				if (childPoly.IsInside(parentPoly))
 				{
@@ -633,12 +419,12 @@ namespace Modumate
 		return resultID;
 	}
 
-	FGraphPolygon *FGraph2D::GetExteriorPolygon()
+	FGraph2DPolygon *FGraph2D::GetExteriorPolygon()
 	{
 		return FindPolygon(GetExteriorPolygonID());
 	}
 
-	const FGraphPolygon *FGraph2D::GetExteriorPolygon() const
+	const FGraph2DPolygon *FGraph2D::GetExteriorPolygon() const
 	{
 		return FindPolygon(GetExteriorPolygonID());
 	}
@@ -651,13 +437,13 @@ namespace Modumate
 
 		for (const auto &kvp : Vertices)
 		{
-			const FGraphVertex &vertex = kvp.Value;
+			const FGraph2DVertex &vertex = kvp.Value;
 			OutRecord.Vertices.Add(vertex.ID, vertex.Position);
 		}
 
 		for (const auto &kvp : Edges)
 		{
-			const FGraphEdge &edge = kvp.Value;
+			const FGraph2DEdge &edge = kvp.Value;
 			TArray<int32> vertexIDs({ edge.StartVertexID, edge.EndVertexID });
 			FGraph2DEdgeRecord edgeRecord({ vertexIDs });
 			OutRecord.Edges.Add(edge.ID, edgeRecord);
@@ -665,7 +451,7 @@ namespace Modumate
 
 		for (const auto &kvp : Polygons)
 		{
-			const FGraphPolygon &poly = kvp.Value;
+			const FGraph2DPolygon &poly = kvp.Value;
 
 			if (!poly.bInterior && !bSaveExteriorPolygons)
 			{
@@ -685,7 +471,7 @@ namespace Modumate
 
 		for (const auto &kvp : InRecord.Vertices)
 		{
-			FGraphVertex *newVertex = AddVertex(kvp.Value, kvp.Key);
+			FGraph2DVertex *newVertex = AddVertex(kvp.Value, kvp.Key);
 			if (newVertex == nullptr)
 			{
 				return false;
@@ -702,7 +488,7 @@ namespace Modumate
 				return false;
 			}
 
-			FGraphEdge *newEdge = AddEdge(edgeRecord.VertexIDs[0], edgeRecord.VertexIDs[1], kvp.Key);
+			FGraph2DEdge *newEdge = AddEdge(edgeRecord.VertexIDs[0], edgeRecord.VertexIDs[1], kvp.Key);
 			if (newEdge == nullptr)
 			{
 				return false;
@@ -715,7 +501,7 @@ namespace Modumate
 		{
 			const FGraph2DPolygonRecord &polyRecord = kvp.Value;
 
-			FGraphPolygon poly(kvp.Key, this);
+			FGraph2DPolygon poly(kvp.Key, this);
 			poly.Edges = polyRecord.EdgeIDs;
 
 			// TODO: use the polygon calculation to compute this data, and verify the integrity of the input.
@@ -725,13 +511,13 @@ namespace Modumate
 			// At least make sure all of the referenced edges and vertices are correct, also to update the AABB and cached points.
 			for (FEdgeID edgeID : poly.Edges)
 			{
-				const FGraphEdge *edge = FindEdge(edgeID);
+				const FGraph2DEdge *edge = FindEdge(edgeID);
 				if (edge == nullptr)
 				{
 					return false;
 				}
 
-				FGraphVertex *vertex = FindVertex(edge->StartVertexID);
+				FGraph2DVertex *vertex = FindVertex(edge->StartVertexID);
 				if (vertex == nullptr)
 				{
 					return false;
@@ -762,7 +548,7 @@ namespace Modumate
 		{
 			int32 vertexID = kvp.Key;
 			const TPair<FVector2D, FVector2D> &vertexDelta = kvp.Value;
-			FGraphVertex *vertex = FindVertex(vertexID);
+			FGraph2DVertex *vertex = FindVertex(vertexID);
 			if (ensureAlways(vertex))
 			{
 				vertex->Position = vertexDelta.Value;
