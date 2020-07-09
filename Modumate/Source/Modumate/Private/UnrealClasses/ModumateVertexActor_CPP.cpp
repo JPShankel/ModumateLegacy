@@ -4,7 +4,6 @@
 #include "UnrealClasses/ModumateVertexActor_CPP.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Engine/StaticMesh.h"
-#include "DocumentManagement/ModumateObjectInstanceMetaVertex.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 

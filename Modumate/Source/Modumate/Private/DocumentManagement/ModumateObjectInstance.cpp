@@ -21,27 +21,9 @@
 #include "UI/HUDDrawWidget.h"
 #include "UnrealClasses/LineActor.h"
 #include "DocumentManagement/ModumateCommands.h"
+#include "DocumentManagement/Objects/MOIFactory.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "Database/ModumateObjectDatabase.h"
-#include "DocumentManagement/ModumateObjectGroup.h"
-#include "DocumentManagement/ModumateObjectInstanceCabinets.h"
-#include "DocumentManagement/ModumateObjectInstanceCutPlane.h"
-#include "DocumentManagement/ModumateObjectInstanceFinish.h"
-#include "DocumentManagement/ModumateObjectInstanceFlatPoly.h"
-#include "DocumentManagement/ModumateObjectInstanceFurniture.h"
-#include "DocumentManagement/ModumateObjectInstanceGraphObjects.h"
-#include "DocumentManagement/ModumateObjectInstanceMetaEdge.h"
-#include "DocumentManagement/ModumateObjectInstanceMetaPlane.h"
-#include "DocumentManagement/ModumateObjectInstanceMetaVertex.h"
-#include "DocumentManagement/ModumateObjectInstancePlaneHostedObj.h"
-#include "DocumentManagement/ModumateObjectInstancePortal.h"
-#include "DocumentManagement/ModumateObjectInstanceRails.h"
-#include "DocumentManagement/ModumateObjectInstanceRoofPerimeter.h"
-#include "DocumentManagement/ModumateObjectInstanceRooms.h"
-#include "DocumentManagement/ModumateObjectInstanceScopeBox.h"
-#include "DocumentManagement/ModumateObjectInstanceStairs.h"
-#include "DocumentManagement/ModumateObjectInstanceStructureLine.h"
-#include "DocumentManagement/ModumateObjectInstanceTrim.h"
 #include "UnrealClasses/ModumateObjectComponent_CPP.h"
 
 class AEditModelPlayerController_CPP;
@@ -144,40 +126,7 @@ namespace Modumate
 
 	void FModumateObjectInstance::MakeImplementation()
 	{
-		switch (GetObjectType())
-		{
-		case EObjectType::OTWallSegment: Implementation = new FMOIPlaneHostedObjImpl(this); break;
-		case EObjectType::OTRailSegment: Implementation = new FMOIRailImpl(this); break;
-		case EObjectType::OTFloorSegment: Implementation = new FMOIPlaneHostedObjImpl(this); break;
-		case EObjectType::OTRoofFace: Implementation = new FMOIPlaneHostedObjImpl(this); break;
-		case EObjectType::OTCountertop: Implementation = new FMOIFlatPolyImpl(this,false); break; // false = no invert handle
-		case EObjectType::OTDoor:
-		case EObjectType::OTWindow: Implementation = new FMOIPortalImpl(this); break;
-		case EObjectType::OTFurniture: Implementation = new FMOIObjectImpl(this); break;
-		case EObjectType::OTCabinet: Implementation = new FMOICabinetImpl(this); break;
-		case EObjectType::OTStaircase: Implementation = new FMOIStaircaseImpl(this); break;
-		case EObjectType::OTFinish: Implementation = new FMOIFinishImpl(this); break;
-		case EObjectType::OTGroup: Implementation = new FMOIGroupImpl(this); break;
-		case EObjectType::OTRoom: Implementation = new FMOIRoomImpl(this); break;
-		case EObjectType::OTTrim: Implementation = new FMOITrimImpl(this); break;
-		case EObjectType::OTGraphVertex: Implementation = new FMOIGraphVertex(this); break;
-		case EObjectType::OTGraphEdge: Implementation = new FMOIGraphEdge(this); break;
-		case EObjectType::OTMetaVertex: Implementation = new FMOIMetaVertexImpl(this); break;
-		case EObjectType::OTMetaEdge: Implementation = new FMOIMetaEdgeImpl(this); break;
-		case EObjectType::OTMetaPlane: Implementation = new FMOIMetaPlaneImpl(this); break;
-		case EObjectType::OTCutPlane: Implementation = new FMOICutPlaneImpl(this); break;
-		case EObjectType::OTScopeBox: Implementation = new FMOIScopeBoxImpl(this); break;
-		case EObjectType::OTStructureLine: Implementation = new FMOIStructureLine(this); break;
-		case EObjectType::OTRoofPerimeter: Implementation = new FMOIRoofPerimeterImpl(this); break;
-		default:
-		{
-			FString objectTypeString = EnumValueString(EObjectType, GetObjectType());
-			ensureAlwaysMsgf(false, TEXT("Tried to create a MOI from an unsupported ObjectType: %s!"),
-				*objectTypeString);
-			Implementation = nullptr;
-			break;
-		}
-		}
+		Implementation = FMOIFactory::MakeMOIImplementation(GetObjectType(), this);
 	}
 
 	void FModumateObjectInstance::MakeActor(const FVector &Loc, const FQuat &Rot)

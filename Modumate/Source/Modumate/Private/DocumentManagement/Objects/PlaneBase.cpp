@@ -1,6 +1,6 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "DocumentManagement/ModumateObjectInstancePlaneBase.h"
+#include "DocumentManagement/Objects/PlaneBase.h"
 
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"

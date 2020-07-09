@@ -1,38 +1,29 @@
-// Copyright 2019 Modumate, Inc. All Rights Reserved.
+// Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "CoreMinimal.h"
 #include "DocumentManagement/ModumateObjectInstance.h"
-#include "DocumentManagement/ModumateMiterNodeInterface.h"
 
 class UWorld;
 class ALineActor;
 
 namespace Modumate
 {
-	class MODUMATE_API FMOIMetaEdgeImpl : public FModumateObjectInstanceImplBase, IMiterNode
+	class MODUMATE_API FMOIEdgeImplBase : public FModumateObjectInstanceImplBase
 	{
 	public:
-		FMOIMetaEdgeImpl(FModumateObjectInstance *moi);
+		FMOIEdgeImplBase(FModumateObjectInstance *moi);
 
 		virtual void SetLocation(const FVector &p) override;
 		virtual FVector GetLocation() const override;
 		virtual FVector GetCorner(int32 index) const override;
 		virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bEnableHover) override;
 		virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
-		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag) override;
 		virtual void SetupDynamicGeometry() override;
 		virtual void UpdateDynamicGeometry() override;
-		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 		virtual void OnSelected(bool bNewSelected) override;
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 		virtual bool ShowStructureOnSelection() const override { return false; }
 		virtual bool UseStructureDataForCollision() const override { return true; }
-		virtual const IMiterNode* GetMiterInterface() const override { return this; }
-
-		// Begin IMiterNode interface
-		virtual const FMiterData &GetMiterData() const;
-		// End IMiterNode interface
 
 	protected:
 		float GetThicknessMultiplier() const;
@@ -42,6 +33,5 @@ namespace Modumate
 		TWeakObjectPtr<ALineActor> LineActor;
 		FColor HoverColor;
 		float HoverThickness;
-		FMiterData CachedMiterData;
 	};
 }

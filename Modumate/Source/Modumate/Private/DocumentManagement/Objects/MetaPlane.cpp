@@ -1,6 +1,6 @@
-// Copyright 2019 Modumate, Inc. All Rights Reserved.
+// Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "DocumentManagement/ModumateObjectInstanceMetaPlane.h"
+#include "DocumentManagement/Objects/MetaPlane.h"
 
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"

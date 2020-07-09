@@ -60,6 +60,7 @@
 #include "ToolsAndAdjustments/Tools/EditModelSplitTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelStairTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelStructureLineTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelSurfaceGraphTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelTrimTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelWandTool.h"
 
@@ -437,6 +438,7 @@ void AEditModelPlayerController_CPP::CreateTools()
 	RegisterTool(CreateTool<UStructureLineTool>());
 	RegisterTool(CreateTool<UDrawingTool>());
 	RegisterTool(CreateTool<UGraph2DTool>());
+	RegisterTool(CreateTool<USurfaceGraphTool>());
 }
 
 void AEditModelPlayerController_CPP::RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool)

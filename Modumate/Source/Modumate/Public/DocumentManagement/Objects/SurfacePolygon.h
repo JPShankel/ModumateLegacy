@@ -1,17 +1,17 @@
-// Copyright 2019 Modumate, Inc. All Rights Reserved.
+// Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DocumentManagement/ModumateObjectInstancePlaneBase.h"
+#include "DocumentManagement/Objects/PlaneBase.h"
 #include "Graph/Graph3D.h"
 
 
 namespace Modumate
 {
-	class MODUMATE_API FMOIMetaPlaneImpl : public FMOIPlaneImplBase
+	class MODUMATE_API FMOISurfacePolygonImpl : public FMOIPlaneImplBase
 	{
 	public:
-		FMOIMetaPlaneImpl(FModumateObjectInstance *moi);
+		FMOISurfacePolygonImpl(FModumateObjectInstance *moi);
 
 		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 		virtual void SetupDynamicGeometry() override;

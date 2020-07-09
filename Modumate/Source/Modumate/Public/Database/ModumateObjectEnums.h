@@ -98,6 +98,7 @@ enum class EToolMode : uint8
 	VE_STRUCTURELINE,
 	VE_DRAWING,
 	VE_GRAPH2D,
+	VE_SURFACEGRAPH,
 };
 
 UENUM(BlueprintType)
@@ -118,11 +119,13 @@ enum class EObjectType : uint8
 	OTRoom,
 	OTCountertop,
 	OTTrim,
-	OTGraphVertex,	// DEPRECATED, once meta planes replace the 2D room graph
-	OTGraphEdge,	// DEPRECATED, once meta planes replace the 2D room graph
 	OTMetaVertex,
 	OTMetaEdge,
 	OTMetaPlane,
+	OTSurfaceGraph,
+	OTSurfaceVertex,
+	OTSurfaceEdge,
+	OTSurfacePolygon,
 	OTCutPlane,
 	OTScopeBox,
 	OTStructureLine,

@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DocumentManagement/ModumateObjectInstancePlaneBase.h"
+#include "DocumentManagement/Objects/PlaneBase.h"
 #include "Drafting/ModumateHUDDraw.h"
 #include "DocumentManagement/ModumateSceneCaptureObjectInterface.h"
 

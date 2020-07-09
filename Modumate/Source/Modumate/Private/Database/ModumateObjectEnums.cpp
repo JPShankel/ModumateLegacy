@@ -96,11 +96,13 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTRoom: return EToolMode::VE_NONE;
 	case EObjectType::OTCountertop: return EToolMode::VE_COUNTERTOP;
 	case EObjectType::OTTrim: return EToolMode::VE_TRIM;
-	case EObjectType::OTGraphVertex: return EToolMode::VE_NONE;
-	case EObjectType::OTGraphEdge: return EToolMode::VE_NONE;
-	case EObjectType::OTMetaVertex: return EToolMode::VE_METAPLANE;
-	case EObjectType::OTMetaEdge: return EToolMode::VE_METAPLANE;
+	case EObjectType::OTMetaVertex:
+	case EObjectType::OTMetaEdge:
 	case EObjectType::OTMetaPlane: return EToolMode::VE_METAPLANE;
+	case EObjectType::OTSurfaceGraph:
+	case EObjectType::OTSurfaceVertex:
+	case EObjectType::OTSurfaceEdge:
+	case EObjectType::OTSurfacePolygon: return EToolMode::VE_SURFACEGRAPH;
 	case EObjectType::OTCutPlane: return EToolMode::VE_CUTPLANE;
 	case EObjectType::OTScopeBox: return EToolMode::VE_SCOPEBOX;
 	case EObjectType::OTStructureLine: return EToolMode::VE_STRUCTURELINE;
@@ -143,16 +145,20 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTCountertops", "Countertops") : LOCTEXT("OTCountertop", "Countertop");
 	case EObjectType::OTTrim:
 		return bPlural ? LOCTEXT("OTTrims", "Trims") : LOCTEXT("OTTrim", "Trim");
-	case EObjectType::OTGraphVertex:
-		return bPlural ? LOCTEXT("OTGraphVertexs", "Graph Vertices") : LOCTEXT("OTGraphVertex", "Graph Vertex");
-	case EObjectType::OTGraphEdge:
-		return bPlural ? LOCTEXT("OTGraphEdges", "Graph Edges") : LOCTEXT("OTGraphEdge", "Graph Edge");
 	case EObjectType::OTMetaVertex:
 		return bPlural ? LOCTEXT("OTMetaVertexs", "Meta Vertices") : LOCTEXT("OTMetaVertex", "Meta Vertex");
 	case EObjectType::OTMetaEdge:
 		return bPlural ? LOCTEXT("OTMetaEdges", "Meta Edges") : LOCTEXT("OTMetaEdge", "Meta Edge");
 	case EObjectType::OTMetaPlane:
 		return bPlural ? LOCTEXT("OTMetaPlanes", "Meta Planes") : LOCTEXT("OTMetaPlane", "Meta Plane");
+	case EObjectType::OTSurfaceGraph:
+		return bPlural ? LOCTEXT("OTSurfaceGraphs", "Surface Graphs") : LOCTEXT("OTSurfaceGraph", "Surface Graph");
+	case EObjectType::OTSurfaceVertex:
+		return bPlural ? LOCTEXT("OTSurfaceVertexs", "Surface Graph Vertices") : LOCTEXT("OTSurfaceVertex", "Surface Graph Vertex");
+	case EObjectType::OTSurfaceEdge:
+		return bPlural ? LOCTEXT("OTSurfaceEdges", "Surface Graph Edges") : LOCTEXT("OTSurfaceEdge", "Surface Graph Edge");
+	case EObjectType::OTSurfacePolygon:
+		return bPlural ? LOCTEXT("OTSurfacePolygons", "Surface Graph Polygons") : LOCTEXT("OTSurfacePolygon", "Surface Graph Polygon");
 	case EObjectType::OTCutPlane:
 		return bPlural ? LOCTEXT("OTCutPlanes", "Cut Planes") : LOCTEXT("OTCutPlane", "Cut Plane");
 	case EObjectType::OTScopeBox:
