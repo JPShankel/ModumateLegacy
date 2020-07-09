@@ -24,7 +24,7 @@ bool UGraph2DTool::Activate()
 	TSet<FTypedGraphObjID> graphObjIDs, connectedGraphIDs;
 	UModumateObjectStatics::GetGraphIDsFromMOIs(Controller->EMPlayerState->SelectedObjects, graphObjIDs);
 
-	FGraph selectedGraph;
+	FGraph2D selectedGraph;
 	FPlane graphPlane;
 	if (volumeGraph.Create2DGraph(graphObjIDs, connectedGraphIDs, selectedGraph, graphPlane, true, true))
 	{

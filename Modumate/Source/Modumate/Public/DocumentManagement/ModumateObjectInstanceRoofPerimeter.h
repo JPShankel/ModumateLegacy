@@ -3,8 +3,8 @@
 
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "DocumentManagement/ModumateObjectInstance.h"
-#include "Graph/ModumateGraph.h"
-#include "Graph/ModumateGraph3DTypes.h"
+#include "Graph/Graph2D.h"
+#include "Graph/Graph3DTypes.h"
 
 class AAdjustmentHandleActor;
 class ACreateRoofFacesHandle;
@@ -44,7 +44,7 @@ namespace Modumate
 		TArray<int32> CachedFaceIDs;
 		TArray<FVector> CachedPerimeterPoints;
 		FVector CachedPerimeterCenter;
-		FGraph CachedPerimeterGraph;
+		FGraph2D CachedPerimeterGraph;
 		FPlane CachedPlane;
 
 		TSet<FTypedGraphObjID> TempGroupMembers, TempGroupEdges, TempGroupFaces, TempConnectedGraphIDs;

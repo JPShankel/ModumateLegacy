@@ -6,7 +6,7 @@
 #include "ProceduralMeshComponent.h"
 #include "Database/ModumateSimpleMesh.h"
 #include "ModumateCore/ModumateTypes.h"
-#include "Graph/ModumateGraph3DTypes.h"
+#include "Graph/Graph3DTypes.h"
 
 #include "ModumateGeometryStatics.generated.h"
 

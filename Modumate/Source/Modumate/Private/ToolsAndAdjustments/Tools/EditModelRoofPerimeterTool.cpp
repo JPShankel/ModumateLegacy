@@ -7,7 +7,7 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Graph/Graph3DDelta.h"
-#include "Graph/ModumateGraph.h"
+#include "Graph/Graph2D.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateRoofStatics.h"
 
@@ -31,7 +31,7 @@ bool URoofPerimeterTool::Activate()
 
 	// Try to make a 2D graph from the selected objects, in order to find a perimeter
 	TArray<int32> perimeterEdgeIDs;
-	FGraph selectedGraph;
+	FGraph2D selectedGraph;
 	FPlane perimeterPlane;
 	if (volumeGraph.Create2DGraph(graphObjIDs, connectedGraphIDs, selectedGraph, perimeterPlane, true, false))
 	{

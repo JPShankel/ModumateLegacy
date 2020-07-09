@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 
-#include "ModumateGraph3DTypes.h"
+#include "Graph3DTypes.h"
 #include "Graph3DVertex.h"
 #include "Graph/Graph3DEdge.h"
 #include "Graph/Graph3DFace.h"
@@ -15,7 +15,7 @@ typedef FGraph3DRecordV1 FGraph3DRecord;
 
 namespace Modumate
 {
-	class FGraph;
+	class FGraph2D;
 	class FGraph3DDelta;
 	struct FGraph3DGroupIDsDelta;
 
@@ -71,20 +71,20 @@ namespace Modumate
 		// bRequireConnected - that the graph is fully connected (only one exterior polygonal perimeter)
 		// bRequireComplete - there are no extra 3D graph objects supplied that don't correspond to a 2D graph object
 		bool Create2DGraph(const TSet<FTypedGraphObjID> &InitialGraphObjIDs, TSet<FTypedGraphObjID> &OutContainedGraphObjIDs,
-			FGraph &OutGraph, FPlane &OutPlane, bool bRequireConnected, bool bRequireComplete) const;
+			FGraph2D &OutGraph, FPlane &OutPlane, bool bRequireConnected, bool bRequireComplete) const;
 
 		// Create 2D graph representing the connecting set of vertices and edges that are on the cut plane and contain the starting vertex,
 		// optionally only traversing the whitelisted IDs, if a set is provided, and optionally creating a mapping from 3D Face IDs to 2D Poly IDs
-		bool Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph &OutGraph, const TSet<FTypedGraphObjID> *WhitelistIDs = nullptr, TMap<int32, int32> *OutFace3DToPoly2D = nullptr) const;
+		bool Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph2D &OutGraph, const TSet<FTypedGraphObjID> *WhitelistIDs = nullptr, TMap<int32, int32> *OutFace3DToPoly2D = nullptr) const;
 
 		// Create 2D graph representing faces, edges, and vertices that are sliced by the cut plane
-		bool Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, FGraph &OutGraph, TMap<int32, int32> &OutGraphIDToObjID) const;
+		bool Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, FGraph2D &OutGraph, TMap<int32, int32> &OutGraphIDToObjID) const;
 
 		void CheckTranslationValidity(const TArray<int32> &InVertexIDs, TMap<int32, bool> &OutEdgeIDToValidity) const;
 
 	private:
 		// Find a mapping between this 3D graph's faces and the given 2D graph's polygons, assuming the underlying vertex IDs are the same.
-		bool Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const FGraph &Graph, TMap<int32, int32> &OutFace3DToPoly2D) const;
+		bool Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const FGraph2D &Graph, TMap<int32, int32> &OutFace3DToPoly2D) const;
 
 	public:
 		static void CloneFromGraph(FGraph3D &tempGraph, const FGraph3D &graph);

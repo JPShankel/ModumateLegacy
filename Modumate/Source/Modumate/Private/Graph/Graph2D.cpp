@@ -1,6 +1,6 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "Graph/ModumateGraph.h"
+#include "Graph/Graph2D.h"
 
 #include "ModumateCore/ModumateFunctionLibrary.h"
 
@@ -16,7 +16,7 @@
 namespace Modumate
 {
 
-	FGraphEdge::FGraphEdge(int32 InID, FGraph* InGraph, int32 InStart, int32 InEnd)
+	FGraphEdge::FGraphEdge(int32 InID, FGraph2D* InGraph, int32 InStart, int32 InEnd)
 		: ID(InID)
 		, Graph(InGraph)
 		, LeftPolyID(0)
@@ -229,14 +229,14 @@ namespace Modumate
 	}
 
 
-	FGraph::FGraph(float InEpsilon, bool bInDebugCheck)
+	FGraph2D::FGraph2D(float InEpsilon, bool bInDebugCheck)
 		: Epsilon(InEpsilon)
 		, bDebugCheck(bInDebugCheck)
 	{
 		Reset();
 	}
 
-	void FGraph::Reset()
+	void FGraph2D::Reset()
 	{
 		NextEdgeID = NextVertexID = NextPolyID = 1;
 		bDirty = false;
@@ -247,17 +247,17 @@ namespace Modumate
 		DirtyEdges.Reset();
 	}
 
-	FGraphEdge* FGraph::FindEdge(FEdgeID EdgeID) 
+	FGraphEdge* FGraph2D::FindEdge(FEdgeID EdgeID) 
 	{ 
 		return Edges.Find(FMath::Abs(EdgeID)); 
 	}
 
-	const FGraphEdge* FGraph::FindEdge(FEdgeID EdgeID) const 
+	const FGraphEdge* FGraph2D::FindEdge(FEdgeID EdgeID) const 
 	{ 
 		return Edges.Find(FMath::Abs(EdgeID)); 
 	}
 
-	const FGraphEdge* FGraph::FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward)
+	const FGraphEdge* FGraph2D::FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward)
 	{
 		if (const int32 *edgeIDPtr = EdgeIDsByVertexPair.Find(MakeVertexPair(VertexIDA, VertexIDB)))
 		{
@@ -271,27 +271,27 @@ namespace Modumate
 		return nullptr;
 	}
 
-	FGraphVertex* FGraph::FindVertex(int32 ID) 
+	FGraphVertex* FGraph2D::FindVertex(int32 ID) 
 	{ 
 		return Vertices.Find(ID); 
 	}
 
-	const FGraphVertex* FGraph::FindVertex(int32 ID) const 
+	const FGraphVertex* FGraph2D::FindVertex(int32 ID) const 
 	{ 
 		return Vertices.Find(ID); 
 	}
 
-	FGraphPolygon* FGraph::FindPolygon(int32 ID) 
+	FGraphPolygon* FGraph2D::FindPolygon(int32 ID) 
 	{ 
 		return Polygons.Find(ID); 
 	}
 
-	const FGraphPolygon* FGraph::FindPolygon(int32 ID) const 
+	const FGraphPolygon* FGraph2D::FindPolygon(int32 ID) const 
 	{ 
 		return Polygons.Find(ID); 
 	}
 
-	FGraphVertex* FGraph::FindVertex(const FVector2D &Position)
+	FGraphVertex* FGraph2D::FindVertex(const FVector2D &Position)
 	{
 		for (auto& vertexkvp : Vertices)
 		{
@@ -304,7 +304,7 @@ namespace Modumate
 		return nullptr;
 	}
 
-	bool FGraph::ContainsObject(int32 ID, EGraphObjectType GraphObjectType) const
+	bool FGraph2D::ContainsObject(int32 ID, EGraphObjectType GraphObjectType) const
 	{
 		switch (GraphObjectType)
 		{
@@ -319,7 +319,7 @@ namespace Modumate
 		}
 	}
 
-	bool FGraph::GetEdgeAngle(FEdgeID EdgeID, float &outEdgeAngle)
+	bool FGraph2D::GetEdgeAngle(FEdgeID EdgeID, float &outEdgeAngle)
 	{
 		FGraphEdge *edge = FindEdge(EdgeID);
 		if (edge && edge->bValid)
@@ -336,7 +336,7 @@ namespace Modumate
 		return false;
 	}
 
-	FGraphVertex *FGraph::AddVertex(const FVector2D &Position, int32 InID)
+	FGraphVertex *FGraph2D::AddVertex(const FVector2D &Position, int32 InID)
 	{
 		int32 newID = InID;
 		if (newID == 0)
@@ -367,7 +367,7 @@ namespace Modumate
 		return &newVertex;
 	}
 
-	FGraphEdge *FGraph::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID)
+	FGraphEdge *FGraph2D::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID)
 	{
 		int32 newID = InID;
 		if (newID == 0)
@@ -399,7 +399,7 @@ namespace Modumate
 		return &newEdge;
 	}
 
-	bool FGraph::RemoveVertex(int32 VertexID)
+	bool FGraph2D::RemoveVertex(int32 VertexID)
 	{
 		FGraphVertex *vertexToRemove = FindVertex(VertexID);
 		if (!vertexToRemove)
@@ -424,7 +424,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph::RemoveEdge(int32 EdgeID)
+	bool FGraph2D::RemoveEdge(int32 EdgeID)
 	{
 		EdgeID = FMath::Abs(EdgeID);
 		FGraphEdge *edgeToRemove = FindEdge(EdgeID);
@@ -458,7 +458,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph::RemoveObject(int32 ID, EGraphObjectType GraphObjectType)
+	bool FGraph2D::RemoveObject(int32 ID, EGraphObjectType GraphObjectType)
 	{
 		switch (GraphObjectType)
 		{
@@ -472,7 +472,7 @@ namespace Modumate
 		}
 	}
 
-	int32 FGraph::CalculatePolygons()
+	int32 FGraph2D::CalculatePolygons()
 	{
 		// clear the existing polygon data before computing new ones
 		// TODO: ensure this is unnecessary so that the computation can be iterative
@@ -601,14 +601,14 @@ namespace Modumate
 		return Polygons.Num();
 	}
 
-	void FGraph::ClearPolygons()
+	void FGraph2D::ClearPolygons()
 	{
 		Polygons.Reset();
 		NextPolyID = 1;
 		bDirty = true;
 	}
 
-	int32 FGraph::GetExteriorPolygonID() const
+	int32 FGraph2D::GetExteriorPolygonID() const
 	{
 		int32 resultID = MOD_ID_NONE;
 
@@ -633,17 +633,17 @@ namespace Modumate
 		return resultID;
 	}
 
-	FGraphPolygon *FGraph::GetExteriorPolygon()
+	FGraphPolygon *FGraph2D::GetExteriorPolygon()
 	{
 		return FindPolygon(GetExteriorPolygonID());
 	}
 
-	const FGraphPolygon *FGraph::GetExteriorPolygon() const
+	const FGraphPolygon *FGraph2D::GetExteriorPolygon() const
 	{
 		return FindPolygon(GetExteriorPolygonID());
 	}
 
-	bool FGraph::ToDataRecord(FGraph2DRecord &OutRecord, bool bSaveOpenPolygons, bool bSaveExteriorPolygons) const
+	bool FGraph2D::ToDataRecord(FGraph2DRecord &OutRecord, bool bSaveOpenPolygons, bool bSaveExteriorPolygons) const
 	{
 		OutRecord.Vertices.Reset();
 		OutRecord.Edges.Reset();
@@ -679,7 +679,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph::FromDataRecord(const FGraph2DRecord &InRecord)
+	bool FGraph2D::FromDataRecord(const FGraph2DRecord &InRecord)
 	{
 		Reset();
 
@@ -749,12 +749,12 @@ namespace Modumate
 		return true;
 	}
 
-	FVertexPair FGraph::MakeVertexPair(int32 VertexIDA, int32 VertexIDB)
+	FVertexPair FGraph2D::MakeVertexPair(int32 VertexIDA, int32 VertexIDB)
 	{
 		return FVertexPair(FMath::Min(VertexIDA, VertexIDB), FMath::Max(VertexIDA, VertexIDB));
 	}
 
-	bool FGraph::ApplyDelta(const FGraph2DDelta &Delta)
+	bool FGraph2D::ApplyDelta(const FGraph2DDelta &Delta)
 	{
 		// TODO: do graph objects need dirty capabilities?
 
@@ -815,7 +815,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph::ApplyDeltas(const TArray<FGraph2DDelta> &Deltas)
+	bool FGraph2D::ApplyDeltas(const TArray<FGraph2DDelta> &Deltas)
 	{
 		TArray<FGraph2DDelta> appliedDeltas;
 		for (auto& delta : Deltas)
@@ -830,7 +830,7 @@ namespace Modumate
 		return true;
 	}
 
-	void FGraph::ApplyInverseDeltas(const TArray<FGraph2DDelta> &Deltas)
+	void FGraph2D::ApplyInverseDeltas(const TArray<FGraph2DDelta> &Deltas)
 	{
 		auto inverseDeltas = Deltas;
 		Algo::Reverse(inverseDeltas);
@@ -841,7 +841,7 @@ namespace Modumate
 		}
 	}
 
-	void FGraph::AggregateAddedObjects(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices, TSet<int32> &OutEdges)
+	void FGraph2D::AggregateAddedObjects(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices, TSet<int32> &OutEdges)
 	{
 		for (auto& delta : Deltas)
 		{
@@ -867,7 +867,7 @@ namespace Modumate
 		}
 	}
 
-	void FGraph::AggregateAddedVertices(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices)
+	void FGraph2D::AggregateAddedVertices(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices)
 	{
 		for (auto& delta : Deltas)
 		{

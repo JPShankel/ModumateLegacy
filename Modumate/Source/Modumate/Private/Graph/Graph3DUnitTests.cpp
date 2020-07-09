@@ -4,7 +4,7 @@
 #include "DocumentManagement/ModumateSerialization.h"
 #include "Graph/Graph3D.h"
 #include "Graph/Graph3DDelta.h"
-#include "Graph/ModumateGraph.h"
+#include "Graph/Graph2D.h"
 #include "JsonObjectConverter.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 

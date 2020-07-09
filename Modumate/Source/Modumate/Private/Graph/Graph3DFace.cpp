@@ -3,7 +3,7 @@
 #include "Graph/Graph3DDelta.h"
 
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "Graph/ModumateGraph.h"
+#include "Graph/Graph2D.h"
 
 namespace Modumate
 {
@@ -330,7 +330,7 @@ namespace Modumate
 	bool FGraph3DFace::CalculateArea()
 	{
 		// create 2D graph
-		FGraph graph2D;
+		FGraph2D graph2D;
 		for (int32 vertexIdx = 0; vertexIdx < VertexIDs.Num(); vertexIdx++)
 		{
 			graph2D.AddVertex(Cached2DPositions[vertexIdx], VertexIDs[vertexIdx]);

@@ -3,7 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "Database/ModumateDataTables.h"
-#include "Graph/ModumateGraph3DTypes.h"
+#include "Graph/Graph3DTypes.h"
 #include "Database/ModumateShoppingItem.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"

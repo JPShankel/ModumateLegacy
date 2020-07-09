@@ -15,7 +15,7 @@
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonSerializer.h"
 
-#include "Graph/ModumateGraph.h"
+#include "Graph/Graph2D.h"
 #include "Graph/Graph3DDelta.h"
 
 #include "ModumateCore/PlatformFunctions.h"

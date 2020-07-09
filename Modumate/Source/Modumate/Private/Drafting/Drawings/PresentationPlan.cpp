@@ -3,7 +3,7 @@
 #include "Drafting/ModumateDraftingTags.h"
 #include "DocumentManagement/ModumateObjectInstance.h"
 #include "DocumentManagement/ModumateObjectInstanceCutPlane.h"
-#include "Graph/ModumateGraph.h"
+#include "Graph/Graph2D.h"
 #include "Drafting/Drawings/DrawingArea.h"
 #include "Drafting/DraftingManager.h"
 #include "Drafting/Schedules/ScheduleGrid.h"

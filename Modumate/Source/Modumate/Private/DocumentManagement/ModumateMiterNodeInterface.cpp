@@ -6,7 +6,7 @@
 #include "Graph/Graph3DEdge.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "Graph/ModumateGraph3DTypes.h"
+#include "Graph/Graph3DTypes.h"
 #include "DocumentManagement/ModumateLayeredObjectInterface.h"
 #include "ModumateCore/ModumateMitering.h"
 #include "DocumentManagement/ModumateObjectInstance.h"

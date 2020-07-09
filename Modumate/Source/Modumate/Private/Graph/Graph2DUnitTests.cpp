@@ -1,7 +1,7 @@
 #include "CoreMinimal.h"
 
 #include "DocumentManagement/ModumateDelta.h"
-#include "Graph/ModumateGraph.h"
+#include "Graph/Graph2D.h"
 #include "Graph/Graph2DDelta.h"
 
 namespace Modumate
@@ -9,14 +9,14 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphDefaultTest, "Modumate.Graph.2D.Init", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphDefaultTest::RunTest(const FString& Parameters)
 	{
-		FGraph graph;
+		FGraph2D graph;
 		return true;
 	}
 
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphOneTriangle, "Modumate.Graph.2D.OneTriangle", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphOneTriangle::RunTest(const FString& Parameters)
 	{
-		Modumate::FGraph graph;
+		Modumate::FGraph2D graph;
 
 		int32 p1ID = graph.AddVertex(FVector2D(0.0f, 0.0f))->ID;
 		int32 p2ID = graph.AddVertex(FVector2D(10.0f, 0.0f))->ID;
@@ -33,7 +33,7 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphOnePentagon, "Modumate.Graph.2D.OnePentagon", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphOnePentagon::RunTest(const FString& Parameters)
 	{
-		Modumate::FGraph graph;
+		Modumate::FGraph2D graph;
 
 		int32 p1ID = graph.AddVertex(FVector2D(0.0f, 0.0f))->ID;
 		int32 p2ID = graph.AddVertex(FVector2D(10.0f, 0.0f))->ID;
@@ -54,7 +54,7 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphIrregularShapes, "Modumate.Graph.2D.IrregularShapes", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphIrregularShapes::RunTest(const FString& Parameters)
 	{
-		Modumate::FGraph graph;
+		Modumate::FGraph2D graph;
 
 		int32 p1ID = graph.AddVertex(FVector2D(0.0f, 10.0f))->ID;
 		int32 p2ID = graph.AddVertex(FVector2D(10.0f, 5.0f))->ID;
@@ -94,7 +94,7 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphRegularShapes, "Modumate.Graph.2D.RegularShapes", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphRegularShapes::RunTest(const FString& Parameters)
 	{
-		Modumate::FGraph graph;
+		Modumate::FGraph2D graph;
 
 		int32 p1ID = graph.AddVertex(FVector2D(0.0f, 0.0f))->ID;
 		int32 p2ID = graph.AddVertex(FVector2D(10.0f, 0.0f))->ID;
@@ -129,7 +129,7 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphSerialization, "Modumate.Graph.2D.Serialization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphSerialization::RunTest(const FString& Parameters)
 	{
-		Modumate::FGraph graph;
+		Modumate::FGraph2D graph;
 
 		int32 p1ID = graph.AddVertex(FVector2D(0.0f, 0.0f))->ID;
 		int32 p2ID = graph.AddVertex(FVector2D(10.0f, 0.0f))->ID;
@@ -197,7 +197,7 @@ namespace Modumate
 
 		TestEqualInsensitive(TEXT("Graph JSON string"), *expectedJSONString, *graphJSONString);
 
-		Modumate::FGraph deserializedGraph;
+		Modumate::FGraph2D deserializedGraph;
 		bool bLoadSuccess = deserializedGraph.FromDataRecord(graphRecord);
 		TestTrue(TEXT("Graph Load Success"), bLoadSuccess);
 
@@ -207,7 +207,7 @@ namespace Modumate
 	}
 
 	// 3D graph test helper functions
-	void ApplyDeltas(FAutomationTestBase *Test, FGraph &Graph, TArray<FGraph2DDelta> &Deltas)
+	void ApplyDeltas(FAutomationTestBase *Test, FGraph2D &Graph, TArray<FGraph2DDelta> &Deltas)
 	{
 		bool bValidDelta = true;
 		for (auto& delta : Deltas)
@@ -217,7 +217,7 @@ namespace Modumate
 		Test->TestTrue(TEXT("Apply Deltas"), bValidDelta);
 	}
 
-	void ApplyInverseDeltas(FAutomationTestBase *Test, FGraph &Graph, TArray<FGraph2DDelta> &Deltas)
+	void ApplyInverseDeltas(FAutomationTestBase *Test, FGraph2D &Graph, TArray<FGraph2DDelta> &Deltas)
 	{
 		bool bValidDelta = true;
 		for (int32 deltaIdx = Deltas.Num() - 1; deltaIdx >= 0; deltaIdx--)
@@ -227,7 +227,7 @@ namespace Modumate
 		Test->TestTrue(TEXT("Apply Inverse Deltas"), bValidDelta);
 	}
 
-	void TestGraph(FAutomationTestBase *Test, FGraph &Graph, int32 TestNumFaces = -1, int32 TestNumVertices = -1, int32 TestNumEdges = -1)
+	void TestGraph(FAutomationTestBase *Test, FGraph2D &Graph, int32 TestNumFaces = -1, int32 TestNumVertices = -1, int32 TestNumEdges = -1)
 	{
 		if (TestNumFaces != -1)
 		{
@@ -243,7 +243,7 @@ namespace Modumate
 		}
 	}
 
-	void TestDeltas(FAutomationTestBase *Test, TArray<FGraph2DDelta> &Deltas, FGraph &Graph, int32 TestNumFaces = -1, int32 TestNumVertices = -1, int32 TestNumEdges = -1, bool bResetDeltas = true)
+	void TestDeltas(FAutomationTestBase *Test, TArray<FGraph2DDelta> &Deltas, FGraph2D &Graph, int32 TestNumFaces = -1, int32 TestNumVertices = -1, int32 TestNumEdges = -1, bool bResetDeltas = true)
 	{
 		ApplyDeltas(Test, Graph, Deltas);
 		TestGraph(Test, Graph, TestNumFaces, TestNumVertices, TestNumEdges);
@@ -253,7 +253,7 @@ namespace Modumate
 		}
 	}
 
-	void TestDeltasAndResetGraph(FAutomationTestBase *Test, TArray<FGraph2DDelta> &Deltas, FGraph& Graph, int32 TestNumFaces = -1, int32 TestNumVertices = -1, int32 TestNumEdges = -1)
+	void TestDeltasAndResetGraph(FAutomationTestBase *Test, TArray<FGraph2DDelta> &Deltas, FGraph2D& Graph, int32 TestNumFaces = -1, int32 TestNumVertices = -1, int32 TestNumEdges = -1)
 	{
 		// make sure amounts of objects match before and after the test
 		int32 resetNumFaces = Graph.GetPolygons().Num();
@@ -271,7 +271,7 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DAddVertex, "Modumate.Graph.2D.AddVertex", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraph2DAddVertex::RunTest(const FString& Parameters)
 	{
-		FGraph graph;
+		FGraph2D graph;
 		int32 NextID = 1;
 		TArray<FGraph2DDelta> deltas;
 
@@ -293,7 +293,7 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DAddEdge, "Modumate.Graph.2D.AddEdge", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraph2DAddEdge::RunTest(const FString& Parameters)
 	{
-		FGraph graph;
+		FGraph2D graph;
 		int32 NextID = 1;
 		TArray<FGraph2DDelta> deltas;
 
@@ -318,7 +318,7 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DDeleteObjects, "Modumate.Graph.2D.DeleteObjects", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraph2DDeleteObjects::RunTest(const FString& Parameters)
 	{
-		FGraph graph;
+		FGraph2D graph;
 		int32 NextID = 1;
 		TArray<FGraph2DDelta> deltas;
 
@@ -371,7 +371,7 @@ namespace Modumate
 	{
 		// Create grid of edges
 
-		FGraph graph;
+		FGraph2D graph;
 		int32 NextID = 1;
 		TArray<FGraph2DDelta> deltas;
 		int32 gridDimension = 3;
@@ -416,7 +416,7 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DColinearEdges, "Modumate.Graph.2D.ColinearEdges", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraph2DColinearEdges::RunTest(const FString& Parameters)
 	{
-		FGraph graph;
+		FGraph2D graph;
 		int32 NextID = 1;
 		TArray<FGraph2DDelta> deltas;
 

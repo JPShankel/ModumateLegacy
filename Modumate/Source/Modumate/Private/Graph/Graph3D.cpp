@@ -5,7 +5,7 @@
 #include "Algo/Transform.h"
 #include "Graph/Graph3DDelta.h"
 
-#include "Graph/ModumateGraph.h"
+#include "Graph/Graph2D.h"
 
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
@@ -1021,7 +1021,7 @@ namespace Modumate
 
 		for (auto& plane : planes)
 		{
-			FGraph graph2D;
+			FGraph2D graph2D;
 
 			bool startVertexDistance = FMath::IsNearlyZero(plane.PlaneDot(startVertex->Position), Epsilon);
 			bool endVertexDistance = FMath::IsNearlyZero(plane.PlaneDot(startVertex->Position), Epsilon);
@@ -1509,7 +1509,7 @@ namespace Modumate
 	}
 
 	bool FGraph3D::Create2DGraph(const TSet<FTypedGraphObjID> &InitialGraphObjIDs, TSet<FTypedGraphObjID> &OutContainedGraphObjIDs,
-		FGraph &OutGraph, FPlane &OutPlane, bool bRequireConnected, bool bRequireComplete) const
+		FGraph2D &OutGraph, FPlane &OutPlane, bool bRequireConnected, bool bRequireComplete) const
 	{
 		OutPlane = FPlane(ForceInitToZero);
 
@@ -1660,7 +1660,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph &OutGraph, const TSet<FTypedGraphObjID> *WhitelistIDs, TMap<int32, int32> *OutFace3DToPoly2D) const
+	bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph2D &OutGraph, const TSet<FTypedGraphObjID> *WhitelistIDs, TMap<int32, int32> *OutFace3DToPoly2D) const
 	{
 		OutGraph.Reset();
 
@@ -1753,7 +1753,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, FGraph &OutGraph, TMap<int32, int32> &OutGraphIDToObjID) const
+	bool FGraph3D::Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, FGraph2D &OutGraph, TMap<int32, int32> &OutGraphIDToObjID) const
 	{
 		OutGraph.Reset();
 
@@ -1818,7 +1818,7 @@ namespace Modumate
 		return false;
 	}
 
-	bool FGraph3D::Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const FGraph &Graph, TMap<int32, int32> &OutFace3DToPoly2D) const
+	bool FGraph3D::Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const FGraph2D &Graph, TMap<int32, int32> &OutFace3DToPoly2D) const
 	{
 		const TMap<int32, FGraphPolygon> &graphPolys = Graph.GetPolygons();
 

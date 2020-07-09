@@ -262,7 +262,7 @@ namespace Modumate
 		// bounding box is defined by the dimensions of the cut plane as opposed to the contents of the graph
 		FBox2D cutPlaneBox = FBox2D(boxPoints);
 
-		FGraph graph;
+		FGraph2D graph;
 		TMap<int32, int32> objMap;
 		volumeGraph.Create2DGraph(CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, graph, objMap);
 

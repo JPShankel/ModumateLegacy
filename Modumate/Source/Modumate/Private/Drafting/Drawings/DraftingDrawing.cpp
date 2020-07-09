@@ -95,7 +95,7 @@ namespace Modumate {
 
 		auto plane = FPlane(scopeBoxOrigin, cutPlane->GetNormal());
 
-		FGraph graph;
+		FGraph2D graph;
 		TMap<int32, int32> objMap;
 		auto volumeGraph = Doc->GetVolumeGraph();
 		volumeGraph.Create2DGraph(plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, graph, objMap);
@@ -304,7 +304,7 @@ namespace Modumate {
 		FVector origin = cutPlane->GetControlPoint(0);
 		UModumateGeometryStatics::AnalyzeCachedPositions(cutPlane->GetControlPoints(), plane, axisX, axisY, cached2DPositions, center);
 		TMap<int32, int32> objMap;
-		FGraph graph;
+		FGraph2D graph;
 
 		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(scopeBox->GetControlPoint(0), axisX, axisY, origin);
 		FVector scopeBoxOrigin = origin + (scopeBoxOrigin2D.X * axisX) + (scopeBoxOrigin2D.Y * axisY);

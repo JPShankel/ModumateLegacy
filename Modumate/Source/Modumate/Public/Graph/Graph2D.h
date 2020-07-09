@@ -10,7 +10,7 @@
 
 namespace Modumate
 {
-	class FGraph;
+	class FGraph2D;
 
 	// Use this typedef to designate edge IDs, which are only valid if non-0, and whose sign indicates a direction
 	typedef int32 FEdgeID;
@@ -28,7 +28,7 @@ namespace Modumate
 	struct FGraphEdge
 	{
 		int32 ID = MOD_ID_NONE;							// The ID of the edge
-		FGraph *Graph = nullptr;					// The graph that owns this edge
+		FGraph2D *Graph = nullptr;					// The graph that owns this edge
 		int32 StartVertexID = MOD_ID_NONE;				// The ID of the vertex that the start of this edge is connected to
 		int32 EndVertexID = MOD_ID_NONE;				// The ID of the vertex that the end of this edge is connected to
 		int32 LeftPolyID = MOD_ID_NONE;					// The ID of the polygon that the left side of this edge is a part of
@@ -37,7 +37,7 @@ namespace Modumate
 		FVector2D EdgeDir = FVector2D::ZeroVector;	// The direction of the line from start to end vertex
 		bool bValid = false;						// Whether an edge can be used in the graph
 
-		FGraphEdge(int32 InID, FGraph* InGraph, int32 InStart, int32 InEnd);
+		FGraphEdge(int32 InID, FGraph2D* InGraph, int32 InStart, int32 InEnd);
 		void SetVertices(int32 InStart, int32 InEnd);
 		bool CacheAngle();
 	};
@@ -45,12 +45,12 @@ namespace Modumate
 	struct FGraphVertex
 	{
 		int32 ID = MOD_ID_NONE;							// The ID of the vertex
-		FGraph *Graph = nullptr;					// The graph that owns this vertex
+		FGraph2D *Graph = nullptr;					// The graph that owns this vertex
 		FVector2D Position = FVector2D::ZeroVector;	// The position of the vertex
 		TArray<FEdgeID> Edges;						// The list of edges (sorted, clockwise, from +X) connected to this vertex
 		bool bDirty = false;						// Whether the edge list is dirty, and needs to be re-sorted
 
-		FGraphVertex(int32 InID, FGraph* InGraph, const FVector2D &InPos)
+		FGraphVertex(int32 InID, FGraph2D* InGraph, const FVector2D &InPos)
 			: ID(InID)
 			, Graph(InGraph)
 			, Position(InPos)
@@ -65,7 +65,7 @@ namespace Modumate
 	struct FGraphPolygon
 	{
 		int32 ID = MOD_ID_NONE;						// The ID of the polygon
-		FGraph *Graph = nullptr;				// The graph that owns this polygon
+		FGraph2D *Graph = nullptr;				// The graph that owns this polygon
 		int32 ParentID = MOD_ID_NONE;				// The ID of the polygon that contains this one, if any
 		TArray<int32> InteriorPolygons;			// The IDs of polygons that this polygon contains
 		TArray<FEdgeID> Edges;					// The list of edges that make up this polygon
@@ -76,17 +76,17 @@ namespace Modumate
 		FBox2D AABB = FBox2D(ForceInitToZero);	// The axis-aligned bounding box for the polygon
 		TArray<FVector2D> Points;				// The list of vertex positions in this polygon
 
-		FGraphPolygon(int32 InID, FGraph* InGraph) : ID(InID), Graph(InGraph) { }
+		FGraphPolygon(int32 InID, FGraph2D* InGraph) : ID(InID), Graph(InGraph) { }
 		FGraphPolygon() { };
 
 		bool IsInside(const FGraphPolygon &otherPoly) const;
 		void SetParent(int32 inParentID);
 	};
 
-	class MODUMATE_API FGraph
+	class MODUMATE_API FGraph2D
 	{
 	public:
-		FGraph(float InEpsilon = DEFAULT_GRAPH_EPSILON, bool bInDebugCheck = !UE_BUILD_SHIPPING);
+		FGraph2D(float InEpsilon = DEFAULT_GRAPH_EPSILON, bool bInDebugCheck = !UE_BUILD_SHIPPING);
 
 		void Reset();
 

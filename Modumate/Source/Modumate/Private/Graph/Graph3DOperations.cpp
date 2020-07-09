@@ -3,7 +3,7 @@
 #include "Graph/Graph3D.h"
 
 #include "Graph/Graph3DDelta.h"
-#include "Graph/ModumateGraph.h"
+#include "Graph/Graph2D.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 
 namespace Modumate
@@ -1420,7 +1420,7 @@ namespace Modumate
 		// TODO: this kind of code may be useful somewhere else, and could be generalized to be 
 		// similar in use to GetDeltaForUpdateFaces
 		// only edges need to actually be calculated to use Create2DGraph
-		FGraph joinGraph;
+		FGraph2D joinGraph;
 		FPlane graphPlane;
 		TArray<int32> newFaceVertexIDs;
 		Create2DGraph(whitelistIDs, connectedGraphIDs, joinGraph, graphPlane, true, true);

@@ -1,12 +1,12 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "Graph/ModumateGraph.h"
+#include "Graph/Graph2D.h"
 
 #include "Graph/Graph2DDelta.h"
 
 namespace Modumate
 {
-	bool FGraph::AddVertexDirect(FGraph2DDelta &OutDelta, int32 &NextID, const FVector2D Position)
+	bool FGraph2D::AddVertexDirect(FGraph2DDelta &OutDelta, int32 &NextID, const FVector2D Position)
 	{
 		int32 addedVertexID = NextID++;
 		OutDelta.VertexAdditions.Add(addedVertexID, Position);
@@ -14,7 +14,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph::AddVertex(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D Position)
+	bool FGraph2D::AddVertex(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D Position)
 	{
 		const FGraphVertex *existingVertex = FindVertex(Position);
 
@@ -29,7 +29,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph::AddEdgeDirect(FGraph2DDelta &OutDelta, int32 &NextID, const int32 StartVertexID, const int32 EndVertexID)
+	bool FGraph2D::AddEdgeDirect(FGraph2DDelta &OutDelta, int32 &NextID, const int32 StartVertexID, const int32 EndVertexID)
 	{
 		auto startVertex = FindVertex(StartVertexID);
 		auto endVertex = FindVertex(EndVertexID);
@@ -49,7 +49,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph::AddEdge(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D StartPosition, const FVector2D EndPosition)
+	bool FGraph2D::AddEdge(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D StartPosition, const FVector2D EndPosition)
 	{
 		TArray<int32> addedIDs;
 		TSet<int32> addedVertexIDs;
@@ -234,7 +234,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph::DeleteObjects(TArray<FGraph2DDelta> &OutDeltas, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs)
+	bool FGraph2D::DeleteObjects(TArray<FGraph2DDelta> &OutDeltas, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs)
 	{
 		// the ids that are considered for deletion starts with the input arguments and grows based on object connectivity
 		TSet<int32> vertexIDsToDelete;
@@ -301,7 +301,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph::DeleteObjectsDirect(FGraph2DDelta &OutDelta, const TSet<int32> &VertexIDs, const TSet<int32> &EdgeIDs)
+	bool FGraph2D::DeleteObjectsDirect(FGraph2DDelta &OutDelta, const TSet<int32> &VertexIDs, const TSet<int32> &EdgeIDs)
 	{
 		for (int32 vertexID : VertexIDs)
 		{
@@ -328,7 +328,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph::SplitEdge(FGraph2DDelta &OutDelta, int32 &NextID, int32 EdgeID, int32 SplittingVertexID)
+	bool FGraph2D::SplitEdge(FGraph2DDelta &OutDelta, int32 &NextID, int32 EdgeID, int32 SplittingVertexID)
 	{
 		auto edge = FindEdge(EdgeID);
 		if (!ensureAlways(edge != nullptr))
