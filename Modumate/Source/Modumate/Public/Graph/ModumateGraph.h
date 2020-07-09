@@ -166,6 +166,9 @@ namespace Modumate
 		// constrained by a line segment to figure out which edges would need to host an object
 		void AggregateAddedObjects(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices, TSet<int32> &OutEdges);
 
+		// aggregates only the added vertices, helpful for determining the result of AddVertex
+		void AggregateAddedVertices(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices);
+
 		// 2D Graph Operations
 		// All graph operations should leave the graph in the same state that it entered if the function failed or if the function
 		// is public, even though it needs to be modified to set up all of the deltas.
@@ -204,5 +207,9 @@ namespace Modumate
 
 		// Create Delta that delete precisely the provided objects
 		bool DeleteObjectsDirect(FGraph2DDelta &OutDelta, const TSet<int32> &VertexIDs, const TSet<int32> &EdgeIDs);
+
+		// Create Delta that replaces the edge with two edges - an edge from the start vertex to the split vertex, 
+		// and an edge from the split vertex to the end vertex.
+		bool SplitEdge(FGraph2DDelta &OutDelta, int32 &NextID, int32 EdgeID, int32 SplittingVertexID);
 	};
 }

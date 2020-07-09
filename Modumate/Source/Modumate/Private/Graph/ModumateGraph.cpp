@@ -866,4 +866,20 @@ namespace Modumate
 			}
 		}
 	}
+
+	void FGraph::AggregateAddedVertices(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices)
+	{
+		for (auto& delta : Deltas)
+		{
+			for (auto& kvp : delta.VertexAdditions)
+			{
+				OutVertices.Add(kvp.Key);
+			}
+
+			for (auto& kvp : delta.VertexDeletions)
+			{
+				OutVertices.Remove(kvp.Key);
+			}
+		}
+	}
 }

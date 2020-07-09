@@ -365,4 +365,90 @@ namespace Modumate
 
 		return true;
 	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DSplitEdges, "Modumate.Graph.2D.SplitEdges", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DSplitEdges::RunTest(const FString& Parameters)
+	{
+		// Create grid of edges
+
+		FGraph graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+		int32 gridDimension = 3;
+
+		// vertical edges
+		for (int i = 0; i <= gridDimension; i++)
+		{
+			FVector2D startPosition = FVector2D(i*100.0f, 0.0f);
+			FVector2D endPosition = FVector2D(i*100.0f, gridDimension*100.0f);
+
+			TestTrue(TEXT("Add Horizontal Edge"),
+				graph.AddEdge(deltas, NextID, startPosition, endPosition));
+			TestDeltas(this, deltas, graph, 0, 2*(i+1), i+1);
+		}
+
+		int32 expectedVertices  = graph.GetVertices().Num();
+		int32 expectedEdges = graph.GetEdges().Num();
+		// horizontal edges
+		for (int i = 0; i <= gridDimension; i++)
+		{
+			FVector2D startPosition = FVector2D(0.0f, i*100.0f);
+			FVector2D endPosition = FVector2D(gridDimension*100.0f, i*100.0f);
+
+			TestTrue(TEXT("Add Vertical Edge"),
+				graph.AddEdge(deltas, NextID, startPosition, endPosition));
+
+			if (i == 0 || i == gridDimension)
+			{
+				expectedEdges += gridDimension;
+			}
+			else
+			{
+				expectedEdges += 2*gridDimension + 1;
+				expectedVertices += gridDimension + 1;
+			}
+			TestDeltas(this, deltas, graph, 0, expectedVertices, expectedEdges);
+		}
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DColinearEdges, "Modumate.Graph.2D.ColinearEdges", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DColinearEdges::RunTest(const FString& Parameters)
+	{
+		FGraph graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+
+		TArray<FVector2D> vertices = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(100.0f, 0.0f),
+			FVector2D(200.0f, 0.0f),
+			FVector2D(300.0f, 0.0f),
+			FVector2D(400.0f, 0.0f),
+			FVector2D(500.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[1]));
+		TestDeltas(this, deltas, graph, 0, 2, 1);
+
+		TestTrue(TEXT("Add Overlapping edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[2]));
+		TestDeltas(this, deltas, graph, 0, 3, 2);
+
+		TestTrue(TEXT("Add another edge"),
+			graph.AddEdge(deltas, NextID, vertices[3], vertices[4]));
+		TestDeltas(this, deltas, graph, 0, 5, 3);
+
+		TestTrue(TEXT("Add another overlapping edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[5]));
+		TestDeltas(this, deltas, graph, 0, 6, 5);
+
+		TestTrue(TEXT("Add edge covered by several existing edges"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[5]));
+		TestDeltas(this, deltas, graph, 0, 6, 5);
+
+		return true;
+	}
 }
