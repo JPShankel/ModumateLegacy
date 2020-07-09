@@ -375,14 +375,17 @@ const float AAdjustInvertHandle::MaxScreenDist = 30.0f;
 
 bool AAdjustInvertHandle::BeginUse()
 {
-	if (!Super::BeginUse())
+	if (!ensure(TargetMOI))
 	{
 		return false;
 	}
 
+	TargetMOI->BeginPreviewOperation();
 	TargetMOI->SetObjectInverted(!TargetMOI->GetObjectInverted());
+	auto delta = MakeShareable(new Modumate::FMOIDelta({ TargetMOI }));
+	TargetMOI->EndPreviewOperation();
 
-	EndUse();
+	GameState->Document.ApplyDeltas({ delta }, GetWorld());
 	return false;
 }
 
@@ -425,13 +428,15 @@ const float AJustificationHandle::MaxScreenDist = 50.0f;
 
 bool AJustificationHandle::BeginUse()
 {
-	if (!Super::BeginUse())
+	if (!ensure(TargetMOI))
 	{
 		return false;
 	}
 
 	if ((HandleChildren.Num() > 0) && !bRootExpanded)
 	{
+		// If we're expanding the root justification handle, then no operations will happen on the target MOI,
+		// so BeginUse and End/AbortUse aren't necessary.
 		for (AAdjustmentHandleActor *handleChild : HandleChildren)
 		{
 			if (handleChild)
@@ -442,12 +447,18 @@ bool AJustificationHandle::BeginUse()
 
 		bRootExpanded = true;
 		ApplyWidgetStyle();
-		AbortUse();
 	}
 	else
 	{
+		// If this handle is performing an operation on the target MOI,
+		// then just create a delta and apply it, without using BeginUse or End/AbortUse,
+		// to avoid unnecessary state changes like handle visibility.
+		TargetMOI->BeginPreviewOperation();
 		TargetMOI->SetExtents(FVector(JustificationValue, 0.0f, 0.0f));
-		EndUse();
+		auto delta = MakeShareable(new Modumate::FMOIDelta({ TargetMOI }));
+		TargetMOI->EndPreviewOperation();
+
+		GameState->Document.ApplyDeltas({ delta }, GetWorld());
 	}
 
 	return false;
@@ -458,7 +469,7 @@ void AJustificationHandle::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// TODO: replace with line actors, rather than immediate-mode HUD lines
-	if (bEnabled)
+	if (bEnabled && (HandleParent != nullptr))
 	{
 		FVector handleDirection = TargetMOI->GetNormal();
 		FVector attachLocation = GetHandlePosition();

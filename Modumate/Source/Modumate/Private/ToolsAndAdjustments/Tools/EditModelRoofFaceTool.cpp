@@ -17,6 +17,6 @@ URoofFaceTool::URoofFaceTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	ObjectType = EObjectType::OTRoofFace;
-	SetAxisConstraint(EAxisConstraint::None);
-	bRequireHoverMetaPlane = true;
+	SetAxisConstraint(EAxisConstraint::AxesXY);
+	bRequireHoverMetaPlane = false;
 }

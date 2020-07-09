@@ -33,8 +33,17 @@ bool UPlaneHostedObjTool::ValidatePlaneTarget(const FModumateObjectInstance *Pla
 
 bool UPlaneHostedObjTool::IsTargetFacingDown()
 {
-	FModumateObjectInstance *parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
-	return (parentMOI && (parentMOI->GetNormal().Z < 0.0f));
+	if (LastValidTargetID != MOD_ID_NONE)
+	{
+		FModumateObjectInstance *parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
+		return (parentMOI && (parentMOI->GetNormal().Z < 0.0f));
+	}
+	else if (bPendingPlaneValid && PendingPlaneGeom.IsNormalized())
+	{
+		return (PendingPlaneGeom.Z < 0.0f);
+	}
+
+	return false;
 }
 
 float UPlaneHostedObjTool::GetDefaultJustificationValue()
@@ -103,36 +112,25 @@ bool UPlaneHostedObjTool::FrameUpdate()
 	if (PendingObjMesh.IsValid() && PendingSegmentID != MOD_ID_NONE)
 	{
 		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-		bool bSegmentValid = false;
-		switch (AxisConstraint)
-		{
-		case EAxisConstraint::AxisZ:
-			bSegmentValid = !pendingSegment->Point1.Equals(pendingSegment->Point2) &&
-				FMath::IsNearlyEqual(pendingSegment->Point1.Z, pendingSegment->Point2.Z);// , KINDA_SMALL_NUMBER);
-			break;
-		case EAxisConstraint::AxesXY:
-			bSegmentValid = !FMath::IsNearlyEqual(pendingSegment->Point1.X, pendingSegment->Point2.X) &&
-				!FMath::IsNearlyEqual(pendingSegment->Point1.Y, pendingSegment->Point2.Y) &&
-				FMath::IsNearlyEqual(pendingSegment->Point1.Z, pendingSegment->Point2.Z);// , KINDA_SMALL_NUMBER);
-			break;
-		default:
-			bSegmentValid = true;
-			break;
-		}
 
-		if ((PendingPlanePoints.Num() > 0) && bSegmentValid)
+		if (bPendingPlaneValid && (PendingPlanePoints.Num() >= 3))
 		{
 			bool bRecreatingGeometry = (PendingObjMesh->LayerGeometries.Num() == 0);
 			PendingObjMesh->CreateBasicLayerDefs(PendingPlanePoints, FVector::ZeroVector, ObjAssembly, GetDefaultJustificationValue());
-			PendingObjMesh->UpdatePlaneHostedMesh(bRecreatingGeometry, false, false, pendingSegment->Point1);
+			PendingObjMesh->UpdatePlaneHostedMesh(bRecreatingGeometry, false, false, PendingPlanePoints[0]);
 			PendingObjMesh->SetActorHiddenInGame(false);
 		}
 		else
 		{
 			PendingObjMesh->SetActorHiddenInGame(true);
-			pendingSegment->SetActorHiddenInGame(true);
 		}
 
+		if (pendingSegment)
+		{
+			pendingSegment->SetActorHiddenInGame(!bPendingSegmentValid || bPendingPlaneValid);
+		}
+
+		// Always hide the pending plane mesh inherited from the MetaPlaneTool
 		if (PendingPlane.IsValid())
 		{
 			PendingPlane->SetActorHiddenInGame(true);
@@ -365,30 +363,33 @@ bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &new
 	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kBeginUndoRedoMacro));
 
 	int32 newObjID = MOD_ID_NONE;
-	TArray<int32> newPlaneIDs;
-	bool bSuccess = UMetaPlaneTool::MakeObject(Location, newPlaneIDs);
+	TArray<int32> newGraphObjIDs;
+	bool bSuccess = UMetaPlaneTool::MakeObject(Location, newGraphObjIDs);
 
-	for (int32 newPlaneID : newPlaneIDs)
+	if (bSuccess)
 	{
-		FModumateObjectInstance *newPlaneObj = GameState->Document.GetObjectById(newPlaneID);
-
-		if (newPlaneObj && (newPlaneObj->GetObjectType() == EObjectType::OTMetaPlane))
+		for (int32 newGraphObjID : newGraphObjIDs)
 		{
-			newObjID = GameState->Document.GetNextAvailableID();
+			FModumateObjectInstance *newGraphObj = GameState->Document.GetObjectById(newGraphObjID);
 
-			FMOIStateData newMOIData;
-			newMOIData.StateType = EMOIDeltaType::Create;
-			newMOIData.ObjectType = ObjectType;
-			newMOIData.ParentID = newPlaneID;
-			newMOIData.ObjectAssemblyKey = Assembly.Key;
-			newMOIData.bObjectInverted = bInverted; 
-			newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
-			newMOIData.ObjectID = newObjID;
-			
-			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ newMOIData }));
-			Controller->ModumateCommand(delta->AsCommand());
-		
-			newObjIDs.Add(newObjID);
+			if (newGraphObj && (newGraphObj->GetObjectType() == EObjectType::OTMetaPlane))
+			{
+				newObjID = GameState->Document.GetNextAvailableID();
+
+				FMOIStateData newMOIData;
+				newMOIData.StateType = EMOIDeltaType::Create;
+				newMOIData.ObjectType = ObjectType;
+				newMOIData.ParentID = newGraphObjID;
+				newMOIData.ObjectAssemblyKey = Assembly.Key;
+				newMOIData.bObjectInverted = bInverted;
+				newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
+				newMOIData.ObjectID = newObjID;
+
+				TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ newMOIData }));
+				Controller->ModumateCommand(delta->AsCommand());
+
+				newObjIDs.Add(newObjID);
+			}
 		}
 	}
 

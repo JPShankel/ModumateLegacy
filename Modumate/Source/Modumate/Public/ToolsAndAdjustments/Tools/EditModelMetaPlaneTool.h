@@ -33,8 +33,10 @@ protected:
 	TWeakObjectPtr<ADynamicMeshActor> PendingPlane;
 	FVector AnchorPointDegree;
 	TArray<FVector> PendingPlanePoints, SketchPlanePoints;
-	TArray<int32> PendingPlaneEdgeIDs;
 	FArchitecturalMaterial PendingPlaneMaterial;
+	bool bPendingSegmentValid;
+	bool bPendingPlaneValid;
+	FPlane PendingPlaneGeom;
 	float MinPlaneSize;
 	float PendingPlaneAlpha;
 

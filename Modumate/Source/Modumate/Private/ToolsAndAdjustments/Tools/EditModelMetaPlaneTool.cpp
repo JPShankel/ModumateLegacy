@@ -22,6 +22,9 @@ UMetaPlaneTool::UMetaPlaneTool(const FObjectInitializer& ObjectInitializer)
 	, PendingSegmentID(MOD_ID_NONE)
 	, PendingPlane(nullptr)
 	, AnchorPointDegree(ForceInitToZero)
+	, bPendingSegmentValid(false)
+	, bPendingPlaneValid(false)
+	, PendingPlaneGeom(ForceInitToZero)
 	, MinPlaneSize(1.0f)
 	, PendingPlaneAlpha(0.4f)
 {
@@ -111,7 +114,6 @@ bool UMetaPlaneTool::BeginUse()
 	}
 
 	const FVector &hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-	PendingPlaneEdgeIDs.Reset();
 	SketchPlanePoints.Reset();
 
 	const FVector &tangent = Controller->EMPlayerState->SnappedCursor.HitTangent;
@@ -180,13 +182,13 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 {
 	Modumate::FModumateDocument &doc = GameState->Document;
 
-	int32 newObjectID = MOD_ID_NONE;
+	bool bSuccess = false;
 	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 	FVector constrainedStartPoint = pendingSegment->Point1;
 	FVector constrainedEndPoint = Location;
 	ConstrainHitPoint(constrainedStartPoint);
 	ConstrainHitPoint(constrainedEndPoint);
-	NewObjIDs.Reset();
+	OutNewObjIDs.Reset();
 
 	if (State == NewSegmentPending && pendingSegment != nullptr &&
 		(FVector::Dist(constrainedStartPoint, constrainedEndPoint) >= MinPlaneSize))
@@ -195,21 +197,6 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 		{
 		case EAxisConstraint::None:
 		{
-			Controller->ModumateCommand(FModumateCommand(Commands::kBeginUndoRedoMacro));
-
-			TArray<FVector> points = { constrainedStartPoint, constrainedEndPoint };
-			auto commandResult = Controller->ModumateCommand(
-				FModumateCommand(Commands::kMakeMetaEdge)
-				.Param(Parameters::kControlPoints, points)
-				.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID()));
-
-			bool bCommandSuccess = commandResult.GetValue(Parameters::kSuccess);
-			TArray<int32> outEdgeIDs = commandResult.GetValue(Parameters::kObjectIDs);
-			for (auto id : outEdgeIDs)
-			{
-				PendingPlaneEdgeIDs.Add(id);
-			}
-
 			// The segment-based plane updates the sketch plane on the first three clicks
 			FVector segmentDirection = FVector(constrainedEndPoint - constrainedStartPoint).GetSafeNormal();
 			FVector currentSketchPlaneNormal(Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Normal);
@@ -266,7 +253,8 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 			pendingSegment->Point1 = constrainedEndPoint;
 			pendingSegment->Point2 = constrainedEndPoint;
 
-			Controller->ModumateCommand(FModumateCommand(Commands::kEndUndoRedoMacro));
+			TArray<FVector> points = { constrainedStartPoint, constrainedEndPoint };
+			bSuccess = doc.MakeMetaObject(GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(), OutNewObjIDs);
 			break;
 		}
 		case EAxisConstraint::AxisZ:
@@ -275,46 +263,52 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 			pendingSegment->Point2 = constrainedEndPoint;
 			UpdatePendingPlane();
 
-			// create meta plane
-			auto commandResult = Controller->ModumateCommand(
-				FModumateCommand(Commands::kMakeMetaPlane)
-				.Param(Parameters::kControlPoints, PendingPlanePoints)
-				.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID()));
-			if (!commandResult.GetValue(Parameters::kSuccess))
+			if (bPendingPlaneValid)
 			{
-				return false;
+				// create meta plane
+				auto commandResult = Controller->ModumateCommand(
+					FModumateCommand(Commands::kMakeMetaPlane)
+					.Param(Parameters::kControlPoints, PendingPlanePoints)
+					.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID()));
+
+				bSuccess = commandResult.GetValue(Parameters::kSuccess);
+				OutNewObjIDs = commandResult.GetValue(Parameters::kObjectIDs);
+
+				// set up cursor affordance so snapping works on the next chained segment
+				Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, FVector::UpVector, (pendingSegment->Point1 - pendingSegment->Point2).GetSafeNormal());
+
+				// continue plane creation starting from the hit location
+				AnchorPointDegree = pendingSegment->Point1;
+				pendingSegment->Point1 = constrainedEndPoint;
 			}
-			NewObjIDs = commandResult.GetValue(Parameters::kObjectIDs);
 
-			// set up cursor affordance so snapping works on the next chained segment
-			Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, FVector::UpVector, (pendingSegment->Point1 - pendingSegment->Point2).GetSafeNormal());
-
-			// continue plane creation starting from the hit location
-			AnchorPointDegree = pendingSegment->Point1;
-			pendingSegment->Point1 = constrainedEndPoint;
 			break;
 		}
 		case EAxisConstraint::AxesXY:
 		{
-			auto commandResult = Controller->ModumateCommand(
-				FModumateCommand(Commands::kMakeMetaPlane)
-				.Param(Parameters::kControlPoints, PendingPlanePoints)
-				.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID()));
-			if (!commandResult.GetValue(Parameters::kSuccess))
+			if (bPendingPlaneValid)
 			{
-				return false;
-			}
-			NewObjIDs = commandResult.GetValue(Parameters::kObjectIDs);
+				auto commandResult = Controller->ModumateCommand(
+					FModumateCommand(Commands::kMakeMetaPlane)
+					.Param(Parameters::kControlPoints, PendingPlanePoints)
+					.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID()));
 
-			EndUse();
+				bSuccess = commandResult.GetValue(Parameters::kSuccess);
+				OutNewObjIDs = commandResult.GetValue(Parameters::kObjectIDs);
+
+				// Don't chain horizontal planes, so end the tool's use here
+				if (bSuccess)
+				{
+					EndUse();
+				}
+			}
+
 			break;
 		}
 		}
 	}
 
-	OutNewObjIDs = NewObjIDs;
-
-	return true;
+	return bSuccess;
 }
 
 bool UMetaPlaneTool::FrameUpdate()
@@ -351,9 +345,9 @@ bool UMetaPlaneTool::FrameUpdate()
 
 			pendingSegment->Point2 = hitLoc;
 			pendingSegment->UpdateMetaEdgeVisuals(false);
-
-			UpdatePendingPlane();
 		}
+
+		UpdatePendingPlane();
 	}
 
 	return true;
@@ -391,20 +385,25 @@ void UMetaPlaneTool::SetAxisConstraint(EAxisConstraint InAxisConstraint)
 
 void UMetaPlaneTool::UpdatePendingPlane()
 {
+	bPendingSegmentValid = false;
+	bPendingPlaneValid = false;
+
 	if (PendingPlane.IsValid())
 	{
-
 		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 		if (State == NewSegmentPending && pendingSegment != nullptr &&
 			(FVector::Dist(pendingSegment->Point1, pendingSegment->Point2) >= MinPlaneSize))
 		{
+			bPendingSegmentValid = true;
+
 			switch (AxisConstraint)
 			{
 			case EAxisConstraint::None:
-				PendingPlane->SetActorHiddenInGame(true);
 				break;
 			case EAxisConstraint::AxisZ:
 			{
+				bPendingPlaneValid = true;
+
 				FVector verticalRectOffset = FVector::UpVector * Controller->GetDefaultWallHeightFromDoc();
 
 				PendingPlanePoints = {
@@ -414,35 +413,48 @@ void UMetaPlaneTool::UpdatePendingPlane()
 					pendingSegment->Point1 + verticalRectOffset
 				};
 
-				PendingPlane->SetActorHiddenInGame(false);
-				PendingPlane->SetupMetaPlaneGeometry(PendingPlanePoints, PendingPlaneMaterial, PendingPlaneAlpha, true, false);
-
 				break;
 			}
 			case EAxisConstraint::AxesXY:
 			{
-				FBox2D pendingRect(ForceInitToZero);
-				pendingRect += FVector2D(pendingSegment->Point1);
-				pendingRect += FVector2D(pendingSegment->Point2);
-				float planeHeight = pendingSegment->Point1.Z;
+				bPendingPlaneValid = !FMath::IsNearlyEqual(pendingSegment->Point1.X, pendingSegment->Point2.X) &&
+					!FMath::IsNearlyEqual(pendingSegment->Point1.Y, pendingSegment->Point2.Y) &&
+					FMath::IsNearlyEqual(pendingSegment->Point1.Z, pendingSegment->Point2.Z);
 
-				PendingPlanePoints = {
-					FVector(pendingRect.Min.X, pendingRect.Min.Y, planeHeight),
-					FVector(pendingRect.Min.X, pendingRect.Max.Y, planeHeight),
-					FVector(pendingRect.Max.X, pendingRect.Max.Y, planeHeight),
-					FVector(pendingRect.Max.X, pendingRect.Min.Y, planeHeight),
-				};
-				PendingPlane->SetActorHiddenInGame(false);
-				PendingPlane->SetupMetaPlaneGeometry(PendingPlanePoints, PendingPlaneMaterial, PendingPlaneAlpha, true, false);
-					
+				if (bPendingPlaneValid)
+				{
+					FBox2D pendingRect(ForceInitToZero);
+					pendingRect += FVector2D(pendingSegment->Point1);
+					pendingRect += FVector2D(pendingSegment->Point2);
+					float planeHeight = pendingSegment->Point1.Z;
+
+					PendingPlanePoints = {
+						FVector(pendingRect.Min.X, pendingRect.Min.Y, planeHeight),
+						FVector(pendingRect.Min.X, pendingRect.Max.Y, planeHeight),
+						FVector(pendingRect.Max.X, pendingRect.Max.Y, planeHeight),
+						FVector(pendingRect.Max.X, pendingRect.Min.Y, planeHeight),
+					};
+				}
+
 				break;
 			}
 			}
+
+			if (bPendingPlaneValid)
+			{
+				bPendingPlaneValid = UModumateGeometryStatics::GetPlaneFromPoints(PendingPlanePoints, PendingPlaneGeom);
+			}
+		}
+
+		PendingPlane->SetActorHiddenInGame(!bPendingPlaneValid);
+
+		if (bPendingPlaneValid)
+		{
+			PendingPlane->SetupMetaPlaneGeometry(PendingPlanePoints, PendingPlaneMaterial, PendingPlaneAlpha, true, false);
 		}
 		else
 		{
 			PendingPlanePoints.Reset();
-			PendingPlane->SetActorHiddenInGame(true);
 		}
 	}
 }

@@ -2428,6 +2428,7 @@ int32 FModumateDocument::MakePointsObject(
 bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &points, const TArray<int32> &IDs, EObjectType objectType, int32 parentID, TArray<int32> &OutObjIDs)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeMetaObject"));
+	OutObjIDs.Reset();
 
 	EGraph3DObjectType graphObjectType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
 	if (!ensureAlways(graphObjectType != EGraph3DObjectType::None))
@@ -2500,12 +2501,9 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 	}
 	bool bSuccess = ApplyDeltas(deltaptrs, world);
 
-	switch (graphObjectType)
-	{
-	case EGraph3DObjectType::Face: OutObjIDs = faceIDs; break;
-	case EGraph3DObjectType::Vertex: OutObjIDs = vertexIDs; break;
-	case EGraph3DObjectType::Edge: OutObjIDs = edgeIDs; break;
-	};
+	OutObjIDs.Append(faceIDs);
+	OutObjIDs.Append(vertexIDs);
+	OutObjIDs.Append(edgeIDs);
 
 	return bSuccess;
 }
