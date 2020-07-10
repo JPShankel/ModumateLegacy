@@ -25,21 +25,24 @@ void UToolTrayBlockModes::NativeConstruct()
 
 void UToolTrayBlockModes::ChangeToMetaPlaneToolsButtons()
 {
-	ButtonMPLine->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonMPVertical->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonMPHorizontal->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonAxesNone->SetVisibility(ESlateVisibility::Collapsed);
-	ButtonAxesXY->SetVisibility(ESlateVisibility::Collapsed);
-	ButtonAxesZ->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonAxesNone->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ButtonAxesXY->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ButtonAxesZ->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ButtonMPBucket->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonRoofPerimeter->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UToolTrayBlockModes::ChangeToSurfaceGraphToolsButtons()
+{
+	ButtonAxesNone->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ButtonAxesXY->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ButtonAxesZ->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ButtonMPBucket->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ButtonRoofPerimeter->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UToolTrayBlockModes::ChangeToSeparatorToolsButtons(EToolMode mode)
 {
-	ButtonMPLine->SetVisibility(ESlateVisibility::Collapsed);
-	ButtonMPVertical->SetVisibility(ESlateVisibility::Collapsed);
-	ButtonMPHorizontal->SetVisibility(ESlateVisibility::Collapsed);
 	ButtonAxesNone->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ButtonAxesXY->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ButtonAxesZ->SetVisibility(ESlateVisibility::SelfHitTestInvisible);

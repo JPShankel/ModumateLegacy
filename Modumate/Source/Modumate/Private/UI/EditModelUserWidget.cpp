@@ -48,6 +48,9 @@ void UEditModelUserWidget::EMOnToolModeChanged()
 	case EToolCategories::Separators:
 		ToolTrayWidget->ChangeBlockToSeparatorTools(controller->GetToolMode());
 		break;
+	case EToolCategories::SurfaceGraphs:
+		ToolTrayWidget->ChangeBlockToSurfaceGraphTools();
+		break;
 	case EToolCategories::Attachments:
 		ToolTrayWidget->ChangeBlockToAttachmentTools(controller->GetToolMode());
 		break;

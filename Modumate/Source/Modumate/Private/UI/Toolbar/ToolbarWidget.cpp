@@ -6,6 +6,7 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/ToolTray/ToolTrayWidget.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 
 
@@ -21,13 +22,16 @@ bool UToolbarWidget::Initialize()
 		return false;
 	}
 
-	if (!(Button_Metaplanes && Button_Separators && Button_Attachments))
+	Controller = GetOwningLocalPlayer<AEditModelPlayerController_CPP>();
+
+	if (!(Controller && Button_Metaplanes && Button_Separators && Button_SurfaceGraphs && Button_Attachments))
 	{
 		return false;
 	}
 
 	Button_Metaplanes->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonPressMetaPlane);
 	Button_Separators->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonPressSeparators);
+	Button_SurfaceGraphs->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonPressSurfaceGraphs);
 	Button_Attachments->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonPressAttachments);
 
 	return true;
@@ -40,10 +44,7 @@ void UToolbarWidget::NativeConstruct()
 
 void UToolbarWidget::OnButtonPressMetaPlane()
 {
-	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
-	{
-		EditModelUserWidget->ToolTrayWidget->ChangeBlockToMetaPlaneTools();
-	}
+	Controller->SetToolMode(EToolMode::VE_METAPLANE);
 }
 
 void UToolbarWidget::OnButtonPressSeparators()
@@ -56,10 +57,7 @@ void UToolbarWidget::OnButtonPressSeparators()
 
 void UToolbarWidget::OnButtonPressSurfaceGraphs()
 {
-	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
-	{
-		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSurfaceGraphTools();
-	}
+	Controller->SetToolMode(EToolMode::VE_SURFACEGRAPH);
 }
 
 void UToolbarWidget::OnButtonPressAttachments()

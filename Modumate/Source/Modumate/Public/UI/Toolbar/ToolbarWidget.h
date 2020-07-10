@@ -27,6 +27,9 @@ protected:
 public:
 
 	UPROPERTY()
+	class AEditModelPlayerController_CPP *Controller;
+
+	UPROPERTY()
 	class UEditModelUserWidget *EditModelUserWidget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -34,6 +37,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *Button_Separators;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *Button_SurfaceGraphs;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *Button_Attachments;

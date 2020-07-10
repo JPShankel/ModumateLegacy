@@ -26,16 +26,6 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonMPLine;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonMPVertical;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonMPHorizontal;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonAxesNone;
 
@@ -53,6 +43,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeToMetaPlaneToolsButtons();
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeToSurfaceGraphToolsButtons();
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeToSeparatorToolsButtons(EToolMode mode);
