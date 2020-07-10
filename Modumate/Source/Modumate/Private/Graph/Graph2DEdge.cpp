@@ -46,4 +46,43 @@ namespace Modumate
 
 		return false;
 	}
+
+	void FGraph2DEdge::Dirty(bool bConnected)
+	{
+		bDirty = true;
+
+		if (bConnected)
+		{
+			bool bContinueConnected = false;
+
+			auto startVertex = Graph->FindVertex(StartVertexID);
+			if (startVertex != nullptr)
+			{
+				startVertex->Dirty(bContinueConnected);
+			}
+
+			auto endVertex = Graph->FindVertex(EndVertexID);
+			if (endVertex != nullptr)
+			{
+				endVertex->Dirty(bContinueConnected);
+			}
+
+			auto leftPoly = Graph->FindPolygon(LeftPolyID);
+			if (leftPoly != nullptr)
+			{
+				leftPoly->Dirty(bContinueConnected);
+			}
+
+			auto rightPoly = Graph->FindPolygon(RightPolyID);
+			if (rightPoly != nullptr)
+			{
+				rightPoly->Dirty(bContinueConnected);
+			}
+		}
+	}
+
+	void FGraph2DEdge::Clean()
+	{
+		bDirty = false;
+	}
 }

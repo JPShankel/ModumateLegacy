@@ -31,6 +31,7 @@ namespace Modumate
 
 	public:
 		virtual void Dirty(bool bConnected = true) = 0;
+		virtual void Clean() = 0;
 
 		virtual EGraphObjectType GetType() const = 0;
 

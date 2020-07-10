@@ -86,6 +86,8 @@ namespace Modumate
 	public:
 		bool ApplyDelta(const FGraph2DDelta &Delta);
 
+		// Clean all objects that are dirtied (by applying deltas) and output their IDs
+		bool CleanGraph(TArray<int32> &OutCleanedVertices, TArray<int32> &OutCleanedEdges, TArray<int32> &OutCleanedPolygons);
 	private:
 		// The graph operation functions test out individual deltas by applying them as they are generated.
 		// A common flow is to make basic deltas for adding objects, apply them, and then create more deltas

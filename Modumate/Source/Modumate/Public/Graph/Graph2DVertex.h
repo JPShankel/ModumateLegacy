@@ -20,7 +20,8 @@ namespace Modumate
 		void SortEdges();
 		bool GetNextEdge(FEdgeID curEdgeID, FEdgeID &outNextEdgeID, float &outAngleDelta, int32 indexDelta = 1) const;
 
-		virtual void Dirty(bool bConnected = true) override {};
+		virtual void Dirty(bool bConnected = true) override;
+		virtual void Clean() override;
 
 		virtual EGraphObjectType GetType() const override { return EGraphObjectType::Vertex; };
 	};

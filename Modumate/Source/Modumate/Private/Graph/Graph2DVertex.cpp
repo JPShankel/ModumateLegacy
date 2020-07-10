@@ -104,4 +104,42 @@ namespace Modumate
 
 		return false;
 	}
+
+	void FGraph2DVertex::Dirty(bool bConnected)
+	{
+		bDirty = true;
+
+		if (bConnected)
+		{
+			bool bContinueConnected = false;
+
+			for (int32 edgeID : Edges)
+			{
+				auto edge = Graph->FindEdge(edgeID);
+				if (edge == nullptr)
+				{
+					continue;
+				}
+
+				edge->Dirty(bContinueConnected);
+
+				auto leftPoly = Graph->FindPolygon(edge->LeftPolyID);
+				if (leftPoly != nullptr)
+				{
+					leftPoly->Dirty(bContinueConnected);
+				}
+
+				auto rightPoly = Graph->FindPolygon(edge->RightPolyID);
+				if (rightPoly != nullptr)
+				{
+					rightPoly->Dirty(bContinueConnected);
+				}
+			}
+		}
+	}
+
+	void FGraph2DVertex::Clean()
+	{
+		bDirty = false;
+	}
 }

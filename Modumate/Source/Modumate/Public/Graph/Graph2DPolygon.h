@@ -25,7 +25,8 @@ namespace Modumate
 		bool IsInside(const FGraph2DPolygon &otherPoly) const;
 		void SetParent(int32 inParentID);
 
-		virtual void Dirty(bool bConnected = true) override {};
+		virtual void Dirty(bool bConnected = true) override;
+		virtual void Clean() override;
 
 		virtual EGraphObjectType GetType() const override { return EGraphObjectType::Polygon; };
 	};

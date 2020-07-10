@@ -20,7 +20,8 @@ namespace Modumate
 		void SetVertices(int32 InStart, int32 InEnd);
 		bool CacheAngle();
 
-		virtual void Dirty(bool bConnected = true) override {};
+		virtual void Dirty(bool bConnected = true) override;
+		virtual void Clean() override;
 
 		virtual EGraphObjectType GetType() const override { return EGraphObjectType::Edge; };
 	};

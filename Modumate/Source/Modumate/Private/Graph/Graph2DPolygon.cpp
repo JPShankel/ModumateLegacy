@@ -73,4 +73,33 @@ namespace Modumate
 			}
 		}
 	}
+
+	void FGraph2DPolygon::Dirty(bool bConnected)
+	{
+		bDirty = true;
+
+		if (bConnected)
+		{
+			bool bContinueConnected = false;
+			for (int32 edgeID : Edges)
+			{
+				if (auto edge = Graph->FindEdge(edgeID))
+				{
+					edge->Dirty(bContinueConnected);
+
+					// TODO: should polygons maintain a list of vertices instead of (or in addition to) positions?
+					auto vertex = (edgeID < 0) ? Graph->FindVertex(edge->EndVertexID) : Graph->FindVertex(edge->StartVertexID);
+					if (vertex != nullptr)
+					{
+						vertex->Dirty(bContinueConnected);
+					}
+				}
+			}
+		}
+	}
+
+	void FGraph2DPolygon::Clean()
+	{
+		bDirty = false;
+	}
 }

@@ -149,6 +149,7 @@ namespace Modumate
 
 		FGraph2DVertex &newVertex = Vertices.Add(newID, FGraph2DVertex(newID, this, Position));
 		bDirty = true;
+		newVertex.Dirty(false);
 
 		return &newVertex;
 	}
@@ -165,20 +166,22 @@ namespace Modumate
 		{
 			return nullptr;
 		}
+		FGraph2DVertex *startVertex = FindVertex(StartVertexID);
+		FGraph2DVertex *endVertex = FindVertex(EndVertexID);
+		if (!ensureAlways(startVertex != nullptr && endVertex != nullptr))
+		{
+			return nullptr;
+		}
 
 		FGraph2DEdge &newEdge = Edges.Add(newID, FGraph2DEdge(newID, this, StartVertexID, EndVertexID));
 
 		bDirty = true;
+		newEdge.Dirty(false);
 		DirtyEdges.Add(newID);
 		DirtyEdges.Add(-newID);
 
-		FGraph2DVertex *startVertex = FindVertex(StartVertexID);
-		FGraph2DVertex *endVertex = FindVertex(EndVertexID);
-		if (startVertex && endVertex)
-		{
-			startVertex->AddEdge(newID);
-			endVertex->AddEdge(-newID);
-		}
+		startVertex->AddEdge(newID);
+		endVertex->AddEdge(-newID);
 
 		EdgeIDsByVertexPair.Add(MakeVertexPair(newEdge.StartVertexID, newEdge.EndVertexID), newEdge.ID);
 
@@ -354,6 +357,7 @@ namespace Modumate
 							adjacentPolyID = newID;
 						}
 					}
+					newPolygon.Dirty(false);
 
 					Polygons.Add(newID, MoveTemp(newPolygon));
 				}
@@ -601,6 +605,45 @@ namespace Modumate
 		return true;
 	}
 
+	bool FGraph2D::CleanGraph(TArray<int32> &OutCleanedVertices, TArray<int32> &OutCleanedEdges, TArray<int32> &OutCleanedPolygons)
+	{
+		OutCleanedVertices.Reset();
+		OutCleanedEdges.Reset();
+		OutCleanedPolygons.Reset();
+
+		for (auto &vertexkvp : Vertices)
+		{
+			auto& vertex = vertexkvp.Value;
+			if (vertex.bDirty)
+			{
+				vertex.Clean();
+				OutCleanedVertices.Add(vertex.ID);
+			}
+		}
+
+		for (auto &edgekvp : Edges)
+		{
+			auto& edge = edgekvp.Value;
+			if (edge.bDirty)
+			{
+				edge.Clean();
+				OutCleanedEdges.Add(edge.ID);
+			}
+		}
+
+		for (auto &polykvp : Polygons)
+		{
+			auto& poly = polykvp.Value;
+			if (poly.bDirty)
+			{
+				poly.Clean();
+				OutCleanedPolygons.Add(poly.ID);
+			}
+		}
+
+		return true;
+	}
+
 	bool FGraph2D::ApplyDeltas(const TArray<FGraph2DDelta> &Deltas)
 	{
 		TArray<FGraph2DDelta> appliedDeltas;
@@ -625,6 +668,9 @@ namespace Modumate
 		{
 			ApplyDelta(*delta.MakeGraphInverse());
 		}
+
+		TArray<int32> cleanedVertices, cleanedEdges, cleanedPolygons;
+		CleanGraph(cleanedVertices, cleanedEdges, cleanedPolygons);
 	}
 
 	void FGraph2D::AggregateAddedObjects(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices, TSet<int32> &OutEdges)
