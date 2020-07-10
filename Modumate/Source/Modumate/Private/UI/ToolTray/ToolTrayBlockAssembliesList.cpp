@@ -10,6 +10,8 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UI/ToolTray/ToolTrayWidget.h"
 #include "UI/EditModelUserWidget.h"
+#include "DocumentManagement/ModumatePresetManager.h"
+#include "Database/ModumateObjectEnums.h"
 
 UToolTrayBlockAssembliesList::UToolTrayBlockAssembliesList(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -41,20 +43,31 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 {
 	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+
+	Modumate::FPresetManager &presetManager = gameState->Document.PresetManager;
+
 	if (controller && gameState && ComponentAssemblyListItemClass)
 	{
 		AssembliesList->ClearChildren();
-		TArray<FShoppingItem> items = gameState->GetAssembliesForToolMode(controller->GetToolMode());
-		for (FShoppingItem& curItem : items)
+
+		Modumate::FPresetManager::FAssemblyDataCollection *assemblies = presetManager.AssemblyDBs_DEPRECATED.Find(controller->GetToolMode());
+		if (assemblies == nullptr || assemblies->DataMap.Num() == 0)
 		{
-			const FModumateObjectAssembly *assembly = gameState->Document.PresetManager.GetAssemblyByKey(controller->GetToolMode(), curItem.Key);
-			if (assembly)
-			{
-				UComponentAssemblyListItem *newWidgetListItem = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UComponentAssemblyListItem>(ComponentAssemblyListItemClass);
-				newWidgetListItem->ToolTrayBlockAssembliesList = this;
-				newWidgetListItem->BuildFromAssembly(controller, controller->GetToolMode(), assembly);
-				AssembliesList->AddChildToVerticalBox(newWidgetListItem);
-			}
+			EObjectType ot = UModumateTypeStatics::ObjectTypeFromToolMode(controller->GetToolMode());
+			assemblies = presetManager.AssembliesByObjectType.Find(ot);
+		}
+
+		if (assemblies == nullptr)
+		{
+			return;
+		}
+
+		for (auto &kvp : assemblies->DataMap)
+		{
+			UComponentAssemblyListItem *newWidgetListItem = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UComponentAssemblyListItem>(ComponentAssemblyListItemClass);
+			newWidgetListItem->ToolTrayBlockAssembliesList = this;
+			newWidgetListItem->BuildFromAssembly(controller, controller->GetToolMode(), &kvp.Value);
+			AssembliesList->AddChildToVerticalBox(newWidgetListItem);
 		}
 	}
 }

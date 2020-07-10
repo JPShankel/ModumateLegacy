@@ -3162,17 +3162,19 @@ void FModumateDocument::MakeNew(UWorld *world)
 
 	// Set default assemblies for tool modes
 	// TODO: move to login/connect to project when we move docs to the cloud, but for now there's only one player state
+
 	AEditModelPlayerState_CPP* pPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
 	for (auto &kvp : PresetManager.AssemblyDBs_DEPRECATED)
 	{
 		if (kvp.Value.DataMap.Num() > 0)
 		{
 			auto asmIter = kvp.Value.DataMap.CreateConstIterator();
-			pPlayerState->SetAssemblyForToolMode(kvp.Key, (*asmIter).Value.AsShoppingItem());
+			pPlayerState->SetAssemblyForToolMode(kvp.Key, (*asmIter).Value.DatabaseKey);
 		}
 		else
 		{
-			pPlayerState->SetAssemblyForToolMode(kvp.Key, FShoppingItem::ErrorItem);
+			static const FName errorItemKey(TEXT("None"));
+			pPlayerState->SetAssemblyForToolMode(kvp.Key, errorItemKey);
 		}
 	}
 
@@ -3405,7 +3407,7 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 		TScriptInterface<IEditModelToolInterface> tool = emPlayerController->ModeToTool.FindRef(mode);
 		if (ensureAlways(tool))
 		{
-			docRec.CurrentToolAssemblyMap.Add(mode, tool->GetAssembly().Key);
+			docRec.CurrentToolAssemblyMap.Add(mode, tool->GetAssemblyKey());
 		}
 	}
 
@@ -3556,7 +3558,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 				const FModumateObjectAssembly *obAsm = PresetManager.GetAssemblyByKey(cta.Key, cta.Value);
 				if (obAsm != nullptr)
 				{
-					tool->SetAssembly(obAsm->AsShoppingItem());
+					tool->SetAssemblyKey(obAsm->DatabaseKey);
 				}
 			}
 		}

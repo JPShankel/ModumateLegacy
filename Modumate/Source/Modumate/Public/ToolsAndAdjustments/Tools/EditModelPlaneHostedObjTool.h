@@ -47,9 +47,9 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual bool HandleInvert() override;
-	virtual void SetAssembly(const FShoppingItem &key) override;
 
 	virtual bool MakeObject(const FVector &Location, TArray<int32> &newObjIDs) override;
+	virtual void SetAssemblyKey(const FName &InAssemblyKey) override;
 
 	FColor AffordanceLineColor = FColor::Orange;
 	float AffordanceLineThickness = 4.0f;

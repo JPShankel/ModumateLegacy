@@ -879,52 +879,7 @@ void UModumateGameInstance::RegisterAllCommands()
 		FName replacementKey = params.GetValue(Parameters::kReplacementKey);
 		FName toolMode = params.GetValue(Parameters::kToolMode);
 		return GetDocument()->RemoveAssembly(GetWorld(), FindEnumValueByName<EToolMode>(TEXT("EToolMode"), toolMode), assemblyKey, replacementKey);
-	});
-
-	RegisterCommand(kSetCurrentAssembly, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		AEditModelPlayerController_CPP *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-		AEditModelPlayerState_CPP *playerState = playerController->EMPlayerState;
-		AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
-		FModumateDocument *doc = GetDocument();
-
-		if (playerState && gameMode && doc)
-		{
-			EToolMode targetToolMode = playerController->GetToolMode();
-
-			FString toolModeString = params.GetValue(Parameters::kMode);
-			if (toolModeString.IsEmpty())
-			{
-				toolModeString = EnumValueString(EToolMode, targetToolMode);
-			}
-			else
-			{
-				targetToolMode = EnumValueByString(EToolMode, toolModeString);
-			}
-
-			int32 assemblyIndex = params.GetValue(Parameters::kIndex);
-
-			if (targetToolMode != EToolMode::VE_NONE)
-			{
-				FString assemblyKeyParam = params.GetValue(kAssembly);
-
-				AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-
-				TArray<FShoppingItem> shoppingItems = gameState->GetAssembliesForToolMode(targetToolMode);
-				if (shoppingItems.Num() > 0)
-				{
-					assemblyIndex = FMath::Clamp(assemblyIndex, 0, shoppingItems.Num() - 1);
-					FShoppingItem &targetShoppingItem = shoppingItems[assemblyIndex];
-
-					UE_LOG(LogTemp, Log, TEXT("Set assembly for tool mode %s to: \"%s\" (%s)"), *toolModeString, *targetShoppingItem.DisplayName, *targetShoppingItem.Key.ToString());
-					playerState->SetAssemblyForToolMode(targetToolMode, targetShoppingItem);
-				}
-			}
-			return true;
-		}
-
-		return false;
-	});
+	});	
 }
 
 DECLARE_CYCLE_STAT(TEXT("Process app command queue"), STAT_ModumateProcessCommandQueue, STATGROUP_Modumate)

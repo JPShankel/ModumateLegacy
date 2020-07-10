@@ -49,7 +49,7 @@ bool UFinishTool::BeginUse()
 
 	if (gameState && LastValidTarget && (LastValidTarget->ID != 0) && (LastValidFaceIndex != INDEX_NONE))
 	{
-		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_FINISH, Assembly.Key);
+		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_FINISH, AssemblyKey);
 		const FModumateObjectInstance *parentMOI = gameState->Document.GetObjectById(LastValidTarget->ID);
 
 		// If we're replacing an existing finish, just swap its assembly
@@ -86,7 +86,7 @@ bool UFinishTool::BeginUse()
 			FMOIStateData stateData;
 			stateData.StateType = EMOIDeltaType::Create;
 			stateData.ObjectType = EObjectType::OTFinish;
-			stateData.ObjectAssemblyKey = Assembly.Key;
+			stateData.ObjectAssemblyKey = AssemblyKey;
 			stateData.ParentID = LastValidTarget->ID;
 			stateData.ControlIndices = { LastValidFaceIndex };
 			stateData.ObjectID = gameState->Document.GetNextAvailableID();

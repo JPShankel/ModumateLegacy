@@ -21,80 +21,6 @@ class MODUMATE_API UModumateIconMeshStatics : public UBlueprintFunctionLibrary
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
-		static bool GetWallIconParamsFromShopItem(
-			AActor* IconGenerator,
-			UModumateCraftingWidget_CPP* CraftingWidget,
-			const FName &AssemblyKey,
-			FVector RefCP1,
-			FVector RefCP2,
-			TArray<FProceduralMeshParams>& ProceduralMeshParam,
-			TArray<UMaterialInterface*>& Materials,
-			float& WallThickness,
-			float& LayerHeight,
-			FVector& CP1, FVector& CP2,
-			EToolMode mode,
-			bool ManualLayerCPs = false,
-			float UVScale = 1.f,
-			bool bMarketplaceAsm = false);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
-		static bool GetFloorIconParamsFromShopItem(
-			AActor* IconGenerator,
-			EToolMode FromToolMode,
-			UModumateCraftingWidget_CPP* CraftingWidget,
-			const FName &AssemblyKey,
-			FVector Offset,
-			float FloorStartHeight,
-			TArray<FProceduralMeshParams>& ProceduralMeshParam,
-			TArray<UMaterialInterface*>& Materials,
-			float& FloorThickness,
-			float& LayerDepth,
-			FVector& CP1, FVector& CP2, FVector& CP3, FVector& CP4,
-			bool ManualLayerCPs = false,
-			bool bMarketplaceAsm = false);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
-		static bool MakeCompoundMeshFromShoppingItem(
-			AActor* IconGenerator,
-			const FName &AssemblyKey,
-			EToolMode FromToolMode,
-			float& TotalWidth,
-			UModumateCraftingWidget_CPP* CraftingWidget,
-			bool bMarketplaceAsm = false);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
-		static bool MakeCabinetFromShoppingItem(
-			AActor* IconGenerator,
-			const FName &AsmKey,
-			TArray<FVector>& CabinetPointRefs,
-			UModumateCraftingWidget_CPP* CraftingWidget,
-			bool bMarketplaceAsm = false);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
-		static bool MakeExtrudedPolyFromShoppingItem(
-			AActor* iconGenerator,
-			EToolMode fromToolMode,
-			const FName &asmKey,
-			const FVector &rootLoation,
-			UModumateCraftingWidget_CPP* CraftingWidget,
-			float length = 25.f,
-			bool bMarketplaceAsm = false);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
-		static bool GetModuleGapIconParamsFromCrafting(
-			AActor* IconGenerator,
-			UModumateCraftingWidget_CPP* CraftingWidget,
-			EToolMode FromToolMode,
-			const FString &AssemblyKey,
-			FVector &ModuleExtent,
-			FVector &GapExtent,
-			UMaterialInterface* &ModuleMaterial,
-			FCustomColor &ModuleColor,
-			FCustomColor &GapColor,
-			bool bMarketplaceAsm = false,
-			int32 InLayerID = 0);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
 		static bool GetMeshesFromShoppingItem(AEditModelPlayerController_CPP *Controller, const FName &AsmKey, EToolMode FromToolMode, TArray<UStaticMesh*>& TargetComps, bool bMarketplaceAsm = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate IconMesh")
@@ -121,24 +47,4 @@ public:
 			const FName &PresetKey, 
 			UMaterialInterface* &ModuleMaterial,
 			FCustomColor &ModuleColor);
-
-	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate IconMesh")
-		static bool GetModuleIconParamsFromPreset(
-			UObject* WorldContextObject,
-			UModumateCraftingWidget_CPP* CraftingWidget,
-			EToolMode FromToolMode,
-			const FName &PresetKey,
-			FVector &ModuleExtent,
-			UMaterialInterface* &ModuleMaterial,
-			FCustomColor &ModuleColor);
-
-	// Provided with the front face parameters as reference, this will give the rest of the parameters to build a wall
-	static void CalculateWallParam(FVector UVAnchorRelative, TArray<FVector> RefFaceVerts, TArray<int32> RefFaceTris, TArray<FVector> WallCorners, FVector WorldLocation, FVector WallFrontDirection, TArray<FVector2D> RefFaceUV, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUVs);
-
-	static TArray<FWallAssemblyLayerControlPoints> GetWallAssemblyLayerControlPoints(const TArray<FVector> &controlPoints, const TArray<FModumateObjectAssemblyLayer> &layers, float height, bool ManualLayerCPs = false);
-
-	static void GetWallVertsParamFromAssemblyLayerControlPoints(FVector UVAnchor, FWallAssemblyLayerControlPoints AssemblyLayer, AActor * CurrentWallActor, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUVs);
-
-	// Calculate UV with UV origin at designated local (relative to mesh) anchor.
-	static TArray<FVector2D> UVCalculateWithAnchor(TArray<FVector> faceVertsRelative, FVector anchorRelative, FVector faceDirection, FVector horizontalDirection);
 };

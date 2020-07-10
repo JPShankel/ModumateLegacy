@@ -12,23 +12,22 @@ namespace Modumate
 {
 	class MODUMATE_API FPresetManager 
 	{
+	public:
+		typedef DataCollection<FModumateObjectAssembly> FAssemblyDataCollection;
+		typedef TMap<FName, FGraph2DRecord> FGraphCollection;
+
 	private:
 
 		// ModumateObjectDatabase initializes the preset manager for a new document
 		friend class ModumateObjectDatabase;
 
-		typedef DataCollection<FModumateObjectAssembly> FAssemblyDataCollection;
-		TMap<EObjectType, FAssemblyDataCollection> AssembliesByObjectType;
-
-		typedef TMap<FName, FGraph2DRecord> FGraphCollection;
 		FGraphCollection GraphCollection;
-
 		TSet<FName> KeyStore;
-
 		ECraftingResult ReadBIMTable(UDataTable *DataTable, BIM::FCraftingPresetCollection &Target);
 
 	public:
-		TMap<EToolMode, FAssemblyDataCollection > AssemblyDBs_DEPRECATED;
+		TMap<EToolMode, FAssemblyDataCollection> AssemblyDBs_DEPRECATED;
+		TMap<EObjectType, FAssemblyDataCollection> AssembliesByObjectType;
 
 		FPresetManager();
 		virtual ~FPresetManager();

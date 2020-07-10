@@ -5,7 +5,6 @@
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "CoreMinimal.h"
 #include "Engine/Engine.h"
-#include "Database/ModumateShoppingItem.h"
 
 #include "EditModelToolBase.generated.h"
 
@@ -21,7 +20,6 @@ class MODUMATE_API UEditModelToolBase : public UObject, public IEditModelToolInt
 protected:
 	bool InUse;
 	bool Active;
-	FShoppingItem Assembly;
 
 	UPROPERTY()
 	class AEditModelPlayerController_CPP* Controller;
@@ -31,6 +29,8 @@ protected:
 
 	EAxisConstraint AxisConstraint;
 	EToolCreateObjectMode CreateObjectMode;
+
+	FName AssemblyKey;
 
 public:
 
@@ -54,8 +54,8 @@ public:
 	virtual bool ShowSnapCursorAffordances() { return true; }
 	virtual void GetSnappingPointsAndLines(TArray<FVector> &OutPoints, TArray<TPair<FVector, FVector>> &OutLines) {};
 
-	virtual const FShoppingItem &GetAssembly() const override { return Assembly; }
-	virtual void SetAssembly(const FShoppingItem &key) override { Assembly = key; }
 	virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override { AxisConstraint = InAxisConstraint; }
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override { CreateObjectMode = InCreateObjectMode; }
+	virtual void SetAssemblyKey(const FName &InAssemblyKey) override { AssemblyKey = InAssemblyKey; }
+	virtual FName GetAssemblyKey() const override { return AssemblyKey; }
 };

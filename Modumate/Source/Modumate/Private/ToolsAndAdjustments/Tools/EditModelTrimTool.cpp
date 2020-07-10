@@ -65,7 +65,7 @@ void UTrimTool::OnAssemblySet()
 		AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
 
 		// TODO: fix the case when the assembly is not already set when the tool is invoked
-		const FModumateObjectAssembly *assembly = gameState ? gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_TRIM, Assembly.Key) : nullptr;
+		const FModumateObjectAssembly *assembly = gameState ? gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_TRIM, AssemblyKey) : nullptr;
 		if (ensureAlways(gameMode) && assembly)
 		{
 			TrimAssembly = *assembly;
@@ -241,7 +241,7 @@ bool UTrimTool::BeginUse()
 		TArray<FVector> controlPoints;
 		TArray<int32> controlIndices;
 
-		if (ensureAlways(!Assembly.Key.IsNone() && CurrentTarget &&
+		if (ensureAlways(!AssemblyKey.IsNone() && CurrentTarget &&
 			UModumateObjectStatics::GetTrimControlsFromValues(CurrentStartAlongEdge, CurrentEndAlongEdge,
 				CurrentStartIndex, CurrentEndIndex, CurrentMountIndex, bCurrentLengthsArePCT,
 				MiterOptionStart, MiterOptionEnd, controlPoints, controlIndices)))
@@ -250,7 +250,7 @@ bool UTrimTool::BeginUse()
 				FModumateCommand(Commands::kMakeTrim)
 				.Param(Parameters::kControlPoints, controlPoints)
 				.Param(Parameters::kIndices, controlIndices)
-				.Param(Parameters::kAssembly, Assembly.Key)
+				.Param(Parameters::kAssembly, AssemblyKey)
 				.Param(Parameters::kInverted, bInverted)
 				.Param(Parameters::kParent, CurrentTarget->ID)
 			);
@@ -262,7 +262,6 @@ bool UTrimTool::BeginUse()
 			AbortUse();
 		}
 	}
-
 	return false;
 }
 
@@ -465,8 +464,8 @@ bool UTrimTool::HandleInvert()
 	return true;
 }
 
-void UTrimTool::SetAssembly(const FShoppingItem &key)
+void UTrimTool::SetAssemblyKey(const FName &InAssemblyKey)
 {
-	Super::SetAssembly(key);
+	Super::SetAssemblyKey(InAssemblyKey);
 	OnAssemblySet();
 }

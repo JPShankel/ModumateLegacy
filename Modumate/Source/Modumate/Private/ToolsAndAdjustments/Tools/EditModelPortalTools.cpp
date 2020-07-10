@@ -28,7 +28,6 @@ UPortalToolBase::UPortalToolBase(const FObjectInitializer& ObjectInitializer)
 	, RelativePos(FVector2D::ZeroVector)
 	, WorldRot(FQuat::Identity)
 	, RelativeRot(FQuat::Identity)
-	, Assembly()
 	, Active(false)
 	, Inverted(false)
 	, bValidPortalConfig(false)
@@ -51,9 +50,9 @@ bool UPortalToolBase::Activate()
 	return true;
 }
 
-void UPortalToolBase::SetAssembly(const FShoppingItem &key)
+void UPortalToolBase::SetAssemblyKey(const FName &InAssemblyKey)
 {
-	Assembly = key;
+	UEditModelToolBase::SetAssemblyKey(InAssemblyKey);
 	if (Active)
 	{
 		SetupCursor();
@@ -82,7 +81,7 @@ void UPortalToolBase::SetupCursor()
 	CursorActor->SetActorEnableCollision(false);
 
 	auto *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	const FModumateObjectAssembly *obAsm = gameState->GetAssemblyByKey(Assembly.Key);
+	const FModumateObjectAssembly *obAsm = gameState->GetAssemblyByKey(AssemblyKey);
 	bValidPortalConfig = false;
 
 	float invMul = Inverted ? 1 : -1;
@@ -93,7 +92,7 @@ void UPortalToolBase::SetupCursor()
 		CursorActor->MakeFromAssembly(*obAsm, FVector::OneVector, Inverted, false);
 
 		// Store data used for previewing this object as if it were a fully-created MOI
-		CursorActor->TempAssemblyKey = Assembly.Key;
+		CursorActor->TempAssemblyKey = AssemblyKey;
 		CursorActor->TempObjectToolMode = GetToolMode();
 	}
 }
@@ -323,7 +322,7 @@ bool UDoorTool::BeginUse()
 			.Param(Parameters::kLocation, RelativePos)
 			.Param(Parameters::kQuaternion, RelativeRot)
 			.Param(Parameters::kInverted,Inverted)
-			.Param(Parameters::kAssembly, Assembly.Key)
+			.Param(Parameters::kAssembly, AssemblyKey)
 		);
 	}
 	return false;
@@ -344,7 +343,7 @@ bool UWindowTool::BeginUse()
 			.Param(Parameters::kLocation, RelativePos)
 			.Param(Parameters::kQuaternion, RelativeRot)
 			.Param(Parameters::kInverted,Inverted)
-			.Param(Parameters::kAssembly,Assembly.Key)
+			.Param(Parameters::kAssembly,AssemblyKey)
 		);
 	}
 	return false;

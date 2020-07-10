@@ -57,7 +57,7 @@ void UComponentAssemblyListItem::NativeDestruct()
 
 bool UComponentAssemblyListItem::BuildFromAssembly(AEditModelPlayerController_CPP *Controller, EToolMode mode, const FModumateObjectAssembly *Asm)
 {
-	MainText->ChangeText(FText::FromString(Asm->AsShoppingItem().DisplayName));
+	MainText->ChangeText(FText::FromString(Asm->GetProperty(BIM::Parameters::Name)));
 	AsmKey = Asm->DatabaseKey;
 	EMPlayerController = Controller;
 	ToolMode = mode;
@@ -84,11 +84,7 @@ void UComponentAssemblyListItem::OnModumateButtonMainReleased()
 	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 	if (controller && controller->EMPlayerState)
 	{
-		const FModumateObjectAssembly *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, AsmKey);
-		if (assembly)
-		{
-			controller->EMPlayerState->SetAssemblyForToolMode(ToolMode, assembly->AsShoppingItem());
-		}
+		controller->EMPlayerState->SetAssemblyForToolMode(ToolMode, AsmKey);
 	}
 }
 

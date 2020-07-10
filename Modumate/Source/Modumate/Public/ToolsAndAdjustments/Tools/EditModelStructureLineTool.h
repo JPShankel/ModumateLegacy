@@ -30,8 +30,8 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
-	virtual void SetAssembly(const FShoppingItem &key) override;
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override;
+	virtual void SetAssemblyKey(const FName &InAssemblyKey) override;
 
 protected:
 	void SetTargetID(int32 NewTargetID);

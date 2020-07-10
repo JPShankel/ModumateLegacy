@@ -129,7 +129,7 @@ bool UCountertopTool::EnterNextStage()
 			FMOIStateData stateData;
 			stateData.StateType = EMOIDeltaType::Create;
 			stateData.ObjectType = EObjectType::OTCountertop;
-			stateData.ObjectAssemblyKey = Assembly.Key;
+			stateData.ObjectAssemblyKey = AssemblyKey;
 			stateData.ControlPoints = BasePoints;
 			stateData.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
 			stateData.ObjectID = doc.GetNextAvailableID();

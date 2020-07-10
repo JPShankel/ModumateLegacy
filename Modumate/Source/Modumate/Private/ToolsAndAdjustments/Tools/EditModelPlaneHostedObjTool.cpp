@@ -218,7 +218,7 @@ bool UPlaneHostedObjTool::HandleInvert()
 bool UPlaneHostedObjTool::BeginUse()
 {
 	// TODO: require assemblies for stairs, once they can be crafted
-	if (!Controller || (Assembly.Key.IsNone() && (ObjectType != EObjectType::OTStaircase)))
+	if (!Controller || (AssemblyKey.IsNone() && (ObjectType != EObjectType::OTStaircase)))
 	{
 		return false;
 	}
@@ -272,7 +272,7 @@ bool UPlaneHostedObjTool::BeginUse()
 			newMOIData.StateType = EMOIDeltaType::Create;
 			newMOIData.ObjectType = ObjectType;
 			newMOIData.ParentID = LastValidTargetID;
-			newMOIData.ObjectAssemblyKey = Assembly.Key;
+			newMOIData.ObjectAssemblyKey = AssemblyKey;
 			newMOIData.bObjectInverted = GetAppliedInversionValue();
 			newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
 			newMOIData.ObjectID = GameState->Document.GetNextAvailableID();
@@ -304,7 +304,6 @@ bool UPlaneHostedObjTool::BeginUse()
 
 		return true;
 	}
-
 	return false;
 }
 
@@ -335,13 +334,13 @@ bool UPlaneHostedObjTool::EnterNextStage()
 	return UMetaPlaneTool::EnterNextStage();
 }
 
-void UPlaneHostedObjTool::SetAssembly(const FShoppingItem &key)
+void UPlaneHostedObjTool::SetAssemblyKey(const FName &InAssemblyKey)
 {
-	UMetaPlaneTool::SetAssembly(key);
+	UMetaPlaneTool::SetAssemblyKey(InAssemblyKey);
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(ObjectType);
 	const FModumateObjectAssembly *assembly = GameState.IsValid() ?
-		GameState->GetAssemblyByKey_DEPRECATED(toolMode, key.Key) : nullptr;
+		GameState->GetAssemblyByKey_DEPRECATED(toolMode, InAssemblyKey) : nullptr;
 
 	if (assembly != nullptr)
 	{
@@ -380,7 +379,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &new
 				newMOIData.StateType = EMOIDeltaType::Create;
 				newMOIData.ObjectType = ObjectType;
 				newMOIData.ParentID = newGraphObjID;
-				newMOIData.ObjectAssemblyKey = Assembly.Key;
+				newMOIData.ObjectAssemblyKey = AssemblyKey;
 				newMOIData.bObjectInverted = bInverted;
 				newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
 				newMOIData.ObjectID = newObjID;

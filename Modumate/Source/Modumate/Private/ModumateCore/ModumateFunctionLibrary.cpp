@@ -987,59 +987,6 @@ static FString FormatDateString(const FDateTime &dt, const TCHAR *monthNames[])
 	return monthNames[dt.GetMonth() - 1] + FString(TEXT(" ")) + FString::FromInt(dt.GetDay()) + TEXT(", ") + FString::FromInt(dt.GetYear());
 }
 
-FVector UModumateFunctionLibrary::WallUpdateUVAnchor(FVector currentAnchorOrigin, int32 anchorSide, FVector newP1, FVector newP2, FVector oldP1, FVector oldP2)
-{
-	FVector returnAnchorLocation;
-	FVector curAnchorOrigin = currentAnchorOrigin * FVector(1.0f, 1.0f, 0.0f);
-	FVector nP1 = newP1 * FVector(1.0f, 1.0f, 0.0f);
-	FVector nP2 = newP2 * FVector(1.0f, 1.0f, 0.0f);
-	FVector oP1 = oldP1 * FVector(1.0f, 1.0f, 0.0f);
-	FVector oP2 = oldP2 * FVector(1.0f, 1.0f, 0.0f);
-
-	if (anchorSide == 0)
-	{
-		bool bPossibleNegativeLength = (nP1 - nP2).Size() < (nP1 - curAnchorOrigin).Size();
-		float anchorLength = (oP2 - curAnchorOrigin).Size();
-
-		if (bPossibleNegativeLength)
-		{
-			float lengthA = (oP1 - oP2).Size() + (oP2 - curAnchorOrigin).Size();
-			float lengthB = (oP1 - curAnchorOrigin).Size();
-			if (FMath::IsNearlyEqual(lengthA, lengthB, 0.1f))
-			{
-				anchorLength = anchorLength * -1.0f;
-			}
-		}
-		FVector anchorDirection = UKismetMathLibrary::GetDirectionUnitVector(nP2, nP1);
-		FVector anchorNewLocationXY = (anchorDirection * anchorLength) + nP2;
-		returnAnchorLocation = FVector(anchorNewLocationXY.X, anchorNewLocationXY.Y, currentAnchorOrigin.Z);
-	}
-	else if ((anchorSide == 1) || (anchorSide == 2) || (anchorSide == 3))
-	{
-		bool bPossibleNegativeLength = (nP2 - nP1).Size() < (nP2 - curAnchorOrigin).Size();
-		float anchorLength = (oP1 - curAnchorOrigin).Size();
-
-		if (bPossibleNegativeLength)
-		{
-			float lengthA = (curAnchorOrigin - oP1).Size() + (oP1 - oP2).Size();
-			float lengthB = (curAnchorOrigin - oP2).Size();
-			if (FMath::IsNearlyEqual(lengthA, lengthB, 0.1f))
-			{
-				anchorLength = anchorLength * -1.0f;
-			}
-		}
-		FVector anchorDirection = UKismetMathLibrary::GetDirectionUnitVector(nP1, nP2);
-		FVector anchorNewLocationXY = (anchorDirection * anchorLength) + nP1;
-		returnAnchorLocation = FVector(anchorNewLocationXY.X, anchorNewLocationXY.Y, currentAnchorOrigin.Z);
-	}
-	else if (anchorSide == -1)
-	{
-		returnAnchorLocation = currentAnchorOrigin;
-	}
-
-	return returnAnchorLocation;
-}
-
 EObjectType UModumateFunctionLibrary::GetMOITypeFromActor(AActor * MOIActor)
 {
 	if (MOIActor != nullptr)
@@ -1263,24 +1210,22 @@ void UModumateFunctionLibrary::DocUnHideAllMoiActors(const AActor* Owner)
 	}
 }
 
-FShoppingItem UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& bSuccess)
+FName UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& bSuccess)
 {
 	if (TargetActor != nullptr)
 	{
 		AEditModelGameState_CPP *gameState = TargetActor->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 		Modumate::FModumateDocument *doc = &gameState->Document;
 		FModumateObjectInstance *moi = doc->ObjectFromActor(TargetActor);
-		FShoppingItem returnShoppingItem = moi->GetAssembly().AsShoppingItem();
-		bSuccess = !returnShoppingItem.Key.IsNone();
-		return returnShoppingItem;
+		
+		if (moi != nullptr)
+		{
+			bSuccess = true;
+			return moi->GetAssembly().DatabaseKey;
+		}
 	}
-	else
-	{
-		bSuccess = false;
-		FShoppingItem returnShoppingItem;
-		return returnShoppingItem;
-	}
-
+	bSuccess = false;
+	return NAME_None;
 }
 
 using namespace Modumate;

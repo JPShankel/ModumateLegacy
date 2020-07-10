@@ -139,10 +139,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static float GetViewportDPIScale();
 
-	// Call when wall is updating to update anchor of UV in world space
-	UFUNCTION(BlueprintCallable, Category = "Modumate Wall")
-	static FVector WallUpdateUVAnchor(FVector currentAnchorOrigin, int32 anchorSide, FVector newP1, FVector newP2, FVector oldP1, FVector oldP2);
-
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
 	static EObjectType GetMOITypeFromActor(AActor* MOIActor);
 
@@ -191,7 +187,7 @@ public:
 	static void DocUnHideAllMoiActors(const AActor* Owner);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static FShoppingItem GetShopItemFromActor(AActor* TargetActor, bool& bSuccess);
+	static FName GetShopItemFromActor(AActor* TargetActor, bool& bSuccess);
 
 	static bool GetCabinetToeKickDimensions(const FModumateObjectAssembly &obAsm, FVector2D &outToeKickDims);
 

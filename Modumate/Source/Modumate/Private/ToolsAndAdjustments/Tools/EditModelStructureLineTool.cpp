@@ -99,7 +99,7 @@ bool UStructureLineTool::Deactivate()
 
 bool UStructureLineTool::BeginUse()
 {
-	if (!Assembly.Valid)
+	if (AssemblyKey.IsNone())
 	{
 		return false;
 	}
@@ -157,7 +157,7 @@ bool UStructureLineTool::FrameUpdate()
 {
 	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
 
-	if (!cursor.Visible || !Assembly.Valid)
+	if (!cursor.Visible || AssemblyKey.IsNone())
 	{
 		return false;
 	}
@@ -235,13 +235,13 @@ bool UStructureLineTool::AbortUse()
 	return UEditModelToolBase::AbortUse();
 }
 
-void UStructureLineTool::SetAssembly(const FShoppingItem &key)
+void UStructureLineTool::SetAssemblyKey(const FName &InAssemblyKey)
 {
-	Super::SetAssembly(key);
+	Super::SetAssemblyKey(InAssemblyKey);
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(EObjectType::OTStructureLine);
 	const FModumateObjectAssembly *assembly = GameState.IsValid() ?
-		GameState->GetAssemblyByKey_DEPRECATED(toolMode, key.Key) : nullptr;
+		GameState->GetAssemblyByKey_DEPRECATED(toolMode, InAssemblyKey) : nullptr;
 
 	if (assembly != nullptr)
 	{
@@ -250,7 +250,7 @@ void UStructureLineTool::SetAssembly(const FShoppingItem &key)
 	}
 	else
 	{
-		Assembly = FShoppingItem::ErrorItem;
+		Super::SetAssemblyKey(NAME_None);
 		ObjAssembly = FModumateObjectAssembly();
 	}
 }
@@ -321,7 +321,7 @@ bool UStructureLineTool::SetStructureLineHidden(int32 StructureLineID, bool bHid
 
 bool UStructureLineTool::UpdatePreviewStructureLine()
 {
-	if (!PendingObjMesh.IsValid() || !Assembly.Valid)
+	if (!PendingObjMesh.IsValid() || AssemblyKey.IsNone())
 	{
 		return false;
 	}
@@ -429,7 +429,7 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 			FMOIStateData stateData;
 			stateData.StateType = EMOIDeltaType::Create;
 			stateData.ObjectType = EObjectType::OTStructureLine;
-			stateData.ObjectAssemblyKey = Assembly.Key;
+			stateData.ObjectAssemblyKey = AssemblyKey;
 			stateData.ParentID = targetEdgeID;
 			stateData.ObjectID = GameState->Document.GetNextAvailableID();
 

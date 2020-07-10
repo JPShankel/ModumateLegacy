@@ -348,13 +348,13 @@ bool UStairTool::EnterNextStage()
 	return true;
 }
 
-void UStairTool::SetAssembly(const FShoppingItem &key)
+void UStairTool::SetAssemblyKey(const FName &InAssemblyKey)
 {
-	Super::SetAssembly(key);
+	UEditModelToolBase::SetAssemblyKey(InAssemblyKey);
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(EObjectType::OTStaircase);
 	const FModumateObjectAssembly *assembly = GameState.IsValid() ?
-		GameState->GetAssemblyByKey_DEPRECATED(toolMode, key.Key) : nullptr;
+		GameState->GetAssemblyByKey_DEPRECATED(toolMode, InAssemblyKey) : nullptr;
 
 	if (assembly != nullptr)
 	{
@@ -466,7 +466,7 @@ bool UStairTool::MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID)
 			newMOIData.StateType = EMOIDeltaType::Create;
 			newMOIData.ObjectType = EObjectType::OTStaircase;
 			newMOIData.ParentID = RefParentPlaneID;
-			newMOIData.ObjectAssemblyKey = Assembly.Key;
+			newMOIData.ObjectAssemblyKey = AssemblyKey;
 			newMOIData.bObjectInverted = false;
 			newMOIData.Extents = FVector(0.5f, 0, 0);
 			newMOIData.ObjectID = OutStairsID;

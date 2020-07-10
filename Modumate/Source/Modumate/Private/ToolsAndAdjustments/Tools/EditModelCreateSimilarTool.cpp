@@ -79,9 +79,8 @@ bool UCreateSimilarTool::MatchTargetObject(bool bUseMouseHoverObject)
 
 	if (targetObj)
 	{
-		FShoppingItem targetShoppingItem = targetObj->GetAssembly().AsShoppingItem();
 		EToolMode targetToolMode = UModumateTypeStatics::ToolModeFromObjectType(targetObj->GetObjectType());
-		Controller->EMPlayerState->SetAssemblyForToolMode(targetToolMode, targetShoppingItem);
+		Controller->EMPlayerState->SetAssemblyForToolMode(targetToolMode, targetObj->GetAssembly().DatabaseKey);
 		return true;
 	}
 

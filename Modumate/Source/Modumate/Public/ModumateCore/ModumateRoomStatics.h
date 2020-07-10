@@ -4,13 +4,53 @@
 #include "CoreMinimal.h"
 #include "Database/ModumateDataTables.h"
 #include "Graph/Graph3DTypes.h"
-#include "Database/ModumateShoppingItem.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/Object.h"
 
 #include "ModumateRoomStatics.generated.h"
 
+USTRUCT(BlueprintType)
+struct FRoomConfigurationBlueprint
+{
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
+	FName Key;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
+	int32 ObjectID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
+	FString RoomNumber;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
+	FColor RoomColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
+	float Area;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
+	FName UseGroupCode;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
+	FText UseGroupType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
+	FText DisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
+	int32 OccupantsNumber;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
+	float OccupantLoadFactor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
+	EAreaType AreaType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
+	FText LoadFactorSpecialCalc;
+};
 
 // TODO: this should be defined by BIM, rather than a USTRUCT table row and a Blueprintable subclass
 namespace Modumate

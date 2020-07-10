@@ -232,7 +232,7 @@ AEditModelGameMode_CPP *AEditModelPlayerState_CPP::GetEditModelGameMode()
 }
 
 
-void AEditModelPlayerState_CPP::SetAssemblyForActor(AActor *actor, const FShoppingItem &assembly)
+void AEditModelPlayerState_CPP::SetAssemblyForActor(AActor *actor, const FName &assemblyKey)
 {
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	Modumate::FModumateDocument *doc = &gameState->Document;
@@ -252,7 +252,7 @@ void AEditModelPlayerState_CPP::SetAssemblyForActor(AActor *actor, const FShoppi
 			Modumate::FModumateCommand(Modumate::Commands::kSetAssemblyForObjects)
 			.Param(Modumate::Parameters::kObjectIDs, ids)
 			.Param(Modumate::Parameters::kToolMode,modeName.ToString())
-			.Param(Modumate::Parameters::kAssembly, assembly.Key));
+			.Param(Modumate::Parameters::kAssembly, assemblyKey));
 	}
 }
 
@@ -939,23 +939,22 @@ void AEditModelPlayerState_CPP::Paste(Modumate::FModumateDocument &document) con
 	document.EndUndoRedoMacro();
 }
 
-const FShoppingItem &AEditModelPlayerState_CPP::GetAssemblyForToolMode(EToolMode mode)
+FName AEditModelPlayerState_CPP::GetAssemblyForToolMode(EToolMode mode)
 {
 	TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(mode);
 	if (ensureAlways(tool))
 	{
-		return tool->GetAssembly();
+		return tool->GetAssemblyKey();
 	}
-
-	return FShoppingItem::ErrorItem;
+	return NAME_None;
 }
 
-void AEditModelPlayerState_CPP::SetAssemblyForToolMode(EToolMode mode, const FShoppingItem &item)
+void AEditModelPlayerState_CPP::SetAssemblyForToolMode(EToolMode mode, const FName &assemblyKey)
 {
 	TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(mode);
 	if (ensureAlways(tool))
 	{
-		tool->SetAssembly(item);
+		tool->SetAssemblyKey(assemblyKey);
 	}
 }
 

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "UnrealClasses/ModumateGameModeBase.h"
-#include "Database/ModumateShoppingItem.h"
 #include "EditModelGameMode_CPP.generated.h"
 
 namespace Modumate {

@@ -8,13 +8,11 @@
 
 #include "EditModelToolInterface.generated.h"
 
-struct FShoppingItem;
-class AEditModelPlayerController_CPP;
+class MODUMATE_API AEditModelPlayerController_CPP;
 
 namespace Modumate {
 	class FModumateObjectInstance;
 }
-
 
 UINTERFACE(meta = (CannotImplementInterfaceInBlueprint))
 class UEditModelToolInterface : public UInterface
@@ -44,8 +42,8 @@ public:
 	virtual bool HandleMouseUp() = 0;
 	virtual bool ShowSnapCursorAffordances() = 0;
 	virtual void GetSnappingPointsAndLines(TArray<FVector> &OutPoints, TArray<TPair<FVector, FVector>> &OutLines) = 0;
-	virtual const FShoppingItem &GetAssembly() const = 0;
-	virtual void SetAssembly(const FShoppingItem &str) = 0;
 	virtual void SetAxisConstraint(EAxisConstraint AxisConstraint) = 0;
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) = 0;
+	virtual void SetAssemblyKey(const FName &InAssemblyKey) = 0;
+	virtual FName GetAssemblyKey() const = 0;
 };

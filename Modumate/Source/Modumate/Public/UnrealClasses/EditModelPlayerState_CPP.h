@@ -127,7 +127,7 @@ public:
 	bool SetObjectHeight(Modumate::FModumateObjectInstance *obj, float newHeight, bool bSetBaseElevation, bool bUpdateGeometry);
 
 	UFUNCTION(BlueprintCallable, Category = "Tools")
-	void SetAssemblyForActor(AActor *actor, const FShoppingItem &assembly);
+	void SetAssemblyForActor(AActor *actor, const FName &assemblyKey);
 
 	UFUNCTION(BlueprintCallable, Category = "Tools")
 	void ToggleRoomViewMode();
@@ -213,10 +213,10 @@ public:
 	int32 GetViewGroupObjectID() const { return ViewGroupObject ? ViewGroupObject->ID : 0; }
 
 	UFUNCTION(BlueprintCallable, Category = "Shopping")
-	void SetAssemblyForToolMode(EToolMode mode, const FShoppingItem &item);
+	void SetAssemblyForToolMode(EToolMode mode, const FName &assemblyKey);
 
 	UFUNCTION(BlueprintCallable, Category = "Shopping")
-	const FShoppingItem &GetAssemblyForToolMode(EToolMode mode);
+	FName GetAssemblyForToolMode(EToolMode mode);
 
 	UFUNCTION(BlueprintCallable, Category = Keyboard)
 	void AddDimensionStringsToHUDDrawWidget();

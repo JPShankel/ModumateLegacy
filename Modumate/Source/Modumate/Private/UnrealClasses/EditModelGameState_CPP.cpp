@@ -44,29 +44,6 @@ const FModumateObjectAssembly *AEditModelGameState_CPP::GetAssemblyByKey_DEPRECA
 /*
 Tool Mode accessors
 */
-TArray<FShoppingItem> AEditModelGameState_CPP::GetAssembliesForToolMode(EToolMode mode) const
-{
-	TArray<FShoppingItem> ret;
-	Algo::Transform(Document.GetAssembliesForToolMode_DEPRECATED(GetWorld(), mode),ret,[](const FModumateObjectAssembly &moa){return moa.AsShoppingItem();});
-	return ret;
-}
-
-TArray<FShoppingItem> AEditModelGameState_CPP::GetMarketplaceAssembliesForToolMode(EToolMode mode) const
-{
-	TArray<FShoppingItem> ret;
-	Modumate::ModumateObjectDatabase *objectDB = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
-	Modumate::DataCollection<FModumateObjectAssembly> *db = objectDB->PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
-
-	if (db != nullptr)
-	{
-		for (auto &kvp : db->DataMap)
-		{
-			ret.Add(kvp.Value.AsShoppingItem());
-		}
-	}
-
-	return ret;
-}
 
 void AEditModelGameState_CPP::ImportAssemblyFromMarketplace(EToolMode mode, const FName &key)
 {
@@ -93,26 +70,6 @@ void AEditModelGameState_CPP::ImportAssemblyFromMarketplace(EToolMode mode, cons
 /*
 Assembly Accessors
 */
-TArray<FShoppingItem> AEditModelGameState_CPP::GetComponentsForAssembly(EToolMode mode, const FShoppingItem &item) const
-{
-	// This may be called with an empty assembly, which legitimately should return empty results.
-	if (item.Key.IsNone())
-	{
-		return TArray<FShoppingItem>();
-	}
-
-	const FModumateObjectAssembly *pMOA = Document.PresetManager.GetAssemblyByKey(mode, item.Key);
-
-	if (ensureAlways(pMOA != nullptr))
-	{
-		TArray<FShoppingItem> ret;
-		Algo::Transform(pMOA->Layers,ret,[](const FModumateObjectAssemblyLayer &moa){return moa.AsShoppingItem();});
-		return ret;
-	}
-
-	ensureAlways(false);
-	return TArray<FShoppingItem>();
-}
 
 TArray<float> AEditModelGameState_CPP::GetComponentsThicknessWithKey(EToolMode mode, const FString &assemblyKey) const
 {

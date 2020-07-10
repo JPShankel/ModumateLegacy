@@ -3,7 +3,6 @@
 
 #include "CoreMinimal.h"
 #include "DocumentManagement/ModumateObjectInstance.h"
-#include "Database/ModumateShoppingItem.h"
 
 
 class AEditModelPlayerController_CPP;

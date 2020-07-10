@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ModumateCore/ModumateTypes.h"
-#include "Database/ModumateShoppingItem.h"
+#include "ProceduralMeshComponent.h"
 #include "LineActor.generated.h"
 
 class AEditModelPlayerState_CPP;
@@ -62,9 +62,6 @@ public:
 
 	UPROPERTY()
 	AEditModelPlayerHUD* EMPlayerHUD;
-
-	UPROPERTY()
-	TArray<FShoppingItem> AssemblyShoppingItems;
 
 	UPROPERTY()
 	TArray<UMaterialInstanceDynamic*> DynamicMaterials;

@@ -2,11 +2,69 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Database/ModumateShoppingItem.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/Object.h"
 #include "DocumentManagement/ModumateCameraView.h"
 #include "ModumateBrowserStatics.generated.h"
+
+USTRUCT(BlueprintType)
+struct FCutPlaneParamBlueprint
+{
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
+	FName Key;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
+	int32 ObjectID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
+	FString DisplayName = FString(TEXT("New Cut Plane"));
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
+	bool bVisiblity = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
+	FVector Normal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
+	FVector Size;
+
+	// If true, menu will start initial behavior such as user naming process
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
+	bool bRecentlyCreated = false;
+};
+
+USTRUCT(BlueprintType)
+struct FScopeBoxParamBlueprint
+{
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ScopeBox")
+	FName Key;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ScopeBox")
+	int32 ObjectID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ScopeBox")
+	FString DisplayName = FString(TEXT("New Scope Box"));
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ScopeBox")
+	bool bVisiblity = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ScopeBox")
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ScopeBox")
+	FVector Extent;
+
+	// If true, menu will start initial behavior such as user naming process
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ScopeBox")
+	bool bRecentlyCreated = false;
+};
 
 // Helper functions for accessing / editing browser menu related data.
 UCLASS(BlueprintType)

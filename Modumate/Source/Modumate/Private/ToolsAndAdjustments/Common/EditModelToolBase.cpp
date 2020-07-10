@@ -20,7 +20,6 @@ UEditModelToolBase::UEditModelToolBase(const FObjectInitializer& ObjectInitializ
 	: Super(ObjectInitializer)
 	, InUse(false)
 	, Active(false)
-	, Assembly(false)
 	, Controller(nullptr)
 	, GameInstance(nullptr)
 	, AxisConstraint(EAxisConstraint::None)

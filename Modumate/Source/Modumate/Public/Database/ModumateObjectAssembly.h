@@ -10,7 +10,6 @@
 #include "Database/ModumateArchitecturalMesh.h"
 #include "Database/ModumateSimpleMesh.h"
 #include "BIMKernel/BIMLegacyPattern.h"
-#include "Database/ModumateShoppingItem.h"
 #include "BIMKernel/BIMLegacyPortals.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateObjectAssembly.generated.h"
@@ -78,8 +77,6 @@ struct MODUMATE_API FModumateObjectAssemblyLayer
 	FVector SlotScale = FVector::OneVector;
 
 	// WHEN UPDATING FIELDS, UPDATE THE FCustomAssemblyLayerRecord STRUCT!!!
-
-	FShoppingItem AsShoppingItem() const;
 
 	// Used by database to sort assemblies
 	FName UniqueKey() const { return DatabaseKey; }
@@ -191,7 +188,6 @@ struct FModumateObjectAssembly
 
 	// Used by database to sort assemblies
 	FName UniqueKey() const { return DatabaseKey; }
-	FShoppingItem AsShoppingItem() const;
 	FString GetGenomeString() const;
 	FCustomAssemblyRecord ToDataRecord() const;
 

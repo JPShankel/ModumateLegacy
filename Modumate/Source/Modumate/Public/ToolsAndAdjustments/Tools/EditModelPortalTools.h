@@ -29,7 +29,6 @@ protected:
 	FVector WorldPos;
 	FVector2D RelativePos;
 	FQuat WorldRot, RelativeRot;
-	FShoppingItem Assembly;
 
 	bool Active,Inverted;
 	bool bValidPortalConfig;
@@ -53,10 +52,9 @@ public:
 	virtual bool HandleControlKey(bool pressed) override;
 	virtual bool HandleMouseUp() override { return true; }
 	virtual bool ShowSnapCursorAffordances() override { return true; }
-	virtual const FShoppingItem &GetAssembly() const override { return Assembly; }
-	virtual void SetAssembly(const FShoppingItem &key) override;
 	virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override { };
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override { };
+	virtual void SetAssemblyKey(const FName &InAssemblyKey) override;
 };
 
 UCLASS()

@@ -31,10 +31,10 @@ public:
 	virtual bool Deactivate() override;
 	virtual bool BeginUse() override;
 	virtual bool EnterNextStage() override;
-	virtual void SetAssembly(const FShoppingItem &key) override;
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
+	virtual void SetAssemblyKey(const FName &InAssemblyKey) override;
 
 protected:
 	enum EState
