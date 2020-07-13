@@ -15,6 +15,7 @@
 #include "UI/ToolTray/ToolTrayWidget.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/ComponentPresetListItem.h"
 
 using namespace Modumate;
 
@@ -57,7 +58,11 @@ void UComponentAssemblyListItem::NativeDestruct()
 
 bool UComponentAssemblyListItem::BuildFromAssembly(AEditModelPlayerController_CPP *Controller, EToolMode mode, const FModumateObjectAssembly *Asm)
 {
-	MainText->ChangeText(FText::FromString(Asm->GetProperty(BIM::Parameters::Name)));
+	if (!ComponentPresetItem)
+	{
+		return false;
+	}
+	ComponentPresetItem->MainText->ChangeText(FText::FromString(Asm->GetProperty(BIM::Parameters::Name)));
 	AsmKey = Asm->DatabaseKey;
 	EMPlayerController = Controller;
 	ToolMode = mode;
@@ -100,7 +105,7 @@ void UComponentAssemblyListItem::OnButtonEditReleased()
 
 bool UComponentAssemblyListItem::CaptureIconRenderTarget()
 {
-	if (!IconImage)
+	if (!(ComponentPresetItem && ComponentPresetItem->IconImage))
 	{
 		return false;
 	}
@@ -112,7 +117,7 @@ bool UComponentAssemblyListItem::CaptureIconRenderTarget()
 	if (bCaptureSucess)
 	{
 		static const FName textureParamName(TEXT("Texture"));
-		IconImage->GetDynamicMaterial()->SetTextureParameterValue(textureParamName, IconRenderTarget);
+		ComponentPresetItem->IconImage->GetDynamicMaterial()->SetTextureParameterValue(textureParamName, IconRenderTarget);
 	}
 	return bCaptureSucess;
 }

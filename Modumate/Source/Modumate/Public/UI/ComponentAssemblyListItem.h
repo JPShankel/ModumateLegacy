@@ -36,16 +36,13 @@ public:
 	class UToolTrayBlockAssembliesList *ToolTrayBlockAssembliesList;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateTextBlockUserWidget *MainText;
+	class UComponentPresetListItem *ComponentPresetItem;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButton *ModumateButtonMain;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonEdit;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UImage *IconImage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox *VerticalBoxProperties;
