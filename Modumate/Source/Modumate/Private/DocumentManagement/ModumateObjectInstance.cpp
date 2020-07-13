@@ -134,17 +134,17 @@ namespace Modumate
 		if (ensure(Implementation && World.IsValid() && (ID != MOD_ID_NONE)))
 		{
 			MeshActor = Implementation->CreateActor(World.Get(), Loc, Rot);
-			if (!MeshActor.IsValid())
-			{
-				return;
-			}
-
 			SetupMOIComponent();
 		}
 	}
 
 	void FModumateObjectInstance::SetupMOIComponent()
 	{
+		if (!ensure(MeshActor.IsValid()))
+		{
+			return;
+		}
+
 		// (Optionally create) and register a MOI component that can be used for looking up MOIs by ID.
 		UModumateObjectComponent_CPP *moiComponent = MeshActor->FindComponentByClass<UModumateObjectComponent_CPP>();
 		if (moiComponent == nullptr)
@@ -1373,6 +1373,11 @@ namespace Modumate
 		}
 
 		return nullptr;
+	}
+
+	AActor *FModumateObjectInstanceImplBase::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+	{
+		return world->SpawnActor<AActor>(loc, rot.Rotator());
 	}
 
 	bool FModumateObjectInstanceImplBase::CleanObject(EObjectDirtyFlags DirtyFlag)

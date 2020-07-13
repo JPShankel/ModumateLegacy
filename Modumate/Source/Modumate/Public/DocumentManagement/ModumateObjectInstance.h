@@ -175,7 +175,7 @@ namespace Modumate
 		virtual void OnAssemblyChanged() override;
 
 		virtual AActor *RestoreActor() override;
-		virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override { return nullptr; }
+		virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 
 		virtual FVector GetNormal() const override { return FVector::ZeroVector; }
 

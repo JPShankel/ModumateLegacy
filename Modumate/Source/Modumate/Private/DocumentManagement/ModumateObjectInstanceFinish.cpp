@@ -68,7 +68,7 @@ namespace Modumate
 		// TODO: why is this necessary?
 		MOI->ClearAdjustmentHandles();
 
-		int32 faceIndex = UModumateObjectStatics::GetFaceIndexFromFinishObj(MOI);
+		int32 faceIndex = UModumateObjectStatics::GetParentFaceIndex(MOI);
 		auto *hostObj = MOI->GetParentObject();
 
 		if (hostObj && (faceIndex != INDEX_NONE))

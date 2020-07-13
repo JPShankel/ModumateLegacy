@@ -68,6 +68,9 @@ namespace Modumate
 		// Copy of the volume graph to work with multi-stage deltas
 		FGraph3D TempVolumeGraph;
 
+		// The surface graphs used by the current document, mapped by owning object ID
+		TMap<int32, FGraph2D> SurfaceGraphs;
+
 		TMap<EObjectDirtyFlags, TArray<FModumateObjectInstance*>> DirtyObjectMap;
 
 	public:

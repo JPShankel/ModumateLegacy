@@ -25,7 +25,7 @@ namespace Modumate
 		EdgeDeletions.Reset();
 	}
 
-	bool FGraph2DDelta::IsEmpty()
+	bool FGraph2DDelta::IsEmpty() const
 	{
 		if (VertexMovements.Num() > 0) return false;
 		if (VertexAdditions.Num() > 0) return false;
@@ -39,6 +39,24 @@ namespace Modumate
 	TSharedPtr<FGraph2DDelta> FGraph2DDelta::MakeGraphInverse() const
 	{
 		TSharedPtr<FGraph2DDelta> inverse = MakeShareable(new FGraph2DDelta());
+
+		inverse->ID = ID;
+
+		switch (DeltaType)
+		{
+		case EGraph2DDeltaType::Add:
+			inverse->DeltaType = EGraph2DDeltaType::Remove;
+			return inverse;
+			break;
+		case EGraph2DDeltaType::Edit:
+			inverse->DeltaType = EGraph2DDeltaType::Edit;
+			break;
+		case EGraph2DDeltaType::Remove:
+			inverse->DeltaType = EGraph2DDeltaType::Add;
+			break;
+		default:
+			break;
+		}
 
 		for (const auto &kvp : VertexMovements)
 		{

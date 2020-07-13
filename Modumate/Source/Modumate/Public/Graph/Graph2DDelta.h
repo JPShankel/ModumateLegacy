@@ -22,6 +22,13 @@ namespace Modumate
 		FGraph2DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents);
 	};
 
+	enum EGraph2DDeltaType
+	{
+		Add,
+		Edit,
+		Remove,
+	};
+
 	// TODO: generalize FGraph3DHostedObjDelta for use here as well
 
 	// A struct that completely describes a change to the 2D graph
@@ -29,6 +36,8 @@ namespace Modumate
 	{
 	public:
 		int32 ID = MOD_ID_NONE; // id of the surface graph object to apply this delta
+
+		EGraph2DDeltaType DeltaType = EGraph2DDeltaType::Edit;
 
 		TMap<int32, TPair<FVector2D, FVector2D>> VertexMovements;
 		TMap<int32, FVector2D> VertexAdditions;
@@ -38,7 +47,7 @@ namespace Modumate
 		TMap<int32, FGraph2DObjDelta> EdgeDeletions;
 
 		void Reset();
-		bool IsEmpty();
+		bool IsEmpty() const;
 
 		TSharedPtr<FGraph2DDelta> MakeGraphInverse() const;
 		virtual TSharedPtr<FDelta> MakeInverse() const override;

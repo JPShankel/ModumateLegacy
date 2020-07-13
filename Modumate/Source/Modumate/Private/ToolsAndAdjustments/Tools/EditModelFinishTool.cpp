@@ -62,7 +62,7 @@ bool UFinishTool::BeginUse()
 				{
 					if (child->GetObjectType() == EObjectType::OTFinish)
 					{
-						int32 existingFinishFace = UModumateObjectStatics::GetFaceIndexFromFinishObj(child);
+						int32 existingFinishFace = UModumateObjectStatics::GetParentFaceIndex(child);
 
 						if (existingFinishFace != LastValidFaceIndex)
 						{

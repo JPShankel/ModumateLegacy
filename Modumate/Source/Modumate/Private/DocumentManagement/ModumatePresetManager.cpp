@@ -298,6 +298,10 @@ Starting point: get a tree
 			{
 				return db->GetData(Key);
 			}
+			else
+			{
+				return nullptr;
+			}
 		}
 
 		const DataCollection<FModumateObjectAssembly> *db = AssemblyDBs_DEPRECATED.Find(Mode);

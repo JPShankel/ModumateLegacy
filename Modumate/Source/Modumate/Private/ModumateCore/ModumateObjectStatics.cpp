@@ -503,7 +503,7 @@ bool UModumateObjectStatics::GetTrimGeometryOnEdge(const FModumateObjectInstance
 		auto wallChildren = parentWall->GetChildObjects();
 		for (const FModumateObjectInstance *wallChild : wallChildren)
 		{
-			int32 finishFaceIdx = UModumateObjectStatics::GetFaceIndexFromFinishObj(wallChild);
+			int32 finishFaceIdx = UModumateObjectStatics::GetParentFaceIndex(wallChild);
 
 			if (finishFaceIdx == wallFaceIdx)
 			{
@@ -846,11 +846,23 @@ bool UModumateObjectStatics::GetWorldTransformOnPlaneHostedObj(
 	return true;
 }
 
-int32 UModumateObjectStatics::GetFaceIndexFromFinishObj(const FModumateObjectInstance *FinishObject)
+int32 UModumateObjectStatics::GetParentFaceIndex(const FModumateObjectInstance *FaceMountedObj)
 {
-	if (FinishObject && (FinishObject->GetObjectType() == EObjectType::OTFinish) && (FinishObject->GetControlPointIndices().Num() >= 1))
+	if (FaceMountedObj == nullptr)
 	{
-		return FinishObject->GetControlPointIndex(0);
+		return INDEX_NONE;
+	}
+
+	switch (FaceMountedObj->GetObjectType())
+	{
+	case EObjectType::OTSurfaceGraph:
+	case EObjectType::OTFurniture:
+		if (FaceMountedObj->GetControlPointIndices().Num() >= 1)
+		{
+			return FaceMountedObj->GetControlPointIndex(0);
+		}
+	default:
+		break;
 	}
 
 	return INDEX_NONE;
@@ -937,22 +949,22 @@ int32 UModumateObjectStatics::GetFaceIndexFromTargetHit(const FModumateObjectIns
 	}
 }
 
-bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateObjectInstance *FinishHost, int32 FaceIndex, TArray<int32> &OutCornerIndices, FVector &OutNormal)
+bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateObjectInstance *Host, int32 FaceIndex, TArray<int32> &OutCornerIndices, FVector &OutNormal)
 {
 	OutCornerIndices.Reset();
 
-	if ((FinishHost == nullptr) || (FaceIndex == INDEX_NONE))
+	if ((Host == nullptr) || (FaceIndex == INDEX_NONE))
 	{
 		return false;
 	}
 
-	switch (FinishHost->GetObjectType())
+	switch (Host->GetObjectType())
 	{
 	case EObjectType::OTRoofFace:
 	case EObjectType::OTWallSegment:
 	case EObjectType::OTFloorSegment:
 	{
-		const Modumate::FModumateObjectInstance *hostParent = FinishHost->GetParentObject();
+		const Modumate::FModumateObjectInstance *hostParent = Host->GetParentObject();
 		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
 			return false;

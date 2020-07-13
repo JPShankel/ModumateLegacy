@@ -1330,9 +1330,32 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 
 void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World)
 {
-	// TODO: surface graph object and storage in document
-	// auto surfaceGraph = GetObjectByID(Delta.ID);
-	// surfaceGraph->Graph->ApplyDelta(Delta);
+	FGraph2D *targetSurfaceGraph = nullptr;
+
+	switch (Delta.DeltaType)
+	{
+	case EGraph2DDeltaType::Add:
+		if (!ensure(!SurfaceGraphs.Contains(Delta.ID)))
+		{
+			return;
+		}
+		targetSurfaceGraph = &SurfaceGraphs.Add(Delta.ID);
+		break;
+	case EGraph2DDeltaType::Edit:
+		if (!ensure(SurfaceGraphs.Contains(Delta.ID)))
+		{
+			return;
+		}
+		targetSurfaceGraph = SurfaceGraphs.Find(Delta.ID);
+		break;
+	case EGraph2DDeltaType::Remove:
+		ensure(SurfaceGraphs.Contains(Delta.ID));
+		SurfaceGraphs.Remove(Delta.ID);
+		return;
+	}
+
+	// TODO: potentially finalize delta by updating connected objects
+	targetSurfaceGraph->ApplyDelta(Delta);
 }
 
 void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World)
@@ -3157,6 +3180,7 @@ void FModumateDocument::MakeNew(UWorld *world)
 	UndoRedoMacroStack.Reset();
 	VolumeGraph.Reset();
 	TempVolumeGraph.Reset();
+	SurfaceGraphs.Reset();
 
 	GatherDocumentMetadata();
 
@@ -3426,6 +3450,14 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 
 	VolumeGraph.Save(&docRec.VolumeGraph);
 
+	// Save all of the surface graphs as records
+	for (const auto &kvp : SurfaceGraphs)
+	{
+		const FGraph2D &surfaceGraph = kvp.Value;
+		FGraph2DRecord &surfaceGraphRecord = docRec.SurfaceGraphs.Add(kvp.Key);
+		surfaceGraph.ToDataRecord(surfaceGraphRecord, false, false);
+	}
+
 	docRec.CameraViews = SavedCameraViews;
 
 	TSharedPtr<FJsonObject> docOb = FJsonObjectConverter::UStructToJsonObject<FMOIDocumentRecord>(docRec);
@@ -3496,6 +3528,17 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 		// so that any objects whose geometry setup needs to know about connectivity can find it.
 		VolumeGraph.Load(&docRec.VolumeGraph);
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+
+		// Load all of the surface graphs now
+		for (const auto &kvp : docRec.SurfaceGraphs)
+		{
+			const FGraph2DRecord &surfaceGraphRecord = kvp.Value;
+			FGraph2D surfaceGraph;
+			if (surfaceGraph.FromDataRecord(surfaceGraphRecord))
+			{
+				SurfaceGraphs.Add(kvp.Key, MoveTemp(surfaceGraph));
+			}
+		}
 
 		SavedCameraViews = docRec.CameraViews;
 

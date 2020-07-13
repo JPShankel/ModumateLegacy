@@ -89,10 +89,10 @@ public:
 		const FVector2D &RelativePos, const FQuat &RelativeRot,
 		FVector &OutWorldPos, FQuat &OutWorldRot);
 
-	// Finishes
-	static int32 GetFaceIndexFromFinishObj(const Modumate::FModumateObjectInstance *FinishObject);
+	// Face-mounted objects
+	static int32 GetParentFaceIndex(const Modumate::FModumateObjectInstance *FaceMountedObj);
 	static int32 GetFaceIndexFromTargetHit(const Modumate::FModumateObjectInstance *HitObject, const FVector &HitLocation, const FVector &HitNormal);
-	static bool GetGeometryFromFaceIndex(const Modumate::FModumateObjectInstance *FinishHost, int32 FaceIndex, TArray<int32> &OutCornerIndices, FVector &OutNormal);
+	static bool GetGeometryFromFaceIndex(const Modumate::FModumateObjectInstance *Host, int32 FaceIndex, TArray<int32> &OutCornerIndices, FVector &OutNormal);
 
 	// Meta Objects
 	static void EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const Modumate::FModumateDocument *Doc,

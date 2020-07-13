@@ -1036,6 +1036,7 @@ bool UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(EObjectType OT)
 	case EObjectType::OTRoofFace:
 	case EObjectType::OTRoofPerimeter:
 	case EObjectType::OTFinish:
+	case EObjectType::OTSurfaceGraph:
 		return true;
 	};
 

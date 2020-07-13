@@ -68,6 +68,7 @@ EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 	case EToolMode::VE_JOIN: return EObjectType::OTUnknown;
 	case EToolMode::VE_STRUCTURELINE: return EObjectType::OTStructureLine;
 	case EToolMode::VE_DRAWING: return EObjectType::OTDrawing;
+	case EToolMode::VE_SURFACEGRAPH: return EObjectType::OTSurfaceGraph;
 	}
 	return EObjectType::OTUnknown;
 }

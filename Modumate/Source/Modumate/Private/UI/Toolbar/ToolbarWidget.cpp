@@ -22,7 +22,7 @@ bool UToolbarWidget::Initialize()
 		return false;
 	}
 
-	Controller = GetOwningLocalPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 
 	if (!(Controller && Button_Metaplanes && Button_Separators && Button_SurfaceGraphs && Button_Attachments))
 	{
