@@ -18,14 +18,21 @@ bool UModumateButton::ApplyCustomStyle()
 		const FButtonStyle* StylePtr = CustomButtonStyle->GetStyle<FButtonStyle>();
 		if (StylePtr)
 		{
-			// Apply new style, but keep old image size
-			FButtonStyle oldStyle = WidgetStyle;
-			WidgetStyle = *StylePtr;
+			if (OverrideImageSize)
+			{
+				WidgetStyle = *StylePtr;
+			}
+			else
+			{
+				// Apply new style, but keep old image size
+				FButtonStyle oldStyle = WidgetStyle;
+				WidgetStyle = *StylePtr;
 
-			WidgetStyle.Normal.ImageSize = oldStyle.Normal.ImageSize;
-			WidgetStyle.Hovered.ImageSize = oldStyle.Hovered.ImageSize;
-			WidgetStyle.Pressed.ImageSize = oldStyle.Pressed.ImageSize;
-			WidgetStyle.Disabled.ImageSize = oldStyle.Disabled.ImageSize;
+				WidgetStyle.Normal.ImageSize = oldStyle.Normal.ImageSize;
+				WidgetStyle.Hovered.ImageSize = oldStyle.Hovered.ImageSize;
+				WidgetStyle.Pressed.ImageSize = oldStyle.Pressed.ImageSize;
+				WidgetStyle.Disabled.ImageSize = oldStyle.Disabled.ImageSize;
+			}
 
 			return true;
 		}

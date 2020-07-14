@@ -20,8 +20,12 @@ public:
 	virtual void SynchronizeProperties() override;
 
 public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool OverrideImageSize = false;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class USlateWidgetStyleAsset *CustomButtonStyle;
+	class USlateWidgetStyleAsset *CustomButtonStyle;
 
 	bool ApplyCustomStyle();
 };
