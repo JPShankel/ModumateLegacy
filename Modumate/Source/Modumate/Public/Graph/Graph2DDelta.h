@@ -46,6 +46,8 @@ namespace Modumate
 		TMap<int32, FGraph2DObjDelta> EdgeAdditions;
 		TMap<int32, FGraph2DObjDelta> EdgeDeletions;
 
+		FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType = EGraph2DDeltaType::Edit);
+
 		void Reset();
 		bool IsEmpty() const;
 

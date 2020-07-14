@@ -13,10 +13,14 @@ namespace Modumate
 	{ }
 
 
+	FGraph2DDelta::FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType)
+		: ID(InID)
+		, DeltaType(InDeltaType)
+	{
+	}
+
 	void FGraph2DDelta::Reset()
 	{
-		ID = MOD_ID_NONE;
-
 		VertexMovements.Reset();
 		VertexAdditions.Reset();
 		VertexDeletions.Reset();
@@ -38,9 +42,7 @@ namespace Modumate
 
 	TSharedPtr<FGraph2DDelta> FGraph2DDelta::MakeGraphInverse() const
 	{
-		TSharedPtr<FGraph2DDelta> inverse = MakeShareable(new FGraph2DDelta());
-
-		inverse->ID = ID;
+		TSharedPtr<FGraph2DDelta> inverse = MakeShareable(new FGraph2DDelta(ID));
 
 		switch (DeltaType)
 		{

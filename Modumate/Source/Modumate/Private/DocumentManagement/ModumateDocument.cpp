@@ -1339,7 +1339,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		{
 			return;
 		}
-		targetSurfaceGraph = &SurfaceGraphs.Add(Delta.ID);
+		targetSurfaceGraph = &SurfaceGraphs.Add(Delta.ID, FGraph2D(Delta.ID));
 		break;
 	case EGraph2DDeltaType::Edit:
 		if (!ensure(SurfaceGraphs.Contains(Delta.ID)))
@@ -3533,7 +3533,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 		for (const auto &kvp : docRec.SurfaceGraphs)
 		{
 			const FGraph2DRecord &surfaceGraphRecord = kvp.Value;
-			FGraph2D surfaceGraph;
+			FGraph2D surfaceGraph(kvp.Key);
 			if (surfaceGraph.FromDataRecord(surfaceGraphRecord))
 			{
 				SurfaceGraphs.Add(kvp.Key, MoveTemp(surfaceGraph));

@@ -59,9 +59,7 @@ bool USurfaceGraphTool::BeginUse()
 
 			int32 surfaceGraphID = gameState->Document.GetNextAvailableID();
 
-			TSharedPtr<FGraph2DDelta> addGraphDelta = MakeShareable(new FGraph2DDelta());
-			addGraphDelta->ID = surfaceGraphID;
-			addGraphDelta->DeltaType = EGraph2DDeltaType::Add;
+			TSharedPtr<FGraph2DDelta> addGraphDelta = MakeShareable(new FGraph2DDelta(surfaceGraphID, EGraph2DDeltaType::Add));
 			deltas.Add(addGraphDelta);
 
 			FMOIStateData surfaceObjectData;

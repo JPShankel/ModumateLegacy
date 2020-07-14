@@ -19,7 +19,7 @@ namespace Modumate
 	class MODUMATE_API FGraph2D
 	{
 	public:
-		FGraph2D(float InEpsilon = DEFAULT_GRAPH_EPSILON, bool bInDebugCheck = !UE_BUILD_SHIPPING);
+		FGraph2D(int32 InID = MOD_ID_NONE, float InEpsilon = DEFAULT_GRAPH_EPSILON, bool bInDebugCheck = !UE_BUILD_SHIPPING);
 
 		void Reset();
 
@@ -47,6 +47,7 @@ namespace Modumate
 		int32 CalculatePolygons();
 		void ClearPolygons();
 
+		int32 GetID() const;
 		int32 GetExteriorPolygonID() const;
 		FGraph2DPolygon *GetExteriorPolygon();
 		const FGraph2DPolygon *GetExteriorPolygon() const;
@@ -66,6 +67,7 @@ namespace Modumate
 		bool bDebugCheck;
 
 	private:
+		int32 ID = MOD_ID_NONE;
 		int32 NextEdgeID = 1;
 		int32 NextVertexID = 1;
 		int32 NextPolyID = 1;

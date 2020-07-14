@@ -15,9 +15,10 @@
 
 namespace Modumate
 {
-	FGraph2D::FGraph2D(float InEpsilon, bool bInDebugCheck)
+	FGraph2D::FGraph2D(int32 InID, float InEpsilon, bool bInDebugCheck)
 		: Epsilon(InEpsilon)
 		, bDebugCheck(bInDebugCheck)
+		, ID(InID)
 	{
 		Reset();
 	}
@@ -57,24 +58,24 @@ namespace Modumate
 		return nullptr;
 	}
 
-	FGraph2DVertex* FGraph2D::FindVertex(int32 ID) 
+	FGraph2DVertex* FGraph2D::FindVertex(int32 VertexID)
 	{ 
-		return Vertices.Find(ID); 
+		return Vertices.Find(VertexID); 
 	}
 
-	const FGraph2DVertex* FGraph2D::FindVertex(int32 ID) const 
+	const FGraph2DVertex* FGraph2D::FindVertex(int32 VertexID) const
 	{ 
-		return Vertices.Find(ID); 
+		return Vertices.Find(VertexID); 
 	}
 
-	FGraph2DPolygon* FGraph2D::FindPolygon(int32 ID) 
+	FGraph2DPolygon* FGraph2D::FindPolygon(int32 PolygonID)
 	{ 
-		return Polygons.Find(ID); 
+		return Polygons.Find(PolygonID); 
 	}
 
-	const FGraph2DPolygon* FGraph2D::FindPolygon(int32 ID) const 
+	const FGraph2DPolygon* FGraph2D::FindPolygon(int32 PolygonID) const
 	{ 
-		return Polygons.Find(ID); 
+		return Polygons.Find(PolygonID); 
 	}
 
 	FGraph2DVertex* FGraph2D::FindVertex(const FVector2D &Position)
@@ -90,16 +91,16 @@ namespace Modumate
 		return nullptr;
 	}
 
-	bool FGraph2D::ContainsObject(int32 ID, EGraphObjectType GraphObjectType) const
+	bool FGraph2D::ContainsObject(int32 GraphObjID, EGraphObjectType GraphObjectType) const
 	{
 		switch (GraphObjectType)
 		{
 		case EGraphObjectType::Vertex:
-			return Vertices.Contains(ID);
+			return Vertices.Contains(GraphObjID);
 		case EGraphObjectType::Edge:
-			return Edges.Contains(ID);
+			return Edges.Contains(GraphObjID);
 		case EGraphObjectType::Polygon:
-			return Polygons.Contains(ID);
+			return Polygons.Contains(GraphObjID);
 		default:
 			return false;
 		}
@@ -247,14 +248,14 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph2D::RemoveObject(int32 ID, EGraphObjectType GraphObjectType)
+	bool FGraph2D::RemoveObject(int32 GraphObjID, EGraphObjectType GraphObjectType)
 	{
 		switch (GraphObjectType)
 		{
 		case EGraphObjectType::Vertex:
-			return RemoveVertex(ID);
+			return RemoveVertex(GraphObjID);
 		case EGraphObjectType::Edge:
-			return RemoveEdge(ID);
+			return RemoveEdge(GraphObjID);
 		default:
 			ensureAlwaysMsgf(false, TEXT("Attempted to remove a non-vertex/edge from the graph, ID: %d"), ID);
 			return false;
@@ -396,6 +397,11 @@ namespace Modumate
 		Polygons.Reset();
 		NextPolyID = 1;
 		bDirty = true;
+	}
+
+	int32 FGraph2D::GetID() const
+	{
+		return ID;
 	}
 
 	int32 FGraph2D::GetExteriorPolygonID() const

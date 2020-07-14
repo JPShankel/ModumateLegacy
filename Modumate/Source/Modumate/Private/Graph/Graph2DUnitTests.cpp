@@ -212,6 +212,7 @@ namespace Modumate
 		bool bValidDelta = true;
 		for (auto& delta : Deltas)
 		{
+			Test->TestEqual(TEXT("Graph and delta ID equality"), Graph.GetID(), delta.ID);
 			bValidDelta = Graph.ApplyDelta(delta);
 		}
 		Test->TestTrue(TEXT("Apply Deltas"), bValidDelta);
@@ -290,7 +291,7 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DAddVertex, "Modumate.Graph.2D.AddVertex", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraph2DAddVertex::RunTest(const FString& Parameters)
 	{
-		FGraph2D graph;
+		FGraph2D graph(1);
 		int32 NextID = 1;
 		TArray<FGraph2DDelta> deltas;
 
@@ -316,7 +317,7 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DAddEdge, "Modumate.Graph.2D.AddEdge", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraph2DAddEdge::RunTest(const FString& Parameters)
 	{
-		FGraph2D graph;
+		FGraph2D graph(2);
 		int32 NextID = 1;
 		TArray<FGraph2DDelta> deltas;
 
@@ -343,7 +344,7 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DDeleteObjects, "Modumate.Graph.2D.DeleteObjects", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraph2DDeleteObjects::RunTest(const FString& Parameters)
 	{
-		FGraph2D graph;
+		FGraph2D graph(3);
 		int32 NextID = 1;
 		TArray<FGraph2DDelta> deltas;
 

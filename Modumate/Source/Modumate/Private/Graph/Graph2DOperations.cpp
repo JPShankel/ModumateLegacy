@@ -20,7 +20,7 @@ namespace Modumate
 
 		if (existingVertex == nullptr)
 		{
-			FGraph2DDelta addVertexDelta;
+			FGraph2DDelta addVertexDelta(ID);
 			AddVertexDirect(addVertexDelta, NextID, Position);
 
 			OutDeltas.Add(addVertexDelta);
@@ -105,7 +105,7 @@ namespace Modumate
 		FVector2D pendingEdgeDirection = pendingEndPosition - pendingStartPosition;
 		pendingEdgeDirection.Normalize();
 
-		FGraph2DDelta addVertexDelta;
+		FGraph2DDelta addVertexDelta(ID);
 		// all vertices on the pending segment are collected in addedVertices to ultimately make the edges
 		TSet<int32> addedVertices;
 		// if a vertex created at an intersection and it is in-between the edge's vertices, the edge needs to be split
@@ -173,7 +173,7 @@ namespace Modumate
 		}
 
 		// split edges
-		FGraph2DDelta splitEdgeDelta;
+		FGraph2DDelta splitEdgeDelta(ID);
 		for (auto& kvp : edgesToSplitByVertex)
 		{
 			splitEdgeDelta.Reset();
@@ -211,7 +211,7 @@ namespace Modumate
 
 		// add an edge connecting the sorted vertices - AddEdgeDirect detects if the edge
 		// exists already, so the edges are only created when there is a gap
-		FGraph2DDelta addEdgesDelta;
+		FGraph2DDelta addEdgesDelta(ID);
 		int32 numVertices = sortedNewVertices.Num();
 		for (int32 idx = 0; idx < numVertices-1; idx++)
 		{
@@ -291,7 +291,7 @@ namespace Modumate
 			}
 		}
 
-		FGraph2DDelta deleteDelta;
+		FGraph2DDelta deleteDelta(ID);
 		if (!DeleteObjectsDirect(deleteDelta, vertexIDsToDelete, edgeIDsToDelete))
 		{
 			return false;
