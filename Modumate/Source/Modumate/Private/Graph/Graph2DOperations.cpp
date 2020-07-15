@@ -94,12 +94,93 @@ namespace Modumate
 			return false;
 		}
 
+		if (!SplitEdgesByVertices(OutDeltas, NextID, addedIDs))
+		{
+			ApplyInverseDeltas(OutDeltas);
+			return false;
+		}
+
+		if (!AddEdgesBetweenVertices(OutDeltas, NextID, addedIDs[0], addedIDs[1]))
+		{
+			ApplyInverseDeltas(OutDeltas);
+			return false;
+		}
+
+		// return graph in its original state
+		ApplyInverseDeltas(OutDeltas);
+
+		return true;
+	}
+
+	bool FGraph2D::SplitEdgesByVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, TArray<int32> &VertexIDs)
+	{
+		TArray<FGraph2DDelta> splitEdgeDeltas;
+		for (int32 vertexID : VertexIDs)
+		{
+			auto vertex = FindVertex(vertexID);
+			if (vertex == nullptr)
+			{
+				continue;
+			}
+
+			int32 intersectingEdgeID = MOD_ID_NONE;
+
+			for (auto& edgekvp : Edges)
+			{
+				const FGraph2DEdge &edge = edgekvp.Value;
+				auto startVertex = FindVertex(edge.StartVertexID);
+				auto endVertex = FindVertex(edge.EndVertexID);
+				if (startVertex == nullptr || endVertex == nullptr)
+				{
+					continue;
+				}
+				if (startVertex->ID == vertexID || endVertex->ID == vertexID)
+				{
+					continue;
+				}
+
+				// If the vertex is on the edge, split the edge and apply the delta.
+				// It is important that the delta is applied here in the case that more than one
+				// provided vertex is on the edge.  In that case, having multiple deltas allows for 
+				// iterative splitting.
+				FVector2D closestPoint = FMath::ClosestPointOnSegment2D(vertex->Position, startVertex->Position, endVertex->Position);
+				if (closestPoint.Equals(vertex->Position, Epsilon))
+				{
+					if (!ensureAlways(intersectingEdgeID == MOD_ID_NONE))
+					{
+						ApplyInverseDeltas(splitEdgeDeltas);
+						return false;
+					}
+					intersectingEdgeID = edge.ID;
+				}
+			}
+
+			if (intersectingEdgeID != MOD_ID_NONE)
+			{
+				FGraph2DDelta splitEdgeDelta(ID);
+				SplitEdge(splitEdgeDelta, NextID, intersectingEdgeID, vertex->ID);
+				if (!ApplyDelta(splitEdgeDelta))
+				{
+					ApplyInverseDeltas(splitEdgeDeltas);
+					return false;
+				}
+				splitEdgeDeltas.Add(splitEdgeDelta);
+			}
+		}
+
+		OutDeltas.Append(splitEdgeDeltas);
+
+		return true;
+	}
+
+	bool FGraph2D::AddEdgesBetweenVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, int32 StartVertexID, int32 EndVertexID)
+	{
 		// TODO: depending on the implementation of future operations (like add polygon) this 
 		// splitting code may be best in a separate function
 
 		// Find intersections between the pending segment (defined by the input points) and the existing edges
-		auto pendingStartVertex = FindVertex(addedIDs[0]);
-		auto pendingEndVertex = FindVertex(addedIDs[1]);
+		auto pendingStartVertex = FindVertex(StartVertexID);
+		auto pendingEndVertex = FindVertex(EndVertexID);
 		FVector2D pendingStartPosition = pendingStartVertex->Position;
 		FVector2D pendingEndPosition = pendingEndVertex->Position;
 		FVector2D pendingEdgeDirection = pendingEndPosition - pendingStartPosition;
@@ -108,6 +189,7 @@ namespace Modumate
 		FGraph2DDelta addVertexDelta(ID);
 		// all vertices on the pending segment are collected in addedVertices to ultimately make the edges
 		TSet<int32> addedVertices;
+		TArray<int32> addedIDs = { StartVertexID, EndVertexID };
 		// if a vertex created at an intersection and it is in-between the edge's vertices, the edge needs to be split
 		TArray<TPair<int32, int32>> edgesToSplitByVertex;
 
@@ -156,19 +238,27 @@ namespace Modumate
 			}
 			// if the edge is overlapping the pending segment, SegmentIntersection2D returns false.
 			// however, all of the points that are on the pending segment are needed to add the correct edges
-			else if ((pendingEdgeDirection | edgeDirection) > THRESH_NORMALS_ARE_PARALLEL)
+			else
 			{
-				FVector2D startVertexOnSegment = FMath::ClosestPointOnSegment2D(startVertex->Position, pendingStartPosition, pendingEndPosition);
-				if (startVertexOnSegment.Equals(startVertex->Position, Epsilon))
+				float start = pendingEdgeDirection | (startVertex->Position - pendingStartPosition);
+				float end = pendingEdgeDirection | (endVertex->Position - pendingStartPosition);
+				if (FMath::Abs(start) > THRESH_NORMALS_ARE_PARALLEL &&
+					FMath::Abs(end) > THRESH_NORMALS_ARE_PARALLEL)
 				{
-					addedIDs.Add(startVertex->ID);
+
+					FVector2D startVertexOnSegment = FMath::ClosestPointOnSegment2D(startVertex->Position, pendingStartPosition, pendingEndPosition);
+					if (startVertexOnSegment.Equals(startVertex->Position, Epsilon))
+					{
+						addedIDs.Add(startVertex->ID);
+					}
+
+					FVector2D endVertexOnSegment = FMath::ClosestPointOnSegment2D(endVertex->Position, pendingStartPosition, pendingEndPosition);
+					if (endVertexOnSegment.Equals(endVertex->Position, Epsilon))
+					{
+						addedIDs.Add(endVertex->ID);
+					}
 				}
 
-				FVector2D endVertexOnSegment = FMath::ClosestPointOnSegment2D(endVertex->Position, pendingStartPosition, pendingEndPosition);
-				if (endVertexOnSegment.Equals(endVertex->Position, Epsilon))
-				{
-					addedIDs.Add(endVertex->ID);
-				}
 			}
 		}
 
@@ -211,25 +301,30 @@ namespace Modumate
 
 		// add an edge connecting the sorted vertices - AddEdgeDirect detects if the edge
 		// exists already, so the edges are only created when there is a gap
-		FGraph2DDelta addEdgesDelta(ID);
+		FGraph2DDelta updateEdgesDelta(ID);
 		int32 numVertices = sortedNewVertices.Num();
+
+		bool bOutForward;
+		auto existingEdge = FindEdgeByVertices(StartVertexID, EndVertexID, bOutForward);
+		if (existingEdge != nullptr && numVertices != 2)
+		{
+			DeleteObjectsDirect(updateEdgesDelta, {}, { existingEdge->ID });
+		}
+
 		for (int32 idx = 0; idx < numVertices-1; idx++)
 		{
 			int32 startVertexID = sortedNewVertices[idx].Value;
 			int32 endVertexID = sortedNewVertices[idx + 1].Value;
 
-			AddEdgeDirect(addEdgesDelta, NextID, startVertexID, endVertexID);
+			AddEdgeDirect(updateEdgesDelta, NextID, startVertexID, endVertexID);
 		}
 
-		if (!ApplyDelta(addEdgesDelta))
+		if (!ApplyDelta(updateEdgesDelta))
 		{
 			ApplyInverseDeltas(OutDeltas);
 			return false;
 		}
-		OutDeltas.Add(addEdgesDelta);
-
-		// return graph in its original state
-		ApplyInverseDeltas(OutDeltas);
+		OutDeltas.Add(updateEdgesDelta);
 
 		return true;
 	}
@@ -322,7 +417,7 @@ namespace Modumate
 				continue;
 			}
 
-			OutDelta.EdgeDeletions.Add(edgeID, FGraph2DObjDelta({ edge->StartVertexID, edge->EndVertexID }));
+			OutDelta.EdgeDeletions.Add(edge->ID, FGraph2DObjDelta({ edge->StartVertexID, edge->EndVertexID }));
 		}
 
 		return true;
@@ -358,6 +453,155 @@ namespace Modumate
 		if (!AddEdgeDirect(OutDelta, NextID, SplittingVertexID, endVertex->ID))
 		{
 			return false;
+		}
+
+		return true;
+	}
+
+	bool FGraph2D::MoveVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TArray<int32> &VertexIDs, const FVector2D& Offset)
+	{
+		int32 numVertices = VertexIDs.Num();
+
+		// move vertices
+		FGraph2DDelta moveVertexDelta(ID);
+		TMap<int32, int32> joinableVertexIDs;
+		TArray<int32> dirtyVertexIDs;
+
+		for (int32 i = 0; i < numVertices; ++i)
+		{
+			int32 vertexID = VertexIDs[i];
+			const FGraph2DVertex *vertex = FindVertex(vertexID);
+
+			if (vertex == nullptr)
+			{
+				return false;
+			}
+
+			FVector2D oldPos = vertex->Position;
+			FVector2D newPos = vertex->Position + Offset;
+
+			const FGraph2DVertex *existingVertex = FindVertex(newPos);
+			if (existingVertex != nullptr && existingVertex->ID != vertexID && VertexIDs.Find(existingVertex->ID) == INDEX_NONE)
+			{
+				joinableVertexIDs.Add(existingVertex->ID, vertexID);
+				dirtyVertexIDs.Add(existingVertex->ID);
+			}
+			else if (!newPos.Equals(oldPos))
+			{
+				moveVertexDelta.VertexMovements.Add(vertexID, TPair<FVector2D, FVector2D>(oldPos, newPos));
+				dirtyVertexIDs.Add(vertex->ID);
+			}
+		}
+
+		if (!ApplyDelta(moveVertexDelta))
+		{
+			return false;
+		}
+		OutDeltas.Add(moveVertexDelta);
+
+		// join vertices
+		FGraph2DDelta joinDelta(ID);
+		for (auto& kvp : joinableVertexIDs)
+		{
+			joinDelta.Reset();
+			if (!JoinVertices(joinDelta, NextID, kvp.Key, kvp.Value))
+			{
+				ApplyInverseDeltas(OutDeltas);
+				return false;
+			}
+
+			if (!ApplyDelta(joinDelta))
+			{
+				ApplyInverseDeltas(OutDeltas);
+				return false;
+			}
+			OutDeltas.Add(joinDelta);
+		}
+
+
+		// account for edge side-effects
+
+		// find the vertices that exist at the new positions (post join)
+		if (!SplitEdgesByVertices(OutDeltas, NextID, dirtyVertexIDs))
+		{
+			ApplyInverseDeltas(OutDeltas);
+			return false;
+		}
+
+		TSet<int32> dirtyEdgeIDs;
+		for (int32 vertexID : dirtyVertexIDs)
+		{
+			auto vertex = FindVertex(vertexID);
+			if (vertex == nullptr)
+			{
+				ApplyInverseDeltas(OutDeltas);
+				return false;
+			}
+			for (int32 id : vertex->Edges)
+			{
+				dirtyEdgeIDs.Add(FMath::Abs(id));
+			}
+		}
+
+		for (int32 edgeID : dirtyEdgeIDs)
+		{
+			auto edge = FindEdge(edgeID);
+			if (edge == nullptr)
+			{
+				continue;
+			}
+			
+			// when moving an edge (since its vertex has moved), check whether there are new edge intersections
+			// if there aren't any, this will have no effect
+			if (!AddEdgesBetweenVertices(OutDeltas, NextID, edge->StartVertexID, edge->EndVertexID))
+			{
+				ApplyInverseDeltas(OutDeltas);
+				return false;
+			}
+		}
+
+		ApplyInverseDeltas(OutDeltas);
+
+		return true;
+	}
+
+	bool FGraph2D::JoinVertices(FGraph2DDelta &OutDelta, int32 &NextID, int32 SavedVertexID, int32 RemovedVertexID)
+	{
+		auto joinVertex = FindVertex(SavedVertexID);
+		auto oldVertex = FindVertex(RemovedVertexID);
+
+		if (joinVertex == nullptr || oldVertex == nullptr)
+		{
+			return false;
+		}
+		if (joinVertex->ID == oldVertex->ID)
+		{
+			return false;
+		}
+
+		// there is no way to reassign an edge's vertexIDs, so delete the edges connected to the vertex
+		if (!DeleteObjectsDirect(OutDelta, { oldVertex->ID }, TSet<int32>(oldVertex->Edges)))
+		{
+			return false;
+		}
+
+		// add back edges with updated vertices
+		for (int32 edgeID : oldVertex->Edges)
+		{
+			auto edge = FindEdge(edgeID);
+			if (edge == nullptr)
+			{
+				return false;
+			}
+
+			// find the edge's vertexID that is not being removed
+			int32 otherVertexID = (oldVertex->ID == edge->StartVertexID) ? edge->EndVertexID : edge->StartVertexID;
+
+			// new edge connects the other vertex of the edge to the vertex that is saved in the join
+			if (!AddEdgeDirect(OutDelta, NextID, otherVertexID, SavedVertexID))
+			{
+				return false;
+			}
 		}
 
 		return true;

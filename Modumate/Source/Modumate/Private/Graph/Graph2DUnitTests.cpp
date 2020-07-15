@@ -484,4 +484,99 @@ namespace Modumate
 
 		return true;
 	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DColinearEdges2, "Modumate.Graph.2D.ColinearEdges2", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DColinearEdges2::RunTest(const FString& Parameters)
+	{
+		FGraph2D graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+
+		TArray<FVector2D> vertices = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(100.0f, 0.0f),
+			FVector2D(200.0f, 0.0f),
+			FVector2D(300.0f, 0.0f),
+			FVector2D(400.0f, 0.0f),
+			FVector2D(500.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[1], vertices[4]));
+		TestDeltas(this, deltas, graph, 0, 2, 1);
+
+		TestTrue(TEXT("Add containing edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[5]));
+		TestDeltasAndResetGraph(this, deltas, graph, 0, 4, 3);
+
+		TestTrue(TEXT("Add contained edge"),
+			graph.AddEdge(deltas, NextID, vertices[2], vertices[3]));
+		TestDeltasAndResetGraph(this, deltas, graph, 0, 4, 3);
+
+		TestTrue(TEXT("Add overlapping edge containing start vertex"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[2]));
+		TestDeltasAndResetGraph(this, deltas, graph, 0, 4, 3);
+
+		TestTrue(TEXT("Add overlapping edge containing end vertex"),
+			graph.AddEdge(deltas, NextID, vertices[3], vertices[5]));
+		TestDeltasAndResetGraph(this, deltas, graph, 0, 4, 3);
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DMoveVertices, "Modumate.Graph.2D.MoveVertices", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DMoveVertices::RunTest(const FString& Parameters)
+	{
+		FGraph2D graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+
+		TArray<FVector2D> vertices = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(100.0f, 0.0f),
+		};
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[1]));
+
+		TSet<int32> firstVertexIDs;
+		graph.AggregateAddedVertices(deltas, firstVertexIDs);
+
+		TestDeltas(this, deltas, graph, 0, 2, 1);
+
+		vertices = {
+			FVector2D(200.0f, 0.0f),
+			FVector2D(300.0f, 0.0f),
+		};
+
+		TestTrue(TEXT("Add another Edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[1]));
+
+		TSet<int32> secondVertexIDs;
+		graph.AggregateAddedVertices(deltas, secondVertexIDs);
+
+		TestDeltas(this, deltas, graph, 0, 4, 2);
+
+		TestTrue(TEXT("Basic move"),
+			graph.MoveVertices(deltas, NextID, firstVertexIDs.Array(), FVector2D(50.0f, 0.0f)));
+
+		TestDeltasAndResetGraph(this, deltas, graph, 0, 4, 2);
+
+		TestTrue(TEXT("Join one vertex"),
+			graph.MoveVertices(deltas, NextID, firstVertexIDs.Array(), FVector2D(100.0f, 0.0f)));
+
+		TestDeltasAndResetGraph(this, deltas, graph, 0, 3, 2);
+
+		TestTrue(TEXT("Overlap edges"),
+			graph.MoveVertices(deltas, NextID, firstVertexIDs.Array(), FVector2D(150.0f, 0.0f)));
+
+		TestDeltasAndResetGraph(this, deltas, graph, 0, 4, 3);
+
+		TestTrue(TEXT("Make edges the same"),
+			graph.MoveVertices(deltas, NextID, firstVertexIDs.Array(), FVector2D(200.0f, 0.0f)));
+
+		TestDeltasAndResetGraph(this, deltas, graph, 0, 2, 1);
+
+		return true;
+	}
 }

@@ -136,18 +136,6 @@ namespace Modumate
 			return nullptr;
 		}
 
-		if (bDebugCheck)
-		{
-			for (auto &kvp : Vertices)
-			{
-				FGraph2DVertex &otherVertex = kvp.Value;
-				if (!ensureAlways(!Position.Equals(otherVertex.Position, Epsilon)))
-				{
-					return nullptr;
-				}
-			}
-		}
-
 		FGraph2DVertex &newVertex = Vertices.Add(newID, FGraph2DVertex(newID, this, Position));
 		bDirty = true;
 		newVertex.Dirty(false);

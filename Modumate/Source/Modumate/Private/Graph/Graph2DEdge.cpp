@@ -26,6 +26,7 @@ namespace Modumate
 	bool FGraph2DEdge::CacheAngle()
 	{
 		Angle = 0.0f;
+		EdgeDir = FVector2D::ZeroVector;
 
 		if (ensureAlways(Graph) && (StartVertexID != 0) && (EndVertexID != 0))
 		{
@@ -35,12 +36,12 @@ namespace Modumate
 			{
 				FVector2D edgeDelta = endVertex->Position - startVertex->Position;
 				float edgeLength = edgeDelta.Size();
-				if (ensureAlways(edgeLength > Graph->Epsilon))
+				if (edgeLength > Graph->Epsilon)
 				{
 					EdgeDir = edgeDelta / edgeLength;
 					Angle = FRotator::ClampAxis(FMath::RadiansToDegrees(FMath::Atan2(EdgeDir.Y, EdgeDir.X)));
-					return true;
 				}
+				return true;
 			}
 		}
 

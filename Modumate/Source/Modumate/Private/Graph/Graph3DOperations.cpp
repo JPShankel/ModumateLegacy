@@ -1060,17 +1060,11 @@ namespace Modumate
 				return false;
 			}
 
-			if (!OutDelta.FaceVertexAdditions.Contains(faceID))
-			{
-				OutDelta.FaceVertexAdditions.Add(faceID, TMap<int32, int32>());
-			}
-			if (!OutDelta.FaceVertexRemovals.Contains(faceID))
-			{
-				OutDelta.FaceVertexRemovals.Add(faceID, TMap<int32, int32>());
-			}
+			auto& faceVertexAdditions = OutDelta.FaceVertexAdditions.FindOrAdd(faceID);
+			faceVertexAdditions.Add(oldVertexIdx, SavedVertexID);
 
-			OutDelta.FaceVertexAdditions[faceID].Add(oldVertexIdx, SavedVertexID);
-			OutDelta.FaceVertexRemovals[faceID].Add(oldVertexIdx, RemovedVertexID);
+			auto& faceVertexRemovals = OutDelta.FaceVertexRemovals.FindOrAdd(faceID);
+			faceVertexRemovals.Add(oldVertexIdx, RemovedVertexID);
 		}
 
 		// TODO: check for coincident faces
@@ -1083,7 +1077,7 @@ namespace Modumate
 				return false;
 			}
 
-			int32 savedEdgeID = RemovedVertexID == edge->StartVertexID ? edge->EndVertexID : edge->StartVertexID;
+			int32 savedEdgeVertexID = RemovedVertexID == edge->StartVertexID ? edge->EndVertexID : edge->StartVertexID;
 			// TODO: catch savedEdgeID == SavedVertexID and then collapse edge and update the connected faces
 			bool bOutForward;
 
@@ -1092,13 +1086,13 @@ namespace Modumate
 				return false;
 			}
 
-			if (FindEdgeByVertices(savedEdgeID, SavedVertexID, bOutForward) == nullptr)
+			if (FindEdgeByVertices(savedEdgeVertexID, SavedVertexID, bOutForward) == nullptr)
 			{
 				// edge should not exist yet, because it was just checked
 				int32 ExistingID;
 
 				// TODO: handle edge deletes
-				if (!GetDeltaForEdgeAddition(TPair<int32, int32>(savedEdgeID, SavedVertexID), OutDelta, NextID, ExistingID))
+				if (!GetDeltaForEdgeAddition(TPair<int32, int32>(savedEdgeVertexID, SavedVertexID), OutDelta, NextID, ExistingID))
 				{
 					return false;
 				}
