@@ -18,11 +18,20 @@ public:
 	USplashBlockHomeWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
-protected:
-	virtual void NativeConstruct() override;
-
-public:
+	UPROPERTY()
+	class AMainMenuGameMode_CPP *MainMenuGameMode;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UWrapBox *WrapBoxProjects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class USplashBlockProjectCardWidget> LoadProjectCardWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class USplashBlockNewProjectCardWidget> NewProjectCardWidgetClass;
+
+	void OpenRecentProjectMenu();
+
+protected:
+	virtual void NativeConstruct() override;
 };

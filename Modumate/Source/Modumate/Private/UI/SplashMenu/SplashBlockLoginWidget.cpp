@@ -5,6 +5,7 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
+#include "Components/TextBlock.h"
 
 USplashBlockLoginWidget::USplashBlockLoginWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -17,13 +18,15 @@ bool USplashBlockLoginWidget::Initialize()
 	{
 		return false;
 	}
+	ModumateGameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 	if (!(ButtonCreateAccount && ButtonLogin))
 	{
 		return false;
 	}
-
 	ButtonCreateAccount->ModumateButton->OnReleased.AddDynamic(this, &USplashBlockLoginWidget::OnButtonReleasedCreateAccount);
-	ButtonLogin->ModumateButton->OnReleased.AddDynamic(this, &USplashBlockLoginWidget::OnButtonReleasedLogin);
+	ButtonLogin->ModumateButton->OnReleased.AddDynamic(this, &USplashBlockLoginWidget::Login);
+	EmailBox->OnTextCommitted.AddDynamic(this, &USplashBlockLoginWidget::OnTextBlockCommittedLogin);
+	PasswordBox->OnTextCommitted.AddDynamic(this, &USplashBlockLoginWidget::OnTextBlockCommittedLogin);
 
 	return true;
 }
@@ -33,16 +36,42 @@ void USplashBlockLoginWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
+void USplashBlockLoginWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	// Set LoginMessage visibility based on login status
+	if (ModumateGameInstance && TextBlock_LoginAttemptMsg)
+	{
+		switch (ModumateGameInstance->LoginStatus())
+		{
+		case ELoginStatus::InvalidEmail:
+		case ELoginStatus::InvalidPassword:
+			TextBlock_LoginAttemptMsg->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+			break;
+		default:
+			TextBlock_LoginAttemptMsg->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+}
+
 void USplashBlockLoginWidget::OnButtonReleasedCreateAccount()
 {
 	FPlatformProcess::LaunchURL(*CreateAccountURL, nullptr, nullptr);
 }
 
-void USplashBlockLoginWidget::OnButtonReleasedLogin()
+void USplashBlockLoginWidget::OnTextBlockCommittedLogin(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
-	if (gameInstance && EmailBox && PasswordBox)
+	if (CommitMethod == ETextCommit::OnEnter)
 	{
-		gameInstance->Login(EmailBox->GetText().ToString(), PasswordBox->GetText().ToString());
+		Login();
+	}
+}
+
+void USplashBlockLoginWidget::Login()
+{
+	if (ModumateGameInstance && EmailBox && PasswordBox)
+	{
+		ModumateGameInstance->Login(EmailBox->GetText().ToString(), PasswordBox->GetText().ToString());
 	}
 }

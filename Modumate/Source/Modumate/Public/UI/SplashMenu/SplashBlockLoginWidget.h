@@ -18,10 +18,9 @@ public:
 	USplashBlockLoginWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
-protected:
-	virtual void NativeConstruct() override;
+	UPROPERTY()
+	class UModumateGameInstance *ModumateGameInstance;
 
-public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString CreateAccountURL;
 
@@ -37,9 +36,19 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateEditableTextBox *PasswordBox;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UTextBlock *TextBlock_LoginAttemptMsg;
+
+protected:
+	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 	UFUNCTION()
 	void OnButtonReleasedCreateAccount();
 
 	UFUNCTION()
-	void OnButtonReleasedLogin();
+	void OnTextBlockCommittedLogin(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void Login();
 };
