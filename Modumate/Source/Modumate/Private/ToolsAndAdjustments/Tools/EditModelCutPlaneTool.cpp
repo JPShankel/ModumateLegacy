@@ -125,18 +125,34 @@ bool UCutPlaneTool::EnterNextStage()
 	FBox bounds = doc->CalculateProjectBounds().GetBox();
 	bounds = bounds.ExpandBy(DefaultPlaneDimension / 2.0f);
 
-	// if the cut plane will be inside of the project bounds, attempt to size the plane to match the bounds
+	// Size the cut plane to cover entire scene.
 	FVector BasisX, BasisY;
-	FBox2D slice;
-	if (UModumateGeometryStatics::SliceBoxWithPlane(bounds, Origin, Normal, BasisX, BasisY, slice))
+	FBox2D slice(ForceInit);
+	UModumateGeometryStatics::FindBasisVectors(BasisX, BasisY, Normal);
+
+	TArray<FVector> sceneExtentBox =
 	{
-		PendingPlanePoints = {
-			Origin + BasisX * slice.Min.X + BasisY * slice.Min.Y,
-			Origin + BasisX * slice.Max.X + BasisY * slice.Min.Y,
-			Origin + BasisX * slice.Max.X + BasisY * slice.Max.Y,
-			Origin + BasisX * slice.Min.X + BasisY * slice.Max.Y
-		};
+		FVector(bounds.Min.X, bounds.Min.Y, bounds.Min.Z),
+		FVector(bounds.Min.X, bounds.Min.Y, bounds.Max.Z),
+		FVector(bounds.Min.X, bounds.Max.Y, bounds.Min.Z),
+		FVector(bounds.Min.X, bounds.Max.Y, bounds.Max.Z),
+		FVector(bounds.Max.X, bounds.Min.Y, bounds.Min.Z),
+		FVector(bounds.Max.X, bounds.Min.Y, bounds.Max.Z),
+		FVector(bounds.Max.X, bounds.Max.Y, bounds.Min.Z),
+		FVector(bounds.Max.X, bounds.Max.Y, bounds.Max.Z)
+	};
+
+	for (auto& p: sceneExtentBox)
+	{
+		slice += UModumateGeometryStatics::ProjectPoint2D(p, BasisX, BasisY, Origin);
 	}
+
+	PendingPlanePoints = {
+		Origin + BasisX * slice.Min.X + BasisY * slice.Min.Y,
+		Origin + BasisX * slice.Max.X + BasisY * slice.Min.Y,
+		Origin + BasisX * slice.Max.X + BasisY * slice.Max.Y,
+		Origin + BasisX * slice.Min.X + BasisY * slice.Max.Y
+	};
 
 	auto commandResult = Controller->ModumateCommand(
 		FModumateCommand(Commands::kMakeCutPlane)

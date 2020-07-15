@@ -1650,65 +1650,6 @@ bool UModumateGeometryStatics::AnalyzeCachedPositions(const TArray<FVector> &InP
 	return true;
 }
 
-// Given a 3D box and a plane, attempt to find a slice of the box that is on the plane
-bool UModumateGeometryStatics::SliceBoxWithPlane(const FBox &InBox, const FVector &InOrigin, const FVector &InNormal, FVector &OutAxisX, FVector &OutAxisY, FBox2D &OutSlice)
-{
-	FindBasisVectors(OutAxisX, OutAxisY, InNormal);
-	FPlane plane = FPlane(InOrigin, InNormal);
-
-	if (!FMath::PlaneAABBIntersection(plane, InBox))
-	{
-		return false;
-	}
-	// 8 points on an FBox
-	TArray<FVector> points = {
-		FVector(InBox.Min.X, InBox.Min.Y, InBox.Min.Z),
-		FVector(InBox.Min.X, InBox.Min.Y, InBox.Max.Z),
-		FVector(InBox.Min.X, InBox.Max.Y, InBox.Min.Z),
-		FVector(InBox.Min.X, InBox.Max.Y, InBox.Max.Z),
-		FVector(InBox.Max.X, InBox.Min.Y, InBox.Min.Z),
-		FVector(InBox.Max.X, InBox.Min.Y, InBox.Max.Z),
-		FVector(InBox.Max.X, InBox.Max.Y, InBox.Min.Z),
-		FVector(InBox.Max.X, InBox.Max.Y, InBox.Max.Z),
-	};
-
-	// 12 lines connecting the 8 points
-	TArray<TPair<FVector, FVector>> lines = {
-		TPair<FVector, FVector>(points[0], points[1]),
-		TPair<FVector, FVector>(points[0], points[2]),
-		TPair<FVector, FVector>(points[1], points[3]),
-		TPair<FVector, FVector>(points[2], points[3]),
-		TPair<FVector, FVector>(points[4], points[5]),
-		TPair<FVector, FVector>(points[4], points[6]),
-		TPair<FVector, FVector>(points[5], points[7]),
-		TPair<FVector, FVector>(points[6], points[7]),
-		TPair<FVector, FVector>(points[0], points[4]),
-		TPair<FVector, FVector>(points[1], points[5]),
-		TPair<FVector, FVector>(points[2], points[6]),
-		TPair<FVector, FVector>(points[3], points[7])
-	};
-
-	// Calculate all intersections with the plane
-	TArray<FVector2D> intersections;
-	for (auto& line : lines)
-	{
-		FVector point;
-		if (FMath::SegmentPlaneIntersection(line.Key, line.Value, plane, point))
-		{
-			intersections.Add(UModumateGeometryStatics::ProjectPoint2D(point, OutAxisX, OutAxisY, InOrigin));
-		}
-	}
-
-	// with three intersections the slice is meaningful
-	if (intersections.Num() >= 3)
-	{
-		OutSlice = FBox2D(intersections);
-		return true;
-	}
-
-	return false;
-}
-
 bool UModumateGeometryStatics::ConvertProcMeshToLinesOnPlane(UProceduralMeshComponent* InProcMesh, FVector PlanePosition, FVector PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges)
 {
 	// This code is mostly copied from UKismetProceduralMeshLibrary::SliceProceduralMesh.
