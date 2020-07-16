@@ -17,14 +17,17 @@ namespace Modumate
 	bool FGraph2D::AddVertex(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D Position)
 	{
 		const FGraph2DVertex *existingVertex = FindVertex(Position);
-
 		if (existingVertex == nullptr)
 		{
 			FGraph2DDelta addVertexDelta(ID);
-			AddVertexDirect(addVertexDelta, NextID, Position);
-
+			if (!AddVertexDirect(addVertexDelta, NextID, Position))
+			{
+				return false;
+			}
 			OutDeltas.Add(addVertexDelta);
 		}
+
+		// TODO: aggregate and split edge by vertex?
 
 		return true;
 	}
@@ -57,19 +60,19 @@ namespace Modumate
 		// start by adding or finding the vertices at the input positions
 		for (auto& position : { StartPosition, EndPosition })
 		{
-			TArray<FGraph2DDelta> addVertexDeltas;
+			FGraph2DDelta addVertexDelta(ID);
 			addedVertexIDs.Reset();
 
 			const FGraph2DVertex *existingVertex = FindVertex(position);
 
 			if (existingVertex == nullptr)
 			{
-				if (!AddVertex(addVertexDeltas, NextID, position))
+				if (!AddVertexDirect(addVertexDelta, NextID, position))
 				{
 					return false;
 				}
 
-				AggregateAddedVertices(addVertexDeltas, addedVertexIDs);
+				AggregateAddedVertices({ addVertexDelta }, addedVertexIDs);
 
 				if (!ensureAlways(addedVertexIDs.Num() == 1))
 				{
@@ -82,11 +85,12 @@ namespace Modumate
 				addedIDs.Add(existingVertex->ID);
 			}
 
-			if (!ApplyDeltas(addVertexDeltas))
+			if (!ApplyDelta(addVertexDelta))
 			{
+				ApplyInverseDeltas(OutDeltas);
 				return false;
 			}
-			OutDeltas.Append(addVertexDeltas);
+			OutDeltas.Add(addVertexDelta);
 		}
 
 		if (!ensureAlways(addedIDs.Num() == 2))
@@ -158,8 +162,7 @@ namespace Modumate
 			if (intersectingEdgeID != MOD_ID_NONE)
 			{
 				FGraph2DDelta splitEdgeDelta(ID);
-				SplitEdge(splitEdgeDelta, NextID, intersectingEdgeID, vertex->ID);
-				if (!ApplyDelta(splitEdgeDelta))
+				if (!SplitEdge(splitEdgeDelta, NextID, intersectingEdgeID, vertex->ID))
 				{
 					ApplyInverseDeltas(splitEdgeDeltas);
 					return false;
@@ -216,7 +219,11 @@ namespace Modumate
 				auto existingVertex = FindVertex(intersection);
 				if (existingVertex == nullptr)
 				{
-					AddVertexDirect(addVertexDelta, NextID, intersection);
+					if (!AddVertexDirect(addVertexDelta, NextID, intersection))
+					{
+						ApplyInverseDeltas(OutDeltas);
+						return false;
+					}
 					if (!ApplyDelta(addVertexDelta))
 					{
 						ApplyInverseDeltas(OutDeltas);
@@ -267,8 +274,7 @@ namespace Modumate
 		for (auto& kvp : edgesToSplitByVertex)
 		{
 			splitEdgeDelta.Reset();
-			SplitEdge(splitEdgeDelta, NextID, kvp.Key, kvp.Value);
-			if (!ApplyDelta(splitEdgeDelta))
+			if (!SplitEdge(splitEdgeDelta, NextID, kvp.Key, kvp.Value))
 			{
 				ApplyInverseDeltas(OutDeltas);
 				return false;
@@ -455,6 +461,11 @@ namespace Modumate
 			return false;
 		}
 
+		if (!ApplyDelta(OutDelta))
+		{
+			return false;
+		}
+
 		return true;
 	}
 
@@ -510,11 +521,6 @@ namespace Modumate
 				return false;
 			}
 
-			if (!ApplyDelta(joinDelta))
-			{
-				ApplyInverseDeltas(OutDeltas);
-				return false;
-			}
 			OutDeltas.Add(joinDelta);
 		}
 
@@ -602,6 +608,11 @@ namespace Modumate
 			{
 				return false;
 			}
+		}
+
+		if (!ApplyDelta(OutDelta))
+		{
+			return false;
 		}
 
 		return true;

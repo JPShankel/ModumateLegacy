@@ -541,6 +541,7 @@ namespace Modumate
 	bool FGraph2D::ApplyDelta(const FGraph2DDelta &Delta)
 	{
 		// TODO: do graph objects need dirty capabilities?
+		FGraph2DDelta appliedDelta(ID);
 
 		for (auto &kvp : Delta.VertexMovements)
 		{
@@ -551,6 +552,8 @@ namespace Modumate
 			{
 				vertex->Position = vertexDelta.Value;
 			}
+
+			appliedDelta.VertexMovements.Add(kvp);
 		}
 
 		for (auto &kvp : Delta.VertexAdditions)
@@ -558,8 +561,10 @@ namespace Modumate
 			auto newVertex = AddVertex(kvp.Value, kvp.Key);
 			if (!ensure(newVertex))
 			{
+				ApplyInverseDeltas({ appliedDelta });
 				return false;
 			}
+			appliedDelta.VertexAdditions.Add(kvp);
 		}
 
 		for (auto &kvp : Delta.VertexDeletions)
@@ -567,8 +572,10 @@ namespace Modumate
 			bool bRemovedVertex = RemoveVertex(kvp.Key);
 			if (!ensure(bRemovedVertex))
 			{
+				ApplyInverseDeltas({ appliedDelta });
 				return false;
 			}
+			appliedDelta.VertexDeletions.Add(kvp);
 		}
 
 		for (auto &kvp : Delta.EdgeAdditions)
@@ -577,14 +584,17 @@ namespace Modumate
 			const TArray<int32> &edgeVertexIDs = kvp.Value.Vertices;
 			if (!ensureAlways(edgeVertexIDs.Num() == 2))
 			{
+				ApplyInverseDeltas({ appliedDelta });
 				return false;
 			}
 
 			auto newEdge = AddEdge(edgeVertexIDs[0], edgeVertexIDs[1], edgeID);
 			if (!ensure(newEdge))
 			{
+				ApplyInverseDeltas({ appliedDelta });
 				return false;
 			}
+			appliedDelta.EdgeAdditions.Add(kvp);
 		}
 
 		for (auto &kvp : Delta.EdgeDeletions)
@@ -592,8 +602,10 @@ namespace Modumate
 			bool bRemovedEdge = RemoveEdge(kvp.Key);
 			if (!ensure(bRemovedEdge))
 			{
+				ApplyInverseDeltas({ appliedDelta });
 				return false;
 			}
+			appliedDelta.EdgeDeletions.Add(kvp);
 		}
 
 		return true;

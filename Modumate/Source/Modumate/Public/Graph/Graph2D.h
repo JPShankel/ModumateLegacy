@@ -132,13 +132,17 @@ namespace Modumate
 		bool AddEdge(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D StartPosition, const FVector2D EndPosition);
 
 		// Create Deltas that delete all objects provided and also all objects that are invalidated by the deletions -
-		// For example, vertices that are no longer connected to any edges are also deleted
+		// For example, vertices that are no longer connected to any edges are also deleted.  Note that this function
+		// does not use NextID because no new objects should be created.
 		bool DeleteObjects(TArray<FGraph2DDelta> &OutDeltas, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs);
 
 		// Create Deltas that move the provided vertices by the provided offset vector.  Moving vertices handles the 
 		// same kind of side effects that occur when you add objects (splitting edges, (TODO) handling new polygons).
 		bool MoveVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TArray<int32> &VertexIDs, const FVector2D &Offset);
 
+
+		// The "Direct" versions of helper functions are meant to be combined together to make deltas that result in
+		// more complicated operations, and do not apply the delta that they create.
 	private:
 		// Create Delta resulting in a new vertex added to the graph at the input position
 		bool AddVertexDirect(FGraph2DDelta &OutDelta, int32 &NextID, const FVector2D Position);
@@ -149,23 +153,24 @@ namespace Modumate
 		// Create Delta that delete precisely the provided objects
 		bool DeleteObjectsDirect(FGraph2DDelta &OutDelta, const TSet<int32> &VertexIDs, const TSet<int32> &EdgeIDs);
 
-		// Create Delta that replaces the edge with two edges - an edge from the start vertex to the split vertex, 
+
+		// These helper functions account for side-effects caused by the public functions and apply the deltas that they create,
+		// often because deltas that are created afterwards for the same operation rely on the result.
+	private:
+		// Create and apply a Delta that replaces the edge with two edges - an edge from the start vertex to the split vertex, 
 		// and an edge from the split vertex to the end vertex.
 		bool SplitEdge(FGraph2DDelta &OutDelta, int32 &NextID, int32 EdgeID, int32 SplittingVertexID);
 
-		// TODO: SplitEdgesByVertices and AddEdgesBetweenVertices apply the deltas that they create, which is inconsistent
-		// with the other private functions.  Potentially, make the other private functions apply their single delta as well
-
-		// Creates Deltas that split edges if the provided vertices are on them.  This helper function should be called
+		// Creates and applies Deltas that split edges if the provided vertices are on them.  This helper function should be called
 		// after adding vertices directly to maintain the graph's assumption that nothing overlaps.
 		bool SplitEdgesByVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, TArray<int32> &VertexIDs);
 
-		// Create Deltas that add edges connecting the two provided vertices.  Several edges may be added instead of one
+		// Creates and applies Deltas that add edges connecting the two provided vertices.  Several edges may be added instead of one
 		// to account for intersections with other edges.  When there is an intersection, the existing edge splits there
 		// and edges are added ending at the intersection and starting from the intersection.
 		bool AddEdgesBetweenVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, int32 StartVertexID, int32 EndVertexID);
 
-		// Create delta that replaces the removed vertex with the saved vertex.  When two vertices are put in the 
+		// Create and apply a delta that replaces the removed vertex with the saved vertex.  When two vertices are put in the 
 		// same position, one is saved and one is removed, representing the join operation.  The edges that 
 		// were connected to the removed vertex are replaced to connect to the saved vertex.
 		bool JoinVertices(FGraph2DDelta &OutDelta, int32 &NextID, int32 SavedVertexID, int32 RemovedVertexID);
