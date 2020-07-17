@@ -720,4 +720,40 @@ namespace Modumate
 			}
 		}
 	}
+
+	void FGraph2D::AggregateAddedEdges(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutEdges, const FVector2D &StartPosition, const FVector2D &EndPosition)
+	{
+		for (auto& delta : Deltas)
+		{
+			for (auto& kvp : delta.EdgeAdditions)
+			{
+				auto edge = FindEdge(kvp.Key);
+				if (edge == nullptr)
+				{
+					continue;
+				}
+
+				auto startVertex = FindVertex(edge->StartVertexID);
+				auto endVertex = FindVertex(edge->EndVertexID);
+				if (startVertex == nullptr || endVertex == nullptr)
+				{
+					continue;
+				}
+
+				FVector2D startOnSegment = FMath::ClosestPointOnSegment2D(startVertex->Position, StartPosition, EndPosition);
+				FVector2D endOnSegment = FMath::ClosestPointOnSegment2D(endVertex->Position, StartPosition, EndPosition);
+
+				if (startOnSegment.Equals(startVertex->Position, Epsilon) &&
+					endOnSegment.Equals(endVertex->Position, Epsilon))
+				{
+					OutEdges.Add(edge->ID);
+				}
+
+			}
+			for (auto& kvp : delta.EdgeDeletions)
+			{
+				OutEdges.Remove(kvp.Key);
+			}
+		}
+	}
 }

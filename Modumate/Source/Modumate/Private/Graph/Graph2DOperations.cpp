@@ -21,7 +21,7 @@ namespace Modumate
 		{
 			FGraph2DDelta addVertexDelta(ID);
 			if (!AddVertexDirect(addVertexDelta, NextID, Position))
-			{
+			{	// no deltas have been applied
 				return false;
 			}
 			OutDeltas.Add(addVertexDelta);
@@ -32,7 +32,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph2D::AddEdgeDirect(FGraph2DDelta &OutDelta, int32 &NextID, const int32 StartVertexID, const int32 EndVertexID)
+	bool FGraph2D::AddEdgeDirect(FGraph2DDelta &OutDelta, int32 &NextID, const int32 StartVertexID, const int32 EndVertexID, const TArray<int32> &ParentIDs)
 	{
 		auto startVertex = FindVertex(StartVertexID);
 		auto endVertex = FindVertex(EndVertexID);
@@ -46,7 +46,7 @@ namespace Modumate
 		if (existingEdge == nullptr)
 		{
 			int32 addedEdgeID = NextID++;
-			OutDelta.EdgeAdditions.Add(addedEdgeID, FGraph2DObjDelta({ StartVertexID, EndVertexID }));
+			OutDelta.EdgeAdditions.Add(addedEdgeID, FGraph2DObjDelta({ StartVertexID, EndVertexID }, ParentIDs));
 		}
 
 		return true;
@@ -312,9 +312,13 @@ namespace Modumate
 
 		bool bOutForward;
 		auto existingEdge = FindEdgeByVertices(StartVertexID, EndVertexID, bOutForward);
-		if (existingEdge != nullptr && numVertices != 2)
+		TArray<int32> previousObjIDs;
+		bool bDeleteExistingEdge = existingEdge != nullptr && numVertices != 2;
+
+		if (bDeleteExistingEdge)
 		{
 			DeleteObjectsDirect(updateEdgesDelta, {}, { existingEdge->ID });
+			previousObjIDs = { existingEdge->ID };
 		}
 
 		for (int32 idx = 0; idx < numVertices-1; idx++)
@@ -322,7 +326,15 @@ namespace Modumate
 			int32 startVertexID = sortedNewVertices[idx].Value;
 			int32 endVertexID = sortedNewVertices[idx + 1].Value;
 
-			AddEdgeDirect(updateEdgesDelta, NextID, startVertexID, endVertexID);
+			AddEdgeDirect(updateEdgesDelta, NextID, startVertexID, endVertexID, previousObjIDs);
+		}
+
+		if (bDeleteExistingEdge)
+		{
+			// the edges that are added along the segment replace the existing edge,
+			// store that as the ParentObjIDs in the delta
+			updateEdgesDelta.EdgeAdditions.GenerateKeyArray(
+				updateEdgesDelta.EdgeDeletions[existingEdge->ID].ParentObjIDs);
 		}
 
 		if (!ApplyDelta(updateEdgesDelta))
@@ -431,6 +443,8 @@ namespace Modumate
 
 	bool FGraph2D::SplitEdge(FGraph2DDelta &OutDelta, int32 &NextID, int32 EdgeID, int32 SplittingVertexID)
 	{
+		OutDelta.Reset();
+
 		auto edge = FindEdge(EdgeID);
 		if (!ensureAlways(edge != nullptr))
 		{
@@ -451,15 +465,19 @@ namespace Modumate
 			return false;
 		}
 
-		if (!AddEdgeDirect(OutDelta, NextID, startVertex->ID, SplittingVertexID))
+		if (!AddEdgeDirect(OutDelta, NextID, startVertex->ID, SplittingVertexID, { EdgeID }))
 		{
 			return false;
 		}
 
-		if (!AddEdgeDirect(OutDelta, NextID, SplittingVertexID, endVertex->ID))
+		if (!AddEdgeDirect(OutDelta, NextID, SplittingVertexID, endVertex->ID, { EdgeID }))
 		{
 			return false;
 		}
+
+		// link the added edges to the previous deleted edge
+		OutDelta.EdgeAdditions.GenerateKeyArray(
+			OutDelta.EdgeDeletions[EdgeID].ParentObjIDs);
 
 		if (!ApplyDelta(OutDelta))
 		{

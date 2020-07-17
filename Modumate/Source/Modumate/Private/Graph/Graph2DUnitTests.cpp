@@ -392,6 +392,88 @@ namespace Modumate
 		return true;
 	}
 
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DPreviousObjects, "Modumate.Graph.2D.PreviousObjects", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DPreviousObjects::RunTest(const FString& Parameters)
+	{
+		FGraph2D graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+
+		TArray<FVector2D> vertices = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(100.0f, 0.0f),
+			FVector2D(200.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[2]));
+		TestDeltas(this, deltas, graph, 0, 2, 1, false);
+
+		TSet<int32> addedEdgeIDs;
+		graph.AggregateAddedEdges(deltas, addedEdgeIDs, vertices[0], vertices[2]);
+		deltas.Reset();
+		if (addedEdgeIDs.Num() != 1)
+		{
+			return false;
+		}
+		int32 previousEdgeID = addedEdgeIDs.Array()[0];
+
+		TestTrue(TEXT("Add Overlapping edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[1]));
+		TestDeltas(this, deltas, graph, 0, 3, 2, false);
+
+		addedEdgeIDs.Reset();
+		graph.AggregateAddedEdges(deltas, addedEdgeIDs, vertices[0], vertices[2]);
+		int32 expectedIDs = 2;
+		if (addedEdgeIDs.Num() != expectedIDs)
+		{
+			return false;
+		}
+
+		int32 checkedIDs = 0;
+		bool bCheckedPreviousObject = false;
+		for (auto& delta : deltas)
+		{
+			for (auto& edgekvp : delta.EdgeAdditions)
+			{
+				int32 edgeID = edgekvp.Key;
+				if (addedEdgeIDs.Contains(edgeID))
+				{
+					auto& parents = delta.EdgeAdditions[edgeID].ParentObjIDs;
+					TestTrue(TEXT("correct previous object"),
+						parents.Num() == 1 && parents[0] == previousEdgeID);
+					checkedIDs++;
+				}
+			}
+
+			for (auto& edgekvp : delta.EdgeDeletions)
+			{
+				int32 edgeID = edgekvp.Key;
+				if (edgeID == previousEdgeID)
+				{
+					auto& parents = delta.EdgeDeletions[edgeID].ParentObjIDs;
+					TestTrue(TEXT("correct amount of current objects"),
+						parents.Num() == 2);
+					for (int32 id : parents)
+					{
+						TestTrue(TEXT("correct current object id"),
+							addedEdgeIDs.Contains(id));
+					}
+					bCheckedPreviousObject = true;
+				}
+			}
+		}
+
+		TestTrue(TEXT("correct amount of current objects"),
+			checkedIDs == expectedIDs);
+		TestTrue(TEXT("correct amount of previous objects"),
+			bCheckedPreviousObject);
+
+		deltas.Reset();
+
+		return true;
+	}
+
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DSplitEdges, "Modumate.Graph.2D.SplitEdges", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraph2DSplitEdges::RunTest(const FString& Parameters)
 	{

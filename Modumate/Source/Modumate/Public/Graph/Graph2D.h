@@ -99,12 +99,15 @@ namespace Modumate
 
 	public:
 		// outputs objects that would be added by the list of deltas.
-		// TODO: this returns all added objects - it will be useful to figure out which edges were added 
-		// constrained by a line segment to figure out which edges would need to host an object
 		void AggregateAddedObjects(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices, TSet<int32> &OutEdges);
 
 		// aggregates only the added vertices, helpful for determining the result of AddVertex
 		void AggregateAddedVertices(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices);
+
+		// aggregates only the added edges, constrained by the provided segment
+		void AggregateAddedEdges(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutEdges, const FVector2D &StartPosition, const FVector2D &EndPosition);
+
+		// TODO: aggregate polygons constrained by polygon
 
 		// 2D Graph Operations
 		// All graph operations should leave the graph in the same state that it entered if the function failed or if the function
@@ -148,7 +151,7 @@ namespace Modumate
 		bool AddVertexDirect(FGraph2DDelta &OutDelta, int32 &NextID, const FVector2D Position);
 
 		// Create Delta resulting in a new edge connecting two existing vertices
-		bool AddEdgeDirect(FGraph2DDelta &OutDelta, int32 &NextID, const int32 StartVertexID, const int32 EndVertexID);
+		bool AddEdgeDirect(FGraph2DDelta &OutDelta, int32 &NextID, const int32 StartVertexID, const int32 EndVertexID, const TArray<int32> &ParentIDs = TArray<int32>());
 
 		// Create Delta that delete precisely the provided objects
 		bool DeleteObjectsDirect(FGraph2DDelta &OutDelta, const TSet<int32> &VertexIDs, const TSet<int32> &EdgeIDs);
