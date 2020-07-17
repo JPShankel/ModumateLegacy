@@ -85,7 +85,7 @@ bool UToolTrayWidget::ChangeBlockToSurfaceGraphTools()
 	ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetToolCategoryText(EToolCategories::SurfaceGraphs));
 	HideAllToolTrayBlocks();
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockModes->ChangeToMetaPlaneToolsButtons();
+	ToolTrayBlockModes->ChangeToSurfaceGraphToolsButtons();
 
 	return true;
 }

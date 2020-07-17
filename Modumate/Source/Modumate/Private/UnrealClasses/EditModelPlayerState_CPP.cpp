@@ -260,12 +260,12 @@ void AEditModelPlayerState_CPP::ToggleRoomViewMode()
 {
 	if (SelectedViewMode == EEditViewModes::Rooms)
 	{
-		SetEditViewModeCommand(PreviousModeFromToggleRoomView);
+		SetEditViewModeDirect(PreviousModeFromToggleRoomView);
 	}
 	else
 	{
 		PreviousModeFromToggleRoomView = SelectedViewMode;
-		SetEditViewModeCommand(EEditViewModes::Rooms);
+		SetEditViewModeDirect(EEditViewModes::Rooms);
 	}
 }
 
@@ -1194,13 +1194,6 @@ void AEditModelPlayerState_CPP::SetEditViewModeDirect(EEditViewModes NewEditView
 	}
 }
 
-void AEditModelPlayerState_CPP::SetEditViewModeCommand(EEditViewModes NewEditViewMode)
-{
-	EMPlayerController->ModumateCommand(
-		Modumate::FModumateCommand(Modumate::Commands::kSetEditViewMode, true)
-		.Param(Modumate::Parameters::kEditViewMode, EnumValueString(EEditViewModes, NewEditViewMode)));
-}
-
 void AEditModelPlayerState_CPP::UpdateObjectVisibilityAndCollision()
 {
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
@@ -1224,6 +1217,11 @@ bool AEditModelPlayerState_CPP::IsObjectTypeEnabledByViewMode(EObjectType Object
 	case EObjectType::OTMetaEdge:
 	case EObjectType::OTMetaPlane:
 		return SelectedViewMode == EEditViewModes::MetaPlanes;
+	case EObjectType::OTSurfaceGraph:
+	case EObjectType::OTSurfaceVertex:
+	case EObjectType::OTSurfaceEdge:
+	case EObjectType::OTSurfacePolygon:
+		return SelectedViewMode == EEditViewModes::SurfaceGraphs;
 	case EObjectType::OTCutPlane:
 	case EObjectType::OTScopeBox: // TODO: cut planes and scope boxes will have individually toggled visibility in the app
 		return EMPlayerController->bCutPlaneVisible;

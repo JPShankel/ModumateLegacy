@@ -158,7 +158,8 @@ enum class EEditViewModes : uint8
 	MetaPlanes,
 	Rooms,
 	Volumes,
-	ConstructionTimeline
+	ConstructionTimeline,
+	SurfaceGraphs
 };
 
 UENUM(BlueprintType)

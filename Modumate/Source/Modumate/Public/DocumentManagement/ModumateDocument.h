@@ -174,6 +174,9 @@ namespace Modumate
 		const FGraph3D &GetTempVolumeGraph() const { return TempVolumeGraph; }
 		FGraph3D &GetTempVolumeGraph() { return TempVolumeGraph; }
 
+		const FGraph2D *FindSurfaceGraph(int32 SurfaceGraphID) const;
+		FGraph2D *FindSurfaceGraph(int32 SurfaceGraphID);
+
 		int32 CalculatePolyhedra() { return VolumeGraph.CalculatePolyhedra(); }
 		bool IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &OutObjType) const;
 

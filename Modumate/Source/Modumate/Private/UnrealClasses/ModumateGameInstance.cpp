@@ -828,36 +828,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
-	RegisterCommand(kSetToolMode, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		AEditModelPlayerController_CPP *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-		AEditModelPlayerState_CPP *playerState = playerController ? playerController->EMPlayerState : nullptr;
-		EToolMode toolMode = EToolMode::VE_NONE;
-
-		if (playerState && TryEnumValueByString(EToolMode, params.GetValue(Parameters::kToolMode).AsString(), toolMode))
-		{
-			playerController->SetToolMode(toolMode);
-			return true;
-		}
-
-		return false;
-	});
-
-	RegisterCommand(kSetEditViewMode, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		AEditModelPlayerController_CPP *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-		AEditModelPlayerState_CPP *playerState = playerController ? playerController->EMPlayerState : nullptr;
-		EEditViewModes editViewMode = EEditViewModes::ObjectEditing;
-
-		if (playerState && TryEnumValueByString(EEditViewModes, params.GetValue(Parameters::kEditViewMode).AsString(), editViewMode))
-		{
-			playerState->SetEditViewModeDirect(editViewMode);
-			return true;
-		}
-
-		return false;
-	});
-
 	RegisterCommand(kSetFOV, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		AEditModelPlayerController_CPP *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
@@ -871,7 +841,7 @@ void UModumateGameInstance::RegisterAllCommands()
 		}
 
 		return false;
-	});	
+	});
 
 	RegisterCommand(kRemoveAssembly_DEPRECATED, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{

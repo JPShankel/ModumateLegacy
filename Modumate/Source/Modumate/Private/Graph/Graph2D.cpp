@@ -34,6 +34,11 @@ namespace Modumate
 		DirtyEdges.Reset();
 	}
 
+	bool FGraph2D::IsEmpty() const
+	{
+		return (Edges.Num() == 0) && (Vertices.Num() == 0) && (Polygons.Num() == 0);
+	}
+
 	FGraph2DEdge* FGraph2D::FindEdge(FEdgeID EdgeID) 
 	{ 
 		return Edges.Find(FMath::Abs(EdgeID)); 

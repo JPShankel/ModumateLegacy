@@ -333,11 +333,14 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	{
 		switch (Controller->EMPlayerState->GetSelectedViewMode())
 		{
-		case EEditViewModes::ObjectEditing:
-			Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::MetaPlanes);
-			return true;
 		case EEditViewModes::MetaPlanes:
 			Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::ObjectEditing);
+			return true;
+		case EEditViewModes::ObjectEditing:
+			Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::SurfaceGraphs);
+			return true;
+		case EEditViewModes::SurfaceGraphs:
+			Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::MetaPlanes);
 			return true;
 		default:
 			return false;
@@ -351,6 +354,11 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	case EInputCommand::SetEditMode_MetaPlanes:
 	{
 		Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::MetaPlanes);
+		return true;
+	}
+	case EInputCommand::SetEditMode_SurfaceGraphs:
+	{
+		Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::SurfaceGraphs);
 		return true;
 	}
 	case EInputCommand::SetEditMode_Rooms:

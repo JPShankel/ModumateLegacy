@@ -227,9 +227,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetEditViewModeDirect(EEditViewModes NewEditViewMode, bool bForceUpdate = false);
 
-	UFUNCTION(BlueprintCallable)
-	void SetEditViewModeCommand(EEditViewModes NewEditViewMode);
-
 	UFUNCTION()
 	void UpdateObjectVisibilityAndCollision();
 

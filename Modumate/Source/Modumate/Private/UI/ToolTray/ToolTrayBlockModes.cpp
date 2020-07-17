@@ -35,9 +35,9 @@ void UToolTrayBlockModes::ChangeToMetaPlaneToolsButtons()
 void UToolTrayBlockModes::ChangeToSurfaceGraphToolsButtons()
 {
 	ButtonAxesNone->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonAxesXY->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonAxesZ->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonMPBucket->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ButtonAxesXY->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonAxesZ->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonMPBucket->SetVisibility(ESlateVisibility::Collapsed);
 	ButtonRoofPerimeter->SetVisibility(ESlateVisibility::Collapsed);
 }
 

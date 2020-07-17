@@ -8,9 +8,7 @@ namespace Modumate
 {
 	bool FGraph2D::AddVertexDirect(FGraph2DDelta &OutDelta, int32 &NextID, const FVector2D Position)
 	{
-		int32 addedVertexID = NextID++;
-		OutDelta.VertexAdditions.Add(addedVertexID, Position);
-
+		OutDelta.AddNewVertex(Position, NextID);
 		return true;
 	}
 
@@ -45,8 +43,7 @@ namespace Modumate
 		const FGraph2DEdge *existingEdge = FindEdgeByVertices(StartVertexID, EndVertexID, bOutForward);
 		if (existingEdge == nullptr)
 		{
-			int32 addedEdgeID = NextID++;
-			OutDelta.EdgeAdditions.Add(addedEdgeID, FGraph2DObjDelta({ StartVertexID, EndVertexID }, ParentIDs));
+			OutDelta.AddNewEdge(TPair<int32, int32>(StartVertexID, EndVertexID), NextID, ParentIDs);
 		}
 
 		return true;

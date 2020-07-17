@@ -2,6 +2,8 @@
 #pragma once
 
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+
+#include "DocumentManagement/ModumateDelta.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 
 #include "EditModelSurfaceGraphTool.generated.h"
@@ -28,14 +30,27 @@ public:
 	float AffordanceLineInterval = 8.0f;
 
 protected:
+	bool CreateGraphFromFaceTarget(TArray<TSharedPtr<Modumate::FDelta>> &OutDeltas);
 	void ResetTarget();
+
+	UPROPERTY()
+	class AEditModelGameState_CPP* GameState;
+
+	UPROPERTY()
+	class UDimensionManager* DimensionManager;
 
 	class Modumate::FModumateObjectInstance *LastHostTarget = nullptr;
 	class Modumate::FModumateObjectInstance *LastGraphTarget = nullptr;
-	TWeakObjectPtr<AActor> LastHitHostActor = nullptr;
-	FVector LastValidHitLocation = FVector::ZeroVector;
-	FVector LastValidHitNormal = FVector::ZeroVector;
-	int32 LastValidFaceIndex = INDEX_NONE;
+
+	UPROPERTY()
+	AActor* LastHitHostActor;
+
+	FVector LastValidHitLocation;
+	FVector LastValidHitNormal;
+	int32 LastValidFaceIndex;
 	TArray<int32> LastCornerIndices;
-	EMouseMode OriginalMouseMode = EMouseMode::Object;
+	TArray<FVector> LastCornerPositions;
+	FPlane LastTargetFacePlane;
+	EMouseMode OriginalMouseMode;
+	int32 PendingSegmentID;
 };

@@ -94,6 +94,7 @@ enum class EInputCommand : uint8
 	CycleEditModes,
 	SetEditMode_ObjectEditing,
 	SetEditMode_MetaPlanes,
+	SetEditMode_SurfaceGraphs,
 	SetEditMode_Rooms,
 	ToggleRoomView,
 	ToggleWalkAround,

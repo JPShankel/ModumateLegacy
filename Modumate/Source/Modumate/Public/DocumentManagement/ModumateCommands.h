@@ -26,8 +26,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kLogin, "login");
 
 		// Edit environment commands
-		MODUMATE_COMMAND(kSetToolMode, "set_tool_mode");
-		MODUMATE_COMMAND(kSetEditViewMode, "set_edit_view_mode");
 		MODUMATE_COMMAND(kSetFOV, "set_fov");
 
 		// Object creators

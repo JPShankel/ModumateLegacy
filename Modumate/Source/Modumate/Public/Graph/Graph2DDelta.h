@@ -51,6 +51,9 @@ namespace Modumate
 		void Reset();
 		bool IsEmpty() const;
 
+		void AddNewVertex(const FVector2D &Position, int32 &NextID);
+		void AddNewEdge(const TPair<int32, int32> &VertexIDs, int32 &NextID, const TArray<int32> &ParentIDs = TArray<int32>());
+
 		TSharedPtr<FGraph2DDelta> MakeGraphInverse() const;
 		virtual TSharedPtr<FDelta> MakeInverse() const override;
 		virtual bool ApplyTo(FModumateDocument *doc, UWorld *world) const override;

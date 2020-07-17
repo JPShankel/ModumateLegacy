@@ -22,6 +22,7 @@ namespace Modumate
 		FGraph2D(int32 InID = MOD_ID_NONE, float InEpsilon = DEFAULT_GRAPH_EPSILON, bool bInDebugCheck = !UE_BUILD_SHIPPING);
 
 		void Reset();
+		bool IsEmpty() const;
 
 		FGraph2DVertex* FindVertex(int32 ID);
 		const FGraph2DVertex* FindVertex(int32 ID) const;

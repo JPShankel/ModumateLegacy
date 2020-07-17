@@ -40,6 +40,18 @@ namespace Modumate
 		return true;
 	}
 
+	void FGraph2DDelta::AddNewVertex(const FVector2D &Position, int32 &NextID)
+	{
+		int32 newVertexID = NextID++;
+		VertexAdditions.Add(newVertexID, Position);
+	}
+
+	void FGraph2DDelta::AddNewEdge(const TPair<int32, int32> &VertexIDs, int32 &NextID, const TArray<int32> &ParentIDs)
+	{
+		int32 newEdgeID = NextID++;
+		EdgeAdditions.Add(newEdgeID, FGraph2DObjDelta({ VertexIDs.Key, VertexIDs.Value }, ParentIDs));
+	}
+
 	TSharedPtr<FGraph2DDelta> FGraph2DDelta::MakeGraphInverse() const
 	{
 		TSharedPtr<FGraph2DDelta> inverse = MakeShareable(new FGraph2DDelta(ID));

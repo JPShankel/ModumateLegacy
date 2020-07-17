@@ -4001,6 +4001,16 @@ void FModumateDocument::UpdateRoomAnalysis(UWorld *world)
 	}
 }
 
+const FGraph2D *FModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID) const
+{
+	return SurfaceGraphs.Find(SurfaceGraphID);
+}
+
+FGraph2D *FModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID)
+{
+	return SurfaceGraphs.Find(SurfaceGraphID);
+}
+
 bool FModumateDocument::IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &OutObjType) const
 {
 	bool bIsInGraph = false;
