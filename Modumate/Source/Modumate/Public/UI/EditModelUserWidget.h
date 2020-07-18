@@ -23,14 +23,23 @@ protected:
 
 public:
 
+	UPROPERTY()
+	class AEditModelPlayerController_CPP *Controller;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UToolbarWidget *ToolbarWidget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UToolTrayWidget *ToolTrayWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class USelectionTrayWidget *SelectionTrayWidget;
+
 	UFUNCTION()
 	void EMOnToolModeChanged();
+
+	UFUNCTION()
+	void EMOnSelectionObjectChanged();
 
 	// Blueprint event for opening BIM configurator
 	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")

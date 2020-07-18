@@ -66,7 +66,7 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 		{
 			UComponentAssemblyListItem *newWidgetListItem = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UComponentAssemblyListItem>(ComponentAssemblyListItemClass);
 			newWidgetListItem->ToolTrayBlockAssembliesList = this;
-			newWidgetListItem->BuildFromAssembly(controller, controller->GetToolMode(), &kvp.Value);
+			newWidgetListItem->BuildAsAssemblyItem(controller, controller->GetToolMode(), &kvp.Value);
 			AssembliesList->AddChildToVerticalBox(newWidgetListItem);
 		}
 	}

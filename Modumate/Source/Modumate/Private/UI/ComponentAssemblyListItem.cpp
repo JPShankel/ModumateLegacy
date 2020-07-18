@@ -7,9 +7,6 @@
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UI/Custom/ModumateButton.h"
-#include "Kismet/KismetRenderingLibrary.h"
-#include "UnrealClasses/DynamicIconGenerator.h"
-#include "Components/Image.h"
 #include "Components/VerticalBox.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "UI/ToolTray/ToolTrayWidget.h"
@@ -47,33 +44,96 @@ void UComponentAssemblyListItem::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UComponentAssemblyListItem::NativeDestruct()
-{
-	Super::NativeDestruct();
-	if (IconRenderTarget)
-	{
-		IconRenderTarget->ReleaseResource();
-	}
-}
-
-bool UComponentAssemblyListItem::BuildFromAssembly(AEditModelPlayerController_CPP *Controller, EToolMode mode, const FModumateObjectAssembly *Asm)
+bool UComponentAssemblyListItem::BuildAsAssemblyItem(AEditModelPlayerController_CPP *Controller, EToolMode Mode, const FModumateObjectAssembly *Asm)
 {
 	if (!ComponentPresetItem)
 	{
 		return false;
 	}
-	ComponentPresetItem->MainText->ChangeText(FText::FromString(Asm->GetProperty(BIM::Parameters::Name)));
+	UpdateItemType(EComponentListItemType::AssemblyListItem);
 	AsmKey = Asm->DatabaseKey;
+	AsmName = Asm->GetProperty(BIM::Parameters::Name);
 	EMPlayerController = Controller;
-	ToolMode = mode;
-	CaptureIconRenderTarget();
+	ToolMode = Mode;
+	ComponentPresetItem->MainText->ChangeText(FText::FromName(AsmName));
+
+	BuildFromAssembly();
+	return true;
+}
+
+bool UComponentAssemblyListItem::BuildAsSelectionItem(AEditModelPlayerController_CPP *Controller, EToolMode Mode, const FModumateObjectAssembly *Asm, int32 ItemCount)
+{
+	UpdateItemType(EComponentListItemType::SelectionListItem);
+	AsmKey = Asm->DatabaseKey;
+	AsmName = Asm->GetProperty(BIM::Parameters::Name);
+	EMPlayerController = Controller;
+	ToolMode = Mode;
+	UpdateSelectionItemCount(ItemCount);
+
+	BuildFromAssembly();
+	return true;
+}
+
+void UComponentAssemblyListItem::UpdateItemType(EComponentListItemType NewItemType)
+{
+	ItemType = NewItemType;
+	if (!(ButtonEdit && ButtonSwap && ButtonTrash && ButtonConfirm))
+	{
+		return;
+	}
+	switch (ItemType)
+	{
+	case EComponentListItemType::AssemblyListItem:
+		ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonTrash->SetVisibility(ESlateVisibility::Visible);
+		ButtonEdit->SetVisibility(ESlateVisibility::Visible);
+		ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
+		break;
+	case EComponentListItemType::SelectionListItem:
+		ButtonSwap->SetVisibility(ESlateVisibility::Visible);
+		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonEdit->SetVisibility(ESlateVisibility::Visible);
+		ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
+		break;
+	case EComponentListItemType::SwapListItem:
+		ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonEdit->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonConfirm->SetVisibility(ESlateVisibility::Visible);
+		break;
+	}
+}
+
+void UComponentAssemblyListItem::UpdateSelectionItemCount(int32 ItemCount)
+{
+	if (!ComponentPresetItem)
+	{
+		return;
+	}
+	if (ItemCount > 1)
+	{
+		ComponentPresetItem->MainText->ChangeText(FText::FromString(FString(TEXT("(")) + FString::FromInt(ItemCount) + FString(TEXT(") ")) + AsmName.ToString()));
+	}
+	else
+	{
+		ComponentPresetItem->MainText->ChangeText(FText::FromName(AsmName));
+	}
+}
+
+bool UComponentAssemblyListItem::BuildFromAssembly()
+{
+	if (!ComponentPresetItem)
+	{
+		return false;
+	}
+	ComponentPresetItem->CaptureIconFromPresetKey(EMPlayerController, AsmKey, ToolMode);
 
 	TArray<FString> propertyTips;
 	GetItemTips(propertyTips);
 	VerticalBoxProperties->ClearChildren();
 	for (auto &curTip : propertyTips)
 	{
-		UModumateTextBlockUserWidget *newModumateTextBlockUserWidget = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UModumateTextBlockUserWidget>(ModumateTextBlockUserWidgetClass);
+		UModumateTextBlockUserWidget *newModumateTextBlockUserWidget = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UModumateTextBlockUserWidget>(ModumateTextBlockUserWidgetClass);
 		if (newModumateTextBlockUserWidget)
 		{
 			newModumateTextBlockUserWidget->ChangeText(FText::FromString(curTip), true);
@@ -85,11 +145,9 @@ bool UComponentAssemblyListItem::BuildFromAssembly(AEditModelPlayerController_CP
 
 void UComponentAssemblyListItem::OnModumateButtonMainReleased()
 {
-	AEditModelPlayerController_CPP *controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-	if (controller && controller->EMPlayerState)
+	if (EMPlayerController && EMPlayerController->EMPlayerState)
 	{
-		controller->EMPlayerState->SetAssemblyForToolMode(ToolMode, AsmKey);
+		EMPlayerController->EMPlayerState->SetAssemblyForToolMode(ToolMode, AsmKey);
 	}
 }
 
@@ -103,25 +161,6 @@ void UComponentAssemblyListItem::OnButtonEditReleased()
 	}
 }
 
-bool UComponentAssemblyListItem::CaptureIconRenderTarget()
-{
-	if (!(ComponentPresetItem && ComponentPresetItem->IconImage))
-	{
-		return false;
-	}
-	if (!IconRenderTarget)
-	{
-		IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8, FLinearColor::Black, true);
-	}
-	bool bCaptureSucess = EMPlayerController->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(AsmKey, ToolMode, IconRenderTarget);
-	if (bCaptureSucess)
-	{
-		static const FName textureParamName(TEXT("Texture"));
-		ComponentPresetItem->IconImage->GetDynamicMaterial()->SetTextureParameterValue(textureParamName, IconRenderTarget);
-	}
-	return bCaptureSucess;
-}
-
 bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 {
 	if (!EMPlayerController)
@@ -129,7 +168,7 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 		return false;
 	}
 	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-	const FModumateObjectAssembly *assembly = doc->PresetManager.GetAssemblyByKey(EMPlayerController->GetToolMode(), AsmKey);
+	const FModumateObjectAssembly *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, AsmKey);
 	if (!assembly)
 	{
 		return false;

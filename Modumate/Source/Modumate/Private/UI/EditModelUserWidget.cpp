@@ -5,6 +5,8 @@
 #include "UI/ToolTray/ToolTrayWidget.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelInputHandler.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UI/SelectionTray/SelectionTrayWidget.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -17,6 +19,8 @@ bool UEditModelUserWidget::Initialize()
 	{
 		return false;
 	}
+
+	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	if (!(ToolTrayWidget && ToolTrayWidget))
 	{
 		return false;
@@ -35,26 +39,37 @@ void UEditModelUserWidget::NativeConstruct()
 
 void UEditModelUserWidget::EMOnToolModeChanged()
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	if (!(controller && ToolTrayWidget))
+	if (!(Controller && ToolTrayWidget))
 	{
 		return;
 	}
-	switch (UModumateTypeStatics::GetToolCategory(controller->GetToolMode()))
+	switch (UModumateTypeStatics::GetToolCategory(Controller->GetToolMode()))
 	{
 	case EToolCategories::MetaGraph:
 		ToolTrayWidget->ChangeBlockToMetaPlaneTools();
 		break;
 	case EToolCategories::Separators:
-		ToolTrayWidget->ChangeBlockToSeparatorTools(controller->GetToolMode());
+		ToolTrayWidget->ChangeBlockToSeparatorTools(Controller->GetToolMode());
 		break;
 	case EToolCategories::SurfaceGraphs:
 		ToolTrayWidget->ChangeBlockToSurfaceGraphTools();
 		break;
 	case EToolCategories::Attachments:
-		ToolTrayWidget->ChangeBlockToAttachmentTools(controller->GetToolMode());
+		ToolTrayWidget->ChangeBlockToAttachmentTools(Controller->GetToolMode());
 		break;
 	default:
 		ToolTrayWidget->CloseToolTray();
+	}
+}
+
+void UEditModelUserWidget::EMOnSelectionObjectChanged()
+{
+	if (Controller->EMPlayerState->SelectedObjects.Num() == 0)
+	{
+		SelectionTrayWidget->CloseToolTray();
+	}
+	else
+	{
+		SelectionTrayWidget->OpenToolTrayForSelection();
 	}
 }

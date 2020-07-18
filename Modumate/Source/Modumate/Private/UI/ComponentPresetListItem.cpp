@@ -1,6 +1,10 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/ComponentPresetListItem.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/DynamicIconGenerator.h"
+#include "Kismet/KismetRenderingLibrary.h"
+#include "Components/Image.h"
 
 
 UComponentPresetListItem::UComponentPresetListItem(const FObjectInitializer& ObjectInitializer)
@@ -21,4 +25,30 @@ bool UComponentPresetListItem::Initialize()
 void UComponentPresetListItem::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
+
+void UComponentPresetListItem::NativeDestruct()
+{
+	Super::NativeDestruct();
+	if (IconRenderTarget)
+	{
+		IconRenderTarget->ReleaseResource();
+	}
+}
+
+bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerController_CPP *Controller, const FName &AsmKey, EToolMode mode)
+{
+	if (!(Controller && IconImage))
+	{
+		return false;
+	}
+
+	IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8, FLinearColor::Black, true);
+	bool bCaptureSucess = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(AsmKey, mode, IconRenderTarget);
+	if (bCaptureSucess)
+	{
+		static const FName textureParamName(TEXT("Texture"));
+		IconImage->GetDynamicMaterial()->SetTextureParameterValue(textureParamName, IconRenderTarget);
+	}
+	return bCaptureSucess;
 }

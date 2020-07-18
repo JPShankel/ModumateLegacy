@@ -21,7 +21,6 @@ namespace Modumate
 class AGraphDimensionActor;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionChanged);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionObjectChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPostOnNewModel);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdateCutPlanes);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdateScopeBoxes);
@@ -103,9 +102,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintAssignable, Category = "Tools")
 	FOnSelectionChanged OnSelectionChanged;
-
-	UPROPERTY(VisibleAnywhere, BlueprintAssignable, Category = "Tools")
-	FOnSelectionObjectChanged OnSelectionObjectChanged;
 
 	// Blueprints will use this to handle post load events
 	UPROPERTY(VisibleAnywhere, BlueprintAssignable, Category = "Tools")

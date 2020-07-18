@@ -19,6 +19,7 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "Algo/Transform.h"
+#include "UI/EditModelUserWidget.h"
 
 
 using namespace Modumate;
@@ -409,7 +410,7 @@ void AEditModelPlayerState_CPP::SelectAll()
 	}
 
 	PostSelectionOrViewChanged();
-	OnSelectionObjectChanged.Broadcast();
+	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
 void AEditModelPlayerState_CPP::SelectInverse()
@@ -438,7 +439,7 @@ void AEditModelPlayerState_CPP::SelectInverse()
 	}
 
 	PostSelectionOrViewChanged();
-	OnSelectionObjectChanged.Broadcast();
+	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
 void AEditModelPlayerState_CPP::DeselectAll()
@@ -463,6 +464,7 @@ void AEditModelPlayerState_CPP::DeselectAll()
 	SelectedObjects.Empty();
 
 	PostSelectionOrViewChanged();
+	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
 void AEditModelPlayerState_CPP::SetActorRenderValues(AActor* actor, int32 stencilValue, bool bNeverCull)
@@ -698,7 +700,7 @@ void AEditModelPlayerState_CPP::SetObjectSelected(FModumateObjectInstance *ob, b
 	ob->OnSelected(selected);
 
 	PostSelectionOrViewChanged();
-	OnSelectionObjectChanged.Broadcast();
+	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
 void AEditModelPlayerState_CPP::SetViewGroupObject(FModumateObjectInstance *ob)

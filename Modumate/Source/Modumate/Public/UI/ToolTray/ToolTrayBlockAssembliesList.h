@@ -28,6 +28,7 @@ public:
 	UPROPERTY()
 	class UToolTrayWidget *ToolTray;
 
+	// TODO: Candidate for changing to UListViewBase 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox *AssembliesList;
 
