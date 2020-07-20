@@ -12,6 +12,11 @@ namespace Modumate
 		, ParentObjIDs(InParents)
 	{ }
 
+	FGraph2DObjDelta::FGraph2DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents, bool bIsInterior)
+		: Vertices(InVertices)
+		, ParentObjIDs(InParents)
+		, bInterior(bIsInterior)
+	{ }
 
 	FGraph2DDelta::FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType)
 		: ID(InID)
@@ -27,6 +32,9 @@ namespace Modumate
 
 		EdgeAdditions.Reset();
 		EdgeDeletions.Reset();
+
+		PolygonAdditions.Reset();
+		PolygonDeletions.Reset();
 	}
 
 	bool FGraph2DDelta::IsEmpty() const
@@ -36,6 +44,8 @@ namespace Modumate
 		if (VertexDeletions.Num() > 0) return false;
 		if (EdgeAdditions.Num() > 0) return false;
 		if (EdgeDeletions.Num() > 0) return false;
+		if (PolygonAdditions.Num() > 0) return false;
+		if (PolygonDeletions.Num() > 0) return false;
 
 		return true;
 	}
@@ -85,6 +95,9 @@ namespace Modumate
 
 		inverse->EdgeAdditions = EdgeDeletions;
 		inverse->EdgeDeletions = EdgeAdditions;
+
+		inverse->PolygonAdditions = PolygonDeletions;
+		inverse->PolygonDeletions = PolygonAdditions;
 
 		return inverse;
 	}

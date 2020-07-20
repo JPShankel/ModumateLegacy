@@ -20,6 +20,10 @@ namespace Modumate
 
 		FGraph2DObjDelta(const TArray<int32> &InVertices);
 		FGraph2DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents);
+		FGraph2DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents, bool bIsInterior);
+
+		// TODO: unclear if this needs to be here or not long term
+		bool bInterior;
 	};
 
 	enum EGraph2DDeltaType
@@ -45,6 +49,9 @@ namespace Modumate
 
 		TMap<int32, FGraph2DObjDelta> EdgeAdditions;
 		TMap<int32, FGraph2DObjDelta> EdgeDeletions;
+
+		TMap<int32, FGraph2DObjDelta> PolygonAdditions;
+		TMap<int32, FGraph2DObjDelta> PolygonDeletions;
 
 		FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType = EGraph2DDeltaType::Edit);
 

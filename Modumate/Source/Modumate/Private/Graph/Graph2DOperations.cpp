@@ -107,6 +107,12 @@ namespace Modumate
 			return false;
 		}
 
+		if (!CalculatePolygons(OutDeltas, NextID))
+		{
+			ApplyInverseDeltas(OutDeltas);
+			return false;
+		}
+
 		// return graph in its original state
 		ApplyInverseDeltas(OutDeltas);
 
@@ -244,12 +250,8 @@ namespace Modumate
 			// however, all of the points that are on the pending segment are needed to add the correct edges
 			else
 			{
-				float start = pendingEdgeDirection | (startVertex->Position - pendingStartPosition);
-				float end = pendingEdgeDirection | (endVertex->Position - pendingStartPosition);
-				if (FMath::Abs(start) > THRESH_NORMALS_ARE_PARALLEL &&
-					FMath::Abs(end) > THRESH_NORMALS_ARE_PARALLEL)
+				if (FMath::Abs(pendingEdgeDirection | edgeDirection) > THRESH_NORMALS_ARE_PARALLEL)
 				{
-
 					FVector2D startVertexOnSegment = FMath::ClosestPointOnSegment2D(startVertex->Position, pendingStartPosition, pendingEndPosition);
 					if (startVertexOnSegment.Equals(startVertex->Position, Epsilon))
 					{
@@ -344,7 +346,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph2D::DeleteObjects(TArray<FGraph2DDelta> &OutDeltas, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs)
+	bool FGraph2D::DeleteObjects(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs)
 	{
 		// the ids that are considered for deletion starts with the input arguments and grows based on object connectivity
 		TSet<int32> vertexIDsToDelete;
@@ -406,8 +408,19 @@ namespace Modumate
 		{
 			return false;
 		}
+		if (!ApplyDelta(deleteDelta))
+		{
+			return false;
+		}
 		OutDeltas.Add(deleteDelta);
 
+		if (!CalculatePolygons(OutDeltas, NextID))
+		{
+			ApplyInverseDeltas(OutDeltas);
+			return false;
+		}
+
+		ApplyInverseDeltas(OutDeltas);
 		return true;
 	}
 
@@ -433,6 +446,16 @@ namespace Modumate
 			}
 
 			OutDelta.EdgeDeletions.Add(edge->ID, FGraph2DObjDelta({ edge->StartVertexID, edge->EndVertexID }));
+
+			// TODO: is this direct?  should it work this way?
+			for (int32 polyID : { edge->LeftPolyID, edge->RightPolyID })
+			{
+				auto poly = FindPolygon(polyID);
+				if (poly != nullptr && !OutDelta.PolygonDeletions.Contains(poly->ID))
+				{
+					OutDelta.PolygonDeletions.Add(poly->ID, FGraph2DObjDelta(poly->VertexIDs));
+				}
+			}
 		}
 
 		return true;
@@ -581,6 +604,12 @@ namespace Modumate
 			}
 		}
 
+		if (!CalculatePolygons(OutDeltas, NextID))
+		{
+			ApplyInverseDeltas(OutDeltas);
+			return false;
+		}
+
 		ApplyInverseDeltas(OutDeltas);
 
 		return true;
@@ -629,6 +658,148 @@ namespace Modumate
 		{
 			return false;
 		}
+
+		return true;
+	}
+
+	bool FGraph2D::CalculatePolygons(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID)
+	{
+		FGraph2DDelta updatePolygonsDelta(ID);
+		// aggregate dirty edges
+		TSet<int32> dirtyEdges;
+		for (auto& edgekvp : Edges)
+		{
+			if (edgekvp.Value.bDirty)
+			{
+				dirtyEdges.Add(edgekvp.Key);
+			}
+		}
+
+		// make sure all vertex-edge connections are sorted
+		for (auto &kvp : Vertices)
+		{
+			FGraph2DVertex &vertex = kvp.Value;
+			if (vertex.bDirty)
+			{
+				vertex.SortEdges();
+			}
+		}
+
+		TSet<FEdgeID> visitedEdges;
+		TArray<FEdgeID> curPolyEdges;
+		TArray<FVector2D> curPolyPoints;
+		TArray<int32> curVertexIDs;
+
+		// iterate through the edges to find every polygon
+		for (FEdgeID curEdgeID : dirtyEdges)
+		{
+			float curPolyTotalAngle = 0.0f;
+			curPolyEdges.Reset();
+			curVertexIDs.Reset();
+
+			FGraph2DEdge *curEdge = FindEdge(curEdgeID);
+
+			while (!visitedEdges.Contains(curEdgeID) && curEdge)
+			{
+				visitedEdges.Add(curEdgeID);
+				curPolyEdges.Add(curEdgeID);
+
+				// choose the next vertex based on whether we are traversing the current edge forwards or backwards
+				int32 prevVertexID = (curEdgeID > 0) ? curEdge->StartVertexID : curEdge->EndVertexID;
+				int32 nextVertexID = (curEdgeID > 0) ? curEdge->EndVertexID : curEdge->StartVertexID;
+				FGraph2DVertex *prevVertex = FindVertex(prevVertexID);
+				FGraph2DVertex *nextVertex = FindVertex(nextVertexID);
+				FEdgeID nextEdgeID = 0;
+				float angleDelta = 0.0f;
+
+				if (ensureAlways(prevVertex))
+				{
+					curVertexIDs.Add(prevVertex->ID);
+				}
+
+				if (ensureAlways(nextVertex) && nextVertex->GetNextEdge(curEdgeID, nextEdgeID, angleDelta))
+				{
+					curPolyTotalAngle += angleDelta;
+					curEdgeID = nextEdgeID;
+					curEdge = FindEdge(nextEdgeID);
+				}
+			}
+
+			int32 numPolyEdges = curPolyEdges.Num();
+			if (numPolyEdges <= 1)
+			{
+				continue;
+			}
+
+			bool bPolyClosed = (curPolyEdges[0] == curEdgeID);
+			if (!ensureAlways(bPolyClosed))
+			{
+				continue;
+			}
+
+			float expectedInteriorAngle = 180.0f * (numPolyEdges - 2);
+			const static float polyAngleEpsilon = 0.1f;
+			bool bPolyInterior = FMath::IsNearlyEqual(expectedInteriorAngle, curPolyTotalAngle, polyAngleEpsilon);
+
+			TSet<int32> previousPolys;
+			for (FEdgeID edgeID : curPolyEdges)
+			{
+				if (FGraph2DEdge *edge = FindEdge(edgeID))
+				{
+					// determine which side of the edge this new polygon is on
+					int32 adjacentPolyID = (edgeID > 0) ? edge->LeftPolyID : edge->RightPolyID;
+					if (adjacentPolyID != MOD_ID_NONE)
+					{
+						previousPolys.Add(adjacentPolyID);
+					}
+				}
+			}
+			int32 addedPolyID = NextID++;
+			updatePolygonsDelta.PolygonAdditions.Add(addedPolyID, FGraph2DObjDelta({ curVertexIDs }, previousPolys.Array()));
+
+			for (int32 previousID : previousPolys)
+			{
+				auto polygon = FindPolygon(previousID);
+				if (polygon == nullptr)
+				{
+					continue;
+				}
+
+				updatePolygonsDelta.PolygonDeletions.Add(previousID, FGraph2DObjDelta(polygon->VertexIDs, { addedPolyID }, polygon->bInterior));
+			}
+
+		}
+
+		if (!ApplyDelta(updatePolygonsDelta))
+		{
+			return false;
+		}
+		OutDeltas.Add(updatePolygonsDelta);
+
+		// TODO: do this after all polys have been updated?
+		/*
+		// determine which polygons are inside of others
+		for (auto &childKVP : Polygons)
+		{
+			FGraph2DPolygon &childPoly = childKVP.Value;
+
+			for (auto &parentKVP : Polygons)
+			{
+				FGraph2DPolygon &parentPoly = parentKVP.Value;
+
+				if (childPoly.IsInside(parentPoly))
+				{
+					// if the child polygon doesn't have a parent, then set it to the first polygon it's contained in
+					// otherwise, see if the new parent is more appropriate
+					if ((childPoly.ParentID == 0) ||
+						(parentPoly.IsInside(*FindPolygon(childPoly.ParentID))))
+					{
+						childPoly.SetParent(parentPoly.ID);
+					}
+				}
+			}
+		}
+		//*/
 
 		return true;
 	}

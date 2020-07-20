@@ -359,7 +359,7 @@ namespace Modumate
 			auto& poly = kvp.Value;
 			if (!poly.bInterior)
 			{
-				CachedPerimeter = poly.Points;
+				CachedPerimeter = poly.CachedPoints;
 			}
 			else
 			{
@@ -381,7 +381,7 @@ namespace Modumate
 				}
 				if (bEnclosedPoly)
 				{
-					CachedHoles.Add(FPolyHole2D(poly.Points));
+					CachedHoles.Add(FPolyHole2D(poly.CachedPoints));
 				}
 			}
 		}

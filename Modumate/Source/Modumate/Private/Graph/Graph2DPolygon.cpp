@@ -8,6 +8,12 @@
 
 namespace Modumate
 {
+	FGraph2DPolygon::FGraph2DPolygon(int32 InID, FGraph2D* InGraph, TArray<int32> &Vertices)
+		: IGraph2DObject(InID, InGraph)
+	{
+		SetVertices(Vertices);
+	}
+
 	bool FGraph2DPolygon::IsInside(const FGraph2DPolygon &otherPoly) const
 	{
 		// Polygons cannot be contained inside exterior polygons
@@ -34,9 +40,9 @@ namespace Modumate
 			return false;
 		}
 
-		for (const FVector2D &point : Points)
+		for (const FVector2D &point : CachedPoints)
 		{
-			if (UModumateFunctionLibrary::PointInPoly2D(point, otherPoly.Points))
+			if (UModumateFunctionLibrary::PointInPoly2D(point, otherPoly.CachedPoints))
 			{
 				return true;
 			}
@@ -72,6 +78,45 @@ namespace Modumate
 				}
 			}
 		}
+	}
+
+	void FGraph2DPolygon::SetVertices(TArray<int32> &Vertices)
+	{
+		int32 numVertices = Vertices.Num();
+
+		CachedPoints.Reset();
+		VertexIDs.Reset();
+		Edges.Reset();
+		bHasDuplicateEdge = false;
+
+		for (int32 vertexIdx = 0; vertexIdx < numVertices; vertexIdx++)
+		{
+			int32 vertexID = Vertices[vertexIdx];
+			int32 nextVertexID = Vertices[(vertexIdx + 1) % numVertices];
+
+			auto vertex = Graph->FindVertex(vertexID);
+			if (!ensureAlways(vertex)) return;
+
+			CachedPoints.Add(vertex->Position);
+			VertexIDs.Add(vertexID);
+			
+			bool bOutForward;
+			auto edge = Graph->FindEdgeByVertices(vertexID, nextVertexID, bOutForward);
+			if (!ensureAlways(edge)) return;
+
+			// updated edge's left/right poly to be this one
+			(bOutForward) ? (edge->LeftPolyID = ID) : (edge->RightPolyID = ID);
+
+			// detect "peninsula" in edge loop
+			if (Edges.Num() > 0 && -edge->ID == Edges[Edges.Num() - 1])
+			{	// TODO: this does not cover all cases of duplicate edges
+				bHasDuplicateEdge = true;
+			}
+
+			Edges.Add(bOutForward ? edge->ID : -edge->ID);
+		}
+
+		AABB = FBox2D(CachedPoints);
 	}
 
 	void FGraph2DPolygon::Dirty(bool bConnected)

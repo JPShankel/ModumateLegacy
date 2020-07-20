@@ -49,7 +49,12 @@ namespace Modumate
 		return Edges.Find(FMath::Abs(EdgeID)); 
 	}
 
-	const FGraph2DEdge* FGraph2D::FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward)
+	FGraph2DEdge *FGraph2D::FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward)
+	{
+		return const_cast<FGraph2DEdge*>(const_cast<const FGraph2D*>(this)->FindEdgeByVertices(VertexIDA, VertexIDB, bOutForward));
+	}
+
+	const FGraph2DEdge* FGraph2D::FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward) const
 	{
 		if (const int32 *edgeIDPtr = EdgeIDsByVertexPair.Find(MakeVertexPair(VertexIDA, VertexIDB)))
 		{
@@ -182,6 +187,27 @@ namespace Modumate
 		return &newEdge;
 	}
 
+	FGraph2DPolygon *FGraph2D::AddPolygon(TArray<int32> &VertexIDs, int32 InID, bool bInterior)
+	{
+		if (InID == MOD_ID_NONE)
+		{
+			return nullptr;
+		}
+
+		if (Polygons.Contains(InID))
+		{
+			return nullptr;
+		}
+
+		FGraph2DPolygon &newPoly = Polygons.Add(InID, FGraph2DPolygon(InID, this, VertexIDs));
+		newPoly.bInterior = bInterior;
+
+		bDirty = true;
+		newPoly.Dirty(false);
+
+		return &newPoly;
+	}
+
 	bool FGraph2D::RemoveVertex(int32 VertexID)
 	{
 		FGraph2DVertex *vertexToRemove = FindVertex(VertexID);
@@ -237,6 +263,31 @@ namespace Modumate
 		EdgeIDsByVertexPair.Remove(MakeVertexPair(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID));
 
 		Edges.Remove(EdgeID);
+
+		return true;
+	}
+
+	bool FGraph2D::RemovePolygon(int32 PolyID)
+	{
+		FGraph2DPolygon *polyToRemove = FindPolygon(PolyID);
+		if (!polyToRemove)
+		{
+			return false;
+		}
+
+		for (int32 edgeID : polyToRemove->Edges)
+		{
+			auto edge = FindEdge(edgeID);
+			if (edge == nullptr)
+			{
+				continue;
+			}
+
+			(edge->ID < 0) ? (edge->LeftPolyID = polyToRemove->ParentID) : (edge->RightPolyID = polyToRemove->ParentID);
+
+		}
+
+		Polygons.Remove(PolyID);
 
 		return true;
 	}
@@ -340,7 +391,7 @@ namespace Modumate
 					newPolygon.bHasDuplicateEdge = bPolyHasDuplicateEdge;
 					newPolygon.bInterior = bPolyInterior;
 					newPolygon.AABB = FBox2D(curPolyPoints);
-					newPolygon.Points = curPolyPoints;
+					newPolygon.CachedPoints = curPolyPoints;
 
 					for (FEdgeID edgeID : curPolyEdges)
 					{
@@ -526,10 +577,10 @@ namespace Modumate
 					return false;
 				}
 
-				poly.Points.Add(vertex->Position);
+				poly.CachedPoints.Add(vertex->Position);
 			}
 
-			poly.AABB = FBox2D(poly.Points);
+			poly.AABB = FBox2D(poly.CachedPoints);
 			Polygons.Add(poly.ID, poly);
 
 			NextPolyID = FMath::Max(NextPolyID, poly.ID + 1);
@@ -538,7 +589,7 @@ namespace Modumate
 		return true;
 	}
 
-	FVertexPair FGraph2D::MakeVertexPair(int32 VertexIDA, int32 VertexIDB)
+	const FVertexPair FGraph2D::MakeVertexPair(int32 VertexIDA, int32 VertexIDB) const
 	{
 		return FVertexPair(FMath::Min(VertexIDA, VertexIDB), FMath::Max(VertexIDA, VertexIDB));
 	}
@@ -611,6 +662,37 @@ namespace Modumate
 				return false;
 			}
 			appliedDelta.EdgeDeletions.Add(kvp);
+		}
+
+		for (auto& kvp : Delta.PolygonAdditions)
+		{
+			int32 polyID = kvp.Key;
+			auto polyVertexIDs = kvp.Value.Vertices;
+
+			if (!ensureAlways(polyVertexIDs.Num() > 1))
+			{
+				ApplyInverseDeltas({ appliedDelta });
+				return false;
+			}
+
+			auto newPoly = AddPolygon(polyVertexIDs, polyID, kvp.Value.bInterior);
+			if (!ensure(newPoly))
+			{
+				ApplyInverseDeltas({ appliedDelta });
+				return false;
+			}
+			appliedDelta.PolygonAdditions.Add(kvp);
+		}
+
+		for (auto &kvp : Delta.PolygonDeletions)
+		{
+			bool bRemovedPoly = RemovePolygon(kvp.Key);
+			if (!ensure(bRemovedPoly))
+			{
+				ApplyInverseDeltas({ appliedDelta });
+				return false;
+			}
+			appliedDelta.PolygonDeletions.Add(kvp);
 		}
 
 		return true;

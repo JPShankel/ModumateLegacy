@@ -30,7 +30,9 @@ namespace Modumate
 
 		FGraph2DEdge* FindEdge(FEdgeID EdgeID);
 		const FGraph2DEdge* FindEdge(FEdgeID EdgeID) const;
-		const FGraph2DEdge* FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward);
+
+		FGraph2DEdge *FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward);
+		const FGraph2DEdge* FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward) const;
 
 		FGraph2DPolygon* FindPolygon(int32 ID);
 		const FGraph2DPolygon* FindPolygon(int32 ID) const;
@@ -41,8 +43,11 @@ namespace Modumate
 
 		FGraph2DVertex *AddVertex(const FVector2D &Position, int32 InID = 0);
 		FGraph2DEdge *AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID = 0);
+		FGraph2DPolygon *AddPolygon(TArray<int32> &VertexIDs, int32 InID = 0, bool bInterior = false);
+
 		bool RemoveVertex(int32 VertexID);
 		bool RemoveEdge(int32 EdgeID);
+		bool RemovePolygon(int32 PolyID);
 		bool RemoveObject(int32 ID, EGraphObjectType GraphObjectType);
 		int32 CalculatePolygons();
 		void ClearPolygons();
@@ -60,7 +65,7 @@ namespace Modumate
 		bool FromDataRecord(const FGraph2DRecord &InRecord);
 
 	private:
-		FVertexPair MakeVertexPair(int32 VertexIDA, int32 VertexIDB);
+		const FVertexPair MakeVertexPair(int32 VertexIDA, int32 VertexIDB) const;
 
 	public:
 		float Epsilon;
@@ -136,9 +141,8 @@ namespace Modumate
 		bool AddEdge(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D StartPosition, const FVector2D EndPosition);
 
 		// Create Deltas that delete all objects provided and also all objects that are invalidated by the deletions -
-		// For example, vertices that are no longer connected to any edges are also deleted.  Note that this function
-		// does not use NextID because no new objects should be created.
-		bool DeleteObjects(TArray<FGraph2DDelta> &OutDeltas, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs);
+		// For example, vertices that are no longer connected to any edges are also deleted.  
+		bool DeleteObjects(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs);
 
 		// Create Deltas that move the provided vertices by the provided offset vector.  Moving vertices handles the 
 		// same kind of side effects that occur when you add objects (splitting edges, (TODO) handling new polygons).
@@ -178,5 +182,7 @@ namespace Modumate
 		// same position, one is saved and one is removed, representing the join operation.  The edges that 
 		// were connected to the removed vertex are replaced to connect to the saved vertex.
 		bool JoinVertices(FGraph2DDelta &OutDelta, int32 &NextID, int32 SavedVertexID, int32 RemovedVertexID);
+
+		bool CalculatePolygons(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID);
 	};
 }

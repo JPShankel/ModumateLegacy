@@ -329,13 +329,13 @@ namespace Modumate
 		TestTrue(TEXT("Add Edge"),
 			graph.AddEdge(deltas, NextID, positions[0], positions[1]));
 
-		TestDeltas(this, deltas, graph, 0, 2, 1);
-		TestCleanGraph(this, graph, 0, 2, 1);
+		TestDeltas(this, deltas, graph, 1, 2, 1);
+		TestCleanGraph(this, graph, 1, 2, 1);
 
 		TestTrue(TEXT("Add Duplicate Edge"),
 			graph.AddEdge(deltas, NextID, positions[0], positions[1]));
 
-		TestDeltas(this, deltas, graph, 0, 2, 1);
+		TestDeltas(this, deltas, graph, 1, 2, 1);
 		TestCleanGraph(this, graph, 0, 0, 0);
 
 		return true;
@@ -356,29 +356,30 @@ namespace Modumate
 
 		TestTrue(TEXT("Add Edge"),
 			graph.AddEdge(deltas, NextID, positions[0], positions[1]));
-		TestDeltas(this, deltas, graph, 0, 2, 1);
+		TestDeltas(this, deltas, graph, 1, 2, 1);
 
 		TestTrue(TEXT("Add Edge"),
 			graph.AddEdge(deltas, NextID, positions[1], positions[2]));
-		TestDeltas(this, deltas, graph, 0, 3, 2);
+		TestDeltas(this, deltas, graph, 1, 3, 2);
 
 		for (auto& edgekvp : graph.GetEdges())
 		{
 			TestTrue(TEXT("Delete Edge"),
-				graph.DeleteObjects(deltas, {}, { edgekvp.Key }));
-			TestDeltasAndResetGraph(this, deltas, graph, 0, 2, 1);
+				graph.DeleteObjects(deltas, NextID, {}, { edgekvp.Key }));
+			TestDeltasAndResetGraph(this, deltas, graph, 1, 2, 1);
 		}
 
 		for (auto& vertexkvp : graph.GetVertices())
 		{
-			TestTrue(TEXT("Delete Vertex"),
-				graph.DeleteObjects(deltas, { vertexkvp.Key }, {}));
-
 			int32 numConnectedEdges = vertexkvp.Value.Edges.Num();
 			int32 expectedNumEdges = numConnectedEdges == 2 ? 0 : 1;
 			int32 expectedNumVertices = numConnectedEdges == 2 ? 0 : 2;
+			int32 expectedNumPolygons = numConnectedEdges == 2 ? 0 : 1;
 
-			TestDeltasAndResetGraph(this, deltas, graph, 0, expectedNumVertices, expectedNumEdges);
+			TestTrue(TEXT("Delete Vertex"),
+				graph.DeleteObjects(deltas, NextID, { vertexkvp.Key }, {}));
+
+			TestDeltasAndResetGraph(this, deltas, graph, expectedNumPolygons, expectedNumVertices, expectedNumEdges);
 		}
 
 		TArray<int32> allEdges, allVertices;
@@ -386,7 +387,7 @@ namespace Modumate
 		graph.GetVertices().GenerateKeyArray(allVertices);
 
 		TestTrue(TEXT("Delete All Objects"),
-			graph.DeleteObjects(deltas, allVertices, allEdges));
+			graph.DeleteObjects(deltas, NextID, allVertices, allEdges));
 		TestDeltasAndResetGraph(this, deltas, graph, 0, 0, 0);
 
 		return true;
@@ -407,7 +408,7 @@ namespace Modumate
 
 		TestTrue(TEXT("Add Edge"),
 			graph.AddEdge(deltas, NextID, vertices[0], vertices[2]));
-		TestDeltas(this, deltas, graph, 0, 2, 1, false);
+		TestDeltas(this, deltas, graph, 1, 2, 1, false);
 
 		TSet<int32> addedEdgeIDs;
 		graph.AggregateAddedEdges(deltas, addedEdgeIDs, vertices[0], vertices[2]);
@@ -420,7 +421,7 @@ namespace Modumate
 
 		TestTrue(TEXT("Add Overlapping edge"),
 			graph.AddEdge(deltas, NextID, vertices[0], vertices[1]));
-		TestDeltas(this, deltas, graph, 0, 3, 2, false);
+		TestDeltas(this, deltas, graph, 1, 3, 2, false);
 
 		addedEdgeIDs.Reset();
 		graph.AggregateAddedEdges(deltas, addedEdgeIDs, vertices[0], vertices[2]);
@@ -492,11 +493,12 @@ namespace Modumate
 
 			TestTrue(TEXT("Add Horizontal Edge"),
 				graph.AddEdge(deltas, NextID, startPosition, endPosition));
-			TestDeltas(this, deltas, graph, 0, 2*(i+1), i+1);
+			TestDeltas(this, deltas, graph, i+1, 2*(i+1), i+1);
 		}
 
 		int32 expectedVertices  = graph.GetVertices().Num();
 		int32 expectedEdges = graph.GetEdges().Num();
+		int32 expectedPolygons = 0;
 		// horizontal edges
 		for (int i = 0; i <= gridDimension; i++)
 		{
@@ -515,7 +517,17 @@ namespace Modumate
 				expectedEdges += 2*gridDimension + 1;
 				expectedVertices += gridDimension + 1;
 			}
-			TestDeltas(this, deltas, graph, 0, expectedVertices, expectedEdges);
+
+			if (i == 0)
+			{
+				expectedPolygons += 1;
+			}
+			else
+			{
+				expectedPolygons += gridDimension;
+			}
+
+			TestDeltas(this, deltas, graph, expectedPolygons, expectedVertices, expectedEdges);
 		}
 
 		return true;
@@ -539,29 +551,29 @@ namespace Modumate
 
 		TestTrue(TEXT("Add Edge"),
 			graph.AddEdge(deltas, NextID, vertices[0], vertices[1]));
-		TestDeltas(this, deltas, graph, 0, 2, 1);
-		TestCleanGraph(this, graph, 0, 2, 1);
+		TestDeltas(this, deltas, graph, 1, 2, 1);
+		TestCleanGraph(this, graph, 1, 2, 1);
 		TestCleanGraph(this, graph, 0, 0, 0);
 
 		TestTrue(TEXT("Add Overlapping edge"),
 			graph.AddEdge(deltas, NextID, vertices[0], vertices[2]));
 		TestCleanGraph(this, graph, 0, 0, 0);
-		TestDeltas(this, deltas, graph, 0, 3, 2);
-		TestCleanGraph(this, graph, 0, 2, 1);
+		TestDeltas(this, deltas, graph, 1, 3, 2);
+		TestCleanGraph(this, graph, 1, 2, 1);
 
 		TestTrue(TEXT("Add another edge"),
 			graph.AddEdge(deltas, NextID, vertices[3], vertices[4]));
-		TestDeltas(this, deltas, graph, 0, 5, 3);
-		TestCleanGraph(this, graph, 0, 2, 1);
+		TestDeltas(this, deltas, graph, 2, 5, 3);
+		TestCleanGraph(this, graph, 1, 2, 1);
 
 		TestTrue(TEXT("Add another overlapping edge"),
 			graph.AddEdge(deltas, NextID, vertices[0], vertices[5]));
-		TestDeltas(this, deltas, graph, 0, 6, 5);
-		TestCleanGraph(this, graph, 0, 4, 2);
+		TestDeltas(this, deltas, graph, 1, 6, 5);
+		TestCleanGraph(this, graph, 1, 4, 2);
 
 		TestTrue(TEXT("Add edge covered by several existing edges"),
 			graph.AddEdge(deltas, NextID, vertices[0], vertices[5]));
-		TestDeltas(this, deltas, graph, 0, 6, 5);
+		TestDeltas(this, deltas, graph, 1, 6, 5);
 		TestCleanGraph(this, graph, 0, 0, 0);
 
 		return true;
@@ -585,23 +597,23 @@ namespace Modumate
 
 		TestTrue(TEXT("Add Edge"),
 			graph.AddEdge(deltas, NextID, vertices[1], vertices[4]));
-		TestDeltas(this, deltas, graph, 0, 2, 1);
+		TestDeltas(this, deltas, graph, 1, 2, 1);
 
 		TestTrue(TEXT("Add containing edge"),
 			graph.AddEdge(deltas, NextID, vertices[0], vertices[5]));
-		TestDeltasAndResetGraph(this, deltas, graph, 0, 4, 3);
+		TestDeltasAndResetGraph(this, deltas, graph, 1, 4, 3);
 
 		TestTrue(TEXT("Add contained edge"),
 			graph.AddEdge(deltas, NextID, vertices[2], vertices[3]));
-		TestDeltasAndResetGraph(this, deltas, graph, 0, 4, 3);
+		TestDeltasAndResetGraph(this, deltas, graph, 1, 4, 3);
 
 		TestTrue(TEXT("Add overlapping edge containing start vertex"),
 			graph.AddEdge(deltas, NextID, vertices[0], vertices[2]));
-		TestDeltasAndResetGraph(this, deltas, graph, 0, 4, 3);
+		TestDeltasAndResetGraph(this, deltas, graph, 1, 4, 3);
 
 		TestTrue(TEXT("Add overlapping edge containing end vertex"),
 			graph.AddEdge(deltas, NextID, vertices[3], vertices[5]));
-		TestDeltasAndResetGraph(this, deltas, graph, 0, 4, 3);
+		TestDeltasAndResetGraph(this, deltas, graph, 1, 4, 3);
 
 		return true;
 	}
@@ -624,40 +636,39 @@ namespace Modumate
 		TSet<int32> firstVertexIDs;
 		graph.AggregateAddedVertices(deltas, firstVertexIDs);
 
-		TestDeltas(this, deltas, graph, 0, 2, 1);
+		TestDeltas(this, deltas, graph, 1, 2, 1);
 
 		vertices = {
 			FVector2D(200.0f, 0.0f),
 			FVector2D(300.0f, 0.0f),
 		};
-
 		TestTrue(TEXT("Add another Edge"),
 			graph.AddEdge(deltas, NextID, vertices[0], vertices[1]));
 
 		TSet<int32> secondVertexIDs;
 		graph.AggregateAddedVertices(deltas, secondVertexIDs);
 
-		TestDeltas(this, deltas, graph, 0, 4, 2);
+		TestDeltas(this, deltas, graph, 2, 4, 2);
 
 		TestTrue(TEXT("Basic move"),
 			graph.MoveVertices(deltas, NextID, firstVertexIDs.Array(), FVector2D(50.0f, 0.0f)));
 
-		TestDeltasAndResetGraph(this, deltas, graph, 0, 4, 2);
+		TestDeltasAndResetGraph(this, deltas, graph, 2, 4, 2);
 
 		TestTrue(TEXT("Join one vertex"),
 			graph.MoveVertices(deltas, NextID, firstVertexIDs.Array(), FVector2D(100.0f, 0.0f)));
 
-		TestDeltasAndResetGraph(this, deltas, graph, 0, 3, 2);
+		TestDeltasAndResetGraph(this, deltas, graph, 1, 3, 2);
 
 		TestTrue(TEXT("Overlap edges"),
 			graph.MoveVertices(deltas, NextID, firstVertexIDs.Array(), FVector2D(150.0f, 0.0f)));
 
-		TestDeltasAndResetGraph(this, deltas, graph, 0, 4, 3);
+		TestDeltasAndResetGraph(this, deltas, graph, 1, 4, 3);
 
 		TestTrue(TEXT("Make edges the same"),
 			graph.MoveVertices(deltas, NextID, firstVertexIDs.Array(), FVector2D(200.0f, 0.0f)));
 
-		TestDeltasAndResetGraph(this, deltas, graph, 0, 2, 1);
+		TestDeltasAndResetGraph(this, deltas, graph, 1, 2, 1);
 
 		return true;
 	}
