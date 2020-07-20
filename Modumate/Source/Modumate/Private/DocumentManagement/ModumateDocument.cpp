@@ -72,6 +72,8 @@ FModumateDocument::~FModumateDocument()
 
 void FModumateDocument::Undo(UWorld *world)
 {
+//TODO: nulled out until delta-based undo/redo is implemented
+#if 0 
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Undo"));
 	ensureAlways(UndoRedoMacroStack.Num() == 0);
 	if (UndoBuffer.Num() > 0)
@@ -91,10 +93,13 @@ void FModumateDocument::Undo(UWorld *world)
 		ensureAlways(undoBufferSize == UndoBuffer.Num());
 		ensureAlways(redoBufferSize == RedoBuffer.Num());
 	}
+#endif
 }
 
 void FModumateDocument::Redo(UWorld *world)
 {
+	//TODO: nulled out until delta-based undo/redo is implemented
+#if 0
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Redo"));
 	ensureAlways(UndoRedoMacroStack.Num() == 0);
 	if (RedoBuffer.Num() > 0)
@@ -114,15 +119,21 @@ void FModumateDocument::Redo(UWorld *world)
 		ensureAlways(undoBufferSize == UndoBuffer.Num());
 		ensureAlways(redoBufferSize == RedoBuffer.Num());
 	}
+#endif
 }
 
 void FModumateDocument::BeginUndoRedoMacro()
 {
+	//TODO: nulled out until delta-based undo/redo is implemented
+#if 0
 	UndoRedoMacroStack.Push(UndoBuffer.Num());
+#endif
 }
 
 void FModumateDocument::EndUndoRedoMacro()
 {
+	//TODO: nulled out until delta-based undo/redo is implemented
+#if 0
 	if (UndoRedoMacroStack.Num() == 0)
 	{
 		return;
@@ -149,23 +160,8 @@ void FModumateDocument::EndUndoRedoMacro()
 
 	UndoBuffer.SetNum(start, true);
 
-	ur->Redo = [section]()
-	{
-		for (auto &subdo : section)
-		{
-			subdo->Redo();
-		}
-	};
-
-	ur->Undo = [section]()
-	{
-		for (int i = section.Num() - 1; i >= 0; --i)
-		{
-			section[i]->Undo();
-		}
-	};
-
 	UndoBuffer.Add(ur);
+#endif
 }
 
 void FModumateDocument::SetDefaultWallHeight(float height)
@@ -173,20 +169,7 @@ void FModumateDocument::SetDefaultWallHeight(float height)
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultWallHeight"));
 	ClearRedoBuffer();
 	float orig = DefaultWallHeight;
-	UndoRedo *ur = new UndoRedo();
-	ur->Redo = [ur, orig, height, this]()
-	{
-		DefaultWallHeight = height;
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultWallHeight::Redo"));
-		ur->Undo = [this, orig]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultWallHeight::Undo"));
-			DefaultWallHeight = orig;
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	DefaultWallHeight = height;
 }
 
 void FModumateDocument::SetDefaultRailHeight(float height)
@@ -194,20 +177,8 @@ void FModumateDocument::SetDefaultRailHeight(float height)
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultRailHeight"));
 	ClearRedoBuffer();
 	float orig = DefaultRailHeight;
-	UndoRedo *ur = new UndoRedo();
-	ur->Redo = [ur, orig, height, this]()
-	{
-		DefaultRailHeight = height;
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultRailHeight::Redo"));
-		ur->Undo = [this, orig]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultRailHeight::Undo"));
-			DefaultRailHeight = orig;
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	DefaultRailHeight = height;
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultRailHeight::Redo"));
 }
 
 void FModumateDocument::SetDefaultCabinetHeight(float height)
@@ -215,20 +186,7 @@ void FModumateDocument::SetDefaultCabinetHeight(float height)
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultCabinetHeight"));
 	ClearRedoBuffer();
 	float orig = DefaultCabinetHeight;
-	UndoRedo *ur = new UndoRedo();
-	ur->Redo = [ur, orig, height, this]()
-	{
-		DefaultCabinetHeight = height;
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultCabinetHeight::Redo"));
-		ur->Undo = [this, orig]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultCabinetHeight::Undo"));
-			DefaultCabinetHeight = orig;
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	DefaultCabinetHeight = height;
 }
 
 void FModumateDocument::SetDefaultDoorHeightWidth(float height, float width)
@@ -237,46 +195,16 @@ void FModumateDocument::SetDefaultDoorHeightWidth(float height, float width)
 	ClearRedoBuffer();
 	float origHeight = DefaultDoorHeight;
 	float origWidth = DefaultDoorWidth;
-	UndoRedo *ur = new UndoRedo();
-	ur->Redo = [ur, origHeight, origWidth, height, width, this]()
-	{
-		DefaultDoorHeight = height;
-		DefaultDoorWidth = width;
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultDoorHeightWidth::Redo"));
-		ur->Undo = [this, origHeight, origWidth]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultDoorHeightWidth::Undo"));
-			DefaultDoorHeight = origHeight;
-			DefaultDoorWidth = origWidth;
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	DefaultDoorHeight = height;
+	DefaultDoorWidth = width;
 }
 
 void FModumateDocument::SetDefaultWindowHeightWidth(float height, float width)
 {
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultWindowHeightWidth"));
-	ClearRedoBuffer();
 	float origHeight = DefaultWindowHeight;
 	float origWidth = DefaultWindowWidth;
-	UndoRedo *ur = new UndoRedo();
-	ur->Redo = [ur, origHeight, origWidth, height, width, this]()
-	{
-		DefaultWindowHeight = height;
-		DefaultWindowWidth = width;
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultWindowHeightWidth::Redo"));
-		ur->Undo = [this, origHeight, origWidth]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultWindowHeightWidth::Undo"));
-			DefaultWindowHeight = origHeight;
-			DefaultWindowWidth = origWidth;
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	DefaultWindowHeight = height;
+	DefaultWindowWidth = width;
 }
 
 void FModumateDocument::SetDefaultJustificationZ(float newValue)
@@ -284,20 +212,7 @@ void FModumateDocument::SetDefaultJustificationZ(float newValue)
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultJustificationZ"));
 	ClearRedoBuffer();
 	float orig = DefaultJustificationZ;
-	UndoRedo *ur = new UndoRedo();
-	ur->Redo = [ur, orig, newValue, this]()
-	{
-		DefaultJustificationZ = newValue;
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultJustificationZ::Redo"));
-		ur->Undo = [this, orig]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultJustificationZ::Undo"));
-			DefaultJustificationZ = orig;
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	DefaultJustificationZ = newValue;
 }
 
 void FModumateDocument::SetDefaultJustificationXY(float newValue)
@@ -305,54 +220,25 @@ void FModumateDocument::SetDefaultJustificationXY(float newValue)
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultJustificationXY"));
 	ClearRedoBuffer();
 	float orig = DefaultJustificationXY;
-	UndoRedo *ur = new UndoRedo();
-	ur->Redo = [ur, orig, newValue, this]()
-	{
-		DefaultJustificationXY = newValue;
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultJustificationXY::Redo"));
-		ur->Undo = [this, orig]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultJustificationXY::Undo"));
-			DefaultJustificationXY = orig;
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	DefaultJustificationXY = newValue;
 }
 
 void FModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, const FModumateObjectAssembly &assembly)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetAssemblyForWalls"));
 	ClearRedoBuffer();
-	UndoRedo *ur = new UndoRedo();
 
-	ur->Redo = [this, ur, ids, assembly]()
+	TMap<FModumateObjectInstance *, FModumateObjectAssembly> originals;
+	for (auto id : ids)
 	{
-		TMap<FModumateObjectInstance *, FModumateObjectAssembly> originals;
-
-		for (auto id : ids)
+		FModumateObjectInstance *ob = GetObjectById(id);
+		if (ob != nullptr)
 		{
-			FModumateObjectInstance *ob = GetObjectById(id);
-			if (ob != nullptr)
-			{
-				originals.Add(ob, ob->GetAssembly());
-				ob->SetAssembly(assembly);
-				ob->OnAssemblyChanged();
-			}
+			originals.Add(ob, ob->GetAssembly());
+			ob->SetAssembly(assembly);
+			ob->OnAssemblyChanged();
 		}
-
-		ur->Undo = [originals, this]()
-		{
-			for (auto o : originals)
-			{
-				o.Key->SetAssembly(o.Value);
-				o.Key->OnAssemblyChanged();
-			}
-		};
-	};
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	}
 }
 
 void FModumateDocument::AddHideObjectsById(UWorld *world, const TArray<int32> &ids)
@@ -361,41 +247,16 @@ void FModumateDocument::AddHideObjectsById(UWorld *world, const TArray<int32> &i
 
 	ClearRedoBuffer();
 
-	UndoRedo *ur = new UndoRedo();
-
-	ur->Redo = [this, ur, ids]()
+	for (auto id : ids)
 	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::AddHideObjectsById::Redo"));
-		for (auto id : ids)
+		FModumateObjectInstance *obj = GetObjectById(id);
+		if (obj && !HiddenObjectsID.Contains(id))
 		{
-			FModumateObjectInstance *obj = GetObjectById(id);
-			if (obj && !HiddenObjectsID.Contains(id))
-			{
-				obj->RequestHidden(FModumateDocument::DocumentHideRequestTag, true);
-				obj->RequestCollisionDisabled(FModumateDocument::DocumentHideRequestTag, true);
-				HiddenObjectsID.Add(id);
-			}
+			obj->RequestHidden(FModumateDocument::DocumentHideRequestTag, true);
+			obj->RequestCollisionDisabled(FModumateDocument::DocumentHideRequestTag, true);
+			HiddenObjectsID.Add(id);
 		}
-
-		ur->Undo = [this, ids]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::AddHideObjectsById::Undo"));
-			for (auto id : ids)
-			{
-				FModumateObjectInstance *obj = GetObjectById(id);
-				if (HiddenObjectsID.Contains(id))
-				{
-					obj->RequestHidden(FModumateDocument::DocumentHideRequestTag, false);
-					obj->RequestCollisionDisabled(FModumateDocument::DocumentHideRequestTag, false);
-				}
-				HiddenObjectsID.Remove(id);
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-
-	ur->Redo();
+	}
 }
 
 void FModumateDocument::UnhideAllObjects(UWorld *world)
@@ -404,50 +265,22 @@ void FModumateDocument::UnhideAllObjects(UWorld *world)
 
 	ClearRedoBuffer();
 
-	UndoRedo *ur = new UndoRedo();
 	TSet<int32> ids = HiddenObjectsID;
 
-	ur->Redo = [this, ur, ids]()
+	for (auto id : ids)
 	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UnhideAllObjects::Redo"));
-		for (auto id : ids)
+		if (FModumateObjectInstance *obj = GetObjectById(id))
 		{
-			if (FModumateObjectInstance *obj = GetObjectById(id))
-			{
-				obj->RequestHidden(FModumateDocument::DocumentHideRequestTag, false);
-				obj->RequestCollisionDisabled(FModumateDocument::DocumentHideRequestTag, false);
-			}
+			obj->RequestHidden(FModumateDocument::DocumentHideRequestTag, false);
+			obj->RequestCollisionDisabled(FModumateDocument::DocumentHideRequestTag, false);
 		}
+	}
 
-		HiddenObjectsID.Empty();
-		for (FModumateObjectInstance *obj : ObjectInstanceArray)
-		{
-			obj->UpdateVisibilityAndCollision();
-		}
-
-		ur->Undo = [this, ids]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UnhideAllObjects::Undo"));
-			for (auto id : ids)
-			{
-				if (FModumateObjectInstance *obj = GetObjectById(id))
-				{
-					obj->RequestHidden(FModumateDocument::DocumentHideRequestTag, true);
-					obj->RequestCollisionDisabled(FModumateDocument::DocumentHideRequestTag, true);
-				}
-			}
-
-			HiddenObjectsID = ids;
-			for (FModumateObjectInstance *obj : ObjectInstanceArray)
-			{
-				obj->UpdateVisibilityAndCollision();
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-
-	ur->Redo();
+	HiddenObjectsID.Empty();
+	for (FModumateObjectInstance *obj : ObjectInstanceArray)
+	{
+		obj->UpdateVisibilityAndCollision();
+	}
 }
 
 bool FModumateDocument::MoveObjects(UWorld *world, const TArray<int32> &obs, const FVector &v)
@@ -467,8 +300,6 @@ bool FModumateDocument::MoveObjects(UWorld *world, const TArray<FModumateObjectI
 	}
 
 	ClearRedoBuffer();
-
-	UndoRedo *ur = new UndoRedo();
 
 	TMap<int32, FMOIDataRecord> originalObjRecords;
 
@@ -496,35 +327,14 @@ bool FModumateDocument::MoveObjects(UWorld *world, const TArray<FModumateObjectI
 		MoveMetaObjects(world, volumeObjectIDs, moveDelta);
 	}
 
-	ur->Redo = [this, ur, moveDelta, originalObjRecords, volumeObjectIDs]()
+	for (auto &kvp : originalObjRecords)
 	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MoveObjects::Redo"));
-		for (auto &kvp : originalObjRecords)
+		FModumateObjectInstance *moi = GetObjectById(kvp.Key);
+		if (moi != nullptr)
 		{
-			FModumateObjectInstance *moi = GetObjectById(kvp.Key);
-			if (moi != nullptr)
-			{
-				moi->SetFromDataRecordAndDisplacement(kvp.Value, moveDelta);
-			}
+			moi->SetFromDataRecordAndDisplacement(kvp.Value, moveDelta);
 		}
-
-		ur->Undo = [this, originalObjRecords, volumeObjectIDs]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MoveObjects::Undo"));
-			for (auto &kvp : originalObjRecords)
-			{
-				FModumateObjectInstance *moi = GetObjectById(kvp.Key);
-				if (moi != nullptr)
-				{
-					moi->SetFromDataRecordAndDisplacement(kvp.Value, FVector::ZeroVector);
-				}
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-
-	ur->Redo();
+	}
 
 	if (volumeObjectIDs.Num() > 0)
 	{
@@ -551,8 +361,6 @@ void FModumateDocument::RotateObjects(UWorld *world, const TArray<FModumateObjec
 	}
 
 	ClearRedoBuffer();
-
-	UndoRedo *ur = new UndoRedo();
 
 	TMap<int32, FMOIDataRecordV1> originalData;
 
@@ -582,56 +390,27 @@ void FModumateDocument::RotateObjects(UWorld *world, const TArray<FModumateObjec
 		RotateMetaObjectsAboutOrigin(world, volumeObjectIDs, v, q);
 	}
 
-	ur->Redo = [this, ur, v,q, originalData, volumeObjectIDs]()
+	/*
+	TODO: hierarchy and geometry operations are redundant here and the semantics of updating are not yet well understood
+	On refactor, we want a simple way of modifying a metaplane and expecting everything to update itself cleanly
+	*/
+	for (auto &kvp : originalData)
 	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::RotateObjects::Redo"));
-
-		/*
-		TODO: hierarchy and geometry operations are redundant here and the semantics of updating are not yet well understood
-		On refactor, we want a simple way of modifying a metaplane and expecting everything to update itself cleanly
-		*/
-		for (auto &kvp : originalData)
+		FModumateObjectInstance *moi = GetObjectById(kvp.Key);
+		if (ensureAlways(moi != nullptr))
 		{
-			FModumateObjectInstance *moi = GetObjectById(kvp.Key);
-			if (ensureAlways(moi != nullptr))
-			{
-				moi->SetFromDataRecordAndRotation(kvp.Value, v, q);
-			}
+			moi->SetFromDataRecordAndRotation(kvp.Value, v, q);
 		}
+	}
 
-		for (auto &vid : volumeObjectIDs)
+	for (auto &vid : volumeObjectIDs)
+	{
+		FModumateObjectInstance *moi = GetObjectById(vid);
+		if (ensureAlways(moi != nullptr))
 		{
-			FModumateObjectInstance *moi = GetObjectById(vid);
-			if (ensureAlways(moi != nullptr))
-			{
-				moi->UpdateGeometry();
-			}
+			moi->UpdateGeometry();
 		}
-
-		ur->Undo = [this, originalData, volumeObjectIDs]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::RotateObjects::Undo"));
-			for (auto kvp : originalData)
-			{
-				FModumateObjectInstance *moi = GetObjectById(kvp.Key);
-				if (ensureAlways(moi != nullptr))
-				{
-					moi->SetFromDataRecordAndRotation(kvp.Value, FVector::ZeroVector, FQuat::Identity);
-				}
-			}
-			for (auto &vid : volumeObjectIDs)
-			{
-				FModumateObjectInstance *moi = GetObjectById(vid);
-				if (ensureAlways(moi != nullptr))
-				{
-					moi->UpdateGeometry();
-				}
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	}
 
 	if (volumeObjectIDs.Num() > 0)
 	{
@@ -667,48 +446,27 @@ bool FModumateDocument::SetObjectTransforms(UWorld *world, const TArray<int32> &
 	}
 
 	ClearRedoBuffer();
-	UndoRedo *ur = new UndoRedo();
+	TArray<FModumateObjectInstance *> targetObjects;
+	TArray<int32> oldParentIDs;
+	TArray<FVector> oldPositions;
+	TArray<FQuat> oldRotations;
 
-	ur->Redo = [this, ur, numObjects, ObjectIDs, ParentIDs, Positions, Rotations]()
+	for (int32 i = 0; i < numObjects; ++i)
 	{
-		TArray<FModumateObjectInstance *> targetObjects;
-		TArray<int32> oldParentIDs;
-		TArray<FVector> oldPositions;
-		TArray<FQuat> oldRotations;
+		FModumateObjectInstance *targetObject = GetObjectById(ObjectIDs[i]);
+		targetObjects.Add(targetObject);
 
-		for (int32 i = 0; i < numObjects; ++i)
-		{
-			FModumateObjectInstance *targetObject = GetObjectById(ObjectIDs[i]);
-			targetObjects.Add(targetObject);
+		oldParentIDs.Add(targetObject->GetParentID());
 
-			oldParentIDs.Add(targetObject->GetParentID());
+		FTransform transform = targetObject->GetWorldTransform();
+		oldPositions.Add(transform.GetLocation());
+		oldRotations.Add(transform.GetRotation());
 
-			FTransform transform = targetObject->GetWorldTransform();
-			oldPositions.Add(transform.GetLocation());
-			oldRotations.Add(transform.GetRotation());
-
-			FModumateObjectInstance *newParentObject = GetObjectById(ParentIDs[i]);
-			targetObject->SetParentObject(newParentObject);
-			targetObject->SetWorldTransform(FTransform(Rotations[i], Positions[i]));
-			targetObject->MarkDirty(EObjectDirtyFlags::Structure);
-		}
-
-		ur->Undo = [this, numObjects, ObjectIDs, oldParentIDs, oldPositions, oldRotations]()
-		{
-			for (int32 i = 0; i < numObjects; ++i)
-			{
-				FModumateObjectInstance *targetObject = GetObjectById(ObjectIDs[i]);
-
-				FModumateObjectInstance *oldParentObject = GetObjectById(oldParentIDs[i]);
-				targetObject->SetParentObject(oldParentObject);
-				targetObject->SetWorldTransform(FTransform(oldRotations[i], oldPositions[i]));
-				targetObject->MarkDirty(EObjectDirtyFlags::Structure);
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+		FModumateObjectInstance *newParentObject = GetObjectById(ParentIDs[i]);
+		targetObject->SetParentObject(newParentObject);
+		targetObject->SetWorldTransform(FTransform(Rotations[i], Positions[i]));
+		targetObject->MarkDirty(EObjectDirtyFlags::Structure);
+	}
 
 	return true;
 }
@@ -758,41 +516,17 @@ bool FModumateDocument::UpdateGeometry(UWorld *world, int32 id, const TArray<FVe
 	int32 parentPlaneID = (parentObj && (parentObj->GetObjectType() == EObjectType::OTMetaPlane)) ? parentObj->ID : MOD_ID_NONE;
 
 	ClearRedoBuffer();
-	UndoRedo *ur = new UndoRedo();
+	TArray<FVector> oldPoints = moi->GetControlPoints();
+	FVector oldExtents = moi->GetExtents();
 
-	ur->Redo = [ur, id, parentPlaneID, world, points, extents, moi, this]()
+	moi->SetControlPoints(points);
+	moi->SetExtents(extents);
+	moi->MarkDirty(EObjectDirtyFlags::Structure);
+
+	if (parentPlaneID != MOD_ID_NONE)
 	{
-		TArray<FVector> oldPoints = moi->GetControlPoints();
-		FVector oldExtents = moi->GetExtents();
-
-		moi->SetControlPoints(points);
-		moi->SetExtents(extents);
-		moi->MarkDirty(EObjectDirtyFlags::Structure);
-
-		if (parentPlaneID != MOD_ID_NONE)
-		{
-			UpdateMitering(world, { parentPlaneID });
-		}
-
-		ur->Undo = [world, id, parentPlaneID, oldPoints, oldExtents, this]()
-		{
-			FModumateObjectInstance *moi = GetObjectById(id);
-			if (moi != nullptr)
-			{
-				moi->SetControlPoints(oldPoints);
-				moi->SetExtents(oldExtents);
-				moi->MarkDirty(EObjectDirtyFlags::Structure);
-
-				if (parentPlaneID != MOD_ID_NONE)
-				{
-					UpdateMitering(world, { parentPlaneID });
-				}
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+		UpdateMitering(world, { parentPlaneID });
+	}
 
 	return true;
 }
@@ -817,27 +551,10 @@ void FModumateDocument::UpdateControlIndices(int32 id, const TArray<int32> &indi
 	}
 
 	ClearRedoBuffer();
-	UndoRedo *ur = new UndoRedo();
+	TArray<int32> oldIndices = moi->GetControlPointIndices();
 
-	ur->Redo = [ur, id, indices, moi, this]()
-	{
-		TArray<int32> oldIndices = moi->GetControlPointIndices();
-
-		moi->SetControlPointIndices(indices);
-		moi->UpdateGeometry();
-		ur->Undo = [id, oldIndices, this]()
-		{
-			FModumateObjectInstance *ob = GetObjectById(id);
-			if (ob != nullptr)
-			{
-				ob->SetControlPointIndices(oldIndices);
-				ob->UpdateGeometry();
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	moi->SetControlPointIndices(indices);
+	moi->UpdateGeometry();
 }
 
 void FModumateDocument::UpdateControlValues(int32 id, const TArray<FVector> &controlPoints, const TArray<int32> &controlIndices)
@@ -849,32 +566,12 @@ void FModumateDocument::UpdateControlValues(int32 id, const TArray<FVector> &con
 		return;
 	}
 
-	ClearRedoBuffer();
-	UndoRedo *ur = new UndoRedo();
+	TArray<FVector> oldCPs = moi->GetControlPoints();
+	TArray<int32> oldCIs = moi->GetControlPointIndices();
 
-	ur->Redo = [ur, id, moi, controlPoints, controlIndices, this]()
-	{
-		TArray<FVector> oldCPs = moi->GetControlPoints();
-		TArray<int32> oldCIs = moi->GetControlPointIndices();
-
-		moi->SetControlPoints(controlPoints);
-		moi->SetControlPointIndices(controlIndices);
-		moi->UpdateGeometry();
-
-		ur->Undo = [id, oldCPs, oldCIs, this]()
-		{
-			FModumateObjectInstance *moi = GetObjectById(id);
-			if (moi != nullptr)
-			{
-				moi->SetControlPoints(oldCPs);
-				moi->SetControlPointIndices(oldCIs);
-				moi->UpdateGeometry();
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	moi->SetControlPoints(controlPoints);
+	moi->SetControlPointIndices(controlIndices);
+	moi->UpdateGeometry();
 }
 
 void FModumateDocument::Split(int32 id, const TArray<FVector> &pointsA, const TArray<FVector> &pointsB, const TArray<int32> &indicesA, const TArray<int32> &indicesB)
@@ -902,48 +599,26 @@ void FModumateDocument::Split(int32 id, const TArray<FVector> &pointsA, const TA
 		int32 cloneID = CloneObject(world, moi);
 
 		// Second undo/redoable step; modify the original object and its clone to have the two halves of the control points
+		FVector extentsA = moi->GetExtents();
+		FVector extentsB = moi->GetExtents();
+
+		ClearRedoBuffer();
+		TArray<FVector> oldPoints = moi->GetControlPoints();
+		TArray<int32> oldIndices = moi->GetControlPointIndices();
+		FVector oldExtents = moi->GetExtents();
+
+		moi->SetControlPoints(pointsA);
+		moi->SetControlPointIndices(indicesA);
+		moi->SetExtents(extentsA);
+		moi->SetupGeometry();
+
+		FModumateObjectInstance *moiClone = GetObjectById(cloneID);
+		if (ensureAlways(moiClone))
 		{
-			FVector extentsA = moi->GetExtents();
-			FVector extentsB = moi->GetExtents();
-
-			ClearRedoBuffer();
-			UndoRedo *ur = new UndoRedo();
-
-			ur->Redo = [ur, id, cloneID, pointsA, pointsB, indicesA, indicesB, extentsA, extentsB, moi, this]()
-			{
-				TArray<FVector> oldPoints = moi->GetControlPoints();
-				TArray<int32> oldIndices = moi->GetControlPointIndices();
-				FVector oldExtents = moi->GetExtents();
-
-				moi->SetControlPoints(pointsA);
-				moi->SetControlPointIndices(indicesA);
-				moi->SetExtents(extentsA);
-				moi->SetupGeometry();
-
-				FModumateObjectInstance *moiClone = GetObjectById(cloneID);
-				if (ensureAlways(moiClone))
-				{
-					moiClone->SetControlPoints(pointsB);
-					moiClone->SetControlPointIndices(indicesB);
-					moiClone->SetExtents(extentsB);
-					moiClone->SetupGeometry();
-				}
-
-				ur->Undo = [id, oldPoints, oldIndices, oldExtents, this]()
-				{
-					FModumateObjectInstance *ob = GetObjectById(id);
-					if (ensureAlways(ob))
-					{
-						ob->SetControlPoints(oldPoints);
-						ob->SetControlPointIndices(oldIndices);
-						ob->SetExtents(oldExtents);
-						ob->SetupGeometry();
-					}
-				};
-			};
-
-			UndoBuffer.Add(ur);
-			ur->Redo();
+			moiClone->SetControlPoints(pointsB);
+			moiClone->SetControlPointIndices(indicesB);
+			moiClone->SetExtents(extentsB);
+			moiClone->SetupGeometry();
 		}
 
 		// Third undo/redoable step; potentially group the two resulting cabinets together
@@ -969,37 +644,15 @@ void FModumateDocument::AdjustMoiHoleVerts(int32 id, const FVector &location, co
 	FVector newLocation = location;
 
 	ClearRedoBuffer();
-	UndoRedo *ur = new UndoRedo();
-	ur->Redo = [ur, id, holeVerts, oldHoleVerts, oldLocation, newLocation, this]()
+	FModumateObjectInstance *holeRedoObj = GetObjectById(id);
+	holeRedoObj->SetControlPoints(holeVerts);
+	holeRedoObj->UpdateGeometry();
+
+	auto *wallParent = holeRedoObj->GetParentObject();
+	if (wallParent && wallParent->GetObjectType() == EObjectType::OTWallSegment)
 	{
-		FModumateObjectInstance *holeRedoObj = GetObjectById(id);
-		holeRedoObj->SetControlPoints(holeVerts);
-		holeRedoObj->UpdateGeometry();
-
-		auto *wallParent = holeRedoObj->GetParentObject();
-		if (wallParent && wallParent->GetObjectType() == EObjectType::OTWallSegment)
-		{
-			wallParent->SetupGeometry();
-		}
-
-		ur->Undo = [this, id, oldLocation, oldHoleVerts]()
-		{
-			if (FModumateObjectInstance *holeUndoObj = GetObjectById(id))
-			{
-				holeUndoObj->SetControlPoints(oldHoleVerts);
-				holeUndoObj->UpdateGeometry();
-
-				auto *wallParent = holeUndoObj->GetParentObject();
-				if (wallParent && wallParent->GetObjectType() == EObjectType::OTWallSegment)
-				{
-					wallParent->SetupGeometry();
-				}
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+		wallParent->SetupGeometry();
+	}
 }
 
 bool FModumateDocument::InvertObjects(const TArray<FModumateObjectInstance*> &obs)
@@ -1010,26 +663,12 @@ bool FModumateDocument::InvertObjects(const TArray<FModumateObjectInstance*> &ob
 		return false;
 	}
 
-	UndoRedo *ur = new UndoRedo();
 	ClearRedoBuffer();
 
-	ur->Redo = [this, ur, obs]()
+	for (auto &s : obs)
 	{
-		for (auto &s : obs)
-		{
-			s->InvertObject();
-		}
-		ur->Undo = [this, obs]()
-		{
-			for (auto &s : obs)
-			{
-				s->InvertObject();
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+		s->InvertObject();
+	}
 
 	return true;
 }
@@ -1042,34 +681,17 @@ void FModumateDocument::RestoreDeletedObjects(const TArray<int32> &ids)
 		return;
 	}
 
-	UndoRedo *ur = new UndoRedo();
 	ClearRedoBuffer();
-
-	ur->Redo = [this, ur, ids]()
+	TArray<FModumateObjectInstance*> oldObs;
+	for (auto id : ids)
 	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::RestoreDeletedObjects::Redo"));
-		TArray<FModumateObjectInstance*> oldObs;
-		for (auto id : ids)
+		FModumateObjectInstance *oldOb = TryGetDeletedObject(id);
+		if (oldOb != nullptr)
 		{
-			FModumateObjectInstance *oldOb = TryGetDeletedObject(id);
-			if (oldOb != nullptr)
-			{
-				RestoreObjectImpl(oldOb);
-				oldObs.AddUnique(oldOb);
-			}
+			RestoreObjectImpl(oldOb);
+			oldObs.AddUnique(oldOb);
 		}
-
-		ur->Undo = [this, oldObs]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::RestoreDeletedObjects::Undo"));
-			for (auto &ob : oldObs)
-			{
-				DeleteObjectImpl(ob);
-			}
-		};
-	};
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	}
 }
 
 bool FModumateDocument::DeleteObjectImpl(FModumateObjectInstance *ob, bool keepInDeletedList)
@@ -1539,38 +1161,16 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 	ClearRedoBuffer();
 
 	BeginUndoRedoMacro();
-	UndoRedo *ur = new UndoRedo();
+
+	UndoRedo* ur = new UndoRedo();
 	ur->Deltas = Deltas;
 
-	ur->Redo = [this, ur, World]()
+	for (auto& delta : ur->Deltas)
 	{
-		for (auto& delta : ur->Deltas)
-		{
-			delta->ApplyTo(this, World);
-		}
+		delta->ApplyTo(this, World);
+	}
 
-		PostApplyDelta(World);
-
-		ur->Undo = [this, ur, World]()
-		{
-			auto inverseDeltas = ur->Deltas;
-			Algo::Reverse(inverseDeltas);
-
-			for (auto& delta : inverseDeltas)
-			{
-				TSharedPtr<FDelta> inverseDelta = delta->MakeInverse();
-				if (inverseDelta != nullptr)
-				{
-					inverseDelta->ApplyTo(this, World);
-				}
-			}
-
-			PostApplyDelta(World);
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	PostApplyDelta(World);
 
 	UpdateRoomAnalysis(World);
 	EndUndoRedoMacro();
@@ -1874,124 +1474,70 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &ob
 		UModumateAnalyticsStatics::RecordObjectDeletion(world, ob->GetObjectType());
 	}
 
-	UndoRedo *ur = new UndoRedo();
 	ClearRedoBuffer();
 
-	ur->Redo = [this, ur, allobs, world, graphDelta, bApplyDelta, deletedObjParentPlaneIDs]()
+	TArray<FModumateObjectInstance*> deletedObjs;
+
+	if (bApplyDelta)
 	{
-		TArray<FModumateObjectInstance*> deletedObjs;
+		// TODO: fix
+		ApplyGraph3DDelta(graphDelta, world);
+		PostApplyDelta(world);
+	}
 
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::DeleteObjects::Redo"));
+	bool doorsDirty = false;
+	bool windowsDirty = false;
+	// TODO: Figure out a better way to broadcast BP widget changes to reduce complexity of this function
+	bool bCutPlanesDirty = false;
+	bool bScopeBoxesDirty = false;
+	for (auto *obj : allobs)
+	{
+		DeleteObjectImpl(obj);
 
-		if (bApplyDelta)
+		if (obj->GetObjectType() == EObjectType::OTDoor)
 		{
-			// TODO: fix
-			ApplyGraph3DDelta(graphDelta, world);
-			PostApplyDelta(world);
+			doorsDirty = true;
+		}
+		if (obj->GetObjectType() == EObjectType::OTWindow)
+		{
+			windowsDirty = true;
+		}
+		if (obj->GetObjectType() == EObjectType::OTCutPlane)
+		{
+			bCutPlanesDirty = true;
+		}
+		if (obj->GetObjectType() == EObjectType::OTScopeBox)
+		{
+			bScopeBoxesDirty = true;
 		}
 
-		bool doorsDirty = false;
-		bool windowsDirty = false;
-		// TODO: Figure out a better way to broadcast BP widget changes to reduce complexity of this function
-		bool bCutPlanesDirty = false;
-		bool bScopeBoxesDirty = false;
-		for (auto *obj : allobs)
+		deletedObjs.Add(obj);
+	}
+
+	if (windowsDirty)
+	{
+		ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTWindow);
+	}
+
+	if (doorsDirty)
+	{
+		ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTDoor);
+	}
+
+	if (bCutPlanesDirty || bScopeBoxesDirty)
+	{
+		AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
+		if (bCutPlanesDirty && emPlayerState)
 		{
-			DeleteObjectImpl(obj);
-
-			if (obj->GetObjectType() == EObjectType::OTDoor)
-			{
-				doorsDirty = true;
-			}
-			if (obj->GetObjectType() == EObjectType::OTWindow)
-			{
-				windowsDirty = true;
-			}
-			if (obj->GetObjectType() == EObjectType::OTCutPlane)
-			{
-				bCutPlanesDirty = true;
-			}
-			if (obj->GetObjectType() == EObjectType::OTScopeBox)
-			{
-				bScopeBoxesDirty = true;
-			}
-
-			deletedObjs.Add(obj);
+			emPlayerState->OnUpdateCutPlanes.Broadcast();
 		}
-
-		if (windowsDirty)
+		if (bScopeBoxesDirty && emPlayerState)
 		{
-			ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTWindow);
+			emPlayerState->OnUpdateScopeBoxes.Broadcast();
 		}
+	}
 
-		if (doorsDirty)
-		{
-			ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTDoor);
-		}
-
-		if (bCutPlanesDirty || bScopeBoxesDirty)
-		{
-			AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
-			if (bCutPlanesDirty && emPlayerState)
-			{
-				emPlayerState->OnUpdateCutPlanes.Broadcast();
-			}
-			if (bScopeBoxesDirty && emPlayerState)
-			{
-				emPlayerState->OnUpdateScopeBoxes.Broadcast();
-			}
-		}
-
-		UpdateMitering(world, deletedObjParentPlaneIDs);
-
-		ur->Undo = [this, deletedObjs, world, windowsDirty, doorsDirty, bApplyDelta, graphDelta, deletedObjParentPlaneIDs, bCutPlanesDirty, bScopeBoxesDirty]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::DeleteObjects::Undo"));
-
-			if (bApplyDelta)
-			{
-				auto inverseDelta = graphDelta.MakeInverse();
-				inverseDelta->ApplyTo(this, world);
-				PostApplyDelta(world);
-			}
-
-			// Restore objects in reverse order, to emulate the order in which the objects are created
-			// so that parents know about their kids correctly.
-			for (int32 i = deletedObjs.Num() - 1; i >= 0; --i)
-			{
-				auto &s = deletedObjs[i];
-				RestoreObjectImpl(s);
-			}
-
-			if (windowsDirty)
-			{
-				ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTWindow);
-			}
-
-			if (doorsDirty)
-			{
-				ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTDoor);
-			}
-
-			if (bCutPlanesDirty || bScopeBoxesDirty)
-			{
-				AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
-				if (bCutPlanesDirty && emPlayerState)
-				{
-					emPlayerState->OnUpdateCutPlanes.Broadcast();
-				}
-				if (bScopeBoxesDirty && emPlayerState)
-				{
-					emPlayerState->OnUpdateScopeBoxes.Broadcast();
-				}
-			}
-
-			UpdateMitering(world, deletedObjParentPlaneIDs);
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	UpdateMitering(world, deletedObjParentPlaneIDs);
 
 	if (bDoRoomAnalysis)
 	{
@@ -2008,92 +1554,50 @@ FModumateObjectInstance *FModumateDocument::TryGetDeletedObject(int32 id)
 
 int32 FModumateDocument::MakeGroupObject(UWorld *world, const TArray<int32> &ids, bool combineWithExistingGroups, int32 parentID)
 {
-	UndoRedo *ur = new UndoRedo();
 	ClearRedoBuffer();
 
 	int id = NextID++;
 
-	ur->Redo = [id,this,world,ur,ids,parentID]()
+	TArray<FModumateObjectInstance*> obs;
+	Algo::Transform(ids,obs,[this](int32 id){return GetObjectById(id);}); 
+
+	TMap<FModumateObjectInstance*, FModumateObjectInstance*> oldParents;
+	for (auto ob : obs)
 	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeGroupObject::Redo"));
+		oldParents.Add(ob, ob->GetParentObject());
+	}
 
-		TArray<FModumateObjectInstance*> obs;
-		Algo::Transform(ids,obs,[this](int32 id){return GetObjectById(id);}); 
+	auto *groupObj = CreateOrRestoreObjFromObjectType(world, EObjectType::OTGroup, id, parentID);
 
-		TMap<FModumateObjectInstance*, FModumateObjectInstance*> oldParents;
-		for (auto ob : obs)
-		{
-			oldParents.Add(ob, ob->GetParentObject());
-		}
+	for (auto ob : obs)
+	{
+		ob->SetParentObject(groupObj);
+	}
 
-		auto *groupObj = CreateOrRestoreObjFromObjectType(world, EObjectType::OTGroup, id, parentID);
-
-		for (auto ob : obs)
-		{
-			ob->SetParentObject(groupObj);
-		}
-
-		ur->Undo = [groupObj, oldParents, this]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeGroupObject::Undo"));
-
-			for (auto oldP : oldParents)
-			{
-				oldP.Key->SetParentObject(oldP.Value);
-			}
-
-			DeleteObjectImpl(groupObj);
-		};
-	};
-	UndoBuffer.Add(ur);
-	ur->Redo();
 	return id;
 }
 
 void FModumateDocument::UnmakeGroupObjects(UWorld *world, const TArray<int32> &groupIds)
 {
-	UndoRedo *ur = new UndoRedo();
 	ClearRedoBuffer();
 
 	AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
 
-	ur->Redo = [this, world, ur, groupIds]()
+	TArray<FModumateObjectInstance*> obs;
+	Algo::Transform(groupIds,obs,[this](int32 id){return GetObjectById(id);});
+
+	TMap<FModumateObjectInstance*, TArray<FModumateObjectInstance*>> oldChildren;
+
+	for (auto ob : obs)
 	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UnmakeGroupObjects::Redo"));
-
-		TArray<FModumateObjectInstance*> obs;
-		Algo::Transform(groupIds,obs,[this](int32 id){return GetObjectById(id);});
-
-		TMap<FModumateObjectInstance*, TArray<FModumateObjectInstance*>> oldChildren;
-
-		for (auto ob : obs)
+		TArray<FModumateObjectInstance*> children = ob->GetChildObjects();
+		oldChildren.Add(ob, children);
+		for (auto child : children)
 		{
-			TArray<FModumateObjectInstance*> children = ob->GetChildObjects();
-			oldChildren.Add(ob, children);
-			for (auto child : children)
-			{
-				child->SetParentObject(nullptr);
-			}
-			DeleteObjectImpl(ob);
+			child->SetParentObject(nullptr);
 		}
-
-		ur->Undo = [oldChildren, this]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UnmakeGroupObjects::Undo"));
-
-			for (auto oldC : oldChildren)
-			{
-				RestoreObjectImpl(oldC.Key);
-				for (auto child : oldC.Value)
-				{
-					child->SetParentObject(oldC.Key);
-				}
-			}
-
-		};
-	};
-	UndoBuffer.Add(ur);
-	ur->Redo();
+		DeleteObjectImpl(ob);
+	}
 }
 
 // TODO: we should merge this with MoveMetaObjects and make it a general transformation operation
@@ -2341,25 +1845,12 @@ int32 FModumateDocument::MakeRoom(UWorld *World, const TArray<FSignedID> &FaceID
 
 	int id = NextID++;
 
-	ur->Redo = [this, ur, id, World, FaceIDs]()
-	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeRoom::Redo"));
+	FModumateObjectInstance *newRoomObj = CreateOrRestoreObjFromObjectType(World, EObjectType::OTRoom,
+		id, MOD_ID_NONE, FVector::ZeroVector, nullptr, &FaceIDs);
 
-		FModumateObjectInstance *newRoomObj = CreateOrRestoreObjFromObjectType(World, EObjectType::OTRoom,
-			id, MOD_ID_NONE, FVector::ZeroVector, nullptr, &FaceIDs);
+	UModumateRoomStatics::SetRoomConfigFromKey(newRoomObj, UModumateRoomStatics::DefaultRoomConfigKey);
 
-		UModumateRoomStatics::SetRoomConfigFromKey(newRoomObj, UModumateRoomStatics::DefaultRoomConfigKey);
-
-		newRoomObj->UpdateVisibilityAndCollision();
-
-		ur->Undo = [newRoomObj,this]()
-		{
-			DeleteObjectImpl(newRoomObj);
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	newRoomObj->UpdateVisibilityAndCollision();
 
 	return id;
 }
@@ -2397,53 +1888,25 @@ int32 FModumateDocument::MakePointsObject(
 		}
 	};
 
-	ur->Redo = [this, points, controlIndices, id, objectType, assembly, inverted, ur,
-		idsToDelete, world, parentID, bUpdateSiblingGeometry, updateSiblingGeometry]()
+
+	FModumateObjectInstance *newOb = CreateOrRestoreObjFromAssembly(
+		world, assembly, id, parentID, FVector::ZeroVector, &points, &controlIndices, inverted);
+
+	TArray<FModumateObjectInstance*> objectsToDelete;
+	Algo::Transform(idsToDelete,objectsToDelete,[this](int32 id){return GetObjectById(id);});
+
+	for (auto *objToDelete : objectsToDelete)
 	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakePointsObject::Redo"));
-
-		FModumateObjectInstance *newOb = CreateOrRestoreObjFromAssembly(
-			world, assembly, id, parentID, FVector::ZeroVector, &points, &controlIndices, inverted);
-
-		TArray<FModumateObjectInstance*> objectsToDelete;
-		Algo::Transform(idsToDelete,objectsToDelete,[this](int32 id){return GetObjectById(id);});
-
-		for (auto *objToDelete : objectsToDelete)
+		if (objToDelete != nullptr)
 		{
-			if (objToDelete != nullptr)
-			{
-				DeleteObjectImpl(objToDelete);
-			}
+			DeleteObjectImpl(objToDelete);
 		}
+	}
 
-		if (bUpdateSiblingGeometry)
-		{
-			updateSiblingGeometry();
-		}
-
-		ur->Undo = [this, id, parentID, world, idsToDelete, newOb, bUpdateSiblingGeometry, updateSiblingGeometry]()
-		{
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakePointsObject::Undo"));
-			DeleteObjectImpl(newOb);
-
-			for (auto idToDelete : idsToDelete)
-			{
-				FModumateObjectInstance *objToDelete = TryGetDeletedObject(idToDelete);
-				if (objToDelete != nullptr)
-				{
-					RestoreObjectImpl(objToDelete);
-				}
-			}
-
-			if (bUpdateSiblingGeometry)
-			{
-				updateSiblingGeometry();
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+	if (bUpdateSiblingGeometry)
+	{
+		updateSiblingGeometry();
+	}
 
 	return id;
 }
@@ -2533,30 +1996,15 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 
 bool FModumateDocument::MakeCutPlaneObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs)
 {
-	UndoRedo *ur = new UndoRedo();
 	ClearRedoBuffer();
 	int32 id = NextID++;
 
-	ur->Redo = [this, ur, id, world, points]()
+	auto newObj = CreateOrRestoreObjFromObjectType(world, EObjectType::OTCutPlane, id, 0, FVector::ZeroVector, &points);
+	AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
+	if (emPlayerState)
 	{
-		auto newObj = CreateOrRestoreObjFromObjectType(world, EObjectType::OTCutPlane, id, 0, FVector::ZeroVector, &points);
-		AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
-		if (emPlayerState)
-		{
-			emPlayerState->OnUpdateCutPlanes.Broadcast();
-		}
-		ur->Undo = [this, world, newObj, emPlayerState]()
-		{
-			DeleteObjectImpl(newObj);
-			if (emPlayerState)
-			{
-				emPlayerState->OnUpdateCutPlanes.Broadcast();
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+		emPlayerState->OnUpdateCutPlanes.Broadcast();
+	}
 
 	OutObjIDs.Add(id);
 
@@ -2571,26 +2019,12 @@ bool FModumateDocument::MakeScopeBoxObject(UWorld *world, const TArray<FVector> 
 
 	FVector extents = FVector(0.0f, Height, 0.0f);
 
-	ur->Redo = [this, ur, id, world, extents, points]()
+	auto newObj = CreateOrRestoreObjFromObjectType(world, EObjectType::OTScopeBox, id, 0, extents, &points);
+	AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
+	if (emPlayerState)
 	{
-		auto newObj = CreateOrRestoreObjFromObjectType(world, EObjectType::OTScopeBox, id, 0, extents, &points);
-		AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
-		if (emPlayerState)
-		{
-			emPlayerState->OnUpdateScopeBoxes.Broadcast();
-		}
-		ur->Undo = [this, world, newObj, emPlayerState]()
-		{
-			if (emPlayerState)
-			{
-				emPlayerState->OnUpdateScopeBoxes.Broadcast();
-			}
-			DeleteObjectImpl(newObj);
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+		emPlayerState->OnUpdateScopeBoxes.Broadcast();
+	}
 
 	OutObjIDs.Add(id);
 
@@ -2888,47 +2322,32 @@ int32 FModumateDocument::MakePortalAt(
 	}
 
 	// Step 2: actually create the portal object
-	UndoRedo *ur = new UndoRedo();
-
 	int32 id = NextID++;
 
-	ur->Redo = [ur,inverted,world,portalType,pal,id,relativePos,relativeRot,portalParent,this]()
+	FModumateObjectInstance *newOb = CreateOrRestoreObjFromAssembly(world, pal, id);
+
+	// TODO: this is needed because only for redo operations because the parent ID gets saved,
+	// need to revisit this in a way that doesn't cause redundant geometry updates.
+	newOb->SetParentObject(nullptr);
+
+	newOb->SetObjectLocation(FVector(relativePos, 0.0f));
+	newOb->SetObjectRotation(relativeRot);
+	newOb->SetParentObject(portalParent);
+	newOb->SetAssembly(pal);
+	newOb->SetupGeometry();
+	ResequencePortalAssemblies_DEPRECATED(world, portalType);
+
+	if (inverted)
 	{
-		FModumateObjectInstance *newOb = CreateOrRestoreObjFromAssembly(world, pal, id);
-
-		// TODO: this is needed because only for redo operations because the parent ID gets saved,
-		// need to revisit this in a way that doesn't cause redundant geometry updates.
-		newOb->SetParentObject(nullptr);
-
-		newOb->SetObjectLocation(FVector(relativePos, 0.0f));
-		newOb->SetObjectRotation(relativeRot);
-		newOb->SetParentObject(portalParent);
-		newOb->SetAssembly(pal);
-		newOb->SetupGeometry();
-		ResequencePortalAssemblies_DEPRECATED(world, portalType);
-
-		if (inverted)
+		float w = newOb->GetControlPoint(2).Y - newOb->GetControlPoint(1).Y;
+		for (int32 i=0;i<newOb->GetControlPoints().Num();++i)
 		{
-			float w = newOb->GetControlPoint(2).Y - newOb->GetControlPoint(1).Y;
-			for (int32 i=0;i<newOb->GetControlPoints().Num();++i)
-			{
-				FVector cp = newOb->GetControlPoint(i);
-				cp.Y -= w;
-				newOb->SetControlPoint(i, cp);
-			}
-			newOb->InvertObject();
+			FVector cp = newOb->GetControlPoint(i);
+			cp.Y -= w;
+			newOb->SetControlPoint(i, cp);
 		}
-
-		ur->Undo = [this, id, world, portalType]()
-		{
-			FModumateObjectInstance *ob = GetObjectById(id);
-			DeleteObjectImpl(ob);
-			ResequencePortalAssemblies_DEPRECATED(world, portalType);
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+		newOb->InvertObject();
+	}
 
 	if (bPortalModifiesTrim)
 	{
@@ -2946,26 +2365,12 @@ void FModumateDocument::TransverseObjects(const TArray<FModumateObjectInstance*>
 		return;
 	}
 
-	UndoRedo *ur = new UndoRedo();
 	ClearRedoBuffer();
 
-	ur->Redo = [this, ur, obs]()
+	for (auto &s : obs)
 	{
-		for (auto &s : obs)
-		{
-			s->TransverseObject();
-		}
-		ur->Undo = [obs]()
-		{
-			for (auto &s : obs)
-			{
-				s->TransverseObject();
-			}
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
+		s->TransverseObject();
+	}
 }
 
 int32 FModumateDocument::CreateFFE(
@@ -3005,48 +2410,26 @@ int32 FModumateDocument::CreateFFE(
 		}
 	}
 
-	ur->Redo = [this, newFFECode, ur, id, parentID, world, locVal, rotVal, useAsm, oldAsm, parentFaceIdx]()
+
+	TArray<int32> controlIndices = { parentFaceIdx };
+	FModumateObjectInstance *newOb = CreateOrRestoreObjFromAssembly(world, useAsm, id, parentID,
+		FVector::ZeroVector, nullptr, &controlIndices);
+	newOb->SetObjectLocation(locVal);
+	newOb->SetObjectRotation(rotVal);
+	newOb->SetupGeometry();
+
+	// If we generated a code name, this is the first time this object was used
+	if (!newFFECode.IsNone())
 	{
-		UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::CreateObjectAt::Redo"));
-
-		TArray<int32> controlIndices = { parentFaceIdx };
-		FModumateObjectInstance *newOb = CreateOrRestoreObjFromAssembly(world, useAsm, id, parentID,
-			FVector::ZeroVector, nullptr, &controlIndices);
-		newOb->SetObjectLocation(locVal);
-		newOb->SetObjectRotation(rotVal);
-		newOb->SetupGeometry();
-
-		// If we generated a code name, this is the first time this object was used
-		if (!newFFECode.IsNone())
+		DataCollection<FModumateObjectAssembly>  *db = PresetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
+		if (ensureAlways(db != nullptr))
 		{
-			DataCollection<FModumateObjectAssembly>  *db = PresetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
-			if (ensureAlways(db != nullptr))
-			{
-				db->RemoveData(oldAsm);
-				db->AddData(useAsm);
-				OnAssemblyUpdated(world, EToolMode::VE_PLACEOBJECT, useAsm);
-			}
+			db->RemoveData(oldAsm);
+			db->AddData(useAsm);
+			OnAssemblyUpdated(world, EToolMode::VE_PLACEOBJECT, useAsm);
 		}
+	}
 
-		ur->Undo = [this, oldAsm, world, useAsm, newFFECode, id]()
-		{
-			DataCollection<FModumateObjectAssembly>  *db = PresetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
-
-			// If we generated a new name, restore the old assembly without the codename
-			if (ensureAlways(db != nullptr) && !newFFECode.IsNone())
-			{
-				db->RemoveData(useAsm);
-				db->AddData(oldAsm);
-				OnAssemblyUpdated(world, EToolMode::VE_PLACEOBJECT, oldAsm);
-			}
-
-			UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::CreateObjectAt::Redo"));
-			FModumateObjectInstance *ob = GetObjectById(id);
-			DeleteObjectImpl(ob);
-		};
-	};
-	UndoBuffer.Add(ur);
-	ur->Redo();
 	return id;
 }
 
@@ -3637,29 +3020,18 @@ int32 FModumateDocument::CreateObjectFromRecord(UWorld *world, const FMOIDataRec
 	ClearRedoBuffer();
 	int32 id = NextID++;
 
-	UndoRedo *ur = new UndoRedo();
-	ur->Redo = [this, ur, id, world, obRec]()
+	const FModumateObjectAssembly *obAsm = nullptr;
+	if (obRec.AssemblyKey != "None")
 	{
-		const FModumateObjectAssembly *obAsm = nullptr;
-		if (obRec.AssemblyKey != "None")
-		{
-			obAsm = PresetManager.GetAssemblyByKey(UModumateTypeStatics::ToolModeFromObjectType(obRec.ObjectType), FName(*obRec.AssemblyKey));
-			ensureAlways(obAsm != nullptr);
-		}
-		FModumateObjectInstance *obj = obAsm != nullptr ?
-			CreateOrRestoreObjFromAssembly(world, *obAsm, id, obRec.ParentID, obRec.Extents, &obRec.ControlPoints, &obRec.ControlIndices) :
-			CreateOrRestoreObjFromObjectType(world, obRec.ObjectType, id, obRec.ParentID, obRec.Extents, &obRec.ControlPoints, &obRec.ControlIndices);
+		obAsm = PresetManager.GetAssemblyByKey(UModumateTypeStatics::ToolModeFromObjectType(obRec.ObjectType), FName(*obRec.AssemblyKey));
+		ensureAlways(obAsm != nullptr);
+	}
+	FModumateObjectInstance *obj = obAsm != nullptr ?
+		CreateOrRestoreObjFromAssembly(world, *obAsm, id, obRec.ParentID, obRec.Extents, &obRec.ControlPoints, &obRec.ControlIndices) :
+		CreateOrRestoreObjFromObjectType(world, obRec.ObjectType, id, obRec.ParentID, obRec.Extents, &obRec.ControlPoints, &obRec.ControlIndices);
 
-		obj->SetupGeometry();
+	obj->SetupGeometry();
 
-		ur->Undo = [id, this, obj]()
-		{
-			FModumateObjectInstance *ob = GetObjectById(id);
-			DeleteObjectImpl(ob);
-		};
-	};
-	UndoBuffer.Add(ur);
-	ur->Redo();
 	return id;
 }
 
@@ -3689,33 +3061,21 @@ int32 FModumateDocument::CloneObject(UWorld *world, const FModumateObjectInstanc
 	ClearRedoBuffer();
 	int32 id = NextID++;
 
-	ur->Redo = [id, ur, world,this,original]()
+	FModumateObjectInstance* obj = TryGetDeletedObject(id);
+	if (obj != nullptr)
 	{
-		FModumateObjectInstance* obj = TryGetDeletedObject(id);
-		if (obj != nullptr)
-		{
-			RestoreObjectImpl(obj);
-		}
-		else
-		{
-			obj = new FModumateObjectInstance(world, this, original->AsDataRecord());
-			obj->SetupGeometry();
-			obj->ID = id;
-			obj->SetParentObject(GetObjectById(original->GetParentID()));
-			ObjectInstanceArray.AddUnique(obj);
-			ObjectsByID.Add(obj->ID, obj);
-		}
+		RestoreObjectImpl(obj);
+	}
+	else
+	{
+		obj = new FModumateObjectInstance(world, this, original->AsDataRecord());
+		obj->SetupGeometry();
+		obj->ID = id;
+		obj->SetParentObject(GetObjectById(original->GetParentID()));
+		ObjectInstanceArray.AddUnique(obj);
+		ObjectsByID.Add(obj->ID, obj);
+	}
 
-		ur->Undo = [obj, id, this]()
-		{
-			FModumateObjectInstance *ob = GetObjectById(id);
-			DeleteObjectImpl(ob);
-		};
-	};
-
-	UndoBuffer.Add(ur);
-
-	ur->Redo();
 	return id;
 }
 
@@ -3873,11 +3233,11 @@ bool FModumateDocument::CanRoomContainFace(FSignedID FaceID)
 	}
 
 	return false;
-
 }
 
 void FModumateDocument::UpdateRoomAnalysis(UWorld *world)
 {
+#if 0
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UpdateRoomAnalysis"));
 
 	bool bStartedMacro = false;
@@ -3999,6 +3359,7 @@ void FModumateDocument::UpdateRoomAnalysis(UWorld *world)
 	{
 		EndUndoRedoMacro();
 	}
+#endif
 }
 
 const FGraph2D *FModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID) const
@@ -4238,17 +3599,7 @@ bool FModumateDocument::RemoveAssembly(UWorld *world, EToolMode toolMode, const 
 		if (replacementKey.IsNone())
 		{
 			ensureAlways(obIds.Num() == 0);
-			ur->Redo = [ur, db, originalAssembly]()
-			{
-				db->RemoveData(originalAssembly);
-
-				ur->Undo = [originalAssembly, db]()
-				{
-					db->AddData(originalAssembly);
-				};
-			};
-			ur->Redo();
-			UndoBuffer.Add(ur);
+			db->RemoveData(originalAssembly);
 			return true;
 		}
 		else
@@ -4259,27 +3610,12 @@ bool FModumateDocument::RemoveAssembly(UWorld *world, EToolMode toolMode, const 
 			if (ensureAlways(pReplacement != nullptr))
 			{
 				FModumateObjectAssembly replacementAssembly = *pReplacement;
-				ur->Redo = [this, world, ur, affectedObs, db, replacementAssembly, originalAssembly]()
+				for (auto &ob : affectedObs)
 				{
-					for (auto &ob : affectedObs)
-					{
-						ob->SetAssembly(replacementAssembly);
-						ob->OnAssemblyChanged();
-					}
-					db->RemoveData(originalAssembly);
-
-					ur->Undo = [this, world, affectedObs, originalAssembly, db]()
-					{
-						db->AddData(originalAssembly);
-						for (auto &ob : affectedObs)
-						{
-							ob->SetAssembly(originalAssembly);
-							ob->OnAssemblyChanged();
-						}
-					};
-				};
-				ur->Redo();
-				UndoBuffer.Add(ur);
+					ob->SetAssembly(replacementAssembly);
+					ob->OnAssemblyChanged();
+				}
+				db->RemoveData(originalAssembly);
 				return true;
 			}
 		}
@@ -4341,23 +3677,11 @@ FModumateObjectAssembly FModumateDocument::OverwriteAssembly_DEPRECATED(
 	ensureAlways(pOldAsm != nullptr);
 	oldAsm = (pOldAsm != nullptr) ? *pOldAsm : newAsm;
 
-	ur->Redo = [this, ur, db, mode, world, newAsm, oldAsm]()
-	{
-		db->RemoveData(oldAsm);
-		db->AddData(newAsm);
+	db->RemoveData(oldAsm);
+	db->AddData(newAsm);
 
-		OnAssemblyUpdated(world, mode, newAsm);
+	OnAssemblyUpdated(world, mode, newAsm);
 
-		ur->Undo = [this, mode, ur, db, world, newAsm, oldAsm]()
-		{
-			db->RemoveData(newAsm);
-			db->AddData(oldAsm);
-			OnAssemblyUpdated(world, mode, oldAsm);
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
 	return newAsm;
 }
 
@@ -4381,18 +3705,8 @@ FModumateObjectAssembly FModumateDocument::CreateNewAssembly_DEPRECATED(
 		newAsm.DatabaseKey = PresetManager.GetAvailableKey(*EnumValueString(EObjectType, assembly.ObjectType));
 	}
 
-	ur->Redo = [this, ur, db, mode, world, newAsm]()
-	{
-		db->AddData(newAsm);
+	db->AddData(newAsm);
 
-		ur->Undo = [this, mode, ur, db, world, newAsm]()
-		{
-			db->RemoveData(newAsm);
-		};
-	};
-
-	UndoBuffer.Add(ur);
-	ur->Redo();
 	return newAsm;
 }
 

@@ -33,10 +33,6 @@ namespace Modumate
 
 		struct UndoRedo
 		{
-			// TODO: if Deltas are universally used and consistently applied, Undo and Redo functions
-			// should not be needed anymore
-			std::function<void()> Undo, Redo;
-
 			TArray<TSharedPtr<FDelta>> Deltas;
 		};
 
