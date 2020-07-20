@@ -16,6 +16,7 @@ bool UModumateEditableTextBoxUserWidget::Initialize()
 		return false;
 	}
 	ChangeText(TextOverride);
+	ChangeHint(HintOverride);
 	return true;
 }
 
@@ -40,5 +41,22 @@ void UModumateEditableTextBoxUserWidget::ChangeText(const FText &NewText, bool E
 	{
 		ModumateEditableTextBox->SetText(NewText);
 	}
+}
 
+void UModumateEditableTextBoxUserWidget::ChangeHint(const FText &NewHint, bool EllipsizeHint)
+{
+	if (!ModumateEditableTextBox)
+	{
+		return;
+	}
+
+	if (EllipsizeHint)
+	{
+		FString hintEllipsized = UModumateUIStatics::GetEllipsizeString(NewHint.ToString(), EllipsizeWordAt);
+		ModumateEditableTextBox->SetHintText(FText::FromString(hintEllipsized)); // Potential loss of auto localization
+	}
+	else
+	{
+		ModumateEditableTextBox->SetHintText(NewHint);
+	}
 }

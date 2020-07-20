@@ -33,9 +33,13 @@ public:
 	FText TextOverride;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FText HintOverride;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 EllipsizeWordAt = 18;
 
 	void ChangeText(const FText &NewText, bool EllipsizeText = true);
+	void ChangeHint(const FText &NewHint, bool EllipsizeHint = true);
 
 protected:
 
