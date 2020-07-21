@@ -29,7 +29,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlockUserWidget *ModumateTextBlockUserWidget;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UImage *ImageBlock;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

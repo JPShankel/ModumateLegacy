@@ -27,7 +27,7 @@ void UModumateComboBoxStringItem::NativeConstruct()
 void UModumateComboBoxStringItem::BuildItem(FText NewText, UTexture2D *NewTexture)
 {
 	ModumateTextBlockUserWidget->ChangeText(NewText);
-	if (NewTexture)
+	if (NewTexture && ImageBlock)
 	{
 		ImageBlock->SetBrushFromTexture(NewTexture);
 	}
