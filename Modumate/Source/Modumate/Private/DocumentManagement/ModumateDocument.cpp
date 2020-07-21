@@ -953,6 +953,7 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World)
 {
 	FGraph2D *targetSurfaceGraph = nullptr;
+	TArray<FVector> controlPoints;
 
 	switch (Delta.DeltaType)
 	{
@@ -976,8 +977,138 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		return;
 	}
 
-	// TODO: potentially finalize delta by updating connected objects
+	// update graph
 	targetSurfaceGraph->ApplyDelta(Delta);
+
+	// add objects
+	for (auto &kvp : Delta.VertexAdditions)
+	{
+		const FVector2D &vertexPos = kvp.Value;
+		controlPoints.SetNum(1);
+		controlPoints[0] = FVector(vertexPos, 0.0f);
+		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceVertex,
+			kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+	}
+
+	for (auto &kvp : Delta.EdgeAdditions)
+	{
+		const TArray<int32> &edgeVertexIDs = kvp.Value.Vertices;
+		ensureAlways(kvp.Value.Vertices.Num() == 2);
+		controlPoints.SetNum(2);
+		const FGraph2DVertex *startVertex = targetSurfaceGraph->FindVertex(edgeVertexIDs[0]);
+		const FGraph2DVertex *endVertex = targetSurfaceGraph->FindVertex(edgeVertexIDs[1]);
+		if (startVertex && endVertex)
+		{
+			controlPoints[0] = FVector(startVertex->Position, 0.0f);
+			controlPoints[1] = FVector(endVertex->Position, 0.0f);
+		}
+
+		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceEdge,
+			kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+	}
+
+	for (auto &kvp : Delta.PolygonAdditions)
+	{
+		controlPoints.Reset();
+		for (int32 polygonVertexID : kvp.Value.Vertices)
+		{
+			const FGraph2DVertex *polyVertex = targetSurfaceGraph->FindVertex(polygonVertexID);
+			if (ensureAlways(polyVertex))
+			{
+				controlPoints.Add(FVector(polyVertex->Position, 0.0f));
+			}
+		}
+
+		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfacePolygon,
+			kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+	}
+
+	// finalize objects after all of them have been added
+	TMap<int32, FGraph2DHostedObjectDelta> ParentIDUpdates;
+	FinalizeGraph2DDelta(Delta, ParentIDUpdates);
+
+	// when modifying objects in the document, first add objects, then modify parent objects, then delete objects
+	for (auto &kvp : ParentIDUpdates)
+	{
+		auto obj = GetObjectById(kvp.Key);
+		if (obj == nullptr)
+		{
+			const FGraph2DHostedObjectDelta& objUpdate = kvp.Value;
+			auto newParentObj = GetObjectById(objUpdate.NextParentID);
+			// When the previous object exists, use its information to clone a new object
+			auto hostedObj = GetObjectById(objUpdate.PreviousHostedObjID);
+			if (hostedObj)
+			{
+				auto newObj = CreateOrRestoreObjFromAssembly(World, hostedObj->GetAssembly(), kvp.Key, objUpdate.NextParentID, hostedObj->GetExtents(), nullptr, &hostedObj->GetControlPointIndices(), hostedObj->GetObjectInverted());
+			}
+			// Otherwise, attempt to restore the previous object (during undo)
+			else
+			{
+				auto *oldObj = TryGetDeletedObject(kvp.Key);
+				if (ensureAlways(oldObj != nullptr))
+				{
+					RestoreObjectImpl(oldObj);
+				}
+			}
+		}
+	}
+
+	// there is a separate loop afterwards because re-parenting objects may rely on objects that are being added
+	TSet<int32> objsMarkedForDelete;
+	for (auto &kvp : ParentIDUpdates)
+	{
+		auto obj = GetObjectById(kvp.Key);
+		if (obj != nullptr)
+		{
+			FGraph2DHostedObjectDelta objUpdate = kvp.Value;
+			auto newParentObj = GetObjectById(objUpdate.NextParentID);
+
+			if (newParentObj != nullptr)
+			{
+				FTransform worldTransform = obj->GetWorldTransform();
+				newParentObj->AddChild(obj);
+				obj->SetWorldTransform(worldTransform);
+			}
+			else
+			{
+				objsMarkedForDelete.Add(kvp.Key);
+			}
+		}
+	}
+
+	// delete hosted objects
+	for (auto objID : objsMarkedForDelete)
+	{
+		DeleteObjectImpl(GetObjectById(objID));
+	}
+
+	// delete surface objects
+	for (auto &kvp : Delta.VertexDeletions)
+	{
+		FModumateObjectInstance *deletedVertexObj = GetObjectById(kvp.Key);
+		if (ensureAlways(deletedVertexObj))
+		{
+			DeleteObjectImpl(deletedVertexObj);
+		}
+	}
+
+	for (auto &kvp : Delta.EdgeDeletions)
+	{
+		FModumateObjectInstance *deletedEdgeObj = GetObjectById(kvp.Key);
+		if (ensureAlways(deletedEdgeObj))
+		{
+			DeleteObjectImpl(deletedEdgeObj);
+		}
+	}
+
+	for (auto &kvp : Delta.PolygonDeletions)
+	{
+		FModumateObjectInstance *deletedPolyObj = GetObjectById(kvp.Key);
+		if (ensureAlways(deletedPolyObj))
+		{
+			DeleteObjectImpl(deletedPolyObj);
+		}
+	}
 }
 
 void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World)
@@ -1051,14 +1182,12 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		const TArray<int32> &edgeVertexIDs = kvp.Value.Vertices;
 		ensureAlways(kvp.Value.Vertices.Num() == 2);
 		controlPoints.SetNum(2);
-		FVector edgePosition(ForceInitToZero);
 		const FGraph3DVertex *startVertex = VolumeGraph.FindVertex(edgeVertexIDs[0]);
 		const FGraph3DVertex *endVertex = VolumeGraph.FindVertex(edgeVertexIDs[1]);
 		if (startVertex && endVertex)
 		{
 			controlPoints[0] = startVertex->Position;
 			controlPoints[1] = endVertex->Position;
-			edgePosition = 0.5f * (startVertex->Position + endVertex->Position);
 		}
 
 		CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaEdge,
@@ -2031,6 +2160,96 @@ bool FModumateDocument::MakeScopeBoxObject(UWorld *world, const TArray<FVector> 
 	return true;
 }
 
+bool FModumateDocument::FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<int32, FGraph2DHostedObjectDelta> &OutParentIDUpdates)
+{
+	TMap<int32, TArray<int32>> parentIDToChildrenIDs;
+
+	for (auto &kvp : Delta.PolygonAdditions)
+	{
+		for (int32 parentID : kvp.Value.ParentObjIDs)
+		{
+			if (parentIDToChildrenIDs.Contains(parentID))
+			{
+				parentIDToChildrenIDs[parentID].Add(kvp.Key);
+			}
+			else
+			{
+				parentIDToChildrenIDs.Add(parentID, { kvp.Key });
+			}
+		}
+	}
+
+	for (auto &kvp : Delta.EdgeAdditions)
+	{
+		for (int32 parentID : kvp.Value.ParentObjIDs)
+		{
+			parentID = FMath::Abs(parentID);
+			if (parentIDToChildrenIDs.Contains(parentID))
+			{
+				parentIDToChildrenIDs[parentID].Add(FMath::Abs(kvp.Key));
+			}
+			else
+			{
+				parentIDToChildrenIDs.Add(parentID, { FMath::Abs(kvp.Key) });
+			}
+		}
+	}
+
+	TMap<int32, int32> childFaceIDToHostedID;
+	TSet<int32> idsWithObjects;
+	for (auto &kvp : parentIDToChildrenIDs)
+	{
+		int32 parentID = kvp.Key;
+		auto parentObj = GetObjectById(parentID);
+
+		if (parentObj == nullptr || parentObj->GetChildren().Num() == 0)
+		{
+			continue;
+		}
+
+		for (int32 childIdx = 0; childIdx < parentObj->GetChildren().Num(); childIdx++)
+		{
+			auto childObj = GetObjectById(parentObj->GetChildren()[childIdx]);
+
+			for (int32 childFaceID : kvp.Value)
+			{
+				if (!idsWithObjects.Contains(childFaceID))
+				{
+					int32 newObjID = NextID++;
+					OutParentIDUpdates.Add(newObjID, FGraph2DHostedObjectDelta(parentObj->GetChildren()[childIdx], MOD_ID_NONE, childFaceID));
+					childFaceIDToHostedID.Add(childFaceID, newObjID);
+					idsWithObjects.Add(childFaceID);
+				}
+			}
+		}
+	}
+
+	TArray<int32> deletedObjIDs;
+	for (auto &kvp : Delta.PolygonDeletions)
+	{
+		deletedObjIDs.Add(kvp.Key);
+	}
+	for (auto &kvp : Delta.EdgeDeletions)
+	{
+		deletedObjIDs.Add(kvp.Key);
+	}
+
+	for (int32 objID : deletedObjIDs)
+	{
+		auto obj = GetObjectById(objID);
+
+		if (obj && obj->GetChildren().Num() > 0)
+		{
+			for (int32 childIdx = 0; childIdx < obj->GetChildren().Num(); childIdx++)
+			{
+				OutParentIDUpdates.Add(obj->GetChildren()[childIdx], FGraph2DHostedObjectDelta(MOD_ID_NONE, objID, MOD_ID_NONE));
+			}
+		}
+	}
+
+	return true;
+}
+
 bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &Delta)
 {
 	TMap<int32, TArray<int32>> parentIDToChildrenIDs;
@@ -2187,7 +2406,6 @@ bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &D
 	for (int32 objID : deletedObjIDs)
 	{
 		auto obj = GetObjectById(objID);
-		auto face = TempGraph.FindFace(objID);
 
 		if (obj && obj->GetChildren().Num() > 0)
 		{

@@ -137,6 +137,7 @@ namespace Modumate
 		bool MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height);
 
 		// Allocates IDs for new objects, finds new parent IDs for objects, and marks objects for deletion after another graph operation
+		bool FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<int32, FGraph2DHostedObjectDelta> &OutParentIDUpdates);
 		bool FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &Delta);
 
 		bool UpdateGeometry(UWorld *world, int32 id, const TArray<FVector> &points, const FVector& extents);

@@ -33,6 +33,20 @@ namespace Modumate
 		Remove,
 	};
 
+	// TODO: this is redundant with FGraph3DHostedObjectDelta
+	struct FGraph2DHostedObjectDelta
+	{
+		int32 PreviousHostedObjID;
+		int32 PreviousParentID;
+		int32 NextParentID;
+
+		FGraph2DHostedObjectDelta(int32 prevHostedObjID, int32 prevParentID, int32 nextParentID)
+			: PreviousHostedObjID(prevHostedObjID)
+			, PreviousParentID(prevParentID)
+			, NextParentID(nextParentID)
+		{ }
+	};
+
 	// TODO: generalize FGraph3DHostedObjDelta for use here as well
 
 	// A struct that completely describes a change to the 2D graph
