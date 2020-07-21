@@ -29,7 +29,6 @@ namespace Modumate {
 		viewArea->Dimensions = FCoordinates2D::WorldCentimeters(viewArea->Dimensions.AsWorldCentimeters(DrawingScale));
 		worldObjects->TranslateBy(viewArea->Dimensions.X);
 
-		viewArea->Children.Add(worldObjects);
 		worldObjects->Dimensions = FCoordinates2D::WorldCentimeters(worldObjects->BoundingBox.GetSize());
 		worldObjects->TranslateBy(worldObjects->Dimensions.X * -1.0f);
 

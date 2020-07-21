@@ -81,6 +81,8 @@ namespace Modumate
 		FBox2D BoundingBox = FBox2D(EForceInit::ForceInitToZero);
 
 		TUniquePtr<FModumateClippingTriangles> lineClipping;
+		// Cut-plane lines that may occlude beyond cut-plane lines.
+		TArray<FEdge> inPlaneLines;
 	};
 
 	// represents a "node" of an object tree

@@ -2004,3 +2004,38 @@ bool UModumateGeometryStatics::IsPolygonValid(const TArray<FVector> &Points3D, F
 
 	return IsPolygon2DValid(points2D);
 }
+
+// Is OuterLine same-as or containing InnerLine?
+bool UModumateGeometryStatics::IsLineSegmentWithin2D(const FEdge& OuterLine, const FEdge& InnerLine, float epsilon /*= THRESH_POINTS_ARE_NEAR*/)
+{
+	FVector2D outerP1(OuterLine.Vertex[0]);
+	FVector2D outerP2(OuterLine.Vertex[1]);
+	FVector2D outerDir(outerP2 - outerP1);
+	float epsilon2 = epsilon * epsilon;
+
+	float lineLength2 = outerDir.SizeSquared();
+	if (lineLength2 < epsilon2)
+	{
+		return false;
+	}
+	outerDir.Normalize();
+
+	FVector2D innerP1 = FVector2D(InnerLine.Vertex[0] - OuterLine.Vertex[0]);
+	FVector2D innerP2 = FVector2D(InnerLine.Vertex[1] - OuterLine.Vertex[0]);
+
+	float projectedInner1 = outerDir | innerP1;
+	if (projectedInner1 < -epsilon || projectedInner1 * projectedInner1 > lineLength2 + 2.0f * epsilon
+		|| FVector2D::DistSquared(innerP1, projectedInner1 * outerDir) > epsilon2)
+	{
+		return false;
+	}
+
+	float projectedInner2 = outerDir | innerP2;
+	if (projectedInner2 < -epsilon || projectedInner2 * projectedInner2 > lineLength2 + 2.0f * epsilon
+		|| FVector2D::DistSquared(innerP2, projectedInner2 * outerDir) > epsilon2)
+	{
+		return false;
+	}
+
+	return true;
+}

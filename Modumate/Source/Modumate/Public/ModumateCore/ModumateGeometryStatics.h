@@ -228,4 +228,6 @@ public:
 
 	static bool IsPolygon2DValid(const TArray<FVector2D> &Points2D, class FFeedbackContext* InWarn = nullptr);
 	static bool IsPolygonValid(const TArray<FVector> &Points, FPlane PolyPlane = FPlane(ForceInitToZero), class FFeedbackContext* InWarn = nullptr);
+
+	static bool IsLineSegmentWithin2D(const FEdge& OuterLine, const FEdge& InnerLine, float epsilon = THRESH_POINTS_ARE_NEAR);
 };

@@ -495,10 +495,10 @@ namespace Modumate
 		};
 
 		bool bGetFarLines = ParentPage->lineClipping.IsValid();
-
 		if (!bGetFarLines)
 		{
 			float currentThickness = 0.0f;
+			TArray<FVector2D> previousLinePoints;
 			int32 numLines = LayerGeometries.Num() + 1;
 			for (int32 layerIdx = 0; layerIdx < numLines; layerIdx++)
 			{
@@ -576,6 +576,9 @@ namespace Modumate
 					FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersectionEnd);
 					FVector2D delta = end - start;
 
+					ParentPage->inPlaneLines.Emplace(FVector(start, 0), FVector(end, 0));
+
+					int32 linePoint = 0;
 					for (auto& range : lineRanges)
 					{
 						FVector2D clippedStart, clippedEnd;
@@ -591,9 +594,34 @@ namespace Modumate
 							ParentPage->Children.Add(line);
 							line->SetLayerTypeRecursive(dwgLayerType);
 						}
+						if (previousLinePoints.Num() > linePoint)
+						{
+							if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint], rangeStart, BoundingBox, clippedStart, clippedEnd))
+							{
+								TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
+									Units::FCoordinates2D::WorldCentimeters(clippedStart),
+									Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+									lineThickness, lineColor));
+								ParentPage->Children.Add(line);
+								line->SetLayerTypeRecursive(FModumateLayerType::kSeparatorCutOuterSurface);
+							}
+							if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint+1], rangeEnd, BoundingBox, clippedStart, clippedEnd))
+							{
+								TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
+									Units::FCoordinates2D::WorldCentimeters(clippedStart),
+									Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+									lineThickness, lineColor));
+								ParentPage->Children.Add(line);
+								line->SetLayerTypeRecursive(FModumateLayerType::kSeparatorCutOuterSurface);
+							}
+						}
+						previousLinePoints.SetNum(FMath::Max(linePoint + 2, previousLinePoints.Num()) );
+						previousLinePoints[linePoint] = rangeStart;
+						previousLinePoints[linePoint+1] = rangeEnd;
+						linePoint += 2;
 					}
-				}
 
+				}
 				currentThickness += layer.Thickness;
 
 			}
@@ -636,8 +664,19 @@ namespace Modumate
 					{
 						FVector2D vert0(lineSection.Vertex[0]);
 						FVector2D vert1(lineSection.Vertex[1]);
+
+						bool bObscured = false;
+						static constexpr float withinMaxDelta = 1.5f;
+						for (const auto& fgLine : ParentPage->inPlaneLines)
+						{
+							if (UModumateGeometryStatics::IsLineSegmentWithin2D(fgLine, lineSection, withinMaxDelta))
+							{
+								bObscured = true;
+								break;
+							}
+						}
 						
-						if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
+						if (!bObscured && UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 						{
 							TSharedPtr<FDraftingLine> draftingLine = MakeShareable(new FDraftingLine(
 								Units::FCoordinates2D::WorldCentimeters(boxClipped0),
