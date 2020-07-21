@@ -11,9 +11,42 @@ UModumateComboBoxString::UModumateComboBoxString(const FObjectInitializer& Objec
 	OnGenerateWidgetEvent.BindDynamic(this, &UModumateComboBoxString::OnComboBoxGenerateWidget);
 }
 
+void UModumateComboBoxString::SynchronizeProperties()
+{
+	Super::SynchronizeProperties();
+	ApplyCustomStyle();
+}
+
 UWidget* UModumateComboBoxString::OnComboBoxGenerateWidget(FString SelectedItem)
 {
 	UModumateComboBoxStringItem* newItem = CreateWidget<UModumateComboBoxStringItem>(this, ItemWidgetClass);
 	newItem->BuildItem(FText::FromString(SelectedItem));
 	return newItem;
+}
+
+bool UModumateComboBoxString::ApplyCustomStyle()
+{
+	bool bComboBoxWidgetSuccess = false;
+	bool bComboBoxItemSuccess = false;
+
+	if (ComboBoxWidgetStyle)
+	{
+		const FComboBoxStyle* StylePtr = ComboBoxWidgetStyle->GetStyle<FComboBoxStyle>();
+		if (StylePtr)
+		{
+			WidgetStyle = *StylePtr;
+			bComboBoxWidgetSuccess = true;
+		}
+	}
+	if (ComboBoxItemStyle)
+	{
+		const FTableRowStyle* StylePtr = ComboBoxItemStyle->GetStyle<FTableRowStyle>();
+		if (StylePtr)
+		{
+			ItemStyle = *StylePtr;
+			bComboBoxItemSuccess = true;
+		}
+	}
+
+	return bComboBoxWidgetSuccess && bComboBoxItemSuccess;
 }
