@@ -122,7 +122,7 @@ void UComponentAssemblyListItem::UpdateSelectionItemCount(int32 ItemCount)
 
 bool UComponentAssemblyListItem::BuildFromAssembly()
 {
-	if (!ComponentPresetItem)
+	if (!ComponentPresetItem || AsmKey.IsNone())
 	{
 		return false;
 	}
