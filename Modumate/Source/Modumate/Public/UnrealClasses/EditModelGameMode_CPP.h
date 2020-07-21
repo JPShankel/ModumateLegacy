@@ -72,28 +72,7 @@ public:
 	UMaterialInterface *LineMaterial;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UStaticMesh *FlipHandleMesh;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UStaticMesh *JustificationHandleMesh;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UStaticMesh *JustificationHandleChildMesh;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UStaticMesh *FaceAdjusterMesh;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UStaticMesh *PointAdjusterMesh;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UStaticMesh *MetaPlaneVertexIconMesh;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UStaticMesh *RotateHandleMesh;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UStaticMesh *InvertHandleMesh;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UMaterialInterface *BillboardTextureMaterial;
