@@ -6,10 +6,7 @@
 #include "Database/ModumateObjectEnums.h"
 #include "BIMWidgetStatics.generated.h"
 
-namespace Modumate
-{
-	class MODUMATE_API ModumateObjectDatabase;
-}
+class MODUMATE_API FModumateDatabase;
 
 /*
 TODO: Rename these blueprint structs to reflect intent that they are used for UI crafting
@@ -136,6 +133,6 @@ public:
 	static ECraftingResult GetPinGroupsForNode(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, const Modumate::BIM::FCraftingPresetCollection &PresetCollection, int32 NodeID, TArray<FCraftingNodePinGroup> &OutPins);
 	static ECraftingResult DragMovePinChild(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, int32 InstanceID, const FName &PinGroup, int32 From, int32 To);
 	static ECraftingResult GetLayerIDFromNodeInstanceID(const Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, const Modumate::BIM::FCraftingPresetCollection &PresetCollection, int32 InstanceID, int32 &OutLayerID, int32 &NumberOfLayers);
-	static ECraftingResult GetPropertyTipsByIconType(const Modumate::ModumateObjectDatabase &InDB, EConfiguratorNodeIconType IconType, const Modumate::BIM::FModumateAssemblyPropertySpec &PresetProperties, TArray<FString> &OutTips);
+	static ECraftingResult GetPropertyTipsByIconType(const FModumateDatabase &InDB, EConfiguratorNodeIconType IconType, const Modumate::BIM::FModumateAssemblyPropertySpec &PresetProperties, TArray<FString> &OutTips);
 	static ECraftingResult GetEligiblePresetsForSwap(Modumate::BIM::FCraftingTreeNodeInstancePool &NodeInstances, const Modumate::BIM::FCraftingPresetCollection &PresetCollection, int32 InstanceID, TArray<FCraftingNode> &OutPresets);
 };

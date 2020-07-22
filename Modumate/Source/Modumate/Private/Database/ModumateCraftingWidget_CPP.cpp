@@ -68,7 +68,7 @@ ECraftingResult UModumateCraftingWidget_CPP::GetPropertiesForPresetID(EToolMode 
 ECraftingResult UModumateCraftingWidget_CPP::GetPropertyTipsForPresetByIconType(EConfiguratorNodeIconType IconType, const FName &PresetID, TArray<FString> &OutTips)
 {
 	const FPresetManager &presetManager = GetDocumentPresetManager();
-	const ModumateObjectDatabase *db = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+	const FModumateDatabase *db = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
 
 	BIM::FModumateAssemblyPropertySpec presetSpec;
 	presetManager.PresetToSpec(PresetID, presetSpec);
@@ -165,7 +165,7 @@ ECraftingResult UModumateCraftingWidget_CPP::TryMakeNodeAssembly(EToolMode ToolM
 		spec.RootPreset = starterNode->PresetID;
 	}
 
-	const ModumateObjectDatabase *db = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+	const FModumateDatabase *db = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
 
 	EObjectType ot = UModumateTypeStatics::ObjectTypeFromToolMode(ToolMode);
 

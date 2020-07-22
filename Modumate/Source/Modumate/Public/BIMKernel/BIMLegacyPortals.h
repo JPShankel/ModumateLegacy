@@ -60,9 +60,10 @@ enum class EPortalSlotType : uint8
 	Caster
 };
 
+class MODUMATE_API FModumateDatabase;
+
 namespace Modumate
 {
-	class ModumateObjectDatabase;
 
 	struct MODUMATE_API FCraftingOptionBase
 	{

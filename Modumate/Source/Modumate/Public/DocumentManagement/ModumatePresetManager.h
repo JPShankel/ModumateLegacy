@@ -13,13 +13,13 @@ namespace Modumate
 	class MODUMATE_API FPresetManager 
 	{
 	public:
-		typedef DataCollection<FModumateObjectAssembly> FAssemblyDataCollection;
+		typedef TModumateDataCollection<FModumateObjectAssembly> FAssemblyDataCollection;
 		typedef TMap<FName, FGraph2DRecord> FGraphCollection;
 
 	private:
 
-		// ModumateObjectDatabase initializes the preset manager for a new document
-		friend class ModumateObjectDatabase;
+		// FModumateDatabase initializes the preset manager for a new document
+		friend class FModumateDatabase;
 
 		FGraphCollection GraphCollection;
 		TSet<FName> KeyStore;

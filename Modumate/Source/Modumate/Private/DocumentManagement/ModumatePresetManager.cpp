@@ -227,7 +227,7 @@ namespace Modumate
 
 	bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FName &PresetID, const FModumateObjectAssembly *&OutAssembly) const
 	{
-		const DataCollection<FModumateObjectAssembly> *db = AssembliesByObjectType.Find(ObjectType);
+		const TModumateDataCollection<FModumateObjectAssembly> *db = AssembliesByObjectType.Find(ObjectType);
 
 		// It's legal for an object database to not exist
 		if (db == nullptr)
@@ -250,21 +250,21 @@ namespace Modumate
 	FPresetManager::Result FPresetManager::InitAssemblyDBs()
 	{
 		AssemblyDBs_DEPRECATED.Reset();
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_WALL, DataCollection<FModumateObjectAssembly>());
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_FLOOR, DataCollection<FModumateObjectAssembly>());
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_DOOR, DataCollection<FModumateObjectAssembly>());
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_WINDOW, DataCollection<FModumateObjectAssembly>());
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_STAIR, DataCollection<FModumateObjectAssembly>());
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_RAIL, DataCollection<FModumateObjectAssembly>());
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_CABINET, DataCollection<FModumateObjectAssembly>());
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_COUNTERTOP, DataCollection<FModumateObjectAssembly>());
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_FINISH, DataCollection<FModumateObjectAssembly>());
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_PLACEOBJECT, DataCollection<FModumateObjectAssembly>());
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_TRIM, DataCollection<FModumateObjectAssembly>());
-		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_ROOF_FACE, DataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_WALL, TModumateDataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_FLOOR, TModumateDataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_DOOR, TModumateDataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_WINDOW, TModumateDataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_STAIR, TModumateDataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_RAIL, TModumateDataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_CABINET, TModumateDataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_COUNTERTOP, TModumateDataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_FINISH, TModumateDataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_PLACEOBJECT, TModumateDataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_TRIM, TModumateDataCollection<FModumateObjectAssembly>());
+		AssemblyDBs_DEPRECATED.Add(EToolMode::VE_ROOF_FACE, TModumateDataCollection<FModumateObjectAssembly>());
 
-		AssembliesByObjectType.Add(EObjectType::OTStructureLine, DataCollection<FModumateObjectAssembly>());
-		AssembliesByObjectType.Add(EObjectType::OTRoofPerimeter, DataCollection<FModumateObjectAssembly>());
+		AssembliesByObjectType.Add(EObjectType::OTStructureLine, TModumateDataCollection<FModumateObjectAssembly>());
+		AssembliesByObjectType.Add(EObjectType::OTRoofPerimeter, TModumateDataCollection<FModumateObjectAssembly>());
 
 		return NoError;
 	}
@@ -304,7 +304,7 @@ Starting point: get a tree
 			}
 		}
 
-		const DataCollection<FModumateObjectAssembly> *db = AssemblyDBs_DEPRECATED.Find(Mode);
+		const TModumateDataCollection<FModumateObjectAssembly> *db = AssemblyDBs_DEPRECATED.Find(Mode);
 
 		if (ensureAlways(db != nullptr))
 		{
@@ -319,7 +319,7 @@ Starting point: get a tree
 		{
 			return ECraftingResult::Error;
 		}
-		const DataCollection<FModumateObjectAssembly> *db = AssembliesByObjectType.Find(ObjectType);
+		const TModumateDataCollection<FModumateObjectAssembly> *db = AssembliesByObjectType.Find(ObjectType);
 		
 		if (db == nullptr)
 		{
@@ -417,7 +417,7 @@ Starting point: get a tree
 	ECraftingResult FPresetManager::MakeNewOrUpdateExistingPresetFromParameterSet(UWorld *World,const FModumateFunctionParameterSet &ParameterSet,FName &OutKey)
 	{
 		AEditModelGameMode_CPP *mode = Cast<AEditModelGameMode_CPP>(World->GetAuthGameMode());
-		Modumate::ModumateObjectDatabase &objectDB = *mode->ObjectDatabase;
+		FModumateDatabase &objectDB = *mode->ObjectDatabase;
 
 		BIM::FCraftingTreeNodePreset preset;
 		ECraftingResult result = preset.FromParameterSet(CraftingNodePresets,ParameterSet);

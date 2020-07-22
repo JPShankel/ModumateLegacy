@@ -47,7 +47,7 @@ Tool Mode accessors
 
 void AEditModelGameState_CPP::ImportAssemblyFromMarketplace(EToolMode mode, const FName &key)
 {
-	Modumate::ModumateObjectDatabase *objectDB = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+	FModumateDatabase *objectDB = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
 	const FModumateObjectAssembly *pAsm = objectDB->PresetManager.GetAssemblyByKey(mode,key);
 
 	if (pAsm != nullptr)

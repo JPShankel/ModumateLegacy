@@ -19,7 +19,7 @@ AEditModelGameMode_CPP::AEditModelGameMode_CPP()
 	PlayerStateClass = AEditModelPlayerState_CPP::StaticClass();
 	DynamicMeshActorClass = ADynamicMeshActor::StaticClass();
 
-	ObjectDatabase = new Modumate::ModumateObjectDatabase();
+	ObjectDatabase = new FModumateDatabase();
 
 	ObjectDatabase->Init();
 }

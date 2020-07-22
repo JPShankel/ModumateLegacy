@@ -381,7 +381,7 @@ public:
 		}
 	}
 
-	FModumateObjectAssemblyLayer Make(const Modumate::ModumateObjectDatabase &db)
+	FModumateObjectAssemblyLayer Make(const FModumateDatabase &db)
 	{
 		FModumateObjectAssemblyLayer ret;
 
@@ -554,7 +554,7 @@ public:
 // TODO: break out parameter validation and assembly construction to each object type rather than relying on the assembly class to know everyone's business
 bool FModumateObjectAssembly::FromCraftingProperties_DEPRECATED(
 	EObjectType ot,
-	const Modumate::ModumateObjectDatabase &db,
+	const FModumateDatabase &db,
 	const Modumate::FPresetManager &presetManager,
 	const BIM::FModumateAssemblyPropertySpec &spec,
 	FModumateObjectAssembly &outMOA,
@@ -779,7 +779,7 @@ bool FModumateObjectAssembly::FromCraftingProperties_DEPRECATED(
 
 bool FModumateObjectAssembly::FromDataRecord_DEPRECATED(
 	const FCustomAssemblyRecord &record,
-	const Modumate::ModumateObjectDatabase &objectDB,
+	const FModumateDatabase &objectDB,
 	const FPresetManager &presetManager,
 	FModumateObjectAssembly &outMOA)
 {
@@ -833,7 +833,7 @@ bool FModumateObjectAssembly::FromDataRecord_DEPRECATED(
 	}
 	else
 	{
-		const DataCollection<FModumateObjectAssembly> *ffeDB = presetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
+		const TModumateDataCollection<FModumateObjectAssembly> *ffeDB = presetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
 		const FModumateObjectAssembly *originalAsm = ffeDB->GetData(*record.DatabaseKey);
 		if (originalAsm == nullptr)
 		{
@@ -861,7 +861,7 @@ void FModumateObjectAssembly::ReverseLayers()
 
 bool UModumateObjectAssemblyStatics::CheckCanMakeAssembly(
 	EObjectType OT,
-	const Modumate::ModumateObjectDatabase &InDB,
+	const FModumateDatabase &InDB,
 	const BIM::FModumateAssemblyPropertySpec &InSpec)
 {
 	if (UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(OT))
@@ -873,7 +873,7 @@ bool UModumateObjectAssemblyStatics::CheckCanMakeAssembly(
 }
 
 ECraftingResult UModumateObjectAssemblyStatics::MakeLayeredAssembly(
-	const Modumate::ModumateObjectDatabase &InDB,
+	const FModumateDatabase &InDB,
 	const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec,
 	FModumateObjectAssembly &OutMOA)
 {
@@ -902,7 +902,7 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeLayeredAssembly(
 }
 
 ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
-	const Modumate::ModumateObjectDatabase &InDB,
+	const FModumateDatabase &InDB,
 	const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec,
 	FModumateObjectAssembly &OutMOA)
 {
@@ -970,7 +970,7 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 
 
 ECraftingResult UModumateObjectAssemblyStatics::DoMakeAssembly(
-	const Modumate::ModumateObjectDatabase &InDB,
+	const FModumateDatabase &InDB,
 	const Modumate::FPresetManager &PresetManager,
 	const BIM::FModumateAssemblyPropertySpec &InSpec,
 	FModumateObjectAssembly &OutMOA,

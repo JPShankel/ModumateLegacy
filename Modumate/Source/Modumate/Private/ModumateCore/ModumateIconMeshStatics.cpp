@@ -9,7 +9,7 @@ using namespace Modumate;
 
 bool UModumateIconMeshStatics::GetMeshesFromShoppingItem(AEditModelPlayerController_CPP *Controller, const FName &AsmKey, EToolMode FromToolMode, TArray<UStaticMesh*>& TargetComps, bool bMarketplaceAsm)
 {
-	ModumateObjectDatabase *obDB = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+	FModumateDatabase *obDB = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
 	const FModumateObjectAssembly *obAsm = bMarketplaceAsm ?
 		obDB->PresetManager.GetAssemblyByKey(FromToolMode, AsmKey) :
 		Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>()->GetAssemblyByKey_DEPRECATED(FromToolMode, AsmKey);
@@ -32,7 +32,7 @@ bool UModumateIconMeshStatics::GetEngineMaterialByKey(AEditModelPlayerController
 {
 	if (Controller != nullptr)
 	{
-		ModumateObjectDatabase *db = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+		FModumateDatabase *db = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
 		const FArchitecturalMaterial *mat = db->GetArchitecturalMaterialByKey(Key);
 		if (ensureAlways(mat != nullptr) && ensureAlways(mat->EngineMaterial.IsValid()))
 		{
@@ -48,7 +48,7 @@ bool UModumateIconMeshStatics::GetEngineCustomColorByKey(AEditModelPlayerControl
 {
 	if (Controller != nullptr)
 	{
-		ModumateObjectDatabase *db = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+		FModumateDatabase *db = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
 		const FCustomColor *color = db->GetCustomColorByKey(Key);
 		if (ensureAlways(color != nullptr))
 		{
@@ -64,7 +64,7 @@ bool UModumateIconMeshStatics::GetEngineStaticIconTextureByKey(AEditModelPlayerC
 {
 	if (Controller != nullptr)
 	{
-		ModumateObjectDatabase *db = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+		FModumateDatabase *db = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
 		const FStaticIconTexture *icon = db->GetStaticIconTextureByKey(Key);
 		if (ensureAlways(icon != nullptr))
 		{
@@ -80,7 +80,7 @@ bool UModumateIconMeshStatics::MakeIconMeshFromPofileKey(AEditModelPlayerControl
 {
 	if (Controller != nullptr)
 	{
-		ModumateObjectDatabase *db = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+		FModumateDatabase *db = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
 		const FSimpleMeshRef* meshRef = db->GetSimpleMeshByKey(ProfileKey);
 		
 		if (meshRef != nullptr)
@@ -115,7 +115,7 @@ bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContex
 
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
-	ModumateObjectDatabase *db = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase : nullptr;
+	FModumateDatabase *db = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase : nullptr;
 	if (gameState == nullptr && db == nullptr)
 	{
 		return false;

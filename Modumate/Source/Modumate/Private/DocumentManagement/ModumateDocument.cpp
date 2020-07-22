@@ -2639,7 +2639,7 @@ int32 FModumateDocument::CreateFFE(
 	// If we generated a code name, this is the first time this object was used
 	if (!newFFECode.IsNone())
 	{
-		DataCollection<FModumateObjectAssembly>  *db = PresetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
+		TModumateDataCollection<FModumateObjectAssembly>  *db = PresetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
 		if (ensureAlways(db != nullptr))
 		{
 			db->RemoveData(oldAsm);
@@ -3111,14 +3111,14 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 
 	AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
 
-	Modumate::ModumateObjectDatabase *objectDB = gameMode->ObjectDatabase;
+	FModumateDatabase *objectDB = gameMode->ObjectDatabase;
 
 	FModumateDocumentHeader docHeader;
 	FMOIDocumentRecord docRec;
 
 	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(path, docHeader, docRec))
 	{
-		DataCollection<FModumateObjectAssembly> *ffeDB = PresetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
+		TModumateDataCollection<FModumateObjectAssembly> *ffeDB = PresetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
 
 		CommandHistory = docRec.CommandHistory;
 
@@ -3791,7 +3791,7 @@ TArray<FModumateObjectAssembly> FModumateDocument::GetAssembliesForToolMode_DEPR
 	}
 	else
 	{
-		const DataCollection<FModumateObjectAssembly> *db = PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
+		const TModumateDataCollection<FModumateObjectAssembly> *db = PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
 		if (db != nullptr)
 		{
 			db->DataMap.GenerateValueArray(ret);
@@ -3802,7 +3802,7 @@ TArray<FModumateObjectAssembly> FModumateDocument::GetAssembliesForToolMode_DEPR
 
 bool FModumateDocument::RemoveAssembly(UWorld *world, EToolMode toolMode, const FName &assemblyKey, const FName &replacementKey)
 {
-	DataCollection<FModumateObjectAssembly> *db = PresetManager.AssemblyDBs_DEPRECATED.Find(toolMode);
+	TModumateDataCollection<FModumateObjectAssembly> *db = PresetManager.AssemblyDBs_DEPRECATED.Find(toolMode);
 	const FModumateObjectAssembly *pOriginal = PresetManager.GetAssemblyByKey(toolMode, assemblyKey);
 
 	if (ensureAlways(db != nullptr && pOriginal != nullptr))
@@ -3888,7 +3888,7 @@ FModumateObjectAssembly FModumateDocument::OverwriteAssembly_DEPRECATED(
 	UndoRedo *ur = new UndoRedo();
 	FModumateObjectAssembly oldAsm;
 
-	DataCollection<FModumateObjectAssembly>  *db = PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
+	TModumateDataCollection<FModumateObjectAssembly>  *db = PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
 	ensureAlways(db != nullptr);
 
 	const FModumateObjectAssembly *pOldAsm = db->GetData(newAsm.DatabaseKey);
@@ -3911,7 +3911,7 @@ FModumateObjectAssembly FModumateDocument::CreateNewAssembly_DEPRECATED(
 	ClearRedoBuffer();
 	UndoRedo *ur = new UndoRedo();
 
-	DataCollection<FModumateObjectAssembly> *db = PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
+	TModumateDataCollection<FModumateObjectAssembly> *db = PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
 	ensureAlways(db != nullptr);
 
 	FModumateObjectAssembly newAsm = assembly;
@@ -3933,7 +3933,7 @@ FModumateObjectAssembly FModumateDocument::CreateOrOverwriteAssembly_DEPRECATED(
 	EToolMode mode,
 	const FModumateObjectAssembly &assembly)
 {
-	DataCollection<FModumateObjectAssembly>  *db = PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
+	TModumateDataCollection<FModumateObjectAssembly>  *db = PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
 	ensureAlways(db != nullptr);
 	if (db->GetData(assembly.DatabaseKey) != nullptr)
 	{

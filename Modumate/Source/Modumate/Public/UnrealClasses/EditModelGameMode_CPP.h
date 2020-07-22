@@ -6,9 +6,7 @@
 #include "UnrealClasses/ModumateGameModeBase.h"
 #include "EditModelGameMode_CPP.generated.h"
 
-namespace Modumate {
-	class ModumateObjectDatabase;
-}
+class MODUMATE_API FModumateDatabase;
 
 class UDataTable;
 
@@ -84,7 +82,7 @@ public:
 	UTexture2D *ButtonEditRedTexture;
 
 
-	Modumate::ModumateObjectDatabase *ObjectDatabase;
+	FModumateDatabase *ObjectDatabase;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* RoomConfigurationTable;

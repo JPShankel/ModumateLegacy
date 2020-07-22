@@ -148,10 +148,11 @@ An Object assembly is a collection of layers
 namespace Modumate
 {
 	class MODUMATE_API IPresetManager;
-	class MODUMATE_API ModumateObjectDatabase;
 	class MODUMATE_API FModumateDocument;
 	class MODUMATE_API FPresetManager;
 }
+
+class MODUMATE_API FModumateDatabase;
 
 USTRUCT(BlueprintType)
 struct FModumateObjectAssembly
@@ -211,7 +212,7 @@ struct FModumateObjectAssembly
 	//TODO: move to UModumateObjectAssemblyStatics and refactor each object type to do its own assembly synthesis/analysis
 	static bool FromCraftingProperties_DEPRECATED(
 		EObjectType ot,
-		const Modumate::ModumateObjectDatabase &db,
+		const FModumateDatabase &db,
 		const Modumate::FPresetManager &presetManager,
 		const Modumate::BIM::FModumateAssemblyPropertySpec &spec,
 		FModumateObjectAssembly &outMOA,
@@ -220,7 +221,7 @@ struct FModumateObjectAssembly
 	//TODO: in DDL 2.0, runtime assemblies will not need to be serialized
 	static bool FromDataRecord_DEPRECATED(
 		const FCustomAssemblyRecord &record, 
-		const Modumate::ModumateObjectDatabase &objectDB,
+		const FModumateDatabase &objectDB,
 		const Modumate::FPresetManager &presetManager,
 		FModumateObjectAssembly &outMOA);
 };
@@ -235,23 +236,23 @@ class MODUMATE_API UModumateObjectAssemblyStatics : public UBlueprintFunctionLib
 		TODO: consider moving these to individual MOI modules after all categories are covered for DDL2
 		*/
 		static ECraftingResult MakeLayeredAssembly(
-			const Modumate::ModumateObjectDatabase &InDB,
+			const FModumateDatabase &InDB,
 			const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec,
 			FModumateObjectAssembly &OutMOA);
 
 		static ECraftingResult MakeStructureLineAssembly(
-			const Modumate::ModumateObjectDatabase &InDB,
+			const FModumateDatabase &InDB,
 			const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec,
 			FModumateObjectAssembly &OutMOA);
 
 	public:
 		static bool CheckCanMakeAssembly(
 			EObjectType OT,
-			const Modumate::ModumateObjectDatabase &InDB,
+			const FModumateDatabase &InDB,
 			const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec);
 
 		static ECraftingResult DoMakeAssembly(
-			const Modumate::ModumateObjectDatabase &InDB,
+			const FModumateDatabase &InDB,
 			const Modumate::FPresetManager &PresetManager,
 			const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec,
 			FModumateObjectAssembly &OutMOA,

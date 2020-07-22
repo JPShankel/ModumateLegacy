@@ -1428,7 +1428,7 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshes(const TArray<UProcedura
 		}
 		else
 		{
-			Modumate::ModumateObjectDatabase *obDB = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+			FModumateDatabase *obDB = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
 			const FModumateObjectAssembly* asmByKey = bUseMarketplaceAsm ? 
 				obDB->PresetManager.GetAssemblyByKey(FromToolMode, AssemblyKey) :
 				emGameState->GetAssemblyByKey_DEPRECATED(FromToolMode, AssemblyKey);
@@ -1457,7 +1457,7 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshes(const TArray<UProcedura
 		}
 		else
 		{
-			Modumate::ModumateObjectDatabase *obDB = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
+			FModumateDatabase *obDB = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
 			const FModumateObjectAssembly* keyASM = bUseMarketplaceAsm ?
 				obDB->PresetManager.GetAssemblyByKey(FromToolMode, AssemblyKey) :
 				emGameState->GetAssemblyByKey_DEPRECATED(FromToolMode, AssemblyKey);
