@@ -143,9 +143,9 @@ FVector2D FLayerGeomDef::ProjectPoint2D(const FVector &Point3D) const
 	return UModumateGeometryStatics::ProjectPoint2D(Point3D, AxisX, AxisY, Origin);
 }
 
-FVector FLayerGeomDef::ProjectPoint3D(const FVector2D &Point2D, bool bSideA) const
+FVector FLayerGeomDef::Deproject2DPoint(const FVector2D &Point2D, bool bSideA) const
 {
-	return Origin + (AxisX * Point2D.X) + (AxisY * Point2D.Y) +
+	return UModumateGeometryStatics::Deproject2DPoint(Point2D, AxisX, AxisY, Origin) +
 		(bSideA ? FVector::ZeroVector : (Thickness * Normal));
 }
 
@@ -238,10 +238,10 @@ bool FLayerGeomDef::TriangulateSideFace(const FVector2D &Point2DA1, const FVecto
 	const FVector2D &UVScale, const FVector &UVAnchor, float UVRotOffset) const
 {
 	TempSidePoints.SetNum(4);
-	TempSidePoints[0] = ProjectPoint3D(Point2DA1, true);
-	TempSidePoints[1] = ProjectPoint3D(Point2DA2, true);
-	TempSidePoints[2] = ProjectPoint3D(Point2DB1, false);
-	TempSidePoints[3] = ProjectPoint3D(Point2DB2, false);
+	TempSidePoints[0] = Deproject2DPoint(Point2DA1, true);
+	TempSidePoints[1] = Deproject2DPoint(Point2DA2, true);
+	TempSidePoints[2] = Deproject2DPoint(Point2DB1, false);
+	TempSidePoints[3] = Deproject2DPoint(Point2DB2, false);
 
 	FPlane sidePlane(ForceInitToZero);
 	bool bSidePointsPlanar = UModumateGeometryStatics::GetPlaneFromPoints(TempSidePoints, sidePlane);
@@ -374,7 +374,7 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &Ou
 	AppendTriangles(OutVerts, trisA2D, OutTris, false);
 	for (const FVector2D &vertexA2D : verticesA2D)
 	{
-		FVector vertexA = ProjectPoint3D(vertexA2D, true);
+		FVector vertexA = Deproject2DPoint(vertexA2D, true);
 		OutVerts.Add(vertexA);
 		FVector2D uvA = UModumateGeometryStatics::ProjectPoint2D(vertexA, -AxisX, AxisY, UVAnchor);
 		OutUVs.Add(uvA * uvScale);
@@ -392,7 +392,7 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &Ou
 	AppendTriangles(OutVerts, trisB2D, OutTris, true);
 	for (const FVector2D &vertexB2D : verticesB2D)
 	{
-		FVector vertexB = ProjectPoint3D(vertexB2D, false);
+		FVector vertexB = Deproject2DPoint(vertexB2D, false);
 		OutVerts.Add(vertexB);
 		FVector2D uvB = UModumateGeometryStatics::ProjectPoint2D(vertexB, AxisX, AxisY, UVAnchor);
 		OutUVs.Add(uvB * uvScale);
@@ -572,6 +572,11 @@ FVector2D UModumateGeometryStatics::ProjectPoint2D(const FVector &Point3D, const
 		originDelta | AxisX,
 		originDelta | AxisY
 	);
+}
+
+FVector UModumateGeometryStatics::Deproject2DPoint(const FVector2D &Point2D, const FVector &AxisX, const FVector &AxisY, const FVector &Origin)
+{
+	return Origin + (AxisX * Point2D.X) + (AxisY * Point2D.Y);
 }
 
 FVector2D UModumateGeometryStatics::ProjectVector2D(const FVector &Vector3D, const FVector &AxisX, const FVector &AxisY)

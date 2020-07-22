@@ -303,48 +303,104 @@ namespace Modumate
 	void FModumateObjectInstance::GetConnectedIDs(TArray<int32> &connectedIDs) const
 	{
 		connectedIDs.Reset();
+		EObjectType objectType = GetObjectType();
 
-		const FGraph3D &graph = Document->GetVolumeGraph();
-		EGraph3DObjectType graphObjectType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(GetObjectType());
-		switch (graphObjectType)
+		EGraph3DObjectType graph3DObjectType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
+		if (graph3DObjectType != EGraph3DObjectType::None)
 		{
-		case EGraph3DObjectType::Vertex:
-			if (const FGraph3DVertex *graphVertex = graph.FindVertex(ID))
+			const FGraph3D &graph = Document->GetVolumeGraph();
+			switch (graph3DObjectType)
 			{
-				for (FSignedID directedEdgeID : graphVertex->ConnectedEdgeIDs)
+			case EGraph3DObjectType::Vertex:
+				if (const FGraph3DVertex *graphVertex = graph.FindVertex(ID))
 				{
-					connectedIDs.Add(FMath::Abs(directedEdgeID));
+					for (FSignedID directedEdgeID : graphVertex->ConnectedEdgeIDs)
+					{
+						connectedIDs.Add(FMath::Abs(directedEdgeID));
+					}
 				}
-			}
-			break;
-		case EGraph3DObjectType::Edge:
-			if (const FGraph3DEdge *graphEdge = graph.FindEdge(ID))
-			{
-				connectedIDs.Add(graphEdge->StartVertexID);
-				connectedIDs.Add(graphEdge->EndVertexID);
+				return;
+			case EGraph3DObjectType::Edge:
+				if (const FGraph3DEdge *graphEdge = graph.FindEdge(ID))
+				{
+					connectedIDs.Add(graphEdge->StartVertexID);
+					connectedIDs.Add(graphEdge->EndVertexID);
 
-				for (const auto &connectedFace : graphEdge->ConnectedFaces)
-				{
-					connectedIDs.Add(FMath::Abs(connectedFace.FaceID));
+					for (const auto &connectedFace : graphEdge->ConnectedFaces)
+					{
+						connectedIDs.Add(FMath::Abs(connectedFace.FaceID));
+					}
 				}
-			}
-			break;
-		case EGraph3DObjectType::Face:
-			if (const FGraph3DFace *graphFace = graph.FindFace(ID))
-			{
-				for (int32 vertexID : graphFace->VertexIDs)
+				return;
+			case EGraph3DObjectType::Face:
+				if (const FGraph3DFace *graphFace = graph.FindFace(ID))
 				{
-					connectedIDs.Add(vertexID);
-				}
+					for (int32 vertexID : graphFace->VertexIDs)
+					{
+						connectedIDs.Add(vertexID);
+					}
 
-				for (FSignedID directedEdgeID : graphFace->EdgeIDs)
+					for (FSignedID directedEdgeID : graphFace->EdgeIDs)
+					{
+						connectedIDs.Add(FMath::Abs(directedEdgeID));
+					}
+				}
+				return;
+			default:
+				break;
+			}
+		}
+
+		EGraphObjectType graph2DObjectType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(objectType);
+		if (graph2DObjectType != EGraphObjectType::None)
+		{
+			if (const FGraph2D *surfaceGraph = Document->FindSurfaceGraph(GetParentID()))
+			{
+				switch (objectType)
 				{
-					connectedIDs.Add(FMath::Abs(directedEdgeID));
+				case EObjectType::OTSurfaceVertex:
+					if (const FGraph2DVertex *vertex = surfaceGraph->FindVertex(ID))
+					{
+						for (FEdgeID directedEdgeID : vertex->Edges)
+						{
+							connectedIDs.Add(FMath::Abs(directedEdgeID));
+						}
+					}
+					return;
+				case EObjectType::OTSurfaceEdge:
+					if (const FGraph2DEdge *edge = surfaceGraph->FindEdge(ID))
+					{
+						connectedIDs.Add(edge->StartVertexID);
+						connectedIDs.Add(edge->EndVertexID);
+
+						if (edge->LeftPolyID != MOD_ID_NONE)
+						{
+							connectedIDs.Add(edge->LeftPolyID);
+						}
+						if (edge->RightPolyID != MOD_ID_NONE)
+						{
+							connectedIDs.Add(edge->RightPolyID);
+						}
+					}
+					return;
+				case EObjectType::OTSurfacePolygon:
+					if (const FGraph2DPolygon *polygon = surfaceGraph->FindPolygon(ID))
+					{
+						for (int32 vertexID : polygon->VertexIDs)
+						{
+							connectedIDs.Add(vertexID);
+						}
+
+						for (FEdgeID directedEdgeID : polygon->Edges)
+						{
+							connectedIDs.Add(FMath::Abs(directedEdgeID));
+						}
+					}
+					return;
+				default:
+					break;
 				}
 			}
-			break;
-		default:
-			break;
 		}
 	}
 

@@ -39,18 +39,17 @@ protected:
 	UPROPERTY()
 	class UDimensionManager* DimensionManager;
 
-	class Modumate::FModumateObjectInstance *LastHostTarget = nullptr;
-	class Modumate::FModumateObjectInstance *LastGraphTarget = nullptr;
+	class Modumate::FModumateObjectInstance *HostTarget = nullptr;
+	class Modumate::FModumateObjectInstance *GraphTarget = nullptr;
 
 	UPROPERTY()
-	AActor* LastHitHostActor;
+	AActor* HitHostActor;
 
-	FVector LastValidHitLocation;
-	FVector LastValidHitNormal;
-	int32 LastValidFaceIndex;
-	TArray<int32> LastCornerIndices;
-	TArray<FVector> LastCornerPositions;
-	FPlane LastTargetFacePlane;
+	FVector HitLocation, HitNormal;
+	int32 HitFaceIndex;
+	TArray<int32> HostCornerIndices;
+	TArray<FVector> HostCornerPositions;
+	FVector TargetFaceOrigin, TargetFaceNormal, TargetFaceAxisX, TargetFaceAxisY;
 	EMouseMode OriginalMouseMode;
 	int32 PendingSegmentID;
 };

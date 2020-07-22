@@ -144,16 +144,17 @@ bool UFinishTool::FrameUpdate()
 			}
 		}
 
-		FVector faceNormal;
-		if (LastValidTarget && UModumateObjectStatics::GetGeometryFromFaceIndex(LastValidTarget, LastValidFaceIndex, LastCornerIndices, faceNormal))
+		FVector faceNormal, faceAxisX, faceAxisY;
+		if (LastValidTarget && UModumateObjectStatics::GetGeometryFromFaceIndex(LastValidTarget, LastValidFaceIndex,
+			LastCornerPoints, faceNormal, faceAxisX, faceAxisY))
 		{
-			int32 numCorners = LastCornerIndices.Num();
+			int32 numCorners = LastCornerPoints.Num();
 			for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
 			{
 				int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
 
-				FVector curCornerPos = LastValidTarget->GetCorner(LastCornerIndices[curCornerIdx]);
-				FVector nextCornerPos = LastValidTarget->GetCorner(LastCornerIndices[nextCornerIdx]);
+				FVector curCornerPos = LastCornerPoints[curCornerIdx];
+				FVector nextCornerPos = LastCornerPoints[nextCornerIdx];
 
 				Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(
 					curCornerPos, nextCornerPos, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness)

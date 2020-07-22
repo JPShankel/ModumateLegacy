@@ -1227,6 +1227,10 @@ bool AEditModelPlayerState_CPP::IsObjectTypeEnabledByViewMode(EObjectType Object
 	case EObjectType::OTCutPlane:
 	case EObjectType::OTScopeBox: // TODO: cut planes and scope boxes will have individually toggled visibility in the app
 		return EMPlayerController->bCutPlaneVisible;
+	case EObjectType::OTWallSegment:
+	case EObjectType::OTFloorSegment:
+	case EObjectType::OTRoofFace:
+		return (SelectedViewMode == EEditViewModes::ObjectEditing) || (SelectedViewMode == EEditViewModes::SurfaceGraphs);
 	default:
 		return SelectedViewMode == EEditViewModes::ObjectEditing;
 	}

@@ -3,6 +3,13 @@
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UI/EditModelPlayerHUD.h"
 
+
+FAffordanceFrame::FAffordanceFrame()
+	: Origin(ForceInitToZero)
+	, Normal(FVector::UpVector)
+	, Tangent(ForceInitToZero)
+{ }
+
 bool FSnappedCursor::TryMakeAffordanceLineFromCursorToSketchPlane(FAffordanceLine &outAffordance, FVector &outHitPoint) const
 {
 	FVector projected = SketchPlaneProject(WorldPosition);
@@ -26,23 +33,25 @@ FVector FSnappedCursor::SketchPlaneProject(const FVector &p) const
 
 bool FSnappedCursor::HasAffordanceSet() const
 {
-	return AffordanceFrame.bHasValue;
+	return bHasCustomAffordance;
 }
 
-void FSnappedCursor::SetAffordanceFrame(const FVector &origin, const FVector &normal, const FVector &tangent)
+void FSnappedCursor::SetAffordanceFrame(const FVector &origin, const FVector &normal, const FVector &tangent, bool bInVerticalAffordanceSnap, bool bInSnapGlobalAxes)
 {
 	AffordanceFrame.Origin = origin;
 	AffordanceFrame.Normal = normal;
 	AffordanceFrame.Tangent = tangent;
-	AffordanceFrame.bHasValue = true;
+	bHasCustomAffordance = true;
+	WantsVerticalAffordanceSnap = bInVerticalAffordanceSnap;
+	bSnapGlobalAxes = bInSnapGlobalAxes;
 }
 
 void FSnappedCursor::ClearAffordanceFrame()
 {
-	AffordanceFrame.Origin = FVector::ZeroVector;
-	AffordanceFrame.Normal = FVector::UpVector;
-	AffordanceFrame.Tangent = FVector::ZeroVector;
-	AffordanceFrame.bHasValue = false;
+	AffordanceFrame = FAffordanceFrame();
+	bHasCustomAffordance = false;
+	WantsVerticalAffordanceSnap = false;
+	bSnapGlobalAxes = true;
 }
 
 bool FSnappedCursor::TryGetRaySketchPlaneIntersection(const FVector &origin, const FVector &direction, FVector &outputPosition) const

@@ -4,6 +4,7 @@
 
 #include "DocumentManagement/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -16,12 +17,16 @@ using namespace Modumate;
 
 USurfaceGraphTool::USurfaceGraphTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, LastHostTarget(nullptr)
-	, LastGraphTarget(nullptr)
-	, LastHitHostActor(nullptr)
-	, LastValidHitLocation(ForceInitToZero)
-	, LastValidHitNormal(ForceInitToZero)
-	, LastValidFaceIndex(INDEX_NONE)
+	, HostTarget(nullptr)
+	, GraphTarget(nullptr)
+	, HitHostActor(nullptr)
+	, HitLocation(ForceInitToZero)
+	, HitNormal(ForceInitToZero)
+	, HitFaceIndex(INDEX_NONE)
+	, TargetFaceOrigin(ForceInitToZero)
+	, TargetFaceNormal(ForceInitToZero)
+	, TargetFaceAxisX(ForceInitToZero)
+	, TargetFaceAxisY(ForceInitToZero)
 	, OriginalMouseMode(EMouseMode::Object)
 	, PendingSegmentID(MOD_ID_NONE)
 {
@@ -64,26 +69,31 @@ bool USurfaceGraphTool::Deactivate()
 
 bool USurfaceGraphTool::BeginUse()
 {
-	if (LastHostTarget && (LastHostTarget->ID != 0) && (LastValidFaceIndex != INDEX_NONE))
+	if (HostTarget && (HostTarget->ID != 0) && (HitFaceIndex != INDEX_NONE))
 	{
-		// TODO: replace parent class's default affordance with our contextual understanding of the surface graph's snap axes
-		Super::BeginUse();
-
-		if (LastGraphTarget == nullptr)
+		// If there's no graph on the target, then just create an explicit surface graph for the face,
+		// before starting any poly-line drawing.
+		if (GraphTarget == nullptr)
 		{
 			TArray<TSharedPtr<FDelta>> deltas;
 			if (CreateGraphFromFaceTarget(deltas))
 			{
 				GameState->Document.ApplyDeltas(deltas, GetWorld());
 			}
+
+			return true;
 		}
+
+		// Otherwise, start drawing a poly-line on the target surface graph.
+		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(HitLocation, TargetFaceNormal, TargetFaceAxisX, false, false);
+		InUse = true;
 
 		auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
 		PendingSegmentID = dimensionActor->ID;
 
 		auto pendingSegment = dimensionActor->GetLineActor();
-		pendingSegment->Point1 = LastValidHitLocation;
-		pendingSegment->Point2 = LastValidHitLocation;
+		pendingSegment->Point1 = HitLocation;
+		pendingSegment->Point2 = HitLocation;
 		pendingSegment->Color = FColor::White;
 		pendingSegment->Thickness = 2;
 	}
@@ -93,7 +103,65 @@ bool USurfaceGraphTool::BeginUse()
 
 bool USurfaceGraphTool::EnterNextStage()
 {
-	return Super::EnterNextStage();
+	// Make sure we have a valid target first
+	if (!(HostTarget && (HostTarget->ID != 0) && (HitFaceIndex != INDEX_NONE) && (GraphTarget != nullptr)))
+	{
+		return false;
+	}
+
+	// Make sure we have a valid edge to add to a valid target graph
+	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+	FVector projectedHitPosition = cursor.SketchPlaneProject(cursor.WorldPosition);
+
+	auto *dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
+	auto *pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
+	if (pendingSegment == nullptr)
+	{
+		return false;
+	}
+
+	FVector edgeStartPos = cursor.SketchPlaneProject(pendingSegment->Point1);
+	FVector edgeEndPos = cursor.SketchPlaneProject(pendingSegment->Point2);
+	if (edgeStartPos.Equals(edgeEndPos))
+	{
+		return false;
+	}
+
+	FGraph2D *targetSurfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
+	if ((targetSurfaceGraph == nullptr) || targetSurfaceGraph->IsEmpty())
+	{
+		return false;
+	}
+
+	FVector2D startPos = UModumateGeometryStatics::ProjectPoint2D(edgeStartPos, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
+	FVector2D endPos = UModumateGeometryStatics::ProjectPoint2D(edgeEndPos, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
+
+	// Try to add the edge to the graph, and apply the delta(s) to the document
+	TArray<FGraph2DDelta> addEdgeDeltas;
+	int32 nextID = GameState->Document.GetNextAvailableID();
+	if (!targetSurfaceGraph->AddEdge(addEdgeDeltas, nextID, startPos, endPos))
+	{
+		return false;
+	}
+
+	if (addEdgeDeltas.Num() > 0)
+	{
+		TArray<TSharedPtr<FDelta>> deltaPtrs;
+		Algo::Transform(addEdgeDeltas, deltaPtrs, [](const FGraph2DDelta &graphDelta) {
+			return MakeShareable(new FGraph2DDelta{ graphDelta });
+		});
+
+		if (!GameState->Document.ApplyDeltas(deltaPtrs, GetWorld()))
+		{
+			return false;
+		}
+	}
+
+	// If successful so far, continue from the end point for adding the next line segment
+	pendingSegment->Point1 = edgeEndPos;
+	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(edgeEndPos, TargetFaceNormal, TargetFaceAxisX, false, false);
+
+	return true;
 }
 
 bool USurfaceGraphTool::EndUse()
@@ -105,8 +173,6 @@ bool USurfaceGraphTool::EndUse()
 
 	PendingSegmentID = MOD_ID_NONE;
 
-
-
 	return Super::EndUse();
 }
 
@@ -117,68 +183,68 @@ bool USurfaceGraphTool::AbortUse()
 
 bool USurfaceGraphTool::FrameUpdate()
 {
-	auto *gameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
 	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+
+	auto *moi = GameState->Document.ObjectFromActor(cursor.Actor);
+	if ((moi == nullptr) || !cursor.bValid || (cursor.Actor == nullptr))
+	{
+		return true;
+	}
+
+	int32 newHitFaceIndex = UModumateObjectStatics::GetFaceIndexFromTargetHit(moi, cursor.WorldPosition, cursor.HitNormal);
 
 	if (IsInUse())
 	{
+		FVector projectedHitPosition = cursor.SketchPlaneProject(cursor.WorldPosition);
+
 		auto *dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
 		auto *pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
 
 		if (pendingSegment)
 		{
-			pendingSegment->Point2 = cursor.WorldPosition;
+			pendingSegment->Point2 = projectedHitPosition;
 		}
 	}
 	else
 	{
 		ResetTarget();
 
-		auto *moi = gameState ? gameState->Document.ObjectFromActor(cursor.Actor) : nullptr;
-		if ((moi == nullptr) || !cursor.bValid || (cursor.Actor == nullptr))
-		{
-			return true;
-		}
-
 		// If we're targeting a face, then figure out whether we're targeting an object onto which we can apply a surface graph,
 		// or if we're targeting an existing surface graph that we want to edit and snap against.
-		LastValidFaceIndex = UModumateObjectStatics::GetFaceIndexFromTargetHit(moi, cursor.WorldPosition, cursor.HitNormal);
+		HitFaceIndex = newHitFaceIndex;
 
-		if (LastValidFaceIndex != INDEX_NONE)
+		if (HitFaceIndex != INDEX_NONE)
 		{
-			LastHostTarget = moi;
-			LastHitHostActor = cursor.Actor;
-			LastValidHitLocation = cursor.WorldPosition;
-			LastValidHitNormal = cursor.HitNormal;
+			HostTarget = moi;
+			HitHostActor = cursor.Actor;
+			HitLocation = cursor.WorldPosition;
+			HitNormal = cursor.HitNormal;
 
 			// See if there's already a surface graph mounted to the same target MOI, at the same target face as the current target.
-			for (int32 childID : LastHostTarget->GetChildIDs())
+			for (int32 childID : HostTarget->GetChildIDs())
 			{
-				FModumateObjectInstance *childObj = gameState->Document.GetObjectById(childID);
+				FModumateObjectInstance *childObj = GameState->Document.GetObjectById(childID);
 				int32 childFaceIdx = UModumateObjectStatics::GetParentFaceIndex(childObj);
-				if (childObj && (childObj->GetObjectType() == EObjectType::OTSurfaceGraph) && (childFaceIdx == LastValidFaceIndex))
+				if (childObj && (childObj->GetObjectType() == EObjectType::OTSurfaceGraph) && (childFaceIdx == HitFaceIndex))
 				{
-					LastGraphTarget = childObj;
+					GraphTarget = childObj;
 					break;
 				}
 			}
 		}
 
-		if (LastHostTarget && UModumateObjectStatics::GetGeometryFromFaceIndex(LastHostTarget, LastValidFaceIndex, LastCornerIndices, LastTargetFacePlane))
+		if (HostTarget && UModumateObjectStatics::GetGeometryFromFaceIndex(HostTarget, HitFaceIndex,
+			HostCornerPositions, TargetFaceNormal, TargetFaceAxisX, TargetFaceAxisY))
 		{
-			LastCornerPositions.Reset();
-			Algo::Transform(LastCornerIndices, LastCornerPositions, [this](const int32 &CornerIdx) {
-				return LastHostTarget->GetCorner(CornerIdx);
-			});
-
-			if (LastGraphTarget == nullptr)
+			TargetFaceOrigin = HostCornerPositions[0];
+			if (GraphTarget == nullptr)
 			{
-				int32 numCorners = LastCornerPositions.Num();
+				int32 numCorners = HostCornerPositions.Num();
 				for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
 				{
 					int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
 
-					Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(LastCornerPositions[curCornerIdx], LastCornerPositions[nextCornerIdx],
+					Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(HostCornerPositions[curCornerIdx], HostCornerPositions[nextCornerIdx],
 						AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness)
 					);
 				}
@@ -192,9 +258,8 @@ bool USurfaceGraphTool::FrameUpdate()
 bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &OutDeltas)
 {
 	int32 originalNumDeltas = OutDeltas.Num();
-	auto *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 
-	if (!(gameState && LastHostTarget && LastHitHostActor && (LastValidFaceIndex != INDEX_NONE)))
+	if (!(HostTarget && HitHostActor && (HitFaceIndex != INDEX_NONE)))
 	{
 		return false;
 	}
@@ -202,17 +267,17 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 	// If we're targeting a surface graph object, it has to be empty
 	int32 surfaceGraphID = MOD_ID_NONE;
 	EGraph2DDeltaType graphDeltaType = EGraph2DDeltaType::Add;
-	int32 nextGraphObjID = gameState->Document.GetNextAvailableID();
+	int32 nextGraphObjID = GameState->Document.GetNextAvailableID();
 
-	if (LastGraphTarget)
+	if (GraphTarget)
 	{
-		const FGraph2D *targetSurfaceGraph = gameState->Document.FindSurfaceGraph(LastGraphTarget->ID);
+		const FGraph2D *targetSurfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
 		if ((targetSurfaceGraph == nullptr) || !targetSurfaceGraph->IsEmpty())
 		{
 			return false;
 		}
 
-		surfaceGraphID = LastGraphTarget->ID;
+		surfaceGraphID = GraphTarget->ID;
 		graphDeltaType = EGraph2DDeltaType::Edit;
 	}
 	else
@@ -220,36 +285,47 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 		surfaceGraphID = nextGraphObjID++;
 	}
 
-	int32 numPerimeterPoints = LastCornerPositions.Num();
-	if (!LastTargetFacePlane.IsNormalized() || (numPerimeterPoints < 3))
+	// Create the delta for adding the surface graph object, if it didn't already exist
+	if (GraphTarget == nullptr)
+	{
+		FMOIStateData surfaceObjectData;
+		surfaceObjectData.StateType = EMOIDeltaType::Create;
+		surfaceObjectData.ObjectType = EObjectType::OTSurfaceGraph;
+		surfaceObjectData.ObjectAssemblyKey = NAME_None;
+		surfaceObjectData.ParentID = HostTarget->ID;
+		surfaceObjectData.ControlIndices = { HitFaceIndex };
+		surfaceObjectData.ObjectID = surfaceGraphID;
+
+		TSharedPtr<FMOIDelta> addObjectDelta = MakeShareable(new FMOIDelta({ surfaceObjectData }));
+		OutDeltas.Add(addObjectDelta);
+	}
+
+	// Make sure we have valid geometry from the target
+	int32 numPerimeterPoints = HostCornerPositions.Num();
+	if ((numPerimeterPoints < 3) || !TargetFaceNormal.IsNormalized() || !TargetFaceAxisX.IsNormalized() || !TargetFaceAxisY.IsNormalized())
 	{
 		return false;
 	}
 
 	TSharedPtr<FGraph2DDelta> fillGraphDelta = MakeShareable(new FGraph2DDelta(surfaceGraphID, graphDeltaType));
 
-	// Generate the geometry for the target's explicit graph, starting with the perimeter, basis vectors, and origin
-	FVector graphWorldOrigin = LastCornerPositions[0];
-	FVector graphAxisX, graphAxisY;
-	UModumateGeometryStatics::FindBasisVectors(graphAxisX, graphAxisY, LastTargetFacePlane);
-
 	// Project all of the polygons to add to the target graph
 	TArray<TArray<FVector2D>> graphPolygonsToAdd;
 	TArray<FVector2D> &perimeterPolygon = graphPolygonsToAdd.AddDefaulted_GetRef();
-	Algo::Transform(LastCornerPositions, perimeterPolygon, [graphAxisX, graphAxisY, graphWorldOrigin](const FVector &WorldPoint) {
-		return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, graphAxisX, graphAxisY, graphWorldOrigin);
+	Algo::Transform(HostCornerPositions, perimeterPolygon, [this](const FVector &WorldPoint) {
+		return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
 	});
 
 	// Project the holes that the target has into graph polygons, if any
-	const auto &volumeGraph = gameState->Document.GetVolumeGraph();
-	const auto *hostParentFace = volumeGraph.FindFace(LastHostTarget->GetParentID());
+	const auto &volumeGraph = GameState->Document.GetVolumeGraph();
+	const auto *hostParentFace = volumeGraph.FindFace(HostTarget->GetParentID());
 	if (hostParentFace)
 	{
 		for (const FPolyHole3D &hostWorldHole : hostParentFace->CachedHoles3D)
 		{
 			TArray<FVector2D> &holePolygon = graphPolygonsToAdd.AddDefaulted_GetRef();
-			Algo::Transform(hostWorldHole.Points, holePolygon, [graphAxisX, graphAxisY, graphWorldOrigin](const FVector &WorldPoint) {
-				return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, graphAxisX, graphAxisY, graphWorldOrigin);
+			Algo::Transform(hostWorldHole.Points, holePolygon, [this](const FVector &WorldPoint) {
+				return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
 			});
 		}
 	}
@@ -258,7 +334,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 	TArray<int32> polygonVertexIDs;
 	for (const TArray<FVector2D> &graphPolygonToAdd : graphPolygonsToAdd)
 	{
-		// Populate the target graph with the hole vertices
+		// Populate the target graph with the polygon vertices
 		polygonVertexIDs.Reset();
 		for (const FVector2D &vertex : graphPolygonToAdd)
 		{
@@ -266,40 +342,28 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 			fillGraphDelta->AddNewVertex(vertex, nextGraphObjID);
 		}
 
-		// Populate the target graph with the hole edges
+		// Populate the target graph with the polygon edges
 		int32 numPolygonVerts = graphPolygonToAdd.Num();
 		for (int32 polyPointIdxA = 0; polyPointIdxA < numPolygonVerts; ++polyPointIdxA)
 		{
 			int32 polyPointIdxB = (polyPointIdxA + 1) % numPolygonVerts;
 			fillGraphDelta->AddNewEdge(TPair<int32, int32>(polygonVertexIDs[polyPointIdxA], polygonVertexIDs[polyPointIdxB]), nextGraphObjID);
 		}
+
+		// Populate the target graph with the polygon itself
+		fillGraphDelta->AddNewPolygon(polygonVertexIDs, nextGraphObjID, true);
 	}
 
 	OutDeltas.Add(fillGraphDelta);
-
-	// Create the delta for adding the surface graph object, if it didn't already exist
-	if (LastGraphTarget == nullptr)
-	{
-		FMOIStateData surfaceObjectData;
-		surfaceObjectData.StateType = EMOIDeltaType::Create;
-		surfaceObjectData.ObjectType = EObjectType::OTSurfaceGraph;
-		surfaceObjectData.ObjectAssemblyKey = NAME_None;
-		surfaceObjectData.ParentID = LastHostTarget->ID;
-		surfaceObjectData.ControlIndices = { LastValidFaceIndex };
-		surfaceObjectData.ObjectID = surfaceGraphID;
-
-		TSharedPtr<FMOIDelta> addObjectDelta = MakeShareable(new FMOIDelta({ surfaceObjectData }));
-		OutDeltas.Add(addObjectDelta);
-	}
 
 	return true;
 }
 
 void USurfaceGraphTool::ResetTarget()
 {
-	LastHostTarget = nullptr;
-	LastGraphTarget = nullptr;
-	LastHitHostActor = nullptr;
-	LastValidHitLocation = LastValidHitNormal = FVector::ZeroVector;
-	LastValidFaceIndex = INDEX_NONE;
+	HostTarget = nullptr;
+	GraphTarget = nullptr;
+	HitHostActor = nullptr;
+	HitLocation = HitNormal = FVector::ZeroVector;
+	HitFaceIndex = INDEX_NONE;
 }

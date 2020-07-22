@@ -51,11 +51,9 @@ bool UEditModelToolBase::Deactivate()
 
 bool UEditModelToolBase::BeginUse()
 {
-	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(
-		Controller->EMPlayerState->SnappedCursor.WorldPosition,
-		Controller->EMPlayerState->SnappedCursor.HitNormal,
-		Controller->EMPlayerState->SnappedCursor.HitTangent
-	);
+	FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+	cursor.SetAffordanceFrame(cursor.WorldPosition, cursor.HitNormal, cursor.HitTangent, true, true);
+
 	InUse = true;
 	return true;
 }

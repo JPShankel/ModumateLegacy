@@ -185,6 +185,21 @@ EGraph3DObjectType UModumateTypeStatics::Graph3DObjectTypeFromObjectType(EObject
 	}
 }
 
+EGraphObjectType UModumateTypeStatics::Graph2DObjectTypeFromObjectType(EObjectType ObjectType)
+{
+	switch (ObjectType)
+	{
+	case EObjectType::OTSurfaceVertex:
+		return EGraphObjectType::Vertex;
+	case EObjectType::OTSurfaceEdge:
+		return EGraphObjectType::Edge;
+	case EObjectType::OTSurfacePolygon:
+		return EGraphObjectType::Polygon;
+	default:
+		return EGraphObjectType::None;
+	}
+}
+
 ECollisionChannel UModumateTypeStatics::CollisionTypeFromObjectType(EObjectType ot)
 {
 	switch (ot)

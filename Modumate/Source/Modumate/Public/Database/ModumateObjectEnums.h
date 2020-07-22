@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/ObjectMacros.h"
 #include "Graph/Graph3D.h"
+#include "Graph/Graph2DTypes.h"
 
 #include "ModumateObjectEnums.generated.h"
 
@@ -217,6 +218,8 @@ public:
 	static EToolMode ToolModeFromObjectType(EObjectType ot);
 
 	static Modumate::EGraph3DObjectType Graph3DObjectTypeFromObjectType(EObjectType ot);
+
+	static Modumate::EGraphObjectType Graph2DObjectTypeFromObjectType(EObjectType ObjectType);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Types")
 	static FText GetTextForObjectType(EObjectType ObjectType, bool bPlural = false);

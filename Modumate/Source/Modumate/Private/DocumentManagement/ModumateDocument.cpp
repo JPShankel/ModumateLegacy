@@ -953,7 +953,6 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World)
 {
 	FGraph2D *targetSurfaceGraph = nullptr;
-	TArray<FVector> controlPoints;
 
 	switch (Delta.DeltaType)
 	{
@@ -977,6 +976,27 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		return;
 	}
 
+	// Get the geometry for the face of the surface graph host, so that we can set the surface graph MOI geometry in world space
+	// TODO: this wouldn't be necessary if we don't need control points for these objects, if their handles didn't operate on control points.
+	const FModumateObjectInstance *surfaceGraphObj = GetObjectById(targetSurfaceGraph->GetID());
+	const FModumateObjectInstance *surfaceGraphParent = surfaceGraphObj ? surfaceGraphObj->GetParentObject() : nullptr;
+	int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceGraphObj);
+	if (!ensure(surfaceGraphObj && surfaceGraphParent && (surfaceGraphFaceIndex != INDEX_NONE)))
+	{
+		return;
+	}
+
+	TArray<FVector> facePoints;
+	FVector faceNormal, faceAxisX, faceAxisY;
+	if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceGraphParent, surfaceGraphFaceIndex, facePoints, faceNormal, faceAxisX, faceAxisY)))
+	{
+		return;
+	}
+	FVector faceOrigin = facePoints[0];
+
+	// shared world-space control points for each object in the surface graph that will be updated
+	TArray<FVector> controlPoints;
+
 	// update graph
 	targetSurfaceGraph->ApplyDelta(Delta);
 
@@ -985,7 +1005,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	{
 		const FVector2D &vertexPos = kvp.Value;
 		controlPoints.SetNum(1);
-		controlPoints[0] = FVector(vertexPos, 0.0f);
+		controlPoints[0] = UModumateGeometryStatics::Deproject2DPoint(vertexPos, faceAxisX, faceAxisY, faceOrigin);
 		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceVertex,
 			kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
 	}
@@ -997,14 +1017,14 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		controlPoints.SetNum(2);
 		const FGraph2DVertex *startVertex = targetSurfaceGraph->FindVertex(edgeVertexIDs[0]);
 		const FGraph2DVertex *endVertex = targetSurfaceGraph->FindVertex(edgeVertexIDs[1]);
-		if (startVertex && endVertex)
+		if (ensureAlways(startVertex && endVertex))
 		{
-			controlPoints[0] = FVector(startVertex->Position, 0.0f);
-			controlPoints[1] = FVector(endVertex->Position, 0.0f);
-		}
+			controlPoints[0] = UModumateGeometryStatics::Deproject2DPoint(startVertex->Position, faceAxisX, faceAxisY, faceOrigin);
+			controlPoints[1] = UModumateGeometryStatics::Deproject2DPoint(endVertex->Position, faceAxisX, faceAxisY, faceOrigin);
 
-		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceEdge,
-			kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+			CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceEdge,
+				kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+		}
 	}
 
 	for (auto &kvp : Delta.PolygonAdditions)
@@ -1013,14 +1033,19 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		for (int32 polygonVertexID : kvp.Value.Vertices)
 		{
 			const FGraph2DVertex *polyVertex = targetSurfaceGraph->FindVertex(polygonVertexID);
-			if (ensureAlways(polyVertex))
+			if (!ensureAlways(polyVertex))
 			{
-				controlPoints.Add(FVector(polyVertex->Position, 0.0f));
+				break;
 			}
+
+			controlPoints.Add(UModumateGeometryStatics::Deproject2DPoint(polyVertex->Position, faceAxisX, faceAxisY, faceOrigin));
 		}
 
-		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfacePolygon,
-			kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+		if (controlPoints.Num() == kvp.Value.Vertices.Num())
+		{
+			CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfacePolygon,
+				kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+		}
 	}
 
 	// finalize objects after all of them have been added
@@ -1184,14 +1209,14 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		controlPoints.SetNum(2);
 		const FGraph3DVertex *startVertex = VolumeGraph.FindVertex(edgeVertexIDs[0]);
 		const FGraph3DVertex *endVertex = VolumeGraph.FindVertex(edgeVertexIDs[1]);
-		if (startVertex && endVertex)
+		if (ensure(startVertex && endVertex))
 		{
 			controlPoints[0] = startVertex->Position;
 			controlPoints[1] = endVertex->Position;
-		}
 
-		CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaEdge,
-			kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+			CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaEdge,
+				kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+		}
 	}
 
 	for (auto &kvp : Delta.EdgeDeletions)
@@ -1209,14 +1234,19 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		for (int32 faceVertexID : kvp.Value.Vertices)
 		{
 			const FGraph3DVertex *faceVertex = VolumeGraph.FindVertex(faceVertexID);
-			if (ensureAlways(faceVertex))
+			if (!ensureAlways(faceVertex))
 			{
-				controlPoints.Add(faceVertex->Position);
+				break;
 			}
+
+			controlPoints.Add(faceVertex->Position);
 		}
 
-		CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaPlane,
-			kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+		if (controlPoints.Num() == kvp.Value.Vertices.Num())
+		{
+			CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaPlane,
+				kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+		}
 	}
 
 	// when modifying objects in the document, first add objects, then modify parent objects, then delete objects

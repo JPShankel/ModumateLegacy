@@ -19,7 +19,7 @@ private:
 	FVector LastValidHitLocation = FVector::ZeroVector;
 	FVector LastValidHitNormal = FVector::ZeroVector;
 	int32 LastValidFaceIndex = INDEX_NONE;
-	TArray<int32> LastCornerIndices;
+	TArray<FVector> LastCornerPoints;
 	EMouseMode OriginalMouseMode = EMouseMode::Object;
 	FModumateObjectAssembly FinishAssembly = FModumateObjectAssembly();
 

@@ -754,8 +754,8 @@ namespace Modumate
 					}
 				}
 			}
-			int32 addedPolyID = NextID++;
-			updatePolygonsDelta.PolygonAdditions.Add(addedPolyID, FGraph2DObjDelta({ curVertexIDs }, previousPolys.Array()));
+			int32 addedPolyID = NextID;
+			updatePolygonsDelta.AddNewPolygon(curVertexIDs, NextID, bPolyInterior, previousPolys.Array());
 
 			for (int32 previousID : previousPolys)
 			{

@@ -62,6 +62,12 @@ namespace Modumate
 		EdgeAdditions.Add(newEdgeID, FGraph2DObjDelta({ VertexIDs.Key, VertexIDs.Value }, ParentIDs));
 	}
 
+	void FGraph2DDelta::AddNewPolygon(const TArray<int32> &VertexIDs, int32 &NextID, bool bIsInterior, const TArray<int32> &ParentIDs)
+	{
+		int32 newPolygonID = NextID++;
+		PolygonAdditions.Add(newPolygonID, FGraph2DObjDelta(VertexIDs, ParentIDs, bIsInterior));
+	}
+
 	TSharedPtr<FGraph2DDelta> FGraph2DDelta::MakeGraphInverse() const
 	{
 		TSharedPtr<FGraph2DDelta> inverse = MakeShareable(new FGraph2DDelta(ID));

@@ -48,8 +48,11 @@ struct MODUMATE_API FMouseWorldHitType
 // Tangent may be the zero vector if there is no custom affordance on the plane
 struct MODUMATE_API FAffordanceFrame
 {
-	FVector Origin, Normal, Tangent;
-	bool bHasValue = false;
+	FAffordanceFrame();
+
+	FVector Origin;
+	FVector Normal;
+	FVector Tangent;
 };
 
 struct FAffordanceLine;
@@ -108,10 +111,15 @@ struct MODUMATE_API FSnappedCursor
 	// "Custom" affordances are established when we click on a directed element, like the edge of a wall or floor, and provide
 	// a reference frame aligned along that element. There are also world aligned affordances along global X, Y and Z at the
 	// same origin as the custom affordance
-	bool WantsVerticalAffordanceSnap = false;
+
 	FAffordanceFrame AffordanceFrame;
+	bool bHasCustomAffordance = false;	// TODO: replace with array of affordances, i.e. a point connected to multiple non-orthogonal edges
+	bool WantsVerticalAffordanceSnap = false;
+	bool bSnapGlobalAxes = false;
+
 	bool HasAffordanceSet() const;
-	void SetAffordanceFrame(const FVector &origin, const FVector &normal, const FVector &tangent = FVector::ZeroVector);
+	void SetAffordanceFrame(const FVector &origin, const FVector &normal, const FVector &tangent = FVector::ZeroVector,
+		bool bInVerticalAffordanceSnap = true, bool bInSnapGlobalAxes = true);
 	void ClearAffordanceFrame();
 	FVector SketchPlaneProject(const FVector &p) const;
 

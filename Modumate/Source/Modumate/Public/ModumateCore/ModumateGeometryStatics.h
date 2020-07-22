@@ -111,7 +111,7 @@ struct MODUMATE_API FLayerGeomDef
 	void Init(const TArray<FVector> &InPointsA, const TArray<FVector> &InPointsB, const FVector &InNormal,
 		const FVector &InAxisX = FVector::ZeroVector, const TArray<FPolyHole3D> *InHoles = nullptr);
 	FVector2D ProjectPoint2D(const FVector &Point3D) const;
-	FVector ProjectPoint3D(const FVector2D &Point2D, bool bSideA) const;
+	FVector Deproject2DPoint(const FVector2D &Point2D, bool bSideA) const;
 	bool CachePoints2D();
 
 	static void AppendTriangles(const TArray<FVector> &Verts, const TArray<int32> &SourceTriIndices,
@@ -136,6 +136,9 @@ class MODUMATE_API UModumateGeometryStatics : public UBlueprintFunctionLibrary
 public:
 	UFUNCTION(Category = "Modumate | Geometry")
 	static FVector2D ProjectPoint2D(const FVector &Point3D, const FVector &AxisX, const FVector &AxisY, const FVector &Origin);
+
+	UFUNCTION(Category = "Modumate | Geometry")
+	static FVector Deproject2DPoint(const FVector2D &Point2D, const FVector &AxisX, const FVector &AxisY, const FVector &Origin);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static FVector2D ProjectVector2D(const FVector &Vector3D, const FVector &AxisX, const FVector &AxisY);

@@ -43,10 +43,23 @@ namespace Modumate
 		{
 			AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(LineActor->GetWorld()->GetFirstPlayerController()->PlayerState);
 
-			bool bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane;
-			UModumateObjectStatics::ShouldMetaObjBeEnabled(MOI, bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane);
-			bOutVisible = !MOI->IsRequestedHidden() && bShouldBeVisible;
-			bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bShouldCollisionBeEnabled;
+			bool bHaveChildren = (MOI->GetChildIDs().Num() > 0);
+			auto controller = MOI->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+			switch (controller->EMPlayerState->GetSelectedViewMode())
+			{
+			case EEditViewModes::SurfaceGraphs:
+				bOutVisible = true;
+				bOutCollisionEnabled = true;
+				break;
+			case EEditViewModes::ObjectEditing:
+				bOutVisible = !bHaveChildren;
+				bOutCollisionEnabled = !bHaveChildren;
+				break;
+			default:
+				bOutVisible = false;
+				bOutCollisionEnabled = false;
+				break;
+			}
 
 			LineActor->SetVisibilityInApp(bOutVisible);
 			if (bOutVisible)
@@ -59,7 +72,7 @@ namespace Modumate
 				}
 				else
 				{
-					LineActor->UpdateMetaEdgeVisuals(bConnectedToAnyPlane, thicknessMultiplier);
+					LineActor->UpdateMetaEdgeVisuals(true, thicknessMultiplier);
 				}
 			}
 

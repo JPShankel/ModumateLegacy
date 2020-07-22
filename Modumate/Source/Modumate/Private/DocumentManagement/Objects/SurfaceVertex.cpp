@@ -3,6 +3,8 @@
 #include "DocumentManagement/Objects/SurfaceVertex.h"
 
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/ModumateVertexActor_CPP.h"
 
 namespace Modumate
@@ -16,10 +18,9 @@ namespace Modumate
 	{
 		if (MOI && VertexActor.IsValid())
 		{
-			bool bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane;
-			UModumateObjectStatics::ShouldMetaObjBeEnabled(MOI, bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane);
-			bOutVisible = !MOI->IsRequestedHidden() && bShouldBeVisible;
-			bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bShouldCollisionBeEnabled;
+			auto controller = MOI->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+			bool bEnabledByViewMode = controller->EMPlayerState->IsObjectTypeEnabledByViewMode(EObjectType::OTSurfaceVertex);
+			bOutVisible = bOutCollisionEnabled = bEnabledByViewMode;
 
 			VertexActor->SetActorHiddenInGame(!bOutVisible);
 			VertexActor->SetActorTickEnabled(bOutVisible);

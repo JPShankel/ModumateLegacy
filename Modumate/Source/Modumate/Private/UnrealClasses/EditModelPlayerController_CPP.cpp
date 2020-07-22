@@ -2031,6 +2031,28 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 		}
 		else if (sketchDist < (structuralDist - StructuralSnapPreferenceEpsilon) || worldSnapOverride)
 		{
+			// If this sketch hit is being used because of a world or custom axis snap, then allow it to just be a snapped structural hit.
+			// That means we need to redo the structural mouse hit with the snapped screen position of the sketch hit, and report the new location.
+			// This allows physical hits against objects that are aligned with snap axes to still report data like hit normals and actors.
+			FVector2D sketchHitScreenPos;
+			FVector sketchMouseOrigin, sketchMouseDir;
+			if (worldSnapOverride && sketchHit.Valid && structuralHit.Valid &&
+				ProjectWorldLocationToScreen(sketchHit.Location, sketchHitScreenPos) &&
+				UGameplayStatics::DeprojectScreenToWorld(this, sketchHitScreenPos, sketchMouseOrigin, sketchMouseDir))
+			{
+				FMouseWorldHitType snappedStructuralHit = GetObjectMouseHit(sketchMouseOrigin, sketchMouseDir, true);
+
+				float screenSpaceDist;
+				if (snappedStructuralHit.Valid && (snappedStructuralHit.Actor.Get() == structuralHit.Actor.Get()) &&
+					DistanceBetweenWorldPointsInScreenSpace(snappedStructuralHit.Location, sketchHit.Location, screenSpaceDist) &&
+					(screenSpaceDist < SnapPointMaxScreenDistance))
+				{
+					ESnapType sketchSnapType = sketchHit.SnapType;
+					sketchHit = snappedStructuralHit;
+					sketchHit.SnapType = sketchSnapType;
+				}
+			}
+
 			if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("SKETCH")); }
 			projectedHit = GetShiftConstrainedMouseHit(sketchHit);
 			baseHit = sketchHit;
@@ -2272,8 +2294,6 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetAffordanceHit(const FVecto
 	ret.Actor = nullptr;
 	ret.SnapType = ESnapType::CT_NOSNAP;
 
-	FPlane sketchPlane(affordance.Origin, affordance.Normal);
-
 	int32 affordanceDimensions = allowZSnap ? 3 : 2;
 
 	// If we're near the affordance origin, snap to it
@@ -2285,7 +2305,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetAffordanceHit(const FVecto
 		ret.Location = affordance.Origin;
 	}
 	// Otherwise, if we have a custom affordance direction (purple axes), prefer those .. affordance.Tangent will be ZeroVector otherwise
-	else if (!affordance.Tangent.IsNearlyZero())
+	else if (affordance.Normal.IsNormalized() && affordance.Tangent.IsNormalized())
 	{
 		// Assumption: the affordance direction is along the sketch plane and so is perpendicular to the sketch plane normal
 		// TODO: when arbitrary affordances are added for ambiguous snaps (edges, corners), resolve whether each affordance has its own sketch plane
@@ -2329,7 +2349,13 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetSketchPlaneMouseHit(const 
 	If we receive no basis vector snap, then project the mouse ray onto the sketch plane to determine the hit
 	Assumption: the affordance origin is on the sketch plane
 	*/
-	FMouseWorldHitType ret = GetAffordanceHit(mouseLoc,mouseDir,EMPlayerState->SnappedCursor.AffordanceFrame, EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap);
+	FMouseWorldHitType ret;
+
+	if (EMPlayerState->SnappedCursor.HasAffordanceSet())
+	{
+		ret = GetAffordanceHit(mouseLoc, mouseDir, EMPlayerState->SnappedCursor.AffordanceFrame, EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap);
+	}
+
 	// Sketch plane hits come back with world x, y or z indicated .. convert to custom
 	if (ret.Valid)
 	{
@@ -2341,7 +2367,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetSketchPlaneMouseHit(const 
 		}
 	}
 	// We got no custom hit, so go for a global direction hit
-	else
+	else if (EMPlayerState->SnappedCursor.bSnapGlobalAxes)
 	{
 		FAffordanceFrame globalAffordance;
 		globalAffordance.Origin = EMPlayerState->SnappedCursor.AffordanceFrame.Origin;
@@ -2570,11 +2596,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 		}
 	}
 
-	// TODO: we're defaulting to the XY sketch plane but we should disambiguate between candidate normals
-	if (objectHit.Normal.IsNearlyZero())
-	{
-		objectHit.Normal = FVector::UpVector;
-	}
+	// TODO: we should disambiguate between candidate normals, but we'll want multiple affordances for a given snap point/edge before then
 
 	return objectHit;
 }
