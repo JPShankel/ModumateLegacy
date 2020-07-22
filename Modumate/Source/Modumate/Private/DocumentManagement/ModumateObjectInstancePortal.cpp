@@ -479,18 +479,6 @@ namespace Modumate
 
 	void FMOIPortalImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
 	{
-		ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(MOI->GetActor());
-
-		TArray<TPair<FVector, FVector>> OutEdges;
-		actor->ConvertProcMeshToLinesOnPlane(Origin, FVector(Plane), OutEdges);
-
-		OutEdges.Num();
-
-		Units::FThickness defaultThickness = Units::FThickness::Points(0.125f);
-		FMColor defaultColor = FMColor::Gray64;
-		FMColor swingColor = FMColor(0.0f, 0.0f, 0.0f);
-		float defaultDoorOpeningDegrees = 90;
-		
 		bool bGetFarLines = ParentPage->lineClipping.IsValid();
 		if (bGetFarLines)
 		{
@@ -498,6 +486,17 @@ namespace Modumate
 		}
 		else
 		{
+			ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(MOI->GetActor());
+
+			TArray<TPair<FVector, FVector>> OutEdges;
+			actor->ConvertProcMeshToLinesOnPlane(Origin, FVector(Plane), OutEdges);
+
+			OutEdges.Num();
+
+			Units::FThickness defaultThickness = Units::FThickness::Points(0.125f);
+			FMColor defaultColor = FMColor::Gray64;
+			FMColor swingColor = FMColor(0.0f, 0.0f, 0.0f);
+			float defaultDoorOpeningDegrees = 90;
 
 			for (auto& edge : OutEdges)
 			{

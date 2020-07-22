@@ -495,9 +495,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FModumateObjectAssembly &obAsm, 
 
 bool ACompoundMeshActor::ConvertProcMeshToLinesOnPlane(const FVector &PlanePosition, const FVector &PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges)
 {
-	// TODO: different LOD?
-	//for (auto procMesh : NineSliceComps)
-	for (auto procMesh : NineSliceLowLODComps)
+	for (auto procMesh : NineSliceComps)
 	{
 		UModumateGeometryStatics::ConvertProcMeshToLinesOnPlane(procMesh, PlanePosition, PlaneNormal, OutEdges);
 	}
