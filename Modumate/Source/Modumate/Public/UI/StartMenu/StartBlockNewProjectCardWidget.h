@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "SplashBlockNewProjectCardWidget.generated.h"
+#include "StartBlockNewProjectCardWidget.generated.h"
 
 /**
  *
  */
 UCLASS()
-class MODUMATE_API USplashBlockNewProjectCardWidget : public UUserWidget
+class MODUMATE_API UStartBlockNewProjectCardWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	USplashBlockNewProjectCardWidget(const FObjectInitializer& ObjectInitializer);
+	UStartBlockNewProjectCardWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

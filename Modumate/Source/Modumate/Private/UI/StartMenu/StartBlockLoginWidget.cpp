@@ -1,18 +1,18 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "UI/SplashMenu/SplashBlockLoginWidget.h"
+#include "UI/StartMenu/StartBlockLoginWidget.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "Components/TextBlock.h"
 
-USplashBlockLoginWidget::USplashBlockLoginWidget(const FObjectInitializer& ObjectInitializer)
+UStartBlockLoginWidget::UStartBlockLoginWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-bool USplashBlockLoginWidget::Initialize()
+bool UStartBlockLoginWidget::Initialize()
 {
 	if (!Super::Initialize())
 	{
@@ -23,20 +23,20 @@ bool USplashBlockLoginWidget::Initialize()
 	{
 		return false;
 	}
-	ButtonCreateAccount->ModumateButton->OnReleased.AddDynamic(this, &USplashBlockLoginWidget::OnButtonReleasedCreateAccount);
-	ButtonLogin->ModumateButton->OnReleased.AddDynamic(this, &USplashBlockLoginWidget::Login);
-	EmailBox->OnTextCommitted.AddDynamic(this, &USplashBlockLoginWidget::OnTextBlockCommittedLogin);
-	PasswordBox->OnTextCommitted.AddDynamic(this, &USplashBlockLoginWidget::OnTextBlockCommittedLogin);
+	ButtonCreateAccount->ModumateButton->OnReleased.AddDynamic(this, &UStartBlockLoginWidget::OnButtonReleasedCreateAccount);
+	ButtonLogin->ModumateButton->OnReleased.AddDynamic(this, &UStartBlockLoginWidget::Login);
+	EmailBox->OnTextCommitted.AddDynamic(this, &UStartBlockLoginWidget::OnTextBlockCommittedLogin);
+	PasswordBox->OnTextCommitted.AddDynamic(this, &UStartBlockLoginWidget::OnTextBlockCommittedLogin);
 
 	return true;
 }
 
-void USplashBlockLoginWidget::NativeConstruct()
+void UStartBlockLoginWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 }
 
-void USplashBlockLoginWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void UStartBlockLoginWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
@@ -55,12 +55,12 @@ void USplashBlockLoginWidget::NativeTick(const FGeometry& MyGeometry, float InDe
 	}
 }
 
-void USplashBlockLoginWidget::OnButtonReleasedCreateAccount()
+void UStartBlockLoginWidget::OnButtonReleasedCreateAccount()
 {
 	FPlatformProcess::LaunchURL(*CreateAccountURL, nullptr, nullptr);
 }
 
-void USplashBlockLoginWidget::OnTextBlockCommittedLogin(const FText& Text, ETextCommit::Type CommitMethod)
+void UStartBlockLoginWidget::OnTextBlockCommittedLogin(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	if (CommitMethod == ETextCommit::OnEnter)
 	{
@@ -68,7 +68,7 @@ void USplashBlockLoginWidget::OnTextBlockCommittedLogin(const FText& Text, EText
 	}
 }
 
-void USplashBlockLoginWidget::Login()
+void UStartBlockLoginWidget::Login()
 {
 	if (ModumateGameInstance && EmailBox && PasswordBox)
 	{

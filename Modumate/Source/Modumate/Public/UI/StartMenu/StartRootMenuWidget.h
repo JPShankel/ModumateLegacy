@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "SplashRootMenuWidget.generated.h"
+#include "StartRootMenuWidget.generated.h"
 
 /**
  *
  */
 UCLASS()
-class MODUMATE_API USplashRootMenuWidget : public UUserWidget
+class MODUMATE_API UStartRootMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	USplashRootMenuWidget(const FObjectInitializer& ObjectInitializer);
+	UStartRootMenuWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
 	UPROPERTY()
@@ -31,7 +31,7 @@ public:
 	class UModumateButtonUserWidget *ButtonQuit;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class USplashBlockHomeWidget *Splash_Home_BP;
+	class UStartBlockHomeWidget *Start_Home_BP;
 
 protected:
 	virtual void NativeConstruct() override;

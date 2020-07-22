@@ -1,17 +1,18 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "UI/SplashMenu/SplashBlockProjectCardWidget.h"
+#include "UI/StartMenu/StartBlockProjectCardWidget.h"
 #include "UnrealClasses/MainMenuGameMode_CPP.h"
 #include "Components/Image.h"
 #include "UI/Custom/ModumateTextBlock.h"
 #include "UI/Custom/ModumateButton.h"
+#include "UI/Custom/ModumateTextBlockUserWidget.h"
 
-USplashBlockProjectCardWidget::USplashBlockProjectCardWidget(const FObjectInitializer& ObjectInitializer)
+UStartBlockProjectCardWidget::UStartBlockProjectCardWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-bool USplashBlockProjectCardWidget::Initialize()
+bool UStartBlockProjectCardWidget::Initialize()
 {
 	if (!Super::Initialize())
 	{
@@ -22,17 +23,17 @@ bool USplashBlockProjectCardWidget::Initialize()
 	{
 		return false;
 	}
-	ModumateButtonProjectCard->OnReleased.AddDynamic(this, &USplashBlockProjectCardWidget::OnButtonReleasedProjectCard);
+	ModumateButtonProjectCard->OnReleased.AddDynamic(this, &UStartBlockProjectCardWidget::OnButtonReleasedProjectCard);
 
 	return true;
 }
 
-void USplashBlockProjectCardWidget::NativeConstruct()
+void UStartBlockProjectCardWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 }
 
-void USplashBlockProjectCardWidget::OnButtonReleasedProjectCard()
+void UStartBlockProjectCardWidget::OnButtonReleasedProjectCard()
 {
 	if (MainMenuGameMode && ProjectPath.Len() > 0)
 	{
@@ -40,7 +41,7 @@ void USplashBlockProjectCardWidget::OnButtonReleasedProjectCard()
 	}
 }
 
-bool USplashBlockProjectCardWidget::BuildProjectCard(int32 ProjectID)
+bool UStartBlockProjectCardWidget::BuildProjectCard(int32 ProjectID)
 {
 	if (!(MainMenuGameMode && ImageScene && TextBlockDate && TextBlockTitle))
 	{
@@ -55,7 +56,7 @@ bool USplashBlockProjectCardWidget::BuildProjectCard(int32 ProjectID)
 	{
 		ImageScene->SetBrush(defaultThumbnail);
 		TextBlockDate->SetText(FText::AsDateTime(projectTime, EDateTimeStyle::Default, EDateTimeStyle::Default, FText::GetInvariantTimeZone()));
-		TextBlockTitle->SetText(projectName);
+		TextBlockTitle->ChangeText(projectName);
 		return true;
 	}
 	return false;

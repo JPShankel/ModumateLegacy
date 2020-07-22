@@ -14,4 +14,12 @@ class MODUMATE_API AMainMenuController_CPP : public APlayerController
 {
 	GENERATED_BODY()
 
+public:
+	virtual void BeginPlay() override;
+
+	UPROPERTY()
+	class UStartRootMenuWidget *StartRootMenuWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UStartRootMenuWidget> StartRootMenuWidgetClass;
 };

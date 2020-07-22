@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "SplashBlockHomeWidget.generated.h"
+#include "StartBlockHomeWidget.generated.h"
 
 /**
  *
  */
 UCLASS()
-class MODUMATE_API USplashBlockHomeWidget : public UUserWidget
+class MODUMATE_API UStartBlockHomeWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	USplashBlockHomeWidget(const FObjectInitializer& ObjectInitializer);
+	UStartBlockHomeWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
 	UPROPERTY()
@@ -25,10 +25,10 @@ public:
 	class UWrapBox *WrapBoxProjects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class USplashBlockProjectCardWidget> LoadProjectCardWidgetClass;
+	TSubclassOf<class UStartBlockProjectCardWidget> LoadProjectCardWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class USplashBlockNewProjectCardWidget> NewProjectCardWidgetClass;
+	TSubclassOf<class UStartBlockNewProjectCardWidget> NewProjectCardWidgetClass;
 
 	void OpenRecentProjectMenu();
 

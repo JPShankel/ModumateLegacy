@@ -1,17 +1,17 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "UI/SplashMenu/SplashBlockHomeWidget.h"
+#include "UI/StartMenu/StartBlockHomeWidget.h"
 #include "UnrealClasses/MainMenuGameMode_CPP.h"
 #include "Components/WrapBox.h"
-#include "UI/SplashMenu/SplashBlockProjectCardWidget.h"
-#include "UI/SplashMenu/SplashBlockNewProjectCardWidget.h"
+#include "UI/StartMenu/StartBlockProjectCardWidget.h"
+#include "UI/StartMenu/StartBlockNewProjectCardWidget.h"
 
-USplashBlockHomeWidget::USplashBlockHomeWidget(const FObjectInitializer& ObjectInitializer)
+UStartBlockHomeWidget::UStartBlockHomeWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-bool USplashBlockHomeWidget::Initialize()
+bool UStartBlockHomeWidget::Initialize()
 {
 	if (!Super::Initialize())
 	{
@@ -22,7 +22,7 @@ bool USplashBlockHomeWidget::Initialize()
 	return true;
 }
 
-void USplashBlockHomeWidget::OpenRecentProjectMenu()
+void UStartBlockHomeWidget::OpenRecentProjectMenu()
 {
 	if (!(WrapBoxProjects && MainMenuGameMode))
 	{
@@ -30,7 +30,7 @@ void USplashBlockHomeWidget::OpenRecentProjectMenu()
 	}
 	WrapBoxProjects->ClearChildren();
 
-	USplashBlockNewProjectCardWidget *newProjectCard = CreateWidget<USplashBlockNewProjectCardWidget>(this, NewProjectCardWidgetClass);
+	UStartBlockNewProjectCardWidget *newProjectCard = CreateWidget<UStartBlockNewProjectCardWidget>(this, NewProjectCardWidgetClass);
 	if (newProjectCard)
 	{
 		WrapBoxProjects->AddChildToWrapBox(newProjectCard);
@@ -38,7 +38,7 @@ void USplashBlockHomeWidget::OpenRecentProjectMenu()
 
 	for (int32 i = 0; i < MainMenuGameMode->NumRecentProjects; ++i)
 	{
-		USplashBlockProjectCardWidget *newLoadProjectCard = CreateWidget<USplashBlockProjectCardWidget>(this, LoadProjectCardWidgetClass);
+		UStartBlockProjectCardWidget *newLoadProjectCard = CreateWidget<UStartBlockProjectCardWidget>(this, LoadProjectCardWidgetClass);
 		if (newLoadProjectCard && newLoadProjectCard->BuildProjectCard(i))
 		{
 			WrapBoxProjects->AddChildToWrapBox(newLoadProjectCard);
@@ -46,7 +46,7 @@ void USplashBlockHomeWidget::OpenRecentProjectMenu()
 	}
 }
 
-void USplashBlockHomeWidget::NativeConstruct()
+void UStartBlockHomeWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 }

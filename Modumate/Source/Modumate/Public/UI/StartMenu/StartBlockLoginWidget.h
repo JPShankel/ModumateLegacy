@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "SplashBlockLoginWidget.generated.h"
+#include "StartBlockLoginWidget.generated.h"
 
 /**
  *
  */
 UCLASS()
-class MODUMATE_API USplashBlockLoginWidget : public UUserWidget
+class MODUMATE_API UStartBlockLoginWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	USplashBlockLoginWidget(const FObjectInitializer& ObjectInitializer);
+	UStartBlockLoginWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
 	UPROPERTY()
