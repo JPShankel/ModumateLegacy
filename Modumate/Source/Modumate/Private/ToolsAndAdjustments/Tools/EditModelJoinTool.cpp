@@ -136,11 +136,10 @@ bool UJoinTool::EnterNextStage()
 	{
 		PendingObjectIDs.Add(newTarget->ID);
 		Controller->DeselectAll();
-
-		auto commandResult = Controller->ModumateCommand(
-			FModumateCommand(Commands::kJoinMetaObjects)
-			.Param(Parameters::kObjectIDs, PendingObjectIDs.Array())
-		);
+		
+		AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		Modumate::FModumateDocument* doc = &gameState->Document;
+		return doc->JoinMetaObjects(GetWorld(), PendingObjectIDs.Array());
 
 		// TODO: potentially return the result of this function, if it is true the two faces will be joined
 		// and the tool can continue

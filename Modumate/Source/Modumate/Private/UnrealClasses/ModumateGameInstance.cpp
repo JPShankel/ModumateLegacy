@@ -348,18 +348,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return false;
 	});
 
-	RegisterCommand(kJoinMetaObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-
-		TArray<int32> faceIDs = params.GetValue(kObjectIDs);
-
-		FModumateDocument *doc = GetDocument();
-		if (doc != nullptr)
-		{
-			return doc->JoinMetaObjects(GetWorld(), faceIDs);
-		}
-		return false;
-	});
-
 	RegisterCommand(kSplit, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 
 		int32 id = params.GetValue(kObjectID);
