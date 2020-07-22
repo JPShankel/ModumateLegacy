@@ -978,7 +978,8 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 
 	// Get the geometry for the face of the surface graph host, so that we can set the surface graph MOI geometry in world space
 	// TODO: this wouldn't be necessary if we don't need control points for these objects, if their handles didn't operate on control points.
-	const FModumateObjectInstance *surfaceGraphObj = GetObjectById(targetSurfaceGraph->GetID());
+	int32 surfaceGraphID = targetSurfaceGraph->GetID();
+	const FModumateObjectInstance *surfaceGraphObj = GetObjectById(surfaceGraphID);
 	const FModumateObjectInstance *surfaceGraphParent = surfaceGraphObj ? surfaceGraphObj->GetParentObject() : nullptr;
 	int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceGraphObj);
 	if (!ensure(surfaceGraphObj && surfaceGraphParent && (surfaceGraphFaceIndex != INDEX_NONE)))
@@ -1007,7 +1008,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		controlPoints.SetNum(1);
 		controlPoints[0] = UModumateGeometryStatics::Deproject2DPoint(vertexPos, faceAxisX, faceAxisY, faceOrigin);
 		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceVertex,
-			kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+			kvp.Key, surfaceGraphID, FVector::ZeroVector, &controlPoints, nullptr);
 	}
 
 	for (auto &kvp : Delta.EdgeAdditions)
@@ -1023,7 +1024,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 			controlPoints[1] = UModumateGeometryStatics::Deproject2DPoint(endVertex->Position, faceAxisX, faceAxisY, faceOrigin);
 
 			CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceEdge,
-				kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+				kvp.Key, surfaceGraphID, FVector::ZeroVector, &controlPoints, nullptr);
 		}
 	}
 
@@ -1044,7 +1045,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		if (controlPoints.Num() == kvp.Value.Vertices.Num())
 		{
 			CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfacePolygon,
-				kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+				kvp.Key, surfaceGraphID, FVector::ZeroVector, &controlPoints, nullptr);
 		}
 	}
 

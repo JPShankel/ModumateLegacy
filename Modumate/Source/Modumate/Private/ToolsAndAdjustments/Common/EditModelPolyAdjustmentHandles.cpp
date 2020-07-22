@@ -128,16 +128,16 @@ FVector AAdjustPolyPointHandle::GetHandlePosition() const
 		averageTargetPos = controlPoints[TargetIndex];
 	}
 
-	if (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane || TargetMOI->GetObjectType() == EObjectType::OTCutPlane)
+	switch (TargetMOI->GetObjectType())
 	{
+		// TODO: this is an awkward stand-in for the fact that these all inherit from FMOIPlaneImplBase, this should be cleaner
+	case EObjectType::OTMetaPlane:
+	case EObjectType::OTSurfacePolygon:
+	case EObjectType::OTCutPlane:
 		return averageTargetPos;
-	}
-	else if (TargetMOI->GetObjectType() == EObjectType::OTScopeBox)
-	{
+	case EObjectType::OTScopeBox:
 		return TargetMOI->GetObjectRotation().RotateVector(TargetMOI->GetNormal() * 0.5f * TargetMOI->GetExtents().Y + averageTargetPos);
-	}
-	else
-	{
+	default:
 		return TargetMOI->GetObjectRotation().RotateVector(FVector(0, 0, 0.5f * TargetMOI->GetExtents().Y) + averageTargetPos);
 	}
 }
@@ -155,6 +155,18 @@ FVector AAdjustPolyPointHandle::GetHandleDirection() const
 	}
 
 	const TArray<FVector> &targetCPs = TargetMOI->GetControlPoints();
+
+	// This would be redundant, but the handles need to recalculate the plane in order to determine
+	// how the points wind relative to the reported object normal.
+	FPlane targetPlane;
+	if (!ensure(UModumateGeometryStatics::GetPlaneFromPoints(targetCPs, targetPlane)))
+	{
+		return FVector::ZeroVector;
+	}
+
+	FVector targetNormal = TargetMOI->GetNormal();
+	float windingSign = targetNormal | targetPlane;
+
 	int32 numPolyPoints = targetCPs.Num();
 	int32 edgeStartIdx = TargetIndex;
 	int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
@@ -162,7 +174,7 @@ FVector AAdjustPolyPointHandle::GetHandleDirection() const
 	const FVector &edgeStartPoint = TargetMOI->GetControlPoint(edgeStartIdx);
 	const FVector &edgeEndPoint = TargetMOI->GetControlPoint(edgeEndIdx);
 	FVector edgeDir = (edgeEndPoint - edgeStartPoint).GetSafeNormal();
-	FVector edgeNormal = edgeDir ^ TargetMOI->GetNormal();
+	FVector edgeNormal = windingSign * (edgeDir ^ targetNormal);
 
 	return edgeNormal;
 }

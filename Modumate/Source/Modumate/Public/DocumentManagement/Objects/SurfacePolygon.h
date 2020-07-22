@@ -17,6 +17,9 @@ namespace Modumate
 		virtual void SetupDynamicGeometry() override;
 
 	protected:
+		float MeshPointOffset;
+		TArray<FVector> CachedOffsetPoints;
+
 		void UpdateCachedGraphData();
 		virtual float GetAlpha() const override;
 	};

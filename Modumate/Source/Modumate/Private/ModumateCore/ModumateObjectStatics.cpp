@@ -857,6 +857,7 @@ int32 UModumateObjectStatics::GetParentFaceIndex(const FModumateObjectInstance *
 	{
 	case EObjectType::OTSurfaceGraph:
 	case EObjectType::OTFurniture:
+	case EObjectType::OTFinish:	// TODO: delete
 		if (FaceMountedObj->GetControlPointIndices().Num() >= 1)
 		{
 			return FaceMountedObj->GetControlPointIndex(0);
