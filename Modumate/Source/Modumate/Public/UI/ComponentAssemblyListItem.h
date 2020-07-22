@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Database/ModumateObjectAssembly.h"
+#include "Blueprint/IUserObjectListEntry.h"
 
 #include "ComponentAssemblyListItem.generated.h"
 
@@ -21,7 +22,7 @@ enum class EComponentListItemType : uint8
 };
 
 UCLASS()
-class MODUMATE_API UComponentAssemblyListItem : public UUserWidget
+class MODUMATE_API UComponentAssemblyListItem : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 
@@ -34,13 +35,13 @@ protected:
 
 	FName AsmKey;
 	FName AsmName;
-	class AEditModelPlayerController_CPP *EMPlayerController;
 	EToolMode ToolMode;
 	EComponentListItemType ItemType;
 
-public:
 	UPROPERTY()
-	class UToolTrayBlockAssembliesList *ToolTrayBlockAssembliesList;
+	class AEditModelPlayerController_CPP *EMPlayerController;
+
+public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UComponentPresetListItem *ComponentPresetItem;
@@ -72,12 +73,11 @@ public:
 	UFUNCTION()
 	void OnButtonEditReleased();
 
-	bool BuildAsAssemblyItem(AEditModelPlayerController_CPP *Controller, EToolMode Mode, const FModumateObjectAssembly *Asm);
-	//bool BuildAsSwapItem();
-	bool BuildAsSelectionItem(AEditModelPlayerController_CPP *Controller, EToolMode Mode, const FModumateObjectAssembly *Asm, int32 ItemCount);
 	void UpdateItemType(EComponentListItemType NewItemType);
 	void UpdateSelectionItemCount(int32 ItemCount);
 	bool BuildFromAssembly();
 	bool GetItemTips(TArray<FString> &OutTips);
 
+	// UserObjectListEntry interface
+	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 };

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-
 #include "ToolTrayBlockAssembliesList.generated.h"
 
 /**
@@ -28,12 +27,8 @@ public:
 	UPROPERTY()
 	class UToolTrayWidget *ToolTray;
 
-	// TODO: Candidate for changing to UListViewBase 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UVerticalBox *AssembliesList;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class UComponentAssemblyListItem> ComponentAssemblyListItemClass;
+	class UListView *AssembliesList;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonAdd;

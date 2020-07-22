@@ -8,11 +8,11 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "UI/Custom/ModumateButton.h"
 #include "Components/VerticalBox.h"
-#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "UI/ToolTray/ToolTrayWidget.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/ComponentPresetListItem.h"
+#include "UI/ComponentListObject.h"
 
 using namespace Modumate;
 
@@ -42,36 +42,6 @@ bool UComponentAssemblyListItem::Initialize()
 void UComponentAssemblyListItem::NativeConstruct()
 {
 	Super::NativeConstruct();
-}
-
-bool UComponentAssemblyListItem::BuildAsAssemblyItem(AEditModelPlayerController_CPP *Controller, EToolMode Mode, const FModumateObjectAssembly *Asm)
-{
-	if (!ComponentPresetItem)
-	{
-		return false;
-	}
-	UpdateItemType(EComponentListItemType::AssemblyListItem);
-	AsmKey = Asm->DatabaseKey;
-	AsmName = Asm->GetProperty(BIM::Parameters::Name);
-	EMPlayerController = Controller;
-	ToolMode = Mode;
-	ComponentPresetItem->MainText->ChangeText(FText::FromName(AsmName));
-
-	BuildFromAssembly();
-	return true;
-}
-
-bool UComponentAssemblyListItem::BuildAsSelectionItem(AEditModelPlayerController_CPP *Controller, EToolMode Mode, const FModumateObjectAssembly *Asm, int32 ItemCount)
-{
-	UpdateItemType(EComponentListItemType::SelectionListItem);
-	AsmKey = Asm->DatabaseKey;
-	AsmName = Asm->GetProperty(BIM::Parameters::Name);
-	EMPlayerController = Controller;
-	ToolMode = Mode;
-	UpdateSelectionItemCount(ItemCount);
-
-	BuildFromAssembly();
-	return true;
 }
 
 void UComponentAssemblyListItem::UpdateItemType(EComponentListItemType NewItemType)
@@ -153,11 +123,9 @@ void UComponentAssemblyListItem::OnModumateButtonMainReleased()
 
 void UComponentAssemblyListItem::OnButtonEditReleased()
 {
-	if (ToolTrayBlockAssembliesList && 
-		ToolTrayBlockAssembliesList->ToolTray && 
-		ToolTrayBlockAssembliesList->ToolTray->EditModelUserWidget)
+	if (EMPlayerController)
 	{
-		ToolTrayBlockAssembliesList->ToolTray->EditModelUserWidget->EventEditExistingAssembly(ToolMode, AsmKey);
+		EMPlayerController->EditModelUserWidget->EventEditExistingAssembly(ToolMode, AsmKey);
 	}
 }
 
@@ -193,3 +161,39 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 	}
 	return true;
 }
+
+void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
+{
+	UComponentListObject *compListObj = Cast<UComponentListObject>(ListItemObject);
+	if (!compListObj)
+	{
+		return;
+	}
+
+	EMPlayerController = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	Modumate::FPresetManager &presetManager = gameState->Document.PresetManager;
+
+	AsmKey = compListObj->UniqueKey;
+	const FModumateObjectAssembly *assembly = presetManager.GetAssemblyByKey(AsmKey);
+	if (!assembly)
+	{
+		return;
+	}
+	AsmName = assembly->GetProperty(BIM::Parameters::Name);
+	ToolMode = compListObj->Mode;
+	UpdateItemType(compListObj->ItemType);
+
+	switch (ItemType)
+	{
+	case EComponentListItemType::AssemblyListItem:
+		ComponentPresetItem->MainText->ChangeText(FText::FromName(AsmName));
+		BuildFromAssembly();
+		break;
+	case EComponentListItemType::SelectionListItem:
+		UpdateSelectionItemCount(compListObj->SelectionItemCount);
+		BuildFromAssembly();
+		break;
+	}
+}
+

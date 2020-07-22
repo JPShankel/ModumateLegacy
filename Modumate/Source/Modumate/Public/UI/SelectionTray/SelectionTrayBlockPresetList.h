@@ -25,18 +25,14 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
-	TMap<FName, class UComponentAssemblyListItem*> ComponentItemMap;
+	TMap<FName, class UComponentListObject*> ComponentItemMap;
 
 public:
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *Controller;
 
-	// TODO: Candidate for changing to UListViewBase 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UVerticalBox *AssembliesList;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class UComponentAssemblyListItem> ComponentSelectionListItemClass;
+	class UListView *AssembliesList;
 
 	void BuildPresetListFromSelection();
 	void ClearPresetList();

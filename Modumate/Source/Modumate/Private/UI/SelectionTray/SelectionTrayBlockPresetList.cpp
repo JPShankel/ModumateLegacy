@@ -6,7 +6,8 @@
 #include "DocumentManagement/ModumateObjectInstance.h"
 #include "UI/ComponentAssemblyListItem.h"
 #include "Database/ModumateObjectEnums.h"
-#include "Components/VerticalBox.h"
+#include "Components/ListView.h"
+#include "UI/ComponentListObject.h"
 
 
 USelectionTrayBlockPresetList::USelectionTrayBlockPresetList(const FObjectInitializer& ObjectInitializer)
@@ -33,27 +34,40 @@ void USelectionTrayBlockPresetList::NativeConstruct()
 
 void USelectionTrayBlockPresetList::BuildPresetListFromSelection()
 {
+	ClearPresetList();
 	TMap<FName, int32> numberOfObjectsWithKey;
 	for (auto& curObject : Controller->EMPlayerState->SelectedObjects)
 	{
 		if (curObject->GetActor())
 		{
-			UComponentAssemblyListItem *compItem = ComponentItemMap.FindRef(curObject->GetAssembly().DatabaseKey);
+			UComponentListObject *compItem = ComponentItemMap.FindRef(curObject->GetAssembly().DatabaseKey);
 			if (compItem)
 			{
 				int32 numberOfObj = numberOfObjectsWithKey.FindRef(curObject->GetAssembly().DatabaseKey);
-				compItem->UpdateSelectionItemCount(numberOfObj + 1);
 				numberOfObjectsWithKey.Add(curObject->GetAssembly().DatabaseKey, numberOfObj + 1);
+				compItem->SelectionItemCount = numberOfObj + 1;
+
+				UUserWidget *entryWidget = AssembliesList->GetEntryWidgetFromItem(compItem);
+				if (entryWidget)
+				{
+					UComponentAssemblyListItem *compListWidget = Cast<UComponentAssemblyListItem>(entryWidget);
+					if (compListWidget)
+					{
+						compListWidget->UpdateSelectionItemCount(compItem->SelectionItemCount);
+					}
+				}
 			}
 			else
 			{
-				UComponentAssemblyListItem *newWidgetListItem = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UComponentAssemblyListItem>(ComponentSelectionListItemClass);
-				EToolMode mode = UModumateTypeStatics::ToolModeFromObjectType(curObject->GetObjectType());
-				newWidgetListItem->BuildAsSelectionItem(Controller, mode, &curObject->GetAssembly(), 0);
-				AssembliesList->AddChildToVerticalBox(newWidgetListItem);
-				ComponentItemMap.Add(curObject->GetAssembly().DatabaseKey, newWidgetListItem);
+				UComponentListObject *newCompListObj = NewObject<UComponentListObject>(this);
+				newCompListObj->ItemType = EComponentListItemType::SelectionListItem;
+				newCompListObj->Mode = UModumateTypeStatics::ToolModeFromObjectType(curObject->GetObjectType());
+				newCompListObj->UniqueKey = curObject->GetAssembly().DatabaseKey;
+				newCompListObj->SelectionItemCount = 1;
+				AssembliesList->AddItem(newCompListObj);
+				ComponentItemMap.Add(curObject->GetAssembly().DatabaseKey, newCompListObj);
+				numberOfObjectsWithKey.Add(curObject->GetAssembly().DatabaseKey, newCompListObj->SelectionItemCount);
 			}
-
 		}
 	}
 }
@@ -61,5 +75,5 @@ void USelectionTrayBlockPresetList::BuildPresetListFromSelection()
 void USelectionTrayBlockPresetList::ClearPresetList()
 {
 	ComponentItemMap.Empty();
-	AssembliesList->ClearChildren();
+	AssembliesList->ClearListItems();
 }
