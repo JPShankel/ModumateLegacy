@@ -20,15 +20,15 @@ UFinishTool::UFinishTool(const FObjectInitializer& ObjectInitializer)
 
 bool UFinishTool::Activate()
 {
+	if (!Super::Activate())
+	{
+		return false;
+	}
+
 	OriginalMouseMode = Controller->EMPlayerState->SnappedCursor.MouseMode;
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Object;
 
-	LastValidTarget = nullptr;
-	LastValidHitActor.Reset();
-	LastValidHitLocation = LastValidHitNormal = FVector::ZeroVector;
-	LastValidFaceIndex = INDEX_NONE;
-
-	return UEditModelToolBase::Activate();
+	return true;
 }
 
 bool UFinishTool::Deactivate()
@@ -38,136 +38,121 @@ bool UFinishTool::Deactivate()
 		Controller->EMPlayerState->SnappedCursor.MouseMode = OriginalMouseMode;
 	}
 
-	return UEditModelToolBase::Deactivate();
+	return Super::Deactivate();
 }
 
 bool UFinishTool::BeginUse()
 {
-	Super::BeginUse();
-
-	auto *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-
-	if (gameState && LastValidTarget && (LastValidTarget->ID != 0) && (LastValidFaceIndex != INDEX_NONE))
+	if ((HostTarget == nullptr) || (HostTarget->ID == MOD_ID_NONE))
 	{
-		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_FINISH, AssemblyKey);
-		const FModumateObjectInstance *parentMOI = gameState->Document.GetObjectById(LastValidTarget->ID);
+		return false;
+	}
 
-		// If we're replacing an existing finish, just swap its assembly
-		if (ensureAlways(assembly != nullptr && parentMOI != nullptr))
+	// If we aren't already targeting a surface polygon, then we'll try to create an implicit one and a graph on the target host.
+	if ((GraphElementTarget == nullptr) || (GraphElementTarget->GetObjectType() != EObjectType::OTSurfacePolygon))
+	{
+		// If we are targeting a graph, then it should have a polygon that we can target, so don't create a new one.
+		if (GraphTarget != nullptr)
 		{
-			for (auto &childID : parentMOI->GetChildren())
+			return false;
+		}
+
+		// TODO: replace with implicit graph creation
+		if (!Super::BeginUse())
+		{
+			return false;
+		}
+
+		for (FModumateObjectInstance *hostChild : HostTarget->GetChildObjects())
+		{
+			if (hostChild->GetObjectType() == EObjectType::OTSurfaceGraph)
 			{
-				FModumateObjectInstance *child = gameState->Document.GetObjectById(childID);
-				if (ensureAlways(child != nullptr))
-				{
-					if (child->GetObjectType() == EObjectType::OTFinish)
-					{
-						int32 existingFinishFace = UModumateObjectStatics::GetParentFaceIndex(child);
-
-						if (existingFinishFace != LastValidFaceIndex)
-						{
-							continue;
-						}
-
-						child->BeginPreviewOperation();
-						child->SetAssembly(*assembly);
-
-						TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ child }));
-						child->EndPreviewOperation();
-
-						FModumateFunctionParameterSet result = Controller->ModumateCommand(delta->AsCommand());
-
-						EndUse();
-						return result.GetValue(Parameters::kSuccess);
-					}
-				}
+				GraphTarget = hostChild;
+				break;
 			}
+		}
 
-			FMOIStateData stateData;
-			stateData.StateType = EMOIDeltaType::Create;
-			stateData.ObjectType = EObjectType::OTFinish;
-			stateData.ObjectAssemblyKey = AssemblyKey;
-			stateData.ParentID = LastValidTarget->ID;
-			stateData.ControlIndices = { LastValidFaceIndex };
-			stateData.ObjectID = gameState->Document.GetNextAvailableID();
+		if (GraphTarget == nullptr)
+		{
+			return false;
+		}
 
-			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ stateData }));
-			Controller->ModumateCommand(delta->AsCommand());
+		FGraph2D *surfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
+		if (surfaceGraph == nullptr)
+		{
+			return false;
+		}
+
+		for (auto &kvp : surfaceGraph->GetPolygons())
+		{
+			const FGraph2DPolygon &surfacePolygon = kvp.Value;
+			if (surfacePolygon.bInterior && (surfacePolygon.ParentID == MOD_ID_NONE))
+			{
+				GraphElementTarget = GameState->Document.GetObjectById(surfacePolygon.ID);
+				break;
+			}
 		}
 	}
 
-	EndUse();
-	return true;
-}
+	if (GraphElementTarget == nullptr)
+	{
+		return false;
+	}
 
-bool UFinishTool::EnterNextStage()
-{
-	Super::EnterNextStage();
-	return false;
-}
+	const FModumateObjectAssembly *assembly = GameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_FINISH, AssemblyKey);
 
-bool UFinishTool::EndUse()
-{
-	Super::EndUse();
-	return true;
-}
+	if (!ensureAlways(assembly))
+	{
+		return false;
+	}
 
-bool UFinishTool::AbortUse()
-{
-	Super::AbortUse();
-	return true;
+	// If we're replacing an existing finish, just swap its assembly
+	for (FModumateObjectInstance *child : GraphElementTarget->GetChildObjects())
+	{
+		if (child->GetObjectType() == EObjectType::OTFinish)
+		{
+			child->BeginPreviewOperation();
+			child->SetAssembly(*assembly);
+
+			TSharedPtr<FMOIDelta> swapAssemblyDelta = MakeShareable(new FMOIDelta({ child }));
+			child->EndPreviewOperation();
+
+			return GameState->Document.ApplyDeltas({ swapAssemblyDelta }, GetWorld());
+		}
+	}
+
+	// Otherwise, create a new finish object on the target surface graph polygon
+	FMOIStateData stateData;
+	stateData.StateType = EMOIDeltaType::Create;
+	stateData.ObjectType = EObjectType::OTFinish;
+	stateData.ObjectAssemblyKey = AssemblyKey;
+	stateData.ParentID = GraphElementTarget->ID;
+	stateData.ObjectID = GameState->Document.GetNextAvailableID();
+
+	TSharedPtr<FMOIDelta> createFinishDelta = MakeShareable(new FMOIDelta({ stateData }));
+	return GameState->Document.ApplyDeltas({ createFinishDelta }, GetWorld());
 }
 
 bool UFinishTool::FrameUpdate()
 {
-	Super::FrameUpdate();
-
-	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
-	if (cursor.Actor && (cursor.SnapType == ESnapType::CT_FACESELECT))
+	if (!Super::FrameUpdate())
 	{
-		if (!LastValidTarget || (cursor.Actor != LastValidHitActor.Get()) || !cursor.HitNormal.Equals(LastValidHitNormal))
-		{
-			LastValidTarget = nullptr;
-			LastValidHitActor.Reset();
-
-			auto *gameState = Cast<AEditModelGameState_CPP>(Controller->GetWorld()->GetGameState());
-			if (auto *moi = gameState->Document.ObjectFromActor(cursor.Actor))
-			{
-				LastValidFaceIndex = UModumateObjectStatics::GetFaceIndexFromTargetHit(moi, cursor.WorldPosition, cursor.HitNormal);
-
-				if (LastValidFaceIndex != INDEX_NONE)
-				{
-					LastValidTarget = moi;
-					LastValidHitActor = cursor.Actor;
-					LastValidHitNormal = cursor.HitNormal;
-				}
-			}
-		}
-
-		FVector faceNormal, faceAxisX, faceAxisY;
-		if (LastValidTarget && UModumateObjectStatics::GetGeometryFromFaceIndex(LastValidTarget, LastValidFaceIndex,
-			LastCornerPoints, faceNormal, faceAxisX, faceAxisY))
-		{
-			int32 numCorners = LastCornerPoints.Num();
-			for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
-			{
-				int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
-
-				FVector curCornerPos = LastCornerPoints[curCornerIdx];
-				FVector nextCornerPos = LastCornerPoints[nextCornerIdx];
-
-				Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(
-					curCornerPos, nextCornerPos, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness)
-				);
-			}
-		}
+		return false;
 	}
-	else
+
+	if (GraphElementTarget && (GraphElementTarget->GetObjectType() == EObjectType::OTSurfacePolygon))
 	{
-		LastValidTarget = nullptr;
+		const TArray<FVector> &surfacePolyCPs = GraphElementTarget->GetControlPoints();
+		int32 numCPs = surfacePolyCPs.Num();
+		for (int32 curPointIdx = 0; curPointIdx < numCPs; ++curPointIdx)
+		{
+			int32 nextPointIdx = (curPointIdx + 1) % numCPs;
+
+			Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(surfacePolyCPs[curPointIdx], surfacePolyCPs[nextPointIdx],
+				AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness)
+			);
+		}
 	}
 
 	return true;
 }
-
-

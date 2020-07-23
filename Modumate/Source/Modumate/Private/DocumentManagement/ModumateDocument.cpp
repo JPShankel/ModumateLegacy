@@ -1041,7 +1041,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 			controlPoints.Add(UModumateGeometryStatics::Deproject2DPoint(polyVertex->Position, faceAxisX, faceAxisY, faceOrigin));
 		}
 
-		if (controlPoints.Num() == kvp.Value.Vertices.Num())
+		if ((controlPoints.Num() == kvp.Value.Vertices.Num()) && kvp.Value.bInterior)
 		{
 			CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfacePolygon,
 				kvp.Key, surfaceGraphID, FVector::ZeroVector, &controlPoints, nullptr);

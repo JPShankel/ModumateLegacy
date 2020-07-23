@@ -24,9 +24,6 @@ namespace Modumate
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override { }
 
-		virtual FModumateWallMount GetWallMountForSelf(int32 originIndex) const override;
-		virtual void SetWallMountForSelf(const FModumateWallMount &wm) override;
-
 	protected:
 		FVector CachedNormal;
 	};

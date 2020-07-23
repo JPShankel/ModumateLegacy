@@ -672,6 +672,7 @@ namespace Modumate
 			if (edgekvp.Value.bDirty)
 			{
 				dirtyEdges.Add(edgekvp.Key);
+				dirtyEdges.Add(-edgekvp.Key);
 			}
 		}
 

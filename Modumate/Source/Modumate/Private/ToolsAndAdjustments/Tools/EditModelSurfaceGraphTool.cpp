@@ -19,6 +19,7 @@ USurfaceGraphTool::USurfaceGraphTool(const FObjectInitializer& ObjectInitializer
 	: Super(ObjectInitializer)
 	, HostTarget(nullptr)
 	, GraphTarget(nullptr)
+	, GraphElementTarget(nullptr)
 	, HitHostActor(nullptr)
 	, HitLocation(ForceInitToZero)
 	, HitNormal(ForceInitToZero)
@@ -69,7 +70,7 @@ bool USurfaceGraphTool::Deactivate()
 
 bool USurfaceGraphTool::BeginUse()
 {
-	if (HostTarget && (HostTarget->ID != 0) && (HitFaceIndex != INDEX_NONE))
+	if (HostTarget && (HostTarget->ID != 0))
 	{
 		// If there's no graph on the target, then just create an explicit surface graph for the face,
 		// before starting any poly-line drawing.
@@ -213,7 +214,24 @@ bool USurfaceGraphTool::FrameUpdate()
 		// or if we're targeting an existing surface graph that we want to edit and snap against.
 		HitFaceIndex = newHitFaceIndex;
 
-		if (HitFaceIndex != INDEX_NONE)
+		EGraphObjectType hitObjectGraphType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType());
+		if (hitObjectGraphType != EGraphObjectType::None)
+		{
+			FModumateObjectInstance *surfaceGraphObj = moi->GetParentObject();
+			FModumateObjectInstance *surfaceGraphHost = surfaceGraphObj ? surfaceGraphObj->GetParentObject() : nullptr;
+			if (!ensure(surfaceGraphObj && (surfaceGraphObj->GetObjectType() == EObjectType::OTSurfaceGraph) && surfaceGraphHost))
+			{
+				return true;
+			}
+
+			HostTarget = surfaceGraphHost;
+			HitHostActor = surfaceGraphHost->GetActor();
+			HitLocation = cursor.WorldPosition;
+			HitNormal = cursor.HitNormal;
+			GraphTarget = surfaceGraphObj;
+			GraphElementTarget = moi;
+		}
+		else if (HitFaceIndex != INDEX_NONE)
 		{
 			HostTarget = moi;
 			HitHostActor = cursor.Actor;
@@ -363,6 +381,7 @@ void USurfaceGraphTool::ResetTarget()
 {
 	HostTarget = nullptr;
 	GraphTarget = nullptr;
+	GraphElementTarget = nullptr;
 	HitHostActor = nullptr;
 	HitLocation = HitNormal = FVector::ZeroVector;
 	HitFaceIndex = INDEX_NONE;

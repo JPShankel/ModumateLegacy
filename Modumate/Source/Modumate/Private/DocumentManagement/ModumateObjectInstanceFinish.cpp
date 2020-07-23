@@ -68,101 +68,27 @@ namespace Modumate
 		// TODO: why is this necessary?
 		MOI->ClearAdjustmentHandles();
 
-		int32 faceIndex = UModumateObjectStatics::GetParentFaceIndex(MOI);
-		auto *hostObj = MOI->GetParentObject();
-
-		if (hostObj && (faceIndex != INDEX_NONE))
+		FModumateObjectInstance *surfacePolyParent = MOI->GetParentObject();
+		if (!ensure(surfacePolyParent && (surfacePolyParent->GetObjectType() == EObjectType::OTSurfacePolygon)))
 		{
-			MOI->SetControlPoints(TArray<FVector>());
-			CachedNormal = FVector::ZeroVector;
-			float finishThickness = MOI->CalculateThickness();
+			return;
+		}
 
-			switch (hostObj->GetObjectType())
-			{
-			case EObjectType::OTRoofFace:
-			case EObjectType::OTWallSegment:
-			case EObjectType::OTFloorSegment:
-			{
-				const auto *hostObjParent = hostObj->GetParentObject();
-				if (!(hostObjParent && (hostObjParent->GetObjectType() == EObjectType::OTMetaPlane)))
-				{
-					return;
-				}
+		MOI->SetControlPoints(surfacePolyParent->GetControlPoints());
+		CachedNormal = surfacePolyParent->GetNormal();
 
-				int32 numPoints = hostObjParent->GetControlPoints().Num();
-				float hostObjThickness = hostObj->CalculateThickness();
-				FVector hostNormal = hostObj->GetNormal();
+		if ((MOI->GetControlPoints().Num() < 3) || !CachedNormal.IsNormalized())
+		{
+			return;
+		}
 
-				// hostNormal can be zero if its parent hasn't been created yet;
-				// otherwise, it better actually be normalized.
-				if (hostNormal.IsZero() || !ensure(hostNormal.IsNormalized()))
-				{
-					return;
-				}
+		bool bToleratePlanarErrors = true;
+		bool bLayerSetupSuccess = DynamicMeshActor->CreateBasicLayerDefs(MOI->GetControlPoints(), CachedNormal, MOI->GetAssembly(),
+			0.0f, FVector::ZeroVector, 0.0f, bToleratePlanarErrors);
 
-				// front or back of polygon
-				if (faceIndex < 2)
-				{
-					bool bOnFront = (faceIndex == 0);
-					int32 cornerOffset = bOnFront ? numPoints : 0;
-
-					for (int32 pointIdx = 0; pointIdx < numPoints; ++pointIdx)
-					{
-						int32 cornerIdx = pointIdx + cornerOffset;
-						MOI->AddControlPoint(hostObj->GetCorner(cornerIdx));
-					}
-
-					CachedNormal = hostNormal * (bOnFront ? 1.0f : -1.0f);
-				}
-				// side of polygon
-				else if (faceIndex < (numPoints + 2))
-				{
-					int32 startCornerIdx = faceIndex - 2;
-					int32 endCornerIdx = (startCornerIdx + 1) % numPoints;
-					FVector point1A = hostObj->GetCorner(startCornerIdx);
-					FVector point2A = hostObj->GetCorner(endCornerIdx);
-					FVector point1B = hostObj->GetCorner(startCornerIdx + numPoints);
-					FVector point2B = hostObj->GetCorner(endCornerIdx + numPoints);
-					FVector edgeDir = (point2A - point1A).GetSafeNormal();
-					CachedNormal = edgeDir ^ hostNormal;
-
-					MOI->SetControlPoints({ point1A, point2A, point2B, point1B });
-				}
-			}
-			break;
-			default:
-				break;
-			}
-
-			ADynamicMeshActor *parentMeshActor = Cast<ADynamicMeshActor>(hostObj->GetActor());
-			if ((MOI->GetControlPoints().Num() >= 3) && CachedNormal.IsNormalized() && parentMeshActor)
-			{
-				DynamicMeshActor->HoleActors = parentMeshActor->HoleActors;
-				bool bToleratePlanarErrors = true;
-				bool bLayerSetupSuccess = DynamicMeshActor->CreateBasicLayerDefs(MOI->GetControlPoints(), CachedNormal, MOI->GetAssembly(),
-					0.0f, FVector::ZeroVector, 0.0f, bToleratePlanarErrors);
-
-				if (bLayerSetupSuccess)
-				{
-					DynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
-				}
-
-				auto *controller = DynamicMeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-				AEditModelPlayerState_CPP *playerState = controller ? controller->EMPlayerState : nullptr;
-				if (playerState)
-				{
-					// Ensure that the player state's object errors are the same as this mesh's placement errors
-					// TODO: combine these error collections, there's no good reason to have both of them.
-					playerState->ClearErrorsForObject(MOI->ID);
-					if (DynamicMeshActor->HasPlacementError())
-					{
-						for (const FName &placementError : DynamicMeshActor->GetPlacementErrors())
-						{
-							playerState->SetErrorForObject(MOI->ID, placementError, true);
-						}
-					}
-				}
-			}
+		if (bLayerSetupSuccess)
+		{
+			DynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
 		}
 	}
 
@@ -193,16 +119,5 @@ namespace Modumate
 			outLines.Add(FStructureLine(cornerMaxA, cornerMaxB, edgeIdxA + numCP, edgeIdxB + numCP));
 			outLines.Add(FStructureLine(cornerMinA, cornerMaxA, edgeIdxA, edgeIdxA + numCP));
 		}
-	}
-
-	FModumateWallMount FMOIFinishImpl::GetWallMountForSelf(int32 originIndex) const
-	{
-		// TODO: add more details once finish regions exist
-		return FModumateWallMount();
-	}
-
-	void FMOIFinishImpl::SetWallMountForSelf(const FModumateWallMount &wm)
-	{
-		SetupDynamicGeometry();
 	}
 }
