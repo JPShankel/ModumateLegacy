@@ -200,7 +200,7 @@ void UModumateRoomStatics::UpdateDerivedRoomProperties(Modumate::FModumateObject
 	RoomObj->SetProperty(BIM::EScope::Room, BIM::Parameters::OccupantsNumber, occupantsNumValue);
 }
 
-bool UModumateRoomStatics::CanRoomContainFace(const Modumate::FModumateDocument *Document, FSignedID FaceID)
+bool UModumateRoomStatics::CanRoomContainFace(const FModumateDocument *Document, FSignedID FaceID)
 {
 	const FGraph3DFace *graphFace = Document->GetVolumeGraph().FindFace(FaceID);
 	const FModumateObjectInstance *planeObj = Document->GetObjectById(FMath::Abs(FaceID));
@@ -232,7 +232,7 @@ bool UModumateRoomStatics::CanRoomContainFace(const Modumate::FModumateDocument 
 	return false;
 }
 
-void UModumateRoomStatics::CalculateRoomChanges(const Modumate::FModumateDocument *Document, bool &bOutAnyChange,
+void UModumateRoomStatics::CalculateRoomChanges(const FModumateDocument *Document, bool &bOutAnyChange,
 	TMap<int32, int32> &OutOldRoomIDsToNewRoomIndices,
 	TMap<int32, TArray<int32>> &OutNewRoomsFaceIDs,
 	TSet<int32> &OutOldRoomsToDeleteIDs,
@@ -338,7 +338,7 @@ void UModumateRoomStatics::CalculateRoomChanges(const Modumate::FModumateDocumen
 	}
 }
 
-void UModumateRoomStatics::CalculateRoomNumbers(const Modumate::FModumateDocument *Document,
+void UModumateRoomStatics::CalculateRoomNumbers(const FModumateDocument *Document,
 	TMap<int32, FString> &OutOldRoomNumbers, TMap<int32, FString> &OutNewRoomNumbers)
 {
 	OutOldRoomNumbers.Reset();

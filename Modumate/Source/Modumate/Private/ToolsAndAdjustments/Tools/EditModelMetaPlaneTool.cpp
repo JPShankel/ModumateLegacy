@@ -179,7 +179,7 @@ bool UMetaPlaneTool::EnterNextStage()
 
 bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewObjIDs)
 {
-	Modumate::FModumateDocument &doc = GameState->Document;
+	FModumateDocument &doc = GameState->Document;
 
 	bool bSuccess = false;
 	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();

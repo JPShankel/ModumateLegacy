@@ -28,6 +28,7 @@ class ALineActor;
 class UHUDDrawWidget;
 
 struct FMOIDataRecordV1;
+class MODUMATE_API FModumateDocument;
 
 namespace Modumate
 {
@@ -211,7 +212,6 @@ namespace Modumate
 		virtual bool GetIsDynamic() const override { return false; }
 	};
 
-	class FModumateDocument;
 
 	struct MODUMATE_API FMOIStateData
 	{
@@ -280,7 +280,7 @@ namespace Modumate
 		TWeakObjectPtr<AActor> MeshActor = nullptr;
 		TWeakObjectPtr<UWorld> World = nullptr;
 		IModumateObjectInstanceImpl *Implementation = nullptr;
-		Modumate::FModumateDocument *Document = nullptr;
+		FModumateDocument *Document = nullptr;
 
 		FMOIStateData CurrentState, PreviewState;
 
@@ -360,7 +360,7 @@ namespace Modumate
 		bool HasActor(const AActor *actor) const { return MeshActor == actor; }
 		AActor *GetActor() { return MeshActor.Get(); }
 		const AActor *GetActor() const { return MeshActor.Get(); }
-		const Modumate::FModumateDocument *GetDocument() const { return Document; }
+		const FModumateDocument *GetDocument() const { return Document; }
 
 		void Destroy();
 

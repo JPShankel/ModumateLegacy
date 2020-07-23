@@ -14,11 +14,8 @@
 
 #include "EditModelPlayerState_CPP.generated.h"
 
-namespace Modumate
-{
-	class FModumateDocument;
-}
-class AGraphDimensionActor;
+class MODUMATE_API FModumateDocument;
+class MODUMATE_API AGraphDimensionActor;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPostOnNewModel);
@@ -147,8 +144,8 @@ public:
 	void SetActorRenderValues(AActor* actor, int32 stencilValue, bool bNeverCull);
 	void PostSelectionOrViewChanged();
 
-	void CopySelectedToClipboard(const Modumate::FModumateDocument &document);
-	void Paste(Modumate::FModumateDocument &document) const;
+	void CopySelectedToClipboard(const FModumateDocument &document);
+	void Paste(FModumateDocument &document) const;
 
 	FModumateObjectAssembly SetTemporaryAssembly(EToolMode mode, const FModumateObjectAssembly &assembly);
 	const FModumateObjectAssembly *GetTemporaryAssembly(EToolMode mode) const;

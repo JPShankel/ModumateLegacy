@@ -42,7 +42,7 @@ bool UJoinTool::BeginUse()
 bool UJoinTool::HandleMouseUp()
 {
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Modumate::FModumateDocument *doc = &gameState->Document;
+	FModumateDocument *doc = &gameState->Document;
 
 	FModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
 		
@@ -138,9 +138,8 @@ bool UJoinTool::EnterNextStage()
 		Controller->DeselectAll();
 		
 		AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		Modumate::FModumateDocument* doc = &gameState->Document;
+		FModumateDocument* doc = &gameState->Document;
 		return doc->JoinMetaObjects(GetWorld(), PendingObjectIDs.Array());
-
 		// TODO: potentially return the result of this function, if it is true the two faces will be joined
 		// and the tool can continue
 	}

@@ -24,11 +24,11 @@ class UEditModelInputHandler;
 class UModumateCraftingWidget_CPP;
 class UHUDDrawWidget;
 class UModumateDrawingSetWidget_CPP;
+class FModumateDocument;
 
 namespace Modumate
 {
 	class FModumateSnappingView;
-	class FModumateDocument;
 	class FModumateObjectInstance;
 }
 
@@ -53,7 +53,7 @@ class MODUMATE_API AEditModelPlayerController_CPP : public APlayerController
 
 private:
 
-	Modumate::FModumateDocument *Document;
+	FModumateDocument *Document;
 	Modumate::FModumateSnappingView *SnappingView;
 
 	TSet<int32> SnappingIDsToIgnore;
@@ -224,7 +224,7 @@ public:
 
 	Modumate::FModumateFunctionParameterSet ModumateCommand(const Modumate::FModumateCommand &cmd);
 
-	Modumate::FModumateDocument *GetDocument() const { return Document; }
+	FModumateDocument *GetDocument() const { return Document; }
 	Modumate::FModumateSnappingView *GetSnappingView() const { return SnappingView; }
 
 	/*  Assembly Layer Inputs */

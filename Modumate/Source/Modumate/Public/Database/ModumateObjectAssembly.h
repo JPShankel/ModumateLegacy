@@ -148,16 +148,16 @@ An Object assembly is a collection of layers
 namespace Modumate
 {
 	class MODUMATE_API IPresetManager;
-	class MODUMATE_API FModumateDocument;
 	class MODUMATE_API FPresetManager;
 }
 
 class MODUMATE_API FModumateDatabase;
+class MODUMATE_API FModumateDocument;
 
 USTRUCT(BlueprintType)
-struct FModumateObjectAssembly
+struct MODUMATE_API FModumateObjectAssembly
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
 
 	EObjectType ObjectType = EObjectType::OTUnknown;
 	FName DatabaseKey, RootPreset;

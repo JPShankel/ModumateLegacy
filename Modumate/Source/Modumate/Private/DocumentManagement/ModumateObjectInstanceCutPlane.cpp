@@ -249,7 +249,7 @@ namespace Modumate
 		MasksActor->ClearProceduralLayers();
 
 		AEditModelGameState_CPP *gameState = World->GetGameState<AEditModelGameState_CPP>();
-		Modumate::FModumateDocument &doc = gameState->Document;
+		FModumateDocument &doc = gameState->Document;
 		auto volumeGraph = doc.GetVolumeGraph();
 		TArray<FVector2D> boxPoints;
 

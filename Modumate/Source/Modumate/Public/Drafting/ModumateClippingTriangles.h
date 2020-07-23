@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+class MODUMATE_API FModumateDocument;
 
 namespace Modumate
 {
-	class FModumateDocument;
 	class FModumateObjectInstance;
 
 	class FModumateClippingTriangles

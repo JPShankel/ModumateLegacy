@@ -87,7 +87,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	CurViewGroupObjects.Reset();
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Modumate::FModumateDocument &doc = gameState->Document;
+	FModumateDocument &doc = gameState->Document;
 
 	if (ViewGroupObject)
 	{
@@ -212,7 +212,7 @@ void AEditModelPlayerState_CPP::SetShowGraphDebug(bool bShow)
 
 		// TODO: replace with non-debug visibility flag for rooms; for now, just piggypack off of the room graph visibility
 		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		Modumate::FModumateDocument &doc = gameState->Document;
+		FModumateDocument &doc = gameState->Document;
 		TArray<FModumateObjectInstance *> rooms = doc.GetObjectsOfType(EObjectType::OTRoom);
 		for (FModumateObjectInstance *room : rooms)
 		{
@@ -236,7 +236,7 @@ AEditModelGameMode_CPP *AEditModelPlayerState_CPP::GetEditModelGameMode()
 void AEditModelPlayerState_CPP::SetAssemblyForActor(AActor *actor, const FName &assemblyKey)
 {
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Modumate::FModumateDocument *doc = &gameState->Document;
+	FModumateDocument *doc = &gameState->Document;
 	FModumateObjectInstance *ob = doc->ObjectFromActor(actor);
 
 	if (ob != nullptr)
@@ -338,7 +338,7 @@ bool AEditModelPlayerState_CPP::ValidateSelectionsAndView()
 	bool selectionOrViewChanged = false;
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Modumate::FModumateDocument *doc = &gameState->Document;
+	FModumateDocument *doc = &gameState->Document;
 
 	for (int32 i = SelectedObjects.Num() - 1; i >= 0; --i)
 	{
@@ -392,7 +392,7 @@ void AEditModelPlayerState_CPP::SelectAll()
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SelectAll"));
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Modumate::FModumateDocument *doc = &gameState->Document;
+	FModumateDocument *doc = &gameState->Document;
 
 	for (auto *selectedObj : SelectedObjects)
 	{
@@ -418,7 +418,7 @@ void AEditModelPlayerState_CPP::SelectInverse()
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SelectInverse"));
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Modumate::FModumateDocument *doc = &gameState->Document;
+	FModumateDocument *doc = &gameState->Document;
 
 	TSet<FModumateObjectInstance *> previousSelectedObjs(SelectedObjects);
 
@@ -453,7 +453,7 @@ void AEditModelPlayerState_CPP::DeselectAll()
 	}
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Modumate::FModumateDocument *doc = &gameState->Document;
+	FModumateDocument *doc = &gameState->Document;
 	auto obs = doc->GetObjectInstances();
 
 	for (auto &ob : obs)
@@ -913,7 +913,7 @@ bool AEditModelPlayerState_CPP::DoesObjectHaveAnyError(int32 ObjectID) const
 	return (objectErrors && (objectErrors->Num() > 0));
 }
 
-void AEditModelPlayerState_CPP::CopySelectedToClipboard(const Modumate::FModumateDocument &document)
+void AEditModelPlayerState_CPP::CopySelectedToClipboard(const FModumateDocument &document)
 {
 	ClipboardEntries.Reset();
 	Algo::Transform(
@@ -927,7 +927,7 @@ void AEditModelPlayerState_CPP::CopySelectedToClipboard(const Modumate::FModumat
 		});
 }
 
-void AEditModelPlayerState_CPP::Paste(Modumate::FModumateDocument &document) const
+void AEditModelPlayerState_CPP::Paste(FModumateDocument &document) const
 {
 	if (ClipboardEntries.Num() == 0)
 	{
@@ -1199,7 +1199,7 @@ void AEditModelPlayerState_CPP::SetEditViewModeDirect(EEditViewModes NewEditView
 void AEditModelPlayerState_CPP::UpdateObjectVisibilityAndCollision()
 {
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Modumate::FModumateDocument &doc = gameState->Document;
+	FModumateDocument &doc = gameState->Document;
 	for (FModumateObjectInstance *moi : doc.GetObjectInstances())
 	{
 		if (moi)

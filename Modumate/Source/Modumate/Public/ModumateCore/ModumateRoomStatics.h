@@ -53,9 +53,10 @@ struct FRoomConfigurationBlueprint
 };
 
 // TODO: this should be defined by BIM, rather than a USTRUCT table row and a Blueprintable subclass
+class MODUMATE_API FModumateDocument;
 namespace Modumate
 {
-	struct FRoomConfiguration : public FRoomConfigurationTableRow
+	struct MODUMATE_API FRoomConfiguration : public FRoomConfigurationTableRow
 	{
 		FName DatabaseKey;
 		FName UniqueKey() const { return DatabaseKey; }
@@ -63,8 +64,7 @@ namespace Modumate
 		FRoomConfigurationBlueprint AsBlueprintObject(int32 InObjectID, const FString &InRoomNumber, float InArea, int32 InOccupantsNumber) const;
 	};
 
-	class FModumateDocument;
-	class FModumateObjectInstance;
+	class MODUMATE_API FModumateObjectInstance;
 }
 
 // Helper functions for accessing / editing room data and interpreting room geometry.
@@ -92,13 +92,13 @@ public:
 
 	static void UpdateDerivedRoomProperties(Modumate::FModumateObjectInstance *RoomObj);
 
-	static bool CanRoomContainFace(const Modumate::FModumateDocument *Document, Modumate::FSignedID FaceID);
+	static bool CanRoomContainFace(const FModumateDocument *Document, Modumate::FSignedID FaceID);
 
-	static void CalculateRoomChanges(const Modumate::FModumateDocument *Document, bool &bOutAnyChange,
+	static void CalculateRoomChanges(const FModumateDocument *Document, bool &bOutAnyChange,
 		TMap<int32, int32> &OutOldRoomIDsToNewRoomIndices, TMap<int32, TArray<int32>> &OutNewRoomsFaceIDs,
 		TSet<int32> &OutOldRoomsToDeleteIDs, TSet<int32> &OutNewRoomsToCreateIndices);
 
-	static void CalculateRoomNumbers(const Modumate::FModumateDocument *Document,
+	static void CalculateRoomNumbers(const FModumateDocument *Document,
 		TMap<int32, FString> &OutOldRoomNumbers, TMap<int32, FString> &OutNewRoomNumbers);
 
 	static const FName DefaultRoomConfigKey;

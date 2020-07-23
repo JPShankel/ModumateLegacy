@@ -3,12 +3,12 @@
 
 #include "Drafting/Schedules/SummaryList.h"
 
+class MODUMATE_API FModumateDocument;
 namespace Modumate {
 
-	class FModumateDocument;
-	class IModumateDraftingDraw;
+	class MODUMATE_API IModumateDraftingDraw;
 
-	class FFFESchedule : public FSummaryList
+	class MODUMATE_API FFFESchedule : public FSummaryList
 	{
 	public:
 		FFFESchedule(const FModumateDocument *doc, IModumateDraftingDraw *drawingInterface);

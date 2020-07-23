@@ -5,9 +5,10 @@
 #include "CoreMinimal.h"
 
 class UWorld;
+class FModumateDocument;
+
 namespace Modumate
 {
-	class FModumateDocument;
 
 	class MODUMATE_API FDelta : public TSharedFromThis<FDelta>
 	{

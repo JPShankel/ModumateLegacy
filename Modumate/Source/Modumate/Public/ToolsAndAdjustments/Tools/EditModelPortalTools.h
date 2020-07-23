@@ -8,10 +8,7 @@
 class APortalFrameActor_CPP;
 class AEditModelPlayerController_CPP;
 class ACompoundMeshActor;
-
-namespace Modumate {
-	class FModumateDocument;
-}
+class FModumateDocument;
 
 UCLASS()
 class MODUMATE_API UPortalToolBase : public UEditModelToolBase
@@ -22,7 +19,7 @@ protected:
 	UPROPERTY()
 	ACompoundMeshActor * CursorActor;
 
-	Modumate::FModumateDocument *Document;
+	FModumateDocument *Document;
 	int32 HostID;
 	bool bHasBoringError;
 	bool bUseFixedOffset;

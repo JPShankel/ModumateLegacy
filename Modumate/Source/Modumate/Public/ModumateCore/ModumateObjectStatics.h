@@ -10,15 +10,16 @@
 
 #include "ModumateObjectStatics.generated.h"
 
+class MODUMATE_API FModumateDocument;
+
 namespace Modumate
 {
-	class FModumateObjectInstance;
-	class FModumateDocument;
-	class FGraph3DEdge;
+	class MODUMATE_API FModumateObjectInstance;
+	class MODUMATE_API FGraph3DEdge;
 };
 
-struct FModumateObjectAssembly;
-struct FSimplePolygon;
+struct MODUMATE_API FModumateObjectAssembly;
+struct MODUMATE_API FSimplePolygon;
 
 UENUM(BlueprintType)
 enum class ETrimMiterOptions : uint8
@@ -96,7 +97,7 @@ public:
 		TArray<FVector> &OutFacePoints, FVector &OutNormal, FVector &OutFaceAxisX, FVector &OutFaceAxisY);
 
 	// Meta Objects
-	static void EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const Modumate::FModumateDocument *Doc,
+	static void EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const FModumateDocument *Doc,
 		bool &bOutConnectedToEmptyPlane, bool &bOutConnectedToSelectedPlane);
 	static void ShouldMetaObjBeEnabled(const Modumate::FModumateObjectInstance *MetaMOI,
 		bool &bOutShouldBeVisible, bool &bOutShouldCollisionBeEnabled, bool &bOutIsConnected);

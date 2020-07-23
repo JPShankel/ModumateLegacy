@@ -154,7 +154,7 @@ bool USelectTool::HandleMouseUp()
 	}
 
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Modumate::FModumateDocument *doc = &gameState->Document;
+	FModumateDocument *doc = &gameState->Document;
 
 	FModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
 	bool doubleClicked = false;
@@ -336,7 +336,7 @@ bool USelectTool::ProcessDragSelect()
 		}
 
 		AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		Modumate::FModumateDocument *doc = &gameState->Document;
+		FModumateDocument *doc = &gameState->Document;
 
 		bool requireEnclosure = curMousePosition.X > InitialClickLocation.X;
 		FBox2D screenSelectRect(ForceInitToZero);

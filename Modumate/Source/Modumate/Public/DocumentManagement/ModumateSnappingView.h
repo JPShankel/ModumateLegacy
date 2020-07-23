@@ -7,10 +7,10 @@
 #include "DocumentManagement/ModumateObjectInstance.h"
 
 class AEditModelPlayerController_CPP;
+class MODUMATE_API FModumateDocument;
 
 namespace Modumate
 {
-	class FModumateDocument;
 	class FModumateObjectInstance;
 
 	class MODUMATE_API FModumateSnappingView

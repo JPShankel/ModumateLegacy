@@ -41,7 +41,7 @@ UModumateGameInstance::UModumateGameInstance(const FObjectInitializer& ObjectIni
 	: Super(ObjectInitializer)
 {}
 
-Modumate::FModumateDocument *UModumateGameInstance::GetDocument()
+FModumateDocument *UModumateGameInstance::GetDocument()
 {
 	AEditModelGameState_CPP *gameState = GetWorld() != nullptr ? GetWorld()->GetGameState<AEditModelGameState_CPP>() : nullptr;
 	if (gameState != nullptr)

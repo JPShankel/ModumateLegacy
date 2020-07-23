@@ -10,14 +10,15 @@
 #include "ModumateRoofStatics.generated.h"
 
 
+class MODUMATE_API FModumateDocument;
+
 namespace Modumate
 {
-	class FModumateDocument;
-	class FModumateObjectInstance;
+	class MODUMATE_API FModumateObjectInstance;
 
 	namespace BIM
 	{
-		class FBIMPropertySheet;
+		class MODUMATE_API FBIMPropertySheet;
 	}
 }
 

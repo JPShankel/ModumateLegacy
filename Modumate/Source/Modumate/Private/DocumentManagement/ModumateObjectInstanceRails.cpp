@@ -16,7 +16,7 @@ namespace Modumate
 	void FMOIRailImpl::SetupDynamicGeometry()
 	{
 		AEditModelGameState_CPP *gameState = DynamicMeshActor->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		Modumate::FModumateDocument *doc = &gameState->Document;
+		FModumateDocument *doc = &gameState->Document;
 		FVector extent = MOI->GetExtents();
 		extent.Y = doc->GetDefaultRailHeight();
 		MOI->SetExtents(extent);

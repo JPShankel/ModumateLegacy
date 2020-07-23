@@ -43,9 +43,8 @@
 #include "UnrealClasses/Modumate.h"
 
 using namespace Modumate::Mitering;
+using namespace Modumate;
 
-namespace Modumate
-{
 
 const FName FModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
 
@@ -3012,7 +3011,7 @@ bool FModumateDocument::ExportPDF(UWorld *world, const TCHAR *filepath, const FV
 	return true;
 }
 
-bool Modumate::FModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
+bool FModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ExportDWG"));
 	CurrentDraftingView = MakeShareable(new FModumateDraftingView(world, this, FModumateDraftingView::kDWG));
@@ -3973,4 +3972,3 @@ FModumateObjectAssembly FModumateDocument::CreateOrOverwriteAssembly_DEPRECATED(
 	return CreateNewAssembly_DEPRECATED(world, mode, assembly);
 }
 
-}

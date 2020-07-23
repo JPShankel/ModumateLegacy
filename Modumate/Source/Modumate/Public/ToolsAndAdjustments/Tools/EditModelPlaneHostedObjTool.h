@@ -7,11 +7,11 @@
 
 #include "EditModelPlaneHostedObjTool.generated.h"
 
-class ADynamicMeshActor;
+class MODUMATE_API ADynamicMeshActor;
 
+class MODUMATE_API FModumateDocument;
 namespace Modumate {
-	class FModumateDocument;
-	class FModumateObjectInstance;
+	class MODUMATE_API FModumateObjectInstance;
 }
 
 UCLASS()

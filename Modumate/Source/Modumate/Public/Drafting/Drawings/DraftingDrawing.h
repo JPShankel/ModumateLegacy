@@ -5,10 +5,10 @@
 #include "Drafting/DraftingManager.h"
 
 class UWorld;
+class MODUMATE_API FModumateDocument;
 
 namespace Modumate {
 
-	class FModumateDocument;
 	class FDrawingArea;
 
 	class FDraftingDrawing : public FDraftingComposite

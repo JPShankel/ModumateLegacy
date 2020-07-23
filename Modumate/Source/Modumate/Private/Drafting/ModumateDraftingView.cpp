@@ -50,7 +50,7 @@ FModumateDraftingView::~FModumateDraftingView()
 }
 
 
-FModumateDraftingView::FModumateDraftingView(UWorld *world, Modumate::FModumateDocument *doc, DraftType draftType) :
+FModumateDraftingView::FModumateDraftingView(UWorld *world, FModumateDocument *doc, DraftType draftType) :
 	World(world),
 	Document(doc),
 	ExportType(draftType)

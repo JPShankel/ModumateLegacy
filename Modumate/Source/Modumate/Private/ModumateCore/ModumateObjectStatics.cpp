@@ -1045,7 +1045,7 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateO
 	}
 }
 
-void UModumateObjectStatics::EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const Modumate::FModumateDocument *Doc,
+void UModumateObjectStatics::EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const FModumateDocument *Doc,
 	bool &bOutConnectedToEmptyPlane, bool &bOutConnectedToSelectedPlane)
 {
 	bOutConnectedToEmptyPlane = false;

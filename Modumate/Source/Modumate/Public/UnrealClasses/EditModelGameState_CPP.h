@@ -26,7 +26,7 @@ public:
 	AEditModelGameState_CPP();
 	~AEditModelGameState_CPP();
 
-	Modumate::FModumateDocument Document;
+	FModumateDocument Document;
 
 	const FModumateObjectAssembly *GetAssemblyByKey_DEPRECATED(EToolMode mode, const FName &key) const;
 	const FModumateObjectAssembly *GetAssemblyByKey(const FName &key) const;

@@ -3,13 +3,14 @@
 
 #include "Drafting/Schedules/DraftingSchedule.h"
 
+class MODUMATE_API FModumateDocument;
+
 namespace Modumate {
 
-	class FModumateDocument;
-	class IModumateDraftingDraw;
-	class FScheduleGrid;
+	class MODUMATE_API IModumateDraftingDraw;
+	class MODUMATE_API FScheduleGrid;
 
-	class FWallSummarySchedule : public FDraftingSchedule
+	class MODUMATE_API FWallSummarySchedule : public FDraftingSchedule
 	{
 	public:
 		FWallSummarySchedule(const FModumateDocument *doc, UWorld *World, IModumateDraftingDraw *drawingInterface);
