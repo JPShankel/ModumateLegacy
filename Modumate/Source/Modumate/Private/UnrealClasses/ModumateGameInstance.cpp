@@ -205,33 +205,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
-	RegisterCommand(kMakeTrim, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		TArray<FVector> points = params.GetValue(kControlPoints);
-		TArray<int32> controlIndices = params.GetValue(kIndices);
-		FName assemblyKey = params.GetValue(kAssembly);
-		bool inverted = params.GetValue(kInverted);
-		int32 parentID = params.GetValue(kParent);
-
-		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_TRIM, assemblyKey);
-
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		if (ensureAlways(playerState))
-		{
-			playerState->DeselectAll();
-		}
-
-		if (assembly)
-		{
-			TArray<int32> idsToDelete;
-			int32 newObjectID = GetDocument()->MakePointsObject(GetWorld(), idsToDelete, points, controlIndices, EObjectType::OTTrim, inverted, *assembly, parentID, true);
-			output.SetValue(kObjectID, newObjectID);
-
-			return true;
-		}
-		return false;
-	});
-
 	RegisterCommand(kMakeMetaVertex, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		TArray<FVector> points = { params.GetValue(kLocation) };
 		TArray<int32> ids;

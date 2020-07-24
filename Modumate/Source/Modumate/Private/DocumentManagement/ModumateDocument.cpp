@@ -679,7 +679,6 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 				/*
 				TODO: consolidate all object creation code here
 				*/
-
 				EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(targetState.ObjectType);
 
 				// No tool mode implies a line segment (used by multiple tools with no assembly)

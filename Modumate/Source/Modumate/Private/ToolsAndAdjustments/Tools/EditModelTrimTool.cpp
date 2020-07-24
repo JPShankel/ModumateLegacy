@@ -246,14 +246,22 @@ bool UTrimTool::BeginUse()
 				CurrentStartIndex, CurrentEndIndex, CurrentMountIndex, bCurrentLengthsArePCT,
 				MiterOptionStart, MiterOptionEnd, controlPoints, controlIndices)))
 		{
-			auto result = Controller->ModumateCommand(
-				FModumateCommand(Commands::kMakeTrim)
-				.Param(Parameters::kControlPoints, controlPoints)
-				.Param(Parameters::kIndices, controlIndices)
-				.Param(Parameters::kAssembly, AssemblyKey)
-				.Param(Parameters::kInverted, bInverted)
-				.Param(Parameters::kParent, CurrentTarget->ID)
-			);
+			auto* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+
+			FMOIStateData stateData;
+			stateData.StateType = EMOIDeltaType::Create;
+			stateData.ObjectType = EObjectType::OTTrim;
+			stateData.ObjectAssemblyKey = AssemblyKey;
+			stateData.ControlPoints = controlPoints;
+			stateData.ControlIndices = controlIndices;
+			stateData.ParentID = CurrentTarget->ID;
+			stateData.bObjectInverted = bInverted;
+			stateData.ObjectID = gameState->Document.GetNextAvailableID();
+
+			TArray<TSharedPtr<FDelta>> deltas;
+			deltas.Add(MakeShareable(new FMOIDelta({ stateData })));
+
+			gameState->Document.ApplyDeltas(deltas, GetWorld());
 
 			EndUse();
 		}

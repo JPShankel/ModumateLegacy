@@ -4,6 +4,7 @@
 
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "DocumentManagement/ModumateSnappingView.h"
@@ -69,15 +70,35 @@ namespace Modumate
 	{
 		World = world;
 
-		AEditModelGameMode_CPP *gameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
-		if (gameMode)
+		if (ensureAlways(world != nullptr))
 		{
-			DynamicMeshActor = world->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get(), FTransform(rot, loc));
-
-			if (MOI && DynamicMeshActor.IsValid() && DynamicMeshActor->Mesh)
+			AEditModelGameMode_CPP* gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
+			if (gameMode)
 			{
-				ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->GetObjectType());
-				DynamicMeshActor->Mesh->SetCollisionObjectType(collisionObjType);
+				DynamicMeshActor = world->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get(), FTransform(rot, loc));
+
+				if (MOI && DynamicMeshActor.IsValid() && DynamicMeshActor->Mesh)
+				{
+					ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->GetObjectType());
+					DynamicMeshActor->Mesh->SetCollisionObjectType(collisionObjType);
+				}
+			}
+
+			AEditModelGameState_CPP* gameState = world->GetAuthGameMode<AEditModelGameState_CPP>();
+			if (gameState)
+			{
+				FModumateObjectInstance* parent = gameState->Document.GetObjectById(MOI->GetParentID());
+				if (parent)
+				{
+					auto siblings = parent->GetChildObjects();
+					for (FModumateObjectInstance* sibling : siblings)
+					{
+						if (sibling && (sibling->ID != MOI->ID))
+						{
+							sibling->UpdateGeometry();
+						}
+					}
+				}
 			}
 		}
 
