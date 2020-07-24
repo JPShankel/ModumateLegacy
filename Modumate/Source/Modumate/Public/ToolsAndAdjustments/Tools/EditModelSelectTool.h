@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "DocumentManagement/ModumateDelta.h"
 #include "DocumentManagement/ModumateSerialization.h"
 
 #include "EditModelSelectTool.generated.h"
@@ -20,6 +21,7 @@ protected:
 	void AcquireSelectedObjects();
 	void RestoreSelectedObjects();
 	void ReleaseSelectedObjects();
+	void ReleaseObjectsAndApplyDeltas();
 
 	static const FName StateRequestTag;
 };

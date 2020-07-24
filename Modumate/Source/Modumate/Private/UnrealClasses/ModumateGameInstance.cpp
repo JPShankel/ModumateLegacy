@@ -335,19 +335,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return false;
 	});
 
-	RegisterCommand(kMoveMetaVertices, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-
-		TArray<int32> vertexIDs = params.GetValue(kObjectIDs);
-		TArray<FVector> vertexPositions = params.GetValue(kControlPoints);
-
-		FModumateDocument *doc = GetDocument();
-		if ((doc != nullptr) && (vertexIDs.Num() == vertexPositions.Num()))
-		{
-			return doc->MoveMetaVertices(GetWorld(), vertexIDs, vertexPositions);
-		}
-		return false;
-	});
-
 	RegisterCommand(kSplit, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 
 		int32 id = params.GetValue(kObjectID);
@@ -512,29 +499,6 @@ void UModumateGameInstance::RegisterAllCommands()
 
 		GetDocument()->DeleteObjects(obs, bAllowRoomAnalysis, bIncludeConnected);
 		return true;
-	});
-
-	RegisterCommand(kMoveObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-
-		GetDocument()->MoveObjects(GetWorld(),params.GetValue(kObjectIDs), params.GetValue(kDelta));
-		return true;
-	});
-
-	RegisterCommand(kRotateObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-
-		GetDocument()->RotateObjects(GetWorld(),params.GetValue(kObjectIDs), params.GetValue(kOrigin), params.GetValue(kQuaternion));
-		return true;
-	});
-
-	RegisterCommand(kSetObjectTransforms, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		TArray<int32> objectIDs = params.GetValue(kObjectIDs);
-		TArray<int32> parentIDs = params.GetValue(kParentIDs);
-		TArray<FVector> positions = params.GetValue(kLocation);
-		TArray<FQuat> rotations = params.GetValue(kQuaternion);
-
-		bool bSuccess = GetDocument()->SetObjectTransforms(GetWorld(), objectIDs, parentIDs, positions, rotations);
-
-		return bSuccess;
 	});
 
 	RegisterCommand(kDebug, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {

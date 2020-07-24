@@ -146,11 +146,8 @@ public:
 	void UpdateControlValues(int32 id, const TArray<FVector> &controlPoints, const TArray<int32> &controlIndices);
 	void Split(int32 id, const TArray<FVector> &pointsA, const TArray<FVector> &pointsB, const TArray<int32> &indicesA, const TArray<int32> &indicesB);
 
-	bool RotateMetaObjectsAboutOrigin(UWorld *World, const TArray<int32> &ObjectIDs, const FVector &origin, const FQuat &rotation);
-
-	bool MoveMetaObjects(UWorld *World, const TArray<int32> &ObjectIDs, const FVector &Displacement);
-	bool MoveMetaVertices(UWorld *World, int32 ObjectID, const FVector &Displacement);
-	bool MoveMetaVertices(UWorld *World, const TArray<int32> &VertexIDs, const TArray<FVector> &VertexPositions);
+	bool GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<TSharedPtr<Modumate::FDelta>>& OutDeltas);
+	bool MoveMetaVertices(UWorld* World, const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions);
 
 	bool JoinMetaObjects(UWorld *World, const TArray<int32> &ObjectIDs);
 
@@ -186,12 +183,6 @@ public:
 	static const FName DocumentHideRequestTag;
 	void AddHideObjectsById(UWorld *world, const TArray<int32> &ids);
 	void UnhideAllObjects(UWorld *world);
-
-	bool MoveObjects(UWorld *world, const TArray<int32> &obs, const FVector &v);
-	bool MoveObjects(UWorld *world, const TArray<Modumate::FModumateObjectInstance*> &obs, const FVector &v);
-	void RotateObjects(UWorld *world, const TArray<Modumate::FModumateObjectInstance*> &obs, const FVector &v, const FQuat &q);
-	void RotateObjects(UWorld *world, const TArray<int32> &obs, const FVector &v, const FQuat &q);
-	bool SetObjectTransforms(UWorld *world, const TArray<int32> &ObjectIDs, const TArray<int32> &ParentIDs, const TArray<FVector> &Positions, const TArray<FQuat> &Rotations);
 
 	// Deletion and restoration functions used internally by undo/redo-aware functions
 private:

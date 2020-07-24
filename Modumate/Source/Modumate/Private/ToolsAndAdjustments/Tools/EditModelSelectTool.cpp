@@ -100,6 +100,112 @@ void FSelectedObjectToolMixin::ReleaseSelectedObjects()
 	OriginalObjectData.Empty();
 }
 
+void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
+{
+	FModumateDocument* doc = ControllerPtr->GetDocument();
+	UWorld* world = ControllerPtr->GetWorld();
+	const FGraph3D& volumeGraph = doc->GetVolumeGraph();
+
+	// For all the acquired targets, collect the previewed changes in a way that can be applied as deltas to the document
+	TArray<FModumateObjectInstance*> targetPhysicalMOIs;
+	TMap<int32, FVector> vertex3DMovements;
+	for (auto &kvp : OriginalObjectData)
+	{
+		FModumateObjectInstance* targetMOI = kvp.Key;
+		const TArray<FVector>& targetCPs = targetMOI->GetControlPoints();
+		int32 numCPs = targetCPs.Num();
+		EObjectType objectType = targetMOI->GetObjectType();
+		EGraphObjectType graph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(objectType);
+		EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
+
+		if (graph2DObjType != EGraphObjectType::None)
+		{
+			// TODO
+		}
+		else if (graph3DObjType != EGraph3DObjectType::None)
+		{
+			int32 objID = targetMOI->ID;
+			
+			switch (graph3DObjType)
+			{
+			case EGraph3DObjectType::Vertex:
+			{
+				if (ensure(numCPs == 1))
+				{
+					vertex3DMovements.Add(objID, targetCPs[0]);
+				}
+				break;
+			}
+			case EGraph3DObjectType::Edge:
+			{
+				const FGraph3DEdge *edge = volumeGraph.FindEdge(objID);
+				if (ensure(edge && (numCPs == 2)))
+				{
+					vertex3DMovements.Add(edge->StartVertexID, targetCPs[0]);
+					vertex3DMovements.Add(edge->EndVertexID, targetCPs[1]);
+				}
+				break;
+			}
+			case EGraph3DObjectType::Face:
+			{
+				const FGraph3DFace *face = volumeGraph.FindFace(objID);
+				if (ensure(face && (face->VertexIDs.Num() == numCPs)))
+				{
+					for (int32 i = 0; i < numCPs; ++i)
+					{
+						vertex3DMovements.Add(face->VertexIDs[i], targetCPs[i]);
+					}
+				}
+				break;
+			}
+			default:
+				break;
+			}
+		}
+		else
+		{
+			targetPhysicalMOIs.Add(kvp.Key);
+		}
+	}
+
+	TArray<TSharedPtr<FDelta>> deltas;
+
+	// First, get deltas for applying volume graph changes as vertex movements
+	// TODO: this might be better structured as just a delta collection step, but FinalizeGraphDeltas etc. use the temporary graph,
+	// so as long as this function is appropriate in directly applying the deltas, we'll just perform the vertex movement right away.
+	if (vertex3DMovements.Num() > 0)
+	{
+		TArray<int32> vertexMoveIDs;
+		TArray<FVector> vertexMovePositions;
+		for (auto& kvp : vertex3DMovements)
+		{
+			vertexMoveIDs.Add(kvp.Key);
+			vertexMovePositions.Add(kvp.Value);
+		}
+		doc->GetVertexMovementDeltas(vertexMoveIDs, vertexMovePositions, deltas);
+	}
+
+	// TODO: next, get deltas for surface graph changes
+
+	// Next, get deltas for physical MOI movements as regular state data changes with an FMOIDelta
+	if (targetPhysicalMOIs.Num() > 0)
+	{
+		deltas.Add(MakeShareable(new FMOIDelta(targetPhysicalMOIs)));
+	}
+
+	// Release the acquired objects
+	for (auto &kvp : OriginalObjectData)
+	{
+		kvp.Key->RequestCollisionDisabled(StateRequestTag, false);
+		kvp.Key->EndPreviewOperation();
+	}
+
+	// And finally, apply the deltas now that the objects are no longer being previewed and the desired changes have been captured as deltas.
+	doc->ApplyDeltas(deltas, world);
+
+	OriginalObjectData.Empty();
+}
+
 
 
 USelectTool::USelectTool(const FObjectInitializer& ObjectInitializer)

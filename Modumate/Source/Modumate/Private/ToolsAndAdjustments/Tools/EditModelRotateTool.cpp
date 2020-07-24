@@ -86,28 +86,8 @@ bool URotateObjectTool::EndUse()
 {
 	if (IsInUse())
 	{
-		RestoreSelectedObjects();
-
-		// Should the new angle be calculate with input from mouse (CalcToolAngle) or from textinput
-		float angle = bOverrideAngleWithInput ? InputAngle : CalcToolAngle();
-		FRotator rot = FRotator(0, angle, 0);
-
-		TArray<int32> ids;
-		ids.Reset(OriginalObjectData.Num());
-		for (auto &kvp : OriginalObjectData)
-		{
-			ids.Add(kvp.Key->ID);
-		}
-		ReleaseSelectedObjects();
-
-		Controller->ModumateCommand(
-			FModumateCommand(Commands::kRotateObjects)
-			.Param(Parameters::kObjectIDs, ids)
-			.Param(Parameters::kOrigin, AnchorPoint)
-			.Param(Parameters::kQuaternion, rot.Quaternion()));
-
-
 		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
+		ReleaseObjectsAndApplyDeltas();
 	}
 
 	if (PendingSegmentStart.IsValid())
@@ -125,7 +105,6 @@ bool URotateObjectTool::EndUse()
 
 bool URotateObjectTool::AbortUse()
 {
-	RestoreSelectedObjects();
 	ReleaseSelectedObjects();
 
 	if (IsInUse())

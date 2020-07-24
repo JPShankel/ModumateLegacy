@@ -125,34 +125,17 @@ bool UMoveObjectTool::EndUse()
 
 	if (Controller->EMPlayerState->SnappedCursor.Visible)
 	{
-		RestoreSelectedObjects();
-
-		TArray<int32> ids;
-		ids.Reset(OriginalObjectData.Num());
-		for (auto &kvp : OriginalObjectData)
-		{
-			ids.Add(kvp.Key->ID);
-		}
-		ReleaseSelectedObjects();
-
-		FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-		Controller->ModumateCommand(
-			FModumateCommand(Commands::kMoveObjects)
-			.Param(Parameters::kDelta, hitLoc - AnchorPoint)
-			.Param(Parameters::kObjectIDs, ids));
+		ReleaseObjectsAndApplyDeltas();
 	}
 
 	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 	PendingSegmentID = MOD_ID_NONE;
-
-	ReleaseSelectedObjects();
 
 	return Super::EndUse();
 }
 
 bool UMoveObjectTool::AbortUse()
 {
-	RestoreSelectedObjects();
 	ReleaseSelectedObjects();
 
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();

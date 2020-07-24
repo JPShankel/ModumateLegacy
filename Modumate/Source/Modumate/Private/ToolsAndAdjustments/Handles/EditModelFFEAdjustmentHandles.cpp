@@ -103,16 +103,18 @@ bool AAdjustFFEPointHandle::UpdateUse()
 
 bool AAdjustFFEPointHandle::UpdateTarget()
 {
+	// Fail out if the actor is ever unavailable
 	AActor *moiActor = TargetMOI->GetActor();
 	if (moiActor == nullptr)
 	{
 		return false;
 	}
 
+	// Bail out of updating the target, but keep the handle active, if the cursor doesn't have a valid target
 	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
 	if (!cursor.Visible)
 	{
-		return false;
+		return true;
 	}
 
 	FTransform newTransform = moiActor->GetActorTransform();
@@ -223,14 +225,8 @@ bool AAdjustFFEPointHandle::HandleInputNumber(float number)
 		moveAxis *= -1.0f;
 	}
 
-	TArray<int32> objectIDs = { TargetMOI->ID };
 	FVector delta = number * moveAxis;
-
-	moiActor->SetActorLocation(OriginalObjectLoc);
-	Controller->ModumateCommand(
-		FModumateCommand(Modumate::Commands::kMoveObjects)
-		.Param(Parameters::kObjectIDs, objectIDs)
-		.Param(Parameters::kDelta, delta));
+	TargetMOI->SetObjectLocation(OriginalObjectLoc + delta);
 
 	EndUse();
 	return true;
@@ -403,22 +399,14 @@ FVector AAdjustFFERotateHandle::GetHandleDirection() const
 
 bool AAdjustFFERotateHandle::HandleInputNumber(float number)
 {
-	Super::EndUse();
-
 	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
 
 	float clockwiseScale = bClockwise ? 1.f : -1.f;
 	float radians = FMath::DegreesToRadians(number);
 	FQuat deltaRot(AssemblyNormal, radians * clockwiseScale);
 
-	TargetMOI->SetObjectRotation(OriginalRotation);
-
-	TArray<int32> objectIDs = { TargetMOI->ID };
-	Controller->ModumateCommand(
-		FModumateCommand(Modumate::Commands::kRotateObjects)
-		.Param(Parameters::kObjectIDs, objectIDs)
-		.Param(Parameters::kOrigin, TargetMOI->GetObjectLocation())
-		.Param(Parameters::kQuaternion, deltaRot));
+	TargetMOI->SetObjectRotation(deltaRot * OriginalRotation);
+	EndUse();
 
 	return true;
 }

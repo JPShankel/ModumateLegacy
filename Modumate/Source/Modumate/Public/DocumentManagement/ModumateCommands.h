@@ -45,7 +45,6 @@ namespace Modumate
 		// Object mutators
 		MODUMATE_COMMAND(kUpdateMOIHoleParams, "update_moi_hole_params");
 		MODUMATE_COMMAND(kSetGeometry, "set_geometry");
-		MODUMATE_COMMAND(kMoveMetaVertices, "move_vertices");
 		MODUMATE_COMMAND(kSplit, "split");
 		MODUMATE_COMMAND(kInvertObjects, "invert_objects");
 		MODUMATE_COMMAND(kTransverseObjects, "transverse_objects");
@@ -63,9 +62,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kCutSelected, "cut_selected");
 		MODUMATE_COMMAND(kCopySelected, "copy_selected");
 		MODUMATE_COMMAND(kPaste, "paste");
-		MODUMATE_COMMAND(kMoveObjects, "move_objects");
-		MODUMATE_COMMAND(kRotateObjects, "rotate_objects");
-		MODUMATE_COMMAND(kSetObjectTransforms, "set_object_transforms");
 		MODUMATE_COMMAND(kCloneObjects, "clone_objects");
 		MODUMATE_COMMAND(kRestoreDeletedObjects, "restore_deleted_objects");
 

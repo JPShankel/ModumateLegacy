@@ -1253,11 +1253,20 @@ namespace Modumate
 	void FModumateObjectInstance::SetFromDataRecordAndRotation(const FMOIDataRecordV1 &dataRec, const FVector &origin, const FQuat &rotation)
 	{
 		Implementation->SetFromDataRecordAndRotation(dataRec, origin, rotation);
+
+		// TODO: this is messy because we allow objects to customize how they respond to rotational deltas without modifying their data state,
+		// but we need to update the data state in order to use deltas. So for now, allow the existing implementations to mess with their actors
+		// however they want, but make sure we track the changes in the data state afterwards. We should either delete these functions,
+		// or ensure they behave consistently for objects in the same coordinate space.
+		GetDataState().Location = GetObjectLocation();
+		GetDataState().Orientation = GetObjectRotation();
 	}
 
 	void FModumateObjectInstance::SetFromDataRecordAndDisplacement(const FMOIDataRecordV1 &dataRec, const FVector &displacement)
 	{
 		Implementation->SetFromDataRecordAndDisplacement(dataRec, displacement);
+		GetDataState().Location = GetObjectLocation();
+		GetDataState().Orientation = GetObjectRotation();
 	}
 
 	// data records are USTRUCTs used in serialization and clipboard operations
