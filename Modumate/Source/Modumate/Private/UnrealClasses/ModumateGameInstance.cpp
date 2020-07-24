@@ -102,14 +102,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
-	RegisterCommand(kApplyObjectDelta, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta());
-		delta->FromParameterSet(params);
-		TArray<TSharedPtr<FDelta>> deltas({ delta });
-		return GetDocument()->ApplyDeltas(deltas, GetWorld());
-	});
-
 	RegisterCommand(kMakeNew, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
@@ -271,22 +263,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		TArray<int32> newObjIDs;
 
 		bool bSuccess = GetDocument()->MakeMetaObject(GetWorld(), points, ids, EObjectType::OTMetaPlane, parentID, newObjIDs);
-		output.SetValue(kObjectIDs, newObjIDs);
-
-		return bSuccess;
-	});
-
-	RegisterCommand(kMakeCutPlane, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		FModumateDocument *doc = GetDocument();
-		if (doc == nullptr)
-		{
-			return false;
-		}
-
-		TArray<FVector> points = params.GetValue(kControlPoints);
-		TArray<int32> newObjIDs;
-
-		bool bSuccess = doc->MakeCutPlaneObject(GetWorld(), points, newObjIDs);
 		output.SetValue(kObjectIDs, newObjIDs);
 
 		return bSuccess;

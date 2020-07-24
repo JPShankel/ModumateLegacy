@@ -433,10 +433,10 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 			stateData.ParentID = targetEdgeID;
 			stateData.ObjectID = GameState->Document.GetNextAvailableID();
 
-			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ stateData }));
-			auto commandResult = Controller->ModumateCommand(delta->AsCommand());
+			TArray<TSharedPtr<FDelta>> deltas;
+			deltas.Add(MakeShareable(new FMOIDelta({ stateData })));
 
-			if (!commandResult.GetValue(Parameters::kSuccess).AsBool())
+			if (!GameState->Document.ApplyDeltas(deltas, GetWorld()))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Failed to create StructureLine on edge ID %d!"), targetEdgeID);
 				bAnyFailure = true;

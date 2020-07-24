@@ -120,7 +120,7 @@ bool UCutPlaneTool::EnterNextStage()
 	}
 
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	const FModumateDocument *doc = &gameState->Document;
+	FModumateDocument *doc = &gameState->Document;
 
 	FBox bounds = doc->CalculateProjectBounds().GetBox();
 	bounds = bounds.ExpandBy(DefaultPlaneDimension / 2.0f);
@@ -154,17 +154,15 @@ bool UCutPlaneTool::EnterNextStage()
 		Origin + BasisX * slice.Min.X + BasisY * slice.Max.Y
 	};
 
-	auto commandResult = Controller->ModumateCommand(
-		FModumateCommand(Commands::kMakeCutPlane)
-		.Param(Parameters::kControlPoints, PendingPlanePoints)
-	);
+	FMOIStateData stateData;
+	stateData.StateType = EMOIDeltaType::Create;
+	stateData.ObjectType = EObjectType::OTCutPlane;
+	stateData.ControlPoints = PendingPlanePoints;
+	stateData.ObjectID = doc->GetNextAvailableID();
 
-	if (commandResult.GetValue(Parameters::kSuccess))
-	{
-		EndUse();
-	}
-
-	return commandResult.GetValue(Parameters::kSuccess);
+	TArray<TSharedPtr<FDelta>> deltas;
+	deltas.Add(MakeShareable(new FMOIDelta({ stateData })));
+	return doc->ApplyDeltas(deltas, GetWorld());
 }
 
 bool UCutPlaneTool::EndUse()

@@ -471,9 +471,10 @@ bool UStairTool::MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID)
 			newMOIData.Extents = FVector(0.5f, 0, 0);
 			newMOIData.ObjectID = OutStairsID;
 
-			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ newMOIData }));
+			TArray<TSharedPtr<FDelta>> deltas;
+			deltas.Add(MakeShareable(new FMOIDelta({ newMOIData })));
 
-			Controller->ModumateCommand(delta->AsCommand());
+			GameState->Document.ApplyDeltas(deltas, GetWorld());
 		}
 	}
 

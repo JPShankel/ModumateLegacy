@@ -5,6 +5,7 @@
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "DrawDebugHelpers.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
 #include "DocumentManagement/ModumateCommands.h"
@@ -264,12 +265,15 @@ bool ASelectCabinetFrontHandle::BeginUse()
 	}
 
 	TargetMOI->SetControlPointIndices(newControlIndices);
-	TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ TargetMOI }));
 
 	EndUse();
 
-	Controller->ModumateCommand(delta->AsCommand());
-	return false;
+	TArray<TSharedPtr<FDelta>> deltas;
+	deltas.Add(MakeShareable(new FMOIDelta({ TargetMOI })));
+	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	FModumateDocument* doc = &gameState->Document;
+
+	return doc->ApplyDeltas(deltas, GetWorld());
 }
 
 FVector ASelectCabinetFrontHandle::GetHandlePosition() const

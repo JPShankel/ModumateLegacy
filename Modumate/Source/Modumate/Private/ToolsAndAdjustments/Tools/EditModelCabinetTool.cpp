@@ -302,8 +302,10 @@ bool UCabinetTool::EnterNextStage()
 		stateData.ObjectID = doc.GetNextAvailableID();
 		stateData.Extents = FVector(0, h, 0);
 
-		TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ stateData }));
-		Controller->ModumateCommand(delta->AsCommand());
+		TArray<TSharedPtr<FDelta>> deltas;
+		deltas.Add(MakeShareable(new FMOIDelta({ stateData })));
+
+		doc.ApplyDeltas(deltas,GetWorld());
 		
 		return false;
 	}

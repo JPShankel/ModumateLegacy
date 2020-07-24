@@ -306,7 +306,7 @@ Starting point: get a tree
 
 		const TModumateDataCollection<FModumateObjectAssembly> *db = AssemblyDBs_DEPRECATED.Find(Mode);
 
-		if (ensureAlways(db != nullptr))
+		if (db != nullptr)
 		{
 			return db->GetData(Key);
 		}

@@ -263,12 +263,6 @@ namespace Modumate
 
 		typedef TPair<FMOIStateData, FMOIStateData> FStatePair;
 		TArray<FStatePair> StatePairs;
-
-		// TODO: to be deprecated when Commands 2.0 is developed, meantime...
-		bool ToParameterSet(FModumateFunctionParameterSet &OutParameterSet) const;
-		bool FromParameterSet(const FModumateFunctionParameterSet &ParameterSet);
-
-		FModumateCommand AsCommand(const FString &CommandID = Modumate::Commands::kApplyObjectDelta) const;
 	};
 
 	class MODUMATE_API FModumateObjectInstance

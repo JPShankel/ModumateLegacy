@@ -413,9 +413,12 @@ bool USelectTool::HandleInvert()
 		ob->EndPreviewOperation();
 	}
 
-	// Capture inversion as a MOI delta
-	TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta(Controller->EMPlayerState->SelectedObjects));
-	Controller->ModumateCommand(delta->AsCommand());
+	TArray<TSharedPtr<FDelta>> deltas;
+	deltas.Add(MakeShareable(new FMOIDelta(Controller->EMPlayerState->SelectedObjects)));
+
+	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	FModumateDocument* doc = &gameState->Document;
+	doc->ApplyDeltas(deltas, GetWorld());
 
 	return true;
 }

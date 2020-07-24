@@ -679,11 +679,12 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 				/*
 				TODO: consolidate all object creation code here
 				*/
+
 				EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(targetState.ObjectType);
 
 				// No tool mode implies a line segment (used by multiple tools with no assembly)
 				// TODO: generalize assemblyless/tool modeless non-graph MOIs
-				const FModumateObjectAssembly *assembly = toolMode != EToolMode::VE_NONE ? PresetManager.GetAssemblyByKey(toolMode, targetState.ObjectAssemblyKey) : nullptr;
+				const FModumateObjectAssembly *assembly = PresetManager.GetAssemblyByKey(toolMode, targetState.ObjectAssemblyKey);
 
 				// If we got an assembly, build the object with it, otherwise by type
 				FModumateObjectInstance *newInstance = (assembly != nullptr) ?
@@ -1798,23 +1799,6 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 	OutObjIDs.Append(edgeIDs);
 
 	return bSuccess;
-}
-
-bool FModumateDocument::MakeCutPlaneObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs)
-{
-	ClearRedoBuffer();
-	int32 id = NextID++;
-
-	auto newObj = CreateOrRestoreObjFromObjectType(world, EObjectType::OTCutPlane, id, 0, FVector::ZeroVector, &points);
-	AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
-	if (emPlayerState)
-	{
-		emPlayerState->OnUpdateCutPlanes.Broadcast();
-	}
-
-	OutObjIDs.Add(id);
-
-	return true;
 }
 
 bool FModumateDocument::MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height)

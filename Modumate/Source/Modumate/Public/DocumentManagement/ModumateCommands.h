@@ -35,7 +35,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kMakeMetaVertex, "make_vertex");
 		MODUMATE_COMMAND(kMakeMetaEdge, "make_edge");
 		MODUMATE_COMMAND(kMakeMetaPlane, "make_plane");
-		MODUMATE_COMMAND(kMakeCutPlane, "make_cutplane");
 		MODUMATE_COMMAND(kMakeScopeBox, "make_scopebox");
 
 		// Groups
@@ -49,7 +48,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kInvertObjects, "invert_objects");
 		MODUMATE_COMMAND(kTransverseObjects, "transverse_objects");
 		MODUMATE_COMMAND(kSetAssemblyForObjects, "set_assembly_for_objects");
-		MODUMATE_COMMAND(kApplyObjectDelta, "apply_object_delta");
 
 		// Selected Objects
 		MODUMATE_COMMAND(kDeleteSelectedObjects, "delete_selected");

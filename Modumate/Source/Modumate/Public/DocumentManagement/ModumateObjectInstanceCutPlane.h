@@ -29,6 +29,8 @@ namespace Modumate
 		virtual bool StartRender(FModumateDocument* doc = nullptr) override;
 		virtual void PublishPage() override;
 
+		virtual AActor* CreateActor(UWorld* world, const FVector& loc, const FQuat& rot) override;
+
 		FModumateHUDDraw DrawingInterface;
 
 		// These two objects are similar in purpose and use, but there are differences between what the HUD and the PDF 

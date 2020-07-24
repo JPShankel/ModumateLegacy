@@ -6,6 +6,7 @@
 #include "Drafting/DraftingManager.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Graph/Graph3DFace.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "ModumateCore/ModumateUserSettings.h"
@@ -23,6 +24,17 @@ namespace Modumate
 		EdgeSelectedColor(28.0f / 255.0f, 159.0f / 255.0f, 255.0f / 255.0f),
 		EdgeColor(73.0f / 255.0f, 179.0f / 255.0f, 255.0f / 255.0f)
 	{
+	}
+
+	AActor* FMOICutPlaneImpl::CreateActor(UWorld* world, const FVector& loc, const FQuat& rot)
+	{
+		AActor *returnActor = FMOIPlaneImplBase::CreateActor(world, loc, rot);
+		AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
+		if (emPlayerState)
+		{
+			emPlayerState->OnUpdateCutPlanes.Broadcast();
+		}
+		return returnActor;
 	}
 
 	void FMOICutPlaneImpl::SetupDynamicGeometry()

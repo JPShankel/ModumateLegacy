@@ -246,13 +246,13 @@ bool UPlaneHostedObjTool::BeginUse()
 						child->BeginPreviewOperation();
 						child->SetAssembly(ObjAssembly);
 
-						TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ child }));
+						TArray<TSharedPtr<FDelta>> deltas;
+						deltas.Add(MakeShareable(new FMOIDelta({ child })));
+						GameState->Document.ApplyDeltas(deltas, GetWorld());
+
 						child->EndPreviewOperation();
 
-						FModumateFunctionParameterSet result = Controller->ModumateCommand(delta->AsCommand());
-
 						EndUse();
-						return result.GetValue(Parameters::kSuccess);
 					}
 					else if (child->GetLayeredInterface() != nullptr)
 					{
@@ -277,11 +277,11 @@ bool UPlaneHostedObjTool::BeginUse()
 			newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
 			newMOIData.ObjectID = GameState->Document.GetNextAvailableID();
 
-			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta(deltaStates));
-			FModumateFunctionParameterSet result = Controller->ModumateCommand(delta->AsCommand());
+			TArray<TSharedPtr<FDelta>> deltas;
+			deltas.Add(MakeShareable(new FMOIDelta({ deltaStates })));
 
+			GameState->Document.ApplyDeltas(deltas, GetWorld());
 			EndUse();
-			return result.GetValue(Parameters::kSuccess);
 		}
 		else
 		{
@@ -384,8 +384,10 @@ bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &new
 				newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
 				newMOIData.ObjectID = newObjID;
 
-				TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ newMOIData }));
-				Controller->ModumateCommand(delta->AsCommand());
+				TArray<TSharedPtr<FDelta>> deltas;
+				deltas.Add(MakeShareable(new FMOIDelta({ newMOIData })));
+
+				GameState->Document.ApplyDeltas(deltas, GetWorld());
 
 				newObjIDs.Add(newObjID);
 			}

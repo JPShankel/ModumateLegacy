@@ -135,9 +135,10 @@ bool UCountertopTool::EnterNextStage()
 			stateData.ObjectID = doc.GetNextAvailableID();
 			stateData.bObjectInverted = Inverted;
 
-			TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta({ stateData }));
-			Controller->ModumateCommand(delta->AsCommand());
+			TArray<TSharedPtr<FDelta>> deltas;
+			deltas.Add(MakeShareable(new FMOIDelta({ stateData })));
 
+			doc.ApplyDeltas(deltas, GetWorld());
 			return false;
 		}
 		return true;

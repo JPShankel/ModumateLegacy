@@ -730,17 +730,6 @@ namespace Modumate
 		return delta;
 	}
 
-	FModumateCommand FMOIDelta::AsCommand(const FString &CommandID) const
-	{
-		FModumateFunctionParameterSet params;
-		ToParameterSet(params);
-
-		FModumateCommand command(CommandID);
-		command.SetParameterSet(params);
-
-		return command;
-	}
-
 	void FMOIDelta::AddCreateDestroyStates(const TArray<FMOIStateData> &States)
 	{
 		for (auto &state : States)
@@ -865,42 +854,6 @@ namespace Modumate
 	static inline FString MakeInstancePrefix(const FString &Prefix, int32 ID)
 	{
 		return Prefix + FString::Printf(TEXT("%d_"), ID);
-	}
-
-	bool FMOIDelta::ToParameterSet(FModumateFunctionParameterSet &OutParameterSet) const
-	{
-		TArray<int32> keys;
-		Algo::Transform(StatePairs, keys, [](const FStatePair &Pair) {return Pair.Key.ObjectID; });
-
-		OutParameterSet.SetValue(Modumate::Parameters::kObjectIDs, keys);		
-		for (auto &statePair : StatePairs)
-		{
-			int32 key = statePair.Key.ObjectID;
-			statePair.Key.ToParameterSet(MakeInstancePrefix(BaseStatePrefix,key), OutParameterSet);
-			statePair.Value.ToParameterSet(MakeInstancePrefix(TargetStatePrefix,key), OutParameterSet);
-		}
-
-		return true;
-	}
-
-	bool FMOIDelta::FromParameterSet(const FModumateFunctionParameterSet &ParameterSet)
-	{
-		TArray<int32> objectIDs = ParameterSet.GetValue(Modumate::Parameters::kObjectIDs);
-		if (!ensureAlwaysMsgf(objectIDs.Num() > 0, TEXT("Empty MOI Delta sent to FromParameterSet")))
-		{
-			return false;
-		}
-
-		StatePairs.Empty();
-
-		for (auto obID : objectIDs)
-		{
-			FStatePair &statePair = StatePairs.AddDefaulted_GetRef();
-			statePair.Key.FromParameterSet(MakeInstancePrefix(BaseStatePrefix, obID), ParameterSet);
-			statePair.Value.FromParameterSet(MakeInstancePrefix(TargetStatePrefix,obID), ParameterSet);
-		}
-
-		return true;
 	}
 
 	bool FModumateObjectInstance::SetDataState(const FMOIStateData &DataState)

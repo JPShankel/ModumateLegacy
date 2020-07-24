@@ -134,7 +134,6 @@ public:
 
 	bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, const TArray<int32> &IDs, EObjectType objectType, int32 parentID, TArray<int32> &OutObjIDs);
 
-	bool MakeCutPlaneObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs);
 	bool MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height);
 
 	// Allocates IDs for new objects, finds new parent IDs for objects, and marks objects for deletion after another graph operation
