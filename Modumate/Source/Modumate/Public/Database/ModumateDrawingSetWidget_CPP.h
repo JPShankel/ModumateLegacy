@@ -17,7 +17,7 @@ class MODUMATE_API UModumateDrawingSetWidget_CPP : public UUserWidget
 {
 	GENERATED_BODY()
 
-	const Modumate::FPresetManager &GetDocumentPresetManager() const;
+	const FPresetManager &GetDocumentPresetManager() const;
 	Modumate::BIM::FCraftingTreeNodeInstancePool DraftingNodeInstances;
 
 public:

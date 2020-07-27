@@ -287,7 +287,7 @@ public:
 	TODO: Assembly management to all happen through the preset manager and be associated with object types instead of tool modes
 	Functions will remain here, refactored for object types, to take advantage of undo/redo
 	*/
-	Modumate::FPresetManager PresetManager;
+	FPresetManager PresetManager;
 
 	// to be deprecated in favor of a single "update assembly" function that will call through to the preset manager
 	// assemblies to be accessed by object type in the preset manager, not by the tool type here

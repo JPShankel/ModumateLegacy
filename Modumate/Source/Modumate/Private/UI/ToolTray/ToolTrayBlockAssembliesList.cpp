@@ -43,13 +43,13 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 
-	Modumate::FPresetManager &presetManager = gameState->Document.PresetManager;
+	FPresetManager &presetManager = gameState->Document.PresetManager;
 
 	if (controller && gameState)
 	{
 		AssembliesList->ClearListItems();
 
-		Modumate::FPresetManager::FAssemblyDataCollection *assemblies = presetManager.AssemblyDBs_DEPRECATED.Find(controller->GetToolMode());
+		FPresetManager::FAssemblyDataCollection *assemblies = presetManager.AssemblyDBs_DEPRECATED.Find(controller->GetToolMode());
 		if (assemblies == nullptr || assemblies->DataMap.Num() == 0)
 		{
 			EObjectType ot = UModumateTypeStatics::ObjectTypeFromToolMode(controller->GetToolMode());

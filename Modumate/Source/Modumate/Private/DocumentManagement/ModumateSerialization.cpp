@@ -145,7 +145,7 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 	}
 
 	//If the preset manager is out of date, load a new one and throw out MOI types that depend on presets (leave graph)
-	if (OutHeader.Version < Modumate::FPresetManager::MinimumReadableVersion)
+	if (OutHeader.Version < FPresetManager::MinimumReadableVersion)
 	{
 		TArray<EObjectType> whiteList = {
 			EObjectType::OTMetaVertex,

@@ -555,7 +555,7 @@ public:
 bool FModumateObjectAssembly::FromCraftingProperties_DEPRECATED(
 	EObjectType ot,
 	const FModumateDatabase &db,
-	const Modumate::FPresetManager &presetManager,
+	const FPresetManager &presetManager,
 	const BIM::FModumateAssemblyPropertySpec &spec,
 	FModumateObjectAssembly &outMOA,
 	const int32 showOnlyLayerID)
@@ -849,7 +849,7 @@ bool FModumateObjectAssembly::FromDataRecord_DEPRECATED(
 	}
 }
 
-void FModumateObjectAssembly::GatherPresets_DEPRECATED(const Modumate::FPresetManager &presetManager, TArray<FName> &presetKeys) const
+void FModumateObjectAssembly::GatherPresets_DEPRECATED(const FPresetManager &presetManager, TArray<FName> &presetKeys) const
 {
 
 }
@@ -971,7 +971,7 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 
 ECraftingResult UModumateObjectAssemblyStatics::DoMakeAssembly(
 	const FModumateDatabase &InDB,
-	const Modumate::FPresetManager &PresetManager,
+	const FPresetManager &PresetManager,
 	const BIM::FModumateAssemblyPropertySpec &InSpec,
 	FModumateObjectAssembly &OutMOA,
 	const int32 InShowOnlyLayerID)

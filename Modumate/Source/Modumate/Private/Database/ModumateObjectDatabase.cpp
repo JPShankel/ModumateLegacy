@@ -989,7 +989,7 @@ bool FModumateDatabase::ParseColorFromField(FCustomColor &OutColor, const FStrin
 	return false;
 }
 
-void FModumateDatabase::InitPresetManagerForNewDocument(Modumate::FPresetManager &OutManager) const
+void FModumateDatabase::InitPresetManagerForNewDocument(FPresetManager &OutManager) const
 {
 	if (ensureAlways(&OutManager != &PresetManager))
 	{

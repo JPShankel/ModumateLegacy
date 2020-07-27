@@ -8,75 +8,72 @@
 #include "Database/ModumateObjectAssembly.h"
 #include "DocumentManagement/ModumateSerialization.h"
 
-namespace Modumate
+class MODUMATE_API FPresetManager 
 {
-	class MODUMATE_API FPresetManager 
-	{
-	public:
-		typedef TModumateDataCollection<FModumateObjectAssembly> FAssemblyDataCollection;
-		typedef TMap<FName, FGraph2DRecord> FGraphCollection;
+public:
+	typedef TModumateDataCollection<FModumateObjectAssembly> FAssemblyDataCollection;
+	typedef TMap<FName, FGraph2DRecord> FGraphCollection;
 
-	private:
+private:
 
-		// FModumateDatabase initializes the preset manager for a new document
-		friend class FModumateDatabase;
+	// FModumateDatabase initializes the preset manager for a new document
+	friend class FModumateDatabase;
 
-		FGraphCollection GraphCollection;
-		TSet<FName> KeyStore;
-		ECraftingResult ReadBIMTable(UDataTable *DataTable, BIM::FCraftingPresetCollection &Target);
+	FGraphCollection GraphCollection;
+	TSet<FName> KeyStore;
+	ECraftingResult ReadBIMTable(UDataTable *DataTable, Modumate::BIM::FCraftingPresetCollection &Target);
 
-	public:
-		TMap<EToolMode, FAssemblyDataCollection> AssemblyDBs_DEPRECATED;
-		TMap<EObjectType, FAssemblyDataCollection> AssembliesByObjectType;
+public:
+	TMap<EToolMode, FAssemblyDataCollection> AssemblyDBs_DEPRECATED;
+	TMap<EObjectType, FAssemblyDataCollection> AssembliesByObjectType;
 
-		FPresetManager();
-		virtual ~FPresetManager();
+	FPresetManager();
+	virtual ~FPresetManager();
 
-		static const int32 MinimumReadableVersion = 7;
+	static const int32 MinimumReadableVersion = 7;
 
-		// DDL 2.0
-		BIM::FCraftingPresetCollection CraftingNodePresets,DraftingNodePresets;
-		TMap<EObjectType, FName> StarterPresetsByObjectType;
+	// DDL 2.0
+	Modumate::BIM::FCraftingPresetCollection CraftingNodePresets,DraftingNodePresets;
+	TMap<EObjectType, FName> StarterPresetsByObjectType;
 
-		ECraftingResult LoadObjectNodeSet(UWorld *world);
-		ECraftingResult PresetToSpec(const FName &PresetID, BIM::FModumateAssemblyPropertySpec &OutPropertySpec) const;
+	ECraftingResult LoadObjectNodeSet(UWorld *world);
+	ECraftingResult PresetToSpec(const FName &PresetID, Modumate::BIM::FModumateAssemblyPropertySpec &OutPropertySpec) const;
 
-		ECraftingResult FetchAllPresetsForObjectType(EObjectType ObjectType, TSet<FName> &OutPresets) const;
+	ECraftingResult FetchAllPresetsForObjectType(EObjectType ObjectType, TSet<FName> &OutPresets) const;
 
-		bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FName &PresetID, const FModumateObjectAssembly *&OutAssembly) const;
-		bool TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FModumateObjectAssembly &OutAssembly) const;
+	bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FName &PresetID, const FModumateObjectAssembly *&OutAssembly) const;
+	bool TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FModumateObjectAssembly &OutAssembly) const;
 		
-		ECraftingResult UpdateProjectAssembly(const FModumateObjectAssembly &Assembly);
-		ECraftingResult RemoveProjectAssemblyForPreset(const FName &PresetID);
-		ECraftingResult MakeNewOrUpdateExistingPresetFromParameterSet(UWorld *World,const FModumateFunctionParameterSet &ParameterSet, FName &OutKey);
+	ECraftingResult UpdateProjectAssembly(const FModumateObjectAssembly &Assembly);
+	ECraftingResult RemoveProjectAssemblyForPreset(const FName &PresetID);
+	ECraftingResult MakeNewOrUpdateExistingPresetFromParameterSet(UWorld *World,const Modumate::FModumateFunctionParameterSet &ParameterSet, FName &OutKey);
 
-		ECraftingResult GetProjectAssembliesForObjectType(EObjectType ObjectType, TArray<FModumateObjectAssembly> &OutAssemblies) const;
+	ECraftingResult GetProjectAssembliesForObjectType(EObjectType ObjectType, TArray<FModumateObjectAssembly> &OutAssemblies) const;
 
-		ECraftingResult AddOrUpdateGraph2DRecord(FName Key, const FGraph2DRecord &Graph, FName &OutKey);
-		ECraftingResult RemoveGraph2DRecord(const FName &Key);
-		ECraftingResult GetGraph2DRecord(const FName &Key, FGraph2DRecord &OutGraph) const;
+	ECraftingResult AddOrUpdateGraph2DRecord(FName Key, const FGraph2DRecord &Graph, FName &OutKey);
+	ECraftingResult RemoveGraph2DRecord(const FName &Key);
+	ECraftingResult GetGraph2DRecord(const FName &Key, FGraph2DRecord &OutGraph) const;
 
-		// Intended as a general way to generate keys: given a base name, append with increment integers until an unused name is found
-		// This pattern is used through out the app, particularly in FModumateDocument, to generate IDs for new objects
-		// All such schemes should switch to this one key store
-		// TODO: the key store is likely to grow, so we may need to add some scope discrimination or a more complex scheme down the road
-		FName GetAvailableKey(const FName &BaseKey);
+	// Intended as a general way to generate keys: given a base name, append with increment integers until an unused name is found
+	// This pattern is used through out the app, particularly in FModumateDocument, to generate IDs for new objects
+	// All such schemes should switch to this one key store
+	// TODO: the key store is likely to grow, so we may need to add some scope discrimination or a more complex scheme down the road
+	FName GetAvailableKey(const FName &BaseKey);
 
-		ECraftingResult FromDocumentRecord(UWorld *World, const FModumateDocumentHeader &DocumentHeader, const FMOIDocumentRecord &DocumentRecord);
-		ECraftingResult ToDocumentRecord(FMOIDocumentRecord &OutRecord) const;
+	ECraftingResult FromDocumentRecord(UWorld *World, const FModumateDocumentHeader &DocumentHeader, const FMOIDocumentRecord &DocumentRecord);
+	ECraftingResult ToDocumentRecord(FMOIDocumentRecord &OutRecord) const;
 
-		// DDL 1.0 - all to be deprecated
-		enum Result
-		{
-			NoError = 0,
-			Error,
-			Found,
-			NotFound
-		};
-
-		Result InitAssemblyDBs();
-					
-		const FModumateObjectAssembly *GetAssemblyByKey(EToolMode Mode, const FName &Key) const;
-		const FModumateObjectAssembly *GetAssemblyByKey(const FName &Key) const;
+	// DDL 1.0 - all to be deprecated
+	enum Result
+	{
+		NoError = 0,
+		Error,
+		Found,
+		NotFound
 	};
-}
+
+	Result InitAssemblyDBs();
+					
+	const FModumateObjectAssembly *GetAssemblyByKey(EToolMode Mode, const FName &Key) const;
+	const FModumateObjectAssembly *GetAssemblyByKey(const FName &Key) const;
+};

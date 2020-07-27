@@ -66,8 +66,8 @@ public:
 	void AddArchitecturalMaterial(const FName Key, const FString &Name, const FSoftObjectPath &AssetPath);
 
 	void ReadPresetData();
-	void InitPresetManagerForNewDocument(Modumate::FPresetManager &OutManager) const;
-	Modumate::FPresetManager PresetManager;
+	void InitPresetManagerForNewDocument(FPresetManager &OutManager) const;
+	FPresetManager PresetManager;
 	void ReadMarketplace(UWorld *world);
 
 	// Data Access

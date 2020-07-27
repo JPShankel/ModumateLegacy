@@ -15,10 +15,7 @@
  *
  */
 
-namespace Modumate
-{
-	class MODUMATE_API FPresetManager;
-}
+class FPresetManager;
 
 UCLASS()
 class MODUMATE_API UModumateCraftingWidget_CPP : public UUserWidget
@@ -26,7 +23,7 @@ class MODUMATE_API UModumateCraftingWidget_CPP : public UUserWidget
 	GENERATED_BODY()
 
 		// the widget must not make mutating calls on the preset manager, those must be routed through the command system
-		const Modumate::FPresetManager &GetDocumentPresetManager() const;
+		const FPresetManager &GetDocumentPresetManager() const;
 
 	// wrapper for ObjectTypeSupportsDDL2 that also checks debug flag to force all objects to ddl2 for data testing
 	bool ShouldUseDDL2ForObjectType(EObjectType ObjectType) const;

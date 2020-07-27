@@ -172,7 +172,7 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 
 	EMPlayerController = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Modumate::FPresetManager &presetManager = gameState->Document.PresetManager;
+	FPresetManager &presetManager = gameState->Document.PresetManager;
 
 	AsmKey = compListObj->UniqueKey;
 	const FModumateObjectAssembly *assembly = presetManager.GetAssemblyByKey(AsmKey);

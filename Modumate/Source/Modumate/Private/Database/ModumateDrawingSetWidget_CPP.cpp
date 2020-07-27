@@ -5,7 +5,7 @@
 
 using namespace Modumate;
 
-const Modumate::FPresetManager &UModumateDrawingSetWidget_CPP::GetDocumentPresetManager() const
+const FPresetManager &UModumateDrawingSetWidget_CPP::GetDocumentPresetManager() const
 {
 	const AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	return gameState->Document.PresetManager;

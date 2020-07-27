@@ -18,7 +18,7 @@
 USTRUCT(BlueprintType)
 struct FLightConfiguration
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
 
 	FName Key;
 	float LightIntensity = 0.f;
@@ -35,7 +35,7 @@ An assembly layer (for walls, floors and other sandwich objects) references an F
 USTRUCT()
 struct MODUMATE_API FModumateObjectAssemblyLayer
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
 
 	FName DatabaseKey = FName();
 
@@ -96,9 +96,9 @@ A part used for portals (doors/windows) that specifies its mesh, compatible slot
 and other portal-specific data that allows it to be 9-sliced and manipulated.
 */
 USTRUCT(BlueprintType)
-struct FPortalPart
+struct MODUMATE_API FPortalPart
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
 
 	FName Key;
 	FText DisplayName;
@@ -119,11 +119,8 @@ struct FPortalPart
 	FName UniqueKey() const { return Key; }
 };
 
-USTRUCT(BlueprintType)
 struct FPortalConfiguration
 {
-	GENERATED_USTRUCT_BODY();
-
 	EPortalFunction PortalFunction = EPortalFunction::None;
 	TMap<FName, Modumate::FPortalReferencePlane> ReferencePlanes;
 	TArray<Modumate::FPortalAssemblyConfigurationSlot> Slots;
@@ -145,14 +142,10 @@ struct FPortalConfiguration
 /*
 An Object assembly is a collection of layers
 */
-namespace Modumate
-{
-	class MODUMATE_API IPresetManager;
-	class MODUMATE_API FPresetManager;
-}
 
-class MODUMATE_API FModumateDatabase;
-class MODUMATE_API FModumateDocument;
+class FPresetManager;
+class FModumateDatabase;
+class FModumateDocument;
 
 USTRUCT(BlueprintType)
 struct MODUMATE_API FModumateObjectAssembly
@@ -200,7 +193,7 @@ struct MODUMATE_API FModumateObjectAssembly
 	bool ToParameterSet_DEPRECATED(Modumate::FModumateFunctionParameterSet &params) const;
 
 	// DDL 1.0 presets
-	void GatherPresets_DEPRECATED(const Modumate::FPresetManager &presetManager, TArray<FName> &presetKeys) const;
+	void GatherPresets_DEPRECATED(const FPresetManager &presetManager, TArray<FName> &presetKeys) const;
 	void ReplacePreset_DEPRECATED(const FName &oldPreset, const FName &newPreset);
 	bool UsesPreset_DEPRECATED(const FName &presetKey) const;
 
@@ -213,7 +206,7 @@ struct MODUMATE_API FModumateObjectAssembly
 	static bool FromCraftingProperties_DEPRECATED(
 		EObjectType ot,
 		const FModumateDatabase &db,
-		const Modumate::FPresetManager &presetManager,
+		const FPresetManager &presetManager,
 		const Modumate::BIM::FModumateAssemblyPropertySpec &spec,
 		FModumateObjectAssembly &outMOA,
 		const int32 showOnlyLayerID = -1);
@@ -222,7 +215,7 @@ struct MODUMATE_API FModumateObjectAssembly
 	static bool FromDataRecord_DEPRECATED(
 		const FCustomAssemblyRecord &record, 
 		const FModumateDatabase &objectDB,
-		const Modumate::FPresetManager &presetManager,
+		const FPresetManager &presetManager,
 		FModumateObjectAssembly &outMOA);
 };
 
@@ -253,7 +246,7 @@ class MODUMATE_API UModumateObjectAssemblyStatics : public UBlueprintFunctionLib
 
 		static ECraftingResult DoMakeAssembly(
 			const FModumateDatabase &InDB,
-			const Modumate::FPresetManager &PresetManager,
+			const FPresetManager &PresetManager,
 			const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec,
 			FModumateObjectAssembly &OutMOA,
 			const int32 InShowOnlyLayerID = -1);
