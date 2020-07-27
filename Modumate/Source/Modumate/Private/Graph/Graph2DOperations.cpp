@@ -113,6 +113,12 @@ namespace Modumate
 			return false;
 		}
 
+		if (!ValidateGraph())
+		{
+			ApplyInverseDeltas(OutDeltas);
+			return false;
+		}
+
 		// return graph in its original state
 		ApplyInverseDeltas(OutDeltas);
 
@@ -420,6 +426,12 @@ namespace Modumate
 			return false;
 		}
 
+		if (!ValidateGraph())
+		{
+			ApplyInverseDeltas(OutDeltas);
+			return false;
+		}
+
 		ApplyInverseDeltas(OutDeltas);
 		return true;
 	}
@@ -605,6 +617,12 @@ namespace Modumate
 		}
 
 		if (!CalculatePolygons(OutDeltas, NextID))
+		{
+			ApplyInverseDeltas(OutDeltas);
+			return false;
+		}
+
+		if (!ValidateGraph())
 		{
 			ApplyInverseDeltas(OutDeltas);
 			return false;

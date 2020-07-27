@@ -672,4 +672,292 @@ namespace Modumate
 
 		return true;
 	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DValidateGraph, "Modumate.Graph.2D.ValidateGraph", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DValidateGraph::RunTest(const FString& Parameters)
+	{
+		FGraph2D graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+
+		TArray<FVector2D> vertices = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(100.0f, 0.0f),
+			FVector2D(100.0f, 100.0f),
+			FVector2D(0.0f, 100.0f)
+		};
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[1]));
+		TestDeltas(this, deltas, graph, 1, 2, 1);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[1], vertices[2]));
+		TestDeltas(this, deltas, graph, 1, 3, 2);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[2], vertices[3]));
+		TestDeltas(this, deltas, graph, 1, 4, 3);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[3], vertices[0]));
+		TestDeltas(this, deltas, graph, 2, 4, 4);
+
+		// Make current vertices into the bounds
+		TArray<int32> outerBounds;
+		TArray<TArray<int32>> innerBounds;
+		graph.GetVertices().GenerateKeyArray(outerBounds);
+		graph.SetBounds(outerBounds, innerBounds);
+
+		TestTrue(TEXT("Add Edge inside poly"),
+			graph.AddEdge(deltas, NextID, FVector2D(10.0f, 10.0f), FVector2D(20.0f, 20.0f)));
+		TestDeltasAndResetGraph(this, deltas, graph, 3, 6, 5);
+
+		// TODO: potentially test magnitudes of objects (especially polygons) for the cases where
+		// adding edges would be successful
+		TestTrue(TEXT("Add Edge spanning poly"),
+			graph.AddEdge(deltas, NextID, FVector2D(0.0f, 0.0f), FVector2D(100.0f, 100.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add edge outside of bounding poly"),
+			!graph.AddEdge(deltas, NextID, FVector2D(110.0f, 110.0f), FVector2D(120.0f, 120.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add edge adjacent, but outside of bounding poly"),
+			!graph.AddEdge(deltas, NextID, FVector2D(0.0f, 0.0f), FVector2D(-10.0f, 0.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add edge adjacent, but inside of bounding poly"),
+			graph.AddEdge(deltas, NextID, FVector2D(10.0f, 0.0f), FVector2D(10.0f, 10.0f)));
+		deltas.Reset();
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DValidateGraphConcave, "Modumate.Graph.2D.ValidateGraphConcave", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DValidateGraphConcave::RunTest(const FString& Parameters)
+	{
+		FGraph2D graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+
+		TArray<FVector2D> vertices = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(100.0f, 0.0f),
+			FVector2D(100.0f, 100.0f),
+			FVector2D(50.0f, 90.0f),
+			FVector2D(0.0f, 100.0f)
+		};
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[1]));
+		TestDeltas(this, deltas, graph, 1, 2, 1);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[1], vertices[2]));
+		TestDeltas(this, deltas, graph, 1, 3, 2);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[2], vertices[3]));
+		TestDeltas(this, deltas, graph, 1, 4, 3);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[3], vertices[4]));
+		TestDeltas(this, deltas, graph, 1, 5, 4);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[4], vertices[0]));
+		TestDeltas(this, deltas, graph, 2, 5, 5);
+
+		// Make current vertices into the bounds
+		TArray<int32> outerBounds;
+		TArray<TArray<int32>> innerBounds;
+		graph.GetVertices().GenerateKeyArray(outerBounds);
+		graph.SetBounds(outerBounds, innerBounds);
+
+		TestTrue(TEXT("Add Edge inside poly"),
+			graph.AddEdge(deltas, NextID, FVector2D(10.0f, 10.0f), FVector2D(20.0f, 20.0f)));
+		TestDeltasAndResetGraph(this, deltas, graph, 3, 7, 6);
+
+		TestTrue(TEXT("Add Edge outside poly"),
+			!graph.AddEdge(deltas, NextID, FVector2D(110.0f, 110.0f), FVector2D(120.0f, 120.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge on concave corner outside and away from poly"),
+			!graph.AddEdge(deltas, NextID, FVector2D(50.0f, 90.0f), FVector2D(50.0f, 100.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge on concave corner outside and towards poly"),
+			!graph.AddEdge(deltas, NextID, FVector2D(50.0f, 100.0f), FVector2D(50.0f, 90.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge on concave corner inside and away from poly"),
+			graph.AddEdge(deltas, NextID, FVector2D(50.0f, 90.0f), FVector2D(50.0f, 80.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge on concave corner inside and towards poly"),
+			graph.AddEdge(deltas, NextID, FVector2D(50.0f, 80.0f), FVector2D(50.0f, 90.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge on concave corner colinear with edge"),
+			graph.AddEdge(deltas, NextID, FVector2D(50.0f, 90.0f), FVector2D(75.0f, 95.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge on concave corner colinear with edge"),
+			graph.AddEdge(deltas, NextID, FVector2D(50.0f, 90.0f), FVector2D(25.0f, 95.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge on concave corner slightly inside poly"),
+			graph.AddEdge(deltas, NextID, FVector2D(50.0f, 90.0f), FVector2D(25.0f, 94.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge on concave corner slightly outside poly"),
+			!graph.AddEdge(deltas, NextID, FVector2D(50.0f, 90.0f), FVector2D(25.0f, 96.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge across concave corner"),
+			!graph.AddEdge(deltas, NextID, FVector2D(50.0f, 80.0f), FVector2D(50.0f, 100.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge across concave edge"),
+			!graph.AddEdge(deltas, NextID, FVector2D(60.0f, 80.0f), FVector2D(60.0f, 100.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge on convex corner inside poly"),
+			graph.AddEdge(deltas, NextID, FVector2D(100.0f, 100.0f), FVector2D(75.0f, 75.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge on convex corner outside poly"),
+			!graph.AddEdge(deltas, NextID, FVector2D(100.0f, 100.0f), FVector2D(125.0f, 125.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge on convex corner slightly inside poly"),
+			graph.AddEdge(deltas, NextID, FVector2D(100.0f, 100.0f), FVector2D(99.0f, 50.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge on convex corner slightly outside poly"),
+			!graph.AddEdge(deltas, NextID, FVector2D(100.0f, 100.0f), FVector2D(101.0f, 50.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge across convex corner"),
+			!graph.AddEdge(deltas, NextID, FVector2D(75.0f, 75.0f), FVector2D(125.0f, 125.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge across concave area, connecting corners"),
+			!graph.AddEdge(deltas, NextID, FVector2D(0.0f, 100.0f), FVector2D(100.0f, 100.0f)));
+		deltas.Reset();
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DValidateGraphHoles, "Modumate.Graph.2D.ValidateGraphHoles", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DValidateGraphHoles::RunTest(const FString& Parameters)
+	{
+		FGraph2D graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+
+		TArray<FVector2D> vertices = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(100.0f, 0.0f),
+			FVector2D(100.0f, 100.0f),
+			FVector2D(0.0f, 100.0f)
+		};
+
+		TArray<FVector2D> holeVertices = {
+			FVector2D(25.0f, 25.0f),
+			FVector2D(75.0f, 25.0f),
+			FVector2D(75.0f, 75.0f),
+			FVector2D(25.0f, 75.0f)
+		};
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[1]));
+		TestDeltas(this, deltas, graph, 1, 2, 1);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[1], vertices[2]));
+		TestDeltas(this, deltas, graph, 1, 3, 2);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[2], vertices[3]));
+		TestDeltas(this, deltas, graph, 1, 4, 3);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[3], vertices[0]));
+		TestDeltas(this, deltas, graph, 2, 4, 4);
+
+		// Make current vertices into the bounds
+		TArray<int32> outerBounds;
+		graph.GetVertices().GenerateKeyArray(outerBounds);
+
+		TSet<int32> holeVertexIDs;
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, holeVertices[0], holeVertices[1]));
+		graph.AggregateAddedVertices(deltas, holeVertexIDs);
+		TestDeltas(this, deltas, graph, 3, 6, 5);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, holeVertices[1], holeVertices[2]));
+		graph.AggregateAddedVertices(deltas, holeVertexIDs);
+		TestDeltas(this, deltas, graph, 3, 7, 6);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, holeVertices[2], holeVertices[3]));
+		graph.AggregateAddedVertices(deltas, holeVertexIDs);
+		TestDeltas(this, deltas, graph, 3, 8, 7);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, holeVertices[3], holeVertices[0]));
+		graph.AggregateAddedVertices(deltas, holeVertexIDs);
+		TestDeltas(this, deltas, graph, 4, 8, 8);
+
+		// add hole
+		TArray<TArray<int32>> innerBounds;
+		innerBounds.Add(holeVertexIDs.Array());
+
+		graph.SetBounds(outerBounds, innerBounds);
+
+		TestTrue(TEXT("Add Edge inside poly"),
+			graph.AddEdge(deltas, NextID, FVector2D(10.0f, 10.0f), FVector2D(20.0f, 20.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge inside hole"),
+			!graph.AddEdge(deltas, NextID, FVector2D(50.0f, 50.0f), FVector2D(60.0f, 60.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge spanning hole"),
+			!graph.AddEdge(deltas, NextID, FVector2D(25.0f, 25.0f), FVector2D(75.0f, 75.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge from hole to bounds"),
+			graph.AddEdge(deltas, NextID, FVector2D(25.0f, 25.0f), FVector2D(0.0f, 0.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge from side of hole to bounds"),
+			graph.AddEdge(deltas, NextID, FVector2D(35.0f, 25.0f), FVector2D(0.0f, 0.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge colinear with hole on corner"),
+			graph.AddEdge(deltas, NextID, FVector2D(25.0f, 25.0f), FVector2D(45.0f, 25.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge colinear with hole off corner"),
+			graph.AddEdge(deltas, NextID, FVector2D(35.0f, 25.0f), FVector2D(45.0f, 25.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge spanning bounds through hole"),
+			!graph.AddEdge(deltas, NextID, FVector2D(0.0f, 0.0f), FVector2D(100.0f, 100.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge from bounds spanning hole"),
+			!graph.AddEdge(deltas, NextID, FVector2D(0.0f, 0.0f), FVector2D(75.0f, 75.0f)));
+		deltas.Reset();
+
+		TestTrue(TEXT("Add Edge from bounds intersecting hole corner"),
+			!graph.AddEdge(deltas, NextID, FVector2D(0.0f, 0.0f), FVector2D(50.0f, 50.0f)));
+		deltas.Reset();
+
+		return true;
+	}
 }

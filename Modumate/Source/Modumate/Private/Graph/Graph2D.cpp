@@ -32,6 +32,8 @@ namespace Modumate
 		Vertices.Reset();
 		Polygons.Reset();
 		DirtyEdges.Reset();
+
+		ClearBounds();
 	}
 
 	bool FGraph2D::IsEmpty() const
@@ -735,6 +737,191 @@ namespace Modumate
 		}
 
 		return true;
+	}
+
+	bool FGraph2D::SetBounds(TArray<int32> &InOuterBounds, TArray<TArray<int32>> &InInnerBounds)
+	{
+		// verify that the provided vertices exist
+		for (int32 vertexID : BoundingPolygon)
+		{
+			auto vertex = FindVertex(vertexID);
+			if (vertex == nullptr)
+			{
+				return false;
+			}
+		}
+
+		for (int32 holeIdx = 0; holeIdx < InInnerBounds.Num(); holeIdx++)
+		{
+			auto& bounds = InInnerBounds[holeIdx];
+			for (int32 vertexID : bounds)
+			{
+				auto vertex = FindVertex(vertexID);
+				if (vertex == nullptr)
+				{
+					return false;
+				}
+			}
+		}
+
+		BoundingPolygon = InOuterBounds;
+		BoundingContainedPolygons = InInnerBounds;
+
+		return true;
+	}
+
+	void FGraph2D::ClearBounds()
+	{
+		BoundingPolygon.Reset();
+		BoundingContainedPolygons.Reset();
+
+		CachedOuterBounds.Positions.Reset();
+		CachedOuterBounds.EdgeNormals.Reset();
+	}
+
+	bool FGraph2D::ValidateGraph()
+	{
+		if (BoundingPolygon.Num() == 0) 
+		{
+			return true;
+		}
+
+		// Convert the vertices saved in the bounds into BoundsInformation structs
+		// All vertices saved in the bounds must be in the graph - operations 
+		// that would destroy any of these vertices are invalid, for example joining a vertex in the bounds
+		if (!UpdateCachedBoundsPositions())
+		{
+			return false;
+		}
+
+		// Check whether each vertex is inside the outer bounds and outside the holes
+		for (auto& vertexkvp : Vertices)
+		{
+			auto vertex = &vertexkvp.Value;
+
+			if (BoundingPolygon.Find(vertex->ID) == INDEX_NONE && 
+				!UModumateGeometryStatics::IsPointInPolygon(vertex->Position, CachedOuterBounds.Positions))
+			{
+				return false;
+			}
+
+			for (int32 holeIdx = 0; holeIdx < CachedInnerBounds.Num(); holeIdx++)
+			{
+				auto& bounds = CachedInnerBounds[holeIdx];
+				// Checking the holes should be exclusive - being on the edge of the hole is valid
+				if (BoundingContainedPolygons[holeIdx].Find(vertex->ID) == INDEX_NONE && 
+					UModumateGeometryStatics::IsPointInPolygon(vertex->Position, bounds.Positions, KINDA_SMALL_NUMBER, false))
+				{
+					return false;
+				}
+			}
+		}
+
+		bool bClockwise, bConcave;
+		UModumateGeometryStatics::GetPolygonWindingAndConcavity(CachedOuterBounds.Positions, bClockwise, bConcave);
+		// if the outer bounds is convex and there are no holes, the edges do not need to be checked
+		if (CachedInnerBounds.Num() == 0 && !bConcave)
+		{
+			return true;
+		}
+
+		// populate edge normals
+		UpdateCachedBoundsNormals();
+
+		for (auto& edgekvp : Edges)
+		{
+			int32 edgeID = edgekvp.Key;
+			for (int32 boundsIdx = 0; boundsIdx <= CachedInnerBounds.Num(); boundsIdx++)
+			{
+				auto& bounds = boundsIdx == CachedInnerBounds.Num() ? CachedOuterBounds : CachedInnerBounds[boundsIdx];
+
+				auto edge = FindEdge(edgeID);
+				if (edge == nullptr)
+				{
+					return false;
+				}
+				auto startVertex = FindVertex(edge->StartVertexID);
+				auto endVertex = FindVertex(edge->EndVertexID);
+				if (startVertex == nullptr || endVertex == nullptr)
+				{
+					return false;
+				}
+
+				if (UModumateGeometryStatics::IsLineSegmentBoundedByPoints2D(startVertex->Position, endVertex->Position, 
+					bounds.Positions, bounds.EdgeNormals, Epsilon))
+				{
+					return false;
+				}
+			}
+		} 
+
+		return true;
+	}
+
+	bool FGraph2D::UpdateCachedBoundsPositions()
+	{
+		CachedOuterBounds.Positions.Reset();
+		CachedOuterBounds.EdgeNormals.Reset();
+		CachedInnerBounds.Reset();
+
+		for (int32 vertexID : BoundingPolygon)
+		{
+			auto vertex = FindVertex(vertexID);
+			if (vertex == nullptr)
+			{
+				return false;
+			}
+
+			CachedOuterBounds.Positions.Add(vertex->Position);
+		}
+
+		for (int32 holeIdx = 0; holeIdx < BoundingContainedPolygons.Num(); holeIdx++)
+		{
+			auto& hole = BoundingContainedPolygons[holeIdx];
+			auto& bounds = CachedInnerBounds.AddDefaulted_GetRef();
+
+			for (int32 vertexID : hole)
+			{
+				auto vertex = FindVertex(vertexID);
+				if (vertex == nullptr)
+				{
+					return false;
+				}
+
+				bounds.Positions.Add(vertex->Position);
+			}
+		}
+
+		return true;
+	}
+
+	void FGraph2D::UpdateCachedBoundsNormals()
+	{
+		bool bConcave = false;
+		bool bClockwise = false;
+
+		int32 numBounds = CachedInnerBounds.Num();
+		for (int32 boundsIdx = 0; boundsIdx <= numBounds; boundsIdx++)
+		{
+			bool bUseOuterBounds = boundsIdx == numBounds;
+			auto& bounds = bUseOuterBounds ? CachedOuterBounds : CachedInnerBounds[boundsIdx];
+
+			// for outer bounds, edge normals should point toward the inside of the polygon
+			// for inner bounds, edge normals should point toward the outside of the polygon
+			float sign = bClockwise ? -1 : 1;
+			// the sign used for the inner bounds is flipped relative to the sign for the outer bounds
+			sign *= bUseOuterBounds ? -1 : 1;
+			
+			int32 numPositions = bounds.Positions.Num();
+			for (int32 idx = 0; idx < numPositions; idx++)
+			{
+				FVector2D p1 = bounds.Positions[idx];
+				FVector2D p2 = bounds.Positions[(idx + 1) % numPositions];
+
+				FVector2D direction = (p2 - p1).GetSafeNormal();
+				bounds.EdgeNormals.Add(sign * FVector2D(direction.Y, -direction.X));
+			}
+		}
 	}
 
 	bool FGraph2D::ApplyDeltas(const TArray<FGraph2DDelta> &Deltas)

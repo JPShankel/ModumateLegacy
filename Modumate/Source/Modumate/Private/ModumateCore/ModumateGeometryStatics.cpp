@@ -423,7 +423,8 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &Ou
 
 		const FPolyHole2D &hole = ValidHoles2D[holeIdx];
 		int32 numHolePoints = hole.Points.Num();
-		bool bHolePointsCW = UModumateGeometryStatics::AreLocationsClockwise2D(hole.Points);
+		bool bPointsConcave, bHolePointsCW;
+		UModumateGeometryStatics::GetPolygonWindingAndConcavity(hole.Points, bHolePointsCW, bPointsConcave);
 		for (int32 holeSideIdx1 = 0; holeSideIdx1 < numHolePoints; ++holeSideIdx1)
 		{
 			int32 holeSideIdx2 = (holeSideIdx1 + 1) % numHolePoints;
@@ -823,15 +824,19 @@ bool UModumateGeometryStatics::TriangulateVerticesPoly2Tri(const TArray<FVector2
 	return (OutVertices.Num() > 0);
 }
 
-bool UModumateGeometryStatics::AreLocationsClockwise2D(const TArray<FVector2D> &Locations)
+void UModumateGeometryStatics::GetPolygonWindingAndConcavity(const TArray<FVector2D> &Locations, bool &bOutClockwise, bool &bOutConcave)
 {
 	int32 numLocations = Locations.Num();
 	if (numLocations < 3)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Can't determine winding of < 3 locations!"));
-		return true;
+		return;
 	}
 
+	// a polygon is concave if any two edges have opposite signs,
+	// so save the first non-zero sign and compare it to the rest
+	bOutConcave = false;
+	float savedSign = 0.0f;
 	float totalWindingAngle = 0.0f;
 
 	for (int32 i1 = 0; i1 < numLocations; ++i1)
@@ -846,7 +851,7 @@ bool UModumateGeometryStatics::AreLocationsClockwise2D(const TArray<FVector2D> &
 		if (p1.Equals(p2) || p2.Equals(p3))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Can't determine winding of redundant locations!"));
-			return true;
+			return;
 		}
 
 		FVector2D n1 = (p2 - p1).GetSafeNormal();
@@ -854,11 +859,20 @@ bool UModumateGeometryStatics::AreLocationsClockwise2D(const TArray<FVector2D> &
 
 		float unsignedAngle = FMath::Acos(n1 | n2);
 		float angleSign = -FMath::Sign(n1 ^ n2);
+		if (savedSign == 0.0f && angleSign != 0.0f)
+		{
+			savedSign = angleSign;
+		}
+		else if (savedSign * angleSign < 0.0f)
+		{	// if the signs are opposite, their product is less than 0
+			bOutConcave = true;
+		}
+
 		float signedAngle = angleSign * unsignedAngle;
 		totalWindingAngle += signedAngle;
 	}
 
-	return (totalWindingAngle >= 0.0f);
+	bOutClockwise = (totalWindingAngle >= 0.0f);
 }
 
 bool UModumateGeometryStatics::GetPlaneFromPoints(const TArray<FVector> &Points, FPlane &outPlane, float Tolerance)
@@ -1105,7 +1119,7 @@ bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D &Point, const TA
 		}
 
 		// If the test point is close to a polygon edge, return whether we're inclusive
-		FVector2D projectedPoint = edgePoint1 + edgeDir * ((Point - edgePoint1) | edgeDir);
+		FVector2D projectedPoint = FMath::ClosestPointOnSegment2D(Point, edgePoint1, edgePoint2);
 		if (FVector2D::Distance(Point, projectedPoint) <= Tolerance)
 		{
 			return bInclusive;
@@ -2043,4 +2057,90 @@ bool UModumateGeometryStatics::IsLineSegmentWithin2D(const FEdge& OuterLine, con
 	}
 
 	return true;
+}
+
+bool UModumateGeometryStatics::IsLineSegmentBoundedByPoints2D(const FVector2D &StartPosition, const FVector2D &EndPosition, const TArray<FVector2D> &Positions, const TArray<FVector2D> &EdgeNormals, float Epsilon)
+{
+	int32 numPoints = Positions.Num();
+	FVector2D intersection;
+	for (int32 idx = 0; idx < numPoints; idx++)
+	{
+		int32 nextIdx = (idx + 1) % numPoints;
+
+		if (UModumateGeometryStatics::SegmentIntersection2D(
+			StartPosition,
+			EndPosition,
+			Positions[idx],
+			Positions[nextIdx],
+			intersection,
+			Epsilon))
+		{
+			// if the intersection is on the vertices of the edges, there are special cases to be handled
+			bool bOnEdgeStart = intersection.Equals(StartPosition, Epsilon);
+			bool bOnEdgeEnd = intersection.Equals(EndPosition, Epsilon);
+			bool bOnBoundsStart = intersection.Equals(Positions[idx], Epsilon);
+			bool bOnBoundsEnd = intersection.Equals(Positions[(idx + 1) % numPoints], Epsilon);
+			bool bExistingOnBounds = bOnBoundsStart || bOnBoundsEnd;
+
+			// if it isn't on one of the vertices, there is a clean intersection with the polygon,
+			// meaning part of the edge is outside it
+			if (!(bExistingOnBounds || bOnEdgeStart || bOnEdgeEnd))
+			{
+				return true;
+			}
+
+			FVector2D edgeDir = (EndPosition - StartPosition).GetSafeNormal();
+
+			// if the edges meet at a vertex, check whether the edge is on the correct side of the corner
+			if (bExistingOnBounds && (bOnEdgeStart || bOnEdgeEnd))
+			{
+				int32 cornerIdx = bOnBoundsStart ? idx : nextIdx;
+				edgeDir *= bOnEdgeStart ? 1 : -1;
+
+				FVector2D currentPoint = Positions[cornerIdx];
+				FVector2D nextPoint = Positions[(cornerIdx + 1) % numPoints];
+				FVector2D prevPoint = Positions[(cornerIdx + numPoints - 1) % numPoints];
+
+				FVector2D nextEdgeNormal = EdgeNormals[cornerIdx];
+				FVector2D prevEdgeNormal = EdgeNormals[(cornerIdx + numPoints - 1) % numPoints];
+
+				FVector2D dirToNextPoint = (nextPoint - currentPoint).GetSafeNormal();
+				FVector2D dirToPrevPoint = (prevPoint - currentPoint).GetSafeNormal();
+
+				bool isCornerConvex = ((dirToPrevPoint | nextEdgeNormal) > 0.0f) && ((dirToNextPoint | prevEdgeNormal) > 0.0f);
+
+				float prevToNextCrossAmount = (dirToPrevPoint ^ dirToNextPoint);
+				float prevToSplitCrossAmount = (dirToPrevPoint ^ edgeDir);
+				float nextToPrevCrossAmount = (dirToNextPoint ^ dirToPrevPoint);
+				float nextToSplitCrossAmount = (dirToNextPoint ^ edgeDir);
+
+				bool splitDirBetweenEdgesAcute = ((prevToNextCrossAmount * prevToSplitCrossAmount) >= 0) &&
+					((nextToPrevCrossAmount * nextToSplitCrossAmount) >= 0);
+
+				// this makes the check inclusive by checking whether the edge has the same direction as the polygon edge
+				bool splitDirBetweenEdgesZero = ((prevToNextCrossAmount * prevToSplitCrossAmount) == 0) ||
+					((nextToPrevCrossAmount * nextToSplitCrossAmount) == 0);
+
+				if (!splitDirBetweenEdgesZero && (isCornerConvex != splitDirBetweenEdgesAcute))
+				{
+					return true;
+				}
+			}
+			else
+			{
+				// if the edge normal of the bounds is pointing away from the direction of the edge
+				// the edge is outside the polygon
+				FVector2D dir1 = (StartPosition - intersection).GetSafeNormal();
+				FVector2D dir2 = (EndPosition - intersection).GetSafeNormal();
+				float dot1 = dir1 | EdgeNormals[idx];
+				float dot2 = dir2 | EdgeNormals[idx];
+				if (dot1 < 0 || dot2 < 0)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }

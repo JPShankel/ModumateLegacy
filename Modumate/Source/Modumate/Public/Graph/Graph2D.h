@@ -86,6 +86,22 @@ namespace Modumate
 
 		TMap<FVertexPair, int32> EdgeIDsByVertexPair;
 
+		// vertices and edges in the graph must be inside the bounding vertices,
+		// and outside the bounding contained vertices
+		TArray<int32> BoundingPolygon;
+		TArray<TArray<int32>> BoundingContainedPolygons;
+
+		// During validation, the vertex IDs saved in BoundingVertices and BoundingContainedVertices
+		// are converted into this to calculate whether the vertices and edges of the graph are within the bounds
+		struct FBoundsInformation
+		{
+			TArray<FVector2D> Positions;
+			TArray<FVector2D> EdgeNormals;
+		};
+
+		FBoundsInformation CachedOuterBounds;
+		TArray<FBoundsInformation> CachedInnerBounds;
+
 		// 2D Graph Deltas
 		// The graph operations create a list of deltas that represent instructions for applying the operation.
 		// Creating a list of deltas is undo/redo-able, and the public graph operations will leave the graph in the same state
@@ -95,6 +111,11 @@ namespace Modumate
 
 		// Clean all objects that are dirtied (by applying deltas) and output their IDs
 		bool CleanGraph(TArray<int32> &OutCleanedVertices, TArray<int32> &OutCleanedEdges, TArray<int32> &OutCleanedPolygons);
+
+		// Set the bounds to the provided vertex IDs if they exist
+		bool SetBounds(TArray<int32> &InOuterBounds, TArray<TArray<int32>> &InInnerBounds);
+		void ClearBounds();
+
 	private:
 		// The graph operation functions test out individual deltas by applying them as they are generated.
 		// A common flow is to make basic deltas for adding objects, apply them, and then create more deltas
@@ -102,6 +123,14 @@ namespace Modumate
 		// so that they can use ApplyInverseDeltas to reset the graph to its initial state before failing out.
 		bool ApplyDeltas(const TArray<FGraph2DDelta> &Deltas);
 		void ApplyInverseDeltas(const TArray<FGraph2DDelta> &Deltas);
+
+		// Checks the values of the graph against the bounds if they are set.  This should be called as the 
+		// last side-effect in every public graph operation.  If any vertex is outside the bounding
+		// polygon or inside any of the bounding holes, the deltas are invalid and should be inverted.
+		bool ValidateGraph();
+
+		bool UpdateCachedBoundsPositions();
+		void UpdateCachedBoundsNormals();
 
 	public:
 		// outputs objects that would be added by the list of deltas.
