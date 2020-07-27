@@ -211,6 +211,8 @@ private:
 	// Helper function for ObjectFromActor
 	Modumate::FModumateObjectInstance *ObjectFromSingleActor(AActor *actor);
 
+	void PerformUndoRedo(UWorld* World, TArray<UndoRedo*>& FromBuffer, TArray<UndoRedo*>& ToBuffer);
+
 public:
 
 	Modumate::FModumateObjectInstance *TryGetDeletedObject(int32 id);
@@ -234,8 +236,8 @@ public:
 	bool ExportPDF(UWorld *world, const TCHAR *filepath, const FVector &origin, const FVector &normal);
 	bool ExportDWG(UWorld *world, const TCHAR *filepath);
 
-	void Undo(UWorld *world);
-	void Redo(UWorld *world);
+	void Undo(UWorld *World);
+	void Redo(UWorld *World);
 
 	void ClearRedoBuffer();
 	void ClearUndoBuffer();

@@ -31,6 +31,7 @@
 
 #include "Algo/Transform.h"
 #include "Algo/Accumulate.h"
+#include "Algo/ForEach.h"
 #include "Misc/Paths.h"
 #include "JsonObjectConverter.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -69,70 +70,67 @@ FModumateDocument::~FModumateDocument()
 {
 }
 
-void FModumateDocument::Undo(UWorld *world)
+void FModumateDocument::PerformUndoRedo(UWorld* World, TArray<UndoRedo*>& FromBuffer, TArray<UndoRedo*>& ToBuffer)
 {
-//TODO: nulled out until delta-based undo/redo is implemented
-#if 0 
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Undo"));
-	ensureAlways(UndoRedoMacroStack.Num() == 0);
-	if (UndoBuffer.Num() > 0)
+	if (FromBuffer.Num() > 0)
 	{
-		UndoRedo *ur = UndoBuffer.Last(0);
-		UndoBuffer.RemoveAt(UndoBuffer.Num() - 1);
-		RedoBuffer.Add(ur);
+		UndoRedo* ur = FromBuffer.Last(0);
+		FromBuffer.RemoveAt(FromBuffer.Num() - 1);
 
-		int32 undoBufferSize = UndoBuffer.Num();
-		int32 redoBufferSize = RedoBuffer.Num();
+		TArray<TSharedPtr<FDelta>> fromDeltas = ur->Deltas;
+		Algo::Reverse(fromDeltas);
 
-		ur->Undo();
+		ur->Deltas.Empty();
+		Algo::Transform(fromDeltas, ur->Deltas, [](const TSharedPtr<FDelta>& DeltaPtr) {return DeltaPtr->MakeInverse(); });
+		Algo::ForEach(ur->Deltas, [this, World](TSharedPtr<FDelta>& DeltaPtr) {DeltaPtr->ApplyTo(this, World); });
 
-		AEditModelPlayerState_CPP* EMPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
+		ToBuffer.Add(ur);
+
+#if WITH_EDITOR
+		int32 fromBufferSize = FromBuffer.Num();
+		int32 toBufferSize = ToBuffer.Num();
+#endif
+
+		PostApplyDelta(World);
+		UpdateRoomAnalysis(World);
+
+		AEditModelPlayerState_CPP* EMPlayerState = Cast<AEditModelPlayerState_CPP>(World->GetFirstPlayerController()->PlayerState);
 		EMPlayerState->RefreshActiveAssembly();
 
-		ensureAlways(undoBufferSize == UndoBuffer.Num());
-		ensureAlways(redoBufferSize == RedoBuffer.Num());
-	}
+#if WITH_EDITOR
+		ensureAlways(fromBufferSize == FromBuffer.Num());
+		ensureAlways(toBufferSize == ToBuffer.Num());
 #endif
+	}
 }
 
-void FModumateDocument::Redo(UWorld *world)
+void FModumateDocument::Undo(UWorld *World)
 {
-	//TODO: nulled out until delta-based undo/redo is implemented
-#if 0
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Redo"));
-	ensureAlways(UndoRedoMacroStack.Num() == 0);
-	if (RedoBuffer.Num() > 0)
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Undo"));
+	if (ensureAlways(UndoRedoMacroStack.Num() == 0))
 	{
-		UndoRedo *ur = RedoBuffer.Last(0);
-		RedoBuffer.RemoveAt(RedoBuffer.Num() - 1);
-		UndoBuffer.Add(ur);
-
-		int32 undoBufferSize = UndoBuffer.Num();
-		int32 redoBufferSize = RedoBuffer.Num();
-
-		ur->Redo();
-
-		AEditModelPlayerState_CPP* EMPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
-		EMPlayerState->RefreshActiveAssembly();
-
-		ensureAlways(undoBufferSize == UndoBuffer.Num());
-		ensureAlways(redoBufferSize == RedoBuffer.Num());
+		PerformUndoRedo(World, UndoBuffer, RedoBuffer);
 	}
-#endif
+}
+
+void FModumateDocument::Redo(UWorld *World)
+{
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Redo"));
+	if (ensureAlways(UndoRedoMacroStack.Num() == 0))
+	{
+		PerformUndoRedo(World, RedoBuffer, UndoBuffer);
+	}
 }
 
 void FModumateDocument::BeginUndoRedoMacro()
 {
 	//TODO: nulled out until delta-based undo/redo is implemented
-#if 0
 	UndoRedoMacroStack.Push(UndoBuffer.Num());
-#endif
 }
 
 void FModumateDocument::EndUndoRedoMacro()
 {
 	//TODO: nulled out until delta-based undo/redo is implemented
-#if 0
 	if (UndoRedoMacroStack.Num() == 0)
 	{
 		return;
@@ -160,7 +158,6 @@ void FModumateDocument::EndUndoRedoMacro()
 	UndoBuffer.SetNum(start, true);
 
 	UndoBuffer.Add(ur);
-#endif
 }
 
 void FModumateDocument::SetDefaultWallHeight(float height)
@@ -1135,6 +1132,8 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 
 	UndoRedo* ur = new UndoRedo();
 	ur->Deltas = Deltas;
+
+	UndoBuffer.Add(ur);
 
 	for (auto& delta : ur->Deltas)
 	{
