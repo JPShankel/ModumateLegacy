@@ -15,6 +15,7 @@
 #include "DocumentManagement/ModumateSceneCaptureObjectInterface.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Drafting/ModumateDwgDraw.h"
+#include "Drafting/ModumateLineCorral.h"
 #include "Drafting/ModumateDraftingDraw.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
@@ -276,7 +277,7 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 	}
 	else
 	{
-		DrawingInterface = MakeShared<FModumateDwgDraw>();
+		DrawingInterface = MakeShared<FModumateLineCorral>();
 	}
 
 	for (FModumateObjectInstance* cutPlane : cutPlanes)

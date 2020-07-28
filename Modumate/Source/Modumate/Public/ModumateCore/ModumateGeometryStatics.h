@@ -233,6 +233,8 @@ public:
 	static bool IsPolygonValid(const TArray<FVector> &Points, FPlane PolyPlane = FPlane(ForceInitToZero), class FFeedbackContext* InWarn = nullptr);
 
 	static bool IsLineSegmentWithin2D(const FEdge& OuterLine, const FEdge& InnerLine, float epsilon = THRESH_POINTS_ARE_NEAR);
+	static bool IsLineSegmentWithin2D(const FVector2D& OuterLineStart, const FVector2D& OuterLineEnd,
+		const FVector2D& InnerLineStart, const FVector2D& InnerLineEnd, float epsilon = THRESH_POINTS_ARE_NEAR);
 
 	static bool IsLineSegmentBoundedByPoints2D(const FVector2D &StartPosition, const FVector2D &EndPosition, const TArray<FVector2D> &Positions, const TArray<FVector2D> &BoundingNormals, float Epsilon = THRESH_POINTS_ARE_NEAR);
 };

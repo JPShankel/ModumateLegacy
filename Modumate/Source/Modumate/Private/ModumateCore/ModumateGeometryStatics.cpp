@@ -2027,9 +2027,14 @@ bool UModumateGeometryStatics::IsPolygonValid(const TArray<FVector> &Points3D, F
 // Is OuterLine same-as or containing InnerLine?
 bool UModumateGeometryStatics::IsLineSegmentWithin2D(const FEdge& OuterLine, const FEdge& InnerLine, float epsilon /*= THRESH_POINTS_ARE_NEAR*/)
 {
-	FVector2D outerP1(OuterLine.Vertex[0]);
-	FVector2D outerP2(OuterLine.Vertex[1]);
-	FVector2D outerDir(outerP2 - outerP1);
+	return IsLineSegmentWithin2D(FVector2D(OuterLine.Vertex[0]), FVector2D(OuterLine.Vertex[1]),
+		FVector2D(InnerLine.Vertex[0]), FVector2D(InnerLine.Vertex[1]), epsilon);
+}
+
+bool UModumateGeometryStatics::IsLineSegmentWithin2D(const FVector2D& OuterLineStart, const FVector2D& OuterLineEnd,
+	const FVector2D& InnerLineStart, const FVector2D& InnerLineEnd, float epsilon /*= THRESH_POINTS_ARE_NEAR*/)
+{
+	FVector2D outerDir(OuterLineEnd - OuterLineStart);
 	float epsilon2 = epsilon * epsilon;
 
 	float lineLength2 = outerDir.SizeSquared();
@@ -2039,8 +2044,8 @@ bool UModumateGeometryStatics::IsLineSegmentWithin2D(const FEdge& OuterLine, con
 	}
 	outerDir.Normalize();
 
-	FVector2D innerP1 = FVector2D(InnerLine.Vertex[0] - OuterLine.Vertex[0]);
-	FVector2D innerP2 = FVector2D(InnerLine.Vertex[1] - OuterLine.Vertex[0]);
+	FVector2D innerP1 = InnerLineStart - OuterLineStart;
+	FVector2D innerP2 = InnerLineEnd - OuterLineStart;
 
 	float projectedInner1 = outerDir | innerP1;
 	if (projectedInner1 < -epsilon || projectedInner1 * projectedInner1 > lineLength2 + 2.0f * epsilon
