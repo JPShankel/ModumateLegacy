@@ -91,7 +91,7 @@ void FModumateDocument::PerformUndoRedo(UWorld* World, TArray<UndoRedo*>& FromBu
 		int32 toBufferSize = ToBuffer.Num();
 #endif
 
-		PostApplyDelta(World);
+		PostApplyDeltas(World);
 		UpdateRoomAnalysis(World);
 
 		AEditModelPlayerState_CPP* EMPlayerState = Cast<AEditModelPlayerState_CPP>(World->GetFirstPlayerController()->PlayerState);
@@ -106,8 +106,7 @@ void FModumateDocument::PerformUndoRedo(UWorld* World, TArray<UndoRedo*>& FromBu
 
 void FModumateDocument::Undo(UWorld *World)
 {
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Undo"));
-	if (ensureAlways(UndoRedoMacroStack.Num() == 0))
+	if (ensureAlways(!InUndoRedoMacro()))
 	{
 		PerformUndoRedo(World, UndoBuffer, RedoBuffer);
 	}
@@ -115,8 +114,7 @@ void FModumateDocument::Undo(UWorld *World)
 
 void FModumateDocument::Redo(UWorld *World)
 {
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Redo"));
-	if (ensureAlways(UndoRedoMacroStack.Num() == 0))
+	if (ensureAlways(!InUndoRedoMacro()))
 	{
 		PerformUndoRedo(World, RedoBuffer, UndoBuffer);
 	}
@@ -124,14 +122,12 @@ void FModumateDocument::Redo(UWorld *World)
 
 void FModumateDocument::BeginUndoRedoMacro()
 {
-	//TODO: nulled out until delta-based undo/redo is implemented
 	UndoRedoMacroStack.Push(UndoBuffer.Num());
 }
 
 void FModumateDocument::EndUndoRedoMacro()
 {
-	//TODO: nulled out until delta-based undo/redo is implemented
-	if (UndoRedoMacroStack.Num() == 0)
+	if (!InUndoRedoMacro())
 	{
 		return;
 	}
@@ -158,6 +154,11 @@ void FModumateDocument::EndUndoRedoMacro()
 	UndoBuffer.SetNum(start, true);
 
 	UndoBuffer.Add(ur);
+}
+
+bool FModumateDocument::InUndoRedoMacro() const
+{
+	return (UndoRedoMacroStack.Num() > 0);
 }
 
 void FModumateDocument::SetDefaultWallHeight(float height)
@@ -1206,12 +1207,35 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 
 	UndoBuffer.Add(ur);
 
+	// First, apply the input deltas, generated from the first pass of user intent
 	for (auto& delta : ur->Deltas)
 	{
 		delta->ApplyTo(this, World);
 	}
 
-	PostApplyDelta(World);
+	// Next, clean objects while gathering potential side effect deltas, and add them to the undo/redo-able list of deltas.
+	// Prevent infinite loops, but allow for iteration due to multiple levels of dependency.
+	int32 sideEffectIterationGuard = 8;
+	TArray<TSharedPtr<FDelta>> sideEffectDeltas;
+	do
+	{
+		sideEffectDeltas.Reset();
+		CleanObjects(&sideEffectDeltas);
+		for (auto& delta : sideEffectDeltas)
+		{
+			ur->Deltas.Add(delta);
+			delta->ApplyTo(this, World);
+		}
+
+		if (!ensure(--sideEffectIterationGuard > 0))
+		{
+			UE_LOG(LogTemp, Error, TEXT("Iterative CleanObjects generated too many side effects; preventing infinite loop!"));
+			break;
+		}
+
+	} while (sideEffectDeltas.Num() > 0);
+
+	PostApplyDeltas(World);
 
 	UpdateRoomAnalysis(World);
 	EndUndoRedoMacro();
@@ -1364,7 +1388,7 @@ bool FModumateDocument::FinalizeGraphDeltas(TArray <FGraph3DDelta> &Deltas, TArr
 	return true;
 }
 
-bool FModumateDocument::PostApplyDelta(UWorld *World)
+bool FModumateDocument::PostApplyDeltas(UWorld *World)
 {
 	UpdateVolumeGraphObjects(World);
 	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
@@ -1523,7 +1547,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &ob
 	{
 		// TODO: fix
 		ApplyGraph3DDelta(graphDelta, world);
-		PostApplyDelta(world);
+		PostApplyDeltas(world);
 	}
 
 	bool doorsDirty = false;
@@ -2381,7 +2405,7 @@ int32 FModumateDocument::CreateFFE(
 	return id;
 }
 
-bool FModumateDocument::CleanObjects()
+bool FModumateDocument::CleanObjects(TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 {
 	int32 totalObjectCleans = 0;
 	TArray<FModumateObjectInstance*> curDirtyList;
@@ -2402,7 +2426,7 @@ bool FModumateDocument::CleanObjects()
 
 			for (FModumateObjectInstance *objToClean : curDirtyList)
 			{
-				bModifiedAnyObjects = objToClean->CleanObject(flagToClean) || bModifiedAnyObjects;
+				bModifiedAnyObjects = objToClean->CleanObject(flagToClean, OutSideEffectDeltas) || bModifiedAnyObjects;
 				if (bModifiedAnyObjects)
 				{
 					++objectCleans;
@@ -2911,7 +2935,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 
 		// Now that all objects have been created and parented correctly, we can clean all of them.
 		// This should take care of anything that depends on relationships between objects, like mitering.
-		CleanObjects();
+		CleanObjects(nullptr);
 
 		// Check for objects that have errors, as a result of having been loaded and cleaned.
 		// TODO: prompt the user to fix, or delete, these objects

@@ -25,9 +25,9 @@ namespace Modumate
 		Location = p;
 	}
 
-	bool FMOIGroupImpl::CleanObject(EObjectDirtyFlags DirtyFlag)
+	bool FMOIGroupImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
-		if (!FModumateObjectInstanceImplBase::CleanObject(DirtyFlag))
+		if (!FModumateObjectInstanceImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
 		{
 			return false;
 		}

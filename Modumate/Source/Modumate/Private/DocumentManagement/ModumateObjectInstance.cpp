@@ -636,7 +636,7 @@ namespace Modumate
 		return ((DirtyFlags & DirtyFlag) == DirtyFlag);
 	}
 
-	bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag)
+	bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
 		bool bSuccess = false;
 
@@ -679,7 +679,7 @@ namespace Modumate
 			// Now actually clean the object.
 			if (bValidObjectToClean)
 			{
-				bSuccess = Implementation->CleanObject(DirtyFlag);
+				bSuccess = Implementation->CleanObject(DirtyFlag, OutSideEffectDeltas);
 			}
 
 			if (bSuccess)
@@ -1398,7 +1398,7 @@ namespace Modumate
 		return world->SpawnActor<AActor>(loc, rot.Rotator());
 	}
 
-	bool FModumateObjectInstanceImplBase::CleanObject(EObjectDirtyFlags DirtyFlag)
+	bool FModumateObjectInstanceImplBase::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
 		if (MOI == nullptr)
 		{

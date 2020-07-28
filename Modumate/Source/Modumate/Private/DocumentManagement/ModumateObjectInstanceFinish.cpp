@@ -42,7 +42,7 @@ namespace Modumate
 		return CachedNormal;
 	}
 
-	bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag)
+	bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
 		switch (DirtyFlag)
 		{

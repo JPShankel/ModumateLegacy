@@ -28,9 +28,9 @@ namespace Modumate
 		}
 	}
 
-	bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag)
+	bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
-		if (!FMOIVertexImplBase::CleanObject(DirtyFlag))
+		if (!FMOIVertexImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
 		{
 			return false;
 		}

@@ -94,7 +94,7 @@ public:
 	const TArray<Modumate::FModumateObjectInstance*>& GetObjectInstances() const { return ObjectInstanceArray; }
 	TArray<Modumate::FModumateObjectInstance*>& GetObjectInstances() { return ObjectInstanceArray; }
 
-	bool CleanObjects();
+	bool CleanObjects(TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas = nullptr);
 	void RegisterDirtyObject(EObjectDirtyFlags DirtyType, Modumate::FModumateObjectInstance *DirtyObj, bool bDirty);
 
 	void AddCommandToHistory(const FString &cmd);
@@ -102,6 +102,7 @@ public:
 
 	void BeginUndoRedoMacro();
 	void EndUndoRedoMacro();
+	bool InUndoRedoMacro() const;
 
 	void SetAssemblyForObjects(UWorld *world, TArray<int32> ids, const FModumateObjectAssembly &assembly);
 
@@ -206,7 +207,7 @@ public:
 
 private:
 	bool FinalizeGraphDeltas(TArray <Modumate::FGraph3DDelta> &Deltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs);
-	bool PostApplyDelta(UWorld *World);
+	bool PostApplyDeltas(UWorld *World);
 
 	// Helper function for ObjectFromActor
 	Modumate::FModumateObjectInstance *ObjectFromSingleActor(AActor *actor);

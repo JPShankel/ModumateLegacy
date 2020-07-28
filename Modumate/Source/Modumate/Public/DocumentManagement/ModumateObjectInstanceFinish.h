@@ -18,7 +18,7 @@ namespace Modumate
 
 		virtual FVector GetCorner(int32 index) const override;
 		virtual FVector GetNormal() const override;
-		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag) override;
+		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
 		virtual void SetupDynamicGeometry() override;
 		virtual void UpdateDynamicGeometry() override;
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;

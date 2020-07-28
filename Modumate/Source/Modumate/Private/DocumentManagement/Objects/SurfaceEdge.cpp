@@ -15,9 +15,9 @@ namespace Modumate
 	{
 	}
 
-	bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag)
+	bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
-		if (!FMOIEdgeImplBase::CleanObject(DirtyFlag))
+		if (!FMOIEdgeImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
 		{
 			return false;
 		}

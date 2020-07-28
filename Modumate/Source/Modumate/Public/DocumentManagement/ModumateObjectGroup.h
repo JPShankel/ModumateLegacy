@@ -25,7 +25,7 @@ namespace Modumate
 
 		virtual void SetLocation(const FVector &p) override;
 
-		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag) override;
+		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
 
 		virtual AActor *RestoreActor() override;
 		virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;

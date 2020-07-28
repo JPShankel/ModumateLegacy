@@ -1255,7 +1255,9 @@ void AEditModelPlayerController_CPP::TickInput(float DeltaTime)
 		EMPlayerState->SnappedCursor.Visible = false;
 	}
 
-	Document->CleanObjects();
+	// Do not allow side effect delta generation / application while cleaning objects during tick;
+	// this step is meant only to clean objects whose client side representations need updating after underlying data changes.
+	Document->CleanObjects(nullptr);
 }
 
 FVector AEditModelPlayerController_CPP::CalculateViewLocationForSphere(const FSphere &TargetSphere, const FVector &ViewVector, float AspectRatio, float FOV)

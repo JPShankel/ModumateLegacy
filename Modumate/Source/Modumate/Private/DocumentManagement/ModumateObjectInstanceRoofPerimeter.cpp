@@ -157,7 +157,7 @@ namespace Modumate
 		return CachedPlane;
 	}
 
-	bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag)
+	bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
 		if (MOI == nullptr)
 		{

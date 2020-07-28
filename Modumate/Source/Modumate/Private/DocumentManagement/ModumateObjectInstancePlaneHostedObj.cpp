@@ -102,7 +102,7 @@ namespace Modumate
 		}
 	}
 
-	bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag)
+	bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
 		switch (DirtyFlag)
 		{

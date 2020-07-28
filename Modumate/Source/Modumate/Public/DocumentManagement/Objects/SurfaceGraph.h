@@ -16,10 +16,10 @@ namespace Modumate
 		virtual FVector GetLocation() const override;
 		virtual FVector GetCorner(int32 index) const override;
 		virtual FVector GetNormal() const override;
-		virtual void SetupDynamicGeometry() override;
+		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
 
 	protected:
-		TArray<FVector> CachedFacePoints;
+		TArray<FVector> CachedFacePoints, PrevFacePoints;
 		FVector CachedFaceNormal, CachedFaceAxisX, CachedFaceAxisY, CachedFaceOrigin;
 	};
 }

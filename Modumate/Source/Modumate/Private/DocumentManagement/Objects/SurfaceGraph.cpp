@@ -3,6 +3,7 @@
 #include "DocumentManagement/Objects/SurfaceGraph.h"
 
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "DocumentManagement/ModumateDocument.h"
 
 namespace Modumate
 {
@@ -43,13 +44,53 @@ namespace Modumate
 		return CachedFaceNormal;
 	}
 
-	void FMOISurfaceGraphImpl::SetupDynamicGeometry()
+	bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
-		const FModumateObjectInstance *parentObj = MOI ? MOI->GetParentObject() : nullptr;
-		int32 faceIndex = UModumateObjectStatics::GetParentFaceIndex(MOI);
-		if (UModumateObjectStatics::GetGeometryFromFaceIndex(parentObj, faceIndex, CachedFacePoints, CachedFaceNormal, CachedFaceAxisX, CachedFaceAxisY))
+		if (MOI == nullptr)
 		{
-			CachedFaceOrigin = CachedFacePoints[0];
+			return false;
 		}
+
+		if (DirtyFlag == EObjectDirtyFlags::Structure)
+		{
+			PrevFacePoints = CachedFacePoints;
+
+			const FModumateObjectInstance *parentObj = MOI ? MOI->GetParentObject() : nullptr;
+			int32 faceIndex = UModumateObjectStatics::GetParentFaceIndex(MOI);
+			if (!UModumateObjectStatics::GetGeometryFromFaceIndex(parentObj, faceIndex, CachedFacePoints, CachedFaceNormal, CachedFaceAxisX, CachedFaceAxisY))
+			{
+				return false;
+			}
+
+			CachedFaceOrigin = CachedFacePoints[0];
+
+			// If the cached host face geometry has changed after it was created, then the surface graph may need to be updated or deleted to match the new host face
+			if ((CachedFacePoints != PrevFacePoints) && (PrevFacePoints.Num() > 0))
+			{
+				if (OutSideEffectDeltas)
+				{
+					// TODO: try to generate deltas to update the surface graph, and only delete itself if that's not possible
+					TArray<FModumateObjectInstance*> objectsToDelete = MOI->GetAllDescendents();
+					objectsToDelete.Add(MOI);
+
+					TArray<FMOIStateData> deletionStates;
+					for (FModumateObjectInstance* descendent : objectsToDelete)
+					{
+						FMOIStateData& deletionState = deletionStates.AddDefaulted_GetRef();
+						deletionState.StateType = EMOIDeltaType::Destroy;
+						deletionState.ObjectID = descendent->ID;
+					}
+
+					auto deleteSurfaceDelta = MakeShareable(new FMOIDelta(deletionStates));
+					OutSideEffectDeltas->Add(deleteSurfaceDelta);
+				}
+				else if (!ensure(parentObj->GetIsInPreviewMode() || (parentObj->GetParentObject() && parentObj->GetParentObject()->GetIsInPreviewMode())))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("SurfaceGraph #%d's host #%d face #%d changed outside of preview modifications!"), MOI->ID, parentObj->ID, faceIndex);
+				}
+			}
+		}
+
+		return true;
 	}
 }

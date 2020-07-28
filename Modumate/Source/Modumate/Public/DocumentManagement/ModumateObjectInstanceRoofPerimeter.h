@@ -33,7 +33,7 @@ namespace Modumate
 		virtual AActor *RestoreActor() override;
 		virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 		virtual FVector GetNormal() const override;
-		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag) override;
+		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
 		virtual bool ShowStructureOnSelection() const override { return false; }
 		virtual bool UseStructureDataForCollision() const override { return true; }
 

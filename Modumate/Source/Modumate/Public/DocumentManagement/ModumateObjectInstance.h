@@ -110,7 +110,7 @@ namespace Modumate
 
 		virtual FVector GetNormal() const = 0;
 
-		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag) = 0;
+		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) = 0;
 
 		virtual void SetupDynamicGeometry() = 0;
 		virtual void UpdateDynamicGeometry() = 0;
@@ -180,7 +180,7 @@ namespace Modumate
 
 		virtual FVector GetNormal() const override { return FVector::ZeroVector; }
 
-		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag) override;
+		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
 
 		virtual void SetupDynamicGeometry() override { }
 		virtual void UpdateDynamicGeometry() override { }
@@ -398,7 +398,7 @@ namespace Modumate
 		// Geometry
 		void MarkDirty(EObjectDirtyFlags DirtyFlag);
 		bool IsDirty(EObjectDirtyFlags DirtyFlag) const;
-		bool CleanObject(EObjectDirtyFlags DirtyFlag);
+		bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas);
 
 		void SetupGeometry();
 		void UpdateGeometry();

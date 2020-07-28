@@ -122,9 +122,9 @@ namespace Modumate
 		return portalTransform.GetUnitAxis(EAxis::Y);
 	}
 
-	bool FMOIPortalImpl::CleanObject(EObjectDirtyFlags DirtyFlag)
+	bool FMOIPortalImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
-		if (!FModumateObjectInstanceImplBase::CleanObject(DirtyFlag))
+		if (!FModumateObjectInstanceImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
 		{
 			return false;
 		}
