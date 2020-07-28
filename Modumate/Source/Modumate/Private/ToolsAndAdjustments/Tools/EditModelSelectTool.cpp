@@ -1,14 +1,16 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+
+#include "Algo/Transform.h"
 #include "DocumentManagement/ModumateCommands.h"
+#include "DocumentManagement/ModumateSnappingView.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "Runtime/Engine/Classes/Engine/Engine.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "DocumentManagement/ModumateSnappingView.h"
-#include "Runtime/Engine/Classes/Engine/Engine.h"
-#include "Algo/Transform.h"
 
 using namespace Modumate;
 
@@ -108,10 +110,13 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 
 	// For all the acquired targets, collect the previewed changes in a way that can be applied as deltas to the document
 	TArray<FModumateObjectInstance*> targetPhysicalMOIs;
+	TMap<int32, TMap<int32, FVector2D>> combinedVertex2DMovements;
 	TMap<int32, FVector> vertex3DMovements;
 	for (auto &kvp : OriginalObjectData)
 	{
 		FModumateObjectInstance* targetMOI = kvp.Key;
+		int32 targetID = targetMOI->ID;
+		int32 targetParentID = targetMOI->GetParentID();
 		const TArray<FVector>& targetCPs = targetMOI->GetControlPoints();
 		int32 numCPs = targetCPs.Num();
 		EObjectType objectType = targetMOI->GetObjectType();
@@ -120,25 +125,80 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 
 		if (graph2DObjType != EGraphObjectType::None)
 		{
-			// TODO
+			// TODO: all of parenting information is gathered here for projecting 3D control points into 2D surface graph positions,
+			// which should be unnecessary if surface graph MOIs expose their 2D information directly.
+			const FModumateObjectInstance* surfaceObj = doc->GetObjectById(targetParentID);
+			const FGraph2D* surfaceGraph = doc->FindSurfaceGraph(targetParentID);
+			const FModumateObjectInstance* surfaceParent = surfaceObj ? surfaceObj->GetParentObject() : nullptr;
+			if (!ensure(surfaceObj && surfaceGraph && surfaceParent))
+			{
+				continue;
+			}
+
+			int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceObj);
+
+			TArray<FVector> facePoints;
+			FVector faceNormal, faceAxisX, faceAxisY;
+			if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceParent, surfaceGraphFaceIndex, facePoints, faceNormal, faceAxisX, faceAxisY)))
+			{
+				continue;
+			}
+			FVector faceOrigin = facePoints[0];
+
+			TMap<int32, FVector2D>& vertex2DMovements = combinedVertex2DMovements.FindOrAdd(targetParentID);
+
+			switch (graph2DObjType)
+			{
+			case EGraphObjectType::Vertex:
+			{
+				if (ensure(numCPs == 1))
+				{
+					vertex2DMovements.Add(targetID, FVector2D(targetCPs[0]));
+					vertex2DMovements.Add(targetID, UModumateGeometryStatics::ProjectPoint2D(targetCPs[0], faceAxisX, faceAxisY, faceOrigin));
+				}
+				break;
+			}
+			case EGraphObjectType::Edge:
+			{
+				const FGraph2DEdge* edge = surfaceGraph->FindEdge(targetID);
+				if (ensure(edge && (numCPs == 2)))
+				{
+					vertex2DMovements.Add(edge->StartVertexID, UModumateGeometryStatics::ProjectPoint2D(targetCPs[0], faceAxisX, faceAxisY, faceOrigin));
+					vertex2DMovements.Add(edge->EndVertexID, UModumateGeometryStatics::ProjectPoint2D(targetCPs[1], faceAxisX, faceAxisY, faceOrigin));
+				}
+				break;
+			}
+			case EGraphObjectType::Polygon:
+			{
+				const FGraph2DPolygon* polygon = surfaceGraph->FindPolygon(targetID);
+				if (ensure(polygon && (polygon->VertexIDs.Num() == numCPs)))
+				{
+					for (int32 i = 0; i < numCPs; ++i)
+					{
+						vertex2DMovements.Add(polygon->VertexIDs[i], UModumateGeometryStatics::ProjectPoint2D(targetCPs[i], faceAxisX, faceAxisY, faceOrigin));
+					}
+				}
+				break;
+			}
+			default:
+				break;
+			}
 		}
 		else if (graph3DObjType != EGraph3DObjectType::None)
 		{
-			int32 objID = targetMOI->ID;
-			
 			switch (graph3DObjType)
 			{
 			case EGraph3DObjectType::Vertex:
 			{
 				if (ensure(numCPs == 1))
 				{
-					vertex3DMovements.Add(objID, targetCPs[0]);
+					vertex3DMovements.Add(targetID, targetCPs[0]);
 				}
 				break;
 			}
 			case EGraph3DObjectType::Edge:
 			{
-				const FGraph3DEdge *edge = volumeGraph.FindEdge(objID);
+				const FGraph3DEdge *edge = volumeGraph.FindEdge(targetID);
 				if (ensure(edge && (numCPs == 2)))
 				{
 					vertex3DMovements.Add(edge->StartVertexID, targetCPs[0]);
@@ -148,7 +208,7 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 			}
 			case EGraph3DObjectType::Face:
 			{
-				const FGraph3DFace *face = volumeGraph.FindFace(objID);
+				const FGraph3DFace *face = volumeGraph.FindFace(targetID);
 				if (ensure(face && (face->VertexIDs.Num() == numCPs)))
 				{
 					for (int32 i = 0; i < numCPs; ++i)
@@ -185,7 +245,27 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 		doc->GetVertexMovementDeltas(vertexMoveIDs, vertexMovePositions, deltas);
 	}
 
-	// TODO: next, get deltas for surface graph changes
+	// Next, get deltas for surface graph changes
+	if (combinedVertex2DMovements.Num() > 0)
+	{
+		int32 nextID = doc->GetNextAvailableID();
+		TArray<FGraph2DDelta> surfaceGraphDeltas;
+		for (auto& kvp : combinedVertex2DMovements)
+		{
+			surfaceGraphDeltas.Reset();
+			FGraph2D* surfaceGraph = doc->FindSurfaceGraph(kvp.Key);
+			if (!ensure(surfaceGraph) || (kvp.Value.Num() == 0) ||
+				!surfaceGraph->MoveVertices(surfaceGraphDeltas, nextID, kvp.Value))
+			{
+				continue;
+			}
+
+			for (auto& delta : surfaceGraphDeltas)
+			{
+				deltas.Add(MakeShareable(new FGraph2DDelta{ delta }));
+			}
+		}
+	}
 
 	// Next, get deltas for physical MOI movements as regular state data changes with an FMOIDelta
 	if (targetPhysicalMOIs.Num() > 0)

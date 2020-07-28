@@ -613,6 +613,7 @@ namespace Modumate
 			if (ensureAlways(vertex))
 			{
 				vertex->Position = vertexDelta.Value;
+				vertex->Dirty(true);
 			}
 
 			appliedDelta.VertexMovements.Add(kvp);

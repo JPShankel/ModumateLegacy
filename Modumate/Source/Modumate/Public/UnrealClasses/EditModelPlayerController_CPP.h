@@ -357,7 +357,7 @@ public:
 	UTexture2D* StaticCamTexture;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Category = Snap, ToolTip = "The distance bias at which we will prefer hits against virtual objects (snaps, MOIs that are just points/lines) to direct hits."))
-	float VirtualHitBias = 0.1f;
+	float VirtualHitBias = 0.5f;
 
 	// The difference in camera distance, in cm, that a structural snap hit
 	// will be preferred compared to the sketch plane in front of it.

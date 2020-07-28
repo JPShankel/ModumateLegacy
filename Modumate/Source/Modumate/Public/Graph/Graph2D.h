@@ -175,6 +175,9 @@ namespace Modumate
 
 		// Create Deltas that move the provided vertices by the provided offset vector.  Moving vertices handles the 
 		// same kind of side effects that occur when you add objects (splitting edges, (TODO) handling new polygons).
+		bool MoveVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TMap<int32, FVector2D>& NewVertexPositions);
+
+		// MoveVertices, but with an identical offset applied to each vertex specified by ID, rather than arbitrary new positions.
 		bool MoveVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TArray<int32> &VertexIDs, const FVector2D &Offset);
 
 

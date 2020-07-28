@@ -13,7 +13,8 @@ namespace Modumate
 {
 	FMOISurfacePolygonImpl::FMOISurfacePolygonImpl(FModumateObjectInstance *moi)
 		: FMOIPlaneImplBase(moi)
-		, MeshPointOffset(0.5f)
+		, MeshPointOffset(0.25f)
+		, bInteriorPolygon(false)
 	{
 
 	}
@@ -22,22 +23,26 @@ namespace Modumate
 	{
 		if (MOI && DynamicMeshActor.IsValid())
 		{
-			bool bHaveChildren = (MOI->GetChildIDs().Num() > 0);
-			auto controller = MOI->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-			switch (controller->EMPlayerState->GetSelectedViewMode())
+			bOutVisible = false;
+			bOutCollisionEnabled = false;
+
+			if (bInteriorPolygon)
 			{
-			case EEditViewModes::SurfaceGraphs:
-				bOutVisible = true;
-				bOutCollisionEnabled = true;
-				break;
-			case EEditViewModes::ObjectEditing:
-				bOutVisible = !bHaveChildren;
-				bOutCollisionEnabled = !bHaveChildren;
-				break;
-			default:
-				bOutVisible = false;
-				bOutCollisionEnabled = false;
-				break;
+				bool bHaveChildren = (MOI->GetChildIDs().Num() > 0);
+				auto controller = MOI->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+				switch (controller->EMPlayerState->GetSelectedViewMode())
+				{
+				case EEditViewModes::SurfaceGraphs:
+					bOutVisible = true;
+					bOutCollisionEnabled = true;
+					break;
+				case EEditViewModes::ObjectEditing:
+					bOutVisible = !bHaveChildren;
+					bOutCollisionEnabled = !bHaveChildren;
+					break;
+				default:
+					break;
+				}
 			}
 
 			DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
@@ -73,7 +78,9 @@ namespace Modumate
 		// For now, control points are already set and updated by object deltas, so they don't need to be updated here
 
 		const FModumateObjectInstance *surfaceGraphObj = MOI ? MOI->GetParentObject() : nullptr;
-		if (surfaceGraphObj == nullptr)
+		const FGraph2D* surfaceGraph = MOI->GetDocument()->FindSurfaceGraph(surfaceGraphObj ? surfaceGraphObj->ID : MOD_ID_NONE);
+		const FGraph2DPolygon* surfacePolgyon = surfaceGraph ? surfaceGraph->FindPolygon(MOI->ID) : nullptr;
+		if (!(surfaceGraphObj && surfaceGraph && surfacePolgyon))
 		{
 			return;
 		}
@@ -83,6 +90,7 @@ namespace Modumate
 		CachedAxisX = graphRot.GetAxisX();
 		CachedAxisY = graphRot.GetAxisY();
 		CachedPlane = FPlane(CachedOrigin, surfaceGraphObj->GetNormal());
+		bInteriorPolygon = surfacePolgyon->bInterior;
 	}
 
 	float FMOISurfacePolygonImpl::GetAlpha() const

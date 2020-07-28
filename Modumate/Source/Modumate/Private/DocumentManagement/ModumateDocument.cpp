@@ -850,7 +850,9 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 			controlPoints.Add(UModumateGeometryStatics::Deproject2DPoint(polyVertex->Position, faceAxisX, faceAxisY, faceOrigin));
 		}
 
-		if ((controlPoints.Num() == kvp.Value.Vertices.Num()) && kvp.Value.bInterior)
+		// It would be ideal to only create SurfacePolgyon objects for interior polygons, but if we don't then the graph will try creating
+		// deltas that use IDs that the document will try to re-purpose for other objects.
+		if ((controlPoints.Num() == kvp.Value.Vertices.Num()))
 		{
 			CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfacePolygon,
 				kvp.Key, surfaceGraphID, FVector::ZeroVector, &controlPoints, nullptr);
@@ -943,6 +945,73 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		if (deletedPolyObj)
 		{
 			DeleteObjectImpl(deletedPolyObj);
+		}
+	}
+
+	// Update the MOI objects that reflect surface graph elements that have been modified by the delta
+	// TODO: none of this should be necessary if the tools and handles that modify surface graph elements
+	// can preview their progress without directly modifying control points.
+	// Much of this could also be removed/cleaned earlier if the control points were only in graph 2D coordinate space.
+	TArray<int32> cleanedVertices, cleanedEdges, cleanedPolygons;
+	if (targetSurfaceGraph->CleanGraph(cleanedVertices, cleanedEdges, cleanedPolygons))
+	{
+		for (int32 vertexID : cleanedVertices)
+		{
+			FGraph2DVertex* surfaceVertex = targetSurfaceGraph->FindVertex(vertexID);
+			FModumateObjectInstance* vertexObj = GetObjectById(vertexID);
+			if (surfaceVertex && vertexObj && (vertexObj->GetObjectType() == EObjectType::OTSurfaceVertex))
+			{
+				vertexObj->SetObjectLocation(UModumateGeometryStatics::Deproject2DPoint(surfaceVertex->Position, faceAxisX, faceAxisY, faceOrigin));
+			}
+		}
+
+		for (int32 edgeID : cleanedEdges)
+		{
+			FGraph2DEdge* surfaceEdge = targetSurfaceGraph->FindEdge(edgeID);
+			FModumateObjectInstance *edgeObj = GetObjectById(edgeID);
+			if (!(surfaceEdge && edgeObj && (edgeObj->GetObjectType() == EObjectType::OTSurfaceEdge)))
+			{
+				continue;
+			}
+
+			FGraph2DVertex* startSurfaceVertex = targetSurfaceGraph->FindVertex(surfaceEdge->StartVertexID);
+			FGraph2DVertex* endSurfaceVertex = targetSurfaceGraph->FindVertex(surfaceEdge->EndVertexID);
+			FModumateObjectInstance* startVertexObj = GetObjectById(surfaceEdge->StartVertexID);
+			FModumateObjectInstance* endVertexObj = GetObjectById(surfaceEdge->EndVertexID);
+			if (!(startSurfaceVertex && endSurfaceVertex && startVertexObj && endVertexObj))
+			{
+				continue;
+			}
+
+			edgeObj->SetControlPoints({ startVertexObj->GetObjectLocation(), endVertexObj->GetObjectLocation() });
+			edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
+		}
+
+		for (int32 polygonID : cleanedPolygons)
+		{
+			FGraph2DPolygon* surfacePolygon = targetSurfaceGraph->FindPolygon(polygonID);
+			FModumateObjectInstance *polygonObj = GetObjectById(polygonID);
+			if (!(surfacePolygon && polygonObj && (polygonObj->GetObjectType() == EObjectType::OTSurfacePolygon)))
+			{
+				continue;
+			}
+
+			TArray<FVector> polygonWorldPoints;
+			for (int32 vertexID : surfacePolygon->VertexIDs)
+			{
+				FGraph2DVertex* surfaceVertex = targetSurfaceGraph->FindVertex(vertexID);
+				FModumateObjectInstance* vertexObj = GetObjectById(vertexID);
+				if (surfaceVertex && vertexObj)
+				{
+					polygonWorldPoints.Add(vertexObj->GetObjectLocation());
+				}
+			}
+
+			if (polygonWorldPoints.Num() == surfacePolygon->VertexIDs.Num())
+			{
+				polygonObj->SetControlPoints(polygonWorldPoints);
+				polygonObj->MarkDirty(EObjectDirtyFlags::Structure);
+			}
 		}
 	}
 }
@@ -1150,7 +1219,7 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 	return true;
 }
 
-bool FModumateDocument::UpdateGraphObjects(UWorld *World)
+bool FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 {
 	// TODO: unclear whether this is correct or the best place -
 	// set the faces containing or contained by dirty faces dirty as well	
@@ -1297,7 +1366,7 @@ bool FModumateDocument::FinalizeGraphDeltas(TArray <FGraph3DDelta> &Deltas, TArr
 
 bool FModumateDocument::PostApplyDelta(UWorld *World)
 {
-	UpdateGraphObjects(World);
+	UpdateVolumeGraphObjects(World);
 	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 
 	// Now that objects may have been deleted, validate the player state so that none of them are incorrectly referenced.

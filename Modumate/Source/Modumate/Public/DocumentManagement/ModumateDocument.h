@@ -202,7 +202,7 @@ public:
 	void ApplyGraph2DDelta(const Modumate::FGraph2DDelta &Delta, UWorld *World);
 	void ApplyGraph3DDelta(const Modumate::FGraph3DDelta &Delta, UWorld *World);
 	bool ApplyDeltas(const TArray<TSharedPtr<Modumate::FDelta>> &Deltas, UWorld *World);
-	bool UpdateGraphObjects(UWorld *World);
+	bool UpdateVolumeGraphObjects(UWorld *World);
 
 private:
 	bool FinalizeGraphDeltas(TArray <Modumate::FGraph3DDelta> &Deltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs);

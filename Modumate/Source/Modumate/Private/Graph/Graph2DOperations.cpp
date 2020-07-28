@@ -519,18 +519,18 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph2D::MoveVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TArray<int32> &VertexIDs, const FVector2D& Offset)
+	bool FGraph2D::MoveVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TMap<int32, FVector2D>& NewVertexPositions)
 	{
-		int32 numVertices = VertexIDs.Num();
+		int32 numVertices = NewVertexPositions.Num();
 
 		// move vertices
 		FGraph2DDelta moveVertexDelta(ID);
 		TMap<int32, int32> joinableVertexIDs;
 		TArray<int32> dirtyVertexIDs;
 
-		for (int32 i = 0; i < numVertices; ++i)
+		for (auto& kvp : NewVertexPositions)
 		{
-			int32 vertexID = VertexIDs[i];
+			int32 vertexID = kvp.Key;
 			const FGraph2DVertex *vertex = FindVertex(vertexID);
 
 			if (vertex == nullptr)
@@ -539,10 +539,10 @@ namespace Modumate
 			}
 
 			FVector2D oldPos = vertex->Position;
-			FVector2D newPos = vertex->Position + Offset;
+			FVector2D newPos = kvp.Value;
 
 			const FGraph2DVertex *existingVertex = FindVertex(newPos);
-			if (existingVertex != nullptr && existingVertex->ID != vertexID && VertexIDs.Find(existingVertex->ID) == INDEX_NONE)
+			if (existingVertex != nullptr && existingVertex->ID != vertexID && !NewVertexPositions.Contains(existingVertex->ID))
 			{
 				joinableVertexIDs.Add(existingVertex->ID, vertexID);
 				dirtyVertexIDs.Add(existingVertex->ID);
@@ -631,6 +631,27 @@ namespace Modumate
 		ApplyInverseDeltas(OutDeltas);
 
 		return true;
+	}
+
+	bool FGraph2D::MoveVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TArray<int32> &VertexIDs, const FVector2D& Offset)
+	{
+		TMap<int32, FVector2D> newVertexPositions;
+		int32 numVertices = VertexIDs.Num();
+		for (int32 i = 0; i < numVertices; ++i)
+		{
+			int32 vertexID = VertexIDs[i];
+			const FGraph2DVertex *vertex = FindVertex(vertexID);
+
+			if (vertex == nullptr)
+			{
+				return false;
+			}
+
+			FVector2D newVertexPosition = vertex->Position + Offset;
+			newVertexPositions.Add(vertexID, newVertexPosition);
+		}
+
+		return MoveVertices(OutDeltas, NextID, newVertexPositions);
 	}
 
 	bool FGraph2D::JoinVertices(FGraph2DDelta &OutDelta, int32 &NextID, int32 SavedVertexID, int32 RemovedVertexID)
