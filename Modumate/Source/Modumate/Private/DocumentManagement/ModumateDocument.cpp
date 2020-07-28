@@ -938,7 +938,9 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	for (auto &kvp : Delta.PolygonDeletions)
 	{
 		FModumateObjectInstance *deletedPolyObj = GetObjectById(kvp.Key);
-		if (ensureAlways(deletedPolyObj))
+		// the document does not make MOIs for exterior polygons, 
+		// so the deleted polygon may not exist
+		if (deletedPolyObj)
 		{
 			DeleteObjectImpl(deletedPolyObj);
 		}

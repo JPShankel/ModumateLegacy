@@ -285,8 +285,12 @@ namespace Modumate
 				continue;
 			}
 
-			(edge->ID < 0) ? (edge->LeftPolyID = polyToRemove->ParentID) : (edge->RightPolyID = polyToRemove->ParentID);
+			int32& edgePolyID = (edge->ID < 0 ? edge->LeftPolyID : edge->RightPolyID);
 
+			if (edgePolyID == polyToRemove->ID)
+			{
+				edgePolyID = polyToRemove->ParentID;
+			}
 		}
 
 		Polygons.Remove(PolyID);

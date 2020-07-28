@@ -717,7 +717,7 @@ namespace Modumate
 		// adding edges would be successful
 		TestTrue(TEXT("Add Edge spanning poly"),
 			graph.AddEdge(deltas, NextID, FVector2D(0.0f, 0.0f), FVector2D(100.0f, 100.0f)));
-		deltas.Reset();
+		TestDeltasAndResetGraph(this, deltas, graph, 3, 4, 5);
 
 		TestTrue(TEXT("Add edge outside of bounding poly"),
 			!graph.AddEdge(deltas, NextID, FVector2D(110.0f, 110.0f), FVector2D(120.0f, 120.0f)));
@@ -729,7 +729,7 @@ namespace Modumate
 
 		TestTrue(TEXT("Add edge adjacent, but inside of bounding poly"),
 			graph.AddEdge(deltas, NextID, FVector2D(10.0f, 0.0f), FVector2D(10.0f, 10.0f)));
-		deltas.Reset();
+		TestDeltasAndResetGraph(this, deltas, graph, 2, 6, 6);
 
 		return true;
 	}
@@ -920,7 +920,7 @@ namespace Modumate
 
 		TestTrue(TEXT("Add Edge inside poly"),
 			graph.AddEdge(deltas, NextID, FVector2D(10.0f, 10.0f), FVector2D(20.0f, 20.0f)));
-		deltas.Reset();
+		TestDeltasAndResetGraph(this, deltas, graph, 5);
 
 		TestTrue(TEXT("Add Edge inside hole"),
 			!graph.AddEdge(deltas, NextID, FVector2D(50.0f, 50.0f), FVector2D(60.0f, 60.0f)));
@@ -932,19 +932,19 @@ namespace Modumate
 
 		TestTrue(TEXT("Add Edge from hole to bounds"),
 			graph.AddEdge(deltas, NextID, FVector2D(25.0f, 25.0f), FVector2D(0.0f, 0.0f)));
-		deltas.Reset();
+		TestDeltasAndResetGraph(this, deltas, graph, 3);
 
 		TestTrue(TEXT("Add Edge from side of hole to bounds"),
 			graph.AddEdge(deltas, NextID, FVector2D(35.0f, 25.0f), FVector2D(0.0f, 0.0f)));
-		deltas.Reset();
+		TestDeltasAndResetGraph(this, deltas, graph, 3);
 
 		TestTrue(TEXT("Add Edge colinear with hole on corner"),
 			graph.AddEdge(deltas, NextID, FVector2D(25.0f, 25.0f), FVector2D(45.0f, 25.0f)));
-		deltas.Reset();
+		TestDeltasAndResetGraph(this, deltas, graph, 4);
 
 		TestTrue(TEXT("Add Edge colinear with hole off corner"),
 			graph.AddEdge(deltas, NextID, FVector2D(35.0f, 25.0f), FVector2D(45.0f, 25.0f)));
-		deltas.Reset();
+		TestDeltasAndResetGraph(this, deltas, graph, 4);
 
 		TestTrue(TEXT("Add Edge spanning bounds through hole"),
 			!graph.AddEdge(deltas, NextID, FVector2D(0.0f, 0.0f), FVector2D(100.0f, 100.0f)));
