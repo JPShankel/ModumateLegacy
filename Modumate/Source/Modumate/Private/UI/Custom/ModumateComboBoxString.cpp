@@ -20,7 +20,10 @@ void UModumateComboBoxString::SynchronizeProperties()
 UWidget* UModumateComboBoxString::OnComboBoxGenerateWidget(FString SelectedItem)
 {
 	UModumateComboBoxStringItem* newItem = CreateWidget<UModumateComboBoxStringItem>(this, ItemWidgetClass);
-	newItem->BuildItem(FText::FromString(SelectedItem));
+	if (ensureAlways(newItem))
+	{
+		newItem->BuildItem(FText::FromString(SelectedItem));
+	}
 	return newItem;
 }
 
