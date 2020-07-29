@@ -243,30 +243,37 @@ void FModumateLineCorral::ProcessLines()
 					{   // Lines overlap
 						if (aDotB > 0.0f)
 						{
-							endA = intersectOnA;
-							deltaA = endA - startA;
-							FLineSegment clippedLine = lineA;
-							clippedLine.StartVert = endB;
-							clippedLine.EndVert = startB;
-							clippedSegments.Push(clippedLine);
-							lineA.EndVert = endA;
-							if (deltaA.IsNearlyZero(Epsilon))
+							if (FVector2D::DistSquared(startA, intersectOnA) > Epsilon)
 							{
-								break;
+								endA = intersectOnA;
+								deltaA = endA - startA;
+								FLineSegment clippedLine = lineA;
+								clippedLine.StartVert = lineA.EndVert;
+								clippedLine.EndVert = intersectOnA;
+								lineA.EndVert = endA;
+								clippedSegments.Push(clippedLine);
+								if (deltaA.IsNearlyZero(Epsilon))
+								{
+									break;
+								}
 							}
 						}
 						else
 						{
-							startA = intersectOnA;
-							deltaA = endA - startA;
-							FLineSegment clippedLine = lineA;
-							clippedLine.StartVert = startB;
-							clippedLine.EndVert = endB;
-							clippedSegments.Push(clippedLine);
-							lineA.StartVert = startA;
-							if (deltaA.IsNearlyZero(Epsilon))
+							if (FVector2D::DistSquared(endA, intersectOnA) > Epsilon)
 							{
-								break;
+								startA = intersectOnA;
+								deltaA = endA - startA;
+								FLineSegment clippedLine = lineA;
+								clippedLine.StartVert = intersectOnA;
+								clippedLine.EndVert = lineA.StartVert;
+								clippedSegments.Push(clippedLine);
+								lineA.StartVert = startA;
+								clippedSegments.Push(clippedLine);
+								if (deltaA.IsNearlyZero(Epsilon))
+								{
+									break;
+								}
 							}
 						}
 					}
@@ -275,30 +282,36 @@ void FModumateLineCorral::ProcessLines()
 					{   // Lines overlap
 						if (aDotB > 0.0f)
 						{
-							startA = intersectOnA;
-							deltaA = endA - startA;
-							FLineSegment clippedLine = lineA;
-							clippedLine.StartVert = endB;
-							clippedLine.EndVert = startB;
-							clippedSegments.Push(clippedLine);
-							lineA.StartVert = startA;
-							if (deltaA.IsNearlyZero(Epsilon))
+							if (FVector2D::DistSquared(endA, intersectOnA) > Epsilon)
 							{
-								break;
+								startA = intersectOnA;
+								deltaA = endA - startA;
+								FLineSegment clippedLine = lineA;
+								clippedLine.StartVert = intersectOnA;
+								clippedLine.EndVert = lineA.StartVert;
+								clippedSegments.Push(clippedLine);
+								lineA.StartVert = startA;
+								if (deltaA.IsNearlyZero(Epsilon))
+								{
+									break;
+								}
 							}
 						}
 						else
 						{
-							endA = intersectOnA;
-							deltaA = endA - startA;
-							FLineSegment clippedLine = lineA;
-							clippedLine.StartVert = startB;
-							clippedLine.EndVert = endB;
-							clippedSegments.Push(clippedLine);
-							lineA.EndVert = endA;
-							if (deltaA.IsNearlyZero(Epsilon))
+							if (FVector2D::DistSquared(startA, intersectOnA) > Epsilon)
 							{
-								break;
+								endA = intersectOnA;
+								deltaA = endA - startA;
+								FLineSegment clippedLine = lineA;
+								clippedLine.StartVert = lineA.EndVert;
+								clippedLine.EndVert = intersectOnA;
+								clippedSegments.Push(clippedLine);
+								lineA.EndVert = endA;
+								if (deltaA.IsNearlyZero(Epsilon))
+								{
+									break;
+								}
 							}
 						}
 					}
