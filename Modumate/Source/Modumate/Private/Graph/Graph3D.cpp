@@ -135,8 +135,7 @@ namespace Modumate
 			}
 		}
 
-		int32 minID = MOD_ID_NONE;
-		float minArea = 0;
+		const FGraph3DFace *minFace = nullptr;
 		for (int32 faceID : facesContainingPolygon)
 		{
 			auto containingFace = FindFace(faceID);
@@ -145,14 +144,27 @@ namespace Modumate
 				continue;
 			}
 
-			if ((minID == MOD_ID_NONE) || (containingFace->CachedArea < minArea))
+			bool bCurrentFaceSmaller = false; 
+			bool bNewFaceSmaller = false; 
+
+			if (minFace != nullptr)
 			{
-				minArea = containingFace->CachedArea;
-				minID = faceID;
+				bNewFaceSmaller = IsFaceContainedByFace(containingFace->ID, minFace->ID);
+
+				if (bDebugCheck)
+				{
+					bCurrentFaceSmaller = IsFaceContainedByFace(minFace->ID, containingFace->ID);
+					ensureAlways(bCurrentFaceSmaller || bNewFaceSmaller);
+				}
+			}
+			
+			if (minFace == nullptr || bNewFaceSmaller)
+			{
+				minFace = FindFace(faceID);
 			}
 		}
 
-		faceIDContainingPoly = minID;
+		faceIDContainingPoly = minFace == nullptr ? MOD_ID_NONE : minFace->ID;
 
 		return faceIDContainingPoly;
 	}
@@ -306,6 +318,27 @@ namespace Modumate
 				ContainingFaces.Add(kvp.Key);
 			}
 		}
+	}
+
+	bool FGraph3D::IsFaceContainedByFace(int32 ContainedFaceID, int32 ContainingFaceID) const
+	{
+		auto containedFace = FindFace(ContainedFaceID);
+		auto containingFace = FindFace(ContainingFaceID);
+
+		if (containedFace == nullptr || containingFace == nullptr)
+		{
+			return false;
+		}
+
+		for (auto& position : containedFace->CachedPositions)
+		{
+			if (!containingFace->ContainsPosition(position))
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	FGraph3DPolyhedron* FGraph3D::FindPolyhedron(int32 PolyhedronID) 

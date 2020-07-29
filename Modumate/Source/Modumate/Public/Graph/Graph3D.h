@@ -39,6 +39,7 @@ namespace Modumate
 		FGraph3DFace* FindFace(FSignedID FaceID);
 		const FGraph3DFace* FindFace(FSignedID FaceID) const;
 		void FindFacesContainingPosition(const FVector &Position, TSet<int32> &ContainingFaces) const;
+		bool IsFaceContainedByFace(int32 ContainedFaceID, int32 ContainingFaceID) const;
 
 		FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID);
 		const FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID) const;
