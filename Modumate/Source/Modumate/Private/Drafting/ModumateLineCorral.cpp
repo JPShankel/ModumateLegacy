@@ -180,6 +180,7 @@ Modumate::EDrawError FModumateLineCorral::FillCircle(
 
 bool FModumateLineCorral::StartPage(int32 pageNumber, float widthInches, float heightInches)
 {
+	ProcessLines();
 	return Next->StartPage(pageNumber, widthInches, heightInches);
 }
 
@@ -326,4 +327,7 @@ void FModumateLineCorral::ProcessLines()
 			lineData.Thickness, lineData.Color, lineData.Pattern, lineData.Phase, lineData.LayerType);
 	}
 
+	OutLines.Empty();
+	InLines.Empty();
+	LineDataItems.Empty();
 }
