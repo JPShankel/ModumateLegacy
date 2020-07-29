@@ -230,6 +230,8 @@ bool USurfaceGraphTool::FrameUpdate()
 			HitNormal = cursor.HitNormal;
 			GraphTarget = surfaceGraphObj;
 			GraphElementTarget = moi;
+
+			HitFaceIndex = UModumateObjectStatics::GetFaceIndexFromTargetHit(surfaceGraphHost, cursor.WorldPosition, cursor.HitNormal);
 		}
 		else if (HitFaceIndex != INDEX_NONE)
 		{

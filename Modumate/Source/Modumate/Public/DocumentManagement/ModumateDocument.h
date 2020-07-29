@@ -248,6 +248,7 @@ public:
 	bool IsDirty() const;
 	void DisplayDebugInfo(UWorld* world);
 	void DrawDebugVolumeGraph(UWorld* world);
+	void DrawDebugSurfaceGraphs(UWorld* world);
 
 	FString CurrentProjectPath;
 	FString CurrentProjectName;

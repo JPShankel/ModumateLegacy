@@ -1219,6 +1219,11 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 	{
 		Document->DrawDebugVolumeGraph(GetWorld());
 	}
+
+	if (EMPlayerState->bShowSurfaceDebug)
+	{
+		Document->DrawDebugSurfaceGraphs(GetWorld());
+	}
 }
 
 void AEditModelPlayerController_CPP::TickInput(float DeltaTime)

@@ -476,6 +476,10 @@ void UModumateGameInstance::RegisterAllCommands()
 		{
 			playerState->bShowVolumeDebug = hasShow ? show : !playerState->bShowVolumeDebug;
 		}
+		else if (type.Equals(TEXT("surface")))
+		{
+			playerState->bShowSurfaceDebug = hasShow ? show : !playerState->bShowSurfaceDebug;
+		}
 		else if (type.Equals(TEXT("ddl2")))
 		{
 			playerState->bDevelopDDL2Data = hasShow ? show : !playerState->bDevelopDDL2Data;

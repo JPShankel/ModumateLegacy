@@ -3529,6 +3529,127 @@ void FModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 	}
 }
 
+void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
+{
+	const float drawVerticalOffset = 5.0f;
+	const float pointThickness = 8.0f;
+	const float lineThickness = 2.0f;
+	const float arrowSize = 10.0f;
+	const float faceEdgeOffset = 15.0f;
+	const FVector textOffset = 20.0f * FVector::UpVector;
+
+	for (auto& kvp : SurfaceGraphs)
+	{
+		auto& graph = kvp.Value;
+
+		int32 surfaceGraphID = kvp.Key;
+		const FModumateObjectInstance *surfaceGraphObj = GetObjectById(surfaceGraphID);
+		const FModumateObjectInstance *surfaceGraphParent = surfaceGraphObj ? surfaceGraphObj->GetParentObject() : nullptr;
+		int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceGraphObj);
+		if (!ensure(surfaceGraphObj && surfaceGraphParent && (surfaceGraphFaceIndex != INDEX_NONE)))
+		{
+			return;
+		}
+
+		TArray<FVector> facePoints;
+		FVector faceNormal, faceAxisX, faceAxisY;
+		if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceGraphParent, surfaceGraphFaceIndex, facePoints, faceNormal, faceAxisX, faceAxisY)))
+		{
+			return;
+		}
+		FVector faceOrigin = facePoints[0];
+
+		for (auto& vertexkvp : graph.GetVertices())
+		{
+			const FGraph2DVertex &graphVertex = vertexkvp.Value;
+			FVector2D vertexPos = graphVertex.Position;
+			FVector vertexDrawPos = UModumateGeometryStatics::Deproject2DPoint(vertexPos, faceAxisX, faceAxisY, faceOrigin);
+
+			world->LineBatcher->DrawPoint(vertexDrawPos, FLinearColor::Red, pointThickness, 0);
+			FString vertexString = FString::Printf(TEXT("Vertex #%d: [%s]"), graphVertex.ID,
+				*FString::JoinBy(graphVertex.Edges, TEXT(", "), [](const FSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); })
+			);
+
+			DrawDebugString(world, vertexDrawPos + textOffset, vertexString, nullptr, FColor::White, 0.0f, true);
+		}
+
+		for (const auto &edgekvp : graph.GetEdges())
+		{
+			const FGraph2DEdge &graphEdge = edgekvp.Value;
+			const FGraph2DVertex *startGraphVertex = graph.FindVertex(graphEdge.StartVertexID);
+			const FGraph2DVertex *endGraphVertex = graph.FindVertex(graphEdge.EndVertexID);
+			if (startGraphVertex && endGraphVertex)
+			{
+				FVector2D startPos = startGraphVertex->Position;
+				FVector2D endPos = endGraphVertex->Position;
+				FVector startDrawPos = UModumateGeometryStatics::Deproject2DPoint(startPos, faceAxisX, faceAxisY, faceOrigin);
+				FVector endDrawPos = UModumateGeometryStatics::Deproject2DPoint(endPos, faceAxisX, faceAxisY, faceOrigin);
+
+				DrawDebugDirectionalArrow(world, startDrawPos, endDrawPos, arrowSize, FColor::Blue, false, -1.f, 0xFF, lineThickness);
+				FString edgeString = FString::Printf(TEXT("Edge #%d: [%d, %d]"), graphEdge.ID, graphEdge.StartVertexID, graphEdge.EndVertexID);
+				DrawDebugString(world, 0.5f * (startDrawPos + endDrawPos) + textOffset, edgeString, nullptr, FColor::White, 0.0f, true);
+			}
+		}
+
+		for (const auto &polykvp : graph.GetPolygons())
+		{
+			const FGraph2DPolygon &poly = polykvp.Value;
+
+			int32 numEdges = poly.Edges.Num();
+
+			TArray<FVector2D> edgeNormals;
+			for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
+			{
+				FSignedID edgeID = poly.Edges[edgeIdx];
+				const FGraph2DEdge *graphEdge = graph.FindEdge(edgeID);
+				const FGraph2DVertex *startGraphVertex = graph.FindVertex(graphEdge->StartVertexID);
+				const FGraph2DVertex *endGraphVertex = graph.FindVertex(graphEdge->EndVertexID);
+
+				FVector2D edgeNormal = FVector2D(graphEdge->EdgeDir.Y, -graphEdge->EdgeDir.X);
+				edgeNormal *= edgeID < 0 ? -1 : 1;
+				edgeNormals.Add(edgeNormal);
+			}
+
+			for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
+			{
+				FSignedID edgeID = poly.Edges[edgeIdx];
+
+				const FVector2D &edgeNormal = edgeNormals[edgeIdx];
+				const FVector2D &prevEdgeNormal = edgeNormals[(edgeIdx + numEdges - 1) % numEdges];
+				const FVector2D &nextEdgeNormal = edgeNormals[(edgeIdx + 1) % numEdges];
+
+				const FGraph2DEdge *graphEdge = graph.FindEdge(edgeID);
+				const FGraph2DVertex *startGraphVertex = graph.FindVertex(graphEdge->StartVertexID);
+				const FGraph2DVertex *endGraphVertex = graph.FindVertex(graphEdge->EndVertexID);
+
+				bool bEdgeForward = (edgeID > 0);
+				FVector2D startPos = bEdgeForward ? startGraphVertex->Position : endGraphVertex->Position;
+				FVector2D endPos = bEdgeForward ? endGraphVertex->Position : startGraphVertex->Position;
+				startPos += faceEdgeOffset * (edgeNormal + prevEdgeNormal).GetSafeNormal();
+				endPos += faceEdgeOffset * (edgeNormal + nextEdgeNormal).GetSafeNormal();
+
+				FVector startDrawPos = UModumateGeometryStatics::Deproject2DPoint(startPos, faceAxisX, faceAxisY, faceOrigin);
+				FVector endDrawPos = UModumateGeometryStatics::Deproject2DPoint(endPos, faceAxisX, faceAxisY, faceOrigin);
+
+				FVector edgeNStartPos = UModumateGeometryStatics::Deproject2DPoint(
+					(startPos + endPos) / 2.0f, faceAxisX, faceAxisY, faceOrigin);
+				FVector edgeNEndPos = UModumateGeometryStatics::Deproject2DPoint(
+					(startPos + endPos) / 2.0f + edgeNormal * faceEdgeOffset, faceAxisX, faceAxisY, faceOrigin);
+
+				DrawDebugDirectionalArrow(world, startDrawPos, endDrawPos, arrowSize, FColor::Green, false, -1.f, 0, lineThickness);
+				DrawDebugDirectionalArrow(world, edgeNStartPos, edgeNEndPos, arrowSize, FColor::Blue, false, -1.f, 0, lineThickness);
+			}
+
+			FString faceString = FString::Printf(TEXT("Face #%d: [%s]"), poly.ID,
+				*FString::JoinBy(poly.Edges, TEXT(", "), [](const FSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }));
+
+			FVector2D originPos = poly.CachedPoints[0];
+			FVector originDrawPos = UModumateGeometryStatics::Deproject2DPoint(originPos, faceAxisX, faceAxisY, faceOrigin);
+			DrawDebugString(world, originDrawPos, faceString, nullptr, FColor::White, 0.0f, true);
+		}
+	}
+}
+
 
 /*
 TODO: to be deprecated in favor of clients querying the PresetManager for assemblies by object type instead of tool mode with DDL 2.0
