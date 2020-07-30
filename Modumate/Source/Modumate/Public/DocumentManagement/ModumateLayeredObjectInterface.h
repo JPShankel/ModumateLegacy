@@ -1,7 +1,7 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "Database/ModumateObjectAssembly.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 
 namespace Modumate
 {
@@ -39,7 +39,7 @@ namespace Modumate
 		bool HasStartFinish() const;
 		bool HasEndFinish() const;
 
-		void UpdateLayersFromAssembly(const FModumateObjectAssembly &Assembly);
+		void UpdateLayersFromAssembly(const FBIMAssemblySpec &Assembly);
 		void UpdateFinishFromObject(const FModumateObjectInstance *MOI);
 	};
 

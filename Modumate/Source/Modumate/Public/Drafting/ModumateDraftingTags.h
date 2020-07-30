@@ -3,7 +3,7 @@
 #include "Drafting/APDFLLib.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "Drafting/ModumateDraftingDraw.h"
-#include "Database/ModumateObjectAssembly.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 #include "Drafting/ModumateDraftingElements.h"
 
 namespace Modumate
@@ -148,7 +148,7 @@ namespace Modumate
 	class FMaterialTagSequence : public FTag
 	{
 	public:
-		FMaterialTagSequence(TArray<FModumateObjectAssemblyLayer> layers);
+		FMaterialTagSequence(const FBIMAssemblySpec &AssemblySpec);
 
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 
@@ -160,7 +160,7 @@ namespace Modumate
 	class FWallTag : public FTag
 	{
 	public:
-		FWallTag(TArray<FModumateObjectAssemblyLayer> layers);
+		FWallTag(const FBIMAssemblySpec& AssemblySpec);
 
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 

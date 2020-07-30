@@ -3,7 +3,7 @@
 
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "Engine/Engine.h"
-#include "Database/ModumateObjectAssembly.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
@@ -27,7 +27,7 @@ private:
 	FVector CurrentEdgeStart, CurrentEdgeEnd;
 	ETrimMiterOptions MiterOptionStart, MiterOptionEnd;
 	EMouseMode OriginalMouseMode;
-	FModumateObjectAssembly TrimAssembly;
+	FBIMAssemblySpec TrimAssembly;
 	TWeakObjectPtr<ADynamicMeshActor> PendingTrimActor;
 
 	void ResetTarget();

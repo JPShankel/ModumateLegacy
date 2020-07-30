@@ -36,9 +36,11 @@ namespace Modumate
 		SetControlPointsFromAssembly();
 	}
 
-	void FMOIPortalImpl::GetControlPointsFromAssembly(const FModumateObjectAssembly &ObjectAssembly, TArray<FVector> &ControlPoints)
+	void FMOIPortalImpl::GetControlPointsFromAssembly(const FBIMAssemblySpec &ObjectAssembly, TArray<FVector> &ControlPoints)
 	{
-		auto &portalConfig = ObjectAssembly.PortalConfiguration;
+#ifdef REMOVE_OLD_PORTALS
+
+		auto &portalConfig = ObjectAssembly.CachedAssembly.PortalConfiguration;
 		if (ensureAlways(portalConfig.IsValid()))
 		{
 			ControlPoints.SetNum(4);
@@ -59,6 +61,7 @@ namespace Modumate
 			ControlPoints[2].Set(maxXValue, 0.0f, maxZValue);
 			ControlPoints[3].Set(maxXValue, 0.0f, minZValue);
 		}
+#endif
 	}
 
 	void FMOIPortalImpl::SetControlPointsFromAssembly()
@@ -75,10 +78,10 @@ namespace Modumate
 			return;
 		}
 
-		if (MOI->GetAssembly().PortalConfiguration.IsValid())
+		if (MOI->GetAssembly().CachedAssembly.PortalConfiguration.IsValid())
 		{
-			FModumateObjectAssembly assembly = MOI->GetAssembly();
-			auto &portalConfig = assembly.PortalConfiguration;
+			FBIMAssemblySpec assembly = MOI->GetAssembly();
+			auto &portalConfig = assembly.CachedAssembly.PortalConfiguration;
 
 			FPortalReferencePlane &minXPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMinX];
 			FPortalReferencePlane &maxXPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMaxX];
@@ -309,6 +312,7 @@ namespace Modumate
 
 	void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 	{
+#ifdef REMOVE_OLD_PORTALS
 		Controller = controller;
 
 		for (int32 i = 0; i < 8; ++i)
@@ -322,6 +326,7 @@ namespace Modumate
 
 		auto portalTransvertHandle = MOI->MakeHandle<AAdjustPortalInvertHandle>();
 		portalTransvertHandle->SetTransvert(true);
+#endif
 	}
 
 	TArray<FModelDimensionString> FMOIPortalImpl::GetDimensionStrings() const
@@ -515,7 +520,7 @@ namespace Modumate
 			if (MOI->GetObjectType() == EObjectType::OTDoor && OutEdges.Num() > 0)
 			{
 				auto assembly = MOI->GetAssembly();
-				auto portalConfig = assembly.PortalConfiguration;
+				auto portalConfig = assembly.CachedAssembly.PortalConfiguration;
 				auto portalFunction = portalConfig.PortalFunction;
 
 				// we only draw arcs for swing doors, where the cut plane's normal is vertical and the door is vertical

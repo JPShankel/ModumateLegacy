@@ -11,7 +11,6 @@
 *
 */
 
-class UModumateCraftingWidget_CPP;
 
 UCLASS()
 class MODUMATE_API UModumateIconMeshStatics : public UBlueprintFunctionLibrary

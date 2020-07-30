@@ -56,7 +56,7 @@ bool UTrimTool::HasValidTarget() const
 
 void UTrimTool::OnAssemblySet()
 {
-	TrimAssembly = FModumateObjectAssembly();
+	TrimAssembly = FBIMAssemblySpec();
 
 	if (Controller)
 	{
@@ -65,7 +65,7 @@ void UTrimTool::OnAssemblySet()
 		AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
 
 		// TODO: fix the case when the assembly is not already set when the tool is invoked
-		const FModumateObjectAssembly *assembly = gameState ? gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_TRIM, AssemblyKey) : nullptr;
+		const FBIMAssemblySpec *assembly = gameState ? gameState->Document.PresetManager.GetAssemblyByKey(EToolMode::VE_TRIM, AssemblyKey) : nullptr;
 		if (ensureAlways(gameMode) && assembly)
 		{
 			TrimAssembly = *assembly;
@@ -76,7 +76,7 @@ void UTrimTool::OnAssemblySet()
 			}
 
 			FVector scaleVector;
-			if (!assembly->TryGetProperty(BIM::Parameters::Scale, scaleVector))
+			if (!assembly->CachedAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
 			{
 				scaleVector = FVector::OneVector;
 			}

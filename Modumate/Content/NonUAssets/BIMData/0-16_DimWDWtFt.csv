@@ -1,134 +1,3000 @@
-TYPENAME,,,,2ModuleLWH,,,,,,,
-,,,,Definition,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,
-PROPERTY,,STRING,,Name,,Preset.ColloquialName,,,,,
-PROPERTY,,DIMENSION,,Length,,Node.Length,,,,,
-PROPERTY,,DIMENSION,,Width,,Node.Width,,,,,
-PROPERTY,,DIMENSION,,Height,,Node.Height,,,,,
-,,,,Presets,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.ColloquialName,Node.Length,Node.Width,Node.Height,DataType=TG_Parent Node+CategoryPath,
-PRESET,,"0DimLWH --> ClayBrick
-7.625inL
-3.625inW
-2.29167inH",,0DimLWH --> ClayBrick,,8in Modular,7.625in,3.625in,2.29167in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-7.625inL
-3.125inW
-2.29167inH",,0DimLWH --> ClayBrick,,Narrow 8in Modular,7.625in,3.125in,2.29167in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-7.625inL
-2.29167inW
-2.29167inH",,0DimLWH --> ClayBrick,,Extra-Narrow 8in Modular,7.625in,2.29167in,2.29167in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-7.625inL
-3.625inW
-2.75inH",,0DimLWH --> ClayBrick,,Tall 8in Modular,7.625in,3.625in,2.75in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-7.625inL
-3.125inW
-2.75inH",,0DimLWH --> ClayBrick,,Tall Narrow 8in Modular,7.625in,3.125in,2.75in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-7.625inL
-3.625inW
-3.625inH",,0DimLWH --> ClayBrick,,Square-Head 8in Modular,7.625in,3.625in,3.625in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-7.625inL
-3.625inW
-7.625inH",,0DimLWH --> ClayBrick,,Triple-Height 8in Modular,7.625in,3.625in,7.625in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-2.29167inH",,0DimLWH --> ClayBrick,,Norman,11.625in,3.625in,2.29167in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-11.625inL
-3.125inW
-2.29167inH",,0DimLWH --> ClayBrick,,Narrow Norman,11.625in,3.125in,2.29167in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-2.75inH",,0DimLWH --> ClayBrick,,Tall Norman,11.625in,3.625in,2.75in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-11.625inL
-3.125inW
-2.75inH",,0DimLWH --> ClayBrick,,Tall Narrow Norman,11.625in,3.125in,2.75in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-3.625inH",,0DimLWH --> ClayBrick,,Square-Head Norman,11.625in,3.625in,3.625in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-7.625inH",,0DimLWH --> ClayBrick,,Triple-Height Norman,11.625in,3.625in,7.625in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-15.625inL
-3.625inW
-2.29167inH",,0DimLWH --> ClayBrick,,Monarch,15.625in,3.625in,2.29167in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-15.625inL
-3.125inW
-2.29167inH",,0DimLWH --> ClayBrick,,Narrow Monarch,15.625in,3.125in,2.29167in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-15.625inL
-3.625inW
-2.75inH",,0DimLWH --> ClayBrick,,Tall Monarch,15.625in,3.625in,2.75in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-15.625inL
-3.625inW
-7.625inH",,0DimLWH --> ClayBrick,,Triple-Height Monarch,15.625in,3.625in,7.625in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-1.625inH",,0DimLWH --> ClayBrick,,Roman,11.625in,3.625in,1.625in,,2ModuleLWH --> Clay Brick
-PRESET,,"0DimLWH --> CMU
-7.625inL
-3.625inW
-3.625inH",,0DimLWH --> CMU,,"4in Half Block, 4in x 8in x 4in",7.625in,3.625in,3.625in,,2ModuleLWH --> Concrete Masonry Unit
-PRESET,,"0DimLWH --> CMU
-15.625inL
-3.625inW
-7.625inH",,0DimLWH --> CMU,,"4in Full Block, 8in x 16in x 4in",15.625in,3.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
-PRESET,,"0DimLWH --> CMU
-7.625inL
-5.625inW
-7.625inH",,0DimLWH --> CMU,,"6in Half Block, 8in x 8in x 6in",7.625in,5.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
-PRESET,,"0DimLWH --> CMU
-15.625inL
-5.625inW
-7.625inH",,0DimLWH --> CMU,,"6in Full Block, 8in x 16in x 6in",15.625in,5.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
-PRESET,,"0DimLWH --> CMU
-7.625inL
-7.625inW
-7.625inH",,0DimLWH --> CMU,,"8in Half Block, 8in x 8in x 8in",7.625in,7.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
-PRESET,,"0DimLWH --> CMU
-15.625inL
-7.625inW
-7.625inH",,0DimLWH --> CMU,,"8in Full Block, 8in x 16in x 8in",15.625in,7.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
-PRESET,,"0DimLWH --> CMU
-7.625inL
-9.625inW
-7.625inH",,0DimLWH --> CMU,,"10in Half Block, 8in x 8in x 10in",7.625in,9.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
-PRESET,,"0DimLWH --> CMU
-15.625inL
-9.625inW
-7.625inH",,0DimLWH --> CMU,,"10in Full Block, 8in x 16in x 10in",15.625in,9.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
-PRESET,,"0DimLWH --> CMU
-7.625inL
-11.625inW
-7.625inH",,0DimLWH --> CMU,,"12in Half Block, 8in x 8in x 12in",7.625in,11.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
-PRESET,,"0DimLWH --> CMU
-15.625inL
-11.625inW
-7.625inH",,0DimLWH --> CMU,,"12in Full Block, 8in x 16in x 12in",15.625in,11.625in,7.625in,,2ModuleLWH --> Concrete Masonry Unit
-PRESET,,"0DimLWH --> GlassBlock
-7.75inL
-3.875inW
-3.75inH",,0DimLWH --> GlassBlock,,4in x 8in x 4in,7.75in,3.875in,3.75in,,2ModuleLWH --> Glass Block
-PRESET,,"0DimLWH --> GlassBlock
-5.75inL
-3.875inW
-5.75inH",,0DimLWH --> GlassBlock,,6in x 6in x 4in,5.75in,3.875in,5.75in,,2ModuleLWH --> Glass Block
-PRESET,,"0DimLWH --> GlassBlock
-7.75inL
-3.875inW
-7.75inH",,0DimLWH --> GlassBlock,,8in x 8in x 4in,7.75in,3.875in,7.75in,,2ModuleLWH --> Glass Block
-,,,,,,,,,,,
+TYPENAME,,,,0DimWDWtFt,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,Definition,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Preset.ColloquialName,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Width,,Node.Width,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Depth,,Node.Depth,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Web Thickness,,Node.WebThickness,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Flange Thickness,,Node.FlangeThickness,,,,,,,,,,,,,,,,,,,,,,
+,,,,Presets,,,,,,,,,,,,,,,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.ColloquialName,Node.Width,Node.Depth,Node.WebThickness,Node.FlangeThickness,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+44W
+15.9D
+1.77Wt
+1.03Ft",,0DimWDWtFt --> WideFlangeSteel,,W44X335,44,15.9,1.77,1.03,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+43.6W
+15.8D
+1.58Wt
+0.865Ft",,0DimWDWtFt --> WideFlangeSteel,,W44X290,43.6,15.8,1.58,0.865,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+43.3W
+15.8D
+1.42Wt
+0.785Ft",,0DimWDWtFt --> WideFlangeSteel,,W44X262,43.3,15.8,1.42,0.785,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+42.9W
+15.8D
+1.22Wt
+0.71Ft",,0DimWDWtFt --> WideFlangeSteel,,W44X230,42.9,15.8,1.22,0.71,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+43.6W
+16.9D
+3.54Wt
+1.97Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X655,43.6,16.9,3.54,1.97,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+43W
+16.7D
+3.23Wt
+1.79Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X593,43,16.7,3.23,1.79,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+42.1W
+16.4D
+2.76Wt
+1.54Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X503,42.1,16.4,2.76,1.54,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+41.3W
+16.2D
+2.36Wt
+1.34Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X431,41.3,16.2,2.36,1.34,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+41W
+16.1D
+2.2Wt
+1.22Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X397,41,16.1,2.2,1.22,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+40.6W
+16.1D
+2.05Wt
+1.16Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X372,40.6,16.1,2.05,1.16,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+40.6W
+16D
+2.01Wt
+1.12Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X362,40.6,16,2.01,1.12,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+40.2W
+15.9D
+1.81Wt
+1Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X324,40.2,15.9,1.81,1,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+39.8W
+15.8D
+1.65Wt
+0.93Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X297,39.8,15.8,1.65,0.93,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+39.7W
+15.8D
+1.58Wt
+0.83Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X277,39.7,15.8,1.58,0.83,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+39.4W
+15.8D
+1.42Wt
+0.75Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X249,39.4,15.8,1.42,0.75,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+39W
+15.8D
+1.22Wt
+0.65Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X215,39,15.8,1.22,0.65,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+38.7W
+15.8D
+1.07Wt
+0.65Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X199,38.7,15.8,1.07,0.65,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+41.6W
+12.4D
+2.52Wt
+1.42Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X392,41.6,12.4,2.52,1.42,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+40.8W
+12.2D
+2.13Wt
+1.22Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X331,40.8,12.2,2.13,1.22,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+40.8W
+12.1D
+2.13Wt
+1.18Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X327,40.8,12.1,2.13,1.18,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+40.4W
+12D
+1.93Wt
+1.06Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X294,40.4,12,1.93,1.06,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+40.2W
+12D
+1.81Wt
+1.03Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X278,40.2,12,1.81,1.03,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+40W
+11.9D
+1.73Wt
+0.96Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X264,40,11.9,1.73,0.96,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+39.7W
+11.9D
+1.58Wt
+0.83Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X235,39.7,11.9,1.58,0.83,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+39.4W
+11.8D
+1.42Wt
+0.75Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X211,39.4,11.8,1.42,0.75,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+39W
+11.8D
+1.2Wt
+0.65Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X183,39,11.8,1.2,0.65,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+38.6W
+11.8D
+1.03Wt
+0.65Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X167,38.6,11.8,1.03,0.65,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+38.2W
+11.8D
+0.83Wt
+0.63Ft",,0DimWDWtFt --> WideFlangeSteel,,W40X149,38.2,11.8,0.83,0.63,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+43.1W
+18.6D
+4.53Wt
+3.02Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X925,43.1,18.6,4.53,3.02,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+43.1W
+18.2D
+4.53Wt
+2.52Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X853,43.1,18.2,4.53,2.52,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+42.6W
+18D
+4.29Wt
+2.38Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X802,42.6,18,4.29,2.38,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+41.8W
+17.8D
+3.9Wt
+2.17Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X723,41.8,17.8,3.9,2.17,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+41.1W
+17.6D
+3.54Wt
+1.97Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X652,41.1,17.6,3.54,1.97,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+39.8W
+17.2D
+2.91Wt
+1.61Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X529,39.8,17.2,2.91,1.61,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+39.3W
+17.1D
+2.68Wt
+1.5Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X487,39.3,17.1,2.68,1.5,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+38.9W
+17D
+2.44Wt
+1.36Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X441,38.9,17,2.44,1.36,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+38.4W
+16.8D
+2.2Wt
+1.22Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X395,38.4,16.8,2.2,1.22,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+38W
+16.7D
+2.01Wt
+1.12Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X361,38,16.7,2.01,1.12,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+37.7W
+16.6D
+1.85Wt
+1.02Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X330,37.7,16.6,1.85,1.02,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+37.3W
+16.7D
+1.68Wt
+0.945Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X302,37.3,16.7,1.68,0.945,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+37.1W
+16.6D
+1.57Wt
+0.885Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X282,37.1,16.6,1.57,0.885,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+36.9W
+16.6D
+1.44Wt
+0.84Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X262,36.9,16.6,1.44,0.84,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+36.7W
+16.5D
+1.35Wt
+0.8Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X247,36.7,16.5,1.35,0.8,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+36.5W
+16.5D
+1.26Wt
+0.76Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X231,36.5,16.5,1.26,0.76,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+37.4W
+12.2D
+1.73Wt
+0.96Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X256,37.4,12.2,1.73,0.96,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+37.1W
+12.1D
+1.57Wt
+0.87Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X232,37.1,12.1,1.57,0.87,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+36.7W
+12.2D
+1.36Wt
+0.83Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X210,36.7,12.2,1.36,0.83,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+36.5W
+12.1D
+1.26Wt
+0.765Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X194,36.5,12.1,1.26,0.765,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+36.3W
+12.1D
+1.18Wt
+0.725Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X182,36.3,12.1,1.18,0.725,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+36.2W
+12D
+1.1Wt
+0.68Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X170,36.2,12,1.1,0.68,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+36W
+12D
+1.02Wt
+0.65Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X160,36,12,1.02,0.65,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+35.9W
+12D
+0.94Wt
+0.625Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X150,35.9,12,0.94,0.625,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+35.6W
+12D
+0.79Wt
+0.6Ft",,0DimWDWtFt --> WideFlangeSteel,,W36X135,35.6,12,0.79,0.6,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+36W
+16.2D
+2.28Wt
+1.26Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X387,36,16.2,2.28,1.26,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+35.6W
+16.1D
+2.09Wt
+1.16Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X354,35.6,16.1,2.09,1.16,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+35.2W
+16D
+1.89Wt
+1.04Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X318,35.2,16,1.89,1.04,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+34.8W
+15.9D
+1.73Wt
+0.96Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X291,34.8,15.9,1.73,0.96,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+34.5W
+15.8D
+1.57Wt
+0.87Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X263,34.5,15.8,1.57,0.87,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+34.2W
+15.9D
+1.4Wt
+0.83Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X241,34.2,15.9,1.4,0.83,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+33.9W
+15.8D
+1.28Wt
+0.775Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X221,33.9,15.8,1.28,0.775,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+33.7W
+15.7D
+1.15Wt
+0.715Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X201,33.7,15.7,1.15,0.715,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+33.8W
+11.5D
+1.22Wt
+0.67Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X169,33.8,11.5,1.22,0.67,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+33.5W
+11.6D
+1.06Wt
+0.635Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X152,33.5,11.6,1.06,0.635,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+33.3W
+11.5D
+0.96Wt
+0.605Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X141,33.3,11.5,0.96,0.605,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+33.1W
+11.5D
+0.855Wt
+0.58Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X130,33.1,11.5,0.855,0.58,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+32.9W
+11.5D
+0.74Wt
+0.55Ft",,0DimWDWtFt --> WideFlangeSteel,,W33X118,32.9,11.5,0.74,0.55,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+33.2W
+15.6D
+2.44Wt
+1.36Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X391,33.2,15.6,2.44,1.36,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+32.8W
+15.5D
+2.24Wt
+1.24Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X357,32.8,15.5,2.24,1.24,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+32.4W
+15.4D
+2.05Wt
+1.14Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X326,32.4,15.4,2.05,1.14,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+32W
+15.3D
+1.85Wt
+1.02Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X292,32,15.3,1.85,1.02,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+31.6W
+15.2D
+1.65Wt
+0.93Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X261,31.6,15.2,1.65,0.93,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+31.3W
+15.1D
+1.5Wt
+0.83Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X235,31.3,15.1,1.5,0.83,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+30.9W
+15.1D
+1.32Wt
+0.775Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X211,30.9,15.1,1.32,0.775,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+30.7W
+15D
+1.19Wt
+0.71Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X191,30.7,15,1.19,0.71,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+30.4W
+15D
+1.07Wt
+0.655Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X173,30.4,15,1.07,0.655,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+30.7W
+10.5D
+1.18Wt
+0.65Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X148,30.7,10.5,1.18,0.65,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+30.3W
+10.5D
+1Wt
+0.615Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X132,30.3,10.5,1,0.615,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+30.2W
+10.5D
+0.93Wt
+0.585Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X124,30.2,10.5,0.93,0.585,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+30W
+10.5D
+0.85Wt
+0.565Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X116,30,10.5,0.85,0.565,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+29.8W
+10.5D
+0.76Wt
+0.545Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X108,29.8,10.5,0.76,0.545,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+29.7W
+10.5D
+0.67Wt
+0.52Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X99,29.7,10.5,0.67,0.52,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+29.5W
+10.4D
+0.61Wt
+0.47Ft",,0DimWDWtFt --> WideFlangeSteel,,W30X90,29.5,10.4,0.61,0.47,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+32.5W
+15.3D
+3.54Wt
+1.97Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X539,32.5,15.3,3.54,1.97,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+30.4W
+14.7D
+2.48Wt
+1.38Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X368,30.4,14.7,2.48,1.38,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+30W
+14.6D
+2.28Wt
+1.26Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X336,30,14.6,2.28,1.26,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+29.6W
+14.4D
+2.09Wt
+1.16Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X307,29.6,14.4,2.09,1.16,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+29.3W
+14.4D
+1.93Wt
+1.06Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X281,29.3,14.4,1.93,1.06,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+29W
+14.3D
+1.77Wt
+0.98Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X258,29,14.3,1.77,0.98,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+28.7W
+14.2D
+1.61Wt
+0.91Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X235,28.7,14.2,1.61,0.91,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+28.4W
+14.1D
+1.5Wt
+0.83Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X217,28.4,14.1,1.5,0.83,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+28.1W
+14D
+1.34Wt
+0.75Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X194,28.1,14,1.34,0.75,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+27.8W
+14.1D
+1.19Wt
+0.725Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X178,27.8,14.1,1.19,0.725,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+27.6W
+14D
+1.08Wt
+0.66Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X161,27.6,14,1.08,0.66,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+27.4W
+14D
+0.975Wt
+0.605Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X146,27.4,14,0.975,0.605,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+27.6W
+10D
+1.1Wt
+0.61Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X129,27.6,10,1.1,0.61,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+27.3W
+10.1D
+0.93Wt
+0.57Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X114,27.3,10.1,0.93,0.57,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+27.1W
+10D
+0.83Wt
+0.515Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X102,27.1,10,0.83,0.515,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+26.9W
+10D
+0.745Wt
+0.49Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X94,26.9,10,0.745,0.49,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+26.7W
+10D
+0.64Wt
+0.46Ft",,0DimWDWtFt --> WideFlangeSteel,,W27X84,26.7,10,0.64,0.46,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+28W
+13.7D
+2.72Wt
+1.52Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X370,28,13.7,2.72,1.52,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+27.5W
+13.5D
+2.48Wt
+1.38Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X335,27.5,13.5,2.48,1.38,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+27.1W
+13.4D
+2.28Wt
+1.26Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X306,27.1,13.4,2.28,1.26,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+26.7W
+13.3D
+2.09Wt
+1.16Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X279,26.7,13.3,2.09,1.16,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+26.3W
+13.2D
+1.89Wt
+1.04Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X250,26.3,13.2,1.89,1.04,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+26W
+13.1D
+1.73Wt
+0.96Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X229,26,13.1,1.73,0.96,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+25.7W
+13D
+1.57Wt
+0.87Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X207,25.7,13,1.57,0.87,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+25.5W
+13D
+1.46Wt
+0.81Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X192,25.5,13,1.46,0.81,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+25.2W
+12.9D
+1.34Wt
+0.75Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X176,25.2,12.9,1.34,0.75,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+25W
+13D
+1.22Wt
+0.705Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X162,25,13,1.22,0.705,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+24.7W
+12.9D
+1.09Wt
+0.65Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X146,24.7,12.9,1.09,0.65,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+24.5W
+12.9D
+0.96Wt
+0.605Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X131,24.5,12.9,0.96,0.605,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+24.3W
+12.8D
+0.85Wt
+0.55Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X117,24.3,12.8,0.85,0.55,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+24.1W
+12.8D
+0.75Wt
+0.5Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X104,24.1,12.8,0.75,0.5,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+24.5W
+9D
+0.98Wt
+0.55Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X103,24.5,9,0.98,0.55,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+24.3W
+9.07D
+0.875Wt
+0.515Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X94,24.3,9.07,0.875,0.515,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+24.1W
+9.02D
+0.77Wt
+0.47Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X84,24.1,9.02,0.77,0.47,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+23.9W
+8.99D
+0.68Wt
+0.44Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X76,23.9,8.99,0.68,0.44,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+23.7W
+8.97D
+0.585Wt
+0.415Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X68,23.7,8.97,0.585,0.415,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+23.7W
+7.04D
+0.59Wt
+0.43Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X62,23.7,7.04,0.59,0.43,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+23.6W
+7.01D
+0.505Wt
+0.395Ft",,0DimWDWtFt --> WideFlangeSteel,,W24X55,23.6,7.01,0.505,0.395,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+24.1W
+12.9D
+2.19Wt
+1.22Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X275,24.1,12.9,2.19,1.22,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+23.7W
+12.8D
+1.99Wt
+1.1Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X248,23.7,12.8,1.99,1.1,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+23.4W
+12.7D
+1.79Wt
+1Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X223,23.4,12.7,1.79,1,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+23W
+12.6D
+1.63Wt
+0.91Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X201,23,12.6,1.63,0.91,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+22.7W
+12.5D
+1.48Wt
+0.83Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X182,22.7,12.5,1.48,0.83,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+22.5W
+12.4D
+1.36Wt
+0.75Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X166,22.5,12.4,1.36,0.75,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+22.1W
+12.5D
+1.15Wt
+0.72Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X147,22.1,12.5,1.15,0.72,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.8W
+12.4D
+1.04Wt
+0.65Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X132,21.8,12.4,1.04,0.65,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.7W
+12.4D
+0.96Wt
+0.6Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X122,21.7,12.4,0.96,0.6,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.5W
+12.3D
+0.875Wt
+0.55Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X111,21.5,12.3,0.875,0.55,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.4W
+12.3D
+0.8Wt
+0.5Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X101,21.4,12.3,0.8,0.5,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.6W
+8.42D
+0.93Wt
+0.58Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X93,21.6,8.42,0.93,0.58,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.4W
+8.36D
+0.835Wt
+0.515Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X83,21.4,8.36,0.835,0.515,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.2W
+8.3D
+0.74Wt
+0.455Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X73,21.2,8.3,0.74,0.455,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.1W
+8.27D
+0.685Wt
+0.43Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X68,21.1,8.27,0.685,0.43,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21W
+8.24D
+0.615Wt
+0.4Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X62,21,8.24,0.615,0.4,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+20.8W
+8.22D
+0.522Wt
+0.375Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X55,20.8,8.22,0.522,0.375,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+20.6W
+8.14D
+0.43Wt
+0.35Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X48,20.6,8.14,0.43,0.35,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.1W
+6.56D
+0.65Wt
+0.405Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X57,21.1,6.56,0.65,0.405,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+20.8W
+6.53D
+0.535Wt
+0.38Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X50,20.8,6.53,0.535,0.38,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+20.7W
+6.5D
+0.45Wt
+0.35Ft",,0DimWDWtFt --> WideFlangeSteel,,W21X44,20.7,6.5,0.45,0.35,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+22.3W
+12D
+2.74Wt
+1.52Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X311,22.3,12,2.74,1.52,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.9W
+11.9D
+2.5Wt
+1.4Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X283,21.9,11.9,2.5,1.4,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.5W
+11.8D
+2.3Wt
+1.28Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X258,21.5,11.8,2.3,1.28,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.1W
+11.7D
+2.11Wt
+1.16Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X234,21.1,11.7,2.11,1.16,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+20.7W
+11.6D
+1.91Wt
+1.06Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X211,20.7,11.6,1.91,1.06,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+20.4W
+11.5D
+1.75Wt
+0.96Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X192,20.4,11.5,1.75,0.96,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+20W
+11.4D
+1.59Wt
+0.89Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X175,20,11.4,1.59,0.89,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+19.7W
+11.3D
+1.44Wt
+0.81Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X158,19.7,11.3,1.44,0.81,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+19.5W
+11.2D
+1.32Wt
+0.73Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X143,19.5,11.2,1.32,0.73,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+19.3W
+11.2D
+1.2Wt
+0.67Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X130,19.3,11.2,1.2,0.67,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+19W
+11.3D
+1.06Wt
+0.655Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X119,19,11.3,1.06,0.655,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+18.7W
+11.2D
+0.94Wt
+0.59Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X106,18.7,11.2,0.94,0.59,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+18.6W
+11.1D
+0.87Wt
+0.535Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X97,18.6,11.1,0.87,0.535,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+18.4W
+11.1D
+0.77Wt
+0.48Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X86,18.4,11.1,0.77,0.48,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+18.2W
+11D
+0.68Wt
+0.425Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X76,18.2,11,0.68,0.425,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+18.5W
+7.64D
+0.81Wt
+0.495Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X71,18.5,7.64,0.81,0.495,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+18.4W
+7.59D
+0.75Wt
+0.45Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X65,18.4,7.59,0.75,0.45,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+18.2W
+7.56D
+0.695Wt
+0.415Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X60,18.2,7.56,0.695,0.415,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+18.1W
+7.53D
+0.63Wt
+0.39Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X55,18.1,7.53,0.63,0.39,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+18W
+7.5D
+0.57Wt
+0.355Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X50,18,7.5,0.57,0.355,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+18.1W
+6.06D
+0.605Wt
+0.36Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X46,18.1,6.06,0.605,0.36,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+17.9W
+6.02D
+0.525Wt
+0.315Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X40,17.9,6.02,0.525,0.315,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+17.7W
+6D
+0.425Wt
+0.3Ft",,0DimWDWtFt --> WideFlangeSteel,,W18X35,17.7,6,0.425,0.3,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+17W
+10.4D
+0.985Wt
+0.585Ft",,0DimWDWtFt --> WideFlangeSteel,,W16X100,17,10.4,0.985,0.585,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+16.8W
+10.4D
+0.875Wt
+0.525Ft",,0DimWDWtFt --> WideFlangeSteel,,W16X89,16.8,10.4,0.875,0.525,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+16.5W
+10.3D
+0.76Wt
+0.455Ft",,0DimWDWtFt --> WideFlangeSteel,,W16X77,16.5,10.3,0.76,0.455,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+16.3W
+10.2D
+0.665Wt
+0.395Ft",,0DimWDWtFt --> WideFlangeSteel,,W16X67,16.3,10.2,0.665,0.395,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+16.4W
+7.12D
+0.715Wt
+0.43Ft",,0DimWDWtFt --> WideFlangeSteel,,W16X57,16.4,7.12,0.715,0.43,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+16.3W
+7.07D
+0.63Wt
+0.38Ft",,0DimWDWtFt --> WideFlangeSteel,,W16X50,16.3,7.07,0.63,0.38,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+16.1W
+7.04D
+0.565Wt
+0.345Ft",,0DimWDWtFt --> WideFlangeSteel,,W16X45,16.1,7.04,0.565,0.345,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+16W
+7D
+0.505Wt
+0.305Ft",,0DimWDWtFt --> WideFlangeSteel,,W16X40,16,7,0.505,0.305,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+15.9W
+6.99D
+0.43Wt
+0.295Ft",,0DimWDWtFt --> WideFlangeSteel,,W16X36,15.9,6.99,0.43,0.295,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+15.9W
+5.53D
+0.44Wt
+0.275Ft",,0DimWDWtFt --> WideFlangeSteel,,W16X31,15.9,5.53,0.44,0.275,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+15.7W
+5.5D
+0.345Wt
+0.25Ft",,0DimWDWtFt --> WideFlangeSteel,,W16X26,15.7,5.5,0.345,0.25,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+23.6W
+18.8D
+5.51Wt
+3.94Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X873,23.6,18.8,5.51,3.94,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+22.8W
+18.6D
+5.12Wt
+3.74Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X808,22.8,18.6,5.12,3.74,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+22.4W
+17.9D
+4.91Wt
+3.07Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X730,22.4,17.9,4.91,3.07,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+21.6W
+17.7D
+4.52Wt
+2.83Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X665,21.6,17.7,4.52,2.83,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+20.9W
+17.4D
+4.16Wt
+2.6Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X605,20.9,17.4,4.16,2.6,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+20.2W
+17.2D
+3.82Wt
+2.38Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X550,20.2,17.2,3.82,2.38,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+19.6W
+17D
+3.5Wt
+2.19Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X500,19.6,17,3.5,2.19,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+19W
+16.8D
+3.21Wt
+2.02Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X455,19,16.8,3.21,2.02,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+18.7W
+16.7D
+3.04Wt
+1.88Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X426,18.7,16.7,3.04,1.88,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+18.3W
+16.6D
+2.85Wt
+1.77Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X398,18.3,16.6,2.85,1.77,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+17.9W
+16.5D
+2.66Wt
+1.66Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X370,17.9,16.5,2.66,1.66,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+17.5W
+16.4D
+2.47Wt
+1.54Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X342,17.5,16.4,2.47,1.54,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+17.1W
+16.2D
+2.26Wt
+1.41Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X311,17.1,16.2,2.26,1.41,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+16.7W
+16.1D
+2.07Wt
+1.29Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X283,16.7,16.1,2.07,1.29,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+16.4W
+16D
+1.89Wt
+1.18Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X257,16.4,16,1.89,1.18,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+16W
+15.9D
+1.72Wt
+1.07Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X233,16,15.9,1.72,1.07,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+15.7W
+15.8D
+1.56Wt
+0.98Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X211,15.7,15.8,1.56,0.98,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+15.5W
+15.7D
+1.44Wt
+0.89Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X193,15.5,15.7,1.44,0.89,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+15.2W
+15.7D
+1.31Wt
+0.83Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X176,15.2,15.7,1.31,0.83,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+15W
+15.6D
+1.19Wt
+0.745Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X159,15,15.6,1.19,0.745,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14.8W
+15.5D
+1.09Wt
+0.68Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X145,14.8,15.5,1.09,0.68,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14.7W
+14.7D
+1.03Wt
+0.645Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X132,14.7,14.7,1.03,0.645,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14.5W
+14.7D
+0.94Wt
+0.59Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X120,14.5,14.7,0.94,0.59,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14.3W
+14.6D
+0.86Wt
+0.525Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X109,14.3,14.6,0.86,0.525,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14.2W
+14.6D
+0.78Wt
+0.485Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X99,14.2,14.6,0.78,0.485,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14W
+14.5D
+0.71Wt
+0.44Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X90,14,14.5,0.71,0.44,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14.3W
+10.1D
+0.855Wt
+0.51Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X82,14.3,10.1,0.855,0.51,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14.2W
+10.1D
+0.785Wt
+0.45Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X74,14.2,10.1,0.785,0.45,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14W
+10D
+0.72Wt
+0.415Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X68,14,10,0.72,0.415,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+13.9W
+10D
+0.645Wt
+0.375Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X61,13.9,10,0.645,0.375,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+13.9W
+8.06D
+0.66Wt
+0.37Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X53,13.9,8.06,0.66,0.37,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+13.8W
+8.03D
+0.595Wt
+0.34Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X48,13.8,8.03,0.595,0.34,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+13.7W
+8D
+0.53Wt
+0.305Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X43,13.7,8,0.53,0.305,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14.1W
+6.77D
+0.515Wt
+0.31Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X38,14.1,6.77,0.515,0.31,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14W
+6.75D
+0.455Wt
+0.285Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X34,14,6.75,0.455,0.285,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+13.8W
+6.73D
+0.385Wt
+0.27Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X30,13.8,6.73,0.385,0.27,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+13.9W
+5.03D
+0.42Wt
+0.255Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X26,13.9,5.03,0.42,0.255,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+13.7W
+5D
+0.335Wt
+0.23Ft",,0DimWDWtFt --> WideFlangeSteel,,W14X22,13.7,5,0.335,0.23,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+16.8W
+13.4D
+2.96Wt
+1.78Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X336,16.8,13.4,2.96,1.78,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+16.3W
+13.2D
+2.71Wt
+1.63Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X305,16.3,13.2,2.71,1.63,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+15.9W
+13.1D
+2.47Wt
+1.53Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X279,15.9,13.1,2.47,1.53,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+15.4W
+13D
+2.25Wt
+1.4Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X252,15.4,13,2.25,1.4,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+15.1W
+12.9D
+2.07Wt
+1.29Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X230,15.1,12.9,2.07,1.29,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14.7W
+12.8D
+1.9Wt
+1.18Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X210,14.7,12.8,1.9,1.18,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14.4W
+12.7D
+1.74Wt
+1.06Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X190,14.4,12.7,1.74,1.06,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+14W
+12.6D
+1.56Wt
+0.96Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X170,14,12.6,1.56,0.96,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+13.7W
+12.5D
+1.4Wt
+0.87Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X152,13.7,12.5,1.4,0.87,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+13.4W
+12.4D
+1.25Wt
+0.79Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X136,13.4,12.4,1.25,0.79,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+13.1W
+12.3D
+1.11Wt
+0.71Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X120,13.1,12.3,1.11,0.71,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.9W
+12.2D
+0.99Wt
+0.61Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X106,12.9,12.2,0.99,0.61,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.7W
+12.2D
+0.9Wt
+0.55Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X96,12.7,12.2,0.9,0.55,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.5W
+12.1D
+0.81Wt
+0.515Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X87,12.5,12.1,0.81,0.515,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.4W
+12.1D
+0.735Wt
+0.47Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X79,12.4,12.1,0.735,0.47,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.3W
+12D
+0.67Wt
+0.43Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X72,12.3,12,0.67,0.43,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.1W
+12D
+0.605Wt
+0.39Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X65,12.1,12,0.605,0.39,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.2W
+10D
+0.64Wt
+0.36Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X58,12.2,10,0.64,0.36,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.1W
+10D
+0.575Wt
+0.345Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X53,12.1,10,0.575,0.345,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.2W
+8.08D
+0.64Wt
+0.37Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X50,12.2,8.08,0.64,0.37,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.1W
+8.05D
+0.575Wt
+0.335Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X45,12.1,8.05,0.575,0.335,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+11.9W
+8.01D
+0.515Wt
+0.295Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X40,11.9,8.01,0.515,0.295,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.5W
+6.56D
+0.52Wt
+0.3Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X35,12.5,6.56,0.52,0.3,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.3W
+6.52D
+0.44Wt
+0.26Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X30,12.3,6.52,0.44,0.26,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.2W
+6.49D
+0.38Wt
+0.23Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X26,12.2,6.49,0.38,0.23,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.3W
+4.03D
+0.425Wt
+0.26Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X22,12.3,4.03,0.425,0.26,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12.2W
+4.01D
+0.35Wt
+0.235Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X19,12.2,4.01,0.35,0.235,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+12W
+3.99D
+0.265Wt
+0.22Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X16,12,3.99,0.265,0.22,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+11.9W
+3.97D
+0.225Wt
+0.2Ft",,0DimWDWtFt --> WideFlangeSteel,,W12X14,11.9,3.97,0.225,0.2,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+11.4W
+10.4D
+1.25Wt
+0.755Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X112,11.4,10.4,1.25,0.755,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+11.1W
+10.3D
+1.12Wt
+0.68Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X100,11.1,10.3,1.12,0.68,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+10.8W
+10.3D
+0.99Wt
+0.605Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X88,10.8,10.3,0.99,0.605,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+10.6W
+10.2D
+0.87Wt
+0.53Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X77,10.6,10.2,0.87,0.53,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+10.4W
+10.1D
+0.77Wt
+0.47Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X68,10.4,10.1,0.77,0.47,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+10.2W
+10.1D
+0.68Wt
+0.42Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X60,10.2,10.1,0.68,0.42,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+10.1W
+10D
+0.615Wt
+0.37Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X54,10.1,10,0.615,0.37,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+10W
+10D
+0.56Wt
+0.34Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X49,10,10,0.56,0.34,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+10.1W
+8.02D
+0.62Wt
+0.35Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X45,10.1,8.02,0.62,0.35,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+9.92W
+7.99D
+0.53Wt
+0.315Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X39,9.92,7.99,0.53,0.315,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+9.73W
+7.96D
+0.435Wt
+0.29Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X33,9.73,7.96,0.435,0.29,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+10.5W
+5.81D
+0.51Wt
+0.3Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X30,10.5,5.81,0.51,0.3,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+10.3W
+5.77D
+0.44Wt
+0.26Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X26,10.3,5.77,0.44,0.26,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+10.2W
+5.75D
+0.36Wt
+0.24Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X22,10.2,5.75,0.36,0.24,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+10.2W
+4.02D
+0.395Wt
+0.25Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X19,10.2,4.02,0.395,0.25,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+10.1W
+4.01D
+0.33Wt
+0.24Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X17,10.1,4.01,0.33,0.24,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+9.99W
+4D
+0.27Wt
+0.23Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X15,9.99,4,0.27,0.23,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+9.87W
+3.96D
+0.21Wt
+0.19Ft",,0DimWDWtFt --> WideFlangeSteel,,W10X12,9.87,3.96,0.21,0.19,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+9W
+8.28D
+0.935Wt
+0.57Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X67,9,8.28,0.935,0.57,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+8.75W
+8.22D
+0.81Wt
+0.51Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X58,8.75,8.22,0.81,0.51,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+8.5W
+8.11D
+0.685Wt
+0.4Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X48,8.5,8.11,0.685,0.4,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+8.25W
+8.07D
+0.56Wt
+0.36Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X40,8.25,8.07,0.56,0.36,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+8.12W
+8.02D
+0.495Wt
+0.31Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X35,8.12,8.02,0.495,0.31,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+8W
+8D
+0.435Wt
+0.285Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X31,8,8,0.435,0.285,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+8.06W
+6.54D
+0.465Wt
+0.285Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X28,8.06,6.54,0.465,0.285,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+7.93W
+6.5D
+0.4Wt
+0.245Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X24,7.93,6.5,0.4,0.245,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+8.28W
+5.27D
+0.4Wt
+0.25Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X21,8.28,5.27,0.4,0.25,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+8.14W
+5.25D
+0.33Wt
+0.23Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X18,8.14,5.25,0.33,0.23,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+8.11W
+4.02D
+0.315Wt
+0.245Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X15,8.11,4.02,0.315,0.245,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+7.99W
+4D
+0.255Wt
+0.23Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X13,7.99,4,0.255,0.23,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+7.89W
+3.94D
+0.205Wt
+0.17Ft",,0DimWDWtFt --> WideFlangeSteel,,W8X10,7.89,3.94,0.205,0.17,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+6.38W
+6.08D
+0.455Wt
+0.32Ft",,0DimWDWtFt --> WideFlangeSteel,,W6X25,6.38,6.08,0.455,0.32,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+6.2W
+6.02D
+0.365Wt
+0.26Ft",,0DimWDWtFt --> WideFlangeSteel,,W6X20,6.2,6.02,0.365,0.26,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+5.99W
+5.99D
+0.26Wt
+0.23Ft",,0DimWDWtFt --> WideFlangeSteel,,W6X15,5.99,5.99,0.26,0.23,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+6.28W
+4.03D
+0.405Wt
+0.26Ft",,0DimWDWtFt --> WideFlangeSteel,,W6X16,6.28,4.03,0.405,0.26,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+6.03W
+4D
+0.28Wt
+0.23Ft",,0DimWDWtFt --> WideFlangeSteel,,W6X12,6.03,4,0.28,0.23,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+5.9W
+3.94D
+0.215Wt
+0.17Ft",,0DimWDWtFt --> WideFlangeSteel,,W6X9,5.9,3.94,0.215,0.17,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+5.83W
+3.94D
+0.195Wt
+0.17Ft",,0DimWDWtFt --> WideFlangeSteel,,W6X8.5,5.83,3.94,0.195,0.17,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+5.15W
+5.03D
+0.43Wt
+0.27Ft",,0DimWDWtFt --> WideFlangeSteel,,W5X19,5.15,5.03,0.43,0.27,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+5.01W
+5D
+0.36Wt
+0.24Ft",,0DimWDWtFt --> WideFlangeSteel,,W5X16,5.01,5,0.36,0.24,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> WideFlangeSteel
+4.16W
+4.06D
+0.345Wt
+0.28Ft",,0DimWDWtFt --> WideFlangeSteel,,W4X13,4.16,4.06,0.345,0.28,,2ExtrudedProfile --> Beam/Column --> SteelW,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+22W
+15.9D
+1.77Wt
+1.03Ft",,0DimWDWtFt --> TSteel,,WT22X167.5,22,15.9,1.77,1.03,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+21.8W
+15.8D
+1.58Wt
+0.865Ft",,0DimWDWtFt --> TSteel,,WT22X145,21.8,15.8,1.58,0.865,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+21.7W
+15.8D
+1.42Wt
+0.785Ft",,0DimWDWtFt --> TSteel,,WT22X131,21.7,15.8,1.42,0.785,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+21.5W
+15.8D
+1.22Wt
+0.71Ft",,0DimWDWtFt --> TSteel,,WT22X115,21.5,15.8,1.22,0.71,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+21.8W
+16.9D
+3.54Wt
+1.97Ft",,0DimWDWtFt --> TSteel,,WT20X327.5,21.8,16.9,3.54,1.97,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+21.5W
+16.7D
+3.23Wt
+1.79Ft",,0DimWDWtFt --> TSteel,,WT20X296.5,21.5,16.7,3.23,1.79,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+21W
+16.4D
+2.76Wt
+1.54Ft",,0DimWDWtFt --> TSteel,,WT20X251.5,21,16.4,2.76,1.54,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20.6W
+16.2D
+2.36Wt
+1.34Ft",,0DimWDWtFt --> TSteel,,WT20X215.5,20.6,16.2,2.36,1.34,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20.5W
+16.1D
+2.2Wt
+1.22Ft",,0DimWDWtFt --> TSteel,,WT20X198.5,20.5,16.1,2.2,1.22,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20.3W
+16.1D
+2.05Wt
+1.16Ft",,0DimWDWtFt --> TSteel,,WT20X186,20.3,16.1,2.05,1.16,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20.3W
+16D
+2.01Wt
+1.12Ft",,0DimWDWtFt --> TSteel,,WT20X181,20.3,16,2.01,1.12,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20.1W
+15.9D
+1.81Wt
+1Ft",,0DimWDWtFt --> TSteel,,WT20X162,20.1,15.9,1.81,1,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.9W
+15.8D
+1.65Wt
+0.93Ft",,0DimWDWtFt --> TSteel,,WT20X148.5,19.9,15.8,1.65,0.93,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.8W
+15.8D
+1.58Wt
+0.83Ft",,0DimWDWtFt --> TSteel,,WT20X138.5,19.8,15.8,1.58,0.83,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.7W
+15.8D
+1.42Wt
+0.75Ft",,0DimWDWtFt --> TSteel,,WT20X124.5,19.7,15.8,1.42,0.75,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.5W
+15.8D
+1.22Wt
+0.65Ft",,0DimWDWtFt --> TSteel,,WT20X107.5,19.5,15.8,1.22,0.65,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.3W
+15.8D
+1.07Wt
+0.65Ft",,0DimWDWtFt --> TSteel,,WT20X99.5,19.3,15.8,1.07,0.65,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20.8W
+12.4D
+2.52Wt
+1.42Ft",,0DimWDWtFt --> TSteel,,WT20X196,20.8,12.4,2.52,1.42,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20.4W
+12.2D
+2.13Wt
+1.22Ft",,0DimWDWtFt --> TSteel,,WT20X165.5,20.4,12.2,2.13,1.22,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20.4W
+12.1D
+2.13Wt
+1.18Ft",,0DimWDWtFt --> TSteel,,WT20X163.5,20.4,12.1,2.13,1.18,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20.2W
+12D
+1.93Wt
+1.06Ft",,0DimWDWtFt --> TSteel,,WT20X147,20.2,12,1.93,1.06,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20.1W
+12D
+1.81Wt
+1.03Ft",,0DimWDWtFt --> TSteel,,WT20X139,20.1,12,1.81,1.03,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20W
+11.9D
+1.73Wt
+0.96Ft",,0DimWDWtFt --> TSteel,,WT20X132,20,11.9,1.73,0.96,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.8W
+11.9D
+1.58Wt
+0.83Ft",,0DimWDWtFt --> TSteel,,WT20X117.5,19.8,11.9,1.58,0.83,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.7W
+11.8D
+1.42Wt
+0.75Ft",,0DimWDWtFt --> TSteel,,WT20X105.5,19.7,11.8,1.42,0.75,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.5W
+11.8D
+1.2Wt
+0.65Ft",,0DimWDWtFt --> TSteel,,WT20X91.5,19.5,11.8,1.2,0.65,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.3W
+11.8D
+1.03Wt
+0.65Ft",,0DimWDWtFt --> TSteel,,WT20X83.5,19.3,11.8,1.03,0.65,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.1W
+11.8D
+0.83Wt
+0.63Ft",,0DimWDWtFt --> TSteel,,WT20X74.5,19.1,11.8,0.83,0.63,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+21.6W
+18.6D
+4.53Wt
+3.02Ft",,0DimWDWtFt --> TSteel,,WT18X462.5,21.6,18.6,4.53,3.02,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+21.6W
+18.2D
+4.53Wt
+2.52Ft",,0DimWDWtFt --> TSteel,,WT18X426.5,21.6,18.2,4.53,2.52,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+21.3W
+18D
+4.29Wt
+2.38Ft",,0DimWDWtFt --> TSteel,,WT18X401,21.3,18,4.29,2.38,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20.9W
+17.8D
+3.9Wt
+2.17Ft",,0DimWDWtFt --> TSteel,,WT18X361.5,20.9,17.8,3.9,2.17,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+20.5W
+17.6D
+3.54Wt
+1.97Ft",,0DimWDWtFt --> TSteel,,WT18X326,20.5,17.6,3.54,1.97,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.9W
+17.2D
+2.91Wt
+1.61Ft",,0DimWDWtFt --> TSteel,,WT18X264.5,19.9,17.2,2.91,1.61,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.7W
+17.1D
+2.68Wt
+1.5Ft",,0DimWDWtFt --> TSteel,,WT18X243.5,19.7,17.1,2.68,1.5,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.4W
+17D
+2.44Wt
+1.36Ft",,0DimWDWtFt --> TSteel,,WT18X220.5,19.4,17,2.44,1.36,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19.2W
+16.8D
+2.2Wt
+1.22Ft",,0DimWDWtFt --> TSteel,,WT18X197.5,19.2,16.8,2.2,1.22,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+19W
+16.7D
+2.01Wt
+1.12Ft",,0DimWDWtFt --> TSteel,,WT18X180.5,19,16.7,2.01,1.12,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18.8W
+16.6D
+1.85Wt
+1.02Ft",,0DimWDWtFt --> TSteel,,WT18X165,18.8,16.6,1.85,1.02,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18.7W
+16.7D
+1.68Wt
+0.945Ft",,0DimWDWtFt --> TSteel,,WT18X151,18.7,16.7,1.68,0.945,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18.6W
+16.6D
+1.57Wt
+0.885Ft",,0DimWDWtFt --> TSteel,,WT18X141,18.6,16.6,1.57,0.885,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18.4W
+16.6D
+1.44Wt
+0.84Ft",,0DimWDWtFt --> TSteel,,WT18X131,18.4,16.6,1.44,0.84,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18.3W
+16.5D
+1.35Wt
+0.8Ft",,0DimWDWtFt --> TSteel,,WT18X123.5,18.3,16.5,1.35,0.8,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18.2W
+16.5D
+1.26Wt
+0.76Ft",,0DimWDWtFt --> TSteel,,WT18X115.5,18.2,16.5,1.26,0.76,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18.7W
+12.2D
+1.73Wt
+0.96Ft",,0DimWDWtFt --> TSteel,,WT18X128,18.7,12.2,1.73,0.96,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18.6W
+12.1D
+1.57Wt
+0.87Ft",,0DimWDWtFt --> TSteel,,WT18X116,18.6,12.1,1.57,0.87,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18.3W
+12.2D
+1.36Wt
+0.83Ft",,0DimWDWtFt --> TSteel,,WT18X105,18.3,12.2,1.36,0.83,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18.2W
+12.1D
+1.26Wt
+0.765Ft",,0DimWDWtFt --> TSteel,,WT18X97,18.2,12.1,1.26,0.765,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18.2W
+12.1D
+1.18Wt
+0.725Ft",,0DimWDWtFt --> TSteel,,WT18X91,18.2,12.1,1.18,0.725,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18.1W
+12D
+1.1Wt
+0.68Ft",,0DimWDWtFt --> TSteel,,WT18X85,18.1,12,1.1,0.68,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18W
+12D
+1.02Wt
+0.65Ft",,0DimWDWtFt --> TSteel,,WT18X80,18,12,1.02,0.65,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+17.9W
+12D
+0.94Wt
+0.625Ft",,0DimWDWtFt --> TSteel,,WT18X75,17.9,12,0.94,0.625,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+17.8W
+12D
+0.79Wt
+0.6Ft",,0DimWDWtFt --> TSteel,,WT18X67.5,17.8,12,0.79,0.6,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+18W
+16.2D
+2.28Wt
+1.26Ft",,0DimWDWtFt --> TSteel,,WT16.5X193.5,18,16.2,2.28,1.26,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+17.8W
+16.1D
+2.09Wt
+1.16Ft",,0DimWDWtFt --> TSteel,,WT16.5X177,17.8,16.1,2.09,1.16,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+17.6W
+16D
+1.89Wt
+1.04Ft",,0DimWDWtFt --> TSteel,,WT16.5X159,17.6,16,1.89,1.04,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+17.4W
+15.9D
+1.73Wt
+0.96Ft",,0DimWDWtFt --> TSteel,,WT16.5X145.5,17.4,15.9,1.73,0.96,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+17.3W
+15.8D
+1.57Wt
+0.87Ft",,0DimWDWtFt --> TSteel,,WT16.5X131.5,17.3,15.8,1.57,0.87,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+17.1W
+15.9D
+1.4Wt
+0.83Ft",,0DimWDWtFt --> TSteel,,WT16.5X120.5,17.1,15.9,1.4,0.83,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+17W
+15.8D
+1.28Wt
+0.775Ft",,0DimWDWtFt --> TSteel,,WT16.5X110.5,17,15.8,1.28,0.775,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+16.8W
+15.7D
+1.15Wt
+0.715Ft",,0DimWDWtFt --> TSteel,,WT16.5X100.5,16.8,15.7,1.15,0.715,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+16.9W
+11.5D
+1.22Wt
+0.67Ft",,0DimWDWtFt --> TSteel,,WT16.5X84.5,16.9,11.5,1.22,0.67,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+16.7W
+11.6D
+1.06Wt
+0.635Ft",,0DimWDWtFt --> TSteel,,WT16.5X76,16.7,11.6,1.06,0.635,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+16.7W
+11.5D
+0.96Wt
+0.605Ft",,0DimWDWtFt --> TSteel,,WT16.5X70.5,16.7,11.5,0.96,0.605,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+16.5W
+11.5D
+0.855Wt
+0.58Ft",,0DimWDWtFt --> TSteel,,WT16.5X65,16.5,11.5,0.855,0.58,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+16.4W
+11.5D
+0.74Wt
+0.55Ft",,0DimWDWtFt --> TSteel,,WT16.5X59,16.4,11.5,0.74,0.55,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+16.6W
+15.6D
+2.44Wt
+1.36Ft",,0DimWDWtFt --> TSteel,,WT15X195.5,16.6,15.6,2.44,1.36,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+16.4W
+15.5D
+2.24Wt
+1.24Ft",,0DimWDWtFt --> TSteel,,WT15X178.5,16.4,15.5,2.24,1.24,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+16.2W
+15.4D
+2.05Wt
+1.14Ft",,0DimWDWtFt --> TSteel,,WT15X163,16.2,15.4,2.05,1.14,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+16W
+15.3D
+1.85Wt
+1.02Ft",,0DimWDWtFt --> TSteel,,WT15X146,16,15.3,1.85,1.02,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+15.8W
+15.2D
+1.65Wt
+0.93Ft",,0DimWDWtFt --> TSteel,,WT15X130.5,15.8,15.2,1.65,0.93,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+15.7W
+15.1D
+1.5Wt
+0.83Ft",,0DimWDWtFt --> TSteel,,WT15X117.5,15.7,15.1,1.5,0.83,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+15.5W
+15.1D
+1.32Wt
+0.775Ft",,0DimWDWtFt --> TSteel,,WT15X105.5,15.5,15.1,1.32,0.775,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+15.3W
+15D
+1.19Wt
+0.71Ft",,0DimWDWtFt --> TSteel,,WT15X95.5,15.3,15,1.19,0.71,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+15.2W
+15D
+1.07Wt
+0.655Ft",,0DimWDWtFt --> TSteel,,WT15X86.5,15.2,15,1.07,0.655,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+15.3W
+10.5D
+1.18Wt
+0.65Ft",,0DimWDWtFt --> TSteel,,WT15X74,15.3,10.5,1.18,0.65,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+15.2W
+10.5D
+1Wt
+0.615Ft",,0DimWDWtFt --> TSteel,,WT15X66,15.2,10.5,1,0.615,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+15.1W
+10.5D
+0.93Wt
+0.585Ft",,0DimWDWtFt --> TSteel,,WT15X62,15.1,10.5,0.93,0.585,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+15W
+10.5D
+0.85Wt
+0.565Ft",,0DimWDWtFt --> TSteel,,WT15X58,15,10.5,0.85,0.565,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+14.9W
+10.5D
+0.76Wt
+0.545Ft",,0DimWDWtFt --> TSteel,,WT15X54,14.9,10.5,0.76,0.545,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+14.8W
+10.5D
+0.67Wt
+0.52Ft",,0DimWDWtFt --> TSteel,,WT15X49.5,14.8,10.5,0.67,0.52,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+14.8W
+10.4D
+0.61Wt
+0.47Ft",,0DimWDWtFt --> TSteel,,WT15X45,14.8,10.4,0.61,0.47,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+16.3W
+15.3D
+3.54Wt
+1.97Ft",,0DimWDWtFt --> TSteel,,WT13.5X269.5,16.3,15.3,3.54,1.97,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+15.2W
+14.7D
+2.48Wt
+1.38Ft",,0DimWDWtFt --> TSteel,,WT13.5X184,15.2,14.7,2.48,1.38,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+15W
+14.6D
+2.28Wt
+1.26Ft",,0DimWDWtFt --> TSteel,,WT13.5X168,15,14.6,2.28,1.26,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+14.8W
+14.4D
+2.09Wt
+1.16Ft",,0DimWDWtFt --> TSteel,,WT13.5X153.5,14.8,14.4,2.09,1.16,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+14.6W
+14.4D
+1.93Wt
+1.06Ft",,0DimWDWtFt --> TSteel,,WT13.5X140.5,14.6,14.4,1.93,1.06,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+14.5W
+14.3D
+1.77Wt
+0.98Ft",,0DimWDWtFt --> TSteel,,WT13.5X129,14.5,14.3,1.77,0.98,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+14.3W
+14.2D
+1.61Wt
+0.91Ft",,0DimWDWtFt --> TSteel,,WT13.5X117.5,14.3,14.2,1.61,0.91,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+14.2W
+14.1D
+1.5Wt
+0.83Ft",,0DimWDWtFt --> TSteel,,WT13.5X108.5,14.2,14.1,1.5,0.83,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+14.1W
+14D
+1.34Wt
+0.75Ft",,0DimWDWtFt --> TSteel,,WT13.5X97,14.1,14,1.34,0.75,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13.9W
+14.1D
+1.19Wt
+0.725Ft",,0DimWDWtFt --> TSteel,,WT13.5X89,13.9,14.1,1.19,0.725,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13.8W
+14D
+1.08Wt
+0.66Ft",,0DimWDWtFt --> TSteel,,WT13.5X80.5,13.8,14,1.08,0.66,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13.7W
+14D
+0.975Wt
+0.605Ft",,0DimWDWtFt --> TSteel,,WT13.5X73,13.7,14,0.975,0.605,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13.8W
+10D
+1.1Wt
+0.61Ft",,0DimWDWtFt --> TSteel,,WT13.5X64.5,13.8,10,1.1,0.61,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13.6W
+10.1D
+0.93Wt
+0.57Ft",,0DimWDWtFt --> TSteel,,WT13.5X57,13.6,10.1,0.93,0.57,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13.5W
+10D
+0.83Wt
+0.515Ft",,0DimWDWtFt --> TSteel,,WT13.5X51,13.5,10,0.83,0.515,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13.5W
+10D
+0.745Wt
+0.49Ft",,0DimWDWtFt --> TSteel,,WT13.5X47,13.5,10,0.745,0.49,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13.4W
+10D
+0.64Wt
+0.46Ft",,0DimWDWtFt --> TSteel,,WT13.5X42,13.4,10,0.64,0.46,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+14W
+13.7D
+2.72Wt
+1.52Ft",,0DimWDWtFt --> TSteel,,WT12X185,14,13.7,2.72,1.52,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13.8W
+13.5D
+2.48Wt
+1.38Ft",,0DimWDWtFt --> TSteel,,WT12X167.5,13.8,13.5,2.48,1.38,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13.6W
+13.4D
+2.28Wt
+1.26Ft",,0DimWDWtFt --> TSteel,,WT12X153,13.6,13.4,2.28,1.26,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13.4W
+13.3D
+2.09Wt
+1.16Ft",,0DimWDWtFt --> TSteel,,WT12X139.5,13.4,13.3,2.09,1.16,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13.2W
+13.2D
+1.89Wt
+1.04Ft",,0DimWDWtFt --> TSteel,,WT12X125,13.2,13.2,1.89,1.04,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+13W
+13.1D
+1.73Wt
+0.96Ft",,0DimWDWtFt --> TSteel,,WT12X114.5,13,13.1,1.73,0.96,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12.9W
+13D
+1.57Wt
+0.87Ft",,0DimWDWtFt --> TSteel,,WT12X103.5,12.9,13,1.57,0.87,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12.7W
+13D
+1.46Wt
+0.81Ft",,0DimWDWtFt --> TSteel,,WT12X96,12.7,13,1.46,0.81,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12.6W
+12.9D
+1.34Wt
+0.75Ft",,0DimWDWtFt --> TSteel,,WT12X88,12.6,12.9,1.34,0.75,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12.5W
+13D
+1.22Wt
+0.705Ft",,0DimWDWtFt --> TSteel,,WT12X81,12.5,13,1.22,0.705,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12.4W
+12.9D
+1.09Wt
+0.65Ft",,0DimWDWtFt --> TSteel,,WT12X73,12.4,12.9,1.09,0.65,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12.2W
+12.9D
+0.96Wt
+0.605Ft",,0DimWDWtFt --> TSteel,,WT12X65.5,12.2,12.9,0.96,0.605,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12.1W
+12.8D
+0.85Wt
+0.55Ft",,0DimWDWtFt --> TSteel,,WT12X58.5,12.1,12.8,0.85,0.55,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12W
+12.8D
+0.75Wt
+0.5Ft",,0DimWDWtFt --> TSteel,,WT12X52,12,12.8,0.75,0.5,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12.3W
+9D
+0.98Wt
+0.55Ft",,0DimWDWtFt --> TSteel,,WT12X51.5,12.3,9,0.98,0.55,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12.2W
+9.07D
+0.875Wt
+0.515Ft",,0DimWDWtFt --> TSteel,,WT12X47,12.2,9.07,0.875,0.515,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12.1W
+9.02D
+0.77Wt
+0.47Ft",,0DimWDWtFt --> TSteel,,WT12X42,12.1,9.02,0.77,0.47,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12W
+8.99D
+0.68Wt
+0.44Ft",,0DimWDWtFt --> TSteel,,WT12X38,12,8.99,0.68,0.44,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11.9W
+8.97D
+0.585Wt
+0.415Ft",,0DimWDWtFt --> TSteel,,WT12X34,11.9,8.97,0.585,0.415,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11.9W
+7.04D
+0.59Wt
+0.43Ft",,0DimWDWtFt --> TSteel,,WT12X31,11.9,7.04,0.59,0.43,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11.8W
+7.01D
+0.505Wt
+0.395Ft",,0DimWDWtFt --> TSteel,,WT12X27.5,11.8,7.01,0.505,0.395,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+12.1W
+12.9D
+2.19Wt
+1.22Ft",,0DimWDWtFt --> TSteel,,WT10.5X137.5,12.1,12.9,2.19,1.22,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11.9W
+12.8D
+1.99Wt
+1.1Ft",,0DimWDWtFt --> TSteel,,WT10.5X124,11.9,12.8,1.99,1.1,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11.7W
+12.7D
+1.79Wt
+1Ft",,0DimWDWtFt --> TSteel,,WT10.5X111.5,11.7,12.7,1.79,1,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11.5W
+12.6D
+1.63Wt
+0.91Ft",,0DimWDWtFt --> TSteel,,WT10.5X100.5,11.5,12.6,1.63,0.91,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11.4W
+12.5D
+1.48Wt
+0.83Ft",,0DimWDWtFt --> TSteel,,WT10.5X91,11.4,12.5,1.48,0.83,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11.2W
+12.4D
+1.36Wt
+0.75Ft",,0DimWDWtFt --> TSteel,,WT10.5X83,11.2,12.4,1.36,0.75,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11W
+12.5D
+1.15Wt
+0.72Ft",,0DimWDWtFt --> TSteel,,WT10.5X73.5,11,12.5,1.15,0.72,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.9W
+12.4D
+1.04Wt
+0.65Ft",,0DimWDWtFt --> TSteel,,WT10.5X66,10.9,12.4,1.04,0.65,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.8W
+12.4D
+0.96Wt
+0.6Ft",,0DimWDWtFt --> TSteel,,WT10.5X61,10.8,12.4,0.96,0.6,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.8W
+12.3D
+0.875Wt
+0.55Ft",,0DimWDWtFt --> TSteel,,WT10.5X55.5,10.8,12.3,0.875,0.55,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.7W
+12.3D
+0.8Wt
+0.5Ft",,0DimWDWtFt --> TSteel,,WT10.5X50.5,10.7,12.3,0.8,0.5,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.8W
+8.42D
+0.93Wt
+0.58Ft",,0DimWDWtFt --> TSteel,,WT10.5X46.5,10.8,8.42,0.93,0.58,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.7W
+8.36D
+0.835Wt
+0.515Ft",,0DimWDWtFt --> TSteel,,WT10.5X41.5,10.7,8.36,0.835,0.515,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.6W
+8.3D
+0.74Wt
+0.455Ft",,0DimWDWtFt --> TSteel,,WT10.5X36.5,10.6,8.3,0.74,0.455,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.6W
+8.27D
+0.685Wt
+0.43Ft",,0DimWDWtFt --> TSteel,,WT10.5X34,10.6,8.27,0.685,0.43,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.5W
+8.24D
+0.615Wt
+0.4Ft",,0DimWDWtFt --> TSteel,,WT10.5X31,10.5,8.24,0.615,0.4,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.4W
+8.22D
+0.522Wt
+0.375Ft",,0DimWDWtFt --> TSteel,,WT10.5X27.5,10.4,8.22,0.522,0.375,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.3W
+8.14D
+0.43Wt
+0.35Ft",,0DimWDWtFt --> TSteel,,WT10.5X24,10.3,8.14,0.43,0.35,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.5W
+6.56D
+0.65Wt
+0.405Ft",,0DimWDWtFt --> TSteel,,WT10.5X28.5,10.5,6.56,0.65,0.405,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.4W
+6.53D
+0.535Wt
+0.38Ft",,0DimWDWtFt --> TSteel,,WT10.5X25,10.4,6.53,0.535,0.38,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.3W
+6.5D
+0.45Wt
+0.35Ft",,0DimWDWtFt --> TSteel,,WT10.5X22,10.3,6.5,0.45,0.35,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11.2W
+12D
+2.74Wt
+1.52Ft",,0DimWDWtFt --> TSteel,,WT9X155.5,11.2,12,2.74,1.52,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.9W
+11.9D
+2.5Wt
+1.4Ft",,0DimWDWtFt --> TSteel,,WT9X141.5,10.9,11.9,2.5,1.4,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.7W
+11.8D
+2.3Wt
+1.28Ft",,0DimWDWtFt --> TSteel,,WT9X129,10.7,11.8,2.3,1.28,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.5W
+11.7D
+2.11Wt
+1.16Ft",,0DimWDWtFt --> TSteel,,WT9X117,10.5,11.7,2.11,1.16,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.3W
+11.6D
+1.91Wt
+1.06Ft",,0DimWDWtFt --> TSteel,,WT9X105.5,10.3,11.6,1.91,1.06,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.2W
+11.5D
+1.75Wt
+0.96Ft",,0DimWDWtFt --> TSteel,,WT9X96,10.2,11.5,1.75,0.96,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10W
+11.4D
+1.59Wt
+0.89Ft",,0DimWDWtFt --> TSteel,,WT9X87.5,10,11.4,1.59,0.89,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.86W
+11.3D
+1.44Wt
+0.81Ft",,0DimWDWtFt --> TSteel,,WT9X79,9.86,11.3,1.44,0.81,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.75W
+11.2D
+1.32Wt
+0.73Ft",,0DimWDWtFt --> TSteel,,WT9X71.5,9.75,11.2,1.32,0.73,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.63W
+11.2D
+1.2Wt
+0.67Ft",,0DimWDWtFt --> TSteel,,WT9X65,9.63,11.2,1.2,0.67,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.49W
+11.3D
+1.06Wt
+0.655Ft",,0DimWDWtFt --> TSteel,,WT9X59.5,9.49,11.3,1.06,0.655,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.37W
+11.2D
+0.94Wt
+0.59Ft",,0DimWDWtFt --> TSteel,,WT9X53,9.37,11.2,0.94,0.59,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.3W
+11.1D
+0.87Wt
+0.535Ft",,0DimWDWtFt --> TSteel,,WT9X48.5,9.3,11.1,0.87,0.535,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.2W
+11.1D
+0.77Wt
+0.48Ft",,0DimWDWtFt --> TSteel,,WT9X43,9.2,11.1,0.77,0.48,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.11W
+11D
+0.68Wt
+0.425Ft",,0DimWDWtFt --> TSteel,,WT9X38,9.11,11,0.68,0.425,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.24W
+7.64D
+0.81Wt
+0.495Ft",,0DimWDWtFt --> TSteel,,WT9X35.5,9.24,7.64,0.81,0.495,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.18W
+7.59D
+0.75Wt
+0.45Ft",,0DimWDWtFt --> TSteel,,WT9X32.5,9.18,7.59,0.75,0.45,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.12W
+7.56D
+0.695Wt
+0.415Ft",,0DimWDWtFt --> TSteel,,WT9X30,9.12,7.56,0.695,0.415,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.06W
+7.53D
+0.63Wt
+0.39Ft",,0DimWDWtFt --> TSteel,,WT9X27.5,9.06,7.53,0.63,0.39,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9W
+7.5D
+0.57Wt
+0.355Ft",,0DimWDWtFt --> TSteel,,WT9X25,9,7.5,0.57,0.355,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.03W
+6.06D
+0.605Wt
+0.36Ft",,0DimWDWtFt --> TSteel,,WT9X23,9.03,6.06,0.605,0.36,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.95W
+6.02D
+0.525Wt
+0.315Ft",,0DimWDWtFt --> TSteel,,WT9X20,8.95,6.02,0.525,0.315,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.85W
+6D
+0.425Wt
+0.3Ft",,0DimWDWtFt --> TSteel,,WT9X17.5,8.85,6,0.425,0.3,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.49W
+10.4D
+0.985Wt
+0.585Ft",,0DimWDWtFt --> TSteel,,WT8X50,8.49,10.4,0.985,0.585,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.38W
+10.4D
+0.875Wt
+0.525Ft",,0DimWDWtFt --> TSteel,,WT8X44.5,8.38,10.4,0.875,0.525,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.26W
+10.3D
+0.76Wt
+0.455Ft",,0DimWDWtFt --> TSteel,,WT8X38.5,8.26,10.3,0.76,0.455,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.17W
+10.2D
+0.665Wt
+0.395Ft",,0DimWDWtFt --> TSteel,,WT8X33.5,8.17,10.2,0.665,0.395,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.22W
+7.12D
+0.715Wt
+0.43Ft",,0DimWDWtFt --> TSteel,,WT8X28.5,8.22,7.12,0.715,0.43,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.13W
+7.07D
+0.63Wt
+0.38Ft",,0DimWDWtFt --> TSteel,,WT8X25,8.13,7.07,0.63,0.38,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.07W
+7.04D
+0.565Wt
+0.345Ft",,0DimWDWtFt --> TSteel,,WT8X22.5,8.07,7.04,0.565,0.345,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.01W
+7D
+0.505Wt
+0.305Ft",,0DimWDWtFt --> TSteel,,WT8X20,8.01,7,0.505,0.305,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.93W
+6.99D
+0.43Wt
+0.295Ft",,0DimWDWtFt --> TSteel,,WT8X18,7.93,6.99,0.43,0.295,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.94W
+5.53D
+0.44Wt
+0.275Ft",,0DimWDWtFt --> TSteel,,WT8X15.5,7.94,5.53,0.44,0.275,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.85W
+5.5D
+0.345Wt
+0.25Ft",,0DimWDWtFt --> TSteel,,WT8X13,7.85,5.5,0.345,0.25,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11.8W
+18.8D
+5.51Wt
+3.94Ft",,0DimWDWtFt --> TSteel,,WT7X436.5,11.8,18.8,5.51,3.94,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11.4W
+18.6D
+5.12Wt
+3.74Ft",,0DimWDWtFt --> TSteel,,WT7X404,11.4,18.6,5.12,3.74,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+11.2W
+17.9D
+4.91Wt
+3.07Ft",,0DimWDWtFt --> TSteel,,WT7X365,11.2,17.9,4.91,3.07,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.8W
+17.7D
+4.52Wt
+2.83Ft",,0DimWDWtFt --> TSteel,,WT7X332.5,10.8,17.7,4.52,2.83,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.5W
+17.4D
+4.16Wt
+2.6Ft",,0DimWDWtFt --> TSteel,,WT7X302.5,10.5,17.4,4.16,2.6,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+10.1W
+17.2D
+3.82Wt
+2.38Ft",,0DimWDWtFt --> TSteel,,WT7X275,10.1,17.2,3.82,2.38,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.8W
+17D
+3.5Wt
+2.19Ft",,0DimWDWtFt --> TSteel,,WT7X250,9.8,17,3.5,2.19,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.51W
+16.8D
+3.21Wt
+2.02Ft",,0DimWDWtFt --> TSteel,,WT7X227.5,9.51,16.8,3.21,2.02,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.34W
+16.7D
+3.04Wt
+1.88Ft",,0DimWDWtFt --> TSteel,,WT7X213,9.34,16.7,3.04,1.88,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+9.15W
+16.6D
+2.85Wt
+1.77Ft",,0DimWDWtFt --> TSteel,,WT7X199,9.15,16.6,2.85,1.77,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.96W
+16.5D
+2.66Wt
+1.66Ft",,0DimWDWtFt --> TSteel,,WT7X185,8.96,16.5,2.66,1.66,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.77W
+16.4D
+2.47Wt
+1.54Ft",,0DimWDWtFt --> TSteel,,WT7X171,8.77,16.4,2.47,1.54,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.56W
+16.2D
+2.26Wt
+1.41Ft",,0DimWDWtFt --> TSteel,,WT7X155.5,8.56,16.2,2.26,1.41,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.37W
+16.1D
+2.07Wt
+1.29Ft",,0DimWDWtFt --> TSteel,,WT7X141.5,8.37,16.1,2.07,1.29,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.19W
+16D
+1.89Wt
+1.18Ft",,0DimWDWtFt --> TSteel,,WT7X128.5,8.19,16,1.89,1.18,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.02W
+15.9D
+1.72Wt
+1.07Ft",,0DimWDWtFt --> TSteel,,WT7X116.5,8.02,15.9,1.72,1.07,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.86W
+15.8D
+1.56Wt
+0.98Ft",,0DimWDWtFt --> TSteel,,WT7X105.5,7.86,15.8,1.56,0.98,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.74W
+15.7D
+1.44Wt
+0.89Ft",,0DimWDWtFt --> TSteel,,WT7X96.5,7.74,15.7,1.44,0.89,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.61W
+15.7D
+1.31Wt
+0.83Ft",,0DimWDWtFt --> TSteel,,WT7X88,7.61,15.7,1.31,0.83,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.49W
+15.6D
+1.19Wt
+0.745Ft",,0DimWDWtFt --> TSteel,,WT7X79.5,7.49,15.6,1.19,0.745,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.39W
+15.5D
+1.09Wt
+0.68Ft",,0DimWDWtFt --> TSteel,,WT7X72.5,7.39,15.5,1.09,0.68,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.33W
+14.7D
+1.03Wt
+0.645Ft",,0DimWDWtFt --> TSteel,,WT7X66,7.33,14.7,1.03,0.645,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.24W
+14.7D
+0.94Wt
+0.59Ft",,0DimWDWtFt --> TSteel,,WT7X60,7.24,14.7,0.94,0.59,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.16W
+14.6D
+0.86Wt
+0.525Ft",,0DimWDWtFt --> TSteel,,WT7X54.5,7.16,14.6,0.86,0.525,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.08W
+14.6D
+0.78Wt
+0.485Ft",,0DimWDWtFt --> TSteel,,WT7X49.5,7.08,14.6,0.78,0.485,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.01W
+14.5D
+0.71Wt
+0.44Ft",,0DimWDWtFt --> TSteel,,WT7X45,7.01,14.5,0.71,0.44,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.16W
+10.1D
+0.855Wt
+0.51Ft",,0DimWDWtFt --> TSteel,,WT7X41,7.16,10.1,0.855,0.51,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.09W
+10.1D
+0.785Wt
+0.45Ft",,0DimWDWtFt --> TSteel,,WT7X37,7.09,10.1,0.785,0.45,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.02W
+10D
+0.72Wt
+0.415Ft",,0DimWDWtFt --> TSteel,,WT7X34,7.02,10,0.72,0.415,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.95W
+10D
+0.645Wt
+0.375Ft",,0DimWDWtFt --> TSteel,,WT7X30.5,6.95,10,0.645,0.375,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.96W
+8.06D
+0.66Wt
+0.37Ft",,0DimWDWtFt --> TSteel,,WT7X26.5,6.96,8.06,0.66,0.37,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.9W
+8.03D
+0.595Wt
+0.34Ft",,0DimWDWtFt --> TSteel,,WT7X24,6.9,8.03,0.595,0.34,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.83W
+8D
+0.53Wt
+0.305Ft",,0DimWDWtFt --> TSteel,,WT7X21.5,6.83,8,0.53,0.305,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.05W
+6.77D
+0.515Wt
+0.31Ft",,0DimWDWtFt --> TSteel,,WT7X19,7.05,6.77,0.515,0.31,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.99W
+6.75D
+0.455Wt
+0.285Ft",,0DimWDWtFt --> TSteel,,WT7X17,6.99,6.75,0.455,0.285,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.92W
+6.73D
+0.385Wt
+0.27Ft",,0DimWDWtFt --> TSteel,,WT7X15,6.92,6.73,0.385,0.27,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.96W
+5.03D
+0.42Wt
+0.255Ft",,0DimWDWtFt --> TSteel,,WT7X13,6.96,5.03,0.42,0.255,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.87W
+5D
+0.335Wt
+0.23Ft",,0DimWDWtFt --> TSteel,,WT7X11,6.87,5,0.335,0.23,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.41W
+13.4D
+2.96Wt
+1.78Ft",,0DimWDWtFt --> TSteel,,WT6X168,8.41,13.4,2.96,1.78,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+8.16W
+13.2D
+2.71Wt
+1.63Ft",,0DimWDWtFt --> TSteel,,WT6X152.5,8.16,13.2,2.71,1.63,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.93W
+13.1D
+2.47Wt
+1.53Ft",,0DimWDWtFt --> TSteel,,WT6X139.5,7.93,13.1,2.47,1.53,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.71W
+13D
+2.25Wt
+1.4Ft",,0DimWDWtFt --> TSteel,,WT6X126,7.71,13,2.25,1.4,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.53W
+12.9D
+2.07Wt
+1.29Ft",,0DimWDWtFt --> TSteel,,WT6X115,7.53,12.9,2.07,1.29,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.36W
+12.8D
+1.9Wt
+1.18Ft",,0DimWDWtFt --> TSteel,,WT6X105,7.36,12.8,1.9,1.18,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.19W
+12.7D
+1.74Wt
+1.06Ft",,0DimWDWtFt --> TSteel,,WT6X95,7.19,12.7,1.74,1.06,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+7.02W
+12.6D
+1.56Wt
+0.96Ft",,0DimWDWtFt --> TSteel,,WT6X85,7.02,12.6,1.56,0.96,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.86W
+12.5D
+1.4Wt
+0.87Ft",,0DimWDWtFt --> TSteel,,WT6X76,6.86,12.5,1.4,0.87,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.71W
+12.4D
+1.25Wt
+0.79Ft",,0DimWDWtFt --> TSteel,,WT6X68,6.71,12.4,1.25,0.79,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.56W
+12.3D
+1.11Wt
+0.71Ft",,0DimWDWtFt --> TSteel,,WT6X60,6.56,12.3,1.11,0.71,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.45W
+12.2D
+0.99Wt
+0.61Ft",,0DimWDWtFt --> TSteel,,WT6X53,6.45,12.2,0.99,0.61,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.36W
+12.2D
+0.9Wt
+0.55Ft",,0DimWDWtFt --> TSteel,,WT6X48,6.36,12.2,0.9,0.55,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.27W
+12.1D
+0.81Wt
+0.515Ft",,0DimWDWtFt --> TSteel,,WT6X43.5,6.27,12.1,0.81,0.515,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.19W
+12.1D
+0.735Wt
+0.47Ft",,0DimWDWtFt --> TSteel,,WT6X39.5,6.19,12.1,0.735,0.47,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.13W
+12D
+0.67Wt
+0.43Ft",,0DimWDWtFt --> TSteel,,WT6X36,6.13,12,0.67,0.43,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.06W
+12D
+0.605Wt
+0.39Ft",,0DimWDWtFt --> TSteel,,WT6X32.5,6.06,12,0.605,0.39,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.1W
+10D
+0.64Wt
+0.36Ft",,0DimWDWtFt --> TSteel,,WT6X29,6.1,10,0.64,0.36,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.03W
+10D
+0.575Wt
+0.345Ft",,0DimWDWtFt --> TSteel,,WT6X26.5,6.03,10,0.575,0.345,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.1W
+8.08D
+0.64Wt
+0.37Ft",,0DimWDWtFt --> TSteel,,WT6X25,6.1,8.08,0.64,0.37,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.03W
+8.05D
+0.575Wt
+0.335Ft",,0DimWDWtFt --> TSteel,,WT6X22.5,6.03,8.05,0.575,0.335,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.97W
+8.01D
+0.515Wt
+0.295Ft",,0DimWDWtFt --> TSteel,,WT6X20,5.97,8.01,0.515,0.295,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.25W
+6.56D
+0.52Wt
+0.3Ft",,0DimWDWtFt --> TSteel,,WT6X17.5,6.25,6.56,0.52,0.3,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.17W
+6.52D
+0.44Wt
+0.26Ft",,0DimWDWtFt --> TSteel,,WT6X15,6.17,6.52,0.44,0.26,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.11W
+6.49D
+0.38Wt
+0.23Ft",,0DimWDWtFt --> TSteel,,WT6X13,6.11,6.49,0.38,0.23,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.16W
+4.03D
+0.425Wt
+0.26Ft",,0DimWDWtFt --> TSteel,,WT6X11,6.16,4.03,0.425,0.26,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6.08W
+4.01D
+0.35Wt
+0.235Ft",,0DimWDWtFt --> TSteel,,WT6X9.5,6.08,4.01,0.35,0.235,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+6W
+3.99D
+0.265Wt
+0.22Ft",,0DimWDWtFt --> TSteel,,WT6X8,6,3.99,0.265,0.22,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.96W
+3.97D
+0.225Wt
+0.2Ft",,0DimWDWtFt --> TSteel,,WT6X7,5.96,3.97,0.225,0.2,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.68W
+10.4D
+1.25Wt
+0.755Ft",,0DimWDWtFt --> TSteel,,WT5X56,5.68,10.4,1.25,0.755,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.55W
+10.3D
+1.12Wt
+0.68Ft",,0DimWDWtFt --> TSteel,,WT5X50,5.55,10.3,1.12,0.68,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.42W
+10.3D
+0.99Wt
+0.605Ft",,0DimWDWtFt --> TSteel,,WT5X44,5.42,10.3,0.99,0.605,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.3W
+10.2D
+0.87Wt
+0.53Ft",,0DimWDWtFt --> TSteel,,WT5X38.5,5.3,10.2,0.87,0.53,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.2W
+10.1D
+0.77Wt
+0.47Ft",,0DimWDWtFt --> TSteel,,WT5X34,5.2,10.1,0.77,0.47,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.11W
+10.1D
+0.68Wt
+0.42Ft",,0DimWDWtFt --> TSteel,,WT5X30,5.11,10.1,0.68,0.42,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.05W
+10D
+0.615Wt
+0.37Ft",,0DimWDWtFt --> TSteel,,WT5X27,5.05,10,0.615,0.37,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.99W
+10D
+0.56Wt
+0.34Ft",,0DimWDWtFt --> TSteel,,WT5X24.5,4.99,10,0.56,0.34,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.05W
+8.02D
+0.62Wt
+0.35Ft",,0DimWDWtFt --> TSteel,,WT5X22.5,5.05,8.02,0.62,0.35,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.96W
+7.99D
+0.53Wt
+0.315Ft",,0DimWDWtFt --> TSteel,,WT5X19.5,4.96,7.99,0.53,0.315,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.87W
+7.96D
+0.435Wt
+0.29Ft",,0DimWDWtFt --> TSteel,,WT5X16.5,4.87,7.96,0.435,0.29,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.24W
+5.81D
+0.51Wt
+0.3Ft",,0DimWDWtFt --> TSteel,,WT5X15,5.24,5.81,0.51,0.3,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.17W
+5.77D
+0.44Wt
+0.26Ft",,0DimWDWtFt --> TSteel,,WT5X13,5.17,5.77,0.44,0.26,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.09W
+5.75D
+0.36Wt
+0.24Ft",,0DimWDWtFt --> TSteel,,WT5X11,5.09,5.75,0.36,0.24,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.12W
+4.02D
+0.395Wt
+0.25Ft",,0DimWDWtFt --> TSteel,,WT5X9.5,5.12,4.02,0.395,0.25,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5.06W
+4.01D
+0.33Wt
+0.24Ft",,0DimWDWtFt --> TSteel,,WT5X8.5,5.06,4.01,0.33,0.24,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+5W
+4D
+0.27Wt
+0.23Ft",,0DimWDWtFt --> TSteel,,WT5X7.5,5,4,0.27,0.23,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.94W
+3.96D
+0.21Wt
+0.19Ft",,0DimWDWtFt --> TSteel,,WT5X6,4.94,3.96,0.21,0.19,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.5W
+8.28D
+0.935Wt
+0.57Ft",,0DimWDWtFt --> TSteel,,WT4X33.5,4.5,8.28,0.935,0.57,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.38W
+8.22D
+0.81Wt
+0.51Ft",,0DimWDWtFt --> TSteel,,WT4X29,4.38,8.22,0.81,0.51,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.25W
+8.11D
+0.685Wt
+0.4Ft",,0DimWDWtFt --> TSteel,,WT4X24,4.25,8.11,0.685,0.4,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.13W
+8.07D
+0.56Wt
+0.36Ft",,0DimWDWtFt --> TSteel,,WT4X20,4.13,8.07,0.56,0.36,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.06W
+8.02D
+0.495Wt
+0.31Ft",,0DimWDWtFt --> TSteel,,WT4X17.5,4.06,8.02,0.495,0.31,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4W
+8D
+0.435Wt
+0.285Ft",,0DimWDWtFt --> TSteel,,WT4X15.5,4,8,0.435,0.285,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.03W
+6.54D
+0.465Wt
+0.285Ft",,0DimWDWtFt --> TSteel,,WT4X14,4.03,6.54,0.465,0.285,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+3.97W
+6.5D
+0.4Wt
+0.245Ft",,0DimWDWtFt --> TSteel,,WT4X12,3.97,6.5,0.4,0.245,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.14W
+5.27D
+0.4Wt
+0.25Ft",,0DimWDWtFt --> TSteel,,WT4X10.5,4.14,5.27,0.4,0.25,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.07W
+5.25D
+0.33Wt
+0.23Ft",,0DimWDWtFt --> TSteel,,WT4X9,4.07,5.25,0.33,0.23,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4.06W
+4.02D
+0.315Wt
+0.245Ft",,0DimWDWtFt --> TSteel,,WT4X7.5,4.06,4.02,0.315,0.245,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+4W
+4D
+0.255Wt
+0.23Ft",,0DimWDWtFt --> TSteel,,WT4X6.5,4,4,0.255,0.23,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+3.95W
+3.94D
+0.205Wt
+0.17Ft",,0DimWDWtFt --> TSteel,,WT4X5,3.95,3.94,0.205,0.17,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+3.19W
+6.08D
+0.455Wt
+0.32Ft",,0DimWDWtFt --> TSteel,,WT3X12.5,3.19,6.08,0.455,0.32,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+3.1W
+6.02D
+0.365Wt
+0.26Ft",,0DimWDWtFt --> TSteel,,WT3X10,3.1,6.02,0.365,0.26,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+3W
+5.99D
+0.26Wt
+0.23Ft",,0DimWDWtFt --> TSteel,,WT3X7.5,3,5.99,0.26,0.23,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+3.14W
+4.03D
+0.405Wt
+0.26Ft",,0DimWDWtFt --> TSteel,,WT3X8,3.14,4.03,0.405,0.26,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+3.02W
+4D
+0.28Wt
+0.23Ft",,0DimWDWtFt --> TSteel,,WT3X6,3.02,4,0.28,0.23,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+2.95W
+3.94D
+0.215Wt
+0.17Ft",,0DimWDWtFt --> TSteel,,WT3X4.5,2.95,3.94,0.215,0.17,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+2.92W
+3.94D
+0.195Wt
+0.17Ft",,0DimWDWtFt --> TSteel,,WT3X4.25,2.92,3.94,0.195,0.17,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+2.58W
+5.03D
+0.43Wt
+0.27Ft",,0DimWDWtFt --> TSteel,,WT2.5X9.5,2.58,5.03,0.43,0.27,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+2.51W
+5D
+0.36Wt
+0.24Ft",,0DimWDWtFt --> TSteel,,WT2.5X8,2.51,5,0.36,0.24,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> TSteel
+2.08W
+4.06D
+0.345Wt
+0.28Ft",,0DimWDWtFt --> TSteel,,WT2X6.5,2.08,4.06,0.345,0.28,,2ExtrudedProfile --> Beam/Column --> SteelWT,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+15W
+3.72D
+0.716Wt
+0.65Ft",,0DimWDWtFt --> CSteel,,C15X50,15,3.72,0.716,0.65,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+15W
+3.52D
+0.52Wt
+0.65Ft",,0DimWDWtFt --> CSteel,,C15X40,15,3.52,0.52,0.65,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+15W
+3.4D
+0.4Wt
+0.65Ft",,0DimWDWtFt --> CSteel,,C15X33.9,15,3.4,0.4,0.65,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+12W
+3.17D
+0.51Wt
+0.501Ft",,0DimWDWtFt --> CSteel,,C12X30,12,3.17,0.51,0.501,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+12W
+3.05D
+0.387Wt
+0.501Ft",,0DimWDWtFt --> CSteel,,C12X25,12,3.05,0.387,0.501,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+12W
+2.94D
+0.282Wt
+0.501Ft",,0DimWDWtFt --> CSteel,,C12X20.7,12,2.94,0.282,0.501,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+10W
+3.03D
+0.673Wt
+0.436Ft",,0DimWDWtFt --> CSteel,,C10X30,10,3.03,0.673,0.436,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+10W
+2.89D
+0.526Wt
+0.436Ft",,0DimWDWtFt --> CSteel,,C10X25,10,2.89,0.526,0.436,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+10W
+2.74D
+0.379Wt
+0.436Ft",,0DimWDWtFt --> CSteel,,C10X20,10,2.74,0.379,0.436,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+10W
+2.6D
+0.24Wt
+0.436Ft",,0DimWDWtFt --> CSteel,,C10X15.3,10,2.6,0.24,0.436,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+9W
+2.65D
+0.448Wt
+0.413Ft",,0DimWDWtFt --> CSteel,,C9X20,9,2.65,0.448,0.413,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+9W
+2.49D
+0.285Wt
+0.413Ft",,0DimWDWtFt --> CSteel,,C9X15,9,2.49,0.285,0.413,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+9W
+2.43D
+0.233Wt
+0.413Ft",,0DimWDWtFt --> CSteel,,C9X13.4,9,2.43,0.233,0.413,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+8W
+2.53D
+0.487Wt
+0.39Ft",,0DimWDWtFt --> CSteel,,C8X18.75,8,2.53,0.487,0.39,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+8W
+2.34D
+0.303Wt
+0.39Ft",,0DimWDWtFt --> CSteel,,C8X13.75,8,2.34,0.303,0.39,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+8W
+2.26D
+0.22Wt
+0.39Ft",,0DimWDWtFt --> CSteel,,C8X11.5,8,2.26,0.22,0.39,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+7W
+2.3D
+0.419Wt
+0.366Ft",,0DimWDWtFt --> CSteel,,C7X14.75,7,2.3,0.419,0.366,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+7W
+2.19D
+0.314Wt
+0.366Ft",,0DimWDWtFt --> CSteel,,C7X12.25,7,2.19,0.314,0.366,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+7W
+2.09D
+0.21Wt
+0.366Ft",,0DimWDWtFt --> CSteel,,C7X9.8,7,2.09,0.21,0.366,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+6W
+2.16D
+0.437Wt
+0.343Ft",,0DimWDWtFt --> CSteel,,C6X13,6,2.16,0.437,0.343,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+6W
+2.03D
+0.314Wt
+0.343Ft",,0DimWDWtFt --> CSteel,,C6X10.5,6,2.03,0.314,0.343,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+6W
+1.92D
+0.2Wt
+0.343Ft",,0DimWDWtFt --> CSteel,,C6X8.2,6,1.92,0.2,0.343,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+5W
+1.89D
+0.325Wt
+0.32Ft",,0DimWDWtFt --> CSteel,,C5X9,5,1.89,0.325,0.32,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+5W
+1.75D
+0.19Wt
+0.32Ft",,0DimWDWtFt --> CSteel,,C5X6.7,5,1.75,0.19,0.32,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+4W
+1.72D
+0.321Wt
+0.296Ft",,0DimWDWtFt --> CSteel,,C4X7.25,4,1.72,0.321,0.296,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+4W
+1.65D
+0.247Wt
+0.296Ft",,0DimWDWtFt --> CSteel,,C4X6.25,4,1.65,0.247,0.296,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+4W
+1.58D
+0.184Wt
+0.296Ft",,0DimWDWtFt --> CSteel,,C4X5.4,4,1.58,0.184,0.296,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+4W
+1.52D
+0.125Wt
+0.296Ft",,0DimWDWtFt --> CSteel,,C4X4.5,4,1.52,0.125,0.296,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+3W
+1.6D
+0.356Wt
+0.273Ft",,0DimWDWtFt --> CSteel,,C3X6,3,1.6,0.356,0.273,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+3W
+1.5D
+0.258Wt
+0.273Ft",,0DimWDWtFt --> CSteel,,C3X5,3,1.5,0.258,0.273,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+3W
+1.41D
+0.17Wt
+0.273Ft",,0DimWDWtFt --> CSteel,,C3X4.1,3,1.41,0.17,0.273,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+PRESET,,"0DimWDWtFt --> CSteel
+3W
+1.37D
+0.132Wt
+0.273Ft",,0DimWDWtFt --> CSteel,,C3X3.5,3,1.37,0.132,0.273,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,

@@ -112,7 +112,7 @@ namespace Modumate {
 			return FCraftingTreeNodeInstanceSharedPtr();
 		}
 
-		ECraftingResult FCraftingTreeNodeInstancePool::PresetToSpec(const FName &PresetID, const FCraftingPresetCollection &PresetCollection, FModumateAssemblyPropertySpec &OutAssemblySpec) const
+		ECraftingResult FCraftingTreeNodeInstancePool::PresetToSpec(const FName &PresetID, const FCraftingPresetCollection &PresetCollection, FBIMAssemblySpec &OutAssemblySpec) const
 		{
 			const BIM::FCraftingTreeNodeInstanceSharedPtr *presetNode = GetInstancePool().FindByPredicate(
 				[PresetID](const BIM::FCraftingTreeNodeInstanceSharedPtr &Instance)

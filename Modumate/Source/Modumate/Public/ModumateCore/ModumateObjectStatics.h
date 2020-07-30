@@ -10,6 +10,7 @@
 
 #include "ModumateObjectStatics.generated.h"
 
+struct MODUMATE_API FBIMAssemblySpec;
 class MODUMATE_API FModumateDocument;
 
 namespace Modumate
@@ -42,7 +43,7 @@ public:
 	// Trims
 	static ETrimMiterOptions GetMiterOptionFromAdjacentTrim(ETrimMiterOptions OtherMiterOption);
 
-	static bool GetPolygonProfile(const FModumateObjectAssembly *TrimAssembly, const FSimplePolygon*& OutProfile);
+	static bool GetPolygonProfile(const FBIMAssemblySpec *TrimAssembly, const FSimplePolygon*& OutProfile);
 
 	static bool GetTrimValuesFromControls(const TArray<FVector> &ControlPoints, const TArray<int32> &ControlIndices,
 		float &OutTrimStartLength, float &OutTrimEndLength, int32 &OutEdgeStartIndex, int32 &OutEdgeEndIndex,
@@ -57,7 +58,7 @@ public:
 		int32 EdgeStartIndex, int32 EdgeEndIndex, FVector &OutEdgeStart, FVector &OutEdgeEnd);
 
 	static bool GetTrimGeometryOnEdge(const Modumate::FModumateObjectInstance* TargetObject,
-		const FModumateObjectAssembly *TrimAssembly, int32 EdgeStartIndex, int32 EdgeEndIndex,
+		const FBIMAssemblySpec *TrimAssembly, int32 EdgeStartIndex, int32 EdgeEndIndex,
 		float TrimStartLength, float TrimEndLength, bool bUseLengthAsPercent,
 		ETrimMiterOptions TrimMiterStart, ETrimMiterOptions TrimMiterEnd,
 		FVector &OutTrimStart, FVector &OutTrimEnd, FVector &OutTrimNormal, FVector &OutTrimUp, int32 &OutMountIndex,
@@ -65,8 +66,8 @@ public:
 		const FVector &HintNormal = FVector::ZeroVector, int32 HintMountIndex = -1, bool bDoMitering = false);
 
 	// Portals
-	static bool GetMoiHoleVertsWorld(const FModumateObjectAssembly *HoleAssembly, const FTransform &HoleActorTransform, TArray<FVector> &OutLocalHoleVerts);
-	static bool GetMoiHoleVerts(const FModumateObjectAssembly *HoleAssembly, TArray<FVector> &OutWorldHoleVerts);
+	static bool GetMoiHoleVertsWorld(const FBIMAssemblySpec *HoleAssembly, const FTransform &HoleActorTransform, TArray<FVector> &OutLocalHoleVerts);
+	static bool GetMoiHoleVerts(const FBIMAssemblySpec* HoleAssembly, TArray<FVector> &OutWorldHoleVerts);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate | Objects | Portals")
 	static TArray<FVector> GetMoiActorHoleVertsWorldLocations(AActor* MoiActor);
@@ -74,7 +75,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Modumate | Objects | Portals")
 	static bool GetMoiHoleVerts(AActor *TargetActor, TArray<FVector> &OutLocalHoleVerts);
 
-	static bool FindPortalTrimOverlaps(Modumate::FModumateObjectInstance *wall, const FModumateObjectAssembly &portalAssembly, const FTransform &portalTransform,
+	static bool FindPortalTrimOverlaps(Modumate::FModumateObjectInstance *wall, const FBIMAssemblySpec &portalAssembly, const FTransform &portalTransform,
 		TArray<Modumate::FModumateObjectInstance *> &outTrimsToDelete,
 		TMap<Modumate::FModumateObjectInstance *, TPair<FVector2D, FVector2D>> &outTrimsToSplit,
 		TMap<Modumate::FModumateObjectInstance *, FVector2D> &outTrimsToModify);
@@ -118,7 +119,7 @@ public:
 	static bool GetMountedTransform(const FVector &MountOrigin, const FVector &MountNormal,
 		const FVector &LocalDesiredNormal, const FVector &LocalDesiredTangent, FTransform &OutTransform);
 
-	static bool GetFFEMountedTransform(const FModumateObjectAssembly *Assembly,
+	static bool GetFFEMountedTransform(const FBIMAssemblySpec *Assembly,
 		const FSnappedCursor &SnappedCursor, FTransform &OutTransform);
 
 	static bool GetFFEBoxSidePoints(AActor *Actor, const FVector &AssemblyNormal, TArray<FVector> &OutPoints);

@@ -3,8 +3,7 @@
 #pragma once
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
-#include "Database/ModumateObjectAssembly.h"
-
+#include "BIMKernel/BIMAssemblySpec.h"
 #include "EditModelStructureLineTool.generated.h"
 
 class AEditModelGameMode_CPP;
@@ -46,7 +45,7 @@ protected:
 	bool bWantedVerticalSnap;
 	int32 LastValidTargetID;
 	int32 LastTargetStructureLineID;
-	FModumateObjectAssembly ObjAssembly;
+	FBIMAssemblySpec ObjAssembly;
 	int32 PendingSegmentID;
 	TWeakObjectPtr<ADynamicMeshActor> PendingObjMesh;
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;

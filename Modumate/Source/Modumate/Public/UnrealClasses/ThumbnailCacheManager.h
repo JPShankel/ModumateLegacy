@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Database/ModumateObjectAssembly.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 #include "IImageWrapper.h"
 #include "UObject/Object.h"
 
@@ -38,8 +38,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Modumate|Thumbnails", meta = (WorldContext = "WorldContextObject"))
 	static FName GetThumbnailKeyForShoppingItemAndTool(const FName &Key, EToolMode ToolMode, UObject *WorldContextObject);
 
-	UFUNCTION(BlueprintPure, Category = "Modumate|Thumbnails")
-	static FName GetThumbnailKeyForAssembly(const FModumateObjectAssembly &Assembly);
+	static FName GetThumbnailKeyForAssembly(const FBIMAssemblySpec &Assembly);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate|Thumbnails")
 	static FString GetThumbnailCacheDir();

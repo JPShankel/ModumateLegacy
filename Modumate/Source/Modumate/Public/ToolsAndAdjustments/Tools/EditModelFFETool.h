@@ -1,7 +1,7 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #pragma once
-#include "Database/ModumateObjectAssembly.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 
 #include "EditModelFFETool.generated.h"
@@ -19,7 +19,7 @@ private:
 public:
 	UPlaceObjectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	FModumateObjectAssembly CurrentFFEAssembly;
+	FBIMAssemblySpec CurrentFFEAssembly;
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_PLACEOBJECT; }
 	virtual bool Activate() override;

@@ -210,7 +210,7 @@ bool UPlaneHostedObjTool::HandleInvert()
 	if (PendingObjMesh.IsValid())
 	{
 		bInverted = !bInverted;
-		ObjAssembly.ReverseLayers();
+		ObjAssembly.CachedAssembly.ReverseLayers();
 	}
 	return true;
 }
@@ -339,8 +339,8 @@ void UPlaneHostedObjTool::SetAssemblyKey(const FName &InAssemblyKey)
 	UMetaPlaneTool::SetAssemblyKey(InAssemblyKey);
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(ObjectType);
-	const FModumateObjectAssembly *assembly = GameState.IsValid() ?
-		GameState->GetAssemblyByKey_DEPRECATED(toolMode, InAssemblyKey) : nullptr;
+	const FBIMAssemblySpec *assembly = GameState.IsValid() ?
+		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, InAssemblyKey) : nullptr;
 
 	if (assembly != nullptr)
 	{
@@ -350,7 +350,7 @@ void UPlaneHostedObjTool::SetAssemblyKey(const FName &InAssemblyKey)
 		// then we need to make sure the layers are inverted now.
 		if (bInverted)
 		{
-			ObjAssembly.ReverseLayers();
+			ObjAssembly.CachedAssembly.ReverseLayers();
 		}
 	}
 

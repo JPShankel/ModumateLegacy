@@ -240,8 +240,8 @@ void UStructureLineTool::SetAssemblyKey(const FName &InAssemblyKey)
 	Super::SetAssemblyKey(InAssemblyKey);
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(EObjectType::OTStructureLine);
-	const FModumateObjectAssembly *assembly = GameState.IsValid() ?
-		GameState->GetAssemblyByKey_DEPRECATED(toolMode, InAssemblyKey) : nullptr;
+	const FBIMAssemblySpec *assembly = GameState.IsValid() ?
+		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, InAssemblyKey) : nullptr;
 
 	if (assembly != nullptr)
 	{
@@ -251,7 +251,7 @@ void UStructureLineTool::SetAssemblyKey(const FName &InAssemblyKey)
 	else
 	{
 		Super::SetAssemblyKey(NAME_None);
-		ObjAssembly = FModumateObjectAssembly();
+		ObjAssembly = FBIMAssemblySpec();
 	}
 }
 
@@ -336,7 +336,7 @@ bool UStructureLineTool::UpdatePreviewStructureLine()
 	// and recreate geometry based on whether it's been set up before.
 
 	FVector scaleVector;
-	if (!ObjAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
+	if (!ObjAssembly.CachedAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
 	{
 		scaleVector = FVector::OneVector;
 	}
@@ -346,7 +346,6 @@ bool UStructureLineTool::UpdatePreviewStructureLine()
 	PendingObjMesh->SetActorHiddenInGame(false);
 
 	bHaveSetUpGeometry = true;
-
 	return true;
 }
 

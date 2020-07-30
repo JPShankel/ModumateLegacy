@@ -107,7 +107,7 @@ namespace Modumate {
 			bool bAddSeparator = false;
 			FString separator = ", ";
 			// Create comma-separated list from the list of FPortalParts in the assembly
-			for (auto& partPair : door->GetAssembly().PortalParts)
+			for (auto& partPair : door->GetAssembly().CachedAssembly.PortalParts)
 			{
 				if (!bAddSeparator)
 				{

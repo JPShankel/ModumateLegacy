@@ -81,59 +81,6 @@ void FPortalConfiguration::CacheRefPlaneValues()
 	}
 }
 
-void FModumateObjectAssembly::FillSpec(BIM::FModumateAssemblyPropertySpec &spec) const
-{
-	spec.RootProperties = Properties;
-	spec.ObjectType = ObjectType;
-	spec.LayerProperties.Empty(Layers.Num());
-	for (auto &l : Layers)
-	{
-		spec.LayerProperties.Add(l.Properties);
-	}
-	spec.RootPreset = RootPreset;
-}
-
-bool FModumateObjectAssembly::UsesPreset_DEPRECATED(const FName &presetKey) const
-{
-	for (auto &l : Layers)
-	{
-		if (l.PresetKey == presetKey)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-void FModumateObjectAssembly::ReplacePreset_DEPRECATED(const FName &oldPreset, const FName &newPreset)
-{
-	for (auto &l : Layers)
-	{
-		if (l.PresetKey == oldPreset)
-		{
-			l.PresetKey = newPreset;
-			l.Properties.SetProperty(BIM::EScope::Layer, BIM::Parameters::Preset, newPreset.ToString());
-		}
-	}
-}
-
-FString FModumateObjectAssembly::GetGenomeString() const
-{
-	FString result;
-	static const FString geneSeparator(TEXT("|"));
-	FCustomAssemblyRecord record = ToDataRecord();
-	for (const FCustomAssemblyProperty &property : record.PropertySheet)
-	{
-		result += property.ToCompactString() + geneSeparator;
-	}
-	return result;
-}
-
-Modumate::FModumateCommandParameter FModumateObjectAssemblyLayer::GetProperty(const Modumate::BIM::EScope &scope, const Modumate::BIM::FNameType &name) const
-{
-	return Properties.GetProperty(scope, name);
-}
-
 Modumate::Units::FUnitValue FModumateObjectAssembly::CalculateThickness() const
 {
 	return Modumate::Units::FUnitValue::WorldCentimeters(Algo::TransformAccumulate(
@@ -163,67 +110,6 @@ void FModumateObjectAssembly::SetProperty(const Modumate::BIM::FNameType &name, 
 bool FModumateObjectAssembly::HasProperty(const Modumate::BIM::FNameType &name) const
 {
 	return Properties.HasProperty(BIM::EScope::Assembly, name);
-}
-
-
-FCustomAssemblyRecord FModumateObjectAssembly::ToDataRecord() const
-{
-	FCustomAssemblyRecord ar;
-	ar.ObjectType = ObjectType;
-	ar.DisplayName = GetProperty(BIM::Parameters::Name);
-	ar.DatabaseKey = DatabaseKey.ToString();
-
-	BIM::FModumateAssemblyPropertySpec spec;
-	FillSpec(spec);
-
-	ar.RootPreset = spec.RootPreset;
-
-	spec.RootProperties.ForEachProperty([&ar](const FString &name, const FModumateCommandParameter &param)
-	{
-		FCustomAssemblyProperty &prop = ar.PropertySheet.AddDefaulted_GetRef();
-		prop.LayerID = -1;
-		prop.PropertyName = name;
-		prop.PropertyValueJSON = param.AsJSON();
-	});
-
-	for (int32 i = 0; i < spec.LayerProperties.Num(); ++i)
-	{
-		auto &l = spec.LayerProperties[i];
-		l.ForEachProperty([&ar,i](const FString &name, const FModumateCommandParameter &param) {
-			FCustomAssemblyProperty &prop = ar.PropertySheet.AddDefaulted_GetRef();
-			prop.LayerID = i;
-			prop.PropertyName = name;
-			prop.PropertyValueJSON = param.AsJSON();
-		});
-	}
-
-	return ar;
-}
-
-bool FModumateObjectAssembly::ToParameterSet_DEPRECATED(Modumate::FModumateFunctionParameterSet &params) const
-{
-	BIM::FModumateAssemblyPropertySpec spec;
-	FillSpec(spec);
-
-	spec.RootProperties.ForEachProperty([&params](const FString &name, const FModumateCommandParameter &param)
-	{
-		params.SetValue(FString::Printf(TEXT("-1:%s"), *name), param);
-	});
-
-	for (int32 i = 0; i < spec.LayerProperties.Num(); ++i)
-	{
-		auto &l = spec.LayerProperties[i];
-		l.ForEachProperty([i, &params](const FString &name, const FModumateCommandParameter &param)
-		{
-			params.SetValue(FString::Printf(TEXT("%d:%s"), i, *name), param);
-		});
-	}
-
-	FName objectTypeName = FindEnumValueFullName<EObjectType>(TEXT("EObjectType"), ObjectType);
-	params.SetValue(Parameters::kObjectType, objectTypeName);
-	params.SetValue(Parameters::kAssembly, DatabaseKey);
-	params.SetValue(Parameters::kPresetKey, spec.RootPreset);
-	return true;
 }
 
 class MODUMATE_API FLayerMaker
@@ -386,16 +272,11 @@ public:
 		FModumateObjectAssemblyLayer ret;
 
 		ret.Format = FormatEnum;
-		ret.FormatDisplayName = FormatName;
 		ret.Function = FunctionEnum;
-		ret.FunctionDisplayName = FunctionName;
 
-		ret.Properties = Properties;
 		ret.Thickness = Thickness;
 
 		ret.DisplayName = CodeName;
-
-		ret.CodeName = CodeName;
 
 		ret.Modules.Add(Module);
 		ret.Gap = Gap;
@@ -408,14 +289,17 @@ public:
 
 			//TODO: legacy trim were keyed based on their display name, so check against both name and key
 
-			const FSimpleMeshRef *trimMesh = nullptr;
-			for (auto &kvp : db.ProfileOptionSets.DataMap)
+			const FSimpleMeshRef *trimMesh = db.GetSimpleMeshByKey(ProfileKey);
+			if (trimMesh == nullptr)
 			{
-				for (auto &option : kvp.Value.Options)
+				for (auto &kvp : db.ProfileOptionSets.DataMap)
 				{
-					if (*option.DisplayName.ToString() == ProfileKey || option.Key == ProfileKey)
+					for (auto &option : kvp.Value.Options)
 					{
-						trimMesh = &option.ProfileMesh;
+						if (*option.DisplayName.ToString() == ProfileKey || option.Key == ProfileKey)
+						{
+							trimMesh = &option.ProfileMesh;
+						}
 					}
 				}
 			}
@@ -551,309 +435,6 @@ public:
 	}
 };
 
-// TODO: break out parameter validation and assembly construction to each object type rather than relying on the assembly class to know everyone's business
-bool FModumateObjectAssembly::FromCraftingProperties_DEPRECATED(
-	EObjectType ot,
-	const FModumateDatabase &db,
-	const FPresetManager &presetManager,
-	const BIM::FModumateAssemblyPropertySpec &spec,
-	FModumateObjectAssembly &outMOA,
-	const int32 showOnlyLayerID)
-{
-	outMOA = FModumateObjectAssembly();
-	outMOA.ObjectType = ot;
-
-	outMOA.Properties = spec.RootProperties;
-	outMOA.RootPreset = spec.RootPreset;
-
-	for (const auto &l : spec.LayerProperties)
-	{
-		FString portalSub;
-
-		// If this is a portal, fill in the portal configuration data and bail...no need to add any layers
-		if (l.TryGetProperty(BIM::EScope::Portal, BIM::Parameters::Subcategory, portalSub))
-		{
-			// portals have all their data in a single layer sheet
-			ensureAlways(spec.LayerProperties.Num() == 1);
-
-			//TODO: portal assemblies need a 'layer' so their properties can be serialized in the same format as the crafting tree stores them
-			//to be refactored when the correspondence between slots and layers is resolved
-			FModumateObjectAssemblyLayer &layer = outMOA.Layers.AddDefaulted_GetRef();
-			layer.Properties = spec.LayerProperties[0];
-
-			const FPortalAssemblyConfigurationOptionSet *configSet = db.PortalConfigurationOptionSets.GetData(*portalSub);
-			FString configKey;
-			if (ensureAlways(configSet != nullptr && l.TryGetProperty(BIM::EScope::Portal, BIM::Parameters::Configuration,configKey)))
-			{
-				const FPortalAssemblyConfigurationOption *config = nullptr;
-				for (const auto &configOption : configSet->Options)
-				{
-					if (configOption.Key.ToString() == configKey)
-					{
-						config = &configOption;
-						break;
-					}
-				}
-
-				// Function and default reference planes
-				if (ensureAlways(config != nullptr))
-				{
-					outMOA.PortalConfiguration.DisplayName = config->DisplayName;
-					outMOA.PortalConfiguration.PortalFunction = config->PortalFunction;
-					for (auto &refPlaneSet: config->ReferencePlanes)
-					{
-						for (auto &rp : refPlaneSet)
-						{
-							outMOA.PortalConfiguration.ReferencePlanes.Add(rp.Name, rp);
-						}
-					}
-					outMOA.PortalConfiguration.Slots = config->Slots;
-				}
-
-				// Width and height are overridden in corresponding reference planes
-				FString widthKey, heightKey;
-				if (l.TryGetProperty(BIM::EScope::Portal, BIM::Parameters::Width, widthKey) 
-					&& l.TryGetProperty(BIM::EScope::Portal, BIM::Parameters::Height, heightKey))
-				{
-					auto setDimension = [&outMOA](const TArray<FPortalConfigDimensionSet> &dims, const FString &dimKey)
-					{
-						for (auto &dim : dims)
-						{
-							if (dim.Key.ToString() == dimKey)
-							{
-								for (auto &kvp : dim.DimensionMap)
-								{
-									FPortalReferencePlane *prp = outMOA.PortalConfiguration.ReferencePlanes.Find(kvp.Key);
-									if (ensureAlways(prp != nullptr))
-									{
-										prp->FixedValue = kvp.Value;
-									}
-								}
-								return true;
-							}
-						}
-						return false;
-					};
-
-					ensureAlways(setDimension(config->SupportedHeights, heightKey));
-					ensureAlways(setDimension(config->SupportedWidths, widthKey));
-				}
-
-				// Get the select part set and update any reference planes that are affected
-				FString partKey;
-
-				//TODO: portal part sets to be refactored, add convenience function in database if this format survives
-				const FCraftingPortalPartOptionSet *partSet = db.PortalPartOptionSets.GetData(*portalSub);
-				if (ensureAlways(partSet != nullptr && l.TryGetProperty(BIM::EScope::Portal, BIM::Parameters::PartSet, partKey)))
-				{
-					for (const auto &partOption : partSet->Options)
-					{
-						if (partOption.Key.ToString() == partKey)
-						{
-							outMOA.PortalConfiguration.PartSet = partOption;
-							break;
-						}
-					}
-
-					// TODO: borrowed/stolen from previous version (makeBasicPortal) which is deprecated
-					auto cacheSlotDimension = [&outMOA](const FString &slotTypeString, const FName &key, const Modumate::Units::FUnitValue &value)
-					{
-						FName dimensionKey(*FString::Printf(TEXT("%s.%s"), *slotTypeString, *key.ToString()));
-						if (!outMOA.PortalConfiguration.CachedDimensions.Contains(dimensionKey))
-						{
-							outMOA.PortalConfiguration.CachedDimensions.Add(dimensionKey, value);
-						}
-					};
-
-					for (int32 slotIdx = 0; slotIdx < outMOA.PortalConfiguration.Slots.Num(); ++slotIdx)
-					{
-						Modumate::FPortalAssemblyConfigurationSlot &slot = outMOA.PortalConfiguration.Slots[slotIdx];
-						FName *partForSlot = outMOA.PortalConfiguration.PartSet.PartsBySlotType.Find(slot.Type);
-						const FPortalPart *portalPart = (partForSlot && !partForSlot->IsNone()) ?
-							db.GetPortalPartByKey(*partForSlot) : nullptr;
-
-						if (portalPart)
-						{
-							// Also, cache configuration dimensions based on the first type of slot that specifies them.
-							FString slotTypeString = EnumValueString(EPortalSlotType, slot.Type);
-							for (auto &kvp : portalPart->ConfigurationDimensions)
-							{
-								cacheSlotDimension(slotTypeString, kvp.Key, kvp.Value);
-							}
-
-							static const FName sizeNameX(TEXT("NativeSizeX"));
-							static const FName sizeNameY(TEXT("NativeSizeY"));
-							static const FName sizeNameZ(TEXT("NativeSizeZ"));
-							cacheSlotDimension(slotTypeString, sizeNameX, portalPart->NativeSizeX);
-							cacheSlotDimension(slotTypeString, sizeNameY, portalPart->NativeSizeY);
-							cacheSlotDimension(slotTypeString, sizeNameZ, portalPart->NativeSizeZ);
-
-							// TODO: support cabinet frames once we need to actually bore holes in cabinet boxes and animate doors.
-							if ((outMOA.ObjectType != EObjectType::OTCabinet) || (slot.Type != EPortalSlotType::Frame))
-							{
-								outMOA.PortalParts.Add(slotIdx, *portalPart);
-							}
-						}
-					}
-					outMOA.PortalConfiguration.CacheRefPlaneValues();
-				}
-
-				// Cabinet toe-kicks
-				FString toekickHeightStr, toekickDepthStr;
-				if (l.TryGetProperty(BIM::EScope::ToeKick, BIM::Parameters::Height, toekickHeightStr))
-				{
-					outMOA.Properties.SetProperty(BIM::EScope::ToeKick, BIM::Parameters::Height, toekickHeightStr);
-				}
-				if (l.TryGetProperty(BIM::EScope::ToeKick, BIM::Parameters::Depth, toekickDepthStr))
-				{
-					outMOA.Properties.SetProperty(BIM::EScope::ToeKick, BIM::Parameters::Depth, toekickDepthStr);
-				}
-
-				// TODO: Material channels are to be reviewed, in the meantime they are each a scope
-
-				const TArray<BIM::EScope> finishEnums = 
-				{
-					BIM::EScope::Interior_Finish,
-					BIM::EScope::Exterior_Finish,
-					BIM::EScope::Glass_Finish,
-					BIM::EScope::Frame_Finish,
-					BIM::EScope::Hardware_Finish,
-					BIM::EScope::Cabinet_Interior_Finish,
-					BIM::EScope::Cabinet_Exterior_Finish,
-					BIM::EScope::Cabinet_Glass_Finish,
-					BIM::EScope::Cabinet_Hardware_Finish
-				};
-
-#if 0 // TODO: removal in anticipation of DDL 2.0 opening system refactor
-				for (auto &finishEnum : finishEnums)
-				{
-					FString colorName, materialName;
-					if (l.TryGetProperty(finishEnum, BIM::Parameters::Color, colorName) &&
-						l.TryGetProperty(finishEnum, BIM::Parameters::MaterialKey, materialName))
-					{
-						const FArchitecturalMaterial *channelMat = db.GetArchitecturalMaterialByKey(*materialName);
-						const FCustomColor *channelColor = db.GetCustomColorByKey(*colorName);
-						if (ensureAlways(channelMat && channelColor))
-						{
-							FArchitecturalMaterial customChannelMat = *channelMat;
-							customChannelMat.DefaultBaseColor = *channelColor;
-							outMOA.PortalConfiguration.MaterialsPerChannel.Add(BIM::NameFromScope(finishEnum), MoveTemp(customChannelMat));
-						}
-					}
-				}
-#endif
-			}
-		}
-		else
-		{
-			// Get new maker and reset params
-			FLayerMaker layerMaker;
-
-			BIM::FBIMPropertySheet props = l;
-
-			// Set pattern data
-			if (props.HasProperty(BIM::EScope::Pattern, BIM::Parameters::ModuleCount))
-			{
-				layerMaker.Pattern.InitFromCraftingParameters(props);
-			}
-
-			props.ForEachProperty([&layerMaker](const FString &propName, const FModumateCommandParameter &val)
-			{
-				if (!propName.IsEmpty())
-				{
-					layerMaker.SetValue(BIM::FValueSpec(*propName), val);
-				}
-			});
-
-			FModumateObjectAssemblyLayer &layer = outMOA.Layers.Add_GetRef(layerMaker.Make(db));
-		}
-	}
-	if (showOnlyLayerID != -1 && outMOA.Layers.Num() > showOnlyLayerID)
-	{
-		FModumateObjectAssembly filteredMOA;
-		filteredMOA.Layers.Add_GetRef(outMOA.Layers[showOnlyLayerID]);
-		outMOA = filteredMOA;
-	}
-	return true;
-}
-
-bool FModumateObjectAssembly::FromDataRecord_DEPRECATED(
-	const FCustomAssemblyRecord &record,
-	const FModumateDatabase &objectDB,
-	const FPresetManager &presetManager,
-	FModumateObjectAssembly &outMOA)
-{
-	if (record.ObjectType != EObjectType::OTFurniture)
-	{
-		/*
-		TODO: explicit property sheets in data records are deprecated (DDL 1.0)
-		DLL 2.0 assemblies are identified solely by their root preset
-		*/
-		if (!record.RootPreset.IsNone())
-		{
-			BIM::FModumateAssemblyPropertySpec spec;
-			presetManager.PresetToSpec(record.RootPreset, spec);
-			if (UModumateObjectAssemblyStatics::DoMakeAssembly(objectDB, presetManager, spec, outMOA) == ECraftingResult::Success)
-			{
-				outMOA.DatabaseKey = *record.DatabaseKey;
-				return true;
-			}
-			return false;
-		}
-		else
-		if (ensureAlways(record.PropertySheet.Num() > 0))
-		{
-			BIM::FModumateAssemblyPropertySpec spec;
-			spec.ObjectType = record.ObjectType;
-			for (auto &ps : record.PropertySheet)
-			{
-				FModumateCommandParameter param;
-				param.FromJSON(ps.PropertyValueJSON);
-				if (ps.LayerID == -1)
-				{
-					spec.RootProperties.SetValue(ps.PropertyName, param);
-				}
-				else
-				{
-					while (ps.LayerID >= spec.LayerProperties.Num())
-					{
-						spec.LayerProperties.AddDefaulted();
-					}
-					spec.LayerProperties[ps.LayerID].SetValue(ps.PropertyName, param);
-				}
-			}
-			if (UModumateObjectAssemblyStatics::DoMakeAssembly(objectDB, presetManager, spec, outMOA) == ECraftingResult::Success)
-			{
-				outMOA.DatabaseKey = *record.DatabaseKey;
-				return true;
-			}
-			return false;
-		}
-		return false;
-	}
-	else
-	{
-		const TModumateDataCollection<FModumateObjectAssembly> *ffeDB = presetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
-		const FModumateObjectAssembly *originalAsm = ffeDB->GetData(*record.DatabaseKey);
-		if (originalAsm == nullptr)
-		{
-			originalAsm = objectDB.PresetManager.GetAssemblyByKey(EToolMode::VE_PLACEOBJECT,*record.DatabaseKey);
-		}
-		if (ensureAlways(originalAsm))
-		{
-			// TODO: fix layered assembly code names here, using a better scheme than custom assembly properties
-			outMOA = *originalAsm;
-			return true;
-		}
-		return false;
-	}
-}
-
-void FModumateObjectAssembly::GatherPresets_DEPRECATED(const FPresetManager &presetManager, TArray<FName> &presetKeys) const
-{
-
-}
-
 void FModumateObjectAssembly::ReverseLayers()
 {
 	Algo::Reverse(Layers);
@@ -862,25 +443,42 @@ void FModumateObjectAssembly::ReverseLayers()
 bool UModumateObjectAssemblyStatics::CheckCanMakeAssembly(
 	EObjectType OT,
 	const FModumateDatabase &InDB,
-	const BIM::FModumateAssemblyPropertySpec &InSpec)
+	const FBIMAssemblySpec &InSpec)
 {
-	if (UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(OT))
+	// TODO: Generalize required property specification and move check functions to tools or object types (TBD)
+	return !InSpec.RootPreset.IsNone();
+}
+
+ECraftingResult UModumateObjectAssemblyStatics::MakeStubbyAssembly(
+	const FModumateDatabase& InDB,
+	const FBIMAssemblySpec& InSpec,
+	FModumateObjectAssembly& OutMOA)
+{
+	FName meshKey = InSpec.RootProperties.GetProperty(Modumate::BIM::EScope::Preset, Modumate::BIM::Parameters::Name);
+	const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(meshKey);
+	if (mesh == nullptr)
 	{
-		// TODO: Generalize required property specification and move check functions to tools or object types (TBD)
-		return !InSpec.RootPreset.IsNone();
+		return ECraftingResult::Error;
 	}
-	return true;
+
+	FModumateObjectAssemblyLayer &layer = OutMOA.Layers.AddDefaulted_GetRef();
+	layer.Mesh = *mesh;
+
+	OutMOA.SetProperty(BIM::Parameters::Normal, FVector(0, 0, 1));
+	OutMOA.SetProperty(BIM::Parameters::Tangent, FVector(0, 1, 0));
+
+	OutMOA.ObjectType = InSpec.ObjectType;
+
+	return ECraftingResult::Success;
 }
 
 ECraftingResult UModumateObjectAssemblyStatics::MakeLayeredAssembly(
 	const FModumateDatabase &InDB,
-	const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec,
+	const FBIMAssemblySpec &InSpec,
 	FModumateObjectAssembly &OutMOA)
 {
 	OutMOA = FModumateObjectAssembly();
 
-	OutMOA.ObjectType = InSpec.ObjectType;
-	OutMOA.RootPreset = InSpec.RootPreset;
 	OutMOA.Properties = InSpec.RootProperties;
 
 	for (auto &layerProperties : InSpec.LayerProperties)
@@ -903,13 +501,10 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeLayeredAssembly(
 
 ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 	const FModumateDatabase &InDB,
-	const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec,
+	const FBIMAssemblySpec &InSpec,
 	FModumateObjectAssembly &OutMOA)
 {
 	OutMOA = FModumateObjectAssembly();
-	OutMOA.ObjectType = EObjectType::OTStructureLine;
-
-	OutMOA.RootPreset = InSpec.RootPreset;
 	OutMOA.Properties = InSpec.RootProperties;
 
 
@@ -918,15 +513,15 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 
 	FString diameterString;
 	FModumateFormattedDimension xDim, yDim;
-	if (OutMOA.Properties.TryGetProperty(BIM::EScope::Layer, BIM::Parameters::Diameter, diameterString))
+	if (OutMOA.Properties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::Diameter, diameterString))
 	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Layer, BIM::Parameters::Diameter));
+		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Assembly, BIM::Parameters::Diameter));
 		yDim = xDim;
 	}
 	else
 	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Layer, BIM::Parameters::XExtents));
-		yDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Layer, BIM::Parameters::YExtents));
+		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Assembly, BIM::Parameters::XExtents));
+		yDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Assembly, BIM::Parameters::YExtents));
 	}
 
 	if (ensureAlways(xDim.Format != EDimensionFormat::Error))
@@ -941,11 +536,8 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 
 	layerMaker.FormatEnum = ELayerFormat::None;
 	layerMaker.FunctionEnum = ELayerFunction::Structure;
-	layerMaker.LayerMaterialKey = OutMOA.Properties.GetProperty(BIM::EScope::Layer, BIM::Parameters::MaterialKey);
-
-	layerMaker.ProfileKey = OutMOA.Properties.GetProperty(BIM::EScope::Mesh, BIM::Parameters::AssetID);
-	layerMaker.Subcategories.Add(TEXT("SubcategoryNone"));
-
+	layerMaker.LayerMaterialKey = OutMOA.Properties.GetProperty(BIM::EScope::Assembly, BIM::Parameters::MaterialKey);
+	layerMaker.ProfileKey = OutMOA.Properties.GetProperty(BIM::EScope::Assembly, BIM::Parameters::ProfileKey);
 
 	FModumateObjectAssemblyLayer &layer = OutMOA.Layers.Add_GetRef(layerMaker.Make(InDB));
 
@@ -972,76 +564,43 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 ECraftingResult UModumateObjectAssemblyStatics::DoMakeAssembly(
 	const FModumateDatabase &InDB,
 	const FPresetManager &PresetManager,
-	const BIM::FModumateAssemblyPropertySpec &InSpec,
+	const FBIMAssemblySpec &InSpec,
 	FModumateObjectAssembly &OutMOA,
 	const int32 InShowOnlyLayerID)
 {
 	// TODO: move assembly synthesis to each tool mode or MOI implementation (TBD)
-	if (UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(InSpec.ObjectType))
+	ECraftingResult result = ECraftingResult::Error;
+	switch(InSpec.ObjectType)
 	{
-		ECraftingResult result = ECraftingResult::Error;
-		switch(InSpec.ObjectType)
-		{
 
-		case EObjectType::OTStructureLine:
-			result = MakeStructureLineAssembly(InDB,InSpec,OutMOA);
-			break;
+	case EObjectType::OTStructureLine:
+		result = MakeStructureLineAssembly(InDB,InSpec,OutMOA);
+		break;
 
-		case EObjectType::OTFloorSegment:
-		case EObjectType::OTWallSegment:
-		case EObjectType::OTRoofFace:
-		case EObjectType::OTFinish:
-			result =  MakeLayeredAssembly(InDB,InSpec,OutMOA);
-			break;
-
-		default:
-			ensureAlways(false);
-		};
-
-		if (result != ECraftingResult::Error)
-		{			
-			OutMOA.SetProperty(BIM::Parameters::Name, InSpec.RootProperties.GetProperty(BIM::EScope::Preset, BIM::Parameters::Name));
-		}
-		return result;
-	}
-	else
-	{
-		if (FModumateObjectAssembly::FromCraftingProperties_DEPRECATED(InSpec.ObjectType, InDB, PresetManager, InSpec, OutMOA, InShowOnlyLayerID))
-		{
-			return ECraftingResult::Success;
-		}
-	}
-
-	return ECraftingResult::Error;
-}
-
-// TODO: remove after DDL2 migration
-#define DDL_WORK_IN_PROGRESS 0
-
-// Compiler warning in editor, refuse to package
-#if DDL_WORK_IN_PROGRESS
-#if WITH_EDITOR
-#pragma message("WARNING: DDL_WORK_IN_PROGRESS IS ENABLED, DISABLE BEFORE SUBMITTING!!!")
-#else
-#error CANNOT PACKAGE BUILD WITH DDL_WORK_IN_PROGRESS
-#endif
-#endif
-
-bool UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(EObjectType OT)
-{
-	switch (OT) {
-	case EObjectType::OTStructureLine :
-	case EObjectType::OTWallSegment:
 	case EObjectType::OTFloorSegment:
+	case EObjectType::OTWallSegment:
 	case EObjectType::OTRoofFace:
-	case EObjectType::OTRoofPerimeter:
 	case EObjectType::OTFinish:
-	case EObjectType::OTSurfaceGraph:
-		return true;
+		result =  MakeLayeredAssembly(InDB,InSpec,OutMOA);
+		break;
+
+	case EObjectType::OTFurniture:
+	case EObjectType::OTDoor:
+	case EObjectType::OTWindow:
+		result = MakeStubbyAssembly(InDB, InSpec, OutMOA);
+		break;
+
+	default:
+		ensureAlways(false);
 	};
 
-	return false;
+	if (result != ECraftingResult::Error)
+	{			
+		OutMOA.SetProperty(BIM::Parameters::Name, InSpec.RootProperties.GetProperty(BIM::EScope::Preset, BIM::Parameters::Name));
+	}
+	return result;
 }
+
 
 
 

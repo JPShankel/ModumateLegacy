@@ -32,14 +32,14 @@ ETrimMiterOptions UModumateObjectStatics::GetMiterOptionFromAdjacentTrim(ETrimMi
 	}
 }
 
-bool UModumateObjectStatics::GetPolygonProfile(const FModumateObjectAssembly *TrimAssembly, const FSimplePolygon*& OutProfile)
+bool UModumateObjectStatics::GetPolygonProfile(const FBIMAssemblySpec *TrimAssembly, const FSimplePolygon*& OutProfile)
 {
-	if (!ensure(TrimAssembly && (TrimAssembly->Layers.Num() == 1)))
+	if (!ensure(TrimAssembly && (TrimAssembly->CachedAssembly.Layers.Num() == 1)))
 	{
 		return false;
 	}
 
-	const FModumateObjectAssemblyLayer &trimLayer = TrimAssembly->Layers[0];
+	const FModumateObjectAssemblyLayer &trimLayer = TrimAssembly->CachedAssembly.Layers[0];
 	if (!ensure(trimLayer.SimpleMeshes.Num() == 1))
 	{
 		return false;
@@ -132,7 +132,7 @@ bool UModumateObjectStatics::GetTrimEdgePosition(const Modumate::FModumateObject
 }
 
 bool UModumateObjectStatics::GetTrimGeometryOnEdge(const FModumateObjectInstance* TargetObject,
-	const FModumateObjectAssembly *TrimAssembly, int32 EdgeStartIndex, int32 EdgeEndIndex,
+	const FBIMAssemblySpec *TrimAssembly, int32 EdgeStartIndex, int32 EdgeEndIndex,
 	float TrimStartLength, float TrimEndLength, bool bUseLengthAsPercent,
 	ETrimMiterOptions TrimMiterStart, ETrimMiterOptions TrimMiterEnd,
 	FVector &OutTrimStart, FVector &OutTrimEnd, FVector &OutTrimNormal, FVector &OutTrimUp, int32 &OutMountIndex,
@@ -519,7 +519,7 @@ bool UModumateObjectStatics::GetTrimGeometryOnEdge(const FModumateObjectInstance
 	return true;
 }
 
-bool UModumateObjectStatics::GetMoiHoleVertsWorld(const FModumateObjectAssembly *HoleAssembly, const FTransform &HoleActorTransform, TArray<FVector> &OutWorldHoleVerts)
+bool UModumateObjectStatics::GetMoiHoleVertsWorld(const ::FBIMAssemblySpec *HoleAssembly, const FTransform &HoleActorTransform, TArray<FVector> &OutWorldHoleVerts)
 {
 	OutWorldHoleVerts.Reset();
 
@@ -557,22 +557,23 @@ TArray<FVector> UModumateObjectStatics::GetMoiActorHoleVertsWorldLocations(AActo
 	return worldHoleVerts;
 }
 
-bool UModumateObjectStatics::GetMoiHoleVerts(const FModumateObjectAssembly *HoleAssembly, TArray<FVector> &OutLocalHoleVerts)
+bool UModumateObjectStatics::GetMoiHoleVerts(const ::FBIMAssemblySpec *HoleAssembly, TArray<FVector> &OutLocalHoleVerts)
 {
 	OutLocalHoleVerts.Reset();
 
-	if (HoleAssembly && HoleAssembly->PortalConfiguration.IsValid())
+#ifdef REMOVE_OLD_PORTALS
+	if (HoleAssembly && HoleAssembly->CachedAssembly.PortalConfiguration.IsValid())
 	{
-		for (const Modumate::FPortalAssemblyConfigurationSlot &slot : HoleAssembly->PortalConfiguration.Slots)
+		for (const Modumate::FPortalAssemblyConfigurationSlot &slot : HoleAssembly->CachedAssembly.PortalConfiguration.Slots)
 		{
 			if (slot.Type == EPortalSlotType::Hole)
 			{
 				Units::FUnitValue holeX, holeZ, holeW, holeH;
 				if (ensureAlways(
-					Expression::Evaluate(HoleAssembly->PortalConfiguration.CachedDimensions, slot.LocationX, holeX) &&
-					Expression::Evaluate(HoleAssembly->PortalConfiguration.CachedDimensions, slot.LocationZ, holeZ) &&
-					Expression::Evaluate(HoleAssembly->PortalConfiguration.CachedDimensions, slot.SizeX, holeW) &&
-					Expression::Evaluate(HoleAssembly->PortalConfiguration.CachedDimensions, slot.SizeZ, holeH)))
+					Expression::Evaluate(HoleAssembly->CachedAssembly.PortalConfiguration.CachedDimensions, slot.LocationX, holeX) &&
+					Expression::Evaluate(HoleAssembly->CachedAssembly.PortalConfiguration.CachedDimensions, slot.LocationZ, holeZ) &&
+					Expression::Evaluate(HoleAssembly->CachedAssembly.PortalConfiguration.CachedDimensions, slot.SizeX, holeW) &&
+					Expression::Evaluate(HoleAssembly->CachedAssembly.PortalConfiguration.CachedDimensions, slot.SizeZ, holeH)))
 				{
 					float holeXValue = holeX.AsWorldCentimeters();
 					float holeZValue = holeZ.AsWorldCentimeters();
@@ -591,6 +592,7 @@ bool UModumateObjectStatics::GetMoiHoleVerts(const FModumateObjectAssembly *Hole
 
 		return true;
 	}
+#endif
 
 	return false;
 }
@@ -601,7 +603,7 @@ bool UModumateObjectStatics::GetMoiHoleVerts(AActor *TargetActor, TArray<FVector
 
 	if (TargetActor != nullptr)
 	{
-		const FModumateObjectAssembly* holeAssembly = nullptr;
+		const FBIMAssemblySpec* holeAssembly = nullptr;
 
 		UWorld *world = TargetActor->GetWorld();
 		AEditModelGameState_CPP *gameState = world->GetGameState<AEditModelGameState_CPP>();
@@ -618,7 +620,7 @@ bool UModumateObjectStatics::GetMoiHoleVerts(AActor *TargetActor, TArray<FVector
 			if ((compoundMeshActor->TempObjectToolMode != EToolMode::VE_NONE) &&
 				!compoundMeshActor->TempAssemblyKey.IsNone())
 			{
-				holeAssembly = gameState->GetAssemblyByKey_DEPRECATED(compoundMeshActor->TempObjectToolMode, compoundMeshActor->TempAssemblyKey);
+				holeAssembly = gameState->Document.PresetManager.GetAssemblyByKey(compoundMeshActor->TempObjectToolMode, compoundMeshActor->TempAssemblyKey);
 			}
 		}
 
@@ -628,7 +630,7 @@ bool UModumateObjectStatics::GetMoiHoleVerts(AActor *TargetActor, TArray<FVector
 	return false;
 }
 
-bool UModumateObjectStatics::FindPortalTrimOverlaps(FModumateObjectInstance *wall, const FModumateObjectAssembly &portalAssembly, const FTransform &portalTransform,
+bool UModumateObjectStatics::FindPortalTrimOverlaps(FModumateObjectInstance *wall, const FBIMAssemblySpec &portalAssembly, const FTransform &portalTransform,
 	TArray<FModumateObjectInstance *> &outTrimsToDelete,
 	TMap<FModumateObjectInstance *, TPair<FVector2D, FVector2D>> &outTrimsToSplit,
 	TMap<FModumateObjectInstance *, FVector2D> &outTrimsToModify)
@@ -1298,12 +1300,12 @@ bool UModumateObjectStatics::GetMountedTransform(const FVector &MountOrigin, con
 }
 
 bool UModumateObjectStatics::GetFFEMountedTransform(
-	const FModumateObjectAssembly *Assembly, const FSnappedCursor &SnappedCursor, FTransform &OutTransform)
+	const FBIMAssemblySpec *Assembly, const FSnappedCursor &SnappedCursor, FTransform &OutTransform)
 {
 	FVector localDesiredNormal, localDesiredTangent;
 	if (!SnappedCursor.HitNormal.IsNearlyZero() && ensure(Assembly &&
-		Assembly->TryGetProperty(BIM::Parameters::Normal, localDesiredNormal) &&
-		Assembly->TryGetProperty(BIM::Parameters::Tangent, localDesiredTangent)))
+		Assembly->CachedAssembly.TryGetProperty(BIM::Parameters::Normal, localDesiredNormal) &&
+		Assembly->CachedAssembly.TryGetProperty(BIM::Parameters::Tangent, localDesiredTangent)))
 	{
 		return GetMountedTransform(SnappedCursor.WorldPosition, SnappedCursor.HitNormal,
 			localDesiredNormal, localDesiredTangent, OutTransform);

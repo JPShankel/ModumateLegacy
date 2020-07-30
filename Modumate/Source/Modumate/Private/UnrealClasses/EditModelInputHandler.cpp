@@ -149,29 +149,15 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	}
 	case EInputCommand::Undo:
 	{
-		if (Controller->IsCraftingWidgetActive())
-		{
-			return false;
-		}
-		else
-		{
-			Controller->ClearTextInputs();
-			Controller->ModumateCommand(FModumateCommand(Commands::kUndo));
-			return true;
-		}
+		Controller->ClearTextInputs();
+		Controller->ModumateCommand(FModumateCommand(Commands::kUndo));
+		return true;
 	}
 	case EInputCommand::Redo:
 	{
-		if (Controller->IsCraftingWidgetActive())
-		{
-			return false;
-		}
-		else
-		{
-			Controller->ClearTextInputs();
-			Controller->ModumateCommand(FModumateCommand(Commands::kRedo));
-			return true;
-		}
+		Controller->ClearTextInputs();
+		Controller->ModumateCommand(FModumateCommand(Commands::kRedo));
+		return true;
 	}
 	case EInputCommand::TakeScreenshot:
 	{

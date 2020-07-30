@@ -2,7 +2,7 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelCountertopTool.h"
 
-#include "Database/ModumateObjectAssembly.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"

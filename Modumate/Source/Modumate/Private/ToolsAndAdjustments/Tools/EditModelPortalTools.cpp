@@ -81,11 +81,13 @@ void UPortalToolBase::SetupCursor()
 	CursorActor->SetActorEnableCollision(false);
 
 	auto *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	const FModumateObjectAssembly *obAsm = gameState->GetAssemblyByKey(AssemblyKey);
+	const FBIMAssemblySpec *obAsm = gameState->Document.PresetManager.GetAssemblyByKey(GetToolMode(),AssemblyKey);
 	bValidPortalConfig = false;
 
 	float invMul = Inverted ? 1 : -1;
-	if (obAsm && obAsm->PortalConfiguration.IsValid())
+#ifdef REMOVE_OLD_PORTALS
+	if (obAsm && obAsm->CachedAssembly.PortalConfiguration.IsValid())
+#endif
 	{
 		bValidPortalConfig = true;
 
@@ -314,18 +316,18 @@ UDoorTool::UDoorTool(const FObjectInitializer& ObjectInitializer)
 
 bool UDoorTool::BeginUse()
 {
-	if (HostID != 0 && !bHasBoringError)
+	const FBIMAssemblySpec* assembly = Document->PresetManager.GetAssemblyByKey(EToolMode::VE_DOOR, AssemblyKey);
+
+	FModumateObjectInstance* parent = Document->GetObjectById(HostID);
+
+	if (assembly == nullptr || parent == nullptr)
 	{
-		Controller->ModumateCommand(
-			FModumateCommand(Commands::kAddDoor)
-			.Param(Parameters::kObjectID, HostID)
-			.Param(Parameters::kLocation, RelativePos)
-			.Param(Parameters::kQuaternion, RelativeRot)
-			.Param(Parameters::kInverted,Inverted)
-			.Param(Parameters::kAssembly, AssemblyKey)
-		);
+		return false;
 	}
-	return false;
+
+	Document->MakePortalAt_DEPRECATED(GetWorld(), EObjectType::OTDoor, HostID, RelativePos, RelativeRot, false, *assembly);
+
+	return true;
 }
 
 UWindowTool::UWindowTool(const FObjectInitializer& ObjectInitializer)
@@ -335,16 +337,14 @@ UWindowTool::UWindowTool(const FObjectInitializer& ObjectInitializer)
 
 bool UWindowTool::BeginUse()
 {
-	if (HostID != 0 && !bHasBoringError)
+	const FBIMAssemblySpec* assembly = Document->PresetManager.GetAssemblyByKey(EToolMode::VE_WINDOW, AssemblyKey);
+
+	if (assembly == nullptr)
 	{
-		Controller->ModumateCommand(
-			FModumateCommand(Commands::kAddWindow)
-			.Param(Parameters::kObjectID, HostID)
-			.Param(Parameters::kLocation, RelativePos)
-			.Param(Parameters::kQuaternion, RelativeRot)
-			.Param(Parameters::kInverted,Inverted)
-			.Param(Parameters::kAssembly,AssemblyKey)
-		);
+		return false;
 	}
-	return false;
+
+	Document->MakePortalAt_DEPRECATED(GetWorld(), EObjectType::OTWindow, HostID, RelativePos, RelativeRot, false, *assembly);
+
+	return true;
 }

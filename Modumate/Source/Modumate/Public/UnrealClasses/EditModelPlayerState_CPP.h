@@ -150,9 +150,6 @@ public:
 	void CopySelectedToClipboard(const FModumateDocument &document);
 	void Paste(FModumateDocument &document) const;
 
-	FModumateObjectAssembly SetTemporaryAssembly(EToolMode mode, const FModumateObjectAssembly &assembly);
-	const FModumateObjectAssembly *GetTemporaryAssembly(EToolMode mode) const;
-
 	void DebugShowWallProfiles(const TArray<Modumate::FModumateObjectInstance *> &walls);
 
 	UPROPERTY()
@@ -233,5 +230,4 @@ protected:
 	TArray<Modumate::FStructurePoint> TempObjectStructurePoints, CurSelectionStructurePoints;
 	TArray<Modumate::FStructureLine> TempObjectStructureLines, CurSelectionStructureLines;
 	TSet<Modumate::FModumateObjectInstance *> CurViewGroupObjects;
-	TMap<EToolMode, FModumateObjectAssembly> TemporaryAssemblies;
 };

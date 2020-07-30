@@ -215,6 +215,7 @@ namespace Modumate {
 			const FNameType PartSet = TEXT("PartSet");
 			const FNameType Pattern = TEXT("Pattern");
 			const FNameType Preset = TEXT("Preset");
+			const FNameType ProfileKey = TEXT("ProfileKey");
 			const FNameType Scale = TEXT("Scale");
 			const FNameType Slope = TEXT("Slope");
 			const FNameType StyleComments = TEXT("StyleComments");

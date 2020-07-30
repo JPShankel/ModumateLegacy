@@ -71,8 +71,6 @@ namespace Modumate
 		// Crafting
 		MODUMATE_COMMAND(kUpdateCraftingPreset, "update_crafting_preset");
 		MODUMATE_COMMAND(kRemovePresetProjectAssembly, "remove_preset_project_assembly");
-		MODUMATE_COMMAND(kCreateNewAssembly_DEPRECATED, "create_new_assembly");
-		MODUMATE_COMMAND(kRemoveAssembly_DEPRECATED, "remove_assembly");
 	}
 
 	namespace Parameters

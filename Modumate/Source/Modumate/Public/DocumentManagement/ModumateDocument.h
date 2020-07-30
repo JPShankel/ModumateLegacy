@@ -89,7 +89,7 @@ public:
 	int32 GetNextAvailableID() const { return NextID; }
 
 	// Document modifiers
-	int32 CreateFFE(UWorld *world, int32 parentID, const FVector &loc, const FQuat &rot, const FModumateObjectAssembly &obAsm, int32 parentFaceIdx = INDEX_NONE);
+	int32 CreateFFE(UWorld *world, int32 parentID, const FVector &loc, const FQuat &rot, const FBIMAssemblySpec &obAsm, int32 parentFaceIdx = INDEX_NONE);
 
 	const TArray<Modumate::FModumateObjectInstance*>& GetObjectInstances() const { return ObjectInstanceArray; }
 	TArray<Modumate::FModumateObjectInstance*>& GetObjectInstances() { return ObjectInstanceArray; }
@@ -104,7 +104,7 @@ public:
 	void EndUndoRedoMacro();
 	bool InUndoRedoMacro() const;
 
-	void SetAssemblyForObjects(UWorld *world, TArray<int32> ids, const FModumateObjectAssembly &assembly);
+	void SetAssemblyForObjects(UWorld *world, TArray<int32> ids, const FBIMAssemblySpec &assembly);
 
 	void SetDefaultWallHeight(float height);
 	float GetDefaultWallHeight() const { return DefaultWallHeight; } // return DWH from private;
@@ -126,12 +126,11 @@ public:
 
 	void AdjustMoiHoleVerts(int32 id, const FVector &location, const TArray<FVector> &holeVerts);
 
-	int32 MakePortalAt(UWorld *world, EObjectType portalType, int32 parentID, const FVector2D &relativePos, const FQuat &relativeRot, bool inverted, const FModumateObjectAssembly &pal);
 	void TransverseObjects(const TArray<Modumate::FModumateObjectInstance*> &obs);
 
 	int32 MakeRoom(UWorld *World, const TArray<Modumate::FSignedID> &FaceIDs);
 	int32 MakePointsObject(UWorld *world, const TArray<int32> &idsToDelete, const TArray<FVector> &points, const TArray<int32> &controlIndices,
-		EObjectType objectType, bool inverted, const FModumateObjectAssembly &assembly, int32 parentID, bool bUpdateSiblingGeometry = false);
+		EObjectType objectType, bool inverted, const FBIMAssemblySpec &assembly, int32 parentID, bool bUpdateSiblingGeometry = false);
 
 	bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, const TArray<int32> &IDs, EObjectType objectType, int32 parentID, TArray<int32> &OutObjIDs);
 
@@ -190,7 +189,7 @@ private:
 	bool RestoreObjectImpl(Modumate::FModumateObjectInstance *ob);
 	bool RestoreChildrenImpl(Modumate::FModumateObjectInstance *obj);
 
-	Modumate::FModumateObjectInstance* CreateOrRestoreObjFromAssembly(UWorld *World, const FModumateObjectAssembly &Assembly,
+	Modumate::FModumateObjectInstance* CreateOrRestoreObjFromAssembly(UWorld *World, const FBIMAssemblySpec &Assembly,
 		int32 ID, int32 ParentID = 0, const FVector &Extents = FVector::ZeroVector,
 		const TArray<FVector> *CPS = nullptr, const TArray<int32> *CPI = nullptr, bool bInverted = false);
 
@@ -286,26 +285,12 @@ public:
 	TArray<FPartyProfile> SecondaryParties;
 	TArray<FDraftRevision> Revisions;
 
-	/*
-	Assemblies
-	TODO: Assembly management to all happen through the preset manager and be associated with object types instead of tool modes
-	Functions will remain here, refactored for object types, to take advantage of undo/redo
-	*/
 	FPresetManager PresetManager;
-
-	// to be deprecated in favor of a single "update assembly" function that will call through to the preset manager
-	// assemblies to be accessed by object type in the preset manager, not by the tool type here
-	TArray<FModumateObjectAssembly> GetAssembliesForToolMode_DEPRECATED(UWorld *world, EToolMode mode) const;
-	FModumateObjectAssembly CreateNewAssembly_DEPRECATED(UWorld *world, EToolMode mode, const FModumateObjectAssembly &assembly);
-	FModumateObjectAssembly OverwriteAssembly_DEPRECATED(UWorld *world, EToolMode mode, const FModumateObjectAssembly &assembly);
-	FModumateObjectAssembly CreateOrOverwriteAssembly_DEPRECATED(UWorld *world, EToolMode mode, const FModumateObjectAssembly &assembly);
-
-	// DDL 1.0 presets imported from the "marketplace," to be replaced by built in DDL 2.0 presets
-	void ImportPresetsIfMissing_DEPRECATED(UWorld *world, const TArray<FName> &presets);
 		
 	// Not deprecated, but will be refactored for object type and preset key
-	void OnAssemblyUpdated(UWorld *world, EToolMode mode, const FModumateObjectAssembly &assembly);
-	bool RemoveAssembly(UWorld *world, EToolMode toolMode, const FName &assemblyKey, const FName &replacementKey);
+	void OnAssemblyUpdated(UWorld *world, EToolMode mode, const FBIMAssemblySpec &assembly);
+
+	int32 MakePortalAt_DEPRECATED(UWorld* World,EObjectType PortalType,int32 ParentID,const FVector2D& RelativePos,const FQuat& RelativeRot,bool Inverted,const FBIMAssemblySpec& Pal);
 
 private:
 	// TODO: All sequencing/coding schemes etc to be handled by a single key pool in the preset manager

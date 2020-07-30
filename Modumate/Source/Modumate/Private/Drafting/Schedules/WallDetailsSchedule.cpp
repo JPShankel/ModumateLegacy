@@ -4,7 +4,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "Drafting/ModumateDraftingTags.h"
-#include "Database/ModumateObjectAssembly.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 #include "Drafting/Schedules/ScheduleGrid.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 
@@ -41,14 +41,16 @@ namespace Modumate {
 		};
 		//*/
 
-		TArray<FModumateObjectAssembly> assemblies = doc->GetAssembliesForToolMode_DEPRECATED(World, EToolMode::VE_WALL);
+
+		TArray<FBIMAssemblySpec> assemblies;
+		doc->PresetManager.GetProjectAssembliesForObjectType(EObjectType::OTWallSegment,assemblies);
 		ensureAlways(assemblies.Num() > 0);
 
 		static const FText InchesFormat = FText::FromString(TEXT("{0}\""));
 
 		for (int32 i = 0; i < assemblies.Num(); i++)
 		{
-			FModumateObjectAssembly assembly = assemblies[i];
+			FBIMAssemblySpec assembly = assemblies[i];
 
 			// Icon thumbnail
 			FName key = UThumbnailCacheManager::GetThumbnailKeyForAssembly(assembly);
@@ -62,7 +64,7 @@ namespace Modumate {
 			TArray<TSharedPtr<FDraftingComposite>> topRow;
 
 			// Materials
-			TSharedPtr<FMaterialTagSequence> materialLayers = MakeShareable(new FMaterialTagSequence(assembly.Layers));
+			TSharedPtr<FMaterialTagSequence> materialLayers = MakeShareable(new FMaterialTagSequence(assembly));
 			materialLayers->InitializeBounds(drawingInterface);
 			TSharedPtr<FFilledRoundedRectTag> layerTag = MakeShareable(new FFilledRoundedRectTag(materialLayers));
 			layerTag->InitializeBounds(drawingInterface);
@@ -71,7 +73,7 @@ namespace Modumate {
 			assemblyGrid->RowHeight = layerTag->Dimensions.Y.AsFloorplanInches() + 2.0f * Margin;
 
 			// Function contains custom name
-			topRow.Add(MakeDraftingText(FText::FromString(assembly.GetProperty(BIM::Parameters::Name))));
+			topRow.Add(MakeDraftingText(FText::FromString(assembly.CachedAssembly.GetProperty(BIM::Parameters::Name))));
 
 			// Category columns is blank
 			// column widths are implicitly set by subsequent rows
@@ -85,7 +87,7 @@ namespace Modumate {
 			topRow.Add(MakeShareable(new FDraftingComposite()));
 			topRow.Add(MakeShareable(new FDraftingComposite()));
 
-			topRow.Add(MakeDraftingText(FText::FromString(assembly.GetProperty(BIM::Parameters::Comments))));
+			topRow.Add(MakeDraftingText(FText::FromString(assembly.CachedAssembly.GetProperty(BIM::Parameters::Comments))));
 
 			assemblyGrid->MakeRow(topRow);
 
@@ -105,10 +107,10 @@ namespace Modumate {
 
 			// rows are associated with each wall layer
 			//*
-			for (int32 j = 0; j < assembly.Layers.Num(); j++)
+			for (int32 j = 0; j < assembly.CachedAssembly.Layers.Num(); j++)
 			{
 				TArray<TSharedPtr<FDraftingComposite>> row;
-				auto layer = assembly.Layers[j];
+				auto layer = assembly.CachedAssembly.Layers[j];
 
 				// ID
 				TSharedPtr<FMaterialTag> materialTag = MakeShareable(new FMaterialTag());

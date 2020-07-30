@@ -253,7 +253,7 @@ namespace Modumate
 	void FMOITrimImpl::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 	{
 		// Updated cached values for this trim
-		if (!ensure(DynamicMeshActor.IsValid() && MOI && (MOI->GetAssembly().Layers.Num() == 1) &&
+		if (!ensure(DynamicMeshActor.IsValid() && MOI && (MOI->GetAssembly().CachedAssembly.Layers.Num() == 1) &&
 			UModumateObjectStatics::GetTrimValuesFromControls(MOI->GetControlPoints(), MOI->GetControlPointIndices(),
 				StartAlongEdge, EndAlongEdge, EdgeStartIndex, EdgeEndIndex, EdgeMountIndex,
 				bUseLengthAsPercent, MiterOptionStart, MiterOptionEnd)))
@@ -278,7 +278,7 @@ namespace Modumate
 			TrimDir = (TrimEndPos - TrimStartPos).GetSafeNormal();
 
 			FVector scaleVector;
-			if (!MOI->GetAssembly().TryGetProperty(BIM::Parameters::Scale, scaleVector))
+			if (!MOI->GetAssembly().CachedAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
 			{
 				scaleVector = FVector::OneVector;
 			}

@@ -4,6 +4,7 @@
 #include "BIMKernel/BIMTagPath.h"
 #include "BIMKernel/BIMNodeEditor.h"
 #include "BIMKernel/BIMWidgetStatics.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 
 static bool testTags()
 {
@@ -261,7 +262,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	Modumate::BIM::FCraftingTreeNodeInstancePool instancePool;
 	Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr node = instancePool.CreateNodeInstanceFromPreset(presetCollection, 0, layeredAssemblies[0],0,0);
 
-	Modumate::BIM::FModumateAssemblyPropertySpec outSpec;
+	FBIMAssemblySpec outSpec;
 	if (!ensureAlways(instancePool.PresetToSpec(layeredAssemblies[0], presetCollection, outSpec) == ECraftingResult::Success))
 	{
 		return false;

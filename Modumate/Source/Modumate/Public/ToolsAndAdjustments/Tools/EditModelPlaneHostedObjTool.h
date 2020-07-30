@@ -3,7 +3,7 @@
 #pragma once
 #include "ToolsAndAdjustments/Tools/EditModelMetaPlaneTool.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "Database/ModumateObjectAssembly.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 
 #include "EditModelPlaneHostedObjTool.generated.h"
 
@@ -24,7 +24,7 @@ protected:
 	bool bInverted;
 	bool bRequireHoverMetaPlane;
 	EObjectType ObjectType;
-	FModumateObjectAssembly ObjAssembly;
+	FBIMAssemblySpec ObjAssembly;
 	int32 LastValidTargetID;
 	bool bWasShowingSnapCursor;
 

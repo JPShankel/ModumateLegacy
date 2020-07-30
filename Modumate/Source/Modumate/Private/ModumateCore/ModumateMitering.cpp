@@ -58,7 +58,7 @@ namespace Modumate
 				return false;
 			}
 
-			const auto &layers = PlaneHostedObj->GetAssembly().Layers;
+			const auto &layers = PlaneHostedObj->GetAssembly().CachedAssembly.Layers;
 			int32 numLayers = layers.Num();
 			OutLayerGeometries.SetNum(numLayers);
 

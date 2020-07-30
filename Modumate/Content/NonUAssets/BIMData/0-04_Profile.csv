@@ -1,63 +1,62 @@
-TYPENAME,,0Profile,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+TYPENAME,,,,0Profile,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PROPERTY,,STRING,,Name,,Preset.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PROPERTY,,STRING,,ProfileKey,,Node.ProfileKey,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,PRIVATE,,Mesh Asset Path,,Preset.MeshAssetPath,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,6,6,1,1,1,1,2,1,1,1,1,1,1,1
-TAGPATHS,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=ID,ID,DataType=Properties,Preset.Name,Node.ProfileKey,Preset.MeshAssetPath,DataType=TG_Parent Node+CategoryPath,2ModuleWDProfile --> Corrugated Plastic Sheet,2ModuleWDProfile --> Corrugated Steel Deck,2ModuleWDProfile --> Steel C-Channel,2ModuleWDProfile --> Steel C-H Channel,2ModuleWDProfile --> Steel Hat Channel,2ModuleWDProfile --> Steel Web Joist,2ModuleWDProfile --> Steel Z Channel,#REF!,2ModuleWDProfile --> Wood Lumber,2ModuleWDProfile --> Wood Web Joist,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",2Gap2D --> Tile Gaps,2Gap2D --> Masonry Gaps,2ExtrudedProfile --> Beam/Column --> Concrete Rectangular,2ExtrudedProfile --> Beam/Column --> Concrete Round,2ExtrudedProfile --> Beam/Column --> Steel C,2ExtrudedProfile --> Beam/Column --> Steel HSS,2ExtrudedProfile --> Beam/Column --> Steel L,2ExtrudedProfile --> Beam/Column --> Steel Tube,2ExtrudedProfile --> Beam/Column --> Steel W,2ExtrudedProfile --> Beam/Column --> Steel WT,2ExtrudedProfile --> Beam/Column --> Stone Rectangular,2ExtrudedProfile --> Beam/Column --> Stone Round,2ExtrudedProfile --> Beam/Column --> Wood Rectangular,2ExtrudedProfile --> Beam/Column --> Wood Round
-PRESET,,0Profile,,"0Profile
-Corrugated Plastic",,Corrugated Plastic,CorrugatedPlastic,,,X,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Corrugated Steel",,Corrugated Steel,CorrugatedSteel,,,,X,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Steel C-Stud",,Steel C-Stud,SteelCStud,,,,,X,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Steel C-H Stud",,Steel C-H Stud,SteelCHStud,,,,,,X,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Steel Hat Channel",,Steel Hat Channel,SteelHatChannel,,,,,,,X,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Steel Web Joist",,Steel Web Joist,SteelWebJoist,,,,,,,,X,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Steel Z Channel",,Steel Z Channel,SteelZChannel,/Game/ShoppingData/Profiles/SteelProfile-Z,,,,,,,,X,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Solid Rectangle",,Solid Rectangle,SolidRectangle,,,,,,,,,,X,X,,,,,X,,,,,,,,X,,X,
-PRESET,,0Profile,,"0Profile
-Wood Web Joist",,Wood Web Joist,WoodWebJoist,,,,,,,,,,,,X,,,,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Wood-Chord Steel-Web Joist",,Wood-Chord Steel-Web Joist,WoodChordSteelWebJoist,,,,,,,,,,,,,X,,,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Solid Circle",,Solid Circle,SolidCircle,,,,,,,,,,,,,,,,,X,,,,,,,,X,,X
-PRESET,,0Profile,,"0Profile
-Wide Flange, W",,"Wide Flange, W",WideFlangeSteel,/Game/ShoppingData/Profiles/SteelProfile-W,,,,,,,,,,,,,,,,,,,,,X,,,,,
-PRESET,,0Profile,,"0Profile
-Channel, C",,"Channel, C",CChannelSteel,/Game/ShoppingData/Profiles/SteelProfile-C,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Hollow Structural Section, HSS",,"Hollow Structural Section, HSS",HSS,/Game/ShoppingData/Profiles/SteelProfile-HSS-02,,,,,,,,,,,,,,,,,,X,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Tube Steel",,Tube Steel,TubeSteel,/Game/ShoppingData/Profiles/SteelProfile-Tube,,,,,,,,,,,,,,,,,,,,X,,,,,,
-PRESET,,0Profile,,"0Profile
-Angle, L",,"Angle, L",LAngleSteel,/Game/ShoppingData/Profiles/SteelProfile-L,,,,,,,,,,,,,,,,,,,X,,,,,,,
-PRESET,,0Profile,,"0Profile
-Tee, WT",,"Tee, WT",TeeSteel,/Game/ShoppingData/Profiles/SteelProfile-WT,,,,,,,,,,,,,,,,,,,,,,X,,,,
-PRESET,,0Profile,,"0Profile
-Plate Section",,Plate Section,PlateSteel,/Game/ShoppingData/Profiles/SteelProfile-Plate,,,,,,,,,,,,,,,,,,,X,,,,,,,
-PRESET,,0Profile,,"0Profile
-Rectangular Mullion",,Rectangular Mullion,MullionRectangular,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-L Corner Mullion",,L Corner Mullion,MullionCornerL,/Game/ShoppingData/Profiles/Mullion-LShaped-01,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Mullion Fin, Oblong",,"Mullion Fin, Oblong",MullionOblong,/Game/ShoppingData/Profiles/Mullion-Fin-Oblong-01,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Flat",,Flat,GapFlat,,,,,,,,,,,,,,X,X,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Curved",,Curved,GapCurved,,,,,,,,,,,,,,X,X,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Raked",,Raked,GapRaked,,,,,,,,,,,,,,X,X,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-V",,V,GapV,,,,,,,,,,,,,,X,X,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Upslope",,Upslope,GapUpslope,,,,,,,,,,,,,,X,X,,,,,,,,,,,,
-PRESET,,0Profile,,"0Profile
-Downslope",,Downslope,GapDownslope,,,,,,,,,,,,,,X,X,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Mesh Asset Path,,Node.Mesh,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,Presets,,,,,,1,1,1,1,1,1,1,1,1,1,1,6,6,1,1,1,1,2,1,1,1,1,1,1,1
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Node.ProfileKey,Node.Mesh,DataType=TG_Parent Node+CategoryPath,2ModuleWDProfile --> Corrugated Plastic Sheet,2ModuleWDProfile --> Corrugated Steel Deck,2ModuleWDProfile --> Steel C-Channel,2ModuleWDProfile --> Steel C-H Channel,2ModuleWDProfile --> Steel Hat Channel,2ModuleWDProfile --> Steel Web Joist,2ModuleWDProfile --> Steel Z Channel,#REF!,2ModuleWDProfile --> Wood Lumber,2ModuleWDProfile --> Wood Web Joist,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",2Gap2D --> Tile Gaps,2Gap2D --> Masonry Gaps,2ExtrudedProfile --> Beam/Column --> ConcreteRectangular,2ExtrudedProfile --> Beam/Column --> ConcreteRound,2ExtrudedProfile --> Beam/Column --> SteelC,2ExtrudedProfile --> Beam/Column --> SteelHSS,2ExtrudedProfile --> Beam/Column --> SteelL,2ExtrudedProfile --> Beam/Column --> SteelTube,2ExtrudedProfile --> Beam/Column --> SteelW,2ExtrudedProfile --> Beam/Column --> SteelWT,2ExtrudedProfile --> Beam/Column --> StoneRectangular,2ExtrudedProfile --> Beam/Column --> StoneRound,2ExtrudedProfile --> Beam/Column --> WoodRectangular,2ExtrudedProfile --> Beam/Column --> WoodRound
+PRESET,,"0Profile
+Corrugated Plastic",,0Profile,,Corrugated Plastic,CorrugatedPlastic,,,X,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0Profile
+Corrugated Steel",,0Profile,,Corrugated Steel,CorrugatedSteel,,,,X,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0Profile
+Steel C-Stud",,0Profile,,Steel C-Stud,SteelCStud,,,,,X,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0Profile
+Steel C-H Stud",,0Profile,,Steel C-H Stud,SteelCHStud,,,,,,X,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0Profile
+Steel Hat Channel",,0Profile,,Steel Hat Channel,SteelHatChannel,,,,,,,X,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0Profile
+Steel Web Joist",,0Profile,,Steel Web Joist,SteelWebJoist,,,,,,,,X,,,,,,,,,,,,,,,,,,,
+PRESET,,"0Profile
+Steel Z Channel",,0Profile,,Steel Z Channel,SteelZChannel,/Game/ShoppingData/Profiles/SteelProfile-Z,,,,,,,,X,,,,,,,,,,,,,,,,,,
+PRESET,,"0Profile
+Solid Rectangle",,0Profile,,Solid Rectangle,SolidRectangle,,,,,,,,,,X,X,,,,,X,,,,,,,,X,,X,
+PRESET,,"0Profile
+Wood Web Joist",,0Profile,,Wood Web Joist,WoodWebJoist,,,,,,,,,,,,X,,,,,,,,,,,,,,,
+PRESET,,"0Profile
+Wood-Chord Steel-Web Joist",,0Profile,,Wood-Chord Steel-Web Joist,WoodChordSteelWebJoist,,,,,,,,,,,,,X,,,,,,,,,,,,,,
+PRESET,,"0Profile
+Solid Circle",,0Profile,,Solid Circle,SolidCircle,,,,,,,,,,,,,,,,,X,,,,,,,,X,,X
+PRESET,,"0Profile
+Wide Flange, W",,0Profile,,"Wide Flange, W",WideFlangeSteel,/Game/ShoppingData/Profiles/SteelProfile-W,,,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"0Profile
+Channel, C",,0Profile,,"Channel, C",CChannelSteel,/Game/ShoppingData/Profiles/SteelProfile-C,,,,,,,,,,,,,,,,,X,,,,,,,,,
+PRESET,,"0Profile
+Hollow Structural Section, HSS",,0Profile,,"Hollow Structural Section, HSS",HSS,/Game/ShoppingData/Profiles/SteelProfile-HSS-02,,,,,,,,,,,,,,,,,,X,,,,,,,,
+PRESET,,"0Profile
+Tube Steel",,0Profile,,Tube Steel,TubeSteel,/Game/ShoppingData/Profiles/SteelProfile-Tube,,,,,,,,,,,,,,,,,,,,X,,,,,,
+PRESET,,"0Profile
+Angle, L",,0Profile,,"Angle, L",LAngleSteel,/Game/ShoppingData/Profiles/SteelProfile-L,,,,,,,,,,,,,,,,,,,X,,,,,,,
+PRESET,,"0Profile
+Tee, WT",,0Profile,,"Tee, WT",TeeSteel,/Game/ShoppingData/Profiles/SteelProfile-WT,,,,,,,,,,,,,,,,,,,,,,X,,,,
+PRESET,,"0Profile
+Plate Section",,0Profile,,Plate Section,PlateSteel,/Game/ShoppingData/Profiles/SteelProfile-Plate,,,,,,,,,,,,,,,,,,,X,,,,,,,
+PRESET,,"0Profile
+Rectangular Mullion",,0Profile,,Rectangular Mullion,MullionRectangular,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0Profile
+L Corner Mullion",,0Profile,,L Corner Mullion,MullionCornerL,/Game/ShoppingData/Profiles/Mullion-LShaped-01,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0Profile
+Mullion Fin, Oblong",,0Profile,,"Mullion Fin, Oblong",MullionOblong,/Game/ShoppingData/Profiles/Mullion-Fin-Oblong-01,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"0Profile
+Flat",,0Profile,,Flat,GapFlat,,,,,,,,,,,,,,X,X,,,,,,,,,,,,
+PRESET,,"0Profile
+Curved",,0Profile,,Curved,GapCurved,,,,,,,,,,,,,,X,X,,,,,,,,,,,,
+PRESET,,"0Profile
+Raked",,0Profile,,Raked,GapRaked,,,,,,,,,,,,,,X,X,,,,,,,,,,,,
+PRESET,,"0Profile
+V",,0Profile,,V,GapV,,,,,,,,,,,,,,X,X,,,,,,,,,,,,
+PRESET,,"0Profile
+Upslope",,0Profile,,Upslope,GapUpslope,,,,,,,,,,,,,,X,X,,,,,,,,,,,,
+PRESET,,"0Profile
+Downslope",,0Profile,,Downslope,GapDownslope,,,,,,,,,,,,,,X,X,,,,,,,,,,,,

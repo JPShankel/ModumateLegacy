@@ -40,13 +40,18 @@ void ACompoundMeshActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ACompoundMeshActor::MakeFromAssembly(const FModumateObjectAssembly &obAsm, const FVector &scale, bool bLateralInvert, bool bMakeCollision)
+void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const FVector &scale, bool bLateralInvert, bool bMakeCollision)
 {
 	// Figure out how many components we might need.
-	const FPortalConfiguration &portalConfig = obAsm.PortalConfiguration;
+
+#ifdef REMOVE_OLD_PORTALS
+	const FPortalConfiguration& portalConfig = obAsm.CachedAssembly.PortalConfiguration;
 	int32 maxNumMeshes = portalConfig.IsValid() ?
 		portalConfig.Slots.Num() :
-		obAsm.Layers.Num();
+		obAsm.CachedAssembly.Layers.Num();
+#endif
+
+	int32 maxNumMeshes = obAsm.CachedAssembly.Layers.Num();
 
 	for (int32 compIdx = 0; compIdx < StaticMeshComps.Num(); ++compIdx)
 	{
@@ -77,6 +82,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FModumateObjectAssembly &obAsm, 
 	const bool origDynamicStatus = GetIsDynamic();
 	SetIsDynamic(true);
 
+#ifdef REMOVE_OLD_PORTALS
 	// Now, set up portal meshes
 	if (portalConfig.IsValid())
 	{
@@ -90,9 +96,9 @@ void ACompoundMeshActor::MakeFromAssembly(const FModumateObjectAssembly &obAsm, 
 		for (int32 slotIdx = 0; slotIdx < numSlots; ++slotIdx)
 		{
 			const FPortalAssemblyConfigurationSlot &slot = portalConfig.Slots[slotIdx];
-			if (obAsm.PortalParts.Contains(slotIdx))
+			if (obAsm.CachedAssembly.PortalParts.Contains(slotIdx))
 			{
-				const FPortalPart &portalPart = obAsm.PortalParts.FindChecked(slotIdx);
+				const FPortalPart &portalPart = obAsm.CachedAssembly.PortalParts.FindChecked(slotIdx);
 
 				if (!portalPart.Mesh.EngineMesh.IsValid())
 				{
@@ -435,13 +441,14 @@ void ACompoundMeshActor::MakeFromAssembly(const FModumateObjectAssembly &obAsm, 
 	}
 	// Otherwise, set up layered meshes
 	else
+#endif
 	{
 		FVector objectScale = bLateralInvert ? FVector(1, -1, 1) : FVector::OneVector;
 
-		int32 numLayers = obAsm.Layers.Num();
+		int32 numLayers = obAsm.CachedAssembly.Layers.Num();
 		for (int32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
 		{
-			auto &layer = obAsm.Layers[layerIdx];
+			auto &layer = obAsm.CachedAssembly.Layers[layerIdx];
 			if (layer.Mesh.EngineMesh == nullptr)
 			{
 				continue;

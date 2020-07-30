@@ -14,7 +14,7 @@ namespace Modumate
 		bool WantsInvertHandle;
 
 		virtual FVector GetCorner(int32 index) const override;
-		float CalcThickness(const TArray<FModumateObjectAssemblyLayer> &floorLayers) const;
+		float CalcThickness(const FBIMAssemblySpec &Assembly) const;
 		virtual void SetupDynamicGeometry() override;
 		virtual void UpdateDynamicGeometry() override;
 		void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller);

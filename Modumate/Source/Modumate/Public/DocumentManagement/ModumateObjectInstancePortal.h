@@ -56,7 +56,7 @@ namespace Modumate
 		virtual FModumateWallMount GetWallMountForSelf(int32 originIndex) const override;
 		virtual void SetWallMountForSelf(const FModumateWallMount &wm) override;
 
-		static void GetControlPointsFromAssembly(const FModumateObjectAssembly &ObjectAssembly, TArray<FVector> &ControlPoints);
+		static void GetControlPointsFromAssembly(const FBIMAssemblySpec &ObjectAssembly, TArray<FVector> &ControlPoints);
 
 		virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override;
 

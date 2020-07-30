@@ -28,22 +28,8 @@ public:
 
 	FModumateDocument Document;
 
-	const FModumateObjectAssembly *GetAssemblyByKey_DEPRECATED(EToolMode mode, const FName &key) const;
-	const FModumateObjectAssembly *GetAssemblyByKey(const FName &key) const;
-
-	// WIP Import Marketplace Assemblies to normal assemblies db
-	UFUNCTION(BlueprintCallable, Category = "Shopping")
-	void ImportAssemblyFromMarketplace(EToolMode mode, const FName &key);
-
 	UFUNCTION(BlueprintCallable, Category = "Shopping")
 	TArray<float> GetComponentsThicknessWithKey(EToolMode mode, const FString &assemblyKey) const;
-
-	// Return number of affected
-	UFUNCTION(BlueprintCallable, Category = "Shopping")
-	int32 CheckRemoveAssembly(EToolMode mode, const FString &assemblyKey);
-
-	UFUNCTION(BlueprintCallable, Category = "Shopping")
-	bool DoRemoveAssembly(EToolMode mode, const FString &assemblyKey, const FString &replaceAssemblyKey);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
 	bool GetPortalToolTip(EToolMode mode, const FName &assemblyKey, FString &type, FString &configName, TArray<FString> &parts);

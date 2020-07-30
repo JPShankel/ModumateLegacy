@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Database/ModumateObjectAssembly.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 #include "BIMKernel/BIMLegacyPattern.h"
 #include "Database/ModumateDataCollection.h"
 #include "DocumentManagement/ModumateSerialization.h"
@@ -23,7 +23,6 @@ class MODUMATE_API FModumateDatabase
 private:
 
 	// Primitive type
-	TModumateDataCollection<FModumateObjectAssemblyLayer> FFEParts;
 	TModumateDataCollection<FArchitecturalMaterial> AMaterials;
 	TModumateDataCollection<FArchitecturalMesh> AMeshes;
 	TModumateDataCollection<FCustomColor> NamedColors;
@@ -32,7 +31,6 @@ private:
 
 public:
 
-	TModumateDataCollection<FModumateObjectAssembly> FFEAssemblies;
 	TModumateDataCollection<FPortalPart> PortalParts;
 	TModumateDataCollection<Modumate::FRoomConfiguration> RoomConfigurations;
 	TModumateDataCollection<FStaticIconTexture> StaticIconTextures;
@@ -44,17 +42,17 @@ public:
 	TModumateDataCollection<Modumate::FPortalAssemblyConfigurationOptionSet> PortalConfigurationOptionSets;
 	TModumateDataCollection<Modumate::FCraftingPortalPartOptionSet> PortalPartOptionSets;
 
+	FPresetManager PresetManager;
 	FModumateDatabase();
 	~FModumateDatabase();
+
 
 	void Init();
 	void Shutdown();
 
 	// Read database
 	void ReadMeshData(UDataTable *data);
-	void ReadFFEPartData(UDataTable *data);
 	void ReadLightConfigData(UDataTable *data);
-	void ReadFFEAssemblyData(UDataTable *data);
 	void ReadColorData(UDataTable *data);
 	void ReadPortalPartData(UDataTable *data);
 	void ReadRoomConfigurations(UDataTable *data);
@@ -63,15 +61,16 @@ public:
 	void ReadCraftingPortalPartOptionSet(UDataTable *data);
 	void ReadCraftingProfileOptionSet(UDataTable *data);
 
-	void AddArchitecturalMaterial(const FName Key, const FString &Name, const FSoftObjectPath &AssetPath);
+	void AddArchitecturalMaterial(const FName &Key, const FString& Name, const FSoftObjectPath& AssetPath);
+	void AddArchitecturalMesh(const FName &Key, const FString& Name, const FSoftObjectPath& AssetPath);
+	void AddSimpleMesh(const FName& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 
 	void ReadPresetData();
 	void InitPresetManagerForNewDocument(FPresetManager &OutManager) const;
-	FPresetManager PresetManager;
-	void ReadMarketplace(UWorld *world);
 
 	// Data Access
-	const FArchitecturalMaterial *GetArchitecturalMaterialByKey(const FName &name) const;
+	const FArchitecturalMesh* GetArchitecturalMeshByKey(const FName& Key) const;
+	const FArchitecturalMaterial *GetArchitecturalMaterialByKey(const FName& Key) const;
 	const FCustomColor *GetCustomColorByKey(const FName &Key) const;
 	const FPortalPart *GetPortalPartByKey(const FName &Key) const;
 	const FSimpleMeshRef *GetSimpleMeshByKey(const FName &Key) const;

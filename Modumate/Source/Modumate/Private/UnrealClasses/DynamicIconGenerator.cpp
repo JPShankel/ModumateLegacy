@@ -101,7 +101,7 @@ bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FName &AsmKey, EToo
 	////////////////////////////////////////////////////////////////////
 	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 
-	const FModumateObjectAssembly *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
+	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
 	if (!assembly)
 	{
 		return false;
@@ -118,12 +118,12 @@ bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FName &AsmKey, EToo
 	IconDynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
 
 	// Slice each layer, assuming each layer is successfully made
-	for (int32 i = 0; i < assembly->Layers.Num(); ++i)
+	for (int32 i = 0; i < assembly->CachedAssembly.Layers.Num(); ++i)
 	{
 		if (IconDynamicMeshActor->ProceduralSubLayers[i])
 		{
 			FVector sliceLocation, sliceNormal;
-			GetWallSliceLocationNormal(i, assembly->Layers.Num(), p2, p1, WallHeight, sliceLocation, sliceNormal);
+			GetWallSliceLocationNormal(i, assembly->CachedAssembly.Layers.Num(), p2, p1, WallHeight, sliceLocation, sliceNormal);
 			UProceduralMeshComponent* otherHalfProcMesh;
 			UKismetProceduralMeshLibrary::SliceProceduralMesh(
 				IconDynamicMeshActor->ProceduralSubLayers[i],
@@ -161,7 +161,7 @@ bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FName &AsmKey, ETo
 	////////////////////////////////////////////////////////////////////
 	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 
-	const FModumateObjectAssembly *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
+	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
 	if (!assembly)
 	{
 		return false;
@@ -178,17 +178,17 @@ bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FName &AsmKey, ETo
 	IconDynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
 
 	// Slice each layer, assuming each layer is successfully made
-	for (int32 i = 0; i < assembly->Layers.Num(); ++i)
+	for (int32 i = 0; i < assembly->CachedAssembly.Layers.Num(); ++i)
 	{
 		if (IconDynamicMeshActor->ProceduralSubLayers[i])
 		{
 			FVector sliceLocation, sliceNormal;
 			bool bSliced;
-			float layerRatio = 1.f / assembly->Layers.Num();
+			float layerRatio = 1.f / assembly->CachedAssembly.Layers.Num();
 			FVector sliceStart = p4 + layerRatio * (p3 - p4);
 			FVector sliceEnd = p2 + layerRatio * (p1 - p2);
 
-			GetFloorSliceLocationNormal(i, assembly->Layers.Num(), sliceStart, sliceEnd, 0.f, sliceLocation, sliceNormal, bSliced);
+			GetFloorSliceLocationNormal(i, assembly->CachedAssembly.Layers.Num(), sliceStart, sliceEnd, 0.f, sliceLocation, sliceNormal, bSliced);
 			if (bSliced)
 			{
 				UProceduralMeshComponent* otherHalfProcMesh;
@@ -230,7 +230,7 @@ bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FName &AsmKey, ET
 	////////////////////////////////////////////////////////////////////
 	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 
-	const FModumateObjectAssembly *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
+	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
 	if (!assembly)
 	{
 		return false;
@@ -239,10 +239,10 @@ bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FName &AsmKey, ET
 	IconCompoundMeshActor->MakeFromAssembly(*assembly, FVector::OneVector, false, true);
 
 	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
-	float portalMinX = assembly->PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinX).AsWorldCentimeters();
-	float portalMaxX = assembly->PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMaxX).AsWorldCentimeters();
-	float portalMinZ = assembly->PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinZ).AsWorldCentimeters();
-	float portalMaxZ = assembly->PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMaxZ).AsWorldCentimeters();
+	float portalMinX = assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinX).AsWorldCentimeters();
+	float portalMaxX = assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMaxX).AsWorldCentimeters();
+	float portalMinZ = assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinZ).AsWorldCentimeters();
+	float portalMaxZ = assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMaxZ).AsWorldCentimeters();
 	float portalWidth = portalMaxX - portalMinX;
 	float portalHeight = portalMaxZ - portalMinZ;
 
@@ -271,19 +271,22 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FName &AsmKey, U
 ////////////////////////////////////////////////////////////////////
 	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 
-	const FModumateObjectAssembly *assemblyPtr = doc->PresetManager.GetAssemblyByKey(AsmKey);
+	const FBIMAssemblySpec *assemblyPtr = doc->PresetManager.GetAssemblyByKey(EToolMode::VE_CABINET,AsmKey);
 	if (!assemblyPtr)
 	{
 		return false;
 	}
-	FModumateObjectAssembly assembly = *assemblyPtr;
+
+	// need to make local changes, so copy...
+	FModumateObjectAssembly assembly = assemblyPtr->CachedAssembly;
+
 	////////////////////////////////////////////////////////////////////
 	// Now that we have a cabinet assembly, a DynamicMeshActor, and CompoundMeshActor,
 	// we can make a fake cabinet for icon generation the same way that FMOICabinetImpl does.
 
 	// Get the toe kick dimensions from the assembly
 	FVector2D toeKickDimensions;
-	UModumateFunctionLibrary::GetCabinetToeKickDimensions(assembly, toeKickDimensions);
+	UModumateFunctionLibrary::GetCabinetToeKickDimensions(*assemblyPtr, toeKickDimensions);
 
 	// Get the exterior finish material for the cabinet
 	static const FName cabinetGeomMatName(TEXT("Cabinet_Exterior_Finish"));
@@ -329,7 +332,7 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FName &AsmKey, U
 		assembly.PortalConfiguration.CacheRefPlaneValues();
 	}
 
-	IconCompoundMeshActor->MakeFromAssembly(assembly, FVector::OneVector, false, false);
+	IconCompoundMeshActor->MakeFromAssembly(*assemblyPtr, FVector::OneVector, false, false);
 
 	if (assembly.PortalConfiguration.IsValid())
 	{
@@ -380,7 +383,7 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FName &AsmKey, EToo
 	////////////////////////////////////////////////////////////////////
 	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 
-	const FModumateObjectAssembly *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
+	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
 	if (!assembly)
 	{
 		return false;
@@ -397,7 +400,7 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FName &AsmKey, EToo
 	FVector2D outerExtensions = FVector2D::ZeroVector;
 
 	FVector scaleVector;
-	if (!assembly->TryGetProperty(BIM::Parameters::Scale, scaleVector))
+	if (!assembly->CachedAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
 	{
 		scaleVector = FVector::OneVector;
 	}

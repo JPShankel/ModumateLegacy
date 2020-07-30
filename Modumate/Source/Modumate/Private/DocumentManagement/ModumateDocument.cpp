@@ -62,8 +62,6 @@ FModumateDocument::FModumateDocument() :
 	ElevationDelta = 0;
 	DefaultWindowHeight = 91.44f;
 	DefaultDoorHeight = 0.f;
-
-	PresetManager.InitAssemblyDBs();
 }
 
 FModumateDocument::~FModumateDocument()
@@ -220,15 +218,15 @@ void FModumateDocument::SetDefaultJustificationXY(float newValue)
 	DefaultJustificationXY = newValue;
 }
 
-void FModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, const FModumateObjectAssembly &assembly)
+void FModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, const FBIMAssemblySpec &assembly)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetAssemblyForWalls"));
 	ClearRedoBuffer();
 
-	TMap<FModumateObjectInstance *, FModumateObjectAssembly> originals;
+	TMap<FModumateObjectInstance *, const FBIMAssemblySpec> originals;
 	for (auto id : ids)
 	{
-		FModumateObjectInstance *ob = GetObjectById(id);
+		FModumateObjectInstance* ob = GetObjectById(id);
 		if (ob != nullptr)
 		{
 			originals.Add(ob, ob->GetAssembly());
@@ -605,14 +603,14 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromObjectType(
 	const TArray<int32> *CPI,
 	bool bInverted)
 {
-	FModumateObjectAssembly obAsm;
+	FBIMAssemblySpec obAsm;
 	obAsm.ObjectType = OT;
 	return CreateOrRestoreObjFromAssembly(World, obAsm, ID, ParentID, Extents, CPS, CPI, bInverted);
 }
 
 FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
 	UWorld *World,
-	const FModumateObjectAssembly &Assembly,
+	const FBIMAssemblySpec &Assembly,
 	int32 ID,
 	int32 ParentID,
 	const FVector &Extents,
@@ -620,6 +618,7 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
 	const TArray<int32> *CPI,
 	bool bInverted)
 {
+
 	// Check to make sure NextID represents the next highest ID we can allocate to a new object.
 	if (ID >= NextID)
 	{
@@ -661,6 +660,8 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
 
 		return obj;
 	}
+
+	return nullptr;
 }
 
 bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
@@ -681,7 +682,7 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 
 				// No tool mode implies a line segment (used by multiple tools with no assembly)
 				// TODO: generalize assemblyless/tool modeless non-graph MOIs
-				const FModumateObjectAssembly *assembly = PresetManager.GetAssemblyByKey(toolMode, targetState.ObjectAssemblyKey);
+				const FBIMAssemblySpec* assembly = PresetManager.GetAssemblyByKey(toolMode, targetState.ObjectAssemblyKey);
 
 				// If we got an assembly, build the object with it, otherwise by type
 				FModumateObjectInstance *newInstance = (assembly != nullptr) ?
@@ -735,10 +736,10 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 				EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(targetState.ObjectType);
 				if (toolMode != EToolMode::VE_NONE)
 				{
-					FName assemblyKey = MOI->GetAssembly().DatabaseKey;
+					FName assemblyKey = MOI->GetAssembly().UniqueKey();
 					if (targetState.ObjectAssemblyKey != assemblyKey)
 					{
-						const FModumateObjectAssembly *obAsm = PresetManager.GetAssemblyByKey(toolMode, targetState.ObjectAssemblyKey);
+						const FBIMAssemblySpec *obAsm = PresetManager.GetAssemblyByKey(toolMode, targetState.ObjectAssemblyKey);
 						if (ensureAlwaysMsgf(obAsm != nullptr, TEXT("Could not find assembly by key %s"), *targetState.ObjectAssemblyKey.ToString()))
 						{
 							MOI->SetAssembly(*obAsm);
@@ -755,7 +756,6 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 			break;
 		};
 	}
-
 	return true;
 }
 
@@ -1019,6 +1019,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 
 void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World)
 {
+
 	TArray<FVector> controlPoints;
 
 	// TODO: the graph may need an understanding of "net" deleted objects
@@ -1762,7 +1763,7 @@ int32 FModumateDocument::MakePointsObject(
 	const TArray<int32> &controlIndices,
 	EObjectType objectType,
 	bool inverted,
-	const FModumateObjectAssembly &assembly,
+	const FBIMAssemblySpec &assembly,
 	int32 parentID,
 	bool bUpdateSiblingGeometry)
 {
@@ -2223,112 +2224,6 @@ FBoxSphereBounds FModumateDocument::CalculateProjectBounds() const
 	return projectBounds;
 }
 
-int32 FModumateDocument::MakePortalAt(
-	UWorld *world,
-	EObjectType portalType,
-	int32 parentID,
-	const FVector2D &relativePos,
-	const FQuat &relativeRot,
-	bool inverted,
-	const FModumateObjectAssembly &pal)
-{
-	AEditModelGameMode_CPP *gameState = world->GetAuthGameMode<AEditModelGameMode_CPP>();
-	FModumateObjectInstance *portalParent = GetObjectById(parentID);
-	if (!ensureAlways((gameState != nullptr) && (portalParent != nullptr)))
-	{
-		return 0;
-	}
-
-	// check whether the new portal would need to modify, split, or delete any existing trim objects
-	FVector worldPos(ForceInitToZero);
-	FQuat worldRot(ForceInit);
-	if (!UModumateObjectStatics::GetWorldTransformOnPlaneHostedObj(portalParent,
-		relativePos, relativeRot, worldPos, worldRot))
-	{
-		return 0;
-	}
-
-	FTransform holeTransform(worldRot, worldPos);
-	TArray<FModumateObjectInstance *> trimsToDelete;
-	TMap<FModumateObjectInstance *, TPair<FVector2D, FVector2D>> trimsToSplit;
-	TMap<FModumateObjectInstance *, FVector2D> trimsToModify;
-	bool bPortalModifiesTrim = UModumateObjectStatics::FindPortalTrimOverlaps(portalParent, pal, holeTransform,
-		trimsToDelete, trimsToSplit, trimsToModify);
-
-	ClearRedoBuffer();
-
-	// Step 1 (optional): delete / split / modify trims affected by the portal
-	if (bPortalModifiesTrim)
-	{
-		BeginUndoRedoMacro();
-
-		if (trimsToDelete.Num() > 0)
-		{
-			DeleteObjects(trimsToDelete, false, false);
-		}
-
-		for (auto &kvp : trimsToSplit)
-		{
-			FModumateObjectInstance *trimObj = kvp.Key;
-			FVector2D newStartTrimExtent = kvp.Value.Key;
-			FVector2D newEndTrimExtent = kvp.Value.Value;
-
-			// cut the starting trim segment short before the portal
-			TArray<FVector> newStartControlPoints({ FVector(newStartTrimExtent.X, 0.0f, 0.0f), FVector(newStartTrimExtent.Y, 0.0f, 0.0f) });
-			UpdateGeometry(world, trimObj->ID, newStartControlPoints, trimObj->GetExtents());
-
-			// and create a new trim segment after the portal
-			TArray<int32> emptyIDsToDelete;
-			TArray<FVector> newEndControlPoints({ FVector(newEndTrimExtent.X, 0.0f, 0.0f), FVector(newEndTrimExtent.Y, 0.0f, 0.0f) });
-			MakePointsObject(world, emptyIDsToDelete, newEndControlPoints, trimObj->GetControlPointIndices(), EObjectType::OTTrim, trimObj->GetObjectInverted(), trimObj->GetAssembly(), trimObj->GetParentID());
-		}
-
-		for (auto &kvp : trimsToModify)
-		{
-			FModumateObjectInstance *trimObj = kvp.Key;
-			FVector2D newTrimExtent = kvp.Value;
-
-			TArray<FVector> newControlPoints({ FVector(newTrimExtent.X, 0.0f, 0.0f), FVector(newTrimExtent.Y, 0.0f, 0.0f) });
-			UpdateGeometry(world, trimObj->ID, newControlPoints, trimObj->GetExtents());
-		}
-	}
-
-	// Step 2: actually create the portal object
-	int32 id = NextID++;
-
-	FModumateObjectInstance *newOb = CreateOrRestoreObjFromAssembly(world, pal, id);
-
-	// TODO: this is needed because only for redo operations because the parent ID gets saved,
-	// need to revisit this in a way that doesn't cause redundant geometry updates.
-	newOb->SetParentObject(nullptr);
-
-	newOb->SetObjectLocation(FVector(relativePos, 0.0f));
-	newOb->SetObjectRotation(relativeRot);
-	newOb->SetParentObject(portalParent);
-	newOb->SetAssembly(pal);
-	newOb->SetupGeometry();
-	ResequencePortalAssemblies_DEPRECATED(world, portalType);
-
-	if (inverted)
-	{
-		float w = newOb->GetControlPoint(2).Y - newOb->GetControlPoint(1).Y;
-		for (int32 i=0;i<newOb->GetControlPoints().Num();++i)
-		{
-			FVector cp = newOb->GetControlPoint(i);
-			cp.Y -= w;
-			newOb->SetControlPoint(i, cp);
-		}
-		newOb->InvertObject();
-	}
-
-	if (bPortalModifiesTrim)
-	{
-		EndUndoRedoMacro();
-	}
-
-	return id;
-}
-
 void FModumateDocument::TransverseObjects(const TArray<FModumateObjectInstance*> &obs)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::TransversePortalObjects"));
@@ -2345,12 +2240,50 @@ void FModumateDocument::TransverseObjects(const TArray<FModumateObjectInstance*>
 	}
 }
 
+int32 FModumateDocument::MakePortalAt_DEPRECATED(
+	UWorld* World,
+	EObjectType PortalType,
+	int32 ParentID,
+	const FVector2D& RelativePos,
+	const FQuat& RelativeRot,
+	bool Inverted,
+	const FBIMAssemblySpec& PAL)
+{
+	AEditModelGameMode_CPP* gameState = World->GetAuthGameMode<AEditModelGameMode_CPP>();
+	FModumateObjectInstance* portalParent = GetObjectById(ParentID);
+	if (!ensureAlways((gameState != nullptr) && (portalParent != nullptr)))
+	{
+		return 0;
+	}
+
+	// check whether the new portal would need to modify, split, or delete any existing trim objects
+	FVector worldPos(ForceInitToZero);
+	FQuat worldRot(ForceInit);
+	if (!UModumateObjectStatics::GetWorldTransformOnPlaneHostedObj(portalParent,
+		RelativePos, RelativeRot, worldPos, worldRot))
+	{
+		return 0;
+	}
+
+	int32 id = NextID++;
+
+	FModumateObjectInstance* newOb = CreateOrRestoreObjFromAssembly(World, PAL, id);
+
+	newOb->SetObjectLocation(FVector(RelativePos, 0.0f));
+	newOb->SetObjectRotation(RelativeRot);
+	newOb->SetParentObject(portalParent);
+	newOb->SetAssembly(PAL);
+	newOb->SetupGeometry();
+
+	return id;
+}
+
 int32 FModumateDocument::CreateFFE(
 	UWorld *world,
 	int32 parentID,
 	const FVector &loc,
 	const FQuat &rot,
-	const FModumateObjectAssembly &obAsm,
+	const FBIMAssemblySpec &obAsm,
 	int32 parentFaceIdx)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::CreateObjectAt"));
@@ -2364,21 +2297,21 @@ int32 FModumateDocument::CreateFFE(
 	int32 id = NextID++;
 
 	// We may have to modify the assembly, preserve the old one for undo
-	FModumateObjectAssembly useAsm=obAsm;
-	FModumateObjectAssembly oldAsm=obAsm;
+	FBIMAssemblySpec useAsm=obAsm;
+	FBIMAssemblySpec oldAsm=obAsm;
 
 	FName newFFECode;
 
 	/*
 	If the incoming assembly has no code name, this is its first placement in the document and needs a code name
 	*/
-	if (useAsm.GetProperty(BIM::Parameters::Code).AsString().IsEmpty())
+	if (useAsm.CachedAssembly.GetProperty(BIM::Parameters::Code).AsString().IsEmpty())
 	{
 		newFFECode = PresetManager.GetAvailableKey(TEXT("FFE"));
-		useAsm.SetProperty(BIM::Parameters::Code, newFFECode);
-		for (auto &l : useAsm.Layers)
+		useAsm.CachedAssembly.SetProperty(BIM::Parameters::Code, newFFECode);
+		for (auto &l : useAsm.CachedAssembly.Layers)
 		{
-			l.CodeName = useAsm.GetProperty(BIM::Parameters::Code);
+			l.CodeName = useAsm.CachedAssembly.GetProperty(BIM::Parameters::Code);
 		}
 	}
 
@@ -2389,18 +2322,6 @@ int32 FModumateDocument::CreateFFE(
 	newOb->SetObjectLocation(locVal);
 	newOb->SetObjectRotation(rotVal);
 	newOb->SetupGeometry();
-
-	// If we generated a code name, this is the first time this object was used
-	if (!newFFECode.IsNone())
-	{
-		TModumateDataCollection<FModumateObjectAssembly>  *db = PresetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
-		if (ensureAlways(db != nullptr))
-		{
-			db->RemoveData(oldAsm);
-			db->AddData(useAsm);
-			OnAssemblyUpdated(world, EToolMode::VE_PLACEOBJECT, useAsm);
-		}
-	}
 
 	return id;
 }
@@ -2539,24 +2460,6 @@ void FModumateDocument::MakeNew(UWorld *world)
 
 	GatherDocumentMetadata();
 
-	// Set default assemblies for tool modes
-	// TODO: move to login/connect to project when we move docs to the cloud, but for now there's only one player state
-
-	AEditModelPlayerState_CPP* pPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
-	for (auto &kvp : PresetManager.AssemblyDBs_DEPRECATED)
-	{
-		if (kvp.Value.DataMap.Num() > 0)
-		{
-			auto asmIter = kvp.Value.DataMap.CreateConstIterator();
-			pPlayerState->SetAssemblyForToolMode(kvp.Key, (*asmIter).Value.DatabaseKey);
-		}
-		else
-		{
-			static const FName errorItemKey(TEXT("None"));
-			pPlayerState->SetAssemblyForToolMode(kvp.Key, errorItemKey);
-		}
-	}
-
 	static const FString eventCategory(TEXT("FileIO"));
 	static const FString eventNameNew(TEXT("NewDocument"));
 	UModumateAnalyticsStatics::RecordEventSimple(world, eventCategory, eventNameNew);
@@ -2693,7 +2596,7 @@ void FModumateDocument::GetObjectIdsByAssembly(const FName &assemblyKey, TArray<
 {
 	for (const auto &moi : ObjectInstanceArray)
 	{
-		if (moi->GetAssembly().DatabaseKey == assemblyKey)
+		if (moi->GetAssembly().UniqueKey() == assemblyKey)
 		{
 			outIds.Add(moi->ID);
 		}
@@ -2872,8 +2775,6 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 
 	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(path, docHeader, docRec))
 	{
-		TModumateDataCollection<FModumateObjectAssembly> *ffeDB = PresetManager.AssemblyDBs_DEPRECATED.Find(EToolMode::VE_PLACEOBJECT);
-
 		CommandHistory = docRec.CommandHistory;
 
 		// Note: will check version against header and simply init from db if presets are out of date
@@ -2953,10 +2854,10 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 			TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(cta.Key);
 			if (ensureAlways(tool))
 			{
-				const FModumateObjectAssembly *obAsm = PresetManager.GetAssemblyByKey(cta.Key, cta.Value);
+				const FBIMAssemblySpec *obAsm = PresetManager.GetAssemblyByKey(cta.Key, cta.Value);
 				if (obAsm != nullptr)
 				{
-					tool->SetAssemblyKey(obAsm->DatabaseKey);
+					tool->SetAssemblyKey(obAsm->UniqueKey());
 				}
 			}
 		}
@@ -2992,12 +2893,13 @@ int32 FModumateDocument::CreateObjectFromRecord(UWorld *world, const FMOIDataRec
 	ClearRedoBuffer();
 	int32 id = NextID++;
 
-	const FModumateObjectAssembly *obAsm = nullptr;
+	const FBIMAssemblySpec *obAsm = nullptr;
 	if (obRec.AssemblyKey != "None")
 	{
 		obAsm = PresetManager.GetAssemblyByKey(UModumateTypeStatics::ToolModeFromObjectType(obRec.ObjectType), FName(*obRec.AssemblyKey));
 		ensureAlways(obAsm != nullptr);
 	}
+
 	FModumateObjectInstance *obj = obAsm != nullptr ?
 		CreateOrRestoreObjFromAssembly(world, *obAsm, id, obRec.ParentID, obRec.Extents, &obRec.ControlPoints, &obRec.ControlIndices) :
 		CreateOrRestoreObjFromObjectType(world, obRec.ObjectType, id, obRec.ParentID, obRec.Extents, &obRec.ControlPoints, &obRec.ControlIndices);
@@ -3651,80 +3553,15 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 }
 
 
-/*
-TODO: to be deprecated in favor of clients querying the PresetManager for assemblies by object type instead of tool mode with DDL 2.0
-*/
-TArray<FModumateObjectAssembly> FModumateDocument::GetAssembliesForToolMode_DEPRECATED(UWorld *world, EToolMode mode) const
-{
-	EObjectType objectType = UModumateTypeStatics::ObjectTypeFromToolMode(mode);
-	TArray<FModumateObjectAssembly> ret;
-
-	if (UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(objectType))
-	{
-		PresetManager.GetProjectAssembliesForObjectType(objectType, ret);
-		return ret;
-	}
-	else
-	{
-		const TModumateDataCollection<FModumateObjectAssembly> *db = PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
-		if (db != nullptr)
-		{
-			db->DataMap.GenerateValueArray(ret);
-		}
-		return ret;
-	}
-}
-
-bool FModumateDocument::RemoveAssembly(UWorld *world, EToolMode toolMode, const FName &assemblyKey, const FName &replacementKey)
-{
-	TModumateDataCollection<FModumateObjectAssembly> *db = PresetManager.AssemblyDBs_DEPRECATED.Find(toolMode);
-	const FModumateObjectAssembly *pOriginal = PresetManager.GetAssemblyByKey(toolMode, assemblyKey);
-
-	if (ensureAlways(db != nullptr && pOriginal != nullptr))
-	{
-		FModumateObjectAssembly originalAssembly = *pOriginal;
-
-		TArray<int32> obIds;
-		GetObjectIdsByAssembly(assemblyKey, obIds);
-
-		UndoRedo *ur = new UndoRedo();
-
-		if (replacementKey.IsNone())
-		{
-			ensureAlways(obIds.Num() == 0);
-			db->RemoveData(originalAssembly);
-			return true;
-		}
-		else
-		{
-			const FModumateObjectAssembly *pReplacement = PresetManager.GetAssemblyByKey(toolMode,replacementKey);
-			TArray<FModumateObjectInstance*> affectedObs;
-			Algo::Transform(obIds, affectedObs, [this](int32 id) {return GetObjectById(id); });
-			if (ensureAlways(pReplacement != nullptr))
-			{
-				FModumateObjectAssembly replacementAssembly = *pReplacement;
-				for (auto &ob : affectedObs)
-				{
-					ob->SetAssembly(replacementAssembly);
-					ob->OnAssemblyChanged();
-				}
-				db->RemoveData(originalAssembly);
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
 void FModumateDocument::OnAssemblyUpdated(
 	UWorld *world,
 	EToolMode mode,
-	const FModumateObjectAssembly &assembly)
+	const FBIMAssemblySpec &assembly)
 {
 	TArray<FModumateObjectInstance*> mois = GetObjectsOfType(assembly.ObjectType);
 	for (auto &moi : mois)
 	{
-		if (moi->GetAssembly().DatabaseKey == assembly.DatabaseKey)
+		if (moi->GetAssembly().UniqueKey() == assembly.UniqueKey())
 		{
 			moi->SetAssembly(assembly);
 			moi->OnAssemblyChanged();
@@ -3734,86 +3571,3 @@ void FModumateDocument::OnAssemblyUpdated(
 	AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
 	playerState->RefreshActiveAssembly();
 }
-
-/*
-Assembly Mutators
-*/
-void FModumateDocument::ImportPresetsIfMissing_DEPRECATED(UWorld *world, const TArray<FName> &presets)
-{
-}
-
-FModumateObjectAssembly FModumateDocument::OverwriteAssembly_DEPRECATED(
-	UWorld *world,
-	EToolMode mode,
-	const FModumateObjectAssembly &assembly)
-{
-	FModumateObjectAssembly newAsm = assembly;
-
-	if (newAsm.DatabaseKey == TEXT("temp"))
-	{
-		AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
-		playerState->RefreshActiveAssembly();
-
-		ensureAlways(false);
-		playerState->SetTemporaryAssembly(mode, newAsm);
-		return newAsm;
-	}
-
-	ClearRedoBuffer();
-	UndoRedo *ur = new UndoRedo();
-	FModumateObjectAssembly oldAsm;
-
-	TModumateDataCollection<FModumateObjectAssembly>  *db = PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
-	ensureAlways(db != nullptr);
-
-	const FModumateObjectAssembly *pOldAsm = db->GetData(newAsm.DatabaseKey);
-	ensureAlways(pOldAsm != nullptr);
-	oldAsm = (pOldAsm != nullptr) ? *pOldAsm : newAsm;
-
-	db->RemoveData(oldAsm);
-	db->AddData(newAsm);
-
-	OnAssemblyUpdated(world, mode, newAsm);
-
-	return newAsm;
-}
-
-FModumateObjectAssembly FModumateDocument::CreateNewAssembly_DEPRECATED(
-	UWorld *world,
-	EToolMode mode,
-	const FModumateObjectAssembly &assembly)
-{
-	ClearRedoBuffer();
-	UndoRedo *ur = new UndoRedo();
-
-	TModumateDataCollection<FModumateObjectAssembly> *db = PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
-	ensureAlways(db != nullptr);
-
-	FModumateObjectAssembly newAsm = assembly;
-
-	if (newAsm.DatabaseKey.IsNone())
-	{
-		// All DDL 2.0 assemblies should come in with their own database key supplied by the preset manager
-		ensureAlways(!UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(assembly.ObjectType));
-		newAsm.DatabaseKey = PresetManager.GetAvailableKey(*EnumValueString(EObjectType, assembly.ObjectType));
-	}
-
-	db->AddData(newAsm);
-
-	return newAsm;
-}
-
-FModumateObjectAssembly FModumateDocument::CreateOrOverwriteAssembly_DEPRECATED(
-	UWorld *world,
-	EToolMode mode,
-	const FModumateObjectAssembly &assembly)
-{
-	TModumateDataCollection<FModumateObjectAssembly>  *db = PresetManager.AssemblyDBs_DEPRECATED.Find(mode);
-	ensureAlways(db != nullptr);
-	if (db->GetData(assembly.DatabaseKey) != nullptr)
-	{
-		return OverwriteAssembly_DEPRECATED(world, mode, assembly);
-	}
-	return CreateNewAssembly_DEPRECATED(world, mode, assembly);
-}
-

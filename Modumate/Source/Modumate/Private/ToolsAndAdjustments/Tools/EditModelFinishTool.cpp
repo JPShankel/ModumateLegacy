@@ -98,7 +98,7 @@ bool UFinishTool::BeginUse()
 	{
 		return false;
 	}
-	const FModumateObjectAssembly *assembly = GameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_FINISH, AssemblyKey);
+	const FBIMAssemblySpec* assembly = GameState->Document.PresetManager.GetAssemblyByKey(EToolMode::VE_FINISH, AssemblyKey);
 
 	if (!ensureAlways(assembly))
 	{

@@ -1,3 +1,6 @@
+2-20_ExtrudedProfile.csv
+0-05B_StubbyFFE.csv
+0-05A_StubbyPortals.csv
 0-01_Color.csv
 0-02_RawMaterial.csv
 0-03_SrfTreatment.csv

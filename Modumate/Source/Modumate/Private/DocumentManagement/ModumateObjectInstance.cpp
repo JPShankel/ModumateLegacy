@@ -33,7 +33,7 @@ namespace Modumate
 	FModumateObjectInstance::FModumateObjectInstance(
 		UWorld *world,
 		FModumateDocument *doc,
-		const FModumateObjectAssembly &obAsm,
+		const FBIMAssemblySpec& obAsm,
 		int32 id)
 		: World(world)
 		, Document(doc)
@@ -79,22 +79,10 @@ namespace Modumate
 		// TODO: refactor assembly keys to use FName
 		if (obRec.AssemblyKey.Len() > 0 && obRec.AssemblyKey != TEXT("None"))
 		{
-			const FModumateObjectAssembly *obAsm;
-			if (UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(obRec.ObjectType))
+			FBIMAssemblySpec obAsm;
+			if (ensureAlways(doc->PresetManager.TryGetProjectAssemblyForPreset(obRec.ObjectType, *obRec.AssemblyKey, obAsm)))
 			{
-				if (ensureAlways(doc->PresetManager.TryGetProjectAssemblyForPreset(obRec.ObjectType, *obRec.AssemblyKey, obAsm)))
-				{
-					ObjectAssembly = *obAsm;
-				}
-			}
-			else
-			{
-				obAsm = doc->PresetManager.GetAssemblyByKey(UModumateTypeStatics::ToolModeFromObjectType(obRec.ObjectType), FName(*obRec.AssemblyKey));
-				ensureAlways(obAsm != nullptr);
-				if (obAsm != nullptr)
-				{
-					ObjectAssembly = *obAsm;
-				}
+				ObjectAssembly = obAsm;
 			}
 		}
 		else
@@ -608,7 +596,7 @@ namespace Modumate
 
 	float FModumateObjectInstance::CalculateThickness() const
 	{
-		return ObjectAssembly.CalculateThickness().AsWorldCentimeters();
+		return ObjectAssembly.CachedAssembly.CalculateThickness().AsWorldCentimeters();
 	}
 
 	FVector FModumateObjectInstance::GetNormal() const
@@ -940,12 +928,12 @@ namespace Modumate
 		GetDataState().ParentID = NewID;
 	}
 
-	const FModumateObjectAssembly &FModumateObjectInstance::GetAssembly() const
+	const FBIMAssemblySpec &FModumateObjectInstance::GetAssembly() const
 	{
 		return ObjectAssembly;
 	}
 
-	void FModumateObjectInstance::SetAssembly(const FModumateObjectAssembly &NewAssembly)
+	void FModumateObjectInstance::SetAssembly(const FBIMAssemblySpec &NewAssembly)
 	{
 		GetDataState().ObjectAssemblyKey = NewAssembly.UniqueKey();
 		ObjectAssembly = NewAssembly;
@@ -956,7 +944,7 @@ namespace Modumate
 	{
 		if (bNewLayersReversed != bAssemblyLayersReversed)
 		{
-			ObjectAssembly.ReverseLayers();
+			ObjectAssembly.CachedAssembly.ReverseLayers();
 			bAssemblyLayersReversed = bNewLayersReversed;
 		}
 	}

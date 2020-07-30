@@ -2,7 +2,6 @@
 #include "UI/EditModelPlayerHUD.h"
 
 #include "Components/Image.h"
-#include "Database/ModumateCraftingWidget_CPP.h"
 #include "Database/ModumateDrawingSetWidget_CPP.h"
 #include "UI/WidgetClassAssetData.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -32,18 +31,10 @@ void AEditModelPlayerHUD::Initialize()
 	auto *controller = Cast<AEditModelPlayerController_CPP>(PlayerOwner);
 
 	if (!ensureAlways(controller && WidgetClasses &&
-		WidgetClasses->CraftingWidgetClass &&
 		WidgetClasses->DrawingSetWidgetClass &&
 		WidgetClasses->HUDDrawWidgetClass))
 	{
 		return;
-	}
-
-	CraftingWidget = CreateWidget<UModumateCraftingWidget_CPP>(controller, WidgetClasses->CraftingWidgetClass);
-	if (CraftingWidget != nullptr)
-	{
-		CraftingWidget->AddToViewport();
-		CraftingWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 
 	DrawingSetWidget = CreateWidget<UModumateDrawingSetWidget_CPP>(controller, WidgetClasses->DrawingSetWidgetClass);

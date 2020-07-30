@@ -40,11 +40,11 @@ void USelectionTrayBlockPresetList::BuildPresetListFromSelection()
 	{
 		if (curObject->GetActor())
 		{
-			UComponentListObject *compItem = ComponentItemMap.FindRef(curObject->GetAssembly().DatabaseKey);
+			UComponentListObject *compItem = ComponentItemMap.FindRef(curObject->GetAssembly().UniqueKey());
 			if (compItem)
 			{
-				int32 numberOfObj = numberOfObjectsWithKey.FindRef(curObject->GetAssembly().DatabaseKey);
-				numberOfObjectsWithKey.Add(curObject->GetAssembly().DatabaseKey, numberOfObj + 1);
+				int32 numberOfObj = numberOfObjectsWithKey.FindRef(curObject->GetAssembly().UniqueKey());
+				numberOfObjectsWithKey.Add(curObject->GetAssembly().UniqueKey(), numberOfObj + 1);
 				compItem->SelectionItemCount = numberOfObj + 1;
 
 				UUserWidget *entryWidget = AssembliesList->GetEntryWidgetFromItem(compItem);
@@ -62,11 +62,11 @@ void USelectionTrayBlockPresetList::BuildPresetListFromSelection()
 				UComponentListObject *newCompListObj = NewObject<UComponentListObject>(this);
 				newCompListObj->ItemType = EComponentListItemType::SelectionListItem;
 				newCompListObj->Mode = UModumateTypeStatics::ToolModeFromObjectType(curObject->GetObjectType());
-				newCompListObj->UniqueKey = curObject->GetAssembly().DatabaseKey;
+				newCompListObj->UniqueKey = curObject->GetAssembly().UniqueKey();
 				newCompListObj->SelectionItemCount = 1;
 				AssembliesList->AddItem(newCompListObj);
-				ComponentItemMap.Add(curObject->GetAssembly().DatabaseKey, newCompListObj);
-				numberOfObjectsWithKey.Add(curObject->GetAssembly().DatabaseKey, newCompListObj->SelectionItemCount);
+				ComponentItemMap.Add(curObject->GetAssembly().UniqueKey(), newCompListObj);
+				numberOfObjectsWithKey.Add(curObject->GetAssembly().UniqueKey(), newCompListObj->SelectionItemCount);
 			}
 		}
 	}

@@ -301,35 +301,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return false;
 	});
 
-	auto makePortal = [this](EObjectType ot, EToolMode tool, const FModumateFunctionParameterSet &params)
-	{
-		int32 wallid = params.GetValue(kObjectID);
-		FVector2D relativePos = params.GetValue(kLocation);
-		FName assemblyKey = params.GetValue(kAssembly);
-		FQuat relativeRot = params.GetValue(kQuaternion);
-		bool inverted = params.GetValue(kInverted);
-
-		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(tool, assemblyKey);
-
-
-		if (assembly != nullptr)
-		{
-			GetDocument()->MakePortalAt(GetWorld(), ot, wallid, relativePos, relativeRot, inverted, *assembly);
-			return true;
-		}
-
-		return false;
-	};
-
-	RegisterCommand(kAddWindow, [this,makePortal](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		return makePortal(EObjectType::OTWindow,EToolMode::VE_WINDOW,params);
-	});
-
-	RegisterCommand(kAddDoor, [this, makePortal](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		return makePortal(EObjectType::OTDoor, EToolMode::VE_DOOR, params);
-	});
-
 	RegisterCommand(kDumpScript, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		TArray<FString> inputHistory = GetDocument()->GetCommandHistory();
@@ -614,119 +585,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return false;
 	});
 
-	auto getAssemblySpec = [this](const FModumateFunctionParameterSet &Params, BIM::FModumateAssemblyPropertySpec &OutSpec)
-	{
-		OutSpec.RootPreset = Params.GetValue(Parameters::kPresetKey);
-
-		OutSpec.ObjectType = FindEnumValueByName<EObjectType>(TEXT("EObjectType"), Params.GetValue(kObjectType).AsName());
-
-		Params.ForEachProperty([&OutSpec](const FString &name, const FModumateCommandParameter &param)
-		{
-			if (name.Contains(TEXT(":")))
-			{
-				TArray<FString> indexedParam;
-				name.ParseIntoArray(indexedParam, TEXT(":"));
-				if (ensureAlways(indexedParam.Num() == 2))
-				{
-					int32 index = FCString::Atoi(*indexedParam[0]);
-					if (index == -1)
-					{
-						OutSpec.RootProperties.SetValue(indexedParam[1], param);
-					}
-					else
-					{
-						while (index >= OutSpec.LayerProperties.Num())
-						{
-							OutSpec.LayerProperties.AddDefaulted();
-						}
-						OutSpec.LayerProperties[index].SetValue(indexedParam[1], param);
-					}
-				}
-			}
-		});
-	};
-
-	RegisterCommand(kRemovePresetProjectAssembly, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		// TODO: undo/redoable
-		FName assemblyKey = params.GetValue(Parameters::kAssembly);
-		ECraftingResult result = GetDocument()->PresetManager.RemoveProjectAssemblyForPreset(params.GetValue(Parameters::kPresetKey));
-		return result == ECraftingResult::Success;
-	});
-	
-	RegisterCommand(kUpdateCraftingPreset, [this, getAssemblySpec](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		// TODO: add undo/redoable call in document
-		FName outKey;
-		ECraftingResult result = GetDocument()->PresetManager.MakeNewOrUpdateExistingPresetFromParameterSet(GetWorld(),params,outKey);
-		output.SetValue(Modumate::Parameters::kPresetKey, outKey);
-		output.SetValue(Modumate::Parameters::kResult, EnumValueString(ECraftingResult,result));
-		return result == ECraftingResult::Success;
-	});
-
-	RegisterCommand(kCreateNewAssembly_DEPRECATED, [this, getAssemblySpec](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		int32 version = params.GetValue(FModumateCommand::VersionString);
-
-		if (ensureAlways(version == 3))
-		{
-			FString tmStr = params.GetValue(kObjectType);
-			EObjectType objectType = FindEnumValueByName<EObjectType>(TEXT("EObjectType"), *tmStr);
-			EToolMode mode = UModumateTypeStatics::ToolModeFromObjectType(objectType);
-
-			AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
-			BIM::FModumateAssemblyPropertySpec spec;
-			FModumateObjectAssembly newAsm;
-
-			EObjectType ot = EnumValueByString(EObjectType, params.GetValue(Parameters::kObjectType).AsString());
-
-			// FFE assemblies are stored directly in the object database and don't receive parameters from the editor
-			if (ot == EObjectType::OTFurniture)
-			{
-				const FModumateObjectAssembly *pAsm = gameMode->ObjectDatabase->PresetManager.GetAssemblyByKey(EToolMode::VE_PLACEOBJECT, params.GetValue(Parameters::kAssembly));
-				if (ensureAlways(pAsm != nullptr))
-				{
-					newAsm = *pAsm;
-				}
-				else
-				{
-					return false;
-				}
-			}
-			// All other assemblies have preset parameters
-			else
-			{
-				getAssemblySpec(params, spec);
-				if (UModumateObjectAssemblyStatics::DoMakeAssembly(*gameMode->ObjectDatabase, GetDocument()->PresetManager, spec, newAsm) != ECraftingResult::Success)
-				{
-					return false;
-				}
-			}
-
-			newAsm = GetDocument()->CreateNewAssembly_DEPRECATED(GetWorld(), UModumateTypeStatics::ToolModeFromObjectType(objectType), newAsm);
-			output.SetValue(kAssembly, newAsm.DatabaseKey.ToString());
-			return true;
-		}
-		return false;
-	});
-
-	RegisterCommand(kSetAssemblyForObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		TArray<int32> ids = params.GetValue(kObjectIDs);
-
-		FString tmStr = params.GetValue(kToolMode);
-		EToolMode toolMode = FindEnumValueByName<EToolMode>(TEXT("EToolMode"), *tmStr);
-
-		FName assemblyKey = FName(*params.GetValue(kAssembly).AsString());
-		const FModumateObjectAssembly *pAsm = GetDocument()->PresetManager.GetAssemblyByKey(toolMode, assemblyKey);
-		if (ensureAlways(pAsm != nullptr))
-		{
-			GetDocument()->SetAssemblyForObjects(GetWorld(), ids, *pAsm);
-			return true;
-		}
-		return false;
-	});
-
 	RegisterCommand(kLogin, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		Login(params.GetValue(Parameters::kUserName), params.GetValue(Parameters::kPassword));
@@ -747,14 +605,6 @@ void UModumateGameInstance::RegisterAllCommands()
 
 		return false;
 	});
-
-	RegisterCommand(kRemoveAssembly_DEPRECATED, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		FName assemblyKey = params.GetValue(Parameters::kAssembly);
-		FName replacementKey = params.GetValue(Parameters::kReplacementKey);
-		FName toolMode = params.GetValue(Parameters::kToolMode);
-		return GetDocument()->RemoveAssembly(GetWorld(), FindEnumValueByName<EToolMode>(TEXT("EToolMode"), toolMode), assemblyKey, replacementKey);
-	});	
 }
 
 DECLARE_CYCLE_STAT(TEXT("Process app command queue"), STAT_ModumateProcessCommandQueue, STATGROUP_Modumate)

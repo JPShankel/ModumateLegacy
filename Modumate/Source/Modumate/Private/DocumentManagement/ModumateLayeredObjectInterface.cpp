@@ -30,10 +30,10 @@ namespace Modumate
 		return bHasEndFinish;
 	}
 
-	void FCachedLayerDimsByType::UpdateLayersFromAssembly(const FModumateObjectAssembly &Assembly)
+	void FCachedLayerDimsByType::UpdateLayersFromAssembly(const FBIMAssemblySpec &Assembly)
 	{
 		// reset layer dimensions
-		NumLayers = Assembly.Layers.Num();
+		NumLayers = Assembly.CachedAssembly.Layers.Num();
 		StructuralLayerStartIdx = StructuralLayerEndIdx = INDEX_NONE;
 		StructureWidthStart = StructureWidthEnd = 0.0f;
 
@@ -56,7 +56,7 @@ namespace Modumate
 		for (int32 layerIdx = 0; layerIdx < NumLayers; ++layerIdx)
 		{
 			LayerOffsets.Add(curThickness);
-			const FModumateObjectAssemblyLayer &layer = Assembly.Layers[layerIdx];
+			const FModumateObjectAssemblyLayer &layer = Assembly.CachedAssembly.Layers[layerIdx];
 			float layerThickness = layer.Thickness.AsWorldCentimeters();
 
 			if ((layer.Function == ELayerFunction::Membrane) && (StructuralLayerStartIdx == INDEX_NONE))
@@ -80,7 +80,7 @@ namespace Modumate
 		// Next, traverse backwards for the end layers
 		for (int32 layerIdx = NumLayers - 1; layerIdx >= 0; --layerIdx)
 		{
-			const FModumateObjectAssemblyLayer &layer = Assembly.Layers[layerIdx];
+			const FModumateObjectAssemblyLayer &layer = Assembly.CachedAssembly.Layers[layerIdx];
 			float layerThickness = layer.Thickness.AsWorldCentimeters();
 
 			if ((layer.Function == ELayerFunction::Membrane) && (StructuralLayerEndIdx == INDEX_NONE))

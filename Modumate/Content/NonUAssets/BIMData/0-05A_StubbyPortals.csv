@@ -1,0 +1,17 @@
+TYPENAME,,,,0StubbyPortal,,,,
+,,,,Definition,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,
+PROPERTY,,STRING,,Name,,Preset.Name,,
+PROPERTY,,PRIVATE,,Mesh Asset Path,,Layer.AssetID,,
+,,,,Presets,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Layer.AssetID,
+PRESET,,"4RiggedAssembly --> Door --> Swing
+Stubby Swing Door 1",,4RiggedAssembly --> Door --> Swing,,Stubby Swing Door 1,StaticMesh'/Game/ShoppingData/Meshes/StubbyPortal-SwingDoor1.StubbyPortal-SwingDoor1,
+PRESET,,"4RiggedAssembly --> Door --> Swing
+Stubby Swing Door 2",,4RiggedAssembly --> Door --> Swing,,Stubby Swing Door 2,StaticMesh'/Game/ShoppingData/Meshes/StubbyPortal-SwingDoor2.StubbyPortal-SwingDoor2,
+PRESET,,"4RiggedAssembly --> Door --> Swing
+Stubby Swing Door 3",,4RiggedAssembly --> Door --> Swing,,Stubby Swing Door 3,StaticMesh'/Game/ShoppingData/Meshes/StubbyPortal-SwingDoor3.StubbyPortal-SwingDoor3,
+PRESET,,"4RiggedAssembly --> Window --> Fixed
+Stubby Fixed Window",,4RiggedAssembly --> Window --> Fixed,,Stubby Fixed Window,StaticMesh'/Game/ShoppingData/Meshes/StubbyPortal-FixedWindow1.StubbyPortal-FixedWindow1,
+PRESET,,"4RiggedAssembly --> Window --> Hung
+Stubby Hung Window",,4RiggedAssembly --> Window --> Hung,,Stubby Hung Window,StaticMesh'/Game/ShoppingData/Meshes/StubbyPortal-HungWindow1.StubbyPortal-HungWindow1,

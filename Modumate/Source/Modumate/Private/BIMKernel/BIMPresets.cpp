@@ -663,7 +663,13 @@ ECraftingResult FCraftingPresetCollection::LoadCSVManifest(const FString &Manife
 	{
 		for (auto &file : fileList)
 		{
-			if (file.IsEmpty() || file[0] == TCHAR(';'))
+			// add a blank line in manifest to halt processing
+			if (file.IsEmpty())
+			{
+				break;
+			}
+
+			if (file[0] == TCHAR(';'))
 			{
 				continue;
 			}

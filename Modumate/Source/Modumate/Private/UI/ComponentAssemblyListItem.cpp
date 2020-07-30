@@ -135,19 +135,16 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 	{
 		return false;
 	}
+
 	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-	const FModumateObjectAssembly *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, AsmKey);
+	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, AsmKey);
 	if (!assembly)
 	{
 		return false;
 	}
 
-	// Get properties for tips
-	BIM::FModumateAssemblyPropertySpec presetSpec;
-	doc->PresetManager.PresetToSpec(assembly->RootPreset, presetSpec);
-
 	FModumateFunctionParameterSet params;
-	for (auto &curLayerProperties : presetSpec.LayerProperties)
+	for (auto &curLayerProperties : assembly->LayerProperties)
 	{
 		// TODO: Only tips for wall tools for now. Will expand to other tool modes
 		if (ToolMode == EToolMode::VE_WALL)
@@ -157,7 +154,6 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 			curLayerProperties.TryGetProperty(BIM::EScope::Layer, BIM::Parameters::Thickness, layerThickness);
 			OutTips.Add(layerThickness + FString(TEXT(", ")) + layerFunction);
 		}
-
 	}
 	return true;
 }
@@ -175,12 +171,12 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 	FPresetManager &presetManager = gameState->Document.PresetManager;
 
 	AsmKey = compListObj->UniqueKey;
-	const FModumateObjectAssembly *assembly = presetManager.GetAssemblyByKey(AsmKey);
+	const FBIMAssemblySpec *assembly = presetManager.GetAssemblyByKey(compListObj->Mode,AsmKey);
 	if (!assembly)
 	{
 		return;
 	}
-	AsmName = assembly->GetProperty(BIM::Parameters::Name);
+	AsmName = assembly->CachedAssembly.GetProperty(BIM::Parameters::Name);
 	ToolMode = compListObj->Mode;
 	UpdateItemType(compListObj->ItemType);
 

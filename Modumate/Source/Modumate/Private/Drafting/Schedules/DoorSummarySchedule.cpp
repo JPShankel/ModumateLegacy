@@ -26,23 +26,23 @@ namespace Modumate {
 		auto doors = doc->GetObjectsOfType(EObjectType::OTDoor);
 		ensureAlways(doors.Num() > 0);
 
-		TMap<FName, TPair<int32, FModumateObjectAssembly>> doorsByKey;
+		TMap<FName, TPair<int32, FBIMAssemblySpec>> doorsByKey;
 		for (auto& door : doors)
 		{
-			if (!doorsByKey.Contains(door->GetAssembly().DatabaseKey))
+			if (!doorsByKey.Contains(door->GetAssembly().UniqueKey()))
 			{
-				doorsByKey.Add(door->GetAssembly().DatabaseKey, TPair<int32, FModumateObjectAssembly>(1, door->GetAssembly()));
+				doorsByKey.Add(door->GetAssembly().UniqueKey(), TPair < int32, FBIMAssemblySpec > (1, door->GetAssembly()));
 			}
 			else
 			{
-				doorsByKey[door->GetAssembly().DatabaseKey].Key++;
+				doorsByKey[door->GetAssembly().UniqueKey()].Key++;
 			}
 		}
 
 		for (auto& kvp : doorsByKey)
 		{
 			int32 count = kvp.Value.Key;
-			FModumateObjectAssembly assembly = kvp.Value.Value;
+			FBIMAssemblySpec assembly = kvp.Value.Value;
 
 			TSharedPtr<FIconElement> iconElement = MakeShareable(new FIconElement());
 
@@ -56,7 +56,7 @@ namespace Modumate {
 			iconElement->Information->Children.Add(idTag);
 
 			// Name
-			FText name = FText::FromString(assembly.GetProperty(BIM::Parameters::Name));
+			FText name = FText::FromString(assembly.CachedAssembly.GetProperty(BIM::Parameters::Name));
 			iconElement->Information->Children.Add(MakeDraftingText(name));
 
 			// Count
@@ -66,7 +66,7 @@ namespace Modumate {
 
 			// Comments
 			FString comments;
-			if (assembly.TryGetProperty(BIM::Parameters::Comments,comments))
+			if (assembly.CachedAssembly.TryGetProperty(BIM::Parameters::Comments,comments))
 			{
 				FText commentFormat = LOCTEXT("comments", "Comments: {0}");
 				FText commentText = FText::Format(commentFormat, FText::FromString(comments));

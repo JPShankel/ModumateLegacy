@@ -109,7 +109,7 @@ FName UThumbnailCacheManager::GetThumbnailKeyForShoppingItemAndTool(const FName 
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState_CPP *gameState = world ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
-	const FModumateObjectAssembly *assembly = gameState ? gameState->GetAssemblyByKey_DEPRECATED(ToolMode, Key) : nullptr;
+	const FBIMAssemblySpec *assembly = gameState ? gameState->Document.PresetManager.GetAssemblyByKey(ToolMode, Key) : nullptr;
 
 	if (assembly)
 	{
@@ -119,13 +119,14 @@ FName UThumbnailCacheManager::GetThumbnailKeyForShoppingItemAndTool(const FName 
 	{
 		return NAME_None;
 	}
+	return NAME_None;
 }
 
-FName UThumbnailCacheManager::GetThumbnailKeyForAssembly(const FModumateObjectAssembly &Assembly)
+FName UThumbnailCacheManager::GetThumbnailKeyForAssembly(const FBIMAssemblySpec &Assembly)
 {
 	static const FString thumbnailKeySuffix(TEXT("_Ver0"));
 
-	FString wholeKey = Assembly.GetGenomeString() + thumbnailKeySuffix;
+	FString wholeKey = Assembly.RootPreset.ToString() + thumbnailKeySuffix;
 	FString shortKey = FMD5::HashAnsiString(*wholeKey);
 
 	return FName(*shortKey);

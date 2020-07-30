@@ -33,7 +33,6 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
-#include "Database/ModumateCraftingWidget_CPP.h"
 #include "Algo/Accumulate.h"
 
 #include <algorithm>
@@ -1221,7 +1220,7 @@ FName UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& 
 		if (moi != nullptr)
 		{
 			bSuccess = true;
-			return moi->GetAssembly().DatabaseKey;
+			return moi->GetAssembly().UniqueKey();
 		}
 	}
 	bSuccess = false;
@@ -1229,13 +1228,13 @@ FName UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& 
 }
 
 using namespace Modumate;
-bool UModumateFunctionLibrary::GetCabinetToeKickDimensions(const FModumateObjectAssembly &obAsm, FVector2D &outToeKickDims)
+bool UModumateFunctionLibrary::GetCabinetToeKickDimensions(const FBIMAssemblySpec &obAsm, FVector2D &outToeKickDims)
 {
 	outToeKickDims.Set(0.0f, 0.0f);
 
 	FString depth, height;
-	if (obAsm.Properties.TryGetProperty(BIM::EScope::ToeKick,BIM::Parameters::Depth,depth)
-		&& obAsm.Properties.TryGetProperty(BIM::EScope::ToeKick,BIM::Parameters::Height,height))
+	if (obAsm.CachedAssembly.Properties.TryGetProperty(BIM::EScope::ToeKick,BIM::Parameters::Depth,depth)
+		&& obAsm.CachedAssembly.Properties.TryGetProperty(BIM::EScope::ToeKick,BIM::Parameters::Height,height))
 	{
 		outToeKickDims.X = UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters;
 		outToeKickDims.Y = UModumateDimensionStatics::StringToFormattedDimension(height).Centimeters;
@@ -1401,77 +1400,6 @@ void UModumateFunctionLibrary::DocTransverseObject(AActor* MoiActor)
 		AEditModelGameState_CPP * GameState = MoiActor->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 		FModumateObjectInstance *moi = GameState->Document.ObjectFromActor(MoiActor);
 		GameState->Document.TransverseObjects(TArray<FModumateObjectInstance*>{moi});
-	}
-}
-
-bool UModumateFunctionLibrary::ApplyTileMaterialToMeshes(const TArray<UProceduralMeshComponent*> &ProceduralSubLayers, const FName &AssemblyKey, AEditModelPlayerController_CPP *Controller, EToolMode FromToolMode, const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial, bool AsLayer, FString KeyOverride, bool bUseMarketplaceAsm)
-{
-	FModumateObjectAssembly Assembly;
-	AEditModelGameState_CPP* emGameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	if (AsLayer)
-	{
-		if (KeyOverride == FString("temp"))
-		{
-			const FModumateObjectAssembly *pAsm = Controller->EMPlayerState->GetTemporaryAssembly(FromToolMode);
-			if (ensureAlways(pAsm != nullptr))
-			{
-				if (Assembly.Layers.Num() == 0)
-				{
-					Assembly.Layers.Add(pAsm->Layers[0]);
-				}
-				else
-				{
-					Assembly.Layers[0] = pAsm->Layers[0];
-				}
-			}
-			return UpdateMaterialsFromAssembly(ProceduralSubLayers, Assembly, TilingMaterials, MasterPBRMaterial);
-		}
-		else
-		{
-			FModumateDatabase *obDB = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
-			const FModumateObjectAssembly* asmByKey = bUseMarketplaceAsm ? 
-				obDB->PresetManager.GetAssemblyByKey(FromToolMode, AssemblyKey) :
-				emGameState->GetAssemblyByKey_DEPRECATED(FromToolMode, AssemblyKey);
-			if (asmByKey != nullptr)
-			{
-				Assembly = *asmByKey;
-				return UpdateMaterialsFromAssembly(ProceduralSubLayers, Assembly, TilingMaterials, MasterPBRMaterial);
-			}
-			else
-			{
-				ensureAlways(false);
-				return false;
-			}
-		}
-	}
-	else
-	{
-		if (AssemblyKey == "temp")
-		{
-			const FModumateObjectAssembly *pAsm = Controller->EMPlayerState->GetTemporaryAssembly(FromToolMode);
-			if (ensureAlways(pAsm != nullptr))
-			{
-				Assembly = *pAsm;
-			}
-			return UpdateMaterialsFromAssembly(ProceduralSubLayers, Assembly, TilingMaterials, MasterPBRMaterial);
-		}
-		else
-		{
-			FModumateDatabase *obDB = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
-			const FModumateObjectAssembly* keyASM = bUseMarketplaceAsm ?
-				obDB->PresetManager.GetAssemblyByKey(FromToolMode, AssemblyKey) :
-				emGameState->GetAssemblyByKey_DEPRECATED(FromToolMode, AssemblyKey);
-			if (keyASM != nullptr)
-			{
-				Assembly = *keyASM;
-				return UpdateMaterialsFromAssembly(ProceduralSubLayers, Assembly, TilingMaterials, MasterPBRMaterial);
-			}
-			else
-			{
-				ensureAlways(false);
-				return false;
-			}
-		}
 	}
 }
 
@@ -1676,12 +1604,12 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 	return false;
 }
 
-bool UModumateFunctionLibrary::UpdateMaterialsFromAssembly(const TArray<UProceduralMeshComponent*> &ProceduralSubLayers, const FModumateObjectAssembly &Assembly,
+bool UModumateFunctionLibrary::UpdateMaterialsFromAssembly(const TArray<UProceduralMeshComponent*> &ProceduralSubLayers, const FBIMAssemblySpec &Assembly,
 	const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial,
 	TArray<UMaterialInstanceDynamic*> *CachedMIDs, bool bLayersReversed)
 {
 	bool bAppliedAnyTileMaterials = false;
-	int32 numLayers = Assembly.Layers.Num();
+	int32 numLayers = Assembly.CachedAssembly.Layers.Num();
 
 	if (ensure(ProceduralSubLayers.Num() == numLayers))
 	{
@@ -1690,7 +1618,7 @@ bool UModumateFunctionLibrary::UpdateMaterialsFromAssembly(const TArray<UProcedu
 			UProceduralMeshComponent *layerMesh = ProceduralSubLayers[layerIdx];
 
 			int32 fixedLayerIdx = bLayersReversed ? (numLayers - layerIdx - 1) : layerIdx;
-			const FModumateObjectAssemblyLayer &layerData = Assembly.Layers[fixedLayerIdx];
+			const FModumateObjectAssemblyLayer &layerData = Assembly.CachedAssembly.Layers[fixedLayerIdx];
 
 			UMaterialInstanceDynamic** cachedMIDPtr = nullptr;
 			if (CachedMIDs && (layerIdx < CachedMIDs->Num()))

@@ -353,8 +353,8 @@ void UStairTool::SetAssemblyKey(const FName &InAssemblyKey)
 	UEditModelToolBase::SetAssemblyKey(InAssemblyKey);
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(EObjectType::OTStaircase);
-	const FModumateObjectAssembly *assembly = GameState.IsValid() ?
-		GameState->GetAssemblyByKey_DEPRECATED(toolMode, InAssemblyKey) : nullptr;
+	const FBIMAssemblySpec *assembly = GameState.IsValid() ?
+		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, InAssemblyKey) : nullptr;
 
 	if (assembly != nullptr)
 	{

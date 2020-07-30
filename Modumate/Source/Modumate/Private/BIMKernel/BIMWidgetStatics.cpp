@@ -341,7 +341,7 @@ ECraftingResult UModumateCraftingNodeWidgetStatics::GetLayerIDFromNodeInstanceID
 	return rootNode != nullptr && childPinPosition != -1 ? ECraftingResult::Success : ECraftingResult::Error;
 }
 
-ECraftingResult UModumateCraftingNodeWidgetStatics::GetPropertyTipsByIconType(const FModumateDatabase &InDB, EConfiguratorNodeIconType IconType, const Modumate::BIM::FModumateAssemblyPropertySpec &PresetProperties, TArray<FString> &OutTips)
+ECraftingResult UModumateCraftingNodeWidgetStatics::GetPropertyTipsByIconType(const FModumateDatabase &InDB, EConfiguratorNodeIconType IconType, const FBIMAssemblySpec &PresetProperties, TArray<FString> &OutTips)
 {
 	if (IconType == EConfiguratorNodeIconType::Module || IconType == EConfiguratorNodeIconType::Gap2D)
 	{

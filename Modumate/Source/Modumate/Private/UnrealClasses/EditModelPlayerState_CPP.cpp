@@ -309,21 +309,6 @@ bool AEditModelPlayerState_CPP::GetSnapCursorDeltaFromRay(const FVector& RayOrig
 	return false;
 }
 
-FModumateObjectAssembly AEditModelPlayerState_CPP::SetTemporaryAssembly(
-	EToolMode mode,
-	const FModumateObjectAssembly &assembly)
-{
-	FModumateObjectAssembly newTemp = assembly;
-	newTemp.DatabaseKey = TEXT("temp");
-	TemporaryAssemblies.Add(mode, newTemp);
-	return newTemp;
-}
-
-const FModumateObjectAssembly *AEditModelPlayerState_CPP::GetTemporaryAssembly(EToolMode mode) const
-{
-	return TemporaryAssemblies.Find(mode);
-}
-
 void AEditModelPlayerState_CPP::DebugShowWallProfiles(const TArray<FModumateObjectInstance *> &walls)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::DebugShowWallProfiles"));

@@ -242,8 +242,8 @@ void AAdjustFFEPointHandle::Initialize()
 	}
 
 	bool bHaveMountingProperties =
-		TargetMOI->GetAssembly().TryGetProperty(BIM::Parameters::Normal, AssemblyNormal) &&
-		TargetMOI->GetAssembly().TryGetProperty(BIM::Parameters::Tangent, AssemblyTangent);
+		TargetMOI->GetAssembly().CachedAssembly.TryGetProperty(BIM::Parameters::Normal, AssemblyNormal) &&
+		TargetMOI->GetAssembly().CachedAssembly.TryGetProperty(BIM::Parameters::Tangent, AssemblyTangent);
 	ensure(bHaveMountingProperties);
 
 	AActor *moiActor = TargetMOI->GetActor();
@@ -267,7 +267,6 @@ bool AAdjustFFEPointHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& 
 	OutWidgetSize = FVector2D(12.0f, 12.0f);
 	return true;
 }
-
 
 bool AAdjustFFERotateHandle::BeginUse()
 {
@@ -446,8 +445,8 @@ void AAdjustFFERotateHandle::Initialize()
 	}
 
 	bool bHaveMountingProperties =
-		TargetMOI->GetAssembly().TryGetProperty(BIM::Parameters::Normal, AssemblyNormal) &&
-		TargetMOI->GetAssembly().TryGetProperty(BIM::Parameters::Tangent, AssemblyTangent);
+		TargetMOI->GetAssembly().CachedAssembly.TryGetProperty(BIM::Parameters::Normal, AssemblyNormal) &&
+		TargetMOI->GetAssembly().CachedAssembly.TryGetProperty(BIM::Parameters::Tangent, AssemblyTangent);
 	ensure(bHaveMountingProperties);
 
 	AActor *moiActor = TargetMOI->GetActor();

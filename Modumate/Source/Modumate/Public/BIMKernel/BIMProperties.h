@@ -149,6 +149,7 @@ namespace Modumate {
 			extern const FNameType PartSet;
 			extern const FNameType Pattern;
 			extern const FNameType Preset;
+			extern const FNameType ProfileKey;
 			extern const FNameType Scale;
 			extern const FNameType Slope;
 			extern const FNameType StyleComments;

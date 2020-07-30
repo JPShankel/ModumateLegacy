@@ -123,8 +123,9 @@ void FModumateDraftingView::GenerateScheduleViews()
 	}
 
 	// Wall Schedules
-	// TODO: should use GetPresentAssembliesForToolMode
-	TArray<FModumateObjectAssembly> assemblies = Document->GetAssembliesForToolMode_DEPRECATED(World.Get(), EToolMode::VE_WALL);
+	TArray<FBIMAssemblySpec> assemblies;
+
+	Document->PresetManager.GetProjectAssembliesForObjectType(EObjectType::OTWallSegment, assemblies);
 
 	if (assemblies.Num() > 0)
 	{

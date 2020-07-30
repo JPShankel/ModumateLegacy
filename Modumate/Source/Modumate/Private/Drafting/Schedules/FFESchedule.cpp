@@ -23,14 +23,14 @@ namespace Modumate
 
 		// TODO: this code may be temporary with a different accessor from Document
 		TMap<FString, int32> CodeNameToCount;
-		TMap<FString, FModumateObjectAssembly> CodeNameToAssembly;
+		TMap<FString, FBIMAssemblySpec> CodeNameToAssembly;
 
 		auto ffes = doc->GetObjectsOfType(EObjectType::OTFurniture);
 		ensureAlways(ffes.Num() > 0);
 
 		for (auto& ffe : ffes)
 		{
-			FString codeName = ffe->GetAssembly().GetProperty(BIM::Parameters::Code);
+			FString codeName = ffe->GetAssembly().CachedAssembly.GetProperty(BIM::Parameters::Code);
 			if (!CodeNameToCount.Contains(codeName))
 			{
 				CodeNameToCount.Add(codeName, 1);
@@ -58,7 +58,7 @@ namespace Modumate
 			iconElement->Information->Children.Add(idTag);
 
 			// Name
-			FText name = FText::FromString(assembly.GetProperty(BIM::Parameters::Name));
+			FText name = FText::FromString(assembly.CachedAssembly.GetProperty(BIM::Parameters::Name));
 			iconElement->Information->Children.Add(iconElement->MakeDraftingText(name));
 
 			// Count

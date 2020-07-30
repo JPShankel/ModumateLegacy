@@ -9,7 +9,7 @@
 #include "HAL/FileManager.h"
 #include "Misc/Paths.h"
 #include "Database/ModumateDataTables.h"
-#include "Database/ModumateObjectAssembly.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -573,9 +573,50 @@ void FModumateDatabase::ReadPortalConfigurationData(UDataTable *data)
 		PortalConfigurationOptionSets.AddData(pendingSet);
 		pendingSet.Options.Empty();
 	}
-
 }
-void FModumateDatabase::AddArchitecturalMaterial(const FName Key, const FString &Name, const FSoftObjectPath &AssetPath)
+
+void FModumateDatabase::AddSimpleMesh(const FName& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+{
+	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
+	{
+		return;
+	}
+
+	FSimpleMeshRef mesh;
+
+	mesh.Key = Key;
+	mesh.AssetPath = AssetPath;
+
+	mesh.Asset = Cast<USimpleMeshData>(AssetPath.TryLoad());
+	if (ensureAlways(mesh.Asset.IsValid()))
+	{
+		mesh.Asset->AddToRoot();
+	}
+
+	SimpleMeshes.AddData(mesh);
+}
+
+void FModumateDatabase::AddArchitecturalMesh(const FName& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+{
+	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
+	{
+		return;
+	}
+
+	FArchitecturalMesh mesh;
+	mesh.AssetPath = AssetPath;
+	mesh.Key = Key;
+
+	mesh.EngineMesh = Cast<UStaticMesh>(AssetPath.TryLoad());
+	if (ensureAlways(mesh.EngineMesh.IsValid()))
+	{
+		mesh.EngineMesh->AddToRoot();
+	}
+
+	AMeshes.AddData(mesh);
+}
+
+void FModumateDatabase::AddArchitecturalMaterial(const FName& Key, const FString& Name, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -596,6 +637,10 @@ void FModumateDatabase::AddArchitecturalMaterial(const FName Key, const FString 
 	AMaterials.AddData(mat);
 }
 
+/*
+This function is in development pending a complete data import/access plan
+In the meantime, we read a manifest of CSV files and look for expected presets to populate tools
+*/
 void FModumateDatabase::ReadPresetData()
 {
 	FString manifestPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
@@ -609,7 +654,13 @@ void FModumateDatabase::ReadPresetData()
 	layerNode->Scope = EBIMValueScope::Layer;
 
 	FName rawMaterialType = TEXT("0RawMaterial");
-	for (auto &kvp : PresetManager.CraftingNodePresets.Presets)
+	FName layeredType = TEXT("4LayeredAssembly");
+	FName riggedType = TEXT("0StubbyPortal");
+	FName ffeType = TEXT("0StubbyFFE");
+	FName beamColumnType = TEXT("2ExtrudedProfile");
+	FName profileType = TEXT("0Profile");
+
+	for (auto& kvp : PresetManager.CraftingNodePresets.Presets)
 	{
 		if (kvp.Value.NodeType == rawMaterialType)
 		{
@@ -617,6 +668,22 @@ void FModumateDatabase::ReadPresetData()
 			FName matKey = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Node, Modumate::BIM::Parameters::MaterialKey);
 			FString assetPathStr = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Node, Modumate::BIM::Parameters::EngineMaterial);
 			AddArchitecturalMaterial(matKey, matName, assetPathStr);
+		}
+		if (kvp.Value.NodeType == riggedType || kvp.Value.NodeType == ffeType)
+		{
+			FString assetPath = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Layer, Modumate::BIM::Parameters::AssetID);
+			FString name = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Preset, Modumate::BIM::Parameters::Name);
+			AddArchitecturalMesh(*name, name, assetPath);
+		}
+		if (kvp.Value.NodeType == profileType)
+		{
+			FString assetPath = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Node, Modumate::BIM::Parameters::Mesh);
+			if (assetPath.Len() != 0)
+			{
+				FString name = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Preset, Modumate::BIM::Parameters::Name);
+				FString key = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Node, Modumate::BIM::Parameters::ProfileKey);
+				AddSimpleMesh(*key, name, assetPath);
+			}
 		}
 	}
 
@@ -630,11 +697,28 @@ void FModumateDatabase::ReadPresetData()
 	objectMap.Add(FString(TEXT("4LayeredAssembly-->Finish")), EObjectType::OTFinish);
 	objectMap.Add(FString(TEXT("4LayeredAssembly-->Countertop")), EObjectType::OTCountertop);
 
-	FName layeredType = TEXT("4LayeredAssembly");
+	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->ConcreteRectangular")),EObjectType::OTStructureLine);
+	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->ConcreteRound")),EObjectType::OTStructureLine);
+	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->SteelC")),EObjectType::OTStructureLine);
+	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->SteelHSS")),EObjectType::OTStructureLine);
+	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->SteelL")),EObjectType::OTStructureLine);
+	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->SteelTube")),EObjectType::OTStructureLine);
+	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->SteelW")),EObjectType::OTStructureLine);
+	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->SteelWT")),EObjectType::OTStructureLine);
+	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->StoneRectangular")),EObjectType::OTStructureLine);
+	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->StoneRound")),EObjectType::OTStructureLine);
+	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->WoodRectangular")),EObjectType::OTStructureLine);
+	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->WoodRound")),EObjectType::OTStructureLine);
+	objectMap.Add(FString(TEXT("4RiggedAssembly-->Door-->Swing")), EObjectType::OTDoor);
+	objectMap.Add(FString(TEXT("4RiggedAssembly-->Window-->Fixed")), EObjectType::OTWindow);
+	objectMap.Add(FString(TEXT("4RiggedAssembly-->Window-->Hung")), EObjectType::OTWindow);
+
+	objectMap.Add(FString(TEXT("2Part0Slice-->FF&E")), EObjectType::OTFurniture);
+
 	TSet<EObjectType> gotDefault;
 	for (auto &kvp : PresetManager.CraftingNodePresets.Presets)
 	{
-		if (kvp.Value.NodeType == layeredType)
+		if (kvp.Value.NodeType == riggedType || kvp.Value.NodeType == layeredType || kvp.Value.NodeType == ffeType || kvp.Value.NodeType == beamColumnType)
 		{
 			FString myPath;
 			kvp.Value.MyTagPath.ToString(myPath);
@@ -652,20 +736,18 @@ void FModumateDatabase::ReadPresetData()
 				PresetManager.StarterPresetsByObjectType.Add(*ot, kvp.Key);
 			}
 
-			FModumateObjectAssembly outAssembly;
-			Modumate::BIM::FModumateAssemblyPropertySpec outSpec;
+			FBIMAssemblySpec outSpec;
 			PresetManager.PresetToSpec(kvp.Key, outSpec);
 			outSpec.ObjectType = *ot;
-			UModumateObjectAssemblyStatics::DoMakeAssembly(*this, PresetManager, outSpec, outAssembly);
-			outAssembly.DatabaseKey = kvp.Key;
-			PresetManager.UpdateProjectAssembly(outAssembly);
+			UModumateObjectAssemblyStatics::DoMakeAssembly(*this, PresetManager, outSpec, outSpec.CachedAssembly);
+			PresetManager.UpdateProjectAssembly(outSpec);
 
 			// TODO: default assemblies added to allow interim loading during assembly refactor, to be eliminated
 			if (!gotDefault.Contains(outSpec.ObjectType))
 			{
 				gotDefault.Add(outSpec.ObjectType);
-				outAssembly.DatabaseKey = TEXT("default");
-				PresetManager.UpdateProjectAssembly(outAssembly);
+				outSpec.RootPreset = TEXT("default");
+				PresetManager.UpdateProjectAssembly(outSpec);
 			}
 		}
 	}
@@ -706,73 +788,6 @@ void FModumateDatabase::ReadMeshData(UDataTable *data)
 	);
 }
 
-void FModumateDatabase::ReadFFEPartData(UDataTable *data)
-{
-	if (data == nullptr)
-	{
-		return;
-	}
-
-	data->ForeachRow<FFFEPartTableRow>(TEXT("FFFEPartTableRow"),
-		[this](const FName &Key, const FFFEPartTableRow &data)
-	{
-		FModumateObjectAssemblyLayer newLayer;
-		newLayer.DatabaseKey = Key;
-		newLayer.Thickness = Modumate::Units::FUnitValue::WorldCentimeters(1.0f);
-
-		newLayer.CodeName = "";
-
-		newLayer.Mesh.AssetPath = data.AssetFilePath;
-		newLayer.Mesh.Key = Key;
-		newLayer.Mesh.EngineMesh = Cast<UStaticMesh>(newLayer.Mesh.AssetPath.TryLoad());
-		if (ensureAlwaysMsgf(newLayer.Mesh.EngineMesh.IsValid(), TEXT("FFE Part %s missing mesh"), *(Key.ToString())))
-		{
-			newLayer.Mesh.EngineMesh->AddToRoot();
-		}
-
-		FSoftObjectPath simpleMeshPaths[] = {
-			data.PerimeterMeshPath,
-			data.InteriorMeshPath,
-		};
-
-		for (const FSoftObjectPath &simpleMeshPath : simpleMeshPaths)
-		{
-			if (simpleMeshPath.IsValid())
-			{
-				auto *simpleMeshData = Cast<USimpleMeshData>(simpleMeshPath.TryLoad());
-				if (ensureAlwaysMsgf(simpleMeshData, TEXT("FFE Part %s missing simple mesh"),
-					*(Key.ToString())))
-				{
-					FSimpleMeshRef poly = FSimpleMeshRef();
-					poly.Key = FName(*simpleMeshPath.GetAssetName());
-					poly.AssetPath = simpleMeshPath;
-					poly.Asset = simpleMeshData;
-
-					simpleMeshData->AddToRoot();
-					newLayer.SimpleMeshes.Add(poly);
-				}
-			}
-		}
-
-		// Add lights to FFE layer
-		if (data.LightConfigKey.Len() > 0)
-		{
-			newLayer.LightLocation = data.LightLocation;
-			newLayer.LightRotation = data.LightRotation;
-			const FLightConfiguration* lightConfigData = LightConfigs.GetData(*data.LightConfigKey);
-			if (!ensureAlways(lightConfigData))
-			{
-				UE_LOG(LogTemp, Warning, TEXT("LightConfig %s missing data"), *data.LightConfigKey);
-			}
-			else
-			{
-				newLayer.LightConfiguration = *lightConfigData;
-			}
-		}
-		FFEParts.AddData(newLayer);
-	});
-}
-
 void FModumateDatabase::ReadLightConfigData(UDataTable *data)
 {
 	if (!ensureAlways(data))
@@ -799,37 +814,6 @@ void FModumateDatabase::ReadLightConfigData(UDataTable *data)
 		LightConfigs.AddData(lightdata);
 	}
 	);
-}
-
-void FModumateDatabase::ReadFFEAssemblyData(UDataTable *data)
-{
-	if (data == nullptr)
-	{
-		return;
-	}
-	data->ForeachRow<FFFEAssemblyTableRow>(TEXT("FFFEAssemblyTableRow"),
-		[this](const FName &Key, const FFFEAssemblyTableRow &data)
-	{
-		FModumateObjectAssembly newAssembly;
-		for (auto &ffeKey : data.FFEKeys)
-		{
-			const FModumateObjectAssemblyLayer *partData = FFEParts.GetData(*ffeKey);
-			if (!ensureAlways(partData))
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Wall %s missing layer data"), *ffeKey);
-				continue;
-			}
-			newAssembly.Layers.Add(*partData);
-		}
-		newAssembly.DatabaseKey = Key;
-		newAssembly.SetProperty(Modumate::BIM::Parameters::Normal, data.NormalVector);
-		newAssembly.SetProperty(Modumate::BIM::Parameters::Tangent, data.TangentVector);
-		newAssembly.SetProperty(Modumate::BIM::Parameters::Name, data.DisplayName.ToString());
-		newAssembly.ObjectType = EObjectType::OTFurniture;
-
-		FFEAssemblies.AddData(newAssembly);
-	});
-
 }
 
 void FModumateDatabase::ReadColorData(UDataTable *data)
@@ -937,22 +921,27 @@ bool checkSubcategoryMetadata(
 Data Access
 */
 
-const FArchitecturalMaterial *FModumateDatabase::GetArchitecturalMaterialByKey(const FName &key) const
+const FArchitecturalMaterial *FModumateDatabase::GetArchitecturalMaterialByKey(const FName& Key) const
 {
-	return AMaterials.GetData(key);
+	return AMaterials.GetData(Key);
 }
 
-const FCustomColor *FModumateDatabase::GetCustomColorByKey(const FName &key) const
+const FArchitecturalMesh* FModumateDatabase::GetArchitecturalMeshByKey(const FName& Key) const
 {
-	return NamedColors.GetData(key);
+	return AMeshes.GetData(Key);
 }
 
-const FPortalPart *FModumateDatabase::GetPortalPartByKey(const FName &key) const
+const FCustomColor *FModumateDatabase::GetCustomColorByKey(const FName& Key) const
 {
-	return PortalParts.GetData(key);
+	return NamedColors.GetData(Key);
 }
 
-const FSimpleMeshRef * FModumateDatabase::GetSimpleMeshByKey(const FName &Key) const
+const FPortalPart *FModumateDatabase::GetPortalPartByKey(const FName& Key) const
+{
+	return PortalParts.GetData(Key);
+}
+
+const FSimpleMeshRef* FModumateDatabase::GetSimpleMeshByKey(const FName& Key) const
 {
 	return SimpleMeshes.GetData(Key);
 }
@@ -993,57 +982,12 @@ void FModumateDatabase::InitPresetManagerForNewDocument(FPresetManager &OutManag
 {
 	if (ensureAlways(&OutManager != &PresetManager))
 	{
-		OutManager.InitAssemblyDBs();
 		OutManager.CraftingNodePresets = PresetManager.CraftingNodePresets;
 		OutManager.DraftingNodePresets = PresetManager.DraftingNodePresets;
 		OutManager.AssembliesByObjectType = PresetManager.AssembliesByObjectType;
 		OutManager.KeyStore = PresetManager.KeyStore;
 		OutManager.StarterPresetsByObjectType = PresetManager.StarterPresetsByObjectType;
-
-		// Add all DDL 1.0 assemblies to project as marketplace has been deactivated and there are no presets
-		for (auto &kvp : PresetManager.AssemblyDBs_DEPRECATED)
-		{
-			if (!UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(UModumateTypeStatics::ObjectTypeFromToolMode(kvp.Key)))
-			{
-				if (kvp.Value.DataMap.Num() == 0)
-				{
-					continue;
-				}
-				TModumateDataCollection<FModumateObjectAssembly> &db = OutManager.AssemblyDBs_DEPRECATED.FindOrAdd(kvp.Key);
-				db = kvp.Value;
-			}
-		}
 	}
-}
-
-void FModumateDatabase::ReadMarketplace(UWorld *world)
-{
-	FString defaultAssemblyPath = FPaths::Combine(FPaths::Combine(FPaths::ProjectContentDir(), TEXT("NonUAssets")), TEXT("defaultAssemblies.mdmt"));
-
-	PresetManager.InitAssemblyDBs();
-
-	FModumateDocumentHeader docHeader;
-	FMOIDocumentRecord docRecord;
-	if (ensure(FModumateSerializationStatics::TryReadModumateDocumentRecord(defaultAssemblyPath, docHeader, docRecord)))
-	{
-		PresetManager.CraftingNodePresets.FromDataRecords(docRecord.CraftingPresetArrayV2);
-	}
-
-	for (auto &car : docRecord.CustomAssemblies)
-	{
-		if (car.ObjectType == EObjectType::OTFurniture || UModumateObjectAssemblyStatics::ObjectTypeSupportsDDL2(car.ObjectType))
-		{
-			continue;
-		}
-		TModumateDataCollection<FModumateObjectAssembly> &obDB = PresetManager.AssemblyDBs_DEPRECATED.FindOrAdd(car.ToolMode);
-		FModumateObjectAssembly newAsm;
-		FModumateObjectAssembly::FromDataRecord_DEPRECATED(car, *this, PresetManager, newAsm);
-		obDB.AddData(newAsm);
-	}
-
-	PresetManager.AssemblyDBs_DEPRECATED.Add(EToolMode::VE_PLACEOBJECT, FFEAssemblies);
-
-	ReadPresetData();
 }
 
 void FModumateDatabase::Init()

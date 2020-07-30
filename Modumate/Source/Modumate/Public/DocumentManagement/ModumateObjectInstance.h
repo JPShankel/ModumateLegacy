@@ -278,9 +278,10 @@ namespace Modumate
 
 		FMOIStateData CurrentState, PreviewState;
 
-		// TODO: refactor for shared pointers held in the preset manager
-		// First preset manager must become responsible for "trivial" assemblies used by abstract MOIs like metaplanes
-		FModumateObjectAssembly ObjectAssembly;
+		// Carry a bespoke copy of your assembly
+		// TODO: this is motivated by object-level overrides and anticipated serialization needs
+		FBIMAssemblySpec ObjectAssembly;
+
 		// TODO: this flag is helpful to keep the above ObjectAssembly layer orders correct, especially because the assembly
 		// itself isn't stored in the FMOIStateData. So if CurrentState / PreviewState get modified (or swapped), this flag lets us maintain the layer order.
 		bool bAssemblyLayersReversed = false;
@@ -311,7 +312,7 @@ namespace Modumate
 		TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
 
 	public:
-		FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FModumateObjectAssembly &obAsm, int32 id);
+		FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FBIMAssemblySpec &obAsm, int32 id);
 		FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FMOIDataRecord &obRec);
 		~FModumateObjectInstance();
 
@@ -415,8 +416,8 @@ namespace Modumate
 		// TODO: move some of these to ILayeredObject, or make them more general
 		void OnAssemblyChanged();
 
-		const FModumateObjectAssembly &GetAssembly() const;
-		void SetAssembly(const FModumateObjectAssembly &NewAssembly);
+		const FBIMAssemblySpec &GetAssembly() const;
+		void SetAssembly(const FBIMAssemblySpec &NewAssembly);
 		void SetAssemblyLayersReversed(bool bNewLayersReversed);
 
 		// TODO: generalize or delete these functions, especially if they are

@@ -3,8 +3,9 @@
 #pragma once
 
 #include "Database/ModumateObjectEnums.h"
-#include "BIMKernel/BIMAssemblySpec.h"
 #include "BIMKernel/BIMPresets.h"
+
+struct MODUMATE_API FBIMAssemblySpec;
 
 namespace Modumate { namespace BIM {
 
@@ -106,7 +107,7 @@ public:
 	ECraftingResult DestroyNodeInstance(const FCraftingTreeNodeInstanceSharedPtr &Instance, TArray<int32> &OutDestroyed);
 	ECraftingResult DestroyNodeInstance(int32 InstanceID, TArray<int32> &OutDestroyed);
 
-	ECraftingResult PresetToSpec(const FName &PresetID, const FCraftingPresetCollection &PresetCollection, FModumateAssemblyPropertySpec &OutPropertySpec) const;
+	ECraftingResult PresetToSpec(const FName &PresetID, const FCraftingPresetCollection &PresetCollection, FBIMAssemblySpec &OutPropertySpec) const;
 
 	const FCraftingTreeNodeInstanceSharedPtr InstanceFromID(int32 InstanceID) const;
 	FCraftingTreeNodeInstanceSharedPtr InstanceFromID(int32 InstanceID);

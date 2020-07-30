@@ -17,7 +17,6 @@
 */
 
 class ADynamicMeshActor;
-class UModumateCraftingWidget_CPP;
 
 UCLASS()
 class MODUMATE_API UModumateFunctionLibrary : public UBlueprintFunctionLibrary
@@ -189,7 +188,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
 	static FName GetShopItemFromActor(AActor* TargetActor, bool& bSuccess);
 
-	static bool GetCabinetToeKickDimensions(const FModumateObjectAssembly &obAsm, FVector2D &outToeKickDims);
+	static bool GetCabinetToeKickDimensions(const FBIMAssemblySpec &obAsm, FVector2D &outToeKickDims);
 
 	// Helper non-BP methods for below BP method
 	static bool SetMeshMaterial(UMeshComponent *MeshComponent, const FArchitecturalMaterial &Material, int32 MatIndex, UMaterialInstanceDynamic** CachedMIDPtr = nullptr);
@@ -223,15 +222,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
 	static void DocTransverseObject(AActor* MoiActors);
 
-	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static bool ApplyTileMaterialToMeshes(const TArray<UProceduralMeshComponent*> &ProceduralSubLayers, const FName &AssemblyKey, AEditModelPlayerController_CPP *Controller, EToolMode FromToolMode, const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial, bool AsLayer, FString KeyOverride, bool bUseMarketplaceAsm = false);
-
 	static void PopulatePatternModuleVariables(TMap<FString, float> &patternExprVars, const FVector &moduleDims, int32 moduleIdx);
 
 	static bool ApplyTileMaterialToMeshFromLayer(UProceduralMeshComponent *MeshComponent, const FModumateObjectAssemblyLayer &Layer,
 		const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial, UMaterialInstanceDynamic** CachedMIDPtr = nullptr);
 
-	static bool UpdateMaterialsFromAssembly(const TArray<UProceduralMeshComponent*> &ProceduralSubLayers, const FModumateObjectAssembly &Assembly,
+	static bool UpdateMaterialsFromAssembly(const TArray<UProceduralMeshComponent*> &ProceduralSubLayers, const FBIMAssemblySpec &Assembly,
 		const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial,
 		TArray<UMaterialInstanceDynamic*> *CachedMIDs = nullptr, bool bLayersReversed = false);
 

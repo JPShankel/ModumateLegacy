@@ -3,7 +3,7 @@
 #pragma once
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
-#include "Database/ModumateObjectAssembly.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 
 #include "EditModelStairTool.generated.h"
 
@@ -57,7 +57,7 @@ protected:
 	EMouseMode OriginalMouseMode;
 	bool bWantedVerticalSnap;
 	int32 LastValidTargetID;
-	FModumateObjectAssembly ObjAssembly;
+	FBIMAssemblySpec ObjAssembly;
 	int32 RunSegmentID, RiseSegmentID, WidthSegmentID;
 	TWeakObjectPtr<ADynamicMeshActor> PendingObjMesh;
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;

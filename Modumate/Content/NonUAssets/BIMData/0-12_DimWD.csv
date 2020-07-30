@@ -1,11 +1,11 @@
 TYPENAME,,,,0DimWD,,,,,,,,,,,,,,,,,,,,,
 ,,,,Definition,,,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,
-PROPERTY,,STRING,,Name,,Preset.Name,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DIMENSION,,Width,,Preset.Width,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DIMENSION,,Depth,,Preset.Depth,,,,,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Node.Name,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Width,,Node.Width,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Depth,,Node.Depth,,,,,,,,,,,,,,,,,,,
 ,,,,Presets,,,,,,1,4,8,0,0,11,5,0,0,11,11,0,0,13,13,9
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Node.Width,Node.Depth,DataType=TG_Parent Node+CategoryPath,2ModuleWDProfile --> Corrugated Plastic Sheet,2ModuleWDProfile --> Corrugated Steel Deck,2ModuleWDProfile --> Steel C-Channel,2ModuleWDProfile --> Steel C-H Channel,2ModuleWDProfile --> Steel Hat Channel,2ModuleWDProfile --> Steel Web Joist,2ModuleWDProfile --> Steel Z Channel,#REF!,2ModuleWDProfile --> Wood Lumber,2ModuleWDProfile --> Wood Web Joist,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",2Gap2D --> Tile Gaps,2Gap2D --> Masonry Gaps,2ExtrudedProfile --> Beam/Column --> Concrete Rectangular,2ExtrudedProfile --> Beam/Column --> Stone Rectangular,2ExtrudedProfile --> Beam/Column --> Wood Rectangular
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Node.Name,Node.Width,Node.Depth,DataType=TG_Parent Node+CategoryPath,2ModuleWDProfile --> Corrugated Plastic Sheet,2ModuleWDProfile --> Corrugated Steel Deck,2ModuleWDProfile --> Steel C-Channel,2ModuleWDProfile --> Steel C-H Channel,2ModuleWDProfile --> Steel Hat Channel,2ModuleWDProfile --> Steel Web Joist,2ModuleWDProfile --> Steel Z Channel,#REF!,2ModuleWDProfile --> Wood Lumber,2ModuleWDProfile --> Wood Web Joist,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",2Gap2D --> Tile Gaps,2Gap2D --> Masonry Gaps,2ExtrudedProfile --> Beam/Column --> ConcreteRectangular,2ExtrudedProfile --> Beam/Column --> StoneRectangular,2ExtrudedProfile --> Beam/Column --> WoodRectangular
 PRESET,,"0DimWD
 0.125inW
 0inD",,0DimWD,,0.125in x 0in,0.125in,0in,,,,,,,,,,,,,X,,,,
@@ -240,4 +240,3 @@ PRESET,,"0DimWD
 PRESET,,"0DimWD
 8inW
 8inD",,0DimWD,,8in x 8in,8in,8in,,,,,,,,,,,,,,,X,X,X
-,,,,,,,,,,,,,,,,,,,,,,,,,

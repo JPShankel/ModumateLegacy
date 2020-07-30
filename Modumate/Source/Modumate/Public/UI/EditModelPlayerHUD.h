@@ -72,9 +72,6 @@ public:
 	UHUDDrawWidget *HUDDrawWidget;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widgets)
-	class UModumateCraftingWidget_CPP *CraftingWidget;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widgets)
 	class UModumateDrawingSetWidget_CPP *DrawingSetWidget;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

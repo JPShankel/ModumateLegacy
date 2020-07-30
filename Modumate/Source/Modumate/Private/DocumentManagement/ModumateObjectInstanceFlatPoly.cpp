@@ -77,10 +77,10 @@ namespace Modumate
 	}
 #endif
 
-	float FMOIFlatPolyImpl::CalcThickness(const TArray<FModumateObjectAssemblyLayer> &floorLayers) const
+	float FMOIFlatPolyImpl::CalcThickness(const FBIMAssemblySpec &Assembly) const
 	{
 		float thickness = 0;
-		for (auto &layer : floorLayers)
+		for (auto &layer : Assembly.CachedAssembly.Layers)
 		{
 			if (layer.Thickness.AsWorldCentimeters() > 0)
 			{
@@ -95,10 +95,10 @@ namespace Modumate
 	void FMOIFlatPolyImpl::SetupDynamicGeometry()
 	{
 		GotGeometry = true;
-		if (MOI->GetObjectInverted() && DynamicMeshActor->Assembly.Layers.Num() > 0)
+		if (MOI->GetObjectInverted() && DynamicMeshActor->Assembly.CachedAssembly.Layers.Num() > 0)
 		{
 			float sketchPlaneHeight = DynamicMeshActor->GetActorLocation().Z + MOI->GetExtents().Y;
-			float newThickness = CalcThickness(MOI->GetAssembly().Layers);
+			float newThickness = CalcThickness(MOI->GetAssembly());
 
 			TArray<FVector> newCPS = MOI->GetControlPoints();
 			float newZ = sketchPlaneHeight - newThickness;
@@ -111,7 +111,7 @@ namespace Modumate
 		DynamicMeshActor->UVFloorAnchors = MOI->GetControlPoints();
 		DynamicMeshActor->TopUVFloorAnchor = FVector::ZeroVector;
 		DynamicMeshActor->SetupFlatPolyGeometry(MOI->GetControlPoints(), MOI->GetAssembly());
-		MOI->SetExtents(FVector(0.0f, CalcThickness(MOI->GetAssembly().Layers), 0.0f));
+		MOI->SetExtents(FVector(0.0f, CalcThickness(MOI->GetAssembly()), 0.0f));
 
 		auto children = MOI->GetChildObjects();
 		for (auto *child : children)

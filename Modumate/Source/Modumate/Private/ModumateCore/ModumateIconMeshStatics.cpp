@@ -10,15 +10,18 @@ using namespace Modumate;
 bool UModumateIconMeshStatics::GetMeshesFromShoppingItem(AEditModelPlayerController_CPP *Controller, const FName &AsmKey, EToolMode FromToolMode, TArray<UStaticMesh*>& TargetComps, bool bMarketplaceAsm)
 {
 	FModumateDatabase *obDB = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
-	const FModumateObjectAssembly *obAsm = bMarketplaceAsm ?
-		obDB->PresetManager.GetAssemblyByKey(FromToolMode, AsmKey) :
-		Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>()->GetAssemblyByKey_DEPRECATED(FromToolMode, AsmKey);
 
-	if (obAsm == nullptr)
+	AEditModelGameState_CPP* gameState = Cast<AEditModelGameState_CPP>(Controller->GetWorld()->GetGameState());
+	const FPresetManager& presetManager = gameState->Document.PresetManager;
+
+	const FBIMAssemblySpec* assembly = presetManager.GetAssemblyByKey(FromToolMode, AsmKey);
+
+	if (assembly == nullptr)
 	{
 		return false;
 	}
-	FModumateObjectAssembly *updatedObAsmPtr = const_cast<FModumateObjectAssembly*>(obAsm);
+
+	FModumateObjectAssembly *updatedObAsmPtr = const_cast<FModumateObjectAssembly*>(&assembly->CachedAssembly);
 	FModumateObjectAssembly updatedObAsm = *updatedObAsmPtr;
 	TargetComps.Empty();
 	for (int32 i = 0; i < updatedObAsm.Layers.Num(); ++i)
@@ -86,10 +89,10 @@ bool UModumateIconMeshStatics::MakeIconMeshFromPofileKey(AEditModelPlayerControl
 		if (meshRef != nullptr)
 		{
 			// Add temp assembly that uses the profile
-			FModumateObjectAssembly obAsm;
+			FBIMAssemblySpec obAsm;
 			FModumateObjectAssemblyLayer obAsmLayer;
 			obAsmLayer.SimpleMeshes.Add(*meshRef);
-			obAsm.Layers.Add(obAsmLayer);
+			obAsm.CachedAssembly.Layers.Add(obAsmLayer);
 
 			// Geometry params for setting up dynamic mesh actor
 			FVector meshStartPos = FVector(Length, 0.f, 0.f) + RootLoation;
@@ -122,7 +125,7 @@ bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContex
 	}
 	const FPresetManager &presetManager = gameState->Document.PresetManager;
 
-	BIM::FModumateAssemblyPropertySpec presetSpec;
+	FBIMAssemblySpec presetSpec;
 	presetManager.PresetToSpec(PresetKey, presetSpec);
 
 	FName materialName, colorName;

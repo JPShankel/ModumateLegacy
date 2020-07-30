@@ -6,15 +6,25 @@
 #include "Database/ModumateObjectEnums.h"
 #include "BIMKernel/BIMProperties.h"
 
-namespace Modumate {
-	namespace BIM {
+// All needed by ObjectAssembly, first step is to replace all inclusions of the object assembly header with this one
+#include "ModumateCore/ModumateUnits.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
+#include "Database/ModumateArchitecturalMaterial.h"
+#include "Database/ModumateArchitecturalMesh.h"
+#include "Database/ModumateSimpleMesh.h"
+#include "BIMKernel/BIMLegacyPattern.h"
+#include "DocumentManagement/ModumateSerialization.h"
+#include "Database/ModumateObjectAssembly.h"
 
-		struct MODUMATE_API FModumateAssemblyPropertySpec
-		{
-			EObjectType ObjectType = EObjectType::OTNone;
-			FName RootPreset;
-			FBIMPropertySheet RootProperties;
-			TArray<FBIMPropertySheet> LayerProperties;
-		};
-	}
-}
+struct MODUMATE_API FBIMAssemblySpec
+{
+	EObjectType ObjectType = EObjectType::OTNone;
+	FName RootPreset;
+	Modumate::BIM::FBIMPropertySheet RootProperties;
+	TArray<Modumate::BIM::FBIMPropertySheet> LayerProperties;
+
+	FModumateObjectAssembly CachedAssembly;
+
+	// For DataCollection support in preset manager
+	FName UniqueKey() const { return RootPreset; }
+};

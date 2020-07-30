@@ -8,7 +8,7 @@
 #include "ModumateCore/ModumateTypes.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "Database/ModumateObjectAssembly.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 #include "DynamicMeshActor.generated.h"
 
 
@@ -84,8 +84,8 @@ public:
 	void SetupProceduralLayers(int32 numProceduralLayers);
 	void ClearProceduralLayers();
 
-	void SetupFlatPolyGeometry(const TArray<FVector> &points, const FModumateObjectAssembly &assembly);
-	void UpdateFlatPolyGeometry(const TArray<FVector> &points, const FModumateObjectAssembly &assembly);
+	void SetupFlatPolyGeometry(const TArray<FVector> &points, const FBIMAssemblySpec &assembly);
+	void UpdateFlatPolyGeometry(const TArray<FVector> &points, const FBIMAssemblySpec &assembly);
 
 	void SetupPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, bool bRecreateMesh, bool bCreateCollision = true);
 	void SetupMetaPlaneGeometry(const TArray<FVector> &points, 
@@ -110,7 +110,7 @@ public:
 	void UpdateHolesFromActors();
 	const TArray<FPolyHole3D> &GetHoles3D() const { return Holes3D; }
 	bool CreateBasicLayerDefs(const TArray<FVector> &PlanePoints, const FVector &PlaneNormal,
-		const FModumateObjectAssembly &InAssembly, float PlaneOffsetPCT,
+		const FBIMAssemblySpec &InAssembly, float PlaneOffsetPCT,
 		const FVector &AxisX = FVector::ZeroVector, float UVRotOffset = 0.0f, bool bToleratePlanarErrors = false);
 	bool UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCollision, bool bEnableCollision,
 		const FVector &InUVAnchor = FVector::ZeroVector, float UVRotOffset = 0.0f);
@@ -126,16 +126,16 @@ public:
 	void SetupCabinetGeometry(const TArray<FVector> &points, float height, const FArchitecturalMaterial &material, const FVector2D &toeKickDimensions = FVector2D::ZeroVector, int32 frontIndexStart = 0, float uvRotOffset = 0.0f);
 	void UpdateCabinetGeometry(const TArray<FVector> &points, float height, const FArchitecturalMaterial &material, const FVector2D &toeKickDimensions = FVector2D::ZeroVector, int32 frontIndexStart = 0, float uvRotOffset = 0.0f);
 
-	void SetupExtrudedPolyGeometry(const FModumateObjectAssembly &assembly, const FVector &p1, const FVector &p2, const FVector &objNormal, const FVector &objUp,
+	void SetupExtrudedPolyGeometry(const FBIMAssemblySpec &assembly, const FVector &p1, const FVector &p2, const FVector &objNormal, const FVector &objUp,
 		const FVector2D &upperExtensions = FVector2D::ZeroVector, const FVector2D &outerExtensions = FVector2D::ZeroVector, const FVector &scale = FVector::OneVector, bool bRecreateSection = true, bool bCreateCollision = true);
-	void UpdateExtrudedPolyGeometry(const FModumateObjectAssembly &assembly, const FVector &p1, const FVector &p2, const FVector &objNormal, const FVector &objUp,
+	void UpdateExtrudedPolyGeometry(const FBIMAssemblySpec &assembly, const FVector &p1, const FVector &p2, const FVector &objNormal, const FVector &objUp,
 		const FVector2D &upperExtensions = FVector2D::ZeroVector, const FVector2D &outerExtensions = FVector2D::ZeroVector, const FVector &scale = FVector::OneVector, bool bCreateCollision = true);
 
 	void SetupMasksGeometry(const TArray<TArray<FVector>> &Polygons, const FPlane &Plane, const FVector &Origin, const FVector &AxisX, const FVector &AxisY);
 
 	bool AddRoofFace(const TArray<FVector> &polyVerts, const FVector &extrusionDir, float extrusionOffset, float layerThickness, const FArchitecturalMaterial &material, float uvRotOffset = 0.0f);
 	bool AddRoofLayer(const TArray<FVector> &combinedPolyVerts, const TArray<int32> &combinedVertIndices, const TArray<bool> &edgesHaveFaces, const FVector &extrusionDir, float extrusionOffset, float layerThickness, const FArchitecturalMaterial &material, float uvRotOffset = 0.0f);
-	bool SetupRoofGeometry(const FModumateObjectAssembly &assembly, const TArray<FVector> &combinedPolyVerts, const TArray<int32> &combinedVertIndices, const TArray<bool> &edgesHaveFaces, float uvRotOffset = 0.0f, bool bCreateCollision = true);
+	bool SetupRoofGeometry(const FBIMAssemblySpec &assembly, const TArray<FVector> &combinedPolyVerts, const TArray<int32> &combinedVertIndices, const TArray<bool> &edgesHaveFaces, float uvRotOffset = 0.0f, bool bCreateCollision = true);
 
 	void UpdateLayerMaterialsFromAssembly();
 
@@ -146,8 +146,8 @@ public:
 	void ClearPlacementErrors() { PlacementErrors.Reset(); }
 	const TSet<FName> &GetPlacementErrors() const { return PlacementErrors; }
 
-	const FModumateObjectAssembly &GetAssembly() { return Assembly; }
-	FModumateObjectAssembly Assembly;
+	const FBIMAssemblySpec &GetAssembly() { return Assembly; }
+	FBIMAssemblySpec Assembly;
 
 	float Height; // Height of actor, from base
 

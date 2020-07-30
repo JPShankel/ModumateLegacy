@@ -465,11 +465,11 @@ EDrawError FMaterialTag::InitializeBounds(IModumateDraftingDraw *drawingInterfac
 	return EDrawError::ErrorNone;
 }
 
-FMaterialTagSequence::FMaterialTagSequence(TArray<FModumateObjectAssemblyLayer> layers)
+FMaterialTagSequence::FMaterialTagSequence(const FBIMAssemblySpec &Assembly)
 {
 	TotalThickness = 0.0f;
 
-	for (auto layer : layers)
+	for (auto layer : Assembly.CachedAssembly.Layers)
 	{
 		Modumate::Units::FUnitValue t = layer.Thickness;
 		FString imperial = UModumateDimensionStatics::DecimalToFractionString(t.AsWorldInches());
@@ -520,9 +520,9 @@ EDrawError FMaterialTagSequence::InitializeBounds(IModumateDraftingDraw *drawing
 	return EDrawError::ErrorNone;
 }
 
-FWallTag::FWallTag(TArray<FModumateObjectAssemblyLayer> layers)
+FWallTag::FWallTag(const FBIMAssemblySpec &Assembly)
 {
-	MaterialTags = MakeShareable(new FMaterialTagSequence(layers));
+	MaterialTags = MakeShareable(new FMaterialTagSequence(Assembly));
 }
 
 EDrawError FWallTag::InitializeBounds(IModumateDraftingDraw *drawingInterface)

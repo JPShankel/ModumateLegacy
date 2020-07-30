@@ -291,11 +291,11 @@ void ADynamicMeshActor::UpdateHolesFromActors()
 }
 
 bool ADynamicMeshActor::CreateBasicLayerDefs(const TArray<FVector> &PlanePoints, const FVector &PlaneNormal,
-	const FModumateObjectAssembly &InAssembly, float PlaneOffsetPCT,
+	const FBIMAssemblySpec &InAssembly, float PlaneOffsetPCT,
 	const FVector &AxisX, float UVRotOffset, bool bToleratePlanarErrors)
 {
 	TArray<FVector> layerPointsA, layerPointsB, fixedPlanePoints;
-	int32 numLayers = InAssembly.Layers.Num();
+	int32 numLayers = InAssembly.CachedAssembly.Layers.Num();
 	int32 numPoints = PlanePoints.Num();
 
 	if (!ensureAlways((numLayers > 0) && (numPoints > 0)))
@@ -337,7 +337,7 @@ bool ADynamicMeshActor::CreateBasicLayerDefs(const TArray<FVector> &PlanePoints,
 	FVector layersNormal = PlaneNormal.IsZero() ? FVector(planeGeom) : PlaneNormal;
 	Assembly = InAssembly;
 	LayerGeometries.SetNum(numLayers);
-	float totalThickness = Assembly.CalculateThickness().AsWorldCentimeters();
+	float totalThickness = Assembly.CachedAssembly.CalculateThickness().AsWorldCentimeters();
 	float totalOffset = totalThickness * -FMath::Clamp(PlaneOffsetPCT, 0.0f, 1.0f);
 	UpdateHolesFromActors();
 
@@ -345,7 +345,7 @@ bool ADynamicMeshActor::CreateBasicLayerDefs(const TArray<FVector> &PlanePoints,
 	float accumThickness = 0.0f;
 	for (int32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
 	{
-		const FModumateObjectAssemblyLayer &layer = Assembly.Layers[layerIdx];
+		const FModumateObjectAssemblyLayer &layer = Assembly.CachedAssembly.Layers[layerIdx];
 		float layerThickness = layer.Thickness.AsWorldCentimeters();
 
 		layerPointsA.Reset(numPoints);
@@ -711,13 +711,13 @@ void ADynamicMeshActor::UpdateCabinetGeometry(const TArray<FVector> &points, flo
 	return SetupCabinetGeometry(points, height, materialData, toeKickDimensions, frontIndexStart, uvRotOffset);
 }
 
-void ADynamicMeshActor::SetupFlatPolyGeometry(const TArray<FVector> &points, const FModumateObjectAssembly &assembly)
+void ADynamicMeshActor::SetupFlatPolyGeometry(const TArray<FVector> &points, const FBIMAssemblySpec &assembly)
 {
 	Assembly = assembly;
 	TArray<FModumateObjectAssemblyLayer> orderedFAL;
-	for (int32 i = 0; i < Assembly.Layers.Num(); ++i)
+	for (int32 i = 0; i < Assembly.CachedAssembly.Layers.Num(); ++i)
 	{
-		orderedFAL.Add(Assembly.Layers[i]);
+		orderedFAL.Add(Assembly.CachedAssembly.Layers[i]);
 	}
 
 	float thickness = Algo::TransformAccumulate(orderedFAL,[](const FModumateObjectAssemblyLayer &layer){return layer.Thickness.AsWorldCentimeters();},0.0f);
@@ -730,7 +730,7 @@ void ADynamicMeshActor::SetupFlatPolyGeometry(const TArray<FVector> &points, con
 	SetActorLocation(centroid);
 
 	// Begin constructing sublayers for floor
-	UModumateFunctionLibrary::GetFloorAssemblyLayerControlPoints(originalVertices, Assembly.Layers, FloorAssemblyLayerControlPoints);
+	UModumateFunctionLibrary::GetFloorAssemblyLayerControlPoints(originalVertices, Assembly.CachedAssembly.Layers, FloorAssemblyLayerControlPoints);
 	TArray<FVector> topControlPoints, bottomControlPoints, layerVerts, layerNormals;
 	TArray<int32> layerTris;
 	TArray<int32> layerTopTris;
@@ -772,7 +772,7 @@ void ADynamicMeshActor::SetupFlatPolyGeometry(const TArray<FVector> &points, con
 	UpdateLayerMaterialsFromAssembly();
 }
 
-void ADynamicMeshActor::UpdateFlatPolyGeometry(const TArray<FVector> &points, const FModumateObjectAssembly &assembly)
+void ADynamicMeshActor::UpdateFlatPolyGeometry(const TArray<FVector> &points, const FBIMAssemblySpec &assembly)
 {
 	SetupFlatPolyGeometry(points, assembly);
 	return;
@@ -787,7 +787,7 @@ void ADynamicMeshActor::SetupPlaneGeometry(const TArray<FVector> &points, const 
 	}
 
 	FVector planeNormal(pointsPlane);
-	Assembly = FModumateObjectAssembly();
+	Assembly = FBIMAssemblySpec();
 
 	FVector centroid = Algo::Accumulate(points, FVector::ZeroVector, [](const FVector &c, const FVector &p) { return c + p; }) / points.Num();
 	SetActorLocation(centroid);
@@ -827,7 +827,7 @@ void ADynamicMeshActor::SetupMetaPlaneGeometry(const TArray<FVector> &points, co
 	}
 
 	FVector planeNormal(pointsPlane);
-	Assembly = FModumateObjectAssembly();
+	Assembly = FBIMAssemblySpec();
 
 	FVector centroid = Algo::Accumulate(points, FVector::ZeroVector, [](const FVector &c, const FVector &p) { return c + p; }) / points.Num();
 	SetActorLocation(centroid);
@@ -873,7 +873,7 @@ void ADynamicMeshActor::SetupMetaPlaneGeometry(const TArray<FVector> &points, co
 
 void ADynamicMeshActor::SetupRoomGeometry(const TArray<TArray<FVector>> &Polygons, const FArchitecturalMaterial &Material)
 {
-	Assembly = FModumateObjectAssembly();
+	Assembly = FBIMAssemblySpec();
 
 	// TODO: calculate a point inside of the merged polygon formed from projecting the input 3D polygons to a 2D surface,
 	// if none of them overlap.
@@ -959,7 +959,7 @@ bool ADynamicMeshActor::SetupStairPolys(const FVector &StairOrigin,
 
 	LayerGeometries.Reset();
 	Holes3D.Reset();
-	Assembly = FModumateObjectAssembly();
+	Assembly = FBIMAssemblySpec();
 
 	TArray<FVector> layerPointsB;
 
@@ -1050,10 +1050,10 @@ void ADynamicMeshActor::ClearProceduralLayers()
 	ProceduralSubLayers.Reset();
 }
 
-void ADynamicMeshActor::SetupExtrudedPolyGeometry(const FModumateObjectAssembly &inAssembly, const FVector &inP1, const FVector &inP2, const FVector &objNormal, const FVector &objUp,
+void ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec &inAssembly, const FVector &inP1, const FVector &inP2, const FVector &objNormal, const FVector &objUp,
 	const FVector2D &upperExtensions, const FVector2D &outerExtensions, const FVector &scale, bool bRecreateSection, bool bCreateCollision)
 {
-	if (!ensureAlways(inAssembly.Layers.Num() >= 1))
+	if (!ensureAlways(inAssembly.CachedAssembly.Layers.Num() >= 1))
 	{
 		return;
 	}
@@ -1197,10 +1197,10 @@ void ADynamicMeshActor::SetupExtrudedPolyGeometry(const FModumateObjectAssembly 
 
 	// Update the material (and its parameters, if any)
 	CachedMIDs.SetNumZeroed(1);
-	UModumateFunctionLibrary::SetMeshMaterial(Mesh, Assembly.Layers[0].Material, 0, &CachedMIDs[0]);
+	UModumateFunctionLibrary::SetMeshMaterial(Mesh, Assembly.CachedAssembly.Layers[0].Material, 0, &CachedMIDs[0]);
 }
 
-void ADynamicMeshActor::UpdateExtrudedPolyGeometry(const FModumateObjectAssembly &inAssembly, const FVector &p1, const FVector &p2, const FVector &objNormal, const FVector &objUp,
+void ADynamicMeshActor::UpdateExtrudedPolyGeometry(const FBIMAssemblySpec &inAssembly, const FVector &p1, const FVector &p2, const FVector &objNormal, const FVector &objUp,
 	const FVector2D &upperExtensions, const FVector2D &outerExtensions, const FVector &scale, bool bCreateCollision)
 {
 	SetupExtrudedPolyGeometry(inAssembly, p1, p2, objNormal, objUp, upperExtensions, outerExtensions, scale, false, bCreateCollision);
@@ -1391,7 +1391,7 @@ bool ADynamicMeshActor::AddRoofLayer(const TArray<FVector> &combinedPolyVerts, c
 	return bAddedAnyFaces;
 }
 
-bool ADynamicMeshActor::SetupRoofGeometry(const FModumateObjectAssembly &assembly, const TArray<FVector> &combinedPolyVerts, const TArray<int32> &combinedVertIndices, const TArray<bool> &edgesHaveFaces, float uvRotOffset, bool bCreateCollision)
+bool ADynamicMeshActor::SetupRoofGeometry(const FBIMAssemblySpec &assembly, const TArray<FVector> &combinedPolyVerts, const TArray<int32> &combinedVertIndices, const TArray<bool> &edgesHaveFaces, float uvRotOffset, bool bCreateCollision)
 {
 	auto clearMeshData = [this]()
 	{
@@ -1422,14 +1422,14 @@ bool ADynamicMeshActor::SetupRoofGeometry(const FModumateObjectAssembly &assembl
 	float curThickness = 0.0f;
 	bool bCreatedAnyLayers = false;
 
-	int32 numLayers = assembly.Layers.Num();
+	int32 numLayers = assembly.CachedAssembly.Layers.Num();
 
 	SetupProceduralLayers(numLayers);
 	CachedMIDs.SetNumZeroed(numLayers);
 
 	for (int32 layerIdx = numLayers - 1; layerIdx >= 0; --layerIdx)
 	{
-		const FModumateObjectAssemblyLayer &layer = assembly.Layers[layerIdx];
+		const FModumateObjectAssemblyLayer &layer = assembly.CachedAssembly.Layers[layerIdx];
 		float layerThickness = layer.Thickness.AsWorldCentimeters();
 
 		clearMeshData();
@@ -1454,7 +1454,7 @@ void ADynamicMeshActor::UpdateLayerMaterialsFromAssembly()
 {
 	// Only update relevant procedural layers
 	TArray<UProceduralMeshComponent*> updateLayers;
-	for (int32 layerIdx = 0; layerIdx < Assembly.Layers.Num(); ++layerIdx)
+	for (int32 layerIdx = 0; layerIdx < Assembly.CachedAssembly.Layers.Num(); ++layerIdx)
 	{
 		if (ensureAlways(ProceduralSubLayers[layerIdx]))
 		{
@@ -1495,7 +1495,7 @@ bool ADynamicMeshActor::SetPlacementError(FName errorTag, bool bIsError)
 	if (bChanged)
 	{
 		// Update the materials of the mesh, in case they don't get updated by whatever is changing the error state
-		int32 numLayers = FMath::Min(Assembly.Layers.Num(), ProceduralSubLayers.Num());
+		int32 numLayers = FMath::Min(Assembly.CachedAssembly.Layers.Num(), ProceduralSubLayers.Num());
 		CachedMIDs.SetNumZeroed(numLayers);
 		for (int32 i = 0; i < numLayers; i++)
 		{
@@ -1507,7 +1507,7 @@ bool ADynamicMeshActor::SetPlacementError(FName errorTag, bool bIsError)
 			}
 			else
 			{
-				const FModumateObjectAssemblyLayer &layerData = Assembly.Layers[i];
+				const FModumateObjectAssemblyLayer &layerData = Assembly.CachedAssembly.Layers[i];
 				UModumateFunctionLibrary::SetMeshMaterial(procMeshComp, layerData.Material, 0, &CachedMIDs[i]);
 			}
 		}

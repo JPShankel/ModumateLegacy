@@ -21,7 +21,6 @@ class AEditModelPlayerState_CPP;
 class UEditModelCameraController;
 class UEditModelInputAutomation;
 class UEditModelInputHandler;
-class UModumateCraftingWidget_CPP;
 class UHUDDrawWidget;
 class UModumateDrawingSetWidget_CPP;
 class FModumateDocument;
@@ -279,12 +278,6 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	bool IsCursorOverWidget() const;
-
-	UFUNCTION(BlueprintPure)
-	bool IsCraftingWidgetActive() const;
-
-	UFUNCTION(BlueprintPure)
-	UModumateCraftingWidget_CPP* GetCraftingWidget() const;
 
 	UFUNCTION(BlueprintPure)
 	UModumateDrawingSetWidget_CPP* GetDrawingSetWidget() const;

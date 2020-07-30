@@ -20,14 +20,13 @@ UPlaceObjectTool::UPlaceObjectTool(const FObjectInitializer& ObjectInitializer)
 bool UPlaceObjectTool::Activate()
 {
 	Super::Activate();
-
 	// Spawn CompoundMeshActor as cursor
 	CursorCompoundMesh = Controller->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform::Identity);
 	CursorCompoundMesh->SetActorEnableCollision(false);
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	FModumateDocument *doc = &gameState->Document;
 	FName key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
-	const FModumateObjectAssembly *obAsmPtr = gameState->GetAssemblyByKey(key);
+	const FBIMAssemblySpec *obAsmPtr = doc->PresetManager.GetAssemblyByKey(EToolMode::VE_PLACEOBJECT,key);
 
 	if (!ensureAlways(obAsmPtr))
 	{
@@ -46,7 +45,6 @@ bool UPlaceObjectTool::Activate()
 	Controller->DeselectAll();
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
-
 	return true;
 }
 
@@ -77,12 +75,11 @@ bool UPlaceObjectTool::FrameUpdate()
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	FModumateDocument *doc = &gameState->Document;
 	FName key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
-	const FModumateObjectAssembly *assembly = gameState->GetAssemblyByKey_DEPRECATED(EToolMode::VE_PLACEOBJECT, key);
-
+	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(EToolMode::VE_PLACEOBJECT, key);
 
 	if (assembly != nullptr)
 	{
-		if (CurrentFFEAssembly.DatabaseKey != assembly->DatabaseKey)
+		if (CurrentFFEAssembly.UniqueKey() != assembly->UniqueKey())
 		{
 			if (CursorCompoundMesh != nullptr)
 			{
@@ -105,7 +102,6 @@ bool UPlaceObjectTool::FrameUpdate()
 	{
 		CursorCompoundMesh->SetActorTransform(mountedTransform);
 	}
-
 	return true;
 }
 

@@ -5,7 +5,6 @@
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
 #include "BIMKernel/BIMLegacyPortals.h"
-#include "Database/ModumateCraftingWidget_CPP.h"
 #include "Database/ModumateDrawingSetWidget_CPP.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "Drafting/APDFLLib.h"
@@ -280,11 +279,11 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 		// meantime this will ensure tools start with a default assembly
 		if (CurrentTool->GetAssemblyKey().IsNone())
 		{
-			FModumateObjectAssembly assembly;
+			FBIMAssemblySpec assembly;
 			AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 			if (gameState->Document.PresetManager.TryGetDefaultAssemblyForToolMode(NewToolMode, assembly))
 			{
-				CurrentTool->SetAssemblyKey(assembly.DatabaseKey);
+				CurrentTool->SetAssemblyKey(assembly.UniqueKey());
 			}
 		}
 		CurrentTool->Activate();
@@ -1766,18 +1765,6 @@ bool AEditModelPlayerController_CPP::IsCursorOverWidget() const
 	}
 
 	return true;
-}
-
-bool AEditModelPlayerController_CPP::IsCraftingWidgetActive() const
-{
-	auto *hud = GetEditModelHUD();
-	return hud && hud->CraftingWidget && hud->CraftingWidget->IsVisible();
-}
-
-UModumateCraftingWidget_CPP* AEditModelPlayerController_CPP::GetCraftingWidget() const
-{
-	auto *hud = GetEditModelHUD();
-	return hud ? hud->CraftingWidget : nullptr;
 }
 
 UModumateDrawingSetWidget_CPP* AEditModelPlayerController_CPP::GetDrawingSetWidget() const

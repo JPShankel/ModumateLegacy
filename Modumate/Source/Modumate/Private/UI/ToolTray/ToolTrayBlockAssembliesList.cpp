@@ -49,12 +49,8 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 	{
 		AssembliesList->ClearListItems();
 
-		FPresetManager::FAssemblyDataCollection *assemblies = presetManager.AssemblyDBs_DEPRECATED.Find(controller->GetToolMode());
-		if (assemblies == nullptr || assemblies->DataMap.Num() == 0)
-		{
-			EObjectType ot = UModumateTypeStatics::ObjectTypeFromToolMode(controller->GetToolMode());
-			assemblies = presetManager.AssembliesByObjectType.Find(ot);
-		}
+		EObjectType ot = UModumateTypeStatics::ObjectTypeFromToolMode(controller->GetToolMode());
+		FPresetManager::FAssemblyDataCollection *assemblies = presetManager.AssembliesByObjectType.Find(ot);
 
 		if (assemblies == nullptr)
 		{
@@ -66,7 +62,7 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 			UComponentListObject *newCompListObj = NewObject<UComponentListObject>(this);
 			newCompListObj->ItemType = EComponentListItemType::AssemblyListItem;
 			newCompListObj->Mode = controller->GetToolMode();
-			newCompListObj->UniqueKey = kvp.Value.DatabaseKey;
+			newCompListObj->UniqueKey = kvp.Value.UniqueKey();
 			AssembliesList->AddItem(newCompListObj);
 		}
 	}

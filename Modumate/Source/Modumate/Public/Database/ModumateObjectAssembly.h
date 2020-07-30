@@ -3,16 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
-#include "ModumateCore/ModumateUnits.h"
-#include "ModumateCore/ModumateConsoleCommand.h"
-#include "Database/ModumateArchitecturalMaterial.h"
-#include "Database/ModumateArchitecturalMesh.h"
-#include "Database/ModumateSimpleMesh.h"
+#include "Engine/TextureLightProfile.h"
+#include "BIMKernel/BIMEnums.h"
 #include "BIMKernel/BIMLegacyPattern.h"
 #include "BIMKernel/BIMLegacyPortals.h"
+#include "BIMKernel/BIMSerialization.h"
+#include "BIMKernel/BIMProperties.h"
+#include "Database/ModumateArchitecturalMesh.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateObjectAssembly.generated.h"
+
 
 
 USTRUCT(BlueprintType)
@@ -35,17 +35,10 @@ An assembly layer (for walls, floors and other sandwich objects) references an F
 USTRUCT()
 struct MODUMATE_API FModumateObjectAssemblyLayer
 {
-	GENERATED_BODY();
-
-	FName DatabaseKey = FName();
-
-	FName PresetKey = FName();
+	GENERATED_BODY()
 
 	ELayerFunction Function = ELayerFunction::None;
-	FText FunctionDisplayName;
-
 	ELayerFormat Format = ELayerFormat::None;
-	FText FormatDisplayName;
 
 	TArray<FString> SubcategoryDisplayNames;
 
@@ -72,23 +65,7 @@ struct MODUMATE_API FModumateObjectAssemblyLayer
 
 	TArray<FSimpleMeshRef> SimpleMeshes;
 
-	TSet<EObjectType> CompatibleObjectTypes;
-
 	FVector SlotScale = FVector::OneVector;
-
-	// WHEN UPDATING FIELDS, UPDATE THE FCustomAssemblyLayerRecord STRUCT!!!
-
-	// Used by database to sort assemblies
-	FName UniqueKey() const { return DatabaseKey; }
-
-	// Helper functions for getting properties in the Layer scope
-	Modumate::FModumateCommandParameter GetProperty(const Modumate::BIM::EScope &scope, const Modumate::BIM::FNameType &name) const;
-
-private: 	
-	friend struct FModumateObjectAssembly;
-	friend class FLayerMaker;
-	Modumate::BIM::FBIMPropertySheet Properties;
-
 };
 
 /*
@@ -98,7 +75,7 @@ and other portal-specific data that allows it to be 9-sliced and manipulated.
 USTRUCT(BlueprintType)
 struct MODUMATE_API FPortalPart
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	FName Key;
 	FText DisplayName;
@@ -177,46 +154,10 @@ struct MODUMATE_API FModumateObjectAssembly
 		return false;
 	}
 
-	FPortalConfiguration PortalConfiguration;
-	TMap<int32, FPortalPart> PortalParts;
-
-	// Used by database to sort assemblies
-	FName UniqueKey() const { return DatabaseKey; }
-	FString GetGenomeString() const;
-	FCustomAssemblyRecord ToDataRecord() const;
-
-
-	void FillSpec(Modumate::BIM::FModumateAssemblyPropertySpec &spec) const;
-
-	// Used by DDL 1.0 to import assemblies from marketplace and update assemblies in crafting
-	// Under DDL 2.0, we just rely on FModumateAssemblyPropertySpec
-	bool ToParameterSet_DEPRECATED(Modumate::FModumateFunctionParameterSet &params) const;
-
-	// DDL 1.0 presets
-	void GatherPresets_DEPRECATED(const FPresetManager &presetManager, TArray<FName> &presetKeys) const;
-	void ReplacePreset_DEPRECATED(const FName &oldPreset, const FName &newPreset);
-	bool UsesPreset_DEPRECATED(const FName &presetKey) const;
-
-	// Reverse the assembly's layer list. This modification has no connection to the assembly's crafting/BIM definition,
-	// and is purely meant to serve as a reinterpretation of cached layer properties by an assembly's owner.
-	// As such, the owner needs to keep track of whether the layers have been reversed.
 	void ReverseLayers();
 
-	//TODO: move to UModumateObjectAssemblyStatics and refactor each object type to do its own assembly synthesis/analysis
-	static bool FromCraftingProperties_DEPRECATED(
-		EObjectType ot,
-		const FModumateDatabase &db,
-		const FPresetManager &presetManager,
-		const Modumate::BIM::FModumateAssemblyPropertySpec &spec,
-		FModumateObjectAssembly &outMOA,
-		const int32 showOnlyLayerID = -1);
-
-	//TODO: in DDL 2.0, runtime assemblies will not need to be serialized
-	static bool FromDataRecord_DEPRECATED(
-		const FCustomAssemblyRecord &record, 
-		const FModumateDatabase &objectDB,
-		const FPresetManager &presetManager,
-		FModumateObjectAssembly &outMOA);
+	FPortalConfiguration PortalConfiguration;
+	TMap<int32, FPortalPart> PortalParts;
 };
 
 UCLASS()
@@ -230,29 +171,29 @@ class MODUMATE_API UModumateObjectAssemblyStatics : public UBlueprintFunctionLib
 		*/
 		static ECraftingResult MakeLayeredAssembly(
 			const FModumateDatabase &InDB,
-			const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec,
+			const FBIMAssemblySpec &InSpec,
 			FModumateObjectAssembly &OutMOA);
 
 		static ECraftingResult MakeStructureLineAssembly(
 			const FModumateDatabase &InDB,
-			const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec,
+			const FBIMAssemblySpec &InSpec,
 			FModumateObjectAssembly &OutMOA);
 
-	public:
+		static ECraftingResult MakeStubbyAssembly(
+			const FModumateDatabase& InDB,
+			const FBIMAssemblySpec& InSpec,
+			FModumateObjectAssembly& OutMOA);
+
+public:
 		static bool CheckCanMakeAssembly(
 			EObjectType OT,
 			const FModumateDatabase &InDB,
-			const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec);
+			const FBIMAssemblySpec &InSpec);
 
 		static ECraftingResult DoMakeAssembly(
 			const FModumateDatabase &InDB,
 			const FPresetManager &PresetManager,
-			const Modumate::BIM::FModumateAssemblyPropertySpec &InSpec,
+			const FBIMAssemblySpec &InSpec,
 			FModumateObjectAssembly &OutMOA,
 			const int32 InShowOnlyLayerID = -1);
-
-		// TODO: remove after DDL2 migration
-		UFUNCTION(BlueprintPure, Category = "Crafting")
-		static bool ObjectTypeSupportsDDL2(EObjectType OT);
-
 };

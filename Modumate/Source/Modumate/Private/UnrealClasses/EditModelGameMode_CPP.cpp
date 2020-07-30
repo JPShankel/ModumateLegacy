@@ -50,10 +50,7 @@ void AEditModelGameMode_CPP::InitGame(const FString& MapName, const FString& Opt
 		ObjectDatabase->ReadCraftingPortalPartOptionSet(PortalPartOptionSetDataTable);
 		ObjectDatabase->ReadPortalConfigurationData(PortalConfigurationTable);
 
-		ObjectDatabase->ReadFFEPartData(FFEPartTable);
-		ObjectDatabase->ReadFFEAssemblyData(FFEAssemblyTable);
-
-		ObjectDatabase->ReadMarketplace(GetWorld());
+		ObjectDatabase->ReadPresetData();
 	}
 	databaseLoadTime *= 1000.0;
 	UE_LOG(LogPerformance, Log, TEXT("Object database loaded in %d ms"), int(databaseLoadTime + 0.5));

@@ -41,7 +41,8 @@ namespace Modumate {
 		External = MakeShareable(new FScheduleGrid());
 		External->InitializeColumns(ColumnHeaders);
 
-		TArray<FModumateObjectAssembly> assemblies = doc->GetAssembliesForToolMode_DEPRECATED(World, EToolMode::VE_WALL);
+		TArray<FBIMAssemblySpec> assemblies;
+		doc->PresetManager.GetProjectAssembliesForObjectType(EObjectType::OTWallSegment, assemblies);
 		ensureAlways(assemblies.Num() > 0);
 
 		static const FText InchesFormat = FText::FromString(TEXT("{0}\""));
@@ -51,9 +52,9 @@ namespace Modumate {
 			TArray<TSharedPtr<FDraftingComposite>> row;
 
 			// tag
-			FModumateObjectAssembly assembly = assemblies[i];
+			const FBIMAssemblySpec &assembly = assemblies[i];
 
-			TSharedPtr<FMaterialTagSequence> tag = MakeShareable(new FMaterialTagSequence(assembly.Layers));
+			TSharedPtr<FMaterialTagSequence> tag = MakeShareable(new FMaterialTagSequence(assembly));
 			tag->InitializeBounds(drawingInterface);
 			TSharedPtr<FFilledRoundedRectTag> idTag = MakeShareable(new FFilledRoundedRectTag(tag));
 			idTag->InitializeBounds(drawingInterface);
@@ -68,7 +69,7 @@ namespace Modumate {
 			row.Add(idTag);
 
 			// Custom Name
-			row.Add(MakeDraftingText(FText::FromString(assembly.GetProperty(BIM::Parameters::Name))));
+			row.Add(MakeDraftingText(FText::FromString(assembly.CachedAssembly.GetProperty(BIM::Parameters::Name))));
 
 			// Thickness
 			FText thickness = FText::FromString(UModumateDimensionStatics::DecimalToFractionString(tag->TotalThickness));
@@ -89,7 +90,6 @@ namespace Modumate {
 
 		HorizontalAlignment = DraftingAlignment::Right;
 		VerticalAlignment = DraftingAlignment::Bottom;
-
 	}
 
 	EDrawError FWallSummarySchedule::InitializeBounds(IModumateDraftingDraw *drawingInterface)

@@ -79,7 +79,7 @@ namespace Modumate
 		UpdateToeKickDimensions();
 
 		int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
-		FArchitecturalMaterial materialData = MOI->GetAssembly().PortalConfiguration.MaterialsPerChannel.FindRef(CabinetGeometryMatName);
+		FArchitecturalMaterial materialData = MOI->GetAssembly().CachedAssembly.PortalConfiguration.MaterialsPerChannel.FindRef(CabinetGeometryMatName);
 
 		DynamicMeshActor->SetupCabinetGeometry(MOI->GetControlPoints(), MOI->GetExtents().Y,
 			materialData, ToeKickDimensions, frontFaceIndex);
@@ -149,7 +149,7 @@ namespace Modumate
 			return;
 		}
 
-		if (!ensureAlways(MOI && MOI->GetAssembly().PortalConfiguration.IsValid()))
+		if (!ensureAlways(MOI && MOI->GetAssembly().CachedAssembly.PortalConfiguration.IsValid()))
 		{
 			return;
 		}
@@ -184,13 +184,13 @@ namespace Modumate
 		FVector toeKickOffset = ToeKickDimensions.Y * extrusionDir;
 
 		// Update the reference planes so the portal 9-slicing is correct
-		FModumateObjectAssembly assembly = MOI->GetAssembly();
-		TMap<FName, FPortalReferencePlane> &refPlanes = assembly.PortalConfiguration.ReferencePlanes;
+		FBIMAssemblySpec assembly = MOI->GetAssembly();
+		TMap<FName, FPortalReferencePlane> &refPlanes = assembly.CachedAssembly.PortalConfiguration.ReferencePlanes;
 		refPlanes[FPortalConfiguration::RefPlaneNameMinX].FixedValue = FUnitValue::WorldCentimeters(0.0f);
 		refPlanes[FPortalConfiguration::RefPlaneNameMaxX].FixedValue = FUnitValue::WorldCentimeters(edgeLength);
 		refPlanes[FPortalConfiguration::RefPlaneNameMinZ].FixedValue = FUnitValue::WorldCentimeters(0.0f);
 		refPlanes[FPortalConfiguration::RefPlaneNameMaxZ].FixedValue = FUnitValue::WorldCentimeters(cabinetHeight - ToeKickDimensions.Y);
-		assembly.PortalConfiguration.CacheRefPlaneValues();
+		assembly.CachedAssembly.PortalConfiguration.CacheRefPlaneValues();
 		MOI->SetAssembly(assembly);
 
 		FrontFacePortalActor->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
