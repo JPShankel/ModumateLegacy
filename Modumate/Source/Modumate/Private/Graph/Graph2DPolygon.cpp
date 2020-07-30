@@ -59,7 +59,8 @@ namespace Modumate
 			if (ParentID != 0)
 			{
 				FGraph2DPolygon *parentPoly = Graph->FindPolygon(ParentID);
-				if (ensureAlways(parentPoly))
+				// parentPoly may be nullptr if the parent has been deleted
+				if (parentPoly != nullptr)
 				{
 					int32 numRemoved = parentPoly->InteriorPolygons.Remove(ID);
 					ensureAlways(numRemoved == 1);

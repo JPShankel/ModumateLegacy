@@ -277,6 +277,8 @@ namespace Modumate
 			return false;
 		}
 
+		polyToRemove->SetParent(MOD_ID_NONE);
+
 		for (int32 edgeID : polyToRemove->Edges)
 		{
 			auto edge = FindEdge(edgeID);
@@ -700,6 +702,15 @@ namespace Modumate
 				return false;
 			}
 			appliedDelta.PolygonDeletions.Add(kvp);
+		}
+
+		for (auto &kvp : Delta.PolygonParentIDUpdates)
+		{
+			auto childPoly = FindPolygon(kvp.Key);
+			if (childPoly != nullptr)
+			{
+				childPoly->SetParent(kvp.Value.Value);
+			}
 		}
 
 		return true;

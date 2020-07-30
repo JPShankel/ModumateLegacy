@@ -459,7 +459,8 @@ namespace Modumate
 
 			OutDelta.EdgeDeletions.Add(edge->ID, FGraph2DObjDelta({ edge->StartVertexID, edge->EndVertexID }));
 
-			// TODO: is this direct?  should it work this way?
+			// Since polygons can't be directly added or deleted, maintaining polygons is a side-effect that
+			// is accomplished here.
 			for (int32 polyID : { edge->LeftPolyID, edge->RightPolyID })
 			{
 				auto poly = FindPolygon(polyID);
@@ -816,9 +817,8 @@ namespace Modumate
 		}
 		OutDeltas.Add(updatePolygonsDelta);
 
-		// TODO: do this after all polys have been updated?
-		/*
 		// determine which polygons are inside of others
+		FGraph2DDelta parentIDUpdatesDelta(ID);
 		for (auto &childKVP : Polygons)
 		{
 			FGraph2DPolygon &childPoly = childKVP.Value;
@@ -829,17 +829,36 @@ namespace Modumate
 
 				if (childPoly.IsInside(parentPoly))
 				{
+					bool bNoParent = childPoly.ParentID == 0;
+
+					int32 currentBestParentID = childPoly.ParentID;
+					if (parentIDUpdatesDelta.PolygonParentIDUpdates.Contains(childPoly.ID))
+					{
+						currentBestParentID = parentIDUpdatesDelta.PolygonParentIDUpdates[childPoly.ID].Value;
+					}
+					bool bBetterParent = bNoParent ? false : parentPoly.IsInside(*FindPolygon(currentBestParentID));
+
 					// if the child polygon doesn't have a parent, then set it to the first polygon it's contained in
 					// otherwise, see if the new parent is more appropriate
-					if ((childPoly.ParentID == 0) ||
-						(parentPoly.IsInside(*FindPolygon(childPoly.ParentID))))
+					if (bNoParent || bBetterParent)
 					{
-						childPoly.SetParent(parentPoly.ID);
+						auto& parentIDUpdate = parentIDUpdatesDelta.PolygonParentIDUpdates.FindOrAdd(childPoly.ID);
+						parentIDUpdate.Key = childPoly.ParentID;
+						parentIDUpdate.Value = parentPoly.ID;
 					}
 				}
 			}
 		}
-		//*/
+
+		if (!ApplyDelta(parentIDUpdatesDelta))
+		{
+			return false;
+		}
+
+		if (!parentIDUpdatesDelta.IsEmpty())
+		{
+			OutDeltas.Add(parentIDUpdatesDelta);
+		}
 
 		return true;
 	}

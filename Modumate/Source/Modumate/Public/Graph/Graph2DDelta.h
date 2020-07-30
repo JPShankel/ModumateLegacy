@@ -66,6 +66,7 @@ namespace Modumate
 
 		TMap<int32, FGraph2DObjDelta> PolygonAdditions;
 		TMap<int32, FGraph2DObjDelta> PolygonDeletions;
+		TMap<int32, TPair<int32, int32>> PolygonParentIDUpdates;
 
 		FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType = EGraph2DDeltaType::Edit);
 

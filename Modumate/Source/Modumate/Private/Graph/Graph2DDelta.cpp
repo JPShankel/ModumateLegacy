@@ -35,6 +35,7 @@ namespace Modumate
 
 		PolygonAdditions.Reset();
 		PolygonDeletions.Reset();
+		PolygonParentIDUpdates.Reset();
 	}
 
 	bool FGraph2DDelta::IsEmpty() const
@@ -46,6 +47,7 @@ namespace Modumate
 		if (EdgeDeletions.Num() > 0) return false;
 		if (PolygonAdditions.Num() > 0) return false;
 		if (PolygonDeletions.Num() > 0) return false;
+		if (PolygonParentIDUpdates.Num() > 0) return false;
 
 		return true;
 	}
@@ -104,6 +106,14 @@ namespace Modumate
 
 		inverse->PolygonAdditions = PolygonDeletions;
 		inverse->PolygonDeletions = PolygonAdditions;
+
+		for (const auto &kvp : PolygonParentIDUpdates)
+		{
+			int32 childID = kvp.Key;
+			const TPair<int32, int32> &update = kvp.Value;
+
+			inverse->PolygonParentIDUpdates.Add(ID, TPair<int32, int32>(update.Value, update.Key));
+		}
 
 		return inverse;
 	}

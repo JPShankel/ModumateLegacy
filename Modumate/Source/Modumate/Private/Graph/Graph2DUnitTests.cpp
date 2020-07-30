@@ -960,4 +960,103 @@ namespace Modumate
 
 		return true;
 	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DContainment, "Modumate.Graph.2D.Containment", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DContainment::RunTest(const FString& Parameters)
+	{
+		FGraph2D graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+
+		TArray<FVector2D> vertices = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(100.0f, 0.0f),
+			FVector2D(100.0f, 100.0f),
+			FVector2D(0.0f, 100.0f)
+		};
+
+		TArray<FVector2D> holeVertices = {
+			FVector2D(25.0f, 25.0f),
+			FVector2D(75.0f, 25.0f),
+			FVector2D(75.0f, 75.0f),
+			FVector2D(25.0f, 75.0f)
+		};
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[1]));
+		TestDeltas(this, deltas, graph, 1, 2, 1);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[1], vertices[2]));
+		TestDeltas(this, deltas, graph, 1, 3, 2);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[2], vertices[3]));
+		TestDeltas(this, deltas, graph, 1, 4, 3);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, vertices[3], vertices[0]));
+		TestDeltas(this, deltas, graph, 2, 4, 4);
+
+		// Make current vertices into the bounds
+		TArray<int32> outerBounds;
+		graph.GetVertices().GenerateKeyArray(outerBounds);
+
+		int32 containingPolyID = MOD_ID_NONE;
+
+		for (auto& polykvp : graph.GetPolygons())
+		{
+			if (polykvp.Value.bInterior)
+			{
+				containingPolyID = polykvp.Key;
+			}
+		}
+		TestTrue(TEXT("outer loop has interior polygon"),
+			containingPolyID != MOD_ID_NONE);
+
+		TSet<int32> holeVertexIDs;
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, holeVertices[0], holeVertices[1]));
+		graph.AggregateAddedVertices(deltas, holeVertexIDs);
+		TestDeltas(this, deltas, graph, 3, 6, 5);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, holeVertices[1], holeVertices[2]));
+		graph.AggregateAddedVertices(deltas, holeVertexIDs);
+		TestDeltas(this, deltas, graph, 3, 7, 6);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, holeVertices[2], holeVertices[3]));
+		graph.AggregateAddedVertices(deltas, holeVertexIDs);
+		TestDeltas(this, deltas, graph, 3, 8, 7);
+
+		TestTrue(TEXT("Add Edge"),
+			graph.AddEdge(deltas, NextID, holeVertices[3], holeVertices[0]));
+		graph.AggregateAddedVertices(deltas, holeVertexIDs);
+		TestDeltas(this, deltas, graph, 4, 8, 8);
+
+		int32 numContainingPolys = 0;
+		for (auto& polykvp : graph.GetPolygons())
+		{
+			auto& interiorPolys = polykvp.Value.InteriorPolygons;
+			if (interiorPolys.Num() != 0)
+			{
+				TestTrue(TEXT("containing polygon contains 2 faces"),
+					interiorPolys.Num() == 2);
+				for (int32 containedID : interiorPolys)
+				{
+					auto containedPoly = graph.FindPolygon(containedID);
+					TestTrue(TEXT("contained poly exists and is contained by the same poly"),
+						containedPoly != nullptr && containedPoly->ParentID == polykvp.Key);
+				}
+
+				numContainingPolys++;
+			}
+		}
+
+		TestTrue(TEXT("right amount of containingPolys"),
+			numContainingPolys == 1);
+
+		return true;
+	}
 }
