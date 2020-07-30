@@ -456,6 +456,20 @@ namespace Modumate
 
 		TestTrue(TEXT("simple square"), UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutVertices, OutTriangles, OutPerimeter, OutMergedHoles, OutPerimeterVertexHoleIndices));
 
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometryTriangulationErrors, "Modumate.Core.Geometry.TriangulationErrors", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::NegativeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGeometryTriangulationErrors::RunTest(const FString& Parameters)
+	{
+		TArray<FVector2D> OutVertices;
+		TArray<int32> OutTriangles, OutPerimeterVertexHoleIndices;
+		TArray<FVector2D> OutPerimeter;
+		TArray<bool> OutMergedHoles;
+
+		TArray<FVector2D> InVertices;
+		TArray<FPolyHole2D> InHoles;
+
 		InVertices = {
 			FVector2D(0.0f, 0.0f),
 			FVector2D(0.0f, 100.0f),
@@ -466,7 +480,7 @@ namespace Modumate
 			FVector2D(50.0f, 0.0f)
 		};
 
-		TestTrue(TEXT("square with peninsula"), UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutVertices, OutTriangles, OutPerimeter, OutMergedHoles, OutPerimeterVertexHoleIndices));
+		TestTrue(TEXT("square with peninsula"), !UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutVertices, OutTriangles, OutPerimeter, OutMergedHoles, OutPerimeterVertexHoleIndices));
 
 		InVertices = {
 			FVector2D(0.0f, 0.0f),
@@ -483,9 +497,9 @@ namespace Modumate
 			FVector2D(25.0f, 0.0f)
 		};
 
-		TestTrue(TEXT("square with multiple peninsulas"), UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutVertices, OutTriangles, OutPerimeter, OutMergedHoles, OutPerimeterVertexHoleIndices));
+		TestTrue(TEXT("square with multiple peninsulas"), !UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutVertices, OutTriangles, OutPerimeter, OutMergedHoles, OutPerimeterVertexHoleIndices));
 
-		return true;
+		return false;
 	}
 
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometryBasisVectors, "Modumate.Core.Geometry.BasisVectors", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
@@ -822,11 +836,11 @@ namespace Modumate
 		vars1.Add("W2", 6.0f);
 
 		float value = 0.0f;
-		bool bEvaluationSuccess = Expression::Evaluate(vars1, TEXT("W2W2"), value);
+		TestTrue(TEXT("Expected expression failure 1"), Expression::Evaluate(vars1, TEXT("W2W2"), value));
 
-		bEvaluationSuccess = bEvaluationSuccess || Expression::Evaluate(vars1, TEXT("W2ZED"), value);
+		TestTrue(TEXT("Expected expression failure 2"), Expression::Evaluate(vars1, TEXT("W2ZED"), value));
 
-		return !bEvaluationSuccess;
+		return true;
 	}
 
 	// Modumate dimension format test

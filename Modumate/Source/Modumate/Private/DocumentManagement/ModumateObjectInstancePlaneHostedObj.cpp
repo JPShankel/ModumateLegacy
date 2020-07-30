@@ -722,7 +722,7 @@ namespace Modumate
 		DynamicMeshActor->UpdateHolesFromActors();
 
 		CachedHoles.Reset();
-		for (auto& hole : planeFace->CachedHoles3D)
+		for (auto& hole : planeFace->CachedHoles)
 		{
 			TempHoleRelativePoints.Reset();
 			Algo::Transform(hole.Points, TempHoleRelativePoints, [planeFace](const FVector &worldPoint) { return worldPoint - planeFace->CachedCenter; });

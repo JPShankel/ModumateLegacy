@@ -119,7 +119,7 @@ namespace Modumate
 
 	void FGraph3DFace::UpdateHoles()
 	{
-		CachedHoles3D.Reset();
+		CachedHoles.Reset();
 
 		TArray<FVector> holePoints;
 		TArray<FVector2D> holePoints2D;
@@ -134,8 +134,8 @@ namespace Modumate
 				holePoints.Add(position);
 			}
 
-			CachedHoles3D.Add(FPolyHole3D(holePoints));
-			CachedHoles.Add(FPolyHole2D(holePoints2D));
+			CachedHoles.Add(FPolyHole3D(holePoints));
+			Cached2DHoles.Add(FPolyHole2D(holePoints2D));
 		}
 	}
 
@@ -169,6 +169,7 @@ namespace Modumate
 		int32 numVertices = VertexIDs.Num();
 		EdgeIDs.Reset(numVertices);
 		CachedEdgeNormals.Reset(numVertices);
+		Cached2DEdgeNormals.Reset(numVertices);
 		for (int32 idxA = 0; idxA < numVertices; ++idxA)
 		{
 			int32 idxB = (idxA + 1) % numVertices;
@@ -188,7 +189,24 @@ namespace Modumate
 
 			FVector edgeDir = edge->CachedDir * (bEdgeForward ? 1.0f : -1.0f);
 			FVector edgeNormal = CachedPlane ^ edgeDir;
+			if (!ensure(!edgeNormal.IsNearlyZero()))
+			{
+				bValid = false;
+				return bValid;
+			}
+
+			edgeNormal.Normalize();
 			CachedEdgeNormals.Add(edgeNormal);
+
+			// Also cache the 2D edge normal here, which should already be safe to project into the plane and stay normalized.
+			FVector2D edgeNormal2D = UModumateGeometryStatics::ProjectVector2D(edgeNormal, Cached2DX, Cached2DY);
+			bool edgeNormal2DNormalized = (FMath::Abs(1.f - edgeNormal2D.SizeSquared()) < THRESH_VECTOR_NORMALIZED);
+			if (!ensure(edgeNormal2DNormalized))
+			{
+				bValid = false;
+				return bValid;
+			}
+			Cached2DEdgeNormals.Add(edgeNormal2D);
 
 			FSignedID signedFaceID = ID * (bEdgeForward ? 1 : -1);
 			edge->AddFace(signedFaceID, edgeNormal);
@@ -346,8 +364,8 @@ namespace Modumate
 		}
 
 		int32 numPolygons = graph2D.CalculatePolygons();
-		CachedPerimeter.Reset();
-		CachedHoles.Reset();
+		Cached2DPerimeter.Reset();
+		Cached2DHoles.Reset();
 
 		if (numPolygons == 0)
 		{
@@ -359,7 +377,7 @@ namespace Modumate
 			auto& poly = kvp.Value;
 			if (!poly.bInterior)
 			{
-				CachedPerimeter = poly.CachedPoints;
+				Cached2DPerimeter = poly.CachedPoints;
 			}
 			else
 			{
@@ -381,15 +399,23 @@ namespace Modumate
 				}
 				if (bEnclosedPoly)
 				{
-					CachedHoles.Add(FPolyHole2D(poly.CachedPoints));
+					Cached2DHoles.Add(FPolyHole2D(poly.CachedPoints));
 				}
 			}
 		}
 
+		CachedPerimeter.Reset();
+		for (const FVector2D& perimeterPoint2D : Cached2DPerimeter)
+		{
+			CachedPerimeter.Add(DeprojectPosition(perimeterPoint2D));
+		}
+
+		// TODO: remove triangulation and area calculation if we don't need them until after all
+		// graph deltas have been calculated and verified, and only at mesh creation.
 		TArray<FVector2D> OutVertices, OutPerimeter;
 		TArray<int32> OutTriangles, outholeidxs;
 		TArray<bool> outholes;
-		if (!UModumateGeometryStatics::TriangulateVerticesPoly2Tri(CachedPerimeter, CachedHoles, OutVertices, OutTriangles, OutPerimeter, outholes, outholeidxs))
+		if (!UModumateGeometryStatics::TriangulateVerticesPoly2Tri(Cached2DPerimeter, Cached2DHoles, OutVertices, OutTriangles, OutPerimeter, outholes, outholeidxs))
 		{
 			return false;
 		}
@@ -428,20 +454,26 @@ namespace Modumate
 		}
 	}
 
-	const bool FGraph3DFace::FindVertex(FVector &Position) const
+	int32 FGraph3DFace::FindVertexID(const FVector &Position) const
 	{
-		for (auto position : CachedPositions)
+		int32 numVertices = VertexIDs.Num();
+		if (numVertices != CachedPositions.Num())
 		{
-			if (position.Equals(Position, DEFAULT_GRAPH3D_EPSILON))
+			return MOD_ID_NONE;
+		}
+
+		for (int32 i = 0; i < numVertices; ++i)
+		{
+			if (CachedPositions[i].Equals(Position, DEFAULT_GRAPH3D_EPSILON))
 			{
-				return true;
+				return VertexIDs[i];
 			}
 		}
 
-		return false;
+		return MOD_ID_NONE;
 	}
 
-	const int32 FGraph3DFace::FindEdgeIndex(FSignedID edgeID, bool &bOutSameDirection) const
+	int32 FGraph3DFace::FindEdgeIndex(FSignedID edgeID, bool &bOutSameDirection) const
 	{
 		for (int32 edgeIdx = 0; edgeIdx < EdgeIDs.Num(); edgeIdx++)
 		{

@@ -19,16 +19,18 @@ namespace Modumate
 
 		TArray<FVector> CachedPositions;				// The positions of this face's vertices
 		TArray<FVector> CachedEdgeNormals;				// The normals of this face's edges, pointing inward
+		TArray<FVector> CachedPerimeter;				// The perimeter of the face, after removing peninsulas
 		FPlane CachedPlane = FPlane(ForceInitToZero);	// The plane of this face; its normal assumes the points are defined in clockwise winding
 		FVector Cached2DX = FVector::ZeroVector;		// The cached basis normal vectors for 2D projections
 		FVector Cached2DY = FVector::ZeroVector;
 		FVector CachedCenter = FVector::ZeroVector;		// The central position to use for casting rays from the plane; intended to lie inside the polygon
-		TArray<FVector2D> Cached2DPositions;			// The positions of this face's vertices, projected in 2D
+		TArray<FPolyHole3D> CachedHoles;				// The cached positions of holes that arise from peninsulas with polygons, *NOT* contained faces
 
-		TArray<FVector2D> CachedPerimeter;
-		TArray<FPolyHole2D> CachedHoles;
-		TArray<FPolyHole3D> CachedHoles3D;
-		float CachedArea;
+		TArray<FVector2D> Cached2DPositions;			// CachedPositions, projected in the face's 2D coordinate space
+		TArray<FVector2D> Cached2DEdgeNormals;			// CachedEdgeNormals, projected in the face's 2D coordinate space
+		TArray<FVector2D> Cached2DPerimeter;			// CachedPerimeter, projected in the face's 2D coordinate space
+		TArray<FPolyHole2D> Cached2DHoles;				// CachedHoles, projected in the face's 2D coordinate space
+		float CachedArea = 0.0f;						// The area of the face
 
 		FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs,
 			const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs);
@@ -49,8 +51,8 @@ namespace Modumate
 
 		void GetAdjacentFaceIDs(TSet<int32>& adjFaceIDs) const;
 
-		const bool FindVertex(FVector &Position) const;
-		const int32 FindEdgeIndex(FSignedID edgeID, bool &bOutSameDirection) const;
+		int32 FindVertexID(const FVector& Position) const;
+		int32 FindEdgeIndex(FSignedID edgeID, bool &bOutSameDirection) const;
 
 		virtual void Dirty(bool bConnected = true) override;
 		virtual bool ValidateForTests() const override;

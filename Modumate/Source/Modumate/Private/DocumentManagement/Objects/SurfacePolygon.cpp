@@ -56,6 +56,12 @@ namespace Modumate
 
 		UpdateCachedGraphData();
 
+		// Skip exterior polygons; they can't be visible anyway, so they shouldn't set up any dynamic meshes.
+		if (!bInteriorPolygon)
+		{
+			return;
+		}
+
 		AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
 		MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 

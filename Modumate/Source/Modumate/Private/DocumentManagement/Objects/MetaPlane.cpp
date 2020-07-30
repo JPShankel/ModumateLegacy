@@ -79,7 +79,7 @@ namespace Modumate
 				CachedAxisY = rotation.RotateVector(graphFace->Cached2DY);
 				CachedOrigin = origin + rotation.RotateVector(graphFace->CachedPositions[0] - origin);
 				CachedCenter = origin + rotation.RotateVector(graphFace->CachedCenter - origin);
-				CachedHoles = graphFace->CachedHoles3D;
+				CachedHoles = graphFace->CachedHoles;
 			}
 
 			MOI->MarkDirty(EObjectDirtyFlags::Structure);
@@ -104,7 +104,7 @@ namespace Modumate
 				CachedPlane = FPlane(planeBase + displacement, planeNormal);
 				CachedOrigin = graphFace->CachedPositions[0] + displacement;
 				CachedCenter = graphFace->CachedCenter + displacement;
-				CachedHoles = graphFace->CachedHoles3D;
+				CachedHoles = graphFace->CachedHoles;
 			}
 
 			MOI->MarkDirty(EObjectDirtyFlags::Structure);
@@ -174,7 +174,7 @@ namespace Modumate
 			CachedAxisY = graphFace->Cached2DY;
 			CachedOrigin = graphFace->CachedPositions[0];
 			CachedCenter = graphFace->CachedCenter;
-			CachedHoles = graphFace->CachedHoles3D;
+			CachedHoles = graphFace->CachedHoles;
 		}
 	}
 

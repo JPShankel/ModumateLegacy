@@ -870,6 +870,11 @@ namespace Modumate
 		for (auto &kvp : Delta.FaceContainmentUpdates)
 		{
 			auto *face = FindFace(kvp.Key);
+			if (!ensure(face))
+			{
+				return false;
+			}
+
 			if (!updatedHoles.Contains(face->ID))
 			{
 				face->UpdateHoles();

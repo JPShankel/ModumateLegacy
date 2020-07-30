@@ -740,13 +740,14 @@ bool UModumateGeometryStatics::TriangulateVerticesPoly2Tri(const TArray<FVector2
 	vector<p2t::Point*> vector_hole;
 	for (int32 i = 0; i < OutPerimeter.Num(); i++)
 	{
-		// checking for duplicate points in this way is n^2
+		// checking for duplicate points in this way is n^2,
+		// this should be debug-only when we are confident that every caller validates input.
 		for (int32 j = i+1; j < OutPerimeter.Num(); j++)
 		{
-			if (OutPerimeter[i].Equals(OutPerimeter[j]))
+			if (!ensure(!OutPerimeter[i].Equals(OutPerimeter[j])))
 			{
-				// skip all vertices contained between equal vertices
-				i = j;
+				UE_LOG(LogTemp, Error, TEXT("Input polygon has repeated vertices!"));
+				return false;
 			}
 		}
 
@@ -755,7 +756,7 @@ bool UModumateGeometryStatics::TriangulateVerticesPoly2Tri(const TArray<FVector2
 
 	if (!ensure(polyline.size() >= 3))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Input polygon only has %d vertices after duplicates were removed!"), polyline.size());
+		UE_LOG(LogTemp, Error, TEXT("Input polygon only has %d vertices!"), polyline.size());
 		return false;
 	}
 

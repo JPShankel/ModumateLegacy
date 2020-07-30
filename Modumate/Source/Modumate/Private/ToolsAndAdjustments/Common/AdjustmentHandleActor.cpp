@@ -3,6 +3,7 @@
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Graph/Graph3D.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
@@ -263,10 +264,11 @@ void AAdjustmentHandleActor::EndUse()
 	// TODO: generalize the generation of TArray<TSharedPtr<Modumate::FDelta>> based on any previewed MOI,
 	// either in handles, the document, or through the MOI interface
 	TArray<TSharedPtr<FDelta>> deltas;
-	TArray<FVector> newMetaControlPoints;
-	bool bUseMetaCPs = (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane);
 
-	if (bUseMetaCPs)
+	TArray<FVector> newMetaControlPoints;
+	bool bMetaPlaneTarget = (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane);
+
+	if (bMetaPlaneTarget)
 	{
 		newMetaControlPoints = TargetMOI->GetControlPoints();
 	}
@@ -277,14 +279,40 @@ void AAdjustmentHandleActor::EndUse()
 
 	TargetMOI->EndPreviewOperation();
 
-	if (bUseMetaCPs)
+	if (bMetaPlaneTarget)
 	{
-		// If we are a meta-object, use the kSetGeometry command which creates graph deltas
-		Controller->ModumateCommand(
-			FModumateCommand(Modumate::Commands::kSetGeometry)
-			.Param(Parameters::kObjectID, TargetMOI->ID)
-			.Param(Parameters::kControlPoints, newMetaControlPoints)
-		).GetValue(Parameters::kSuccess);
+		// Generate the minimum list of moved vertices, so we can generate graph deltas based only on those,
+		// rather than trying to update the entire geometry all at once.
+		const FGraph3DFace* targetGraphFace = GameState->Document.GetVolumeGraph().FindFace(TargetMOI->ID);
+		const TArray<FVector>& originalControlPoints = TargetMOI->GetControlPoints();
+		int32 numNewPoints = newMetaControlPoints.Num();
+		int32 numOldPoints = originalControlPoints.Num();
+
+		if (ensure(targetGraphFace && (numNewPoints == numOldPoints)))
+		{
+			TArray<int32> movedVertexIDs;
+			TArray<FVector> newVertexPositions;
+
+			for (int32 i = 0; i < numNewPoints; ++i)
+			{
+				const FVector& newPoint = newMetaControlPoints[i];
+				const FVector& oldPoint = originalControlPoints[i];
+				if (!newPoint.Equals(oldPoint))
+				{
+					int32 vertexID = targetGraphFace->FindVertexID(oldPoint);
+					if (ensure(vertexID != MOD_ID_NONE))
+					{
+						movedVertexIDs.Add(vertexID);
+						newVertexPositions.Add(newPoint);
+					}
+				}
+			}
+
+			if (newVertexPositions.Num() > 0)
+			{
+				GameState->Document.MoveMetaVertices(GetWorld(), movedVertexIDs, newVertexPositions);
+			}
+		}
 	}
 	else
 	{

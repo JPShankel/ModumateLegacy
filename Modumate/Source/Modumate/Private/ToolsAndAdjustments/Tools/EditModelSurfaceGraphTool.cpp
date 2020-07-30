@@ -341,7 +341,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 	const auto *hostParentFace = volumeGraph.FindFace(HostTarget->GetParentID());
 	if (hostParentFace)
 	{
-		for (const FPolyHole3D &hostWorldHole : hostParentFace->CachedHoles3D)
+		for (const FPolyHole3D &hostWorldHole : hostParentFace->CachedHoles)
 		{
 			TArray<FVector2D> &holePolygon = graphPolygonsToAdd.AddDefaulted_GetRef();
 			Algo::Transform(hostWorldHole.Points, holePolygon, [this](const FVector &WorldPoint) {

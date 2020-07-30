@@ -1113,19 +1113,10 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 	for (auto &kvp : Delta.FaceAdditions)
 	{
 		controlPoints.Reset();
-		for (int32 faceVertexID : kvp.Value.Vertices)
+		const FGraph3DFace* newFace = VolumeGraph.FindFace(kvp.Key);
+		if (ensureAlways(newFace && (newFace->CachedPerimeter.Num() >= 3)))
 		{
-			const FGraph3DVertex *faceVertex = VolumeGraph.FindVertex(faceVertexID);
-			if (!ensureAlways(faceVertex))
-			{
-				break;
-			}
-
-			controlPoints.Add(faceVertex->Position);
-		}
-
-		if (controlPoints.Num() == kvp.Value.Vertices.Num())
-		{
+			controlPoints = newFace->CachedPerimeter;
 			CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaPlane,
 				kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
 		}
@@ -1314,9 +1305,9 @@ bool FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 				continue;
 			}
 
-			// TODO: using perimeter instead of cached positions would help adjustment handles
+			// using perimeter instead of cached positions, so adjustment handles
 			// show up on only exterior edges
-			faceObj->SetControlPoints(graphFace->CachedPositions);
+			faceObj->SetControlPoints(graphFace->CachedPerimeter);
 			
 			faceObj->MarkDirty(EObjectDirtyFlags::Structure);
 			dirtyGroupIDs.Append(graphFace->GroupIDs);
