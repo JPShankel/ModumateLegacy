@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Graph/GraphCommon.h"
 #include "ModumateCore/ModumateTypes.h"
+
 
 namespace Modumate
 {

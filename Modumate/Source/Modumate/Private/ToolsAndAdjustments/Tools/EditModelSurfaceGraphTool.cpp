@@ -367,7 +367,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 		for (int32 polyPointIdxA = 0; polyPointIdxA < numPolygonVerts; ++polyPointIdxA)
 		{
 			int32 polyPointIdxB = (polyPointIdxA + 1) % numPolygonVerts;
-			fillGraphDelta->AddNewEdge(TPair<int32, int32>(polygonVertexIDs[polyPointIdxA], polygonVertexIDs[polyPointIdxB]), nextGraphObjID);
+			fillGraphDelta->AddNewEdge(FGraphVertexPair(polygonVertexIDs[polyPointIdxA], polygonVertexIDs[polyPointIdxB]), nextGraphObjID);
 		}
 
 		// Populate the target graph with the polygon itself

@@ -51,11 +51,7 @@ namespace Modumate
 
 	const FGraph3DEdge *FGraph3D::FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward) const
 	{
-		FVertexPair vertexPair(
-			FMath::Min(VertexIDA, VertexIDB),
-			FMath::Max(VertexIDA, VertexIDB)
-		);
-
+		FGraphVertexPair vertexPair = FGraphVertexPair::MakeEdgeKey(VertexIDA, VertexIDB);
 		if (const int32 *edgeIDPtr = EdgeIDsByVertexPair.Find(vertexPair))
 		{
 			if (const FGraph3DEdge *edge = Edges.Find(*edgeIDPtr))
@@ -430,10 +426,7 @@ namespace Modumate
 		newEdge.Dirty();
 		bDirty = true;
 
-		FVertexPair vertexPair(
-			FMath::Min(StartVertexID, EndVertexID),
-			FMath::Max(StartVertexID, EndVertexID)
-		);
+		FGraphVertexPair vertexPair = FGraphVertexPair::MakeEdgeKey(StartVertexID, EndVertexID);
 		EdgeIDsByVertexPair.Add(vertexPair, newID);
 
 		FGraph3DEdge *edgePtr = &Edges.Add(newID, MoveTemp(newEdge));
@@ -488,8 +481,21 @@ namespace Modumate
 			FGraph3DEdge *connectedEdge = FindEdge(connectedEdgeID);
 			if (ensureAlways(connectedEdge))
 			{
-				int32 &vertexIDRef = bEdgeStartsFromVertex ? connectedEdge->StartVertexID : connectedEdge->EndVertexID;
-				vertexIDRef = 0;
+				// Remove the edge from the vertex pair mapping, because it's useless unless both vertices are valid
+				if ((connectedEdge->StartVertexID != MOD_ID_NONE) && (connectedEdge->EndVertexID != MOD_ID_NONE))
+				{
+					EdgeIDsByVertexPair.Remove(FGraphVertexPair::MakeEdgeKey(connectedEdge->StartVertexID, connectedEdge->EndVertexID));
+				}
+
+				if (bEdgeStartsFromVertex)
+				{
+					connectedEdge->StartVertexID = MOD_ID_NONE;
+				}
+				else
+				{
+					connectedEdge->EndVertexID = MOD_ID_NONE;
+				}
+
 				bDirty = true;
 			}
 		}
@@ -509,23 +515,24 @@ namespace Modumate
 		edgeToRemove->Dirty();
 		RemoveObjectFromGroups(edgeToRemove);
 
-		if (edgeToRemove->StartVertexID != 0)
+		if (edgeToRemove->StartVertexID != MOD_ID_NONE)
 		{
 			FGraph3DVertex *startVertex = FindVertex(edgeToRemove->StartVertexID);
 			ensureAlways(startVertex && startVertex->RemoveEdge(EdgeID));
 		}
 
-		if (edgeToRemove->EndVertexID != 0)
+		if (edgeToRemove->EndVertexID != MOD_ID_NONE)
 		{
 			FGraph3DVertex *endVertex = FindVertex(edgeToRemove->EndVertexID);
 			ensureAlways(endVertex && endVertex->RemoveEdge(-EdgeID));
 		}
 
-		FVertexPair vertexPair(
-			FMath::Min(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID),
-			FMath::Max(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID)
-		);
-		EdgeIDsByVertexPair.Remove(vertexPair);
+		// Remove the edge from the vertex pair mapping if it's still in there
+		if ((edgeToRemove->StartVertexID != MOD_ID_NONE) && (edgeToRemove->EndVertexID != MOD_ID_NONE))
+		{
+			FGraphVertexPair vertexPair = FGraphVertexPair::MakeEdgeKey(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID);
+			EdgeIDsByVertexPair.Remove(vertexPair);
+		}
 
 		return Edges.Remove(EdgeID) > 0;
 	}
@@ -901,7 +908,7 @@ namespace Modumate
 		return bValidFaces;
 	}
 
-	bool FGraph3D::CalculateVerticesOnLine(const FVertexPair &VertexPair, const FVector& StartPos, const FVector& EndPos, TArray<int32> &OutVertexIDs, TPair<int32, int32> &OutSplitEdgeIDs) const
+	bool FGraph3D::CalculateVerticesOnLine(const FGraphVertexPair &VertexPair, const FVector& StartPos, const FVector& EndPos, TArray<int32> &OutVertexIDs, TPair<int32, int32> &OutSplitEdgeIDs) const
 	{
 		TArray<TPair<float, int32>> verticesAlongLine;
 		FVector direction = (EndPos - StartPos).GetSafeNormal();

@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Graph/Graph2D.h"
 #include "Graph/Graph3DTypes.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 
@@ -24,13 +25,16 @@ namespace Modumate
 		FVector Cached2DX = FVector::ZeroVector;		// The cached basis normal vectors for 2D projections
 		FVector Cached2DY = FVector::ZeroVector;
 		FVector CachedCenter = FVector::ZeroVector;		// The central position to use for casting rays from the plane; intended to lie inside the polygon
-		TArray<FPolyHole3D> CachedHoles;				// The cached positions of holes that arise from peninsulas with polygons, *NOT* contained faces
+		TArray<FPolyHole3D> CachedIslands;				// The cached positions of connected internal polygons that contribute to holes
+		TArray<FPolyHole3D> CachedHoles;				// The cached positions of all holes, from both islands and contained faces
 
 		TArray<FVector2D> Cached2DPositions;			// CachedPositions, projected in the face's 2D coordinate space
 		TArray<FVector2D> Cached2DEdgeNormals;			// CachedEdgeNormals, projected in the face's 2D coordinate space
 		TArray<FVector2D> Cached2DPerimeter;			// CachedPerimeter, projected in the face's 2D coordinate space
+		TArray<FPolyHole2D> Cached2DIslands;			// CachedIslands, projected in the face's 2D coordinate space
 		TArray<FPolyHole2D> Cached2DHoles;				// CachedHoles, projected in the face's 2D coordinate space
 		float CachedArea = 0.0f;						// The area of the face
+		FGraph2D CachedGraph;							// The graph that is used to calculate perimeter, islands, triangulation, and area
 
 		FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs,
 			const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs);
@@ -45,9 +49,12 @@ namespace Modumate
 		bool IntersectsFace(const FGraph3DFace *OtherFace, TArray<TPair<FVector, FVector>> &OutEdges) const;
 		bool IntersectsPlane(const FPlane OtherPlane, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<TPair<FVector, FVector>> &IntersectingSegments) const;
 
-		void UpdateHoles();
-		// TODO: potentially make this static
+		bool UpdateInternalGraph();
+
+		// TODO: potentially remove or make this static
 		bool CalculateArea();
+
+		void UpdateHoles();
 
 		void GetAdjacentFaceIDs(TSet<int32>& adjFaceIDs) const;
 

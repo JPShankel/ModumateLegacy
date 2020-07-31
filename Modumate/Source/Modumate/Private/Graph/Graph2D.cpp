@@ -58,7 +58,8 @@ namespace Modumate
 
 	const FGraph2DEdge* FGraph2D::FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward) const
 	{
-		if (const int32 *edgeIDPtr = EdgeIDsByVertexPair.Find(MakeVertexPair(VertexIDA, VertexIDB)))
+		FGraphVertexPair edgeKey = FGraphVertexPair::MakeEdgeKey(VertexIDA, VertexIDB);
+		if (const int32 *edgeIDPtr = EdgeIDsByVertexPair.Find(edgeKey))
 		{
 			if (const FGraph2DEdge *edge = Edges.Find(*edgeIDPtr))
 			{
@@ -184,7 +185,7 @@ namespace Modumate
 		startVertex->AddEdge(newID);
 		endVertex->AddEdge(-newID);
 
-		EdgeIDsByVertexPair.Add(MakeVertexPair(newEdge.StartVertexID, newEdge.EndVertexID), newEdge.ID);
+		EdgeIDsByVertexPair.Add(FGraphVertexPair::MakeEdgeKey(newEdge.StartVertexID, newEdge.EndVertexID), newEdge.ID);
 
 		return &newEdge;
 	}
@@ -224,8 +225,21 @@ namespace Modumate
 			FGraph2DEdge *connectedEdge = FindEdge(connectedEdgeID);
 			if (ensureAlways(connectedEdge))
 			{
-				int32 &vertexIDRef = bEdgeStartsFromVertex ? connectedEdge->StartVertexID : connectedEdge->EndVertexID;
-				vertexIDRef = 0;
+				// Remove the edge from the vertex pair mapping, because it's useless unless both vertices are valid
+				if ((connectedEdge->StartVertexID != MOD_ID_NONE) && (connectedEdge->EndVertexID != MOD_ID_NONE))
+				{
+					EdgeIDsByVertexPair.Remove(FGraphVertexPair::MakeEdgeKey(connectedEdge->StartVertexID, connectedEdge->EndVertexID));
+				}
+
+				if (bEdgeStartsFromVertex)
+				{
+					connectedEdge->StartVertexID = MOD_ID_NONE;
+				}
+				else
+				{
+					connectedEdge->EndVertexID = MOD_ID_NONE;
+				}
+
 				bDirty = true;
 			}
 		}
@@ -244,7 +258,7 @@ namespace Modumate
 			return false;
 		}
 
-		if (edgeToRemove->StartVertexID != 0)
+		if (edgeToRemove->StartVertexID != MOD_ID_NONE)
 		{
 			FGraph2DVertex *startVertex = FindVertex(edgeToRemove->StartVertexID);
 			if (ensureAlways(startVertex && startVertex->RemoveEdge(EdgeID)))
@@ -253,7 +267,7 @@ namespace Modumate
 			}
 		}
 
-		if (edgeToRemove->EndVertexID != 0)
+		if (edgeToRemove->EndVertexID != MOD_ID_NONE)
 		{
 			FGraph2DVertex *endVertex = FindVertex(edgeToRemove->EndVertexID);
 			if (ensureAlways(endVertex && endVertex->RemoveEdge(-EdgeID)))
@@ -262,7 +276,11 @@ namespace Modumate
 			}
 		}
 
-		EdgeIDsByVertexPair.Remove(MakeVertexPair(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID));
+		// Remove the edge from the vertex pair mapping if it's still in there
+		if ((edgeToRemove->StartVertexID != MOD_ID_NONE) && (edgeToRemove->EndVertexID != MOD_ID_NONE))
+		{
+			EdgeIDsByVertexPair.Remove(FGraphVertexPair::MakeEdgeKey(edgeToRemove->StartVertexID, edgeToRemove->EndVertexID));
+		}
 
 		Edges.Remove(EdgeID);
 
@@ -491,16 +509,16 @@ namespace Modumate
 		return FindPolygon(GetExteriorPolygonID());
 	}
 
-	bool FGraph2D::ToDataRecord(FGraph2DRecord &OutRecord, bool bSaveOpenPolygons, bool bSaveExteriorPolygons) const
+	bool FGraph2D::ToDataRecord(FGraph2DRecord* OutRecord, bool bSaveOpenPolygons, bool bSaveExteriorPolygons) const
 	{
-		OutRecord.Vertices.Reset();
-		OutRecord.Edges.Reset();
-		OutRecord.Polygons.Reset();
+		OutRecord->Vertices.Reset();
+		OutRecord->Edges.Reset();
+		OutRecord->Polygons.Reset();
 
 		for (const auto &kvp : Vertices)
 		{
 			const FGraph2DVertex &vertex = kvp.Value;
-			OutRecord.Vertices.Add(vertex.ID, vertex.Position);
+			OutRecord->Vertices.Add(vertex.ID, vertex.Position);
 		}
 
 		for (const auto &kvp : Edges)
@@ -508,7 +526,7 @@ namespace Modumate
 			const FGraph2DEdge &edge = kvp.Value;
 			TArray<int32> vertexIDs({ edge.StartVertexID, edge.EndVertexID });
 			FGraph2DEdgeRecord edgeRecord({ vertexIDs });
-			OutRecord.Edges.Add(edge.ID, edgeRecord);
+			OutRecord->Edges.Add(edge.ID, edgeRecord);
 		}
 
 		for (const auto &kvp : Polygons)
@@ -521,17 +539,17 @@ namespace Modumate
 			}
 
 			FGraph2DPolygonRecord polyRecord({ poly.Edges });
-			OutRecord.Polygons.Add(poly.ID, polyRecord);
+			OutRecord->Polygons.Add(poly.ID, polyRecord);
 		}
 
 		return true;
 	}
 
-	bool FGraph2D::FromDataRecord(const FGraph2DRecord &InRecord)
+	bool FGraph2D::FromDataRecord(const FGraph2DRecord* InRecord)
 	{
 		Reset();
 
-		for (const auto &kvp : InRecord.Vertices)
+		for (const auto &kvp : InRecord->Vertices)
 		{
 			FGraph2DVertex *newVertex = AddVertex(kvp.Value, kvp.Key);
 			if (newVertex == nullptr)
@@ -542,7 +560,7 @@ namespace Modumate
 			NextVertexID = FMath::Max(NextVertexID, newVertex->ID + 1);
 		}
 
-		for (const auto &kvp : InRecord.Edges)
+		for (const auto &kvp : InRecord->Edges)
 		{
 			const FGraph2DEdgeRecord &edgeRecord = kvp.Value;
 			if (edgeRecord.VertexIDs.Num() != 2)
@@ -559,7 +577,7 @@ namespace Modumate
 			NextEdgeID = FMath::Max(NextEdgeID, newEdge->ID + 1);
 		}
 
-		for (const auto &kvp : InRecord.Polygons)
+		for (const auto &kvp : InRecord->Polygons)
 		{
 			const FGraph2DPolygonRecord &polyRecord = kvp.Value;
 
@@ -595,11 +613,6 @@ namespace Modumate
 		}
 
 		return true;
-	}
-
-	const FVertexPair FGraph2D::MakeVertexPair(int32 VertexIDA, int32 VertexIDB) const
-	{
-		return FVertexPair(FMath::Min(VertexIDA, VertexIDB), FMath::Max(VertexIDA, VertexIDB));
 	}
 
 	bool FGraph2D::ApplyDelta(const FGraph2DDelta &Delta)

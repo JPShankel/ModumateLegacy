@@ -152,7 +152,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltaForEdgeAddition(const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> &ParentIDs)
+	bool FGraph3D::GetDeltaForEdgeAddition(const FGraphVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> &ParentIDs)
 	{
 		bool bExistingEdgeForward = true;
 		const FGraph3DEdge *existingEdge = FindEdgeByVertices(VertexPair.Key, VertexPair.Value, bExistingEdgeForward);
@@ -184,7 +184,7 @@ namespace Modumate
 
 	// Checks against the current graph and makes edges to connect the provided vertices.  OutVertexIDs is a list of vertices
 	// along the edges that connect the two vertices in VertexPair
-	bool FGraph3D::GetDeltaForMultipleEdgeAdditions(const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> &ParentIDs)
+	bool FGraph3D::GetDeltaForMultipleEdgeAdditions(const FGraphVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> &ParentIDs)
 	{
 		bool bAddedEdge = false;
 
@@ -241,7 +241,7 @@ namespace Modumate
 		{
 			for (int32 vertexIdx = 0; vertexIdx < OutVertexIDs.Num() - 1; vertexIdx++)
 			{
-				FVertexPair vertexPair = FVertexPair(OutVertexIDs[vertexIdx], OutVertexIDs[vertexIdx + 1]);
+				FGraphVertexPair vertexPair(OutVertexIDs[vertexIdx], OutVertexIDs[vertexIdx + 1]);
 				// ExistingID should not be used if there are several edges
 				int32 existingID;
 				bAddedEdge = GetDeltaForEdgeAddition(vertexPair, OutDelta, NextID, existingID, ParentIDs) || bAddedEdge;
@@ -257,7 +257,7 @@ namespace Modumate
 		return bAddedEdge;
 	}
 
-	bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(const FVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs)
+	bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(const FGraphVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs)
 	{
 		int32 ExistingID;
 
@@ -538,6 +538,11 @@ namespace Modumate
 	{
 		OutEdgeIDs.Reset();
 
+		if (EdgeStartPos.Equals(EdgeEndPos, Epsilon))
+		{
+			return false;
+		}
+
 		FVector vertexPositions[2] = { EdgeStartPos, EdgeEndPos };
 		int32 vertexIDs[2] = { MOD_ID_NONE, MOD_ID_NONE };
 
@@ -572,7 +577,7 @@ namespace Modumate
 			vertexIDs[i] = vertexID;
 		}
 
-		FVertexPair vertexPair(vertexIDs[0], vertexIDs[1]);
+		FGraphVertexPair vertexPair(vertexIDs[0], vertexIDs[1]);
 		TArray<FGraph3DDelta> splitEdgeDeltas;
 		if (GetDeltaForEdgeAdditionWithSplit(vertexPair, splitEdgeDeltas, NextID, OutEdgeIDs))
 		{
@@ -605,7 +610,7 @@ namespace Modumate
 			int32 vertexIDB = VertexIDs[idxB];
 			bool bEdgeForward = true;
 
-			FVertexPair currentPair = TPair<int32, int32>(vertexIDA, vertexIDB);
+			FGraphVertexPair currentPair(vertexIDA, vertexIDB);
 			TArray<int32> vertices;
 			int32 existingID;
 
@@ -989,7 +994,7 @@ namespace Modumate
 			return false;
 		}
 
-		FVertexPair startPair = FVertexPair(edge->StartVertexID, vertexID);
+		FGraphVertexPair startPair = FGraphVertexPair(edge->StartVertexID, vertexID);
 		bool bForward;
 		auto existingStartEdge = FindEdgeByVertices(edge->StartVertexID, vertexID, bForward);
 		if (existingStartEdge == nullptr)
@@ -1000,7 +1005,7 @@ namespace Modumate
 			}
 		}
 
-		FVertexPair endPair = FVertexPair(vertexID, edge->EndVertexID);
+		FGraphVertexPair endPair = FGraphVertexPair(vertexID, edge->EndVertexID);
 		auto existingEndEdge = FindEdgeByVertices(edge->EndVertexID, vertexID, bForward);
 		if (existingEndEdge == nullptr)
 		{
@@ -1092,7 +1097,7 @@ namespace Modumate
 				int32 ExistingID;
 
 				// TODO: handle edge deletes
-				if (!GetDeltaForEdgeAddition(TPair<int32, int32>(savedEdgeVertexID, SavedVertexID), OutDelta, NextID, ExistingID))
+				if (!GetDeltaForEdgeAddition(FGraphVertexPair(savedEdgeVertexID, SavedVertexID), OutDelta, NextID, ExistingID))
 				{
 					return false;
 				}
@@ -1107,7 +1112,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltaForEdgeJoin(FGraph3DDelta &OutDelta, int32 &NextID, TPair<int32, int32> EdgeIDs)
+	bool FGraph3D::GetDeltaForEdgeJoin(FGraph3DDelta &OutDelta, int32 &NextID, const TPair<int32, int32>& EdgeIDs)
 	{
 		auto edgeA = FindEdge(EdgeIDs.Key);
 		auto edgeB = FindEdge(EdgeIDs.Value);
@@ -1118,29 +1123,29 @@ namespace Modumate
 		}
 
 		// for edges to be joined, one vertex must be shared, and the two vertices unique to one edge will create a new edge
-		TPair<int32, int32> newEdgeVertexIDs;
+		FGraphVertexPair newEdgeVertexIDs;
 		int32 sharedVertexID;
 
 		// find which vertex is shared between the edges
 		if (edgeA->StartVertexID == edgeB->StartVertexID)
 		{
 			sharedVertexID = edgeA->StartVertexID;
-			newEdgeVertexIDs = TPair<int32, int32>(edgeA->EndVertexID, edgeB->EndVertexID);
+			newEdgeVertexIDs = FGraphVertexPair(edgeA->EndVertexID, edgeB->EndVertexID);
 		}
 		else if (edgeA->EndVertexID == edgeB->EndVertexID)
 		{
 			sharedVertexID = edgeA->EndVertexID;
-			newEdgeVertexIDs = TPair<int32, int32>(edgeA->StartVertexID, edgeB->StartVertexID);
+			newEdgeVertexIDs = FGraphVertexPair(edgeA->StartVertexID, edgeB->StartVertexID);
 		}
 		else if (edgeA->StartVertexID == edgeB->EndVertexID)
 		{
 			sharedVertexID = edgeA->StartVertexID;
-			newEdgeVertexIDs = TPair<int32, int32>(edgeA->EndVertexID, edgeB->StartVertexID);
+			newEdgeVertexIDs = FGraphVertexPair(edgeA->EndVertexID, edgeB->StartVertexID);
 		}
 		else if (edgeA->EndVertexID == edgeB->StartVertexID)
 		{
 			sharedVertexID = edgeA->EndVertexID;
-			newEdgeVertexIDs = TPair<int32, int32>(edgeA->StartVertexID, edgeB->EndVertexID);
+			newEdgeVertexIDs = FGraphVertexPair(edgeA->StartVertexID, edgeB->EndVertexID);
 		}
 		else
 		{
@@ -1491,7 +1496,7 @@ namespace Modumate
 		else if (ObjectType == EGraph3DObjectType::Edge)
 		{
 			FGraph3DDelta OutDelta;
-			if (!GetDeltaForEdgeJoin(OutDelta, NextID, TPair<int32, int32>(ObjectIDs[0], ObjectIDs[1])))
+			if (!GetDeltaForEdgeJoin(OutDelta, NextID, FGraphVertexPair(ObjectIDs[0], ObjectIDs[1])))
 			{
 				return false;
 			}
@@ -1536,7 +1541,7 @@ namespace Modumate
 					continue;
 				}
 
-				TPair<int32, int32> currentEdgePair = TPair<int32, int32>(currentEdgeID, nextEdgeID);
+				FGraphVertexPair currentEdgePair(currentEdgeID, nextEdgeID);
 				if (GetDeltaForEdgeJoin(joinEdgeDelta, NextID, currentEdgePair))
 				{
 					bAttemptEdgeJoin = true;
@@ -1764,7 +1769,7 @@ namespace Modumate
 		{
 			if (OutDelta.EdgeAdditions.Remove(edge->ID) == 0)
 			{
-				OutDelta.EdgeDeletions.Add(edge->ID, FGraph3DObjDelta(FVertexPair(edge->StartVertexID, edge->EndVertexID), {}, edge->GroupIDs));
+				OutDelta.EdgeDeletions.Add(edge->ID, FGraph3DObjDelta(FGraphVertexPair(edge->StartVertexID, edge->EndVertexID), {}, edge->GroupIDs));
 			}
 		}
 

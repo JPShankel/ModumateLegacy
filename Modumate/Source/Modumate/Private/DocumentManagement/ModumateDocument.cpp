@@ -2704,7 +2704,7 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 	{
 		const FGraph2D &surfaceGraph = kvp.Value;
 		FGraph2DRecord &surfaceGraphRecord = docRec.SurfaceGraphs.Add(kvp.Key);
-		surfaceGraph.ToDataRecord(surfaceGraphRecord, false, false);
+		surfaceGraph.ToDataRecord(&surfaceGraphRecord, false, false);
 	}
 
 	docRec.CameraViews = SavedCameraViews;
@@ -2781,7 +2781,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 		{
 			const FGraph2DRecord &surfaceGraphRecord = kvp.Value;
 			FGraph2D surfaceGraph(kvp.Key);
-			if (surfaceGraph.FromDataRecord(surfaceGraphRecord))
+			if (surfaceGraph.FromDataRecord(&surfaceGraphRecord))
 			{
 				SurfaceGraphs.Add(kvp.Key, MoveTemp(surfaceGraph));
 			}

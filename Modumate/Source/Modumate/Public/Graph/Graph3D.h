@@ -105,7 +105,7 @@ namespace Modumate
 		int32 NextPolyhedronID = 1;
 		bool bDirty = false;
 
-		TMap<FVertexPair, int32> EdgeIDsByVertexPair;
+		TMap<FGraphVertexPair, int32> EdgeIDsByVertexPair;
 		TMap<int32, FGraph3DVertex> Vertices;
 		TMap<int32, FGraph3DEdge> Edges;
 		TMap<int32, FGraph3DFace> Faces;
@@ -138,7 +138,7 @@ namespace Modumate
 		bool GetDeltaForFaceAddition(const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID, const TSet<int32> &InGroupIDs = TSet<int32>());
 
 	private:
-		bool GetDeltaForEdgeAddition(const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> &ParentIDs = TArray<int32>());
+		bool GetDeltaForEdgeAddition(const FGraphVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> &ParentIDs = TArray<int32>());
 		bool GetDeltaForFaceAddition(const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID, const TSet<int32> &InGroupIDs = TSet<int32>());
 
 	// object deletion
@@ -158,7 +158,7 @@ namespace Modumate
 		bool GetDeltasForReduceEdges(TArray<FGraph3DDelta> &OutDeltas, int32 FaceID, int32 &NextID);
 
 		bool GetDeltaForVertexJoin(FGraph3DDelta &OutDelta, int32 &NextID, int32 SavedVertexID, int32 RemovedVertexID);
-		bool GetDeltaForEdgeJoin(FGraph3DDelta &OutDelta, int32 &NextID, TPair<int32, int32> EdgeIDs);
+		bool GetDeltaForEdgeJoin(FGraph3DDelta &OutDelta, int32 &NextID, const TPair<int32, int32>& EdgeIDs);
 		bool GetDeltasForFaceJoin(TArray<FGraph3DDelta> &OutDeltas, const TArray<int32> &FaceIDs, int32 &NextID);
 		bool GetSharedSeamForFaces(const int32 FaceID, const int32 OtherFaceID, const int32 SharedIdx, int32 &SeamStartIdx, int32 &SeamEndIdx, int32 &SeamLength);
 
@@ -169,8 +169,8 @@ namespace Modumate
 	// splitting functions, support for other graph operations
 	private:
 		// calculates splits, etc. then will call the direct versions of the function
-		bool GetDeltaForMultipleEdgeAdditions(const FVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> &ParentIDs = TArray<int32>());
-		bool GetDeltaForEdgeAdditionWithSplit(const FVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs);
+		bool GetDeltaForMultipleEdgeAdditions(const FGraphVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> &ParentIDs = TArray<int32>());
+		bool GetDeltaForEdgeAdditionWithSplit(const FGraphVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs);
 
 		bool GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, const TArray<int32>& EdgeIDs, const TArray<int32>& FaceIDs, const TArray<FPlane>& InPlanes = TArray<FPlane>(), bool bAddNewFaces = true);
 
@@ -195,7 +195,7 @@ namespace Modumate
 		void ApplyGroupIDsDelta(FTypedGraphObjID TypedObjectID, const FGraph3DGroupIDsDelta &GroupDelta);
 
 		// calculate a list of vertices that are on the line between the two vertices provided
-		bool CalculateVerticesOnLine(const FVertexPair &VertexPair, const FVector& StartPos, const FVector& EndPos, TArray<int32> &OutVertexIDs, TPair<int32, int32> &OutSplitEdgeIDs) const;
+		bool CalculateVerticesOnLine(const FGraphVertexPair &VertexPair, const FVector& StartPos, const FVector& EndPos, TArray<int32> &OutVertexIDs, TPair<int32, int32> &OutSplitEdgeIDs) const;
 
 		// TODO: this should become private once FinalizeGraphDeltas doesn't check for 
 		// overlapping faces (and doesn't trigger the ensure)

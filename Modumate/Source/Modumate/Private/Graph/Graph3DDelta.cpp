@@ -67,12 +67,12 @@ namespace Modumate
 	{
 	}
 
-	FGraph3DObjDelta::FGraph3DObjDelta(const FVertexPair &VertexPair)
+	FGraph3DObjDelta::FGraph3DObjDelta(const FGraphVertexPair &VertexPair)
 		: Vertices({ VertexPair.Key, VertexPair.Value })
 	{
 	}
 
-	FGraph3DObjDelta::FGraph3DObjDelta(const FVertexPair &VertexPair, const TArray<int32> &InParents,
+	FGraph3DObjDelta::FGraph3DObjDelta(const FGraphVertexPair &VertexPair, const TArray<int32> &InParents,
 		const TSet<int32> &InGroupIDs)
 		: Vertices({ VertexPair.Key, VertexPair.Value })
 		, ParentObjIDs(InParents)
@@ -117,12 +117,12 @@ namespace Modumate
 		return true;
 	}
 
-	int32 FGraph3DDelta::FindAddedVertex(FVector position)
+	int32 FGraph3DDelta::FindAddedVertex(const FVector& Position)
 	{
 		for (auto &kvp : VertexAdditions)
 		{
 			FVector otherVertex = kvp.Value;
-			if (position.Equals(otherVertex, DEFAULT_GRAPH3D_EPSILON))
+			if (Position.Equals(otherVertex, DEFAULT_GRAPH3D_EPSILON))
 			{
 				return kvp.Key;
 			}
@@ -131,13 +131,13 @@ namespace Modumate
 		return MOD_ID_NONE;
 	}
 
-	int32 FGraph3DDelta::FindAddedEdge(FVertexPair edge)
+	int32 FGraph3DDelta::FindAddedEdge(const FGraphVertexPair& Edge)
 	{
-		FVertexPair flippedEdge = FVertexPair(edge.Value, edge.Key);
+		FGraphVertexPair flippedEdge(Edge.Value, Edge.Key);
 		for (auto &kvp : EdgeAdditions)
 		{
-			FVertexPair otherPair = FVertexPair(kvp.Value.Vertices[0], kvp.Value.Vertices[1]);
-			if (otherPair == edge)
+			FGraphVertexPair otherPair(kvp.Value.Vertices[0], kvp.Value.Vertices[1]);
+			if (otherPair == Edge)
 			{
 				return kvp.Key;
 			}

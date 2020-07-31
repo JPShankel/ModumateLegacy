@@ -58,7 +58,7 @@ namespace Modumate
 		VertexAdditions.Add(newVertexID, Position);
 	}
 
-	void FGraph2DDelta::AddNewEdge(const TPair<int32, int32> &VertexIDs, int32 &NextID, const TArray<int32> &ParentIDs)
+	void FGraph2DDelta::AddNewEdge(const FGraphVertexPair& VertexIDs, int32 &NextID, const TArray<int32> &ParentIDs)
 	{
 		int32 newEdgeID = NextID++;
 		EdgeAdditions.Add(newEdgeID, FGraph2DObjDelta({ VertexIDs.Key, VertexIDs.Value }, ParentIDs));
@@ -110,7 +110,7 @@ namespace Modumate
 		for (const auto &kvp : PolygonParentIDUpdates)
 		{
 			int32 childID = kvp.Key;
-			const TPair<int32, int32> &update = kvp.Value;
+			const TPair<int32, int32>& update = kvp.Value;
 
 			inverse->PolygonParentIDUpdates.Add(ID, TPair<int32, int32>(update.Value, update.Key));
 		}

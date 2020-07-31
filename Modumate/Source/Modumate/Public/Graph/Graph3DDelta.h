@@ -23,8 +23,8 @@ namespace Modumate
 			const TSet<int32> &InGroupIDs = TSet<int32>(),
 			int32 InContainingObjID = MOD_ID_NONE, const TSet<int32> &InContainedObjIDs = TSet<int32>());
 
-		FGraph3DObjDelta(const FVertexPair &VertexPair);
-		FGraph3DObjDelta(const FVertexPair &VertexPair, const TArray<int32> &InParents,
+		FGraph3DObjDelta(const FGraphVertexPair &VertexPair);
+		FGraph3DObjDelta(const FGraphVertexPair &VertexPair, const TArray<int32> &InParents,
 			const TSet<int32> &InGroupIDs = TSet<int32>());
 	};
 
@@ -93,8 +93,8 @@ namespace Modumate
 		void Reset();
 		bool IsEmpty();
 
-		int32 FindAddedVertex(FVector position);
-		int32 FindAddedEdge(FVertexPair edge);
+		int32 FindAddedVertex(const FVector& Position);
+		int32 FindAddedEdge(const FGraphVertexPair& Edge);
 
 		void AggregateAddedObjects(TArray<int32> OutAddedFaceIDs, TArray<int32> OutAddedVertexIDs, TArray<int32> OutAddedEdgeIDs);
 

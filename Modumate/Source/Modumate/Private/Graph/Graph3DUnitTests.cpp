@@ -2297,8 +2297,7 @@ namespace Modumate
 
 		int32 outerFaceID = faceIDs[0];
 		int32 innerFaceID = faceIDs[1];
-		auto outerFace = graph.FindFace(outerFaceID);
-		auto innerFace = graph.FindFace(innerFaceID);
+		float outerFaceArea = graph.FindFace(outerFaceID)->CachedArea;
 
 		// add a face in the corner of the outer face
 		TArray<FVector> cornerVertices = {
@@ -2314,10 +2313,13 @@ namespace Modumate
 			tempGraph.GetDeltaForFaceAddition(cornerVertices, deltas, nextID, existingID));
 		TestDeltas(this, deltas, graph, tempGraph, 3, 11, 12, false);
 
-		TestTrue(TEXT("Inner face is contained"),
-			innerFace->ContainingFaceID != MOD_ID_NONE &&
-			graph.FindFace(innerFace->ContainingFaceID) != nullptr &&
-			innerFace->ContainingFaceID != outerFaceID);
+		auto innerFace = graph.FindFace(innerFaceID);
+		auto containingFace = innerFace ? graph.FindFace(innerFace->ContainingFaceID) : nullptr;
+
+		TestTrue(TEXT("Inner face is contained by the new outer face, smaller than the original one"),
+			innerFace && containingFace &&
+			(containingFace->VertexIDs.Num() == 6) &&
+			containingFace->CachedArea < outerFaceArea);
 
 		ApplyInverseDeltas(this, graph, tempGraph, deltas);
 		deltas.Reset();

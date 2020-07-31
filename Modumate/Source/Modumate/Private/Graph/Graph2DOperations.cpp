@@ -3,6 +3,7 @@
 #include "Graph/Graph2D.h"
 
 #include "Graph/Graph2DDelta.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 namespace Modumate
 {
@@ -43,7 +44,7 @@ namespace Modumate
 		const FGraph2DEdge *existingEdge = FindEdgeByVertices(StartVertexID, EndVertexID, bOutForward);
 		if (existingEdge == nullptr)
 		{
-			OutDelta.AddNewEdge(TPair<int32, int32>(StartVertexID, EndVertexID), NextID, ParentIDs);
+			OutDelta.AddNewEdge(FGraphVertexPair(StartVertexID, EndVertexID), NextID, ParentIDs);
 		}
 
 		return true;

@@ -30,7 +30,7 @@ bool UGraph2DTool::Activate()
 	{
 		FGraph2DRecord graphRecord;
 		FName graphKey;
-		if (selectedGraph.ToDataRecord(graphRecord) &&
+		if (selectedGraph.ToDataRecord(&graphRecord) &&
 			(gameState->Document.PresetManager.AddOrUpdateGraph2DRecord(NAME_None, graphRecord, graphKey) == ECraftingResult::Success))
 		{
 			UE_LOG(LogTemp, Log, TEXT("Added graph record \"%s\""), *graphKey.ToString());

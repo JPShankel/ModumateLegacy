@@ -1,6 +1,7 @@
 #include "CoreMinimal.h"
 
 #include "DocumentManagement/ModumateDelta.h"
+#include "DocumentManagement/ModumateSerialization.h"
 #include "Graph/Graph2D.h"
 #include "Graph/Graph2DDelta.h"
 
@@ -150,7 +151,7 @@ namespace Modumate
 		TestEqual((TEXT("Num Computed Polygons")), graph.GetPolygons().Num(), 3);
 
 		FGraph2DRecord graphRecord;
-		bool bSaveSuccess = graph.ToDataRecord(graphRecord);
+		bool bSaveSuccess = graph.ToDataRecord(&graphRecord);
 		TestTrue(TEXT("Graph Save Success"), bSaveSuccess);
 
 		FString graphJSONString;
@@ -198,7 +199,7 @@ namespace Modumate
 		TestEqualInsensitive(TEXT("Graph JSON string"), *expectedJSONString, *graphJSONString);
 
 		Modumate::FGraph2D deserializedGraph;
-		bool bLoadSuccess = deserializedGraph.FromDataRecord(graphRecord);
+		bool bLoadSuccess = deserializedGraph.FromDataRecord(&graphRecord);
 		TestTrue(TEXT("Graph Load Success"), bLoadSuccess);
 
 		TestEqual(TEXT("Num Loaded Polygons"), deserializedGraph.GetPolygons().Num(), 2);

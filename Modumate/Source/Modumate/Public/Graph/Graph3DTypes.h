@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Graph/GraphCommon.h"
 #include "ModumateCore/ModumateTypes.h"
-#include <functional>
 
 #define DEFAULT_GRAPH3D_EPSILON 0.05f
 
@@ -12,8 +12,7 @@ namespace Modumate
 {
 	// Use this typedef to designate edge and face IDs, which are only valid if non-0, and whose sign indicates a direction
 	typedef int32 FSignedID;
-	typedef TPair<int32, int32> FVertexPair;
-	typedef std::function<bool(FSignedID SignedID)> FGraphObjPredicate;
+	typedef TFunction<bool(FSignedID SignedID)> FGraphObjPredicate;
 
 	enum class EGraph3DObjectType : uint8
 	{

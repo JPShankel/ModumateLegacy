@@ -12,7 +12,7 @@ namespace Modumate
 		: IGraph3DObject(InID, InGraph, InGroupIDs)
 		, ContainingFaceID(InContainingFaceID)
 		, ContainedFaceIDs(InContainedFaceIDs)
-		, CachedPlane(ForceInitToZero)
+		, CachedGraph(InID, InGraph->Epsilon, InGraph->bDebugCheck)
 	{
 		if (!UpdatePlane(InVertexIDs))
 		{
@@ -55,33 +55,6 @@ namespace Modumate
 		return UModumateGeometryStatics::IsPointInPolygon(ProjectPosition2D(Position), Cached2DPositions, Graph->Epsilon, false);
 	}
 
-	bool FGraph3DFace::AssignVertices(const TArray<int32> &InVertexIDs)
-	{
-		VertexIDs = InVertexIDs;
-		int32 numVertices = VertexIDs.Num();
-		if (!ensureAlways(numVertices >= 3))
-		{
-			bValid = false;
-			return bValid;
-		}
-
-		// Get the positions of all the vertices used for this face's polygon
-		CachedPositions.Reset(numVertices);
-		for (int32 vertexID : VertexIDs)
-		{
-			FGraph3DVertex *vertex = Graph->FindVertex(vertexID);
-			if (!ensureAlways(vertex != nullptr))
-			{
-				bValid = false;
-				return bValid;
-			}
-
-			CachedPositions.Add(vertex->Position);
-		}
-
-		return true;
-	}
-
 	bool FGraph3DFace::UpdatePlane(const TArray<int32> &InVertexIDs)
 	{
 		if (!AssignVertices(InVertexIDs))
@@ -115,28 +88,6 @@ namespace Modumate
 			}
 		}
 		return false;
-	}
-
-	void FGraph3DFace::UpdateHoles()
-	{
-		CachedHoles.Reset();
-
-		TArray<FVector> holePoints;
-		TArray<FVector2D> holePoints2D;
-		for (int32 containedFaceID : ContainedFaceIDs)
-		{
-			holePoints.Reset();
-			auto containedFace = Graph->FindFace(containedFaceID);
-
-			for (FVector& position : containedFace->CachedPositions)
-			{
-				holePoints2D.Add(ProjectPosition2D(position));
-				holePoints.Add(position);
-			}
-
-			CachedHoles.Add(FPolyHole3D(holePoints));
-			Cached2DHoles.Add(FPolyHole2D(holePoints2D));
-		}
 	}
 
 	bool FGraph3DFace::UpdateVerticesAndEdges(const TArray<int32> &InVertexIDs, bool bAssignVertices)
@@ -212,7 +163,7 @@ namespace Modumate
 			edge->AddFace(signedFaceID, edgeNormal);
 		}
 
-		if (!CalculateArea())
+		if (!UpdateInternalGraph() || !CalculateArea())
 		{
 			bValid = false;
 			return bValid;
@@ -319,6 +270,11 @@ namespace Modumate
 			FVector edgeStart = IntersectingEdgeOrigin + IntersectingEdgeDir * range.Key;
 			FVector edgeEnd = IntersectingEdgeOrigin + IntersectingEdgeDir * range.Value;
 
+			if (FMath::IsNearlyEqual(range.Key, range.Value, Graph->Epsilon))
+			{
+				return false;
+			}
+
 			OutEdges.Add(TPair<FVector, FVector>(edgeStart, edgeEnd));
 		}
 
@@ -345,13 +301,13 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3DFace::CalculateArea()
+	bool FGraph3DFace::UpdateInternalGraph()
 	{
-		// create 2D graph
-		FGraph2D graph2D;
+		// updated our 2D graph
+		CachedGraph.Reset();
 		for (int32 vertexIdx = 0; vertexIdx < VertexIDs.Num(); vertexIdx++)
 		{
-			graph2D.AddVertex(Cached2DPositions[vertexIdx], VertexIDs[vertexIdx]);
+			CachedGraph.AddVertex(Cached2DPositions[vertexIdx], VertexIDs[vertexIdx]);
 		}
 		for (int32 edgeID : EdgeIDs)
 		{
@@ -360,19 +316,22 @@ namespace Modumate
 			{
 				return false;
 			}
-			graph2D.AddEdge(edge->StartVertexID, edge->EndVertexID, edge->ID);
+			CachedGraph.AddEdge(edge->StartVertexID, edge->EndVertexID, edge->ID);
 		}
 
-		int32 numPolygons = graph2D.CalculatePolygons();
+		int32 numPolygons = CachedGraph.CalculatePolygons();
+
+		CachedPerimeter.Reset();
 		Cached2DPerimeter.Reset();
-		Cached2DHoles.Reset();
+		CachedIslands.Reset();
+		Cached2DIslands.Reset();
 
 		if (numPolygons == 0)
 		{
 			return false;
 		}
 
-		for (auto& kvp : graph2D.GetPolygons())
+		for (auto& kvp : CachedGraph.GetPolygons())
 		{
 			auto& poly = kvp.Value;
 			if (!poly.bInterior)
@@ -384,9 +343,9 @@ namespace Modumate
 				bool bEnclosedPoly = true;
 				for (auto& edgeID : poly.Edges)
 				{
-					auto edge = graph2D.FindEdge(edgeID);
-					auto leftPoly = graph2D.FindPolygon(edge->LeftPolyID);
-					auto rightPoly = graph2D.FindPolygon(edge->RightPolyID);
+					auto edge = CachedGraph.FindEdge(edgeID);
+					auto leftPoly = CachedGraph.FindPolygon(edge->LeftPolyID);
+					auto rightPoly = CachedGraph.FindPolygon(edge->RightPolyID);
 					if (!ensure(leftPoly != nullptr && rightPoly != nullptr))
 					{
 						continue;
@@ -399,15 +358,30 @@ namespace Modumate
 				}
 				if (bEnclosedPoly)
 				{
-					Cached2DHoles.Add(FPolyHole2D(poly.CachedPoints));
+					Cached2DIslands.Add(FPolyHole2D(poly.CachedPoints));
+
+					FPolyHole3D& island = CachedIslands.AddDefaulted_GetRef();
+					for (const FVector2D& islandPoint2D : poly.CachedPoints)
+					{
+						island.Points.Add(DeprojectPosition(islandPoint2D));
+					}
 				}
 			}
 		}
 
-		CachedPerimeter.Reset();
 		for (const FVector2D& perimeterPoint2D : Cached2DPerimeter)
 		{
 			CachedPerimeter.Add(DeprojectPosition(perimeterPoint2D));
+		}
+
+		return true;
+	}
+
+	bool FGraph3DFace::CalculateArea()
+	{
+		if (!ensure(Cached2DPerimeter.Num() >= 3))
+		{
+			return false;
 		}
 
 		// TODO: remove triangulation and area calculation if we don't need them until after all
@@ -415,7 +389,9 @@ namespace Modumate
 		TArray<FVector2D> OutVertices, OutPerimeter;
 		TArray<int32> OutTriangles, outholeidxs;
 		TArray<bool> outholes;
-		if (!UModumateGeometryStatics::TriangulateVerticesPoly2Tri(Cached2DPerimeter, Cached2DHoles, OutVertices, OutTriangles, OutPerimeter, outholes, outholeidxs))
+		// TODO: Cached2DIslands is used rather than Cached2DHoles because current area calculation is used to compare candidate overlapping faces.
+		// This area calculation isn't strictly correct, so we should delete it or replace Cached2DIslands with Cached2DHoles when the area is no longer used in this way.
+		if (!UModumateGeometryStatics::TriangulateVerticesPoly2Tri(Cached2DPerimeter, Cached2DIslands, OutVertices, OutTriangles, OutPerimeter, outholes, outholeidxs))
 		{
 			return false;
 		}
@@ -434,6 +410,35 @@ namespace Modumate
 		}
 
 		return (CachedArea > 0.0f);
+	}
+
+	void FGraph3DFace::UpdateHoles()
+	{
+		CachedHoles.Reset();
+		Cached2DHoles.Reset();
+
+		CachedHoles.Append(CachedIslands);
+		Cached2DHoles.Append(Cached2DIslands);
+
+		TArray<FVector> holePoints;
+		TArray<FVector2D> holePoints2D;
+		for (int32 containedFaceID : ContainedFaceIDs)
+		{
+			auto containedFace = Graph->FindFace(containedFaceID);
+			if (!ensure(containedFace && containedFace->CachedPositions.Num() >= 3))
+			{
+				continue;
+			}
+
+			FPolyHole3D& containedFaceHole = CachedHoles.AddDefaulted_GetRef();
+			FPolyHole2D& containedFace2DHole = Cached2DHoles.AddDefaulted_GetRef();
+
+			for (FVector& position : containedFace->CachedPositions)
+			{
+				containedFaceHole.Points.Add(position);
+				containedFace2DHole.Points.Add(ProjectPosition2D(position));
+			}
+		}
 	}
 
 	void FGraph3DFace::GetAdjacentFaceIDs(TSet<int32>& OutFaceIDs) const
@@ -547,6 +552,33 @@ namespace Modumate
 			{
 				return false;
 			}
+		}
+
+		return true;
+	}
+
+	bool FGraph3DFace::AssignVertices(const TArray<int32> &InVertexIDs)
+	{
+		VertexIDs = InVertexIDs;
+		int32 numVertices = VertexIDs.Num();
+		if (!ensureAlways(numVertices >= 3))
+		{
+			bValid = false;
+			return bValid;
+		}
+
+		// Get the positions of all the vertices used for this face's polygon
+		CachedPositions.Reset(numVertices);
+		for (int32 vertexID : VertexIDs)
+		{
+			FGraph3DVertex *vertex = Graph->FindVertex(vertexID);
+			if (!ensureAlways(vertex != nullptr))
+			{
+				bValid = false;
+				return bValid;
+			}
+
+			CachedPositions.Add(vertex->Position);
 		}
 
 		return true;

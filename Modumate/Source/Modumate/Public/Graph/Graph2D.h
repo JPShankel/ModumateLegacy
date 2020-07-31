@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 
-#include "DocumentManagement/ModumateSerialization.h"
-#include "ModumateCore/ModumateTypes.h"
 #include "Graph/Graph2DDelta.h"
 #include "Graph/Graph2DEdge.h"
 #include "Graph/Graph2DPolygon.h"
 #include "Graph/Graph2DTypes.h"
 #include "Graph/Graph2DVertex.h"
+
+struct FGraph2DRecord;
 
 namespace Modumate
 {
@@ -37,7 +37,6 @@ namespace Modumate
 		FGraph2DPolygon* FindPolygon(int32 ID);
 		const FGraph2DPolygon* FindPolygon(int32 ID) const;
 
-		bool ContainsObject(const FTypedGraphObjID &GraphObjID) const;
 		bool ContainsObject(int32 ID, EGraphObjectType GraphObjectType) const;
 		bool GetEdgeAngle(FEdgeID EdgeID, float &outEdgeAngle);
 
@@ -61,13 +60,9 @@ namespace Modumate
 		const TMap<int32, FGraph2DVertex> &GetVertices() const { return Vertices; }
 		const TMap<int32, FGraph2DPolygon> &GetPolygons() const { return Polygons; }
 
-		bool ToDataRecord(FGraph2DRecord &OutRecord, bool bSaveOpenPolygons = false, bool bSaveExteriorPolygons = false) const;
-		bool FromDataRecord(const FGraph2DRecord &InRecord);
+		bool ToDataRecord(FGraph2DRecord* OutRecord, bool bSaveOpenPolygons = false, bool bSaveExteriorPolygons = false) const;
+		bool FromDataRecord(const FGraph2DRecord* InRecord);
 
-	private:
-		const FVertexPair MakeVertexPair(int32 VertexIDA, int32 VertexIDB) const;
-
-	public:
 		float Epsilon;
 		bool bDebugCheck;
 
@@ -84,7 +79,7 @@ namespace Modumate
 
 		TSet<FEdgeID> DirtyEdges;
 
-		TMap<FVertexPair, int32> EdgeIDsByVertexPair;
+		TMap<FGraphVertexPair, int32> EdgeIDsByVertexPair;
 
 		// vertices and edges in the graph must be inside the bounding vertices,
 		// and outside the bounding contained vertices
