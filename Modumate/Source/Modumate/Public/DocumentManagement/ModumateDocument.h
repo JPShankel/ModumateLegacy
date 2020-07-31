@@ -122,7 +122,7 @@ public:
 
 	void TransverseObjects(const TArray<Modumate::FModumateObjectInstance*> &obs);
 
-	int32 MakeRoom(UWorld *World, const TArray<Modumate::FSignedID> &FaceIDs);
+	int32 MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs);
 	int32 MakePointsObject(UWorld *world, const TArray<int32> &idsToDelete, const TArray<FVector> &points, const TArray<int32> &controlIndices,
 		EObjectType objectType, bool inverted, const FBIMAssemblySpec &assembly, int32 parentID, bool bUpdateSiblingGeometry = false);
 
@@ -152,7 +152,7 @@ public:
 
 	void UpdateMitering(UWorld *world, const TArray<int32> &dirtyObjIDs);
 
-	bool CanRoomContainFace(Modumate::FSignedID FaceID);
+	bool CanRoomContainFace(FGraphSignedID FaceID);
 	void UpdateRoomAnalysis(UWorld *world);
 
 	const Modumate::FGraph3D &GetVolumeGraph() const { return VolumeGraph; }

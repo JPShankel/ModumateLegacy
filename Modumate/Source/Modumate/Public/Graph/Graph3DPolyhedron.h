@@ -13,7 +13,7 @@ namespace Modumate
 	public:
 		int32 ParentID = MOD_ID_NONE;		// The ID of the polyhedron that contains this one, if any
 		TArray<int32> InteriorPolyhedra;	// The IDs of polyhedrons that this polyhedron contains
-		TArray<FSignedID> FaceIDs;			// The list of signed faces that make up this polyhedron
+		TArray<FGraphSignedID> FaceIDs;			// The list of signed faces that make up this polyhedron
 
 		// Cached derived data
 		bool bClosed = false;				// Whether this is a closed polyhedron (it fully bounds a volume)
@@ -28,7 +28,7 @@ namespace Modumate
 		bool DetermineInterior();				// A helper function to determine whether this polyhedron is interior or exterior, if it is closed
 		bool DetermineConvex();
 
-		TArray<TArray<FSignedID>> GroupFacesByNormal(); // A helper function to find the most common face directions for use as drawing cuts
+		TArray<TArray<FGraphSignedID>> GroupFacesByNormal(); // A helper function to find the most common face directions for use as drawing cuts
 
 		virtual void Dirty(bool bConnected = true) override { }
 		virtual bool ValidateForTests() const override { return true; }

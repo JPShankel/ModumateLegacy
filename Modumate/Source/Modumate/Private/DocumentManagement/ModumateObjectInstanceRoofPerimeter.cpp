@@ -74,7 +74,7 @@ namespace Modumate
 		RetractFacesHandle = MOI->MakeHandle<ARetractRoofFacesHandle>();
 
 		// Handles for modifying roof edges
-		for (FSignedID edgeID : CachedEdgeIDs)
+		for (FGraphSignedID edgeID : CachedEdgeIDs)
 		{
 			AEditRoofEdgeHandle *editEdgeHandle = MOI->MakeHandle<AEditRoofEdgeHandle>();
 			editEdgeHandle->SetTargetEdge(edgeID);
@@ -340,7 +340,7 @@ namespace Modumate
 
 		const FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
 
-		for (FSignedID signedEdgeID : CachedEdgeIDs)
+		for (FGraphSignedID signedEdgeID : CachedEdgeIDs)
 		{
 			int32 edgeID = FMath::Abs(signedEdgeID);
 			if (volumeGraph.ContainsObject(FTypedGraphObjID(edgeID, EGraph3DObjectType::Edge)))

@@ -90,7 +90,7 @@ namespace Modumate
 
 		TArray<TArray<FVector>> polygons;
 		const FGraph3D &volumeGraph = doc->GetVolumeGraph();
-		for (FSignedID faceID : MOI->GetControlPointIndices())
+		for (FGraphSignedID faceID : MOI->GetControlPointIndices())
 		{
 			const FGraph3DFace *graphFace = volumeGraph.FindFace(faceID);
 			const FModumateObjectInstance *planeObj = doc->GetObjectById(FMath::Abs(faceID));
@@ -126,7 +126,7 @@ namespace Modumate
 		const FModumateDocument *doc = MOI ? MOI->GetDocument() : nullptr;
 		if (doc)
 		{
-			for (FSignedID faceID : MOI->GetControlPointIndices())
+			for (FGraphSignedID faceID : MOI->GetControlPointIndices())
 			{
 				const FModumateObjectInstance *planeObj = doc->GetObjectById(FMath::Abs(faceID));
 				if (!ensureAlways(planeObj))

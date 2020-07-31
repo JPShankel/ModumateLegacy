@@ -135,7 +135,7 @@ namespace Modumate
 				return bValid;
 			}
 
-			FSignedID edgeID = edge->ID * (bEdgeForward ? 1 : -1);
+			FGraphSignedID edgeID = edge->ID * (bEdgeForward ? 1 : -1);
 			EdgeIDs.Add(edgeID);
 
 			FVector edgeDir = edge->CachedDir * (bEdgeForward ? 1.0f : -1.0f);
@@ -159,7 +159,7 @@ namespace Modumate
 			}
 			Cached2DEdgeNormals.Add(edgeNormal2D);
 
-			FSignedID signedFaceID = ID * (bEdgeForward ? 1 : -1);
+			FGraphSignedID signedFaceID = ID * (bEdgeForward ? 1 : -1);
 			edge->AddFace(signedFaceID, edgeNormal);
 		}
 
@@ -478,7 +478,7 @@ namespace Modumate
 		return MOD_ID_NONE;
 	}
 
-	int32 FGraph3DFace::FindEdgeIndex(FSignedID edgeID, bool &bOutSameDirection) const
+	int32 FGraph3DFace::FindEdgeIndex(FGraphSignedID edgeID, bool &bOutSameDirection) const
 	{
 		for (int32 edgeIdx = 0; edgeIdx < EdgeIDs.Num(); edgeIdx++)
 		{

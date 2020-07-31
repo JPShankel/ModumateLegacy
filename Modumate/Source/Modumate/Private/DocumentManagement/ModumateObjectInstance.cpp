@@ -302,7 +302,7 @@ namespace Modumate
 			case EGraph3DObjectType::Vertex:
 				if (const FGraph3DVertex *graphVertex = graph.FindVertex(ID))
 				{
-					for (FSignedID directedEdgeID : graphVertex->ConnectedEdgeIDs)
+					for (FGraphSignedID directedEdgeID : graphVertex->ConnectedEdgeIDs)
 					{
 						connectedIDs.Add(FMath::Abs(directedEdgeID));
 					}
@@ -328,7 +328,7 @@ namespace Modumate
 						connectedIDs.Add(vertexID);
 					}
 
-					for (FSignedID directedEdgeID : graphFace->EdgeIDs)
+					for (FGraphSignedID directedEdgeID : graphFace->EdgeIDs)
 					{
 						connectedIDs.Add(FMath::Abs(directedEdgeID));
 					}
@@ -349,7 +349,7 @@ namespace Modumate
 				case EObjectType::OTSurfaceVertex:
 					if (const FGraph2DVertex *vertex = surfaceGraph->FindVertex(ID))
 					{
-						for (FEdgeID directedEdgeID : vertex->Edges)
+						for (FGraphSignedID directedEdgeID : vertex->Edges)
 						{
 							connectedIDs.Add(FMath::Abs(directedEdgeID));
 						}
@@ -379,7 +379,7 @@ namespace Modumate
 							connectedIDs.Add(vertexID);
 						}
 
-						for (FEdgeID directedEdgeID : polygon->Edges)
+						for (FGraphSignedID directedEdgeID : polygon->Edges)
 						{
 							connectedIDs.Add(FMath::Abs(directedEdgeID));
 						}

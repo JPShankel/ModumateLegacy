@@ -12,3 +12,7 @@ public:
 
 	static FGraphVertexPair MakeEdgeKey(int32 VertexIDA, int32 VertexIDB);
 };
+
+// Use this type alias to designate ID whose sign indicates a direction
+// i.e. edges traversed opposite their geometric direction, or faces traversed opposite their normal
+using FGraphSignedID = int32;

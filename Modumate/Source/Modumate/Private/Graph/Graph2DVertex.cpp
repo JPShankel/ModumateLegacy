@@ -4,13 +4,13 @@
 
 namespace Modumate
 {
-	void FGraph2DVertex::AddEdge(FEdgeID EdgeID)
+	void FGraph2DVertex::AddEdge(FGraphSignedID EdgeID)
 	{
 		Edges.AddUnique(EdgeID);
 		bDirty = true;
 	}
 
-	bool FGraph2DVertex::RemoveEdge(FEdgeID EdgeID)
+	bool FGraph2DVertex::RemoveEdge(FGraphSignedID EdgeID)
 	{
 		int32 numRemoved = Edges.Remove(EdgeID);
 		if (numRemoved != 0)
@@ -28,7 +28,7 @@ namespace Modumate
 		{
 			if (Graph->bDebugCheck)
 			{
-				for (FEdgeID edgeID : Edges)
+				for (FGraphSignedID edgeID : Edges)
 				{
 					FGraph2DEdge *edge = Graph->FindEdge(edgeID);
 					if (ensureAlways(edge && edge->bValid))
@@ -39,7 +39,7 @@ namespace Modumate
 				}
 			}
 
-			auto edgeSorter = [this](const FEdgeID &edgeID1, const FEdgeID &edgeID2) {
+			auto edgeSorter = [this](const FGraphSignedID &edgeID1, const FGraphSignedID &edgeID2) {
 				float angle1 = 0.0f, angle2 = 0.0f;
 				if (ensureAlways(Graph->GetEdgeAngle(edgeID1, angle1) && Graph->GetEdgeAngle(edgeID2, angle2)))
 				{
@@ -56,12 +56,12 @@ namespace Modumate
 		}
 	}
 
-	bool FGraph2DVertex::GetNextEdge(FEdgeID curEdgeID, FEdgeID &outNextEdgeID, float &outAngleDelta, int32 indexDelta) const
+	bool FGraph2DVertex::GetNextEdge(FGraphSignedID curEdgeID, FGraphSignedID &outNextEdgeID, float &outAngleDelta, int32 indexDelta) const
 	{
 		outNextEdgeID = 0;
 		outAngleDelta = 0.0f;
 
-		FEdgeID curEdgeFromVertexID = -curEdgeID;
+		FGraphSignedID curEdgeFromVertexID = -curEdgeID;
 		int32 curEdgeIdx = Edges.Find(curEdgeFromVertexID);
 		if (curEdgeIdx == INDEX_NONE)
 		{

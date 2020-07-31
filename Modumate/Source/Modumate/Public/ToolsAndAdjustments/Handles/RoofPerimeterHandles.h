@@ -61,12 +61,12 @@ public:
 	virtual void AbortUse() override;
 	virtual FVector GetHandlePosition() const override;
 
-	void SetTargetEdge(Modumate::FSignedID InTargetEdgeID);
+	void SetTargetEdge(FGraphSignedID InTargetEdgeID);
 
 protected:
 	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 
-	Modumate::FSignedID TargetEdgeID;
+	FGraphSignedID TargetEdgeID;
 
 	UPROPERTY()
 	class URoofPerimeterPropertiesWidget* PropertiesWidget;

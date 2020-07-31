@@ -727,13 +727,13 @@ namespace Modumate
 			}
 		}
 
-		TSet<FEdgeID> visitedEdges;
-		TArray<FEdgeID> curPolyEdges;
+		TSet<FGraphSignedID> visitedEdges;
+		TArray<FGraphSignedID> curPolyEdges;
 		TArray<FVector2D> curPolyPoints;
 		TArray<int32> curVertexIDs;
 
 		// iterate through the edges to find every polygon
-		for (FEdgeID curEdgeID : dirtyEdges)
+		for (FGraphSignedID curEdgeID : dirtyEdges)
 		{
 			float curPolyTotalAngle = 0.0f;
 			curPolyEdges.Reset();
@@ -751,7 +751,7 @@ namespace Modumate
 				int32 nextVertexID = (curEdgeID > 0) ? curEdge->EndVertexID : curEdge->StartVertexID;
 				FGraph2DVertex *prevVertex = FindVertex(prevVertexID);
 				FGraph2DVertex *nextVertex = FindVertex(nextVertexID);
-				FEdgeID nextEdgeID = 0;
+				FGraphSignedID nextEdgeID = 0;
 				float angleDelta = 0.0f;
 
 				if (ensureAlways(prevVertex))
@@ -784,7 +784,7 @@ namespace Modumate
 			bool bPolyInterior = FMath::IsNearlyEqual(expectedInteriorAngle, curPolyTotalAngle, polyAngleEpsilon);
 
 			TSet<int32> previousPolys;
-			for (FEdgeID edgeID : curPolyEdges)
+			for (FGraphSignedID edgeID : curPolyEdges)
 			{
 				if (FGraph2DEdge *edge = FindEdge(edgeID))
 				{

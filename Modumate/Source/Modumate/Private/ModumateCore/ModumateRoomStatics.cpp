@@ -200,7 +200,7 @@ void UModumateRoomStatics::UpdateDerivedRoomProperties(Modumate::FModumateObject
 	RoomObj->SetProperty(BIM::EScope::Room, BIM::Parameters::OccupantsNumber, occupantsNumValue);
 }
 
-bool UModumateRoomStatics::CanRoomContainFace(const FModumateDocument *Document, FSignedID FaceID)
+bool UModumateRoomStatics::CanRoomContainFace(const FModumateDocument *Document, FGraphSignedID FaceID)
 {
 	const FGraph3DFace *graphFace = Document->GetVolumeGraph().FindFace(FaceID);
 	const FModumateObjectInstance *planeObj = Document->GetObjectById(FMath::Abs(FaceID));
@@ -255,7 +255,7 @@ void UModumateRoomStatics::CalculateRoomChanges(const FModumateDocument *Documen
 	TArray<const FModumateObjectInstance *> curRoomObjs = Document->GetObjectsOfType(EObjectType::OTRoom);
 	for (const FModumateObjectInstance *curRoomObj : curRoomObjs)
 	{
-		TArray<FSignedID> roomFaceIDs = curRoomObj->GetControlPointIndices();
+		TArray<FGraphSignedID> roomFaceIDs = curRoomObj->GetControlPointIndices();
 		roomFaceIDs.Sort();
 		oldRoomsFaceIDs.Add(curRoomObj->ID, roomFaceIDs);
 	}
@@ -275,14 +275,14 @@ void UModumateRoomStatics::CalculateRoomChanges(const FModumateDocument *Documen
 	TArray<FGraph3DTraversal> roomTraversals;
 	Document->GetVolumeGraph().TraverseFacesGeneric(floorPlaneIDs, roomTraversals,
 		FGraph3D::AlwaysPassPredicate,
-		[Document](FSignedID FaceID) { return UModumateRoomStatics::CanRoomContainFace(Document, FaceID); }
+		[Document](FGraphSignedID FaceID) { return UModumateRoomStatics::CanRoomContainFace(Document, FaceID); }
 	);
 	int32 totalNumRooms = roomTraversals.Num();
 
 	// Store the new room info in a comparable data structure
 	for (int32 roomIdx = 0; roomIdx < totalNumRooms; ++roomIdx)
 	{
-		TArray<FSignedID> roomFaceIDs = roomTraversals[roomIdx].FaceIDs;
+		TArray<FGraphSignedID> roomFaceIDs = roomTraversals[roomIdx].FaceIDs;
 		roomFaceIDs.Sort();
 		OutNewRoomsFaceIDs.Add(roomIdx, MoveTemp(roomFaceIDs));
 	}

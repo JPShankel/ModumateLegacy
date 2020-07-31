@@ -1114,7 +1114,7 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const Modumate::FModumateObj
 			}
 
 			bOutIsConnected = (graphVertex->ConnectedEdgeIDs.Num() > 0);
-			for (FSignedID connectedEdgeID : graphVertex->ConnectedEdgeIDs)
+			for (FGraphSignedID connectedEdgeID : graphVertex->ConnectedEdgeIDs)
 			{
 				const auto *connectedEdge = volumeGraph.FindEdge(connectedEdgeID);
 				EdgeConnectedToValidPlane(connectedEdge, doc, bConnectedToEmptyPlane, bConnectedToSelectedPlane);

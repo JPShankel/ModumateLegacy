@@ -12,7 +12,7 @@ namespace Modumate
 		int32 ParentID = MOD_ID_NONE;			// The ID of the polygon that contains this one, if any
 		TArray<int32> InteriorPolygons;			// The IDs of polygons that this polygon contains
 		TArray<int32> VertexIDs;				// The list of vertices that make up this polygon
-		TArray<FEdgeID> Edges;					// The list of edges that make up this polygon
+		TArray<FGraphSignedID> Edges;					// The list of edges that make up this polygon
 
 		// Cached derived data
 		bool bHasDuplicateEdge = false;			// Whether this polygon has any edges that double back on themselves

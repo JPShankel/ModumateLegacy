@@ -79,12 +79,12 @@ namespace Modumate
 			return false;
 		}
 
-		for (FSignedID sourceFaceID : FaceIDs)
+		for (FGraphSignedID sourceFaceID : FaceIDs)
 		{
 			bool bFaceHitsAnotherFace = false;
 			float sourceSign = FMath::Sign(sourceFaceID);
 
-			for (FSignedID destFaceID : FaceIDs)
+			for (FGraphSignedID destFaceID : FaceIDs)
 			{
 				if (sourceFaceID == destFaceID)
 				{
@@ -130,7 +130,7 @@ namespace Modumate
 			return false;
 		}
 
-		for (FSignedID sourceFaceID : FaceIDs)
+		for (FGraphSignedID sourceFaceID : FaceIDs)
 		{
 			float sourceSign = FMath::Sign(sourceFaceID);
 			if (!bInterior)
@@ -138,7 +138,7 @@ namespace Modumate
 				sourceSign *= -1.0f;
 			}
 
-			for (FSignedID destFaceID : FaceIDs)
+			for (FGraphSignedID destFaceID : FaceIDs)
 			{
 				if (sourceFaceID == destFaceID)
 				{
@@ -169,14 +169,14 @@ namespace Modumate
 		return true;
 	}
 
-	TArray<TArray<FSignedID>> FGraph3DPolyhedron::GroupFacesByNormal()
+	TArray<TArray<FGraphSignedID>> FGraph3DPolyhedron::GroupFacesByNormal()
 	{
-		TSet<FSignedID> visitedFaces;
-		TArray<TArray<FSignedID>> facesGroupedByNormal;
+		TSet<FGraphSignedID> visitedFaces;
+		TArray<TArray<FGraphSignedID>> facesGroupedByNormal;
 
 		for (int32 faceIdx = 0; faceIdx < FaceIDs.Num(); faceIdx++)
 		{
-			FSignedID faceID = FaceIDs[faceIdx];
+			FGraphSignedID faceID = FaceIDs[faceIdx];
 			FGraph3DFace* face = Graph->FindFace(faceID);
 			FVector faceNormal = FVector(face->CachedPlane);
 
@@ -191,12 +191,12 @@ namespace Modumate
 				continue;
 			}
 
-			TArray<FSignedID> currentGroup = { faceID };
+			TArray<FGraphSignedID> currentGroup = { faceID };
 			visitedFaces.Add(FMath::Abs(faceID));
 
 			for (int32 otherFaceIdx = faceIdx + 1; otherFaceIdx < FaceIDs.Num(); otherFaceIdx++)
 			{
-				FSignedID otherFaceID = FaceIDs[otherFaceIdx];
+				FGraphSignedID otherFaceID = FaceIDs[otherFaceIdx];
 				FGraph3DFace* otherFace = Graph->FindFace(otherFaceID);
 				FVector otherFaceNormal = FVector(otherFace->CachedPlane);
 

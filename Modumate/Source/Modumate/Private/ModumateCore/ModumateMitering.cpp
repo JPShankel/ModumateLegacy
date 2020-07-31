@@ -76,7 +76,7 @@ namespace Modumate
 
 			for (int32 edgeIdx = 0; edgeIdx < numPoints; ++edgeIdx)
 			{
-				FSignedID edgeID = PlaneFace->EdgeIDs[edgeIdx];
+				FGraphSignedID edgeID = PlaneFace->EdgeIDs[edgeIdx];
 				const FModumateObjectInstance* edgeObj = doc->GetObjectById(FMath::Abs(edgeID));
 				const IMiterNode *miterNode = edgeObj ? edgeObj->GetMiterInterface() : nullptr;
 				if (!ensure(miterNode))

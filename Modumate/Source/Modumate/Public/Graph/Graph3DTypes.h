@@ -11,8 +11,7 @@
 namespace Modumate
 {
 	// Use this typedef to designate edge and face IDs, which are only valid if non-0, and whose sign indicates a direction
-	typedef int32 FSignedID;
-	typedef TFunction<bool(FSignedID SignedID)> FGraphObjPredicate;
+	typedef TFunction<bool(FGraphSignedID SignedID)> FGraphObjPredicate;
 
 	enum class EGraph3DObjectType : uint8
 	{
@@ -49,10 +48,10 @@ namespace Modumate
 
 	struct FGraph3DTraversal
 	{
-		TArray<FSignedID> FaceIDs;
+		TArray<FGraphSignedID> FaceIDs;
 		TArray<FVector> FacePoints;
 
-		FGraph3DTraversal(const TArray<FSignedID> &InFaceIDs, const TArray<FVector> &InFacePoints)
+		FGraph3DTraversal(const TArray<FGraphSignedID> &InFaceIDs, const TArray<FVector> &InFacePoints)
 			: FaceIDs(InFaceIDs)
 			, FacePoints(InFacePoints)
 		{ }

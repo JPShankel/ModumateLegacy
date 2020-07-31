@@ -40,7 +40,7 @@ namespace Modumate
 	protected:
 		TWeakObjectPtr<UWorld> World;
 		bool bValidPerimeterLoop;
-		TArray<FSignedID> CachedEdgeIDs;
+		TArray<FGraphSignedID> CachedEdgeIDs;
 		TArray<int32> CachedFaceIDs;
 		TArray<FVector> CachedPerimeterPoints;
 		FVector CachedPerimeterCenter;

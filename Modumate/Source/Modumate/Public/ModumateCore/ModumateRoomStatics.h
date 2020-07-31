@@ -92,7 +92,7 @@ public:
 
 	static void UpdateDerivedRoomProperties(Modumate::FModumateObjectInstance *RoomObj);
 
-	static bool CanRoomContainFace(const FModumateDocument *Document, Modumate::FSignedID FaceID);
+	static bool CanRoomContainFace(const FModumateDocument *Document, FGraphSignedID FaceID);
 
 	static void CalculateRoomChanges(const FModumateDocument *Document, bool &bOutAnyChange,
 		TMap<int32, int32> &OutOldRoomIDsToNewRoomIndices, TMap<int32, TArray<int32>> &OutNewRoomsFaceIDs,

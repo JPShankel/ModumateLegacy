@@ -26,8 +26,8 @@ namespace Modumate
 
 		void Reset();
 
-		FGraph3DEdge* FindEdge(FSignedID EdgeID);
-		const FGraph3DEdge* FindEdge(FSignedID EdgeID) const;
+		FGraph3DEdge* FindEdge(FGraphSignedID EdgeID);
+		const FGraph3DEdge* FindEdge(FGraphSignedID EdgeID) const;
 		FGraph3DEdge *FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward);
 		const FGraph3DEdge *FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward) const;
 
@@ -36,8 +36,8 @@ namespace Modumate
 		FGraph3DVertex *FindVertex(const FVector &Position);
 		const FGraph3DVertex *FindVertex(const FVector &Position) const;
 
-		FGraph3DFace* FindFace(FSignedID FaceID);
-		const FGraph3DFace* FindFace(FSignedID FaceID) const;
+		FGraph3DFace* FindFace(FGraphSignedID FaceID);
+		const FGraph3DFace* FindFace(FGraphSignedID FaceID) const;
 		void FindFacesContainingPosition(const FVector &Position, TSet<int32> &ContainingFaces) const;
 		bool IsFaceContainedByFace(int32 ContainedFaceID, int32 ContainingFaceID) const;
 
@@ -58,8 +58,8 @@ namespace Modumate
 
 	// graph analysis tools
 	public:
-		static bool AlwaysPassPredicate(FSignedID GraphObjID) { return true; }
-		void TraverseFacesGeneric(const TSet<FSignedID> &StartingFaceIDs, TArray<FGraph3DTraversal> &OutTraversals,
+		static bool AlwaysPassPredicate(FGraphSignedID GraphObjID) { return true; }
+		void TraverseFacesGeneric(const TSet<FGraphSignedID> &StartingFaceIDs, TArray<FGraph3DTraversal> &OutTraversals,
 			const FGraphObjPredicate &EdgePredicate = AlwaysPassPredicate,
 			const FGraphObjPredicate &FacePredicate = AlwaysPassPredicate) const;
 
@@ -110,7 +110,7 @@ namespace Modumate
 		TMap<int32, FGraph3DEdge> Edges;
 		TMap<int32, FGraph3DFace> Faces;
 		TMap<int32, FGraph3DPolyhedron> Polyhedra;
-		TSet<FSignedID> DirtyFaces;
+		TSet<FGraphSignedID> DirtyFaces;
 		TMap<int32, TSet<FTypedGraphObjID>> CachedGroups;
 
 		mutable TSet<int32> TempInheritedGroupIDs;

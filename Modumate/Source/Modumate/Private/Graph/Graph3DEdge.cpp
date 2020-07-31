@@ -62,7 +62,7 @@ namespace Modumate
 		bDirty = (ConnectedFaces.Num() > 0);
 	}
 
-	bool FGraph3DEdge::AddFace(FSignedID FaceID, const FVector &EdgeFaceDir)
+	bool FGraph3DEdge::AddFace(FGraphSignedID FaceID, const FVector &EdgeFaceDir)
 	{
 		for (FEdgeFaceConnection &connectedFace : ConnectedFaces)
 		{
@@ -87,7 +87,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3DEdge::RemoveFace(FSignedID FaceID, bool bRequireSameSign)
+	bool FGraph3DEdge::RemoveFace(FGraphSignedID FaceID, bool bRequireSameSign)
 	{
 		if (!bRequireSameSign)
 		{
@@ -124,7 +124,7 @@ namespace Modumate
 				if (ensureAlways(face))
 				{
 					bool bFaceContainsThisEdge = false;
-					for (FSignedID faceEdgeID : face->EdgeIDs)
+					for (FGraphSignedID faceEdgeID : face->EdgeIDs)
 					{
 						if (FMath::Abs(faceEdgeID) == ID)
 						{
@@ -146,7 +146,7 @@ namespace Modumate
 		bDirty = false;
 	}
 
-	bool FGraph3DEdge::GetNextFace(FSignedID CurFaceID, FSignedID &OutNextFaceID, float &OutAngleDelta, int32 &OutNextFaceIndex) const
+	bool FGraph3DEdge::GetNextFace(FGraphSignedID CurFaceID, FGraphSignedID &OutNextFaceID, float &OutAngleDelta, int32 &OutNextFaceIndex) const
 	{
 		OutNextFaceID = 0;
 		OutAngleDelta = 0.0f;

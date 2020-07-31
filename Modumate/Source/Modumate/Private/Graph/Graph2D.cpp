@@ -41,12 +41,12 @@ namespace Modumate
 		return (Edges.Num() == 0) && (Vertices.Num() == 0) && (Polygons.Num() == 0);
 	}
 
-	FGraph2DEdge* FGraph2D::FindEdge(FEdgeID EdgeID) 
+	FGraph2DEdge* FGraph2D::FindEdge(FGraphSignedID EdgeID) 
 	{ 
 		return Edges.Find(FMath::Abs(EdgeID)); 
 	}
 
-	const FGraph2DEdge* FGraph2D::FindEdge(FEdgeID EdgeID) const 
+	const FGraph2DEdge* FGraph2D::FindEdge(FGraphSignedID EdgeID) const 
 	{ 
 		return Edges.Find(FMath::Abs(EdgeID)); 
 	}
@@ -119,7 +119,7 @@ namespace Modumate
 		}
 	}
 
-	bool FGraph2D::GetEdgeAngle(FEdgeID EdgeID, float &outEdgeAngle)
+	bool FGraph2D::GetEdgeAngle(FGraphSignedID EdgeID, float &outEdgeAngle)
 	{
 		FGraph2DEdge *edge = FindEdge(EdgeID);
 		if (edge && edge->bValid)
@@ -219,7 +219,7 @@ namespace Modumate
 			return false;
 		}
 
-		for (FEdgeID connectedEdgeID : vertexToRemove->Edges)
+		for (FGraphSignedID connectedEdgeID : vertexToRemove->Edges)
 		{
 			bool bEdgeStartsFromVertex = (connectedEdgeID > 0);
 			FGraph2DEdge *connectedEdge = FindEdge(connectedEdgeID);
@@ -355,12 +355,12 @@ namespace Modumate
 			vertex.SortEdges();
 		}
 
-		TSet<FEdgeID> visitedEdges;
-		TArray<FEdgeID> curPolyEdges;
+		TSet<FGraphSignedID> visitedEdges;
+		TArray<FGraphSignedID> curPolyEdges;
 		TArray<FVector2D> curPolyPoints;
 
 		// iterate through the edges to find every polygon
-		for (FEdgeID curEdgeID : DirtyEdges)
+		for (FGraphSignedID curEdgeID : DirtyEdges)
 		{
 			float curPolyTotalAngle = 0.0f;
 			bool bPolyHasDuplicateEdge = false;
@@ -380,7 +380,7 @@ namespace Modumate
 				int32 nextVertexID = (curEdgeID > 0) ? curEdge->EndVertexID : curEdge->StartVertexID;
 				FGraph2DVertex *prevVertex = FindVertex(prevVertexID);
 				FGraph2DVertex *nextVertex = FindVertex(nextVertexID);
-				FEdgeID nextEdgeID = 0;
+				FGraphSignedID nextEdgeID = 0;
 				float angleDelta = 0.0f;
 
 				if (ensureAlways(prevVertex))
@@ -419,7 +419,7 @@ namespace Modumate
 					newPolygon.AABB = FBox2D(curPolyPoints);
 					newPolygon.CachedPoints = curPolyPoints;
 
-					for (FEdgeID edgeID : curPolyEdges)
+					for (FGraphSignedID edgeID : curPolyEdges)
 					{
 						if (FGraph2DEdge *edge = FindEdge(edgeID))
 						{
@@ -589,7 +589,7 @@ namespace Modumate
 			poly.bInterior = true;
 
 			// At least make sure all of the referenced edges and vertices are correct, also to update the AABB and cached points.
-			for (FEdgeID edgeID : poly.Edges)
+			for (FGraphSignedID edgeID : poly.Edges)
 			{
 				const FGraph2DEdge *edge = FindEdge(edgeID);
 				if (edge == nullptr)

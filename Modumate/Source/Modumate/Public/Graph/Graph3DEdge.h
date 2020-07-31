@@ -6,11 +6,11 @@ namespace Modumate
 {
 	struct FEdgeFaceConnection
 	{
-		FSignedID FaceID;		// The ID of the face, with sign indicating whether this edge is forward in the face's edge list
+		FGraphSignedID FaceID;		// The ID of the face, with sign indicating whether this edge is forward in the face's edge list
 		FVector EdgeFaceDir;	// The internal normal of the edge to the face
 		float FaceAngle;		// The angle of the face dir with respect to the edge's reference normal
 
-		FEdgeFaceConnection(FSignedID InFaceID, FVector InEdgeFaceDir, float InFaceAngle)
+		FEdgeFaceConnection(FGraphSignedID InFaceID, FVector InEdgeFaceDir, float InFaceAngle)
 			: FaceID(InFaceID)
 			, EdgeFaceDir(InEdgeFaceDir)
 			, FaceAngle(InFaceAngle)
@@ -33,10 +33,10 @@ namespace Modumate
 		FGraph3DEdge(int32 InID, FGraph3D* InGraph, int32 InStart, int32 InEnd, const TSet<int32> &InGroupIDs);
 
 		void SetVertices(int32 InStart, int32 InEnd);
-		bool AddFace(FSignedID FaceID, const FVector &EdgeFaceDir);
-		bool RemoveFace(FSignedID FaceID, bool bRequireSameSign);
+		bool AddFace(FGraphSignedID FaceID, const FVector &EdgeFaceDir);
+		bool RemoveFace(FGraphSignedID FaceID, bool bRequireSameSign);
 		void SortFaces();
-		bool GetNextFace(FSignedID CurFaceID, FSignedID &OutNextFaceID, float &OutAngleDelta, int32 &OutNextFaceIndex) const;
+		bool GetNextFace(FGraphSignedID CurFaceID, FGraphSignedID &OutNextFaceID, float &OutAngleDelta, int32 &OutNextFaceIndex) const;
 
 		void GetAdjacentEdgeIDs(TSet<int32>& OutAdjEdgeIDs) const;
 

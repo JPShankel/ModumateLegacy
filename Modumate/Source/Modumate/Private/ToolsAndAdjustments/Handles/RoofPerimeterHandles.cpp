@@ -226,7 +226,7 @@ FVector AEditRoofEdgeHandle::GetHandlePosition() const
 	return FVector::ZeroVector;
 }
 
-void AEditRoofEdgeHandle::SetTargetEdge(Modumate::FSignedID InTargetEdgeID)
+void AEditRoofEdgeHandle::SetTargetEdge(FGraphSignedID InTargetEdgeID)
 {
 	TargetEdgeID = InTargetEdgeID;
 }

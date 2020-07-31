@@ -28,8 +28,8 @@ namespace Modumate
 		const FGraph2DVertex* FindVertex(int32 ID) const;
 		FGraph2DVertex* FindVertex(const FVector2D &Position);
 
-		FGraph2DEdge* FindEdge(FEdgeID EdgeID);
-		const FGraph2DEdge* FindEdge(FEdgeID EdgeID) const;
+		FGraph2DEdge* FindEdge(FGraphSignedID EdgeID);
+		const FGraph2DEdge* FindEdge(FGraphSignedID EdgeID) const;
 
 		FGraph2DEdge *FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward);
 		const FGraph2DEdge* FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward) const;
@@ -38,7 +38,7 @@ namespace Modumate
 		const FGraph2DPolygon* FindPolygon(int32 ID) const;
 
 		bool ContainsObject(int32 ID, EGraphObjectType GraphObjectType) const;
-		bool GetEdgeAngle(FEdgeID EdgeID, float &outEdgeAngle);
+		bool GetEdgeAngle(FGraphSignedID EdgeID, float &outEdgeAngle);
 
 		FGraph2DVertex *AddVertex(const FVector2D &Position, int32 InID = 0);
 		FGraph2DEdge *AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID = 0);
@@ -77,7 +77,7 @@ namespace Modumate
 		TMap<int32, FGraph2DVertex> Vertices;
 		TMap<int32, FGraph2DPolygon> Polygons;
 
-		TSet<FEdgeID> DirtyEdges;
+		TSet<FGraphSignedID> DirtyEdges;
 
 		TMap<FGraphVertexPair, int32> EdgeIDsByVertexPair;
 

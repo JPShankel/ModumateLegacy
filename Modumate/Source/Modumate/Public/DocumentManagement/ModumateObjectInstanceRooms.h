@@ -2,7 +2,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "DocumentManagement/ModumateObjectInstance.h"
+#include "ModumateCore/ModumateRoomStatics.h"
 
 
 class AEditModelPlayerController_CPP;

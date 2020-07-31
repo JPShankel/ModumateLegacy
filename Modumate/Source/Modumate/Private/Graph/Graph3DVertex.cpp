@@ -9,12 +9,12 @@ namespace Modumate {
 		bValid = true;
 	}
 
-	void FGraph3DVertex::AddEdge(FSignedID EdgeID)
+	void FGraph3DVertex::AddEdge(FGraphSignedID EdgeID)
 	{
 		ConnectedEdgeIDs.AddUnique(EdgeID);
 	}
 
-	bool FGraph3DVertex::RemoveEdge(FSignedID EdgeID)
+	bool FGraph3DVertex::RemoveEdge(FGraphSignedID EdgeID)
 	{
 		int32 numRemoved = ConnectedEdgeIDs.Remove(EdgeID);
 		return (numRemoved != 0);

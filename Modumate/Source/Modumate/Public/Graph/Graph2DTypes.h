@@ -12,9 +12,6 @@ namespace Modumate
 
 #define DEFAULT_GRAPH_EPSILON 0.05f
 
-	// Use this typedef to designate edge IDs, which are only valid if non-0, and whose sign indicates a direction
-	typedef int32 FEdgeID;
-
 	enum EGraphObjectType
 	{
 		None,

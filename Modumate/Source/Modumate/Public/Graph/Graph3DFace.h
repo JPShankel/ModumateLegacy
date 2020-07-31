@@ -12,7 +12,7 @@ namespace Modumate
 	{
 	public:
 		TArray<int32> VertexIDs;						// The IDs of vertices that define this face's polygon's vertices
-		TArray<FSignedID> EdgeIDs;						// The IDs of edges that define this face's polygon's edges
+		TArray<FGraphSignedID> EdgeIDs;						// The IDs of edges that define this face's polygon's edges
 		int32 FrontPolyhedronID = MOD_ID_NONE;			// The ID of the polyhedron that contains the front of this face, if any
 		int32 BackPolyhedronID = MOD_ID_NONE;			// The ID of the polyhedron that contains the back of this face, if any
 		int32 ContainingFaceID = MOD_ID_NONE;			// The ID of the face that contains this one, if any
@@ -59,7 +59,7 @@ namespace Modumate
 		void GetAdjacentFaceIDs(TSet<int32>& adjFaceIDs) const;
 
 		int32 FindVertexID(const FVector& Position) const;
-		int32 FindEdgeIndex(FSignedID edgeID, bool &bOutSameDirection) const;
+		int32 FindEdgeIndex(FGraphSignedID edgeID, bool &bOutSameDirection) const;
 
 		virtual void Dirty(bool bConnected = true) override;
 		virtual bool ValidateForTests() const override;

@@ -34,12 +34,12 @@ namespace Modumate
 		CachedGroups.Reset();
 	}
 
-	FGraph3DEdge* FGraph3D::FindEdge(FSignedID EdgeID)
+	FGraph3DEdge* FGraph3D::FindEdge(FGraphSignedID EdgeID)
 	{
 		return Edges.Find(FMath::Abs(EdgeID));
 	}
 
-	const FGraph3DEdge* FGraph3D::FindEdge(FSignedID EdgeID) const
+	const FGraph3DEdge* FGraph3D::FindEdge(FGraphSignedID EdgeID) const
 	{
 		return Edges.Find(FMath::Abs(EdgeID));
 	}
@@ -295,12 +295,12 @@ namespace Modumate
 		return nullptr;
 	}
 
-	FGraph3DFace* FGraph3D::FindFace(FSignedID FaceID) 
+	FGraph3DFace* FGraph3D::FindFace(FGraphSignedID FaceID) 
 	{ 
 		return Faces.Find(FMath::Abs(FaceID)); 
 	}
 
-	const FGraph3DFace* FGraph3D::FindFace(FSignedID FaceID) const 
+	const FGraph3DFace* FGraph3D::FindFace(FGraphSignedID FaceID) const 
 	{ 
 		return Faces.Find(FMath::Abs(FaceID)); 
 	}
@@ -475,7 +475,7 @@ namespace Modumate
 		vertexToRemove->Dirty();
 		RemoveObjectFromGroups(vertexToRemove);
 
-		for (FSignedID connectedEdgeID : vertexToRemove->ConnectedEdgeIDs)
+		for (FGraphSignedID connectedEdgeID : vertexToRemove->ConnectedEdgeIDs)
 		{
 			bool bEdgeStartsFromVertex = (connectedEdgeID > 0);
 			FGraph3DEdge *connectedEdge = FindEdge(connectedEdgeID);
@@ -549,7 +549,7 @@ namespace Modumate
 		faceToRemove->Dirty();
 		RemoveObjectFromGroups(faceToRemove);
 
-		for (FSignedID edgeID : faceToRemove->EdgeIDs)
+		for (FGraphSignedID edgeID : faceToRemove->EdgeIDs)
 		{
 			if (FGraph3DEdge *faceEdge = FindEdge(edgeID))
 			{
@@ -1109,16 +1109,16 @@ namespace Modumate
 		return true;
 	}
 
-	void FGraph3D::TraverseFacesGeneric(const TSet<FSignedID> &StartingFaceIDs, TArray<FGraph3DTraversal> &OutTraversals,
+	void FGraph3D::TraverseFacesGeneric(const TSet<FGraphSignedID> &StartingFaceIDs, TArray<FGraph3DTraversal> &OutTraversals,
 		const FGraphObjPredicate &EdgePredicate, const FGraphObjPredicate &FacePredicate) const
 	{
-		TQueue<FSignedID> faceQueue;
-		TSet<FSignedID> visitedFaceIDs;
-		TMap<FSignedID, TSet<int32>> visitedEdgesPerFace;
-		TArray<FSignedID> curTraversalFaceIDs;
+		TQueue<FGraphSignedID> faceQueue;
+		TSet<FGraphSignedID> visitedFaceIDs;
+		TMap<FGraphSignedID, TSet<int32>> visitedEdgesPerFace;
+		TArray<FGraphSignedID> curTraversalFaceIDs;
 		TArray<FVector> curTraversalPoints;
 
-		for (FSignedID startingFaceID : StartingFaceIDs)
+		for (FGraphSignedID startingFaceID : StartingFaceIDs)
 		{
 			if (!FacePredicate(startingFaceID))
 			{
@@ -1130,7 +1130,7 @@ namespace Modumate
 			faceQueue.Empty();
 			faceQueue.Enqueue(startingFaceID);
 
-			FSignedID curFaceID = MOD_ID_NONE;
+			FGraphSignedID curFaceID = MOD_ID_NONE;
 			while (faceQueue.Dequeue(curFaceID))
 			{
 				const FGraph3DFace *curFace = FindFace(curFaceID);
@@ -1142,7 +1142,7 @@ namespace Modumate
 					curTraversalPoints.Append(curFace->CachedPositions);
 
 					TSet<int32> &visitedEdgesForFace = visitedEdgesPerFace.FindOrAdd(curFaceID);
-					for (FSignedID faceEdgeSignedID : curFace->EdgeIDs)
+					for (FGraphSignedID faceEdgeSignedID : curFace->EdgeIDs)
 					{
 						if (!EdgePredicate(faceEdgeSignedID))
 						{
@@ -1155,7 +1155,7 @@ namespace Modumate
 							continue;
 						}
 
-						FSignedID nextFaceID = MOD_ID_NONE;
+						FGraphSignedID nextFaceID = MOD_ID_NONE;
 						float dihedralAngle = 0.0f;
 						int32 nextFaceIndex = INDEX_NONE;
 
@@ -1235,8 +1235,8 @@ namespace Modumate
 		for (auto &kvp : Faces)
 		{
 			int32 faceID = kvp.Key;
-			FSignedID frontID = faceID;
-			FSignedID backID = -faceID;
+			FGraphSignedID frontID = faceID;
+			FGraphSignedID backID = -faceID;
 			DirtyFaces.Add(faceID);
 			DirtyFaces.Add(backID);
 		}
@@ -1252,7 +1252,7 @@ namespace Modumate
 			newPolyhedron.FaceIDs = traversal.FaceIDs;
 			newPolyhedron.AABB = FBox(traversal.FacePoints);
 
-			for (FSignedID faceID : newPolyhedron.FaceIDs)
+			for (FGraphSignedID faceID : newPolyhedron.FaceIDs)
 			{
 				if (FGraph3DFace *face = FindFace(faceID))
 				{
@@ -1585,7 +1585,7 @@ namespace Modumate
 				}
 
 				Algo::Transform(face->VertexIDs, OutContainedGraphObjIDs, [](const int32 &VertexID) { return FTypedGraphObjID(VertexID, EGraph3DObjectType::Vertex); });
-				Algo::Transform(face->EdgeIDs, OutContainedGraphObjIDs, [](const FSignedID &EdgeID) { return FTypedGraphObjID(FMath::Abs(EdgeID), EGraph3DObjectType::Edge); });
+				Algo::Transform(face->EdgeIDs, OutContainedGraphObjIDs, [](const FGraphSignedID &EdgeID) { return FTypedGraphObjID(FMath::Abs(EdgeID), EGraph3DObjectType::Edge); });
 				break;
 			}
 			// Expand the sets of vertices to include those that are part of the provided edges.
@@ -1885,7 +1885,7 @@ namespace Modumate
 			if (polygon.bInterior)
 			{
 				TArray<int32> sortedVerts;
-				Algo::Transform(polygon.Edges, sortedVerts, [&Graph](const FEdgeID &EdgeID) {
+				Algo::Transform(polygon.Edges, sortedVerts, [&Graph](const FGraphSignedID &EdgeID) {
 					const FGraph2DEdge *edge = Graph.FindEdge(EdgeID);
 					return (EdgeID > 0) ? edge->StartVertexID : edge->EndVertexID;
 				});

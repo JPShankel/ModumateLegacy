@@ -8,12 +8,12 @@ namespace Modumate
 	{
 	public:
 		FVector Position = FVector::ZeroVector;	// The position of the vertex
-		TArray<FSignedID> ConnectedEdgeIDs;		// The set of IDs of connected edges connected to this vertex, unsorted
+		TArray<FGraphSignedID> ConnectedEdgeIDs;		// The set of IDs of connected edges connected to this vertex, unsorted
 
 		FGraph3DVertex(int32 InID, FGraph3D* InGraph, const FVector &InPos, const TSet<int32> &InGroupIDs);
 
-		void AddEdge(FSignedID EdgeID);
-		bool RemoveEdge(FSignedID EdgeID);
+		void AddEdge(FGraphSignedID EdgeID);
+		bool RemoveEdge(FGraphSignedID EdgeID);
 
 		void GetConnectedFaces(TSet<int32>& OutFaceIDs) const;
 		void GetConnectedFacesAndEdges(TSet<int32>& OutFaceIDs, TSet<int32>& OutEdgeIDs) const;

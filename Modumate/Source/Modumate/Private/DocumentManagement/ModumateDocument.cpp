@@ -1728,7 +1728,7 @@ bool FModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &Obje
 	return ApplyDeltas(deltaptrs, World);
 }
 
-int32 FModumateDocument::MakeRoom(UWorld *World, const TArray<FSignedID> &FaceIDs)
+int32 FModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeRoom"));
 
@@ -3068,7 +3068,7 @@ void FModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirty
 	}
 }
 
-bool FModumateDocument::CanRoomContainFace(FSignedID FaceID)
+bool FModumateDocument::CanRoomContainFace(FGraphSignedID FaceID)
 {
 	const FGraph3DFace *graphFace = VolumeGraph.FindFace(FaceID);
 	const FModumateObjectInstance *planeObj = GetObjectById(FMath::Abs(FaceID));
@@ -3343,7 +3343,7 @@ void FModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 
 		world->LineBatcher->DrawPoint(vertexDrawPos, FLinearColor::Red, pointThickness, 0);
 		FString vertexString = FString::Printf(TEXT("Vertex #%d: [%s]%s"), graphVertex.ID,
-			*FString::JoinBy(graphVertex.ConnectedEdgeIDs, TEXT(", "), [](const FSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }),
+			*FString::JoinBy(graphVertex.ConnectedEdgeIDs, TEXT(", "), [](const FGraphSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }),
 			(graphVertex.GroupIDs.Num() == 0) ? TEXT("") : *FString::Printf(TEXT(" {%s}"), *FString::JoinBy(graphVertex.GroupIDs, TEXT(", "), [](const int32 &GroupID) { return FString::Printf(TEXT("%d"), GroupID); }))
 		);
 
@@ -3374,7 +3374,7 @@ void FModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 		int32 numEdges = face.EdgeIDs.Num();
 		for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
 		{
-			FSignedID edgeID = face.EdgeIDs[edgeIdx];
+			FGraphSignedID edgeID = face.EdgeIDs[edgeIdx];
 			const FVector &edgeNormal = face.CachedEdgeNormals[edgeIdx];
 			const FVector &prevEdgeNormal = face.CachedEdgeNormals[(edgeIdx + numEdges - 1) % numEdges];
 			const FVector &nextEdgeNormal = face.CachedEdgeNormals[(edgeIdx + 1) % numEdges];
@@ -3397,7 +3397,7 @@ void FModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 		}
 
 		FString faceString = FString::Printf(TEXT("Face #%d: [%s]%s"), face.ID,
-			*FString::JoinBy(face.EdgeIDs, TEXT(", "), [](const FSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }),
+			*FString::JoinBy(face.EdgeIDs, TEXT(", "), [](const FGraphSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }),
 			(face.GroupIDs.Num() == 0) ? TEXT("") : *FString::Printf(TEXT(" {%s}"), *FString::JoinBy(face.GroupIDs, TEXT(", "), [](const int32 &GroupID) { return FString::Printf(TEXT("%d"), GroupID); }))
 		);
 		DrawDebugString(world, face.CachedCenter, faceString, nullptr, FColor::White, 0.0f, true);
@@ -3409,7 +3409,7 @@ void FModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 	for (const auto &kvp : VolumeGraph.GetPolyhedra())
 	{
 		const FGraph3DPolyhedron &polyhedron = kvp.Value;
-		FString polyhedronFacesString = FString::JoinBy(polyhedron.FaceIDs, TEXT(", "), [](const FSignedID &faceID) { return FString::Printf(TEXT("%d"), faceID); });
+		FString polyhedronFacesString = FString::JoinBy(polyhedron.FaceIDs, TEXT(", "), [](const FGraphSignedID &faceID) { return FString::Printf(TEXT("%d"), faceID); });
 		FString polyhedronTypeString = !polyhedron.bClosed ? FString(TEXT("open")) :
 			FString::Printf(TEXT("closed, %s, %s"),
 				polyhedron.bInterior ? TEXT("interior") : TEXT("exterior"),
@@ -3460,7 +3460,7 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 
 			world->LineBatcher->DrawPoint(vertexDrawPos, FLinearColor::Red, pointThickness, 0);
 			FString vertexString = FString::Printf(TEXT("Vertex #%d: [%s]"), graphVertex.ID,
-				*FString::JoinBy(graphVertex.Edges, TEXT(", "), [](const FSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); })
+				*FString::JoinBy(graphVertex.Edges, TEXT(", "), [](const FGraphSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); })
 			);
 
 			DrawDebugString(world, vertexDrawPos + textOffset, vertexString, nullptr, FColor::White, 0.0f, true);
@@ -3493,7 +3493,7 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 			TArray<FVector2D> edgeNormals;
 			for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
 			{
-				FSignedID edgeID = poly.Edges[edgeIdx];
+				FGraphSignedID edgeID = poly.Edges[edgeIdx];
 				const FGraph2DEdge *graphEdge = graph.FindEdge(edgeID);
 				const FGraph2DVertex *startGraphVertex = graph.FindVertex(graphEdge->StartVertexID);
 				const FGraph2DVertex *endGraphVertex = graph.FindVertex(graphEdge->EndVertexID);
@@ -3505,7 +3505,7 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 
 			for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
 			{
-				FSignedID edgeID = poly.Edges[edgeIdx];
+				FGraphSignedID edgeID = poly.Edges[edgeIdx];
 
 				const FVector2D &edgeNormal = edgeNormals[edgeIdx];
 				const FVector2D &prevEdgeNormal = edgeNormals[(edgeIdx + numEdges - 1) % numEdges];
@@ -3534,7 +3534,7 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 			}
 
 			FString faceString = FString::Printf(TEXT("Face #%d: [%s]"), poly.ID,
-				*FString::JoinBy(poly.Edges, TEXT(", "), [](const FSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }));
+				*FString::JoinBy(poly.Edges, TEXT(", "), [](const FGraphSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }));
 
 			FVector2D originPos = poly.CachedPoints[0];
 			FVector originDrawPos = UModumateGeometryStatics::Deproject2DPoint(originPos, faceAxisX, faceAxisY, faceOrigin);

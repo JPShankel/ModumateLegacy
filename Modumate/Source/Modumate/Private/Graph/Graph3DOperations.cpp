@@ -602,7 +602,7 @@ namespace Modumate
 		TArray<int32> faceVertices;
 
 		int32 numVertices = VertexIDs.Num();
-		TArray<FSignedID> newFaceEdgeIDs;
+		TArray<FGraphSignedID> newFaceEdgeIDs;
 		for (int32 idxA = 0; idxA < numVertices; ++idxA)
 		{
 			int32 idxB = (idxA + 1) % numVertices;
