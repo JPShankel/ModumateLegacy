@@ -40,15 +40,8 @@ void AEditModelGameMode_CPP::InitGame(const FString& MapName, const FString& Opt
 
 		ObjectDatabase->ReadColorData(ColorTable);
 		ObjectDatabase->ReadMeshData(MeshTable);
-		ObjectDatabase->ReadPortalPartData(PortalPartsTable);
 		ObjectDatabase->ReadLightConfigData(LightConfigTable);
 		ObjectDatabase->ReadRoomConfigurations(RoomConfigurationTable);
-
-		ObjectDatabase->ReadCraftingPatternOptionSet(PatternOptionSetDataTable);
-		ObjectDatabase->ReadCraftingProfileOptionSet(ProfileMeshDataTable);
-
-		ObjectDatabase->ReadCraftingPortalPartOptionSet(PortalPartOptionSetDataTable);
-		ObjectDatabase->ReadPortalConfigurationData(PortalConfigurationTable);
 
 		ObjectDatabase->ReadPresetData();
 	}

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Database/ModumateObjectEnums.h"
-#include "BIMKernel/BIMLegacyPortals.h"
 #include "Serialization/JsonReader.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonSerializer.h"

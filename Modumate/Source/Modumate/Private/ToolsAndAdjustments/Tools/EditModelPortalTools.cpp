@@ -82,21 +82,15 @@ void UPortalToolBase::SetupCursor()
 
 	auto *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	const FBIMAssemblySpec *obAsm = gameState->Document.PresetManager.GetAssemblyByKey(GetToolMode(),AssemblyKey);
-	bValidPortalConfig = false;
+	bValidPortalConfig = true;
 
 	float invMul = Inverted ? 1 : -1;
-#ifdef REMOVE_OLD_PORTALS
-	if (obAsm && obAsm->CachedAssembly.PortalConfiguration.IsValid())
-#endif
-	{
-		bValidPortalConfig = true;
 
-		CursorActor->MakeFromAssembly(*obAsm, FVector::OneVector, Inverted, false);
+	CursorActor->MakeFromAssembly(*obAsm, FVector::OneVector, Inverted, false);
 
-		// Store data used for previewing this object as if it were a fully-created MOI
-		CursorActor->TempAssemblyKey = AssemblyKey;
-		CursorActor->TempObjectToolMode = GetToolMode();
-	}
+	// Store data used for previewing this object as if it were a fully-created MOI
+	CursorActor->TempAssemblyKey = AssemblyKey;
+	CursorActor->TempObjectToolMode = GetToolMode();
 }
 
 bool UPortalToolBase::Deactivate()

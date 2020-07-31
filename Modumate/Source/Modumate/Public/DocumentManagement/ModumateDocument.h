@@ -6,7 +6,6 @@
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "Database/ModumateObjectDatabase.h"
-#include "BIMKernel/BIMLegacyPortals.h"
 #include "Graph/Graph2D.h"
 #include "DocumentManagement/ModumatePresetManager.h"
 #include "Graph/Graph3D.h"
@@ -15,11 +14,6 @@
 #include "DocumentManagement/ModumateCameraView.h"
 
 class AEditModelPlayerState_CPP;
-
-/**
- *
- */
-
 
 namespace Modumate
 {

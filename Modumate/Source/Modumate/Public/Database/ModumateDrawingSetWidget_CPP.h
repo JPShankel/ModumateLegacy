@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BIMKernel/BIMLegacyPortals.h"
+#include "BIMKernel/BIMNodeEditor.h"
+#include "BIMKernel/BIMWidgetStatics.h"
 #include "DocumentManagement/ModumatePresetManager.h"
 #include "ModumateDrawingSetWidget_CPP.generated.h"
 

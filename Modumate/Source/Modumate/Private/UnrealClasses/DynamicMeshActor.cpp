@@ -703,6 +703,7 @@ void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector> &points, floa
 	Mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, true);
 
 	CachedMIDs.SetNumZeroed(1);
+
 	UModumateFunctionLibrary::SetMeshMaterial(Mesh, materialData, 0, &CachedMIDs[0]);
 }
 

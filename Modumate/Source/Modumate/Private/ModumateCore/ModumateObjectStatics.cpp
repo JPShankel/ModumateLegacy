@@ -560,40 +560,6 @@ TArray<FVector> UModumateObjectStatics::GetMoiActorHoleVertsWorldLocations(AActo
 bool UModumateObjectStatics::GetMoiHoleVerts(const ::FBIMAssemblySpec *HoleAssembly, TArray<FVector> &OutLocalHoleVerts)
 {
 	OutLocalHoleVerts.Reset();
-
-#ifdef REMOVE_OLD_PORTALS
-	if (HoleAssembly && HoleAssembly->CachedAssembly.PortalConfiguration.IsValid())
-	{
-		for (const Modumate::FPortalAssemblyConfigurationSlot &slot : HoleAssembly->CachedAssembly.PortalConfiguration.Slots)
-		{
-			if (slot.Type == EPortalSlotType::Hole)
-			{
-				Units::FUnitValue holeX, holeZ, holeW, holeH;
-				if (ensureAlways(
-					Expression::Evaluate(HoleAssembly->CachedAssembly.PortalConfiguration.CachedDimensions, slot.LocationX, holeX) &&
-					Expression::Evaluate(HoleAssembly->CachedAssembly.PortalConfiguration.CachedDimensions, slot.LocationZ, holeZ) &&
-					Expression::Evaluate(HoleAssembly->CachedAssembly.PortalConfiguration.CachedDimensions, slot.SizeX, holeW) &&
-					Expression::Evaluate(HoleAssembly->CachedAssembly.PortalConfiguration.CachedDimensions, slot.SizeZ, holeH)))
-				{
-					float holeXValue = holeX.AsWorldCentimeters();
-					float holeZValue = holeZ.AsWorldCentimeters();
-					float holeWValue = holeW.AsWorldCentimeters();
-					float holeHValue = holeH.AsWorldCentimeters();
-
-					OutLocalHoleVerts.SetNum(4);
-					OutLocalHoleVerts[0].Set(holeXValue, 0.0f, holeZValue);
-					OutLocalHoleVerts[1].Set(holeXValue, 0.0f, holeZValue + holeHValue);
-					OutLocalHoleVerts[2].Set(holeXValue + holeWValue, 0.0f, holeZValue + holeHValue);
-					OutLocalHoleVerts[3].Set(holeXValue + holeWValue, 0.0f, holeZValue);
-					break;
-				}
-			}
-		}
-
-		return true;
-	}
-#endif
-
 	return false;
 }
 

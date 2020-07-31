@@ -4,7 +4,6 @@
 
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
-#include "BIMKernel/BIMLegacyPortals.h"
 #include "Database/ModumateDrawingSetWidget_CPP.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "Drafting/APDFLLib.h"

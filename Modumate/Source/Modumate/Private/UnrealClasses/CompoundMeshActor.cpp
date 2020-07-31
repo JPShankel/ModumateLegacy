@@ -44,13 +44,6 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 {
 	// Figure out how many components we might need.
 
-#ifdef REMOVE_OLD_PORTALS
-	const FPortalConfiguration& portalConfig = obAsm.CachedAssembly.PortalConfiguration;
-	int32 maxNumMeshes = portalConfig.IsValid() ?
-		portalConfig.Slots.Num() :
-		obAsm.CachedAssembly.Layers.Num();
-#endif
-
 	int32 maxNumMeshes = obAsm.CachedAssembly.Layers.Num();
 
 	for (int32 compIdx = 0; compIdx < StaticMeshComps.Num(); ++compIdx)
@@ -82,7 +75,8 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 	const bool origDynamicStatus = GetIsDynamic();
 	SetIsDynamic(true);
 
-#ifdef REMOVE_OLD_PORTALS
+	//TODO: reinstitute 9-slicing for DDL 2 portals
+#if 0
 	// Now, set up portal meshes
 	if (portalConfig.IsValid())
 	{

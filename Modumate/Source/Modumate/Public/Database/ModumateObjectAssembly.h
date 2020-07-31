@@ -6,14 +6,14 @@
 #include "Engine/TextureLightProfile.h"
 #include "BIMKernel/BIMEnums.h"
 #include "BIMKernel/BIMLegacyPattern.h"
-#include "BIMKernel/BIMLegacyPortals.h"
 #include "BIMKernel/BIMSerialization.h"
 #include "BIMKernel/BIMProperties.h"
 #include "Database/ModumateArchitecturalMesh.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateObjectAssembly.generated.h"
 
-
+class FModumateDatabase;
+struct FBIMAssemblySpec;
 
 USTRUCT(BlueprintType)
 struct FLightConfiguration
@@ -69,54 +69,6 @@ struct MODUMATE_API FModumateObjectAssemblyLayer
 };
 
 /*
-A part used for portals (doors/windows) that specifies its mesh, compatible slots,
-and other portal-specific data that allows it to be 9-sliced and manipulated.
-*/
-USTRUCT(BlueprintType)
-struct MODUMATE_API FPortalPart
-{
-	GENERATED_BODY()
-
-	FName Key;
-	FText DisplayName;
-	TSet<EPortalSlotType> SupportedSlotTypes;
-	FArchitecturalMesh Mesh = FArchitecturalMesh();
-
-	// The original bounds of the entire mesh
-	Modumate::Units::FUnitValue NativeSizeX = Modumate::Units::FUnitValue::WorldCentimeters(0.0f);
-	Modumate::Units::FUnitValue NativeSizeY = Modumate::Units::FUnitValue::WorldCentimeters(0.0f);
-	Modumate::Units::FUnitValue NativeSizeZ = Modumate::Units::FUnitValue::WorldCentimeters(0.0f);
-
-	// The bounding box that represents the region of the mesh that can be stretched by 9-slicing, in cm.
-	FBox NineSliceInterior = FBox(ForceInitToZero);
-
-	TMap<FName, Modumate::Units::FUnitValue> ConfigurationDimensions;
-	TSet<FName> SupportedMaterialChannels;
-
-	FName UniqueKey() const { return Key; }
-};
-
-struct FPortalConfiguration
-{
-	EPortalFunction PortalFunction = EPortalFunction::None;
-	TMap<FName, Modumate::FPortalReferencePlane> ReferencePlanes;
-	TArray<Modumate::FPortalAssemblyConfigurationSlot> Slots;
-	Modumate::FPortalConfigDimensionSet Width, Height;
-	Modumate::FCraftingPortalPartOption PartSet;
-	TMap<FName, FArchitecturalMaterial> MaterialsPerChannel;
-	FText DisplayName;
-
-	// Coalesced mapping of slot type and config dimension to fixed unit values
-	// e.g. Frame.GapBehind -> 1.25in, Panel.JambThickness -> 2in
-	TMap<FName, Modumate::Units::FUnitValue> CachedDimensions;
-
-	static const FName RefPlaneNameMinX, RefPlaneNameMaxX, RefPlaneNameMinZ, RefPlaneNameMaxZ;
-
-	bool IsValid() const;
-	void CacheRefPlaneValues();
-};
-
-/*
 An Object assembly is a collection of layers
 */
 
@@ -124,7 +76,7 @@ class FPresetManager;
 class FModumateDatabase;
 class FModumateDocument;
 
-USTRUCT(BlueprintType)
+USTRUCT()
 struct MODUMATE_API FModumateObjectAssembly
 {
 	GENERATED_BODY();
@@ -155,9 +107,6 @@ struct MODUMATE_API FModumateObjectAssembly
 	}
 
 	void ReverseLayers();
-
-	FPortalConfiguration PortalConfiguration;
-	TMap<int32, FPortalPart> PortalParts;
 };
 
 UCLASS()

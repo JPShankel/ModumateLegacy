@@ -81,56 +81,19 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UTexture2D *ButtonEditRedTexture;
 
-
 	FModumateDatabase *ObjectDatabase;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* RoomConfigurationTable;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
-	UDataTable* PortalPartsTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
-	UDataTable* FFEPartTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* MeshTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
-	UDataTable* PortalConfigurationTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
-	UDataTable* FFEAssemblyTable;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* ColorTable;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* LightConfigTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Crafting")
-	UDataTable* CraftingSubcategoryTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Crafting")
-	UDataTable* DecisionTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Crafting")
-	UDataTable* LayerThicknessOptionSetTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Crafting")
-	UDataTable* DimensionalOptionSetDataTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Crafting")
-	UDataTable* MaterialsAndColorsOptionSetDataTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Crafting")
-	UDataTable* PatternOptionSetDataTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Crafting")
-	UDataTable* PortalPartOptionSetDataTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Crafting")
-	UDataTable* ProfileMeshDataTable;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Editing")
 	TSubclassOf<class ADynamicMeshActor> DynamicMeshActorClass;

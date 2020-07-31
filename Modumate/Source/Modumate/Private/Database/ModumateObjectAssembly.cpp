@@ -16,71 +16,6 @@
 using namespace Modumate;
 using namespace Modumate::Units;
 
-const FName FPortalConfiguration::RefPlaneNameMinX(TEXT("RXLeft"));
-const FName FPortalConfiguration::RefPlaneNameMaxX(TEXT("RXRight"));
-const FName FPortalConfiguration::RefPlaneNameMinZ(TEXT("RZBottom"));
-const FName FPortalConfiguration::RefPlaneNameMaxZ(TEXT("RZTop"));
-
-bool FPortalConfiguration::IsValid() const
-{
-	return (PortalFunction != EPortalFunction::None) && (Slots.Num() > 0) &&
-		!PartSet.Key.IsNone() && (PartSet.PartsBySlotType.Num() > 0) &&
-		ReferencePlanes.Contains(FPortalConfiguration::RefPlaneNameMinX) &&
-		ReferencePlanes.Contains(FPortalConfiguration::RefPlaneNameMaxX) &&
-		ReferencePlanes.Contains(FPortalConfiguration::RefPlaneNameMinZ) &&
-		ReferencePlanes.Contains(FPortalConfiguration::RefPlaneNameMaxZ);
-}
-
-void FPortalConfiguration::CacheRefPlaneValues()
-{
-	TSet<FName> planeNamesToEvaluate;
-
-	// First, cache the fixed values and clear out the evaluated values
-	for (const auto &kvp : ReferencePlanes)
-	{
-		const Modumate::FPortalReferencePlane &refPlane = kvp.Value;
-		if (refPlane.ValueExpression.IsEmpty())
-		{
-			CachedDimensions.Emplace(refPlane.Name, refPlane.FixedValue);
-		}
-		else
-		{
-			CachedDimensions.Remove(refPlane.Name);
-			planeNamesToEvaluate.Add(refPlane.Name);
-		}
-	}
-
-	while (planeNamesToEvaluate.Num() > 0)
-	{
-		bool bEvaluatedAnyPlane = false;
-
-		for (const auto &kvp : ReferencePlanes)
-		{
-			const Modumate::FPortalReferencePlane &refPlane = kvp.Value;
-			if (!refPlane.ValueExpression.IsEmpty() && !CachedDimensions.Contains(refPlane.Name))
-			{
-				Modumate::Units::FUnitValue evaluatedValue;
-				if (Modumate::Expression::Evaluate(CachedDimensions, refPlane.ValueExpression, evaluatedValue))
-				{
-					CachedDimensions.Add(refPlane.Name, evaluatedValue);
-					planeNamesToEvaluate.Remove(refPlane.Name);
-					bEvaluatedAnyPlane = true;
-				}
-			}
-		}
-
-		if (!ensure(bEvaluatedAnyPlane))
-		{
-			for (const FName &planeNameToEvaluate : planeNamesToEvaluate)
-			{
-				const Modumate::FPortalReferencePlane &refPlane = ReferencePlanes[planeNameToEvaluate];
-				UE_LOG(LogTemp, Error, TEXT("Failed to evaluate ref plane \"%s\" expression: \"%s\""),
-					*refPlane.Name.ToString(), *refPlane.ValueExpression);
-			}
-		}
-	}
-}
-
 Modumate::Units::FUnitValue FModumateObjectAssembly::CalculateThickness() const
 {
 	return Modumate::Units::FUnitValue::WorldCentimeters(Algo::TransformAccumulate(
@@ -290,19 +225,6 @@ public:
 			//TODO: legacy trim were keyed based on their display name, so check against both name and key
 
 			const FSimpleMeshRef *trimMesh = db.GetSimpleMeshByKey(ProfileKey);
-			if (trimMesh == nullptr)
-			{
-				for (auto &kvp : db.ProfileOptionSets.DataMap)
-				{
-					for (auto &option : kvp.Value.Options)
-					{
-						if (*option.DisplayName.ToString() == ProfileKey || option.Key == ProfileKey)
-						{
-							trimMesh = &option.ProfileMesh;
-						}
-					}
-				}
-			}
 
 			if (ensureAlways(trimMesh != nullptr))
 			{
@@ -386,28 +308,6 @@ public:
 		{
 			ret.Pattern.Key = ret.Modules.Num() == 0 ? TEXT("Continuous") : TEXT("PATKEY");
 		}
-		else
-		{
-		// TODO: DDL 2 will define patterns for itself, but in the interim patterns are tied to DDL 1.0 subcategory keyed data
-			bool found = false;
-			for (const auto &optionSet : db.PatternOptionSets.DataMap)
-			{
-				for (const auto &option : optionSet.Value.Options)
-				{
-					if (option.Key == ret.Pattern.Key)
-					{
-						ret.Pattern.InitFromCraftingParameters(option.CraftingParameters);
-						found = true;
-						break;
-					}
-				}
-				if (found)
-				{
-					break;
-				}
-			}
-		}
-
 
 		if (ret.Gap.Key.IsNone())
 		{

@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
-#include "BIMKernel/BIMLegacyPortals.h"
 #include "Runtime/Engine/Classes/GameFramework/GameStateBase.h"
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "EditModelGameState_CPP.generated.h"

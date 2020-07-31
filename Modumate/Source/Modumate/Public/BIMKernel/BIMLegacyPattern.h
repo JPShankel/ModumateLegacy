@@ -6,6 +6,7 @@
 
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "ModumateCore/ModumateUnits.h"
+#include "BIMKernel/BIMProperties.h"
 #include "Database/ModumateObjectEnums.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "BIMKernel/BIMEnums.h"
@@ -15,6 +16,28 @@ namespace Modumate
 {
 	struct FCraftingPatternOption;
 	struct FCraftingDimensionalOption;
+
+	namespace CraftingParameters
+	{
+		extern const FString ThicknessValue;
+		extern const FString ThicknessUnits;
+		extern const FString MaterialColorMaterial;
+		extern const FString MaterialColorColor;
+		extern const FString DimensionLength;
+		extern const FString DimensionWidth;
+		extern const FString DimensionHeight;
+		extern const FString DimensionDepth;
+		extern const FString DimensionThickness;
+		extern const FString DimensionBevelWidth;
+		extern const FString PatternModuleCount;
+		extern const FString PatternExtents;
+		extern const FString PatternThickness;
+		extern const FString PatternGap;
+		extern const FString PatternName;
+		extern const FString PatternModuleDimensions;
+		extern const FString TrimProfileNativeSizeX;
+		extern const FString TrimProfileNativeSizeY;
+	}
 }
 
 USTRUCT()

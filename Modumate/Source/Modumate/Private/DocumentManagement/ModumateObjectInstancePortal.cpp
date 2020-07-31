@@ -38,30 +38,6 @@ namespace Modumate
 
 	void FMOIPortalImpl::GetControlPointsFromAssembly(const FBIMAssemblySpec &ObjectAssembly, TArray<FVector> &ControlPoints)
 	{
-#ifdef REMOVE_OLD_PORTALS
-
-		auto &portalConfig = ObjectAssembly.CachedAssembly.PortalConfiguration;
-		if (ensureAlways(portalConfig.IsValid()))
-		{
-			ControlPoints.SetNum(4);
-			float conceptualWidth = 0.0f, conceptualHeight = 0.0f;
-
-			const FPortalReferencePlane &minXPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMinX];
-			const FPortalReferencePlane &maxXPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMaxX];
-			const FPortalReferencePlane &minZPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMinZ];
-			const FPortalReferencePlane &maxZPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMaxZ];
-
-			float minXValue = minXPlane.FixedValue.AsWorldCentimeters();
-			float maxXValue = maxXPlane.FixedValue.AsWorldCentimeters();
-			float minZValue = minZPlane.FixedValue.AsWorldCentimeters();
-			float maxZValue = maxZPlane.FixedValue.AsWorldCentimeters();
-
-			ControlPoints[0].Set(minXValue, 0.0f, minZValue);
-			ControlPoints[1].Set(minXValue, 0.0f, maxZValue);
-			ControlPoints[2].Set(maxXValue, 0.0f, maxZValue);
-			ControlPoints[3].Set(maxXValue, 0.0f, minZValue);
-		}
-#endif
 	}
 
 	void FMOIPortalImpl::SetControlPointsFromAssembly()
@@ -76,25 +52,6 @@ namespace Modumate
 		if (MOI->GetControlPoints().Num() < 4)
 		{
 			return;
-		}
-
-		if (MOI->GetAssembly().CachedAssembly.PortalConfiguration.IsValid())
-		{
-			FBIMAssemblySpec assembly = MOI->GetAssembly();
-			auto &portalConfig = assembly.CachedAssembly.PortalConfiguration;
-
-			FPortalReferencePlane &minXPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMinX];
-			FPortalReferencePlane &maxXPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMaxX];
-			FPortalReferencePlane &minZPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMinZ];
-			FPortalReferencePlane &maxZPlane = portalConfig.ReferencePlanes[FPortalConfiguration::RefPlaneNameMaxZ];
-
-			minXPlane.FixedValue = Units::FUnitValue::WorldCentimeters(MOI->GetControlPoint(0).X);
-			maxXPlane.FixedValue = Units::FUnitValue::WorldCentimeters(MOI->GetControlPoint(2).X);
-			minZPlane.FixedValue = Units::FUnitValue::WorldCentimeters(MOI->GetControlPoint(0).Z);
-			maxZPlane.FixedValue = Units::FUnitValue::WorldCentimeters(MOI->GetControlPoint(2).Z);
-
-			portalConfig.CacheRefPlaneValues();
-			MOI->SetAssembly(assembly);
 		}
 	}
 
@@ -312,21 +269,6 @@ namespace Modumate
 
 	void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 	{
-#ifdef REMOVE_OLD_PORTALS
-		Controller = controller;
-
-		for (int32 i = 0; i < 8; ++i)
-		{
-			auto portalPointHandle = MOI->MakeHandle<AAdjustPortalPointHandle>();
-			portalPointHandle->SetTargetIndex(i);
-		}
-
-		auto portalInvertHandle = MOI->MakeHandle<AAdjustPortalInvertHandle>();
-		portalInvertHandle->SetTransvert(false);
-
-		auto portalTransvertHandle = MOI->MakeHandle<AAdjustPortalInvertHandle>();
-		portalTransvertHandle->SetTransvert(true);
-#endif
 	}
 
 	TArray<FModelDimensionString> FMOIPortalImpl::GetDimensionStrings() const
@@ -517,6 +459,8 @@ namespace Modumate
 			}
 
 			// draw door swing lines if the cut plane intersects the door's mesh
+			// TODO: door swings for DDL 2.0 openings
+#if 0 
 			if (MOI->GetObjectType() == EObjectType::OTDoor && OutEdges.Num() > 0)
 			{
 				auto assembly = MOI->GetAssembly();
@@ -613,6 +557,7 @@ namespace Modumate
 					}
 				}
 			}
+#endif
 		}
 
 	}

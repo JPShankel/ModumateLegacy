@@ -107,6 +107,8 @@ namespace Modumate {
 			bool bAddSeparator = false;
 			FString separator = ", ";
 			// Create comma-separated list from the list of FPortalParts in the assembly
+			// TODO: DDL 2 portal part information (DDL 1 left commented out for reference)
+#if 0
 			for (auto& partPair : door->GetAssembly().CachedAssembly.PortalParts)
 			{
 				if (!bAddSeparator)
@@ -121,7 +123,7 @@ namespace Modumate {
 				partsList += partPair.Value.DisplayName.ToString();
 			}
 			row.Add(MakeDraftingText(FText::FromString(partsList)));
-
+#endif
 			// Finish overrides
 			// TODO: this should be replaced with the correct contents of the Finish overrides column
 			// and ultimately remove the FinishNames variable from schedules

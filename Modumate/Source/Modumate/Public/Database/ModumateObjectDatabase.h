@@ -31,21 +31,12 @@ private:
 
 public:
 
-	TModumateDataCollection<FPortalPart> PortalParts;
 	TModumateDataCollection<Modumate::FRoomConfiguration> RoomConfigurations;
 	TModumateDataCollection<FStaticIconTexture> StaticIconTextures;
-
-	// Option sets
-	TModumateDataCollection<Modumate::FCraftingOptionSet> PatternOptionSets;
-	TModumateDataCollection<Modumate::FCraftingOptionSet> ProfileOptionSets;
-
-	TModumateDataCollection<Modumate::FPortalAssemblyConfigurationOptionSet> PortalConfigurationOptionSets;
-	TModumateDataCollection<Modumate::FCraftingPortalPartOptionSet> PortalPartOptionSets;
 
 	FPresetManager PresetManager;
 	FModumateDatabase();
 	~FModumateDatabase();
-
 
 	void Init();
 	void Shutdown();
@@ -54,12 +45,7 @@ public:
 	void ReadMeshData(UDataTable *data);
 	void ReadLightConfigData(UDataTable *data);
 	void ReadColorData(UDataTable *data);
-	void ReadPortalPartData(UDataTable *data);
 	void ReadRoomConfigurations(UDataTable *data);
-	void ReadPortalConfigurationData(UDataTable *data);
-	void ReadCraftingPatternOptionSet(UDataTable *data);
-	void ReadCraftingPortalPartOptionSet(UDataTable *data);
-	void ReadCraftingProfileOptionSet(UDataTable *data);
 
 	void AddArchitecturalMaterial(const FName &Key, const FString& Name, const FSoftObjectPath& AssetPath);
 	void AddArchitecturalMesh(const FName &Key, const FString& Name, const FSoftObjectPath& AssetPath);
@@ -72,13 +58,11 @@ public:
 	const FArchitecturalMesh* GetArchitecturalMeshByKey(const FName& Key) const;
 	const FArchitecturalMaterial *GetArchitecturalMaterialByKey(const FName& Key) const;
 	const FCustomColor *GetCustomColorByKey(const FName &Key) const;
-	const FPortalPart *GetPortalPartByKey(const FName &Key) const;
 	const FSimpleMeshRef *GetSimpleMeshByKey(const FName &Key) const;
 	const Modumate::FRoomConfiguration *GetRoomConfigByKey(const FName &Key) const;
 	const FStaticIconTexture *GetStaticIconTextureByKey(const FName &Key) const;
 
 	bool ParseColorFromField(FCustomColor &OutColor, const FString &Field);
-	bool ParsePortalConfigDimensionSets(FName configKey, const FString &typeString, const TArray<FString> &setStrings, TArray<Modumate::FPortalConfigDimensionSet> &outSets);
 
 	TArray<FString> GetDebugInfo();
 };

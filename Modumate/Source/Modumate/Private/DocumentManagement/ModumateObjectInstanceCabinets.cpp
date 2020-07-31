@@ -79,10 +79,10 @@ namespace Modumate
 		UpdateToeKickDimensions();
 
 		int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
-		FArchitecturalMaterial materialData = MOI->GetAssembly().CachedAssembly.PortalConfiguration.MaterialsPerChannel.FindRef(CabinetGeometryMatName);
 
+		// TODO: get material from portal definition
 		DynamicMeshActor->SetupCabinetGeometry(MOI->GetControlPoints(), MOI->GetExtents().Y,
-			materialData, ToeKickDimensions, frontFaceIndex);
+			FArchitecturalMaterial(), ToeKickDimensions, frontFaceIndex);
 
 		// refresh handle visibility, don't destroy & recreate handles
 		AEditModelPlayerController_CPP *controller = DynamicMeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
@@ -149,11 +149,6 @@ namespace Modumate
 			return;
 		}
 
-		if (!ensureAlways(MOI && MOI->GetAssembly().CachedAssembly.PortalConfiguration.IsValid()))
-		{
-			return;
-		}
-
 		// Get enough geometric information to set up the portal assembly
 		FVector extrusionDir = FVector::UpVector;
 		FPlane plane;
@@ -183,16 +178,6 @@ namespace Modumate
 		float cabinetHeight = MOI->GetExtents().Y;
 		FVector toeKickOffset = ToeKickDimensions.Y * extrusionDir;
 
-		// Update the reference planes so the portal 9-slicing is correct
-		FBIMAssemblySpec assembly = MOI->GetAssembly();
-		TMap<FName, FPortalReferencePlane> &refPlanes = assembly.CachedAssembly.PortalConfiguration.ReferencePlanes;
-		refPlanes[FPortalConfiguration::RefPlaneNameMinX].FixedValue = FUnitValue::WorldCentimeters(0.0f);
-		refPlanes[FPortalConfiguration::RefPlaneNameMaxX].FixedValue = FUnitValue::WorldCentimeters(edgeLength);
-		refPlanes[FPortalConfiguration::RefPlaneNameMinZ].FixedValue = FUnitValue::WorldCentimeters(0.0f);
-		refPlanes[FPortalConfiguration::RefPlaneNameMaxZ].FixedValue = FUnitValue::WorldCentimeters(cabinetHeight - ToeKickDimensions.Y);
-		assembly.CachedAssembly.PortalConfiguration.CacheRefPlaneValues();
-		MOI->SetAssembly(assembly);
-
 		FrontFacePortalActor->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
 
 		// Now position the portal where it's supposed to go
@@ -201,7 +186,6 @@ namespace Modumate
 
 		FrontFacePortalActor->SetActorLocationAndRotation(portalOrigin, portalRot);
 	}
-
 
 	void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 	{

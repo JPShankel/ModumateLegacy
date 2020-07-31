@@ -239,10 +239,10 @@ bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FName &AsmKey, ET
 	IconCompoundMeshActor->MakeFromAssembly(*assembly, FVector::OneVector, false, true);
 
 	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
-	float portalMinX = assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinX).AsWorldCentimeters();
-	float portalMaxX = assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMaxX).AsWorldCentimeters();
-	float portalMinZ = assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinZ).AsWorldCentimeters();
-	float portalMaxZ = assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMaxZ).AsWorldCentimeters();
+	float portalMinX = 0;// assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinX).AsWorldCentimeters();
+	float portalMaxX = 100; // assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMaxX).AsWorldCentimeters();
+	float portalMinZ = 0; // assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinZ).AsWorldCentimeters();
+	float portalMaxZ = 180; // assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMaxZ).AsWorldCentimeters();
 	float portalWidth = portalMaxX - portalMinX;
 	float portalHeight = portalMaxZ - portalMinZ;
 
@@ -262,6 +262,7 @@ bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FName &AsmKey, ET
 	IconCompoundMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
 	IconCompoundMeshActor->SetActorScale3D(FVector::OneVector);
 	SetIconCompoundMeshActorForCapture(false);
+
 	return true;
 }
 
@@ -291,21 +292,12 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FName &AsmKey, U
 	// Get the exterior finish material for the cabinet
 	static const FName cabinetGeomMatName(TEXT("Cabinet_Exterior_Finish"));
 	FArchitecturalMaterial materialData;
-	if (assembly.PortalConfiguration.IsValid())
-	{
-		materialData = assembly.PortalConfiguration.MaterialsPerChannel.FindRef(cabinetGeomMatName);
-	}
 
 	// Get the cabinet dimensions
 	Units::FUnitValue cabinetWidthUnit(CabinetDimension.X, Units::EUnitType::WorldInches);
 	Units::FUnitValue cabinetHeightUnit(CabinetDimension.Z, Units::EUnitType::WorldInches);
 	Units::FUnitValue cabinetDepthUnit(CabinetDimension.Y, Units::EUnitType::WorldInches);
 
-	if (assembly.PortalConfiguration.IsValid())
-	{
-		cabinetWidthUnit = assembly.PortalConfiguration.ReferencePlanes[FPortalConfiguration::RefPlaneNameMaxX].FixedValue;
-		cabinetHeightUnit = assembly.PortalConfiguration.ReferencePlanes[FPortalConfiguration::RefPlaneNameMaxZ].FixedValue;
-	}
 
 	float cabinetWidth = cabinetWidthUnit.AsWorldCentimeters();
 	float cabinetHeight = cabinetHeightUnit.AsWorldCentimeters();
@@ -320,28 +312,7 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FName &AsmKey, U
 	};
 	IconDynamicMeshActor->SetupCabinetGeometry(cabinetCPs, cabinetHeight, materialData, toeKickDimensions, 2);
 
-	// Now make the cabinet portal geometry
-	if (assembly.PortalConfiguration.IsValid())
-	{
-		// Update the reference planes so the portal 9-slicing is correct
-		TMap<FName, FPortalReferencePlane> &refPlanes = assembly.PortalConfiguration.ReferencePlanes;
-		refPlanes[FPortalConfiguration::RefPlaneNameMinX].FixedValue = Units::FUnitValue::WorldCentimeters(0.0f);
-		refPlanes[FPortalConfiguration::RefPlaneNameMaxX].FixedValue = Units::FUnitValue::WorldCentimeters(cabinetWidth);
-		refPlanes[FPortalConfiguration::RefPlaneNameMinZ].FixedValue = Units::FUnitValue::WorldCentimeters(0.0f);
-		refPlanes[FPortalConfiguration::RefPlaneNameMaxZ].FixedValue = Units::FUnitValue::WorldCentimeters(cabinetHeight - toeKickDimensions.Y);
-		assembly.PortalConfiguration.CacheRefPlaneValues();
-	}
-
 	IconCompoundMeshActor->MakeFromAssembly(*assemblyPtr, FVector::OneVector, false, false);
-
-	if (assembly.PortalConfiguration.IsValid())
-	{
-		// Now position the portal where it's supposed to go
-		FVector portalOrigin = cabinetCPs[3] + (toeKickDimensions.Y * FVector::UpVector);
-		FQuat portalRot = FRotationMatrix::MakeFromYZ(FVector(0.0f, 1.0f, 0.0f), FVector::UpVector).ToQuat();
-
-		IconCompoundMeshActor->SetActorLocationAndRotation(portalOrigin, portalRot);
-	}
 
 	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
 	// Scale IconDynamicMeshActor to fit

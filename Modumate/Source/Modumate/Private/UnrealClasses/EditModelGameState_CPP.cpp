@@ -50,17 +50,7 @@ TArray<float> AEditModelGameState_CPP::GetComponentsThicknessWithKey(EToolMode m
 
 bool AEditModelGameState_CPP::GetPortalToolTip(EToolMode mode, const FName &assemblyKey, FString &type, FString &configName, TArray<FString> &parts)
 {
-	const FBIMAssemblySpec *moa = Document.PresetManager.GetAssemblyByKey(mode, assemblyKey);
-	if (moa != nullptr)
-	{
-		type = FindEnumValueString<EPortalFunction>(TEXT("EPortalFunction"), moa->CachedAssembly.PortalConfiguration.PortalFunction);
-		configName = moa->CachedAssembly.PortalConfiguration.DisplayName.ToString();
-		
-		for (auto& curPart : moa->CachedAssembly.PortalParts)
-		{
-			parts.Add(curPart.Value.DisplayName.ToString());
-		}
-		return true;
-	}
+	type = TEXT("UNKNOWN PORTAL TYPE");
+	configName = TEXT("UNKNOWN PORTAL CONFIG");
 	return false;
 }
