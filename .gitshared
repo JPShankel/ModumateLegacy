@@ -2,3 +2,15 @@
 	autocrlf = true
 [submodule]
 	recurse = true
+[alias]
+	prune-branches = !git remote prune origin && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -D
+	pushpr = !git push --set-upstream origin `git rev-parse --abbrev-ref HEAD` && explorer "https://github.com/Modumate/Modumate/pull/new/`git rev-parse --abbrev-ref HEAD`"
+	codev = !git fetch origin development:development && git checkout development && git prune-branches
+[fetch]
+	prune = true
+[merge]
+	tool = p4merge
+[diff]
+	tool = p4merge
+[difftool]
+	prompt = false
