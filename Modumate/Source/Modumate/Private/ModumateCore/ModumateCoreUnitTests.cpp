@@ -237,6 +237,9 @@ namespace Modumate
 		bool bInsideTriangle4 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(5.0f, 14.0f), triangle);
 		bSuccess = bSuccess && !bInsideTriangle4;
 
+		bool bInsideTriangle5 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(15.0f, 0.0f), triangle);
+		bSuccess = bSuccess && !bInsideTriangle5;
+
 		TArray<FVector2D> concaveUShape({
 			FVector2D(0.0f, 0.0f),
 			FVector2D(10.0f, 0.0f),
