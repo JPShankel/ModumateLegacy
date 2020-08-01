@@ -15,7 +15,8 @@
 				"UMG",
 				"Sockets",
 				"Networking",
-				"zlib"
+				"zlib",
+				"MeshDescription"
 			]
 		},
 		{

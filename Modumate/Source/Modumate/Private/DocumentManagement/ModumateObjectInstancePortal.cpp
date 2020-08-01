@@ -2,6 +2,8 @@
 
 #include "DocumentManagement/ModumateObjectInstancePortal.h"
 
+#include "MeshDescription.h"
+#include "MeshAttributes.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
@@ -436,9 +438,7 @@ namespace Modumate
 			ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(MOI->GetActor());
 
 			TArray<TPair<FVector, FVector>> OutEdges;
-			actor->ConvertProcMeshToLinesOnPlane(Origin, FVector(Plane), OutEdges);
-
-			OutEdges.Num();
+			actor->ConvertStaticMeshToLinesOnPlane(Origin, FVector(Plane), OutEdges);
 
 			Units::FThickness defaultThickness = Units::FThickness::Points(0.125f);
 			FMColor defaultColor = FMColor::Gray64;
@@ -589,6 +589,8 @@ namespace Modumate
 		const FVector localViewNormal(localToWorld.ToMatrixWithScale().GetTransposed().TransformVector(viewNormal));
 
 		TArray<FEdge> portalEdges;
+
+#if 0	// Code for extracting from nine-slice ProcMeshes:
 		for (auto meshComp : actor->NineSliceLowLODComps)
 		{
 			if (meshComp == nullptr)
@@ -614,8 +616,8 @@ namespace Modumate
 					static const int Invalid = -1;
 					struct LineIndices
 					{
-						int A { Invalid };
-						int B { Invalid };
+						int A{ Invalid };
+						int B{ Invalid };
 						void Normalize() { if (A > B) { Swap(A, B); } }
 						bool operator==(const LineIndices& rhs) const { return A == rhs.A && B == rhs.B; }
 					} lineIndices[6];
@@ -634,7 +636,7 @@ namespace Modumate
 
 						for (int edge = 0; edge < 3; ++edge)
 						{
-							lineIndices[edge + 3] = { (int) indices[triangle + edge], (int) indices[triangle + (edge + 1) % 3] };
+							lineIndices[edge + 3] = { (int)indices[triangle + edge], (int)indices[triangle + (edge + 1) % 3] };
 							lineIndices[edge + 3].Normalize();
 						}
 
@@ -673,9 +675,43 @@ namespace Modumate
 					}
 
 				}
-
 			}
 		}
+
+#else
+
+
+		for (auto meshComp : actor->StaticMeshComps)
+		{
+			if (meshComp == nullptr)
+			{
+				continue;
+			}
+			const FName& positionName = MeshAttribute::Vertex::Position;  // This is "Position "!
+			const UStaticMesh* meshSection = meshComp->GetStaticMesh();
+			if (meshSection == nullptr)
+			{
+				continue;
+			}
+
+			const FMeshDescription* meshDescription = meshSection->GetMeshDescription(0);
+			const FTriangleArray& triangleArray = meshDescription->Triangles();
+			const auto triangleIDs = triangleArray.GetElementIDs();
+			const auto& attribs = meshDescription->VertexAttributes();
+			for (const auto triangleID: triangleIDs)
+			{
+				auto vertexIDs = meshDescription->GetTriangleVertices(triangleID);
+				FVector vert0 = attribs.GetAttribute<FVector>(vertexIDs[0], positionName);
+				FVector vert1 = attribs.GetAttribute<FVector>(vertexIDs[1], positionName);
+				FVector vert2 = attribs.GetAttribute<FVector>(vertexIDs[2], positionName);
+				portalEdges.Emplace(vert0, vert1);
+				portalEdges.Emplace(vert1, vert2);
+				portalEdges.Emplace(vert2, vert0);
+			}
+
+		}
+
+#endif
 
 		Algo::ForEach(portalEdges, [localToWorld](FEdge& edge) {edge.Vertex[0] = localToWorld.TransformPosition(edge.Vertex[0]);
 		    edge.Vertex[1] = localToWorld.TransformPosition(edge.Vertex[1]); });
@@ -687,6 +723,7 @@ namespace Modumate
 		}
 
 		// Eliminate identical lines in 2D...
+		// Superfluous now that we eliminate over the whole draft, but more efficient.
 
 		for (auto& edge: clippedLines)
 		{   // Canonical form:

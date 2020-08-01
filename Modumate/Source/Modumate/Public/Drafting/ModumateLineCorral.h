@@ -6,102 +6,100 @@
 #include "ModumateCore/ModumateUnits.h"
 #include "Drafting/ModumateDwgDraw.h"
 
-using namespace Modumate;
-
 // Eliminate or separate overlying line segments.
-class MODUMATE_API FModumateLineCorral: public IModumateDraftingDraw
+class MODUMATE_API FModumateLineCorral: public Modumate::IModumateDraftingDraw
 {
 public:
-		virtual EDrawError DrawLine(
-		const Units::FXCoord &x1,
-		const Units::FYCoord &y1,
-		const Units::FXCoord &x2,
-		const Units::FYCoord &y2,
-		const Units::FThickness &thickness,
-		const FMColor &color,
-		const LinePattern &linePattern,
-		const Units::FPhase &phase,
-		FModumateLayerType layerType = FModumateLayerType::kDefault
+		virtual Modumate::EDrawError DrawLine(
+		const Modumate::Units::FXCoord &x1,
+		const Modumate::Units::FYCoord &y1,
+		const Modumate::Units::FXCoord &x2,
+		const Modumate::Units::FYCoord &y2,
+		const Modumate::Units::FThickness &thickness,
+		const Modumate::FMColor &color,
+		const Modumate::LinePattern &linePattern,
+		const Modumate::Units::FPhase &phase,
+		Modumate::FModumateLayerType layerType = Modumate::FModumateLayerType::kDefault
 	) override;
 
-	virtual EDrawError AddText(
+	virtual Modumate::EDrawError AddText(
 		const TCHAR *text,
-		const Units::FFontSize &fontSize,
-		const Units::FXCoord &xpos,
-		const Units::FYCoord &ypos,
-		const Units::FAngle &rotateByRadians,
-		const FMColor &color,
-		DraftingAlignment textJustify,
-		const Units::FWidth &containingRectWidth,
-		FontType type,
-		FModumateLayerType layerType = FModumateLayerType::kDefault
+		const Modumate::Units::FFontSize &fontSize,
+		const Modumate::Units::FXCoord &xpos,
+		const Modumate::Units::FYCoord &ypos,
+		const Modumate::Units::FAngle &rotateByRadians,
+		const Modumate::FMColor &color,
+		Modumate::DraftingAlignment textJustify,
+		const Modumate::Units::FWidth &containingRectWidth,
+		Modumate::FontType type,
+		Modumate::FModumateLayerType layerType = Modumate::FModumateLayerType::kDefault
 	) override;
 
-	virtual EDrawError GetTextLength(
+	virtual Modumate::EDrawError GetTextLength(
 		const TCHAR *text,
-		const Units::FFontSize &fontSize,
-		Units::FUnitValue &textLength,
-		FontType type = FontType::Standard) override;
+		const Modumate::Units::FFontSize &fontSize,
+		Modumate::Units::FUnitValue &textLength,
+		Modumate::FontType type = Modumate::FontType::Standard) override;
 
-	virtual EDrawError DrawArc(
-		const Units::FXCoord &x,
-		const Units::FYCoord &y,
-		const Units::FAngle &a1,
-		const Units::FAngle &a2,
-		const Units::FRadius &radius,
-		const Units::FThickness &lineWidth,
-		const FMColor &color,
-		const LinePattern &linePattern,
+	virtual Modumate::EDrawError DrawArc(
+		const Modumate::Units::FXCoord &x,
+		const Modumate::Units::FYCoord &y,
+		const Modumate::Units::FAngle &a1,
+		const Modumate::Units::FAngle &a2,
+		const Modumate::Units::FRadius &radius,
+		const Modumate::Units::FThickness &lineWidth,
+		const Modumate::FMColor &color,
+		const Modumate::LinePattern &linePattern,
 		int slices,
-		FModumateLayerType layerType = FModumateLayerType::kDefault
+		Modumate::FModumateLayerType layerType = Modumate::FModumateLayerType::kDefault
 	) override;
 
-	virtual EDrawError AddImage(
+	virtual Modumate::EDrawError AddImage(
 		const TCHAR *imageFileFullPath,
-		const Units::FXCoord &x,
-		const Units::FYCoord &y,
-		const Units::FWidth &width,
-		const Units::FHeight &height,
-		FModumateLayerType layerType = FModumateLayerType::kDefault
+		const Modumate::Units::FXCoord &x,
+		const Modumate::Units::FYCoord &y,
+		const Modumate::Units::FWidth &width,
+		const Modumate::Units::FHeight &height,
+		Modumate::FModumateLayerType layerType = Modumate::FModumateLayerType::kDefault
 	) override;
 
-	virtual EDrawError FillPoly(
+	virtual Modumate::EDrawError FillPoly(
 		const float *points,
 		int numPoints,
-		const FMColor &color,
-		FModumateLayerType layerType = FModumateLayerType::kDefault
+		const Modumate::FMColor &color,
+		Modumate::FModumateLayerType layerType = Modumate::FModumateLayerType::kDefault
 	) override;
 
-	virtual EDrawError DrawCircle(
-		const Units::FXCoord &cx,
-		const Units::FYCoord &cy,
-		const Units::FRadius &radius,
-		const Units::FThickness &lineWidth,
-		const LinePattern &linePattern,
-		const FMColor &color,
-		FModumateLayerType layerType = FModumateLayerType::kDefault
+	virtual Modumate::EDrawError DrawCircle(
+		const Modumate::Units::FXCoord &cx,
+		const Modumate::Units::FYCoord &cy,
+		const Modumate::Units::FRadius &radius,
+		const Modumate::Units::FThickness &lineWidth,
+		const Modumate::LinePattern &linePattern,
+		const Modumate::FMColor &color,
+		Modumate::FModumateLayerType layerType = Modumate::FModumateLayerType::kDefault
 	) override;
 
-	virtual EDrawError FillCircle(
-		const Units::FXCoord &cx,
-		const Units::FYCoord &cy,
-		const Units::FRadius &radius,
-		const FMColor &color,
-		FModumateLayerType layerType = FModumateLayerType::kDefault
+	virtual Modumate::EDrawError FillCircle(
+		const Modumate::Units::FXCoord &cx,
+		const Modumate::Units::FYCoord &cy,
+		const Modumate::Units::FRadius &radius,
+		const Modumate::FMColor &color,
+		Modumate::FModumateLayerType layerType = Modumate::FModumateLayerType::kDefault
 	) override;
 
 	virtual bool StartPage(int32 pageNumber, float widthInches, float heightInches) override;
 
 	virtual bool SaveDocument(const FString& filename) override;
 
-	explicit FModumateLineCorral(IModumateDraftingDraw * nextDrafting = new FModumateDwgDraw);
+	explicit FModumateLineCorral(IModumateDraftingDraw * nextDrafting = new Modumate::FModumateDwgDraw);
 
 	static int LinePriorities[];
 
 private:
-	static const FModumateLayerType LayerTypeOrder[];
+	static const Modumate::FModumateLayerType LayerTypeOrder[];
 	static TAtomic<int32> InitPriorities;
-	static const TSet<FModumateLayerType> PassedThroughTypes;
+	static const TSet<Modumate::FModumateLayerType> PassedThroughTypes;
 
 	const TUniquePtr<IModumateDraftingDraw> Next;
 
@@ -117,13 +115,13 @@ private:
 
 	struct FLineData
 	{
-		Units::FThickness Thickness;
-		FMColor Color;
-		LinePattern Pattern;
-		Units::FPhase Phase;
-		FModumateLayerType LayerType;
-		FLineData(Units::FThickness thickness, FMColor color, LinePattern linePattern, Units::FPhase phase,
-			FModumateLayerType layerType);
+		Modumate::Units::FThickness Thickness;
+		Modumate::FMColor Color;
+		Modumate::LinePattern Pattern;
+		Modumate::Units::FPhase Phase;
+		Modumate::FModumateLayerType LayerType;
+		FLineData(Modumate::Units::FThickness thickness, Modumate::FMColor color, Modumate::LinePattern linePattern, Modumate::Units::FPhase phase,
+			Modumate::FModumateLayerType layerType);
 	};
 
 	using FLineSegments = TArray<FLineSegment>;
@@ -134,5 +132,5 @@ private:
 	int32 CurrentIndex{ 0 };
 
 	void ProcessLines();
-	static constexpr float Epsilon = 1.5f;	// World units
+	static constexpr float Epsilon = 0.6f;	// World units
 };

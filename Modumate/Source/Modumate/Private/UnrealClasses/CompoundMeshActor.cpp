@@ -503,6 +503,15 @@ bool ACompoundMeshActor::ConvertProcMeshToLinesOnPlane(const FVector &PlanePosit
 	return true;
 }
 
+bool ACompoundMeshActor::ConvertStaticMeshToLinesOnPlane(const FVector &PlanePosition, const FVector &PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges)
+{
+	for (auto staticMesh: StaticMeshComps)
+	{
+		UModumateGeometryStatics::ConvertStaticMeshToLinesOnPlane(staticMesh, PlanePosition, PlaneNormal, OutEdges);
+	}
+	return true;
+}
+
 void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parentMesh, const FLightConfiguration &lightConfig, const FTransform &lightTransform)
 {
 	bool makePointLight = (lightConfig.LightIntensity > 0.f) && lightConfig.bAsSpotLight == false;

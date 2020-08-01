@@ -2,6 +2,8 @@
 
 #include "ModumateCore/ModumateGeometryStatics.h"
 
+#include "MeshDescription.h"
+#include "MeshAttributes.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "KismetProceduralMeshLibrary.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
@@ -1821,6 +1823,55 @@ bool UModumateGeometryStatics::ConvertProcMeshToLinesOnPlane(UProceduralMeshComp
 	return true;
 }
 
+bool UModumateGeometryStatics::ConvertStaticMeshToLinesOnPlane(UStaticMeshComponent* InStaticMesh, FVector PlanePosition, FVector PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges)
+{
+	const FName& positionName = MeshAttribute::Vertex::Position;
+
+	const FTransform& localToWorld = InStaticMesh->GetComponentToWorld();
+	const UStaticMesh* staticMesh = InStaticMesh->GetStaticMesh();
+	if (staticMesh == nullptr)
+	{
+		return true;
+	}
+
+	static constexpr int32 levelOfDetailIndex = 0;
+	const FMeshDescription* meshDescription = staticMesh->GetMeshDescription(levelOfDetailIndex);
+	const FTriangleArray& triangleArray = meshDescription->Triangles();
+	const auto& vertexAttribs = meshDescription->VertexAttributes();
+	for (const auto triangleID: triangleArray.GetElementIDs())
+	{
+		auto vertexIDs = meshDescription->GetTriangleVertices(triangleID);
+		FVector verts[3];
+		for (int v = 0; v < 3; ++v)
+		{
+			FVector vert = vertexAttribs.GetAttribute<FVector>(vertexIDs[v], positionName);
+			verts[v] = localToWorld.TransformPosition(vert);
+		}
+		FVector intersections[2];
+		int intersectCount = 0;
+		for (int edge = 0; edge < 3; ++edge)
+		{
+			FVector& p1 = verts[edge];
+			FVector& p2 = verts[(edge + 1) % 3];
+			if ( ((p1 - PlanePosition) | PlaneNormal) * ((p2 - PlanePosition) | PlaneNormal) < 0.0f )
+			{   // Line crosses plane
+				intersections[intersectCount++] = FMath::LinePlaneIntersection(p1, p2, PlanePosition, PlaneNormal);
+				if (intersectCount == 2)
+				{
+					break;
+				}
+
+			}
+		}
+		if (intersectCount == 2)
+		{
+			OutEdges.Add(TPair<FVector, FVector>(intersections[0], intersections[1]));
+		}
+
+	}
+	return true;
+}
+
 bool UModumateGeometryStatics::GetAxisForVector(const FVector &Normal, EAxis::Type &OutAxis, float &OutSign)
 {
 	OutAxis = EAxis::Type::None;
@@ -2043,20 +2094,26 @@ bool UModumateGeometryStatics::IsLineSegmentWithin2D(const FVector2D& OuterLineS
 	{
 		return false;
 	}
+
 	outerDir.Normalize();
+	FVector2D innerDir((InnerLineEnd - InnerLineStart).GetSafeNormal());
+	if (FMath::Abs(outerDir | innerDir) < THRESH_NORMALS_ARE_PARALLEL)
+	{
+		return false;
+	}
 
 	FVector2D innerP1 = InnerLineStart - OuterLineStart;
 	FVector2D innerP2 = InnerLineEnd - OuterLineStart;
 
 	float projectedInner1 = outerDir | innerP1;
-	if (projectedInner1 < -epsilon || projectedInner1 * projectedInner1 > lineLength2 + 2.0f * epsilon
+	if (projectedInner1 < -epsilon || projectedInner1 * projectedInner1 > lineLength2 + 2.0f * epsilon2
 		|| FVector2D::DistSquared(innerP1, projectedInner1 * outerDir) > epsilon2)
 	{
 		return false;
 	}
 
 	float projectedInner2 = outerDir | innerP2;
-	if (projectedInner2 < -epsilon || projectedInner2 * projectedInner2 > lineLength2 + 2.0f * epsilon
+	if (projectedInner2 < -epsilon || projectedInner2 * projectedInner2 > lineLength2 + 2.0f * epsilon2
 		|| FVector2D::DistSquared(innerP2, projectedInner2 * outerDir) > epsilon2)
 	{
 		return false;

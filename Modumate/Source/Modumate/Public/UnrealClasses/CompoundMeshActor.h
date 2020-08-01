@@ -37,6 +37,7 @@ public:
 	void RemoveAllLights();
 
 	bool ConvertProcMeshToLinesOnPlane(const FVector &PlanePosition, const FVector &PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges);
+	bool ConvertStaticMeshToLinesOnPlane(const FVector &PlanePosition, const FVector &PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges);
 
 	void SetIsDynamic(bool DynamicStatus);
 	bool GetIsDynamic() const { return bIsDynamic; }

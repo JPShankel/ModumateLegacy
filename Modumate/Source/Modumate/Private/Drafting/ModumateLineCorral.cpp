@@ -3,6 +3,8 @@
 #include "Drafting/ModumateLineCorral.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 
+using namespace Modumate;
+
 // Map FModumateLayerType priorities in terms of obscuring in DWG.
 const FModumateLayerType FModumateLineCorral::LayerTypeOrder[] =
 {
