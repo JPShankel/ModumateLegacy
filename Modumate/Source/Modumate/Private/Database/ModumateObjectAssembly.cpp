@@ -472,7 +472,6 @@ ECraftingResult UModumateObjectAssemblyStatics::DoMakeAssembly(
 	ECraftingResult result = ECraftingResult::Error;
 	switch(InSpec.ObjectType)
 	{
-
 	case EObjectType::OTStructureLine:
 		result = MakeStructureLineAssembly(InDB,InSpec,OutMOA);
 		break;
@@ -484,6 +483,8 @@ ECraftingResult UModumateObjectAssemblyStatics::DoMakeAssembly(
 		result =  MakeLayeredAssembly(InDB,InSpec,OutMOA);
 		break;
 
+	case EObjectType::OTCountertop:
+	case EObjectType::OTCabinet:
 	case EObjectType::OTFurniture:
 	case EObjectType::OTDoor:
 	case EObjectType::OTWindow:

@@ -1,0 +1,11 @@
+TYPENAME,,,,0StubbyCabinets,,,,
+,,,,Definition,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,
+PROPERTY,,STRING,,Name,,Preset.Name,,
+PROPERTY,,PRIVATE,,Mesh Asset Path,,Node.AssetID,,
+,,,,Presets,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Node.AssetID,
+PRESET,,"4RiggedAssembly --> CabinetFace
+Stubby Cabinet 1",,4RiggedAssembly --> CabinetFace,,Stubby Cabinet 1,StaticMesh'/Game/ShoppingData/Meshes/StubbyPortal-Cabinet1.StubbyPortal-Cabinet1,
+PRESET,,"4RiggedAssembly --> CabinetFace
+Stubby Cabinet 2",,4RiggedAssembly --> CabinetFace,,Stubby Cabinet 2,StaticMesh'/Game/ShoppingData/Meshes/StubbyPortal-Cabinet2.StubbyPortal-Cabinet2,

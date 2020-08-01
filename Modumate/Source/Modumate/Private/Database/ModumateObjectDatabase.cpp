@@ -187,6 +187,10 @@ void FModumateDatabase::ReadPresetData()
 	FName ffeType = TEXT("0StubbyFFE");
 	FName beamColumnType = TEXT("2ExtrudedProfile");
 	FName profileType = TEXT("0Profile");
+	FName cabinetType = TEXT("0StubbyCabinets");
+	FName countertopType = TEXT("0StubbyCountertops");
+
+	TSet<FName> assemblyTypes = { rawMaterialType, layeredType, riggedType, ffeType, beamColumnType, profileType, cabinetType, countertopType };
 
 	for (auto& kvp : PresetManager.CraftingNodePresets.Presets)
 	{
@@ -197,12 +201,21 @@ void FModumateDatabase::ReadPresetData()
 			FString assetPathStr = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Node, Modumate::BIM::Parameters::EngineMaterial);
 			AddArchitecturalMaterial(matKey, matName, assetPathStr);
 		}
+		else
+		if (kvp.Value.NodeType == cabinetType || kvp.Value.NodeType == countertopType)
+		{
+			FString assetPath = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Node, Modumate::BIM::Parameters::AssetID);
+			FString name = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Preset, Modumate::BIM::Parameters::Name);
+			AddArchitecturalMesh(*name, name, assetPath);
+		}
+		else
 		if (kvp.Value.NodeType == riggedType || kvp.Value.NodeType == ffeType)
 		{
 			FString assetPath = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Layer, Modumate::BIM::Parameters::AssetID);
 			FString name = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Preset, Modumate::BIM::Parameters::Name);
 			AddArchitecturalMesh(*name, name, assetPath);
 		}
+		else
 		if (kvp.Value.NodeType == profileType)
 		{
 			FString assetPath = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Node, Modumate::BIM::Parameters::Mesh);
@@ -242,11 +255,13 @@ void FModumateDatabase::ReadPresetData()
 	objectMap.Add(FString(TEXT("4RiggedAssembly-->Window-->Hung")), EObjectType::OTWindow);
 
 	objectMap.Add(FString(TEXT("2Part0Slice-->FF&E")), EObjectType::OTFurniture);
+	objectMap.Add(FString(TEXT("4RiggedAssembly-->CabinetFace")), EObjectType::OTCabinet);
+	objectMap.Add(FString(TEXT("4LayeredAssembly-->Countertop")), EObjectType::OTCountertop);
 
 	TSet<EObjectType> gotDefault;
 	for (auto &kvp : PresetManager.CraftingNodePresets.Presets)
 	{
-		if (kvp.Value.NodeType == riggedType || kvp.Value.NodeType == layeredType || kvp.Value.NodeType == ffeType || kvp.Value.NodeType == beamColumnType)
+		if (assemblyTypes.Contains(kvp.Value.NodeType))
 		{
 			FString myPath;
 			kvp.Value.MyTagPath.ToString(myPath);

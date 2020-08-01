@@ -1,0 +1,11 @@
+TYPENAME,,,,0StubbyCountertops,,,,
+,,,,Definition,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,
+PROPERTY,,STRING,,Name,,Preset.Name,,
+PROPERTY,,PRIVATE,,Mesh Asset Path,,Node.AssetID,,
+,,,,Presets,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Node.AssetID,
+PRESET,,"4LayeredAssembly --> Countertop
+Stubby Countertop 1",,4LayeredAssembly --> Countertop,,Stubby Countertop 1,StaticMesh'/Game/ShoppingData/Meshes/StubbyPortal-Cabinet1.StubbyPortal-Cabinet1,
+PRESET,,"4LayeredAssembly --> Countertop
+Stubby Countertop 2",,4LayeredAssembly --> Countertop,,Stubby Countertop 2,StaticMesh'/Game/ShoppingData/Meshes/StubbyPortal-Cabinet2.StubbyPortal-Cabinet2,
