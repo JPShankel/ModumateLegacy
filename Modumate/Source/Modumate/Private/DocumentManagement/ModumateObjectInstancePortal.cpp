@@ -590,6 +590,42 @@ namespace Modumate
 
 		TArray<FEdge> portalEdges;
 
+		static auto lexicalEdgeCompare = [](const FEdge& a, const FEdge& b)
+		{   // Compare lexicographically.
+			for (int v = 0; v < 2; ++v)
+			{
+				if (a.Vertex[v].X < b.Vertex[v].X)
+				{
+					return true;
+				}
+				else if (a.Vertex[v].X > b.Vertex[v].X)
+				{
+					return false;
+				}
+				else if (a.Vertex[v].Y < b.Vertex[v].Y)
+				{
+					return true;
+				}
+				else if (a.Vertex[v].Y > b.Vertex[v].Y)
+				{
+					return false;
+				}
+			}
+			return false;  // False if equal.
+		};
+		static auto lexicalVectorCompare = [](const FVector& a, const FVector& b)
+		{
+			if (a.X == b.X)
+			{
+				if (a.Y == b.Y)
+				{
+					return a.Z < b.Z;
+				}
+				return a.Y < b.Y;
+			}
+			return a.X < b.X;
+		};
+
 #if 0	// Code for extracting from nine-slice ProcMeshes:
 		for (auto meshComp : actor->NineSliceLowLODComps)
 		{
@@ -694,6 +730,21 @@ namespace Modumate
 				continue;
 			}
 
+			struct FLocalEdge
+			{
+				FVector A;
+				FVector B;
+				FVector N;
+				bool bIsValid { true };
+				operator bool() const { return bIsValid; }
+				void Normalize() { if (lexicalVectorCompare(B, A)) { Swap(A, B); } }
+				bool operator==(const FLocalEdge& rhs) const
+					{ return A == rhs.A && B == rhs.B || A == rhs.B && B == rhs.A; }
+				bool operator<(const FLocalEdge& rhs) const
+				    { return A == rhs.A ? lexicalVectorCompare(B, rhs.B) : lexicalVectorCompare(A, rhs.A); }
+			};
+			TArray<FLocalEdge> edges;
+
 			const FMeshDescription* meshDescription = meshSection->GetMeshDescription(0);
 			const FTriangleArray& triangleArray = meshDescription->Triangles();
 			const auto triangleIDs = triangleArray.GetElementIDs();
@@ -704,9 +755,45 @@ namespace Modumate
 				FVector vert0 = attribs.GetAttribute<FVector>(vertexIDs[0], positionName);
 				FVector vert1 = attribs.GetAttribute<FVector>(vertexIDs[1], positionName);
 				FVector vert2 = attribs.GetAttribute<FVector>(vertexIDs[2], positionName);
-				portalEdges.Emplace(vert0, vert1);
-				portalEdges.Emplace(vert1, vert2);
-				portalEdges.Emplace(vert2, vert0);
+				FVector triNormal = ((vert1 - vert0) ^ (vert2 - vert0)).GetSafeNormal();
+
+				edges.Add({ vert0, vert1, triNormal });
+				edges.Add({ vert1, vert2, triNormal });
+				edges.Add({ vert2, vert0, triNormal });
+			}
+
+			for (auto& edge: edges)
+			{
+				edge.Normalize();
+			}
+			const int numEdges = edges.Num();
+			Algo::Sort(edges);
+			// Remove all common edges with common directions. 
+			for (int e1 = 0; e1 < numEdges; ++e1)
+			{
+				FLocalEdge& edge1 = edges[e1];
+				for (int e2 = e1 + 1; e2 < numEdges; ++e2)
+				{
+					FLocalEdge& edge2 = edges[e2];
+					if (!(edge1 == edge2))
+					{
+						break;
+					}
+					if (edge2 && FMath::Abs(edge1.N | edge2.N) > THRESH_NORMALS_ARE_PARALLEL)
+					{
+						edge1.bIsValid = false;
+						edge2.bIsValid = false;
+						break;
+					}
+				}
+			}
+
+			for (auto& edge: edges)
+			{
+				if (edge)
+				{
+					portalEdges.Emplace(edge.A, edge.B);
+				}
 			}
 
 		}
@@ -733,29 +820,7 @@ namespace Modumate
 				Swap(edge.Vertex[0], edge.Vertex[1]);
 			}
 		}
-		Algo::Sort(clippedLines, [](const FEdge& a, const FEdge& b)
-			{   // Sort lexicographically.
-				for (int v = 0; v < 2; ++v)
-				{
-					if (a.Vertex[v].X < b.Vertex[v].X)
-					{
-						return true;
-					}
-					else if (a.Vertex[v].X > b.Vertex[v].X)
-					{
-						return false;
-					}
-					else if (a.Vertex[v].Y < b.Vertex[v].Y)
-					{
-						return true;
-					}
-					else if (a.Vertex[v].Y > b.Vertex[v].Y)
-					{
-						return false;
-					}
-				}
-				return false;  // False if equal.
-			});
+		Algo::Sort(clippedLines, lexicalEdgeCompare);
 
 		int32 eraseIndex = Algo::Unique(clippedLines, [](const FEdge& a, const FEdge& b)
 			{

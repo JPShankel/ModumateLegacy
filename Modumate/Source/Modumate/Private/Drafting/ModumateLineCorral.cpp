@@ -237,6 +237,7 @@ void FModumateLineCorral::ProcessLines()
 					break;
 				}
 
+				bool bNotClipped = false;
 				float aDotB = dirA | dirB;
 				if (FMath::Abs(aDotB) > THRESH_NORMALS_ARE_PARALLEL)
 				{	// Lines parallel and possibly overlap.
@@ -259,6 +260,10 @@ void FModumateLineCorral::ProcessLines()
 									break;
 								}
 							}
+							else
+							{
+								bNotClipped = true;
+							}
 						}
 						else
 						{
@@ -277,6 +282,11 @@ void FModumateLineCorral::ProcessLines()
 									break;
 								}
 							}
+							else
+							{
+								bNotClipped = true;
+							}
+
 						}
 					}
 					intersectOnA = FMath::ClosestPointOnSegment2D(endB, startA, endA);
@@ -316,6 +326,11 @@ void FModumateLineCorral::ProcessLines()
 								}
 							}
 						}
+					}
+					else if (bNotClipped)
+					{
+						deltaA = FVector2D::ZeroVector;
+						break;
 					}
 
 				}
