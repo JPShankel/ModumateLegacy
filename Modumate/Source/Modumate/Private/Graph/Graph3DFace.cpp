@@ -164,7 +164,7 @@ namespace Modumate
 			edge->AddFace(signedFaceID, edgeNormal);
 		}
 
-		if (!UpdateInternalGraph() || !CalculateArea())
+		if (!UpdateInternalGraph())
 		{
 			bValid = false;
 			return bValid;
@@ -376,41 +376,6 @@ namespace Modumate
 		}
 
 		return true;
-	}
-
-	bool FGraph3DFace::CalculateArea()
-	{
-		if (!ensure(Cached2DPerimeter.Num() >= 3))
-		{
-			return false;
-		}
-
-		// TODO: remove triangulation and area calculation if we don't need them until after all
-		// graph deltas have been calculated and verified, and only at mesh creation.
-		TArray<FVector2D> OutVertices, OutPerimeter;
-		TArray<int32> OutTriangles, outholeidxs;
-		TArray<bool> outholes;
-		// TODO: Cached2DIslands is used rather than Cached2DHoles because current area calculation is used to compare candidate overlapping faces.
-		// This area calculation isn't strictly correct, so we should delete it or replace Cached2DIslands with Cached2DHoles when the area is no longer used in this way.
-		if (!UModumateGeometryStatics::TriangulateVerticesPoly2Tri(Cached2DPerimeter, Cached2DIslands, OutVertices, OutTriangles, OutPerimeter, outholes, outholeidxs))
-		{
-			return false;
-		}
-
-		CachedArea = 0.0f;
-		for (int32 i = 0; i < OutTriangles.Num(); i += 3)
-		{
-			const auto &p1 = OutVertices[OutTriangles[i]], &p2 = OutVertices[OutTriangles[i + 1]], &p3 = OutVertices[OutTriangles[i + 2]];
-
-			FVector2D triBaseDelta = p2 - p1;
-			float triBaseLen = triBaseDelta.Size();
-			float triHeight = FMath::PointDistToLine(FVector(p3.X, p3.Y, 0.0f), FVector(triBaseDelta.X, triBaseDelta.Y, 0.0f), FVector(p2.X, p2.Y, 0.0f));
-			float triArea = 0.5f * triBaseLen * triHeight;
-
-			CachedArea += triArea;
-		}
-
-		return (CachedArea > 0.0f);
 	}
 
 	void FGraph3DFace::UpdateHoles()

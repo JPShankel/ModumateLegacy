@@ -33,7 +33,6 @@ namespace Modumate
 		TArray<FVector2D> Cached2DPerimeter;			// CachedPerimeter, projected in the face's 2D coordinate space
 		TArray<FPolyHole2D> Cached2DIslands;			// CachedIslands, projected in the face's 2D coordinate space
 		TArray<FPolyHole2D> Cached2DHoles;				// CachedHoles, projected in the face's 2D coordinate space
-		float CachedArea = 0.0f;						// The area of the face
 		FGraph2D CachedGraph;							// The graph that is used to calculate perimeter, islands, triangulation, and area
 
 		FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs,
@@ -50,9 +49,6 @@ namespace Modumate
 		bool IntersectsPlane(const FPlane OtherPlane, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<TPair<FVector, FVector>> &IntersectingSegments) const;
 
 		bool UpdateInternalGraph();
-
-		// TODO: potentially remove or make this static
-		bool CalculateArea();
 
 		void UpdateHoles();
 
