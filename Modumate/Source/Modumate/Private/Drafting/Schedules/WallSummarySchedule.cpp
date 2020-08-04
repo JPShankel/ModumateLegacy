@@ -69,7 +69,7 @@ namespace Modumate {
 			row.Add(idTag);
 
 			// Custom Name
-			row.Add(MakeDraftingText(FText::FromString(assembly.CachedAssembly.GetProperty(BIM::Parameters::Name))));
+			row.Add(MakeDraftingText(FText::FromString(assembly.CachedAssembly.GetProperty(BIMPropertyNames::Name))));
 
 			// Thickness
 			FText thickness = FText::FromString(UModumateDimensionStatics::DecimalToFractionString(tag->TotalThickness));

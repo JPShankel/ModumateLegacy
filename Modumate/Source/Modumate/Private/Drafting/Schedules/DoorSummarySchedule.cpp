@@ -56,7 +56,7 @@ namespace Modumate {
 			iconElement->Information->Children.Add(idTag);
 
 			// Name
-			FText name = FText::FromString(assembly.CachedAssembly.GetProperty(BIM::Parameters::Name));
+			FText name = FText::FromString(assembly.CachedAssembly.GetProperty(BIMPropertyNames::Name));
 			iconElement->Information->Children.Add(MakeDraftingText(name));
 
 			// Count
@@ -66,7 +66,7 @@ namespace Modumate {
 
 			// Comments
 			FString comments;
-			if (assembly.CachedAssembly.TryGetProperty(BIM::Parameters::Comments,comments))
+			if (assembly.CachedAssembly.TryGetProperty(BIMPropertyNames::Comments,comments))
 			{
 				FText commentFormat = LOCTEXT("comments", "Comments: {0}");
 				FText commentText = FText::Format(commentFormat, FText::FromString(comments));

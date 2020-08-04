@@ -22,7 +22,7 @@ private:
 
 	FGraphCollection GraphCollection;
 	TSet<FName> KeyStore;
-	ECraftingResult ReadBIMTable(UDataTable* DataTable, Modumate::BIM::FCraftingPresetCollection& Target);
+	ECraftingResult ReadBIMTable(UDataTable* DataTable, FBIMPresetCollection& Target);
 
 public:
 	TMap<EObjectType, FAssemblyDataCollection> AssembliesByObjectType;
@@ -33,7 +33,7 @@ public:
 	static const int32 MinimumReadableVersion = 7;
 
 	// DDL 2.0
-	Modumate::BIM::FCraftingPresetCollection CraftingNodePresets, DraftingNodePresets;
+	FBIMPresetCollection CraftingNodePresets, DraftingNodePresets;
 	TMap<EObjectType, FName> StarterPresetsByObjectType;
 
 	ECraftingResult PresetToSpec(const FName& PresetID, FBIMAssemblySpec& OutPropertySpec) const;

@@ -11,18 +11,15 @@ namespace Modumate
 			bool ret = true;
 			UE_LOG(LogUnitTest, Display, TEXT("Modumate BIM Schema - Unit Test Started"));
 
-			FValueSpec vs;
-			ret = vs.Scope == EScope::None && ret;
-			ret = vs.Type == EValueType::None && ret;
+			FBIMPropertyValue vs;
+			ret = vs.Scope == EBIMValueScope::None && ret;
+			ret = vs.Type == EBIMValueType::None && ret;
 			ret = vs.Name == TEXT("");
 
-			vs = FValueSpec(EScope::Assembly, EValueType::FixedText, TEXT("Name"));
+			vs = FBIMPropertyValue(EBIMValueScope::Assembly, EBIMValueType::FixedText, TEXT("Name"));
 
-			BIM::FNameType fqn = vs.QN();
+			FBIMNameType fqn = vs.QN();
 			ret = (fqn == TEXT("Assembly.Name")) && ret;
-
-			BIM::EValueType vt = ValueTypeFromName(TEXT("Bad Value"));
-			ret = (vt == EValueType::Error) && ret;
 
 			UE_LOG(LogUnitTest, Display, TEXT("Modumate BIM Schema - Unit Test Completed %s"), ret ? TEXT("PASSED") : TEXT("FAILED"));
 			return ret;

@@ -2,7 +2,6 @@
 #include "UI/EditModelPlayerHUD.h"
 
 #include "Components/Image.h"
-#include "Database/ModumateDrawingSetWidget_CPP.h"
 #include "UI/WidgetClassAssetData.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -31,17 +30,9 @@ void AEditModelPlayerHUD::Initialize()
 	auto *controller = Cast<AEditModelPlayerController_CPP>(PlayerOwner);
 
 	if (!ensureAlways(controller && WidgetClasses &&
-		WidgetClasses->DrawingSetWidgetClass &&
 		WidgetClasses->HUDDrawWidgetClass))
 	{
 		return;
-	}
-
-	DrawingSetWidget = CreateWidget<UModumateDrawingSetWidget_CPP>(controller, WidgetClasses->DrawingSetWidgetClass);
-	if (DrawingSetWidget != nullptr)
-	{
-		DrawingSetWidget->AddToViewport();
-		DrawingSetWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 
 	HUDDrawWidget = CreateWidget<UHUDDrawWidget>(controller, WidgetClasses->HUDDrawWidgetClass);

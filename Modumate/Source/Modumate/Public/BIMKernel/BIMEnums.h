@@ -86,3 +86,67 @@ enum class ELayerFormat : uint8
 	Shingle,
 	Tile
 };
+
+UENUM()
+enum class EBIMValueType : uint8
+{
+	None = 0,
+	UserString,
+	FixedText,
+	Number,
+	Integer,
+	Bool,
+	Color,
+	Dimension,
+	Material,
+	Formula,
+	Subcategory,
+	Select,
+	TableSelect,
+	DynamicList,
+	Form,
+	Error = 255
+};
+
+UENUM()
+enum class EBIMValueScope : uint8
+{
+	None = 0,
+	Assembly,
+	Layer,
+	Pattern,
+	Module,
+	Gap,
+	ToeKick,
+	Node,
+	Mesh,
+	Portal,
+	MaterialColor,
+	Form,
+	Preset,
+	Room,
+	Drawing,
+	Roof,
+	//NOTE: finish bindings to be refactored, supporting old version as scopes for now
+	//Underscores appear in metadata table so maintaining here
+	Interior_Finish,
+	Exterior_Finish,
+	Glass_Finish,
+	Frame_Finish,
+	Hardware_Finish,
+	Cabinet_Interior_Finish,
+	Cabinet_Exterior_Finish,
+	Cabinet_Glass_Finish,
+	Cabinet_Hardware_Finish,
+	Error = 255
+};
+
+
+UENUM()
+enum class ECraftingNodePresetStatus : uint8
+{
+	None = 0,
+	UpToDate,
+	Dirty,
+	Pending
+};

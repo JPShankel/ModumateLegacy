@@ -2296,13 +2296,13 @@ int32 FModumateDocument::CreateFFE(
 	/*
 	If the incoming assembly has no code name, this is its first placement in the document and needs a code name
 	*/
-	if (useAsm.CachedAssembly.GetProperty(BIM::Parameters::Code).AsString().IsEmpty())
+	if (useAsm.CachedAssembly.GetProperty(BIMPropertyNames::Code).AsString().IsEmpty())
 	{
 		newFFECode = PresetManager.GetAvailableKey(TEXT("FFE"));
-		useAsm.CachedAssembly.SetProperty(BIM::Parameters::Code, newFFECode);
+		useAsm.CachedAssembly.SetProperty(BIMPropertyNames::Code, newFFECode);
 		for (auto &l : useAsm.CachedAssembly.Layers)
 		{
-			l.CodeName = useAsm.CachedAssembly.GetProperty(BIM::Parameters::Code);
+			l.CodeName = useAsm.CachedAssembly.GetProperty(BIMPropertyNames::Code);
 		}
 	}
 
@@ -3202,7 +3202,7 @@ void FModumateDocument::UpdateRoomAnalysis(UWorld *world)
 			{
 				FModumateObjectInstance *roomObj = GetObjectById(kvp.Key);
 				const FString &newRoomNumber = kvp.Value;
-				roomObj->SetProperty(BIM::EScope::Room, BIM::Parameters::Number, newRoomNumber);
+				roomObj->SetProperty(EScope::Room, BIMPropertyNames::Number, newRoomNumber);
 			}
 
 			urSequenceRooms->Undo = [this, oldRoomNumbers]()
@@ -3211,7 +3211,7 @@ void FModumateDocument::UpdateRoomAnalysis(UWorld *world)
 				{
 					FModumateObjectInstance *roomObj = GetObjectById(kvp.Key);
 					const FString &oldRoomNumber = kvp.Value;
-					roomObj->SetProperty(BIM::EScope::Room, BIM::Parameters::Number, oldRoomNumber);
+					roomObj->SetProperty(EScope::Room, BIMPropertyNames::Number, oldRoomNumber);
 				}
 			};
 		};

@@ -242,8 +242,8 @@ void AAdjustFFEPointHandle::Initialize()
 	}
 
 	bool bHaveMountingProperties =
-		TargetMOI->GetAssembly().CachedAssembly.TryGetProperty(BIM::Parameters::Normal, AssemblyNormal) &&
-		TargetMOI->GetAssembly().CachedAssembly.TryGetProperty(BIM::Parameters::Tangent, AssemblyTangent);
+		TargetMOI->GetAssembly().CachedAssembly.TryGetProperty(BIMPropertyNames::Normal, AssemblyNormal) &&
+		TargetMOI->GetAssembly().CachedAssembly.TryGetProperty(BIMPropertyNames::Tangent, AssemblyTangent);
 	ensure(bHaveMountingProperties);
 
 	AActor *moiActor = TargetMOI->GetActor();
@@ -445,8 +445,8 @@ void AAdjustFFERotateHandle::Initialize()
 	}
 
 	bool bHaveMountingProperties =
-		TargetMOI->GetAssembly().CachedAssembly.TryGetProperty(BIM::Parameters::Normal, AssemblyNormal) &&
-		TargetMOI->GetAssembly().CachedAssembly.TryGetProperty(BIM::Parameters::Tangent, AssemblyTangent);
+		TargetMOI->GetAssembly().CachedAssembly.TryGetProperty(BIMPropertyNames::Normal, AssemblyNormal) &&
+		TargetMOI->GetAssembly().CachedAssembly.TryGetProperty(BIMPropertyNames::Tangent, AssemblyTangent);
 	ensure(bHaveMountingProperties);
 
 	AActor *moiActor = TargetMOI->GetActor();

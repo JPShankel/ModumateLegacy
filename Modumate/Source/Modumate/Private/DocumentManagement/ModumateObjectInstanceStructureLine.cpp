@@ -100,7 +100,7 @@ namespace Modumate
 			FVector2D profileSize = profile->Extents.GetSize();
 
 			FVector2D scaleVector;
-			if (MOI->GetAssembly().CachedAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
+			if (MOI->GetAssembly().CachedAssembly.TryGetProperty(BIMPropertyNames::Scale, scaleVector))
 			{
 				profileSize *= scaleVector;
 			}
@@ -134,7 +134,7 @@ namespace Modumate
 
 		FVector scaleVector;
 
-		if (!MOI->GetAssembly().CachedAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
+		if (!MOI->GetAssembly().CachedAssembly.TryGetProperty(BIMPropertyNames::Scale, scaleVector))
 		{
 			scaleVector = FVector::OneVector;
 		}

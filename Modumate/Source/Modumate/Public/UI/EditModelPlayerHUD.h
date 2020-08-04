@@ -71,9 +71,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widgets)
 	UHUDDrawWidget *HUDDrawWidget;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widgets)
-	class UModumateDrawingSetWidget_CPP *DrawingSetWidget;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<class ALineActor*> All3DLineActors;
 

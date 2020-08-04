@@ -41,9 +41,9 @@ namespace Modumate
 }
 
 USTRUCT()
-struct FLayerPatternModule
+struct MODUMATE_API FLayerPatternModule
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	FName Key = FName();
 	FText DisplayName = FText::GetEmpty();
@@ -62,9 +62,9 @@ struct FLayerPatternModule
 };
 
 USTRUCT()
-struct FLayerPatternGap
+struct MODUMATE_API FLayerPatternGap
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	FName Key = FName();
 	FText DisplayName = FText::GetEmpty();
@@ -138,9 +138,9 @@ struct MODUMATE_API FPatternModuleTemplate
 };
 
 USTRUCT()
-struct FLayerPattern
+struct MODUMATE_API FLayerPattern
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	FName Key = FName();
 	FText DisplayName = FText::GetEmpty();

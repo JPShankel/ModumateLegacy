@@ -178,7 +178,7 @@ void FModumateDatabase::ReadPresetData()
 		return;
 	}
 
-	Modumate::BIM::FCraftingTreeNodeType *layerNode = PresetManager.CraftingNodePresets.NodeDescriptors.Find(TEXT("2Layer0D"));
+	FCraftingTreeNodeType *layerNode = PresetManager.CraftingNodePresets.NodeDescriptors.Find(TEXT("2Layer0D"));
 	layerNode->Scope = EBIMValueScope::Layer;
 
 	FName rawMaterialType = TEXT("0RawMaterial");
@@ -196,33 +196,33 @@ void FModumateDatabase::ReadPresetData()
 	{
 		if (kvp.Value.NodeType == rawMaterialType)
 		{
-			FString matName = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Preset, Modumate::BIM::Parameters::Name);
-			FName matKey = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Node, Modumate::BIM::Parameters::MaterialKey);
-			FString assetPathStr = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Node, Modumate::BIM::Parameters::EngineMaterial);
+			FString matName = kvp.Value.Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
+			FName matKey = kvp.Value.Properties.GetProperty(EBIMValueScope::Node, BIMPropertyNames::MaterialKey);
+			FString assetPathStr = kvp.Value.Properties.GetProperty(EBIMValueScope::Node, BIMPropertyNames::EngineMaterial);
 			AddArchitecturalMaterial(matKey, matName, assetPathStr);
 		}
 		else
 		if (kvp.Value.NodeType == cabinetType || kvp.Value.NodeType == countertopType)
 		{
-			FString assetPath = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Node, Modumate::BIM::Parameters::AssetID);
-			FString name = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Preset, Modumate::BIM::Parameters::Name);
+			FString assetPath = kvp.Value.Properties.GetProperty(EBIMValueScope::Node, BIMPropertyNames::AssetID);
+			FString name = kvp.Value.Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
 			AddArchitecturalMesh(*name, name, assetPath);
 		}
 		else
 		if (kvp.Value.NodeType == riggedType || kvp.Value.NodeType == ffeType)
 		{
-			FString assetPath = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Layer, Modumate::BIM::Parameters::AssetID);
-			FString name = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Preset, Modumate::BIM::Parameters::Name);
+			FString assetPath = kvp.Value.Properties.GetProperty(EBIMValueScope::Layer, BIMPropertyNames::AssetID);
+			FString name = kvp.Value.Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
 			AddArchitecturalMesh(*name, name, assetPath);
 		}
 		else
 		if (kvp.Value.NodeType == profileType)
 		{
-			FString assetPath = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Node, Modumate::BIM::Parameters::Mesh);
+			FString assetPath = kvp.Value.Properties.GetProperty(EBIMValueScope::Node, BIMPropertyNames::Mesh);
 			if (assetPath.Len() != 0)
 			{
-				FString name = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Preset, Modumate::BIM::Parameters::Name);
-				FString key = kvp.Value.Properties.GetProperty(Modumate::BIM::EScope::Node, Modumate::BIM::Parameters::ProfileKey);
+				FString name = kvp.Value.Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
+				FString key = kvp.Value.Properties.GetProperty(EBIMValueScope::Node, BIMPropertyNames::ProfileKey);
 				AddSimpleMesh(*key, name, assetPath);
 			}
 		}

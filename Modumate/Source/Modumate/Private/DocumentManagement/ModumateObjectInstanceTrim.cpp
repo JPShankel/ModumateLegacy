@@ -278,7 +278,7 @@ namespace Modumate
 			TrimDir = (TrimEndPos - TrimStartPos).GetSafeNormal();
 
 			FVector scaleVector;
-			if (!MOI->GetAssembly().CachedAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
+			if (!MOI->GetAssembly().CachedAssembly.TryGetProperty(BIMPropertyNames::Scale, scaleVector))
 			{
 				scaleVector = FVector::OneVector;
 			}

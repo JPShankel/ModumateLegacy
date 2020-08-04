@@ -22,7 +22,6 @@ class UEditModelCameraController;
 class UEditModelInputAutomation;
 class UEditModelInputHandler;
 class UHUDDrawWidget;
-class UModumateDrawingSetWidget_CPP;
 class FModumateDocument;
 
 namespace Modumate
@@ -278,9 +277,6 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	bool IsCursorOverWidget() const;
-
-	UFUNCTION(BlueprintPure)
-	UModumateDrawingSetWidget_CPP* GetDrawingSetWidget() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = HUD)
 	void ClearTextInputs();

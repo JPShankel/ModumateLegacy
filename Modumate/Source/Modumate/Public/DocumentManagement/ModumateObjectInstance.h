@@ -212,14 +212,13 @@ namespace Modumate
 		virtual bool GetIsDynamic() const override { return false; }
 	};
 
-
 	struct MODUMATE_API FMOIStateData
 	{
 		EMOIDeltaType StateType = EMOIDeltaType::None;
 		int32 ObjectID = -1;
 
 		// TODO: use this for instance-level overrides
-		BIM::FBIMPropertySheet ObjectProperties;
+		FBIMPropertySheet ObjectProperties;
 
 		//<Thickness, Height, UNUSED>
 		FVector Extents = FVector::ZeroVector;
@@ -381,14 +380,14 @@ namespace Modumate
 
 		// Property getters/setters that, for now, only pass through directly to ObjectProperties.
 		// TODO: use these for instance-level overrides, where they pass through to the assembly.
-		bool HasProperty(BIM::EScope Scope, const BIM::FNameType &Name) const;
-		FModumateCommandParameter GetProperty(BIM::EScope Scope, const BIM::FNameType &Name) const;
-		const BIM::FBIMPropertySheet &GetProperties() const;
-		void SetProperty(BIM::EScope Scope, const BIM::FNameType &Name, const FModumateCommandParameter &Param);
-		void SetAllProperties(const BIM::FBIMPropertySheet &NewProperties);
+		bool HasProperty(EBIMValueScope Scope, const FBIMNameType &Name) const;
+		FModumateCommandParameter GetProperty(EBIMValueScope Scope, const FBIMNameType &Name) const;
+		const FBIMPropertySheet &GetProperties() const;
+		void SetProperty(EBIMValueScope Scope, const FBIMNameType &Name, const FModumateCommandParameter &Param);
+		void SetAllProperties(const FBIMPropertySheet &NewProperties);
 
 		template<class T>
-		bool TryGetProperty(BIM::EScope Scope, const BIM::FNameType &Name, T &OutT) const
+		bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType &Name, T &OutT) const
 		{
 			return GetProperties().TryGetProperty(Scope, Name, OutT);
 		}

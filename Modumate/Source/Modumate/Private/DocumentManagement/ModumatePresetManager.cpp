@@ -24,7 +24,7 @@ ECraftingResult FPresetManager::FromDocumentRecord(UWorld* World, const FModumat
 	KeyStore = DocumentRecord.KeyStore;
 	CraftingNodePresets.FromDataRecords(DocumentRecord.CraftingPresetArrayV2);
 
-	BIM::FCraftingPresetCollection &presetCollection = CraftingNodePresets;
+	FBIMPresetCollection &presetCollection = CraftingNodePresets;
 
 	// In the DDL2verse, assemblies are stored solely by their root preset ID then rebaked into runtime assemblies on load
 	for (auto& presetID : DocumentRecord.ProjectAssemblyPresets)
@@ -190,7 +190,7 @@ ECraftingResult FPresetManager::PresetToSpec(const FName &PresetID, FBIMAssembly
 	ECraftingResult ret = ECraftingResult::Success;
 	OutPropertySpec.RootPreset = PresetID;
 
-	BIM::FBIMPropertySheet* currentSheet = &OutPropertySpec.RootProperties;
+	FBIMPropertySheet* currentSheet = &OutPropertySpec.RootProperties;
 
 	TArray<FName> presetStack;
 	presetStack.Push(PresetID);
@@ -203,14 +203,14 @@ ECraftingResult FPresetManager::PresetToSpec(const FName &PresetID, FBIMAssembly
 		FName presetID = presetStack.Pop();
 		EBIMValueScope pinScope = scopeStack.Pop();
 
-		const BIM::FCraftingTreeNodePreset* preset = CraftingNodePresets.Presets.Find(presetID);
+		const FBIMPreset* preset = CraftingNodePresets.Presets.Find(presetID);
 		if (preset == nullptr)
 		{
 			ret = ECraftingResult::Error;
 		}
 		else
 		{
-			const BIM::FCraftingTreeNodeType* nodeType = CraftingNodePresets.NodeDescriptors.Find(preset->NodeType);
+			const FCraftingTreeNodeType* nodeType = CraftingNodePresets.NodeDescriptors.Find(preset->NodeType);
 			if (ensureAlways(nodeType != nullptr))
 			{
 				if (nodeType->Scope == EBIMValueScope::Layer)
@@ -232,13 +232,13 @@ ECraftingResult FPresetManager::PresetToSpec(const FName &PresetID, FBIMAssembly
 
 			preset->Properties.ForEachProperty([&OutPropertySpec, &currentSheet, &preset, pinScope, PresetID](const FString& Name, const FModumateCommandParameter& MCP)
 			{
-				BIM::FValueSpec vs(*Name);
+				FBIMPropertyValue vs(*Name);
 
 				// 'Node' scope values inherit their scope from their parents, specified on the pin
-				BIM::EScope nodeScope = vs.Scope == BIM::EScope::Node ? pinScope : vs.Scope;
+				EBIMValueScope nodeScope = vs.Scope == EBIMValueScope::Node ? pinScope : vs.Scope;
 
 				// Preset properties only apply to the preset itself, not to its children
-				if (nodeScope != BIM::EScope::Preset || preset->PresetID == PresetID)
+				if (nodeScope != EBIMValueScope::Preset || preset->PresetID == PresetID)
 				{
 					currentSheet->SetProperty(nodeScope, vs.Name, MCP);
 				}

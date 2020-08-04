@@ -54,7 +54,7 @@ struct MODUMATE_API FCraftingPresetRecord
 };
 
 USTRUCT()
-struct FCustomAssemblyCraftingNodeRecord
+struct MODUMATE_API FCustomAssemblyCraftingNodeRecord
 {
 	GENERATED_BODY();
 

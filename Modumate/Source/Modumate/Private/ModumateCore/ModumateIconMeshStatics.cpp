@@ -130,7 +130,7 @@ bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContex
 
 	FName materialName, colorName;
 
-	if (presetSpec.RootProperties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::MaterialKey, materialName))
+	if (presetSpec.RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::MaterialKey, materialName))
 	{
 		const FArchitecturalMaterial *mat = db->GetArchitecturalMaterialByKey(materialName);
 		if (ensureAlways(mat != nullptr) && ensureAlways(mat->EngineMaterial.IsValid()))
@@ -139,7 +139,7 @@ bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContex
 		}
 	}
 
-	if (presetSpec.RootProperties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::Color, colorName))
+	if (presetSpec.RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Color, colorName))
 	{
 		const FCustomColor *color = db->GetCustomColorByKey(colorName);
 		if (ensureAlways(color != nullptr))

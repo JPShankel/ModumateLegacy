@@ -9,18 +9,14 @@
 
 #include "ModumateRoofStatics.generated.h"
 
-
-class MODUMATE_API FModumateDocument;
+class FModumateDocument;
 
 namespace Modumate
 {
-	class MODUMATE_API FModumateObjectInstance;
-
-	namespace BIM
-	{
-		class MODUMATE_API FBIMPropertySheet;
-	}
+	class FModumateObjectInstance;
 }
+
+class FBIMPropertySheet;
 
 // Helper struct for roof tessellation
 USTRUCT()
@@ -92,7 +88,7 @@ class MODUMATE_API UModumateRoofStatics : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	static void InitializeProperties(Modumate::BIM::FBIMPropertySheet *RoofProperties, int32 NumEdges);
+	static void InitializeProperties(FBIMPropertySheet *RoofProperties, int32 NumEdges);
 
 	static bool GetAllProperties(const Modumate::FModumateObjectInstance *RoofObject,
 		TArray<FVector> &OutEdgePoints, TArray<int32> &OutEdgeIDs, FRoofEdgeProperties &OutDefaultProperties, TArray<FRoofEdgeProperties> &OutEdgeProperties);

@@ -3,12 +3,11 @@
 #include "CoreMinimal.h"
 #include "BIMKernel/BIMTagPath.h"
 #include "BIMKernel/BIMNodeEditor.h"
-#include "BIMKernel/BIMWidgetStatics.h"
 #include "BIMKernel/BIMAssemblySpec.h"
 
 static bool testTags()
 {
-	Modumate::BIM::FTagGroup group1, group2;
+	FBIMTagGroup group1, group2;
 
 	group1.Add(TEXT("TAG1"));
 	group1.Add(TEXT("TAG2"));
@@ -28,8 +27,8 @@ static bool testTags()
 		return false;
 	}
 
-	group1 = Modumate::BIM::FTagGroup();
-	group2 = Modumate::BIM::FTagGroup();
+	group1 = FBIMTagGroup();
+	group2 = FBIMTagGroup();
 
 	group1.Add(TEXT("TAG1"));
 	group1.Add(TEXT("TAG2"));
@@ -58,8 +57,8 @@ static bool testTags()
 		return false;
 	}
 
-	group1 = Modumate::BIM::FTagGroup();
-	group2 = Modumate::BIM::FTagGroup();
+	group1 = FBIMTagGroup();
+	group2 = FBIMTagGroup();
 
 	group1.Add(TEXT("TAG1"));
 	group1.Add(TEXT("TAG2"));
@@ -88,8 +87,8 @@ static bool testTags()
 		return false;
 	}
 
-	group1 = Modumate::BIM::FTagGroup();
-	group2 = Modumate::BIM::FTagGroup();
+	group1 = FBIMTagGroup();
+	group2 = FBIMTagGroup();
 
 	group1.Add(TEXT("TAG1"));
 	group1.Add(TEXT("G1TAG2"));
@@ -110,7 +109,7 @@ static bool testTags()
 
 	FString outString1,outString2;
 
-	Modumate::BIM::FTagPath path1, path2;
+	FBIMTagPath path1, path2;
 	path1.Add(group1);
 	path1.Add(group2);
 
@@ -147,15 +146,15 @@ static bool testTags()
 	return true;
 }
 
-bool testPreset(const Modumate::BIM::FCraftingPresetCollection &PresetCollection, const FName &PresetID)
+bool testPreset(const FBIMPresetCollection &PresetCollection, const FName &PresetID)
 {
-	const Modumate::BIM::FCraftingTreeNodePreset *preset = PresetCollection.Presets.Find(PresetID);
+	const FBIMPreset *preset = PresetCollection.Presets.Find(PresetID);
 	if (preset == nullptr)
 	{
 		return false;
 	}
 
-	Modumate::BIM::FCraftingTreeNodePreset outPreset;
+	FBIMPreset outPreset;
 	FCraftingPresetRecord record;
 
 	if (preset->ToDataRecord(record) != ECraftingResult::Success)
@@ -191,7 +190,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	FString manifestPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
 
 	TArray<FString> errors;
-	Modumate::BIM::FCraftingPresetCollection presetCollection;
+	FBIMPresetCollection presetCollection;
 
 	if (presetCollection.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), errors) != ECraftingResult::Success)
 	{
@@ -245,8 +244,8 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	/*
 	Make sure preset keys are consistent between known parents and children
 	*/
-	Modumate::BIM::FCraftingTreeNodePreset *assemblyPreset = presetCollection.Presets.Find(layeredAssemblies[0]);
-	Modumate::BIM::FCraftingTreeNodePreset *layerPreset = presetCollection.Presets.Find(layerPresets[0]);
+	FBIMPreset *assemblyPreset = presetCollection.Presets.Find(layeredAssemblies[0]);
+	FBIMPreset *layerPreset = presetCollection.Presets.Find(layerPresets[0]);
 	FName assemblyPresetFirstLayer = assemblyPreset->ChildPresets[0].PresetID;
 
 	FString str1 = assemblyPresetFirstLayer.ToString();
@@ -257,13 +256,14 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 		return false;
 	}
 
-	Modumate::BIM::FCraftingTreeNodeType *nodeType = presetCollection.NodeDescriptors.Find(assemblyPreset->NodeType);
+	FCraftingTreeNodeType *nodeType = presetCollection.NodeDescriptors.Find(assemblyPreset->NodeType);
 
-	Modumate::BIM::FCraftingTreeNodeInstancePool instancePool;
-	Modumate::BIM::FCraftingTreeNodeInstanceSharedPtr node = instancePool.CreateNodeInstanceFromPreset(presetCollection, 0, layeredAssemblies[0],0,0);
+	FBIMCraftingTreeNodePool instancePool;
+	FBIMCraftingTreeNodeSharedPtr rootNode;
+	ensureAlways(instancePool.InitFromPreset(presetCollection, layeredAssemblies[0], rootNode) == ECraftingResult::Success);
 
 	FBIMAssemblySpec outSpec;
-	if (!ensureAlways(instancePool.PresetToSpec(layeredAssemblies[0], presetCollection, outSpec) == ECraftingResult::Success))
+	if (ensureAlways(rootNode.IsValid()) && !ensureAlways(instancePool.PresetToSpec(layeredAssemblies[0], presetCollection, outSpec) == ECraftingResult::Success))
 	{
 		return false;
 	}

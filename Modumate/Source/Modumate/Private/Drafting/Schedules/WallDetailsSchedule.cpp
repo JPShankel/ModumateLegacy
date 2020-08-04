@@ -73,7 +73,7 @@ namespace Modumate {
 			assemblyGrid->RowHeight = layerTag->Dimensions.Y.AsFloorplanInches() + 2.0f * Margin;
 
 			// Function contains custom name
-			topRow.Add(MakeDraftingText(FText::FromString(assembly.CachedAssembly.GetProperty(BIM::Parameters::Name))));
+			topRow.Add(MakeDraftingText(FText::FromString(assembly.CachedAssembly.GetProperty(BIMPropertyNames::Name))));
 
 			// Category columns is blank
 			// column widths are implicitly set by subsequent rows
@@ -87,7 +87,7 @@ namespace Modumate {
 			topRow.Add(MakeShareable(new FDraftingComposite()));
 			topRow.Add(MakeShareable(new FDraftingComposite()));
 
-			topRow.Add(MakeDraftingText(FText::FromString(assembly.CachedAssembly.GetProperty(BIM::Parameters::Comments))));
+			topRow.Add(MakeDraftingText(FText::FromString(assembly.CachedAssembly.GetProperty(BIMPropertyNames::Comments))));
 
 			assemblyGrid->MakeRow(topRow);
 

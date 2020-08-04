@@ -15,7 +15,7 @@
 class FModumateDatabase;
 struct FBIMAssemblySpec;
 
-USTRUCT(BlueprintType)
+USTRUCT()
 struct FLightConfiguration
 {
 	GENERATED_BODY();
@@ -84,19 +84,19 @@ struct MODUMATE_API FModumateObjectAssembly
 	EObjectType ObjectType = EObjectType::OTUnknown;
 	FName DatabaseKey, RootPreset;
 
-	Modumate::BIM::FBIMPropertySheet Properties;
+	FBIMPropertySheet Properties;
 
 	TArray<FModumateObjectAssemblyLayer> Layers;
 
 	Modumate::Units::FUnitValue CalculateThickness() const;
 
 	// Helper functions for getting properties in the Assembly scope
-	Modumate::FModumateCommandParameter GetProperty(const Modumate::BIM::FNameType &name) const;
-	void SetProperty(const Modumate::BIM::FNameType &name, const Modumate::FModumateCommandParameter &v);
-	bool HasProperty(const Modumate::BIM::FNameType &name) const;
+	Modumate::FModumateCommandParameter GetProperty(const FBIMNameType &name) const;
+	void SetProperty(const FBIMNameType &name, const Modumate::FModumateCommandParameter &v);
+	bool HasProperty(const FBIMNameType &name) const;
 
 	template <class T>
-	bool TryGetProperty(const Modumate::BIM::FNameType &name, T &outT) const
+	bool TryGetProperty(const FBIMNameType &name, T &outT) const
 	{
 		if (HasProperty(name))
 		{

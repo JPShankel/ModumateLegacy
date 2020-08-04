@@ -1233,8 +1233,8 @@ bool UModumateFunctionLibrary::GetCabinetToeKickDimensions(const FBIMAssemblySpe
 	outToeKickDims.Set(0.0f, 0.0f);
 
 	FString depth, height;
-	if (obAsm.CachedAssembly.Properties.TryGetProperty(BIM::EScope::ToeKick,BIM::Parameters::Depth,depth)
-		&& obAsm.CachedAssembly.Properties.TryGetProperty(BIM::EScope::ToeKick,BIM::Parameters::Height,height))
+	if (obAsm.CachedAssembly.Properties.TryGetProperty(EBIMValueScope::ToeKick, BIMPropertyNames::Depth,depth)
+		&& obAsm.CachedAssembly.Properties.TryGetProperty(EBIMValueScope::ToeKick, BIMPropertyNames::Height,height))
 	{
 		outToeKickDims.X = UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters;
 		outToeKickDims.Y = UModumateDimensionStatics::StringToFormattedDimension(height).Centimeters;

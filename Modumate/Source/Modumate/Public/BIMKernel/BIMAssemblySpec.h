@@ -20,8 +20,8 @@ struct MODUMATE_API FBIMAssemblySpec
 {
 	EObjectType ObjectType = EObjectType::OTNone;
 	FName RootPreset;
-	Modumate::BIM::FBIMPropertySheet RootProperties;
-	TArray<Modumate::BIM::FBIMPropertySheet> LayerProperties;
+	FBIMPropertySheet RootProperties;
+	TArray<FBIMPropertySheet> LayerProperties;
 
 	FModumateObjectAssembly CachedAssembly;
 

@@ -76,7 +76,7 @@ void UTrimTool::OnAssemblySet()
 			}
 
 			FVector scaleVector;
-			if (!assembly->CachedAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
+			if (!assembly->CachedAssembly.TryGetProperty(BIMPropertyNames::Scale, scaleVector))
 			{
 				scaleVector = FVector::OneVector;
 			}

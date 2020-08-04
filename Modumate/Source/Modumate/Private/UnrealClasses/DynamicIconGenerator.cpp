@@ -371,7 +371,7 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FName &AsmKey, EToo
 	FVector2D outerExtensions = FVector2D::ZeroVector;
 
 	FVector scaleVector;
-	if (!assembly->CachedAssembly.TryGetProperty(BIM::Parameters::Scale, scaleVector))
+	if (!assembly->CachedAssembly.TryGetProperty(BIMPropertyNames::Scale, scaleVector))
 	{
 		scaleVector = FVector::OneVector;
 	}

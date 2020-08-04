@@ -323,7 +323,7 @@ TArray<bool> UModumateRoofStatics::TempEdgesHaveFaces;
 TArray<float> UModumateRoofStatics::TempEdgeOverhangs;
 TMap<int32, FRoofEdgeProperties> UModumateRoofStatics::TempEdgePropertyMap;
 
-void UModumateRoofStatics::InitializeProperties(Modumate::BIM::FBIMPropertySheet *RoofProperties, int32 NumEdges)
+void UModumateRoofStatics::InitializeProperties(FBIMPropertySheet *RoofProperties, int32 NumEdges)
 {
 	if (!ensure(RoofProperties))
 	{
@@ -336,10 +336,10 @@ void UModumateRoofStatics::InitializeProperties(Modumate::BIM::FBIMPropertySheet
 	TempEdgesHaveFaces.Init(UModumateRoofStatics::DefaultEdgeProperties.bHasFace, numProperties);
 	TempEdgeOverhangs.Init(UModumateRoofStatics::DefaultEdgeProperties.Overhang, numProperties);
 
-	RoofProperties->SetProperty(BIM::EScope::Roof, BIM::Parameters::Override, BIM::FValue(TempEdgeOverrides));
-	RoofProperties->SetProperty(BIM::EScope::Roof, BIM::Parameters::Slope, BIM::FValue(TempEdgeSlopes));
-	RoofProperties->SetProperty(BIM::EScope::Roof, BIM::Parameters::HasFace, BIM::FValue(TempEdgesHaveFaces));
-	RoofProperties->SetProperty(BIM::EScope::Roof, BIM::Parameters::Overhang, BIM::FValue(TempEdgeOverhangs));
+	RoofProperties->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::Override, FBIMPropertyValue::FValue(TempEdgeOverrides));
+	RoofProperties->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::Slope, FBIMPropertyValue::FValue(TempEdgeSlopes));
+	RoofProperties->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::HasFace, FBIMPropertyValue::FValue(TempEdgesHaveFaces));
+	RoofProperties->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::Overhang, FBIMPropertyValue::FValue(TempEdgeOverhangs));
 }
 
 bool UModumateRoofStatics::GetAllProperties(
@@ -369,12 +369,12 @@ bool UModumateRoofStatics::GetAllProperties(
 	OutEdgeIDs = ControlIndices;
 	OutEdgeProperties.Reset(numEdges);
 
-	BIM::EScope propertyScope = BIM::EScope::Roof;
+	EBIMValueScope propertyScope = EBIMValueScope::Roof;
 
-	if (!RoofObject->TryGetProperty<TArray<bool>>(propertyScope, BIM::Parameters::Override, TempEdgeOverrides) || (TempEdgeOverrides.Num() != numProperties) ||
-		!RoofObject->TryGetProperty<TArray<float>>(propertyScope, BIM::Parameters::Slope, TempEdgeSlopes) || (TempEdgeSlopes.Num() != numProperties) ||
-		!RoofObject->TryGetProperty<TArray<bool>>(propertyScope, BIM::Parameters::HasFace, TempEdgesHaveFaces) || (TempEdgesHaveFaces.Num() != numProperties) ||
-		!RoofObject->TryGetProperty<TArray<float>>(propertyScope, BIM::Parameters::Overhang, TempEdgeOverhangs) || (TempEdgeOverhangs.Num() != numProperties))
+	if (!RoofObject->TryGetProperty<TArray<bool>>(propertyScope, BIMPropertyNames::Override, TempEdgeOverrides) || (TempEdgeOverrides.Num() != numProperties) ||
+		!RoofObject->TryGetProperty<TArray<float>>(propertyScope, BIMPropertyNames::Slope, TempEdgeSlopes) || (TempEdgeSlopes.Num() != numProperties) ||
+		!RoofObject->TryGetProperty<TArray<bool>>(propertyScope, BIMPropertyNames::HasFace, TempEdgesHaveFaces) || (TempEdgesHaveFaces.Num() != numProperties) ||
+		!RoofObject->TryGetProperty<TArray<float>>(propertyScope, BIMPropertyNames::Overhang, TempEdgeOverhangs) || (TempEdgeOverhangs.Num() != numProperties))
 	{
 		return false;
 	}
@@ -425,10 +425,10 @@ bool UModumateRoofStatics::SetAllProperties(Modumate::FModumateObjectInstance *R
 		TempEdgeOverhangs.Add(edgeProperties.Overhang);
 	}
 
-	RoofObject->SetProperty(BIM::EScope::Roof, BIM::Parameters::Override, BIM::FValue(TempEdgeOverrides));
-	RoofObject->SetProperty(BIM::EScope::Roof, BIM::Parameters::Slope, BIM::FValue(TempEdgeSlopes));
-	RoofObject->SetProperty(BIM::EScope::Roof, BIM::Parameters::HasFace, BIM::FValue(TempEdgesHaveFaces));
-	RoofObject->SetProperty(BIM::EScope::Roof, BIM::Parameters::Overhang, BIM::FValue(TempEdgeOverhangs));
+	RoofObject->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::Override, FBIMPropertyValue::FValue(TempEdgeOverrides));
+	RoofObject->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::Slope, FBIMPropertyValue::FValue(TempEdgeSlopes));
+	RoofObject->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::HasFace, FBIMPropertyValue::FValue(TempEdgesHaveFaces));
+	RoofObject->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::Overhang, FBIMPropertyValue::FValue(TempEdgeOverhangs));
 
 	return true;
 }

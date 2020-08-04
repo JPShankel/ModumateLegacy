@@ -1270,8 +1270,8 @@ bool UModumateObjectStatics::GetFFEMountedTransform(
 {
 	FVector localDesiredNormal, localDesiredTangent;
 	if (!SnappedCursor.HitNormal.IsNearlyZero() && ensure(Assembly &&
-		Assembly->CachedAssembly.TryGetProperty(BIM::Parameters::Normal, localDesiredNormal) &&
-		Assembly->CachedAssembly.TryGetProperty(BIM::Parameters::Tangent, localDesiredTangent)))
+		Assembly->CachedAssembly.TryGetProperty(BIMPropertyNames::Normal, localDesiredNormal) &&
+		Assembly->CachedAssembly.TryGetProperty(BIMPropertyNames::Tangent, localDesiredTangent)))
 	{
 		return GetMountedTransform(SnappedCursor.WorldPosition, SnappedCursor.HitNormal,
 			localDesiredNormal, localDesiredTangent, OutTransform);

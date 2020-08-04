@@ -5,27 +5,23 @@
 #include "CoreMinimal.h"
 #include "BIMKernel/BIMEnums.h"
 
-namespace Modumate {
-	namespace BIM {
+typedef FName FBIMTag;
 
-		typedef FName FTag;
+class FBIMTagGroup : public TArray<FBIMTag>
+{
+public:
+	bool MatchesAny(const FBIMTagGroup &OtherGroup) const;
+	bool MatchesAll(const FBIMTagGroup &OtherGroup) const;
 
-		class FTagGroup : public TArray<FTag>
-		{
-		public:
-			bool MatchesAny(const FTagGroup &OtherGroup) const;
-			bool MatchesAll(const FTagGroup &OtherGroup) const;
+	ECraftingResult FromString(const FString &InString);
+	ECraftingResult ToString(FString &OutString) const;
+};
 
-			ECraftingResult FromString(const FString &InString);
-			ECraftingResult ToString(FString &OutString) const;
-		};
+class FBIMTagPath : public TArray<FBIMTagGroup>
+{
+public:
+	bool Matches(const FBIMTagPath &OtherPath) const;
 
-		class FTagPath : public TArray<FTagGroup>
-		{
-		public:
-			bool Matches(const FTagPath &OtherPath) const;
-
-			ECraftingResult FromString(const FString &InString);
-			ECraftingResult ToString(FString &OutString) const;
-		};
-} }
+	ECraftingResult FromString(const FString &InString);
+	ECraftingResult ToString(FString &OutString) const;
+};

@@ -1166,27 +1166,27 @@ namespace Modumate
 		return Implementation->GetWorldTransform();
 	}
 
-	bool FModumateObjectInstance::HasProperty(BIM::EScope Scope, const BIM::FNameType &Name) const
+	bool FModumateObjectInstance::HasProperty(EBIMValueScope Scope, const FBIMNameType &Name) const
 	{
 		return GetDataState().ObjectProperties.HasProperty(Scope, Name);
 	}
 
-	FModumateCommandParameter FModumateObjectInstance::GetProperty(BIM::EScope Scope, const BIM::FNameType &Name) const
+	FModumateCommandParameter FModumateObjectInstance::GetProperty(EBIMValueScope Scope, const FBIMNameType &Name) const
 	{
 		return GetDataState().ObjectProperties.GetProperty(Scope, Name);
 	}
 
-	const BIM::FBIMPropertySheet &FModumateObjectInstance::GetProperties() const
+	const FBIMPropertySheet &FModumateObjectInstance::GetProperties() const
 	{
 		return GetDataState().ObjectProperties;
 	}
 
-	void FModumateObjectInstance::SetProperty(BIM::EScope Scope, const BIM::FNameType &Name, const FModumateCommandParameter &Param)
+	void FModumateObjectInstance::SetProperty(EBIMValueScope Scope, const FBIMNameType &Name, const FModumateCommandParameter &Param)
 	{
 		GetDataState().ObjectProperties.SetProperty(Scope, Name, Param);
 	}
 
-	void FModumateObjectInstance::SetAllProperties(const BIM::FBIMPropertySheet &NewProperties)
+	void FModumateObjectInstance::SetAllProperties(const FBIMPropertySheet &NewProperties)
 	{
 		GetDataState().ObjectProperties = NewProperties;
 	}

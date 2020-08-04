@@ -4,7 +4,6 @@
 
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
-#include "Database/ModumateDrawingSetWidget_CPP.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "Drafting/APDFLLib.h"
 #include "DocumentManagement/ModumateCommands.h"
@@ -1764,12 +1763,6 @@ bool AEditModelPlayerController_CPP::IsCursorOverWidget() const
 	}
 
 	return true;
-}
-
-UModumateDrawingSetWidget_CPP* AEditModelPlayerController_CPP::GetDrawingSetWidget() const
-{
-	auto *hud = GetEditModelHUD();
-	return hud ? hud->DrawingSetWidget : nullptr;
 }
 
 void AEditModelPlayerController_CPP::SetFieldOfViewCommand(float FieldOfView)

@@ -5,52 +5,15 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateScriptProcessor.h"
 
-namespace Modumate { namespace BIM{ 
 
-	bool FChildAttachmentPreset::operator==(const FChildAttachmentPreset &OtherAttachment) const
-	{
-		return ParentPinSetIndex == OtherAttachment.ParentPinSetIndex &&
-			ParentPinSetPosition == OtherAttachment.ParentPinSetPosition &&
-			PresetID == OtherAttachment.PresetID;
-	}
-
-ECraftingResult FCraftingPresetCollection::GetInstanceDataAsPreset(const FCraftingTreeNodeInstanceSharedPtrConst &Instance, FCraftingTreeNodePreset &OutPreset) const
+bool FBIMPreset::FChildAttachment::operator==(const FBIMPreset::FChildAttachment &OtherAttachment) const
 {
-	const FCraftingTreeNodePreset *basePreset = Presets.Find(Instance->PresetID);
-	if (basePreset == nullptr)
-	{
-		return ECraftingResult::Error;
-	}
-
-	OutPreset.NodeType = basePreset->NodeType;
-	OutPreset.Properties = Instance->InstanceProperties;
-	OutPreset.PresetID = basePreset->PresetID;
-	OutPreset.MyTagPath = basePreset->MyTagPath;
-	OutPreset.ParentTagPaths = basePreset->ParentTagPaths;
-	OutPreset.ObjectType = basePreset->ObjectType;
-	OutPreset.IconType = basePreset->IconType;
-	OutPreset.Orientation = basePreset->Orientation;
-	OutPreset.CanFlipOrientation = basePreset->CanFlipOrientation;
-
-	for (int32 pinSetIndex = 0; pinSetIndex < Instance->AttachedChildren.Num(); ++pinSetIndex)
-	{
-		const FCraftingTreeNodeAttachedChildren &pinSet = Instance->AttachedChildren[pinSetIndex];
-		for (int32 pinSetPosition = 0; pinSetPosition < pinSet.Children.Num(); ++pinSetPosition)
-		{
-			FChildAttachmentPreset &pinSpec = OutPreset.ChildPresets.AddDefaulted_GetRef();
-			pinSpec.ParentPinSetIndex = pinSetIndex;
-			pinSpec.ParentPinSetPosition = pinSetPosition;
-
-			FCraftingTreeNodeInstanceSharedPtr attachedOb = pinSet.Children[pinSetPosition].Pin();
-			pinSpec.PresetID = attachedOb->PresetID;
-			const FCraftingTreeNodePreset *attachedPreset = Presets.Find(attachedOb->PresetID);
-		}
-	}
-	OutPreset.SortChildNodes();
-	return ECraftingResult::Success;
+	return ParentPinSetIndex == OtherAttachment.ParentPinSetIndex &&
+		ParentPinSetPosition == OtherAttachment.ParentPinSetPosition &&
+		PresetID == OtherAttachment.PresetID;
 }
 
-ECraftingResult FCraftingPresetCollection::ToDataRecords(TArray<FCraftingPresetRecord> &OutRecords) const
+ECraftingResult FBIMPresetCollection::ToDataRecords(TArray<FCraftingPresetRecord> &OutRecords) const
 {
 	for (auto &kvp : Presets)
 	{
@@ -60,13 +23,13 @@ ECraftingResult FCraftingPresetCollection::ToDataRecords(TArray<FCraftingPresetR
 	return ECraftingResult::Success;
 }
 
-ECraftingResult FCraftingPresetCollection::FromDataRecords(const TArray<FCraftingPresetRecord> &Records)
+ECraftingResult FBIMPresetCollection::FromDataRecords(const TArray<FCraftingPresetRecord> &Records)
 {
 	Presets.Empty();
 
 	for (auto &presetRecord : Records)
 	{
-		FCraftingTreeNodePreset newPreset;
+		FBIMPreset newPreset;
 		if (newPreset.FromDataRecord(*this, presetRecord) == ECraftingResult::Success)
 		{
 			Presets.Add(newPreset.PresetID, newPreset);
@@ -76,7 +39,7 @@ ECraftingResult FCraftingPresetCollection::FromDataRecords(const TArray<FCraftin
 	return ECraftingResult::Success;
 }
 
-bool FCraftingTreeNodePreset::Matches(const FCraftingTreeNodePreset &OtherPreset) const
+bool FBIMPreset::Matches(const FBIMPreset &OtherPreset) const
 {
 	if (NodeType != OtherPreset.NodeType)
 	{
@@ -127,7 +90,7 @@ bool FCraftingTreeNodePreset::Matches(const FCraftingTreeNodePreset &OtherPreset
 	return true;
 }
 
-ECraftingResult FCraftingTreeNodePreset::ToDataRecord(FCraftingPresetRecord &OutRecord) const
+ECraftingResult FBIMPreset::ToDataRecord(FCraftingPresetRecord &OutRecord) const
 {
 	OutRecord.DisplayName = GetDisplayName();
 	OutRecord.NodeType = NodeType;
@@ -151,9 +114,9 @@ ECraftingResult FCraftingTreeNodePreset::ToDataRecord(FCraftingPresetRecord &Out
 	return ECraftingResult::Success;
 }
 
-ECraftingResult FCraftingTreeNodePreset::SortChildNodes()
+ECraftingResult FBIMPreset::SortChildNodes()
 {
-	ChildPresets.Sort([](const FChildAttachmentPreset &lhs, const FChildAttachmentPreset &rhs)
+	ChildPresets.Sort([](const FBIMPreset::FChildAttachment &lhs, const FBIMPreset::FChildAttachment &rhs)
 	{
 		if (lhs.ParentPinSetIndex < rhs.ParentPinSetIndex)
 		{
@@ -168,7 +131,7 @@ ECraftingResult FCraftingTreeNodePreset::SortChildNodes()
 	return ECraftingResult::Success;
 }
 
-ECraftingResult FCraftingTreeNodePreset::FromDataRecord(const FCraftingPresetCollection &PresetCollection, const FCraftingPresetRecord &Record)
+ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCollection, const FCraftingPresetRecord &Record)
 {
 	NodeType = Record.NodeType;
 
@@ -191,7 +154,7 @@ ECraftingResult FCraftingTreeNodePreset::FromDataRecord(const FCraftingPresetCol
 	{
 		for (int32 i = 0; i < Record.ChildPresets.Num(); ++i)
 		{
-			FChildAttachmentPreset &attachment = ChildPresets.AddDefaulted_GetRef();
+			FBIMPreset::FChildAttachment &attachment = ChildPresets.AddDefaulted_GetRef();
 			attachment.ParentPinSetIndex = Record.ChildSetIndices[i];
 			attachment.ParentPinSetPosition = Record.ChildSetPositions[i];
 			attachment.PresetID = Record.ChildPresets[i];
@@ -208,80 +171,13 @@ ECraftingResult FCraftingTreeNodePreset::FromDataRecord(const FCraftingPresetCol
 	return ECraftingResult::Success;
 }
 
-ECraftingResult FCraftingTreeNodePreset::ToParameterSet(FModumateFunctionParameterSet &OutParameterSet) const
-{
-	FCraftingPresetRecord dataRecord;
-	ECraftingResult result = ToDataRecord(dataRecord);
-	if (result != ECraftingResult::Success)
-	{
-		return result;
-	}
-
-	OutParameterSet.SetValue(Modumate::Parameters::kDisplayName, dataRecord.DisplayName);
-	OutParameterSet.SetValue(Modumate::Parameters::kNodeType, dataRecord.NodeType);
-	OutParameterSet.SetValue(Modumate::Parameters::kPresetKey, dataRecord.PresetID);
-	OutParameterSet.SetValue(Modumate::Parameters::kChildNodePinSetIndices, dataRecord.ChildSetIndices);
-	OutParameterSet.SetValue(Modumate::Parameters::kChildNodePinSetPositions, dataRecord.ChildSetPositions);
-	OutParameterSet.SetValue(Modumate::Parameters::kChildNodePinSetPresetIDs, dataRecord.ChildPresets);
-	OutParameterSet.SetValue(Modumate::Parameters::kParentTagPaths, dataRecord.ParentTagPaths);
-	OutParameterSet.SetValue(Modumate::Parameters::kMyTagPath, dataRecord.MyTagPath);
-
-	TArray<FString> propertyNames;
-	dataRecord.PropertyRecord.Properties.GenerateKeyArray(propertyNames);
-	OutParameterSet.SetValue(Modumate::Parameters::kPropertyNames, propertyNames);
-
-	TArray<FString> propertyValues;
-	dataRecord.PropertyRecord.Properties.GenerateValueArray(propertyValues);
-	OutParameterSet.SetValue(Modumate::Parameters::kPropertyValues, propertyValues);
-
-	return ECraftingResult::Success;
-}
-
-ECraftingResult FCraftingTreeNodePreset::FromParameterSet(const FCraftingPresetCollection &PresetCollection, const FModumateFunctionParameterSet &ParameterSet)
-{
-	FCraftingPresetRecord dataRecord;
-
-	// Get base properties, including property bindings that set one property's value to another
-	dataRecord.NodeType = ParameterSet.GetValue(Modumate::Parameters::kNodeType);
-	const FCraftingTreeNodeType *nodeType = PresetCollection.NodeDescriptors.Find(dataRecord.NodeType);
-	if (ensureAlways(nodeType != nullptr))
-	{
-		nodeType->Properties.ToDataRecord(dataRecord.PropertyRecord);
-	}
-
-	// Get local overrides of properties
-	TArray<FString> propertyNames = ParameterSet.GetValue(Modumate::Parameters::kPropertyNames);
-	TArray<FString> propertyValues = ParameterSet.GetValue(Modumate::Parameters::kPropertyValues);
-
-	if (!ensureAlways(propertyNames.Num() == propertyValues.Num()))
-	{
-		return ECraftingResult::Error;
-	}
-
-	int32 numProps = propertyNames.Num();
-	for (int32 i = 0; i < numProps; ++i)
-	{
-		dataRecord.PropertyRecord.Properties.Add(propertyNames[i], propertyValues[i]);
-	}
-
-	dataRecord.DisplayName = ParameterSet.GetValue(Modumate::Parameters::kDisplayName);
-	dataRecord.PresetID = ParameterSet.GetValue(Modumate::Parameters::kPresetKey);
-	dataRecord.ChildSetIndices = ParameterSet.GetValue(Modumate::Parameters::kChildNodePinSetIndices);
-	dataRecord.ChildSetPositions = ParameterSet.GetValue(Modumate::Parameters::kChildNodePinSetPositions);
-	dataRecord.ChildPresets = ParameterSet.GetValue(Modumate::Parameters::kChildNodePinSetPresetIDs);
-	dataRecord.ParentTagPaths = ParameterSet.GetValue(Modumate::Parameters::kParentTagPaths);
-	dataRecord.MyTagPath = ParameterSet.GetValue(Modumate::Parameters::kMyTagPath);
-
-	return FromDataRecord(PresetCollection, dataRecord);
-}
-
 /*
 Given a preset ID, recurse through all its children and gather all other presets that this one depends on
 Note: we don't empty the container because the function is recursive
 */
-ECraftingResult FCraftingPresetCollection::GetDependentPresets(const FName &PresetID, TSet<FName> &OutPresets) const
+ECraftingResult FBIMPresetCollection::GetDependentPresets(const FName &PresetID, TSet<FName> &OutPresets) const
 {
-	const FCraftingTreeNodePreset *preset = Presets.Find(PresetID);
+	const FBIMPreset *preset = Presets.Find(PresetID);
 	if (preset == nullptr)
 	{
 		return ECraftingResult::Error;
@@ -302,14 +198,14 @@ ECraftingResult FCraftingPresetCollection::GetDependentPresets(const FName &Pres
 	return ECraftingResult::Success;
 }
 
-FString FCraftingTreeNodePreset::GetDisplayName() const
+FString FBIMPreset::GetDisplayName() const
 {
-	return Properties.GetProperty(BIM::EScope::Preset, BIM::Parameters::Name);
+	return Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
 }
 
-EObjectType FCraftingPresetCollection::GetPresetObjectType(const FName &PresetID) const
+EObjectType FBIMPresetCollection::GetPresetObjectType(const FName &PresetID) const
 {
-	const FCraftingTreeNodePreset *preset = Presets.Find(PresetID);
+	const FBIMPreset *preset = Presets.Find(PresetID);
 	if (preset == nullptr)
 	{
 		return EObjectType::OTNone;
@@ -321,7 +217,7 @@ EObjectType FCraftingPresetCollection::GetPresetObjectType(const FName &PresetID
 // Ultimately we will develop a compiler from this code that generates a record that can be read more efficiently
 // Once this compiler is in the shape we intend, we will determine where in the toolchain this code will reside we can refactor for long term sustainability
 // Until then this is a prototypical development space used to prototype the relational database structure being authored in Excel
-ECraftingResult FCraftingPresetCollection::LoadCSVManifest(const FString &ManifestPath, const FString &ManifestFile, TArray<FString> &OutMessages)
+ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPath, const FString &ManifestFile, TArray<FString> &OutMessages)
 {
 	FModumateCSVScriptProcessor processor;
 
@@ -350,10 +246,10 @@ ECraftingResult FCraftingPresetCollection::LoadCSVManifest(const FString &Manife
 	struct FTableData
 	{
 		FCraftingTreeNodeType nodeType;
-		TArray<FTagPath> myPaths;
-		TArray<FTagPath> parentPaths;
+		TArray<FBIMTagPath> myPaths;
+		TArray<FBIMTagPath> parentPaths;
 
-		FCraftingTreeNodePreset currentPreset;
+		FBIMPreset currentPreset;
 
 		FColumnRange configRange, propertyRange, myPathRange, parentPathRange, pinRange, idRange;
 	};
@@ -392,7 +288,7 @@ ECraftingResult FCraftingPresetCollection::LoadCSVManifest(const FString &Manife
 	{
 		FName propertyType;
 		FString propertyName;
-		FValueSpec propertyValue;
+		FBIMPropertyValue propertyValue;
 
 		for (int32 i = 1; i < Row.Num(); ++i)
 		{
@@ -409,19 +305,19 @@ ECraftingResult FCraftingPresetCollection::LoadCSVManifest(const FString &Manife
 				}
 				else
 				{
-					propertyValue = FValueSpec(Row[i]);
+					propertyValue = FBIMPropertyValue(Row[i]);
 					break;
 				}
 			}
 		}
 
-		if (propertyValue.Scope == EScope::None)
+		if (propertyValue.Scope == EBIMValueScope::None)
 		{
 			OutMessages.Add(FString::Printf(TEXT("Bad property")));
 		}
 		else
 		{
-			tableData.nodeType.Properties.SetProperty(propertyValue.Scope, propertyValue.Name, Modumate::BIM::FValue());
+			tableData.nodeType.Properties.SetProperty(propertyValue.Scope, propertyValue.Name, FBIMPropertyValue::FValue());
 			if (propertyType != kPrivate)
 			{
 				tableData.nodeType.FormItemToProperty.Add(propertyName, propertyValue.QN());
@@ -527,10 +423,10 @@ ECraftingResult FCraftingPresetCollection::LoadCSVManifest(const FString &Manife
 				cell.RemoveSpacesInline();
 				cell.ParseIntoArray(tags, TEXT("-->"));
 
-				FTagPath path;
+				FBIMTagPath path;
 				for (auto &tag : tags)
 				{
-					FTagGroup &group = path.AddDefaulted_GetRef();
+					FBIMTagGroup &group = path.AddDefaulted_GetRef();
 					group.Add(*tag);
 				};
 
@@ -564,7 +460,7 @@ ECraftingResult FCraftingPresetCollection::LoadCSVManifest(const FString &Manife
 					if (!tableData.currentPreset.PresetID.IsNone())
 					{
 						Presets.Add(tableData.currentPreset.PresetID, tableData.currentPreset);
-						tableData.currentPreset = FCraftingTreeNodePreset();
+						tableData.currentPreset = FBIMPreset();
 					}
 					tableData.currentPreset.PresetID = *cell;
 					tableData.currentPreset.NodeType = tableData.nodeType.TypeName;
@@ -572,7 +468,7 @@ ECraftingResult FCraftingPresetCollection::LoadCSVManifest(const FString &Manife
 			}
 			else if (tableData.propertyRange.IsIn(i))
 			{
-				FValueSpec propSpec(*tableData.propertyRange.Get(i));
+				FBIMPropertyValue propSpec(*tableData.propertyRange.Get(i));
 				tableData.currentPreset.Properties.SetProperty(propSpec.Scope, propSpec.Name, cell);
 			}
 			else if (tableData.myPathRange.IsIn(i) && !cell.IsEmpty())
@@ -581,7 +477,7 @@ ECraftingResult FCraftingPresetCollection::LoadCSVManifest(const FString &Manife
 			}
 			else if (tableData.parentPathRange.IsIn(i) && !cell.IsEmpty())
 			{
-				FTagPath &path = tableData.currentPreset.ParentTagPaths.AddDefaulted_GetRef();
+				FBIMTagPath &path = tableData.currentPreset.ParentTagPaths.AddDefaulted_GetRef();
 				path.FromString(tableData.parentPathRange.Get(i));
 			}
 			else if (tableData.pinRange.IsIn(i))
@@ -600,7 +496,7 @@ ECraftingResult FCraftingPresetCollection::LoadCSVManifest(const FString &Manife
 								setPosition = FMath::Max(cap.ParentPinSetPosition + 1, setPosition);
 							}
 						}
-						FChildAttachmentPreset &newCAP = tableData.currentPreset.ChildPresets.AddDefaulted_GetRef();
+						FBIMPreset::FChildAttachment &newCAP = tableData.currentPreset.ChildPresets.AddDefaulted_GetRef();
 						newCAP.ParentPinSetIndex = setIndex;
 						newCAP.ParentPinSetPosition = setPosition;
 						FString rowStr = cell;
@@ -687,5 +583,3 @@ ECraftingResult FCraftingPresetCollection::LoadCSVManifest(const FString &Manife
 	OutMessages.Add(FString::Printf(TEXT("Failed to load manifest file %s"), *ManifestFile));
 	return ECraftingResult::Error;
 }
-
-} }

@@ -5,25 +5,26 @@
 #include "Database/ModumateObjectEnums.h"
 #include "BIMKernel/BIMPresets.h"
 
-struct MODUMATE_API FBIMAssemblySpec;
 
-namespace Modumate { namespace BIM {
+/*
+	Crafting trees are acyclical networks of crafting node instances
+	They have their own input pin sets and properties, both of which are inherited from the preset used to create the node
+	If a node's properties or child configuration are inconsistent with the base preset, the preset is considered 'dirty' and must be updated or branched
+*/
 
-	/*
-		Crafting trees are acyclical networks of crafting node instances
-		They have their own input pin sets and properties, both of which are inherited from the preset used to create the node
-		If a node's properties or child configuration are inconsistent with the base preset, the preset is considered 'dirty' and must be updated or branched
-	*/
+struct FBIMAssemblySpec;
+class FBIMCraftingTreeNode;
 
-struct  MODUMATE_API FCraftingTreeNodeAttachedChildren
+typedef TSharedPtr<FBIMCraftingTreeNode> FBIMCraftingTreeNodeSharedPtr;
+typedef TWeakPtr<FBIMCraftingTreeNode> FBIMCraftingTreeNodeWeakPtr;
+
+typedef TSharedPtr<const FBIMCraftingTreeNode> FBIMCraftingTreeNodeSharedPtrConst;
+typedef TWeakPtr<const FBIMCraftingTreeNode> FBIMCraftingTreeNodeWeakPtrConst;
+
+
+class MODUMATE_API FBIMCraftingTreeNode : public TSharedFromThis<FBIMCraftingTreeNode>
 {
-	FChildAttachmentType SetType;
-	TArray<FCraftingTreeNodeInstanceWeakPtr> Children;
-};
-
-class MODUMATE_API FCraftingTreeNodeInstance : public TSharedFromThis<FCraftingTreeNodeInstance>
-{
-	friend class MODUMATE_API FCraftingTreeNodeInstancePool;
+	friend class FBIMCraftingTreeNodePool;
 
 #if WITH_EDITOR // for debugging new/delete balance
 	static int32 InstanceCount;
@@ -31,28 +32,33 @@ class MODUMATE_API FCraftingTreeNodeInstance : public TSharedFromThis<FCraftingT
 
 private:
 	// Node instances are managed solely by the object node set and should not be passed around by value or constructed by anyone else
-	FCraftingTreeNodeInstance() = delete;
-	FCraftingTreeNodeInstance(const FCraftingTreeNodeInstance &rhs) = delete;
-	FCraftingTreeNodeInstance &operator=(const FCraftingTreeNodeInstance &rhs) = delete;
-	FCraftingTreeNodeInstance(int32 instanceID);
-
+	FBIMCraftingTreeNode() = delete;
+	FBIMCraftingTreeNode(const FBIMCraftingTreeNode &rhs) = delete;
+	FBIMCraftingTreeNode &operator=(const FBIMCraftingTreeNode &rhs) = delete;
+	FBIMCraftingTreeNode(int32 instanceID);
 
 	int32 InstanceID;
 
-	ECraftingResult GatherAllChildNodes(TArray<FCraftingTreeNodeInstanceSharedPtr> &OutChildren);
+	ECraftingResult GatherAllChildNodes(TArray<FBIMCraftingTreeNodeSharedPtr> &OutChildren);
 
 public:
-	~FCraftingTreeNodeInstance()
+	~FBIMCraftingTreeNode()
 	{
 #if WITH_EDITOR // for debugging new/delete balance
 		--InstanceCount;
 #endif
 	};
 
-	FName PresetID;
-	FCraftingTreeNodeInstanceWeakPtr ParentInstance;
+	struct FAttachedChildGroup
+	{
+		FChildAttachmentType SetType;
+		TArray<FBIMCraftingTreeNodeWeakPtr> Children;
+	};
 
-	TArray<FCraftingTreeNodeAttachedChildren> AttachedChildren;
+	FName PresetID;
+	FBIMCraftingTreeNodeWeakPtr ParentInstance;
+
+	TArray<FAttachedChildGroup> AttachedChildren;
 	FBIMPropertySheet InstanceProperties;
 
 	// May be fixed in type definition, inherited from parent or switchable
@@ -62,60 +68,62 @@ public:
 
 	int32 GetInstanceID() const;
 
-	ECraftingNodePresetStatus GetPresetStatus(const FCraftingPresetCollection &PresetCollection) const;
+	ECraftingNodePresetStatus GetPresetStatus(const FBIMPresetCollection &PresetCollection) const;
+
+	ECraftingResult ToPreset(const FBIMPresetCollection& PresetCollection, FBIMPreset& OutPreset) const;
 
 	ECraftingResult ToDataRecord(FCustomAssemblyCraftingNodeRecord &OutRecord) const;
-	ECraftingResult FromDataRecord(FCraftingTreeNodeInstancePool &InstancePool, const FCraftingPresetCollection &PresetCollection, const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets);
+	ECraftingResult FromDataRecord(FBIMCraftingTreeNodePool &InstancePool, const FBIMPresetCollection &PresetCollection, const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets);
 
-	bool CanRemoveChild(const FCraftingTreeNodeInstanceSharedPtrConst &Child) const;
+	bool CanRemoveChild(const FBIMCraftingTreeNodeSharedPtrConst &Child) const;
 
 	ECraftingResult DetachSelfFromParent();
 
-	ECraftingResult AttachChild(const FCraftingPresetCollection &PresetCollection, const FCraftingTreeNodeInstanceSharedPtr &Child);
-	ECraftingResult AttachChildAt(const FCraftingPresetCollection &PresetCollection, const FCraftingTreeNodeInstanceSharedPtr &Child, int32 PinSetIndex, int32 PinSetPosition);
+	ECraftingResult AttachChild(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child);
+	ECraftingResult AttachChildAt(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child, int32 PinSetIndex, int32 PinSetPosition);
 	ECraftingResult FindChild(int32 ChildID, int32 &OutPinSetIndex, int32 &OutPinSetPosition);
 	ECraftingResult FindChildOrder(int32 ChildID, int32 &Order);
 };
 
 /*
-A Crafting Tree Node Set contains all the context information for node crafting.
-Node descriptors, preset definitions and preset lists are read in via ParseScriptFile
-The crafting widget and preset manager use this node set to implement the crafting interface
+	A Crafting Tree Node Set contains all the context information for node crafting.
+	Node descriptors, preset definitions and preset lists are read in via ParseScriptFile
+	The crafting widget and preset manager use this node set to implement the crafting interface
 
-TODO: this functionality to be merged into the crafting widget which is the only client of node instances
+	TODO: this functionality to be merged into the crafting widget which is the only client of node instances
 */
 
-class MODUMATE_API FCraftingTreeNodeInstancePool
+class MODUMATE_API FBIMCraftingTreeNodePool
 {
 private:
 	int32 NextInstanceID = 1;
-	TMap<int32, FCraftingTreeNodeInstanceWeakPtr> InstanceMap;
-	TArray<FCraftingTreeNodeInstanceSharedPtr> InstancePool;
+	TMap<int32, FBIMCraftingTreeNodeWeakPtr> InstanceMap;
+	TArray<FBIMCraftingTreeNodeSharedPtr> InstancePool;
 
 	// Does not create a fully resolved node, used in FromDataRecord only
-	FCraftingTreeNodeInstanceSharedPtr CreateNodeInstanceFromDataRecord(const FCraftingPresetCollection &PresetCollection, const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets);
+	FBIMCraftingTreeNodeSharedPtr CreateNodeInstanceFromDataRecord(const FBIMPresetCollection &PresetCollection, const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets);
 
 public:
 
-	const TArray<FCraftingTreeNodeInstanceSharedPtr> &GetInstancePool() const { return InstancePool; }
-
 	ECraftingResult ResetInstances();
+	ECraftingResult InitFromPreset(const FBIMPresetCollection& PresetCollection, const FName& PresetID, FBIMCraftingTreeNodeSharedPtr &OutRootNode);
 
-	FCraftingTreeNodeInstanceSharedPtr CreateNodeInstanceFromPreset(const FCraftingPresetCollection &PresetCollection, int32 ParentID, const FName &PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
-	ECraftingResult SetNewPresetForNode(const FCraftingPresetCollection &PresetCollection, int32 InstanceID, const FName &PresetID);
+	ECraftingResult DestroyNodeInstance(const FBIMCraftingTreeNodeSharedPtr& Instance, TArray<int32>& OutDestroyed);
+	ECraftingResult DestroyNodeInstance(int32 InstanceID, TArray<int32>& OutDestroyed);
 
-	ECraftingResult DestroyNodeInstance(const FCraftingTreeNodeInstanceSharedPtr &Instance, TArray<int32> &OutDestroyed);
-	ECraftingResult DestroyNodeInstance(int32 InstanceID, TArray<int32> &OutDestroyed);
+	const TArray<FBIMCraftingTreeNodeSharedPtr> &GetInstancePool() const { return InstancePool; }
 
-	ECraftingResult PresetToSpec(const FName &PresetID, const FCraftingPresetCollection &PresetCollection, FBIMAssemblySpec &OutPropertySpec) const;
+	FBIMCraftingTreeNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FName& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
+	ECraftingResult SetNewPresetForNode(const FBIMPresetCollection &PresetCollection, int32 InstanceID, const FName &PresetID);
 
-	const FCraftingTreeNodeInstanceSharedPtr InstanceFromID(int32 InstanceID) const;
-	FCraftingTreeNodeInstanceSharedPtr InstanceFromID(int32 InstanceID);
-	FCraftingTreeNodeInstanceSharedPtr FindInstanceByPredicate(const std::function<bool(const FCraftingTreeNodeInstanceSharedPtr &Instance)> &Predicate);
+	ECraftingResult PresetToSpec(const FName &PresetID, const FBIMPresetCollection &PresetCollection, FBIMAssemblySpec &OutPropertySpec) const;
 
-	bool FromDataRecord(const FCraftingPresetCollection &PresetCollection, const TArray<FCustomAssemblyCraftingNodeRecord> &InDataRecords, bool RecursePresets);
+	const FBIMCraftingTreeNodeSharedPtr InstanceFromID(int32 InstanceID) const;
+	FBIMCraftingTreeNodeSharedPtr InstanceFromID(int32 InstanceID);
+	FBIMCraftingTreeNodeSharedPtr FindInstanceByPredicate(const std::function<bool(const FBIMCraftingTreeNodeSharedPtr &Instance)> &Predicate);
+
+	bool FromDataRecord(const FBIMPresetCollection &PresetCollection, const TArray<FCustomAssemblyCraftingNodeRecord> &InDataRecords, bool RecursePresets);
 	bool ToDataRecord(TArray<FCustomAssemblyCraftingNodeRecord> &OutDataRecords) const;
 
 	bool ValidatePool() const;
 };
-} }

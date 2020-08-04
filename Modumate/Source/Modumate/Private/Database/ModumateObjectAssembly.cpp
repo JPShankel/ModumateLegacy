@@ -32,19 +32,19 @@ Modumate::Units::FUnitValue FModumateObjectAssembly::CalculateThickness() const
 	));
 }
 
-Modumate::FModumateCommandParameter FModumateObjectAssembly::GetProperty(const Modumate::BIM::FNameType &name) const
+Modumate::FModumateCommandParameter FModumateObjectAssembly::GetProperty(const FBIMNameType &name) const
 {
-	return Properties.GetProperty(BIM::EScope::Assembly, name);
+	return Properties.GetProperty(EBIMValueScope::Assembly, name);
 }
 
-void FModumateObjectAssembly::SetProperty(const Modumate::BIM::FNameType &name, const Modumate::FModumateCommandParameter &val)
+void FModumateObjectAssembly::SetProperty(const FBIMNameType &name, const Modumate::FModumateCommandParameter &val)
 {
-	Properties.SetProperty(BIM::EScope::Assembly, name, val);
+	Properties.SetProperty(EBIMValueScope::Assembly, name, val);
 }
 
-bool FModumateObjectAssembly::HasProperty(const Modumate::BIM::FNameType &name) const
+bool FModumateObjectAssembly::HasProperty(const FBIMNameType &name) const
 {
-	return Properties.HasProperty(BIM::EScope::Assembly, name);
+	return Properties.HasProperty(EBIMValueScope::Assembly, name);
 }
 
 class MODUMATE_API FLayerMaker
@@ -75,14 +75,14 @@ public:
 
 	FName ProfileKey;
 
-	BIM::FBIMPropertySheet Properties;
-	TMap<Modumate::BIM::FNameType, FModumateFormattedDimension> Dimensions;
+	FBIMPropertySheet Properties;
+	TMap<FBIMNameType, FModumateFormattedDimension> Dimensions;
 
 	void SetValue(
-		const BIM::FValueSpec &var,
+		const FBIMPropertyValue &var,
 		const FModumateCommandParameter &value)
 	{
-		auto convertDimension = [this](const FString &dimStr,const BIM::FNameType &property)
+		auto convertDimension = [this](const FString &dimStr,const FBIMNameType &property)
 		{
 			FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(dimStr);
 			Dimensions.Add(property, dim);
@@ -92,40 +92,40 @@ public:
 		Properties.SetValue(var.QN().ToString(), value);
 
 		//TODO: deprecated DDL 1.0 .. DDL 2 tracks all layer values in the Module or Layer scope
-		if (var.Scope == BIM::EScope::MaterialColor)
+		if (var.Scope == EBIMValueScope::MaterialColor)
 		{
-			if (var.Name == BIM::Parameters::Color)
+			if (var.Name == BIMPropertyNames::Color)
 			{
 				LayerColorKey = value;
 			}
-			else if (var.Name == BIM::Parameters::MaterialKey)
+			else if (var.Name == BIMPropertyNames::MaterialKey)
 			{
 				LayerMaterialKey = value;
 			}
 		}
-		else if (var.Scope == BIM::EScope::Layer)
+		else if (var.Scope == EBIMValueScope::Layer)
 		{
-			if (var.Name == BIM::Parameters::Color)
+			if (var.Name == BIMPropertyNames::Color)
 			{
 				LayerColorKey = value;
 			}
-			else if (var.Name == BIM::Parameters::MaterialKey)
+			else if (var.Name == BIMPropertyNames::MaterialKey)
 			{
 				LayerMaterialKey = value;
 			}
-			else if (var.Name == BIM::Parameters::TrimProfile)
+			else if (var.Name == BIMPropertyNames::TrimProfile)
 			{
 				ProfileKey = value;
 			}
-			else if (var.Name == BIM::Parameters::Thickness)
+			else if (var.Name == BIMPropertyNames::Thickness)
 			{
 				Thickness = convertDimension(value,var.QN());
 			}
-			else if (var.Name == BIM::Parameters::Pattern)
+			else if (var.Name == BIMPropertyNames::Pattern)
 			{
 				Pattern.Key = *value.AsString();
 			}
-			else if (var.Name == BIM::Parameters::Function)
+			else if (var.Name == BIMPropertyNames::Function)
 			{
 				if (!ensureAlways(TryFindEnumValueByName<ELayerFunction>(TEXT("ELayerFunction"), value.AsName(), FunctionEnum)))
 				{
@@ -133,69 +133,69 @@ public:
 				}
 			}
 		}
-		else if (var.Scope == BIM::EScope::Module)
+		else if (var.Scope == EBIMValueScope::Module)
 		{
-			if (var.Name == BIM::Parameters::MaterialKey)
+			if (var.Name == BIMPropertyNames::MaterialKey)
 			{
 				ModuleMaterialKey = value;
 				LayerMaterialKey = ModuleMaterialKey;
 			}
-			else if (var.Name == BIM::Parameters::Color)
+			else if (var.Name == BIMPropertyNames::Color)
 			{
 				ModuleColorKey = value;
 				LayerColorKey = ModuleColorKey;
 			}
-			else if (var.Name == BIM::Parameters::Height || var.Name == BIM::Parameters::ZExtents)
+			else if (var.Name == BIMPropertyNames::Height || var.Name == BIMPropertyNames::ZExtents)
 			{
 				Module.ModuleExtents.Z = convertDimension(value, var.QN()).AsWorldCentimeters();
 			}
-			else if (var.Name == BIM::Parameters::Width || var.Name == BIM::Parameters::YExtents || var.Name == BIM::Parameters::Depth)
+			else if (var.Name == BIMPropertyNames::Width || var.Name == BIMPropertyNames::YExtents || var.Name == BIMPropertyNames::Depth)
 			{
 				Module.ModuleExtents.Y = convertDimension(value, var.QN()).AsWorldCentimeters();
 			}
-			else if (var.Name == BIM::Parameters::Length || var.Name == BIM::Parameters::XExtents)
+			else if (var.Name == BIMPropertyNames::Length || var.Name == BIMPropertyNames::XExtents)
 			{
 				Module.ModuleExtents.X = convertDimension(value, var.QN()).AsWorldCentimeters();
 			}
-			else if (var.Name == BIM::Parameters::BevelWidth)
+			else if (var.Name == BIMPropertyNames::BevelWidth)
 			{
 				Module.BevelWidth = convertDimension(value, var.QN());
 			}
 		}
-		else if (var.Scope == BIM::EScope::Gap)
+		else if (var.Scope == EBIMValueScope::Gap)
 		{
-			if (var.Name == BIM::Parameters::Color)
+			if (var.Name == BIMPropertyNames::Color)
 			{
 				GapColorKey = value;
 			}
-			else if (var.Name == BIM::Parameters::MaterialKey)
+			else if (var.Name == BIMPropertyNames::MaterialKey)
 			{
 				GapMaterialKey = value;
 			}
-			else if (var.Name == BIM::Parameters::Name)
+			else if (var.Name == BIMPropertyNames::Name)
 			{
 				Gap.DisplayName = FText::FromString(value);
 			}
-			else if (var.Name == BIM::Parameters::Width || var.Name == BIM::Parameters::XExtents)
+			else if (var.Name == BIMPropertyNames::Width || var.Name == BIMPropertyNames::XExtents)
 			{
 				Gap.GapExtents.X = convertDimension(value,var.QN()).AsWorldCentimeters();
 			}
-			else if (var.Name == BIM::Parameters::Depth || var.Name == BIM::Parameters::YExtents)
+			else if (var.Name == BIMPropertyNames::Depth || var.Name == BIMPropertyNames::YExtents)
 			{
 				Gap.GapExtents.Y = convertDimension(value,var.QN()).AsWorldCentimeters();
 			}
 		}
-		else if (var.Scope == BIM::EScope::Pattern)
+		else if (var.Scope == EBIMValueScope::Pattern)
 		{
-			if (var.Name == BIM::Parameters::Name)
+			if (var.Name == BIMPropertyNames::Name)
 			{
 				Pattern.DisplayName = FText::FromString(value.AsString());
 			}
-			else if (var.Name == BIM::Parameters::ModuleCount)
+			else if (var.Name == BIMPropertyNames::ModuleCount)
 			{
 				Pattern.ModuleCount = value;
 			}
-			else if (var.Name == BIM::Parameters::Extents)
+			else if (var.Name == BIMPropertyNames::Extents)
 			{
 				Pattern.ParameterizedExtents = value;
 			}
@@ -354,7 +354,7 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStubbyAssembly(
 	const FBIMAssemblySpec& InSpec,
 	FModumateObjectAssembly& OutMOA)
 {
-	FName meshKey = InSpec.RootProperties.GetProperty(Modumate::BIM::EScope::Preset, Modumate::BIM::Parameters::Name);
+	FName meshKey = InSpec.RootProperties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
 	const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(meshKey);
 	if (mesh == nullptr)
 	{
@@ -364,8 +364,8 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStubbyAssembly(
 	FModumateObjectAssemblyLayer &layer = OutMOA.Layers.AddDefaulted_GetRef();
 	layer.Mesh = *mesh;
 
-	OutMOA.SetProperty(BIM::Parameters::Normal, FVector(0, 0, 1));
-	OutMOA.SetProperty(BIM::Parameters::Tangent, FVector(0, 1, 0));
+	OutMOA.SetProperty(BIMPropertyNames::Normal, FVector(0, 0, 1));
+	OutMOA.SetProperty(BIMPropertyNames::Tangent, FVector(0, 1, 0));
 
 	OutMOA.ObjectType = InSpec.ObjectType;
 
@@ -389,7 +389,7 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeLayeredAssembly(
 		{
 			if (!propName.IsEmpty())
 			{
-				layerMaker.SetValue(BIM::FValueSpec(*propName), val);
+				layerMaker.SetValue(FBIMPropertyValue(*propName), val);
 			}
 		});
 
@@ -409,43 +409,43 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 
 
 	FLayerMaker layerMaker;
-	layerMaker.CodeName = OutMOA.GetProperty(BIM::Parameters::Name);
+	layerMaker.CodeName = OutMOA.GetProperty(BIMPropertyNames::Name);
 
 	FString diameterString;
 	FModumateFormattedDimension xDim, yDim;
-	if (OutMOA.Properties.TryGetProperty(BIM::EScope::Assembly, BIM::Parameters::Diameter, diameterString))
+	if (OutMOA.Properties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Diameter, diameterString))
 	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Assembly, BIM::Parameters::Diameter));
+		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Diameter));
 		yDim = xDim;
 	}
 	else
 	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Assembly, BIM::Parameters::XExtents));
-		yDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(BIM::EScope::Assembly, BIM::Parameters::YExtents));
+		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::XExtents));
+		yDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::YExtents));
 	}
 
 	if (ensureAlways(xDim.Format != EDimensionFormat::Error))
 	{
-		layerMaker.Dimensions.Add(BIM::Parameters::XExtents, xDim);
+		layerMaker.Dimensions.Add(BIMPropertyNames::XExtents, xDim);
 	}
 
 	if (ensureAlways(yDim.Format != EDimensionFormat::Error))
 	{
-		layerMaker.Dimensions.Add(BIM::Parameters::YExtents, yDim);
+		layerMaker.Dimensions.Add(BIMPropertyNames::YExtents, yDim);
 	}
 
 	layerMaker.FormatEnum = ELayerFormat::None;
 	layerMaker.FunctionEnum = ELayerFunction::Structure;
-	layerMaker.LayerMaterialKey = OutMOA.Properties.GetProperty(BIM::EScope::Assembly, BIM::Parameters::MaterialKey);
-	layerMaker.ProfileKey = OutMOA.Properties.GetProperty(BIM::EScope::Assembly, BIM::Parameters::ProfileKey);
+	layerMaker.LayerMaterialKey = OutMOA.Properties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::MaterialKey);
+	layerMaker.ProfileKey = OutMOA.Properties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::ProfileKey);
 
 	FModumateObjectAssemblyLayer &layer = OutMOA.Layers.Add_GetRef(layerMaker.Make(InDB));
 
-	FString colorHex = OutMOA.Properties.GetProperty(BIM::EScope::MaterialColor, BIM::Parameters::HexValue);
+	FString colorHex = OutMOA.Properties.GetProperty(EBIMValueScope::MaterialColor, BIMPropertyNames::HexValue);
 	layer.Material.DefaultBaseColor.Color = FColor::FromHex(colorHex);
 	layer.Material.DefaultBaseColor.bValid = true;
 
-	OutMOA.SetProperty(BIM::Parameters::Name, OutMOA.Properties.GetProperty(BIM::EScope::Preset, BIM::Parameters::Name));
+	OutMOA.SetProperty(BIMPropertyNames::Name, OutMOA.Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name));
 
 	// TODO: re-orient column meshes so width is along X instead of depth
 	FVector profileSize(xDim.Centimeters, yDim.Centimeters, 1);
@@ -454,7 +454,7 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 	{
 		FSimplePolygon &polygon = layer.SimpleMeshes[0].Asset.Get()->Polygons[0];
 		FVector polyExtents(polygon.Extents.Max.X - polygon.Extents.Min.X, polygon.Extents.Max.Y - polygon.Extents.Min.Y, 1);
-		OutMOA.SetProperty(BIM::Parameters::Scale, profileSize / polyExtents);
+		OutMOA.SetProperty(BIMPropertyNames::Scale, profileSize / polyExtents);
 	}
 
 	return ECraftingResult::Success; 
@@ -497,7 +497,7 @@ ECraftingResult UModumateObjectAssemblyStatics::DoMakeAssembly(
 
 	if (result != ECraftingResult::Error)
 	{			
-		OutMOA.SetProperty(BIM::Parameters::Name, InSpec.RootProperties.GetProperty(BIM::EScope::Preset, BIM::Parameters::Name));
+		OutMOA.SetProperty(BIMPropertyNames::Name, InSpec.RootProperties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name));
 	}
 	return result;
 }

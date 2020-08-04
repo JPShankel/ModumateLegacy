@@ -21,9 +21,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
 	TSubclassOf<class UAdjustmentHandleWidget> AdjustmentHandleClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Drafting)
-	TSubclassOf<class UModumateDrawingSetWidget_CPP> DrawingSetWidgetClass;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Handles)
 	TSubclassOf<class URoofPerimeterPropertiesWidget> RoofPerimeterPropertiesClass;
 };

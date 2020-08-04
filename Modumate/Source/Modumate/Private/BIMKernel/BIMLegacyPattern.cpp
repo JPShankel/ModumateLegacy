@@ -3,8 +3,6 @@
 #include "BIMKernel/BIMLegacyPattern.h"
 #include "Algo/Transform.h"
 
-
-
 using namespace Modumate::Units;
 
 namespace Modumate

@@ -150,8 +150,8 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 		if (ToolMode == EToolMode::VE_WALL)
 		{
 			FString layerFunction, layerThickness;
-			curLayerProperties.TryGetProperty(BIM::EScope::Layer, BIM::Parameters::Function, layerFunction);
-			curLayerProperties.TryGetProperty(BIM::EScope::Layer, BIM::Parameters::Thickness, layerThickness);
+			curLayerProperties.TryGetProperty(EBIMValueScope::Layer, BIMPropertyNames::Function, layerFunction);
+			curLayerProperties.TryGetProperty(EBIMValueScope::Layer, BIMPropertyNames::Thickness, layerThickness);
 			OutTips.Add(layerThickness + FString(TEXT(", ")) + layerFunction);
 		}
 	}
@@ -176,7 +176,7 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 	{
 		return;
 	}
-	AsmName = assembly->CachedAssembly.GetProperty(BIM::Parameters::Name);
+	AsmName = assembly->CachedAssembly.GetProperty(BIMPropertyNames::Name);
 	ToolMode = compListObj->Mode;
 	UpdateItemType(compListObj->ItemType);
 
