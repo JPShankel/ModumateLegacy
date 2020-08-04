@@ -391,6 +391,40 @@ namespace Modumate
 		return true;
 	}
 
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphBasicEdgeSplit, "Modumate.Graph.3D.BasicEdgeSplit", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphBasicEdgeSplit::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		TArray<FGraph3DDelta> OutDeltas;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+		TArray<int32> OutEdgeIDs;
+
+		TestTrue(TEXT("Add first face"),
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
+
+		TArray<FVector> edgeVertices = {
+			FVector(0.0f, 50.0f, 0.0f),
+			FVector(100.0f, 50.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add edge"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(edgeVertices[0], edgeVertices[1], OutDeltas, NextID, OutEdgeIDs, true));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
+
+		return true;
+	}
+
 	// Create several parallel vertical walls, then test basic interactions with them
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphBasicMultiSplits, "Modumate.Graph.3D.BasicMultiSplits", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphBasicMultiSplits::RunTest(const FString& Parameters)
@@ -600,6 +634,89 @@ namespace Modumate
 		TestTrue(TEXT("Horizontal plane - intersection exists but doesn't split any faces"),
 			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 14, 24, 36);
+
+		return true;
+	}
+
+	// Add a face that overlaps with two disconnected, existing faces, to make sure that we correctly detect complex overlapping conditions
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphAddInclusiveOverlap, "Modumate.Graph.3D.AddInclusiveOverlap", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphAddInclusiveOverlap::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(200.0f, 0.0f, 0.0f),
+			FVector(200.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		TArray<FGraph3DDelta> OutDeltas;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+
+		TestTrue(TEXT("Add first face"),
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
+
+		vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add second face inclusively overlapping half of the first face"),
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
+
+		return true;
+	}
+
+	// Add a face that overlaps with two disconnected, existing faces, to make sure that we correctly detect complex overlapping conditions
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphAddMultiOverlaps, "Modumate.Graph.3D.AddMultiOverlaps", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphAddMultiOverlaps::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FVector> vertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		TArray<FGraph3DDelta> OutDeltas;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+
+		TestTrue(TEXT("Add first face"),
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 1, 4, 4);
+
+		vertices = {
+			FVector(200.0f, 0.0f, 0.0f),
+			FVector(300.0f, 0.0f, 0.0f),
+			FVector(300.0f, 100.0f, 0.0f),
+			FVector(200.0f, 100.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add second, separated face"),
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 8, 8);
+
+		vertices = {
+			FVector(50.0f, -50.0f, 0.0f),
+			FVector(250.0f, -50.0f, 0.0f),
+			FVector(250.0f, 150.0f, 0.0f),
+			FVector(50.0f, 150.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add third face that splits both the existing faces"),
+			tempGraph.GetDeltaForFaceAddition(vertices, OutDeltas, NextID, ExistingID));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 5, 16, 20);
 
 		return true;
 	}
@@ -1878,6 +1995,87 @@ namespace Modumate
 
 			// each face does not share edges or vertices
 			TestDeltas(Test, deltas, graph, tempGraph, faceIdx + 1, (faceIdx + 1) * 4, (faceIdx + 1) * 4);
+		}
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphFullAndPartialFaceContainment, "Modumate.Graph.3D.FullAndPartialFaceContainment", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphFullAndPartialFaceContainment::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+		int32 NextID = 1;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+
+		// outermost face
+		TArray<FVector> outerVertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add outer face"),
+			tempGraph.GetDeltaForFaceAddition(outerVertices, deltas, nextID, existingID));
+		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
+
+		// middle face
+		TArray<FVector> middleVertices = {
+			FVector(0.0f, 25.0f, 0.0f),
+			FVector(75.0f, 25.0f, 0.0f),
+			FVector(75.0f, 75.0f, 0.0f),
+			FVector(0.0f, 75.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add middle face"),
+			tempGraph.GetDeltaForFaceAddition(middleVertices, deltas, nextID, existingID));
+		TestDeltas(this, deltas, graph, tempGraph, 2, 8, 9);
+
+		for (auto& kvp : graph.GetFaces())
+		{
+			TestTrue(TEXT("Overlapping faces don't have containment"),
+				(kvp.Value.ContainingFaceID == MOD_ID_NONE) &&
+				(kvp.Value.ContainedFaceIDs.Num() == 0));
+		}
+
+		// inner face
+		TArray<FVector> innerVertices = {
+			FVector(25.0f, 40.0f, 0.0f),
+			FVector(50.0f, 40.0f, 0.0f),
+			FVector(50.0f, 60.0f, 0.0f),
+			FVector(25.0f, 60.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add inner face"),
+			tempGraph.GetDeltaForFaceAddition(innerVertices, deltas, nextID, existingID));
+		if ((deltas.Num() < 1) || (deltas[0].FaceAdditions.Num() != 1))
+		{
+			return false;
+		}
+		auto faceDeltaKVP = *deltas[0].FaceAdditions.CreateConstIterator();
+		int32 innerFaceID = faceDeltaKVP.Key;
+		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 13);
+
+		FGraph3DFace* innerFace = graph.FindFace(innerFaceID);
+		int32 innerFaceContainingID = innerFace ? innerFace->ContainingFaceID : MOD_ID_NONE;
+		TestTrue(TEXT("Inner face is contained"), innerFaceContainingID != MOD_ID_NONE);
+
+		FGraph3DFace* innerContainingFace = graph.FindFace(innerFaceContainingID);
+		TestTrue(TEXT("Middle face contains inner face"), innerContainingFace && (innerContainingFace->EdgeIDs.Num() == 4));
+		TestTrue(TEXT("Middle face is not contained by outer face"), innerContainingFace && (innerContainingFace->ContainingFaceID == MOD_ID_NONE));
+
+		for (auto& kvp : graph.GetFaces())
+		{
+			if ((kvp.Key != innerFaceID) && (kvp.Key != innerFaceContainingID))
+			{
+				TestTrue(TEXT("Outer face doesn't have containment faces don't have containment"),
+					(kvp.Value.ContainingFaceID == MOD_ID_NONE) &&
+					(kvp.Value.ContainedFaceIDs.Num() == 0));
+			}
 		}
 
 		return true;

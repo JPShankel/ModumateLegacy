@@ -9,6 +9,7 @@
 #include "BIMKernel/BIMSerialization.h"
 #include "BIMKernel/BIMProperties.h"
 #include "Database/ModumateArchitecturalMesh.h"
+#include "Database/ModumateSimpleMesh.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateObjectAssembly.generated.h"
 

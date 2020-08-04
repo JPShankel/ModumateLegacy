@@ -96,7 +96,7 @@ namespace Modumate
 		}
 	}
 
-	int32 FGraph3D::FindFaceContainingFace(const int32 FaceID) const
+	int32 FGraph3D::FindFaceFullyContainingFace(int32 FaceID) const
 	{
 		int32 faceIDContainingPoly = MOD_ID_NONE;
 
@@ -131,6 +131,8 @@ namespace Modumate
 			}
 		}
 
+		bool bFullyContained = false;
+		bool bPartiallyContained = false;
 		const FGraph3DFace *minFace = nullptr;
 		for (int32 faceID : facesContainingPolygon)
 		{
@@ -145,16 +147,10 @@ namespace Modumate
 
 			if (minFace != nullptr)
 			{
-				bNewFaceSmaller = IsFaceContainedByFace(containingFace->ID, minFace->ID);
-
-				if (bDebugCheck)
-				{
-					bCurrentFaceSmaller = IsFaceContainedByFace(minFace->ID, containingFace->ID);
-					ensureAlways(bCurrentFaceSmaller || bNewFaceSmaller);
-				}
+				bNewFaceSmaller = GetFaceContainment(minFace->ID, containingFace->ID, bFullyContained, bPartiallyContained) && bFullyContained;
 			}
 			
-			if (minFace == nullptr || bNewFaceSmaller)
+			if (minFace == nullptr || bFullyContained)
 			{
 				minFace = FindFace(faceID);
 			}
@@ -165,48 +161,21 @@ namespace Modumate
 		return faceIDContainingPoly;
 	}
 
-	void FGraph3D::FindFacesContainedByFace(const int32 FaceID, TSet<int32> &OutContainedFaces) const
+	void FGraph3D::FindFacesFullyContainedByFace(int32 ContainingFaceID, TSet<int32> &OutContainedFaces) const
 	{
-		auto containedFace = FindFace(FaceID);
-		if (containedFace == nullptr)
+		auto containingFace = FindFace(ContainingFaceID);
+		if (containingFace == nullptr)
 		{
 			return;
 		}
-
-		// TODO: the plane of the points should be an input to this function,
-		// since it's necessary to call this before we can construct a valid FGraph3DFace,
-		// and we shouldn't rely on this function to be as accurate as it needs to be for comparison against other faces in the graph.
-		FPlane polyPlane, polyAntiPlane;
-		if (!UModumateGeometryStatics::GetPlaneFromPoints(containedFace->CachedPositions, polyPlane, Epsilon))
-		{
-			return;
-		}
-		polyAntiPlane = polyPlane * -1.0f;
 
 		for (const auto &kvp : Faces)
 		{
-			// Only consider existing faces on the same plane as the input points
-			const FGraph3DFace &face = kvp.Value;
-			if (!face.CachedPlane.Equals(polyPlane, Epsilon) && !face.CachedPlane.Equals(polyAntiPlane, Epsilon))
+			int32 containedFaceID = kvp.Key;
+			bool bFullyContained, bPartiallyContained;
+			if (GetFaceContainment(ContainingFaceID, containedFaceID, bFullyContained, bPartiallyContained) && bFullyContained)
 			{
-				continue;
-			}
-
-			// First, project the input polygon to the space of the face candidate
-			TempProjectedPoints.Reset(containedFace->CachedPositions.Num());
-			for (const FVector &polyPoint : containedFace->CachedPositions)
-			{
-				TempProjectedPoints.Add(face.ProjectPosition2D(polyPoint));
-			}
-
-			// Next, check if the 2D-projected face is contained inside the input polygon
-			bool bFaceInPolygon = false, bPolygonsOverlapping = false, bPolygonsTouching = false;
-			UModumateGeometryStatics::PolyIntersection(face.Cached2DPositions, TempProjectedPoints,
-				bFaceInPolygon, bPolygonsOverlapping, bPolygonsTouching);
-
-			if (bFaceInPolygon && !bPolygonsOverlapping && !bPolygonsTouching)
-			{
-				OutContainedFaces.Add(face.ID);
+				OutContainedFaces.Add(containedFaceID);
 			}
 		}
 	}
@@ -305,32 +274,107 @@ namespace Modumate
 		return Faces.Find(FMath::Abs(FaceID)); 
 	}
 
+	const FGraph3DFace* FGraph3D::FindFaceByVertexIDs(const TArray<int32> &VertexIDs) const
+	{
+		for (auto& facekvp : Faces)
+		{
+			if (UModumateFunctionLibrary::AreNormalizedIDListsEqual(VertexIDs, facekvp.Value.VertexIDs))
+			{
+				return &facekvp.Value;
+			}
+		}
+
+		return nullptr;
+	}
+
 	void FGraph3D::FindFacesContainingPosition(const FVector &Position, TSet<int32> &ContainingFaces) const
 	{
 		for (auto &kvp : Faces)
 		{
-			if (kvp.Value.ContainsPosition(Position))
+			bool bOverlaps;
+			if (kvp.Value.ContainsPosition(Position, bOverlaps) && !bOverlaps)
 			{
 				ContainingFaces.Add(kvp.Key);
 			}
 		}
 	}
 
-	bool FGraph3D::IsFaceContainedByFace(int32 ContainedFaceID, int32 ContainingFaceID) const
+	bool FGraph3D::GetFaceContainment(int32 ContainingFaceID, int32 ContainedFaceID, bool& bOutFullyContained, bool& bOutPartiallyContained/*, bool& bOutOverlapping, bool& bOutTouching*/) const
 	{
-		auto containedFace = FindFace(ContainedFaceID);
-		auto containingFace = FindFace(ContainingFaceID);
+		bOutFullyContained = false;
+		bOutPartiallyContained = false;
 
-		if (containedFace == nullptr || containingFace == nullptr)
+		const FGraph3DFace* containingFace = FindFace(ContainingFaceID);
+		const FGraph3DFace* containedFace = FindFace(ContainedFaceID);
+		if (!ensure(containingFace && containedFace))
 		{
 			return false;
 		}
 
-		for (auto& position : containedFace->CachedPositions)
+		if (!UModumateGeometryStatics::ArePlanesCoplanar(containingFace->CachedPlane, containedFace->CachedPlane))
 		{
-			if (!containingFace->ContainsPosition(position))
+			return false;
+		}
+
+		// First, project the potentially contained face's points to the space of the potentially containing face
+		int32 numContainedPoints = containedFace->CachedPositions.Num();
+		TempProjectedPoints.Reset(numContainedPoints);
+		for (const FVector &containedVertex : containedFace->CachedPositions)
+		{
+			TempProjectedPoints.Add(containingFace->ProjectPosition2D(containedVertex));
+		}
+
+		// Now, see if every potentially contained vertex is indeed contained by the other face.
+		// - If any vertices are neither contained nor overlapping, then it's not fully contained.
+		//   If we needed to detect overlaps/touching, we would need to continue, but in this case we can early exit.
+		// - If any vertices are not contained, but are overlapping, then partial containment is still possible.
+		bOutFullyContained = true;
+		bOutPartiallyContained = true;
+		bool bAnyVerticesFullyContained = false;
+		for (const FVector2D& containedVertex : TempProjectedPoints)
+		{
+			bool bVertexOverlaps;
+			bool bVertexContained = UModumateGeometryStatics::IsPointInPolygon(containedVertex, containingFace->Cached2DPositions, containingFace->Cached2DPerimeter, bVertexOverlaps, Epsilon);
+			bAnyVerticesFullyContained = bAnyVerticesFullyContained || (bVertexContained && !bVertexOverlaps);
+
+			if (!bVertexContained)
 			{
-				return false;
+				bOutFullyContained = false;
+
+				if (!bVertexOverlaps)
+				{
+					bOutPartiallyContained = false;
+					return true;
+				}
+			}
+		}
+
+		// If the vertices are all overlapping, but none are fully contained,
+		// then partial containment is only possible if one of the contained edges is fully contained by the containing polygon.
+		// Because edges don't intersect with each other, we can use the contained edge midpoints to test this.
+		if (bOutPartiallyContained && !bAnyVerticesFullyContained)
+		{
+			bOutPartiallyContained = false;
+
+			TempProjectedPoints.Reset(containedFace->CachedPositions.Num());
+			for (int32 edgeIdxA = 0; edgeIdxA < numContainedPoints; ++edgeIdxA)
+			{
+				int32 edgeIdxB = (edgeIdxA + 1) % numContainedPoints;
+				const FVector& edgePointA = containedFace->CachedPositions[edgeIdxA];
+				const FVector& edgePointB = containedFace->CachedPositions[edgeIdxB];
+				FVector edgeMidpoint = 0.5f * (edgePointA + edgePointB);
+				TempProjectedPoints.Add(containingFace->ProjectPosition2D(edgeMidpoint));
+			}
+
+			for (const FVector2D& containedMidpoint : TempProjectedPoints)
+			{
+				bool bMidpointOverlaps;
+				bool bVertexContained = UModumateGeometryStatics::IsPointInPolygon(containedMidpoint, containingFace->Cached2DPositions, containingFace->Cached2DPerimeter, bMidpointOverlaps, Epsilon);
+				if (bVertexContained && !bMidpointOverlaps)
+				{
+					bOutPartiallyContained = true;
+					return true;
+				}
 			}
 		}
 
@@ -770,7 +814,7 @@ namespace Modumate
 		{
 			auto *face = FindFace(kvp.Key);
 			auto &delta = kvp.Value;
-			if (ensureAlways(face))
+			if (ensureAlways(face && (face->ID != delta.NextContainingFaceID)))
 			{
 				face->ContainingFaceID = delta.NextContainingFaceID;
 				face->ContainedFaceIDs.Append(delta.ContainedFaceIDsToAdd);
@@ -1009,7 +1053,7 @@ namespace Modumate
 			{
 				if (FMath::Abs(connection.FaceID) != FMath::Abs(AddedFaceID) && FVector::Coincident(connection.EdgeFaceDir, edgeNormal))
 				{
-					OutOverlappingFaces.Add(connection.FaceID);
+					OutOverlappingFaces.Add(FMath::Abs(connection.FaceID));
 				}
 			}
 			edgeIdx++;
@@ -1525,17 +1569,13 @@ namespace Modumate
 				else
 				{
 					FVector currentPosition = currentVertex->Position;
-					FPlane newPlane = FPlane(currentPosition, currentPosition + currentDirection, currentPosition + originalDirection);
-					if (newPlane.W < 0)
-					{
-						newPlane *= -1.0f;
-					}
+					FPlane newPlane(currentPosition, currentPosition + currentDirection, currentPosition + originalDirection);
 
-					// TArray::AddUnique uses operator==, which for FPlane does not allow for a tolerance
+					// TArray::AddUnique uses operator==, which isn't the comparison we want for planes
 					bool bAddPlane = true;
 					for (auto& plane : OutPlanes)
 					{
-						if (plane.Equals(newPlane, Epsilon))
+						if (UModumateGeometryStatics::ArePlanesCoplanar(plane, newPlane, Epsilon))
 						{
 							bAddPlane = false;
 							break;

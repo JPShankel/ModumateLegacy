@@ -827,9 +827,11 @@ namespace Modumate
 		for (auto& vertexkvp : Vertices)
 		{
 			auto vertex = &vertexkvp.Value;
+			bool bVertexOverlapsBounds;
 
-			if (BoundingPolygon.Find(vertex->ID) == INDEX_NONE && 
-				!UModumateGeometryStatics::IsPointInPolygon(vertex->Position, CachedOuterBounds.Positions))
+			if (BoundingPolygon.Find(vertex->ID) == INDEX_NONE &&
+				!UModumateGeometryStatics::IsPointInPolygon(vertex->Position, CachedOuterBounds.Positions, bVertexOverlapsBounds) &&
+				!bVertexOverlapsBounds)
 			{
 				return false;
 			}
@@ -839,7 +841,8 @@ namespace Modumate
 				auto& bounds = CachedInnerBounds[holeIdx];
 				// Checking the holes should be exclusive - being on the edge of the hole is valid
 				if (BoundingContainedPolygons[holeIdx].Find(vertex->ID) == INDEX_NONE && 
-					UModumateGeometryStatics::IsPointInPolygon(vertex->Position, bounds.Positions, KINDA_SMALL_NUMBER, false))
+					UModumateGeometryStatics::IsPointInPolygon(vertex->Position, bounds.Positions, bVertexOverlapsBounds) &&
+					!bVertexOverlapsBounds)
 				{
 					return false;
 				}

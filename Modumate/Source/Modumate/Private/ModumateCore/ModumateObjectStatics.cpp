@@ -902,7 +902,8 @@ int32 UModumateObjectStatics::GetFaceIndexFromTargetHit(const FModumateObjectIns
 					sidePoints2D.Add(UModumateGeometryStatics::ProjectPoint2D(sidePoint, sidePlaneBasisX, sidePlaneBasisY, curBottomCorner));
 				}
 
-				if (UModumateGeometryStatics::IsPointInPolygon(projectedHitPoint, sidePoints2D))
+				bool bOverlaps;
+				if (UModumateGeometryStatics::IsPointInPolygon(projectedHitPoint, sidePoints2D, bOverlaps) || bOverlaps)
 				{
 					return 2 + curBottomIdx;
 				}

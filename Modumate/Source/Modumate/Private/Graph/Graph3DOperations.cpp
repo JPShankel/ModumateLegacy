@@ -4,6 +4,7 @@
 
 #include "Graph/Graph3DDelta.h"
 #include "Graph/Graph2D.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 
 namespace Modumate
@@ -110,7 +111,10 @@ namespace Modumate
 			}
 		}
 
-		OutDeltas.Add(removeFaceDelta);
+		if (!removeFaceDelta.IsEmpty())
+		{
+			OutDeltas.Add(removeFaceDelta);
+		}
 
 		TSet<int32> connectedFaceIDs;
 		TSet<int32> connectedEdgeIDs;
@@ -360,23 +364,13 @@ namespace Modumate
 				}
 				else
 				{
-					float minArea = BIG_NUMBER;
-
+					// TODO: we shouldn't just arbitrarily pick the first coincident face, we need a better scheme
+					// (CachedArea was wrong, relying on the order of face IDs is also potentially wrong, but happens to be correct more often)
 					int32 coincidentFaceID = MOD_ID_NONE;
-
 					for (int32 id : coincidentFaceIDs)
 					{
-						auto face = FindFace(id);
-						if (face == nullptr)
-						{
-							continue;
-						}
-
-						if (face->CachedArea < minArea)
-						{
-							minArea = face->CachedArea;
-							coincidentFaceID = id;
-						}
+						coincidentFaceID = id;
+						break;
 					}
 
 					addedFaceID = FMath::Abs(addedFaceID);
@@ -386,10 +380,9 @@ namespace Modumate
 
 					if (newFace && oldFace)
 					{
-						float newArea = newFace->CachedArea;
-						float oldArea = oldFace->CachedArea;
-
-						if (newArea < oldArea - Epsilon)
+						bool bFullyContained, bPartiallyContained;
+						if (GetFaceContainment(oldFace->ID, newFace->ID, bFullyContained, bPartiallyContained) &&
+							!bFullyContained && bPartiallyContained)
 						{
 							faceDelta.FaceAdditions[addedFaceID].ParentObjIDs = { coincidentFaceID };
 							OutDeltas.Add(faceDelta);
@@ -421,8 +414,8 @@ namespace Modumate
 		if (!deleteDelta.IsEmpty())
 		{
 			OutDeltas.Add(deleteDelta);
+			ApplyDelta(deleteDelta);
 		}
-		ApplyDelta(deleteDelta);
 
 		// The initial group of faces that need to be updated contains
 		// the faces provided as an argument (FaceIDs) by the graph operation
@@ -456,8 +449,8 @@ namespace Modumate
 				continue;
 			}
 
-			int32 containingFaceID = FindFaceContainingFace(face->ID);
-			FindFacesContainedByFace(face->ID, sideEffectContainedFaceIDs);
+			int32 containingFaceID = FindFaceFullyContainingFace(face->ID);
+			FindFacesFullyContainedByFace(face->ID, sideEffectContainedFaceIDs);
 
 			sideEffectContainedFaceIDs.Append(face->ContainedFaceIDs);
 
@@ -493,7 +486,7 @@ namespace Modumate
 		{
 			if (auto face = FindFace(id))
 			{
-				int32 containingFaceID = FindFaceContainingFace(face->ID);
+				int32 containingFaceID = FindFaceFullyContainingFace(face->ID);
 				facesContainedByFace.Add(id, containingFaceID);
 			}
 		}
@@ -518,7 +511,7 @@ namespace Modumate
 			}
 
 			auto containingFace = FindFace(containingFaceID);
-			if (containingFace != nullptr)
+			if (containingFace && ensure(containmentDelta.FaceContainmentUpdates.Contains(containingFaceID)))
 			{
 				auto& containDelta = containmentDelta.FaceContainmentUpdates[containingFaceID];
 				containDelta.ContainedFaceIDsToAdd.Add(faceID);
@@ -630,7 +623,23 @@ namespace Modumate
 			}
 		}
 
-		// Make the actual delta for the face addition
+		// TODO: this does not perform well, but it is necessary in order to not consider adding identical faces.
+		// If we remove peninsulas then we could normalize vertex IDs and compare them directly.
+		TArray<int32> sortedFaceVertices(faceVertices);
+		sortedFaceVertices.Sort();
+		TArray<int32> otherFaceVertexIDs;
+		for (auto& kvp : Faces)
+		{
+			otherFaceVertexIDs = kvp.Value.VertexIDs;
+			otherFaceVertexIDs.Sort();
+
+			if (sortedFaceVertices == otherFaceVertexIDs)
+			{
+				AddedFaceID = kvp.Key;
+				return false;
+			}
+		}
+
 		AddedFaceID = NextID++;
 		FGraph3DObjDelta &faceAdditionDelta = OutDelta.FaceAdditions.Add(AddedFaceID, FGraph3DObjDelta(faceVertices, ParentFaceIDs, InGroupIDs));
 
@@ -933,10 +942,10 @@ namespace Modumate
 		return bHasNewVertex;
 	}
 
-	bool FGraph3D::GetDeltasForEdgeAtSplit(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &FaceID, TSet<int32> &OutEdges)
+	bool FGraph3D::GetDeltasForEdgeAtSplit(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 SplittingFaceID, TSet<int32> &OutEdges)
 	{
-		FGraph3DFace *newFace = FindFace(FaceID);
-		if (newFace == nullptr)
+		FGraph3DFace *splittingFace = FindFace(SplittingFaceID);
+		if (splittingFace == nullptr)
 		{
 			return false;
 		}
@@ -945,13 +954,13 @@ namespace Modumate
 		{
 			const FGraph3DFace* otherFace = &kvp.Value;
 
-			if (kvp.Key == FaceID)
+			if (kvp.Key == SplittingFaceID)
 			{
 				continue;
 			}
 			TArray<TPair<FVector, FVector>> OutEdgesFromSplit;
 
-			if (newFace->IntersectsFace(otherFace, OutEdgesFromSplit))
+			if (splittingFace->IntersectsFace(otherFace, OutEdgesFromSplit))
 			{
 				for (auto& edgePoints : OutEdgesFromSplit)
 				{

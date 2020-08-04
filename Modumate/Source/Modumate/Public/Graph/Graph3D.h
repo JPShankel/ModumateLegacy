@@ -38,8 +38,16 @@ namespace Modumate
 
 		FGraph3DFace* FindFace(FGraphSignedID FaceID);
 		const FGraph3DFace* FindFace(FGraphSignedID FaceID) const;
+		const FGraph3DFace* FindFaceByVertexIDs(const TArray<int32> &VertexIDs) const;
 		void FindFacesContainingPosition(const FVector &Position, TSet<int32> &ContainingFaces) const;
-		bool IsFaceContainedByFace(int32 ContainedFaceID, int32 ContainingFaceID) const;
+
+		// Test if one face contains another; either fully (no touching vertices/edges) or partially (overlapping edges and/or touching vertices).
+		// NOTE: this requires that the faces have edges that are already full split, and do not intersect with one another except at vertices, and no vertices lie inside other edges.
+		// [param] bOutFullyContained: All vertices and edges of ContainedFaceID are inside of ContainingFaceID, and do not touch.
+		// [param] bOutPartiallyContained: All vertices and edges of ContainedFaceID are either inside of ContainingFaceID, or overlap with vertices and edges of ContainingFaceID, AND
+		//                                 at least one vertex and/or edge of ContainingFaceID is outside of ContainedFaceID, so they can not be identical.
+		// If neither are true, then the faces may or may not overlap geometrically; we could add out parameters to detect this if needed.
+		bool GetFaceContainment(int32 ContainingFaceID, int32 ContainedFaceID, bool& bOutFullyContained, bool& bOutPartiallyContained/*, bool& bOutOverlapping, bool& bOutTouching*/) const;
 
 		FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID);
 		const FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID) const;
@@ -175,20 +183,23 @@ namespace Modumate
 		bool GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, const TArray<int32>& EdgeIDs, const TArray<int32>& FaceIDs, const TArray<FPlane>& InPlanes = TArray<FPlane>(), bool bAddNewFaces = true);
 
 		// provides deltas for splitting edges and adjusting faces after a graph operation
-		bool GetDeltasForEdgeSplits(TArray<FGraph3DDelta> &OutDeltas, TArray<int32> &AddedEdgeIDs, int32 &NextID); 
+		bool GetDeltasForEdgeSplits(TArray<FGraph3DDelta> &OutDeltas, TArray<int32> &AddedEdgeIDs, int32 &NextID);
 
 		bool GetDeltaForFaceVertexAddition(int32 EdgeIDToRemove, int32 FaceID, int32 VertexIDToAdd, FGraph3DDelta &OutDelta);
 		bool GetDeltaForFaceVertexRemoval(int32 VertexIDToRemove, FGraph3DDelta &OutDelta);
 
 		bool GetDeltaForVertexList(TArray<int32> &OutVertexIDs, const TArray<FVector> &InVertexPositions, FGraph3DDelta &OutDelta, int32 &NextID);
 
-		bool GetDeltasForEdgeAtSplit(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &FaceID, TSet<int32> &OutEdges);
+		bool GetDeltasForEdgeAtSplit(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 SplittingFaceID, TSet<int32> &OutEdges);
 
 		bool GetDeltaForEdgeSplit(FGraph3DDelta &OutDelta, int32 edgeID, int32 vertexID, int32 &NextID, int32 &ExistingID);
 
 		void FindEdges(const FVector &Position, int32 ExistingID, TArray<int32>& OutEdgeIDs) const;
-		int32 FindFaceContainingFace(const int32 FaceID) const;
-		void FindFacesContainedByFace(const int32 FaceID, TSet<int32> &OutContainedFaces) const;
+
+		// Find the face that minimally contains this face
+		// NOTE: this assumes that the graph is in a valid enough state that there are no face overlaps
+		int32 FindFaceFullyContainingFace(int32 FaceID) const;
+		void FindFacesFullyContainedByFace(int32 FaceID, TSet<int32> &OutContainedFaces) const;
 
 		void AddObjectToGroups(const IGraph3DObject *GraphObject);
 		void RemoveObjectFromGroups(const IGraph3DObject *GraphObject);

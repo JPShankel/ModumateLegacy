@@ -3,7 +3,6 @@
 
 #include "CoreMinimal.h"
 #include "DocumentManagement/Objects/PlaneBase.h"
-#include "Graph/Graph3D.h"
 
 
 namespace Modumate

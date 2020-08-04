@@ -206,6 +206,75 @@ TArray<int32> UModumateFunctionLibrary::IntegerArrayReplaceHighest(TArray<int32>
 	return resultInt;
 }
 
+bool UModumateFunctionLibrary::NormalizeIDs(TArray<int32>& IDs)
+{
+	int32 numIDs = IDs.Num();
+	if (numIDs <= 1)
+	{
+		return true;
+	}
+
+	int32 minIdx = INDEX_NONE;
+	for (int32 i = 0; i < numIDs; ++i)
+	{
+		int32 curID = IDs[i];
+		if ((minIdx == INDEX_NONE) || (curID < IDs[minIdx]))
+		{
+			minIdx = i;
+		}
+		else if (curID == IDs[minIdx])
+		{
+			// A candidate minimum is duplicated, the list can't be normalized.
+			return false;
+		}
+	}
+
+	if (minIdx == 0)
+	{
+		return true;
+	}
+
+	// Append the IDs that are before the minimum
+	for (int32 i = 0; i < minIdx; ++i)
+	{
+		int32 ID = IDs[i];
+		IDs.Add(ID);
+	}
+
+	// Remove the IDs that are after the minimum
+	IDs.RemoveAt(0, minIdx);
+	return true;
+}
+
+bool UModumateFunctionLibrary::AreNormalizedIDListsEqual(const TArray<int32>& IDList1, const TArray<int32>& IDList2)
+{
+	int32 numIDs = IDList1.Num();
+	if (IDList1.Num() != IDList2.Num())
+	{
+		return false;
+	}
+
+	// If the arrays are identical in the same order, then we're done
+	if (IDList1 == IDList2)
+	{
+		return true;
+	}
+
+	// Otherwise, see if the the lists are reverse orders of IDs, starting with the same ID
+	bool bBackwards = true;
+	int32 reverseIdx = 0;
+	for (int32 idx = 0; idx < numIDs; idx++)
+	{
+		if (IDList1[idx] != IDList2[reverseIdx])
+		{
+			return false;
+		}
+		reverseIdx = (reverseIdx + numIDs - 1) % numIDs;
+	}
+
+	return true;
+}
+
 FVector UModumateFunctionLibrary::GetClosestLocationToTargetFromArray(FVector Target, TArray<FVector> Array, int32 & ClosestIndex, int32 & FarestIndex)
 {
 	TArray<float> distances;

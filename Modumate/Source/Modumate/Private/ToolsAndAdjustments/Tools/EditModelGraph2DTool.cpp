@@ -2,10 +2,12 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelGraph2DTool.h"
 
+#include "Graph/Graph2D.h"
+#include "Graph/Graph3D.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "ModumateCore/ModumateObjectStatics.h"
 
 using namespace Modumate;
 

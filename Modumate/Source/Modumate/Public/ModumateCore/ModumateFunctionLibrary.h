@@ -55,6 +55,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
 	static TArray<int32> IntegerArrayReplaceHighest(TArray<int32> ExistingInt, TArray<int32> NewInt);
 
+	// Rotate a list of IDs to start at the minimum, preserving the order of the rest of the elements. Returns true if the ID list can be (or already is) normalized.
+	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
+	static bool NormalizeIDs(TArray<int32>& IDs);
+
+	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
+	static bool AreNormalizedIDListsEqual(const TArray<int32>& IDList1, const TArray<int32>& IDList2);
+
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static FVector GetClosestLocationToTargetFromArray(FVector Target, TArray<FVector>Array, int32& ClosestIndex, int32& FarestIndex);
 

@@ -44,15 +44,16 @@ namespace Modumate
 		return CachedPositions[0] + (ProjectedPos.X * Cached2DX) + (ProjectedPos.Y * Cached2DY);
 	}
 
-	bool FGraph3DFace::ContainsPosition(const FVector &Position) const
+	bool FGraph3DFace::ContainsPosition(const FVector &Position, bool& bOutOverlaps) const
 	{
+		bOutOverlaps = false;
 		float planeDist = CachedPlane.PlaneDot(Position);
 		if (!FMath::IsNearlyZero(planeDist, Graph->Epsilon))
 		{
 			return false;
 		}
 
-		return UModumateGeometryStatics::IsPointInPolygon(ProjectPosition2D(Position), Cached2DPositions, Graph->Epsilon, false);
+		return UModumateGeometryStatics::IsPointInPolygon(ProjectPosition2D(Position), Cached2DPositions, Cached2DPerimeter, bOutOverlaps, Graph->Epsilon);
 	}
 
 	bool FGraph3DFace::UpdatePlane(const TArray<int32> &InVertexIDs)

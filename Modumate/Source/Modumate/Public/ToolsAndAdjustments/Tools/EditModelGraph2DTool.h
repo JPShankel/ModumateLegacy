@@ -4,21 +4,12 @@
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/DynamicMeshActor.h"
-#include "Graph/Graph3D.h"
-#include "Graph/Graph2D.h"
 
 #include "EditModelGraph2DTool.generated.h"
 
 class AEditModelGameMode_CPP;
 class AEditModelGameState_CPP;
 class ALineActor;
-
-namespace Modumate
-{
-	class FGraph2D;
-	class FGraph3D;
-	class FModumateObjectInstance;
-}
 
 UCLASS()
 class MODUMATE_API UGraph2DTool : public UEditModelToolBase

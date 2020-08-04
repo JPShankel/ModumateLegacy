@@ -2,11 +2,12 @@
 
 #include "DocumentManagement/Objects/MetaPlane.h"
 
+#include "DocumentManagement/ModumateDocument.h"
+#include "Graph/Graph3D.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "DocumentManagement/ModumateDocument.h"
-#include "ModumateCore/ModumateObjectStatics.h"
 
 namespace Modumate
 {

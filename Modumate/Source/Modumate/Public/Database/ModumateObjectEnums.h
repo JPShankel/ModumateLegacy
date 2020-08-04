@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/ObjectMacros.h"
-#include "Graph/Graph3D.h"
 #include "Graph/Graph2DTypes.h"
+#include "Graph/Graph3DTypes.h"
 
 #include "ModumateObjectEnums.generated.h"
 

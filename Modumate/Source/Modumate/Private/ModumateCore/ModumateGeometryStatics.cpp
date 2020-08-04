@@ -1081,25 +1081,131 @@ bool UModumateGeometryStatics::RayIntersection2D(const FVector2D& RayOriginA, co
 	return true;
 }
 
-// Test whether a point is inside a polygon, within Tolerance distance of an edge (inclusive).
-// It assumes a valid, simple polygon input (convex or concave, no holes, closed).
-bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D &Point, const TArray<FVector2D> &Polygon, float Tolerance, bool bInclusive)
+bool UModumateGeometryStatics::IsRayBoundedByRays(const FVector2D& RayDirA, const FVector2D& RayDirB, const FVector2D& RayNormalA, const FVector2D& RayNormalB,
+	const FVector2D& TestRay, bool& bOutOverlaps)
+{
+	bOutOverlaps = false;
+
+#if !UE_BUILD_SHIPPING
+	// Debug validation that all input ray directions are normalized, and that the bounding ray normals are indeed normal to their rays.
+	if (!ensure(
+		FMath::IsNearlyEqual(RayDirA.SizeSquared(), 1.0f, THRESH_VECTOR_NORMALIZED) &&
+		FMath::IsNearlyEqual(RayDirB.SizeSquared(), 1.0f, THRESH_VECTOR_NORMALIZED) &&
+		FMath::IsNearlyEqual(RayNormalA.SizeSquared(), 1.0f, THRESH_VECTOR_NORMALIZED) &&
+		FMath::IsNearlyEqual(RayNormalB.SizeSquared(), 1.0f, THRESH_VECTOR_NORMALIZED) &&
+		FMath::IsNearlyEqual(TestRay.SizeSquared(), 1.0f, THRESH_VECTOR_NORMALIZED) &&
+		(FMath::Abs(RayDirA | RayNormalA) <= THRESH_NORMALS_ARE_ORTHOGONAL) &&
+		(FMath::Abs(RayDirB | RayNormalB) <= THRESH_NORMALS_ARE_ORTHOGONAL)))
+	{
+		return false;
+	}
+#endif
+
+	// If the test ray is coincident to one of the bounding rays, early exit and report overlapping.
+	bool bTestOverlapsA = (TestRay | RayDirA) >= THRESH_NORMALS_ARE_PARALLEL;
+	bool bTestOverlapsB = (TestRay | RayDirB) >= THRESH_NORMALS_ARE_PARALLEL;
+	if (bTestOverlapsA || bTestOverlapsB)
+	{
+		bOutOverlaps = true;
+		return false;
+	}
+
+	// If the bounding rays are parallel, then we can handle that here without worrying about precision later
+	float boundingRaysDot = (RayDirA | RayDirB);
+	if (FMath::Abs(boundingRaysDot) >= THRESH_NORMALS_ARE_PARALLEL)
+	{
+		// The bounding rays can't be coincident, and if they're parallel then their normals must be coincident
+		if (!ensure((boundingRaysDot < 0) && ((RayNormalA | RayNormalB) >= THRESH_NORMALS_ARE_PARALLEL)))
+		{
+			return false;
+		}
+
+		float testNormalDot = (TestRay | RayNormalA);
+		return (testNormalDot > THRESH_NORMALS_ARE_ORTHOGONAL);
+	}
+
+	// Otherwise, use the convexity of the corner (based on the ray normals) to test the ray
+	bool bIsCornerConvex = ((RayDirA | RayNormalB) > 0.0f) && ((RayDirB | RayNormalA) > 0.0f);
+
+	float prevToNextCrossAmount = (RayDirA ^ RayDirB);
+	float prevToTestCrossAmount = (RayDirA ^ TestRay);
+	float nextToPrevCrossAmount = (RayDirB ^ RayDirA);
+	float nextToTestCrossAmount = (RayDirB ^ TestRay);
+
+	bool bTestDirBetweenEdgesAcute =
+		((prevToNextCrossAmount * prevToTestCrossAmount) >= 0) &&
+		((nextToPrevCrossAmount * nextToTestCrossAmount) >= 0);
+
+	return (bIsCornerConvex == bTestDirBetweenEdgesAcute);
+}
+
+bool UModumateGeometryStatics::GetPolyEdgeInfo(const TArray<FVector2D>& Polygon, bool bPolyCW, int32 EdgeStartIdx,
+	FVector2D& OutStartPoint, FVector2D& OutEndPoint, float& OutEdgeLength, FVector2D& OutEdgeDir, FVector2D& OutEdgeNormal, float Epsilon)
+{
+	if (!Polygon.IsValidIndex(EdgeStartIdx))
+	{
+		return false;
+	}
+
+	int32 edgeEndIdx = (EdgeStartIdx + 1) % Polygon.Num();
+	OutStartPoint = Polygon[EdgeStartIdx];
+	OutEndPoint = Polygon[edgeEndIdx];
+	if (OutStartPoint.Equals(OutEndPoint, Epsilon))
+	{
+		return false;
+	}
+
+	FVector2D edgeDelta = OutEndPoint - OutStartPoint;
+	OutEdgeLength = edgeDelta.Size();
+	OutEdgeDir = edgeDelta / OutEdgeLength;
+
+	// Rotate the edge direction clockwise (in our left-handed coordinate system) to get the normal for a clockwise polygon
+	OutEdgeNormal = FVector2D(OutEdgeDir.Y, -OutEdgeDir.X);
+
+	if (!bPolyCW)
+	{
+		OutEdgeNormal *= -1.0f;
+	}
+
+	return true;
+}
+
+bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, bool& bOutOverlaps, float Tolerance)
+{
+	// debug n^2 check to ensure that Polygon is indeed a perimeter, and does not have peninsula edges.
+#if !UE_BUILD_SHIPPING
+	int32 numPoints = Polygon.Num();
+	for (int32 idxA = 0; idxA < numPoints; ++idxA)
+	{
+		const FVector2D& pointA = Polygon[idxA];
+		for (int32 idxB = idxA + 1; idxB < numPoints; ++idxB)
+		{
+			const FVector2D& pointB = Polygon[idxB];
+			if (!ensure(!pointA.Equals(pointB, Tolerance)))
+			{
+				UE_LOG(LogTemp, Error, TEXT("Input polygon is not a valid perimeter; indices %d and %d are the same point: %s"),
+					idxA, idxB, *pointA.ToString());
+				return false;
+			}
+		}
+	}
+#endif
+
+	return IsPointInPolygon(Point, Polygon, Polygon, bOutOverlaps, Tolerance);
+}
+
+bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, const TArray<FVector2D>& Perimeter, bool& bOutOverlaps, float Tolerance)
 {
 	int32 numPolyPoints = Polygon.Num();
+	bOutOverlaps = false;
 
 	if (!ensure(numPolyPoints >= 3))
 	{
 		return false;
 	}
 
-	// Choose an arbitrary ray direction from which to test if our sample point hits an odd number
-	// of polygon edges.
-	const FVector2D testRay(1.0f, 0.0f);
-	int32 edgeRayHits = 0;
-
-	// Test the ray against every edge, since we aren't using any kind of spatial data structure to rule out edges,
-	// and this is intended to work with concave polygons where being inside corners or on the same side of every edge
-	// wouldn't be sufficient.
+	// First, test if the input point lies on any of the input polygon's vertices or edges,
+	// since any other ray intersection tests would be invalidated by the point overlapping with the polygon.
 	for (int32 pointIdx = 0; pointIdx < numPolyPoints; ++pointIdx)
 	{
 		int32 edgeIdx1 = pointIdx;
@@ -1107,40 +1213,108 @@ bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D &Point, const TA
 
 		const FVector2D &edgePoint1 = Polygon[edgeIdx1];
 		const FVector2D &edgePoint2 = Polygon[edgeIdx2];
-		FVector2D edgeDelta = edgePoint2 - edgePoint1;
-		float edgeLen = edgeDelta.Size();
-		if (!ensure(!FMath::IsNearlyZero(edgeLen)))
+		if (!ensure(!edgePoint1.Equals(edgePoint2, Tolerance)))
 		{
 			return false;
 		}
-		FVector2D edgeDir = edgeDelta / edgeLen;
 
-		// If the test point is close to a polygon point, return whether we're inclusive
-		if (FVector2D::Distance(Point, edgePoint1) <= Tolerance)
-		{
-			return bInclusive;
-		}
-
-		// If the test point is close to a polygon edge, return whether we're inclusive
+		// If the test point is close to a polygon vertex or edge, return whether we're inclusive
 		FVector2D projectedPoint = FMath::ClosestPointOnSegment2D(Point, edgePoint1, edgePoint2);
-		if (FVector2D::Distance(Point, projectedPoint) <= Tolerance)
+		if (Point.Equals(projectedPoint, Tolerance))
 		{
-			return bInclusive;
-		}
-
-		FVector2D edgeIntersection;
-		float testRayDist, edgeRayDist;
-		bool bRaysColinear;
-		if (UModumateGeometryStatics::RayIntersection2D(Point, testRay, edgePoint1, edgeDir, edgeIntersection,
-			testRayDist, edgeRayDist, bRaysColinear, true) && !bRaysColinear &&
-			FMath::IsWithinInclusive(edgeRayDist, -Tolerance, edgeLen + Tolerance))
-		{
-			++edgeRayHits;
+			bOutOverlaps = true;
+			return false;
 		}
 	}
 
-	// If the ray hit an odd number of edges, then its origin must be inside the polygon.
-	return ((edgeRayHits % 2) == 1);
+	// Now that we've tested vertex and edge overlapping with the Polygon, we're only concerned with the Perimeter,
+	// since point containment isn't well-defined (or at least easy to write) for polygons with peninsulas.
+
+	// Get the winding for the input perimeter, so we can calculate internal edge normals to perform ray tests
+	bool bPolyCW, bPolyConcave;
+	GetPolygonWindingAndConcavity(Perimeter, bPolyCW, bPolyConcave);
+
+	// Choose an arbitrary ray direction from which to test if our sample point hits an odd number
+	// of polygon edges.
+	const FVector2D testRay(1.0f, 0.0f);
+
+	// Keep track of the shortest hit against either a vertex or edge of the polygon,
+	// so we can test whether the hit normal is inside the polygon.
+	float minRayHitDist = FLT_MAX;
+	int32 minHitEdgeStartIdx = INDEX_NONE;
+	bool bMinHitVertex = false;
+
+	// The edge info for the edge that we have a min hit against
+	float hitEdgeLength;
+	FVector2D hitEdgePoint1, hitEdgePoint2, hitEdgeDir, hitEdgeNormal;
+
+	// Test the ray against every edge, since we aren't using any kind of spatial data structure to rule out edges,
+	// and this is intended to work with concave polygons where being inside corners or on the same side of every edge
+	// wouldn't be sufficient.
+	int32 numPerimeterPoints = Perimeter.Num();
+	for (int32 pointIdx = 0; pointIdx < numPerimeterPoints; ++pointIdx)
+	{
+		int32 edgeStartIdx = pointIdx;
+
+		float edgeLength;
+		FVector2D edgePoint1, edgePoint2, edgeDir, edgeNormal;
+		GetPolyEdgeInfo(Perimeter, bPolyCW, edgeStartIdx, edgePoint1, edgePoint2, edgeLength, edgeDir, edgeNormal, Tolerance);
+
+		// Now, try to intersect with the actual edge
+		FVector2D edgeIntersection;
+		float testRayDist, edgeRayDist;
+		bool bRaysColinear;
+		bool bHitEdge = UModumateGeometryStatics::RayIntersection2D(Point, testRay, edgePoint1, edgeDir,
+			edgeIntersection, testRayDist, edgeRayDist, bRaysColinear, true);
+
+		// - Require an intersection of some kind
+		// - Require a shorter intersection than we've already had
+		// - Require an intersection against only either the start of the target edge or its inside;
+		//   the target edge's end point that will be considered with the next edge
+		if (bHitEdge && (testRayDist < minRayHitDist) &&
+			FMath::IsWithinInclusive(edgeRayDist, -Tolerance, edgeLength - Tolerance))
+		{
+			minRayHitDist = testRayDist;
+			minHitEdgeStartIdx = edgeStartIdx;
+			bMinHitVertex = edgeIntersection.Equals(edgePoint1, Tolerance);
+
+			hitEdgeLength = edgeLength;
+			hitEdgePoint1 = edgePoint1;
+			hitEdgePoint2 = edgePoint2;
+			hitEdgeDir = edgeDir;
+			hitEdgeNormal = edgeNormal;
+		}
+	}
+
+	if (minHitEdgeStartIdx == INDEX_NONE)
+	{
+		return false;
+	}
+
+	// If the shortest ray hit against the polygon is against an edge, then we only need to check against the one edge's normal
+	if (!bMinHitVertex)
+	{
+		float hitNormalDot = testRay | hitEdgeNormal;
+
+		// Make sure we didn't hit an edge that was parallel with the test ray if we thought we intersected the middle of it.
+		if (!ensure(!FMath::IsNearlyZero(hitNormalDot, PLANAR_DOT_EPSILON)))
+		{
+			return false;
+		}
+
+		return (hitNormalDot < 0.0f);
+	}
+	// Otherwise, compare against both edge normals of the edges whose shared vertex we hit
+	else
+	{
+		int32 preEdgeIdx = (minHitEdgeStartIdx - 1 + numPerimeterPoints) % numPerimeterPoints;
+		float preEdgeLength;
+		FVector2D preEdgePoint1, preEdgePoint2, preEdgeDir, preEdgeNormal;
+		GetPolyEdgeInfo(Perimeter, bPolyCW, preEdgeIdx, preEdgePoint1, preEdgePoint2, preEdgeLength, preEdgeDir, preEdgeNormal, Tolerance);
+
+		bool bOverlaps;
+		return IsRayBoundedByRays(-preEdgeDir, hitEdgeDir, preEdgeNormal, hitEdgeNormal, -testRay, bOverlaps);
+	}
 }
 
 void UModumateGeometryStatics::PolyIntersection(const TArray<FVector2D> &PolyA, const TArray<FVector2D> &PolyB,
@@ -2206,4 +2380,9 @@ bool UModumateGeometryStatics::IsLineSegmentBoundedByPoints2D(const FVector2D &S
 	}
 
 	return false;
+}
+
+bool UModumateGeometryStatics::ArePlanesCoplanar(const FPlane& PlaneA, const FPlane& PlaneB, float Epsilon)
+{
+	return PlaneA.Equals(PlaneB, Epsilon) || PlaneA.Equals(PlaneB.Flip(), Epsilon);
 }

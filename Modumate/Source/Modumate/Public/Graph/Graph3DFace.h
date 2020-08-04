@@ -41,7 +41,7 @@ namespace Modumate
 
 		FVector2D ProjectPosition2D(const FVector &Position) const;
 		FVector DeprojectPosition(const FVector2D &ProjectedPos) const;
-		bool ContainsPosition(const FVector &Position) const;
+		bool ContainsPosition(const FVector &Position, bool& bOutOverlaps) const;
 		bool UpdatePlane(const TArray<int32> &InVertexIDs);
 		bool ShouldUpdatePlane() const;
 		bool UpdateVerticesAndEdges(const TArray<int32> &InVertexIDs, bool bAssignVertices = true);
