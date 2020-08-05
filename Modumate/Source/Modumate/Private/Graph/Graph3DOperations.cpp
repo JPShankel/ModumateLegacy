@@ -318,7 +318,20 @@ namespace Modumate
 		// this function is intended to be called once per graph operation, so it makes containers instead of having mutable members
 		TSet<int32> oldFaces;
 		TSet<int32> newFaces;
+
+		TSet<int32> currentFaces;
+		for (auto& kvp : GetFaces())
+		{
+			currentFaces.Add(kvp.Key);
+		}
+
 		TMap<int32, TArray<int32>> oldToNewFaceIDs;
+		TArray <TArray<int32>> outFaceVertices;
+
+		// variables for face addition
+		FGraph3DDelta faceDelta;
+		TArray<int32> parentIds = { MOD_ID_NONE };
+		TMap<int32, int32> edgeMap;
 
 		for (int32 edgeIdx = 0; edgeIdx < EdgeIDs.Num(); edgeIdx++)
 		{
@@ -327,16 +340,15 @@ namespace Modumate
 			bool bHasPlaneConstraint = !currentPlane.Equals(FPlane(EForceInit::ForceInitToZero));
 
 			// subdivide faces
-			TArray <TArray<int32>> outFaceVertices;
+			outFaceVertices.Reset();
 			TraverseFacesFromEdge(edgeID, outFaceVertices);
 
 			for (auto& faceVertices : outFaceVertices)
 			{
-				FGraph3DDelta faceDelta;
+				faceDelta.Reset();
+				parentIds = { MOD_ID_NONE };
 				int32 addedFaceID;
-				TArray<int32> parentIds = { MOD_ID_NONE };
-				TSet<int32> groupIDs;
-				TMap<int32, int32> edgeMap;
+				edgeMap.Reset();
 				if (!GetDeltaForFaceAddition(faceVertices, faceDelta, NextID, existingID, parentIds, edgeMap, addedFaceID))
 				{
 					continue;
@@ -350,29 +362,38 @@ namespace Modumate
 					continue;
 				}
 
+				// Find out whether the potential added face overlaps with any existing faces
 				TSet<int32> coincidentFaceIDs;
-				FindOverlappingFaces(addedFaceID, coincidentFaceIDs);
+				FindOverlappingFaces(addedFaceID, currentFaces, coincidentFaceIDs);
+
+				// There are two overlapping faces when the potential face is between a 
+				// face from before the graph operation and a face added during the graph operation.
+				// Currently, user-facing graph operations only support adding one face at a time,
+				// so there shouldn't be more than two overlapping faces.
+				if (!ensureAlways(coincidentFaceIDs.Num() <= 2))
+				{
+					continue;
+				}
+
+				// If there are two faces, choose one arbitrarily.  Potentially, there could be some
+				// logic here to attempt to prefer the pre-operation face or the during-operation face
+				// to transfer that face's assembly to the new face.
+				int32 coincidentFaceID = MOD_ID_NONE;
+				if (coincidentFaceIDs.Num() > 0)
+				{
+					coincidentFaceID = *coincidentFaceIDs.CreateIterator();
+				}
 
 				// If the plane is constrained (used when a face is added) only add the new faces that are found if they are subdividing another face
 				bool bParallel = FVector::Parallel(FVector(newFace->CachedPlane), FVector(currentPlane));
-				bool bHasCoincidentFaceIDs = coincidentFaceIDs.Num() != 0;
 				// bAddNewFaces exists because because certain graph operations only want to make faces that are created from overlapping faces
-				if (bAddNewFaces && !bHasCoincidentFaceIDs && (!bHasPlaneConstraint || bParallel))
+				if (bAddNewFaces && coincidentFaceID == MOD_ID_NONE && (!bHasPlaneConstraint || bParallel))
 				{
 					OutDeltas.Add(faceDelta);
 					bAddedToDeltas = true;
 				}
 				else
 				{
-					// TODO: we shouldn't just arbitrarily pick the first coincident face, we need a better scheme
-					// (CachedArea was wrong, relying on the order of face IDs is also potentially wrong, but happens to be correct more often)
-					int32 coincidentFaceID = MOD_ID_NONE;
-					for (int32 id : coincidentFaceIDs)
-					{
-						coincidentFaceID = id;
-						break;
-					}
-
 					addedFaceID = FMath::Abs(addedFaceID);
 					coincidentFaceID = FMath::Abs(coincidentFaceID);
 
@@ -497,9 +518,9 @@ namespace Modumate
 			int32 containingFaceID = kvp.Value;
 			auto face = FindFace(faceID);
 
-			auto& faceDelta  = containmentDelta.FaceContainmentUpdates[faceID];
-			faceDelta.PrevContainingFaceID = face->ContainingFaceID;
-			faceDelta.NextContainingFaceID = containingFaceID;
+			auto& faceContainmentDelta  = containmentDelta.FaceContainmentUpdates[faceID];
+			faceContainmentDelta.PrevContainingFaceID = face->ContainingFaceID;
+			faceContainmentDelta.NextContainingFaceID = containingFaceID;
 			if (face->ContainingFaceID != containingFaceID)
 			{
 				auto oldContainingFace = FindFace(face->ContainingFaceID);

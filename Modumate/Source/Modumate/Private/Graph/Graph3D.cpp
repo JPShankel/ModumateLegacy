@@ -1034,7 +1034,7 @@ namespace Modumate
 		return true;
 	}
 
-	void FGraph3D::FindOverlappingFaces(int32 AddedFaceID, TSet<int32> &OutOverlappingFaces) const
+	void FGraph3D::FindOverlappingFaces(int32 AddedFaceID, const TSet<int32> &ExistingFaces, TSet<int32> &OutOverlappingFaces) const
 	{
 		auto newFace = FindFace(AddedFaceID);
 		if (newFace == nullptr)
@@ -1051,7 +1051,7 @@ namespace Modumate
 
 			for (auto connection : edge->ConnectedFaces)
 			{
-				if (FMath::Abs(connection.FaceID) != FMath::Abs(AddedFaceID) && FVector::Coincident(connection.EdgeFaceDir, edgeNormal))
+				if (ExistingFaces.Contains(FMath::Abs(connection.FaceID)) && FMath::Abs(connection.FaceID) != FMath::Abs(AddedFaceID) && FVector::Coincident(connection.EdgeFaceDir, edgeNormal))
 				{
 					OutOverlappingFaces.Add(FMath::Abs(connection.FaceID));
 				}

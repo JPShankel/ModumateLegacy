@@ -213,7 +213,7 @@ namespace Modumate
 	public:
 		int32 FindOverlappingFace(int32 AddedFaceID) const;
 	private:
-		void FindOverlappingFaces(int32 AddedFaceID, TSet<int32> &OutOverlappingFaces) const;
+		void FindOverlappingFaces(int32 AddedFaceID, const TSet<int32> &ExistingFaces, TSet<int32> &OutOverlappingFaces) const;
 
 		bool TraverseFacesFromEdge(int32 OriginalEdgeID, TArray<TArray<int32>> &OutVertexIDs) const;
 	};
