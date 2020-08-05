@@ -127,17 +127,6 @@ enum class EBIMValueScope : uint8
 	Room,
 	Drawing,
 	Roof,
-	//NOTE: finish bindings to be refactored, supporting old version as scopes for now
-	//Underscores appear in metadata table so maintaining here
-	Interior_Finish,
-	Exterior_Finish,
-	Glass_Finish,
-	Frame_Finish,
-	Hardware_Finish,
-	Cabinet_Interior_Finish,
-	Cabinet_Exterior_Finish,
-	Cabinet_Glass_Finish,
-	Cabinet_Hardware_Finish,
 	Error = 255
 };
 

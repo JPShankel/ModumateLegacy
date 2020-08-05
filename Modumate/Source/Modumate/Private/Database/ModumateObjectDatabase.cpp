@@ -280,7 +280,7 @@ void FModumateDatabase::ReadPresetData()
 			}
 
 			FBIMAssemblySpec outSpec;
-			PresetManager.PresetToSpec(kvp.Key, outSpec);
+			outSpec.FromPreset(PresetManager.CraftingNodePresets, kvp.Key);
 			outSpec.ObjectType = *ot;
 			UModumateObjectAssemblyStatics::DoMakeAssembly(*this, PresetManager, outSpec, outSpec.CachedAssembly);
 			PresetManager.UpdateProjectAssembly(outSpec);

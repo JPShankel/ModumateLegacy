@@ -16,6 +16,8 @@
 #include "DocumentManagement/ModumateSerialization.h"
 #include "Database/ModumateObjectAssembly.h"
 
+class FBIMPresetCollection;
+
 struct MODUMATE_API FBIMAssemblySpec
 {
 	EObjectType ObjectType = EObjectType::OTNone;
@@ -27,4 +29,6 @@ struct MODUMATE_API FBIMAssemblySpec
 
 	// For DataCollection support in preset manager
 	FName UniqueKey() const { return RootPreset; }
+
+	ECraftingResult FromPreset(const FBIMPresetCollection& PresetCollection, const FName& PresetID);
 };

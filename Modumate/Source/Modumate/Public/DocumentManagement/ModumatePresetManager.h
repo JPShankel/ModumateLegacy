@@ -36,8 +36,6 @@ public:
 	FBIMPresetCollection CraftingNodePresets, DraftingNodePresets;
 	TMap<EObjectType, FName> StarterPresetsByObjectType;
 
-	ECraftingResult PresetToSpec(const FName& PresetID, FBIMAssemblySpec& OutPropertySpec) const;
-
 	bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FName& PresetID, FBIMAssemblySpec& OutAssembly) const;
 	bool TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAssemblySpec& OutAssembly) const;
 

@@ -5,7 +5,6 @@
 #include "Database/ModumateObjectEnums.h"
 #include "BIMKernel/BIMPresets.h"
 
-
 /*
 	Crafting trees are acyclical networks of crafting node instances
 	They have their own input pin sets and properties, both of which are inherited from the preset used to create the node
@@ -20,7 +19,6 @@ typedef TWeakPtr<FBIMCraftingTreeNode> FBIMCraftingTreeNodeWeakPtr;
 
 typedef TSharedPtr<const FBIMCraftingTreeNode> FBIMCraftingTreeNodeSharedPtrConst;
 typedef TWeakPtr<const FBIMCraftingTreeNode> FBIMCraftingTreeNodeWeakPtrConst;
-
 
 class MODUMATE_API FBIMCraftingTreeNode : public TSharedFromThis<FBIMCraftingTreeNode>
 {
@@ -115,8 +113,6 @@ public:
 
 	FBIMCraftingTreeNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FName& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
 	ECraftingResult SetNewPresetForNode(const FBIMPresetCollection &PresetCollection, int32 InstanceID, const FName &PresetID);
-
-	ECraftingResult PresetToSpec(const FName &PresetID, const FBIMPresetCollection &PresetCollection, FBIMAssemblySpec &OutPropertySpec) const;
 
 	const FBIMCraftingTreeNodeSharedPtr InstanceFromID(int32 InstanceID) const;
 	FBIMCraftingTreeNodeSharedPtr InstanceFromID(int32 InstanceID);

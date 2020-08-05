@@ -260,10 +260,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 
 	FBIMCraftingTreeNodePool instancePool;
 	FBIMCraftingTreeNodeSharedPtr rootNode;
-	ensureAlways(instancePool.InitFromPreset(presetCollection, layeredAssemblies[0], rootNode) == ECraftingResult::Success);
-
-	FBIMAssemblySpec outSpec;
-	if (ensureAlways(rootNode.IsValid()) && !ensureAlways(instancePool.PresetToSpec(layeredAssemblies[0], presetCollection, outSpec) == ECraftingResult::Success))
+	if (!ensureAlways(instancePool.InitFromPreset(presetCollection, layeredAssemblies[0], rootNode) == ECraftingResult::Success))
 	{
 		return false;
 	}

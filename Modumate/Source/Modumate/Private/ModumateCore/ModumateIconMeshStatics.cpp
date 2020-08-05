@@ -126,7 +126,7 @@ bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContex
 	const FPresetManager &presetManager = gameState->Document.PresetManager;
 
 	FBIMAssemblySpec presetSpec;
-	presetManager.PresetToSpec(PresetKey, presetSpec);
+	presetSpec.FromPreset(presetManager.CraftingNodePresets, PresetKey);
 
 	FName materialName, colorName;
 
