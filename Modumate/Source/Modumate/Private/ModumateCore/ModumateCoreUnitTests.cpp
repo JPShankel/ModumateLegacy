@@ -11,152 +11,6 @@ namespace Modumate
 {
 	// Modumate Geometry Statics
 
-	// Segment-Poly Test 1 - no holes
-	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometrySimpleSegment, "Modumate.Core.Geometry.SimpleSegment", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
-	bool FModumateGeometrySimpleSegment::RunTest(const FString& Parameters)
-	{
-		FVector2D segmentStart(0.0f, 0.0f);
-		FVector2D segmentEnd(0.0f, 10.0f);
-
-		TArray<FPolyHole2D> holes;
-		TArray<FVector2D> mergedPoints;
-		TArray<int32> mergedPolyIndices, segmentPointsHoleIndices;
-		TArray<bool> mergedPolygons;
-		TArray<FVector2D> segments;
-		bool bMergeSuccess = UModumateGeometryStatics::GetSegmentPolygonIntersections(segmentStart, segmentEnd,
-			holes, mergedPoints, mergedPolyIndices, mergedPolygons, segments, segmentPointsHoleIndices);
-		bool bValidateMerge = (mergedPolyIndices.Num() == 0) && (mergedPoints.Num() == 2) && (segments.Num() == 1) &&
-			UModumateGeometryStatics::CompareVectors(mergedPoints, TArray<FVector2D>(
-				{
-					FVector2D(0.0f, 0.0f),
-					FVector2D(0.0f, 10.0f),
-				})) &&
-			UModumateGeometryStatics::CompareVectors(segments, TArray<FVector2D>(
-				{
-					FVector2D(0.0f, 10.0f),
-				}));
-
-		return bMergeSuccess && bValidateMerge;
-	}
-
-	// Segment-Poly Test 2 - 1 merged hole
-	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometryOneHole, "Modumate.Core.Geometry.OneHole", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
-		bool FModumateGeometryOneHole::RunTest(const FString& Parameters)
-	{
-		FVector2D segmentStart(0.0f, 0.0f);
-		FVector2D segmentEnd(10.0f, 0.0f);
-
-		FPolyHole2D hole;
-		hole.Points = {
-			FVector2D(4.0f, 0.0f),
-			FVector2D(4.0f, 5.0f),
-			FVector2D(7.0f, 5.0f),
-			FVector2D(7.0f, 0.0f),
-		};
-		TArray<FPolyHole2D> holes({ hole });
-
-		TArray<FVector2D> mergedPoints;
-		TArray<int32> mergedPolyIndices, segmentPointsHoleIndices;
-		TArray<bool> mergedPolygons;
-		TArray<FVector2D> segments;
-		bool bMergeSuccess = UModumateGeometryStatics::GetSegmentPolygonIntersections(segmentStart, segmentEnd,
-			holes, mergedPoints, mergedPolyIndices, mergedPolygons, segments, segmentPointsHoleIndices) &&
-			(mergedPolyIndices.Num() == 1) && (mergedPoints.Num() == 6) && (segments.Num() == 2) &&
-			(mergedPolyIndices[0] == 0) && UModumateGeometryStatics::CompareVectors(mergedPoints, TArray<FVector2D>(
-				{
-					FVector2D(0.0f, 0.0f),
-					FVector2D(4.0f, 0.0f),
-					FVector2D(4.0f, 5.0f),
-					FVector2D(7.0f, 5.0f),
-					FVector2D(7.0f, 0.0f),
-					FVector2D(10.0f, 0.0f),
-				})) && UModumateGeometryStatics::CompareVectors(segments, TArray<FVector2D>(
-				{
-					FVector2D(0.0f, 4.0f),
-					FVector2D(7.0f, 10.0f),
-				}));
-		return bMergeSuccess;
-	}
-
-	// Segment-Poly Test 3 - 3 merged holes, 1 unmerged hole
-	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometryFourHoles, "Modumate.Core.Geometry.FourHoles", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
-	bool FModumateGeometryFourHoles::RunTest(const FString& Parameters)
-	{
-		FVector2D segmentStart(-1.0f, 1.0f);
-		FVector2D segmentEnd(20.0f, -20.0f);
-
-		FPolyHole2D hole1;
-		hole1.Points = {
-			FVector2D(16.0f, -16.0f),
-			FVector2D(17.0f, -15.0f),
-			FVector2D(16.0f, -14.0f),
-			FVector2D(15.0f, -15.0f),
-		};
-
-		FPolyHole2D hole2;
-		hole2.Points = {
-			FVector2D(1.0f, -1.0f),
-			FVector2D(2.0f, 0.0f),
-			FVector2D(3.0f, -1.0f),
-			FVector2D(2.0f, -2.0f),
-		};
-
-		FPolyHole2D hole3;
-		hole3.Points = {
-			FVector2D(1.0f, 1.0f),
-			FVector2D(2.0f, 2.0f),
-			FVector2D(1.0f, 3.0f),
-			FVector2D(0.0f, 2.0f),
-		};
-
-		FPolyHole2D hole4;
-		hole4.Points = {
-			FVector2D(7.0f, -9.0f),
-			FVector2D(6.0f, -8.0f),
-			FVector2D(7.0f, -7.0f),
-			FVector2D(8.0f, -8.0f),
-		};
-
-		TArray<FPolyHole2D> holes({
-			hole1, hole2, hole3, hole4
-			});
-
-		TArray<FVector2D> mergedPoints;
-		TArray<int32> mergedPolyIndices, segmentPointsHoleIndices;
-		TArray<bool> mergedPolygons;
-		TArray<FVector2D> segments;
-		bool bMergeSuccess = UModumateGeometryStatics::GetSegmentPolygonIntersections(segmentStart, segmentEnd,
-			holes, mergedPoints, mergedPolyIndices, mergedPolygons, segments, segmentPointsHoleIndices) &&
-			(mergedPolyIndices.Num() == 3) && (mergedPoints.Num() == 14) && (segments.Num() == 4) &&
-			(mergedPolyIndices[0] == 1) && (mergedPolyIndices[1] == 3) && (mergedPolyIndices[2] == 0) &&
-			UModumateGeometryStatics::CompareVectors(mergedPoints, TArray<FVector2D>(
-				{
-					FVector2D(-1.0f, 1.0f),
-					FVector2D(1.0f, -1.0f),
-					FVector2D(2.0f, 0.0f),
-					FVector2D(3.0f, -1.0f),
-					FVector2D(2.0f, -2.0f),
-					FVector2D(7.0f, -7.0f),
-					FVector2D(6.0f, -8.0f),
-					FVector2D(7.0f, -9.0f),
-					FVector2D(8.0f, -8.0f),
-					FVector2D(15.0f, -15.0f),
-					FVector2D(16.0f, -14.0f),
-					FVector2D(17.0f, -15.0f),
-					FVector2D(16.0f, -16.0f),
-					FVector2D(20.0f, -20.0f),
-				})) &&
-				UModumateGeometryStatics::CompareVectors(segments, TArray<FVector2D>(
-					{
-						FVector2D(0.0f  * UE_SQRT_2, 2.0f  * UE_SQRT_2),
-						FVector2D(3.0f  * UE_SQRT_2, 8.0f  * UE_SQRT_2),
-						FVector2D(9.0f  * UE_SQRT_2, 16.0f * UE_SQRT_2),
-						FVector2D(17.0f * UE_SQRT_2, 21.0f * UE_SQRT_2),
-					}));
-
-		return bMergeSuccess;
-	}
-
 	// Ray Intersection Tests
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometryRayIntersection, "Modumate.Core.Geometry.RayIntersection", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 	bool FModumateGeometryRayIntersection::RunTest(const FString& Parameters)
@@ -224,22 +78,23 @@ namespace Modumate
 			FVector2D(5.0f, 8.0f),
 		});
 
-		bool bOverlaps;
+		FPointInPolyResult pointInPolyResult;
+		bool bSuccess;
 
-		bool bInsideTriangle1 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(5.0f, 4.0f), triangle, bOverlaps);
-		TestTrue(TEXT("bInsideTriangle1"), bInsideTriangle1 && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(5.0f, 4.0f), triangle, pointInPolyResult);
+		TestTrue(TEXT("bInsideTriangle1"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bool bInsideTriangle2 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(-5.0f, 4.0f), triangle, bOverlaps);
-		TestTrue(TEXT("!bInsideTriangle2"), !bInsideTriangle2 && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(-5.0f, 4.0f), triangle, pointInPolyResult);
+		TestTrue(TEXT("!bInsideTriangle2"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bool bInsideTriangle3 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(15.0f, 4.0f), triangle, bOverlaps);
-		TestTrue(TEXT("!bInsideTriangle3"), !bInsideTriangle3 && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(15.0f, 4.0f), triangle, pointInPolyResult);
+		TestTrue(TEXT("!bInsideTriangle3"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bool bInsideTriangle4 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(5.0f, 14.0f), triangle, bOverlaps);
-		TestTrue(TEXT("!bInsideTriangle4"), !bInsideTriangle4 && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(5.0f, 14.0f), triangle, pointInPolyResult);
+		TestTrue(TEXT("!bInsideTriangle4"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bool bInsideTriangle5 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(15.0f, 0.0f), triangle, bOverlaps);
-		TestTrue(TEXT("!bInsideTriangle5"), !bInsideTriangle5);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(15.0f, 0.0f), triangle, pointInPolyResult);
+		TestTrue(TEXT("!bInsideTriangle5"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
 		TArray<FVector2D> concaveUShape({
 			FVector2D(0.0f, 0.0f),
@@ -255,50 +110,50 @@ namespace Modumate
 		});
 
 		// Sanity concave intersection tests
-		bool bInsideU1 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(1.0f, 5.0f), concaveUShape, bOverlaps);
-		TestTrue(TEXT("bInsideU1"), bInsideU1 && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(1.0f, 5.0f), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("bInsideU1"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bool bInsideU2 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(5.0f, 1.0f), concaveUShape, bOverlaps);
-		TestTrue(TEXT("bInsideU2"), bInsideU2 && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(5.0f, 1.0f), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("bInsideU2"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bool bInsideU3 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(9.0f, 5.0f), concaveUShape, bOverlaps);
-		TestTrue(TEXT("bInsideU3"), bInsideU3 && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(9.0f, 5.0f), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("bInsideU3"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bool bInsideU4 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(5.0f, 5.0f), concaveUShape, bOverlaps);
-		TestTrue(TEXT("!bInsideU4"), !bInsideU4 && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(5.0f, 5.0f), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("!bInsideU4"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bool bInsideU5 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(-5.0f, 5.0f), concaveUShape, bOverlaps);
-		TestTrue(TEXT("!bInsideU5"), !bInsideU5 && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(-5.0f, 5.0f), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("!bInsideU5"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bool bInsideU6 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(15.0f, 5.0f), concaveUShape, bOverlaps);
-		TestTrue(TEXT("!bInsideU6"), !bInsideU6 && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(15.0f, 5.0f), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("!bInsideU6"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
 		// Inclusive overlap epsilon tests
 		float halfEpsilon = 0.5f * RAY_INTERSECT_TOLERANCE;
-		bool bInsideU7 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(-halfEpsilon, 5.0f), concaveUShape, bOverlaps);
-		TestTrue(TEXT("!bInsideU7"), !bInsideU7 && bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(-halfEpsilon, 5.0f), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("!bInsideU7"), bSuccess && !pointInPolyResult.bInside && pointInPolyResult.bOverlaps);
 
-		bool bInsideU8 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(halfEpsilon, 5.0f), concaveUShape, bOverlaps);
-		TestTrue(TEXT("!bInsideU8"), !bInsideU8 && bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(halfEpsilon, 5.0f), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("!bInsideU8"), bSuccess && !pointInPolyResult.bInside && pointInPolyResult.bOverlaps);
 
-		bool bInsideU9 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(10 - halfEpsilon, 5.0f), concaveUShape, bOverlaps);
-		TestTrue(TEXT("!bInsideU9"), !bInsideU9 && bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(10 - halfEpsilon, 5.0f), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("!bInsideU9"), bSuccess && !pointInPolyResult.bInside && pointInPolyResult.bOverlaps);
 
-		bool bInsideU10 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(10 + halfEpsilon, 5.0f), concaveUShape, bOverlaps);
-		TestTrue(TEXT("!bInsideU10"), !bInsideU10 && bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(10 + halfEpsilon, 5.0f), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("!bInsideU10"), bSuccess && !pointInPolyResult.bInside && pointInPolyResult.bOverlaps);
 
-		bool bInsideU11 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(halfEpsilon, 10.0f - halfEpsilon), concaveUShape, bOverlaps);
-		TestTrue(TEXT("!bInsideU11"), !bInsideU11 && bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(halfEpsilon, 10.0f - halfEpsilon), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("!bInsideU11"), bSuccess && !pointInPolyResult.bInside && pointInPolyResult.bOverlaps);
 
-		bool bInsideU12 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(-halfEpsilon, 10.0f + halfEpsilon), concaveUShape, bOverlaps);
-		TestTrue(TEXT("!bInsideU12"), !bInsideU12 && bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(-halfEpsilon, 10.0f + halfEpsilon), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("!bInsideU12"), bSuccess && !pointInPolyResult.bInside && pointInPolyResult.bOverlaps);
 
 		// Edge cases from point intersections
-		bool bInsideU13 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(1.0f, 1.0f), concaveUShape, bOverlaps);
-		TestTrue(TEXT("bInsideU13"), bInsideU13 && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(1.0f, 1.0f), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("bInsideU13"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bool bInsideU14 = UModumateGeometryStatics::IsPointInPolygon(FVector2D(1.0f, 2.0f), concaveUShape, bOverlaps);
-		TestTrue(TEXT("bInsideU14"), bInsideU14 && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(1.0f, 2.0f), concaveUShape, pointInPolyResult);
+		TestTrue(TEXT("bInsideU14"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
 		return true;
 	}
@@ -331,61 +186,62 @@ namespace Modumate
 			FVector2D(0.0f, 10.0f),
 		});
 
-		bool bInside, bOverlaps;
+		FPointInPolyResult pointInPolyResult;
+		bool bSuccess;
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(0.5f, 0.5f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("OverlapsComplex1"), !bInside && bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(0.5f, 0.5f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("OverlapsComplex1"), bSuccess && !pointInPolyResult.bInside && pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(1.0f, 1.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("OverlapsComplex2"), !bInside && bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(1.0f, 1.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("OverlapsComplex2"), bSuccess && !pointInPolyResult.bInside && pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(9.5f, 0.5f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("OverlapsComplex3"), !bInside && bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(9.5f, 0.5f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("OverlapsComplex3"), bSuccess && !pointInPolyResult.bInside && pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(9.0f, 1.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("OverlapsComplex4"), !bInside && bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(9.0f, 1.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("OverlapsComplex4"), bSuccess && !pointInPolyResult.bInside && pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(0.25f, 0.5f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("InsideComplex1"), bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(0.25f, 0.5f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("InsideComplex1"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(0.5f, 1.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("InsideComplex2"), bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(0.5f, 1.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("InsideComplex2"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(8.0f, 0.5f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("InsideComplex3"), bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(8.0f, 0.5f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("InsideComplex3"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(8.0f, 1.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("InsideComplex4"), bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(8.0f, 1.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("InsideComplex4"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(9.5f, 0.75f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("InsideComplex5"), bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(9.5f, 0.75f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("InsideComplex5"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(2.0f, 7.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("InsideComplex6"), bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(2.0f, 7.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("InsideComplex6"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(2.0f, 8.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("InsideComplex7"), bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(2.0f, 8.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("InsideComplex7"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(2.0f, 9.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("InsideComplex8"), bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(2.0f, 9.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("InsideComplex8"), bSuccess && pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(2.0f, 10.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("OutsideComplex1"), !bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(2.0f, 10.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("OutsideComplex1"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(-1.0f, 1.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("OutsideComplex2"), !bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(-1.0f, 1.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("OutsideComplex2"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(5.0f, 10.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("OutsideComplex3"), !bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(5.0f, 10.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("OutsideComplex3"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(-1.0f, 0.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("OutsideComplex4"), !bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(-1.0f, 0.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("OutsideComplex4"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(-1.0f, 9.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("OutsideComplex5"), !bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(-1.0f, 9.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("OutsideComplex5"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
-		bInside = UModumateGeometryStatics::IsPointInPolygon(FVector2D(-1.0f, 10.0f), complexPolygon, complexPerimeter, bOverlaps);
-		TestTrue(TEXT("OutsideComplex6"), !bInside && !bOverlaps);
+		bSuccess = UModumateGeometryStatics::TestPointInPolygon(FVector2D(-1.0f, 10.0f), complexPolygon, complexPerimeter, pointInPolyResult);
+		TestTrue(TEXT("OutsideComplex6"), bSuccess && !pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
 		return true;
 	}
@@ -394,7 +250,12 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometryConvexPolyIntersection, "Modumate.Core.Geometry.ConvexPolyIntersection", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 	bool FModumateGeometryConvexPolyIntersection::RunTest(const FString& Parameters)
 	{
+		// TODO: these tests are currently unhelpful now that polygon intersections are primarily implemented specifically for faces,
+		// where they can assume that all edge intersections have been resolved as vertices,
+		// and the only other place that arbitrary polygon intersection is used is duplicated inside of polygon triangulation for holes.
+		// Rewrite these tests once we have consolidated polygon intersection functions for all of the needed use cases.
 
+#if 0
 		// Poly intersection test group 1 - convex, non-overlapping
 
 		TArray<FVector2D> smallPoly({
@@ -411,16 +272,13 @@ namespace Modumate
 			FVector2D(11.0f, 0.0f),
 		});
 
-		bool bPolyAInPolyB, bOverlapping, bTouching;
+		bool bPolyAInPolyB, bOverlapping;
 
-		UModumateGeometryStatics::PolyIntersection(smallPoly, bigPoly, bPolyAInPolyB, bOverlapping, bTouching);
-		TestTrue(TEXT("bPolyAInPolyB"), bPolyAInPolyB && !bOverlapping && !bTouching);
+		UModumateGeometryStatics::PolyIntersection(smallPoly, bigPoly, bPolyAInPolyB, bOverlapping);
+		TestTrue(TEXT("bPolyAInPolyB"), bPolyAInPolyB && !bOverlapping);
 
-		UModumateGeometryStatics::PolyIntersection(bigPoly, smallPoly, bPolyAInPolyB, bOverlapping, bTouching);
-		TestTrue(TEXT("!bPolyAInPolyB"), !bPolyAInPolyB && !bOverlapping && !bTouching);
-
-		UModumateGeometryStatics::PolyIntersection(smallPoly, smallPoly, bPolyAInPolyB, bOverlapping, bTouching);
-		TestTrue(TEXT("bPolyAInPolyB"), bPolyAInPolyB && !bOverlapping && bTouching);
+		UModumateGeometryStatics::PolyIntersection(bigPoly, smallPoly, bPolyAInPolyB, bOverlapping);
+		TestTrue(TEXT("!bPolyAInPolyB"), !bPolyAInPolyB && !bOverlapping);
 
 		// Poly intersection test group 2 - convex, touching
 
@@ -439,32 +297,32 @@ namespace Modumate
 		});
 
 		// Simulate placing a door on a wall
-		UModumateGeometryStatics::PolyIntersection(portalPoly, planePoly, bPolyAInPolyB, bOverlapping, bTouching);
-		TestTrue(TEXT("bPolyAInPolyB"), bPolyAInPolyB && !bOverlapping && bTouching);
+		UModumateGeometryStatics::PolyIntersection(portalPoly, planePoly, bPolyAInPolyB, bOverlapping);
+		TestTrue(TEXT("bPolyAInPolyB"), bPolyAInPolyB && !bOverlapping);
 
 		// Ensure it still detects touching and not overlapping within the tolerance
 
 		TArray<FVector2D> portalPolyLower;
 		Algo::Transform(portalPoly, portalPolyLower, [](const FVector2D &p) { return p - FVector2D(0.0f, 0.5f * RAY_INTERSECT_TOLERANCE); });
-		UModumateGeometryStatics::PolyIntersection(portalPolyLower, planePoly, bPolyAInPolyB, bOverlapping, bTouching);
-		TestTrue(TEXT("bPolyAInPolyB"), bPolyAInPolyB && !bOverlapping && bTouching);
+		UModumateGeometryStatics::PolyIntersection(portalPolyLower, planePoly, bPolyAInPolyB, bOverlapping);
+		TestTrue(TEXT("bPolyAInPolyB"), bPolyAInPolyB && !bOverlapping);
 
 		TArray<FVector2D> portalPolyHigher;
 		Algo::Transform(portalPoly, portalPolyHigher, [](const FVector2D &p) { return p + FVector2D(0.0f, 0.5f * RAY_INTERSECT_TOLERANCE); });
-		UModumateGeometryStatics::PolyIntersection(portalPolyHigher, planePoly, bPolyAInPolyB, bOverlapping, bTouching);
-		TestTrue(TEXT("bPolyAInPolyB"), bPolyAInPolyB && !bOverlapping && bTouching);
+		UModumateGeometryStatics::PolyIntersection(portalPolyHigher, planePoly, bPolyAInPolyB, bOverlapping);
+		TestTrue(TEXT("bPolyAInPolyB"), bPolyAInPolyB && !bOverlapping);
 
 		// Ensure it doesn't detect touching outside of the tolerance
 
 		portalPolyLower.Reset();
 		Algo::Transform(portalPoly, portalPolyLower, [](const FVector2D &p) { return p - FVector2D(0.0f, 1.5f * RAY_INTERSECT_TOLERANCE); });
-		UModumateGeometryStatics::PolyIntersection(portalPolyLower, planePoly, bPolyAInPolyB, bOverlapping, bTouching);
-		TestTrue(TEXT("!bPolyAInPolyB"), !bPolyAInPolyB && bOverlapping && !bTouching);
+		UModumateGeometryStatics::PolyIntersection(portalPolyLower, planePoly, bPolyAInPolyB, bOverlapping);
+		TestTrue(TEXT("!bPolyAInPolyB"), !bPolyAInPolyB && bOverlapping);
 
 		portalPolyHigher.Reset();
 		Algo::Transform(portalPoly, portalPolyHigher, [](const FVector2D &p) { return p + FVector2D(0.0f, 1.5f * RAY_INTERSECT_TOLERANCE); });
-		UModumateGeometryStatics::PolyIntersection(portalPolyHigher, planePoly, bPolyAInPolyB, bOverlapping, bTouching);
-		TestTrue(TEXT("bPolyAInPolyB"), bPolyAInPolyB && !bOverlapping && !bTouching);
+		UModumateGeometryStatics::PolyIntersection(portalPolyHigher, planePoly, bPolyAInPolyB, bOverlapping);
+		TestTrue(TEXT("bPolyAInPolyB"), bPolyAInPolyB && !bOverlapping);
 
 
 		// Poly intersection test group 3 - convex, overlapping
@@ -483,11 +341,12 @@ namespace Modumate
 			FVector2D(11.0f, 4.0f),
 			});
 
-		UModumateGeometryStatics::PolyIntersection(rightPoly, leftPoly, bPolyAInPolyB, bOverlapping, bTouching);
-		TestTrue(TEXT("!bPolyAInPolyB"), !bPolyAInPolyB && bOverlapping && !bTouching);
+		UModumateGeometryStatics::PolyIntersection(rightPoly, leftPoly, bPolyAInPolyB, bOverlapping);
+		TestTrue(TEXT("!bPolyAInPolyB"), !bPolyAInPolyB && bOverlapping);
 
-		UModumateGeometryStatics::PolyIntersection(leftPoly, rightPoly, bPolyAInPolyB, bOverlapping, bTouching);
-		TestTrue(TEXT("!bPolyAInPolyB"), !bPolyAInPolyB && bOverlapping && !bTouching);
+		UModumateGeometryStatics::PolyIntersection(leftPoly, rightPoly, bPolyAInPolyB, bOverlapping);
+		TestTrue(TEXT("!bPolyAInPolyB"), !bPolyAInPolyB && bOverlapping);
+#endif
 
 		return true;
 	}
@@ -585,9 +444,7 @@ namespace Modumate
 		bool FModumateGeometryTriangulateVertices::RunTest(const FString& Parameters)
 	{
 		TArray<FVector2D> OutVertices;
-		TArray<int32> OutTriangles, OutPerimeterVertexHoleIndices;
-		TArray<FVector2D> OutPerimeter;
-		TArray<bool> OutMergedHoles;
+		TArray<int32> OutTriangles;
 
 		TArray<FVector2D> InVertices;
 		TArray<FPolyHole2D> InHoles;
@@ -599,7 +456,104 @@ namespace Modumate
 			FVector2D(100.0f, 0.0f)
 		};
 
-		TestTrue(TEXT("simple square"), UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutVertices, OutTriangles, OutPerimeter, OutMergedHoles, OutPerimeterVertexHoleIndices));
+		TestTrue(TEXT("simple square"), UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutTriangles, &OutVertices));
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometryTriangulateHoles, "Modumate.Core.Geometry.TriangulateHoles", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGeometryTriangulateHoles::RunTest(const FString& Parameters)
+	{
+		TArray<FVector2D> perimeter, outVertices;
+		TArray<FPolyHole2D> holes;
+		TArray<int32> outTriangleIndices;
+		TSet<FVector2D> uniqueVertices;
+		bool bTriangulationSuccess;
+		int32 expectedUniqueVertices;
+
+		perimeter = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(0.0f, 100.0f),
+			FVector2D(100.0f, 100.0f),
+			FVector2D(100.0f, 0.0f)
+		};
+
+		holes = { FPolyHole2D({
+			FVector2D(25.0f, 25.0f),
+			FVector2D(75.0f, 25.0f),
+			FVector2D(75.0f, 75.0f),
+			FVector2D(25.0f, 75.0f)
+		}) };
+
+		bTriangulationSuccess = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(perimeter, holes, outTriangleIndices, &outVertices);
+		TestTrue(TEXT("Square with a hole in the middle"), bTriangulationSuccess && (outTriangleIndices.Num() > 6) && (outVertices.Num() == 8));
+
+		// Based on our current limitations and workarounds for triangulation, polygon "islands"
+		// (a polygon that is initially a subset of another polygon, and shares one vertex with the outer polygon)
+		// must be passed as holes in order to not pass duplicate vertices,
+		// and the island holes must be separated from the outer polygon in order to triangulate.
+#define PASS_ISLANDS_AS_HOLES 1
+
+		perimeter = {
+			FVector2D(0.0f, 0.0f),
+#if !PASS_ISLANDS_AS_HOLES
+			FVector2D(148.749756f, 639.932617f),
+			FVector2D(320.486328f, 276.400391f),
+			FVector2D(0.0f, 0.0f),
+#endif
+			FVector2D(1158.06592f, 0.0f),
+			FVector2D(1158.06592, 1337.09644f),
+			FVector2D(0.0f, 1337.09644f)
+		};
+
+		holes = {
+#if PASS_ISLANDS_AS_HOLES
+			FPolyHole2D({
+				FVector2D(320.486328f, 276.400391f),
+				FVector2D(148.749756f, 639.932617f),
+				FVector2D(0.0f, 0.0f)
+			})
+#endif
+		};
+
+		bTriangulationSuccess = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(perimeter, holes, outTriangleIndices, &outVertices);
+		uniqueVertices.Reset();
+		uniqueVertices.Append(outVertices);
+#if PASS_ISLANDS_AS_HOLES
+		expectedUniqueVertices = 7;
+		int32 expectedNumTriangleIndices = 21;
+#else
+		expectedUniqueVertices = 6;
+		int32 expectedNumTriangleIndices = 15;
+#endif
+		TestTrue(TEXT("Square with an implicit triangular hole touching at one corner"), bTriangulationSuccess &&
+			(outTriangleIndices.Num() >= expectedNumTriangleIndices) && (outVertices.Num() == 7) && (uniqueVertices.Num() == expectedUniqueVertices));
+
+		perimeter = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(0.0f, 100.0f),
+			FVector2D(100.0f, 100.0f),
+			FVector2D(100.0f, 0.0f),
+			FVector2D(50.0f, 0.0f)
+		};
+
+		holes = { FPolyHole2D({
+			FVector2D(50.0f, 0.0f),
+			FVector2D(75.0f, 50.0f),
+			FVector2D(50.0f, 75.0f),
+			FVector2D(25.0f, 50.0f)
+		}) };
+
+		bTriangulationSuccess = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(perimeter, holes, outTriangleIndices, &outVertices);
+		uniqueVertices.Reset();
+		uniqueVertices.Append(outVertices);
+#if PASS_ISLANDS_AS_HOLES
+		expectedUniqueVertices = 9;
+#else
+		expectedUniqueVertices = 8;
+#endif
+		TestTrue(TEXT("Pentagon with a diamond hole touching at one point"), bTriangulationSuccess &&
+			(outTriangleIndices.Num() > 6) && (outVertices.Num() == 9) && (uniqueVertices.Num() == expectedUniqueVertices));
 
 		return true;
 	}
@@ -608,9 +562,7 @@ namespace Modumate
 		bool FModumateGeometryTriangulationErrors::RunTest(const FString& Parameters)
 	{
 		TArray<FVector2D> OutVertices;
-		TArray<int32> OutTriangles, OutPerimeterVertexHoleIndices;
-		TArray<FVector2D> OutPerimeter;
-		TArray<bool> OutMergedHoles;
+		TArray<int32> OutTriangles;
 
 		TArray<FVector2D> InVertices;
 		TArray<FPolyHole2D> InHoles;
@@ -625,7 +577,7 @@ namespace Modumate
 			FVector2D(50.0f, 0.0f)
 		};
 
-		TestTrue(TEXT("square with peninsula"), !UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutVertices, OutTriangles, OutPerimeter, OutMergedHoles, OutPerimeterVertexHoleIndices));
+		TestTrue(TEXT("square with peninsula"), !UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutTriangles, &OutVertices));
 
 		InVertices = {
 			FVector2D(0.0f, 0.0f),
@@ -642,7 +594,7 @@ namespace Modumate
 			FVector2D(25.0f, 0.0f)
 		};
 
-		TestTrue(TEXT("square with multiple peninsulas"), !UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutVertices, OutTriangles, OutPerimeter, OutMergedHoles, OutPerimeterVertexHoleIndices));
+		TestTrue(TEXT("square with multiple peninsulas"), !UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutTriangles, &OutVertices));
 
 		return false;
 	}

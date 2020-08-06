@@ -271,25 +271,6 @@ void ADynamicMeshActor::UpdateRailGeometry(const TArray<FVector> &points, float 
 	SetupRailGeometry(points, height);
 }
 
-void ADynamicMeshActor::UpdateHolesFromActors()
-{
-	Holes3D.Reset();
-	FVector actorLocation = GetActorLocation();
-
-	for (auto *holeActor : HoleActors)
-	{
-		FPolyHole3D &hole = Holes3D.AddDefaulted_GetRef();
-		hole.Points = UModumateObjectStatics::GetMoiActorHoleVertsWorldLocations(holeActor);
-
-		// Hole points are calculate in world coordinates, but for consistency with cached layer
-		// definitions and vertices, they should be relative to the actor location (centroid).
-		for (FVector &holePoint : hole.Points)
-		{
-			holePoint -= actorLocation;
-		}
-	}
-}
-
 bool ADynamicMeshActor::CreateBasicLayerDefs(const TArray<FVector> &PlanePoints, const FVector &PlaneNormal,
 	const FBIMAssemblySpec &InAssembly, float PlaneOffsetPCT,
 	const FVector &AxisX, float UVRotOffset, bool bToleratePlanarErrors)
@@ -339,7 +320,6 @@ bool ADynamicMeshActor::CreateBasicLayerDefs(const TArray<FVector> &PlanePoints,
 	LayerGeometries.SetNum(numLayers);
 	float totalThickness = Assembly.CachedAssembly.CalculateThickness().AsWorldCentimeters();
 	float totalOffset = totalThickness * -FMath::Clamp(PlaneOffsetPCT, 0.0f, 1.0f);
-	UpdateHolesFromActors();
 
 	FVector commonAxisX = AxisX;
 	float accumThickness = 0.0f;
@@ -380,16 +360,6 @@ bool ADynamicMeshActor::UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCo
 	if (bRecreateMesh || (numLayers != ProceduralSubLayers.Num()))
 	{
 		SetupProceduralLayers(numLayers);
-	}
-
-	// Only update collision for the mesh if there aren't any preview hole actors,
-	// since otherwise the holes will interfere with the tool's ability to raycast against where the hole might be.
-	// TODO: if we want to potentially select plane hosted objects by both their convex geometry and their complex geometry,
-	// then we may want to explicitly create simple collision convex shapes, or create additional collision meshes
-	// for the spaces where the holes would be.
-	if (PreviewHoleActors.Num() != 0)
-	{
-		bUpdateCollision = false;
 	}
 
 	UVAnchor = InUVAnchor;
@@ -467,10 +437,7 @@ void ADynamicMeshActor::AddPrismGeometry(const TArray<FVector> &points, const FV
 		});
 	}
 
-	TArray<FVector2D> perimeter2D;
-	TArray<bool> mergedHoles;
-	if (UModumateGeometryStatics::TriangulateVerticesPoly2Tri(points2D, holes2D,
-		triangulatedPoints2D, tris, perimeter2D, mergedHoles, perimeterVertexHoleIndices))
+	if (UModumateGeometryStatics::TriangulateVerticesPoly2Tri(points2D, holes2D, tris, &triangulatedPoints2D))
 	{
 		Algo::Transform(
 			triangulatedPoints2D,
@@ -1223,13 +1190,11 @@ void ADynamicMeshActor::SetupMasksGeometry(const TArray<TArray<FVector>> &Polygo
 			maskVertices2D.Add(UModumateGeometryStatics::ProjectPoint2D(vertex, AxisX, AxisY, Origin + planeOffset));
 		}
 
-		TArray<FVector2D> vertices2D, OutPerimeter2D;
+		TArray<FVector2D> vertices2D;
 		TArray<int32> tris2D;
-		TArray<int32> perimeterVertexHoleIndices2D; // empty
 		TArray<FPolyHole2D> validHoles; // empty
-		TArray<bool> outholes; // empty
 
-		UModumateGeometryStatics::TriangulateVerticesPoly2Tri(maskVertices2D, validHoles,vertices2D,tris2D,OutPerimeter2D,outholes,perimeterVertexHoleIndices2D);
+		UModumateGeometryStatics::TriangulateVerticesPoly2Tri(maskVertices2D, validHoles, tris2D, &vertices2D);
 		
 		TArray<FVector> maskVertices;
 		TArray<FVector> maskNormals;
@@ -1260,195 +1225,6 @@ void ADynamicMeshActor::SetupMasksGeometry(const TArray<TArray<FVector>> &Polygo
 
 		idx++;
 	}
-}
-
-bool ADynamicMeshActor::AddRoofFace(const TArray<FVector> &polyVerts, const FVector &extrusionDir, float extrusionOffset, float layerThickness, const FArchitecturalMaterial &material, float uvRotOffset)
-{
-	if (polyVerts.Num() < 3)
-	{
-		return false;
-	}
-
-	FPlane polyPlane;
-	if (!UModumateGeometryStatics::GetPlaneFromPoints(polyVerts, polyPlane))
-	{
-		return false;
-	}
-
-	FVector polyNormal = polyPlane;
-	FVector polyTangentX = (polyVerts[1] - polyVerts[0]).GetSafeNormal();
-	FVector polyTangentY = polyNormal ^ polyTangentX;
-	const FVector &polyOrigin = polyVerts[0];
-
-	auto vert3DTo2D = [polyTangentX, polyTangentY, polyOrigin](const FVector &polyVert) -> FVector2D
-	{
-		FVector vertRelative = polyVert - polyOrigin;
-		return FVector2D(vertRelative | polyTangentX, vertRelative | polyTangentY);
-	};
-
-	auto vert2DTo3D = [polyTangentX, polyTangentY, polyOrigin](const FVector2D &vert2D) -> FVector
-	{
-		return polyOrigin + (polyTangentX * vert2D.X) + (polyTangentY * vert2D.Y);
-	};
-
-	TArray<FVector2D> polyVerts2D;
-	Algo::Transform(polyVerts, polyVerts2D, vert3DTo2D);
-
-	TArray<FPolyHole2D> holes2D;
-	TArray<FVector2D> triVerts2D, polyPerimeter2D;
-	TArray<int32> polyTris, perimeterVertexHoleIndices;
-	TArray<bool> mergedHoles;
-	if (!UModumateGeometryStatics::TriangulateVerticesPoly2Tri(polyVerts2D, holes2D,
-		triVerts2D, polyTris, polyPerimeter2D, mergedHoles, perimeterVertexHoleIndices))
-	{
-		return false;
-	}
-
-	TArray<FVector> triVerts3D;
-	Algo::Transform(triVerts2D, triVerts3D, vert2DTo3D);
-	TArray<FVector> polyPerimeter3D;
-	Algo::Transform(polyPerimeter2D, polyPerimeter3D, vert2DTo3D);
-
-	FVector bottomOffset = (extrusionDir * extrusionOffset);
-	FVector topOffset = (extrusionDir * (extrusionOffset + layerThickness));
-
-	for (int32 triIdx = 0; triIdx < polyTris.Num(); triIdx += 3)
-	{
-		int32 triVertIdxA = polyTris[triIdx + 0];
-		int32 triVertIdxB = polyTris[triIdx + 1];
-		int32 triVertIdxC = polyTris[triIdx + 2];
-
-		const FVector &triVertA = triVerts3D[triVertIdxA];
-		const FVector &triVertB = triVerts3D[triVertIdxB];
-		const FVector &triVertC = triVerts3D[triVertIdxC];
-
-		// Make triangle(s) for the bottom of the roof face
-		FVector bottomTriVertA = triVertA + bottomOffset;
-		FVector bottomTriVertB = triVertB + bottomOffset;
-		FVector bottomTriVertC = triVertC + bottomOffset;
-		MakeTriangle(bottomTriVertA, bottomTriVertB, bottomTriVertC, 0, -1, uvRotOffset);
-		MakeTriangle(bottomTriVertC, bottomTriVertB, bottomTriVertA, 0, -1, uvRotOffset);
-
-		// Make triangle(s) for the top of the roof face
-		FVector topTriVertA = triVertA + topOffset;
-		FVector topTriVertB = triVertB + topOffset;
-		FVector topTriVertC = triVertC + topOffset;
-		MakeTriangle(topTriVertA, topTriVertB, topTriVertC, 0, -1, uvRotOffset);
-		MakeTriangle(topTriVertC, topTriVertB, topTriVertA, 0, -1, uvRotOffset);
-	}
-
-	int32 numPerimVerts = polyPerimeter3D.Num();
-	for (int32 perimIdxA = 0; perimIdxA < numPerimVerts; ++perimIdxA)
-	{
-		int32 perimIdxB = (perimIdxA + 1) % numPerimVerts;
-
-		const FVector &perimVertA = polyPerimeter3D[perimIdxA];
-		const FVector &perimVertB = polyPerimeter3D[perimIdxB];
-
-		FVector bottomPerimVertA = perimVertA + bottomOffset;
-		FVector bottomPerimVertB = perimVertB + bottomOffset;
-		FVector topPerimVertA = perimVertA + topOffset;
-		FVector topPerimVertB = perimVertB + topOffset;
-
-		MakeTriangle(bottomPerimVertA, bottomPerimVertB, topPerimVertA, 0, -1, uvRotOffset);
-		MakeTriangle(topPerimVertA, bottomPerimVertB, bottomPerimVertA, 0, -1, uvRotOffset);
-		MakeTriangle(bottomPerimVertB, topPerimVertB, topPerimVertA, 0, -1, uvRotOffset);
-		MakeTriangle(topPerimVertA, topPerimVertB, bottomPerimVertB, 0, -1, uvRotOffset);
-	}
-
-	return true;
-}
-
-bool ADynamicMeshActor::AddRoofLayer(const TArray<FVector> &combinedPolyVerts, const TArray<int32> &combinedVertIndices, const TArray<bool> &edgesHaveFaces, const FVector &extrusionDir, float extrusionOffset, float layerThickness, const FArchitecturalMaterial &material, float uvRotOffset)
-{
-	if (!ensure(combinedVertIndices.Num() == edgesHaveFaces.Num()))
-	{
-		return false;
-	}
-
-	int32 numEdges = combinedVertIndices.Num();
-	const FVector *combinedPolyVertsPtr = combinedPolyVerts.GetData();
-	int32 vertIdxStart = 0, vertIdxEnd = 0;
-	bool bAddedAnyFaces = false;
-
-	for (int32 i = 0; i < numEdges; ++i)
-	{
-		vertIdxEnd = combinedVertIndices[i];
-
-		if (edgesHaveFaces[i])
-		{
-			int32 numPolyVerts = (vertIdxEnd - vertIdxStart) + 1;
-			TArray<FVector> polyVerts(combinedPolyVertsPtr + vertIdxStart, numPolyVerts);
-
-			if (AddRoofFace(polyVerts, extrusionDir, extrusionOffset, layerThickness, material, uvRotOffset))
-			{
-				bAddedAnyFaces = true;
-			}
-		}
-
-		vertIdxStart = vertIdxEnd + 1;
-	}
-
-	return bAddedAnyFaces;
-}
-
-bool ADynamicMeshActor::SetupRoofGeometry(const FBIMAssemblySpec &assembly, const TArray<FVector> &combinedPolyVerts, const TArray<int32> &combinedVertIndices, const TArray<bool> &edgesHaveFaces, float uvRotOffset, bool bCreateCollision)
-{
-	auto clearMeshData = [this]()
-	{
-		vertices.Reset();
-		triangles.Reset();
-		normals.Reset();
-		uv0.Reset();
-		vertexColors.Reset();
-		tangents.Reset();
-	};
-	clearMeshData();
-
-	Assembly = assembly;
-
-	int32 numVerts = combinedPolyVerts.Num();
-	if (numVerts < 3)
-	{
-		return false;
-	}
-
-	FVector centroid = Algo::Accumulate(combinedPolyVerts, FVector::ZeroVector, [](const FVector &c, const FVector &p) { return c + p; }) / numVerts;
-	SetActorLocation(centroid);
-
-	TArray<FVector> relativePolyVerts;
-	Algo::Transform(combinedPolyVerts, relativePolyVerts, [centroid](const FVector &p) { return p - centroid; });
-
-	FVector extrusionDir = FVector::UpVector;
-	float curThickness = 0.0f;
-	bool bCreatedAnyLayers = false;
-
-	int32 numLayers = assembly.CachedAssembly.Layers.Num();
-
-	SetupProceduralLayers(numLayers);
-	CachedMIDs.SetNumZeroed(numLayers);
-
-	for (int32 layerIdx = numLayers - 1; layerIdx >= 0; --layerIdx)
-	{
-		const FModumateObjectAssemblyLayer &layer = assembly.CachedAssembly.Layers[layerIdx];
-		float layerThickness = layer.Thickness.AsWorldCentimeters();
-
-		clearMeshData();
-		if (AddRoofLayer(relativePolyVerts, combinedVertIndices, edgesHaveFaces, extrusionDir, curThickness, layerThickness, layer.Material, uvRotOffset))
-		{
-			UProceduralMeshComponent *layerMesh = ProceduralSubLayers[layerIdx];
-			layerMesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, bCreateCollision);
-
-			UModumateFunctionLibrary::SetMeshMaterial(layerMesh, layer.Material, 0, &CachedMIDs[layerIdx]);
-			bCreatedAnyLayers = true;
-		}
-
-		curThickness += layerThickness;
-	}
-
-	UpdateLayerMaterialsFromAssembly();
-
-	return bCreatedAnyLayers;
 }
 
 void ADynamicMeshActor::UpdateLayerMaterialsFromAssembly()

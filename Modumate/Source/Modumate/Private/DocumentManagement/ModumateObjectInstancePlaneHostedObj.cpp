@@ -155,8 +155,6 @@ namespace Modumate
 	void FMOIPlaneHostedObjImpl::SetupDynamicGeometry()
 	{
 		GotGeometry = true;
-		DynamicMeshActor->HoleActors.Reset();
-
 		bGeometryDirty = true;
 		InternalUpdateGeometry();
 	}
@@ -218,60 +216,13 @@ namespace Modumate
 			return;
 		}
 
-		TArray<FModumateObjectInstance*> children = MOI->GetChildObjects();
-		bool didChange = (children.Num() != DynamicMeshActor->HoleActors.Num()) || bGeometryDirty;
-
-		if (!didChange)
+		if (bGeometryDirty)
 		{
-			for (auto &child : children)
-			{
-				if (!DynamicMeshActor->HoleActors.Contains(child->GetActor()))
-				{
-					didChange = true;
-					break;
-				}
-			}
-		}
-
-		if (!didChange)
-		{
-			TArray<const AActor*> childActors;
-			Algo::Transform(children,childActors,[](const FModumateObjectInstance *ob){return ob->GetActor();});
-
-			for (auto &hole : DynamicMeshActor->HoleActors)
-			{
-				if (!childActors.Contains(hole))
-				{
-					didChange = true;
-					break;
-				}
-			}
-		}
-
-		if (didChange || (DynamicMeshActor->PreviewHoleActors.Num() > 0))
-		{
-			DynamicMeshActor->HoleActors.Reset();
-			for (auto *child : children)
-			{
-				if ((child->GetObjectType() == EObjectType::OTDoor) || (child->GetObjectType() == EObjectType::OTWindow))
-				{
-					DynamicMeshActor->HoleActors.Add(child->GetActor());
-				}
-			}
-			DynamicMeshActor->HoleActors.Append(DynamicMeshActor->PreviewHoleActors);
-
 			UpdateMeshWithLayers(false, true);
 
+			TArray<FModumateObjectInstance*> children = MOI->GetChildObjects();
 			for (auto *child : children)
 			{
-				if (child->GetObjectType() == EObjectType::OTFinish)
-				{
-					if (auto *childMeshActor = Cast<ADynamicMeshActor>(child->GetActor()))
-					{
-						childMeshActor->HoleActors = DynamicMeshActor->HoleActors;
-					}
-				}
-
 				child->MarkDirty(EObjectDirtyFlags::Structure);
 			}
 
@@ -719,7 +670,6 @@ namespace Modumate
 
 		DynamicMeshActor->SetActorLocation(parentPlane->GetObjectLocation());
 		DynamicMeshActor->SetActorRotation(FQuat::Identity);
-		DynamicMeshActor->UpdateHolesFromActors();
 
 		CachedHoles.Reset();
 		for (auto& hole : planeFace->CachedHoles)

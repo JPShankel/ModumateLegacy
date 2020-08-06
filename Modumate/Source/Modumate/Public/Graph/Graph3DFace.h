@@ -49,8 +49,7 @@ namespace Modumate
 		bool IntersectsPlane(const FPlane OtherPlane, FVector &IntersectingEdgeOrigin, FVector &IntersectingEdgeDir, TArray<TPair<FVector, FVector>> &IntersectingSegments) const;
 
 		bool UpdateInternalGraph();
-
-		void UpdateHoles();
+		bool UpdateHoles();
 
 		void GetAdjacentFaceIDs(TSet<int32>& adjFaceIDs) const;
 

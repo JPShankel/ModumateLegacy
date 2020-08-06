@@ -95,97 +95,6 @@ void UTrimTool::OnAssemblySet()
 	}
 }
 
-bool UTrimTool::ConstrainTargetToSolidEdge(float targetPosAlongEdge,int32 startIndex,int32 endIndex)
-{
-	// TODO: refactor contents of if statement for new wall geometry...just return true for now
-	if (CurrentTarget && (CurrentTargetChildren.Num() > 0) && (CurrentTarget->GetObjectType() == EObjectType::OTWallSegment))
-	{
-		const FModumateObjectInstance *parent = CurrentTarget->GetParentObject();
-		if (parent == nullptr)
-		{
-			return true;
-		}
-		int32 numCP = parent->GetControlPoints().Num();
-
-		// No need to worry if the trim is on the interior of a portal hole
-		if ((endIndex % numCP) == (startIndex % numCP))
-		{
-			return true;
-		}
-
-		FVector targetWallStart = CurrentTarget->GetCorner(startIndex);
-		FVector targetWallEnd = CurrentTarget->GetCorner(endIndex);
-		FVector targetWallDir = (targetWallEnd - targetWallStart).GetSafeNormal();
-		FVector targetWallNormal = CurrentTarget->GetNormal();
-
-		// Bail if we don't have a usable reference frame
-		if (FVector::Parallel(targetWallNormal, FVector::UpVector) || !ensure(FVector::Orthogonal(targetWallDir,targetWallNormal)))
-		{
-			return true;
-		}
-		FVector targetWallUp = (targetWallNormal ^ targetWallDir).GetSafeNormal();
-
-		TArray<FPolyHole2D> holesInTarget;
-		TArray<FVector> portalHoleVerts;
-		for (const FModumateObjectInstance *targetChild : CurrentTargetChildren)
-		{
-			if (targetChild && ((targetChild->GetObjectType() == EObjectType::OTDoor) || (targetChild->GetObjectType() == EObjectType::OTWindow)) &&
-				UModumateObjectStatics::GetMoiHoleVertsWorld(&targetChild->GetAssembly(), targetChild->GetActor()->GetActorTransform(), portalHoleVerts))
-			{
-				FPolyHole2D wallRelativeHole;
-				for (const FVector &worldHoleVert : portalHoleVerts)
-				{
-					FVector wallRelativeVert = worldHoleVert - targetWallStart;
-					wallRelativeHole.Points.Add(FVector2D(
-						wallRelativeVert | targetWallDir,
-						wallRelativeVert | targetWallUp
-					));
-				}
-				holesInTarget.Add(MoveTemp(wallRelativeHole));
-			}
-		}
-
-		if (holesInTarget.Num() > 0)
-		{
-			FVector wallRelativeEdgeStart3D = CurrentEdgeStart - targetWallStart;
-			FVector2D wallRelativeEdgeStart2D(
-				wallRelativeEdgeStart3D | targetWallDir,
-				wallRelativeEdgeStart3D | targetWallUp
-			);
-
-			FVector wallRelativeEdgeEnd3D = CurrentEdgeEnd - targetWallStart;
-			FVector2D wallRelativeEdgeEnd2D(
-				wallRelativeEdgeEnd3D | targetWallDir,
-				wallRelativeEdgeEnd3D | targetWallUp
-			);
-
-			TArray<FVector2D> mergedPoints, edgeSegments;
-			TArray<int32> mergedHoleIndices, segmentPointsHoleIndices;
-			TArray<bool> mergedPolygons;
-			if (UModumateGeometryStatics::GetSegmentPolygonIntersections(wallRelativeEdgeStart2D, wallRelativeEdgeEnd2D,
-				holesInTarget, mergedPoints, mergedHoleIndices, mergedPolygons, edgeSegments, segmentPointsHoleIndices))
-			{
-				if (edgeSegments.Num() > 0)
-				{
-					for (const FVector2D &edgeSegment : edgeSegments)
-					{
-						if (FMath::IsWithinInclusive(targetPosAlongEdge, edgeSegment.X, edgeSegment.Y))
-						{
-							CurrentStartAlongEdge = edgeSegment.X;
-							CurrentEndAlongEdge = edgeSegment.Y;
-							return true;
-						}
-					}
-
-					return false;
-				}
-			}
-		}
-	}
-
-	return true;
-}
-
 bool UTrimTool::HandleInputNumber(double n)
 {
 	return false;
@@ -359,7 +268,7 @@ bool UTrimTool::FrameUpdate()
 					bCurrentLengthsArePCT = false;
 					CurrentStartAlongEdge = 0.0f;
 					CurrentEndAlongEdge = edgeLength;
-					bTargetIsSolidEdge = ConstrainTargetToSolidEdge(targetPosAlongEdge,cursor.CP1,cursor.CP2);
+					bTargetIsSolidEdge = true;
 				}
 				break;
 				}

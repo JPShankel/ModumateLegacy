@@ -22,7 +22,6 @@ UPortalToolBase::UPortalToolBase(const FObjectInitializer& ObjectInitializer)
 	, CursorActor(nullptr)
 	, Document(nullptr)
 	, HostID(0)
-	, bHasBoringError(false)
 	, bUseFixedOffset(true)
 	, WorldPos(FVector::ZeroVector)
 	, RelativePos(FVector2D::ZeroVector)
@@ -69,11 +68,9 @@ void UPortalToolBase::SetupCursor()
 	if (HostID != 0)
 	{
 		auto *lastHitHost = Document->GetObjectById(HostID);
-		auto *lastWallMeshActor = lastHitHost ? Cast<ADynamicMeshActor>(lastHitHost->GetActor()) : nullptr;
-		if (lastWallMeshActor)
+		if (lastHitHost)
 		{
-			lastWallMeshActor->PreviewHoleActors.Reset();
-			lastHitHost->SetupGeometry();
+			lastHitHost->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 	}
 
@@ -104,11 +101,9 @@ bool UPortalToolBase::Deactivate()
 	if (HostID != 0)
 	{
 		auto *lastHitWall = Document->GetObjectById(HostID);
-		auto *lastWallMeshActor = lastHitWall ? Cast<ADynamicMeshActor>(lastHitWall->GetActor()) : nullptr;
-		if (lastWallMeshActor)
+		if (lastHitWall)
 		{
-			lastWallMeshActor->PreviewHoleActors.Reset();
-			lastHitWall->SetupGeometry();
+			lastHitWall->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 	}
 
@@ -221,21 +216,14 @@ bool UPortalToolBase::FrameUpdate()
 
 	if (lastWallID != HostID)
 	{
-		if (hitMOI)
+		if (hitMOI && bValidPortalConfig)
 		{
-			auto *wallMeshActor = Cast<ADynamicMeshActor>(hitMOI->GetActor());
-			if (wallMeshActor && bValidPortalConfig)
-			{
-				wallMeshActor->PreviewHoleActors.AddUnique(CursorActor);
-				hitMOI->MarkDirty(EObjectDirtyFlags::Structure);
-			}
+			hitMOI->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 
 		auto *lastHitWall = Document->GetObjectById(lastWallID);
-		auto *lastWallMeshActor = lastHitWall ? Cast<ADynamicMeshActor>(lastHitWall->GetActor()) : nullptr;
-		if (lastWallMeshActor)
+		if (lastHitWall)
 		{
-			lastWallMeshActor->PreviewHoleActors.Remove(CursorActor);
 			lastHitWall->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 	}
@@ -244,11 +232,6 @@ bool UPortalToolBase::FrameUpdate()
 	{
 		hitMOI->MarkDirty(EObjectDirtyFlags::Structure);
 		CursorActor->SetActorHiddenInGame(false);
-
-		if (auto *hostMeshActor = Cast<ADynamicMeshActor>(hitMOI->GetActor()))
-		{
-			bHasBoringError = hostMeshActor->ErrorHoleActors.Contains(CursorActor);
-		}
 	}
 	else
 	{

@@ -824,27 +824,32 @@ namespace Modumate
 		}
 
 		// Check whether each vertex is inside the outer bounds and outside the holes
+		FPointInPolyResult pointInPolyResult;
 		for (auto& vertexkvp : Vertices)
 		{
 			auto vertex = &vertexkvp.Value;
-			bool bVertexOverlapsBounds;
 
-			if (BoundingPolygon.Find(vertex->ID) == INDEX_NONE &&
-				!UModumateGeometryStatics::IsPointInPolygon(vertex->Position, CachedOuterBounds.Positions, bVertexOverlapsBounds) &&
-				!bVertexOverlapsBounds)
+			if (BoundingPolygon.Find(vertex->ID) == INDEX_NONE)
 			{
-				return false;
+				if (!ensure(UModumateGeometryStatics::TestPointInPolygon(vertex->Position, CachedOuterBounds.Positions, pointInPolyResult, Epsilon)) ||
+					(!pointInPolyResult.bInside && !pointInPolyResult.bOverlaps))
+				{
+					return false;
+				}
 			}
 
 			for (int32 holeIdx = 0; holeIdx < CachedInnerBounds.Num(); holeIdx++)
 			{
 				auto& bounds = CachedInnerBounds[holeIdx];
 				// Checking the holes should be exclusive - being on the edge of the hole is valid
-				if (BoundingContainedPolygons[holeIdx].Find(vertex->ID) == INDEX_NONE && 
-					UModumateGeometryStatics::IsPointInPolygon(vertex->Position, bounds.Positions, bVertexOverlapsBounds) &&
-					!bVertexOverlapsBounds)
+
+				if (BoundingContainedPolygons[holeIdx].Find(vertex->ID) == INDEX_NONE)
 				{
-					return false;
+					if (!ensure(UModumateGeometryStatics::TestPointInPolygon(vertex->Position, bounds.Positions, pointInPolyResult)) ||
+						(pointInPolyResult.bInside && !pointInPolyResult.bOverlaps))
+					{
+						return false;
+					}
 				}
 			}
 		}

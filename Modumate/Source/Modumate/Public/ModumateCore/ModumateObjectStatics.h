@@ -65,21 +65,6 @@ public:
 		FVector2D &OutTrimUpperExtensions, FVector2D &OutTrimOuterExtensions,
 		const FVector &HintNormal = FVector::ZeroVector, int32 HintMountIndex = -1, bool bDoMitering = false);
 
-	// Portals
-	static bool GetMoiHoleVertsWorld(const FBIMAssemblySpec *HoleAssembly, const FTransform &HoleActorTransform, TArray<FVector> &OutLocalHoleVerts);
-	static bool GetMoiHoleVerts(const FBIMAssemblySpec* HoleAssembly, TArray<FVector> &OutWorldHoleVerts);
-
-	UFUNCTION(BlueprintPure, Category = "Modumate | Objects | Portals")
-	static TArray<FVector> GetMoiActorHoleVertsWorldLocations(AActor* MoiActor);
-
-	UFUNCTION(BlueprintPure, Category = "Modumate | Objects | Portals")
-	static bool GetMoiHoleVerts(AActor *TargetActor, TArray<FVector> &OutLocalHoleVerts);
-
-	static bool FindPortalTrimOverlaps(Modumate::FModumateObjectInstance *wall, const FBIMAssemblySpec &portalAssembly, const FTransform &portalTransform,
-		TArray<Modumate::FModumateObjectInstance *> &outTrimsToDelete,
-		TMap<Modumate::FModumateObjectInstance *, TPair<FVector2D, FVector2D>> &outTrimsToSplit,
-		TMap<Modumate::FModumateObjectInstance *, FVector2D> &outTrimsToModify);
-
 	static bool GetRelativeTransformOnPlaneHostedObj(
 		const Modumate::FModumateObjectInstance *PlaneHostedObj,
 		const FVector &WorldPos, const FVector &WorldNormal,

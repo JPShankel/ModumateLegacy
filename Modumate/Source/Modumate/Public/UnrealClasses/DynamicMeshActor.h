@@ -107,7 +107,6 @@ public:
 	void SetupRailGeometry(const TArray<FVector> &points, float height);
 	void UpdateRailGeometry(const TArray<FVector> &points, float height);
 
-	void UpdateHolesFromActors();
 	const TArray<FPolyHole3D> &GetHoles3D() const { return Holes3D; }
 	bool CreateBasicLayerDefs(const TArray<FVector> &PlanePoints, const FVector &PlaneNormal,
 		const FBIMAssemblySpec &InAssembly, float PlaneOffsetPCT,
@@ -132,10 +131,6 @@ public:
 		const FVector2D &upperExtensions = FVector2D::ZeroVector, const FVector2D &outerExtensions = FVector2D::ZeroVector, const FVector &scale = FVector::OneVector, bool bCreateCollision = true);
 
 	void SetupMasksGeometry(const TArray<TArray<FVector>> &Polygons, const FPlane &Plane, const FVector &Origin, const FVector &AxisX, const FVector &AxisY);
-
-	bool AddRoofFace(const TArray<FVector> &polyVerts, const FVector &extrusionDir, float extrusionOffset, float layerThickness, const FArchitecturalMaterial &material, float uvRotOffset = 0.0f);
-	bool AddRoofLayer(const TArray<FVector> &combinedPolyVerts, const TArray<int32> &combinedVertIndices, const TArray<bool> &edgesHaveFaces, const FVector &extrusionDir, float extrusionOffset, float layerThickness, const FArchitecturalMaterial &material, float uvRotOffset = 0.0f);
-	bool SetupRoofGeometry(const FBIMAssemblySpec &assembly, const TArray<FVector> &combinedPolyVerts, const TArray<int32> &combinedVertIndices, const TArray<bool> &edgesHaveFaces, float uvRotOffset = 0.0f, bool bCreateCollision = true);
 
 	void UpdateLayerMaterialsFromAssembly();
 
@@ -203,15 +198,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 AdjustHandleSide = -1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<AActor*> HoleActors;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<AActor*> PreviewHoleActors;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TSet<AActor*> ErrorHoleActors;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UProceduralMeshComponent*> ProceduralSubLayers;

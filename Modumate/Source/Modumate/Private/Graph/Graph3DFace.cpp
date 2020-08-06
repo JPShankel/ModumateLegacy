@@ -53,7 +53,14 @@ namespace Modumate
 			return false;
 		}
 
-		return UModumateGeometryStatics::IsPointInPolygon(ProjectPosition2D(Position), Cached2DPositions, Cached2DPerimeter, bOutOverlaps, Graph->Epsilon);
+		FPointInPolyResult pointInPolyResult;
+		if (!ensure(UModumateGeometryStatics::TestPointInPolygon(ProjectPosition2D(Position), Cached2DPositions, Cached2DPerimeter, pointInPolyResult, Graph->Epsilon)))
+		{
+			return false;
+		}
+
+		bOutOverlaps = pointInPolyResult.bOverlaps;
+		return pointInPolyResult.bInside;
 	}
 
 	bool FGraph3DFace::UpdatePlane(const TArray<int32> &InVertexIDs)
@@ -378,7 +385,7 @@ namespace Modumate
 		return true;
 	}
 
-	void FGraph3DFace::UpdateHoles()
+	bool FGraph3DFace::UpdateHoles()
 	{
 		CachedHoles.Reset();
 		Cached2DHoles.Reset();
@@ -386,13 +393,17 @@ namespace Modumate
 		CachedHoles.Append(CachedIslands);
 		Cached2DHoles.Append(Cached2DIslands);
 
+		bool bSuccess = true;
 		TArray<FVector> holePoints;
 		TArray<FVector2D> holePoints2D;
 		for (int32 containedFaceID : ContainedFaceIDs)
 		{
+			// The contained face may not be in the graph yet if we are mid-delta
+			// TODO: only and always call this function when necessary, and when all referenced faces are in the graph
 			auto containedFace = Graph->FindFace(containedFaceID);
-			if (!ensure(containedFace && containedFace->CachedPositions.Num() >= 3))
+			if ((containedFace == nullptr) || !ensure(containedFace->CachedPositions.Num() >= 3))
 			{
+				bSuccess = false;
 				continue;
 			}
 
@@ -405,6 +416,8 @@ namespace Modumate
 				containedFace2DHole.Points.Add(ProjectPosition2D(position));
 			}
 		}
+
+		return bSuccess;
 	}
 
 	void FGraph3DFace::GetAdjacentFaceIDs(TSet<int32>& OutFaceIDs) const

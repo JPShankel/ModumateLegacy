@@ -33,7 +33,6 @@ private:
 	void ResetTarget();
 	bool HasValidTarget() const;
 	void OnAssemblySet();
-	bool ConstrainTargetToSolidEdge(float targetPosAlongEdge, int32 startIndex,int32 endIndex);
 
 public:
 	UTrimTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());

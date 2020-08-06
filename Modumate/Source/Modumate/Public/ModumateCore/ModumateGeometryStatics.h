@@ -126,6 +126,30 @@ struct MODUMATE_API FLayerGeomDef
 		const FVector &UVAnchor = FVector::ZeroVector, float UVRotOffset = 0.0f) const;
 };
 
+USTRUCT()
+struct FPointInPolyResult
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	bool bInside;
+
+	UPROPERTY()
+	bool bOverlaps;
+
+	UPROPERTY()
+	int32 StartVertexIdx;
+
+	UPROPERTY()
+	int32 EndVertexIdx;
+
+	UPROPERTY()
+	float EdgeDistance;
+
+	FPointInPolyResult();
+	void Reset();
+};
+
 // Helper functions for geometric operations; anything that doesn't need to know about Modumate-specific object types,
 // and/or anything that needs to use Poly2Tri for underlying work.
 UCLASS()
@@ -153,19 +177,15 @@ public:
 	static bool GetPlaneFromPoints(const TArray<FVector> &Points, FPlane &outPlane, float Tolerance = PLANAR_DOT_EPSILON);
 
 	/* Poly2Tri version of triangulation.
-	 * @param[in] Vertices: the polygon vertices to triangulate, either in CW or CCW, but must not repeat
-	 * @param[in] Holes: the array of 0-n holes that should be bored in the polygon (must not overlap with each other)
-	 * @param[out] OutVertices: the vertices that are to be used for triangulation, in the order referenced by OutTriangles
-	 * @param[out] OutTriangles: the triplets of indices of OutVertices that represent the triangulation of the input polygon
-	 * @param[out] OutPerimeter: the vertices that represent the perimeter of the polygon, which includes holes that were merged by the input polygon
-	 * @param[out] OutMergedHoles: the array (same size as Holes) that indicates whether or not a hole was merged by the polygon into the perimeter
-	 * @param[out] OutPerimeterVertexHoleIndices: for each point in OutPerimeter, the index of the hole that created the point, otherwise INDEX_NONE if it came from the original polygon
+	 * @param[in] Vertices: the simple polygon vertices to triangulate; concave/convex or CW/CCW are okay, but no self-intersections or repeating points
+	 * @param[in] Holes: the array of holes that should be bored in the polygon; can't overlap with each other, or intersect the polygon at more than 1 point
+	 * @param[out] OutTriangles: the triplets of indices of vertices that represent the triangulation of the input polygon
+	 * @param[out, optional] OutCombinedVertices: an optional convenience list that combines Vertices and the points in Holes together, as referenced by the indices in OutTriangles
+	 * @param[in, optional] bCheckValid: whether to perform validity and intersection checks on the input polygon and holes
 	 * @result: whether we could triangulate the polygon at all; fails on invalid input polygon/holes, or expected poly2tri failures.
 	 */
-	UFUNCTION(Category = "Modumate | Geometry")
-	static bool TriangulateVerticesPoly2Tri(const TArray<FVector2D> &Vertices, const TArray<FPolyHole2D> &Holes,
-		TArray<FVector2D> &OutVertices, TArray<int32> &OutTriangles, TArray<FVector2D> &OutPerimeter, TArray<bool> &OutMergedHoles,
-		TArray<int32> &OutPerimeterVertexHoleIndices);
+	static bool TriangulateVerticesPoly2Tri(const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& Holes,
+		TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid = true);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool SegmentIntersection2D(const FVector2D& SegmentStartA, const FVector2D& SegmentEndA, const FVector2D& SegmentStartB, const FVector2D& SegmentEndB, FVector2D& outIntersectionPoint, float Tolerance = SMALL_NUMBER);
@@ -187,38 +207,27 @@ public:
 		FVector2D& OutStartPoint, FVector2D& OutEndPoint, float& OutEdgeLength, FVector2D& OutEdgeDir, FVector2D& OutEdgeNormal,
 		float Epsilon = THRESH_POINTS_ARE_SAME);
 
-	// Functions to test whether a point is inside of a polygon, and whether it overlaps within Tolerance distance of an edge or vertex.
-	// They both assume that Polygon is closed and does not have self-intersections or holes.
+	/* Check whether the given point is inside of or overlaps with the given polygon.
+	 * 
+	 * @param[in] Point: the point to test for containment
+	 * @param[in] Polygon: the polygon to test; it may be concave/convex or CW/CCW, and it may have peninsulas (non-zero-length edges that double back on themselves), but it may not have self-intersections
+	 * @param[in] Perimeter: the polygon, except without peninsulas
+	 * @param[out] OutResult: whether the point is strictly inside the polygon, and if not, whether the point overlaps with the polygon (and if so, which vertex/edge it overlaps with and where)
+	 * @param[in, optional] Tolerance: the epsilon value to use for comparing equal points and overlaps
+	 * @result: whether the test could be completed successfully and the inputs are valid
+	 */
+	static bool TestPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, const TArray<FVector2D>& Perimeter, FPointInPolyResult& OutResult, float Tolerance = RAY_INTERSECT_TOLERANCE);
 
-	// Allow passing in an explicit Perimeter separate from the Polygon, so that the Polygon may have peninsula edges that can be tested for overlapping with the given point.
-	static bool IsPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, const TArray<FVector2D>& Perimeter, bool& bOutOverlaps, float Tolerance = RAY_INTERSECT_TOLERANCE);
-
-	// Assume the Polygon does not have vertices, so it can be passed as the Perimeter to the previous function.
-	static bool IsPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, bool& bOutOverlaps, float Tolerance = RAY_INTERSECT_TOLERANCE);
+	// Same as the above TestPointInPolygon, except it assumes Polygon may be passed as the Perimeter.
+	static bool TestPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, FPointInPolyResult& OutResult, float Tolerance = RAY_INTERSECT_TOLERANCE);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static void PolyIntersection(const TArray<FVector2D> &PolyA, const TArray<FVector2D> &PolyB,
-		bool &bOutAInB, bool &bOutOverlapping, bool &bOutTouching, float Tolerance = RAY_INTERSECT_TOLERANCE);
+		bool &bOutAInB, bool &bOutOverlapping, float Tolerance = RAY_INTERSECT_TOLERANCE);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool RayIntersection3D(const FVector& RayOriginA, const FVector& RayDirectionA, const FVector& RayOriginB, const FVector& RayDirectionB,
 		FVector& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool bRequirePositive = true, float Tolerance = RAY_INTERSECT_TOLERANCE);
-
-	/* Given a line segment and an array of polygons (holes), find the intersections between the polygons' segments and the input segment,
-	 * and return a combined set of segments that merges the polygons, if possible.
-	 * @param[in] SegmentStart: the start point of the line segment
-	 * @param[in] SegmentEnd: the end point of the line segment
-	 * @param[in] Polygons: the array of 0-n polygons that are to be merged with the line segment
-	 * @param[out] OutPoints: the full array of merged points, including the SegmentStart/End, as well as potentially points from Polygons
-	 * @param[out] OutMergedPolyIndices: the array of polygons, by index, that were merged with the line segment, in the order in which they were encountered from SegmentStart to SegmentEnd
-	 * @param[out] OutSplitSegments: the array of solid segments that remain from the original line segment, unmerged by the polygons
-	 * @param[out] OutPointsHoleIndices: for each point in OutPoints, the index of the hole that created the point, otherwise INDEX_NONE if it came from the original line segment
-	 * @result: whether the analysis could complete, it should only fail if the input segment or one of the polygon segments are 0 in length
-	 */
-	UFUNCTION(Category = "Modumate | Geometry")
-	static bool GetSegmentPolygonIntersections(const FVector2D &SegmentStart, const FVector2D &SegmentEnd, const TArray<FPolyHole2D> &Polygons,
-		TArray<FVector2D> &OutPoints, TArray<int32> &OutMergedPolyIndices, TArray<bool> &OutMergedPolygons, TArray<FVector2D> &OutSplitSegments,
-		TArray<int32> &OutPointsHoleIndices);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool TranslatePolygonEdge(const TArray<FVector> &PolyPoints, const FVector &PolyNormal, int32 EdgeStartIdx, float Translation, FVector &OutStartPoint, FVector &OutEndPoint);

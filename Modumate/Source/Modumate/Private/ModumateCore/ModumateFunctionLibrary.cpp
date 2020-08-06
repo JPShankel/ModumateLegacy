@@ -429,15 +429,13 @@ void UModumateFunctionLibrary::CalculateFloorParam(FVector Origin, TArray<FVecto
 		Algo::Reverse(inAnchorUV);
 	}
 	// top face
-	TArray<FVector2D> topVerts2D, topVerts2DOut, outPerimeter;
+	TArray<FVector2D> topVerts2D, topVerts2DOut;
 	TArray<FPolyHole2D> holes2D;
-	TArray<bool> outMergedHoles;
-	TArray<int32> outPerimeterVertexHoleIndices;
 	for (FVector& curVert : topVerts)
 	{
 		topVerts2D.Add(FVector2D(curVert));
 	}
-	UModumateGeometryStatics::TriangulateVerticesPoly2Tri(topVerts2D, holes2D, topVerts2DOut, topTris, outPerimeter, outMergedHoles, outPerimeterVertexHoleIndices);
+	UModumateGeometryStatics::TriangulateVerticesPoly2Tri(topVerts2D, holes2D, topTris, &topVerts2DOut);
 	for (int32 i = 0; i < topVerts2DOut.Num(); i++)
 	{
 		topVertsOut.Add(FVector(topVerts2DOut[i], topVerts[i].Z));

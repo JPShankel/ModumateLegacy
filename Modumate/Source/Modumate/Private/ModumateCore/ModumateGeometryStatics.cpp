@@ -188,11 +188,11 @@ bool FLayerGeomDef::CachePoints2D()
 			hole2D.Points.Add(ProjectPoint2D(holePoint3D));
 		}
 
-		bool bHoleInA, bHoleOverlapsA, bHoleTouchesA;
-		UModumateGeometryStatics::PolyIntersection(hole2D.Points, CachedPointsA2D, bHoleInA, bHoleOverlapsA, bHoleTouchesA);
+		bool bHoleInA, bHoleOverlapsA;
+		UModumateGeometryStatics::PolyIntersection(hole2D.Points, CachedPointsA2D, bHoleInA, bHoleOverlapsA);
 
-		bool bHoleInB, bHoleOverlapsB, bHoleTouchesB;
-		UModumateGeometryStatics::PolyIntersection(hole2D.Points, CachedPointsB2D, bHoleInB, bHoleOverlapsB, bHoleTouchesB);
+		bool bHoleInB, bHoleOverlapsB;
+		UModumateGeometryStatics::PolyIntersection(hole2D.Points, CachedPointsB2D, bHoleInB, bHoleOverlapsB);
 
 		if (!bHoleInA || bHoleOverlapsA || !bHoleInB || bHoleOverlapsB)
 		{
@@ -202,10 +202,10 @@ bool FLayerGeomDef::CachePoints2D()
 
 		for (const FPolyHole2D &otherHole2D : ValidHoles2D)
 		{
-			bool bHoleInOther, bHoleOverlapsOther, bHoleTouchesOther;
-			UModumateGeometryStatics::PolyIntersection(hole2D.Points, otherHole2D.Points, bHoleInOther, bHoleOverlapsOther, bHoleTouchesOther);
+			bool bHoleInOther, bHoleOverlapsOther;
+			UModumateGeometryStatics::PolyIntersection(hole2D.Points, otherHole2D.Points, bHoleInOther, bHoleOverlapsOther);
 
-			if (bHoleInOther || bHoleOverlapsOther || bHoleTouchesOther)
+			if (bHoleInOther || bHoleOverlapsOther)
 			{
 				bHoleValid = false;
 				break;
@@ -304,11 +304,9 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &Ou
 		return false;
 	}
 
-	TArray<FVector2D> verticesA2D, perimeterA2D, verticesB2D, perimeterB2D;
-	TArray<int32> trisA2D, trisB2D, perimeterVertexHoleIndicesA, perimeterVertexHoleIndicesB;
-	TArray<bool> mergedHolesA, mergedHolesB;
-	bool bTriangulatedA = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(CachedPointsA2D, ValidHoles2D,
-		verticesA2D, trisA2D, perimeterA2D, mergedHolesA, perimeterVertexHoleIndicesA);
+	TArray<FVector2D> verticesA2D, verticesB2D;
+	TArray<int32> trisA2D, trisB2D;
+	bool bTriangulatedA = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(CachedPointsA2D, ValidHoles2D, trisA2D, &verticesA2D);
 
 	if (!bTriangulatedA)
 	{
@@ -319,8 +317,7 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &Ou
 
 	if (Thickness > PLANAR_DOT_EPSILON)
 	{
-		bool bTriangulatedB = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(CachedPointsB2D, ValidHoles2D,
-			verticesB2D, trisB2D, perimeterB2D, mergedHolesB, perimeterVertexHoleIndicesB);
+		bool bTriangulatedB = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(CachedPointsB2D, ValidHoles2D, trisB2D, &verticesB2D);
 
 		if (!bTriangulatedB)
 		{
@@ -328,49 +325,14 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &Ou
 		}
 
 		// The perimeter and hole merging calculations should match; otherwise, we can't fix any differences between them.
-		bool bSamePerimeters = (perimeterA2D.Num() == perimeterB2D.Num());
-		bool bSameMergedHoles = (mergedHolesA == mergedHolesB);
-		if (!ensure(bSamePerimeters == bSameMergedHoles))
-		{
-			return false;
-		}
-
-		// If the two sides differ in hole-merging, then remove inconsistent holes from the perimeters.
-		if (!bSameMergedHoles)
-		{
-			for (int32 holeIdx = 0; holeIdx < numHoles; ++holeIdx)
-			{
-				if (mergedHolesA[holeIdx] != mergedHolesB[holeIdx])
-				{
-					TArray<FVector2D> &perimeterRef = mergedHolesA[holeIdx] ? perimeterA2D : perimeterB2D;
-					TArray<int32> &perimeterVertexHoleIndicesRef = mergedHolesA[holeIdx] ?
-						perimeterVertexHoleIndicesA : perimeterVertexHoleIndicesB;
-					TArray<bool> &mergedHolesRef = mergedHolesA[holeIdx] ? mergedHolesA : mergedHolesB;
-
-					for (int32 pointIdx = perimeterRef.Num() - 1; pointIdx >= 0; --pointIdx)
-					{
-						if (perimeterVertexHoleIndicesRef[pointIdx] == holeIdx)
-						{
-							perimeterRef.RemoveAt(pointIdx);
-							perimeterVertexHoleIndicesRef.RemoveAt(pointIdx);
-						}
-					}
-
-					mergedHolesRef[holeIdx] = false;
-				}
-			}
-		}
-
-		// Make sure that we were able to fix the perimeters to be the same,
-		// after removing inconsistently-merged holes.
-		bSamePerimeters = (perimeterA2D.Num() == perimeterB2D.Num());
+		bool bSamePerimeters = (CachedPointsA2D.Num() == CachedPointsA2D.Num());
 		if (!ensure(bSamePerimeters))
 		{
 			return false;
 		}
 	}
 
-	int32 numPerimeterPoints = perimeterA2D.Num();
+	int32 numPerimeterPoints = CachedPointsA2D.Num();
 
 	// Side A
 	AppendTriangles(OutVerts, trisA2D, OutTris, false);
@@ -407,22 +369,14 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &Ou
 	{
 		int32 perimIdx2 = (perimIdx1 + 1) % numPerimeterPoints;
 
-		TriangulateSideFace(perimeterA2D[perimIdx1], perimeterA2D[perimIdx2],
-			perimeterB2D[perimIdx1], perimeterB2D[perimIdx2], !bCoincident,
+		TriangulateSideFace(CachedPointsA2D[perimIdx1], CachedPointsA2D[perimIdx2],
+			CachedPointsB2D[perimIdx1], CachedPointsB2D[perimIdx2], !bCoincident,
 			OutVerts, OutTris, OutNormals, OutUVs, OutTangents, uvScale, UVAnchor, UVRotOffset);
 	}
 
 	// Add side faces for insides of holes
 	for (int32 holeIdx = 0; holeIdx < numHoles; ++holeIdx)
 	{
-		ensureMsgf(mergedHolesA[holeIdx] == mergedHolesB[holeIdx],
-			TEXT("Hole %d was inconsistently merged by the different layer sides!"), holeIdx);
-
-		if (mergedHolesA[holeIdx] && mergedHolesB[holeIdx])
-		{
-			continue;
-		}
-
 		const FPolyHole2D &hole = ValidHoles2D[holeIdx];
 		int32 numHolePoints = hole.Points.Num();
 		bool bPointsConcave, bHolePointsCW;
@@ -562,6 +516,20 @@ namespace PolyDist
 
 } // namespace PolyDist
 
+FPointInPolyResult::FPointInPolyResult()
+{
+	Reset();
+}
+
+void FPointInPolyResult::Reset()
+{
+	bInside = false;
+	bOverlaps = false;
+	StartVertexIdx = INDEX_NONE;
+	EndVertexIdx = INDEX_NONE;
+	EdgeDistance = 0.0f;
+}
+
 FVector2D UModumateGeometryStatics::ProjectPoint2D(const FVector &Point3D, const FVector &AxisX, const FVector &AxisY, const FVector &Origin)
 {
 	if (!ensure(AxisX.IsNormalized() && AxisY.IsNormalized() &&
@@ -665,166 +633,189 @@ template <class C> void FreeClear(C & cntr) {
 	cntr.clear();
 }
 
-bool UModumateGeometryStatics::TriangulateVerticesPoly2Tri(const TArray<FVector2D> &Vertices, const TArray<FPolyHole2D> &Holes,
-	TArray<FVector2D> &OutVertices, TArray<int32> &OutTriangles, TArray<FVector2D> &OutPerimeter, TArray<bool> &OutMergedHoles,
-	TArray<int32> &OutPerimeterVertexHoleIndices)
+bool UModumateGeometryStatics::TriangulateVerticesPoly2Tri(const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& InHoles,
+	TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid)
 {
-	if (!ensure(Vertices.Num() >= 3))
+	OutTriangles.Reset();
+	if (OutCombinedVertices)
+	{
+		OutCombinedVertices->Reset();
+	}
+	int32 numVertices = Vertices.Num();
+
+	if (!ensure(numVertices >= 3))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Input polygon only has %d vertices!"), Vertices.Num());
 		return false;
 	}
 
-	if (!ensure(!UModumateGeometryStatics::AreConsecutivePoints2DRepeated(Vertices)))
+	bool bPolyCW, bPolyConcave;
+	GetPolygonWindingAndConcavity(Vertices, bPolyCW, bPolyConcave);
+
+	// Make a copy of the hole vertices so that we can modify vertices, to work around a limitation of poly2tri
+	// where holes cannot touch the polygon, but the polygon cannot be specified in a way that includes such holes
+	// (which would require the shared vertex to be repeated in the polyline)
+	// TODO: find a better solution, or a bugfix for / an alternative to poly2tri
+	static TArray<FPolyHole2D> Holes;
+	Holes = InHoles;
+	int32 numHoles = Holes.Num();
+
+#if !UE_BUILD_SHIPPING
+	bCheckValid = true;
+#endif
+
+	// Validation functions for duplicate vertices and intersecting edges, O(n^2)
+	// TODO: check intersections between holes, and use external functions for hole-poly and hole-hole intersection
+	if (bCheckValid)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Input polygon has consecutive repeating points!"));
-		return false;
-	}
-
-	OutVertices.Reset();
-	OutTriangles.Reset();
-	OutPerimeter.Reset();
-	OutPerimeterVertexHoleIndices.Reset();
-
-	int32 numInputHoles = Holes.Num();
-	OutMergedHoles.Reset();
-	OutMergedHoles.SetNumZeroed(numInputHoles);
-
-	// Step 1: potentially merge holes with the input segments so that it doesn't fail triangulation
-	int32 numVertices = Vertices.Num();
-	if (numInputHoles > 0)
-	{
-		TArray<int32> allMergedHoleIndices, segmentMergedHoleIndices, segmentPointsHoleIndices;
-		TArray<FVector2D> segmentPoints;
-		TArray<bool> segmentMergedHoles;
-		TArray<FVector2D> splitSegments;
-
-		for (int32 polyPointIdx1 = 0; polyPointIdx1 < numVertices; ++polyPointIdx1)
+		if (!ensure(UModumateGeometryStatics::IsPolygon2DValid(Vertices)))
 		{
-			int32 polyPointIdx2 = (polyPointIdx1 + 1) % numVertices;
-			const FVector2D &segmentStart = Vertices[polyPointIdx1];
-			const FVector2D &segmentEnd = Vertices[polyPointIdx2];
+			return false;
+		}
 
-			bool bSegmentAnalysisSuccess = GetSegmentPolygonIntersections(segmentStart, segmentEnd, Holes, segmentPoints,
-				segmentMergedHoleIndices, segmentMergedHoles, splitSegments, segmentPointsHoleIndices);
-			int32 numSegmentPoints = segmentPoints.Num();
-
-			if (bSegmentAnalysisSuccess && (numSegmentPoints > 1))
-			{
-				OutPerimeter.Append(segmentPoints.GetData(), numSegmentPoints - 1);
-				OutPerimeterVertexHoleIndices.Append(segmentPointsHoleIndices.GetData(), numSegmentPoints - 1);
-				allMergedHoleIndices.Append(segmentMergedHoleIndices);
-			}
-			else
+		// Check for segment intersection with every edge of every hole
+		for (int32 holeIdx = 0; holeIdx < numHoles; ++holeIdx)
+		{
+			auto& hole = Holes[holeIdx];
+			if (!ensure(UModumateGeometryStatics::IsPolygon2DValid(hole.Points)))
 			{
 				return false;
 			}
-		}
 
-		for (int32 mergedHoleIdx : allMergedHoleIndices)
-		{
-			OutMergedHoles[mergedHoleIdx] = true;
-		}
-	}
-	else
-	{
-		OutPerimeter.Append(Vertices);
-		for (int32 vertIdx = 0; vertIdx < numVertices; ++vertIdx)
-		{
-			OutPerimeterVertexHoleIndices.Add(INDEX_NONE);
-		}
-	}
-
-	// Step 2: Gather vertices to vector, then create CDT and add primary polyline
-	//NOTE: polyline must be a simple polygon.The polyline's points constitute constrained edges.No repeat points!!!
-
-	vector<p2t::Point*> polyline;
-	vector<p2t::Point*> vector_hole;
-	for (int32 i = 0; i < OutPerimeter.Num(); i++)
-	{
-		// checking for duplicate points in this way is n^2,
-		// this should be debug-only when we are confident that every caller validates input.
-		for (int32 j = i+1; j < OutPerimeter.Num(); j++)
-		{
-			if (!ensure(!OutPerimeter[i].Equals(OutPerimeter[j])))
+			int32 sharedPolyVertexIdx = INDEX_NONE, sharedHoleVertexIdx = INDEX_NONE;
+			for (int32 polyEdgeStartIdx = 0; polyEdgeStartIdx < numVertices; ++polyEdgeStartIdx)
 			{
-				UE_LOG(LogTemp, Error, TEXT("Input polygon has repeated vertices!"));
-				return false;
+				int32 polyEdgeEndIdx = (polyEdgeStartIdx + 1) % numVertices;
+				const FVector2D& polyEdgeStartPoint = Vertices[polyEdgeStartIdx];
+				const FVector2D& polyEdgeEndPoint = Vertices[polyEdgeEndIdx];
+
+				int32 numHolePoints = hole.Points.Num();
+				for (int32 holeEdgeStartIdx = 0; holeEdgeStartIdx < numHolePoints; ++holeEdgeStartIdx)
+				{
+					int32 holeEdgeEndIdx = (holeEdgeStartIdx + 1) % numHolePoints;
+					const FVector2D& holeEdgeStartPoint = hole.Points[holeEdgeStartIdx];
+					const FVector2D& holeEdgeEndPoint = hole.Points[holeEdgeEndIdx];
+
+					if (polyEdgeStartPoint.Equals(holeEdgeStartPoint))
+					{
+						if (ensure(sharedPolyVertexIdx == INDEX_NONE))
+						{
+							sharedPolyVertexIdx = polyEdgeStartIdx;
+							sharedHoleVertexIdx = holeEdgeStartIdx;
+						}
+						else
+						{
+							UE_LOG(LogTemp, Error, TEXT("Input hole #%d shares more than 1 vertex with the input polygon!"), holeIdx);
+							return false;
+						}
+					}
+
+					FVector2D holePolyIntersection;
+					if (UModumateGeometryStatics::SegmentIntersection2D(polyEdgeStartPoint, polyEdgeEndPoint, holeEdgeStartPoint, holeEdgeEndPoint, holePolyIntersection, RAY_INTERSECT_TOLERANCE))
+					{
+						if (!ensure(holePolyIntersection.Equals(polyEdgeStartPoint) || holePolyIntersection.Equals(polyEdgeEndPoint)))
+						{
+							UE_LOG(LogTemp, Error, TEXT("Input polygon edge #%d and hole #%d edge #%d intersect!"), polyEdgeStartIdx, holeIdx, holeEdgeStartIdx);
+							return false;
+						}
+					}
+				}
+			}
+
+			if (sharedPolyVertexIdx != INDEX_NONE)
+			{
+				int32 preEdgeStartIdx = (sharedPolyVertexIdx - 1 + numVertices) % numVertices;
+				FVector2D preEdgeStart, preEdgeEnd, preEdgeDir, preEdgeNormal;
+				float preEdgeLength;
+				GetPolyEdgeInfo(Vertices, bPolyCW, preEdgeStartIdx, preEdgeStart, preEdgeEnd, preEdgeLength, preEdgeDir, preEdgeNormal);
+
+				int32 postEdgeStartIdx = sharedPolyVertexIdx;
+				FVector2D postEdgeStart, postEdgeEnd, postEdgeDir, postEdgeNormal;
+				float postEdgeLength;
+				GetPolyEdgeInfo(Vertices, bPolyCW, postEdgeStartIdx, postEdgeStart, postEdgeEnd, postEdgeLength, postEdgeDir, postEdgeNormal);
+
+				FVector2D sharedVertexNormal = (preEdgeNormal + postEdgeNormal).GetSafeNormal();
+				if (!ensure(!sharedVertexNormal.IsNearlyZero()))
+				{
+					return false;
+				}
+
+				static constexpr float sharedPointNudgeDistance = 2.0f * THRESH_POINTS_ARE_NEAR;
+				hole.Points[sharedHoleVertexIdx] += (sharedPointNudgeDistance * sharedVertexNormal);
 			}
 		}
-
-		polyline.push_back(new p2t::Point(OutPerimeter[i].X, OutPerimeter[i].Y));
 	}
 
-	if (!ensure(polyline.size() >= 3))
-	{
-		UE_LOG(LogTemp, Error, TEXT("Input polygon only has %d vertices!"), polyline.size());
-		return false;
-	}
+	// Create poly2tri structures: CDT and polyline for perimeter and holes
+	// TODO: can we avoid allocating the CDT every time?
 
-	p2t::CDT* cdt = new p2t::CDT(polyline);
+	// Keep a mapping of each poly2tri point to its index in our combined list of polygon vertices and hole vertices
+	static vector<p2t::Point*> polyline;
+	static TMap<p2t::Point*, int32> p2tPointToIndex;
+	p2tPointToIndex.Reset();
 
-	// Step 3: Add holes or Steiner points if necessary
-
-	for (int32 i = 0; i < numInputHoles; i++)
-	{
-		if (OutMergedHoles[i])
+	auto addVertices = [OutCombinedVertices](const TArray<FVector2D>& Verts) {
+		polyline.clear();
+		for (const FVector2D& vertex : Verts)
 		{
-			continue;
+			auto p2tPoint = new p2t::Point(vertex.X, vertex.Y);
+			polyline.push_back(p2tPoint);
+			p2tPointToIndex.Add(p2tPoint, p2tPointToIndex.Num());
 		}
-
-		bool bValidHole = true;
-		TArray<FVector2D> holeVertices = Holes[i].Points;
-		for (int32 j = 0; j < holeVertices.Num(); j++)
+		if (OutCombinedVertices)
 		{
-			p2t::Point *holePoint = new p2t::Point(holeVertices[j].X, holeVertices[j].Y);
-			vector_hole.push_back(holePoint);
-		}
-
-		if (bValidHole)
-		{
-			cdt->AddHole(vector_hole);
-		}
-		vector_hole.clear();
-	}
-
-	// Step 4: Triangulate!
-	cdt->Triangulate();
-	vector<p2t::Triangle*> triangles = cdt->GetTriangles();
-	int32 numTriangles = triangles.size();
-
-	TMap<p2t::Point*, int32> pointIndices;
-	auto addTrianglePoint = [&pointIndices, &OutVertices, &OutTriangles](p2t::Triangle* tri, int32 triIdx)
-	{
-		p2t::Point *point = tri->GetPoint(triIdx);
-
-		if (int32 *vertIdxPtr = pointIndices.Find(point))
-		{
-			OutTriangles.Add(*vertIdxPtr);
-		}
-		else
-		{
-			int32 &polyIdx = pointIndices.Add(point, OutVertices.Num());
-			OutTriangles.Add(polyIdx);
-			OutVertices.Add(FVector2D(point->x, point->y));
+			OutCombinedVertices->Append(Verts);
 		}
 	};
 
-	for (int32 i = 0; i < numTriangles; i++)
+	addVertices(Vertices);
+	p2t::CDT* cdt = new p2t::CDT(polyline);
+
+	for (const FPolyHole2D& hole : Holes)
 	{
-		p2t::Triangle* tri = triangles[i];
-		addTrianglePoint(tri, 0);
-		addTrianglePoint(tri, 1);
-		addTrianglePoint(tri, 2);
+		addVertices(hole.Points);
+		cdt->AddHole(polyline);
 	}
 
-	// Step 5: Free p2t memory
+	// Perform triangulation with poly2tri
+	cdt->Triangulate();
+	vector<p2t::Triangle*> triangles = cdt->GetTriangles();
+
+	int32 numTriangles = triangles.size();
+	bool bTriangulationError = false;
+
+	// Find the mapping from poly2tri points to our combined vertex list
+	for (int32 i = 0; (i < numTriangles) && !bTriangulationError; i++)
+	{
+		p2t::Triangle* tri = triangles[i];
+
+		for (int32 triVertIdx = 0; triVertIdx < 3; ++triVertIdx)
+		{
+			p2t::Point* p2tPoint = tri ? tri->GetPoint(triVertIdx) : nullptr;
+			int32* outVertexIdx = p2tPointToIndex.Find(p2tPoint);
+			if (ensure(outVertexIdx))
+			{
+				OutTriangles.Add(*outVertexIdx);
+			}
+			else
+			{
+				bTriangulationError = true;
+				break;
+			}
+		}
+	}
+
+	// Free poly2tri memory
 	FreeClear(polyline);
-	FreeClear(vector_hole);
 	triangles.clear();
 	delete cdt;
 
-	return (OutVertices.Num() > 0);
+	if (bTriangulationError)
+	{
+		OutTriangles.Reset();
+	}
+
+	return !bTriangulationError;
 }
 
 void UModumateGeometryStatics::GetPolygonWindingAndConcavity(const TArray<FVector2D> &Locations, bool &bOutClockwise, bool &bOutConcave)
@@ -1170,34 +1161,10 @@ bool UModumateGeometryStatics::GetPolyEdgeInfo(const TArray<FVector2D>& Polygon,
 	return true;
 }
 
-bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, bool& bOutOverlaps, float Tolerance)
-{
-	// debug n^2 check to ensure that Polygon is indeed a perimeter, and does not have peninsula edges.
-#if !UE_BUILD_SHIPPING
-	int32 numPoints = Polygon.Num();
-	for (int32 idxA = 0; idxA < numPoints; ++idxA)
-	{
-		const FVector2D& pointA = Polygon[idxA];
-		for (int32 idxB = idxA + 1; idxB < numPoints; ++idxB)
-		{
-			const FVector2D& pointB = Polygon[idxB];
-			if (!ensure(!pointA.Equals(pointB, Tolerance)))
-			{
-				UE_LOG(LogTemp, Error, TEXT("Input polygon is not a valid perimeter; indices %d and %d are the same point: %s"),
-					idxA, idxB, *pointA.ToString());
-				return false;
-			}
-		}
-	}
-#endif
-
-	return IsPointInPolygon(Point, Polygon, Polygon, bOutOverlaps, Tolerance);
-}
-
-bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, const TArray<FVector2D>& Perimeter, bool& bOutOverlaps, float Tolerance)
+bool UModumateGeometryStatics::TestPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, const TArray<FVector2D>& Perimeter, FPointInPolyResult& OutResult, float Tolerance)
 {
 	int32 numPolyPoints = Polygon.Num();
-	bOutOverlaps = false;
+	OutResult.Reset();
 
 	if (!ensure(numPolyPoints >= 3))
 	{
@@ -1218,12 +1185,28 @@ bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D& Point, const TA
 			return false;
 		}
 
-		// If the test point is close to a polygon vertex or edge, return whether we're inclusive
-		FVector2D projectedPoint = FMath::ClosestPointOnSegment2D(Point, edgePoint1, edgePoint2);
-		if (Point.Equals(projectedPoint, Tolerance))
+		// If the test point is the same as one of the polygon vertices, then report the vertex overlap
+		if (Point.Equals(edgePoint1, Tolerance))
 		{
-			bOutOverlaps = true;
-			return false;
+			OutResult.bOverlaps = true;
+			OutResult.StartVertexIdx = pointIdx;
+			return true;
+		}
+
+		// If the test point lies inside one of the polygon edges, then report the edge overlap
+		FVector2D edgeDelta = (edgePoint2 - edgePoint1);
+		float edgeLen = edgeDelta.Size();
+		FVector2D edgeDir = edgeDelta / edgeLen;
+		FVector2D pointDelta = Point - edgePoint1;
+		float distOnEdge = pointDelta | edgeDir;
+		FVector2D projectedPoint = edgePoint1 + (distOnEdge * edgeDir);
+		if (Point.Equals(projectedPoint, Tolerance) && FMath::IsWithinInclusive(distOnEdge, -Tolerance, edgeLen + Tolerance))
+		{
+			OutResult.bOverlaps = true;
+			OutResult.StartVertexIdx = edgeIdx1;
+			OutResult.StartVertexIdx = edgeIdx2;
+			OutResult.EdgeDistance = distOnEdge;
+			return true;
 		}
 	}
 
@@ -1288,7 +1271,7 @@ bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D& Point, const TA
 
 	if (minHitEdgeStartIdx == INDEX_NONE)
 	{
-		return false;
+		return true;
 	}
 
 	// If the shortest ray hit against the polygon is against an edge, then we only need to check against the one edge's normal
@@ -1302,7 +1285,7 @@ bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D& Point, const TA
 			return false;
 		}
 
-		return (hitNormalDot < 0.0f);
+		OutResult.bInside = (hitNormalDot < 0.0f);
 	}
 	// Otherwise, compare against both edge normals of the edges whose shared vertex we hit
 	else
@@ -1313,16 +1296,42 @@ bool UModumateGeometryStatics::IsPointInPolygon(const FVector2D& Point, const TA
 		GetPolyEdgeInfo(Perimeter, bPolyCW, preEdgeIdx, preEdgePoint1, preEdgePoint2, preEdgeLength, preEdgeDir, preEdgeNormal, Tolerance);
 
 		bool bOverlaps;
-		return IsRayBoundedByRays(-preEdgeDir, hitEdgeDir, preEdgeNormal, hitEdgeNormal, -testRay, bOverlaps);
+		OutResult.bInside = IsRayBoundedByRays(-preEdgeDir, hitEdgeDir, preEdgeNormal, hitEdgeNormal, -testRay, bOverlaps);
 	}
+
+	return true;
+}
+
+bool UModumateGeometryStatics::TestPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, FPointInPolyResult& OutResult, float Tolerance)
+{
+	// debug n^2 check to ensure that Polygon is indeed a perimeter, and does not have peninsula edges.
+#if !UE_BUILD_SHIPPING
+	int32 numPoints = Polygon.Num();
+	for (int32 idxA = 0; idxA < numPoints; ++idxA)
+	{
+		const FVector2D& pointA = Polygon[idxA];
+		for (int32 idxB = idxA + 1; idxB < numPoints; ++idxB)
+		{
+			const FVector2D& pointB = Polygon[idxB];
+			if (!ensure(!pointA.Equals(pointB, Tolerance)))
+			{
+				UE_LOG(LogTemp, Error, TEXT("Input polygon is not a valid perimeter; indices %d and %d are the same point: %s"),
+					idxA, idxB, *pointA.ToString());
+				return false;
+			}
+		}
+	}
+#endif
+
+	return TestPointInPolygon(Point, Polygon, Polygon, OutResult, Tolerance);
 }
 
 void UModumateGeometryStatics::PolyIntersection(const TArray<FVector2D> &PolyA, const TArray<FVector2D> &PolyB,
-	bool &bOutAInB, bool &bOutOverlapping, bool &bOutTouching, float Tolerance)
+	bool &bOutAInB, bool &bOutOverlapping, float Tolerance)
 {
+	FPointInPolyResult pointInPolyResult;
 	bOutAInB = false;
 	bOutOverlapping = false;
-	bOutTouching = false;
 
 	int32 numPointsA = PolyA.Num();
 	int32 numPointsB = PolyB.Num();
@@ -1340,83 +1349,63 @@ void UModumateGeometryStatics::PolyIntersection(const TArray<FVector2D> &PolyA, 
 
 	bool bAOutsideOfB = false;
 
-	// Next, check for intersections between each edge, and if each point in the inner poly is inside the outer poly
-	for (int32 edgeAIdx1 = 0; edgeAIdx1 < numPointsA; ++edgeAIdx1)
+	// Now, see if every potentially contained vertex is indeed contained by the other face.
+	// - If any vertices are neither contained nor overlapping, then it's not fully contained.
+	//   If we needed to detect overlaps/touching, we would need to continue, but in this case we can early exit.
+	// - If any vertices are not contained, but are overlapping, then partial containment is still possible.
+	bool bOutFullyContained = true;
+	bool bOutPartiallyContained = true;
+	bool bAnyVerticesFullyContained = false;
+	for (const FVector2D& vertexA : PolyA)
 	{
-		int32 edgeAIdx2 = (edgeAIdx1 + 1) % numPointsA;
-		const FVector2D &edgeAPoint1 = PolyA[edgeAIdx1];
-		const FVector2D &edgeAPoint2 = PolyA[edgeAIdx2];
-		FVector2D edgeADelta = edgeAPoint2 - edgeAPoint1;
-		float edgeALen = edgeADelta.Size();
-		if (!ensure(!FMath::IsNearlyZero(edgeALen, Tolerance)))
+		if (!UModumateGeometryStatics::TestPointInPolygon(vertexA, PolyB, pointInPolyResult, Tolerance))
 		{
 			return;
 		}
-		FVector2D edgeADir = edgeADelta / edgeALen;
-		int32 edgeRayHits = 0;
-		bool bEdgeAOnPolyB = false;
+		bAnyVerticesFullyContained = bAnyVerticesFullyContained || pointInPolyResult.bInside;
 
-		for (int32 edgeBIdx1 = 0; edgeBIdx1 < numPointsB; ++edgeBIdx1)
+		if (!pointInPolyResult.bInside)
 		{
-			int32 edgeBIdx2 = (edgeBIdx1 + 1) % numPointsB;
-			const FVector2D &edgeBPoint1 = PolyB[edgeBIdx1];
-			const FVector2D &edgeBPoint2 = PolyB[edgeBIdx2];
-			FVector2D edgeBDelta = edgeBPoint2 - edgeBPoint1;
-			float edgeBLen = edgeBDelta.Size();
-			if (!ensure(!FMath::IsNearlyZero(edgeBLen, Tolerance)))
+			bOutFullyContained = false;
+
+			if (!pointInPolyResult.bOverlaps)
 			{
+				bOutPartiallyContained = false;
 				return;
 			}
-			FVector2D edgeBDir = edgeBDelta / edgeBLen;
-
-			FVector2D edgeIntersection;
-			float rayADist, rayBDist;
-			bool bEdgesColinear;
-			if (RayIntersection2D(edgeAPoint1, edgeADir, edgeBPoint1, edgeBDir,
-				edgeIntersection, rayADist, rayBDist, bEdgesColinear, false, Tolerance))
-			{
-				bool bRayBHitOnSegment = FMath::IsWithinInclusive(rayBDist, -Tolerance, edgeBLen + Tolerance);
-
-				// If the two edges are colinear, and the source edge lines on the target edge,
-				// then skip the rest of its intersections with the target polygon
-				if (bEdgesColinear && bRayBHitOnSegment)
-				{
-					bEdgeAOnPolyB = true;
-					bOutTouching = true;
-					break;
-				}
-
-				if ((rayADist > Tolerance) && bRayBHitOnSegment)
-				{
-					// If the source ray hit a target edge well within the length of the source edge,
-					// then the source edge sufficiently crosses over the target edge, and the polygons are overlapping.
-					if (rayADist < (edgeALen - Tolerance))
-					{
-						bOutOverlapping = true;
-					}
-					// Otherwise the inner ray hit an outer edge, so keep track of it
-					// so we can determine whether the origin is inside or outside of the outer poly.
-					// The epsilon is interpreted to weight toward this option, so that polygons with edges within
-					// Tolerance distance of each other can be more easily interpreted as touching if necessary,
-					// and marked as overlapping if they significantly cross over each other.
-					else
-					{
-						++edgeRayHits;
-					}
-				}
-			}
-		}
-
-		// If the inner ray hit 0 (or an even number of) outer edges, then its source point must be outside the outer polygon
-		if (!bEdgeAOnPolyB && ((edgeRayHits % 2) == 0))
-		{
-			bAOutsideOfB = true;
 		}
 	}
 
-	// If we've determined that no edges intersect with each other, and none of PolyA's points are outside of PolyB,
-	// then the PolyA must be inside of PolyB
-	bOutAInB = !bAOutsideOfB;
+	// If the vertices are all overlapping, but none are fully contained,
+	// then partial containment is only possible if one of the contained edges is fully contained by the containing polygon.
+	// Because edges don't intersect with each other, we can use the contained edge midpoints to test this.
+	if (bOutPartiallyContained && !bAnyVerticesFullyContained)
+	{
+		bOutPartiallyContained = false;
+
+		for (int32 edgeStartIdx = 0; edgeStartIdx < numPointsA; ++edgeStartIdx)
+		{
+			int32 edgeEndIdx = (edgeStartIdx + 1) % numPointsA;
+			const FVector2D& edgeStartPoint = PolyA[edgeStartIdx];
+			const FVector2D& edgeEndPointB = PolyA[edgeEndIdx];
+			FVector2D edgeMidpoint = 0.5f * (edgeStartPoint + edgeEndPointB);
+
+			if (!UModumateGeometryStatics::TestPointInPolygon(edgeMidpoint, PolyB, pointInPolyResult, Tolerance))
+			{
+				return;
+			}
+
+			if (pointInPolyResult.bInside && !pointInPolyResult.bOverlaps)
+			{
+				bOutPartiallyContained = true;
+				bOutAInB = true;
+				return;
+			}
+		}
+	}
+
+	bOutAInB = true;
+	return;
 }
 
 bool UModumateGeometryStatics::RayIntersection3D(const FVector& RayOriginA, const FVector& RayDirectionA, const FVector& RayOriginB, const FVector& RayDirectionB,
@@ -1477,123 +1466,6 @@ bool UModumateGeometryStatics::RayIntersection3D(const FVector& RayOriginA, cons
 	}
 
 	OutIntersectionPoint = rayAOnBPoint;
-	return true;
-}
-
-bool UModumateGeometryStatics::GetSegmentPolygonIntersections(const FVector2D &SegmentStart, const FVector2D &SegmentEnd, const TArray<FPolyHole2D> &Polygons,
-	TArray<FVector2D> &OutPoints, TArray<int32> &OutMergedPolyIndices, TArray<bool> &OutMergedPolygons, TArray<FVector2D> &OutSegments,
-	TArray<int32> &OutPointsHoleIndices)
-{
-	OutPoints.Reset();
-	OutMergedPolyIndices.Reset();
-	OutMergedPolygons.Reset();
-	OutSegments.Reset();
-	OutPointsHoleIndices.Reset();
-
-	TMap<int32, FVector2D> polyMergedSegmentDists;
-	TMap<int32, int32> polyMergedSegmentIndices;
-	TMap<int32, bool> polyMergeCoincident;
-
-	FVector2D segmentDelta = SegmentEnd - SegmentStart;
-	float segmentLength = segmentDelta.Size();
-	if (FMath::IsNearlyZero(segmentLength))
-	{
-		return false;
-	}
-	FVector2D segmentDir = segmentDelta / segmentLength;
-
-	OutPoints.Add(SegmentStart);
-	OutPointsHoleIndices.Add(INDEX_NONE);
-
-	for (int32 polyIdx = 0; polyIdx < Polygons.Num(); ++polyIdx)
-	{
-		const FPolyHole2D &polygon = Polygons[polyIdx];
-		bool &bMergedPolygon = OutMergedPolygons.Add_GetRef(false);
-
-		// iterate through the segments of the polygon to see if any touch or cross the initial segment
-		int32 numPolyPoints = polygon.Points.Num();
-		for (int32 polyPointIdx1 = 0; polyPointIdx1 < numPolyPoints; ++polyPointIdx1)
-		{
-			int32 polyPointIdx2 = (polyPointIdx1 + 1) % numPolyPoints;
-			const FVector2D &polyPoint1 = polygon.Points[polyPointIdx1];
-			const FVector2D &polyPoint2 = polygon.Points[polyPointIdx2];
-			FVector2D polySegmentDelta = polyPoint2 - polyPoint1;
-			float polySegmentLength = polySegmentDelta.Size();
-			if (FMath::IsNearlyZero(polySegmentLength))
-			{
-				return false;
-			}
-			FVector2D polySegmentDir = polySegmentDelta / polySegmentLength;
-			FVector2D startToPoint1 = polyPoint1 - SegmentStart;
-			float point1DistOnSegment = startToPoint1 | segmentDir;
-
-			// Make sure the polygon point lies between the start and end points of the input segment
-			if (!FMath::IsWithinInclusive(point1DistOnSegment, PLANAR_DOT_EPSILON, segmentLength - PLANAR_DOT_EPSILON))
-			{
-				continue;
-			}
-
-			FVector2D point1OnSegment = SegmentStart + point1DistOnSegment * segmentDir;
-			float point1DistFromSegment = FVector2D::Distance(point1OnSegment, polyPoint1);
-			bool bPoint1OnSegment = FMath::IsNearlyZero(point1DistFromSegment, PLANAR_DOT_EPSILON);
-			float segmentsDot = segmentDir | polySegmentDir;
-
-			// If this poly point and its next point form a segment that lies on the original segment,
-			// then note that this segment will be used to merge.
-			if ((FMath::Abs(segmentsDot) >= THRESH_NORMALS_ARE_PARALLEL) && bPoint1OnSegment)
-			{
-				bool bSegmentCoincident = (segmentsDot > 0.0f);
-				float point2DistOnSegment = (polyPoint2 - SegmentStart) | segmentDir;
-				ensureAlways(bSegmentCoincident == (point1DistOnSegment < point2DistOnSegment));
-
-				bMergedPolygon = true;
-				OutMergedPolyIndices.Add(polyIdx);
-				float startOnSegment = FMath::Min(point1DistOnSegment, point2DistOnSegment);
-				float endOnSegment = FMath::Max(point1DistOnSegment, point2DistOnSegment);
-				polyMergedSegmentDists.Add(polyIdx, FVector2D(startOnSegment, endOnSegment));
-				polyMergedSegmentIndices.Add(polyIdx, polyPointIdx1);
-				polyMergeCoincident.Add(polyIdx, bSegmentCoincident);
-				continue;
-			}
-		}
-	}
-
-	int32 numMergedPolys = OutMergedPolyIndices.Num();
-	OutMergedPolyIndices.Sort([&polyMergedSegmentDists](const int32 &polyIdxA, const int32 &polyIdxB) {
-		return polyMergedSegmentDists[polyIdxA].X < polyMergedSegmentDists[polyIdxB].X;
-	});
-
-	float lastPolyEndOnSegment = 0.0f;
-
-	for (const int32 &polyIdx : OutMergedPolyIndices)
-	{
-		// keep track of the solid segments between merged polygons
-		float polyStartOnSegment = polyMergedSegmentDists[polyIdx].X;
-		OutSegments.Add(FVector2D(lastPolyEndOnSegment, polyStartOnSegment));
-		lastPolyEndOnSegment = polyMergedSegmentDists[polyIdx].Y;
-
-		// add points from each merged polygon
-		const FPolyHole2D &polygon = Polygons[polyIdx];
-		int32 numPolyPoints = polygon.Points.Num();
-
-		int32 segmentStartIdx = polyMergedSegmentIndices[polyIdx];
-		bool bMergeCoincident = polyMergeCoincident[polyIdx];
-
-		for (int32 mergedIdx = 0; mergedIdx < numPolyPoints; ++mergedIdx)
-		{
-			int32 pointIdx = bMergeCoincident ?
-				((segmentStartIdx + numPolyPoints - mergedIdx) % numPolyPoints) :
-				((segmentStartIdx + 1 + mergedIdx) % numPolyPoints);
-
-			OutPoints.Add(polygon.Points[pointIdx]);
-			OutPointsHoleIndices.Add(polyIdx);
-		}
-	}
-
-	OutPoints.Add(SegmentEnd);
-	OutPointsHoleIndices.Add(INDEX_NONE);
-	OutSegments.Add(FVector2D(lastPolyEndOnSegment, segmentLength));
-
 	return true;
 }
 
@@ -2186,15 +2058,28 @@ bool UModumateGeometryStatics::IsPolygon2DValid(const TArray<FVector2D> &Points,
 
 		for (int32 segIdxBStart = 0; segIdxBStart < numPoints; ++segIdxBStart)
 		{
+			if (segIdxAStart == segIdxBStart)
+			{
+				continue;
+			}
+
 			int32 segIdxBEnd = (segIdxBStart + 1) % numPoints;
 			const FVector2D &segBStart = Points[segIdxBStart];
 			const FVector2D &segBEnd = Points[segIdxBEnd];
-			FVector2D intersectionPoint;
 
-			if ((segIdxAStart != segIdxBStart) &&
-				!segAStart.Equals(segBStart) && !segAStart.Equals(segBEnd) &&
-				!segAEnd.Equals(segBStart) && !segAEnd.Equals(segBEnd))
+			if (segAStart.Equals(segBStart))
 			{
+				if (InWarn)
+				{
+					InWarn->Logf(ELogVerbosity::Error, TEXT("Polygon has non-consecutive repeat points (%s): indices %d and %d!"),
+						*segAStart.ToString(), segIdxAStart, segIdxBStart);
+				}
+				return false;
+			}
+
+			if (!segAStart.Equals(segBEnd) && !segAEnd.Equals(segBStart) && !segAEnd.Equals(segBEnd))
+			{
+				FVector2D intersectionPoint;
 				if (UModumateGeometryStatics::SegmentIntersection2D(segAStart, segAEnd, segBStart, segBEnd, intersectionPoint, RAY_INTERSECT_TOLERANCE))
 				{
 					if (InWarn)
