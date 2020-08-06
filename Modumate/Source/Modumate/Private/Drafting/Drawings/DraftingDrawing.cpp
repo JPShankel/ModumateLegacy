@@ -152,19 +152,22 @@ namespace Modumate {
 			}
 		}
 
+		TArray<TArray<FVector>> WallCutPerimeters;
+		TArray<const FModumateObjectInstance*> cabinetObjects(Doc->GetObjectsOfType(EObjectType::OTCabinet));
+		for (const auto* cabinet: cabinetObjects)
+		{
+			cabinet->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
+		}
+
 		// Clipping of beyond-cut-plane lines.
 		ParentPage->lineClipping.Reset(new FModumateClippingTriangles(*cutPlane));
 		ParentPage->lineClipping->SetTransform(cutPlane->GetControlPoint(0), AxisX, 1.0f);
 		ParentPage->lineClipping->AddTrianglesFromDoc(Doc);
 
 		// Draw all separators, portals.
-		TArray<const FModumateObjectInstance*> beyondCutObjects;
-		Algo::CopyIf(Doc->GetObjectInstances(), beyondCutObjects, [](const FModumateObjectInstance* moi)
-			{ auto t = moi->GetObjectType(); return t == EObjectType::OTWallSegment
-				|| t == EObjectType::OTFloorSegment || t == EObjectType::OTRoofFace
-				|| t == EObjectType::OTWindow || t == EObjectType::OTDoor; });
-
-		TArray<TArray<FVector>> WallCutPerimeters;
+		TArray<const FModumateObjectInstance*> beyondCutObjects(Doc->GetObjectsOfType(
+			{EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTFloorSegment, EObjectType::OTRoofFace, EObjectType::OTWindow,
+				EObjectType::OTDoor, EObjectType::OTCabinet}));
 
 		for (auto object: beyondCutObjects)
 		{

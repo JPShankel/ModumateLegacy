@@ -46,7 +46,9 @@ namespace Modumate
 		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
-
+		virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane,
+			const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
+			TArray<TArray<FVector>> &OutPerimeters) const override;
 		static FName CabinetGeometryMatName;
 
 	protected:
@@ -57,5 +59,8 @@ namespace Modumate
 		TArray<TWeakObjectPtr<ASelectCabinetFrontHandle>> FrontSelectionHandles;
 		TWeakObjectPtr<ACompoundMeshActor> FrontFacePortalActor;
 		FVector2D ToeKickDimensions;
+
+	private:
+		TArray<FVector> GetBoundsIntersections(const FPlane& Plane) const;
 	};
 }

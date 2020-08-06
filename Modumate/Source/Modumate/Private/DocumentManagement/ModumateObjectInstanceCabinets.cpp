@@ -2,6 +2,7 @@
 
 #include "DocumentManagement/ModumateObjectInstanceCabinets.h"
 
+#include "Math/ConvexHull2d.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "DrawDebugHelpers.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
@@ -13,6 +14,8 @@
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/EditModelPlayerHUD.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "Drafting/ModumateClippingTriangles.h"
 
 namespace Modumate
 {
@@ -272,4 +275,147 @@ bool ASelectCabinetFrontHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsse
 {
 	OutButtonStyle = PlayerHUD->HandleAssets->CabinetFrontFaceStyle;
 	return true;
+}
+
+namespace
+{
+	const int32 boxEdgeIndices[12][2] = {{0, 1}, {1, 2}, {2, 3}, {3, 0}, {0, 4}, {1, 5}, {2, 6}, {3, 7},
+		{4, 5}, {5, 6}, {6, 7}, {7, 4}};
+}
+
+void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane,
+	const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
+	TArray<TArray<FVector>> &OutPerimeters) const
+{
+	static const Units::FThickness lineThickness = FThickness::Points(0.25f);
+	static const FMColor lineColor = FMColor::Black;
+	static FModumateLayerType dwgLayerType = FModumateLayerType::kCabinetCutCarcass;
+	OutPerimeters.Reset();
+
+	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
+	if (!bGetFarLines)
+	{   // Cut-plane lines:
+		TArray<FVector> intersections(GetBoundsIntersections(Plane));
+		int numIntersections = intersections.Num();
+		if (numIntersections == 0)
+		{
+			return;
+		}
+
+		TArray<FVector2D> points;
+		for (auto& intersect : intersections)
+		{
+			points.Emplace(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersect));
+		}
+		TArray<int32> hullIndices;
+		ConvexHull2D::ComputeConvexHull(points, hullIndices);
+		for (int32 i = 0; i < hullIndices.Num(); ++i)
+		{
+			FVector2D start = points[hullIndices[i]];
+			FVector2D end = points[hullIndices[(i + 1) % hullIndices.Num()]];
+			FVector2D clippedStart;
+			FVector2D clippedEnd;
+			if (UModumateFunctionLibrary::ClipLine2DToRectangle(start, end, BoundingBox, clippedStart, clippedEnd))
+			{
+				TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
+					Units::FCoordinates2D::WorldCentimeters(clippedStart),
+					Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+					lineThickness, lineColor));
+				ParentPage->Children.Add(line);
+				line->SetLayerTypeRecursive(dwgLayerType);
+			}
+
+		}
+	}
+	else
+	{   // Beyond lines:
+		const FModumateObjectInstance * moi = static_cast<const FModumateObjectInstance*>(MOI);
+
+		// Cabinet box base is control points, height is extents.Y.
+		const auto& controlPoints = moi->GetDataState().ControlPoints;
+		if (!ensureAlways(controlPoints.Num() == 4))
+		{
+			return;
+		}
+		FVector height(0.0f, 0.0f, moi->GetDataState().Extents.Y);
+
+		FVector points[8];
+		for (int32 point = 0; point < 4; ++point)
+		{
+			points[point] = controlPoints[point];
+			points[point + 4] = controlPoints[point] + height;
+		}
+
+		TArray<FEdge> cabinetEdges;
+		for (int32 edge = 0; edge < 12; ++edge)
+		{
+			cabinetEdges.Emplace(points[boxEdgeIndices[edge][0]], points[boxEdgeIndices[edge][1]]);
+		}
+
+		for (const auto& edge : cabinetEdges)
+		{
+			TArray<FEdge> viewLines = ParentPage->lineClipping->ClipWorldLineToView(edge);
+			for (const auto& viewLine : viewLines)
+			{
+				FVector2D start(viewLine.Vertex[0]);
+				FVector2D end (viewLine.Vertex[1]);
+				FVector2D boxClipped0;
+				FVector2D boxClipped1;
+
+				if (UModumateFunctionLibrary::ClipLine2DToRectangle(start, end, BoundingBox, boxClipped0, boxClipped1))
+				{
+
+					TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
+						Units::FCoordinates2D::WorldCentimeters(boxClipped0),
+						Units::FCoordinates2D::WorldCentimeters(boxClipped1),
+						Units::FThickness::Points(0.15f), FMColor::Gray144));
+					ParentPage->Children.Add(line);
+					line->SetLayerTypeRecursive(FModumateLayerType::kCabinetBeyond);
+				}
+
+			}
+		}
+
+	}
+
+}
+
+TArray<FVector> FMOICabinetImpl::GetBoundsIntersections(const FPlane& Plane) const
+{
+	TArray<FVector> planeIntersects;
+	FVector location = MOI->GetObjectLocation();
+	const FModumateObjectInstance * moi = static_cast<const FModumateObjectInstance*>(MOI);
+
+	// Cabinet box base is control points, height is extents.Y.
+	const auto& controlPoints = moi->GetDataState().ControlPoints;
+	if (!ensureAlways(controlPoints.Num() == 4))
+	{
+		return planeIntersects;
+	}
+	FVector height(0.0f, 0.0f, moi->GetDataState().Extents.Y);
+
+	FVector points[8];
+	for (int32 point = 0; point < 4; ++point)
+	{
+		points[point] = controlPoints[point];
+		points[point + 4] = controlPoints[point] + height;
+	}
+
+	FBox objectBox(points, sizeof(points) / sizeof(points[0]));
+	if (!FMath::PlaneAABBIntersection(Plane, objectBox))
+	{
+		return planeIntersects;
+	}
+
+	for (int32 edge = 0; edge < 12; ++edge)
+	{
+		FVector intersect;
+		if (FMath::SegmentPlaneIntersection(points[boxEdgeIndices[edge][0]], points[boxEdgeIndices[edge][1]],
+			Plane, intersect))
+		{
+			planeIntersects.Add(intersect);
+		}
+	}
+
+	return planeIntersects;
 }

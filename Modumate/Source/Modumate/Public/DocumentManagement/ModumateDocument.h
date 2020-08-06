@@ -170,6 +170,9 @@ public:
 
 	TArray<const Modumate::FModumateObjectInstance*> GetObjectsOfType(EObjectType type) const;
 	TArray<Modumate::FModumateObjectInstance*> GetObjectsOfType(EObjectType type);
+	using FObjectTypeSet = TSet<EObjectType>;
+	TArray<const Modumate::FModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& types) const;
+	TArray<Modumate::FModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& types);
 
 	void GetObjectIdsByAssembly(const FName &assemblyKey, TArray<int32> &outIDs) const;
 

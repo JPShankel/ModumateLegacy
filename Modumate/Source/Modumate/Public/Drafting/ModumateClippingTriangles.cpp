@@ -29,10 +29,8 @@ namespace Modumate
 
 	void FModumateClippingTriangles::AddTrianglesFromDoc(const FModumateDocument * doc)
 	{
-		TArray<const FModumateObjectInstance*> separatorObjects;
-		Algo::CopyIf(doc->GetObjectInstances(), separatorObjects, [](const FModumateObjectInstance* moi)
-		{ auto t = moi->GetObjectType(); return t == EObjectType::OTWallSegment
-			|| t == EObjectType::OTFloorSegment || t == EObjectType::OTRoofFace;  });
+		TArray<const FModumateObjectInstance*> separatorObjects(doc->GetObjectsOfType(
+			{ EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTRoofFace }));
 
 		const int numObjects = separatorObjects.Num();
 		int totalTriangles = 0;

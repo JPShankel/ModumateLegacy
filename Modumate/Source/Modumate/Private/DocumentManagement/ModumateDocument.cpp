@@ -2583,6 +2583,21 @@ TArray<FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(EObjectType
 	});
 }
 
+TArray<const Modumate::FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(const FObjectTypeSet& types) const
+{
+	TArray<const Modumate::FModumateObjectInstance*> outArray;
+	Algo::TransformIf(ObjectInstanceArray, outArray, [&types](FModumateObjectInstance * moi)
+		{ return types.Contains(moi->GetObjectType()); },
+		[](FModumateObjectInstance * moi) {return moi; });
+	return outArray;
+}
+
+TArray<Modumate::FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(const FObjectTypeSet& types)
+{
+	return ObjectInstanceArray.FilterByPredicate([&types](FModumateObjectInstance *moi)
+		{ return types.Contains(moi->GetObjectType()); });
+}
+
 void FModumateDocument::GetObjectIdsByAssembly(const FName &assemblyKey, TArray<int32> &outIds) const
 {
 	for (const auto &moi : ObjectInstanceArray)

@@ -203,8 +203,7 @@ namespace Modumate
 		if (doc)
 		{
 			captureComponent->ClearShowOnlyComponents();
-			auto bitmapObjects = doc->GetObjectsOfType(EObjectType::OTFurniture)
-				+= doc->GetObjectsOfType(EObjectType::OTCabinet);
+			auto bitmapObjects = doc->GetObjectsOfType(EObjectType::OTFurniture);
 			for (FModumateObjectInstance* moi : bitmapObjects)
 			{
 				captureComponent->ShowOnlyActorComponents(moi->GetActor(), true);
