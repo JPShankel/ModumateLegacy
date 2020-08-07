@@ -1,10 +1,10 @@
-TYPENAME,,,,0DimDi,,,,,,,
-,,,,Definition,,,,,,,
+TYPENAME,,0DimDi,,Dimension,,,,,,,
+,,Definition,,,,,,,,,
 3,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,
-PROPERTY,,STRING,,Name,,Preset.Name,,,,,
-PROPERTY,,DIMENSION,,Diameter,,Node.Diameter,,,,,
-,,,,Presets,,,,,22,22,13
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Node.Diameter,DataType=TG_Parent Node+CategoryPath,2ExtrudedProfile --> Beam/Column --> ConcreteRound,2ExtrudedProfile --> Beam/Column --> StoneRound,2ExtrudedProfile --> Beam/Column --> WoodRound
+PROPERTY,,STRING,,Name,,Dimension.Name,,,,,
+PROPERTY,,DIMENSION,,Diameter,,Dimension.Diameter,,,,,
+,,Presets,,,,,,,22,22,13
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Diameter,DataType=TG_Parent Node+CategoryPath,2ExtrudedProfile --> Beam/Column --> ConcreteRound,2ExtrudedProfile --> Beam/Column --> StoneRound,2ExtrudedProfile --> Beam/Column --> WoodRound
 PRESET,,"0DimDi
 6in",,0DimDi,,6in,6in,,X,X,X
 PRESET,,"0DimDi
@@ -49,3 +49,4 @@ PRESET,,"0DimDi
 46in",,0DimDi,,46in,46in,,X,X,
 PRESET,,"0DimDi
 48in",,0DimDi,,48in,48in,,X,X,
+,,,,,,,,,,,

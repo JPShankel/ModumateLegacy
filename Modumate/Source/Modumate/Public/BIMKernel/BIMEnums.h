@@ -111,28 +111,33 @@ enum class EBIMValueType : uint8
 UENUM()
 enum class EBIMValueScope : uint8
 {
+	// These scopes will be used to define how variables attached to a preset node will be bound
 	None = 0,
 	Assembly,
 	Layer,
+	Part,
 	Pattern,
+	Profile,
 	Module,
+	Mesh,
 	Gap,
+	RawMaterial,
+	Material,
+	Color,
+	Dimension,
+	Parent,
+	Preset,
+
+	// These scopes are to be deprecated as we replace the BIM property sheets
 	ToeKick,
 	Node,
-	Mesh,
-	Portal,
-	MaterialColor,
-	Form,
-	Preset,
 	Room,
-	Drawing,
 	Roof,
 	Error = 255
 };
 
-
 UENUM()
-enum class ECraftingNodePresetStatus : uint8
+enum class EBIMPresetEditorNodeStatus : uint8
 {
 	None = 0,
 	UpToDate,

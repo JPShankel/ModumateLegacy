@@ -179,6 +179,7 @@ namespace BIMPropertyNames
 	const FBIMNameType Area = TEXT("Area");
 	const FBIMNameType AreaType = TEXT("AreaType");
 	const FBIMNameType AssetID = TEXT("AssetID");
+	const FBIMNameType AssetPath = TEXT("AssetPath");
 	const FBIMNameType BevelWidth = TEXT("BevelWidth");
 	const FBIMNameType Category = TEXT("Category");
 	const FBIMNameType Code = TEXT("Code");

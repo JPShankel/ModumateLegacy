@@ -1,13 +1,13 @@
-TYPENAME,,,,2ModuleLWH,,,,,,,,,,,,,,,,,
-,,,,Definition,,,,,,,,,,,,,,,,,
+TYPENAME,,2ModuleLWH,,Module,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,
-PROPERTY,,STRING,,Name,,Preset.Name,,,,,,,,,,,,,,,
-PROPERTY,,PRIVATE,,Anchor Point,,Preset.AnchorPoint,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Module.Name,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Anchor Point,,Module.AnchorPoint,,,,,,,,,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildDimLWH,,,,,,,,,,,,,,,,,
-,,,,Presets,,,,,,,,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Preset.AnchorPoint,DataType=InputPins,ChildMaterial,ChildDimLWH,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath,,,,,,,,,
+,,Presets,,,,,,,,,,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Module.Name,Module.AnchorPoint,DataType=InputPins,ChildMaterial,ChildDimLWH,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay
 0RawMaterial
@@ -389,7 +389,7 @@ Standard","0DimLWH --> ClayBrick
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -399,7 +399,7 @@ Standard
 5.625inW
 7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-29,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -410,7 +410,7 @@ Standard","0DimLWH --> CMU
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -420,7 +420,7 @@ Standard
 5.625inW
 7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-30,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -431,7 +431,7 @@ Standard","0DimLWH --> CMU
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -441,7 +441,7 @@ Standard
 7.625inW
 7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-31,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -452,7 +452,7 @@ Standard","0DimLWH --> CMU
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -462,7 +462,7 @@ Standard
 7.625inW
 7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-32,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -473,7 +473,7 @@ Standard","0DimLWH --> CMU
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -483,7 +483,7 @@ Standard
 9.625inW
 7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-33,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -494,7 +494,7 @@ Standard","0DimLWH --> CMU
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -504,7 +504,7 @@ Standard
 9.625inW
 7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-34,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -515,7 +515,7 @@ Standard","0DimLWH --> CMU
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -525,7 +525,7 @@ Standard
 11.625inW
 7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-35,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -536,7 +536,7 @@ Standard","0DimLWH --> CMU
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -546,7 +546,7 @@ Standard
 11.625inW
 7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-36,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -557,7 +557,7 @@ Standard","0DimLWH --> CMU
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block
 0RawMaterial
-GlassBlock
+Glass Block
 0Color --> Glass and Transparent --> Glass
 F2F2F2-White
 0SrfTreatment
@@ -567,7 +567,7 @@ Standard
 3.875inW
 3.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-37,"0,0,0",,"1Material --> Glass and Transparent --> Glass Block
 0RawMaterial
-GlassBlock
+Glass Block
 0Color --> Glass and Transparent --> Glass
 F2F2F2-White
 0SrfTreatment
@@ -578,7 +578,7 @@ Standard","0DimLWH --> GlassBlock
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block
 0RawMaterial
-GlassBlock
+Glass Block
 0Color --> Glass and Transparent --> Glass
 F2F2F2-White
 0SrfTreatment
@@ -588,7 +588,7 @@ Standard
 3.875inW
 5.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-38,"0,0,0",,"1Material --> Glass and Transparent --> Glass Block
 0RawMaterial
-GlassBlock
+Glass Block
 0Color --> Glass and Transparent --> Glass
 F2F2F2-White
 0SrfTreatment
@@ -599,7 +599,7 @@ Standard","0DimLWH --> GlassBlock
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block
 0RawMaterial
-GlassBlock
+Glass Block
 0Color --> Glass and Transparent --> Glass
 F2F2F2-White
 0SrfTreatment
@@ -609,7 +609,7 @@ Standard
 3.875inW
 7.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-39,"0,0,0",,"1Material --> Glass and Transparent --> Glass Block
 0RawMaterial
-GlassBlock
+Glass Block
 0Color --> Glass and Transparent --> Glass
 F2F2F2-White
 0SrfTreatment
@@ -617,4 +617,3 @@ Standard","0DimLWH --> GlassBlock
 7.75inL
 3.875inW
 7.75inH",,3Layer3D,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,

@@ -1,13 +1,13 @@
-TYPENAME,,,,2Layer0D,,,,,,,,,,,,,,,,,
-,,,,Definition,,,,,,,,,,,,,,,,,
+TYPENAME,,2Layer0D,,Layer,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,
-PROPERTY,,STRING,,Name,,Preset.DisplayName,,,,,,,,,,,,,,,
-PROPERTY,,PRIVATE,,Anchor Point,,Preset.AnchorPoint,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Layer.Name,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Anchor Point,,Layer.AnchorPoint,,,,,,,,,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,Child1Material,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,Child0DimThk,,,,,,,,,,,,,,,,,
-,,,,Presets,,,,,,,,64,64,64,61,50,9,0,3,3,34
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.DisplayName,Preset.AnchorPoint,DataType=InputPins,Child1Material,Child0DimThk,DataType=TG_Parent Node+CategoryPath,4LayeredAssembly --> Wall,4LayeredAssembly --> Floor,4LayeredAssembly --> Roof,4LayeredAssembly --> Ceiling,4LayeredAssembly --> Finish,4LayeredAssembly --> System Panel,4LayeredAssembly --> Countertop,4LayeredAssembly --> Layered Tread,4LayeredAssembly --> Layered Riser,4LayeredAssembly --> Landscape
+,,Presets,,,,,,,,,,64,64,64,61,50,9,0,3,3,34
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Layer.Name,Layer.AnchorPoint,DataType=InputPins,Child1Material,Child0DimThk,DataType=TG_Parent Node+CategoryPath,4LayeredAssembly --> Wall,4LayeredAssembly --> Floor,4LayeredAssembly --> Roof,4LayeredAssembly --> Ceiling,4LayeredAssembly --> Finish,4LayeredAssembly --> System Panel,4LayeredAssembly --> Countertop,4LayeredAssembly --> Layered Tread,4LayeredAssembly --> Layered Riser,4LayeredAssembly --> Landscape
 PRESET,,"2Layer0D --> Abstract
 1Material
 0RawMaterial
@@ -181,7 +181,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -189,7 +189,7 @@ Standard
 0DimThk
 6inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-21,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -198,7 +198,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -206,7 +206,7 @@ Standard
 0DimThk
 8inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-22,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -215,7 +215,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -223,7 +223,7 @@ Standard
 0DimThk
 10inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-23,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -232,7 +232,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -240,7 +240,7 @@ Standard
 0DimThk
 12inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-24,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -249,7 +249,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -257,7 +257,7 @@ Standard
 0DimThk
 14inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-25,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -266,7 +266,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -274,7 +274,7 @@ Standard
 0DimThk
 16inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-26,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -283,7 +283,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -291,7 +291,7 @@ Standard
 0DimThk
 18inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-27,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -300,7 +300,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -308,7 +308,7 @@ Standard
 0DimThk
 20inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-28,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -317,7 +317,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -325,7 +325,7 @@ Standard
 0DimThk
 22inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-29,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -334,7 +334,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -342,7 +342,7 @@ Standard
 0DimThk
 24inT",,2Layer0D --> Abstract --> CastInPlaceConcrete,,2Layer0D-30,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -351,7 +351,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -359,7 +359,7 @@ Standard
 0DimThk
 3inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-31,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -368,7 +368,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -376,7 +376,7 @@ Standard
 0DimThk
 6inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-32,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -385,7 +385,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -393,7 +393,7 @@ Standard
 0DimThk
 8inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-33,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -402,7 +402,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -410,7 +410,7 @@ Standard
 0DimThk
 10inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-34,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -419,7 +419,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -427,7 +427,7 @@ Standard
 0DimThk
 12inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-35,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -436,7 +436,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -444,7 +444,7 @@ Standard
 0DimThk
 14inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-36,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -453,7 +453,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -461,7 +461,7 @@ Standard
 0DimThk
 16inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-37,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -470,7 +470,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -478,7 +478,7 @@ Standard
 0DimThk
 18inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-38,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -487,7 +487,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -495,7 +495,7 @@ Standard
 0DimThk
 20inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-39,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -504,7 +504,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -512,7 +512,7 @@ Standard
 0DimThk
 22inT",,2Layer0D --> Mass --> PrecastConcrete,,2Layer0D-40,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteNormalAggregate
+Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -521,221 +521,221 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished
 0DimThk
 3.5inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-41,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished","0DimThk
 3.5inT",,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished
 0DimThk
 4.125inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-42,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished","0DimThk
 4.125inT",,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished
 0DimThk
 5.5inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-43,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished","0DimThk
 5.5inT",,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished
 0DimThk
 6.875inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-44,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished","0DimThk
 6.875inT",,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished
 0DimThk
 7.5inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-45,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished","0DimThk
 7.5inT",,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished
 0DimThk
 9.5inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-46,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished","0DimThk
 9.5inT",,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished
 0DimThk
 9.625inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-47,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished","0DimThk
 9.625inT",,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished
 0DimThk
 12.375inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,2Layer0D-48,"0,0,0",,"1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
-SprucePineFir
+Spruce-Pine-Fir
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Unfinished","0DimThk
 12.375inT",,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Mass --> RammedEarth
 1Material --> Aggregates --> Rammed Earth
 0RawMaterial
-RammedEarth
+Rammed Earth
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 15cmT",,2Layer0D --> Mass --> RammedEarth,,2Layer0D-49,"0,0,0",,"1Material --> Aggregates --> Rammed Earth
 0RawMaterial
-RammedEarth
+Rammed Earth
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 15cmT",,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Mass --> RammedEarth
 1Material --> Aggregates --> Rammed Earth
 0RawMaterial
-RammedEarth
+Rammed Earth
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 30cmT",,2Layer0D --> Mass --> RammedEarth,,2Layer0D-50,"0,0,0",,"1Material --> Aggregates --> Rammed Earth
 0RawMaterial
-RammedEarth
+Rammed Earth
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 30cmT",,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Mass --> RammedEarth
 1Material --> Aggregates --> Rammed Earth
 0RawMaterial
-RammedEarth
+Rammed Earth
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 40cmT",,2Layer0D --> Mass --> RammedEarth,,2Layer0D-51,"0,0,0",,"1Material --> Aggregates --> Rammed Earth
 0RawMaterial
-RammedEarth
+Rammed Earth
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 40cmT",,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Mass --> RammedEarth
 1Material --> Aggregates --> Rammed Earth
 0RawMaterial
-RammedEarth
+Rammed Earth
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 50cmT",,2Layer0D --> Mass --> RammedEarth,,2Layer0D-52,"0,0,0",,"1Material --> Aggregates --> Rammed Earth
 0RawMaterial
-RammedEarth
+Rammed Earth
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 50cmT",,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Mass --> RammedEarth
 1Material --> Aggregates --> Rammed Earth
 0RawMaterial
-RammedEarth
+Rammed Earth
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 60cmT",,2Layer0D --> Mass --> RammedEarth,,2Layer0D-53,"0,0,0",,"1Material --> Aggregates --> Rammed Earth
 0RawMaterial
-RammedEarth
+Rammed Earth
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 60cmT",,X,X,X,X,,,,,,
@@ -844,75 +844,75 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetLowProfile
-0Color --> Abstract
-6B6B6B-Gray6
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+E9EAE6-White
 0SrfTreatment
 Standard
 0DimThk
 0.25inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-60,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetLowProfile
-0Color --> Abstract
-6B6B6B-Gray6
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+E9EAE6-White
 0SrfTreatment
 Standard","0DimThk
 0.25inT",,,,,,X,,,,,
 PRESET,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetLowProfile
-0Color --> Abstract
-6B6B6B-Gray6
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+E9EAE6-White
 0SrfTreatment
 Standard
 0DimThk
 0.5inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-61,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetLowProfile
-0Color --> Abstract
-6B6B6B-Gray6
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+E9EAE6-White
 0SrfTreatment
 Standard","0DimThk
 0.5inT",,,,,,X,,,,,
 PRESET,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetLowProfile
-0Color --> Abstract
-6B6B6B-Gray6
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+E9EAE6-White
 0SrfTreatment
 Standard
 0DimThk
 0.75inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-62,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetLowProfile
-0Color --> Abstract
-6B6B6B-Gray6
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+E9EAE6-White
 0SrfTreatment
 Standard","0DimThk
 0.75inT",,,,,,X,,,,,
 PRESET,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetLowProfile
-0Color --> Abstract
-6B6B6B-Gray6
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+E9EAE6-White
 0SrfTreatment
 Standard
 0DimThk
 1inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-63,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetLowProfile
-0Color --> Abstract
-6B6B6B-Gray6
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+E9EAE6-White
 0SrfTreatment
 Standard","0DimThk
 1inT",,,,,,X,,,,,
 PRESET,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetMediumProfile
+Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 7A878F-SilverBlue
 0SrfTreatment
@@ -920,7 +920,7 @@ Standard
 0DimThk
 0.25inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-64,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetMediumProfile
+Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 7A878F-SilverBlue
 0SrfTreatment
@@ -929,7 +929,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetMediumProfile
+Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 7A878F-SilverBlue
 0SrfTreatment
@@ -937,7 +937,7 @@ Standard
 0DimThk
 0.5inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-65,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetMediumProfile
+Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 7A878F-SilverBlue
 0SrfTreatment
@@ -946,7 +946,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetMediumProfile
+Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 7A878F-SilverBlue
 0SrfTreatment
@@ -954,7 +954,7 @@ Standard
 0DimThk
 0.75inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-66,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetMediumProfile
+Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 7A878F-SilverBlue
 0SrfTreatment
@@ -963,7 +963,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetMediumProfile
+Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 7A878F-SilverBlue
 0SrfTreatment
@@ -971,7 +971,7 @@ Standard
 0DimThk
 1inT",,2Layer0D --> Roll --> Carpet,,2Layer0D-67,"0,0,0",,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
-CarpetMediumProfile
+Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 7A878F-SilverBlue
 0SrfTreatment
@@ -982,7 +982,7 @@ PRESET,,"2Layer0D --> Roll --> Cork
 0RawMaterial
 Cork
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -990,7 +990,7 @@ Standard
 0RawMaterial
 Cork
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 0.125inT",,,,,,X,,,,,
@@ -999,7 +999,7 @@ PRESET,,"2Layer0D --> Roll --> Cork
 0RawMaterial
 Cork
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1007,7 +1007,7 @@ Standard
 0RawMaterial
 Cork
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 0.1875inT",,,,,,X,,,,,
@@ -1016,7 +1016,7 @@ PRESET,,"2Layer0D --> Roll --> Cork
 0RawMaterial
 Cork
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1024,7 +1024,7 @@ Standard
 0RawMaterial
 Cork
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 0.25inT",,,,,,X,,,,,
@@ -1033,7 +1033,7 @@ PRESET,,"2Layer0D --> Roll --> Cork
 0RawMaterial
 Cork
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1041,7 +1041,7 @@ Standard
 0RawMaterial
 Cork
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 0.5inT",,,,,,X,,,,,
@@ -1099,7 +1099,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Roll --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -1107,7 +1107,7 @@ Standard
 0DimThk
 0.125inT",,2Layer0D --> Roll --> Foam,,2Layer0D-75,"0,0,0",,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -1116,7 +1116,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Roll --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -1124,7 +1124,7 @@ Standard
 0DimThk
 0.1875inT",,2Layer0D --> Roll --> Foam,,2Layer0D-76,"0,0,0",,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -1133,7 +1133,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Roll --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -1141,7 +1141,7 @@ Standard
 0DimThk
 0.25inT",,2Layer0D --> Roll --> Foam,,2Layer0D-77,"0,0,0",,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -1150,7 +1150,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Roll --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -1158,7 +1158,7 @@ Standard
 0DimThk
 0.5inT",,2Layer0D --> Roll --> Foam,,2Layer0D-78,"0,0,0",,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -1267,297 +1267,300 @@ D6D7D1-Natural
 Standard","0DimThk
 0.03125inT",,,,,,X,,,,,
 PRESET,,"2Layer0D --> Sitework --> Gravel
-2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
-14inT
-0DimThk
-1inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-85,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+1inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-85,"0,0,0",,"1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
-Standard
-0DimThk
-14inT","0DimThk
+Standard","0DimThk
 1inT",,,,,,X,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Gravel
-2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
-14inT
-0DimThk
-2inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-86,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+2inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-86,"0,0,0",,"1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
-Standard
-0DimThk
-14inT","0DimThk
+Standard","0DimThk
 2inT",,,,,,X,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Gravel
-2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
-14inT
-0DimThk
-3inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-87,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+3inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-87,"0,0,0",,"1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
-Standard
-0DimThk
-14inT","0DimThk
+Standard","0DimThk
 3inT",,,,,,X,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Gravel
-2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
-14inT
-0DimThk
-4inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-88,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+4inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-88,"0,0,0",,"1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
-Standard
-0DimThk
-14inT","0DimThk
+Standard","0DimThk
 4inT",,,,,,X,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Gravel
-2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
-14inT
-0DimThk
-6inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-89,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+6inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-89,"0,0,0",,"1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
-Standard
-0DimThk
-14inT","0DimThk
+Standard","0DimThk
 6inT",,,,,,X,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Gravel
-2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
-14inT
-0DimThk
-8inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-90,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+8inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-90,"0,0,0",,"1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
-Standard
-0DimThk
-14inT","0DimThk
+Standard","0DimThk
 8inT",,,,,,X,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Gravel
-2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
-14inT
-0DimThk
-12inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-91,"0,0,0",,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete
+12inT",,2Layer0D --> Sitework --> Gravel,,2Layer0D-91,"0,0,0",,"1Material --> Aggregates --> Gravel
 0RawMaterial
-ConcreteNormalAggregate
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
 0SrfTreatment
-Standard
-0DimThk
-14inT","0DimThk
+Standard","0DimThk
 12inT",,,,,,X,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
 1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 1inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-92,"0,0,0",,"1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 1inT",,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
 1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 2inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-93,"0,0,0",,"1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 2inT",,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
 1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 3inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-94,"0,0,0",,"1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 3inT",,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
 1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 4inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-95,"0,0,0",,"1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 4inT",,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
 1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 6inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-96,"0,0,0",,"1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 6inT",,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
 1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 8inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-97,"0,0,0",,"1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 8inT",,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
 1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 12inT",,2Layer0D --> Sitework --> Grass,,2Layer0D-98,"0,0,0",,"1Material --> Fibrous --> Wood Particles
 0RawMaterial
-WoodParticles
+Wood Particles
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 12inT",,,,,,,,,,,X
-PRESET,,#REF!,,2Layer0D --> Sitework --> DecomposedGranite,,2Layer0D-99,"0,0,0",,#REF!,"0DimThk
+PRESET,,"2Layer0D --> Sitework --> DecomposedGranite
+1Material --> Aggregates --> Decomposed Granite
+0RawMaterial
+Decomposed Granite
+0Color --> Aggregates --> Decomposed Granite
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+1inT",,2Layer0D --> Sitework --> DecomposedGranite,,2Layer0D-99,"0,0,0",,"1Material --> Aggregates --> Decomposed Granite
+0RawMaterial
+Decomposed Granite
+0Color --> Aggregates --> Decomposed Granite
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
 1inT",,,X,X,,X,,,,,X
-PRESET,,#REF!,,2Layer0D --> Sitework --> DecomposedGranite,,2Layer0D-100,"0,0,0",,#REF!,"0DimThk
+PRESET,,"2Layer0D --> Sitework --> DecomposedGranite
+1Material --> Aggregates --> Decomposed Granite
+0RawMaterial
+Decomposed Granite
+0Color --> Aggregates --> Decomposed Granite
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+2inT",,2Layer0D --> Sitework --> DecomposedGranite,,2Layer0D-100,"0,0,0",,"1Material --> Aggregates --> Decomposed Granite
+0RawMaterial
+Decomposed Granite
+0Color --> Aggregates --> Decomposed Granite
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
 2inT",,,X,X,,X,,,,,X
-PRESET,,#REF!,,2Layer0D --> Sitework --> DecomposedGranite,,2Layer0D-101,"0,0,0",,#REF!,"0DimThk
+PRESET,,"2Layer0D --> Sitework --> DecomposedGranite
+1Material --> Aggregates --> Decomposed Granite
+0RawMaterial
+Decomposed Granite
+0Color --> Aggregates --> Decomposed Granite
+FFFFFF-White
+0SrfTreatment
+Standard
+0DimThk
+3inT",,2Layer0D --> Sitework --> DecomposedGranite,,2Layer0D-101,"0,0,0",,"1Material --> Aggregates --> Decomposed Granite
+0RawMaterial
+Decomposed Granite
+0Color --> Aggregates --> Decomposed Granite
+FFFFFF-White
+0SrfTreatment
+Standard","0DimThk
 3inT",,,X,X,,X,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Sand
 1Material --> Aggregates --> Sand
 0RawMaterial
 Sand
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1565,7 +1568,7 @@ Standard
 0RawMaterial
 Sand
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 1inT",,,X,X,X,X,,,,,X
@@ -1574,7 +1577,7 @@ PRESET,,"2Layer0D --> Sitework --> Sand
 0RawMaterial
 Sand
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1582,7 +1585,7 @@ Standard
 0RawMaterial
 Sand
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 2inT",,,X,X,X,X,,,,,X
@@ -1591,7 +1594,7 @@ PRESET,,"2Layer0D --> Sitework --> Sand
 0RawMaterial
 Sand
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1599,126 +1602,126 @@ Standard
 0RawMaterial
 Sand
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 3inT",,,X,X,X,X,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
 1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 1inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-105,"0,0,0",,"1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 1inT",,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
 1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 2inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-106,"0,0,0",,"1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 2inT",,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
 1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 3inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-107,"0,0,0",,"1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 3inT",,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
 1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 4inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-108,"0,0,0",,"1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 4inT",,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
 1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 6inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-109,"0,0,0",,"1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 6inT",,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
 1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 8inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-110,"0,0,0",,"1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 8inT",,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
 1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
 12inT",,2Layer0D --> Sitework --> Soil,,2Layer0D-111,"0,0,0",,"1Material --> Fibrous --> Wood Strands
 0RawMaterial
-WoodStrands
+Wood Strands
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 12inT",,,,,,,,,,,X
@@ -1727,7 +1730,7 @@ PRESET,,"2Layer0D --> Sitework --> Soil
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1735,7 +1738,7 @@ Standard
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 1inT",,,,,,,,,,,X
@@ -1744,7 +1747,7 @@ PRESET,,"2Layer0D --> Sitework --> Soil
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1752,7 +1755,7 @@ Standard
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 2inT",,,,,,,,,,,X
@@ -1761,7 +1764,7 @@ PRESET,,"2Layer0D --> Sitework --> Soil
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1769,7 +1772,7 @@ Standard
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 3inT",,,,,,,,,,,X
@@ -1778,7 +1781,7 @@ PRESET,,"2Layer0D --> Sitework --> Soil
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1786,7 +1789,7 @@ Standard
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 4inT",,,,,,,,,,,X
@@ -1795,7 +1798,7 @@ PRESET,,"2Layer0D --> Sitework --> Soil
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1803,7 +1806,7 @@ Standard
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 6inT",,,,,,,,,,,X
@@ -1812,7 +1815,7 @@ PRESET,,"2Layer0D --> Sitework --> Soil
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1820,7 +1823,7 @@ Standard
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 8inT",,,,,,,,,,,X
@@ -1829,7 +1832,7 @@ PRESET,,"2Layer0D --> Sitework --> Soil
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
@@ -1837,7 +1840,7 @@ Standard
 0RawMaterial
 Grass
 0Color --> Abstract
-6B6B6B-Gray6
+FFFFFF-White
 0SrfTreatment
 Standard","0DimThk
 12inT",,,,,,,,,,,X
@@ -2099,7 +2102,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteFineAggregate
+Concrete (Fine Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -2107,7 +2110,7 @@ Standard
 0DimThk
 0.0625inT",,2Layer0D --> Spread --> ThinsetCement,,2Layer0D-134,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteFineAggregate
+Concrete (Fine Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -2116,7 +2119,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteFineAggregate
+Concrete (Fine Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -2124,7 +2127,7 @@ Standard
 0DimThk
 0.09375inT",,2Layer0D --> Spread --> ThinsetCement,,2Layer0D-135,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteFineAggregate
+Concrete (Fine Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -2133,7 +2136,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteFineAggregate
+Concrete (Fine Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -2141,7 +2144,7 @@ Standard
 0DimThk
 0.125inT",,2Layer0D --> Spread --> ThinsetCement,,2Layer0D-136,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteFineAggregate
+Concrete (Fine Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -2150,7 +2153,7 @@ Standard","0DimThk
 PRESET,,"2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteFineAggregate
+Concrete (Fine Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -2158,7 +2161,7 @@ Standard
 0DimThk
 0.25inT",,2Layer0D --> Spread --> ThinsetCement,,2Layer0D-137,"0,0,0",,"1Material --> Aggregates --> Concrete
 0RawMaterial
-ConcreteFineAggregate
+Concrete (Fine Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
@@ -2396,14 +2399,14 @@ Standard","0DimThk
 1inT",,,,,,,,,,,
 ,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumMoistureResistant
+Gypsum (Moisture-Resistant)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
 Standard-0DimThk
 0.25inT",,,,2Layer0D-163,,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumMoistureResistant
+Gypsum (Moisture-Resistant)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
@@ -2411,14 +2414,14 @@ Standard","0DimThk
 0.25inT",,,,,,,,,,,
 ,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumMoistureResistant
+Gypsum (Moisture-Resistant)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
 Standard-0DimThk
 0.375inT",,,,2Layer0D-164,,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumMoistureResistant
+Gypsum (Moisture-Resistant)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
@@ -2426,14 +2429,14 @@ Standard","0DimThk
 0.375inT",,,,,,,,,,,
 ,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumMoistureResistant
+Gypsum (Moisture-Resistant)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
 Standard-0DimThk
 0.5inT",,,,2Layer0D-165,,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumMoistureResistant
+Gypsum (Moisture-Resistant)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
@@ -2441,14 +2444,14 @@ Standard","0DimThk
 0.5inT",,,,,,,,,,,
 ,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumMoistureResistant
+Gypsum (Moisture-Resistant)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
 Standard-0DimThk
 0.625inT",,,,2Layer0D-166,,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumMoistureResistant
+Gypsum (Moisture-Resistant)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
@@ -2456,14 +2459,14 @@ Standard","0DimThk
 0.625inT",,,,,,,,,,,
 ,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumMoistureResistant
+Gypsum (Moisture-Resistant)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
 Standard-0DimThk
 1inT",,,,2Layer0D-167,,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumMoistureResistant
+Gypsum (Moisture-Resistant)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
@@ -2471,14 +2474,14 @@ Standard","0DimThk
 1inT",,,,,,,,,,,
 ,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumTypeX
+Gypsum (Type X)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
 Standard-0DimThk
 0.25inT",,,,2Layer0D-168,,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumTypeX
+Gypsum (Type X)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
@@ -2486,14 +2489,14 @@ Standard","0DimThk
 0.25inT",,,,,,,,,,,
 ,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumTypeX
+Gypsum (Type X)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
 Standard-0DimThk
 0.375inT",,,,2Layer0D-169,,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumTypeX
+Gypsum (Type X)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
@@ -2501,14 +2504,14 @@ Standard","0DimThk
 0.375inT",,,,,,,,,,,
 ,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumTypeX
+Gypsum (Type X)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
 Standard-0DimThk
 0.5inT",,,,2Layer0D-170,,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumTypeX
+Gypsum (Type X)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
@@ -2516,14 +2519,14 @@ Standard","0DimThk
 0.5inT",,,,,,,,,,,
 ,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumTypeX
+Gypsum (Type X)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
 Standard-0DimThk
 0.625inT",,,,2Layer0D-171,,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumTypeX
+Gypsum (Type X)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
@@ -2531,14 +2534,14 @@ Standard","0DimThk
 0.625inT",,,,,,,,,,,
 ,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumTypeX
+Gypsum (Type X)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
 Standard-0DimThk
 1inT",,,,2Layer0D-172,,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
-GypsumTypeX
+Gypsum (Type X)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
@@ -2560,14 +2563,14 @@ Standard","0DimThk
 ,,#REF!,,,,,,,,,,,,,,,,,,,
 ,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
 Standard-0DimThk
 0.375inT",,,,2Layer0D-181,,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
@@ -2575,14 +2578,14 @@ Standard","0DimThk
 0.375inT",,,,,,,,,,,
 ,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
 Standard-0DimThk
 0.4375inT",,,,2Layer0D-182,,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
@@ -2590,14 +2593,14 @@ Standard","0DimThk
 0.4375inT",,,,,,,,,,,
 ,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
 Standard-0DimThk
 0.46875inT",,,,2Layer0D-183,,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
@@ -2605,14 +2608,14 @@ Standard","0DimThk
 0.46875inT",,,,,,,,,,,
 ,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
 Standard-0DimThk
 0.71875inT",,,,2Layer0D-184,,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
@@ -2620,14 +2623,14 @@ Standard","0DimThk
 0.71875inT",,,,,,,,,,,
 ,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
 Standard-0DimThk
 0.875inT",,,,2Layer0D-185,,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
@@ -2670,14 +2673,14 @@ Standard","0DimThk
 ,,#REF!,,,,,,,,,,,,,,,,,,,
 ,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
 0RawMaterial
-FoamPolyisocyanurate
+Foam (Polyisocyanurate)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 FAF1D0-Yellow
 0SrfTreatment
 Standard-0DimThk
 1inT",,,,2Layer0D-205,,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
 0RawMaterial
-FoamPolyisocyanurate
+Foam (Polyisocyanurate)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 FAF1D0-Yellow
 0SrfTreatment
@@ -2685,14 +2688,14 @@ Standard","0DimThk
 1inT",,,,,,,,,,,
 ,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
 0RawMaterial
-FoamPolyisocyanurate
+Foam (Polyisocyanurate)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 FAF1D0-Yellow
 0SrfTreatment
 Standard-0DimThk
 2inT",,,,2Layer0D-206,,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
 0RawMaterial
-FoamPolyisocyanurate
+Foam (Polyisocyanurate)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 FAF1D0-Yellow
 0SrfTreatment
@@ -2700,14 +2703,14 @@ Standard","0DimThk
 2inT",,,,,,,,,,,
 ,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
 0RawMaterial
-FoamPolyisocyanurate
+Foam (Polyisocyanurate)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 FAF1D0-Yellow
 0SrfTreatment
 Standard-0DimThk
 3inT",,,,2Layer0D-207,,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
 0RawMaterial
-FoamPolyisocyanurate
+Foam (Polyisocyanurate)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 FAF1D0-Yellow
 0SrfTreatment
@@ -2715,14 +2718,14 @@ Standard","0DimThk
 3inT",,,,,,,,,,,
 ,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
 0RawMaterial
-FoamPolyisocyanurate
+Foam (Polyisocyanurate)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 FAF1D0-Yellow
 0SrfTreatment
 Standard-0DimThk
 4inT",,,,2Layer0D-208,,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
 0RawMaterial
-FoamPolyisocyanurate
+Foam (Polyisocyanurate)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 FAF1D0-Yellow
 0SrfTreatment
@@ -2730,14 +2733,14 @@ Standard","0DimThk
 4inT",,,,,,,,,,,
 ,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
 0RawMaterial
-FoamPolyisocyanurate
+Foam (Polyisocyanurate)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 FAF1D0-Yellow
 0SrfTreatment
 Standard-0DimThk
 6inT",,,,2Layer0D-209,,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
 0RawMaterial
-FoamPolyisocyanurate
+Foam (Polyisocyanurate)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 FAF1D0-Yellow
 0SrfTreatment
@@ -2746,14 +2749,14 @@ Standard","0DimThk
 ,,#REF!,,,,,,,,,,,,,,,,,,,
 ,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
 Standard-0DimThk
 0.5inT",,,,2Layer0D-211,,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -2761,14 +2764,14 @@ Standard","0DimThk
 0.5inT",,,,,,,,,,,
 ,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
 Standard-0DimThk
 0.75inT",,,,2Layer0D-212,,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -2776,14 +2779,14 @@ Standard","0DimThk
 0.75inT",,,,,,,,,,,
 ,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
 Standard-0DimThk
 1inT",,,,2Layer0D-213,,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -2791,14 +2794,14 @@ Standard","0DimThk
 1inT",,,,,,,,,,,
 ,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
 Standard-0DimThk
 2inT",,,,2Layer0D-214,,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -2806,14 +2809,14 @@ Standard","0DimThk
 2inT",,,,,,,,,,,
 ,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
 Standard-0DimThk
 3inT",,,,2Layer0D-215,,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
@@ -2821,14 +2824,14 @@ Standard","0DimThk
 3inT",,,,,,,,,,,
 ,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
 Standard-0DimThk
 4inT",,,,2Layer0D-216,,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-FoamExtrudedPolystyrene
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment

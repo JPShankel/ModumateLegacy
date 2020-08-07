@@ -1,14 +1,13 @@
-TYPENAME,,,,2ModuleLWT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,STRING,,Name,,Preset.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,PRIVATE,,Anchor Point,,Preset.AnchorPoint,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildDimLW,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildDimThk,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,Presets,,,,,,,,,0,0,0,0,0,0,0,0,0,0,11,12,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Preset.AnchorPoint,DataType=InputPins,ChildMaterial,ChildDimLW,ChildDimThk,DataType=TG_Parent Node+CategoryPath,2ModuleLWT --> Board/Panel --> Cement,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,2ModuleLWT --> Board/Panel --> Foam,2ModuleLWT --> Board/Panel --> Wood Fiber,2ModuleLWT --> Board/Panel --> Gypsum,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),2ModuleLWT --> Board/Panel --> Metal,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),2ModuleLWT --> Board/Panel --> Particle Board,2ModuleLWT --> Board/Panel --> Plywood,2ModuleLWT --> Plank --> Engineered Wood,2ModuleLWT --> Plank --> Wood,2ModuleLWT --> Tile --> Brick Veneer,2ModuleLWT --> Tile --> Carpet,2ModuleLWT --> Tile --> Clay,2ModuleLWT --> Tile --> Cork,2ModuleLWT --> Tile --> Glass,2ModuleLWT --> Tile --> Laminate,2ModuleLWT --> Tile --> Luxury Vinyl,2ModuleLWT --> Tile --> Porcelain,2ModuleLWT --> Tile --> Stone,2ModuleLWT --> Tile --> Vinyl Composite,2ModuleLWT --> Shingle --> Asphalt,2ModuleLWT --> Shingle --> Clay,2ModuleLWT --> Shingle --> Metal,2ModuleLWT --> Shingle --> Stone,2ModuleLWT --> Shingle --> Wood
+TYPENAME,,2ModuleLWT,,Module,,,,,,,,
+,,Definition,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,
+PROPERTY,,STRING,,Anchor Point,,Module.Name,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,
+INPUTPIN,,1..1,,ChildMaterial,,,,,,,,
+INPUTPIN,,1..1,,ChildDimLW,,,,,,,,
+INPUTPIN,,1..1,,ChildDimThk,,,,,,,,
+,,Presets,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Module.Name,DataType=InputPins,ChildMaterial,ChildDimLW,ChildDimThk,DataType=TG_MyNode+CategoryPath,TG_ParentNode+CategoryPath
 PRESET,,"2ModuleLWT --> Board/Panel --> Cement
 1Material --> Aggregates --> Cement
 0RawMaterial
@@ -21,7 +20,7 @@ Standard
 96inL
 48inW
 0DimThk
-0.5inT",,2ModuleLWT --> Board/Panel --> Cement,,,"0,0,0",,"1Material --> Aggregates --> Cement
+0.5inT",,2ModuleLWT --> Board/Panel --> Cement,,,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
@@ -30,7 +29,7 @@ D6D7D8-Natural
 Standard","0DimLW
 96inL
 48inW","0DimThk
-0.5inT",,,,,,,,,,,,X,,,,,,,,,,,,,,,,
+0.5inT",,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Cement
 1Material --> Aggregates --> Cement
 0RawMaterial
@@ -43,7 +42,7 @@ Standard
 96inL
 48inW
 0DimThk
-0.625inT",,2ModuleLWT --> Board/Panel --> Cement,,,"0,0,0",,"1Material --> Aggregates --> Cement
+0.625inT",,2ModuleLWT --> Board/Panel --> Cement,,,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
@@ -52,209 +51,11 @@ A3A7A6-MediumGray
 Standard","0DimLW
 96inL
 48inW","0DimThk
-0.625inT",,,,,,,,,,,,X,,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cement
-1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-70716C-DarkGrey
-0SrfTreatment
-Standard
-0DimLW
-96inL
-48inW
-0DimThk
-0.75inT",,2ModuleLWT --> Board/Panel --> Cement,,,"0,0,0",,"1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-70716C-DarkGrey
-0SrfTreatment
-Standard","0DimLW
-96inL
-48inW","0DimThk
-0.75inT",,,,,,,,,,,,X,,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cement
-1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-FFFFFF-White
-0SrfTreatment
-Standard
-0DimLW
-60inL
-36inW
-0DimThk
-0.5inT",,2ModuleLWT --> Board/Panel --> Cement,,,"0,0,0",,"1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-FFFFFF-White
-0SrfTreatment
-Standard","0DimLW
-60inL
-36inW","0DimThk
-0.5inT",,,,,,,,,,,,X,,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cement
-1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-2F3131-Black
-0SrfTreatment
-Standard
-0DimLW
-60inL
-36inW
-0DimThk
-0.5inT",,2ModuleLWT --> Board/Panel --> Cement,,,"0,0,0",,"1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-2F3131-Black
-0SrfTreatment
-Standard","0DimLW
-60inL
-36inW","0DimThk
-0.5inT",,,,,,,,,,,,X,,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cement
-1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-AC998D-Maple
-0SrfTreatment
-Standard
-0DimLW
-60inL
-36inW
-0DimThk
-0.5inT",,2ModuleLWT --> Board/Panel --> Cement,,,"0,0,0",,"1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-AC998D-Maple
-0SrfTreatment
-Standard","0DimLW
-60inL
-36inW","0DimThk
-0.5inT",,,,,,,,,,,,X,,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cement
-1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-ABA283-Olive
-0SrfTreatment
-Standard
-0DimLW
-72inL
-36inW
-0DimThk
-0.625inT",,2ModuleLWT --> Board/Panel --> Cement,,,"0,0,0",,"1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-ABA283-Olive
-0SrfTreatment
-Standard","0DimLW
-72inL
-36inW","0DimThk
-0.625inT",,,,,,,,,,,,X,,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cement
-1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-CFB086-Buff
-0SrfTreatment
-Standard
-0DimLW
-72inL
-36inW
-0DimThk
-0.625inT",,2ModuleLWT --> Board/Panel --> Cement,,,"0,0,0",,"1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-CFB086-Buff
-0SrfTreatment
-Standard","0DimLW
-72inL
-36inW","0DimThk
-0.625inT",,,,,,,,,,,,X,,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cement
-1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-9FA08B-Moss
-0SrfTreatment
-Standard
-0DimLW
-48inL
-48inW
-0DimThk
-0.625inT",,2ModuleLWT --> Board/Panel --> Cement,,,"0,0,0",,"1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-9FA08B-Moss
-0SrfTreatment
-Standard","0DimLW
-48inL
-48inW","0DimThk
-0.625inT",,,,,,,,,,,,X,,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cement
-1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-8F9AA0-Ocean
-0SrfTreatment
-Standard
-0DimLW
-48inL
-48inW
-0DimThk
-0.75inT",,2ModuleLWT --> Board/Panel --> Cement,,,"0,0,0",,"1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-8F9AA0-Ocean
-0SrfTreatment
-Standard","0DimLW
-48inL
-48inW","0DimThk
-0.75inT",,,,,,,,,,,,X,,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cement
-1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-9F7D7B-Cabernet
-0SrfTreatment
-Standard
-0DimLW
-48inL
-48inW
-0DimThk
-0.75inT",,2ModuleLWT --> Board/Panel --> Cement,,,"0,0,0",,"1Material --> Aggregates --> Cement
-0RawMaterial
-Cement
-0Color --> Aggregates --> Cement
-9F7D7B-Cabernet
-0SrfTreatment
-Standard","0DimLW
-48inL
-48inW","0DimThk
-0.75inT",,,,,,,,,,,,X,,,,,,,,,,,,,,,,
+0.625inT",,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
 1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
@@ -263,20 +64,20 @@ Standard
 24inL
 24inW
 0DimThk
-0.375inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,"0,0,0",,"1Material --> Fibrous --> Cementitious Wood Fiber
+0.375inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
 Standard","0DimLW
 24inL
 24inW","0DimThk
-0.375inT",,,,,,,,,,,,,X,,,,,,,,,,,,,,,
+0.375inT",,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
 1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 D0C6BD-Cream1
 0SrfTreatment
@@ -285,238 +86,27 @@ Standard
 48inL
 24inW
 0DimThk
-0.4375inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,"0,0,0",,"1Material --> Fibrous --> Cementitious Wood Fiber
+0.4375inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
-CementitiousWoodFiber
+Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 D0C6BD-Cream1
 0SrfTreatment
 Standard","0DimLW
 48inL
 24inW","0DimThk
-0.4375inT",,,,,,,,,,,,,X,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
-1Material --> Fibrous --> Cementitious Wood Fiber
+0.4375inT",,3Layer2D
+PRESET,,"2ModuleLWT --> Board/Panel --> Foam
+1Material --> Ceramic --> Clay
 0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-BF945F-Saddle
-0SrfTreatment
-Standard
-0DimLW
-48inL
-24inW
-0DimThk
-0.46875inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,"0,0,0",,"1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-BF945F-Saddle
-0SrfTreatment
-Standard","0DimLW
-48inL
-24inW","0DimThk
-0.46875inT",,,,,,,,,,,,,X,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
-1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-A99978-Parchment
-0SrfTreatment
-Standard
-0DimLW
-48inL
-24inW
-0DimThk
-0.5inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,"0,0,0",,"1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-A99978-Parchment
-0SrfTreatment
-Standard","0DimLW
-48inL
-24inW","0DimThk
-0.5inT",,,,,,,,,,,,,X,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
-1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-88543F-Copper
+Clay
+0Color --> Ceramic --> Clay
+A05633-Natural
 0SrfTreatment
 Standard
 0DimLW
 96inL
-24inW
-0DimThk
-0.625inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,"0,0,0",,"1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-88543F-Copper
-0SrfTreatment
-Standard","0DimLW
-96inL
-24inW","0DimThk
-0.625inT",,,,,,,,,,,,,X,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
-1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-464F3C-OliveGreen
-0SrfTreatment
-Standard
-0DimLW
-96inL
-24inW
-0DimThk
-0.625inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,"0,0,0",,"1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-464F3C-OliveGreen
-0SrfTreatment
-Standard","0DimLW
-96inL
-24inW","0DimThk
-0.625inT",,,,,,,,,,,,,X,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
-1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-7A878F-SilverBlue
-0SrfTreatment
-Standard
-0DimLW
-96inL
-24inW
-0DimThk
-0.625inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,"0,0,0",,"1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-7A878F-SilverBlue
-0SrfTreatment
-Standard","0DimLW
-96inL
-24inW","0DimThk
-0.625inT",,,,,,,,,,,,,X,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
-1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-38485F-OrderlyBlue
-0SrfTreatment
-Standard
-0DimLW
-96inL
-24inW
-0DimThk
-0.625inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,"0,0,0",,"1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-38485F-OrderlyBlue
-0SrfTreatment
-Standard","0DimLW
-96inL
-24inW","0DimThk
-0.625inT",,,,,,,,,,,,,X,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
-1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-3C3B40-Ink
-0SrfTreatment
-Standard
-0DimLW
-96inL
-48inW
-0DimThk
-0.75inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,"0,0,0",,"1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-3C3B40-Ink
-0SrfTreatment
-Standard","0DimLW
-96inL
-48inW","0DimThk
-0.75inT",,,,,,,,,,,,,X,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
-1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-534E4A-Charcoal
-0SrfTreatment
-Standard
-0DimLW
-96inL
-48inW
-0DimThk
-0.75inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,"0,0,0",,"1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-534E4A-Charcoal
-0SrfTreatment
-Standard","0DimLW
-96inL
-48inW","0DimThk
-0.75inT",,,,,,,,,,,,,X,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
-1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-FFFFFF-White
-0SrfTreatment
-Standard
-0DimLW
-96inL
-48inW
-0DimThk
-0.75inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,"0,0,0",,"1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-FFFFFF-White
-0SrfTreatment
-Standard","0DimLW
-96inL
-48inW","0DimThk
-0.75inT",,,,,,,,,,,,,X,,,,,,,,,,,,,,,
-PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
-1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-D0C6BD-Cream1
-0SrfTreatment
-Standard
-0DimLW
-96inL
-48inW
-0DimThk
-0.75inT",,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,,,"0,0,0",,"1Material --> Fibrous --> Cementitious Wood Fiber
-0RawMaterial
-CementitiousWoodFiber
-0Color --> Fibrous --> Cementitious Wood Fiber
-D0C6BD-Cream1
-0SrfTreatment
-Standard","0DimLW
-96inL
-48inW","0DimThk
-0.75inT",,,,,,,,,,,,,X,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Board/Panel --> Foam,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,#REF!,,2ModuleLWT --> Board/Panel --> Foam,,,"0,0,0",,"1Material --> Ceramic --> Clay
+48inW",,2ModuleLWT --> Board/Panel --> Foam,,,,"1Material --> Ceramic --> Clay
 0RawMaterial
 Clay
 0Color --> Ceramic --> Clay
@@ -524,124 +114,55 @@ A05633-Natural
 0SrfTreatment
 Standard","0DimLW
 96inL
-48inW",,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
-PRESET,,#REF!,,2ModuleLWT --> Board/Panel --> Foam,,,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard",#REF!,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
-PRESET,,#REF!,,2ModuleLWT --> Board/Panel --> Foam,,,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard",#REF!,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
-PRESET,,#REF!,,2ModuleLWT --> Board/Panel --> Foam,,,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard",#REF!,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
-PRESET,,#REF!,,2ModuleLWT --> Board/Panel --> Foam,,,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard",#REF!,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
-PRESET,,#REF!,,2ModuleLWT --> Board/Panel --> Foam,,,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard",#REF!,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
-PRESET,,#REF!,,2ModuleLWT --> Board/Panel --> Foam,,,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard",#REF!,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
-PRESET,,#REF!,,2ModuleLWT --> Board/Panel --> Foam,,,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard",#REF!,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,
-,,2ModuleLWT --> Board/Panel --> Wood Fiber,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Board/Panel --> Gypsum,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Board/Panel --> Metal,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Board/Panel --> Particle Board,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Board/Panel --> Plywood,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Plank --> Engineered Wood,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Plank --> Wood,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Tile --> Brick Veneer,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Tile --> Carpet,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Tile --> Clay,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Tile --> Cork,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Tile --> Glass,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Tile --> Laminate,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Tile --> Luxury Vinyl,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Tile --> Porcelain,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Tile --> Stone,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Tile --> Vinyl Composite,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Shingle --> Asphalt,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Shingle --> Clay,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Shingle --> Metal,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Shingle --> Stone,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,2ModuleLWT --> Shingle --> Wood,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+48inW",,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT --> Board/Panel --> Foam,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> Wood Fiber,,2ModuleLWT --> Board/Panel --> Wood Fiber,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> Wood Fiber,,2ModuleLWT --> Board/Panel --> Wood Fiber,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> Gypsum,,2ModuleLWT --> Board/Panel --> Gypsum,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> Gypsum,,2ModuleLWT --> Board/Panel --> Gypsum,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> Metal,,2ModuleLWT --> Board/Panel --> Metal,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> Metal,,2ModuleLWT --> Board/Panel --> Metal,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> Particle Board,,2ModuleLWT --> Board/Panel --> Particle Board,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> Particle Board,,2ModuleLWT --> Board/Panel --> Particle Board,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> Plywood,,2ModuleLWT --> Board/Panel --> Plywood,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Board/Panel --> Plywood,,2ModuleLWT --> Board/Panel --> Plywood,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Plank --> Engineered Wood,,2ModuleLWT --> Plank --> Engineered Wood,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Plank --> Engineered Wood,,2ModuleLWT --> Plank --> Engineered Wood,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Plank --> Wood,,2ModuleLWT --> Plank --> Wood,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Plank --> Wood,,2ModuleLWT --> Plank --> Wood,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Brick Veneer,,2ModuleLWT --> Tile --> Brick Veneer,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Brick Veneer,,2ModuleLWT --> Tile --> Brick Veneer,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Carpet,,2ModuleLWT --> Tile --> Carpet,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Carpet,,2ModuleLWT --> Tile --> Carpet,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Clay,,2ModuleLWT --> Tile --> Clay,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Clay,,2ModuleLWT --> Tile --> Clay,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Cork,,2ModuleLWT --> Tile --> Cork,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Cork,,2ModuleLWT --> Tile --> Cork,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Glass,,2ModuleLWT --> Tile --> Glass,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Glass,,2ModuleLWT --> Tile --> Glass,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Laminate,,2ModuleLWT --> Tile --> Laminate,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Laminate,,2ModuleLWT --> Tile --> Laminate,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Luxury Vinyl,,2ModuleLWT --> Tile --> Luxury Vinyl,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Luxury Vinyl,,2ModuleLWT --> Tile --> Luxury Vinyl,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Porcelain,,2ModuleLWT --> Tile --> Porcelain,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Porcelain,,2ModuleLWT --> Tile --> Porcelain,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Stone,,2ModuleLWT --> Tile --> Stone,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Stone,,2ModuleLWT --> Tile --> Stone,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Vinyl Composite,,2ModuleLWT --> Tile --> Vinyl Composite,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Tile --> Vinyl Composite,,2ModuleLWT --> Tile --> Vinyl Composite,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Shingle --> Asphalt,,2ModuleLWT --> Shingle --> Asphalt,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Shingle --> Asphalt,,2ModuleLWT --> Shingle --> Asphalt,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Shingle --> Clay,,2ModuleLWT --> Shingle --> Clay,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Shingle --> Clay,,2ModuleLWT --> Shingle --> Clay,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Shingle --> Metal,,2ModuleLWT --> Shingle --> Metal,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Shingle --> Metal,,2ModuleLWT --> Shingle --> Metal,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Shingle --> Stone,,2ModuleLWT --> Shingle --> Stone,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Shingle --> Stone,,2ModuleLWT --> Shingle --> Stone,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Shingle --> Wood,,2ModuleLWT --> Shingle --> Wood,,,,,,,,3Layer2D
+PRESET,,2ModuleLWT --> Shingle --> Wood,,2ModuleLWT --> Shingle --> Wood,,,,,,,,3Layer2D
+,,,,,,,,,,,,
+,,,,,,,,,,,,

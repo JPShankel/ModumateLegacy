@@ -1,230 +1,340 @@
-TYPENAME,,,,0RawMaterial,,,,,,,
-,,,,Definition,,,,,,,
+TYPENAME,,0RawMaterial,,RawMaterial,,,,,,,
+,,Definition,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,
-PROPERTY,,STRING,,Name,,Preset.Name,,,,,
-PROPERTY,,PRIVATE,,Material Key,,Node.MaterialKey,,,,,
-PROPERTY,,PRIVATE,,Engine Material File Path,,Node.EngineMaterial,,,,,
-PROPERTY,,PRIVATE,,Texture Tiling Size,,Node.TextureTilingSize,,,,,
-,,,,Presets,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Node.MaterialKey,Node.EngineMaterial,Node.TextureTilingSize,DataType=TG_Parent Node+CategoryPath,
+PROPERTY,,STRING,,Name,,RawMaterial.Name,,,,,
+PROPERTY,,Private,,Engine Material ID,,RawMaterial.AssetID,,,,,
+PROPERTY,,PRIVATE,,Engine Material File Path,,RawMaterial.AssetPath,,,,,
+PROPERTY,,PRIVATE,,Texture Tiling Size,,RawMaterial.TextureTilingSize,,,,,
+,,Presets,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,RawMaterial.Name,RawMaterial.AssetPath,RawMaterial.AssetID,RawMaterial.TextureTilingSize,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
 PRESET,,"0RawMaterial
-Abstract",,0RawMaterial,,Abstract,Abstract,/Game/ShoppingData/Materials/Abstract/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Abstract
+Abstract",,0RawMaterial,,Abstract,/Game/ShoppingData/Materials/Abstract/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Abstract",1,,1Material --> Abstract
 PRESET,,"0RawMaterial
-Asphalt",,0RawMaterial,,Asphalt,Asphalt,/Game/ShoppingData/Materials/Asphalt/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Asphalt
+Asphalt",,0RawMaterial,,Asphalt,/Game/ShoppingData/Materials/Asphalt/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Asphalt",1,,1Material --> Aggregates --> Asphalt
 PRESET,,"0RawMaterial
-Cement",,0RawMaterial,,Cement,Cement,/Game/ShoppingData/Materials/Cement/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Cement
+Cement",,0RawMaterial,,Cement,/Game/ShoppingData/Materials/Cement/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Cement",1,,1Material --> Aggregates --> Cement
 PRESET,,"0RawMaterial
-ConcreteCoarseAggregate",,0RawMaterial,,Concrete (Coarse Aggregate),ConcreteCoarseAggregate,/Game/ShoppingData/Materials/Concrete-CoarseAggregate/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Concrete
+Concrete (Coarse Aggregate)",,0RawMaterial,,Concrete (Coarse Aggregate),/Game/ShoppingData/Materials/Concrete-CoarseAggregate/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Concrete (Coarse Aggregate)",1,,1Material --> Aggregates --> Concrete
 PRESET,,"0RawMaterial
-ConcreteFineAggregate",,0RawMaterial,,Concrete (Fine Aggregate),ConcreteFineAggregate,/Game/ShoppingData/Materials/Concrete-FineAggregate/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Concrete
+Concrete (Fine Aggregate)",,0RawMaterial,,Concrete (Fine Aggregate),/Game/ShoppingData/Materials/Concrete-FineAggregate/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Concrete (Fine Aggregate)",1,,1Material --> Aggregates --> Concrete
 PRESET,,"0RawMaterial
-ConcreteNormalAggregate",,0RawMaterial,,Concrete (Normal Aggregate),ConcreteNormalAggregate,/Game/ShoppingData/Materials/Concrete-NormalAggregate/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Concrete
+Concrete (Normal Aggregate)",,0RawMaterial,,Concrete (Normal Aggregate),/Game/ShoppingData/Materials/Concrete-NormalAggregate/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Concrete (Normal Aggregate)",1,,1Material --> Aggregates --> Concrete
 PRESET,,"0RawMaterial
-DecomposedGranite",,0RawMaterial,,Decomposed Granite,DecomposedGranite,/Game/ShoppingData/Materials/FibreCement/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Decomposed Granite
+Decomposed Granite",,0RawMaterial,,Decomposed Granite,/Game/ShoppingData/Materials/FibreCement/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Decomposed Granite",1,,1Material --> Aggregates --> Decomposed Granite
 PRESET,,"0RawMaterial
-FibreCement",,0RawMaterial,,Fibre Cement,FibreCement,/Game/ShoppingData/Materials/FibreCement/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Fiber-Cement
+Fibre Cement",,0RawMaterial,,Fibre Cement,/Game/ShoppingData/Materials/FibreCement/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Fibre Cement",1,,1Material --> Aggregates --> Fiber-Cement
 ,,"0RawMaterial
-Gravel",,0RawMaterial,,Gravel,Gravel,,1,,1Material --> Aggregates --> Gravel
+Gravel",,0RawMaterial,,Gravel,,"0RawMaterial
+Gravel",1,,1Material --> Aggregates --> Gravel
 PRESET,,"0RawMaterial
-Grout",,0RawMaterial,,Grout,Grout,/Game/ShoppingData/Materials/Grout/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Grout
+Grout",,0RawMaterial,,Grout,/Game/ShoppingData/Materials/Grout/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Grout",1,,1Material --> Aggregates --> Grout
 PRESET,,"0RawMaterial
-Gypsum",,0RawMaterial,,Gypsum,Gypsum,/Game/ShoppingData/Materials/Gypsum/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Gypsum
+Gypsum",,0RawMaterial,,Gypsum,/Game/ShoppingData/Materials/Gypsum/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Gypsum",1,,1Material --> Aggregates --> Gypsum
 PRESET,,"0RawMaterial
-GypsumMoistureResistant",,0RawMaterial,,Gypsum (Moisture-Resistant),GypsumMoistureResistant,/Game/ShoppingData/Materials/Gypsum/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Gypsum
+Gypsum (Moisture-Resistant)",,0RawMaterial,,Gypsum (Moisture-Resistant),/Game/ShoppingData/Materials/Gypsum/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Gypsum (Moisture-Resistant)",1,,1Material --> Aggregates --> Gypsum
 PRESET,,"0RawMaterial
-GypsumTypeX",,0RawMaterial,,Gypsum (Type X),GypsumTypeX,/Game/ShoppingData/Materials/Gypsum/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Gypsum
+Gypsum (Type X)",,0RawMaterial,,Gypsum (Type X),/Game/ShoppingData/Materials/Gypsum/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Gypsum (Type X)",1,,1Material --> Aggregates --> Gypsum
 PRESET,,"0RawMaterial
-Mortar",,0RawMaterial,,Mortar,Mortar,/Game/ShoppingData/Materials/Mortar/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Mortar
+Mortar",,0RawMaterial,,Mortar,/Game/ShoppingData/Materials/Mortar/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Mortar",1,,1Material --> Aggregates --> Mortar
 PRESET,,"0RawMaterial
-RammedEarth",,0RawMaterial,,Rammed Earth,RammedEarth,/Game/ShoppingData/Materials/RammedEarth/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Rammed Earth
+Rammed Earth",,0RawMaterial,,Rammed Earth,/Game/ShoppingData/Materials/RammedEarth/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Rammed Earth",1,,1Material --> Aggregates --> Rammed Earth
 PRESET,,"0RawMaterial
-Sand",,0RawMaterial,,Sand,Sand,/Game/ShoppingData/Materials/Sand/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Sand
+Sand",,0RawMaterial,,Sand,/Game/ShoppingData/Materials/Sand/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Sand",1,,1Material --> Aggregates --> Sand
 PRESET,,"0RawMaterial
-StoneTerrazzoBeige1",,0RawMaterial,,Terrazzo (Beige),StoneTerrazzoBeige1,/Game/ShoppingData/Materials/Stone-Terrazzo-Beige-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Terrazzo
+Terrazzo (Beige)",,0RawMaterial,,Terrazzo (Beige),/Game/ShoppingData/Materials/Stone-Terrazzo-Beige-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Terrazzo (Beige)",1,,1Material --> Aggregates --> Terrazzo
 PRESET,,"0RawMaterial
-StoneTerrazzoBlack1",,0RawMaterial,,Terrazzo (Black),StoneTerrazzoBlack1,/Game/ShoppingData/Materials/Stone-Terrazzo-Black-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Aggregates --> Terrazzo
+Terrazzo (Black)",,0RawMaterial,,Terrazzo (Black),/Game/ShoppingData/Materials/Stone-Terrazzo-Black-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Terrazzo (Black)",1,,1Material --> Aggregates --> Terrazzo
 PRESET,,"0RawMaterial
-CarpetLowProfile",,0RawMaterial,,Carpet (Low Profile),CarpetLowProfile,/Game/ShoppingData/Materials/Carpet-LowProfile/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Fabric and Upholstery --> Carpet
+Carpet (Low Profile)",,0RawMaterial,,Carpet (Low Profile),/Game/ShoppingData/Materials/Carpet-LowProfile/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Carpet (Low Profile)",1,,1Material --> Fabric and Upholstery --> Carpet
 PRESET,,"0RawMaterial
-CarpetMediumProfile",,0RawMaterial,,Carpet (Medium Profile),CarpetMediumProfile,/Game/ShoppingData/Materials/Carpet-MediumProfile/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Fabric and Upholstery --> Carpet
+Carpet (Medium Profile)",,0RawMaterial,,Carpet (Medium Profile),/Game/ShoppingData/Materials/Carpet-MediumProfile/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Carpet (Medium Profile)",1,,1Material --> Fabric and Upholstery --> Carpet
 ,,"0RawMaterial
-Cotton",,0RawMaterial,,Cotton,Cotton,,0.5,,1Material --> Fabric and Upholstery --> Cotton
+Cotton",,0RawMaterial,,Cotton,,"0RawMaterial
+Cotton",0.5,,1Material --> Fabric and Upholstery --> Cotton
 PRESET,,"0RawMaterial
-Felt",,0RawMaterial,,Felt,Felt,/Game/ShoppingData/Materials/Felt/SceneUMaterial_Inst.SceneUMaterial_Inst,0.5,,1Material --> Fabric and Upholstery --> Felt
+Felt",,0RawMaterial,,Felt,/Game/ShoppingData/Materials/Felt/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Felt",0.5,,1Material --> Fabric and Upholstery --> Felt
 PRESET,,"0RawMaterial
-LeatherFine",,0RawMaterial,,Leather (Fine),LeatherFine,/Game/ShoppingData/Materials/Leather-Fine/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Fabric and Upholstery --> Leather
+Leather (Fine)",,0RawMaterial,,Leather (Fine),/Game/ShoppingData/Materials/Leather-Fine/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Leather (Fine)",1,,1Material --> Fabric and Upholstery --> Leather
 PRESET,,"0RawMaterial
-LeatherGrain",,0RawMaterial,,Leather (Grained),LeatherGrain,/Game/ShoppingData/Materials/Leather-Grain/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Fabric and Upholstery --> Leather
+Leather (Grained)",,0RawMaterial,,Leather (Grained),/Game/ShoppingData/Materials/Leather-Grain/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Leather (Grained)",1,,1Material --> Fabric and Upholstery --> Leather
 PRESET,,"0RawMaterial
-LeatherMatte",,0RawMaterial,,Leather (Matte),LeatherMatte,/Game/ShoppingData/Materials/Leather-Matte/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Fabric and Upholstery --> Leather
+Leather (Matte)",,0RawMaterial,,Leather (Matte),/Game/ShoppingData/Materials/Leather-Matte/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Leather (Matte)",1,,1Material --> Fabric and Upholstery --> Leather
 ,,"0RawMaterial
-Silk",,0RawMaterial,,Silk,Silk,,1,,1Material --> Fabric and Upholstery --> Silk
+Silk",,0RawMaterial,,Silk,,"0RawMaterial
+Silk",1,,1Material --> Fabric and Upholstery --> Silk
 PRESET,,"0RawMaterial
-Velvet",,0RawMaterial,,Velvet,Velvet,/Game/ShoppingData/Materials/Fabric-Velvet/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Fabric and Upholstery --> Velvet
+Velvet",,0RawMaterial,,Velvet,/Game/ShoppingData/Materials/Fabric-Velvet/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Velvet",1,,1Material --> Fabric and Upholstery --> Velvet
 ,,"0RawMaterial
-Vinyl",,0RawMaterial,,Vinyl,Vinyl,,1,,1Material --> Fabric and Upholstery --> Vinyl
+Vinyl",,0RawMaterial,,Vinyl,,"0RawMaterial
+Vinyl",1,,1Material --> Fabric and Upholstery --> Vinyl
 PRESET,,"0RawMaterial
-Clay",,0RawMaterial,,Clay,Clay,/Game/ShoppingData/Materials/Clay/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Ceramic --> Clay
+Clay",,0RawMaterial,,Clay,/Game/ShoppingData/Materials/Clay/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Clay",1,,1Material --> Ceramic --> Clay
 PRESET,,"0RawMaterial
-Porcelain",,0RawMaterial,,Porcelain,Porcelain,/Game/ShoppingData/Materials/Porcelain/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Ceramic --> Porcelain
+Porcelain",,0RawMaterial,,Porcelain,/Game/ShoppingData/Materials/Porcelain/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Porcelain",1,,1Material --> Ceramic --> Porcelain
 PRESET,,"0RawMaterial
-Air",,0RawMaterial,,Air,Air,/Game/ShoppingData/Materials/Air/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Glass and Transparent --> Air
+Air",,0RawMaterial,,Air,/Game/ShoppingData/Materials/Air/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Air",1,,1Material --> Glass and Transparent --> Air
 PRESET,,"0RawMaterial
-GlassBlock",,0RawMaterial,,Glass Block,GlassBlock,/Game/ShoppingData/Materials/Glass-Block/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Glass and Transparent --> Glass Block
+Glass Block",,0RawMaterial,,Glass Block,/Game/ShoppingData/Materials/Glass-Block/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Glass Block",1,,1Material --> Glass and Transparent --> Glass Block
 PRESET,,"0RawMaterial
-GlassClear",,0RawMaterial,,Glass,GlassClear,/Game/ShoppingData/Materials/Glass-Clear/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Glass and Transparent --> Glass
+Glass",,0RawMaterial,,Glass,/Game/ShoppingData/Materials/Glass-Clear/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Glass",1,,1Material --> Glass and Transparent --> Glass
 PRESET,,"0RawMaterial
-MeshFlyScreen",,0RawMaterial,,Mesh Fly Screen,MeshFlyScreen,/Game/ShoppingData/Materials/Mesh-FlyScreen/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Glass and Transparent --> Mesh Fly Screen
+Mesh Fly Screen",,0RawMaterial,,Mesh Fly Screen,/Game/ShoppingData/Materials/Mesh-FlyScreen/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Mesh Fly Screen",1,,1Material --> Glass and Transparent --> Mesh Fly Screen
 PRESET,,"0RawMaterial
-Aluminum",,0RawMaterial,,Aluminum,Aluminum,/Game/ShoppingData/Materials/Metal-Aluminum-Anodized/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Metal --> Aluminum
+Aluminum",,0RawMaterial,,Aluminum,/Game/ShoppingData/Materials/Metal-Aluminum-Anodized/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Aluminum",1,,1Material --> Metal --> Aluminum
 PRESET,,"0RawMaterial
-Chrome",,0RawMaterial,,Chrome,Chrome,/Game/ShoppingData/Materials/Metal-Chrome/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Metal --> Chrome
+Chrome",,0RawMaterial,,Chrome,/Game/ShoppingData/Materials/Metal-Chrome/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Chrome",1,,1Material --> Metal --> Chrome
 PRESET,,"0RawMaterial
-Copper",,0RawMaterial,,Copper,Copper,/Game/ShoppingData/Materials/Metal-Copper/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Metal --> Copper
+Copper",,0RawMaterial,,Copper,/Game/ShoppingData/Materials/Metal-Copper/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Copper",1,,1Material --> Metal --> Copper
 PRESET,,"0RawMaterial
-Iron",,0RawMaterial,,Iron,Iron,/Game/ShoppingData/Materials/Metal-Iron-Cast/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Metal --> Iron
+Iron",,0RawMaterial,,Iron,/Game/ShoppingData/Materials/Metal-Iron-Cast/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Iron",1,,1Material --> Metal --> Iron
 PRESET,,"0RawMaterial
-Nickel",,0RawMaterial,,Nickel,Nickel,/Game/ShoppingData/Materials/Metal-Nickel-Brushed/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Metal --> Nickel
+Nickel",,0RawMaterial,,Nickel,/Game/ShoppingData/Materials/Metal-Nickel-Brushed/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Nickel",1,,1Material --> Metal --> Nickel
 PRESET,,"0RawMaterial
-Steel",,0RawMaterial,,Steel,Steel,/Game/ShoppingData/Materials/Metal-Steel-ZincPlated/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Metal --> Steel
+Steel",,0RawMaterial,,Steel,/Game/ShoppingData/Materials/Metal-Steel-ZincPlated/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Steel",1,,1Material --> Metal --> Steel
 PRESET,,"0RawMaterial
-Tin",,0RawMaterial,,Tin,Tin,/Game/ShoppingData/Materials/Metal-Tin/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Metal --> Tin
+Tin",,0RawMaterial,,Tin,/Game/ShoppingData/Materials/Metal-Tin/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Tin",1,,1Material --> Metal --> Tin
 PRESET,,"0RawMaterial
-Zinc",,0RawMaterial,,Zinc,Zinc,/Game/ShoppingData/Materials/Metal-Zinc-Patinated/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Metal --> Zinc
+Zinc",,0RawMaterial,,Zinc,/Game/ShoppingData/Materials/Metal-Zinc-Patinated/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Zinc",1,,1Material --> Metal --> Zinc
 PRESET,,"0RawMaterial
-Paint",,0RawMaterial,,Paint,Paint,/Game/ShoppingData/Materials/Paint-Matte/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Spread --> Paint
+Paint",,0RawMaterial,,Paint,/Game/ShoppingData/Materials/Paint-Matte/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Paint",1,,1Material --> Spread --> Paint
 PRESET,,"0RawMaterial
-Plaster",,0RawMaterial,,Plaster,Plaster,/Game/ShoppingData/Materials/Plaster/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Spread --> Plaster
+Plaster",,0RawMaterial,,Plaster,/Game/ShoppingData/Materials/Plaster/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Plaster",1,,1Material --> Spread --> Plaster
 PRESET,,"0RawMaterial
-FoamExtrudedPolystyrene",,0RawMaterial,,Foam (Extruded Polystyrene),FoamExtrudedPolystyrene,/Game/ShoppingData/Materials/Foam-ExtrudedPolystyrene/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+Foam (Extruded Polystyrene)",,0RawMaterial,,Foam (Extruded Polystyrene),/Game/ShoppingData/Materials/Foam-ExtrudedPolystyrene/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Foam (Extruded Polystyrene)",1,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 PRESET,,"0RawMaterial
-FoamPolyethylene",,0RawMaterial,,Foam (Polyethylene),FoamPolyethylene,/Game/ShoppingData/Materials/Foam-Polyethylene/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Synthetic and Polymer --> Foam - Polyethylene
+Foam (Polyethylene)",,0RawMaterial,,Foam (Polyethylene),/Game/ShoppingData/Materials/Foam-Polyethylene/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Foam (Polyethylene)",1,,1Material --> Synthetic and Polymer --> Foam - Polyethylene
 PRESET,,"0RawMaterial
-FoamPolyisocyanurate",,0RawMaterial,,Foam (Polyisocyanurate),FoamPolyisocyanurate,/Game/ShoppingData/Materials/Foam-Polyiso/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
+Foam (Polyisocyanurate)",,0RawMaterial,,Foam (Polyisocyanurate),/Game/ShoppingData/Materials/Foam-Polyiso/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Foam (Polyisocyanurate)",1,,1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
 PRESET,,"0RawMaterial
-Plastic",,0RawMaterial,,Plastic,Plastic,/Game/ShoppingData/Materials/Plastic/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Synthetic and Polymer --> Plastic
+Plastic",,0RawMaterial,,Plastic,/Game/ShoppingData/Materials/Plastic/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Plastic",1,,1Material --> Synthetic and Polymer --> Plastic
 PRESET,,"0RawMaterial
-Rubber",,0RawMaterial,,Rubber,Rubber,/Game/ShoppingData/Materials/Rubber/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Synthetic and Polymer --> Rubber
+Rubber",,0RawMaterial,,Rubber,/Game/ShoppingData/Materials/Rubber/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Rubber",1,,1Material --> Synthetic and Polymer --> Rubber
 PRESET,,"0RawMaterial
-VinylComposite",,0RawMaterial,,Vinyl Composite,VinylComposite,/Game/ShoppingData/Materials/Vinyl-Composite/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Synthetic and Polymer --> Vinyl Composite
+Vinyl Composite",,0RawMaterial,,Vinyl Composite,/Game/ShoppingData/Materials/Vinyl-Composite/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Vinyl Composite",1,,1Material --> Synthetic and Polymer --> Vinyl Composite
 PRESET,,"0RawMaterial
-Alabaster",,0RawMaterial,,Alabaster,Alabaster,/Game/ShoppingData/Materials/Stone-Alabaster/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Alabaster
+Alabaster",,0RawMaterial,,Alabaster,/Game/ShoppingData/Materials/Stone-Alabaster/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Alabaster",1,,1Material --> Stone --> Alabaster
 PRESET,,"0RawMaterial
-Basalt",,0RawMaterial,,Basalt,Basalt,/Game/ShoppingData/Materials/Stone-Basalt/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Basalt
+Basalt",,0RawMaterial,,Basalt,/Game/ShoppingData/Materials/Stone-Basalt/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Basalt",1,,1Material --> Stone --> Basalt
 PRESET,,"0RawMaterial
-BasaltRough",,0RawMaterial,,Basalt (Rough),BasaltRough,/Game/ShoppingData/Materials/Stone-Basalt-Rough/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Basalt
+Basalt (Rough)",,0RawMaterial,,Basalt (Rough),/Game/ShoppingData/Materials/Stone-Basalt-Rough/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Basalt (Rough)",1,,1Material --> Stone --> Basalt
 PRESET,,"0RawMaterial
-GraniteBlack1",,0RawMaterial,,Granite (Black 1),GraniteBlack1,/Game/ShoppingData/Materials/Stone-Granite-Black-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Granite
+Granite (Black 1)",,0RawMaterial,,Granite (Black 1),/Game/ShoppingData/Materials/Stone-Granite-Black-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Granite (Black 1)",1,,1Material --> Stone --> Granite
 PRESET,,"0RawMaterial
-GraniteBlack2",,0RawMaterial,,Granite (Black 2),GraniteBlack2,/Game/ShoppingData/Materials/Stone-Granite-Black-2/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Granite
+Granite (Black 2)",,0RawMaterial,,Granite (Black 2),/Game/ShoppingData/Materials/Stone-Granite-Black-2/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Granite (Black 2)",1,,1Material --> Stone --> Granite
 PRESET,,"0RawMaterial
-GraniteBlack3",,0RawMaterial,,Granite (Black 3),GraniteBlack3,/Game/ShoppingData/Materials/Stone-Granite-Black-3/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Granite
+Granite (Black 3)",,0RawMaterial,,Granite (Black 3),/Game/ShoppingData/Materials/Stone-Granite-Black-3/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Granite (Black 3)",1,,1Material --> Stone --> Granite
 PRESET,,"0RawMaterial
-GraniteBlack4",,0RawMaterial,,Granite (Black 4),GraniteBlack4,/Game/ShoppingData/Materials/Stone-Granite-Black-4/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Granite
+Granite (Black 4)",,0RawMaterial,,Granite (Black 4),/Game/ShoppingData/Materials/Stone-Granite-Black-4/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Granite (Black 4)",1,,1Material --> Stone --> Granite
 PRESET,,"0RawMaterial
-GraniteBrown1",,0RawMaterial,,Granite (Brown 1),GraniteBrown1,/Game/ShoppingData/Materials/Stone-Granite-Brown-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Granite
+Granite (Brown 1)",,0RawMaterial,,Granite (Brown 1),/Game/ShoppingData/Materials/Stone-Granite-Brown-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Granite (Brown 1)",1,,1Material --> Stone --> Granite
 PRESET,,"0RawMaterial
-GraniteBrown2",,0RawMaterial,,Granite (Brown 2),GraniteBrown2,/Game/ShoppingData/Materials/Stone-Granite-Brown-2/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Granite
+Granite (Brown 2)",,0RawMaterial,,Granite (Brown 2),/Game/ShoppingData/Materials/Stone-Granite-Brown-2/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Granite (Brown 2)",1,,1Material --> Stone --> Granite
 PRESET,,"0RawMaterial
-GraniteGrey1",,0RawMaterial,,Granite (Grey 1),GraniteGrey1,/Game/ShoppingData/Materials/Stone-Granite-Grey-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Granite
+Granite (Grey 1)",,0RawMaterial,,Granite (Grey 1),/Game/ShoppingData/Materials/Stone-Granite-Grey-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Granite (Grey 1)",1,,1Material --> Stone --> Granite
 PRESET,,"0RawMaterial
-GraniteOrange1",,0RawMaterial,,Granite (Orange 1),GraniteOrange1,/Game/ShoppingData/Materials/Stone-Granite-Orange-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Granite
+Granite (Orange 1)",,0RawMaterial,,Granite (Orange 1),/Game/ShoppingData/Materials/Stone-Granite-Orange-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Granite (Orange 1)",1,,1Material --> Stone --> Granite
 PRESET,,"0RawMaterial
-GraniteOrange2",,0RawMaterial,,Granite (Orange 2),GraniteOrange2,/Game/ShoppingData/Materials/Stone-Granite-Orange-2/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Granite
+Granite (Orange 2)",,0RawMaterial,,Granite (Orange 2),/Game/ShoppingData/Materials/Stone-Granite-Orange-2/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Granite (Orange 2)",1,,1Material --> Stone --> Granite
 PRESET,,"0RawMaterial
-GranitePink1",,0RawMaterial,,Granite (Pink 1),GranitePink1,/Game/ShoppingData/Materials/Stone-Granite-Pink-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Granite
+Granite (Pink 1)",,0RawMaterial,,Granite (Pink 1),/Game/ShoppingData/Materials/Stone-Granite-Pink-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Granite (Pink 1)",1,,1Material --> Stone --> Granite
 PRESET,,"0RawMaterial
-LavaStone",,0RawMaterial,,Lava Stone,LavaStone,/Game/ShoppingData/Materials/Stone-LavaStone/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Lava Stone
+Lava Stone",,0RawMaterial,,Lava Stone,/Game/ShoppingData/Materials/Stone-LavaStone/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Lava Stone",1,,1Material --> Stone --> Lava Stone
 PRESET,,"0RawMaterial
-LimestoneWhite1",,0RawMaterial,,Limestone (White),LimestoneWhite1,/Game/ShoppingData/Materials/Stone-Limestone-White-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Limestone
+Limestone (White)",,0RawMaterial,,Limestone (White),/Game/ShoppingData/Materials/Stone-Limestone-White-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Limestone (White)",1,,1Material --> Stone --> Limestone
 PRESET,,"0RawMaterial
-LimestoneBeige1",,0RawMaterial,,Limestone (Beige),LimestoneBeige1,/Game/ShoppingData/Materials/Stone-Limestone-Beige-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Limestone
+Limestone (Beige)",,0RawMaterial,,Limestone (Beige),/Game/ShoppingData/Materials/Stone-Limestone-Beige-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Limestone (Beige)",1,,1Material --> Stone --> Limestone
 PRESET,,"0RawMaterial
-MarbleBlack1",,0RawMaterial,,Marble (Black 1),MarbleBlack1,/Game/ShoppingData/Materials/Stone-Marble-Black-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Marble
+Marble (Black 1)",,0RawMaterial,,Marble (Black 1),/Game/ShoppingData/Materials/Stone-Marble-Black-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Marble (Black 1)",1,,1Material --> Stone --> Marble
 PRESET,,"0RawMaterial
-MarbleBlack2",,0RawMaterial,,Marble (Black 2),MarbleBlack2,/Game/ShoppingData/Materials/Stone-Marble-Black-2/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Marble
+Marble (Black 2)",,0RawMaterial,,Marble (Black 2),/Game/ShoppingData/Materials/Stone-Marble-Black-2/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Marble (Black 2)",1,,1Material --> Stone --> Marble
 PRESET,,"0RawMaterial
-MarbleCalacatta",,0RawMaterial,,Marble (Calacatta),MarbleCalacatta,/Game/ShoppingData/Materials/Stone-Marble-Calacatta/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Marble
+Marble (Calacatta)",,0RawMaterial,,Marble (Calacatta),/Game/ShoppingData/Materials/Stone-Marble-Calacatta/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Marble (Calacatta)",1,,1Material --> Stone --> Marble
 PRESET,,"0RawMaterial
-MarbleCarrara",,0RawMaterial,,Marble (Carrara),MarbleCarrara,/Game/ShoppingData/Materials/Stone-Marble-Carrara/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Marble
+Marble (Carrara)",,0RawMaterial,,Marble (Carrara),/Game/ShoppingData/Materials/Stone-Marble-Carrara/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Marble (Carrara)",1,,1Material --> Stone --> Marble
 PRESET,,"0RawMaterial
-MarbleGreen1",,0RawMaterial,,Marble (Green 1),MarbleGreen1,/Game/ShoppingData/Materials/Stone-Marble-Green-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Marble
+Marble (Green 1)",,0RawMaterial,,Marble (Green 1),/Game/ShoppingData/Materials/Stone-Marble-Green-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Marble (Green 1)",1,,1Material --> Stone --> Marble
 PRESET,,"0RawMaterial
-MarbleGrey1",,0RawMaterial,,Marble (Grey 1),MarbleGrey1,/Game/ShoppingData/Materials/Stone-Marble-Grey-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Marble
+Marble (Grey 1)",,0RawMaterial,,Marble (Grey 1),/Game/ShoppingData/Materials/Stone-Marble-Grey-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Marble (Grey 1)",1,,1Material --> Stone --> Marble
 PRESET,,"0RawMaterial
-Onyx",,0RawMaterial,,Onyx,Onyx,/Game/ShoppingData/Materials/Stone-Onyx/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Onyx
+Onyx",,0RawMaterial,,Onyx,/Game/ShoppingData/Materials/Stone-Onyx/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Onyx",1,,1Material --> Stone --> Onyx
 PRESET,,"0RawMaterial
-Quartzite1",,0RawMaterial,,Quartzite 1,Quartzite1,/Game/ShoppingData/Materials/Stone-Quartzite-1/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Quartzite
+Quartzite 1",,0RawMaterial,,Quartzite 1,/Game/ShoppingData/Materials/Stone-Quartzite-1/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Quartzite 1",1,,1Material --> Stone --> Quartzite
 PRESET,,"0RawMaterial
-Quartzite2",,0RawMaterial,,Quartzite 2,Quartzite2,/Game/ShoppingData/Materials/Stone-Quartzite-2/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Quartzite
+Quartzite 2",,0RawMaterial,,Quartzite 2,/Game/ShoppingData/Materials/Stone-Quartzite-2/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Quartzite 2",1,,1Material --> Stone --> Quartzite
 PRESET,,"0RawMaterial
-Quartzite3",,0RawMaterial,,Quartzite 3,Quartzite3,/Game/ShoppingData/Materials/Stone-Quartzite-3/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Quartzite
+Quartzite 3",,0RawMaterial,,Quartzite 3,/Game/ShoppingData/Materials/Stone-Quartzite-3/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Quartzite 3",1,,1Material --> Stone --> Quartzite
 PRESET,,"0RawMaterial
-Quartzite4",,0RawMaterial,,Quartzite 4,Quartzite4,/Game/ShoppingData/Materials/Stone-Quartzite-4/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Quartzite
+Quartzite 4",,0RawMaterial,,Quartzite 4,/Game/ShoppingData/Materials/Stone-Quartzite-4/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Quartzite 4",1,,1Material --> Stone --> Quartzite
 PRESET,,"0RawMaterial
-Quartzite5",,0RawMaterial,,Quartzite 5,Quartzite5,/Game/ShoppingData/Materials/Stone-Quartzite-5/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Quartzite
+Quartzite 5",,0RawMaterial,,Quartzite 5,/Game/ShoppingData/Materials/Stone-Quartzite-5/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Quartzite 5",1,,1Material --> Stone --> Quartzite
 PRESET,,"0RawMaterial
-Sandstone",,0RawMaterial,,Sandstone,Sandstone,/Game/ShoppingData/Materials/Stone-Sandstone/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Sandstone
+Sandstone",,0RawMaterial,,Sandstone,/Game/ShoppingData/Materials/Stone-Sandstone/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Sandstone",1,,1Material --> Stone --> Sandstone
 PRESET,,"0RawMaterial
-Slate",,0RawMaterial,,Slate,Slate,/Game/ShoppingData/Materials/Stone-Slate/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Slate
+Slate",,0RawMaterial,,Slate,/Game/ShoppingData/Materials/Stone-Slate/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Slate",1,,1Material --> Stone --> Slate
 PRESET,,"0RawMaterial
-Soapstone",,0RawMaterial,,Soapstone,Soapstone,/Game/ShoppingData/Materials/Stone-Soapstone/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Soapstone
+Soapstone",,0RawMaterial,,Soapstone,/Game/ShoppingData/Materials/Stone-Soapstone/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Soapstone",1,,1Material --> Stone --> Soapstone
 PRESET,,"0RawMaterial
-Travertine",,0RawMaterial,,Travertine,Travertine,/Game/ShoppingData/Materials/Stone-Travertine/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Stone --> Travertine
+Travertine",,0RawMaterial,,Travertine,/Game/ShoppingData/Materials/Stone-Travertine/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Travertine",1,,1Material --> Stone --> Travertine
 PRESET,,"0RawMaterial
-Ash",,0RawMaterial,,Ash,Ash,/Game/ShoppingData/Materials/Wood-Ash/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Ash
+Ash",,0RawMaterial,,Ash,/Game/ShoppingData/Materials/Wood-Ash/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Ash",1,,1Material --> Wood --> Ash
 PRESET,,"0RawMaterial
-Bamboo",,0RawMaterial,,Bamboo,Bamboo,/Game/ShoppingData/Materials/Wood-Bamboo/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Bamboo
+Bamboo",,0RawMaterial,,Bamboo,/Game/ShoppingData/Materials/Wood-Bamboo/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Bamboo",1,,1Material --> Wood --> Bamboo
 PRESET,,"0RawMaterial
-Beech",,0RawMaterial,,Beech,Beech,/Game/ShoppingData/Materials/Wood-Beech/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Beech
+Beech",,0RawMaterial,,Beech,/Game/ShoppingData/Materials/Wood-Beech/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Beech",1,,1Material --> Wood --> Beech
 PRESET,,"0RawMaterial
-BirchYellow",,0RawMaterial,,Birch (Yellow),BirchYellow,/Game/ShoppingData/Materials/Wood-Birch-Yellow/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Birch
+Birch (Yellow)",,0RawMaterial,,Birch (Yellow),/Game/ShoppingData/Materials/Wood-Birch-Yellow/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Birch (Yellow)",1,,1Material --> Wood --> Birch
 PRESET,,"0RawMaterial
-CedarWhite",,0RawMaterial,,Cedar (Western Red),CedarWesternRed,/Game/ShoppingData/Materials/Wood-Cedar-White/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Cedar - Western Red
+Cedar (Western Red)",,0RawMaterial,,Cedar (Western Red),/Game/ShoppingData/Materials/Wood-Cedar-White/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Cedar (Western Red)",1,,1Material --> Wood --> Cedar - Western Red
 PRESET,,"0RawMaterial
-CedarWesternRed",,0RawMaterial,,Cedar (White),CedarWhite,/Game/ShoppingData/Materials/Wood-Cedar-WesternRed/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Cedar - White
+Cedar (White)",,0RawMaterial,,Cedar (White),/Game/ShoppingData/Materials/Wood-Cedar-WesternRed/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Cedar (White)",1,,1Material --> Wood --> Cedar - White
 PRESET,,"0RawMaterial
-Cherry",,0RawMaterial,,Cherry,Cherry,/Game/ShoppingData/Materials/Wood-Cherry/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Cherry
+Cherry",,0RawMaterial,,Cherry,/Game/ShoppingData/Materials/Wood-Cherry/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Cherry",1,,1Material --> Wood --> Cherry
 PRESET,,"0RawMaterial
-CypressBald",,0RawMaterial,,Cypress (Bald),CypressBald,/Game/ShoppingData/Materials/Wood-Cypress-Bald/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Cypress - Bald
+Cypress (Bald)",,0RawMaterial,,Cypress (Bald),/Game/ShoppingData/Materials/Wood-Cypress-Bald/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Cypress (Bald)",1,,1Material --> Wood --> Cypress - Bald
 PRESET,,"0RawMaterial
-Ipe",,0RawMaterial,,Ipe,Ipe,/Game/ShoppingData/Materials/Wood-Ipe/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Ipe
+Ipe",,0RawMaterial,,Ipe,/Game/ShoppingData/Materials/Wood-Ipe/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Ipe",1,,1Material --> Wood --> Ipe
 PRESET,,"0RawMaterial
-Mahogany",,0RawMaterial,,Mahogany,Mahogany,/Game/ShoppingData/Materials/Wood-Mahogany/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Mahogany
+Mahogany",,0RawMaterial,,Mahogany,/Game/ShoppingData/Materials/Wood-Mahogany/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Mahogany",1,,1Material --> Wood --> Mahogany
 PRESET,,"0RawMaterial
-MapleHard",,0RawMaterial,,Maple,MapleHard,/Game/ShoppingData/Materials/Wood-Maple-Hard/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Maple
+Maple",,0RawMaterial,,Maple,/Game/ShoppingData/Materials/Wood-Maple-Hard/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Maple",1,,1Material --> Wood --> Maple
 PRESET,,"0RawMaterial
-OakRed",,0RawMaterial,,Oak (Red),OakRed,/Game/ShoppingData/Materials/Wood-Oak-Red/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Oak - Red
+Oak (Red)",,0RawMaterial,,Oak (Red),/Game/ShoppingData/Materials/Wood-Oak-Red/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Oak (Red)",1,,1Material --> Wood --> Oak - Red
 PRESET,,"0RawMaterial
-OakWhite",,0RawMaterial,,Oak (White),OakWhite,/Game/ShoppingData/Materials/Wood-Oak-White/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Oak - White
+Oak (White)",,0RawMaterial,,Oak (White),/Game/ShoppingData/Materials/Wood-Oak-White/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Oak (White)",1,,1Material --> Wood --> Oak - White
 PRESET,,"0RawMaterial
-Redwood",,0RawMaterial,,Redwood,Redwood,/Game/ShoppingData/Materials/Wood-Redwood/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Redwood
+Redwood",,0RawMaterial,,Redwood,/Game/ShoppingData/Materials/Wood-Redwood/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Redwood",1,,1Material --> Wood --> Redwood
 PRESET,,"0RawMaterial
-SprucePineFir",,0RawMaterial,,Spruce-Pine-Fir,SprucePineFir,/Game/ShoppingData/Materials/Wood-SprucePineFir/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Spruce-Pine-Fir
+Spruce-Pine-Fir",,0RawMaterial,,Spruce-Pine-Fir,/Game/ShoppingData/Materials/Wood-SprucePineFir/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Spruce-Pine-Fir",1,,1Material --> Wood --> Spruce-Pine-Fir
 PRESET,,"0RawMaterial
-Sycamore",,0RawMaterial,,Sycamore,Sycamore,/Game/ShoppingData/Materials/Wood-Sycamore/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Sycamore
+Sycamore",,0RawMaterial,,Sycamore,/Game/ShoppingData/Materials/Wood-Sycamore/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Sycamore",1,,1Material --> Wood --> Sycamore
 PRESET,,"0RawMaterial
-Teak",,0RawMaterial,,Teak,Teak,/Game/ShoppingData/Materials/Wood-Teak/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Wood --> Teak
+Teak",,0RawMaterial,,Teak,/Game/ShoppingData/Materials/Wood-Teak/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Teak",1,,1Material --> Wood --> Teak
 PRESET,,"0RawMaterial
-Walnut",,0RawMaterial,,Walnut,Walnut,/Game/ShoppingData/Materials/Wood-Walnut/SceneUMaterial_Inst.SceneUMaterial_Inst,0.6,,1Material --> Wood --> Walnut
+Walnut",,0RawMaterial,,Walnut,/Game/ShoppingData/Materials/Wood-Walnut/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Walnut",0.6,,1Material --> Wood --> Walnut
 PRESET,,"0RawMaterial
-Cork",,0RawMaterial,,Cork,Cork,/Game/ShoppingData/Materials/Cork/SceneUMaterial_Inst.SceneUMaterial_Inst,0.5,,1Material --> Fibrous --> Cork
+Cork",,0RawMaterial,,Cork,/Game/ShoppingData/Materials/Cork/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Cork",0.5,,1Material --> Fibrous --> Cork
 PRESET,,"0RawMaterial
-CementitiousWoodFiber",,0RawMaterial,,Cementitious Wood Fiber,CementitiousWoodFiber,/Game/ShoppingData/Materials/Tectum/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Fibrous --> Cementitious Wood Fiber
+Cementitious Wood Fiber",,0RawMaterial,,Cementitious Wood Fiber,/Game/ShoppingData/Materials/Tectum/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Cementitious Wood Fiber",1,,1Material --> Fibrous --> Cementitious Wood Fiber
 PRESET,,"0RawMaterial
-MineralFiberSmooth",,0RawMaterial,,Mineral Fiber,MineralFiberSmooth,/Game/ShoppingData/Materials/MineralFiber-Ceiling-Smooth/SceneUMaterial_Inst.SceneUMaterial_Inst,0.6,,1Material --> Fibrous --> Mineral Fiber
+Mineral Fiber",,0RawMaterial,,Mineral Fiber,/Game/ShoppingData/Materials/MineralFiber-Ceiling-Smooth/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Mineral Fiber",0.6,,1Material --> Fibrous --> Mineral Fiber
 PRESET,,"0RawMaterial
-Plywood",,0RawMaterial,,Plywood,Plywood,/Game/ShoppingData/Materials/Plywood-SprucePineFir/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Fibrous --> Plywood
+Plywood",,0RawMaterial,,Plywood,/Game/ShoppingData/Materials/Plywood-SprucePineFir/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Plywood",1,,1Material --> Fibrous --> Plywood
 PRESET,,"0RawMaterial
-WoodFibers",,0RawMaterial,,Wood Fibers,WoodFibers,/Game/ShoppingData/Materials/Particle/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Fibrous --> Wood Fibers
+Wood Fibers",,0RawMaterial,,Wood Fibers,/Game/ShoppingData/Materials/Particle/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Wood Fibers",1,,1Material --> Fibrous --> Wood Fibers
 PRESET,,"0RawMaterial
-WoodParticles",,0RawMaterial,,Wood Particles,WoodParticles,/Game/ShoppingData/Materials/Particle/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Fibrous --> Wood Particles
+Wood Particles",,0RawMaterial,,Wood Particles,/Game/ShoppingData/Materials/Particle/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Wood Particles",1,,1Material --> Fibrous --> Wood Particles
 PRESET,,"0RawMaterial
-WoodStrands",,0RawMaterial,,Wood Strands,WoodStrands,/Game/ShoppingData/Materials/OrientedStrand/SceneUMaterial_Inst.SceneUMaterial_Inst,1,,1Material --> Fibrous --> Wood Strands
+Wood Strands",,0RawMaterial,,Wood Strands,/Game/ShoppingData/Materials/OrientedStrand/SceneUMaterial_Inst.SceneUMaterial_Inst,"0RawMaterial
+Wood Strands",1,,1Material --> Fibrous --> Wood Strands
 ,,"0RawMaterial
-Grass",,0RawMaterial,,Grass,Grass,,0.5,,1Material --> Sitework --> Grass
+Grass",,0RawMaterial,,Grass,,"0RawMaterial
+Grass",0.5,,1Material --> Sitework --> Grass
 ,,"0RawMaterial
-Moss",,0RawMaterial,,Moss,Moss,,1,,1Material --> Sitework --> Moss
+Moss",,0RawMaterial,,Moss,,"0RawMaterial
+Moss",1,,1Material --> Sitework --> Moss
 ,,"0RawMaterial
-Soil",,0RawMaterial,,Soil,Soil,,1,,1Material --> Sitework --> Soil
+Soil",,0RawMaterial,,Soil,,"0RawMaterial
+Soil",1,,1Material --> Sitework --> Soil
 ,,,,,,,,,,,

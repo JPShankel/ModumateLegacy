@@ -178,9 +178,10 @@ void FModumateDatabase::ReadPresetData()
 		return;
 	}
 
-	FCraftingTreeNodeType *layerNode = PresetManager.CraftingNodePresets.NodeDescriptors.Find(TEXT("2Layer0D"));
+	FBIMPresetNodeType *layerNode = PresetManager.CraftingNodePresets.NodeDescriptors.Find(TEXT("2Layer0D"));
 	layerNode->Scope = EBIMValueScope::Layer;
 
+	FName colorType = TEXT("0Color");
 	FName rawMaterialType = TEXT("0RawMaterial");
 	FName layeredType = TEXT("4LayeredAssembly");
 	FName riggedType = TEXT("0StubbyPortal");
@@ -194,36 +195,50 @@ void FModumateDatabase::ReadPresetData()
 
 	for (auto& kvp : PresetManager.CraftingNodePresets.Presets)
 	{
-		if (kvp.Value.NodeType == rawMaterialType)
+		if (kvp.Value.NodeType == colorType)
 		{
-			FString matName = kvp.Value.Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
-			FName matKey = kvp.Value.Properties.GetProperty(EBIMValueScope::Node, BIMPropertyNames::MaterialKey);
-			FString assetPathStr = kvp.Value.Properties.GetProperty(EBIMValueScope::Node, BIMPropertyNames::EngineMaterial);
-			AddArchitecturalMaterial(matKey, matName, assetPathStr);
+			FString hexValue = kvp.Value.GetProperty(BIMPropertyNames::HexValue);
+			FString colorName = kvp.Value.GetProperty(BIMPropertyNames::Name);
+			AddCustomColor(kvp.Key, colorName, hexValue);
+		}
+		else
+			if (kvp.Value.NodeType == rawMaterialType)
+		{
+			FString assetPath = kvp.Value.GetProperty(BIMPropertyNames::AssetPath);
+			if (assetPath.Len() != 0)
+			{
+				FString matName = kvp.Value.GetProperty(BIMPropertyNames::Name);
+				AddArchitecturalMaterial(kvp.Key, matName, assetPath);
+			}
 		}
 		else
 		if (kvp.Value.NodeType == cabinetType || kvp.Value.NodeType == countertopType)
 		{
-			FString assetPath = kvp.Value.Properties.GetProperty(EBIMValueScope::Node, BIMPropertyNames::AssetID);
-			FString name = kvp.Value.Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
-			AddArchitecturalMesh(*name, name, assetPath);
+			FString assetPath = kvp.Value.GetScopedProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
+			if (assetPath.Len() != 0)
+			{
+				FString name = kvp.Value.GetProperty(BIMPropertyNames::Name);
+				AddArchitecturalMesh(kvp.Key, name, assetPath);
+			}
 		}
 		else
 		if (kvp.Value.NodeType == riggedType || kvp.Value.NodeType == ffeType)
 		{
-			FString assetPath = kvp.Value.Properties.GetProperty(EBIMValueScope::Layer, BIMPropertyNames::AssetID);
-			FString name = kvp.Value.Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
-			AddArchitecturalMesh(*name, name, assetPath);
+			FString assetPath = kvp.Value.GetScopedProperty(EBIMValueScope::Mesh,BIMPropertyNames::AssetPath);
+			if (assetPath.Len() != 0)
+			{
+				FString name = kvp.Value.GetProperty(BIMPropertyNames::Name);
+				AddArchitecturalMesh(kvp.Key, name, assetPath);
+			}
 		}
 		else
 		if (kvp.Value.NodeType == profileType)
 		{
-			FString assetPath = kvp.Value.Properties.GetProperty(EBIMValueScope::Node, BIMPropertyNames::Mesh);
+			FString assetPath = kvp.Value.GetProperty(BIMPropertyNames::AssetPath);
 			if (assetPath.Len() != 0)
 			{
-				FString name = kvp.Value.Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
-				FString key = kvp.Value.Properties.GetProperty(EBIMValueScope::Node, BIMPropertyNames::ProfileKey);
-				AddSimpleMesh(*key, name, assetPath);
+				FString name = kvp.Value.GetProperty(BIMPropertyNames::Name);
+				AddSimpleMesh(kvp.Key, name, assetPath);
 			}
 		}
 	}
@@ -357,6 +372,14 @@ void FModumateDatabase::ReadLightConfigData(UDataTable *data)
 		LightConfigs.AddData(lightdata);
 	}
 	);
+}
+
+void FModumateDatabase::AddCustomColor(const FName& Key, const FString& Name, const FString& HexValue)
+{
+	FColor value = FColor::FromHex(HexValue);
+	FCustomColor namedColor = FCustomColor(Key, MoveTemp(value), NAME_None, FText::FromString(Name));
+	namedColor.CombinedKey = Key.ToString();
+	NamedColors.AddData(MoveTemp(namedColor));
 }
 
 void FModumateDatabase::ReadColorData(UDataTable *data)

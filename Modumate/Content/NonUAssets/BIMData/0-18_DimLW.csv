@@ -1,11 +1,11 @@
-TYPENAME,,,,0DimLW,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+TYPENAME,,0DimLW,,Dimension,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,STRING,,Name,,Preset.ColloquialName,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DIMENSION,,Width,,Preset.Width,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DIMENSION,,Length,,Preset.Length,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,Presets,,,,,,7,16,6,6,6,6,32,6,6,6,7,7,11,13,35,12,35,21,33,35,35,33,4,4,4,4,4
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.ColloquialName,Preset.Width,Preset.Length,DataType=TG_Parent Node+CategoryPath,2ModuleLWT --> Board/Panel --> Cement,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,2ModuleLWT --> Board/Panel --> Foam,2ModuleLWT --> Board/Panel --> Wood Fiber,2ModuleLWT --> Board/Panel --> Gypsum,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),2ModuleLWT --> Board/Panel --> Metal,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),2ModuleLWT --> Board/Panel --> Particle Board,2ModuleLWT --> Board/Panel --> Plywood,2ModuleLWT --> Plank --> Engineered Wood,2ModuleLWT --> Plank --> Wood,2ModuleLWT --> Tile --> Brick Veneer,2ModuleLWT --> Tile --> Carpet,2ModuleLWT --> Tile --> Clay,2ModuleLWT --> Tile --> Cork,2ModuleLWT --> Tile --> Glass,2ModuleLWT --> Tile --> Laminate,2ModuleLWT --> Tile --> Luxury Vinyl,2ModuleLWT --> Tile --> Porcelain,2ModuleLWT --> Tile --> Stone,2ModuleLWT --> Tile --> Vinyl Composite,2ModuleLWT --> Shingle --> Asphalt,2ModuleLWT --> Shingle --> Clay,2ModuleLWT --> Shingle --> Metal,2ModuleLWT --> Shingle --> Stone,2ModuleLWT --> Shingle --> Wood
+PROPERTY,,STRING,,Name,,Dimension.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Width,,Dimension.Width,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Length,,Dimension.Length,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,7,16,6,6,6,6,32,6,6,6,7,7,11,13,35,12,35,21,33,35,35,33,4,4,4,4,4
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Width,Dimension.Length,DataType=TG_Parent Node+CategoryPath,2ModuleLWT --> Board/Panel --> Cement,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,2ModuleLWT --> Board/Panel --> Foam,2ModuleLWT --> Board/Panel --> Wood Fiber,2ModuleLWT --> Board/Panel --> Gypsum,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),2ModuleLWT --> Board/Panel --> Metal,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),2ModuleLWT --> Board/Panel --> Particle Board,2ModuleLWT --> Board/Panel --> Plywood,2ModuleLWT --> Plank --> Engineered Wood,2ModuleLWT --> Plank --> Wood,2ModuleLWT --> Tile --> Brick Veneer,2ModuleLWT --> Tile --> Carpet,2ModuleLWT --> Tile --> Clay,2ModuleLWT --> Tile --> Cork,2ModuleLWT --> Tile --> Glass,2ModuleLWT --> Tile --> Laminate,2ModuleLWT --> Tile --> Luxury Vinyl,2ModuleLWT --> Tile --> Porcelain,2ModuleLWT --> Tile --> Stone,2ModuleLWT --> Tile --> Vinyl Composite,2ModuleLWT --> Shingle --> Asphalt,2ModuleLWT --> Shingle --> Clay,2ModuleLWT --> Shingle --> Metal,2ModuleLWT --> Shingle --> Stone,2ModuleLWT --> Shingle --> Wood
 PRESET,,"0DimLW
 1inL
 1inW",,0DimLW,,1in x 1in,1in,1in,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
@@ -300,3 +300,4 @@ PRESET,,"0DimLW
 PRESET,,"0DimLW
 96inL
 48inW",,0DimLW,,48in x 96in,48in,96in,,X,X,X,X,X,X,X,X,X,X,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

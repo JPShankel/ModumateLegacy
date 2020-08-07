@@ -256,7 +256,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 		return false;
 	}
 
-	FCraftingTreeNodeType *nodeType = presetCollection.NodeDescriptors.Find(assemblyPreset->NodeType);
+	FBIMPresetNodeType *nodeType = presetCollection.NodeDescriptors.Find(assemblyPreset->NodeType);
 
 	FBIMCraftingTreeNodePool instancePool;
 	FBIMCraftingTreeNodeSharedPtr rootNode;
@@ -264,6 +264,6 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	{
 		return false;
 	}
-	
+
 	return true;
 }

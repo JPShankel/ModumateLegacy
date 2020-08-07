@@ -3,7 +3,6 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "ModumateCore/ModumateTypes.h"
-#include <functional>
 /*
 Modumate Commands are text commands issued that are sent to the Unreal console
 Modumate Functions are functionality that are bound to text commands
@@ -139,7 +138,7 @@ namespace Modumate
 
 		bool HasValue(const FString &key) const;
 		void GetValueNames(TArray<FString> &outNames) const;
-		void ForEachProperty(std::function<void(const FString &name, const FModumateCommandParameter &mcp)> fn) const;
+		void ForEachProperty(TFunction<void(const FString &name, const FModumateCommandParameter &mcp)> fn) const;
 
 		void Empty();
 		void Remove(const FString &key);

@@ -50,12 +50,12 @@ ECraftingResult FBIMCraftingTreeNode::GatherAllChildNodes(TArray<FBIMCraftingTre
 }
 
 // The preset on a crafting node is 'dirty' if the node's properties or input pins is inconsistent with the values in its preset
-ECraftingNodePresetStatus FBIMCraftingTreeNode::GetPresetStatus(const FBIMPresetCollection &PresetCollection) const
+EBIMPresetEditorNodeStatus FBIMCraftingTreeNode::GetPresetStatus(const FBIMPresetCollection &PresetCollection) const
 {
 	const FBIMPreset *preset = PresetCollection.Presets.Find(PresetID);
 	if (preset == nullptr)
 	{
-		return ECraftingNodePresetStatus::None;
+		return EBIMPresetEditorNodeStatus::None;
 	}
 
 	FBIMPreset instanceAsPreset;
@@ -63,9 +63,9 @@ ECraftingNodePresetStatus FBIMCraftingTreeNode::GetPresetStatus(const FBIMPreset
 
 	if (preset->Matches(instanceAsPreset))
 	{
-		return ECraftingNodePresetStatus::UpToDate;
+		return EBIMPresetEditorNodeStatus::UpToDate;
 	}
-	return ECraftingNodePresetStatus::Dirty;
+	return EBIMPresetEditorNodeStatus::Dirty;
 }
 
 ECraftingResult FBIMCraftingTreeNodePool::ResetInstances()
@@ -241,7 +241,7 @@ ECraftingResult FBIMCraftingTreeNode::FromDataRecord(
 		return ECraftingResult::Error;
 	}
 
-	const FCraftingTreeNodeType *descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
+	const FBIMPresetNodeType *descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
 	if (descriptor == nullptr)
 	{
 		return ECraftingResult::Error;
@@ -308,7 +308,7 @@ ECraftingResult FBIMCraftingTreeNode::ToPreset(const FBIMPresetCollection& Prese
 	}
 
 	OutPreset.NodeType = basePreset->NodeType;
-	OutPreset.Properties = InstanceProperties;
+	OutPreset.SetProperties(InstanceProperties);
 	OutPreset.PresetID = basePreset->PresetID;
 	OutPreset.MyTagPath = basePreset->MyTagPath;
 	OutPreset.ParentTagPaths = basePreset->ParentTagPaths;
@@ -421,7 +421,7 @@ FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPr
 		return nullptr;
 	}
 
-	const FCraftingTreeNodeType* descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
+	const FBIMPresetNodeType* descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
 	if (descriptor == nullptr)
 	{
 		return nullptr;

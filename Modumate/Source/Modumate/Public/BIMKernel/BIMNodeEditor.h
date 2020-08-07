@@ -66,7 +66,7 @@ public:
 
 	int32 GetInstanceID() const;
 
-	ECraftingNodePresetStatus GetPresetStatus(const FBIMPresetCollection &PresetCollection) const;
+	EBIMPresetEditorNodeStatus GetPresetStatus(const FBIMPresetCollection &PresetCollection) const;
 
 	ECraftingResult ToPreset(const FBIMPresetCollection& PresetCollection, FBIMPreset& OutPreset) const;
 

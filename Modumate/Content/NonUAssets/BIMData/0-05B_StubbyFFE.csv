@@ -1,463 +1,692 @@
-TYPENAME,,,,0StubbyFFE,,,,
-,,,,Definition,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,
-PROPERTY,,STRING,,Name,,Preset.Name,,
-PROPERTY,,PRIVATE,,Mesh Asset Path,,Layer.AssetID,,
-,,,,Presets,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Layer.AssetID,
+TYPENAME,,0StubbyFFE,,Assembly,,,,,
+,,,,Definition,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,
+PROPERTY,,STRING,,Name,,Assembly.Name,,,
+,,PRIVATE,,Mesh Asset ID,,Mesh.AssetID,,,
+PROPERTY,,PRIVATE,,Mesh Asset Path,,Mesh.AssetPath,,,
+,,,,Presets,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Mesh.AssetID,Mesh.AssetPath,
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sofa-1",,2Part0Slice --> FF&E,,FFE-Sofa-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-1/FFE-Sofa-1.FFE-Sofa-1',
+FFE-Sofa-1",,2Part0Slice --> FF&E,,FFE-Sofa-1,"2Part0Slice --> FF&E
+FFE-Sofa-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-1/FFE-Sofa-1.FFE-Sofa-1',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sofa-2",,2Part0Slice --> FF&E,,FFE-Sofa-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-2/FFE-Sofa-2.FFE-Sofa-2',
+FFE-Sofa-2",,2Part0Slice --> FF&E,,FFE-Sofa-2,"2Part0Slice --> FF&E
+FFE-Sofa-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-2/FFE-Sofa-2.FFE-Sofa-2',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sofa-3",,2Part0Slice --> FF&E,,FFE-Sofa-3,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-3/FFE-Sofa-3-Merged.FFE-Sofa-3-Merged',
+FFE-Sofa-3",,2Part0Slice --> FF&E,,FFE-Sofa-3,"2Part0Slice --> FF&E
+FFE-Sofa-3",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-3/FFE-Sofa-3-Merged.FFE-Sofa-3-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sofa-4",,2Part0Slice --> FF&E,,FFE-Sofa-4,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-4/FFE-Sofa-4-Merged.FFE-Sofa-4-Merged',
+FFE-Sofa-4",,2Part0Slice --> FF&E,,FFE-Sofa-4,"2Part0Slice --> FF&E
+FFE-Sofa-4",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-4/FFE-Sofa-4-Merged.FFE-Sofa-4-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sofa-5",,2Part0Slice --> FF&E,,FFE-Sofa-5,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-5/FFE-Sofa-5-Merged.FFE-Sofa-5-Merged',
+FFE-Sofa-5",,2Part0Slice --> FF&E,,FFE-Sofa-5,"2Part0Slice --> FF&E
+FFE-Sofa-5",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-5/FFE-Sofa-5-Merged.FFE-Sofa-5-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sofa-6",,2Part0Slice --> FF&E,,FFE-Sofa-6,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-6/FFE-Sofa-6.FFE-Sofa-6',
+FFE-Sofa-6",,2Part0Slice --> FF&E,,FFE-Sofa-6,"2Part0Slice --> FF&E
+FFE-Sofa-6",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-6/FFE-Sofa-6.FFE-Sofa-6',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sofa-7",,2Part0Slice --> FF&E,,FFE-Sofa-7,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-7/FFE-Sofa-7.FFE-Sofa-7',
+FFE-Sofa-7",,2Part0Slice --> FF&E,,FFE-Sofa-7,"2Part0Slice --> FF&E
+FFE-Sofa-7",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sofa-7/FFE-Sofa-7.FFE-Sofa-7',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Bench-1",,2Part0Slice --> FF&E,,FFE-Bench-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bench-1/FFE-Bench-1-Merged.FFE-Bench-1-Merged',
+FFE-Bench-1",,2Part0Slice --> FF&E,,FFE-Bench-1,"2Part0Slice --> FF&E
+FFE-Bench-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bench-1/FFE-Bench-1-Merged.FFE-Bench-1-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Bench-2",,2Part0Slice --> FF&E,,FFE-Bench-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bench-2/FFE-Bench-2-Merged.FFE-Bench-2-Merged',
+FFE-Bench-2",,2Part0Slice --> FF&E,,FFE-Bench-2,"2Part0Slice --> FF&E
+FFE-Bench-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bench-2/FFE-Bench-2-Merged.FFE-Bench-2-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Bench-3",,2Part0Slice --> FF&E,,FFE-Bench-3,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bench-3/FFE-Bench-3.FFE-Bench-3',
+FFE-Bench-3",,2Part0Slice --> FF&E,,FFE-Bench-3,"2Part0Slice --> FF&E
+FFE-Bench-3",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bench-3/FFE-Bench-3.FFE-Bench-3',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Loveseat-1",,2Part0Slice --> FF&E,,FFE-Loveseat-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Loveseat-1/FFE-Loveseat-1-Merged.FFE-Loveseat-1-Merged',
+FFE-Loveseat-1",,2Part0Slice --> FF&E,,FFE-Loveseat-1,"2Part0Slice --> FF&E
+FFE-Loveseat-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Loveseat-1/FFE-Loveseat-1-Merged.FFE-Loveseat-1-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Loveseat-2",,2Part0Slice --> FF&E,,FFE-Loveseat-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Loveseat-2/FFE-Loveseat-2-Merged.FFE-Loveseat-2-Merged',
+FFE-Loveseat-2",,2Part0Slice --> FF&E,,FFE-Loveseat-2,"2Part0Slice --> FF&E
+FFE-Loveseat-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Loveseat-2/FFE-Loveseat-2-Merged.FFE-Loveseat-2-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-1",,2Part0Slice --> FF&E,,FFE-Chair-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-1/FFE-Chair-1.FFE-Chair-1',
+FFE-Chair-1",,2Part0Slice --> FF&E,,FFE-Chair-1,"2Part0Slice --> FF&E
+FFE-Chair-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-1/FFE-Chair-1.FFE-Chair-1',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-2",,2Part0Slice --> FF&E,,FFE-Chair-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-2/FFE-Chair-2.FFE-Chair-2',
+FFE-Chair-2",,2Part0Slice --> FF&E,,FFE-Chair-2,"2Part0Slice --> FF&E
+FFE-Chair-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-2/FFE-Chair-2.FFE-Chair-2',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-3",,2Part0Slice --> FF&E,,FFE-Chair-3,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-3/FFE-Chair-3.FFE-Chair-3',
+FFE-Chair-3",,2Part0Slice --> FF&E,,FFE-Chair-3,"2Part0Slice --> FF&E
+FFE-Chair-3",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-3/FFE-Chair-3.FFE-Chair-3',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-4",,2Part0Slice --> FF&E,,FFE-Chair-4,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-4/FFE-Chair-4.FFE-Chair-4',
+FFE-Chair-4",,2Part0Slice --> FF&E,,FFE-Chair-4,"2Part0Slice --> FF&E
+FFE-Chair-4",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-4/FFE-Chair-4.FFE-Chair-4',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-5",,2Part0Slice --> FF&E,,FFE-Chair-5,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-5/FFE-Chair-5.FFE-Chair-5',
+FFE-Chair-5",,2Part0Slice --> FF&E,,FFE-Chair-5,"2Part0Slice --> FF&E
+FFE-Chair-5",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-5/FFE-Chair-5.FFE-Chair-5',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-6",,2Part0Slice --> FF&E,,FFE-Chair-6,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-6/FFE-Chair-6.FFE-Chair-6',
+FFE-Chair-6",,2Part0Slice --> FF&E,,FFE-Chair-6,"2Part0Slice --> FF&E
+FFE-Chair-6",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-6/FFE-Chair-6.FFE-Chair-6',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-7",,2Part0Slice --> FF&E,,FFE-Chair-7,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-7/FFE-Chair-7-Merged.FFE-Chair-7-Merged',
+FFE-Chair-7",,2Part0Slice --> FF&E,,FFE-Chair-7,"2Part0Slice --> FF&E
+FFE-Chair-7",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-7/FFE-Chair-7-Merged.FFE-Chair-7-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-8",,2Part0Slice --> FF&E,,FFE-Chair-8,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-8/FFE-Chair-8-Merged.FFE-Chair-8-Merged',
+FFE-Chair-8",,2Part0Slice --> FF&E,,FFE-Chair-8,"2Part0Slice --> FF&E
+FFE-Chair-8",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-8/FFE-Chair-8-Merged.FFE-Chair-8-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-9",,2Part0Slice --> FF&E,,FFE-Chair-9,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-9/FFE-Chair-9-Merged.FFE-Chair-9-Merged',
+FFE-Chair-9",,2Part0Slice --> FF&E,,FFE-Chair-9,"2Part0Slice --> FF&E
+FFE-Chair-9",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-9/FFE-Chair-9-Merged.FFE-Chair-9-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-10",,2Part0Slice --> FF&E,,FFE-Chair-10,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-10/FFE-Chair-10-Merged.FFE-Chair-10-Merged',
+FFE-Chair-10",,2Part0Slice --> FF&E,,FFE-Chair-10,"2Part0Slice --> FF&E
+FFE-Chair-10",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-10/FFE-Chair-10-Merged.FFE-Chair-10-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-11",,2Part0Slice --> FF&E,,FFE-Chair-11,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-11/FFE-Chair-11-Merged.FFE-Chair-11-Merged',
+FFE-Chair-11",,2Part0Slice --> FF&E,,FFE-Chair-11,"2Part0Slice --> FF&E
+FFE-Chair-11",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-11/FFE-Chair-11-Merged.FFE-Chair-11-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-12",,2Part0Slice --> FF&E,,FFE-Chair-12,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-12/FFE-Chair-12.FFE-Chair-12',
+FFE-Chair-12",,2Part0Slice --> FF&E,,FFE-Chair-12,"2Part0Slice --> FF&E
+FFE-Chair-12",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-12/FFE-Chair-12.FFE-Chair-12',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-13",,2Part0Slice --> FF&E,,FFE-Chair-13,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-13/FFE-Chair-13.FFE-Chair-13',
+FFE-Chair-13",,2Part0Slice --> FF&E,,FFE-Chair-13,"2Part0Slice --> FF&E
+FFE-Chair-13",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-13/FFE-Chair-13.FFE-Chair-13',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-14",,2Part0Slice --> FF&E,,FFE-Chair-14,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-14/FFE-Chair-14.FFE-Chair-14',
+FFE-Chair-14",,2Part0Slice --> FF&E,,FFE-Chair-14,"2Part0Slice --> FF&E
+FFE-Chair-14",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-14/FFE-Chair-14.FFE-Chair-14',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-15",,2Part0Slice --> FF&E,,FFE-Chair-15,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-15/FFE-Chair-15.FFE-Chair-15',
+FFE-Chair-15",,2Part0Slice --> FF&E,,FFE-Chair-15,"2Part0Slice --> FF&E
+FFE-Chair-15",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-15/FFE-Chair-15.FFE-Chair-15',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Desk-01",,2Part0Slice --> FF&E,,FFE-Chair-Desk-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Desk-01/FFE-Chair-Desk-01-Merged.FFE-Chair-Desk-01-Merged',
+FFE-Chair-Desk-01",,2Part0Slice --> FF&E,,FFE-Chair-Desk-01,"2Part0Slice --> FF&E
+FFE-Chair-Desk-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Desk-01/FFE-Chair-Desk-01-Merged.FFE-Chair-Desk-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Desk-02",,2Part0Slice --> FF&E,,FFE-Chair-Desk-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Desk-02/FFE-Chair-Desk-02-Merged.FFE-Chair-Desk-02-Merged',
+FFE-Chair-Desk-02",,2Part0Slice --> FF&E,,FFE-Chair-Desk-02,"2Part0Slice --> FF&E
+FFE-Chair-Desk-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Desk-02/FFE-Chair-Desk-02-Merged.FFE-Chair-Desk-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Desk-03",,2Part0Slice --> FF&E,,FFE-Chair-Desk-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Desk-03/FFE-Chair-Desk-03.FFE-Chair-Desk-03',
+FFE-Chair-Desk-03",,2Part0Slice --> FF&E,,FFE-Chair-Desk-03,"2Part0Slice --> FF&E
+FFE-Chair-Desk-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Desk-03/FFE-Chair-Desk-03.FFE-Chair-Desk-03',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Dining-01",,2Part0Slice --> FF&E,,FFE-Chair-Dining-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged',
+FFE-Chair-Dining-01",,2Part0Slice --> FF&E,,FFE-Chair-Dining-01,"2Part0Slice --> FF&E
+FFE-Chair-Dining-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Dining-02",,2Part0Slice --> FF&E,,FFE-Chair-Dining-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02',
+FFE-Chair-Dining-02",,2Part0Slice --> FF&E,,FFE-Chair-Dining-02,"2Part0Slice --> FF&E
+FFE-Chair-Dining-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Dining-03",,2Part0Slice --> FF&E,,FFE-Chair-Dining-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Dining-03/FFE-Chair-Dining-03.FFE-Chair-Dining-03',
+FFE-Chair-Dining-03",,2Part0Slice --> FF&E,,FFE-Chair-Dining-03,"2Part0Slice --> FF&E
+FFE-Chair-Dining-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Dining-03/FFE-Chair-Dining-03.FFE-Chair-Dining-03',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Dining-04",,2Part0Slice --> FF&E,,FFE-Chair-Dining-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Dining-04/FFE-Chair-Dining-04.FFE-Chair-Dining-04',
+FFE-Chair-Dining-04",,2Part0Slice --> FF&E,,FFE-Chair-Dining-04,"2Part0Slice --> FF&E
+FFE-Chair-Dining-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Dining-04/FFE-Chair-Dining-04.FFE-Chair-Dining-04',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Stool-01",,2Part0Slice --> FF&E,,FFE-Chair-Stool-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-01/FFE-Barstool-1-Merged.FFE-Barstool-1-Merged',
+FFE-Chair-Stool-01",,2Part0Slice --> FF&E,,FFE-Chair-Stool-01,"2Part0Slice --> FF&E
+FFE-Chair-Stool-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-01/FFE-Barstool-1-Merged.FFE-Barstool-1-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Stool-02",,2Part0Slice --> FF&E,,FFE-Chair-Stool-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-02/FFE-Barstool-2-Merged.FFE-Barstool-2-Merged',
+FFE-Chair-Stool-02",,2Part0Slice --> FF&E,,FFE-Chair-Stool-02,"2Part0Slice --> FF&E
+FFE-Chair-Stool-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-02/FFE-Barstool-2-Merged.FFE-Barstool-2-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Stool-03",,2Part0Slice --> FF&E,,FFE-Chair-Stool-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-03/FFE-Barstool-3-Merged.FFE-Barstool-3-Merged',
+FFE-Chair-Stool-03",,2Part0Slice --> FF&E,,FFE-Chair-Stool-03,"2Part0Slice --> FF&E
+FFE-Chair-Stool-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-03/FFE-Barstool-3-Merged.FFE-Barstool-3-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Stool-04",,2Part0Slice --> FF&E,,FFE-Chair-Stool-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-04/FFE-Chair-Stool-04.FFE-Chair-Stool-04',
+FFE-Chair-Stool-04",,2Part0Slice --> FF&E,,FFE-Chair-Stool-04,"2Part0Slice --> FF&E
+FFE-Chair-Stool-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-04/FFE-Chair-Stool-04.FFE-Chair-Stool-04',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Stool-05",,2Part0Slice --> FF&E,,FFE-Chair-Stool-05,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-05/FFE-Chair-Stool-05.FFE-Chair-Stool-05',
+FFE-Chair-Stool-05",,2Part0Slice --> FF&E,,FFE-Chair-Stool-05,"2Part0Slice --> FF&E
+FFE-Chair-Stool-05",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-05/FFE-Chair-Stool-05.FFE-Chair-Stool-05',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Stool-06",,2Part0Slice --> FF&E,,FFE-Chair-Stool-06,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-06/FFE-Chair-Stool-06.FFE-Chair-Stool-06',
+FFE-Chair-Stool-06",,2Part0Slice --> FF&E,,FFE-Chair-Stool-06,"2Part0Slice --> FF&E
+FFE-Chair-Stool-06",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-06/FFE-Chair-Stool-06.FFE-Chair-Stool-06',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Stool-07",,2Part0Slice --> FF&E,,FFE-Chair-Stool-07,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-07/FFE-Chair-Stool-07.FFE-Chair-Stool-07',
+FFE-Chair-Stool-07",,2Part0Slice --> FF&E,,FFE-Chair-Stool-07,"2Part0Slice --> FF&E
+FFE-Chair-Stool-07",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-07/FFE-Chair-Stool-07.FFE-Chair-Stool-07',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Chair-Stool-08",,2Part0Slice --> FF&E,,FFE-Chair-Stool-08,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-08/FFE-Chair-Stool-08.FFE-Chair-Stool-08',
+FFE-Chair-Stool-08",,2Part0Slice --> FF&E,,FFE-Chair-Stool-08,"2Part0Slice --> FF&E
+FFE-Chair-Stool-08",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Stool-08/FFE-Chair-Stool-08.FFE-Chair-Stool-08',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Ottoman-01",,2Part0Slice --> FF&E,,FFE-Ottoman-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Ottoman-01/FFE-Ottoman-01.FFE-Ottoman-01',
+FFE-Ottoman-01",,2Part0Slice --> FF&E,,FFE-Ottoman-01,"2Part0Slice --> FF&E
+FFE-Ottoman-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Ottoman-01/FFE-Ottoman-01.FFE-Ottoman-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Coffee-1",,2Part0Slice --> FF&E,,FFE-Table-Coffee-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Coffee-1/FFE-Table-Coffee-1.FFE-Table-Coffee-1',
+FFE-Table-Coffee-1",,2Part0Slice --> FF&E,,FFE-Table-Coffee-1,"2Part0Slice --> FF&E
+FFE-Table-Coffee-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Coffee-1/FFE-Table-Coffee-1.FFE-Table-Coffee-1',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Coffee-2",,2Part0Slice --> FF&E,,FFE-Table-Coffee-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Coffee-2/FFE-Table-Coffee-2.FFE-Table-Coffee-2',
+FFE-Table-Coffee-2",,2Part0Slice --> FF&E,,FFE-Table-Coffee-2,"2Part0Slice --> FF&E
+FFE-Table-Coffee-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Coffee-2/FFE-Table-Coffee-2.FFE-Table-Coffee-2',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Coffee-3",,2Part0Slice --> FF&E,,FFE-Table-Coffee-3,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Coffee-3/FFE-Table-Coffee-3-Merged.FFE-Table-Coffee-3-Merged',
+FFE-Table-Coffee-3",,2Part0Slice --> FF&E,,FFE-Table-Coffee-3,"2Part0Slice --> FF&E
+FFE-Table-Coffee-3",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Coffee-3/FFE-Table-Coffee-3-Merged.FFE-Table-Coffee-3-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Coffee-4",,2Part0Slice --> FF&E,,FFE-Table-Coffee-4,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Coffee-4/FFE-Table-Coffee-4-Merged.FFE-Table-Coffee-4-Merged',
+FFE-Table-Coffee-4",,2Part0Slice --> FF&E,,FFE-Table-Coffee-4,"2Part0Slice --> FF&E
+FFE-Table-Coffee-4",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Coffee-4/FFE-Table-Coffee-4-Merged.FFE-Table-Coffee-4-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Coffee-5",,2Part0Slice --> FF&E,,FFE-Table-Coffee-5,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Coffee-5/FFE-Table-Coffee-5.FFE-Table-Coffee-5',
+FFE-Table-Coffee-5",,2Part0Slice --> FF&E,,FFE-Table-Coffee-5,"2Part0Slice --> FF&E
+FFE-Table-Coffee-5",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Coffee-5/FFE-Table-Coffee-5.FFE-Table-Coffee-5',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Coffee-6",,2Part0Slice --> FF&E,,FFE-Table-Coffee-6,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Coffee-6/FFE-Table-Coffee-6.FFE-Table-Coffee-6',
+FFE-Table-Coffee-6",,2Part0Slice --> FF&E,,FFE-Table-Coffee-6,"2Part0Slice --> FF&E
+FFE-Table-Coffee-6",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Coffee-6/FFE-Table-Coffee-6.FFE-Table-Coffee-6',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Side-1",,2Part0Slice --> FF&E,,FFE-Table-Side-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-1/FFE-Table-Side-1-Merged.FFE-Table-Side-1-Merged',
+FFE-Table-Side-1",,2Part0Slice --> FF&E,,FFE-Table-Side-1,"2Part0Slice --> FF&E
+FFE-Table-Side-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-1/FFE-Table-Side-1-Merged.FFE-Table-Side-1-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Side-2",,2Part0Slice --> FF&E,,FFE-Table-Side-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-2/FFE-Table-Side-2.FFE-Table-Side-2',
+FFE-Table-Side-2",,2Part0Slice --> FF&E,,FFE-Table-Side-2,"2Part0Slice --> FF&E
+FFE-Table-Side-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-2/FFE-Table-Side-2.FFE-Table-Side-2',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Side-3",,2Part0Slice --> FF&E,,FFE-Table-Side-3,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-3/FFE-Table-Side-3.FFE-Table-Side-3',
+FFE-Table-Side-3",,2Part0Slice --> FF&E,,FFE-Table-Side-3,"2Part0Slice --> FF&E
+FFE-Table-Side-3",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-3/FFE-Table-Side-3.FFE-Table-Side-3',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Side-4",,2Part0Slice --> FF&E,,FFE-Table-Side-4,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-4/FFE-Table-Side-4.FFE-Table-Side-4',
+FFE-Table-Side-4",,2Part0Slice --> FF&E,,FFE-Table-Side-4,"2Part0Slice --> FF&E
+FFE-Table-Side-4",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-4/FFE-Table-Side-4.FFE-Table-Side-4',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Side-5",,2Part0Slice --> FF&E,,FFE-Table-Side-5,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-5/FFE-Table-Side-5.FFE-Table-Side-5',
+FFE-Table-Side-5",,2Part0Slice --> FF&E,,FFE-Table-Side-5,"2Part0Slice --> FF&E
+FFE-Table-Side-5",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-5/FFE-Table-Side-5.FFE-Table-Side-5',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Side-6",,2Part0Slice --> FF&E,,FFE-Table-Side-6,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-6/FFE-Table-Side-6.FFE-Table-Side-6',
+FFE-Table-Side-6",,2Part0Slice --> FF&E,,FFE-Table-Side-6,"2Part0Slice --> FF&E
+FFE-Table-Side-6",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-6/FFE-Table-Side-6.FFE-Table-Side-6',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Side-7",,2Part0Slice --> FF&E,,FFE-Table-Side-7,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-7/FFE-Table-Side-7.FFE-Table-Side-7',
+FFE-Table-Side-7",,2Part0Slice --> FF&E,,FFE-Table-Side-7,"2Part0Slice --> FF&E
+FFE-Table-Side-7",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Side-7/FFE-Table-Side-7.FFE-Table-Side-7',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Occasional-1",,2Part0Slice --> FF&E,,FFE-Table-Occasional-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Occasional-1/FFE-Table-Occasional-1-Merged.FFE-Table-Occasional-1-Merged',
+FFE-Table-Occasional-1",,2Part0Slice --> FF&E,,FFE-Table-Occasional-1,"2Part0Slice --> FF&E
+FFE-Table-Occasional-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Occasional-1/FFE-Table-Occasional-1-Merged.FFE-Table-Occasional-1-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Console-1",,2Part0Slice --> FF&E,,FFE-Table-Console-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Console-1/FFE-Table-Console-1-Merged.FFE-Table-Console-1-Merged',
+FFE-Table-Console-1",,2Part0Slice --> FF&E,,FFE-Table-Console-1,"2Part0Slice --> FF&E
+FFE-Table-Console-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Console-1/FFE-Table-Console-1-Merged.FFE-Table-Console-1-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Desk-1",,2Part0Slice --> FF&E,,FFE-Table-Desk-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Desk-1/FFE-Table-Desk-1.FFE-Table-Desk-1',
+FFE-Table-Desk-1",,2Part0Slice --> FF&E,,FFE-Table-Desk-1,"2Part0Slice --> FF&E
+FFE-Table-Desk-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Desk-1/FFE-Table-Desk-1.FFE-Table-Desk-1',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Desk-2",,2Part0Slice --> FF&E,,FFE-Table-Desk-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Desk-2/FFE-Table-Desk-2-Merged.FFE-Table-Desk-2-Merged',
+FFE-Table-Desk-2",,2Part0Slice --> FF&E,,FFE-Table-Desk-2,"2Part0Slice --> FF&E
+FFE-Table-Desk-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Desk-2/FFE-Table-Desk-2-Merged.FFE-Table-Desk-2-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Round-01",,2Part0Slice --> FF&E,,FFE-Table-Round-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Round-01/FFE-Table-Round-01.FFE-Table-Round-01',
+FFE-Table-Round-01",,2Part0Slice --> FF&E,,FFE-Table-Round-01,"2Part0Slice --> FF&E
+FFE-Table-Round-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Round-01/FFE-Table-Round-01.FFE-Table-Round-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Round-02",,2Part0Slice --> FF&E,,FFE-Table-Round-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Round-02/FFE-Table-Round-02.FFE-Table-Round-02',
+FFE-Table-Round-02",,2Part0Slice --> FF&E,,FFE-Table-Round-02,"2Part0Slice --> FF&E
+FFE-Table-Round-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Round-02/FFE-Table-Round-02.FFE-Table-Round-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Dining-1",,2Part0Slice --> FF&E,,FFE-Table-Dining-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Dining-1/FFE-Table-Dining-1.FFE-Table-Dining-1',
+FFE-Table-Dining-1",,2Part0Slice --> FF&E,,FFE-Table-Dining-1,"2Part0Slice --> FF&E
+FFE-Table-Dining-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Dining-1/FFE-Table-Dining-1.FFE-Table-Dining-1',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Dining-2",,2Part0Slice --> FF&E,,FFE-Table-Dining-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Dining-2/FFE-Table-Dining-2-Merged.FFE-Table-Dining-2-Merged',
+FFE-Table-Dining-2",,2Part0Slice --> FF&E,,FFE-Table-Dining-2,"2Part0Slice --> FF&E
+FFE-Table-Dining-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Dining-2/FFE-Table-Dining-2-Merged.FFE-Table-Dining-2-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Dining-3",,2Part0Slice --> FF&E,,FFE-Table-Dining-3,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Dining-3/FFE-Table-Dining-3-Merged.FFE-Table-Dining-3-Merged',
+FFE-Table-Dining-3",,2Part0Slice --> FF&E,,FFE-Table-Dining-3,"2Part0Slice --> FF&E
+FFE-Table-Dining-3",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Dining-3/FFE-Table-Dining-3-Merged.FFE-Table-Dining-3-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Dining-4",,2Part0Slice --> FF&E,,FFE-Table-Dining-4,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Dining-4/FFE-Table-Dining-4-Merged.FFE-Table-Dining-4-Merged',
+FFE-Table-Dining-4",,2Part0Slice --> FF&E,,FFE-Table-Dining-4,"2Part0Slice --> FF&E
+FFE-Table-Dining-4",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Dining-4/FFE-Table-Dining-4-Merged.FFE-Table-Dining-4-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Conference-01",,2Part0Slice --> FF&E,,FFE-Table-Conference-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Conference-01/FFE-Table-Conference-01-Merged.FFE-Table-Conference-01-Merged',
+FFE-Table-Conference-01",,2Part0Slice --> FF&E,,FFE-Table-Conference-01,"2Part0Slice --> FF&E
+FFE-Table-Conference-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Conference-01/FFE-Table-Conference-01-Merged.FFE-Table-Conference-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Table-Bistro-1",,2Part0Slice --> FF&E,,FFE-Table-Bistro-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Bistro-1/FFE-Table-Bistro-1-Merged.FFE-Table-Bistro-1-Merged',
+FFE-Table-Bistro-1",,2Part0Slice --> FF&E,,FFE-Table-Bistro-1,"2Part0Slice --> FF&E
+FFE-Table-Bistro-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Bistro-1/FFE-Table-Bistro-1-Merged.FFE-Table-Bistro-1-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Dresser-01",,2Part0Slice --> FF&E,,FFE-Dresser-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Dresser-01/FFE-Dresser-01.FFE-Dresser-01',
+FFE-Dresser-01",,2Part0Slice --> FF&E,,FFE-Dresser-01,"2Part0Slice --> FF&E
+FFE-Dresser-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Dresser-01/FFE-Dresser-01.FFE-Dresser-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Dresser-02",,2Part0Slice --> FF&E,,FFE-Dresser-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Dresser-02/FFE-Dresser-02.FFE-Dresser-02',
+FFE-Dresser-02",,2Part0Slice --> FF&E,,FFE-Dresser-02,"2Part0Slice --> FF&E
+FFE-Dresser-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Dresser-02/FFE-Dresser-02.FFE-Dresser-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Dresser-03",,2Part0Slice --> FF&E,,FFE-Dresser-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Dresser-03/FFE-Dresser-03.FFE-Dresser-03',
+FFE-Dresser-03",,2Part0Slice --> FF&E,,FFE-Dresser-03,"2Part0Slice --> FF&E
+FFE-Dresser-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Dresser-03/FFE-Dresser-03.FFE-Dresser-03',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Dresser-04",,2Part0Slice --> FF&E,,FFE-Dresser-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Dresser-04/FFE-Dresser-04.FFE-Dresser-04',
+FFE-Dresser-04",,2Part0Slice --> FF&E,,FFE-Dresser-04,"2Part0Slice --> FF&E
+FFE-Dresser-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Dresser-04/FFE-Dresser-04.FFE-Dresser-04',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Dresser-05",,2Part0Slice --> FF&E,,FFE-Dresser-05,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Dresser-05/FFE-Dresser-05.FFE-Dresser-05',
+FFE-Dresser-05",,2Part0Slice --> FF&E,,FFE-Dresser-05,"2Part0Slice --> FF&E
+FFE-Dresser-05",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Dresser-05/FFE-Dresser-05.FFE-Dresser-05',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Storage-Cabinet-01",,2Part0Slice --> FF&E,,FFE-Storage-Cabinet-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Storage-Cabinet-01/FFE-Storage-Cabinet-01-Merged.FFE-Storage-Cabinet-01-Merged',
+FFE-Storage-Cabinet-01",,2Part0Slice --> FF&E,,FFE-Storage-Cabinet-01,"2Part0Slice --> FF&E
+FFE-Storage-Cabinet-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Storage-Cabinet-01/FFE-Storage-Cabinet-01-Merged.FFE-Storage-Cabinet-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Storage-Cabinet-02",,2Part0Slice --> FF&E,,FFE-Storage-Cabinet-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Storage-Cabinet-02/FFE-Storage-Cabinet-02-Merged.FFE-Storage-Cabinet-02-Merged',
+FFE-Storage-Cabinet-02",,2Part0Slice --> FF&E,,FFE-Storage-Cabinet-02,"2Part0Slice --> FF&E
+FFE-Storage-Cabinet-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Storage-Cabinet-02/FFE-Storage-Cabinet-02-Merged.FFE-Storage-Cabinet-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Storage-Shelf-01",,2Part0Slice --> FF&E,,FFE-Storage-Shelf-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Storage-Shelf-01/FFE-Storage-Shelf-01-Merged.FFE-Storage-Shelf-01-Merged',
+FFE-Storage-Shelf-01",,2Part0Slice --> FF&E,,FFE-Storage-Shelf-01,"2Part0Slice --> FF&E
+FFE-Storage-Shelf-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Storage-Shelf-01/FFE-Storage-Shelf-01-Merged.FFE-Storage-Shelf-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Storage-Shelf-02",,2Part0Slice --> FF&E,,FFE-Storage-Shelf-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Storage-Shelf-02/FFE-Storage-Shelf-02-Merged.FFE-Storage-Shelf-02-Merged',
+FFE-Storage-Shelf-02",,2Part0Slice --> FF&E,,FFE-Storage-Shelf-02,"2Part0Slice --> FF&E
+FFE-Storage-Shelf-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Storage-Shelf-02/FFE-Storage-Shelf-02-Merged.FFE-Storage-Shelf-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Carpet-1",,2Part0Slice --> FF&E,,FFE-Carpet-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Carpet-1/FFE-Carpet-1-Merged.FFE-Carpet-1-Merged',
+FFE-Carpet-1",,2Part0Slice --> FF&E,,FFE-Carpet-1,"2Part0Slice --> FF&E
+FFE-Carpet-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Carpet-1/FFE-Carpet-1-Merged.FFE-Carpet-1-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Carpet-2",,2Part0Slice --> FF&E,,FFE-Carpet-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Carpet-2/FFE-Carpet-2-Merged.FFE-Carpet-2-Merged',
+FFE-Carpet-2",,2Part0Slice --> FF&E,,FFE-Carpet-2,"2Part0Slice --> FF&E
+FFE-Carpet-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Carpet-2/FFE-Carpet-2-Merged.FFE-Carpet-2-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Carpet-3",,2Part0Slice --> FF&E,,FFE-Carpet-3,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Carpet-3/FFE-Carpet-3-Merged.FFE-Carpet-3-Merged',
+FFE-Carpet-3",,2Part0Slice --> FF&E,,FFE-Carpet-3,"2Part0Slice --> FF&E
+FFE-Carpet-3",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Carpet-3/FFE-Carpet-3-Merged.FFE-Carpet-3-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Carpet-4",,2Part0Slice --> FF&E,,FFE-Carpet-4,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Carpet-4/FFE-Carpet-4-Merged.FFE-Carpet-4-Merged',
+FFE-Carpet-4",,2Part0Slice --> FF&E,,FFE-Carpet-4,"2Part0Slice --> FF&E
+FFE-Carpet-4",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Carpet-4/FFE-Carpet-4-Merged.FFE-Carpet-4-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Carpet-5",,2Part0Slice --> FF&E,,FFE-Carpet-5,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Carpet-5/FFE-Carpet-5-Merged.FFE-Carpet-5-Merged',
+FFE-Carpet-5",,2Part0Slice --> FF&E,,FFE-Carpet-5,"2Part0Slice --> FF&E
+FFE-Carpet-5",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Carpet-5/FFE-Carpet-5-Merged.FFE-Carpet-5-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Bed-01",,2Part0Slice --> FF&E,,FFE-Bed-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bed-01/FFE-Bed-01.FFE-Bed-01',
+FFE-Bed-01",,2Part0Slice --> FF&E,,FFE-Bed-01,"2Part0Slice --> FF&E
+FFE-Bed-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bed-01/FFE-Bed-01.FFE-Bed-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Bed-02",,2Part0Slice --> FF&E,,FFE-Bed-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bed-02/FFE-Bed-02.FFE-Bed-02',
+FFE-Bed-02",,2Part0Slice --> FF&E,,FFE-Bed-02,"2Part0Slice --> FF&E
+FFE-Bed-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bed-02/FFE-Bed-02.FFE-Bed-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Bed-03",,2Part0Slice --> FF&E,,FFE-Bed-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bed-03/FFE-Bed-03.FFE-Bed-03',
+FFE-Bed-03",,2Part0Slice --> FF&E,,FFE-Bed-03,"2Part0Slice --> FF&E
+FFE-Bed-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bed-03/FFE-Bed-03.FFE-Bed-03',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Bed-04",,2Part0Slice --> FF&E,,FFE-Bed-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bed-04/FFE-Bed-04.FFE-Bed-04',
+FFE-Bed-04",,2Part0Slice --> FF&E,,FFE-Bed-04,"2Part0Slice --> FF&E
+FFE-Bed-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bed-04/FFE-Bed-04.FFE-Bed-04',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Curtain-1",,2Part0Slice --> FF&E,,FFE-Curtain-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Curtain-1/FFE-Curtain-1-Merged.FFE-Curtain-1-Merged',
+FFE-Curtain-1",,2Part0Slice --> FF&E,,FFE-Curtain-1,"2Part0Slice --> FF&E
+FFE-Curtain-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Curtain-1/FFE-Curtain-1-Merged.FFE-Curtain-1-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-TrashCan-2",,2Part0Slice --> FF&E,,FFE-TrashCan-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-TrashCan-2/FFE-TrashCan-2.FFE-TrashCan-2',
+FFE-TrashCan-2",,2Part0Slice --> FF&E,,FFE-TrashCan-2,"2Part0Slice --> FF&E
+FFE-TrashCan-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-TrashCan-2/FFE-TrashCan-2.FFE-TrashCan-2',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Refrigerator-01",,2Part0Slice --> FF&E,,FFE-Refrigerator-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Refrigerator-01/FFE-Refrigerator-01.FFE-Refrigerator-01',
+FFE-Refrigerator-01",,2Part0Slice --> FF&E,,FFE-Refrigerator-01,"2Part0Slice --> FF&E
+FFE-Refrigerator-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Refrigerator-01/FFE-Refrigerator-01.FFE-Refrigerator-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Refrigerator-02",,2Part0Slice --> FF&E,,FFE-Refrigerator-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Refrigerator-02/FFE-Refrigerator-02-Merged.FFE-Refrigerator-02-Merged',
+FFE-Refrigerator-02",,2Part0Slice --> FF&E,,FFE-Refrigerator-02,"2Part0Slice --> FF&E
+FFE-Refrigerator-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Refrigerator-02/FFE-Refrigerator-02-Merged.FFE-Refrigerator-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Oven-01",,2Part0Slice --> FF&E,,FFE-Oven-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Oven-01/FFE-Oven-01.FFE-Oven-01',
+FFE-Oven-01",,2Part0Slice --> FF&E,,FFE-Oven-01,"2Part0Slice --> FF&E
+FFE-Oven-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Oven-01/FFE-Oven-01.FFE-Oven-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Oven-02",,2Part0Slice --> FF&E,,FFE-Oven-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Oven-02/FFE-Oven-02-Merged.FFE-Oven-02-Merged',
+FFE-Oven-02",,2Part0Slice --> FF&E,,FFE-Oven-02,"2Part0Slice --> FF&E
+FFE-Oven-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Oven-02/FFE-Oven-02-Merged.FFE-Oven-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Range-1",,2Part0Slice --> FF&E,,FFE-Range-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Range-1/FFE-Range-1.FFE-Range-1',
+FFE-Range-1",,2Part0Slice --> FF&E,,FFE-Range-1,"2Part0Slice --> FF&E
+FFE-Range-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Range-1/FFE-Range-1.FFE-Range-1',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Range-2",,2Part0Slice --> FF&E,,FFE-Range-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Range-2/FFE-Range-2.FFE-Range-2',
+FFE-Range-2",,2Part0Slice --> FF&E,,FFE-Range-2,"2Part0Slice --> FF&E
+FFE-Range-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Range-2/FFE-Range-2.FFE-Range-2',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Range-3",,2Part0Slice --> FF&E,,FFE-Range-3,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Range-3/FFE-Range-3.FFE-Range-3',
+FFE-Range-3",,2Part0Slice --> FF&E,,FFE-Range-3,"2Part0Slice --> FF&E
+FFE-Range-3",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Range-3/FFE-Range-3.FFE-Range-3',
 PRESET,,"2Part0Slice --> FF&E
-FFE-RangeHood-01",,2Part0Slice --> FF&E,,FFE-RangeHood-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-RangeHood-01/FFE-RangeHood-01-Merged.FFE-RangeHood-01-Merged',
+FFE-RangeHood-01",,2Part0Slice --> FF&E,,FFE-RangeHood-01,"2Part0Slice --> FF&E
+FFE-RangeHood-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-RangeHood-01/FFE-RangeHood-01-Merged.FFE-RangeHood-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-RangeHood-02",,2Part0Slice --> FF&E,,FFE-RangeHood-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-RangeHood-02/FFE-RangeHood-02-Merged.FFE-RangeHood-02-Merged',
+FFE-RangeHood-02",,2Part0Slice --> FF&E,,FFE-RangeHood-02,"2Part0Slice --> FF&E
+FFE-RangeHood-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-RangeHood-02/FFE-RangeHood-02-Merged.FFE-RangeHood-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Microwave-01",,2Part0Slice --> FF&E,,FFE-Microwave-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Microwave-01/FFE-Microwave-01.FFE-Microwave-01',
+FFE-Microwave-01",,2Part0Slice --> FF&E,,FFE-Microwave-01,"2Part0Slice --> FF&E
+FFE-Microwave-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Microwave-01/FFE-Microwave-01.FFE-Microwave-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Microwave-02",,2Part0Slice --> FF&E,,FFE-Microwave-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Microwave-02/FFE-Microwave-02-Merged.FFE-Microwave-02-Merged',
+FFE-Microwave-02",,2Part0Slice --> FF&E,,FFE-Microwave-02,"2Part0Slice --> FF&E
+FFE-Microwave-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Microwave-02/FFE-Microwave-02-Merged.FFE-Microwave-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-CoffeeMachine-1",,2Part0Slice --> FF&E,,FFE-CoffeeMachine-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-CoffeeMachine-1/FFE-CoffeeMachine-1.FFE-CoffeeMachine-1',
+FFE-CoffeeMachine-1",,2Part0Slice --> FF&E,,FFE-CoffeeMachine-1,"2Part0Slice --> FF&E
+FFE-CoffeeMachine-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-CoffeeMachine-1/FFE-CoffeeMachine-1.FFE-CoffeeMachine-1',
 PRESET,,"2Part0Slice --> FF&E
-FFE-CoffeeMachine-2",,2Part0Slice --> FF&E,,FFE-CoffeeMachine-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-CoffeeMachine-2/FFE-CoffeeMachine-2-Merged.FFE-CoffeeMachine-2-Merged',
+FFE-CoffeeMachine-2",,2Part0Slice --> FF&E,,FFE-CoffeeMachine-2,"2Part0Slice --> FF&E
+FFE-CoffeeMachine-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-CoffeeMachine-2/FFE-CoffeeMachine-2-Merged.FFE-CoffeeMachine-2-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-CoffeeMachine-3",,2Part0Slice --> FF&E,,FFE-CoffeeMachine-3,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-CoffeeMachine-3/FFE-CoffeeMachine-3-Merged.FFE-CoffeeMachine-3-Merged',
+FFE-CoffeeMachine-3",,2Part0Slice --> FF&E,,FFE-CoffeeMachine-3,"2Part0Slice --> FF&E
+FFE-CoffeeMachine-3",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-CoffeeMachine-3/FFE-CoffeeMachine-3-Merged.FFE-CoffeeMachine-3-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Toaster-01",,2Part0Slice --> FF&E,,FFE-Toaster-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Toaster-01/FFE-Toaster-01-Merged.FFE-Toaster-01-Merged',
+FFE-Toaster-01",,2Part0Slice --> FF&E,,FFE-Toaster-01,"2Part0Slice --> FF&E
+FFE-Toaster-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Toaster-01/FFE-Toaster-01-Merged.FFE-Toaster-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Toaster-02",,2Part0Slice --> FF&E,,FFE-Toaster-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Toaster-02/FFE-Toaster-02.FFE-Toaster-02',
+FFE-Toaster-02",,2Part0Slice --> FF&E,,FFE-Toaster-02,"2Part0Slice --> FF&E
+FFE-Toaster-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Toaster-02/FFE-Toaster-02.FFE-Toaster-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-BBQ-Grill-01",,2Part0Slice --> FF&E,,FFE-BBQ-Grill-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-BBQ-Grill-01/FFE-BBQ-Grill-01.FFE-BBQ-Grill-01',
+FFE-BBQ-Grill-01",,2Part0Slice --> FF&E,,FFE-BBQ-Grill-01,"2Part0Slice --> FF&E
+FFE-BBQ-Grill-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-BBQ-Grill-01/FFE-BBQ-Grill-01.FFE-BBQ-Grill-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Wall-01",,2Part0Slice --> FF&E,,FFE-Light-Wall-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Wall-01/FFE-Light-Wall-01.FFE-Light-Wall-01',
+FFE-Light-Wall-01",,2Part0Slice --> FF&E,,FFE-Light-Wall-01,"2Part0Slice --> FF&E
+FFE-Light-Wall-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Wall-01/FFE-Light-Wall-01.FFE-Light-Wall-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Wall-02",,2Part0Slice --> FF&E,,FFE-Light-Wall-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Wall-02/FFE-Light-Wall-02.FFE-Light-Wall-02',
+FFE-Light-Wall-02",,2Part0Slice --> FF&E,,FFE-Light-Wall-02,"2Part0Slice --> FF&E
+FFE-Light-Wall-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Wall-02/FFE-Light-Wall-02.FFE-Light-Wall-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-RecessedCan-01",,2Part0Slice --> FF&E,,FFE-Light-RecessedCan-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-RecessedCan-01/FFE-Light-RecessedCan-01-Merged.FFE-Light-RecessedCan-01-Merged',
+FFE-Light-RecessedCan-01",,2Part0Slice --> FF&E,,FFE-Light-RecessedCan-01,"2Part0Slice --> FF&E
+FFE-Light-RecessedCan-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-RecessedCan-01/FFE-Light-RecessedCan-01-Merged.FFE-Light-RecessedCan-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-RecessedCan-02",,2Part0Slice --> FF&E,,FFE-Light-RecessedCan-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-RecessedCan-02/FFE-Light-RecessedCan-02-Merged.FFE-Light-RecessedCan-02-Merged',
+FFE-Light-RecessedCan-02",,2Part0Slice --> FF&E,,FFE-Light-RecessedCan-02,"2Part0Slice --> FF&E
+FFE-Light-RecessedCan-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-RecessedCan-02/FFE-Light-RecessedCan-02-Merged.FFE-Light-RecessedCan-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Ceiling-01",,2Part0Slice --> FF&E,,FFE-Light-Ceiling-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Ceiling-01/FFE-Light-Ceiling-01.FFE-Light-Ceiling-01',
+FFE-Light-Ceiling-01",,2Part0Slice --> FF&E,,FFE-Light-Ceiling-01,"2Part0Slice --> FF&E
+FFE-Light-Ceiling-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Ceiling-01/FFE-Light-Ceiling-01.FFE-Light-Ceiling-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Ceiling-02",,2Part0Slice --> FF&E,,FFE-Light-Ceiling-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Ceiling-02/FFE-Light-Ceiling-02.FFE-Light-Ceiling-02',
+FFE-Light-Ceiling-02",,2Part0Slice --> FF&E,,FFE-Light-Ceiling-02,"2Part0Slice --> FF&E
+FFE-Light-Ceiling-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Ceiling-02/FFE-Light-Ceiling-02.FFE-Light-Ceiling-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Ceiling-03",,2Part0Slice --> FF&E,,FFE-Light-Ceiling-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Ceiling-03/FFE-Light-Ceiling-03.FFE-Light-Ceiling-03',
+FFE-Light-Ceiling-03",,2Part0Slice --> FF&E,,FFE-Light-Ceiling-03,"2Part0Slice --> FF&E
+FFE-Light-Ceiling-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Ceiling-03/FFE-Light-Ceiling-03.FFE-Light-Ceiling-03',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Ceiling-04",,2Part0Slice --> FF&E,,FFE-Light-Ceiling-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Ceiling-04/FFE-Light-Ceiling-4-Merged.FFE-Light-Ceiling-4-Merged',
+FFE-Light-Ceiling-04",,2Part0Slice --> FF&E,,FFE-Light-Ceiling-04,"2Part0Slice --> FF&E
+FFE-Light-Ceiling-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Ceiling-04/FFE-Light-Ceiling-4-Merged.FFE-Light-Ceiling-4-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Ceiling-05",,2Part0Slice --> FF&E,,FFE-Light-Ceiling-05,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Ceiling-05/FFE-Light-Ceiling-5-Merged.FFE-Light-Ceiling-5-Merged',
+FFE-Light-Ceiling-05",,2Part0Slice --> FF&E,,FFE-Light-Ceiling-05,"2Part0Slice --> FF&E
+FFE-Light-Ceiling-05",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Ceiling-05/FFE-Light-Ceiling-5-Merged.FFE-Light-Ceiling-5-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Floor-01",,2Part0Slice --> FF&E,,FFE-Light-Floor-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Floor-01/FFE-Light-Floor-01.FFE-Light-Floor-01',
+FFE-Light-Floor-01",,2Part0Slice --> FF&E,,FFE-Light-Floor-01,"2Part0Slice --> FF&E
+FFE-Light-Floor-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Floor-01/FFE-Light-Floor-01.FFE-Light-Floor-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Floor-02",,2Part0Slice --> FF&E,,FFE-Light-Floor-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Floor-02/FFE-Light-Floor-02.FFE-Light-Floor-02',
+FFE-Light-Floor-02",,2Part0Slice --> FF&E,,FFE-Light-Floor-02,"2Part0Slice --> FF&E
+FFE-Light-Floor-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Floor-02/FFE-Light-Floor-02.FFE-Light-Floor-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Floor-03",,2Part0Slice --> FF&E,,FFE-Light-Floor-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Floor-03/FFE-Light-Floor-03.FFE-Light-Floor-03',
+FFE-Light-Floor-03",,2Part0Slice --> FF&E,,FFE-Light-Floor-03,"2Part0Slice --> FF&E
+FFE-Light-Floor-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Floor-03/FFE-Light-Floor-03.FFE-Light-Floor-03',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Floor-04",,2Part0Slice --> FF&E,,FFE-Light-Floor-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Floor-04/FFE-Light-Floor-4-Merged.FFE-Light-Floor-4-Merged',
+FFE-Light-Floor-04",,2Part0Slice --> FF&E,,FFE-Light-Floor-04,"2Part0Slice --> FF&E
+FFE-Light-Floor-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Floor-04/FFE-Light-Floor-4-Merged.FFE-Light-Floor-4-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Floor-05",,2Part0Slice --> FF&E,,FFE-Light-Floor-05,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Floor-05/FFE-Light-Floor-5-Merged.FFE-Light-Floor-5-Merged',
+FFE-Light-Floor-05",,2Part0Slice --> FF&E,,FFE-Light-Floor-05,"2Part0Slice --> FF&E
+FFE-Light-Floor-05",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Floor-05/FFE-Light-Floor-5-Merged.FFE-Light-Floor-5-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Table-01",,2Part0Slice --> FF&E,,FFE-Light-Table-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Table-01/FFE-Light-Table-01.FFE-Light-Table-01',
+FFE-Light-Table-01",,2Part0Slice --> FF&E,,FFE-Light-Table-01,"2Part0Slice --> FF&E
+FFE-Light-Table-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Table-01/FFE-Light-Table-01.FFE-Light-Table-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Table-02",,2Part0Slice --> FF&E,,FFE-Light-Table-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Table-02/FFE-Light-Table-2-Merged.FFE-Light-Table-2-Merged',
+FFE-Light-Table-02",,2Part0Slice --> FF&E,,FFE-Light-Table-02,"2Part0Slice --> FF&E
+FFE-Light-Table-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Table-02/FFE-Light-Table-2-Merged.FFE-Light-Table-2-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Table-03",,2Part0Slice --> FF&E,,FFE-Light-Table-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Table-03/FFE-Light-Table-03.FFE-Light-Table-03',
+FFE-Light-Table-03",,2Part0Slice --> FF&E,,FFE-Light-Table-03,"2Part0Slice --> FF&E
+FFE-Light-Table-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Table-03/FFE-Light-Table-03.FFE-Light-Table-03',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Light-Table-04",,2Part0Slice --> FF&E,,FFE-Light-Table-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Table-04/FFE-Light-Table-04.FFE-Light-Table-04',
+FFE-Light-Table-04",,2Part0Slice --> FF&E,,FFE-Light-Table-04,"2Part0Slice --> FF&E
+FFE-Light-Table-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Light-Table-04/FFE-Light-Table-04.FFE-Light-Table-04',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sink-01",,2Part0Slice --> FF&E,,FFE-Sink-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sink-01/FFE-Sink-01.FFE-Sink-01',
+FFE-Sink-01",,2Part0Slice --> FF&E,,FFE-Sink-01,"2Part0Slice --> FF&E
+FFE-Sink-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sink-01/FFE-Sink-01.FFE-Sink-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sink-02",,2Part0Slice --> FF&E,,FFE-Sink-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sink-02/FFE-Sink-02.FFE-Sink-02',
+FFE-Sink-02",,2Part0Slice --> FF&E,,FFE-Sink-02,"2Part0Slice --> FF&E
+FFE-Sink-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sink-02/FFE-Sink-02.FFE-Sink-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sink-03",,2Part0Slice --> FF&E,,FFE-Sink-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sink-03/FFE-Sink-3-Merged.FFE-Sink-3-Merged',
+FFE-Sink-03",,2Part0Slice --> FF&E,,FFE-Sink-03,"2Part0Slice --> FF&E
+FFE-Sink-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sink-03/FFE-Sink-3-Merged.FFE-Sink-3-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sink-04",,2Part0Slice --> FF&E,,FFE-Sink-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sink-04/FFE-Sink-4-Merged.FFE-Sink-4-Merged',
+FFE-Sink-04",,2Part0Slice --> FF&E,,FFE-Sink-04,"2Part0Slice --> FF&E
+FFE-Sink-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sink-04/FFE-Sink-4-Merged.FFE-Sink-4-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sink-Rectangular-01",,2Part0Slice --> FF&E,,FFE-Sink-Rectangular-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sink-Rectangular-01/FFE-Sink-Rectangular-1-Merged.FFE-Sink-Rectangular-1-Merged',
+FFE-Sink-Rectangular-01",,2Part0Slice --> FF&E,,FFE-Sink-Rectangular-01,"2Part0Slice --> FF&E
+FFE-Sink-Rectangular-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sink-Rectangular-01/FFE-Sink-Rectangular-1-Merged.FFE-Sink-Rectangular-1-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Sink-Rectangular-02",,2Part0Slice --> FF&E,,FFE-Sink-Rectangular-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sink-Rectangular-02/FFE-Sink-Rectangular-2-Merged.FFE-Sink-Rectangular-2-Merged',
+FFE-Sink-Rectangular-02",,2Part0Slice --> FF&E,,FFE-Sink-Rectangular-02,"2Part0Slice --> FF&E
+FFE-Sink-Rectangular-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Sink-Rectangular-02/FFE-Sink-Rectangular-2-Merged.FFE-Sink-Rectangular-2-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Faucet-Automatic-01",,2Part0Slice --> FF&E,,FFE-Faucet-Automatic-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Faucet-Automatic-01/FFE-Faucet-Automatic-01-Merged.FFE-Faucet-Automatic-01-Merged',
+FFE-Faucet-Automatic-01",,2Part0Slice --> FF&E,,FFE-Faucet-Automatic-01,"2Part0Slice --> FF&E
+FFE-Faucet-Automatic-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Faucet-Automatic-01/FFE-Faucet-Automatic-01-Merged.FFE-Faucet-Automatic-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Faucet-Gooseneck-01",,2Part0Slice --> FF&E,,FFE-Faucet-Gooseneck-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Faucet-Gooseneck-01/FFE-Faucet-Gooseneck-01-Merged.FFE-Faucet-Gooseneck-01-Merged',
+FFE-Faucet-Gooseneck-01",,2Part0Slice --> FF&E,,FFE-Faucet-Gooseneck-01,"2Part0Slice --> FF&E
+FFE-Faucet-Gooseneck-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Faucet-Gooseneck-01/FFE-Faucet-Gooseneck-01-Merged.FFE-Faucet-Gooseneck-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Faucet-Gooseneck-02",,2Part0Slice --> FF&E,,FFE-Faucet-Gooseneck-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Faucet-Gooseneck-02/FFE-Faucet-Gooseneck-02.FFE-Faucet-Gooseneck-02',
+FFE-Faucet-Gooseneck-02",,2Part0Slice --> FF&E,,FFE-Faucet-Gooseneck-02,"2Part0Slice --> FF&E
+FFE-Faucet-Gooseneck-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Faucet-Gooseneck-02/FFE-Faucet-Gooseneck-02.FFE-Faucet-Gooseneck-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-SoapDispenser-01",,2Part0Slice --> FF&E,,FFE-SoapDispenser-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-SoapDispenser-01/FFE-SoapDispenser-01.FFE-SoapDispenser-01',
+FFE-SoapDispenser-01",,2Part0Slice --> FF&E,,FFE-SoapDispenser-01,"2Part0Slice --> FF&E
+FFE-SoapDispenser-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-SoapDispenser-01/FFE-SoapDispenser-01.FFE-SoapDispenser-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-SoapDispenser-02",,2Part0Slice --> FF&E,,FFE-SoapDispenser-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-SoapDispenser-02/FFE-SoapDispenser-02-Merged.FFE-SoapDispenser-02-Merged',
+FFE-SoapDispenser-02",,2Part0Slice --> FF&E,,FFE-SoapDispenser-02,"2Part0Slice --> FF&E
+FFE-SoapDispenser-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-SoapDispenser-02/FFE-SoapDispenser-02-Merged.FFE-SoapDispenser-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Showerhead-1",,2Part0Slice --> FF&E,,FFE-Showerhead-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Showerhead-1/FFE-Showerhead-1.FFE-Showerhead-1',
+FFE-Showerhead-1",,2Part0Slice --> FF&E,,FFE-Showerhead-1,"2Part0Slice --> FF&E
+FFE-Showerhead-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Showerhead-1/FFE-Showerhead-1.FFE-Showerhead-1',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Showerhead-2",,2Part0Slice --> FF&E,,FFE-Showerhead-2,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Showerhead-2/FFE-Showerhead-2.FFE-Showerhead-2',
+FFE-Showerhead-2",,2Part0Slice --> FF&E,,FFE-Showerhead-2,"2Part0Slice --> FF&E
+FFE-Showerhead-2",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Showerhead-2/FFE-Showerhead-2.FFE-Showerhead-2',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Showerhead-3",,2Part0Slice --> FF&E,,FFE-Showerhead-3,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Showerhead-3/FFE-Showerhead-3.FFE-Showerhead-3',
+FFE-Showerhead-3",,2Part0Slice --> FF&E,,FFE-Showerhead-3,"2Part0Slice --> FF&E
+FFE-Showerhead-3",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Showerhead-3/FFE-Showerhead-3.FFE-Showerhead-3',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Showerhead-4",,2Part0Slice --> FF&E,,FFE-Showerhead-4,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Showerhead-4/FFE-Showerhead-4.FFE-Showerhead-4',
+FFE-Showerhead-4",,2Part0Slice --> FF&E,,FFE-Showerhead-4,"2Part0Slice --> FF&E
+FFE-Showerhead-4",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Showerhead-4/FFE-Showerhead-4.FFE-Showerhead-4',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Showerhead-5",,2Part0Slice --> FF&E,,FFE-Showerhead-5,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Showerhead-5/FFE-Showerhead-5.FFE-Showerhead-5',
+FFE-Showerhead-5",,2Part0Slice --> FF&E,,FFE-Showerhead-5,"2Part0Slice --> FF&E
+FFE-Showerhead-5",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Showerhead-5/FFE-Showerhead-5.FFE-Showerhead-5',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Bathtub-01",,2Part0Slice --> FF&E,,FFE-Bathtub-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bathtub-01/FFE-Bathtub-01.FFE-Bathtub-01',
+FFE-Bathtub-01",,2Part0Slice --> FF&E,,FFE-Bathtub-01,"2Part0Slice --> FF&E
+FFE-Bathtub-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Bathtub-01/FFE-Bathtub-01.FFE-Bathtub-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Toilet-01",,2Part0Slice --> FF&E,,FFE-Toilet-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Toilet-01/FFE-Toilet-01.FFE-Toilet-01',
+FFE-Toilet-01",,2Part0Slice --> FF&E,,FFE-Toilet-01,"2Part0Slice --> FF&E
+FFE-Toilet-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Toilet-01/FFE-Toilet-01.FFE-Toilet-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Toilet-02",,2Part0Slice --> FF&E,,FFE-Toilet-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Toilet-02/FFE-Toilet-02.FFE-Toilet-02',
+FFE-Toilet-02",,2Part0Slice --> FF&E,,FFE-Toilet-02,"2Part0Slice --> FF&E
+FFE-Toilet-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Toilet-02/FFE-Toilet-02.FFE-Toilet-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-GrabBar-01",,2Part0Slice --> FF&E,,FFE-GrabBar-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-GrabBar-01/FFE-GrabBar-01.FFE-GrabBar-01',
+FFE-GrabBar-01",,2Part0Slice --> FF&E,,FFE-GrabBar-01,"2Part0Slice --> FF&E
+FFE-GrabBar-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-GrabBar-01/FFE-GrabBar-01.FFE-GrabBar-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-GrabBar-02",,2Part0Slice --> FF&E,,FFE-GrabBar-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-GrabBar-02/FFE-GrabBar-02.FFE-GrabBar-02',
+FFE-GrabBar-02",,2Part0Slice --> FF&E,,FFE-GrabBar-02,"2Part0Slice --> FF&E
+FFE-GrabBar-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-GrabBar-02/FFE-GrabBar-02.FFE-GrabBar-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-GrabBar-03",,2Part0Slice --> FF&E,,FFE-GrabBar-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-GrabBar-03/FFE-GrabBar-03.FFE-GrabBar-03',
+FFE-GrabBar-03",,2Part0Slice --> FF&E,,FFE-GrabBar-03,"2Part0Slice --> FF&E
+FFE-GrabBar-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-GrabBar-03/FFE-GrabBar-03.FFE-GrabBar-03',
 PRESET,,"2Part0Slice --> FF&E
-FFE-TowelBar-01",,2Part0Slice --> FF&E,,FFE-TowelBar-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-TowelBar-01/FFE-TowelBar-01.FFE-TowelBar-01',
+FFE-TowelBar-01",,2Part0Slice --> FF&E,,FFE-TowelBar-01,"2Part0Slice --> FF&E
+FFE-TowelBar-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-TowelBar-01/FFE-TowelBar-01.FFE-TowelBar-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-TowelBar-02",,2Part0Slice --> FF&E,,FFE-TowelBar-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-TowelBar-02/FFE-TowelBar-02.FFE-TowelBar-02',
+FFE-TowelBar-02",,2Part0Slice --> FF&E,,FFE-TowelBar-02,"2Part0Slice --> FF&E
+FFE-TowelBar-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-TowelBar-02/FFE-TowelBar-02.FFE-TowelBar-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Mirror-01",,2Part0Slice --> FF&E,,FFE-Mirror-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Mirror-01/FFE-Mirror-01.FFE-Mirror-01',
+FFE-Mirror-01",,2Part0Slice --> FF&E,,FFE-Mirror-01,"2Part0Slice --> FF&E
+FFE-Mirror-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Mirror-01/FFE-Mirror-01.FFE-Mirror-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Mirror-02",,2Part0Slice --> FF&E,,FFE-Mirror-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Mirror-02/FFE-Mirror-02.FFE-Mirror-02',
+FFE-Mirror-02",,2Part0Slice --> FF&E,,FFE-Mirror-02,"2Part0Slice --> FF&E
+FFE-Mirror-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Mirror-02/FFE-Mirror-02.FFE-Mirror-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Mirror-03",,2Part0Slice --> FF&E,,FFE-Mirror-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Mirror-03/FFE-Mirror-03.FFE-Mirror-03',
+FFE-Mirror-03",,2Part0Slice --> FF&E,,FFE-Mirror-03,"2Part0Slice --> FF&E
+FFE-Mirror-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Mirror-03/FFE-Mirror-03.FFE-Mirror-03',
 PRESET,,"2Part0Slice --> FF&E
-FFE-HandDryer-01",,2Part0Slice --> FF&E,,FFE-HandDryer-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-HandDryer-01/FFE-HandDryer-01-Merged.FFE-HandDryer-01-Merged',
+FFE-HandDryer-01",,2Part0Slice --> FF&E,,FFE-HandDryer-01,"2Part0Slice --> FF&E
+FFE-HandDryer-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-HandDryer-01/FFE-HandDryer-01-Merged.FFE-HandDryer-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-HandDryer-02",,2Part0Slice --> FF&E,,FFE-HandDryer-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-HandDryer-02/FFE-HandDryer-02-Merged.FFE-HandDryer-02-Merged',
+FFE-HandDryer-02",,2Part0Slice --> FF&E,,FFE-HandDryer-02,"2Part0Slice --> FF&E
+FFE-HandDryer-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-HandDryer-02/FFE-HandDryer-02-Merged.FFE-HandDryer-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-PaperTowelDispenser-01",,2Part0Slice --> FF&E,,FFE-PaperTowelDispenser-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-PaperTowelDispenser-01/FFE-PaperTowelDispenser-01-Merged.FFE-PaperTowelDispenser-01-Merged',
+FFE-PaperTowelDispenser-01",,2Part0Slice --> FF&E,,FFE-PaperTowelDispenser-01,"2Part0Slice --> FF&E
+FFE-PaperTowelDispenser-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-PaperTowelDispenser-01/FFE-PaperTowelDispenser-01-Merged.FFE-PaperTowelDispenser-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-LaundryWasher-1",,2Part0Slice --> FF&E,,FFE-LaundryWasher-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-LaundryWasher-1/FFE-LaundryWasher-1.FFE-LaundryWasher-1',
+FFE-LaundryWasher-1",,2Part0Slice --> FF&E,,FFE-LaundryWasher-1,"2Part0Slice --> FF&E
+FFE-LaundryWasher-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-LaundryWasher-1/FFE-LaundryWasher-1.FFE-LaundryWasher-1',
 PRESET,,"2Part0Slice --> FF&E
-FFE-LaundryDryer-1",,2Part0Slice --> FF&E,,FFE-LaundryDryer-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-LaundryDryer-1/FFE-LaundryDryer-1.FFE-LaundryDryer-1',
+FFE-LaundryDryer-1",,2Part0Slice --> FF&E,,FFE-LaundryDryer-1,"2Part0Slice --> FF&E
+FFE-LaundryDryer-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-LaundryDryer-1/FFE-LaundryDryer-1.FFE-LaundryDryer-1',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Electrical-Outlet-01",,2Part0Slice --> FF&E,,FFE-Electrical-Outlet-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Outlet-01/FFE-Electrical-Outlet-01-Merged.FFE-Electrical-Outlet-01-Merged',
+FFE-Electrical-Outlet-01",,2Part0Slice --> FF&E,,FFE-Electrical-Outlet-01,"2Part0Slice --> FF&E
+FFE-Electrical-Outlet-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Outlet-01/FFE-Electrical-Outlet-01-Merged.FFE-Electrical-Outlet-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Electrical-Outlet-02",,2Part0Slice --> FF&E,,FFE-Electrical-Outlet-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Outlet-02/FFE-Electrical-Outlet-02-Merged.FFE-Electrical-Outlet-02-Merged',
+FFE-Electrical-Outlet-02",,2Part0Slice --> FF&E,,FFE-Electrical-Outlet-02,"2Part0Slice --> FF&E
+FFE-Electrical-Outlet-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Outlet-02/FFE-Electrical-Outlet-02-Merged.FFE-Electrical-Outlet-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Electrical-Outlet-03",,2Part0Slice --> FF&E,,FFE-Electrical-Outlet-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Outlet-03/FFE-Electrical-Outlet-03-Merged.FFE-Electrical-Outlet-03-Merged',
+FFE-Electrical-Outlet-03",,2Part0Slice --> FF&E,,FFE-Electrical-Outlet-03,"2Part0Slice --> FF&E
+FFE-Electrical-Outlet-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Outlet-03/FFE-Electrical-Outlet-03-Merged.FFE-Electrical-Outlet-03-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Electrical-Switch-01",,2Part0Slice --> FF&E,,FFE-Electrical-Switch-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Switch-01/FFE-Electrical-Switch-01-Merged.FFE-Electrical-Switch-01-Merged',
+FFE-Electrical-Switch-01",,2Part0Slice --> FF&E,,FFE-Electrical-Switch-01,"2Part0Slice --> FF&E
+FFE-Electrical-Switch-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Switch-01/FFE-Electrical-Switch-01-Merged.FFE-Electrical-Switch-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Electrical-Switch-02",,2Part0Slice --> FF&E,,FFE-Electrical-Switch-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Switch-02/FFE-Electrical-Switch-02-Merged.FFE-Electrical-Switch-02-Merged',
+FFE-Electrical-Switch-02",,2Part0Slice --> FF&E,,FFE-Electrical-Switch-02,"2Part0Slice --> FF&E
+FFE-Electrical-Switch-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Switch-02/FFE-Electrical-Switch-02-Merged.FFE-Electrical-Switch-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Electrical-Switch-03",,2Part0Slice --> FF&E,,FFE-Electrical-Switch-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Switch-03/FFE-Electrical-Switch-03-Merged.FFE-Electrical-Switch-03-Merged',
+FFE-Electrical-Switch-03",,2Part0Slice --> FF&E,,FFE-Electrical-Switch-03,"2Part0Slice --> FF&E
+FFE-Electrical-Switch-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Switch-03/FFE-Electrical-Switch-03-Merged.FFE-Electrical-Switch-03-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Electrical-Switch-04",,2Part0Slice --> FF&E,,FFE-Electrical-Switch-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Switch-04/FFE-Electrical-Switch-04-Merged.FFE-Electrical-Switch-04-Merged',
+FFE-Electrical-Switch-04",,2Part0Slice --> FF&E,,FFE-Electrical-Switch-04,"2Part0Slice --> FF&E
+FFE-Electrical-Switch-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Electrical-Switch-04/FFE-Electrical-Switch-04-Merged.FFE-Electrical-Switch-04-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Security-Camera-01",,2Part0Slice --> FF&E,,FFE-Security-Camera-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Security-Camera-01/FFE-Security-Camera-01-Merged.FFE-Security-Camera-01-Merged',
+FFE-Security-Camera-01",,2Part0Slice --> FF&E,,FFE-Security-Camera-01,"2Part0Slice --> FF&E
+FFE-Security-Camera-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Security-Camera-01/FFE-Security-Camera-01-Merged.FFE-Security-Camera-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Security-PeopleCounter-01",,2Part0Slice --> FF&E,,FFE-Security-PeopleCounter-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Security-PeopleCounter-01/FFE-Security-PeopleCounter-01-Merged.FFE-Security-PeopleCounter-01-Merged',
+FFE-Security-PeopleCounter-01",,2Part0Slice --> FF&E,,FFE-Security-PeopleCounter-01,"2Part0Slice --> FF&E
+FFE-Security-PeopleCounter-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Security-PeopleCounter-01/FFE-Security-PeopleCounter-01-Merged.FFE-Security-PeopleCounter-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Ceiling-Speaker-01",,2Part0Slice --> FF&E,,FFE-Ceiling-Speaker-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Ceiling-Speaker-01/FFE-Ceiling-Speaker-01-Merged.FFE-Ceiling-Speaker-01-Merged',
+FFE-Ceiling-Speaker-01",,2Part0Slice --> FF&E,,FFE-Ceiling-Speaker-01,"2Part0Slice --> FF&E
+FFE-Ceiling-Speaker-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Ceiling-Speaker-01/FFE-Ceiling-Speaker-01-Merged.FFE-Ceiling-Speaker-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-HVAC-Ductless-01",,2Part0Slice --> FF&E,,FFE-HVAC-Ductless-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-HVAC-Ductless-01/FFE-HVAC-Ductless-01-Merged.FFE-HVAC-Ductless-01-Merged',
+FFE-HVAC-Ductless-01",,2Part0Slice --> FF&E,,FFE-HVAC-Ductless-01,"2Part0Slice --> FF&E
+FFE-HVAC-Ductless-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-HVAC-Ductless-01/FFE-HVAC-Ductless-01-Merged.FFE-HVAC-Ductless-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Diffuser-Linear-01",,2Part0Slice --> FF&E,,FFE-Diffuser-Linear-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Diffuser-Linear-01/FFE-Diffuser-Linear-01.FFE-Diffuser-Linear-01',
+FFE-Diffuser-Linear-01",,2Part0Slice --> FF&E,,FFE-Diffuser-Linear-01,"2Part0Slice --> FF&E
+FFE-Diffuser-Linear-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Diffuser-Linear-01/FFE-Diffuser-Linear-01.FFE-Diffuser-Linear-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Diffuser-Round-01",,2Part0Slice --> FF&E,,FFE-Diffuser-Round-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Diffuser-Round-01/FFE-Diffuser-Round-01-Merged.FFE-Diffuser-Round-01-Merged',
+FFE-Diffuser-Round-01",,2Part0Slice --> FF&E,,FFE-Diffuser-Round-01,"2Part0Slice --> FF&E
+FFE-Diffuser-Round-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Diffuser-Round-01/FFE-Diffuser-Round-01-Merged.FFE-Diffuser-Round-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Projector-01",,2Part0Slice --> FF&E,,FFE-Projector-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Projector-01/FFE-Projector-01-Merged.FFE-Projector-01-Merged',
+FFE-Projector-01",,2Part0Slice --> FF&E,,FFE-Projector-01,"2Part0Slice --> FF&E
+FFE-Projector-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Projector-01/FFE-Projector-01-Merged.FFE-Projector-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Printer-01",,2Part0Slice --> FF&E,,FFE-Printer-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Printer-01/FFE-Printer-01-Merged.FFE-Printer-01-Merged',
+FFE-Printer-01",,2Part0Slice --> FF&E,,FFE-Printer-01,"2Part0Slice --> FF&E
+FFE-Printer-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Printer-01/FFE-Printer-01-Merged.FFE-Printer-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-TV-1",,2Part0Slice --> FF&E,,FFE-TV-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-TV-1/FFE-TV-1.FFE-TV-1',
+FFE-TV-1",,2Part0Slice --> FF&E,,FFE-TV-1,"2Part0Slice --> FF&E
+FFE-TV-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-TV-1/FFE-TV-1.FFE-TV-1',
 PRESET,,"2Part0Slice --> FF&E
-FFE-WirelessAccessPoint-01",,2Part0Slice --> FF&E,,FFE-WirelessAccessPoint-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-WirelessAccessPoint-01/FFE-WirelessAccessPoint-01.FFE-WirelessAccessPoint-01',
+FFE-WirelessAccessPoint-01",,2Part0Slice --> FF&E,,FFE-WirelessAccessPoint-01,"2Part0Slice --> FF&E
+FFE-WirelessAccessPoint-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-WirelessAccessPoint-01/FFE-WirelessAccessPoint-01.FFE-WirelessAccessPoint-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Equipment-Computer-01",,2Part0Slice --> FF&E,,FFE-Equipment-Computer-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Equipment-Computer-01/FFE-Equipment-Computer-01-Merged.FFE-Equipment-Computer-01-Merged',
+FFE-Equipment-Computer-01",,2Part0Slice --> FF&E,,FFE-Equipment-Computer-01,"2Part0Slice --> FF&E
+FFE-Equipment-Computer-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Equipment-Computer-01/FFE-Equipment-Computer-01-Merged.FFE-Equipment-Computer-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Equipment-Computer-02",,2Part0Slice --> FF&E,,FFE-Equipment-Computer-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Equipment-Computer-02/FFE-Equipment-Computer-02-Merged.FFE-Equipment-Computer-02-Merged',
+FFE-Equipment-Computer-02",,2Part0Slice --> FF&E,,FFE-Equipment-Computer-02,"2Part0Slice --> FF&E
+FFE-Equipment-Computer-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Equipment-Computer-02/FFE-Equipment-Computer-02-Merged.FFE-Equipment-Computer-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Equipment-Computer-03",,2Part0Slice --> FF&E,,FFE-Equipment-Computer-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Equipment-Computer-03/FFE-Equipment-Computer-03-Merged.FFE-Equipment-Computer-03-Merged',
+FFE-Equipment-Computer-03",,2Part0Slice --> FF&E,,FFE-Equipment-Computer-03,"2Part0Slice --> FF&E
+FFE-Equipment-Computer-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Equipment-Computer-03/FFE-Equipment-Computer-03-Merged.FFE-Equipment-Computer-03-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Fire-Extinguisher-01",,2Part0Slice --> FF&E,,FFE-Fire-Extinguisher-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Extinguisher-01/FFE-Fire-Extinguisher-01-Merged.FFE-Fire-Extinguisher-01-Merged',
+FFE-Fire-Extinguisher-01",,2Part0Slice --> FF&E,,FFE-Fire-Extinguisher-01,"2Part0Slice --> FF&E
+FFE-Fire-Extinguisher-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Extinguisher-01/FFE-Fire-Extinguisher-01-Merged.FFE-Fire-Extinguisher-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Fire-Extinguisher-02",,2Part0Slice --> FF&E,,FFE-Fire-Extinguisher-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Extinguisher-01/FFE-Fire-Extinguisher-02-Merged.FFE-Fire-Extinguisher-02-Merged',
+FFE-Fire-Extinguisher-02",,2Part0Slice --> FF&E,,FFE-Fire-Extinguisher-02,"2Part0Slice --> FF&E
+FFE-Fire-Extinguisher-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Extinguisher-01/FFE-Fire-Extinguisher-02-Merged.FFE-Fire-Extinguisher-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Fire-Extinguisher-03",,2Part0Slice --> FF&E,,FFE-Fire-Extinguisher-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Extinguisher-03/FFE-Fire-Extinguisher-03-Merged.FFE-Fire-Extinguisher-03-Merged',
+FFE-Fire-Extinguisher-03",,2Part0Slice --> FF&E,,FFE-Fire-Extinguisher-03,"2Part0Slice --> FF&E
+FFE-Fire-Extinguisher-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Extinguisher-03/FFE-Fire-Extinguisher-03-Merged.FFE-Fire-Extinguisher-03-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Fire-SmokeDetector-01",,2Part0Slice --> FF&E,,FFE-Fire-SmokeDetector-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-SmokeDetector-01/FFE-Fire-SmokeDetector-01-Merged.FFE-Fire-SmokeDetector-01-Merged',
+FFE-Fire-SmokeDetector-01",,2Part0Slice --> FF&E,,FFE-Fire-SmokeDetector-01,"2Part0Slice --> FF&E
+FFE-Fire-SmokeDetector-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-SmokeDetector-01/FFE-Fire-SmokeDetector-01-Merged.FFE-Fire-SmokeDetector-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Fire-SmokeDetector-02",,2Part0Slice --> FF&E,,FFE-Fire-SmokeDetector-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-SmokeDetector-02/FFE-Fire-SmokeDetector-02-Merged.FFE-Fire-SmokeDetector-02-Merged',
+FFE-Fire-SmokeDetector-02",,2Part0Slice --> FF&E,,FFE-Fire-SmokeDetector-02,"2Part0Slice --> FF&E
+FFE-Fire-SmokeDetector-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-SmokeDetector-02/FFE-Fire-SmokeDetector-02-Merged.FFE-Fire-SmokeDetector-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Fire-HeatDetector-01",,2Part0Slice --> FF&E,,FFE-Fire-HeatDetector-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-HeatDetector-01/FFE-Fire-HeatDetector-01-Merged.FFE-Fire-HeatDetector-01-Merged',
+FFE-Fire-HeatDetector-01",,2Part0Slice --> FF&E,,FFE-Fire-HeatDetector-01,"2Part0Slice --> FF&E
+FFE-Fire-HeatDetector-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-HeatDetector-01/FFE-Fire-HeatDetector-01-Merged.FFE-Fire-HeatDetector-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Fire-SprinklerHead-01",,2Part0Slice --> FF&E,,FFE-Fire-SprinklerHead-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-SprinklerHead-01/FFE-Fire-SprinklerHead-01-Merged.FFE-Fire-SprinklerHead-01-Merged',
+FFE-Fire-SprinklerHead-01",,2Part0Slice --> FF&E,,FFE-Fire-SprinklerHead-01,"2Part0Slice --> FF&E
+FFE-Fire-SprinklerHead-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-SprinklerHead-01/FFE-Fire-SprinklerHead-01-Merged.FFE-Fire-SprinklerHead-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Fire-Alarm-Pull-01",,2Part0Slice --> FF&E,,FFE-Fire-Alarm-Pull-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Alarm-Pull-01/FFE-Fire-Alarm-Pull-01-Merged.FFE-Fire-Alarm-Pull-01-Merged',
+FFE-Fire-Alarm-Pull-01",,2Part0Slice --> FF&E,,FFE-Fire-Alarm-Pull-01,"2Part0Slice --> FF&E
+FFE-Fire-Alarm-Pull-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Alarm-Pull-01/FFE-Fire-Alarm-Pull-01-Merged.FFE-Fire-Alarm-Pull-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Fire-Alarm-Bell-01",,2Part0Slice --> FF&E,,FFE-Fire-Alarm-Bell-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Alarm-Bell-01/FFE-Fire-Alarm-Bell-01-Merged.FFE-Fire-Alarm-Bell-01-Merged',
+FFE-Fire-Alarm-Bell-01",,2Part0Slice --> FF&E,,FFE-Fire-Alarm-Bell-01,"2Part0Slice --> FF&E
+FFE-Fire-Alarm-Bell-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Alarm-Bell-01/FFE-Fire-Alarm-Bell-01-Merged.FFE-Fire-Alarm-Bell-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Fire-Alarm-Light-01",,2Part0Slice --> FF&E,,FFE-Fire-Alarm-Light-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Alarm-Light-01/FFE-Fire-Alarm-Light-01-Merged.FFE-Fire-Alarm-Light-01-Merged',
+FFE-Fire-Alarm-Light-01",,2Part0Slice --> FF&E,,FFE-Fire-Alarm-Light-01,"2Part0Slice --> FF&E
+FFE-Fire-Alarm-Light-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Alarm-Light-01/FFE-Fire-Alarm-Light-01-Merged.FFE-Fire-Alarm-Light-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Fire-Alarm-Speaker-01",,2Part0Slice --> FF&E,,FFE-Fire-Alarm-Speaker-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Alarm-Speaker-01/FFE-Fire-Alarm-Speaker-01-Merged.FFE-Fire-Alarm-Speaker-01-Merged',
+FFE-Fire-Alarm-Speaker-01",,2Part0Slice --> FF&E,,FFE-Fire-Alarm-Speaker-01,"2Part0Slice --> FF&E
+FFE-Fire-Alarm-Speaker-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-Alarm-Speaker-01/FFE-Fire-Alarm-Speaker-01-Merged.FFE-Fire-Alarm-Speaker-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Fire-ControlPanel-01",,2Part0Slice --> FF&E,,FFE-Fire-ControlPanel-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-ControlPanel-01/FFE-Fire-ControlPanel-01-Merged.FFE-Fire-ControlPanel-01-Merged',
+FFE-Fire-ControlPanel-01",,2Part0Slice --> FF&E,,FFE-Fire-ControlPanel-01,"2Part0Slice --> FF&E
+FFE-Fire-ControlPanel-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Fire-ControlPanel-01/FFE-Fire-ControlPanel-01-Merged.FFE-Fire-ControlPanel-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Vehicle-Car-01",,2Part0Slice --> FF&E,,FFE-Vehicle-Car-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Vehicles-Cars/FFE-Vehicle-Car-01.FFE-Vehicle-Car-01',
+FFE-Vehicle-Car-01",,2Part0Slice --> FF&E,,FFE-Vehicle-Car-01,"2Part0Slice --> FF&E
+FFE-Vehicle-Car-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Vehicles-Cars/FFE-Vehicle-Car-01.FFE-Vehicle-Car-01',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Vehicle-Car-02",,2Part0Slice --> FF&E,,FFE-Vehicle-Car-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Vehicles-Cars/FFE-Vehicle-Car-02.FFE-Vehicle-Car-02',
+FFE-Vehicle-Car-02",,2Part0Slice --> FF&E,,FFE-Vehicle-Car-02,"2Part0Slice --> FF&E
+FFE-Vehicle-Car-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Vehicles-Cars/FFE-Vehicle-Car-02.FFE-Vehicle-Car-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Vehicle-Car-03",,2Part0Slice --> FF&E,,FFE-Vehicle-Car-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Vehicles-Cars/FFE-Vehicle-Car-03.FFE-Vehicle-Car-03',
+FFE-Vehicle-Car-03",,2Part0Slice --> FF&E,,FFE-Vehicle-Car-03,"2Part0Slice --> FF&E
+FFE-Vehicle-Car-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Vehicles-Cars/FFE-Vehicle-Car-03.FFE-Vehicle-Car-03',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-01",,2Part0Slice --> FF&E,,FFE-Decoration-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-01/FFE-Decoration-01-Merged.FFE-Decoration-01-Merged',
+FFE-Decoration-01",,2Part0Slice --> FF&E,,FFE-Decoration-01,"2Part0Slice --> FF&E
+FFE-Decoration-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-01/FFE-Decoration-01-Merged.FFE-Decoration-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-02",,2Part0Slice --> FF&E,,FFE-Decoration-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-02/FFE-Decoration-02-Merged.FFE-Decoration-02-Merged',
+FFE-Decoration-02",,2Part0Slice --> FF&E,,FFE-Decoration-02,"2Part0Slice --> FF&E
+FFE-Decoration-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-02/FFE-Decoration-02-Merged.FFE-Decoration-02-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-03",,2Part0Slice --> FF&E,,FFE-Decoration-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-03/FFE-Decoration-03-Merged.FFE-Decoration-03-Merged',
+FFE-Decoration-03",,2Part0Slice --> FF&E,,FFE-Decoration-03,"2Part0Slice --> FF&E
+FFE-Decoration-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-03/FFE-Decoration-03-Merged.FFE-Decoration-03-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-04",,2Part0Slice --> FF&E,,FFE-Decoration-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-04/FFE-Decoration-04-Merged.FFE-Decoration-04-Merged',
+FFE-Decoration-04",,2Part0Slice --> FF&E,,FFE-Decoration-04,"2Part0Slice --> FF&E
+FFE-Decoration-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-04/FFE-Decoration-04-Merged.FFE-Decoration-04-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-WallShelf-01",,2Part0Slice --> FF&E,,FFE-Decoration-WallShelf-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-WallShelf-01/FFE-Decoration-WallShelf-01-Merged.FFE-Decoration-WallShelf-01-Merged',
+FFE-Decoration-WallShelf-01",,2Part0Slice --> FF&E,,FFE-Decoration-WallShelf-01,"2Part0Slice --> FF&E
+FFE-Decoration-WallShelf-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-WallShelf-01/FFE-Decoration-WallShelf-01-Merged.FFE-Decoration-WallShelf-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-TableSetting-01",,2Part0Slice --> FF&E,,FFE-Decoration-TableSetting-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-TableSetting-01/FFE-Decoration-TableSetting-01-Merged.FFE-Decoration-TableSetting-01-Merged',
+FFE-Decoration-TableSetting-01",,2Part0Slice --> FF&E,,FFE-Decoration-TableSetting-01,"2Part0Slice --> FF&E
+FFE-Decoration-TableSetting-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-TableSetting-01/FFE-Decoration-TableSetting-01-Merged.FFE-Decoration-TableSetting-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Urban-01",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_1.SM_Tree_Urban_1',
+FFE-Plant-Tree-Urban-01",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-01,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Urban-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_1.SM_Tree_Urban_1',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Urban-04",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_4.SM_Tree_Urban_4',
+FFE-Plant-Tree-Urban-04",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-04,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Urban-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_4.SM_Tree_Urban_4',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Urban-10",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-10,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_10.SM_Tree_Urban_10',
+FFE-Plant-Tree-Urban-10",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-10,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Urban-10",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_10.SM_Tree_Urban_10',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Urban-11",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-11,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_11.SM_Tree_Urban_11',
+FFE-Plant-Tree-Urban-11",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-11,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Urban-11",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_11.SM_Tree_Urban_11',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Urban-15",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-15,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_15.SM_Tree_Urban_15',
+FFE-Plant-Tree-Urban-15",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-15,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Urban-15",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_15.SM_Tree_Urban_15',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Urban-16",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-16,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_16.SM_Tree_Urban_16',
+FFE-Plant-Tree-Urban-16",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-16,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Urban-16",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_16.SM_Tree_Urban_16',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Urban-19",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-19,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_19.SM_Tree_Urban_19',
+FFE-Plant-Tree-Urban-19",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-19,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Urban-19",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_19.SM_Tree_Urban_19',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Urban-20",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-20,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_20.SM_Tree_Urban_20',
+FFE-Plant-Tree-Urban-20",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-20,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Urban-20",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_20.SM_Tree_Urban_20',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Urban-21",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-21,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_21.SM_Tree_Urban_21',
+FFE-Plant-Tree-Urban-21",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-21,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Urban-21",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_21.SM_Tree_Urban_21',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Urban-24",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-24,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_24.SM_Tree_Urban_24',
+FFE-Plant-Tree-Urban-24",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-24,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Urban-24",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_24.SM_Tree_Urban_24',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Urban-25",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-25,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_25.SM_Tree_Urban_25',
+FFE-Plant-Tree-Urban-25",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Urban-25,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Urban-25",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Urban_25.SM_Tree_Urban_25',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Fall-09",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Fall-09,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Fall_9.SM_Tree_Fall_9,
+FFE-Plant-Tree-Fall-09",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Fall-09,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Fall-09",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Fall_9.SM_Tree_Fall_9,
 PRESET,,"2Part0Slice --> FF&E
-FFE-Plant-Tree-Fall-10",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Fall-10,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Fall_10.SM_Tree_Fall_10',
+FFE-Plant-Tree-Fall-10",,2Part0Slice --> FF&E,,FFE-Plant-Tree-Fall-10,"2Part0Slice --> FF&E
+FFE-Plant-Tree-Fall-10",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Plants-Trees/SM_Tree_Fall_10.SM_Tree_Fall_10',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Plant-01",,2Part0Slice --> FF&E,,FFE-Decoration-Plant-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Plant-01/FFE-Decoration-Plant-01-Merged.FFE-Decoration-Plant-01-Merged',
+FFE-Decoration-Plant-01",,2Part0Slice --> FF&E,,FFE-Decoration-Plant-01,"2Part0Slice --> FF&E
+FFE-Decoration-Plant-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Plant-01/FFE-Decoration-Plant-01-Merged.FFE-Decoration-Plant-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Plant-02",,2Part0Slice --> FF&E,,FFE-Decoration-Plant-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Plant-02/FFE-Decoration-Plant-02.FFE-Decoration-Plant-02',
+FFE-Decoration-Plant-02",,2Part0Slice --> FF&E,,FFE-Decoration-Plant-02,"2Part0Slice --> FF&E
+FFE-Decoration-Plant-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Plant-02/FFE-Decoration-Plant-02.FFE-Decoration-Plant-02',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Plant-03",,2Part0Slice --> FF&E,,FFE-Decoration-Plant-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Plant-03/FFE-Decoration-Plant-03.FFE-Decoration-Plant-03',
+FFE-Decoration-Plant-03",,2Part0Slice --> FF&E,,FFE-Decoration-Plant-03,"2Part0Slice --> FF&E
+FFE-Decoration-Plant-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Plant-03/FFE-Decoration-Plant-03.FFE-Decoration-Plant-03',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Plant-04",,2Part0Slice --> FF&E,,FFE-Decoration-Plant-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Plant-04/FFE-Decoration-Plant-04.FFE-Decoration-Plant-04',
+FFE-Decoration-Plant-04",,2Part0Slice --> FF&E,,FFE-Decoration-Plant-04,"2Part0Slice --> FF&E
+FFE-Decoration-Plant-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Plant-04/FFE-Decoration-Plant-04.FFE-Decoration-Plant-04',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Plant-05",,2Part0Slice --> FF&E,,FFE-Decoration-Plant-05,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Plant-05/FFE-Decoration-Plant-05.FFE-Decoration-Plant-05',
+FFE-Decoration-Plant-05",,2Part0Slice --> FF&E,,FFE-Decoration-Plant-05,"2Part0Slice --> FF&E
+FFE-Decoration-Plant-05",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Plant-05/FFE-Decoration-Plant-05.FFE-Decoration-Plant-05',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Artwork-01",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-01/FFE-Decoration-Artwork-1-Merged.FFE-Decoration-Artwork-1-Merged',
+FFE-Decoration-Artwork-01",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-01,"2Part0Slice --> FF&E
+FFE-Decoration-Artwork-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-01/FFE-Decoration-Artwork-1-Merged.FFE-Decoration-Artwork-1-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Artwork-02",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-02,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-02/FFE-Decoration-Artwork-2-Merged.FFE-Decoration-Artwork-2-Merged',
+FFE-Decoration-Artwork-02",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-02,"2Part0Slice --> FF&E
+FFE-Decoration-Artwork-02",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-02/FFE-Decoration-Artwork-2-Merged.FFE-Decoration-Artwork-2-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Artwork-03",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-03,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-03/FFE-Decoration-Artwork-03.FFE-Decoration-Artwork-03',
+FFE-Decoration-Artwork-03",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-03,"2Part0Slice --> FF&E
+FFE-Decoration-Artwork-03",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-03/FFE-Decoration-Artwork-03.FFE-Decoration-Artwork-03',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Artwork-04",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-04,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-04/FFE-Decoration-Artwork-04.FFE-Decoration-Artwork-04',
+FFE-Decoration-Artwork-04",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-04,"2Part0Slice --> FF&E
+FFE-Decoration-Artwork-04",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-04/FFE-Decoration-Artwork-04.FFE-Decoration-Artwork-04',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Artwork-05",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-05,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-05/FFE-Decoration-Artwork-05.FFE-Decoration-Artwork-05',
+FFE-Decoration-Artwork-05",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-05,"2Part0Slice --> FF&E
+FFE-Decoration-Artwork-05",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-05/FFE-Decoration-Artwork-05.FFE-Decoration-Artwork-05',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Artwork-06",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-06,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-06/FFE-Decoration-Artwork-06.FFE-Decoration-Artwork-06',
+FFE-Decoration-Artwork-06",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-06,"2Part0Slice --> FF&E
+FFE-Decoration-Artwork-06",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-06/FFE-Decoration-Artwork-06.FFE-Decoration-Artwork-06',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Artwork-07",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-07,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-07/FFE-Decoration-Artwork-07.FFE-Decoration-Artwork-07',
+FFE-Decoration-Artwork-07",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-07,"2Part0Slice --> FF&E
+FFE-Decoration-Artwork-07",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-07/FFE-Decoration-Artwork-07.FFE-Decoration-Artwork-07',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Artwork-08",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-08,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-08/FFE-Decoration-Artwork-08.FFE-Decoration-Artwork-08',
+FFE-Decoration-Artwork-08",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-08,"2Part0Slice --> FF&E
+FFE-Decoration-Artwork-08",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-08/FFE-Decoration-Artwork-08.FFE-Decoration-Artwork-08',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Artwork-09",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-09,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-09/FFE-Decoration-Artwork-09.FFE-Decoration-Artwork-09',
+FFE-Decoration-Artwork-09",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-09,"2Part0Slice --> FF&E
+FFE-Decoration-Artwork-09",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-09/FFE-Decoration-Artwork-09.FFE-Decoration-Artwork-09',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Artwork-10",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-10,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-10/FFE-Decoration-Artwork-10.FFE-Decoration-Artwork-10',
+FFE-Decoration-Artwork-10",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-10,"2Part0Slice --> FF&E
+FFE-Decoration-Artwork-10",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-10/FFE-Decoration-Artwork-10.FFE-Decoration-Artwork-10',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Decoration-Artwork-11",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-11,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-11/FFE-Decoration-Artwork-11.FFE-Decoration-Artwork-11',
+FFE-Decoration-Artwork-11",,2Part0Slice --> FF&E,,FFE-Decoration-Artwork-11,"2Part0Slice --> FF&E
+FFE-Decoration-Artwork-11",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Decoration-Artwork-11/FFE-Decoration-Artwork-11.FFE-Decoration-Artwork-11',
 PRESET,,"2Part0Slice --> FF&E
-FFE-ChalkBoard-01",,2Part0Slice --> FF&E,,FFE-ChalkBoard-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-ChalkBoard-01/FFE-ChalkBoard-01-Merged.FFE-ChalkBoard-01-Merged',
+FFE-ChalkBoard-01",,2Part0Slice --> FF&E,,FFE-ChalkBoard-01,"2Part0Slice --> FF&E
+FFE-ChalkBoard-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-ChalkBoard-01/FFE-ChalkBoard-01-Merged.FFE-ChalkBoard-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Cookware-01",,2Part0Slice --> FF&E,,FFE-Cookware-01,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Cookware-01/FFE-Cookware-01-Merged.FFE-Cookware-01-Merged',
+FFE-Cookware-01",,2Part0Slice --> FF&E,,FFE-Cookware-01,"2Part0Slice --> FF&E
+FFE-Cookware-01",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Cookware-01/FFE-Cookware-01-Merged.FFE-Cookware-01-Merged',
 PRESET,,"2Part0Slice --> FF&E
-FFE-Dining-SaltandPepper-1",,2Part0Slice --> FF&E,,FFE-Dining-SaltandPepper-1,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Dining-SaltandPepper-1/FFE-Dining-SaltandPepper-1-Merged.FFE-Dining-SaltandPepper-1-Merged',
+FFE-Dining-SaltandPepper-1",,2Part0Slice --> FF&E,,FFE-Dining-SaltandPepper-1,"2Part0Slice --> FF&E
+FFE-Dining-SaltandPepper-1",StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Dining-SaltandPepper-1/FFE-Dining-SaltandPepper-1-Merged.FFE-Dining-SaltandPepper-1-Merged',

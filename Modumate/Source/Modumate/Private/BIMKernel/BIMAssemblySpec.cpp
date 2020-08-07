@@ -29,7 +29,7 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollection& PresetC
 		}
 		else
 		{
-			const FCraftingTreeNodeType* nodeType = PresetCollection.NodeDescriptors.Find(preset->NodeType);
+			const FBIMPresetNodeType* nodeType = PresetCollection.NodeDescriptors.Find(preset->NodeType);
 			if (ensureAlways(nodeType != nullptr))
 			{
 				if (nodeType->Scope == EBIMValueScope::Layer)

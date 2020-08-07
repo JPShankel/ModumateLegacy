@@ -1,11 +1,11 @@
-TYPENAME,,,,0DimDiT,,,,,,
-,,,,Definition,,,,,,
+TYPENAME,,0DimDiT,,Dimension,,,,,,
+,,Definition,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,
-PROPERTY,,STRING,,Name,,Preset.ColloquialName,,,,
-PROPERTY,,DIMENSION,,Diameter,,Node.Diameter,,,,
-PROPERTY,,DIMENSION,,Thickness,,Node.Thickness,,,,
-,,,,Presets,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.ColloquialName,Node.Diameter,Node.Thickness,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
+PROPERTY,,STRING,,Name,,Dimension.ColloquialName,,,,
+PROPERTY,,DIMENSION,,Diameter,,Dimension.Diameter,,,,
+PROPERTY,,DIMENSION,,Thickness,,Dimension.Thickness,,,,
+,,Presets,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.ColloquialName,Dimension.Diameter,Dimension.Thickness,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
 PRESET,,"0DimDiT
 12.75inDi
 0.375inT",,0DimDiT,,D12X0.375,12.75in,0.375in,,2ExtrudedProfile --> Beam/Column --> SteelTube
@@ -93,3 +93,4 @@ PRESET,,"0DimDiT
 PRESET,,"0DimDiT
 0.109inDi
 0.84inT",,0DimDiT,,D0.5X0.109,0.109in,0.84in,,2ExtrudedProfile --> Beam/Column --> SteelTube
+,,,,,,,,,,

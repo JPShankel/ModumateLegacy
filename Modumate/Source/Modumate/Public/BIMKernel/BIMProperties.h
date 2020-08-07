@@ -46,6 +46,7 @@ namespace BIMPropertyNames
 	extern const FBIMNameType Area;
 	extern const FBIMNameType AreaType;
 	extern const FBIMNameType AssetID;
+	extern const FBIMNameType AssetPath;
 	extern const FBIMNameType BevelWidth;
 	extern const FBIMNameType Category;
 	extern const FBIMNameType Code;

@@ -1,12 +1,12 @@
-TYPENAME,,,,0DimWDT,,,,,,,
-,,,,Definition,,,,,,,
+TYPENAME,,0DimWDT,,Dimension,,,,,,,
+,,Definition,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,
-PROPERTY,,STRING,,Name,,Preset.Name,,,,,
-PROPERTY,,DIMENSION,,Width,,Node.Width,,,,,
-PROPERTY,,DIMENSION,,Depth,,Node.Depth,,,,,
-PROPERTY,,DIMENSION,,Thickness,,Node.Thickness,,,,,
-,,,,Presets,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Node.Width,Node.Depth,Node.Thickness,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
+PROPERTY,,STRING,,Name,,Dimension.Name,,,,,
+PROPERTY,,DIMENSION,,Width,,Dimension.Width,,,,,
+PROPERTY,,DIMENSION,,Depth,,Dimension.Depth,,,,,
+PROPERTY,,DIMENSION,,Thickness,,Dimension.Thickness,,,,,
+,,Presets,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Width,Dimension.Depth,Dimension.Thickness,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
 PRESET,,"0DimWDT --> LAngle
 12inW
 12inD
@@ -2107,3 +2107,4 @@ PRESET,,"0DimWDT --> HSS
 1inW
 2inD
 0.116inT",,0DimWDT --> HSS,,HSS2X1X1/8,1in,2in,0.116in,,2ExtrudedProfile --> Beam/Column --> SteelHSS
+,,,,,,,,,,,

@@ -1,13 +1,13 @@
-TYPENAME,,,,0DimWDWtFt,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,Definition,,,,,,,,,,,,,,,,,,,,,,,,
+TYPENAME,,0DimWDWtFt,,Dimension,,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,STRING,,Name,,Preset.ColloquialName,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DIMENSION,,Width,,Node.Width,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DIMENSION,,Depth,,Node.Depth,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DIMENSION,,Web Thickness,,Node.WebThickness,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DIMENSION,,Flange Thickness,,Node.FlangeThickness,,,,,,,,,,,,,,,,,,,,,,
-,,,,Presets,,,,,,,,,,,,,,,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.ColloquialName,Node.Width,Node.Depth,Node.WebThickness,Node.FlangeThickness,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath,,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Dimension.ColloquialName,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Width,,Dimension.Width,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Depth,,Dimension.Depth,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Web Thickness,,Dimension.WebThickness,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DIMENSION,,Flange Thickness,,Dimension.FlangeThickness,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.ColloquialName,Dimension.Width,Dimension.Depth,Dimension.WebThickness,Dimension.FlangeThickness,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath,,,,,,,,,,,,,,,,
 PRESET,,"0DimWDWtFt --> WideFlangeSteel
 44W
 15.9D
@@ -2998,3 +2998,4 @@ PRESET,,"0DimWDWtFt --> CSteel
 1.37D
 0.132Wt
 0.273Ft",,0DimWDWtFt --> CSteel,,C3X3.5,3,1.37,0.132,0.273,,2ExtrudedProfile --> Beam/Column --> SteelC,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,

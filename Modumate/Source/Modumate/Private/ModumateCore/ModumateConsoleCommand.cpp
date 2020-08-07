@@ -325,7 +325,7 @@ namespace Modumate
 		GenerateKeyArray(outNames);
 	}
 
-	void FModumateFunctionParameterSet::ForEachProperty(std::function<void(const FString &name, const FModumateCommandParameter &mcp)> fn) const
+	void FModumateFunctionParameterSet::ForEachProperty(TFunction<void(const FString &name, const FModumateCommandParameter &mcp)> fn) const
 	{
 		for (auto &kvp : *this)
 		{

@@ -64,15 +64,6 @@ public:
 	FString LayerMaterialKey;
 	FString LayerColorKey;
 
-	FLayerPattern Pattern;
-	FLayerPatternModule Module;
-	FString ModuleMaterialKey;
-	FString ModuleColorKey;
-
-	FLayerPatternGap Gap;
-	FString GapMaterialKey;
-	FString GapColorKey;
-
 	FName ProfileKey;
 
 	FBIMPropertySheet Properties;
@@ -92,112 +83,24 @@ public:
 		Properties.SetValue(var.QN().ToString(), value);
 
 		//TODO: deprecated DDL 1.0 .. DDL 2 tracks all layer values in the Module or Layer scope
-		if (var.Scope == EBIMValueScope::MaterialColor)
+
+		if (var.Name == BIMPropertyNames::AssetID)
 		{
-			if (var.Name == BIMPropertyNames::Color)
-			{
-				LayerColorKey = value;
-			}
-			else if (var.Name == BIMPropertyNames::MaterialKey)
+			if (var.Scope == EBIMValueScope::RawMaterial)
 			{
 				LayerMaterialKey = value;
 			}
-		}
-		else if (var.Scope == EBIMValueScope::Layer)
-		{
-			if (var.Name == BIMPropertyNames::Color)
+			if (var.Scope == EBIMValueScope::Color)
 			{
 				LayerColorKey = value;
 			}
-			else if (var.Name == BIMPropertyNames::MaterialKey)
-			{
-				LayerMaterialKey = value;
-			}
-			else if (var.Name == BIMPropertyNames::TrimProfile)
-			{
-				ProfileKey = value;
-			}
-			else if (var.Name == BIMPropertyNames::Thickness)
-			{
-				Thickness = convertDimension(value,var.QN());
-			}
-			else if (var.Name == BIMPropertyNames::Pattern)
-			{
-				Pattern.Key = *value.AsString();
-			}
-			else if (var.Name == BIMPropertyNames::Function)
-			{
-				if (!ensureAlways(TryFindEnumValueByName<ELayerFunction>(TEXT("ELayerFunction"), value.AsName(), FunctionEnum)))
-				{
-					FunctionEnum = ELayerFunction::None;
-				}
-			}
 		}
-		else if (var.Scope == EBIMValueScope::Module)
+
+		if (var.Scope == EBIMValueScope::Dimension)
 		{
-			if (var.Name == BIMPropertyNames::MaterialKey)
+			if (var.Name == BIMPropertyNames::Thickness)
 			{
-				ModuleMaterialKey = value;
-				LayerMaterialKey = ModuleMaterialKey;
-			}
-			else if (var.Name == BIMPropertyNames::Color)
-			{
-				ModuleColorKey = value;
-				LayerColorKey = ModuleColorKey;
-			}
-			else if (var.Name == BIMPropertyNames::Height || var.Name == BIMPropertyNames::ZExtents)
-			{
-				Module.ModuleExtents.Z = convertDimension(value, var.QN()).AsWorldCentimeters();
-			}
-			else if (var.Name == BIMPropertyNames::Width || var.Name == BIMPropertyNames::YExtents || var.Name == BIMPropertyNames::Depth)
-			{
-				Module.ModuleExtents.Y = convertDimension(value, var.QN()).AsWorldCentimeters();
-			}
-			else if (var.Name == BIMPropertyNames::Length || var.Name == BIMPropertyNames::XExtents)
-			{
-				Module.ModuleExtents.X = convertDimension(value, var.QN()).AsWorldCentimeters();
-			}
-			else if (var.Name == BIMPropertyNames::BevelWidth)
-			{
-				Module.BevelWidth = convertDimension(value, var.QN());
-			}
-		}
-		else if (var.Scope == EBIMValueScope::Gap)
-		{
-			if (var.Name == BIMPropertyNames::Color)
-			{
-				GapColorKey = value;
-			}
-			else if (var.Name == BIMPropertyNames::MaterialKey)
-			{
-				GapMaterialKey = value;
-			}
-			else if (var.Name == BIMPropertyNames::Name)
-			{
-				Gap.DisplayName = FText::FromString(value);
-			}
-			else if (var.Name == BIMPropertyNames::Width || var.Name == BIMPropertyNames::XExtents)
-			{
-				Gap.GapExtents.X = convertDimension(value,var.QN()).AsWorldCentimeters();
-			}
-			else if (var.Name == BIMPropertyNames::Depth || var.Name == BIMPropertyNames::YExtents)
-			{
-				Gap.GapExtents.Y = convertDimension(value,var.QN()).AsWorldCentimeters();
-			}
-		}
-		else if (var.Scope == EBIMValueScope::Pattern)
-		{
-			if (var.Name == BIMPropertyNames::Name)
-			{
-				Pattern.DisplayName = FText::FromString(value.AsString());
-			}
-			else if (var.Name == BIMPropertyNames::ModuleCount)
-			{
-				Pattern.ModuleCount = value;
-			}
-			else if (var.Name == BIMPropertyNames::Extents)
-			{
-				Pattern.ParameterizedExtents = value;
+				Thickness = convertDimension(value, var.QN());
 			}
 		}
 	}
@@ -208,21 +111,13 @@ public:
 
 		ret.Format = FormatEnum;
 		ret.Function = FunctionEnum;
-
 		ret.Thickness = Thickness;
-
 		ret.DisplayName = CodeName;
-
-		ret.Modules.Add(Module);
-		ret.Gap = Gap;
-		ret.Pattern = Pattern;
 
 		if (!ProfileKey.IsNone())
 		{
 			ret.Function = ELayerFunction::Finish;
 			ret.Format = ELayerFormat::Board;
-
-			//TODO: legacy trim were keyed based on their display name, so check against both name and key
 
 			const FSimpleMeshRef *trimMesh = db.GetSimpleMeshByKey(ProfileKey);
 
@@ -235,101 +130,27 @@ public:
 		if (!LayerMaterialKey.IsEmpty())
 		{
 			const FArchitecturalMaterial *mat = db.GetArchitecturalMaterialByKey(*LayerMaterialKey);
-
-			//TODO: ensure removed for DDL 2.0 refactor, missing materials okay in interim
-			//if (ensureAlways(mat != nullptr))
-			if (mat != nullptr)
+			if (ensureAlways(mat != nullptr))
 			{
 				ret.Material = *mat;
 				ensureAlways(ret.Material.EngineMaterial != nullptr);
 			}
 		}
 
-		if (!ModuleMaterialKey.IsEmpty())
-		{
-			const FArchitecturalMaterial *modMat = db.GetArchitecturalMaterialByKey(*ModuleMaterialKey);
-			ensureAlways(modMat != nullptr);
-			ensureAlways(ret.Modules.Num() > 0);
-			for (auto &m : ret.Modules)
-			{
-				m.Material = *modMat;
-				ensureAlways(m.Material.EngineMaterial != nullptr);
-			}
-		}
-
-		if (!GapMaterialKey.IsEmpty())
-		{
-			const FArchitecturalMaterial *gapMat = db.GetArchitecturalMaterialByKey(*GapMaterialKey);
-			ensureAlways(gapMat != nullptr);
-			if (gapMat != nullptr)
-			{
-				ret.Gap.Material = *gapMat;
-				ensureAlways(ret.Gap.Material.EngineMaterial != nullptr);
-			}
-		}
-
-		auto tryAssignColor = [&db](FCustomColor &target, const FString &key)
-		{
-			const FCustomColor *color = db.GetCustomColorByKey(*key);
-			ensureAlways(color != nullptr);
-			if (color != nullptr)
-			{
-				target = *color;
-			}
-		};
-
 		if (!LayerColorKey.IsEmpty())
 		{
-			tryAssignColor(ret.BaseColor, LayerColorKey);
-			tryAssignColor(ret.Material.DefaultBaseColor, LayerColorKey);
-		}
-
-		if (!ModuleColorKey.IsEmpty())
-		{
-			for (auto &m : ret.Modules)
+			const FCustomColor* color = db.GetCustomColorByKey(*LayerColorKey);
+			if (ensureAlways(color != nullptr))
 			{
-				tryAssignColor(m.Material.DefaultBaseColor, ModuleColorKey);
+				ret.BaseColor = *color;
+				ret.Material.DefaultBaseColor = *color;
 			}
 		}
 
-		if (!GapColorKey.IsEmpty())
-		{
-			tryAssignColor(ret.Gap.BaseColor, GapColorKey);
-		}
-
-		if (ret.Material.EngineMaterial == nullptr &&
-			ret.Modules.Num() > 0 &&
-			ret.Modules[0].Material.EngineMaterial != nullptr)
-		{
-			ret.Material = ret.Modules[0].Material;
-		}
-
-		if (ret.Pattern.Key.IsNone())
-		{
-			ret.Pattern.Key = ret.Modules.Num() == 0 ? TEXT("Continuous") : TEXT("PATKEY");
-		}
-
-		if (ret.Gap.Key.IsNone())
-		{
-			ret.Gap.Key = TEXT("GAPKEY");
-		}
-
-		for (auto &m : ret.Modules)
-		{
-			if (m.Key.IsNone())
-			{
-				m.Key = TEXT("MODKEY");
-			}
-		}
 		if (ret.BaseColor.Key.IsNone())
 		{
 			ret.BaseColor.Key = TEXT("COLORKEY");
 		}
-
-		ret.Pattern.DefaultGap = ret.Gap;
-		ret.Pattern.DefaultModules = ret.Modules;
-
-		ensureAlways(ret.Pattern.ModuleCount == ret.Modules.Num());
 
 		return ret;
 	}
@@ -354,7 +175,7 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStubbyAssembly(
 	const FBIMAssemblySpec& InSpec,
 	FModumateObjectAssembly& OutMOA)
 {
-	FName meshKey = InSpec.RootProperties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
+	FName meshKey = InSpec.RootProperties.GetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID);
 	const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(meshKey);
 	if (mesh == nullptr)
 	{
@@ -407,21 +228,25 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 	OutMOA = FModumateObjectAssembly();
 	OutMOA.Properties = InSpec.RootProperties;
 
-
 	FLayerMaker layerMaker;
+
+	layerMaker.FormatEnum = ELayerFormat::None;
+	layerMaker.FunctionEnum = ELayerFunction::Structure;
+
 	layerMaker.CodeName = OutMOA.GetProperty(BIMPropertyNames::Name);
+	OutMOA.SetProperty(BIMPropertyNames::Name, layerMaker.CodeName);
 
 	FString diameterString;
 	FModumateFormattedDimension xDim, yDim;
-	if (OutMOA.Properties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Diameter, diameterString))
+	if (OutMOA.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter, diameterString))
 	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Diameter));
+		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter));
 		yDim = xDim;
 	}
 	else
 	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::XExtents));
-		yDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::YExtents));
+		xDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::XExtents));
+		yDim = UModumateDimensionStatics::StringToFormattedDimension(OutMOA.Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::YExtents));
 	}
 
 	if (ensureAlways(xDim.Format != EDimensionFormat::Error))
@@ -434,18 +259,10 @@ ECraftingResult UModumateObjectAssemblyStatics::MakeStructureLineAssembly(
 		layerMaker.Dimensions.Add(BIMPropertyNames::YExtents, yDim);
 	}
 
-	layerMaker.FormatEnum = ELayerFormat::None;
-	layerMaker.FunctionEnum = ELayerFunction::Structure;
-	layerMaker.LayerMaterialKey = OutMOA.Properties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::MaterialKey);
-	layerMaker.ProfileKey = OutMOA.Properties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::ProfileKey);
+	layerMaker.LayerMaterialKey = OutMOA.Properties.GetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID);
+	layerMaker.ProfileKey = OutMOA.Properties.GetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID);
 
 	FModumateObjectAssemblyLayer &layer = OutMOA.Layers.Add_GetRef(layerMaker.Make(InDB));
-
-	FString colorHex = OutMOA.Properties.GetProperty(EBIMValueScope::MaterialColor, BIMPropertyNames::HexValue);
-	layer.Material.DefaultBaseColor.Color = FColor::FromHex(colorHex);
-	layer.Material.DefaultBaseColor.bValid = true;
-
-	OutMOA.SetProperty(BIMPropertyNames::Name, OutMOA.Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name));
 
 	// TODO: re-orient column meshes so width is along X instead of depth
 	FVector profileSize(xDim.Centimeters, yDim.Centimeters, 1);

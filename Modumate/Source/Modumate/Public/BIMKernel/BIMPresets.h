@@ -35,7 +35,7 @@ and what pins it supports for child nodes
 Some properties are hidden, so visible/editable properties are specified in the FormItemToProperty map
 TODO: form visibility and editability of properties to be specified in presets, not as part of the fundamental type
 */
-class MODUMATE_API FCraftingTreeNodeType
+class MODUMATE_API FBIMPresetNodeType
 {
 public:
 	FName TypeName;
@@ -62,6 +62,14 @@ class FBIMPresetCollection;
 
 class MODUMATE_API FBIMPreset
 {
+
+private:
+	FBIMPropertySheet Properties;
+
+	//for direct access to properties
+	friend class FBIMCraftingTreeNodePool;
+	friend struct FBIMAssemblySpec;
+
 public:
 
 	struct FChildAttachment
@@ -71,8 +79,27 @@ public:
 		bool operator==(const FChildAttachment& OtherAttachment) const;
 	};
 
+	bool HasProperty(const FBIMNameType& Name) const;
+	Modumate::FModumateCommandParameter GetProperty(const FBIMNameType& Name) const;
+	
+	Modumate::FModumateCommandParameter GetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name) const;
+	void SetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name, const Modumate::FModumateCommandParameter& V);
+
+	void SetProperties(const FBIMPropertySheet& InProperties);
+
+	template <class T>
+	bool TryGetProperty(const FBIMNameType& Name, T& OutT) const
+	{
+		if (HasProperty(Name))
+		{
+			OutT = GetProperty(Name);
+			return true;
+		}
+		return false;
+	}
+
+	EBIMValueScope NodeScope;
 	FName NodeType, PresetID;
-	FBIMPropertySheet Properties;
 	TArray<FChildAttachment> ChildPresets;
 	TArray<FBIMTagPath> ParentTagPaths;
 	FBIMTagPath MyTagPath;
@@ -97,7 +124,7 @@ class MODUMATE_API FBIMPresetCollection
 {
 public:
 
-	TMap<FName, FCraftingTreeNodeType> NodeDescriptors;
+	TMap<FName, FBIMPresetNodeType> NodeDescriptors;
 	TMap<FName, FBIMPreset> Presets;
 
 	EObjectType GetPresetObjectType(const FName &PresetID) const;

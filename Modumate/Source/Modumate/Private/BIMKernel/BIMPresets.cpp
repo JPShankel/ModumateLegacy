@@ -135,7 +135,7 @@ ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCol
 {
 	NodeType = Record.NodeType;
 
-	const FCraftingTreeNodeType *nodeType = PresetCollection.NodeDescriptors.Find(NodeType);
+	const FBIMPresetNodeType *nodeType = PresetCollection.NodeDescriptors.Find(NodeType);
 	// TODO: this ensure will fire if expected presets have become obsolete, resave to fix
 	if (!ensureAlways(nodeType != nullptr))
 	{
@@ -203,6 +203,32 @@ FString FBIMPreset::GetDisplayName() const
 	return Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
 }
 
+bool FBIMPreset::HasProperty(const FBIMNameType& Name) const
+{
+	return Properties.HasProperty(NodeScope, Name);
+}
+
+Modumate::FModumateCommandParameter FBIMPreset::GetProperty(const FBIMNameType& Name) const
+{
+	return Properties.GetProperty(NodeScope, Name);
+}
+
+Modumate::FModumateCommandParameter FBIMPreset::GetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name) const
+{
+	return Properties.GetProperty(Scope, Name);
+}
+
+void FBIMPreset::SetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name, const Modumate::FModumateCommandParameter& V)
+{
+	Properties.SetProperty(Scope, Name, V);
+}
+
+void FBIMPreset::SetProperties(const FBIMPropertySheet& InProperties)
+{
+	Properties = InProperties;
+}
+
+
 EObjectType FBIMPresetCollection::GetPresetObjectType(const FName &PresetID) const
 {
 	const FBIMPreset *preset = Presets.Find(PresetID);
@@ -226,7 +252,6 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPat
 	static const FName kTagPaths = TEXT("TAGPATHS");
 	static const FName kPreset = TEXT("PRESET");
 	static const FName kInputPin = TEXT("INPUTPIN");
-
 	static const FName kPrivate = TEXT("PRIVATE");
 
 	struct FColumnRange
@@ -245,7 +270,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPat
 
 	struct FTableData
 	{
-		FCraftingTreeNodeType nodeType;
+		FBIMPresetNodeType nodeType;
 		TArray<FBIMTagPath> myPaths;
 		TArray<FBIMTagPath> parentPaths;
 
@@ -274,13 +299,22 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPat
 
 	processor.AddRule(kTypeName, [&OutMessages, &tableData](const TArray<const TCHAR*> &Row, int32 RowNumber)
 	{
-		for (int32 i = 1; i < Row.Num(); ++i)
+		tableData.nodeType.TypeName = Row[2];
+
+		FName scope = Row[4];
+
+		if (scope.IsNone())
 		{
-			if (!FString(Row[i]).IsEmpty())
-			{
-				tableData.nodeType.TypeName = Row[i];
-				break;
-			}
+			tableData.nodeType.Scope = EBIMValueScope::Error;
+		}
+		else
+		{
+			tableData.nodeType.Scope = BIMValueScopeFromName(scope);
+		}
+
+		if (tableData.nodeType.Scope == EBIMValueScope::Error || tableData.nodeType.Scope == EBIMValueScope::None)
+		{
+			OutMessages.Add(FString::Printf(TEXT("Unscoped Table")));
 		}
 	});
 
@@ -464,12 +498,13 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPat
 					}
 					tableData.currentPreset.PresetID = *cell;
 					tableData.currentPreset.NodeType = tableData.nodeType.TypeName;
+					tableData.currentPreset.NodeScope = tableData.nodeType.Scope;
 				}
 			}
 			else if (tableData.propertyRange.IsIn(i))
 			{
 				FBIMPropertyValue propSpec(*tableData.propertyRange.Get(i));
-				tableData.currentPreset.Properties.SetProperty(propSpec.Scope, propSpec.Name, cell);
+				tableData.currentPreset.SetScopedProperty(propSpec.Scope, propSpec.Name, cell);
 			}
 			else if (tableData.myPathRange.IsIn(i) && !cell.IsEmpty())
 			{
