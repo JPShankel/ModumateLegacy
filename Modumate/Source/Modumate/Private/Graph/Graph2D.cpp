@@ -538,7 +538,11 @@ namespace Modumate
 				continue;
 			}
 
-			FGraph2DPolygonRecord polyRecord({ poly.Edges });
+			FGraph2DPolygonRecord polyRecord; 
+			polyRecord.VertexIDs = poly.VertexIDs; 
+			polyRecord.bInterior = poly.bInterior;
+			polyRecord.ContainingFaceID = poly.ParentID; 
+			polyRecord.ContainedFaceIDs = poly.InteriorPolygons;
 			OutRecord->Polygons.Add(poly.ID, polyRecord);
 		}
 
@@ -582,31 +586,11 @@ namespace Modumate
 			const FGraph2DPolygonRecord &polyRecord = kvp.Value;
 
 			FGraph2DPolygon poly(kvp.Key, this);
-			poly.Edges = polyRecord.EdgeIDs;
+			poly.SetVertices(polyRecord.VertexIDs);
+			poly.bInterior = polyRecord.bInterior;
+			poly.ParentID = polyRecord.ContainingFaceID;
+			poly.InteriorPolygons = polyRecord.ContainedFaceIDs;
 
-			// TODO: use the polygon calculation to compute this data, and verify the integrity of the input.
-			// For now, we have to assume it was input correctly.
-			poly.bInterior = true;
-
-			// At least make sure all of the referenced edges and vertices are correct, also to update the AABB and cached points.
-			for (FGraphSignedID edgeID : poly.Edges)
-			{
-				const FGraph2DEdge *edge = FindEdge(edgeID);
-				if (edge == nullptr)
-				{
-					return false;
-				}
-
-				FGraph2DVertex *vertex = FindVertex(edge->StartVertexID);
-				if (vertex == nullptr)
-				{
-					return false;
-				}
-
-				poly.CachedPoints.Add(vertex->Position);
-			}
-
-			poly.AABB = FBox2D(poly.CachedPoints);
 			Polygons.Add(poly.ID, poly);
 
 			NextPolyID = FMath::Max(NextPolyID, poly.ID + 1);

@@ -81,7 +81,7 @@ namespace Modumate
 		}
 	}
 
-	void FGraph2DPolygon::SetVertices(TArray<int32> &Vertices)
+	void FGraph2DPolygon::SetVertices(const TArray<int32> &Vertices)
 	{
 		int32 numVertices = Vertices.Num();
 

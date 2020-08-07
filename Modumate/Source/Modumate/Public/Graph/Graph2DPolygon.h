@@ -28,7 +28,7 @@ namespace Modumate
 		bool IsInside(const FGraph2DPolygon &otherPoly) const;
 		void SetParent(int32 inParentID);
 
-		void SetVertices(TArray<int32> &Vertices);
+		void SetVertices(const TArray<int32> &Vertices);
 
 		virtual void Dirty(bool bConnected = true) override;
 		virtual void Clean() override;

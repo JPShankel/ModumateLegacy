@@ -4,6 +4,7 @@
 #include "DocumentManagement/ModumateSerialization.h"
 #include "Graph/Graph2D.h"
 #include "Graph/Graph2DDelta.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 namespace Modumate
 {
@@ -181,8 +182,8 @@ namespace Modumate
 "	},"
 "	\"polygons\":"
 "	{"
-"		\"2\": {\"edgeIds\": [-1, -4, -3, -2]},"
-"		\"3\": {\"edgeIds\": [2, -7, -6, -5]}"
+"		\"2\": { \"vertexIds\": [], \"bInterior\" : true, \"containingFaceId\" : 0, \"containedFaceIds\" : []},"
+"		\"3\": { \"vertexIds\": [], \"bInterior\" : true, \"containingFaceId\" : 0, \"containedFaceIds\" : []}"
 "	}"
 "}"
 		));
@@ -287,6 +288,46 @@ namespace Modumate
 		TestGraph(Test, Graph, resetNumFaces, resetNumVertices, resetNumEdges);
 
 		Deltas.Reset();
+	}
+
+	bool LoadGraphs(const FString &path, TMap<int32, FGraph2D> &OutGraphs, int32 &NextID)
+	{
+		FString scenePathname = FPaths::ProjectDir() / UModumateGameInstance::TestScriptRelativePath / path;
+		FModumateDocumentHeader docHeader;
+		FMOIDocumentRecord docRec;
+
+		if (!FModumateSerializationStatics::TryReadModumateDocumentRecord(scenePathname, docHeader, docRec))
+		{
+			return false;
+		}
+
+		for (auto& kvp : docRec.SurfaceGraphs)
+		{
+			FGraph2D OutGraph;
+			if (!OutGraph.FromDataRecord(&kvp.Value))
+			{
+				return false;
+			}
+
+			OutGraphs.Add(kvp.Key, OutGraph);
+
+			for (auto& vertexkvp : OutGraph.GetVertices())
+			{
+				NextID = FMath::Max(NextID, vertexkvp.Key);
+			}
+
+			for (auto& edgekvp : OutGraph.GetEdges())
+			{
+				NextID = FMath::Max(NextID, edgekvp.Key);
+			}
+
+			for (auto& polykvp : OutGraph.GetPolygons())
+			{
+				NextID = FMath::Max(NextID, polykvp.Key);
+			}
+		}
+
+		return true;
 	}
 
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DAddVertex, "Modumate.Graph.2D.AddVertex", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
@@ -1058,6 +1099,138 @@ namespace Modumate
 		TestTrue(TEXT("right amount of containingPolys"),
 			numContainingPolys == 1);
 
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DStarShape, "Modumate.Graph.2D.StarShape", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DStarShape::RunTest(const FString& Parameters)
+	{
+		FGraph2D graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+
+		TArray<FVector2D> vertices = {
+			FVector2D(0.0f, 25.0f),
+			FVector2D(50.0f, 0.0f),
+			FVector2D(0.0f, 75.0f),
+			FVector2D(50.0f, 100.0f),
+			FVector2D(100.0f, 50.0f)
+		};
+
+		TestTrue(TEXT("Add first Edge"),
+			graph.AddEdge(deltas, NextID, vertices[4], vertices[0]));
+		TestDeltas(this, deltas, graph, 1, 2, 1);
+
+		TestTrue(TEXT("Add second Edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[3]));
+		TestDeltas(this, deltas, graph, 1, 3, 2);
+
+		TestTrue(TEXT("Add third Edge"),
+			graph.AddEdge(deltas, NextID, vertices[3], vertices[1]));
+		TestDeltas(this, deltas, graph, 2, 5, 5);
+
+		TestTrue(TEXT("Add fourth Edge"),
+			graph.AddEdge(deltas, NextID, vertices[1], vertices[2]));
+		TestDeltas(this, deltas, graph, 4, 8, 10);
+
+		TestTrue(TEXT("Add fifth Edge"),
+			graph.AddEdge(deltas, NextID, vertices[2], vertices[4]));
+		TestDeltas(this, deltas, graph, 7, 10, 15);
+		
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DStarShapeWithBounds, "Modumate.Graph.2D.StarShapeWithBounds", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DStarShapeWithBounds::RunTest(const FString& Parameters)
+	{
+		FGraph2D graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+
+		TArray<FVector2D> outerVertices = {
+			FVector2D(-100.0f, -100.0f),
+			FVector2D(200.0f, -100.0f),
+			FVector2D(200.0f, 200.0f),
+			FVector2D(-100.0f, 200.0f)
+		};
+
+		TArray<FVector2D> vertices = {
+			FVector2D(0.0f, 25.0f),
+			FVector2D(50.0f, 0.0f),
+			FVector2D(0.0f, 75.0f),
+			FVector2D(50.0f, 100.0f),
+			FVector2D(100.0f, 50.0f)
+		};
+
+		// bounds
+		TestTrue(TEXT("Add first bounds Edge"),
+			graph.AddEdge(deltas, NextID, outerVertices[0], outerVertices[1]));
+		TestDeltas(this, deltas, graph, 1, 2, 1);
+		
+		TestTrue(TEXT("Add second bounds Edge"),
+			graph.AddEdge(deltas, NextID, outerVertices[1], outerVertices[2]));
+		TestDeltas(this, deltas, graph, 1, 3, 2);
+
+		TestTrue(TEXT("Add third bounds Edge"),
+			graph.AddEdge(deltas, NextID, outerVertices[2], outerVertices[3]));
+		TestDeltas(this, deltas, graph, 1, 4, 3);
+
+		TestTrue(TEXT("Add fourth bounds Edge"),
+			graph.AddEdge(deltas, NextID, outerVertices[3], outerVertices[0]));
+		TestDeltas(this, deltas, graph, 2, 4, 4);
+
+		// Make current vertices into the bounds
+		TArray<int32> outerBounds;
+		TArray<TArray<int32>> innerBounds;
+		graph.GetVertices().GenerateKeyArray(outerBounds);
+		graph.SetBounds(outerBounds, innerBounds);
+
+		// 5-sided star
+		TestTrue(TEXT("Add first Edge"),
+			graph.AddEdge(deltas, NextID, vertices[4], vertices[0]));
+		TestDeltas(this, deltas, graph, 3, 6, 5);
+
+		TestTrue(TEXT("Add second Edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[3]));
+		TestDeltas(this, deltas, graph, 3, 7, 6);
+
+		TestTrue(TEXT("Add third Edge"),
+			graph.AddEdge(deltas, NextID, vertices[3], vertices[1]));
+		TestDeltas(this, deltas, graph, 4, 9, 9);
+
+		TestTrue(TEXT("Add fourth Edge"),
+			graph.AddEdge(deltas, NextID, vertices[1], vertices[2]));
+		TestDeltas(this, deltas, graph, 6, 12, 14);
+
+		TestTrue(TEXT("Add fifth Edge"),
+			graph.AddEdge(deltas, NextID, vertices[2], vertices[4]));
+		TestDeltas(this, deltas, graph, 9, 14, 19);
+		
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DLoadStar, "Modumate.Graph.2D.LoadStar", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DLoadStar::RunTest(const FString& Parameters)
+	{
+		TMap<int32, FGraph2D> allGraphs;
+		int32 NextID = 1;
+
+		if (!LoadGraphs(TEXT("Graph/star_test.mdmt"), allGraphs, NextID))
+		{
+			return false;
+		}
+
+		TestTrue(TEXT("there is one graph"), allGraphs.Num() == 1);
+
+		FGraph2D graph;
+		for (auto& kvp : allGraphs)
+		{
+			graph = kvp.Value;
+			break;
+		}
+
+		TestGraph(this, graph, 5, 12, 14);
+		
 		return true;
 	}
 }

@@ -107,7 +107,16 @@ struct FGraph2DPolygonRecord
 	GENERATED_USTRUCT_BODY();
 
 	UPROPERTY()
-	TArray<int32> EdgeIDs;
+	TArray<int32> VertexIDs;
+
+	UPROPERTY()
+	bool bInterior;
+
+	UPROPERTY()
+	int32 ContainingFaceID;
+
+	UPROPERTY()
+	TArray<int32> ContainedFaceIDs;
 };
 
 USTRUCT()

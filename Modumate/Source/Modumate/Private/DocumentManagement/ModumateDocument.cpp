@@ -2719,7 +2719,7 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 	{
 		const FGraph2D &surfaceGraph = kvp.Value;
 		FGraph2DRecord &surfaceGraphRecord = docRec.SurfaceGraphs.Add(kvp.Key);
-		surfaceGraph.ToDataRecord(&surfaceGraphRecord, false, false);
+		surfaceGraph.ToDataRecord(&surfaceGraphRecord, true, true);
 	}
 
 	docRec.CameraViews = SavedCameraViews;
