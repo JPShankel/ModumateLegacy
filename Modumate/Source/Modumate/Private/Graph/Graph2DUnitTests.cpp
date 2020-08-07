@@ -303,13 +303,12 @@ namespace Modumate
 
 		for (auto& kvp : docRec.SurfaceGraphs)
 		{
-			FGraph2D OutGraph;
+			OutGraphs.Add(kvp.Key, FGraph2D(kvp.Key));
+			FGraph2D &OutGraph = OutGraphs[kvp.Key];
 			if (!OutGraph.FromDataRecord(&kvp.Value))
 			{
 				return false;
 			}
-
-			OutGraphs.Add(kvp.Key, OutGraph);
 
 			for (auto& vertexkvp : OutGraph.GetVertices())
 			{
@@ -325,6 +324,50 @@ namespace Modumate
 			{
 				NextID = FMath::Max(NextID, polykvp.Key);
 			}
+		}
+
+		return true;
+	}
+
+	bool LoadGraph(const FString &path, FGraph2D &OutGraph, int32 &NextID)
+	{
+		FString scenePathname = FPaths::ProjectDir() / UModumateGameInstance::TestScriptRelativePath / path;
+		FModumateDocumentHeader docHeader;
+		FMOIDocumentRecord docRec;
+
+		if (!FModumateSerializationStatics::TryReadModumateDocumentRecord(scenePathname, docHeader, docRec))
+		{
+			return false;
+		}
+
+		if (docRec.SurfaceGraphs.Num() > 1)
+		{
+			return false;
+		}
+
+
+		for (auto& kvp : docRec.SurfaceGraphs)
+		{
+			if (!OutGraph.FromDataRecord(&kvp.Value))
+			{
+				return false;
+			}
+
+			for (auto& vertexkvp : OutGraph.GetVertices())
+			{
+				NextID = FMath::Max(NextID, vertexkvp.Key);
+			}
+
+			for (auto& edgekvp : OutGraph.GetEdges())
+			{
+				NextID = FMath::Max(NextID, edgekvp.Key);
+			}
+
+			for (auto& polykvp : OutGraph.GetPolygons())
+			{
+				NextID = FMath::Max(NextID, polykvp.Key);
+			}
+			break;
 		}
 
 		return true;
@@ -1209,18 +1252,21 @@ namespace Modumate
 		return true;
 	}
 
-	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DLoadStar, "Modumate.Graph.2D.LoadStar", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
-		bool FModumateGraph2DLoadStar::RunTest(const FString& Parameters)
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DLoad, "Modumate.Graph.2D.Load", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DLoad::RunTest(const FString& Parameters)
 	{
 		TMap<int32, FGraph2D> allGraphs;
 		int32 NextID = 1;
 
-		if (!LoadGraphs(TEXT("Graph/star_test.mdmt"), allGraphs, NextID))
+		if (!LoadGraphs(TEXT("Graph/surface_graph_load.mdmt"), allGraphs, NextID))
 		{
 			return false;
 		}
 
-		TestTrue(TEXT("there is one graph"), allGraphs.Num() == 1);
+		if (!allGraphs.Num() == 1)
+		{
+			return false;
+		}
 
 		FGraph2D graph;
 		for (auto& kvp : allGraphs)
@@ -1229,7 +1275,33 @@ namespace Modumate
 			break;
 		}
 
+		TestGraph(this, graph, 1, 4, 4);
+		
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DLoadStar, "Modumate.Graph.2D.LoadStar", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DLoadStar::RunTest(const FString& Parameters)
+	{
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+		FGraph2D graph;
+
+		if (!LoadGraph(TEXT("Graph/star_test.mdmt"), graph, NextID))
+		{
+			return false;
+		}
+
 		TestGraph(this, graph, 5, 12, 14);
+
+		auto startVertex = graph.FindVertex(21);
+		auto endVertex = graph.FindVertex(36);
+
+		TestTrue(TEXT("target vertices exist"), startVertex != nullptr && endVertex != nullptr);
+
+		TestTrue(TEXT("Add edge completing star"),
+			graph.AddEdge(deltas, NextID, startVertex->Position, endVertex->Position));
+		TestDeltas(this, deltas, graph, 9, 14, 19);
 		
 		return true;
 	}

@@ -7,6 +7,7 @@ namespace Modumate
 	void FGraph2DVertex::AddEdge(FGraphSignedID EdgeID)
 	{
 		Edges.AddUnique(EdgeID);
+		SortEdges();
 		bDirty = true;
 	}
 

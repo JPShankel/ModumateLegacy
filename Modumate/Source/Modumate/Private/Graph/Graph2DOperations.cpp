@@ -88,7 +88,10 @@ namespace Modumate
 				ApplyInverseDeltas(OutDeltas);
 				return false;
 			}
-			OutDeltas.Add(addVertexDelta);
+			if (!addVertexDelta.IsEmpty())
+			{
+				OutDeltas.Add(addVertexDelta);
+			}
 		}
 
 		if (!ensureAlways(addedIDs.Num() == 2))
@@ -718,13 +721,11 @@ namespace Modumate
 		}
 
 		// make sure all vertex-edge connections are sorted
+		// TODO: this should probably be in ApplyDelta, and probably doesn't need to be added to every vertex
 		for (auto &kvp : Vertices)
 		{
 			FGraph2DVertex &vertex = kvp.Value;
-			if (vertex.bDirty)
-			{
-				vertex.SortEdges();
-			}
+			vertex.SortEdges();
 		}
 
 		TSet<FGraphSignedID> visitedEdges;

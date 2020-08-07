@@ -3444,7 +3444,7 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 	const float lineThickness = 2.0f;
 	const float arrowSize = 10.0f;
 	const float faceEdgeOffset = 15.0f;
-	const FVector textOffset = 20.0f * FVector::UpVector;
+	const FVector textOffset = 10.0f * FVector::UpVector;
 
 	for (auto& kvp : SurfaceGraphs)
 	{
@@ -3494,7 +3494,7 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 				FVector endDrawPos = UModumateGeometryStatics::Deproject2DPoint(endPos, faceAxisX, faceAxisY, faceOrigin);
 
 				DrawDebugDirectionalArrow(world, startDrawPos, endDrawPos, arrowSize, FColor::Blue, false, -1.f, 0xFF, lineThickness);
-				FString edgeString = FString::Printf(TEXT("Edge #%d: [%d, %d]"), graphEdge.ID, graphEdge.StartVertexID, graphEdge.EndVertexID);
+				FString edgeString = FString::Printf(TEXT("Edge #%d: [%d, %d], {%d, %d}"), graphEdge.ID, graphEdge.StartVertexID, graphEdge.EndVertexID, graphEdge.LeftPolyID, graphEdge.RightPolyID);
 				DrawDebugString(world, 0.5f * (startDrawPos + endDrawPos) + textOffset, edgeString, nullptr, FColor::White, 0.0f, true);
 			}
 		}
