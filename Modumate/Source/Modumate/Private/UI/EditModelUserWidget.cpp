@@ -7,6 +7,8 @@
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UI/SelectionTray/SelectionTrayWidget.h"
+#include "UI/BIM/BIMDesigner.h"
+#include "UI/BIM/BIMBlockDialogBox.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -71,5 +73,27 @@ void UEditModelUserWidget::EMOnSelectionObjectChanged()
 	else
 	{
 		SelectionTrayWidget->OpenToolTrayForSelection();
+	}
+}
+
+void UEditModelUserWidget::EditExistingAssembly(EToolMode ToolMode, FName AssemblyKey)
+{
+	ToggleBIMDesigner(true);
+	BIMDesigner->EditPresetInBIMDesigner(AssemblyKey);
+}
+
+void UEditModelUserWidget::ToggleBIMDesigner(bool Open)
+{
+	if (Open)
+	{
+		BIMDesigner->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		BIMBlockDialogBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		// TODO: open animation
+	}
+	else
+	{
+		// TODO: Replace with closing animation
+		BIMDesigner->SetVisibility(ESlateVisibility::Collapsed);
+		BIMBlockDialogBox->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }

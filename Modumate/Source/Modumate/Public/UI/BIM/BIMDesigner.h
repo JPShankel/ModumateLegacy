@@ -27,6 +27,7 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
 
 	bool DragTick = false;
 	FVector2D LastMousePosition = FVector2D::ZeroVector;
@@ -34,6 +35,9 @@ protected:
 
 	UPROPERTY()
 	TArray<class UBIMBlockNode*> BIMBlockNodes;
+
+	TMap<int32, class UBIMBlockNode*> IdToNodeMap;
+	TMap<FIntPoint, class UBIMBlockNode*> NodeCoordinateMap;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -44,6 +48,24 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ZoomDeltaMinus = 0.91f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor NodeSplineColor = FLinearColor(0.25f, 0.25f, 0.25f, 1.f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float NodeSplineThickness= 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float NodeSplineBezierStartPercentage = 0.45f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float NodeSplineBezierEndPercentage = 0.55f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float NodeHorizontalSpacing = 400.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float NodeVerticalSpacing = 20.f;
 
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *Controller;
@@ -60,5 +82,8 @@ public:
 	UFUNCTION()
 	void PerformDrag();
 
-	float GetCurrentZoomScale();
+	float GetCurrentZoomScale() const;
+	bool EditPresetInBIMDesigner(const FName& PresetID);
+	void AutoArrangeNodes();
+	void DrawConnectSplineForNodes(const FPaintContext& context, class UBIMBlockNode* StartNode, class UBIMBlockNode* EndNode) const;
 };

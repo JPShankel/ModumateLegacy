@@ -35,6 +35,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class USelectionTrayWidget *SelectionTrayWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UBIMDesigner *BIMDesigner;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UBIMBlockDialogBox *BIMBlockDialogBox;
+
 	UFUNCTION()
 	void EMOnToolModeChanged();
 
@@ -45,7 +51,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
 	void EventNewCraftingAssembly(EToolMode ToolMode);
 
-	// Blueprint event for opening BIM configurator for crafting existing assembly
-	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
-	void EventEditExistingAssembly(EToolMode ToolMode, FName AssemblyKey);
+	void EditExistingAssembly(EToolMode ToolMode, FName AssemblyKey);
+	void ToggleBIMDesigner(bool Open);
 };

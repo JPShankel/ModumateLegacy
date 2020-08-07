@@ -36,6 +36,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateAssembliesListForCurrentToolMode();
 
+	void CreatePresetListInNodeForSwap(int32 NodeID);
+
 	UFUNCTION()
 	void OnButtonAddReleased();
 };

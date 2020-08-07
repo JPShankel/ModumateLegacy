@@ -18,7 +18,9 @@ enum class EComponentListItemType : uint8
 {
 	AssemblyListItem,
 	SelectionListItem,
-	SwapListItem
+	SwapListItem,
+	SwapDesignerPreset,
+	None
 };
 
 UCLASS()
@@ -35,8 +37,8 @@ protected:
 
 	FName AsmKey;
 	FName AsmName;
-	EToolMode ToolMode;
-	EComponentListItemType ItemType;
+	EToolMode ToolMode = EToolMode::VE_NONE;
+	EComponentListItemType ItemType = EComponentListItemType::None;
 
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *EMPlayerController;

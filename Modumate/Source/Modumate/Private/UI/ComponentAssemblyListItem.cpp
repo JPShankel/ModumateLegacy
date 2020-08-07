@@ -125,7 +125,7 @@ void UComponentAssemblyListItem::OnButtonEditReleased()
 {
 	if (EMPlayerController)
 	{
-		EMPlayerController->EditModelUserWidget->EventEditExistingAssembly(ToolMode, AsmKey);
+		EMPlayerController->EditModelUserWidget->EditExistingAssembly(ToolMode, AsmKey);
 	}
 }
 

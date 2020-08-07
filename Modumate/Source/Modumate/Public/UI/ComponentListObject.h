@@ -16,8 +16,11 @@ class MODUMATE_API UComponentListObject : public UObject
 
 public:
 
-	EComponentListItemType ItemType;
-	EToolMode Mode;
+	EComponentListItemType ItemType = EComponentListItemType::None;
+	EToolMode Mode = EToolMode::VE_NONE;
 	FName UniqueKey;
 	int32 SelectionItemCount = 0;
+
+	// The BIM node that is pending swap
+	int32 BIMNodeInstanceID = -1;
 };

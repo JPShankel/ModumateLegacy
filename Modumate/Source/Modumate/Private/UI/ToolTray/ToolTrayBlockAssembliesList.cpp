@@ -68,6 +68,12 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 	}
 }
 
+void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(int32 NodeID)
+{
+	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+}
+
 void UToolTrayBlockAssembliesList::OnButtonAddReleased()
 {
 	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();

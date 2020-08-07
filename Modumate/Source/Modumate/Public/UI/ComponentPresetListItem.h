@@ -36,5 +36,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UImage *IconImage;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UImage *GrabHandleImage;
+
 	bool CaptureIconFromPresetKey(class AEditModelPlayerController_CPP *Controller, const FName &AsmKey, EToolMode mode);
 };
