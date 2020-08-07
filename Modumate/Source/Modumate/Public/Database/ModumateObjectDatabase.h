@@ -42,9 +42,7 @@ public:
 	void Shutdown();
 
 	// Read database
-	void ReadMeshData(UDataTable *data);
 	void ReadLightConfigData(UDataTable *data);
-	void ReadColorData(UDataTable *data);
 	void ReadRoomConfigurations(UDataTable *data);
 
 	void AddArchitecturalMaterial(const FName &Key, const FString& Name, const FSoftObjectPath& AssetPath);

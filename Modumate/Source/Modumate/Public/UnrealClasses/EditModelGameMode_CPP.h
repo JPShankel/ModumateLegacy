@@ -87,12 +87,6 @@ public:
 	UDataTable* RoomConfigurationTable;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
-	UDataTable* MeshTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
-	UDataTable* ColorTable;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* LightConfigTable;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Editing")

@@ -38,8 +38,6 @@ void AEditModelGameMode_CPP::InitGame(const FString& MapName, const FString& Opt
 	{
 		SCOPE_SECONDS_COUNTER(databaseLoadTime);
 
-		ObjectDatabase->ReadColorData(ColorTable);
-		ObjectDatabase->ReadMeshData(MeshTable);
 		ObjectDatabase->ReadLightConfigData(LightConfigTable);
 		ObjectDatabase->ReadRoomConfigurations(RoomConfigurationTable);
 

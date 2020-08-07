@@ -10,15 +10,6 @@
 
 
 USTRUCT()
-struct FMeshTableRow : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	FSoftObjectPath AssetFilePath;
-};
-
-USTRUCT()
 struct FLightTableRow : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -34,27 +25,6 @@ struct FLightTableRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere)
 	bool bAsSpotLight;
-};
-
-USTRUCT()
-struct FColorTableRow : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	FName Library;
-
-	UPROPERTY(EditAnywhere)
-	FName Category;
-
-	UPROPERTY(EditAnywhere)
-	FString Hex;
-
-	UPROPERTY(EditAnywhere)
-	FText DisplayName;
-
-	UPROPERTY(EditAnywhere)
-	FText InspiredByProduct;
 };
 
 USTRUCT()

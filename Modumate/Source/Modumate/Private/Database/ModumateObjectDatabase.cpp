@@ -312,40 +312,6 @@ void FModumateDatabase::ReadPresetData()
 	ensureAlways(errors.Num() == 0);
 }
 
-/*
-Read Data Tables
-*/
-void FModumateDatabase::ReadMeshData(UDataTable *data)
-{
-	if (!ensureAlways(data))
-	{
-		return;
-	}
-
-	AMeshes = TModumateDataCollection<FArchitecturalMesh>();
-
-	data->ForeachRow<FMeshTableRow>(TEXT("FModumateMeshTableRow"),
-		[this](const FName &Key, const FMeshTableRow &data)
-		{
-			FArchitecturalMesh mesh;
-
-			// TODO: add lazy loading support
-			if (data.AssetFilePath.IsAsset())
-			{
-				mesh.AssetPath = data.AssetFilePath;
-				mesh.EngineMesh = Cast<UStaticMesh>(data.AssetFilePath.TryLoad());
-				if (ensure(mesh.EngineMesh.IsValid()))
-				{
-					mesh.EngineMesh->AddToRoot();
-				}
-
-				mesh.Key = Key;
-				AMeshes.AddData(mesh);
-			}
-		}
-	);
-}
-
 void FModumateDatabase::ReadLightConfigData(UDataTable *data)
 {
 	if (!ensureAlways(data))
@@ -380,25 +346,6 @@ void FModumateDatabase::AddCustomColor(const FName& Key, const FString& Name, co
 	FCustomColor namedColor = FCustomColor(Key, MoveTemp(value), NAME_None, FText::FromString(Name));
 	namedColor.CombinedKey = Key.ToString();
 	NamedColors.AddData(MoveTemp(namedColor));
-}
-
-void FModumateDatabase::ReadColorData(UDataTable *data)
-{
-	if (!data)
-	{
-		return;
-	}
-
-	data->ForeachRow<FColorTableRow>(TEXT("FColorTableRow"),
-		[this](const FName &Key, const FColorTableRow &data)
-	{
-		FString keySuffix = Key.ToString();
-		keySuffix.RemoveFromStart(data.Library.ToString());
-		FColor colorValue = FColor::FromHex(data.Hex);
-
-		FCustomColor namedColor = FCustomColor(FName(*keySuffix), MoveTemp(colorValue), data.Library, data.DisplayName);
-		NamedColors.AddData(MoveTemp(namedColor));
-	});
 }
 
 TArray<FString> FModumateDatabase::GetDebugInfo()
