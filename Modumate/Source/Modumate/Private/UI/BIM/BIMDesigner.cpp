@@ -164,6 +164,11 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FName& PresetID)
 			BIMBlockNodes.Add(newBlockNode);
 			CanvasPanelForNodes->AddChildToCanvas(newBlockNode);
 			IdToNodeMap.Add(curInstance->GetInstanceID(), newBlockNode);
+			UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(newBlockNode);
+			if (canvasSlot)
+			{
+				canvasSlot->SetAutoSize(true);
+			}
 		}
 	}
 

@@ -16,6 +16,11 @@ bool UModumateTextBlockUserWidget::Initialize()
 		return false;
 	}
 	ChangeText(TextOverride);
+
+	if (ModumateTextBlock)
+	{
+		ModumateTextBlock->OverrideTextWrap(AutoWrapTextOverride, WrapTextAtOverride, WrappingPolicyOverride);
+	}
 	return true;
 }
 

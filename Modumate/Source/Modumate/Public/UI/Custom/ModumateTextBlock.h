@@ -24,5 +24,6 @@ public:
 	class USlateWidgetStyleAsset *CustomTextBlockStyle;
 
 	bool ApplyCustomStyle();
+	void OverrideTextWrap(bool NewAutoWrapText, float NewWrapTextAt, ETextWrappingPolicy NewWrappingPolicy);
 
 };

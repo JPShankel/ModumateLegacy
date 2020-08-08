@@ -35,6 +35,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 EllipsizeWordAt = 18;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool AutoWrapTextOverride = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float WrapTextAtOverride = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ETextWrappingPolicy WrappingPolicyOverride = ETextWrappingPolicy::DefaultWrapping;
+
 	void ChangeText(const FText &NewText, bool EllipsizeText = true);
 
 protected:

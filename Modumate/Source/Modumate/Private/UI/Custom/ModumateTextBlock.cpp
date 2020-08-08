@@ -28,3 +28,10 @@ bool UModumateTextBlock::ApplyCustomStyle()
 
 	return false;
 }
+
+void UModumateTextBlock::OverrideTextWrap(bool NewAutoWrapText, float NewWrapTextAt, ETextWrappingPolicy NewWrappingPolicy)
+{
+	WrapTextAt = NewWrapTextAt;
+	WrappingPolicy = NewWrappingPolicy;
+	SetAutoWrapText(NewAutoWrapText);
+}

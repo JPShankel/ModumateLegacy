@@ -3,6 +3,7 @@
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/ModumateUIStatics.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
+#include "Components/Sizebox.h"
 
 UModumateEditableTextBoxUserWidget::UModumateEditableTextBoxUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -17,6 +18,7 @@ bool UModumateEditableTextBoxUserWidget::Initialize()
 	}
 	ChangeText(TextOverride);
 	ChangeHint(HintOverride);
+	OverrideSizeBox();
 	return true;
 }
 
@@ -58,5 +60,41 @@ void UModumateEditableTextBoxUserWidget::ChangeHint(const FText &NewHint, bool E
 	else
 	{
 		ModumateEditableTextBox->SetHintText(NewHint);
+	}
+}
+
+void UModumateEditableTextBoxUserWidget::OverrideSizeBox()
+{
+	if (bOverride_WidthOverride)
+	{
+		SizeBoxEditable->SetWidthOverride(WidthOverride);
+	}
+	if (bOverride_HeightOverride)
+	{
+		SizeBoxEditable->SetHeightOverride(HeightOverride);
+	}
+	if (bOverride_MinDesiredWidth)
+	{
+		SizeBoxEditable->SetMinDesiredWidth(MinDesiredWidth);
+	}
+	if (bOverride_MinDesiredHeight)
+	{
+		SizeBoxEditable->SetMinDesiredHeight(MinDesiredHeight);
+	}
+	if (bOverride_MaxDesiredWidth)
+	{
+		SizeBoxEditable->SetMaxDesiredWidth(MaxDesiredWidth);
+	}
+	if (bOverride_MaxDesiredHeight)
+	{
+		SizeBoxEditable->SetMaxDesiredHeight(MaxDesiredHeight);
+	}
+	if (bOverride_MinAspectRatio)
+	{
+		SizeBoxEditable->SetMinAspectRatio(MinAspectRatio);
+	}
+	if (bOverride_MaxAspectRatio)
+	{
+		SizeBoxEditable->SetMaxAspectRatio(MaxAspectRatio);
 	}
 }
