@@ -24,6 +24,17 @@ namespace Modumate
 	{
 	}
 
+	void FBoundsUpdate::Reset()
+	{
+		OuterBounds = TPair<int32, TArray<int32>>();
+		InnerBounds.Reset();
+	}
+
+	bool FBoundsUpdate::IsEmpty() const
+	{
+		return (OuterBounds.Value.Num() == 0 && InnerBounds.Num() == 0);
+	}
+
 	void FGraph2DDelta::Reset()
 	{
 		VertexMovements.Reset();
@@ -36,6 +47,9 @@ namespace Modumate
 		PolygonAdditions.Reset();
 		PolygonDeletions.Reset();
 		PolygonParentIDUpdates.Reset();
+
+		BoundsUpdates.Key.Reset();
+		BoundsUpdates.Value.Reset();
 	}
 
 	bool FGraph2DDelta::IsEmpty() const
@@ -48,6 +62,7 @@ namespace Modumate
 		if (PolygonAdditions.Num() > 0) return false;
 		if (PolygonDeletions.Num() > 0) return false;
 		if (PolygonParentIDUpdates.Num() > 0) return false;
+		if (BoundsUpdates.Key.IsEmpty() || BoundsUpdates.Value.IsEmpty()) return false;
 
 		return true;
 	}
@@ -114,6 +129,8 @@ namespace Modumate
 
 			inverse->PolygonParentIDUpdates.Add(ID, TPair<int32, int32>(update.Value, update.Key));
 		}
+
+		inverse->BoundsUpdates = TPair<FBoundsUpdate, FBoundsUpdate>(BoundsUpdates.Value, BoundsUpdates.Key);
 
 		return inverse;
 	}

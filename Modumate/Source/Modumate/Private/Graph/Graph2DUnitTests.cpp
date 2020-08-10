@@ -789,10 +789,14 @@ namespace Modumate
 		TestDeltas(this, deltas, graph, 2, 4, 4);
 
 		// Make current vertices into the bounds
-		TArray<int32> outerBounds;
-		TArray<TArray<int32>> innerBounds;
-		graph.GetVertices().GenerateKeyArray(outerBounds);
-		graph.SetBounds(outerBounds, innerBounds);
+		int32 boundsID = NextID++;
+		TPair<int32, TArray<int32>> outerBounds(boundsID, TArray<int32>());
+		TMap<int32, TArray<int32>> innerBounds;
+		graph.GetVertices().GenerateKeyArray(outerBounds.Value);
+
+		TestTrue(TEXT("Add Bounds"),
+			graph.SetBounds(deltas, outerBounds, innerBounds));
+		TestDeltas(this, deltas, graph, 2, 4, 4);
 
 		TestTrue(TEXT("Add Edge inside poly"),
 			graph.AddEdge(deltas, NextID, FVector2D(10.0f, 10.0f), FVector2D(20.0f, 20.0f)));
@@ -855,10 +859,14 @@ namespace Modumate
 		TestDeltas(this, deltas, graph, 2, 5, 5);
 
 		// Make current vertices into the bounds
-		TArray<int32> outerBounds;
-		TArray<TArray<int32>> innerBounds;
-		graph.GetVertices().GenerateKeyArray(outerBounds);
-		graph.SetBounds(outerBounds, innerBounds);
+		int32 boundsID = NextID++;
+		TPair<int32, TArray<int32>> outerBounds(boundsID, TArray<int32>());
+		TMap<int32, TArray<int32>> innerBounds;
+		graph.GetVertices().GenerateKeyArray(outerBounds.Value);
+
+		TestTrue(TEXT("Add Bounds"),
+			graph.SetBounds(deltas, outerBounds, innerBounds));
+		TestDeltas(this, deltas, graph, 2, 5, 5);
 
 		TestTrue(TEXT("Add Edge inside poly"),
 			graph.AddEdge(deltas, NextID, FVector2D(10.0f, 10.0f), FVector2D(20.0f, 20.0f)));
@@ -972,9 +980,10 @@ namespace Modumate
 			graph.AddEdge(deltas, NextID, vertices[3], vertices[0]));
 		TestDeltas(this, deltas, graph, 2, 4, 4);
 
-		// Make current vertices into the bounds
-		TArray<int32> outerBounds;
-		graph.GetVertices().GenerateKeyArray(outerBounds);
+		int32 boundsID = NextID++;
+		TPair<int32, TArray<int32>> outerBounds(boundsID, TArray<int32>());
+		TMap<int32, TArray<int32>> innerBounds;
+		graph.GetVertices().GenerateKeyArray(outerBounds.Value);
 
 		TSet<int32> holeVertexIDs;
 		TestTrue(TEXT("Add Edge"),
@@ -998,10 +1007,11 @@ namespace Modumate
 		TestDeltas(this, deltas, graph, 4, 8, 8);
 
 		// add hole
-		TArray<TArray<int32>> innerBounds;
-		innerBounds.Add(holeVertexIDs.Array());
+		innerBounds.Add(NextID++, holeVertexIDs.Array());
 
-		graph.SetBounds(outerBounds, innerBounds);
+		TestTrue(TEXT("Add Bounds"),
+			graph.SetBounds(deltas, outerBounds, innerBounds));
+		TestDeltas(this, deltas, graph, 4, 8, 8);
 
 		TestTrue(TEXT("Add Edge inside poly"),
 			graph.AddEdge(deltas, NextID, FVector2D(10.0f, 10.0f), FVector2D(20.0f, 20.0f)));
@@ -1223,10 +1233,14 @@ namespace Modumate
 		TestDeltas(this, deltas, graph, 2, 4, 4);
 
 		// Make current vertices into the bounds
-		TArray<int32> outerBounds;
-		TArray<TArray<int32>> innerBounds;
-		graph.GetVertices().GenerateKeyArray(outerBounds);
-		graph.SetBounds(outerBounds, innerBounds);
+		int32 boundsID = NextID++;
+		TPair<int32, TArray<int32>> outerBounds(boundsID, TArray<int32>());
+		TMap<int32, TArray<int32>> innerBounds;
+		graph.GetVertices().GenerateKeyArray(outerBounds.Value);
+
+		TestTrue(TEXT("Add Bounds"),
+			graph.SetBounds(deltas, outerBounds, innerBounds));
+		TestDeltas(this, deltas, graph, 2, 4, 4);
 
 		// 5-sided star
 		TestTrue(TEXT("Add first Edge"),

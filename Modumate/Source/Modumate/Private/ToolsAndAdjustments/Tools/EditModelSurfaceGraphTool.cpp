@@ -331,6 +331,8 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 
 	// Project all of the polygons to add to the target graph
 	TArray<TArray<FVector2D>> graphPolygonsToAdd;
+	TArray<int32> graphPolygonHostIDs;
+
 	TArray<FVector2D> &perimeterPolygon = graphPolygonsToAdd.AddDefaulted_GetRef();
 	Algo::Transform(HostCornerPositions, perimeterPolygon, [this](const FVector &WorldPoint) {
 		return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
@@ -339,21 +341,32 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 	// Project the holes that the target has into graph polygons, if any
 	const auto &volumeGraph = GameState->Document.GetVolumeGraph();
 	const auto *hostParentFace = volumeGraph.FindFace(HostTarget->GetParentID());
+	graphPolygonHostIDs.Add(hostParentFace->ID);
+
+	// this only counts faces that are contained, not holes without faces (CachedIslands)
+	if (hostParentFace->ContainedFaceIDs.Num() != hostParentFace->CachedHoles.Num())
+	{
+		return false;
+	}
+
 	if (hostParentFace)
 	{
-		for (const FPolyHole3D &hostWorldHole : hostParentFace->CachedHoles)
+		for (int32 containedFaceID : hostParentFace->ContainedFaceIDs)
 		{
+			const auto *containedFace = volumeGraph.FindFace(containedFaceID);
 			TArray<FVector2D> &holePolygon = graphPolygonsToAdd.AddDefaulted_GetRef();
-			Algo::Transform(hostWorldHole.Points, holePolygon, [this](const FVector &WorldPoint) {
+			Algo::Transform(containedFace->CachedPositions, holePolygon, [this](const FVector &WorldPoint) {
 				return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
 			});
+			graphPolygonHostIDs.Add(containedFace->ID);
 		}
 	}
 
 	// Populate the target graph with the input polygons
 	TArray<int32> polygonVertexIDs;
-	for (const TArray<FVector2D> &graphPolygonToAdd : graphPolygonsToAdd)
+	for (int32 polygonIdx = 0; polygonIdx < graphPolygonsToAdd.Num(); polygonIdx++)
 	{
+		const TArray<FVector2D> &graphPolygonToAdd = graphPolygonsToAdd[polygonIdx];
 		// Populate the target graph with the polygon vertices
 		polygonVertexIDs.Reset();
 		for (const FVector2D &vertex : graphPolygonToAdd)
@@ -372,6 +385,16 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 
 		// Populate the target graph with the polygon itself
 		fillGraphDelta->AddNewPolygon(polygonVertexIDs, nextGraphObjID, true);
+
+		// Populate the bounds formed by the polygon
+		if (polygonIdx == 0)
+		{
+			fillGraphDelta->BoundsUpdates.Value.OuterBounds = TPair<int32, TArray<int32>>(graphPolygonHostIDs[polygonIdx], polygonVertexIDs);
+		}
+		else
+		{
+			fillGraphDelta->BoundsUpdates.Value.InnerBounds.Add(graphPolygonHostIDs[polygonIdx], polygonVertexIDs);
+		}
 	}
 
 	OutDeltas.Add(fillGraphDelta);

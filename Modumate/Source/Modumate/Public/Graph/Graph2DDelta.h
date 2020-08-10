@@ -48,6 +48,15 @@ namespace Modumate
 		{ }
 	};
 
+	struct FBoundsUpdate
+	{
+		TPair<int32, TArray<int32>> OuterBounds;
+		TMap<int32, TArray<int32>> InnerBounds;
+
+		void Reset();
+		bool IsEmpty() const;
+	};
+
 	// TODO: generalize FGraph3DHostedObjDelta for use here as well
 
 	// A struct that completely describes a change to the 2D graph
@@ -68,6 +77,8 @@ namespace Modumate
 		TMap<int32, FGraph2DObjDelta> PolygonAdditions;
 		TMap<int32, FGraph2DObjDelta> PolygonDeletions;
 		TMap<int32, TPair<int32, int32>> PolygonParentIDUpdates;
+
+		TPair<FBoundsUpdate, FBoundsUpdate> BoundsUpdates;
 
 		FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType = EGraph2DDeltaType::Edit);
 

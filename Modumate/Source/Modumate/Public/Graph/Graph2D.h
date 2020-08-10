@@ -83,8 +83,8 @@ namespace Modumate
 
 		// vertices and edges in the graph must be inside the bounding vertices,
 		// and outside the bounding contained vertices
-		TArray<int32> BoundingPolygon;
-		TArray<TArray<int32>> BoundingContainedPolygons;
+		TPair<int32, TArray<int32>> BoundingPolygon;
+		TMap<int32, TArray<int32>> BoundingContainedPolygons;
 
 		// During validation, the vertex IDs saved in BoundingVertices and BoundingContainedVertices
 		// are converted into this to calculate whether the vertices and edges of the graph are within the bounds
@@ -107,8 +107,6 @@ namespace Modumate
 		// Clean all objects that are dirtied (by applying deltas) and output their IDs
 		bool CleanGraph(TArray<int32> &OutCleanedVertices, TArray<int32> &OutCleanedEdges, TArray<int32> &OutCleanedPolygons);
 
-		// Set the bounds to the provided vertex IDs if they exist
-		bool SetBounds(TArray<int32> &InOuterBounds, TArray<TArray<int32>> &InInnerBounds);
 		void ClearBounds();
 
 	private:
@@ -175,6 +173,9 @@ namespace Modumate
 		// MoveVertices, but with an identical offset applied to each vertex specified by ID, rather than arbitrary new positions.
 		bool MoveVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TArray<int32> &VertexIDs, const FVector2D &Offset);
 
+		// Set lists of vertex IDs to represent the bounds of the surface graph.  All vertices and edges must be inside the 
+		// OuterBounds (inclusive) and outside all InnerBounds (inclusive).
+		bool SetBounds(TArray<FGraph2DDelta> &OutDeltas, TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds);
 
 		// The "Direct" versions of helper functions are meant to be combined together to make deltas that result in
 		// more complicated operations, and do not apply the delta that they create.

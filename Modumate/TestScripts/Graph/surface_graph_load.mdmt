@@ -1,0 +1,1105 @@
+{
+	"ModumateHeader":
+	{
+		"version": 7,
+		"thumbnail": "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Zxk/ma0KVwNy68aWa6VDfabp+qakJX2+RHALeZRzlmW4MWBkY9TkEAjmodR8U6jHqUCabpVpcaewXzpri9aGVDk7tsYicNgYIy65PHHWsmigC5Jr2unWTLHPpi6T2tmtJDP93/nr5oX73P8Aq+nHvVQXOpv/AGilzrF9PBebgsWI4vsynPyxPGiuODgMWLDaCDnJKUUARWlutrbpCstzKq5+e5uJJ5Dk55dyWP4ngcdBUtFFABRRRQBl+J7q30/QbzU7u1+1x6Yo1EQeYY9725EyDcOnzRr2PuCOK9Yrzuuu8IPqMvhPRJNcOdWaxga8Py8zGNd/3fl+9npx6UAa1FVdU1Gy0mxlvdUvLays4seZPcyrHGmSAMsxAGSQPqRWVdeMdBg0qHUor8X1lM/lxy6bE99uPOeIVc4BUgnGAeM5xTA36K5HUfHEdu0BsNC1nU4JoVlEtusMQXOflZJ5Y3DAYJBXjOOuQGyeKtSGsmKPSbNtJ7XLXzCf7uf9V5RX73H+s6c+1AHYUVw1rruvrqVw91caXJp7FvJhjs5ElQbvl3SGUhsDg4RcnnjpWWqanLY3VpqXiHV76Kfb8xeO1kj2nPySW6RsM8Z56DHQnIB6bWXrniLRNA8j+3dY07TPP3eV9sukh8zbjO3cRnGRnHqK4G60iyvtKh03VITqllC/mJHqUjXmH5+bMpYk/MwBJ4BwOKtW8EVtbxQW0SQwRKEjjjUKqKBgAAcAAdqVwOpk8XaRHrJ0tpLw3I/jWwnaD7u7/XBPL6f7XXjrxVa18YJNqVxbSaNqlvBEWCXchgMU2GwNoWUuMjkblHHXB4rDooAu2ninXJ7W7W80vTbC52YtnivHu03kHl1McRwDt4B555XrVGXUPEd5pogutbitLsTbxc6XZJESm3GwrOZh1OcjB4HTnK0UAQanDPqtvaR6hqeqs9su0S217JZtISBln8goGJxnpgZOAMmotR0rTtT1KDUdSsLS81C3CiG5uIVkljCsWXa5BIwSSMHgnNXKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKzbLRLOzF6kJuzb3gmE9rLeTS2ziVi0n7lmMY3EsThR94+prSooAp6Xpen6TbtBpVja2MDMXaO2hWJS2AMkKAM4A59hVyiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//Z"
+	},
+	"ModumateObjects":
+	{
+		"customAssemblies": [],
+		"currentToolAssemblyMap":
+		{
+			"VE_PLACEOBJECT": "None",
+			"VE_WALL": "2Layer0D-->Abstract1Material0RawMaterialAbstract0Color-->AbstractFFFFFF-White0SrfTreatmentStandard0DimThk6inT-2Layer0D-->Abstract-->CastInPlaceConcrete1Material-->Aggregates-->Concrete0RawMaterialConcreteNormalAggregate0Color-->Aggregates-->ConcreteD6D7D8-Natural0SrfTreatmentStandard0DimThk6inT-2Layer0D-->Abstract1Material0RawMaterialAbstract0Color-->AbstractFFFFFF-White0SrfTreatmentStandard0DimThk6inT",
+			"VE_FLOOR": "None",
+			"VE_DOOR": "None",
+			"VE_WINDOW": "None",
+			"VE_STAIR": "None",
+			"VE_RAIL": "None",
+			"VE_CABINET": "None",
+			"VE_FINISH": "None",
+			"VE_COUNTERTOP": "None",
+			"VE_STRUCTURELINE": "None",
+			"VE_TRIM": "None",
+			"VE_ROOF_FACE": "None"
+		},
+		"craftingPresetArrayV2": [],
+		"projectAssemblyPresets": [],
+		"keyStore": [],
+		"cameraViews": [],
+		"customGraph2DRecords":
+		{
+		},
+		"surfaceGraphs":
+		{
+			"11":
+			{
+				"vertices":
+				{
+					"12":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"13":
+					{
+						"x": 552.3731689453125,
+						"y": 0
+					},
+					"14":
+					{
+						"x": 552.3731689453125,
+						"y": -243.83999633789063
+					},
+					"15":
+					{
+						"x": 0,
+						"y": -243.83999633789063
+					}
+				},
+				"edges":
+				{
+					"16":
+					{
+						"vertexIds": [ 12, 13 ]
+					},
+					"17":
+					{
+						"vertexIds": [ 13, 14 ]
+					},
+					"18":
+					{
+						"vertexIds": [ 14, 15 ]
+					},
+					"19":
+					{
+						"vertexIds": [ 15, 12 ]
+					}
+				},
+				"polygons":
+				{
+					"20":
+					{
+						"vertexIds": [ 12, 13, 14, 15 ],
+						"bInterior": true,
+						"containingFaceId": 0,
+						"containedFaceIds": []
+					}
+				}
+			}
+		},
+		"objectInstances": [
+			{
+				"iD": 1,
+				"objectType": "OTMetaVertex",
+				"assemblyKey": "None",
+				"parentId": 0,
+				"childIds": [],
+				"location":
+				{
+					"x": 620.89361572265625,
+					"y": -211.20556640625,
+					"z": 0
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 0.24163472652435303,
+					"y": 1.0089348943138683e-43,
+					"z": 4.2038953929744512e-45
+				},
+				"controlPoints": [
+					{
+						"x": 620.89361572265625,
+						"y": -211.20556640625,
+						"z": 0
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 2,
+				"objectType": "OTMetaVertex",
+				"assemblyKey": "None",
+				"parentId": 0,
+				"childIds": [],
+				"location":
+				{
+					"x": 1150.778076171875,
+					"y": -367.2138671875,
+					"z": 0
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 1150.778076171875,
+						"y": -367.2138671875,
+						"z": 0
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 3,
+				"objectType": "OTMetaVertex",
+				"assemblyKey": "None",
+				"parentId": 0,
+				"childIds": [],
+				"location":
+				{
+					"x": 1150.778076171875,
+					"y": -367.2138671875,
+					"z": 243.83999633789063
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 1150.778076171875,
+						"y": -367.2138671875,
+						"z": 243.83999633789063
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 4,
+				"objectType": "OTMetaVertex",
+				"assemblyKey": "None",
+				"parentId": 0,
+				"childIds": [],
+				"location":
+				{
+					"x": 620.89361572265625,
+					"y": -211.20556640625,
+					"z": 243.83999633789063
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 620.89361572265625,
+						"y": -211.20556640625,
+						"z": 243.83999633789063
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 5,
+				"objectType": "OTMetaEdge",
+				"assemblyKey": "None",
+				"parentId": 0,
+				"childIds": [],
+				"location":
+				{
+					"x": 885.8358154296875,
+					"y": -289.209716796875,
+					"z": 0
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 620.89361572265625,
+						"y": -211.20556640625,
+						"z": 0
+					},
+					{
+						"x": 1150.778076171875,
+						"y": -367.2138671875,
+						"z": 0
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 6,
+				"objectType": "OTMetaEdge",
+				"assemblyKey": "None",
+				"parentId": 0,
+				"childIds": [],
+				"location":
+				{
+					"x": 1150.778076171875,
+					"y": -367.2138671875,
+					"z": 121.91999816894531
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 1150.778076171875,
+						"y": -367.2138671875,
+						"z": 0
+					},
+					{
+						"x": 1150.778076171875,
+						"y": -367.2138671875,
+						"z": 243.83999633789063
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 7,
+				"objectType": "OTMetaEdge",
+				"assemblyKey": "None",
+				"parentId": 0,
+				"childIds": [],
+				"location":
+				{
+					"x": 885.8358154296875,
+					"y": -289.209716796875,
+					"z": 243.83999633789063
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 1150.778076171875,
+						"y": -367.2138671875,
+						"z": 243.83999633789063
+					},
+					{
+						"x": 620.89361572265625,
+						"y": -211.20556640625,
+						"z": 243.83999633789063
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 8,
+				"objectType": "OTMetaEdge",
+				"assemblyKey": "None",
+				"parentId": 0,
+				"childIds": [],
+				"location":
+				{
+					"x": 620.89361572265625,
+					"y": -211.20556640625,
+					"z": 121.91999816894531
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 620.89361572265625,
+						"y": -211.20556640625,
+						"z": 243.83999633789063
+					},
+					{
+						"x": 620.89361572265625,
+						"y": -211.20556640625,
+						"z": 0
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 9,
+				"objectType": "OTMetaPlane",
+				"assemblyKey": "None",
+				"parentId": 0,
+				"childIds": [ 10 ],
+				"location":
+				{
+					"x": 885.8358154296875,
+					"y": -289.209716796875,
+					"z": 121.91999816894531
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 163.59452819824219,
+					"roll": 90.000007629394531
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 620.89361572265625,
+						"y": -211.20556640625,
+						"z": 0
+					},
+					{
+						"x": 1150.778076171875,
+						"y": -367.2138671875,
+						"z": 0
+					},
+					{
+						"x": 1150.778076171875,
+						"y": -367.2138671875,
+						"z": 243.83999633789063
+					},
+					{
+						"x": 620.89361572265625,
+						"y": -211.20556640625,
+						"z": 243.83999633789063
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 10,
+				"objectType": "OTWallSegment",
+				"assemblyKey": "2Layer0D-->Abstract1Material0RawMaterialAbstract0Color-->AbstractFFFFFF-White0SrfTreatmentStandard0DimThk6inT-2Layer0D-->Abstract-->CastInPlaceConcrete1Material-->Aggregates-->Concrete0RawMaterialConcreteNormalAggregate0Color-->Aggregates-->ConcreteD6D7D8-Natural0SrfTreatmentStandard0DimThk6inT-2Layer0D-->Abstract1Material0RawMaterialAbstract0Color-->AbstractFFFFFF-White0SrfTreatmentStandard0DimThk6inT",
+				"parentId": 9,
+				"childIds": [ 11 ],
+				"location":
+				{
+					"x": 885.8358154296875,
+					"y": -289.209716796875,
+					"z": 121.91999816894531
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 163.59452819824219,
+					"roll": 90.000007629394531
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0.5,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 11,
+				"objectType": "OTSurfaceGraph",
+				"assemblyKey": "None",
+				"parentId": 10,
+				"childIds": [ 12, 13, 14, 15, 16, 17, 18, 19, 20 ],
+				"location":
+				{
+					"x": 627.35003662109375,
+					"y": -189.27627563476563,
+					"z": 0
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": -16.40546989440918,
+					"roll": 90
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [],
+				"controlIndices": [ 1 ],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 12,
+				"objectType": "OTSurfaceVertex",
+				"assemblyKey": "None",
+				"parentId": 11,
+				"childIds": [],
+				"location":
+				{
+					"x": 627.35003662109375,
+					"y": -189.27627563476563,
+					"z": 0
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 627.35003662109375,
+						"y": -189.27627563476563,
+						"z": 0
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 13,
+				"objectType": "OTSurfaceVertex",
+				"assemblyKey": "None",
+				"parentId": 11,
+				"childIds": [],
+				"location":
+				{
+					"x": 1157.2344970703125,
+					"y": -345.28457641601563,
+					"z": 0
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 1157.2344970703125,
+						"y": -345.28457641601563,
+						"z": 0
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 14,
+				"objectType": "OTSurfaceVertex",
+				"assemblyKey": "None",
+				"parentId": 11,
+				"childIds": [],
+				"location":
+				{
+					"x": 1157.2344970703125,
+					"y": -345.28457641601563,
+					"z": 243.83999633789063
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 1157.2344970703125,
+						"y": -345.28457641601563,
+						"z": 243.83999633789063
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 15,
+				"objectType": "OTSurfaceVertex",
+				"assemblyKey": "None",
+				"parentId": 11,
+				"childIds": [],
+				"location":
+				{
+					"x": 627.35003662109375,
+					"y": -189.27627563476563,
+					"z": 243.83999633789063
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 627.35003662109375,
+						"y": -189.27627563476563,
+						"z": 243.83999633789063
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 16,
+				"objectType": "OTSurfaceEdge",
+				"assemblyKey": "None",
+				"parentId": 11,
+				"childIds": [],
+				"location":
+				{
+					"x": 892.292236328125,
+					"y": -267.28042602539063,
+					"z": 0
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 627.35003662109375,
+						"y": -189.27627563476563,
+						"z": 0
+					},
+					{
+						"x": 1157.2344970703125,
+						"y": -345.28457641601563,
+						"z": 0
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 17,
+				"objectType": "OTSurfaceEdge",
+				"assemblyKey": "None",
+				"parentId": 11,
+				"childIds": [],
+				"location":
+				{
+					"x": 1157.2344970703125,
+					"y": -345.28457641601563,
+					"z": 121.91999816894531
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 1157.2344970703125,
+						"y": -345.28457641601563,
+						"z": 0
+					},
+					{
+						"x": 1157.2344970703125,
+						"y": -345.28457641601563,
+						"z": 243.83999633789063
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 18,
+				"objectType": "OTSurfaceEdge",
+				"assemblyKey": "None",
+				"parentId": 11,
+				"childIds": [],
+				"location":
+				{
+					"x": 892.292236328125,
+					"y": -267.28042602539063,
+					"z": 243.83999633789063
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 1157.2344970703125,
+						"y": -345.28457641601563,
+						"z": 243.83999633789063
+					},
+					{
+						"x": 627.35003662109375,
+						"y": -189.27627563476563,
+						"z": 243.83999633789063
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 19,
+				"objectType": "OTSurfaceEdge",
+				"assemblyKey": "None",
+				"parentId": 11,
+				"childIds": [],
+				"location":
+				{
+					"x": 627.35003662109375,
+					"y": -189.27627563476563,
+					"z": 121.91999816894531
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 627.35003662109375,
+						"y": -189.27627563476563,
+						"z": 243.83999633789063
+					},
+					{
+						"x": 627.35003662109375,
+						"y": -189.27627563476563,
+						"z": 0
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 20,
+				"objectType": "OTSurfacePolygon",
+				"assemblyKey": "None",
+				"parentId": 11,
+				"childIds": [],
+				"location":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": -16.40546989440918,
+					"roll": 90
+				},
+				"uVAnchor":
+				{
+					"x": 1.5401699397142053e+19,
+					"y": 4.5914945482066956e-41,
+					"z": 0.24156415462493896
+				},
+				"controlPoints": [
+					{
+						"x": 627.35003662109375,
+						"y": -189.27627563476563,
+						"z": 0
+					},
+					{
+						"x": 1157.2344970703125,
+						"y": -345.28457641601563,
+						"z": 0
+					},
+					{
+						"x": 1157.2344970703125,
+						"y": -345.28457641601563,
+						"z": 243.83999633789063
+					},
+					{
+						"x": 627.35003662109375,
+						"y": -189.27627563476563,
+						"z": 243.83999633789063
+					}
+				],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			}
+		],
+		"volumeGraph":
+		{
+			"vertices":
+			{
+				"1":
+				{
+					"iD": 1,
+					"position":
+					{
+						"x": 620.89361572265625,
+						"y": -211.20556640625,
+						"z": 0
+					}
+				},
+				"2":
+				{
+					"iD": 2,
+					"position":
+					{
+						"x": 1150.778076171875,
+						"y": -367.2138671875,
+						"z": 0
+					}
+				},
+				"3":
+				{
+					"iD": 3,
+					"position":
+					{
+						"x": 1150.778076171875,
+						"y": -367.2138671875,
+						"z": 243.83999633789063
+					}
+				},
+				"4":
+				{
+					"iD": 4,
+					"position":
+					{
+						"x": 620.89361572265625,
+						"y": -211.20556640625,
+						"z": 243.83999633789063
+					}
+				}
+			},
+			"edges":
+			{
+				"5":
+				{
+					"iD": 5,
+					"startVertexId": 1,
+					"endVertexId": 2,
+					"groupIds": []
+				},
+				"6":
+				{
+					"iD": 6,
+					"startVertexId": 2,
+					"endVertexId": 3,
+					"groupIds": []
+				},
+				"7":
+				{
+					"iD": 7,
+					"startVertexId": 3,
+					"endVertexId": 4,
+					"groupIds": []
+				},
+				"8":
+				{
+					"iD": 8,
+					"startVertexId": 4,
+					"endVertexId": 1,
+					"groupIds": []
+				}
+			},
+			"faces":
+			{
+				"9":
+				{
+					"iD": 9,
+					"vertexIds": [ 1, 2, 3, 4 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				}
+			}
+		},
+		"commandHistory": [
+			"{\"parameters\":{\"command\":\"{\\\"value\\\":\\\"deselect_all\\\"}\",\"version\":\"{\\\"value\\\":\\\"1\\\"}\",\"commandID\":\"{\\\"value\\\":\\\"2\\\"}\"}}",
+			"{\"parameters\":{\"command\":\"{\\\"value\\\":\\\"begin_undoredo_macro\\\"}\",\"version\":\"{\\\"value\\\":\\\"1\\\"}\",\"commandID\":\"{\\\"value\\\":\\\"3\\\"}\"}}",
+			"{\"parameters\":{\"command\":\"{\\\"value\\\":\\\"end_undoredo_macro\\\"}\",\"version\":\"{\\\"value\\\":\\\"1\\\"}\",\"commandID\":\"{\\\"value\\\":\\\"4\\\"}\"}}"
+		]
+	}
+}

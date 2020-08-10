@@ -710,6 +710,12 @@ namespace Modumate
 			}
 		}
 
+		if (!Delta.BoundsUpdates.Key.IsEmpty() || !Delta.BoundsUpdates.Value.IsEmpty())
+		{
+			BoundingPolygon = Delta.BoundsUpdates.Value.OuterBounds;
+			BoundingContainedPolygons = Delta.BoundsUpdates.Value.InnerBounds;
+		}
+
 		return true;
 	}
 
@@ -752,40 +758,9 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph2D::SetBounds(TArray<int32> &InOuterBounds, TArray<TArray<int32>> &InInnerBounds)
-	{
-		// verify that the provided vertices exist
-		for (int32 vertexID : BoundingPolygon)
-		{
-			auto vertex = FindVertex(vertexID);
-			if (vertex == nullptr)
-			{
-				return false;
-			}
-		}
-
-		for (int32 holeIdx = 0; holeIdx < InInnerBounds.Num(); holeIdx++)
-		{
-			auto& bounds = InInnerBounds[holeIdx];
-			for (int32 vertexID : bounds)
-			{
-				auto vertex = FindVertex(vertexID);
-				if (vertex == nullptr)
-				{
-					return false;
-				}
-			}
-		}
-
-		BoundingPolygon = InOuterBounds;
-		BoundingContainedPolygons = InInnerBounds;
-
-		return true;
-	}
-
 	void FGraph2D::ClearBounds()
 	{
-		BoundingPolygon.Reset();
+		BoundingPolygon = TPair<int32, TArray<int32>>();
 		BoundingContainedPolygons.Reset();
 
 		CachedOuterBounds.Positions.Reset();
@@ -794,7 +769,7 @@ namespace Modumate
 
 	bool FGraph2D::ValidateGraph()
 	{
-		if (BoundingPolygon.Num() == 0) 
+		if (BoundingPolygon.Value.Num() == 0) 
 		{
 			return true;
 		}
@@ -813,7 +788,7 @@ namespace Modumate
 		{
 			auto vertex = &vertexkvp.Value;
 
-			if (BoundingPolygon.Find(vertex->ID) == INDEX_NONE)
+			if (BoundingPolygon.Value.Find(vertex->ID) == INDEX_NONE)
 			{
 				if (!ensure(UModumateGeometryStatics::TestPointInPolygon(vertex->Position, CachedOuterBounds.Positions, pointInPolyResult, Epsilon)) ||
 					(!pointInPolyResult.bInside && !pointInPolyResult.bOverlaps))
@@ -822,12 +797,13 @@ namespace Modumate
 				}
 			}
 
-			for (int32 holeIdx = 0; holeIdx < CachedInnerBounds.Num(); holeIdx++)
+			int32 holeIdx = 0;
+			for (auto& kvp : BoundingContainedPolygons)
 			{
 				auto& bounds = CachedInnerBounds[holeIdx];
 				// Checking the holes should be exclusive - being on the edge of the hole is valid
 
-				if (BoundingContainedPolygons[holeIdx].Find(vertex->ID) == INDEX_NONE)
+				if (kvp.Value.Find(vertex->ID) == INDEX_NONE)
 				{
 					if (!ensure(UModumateGeometryStatics::TestPointInPolygon(vertex->Position, bounds.Positions, pointInPolyResult)) ||
 						(pointInPolyResult.bInside && !pointInPolyResult.bOverlaps))
@@ -835,6 +811,7 @@ namespace Modumate
 						return false;
 					}
 				}
+				holeIdx++;
 			}
 		}
 
@@ -885,7 +862,7 @@ namespace Modumate
 		CachedOuterBounds.EdgeNormals.Reset();
 		CachedInnerBounds.Reset();
 
-		for (int32 vertexID : BoundingPolygon)
+		for (int32 vertexID : BoundingPolygon.Value)
 		{
 			auto vertex = FindVertex(vertexID);
 			if (vertex == nullptr)
@@ -896,9 +873,9 @@ namespace Modumate
 			CachedOuterBounds.Positions.Add(vertex->Position);
 		}
 
-		for (int32 holeIdx = 0; holeIdx < BoundingContainedPolygons.Num(); holeIdx++)
+		for (auto& kvp : BoundingContainedPolygons)
 		{
-			auto& hole = BoundingContainedPolygons[holeIdx];
+			auto& hole = kvp.Value;
 			auto& bounds = CachedInnerBounds.AddDefaulted_GetRef();
 
 			for (int32 vertexID : hole)

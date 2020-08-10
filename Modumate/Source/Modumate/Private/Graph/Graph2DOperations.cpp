@@ -659,6 +659,38 @@ namespace Modumate
 		return MoveVertices(OutDeltas, NextID, newVertexPositions);
 	}
 
+	bool FGraph2D::SetBounds(TArray<FGraph2DDelta> &OutDeltas, TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds)
+	{
+		FGraph2DDelta boundsDelta(ID);
+
+		// test to make sure provided polygons are valid
+		if (OuterBounds.Value.Num() < 3)
+		{
+			return false;
+		}
+		for (auto& kvp : InnerBounds)
+		{
+			if (kvp.Value.Num() < 3)
+			{
+				return false;
+			}
+		}
+
+		FBoundsUpdate currentBounds;
+		currentBounds.OuterBounds = BoundingPolygon;
+		currentBounds.InnerBounds = BoundingContainedPolygons;
+
+		FBoundsUpdate nextBounds;
+		nextBounds.OuterBounds = OuterBounds;
+		nextBounds.InnerBounds = InnerBounds;
+
+		boundsDelta.BoundsUpdates = TPair<FBoundsUpdate, FBoundsUpdate>(currentBounds, nextBounds);
+
+		OutDeltas.Add(boundsDelta);
+
+		return true;
+	}
+
 	bool FGraph2D::JoinVertices(FGraph2DDelta &OutDelta, int32 &NextID, int32 SavedVertexID, int32 RemovedVertexID)
 	{
 		auto joinVertex = FindVertex(SavedVertexID);
