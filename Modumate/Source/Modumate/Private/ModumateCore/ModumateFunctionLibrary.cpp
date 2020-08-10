@@ -1484,6 +1484,8 @@ void UModumateFunctionLibrary::PopulatePatternModuleVariables(TMap<FString, floa
 bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshComponent *MeshComponent, const FModumateObjectAssemblyLayer &Layer,
 	const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial, UMaterialInstanceDynamic** CachedMIDPtr)
 {
+
+#if 0 // TODO: refactor for new patterns
 	static const FString continuousPatternKey(TEXT("Continuous"));
 	static const FName masterPBRTexParamBaseColor(TEXT("BaseColor"));
 	static const FName masterPBRTexParamMRSA(TEXT("MRSA"));
@@ -1667,7 +1669,7 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 			}
 		}
 	}
-
+#endif
 	return false;
 }
 

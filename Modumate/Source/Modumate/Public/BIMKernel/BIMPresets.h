@@ -68,7 +68,7 @@ private:
 
 	//for direct access to properties
 	friend class FBIMCraftingTreeNodePool;
-	friend struct FBIMAssemblySpec;
+	friend class FBIMAssemblySpec;
 
 public:
 

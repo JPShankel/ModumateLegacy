@@ -295,9 +295,8 @@ void FModumateDatabase::ReadPresetData()
 			}
 
 			FBIMAssemblySpec outSpec;
-			outSpec.FromPreset(PresetManager.CraftingNodePresets, kvp.Key);
+			outSpec.FromPreset(*this,PresetManager.CraftingNodePresets, kvp.Key);
 			outSpec.ObjectType = *ot;
-			UModumateObjectAssemblyStatics::DoMakeAssembly(*this, PresetManager, outSpec, outSpec.CachedAssembly);
 			PresetManager.UpdateProjectAssembly(outSpec);
 
 			// TODO: default assemblies added to allow interim loading during assembly refactor, to be eliminated

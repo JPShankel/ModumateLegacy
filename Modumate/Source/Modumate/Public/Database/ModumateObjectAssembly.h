@@ -14,7 +14,7 @@
 #include "ModumateObjectAssembly.generated.h"
 
 class FModumateDatabase;
-struct FBIMAssemblySpec;
+class FBIMAssemblySpec;
 
 USTRUCT()
 struct FLightConfiguration
@@ -49,9 +49,6 @@ struct MODUMATE_API FModumateObjectAssemblyLayer
 	FString CodeName = FString();
 	FString PresetSequence = FString();
 
-	FLayerPattern Pattern = FLayerPattern();
-	FLayerPatternGap Gap;
-	TArray<FLayerPatternModule> Modules;
 	Modumate::Units::FUnitValue Thickness;
 
 	FArchitecturalMaterial Material = FArchitecturalMaterial();
@@ -108,42 +105,4 @@ struct MODUMATE_API FModumateObjectAssembly
 	}
 
 	void ReverseLayers();
-};
-
-UCLASS()
-class MODUMATE_API UModumateObjectAssemblyStatics : public UBlueprintFunctionLibrary
-{
-	GENERATED_BODY()
-	private:
-		/*
-		Support functions for producing assemblies of various categorical types
-		TODO: consider moving these to individual MOI modules after all categories are covered for DDL2
-		*/
-		static ECraftingResult MakeLayeredAssembly(
-			const FModumateDatabase &InDB,
-			const FBIMAssemblySpec &InSpec,
-			FModumateObjectAssembly &OutMOA);
-
-		static ECraftingResult MakeStructureLineAssembly(
-			const FModumateDatabase &InDB,
-			const FBIMAssemblySpec &InSpec,
-			FModumateObjectAssembly &OutMOA);
-
-		static ECraftingResult MakeStubbyAssembly(
-			const FModumateDatabase& InDB,
-			const FBIMAssemblySpec& InSpec,
-			FModumateObjectAssembly& OutMOA);
-
-public:
-		static bool CheckCanMakeAssembly(
-			EObjectType OT,
-			const FModumateDatabase &InDB,
-			const FBIMAssemblySpec &InSpec);
-
-		static ECraftingResult DoMakeAssembly(
-			const FModumateDatabase &InDB,
-			const FPresetManager &PresetManager,
-			const FBIMAssemblySpec &InSpec,
-			FModumateObjectAssembly &OutMOA,
-			const int32 InShowOnlyLayerID = -1);
 };

@@ -147,6 +147,8 @@ namespace Modumate {
 				// Thickness
 				row.Add(MakeDraftingText(FText::Format(InchesFormat, FText::FromString(imperial))));
 
+#if 0 //TODO: refactor for new patterns
+
 				// Pattern
 				row.Add(MakeDraftingText(layer.Pattern.DisplayName));
 
@@ -164,6 +166,7 @@ namespace Modumate {
 
 				// Gap
 				row.Add(MakeDraftingText(layer.Gap.DisplayName));
+#endif
 
 				// Comments
 				TSharedPtr<FDraftingComposite> whiteSpace = MakeShareable(new FDraftingComposite());

@@ -18,8 +18,15 @@
 
 class FBIMPresetCollection;
 
-struct MODUMATE_API FBIMAssemblySpec
+class MODUMATE_API FBIMAssemblySpec
 {
+private:
+	ECraftingResult MakeLayeredAssembly(const FModumateDatabase& InDB);
+	ECraftingResult MakeStructureLineAssembly(const FModumateDatabase& InDB);
+	ECraftingResult MakeStubbyAssembly(const FModumateDatabase& InDB);	
+	ECraftingResult DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection);
+
+public:
 	EObjectType ObjectType = EObjectType::OTNone;
 	FName RootPreset;
 	FBIMPropertySheet RootProperties;
@@ -30,5 +37,5 @@ struct MODUMATE_API FBIMAssemblySpec
 	// For DataCollection support in preset manager
 	FName UniqueKey() const { return RootPreset; }
 
-	ECraftingResult FromPreset(const FBIMPresetCollection& PresetCollection, const FName& PresetID);
+	ECraftingResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FName& PresetID);
 };

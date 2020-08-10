@@ -482,12 +482,14 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 				RemoveAllLights();
 			}
 
+#if 0 //TODO: refactor for new patterns
 			if (layer.Modules.Num() == 0)
 			{
 				continue;
 			}
 
 			UModumateFunctionLibrary::SetMeshMaterialsFromAssemblyLayer(layerStaticMeshComp, layer);
+#endif
 		}
 	}
 

@@ -11,7 +11,7 @@
 	If a node's properties or child configuration are inconsistent with the base preset, the preset is considered 'dirty' and must be updated or branched
 */
 
-struct FBIMAssemblySpec;
+class FBIMAssemblySpec;
 class FBIMCraftingTreeNode;
 
 typedef TSharedPtr<FBIMCraftingTreeNode> FBIMCraftingTreeNodeSharedPtr;

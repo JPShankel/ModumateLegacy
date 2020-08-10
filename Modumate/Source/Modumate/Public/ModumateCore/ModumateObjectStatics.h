@@ -10,17 +10,17 @@
 
 #include "ModumateObjectStatics.generated.h"
 
-struct MODUMATE_API FBIMAssemblySpec;
-class MODUMATE_API FModumateDocument;
+class FBIMAssemblySpec;
+class FModumateDocument;
 
 namespace Modumate
 {
-	class MODUMATE_API FModumateObjectInstance;
-	class MODUMATE_API FGraph3DEdge;
+	class FModumateObjectInstance;
+	class FGraph3DEdge;
 };
 
-struct MODUMATE_API FModumateObjectAssembly;
-struct MODUMATE_API FSimplePolygon;
+struct FModumateObjectAssembly;
+struct FSimplePolygon;
 
 UENUM(BlueprintType)
 enum class ETrimMiterOptions : uint8
