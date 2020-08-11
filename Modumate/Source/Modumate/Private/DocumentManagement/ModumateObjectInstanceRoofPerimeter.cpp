@@ -228,7 +228,7 @@ namespace Modumate
 			const FGraph2DPolygon *perimeterPoly = CachedPerimeterGraph.GetExteriorPolygon();
 			if (ensure(perimeterPoly))
 			{
-				bValidPerimeterLoop = !perimeterPoly->bHasDuplicateEdge;
+				bValidPerimeterLoop = !perimeterPoly->bHasDuplicateVertex;
 				for (auto signedEdgeID : perimeterPoly->Edges)
 				{
 					// Make sure that each edge in the perimeter is actually associated with this perimeter's group ID,

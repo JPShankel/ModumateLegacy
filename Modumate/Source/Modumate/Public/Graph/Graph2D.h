@@ -109,6 +109,15 @@ namespace Modumate
 
 		void ClearBounds();
 
+		// Walk the edges in the graph from the given edge (and direction), visiting the "next" edge from the perspective of each visited vertex.
+		// If called for every edge using the same RefVisitedEdgeIDs, it can generate non-simple polygonal traversals that cover every
+		// edge once in each direction.
+		// When called for a single non-simple polygonal traversal, it can generate a simple polygonal perimeter traversal,
+		// if only allowed to visit the original traversal's edges.
+		bool TraverseEdges(FGraphSignedID StartingEdgeID, TArray<FGraphSignedID>& OutEdgeIDs, TArray<int32>& OutVertexIDs,
+			bool& bOutInterior, TSet<FGraphSignedID>& RefVisitedEdgeIDs,
+			bool bUseDualEdges = true, const TSet<FGraphSignedID>* AllowedEdgeIDs = nullptr) const;
+
 	private:
 		// The graph operation functions test out individual deltas by applying them as they are generated.
 		// A common flow is to make basic deltas for adding objects, apply them, and then create more deltas

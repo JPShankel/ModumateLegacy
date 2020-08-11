@@ -202,8 +202,7 @@ namespace Modumate
 			return nullptr;
 		}
 
-		FGraph2DPolygon &newPoly = Polygons.Add(InID, FGraph2DPolygon(InID, this, VertexIDs));
-		newPoly.bInterior = bInterior;
+		FGraph2DPolygon &newPoly = Polygons.Add(InID, FGraph2DPolygon(InID, this, VertexIDs, bInterior));
 
 		bDirty = true;
 		newPoly.Dirty(false);
@@ -334,131 +333,9 @@ namespace Modumate
 
 	int32 FGraph2D::CalculatePolygons()
 	{
-		// clear the existing polygon data before computing new ones
-		// TODO: ensure this is unnecessary so that the computation can be iterative
-		ClearPolygons();
-		DirtyEdges.Empty();
-		for (auto &kvp : Edges)
-		{
-			DirtyEdges.Add(kvp.Key);
-			DirtyEdges.Add(-kvp.Key);
-
-			FGraph2DEdge &edge = kvp.Value;
-			edge.LeftPolyID = 0;
-			edge.RightPolyID = 0;
-		}
-
-		// make sure all vertex-edge connections are sorted
-		for (auto &kvp : Vertices)
-		{
-			FGraph2DVertex &vertex = kvp.Value;
-			vertex.SortEdges();
-		}
-
-		TSet<FGraphSignedID> visitedEdges;
-		TArray<FGraphSignedID> curPolyEdges;
-		TArray<FVector2D> curPolyPoints;
-
-		// iterate through the edges to find every polygon
-		for (FGraphSignedID curEdgeID : DirtyEdges)
-		{
-			float curPolyTotalAngle = 0.0f;
-			bool bPolyHasDuplicateEdge = false;
-			FBox2D polyAABB(ForceInitToZero);
-			curPolyEdges.Reset();
-			curPolyPoints.Reset();
-
-			FGraph2DEdge *curEdge = FindEdge(curEdgeID);
-
-			while (!visitedEdges.Contains(curEdgeID) && curEdge)
-			{
-				visitedEdges.Add(curEdgeID);
-				curPolyEdges.Add(curEdgeID);
-
-				// choose the next vertex based on whether we are traversing the current edge forwards or backwards
-				int32 prevVertexID = (curEdgeID > 0) ? curEdge->StartVertexID : curEdge->EndVertexID;
-				int32 nextVertexID = (curEdgeID > 0) ? curEdge->EndVertexID : curEdge->StartVertexID;
-				FGraph2DVertex *prevVertex = FindVertex(prevVertexID);
-				FGraph2DVertex *nextVertex = FindVertex(nextVertexID);
-				FGraphSignedID nextEdgeID = 0;
-				float angleDelta = 0.0f;
-
-				if (ensureAlways(prevVertex))
-				{
-					curPolyPoints.Add(prevVertex->Position);
-				}
-
-				if (ensureAlways(nextVertex) && nextVertex->GetNextEdge(curEdgeID, nextEdgeID, angleDelta))
-				{
-					if (curEdgeID == -nextEdgeID)
-					{
-						bPolyHasDuplicateEdge = true;
-					}
-
-					curPolyTotalAngle += angleDelta;
-					curEdgeID = nextEdgeID;
-					curEdge = FindEdge(nextEdgeID);
-				}
-			}
-
-			int32 numPolyEdges = curPolyEdges.Num();
-			if (numPolyEdges > 1)
-			{
-				bool bPolyClosed = (curPolyEdges[0] == curEdgeID);
-				if (ensureAlways(bPolyClosed))
-				{
-					float expectedInteriorAngle = 180.0f * (numPolyEdges - 2);
-					const static float polyAngleEpsilon = 0.1f;
-					bool bPolyInterior = FMath::IsNearlyEqual(expectedInteriorAngle, curPolyTotalAngle, polyAngleEpsilon);
-
-					int32 newID = NextPolyID++;
-					FGraph2DPolygon newPolygon(newID, this);
-					newPolygon.Edges = curPolyEdges;
-					newPolygon.bHasDuplicateEdge = bPolyHasDuplicateEdge;
-					newPolygon.bInterior = bPolyInterior;
-					newPolygon.AABB = FBox2D(curPolyPoints);
-					newPolygon.CachedPoints = curPolyPoints;
-
-					for (FGraphSignedID edgeID : curPolyEdges)
-					{
-						if (FGraph2DEdge *edge = FindEdge(edgeID))
-						{
-							// determine which side of the edge this new polygon is on
-							int32 &adjacentPolyID = (edgeID > 0) ? edge->LeftPolyID : edge->RightPolyID;
-							adjacentPolyID = newID;
-						}
-					}
-					newPolygon.Dirty(false);
-
-					Polygons.Add(newID, MoveTemp(newPolygon));
-				}
-			}
-		}
-		DirtyEdges.Reset();
-
-		// determine which polygons are inside of others
-		for (auto &childKVP : Polygons)
-		{
-			FGraph2DPolygon &childPoly = childKVP.Value;
-
-			for (auto &parentKVP : Polygons)
-			{
-				FGraph2DPolygon &parentPoly = parentKVP.Value;
-
-				if (childPoly.IsInside(parentPoly))
-				{
-					// if the child polygon doesn't have a parent, then set it to the first polygon it's contained in
-					// otherwise, see if the new parent is more appropriate
-					if ((childPoly.ParentID == 0) ||
-						(parentPoly.IsInside(*FindPolygon(childPoly.ParentID))))
-					{
-						childPoly.SetParent(parentPoly.ID);
-					}
-				}
-			}
-		}
-
-		bDirty = false;
+		TArray<FGraph2DDelta> deltas;
+		bool bCalculatedPolygons = CalculatePolygons(deltas, NextPolyID);
+		ensure(bCalculatedPolygons);
 		return Polygons.Num();
 	}
 
@@ -765,6 +642,82 @@ namespace Modumate
 
 		CachedOuterBounds.Positions.Reset();
 		CachedOuterBounds.EdgeNormals.Reset();
+	}
+
+	bool FGraph2D::TraverseEdges(FGraphSignedID StartingEdgeID, TArray<FGraphSignedID>& OutEdgeIDs, TArray<int32>& OutVertexIDs,
+		bool& bOutInterior, TSet<FGraphSignedID>& RefVisitedEdgeIDs, bool bUseDualEdges, const TSet<FGraphSignedID>* AllowedEdgeIDs) const
+	{
+		OutEdgeIDs.Reset();
+		OutVertexIDs.Reset();
+		bOutInterior = false;
+
+		if (RefVisitedEdgeIDs.Contains(StartingEdgeID) ||
+			(!bUseDualEdges && RefVisitedEdgeIDs.Contains(-StartingEdgeID)))
+		{
+			return false;
+		}
+
+		float curTraversalAngle = 0.0f;
+
+		FGraphSignedID curEdgeID = StartingEdgeID;
+		const FGraph2DEdge *curEdge = FindEdge(curEdgeID);
+		if (!ensureAlways(curEdge))
+		{
+			return false;
+		}
+
+		do
+		{
+			if (RefVisitedEdgeIDs.Contains(curEdgeID) ||
+				(!bUseDualEdges && RefVisitedEdgeIDs.Contains(-curEdgeID)))
+			{
+				break;
+			}
+
+			RefVisitedEdgeIDs.Add(curEdgeID);
+			OutEdgeIDs.Add(curEdgeID);
+
+			// choose the next vertex based on whether we are traversing the current edge forwards or backwards
+			int32 prevVertexID = (curEdgeID > 0) ? curEdge->StartVertexID : curEdge->EndVertexID;
+			int32 nextVertexID = (curEdgeID > 0) ? curEdge->EndVertexID : curEdge->StartVertexID;
+			const FGraph2DVertex *prevVertex = FindVertex(prevVertexID);
+			const FGraph2DVertex *nextVertex = FindVertex(nextVertexID);
+			FGraphSignedID nextEdgeID = 0;
+			float angleDelta = 0.0f;
+
+			if (!ensureAlways(prevVertex && nextVertex))
+			{
+				return false;
+			}
+
+			OutVertexIDs.Add(prevVertex->ID);
+
+			if (!ensureAlways(nextVertex->GetNextEdge(curEdgeID, nextEdgeID, angleDelta, AllowedEdgeIDs, true)))
+			{
+				return false;
+			}
+
+			curTraversalAngle += angleDelta;
+			curEdgeID = nextEdgeID;
+			curEdge = FindEdge(nextEdgeID);
+			if (!ensureAlways(curEdge))
+			{
+				return false;
+			}
+
+		} while (curEdgeID != StartingEdgeID);
+
+		int32 numEdges = OutEdgeIDs.Num();
+
+		if ((numEdges < 2) || (StartingEdgeID != curEdgeID))
+		{
+			return false;
+		}
+
+		float expectedInteriorAngle = 180.0f * (numEdges - 2);
+		const static float traversalAngleEpsilon = 0.1f;
+		bOutInterior = FMath::IsNearlyEqual(expectedInteriorAngle, curTraversalAngle, traversalAngleEpsilon);
+		return true;
 	}
 
 	bool FGraph2D::ValidateGraph()

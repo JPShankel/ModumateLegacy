@@ -58,39 +58,72 @@ namespace Modumate
 	{
 		Modumate::FGraph2D graph;
 
-		int32 p1ID = graph.AddVertex(FVector2D(0.0f, 10.0f))->ID;
-		int32 p2ID = graph.AddVertex(FVector2D(10.0f, 5.0f))->ID;
-		int32 p3ID = graph.AddVertex(FVector2D(20.0f, 0.0f))->ID;
-		int32 p4ID = graph.AddVertex(FVector2D(20.0f, 10.0f))->ID;
-		int32 p5ID = graph.AddVertex(FVector2D(0.0f, 0.0f))->ID;
-		int32 p6ID = graph.AddVertex(FVector2D(5.0f, 5.0f))->ID;
+		// Make a bow-tie, with a peninsula
+		int32 tieCenterID = graph.AddVertex(FVector2D(10.0f, 5.0f))->ID;
+		int32 tieLowerLeftID = graph.AddVertex(FVector2D(0.0f, 0.0f))->ID;
+		int32 tieUpperLeftID = graph.AddVertex(FVector2D(0.0f, 10.0f))->ID;
+		int32 tieLowerRightID = graph.AddVertex(FVector2D(20.0f, 0.0f))->ID;
+		int32 tieUpperRightID = graph.AddVertex(FVector2D(20.0f, 10.0f))->ID;
+		int32 tieLeftCenterID = graph.AddVertex(FVector2D(5.0f, 5.0f))->ID;
 
-		int32 p7ID = graph.AddVertex(FVector2D(-10.0f, 0.0f))->ID;
-		int32 p8ID = graph.AddVertex(FVector2D(-10.0f, 10.0f))->ID;
+		// Make an edge to the left of it
+		int32 edgeLowerID = graph.AddVertex(FVector2D(-10.0f, 0.0f))->ID;
+		int32 edgeUpperID = graph.AddVertex(FVector2D(-10.0f, 10.0f))->ID;
 
-		int32 p9ID = graph.AddVertex(FVector2D(-20.0f, -20.0f))->ID;
-		int32 p10ID = graph.AddVertex(FVector2D(30.0f, -20.0f))->ID;
-		int32 p11ID = graph.AddVertex(FVector2D(30.0f, 20.0f))->ID;
-		int32 p12ID = graph.AddVertex(FVector2D(-20.0f, 20.0f))->ID;
+		// Make a rectangle surrounding them both
+		int32 rectLowerLeftID = graph.AddVertex(FVector2D(-20.0f, -20.0f))->ID;
+		int32 rectLowerRightID = graph.AddVertex(FVector2D(30.0f, -20.0f))->ID;
+		int32 rectUpperRightID = graph.AddVertex(FVector2D(30.0f, 20.0f))->ID;
+		int32 rectUpperLeftID = graph.AddVertex(FVector2D(-20.0f, 20.0f))->ID;
 
 
-		graph.AddEdge(p5ID, p1ID);
-		graph.AddEdge(p1ID, p2ID);
-		graph.AddEdge(p2ID, p3ID);
-		graph.AddEdge(p3ID, p4ID);
-		graph.AddEdge(p4ID, p2ID);
-		graph.AddEdge(p2ID, p5ID);
-		graph.AddEdge(p5ID, p6ID);
+		graph.AddEdge(tieLowerLeftID, tieUpperLeftID);
+		graph.AddEdge(tieUpperLeftID, tieCenterID);
+		graph.AddEdge(tieCenterID, tieLowerRightID);
+		graph.AddEdge(tieLowerRightID, tieUpperRightID);
+		graph.AddEdge(tieUpperRightID, tieCenterID);
+		graph.AddEdge(tieCenterID, tieLowerLeftID);
+		graph.AddEdge(tieLowerLeftID, tieLeftCenterID);
 
-		graph.AddEdge(p7ID, p8ID);
+		graph.AddEdge(edgeLowerID, edgeUpperID);
 
-		graph.AddEdge(p9ID, p10ID);
-		graph.AddEdge(p10ID, p11ID);
-		graph.AddEdge(p11ID, p12ID);
-		graph.AddEdge(p12ID, p9ID);
+		graph.AddEdge(rectLowerLeftID, rectLowerRightID);
+		graph.AddEdge(rectLowerRightID, rectUpperRightID);
+		graph.AddEdge(rectUpperRightID, rectUpperLeftID);
+		graph.AddEdge(rectUpperLeftID, rectLowerLeftID);
 
 		int32 numPolys = graph.CalculatePolygons();
-		return (numPolys == 6);
+		TestEqual(TEXT("Correct number of polygons"), numPolys, 6);
+
+		for (auto& kvp : graph.GetPolygons())
+		{
+			const FGraph2DPolygon& poly = kvp.Value;
+			if (poly.VertexIDs.Contains(tieLowerLeftID) && poly.bInterior)
+			{
+				TestEqual(TEXT("Correct bowtie left vertices"), poly.VertexIDs.Num(), 5);
+				TestEqual(TEXT("Correct bowtie left perimeter"), poly.CachedPerimeterVertexIDs.Num(), 3);
+			}
+			else if (poly.VertexIDs.Contains(tieLowerRightID) && poly.bInterior)
+			{
+				TestEqual(TEXT("Correct bowtie right vertices"), poly.VertexIDs.Num(), 3);
+				TestEqual(TEXT("Correct bowtie right perimeter"), poly.CachedPerimeterVertexIDs.Num(), 3);
+			}
+			else if (poly.VertexIDs.Contains(tieCenterID) && !poly.bInterior)
+			{
+				TestEqual(TEXT("Correct bowtie external vertices"), poly.VertexIDs.Num(), 6);
+			}
+			else if (poly.VertexIDs.Contains(edgeLowerID))
+			{
+				TestTrue(TEXT("Correct edge polygon winding"), !poly.bInterior);
+				TestEqual(TEXT("Correct edge polygon vertices"), poly.VertexIDs.Num(), 2);
+			}
+			else if (poly.VertexIDs.Contains(rectLowerLeftID))
+			{
+				TestEqual(TEXT("Correct rectangle polygon vertices"), poly.VertexIDs.Num(), 4);
+			}
+		}
+
+		return true;
 	}
 
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphRegularShapes, "Modumate.Graph.2D.RegularShapes", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
@@ -126,6 +159,114 @@ namespace Modumate
 
 		int32 numPolys = graph.CalculatePolygons();
 		return (numPolys == 6);
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphPerimeter, "Modumate.Graph.2D.Perimeter", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphPerimeter::RunTest(const FString& Parameters)
+	{
+		Modumate::FGraph2D graph;
+
+		// Create three nested squares, connected by bridges to test various traversals and perimeter windings
+
+		int32 vInnerLLID = graph.AddVertex(FVector2D(25.0f, 25.0f))->ID;
+		int32 vInnerLRID = graph.AddVertex(FVector2D(50.0f, 25.0f))->ID;
+		int32 vInnerURID = graph.AddVertex(FVector2D(50.0f, 50.0f))->ID;
+		int32 vInnerULID = graph.AddVertex(FVector2D(25.0f, 50.0f))->ID;
+		TSet<int32> innerVertexIDs({ vInnerLLID, vInnerLRID, vInnerURID, vInnerULID });
+
+		int32 eInnerLowerID = graph.AddEdge(vInnerLLID, vInnerLRID)->ID;
+		int32 eInnerRightID = graph.AddEdge(vInnerLRID, vInnerURID)->ID;
+		int32 eInnerUpperID = graph.AddEdge(vInnerURID, vInnerULID)->ID;
+		int32 eInnerLeftID = graph.AddEdge(vInnerULID, vInnerLLID)->ID;
+
+		int32 vMiddleLLID = graph.AddVertex(FVector2D(10.0f, 10.0f))->ID;
+		int32 vMiddleLRID = graph.AddVertex(FVector2D(90.0f, 10.0f))->ID;
+		int32 vMiddleURID = graph.AddVertex(FVector2D(90.0f, 90.0f))->ID;
+		int32 vMiddleULID = graph.AddVertex(FVector2D(10.0f, 90.0f))->ID;
+		TSet<int32> middleVertexIDs({ vMiddleLLID, vMiddleLRID, vMiddleURID, vMiddleULID });
+
+		int32 eInnerBridgeID = graph.AddEdge(vInnerURID, vMiddleURID)->ID;
+
+		int32 eMiddleLowerID = graph.AddEdge(vMiddleLLID, vMiddleLRID)->ID;
+		int32 eMiddleRightID = graph.AddEdge(vMiddleLRID, vMiddleURID)->ID;
+		int32 eMiddleUpperID = graph.AddEdge(vMiddleURID, vMiddleULID)->ID;
+		int32 eMiddleLeftID = graph.AddEdge(vMiddleULID, vMiddleLLID)->ID;
+
+		int32 vOuterLLID = graph.AddVertex(FVector2D(  0.0f,   0.0f))->ID;
+		int32 vOuterLRID = graph.AddVertex(FVector2D(100.0f,   0.0f))->ID;
+		int32 vOuterURID = graph.AddVertex(FVector2D(100.0f, 100.0f))->ID;
+		int32 vOuterULID = graph.AddVertex(FVector2D(  0.0f, 100.0f))->ID;
+		TSet<int32> outerVertexIDs({ vOuterLLID, vOuterLRID, vOuterURID, vOuterULID });
+
+		int32 eOuterLowerID = graph.AddEdge(vOuterLLID, vOuterLRID)->ID;
+		int32 eOuterRight = graph.AddEdge(vOuterLRID, vOuterURID)->ID;
+		int32 eOuterUpper = graph.AddEdge(vOuterURID, vOuterULID)->ID;
+		int32 eOuterLeftID = graph.AddEdge(vOuterULID, vOuterLLID)->ID;
+
+		int32 eOuterBridgeID = graph.AddEdge(vOuterLLID, vMiddleLLID)->ID;
+
+		int32 numPolys = graph.CalculatePolygons();
+		TestEqual(TEXT("Num polygons"), numPolys, 4);
+
+		for (auto& kvp : graph.GetPolygons())
+		{
+			const FGraph2DPolygon& poly = kvp.Value;
+			const TArray<int32>& vertices = poly.VertexIDs;
+			const TArray<FGraphSignedID>& edges = poly.Edges;
+			int32 numVertices = vertices.Num();
+
+			if (numVertices == 4)
+			{
+				if (vertices.Contains(vInnerLLID))
+				{
+					TestTrue(TEXT("Inner island polygon is interior"), poly.bInterior);
+					TestTrue(TEXT("Inner island polygon has correct perimeter"), (poly.CachedPerimeterVertexIDs.Num() == 4) &&
+						(TSet<int32>(poly.CachedPerimeterVertexIDs).Intersect(innerVertexIDs).Num() == 4));
+				}
+				else if (vertices.Contains(vMiddleLLID))
+				{
+					TestTrue(TEXT("Middle island polygon is interior"), poly.bInterior);
+					TestTrue(TEXT("Middle island polygon has correct perimeter"), (poly.CachedPerimeterVertexIDs.Num() == 4) &&
+						(TSet<int32>(poly.CachedPerimeterVertexIDs).Intersect(middleVertexIDs).Num() == 4));
+				}
+				else if (vertices.Contains(vOuterLLID))
+				{
+					TestTrue(TEXT("Outer perimeter polygon is exterior"), !poly.bInterior);
+				}
+				else
+				{
+					AddError(TEXT("Unknown polygon with 4 vertices!"));
+				}
+			}
+			else
+			{
+				TSet<int32> uniqueVertices(vertices);
+				int32 numUniqueVertices = uniqueVertices.Num();
+
+				if (edges.Contains(eInnerBridgeID) || edges.Contains(-eInnerBridgeID))
+				{
+					TestTrue(TEXT("Non-rectangular inner polygon has correct vertices"), (numVertices == 10) && (numUniqueVertices == 8) &&
+						(uniqueVertices.Intersect(innerVertexIDs).Num() == 4) && ((uniqueVertices.Intersect(middleVertexIDs).Num() == 4)));
+					TestTrue(TEXT("Non-rectangular inner polygon is interior"), poly.bInterior);
+					TestTrue(TEXT("Non-rectangular inner polygon has correct perimeter"), (poly.CachedPerimeterVertexIDs.Num() == 4) &&
+						(TSet<int32>(poly.CachedPerimeterVertexIDs).Intersect(middleVertexIDs).Num() == 4));
+				}
+				else if (edges.Contains(eOuterBridgeID) || edges.Contains(-eOuterBridgeID))
+				{
+					TestTrue(TEXT("Non-rectangular outer polygon has correct vertices"), (numVertices == 10) && (numUniqueVertices == 8) &&
+						(uniqueVertices.Intersect(middleVertexIDs).Num() == 4) && ((uniqueVertices.Intersect(outerVertexIDs).Num() == 4)));
+					TestTrue(TEXT("Non-rectangular outer polygon is interior"), poly.bInterior);
+					TestTrue(TEXT("Non-rectangular outer polygon has correct perimeter"), (poly.CachedPerimeterVertexIDs.Num() == 4) &&
+						(TSet<int32>(poly.CachedPerimeterVertexIDs).Intersect(outerVertexIDs).Num() == 4));
+				}
+				else
+				{
+					AddError(FString::Printf(TEXT("Unknown polygon with not %d vertices!"), numVertices));
+				}
+			}
+		}
+
+		return true;
 	}
 
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphSerialization, "Modumate.Graph.2D.Serialization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
@@ -182,8 +323,8 @@ namespace Modumate
 "	},"
 "	\"polygons\":"
 "	{"
-"		\"2\": { \"vertexIds\": [], \"bInterior\" : true, \"containingFaceId\" : 0, \"containedFaceIds\" : []},"
-"		\"3\": { \"vertexIds\": [], \"bInterior\" : true, \"containingFaceId\" : 0, \"containedFaceIds\" : []}"
+"		\"2\": { \"vertexIds\": [2, 1, 4, 3], \"bInterior\" : true, \"containingFaceId\" : 0, \"containedFaceIds\" : []},"
+"		\"3\": { \"vertexIds\": [2, 3, 6, 5], \"bInterior\" : true, \"containingFaceId\" : 0, \"containedFaceIds\" : []}"
 "	}"
 "}"
 		));

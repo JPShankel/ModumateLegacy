@@ -39,7 +39,7 @@ bool URoofPerimeterTool::Activate()
 		// TODO: this liberally invalidates polygons that have area, but also extra "peninsula" edges that double back on themselves;
 		// we could remove those duplicate edges from the loop and use the rest of the edges as a perimeter in the future.
 		const FGraph2DPolygon *perimeterPoly = selectedGraph.GetExteriorPolygon();
-		if (ensure(perimeterPoly) && !perimeterPoly->bHasDuplicateEdge)
+		if (ensure(perimeterPoly) && !perimeterPoly->bHasDuplicateVertex)
 		{
 			for (auto signedEdgeID : perimeterPoly->Edges)
 			{

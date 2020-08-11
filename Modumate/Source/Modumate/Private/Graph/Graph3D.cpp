@@ -1098,6 +1098,9 @@ namespace Modumate
 
 	bool FGraph3D::TraverseFacesFromEdge(int32 OriginalEdgeID, TArray<TArray<int32>> &OutVertexIDs) const
 	{
+		static FGraph2D graph2D;
+		graph2D.Reset();
+
 		TArray<FPlane> planes;
 		GetPlanesForEdge(OriginalEdgeID, planes);
 
@@ -1115,8 +1118,6 @@ namespace Modumate
 
 		for (auto& plane : planes)
 		{
-			FGraph2D graph2D;
-
 			bool startVertexDistance = FMath::IsNearlyZero(plane.PlaneDot(startVertex->Position), Epsilon);
 			bool endVertexDistance = FMath::IsNearlyZero(plane.PlaneDot(startVertex->Position), Epsilon);
 			if (!startVertexDistance || !endVertexDistance || 

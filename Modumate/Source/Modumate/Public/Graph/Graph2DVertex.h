@@ -18,7 +18,8 @@ namespace Modumate
 		void AddEdge(FGraphSignedID EdgeID);
 		bool RemoveEdge(FGraphSignedID EdgeID);
 		void SortEdges();
-		bool GetNextEdge(FGraphSignedID curEdgeID, FGraphSignedID &outNextEdgeID, float &outAngleDelta, int32 indexDelta = 1) const;
+		bool GetNextEdge(FGraphSignedID CurEdgeID, FGraphSignedID &OutNextEdgeID, float &OutAngleDelta,
+			const TSet<FGraphSignedID>* AllowedEdgeIDs = nullptr, bool bForwards = true) const;
 
 		virtual void Dirty(bool bConnected = true) override;
 		virtual void Clean() override;

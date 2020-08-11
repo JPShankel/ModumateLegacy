@@ -470,7 +470,7 @@ namespace Modumate
 				auto poly = FindPolygon(polyID);
 				if (poly != nullptr && !OutDelta.PolygonDeletions.Contains(poly->ID))
 				{
-					OutDelta.PolygonDeletions.Add(poly->ID, FGraph2DObjDelta(poly->VertexIDs));
+					OutDelta.PolygonDeletions.Add(poly->ID, FGraph2DObjDelta(poly->VertexIDs, {}, poly->bInterior));
 				}
 			}
 		}
@@ -762,59 +762,16 @@ namespace Modumate
 
 		TSet<FGraphSignedID> visitedEdges;
 		TArray<FGraphSignedID> curPolyEdges;
-		TArray<FVector2D> curPolyPoints;
 		TArray<int32> curVertexIDs;
+		bool bPolyInterior;
 
 		// iterate through the edges to find every polygon
 		for (FGraphSignedID curEdgeID : dirtyEdges)
 		{
-			float curPolyTotalAngle = 0.0f;
-			curPolyEdges.Reset();
-			curVertexIDs.Reset();
-
-			FGraph2DEdge *curEdge = FindEdge(curEdgeID);
-
-			while (!visitedEdges.Contains(curEdgeID) && curEdge)
-			{
-				visitedEdges.Add(curEdgeID);
-				curPolyEdges.Add(curEdgeID);
-
-				// choose the next vertex based on whether we are traversing the current edge forwards or backwards
-				int32 prevVertexID = (curEdgeID > 0) ? curEdge->StartVertexID : curEdge->EndVertexID;
-				int32 nextVertexID = (curEdgeID > 0) ? curEdge->EndVertexID : curEdge->StartVertexID;
-				FGraph2DVertex *prevVertex = FindVertex(prevVertexID);
-				FGraph2DVertex *nextVertex = FindVertex(nextVertexID);
-				FGraphSignedID nextEdgeID = 0;
-				float angleDelta = 0.0f;
-
-				if (ensureAlways(prevVertex))
-				{
-					curVertexIDs.Add(prevVertex->ID);
-				}
-
-				if (ensureAlways(nextVertex) && nextVertex->GetNextEdge(curEdgeID, nextEdgeID, angleDelta))
-				{
-					curPolyTotalAngle += angleDelta;
-					curEdgeID = nextEdgeID;
-					curEdge = FindEdge(nextEdgeID);
-				}
-			}
-
-			int32 numPolyEdges = curPolyEdges.Num();
-			if (numPolyEdges <= 1)
+			if (!TraverseEdges(curEdgeID, curPolyEdges, curVertexIDs, bPolyInterior, visitedEdges))
 			{
 				continue;
 			}
-
-			bool bPolyClosed = (curPolyEdges[0] == curEdgeID);
-			if (!ensureAlways(bPolyClosed))
-			{
-				continue;
-			}
-
-			float expectedInteriorAngle = 180.0f * (numPolyEdges - 2);
-			const static float polyAngleEpsilon = 0.1f;
-			bool bPolyInterior = FMath::IsNearlyEqual(expectedInteriorAngle, curPolyTotalAngle, polyAngleEpsilon);
 
 			TSet<int32> previousPolys;
 			for (FGraphSignedID edgeID : curPolyEdges)

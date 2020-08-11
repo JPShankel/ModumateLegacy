@@ -8,8 +8,9 @@
 
 namespace Modumate
 {
-	FGraph2DPolygon::FGraph2DPolygon(int32 InID, FGraph2D* InGraph, TArray<int32> &Vertices)
+	FGraph2DPolygon::FGraph2DPolygon(int32 InID, FGraph2D* InGraph, TArray<int32> &Vertices, bool bInInterior)
 		: IGraph2DObject(InID, InGraph)
+		, bInterior(bInInterior)
 	{
 		SetVertices(Vertices);
 	}
@@ -88,7 +89,8 @@ namespace Modumate
 		CachedPoints.Reset();
 		VertexIDs.Reset();
 		Edges.Reset();
-		bHasDuplicateEdge = false;
+		TempVertexSet.Reset();
+		bHasDuplicateVertex = false;
 
 		for (int32 vertexIdx = 0; vertexIdx < numVertices; vertexIdx++)
 		{
@@ -96,28 +98,139 @@ namespace Modumate
 			int32 nextVertexID = Vertices[(vertexIdx + 1) % numVertices];
 
 			auto vertex = Graph->FindVertex(vertexID);
-			if (!ensureAlways(vertex)) return;
+			if (!ensureAlways(vertex))
+			{
+				return;
+			}
 
 			CachedPoints.Add(vertex->Position);
 			VertexIDs.Add(vertexID);
-			
-			bool bOutForward;
-			auto edge = Graph->FindEdgeByVertices(vertexID, nextVertexID, bOutForward);
-			if (!ensureAlways(edge)) return;
+			TempVertexSet.Add(vertexID);
 
-			// updated edge's left/right poly to be this one
-			(bOutForward) ? (edge->LeftPolyID = ID) : (edge->RightPolyID = ID);
-
-			// detect "peninsula" in edge loop
-			if (Edges.Num() > 0 && -edge->ID == Edges[Edges.Num() - 1])
-			{	// TODO: this does not cover all cases of duplicate edges
-				bHasDuplicateEdge = true;
+			bool bCurEdgeForward;
+			auto edge = Graph->FindEdgeByVertices(vertexID, nextVertexID, bCurEdgeForward);
+			if (!ensureAlways(edge))
+			{
+				return;
 			}
 
-			Edges.Add(bOutForward ? edge->ID : -edge->ID);
+			// updated edge's left/right poly to be this one
+			if (bCurEdgeForward)
+			{
+				edge->LeftPolyID = ID;
+			}
+			else
+			{
+				edge->RightPolyID = ID;
+			}
+
+			Edges.Add(bCurEdgeForward ? edge->ID : -edge->ID);
 		}
 
+		bHasDuplicateVertex = (VertexIDs.Num() != TempVertexSet.Num());
+
 		AABB = FBox2D(CachedPoints);
+		CalculatePerimeter();
+	}
+
+	void FGraph2DPolygon::CalculatePerimeter()
+	{
+		CachedPerimeterVertexIDs.Reset();
+		CachedPerimeterEdgeIDs.Reset();
+		CachedPerimeterPoints.Reset();
+
+		// Only interior non-simple polygonal traversals are guaranteed to have simple polygonal perimeter traversals
+		int32 numEdges = Edges.Num();
+		if ((numEdges == 0) || !bInterior)
+		{
+			return;
+		}
+
+#define SUPER_DEBUG 0
+		// TODO: remove very excessive debug testing and cleaning
+
+		if (Graph->bDebugCheck)
+		{
+#if SUPER_DEBUG
+			TArray<FGraphSignedID> testEdgeIDs;
+			TArray<int32> testVertexIDs;
+			bool bTestInterior;
+			TempVisitedEdges.Empty(numEdges);
+			bool bValidPolygon = Graph->TraverseEdges(Edges[0], testEdgeIDs, testVertexIDs, bTestInterior, TempVisitedEdges);
+			ensureAlways((testEdgeIDs == Edges) && (testVertexIDs == VertexIDs) && (bTestInterior == bInterior));
+#endif
+
+			for (int32 vertexID : VertexIDs)
+			{
+				auto vertex = Graph->FindVertex(vertexID);
+				TArray<FGraphSignedID> oldEdges = vertex->Edges;
+				vertex->Dirty(false);
+				vertex->SortEdges();
+#if SUPER_DEBUG
+				ensureAlways(vertex->Edges == oldEdges);
+#endif
+			}
+		}
+
+#undef SUPER_DEBUG
+
+		TempAllowedPerimeterEdges.Empty(numEdges);
+		for (FGraphSignedID edgeID : Edges)
+		{
+			TempAllowedPerimeterEdges.Add(-edgeID);
+		}
+
+		// Try to traverse an external simple polygonal perimeter by going in the opposite direction of one of the edges in the polygon.
+		// We expect the traversal to fail if we start on an edge that is in the original traversal twice (a "peninsula" edge),
+		// so we may have to try multiple.
+		bool bValidPerimeter = false;
+		for (int32 edgeIdx = 0; (edgeIdx < numEdges) && !bValidPerimeter; ++edgeIdx)
+		{
+			FGraphSignedID startingEdgeID = -Edges[edgeIdx];
+
+			// Don't try to traverse perimeters from edges that are duplicated in the original traversal
+			if (TempAllowedPerimeterEdges.Contains(-startingEdgeID))
+			{
+				continue;
+			}
+
+			// This may still fail if we start traversing from an edge on an "island" contained within the polygon,
+			// since it only appears once within the original traversal's edge list, so we didn't already skip it.
+			bool bPerimeterInterior;
+			TempVisitedEdges.Empty(numEdges);
+			bValidPerimeter = Graph->TraverseEdges(startingEdgeID, CachedPerimeterEdgeIDs, CachedPerimeterVertexIDs, bPerimeterInterior, TempVisitedEdges, false, &TempAllowedPerimeterEdges);
+			bValidPerimeter = bValidPerimeter && !bPerimeterInterior;
+
+			if (bValidPerimeter)
+			{
+				// TODO: remove debug check if it turns out it's impossible to reach
+				if (Graph->bDebugCheck)
+				{
+					TempVertexSet.Empty(CachedPerimeterVertexIDs.Num());
+					TempVertexSet.Append(CachedPerimeterVertexIDs);
+					if (!ensureAlways(CachedPerimeterVertexIDs.Num() == TempVertexSet.Num()))
+					{
+						bValidPerimeter = false;
+					}
+				}
+			}
+		}
+
+		// TODO: identify and fix cases where graphs with polygons that made it this far were unable to come up with a valid perimeter.
+		// Regardless, the existence of CachedPerimeter* members reflects whether the perimeter exists.
+		if (ensureAlways(bValidPerimeter))
+		{
+			for (int32 perimeterVertexID : CachedPerimeterVertexIDs)
+			{
+				CachedPerimeterPoints.Add(Graph->FindVertex(perimeterVertexID)->Position);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Graph2DPolygon #%d failed to calculate a valid perimeter!"), ID);
+			CachedPerimeterVertexIDs.Reset();
+			CachedPerimeterEdgeIDs.Reset();
+		}
 	}
 
 	void FGraph2DPolygon::Dirty(bool bConnected)

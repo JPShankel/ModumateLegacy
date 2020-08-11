@@ -5,11 +5,13 @@ namespace Modumate
 {
 	FGraph2DObjDelta::FGraph2DObjDelta(const TArray<int32> &InVertices)
 		: Vertices(InVertices)
+		, bInterior(false)
 	{ }
 
 	FGraph2DObjDelta::FGraph2DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents)
 		: Vertices(InVertices)
 		, ParentObjIDs(InParents)
+		, bInterior(false)
 	{ }
 
 	FGraph2DObjDelta::FGraph2DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents, bool bIsInterior)
