@@ -964,6 +964,43 @@ namespace Modumate
 		return true;
 	}
 
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DMoveEdges, "Modumate.Graph.2D.MoveEdges", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraph2DMoveEdges::RunTest(const FString& Parameters)
+	{
+		FGraph2D graph;
+		int32 NextID = 1;
+		TArray<FGraph2DDelta> deltas;
+
+		TArray<FVector2D> vertices = {
+			FVector2D(50.0f, 0.0f),
+			FVector2D(50.0f, 100.0f),
+			FVector2D(0.0f, 25.0f),
+			FVector2D(25.0f, 50.0f),
+			FVector2D(0.0f, 75.0f)
+		};
+
+		TestTrue(TEXT("first Edge"),
+			graph.AddEdge(deltas, NextID, vertices[2], vertices[3]));
+		TestDeltas(this, deltas, graph, 1, 2, 1);
+
+		TestTrue(TEXT("second Edge"),
+			graph.AddEdge(deltas, NextID, vertices[3], vertices[4]));
+		TestDeltas(this, deltas, graph, 1, 3, 2);
+
+		TArray<int32> verticesToMove;
+		graph.GetVertices().GenerateKeyArray(verticesToMove);
+
+		TestTrue(TEXT("third Edge"),
+			graph.AddEdge(deltas, NextID, vertices[0], vertices[1]));
+		TestDeltas(this, deltas, graph, 2, 5, 3);
+
+		TestTrue(TEXT("move first two across third edge"),
+			graph.MoveVertices(deltas, NextID, verticesToMove, FVector2D(40.0f, 0.0f)));
+		TestDeltas(this, deltas, graph, 2, 7, 7);
+
+		return true;
+	}
+
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DValidateGraphConcave, "Modumate.Graph.2D.ValidateGraphConcave", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraph2DValidateGraphConcave::RunTest(const FString& Parameters)
 	{

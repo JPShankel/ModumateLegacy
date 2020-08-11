@@ -191,8 +191,7 @@ namespace Modumate
 
 	bool FGraph2D::AddEdgesBetweenVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, int32 StartVertexID, int32 EndVertexID)
 	{
-		// TODO: depending on the implementation of future operations (like add polygon) this 
-		// splitting code may be best in a separate function
+		TArray<FGraph2DDelta> addEdgesBetweenVerticesDeltas;
 
 		// Find intersections between the pending segment (defined by the input points) and the existing edges
 		auto pendingStartVertex = FindVertex(StartVertexID);
@@ -234,15 +233,15 @@ namespace Modumate
 				{
 					if (!AddVertexDirect(addVertexDelta, NextID, intersection))
 					{
-						ApplyInverseDeltas(OutDeltas);
+						ApplyInverseDeltas(addEdgesBetweenVerticesDeltas);
 						return false;
 					}
 					if (!ApplyDelta(addVertexDelta))
 					{
-						ApplyInverseDeltas(OutDeltas);
+						ApplyInverseDeltas(addEdgesBetweenVerticesDeltas);
 						return false;
 					}
-					OutDeltas.Add(addVertexDelta);
+					addEdgesBetweenVerticesDeltas.Add(addVertexDelta);
 
 					AggregateAddedVertices({ addVertexDelta }, addedVertices);
 					edgesToSplitByVertex.Add(TPair<int32, int32>(edge.ID, addedVertices.Array()[0]));
@@ -285,15 +284,15 @@ namespace Modumate
 			splitEdgeDelta.Reset();
 			if (!SplitEdge(splitEdgeDelta, NextID, kvp.Key, kvp.Value))
 			{
-				ApplyInverseDeltas(OutDeltas);
+				ApplyInverseDeltas(addEdgesBetweenVerticesDeltas);
 				return false;
 			}
-			OutDeltas.Add(splitEdgeDelta);
+			addEdgesBetweenVerticesDeltas.Add(splitEdgeDelta);
 		}
 
 		// aggregate all vertices on the pending segment into addedVertices
 		addedVertices.Append(addedIDs);
-		AggregateAddedVertices(OutDeltas, addedVertices);
+		AggregateAddedVertices(addEdgesBetweenVerticesDeltas, addedVertices);
 
 		// sort the vertices by their distance along the pending segment
 		TArray<TPair<float, int32>> sortedNewVertices;
@@ -304,7 +303,7 @@ namespace Modumate
 			auto vertex = FindVertex(vertexID);
 			if (vertex == nullptr)
 			{
-				ApplyInverseDeltas(OutDeltas);
+				ApplyInverseDeltas(addEdgesBetweenVerticesDeltas);
 				return false;
 			}
 
@@ -348,10 +347,12 @@ namespace Modumate
 
 		if (!ApplyDelta(updateEdgesDelta))
 		{
-			ApplyInverseDeltas(OutDeltas);
+			ApplyInverseDeltas(addEdgesBetweenVerticesDeltas);
 			return false;
 		}
-		OutDeltas.Add(updateEdgesDelta);
+		addEdgesBetweenVerticesDeltas.Add(updateEdgesDelta);
+
+		OutDeltas.Append(addEdgesBetweenVerticesDeltas);
 
 		return true;
 	}
