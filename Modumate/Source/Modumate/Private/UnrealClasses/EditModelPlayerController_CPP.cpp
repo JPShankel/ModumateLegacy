@@ -207,7 +207,7 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	EditModelUserWidget = CreateWidget<UEditModelUserWidget>(this, EditModelUserWidgetClass);
 	if (ensureAlways(EditModelUserWidget))
 	{
-		EditModelUserWidget->AddToViewport();
+		EditModelUserWidget->AddToViewport(1);
 	}
 
 #if !UE_BUILD_SHIPPING
