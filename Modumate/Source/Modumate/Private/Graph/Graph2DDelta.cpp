@@ -64,7 +64,7 @@ namespace Modumate
 		if (PolygonAdditions.Num() > 0) return false;
 		if (PolygonDeletions.Num() > 0) return false;
 		if (PolygonParentIDUpdates.Num() > 0) return false;
-		if (BoundsUpdates.Key.IsEmpty() || BoundsUpdates.Value.IsEmpty()) return false;
+		if (!BoundsUpdates.Key.IsEmpty() || !BoundsUpdates.Value.IsEmpty()) return false;
 
 		return true;
 	}
@@ -87,53 +87,43 @@ namespace Modumate
 		PolygonAdditions.Add(newPolygonID, FGraph2DObjDelta(VertexIDs, ParentIDs, bIsInterior));
 	}
 
-	TSharedPtr<FGraph2DDelta> FGraph2DDelta::MakeGraphInverse() const
+	void FGraph2DDelta::Invert()
 	{
-		TSharedPtr<FGraph2DDelta> inverse = MakeShareable(new FGraph2DDelta(ID));
-
 		switch (DeltaType)
 		{
 		case EGraph2DDeltaType::Add:
-			inverse->DeltaType = EGraph2DDeltaType::Remove;
-			return inverse;
-			break;
-		case EGraph2DDeltaType::Edit:
-			inverse->DeltaType = EGraph2DDeltaType::Edit;
+			DeltaType = EGraph2DDeltaType::Remove;
 			break;
 		case EGraph2DDeltaType::Remove:
-			inverse->DeltaType = EGraph2DDeltaType::Add;
+			DeltaType = EGraph2DDeltaType::Add;
 			break;
 		default:
 			break;
 		}
 
-		for (const auto &kvp : VertexMovements)
+		for (auto &kvp : VertexMovements)
 		{
-			int32 vertexID = kvp.Key;
-			const TPair<FVector2D, FVector2D> &vertexMovement = kvp.Value;
-
-			inverse->VertexMovements.Add(vertexID, TPair<FVector2D, FVector2D>(vertexMovement.Value, vertexMovement.Key));
+			TPair<FVector2D, FVector2D>& vertexMovement = kvp.Value;
+			Swap(vertexMovement.Key, vertexMovement.Value);
 		}
 
-		inverse->VertexAdditions = VertexDeletions;
-		inverse->VertexDeletions = VertexAdditions;
+		Swap(VertexAdditions, VertexDeletions);
+		Swap(EdgeAdditions, EdgeDeletions);
+		Swap(PolygonAdditions, PolygonDeletions);
 
-		inverse->EdgeAdditions = EdgeDeletions;
-		inverse->EdgeDeletions = EdgeAdditions;
-
-		inverse->PolygonAdditions = PolygonDeletions;
-		inverse->PolygonDeletions = PolygonAdditions;
-
-		for (const auto &kvp : PolygonParentIDUpdates)
+		for (auto &kvp : PolygonParentIDUpdates)
 		{
-			int32 childID = kvp.Key;
-			const TPair<int32, int32>& update = kvp.Value;
-
-			inverse->PolygonParentIDUpdates.Add(ID, TPair<int32, int32>(update.Value, update.Key));
+			TPair<int32, int32>& update = kvp.Value;
+			Swap(update.Key, update.Value);
 		}
 
-		inverse->BoundsUpdates = TPair<FBoundsUpdate, FBoundsUpdate>(BoundsUpdates.Value, BoundsUpdates.Key);
+		Swap(BoundsUpdates.Key, BoundsUpdates.Value);
+	}
 
+	TSharedPtr<FGraph2DDelta> FGraph2DDelta::MakeGraphInverse() const
+	{
+		TSharedPtr<FGraph2DDelta> inverse = MakeShareable(new FGraph2DDelta{ *this });
+		inverse->Invert();
 		return inverse;
 	}
 

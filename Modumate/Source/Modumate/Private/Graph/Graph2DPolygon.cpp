@@ -82,23 +82,30 @@ namespace Modumate
 		}
 	}
 
-	void FGraph2DPolygon::SetVertices(const TArray<int32> &Vertices)
+	void FGraph2DPolygon::SetVertices(const TArray<int32> &InVertexIDs)
 	{
-		int32 numVertices = Vertices.Num();
+		int32 numVertices = InVertexIDs.Num();
 
-		CachedPoints.Reset();
-		VertexIDs.Reset();
-		Edges.Reset();
-		TempVertexSet.Reset();
+		bValid = false;
+		VertexIDs.Reset(numVertices);
+		Edges.Reset(numVertices);
 		bHasDuplicateVertex = false;
+		AABB.Init();
+		CachedPoints.Reset(numVertices);
+		CachedPerimeterVertexIDs.Reset();
+		CachedPerimeterEdgeIDs.Reset();
+		CachedPerimeterPoints.Reset();
+		TempVertexSet.Reset();
+		
+		Dirty(false);
 
 		for (int32 vertexIdx = 0; vertexIdx < numVertices; vertexIdx++)
 		{
-			int32 vertexID = Vertices[vertexIdx];
-			int32 nextVertexID = Vertices[(vertexIdx + 1) % numVertices];
+			int32 vertexID = InVertexIDs[vertexIdx];
+			int32 nextVertexID = InVertexIDs[(vertexIdx + 1) % numVertices];
 
 			auto vertex = Graph->FindVertex(vertexID);
-			if (!ensureAlways(vertex))
+			if (!ensureAlways(vertex && vertex->bValid && !vertex->bDerivedDataDirty))
 			{
 				return;
 			}
@@ -106,6 +113,7 @@ namespace Modumate
 			CachedPoints.Add(vertex->Position);
 			VertexIDs.Add(vertexID);
 			TempVertexSet.Add(vertexID);
+			AABB += vertex->Position;
 
 			bool bCurEdgeForward;
 			auto edge = Graph->FindEdgeByVertices(vertexID, nextVertexID, bCurEdgeForward);
@@ -127,13 +135,28 @@ namespace Modumate
 			Edges.Add(bCurEdgeForward ? edge->ID : -edge->ID);
 		}
 
-		bHasDuplicateVertex = (VertexIDs.Num() != TempVertexSet.Num());
-
-		AABB = FBox2D(CachedPoints);
-		CalculatePerimeter();
+		// Extremely basic validity check; perimeter calculation will be more telling for polygons that can use it
+		bValid = numVertices > 1;
+		bHasDuplicateVertex = (numVertices != TempVertexSet.Num());
 	}
 
-	void FGraph2DPolygon::CalculatePerimeter()
+	bool FGraph2DPolygon::ValidateTraversal()
+	{
+		int32 numEdges = Edges.Num();
+		if (numEdges == 0)
+		{
+			return false;
+		}
+
+		TArray<FGraphSignedID> testEdgeIDs;
+		TArray<int32> testVertexIDs;
+		bool bTestInterior;
+		TempVisitedEdges.Empty(numEdges);
+		bool bValidPolygon = Graph->TraverseEdges(Edges[0], testEdgeIDs, testVertexIDs, bTestInterior, TempVisitedEdges);
+		return (testEdgeIDs == Edges) && (testVertexIDs == VertexIDs) && (bTestInterior == bInterior);
+	}
+
+	bool FGraph2DPolygon::CalculatePerimeter()
 	{
 		CachedPerimeterVertexIDs.Reset();
 		CachedPerimeterEdgeIDs.Reset();
@@ -143,36 +166,26 @@ namespace Modumate
 		int32 numEdges = Edges.Num();
 		if ((numEdges == 0) || !bInterior)
 		{
-			return;
+			return true;
 		}
 
-#define SUPER_DEBUG 0
 		// TODO: remove very excessive debug testing and cleaning
-
 		if (Graph->bDebugCheck)
 		{
-#if SUPER_DEBUG
-			TArray<FGraphSignedID> testEdgeIDs;
-			TArray<int32> testVertexIDs;
-			bool bTestInterior;
-			TempVisitedEdges.Empty(numEdges);
-			bool bValidPolygon = Graph->TraverseEdges(Edges[0], testEdgeIDs, testVertexIDs, bTestInterior, TempVisitedEdges);
-			ensureAlways((testEdgeIDs == Edges) && (testVertexIDs == VertexIDs) && (bTestInterior == bInterior));
-#endif
+			if (!ensureAlways(ValidateTraversal()))
+			{
+				return false;
+			}
 
 			for (int32 vertexID : VertexIDs)
 			{
 				auto vertex = Graph->FindVertex(vertexID);
-				TArray<FGraphSignedID> oldEdges = vertex->Edges;
-				vertex->Dirty(false);
-				vertex->SortEdges();
-#if SUPER_DEBUG
-				ensureAlways(vertex->Edges == oldEdges);
-#endif
+				if (!ensureAlways(vertex && vertex->bValid && !vertex->bDerivedDataDirty))
+				{
+					return false;
+				}
 			}
 		}
-
-#undef SUPER_DEBUG
 
 		TempAllowedPerimeterEdges.Empty(numEdges);
 		for (FGraphSignedID edgeID : Edges)
@@ -224,41 +237,55 @@ namespace Modumate
 			{
 				CachedPerimeterPoints.Add(Graph->FindVertex(perimeterVertexID)->Position);
 			}
+
+			return true;
 		}
 		else
 		{
 			UE_LOG(LogTemp, Error, TEXT("Graph2DPolygon #%d failed to calculate a valid perimeter!"), ID);
 			CachedPerimeterVertexIDs.Reset();
 			CachedPerimeterEdgeIDs.Reset();
+			return false;
 		}
 	}
 
 	void FGraph2DPolygon::Dirty(bool bConnected)
 	{
-		bDirty = true;
+		IGraph2DObject::Dirty(bConnected);
 
 		if (bConnected)
 		{
 			bool bContinueConnected = false;
-			for (int32 edgeID : Edges)
+			for (FGraphSignedID edgeID : Edges)
 			{
 				if (auto edge = Graph->FindEdge(edgeID))
 				{
 					edge->Dirty(bContinueConnected);
+				}
+			}
 
-					// TODO: should polygons maintain a list of vertices instead of (or in addition to) positions?
-					auto vertex = (edgeID < 0) ? Graph->FindVertex(edge->EndVertexID) : Graph->FindVertex(edge->StartVertexID);
-					if (vertex != nullptr)
-					{
-						vertex->Dirty(bContinueConnected);
-					}
+			for (int32 vertexID : VertexIDs)
+			{
+				if (auto vertex = Graph->FindVertex(vertexID))
+				{
+					vertex->Dirty(bContinueConnected);
 				}
 			}
 		}
 	}
 
-	void FGraph2DPolygon::Clean()
+	bool FGraph2DPolygon::Clean()
 	{
-		bDirty = false;
+		if (!bDerivedDataDirty)
+		{
+			return false;
+		}
+
+		if (ensure(CalculatePerimeter()))
+		{
+			bDerivedDataDirty = false;
+		}
+
+		return true;
 	}
 }

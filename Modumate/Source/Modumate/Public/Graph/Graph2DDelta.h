@@ -89,6 +89,7 @@ namespace Modumate
 		void AddNewEdge(const FGraphVertexPair& VertexIDs, int32& NextID, const TArray<int32>& ParentIDs = TArray<int32>());
 		void AddNewPolygon(const TArray<int32>& VertexIDs, int32& NextID, bool bIsInterior, const TArray<int32>& ParentIDs = TArray<int32>());
 
+		void Invert();
 		TSharedPtr<FGraph2DDelta> MakeGraphInverse() const;
 		virtual TSharedPtr<FDelta> MakeInverse() const override;
 		virtual bool ApplyTo(FModumateDocument *doc, UWorld *world) const override;

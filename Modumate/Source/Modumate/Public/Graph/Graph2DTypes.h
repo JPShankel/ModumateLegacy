@@ -25,19 +25,26 @@ namespace Modumate
 	class IGraph2DObject
 	{
 	public:
-		IGraph2DObject(int32 InID, FGraph2D *InGraph) : ID(InID), Graph(InGraph) {};
-		virtual ~IGraph2DObject() {}
+		IGraph2DObject(int32 InID, FGraph2D *InGraph);
+		virtual ~IGraph2DObject();
 
 	public:
-		virtual void Dirty(bool bConnected = true) = 0;
-		virtual void Clean() = 0;
+		// Mark the object's modified and derived data dirty flags as true, and potentially mark connected objects dirty as well
+		virtual void Dirty(bool bConnected = true);
+
+		// Update the object's derived data, clear the dirty flag, and return whether the flag had been set
+		virtual bool Clean() = 0;
+
+		// Clear the object modification flag, and return whether it had been set
+		bool ClearModified();
 
 		virtual EGraphObjectType GetType() const = 0;
 
 	public:
-		int32 ID = MOD_ID_NONE;		// The ID of the object, can match a corresponding MOI
-		bool bValid = false;		// Whether this object can be used in the graph
-		bool bDirty = false;		// Whether this object needs to be updated
+		int32 ID = MOD_ID_NONE;			// The ID of the object, can match a corresponding MOI
+		bool bValid = false;			// Whether this object can be used in the graph
+		bool bModified = false;			// Whether this object has been modified since the last time this flag was cleared (for updating reflected MOIs)
+		bool bDerivedDataDirty = false;	// Whether this object's definitional data has changed since its derived data has been updated
 
 		FGraph2D *Graph = nullptr;	// The graph that owns this object
 	};

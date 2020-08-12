@@ -4,57 +4,40 @@
 
 namespace Modumate
 {
-	void FGraph2DVertex::AddEdge(FGraphSignedID EdgeID)
+	FGraph2DVertex::FGraph2DVertex(int32 InID, FGraph2D* InGraph, const FVector2D &InPos)
+		: IGraph2DObject(InID, InGraph)
+		, Position(InPos)
 	{
-		Edges.AddUnique(EdgeID);
-		SortEdges();
-		bDirty = true;
+		bValid = true;
+	}
+
+	void FGraph2DVertex::SetPosition(const FVector2D& NewPosition)
+	{
+		Position = NewPosition;
+		Dirty(true);
+	}
+
+	bool FGraph2DVertex::AddEdge(FGraphSignedID EdgeID)
+	{
+		if (Edges.AddUnique(EdgeID) == INDEX_NONE)
+		{
+			return false;
+		}
+
+		Dirty(false);
+		return true;
 	}
 
 	bool FGraph2DVertex::RemoveEdge(FGraphSignedID EdgeID)
 	{
 		int32 numRemoved = Edges.Remove(EdgeID);
-		if (numRemoved != 0)
+		if (numRemoved == 0)
 		{
-			bDirty = true;
-			return true;
+			return false;
 		}
 
-		return false;
-	}
-
-	void FGraph2DVertex::SortEdges()
-	{
-		if (bDirty)
-		{
-			if (Graph->bDebugCheck)
-			{
-				for (FGraphSignedID edgeID : Edges)
-				{
-					FGraph2DEdge *edge = Graph->FindEdge(edgeID);
-					if (ensureAlways(edge && edge->bValid))
-					{
-						int32 connectedVertexID = (edgeID > 0) ? edge->StartVertexID : edge->EndVertexID;
-						ensureAlways(connectedVertexID == ID);
-					}
-				}
-			}
-
-			auto edgeSorter = [this](const FGraphSignedID &edgeID1, const FGraphSignedID &edgeID2) {
-				float angle1 = 0.0f, angle2 = 0.0f;
-				if (ensureAlways(Graph->GetEdgeAngle(edgeID1, angle1) && Graph->GetEdgeAngle(edgeID2, angle2)))
-				{
-					return angle1 < angle2;
-				}
-				else
-				{
-					return false;
-				}
-			};
-
-			Edges.Sort(edgeSorter);
-			bDirty = false;
-		}
+		Dirty(false);
+		return true;
 	}
 
 	bool FGraph2DVertex::GetNextEdge(FGraphSignedID CurEdgeID, FGraphSignedID &OutNextEdgeID, float &OutAngleDelta,
@@ -116,7 +99,7 @@ namespace Modumate
 
 	void FGraph2DVertex::Dirty(bool bConnected)
 	{
-		bDirty = true;
+		IGraph2DObject::Dirty(bConnected);
 
 		if (bConnected)
 		{
@@ -147,8 +130,54 @@ namespace Modumate
 		}
 	}
 
-	void FGraph2DVertex::Clean()
+	bool FGraph2DVertex::Clean()
 	{
-		bDirty = false;
+		if (!bDerivedDataDirty)
+		{
+			return false;
+		}
+
+		if (ensure(SortEdges()))
+		{
+			bDerivedDataDirty = false;
+		}
+
+		return true;
+	}
+
+	bool FGraph2DVertex::SortEdges()
+	{
+		if (Graph->bDebugCheck)
+		{
+			for (FGraphSignedID edgeID : Edges)
+			{
+				FGraph2DEdge *edge = Graph->FindEdge(edgeID);
+				if (!ensureAlways(edge && edge->bValid && !edge->bDerivedDataDirty))
+				{
+					return false;
+				}
+
+				int32 connectedVertexID = (edgeID > 0) ? edge->StartVertexID : edge->EndVertexID;
+				if (!ensureAlways(connectedVertexID == ID))
+				{
+					return false;
+				}
+			}
+		}
+
+		auto edgeSorter = [this](const FGraphSignedID &edgeID1, const FGraphSignedID &edgeID2) {
+			float angle1 = 0.0f, angle2 = 0.0f;
+			if (ensureAlways(Graph->GetEdgeAngle(edgeID1, angle1) && Graph->GetEdgeAngle(edgeID2, angle2)))
+			{
+				return angle1 < angle2;
+			}
+			else
+			{
+				return false;
+			}
+		};
+
+		Edges.Sort(edgeSorter);
+		return true;
 	}
 }

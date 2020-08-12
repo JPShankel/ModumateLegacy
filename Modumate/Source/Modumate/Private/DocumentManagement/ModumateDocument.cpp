@@ -953,10 +953,10 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	// TODO: none of this should be necessary if the tools and handles that modify surface graph elements
 	// can preview their progress without directly modifying control points.
 	// Much of this could also be removed/cleaned earlier if the control points were only in graph 2D coordinate space.
-	TArray<int32> cleanedVertices, cleanedEdges, cleanedPolygons;
-	if (targetSurfaceGraph->CleanGraph(cleanedVertices, cleanedEdges, cleanedPolygons))
+	TArray<int32> modifiedVertices, modifiedEdges, modifiedPolygons;
+	if (targetSurfaceGraph->ClearModifiedObjects(modifiedVertices, modifiedEdges, modifiedPolygons))
 	{
-		for (int32 vertexID : cleanedVertices)
+		for (int32 vertexID : modifiedVertices)
 		{
 			FGraph2DVertex* surfaceVertex = targetSurfaceGraph->FindVertex(vertexID);
 			FModumateObjectInstance* vertexObj = GetObjectById(vertexID);
@@ -966,7 +966,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 			}
 		}
 
-		for (int32 edgeID : cleanedEdges)
+		for (int32 edgeID : modifiedEdges)
 		{
 			FGraph2DEdge* surfaceEdge = targetSurfaceGraph->FindEdge(edgeID);
 			FModumateObjectInstance *edgeObj = GetObjectById(edgeID);
@@ -988,7 +988,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 			edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 
-		for (int32 polygonID : cleanedPolygons)
+		for (int32 polygonID : modifiedPolygons)
 		{
 			FGraph2DPolygon* surfacePolygon = targetSurfaceGraph->FindPolygon(polygonID);
 			FModumateObjectInstance *polygonObj = GetObjectById(polygonID);
@@ -3513,7 +3513,7 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 				const FGraph2DVertex *startGraphVertex = graph.FindVertex(graphEdge->StartVertexID);
 				const FGraph2DVertex *endGraphVertex = graph.FindVertex(graphEdge->EndVertexID);
 
-				FVector2D edgeNormal = FVector2D(graphEdge->EdgeDir.Y, -graphEdge->EdgeDir.X);
+				FVector2D edgeNormal = FVector2D(graphEdge->CachedEdgeDir.Y, -graphEdge->CachedEdgeDir.X);
 				edgeNormal *= edgeID < 0 ? -1 : 1;
 				edgeNormals.Add(edgeNormal);
 			}

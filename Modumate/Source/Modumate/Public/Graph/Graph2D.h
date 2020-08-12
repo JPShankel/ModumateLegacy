@@ -71,13 +71,10 @@ namespace Modumate
 		int32 NextEdgeID = 1;
 		int32 NextVertexID = 1;
 		int32 NextPolyID = 1;
-		bool bDirty = false;
 
 		TMap<int32, FGraph2DEdge> Edges;
 		TMap<int32, FGraph2DVertex> Vertices;
 		TMap<int32, FGraph2DPolygon> Polygons;
-
-		TSet<FGraphSignedID> DirtyEdges;
 
 		TMap<FGraphVertexPair, int32> EdgeIDsByVertexPair;
 
@@ -104,8 +101,14 @@ namespace Modumate
 	public:
 		bool ApplyDelta(const FGraph2DDelta &Delta);
 
-		// Clean all objects that are dirtied (by applying deltas) and output their IDs
-		bool CleanGraph(TArray<int32> &OutCleanedVertices, TArray<int32> &OutCleanedEdges, TArray<int32> &OutCleanedPolygons);
+		// Clear the modified flags from all graph objects, and gather their IDs so that reflected objects can be updated.
+		bool ClearModifiedObjects(TArray<int32>& OutModifiedVertices, TArray<int32>& OutModifiedEdges, TArray<int32>& OutModifiedPolygons);
+
+		// Clean all dirty graph objects, in the correct order based on geometric dependencies between vertices, edges, and polygons
+		bool CleanDirtyObjects(bool bCleanPolygons);
+
+		// Get whether any graph objects are marked as derived data dirty
+		bool IsDirty() const;
 
 		void ClearBounds();
 
@@ -118,18 +121,18 @@ namespace Modumate
 			bool& bOutInterior, TSet<FGraphSignedID>& RefVisitedEdgeIDs,
 			bool bUseDualEdges = true, const TSet<FGraphSignedID>* AllowedEdgeIDs = nullptr) const;
 
-	private:
 		// The graph operation functions test out individual deltas by applying them as they are generated.
 		// A common flow is to make basic deltas for adding objects, apply them, and then create more deltas
 		// for handling the side-effects.  Graph operation functions should keep track of the deltas that have been applied,
 		// so that they can use ApplyInverseDeltas to reset the graph to its initial state before failing out.
-		bool ApplyDeltas(const TArray<FGraph2DDelta> &Deltas);
-		void ApplyInverseDeltas(const TArray<FGraph2DDelta> &Deltas);
+		bool ApplyDeltas(const TArray<FGraph2DDelta> &Deltas, bool bApplyInverseOnFailure = true);
+		bool ApplyInverseDeltas(const TArray<FGraph2DDelta> &Deltas);
 
+	private:
 		// Checks the values of the graph against the bounds if they are set.  This should be called as the 
 		// last side-effect in every public graph operation.  If any vertex is outside the bounding
 		// polygon or inside any of the bounding holes, the deltas are invalid and should be inverted.
-		bool ValidateGraph();
+		bool ValidateAgainstBounds();
 
 		bool UpdateCachedBoundsPositions();
 		void UpdateCachedBoundsNormals();

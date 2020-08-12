@@ -15,6 +15,34 @@
 
 namespace Modumate
 {
+	IGraph2DObject::IGraph2DObject(int32 InID, FGraph2D *InGraph)
+		: ID(InID)
+		, Graph(InGraph)
+	{
+	}
+
+	IGraph2DObject::~IGraph2DObject()
+	{
+	}
+
+	void IGraph2DObject::Dirty(bool bConnected)
+	{
+		bModified = true;
+		bDerivedDataDirty = true;
+	}
+
+	bool IGraph2DObject::ClearModified()
+	{
+		if (bModified)
+		{
+			bModified = false;
+			return true;
+		}
+
+		return false;
+	}
+
+
 	FGraph2D::FGraph2D(int32 InID, float InEpsilon, bool bInDebugCheck)
 		: Epsilon(InEpsilon)
 		, bDebugCheck(bInDebugCheck)
@@ -26,12 +54,10 @@ namespace Modumate
 	void FGraph2D::Reset()
 	{
 		NextEdgeID = NextVertexID = NextPolyID = 1;
-		bDirty = false;
 
 		Edges.Reset();
 		Vertices.Reset();
 		Polygons.Reset();
-		DirtyEdges.Reset();
 
 		ClearBounds();
 	}
@@ -119,15 +145,15 @@ namespace Modumate
 		}
 	}
 
-	bool FGraph2D::GetEdgeAngle(FGraphSignedID EdgeID, float &outEdgeAngle)
+	bool FGraph2D::GetEdgeAngle(FGraphSignedID EdgeID, float& OutEdgeAngle)
 	{
 		FGraph2DEdge *edge = FindEdge(EdgeID);
-		if (edge && edge->bValid)
+		if (edge && edge->bValid && !edge->bDerivedDataDirty)
 		{
-			outEdgeAngle = edge->Angle;
+			OutEdgeAngle = edge->CachedAngle;
 			if (EdgeID < 0)
 			{
-				outEdgeAngle = FRotator::ClampAxis(outEdgeAngle + 180.0f);
+				OutEdgeAngle = FRotator::ClampAxis(OutEdgeAngle + 180.0f);
 			}
 
 			return true;
@@ -150,7 +176,6 @@ namespace Modumate
 		}
 
 		FGraph2DVertex &newVertex = Vertices.Add(newID, FGraph2DVertex(newID, this, Position));
-		bDirty = true;
 		newVertex.Dirty(false);
 
 		return &newVertex;
@@ -177,14 +202,6 @@ namespace Modumate
 
 		FGraph2DEdge &newEdge = Edges.Add(newID, FGraph2DEdge(newID, this, StartVertexID, EndVertexID));
 
-		bDirty = true;
-		newEdge.Dirty(false);
-		DirtyEdges.Add(newID);
-		DirtyEdges.Add(-newID);
-
-		startVertex->AddEdge(newID);
-		endVertex->AddEdge(-newID);
-
 		EdgeIDsByVertexPair.Add(FGraphVertexPair::MakeEdgeKey(newEdge.StartVertexID, newEdge.EndVertexID), newEdge.ID);
 
 		return &newEdge;
@@ -204,7 +221,6 @@ namespace Modumate
 
 		FGraph2DPolygon &newPoly = Polygons.Add(InID, FGraph2DPolygon(InID, this, VertexIDs, bInterior));
 
-		bDirty = true;
 		newPoly.Dirty(false);
 
 		return &newPoly;
@@ -238,8 +254,6 @@ namespace Modumate
 				{
 					connectedEdge->EndVertexID = MOD_ID_NONE;
 				}
-
-				bDirty = true;
 			}
 		}
 
@@ -260,19 +274,13 @@ namespace Modumate
 		if (edgeToRemove->StartVertexID != MOD_ID_NONE)
 		{
 			FGraph2DVertex *startVertex = FindVertex(edgeToRemove->StartVertexID);
-			if (ensureAlways(startVertex && startVertex->RemoveEdge(EdgeID)))
-			{
-				bDirty = true;
-			}
+			ensureAlways(startVertex && startVertex->RemoveEdge(EdgeID));
 		}
 
 		if (edgeToRemove->EndVertexID != MOD_ID_NONE)
 		{
 			FGraph2DVertex *endVertex = FindVertex(edgeToRemove->EndVertexID);
-			if (ensureAlways(endVertex && endVertex->RemoveEdge(-EdgeID)))
-			{
-				bDirty = true;
-			}
+			ensureAlways(endVertex && endVertex->RemoveEdge(-EdgeID));
 		}
 
 		// Remove the edge from the vertex pair mapping if it's still in there
@@ -298,6 +306,7 @@ namespace Modumate
 
 		for (int32 edgeID : polyToRemove->Edges)
 		{
+			// Edges may be missing because they're currently being deleted, and this polygon is being deleted too as a result.
 			auto edge = FindEdge(edgeID);
 			if (edge == nullptr)
 			{
@@ -306,10 +315,13 @@ namespace Modumate
 
 			int32& edgePolyID = (edge->ID < 0 ? edge->LeftPolyID : edge->RightPolyID);
 
+			// TODO: is this useful, or even correct, if we know we need to re-calculate polygons anyway?
 			if (edgePolyID == polyToRemove->ID)
 			{
 				edgePolyID = polyToRemove->ParentID;
 			}
+
+			edge->bPolygonDirty = true;
 		}
 
 		Polygons.Remove(PolyID);
@@ -333,9 +345,14 @@ namespace Modumate
 
 	int32 FGraph2D::CalculatePolygons()
 	{
+		// Outside of delta application, this is the last possible moment to update derived vertex/edge data.
+		CleanDirtyObjects(false);
+
 		TArray<FGraph2DDelta> deltas;
-		bool bCalculatedPolygons = CalculatePolygons(deltas, NextPolyID);
-		ensure(bCalculatedPolygons);
+		ensure(CalculatePolygons(deltas, NextPolyID));
+
+		CleanDirtyObjects(true);
+
 		return Polygons.Num();
 	}
 
@@ -343,7 +360,6 @@ namespace Modumate
 	{
 		Polygons.Reset();
 		NextPolyID = 1;
-		bDirty = true;
 	}
 
 	int32 FGraph2D::GetID() const
@@ -433,7 +449,7 @@ namespace Modumate
 		for (const auto &kvp : InRecord->Vertices)
 		{
 			FGraph2DVertex *newVertex = AddVertex(kvp.Value, kvp.Key);
-			if (newVertex == nullptr)
+			if (!ensureAlways(newVertex))
 			{
 				return false;
 			}
@@ -450,12 +466,20 @@ namespace Modumate
 			}
 
 			FGraph2DEdge *newEdge = AddEdge(edgeRecord.VertexIDs[0], edgeRecord.VertexIDs[1], kvp.Key);
-			if (newEdge == nullptr)
+			if (!ensureAlways(newEdge && newEdge->Clean()))
 			{
 				return false;
 			}
 
 			NextEdgeID = FMath::Max(NextEdgeID, newEdge->ID + 1);
+		}
+
+		for (auto& kvp : Vertices)
+		{
+			if (!ensureAlways(kvp.Value.Clean()))
+			{
+				return false;
+			}
 		}
 
 		for (const auto &kvp : InRecord->Polygons)
@@ -473,12 +497,21 @@ namespace Modumate
 			NextPolyID = FMath::Max(NextPolyID, poly.ID + 1);
 		}
 
+		for (auto& kvp : Polygons)
+		{
+			kvp.Value.Clean();
+		}
+
+		if (!ensureAlways(!IsDirty()))
+		{
+			return false;
+		}
+
 		return true;
 	}
 
 	bool FGraph2D::ApplyDelta(const FGraph2DDelta &Delta)
 	{
-		// TODO: do graph objects need dirty capabilities?
 		FGraph2DDelta appliedDelta(ID);
 
 		for (auto &kvp : Delta.VertexMovements)
@@ -488,8 +521,7 @@ namespace Modumate
 			FGraph2DVertex *vertex = FindVertex(vertexID);
 			if (ensureAlways(vertex))
 			{
-				vertex->Position = vertexDelta.Value;
-				vertex->Dirty(true);
+				vertex->SetPosition(vertexDelta.Value);
 			}
 
 			appliedDelta.VertexMovements.Add(kvp);
@@ -547,6 +579,9 @@ namespace Modumate
 			appliedDelta.EdgeDeletions.Add(kvp);
 		}
 
+		// Clean vertices and edges here, so that while applying deltas we know that the underlying non-derived graph objects are always clean.
+		CleanDirtyObjects(false);
+
 		for (auto& kvp : Delta.PolygonAdditions)
 		{
 			int32 polyID = kvp.Key;
@@ -593,46 +628,107 @@ namespace Modumate
 			BoundingContainedPolygons = Delta.BoundsUpdates.Value.InnerBounds;
 		}
 
+		// Polygons may still be dirty at this point, but until we're ready to end applying a series of deltas and/or re-calculate polygons,
+		// we can't be sure that the intended Polygon structures will match the current graph traversals, so it's unsafe to clean them now.
+
 		return true;
 	}
 
-	bool FGraph2D::CleanGraph(TArray<int32> &OutCleanedVertices, TArray<int32> &OutCleanedEdges, TArray<int32> &OutCleanedPolygons)
+	bool FGraph2D::ClearModifiedObjects(TArray<int32>& OutModifiedVertices, TArray<int32>& OutModifiedEdges, TArray<int32>& OutModifiedPolygons)
 	{
-		OutCleanedVertices.Reset();
-		OutCleanedEdges.Reset();
-		OutCleanedPolygons.Reset();
+		OutModifiedVertices.Reset();
+		OutModifiedEdges.Reset();
+		OutModifiedPolygons.Reset();
 
-		for (auto &vertexkvp : Vertices)
+		for (auto& vertexkvp : Vertices)
 		{
 			auto& vertex = vertexkvp.Value;
-			if (vertex.bDirty)
+			if (vertex.ClearModified())
 			{
-				vertex.Clean();
-				OutCleanedVertices.Add(vertex.ID);
+				OutModifiedVertices.Add(vertex.ID);
 			}
 		}
 
-		for (auto &edgekvp : Edges)
+		for (auto& edgekvp : Edges)
 		{
 			auto& edge = edgekvp.Value;
-			if (edge.bDirty)
+			if (edge.ClearModified())
 			{
-				edge.Clean();
-				OutCleanedEdges.Add(edge.ID);
+				OutModifiedEdges.Add(edge.ID);
 			}
 		}
 
-		for (auto &polykvp : Polygons)
+		for (auto& polykvp : Polygons)
 		{
 			auto& poly = polykvp.Value;
-			if (poly.bDirty)
+			if (poly.ClearModified())
 			{
-				poly.Clean();
-				OutCleanedPolygons.Add(poly.ID);
+				OutModifiedPolygons.Add(poly.ID);
 			}
 		}
 
-		return true;
+		return (OutModifiedVertices.Num() > 0) || (OutModifiedEdges.Num() > 0) || (OutModifiedPolygons.Num() > 0);
+	}
+
+	bool FGraph2D::CleanDirtyObjects(bool bCleanPolygons)
+	{
+		bool bCleanedAnyObjects = false;
+
+		for (auto& kvp : Edges)
+		{
+			bCleanedAnyObjects = kvp.Value.Clean() || bCleanedAnyObjects;
+
+			// If we're cleaning polygons, then it means we've either already calculated polygons and have applied the appropriate deltas,
+			// or in the middle of applying changes during polygon calculation. In either case, the edges are no longer polygon-dirty.
+			if (bCleanPolygons)
+			{
+				kvp.Value.bPolygonDirty = false;
+			}
+		}
+
+		for (auto& kvp : Vertices)
+		{
+			bCleanedAnyObjects = kvp.Value.Clean() || bCleanedAnyObjects;
+		}
+
+		if (bCleanPolygons)
+		{
+			for (auto& kvp : Polygons)
+			{
+				bCleanedAnyObjects = kvp.Value.Clean() || bCleanedAnyObjects;
+			}
+		}
+
+		return bCleanedAnyObjects;
+	}
+
+	bool FGraph2D::IsDirty() const
+	{
+		for (auto& kvp : Vertices)
+		{
+			if (kvp.Value.bDerivedDataDirty)
+			{
+				return true;
+			}
+		}
+
+		for (auto& kvp : Edges)
+		{
+			if (kvp.Value.bDerivedDataDirty)
+			{
+				return true;
+			}
+		}
+
+		for (auto& kvp : Polygons)
+		{
+			if (kvp.Value.bDerivedDataDirty)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	void FGraph2D::ClearBounds()
@@ -651,8 +747,8 @@ namespace Modumate
 		OutVertexIDs.Reset();
 		bOutInterior = false;
 
-		if (RefVisitedEdgeIDs.Contains(StartingEdgeID) ||
-			(!bUseDualEdges && RefVisitedEdgeIDs.Contains(-StartingEdgeID)))
+		bool bVisitedEdge = RefVisitedEdgeIDs.Contains(StartingEdgeID) || (!bUseDualEdges && RefVisitedEdgeIDs.Contains(-StartingEdgeID));
+		if (bVisitedEdge)
 		{
 			return false;
 		}
@@ -668,8 +764,10 @@ namespace Modumate
 
 		do
 		{
-			if (RefVisitedEdgeIDs.Contains(curEdgeID) ||
-				(!bUseDualEdges && RefVisitedEdgeIDs.Contains(-curEdgeID)))
+			// This shouldn't be possible if we're only calling TraverseEdges on graphs with valid vertex-edge connectivity;
+			// traversal should normally only end when we reach the beginning again, but this validation is fast and useful for validating usage.
+			bVisitedEdge = RefVisitedEdgeIDs.Contains(curEdgeID) || (!bUseDualEdges && RefVisitedEdgeIDs.Contains(-curEdgeID));
+			if (!ensureAlways(!bVisitedEdge))
 			{
 				break;
 			}
@@ -709,7 +807,7 @@ namespace Modumate
 
 		int32 numEdges = OutEdgeIDs.Num();
 
-		if ((numEdges < 2) || (StartingEdgeID != curEdgeID))
+		if (!ensureAlways((numEdges >= 2) && (StartingEdgeID == curEdgeID)))
 		{
 			return false;
 		}
@@ -720,7 +818,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph2D::ValidateGraph()
+	bool FGraph2D::ValidateAgainstBounds()
 	{
 		if (BoundingPolygon.Value.Num() == 0) 
 		{
@@ -875,33 +973,46 @@ namespace Modumate
 		}
 	}
 
-	bool FGraph2D::ApplyDeltas(const TArray<FGraph2DDelta> &Deltas)
+	bool FGraph2D::ApplyDeltas(const TArray<FGraph2DDelta> &Deltas, bool bApplyInverseOnFailure)
 	{
+		bool bAllDeltasSucceeded = true;
 		TArray<FGraph2DDelta> appliedDeltas;
+
 		for (auto& delta : Deltas)
 		{
-			if (!ApplyDelta(delta))
+			if (ApplyDelta(delta))
 			{
-				ApplyInverseDeltas(appliedDeltas);
-				return false;
+				appliedDeltas.Add(delta);
 			}
-			appliedDeltas.Add(delta);
+			else
+			{
+				if (bApplyInverseOnFailure)
+				{
+					ApplyInverseDeltas(appliedDeltas);
+					return false;
+				}
+				else
+				{
+					bAllDeltasSucceeded = false;
+				}
+			}
+			
 		}
-		return true;
+
+		CleanDirtyObjects(true);
+		return bAllDeltasSucceeded;
 	}
 
-	void FGraph2D::ApplyInverseDeltas(const TArray<FGraph2DDelta> &Deltas)
+	bool FGraph2D::ApplyInverseDeltas(const TArray<FGraph2DDelta> &Deltas)
 	{
-		auto inverseDeltas = Deltas;
-		Algo::Reverse(inverseDeltas);
-
-		for (auto& delta : inverseDeltas)
+		TArray<FGraph2DDelta> inverseDeltas;
+		for (int32 i = Deltas.Num() - 1; i >= 0; --i)
 		{
-			ApplyDelta(*delta.MakeGraphInverse());
+			FGraph2DDelta& delta = inverseDeltas.Add_GetRef(Deltas[i]);
+			delta.Invert();
 		}
 
-		TArray<int32> cleanedVertices, cleanedEdges, cleanedPolygons;
-		CleanGraph(cleanedVertices, cleanedEdges, cleanedPolygons);
+		return ApplyDeltas(inverseDeltas, false);
 	}
 
 	void FGraph2D::AggregateAddedObjects(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices, TSet<int32> &OutEdges)

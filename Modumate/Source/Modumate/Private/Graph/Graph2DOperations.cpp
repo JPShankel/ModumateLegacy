@@ -83,13 +83,14 @@ namespace Modumate
 				addedIDs.Add(existingVertex->ID);
 			}
 
-			if (!ApplyDelta(addVertexDelta))
-			{
-				ApplyInverseDeltas(OutDeltas);
-				return false;
-			}
 			if (!addVertexDelta.IsEmpty())
 			{
+				if (!ApplyDelta(addVertexDelta))
+				{
+					ApplyInverseDeltas(OutDeltas);
+					return false;
+				}
+
 				OutDeltas.Add(addVertexDelta);
 			}
 		}
@@ -117,7 +118,7 @@ namespace Modumate
 			return false;
 		}
 
-		if (!ValidateGraph())
+		if (!ValidateAgainstBounds())
 		{
 			ApplyInverseDeltas(OutDeltas);
 			return false;
@@ -345,12 +346,15 @@ namespace Modumate
 				updateEdgesDelta.EdgeDeletions[existingEdge->ID].ParentObjIDs);
 		}
 
-		if (!ApplyDelta(updateEdgesDelta))
+		if (!updateEdgesDelta.IsEmpty())
 		{
-			ApplyInverseDeltas(addEdgesBetweenVerticesDeltas);
-			return false;
+			if (!ApplyDelta(updateEdgesDelta))
+			{
+				ApplyInverseDeltas(addEdgesBetweenVerticesDeltas);
+				return false;
+			}
+			addEdgesBetweenVerticesDeltas.Add(updateEdgesDelta);
 		}
-		addEdgesBetweenVerticesDeltas.Add(updateEdgesDelta);
 
 		OutDeltas.Append(addEdgesBetweenVerticesDeltas);
 
@@ -431,7 +435,7 @@ namespace Modumate
 			return false;
 		}
 
-		if (!ValidateGraph())
+		if (!ValidateAgainstBounds())
 		{
 			ApplyInverseDeltas(OutDeltas);
 			return false;
@@ -628,7 +632,7 @@ namespace Modumate
 			return false;
 		}
 
-		if (!ValidateGraph())
+		if (!ValidateAgainstBounds())
 		{
 			ApplyInverseDeltas(OutDeltas);
 			return false;
@@ -742,23 +746,35 @@ namespace Modumate
 	bool FGraph2D::CalculatePolygons(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID)
 	{
 		FGraph2DDelta updatePolygonsDelta(ID);
-		// aggregate dirty edges
-		TSet<int32> dirtyEdges;
+
+		// Aggregate edges that have been dirtied since the last time polygons were calculated
+		TSet<FGraphSignedID> dirtyEdges;
 		for (auto& edgekvp : Edges)
 		{
-			if (edgekvp.Value.bDirty)
+			FGraph2DEdge& edge = edgekvp.Value;
+			if (edge.bPolygonDirty)
 			{
-				dirtyEdges.Add(edgekvp.Key);
-				dirtyEdges.Add(-edgekvp.Key);
+				// TODO: remove unnecessary debug validity checks, this should be thoroughly enforced during direct changes and delta applications
+				if (!ensureAlways(edge.bValid && !edge.bDerivedDataDirty))
+				{
+					return false;
+				}
+
+				dirtyEdges.Add(edge.ID);
+				dirtyEdges.Add(-edge.ID);
 			}
 		}
 
-		// make sure all vertex-edge connections are sorted
-		// TODO: this should probably be in ApplyDelta, and probably doesn't need to be added to every vertex
-		for (auto &kvp : Vertices)
+		if (bDebugCheck)
 		{
-			FGraph2DVertex &vertex = kvp.Value;
-			vertex.SortEdges();
+			for (auto &kvp : Vertices)
+			{
+				FGraph2DVertex& vertex = kvp.Value;
+				if (!ensureAlways(vertex.bValid && !vertex.bDerivedDataDirty))
+				{
+					return false;
+				}
+			}
 		}
 
 		TSet<FGraphSignedID> visitedEdges;
@@ -800,14 +816,22 @@ namespace Modumate
 
 				updatePolygonsDelta.PolygonDeletions.Add(previousID, FGraph2DObjDelta(polygon->VertexIDs, { addedPolyID }, polygon->bInterior));
 			}
-
 		}
 
-		if (!ApplyDelta(updatePolygonsDelta))
+		// Clear edge-polygon dirty flags, so that subsequent calls to CalculatePolygons would be no-ops
+		for (auto& edgekvp : Edges)
 		{
-			return false;
+			edgekvp.Value.bPolygonDirty = false;
 		}
-		OutDeltas.Add(updatePolygonsDelta);
+
+		if (!updatePolygonsDelta.IsEmpty())
+		{
+			if (!ApplyDelta(updatePolygonsDelta))
+			{
+				return false;
+			}
+			OutDeltas.Add(updatePolygonsDelta);
+		}
 
 		// determine which polygons are inside of others
 		FGraph2DDelta parentIDUpdatesDelta(ID);
@@ -842,13 +866,13 @@ namespace Modumate
 			}
 		}
 
-		if (!ApplyDelta(parentIDUpdatesDelta))
-		{
-			return false;
-		}
-
 		if (!parentIDUpdatesDelta.IsEmpty())
 		{
+			if (!ApplyDelta(parentIDUpdatesDelta))
+			{
+				return false;
+			}
+
 			OutDeltas.Add(parentIDUpdatesDelta);
 		}
 

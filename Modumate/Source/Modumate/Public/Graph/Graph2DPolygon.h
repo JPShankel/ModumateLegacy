@@ -9,13 +9,14 @@ namespace Modumate
 	class FGraph2DPolygon : public IGraph2DObject
 	{
 	public:
+		// Definitional data
+		TArray<int32> VertexIDs;						// The list of vertices that make up this polygon
+
+		// Derived data
+		TArray<FGraphSignedID> Edges;					// The list of edges that make up this polygon
 		int32 ParentID = MOD_ID_NONE;					// The ID of the polygon that contains this one, if any
 		TArray<int32> InteriorPolygons;					// The IDs of polygons that this polygon contains
-		TArray<int32> VertexIDs;						// The list of vertices that make up this polygon
-		TArray<FGraphSignedID> Edges;					// The list of edges that make up this polygon
-
-		// Cached derived data
-		bool bHasDuplicateVertex = false;					// Whether this polygon has any edges that double back on themselves
+		bool bHasDuplicateVertex = false;				// Whether this polygon has any vertices that repeat (peninsulas/islands)
 		bool bInterior = false;							// Whether this is an interior (simple, solid) polygon; otherwise it is a perimeter
 		FBox2D AABB = FBox2D(ForceInitToZero);			// The axis-aligned bounding box for the polygon
 		TArray<FVector2D> CachedPoints;					// The list of vertex positions in this polygon
@@ -32,10 +33,12 @@ namespace Modumate
 		void SetParent(int32 inParentID);
 
 		void SetVertices(const TArray<int32> &Vertices);
-		void CalculatePerimeter();
+
+		// Double-check that the polygon's definition matches the minimal traversal in the graph.
+		bool ValidateTraversal();
 
 		virtual void Dirty(bool bConnected = true) override;
-		virtual void Clean() override;
+		virtual bool Clean() override;
 
 		virtual EGraphObjectType GetType() const override { return EGraphObjectType::Polygon; };
 
@@ -43,5 +46,8 @@ namespace Modumate
 		TSet<int32> TempVertexSet;
 		TSet<FGraphSignedID> TempVisitedEdges;
 		TSet<FGraphSignedID> TempAllowedPerimeterEdges;
+
+		// Update the cached perimeter data from the polygon's definitional data; returns whether it was able to complete, if necessary.
+		bool CalculatePerimeter();
 	};
 }
