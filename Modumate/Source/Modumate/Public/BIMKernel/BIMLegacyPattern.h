@@ -158,3 +158,18 @@ struct MODUMATE_API FLayerPattern
 
 	FName UniqueKey() const { return Key; }
 };
+
+// TODO: add to BIM lighting kernel when it exists 
+USTRUCT()
+struct FLightConfiguration
+{
+	GENERATED_BODY()
+
+		FName Key;
+	float LightIntensity = 0.f;
+	FLinearColor LightColor = FLinearColor::White;
+	TWeakObjectPtr<UTextureLightProfile> LightProfile = nullptr;
+	bool bAsSpotLight = false;
+
+	FName UniqueKey() const { return Key; }
+};

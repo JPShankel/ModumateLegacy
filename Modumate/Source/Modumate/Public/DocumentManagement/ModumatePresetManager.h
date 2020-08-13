@@ -22,7 +22,6 @@ private:
 
 	FGraphCollection GraphCollection;
 	TSet<FName> KeyStore;
-	ECraftingResult ReadBIMTable(UDataTable* DataTable, FBIMPresetCollection& Target);
 
 public:
 	TMap<EObjectType, FAssemblyDataCollection> AssembliesByObjectType;

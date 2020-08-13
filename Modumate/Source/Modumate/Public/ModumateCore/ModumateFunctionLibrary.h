@@ -90,7 +90,7 @@ public:
 	static void CalculateFloorParam(FVector Origin, TArray<FVector> anchorUV, FVector topAnchorUV, FRotator topUvRotation, TArray<FVector> InTopVerts, TArray<FVector> InBottomVerts, TArray<FVector>& ReturnVerts, TArray<int32>& ReturnTris, TArray<FVector>& ReturnNormals, TArray<FVector2D>& ReturnUV, TArray<int32>& ReturnTopTris);
 
 	//UFUNCTION(BlueprintCallable, Category = "Modumate Assembly")
-	static void GetFloorAssemblyLayerControlPoints(const TArray<FVector>& points, const TArray<FModumateObjectAssemblyLayer>& fal, TArray<FFloorAssemblyLayerControlPoints> &OutLayersCPs, bool bLayersReversed = true, bool bManualLayerCPs = false);
+	static void GetFloorAssemblyLayerControlPoints(const TArray<FVector>& points, const TArray<FBIMLayerSpec>& fal, TArray<FFloorAssemblyLayerControlPoints> &OutLayersCPs, bool bLayersReversed = true, bool bManualLayerCPs = false);
 
 	// Given a component reference (size radius should be 100.0), calculate how much new scale needs to be in order to maintain constant screen size
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
@@ -200,7 +200,7 @@ public:
 	// Helper non-BP methods for below BP method
 	static bool SetMeshMaterial(UMeshComponent *MeshComponent, const FArchitecturalMaterial &Material, int32 MatIndex, UMaterialInstanceDynamic** CachedMIDPtr = nullptr);
 	static bool SetMeshMaterialsFromMapping(UMeshComponent *MeshComponent, const TMap<FName, FArchitecturalMaterial> &MaterialMapping, const TMap<FName, int32> *MatIndexMapping = nullptr);
-	static bool SetMeshMaterialsFromAssemblyLayer(UMeshComponent *MeshComponent, const FModumateObjectAssemblyLayer &AssemblyLayer, const TMap<FName, int32> *MatIndexMapping = nullptr);
+	static bool SetMeshMaterialsFromAssemblyLayer(UMeshComponent *MeshComponent, const FBIMLayerSpec &AssemblyLayer, const TMap<FName, int32> *MatIndexMapping = nullptr);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Color")
 	static FColor GetColorFromHex(FString Hex);
@@ -231,7 +231,7 @@ public:
 
 	static void PopulatePatternModuleVariables(TMap<FString, float> &patternExprVars, const FVector &moduleDims, int32 moduleIdx);
 
-	static bool ApplyTileMaterialToMeshFromLayer(UProceduralMeshComponent *MeshComponent, const FModumateObjectAssemblyLayer &Layer,
+	static bool ApplyTileMaterialToMeshFromLayer(UProceduralMeshComponent *MeshComponent, const FBIMLayerSpec &Layer,
 		const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial, UMaterialInstanceDynamic** CachedMIDPtr = nullptr);
 
 	static bool UpdateMaterialsFromAssembly(const TArray<UProceduralMeshComponent*> &ProceduralSubLayers, const FBIMAssemblySpec &Assembly,

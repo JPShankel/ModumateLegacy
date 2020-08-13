@@ -10,24 +10,6 @@
 
 
 USTRUCT()
-struct FLightTableRow : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	float LightIntensity;
-
-	UPROPERTY(EditAnywhere)
-	FLinearColor LightColor;
-
-	UPROPERTY(EditAnywhere)
-	FSoftObjectPath LightProfilePath;
-
-	UPROPERTY(EditAnywhere)
-	bool bAsSpotLight;
-};
-
-USTRUCT()
 struct FRoomConfigurationTableRow : public FTableRowBase
 {
 	GENERATED_BODY()

@@ -44,7 +44,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 {
 	// Figure out how many components we might need.
 
-	int32 maxNumMeshes = obAsm.CachedAssembly.Layers.Num();
+	int32 maxNumMeshes = obAsm.Parts.Num();
 
 	for (int32 compIdx = 0; compIdx < StaticMeshComps.Num(); ++compIdx)
 	{
@@ -439,22 +439,22 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 	{
 		FVector objectScale = bLateralInvert ? FVector(1, -1, 1) : FVector::OneVector;
 
-		int32 numLayers = obAsm.CachedAssembly.Layers.Num();
-		for (int32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
+		int32 numPartSlots = obAsm.Parts.Num();
+		for (int32 partSlotIdx = 0; partSlotIdx < numPartSlots; ++partSlotIdx)
 		{
-			auto &layer = obAsm.CachedAssembly.Layers[layerIdx];
-			if (layer.Mesh.EngineMesh == nullptr)
+			auto &part = obAsm.Parts[partSlotIdx];
+			if (part.Mesh.EngineMesh == nullptr)
 			{
 				continue;
 			}
 
-			UStaticMesh *layerMesh = layer.Mesh.EngineMesh.Get();
+			UStaticMesh *layerMesh = part.Mesh.EngineMesh.Get();
 			int32 lodIndex = 0;
-			FVector slotScale(layer.SlotScale.Y, layer.SlotScale.X, 1);
+			FVector slotScale(part.Scale.Y, part.Scale.X, 1);
 			FVector layerScale = objectScale * slotScale;
 
 			// Make sure that there's a static mesh component for each layer that has the engine mesh.
-			UStaticMeshComponent *layerStaticMeshComp = StaticMeshComps[layerIdx];
+			UStaticMeshComponent *layerStaticMeshComp = StaticMeshComps[partSlotIdx];
 			if (layerStaticMeshComp == nullptr)
 			{
 				layerStaticMeshComp = NewObject<UStaticMeshComponent>(this);
@@ -462,7 +462,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 				AddOwnedComponent(layerStaticMeshComp);
 				layerStaticMeshComp->RegisterComponent();
 
-				StaticMeshComps[layerIdx] = layerStaticMeshComp;
+				StaticMeshComps[partSlotIdx] = layerStaticMeshComp;
 			}
 			layerStaticMeshComp->SetStaticMesh(layerMesh);
 			layerStaticMeshComp->SetVisibility(true);
@@ -472,12 +472,14 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 			layerStaticMeshComp->SetMobility(EComponentMobility::Movable);
 
 			// Light parameters
+#if 0 //TODO: refactor for new light configs
 			if (!layer.LightConfiguration.Key.IsNone())
 			{
 				FTransform lightTransform = FTransform(layer.LightRotation, layer.LightLocation, FVector::OneVector);
 				UpdateLightFromLightConfig(layerStaticMeshComp, layer.LightConfiguration, lightTransform);
 			}
 			else
+#endif
 			{
 				RemoveAllLights();
 			}

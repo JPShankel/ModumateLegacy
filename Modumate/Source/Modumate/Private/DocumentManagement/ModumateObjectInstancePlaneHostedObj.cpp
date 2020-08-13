@@ -77,7 +77,7 @@ namespace Modumate
 			int32 numLayers = LayerGeometries.Num();
 			int32 pointIndex = CornerIndex % numPlanePoints;
 
-			if (ensure((numLayers == MOI->GetAssembly().CachedAssembly.Layers.Num()) && numLayers > 0))
+			if (ensure((numLayers == MOI->GetAssembly().Layers.Num()) && numLayers > 0))
 			{
 				const FVector &layerGeomPoint = bOnStartingSide ?
 					LayerGeometries[0].PointsA[pointIndex] :

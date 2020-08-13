@@ -210,7 +210,7 @@ bool UPlaneHostedObjTool::HandleInvert()
 	if (PendingObjMesh.IsValid())
 	{
 		bInverted = !bInverted;
-		ObjAssembly.CachedAssembly.ReverseLayers();
+		ObjAssembly.ReverseLayers();
 	}
 	return true;
 }
@@ -350,7 +350,7 @@ void UPlaneHostedObjTool::SetAssemblyKey(const FName &InAssemblyKey)
 		// then we need to make sure the layers are inverted now.
 		if (bInverted)
 		{
-			ObjAssembly.CachedAssembly.ReverseLayers();
+			ObjAssembly.ReverseLayers();
 		}
 	}
 

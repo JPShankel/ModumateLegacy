@@ -80,7 +80,7 @@ namespace Modumate
 	float FMOIFlatPolyImpl::CalcThickness(const FBIMAssemblySpec &Assembly) const
 	{
 		float thickness = 0;
-		for (auto &layer : Assembly.CachedAssembly.Layers)
+		for (auto &layer : Assembly.Layers)
 		{
 			if (layer.Thickness.AsWorldCentimeters() > 0)
 			{
@@ -95,7 +95,7 @@ namespace Modumate
 	void FMOIFlatPolyImpl::SetupDynamicGeometry()
 	{
 		GotGeometry = true;
-		if (MOI->GetObjectInverted() && DynamicMeshActor->Assembly.CachedAssembly.Layers.Num() > 0)
+		if (MOI->GetObjectInverted() && DynamicMeshActor->Assembly.Layers.Num() > 0)
 		{
 			float sketchPlaneHeight = DynamicMeshActor->GetActorLocation().Z + MOI->GetExtents().Y;
 			float newThickness = CalcThickness(MOI->GetAssembly());

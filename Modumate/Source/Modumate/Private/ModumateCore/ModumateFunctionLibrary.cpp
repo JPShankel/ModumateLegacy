@@ -520,7 +520,7 @@ void UModumateFunctionLibrary::CalculateFloorParam(FVector Origin, TArray<FVecto
 	ReturnTopTris = topTris;
 }
 
-void UModumateFunctionLibrary::GetFloorAssemblyLayerControlPoints(const TArray<FVector>& points, const TArray<FModumateObjectAssemblyLayer>& fal, TArray<FFloorAssemblyLayerControlPoints> &OutLayersCPs, bool bLayersReversed, bool bManualLayerCPs)
+void UModumateFunctionLibrary::GetFloorAssemblyLayerControlPoints(const TArray<FVector>& points, const TArray<FBIMLayerSpec>& fal, TArray<FFloorAssemblyLayerControlPoints> &OutLayersCPs, bool bLayersReversed, bool bManualLayerCPs)
 {
 	OutLayersCPs.Reset();
 	FFloorAssemblyLayerControlPoints curLayerCPs;
@@ -1300,8 +1300,8 @@ bool UModumateFunctionLibrary::GetCabinetToeKickDimensions(const FBIMAssemblySpe
 	outToeKickDims.Set(0.0f, 0.0f);
 
 	FString depth, height;
-	if (obAsm.CachedAssembly.Properties.TryGetProperty(EBIMValueScope::ToeKick, BIMPropertyNames::Depth,depth)
-		&& obAsm.CachedAssembly.Properties.TryGetProperty(EBIMValueScope::ToeKick, BIMPropertyNames::Height,height))
+	if (obAsm.RootProperties.TryGetProperty(EBIMValueScope::ToeKick, BIMPropertyNames::Depth,depth)
+		&& obAsm.RootProperties.TryGetProperty(EBIMValueScope::ToeKick, BIMPropertyNames::Height,height))
 	{
 		outToeKickDims.X = UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters;
 		outToeKickDims.Y = UModumateDimensionStatics::StringToFormattedDimension(height).Centimeters;
@@ -1397,10 +1397,11 @@ bool UModumateFunctionLibrary::SetMeshMaterialsFromMapping(UMeshComponent *MeshC
 	return bSuccess;
 }
 
-bool UModumateFunctionLibrary::SetMeshMaterialsFromAssemblyLayer(UMeshComponent* MeshComponent, const FModumateObjectAssemblyLayer &AssemblyLayer, const TMap<FName, int32> *MatIndexMapping)
+bool UModumateFunctionLibrary::SetMeshMaterialsFromAssemblyLayer(UMeshComponent* MeshComponent, const FBIMLayerSpec &AssemblyLayer, const TMap<FName, int32> *MatIndexMapping)
 {
 	bool bSuccess = false;
 
+#if 0 // TODO: refactor for new material assignments
 	for (int32 i = -1; i < AssemblyLayer.ExtraMaterials.Num(); ++i)
 	{
 		auto &matData = (i < 0) ? AssemblyLayer.Material : AssemblyLayer.ExtraMaterials[i];
@@ -1429,6 +1430,7 @@ bool UModumateFunctionLibrary::SetMeshMaterialsFromAssemblyLayer(UMeshComponent*
 			}
 		}
 	}
+#endif
 
 	return bSuccess;
 }
@@ -1481,7 +1483,7 @@ void UModumateFunctionLibrary::PopulatePatternModuleVariables(TMap<FString, floa
 	patternExprVars.Add(makeModuleDimensionKey(moduleIdx, TEXT("H")), moduleDims.Z);
 }
 
-bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshComponent *MeshComponent, const FModumateObjectAssemblyLayer &Layer,
+bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshComponent *MeshComponent, const FBIMLayerSpec &Layer,
 	const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial, UMaterialInstanceDynamic** CachedMIDPtr)
 {
 
@@ -1678,7 +1680,7 @@ bool UModumateFunctionLibrary::UpdateMaterialsFromAssembly(const TArray<UProcedu
 	TArray<UMaterialInstanceDynamic*> *CachedMIDs, bool bLayersReversed)
 {
 	bool bAppliedAnyTileMaterials = false;
-	int32 numLayers = Assembly.CachedAssembly.Layers.Num();
+	int32 numLayers = Assembly.Layers.Num();
 
 	if (ensure(ProceduralSubLayers.Num() == numLayers))
 	{
@@ -1687,7 +1689,7 @@ bool UModumateFunctionLibrary::UpdateMaterialsFromAssembly(const TArray<UProcedu
 			UProceduralMeshComponent *layerMesh = ProceduralSubLayers[layerIdx];
 
 			int32 fixedLayerIdx = bLayersReversed ? (numLayers - layerIdx - 1) : layerIdx;
-			const FModumateObjectAssemblyLayer &layerData = Assembly.CachedAssembly.Layers[fixedLayerIdx];
+			const FBIMLayerSpec &layerData = Assembly.Layers[fixedLayerIdx];
 
 			UMaterialInstanceDynamic** cachedMIDPtr = nullptr;
 			if (CachedMIDs && (layerIdx < CachedMIDs->Num()))

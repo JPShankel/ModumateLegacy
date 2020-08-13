@@ -336,7 +336,7 @@ bool UStructureLineTool::UpdatePreviewStructureLine()
 	// and recreate geometry based on whether it's been set up before.
 
 	FVector scaleVector;
-	if (!ObjAssembly.CachedAssembly.TryGetProperty(BIMPropertyNames::Scale, scaleVector))
+	if (!ObjAssembly.TryGetProperty(BIMPropertyNames::Scale, scaleVector))
 	{
 		scaleVector = FVector::OneVector;
 	}

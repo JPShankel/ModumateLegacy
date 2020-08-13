@@ -86,9 +86,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* RoomConfigurationTable;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
-	UDataTable* LightConfigTable;
-
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Editing")
 	TSubclassOf<class ADynamicMeshActor> DynamicMeshActorClass;
 

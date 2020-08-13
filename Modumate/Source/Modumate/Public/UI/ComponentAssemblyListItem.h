@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Database/ModumateObjectAssembly.h"
 #include "Blueprint/IUserObjectListEntry.h"
+#include "Database/ModumateObjectEnums.h"
 
 #include "ComponentAssemblyListItem.generated.h"
 

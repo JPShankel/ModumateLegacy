@@ -34,18 +34,18 @@ ETrimMiterOptions UModumateObjectStatics::GetMiterOptionFromAdjacentTrim(ETrimMi
 
 bool UModumateObjectStatics::GetPolygonProfile(const FBIMAssemblySpec *TrimAssembly, const FSimplePolygon*& OutProfile)
 {
-	if (!ensure(TrimAssembly && (TrimAssembly->CachedAssembly.Layers.Num() == 1)))
+	if (!ensure(TrimAssembly && (TrimAssembly->Extrusions.Num() == 1)))
 	{
 		return false;
 	}
 
-	const FModumateObjectAssemblyLayer &trimLayer = TrimAssembly->CachedAssembly.Layers[0];
-	if (!ensure(trimLayer.SimpleMeshes.Num() == 1))
+	const FBIMExtrusionSpec& trimExtrusion = TrimAssembly->Extrusions[0];
+	if (!ensure(trimExtrusion.SimpleMeshes.Num() == 1))
 	{
 		return false;
 	}
 
-	const FSimpleMeshRef &simpleMesh = trimLayer.SimpleMeshes[0];
+	const FSimpleMeshRef &simpleMesh = trimExtrusion.SimpleMeshes[0];
 	if (!ensure(simpleMesh.Asset.IsValid() && (simpleMesh.Asset->Polygons.Num() == 1)))
 	{
 		return false;
@@ -1088,8 +1088,8 @@ bool UModumateObjectStatics::GetFFEMountedTransform(
 {
 	FVector localDesiredNormal, localDesiredTangent;
 	if (!SnappedCursor.HitNormal.IsNearlyZero() && ensure(Assembly &&
-		Assembly->CachedAssembly.TryGetProperty(BIMPropertyNames::Normal, localDesiredNormal) &&
-		Assembly->CachedAssembly.TryGetProperty(BIMPropertyNames::Tangent, localDesiredTangent)))
+		Assembly->TryGetProperty(BIMPropertyNames::Normal, localDesiredNormal) &&
+		Assembly->TryGetProperty(BIMPropertyNames::Tangent, localDesiredTangent)))
 	{
 		return GetMountedTransform(SnappedCursor.WorldPosition, SnappedCursor.HitNormal,
 			localDesiredNormal, localDesiredTangent, OutTransform);

@@ -100,7 +100,7 @@ namespace Modumate
 			FVector2D profileSize = profile->Extents.GetSize();
 
 			FVector2D scaleVector;
-			if (MOI->GetAssembly().CachedAssembly.TryGetProperty(BIMPropertyNames::Scale, scaleVector))
+			if (MOI->GetAssembly().TryGetProperty(BIMPropertyNames::Scale, scaleVector))
 			{
 				profileSize *= scaleVector;
 			}
@@ -115,7 +115,7 @@ namespace Modumate
 
 	void FMOIStructureLine::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 	{
-		if (!ensure(DynamicMeshActor.IsValid() && MOI && (MOI->GetAssembly().CachedAssembly.Layers.Num() == 1)))
+		if (!ensure(DynamicMeshActor.IsValid() && MOI && (MOI->GetAssembly().Extrusions.Num() == 1)))
 		{
 			return;
 		}
@@ -134,7 +134,7 @@ namespace Modumate
 
 		FVector scaleVector;
 
-		if (!MOI->GetAssembly().CachedAssembly.TryGetProperty(BIMPropertyNames::Scale, scaleVector))
+		if (!MOI->GetAssembly().TryGetProperty(BIMPropertyNames::Scale, scaleVector))
 		{
 			scaleVector = FVector::OneVector;
 		}

@@ -21,12 +21,10 @@ bool UModumateIconMeshStatics::GetMeshesFromShoppingItem(AEditModelPlayerControl
 		return false;
 	}
 
-	FModumateObjectAssembly *updatedObAsmPtr = const_cast<FModumateObjectAssembly*>(&assembly->CachedAssembly);
-	FModumateObjectAssembly updatedObAsm = *updatedObAsmPtr;
 	TargetComps.Empty();
-	for (int32 i = 0; i < updatedObAsm.Layers.Num(); ++i)
+	for (int32 i = 0; i < assembly->Parts.Num(); ++i)
 	{
-		TargetComps.Add(updatedObAsm.Layers[i].Mesh.EngineMesh.Get());
+		TargetComps.Add(assembly->Parts[i].Mesh.EngineMesh.Get());
 	}
 	return true;
 }
@@ -90,9 +88,9 @@ bool UModumateIconMeshStatics::MakeIconMeshFromPofileKey(AEditModelPlayerControl
 		{
 			// Add temp assembly that uses the profile
 			FBIMAssemblySpec obAsm;
-			FModumateObjectAssemblyLayer obAsmLayer;
-			obAsmLayer.SimpleMeshes.Add(*meshRef);
-			obAsm.CachedAssembly.Layers.Add(obAsmLayer);
+			FBIMExtrusionSpec obAsmExtrusion;
+			obAsmExtrusion.SimpleMeshes.Add(*meshRef);
+			obAsm.Extrusions.Add(obAsmExtrusion);
 
 			// Geometry params for setting up dynamic mesh actor
 			FVector meshStartPos = FVector(Length, 0.f, 0.f) + RootLoation;

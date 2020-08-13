@@ -7,6 +7,8 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "ModumateCore/ModumateUnits.h"
+#include "Algo/Reverse.h"
+#include "Algo/Accumulate.h"
 
 ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FName& PresetID)
 {
@@ -36,12 +38,20 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 			const FBIMPresetNodeType* nodeType = PresetCollection.NodeDescriptors.Find(preset->NodeType);
 			if (ensureAlways(nodeType != nullptr))
 			{
-				if (nodeType->Scope == EBIMValueScope::Layer)
+				// TODO: Part scope for FFE
+				if (nodeType->Scope == EBIMValueScope::Profile)
 				{
-					LayerProperties.AddDefaulted();
-					currentSheet = &LayerProperties.Last();
+					Extrusions.AddDefaulted();
+					currentSheet = &Extrusions.Last().Properties;
 				}
-				if (nodeType->Scope != EBIMValueScope::None)
+				else if (nodeType->Scope == EBIMValueScope::Layer)
+				{
+					Layers.AddDefaulted();
+					currentSheet = &Layers.Last().Properties;
+				}
+				
+				// All nodes should have a scope
+				if (ensureAlways(nodeType->Scope != EBIMValueScope::None))
 				{
 					pinScope = nodeType->Scope;
 				}
@@ -84,119 +94,129 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 	return DoMakeAssembly(InDB, PresetCollection);
 }
 
-class MODUMATE_API FLayerMaker
+bool FBIMAssemblySpec::HasProperty(const FBIMNameType& Name) const
 {
-public:
-	TArray<FName> Subcategories;
-	FString CodeName;
+	return RootProperties.HasProperty(EBIMValueScope::Assembly, Name);
+}
 
-	ELayerFunction FunctionEnum = ELayerFunction::None;
-	FText FunctionName;
+Modumate::FModumateCommandParameter FBIMAssemblySpec::GetProperty(const FBIMNameType& Name) const
+{
+	return RootProperties.GetProperty(EBIMValueScope::Assembly, Name);
+}
 
-	ELayerFormat FormatEnum = ELayerFormat::None;
-	FText FormatName;
+void FBIMAssemblySpec::SetProperty(const FBIMNameType& Name, const Modumate::FModumateCommandParameter& Value)
+{
+	RootProperties.SetProperty(EBIMValueScope::Assembly, Name, Value);
+}
 
-	Modumate::Units::FUnitValue Thickness;
+void FBIMAssemblySpec::ReverseLayers()
+{
+	Algo::Reverse(Layers);
+}
 
-	FString LayerMaterialKey;
-	FString LayerColorKey;
-
-	FName ProfileKey;
-
-	FBIMPropertySheet Properties;
-	TMap<FBIMNameType, FModumateFormattedDimension> Dimensions;
-
-	void SetValue(
-		const FBIMPropertyValue& var,
-		const Modumate::FModumateCommandParameter& value)
+ECraftingResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB)
+{
+	const FCustomColor* customColor = nullptr;
+	Properties.ForEachProperty([this,&InDB,&customColor](const FString& VarQN, const Modumate::FModumateCommandParameter& Value)
 	{
-		auto convertDimension = [this](const FString& dimStr, const FBIMNameType& property)
+		FBIMPropertyValue Var(*VarQN);
+		if (Var.Name == BIMPropertyNames::AssetID)
 		{
-			FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(dimStr);
-			Dimensions.Add(property, dim);
-			return Modumate::Units::FUnitValue::WorldCentimeters(dim.Centimeters);
-		};
-
-		Properties.SetValue(var.QN().ToString(), value);
-
-		//TODO: deprecated DDL 1.0 .. DDL 2 tracks all layer values in the Module or Layer scope
-
-		if (var.Name == BIMPropertyNames::AssetID)
-		{
-			if (var.Scope == EBIMValueScope::RawMaterial)
+			// TODO: to be replaced with modules & gaps with their own materials & colors
+			if (Var.Scope == EBIMValueScope::RawMaterial || Var.Scope == EBIMValueScope::Material)
 			{
-				LayerMaterialKey = value;
+				const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(Value);
+				if (ensureAlways(mat != nullptr))
+				{
+					Material = *mat;
+					ensureAlways(Material.EngineMaterial != nullptr);
+				}
 			}
-			if (var.Scope == EBIMValueScope::Color)
+
+			// Color may get set before or after material, so cache it
+			if (Var.Scope == EBIMValueScope::Color)
 			{
-				LayerColorKey = value;
+				customColor = InDB.GetCustomColorByKey(Value);
 			}
 		}
 
-		if (var.Scope == EBIMValueScope::Dimension)
+		if (Var.Scope == EBIMValueScope::Dimension)
 		{
-			if (var.Name == BIMPropertyNames::Thickness)
+			if (Var.Name == BIMPropertyNames::Thickness)
 			{
-				Thickness = convertDimension(value, var.QN());
+				FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(Value);
+				Thickness = Modumate::Units::FUnitValue::WorldCentimeters(dim.Centimeters);
 			}
+		}	
+	});
+
+	if (customColor != nullptr)
+	{
+		Material.DefaultBaseColor = *customColor;
+	}
+
+	return ECraftingResult::Success;
+}
+
+ECraftingResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& InDB)
+{
+	FString diameterString;
+	FModumateFormattedDimension xDim, yDim;
+	if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter, diameterString))
+	{
+		xDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter));
+		yDim = xDim;
+	}
+	else
+	{
+		xDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::XExtents));
+		yDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::YExtents));
+	}
+
+	FName layerMaterialKey = Properties.GetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID);
+	FName profileKey = Properties.GetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID);
+
+	if (!profileKey.IsNone())
+	{
+		const FSimpleMeshRef* trimMesh = InDB.GetSimpleMeshByKey(profileKey);
+
+		if (ensureAlways(trimMesh != nullptr))
+		{
+			SimpleMeshes.Add(*trimMesh);
 		}
 	}
 
-	FModumateObjectAssemblyLayer Make(const FModumateDatabase& db)
+	if (!layerMaterialKey.IsNone())
 	{
-		FModumateObjectAssemblyLayer ret;
-
-		ret.Format = FormatEnum;
-		ret.Function = FunctionEnum;
-		ret.Thickness = Thickness;
-		ret.DisplayName = CodeName;
-
-		if (!ProfileKey.IsNone())
+		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(layerMaterialKey);
+		if (ensureAlways(mat != nullptr))
 		{
-			ret.Function = ELayerFunction::Finish;
-			ret.Format = ELayerFormat::Board;
-
-			const FSimpleMeshRef* trimMesh = db.GetSimpleMeshByKey(ProfileKey);
-
-			if (ensureAlways(trimMesh != nullptr))
-			{
-				ret.SimpleMeshes.Add(*trimMesh);
-			}
+			Material = *mat;
+			ensureAlways(Material.EngineMaterial != nullptr);
 		}
-
-		if (!LayerMaterialKey.IsEmpty())
-		{
-			const FArchitecturalMaterial* mat = db.GetArchitecturalMaterialByKey(*LayerMaterialKey);
-			if (ensureAlways(mat != nullptr))
-			{
-				ret.Material = *mat;
-				ensureAlways(ret.Material.EngineMaterial != nullptr);
-			}
-		}
-
-		if (!LayerColorKey.IsEmpty())
-		{
-			const FCustomColor* color = db.GetCustomColorByKey(*LayerColorKey);
-			if (ensureAlways(color != nullptr))
-			{
-				ret.BaseColor = *color;
-				ret.Material.DefaultBaseColor = *color;
-			}
-		}
-
-		if (ret.BaseColor.Key.IsNone())
-		{
-			ret.BaseColor.Key = TEXT("COLORKEY");
-		}
-
-		return ret;
 	}
-};
+
+	// TODO: re-orient column meshes so width is along X instead of depth
+	FVector profileSize(xDim.Centimeters, yDim.Centimeters, 1);
+
+	if (ensureAlways(SimpleMeshes.Num() > 0 && SimpleMeshes[0].Asset.Get()->Polygons.Num() > 0))
+	{
+		FSimplePolygon& polygon = SimpleMeshes[0].Asset.Get()->Polygons[0];
+		FVector polyExtents(polygon.Extents.Max.X - polygon.Extents.Min.X, polygon.Extents.Max.Y - polygon.Extents.Min.Y, 1);
+		Properties.SetProperty(EBIMValueScope::Assembly,BIMPropertyNames::Scale, profileSize / polyExtents);
+	}	
+	return ECraftingResult::Success;
+}
+
+ECraftingResult FBIMPartSlotSpec::BuildFromProperties(const FModumateDatabase& InDB)
+{
+	// TODO: not yet implemented
+	ensureAlways(false);
+	return ECraftingResult::Error;
+}
 
 ECraftingResult FBIMAssemblySpec::MakeStubbyAssembly(const FModumateDatabase& InDB)
 {
-	CachedAssembly = FModumateObjectAssembly();
-
 	FName meshKey = RootProperties.GetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID);
 	const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(meshKey);
 	if (mesh == nullptr)
@@ -204,92 +224,60 @@ ECraftingResult FBIMAssemblySpec::MakeStubbyAssembly(const FModumateDatabase& In
 		return ECraftingResult::Error;
 	}
 
-	FModumateObjectAssemblyLayer& layer = CachedAssembly.Layers.AddDefaulted_GetRef();
-	layer.Mesh = *mesh;
+	FBIMPartSlotSpec& partSlot = Parts.AddDefaulted_GetRef();
+	partSlot.Mesh = *mesh;
 
-	CachedAssembly.SetProperty(BIMPropertyNames::Normal, FVector(0, 0, 1));
-	CachedAssembly.SetProperty(BIMPropertyNames::Tangent, FVector(0, 1, 0));
+	SetProperty(BIMPropertyNames::Normal, FVector(0, 0, 1));
+	SetProperty(BIMPropertyNames::Tangent, FVector(0, 1, 0));
 
-	CachedAssembly.ObjectType = ObjectType;
 	return ECraftingResult::Success;
 }
 
 ECraftingResult FBIMAssemblySpec::MakeLayeredAssembly(const FModumateDatabase& InDB)
 {
-	CachedAssembly = FModumateObjectAssembly();
-
-	CachedAssembly.Properties = RootProperties;
-
-	for (auto& layerProperties : LayerProperties)
+	for (auto& layer : Layers)
 	{
-		FLayerMaker layerMaker;
-
-		layerProperties.ForEachProperty([&layerMaker](const FString& propName, const Modumate::FModumateCommandParameter& val)
+		ECraftingResult res = layer.BuildFromProperties(InDB);
+		if (!ensureAlways(res == ECraftingResult::Success))
 		{
-			if (!propName.IsEmpty())
-			{
-				layerMaker.SetValue(FBIMPropertyValue(*propName), val);
-			}
-		});
-
-		FModumateObjectAssemblyLayer& layer = CachedAssembly.Layers.Add_GetRef(layerMaker.Make(InDB));
+			return res;
+		}
 	}
 
 	return ECraftingResult::Success;
 }
 
-
 ECraftingResult FBIMAssemblySpec::MakeStructureLineAssembly(const FModumateDatabase& InDB)
 {
-	CachedAssembly = FModumateObjectAssembly();
-	CachedAssembly.Properties = RootProperties;
-
-	FLayerMaker layerMaker;
-
-	layerMaker.FormatEnum = ELayerFormat::None;
-	layerMaker.FunctionEnum = ELayerFunction::Structure;
-
-	layerMaker.CodeName = CachedAssembly.GetProperty(BIMPropertyNames::Name);
-	CachedAssembly.SetProperty(BIMPropertyNames::Name, layerMaker.CodeName);
-
-	FString diameterString;
-	FModumateFormattedDimension xDim, yDim;
-	if (CachedAssembly.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter, diameterString))
+	for (auto& extrusion : Extrusions)
 	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(CachedAssembly.Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter));
-		yDim = xDim;
-	}
-	else
-	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(CachedAssembly.Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::XExtents));
-		yDim = UModumateDimensionStatics::StringToFormattedDimension(CachedAssembly.Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::YExtents));
-	}
+		ECraftingResult res = extrusion.BuildFromProperties(InDB);
+		if (!ensureAlways(res == ECraftingResult::Success))
+		{
+			return res;
+		}
 
-	if (ensureAlways(xDim.Format != EDimensionFormat::Error))
-	{
-		layerMaker.Dimensions.Add(BIMPropertyNames::XExtents, xDim);
-	}
-
-	if (ensureAlways(yDim.Format != EDimensionFormat::Error))
-	{
-		layerMaker.Dimensions.Add(BIMPropertyNames::YExtents, yDim);
-	}
-
-	layerMaker.LayerMaterialKey = CachedAssembly.Properties.GetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID);
-	layerMaker.ProfileKey = CachedAssembly.Properties.GetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID);
-
-	FModumateObjectAssemblyLayer& layer = CachedAssembly.Layers.Add_GetRef(layerMaker.Make(InDB));
-
-	// TODO: re-orient column meshes so width is along X instead of depth
-	FVector profileSize(xDim.Centimeters, yDim.Centimeters, 1);
-
-	if (ensureAlways(layer.SimpleMeshes.Num() > 0 && layer.SimpleMeshes[0].Asset.Get()->Polygons.Num() > 0))
-	{
-		FSimplePolygon& polygon = layer.SimpleMeshes[0].Asset.Get()->Polygons[0];
-		FVector polyExtents(polygon.Extents.Max.X - polygon.Extents.Min.X, polygon.Extents.Max.Y - polygon.Extents.Min.Y, 1);
-		CachedAssembly.SetProperty(BIMPropertyNames::Scale, profileSize / polyExtents);
+		// TODO: currently only one extrusion per assembly so only one scale
+		FVector scale = extrusion.Properties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Scale);
+		SetProperty(BIMPropertyNames::Scale, scale);
 	}
 	return ECraftingResult::Success;
+}
+
+Modumate::Units::FUnitValue FBIMAssemblySpec::CalculateThickness() const
+{
+	return Modumate::Units::FUnitValue::WorldCentimeters(Algo::TransformAccumulate(
+		Layers,
+		[](const FBIMLayerSpec& l)
+		{
+			return l.Thickness.AsWorldCentimeters();
+		},
+			0.0f,
+			[](float lhs, float rhs)
+		{
+			return lhs + rhs;
+		}
+	));
 }
 
 ECraftingResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection)

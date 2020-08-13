@@ -37,9 +37,9 @@ TArray<float> AEditModelGameState_CPP::GetComponentsThicknessWithKey(EToolMode m
 
 	if (ensureAlways(pMOA != nullptr))
 	{
-		for (int32 i = 0; i < pMOA->CachedAssembly.Layers.Num(); ++i)
+		for (int32 i = 0; i < pMOA->Layers.Num(); ++i)
 		{
-			layersThickness.Add(pMOA->CachedAssembly.Layers[i].Thickness.AsWorldCentimeters());
+			layersThickness.Add(pMOA->Layers[i].Thickness.AsWorldCentimeters());
 		}
 		return layersThickness;
 	}

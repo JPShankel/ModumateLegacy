@@ -105,7 +105,7 @@ namespace Modumate
 		FVector assemblyNormal;
 		TArray<FVector> boxSidePoints;
 
-		if (cma && MOI->GetAssembly().CachedAssembly.TryGetProperty(BIMPropertyNames::Normal, assemblyNormal) &&
+		if (cma && MOI->GetAssembly().TryGetProperty(BIMPropertyNames::Normal, assemblyNormal) &&
 			UModumateObjectStatics::GetFFEBoxSidePoints(cma, assemblyNormal, boxSidePoints))
 		{
 			// For any structure line computation, we want the points and lines projected on the plane of the actor's origin

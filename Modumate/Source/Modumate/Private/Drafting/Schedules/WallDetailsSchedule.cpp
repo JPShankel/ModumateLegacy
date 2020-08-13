@@ -73,7 +73,7 @@ namespace Modumate {
 			assemblyGrid->RowHeight = layerTag->Dimensions.Y.AsFloorplanInches() + 2.0f * Margin;
 
 			// Function contains custom name
-			topRow.Add(MakeDraftingText(FText::FromString(assembly.CachedAssembly.GetProperty(BIMPropertyNames::Name))));
+			topRow.Add(MakeDraftingText(FText::FromString(assembly.GetProperty(BIMPropertyNames::Name))));
 
 			// Category columns is blank
 			// column widths are implicitly set by subsequent rows
@@ -87,7 +87,7 @@ namespace Modumate {
 			topRow.Add(MakeShareable(new FDraftingComposite()));
 			topRow.Add(MakeShareable(new FDraftingComposite()));
 
-			topRow.Add(MakeDraftingText(FText::FromString(assembly.CachedAssembly.GetProperty(BIMPropertyNames::Comments))));
+			topRow.Add(MakeDraftingText(FText::FromString(assembly.GetProperty(BIMPropertyNames::Comments))));
 
 			assemblyGrid->MakeRow(topRow);
 
@@ -107,10 +107,10 @@ namespace Modumate {
 
 			// rows are associated with each wall layer
 			//*
-			for (int32 j = 0; j < assembly.CachedAssembly.Layers.Num(); j++)
+			for (int32 j = 0; j < assembly.Layers.Num(); j++)
 			{
 				TArray<TSharedPtr<FDraftingComposite>> row;
-				auto layer = assembly.CachedAssembly.Layers[j];
+				auto layer = assembly.Layers[j];
 
 				// ID
 				TSharedPtr<FMaterialTag> materialTag = MakeShareable(new FMaterialTag());
@@ -125,6 +125,7 @@ namespace Modumate {
 				row.Add(materialTag);
 
 				// Function
+#if 0 // TODO: refactor for new subcategories
 				if (layer.SubcategoryDisplayNames.Num() > 0)
 				{
 					row.Add(MakeDraftingText(FText::FromString(layer.SubcategoryDisplayNames[0])));
@@ -143,11 +144,12 @@ namespace Modumate {
 				{
 					row.Add(MakeShareable(new FDraftingComposite()));
 				}
+#endif
 
 				// Thickness
 				row.Add(MakeDraftingText(FText::Format(InchesFormat, FText::FromString(imperial))));
 
-#if 0 //TODO: refactor for new patterns
+#if 0 //TODO: refactor for new patterns && comments
 
 				// Pattern
 				row.Add(MakeDraftingText(layer.Pattern.DisplayName));
@@ -166,7 +168,6 @@ namespace Modumate {
 
 				// Gap
 				row.Add(MakeDraftingText(layer.Gap.DisplayName));
-#endif
 
 				// Comments
 				TSharedPtr<FDraftingComposite> whiteSpace = MakeShareable(new FDraftingComposite());
@@ -179,6 +180,7 @@ namespace Modumate {
 				whiteSpace->Dimensions.Y = FYCoord::FloorplanInches(rowHeight);
 
 				row.Add(whiteSpace);
+#endif
 				assemblyGrid->MakeRow(row);
 			}
 

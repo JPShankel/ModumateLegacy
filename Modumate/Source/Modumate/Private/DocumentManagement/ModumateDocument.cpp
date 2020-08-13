@@ -2296,13 +2296,13 @@ int32 FModumateDocument::CreateFFE(
 	/*
 	If the incoming assembly has no code name, this is its first placement in the document and needs a code name
 	*/
-	if (useAsm.CachedAssembly.GetProperty(BIMPropertyNames::Code).AsString().IsEmpty())
+	if (useAsm.GetProperty(BIMPropertyNames::Code).AsString().IsEmpty())
 	{
 		newFFECode = PresetManager.GetAvailableKey(TEXT("FFE"));
-		useAsm.CachedAssembly.SetProperty(BIMPropertyNames::Code, newFFECode);
-		for (auto &l : useAsm.CachedAssembly.Layers)
+		useAsm.SetProperty(BIMPropertyNames::Code, newFFECode);
+		for (auto &l : useAsm.Layers)
 		{
-			l.CodeName = useAsm.CachedAssembly.GetProperty(BIMPropertyNames::Code);
+			l.CodeName = useAsm.GetProperty(BIMPropertyNames::Code);
 		}
 	}
 

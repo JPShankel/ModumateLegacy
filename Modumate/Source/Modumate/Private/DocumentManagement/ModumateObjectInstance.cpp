@@ -596,7 +596,7 @@ namespace Modumate
 
 	float FModumateObjectInstance::CalculateThickness() const
 	{
-		return ObjectAssembly.CachedAssembly.CalculateThickness().AsWorldCentimeters();
+		return ObjectAssembly.CalculateThickness().AsWorldCentimeters();
 	}
 
 	FVector FModumateObjectInstance::GetNormal() const
@@ -944,7 +944,7 @@ namespace Modumate
 	{
 		if (bNewLayersReversed != bAssemblyLayersReversed)
 		{
-			ObjectAssembly.CachedAssembly.ReverseLayers();
+			ObjectAssembly.ReverseLayers();
 			bAssemblyLayersReversed = bNewLayersReversed;
 		}
 	}

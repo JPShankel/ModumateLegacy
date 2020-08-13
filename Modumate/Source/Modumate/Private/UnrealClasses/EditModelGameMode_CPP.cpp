@@ -38,7 +38,6 @@ void AEditModelGameMode_CPP::InitGame(const FString& MapName, const FString& Opt
 	{
 		SCOPE_SECONDS_COUNTER(databaseLoadTime);
 
-		ObjectDatabase->ReadLightConfigData(LightConfigTable);
 		ObjectDatabase->ReadRoomConfigurations(RoomConfigurationTable);
 
 		ObjectDatabase->ReadPresetData();

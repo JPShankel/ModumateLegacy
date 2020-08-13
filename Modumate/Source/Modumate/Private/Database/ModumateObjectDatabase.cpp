@@ -1,78 +1,15 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
 #include "Database/ModumateObjectDatabase.h"
-
-#include "Components/StaticMeshComponent.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "Engine/StaticMeshActor.h"
-#include "ModumateCore/ExpressionEvaluator.h"
-#include "HAL/FileManager.h"
-#include "Misc/Paths.h"
-#include "Database/ModumateDataTables.h"
 #include "BIMKernel/BIMAssemblySpec.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "UObject/ConstructorHelpers.h"
-
-#include "Misc/FileHelper.h"
-#include "Serialization/JsonReader.h"
-#include "Policies/PrettyJsonPrintPolicy.h"
-#include "Serialization/JsonSerializer.h"
-#include "JsonObjectConverter.h"
-
-
-template<class T, class O, class OS>
-void ReadOptionSet(
-	UDataTable *data,
-	std::function<bool(const T &row, O &ot)> readOptionData,
-	std::function<void(const OS &o)> addOptionSet
-)
-{
-	if (!ensureAlways(data))
-	{
-		return;
-	}
-
-	OS optionSet;
-	TArray<FString> supportedSubcategories;
-
-	data->ForeachRow<T>(TEXT("OPTIONSET"),
-		[&optionSet, &supportedSubcategories, readOptionData, addOptionSet](const FName &Key, const T &row)
-	{
-		if (row.SupportedSubcategories.Num() > 0)
-		{
-			if (optionSet.Options.Num() > 0)
-			{
-				for (auto &sc : supportedSubcategories)
-				{
-					optionSet.Key = *sc;
-					addOptionSet(optionSet);
-				}
-			}
-			optionSet.Options.Empty();
-			supportedSubcategories = row.SupportedSubcategories;
-		}
-
-		O option;
-		option.Key = Key;
-		if (readOptionData(row, option))
-		{
-			optionSet.Options.Add(option);
-		}
-	});
-
-	if (optionSet.Options.Num() > 0)
-	{
-		for (auto &sc : supportedSubcategories)
-		{
-			optionSet.Key = *sc;
-			addOptionSet(optionSet);
-		}
-	}
-}
-
 
 FModumateDatabase::FModumateDatabase() {}	
 
+FModumateDatabase::~FModumateDatabase() {}
+
+void FModumateDatabase::Init() {}
+
+void FModumateDatabase::Shutdown() {}
 
 void FModumateDatabase::ReadRoomConfigurations(UDataTable *data)
 {
@@ -165,6 +102,14 @@ void FModumateDatabase::AddArchitecturalMaterial(const FName& Key, const FString
 	AMaterials.AddData(mat);
 }
 
+void FModumateDatabase::AddCustomColor(const FName& Key, const FString& Name, const FString& HexValue)
+{
+	FColor value = FColor::FromHex(HexValue);
+	FCustomColor namedColor = FCustomColor(Key, MoveTemp(value), NAME_None, FText::FromString(Name));
+	namedColor.CombinedKey = Key.ToString();
+	NamedColors.AddData(MoveTemp(namedColor));
+}
+
 /*
 This function is in development pending a complete data import/access plan
 In the meantime, we read a manifest of CSV files and look for expected presets to populate tools
@@ -201,8 +146,7 @@ void FModumateDatabase::ReadPresetData()
 			FString colorName = kvp.Value.GetProperty(BIMPropertyNames::Name);
 			AddCustomColor(kvp.Key, colorName, hexValue);
 		}
-		else
-			if (kvp.Value.NodeType == rawMaterialType)
+		else if (kvp.Value.NodeType == rawMaterialType)
 		{
 			FString assetPath = kvp.Value.GetProperty(BIMPropertyNames::AssetPath);
 			if (assetPath.Len() != 0)
@@ -211,8 +155,7 @@ void FModumateDatabase::ReadPresetData()
 				AddArchitecturalMaterial(kvp.Key, matName, assetPath);
 			}
 		}
-		else
-		if (kvp.Value.NodeType == cabinetType || kvp.Value.NodeType == countertopType)
+		else if (kvp.Value.NodeType == cabinetType || kvp.Value.NodeType == countertopType)
 		{
 			FString assetPath = kvp.Value.GetScopedProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
 			if (assetPath.Len() != 0)
@@ -221,8 +164,7 @@ void FModumateDatabase::ReadPresetData()
 				AddArchitecturalMesh(kvp.Key, name, assetPath);
 			}
 		}
-		else
-		if (kvp.Value.NodeType == riggedType || kvp.Value.NodeType == ffeType)
+		else if (kvp.Value.NodeType == riggedType || kvp.Value.NodeType == ffeType)
 		{
 			FString assetPath = kvp.Value.GetScopedProperty(EBIMValueScope::Mesh,BIMPropertyNames::AssetPath);
 			if (assetPath.Len() != 0)
@@ -231,8 +173,7 @@ void FModumateDatabase::ReadPresetData()
 				AddArchitecturalMesh(kvp.Key, name, assetPath);
 			}
 		}
-		else
-		if (kvp.Value.NodeType == profileType)
+		else if (kvp.Value.NodeType == profileType)
 		{
 			FString assetPath = kvp.Value.GetProperty(BIMPropertyNames::AssetPath);
 			if (assetPath.Len() != 0)
@@ -311,75 +252,12 @@ void FModumateDatabase::ReadPresetData()
 	ensureAlways(errors.Num() == 0);
 }
 
-void FModumateDatabase::ReadLightConfigData(UDataTable *data)
-{
-	if (!ensureAlways(data))
-	{
-		return;
-	}
-
-	LightConfigs = TModumateDataCollection<FLightConfiguration>();
-
-	data->ForeachRow<FLightTableRow>(TEXT("FModumateMeshTableRow"),
-		[this](const FName &Key, const FLightTableRow &data)
-	{
-		FLightConfiguration lightdata;
-		lightdata.LightIntensity = data.LightIntensity;
-		lightdata.LightColor = data.LightColor;
-		lightdata.bAsSpotLight = data.bAsSpotLight;
-
-		// TODO: add lazy loading support
-		if (data.LightProfilePath.IsAsset())
-		{
-			lightdata.LightProfile = Cast<UTextureLightProfile>(data.LightProfilePath.TryLoad());
-		}
-		lightdata.Key = Key;
-		LightConfigs.AddData(lightdata);
-	}
-	);
-}
-
-void FModumateDatabase::AddCustomColor(const FName& Key, const FString& Name, const FString& HexValue)
-{
-	FColor value = FColor::FromHex(HexValue);
-	FCustomColor namedColor = FCustomColor(Key, MoveTemp(value), NAME_None, FText::FromString(Name));
-	namedColor.CombinedKey = Key.ToString();
-	NamedColors.AddData(MoveTemp(namedColor));
-}
-
 TArray<FString> FModumateDatabase::GetDebugInfo()
 {
 	// TODO: fill in debug info for console display
 	TArray<FString> ret;
 	return ret;
 }
-
-FModumateDatabase::~FModumateDatabase()
-{
-}
-
-/*
-Crafting DB
-*/
-
-template<class T>
-bool checkSubcategoryMetadata(
-	const TArray<FName> &subcategories,
-	const FString &optName,
-	const TModumateDataCollection<T> &options)
-{
-	bool ret = true;
-	for (auto &kvp : options.DataMap)
-	{
-		if (!subcategories.Contains(kvp.Key))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Unidentified subcategory %s in meta-table %s"), *kvp.Key.ToString(), *optName);
-			ret = false;
-		}
-	}
-	return ret;
-}
-
 
 /*
 Data Access
@@ -415,45 +293,12 @@ const FStaticIconTexture * FModumateDatabase::GetStaticIconTextureByKey(const FN
 	return StaticIconTextures.GetData(Key);
 }
 
-bool FModumateDatabase::ParseColorFromField(FCustomColor &OutColor, const FString &Field)
-{
-	static const FString NoColor(TEXT("N/A"));
-
-	if (!Field.IsEmpty() && !Field.Equals(NoColor))
-	{
-		if (auto *namedColor = NamedColors.GetData(*Field))
-		{
-			OutColor = *namedColor;
-		}
-		else
-		{
-			OutColor.Color = FColor::FromHex(Field);
-		}
-
-		OutColor.bValid = true;
-		return true;
-	}
-
-	return false;
-}
-
 void FModumateDatabase::InitPresetManagerForNewDocument(FPresetManager &OutManager) const
 {
 	if (ensureAlways(&OutManager != &PresetManager))
 	{
-		OutManager.CraftingNodePresets = PresetManager.CraftingNodePresets;
-		OutManager.DraftingNodePresets = PresetManager.DraftingNodePresets;
-		OutManager.AssembliesByObjectType = PresetManager.AssembliesByObjectType;
-		OutManager.KeyStore = PresetManager.KeyStore;
-		OutManager.StarterPresetsByObjectType = PresetManager.StarterPresetsByObjectType;
+		OutManager = PresetManager;
 	}
 }
 
-void FModumateDatabase::Init()
-{
-}
-
-void FModumateDatabase::Shutdown()
-{
-}
 

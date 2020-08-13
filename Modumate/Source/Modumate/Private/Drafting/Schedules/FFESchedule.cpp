@@ -30,7 +30,7 @@ namespace Modumate
 
 		for (auto& ffe : ffes)
 		{
-			FString codeName = ffe->GetAssembly().CachedAssembly.GetProperty(BIMPropertyNames::Code);
+			FString codeName = ffe->GetAssembly().GetProperty(BIMPropertyNames::Code);
 			if (!CodeNameToCount.Contains(codeName))
 			{
 				CodeNameToCount.Add(codeName, 1);
@@ -58,7 +58,7 @@ namespace Modumate
 			iconElement->Information->Children.Add(idTag);
 
 			// Name
-			FText name = FText::FromString(assembly.CachedAssembly.GetProperty(BIMPropertyNames::Name));
+			FText name = FText::FromString(assembly.GetProperty(BIMPropertyNames::Name));
 			iconElement->Information->Children.Add(iconElement->MakeDraftingText(name));
 
 			// Count

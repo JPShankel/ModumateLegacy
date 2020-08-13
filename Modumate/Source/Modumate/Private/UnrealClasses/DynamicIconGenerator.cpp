@@ -118,12 +118,12 @@ bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FName &AsmKey, EToo
 	IconDynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
 
 	// Slice each layer, assuming each layer is successfully made
-	for (int32 i = 0; i < assembly->CachedAssembly.Layers.Num(); ++i)
+	for (int32 i = 0; i < assembly->Layers.Num(); ++i)
 	{
 		if (IconDynamicMeshActor->ProceduralSubLayers[i])
 		{
 			FVector sliceLocation, sliceNormal;
-			GetWallSliceLocationNormal(i, assembly->CachedAssembly.Layers.Num(), p2, p1, WallHeight, sliceLocation, sliceNormal);
+			GetWallSliceLocationNormal(i, assembly->Layers.Num(), p2, p1, WallHeight, sliceLocation, sliceNormal);
 			UProceduralMeshComponent* otherHalfProcMesh;
 			UKismetProceduralMeshLibrary::SliceProceduralMesh(
 				IconDynamicMeshActor->ProceduralSubLayers[i],
@@ -178,17 +178,17 @@ bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FName &AsmKey, ETo
 	IconDynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
 
 	// Slice each layer, assuming each layer is successfully made
-	for (int32 i = 0; i < assembly->CachedAssembly.Layers.Num(); ++i)
+	for (int32 i = 0; i < assembly->Layers.Num(); ++i)
 	{
 		if (IconDynamicMeshActor->ProceduralSubLayers[i])
 		{
 			FVector sliceLocation, sliceNormal;
 			bool bSliced;
-			float layerRatio = 1.f / assembly->CachedAssembly.Layers.Num();
+			float layerRatio = 1.f / assembly->Layers.Num();
 			FVector sliceStart = p4 + layerRatio * (p3 - p4);
 			FVector sliceEnd = p2 + layerRatio * (p1 - p2);
 
-			GetFloorSliceLocationNormal(i, assembly->CachedAssembly.Layers.Num(), sliceStart, sliceEnd, 0.f, sliceLocation, sliceNormal, bSliced);
+			GetFloorSliceLocationNormal(i, assembly->Layers.Num(), sliceStart, sliceEnd, 0.f, sliceLocation, sliceNormal, bSliced);
 			if (bSliced)
 			{
 				UProceduralMeshComponent* otherHalfProcMesh;
@@ -277,9 +277,6 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FName &AsmKey, U
 	{
 		return false;
 	}
-
-	// need to make local changes, so copy...
-	FModumateObjectAssembly assembly = assemblyPtr->CachedAssembly;
 
 	////////////////////////////////////////////////////////////////////
 	// Now that we have a cabinet assembly, a DynamicMeshActor, and CompoundMeshActor,
@@ -371,7 +368,7 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FName &AsmKey, EToo
 	FVector2D outerExtensions = FVector2D::ZeroVector;
 
 	FVector scaleVector;
-	if (!assembly->CachedAssembly.TryGetProperty(BIMPropertyNames::Scale, scaleVector))
+	if (!assembly->TryGetProperty(BIMPropertyNames::Scale, scaleVector))
 	{
 		scaleVector = FVector::OneVector;
 	}

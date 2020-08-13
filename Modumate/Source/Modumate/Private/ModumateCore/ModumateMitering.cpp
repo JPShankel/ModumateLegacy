@@ -58,7 +58,7 @@ namespace Modumate
 				return false;
 			}
 
-			const auto &layers = PlaneHostedObj->GetAssembly().CachedAssembly.Layers;
+			const auto &layers = PlaneHostedObj->GetAssembly().Layers;
 			int32 numLayers = layers.Num();
 			OutLayerGeometries.SetNum(numLayers);
 
@@ -108,7 +108,7 @@ namespace Modumate
 			TArray<FVector> layerPointsA, layerPointsB;
 			for (int32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
 			{
-				const FModumateObjectAssemblyLayer &layer = layers[layerIdx];
+				const FBIMLayerSpec &layer = layers[layerIdx];
 				float layerStartPCT = curThickness / totalThickness;
 				float layerThickness = layer.Thickness.AsWorldCentimeters();
 				curThickness += layerThickness;
