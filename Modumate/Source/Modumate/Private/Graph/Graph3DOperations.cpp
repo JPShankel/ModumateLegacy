@@ -644,19 +644,17 @@ namespace Modumate
 			}
 		}
 
-		// TODO: this does not perform well, but it is necessary in order to not consider adding identical faces.
-		// If we remove peninsulas then we could normalize vertex IDs and compare them directly.
-		TArray<int32> sortedFaceVertices(faceVertices);
-		sortedFaceVertices.Sort();
+		if (!ensureAlways(UModumateFunctionLibrary::NormalizeIDs(faceVertices)))
+		{
+			return false;
+		}
+
 		TArray<int32> otherFaceVertexIDs;
 		for (auto& kvp : Faces)
 		{
 			otherFaceVertexIDs = kvp.Value.VertexIDs;
-			otherFaceVertexIDs.Sort();
-
-			if (sortedFaceVertices == otherFaceVertexIDs)
+			if (UModumateFunctionLibrary::AreNormalizedIDListsEqual(faceVertices, otherFaceVertexIDs))
 			{
-				AddedFaceID = kvp.Key;
 				return false;
 			}
 		}

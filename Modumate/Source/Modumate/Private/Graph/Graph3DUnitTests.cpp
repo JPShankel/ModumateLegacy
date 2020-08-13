@@ -2743,7 +2743,6 @@ namespace Modumate
 		// each face does not share edges or vertices
 		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12);
 
-		//*/
 		TestTrue(TEXT("Add face"),
 			tempGraph.GetDeltaForFaceAddition(outerVertices, deltas, nextID, existingID));
 		if ((deltas.Num() < 1) || (deltas[0].FaceAdditions.Num() != 1))
@@ -2786,7 +2785,167 @@ namespace Modumate
 			joinedOuterFace->ContainedFaceIDs.Contains(innerFaceID) &&
 			joinedOuterFace->ContainedFaceIDs.Contains(joinInnerFaceID));
 
-			//*/
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphCheckInteriorPeninsula, "Modumate.Graph.3D.CheckInteriorPeninsula", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphCheckInteriorPeninsula::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+		TArray<int32> OutEdgeIDs;
+
+		TArray<FVector> vertices = {
+			FVector(50.0f, 50.0f, 0.0f),
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		// test adding edges one at a time (testing GetDeltaForUpdateFaces, more specifically)
+		TestTrue(TEXT("add edge 1"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[0], vertices[1], deltas, nextID, OutEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 0, 2, 1);
+
+		TestTrue(TEXT("add edge 2"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[1], vertices[2], deltas, nextID, OutEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 0, 3, 2);
+
+		TestTrue(TEXT("add edge 3"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[2], vertices[3], deltas, nextID, OutEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 0, 4, 3);
+
+		TestTrue(TEXT("add edge 4"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[3], vertices[4], deltas, nextID, OutEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 0, 5, 4);
+
+		TestTrue(TEXT("add edge 5"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[4], vertices[1], deltas, nextID, OutEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 1, 5, 5, false);
+
+		auto& faceKVP = *graph.GetFaces().CreateConstIterator();
+		int32 faceID = faceKVP.Key;
+		auto face = graph.FindFace(faceID);
+
+		TestTrue(TEXT("face from edges does not have peninsula"),
+			face->VertexIDs.Num() == 4 && face->EdgeIDs.Num() == 4);
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphCheckExteriorPeninsula, "Modumate.Graph.3D.CheckExteriorPeninsula", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphCheckExteriorPeninsula::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+		TArray<int32> OutEdgeIDs;
+
+		TArray<FVector> vertices = {
+			FVector(-50.0f, -50.0f, 0.0f),
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		// test adding edges one at a time (testing GetDeltaForUpdateFaces, more specifically)
+		TestTrue(TEXT("add edge 1"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[0], vertices[1], deltas, nextID, OutEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 0, 2, 1);
+
+		TestTrue(TEXT("add edge 2"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[1], vertices[2], deltas, nextID, OutEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 0, 3, 2);
+
+		TestTrue(TEXT("add edge 3"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[2], vertices[3], deltas, nextID, OutEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 0, 4, 3);
+
+		TestTrue(TEXT("add edge 4"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[3], vertices[4], deltas, nextID, OutEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 0, 5, 4);
+
+		TestTrue(TEXT("add edge 5"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vertices[4], vertices[1], deltas, nextID, OutEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 1, 5, 5, false);
+
+		auto& faceKVP = *graph.GetFaces().CreateConstIterator();
+		int32 faceID = faceKVP.Key;
+		auto face = graph.FindFace(faceID);
+
+		TestTrue(TEXT("face from edges does not have peninsula"),
+			face->VertexIDs.Num() == 4 && face->EdgeIDs.Num() == 4);
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphFaceConnections, "Modumate.Graph.3D.CheckFaceConnections", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphFaceConnections::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+		TArray<int32> OutEdgeIDs;
+
+		FVector initialVertex = FVector(50.0f, 50.0f, 0.0f);
+
+		TArray<FVector> baseVertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		TArray<FVector> verticalVertices = {
+			FVector(50.0f, 50.0f, 0.0f),
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(0.0f, 0.0f, 100.0f),
+			FVector(50.0f, 50.0f, 100.0f)
+		};
+
+		TArray<FVector> finalVertices = {
+			FVector(50.0f, 50.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f)
+		};
+
+		// add edge for testing face connectivity
+		TestTrue(TEXT("add test edge"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(initialVertex, baseVertices[0], deltas, nextID, OutEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 0, 2, 1);
+
+		auto& edgeKVP = *graph.GetEdges().CreateConstIterator();
+		int32 edgeID = edgeKVP.Key;
+
+		TestTrue(TEXT("Add base Face"),
+			tempGraph.GetDeltaForFaceAddition(baseVertices, deltas, nextID, existingID));
+		TestDeltas(this, deltas, graph, tempGraph, 1, 5, 5);
+		TestTrue(TEXT("edge not connected to base face"),
+			graph.FindEdge(edgeID)->ConnectedFaces.Num() == 0);
+
+		TestTrue(TEXT("Add vertical Face"),
+			tempGraph.GetDeltaForFaceAddition(verticalVertices, deltas, nextID, existingID));
+		TestDeltas(this, deltas, graph, tempGraph, 2, 7, 8);
+		TestTrue(TEXT("edge connected to vertical face"),
+			graph.FindEdge(edgeID)->ConnectedFaces.Num() == 1);
+
+		TestTrue(TEXT("add final edge"),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(finalVertices[0], finalVertices[1], deltas, nextID, OutEdgeIDs, true));
+		TestDeltas(this, deltas, graph, tempGraph, 3, 7, 9);
+		TestTrue(TEXT("edge connected to vertical face and two base faces"),
+			graph.FindEdge(edgeID)->ConnectedFaces.Num() == 3);
+
 		return true;
 	}
 }
