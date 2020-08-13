@@ -1145,15 +1145,7 @@ namespace Modumate
 					continue;
 				}
 
-				TArray<int32> faceVertexIDs;
-				for (int32 edgeID : face->Edges)
-				{
-					auto edge2D = graph2D.FindEdge(edgeID);
-					int32 vertexID = edgeID > 0 ? edge2D->StartVertexID : edge2D->EndVertexID;
-					faceVertexIDs.Add(vertexID);
-				}
-
-				OutVertexIDs.Add(faceVertexIDs);
+				OutVertexIDs.Add(face->CachedPerimeterVertexIDs);
 			}
 		}
 		return true;
