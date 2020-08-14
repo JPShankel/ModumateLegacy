@@ -27,6 +27,11 @@ namespace Modumate
 
 		void InternalUpdateGeometry(bool bRecreate, bool bCreateCollision);
 
+	private:
+		bool GetPerimeterPoints(TArray<FVector>& outPerimeterPoints) const;
+		TArray<FEdge> GetBeyondLinesFromMesh(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
+			const FVector& AxisX, const FVector& AxisY, const FVector& Origin) const;
+
 	public:
 		FMOIStructureLine(FModumateObjectInstance *moi);
 		virtual ~FMOIStructureLine();
@@ -38,6 +43,10 @@ namespace Modumate
 
 		virtual void SetupDynamicGeometry() override;
 		virtual void UpdateDynamicGeometry() override;
+
+		virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane,
+			const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
+			TArray<TArray<FVector>> &OutPerimeters) const override;
 
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
 	};

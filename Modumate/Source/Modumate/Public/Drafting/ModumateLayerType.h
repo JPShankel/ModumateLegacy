@@ -5,7 +5,7 @@
 namespace Modumate
 {
 
-	// From Layers and Line Types at https://docs.google.com/spreadsheets/d/1re5Qm-58Tm5WEHsnbmAxFiCux8i4mxa3-xqHB5yz19M/ .
+	// From Layers and Line Types at https://docs.google.com/spreadsheets/d/1re5Qm-58Tm5WEHsnbmAxFiCux8i4mxa3-xqHB5yz19M/#gid=642729209 .
 	enum class FModumateLayerType
 	{
 		kDefault,
@@ -27,7 +27,9 @@ namespace Modumate
 		kCountertopCut,
 		kCountertopBeyond,
 		kFfeOutline,
-		kFfeInteriorEdges
+		kFfeInteriorEdges,
+		kBeamColumnCut,
+		kBeamColumnBeyond
 	};
 
 }

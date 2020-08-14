@@ -153,10 +153,12 @@ namespace Modumate {
 		}
 
 		TArray<TArray<FVector>> WallCutPerimeters;
-		TArray<const FModumateObjectInstance*> cabinetObjects(Doc->GetObjectsOfType(EObjectType::OTCabinet));
-		for (const auto* cabinet: cabinetObjects)
+		TArray<const FModumateObjectInstance*> miscDraftObjects(Doc->GetObjectsOfType(
+			{EObjectType::OTCabinet, EObjectType::OTStructureLine}));
+
+		for (const auto* miscObject: miscDraftObjects)
 		{
-			cabinet->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
+			miscObject->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
 		}
 
 		// Clipping of beyond-cut-plane lines.
@@ -167,7 +169,7 @@ namespace Modumate {
 		// Draw all separators, portals.
 		TArray<const FModumateObjectInstance*> beyondCutObjects(Doc->GetObjectsOfType(
 			{EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTFloorSegment, EObjectType::OTRoofFace, EObjectType::OTWindow,
-				EObjectType::OTDoor, EObjectType::OTCabinet}));
+				EObjectType::OTDoor, EObjectType::OTCabinet, EObjectType::OTStructureLine}));
 
 		for (auto object: beyondCutObjects)
 		{
