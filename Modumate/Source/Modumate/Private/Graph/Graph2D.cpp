@@ -1015,28 +1015,36 @@ namespace Modumate
 		return ApplyDeltas(inverseDeltas, false);
 	}
 
-	void FGraph2D::AggregateAddedObjects(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices, TSet<int32> &OutEdges)
+	void FGraph2D::AggregateAddedObjects(const TArray<FGraph2DDelta>& Deltas, TSet<int32>& OutVertices, TSet<int32>& OutEdges, TSet<int32>& OutPolygons)
 	{
 		for (auto& delta : Deltas)
 		{
+			// Gather additions
 			for (auto& kvp : delta.VertexAdditions)
 			{
 				OutVertices.Add(kvp.Key);
 			}
-
 			for (auto& kvp : delta.EdgeAdditions)
 			{
 				OutEdges.Add(kvp.Key);
 			}
+			for (auto& kvp : delta.PolygonAdditions)
+			{
+				OutPolygons.Add(kvp.Key);
+			}
 
+			// Exclude deletions
 			for (auto& kvp : delta.VertexDeletions)
 			{
 				OutVertices.Remove(kvp.Key);
 			}
-
 			for (auto& kvp : delta.EdgeDeletions)
 			{
 				OutEdges.Remove(kvp.Key);
+			}
+			for (auto& kvp : delta.PolygonDeletions)
+			{
+				OutPolygons.Remove(kvp.Key);
 			}
 		}
 	}
@@ -1091,5 +1099,10 @@ namespace Modumate
 				OutEdges.Remove(kvp.Key);
 			}
 		}
+	}
+
+	void FGraph2D::GetOuterBoundsIDs(TArray<int32> &OutVertexIDs) const
+	{
+		OutVertexIDs = BoundingPolygon.Value;
 	}
 }

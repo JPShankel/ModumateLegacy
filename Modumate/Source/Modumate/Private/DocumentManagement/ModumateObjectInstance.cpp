@@ -172,6 +172,13 @@ namespace Modumate
 			// If we need to do anything else during destruction, like cached its destroyed state, that would go here.
 			DestroyActor();
 
+			// Clear dirty flags, since we won't be able to clean the object later
+			DirtyFlags = EObjectDirtyFlags::None;
+			for (EObjectDirtyFlags dirtyFlag : UModumateTypeStatics::OrderedDirtyFlags)
+			{
+				Document->RegisterDirtyObject(dirtyFlag, this, false);
+			}
+
 			bDestroyed = true;
 		}
 	}
@@ -646,10 +653,10 @@ namespace Modumate
 		{
 			bool bValidObjectToClean = true;
 
-			// Don't clean objects that were destroyed after they were marked dirty.
-			if (bDestroyed)
+			// We can't clean objects that were destroyed after they were marked dirty; they should have already cleared their dirty flags.
+			if (!ensureAlways(!bDestroyed))
 			{
-				bValidObjectToClean = false;
+				return false;
 			}
 
 			// If we have a parent assigned, then by assume that

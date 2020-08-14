@@ -162,7 +162,13 @@ public:
 	static FVector2D ProjectPoint2D(const FVector &Point3D, const FVector &AxisX, const FVector &AxisY, const FVector &Origin);
 
 	UFUNCTION(Category = "Modumate | Geometry")
+	static FVector2D ProjectPoint2DTransform(const FVector &Point3D, const FTransform& Origin);
+
+	UFUNCTION(Category = "Modumate | Geometry")
 	static FVector Deproject2DPoint(const FVector2D &Point2D, const FVector &AxisX, const FVector &AxisY, const FVector &Origin);
+
+	UFUNCTION(Category = "Modumate | Geometry")
+	static FVector Deproject2DPointTransform(const FVector2D &Point2D, const FTransform& Origin);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static FVector2D ProjectVector2D(const FVector &Vector3D, const FVector &AxisX, const FVector &AxisY);

@@ -545,9 +545,19 @@ FVector2D UModumateGeometryStatics::ProjectPoint2D(const FVector &Point3D, const
 	);
 }
 
+FVector2D UModumateGeometryStatics::ProjectPoint2DTransform(const FVector &Point3D, const FTransform& Origin)
+{
+	return ProjectPoint2D(Point3D, Origin.GetUnitAxis(EAxis::X), Origin.GetUnitAxis(EAxis::Y), Origin.GetLocation());
+}
+
 FVector UModumateGeometryStatics::Deproject2DPoint(const FVector2D &Point2D, const FVector &AxisX, const FVector &AxisY, const FVector &Origin)
 {
 	return Origin + (AxisX * Point2D.X) + (AxisY * Point2D.Y);
+}
+
+FVector UModumateGeometryStatics::Deproject2DPointTransform(const FVector2D &Point2D, const FTransform& Origin)
+{
+	return Deproject2DPoint(Point2D, Origin.GetUnitAxis(EAxis::X), Origin.GetUnitAxis(EAxis::Y), Origin.GetLocation());
 }
 
 FVector2D UModumateGeometryStatics::ProjectVector2D(const FVector &Vector3D, const FVector &AxisX, const FVector &AxisY)

@@ -830,6 +830,21 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateO
 	}
 }
 
+bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateObjectInstance *Host, int32 FaceIndex,
+	TArray<FVector>& OutFacePoints, FTransform& OutFaceOrigin)
+{
+	FVector faceNormal, faceAxisX, faceAxisY;
+	if (GetGeometryFromFaceIndex(Host, FaceIndex, OutFacePoints, faceNormal, faceAxisX, faceAxisY) && ensure(OutFacePoints.Num() > 0))
+	{
+		OutFaceOrigin.SetLocation(OutFacePoints[0]);
+		OutFaceOrigin.SetRotation(FRotationMatrix::MakeFromXY(faceAxisX, faceAxisY).ToQuat());
+		OutFaceOrigin.SetScale3D(FVector::OneVector);
+		return true;
+	}
+
+	return false;
+}
+
 void UModumateObjectStatics::EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const FModumateDocument *Doc,
 	bool &bOutConnectedToEmptyPlane, bool &bOutConnectedToSelectedPlane)
 {

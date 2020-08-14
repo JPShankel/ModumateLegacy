@@ -66,6 +66,8 @@ public:
 	// The MOI that this handle effects
 	Modumate::FModumateObjectInstance* TargetMOI = nullptr;
 
+	TArray<Modumate::FModumateObjectInstance*> TargetDescendents;
+
 	int32 TargetIndex = INDEX_NONE;
 	float Sign = 0.0f;
 

@@ -352,9 +352,10 @@ namespace Modumate
 		UWorld *GetWorld() const { return World.Get(); }
 		// Actor management
 		bool HasActor(const AActor *actor) const { return MeshActor == actor; }
-		AActor *GetActor() { return MeshActor.Get(); }
-		const AActor *GetActor() const { return MeshActor.Get(); }
-		const FModumateDocument *GetDocument() const { return Document; }
+		AActor* GetActor() { return MeshActor.Get(); }
+		const AActor* GetActor() const { return MeshActor.Get(); }
+		FModumateDocument* GetDocument() { return Document; }
+		const FModumateDocument* GetDocument() const { return Document; }
 
 		void Destroy();
 

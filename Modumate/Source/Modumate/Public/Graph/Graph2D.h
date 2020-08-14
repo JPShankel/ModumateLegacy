@@ -139,13 +139,15 @@ namespace Modumate
 
 	public:
 		// outputs objects that would be added by the list of deltas.
-		void AggregateAddedObjects(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices, TSet<int32> &OutEdges);
+		void AggregateAddedObjects(const TArray<FGraph2DDelta>& Deltas, TSet<int32>& OutVertices, TSet<int32>& OutEdges, TSet<int32>& OutPolygons);
 
 		// aggregates only the added vertices, helpful for determining the result of AddVertex
 		void AggregateAddedVertices(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutVertices);
 
 		// aggregates only the added edges, constrained by the provided segment
 		void AggregateAddedEdges(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutEdges, const FVector2D &StartPosition, const FVector2D &EndPosition);
+
+		void GetOuterBoundsIDs(TArray<int32> &OutVertexIDs) const;
 
 		// TODO: aggregate polygons constrained by polygon
 

@@ -242,7 +242,10 @@ namespace Modumate
 						ApplyInverseDeltas(addEdgesBetweenVerticesDeltas);
 						return false;
 					}
-					addEdgesBetweenVerticesDeltas.Add(addVertexDelta);
+					if (!addVertexDelta.IsEmpty())
+					{
+						addEdgesBetweenVerticesDeltas.Add(addVertexDelta);
+					}
 
 					AggregateAddedVertices({ addVertexDelta }, addedVertices);
 					edgesToSplitByVertex.Add(TPair<int32, int32>(edge.ID, addedVertices.Array()[0]));
@@ -288,7 +291,10 @@ namespace Modumate
 				ApplyInverseDeltas(addEdgesBetweenVerticesDeltas);
 				return false;
 			}
-			addEdgesBetweenVerticesDeltas.Add(splitEdgeDelta);
+			if (!splitEdgeDelta.IsEmpty())
+			{
+				addEdgesBetweenVerticesDeltas.Add(splitEdgeDelta);
+			}
 		}
 
 		// aggregate all vertices on the pending segment into addedVertices
@@ -845,14 +851,14 @@ namespace Modumate
 
 				if (childPoly.IsInside(parentPoly))
 				{
-					bool bNoParent = childPoly.ParentID == 0;
+					bool bNoParent = (childPoly.ParentID == MOD_ID_NONE);
 
-					int32 currentBestParentID = childPoly.ParentID;
+					FGraph2DPolygon* currentBestParentPoly = FindPolygon(childPoly.ParentID);
 					if (parentIDUpdatesDelta.PolygonParentIDUpdates.Contains(childPoly.ID))
 					{
-						currentBestParentID = parentIDUpdatesDelta.PolygonParentIDUpdates[childPoly.ID].Value;
+						currentBestParentPoly = FindPolygon(parentIDUpdatesDelta.PolygonParentIDUpdates[childPoly.ID].Value);
 					}
-					bool bBetterParent = bNoParent ? false : parentPoly.IsInside(*FindPolygon(currentBestParentID));
+					bool bBetterParent = !bNoParent && currentBestParentPoly && parentPoly.IsInside(*currentBestParentPoly);
 
 					// if the child polygon doesn't have a parent, then set it to the first polygon it's contained in
 					// otherwise, see if the new parent is more appropriate

@@ -19,7 +19,9 @@ namespace Modumate
 		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
 
 	protected:
+		bool UpdateCachedGraphData();
+
 		TArray<FVector> CachedFacePoints, PrevFacePoints;
-		FVector CachedFaceNormal, CachedFaceAxisX, CachedFaceAxisY, CachedFaceOrigin;
+		FTransform PrevFaceOrigin, CachedFaceOrigin;
 	};
 }

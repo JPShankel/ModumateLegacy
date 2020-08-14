@@ -785,79 +785,39 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		return;
 	}
 
-	// Get the geometry for the face of the surface graph host, so that we can set the surface graph MOI geometry in world space
-	// TODO: this wouldn't be necessary if we don't need control points for these objects, if their handles didn't operate on control points.
 	int32 surfaceGraphID = targetSurfaceGraph->GetID();
-	const FModumateObjectInstance *surfaceGraphObj = GetObjectById(surfaceGraphID);
-	const FModumateObjectInstance *surfaceGraphParent = surfaceGraphObj ? surfaceGraphObj->GetParentObject() : nullptr;
-	int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceGraphObj);
-	if (!ensure(surfaceGraphObj && surfaceGraphParent && (surfaceGraphFaceIndex != INDEX_NONE)))
+	FModumateObjectInstance *surfaceGraphObj = GetObjectById(surfaceGraphID);
+	if (!ensure(surfaceGraphObj))
 	{
 		return;
 	}
 
-	TArray<FVector> facePoints;
-	FVector faceNormal, faceAxisX, faceAxisY;
-	if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceGraphParent, surfaceGraphFaceIndex, facePoints, faceNormal, faceAxisX, faceAxisY)))
+	// update graph itself
+	if (!targetSurfaceGraph->ApplyDelta(Delta))
 	{
 		return;
 	}
-	FVector faceOrigin = facePoints[0];
 
-	// shared world-space control points for each object in the surface graph that will be updated
-	TArray<FVector> controlPoints;
-
-	// update graph
-	targetSurfaceGraph->ApplyDelta(Delta);
+	// mark the surface graph dirty, so that its children can update their visual and world-coordinate-space representations
+	surfaceGraphObj->MarkDirty(EObjectDirtyFlags::Structure);
 
 	// add objects
 	for (auto &kvp : Delta.VertexAdditions)
 	{
-		const FVector2D &vertexPos = kvp.Value;
-		controlPoints.SetNum(1);
-		controlPoints[0] = UModumateGeometryStatics::Deproject2DPoint(vertexPos, faceAxisX, faceAxisY, faceOrigin);
-		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceVertex,
-			kvp.Key, surfaceGraphID, FVector::ZeroVector, &controlPoints, nullptr);
+		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceVertex, kvp.Key, surfaceGraphID);
 	}
 
 	for (auto &kvp : Delta.EdgeAdditions)
 	{
-		const TArray<int32> &edgeVertexIDs = kvp.Value.Vertices;
-		ensureAlways(kvp.Value.Vertices.Num() == 2);
-		controlPoints.SetNum(2);
-		const FGraph2DVertex *startVertex = targetSurfaceGraph->FindVertex(edgeVertexIDs[0]);
-		const FGraph2DVertex *endVertex = targetSurfaceGraph->FindVertex(edgeVertexIDs[1]);
-		if (ensureAlways(startVertex && endVertex))
-		{
-			controlPoints[0] = UModumateGeometryStatics::Deproject2DPoint(startVertex->Position, faceAxisX, faceAxisY, faceOrigin);
-			controlPoints[1] = UModumateGeometryStatics::Deproject2DPoint(endVertex->Position, faceAxisX, faceAxisY, faceOrigin);
-
-			CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceEdge,
-				kvp.Key, surfaceGraphID, FVector::ZeroVector, &controlPoints, nullptr);
-		}
+		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceEdge, kvp.Key, surfaceGraphID);
 	}
 
 	for (auto &kvp : Delta.PolygonAdditions)
 	{
-		controlPoints.Reset();
-		for (int32 polygonVertexID : kvp.Value.Vertices)
-		{
-			const FGraph2DVertex *polyVertex = targetSurfaceGraph->FindVertex(polygonVertexID);
-			if (!ensureAlways(polyVertex))
-			{
-				break;
-			}
-
-			controlPoints.Add(UModumateGeometryStatics::Deproject2DPoint(polyVertex->Position, faceAxisX, faceAxisY, faceOrigin));
-		}
-
 		// It would be ideal to only create SurfacePolgyon objects for interior polygons, but if we don't then the graph will try creating
 		// deltas that use IDs that the document will try to re-purpose for other objects.
-		if ((controlPoints.Num() == kvp.Value.Vertices.Num()))
-		{
-			CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfacePolygon,
-				kvp.Key, surfaceGraphID, FVector::ZeroVector, &controlPoints, nullptr);
-		}
+		// TODO: allow allocating IDs from graph deltas in a way that the document can't use them
+		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfacePolygon, kvp.Key, surfaceGraphID);
 	}
 
 	// finalize objects after all of them have been added
@@ -922,95 +882,46 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	// delete surface objects
 	for (auto &kvp : Delta.VertexDeletions)
 	{
-		FModumateObjectInstance *deletedVertexObj = GetObjectById(kvp.Key);
-		if (ensureAlways(deletedVertexObj))
-		{
-			DeleteObjectImpl(deletedVertexObj);
-		}
+		DeleteObjectImpl(GetObjectById(kvp.Key));
 	}
 
 	for (auto &kvp : Delta.EdgeDeletions)
 	{
-		FModumateObjectInstance *deletedEdgeObj = GetObjectById(kvp.Key);
-		if (ensureAlways(deletedEdgeObj))
-		{
-			DeleteObjectImpl(deletedEdgeObj);
-		}
+		DeleteObjectImpl(GetObjectById(kvp.Key));
 	}
 
 	for (auto &kvp : Delta.PolygonDeletions)
 	{
-		FModumateObjectInstance *deletedPolyObj = GetObjectById(kvp.Key);
-		// the document does not make MOIs for exterior polygons, 
-		// so the deleted polygon may not exist
-		if (deletedPolyObj)
-		{
-			DeleteObjectImpl(deletedPolyObj);
-		}
+		DeleteObjectImpl(GetObjectById(kvp.Key));
 	}
 
-	// Update the MOI objects that reflect surface graph elements that have been modified by the delta
-	// TODO: none of this should be necessary if the tools and handles that modify surface graph elements
-	// can preview their progress without directly modifying control points.
-	// Much of this could also be removed/cleaned earlier if the control points were only in graph 2D coordinate space.
+	// Use the surface graph modified flags, to decide which surface graph object MOIs need to be updated
 	TArray<int32> modifiedVertices, modifiedEdges, modifiedPolygons;
 	if (targetSurfaceGraph->ClearModifiedObjects(modifiedVertices, modifiedEdges, modifiedPolygons))
 	{
 		for (int32 vertexID : modifiedVertices)
 		{
-			FGraph2DVertex* surfaceVertex = targetSurfaceGraph->FindVertex(vertexID);
 			FModumateObjectInstance* vertexObj = GetObjectById(vertexID);
-			if (surfaceVertex && vertexObj && (vertexObj->GetObjectType() == EObjectType::OTSurfaceVertex))
+			if (ensureAlways(vertexObj && (vertexObj->GetObjectType() == EObjectType::OTSurfaceVertex)))
 			{
-				vertexObj->SetObjectLocation(UModumateGeometryStatics::Deproject2DPoint(surfaceVertex->Position, faceAxisX, faceAxisY, faceOrigin));
+				vertexObj->MarkDirty(EObjectDirtyFlags::Structure);
 			}
 		}
 
 		for (int32 edgeID : modifiedEdges)
 		{
-			FGraph2DEdge* surfaceEdge = targetSurfaceGraph->FindEdge(edgeID);
 			FModumateObjectInstance *edgeObj = GetObjectById(edgeID);
-			if (!(surfaceEdge && edgeObj && (edgeObj->GetObjectType() == EObjectType::OTSurfaceEdge)))
+			if (ensureAlways(edgeObj && (edgeObj->GetObjectType() == EObjectType::OTSurfaceEdge)))
 			{
-				continue;
+				edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
 			}
-
-			FGraph2DVertex* startSurfaceVertex = targetSurfaceGraph->FindVertex(surfaceEdge->StartVertexID);
-			FGraph2DVertex* endSurfaceVertex = targetSurfaceGraph->FindVertex(surfaceEdge->EndVertexID);
-			FModumateObjectInstance* startVertexObj = GetObjectById(surfaceEdge->StartVertexID);
-			FModumateObjectInstance* endVertexObj = GetObjectById(surfaceEdge->EndVertexID);
-			if (!(startSurfaceVertex && endSurfaceVertex && startVertexObj && endVertexObj))
-			{
-				continue;
-			}
-
-			edgeObj->SetControlPoints({ startVertexObj->GetObjectLocation(), endVertexObj->GetObjectLocation() });
-			edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 
 		for (int32 polygonID : modifiedPolygons)
 		{
-			FGraph2DPolygon* surfacePolygon = targetSurfaceGraph->FindPolygon(polygonID);
 			FModumateObjectInstance *polygonObj = GetObjectById(polygonID);
-			if (!(surfacePolygon && polygonObj && (polygonObj->GetObjectType() == EObjectType::OTSurfacePolygon)))
+			if (ensureAlways(polygonObj && (polygonObj->GetObjectType() == EObjectType::OTSurfacePolygon)))
 			{
-				continue;
-			}
-
-			TArray<FVector> polygonWorldPoints;
-			for (int32 vertexID : surfacePolygon->VertexIDs)
-			{
-				FGraph2DVertex* surfaceVertex = targetSurfaceGraph->FindVertex(vertexID);
-				FModumateObjectInstance* vertexObj = GetObjectById(vertexID);
-				if (surfaceVertex && vertexObj)
-				{
-					polygonWorldPoints.Add(vertexObj->GetObjectLocation());
-				}
-			}
-
-			if (polygonWorldPoints.Num() == surfacePolygon->VertexIDs.Num())
-			{
-				polygonObj->SetControlPoints(polygonWorldPoints);
 				polygonObj->MarkDirty(EObjectDirtyFlags::Structure);
 			}
 		}
@@ -1204,8 +1115,10 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 	{
 		delta->ApplyTo(this, World);
 	}
+	PostApplyDeltas(World);
 
-	// Next, clean objects while gathering potential side effect deltas, and add them to the undo/redo-able list of deltas.
+	// Next, clean objects while gathering potential side effect deltas,
+	// apply side effect deltas, and add them to the undo/redo-able list of deltas.
 	// Prevent infinite loops, but allow for iteration due to multiple levels of dependency.
 	int32 sideEffectIterationGuard = 8;
 	TArray<TSharedPtr<FDelta>> sideEffectDeltas;
@@ -1218,6 +1131,7 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 			ur->Deltas.Add(delta);
 			delta->ApplyTo(this, World);
 		}
+		PostApplyDeltas(World);
 
 		if (!ensure(--sideEffectIterationGuard > 0))
 		{
@@ -1227,15 +1141,15 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 
 	} while (sideEffectDeltas.Num() > 0);
 
-	PostApplyDeltas(World);
-
+	// TODO: this should be a proper side effect
 	UpdateRoomAnalysis(World);
+
 	EndUndoRedoMacro();
 
 	return true;
 }
 
-bool FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
+void FModumateDocument::UpdateVolumeGraphObjects(UWorld* World)
 {
 	// TODO: unclear whether this is correct or the best place -
 	// set the faces containing or contained by dirty faces dirty as well	
@@ -1323,8 +1237,6 @@ bool FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 			groupObj->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 	}
-
-	return true;
 }
 
 bool FModumateDocument::FinalizeGraphDeltas(TArray <FGraph3DDelta> &Deltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs)
@@ -1384,6 +1296,11 @@ bool FModumateDocument::PostApplyDeltas(UWorld *World)
 {
 	UpdateVolumeGraphObjects(World);
 	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+
+	for (auto& kvp : SurfaceGraphs)
+	{
+		kvp.Value.CleanDirtyObjects(true);
+	}
 
 	// Now that objects may have been deleted, validate the player state so that none of them are incorrectly referenced.
 	AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(World->GetFirstPlayerController()->PlayerState);
@@ -2319,45 +2236,55 @@ int32 FModumateDocument::CreateFFE(
 
 bool FModumateDocument::CleanObjects(TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 {
+	static TArray<FModumateObjectInstance*> curDirtyList;
+	curDirtyList.Reset();
+
 	int32 totalObjectCleans = 0;
-	TArray<FModumateObjectInstance*> curDirtyList;
-	for (EObjectDirtyFlags flagToClean : UModumateTypeStatics::OrderedDirtyFlags)
+	int32 totalObjectsDirty = 0;
+
+	// Prevent iterating over all combined dirty flags too many times while trying to clean all objects
+	int32 combinedDirtySafeguard = 4;
+	do
 	{
-		// Arbitrarily cut off object cleaning iteration, in case there's bad logic that
-		// creates circular dependencies that will never resolve in a single frame.
-		int32 iterationSafeguard = 99;
-		bool bModifiedAnyObjects = false;
-		int32 objectCleans = 0;
-
-		do
+		for (EObjectDirtyFlags flagToClean : UModumateTypeStatics::OrderedDirtyFlags)
 		{
-			// Save off the current list of dirty objects, since it may change while cleaning them.
-			bModifiedAnyObjects = false;
-			TArray<FModumateObjectInstance*> &dirtyObjList = DirtyObjectMap.FindOrAdd(flagToClean);
-			curDirtyList = dirtyObjList;
+			// Arbitrarily cut off object cleaning iteration, in case there's bad logic that
+			// creates circular dependencies that will never resolve in a single frame.
+			bool bModifiedAnyObjects = false;
+			int32 objectCleans = 0;
+			TArray<FModumateObjectInstance*>& dirtyObjList = DirtyObjectMap.FindOrAdd(flagToClean);
 
-			for (FModumateObjectInstance *objToClean : curDirtyList)
+			// Prevent iterating over objects dirtied with this flag too many times while trying to clean all objects
+			int32 sameFlagSafeguard = 8;
+			do
 			{
-				bModifiedAnyObjects = objToClean->CleanObject(flagToClean, OutSideEffectDeltas) || bModifiedAnyObjects;
-				if (bModifiedAnyObjects)
+				// Save off the current list of dirty objects, since it may change while cleaning them.
+				bModifiedAnyObjects = false;
+				curDirtyList = dirtyObjList;
+
+				for (FModumateObjectInstance *objToClean : curDirtyList)
 				{
-					++objectCleans;
+					bModifiedAnyObjects = objToClean->CleanObject(flagToClean, OutSideEffectDeltas) || bModifiedAnyObjects;
+					if (bModifiedAnyObjects)
+					{
+						++objectCleans;
+					}
 				}
-			}
 
-			if (!ensureAlwaysMsgf(--iterationSafeguard > 0, TEXT("Infinite loop detected while cleaning objects, aborting!")))
-			{
-				break;
-			}
-		} while (bModifiedAnyObjects);
+			} while (bModifiedAnyObjects &&
+				ensureAlwaysMsgf(--sameFlagSafeguard > 0, TEXT("Infinite loop detected while cleaning objects with flag %s, breaking!"), *EnumValueString(EObjectDirtyFlags, flagToClean)));
 
-		if (objectCleans > ObjectInstanceArray.Num())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Cleaned object(s) more than once!"));
+			totalObjectCleans += objectCleans;
 		}
 
-		totalObjectCleans += objectCleans;
-	}
+		totalObjectsDirty = 0;
+		for (auto& kvp : DirtyObjectMap)
+		{
+			totalObjectsDirty += kvp.Value.Num();
+		}
+
+	} while ((totalObjectsDirty > 0) &&
+		ensureAlwaysMsgf(--combinedDirtySafeguard > 0, TEXT("Infinite loop detected while cleaning combined dirty flags, breaking!")));
 
 	return (totalObjectCleans > 0);
 }

@@ -133,14 +133,15 @@ void AAdjustmentHandleActor::PostEndOrAbort()
 
 		TargetMOI->RequestCollisionDisabled(StateRequestTag, false);
 
-		auto descendents = TargetMOI->GetAllDescendents();
-		for (auto *descendent : descendents)
+		for (auto *descendent : TargetDescendents)
 		{
-			descendent->RequestCollisionDisabled(StateRequestTag, false);
+			if (descendent && !descendent->IsDestroyed())
+			{
+				descendent->RequestCollisionDisabled(StateRequestTag, false);
+			}
 		}
 	}
 
-	UpdateTargetGeometry();
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
 	if (SourceMOI && !SourceMOI->IsDestroyed())
@@ -234,8 +235,8 @@ bool AAdjustmentHandleActor::BeginUse()
 		TargetMOI->BeginPreviewOperation();
 		TargetMOI->RequestCollisionDisabled(StateRequestTag, true);
 
-		auto descendents = TargetMOI->GetAllDescendents();
-		for (auto *descendent : descendents)
+		TargetDescendents = TargetMOI->GetAllDescendents();
+		for (auto *descendent : TargetDescendents)
 		{
 			descendent->RequestCollisionDisabled(StateRequestTag, true);
 		}
@@ -278,6 +279,10 @@ void AAdjustmentHandleActor::EndUse()
 	}
 
 	TargetMOI->EndPreviewOperation();
+
+	// Now that we've reverted the target object back to its original state, clean all objects so that
+	// deltas can be applied to the original state, and all of its dependent changes.
+	GameState->Document.CleanObjects();
 
 	if (bMetaPlaneTarget)
 	{

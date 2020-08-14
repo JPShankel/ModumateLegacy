@@ -13,14 +13,14 @@ namespace Modumate
 		FMOISurfacePolygonImpl(FModumateObjectInstance *moi);
 
 		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
-		virtual void SetupDynamicGeometry() override;
+		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
 
 	protected:
 		float MeshPointOffset;
 		TArray<FVector> CachedOffsetPoints;
 		bool bInteriorPolygon;
 
-		void UpdateCachedGraphData();
+		bool UpdateCachedGraphData();
 		virtual float GetAlpha() const override;
 	};
 }

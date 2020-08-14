@@ -2,6 +2,7 @@
 
 #include "DocumentManagement/Objects/SurfaceEdge.h"
 
+#include "DocumentManagement/ModumateDocument.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/LineActor.h"
@@ -17,9 +18,47 @@ namespace Modumate
 
 	bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
-		if (!FMOIEdgeImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
+		// TODO: Use FMOIEdgeImplBase once MetaEdge conforms to this non-ControlPoints-derived data.
+		/*if (!FMOIEdgeImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
 		{
 			return false;
+		}*/
+
+		auto surfaceGraphObj = MOI ? MOI->GetParentObject() : nullptr;
+		auto doc = MOI ? MOI->GetDocument() : nullptr;
+		if (!ensure(surfaceGraphObj && doc && LineActor.IsValid()))
+		{
+			return false;
+		}
+
+		switch (DirtyFlag)
+		{
+		case EObjectDirtyFlags::Structure:
+		{
+			auto surfaceGraph = doc->FindSurfaceGraph(surfaceGraphObj->ID);
+			auto surfaceEdge = surfaceGraph ? surfaceGraph->FindEdge(MOI->ID) : nullptr;
+			if (!ensureAlways(surfaceEdge))
+			{
+				return false;
+			}
+
+			auto startVertexObj = doc->GetObjectById(surfaceEdge->StartVertexID);
+			auto endVertexObj = doc->GetObjectById(surfaceEdge->EndVertexID);
+			if (!ensureAlways(startVertexObj && endVertexObj) ||
+				startVertexObj->IsDirty(DirtyFlag) || endVertexObj->IsDirty(DirtyFlag))
+			{
+				return false;
+			}
+
+			LineActor->Point1 = startVertexObj->GetObjectLocation();
+			LineActor->Point2 = endVertexObj->GetObjectLocation();
+			break;
+		}
+		case EObjectDirtyFlags::Visuals:
+			MOI->UpdateVisibilityAndCollision();
+			break;
+		default:
+			break;
 		}
 
 		if (MOI)

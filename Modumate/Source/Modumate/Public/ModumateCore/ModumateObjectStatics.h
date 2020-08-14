@@ -80,7 +80,9 @@ public:
 	static int32 GetParentFaceIndex(const Modumate::FModumateObjectInstance *FaceMountedObj);
 	static int32 GetFaceIndexFromTargetHit(const Modumate::FModumateObjectInstance *HitObject, const FVector &HitLocation, const FVector &HitNormal);
 	static bool GetGeometryFromFaceIndex(const Modumate::FModumateObjectInstance *Host, int32 FaceIndex,
-		TArray<FVector> &OutFacePoints, FVector &OutNormal, FVector &OutFaceAxisX, FVector &OutFaceAxisY);
+		TArray<FVector>& OutFacePoints, FVector& OutNormal, FVector& OutFaceAxisX, FVector& OutFaceAxisY);
+	static bool GetGeometryFromFaceIndex(const Modumate::FModumateObjectInstance *Host, int32 FaceIndex,
+		TArray<FVector>& OutFacePoints, FTransform& OutFaceOrigin);
 
 	// Meta Objects
 	static void EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const FModumateDocument *Doc,

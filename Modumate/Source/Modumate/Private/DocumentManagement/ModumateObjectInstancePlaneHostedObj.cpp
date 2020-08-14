@@ -120,6 +120,8 @@ namespace Modumate
 			// edges as miter-dirty, so they can re-evaluate mitering with our new structure.
 			UpdateConnectedEdges();
 
+			MOI->MarkDirty(EObjectDirtyFlags::Mitering);
+
 			for (FModumateObjectInstance *connectedEdge : CachedConnectedEdges)
 			{
 				connectedEdge->MarkDirty(EObjectDirtyFlags::Mitering);
