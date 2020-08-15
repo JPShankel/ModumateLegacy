@@ -68,11 +68,11 @@ FModumateDocument::~FModumateDocument()
 {
 }
 
-void FModumateDocument::PerformUndoRedo(UWorld* World, TArray<UndoRedo*>& FromBuffer, TArray<UndoRedo*>& ToBuffer)
+void FModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRedo>>& FromBuffer, TArray<TSharedPtr<UndoRedo>>& ToBuffer)
 {
 	if (FromBuffer.Num() > 0)
 	{
-		UndoRedo* ur = FromBuffer.Last(0);
+		TSharedPtr <UndoRedo> ur = FromBuffer.Last(0);
 		FromBuffer.RemoveAt(FromBuffer.Num() - 1);
 
 		TArray<TSharedPtr<FDelta>> fromDeltas = ur->Deltas;
@@ -137,13 +137,13 @@ void FModumateDocument::EndUndoRedoMacro()
 		return;
 	}
 
-	TArray<UndoRedo*> section;
+	TArray<TSharedPtr<UndoRedo>> section;
 	for (int32 i = start; i < UndoBuffer.Num(); ++i)
 	{
 		section.Add(UndoBuffer[i]);
 	}
 
-	UndoRedo *ur = new UndoRedo();
+	TSharedPtr<UndoRedo> ur = MakeShareable(new UndoRedo());
 	for (auto s : section)
 	{
 		ur->Deltas.Append(s->Deltas);
@@ -1105,7 +1105,7 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 
 	BeginUndoRedoMacro();
 
-	UndoRedo* ur = new UndoRedo();
+	TSharedPtr<UndoRedo> ur = MakeShareable(new UndoRedo());
 	ur->Deltas = Deltas;
 
 	UndoBuffer.Add(ur);
@@ -2085,20 +2085,12 @@ bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &D
 void FModumateDocument::ClearRedoBuffer()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ClearRedoBuffer"));
-	for (auto redo : RedoBuffer)
-	{
-		delete redo;
-	}
 	RedoBuffer.Empty();
 }
 
 void FModumateDocument::ClearUndoBuffer()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ClearUndoBuffer"));
-	for (auto undo : UndoBuffer)
-	{
-		delete undo;
-	}
 	UndoBuffer.Empty();
 	UndoRedoMacroStack.Empty();
 }

@@ -31,7 +31,7 @@ private:
 		TArray<TSharedPtr<Modumate::FDelta>> Deltas;
 	};
 
-	TArray<UndoRedo*> UndoBuffer, RedoBuffer;
+	TArray<TSharedPtr<UndoRedo>> UndoBuffer, RedoBuffer;
 	int32 NextID;
 
 	TArray<Modumate::FModumateObjectInstance*> ObjectInstanceArray;
@@ -208,7 +208,7 @@ private:
 	// Helper function for ObjectFromActor
 	Modumate::FModumateObjectInstance *ObjectFromSingleActor(AActor *actor);
 
-	void PerformUndoRedo(UWorld* World, TArray<UndoRedo*>& FromBuffer, TArray<UndoRedo*>& ToBuffer);
+	void PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRedo>>& FromBuffer, TArray<TSharedPtr<UndoRedo>>& ToBuffer);
 
 public:
 
