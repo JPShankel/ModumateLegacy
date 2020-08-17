@@ -592,6 +592,7 @@ namespace Modumate
 		{
 		case EObjectType::OTWallSegment:
 		case EObjectType::OTRailSegment:
+		case EObjectType::OTCeiling:
 		case EObjectType::OTFloorSegment:
 			//case OTRoofSegment:
 		case EObjectType::OTCabinet:

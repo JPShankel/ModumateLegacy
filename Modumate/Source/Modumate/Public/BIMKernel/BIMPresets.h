@@ -134,5 +134,5 @@ public:
 
 	ECraftingResult GetDependentPresets(const FName &PresetID, TSet<FName> &OutPresets) const;
 
-	ECraftingResult LoadCSVManifest(const FString &ManifestPath, const FString &ManifestFile, TArray<FString> &OutMessages);
+	ECraftingResult LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMNameType>& OutStarters, TArray<FString>& OutMessages);
 };

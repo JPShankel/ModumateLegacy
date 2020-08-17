@@ -1,0 +1,67 @@
+TG_MyNode+CategoryPath,ToolMode,ObjectType,AssetType,IconType,IconOrientation,ToolTray-InstanceProperties,ToolTray-InstancePropertiesDefaultValues,ToolTrayAndBIMDesigner-PresetCard,BIMDesigner-NodeTitle
+0Color,,,Color,Color,Flat,,,,Color
+0RawMaterial,,,RawMaterial,Sphere,Vertical,,,,Raw Material
+0SrfTreatment,,,,Sphere,Vertical,,,,Surface Treatment
+0Profile,,,Profile,Profile,Flat,,,,Profile
+0Mesh,,,Mesh,Mesh,Vertical,,,,Mesh
+0DimThk,,,,Dimensions,Image,,,,Dimensions
+0DimWD,,,,Dimensions,Image,,,,Dimensions
+0DimDi,,,,Dimensions,Image,,,,Dimensions
+0DimDiT,,,,Dimensions,Image,,,,Dimensions
+0DimWDT,,,,Dimensions,Image,,,,Dimensions
+0DimWDWtFt,,,,Dimensions,Image,,,,Dimensions
+0DimLWH,,,,Dimensions,Image,,,,Dimensions
+0DimLW,,,,Dimensions,Image,,,,Dimensions
+0LayerPattern,,,,Pattern,Flat,,,,Pattern
+1Material,,,,Sphere,Vertical,,,,Material
+2Layer0D,,,,Layer,Vertical,,,,Layer
+2ModuleWDProfile,,,,ModuleWDProfile,Horizontal,,,,Module
+2ModuleLWH,,,,ModuleLWH,Vertical,,,,Module
+2ModuleLWT,,,,ModuleLWT,Vertical,,,,Module
+2Gap2D,,,,Gap2D,Flat,,,,Gap
+2ExtrudedProfile --> Beam/Column,VE_STRUCTURELINE,OTStructureLine,,ExtrudedProfile,Horizontal,OffsetX,0,ExtrudedProfile,Beam / Column
+,,,,,,OffsetY,0,,
+,,,,,,Rotation,0,,
+,,,,,,FlipX,No,,
+,,,,,,FlipY,No,,
+2ExtrudedProfile --> Trim,VE_TRIM,OTTrim,,ExtrudedProfile,Horizontal,OffsetX,0,ExtrudedProfile,Trim
+,,,,,,FlipX,No,,
+2Part,,,,TexturedMeshes,Vertical,,,,Part
+2Part --> FFE,VE_PLACEOBJECT,OTFurniture,,TexturedMeshes,Vertical,,,,Part
+2SawtoothStringer,,,,Stringer,Vertical,,,,Stringer
+3Layer1D,,,,Layer,Vertical,,,,Layer
+3Layer2D,,,,Layer,Vertical,,,,Layer
+3Layer3D,,,,Layer,Vertical,,,,Layer
+3HardwareGroup,,,,HardwareGroup,Vertical,,,,Hardware Group
+4LayeredAssembly --> Wall,VE_WALL,OTWallSegment,,LayeredAssembly,Vertical,Justification,Centerline,LayeredAssembly,Wall
+,,,,,,Flip,None,,
+4LayeredAssembly --> Floor,VE_FLOOR,OTFloorSegment,,LayeredAssembly,Horizontal,Justification,First,LayeredAssembly,Floor
+,,,,,,Flip,Down,,
+4LayeredAssembly --> Roof,VE_ROOF_FACE,OTRoofFace,,LayeredAssembly,Horizontal,Justification,First,LayeredAssembly,Roof
+,,,,,,Flip,Down,,
+4LayeredAssembly --> Ceiling,VE_CEILING,OTCeiling,,LayeredAssembly,Horizontal,Justification,Last,LayeredAssembly,Ceiling
+,,,,,,Flip,Up,,
+4LayeredAssembly --> Finish,VE_FINISH,OTFinish,,LayeredAssembly,Vertical,,,LayeredAssembly,Finish
+,,,,,,Flip,None,,
+4LayeredAssembly --> Countertop,VE_COUNTERTOP,OTCountertop,,LayeredAssembly,Horizontal,Justification,First,LayeredAssembly,Countertop
+4LayeredAssembly --> Layered Tread,,,,LayeredAssembly,Horizontal,,,,Layered Tread
+4LayeredAssembly --> Layered Riser,,,,LayeredAssembly,Vertical,,,,Layered Riser
+4LayeredAssembly --> Railing,VE_RAIL,OTRailSegment,,RiggedAssembly,Vertical,,,Railing,Railing
+4LayeredAssembly --> Landscape,,,,LayeredAssembly,Horizontal,,,,Landscape
+4RiggedAssembly --> Door,VE_DOOR,OTDoor,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Door
+,,,,,,Flip,None,,
+,,,,,,Reverse,None,,
+,,,,,,Open,0,,
+4RiggedAssembly --> Window,VE_WINDOW,OTWindow,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Window
+,,,,,,Flip,None,,
+,,,,,,Reverse,None,,
+,,,,,,Open,0,,
+4RiggedAssembly --> FFESet,VE_PLACEOBJECT,OTFurniture,,RiggedAssembly,Vertical,,,FFE,FF&E Group
+5Stair,VE_STAIR,OTStaircase,,CompoundAssembly,Vertical,TreadDepthMin,11in,Stair,Stair
+,,,,,,TreadDepthIdeal,12in,,
+,,,,,,TreadDepthMax,14in,,
+,,,,,,RiserHeightMin,4in,,
+,,,,,,RiserHeightIdeal,6.5in,,
+,,,,,,RiserHeightMax,7.75in,,
+5Cabinet --> Floor,VE_CABINET,OTCabinet,,CompoundAssembly,Horizontal,,,Cabinet,Cabinet
+5Cabinet --> Wall,VE_CABINET,OTCabinet,,CompoundAssembly,Vertical,,,Cabinet,Cabinet

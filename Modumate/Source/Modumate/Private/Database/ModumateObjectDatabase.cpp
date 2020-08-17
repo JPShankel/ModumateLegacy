@@ -2,6 +2,9 @@
 
 #include "Database/ModumateObjectDatabase.h"
 #include "BIMKernel/BIMAssemblySpec.h"
+#include "Misc/FileHelper.h"
+#include "Serialization/Csv/CsvParser.h"
+
 
 FModumateDatabase::FModumateDatabase() {}	
 
@@ -118,138 +121,230 @@ void FModumateDatabase::ReadPresetData()
 {
 	FString manifestPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
 	TArray<FString> errors;
-	if (!ensureAlways(PresetManager.CraftingNodePresets.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), errors) == ECraftingResult::Success))
+	TArray<FName> starters;
+	if (!ensureAlways(PresetManager.CraftingNodePresets.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), starters, errors) == ECraftingResult::Success))
 	{
 		return;
 	}
 
-	FBIMPresetNodeType *layerNode = PresetManager.CraftingNodePresets.NodeDescriptors.Find(TEXT("2Layer0D"));
-	layerNode->Scope = EBIMValueScope::Layer;
-
-	FName colorType = TEXT("0Color");
-	FName rawMaterialType = TEXT("0RawMaterial");
-	FName layeredType = TEXT("4LayeredAssembly");
-	FName riggedType = TEXT("0StubbyPortal");
-	FName ffeType = TEXT("0StubbyFFE");
-	FName beamColumnType = TEXT("2ExtrudedProfile");
-	FName profileType = TEXT("0Profile");
-	FName cabinetType = TEXT("0StubbyCabinets");
-	FName countertopType = TEXT("0StubbyCountertops");
-
-	TSet<FName> assemblyTypes = { rawMaterialType, layeredType, riggedType, ffeType, beamColumnType, profileType, cabinetType, countertopType };
-
-	for (auto& kvp : PresetManager.CraftingNodePresets.Presets)
+	FString NCPString;
+	FString NCPPath = manifestPath / TEXT("NCPTable.csv");
+	if (!ensureAlways(FFileHelper::LoadFileToString(NCPString, *NCPPath)))
 	{
-		if (kvp.Value.NodeType == colorType)
+		return;
+	}
+
+	FCsvParser NCPParsed(NCPString);
+	const FCsvParser::FRows &NCPRows = NCPParsed.GetRows();
+
+	/*
+	Presets make reference to raw assets, like meshes and engine materials, stored in the object database
+	and keyed by a given ID. The NCP table indicates which preset types have AssetPath/AssetID pairs to be
+	loaded and bound to the object database. This map binds tag paths to asset load functions.
+
+	The map is stored as an array of pairs instead of an actual map because tags are checked with partial matches
+
+	Future plan: these relations will be used to build a SQL database
+
+	*/
+
+	typedef TFunction<void(const FBIMPreset &Preset)> FAddAssetFunction;
+	typedef TPair<FBIMTagPath, FAddAssetFunction> FAddAssetPath;
+	TArray<FAddAssetPath> assetTargetPaths;
+
+	FAddAssetFunction addColor = [this](const FBIMPreset &Preset)
+	{
+		FString hexValue = Preset.GetProperty(BIMPropertyNames::HexValue);
+		FString colorName = Preset.GetProperty(BIMPropertyNames::Name);
+		AddCustomColor(Preset.PresetID, colorName, hexValue);
+	};
+
+	FAddAssetFunction addMesh = [this](const FBIMPreset &Preset)
+	{
+		FString assetPath = Preset.GetScopedProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
+		if (assetPath.Len() != 0)
 		{
-			FString hexValue = kvp.Value.GetProperty(BIMPropertyNames::HexValue);
-			FString colorName = kvp.Value.GetProperty(BIMPropertyNames::Name);
-			AddCustomColor(kvp.Key, colorName, hexValue);
+			FString name = Preset.GetProperty(BIMPropertyNames::Name);
+			AddArchitecturalMesh(Preset.PresetID, name, assetPath);
 		}
-		else if (kvp.Value.NodeType == rawMaterialType)
+	};
+
+	FAddAssetFunction addMaterial = [this](const FBIMPreset &Preset)
+	{
+		FString assetPath = Preset.GetProperty(BIMPropertyNames::AssetPath);
+		if (assetPath.Len() != 0)
 		{
-			FString assetPath = kvp.Value.GetProperty(BIMPropertyNames::AssetPath);
-			if (assetPath.Len() != 0)
-			{
-				FString matName = kvp.Value.GetProperty(BIMPropertyNames::Name);
-				AddArchitecturalMaterial(kvp.Key, matName, assetPath);
-			}
+			FString matName = Preset.GetProperty(BIMPropertyNames::Name);
+			AddArchitecturalMaterial(Preset.PresetID, matName, assetPath);
 		}
-		else if (kvp.Value.NodeType == cabinetType || kvp.Value.NodeType == countertopType)
+	};
+
+	FAddAssetFunction addProfile = [this](const FBIMPreset &Preset)
+	{
+		FString assetPath = Preset.GetProperty(BIMPropertyNames::AssetPath);
+		if (assetPath.Len() != 0)
 		{
-			FString assetPath = kvp.Value.GetScopedProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
-			if (assetPath.Len() != 0)
-			{
-				FString name = kvp.Value.GetProperty(BIMPropertyNames::Name);
-				AddArchitecturalMesh(kvp.Key, name, assetPath);
-			}
+			FString name = Preset.GetProperty(BIMPropertyNames::Name);
+			AddSimpleMesh(Preset.PresetID, name, assetPath);
 		}
-		else if (kvp.Value.NodeType == riggedType || kvp.Value.NodeType == ffeType)
+	};
+
+	/*
+	Find the columns containing object type and asset destination (which db) for each preset type
+	*/
+	const FString objectTypeS = TEXT("ObjectType");
+	int32 objectTypeI = -1;
+
+	const FString assetTypeS = TEXT("AssetType");
+	int32 assetTypeI = -1;
+
+	for (int32 column = 0; column < NCPRows[0].Num(); ++column)
+	{
+		if (objectTypeS.Equals(NCPRows[0][column]))
 		{
-			FString assetPath = kvp.Value.GetScopedProperty(EBIMValueScope::Mesh,BIMPropertyNames::AssetPath);
-			if (assetPath.Len() != 0)
-			{
-				FString name = kvp.Value.GetProperty(BIMPropertyNames::Name);
-				AddArchitecturalMesh(kvp.Key, name, assetPath);
-			}
+			objectTypeI = column;
 		}
-		else if (kvp.Value.NodeType == profileType)
+		if (assetTypeS.Equals(NCPRows[0][column]))
 		{
-			FString assetPath = kvp.Value.GetProperty(BIMPropertyNames::AssetPath);
-			if (assetPath.Len() != 0)
+			assetTypeI = column;
+		}
+	}
+
+	/*
+	Now, for each row, record what kind of object it creates (store in objectPaths) and what if any assets it loads (assetTargetPaths)
+	*/
+	const FString colorTag = TEXT("Color");
+	const FString meshTag = TEXT("Mesh");
+	const FString profileTag = TEXT("Profile");
+	const FString rawMaterialTag = TEXT("RawMaterial");
+
+	typedef TFunction<void(const FBIMTagPath &TagPath)> FAssetTargetAssignment;
+	TMap<FString, FAssetTargetAssignment> assetTargetMap;
+
+	assetTargetMap.Add(colorTag, [addColor, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addColor)); });
+	assetTargetMap.Add(meshTag, [addMesh, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addMesh)); });
+	assetTargetMap.Add(profileTag, [addProfile, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addProfile)); });
+	assetTargetMap.Add(rawMaterialTag, [addMaterial, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addMaterial)); });
+
+	typedef TPair<FBIMTagPath, EObjectType> FObjectPathRef;
+	TArray<FObjectPathRef> objectPaths;
+
+	for (int32 row = 1; row < NCPRows.Num(); ++row)
+	{
+		// Get the object type cell and add it to the object map if applicable
+		FString cell = NCPRows[row][objectTypeI];
+		if (!cell.IsEmpty())
+		{
+			EObjectType ot = EnumValueByString(EObjectType, cell);
+			FBIMTagPath tagPath;
+			FString tagStr = NCPRows[row][0];
+			tagPath.FromString(FString(NCPRows[row][0]).Replace(TEXT(" "),TEXT("")));
+			objectPaths.Add(FObjectPathRef(tagPath, ot));
+		}
+
+		// Add asset loader if applicable
+		cell = NCPRows[row][assetTypeI];
+		if (!cell.IsEmpty())
+		{
+			FAssetTargetAssignment *assignment = assetTargetMap.Find(cell);
+			if (assignment != nullptr)
 			{
-				FString name = kvp.Value.GetProperty(BIMPropertyNames::Name);
-				AddSimpleMesh(kvp.Key, name, assetPath);
+				FString tagStr = NCPRows[row][0];
+				FBIMTagPath tagPath;
+				tagPath.FromString(tagStr);
+				(*assignment)(tagPath);
 			}
 		}
 	}
 
 	/*
-	TODO: prior to refactor, we must produce assemblies from presets with known tag paths...to be removed
+	Temp hack: until cabinets and portals are reintroduced, we match the "stubby" representations
 	*/
-	TMap<FString, EObjectType> objectMap;
-	objectMap.Add(FString(TEXT("4LayeredAssembly-->Wall")), EObjectType::OTWallSegment);
-	objectMap.Add(FString(TEXT("4LayeredAssembly-->Floor")), EObjectType::OTFloorSegment);
-	objectMap.Add(FString(TEXT("4LayeredAssembly-->Roof")), EObjectType::OTRoofFace);
-	objectMap.Add(FString(TEXT("4LayeredAssembly-->Finish")), EObjectType::OTFinish);
-	objectMap.Add(FString(TEXT("4LayeredAssembly-->Countertop")), EObjectType::OTCountertop);
+	const TArray<TPair<FString, EObjectType>> stubbies = {
+		TPair <FString,EObjectType>(TEXT("4RiggedAssembly-->Door"),EObjectType::OTDoor),
+		TPair <FString,EObjectType>(TEXT("4RiggedAssembly-->Window"),EObjectType::OTWindow),
+		TPair <FString,EObjectType>(TEXT("2Part0Slice-->FF&E"),EObjectType::OTFurniture),
+		TPair <FString,EObjectType>(TEXT("4RiggedAssembly-->CabinetFace"),EObjectType::OTCabinet),
+		TPair <FString,EObjectType>(TEXT("4RiggedAssembly-->Countertop"),EObjectType::OTCountertop) };
 
-	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->ConcreteRectangular")),EObjectType::OTStructureLine);
-	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->ConcreteRound")),EObjectType::OTStructureLine);
-	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->SteelC")),EObjectType::OTStructureLine);
-	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->SteelHSS")),EObjectType::OTStructureLine);
-	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->SteelL")),EObjectType::OTStructureLine);
-	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->SteelTube")),EObjectType::OTStructureLine);
-	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->SteelW")),EObjectType::OTStructureLine);
-	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->SteelWT")),EObjectType::OTStructureLine);
-	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->StoneRectangular")),EObjectType::OTStructureLine);
-	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->StoneRound")),EObjectType::OTStructureLine);
-	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->WoodRectangular")),EObjectType::OTStructureLine);
-	objectMap.Add(FString(TEXT("2ExtrudedProfile-->Beam/Column-->WoodRound")),EObjectType::OTStructureLine);
-	objectMap.Add(FString(TEXT("4RiggedAssembly-->Door-->Swing")), EObjectType::OTDoor);
-	objectMap.Add(FString(TEXT("4RiggedAssembly-->Window-->Fixed")), EObjectType::OTWindow);
-	objectMap.Add(FString(TEXT("4RiggedAssembly-->Window-->Hung")), EObjectType::OTWindow);
+	for (auto& stubby : stubbies)
+	{
+		FBIMTagPath tempTag;
+		tempTag.FromString(stubby.Key);
+		objectPaths.Add(FObjectPathRef(tempTag, stubby.Value));
+		assetTargetPaths.Add(FAddAssetPath(tempTag, addMesh));
+	}
 
-	objectMap.Add(FString(TEXT("2Part0Slice-->FF&E")), EObjectType::OTFurniture);
-	objectMap.Add(FString(TEXT("4RiggedAssembly-->CabinetFace")), EObjectType::OTCabinet);
-	objectMap.Add(FString(TEXT("4LayeredAssembly-->Countertop")), EObjectType::OTCountertop);
-
+	/*
+	For every preset, load its dependent assets (if any) and set its object type based on tag path
+	*/
 	TSet<EObjectType> gotDefault;
 	for (auto &kvp : PresetManager.CraftingNodePresets.Presets)
 	{
-		if (assemblyTypes.Contains(kvp.Value.NodeType))
+		// Load assets (mesh, material, profile or color)
+		for (auto& assetFunc : assetTargetPaths)
 		{
-			FString myPath;
-			kvp.Value.MyTagPath.ToString(myPath);
-
-			EObjectType *ot = objectMap.Find(myPath);
-			if (ot == nullptr)
+			if (kvp.Value.MyTagPath.MatchesPartial(assetFunc.Key))
 			{
-				continue;
-			}
-
-			kvp.Value.ObjectType = *ot;
-
-			if (!PresetManager.StarterPresetsByObjectType.Contains(*ot))
-			{
-				PresetManager.StarterPresetsByObjectType.Add(*ot, kvp.Key);
-			}
-
-			FBIMAssemblySpec outSpec;
-			outSpec.FromPreset(*this,PresetManager.CraftingNodePresets, kvp.Key);
-			outSpec.ObjectType = *ot;
-			PresetManager.UpdateProjectAssembly(outSpec);
-
-			// TODO: default assemblies added to allow interim loading during assembly refactor, to be eliminated
-			if (!gotDefault.Contains(outSpec.ObjectType))
-			{
-				gotDefault.Add(outSpec.ObjectType);
-				outSpec.RootPreset = TEXT("default");
-				PresetManager.UpdateProjectAssembly(outSpec);
+				assetFunc.Value(kvp.Value);
 			}
 		}
+
+		// Set object type
+		EObjectType *ot = nullptr;
+		for (auto& tagPath : objectPaths)
+		{
+			if (tagPath.Key.MatchesPartial(kvp.Value.MyTagPath))
+			{
+				ot = &tagPath.Value;
+				break;
+			}
+		}
+
+		if (ot == nullptr)
+		{
+			continue;
+		}
+
+		kvp.Value.ObjectType = *ot;
+
+		// "Stubby" assemblies used for portals are temporary, don't have starter codes, so add 'em all
+		switch (*ot)
+		{
+			case EObjectType::OTDoor:
+			case EObjectType::OTWindow:
+			case EObjectType::OTFurniture:
+			case EObjectType::OTCabinet:
+			case EObjectType::OTCountertop:
+				starters.Add(kvp.Key);
+			break;
+		}
 	}
-	ensureAlways(errors.Num() == 0);
+
+	/*
+	Now build every preset that was returned in 'starters' by the manifest parse and add it to the project
+	*/
+	for (auto &starter : starters)
+	{
+		const FBIMPreset *preset = PresetManager.CraftingNodePresets.Presets.Find(starter);
+
+		if (!ensureAlways(preset != nullptr && preset->ObjectType != EObjectType::OTNone))
+		{
+			continue;
+		}
+
+		FBIMAssemblySpec outSpec;
+		outSpec.FromPreset(*this, PresetManager.CraftingNodePresets, starter);
+		outSpec.ObjectType = preset->ObjectType;PresetManager.UpdateProjectAssembly(outSpec);
+
+		// TODO: default assemblies added to allow interim loading during assembly refactor, to be eliminated
+		if (!gotDefault.Contains(outSpec.ObjectType))
+		{
+			gotDefault.Add(outSpec.ObjectType);
+			outSpec.RootPreset = TEXT("default");
+			PresetManager.UpdateProjectAssembly(outSpec);
+		}
+	}
 }
 
 TArray<FString> FModumateDatabase::GetDebugInfo()

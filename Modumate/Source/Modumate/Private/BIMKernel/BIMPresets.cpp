@@ -228,7 +228,6 @@ void FBIMPreset::SetProperties(const FBIMPropertySheet& InProperties)
 	Properties = InProperties;
 }
 
-
 EObjectType FBIMPresetCollection::GetPresetObjectType(const FName &PresetID) const
 {
 	const FBIMPreset *preset = Presets.Find(PresetID);
@@ -243,7 +242,7 @@ EObjectType FBIMPresetCollection::GetPresetObjectType(const FName &PresetID) con
 // Ultimately we will develop a compiler from this code that generates a record that can be read more efficiently
 // Once this compiler is in the shape we intend, we will determine where in the toolchain this code will reside we can refactor for long term sustainability
 // Until then this is a prototypical development space used to prototype the relational database structure being authored in Excel
-ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPath, const FString &ManifestFile, TArray<FString> &OutMessages)
+ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMNameType>& OutStarters, TArray<FString>& OutMessages)
 {
 	FModumateCSVScriptProcessor processor;
 
@@ -276,7 +275,9 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPat
 
 		FBIMPreset currentPreset;
 
-		FColumnRange configRange, propertyRange, myPathRange, parentPathRange, pinRange, idRange;
+		FColumnRange configRange, propertyRange, 
+			myPathRange, parentPathRange, pinRange, 
+			idRange, startInProjectRange;
 	};
 
 	FTableData tableData;
@@ -295,7 +296,6 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPat
 		}
 		return cell;
 	};
-
 
 	processor.AddRule(kTypeName, [&OutMessages, &tableData](const TArray<const TCHAR*> &Row, int32 RowNumber)
 	{
@@ -376,6 +376,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPat
 			InputPins,
 			ParentPaths,
 			ID,
+			StartsInProject,
 			MyPath,
 			Slots
 		};
@@ -387,34 +388,40 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPat
 		for (int32 i = 1; i < Row.Num(); ++i)
 		{
 			FString cell = Row[i];
+			TArray<FString> dataType;
 
-			if (cell.Contains(TEXT("DataType=")))
+			if (cell.ParseIntoArray(dataType, TEXT("=")) && dataType[0].Equals(TEXT("DataType")))
 			{
-				if (cell.Contains(TEXT("Slots")))
+				if (dataType[1].Equals(TEXT("Slots")))
 				{
 					state = Slots;
 				}
-				else if (cell.Contains(TEXT("Properties")))
+				else if (dataType[1].Equals(TEXT("Properties")))
 				{
 					tableData.propertyRange.first = i + 1;
 					state = Properties;
 				}
-				else if (cell.Contains(TEXT("InputPins")))
+				else if (dataType[1].Equals(TEXT("StartsInProject")))
+				{
+					tableData.startInProjectRange.first = i + 1;
+					state = StartsInProject;
+				}
+				else if (dataType[1].Equals(TEXT("InputPins")))
 				{
 					tableData.pinRange.first = i + 1;
 					state = InputPins;
 				}
-				else if (cell.Contains(TEXT("Parent")))
+				else if (dataType[1].Contains(TEXT("Parent")))
 				{
 					tableData.parentPathRange.first = i + 1;
 					state = ParentPaths;
 				}
-				else if (cell.Contains(TEXT("MyNode")))
+				else if (dataType[1].Contains(TEXT("MyNode")))
 				{
 					tableData.myPathRange.first = i + 1;
 					state = MyPath;
 				}
-				else if (cell.Contains(TEXT("=ID")))
+				else if (dataType[1].Equals(TEXT("ID")))
 				{
 					tableData.idRange.first = i + 1;
 					state = ID;
@@ -424,64 +431,71 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPat
 
 			switch (state)
 			{
-			case Slots:
+				case StartsInProject:
+				{
+					//Column title doesn't matter, just need any value to check range
+					tableData.startInProjectRange.columns.Add(TEXT(""));
+				}
 				break;
 
-			case Properties:
-			{
-				tableData.propertyRange.columns.Add(cell);
-			}
-			break;
+				case Slots:
+					break;
 
-			case InputPins:
-			{
-				tableData.pinRange.columns.Add(normalizeCell(*cell));
-			}
-			break;
-
-			case Configuration:
-			{
-				tableData.configRange.columns.Add(cell);
-			}
-			break;
-			case ID:
-			{
-				tableData.idRange.columns.Add(normalizeCell(*cell));
-			}
-			break;
-
-			case ParentPaths:
-			case MyPath:
-			{
-				TArray<FString> tags;
-				cell.RemoveSpacesInline();
-				cell.ParseIntoArray(tags, TEXT("-->"));
-
-				FBIMTagPath path;
-				for (auto &tag : tags)
+				case Properties:
 				{
-					FBIMTagGroup &group = path.AddDefaulted_GetRef();
-					group.Add(*tag);
-				};
-
-				if (state == MyPath)
-				{
-					tableData.myPaths.Add(path);
-					tableData.myPathRange.columns.Add(cell);
+					tableData.propertyRange.columns.Add(cell);
 				}
-				else
-				{
-					tableData.parentPaths.Add(path);
-					tableData.parentPathRange.columns.Add(cell);
-				}
-			}
+				break;
 
-			break;
+				case InputPins:
+				{
+					tableData.pinRange.columns.Add(normalizeCell(*cell));
+				}
+				break;
+
+				case Configuration:
+				{
+					tableData.configRange.columns.Add(cell);
+				}
+				break;
+
+				case ID:
+				{
+					tableData.idRange.columns.Add(normalizeCell(*cell));
+				}
+				break;
+
+				case ParentPaths:
+				case MyPath:
+				{
+					TArray<FString> tags;
+					cell.RemoveSpacesInline();
+					cell.ParseIntoArray(tags, TEXT("-->"));
+
+					FBIMTagPath path;
+					for (auto &tag : tags)
+					{
+						FBIMTagGroup &group = path.AddDefaulted_GetRef();
+						group.Add(*tag);
+					};
+
+					if (state == MyPath)
+					{
+						tableData.myPaths.Add(path);
+						tableData.myPathRange.columns.Add(cell);
+					}
+					else
+					{
+						tableData.parentPaths.Add(path);
+						tableData.parentPathRange.columns.Add(cell);
+					}
+				}
+				break;
 			};
 		}
 	});
 
-	processor.AddRule(kPreset, [&OutMessages, normalizeCell, &tableData, &ManifestFile, this](const TArray<const TCHAR*> &Row, int32 RowNumber)
+	processor.AddRule(kPreset, [&OutMessages, &OutStarters, normalizeCell, &tableData, &ManifestFile, this](const TArray<const TCHAR*> &Row, int32 RowNumber)
 	{
 		for (int32 i = 1; i < Row.Num(); ++i)
 		{
@@ -499,6 +513,13 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPat
 					tableData.currentPreset.PresetID = *cell;
 					tableData.currentPreset.NodeType = tableData.nodeType.TypeName;
 					tableData.currentPreset.NodeScope = tableData.nodeType.Scope;
+				}
+			}
+			else if (tableData.startInProjectRange.IsIn(i))
+			{
+				if (!cell.IsEmpty())
+				{
+					OutStarters.Add(tableData.currentPreset.PresetID);
 				}
 			}
 			else if (tableData.propertyRange.IsIn(i))
@@ -546,6 +567,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPat
 				}
 			}
 		}
+
 	});
 
 	processor.AddRule(kInputPin, [&OutMessages, &tableData](const TArray<const TCHAR*> &Row, int32 RowNumber)
@@ -612,6 +634,13 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString &ManifestPat
 				OutMessages.Add(FString::Printf(TEXT("Failed to load CSV file %s"), *file));
 				return ECraftingResult::Error;
 			}
+
+			// Make sure the last preset we were reading ends up in the map
+			if (!tableData.currentPreset.PresetID.IsNone())
+			{
+				Presets.Add(tableData.currentPreset.PresetID, tableData.currentPreset);
+			}
+
 		}
 		return ECraftingResult::Success;
 	}

@@ -118,6 +118,8 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTRailSegments", "Rails") : LOCTEXT("OTRailSegment", "Rail");
 	case EObjectType::OTFloorSegment:
 		return bPlural ? LOCTEXT("OTFloorSegments", "Floors") : LOCTEXT("OTFloorSegment", "Floor");
+	case EObjectType::OTCeiling:
+		return bPlural ? LOCTEXT("OTCeiling", "Ceilings") : LOCTEXT("OTCeiling", "Ceiling");
 	case EObjectType::OTRoofFace:
 		return bPlural ? LOCTEXT("OTRoofs", "Roofs") : LOCTEXT("OTRoof", "Roof");
 	case EObjectType::OTDoor:

@@ -1,11 +1,11 @@
-TYPENAME,,4LayeredAssembly,,Assembly,,,,,,
-,,Definition,,,,,,,,
-,,PropertyType,,PropertyName,,Scope.Property,,,,
-PROPERTY,,STRING,,Name,,Assembly.Name,,,,
-,,InputExtensibility,,InputPreset,,,,,,
-INPUTPIN,,1..,,ChildLayerArray,,,,,,
-,,Presets,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,MyNode+CategoryPath,DataType=Properties,Assembly.Name,DataType=InputPins,ChildLayerArray,DataType=TG_Parent Node+CategoryPath,5Stair
+TYPENAME,,4LayeredAssembly,,Assembly,,,,,,,,
+,,Definition,,,,,,,,,,
+,,PropertyType,,PropertyName,,Scope.Property,,,,,,
+PROPERTY,,STRING,,Name,,Assembly.Name,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,
+INPUTPIN,,1..,,ChildLayerArray,,,,,,,,
+,,Presets,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,MyNode+CategoryPath,DataType=Properties,Assembly.Name,DataType=StartsInProject,,DataType=InputPins,ChildLayerArray,DataType=TG_Parent Node+CategoryPath,5Stair
 PRESET,,"2Layer0D --> Abstract
 1Material
 0RawMaterial
@@ -35,7 +35,7 @@ FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
-6inT",,4LayeredAssembly --> Wall,,4LayeredAssembly-9,,"2Layer0D --> Abstract
+6inT",,4LayeredAssembly --> Wall,,4LayeredAssembly-9,,X,,"2Layer0D --> Abstract
 1Material
 0RawMaterial
 Abstract
@@ -45,7 +45,7 @@ FFFFFF-White
 Standard
 0DimThk
 6inT",,
-PRESET,,,,,,,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+PRESET,,,,,,,,,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
 Concrete (Normal Aggregate)
@@ -55,7 +55,7 @@ D6D7D8-Natural
 Standard
 0DimThk
 6inT",,
-PRESET,,,,,,,,"2Layer0D --> Abstract
+PRESET,,,,,,,,,,"2Layer0D --> Abstract
 1Material
 0RawMaterial
 Abstract
@@ -101,7 +101,7 @@ FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
-1inT",,4LayeredAssembly --> Wall,,4LayeredAssembly-12,,"2Layer0D --> Membrane --> RubberizedAsphalt
+1inT",,4LayeredAssembly --> Wall,,4LayeredAssembly-12,,X,,"2Layer0D --> Membrane --> RubberizedAsphalt
 1Material --> Synthetic and Polymer --> Plastic
 0RawMaterial
 Plastic
@@ -111,7 +111,7 @@ Plastic
 Standard
 0DimThk
 0.0625inT",,
-PRESET,,,,,,,,"2Layer0D --> Mass --> RammedEarth
+PRESET,,,,,,,,,,"2Layer0D --> Mass --> RammedEarth
 1Material --> Aggregates --> Rammed Earth
 0RawMaterial
 Rammed Earth
@@ -121,7 +121,7 @@ FFFFFF-White
 Standard
 0DimThk
 15cmT",,
-PRESET,,,,,,,,"2Layer0D --> Roll --> Carpet
+PRESET,,,,,,,,,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Low Profile)
@@ -131,7 +131,7 @@ E9EAE6-White
 Standard
 0DimThk
 0.75inT",,
-PRESET,,,,,,,,"2Layer0D --> Sitework --> Gravel
+PRESET,,,,,,,,,,"2Layer0D --> Sitework --> Gravel
 1Material --> Aggregates --> Gravel
 0RawMaterial
 Gravel
@@ -159,7 +159,7 @@ D6D7D8-Natural
 0SrfTreatment
 Standard
 0DimThk
-10inT",,4LayeredAssembly --> Wall,,4LayeredAssembly-16,,"2Layer0D --> Abstract
+10inT",,4LayeredAssembly --> Wall,,4LayeredAssembly-16,,X,,"2Layer0D --> Abstract
 1Material
 0RawMaterial
 Abstract
@@ -169,7 +169,7 @@ FFFFFF-White
 Standard
 0DimThk
 24inT",,
-PRESET,,,,,,,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+PRESET,,,,,,,,,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
 Concrete (Normal Aggregate)
@@ -215,7 +215,7 @@ Asphalt
 0SrfTreatment
 Standard
 0DimThk
-3inT",,4LayeredAssembly --> Wall,,4LayeredAssembly-18,,"2Layer0D --> Roll --> Foam
+3inT",,4LayeredAssembly --> Wall,,4LayeredAssembly-18,,X,,"2Layer0D --> Roll --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
 Foam (Extruded Polystyrene)
@@ -225,7 +225,7 @@ ECB9BE-Pink
 Standard
 0DimThk
 0.5inT",,
-PRESET,,,,,,,,"2Layer0D --> Mass --> PrecastConcrete
+PRESET,,,,,,,,,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
 Concrete (Normal Aggregate)
@@ -235,7 +235,7 @@ D6D7D8-Natural
 Standard
 0DimThk
 12inT",,
-PRESET,,,,,,,,"2Layer0D --> Roll --> Foam
+PRESET,,,,,,,,,,"2Layer0D --> Roll --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
 Foam (Extruded Polystyrene)
@@ -245,7 +245,7 @@ ECB9BE-Pink
 Standard
 0DimThk
 0.25inT",,
-PRESET,,,,,,,,"2Layer0D --> Spread --> Asphalt
+PRESET,,,,,,,,,,"2Layer0D --> Spread --> Asphalt
 1Material --> Aggregates --> Asphalt
 0RawMaterial
 Asphalt
@@ -282,7 +282,7 @@ E9EAE6-White
 0SrfTreatment
 Standard
 0DimThk
-0.5inT",,4LayeredAssembly --> Floor,,4LayeredAssembly-22,,"2Layer0D --> Abstract --> CastInPlaceConcrete
+0.5inT",,4LayeredAssembly --> Floor,,4LayeredAssembly-22,,X,,"2Layer0D --> Abstract --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
 Concrete (Normal Aggregate)
@@ -292,7 +292,7 @@ D6D7D8-Natural
 Standard
 0DimThk
 10inT",,
-PRESET,,,,,,,,"2Layer0D --> Mass --> RammedEarth
+PRESET,,,,,,,,,,"2Layer0D --> Mass --> RammedEarth
 1Material --> Aggregates --> Rammed Earth
 0RawMaterial
 Rammed Earth
@@ -302,7 +302,7 @@ FFFFFF-White
 Standard
 0DimThk
 60cmT",,
-PRESET,,,,,,,,"2Layer0D --> Roll --> Carpet
+PRESET,,,,,,,,,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Low Profile)
@@ -348,7 +348,7 @@ FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
-8inT",,4LayeredAssembly --> Floor,,4LayeredAssembly-25,,"2Layer0D --> Roll --> Cork
+8inT",,4LayeredAssembly --> Floor,,4LayeredAssembly-25,,X,,"2Layer0D --> Roll --> Cork
 1Material --> Fibrous --> Cork
 0RawMaterial
 Cork
@@ -358,7 +358,7 @@ FFFFFF-White
 Standard
 0DimThk
 0.25inT",,
-PRESET,,,,,,,,"2Layer0D --> Membrane --> EPDMRubber
+PRESET,,,,,,,,,,"2Layer0D --> Membrane --> EPDMRubber
 1Material --> Synthetic and Polymer --> Plastic
 0RawMaterial
 Plastic
@@ -368,7 +368,7 @@ Plastic
 Standard
 0DimThk
 0.0625inT",,
-PRESET,,,,,,,,"2Layer0D --> Roll --> Felt
+PRESET,,,,,,,,,,"2Layer0D --> Roll --> Felt
 1Material --> Fabric and Upholstery --> Felt
 0RawMaterial
 Felt
@@ -378,7 +378,7 @@ B9A081-Khaki
 Standard
 0DimThk
 3mmT",,
-PRESET,,,,,,,,"2Layer0D --> Sitework --> Grass
+PRESET,,,,,,,,,,"2Layer0D --> Sitework --> Grass
 1Material --> Fibrous --> Wood Particles
 0RawMaterial
 Wood Particles
@@ -406,7 +406,7 @@ D6D7D8-Natural
 0SrfTreatment
 Standard
 0DimThk
-12inT",,4LayeredAssembly --> Floor,,4LayeredAssembly-29,,"2Layer0D --> Mass --> PrecastConcrete
+12inT",,4LayeredAssembly --> Floor,,4LayeredAssembly-29,,X,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
 Concrete (Normal Aggregate)
@@ -416,7 +416,7 @@ D6D7D8-Natural
 Standard
 0DimThk
 3inT",,
-PRESET,,,,,,,,"2Layer0D --> Mass --> PrecastConcrete
+PRESET,,,,,,,,,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
 Concrete (Normal Aggregate)
@@ -462,7 +462,7 @@ F3F1ED-GentleWhite
 0SrfTreatment
 BuffPolished
 0DimThk
-0.02inT",,4LayeredAssembly --> Floor,,4LayeredAssembly-31,,"2Layer0D --> Sitework --> Gravel
+0.02inT",,4LayeredAssembly --> Floor,,4LayeredAssembly-31,,X,,"2Layer0D --> Sitework --> Gravel
 1Material --> Aggregates --> Gravel
 0RawMaterial
 Gravel
@@ -472,7 +472,7 @@ FFFFFF-White
 Standard
 0DimThk
 2inT",,
-PRESET,,,,,,,,"2Layer0D --> Mass --> CrossLaminatedTimber
+PRESET,,,,,,,,,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
 Spruce-Pine-Fir
@@ -482,7 +482,7 @@ FFFFFF-White
 Unfinished
 0DimThk
 9.625inT",,
-PRESET,,,,,,,,"2Layer0D --> Sitework --> Gravel
+PRESET,,,,,,,,,,"2Layer0D --> Sitework --> Gravel
 1Material --> Aggregates --> Gravel
 0RawMaterial
 Gravel
@@ -492,7 +492,7 @@ FFFFFF-White
 Standard
 0DimThk
 1inT",,
-PRESET,,,,,,,,"2Layer0D --> Spread --> Paint
+PRESET,,,,,,,,,,"2Layer0D --> Spread --> Paint
 1Material --> Spread --> Paint
 0RawMaterial
 Paint
@@ -529,7 +529,7 @@ B9A081-Khaki
 0SrfTreatment
 Standard
 0DimThk
-2mmT",,4LayeredAssembly --> Roof,,4LayeredAssembly-35,,"2Layer0D --> Mass --> PrecastConcrete
+2mmT",,4LayeredAssembly --> Roof,,4LayeredAssembly-35,,X,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
 Concrete (Normal Aggregate)
@@ -539,7 +539,7 @@ D6D7D8-Natural
 Standard
 0DimThk
 12inT",,
-PRESET,,,,,,,,"2Layer0D --> Roll --> Carpet
+PRESET,,,,,,,,,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Low Profile)
@@ -549,7 +549,7 @@ E9EAE6-White
 Standard
 0DimThk
 0.25inT",,
-PRESET,,,,,,,,"2Layer0D --> Roll --> Felt
+PRESET,,,,,,,,,,"2Layer0D --> Roll --> Felt
 1Material --> Fabric and Upholstery --> Felt
 0RawMaterial
 Felt
@@ -595,7 +595,7 @@ FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
-3inT",,4LayeredAssembly --> Roof,,4LayeredAssembly-38,,"2Layer0D --> Roll --> PlasticAdhesive
+3inT",,4LayeredAssembly --> Roof,,4LayeredAssembly-38,,X,,"2Layer0D --> Roll --> PlasticAdhesive
 1Material --> Synthetic and Polymer --> Plastic
 0RawMaterial
 Plastic
@@ -605,7 +605,7 @@ Plastic
 Standard
 0DimThk
 0.09375inT",,
-PRESET,,,,,,,,"2Layer0D --> Roll --> Cork
+PRESET,,,,,,,,,,"2Layer0D --> Roll --> Cork
 1Material --> Fibrous --> Cork
 0RawMaterial
 Cork
@@ -615,7 +615,7 @@ FFFFFF-White
 Standard
 0DimThk
 0.125inT",,
-PRESET,,,,,,,,"2Layer0D --> Roll --> PlasticUnderlayment
+PRESET,,,,,,,,,,"2Layer0D --> Roll --> PlasticUnderlayment
 1Material --> Synthetic and Polymer --> Plastic
 0RawMaterial
 Plastic
@@ -625,7 +625,7 @@ Plastic
 Standard
 0DimThk
 0.09375inT",,
-PRESET,,,,,,,,"2Layer0D --> Sitework --> Soil
+PRESET,,,,,,,,,,"2Layer0D --> Sitework --> Soil
 1Material --> Fibrous --> Wood Strands
 0RawMaterial
 Wood Strands
@@ -653,7 +653,7 @@ FFFFFF-White
 0SrfTreatment
 Unfinished
 0DimThk
-9.625inT",,4LayeredAssembly --> Roof,,4LayeredAssembly-42,,"2Layer0D --> Mass --> CrossLaminatedTimber
+9.625inT",,4LayeredAssembly --> Roof,,4LayeredAssembly-42,,X,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
 Spruce-Pine-Fir
@@ -663,7 +663,7 @@ FFFFFF-White
 Unfinished
 0DimThk
 5.5inT",,
-PRESET,,,,,,,,"2Layer0D --> Mass --> CrossLaminatedTimber
+PRESET,,,,,,,,,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
 Spruce-Pine-Fir
@@ -709,7 +709,7 @@ FFFFFF-Clear
 0SrfTreatment
 Standard
 0DimThk
-1.5inT",,4LayeredAssembly --> Roof,,4LayeredAssembly-44,,"2Layer0D --> Sitework --> Grass
+1.5inT",,4LayeredAssembly --> Roof,,4LayeredAssembly-44,,X,,"2Layer0D --> Sitework --> Grass
 1Material --> Fibrous --> Wood Particles
 0RawMaterial
 Wood Particles
@@ -719,7 +719,7 @@ FFFFFF-White
 Standard
 0DimThk
 12inT",,
-PRESET,,,,,,,,"2Layer0D --> Membrane --> PVC
+PRESET,,,,,,,,,,"2Layer0D --> Membrane --> PVC
 1Material --> Synthetic and Polymer --> Plastic
 0RawMaterial
 Plastic
@@ -729,7 +729,7 @@ Plastic
 Standard
 0DimThk
 0.0625inT",,
-PRESET,,,,,,,,"2Layer0D --> Sitework --> Grass
+PRESET,,,,,,,,,,"2Layer0D --> Sitework --> Grass
 1Material --> Fibrous --> Wood Particles
 0RawMaterial
 Wood Particles
@@ -739,7 +739,7 @@ FFFFFF-White
 Standard
 0DimThk
 8inT",,
-PRESET,,,,,,,,"2Layer0D --> Void --> Air
+PRESET,,,,,,,,,,"2Layer0D --> Void --> Air
 1Material --> Glass and Transparent --> Air
 0RawMaterial
 Air
@@ -776,7 +776,7 @@ Plastic
 0SrfTreatment
 Standard
 0DimThk
-0.0625inT",,4LayeredAssembly --> Finish,,4LayeredAssembly-48,,"2Layer0D --> Mass --> CrossLaminatedTimber
+0.0625inT",,4LayeredAssembly --> Finish,,4LayeredAssembly-48,,X,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
 Spruce-Pine-Fir
@@ -786,7 +786,7 @@ FFFFFF-White
 Unfinished
 0DimThk
 9.625inT",,
-PRESET,,,,,,,,"2Layer0D --> Roll --> Felt
+PRESET,,,,,,,,,,"2Layer0D --> Roll --> Felt
 1Material --> Fabric and Upholstery --> Felt
 0RawMaterial
 Felt
@@ -796,7 +796,7 @@ B9A081-Khaki
 Standard
 0DimThk
 2mmT",,
-PRESET,,,,,,,,"2Layer0D --> Roll --> PlasticUnderlayment
+PRESET,,,,,,,,,,"2Layer0D --> Roll --> PlasticUnderlayment
 1Material --> Synthetic and Polymer --> Plastic
 0RawMaterial
 Plastic
@@ -842,7 +842,7 @@ Asphalt
 0SrfTreatment
 Standard
 0DimThk
-1inT",,4LayeredAssembly --> Finish,,4LayeredAssembly-51,,"2Layer0D --> Sitework --> Gravel
+1inT",,4LayeredAssembly --> Finish,,4LayeredAssembly-51,,X,,"2Layer0D --> Sitework --> Gravel
 1Material --> Aggregates --> Gravel
 0RawMaterial
 Gravel
@@ -852,7 +852,7 @@ FFFFFF-White
 Standard
 0DimThk
 8inT",,
-PRESET,,,,,,,,"2Layer0D --> Roll --> LathMetal
+PRESET,,,,,,,,,,"2Layer0D --> Roll --> LathMetal
 1Material --> Metal --> Aluminum
 0RawMaterial
 Aluminum
@@ -862,7 +862,7 @@ FFFFFF-PureWhite
 Standard
 0DimThk
 0.125inT",,
-PRESET,,,,,,,,"2Layer0D --> Sitework --> Grass
+PRESET,,,,,,,,,,"2Layer0D --> Sitework --> Grass
 1Material --> Fibrous --> Wood Particles
 0RawMaterial
 Wood Particles
@@ -872,7 +872,7 @@ FFFFFF-White
 Standard
 0DimThk
 1inT",,
-PRESET,,,,,,,,"2Layer0D --> Spread --> Asphalt
+PRESET,,,,,,,,,,"2Layer0D --> Spread --> Asphalt
 1Material --> Aggregates --> Asphalt
 0RawMaterial
 Asphalt
@@ -900,7 +900,7 @@ Plastic
 0SrfTreatment
 Standard
 0DimThk
-0.0625inT",,4LayeredAssembly --> Finish,,4LayeredAssembly-55,,"2Layer0D --> Membrane --> BitumenousFelt
+0.0625inT",,4LayeredAssembly --> Finish,,4LayeredAssembly-55,,X,,"2Layer0D --> Membrane --> BitumenousFelt
 1Material --> Fabric and Upholstery --> Felt
 0RawMaterial
 Felt
@@ -910,7 +910,7 @@ B9A081-Khaki
 Standard
 0DimThk
 0.0625inT",,
-PRESET,,,,,,,,"2Layer0D --> Membrane --> PVC
+PRESET,,,,,,,,,,"2Layer0D --> Membrane --> PVC
 1Material --> Synthetic and Polymer --> Plastic
 0RawMaterial
 Plastic
@@ -947,7 +947,7 @@ FFFFFF-White
 0SrfTreatment
 Standard
 0DimThk
-3inT",,4LayeredAssembly --> Finish,,4LayeredAssembly-57,,"2Layer0D --> Sitework --> Soil
+3inT",,4LayeredAssembly --> Finish,,4LayeredAssembly-57,,X,,"2Layer0D --> Sitework --> Soil
 1Material --> Fibrous --> Wood Strands
 0RawMaterial
 Wood Strands
@@ -957,7 +957,7 @@ FFFFFF-White
 Standard
 0DimThk
 4inT",,
-PRESET,,,,,,,,"2Layer0D --> Roll --> Carpet
+PRESET,,,,,,,,,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Medium Profile)
@@ -967,7 +967,7 @@ Carpet (Medium Profile)
 Standard
 0DimThk
 0.5inT",,
-PRESET,,,,,,,,"2Layer0D --> Sitework --> Soil
+PRESET,,,,,,,,,,"2Layer0D --> Sitework --> Soil
 1Material --> Fibrous --> Wood Strands
 0RawMaterial
 Wood Strands
@@ -995,7 +995,7 @@ FFFFFF-White
 0SrfTreatment
 Unfinished
 0DimThk
-3.5inT",,4LayeredAssembly --> Ceiling,,Ceiling Dude Guy 1,,"2Layer0D --> Mass --> PrecastConcrete
+3.5inT",,4LayeredAssembly --> Ceiling,,Ceiling Dude Guy 1,,X,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete
 0RawMaterial
 Concrete (Normal Aggregate)
@@ -1005,7 +1005,7 @@ D6D7D8-Natural
 Standard
 0DimThk
 3inT",,
-PRESET,,,,,,,,"2Layer0D --> Mass --> CrossLaminatedTimber
+PRESET,,,,,,,,,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
 Spruce-Pine-Fir
@@ -1015,5 +1015,5 @@ FFFFFF-White
 Unfinished
 0DimThk
 3.5inT",,
-PRESET,,,,4LayeredAssembly --> Ceiling,,,,,,
-PRESET,,,,,,,,,,
+PRESET,,,,4LayeredAssembly --> Ceiling,,,,,,,,
+PRESET,,,,,,,,,,,,

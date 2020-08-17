@@ -239,6 +239,7 @@ bool USplitObjectTool::FrameUpdate()
 				}
 				break;
 				case EObjectType::OTFloorSegment:
+				case EObjectType::OTCeiling:
 					//case OTRoofSegment:
 				case EObjectType::OTCabinet:
 				{
@@ -293,6 +294,7 @@ bool USplitObjectTool::PerformSplit() const
 	}
 	break;
 	case EObjectType::OTFloorSegment:
+	case EObjectType::OTCeiling:
 		//case OTRoofSegment:
 	case EObjectType::OTCabinet:
 	{
@@ -444,6 +446,7 @@ bool USplitObjectTool::HasValidEdgeSplitTarget() const
 			return true;
 		}
 		case EObjectType::OTFloorSegment:
+		case EObjectType::OTCeiling:
 			//case OTRoofSegment:
 		case EObjectType::OTCabinet:
 		{
@@ -470,6 +473,7 @@ bool USplitObjectTool::HasValidCornerHoverTarget() const
 			return false;
 		}
 		case EObjectType::OTFloorSegment:
+		case EObjectType::OTCeiling:
 			//case OTRoofSegment:
 		case EObjectType::OTCabinet:
 		{
@@ -495,6 +499,7 @@ bool USplitObjectTool::HasValidCornerSplitTarget() const
 			return false;
 		}
 		case EObjectType::OTFloorSegment:
+		case EObjectType::OTCeiling:
 			//case OTRoofSegment:
 		case EObjectType::OTCabinet:
 		{
@@ -625,6 +630,7 @@ bool USplitObjectTool::FindSplitTarget(const FModumateObjectInstance *moi, const
 	}
 	break;
 	case EObjectType::OTFloorSegment:
+	case EObjectType::OTCeiling:
 		//case OTRoofSegment:
 	case EObjectType::OTCabinet:
 	{

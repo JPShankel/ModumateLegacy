@@ -133,12 +133,77 @@ static bool testTags()
 		return false;
 	}
 
-	if (!ensureAlways(path1.Matches(path2)))
+	if (!ensureAlways(path1.MatchesExact(path2)))
 	{
 		return false;
 	}
 
-	if (!ensureAlways(path2.Matches(path1)))
+	if (!ensureAlways(path2.MatchesExact(path1)))
+	{
+		return false;
+	}
+
+	group1 = FBIMTagGroup();
+	group2 = FBIMTagGroup();
+	FBIMTagGroup group3, group4;
+
+	group1.Add(TEXT("ONE"));
+	group2.Add(TEXT("TWO"));
+	group3.Add(TEXT("THREE"));
+	group4.Add(TEXT("FOUR"));
+
+	path1 = FBIMTagPath();
+	path1.Add(group1);
+	path1.Add(group2);
+	path1.Add(group3);
+	path1.Add(group4);
+
+	path2 = FBIMTagPath();
+	path2.Add(group1);
+	path2.Add(group2);
+
+	if (!ensureAlways(path1.MatchesPartial(path2)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(path2.MatchesPartial(path1)))
+	{
+		return false;
+	}
+
+	path1 = FBIMTagPath();
+	path1.Add(group1);
+	path1.Add(group2);
+
+	path2 = FBIMTagPath();
+	path2.Add(group1);
+	path2.Add(group4);
+
+	if (!ensureAlways(!path1.MatchesPartial(path2)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(!path2.MatchesPartial(path1)))
+	{
+		return false;
+	}
+
+	path1 = FBIMTagPath();
+	path1.Add(group3);
+	path1.Add(group4);
+
+	path2 = FBIMTagPath();
+	path2.Add(group1);
+	path2.Add(group4);
+
+	if (!ensureAlways(!path1.MatchesPartial(path2)))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(!path2.MatchesPartial(path1)))
 	{
 		return false;
 	}
@@ -191,8 +256,9 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 
 	TArray<FString> errors;
 	FBIMPresetCollection presetCollection;
+	TArray<FName> starters;
 
-	if (presetCollection.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), errors) != ECraftingResult::Success)
+	if (presetCollection.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), starters, errors) != ECraftingResult::Success)
 	{
 		return false;
 	}

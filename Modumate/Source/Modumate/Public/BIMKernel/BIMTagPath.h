@@ -20,7 +20,8 @@ public:
 class FBIMTagPath : public TArray<FBIMTagGroup>
 {
 public:
-	bool Matches(const FBIMTagPath &OtherPath) const;
+	bool MatchesExact(const FBIMTagPath &OtherPath) const;
+	bool MatchesPartial(const FBIMTagPath& OtherPath) const;
 
 	ECraftingResult FromString(const FString &InString);
 	ECraftingResult ToString(FString &OutString) const;

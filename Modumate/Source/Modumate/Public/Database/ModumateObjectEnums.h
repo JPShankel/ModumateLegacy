@@ -132,6 +132,7 @@ enum class EObjectType : uint8
 	OTStructureLine,
 	OTDrawing,
 	OTRoofPerimeter,
+	OTCeiling,
 	OTUnknown
 };
 

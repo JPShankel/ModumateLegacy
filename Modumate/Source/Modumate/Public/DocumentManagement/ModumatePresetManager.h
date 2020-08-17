@@ -33,7 +33,6 @@ public:
 
 	// DDL 2.0
 	FBIMPresetCollection CraftingNodePresets, DraftingNodePresets;
-	TMap<EObjectType, FName> StarterPresetsByObjectType;
 
 	bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FName& PresetID, FBIMAssemblySpec& OutAssembly) const;
 	bool TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAssemblySpec& OutAssembly) const;

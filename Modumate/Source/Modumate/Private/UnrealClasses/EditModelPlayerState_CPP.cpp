@@ -1215,6 +1215,7 @@ bool AEditModelPlayerState_CPP::IsObjectTypeEnabledByViewMode(EObjectType Object
 		return EMPlayerController->bCutPlaneVisible;
 	case EObjectType::OTWallSegment:
 	case EObjectType::OTFloorSegment:
+	case EObjectType::OTCeiling:
 	case EObjectType::OTRoofFace:
 		return (SelectedViewMode == EEditViewModes::ObjectEditing) || (SelectedViewMode == EEditViewModes::SurfaceGraphs);
 	default:

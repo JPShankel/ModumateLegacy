@@ -94,7 +94,7 @@ ECraftingResult FBIMTagPath::ToString(FString &OutString) const
 	return ECraftingResult::Success;
 }
 
-bool FBIMTagPath::Matches(const FBIMTagPath &OtherPath) const
+bool FBIMTagPath::MatchesExact(const FBIMTagPath &OtherPath) const
 {
 	if (Num() != OtherPath.Num())
 	{
@@ -102,6 +102,19 @@ bool FBIMTagPath::Matches(const FBIMTagPath &OtherPath) const
 	}
 
 	for (int32 i = 0; i < Num(); ++i)
+	{
+		if (!OtherPath[i].MatchesAny((*this)[i]))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool FBIMTagPath::MatchesPartial(const FBIMTagPath& OtherPath) const
+{
+	for (int32 i = 0; i < FMath::Min(Num(), OtherPath.Num()); ++i)
 	{
 		if (!OtherPath[i].MatchesAny((*this)[i]))
 		{

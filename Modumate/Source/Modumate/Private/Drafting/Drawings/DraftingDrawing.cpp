@@ -168,7 +168,7 @@ namespace Modumate {
 
 		// Draw all separators, portals.
 		TArray<const FModumateObjectInstance*> beyondCutObjects(Doc->GetObjectsOfType(
-			{EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTFloorSegment, EObjectType::OTRoofFace, EObjectType::OTWindow,
+			{EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTCeiling, EObjectType::OTFloorSegment, EObjectType::OTRoofFace, EObjectType::OTWindow,
 				EObjectType::OTDoor, EObjectType::OTCabinet, EObjectType::OTStructureLine}));
 
 		for (auto object: beyondCutObjects)

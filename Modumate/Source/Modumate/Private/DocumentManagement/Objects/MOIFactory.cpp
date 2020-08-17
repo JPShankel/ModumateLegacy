@@ -34,6 +34,7 @@ namespace Modumate
 		case EObjectType::OTWallSegment: return new FMOIPlaneHostedObjImpl(MOI);
 		case EObjectType::OTRailSegment: return new FMOIRailImpl(MOI);
 		case EObjectType::OTFloorSegment: return new FMOIPlaneHostedObjImpl(MOI);
+		case EObjectType::OTCeiling: return new FMOIPlaneHostedObjImpl(MOI);
 		case EObjectType::OTRoofFace: return new FMOIPlaneHostedObjImpl(MOI);
 		case EObjectType::OTCountertop: return new FMOIFlatPolyImpl(MOI, false); // false = no invert handle
 		case EObjectType::OTDoor:

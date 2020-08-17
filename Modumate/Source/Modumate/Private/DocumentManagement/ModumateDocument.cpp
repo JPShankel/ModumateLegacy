@@ -291,6 +291,7 @@ bool FModumateDocument::UpdateGeometry(UWorld *world, int32 id, const TArray<FVe
 	switch (moi->GetObjectType())
 	{
 	case EObjectType::OTFloorSegment:
+	case EObjectType::OTCeiling:
 	case EObjectType::OTCabinet:
 	case EObjectType::OTCountertop:
 	case EObjectType::OTTrim:
@@ -3212,6 +3213,7 @@ void FModumateDocument::DisplayDebugInfo(UWorld* world)
 	displayObjectCount(EObjectType::OTWallSegment, TEXT("OTWallSegment"));
 	displayObjectCount(EObjectType::OTRailSegment, TEXT("OTRailSegment"));
 	displayObjectCount(EObjectType::OTFloorSegment, TEXT("OTFloorSegment"));
+	displayObjectCount(EObjectType::OTCeiling, TEXT("OTCeiling"));
 	displayObjectCount(EObjectType::OTRoofFace, TEXT("OTRoof"));
 	displayObjectCount(EObjectType::OTDoor, TEXT("OTDoor"));
 	displayObjectCount(EObjectType::OTWindow, TEXT("OTWindow"));
