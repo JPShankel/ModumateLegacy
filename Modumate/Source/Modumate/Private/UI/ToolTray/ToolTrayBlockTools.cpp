@@ -22,6 +22,7 @@ void UToolTrayBlockTools::ChangeToSeparatorToolsButtons()
 {
 	Button_Wall->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	Button_Floor->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	Button_Ceiling->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	Button_Roof->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	Button_Stair->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	Button_Door->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -38,6 +39,7 @@ void UToolTrayBlockTools::ChangeToAttachmentToolsButtons()
 {
 	Button_Wall->SetVisibility(ESlateVisibility::Collapsed);
 	Button_Floor->SetVisibility(ESlateVisibility::Collapsed);
+	Button_Ceiling->SetVisibility(ESlateVisibility::Collapsed);
 	Button_Roof->SetVisibility(ESlateVisibility::Collapsed);
 	Button_Stair->SetVisibility(ESlateVisibility::Collapsed);
 	Button_Door->SetVisibility(ESlateVisibility::Collapsed);

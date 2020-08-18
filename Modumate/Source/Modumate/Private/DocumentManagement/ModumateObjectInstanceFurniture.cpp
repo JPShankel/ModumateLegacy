@@ -183,8 +183,10 @@ namespace Modumate
 		if (MOI)
 		{
 			FModumateObjectInstance *parent = MOI->GetParentObject();
-			if (parent == nullptr || (parent->GetObjectType() != EObjectType::OTWallSegment) &&
-				(parent->GetObjectType() != EObjectType::OTFloorSegment))
+			if (parent == nullptr ||
+				(parent->GetObjectType() != EObjectType::OTWallSegment) &&
+				(parent->GetObjectType() != EObjectType::OTFloorSegment) &&
+				(parent->GetObjectType() != EObjectType::OTCeiling) )
 			{
 				return;
 			}

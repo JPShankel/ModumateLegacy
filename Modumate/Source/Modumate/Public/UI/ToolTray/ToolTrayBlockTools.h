@@ -28,6 +28,9 @@ public:
 	class UModumateButtonUserWidget *Button_Floor;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *Button_Ceiling;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *Button_Roof;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
