@@ -69,7 +69,7 @@ namespace Modumate
 		MOI->ClearAdjustmentHandles();
 
 		FModumateObjectInstance *surfacePolyParent = MOI->GetParentObject();
-		if (!ensure(surfacePolyParent && (surfacePolyParent->GetObjectType() == EObjectType::OTSurfacePolygon)))
+		if ((surfacePolyParent == nullptr) || !ensure(surfacePolyParent->GetObjectType() != EObjectType::OTSurfacePolygon))
 		{
 			return;
 		}

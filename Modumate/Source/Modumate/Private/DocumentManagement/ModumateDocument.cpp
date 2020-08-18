@@ -774,16 +774,15 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		targetSurfaceGraph = &SurfaceGraphs.Add(Delta.ID, FGraph2D(Delta.ID));
 		break;
 	case EGraph2DDeltaType::Edit:
+	case EGraph2DDeltaType::Remove:
 		if (!ensure(SurfaceGraphs.Contains(Delta.ID)))
 		{
 			return;
 		}
 		targetSurfaceGraph = SurfaceGraphs.Find(Delta.ID);
 		break;
-	case EGraph2DDeltaType::Remove:
-		ensure(SurfaceGraphs.Contains(Delta.ID));
-		SurfaceGraphs.Remove(Delta.ID);
-		return;
+	default:
+		break;
 	}
 
 	int32 surfaceGraphID = targetSurfaceGraph->GetID();
@@ -926,6 +925,12 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 				polygonObj->MarkDirty(EObjectDirtyFlags::Structure);
 			}
 		}
+	}
+
+	if (Delta.DeltaType == EGraph2DDeltaType::Remove)
+	{
+		ensureAlways(targetSurfaceGraph->IsEmpty());
+		SurfaceGraphs.Remove(Delta.ID);
 	}
 }
 
@@ -2265,7 +2270,7 @@ bool FModumateDocument::CleanObjects(TArray<TSharedPtr<FDelta>>* OutSideEffectDe
 				}
 
 			} while (bModifiedAnyObjects &&
-				ensureAlwaysMsgf(--sameFlagSafeguard > 0, TEXT("Infinite loop detected while cleaning objects with flag %s, breaking!"), *EnumValueString(EObjectDirtyFlags, flagToClean)));
+				ensureMsgf(--sameFlagSafeguard > 0, TEXT("Infinite loop detected while cleaning objects with flag %s, breaking!"), *EnumValueString(EObjectDirtyFlags, flagToClean)));
 
 			totalObjectCleans += objectCleans;
 		}
@@ -2277,7 +2282,7 @@ bool FModumateDocument::CleanObjects(TArray<TSharedPtr<FDelta>>* OutSideEffectDe
 		}
 
 	} while ((totalObjectsDirty > 0) &&
-		ensureAlwaysMsgf(--combinedDirtySafeguard > 0, TEXT("Infinite loop detected while cleaning combined dirty flags, breaking!")));
+		ensureMsgf(--combinedDirtySafeguard > 0, TEXT("Infinite loop detected while cleaning combined dirty flags, breaking!")));
 
 	return (totalObjectCleans > 0);
 }

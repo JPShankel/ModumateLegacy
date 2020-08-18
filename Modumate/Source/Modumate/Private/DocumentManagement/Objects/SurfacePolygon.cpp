@@ -119,6 +119,10 @@ namespace Modumate
 			CachedOffsetPoints.Add(perimeterVertexObj->GetObjectLocation() + pointOffsetDelta);
 		}
 
+		// TODO: remove if we can replace the use of ControlPoints as the de-facto public API between tools, handles, and between objects
+		// (such as finish objects, cabinet objects, polygon adjustment handles, move tool, etc.)
+		MOI->SetControlPoints(CachedOffsetPoints);
+
 		CachedHoles.Reset();
 		for (auto interiorPolyID : surfacePolgyon->InteriorPolygons)
 		{

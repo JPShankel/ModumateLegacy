@@ -14,12 +14,13 @@ namespace Modumate
 {
 	FMOISurfaceVertexImpl::FMOISurfaceVertexImpl(FModumateObjectInstance *moi)
 		: FMOIVertexImplBase(moi)
+		, CachedLocation(ForceInitToZero)
 	{
 	}
 
 	FVector FMOISurfaceVertexImpl::GetLocation() const
 	{
-		return ensure(VertexActor.IsValid()) ? VertexActor->MoiLocation : FVector::ZeroVector;
+		return CachedLocation;
 	}
 
 	FVector FMOISurfaceVertexImpl::GetCorner(int32 index) const
@@ -61,13 +62,11 @@ namespace Modumate
 		{
 		case EObjectDirtyFlags::Structure:
 		{
-			FVector worldLocation = VertexActor->MoiLocation;
-
 			if (MOI->GetIsInPreviewMode())
 			{
 				if (ensureAlways(MOI->GetControlPoints().Num() == 1))
 				{
-					worldLocation = MOI->GetControlPoint(0);
+					CachedLocation = MOI->GetControlPoint(0);
 				}
 			}
 			else
@@ -77,11 +76,11 @@ namespace Modumate
 				if (ensureAlways(surfaceVertex))
 				{
 					FTransform surfaceGraphTransform = surfaceGraphObj->GetWorldTransform();
-					worldLocation = UModumateGeometryStatics::Deproject2DPointTransform(surfaceVertex->Position, surfaceGraphTransform);
+					CachedLocation = UModumateGeometryStatics::Deproject2DPointTransform(surfaceVertex->Position, surfaceGraphTransform);
 				}
 			}
 
-			VertexActor->SetMOILocation(worldLocation);
+			VertexActor->SetMOILocation(CachedLocation);
 			break;
 		}
 		case EObjectDirtyFlags::Visuals:

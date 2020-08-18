@@ -44,9 +44,11 @@ namespace Modumate
 	{
 		if (DirtyFlag == EObjectDirtyFlags::Structure)
 		{
-			if (OutSideEffectDeltas == nullptr)
+			// Only use the Prev* members for side-effect evaluation, in order to know which two reference frames the surface graph elements are moving between
+			if (OutSideEffectDeltas != nullptr)
 			{
-				return true;
+				PrevFacePoints = CachedFacePoints;
+				PrevFaceOrigin = CachedFaceOrigin;
 			}
 
 			FModumateDocument* doc = MOI ? MOI->GetDocument() : nullptr;
@@ -54,6 +56,12 @@ namespace Modumate
 			if (!ensure(doc && surfaceGraph) || !UpdateCachedGraphData())
 			{
 				return false;
+			}
+
+			// If we aren't evaluating side effects, then updating cached graph data (and subsequently dirtying children surface graph elements) is enough
+			if (OutSideEffectDeltas == nullptr)
+			{
+				return true;
 			}
 
 			// If the cached host face geometry has changed after it was created, then the surface graph may need to be updated or deleted to match the new host face
@@ -121,15 +129,6 @@ namespace Modumate
 		{
 			return false;
 		}
-
-		// TODO: when we rely less on ControlPoints during preview mode, then we can more likely support cleaning surface graphs with preview graph data
-		if (parentObj->GetIsInPreviewMode() || ((parentObj->GetParentObject() != nullptr) && parentObj->GetParentObject()->GetIsInPreviewMode()))
-		{
-			return false;
-		}
-
-		PrevFacePoints = CachedFacePoints;
-		PrevFaceOrigin = CachedFaceOrigin;
 
 		int32 faceIndex = UModumateObjectStatics::GetParentFaceIndex(MOI);
 		return UModumateObjectStatics::GetGeometryFromFaceIndex(parentObj, faceIndex, CachedFacePoints, CachedFaceOrigin);
