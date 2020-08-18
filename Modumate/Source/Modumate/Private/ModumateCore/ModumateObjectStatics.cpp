@@ -926,6 +926,7 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const Modumate::FModumateObj
 		case EToolMode::VE_STAIR:
 		case EToolMode::VE_METAPLANE:
 		case EToolMode::VE_STRUCTURELINE:
+		case EToolMode::VE_CEILING:
 			bInMetaToolMode = true;
 			break;
 		default:

@@ -78,3 +78,14 @@ public:
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_FLOOR; }
 };
+
+UCLASS()
+class MODUMATE_API UCeilingTool : public UPlaneHostedObjTool
+{
+	GENERATED_BODY()
+
+public:
+	UCeilingTool(const FObjectInitializer& ObjectInitializer);
+
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_CEILING; }
+};

@@ -414,3 +414,10 @@ UFloorTool::UFloorTool(const FObjectInitializer& ObjectInitializer)
 	ObjectType = EObjectType::OTFloorSegment;
 	SetAxisConstraint(EAxisConstraint::AxesXY);
 }
+
+UCeilingTool::UCeilingTool(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	ObjectType = EObjectType::OTCeiling;
+	SetAxisConstraint(EAxisConstraint::AxesXY);
+}

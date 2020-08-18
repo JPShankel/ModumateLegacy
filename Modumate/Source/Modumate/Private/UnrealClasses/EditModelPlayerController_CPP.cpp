@@ -416,6 +416,7 @@ void AEditModelPlayerController_CPP::CreateTools()
 	RegisterTool(CreateTool<USplitObjectTool>());
 	RegisterTool(CreateTool<UWallTool>());
 	RegisterTool(CreateTool<UFloorTool>());
+	RegisterTool(CreateTool<UCeilingTool>());
 	RegisterTool(CreateTool<UDoorTool>());
 	RegisterTool(CreateTool<UWindowTool>());
 	RegisterTool(CreateTool<UStairTool>());
@@ -1698,6 +1699,7 @@ void AEditModelPlayerController_CPP::UpdateMouseTraceParams()
 	{
 	case EToolMode::VE_WALL:
 	case EToolMode::VE_FLOOR:
+	case EToolMode::VE_CEILING:
 	case EToolMode::VE_ROOF_FACE:
 	case EToolMode::VE_RAIL:
 	case EToolMode::VE_STAIR:

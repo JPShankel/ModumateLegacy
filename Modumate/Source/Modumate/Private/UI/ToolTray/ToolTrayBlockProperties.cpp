@@ -42,6 +42,7 @@ void UToolTrayBlockProperties::ChangeBlockProperties(EToolMode mode)
 	{
 	case EToolMode::VE_WALL:
 	case EToolMode::VE_FLOOR:
+	case EToolMode::VE_CEILING:
 	case EToolMode::VE_METAPLANE:
 		HorizontalBoxInstHeight->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		HorizontalBoxInstJustification->SetVisibility(ESlateVisibility::SelfHitTestInvisible);

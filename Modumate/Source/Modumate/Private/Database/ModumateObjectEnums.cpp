@@ -18,6 +18,7 @@ EToolCategories UModumateTypeStatics::GetToolCategory(EToolMode ToolMode)
 		return EToolCategories::MetaGraph;
 	case EToolMode::VE_WALL:
 	case EToolMode::VE_FLOOR:
+	case EToolMode::VE_CEILING:
 	case EToolMode::VE_DOOR:
 	case EToolMode::VE_WINDOW:
 	case EToolMode::VE_STAIR:
@@ -51,6 +52,7 @@ EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 	case EToolMode::VE_SPLIT: return EObjectType::OTUnknown;
 	case EToolMode::VE_WALL: return EObjectType::OTWallSegment;
 	case EToolMode::VE_FLOOR: return EObjectType::OTFloorSegment;
+	case EToolMode::VE_CEILING: return EObjectType::OTCeiling;
 	case EToolMode::VE_DOOR: return EObjectType::OTDoor;
 	case EToolMode::VE_WINDOW: return EObjectType::OTWindow;
 	case EToolMode::VE_STAIR: return EObjectType::OTStaircase;
@@ -80,6 +82,7 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTWallSegment: return EToolMode::VE_WALL;
 	case EObjectType::OTRailSegment: return EToolMode::VE_RAIL;
 	case EObjectType::OTFloorSegment: return EToolMode::VE_FLOOR;
+	case EObjectType::OTCeiling: return EToolMode::VE_CEILING;
 	case EObjectType::OTRoofFace: return EToolMode::VE_ROOF_FACE;
 	case EObjectType::OTDoor: return EToolMode::VE_DOOR;
 	case EObjectType::OTWindow: return EToolMode::VE_WINDOW;

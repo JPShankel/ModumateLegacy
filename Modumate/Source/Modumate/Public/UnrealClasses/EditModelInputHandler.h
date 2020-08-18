@@ -80,6 +80,7 @@ enum class EInputCommand : uint8
 	ActivateTool_Drawing,
 	ActivateTool_Graph2D,
 	ActivateTool_SurfaceGraph,
+	ActivateTool_Ceiling,
 	ActivateTool_END,
 
 	// Tool-related commands

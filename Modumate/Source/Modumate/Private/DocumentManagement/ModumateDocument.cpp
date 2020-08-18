@@ -2604,7 +2604,8 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 		EToolMode::VE_COUNTERTOP,
 		EToolMode::VE_STRUCTURELINE,
 		EToolMode::VE_TRIM,
-		EToolMode::VE_ROOF_FACE
+		EToolMode::VE_ROOF_FACE,
+		EToolMode::VE_CEILING
 	};
 
 	AEditModelPlayerController_CPP* emPlayerController = Cast<AEditModelPlayerController_CPP>(world->GetFirstPlayerController());

@@ -100,6 +100,7 @@ enum class EToolMode : uint8
 	VE_DRAWING,
 	VE_GRAPH2D,
 	VE_SURFACEGRAPH,
+	VE_CEILING,
 };
 
 UENUM(BlueprintType)
