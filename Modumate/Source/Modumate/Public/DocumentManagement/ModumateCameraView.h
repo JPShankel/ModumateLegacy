@@ -11,20 +11,20 @@ struct FModumateCameraView
 	GENERATED_USTRUCT_BODY();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
-	FVector Position;
+	FVector Position = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
-	FQuat Rotation;
+	FQuat Rotation = FQuat::Identity;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
-	float FOV;
+	float FOV = 50.f; // Default Modumate camera fov
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
-	float AspectRatio;
+	float AspectRatio = 1.778f; // Default UE4 camera aspect ratio
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
-	FString Name;
+	FString Name = FString(TEXT("NewCameraView"));
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
-	FDateTime TimeOfDay;
+	FDateTime TimeOfDay = FDateTime::Today();
 };

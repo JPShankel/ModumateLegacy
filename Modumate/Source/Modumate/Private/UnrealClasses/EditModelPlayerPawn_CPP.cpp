@@ -30,6 +30,9 @@ AEditModelPlayerPawn_CPP::AEditModelPlayerPawn_CPP(const FObjectInitializer& Obj
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(RootComponent);
+
+	CameraCaptureComponent2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("CameraCaptureComponent2D"));
+	CameraCaptureComponent2D->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned

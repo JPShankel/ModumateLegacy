@@ -9,6 +9,14 @@
 /**
  *
  */
+UENUM(BlueprintType)
+enum class ERightMenuState : uint8
+{
+	ViewMenu,
+	CutPlaneMenu,
+	None
+};
+
 UCLASS()
 class MODUMATE_API UEditModelUserWidget : public UUserWidget
 {
@@ -41,6 +49,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UBIMBlockDialogBox *BIMBlockDialogBox;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UViewMenuWidget *ViewMenu;
+
+	ERightMenuState CurrentRightMenuState = ERightMenuState::None;
+
 	UFUNCTION()
 	void EMOnToolModeChanged();
 
@@ -53,4 +66,6 @@ public:
 
 	void EditExistingAssembly(EToolMode ToolMode, FName AssemblyKey);
 	void ToggleBIMDesigner(bool Open);
+	void SwitchRightMenu(ERightMenuState NewMenuState);
+
 };

@@ -9,7 +9,6 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 
-
 UToolbarWidget::UToolbarWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -29,10 +28,11 @@ bool UToolbarWidget::Initialize()
 		return false;
 	}
 
-	Button_Metaplanes->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonPressMetaPlane);
-	Button_Separators->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonPressSeparators);
-	Button_SurfaceGraphs->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonPressSurfaceGraphs);
-	Button_Attachments->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonPressAttachments);
+	Button_Metaplanes->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseMetaPlane);
+	Button_Separators->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseSeparators);
+	Button_SurfaceGraphs->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseSurfaceGraphs);
+	Button_Attachments->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseAttachments);
+	Button_3DViews->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonRelease3DViews);
 
 	return true;
 }
@@ -42,12 +42,12 @@ void UToolbarWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UToolbarWidget::OnButtonPressMetaPlane()
+void UToolbarWidget::OnButtonReleaseMetaPlane()
 {
 	Controller->SetToolMode(EToolMode::VE_METAPLANE);
 }
 
-void UToolbarWidget::OnButtonPressSeparators()
+void UToolbarWidget::OnButtonReleaseSeparators()
 {
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
@@ -55,15 +55,31 @@ void UToolbarWidget::OnButtonPressSeparators()
 	}
 }
 
-void UToolbarWidget::OnButtonPressSurfaceGraphs()
+void UToolbarWidget::OnButtonReleaseSurfaceGraphs()
 {
 	Controller->SetToolMode(EToolMode::VE_SURFACEGRAPH);
 }
 
-void UToolbarWidget::OnButtonPressAttachments()
+void UToolbarWidget::OnButtonReleaseAttachments()
 {
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
 		EditModelUserWidget->ToolTrayWidget->ChangeBlockToAttachmentTools(EToolMode::VE_NONE);
+	}
+}
+
+void UToolbarWidget::OnButtonRelease3DViews()
+{
+	if (EditModelUserWidget)
+	{
+		if (EditModelUserWidget->CurrentRightMenuState == ERightMenuState::None)
+		{
+			EditModelUserWidget->SwitchRightMenu(ERightMenuState::ViewMenu);
+		}
+		else
+		{
+			EditModelUserWidget->SwitchRightMenu(ERightMenuState::None);
+		}
+
 	}
 }

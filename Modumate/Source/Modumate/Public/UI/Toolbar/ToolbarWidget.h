@@ -44,17 +44,23 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *Button_Attachments;
 
-	UFUNCTION()
-	void OnButtonPressMetaPlane();
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *Button_3DViews;
 
 	UFUNCTION()
-	void OnButtonPressSeparators();
+	void OnButtonReleaseMetaPlane();
 
 	UFUNCTION()
-	void OnButtonPressSurfaceGraphs();
+	void OnButtonReleaseSeparators();
 
 	UFUNCTION()
-	void OnButtonPressAttachments();
+	void OnButtonReleaseSurfaceGraphs();
+
+	UFUNCTION()
+	void OnButtonReleaseAttachments();
+
+	UFUNCTION()
+	void OnButtonRelease3DViews();
 
 protected:
 

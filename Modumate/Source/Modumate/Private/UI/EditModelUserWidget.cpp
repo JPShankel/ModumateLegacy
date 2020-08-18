@@ -9,6 +9,7 @@
 #include "UI/SelectionTray/SelectionTrayWidget.h"
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/BIM/BIMBlockDialogBox.h"
+#include "UI/RightMenu/ViewMenuWidget.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -96,4 +97,11 @@ void UEditModelUserWidget::ToggleBIMDesigner(bool Open)
 		BIMDesigner->SetVisibility(ESlateVisibility::Collapsed);
 		BIMBlockDialogBox->SetVisibility(ESlateVisibility::Collapsed);
 	}
+}
+
+void UEditModelUserWidget::SwitchRightMenu(ERightMenuState NewMenuState)
+{
+	CurrentRightMenuState = NewMenuState;
+	bool newViewMenuVisibility = CurrentRightMenuState == ERightMenuState::ViewMenu;
+	ViewMenu->SetViewMenuVisibility(newViewMenuVisibility);
 }
