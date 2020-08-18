@@ -167,9 +167,11 @@ namespace Modumate {
 		ParentPage->lineClipping->AddTrianglesFromDoc(Doc);
 
 		// Draw all separators, portals.
-		TArray<const FModumateObjectInstance*> beyondCutObjects(Doc->GetObjectsOfType(
-			{EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTCeiling, EObjectType::OTFloorSegment, EObjectType::OTRoofFace, EObjectType::OTWindow,
-				EObjectType::OTDoor, EObjectType::OTCabinet, EObjectType::OTStructureLine}));
+		TArray<const FModumateObjectInstance*> beyondCutObjects(Doc->GetObjectsOfType({
+			EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTCeiling,
+			EObjectType::OTRoofFace, EObjectType::OTWindow, EObjectType::OTDoor,
+			EObjectType::OTCabinet, EObjectType::OTStructureLine
+			}));
 
 		for (auto object: beyondCutObjects)
 		{

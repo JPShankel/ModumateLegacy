@@ -30,7 +30,7 @@ namespace Modumate
 	void FModumateClippingTriangles::AddTrianglesFromDoc(const FModumateDocument * doc)
 	{
 		TArray<const FModumateObjectInstance*> separatorObjects(doc->GetObjectsOfType(
-			{ EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTRoofFace }));
+			{ EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTRoofFace, EObjectType::OTCeiling }));
 
 		const int numObjects = separatorObjects.Num();
 		int totalTriangles = 0;
