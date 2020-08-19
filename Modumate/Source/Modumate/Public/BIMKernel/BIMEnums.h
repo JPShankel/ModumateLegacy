@@ -127,6 +127,7 @@ enum class EBIMValueScope : uint8
 	Dimension,
 	Parent,
 	Preset,
+	SlotConfig,
 
 	// These scopes are to be deprecated as we replace the BIM property sheets
 	ToeKick,

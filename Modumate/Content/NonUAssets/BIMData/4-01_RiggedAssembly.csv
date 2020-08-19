@@ -1,20 +1,17 @@
-TYPENAME,,4RiggedAssembly,,Assembly,,,,,,,,,,,,,,,,,
-,,Definition,,,,,,,,,,,,,,,,,,,
-,,PropertyType,,PropertyName,,,,,,,,,,,,,,,,,
-PROPERTY,,STRING,,Name,,RiggedAssembly.Name,,,,,,,,,,,,,,,
-,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..,,Part ID Array,,Part.ID,,,,,,,,,,,,,,,
-INPUTPIN,,,,Part Preset,,Part.PresetID,,,,,,,,,,,,,,,
-INPUTPIN,,,,Part Slot Config Array,,Part.SlotConfig,,,,,,,,,,,,,,,
-INPUTPIN,,,,Part's Parent Is...,,Part.ParentIs,,,,,,,,,,,,,,,
-INPUTPIN,,,,Part Attaches To Parent At Slot…,,Part.ParentSlotIs,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,RiggedAssembly.Name,DataType=StartsInProject,,DataType=InputPins,Part.ID,Part.PresetID,Part.SlotConfig,Part.ParentIs,Part.ParentSlotIs,,,,,,,
-,,4RiggedAssembly --> CabinetFace --> Drawer,,4RiggedAssembly --> CabinetFace --> Drawer,,,,,,,,,,,,,,,,,
-,,4RiggedAssembly --> CabinetFace --> Overhead,,4RiggedAssembly --> CabinetFace --> Overhead,,,,,,,,,,,,,,,,,
-,,4RiggedAssembly --> CabinetFace --> Sliding,,4RiggedAssembly --> CabinetFace --> Sliding,,,,,,,,,,,,,,,,,
+TYPENAME,,4RiggedAssembly,,Assembly,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Assembly.Name,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,DataType=StartsInProject,,DataType=Slots,SlotConfig,PartPreset,ID,ParentID,SlotID,,,,,,
+,,4RiggedAssembly --> CabinetFace --> Drawer,,4RiggedAssembly --> CabinetFace --> Drawer,,,,,,,,,,,,,,,,
+,,4RiggedAssembly --> CabinetFace --> Overhead,,4RiggedAssembly --> CabinetFace --> Overhead,,,,,,,,,,,,,,,,
+,,4RiggedAssembly --> CabinetFace --> Sliding,,4RiggedAssembly --> CabinetFace --> Sliding,,,,,,,,,,,,,,,,
 ,,"4RiggedAssembly --> CabinetFace --> Swing
+0SlotConfig
+2-Hinge Double Swing Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
@@ -25,10 +22,11 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-2-Hinge Double Swing Door Frame
-BASE",,4RiggedAssembly --> CabinetFace --> Swing,,,,,,,,,,,,,,,,,
+1
+BASE",,4RiggedAssembly --> CabinetFace --> Swing,,,,,,,,,,,,,,,,
 ,,"4RiggedAssembly --> Door --> Barn
+0SlotConfig
+2-Hinge Double Swing Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
@@ -39,9 +37,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-2-Hinge Double Swing Door Frame
+1
 BASE
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -52,10 +51,11 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+2
 1
 PanelLeft
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -66,36 +66,46 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+3
 1
 PanelRight
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+4
 HardwareGroupMember1
+5
 1
 HingeLeftTop
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember1
+7
 1
 HingeRightTop
 HardwareGroupMember1
+8
 1
 HingeRightBottom
 HardwareGroupMember2
+9
 2
 HandleExterior
 HardwareGroupMember2
+10
 2
 HandleInterior
 HardwareGroupMember2
+11
 3
 HandleExterior
 HardwareGroupMember2
+12
 3
 HandleInterior
+0SlotConfig
+3-Hinge Swing Single Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
@@ -106,10 +116,11 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-3-Hinge Swing Single Door Frame
-BASE",,4RiggedAssembly --> Door --> Barn,,,,,,,,,,,,,,,,,
+1
+BASE",,4RiggedAssembly --> Door --> Barn,,,,,,,,,,,,,,,,
 ,,"4RiggedAssembly --> Door --> Folding
+0SlotConfig
+2-Hinge Double Swing Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
@@ -120,9 +131,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-2-Hinge Double Swing Door Frame
+1
 BASE
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -133,10 +145,11 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+2
 1
 PanelLeft
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -147,36 +160,46 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+3
 1
 PanelRight
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+4
 HardwareGroupMember1
+5
 1
 HingeLeftTop
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember1
+7
 1
 HingeRightTop
 HardwareGroupMember1
+8
 1
 HingeRightBottom
 HardwareGroupMember2
+9
 2
 HandleExterior
 HardwareGroupMember2
+10
 2
 HandleInterior
 HardwareGroupMember2
+11
 3
 HandleExterior
 HardwareGroupMember2
+12
 3
 HandleInterior
+0SlotConfig
+3-Hinge Swing Single Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
@@ -187,9 +210,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-3-Hinge Swing Single Door Frame
+1
 BASE
+0SlotConfig
+Solid Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -200,22 +224,27 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Solid Swing
+2
 1
 PanelLeft
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+3
 HardwareGroupMember1
+4
 1
 HingeLeftTop
 HardwareGroupMember1
+5
 1
 HingeLeftMiddle
 HardwareGroupMember1
+6
 1
-HingeLeftBottom",,4RiggedAssembly --> Door --> Folding,,,,,,,,,,,,,,,,,
+HingeLeftBottom",,4RiggedAssembly --> Door --> Folding,,,,,,,,,,,,,,,,
 ,,"4RiggedAssembly --> Door --> Overhead
+0SlotConfig
+2-Hinge Double Swing Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
@@ -226,9 +255,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-2-Hinge Double Swing Door Frame
+1
 BASE
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -239,10 +269,11 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+2
 1
 PanelLeft
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -253,36 +284,46 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+3
 1
 PanelRight
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+4
 HardwareGroupMember1
+5
 1
 HingeLeftTop
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember1
+7
 1
 HingeRightTop
 HardwareGroupMember1
+8
 1
 HingeRightBottom
 HardwareGroupMember2
+9
 2
 HandleExterior
 HardwareGroupMember2
+10
 2
 HandleInterior
 HardwareGroupMember2
+11
 3
 HandleExterior
 HardwareGroupMember2
+12
 3
 HandleInterior
+0SlotConfig
+3-Hinge Swing Single Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
@@ -293,9 +334,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-3-Hinge Swing Single Door Frame
+1
 BASE
+0SlotConfig
+Solid Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -306,28 +348,35 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Solid Swing
+2
 1
 PanelLeft
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+3
 HardwareGroupMember1
+4
 1
 HingeLeftTop
 HardwareGroupMember1
+5
 1
 HingeLeftMiddle
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember3
+7
 2
 HandleExterior
 HardwareGroupMember2
+8
 2
-HandleInterior",,4RiggedAssembly --> Door --> Overhead,,,,,,,,,,,,,,,,,
+HandleInterior",,4RiggedAssembly --> Door --> Overhead,,,,,,,,,,,,,,,,
 ,,"4RiggedAssembly --> Door --> Pivot
+0SlotConfig
+2-Hinge Double Swing Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
@@ -338,9 +387,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-2-Hinge Double Swing Door Frame
+1
 BASE
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -351,10 +401,11 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+2
 1
 PanelLeft
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -365,36 +416,46 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+3
 1
 PanelRight
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+4
 HardwareGroupMember1
+5
 1
 HingeLeftTop
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember1
+7
 1
 HingeRightTop
 HardwareGroupMember1
+8
 1
 HingeRightBottom
 HardwareGroupMember2
+9
 2
 HandleExterior
 HardwareGroupMember2
+10
 2
 HandleInterior
 HardwareGroupMember2
+11
 3
 HandleExterior
 HardwareGroupMember2
+12
 3
 HandleInterior
+0SlotConfig
+3-Hinge Swing Single Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
@@ -405,9 +466,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-3-Hinge Swing Single Door Frame
+1
 BASE
+0SlotConfig
+Solid Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -418,31 +480,39 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Solid Swing
+2
 1
 PanelLeft
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+3
 HardwareGroupMember1
+4
 1
 HingeLeftTop
 HardwareGroupMember1
+5
 1
 HingeLeftMiddle
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember3
+7
 2
 HandleExterior
 HardwareGroupMember2
+8
 2
 HandleInterior
 HardwareGroupMember4
+9
 2
-Deadbolt",,4RiggedAssembly --> Door --> Pivot,,,,,,,,,,,,,,,,,
+Deadbolt",,4RiggedAssembly --> Door --> Pivot,,,,,,,,,,,,,,,,
 ,,"4RiggedAssembly --> Door --> Pocket
+0SlotConfig
+2-Hinge Double Swing Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
@@ -453,9 +523,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-2-Hinge Double Swing Door Frame
+1
 BASE
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -466,10 +537,11 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+2
 1
 PanelLeft
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -480,36 +552,46 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+3
 1
 PanelRight
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+4
 HardwareGroupMember1
+5
 1
 HingeLeftTop
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember1
+7
 1
 HingeRightTop
 HardwareGroupMember1
+8
 1
 HingeRightBottom
 HardwareGroupMember2
+9
 2
 HandleExterior
 HardwareGroupMember2
+10
 2
 HandleInterior
 HardwareGroupMember2
+11
 3
 HandleExterior
 HardwareGroupMember2
+12
 3
 HandleInterior
+0SlotConfig
+3-Hinge Swing Single Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
@@ -520,9 +602,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-3-Hinge Swing Single Door Frame
+1
 BASE
+0SlotConfig
+Solid Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -533,34 +616,43 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Solid Swing
+2
 1
 PanelLeft
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+3
 HardwareGroupMember1
+4
 1
 HingeLeftTop
 HardwareGroupMember1
+5
 1
 HingeLeftMiddle
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember3
+7
 2
 HandleExterior
 HardwareGroupMember2
+8
 2
 HandleInterior
 HardwareGroupMember4
+9
 2
 Deadbolt
 HardwareGroupMember5
+10
 2
-SurfaceLockUpper",,4RiggedAssembly --> Door --> Pocket,,,,,,,,,,,,,,,,,
+SurfaceLockUpper",,4RiggedAssembly --> Door --> Pocket,,,,,,,,,,,,,,,,
 ,,"4RiggedAssembly --> Door --> Sliding
+0SlotConfig
+2-Hinge Double Swing Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
@@ -571,9 +663,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-2-Hinge Double Swing Door Frame
+1
 BASE
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -584,10 +677,11 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+2
 1
 PanelLeft
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -598,36 +692,46 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+3
 1
 PanelRight
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+4
 HardwareGroupMember1
+5
 1
 HingeLeftTop
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember1
+7
 1
 HingeRightTop
 HardwareGroupMember1
+8
 1
 HingeRightBottom
 HardwareGroupMember2
+9
 2
 HandleExterior
 HardwareGroupMember2
+10
 2
 HandleInterior
 HardwareGroupMember2
+11
 3
 HandleExterior
 HardwareGroupMember2
+12
 3
 HandleInterior
+0SlotConfig
+3-Hinge Swing Single Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
@@ -638,9 +742,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-3-Hinge Swing Single Door Frame
+1
 BASE
+0SlotConfig
+Solid Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -651,37 +756,47 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Solid Swing
+2
 1
 PanelLeft
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+3
 HardwareGroupMember1
+4
 1
 HingeLeftTop
 HardwareGroupMember1
+5
 1
 HingeLeftMiddle
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember3
+7
 2
 HandleExterior
 HardwareGroupMember2
+8
 2
 HandleInterior
 HardwareGroupMember4
+9
 2
 Deadbolt
 HardwareGroupMember5
+10
 2
 SurfaceLockUpper
 HardwareGroupMember5
+11
 2
-SurfaceLockLower",,4RiggedAssembly --> Door --> Sliding,,,,,,,,,,,,,,,,,
+SurfaceLockLower",,4RiggedAssembly --> Door --> Sliding,,,,,,,,,,,,,,,,
 ,,"4RiggedAssembly --> Door --> Swing
+0SlotConfig
+2-Hinge Double Swing Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
@@ -692,9 +807,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-2-Hinge Double Swing Door Frame
+1
 BASE
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -705,10 +821,11 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+2
 1
 PanelLeft
+0SlotConfig
+Mostly-Glass Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -719,36 +836,46 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Mostly-Glass Swing
+3
 1
 PanelRight
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+4
 HardwareGroupMember1
+5
 1
 HingeLeftTop
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember1
+7
 1
 HingeRightTop
 HardwareGroupMember1
+8
 1
 HingeRightBottom
 HardwareGroupMember2
+9
 2
 HandleExterior
 HardwareGroupMember2
+10
 2
 HandleInterior
 HardwareGroupMember2
+11
 3
 HandleExterior
 HardwareGroupMember2
+12
 3
 HandleInterior
+0SlotConfig
+3-Hinge Swing Single Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
@@ -759,9 +886,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-3-Hinge Swing Single Door Frame
+1
 BASE
+0SlotConfig
+Solid Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -772,36 +900,45 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Solid Swing
+2
 1
 PanelLeft
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+3
 HardwareGroupMember1
+4
 1
 HingeLeftTop
 HardwareGroupMember1
+5
 1
 HingeLeftMiddle
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember3
+7
 2
 HandleExterior
 HardwareGroupMember2
+8
 2
 HandleInterior
 HardwareGroupMember4
+9
 2
 Deadbolt
 HardwareGroupMember5
+10
 2
 SurfaceLockUpper
 HardwareGroupMember5
+11
 2
-SurfaceLockLower",,4RiggedAssembly --> Door --> Swing,,Interior Passage Double Swing Door,,X,,1,"2Part --> Door --> Frame --> Swing --> Interior
+SurfaceLockLower",,4RiggedAssembly --> Door --> Swing,,Interior Passage Double Swing Door,,X,,"0SlotConfig
+2-Hinge Double Swing Door Frame","2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
 1Material --> Wood --> Cedar - Western Red
@@ -810,9 +947,9 @@ Cedar (Western Red)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished","0SlotConfig
-2-Hinge Double Swing Door Frame",BASE,,,,,,,,
-,,,,,,,,,,2,"2Part --> Door --> Panel --> Swing
+Unfinished",1,BASE,,,,,,,
+,,,,,,,,,,"0SlotConfig
+Mostly-Glass Swing","2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
 1Material --> Wood --> Ash
@@ -821,9 +958,9 @@ Ash
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished","0SlotConfig
-Mostly-Glass Swing",1,PanelLeft,,,,,,,
-,,,,,,,,,,3,"2Part --> Door --> Panel --> Swing
+Unfinished",2,1,PanelLeft,,,,,,
+,,,,,,,,,,"0SlotConfig
+Mostly-Glass Swing","2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
 1Material --> Wood --> Ash
@@ -832,19 +969,20 @@ Ash
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished","0SlotConfig
-Mostly-Glass Swing",1,PanelRight,,,,,,,
-,,,,,,,,,,4,"3HardwareGroup --> Door --> Swing
-Passage Swing Single Door",,,,,,,,,,
-,,,,,,,,,,5,HardwareGroupMember1,,1,HingeLeftTop,,,,,,,
-,,,,,,,,,,6,HardwareGroupMember1,,1,HingeLeftBottom,,,,,,,
-,,,,,,,,,,7,HardwareGroupMember1,,1,HingeRightTop,,,,,,,
-,,,,,,,,,,8,HardwareGroupMember1,,1,HingeRightBottom,,,,,,,
-,,,,,,,,,,9,HardwareGroupMember2,,2,HandleExterior,,,,,,,
-,,,,,,,,,,10,HardwareGroupMember2,,2,HandleInterior,,,,,,,
-,,,,,,,,,,11,HardwareGroupMember2,,3,HandleExterior,,,,,,,
-,,,,,,,,,,12,HardwareGroupMember2,,3,HandleInterior,,,,,,,
+Unfinished",3,1,PanelRight,,,,,,
+,,,,,,,,,,,"3HardwareGroup --> Door --> Swing
+Passage Swing Single Door",4,,,,,,,,
+,,,,,,,,,,,HardwareGroupMember1,5,1,HingeLeftTop,,,,,,
+,,,,,,,,,,,HardwareGroupMember1,6,1,HingeLeftBottom,,,,,,
+,,,,,,,,,,,HardwareGroupMember1,7,1,HingeRightTop,,,,,,
+,,,,,,,,,,,HardwareGroupMember1,8,1,HingeRightBottom,,,,,,
+,,,,,,,,,,,HardwareGroupMember2,9,2,HandleExterior,,,,,,
+,,,,,,,,,,,HardwareGroupMember2,10,2,HandleInterior,,,,,,
+,,,,,,,,,,,HardwareGroupMember2,11,3,HandleExterior,,,,,,
+,,,,,,,,,,,HardwareGroupMember2,12,3,HandleInterior,,,,,,
 ,,"4RiggedAssembly --> Door --> Swing
+0SlotConfig
+3-Hinge Swing Single Door Frame
 2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
@@ -855,9 +993,10 @@ Cedar (Western Red)
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-3-Hinge Swing Single Door Frame
+1
 BASE
+0SlotConfig
+Solid Swing
 2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
@@ -868,36 +1007,45 @@ Ash
 FFFFFF-White
 0SrfTreatment
 Unfinished
-0SlotConfig
-Solid Swing
+2
 1
 PanelLeft
 3HardwareGroup --> Door --> Swing
 Passage Swing Single Door
+3
 HardwareGroupMember1
+4
 1
 HingeLeftTop
 HardwareGroupMember1
+5
 1
 HingeLeftMiddle
 HardwareGroupMember1
+6
 1
 HingeLeftBottom
 HardwareGroupMember3
+7
 2
 HandleExterior
 HardwareGroupMember2
+8
 2
 HandleInterior
 HardwareGroupMember4
+9
 2
 Deadbolt
 HardwareGroupMember5
+10
 2
 SurfaceLockUpper
 HardwareGroupMember5
+11
 2
-SurfaceLockLower",,4RiggedAssembly --> Door --> Swing,,Front Single Swing Door,,X,,1,"2Part --> Door --> Frame --> Swing --> Interior
+SurfaceLockLower",,4RiggedAssembly --> Door --> Swing,,Front Single Swing Door,,X,,"0SlotConfig
+3-Hinge Swing Single Door Frame","2Part --> Door --> Frame --> Swing --> Interior
 0Mesh
 StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
 1Material --> Wood --> Cedar - Western Red
@@ -906,9 +1054,9 @@ Cedar (Western Red)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished","0SlotConfig
-3-Hinge Swing Single Door Frame",BASE,,,,,,,,
-,,,,,,,,,,2,"2Part --> Door --> Panel --> Swing
+Unfinished",1,BASE,,,,,,,
+,,,,,,,,,,"0SlotConfig
+Solid Swing","2Part --> Door --> Panel --> Swing
 0Mesh
 Panel With Glass
 1Material --> Wood --> Ash
@@ -917,31 +1065,31 @@ Ash
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished","0SlotConfig
-Solid Swing",1,PanelLeft,,,,,,,
-,,,,,,,,,,3,"3HardwareGroup --> Door --> Swing
-Passage Swing Single Door",,,,,,,,,,
-,,,,,,,,,,4,HardwareGroupMember1,,1,HingeLeftTop,,,,,,,
-,,,,,,,,,,5,HardwareGroupMember1,,1,HingeLeftMiddle,,,,,,,
-,,,,,,,,,,6,HardwareGroupMember1,,1,HingeLeftBottom,,,,,,,
-,,,,,,,,,,7,HardwareGroupMember3,,2,HandleExterior,,,,,,,
-,,,,,,,,,,8,HardwareGroupMember2,,2,HandleInterior,,,,,,,
-,,,,,,,,,,9,HardwareGroupMember4,,2,Deadbolt,,,,,,,
-,,,,,,,,,,10,HardwareGroupMember5,,2,SurfaceLockUpper,,,,,,,
-,,,,,,,,,,11,HardwareGroupMember5,,2,SurfaceLockLower,,,,,,,
+Unfinished",2,1,PanelLeft,,,,,,
+,,,,,,,,,,,"3HardwareGroup --> Door --> Swing
+Passage Swing Single Door",3,,,,,,,,
+,,,,,,,,,,,HardwareGroupMember1,4,1,HingeLeftTop,,,,,,
+,,,,,,,,,,,HardwareGroupMember1,5,1,HingeLeftMiddle,,,,,,
+,,,,,,,,,,,HardwareGroupMember1,6,1,HingeLeftBottom,,,,,,
+,,,,,,,,,,,HardwareGroupMember3,7,2,HandleExterior,,,,,,
+,,,,,,,,,,,HardwareGroupMember2,8,2,HandleInterior,,,,,,
+,,,,,,,,,,,HardwareGroupMember4,9,2,Deadbolt,,,,,,
+,,,,,,,,,,,HardwareGroupMember5,10,2,SurfaceLockUpper,,,,,,
+,,,,,,,,,,,HardwareGroupMember5,11,2,SurfaceLockLower,,,,,,
 PRESET,,"4RiggedAssembly --> FFESet
-2Part --> FFE --> Furniture --> Table --> Dining
-0Mesh
-Square Table
-1Material --> Stone --> Marble
-0RawMaterial
-Marble (Calacatta)
-0Color --> Abstract
-FFFFFF-White
-0SrfTreatment
-Standard
 0SlotConfig
 4 Chairs (1 + 1 + 1 + 1)
+2Part --> FFE --> Furniture --> Table --> Dining
+0Mesh
+Square Table
+1Material --> Stone --> Marble
+0RawMaterial
+Marble (Calacatta)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard
+1
 BASE
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
@@ -953,6 +1101,7 @@ Steel
 FFFFFF-PureWhite
 0SrfTreatment
 Standard
+2
 1
 Chair1
 2Part --> FFE --> Furniture --> Chair --> Dining
@@ -965,6 +1114,7 @@ Steel
 FFFFFF-PureWhite
 0SrfTreatment
 Standard
+3
 1
 Chair2
 2Part --> FFE --> Furniture --> Chair --> Dining
@@ -977,6 +1127,7 @@ Steel
 FFFFFF-PureWhite
 0SrfTreatment
 Standard
+4
 1
 Chair3
 2Part --> FFE --> Furniture --> Chair --> Dining
@@ -989,8 +1140,10 @@ Steel
 FFFFFF-PureWhite
 0SrfTreatment
 Standard
+5
 1
-Chair4",,4RiggedAssembly --> FFESet,,Table with 4 Chairs,,X,,1,"2Part --> FFE --> Furniture --> Table --> Dining
+Chair4",,4RiggedAssembly --> FFESet,,Table with 4 Chairs,,X,,"0SlotConfig
+4 Chairs (1 + 1 + 1 + 1)","2Part --> FFE --> Furniture --> Table --> Dining
 0Mesh
 Square Table
 1Material --> Stone --> Marble
@@ -999,9 +1152,8 @@ Marble (Calacatta)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard","0SlotConfig
-4 Chairs (1 + 1 + 1 + 1)",BASE,,,,,,,,
-PRESET,,,,,,,,,,2,"2Part --> FFE --> Furniture --> Chair --> Dining
+Standard",1,BASE,,,,,,,
+PRESET,,,,,,,,,,,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 1
 1Material --> Metal --> Steel
@@ -1010,8 +1162,8 @@ Steel
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1,Chair1,,,,,,,
-PRESET,,,,,,,,,,3,"2Part --> FFE --> Furniture --> Chair --> Dining
+Standard",2,1,Chair1,,,,,,
+PRESET,,,,,,,,,,,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 1
 1Material --> Metal --> Steel
@@ -1020,8 +1172,8 @@ Steel
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1,Chair2,,,,,,,
-PRESET,,,,,,,,,,4,"2Part --> FFE --> Furniture --> Chair --> Dining
+Standard",3,1,Chair2,,,,,,
+PRESET,,,,,,,,,,,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 1
 1Material --> Metal --> Steel
@@ -1030,8 +1182,8 @@ Steel
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1,Chair3,,,,,,,
-PRESET,,,,,,,,,,5,"2Part --> FFE --> Furniture --> Chair --> Dining
+Standard",4,1,Chair3,,,,,,
+PRESET,,,,,,,,,,,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 1
 1Material --> Metal --> Steel
@@ -1040,9 +1192,10 @@ Steel
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1,Chair4,,,,,,,
-PRESET,,"4RiggedAssembly --> FFESet
-1
+Standard",5,1,Chair4,,,,,,
+,,"4RiggedAssembly --> FFESet
+0SlotConfig
+6 Chairs (1 + 2 + 2 + 1)
 2Part --> FFE --> Furniture --> Table --> Dining
 0Mesh
 Rectangular Table
@@ -1053,10 +1206,8 @@ Granite (Brown 1)
 FFFFFF-White
 0SrfTreatment
 Standard
-0SlotConfig
-6 Chairs (1 + 2 + 2 + 1)
+1
 BASE
-2
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 2 
@@ -1067,9 +1218,9 @@ Steel
 FFFFFF-PureWhite
 0SrfTreatment
 Standard
+2
 1
 Chair1
-3
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 2 
@@ -1080,9 +1231,9 @@ Steel
 FFFFFF-PureWhite
 0SrfTreatment
 Standard
+3
 1
 Chair2
-4
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 2 
@@ -1093,9 +1244,9 @@ Steel
 FFFFFF-PureWhite
 0SrfTreatment
 Standard
+4
 1
 Chair3
-5
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 2 
@@ -1106,9 +1257,9 @@ Steel
 FFFFFF-PureWhite
 0SrfTreatment
 Standard
+5
 1
 Chair4
-6
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 2 
@@ -1119,9 +1270,9 @@ Steel
 FFFFFF-PureWhite
 0SrfTreatment
 Standard
+6
 1
 Chair5
-7
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 2 
@@ -1132,8 +1283,10 @@ Steel
 FFFFFF-PureWhite
 0SrfTreatment
 Standard
+7
 1
-Chair6",,4RiggedAssembly --> FFESet,,Table with 6 Chairs,,X,,1,"2Part --> FFE --> Furniture --> Table --> Dining
+Chair6",,4RiggedAssembly --> FFESet,,Table with 6 Chairs,,X,,"0SlotConfig
+6 Chairs (1 + 2 + 2 + 1)","2Part --> FFE --> Furniture --> Table --> Dining
 0Mesh
 Rectangular Table
 1Material --> Stone --> Granite
@@ -1142,9 +1295,8 @@ Granite (Brown 1)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard","0SlotConfig
-6 Chairs (1 + 2 + 2 + 1)",BASE,,,,,,,,
-PRESET,,,,,,,,,,2,"2Part --> FFE --> Furniture --> Chair --> Dining
+Standard",1,BASE,,,,,,,
+,,,,,,,,,,,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 2 
 1Material --> Metal --> Steel
@@ -1153,8 +1305,8 @@ Steel
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1,Chair1,,,,,,,
-PRESET,,,,,,,,,,3,"2Part --> FFE --> Furniture --> Chair --> Dining
+Standard",2,1,Chair1,,,,,,
+,,,,,,,,,,,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 2 
 1Material --> Metal --> Steel
@@ -1163,8 +1315,8 @@ Steel
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1,Chair2,,,,,,,
-PRESET,,,,,,,,,,4,"2Part --> FFE --> Furniture --> Chair --> Dining
+Standard",3,1,Chair2,,,,,,
+,,,,,,,,,,,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 2 
 1Material --> Metal --> Steel
@@ -1173,8 +1325,8 @@ Steel
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1,Chair3,,,,,,,
-PRESET,,,,,,,,,,5,"2Part --> FFE --> Furniture --> Chair --> Dining
+Standard",4,1,Chair3,,,,,,
+,,,,,,,,,,,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 2 
 1Material --> Metal --> Steel
@@ -1183,8 +1335,8 @@ Steel
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1,Chair4,,,,,,,
-PRESET,,,,,,,,,,6,"2Part --> FFE --> Furniture --> Chair --> Dining
+Standard",5,1,Chair4,,,,,,
+,,,,,,,,,,,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 2 
 1Material --> Metal --> Steel
@@ -1193,8 +1345,8 @@ Steel
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1,Chair5,,,,,,,
-PRESET,,,,,,,,,,7,"2Part --> FFE --> Furniture --> Chair --> Dining
+Standard",6,1,Chair5,,,,,,
+,,,,,,,,,,,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh
 Dining Chair 2 
 1Material --> Metal --> Steel
@@ -1203,16 +1355,16 @@ Steel
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1,Chair6,,,,,,,
-,,,,4RiggedAssembly --> Window --> Awning,,,,,,,,,,,,,,,,,
-,,,,4RiggedAssembly --> Window --> Casement,,,,,,,,,,,,,,,,,
-,,,,4RiggedAssembly --> Window --> Double-Action,,,,,,,,,,,,,,,,,
-,,,,4RiggedAssembly --> Window --> Fixed,,,,,,,,,,,,,,,,,
-,,,,4RiggedAssembly --> Window --> Hopper,,,,,,,,,,,,,,,,,
-,,,,4RiggedAssembly --> Window --> Hung,,,,,,,,,,,,,,,,,
-,,,,4RiggedAssembly --> Window --> Jalousie,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,
+Standard",7,1,Chair6,,,,,,
+,,,,4RiggedAssembly --> Window --> Awning,,,,,,,,,,,,,,,,
+,,,,4RiggedAssembly --> Window --> Casement,,,,,,,,,,,,,,,,
+,,,,4RiggedAssembly --> Window --> Double-Action,,,,,,,,,,,,,,,,
+,,,,4RiggedAssembly --> Window --> Fixed,,,,,,,,,,,,,,,,
+,,,,4RiggedAssembly --> Window --> Hopper,,,,,,,,,,,,,,,,
+,,,,4RiggedAssembly --> Window --> Hung,,,,,,,,,,,,,,,,
+,,,,4RiggedAssembly --> Window --> Jalousie,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,

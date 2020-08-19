@@ -90,23 +90,32 @@ bool FBIMPreset::Matches(const FBIMPreset &OtherPreset) const
 	return true;
 }
 
-ECraftingResult FBIMPreset::ToDataRecord(FCraftingPresetRecord &OutRecord) const
+ECraftingResult FBIMPreset::ToDataRecord(FCraftingPresetRecord& OutRecord) const
 {
 	OutRecord.DisplayName = GetDisplayName();
 	OutRecord.NodeType = NodeType;
 	OutRecord.PresetID = PresetID;
+	OutRecord.SlotConfigPresetID = SlotConfigPresetID;
 	MyTagPath.ToString(OutRecord.MyTagPath);
 
-	for (auto &ptp : ParentTagPaths)
+	for (auto& ptp : ParentTagPaths)
 	{
 		ptp.ToString(OutRecord.ParentTagPaths.AddDefaulted_GetRef());
 	}
 
-	for (auto &childPreset : ChildPresets)
+	for (auto& childPreset : ChildPresets)
 	{
 		OutRecord.ChildSetIndices.Add(childPreset.ParentPinSetIndex);
 		OutRecord.ChildSetPositions.Add(childPreset.ParentPinSetPosition);
 		OutRecord.ChildPresets.Add(childPreset.PresetID);
+	}
+
+	for (auto& partSlot : PartSlots)
+	{
+		OutRecord.PartPresets.Add(partSlot.PartPreset);
+		OutRecord.PartIDs.Add(partSlot.ID);
+		OutRecord.PartParentIDs.Add(partSlot.ParentID);
+		OutRecord.PartSlotNames.Add(partSlot.SlotName);
 	}
 
 	Properties.ToDataRecord(OutRecord.PropertyRecord);
@@ -143,6 +152,7 @@ ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCol
 	}
 
 	PresetID = Record.PresetID;
+	SlotConfigPresetID = Record.SlotConfigPresetID;
 
 	Properties.Empty();
 	ChildPresets.Empty();
@@ -158,6 +168,20 @@ ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCol
 			attachment.ParentPinSetIndex = Record.ChildSetIndices[i];
 			attachment.ParentPinSetPosition = Record.ChildSetPositions[i];
 			attachment.PresetID = Record.ChildPresets[i];
+		}
+	}
+
+	if (ensureAlways(Record.PartIDs.Num() == Record.PartParentIDs.Num() &&
+		Record.PartIDs.Num() == Record.PartPresets.Num() &&
+		Record.PartIDs.Num() == Record.PartSlotNames.Num()))
+	{
+		for (int32 i = 0; i < Record.PartIDs.Num();++i)
+		{
+			FPartSlot &partSlot = PartSlots.AddDefaulted_GetRef();
+			partSlot.ID = Record.PartIDs[i];
+			partSlot.ParentID = Record.PartParentIDs[i];
+			partSlot.PartPreset = Record.PartPresets[i];
+			partSlot.SlotName = Record.PartSlotNames[i];
 		}
 	}
 
@@ -271,7 +295,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 		TArray<FString> columns;
 		bool IsIn(int32 i)
 		{
-			return i >= first && i < first + columns.Num();
+			return first >= 0 && i >= first && i < first + columns.Num();
 		}
 
 		const FString &Get(int32 i) const {
@@ -289,15 +313,16 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 
 		FColumnRange configRange, propertyRange, 
 			myPathRange, parentPathRange, pinRange, 
-			idRange, startInProjectRange;
+			idRange, startInProjectRange,slotRange;
 	};
 
 	FTableData tableData;
 
-	auto normalizeCell = [](const TCHAR *Row)
+	auto normalizeCell = [](const FString& Row)
 	{
 		FString cell;
-		int32 sl = FCString::Strlen(Row);
+		int32 sl = Row.Len();
+		cell.Reserve(sl);
 		for (int32 j = 0; j < sl; ++j)
 		{
 			TCHAR c = Row[j];
@@ -406,6 +431,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 			{
 				if (dataType[1].Equals(TEXT("Slots")))
 				{
+					tableData.slotRange.first = i + 1;
 					state = Slots;
 				}
 				else if (dataType[1].Equals(TEXT("Properties")))
@@ -451,7 +477,13 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 				break;
 
 				case Slots:
-					break;
+				{
+					if (!cell.IsEmpty())
+					{
+						tableData.slotRange.columns.Add(cell);
+					}
+				}
+				break;
 
 				case Properties:
 				{
@@ -461,7 +493,10 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 
 				case InputPins:
 				{
-					tableData.pinRange.columns.Add(normalizeCell(*cell));
+					if (tableData.pinRange.columns.Num() < tableData.nodeType.ChildAttachments.Num())
+					{
+						tableData.pinRange.columns.Add(normalizeCell(*cell));
+					}
 				}
 				break;
 
@@ -547,13 +582,56 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 			{
 				FBIMTagPath &path = tableData.currentPreset.ParentTagPaths.AddDefaulted_GetRef();
 				// TODO: standardize parent paths...matrix of Xs or lists in cells?
-				if (cell == TEXT("X"))
+				if (cell.Equals(TEXT("X")))
 				{
 					path.FromString(tableData.parentPathRange.Get(i));
 				}
-				else if (!cell.IsEmpty())
+				else
 				{
 					path.FromString(cell);
+				}
+			}
+			else if (tableData.slotRange.IsIn(i))
+			{
+				FString category = tableData.slotRange.Get(i);
+				if (category.Equals(TEXT("SlotConfig")))
+				{
+					if (!cell.IsEmpty())
+					{
+						tableData.currentPreset.SlotConfigPresetID = *normalizeCell(cell);
+					}
+				}
+				else if (category.Equals(TEXT("PartPreset")))
+				{
+					if (tableData.currentPreset.PartSlots.Num() == 0 || !tableData.currentPreset.PartSlots.Last().PartPreset.IsNone())
+					{
+						tableData.currentPreset.PartSlots.AddDefaulted();
+					}
+					tableData.currentPreset.PartSlots.Last().PartPreset = *normalizeCell(cell);
+				}
+				else if (category.Equals(TEXT("ID")))
+				{
+					if (tableData.currentPreset.PartSlots.Num() == 0 || !tableData.currentPreset.PartSlots.Last().ID.IsNone())
+					{
+						tableData.currentPreset.PartSlots.AddDefaulted();
+					}
+					tableData.currentPreset.PartSlots.Last().ID = *normalizeCell(cell);
+				}
+				else if (category.Equals(TEXT("ParentID")))
+				{
+					if (tableData.currentPreset.PartSlots.Num() == 0 || !tableData.currentPreset.PartSlots.Last().ParentID.IsNone())
+					{
+						tableData.currentPreset.PartSlots.AddDefaulted();
+					}
+					tableData.currentPreset.PartSlots.Last().ParentID = *normalizeCell(cell);
+				}
+				else if (category.Equals(TEXT("SlotID")))
+				{
+					if (tableData.currentPreset.PartSlots.Num() == 0 || !tableData.currentPreset.PartSlots.Last().SlotName.IsNone())
+					{
+						tableData.currentPreset.PartSlots.AddDefaulted();
+					}
+					tableData.currentPreset.PartSlots.Last().SlotName = *normalizeCell(cell);
 				}
 			}
 			else if (tableData.pinRange.IsIn(i))

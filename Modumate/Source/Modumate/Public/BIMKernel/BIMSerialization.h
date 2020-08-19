@@ -51,6 +51,21 @@ struct MODUMATE_API FCraftingPresetRecord
 
 	UPROPERTY()
 	FString MyTagPath;
+
+	UPROPERTY()
+	FName SlotConfigPresetID;
+
+	UPROPERTY()
+	TArray<FName> PartIDs;
+
+	UPROPERTY()
+	TArray<FName> PartParentIDs;
+
+	UPROPERTY()
+	TArray<FName> PartPresets;
+
+	UPROPERTY()
+	TArray<FName> PartSlotNames;
 };
 
 USTRUCT()

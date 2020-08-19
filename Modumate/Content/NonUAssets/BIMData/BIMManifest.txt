@@ -7,6 +7,7 @@
 0-05B_StubbyFFE.csv
 0-05C_StubbyCabinets.csv
 0-05D_StubbyCountertops.csv
+0-06_SlotConfigs.csv
 0-10_DimThk.csv
 0-12_DimWD.csv
 0-13_DimDi.csv
@@ -22,3 +23,4 @@
 2-03_ModuleLWT.csv
 2-20_ExtrudedProfile.csv
 4-00_LayeredAssembly.csv
+4-01_RiggedAssembly.csv

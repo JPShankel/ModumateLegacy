@@ -79,6 +79,11 @@ public:
 		bool operator==(const FChildAttachment& OtherAttachment) const;
 	};
 
+	struct FPartSlot
+	{
+		FName PartPreset, SlotName, ID, ParentID;
+	};
+
 	bool HasProperty(const FBIMNameType& Name) const;
 	Modumate::FModumateCommandParameter GetProperty(const FBIMNameType& Name) const;
 	
@@ -99,9 +104,10 @@ public:
 	}
 
 	EBIMValueScope NodeScope;
-	FName NodeType, PresetID;
+	FName NodeType, PresetID, SlotConfigPresetID;
 	TArray<FChildAttachment> ChildPresets;
 	TArray<FBIMTagPath> ParentTagPaths;
+	TArray<FPartSlot> PartSlots;
 	FBIMTagPath MyTagPath;
 
 	// Sort child nodes by PinSetIndex and PinSetPosition so serialization will be consistent
