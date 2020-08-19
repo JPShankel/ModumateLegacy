@@ -1108,6 +1108,8 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UWorld *World)
 {
+	ClearPreviewDeltas(World);
+
 	ClearRedoBuffer();
 
 	BeginUndoRedoMacro();
@@ -1156,7 +1158,45 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 	return true;
 }
 
-void FModumateDocument::UpdateVolumeGraphObjects(UWorld* World)
+bool FModumateDocument::ApplyPreviewDeltas(const TArray<TSharedPtr<Modumate::FDelta>> &Deltas, UWorld *World)
+{
+	ClearPreviewDeltas(World);
+
+	PreviewDeltas = Deltas;
+
+	// First, apply the input deltas, generated from the first pass of user intent
+	for (auto& delta : PreviewDeltas)
+	{
+		delta->ApplyTo(this, World);
+	}
+
+	PostApplyDeltas(World);
+
+	return true;
+}
+
+void FModumateDocument::ClearPreviewDeltas(UWorld *World)
+{
+	if (PreviewDeltas.Num() == 0)
+	{
+		return;
+	}
+
+	TArray<TSharedPtr<FDelta>> inversePreviewDeltas = PreviewDeltas;
+	Algo::Reverse(inversePreviewDeltas);
+
+	// First, apply the input deltas, generated from the first pass of user intent
+	for (auto& delta : inversePreviewDeltas)
+	{
+		delta->MakeInverse()->ApplyTo(this, World);
+	}
+
+	PostApplyDeltas(World);
+
+	PreviewDeltas.Reset();
+}
+
+void FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 {
 	// TODO: unclear whether this is correct or the best place -
 	// set the faces containing or contained by dirty faces dirty as well	
@@ -1586,6 +1626,31 @@ bool FModumateDocument::GetVertexMovementDeltas(const TArray<int32>& VertexIDs, 
 	TArray<FGraph3DDelta> deltas;
 
 	if (!TempVolumeGraph.GetDeltaForVertexMovements(VertexIDs, VertexPositions, deltas, NextID))
+	{
+		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		return false;
+	}
+
+	TArray<int32> faceIDs, vertexIDs, edgeIDs;
+	if (!FinalizeGraphDeltas(deltas, faceIDs, vertexIDs, edgeIDs))
+	{
+		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		return false;
+	}
+
+	for (auto& delta : deltas)
+	{
+		OutDeltas.Add(MakeShareable<FDelta>(new FGraph3DDelta(delta)));
+	}
+
+	return true;
+}
+
+bool FModumateDocument::GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<TSharedPtr<Modumate::FDelta>>& OutDeltas)
+{
+	TArray<FGraph3DDelta> deltas;
+
+	if (!TempVolumeGraph.MoveVerticesDirect(VertexIDs, VertexPositions, deltas, NextID))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;

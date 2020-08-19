@@ -2,18 +2,19 @@
 
 #include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
 
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
-#include "DrawDebugHelpers.h"
-#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
-#include "DocumentManagement/ModumateCommands.h"
 #include "Algo/Accumulate.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "DrawDebugHelpers.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateObjectDeltaStatics.h"
+#include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/AdjustmentHandleWidget.h"
 #include "UI/EditModelPlayerHUD.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 
 AAdjustPolyPointHandle::AAdjustPolyPointHandle(const FObjectInitializer& ObjectInitializer)
@@ -74,34 +75,39 @@ bool AAdjustPolyPointHandle::UpdateUse()
 		Controller->EMPlayerState->AffordanceLines.Add(affordance);
 	}
 
-	if (bAdjustPolyEdge)
-	{
-		int32 numPolyPoints = OriginalPolyPoints.Num();
-		int32 edgeStartIdx = TargetIndex;
-		int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
 
-		float translation = (dp | OriginalDirection);
-		FVector edgeStartPoint, edgeEndPoint;
-		if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
+	FModumateDocument* doc = Controller->GetDocument();
+	if (doc != nullptr)
+	{
+		auto face = doc->GetVolumeGraph().FindFace(TargetMOI->ID);
+		if (face != nullptr)
 		{
-			TargetMOI->SetControlPoint(edgeStartIdx, edgeStartPoint);
-			TargetMOI->SetControlPoint(edgeEndIdx, edgeEndPoint);
-		}
-	}
-	else
-	{
-		TargetMOI->SetControlPoint(TargetIndex, OriginalPolyPoints[TargetIndex] + dp);
-	}
+			TMap<int32, TArray<FVector>> objectInfo;
+			if (bAdjustPolyEdge)
+			{
+				int32 numPolyPoints = OriginalPolyPoints.Num();
+				int32 edgeStartIdx = TargetIndex;
+				int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
 
-	const TArray<FVector> &newPolyPoints = TargetMOI->GetControlPoints();
-	if (UModumateGeometryStatics::IsPolygonValid(newPolyPoints, PolyPlane))
-	{
-		LastValidPolyPoints = newPolyPoints;
-		UpdateTargetGeometry();
-	}
-	else
-	{
-		TargetMOI->SetControlPoints(LastValidPolyPoints);
+				float translation = (dp | OriginalDirection);
+				FVector edgeStartPoint, edgeEndPoint;
+				if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
+				{
+					objectInfo.Add(face->VertexIDs[edgeStartIdx], { edgeStartPoint });
+					objectInfo.Add(face->VertexIDs[edgeEndIdx], { edgeEndPoint });
+				}
+			}
+			else
+			{
+				objectInfo.Add(face->VertexIDs[TargetIndex], { OriginalPolyPoints[TargetIndex] + dp });
+			}
+
+			FModumateObjectDeltaStatics::PreviewMovement(objectInfo, doc, Controller->GetWorld());
+		}
+		else
+		{ // TODO: non-Graph 3D Objects?
+			return false;
+		}
 	}
 
 	return true;

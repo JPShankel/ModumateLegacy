@@ -32,6 +32,8 @@ private:
 	};
 
 	TArray<TSharedPtr<UndoRedo>> UndoBuffer, RedoBuffer;
+	TArray<TSharedPtr<Modumate::FDelta>> PreviewDeltas;
+
 	int32 NextID;
 
 	TArray<Modumate::FModumateObjectInstance*> ObjectInstanceArray;
@@ -194,12 +196,20 @@ private:
 		int32 ID, int32 ParentID = 0, const FVector &Extents = FVector::ZeroVector,
 		const TArray<FVector> *CPS = nullptr, const TArray<int32> *CPI = nullptr, bool bInverted = false);
 
+	// Preview Operations
+public:
+	bool ApplyPreviewDeltas(const TArray<TSharedPtr<Modumate::FDelta>> &Deltas, UWorld *World);
+	void ClearPreviewDeltas(UWorld *World);
+
+	bool GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<TSharedPtr<Modumate::FDelta>>& OutDeltas);
+
 public:
 	bool ApplyMOIDelta(const Modumate::FMOIDelta &Delta, UWorld *World);
 	void ApplyGraph2DDelta(const Modumate::FGraph2DDelta &Delta, UWorld *World);
 	void ApplyGraph3DDelta(const Modumate::FGraph3DDelta &Delta, UWorld *World);
 	bool ApplyDeltas(const TArray<TSharedPtr<Modumate::FDelta>> &Deltas, UWorld *World);
-	void UpdateVolumeGraphObjects(UWorld* World);
+
+	void UpdateVolumeGraphObjects(UWorld *World);
 
 private:
 	bool FinalizeGraphDeltas(TArray <Modumate::FGraph3DDelta> &Deltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs);

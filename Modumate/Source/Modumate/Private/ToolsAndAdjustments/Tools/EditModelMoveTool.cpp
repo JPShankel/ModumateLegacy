@@ -1,6 +1,7 @@
 #include "ToolsAndAdjustments/Tools/EditModelMoveTool.h"
 
 #include "DocumentManagement/ModumateCommands.h"
+#include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -96,10 +97,29 @@ bool UMoveObjectTool::FrameUpdate()
 				break;
 		};
 
-		for (auto &kvp : OriginalObjectData)
+		FModumateDocument* doc = Controller->GetDocument();
+		if (doc != nullptr)
 		{
-			kvp.Key->SetFromDataRecordAndDisplacement(kvp.Value, hitLoc - AnchorPoint);
+			TMap<int32, TArray<FVector>> objectInfo;
+			FVector offset = hitLoc - AnchorPoint;
+			for (auto& kvp : OriginalObjectData)
+			{
+				TArray<FVector> newPositions;
+				for (auto& pos : kvp.Value.ControlPoints)
+				{
+					newPositions.Add(pos + offset);
+				}
+				objectInfo.Add(kvp.Key->ID, newPositions);
+			}
+			if (!FModumateObjectDeltaStatics::PreviewMovement(objectInfo, doc, Controller->GetWorld()))
+			{
+				for (auto& kvp : OriginalObjectData)
+				{
+					kvp.Key->SetFromDataRecordAndDisplacement(kvp.Value, hitLoc - AnchorPoint);
+				}
+			}
 		}
+
 	}
 	return true;
 }

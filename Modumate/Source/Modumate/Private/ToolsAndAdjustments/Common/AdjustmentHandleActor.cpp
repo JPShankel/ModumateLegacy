@@ -122,6 +122,8 @@ void AAdjustmentHandleActor::PostEndOrAbort()
 	{
 		Controller->InteractionHandle = nullptr;
 		Controller->EMPlayerState->SnappedCursor.MouseMode = OriginalMouseMode;
+
+		GameState->Document.ClearPreviewDeltas(Controller->GetWorld());
 	}
 
 	if (TargetMOI)
@@ -283,6 +285,8 @@ void AAdjustmentHandleActor::EndUse()
 	// Now that we've reverted the target object back to its original state, clean all objects so that
 	// deltas can be applied to the original state, and all of its dependent changes.
 	GameState->Document.CleanObjects();
+
+	GameState->Document.ClearPreviewDeltas(Controller->GetWorld());
 
 	if (bMetaPlaneTarget)
 	{

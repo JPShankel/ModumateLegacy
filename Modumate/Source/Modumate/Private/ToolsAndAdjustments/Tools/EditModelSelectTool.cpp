@@ -93,6 +93,8 @@ void FSelectedObjectToolMixin::RestoreSelectedObjects()
 
 void FSelectedObjectToolMixin::ReleaseSelectedObjects()
 {
+	ControllerPtr->GetDocument()->ClearPreviewDeltas(ControllerPtr->GetWorld());
+
 	for (auto &kvp : OriginalObjectData)
 	{
 		kvp.Key->RequestCollisionDisabled(StateRequestTag, false);
@@ -230,6 +232,7 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 
 	TArray<TSharedPtr<FDelta>> deltas;
 
+	doc->ClearPreviewDeltas(world);
 	// First, get deltas for applying volume graph changes as vertex movements
 	// TODO: this might be better structured as just a delta collection step, but FinalizeGraphDeltas etc. use the temporary graph,
 	// so as long as this function is appropriate in directly applying the deltas, we'll just perform the vertex movement right away.

@@ -32,7 +32,7 @@ namespace Modumate
 		}
 	}
 
-	bool FGraph3D::GetDeltaForVertexMovements(const TArray<int32> &VertexIDs, const TArray<FVector> &NewVertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID)
+	bool FGraph3D::MoveVerticesDirect(const TArray<int32>& VertexIDs, const TArray<FVector>& NewVertexPositions, TArray<FGraph3DDelta>& OutDeltas, int32 &NextID)
 	{
 		// First, move all of the vertices
 		FGraph3DDelta moveVertexDelta;
@@ -43,8 +43,6 @@ namespace Modumate
 			return false;
 		}
 
-		TSet<int32> oldConnectedFaceIDs;
-		TMap<int32, int32> joinableVertexIDs;
 		for (int32 i = 0; i < numVertices; ++i)
 		{
 			int32 vertexID = VertexIDs[i];
@@ -53,21 +51,12 @@ namespace Modumate
 			FVector oldPos = vertex->Position;
 			FVector newPos = NewVertexPositions[i];
 
-			// save vertices that are at the same position - after the moveVertexDelta
-			// has been applied, FindVertex will not reliably find the existingVertex
-			const FGraph3DVertex *existingVertex = FindVertex(newPos);
-			if (existingVertex != nullptr && existingVertex->ID != vertexID)
-			{
-				joinableVertexIDs.Add(vertexID, existingVertex->ID);
-			}
-
 			// ensure that the delta is meaningful
 			if (!newPos.Equals(oldPos))
 			{
 				moveVertexDelta.VertexMovements.Add(vertexID, TPair<FVector, FVector>(oldPos, newPos));
 			}
 
-			vertex->GetConnectedFaces(oldConnectedFaceIDs);
 		}
 
 		// the main reason for checking the output of applying the delta is to 
@@ -78,6 +67,37 @@ namespace Modumate
 			return false;
 		}
 		OutDeltas.Add(moveVertexDelta);
+
+		return true;
+	}
+
+	bool FGraph3D::GetDeltaForVertexMovements(const TArray<int32> &VertexIDs, const TArray<FVector> &NewVertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID)
+	{
+		int32 numVertices = VertexIDs.Num();
+		TSet<int32> oldConnectedFaceIDs;
+		TMap<int32, int32> joinableVertexIDs;
+		for (int32 i = 0; i < numVertices; ++i)
+		{
+			int32 vertexID = VertexIDs[i];
+			const FGraph3DVertex *vertex = FindVertex(vertexID);
+
+			vertex->GetConnectedFaces(oldConnectedFaceIDs);
+
+			FVector newPos = NewVertexPositions[i];
+
+			// save vertices that are at the same position - after the moveVertexDelta
+			// has been applied, FindVertex will not reliably find the existingVertex
+			const FGraph3DVertex *existingVertex = FindVertex(newPos);
+			if (existingVertex != nullptr && existingVertex->ID != vertexID)
+			{
+				joinableVertexIDs.Add(vertexID, existingVertex->ID);
+			}
+		}
+
+		if (!MoveVerticesDirect(VertexIDs, NewVertexPositions, OutDeltas, NextID))
+		{
+			return false;
+		}
 
 		// join vertices
 		// create one delta per vertex join to safely update the vertex lists of the faces,

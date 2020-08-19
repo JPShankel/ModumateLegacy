@@ -172,7 +172,8 @@ namespace Modumate
 
 	// movement
 	public:
-		bool GetDeltaForVertexMovements(const TArray<int32> &VertexIDs, const TArray<FVector> &NewVertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID);
+		bool MoveVerticesDirect(const TArray<int32>& VertexIDs, const TArray<FVector>& NewVertexPositions, TArray<FGraph3DDelta>& OutDeltas, int32& NextID);
+		bool GetDeltaForVertexMovements(const TArray<int32>& VertexIDs, const TArray<FVector>& NewVertexPositions, TArray<FGraph3DDelta>& OutDeltas, int32& NextID);
 
 	// splitting functions, support for other graph operations
 	private:
