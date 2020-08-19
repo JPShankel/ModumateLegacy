@@ -19,12 +19,12 @@ namespace Modumate
 		virtual FVector GetCorner(int32 index) const override;
 		virtual FVector GetNormal() const override;
 		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
-		virtual void SetupDynamicGeometry() override;
-		virtual void UpdateDynamicGeometry() override;
 		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override { }
 
 	protected:
-		FVector CachedNormal;
+		FTransform CachedGraphOrigin;
+		TArray<FVector> CachedPerimeter;
+		TArray<FPolyHole3D> CachedHoles;
 	};
 }

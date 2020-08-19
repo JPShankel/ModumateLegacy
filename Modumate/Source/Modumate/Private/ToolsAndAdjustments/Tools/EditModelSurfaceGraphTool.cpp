@@ -76,13 +76,7 @@ bool USurfaceGraphTool::BeginUse()
 		// before starting any poly-line drawing.
 		if (GraphTarget == nullptr)
 		{
-			TArray<TSharedPtr<FDelta>> deltas;
-			if (CreateGraphFromFaceTarget(deltas))
-			{
-				GameState->Document.ApplyDeltas(deltas, GetWorld());
-			}
-
-			return true;
+			return CreateGraphFromFaceTarget();
 		}
 
 		// Otherwise, start drawing a poly-line on the target surface graph.
@@ -275,34 +269,31 @@ bool USurfaceGraphTool::FrameUpdate()
 	return true;
 }
 
-bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &OutDeltas)
+bool USurfaceGraphTool::CreateGraphFromFaceTarget()
 {
-	int32 originalNumDeltas = OutDeltas.Num();
-
 	if (!(HostTarget && HitHostActor && (HitFaceIndex != INDEX_NONE)))
 	{
 		return false;
 	}
 
 	// If we're targeting a surface graph object, it has to be empty
-	int32 surfaceGraphID = MOD_ID_NONE;
-	EGraph2DDeltaType graphDeltaType = EGraph2DDeltaType::Add;
-	int32 nextGraphObjID = GameState->Document.GetNextAvailableID();
+	int32 nextID = GameState->Document.GetNextAvailableID();
+	FGraph2D targetSurfaceGraph(nextID);
+	TArray<TSharedPtr<FDelta>> deltas;
 
 	if (GraphTarget)
 	{
-		const FGraph2D *targetSurfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
-		if ((targetSurfaceGraph == nullptr) || !targetSurfaceGraph->IsEmpty())
+		FGraph2D* existingSurfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
+		if ((existingSurfaceGraph == nullptr) || !existingSurfaceGraph->IsEmpty())
 		{
 			return false;
 		}
 
-		surfaceGraphID = GraphTarget->ID;
-		graphDeltaType = EGraph2DDeltaType::Edit;
+		targetSurfaceGraph = *existingSurfaceGraph;
 	}
 	else
 	{
-		surfaceGraphID = nextGraphObjID++;
+		nextID++;
 	}
 
 	// Create the delta for adding the surface graph object, if it didn't already exist
@@ -314,10 +305,10 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 		surfaceObjectData.ObjectAssemblyKey = NAME_None;
 		surfaceObjectData.ParentID = HostTarget->ID;
 		surfaceObjectData.ControlIndices = { HitFaceIndex };
-		surfaceObjectData.ObjectID = surfaceGraphID;
+		surfaceObjectData.ObjectID = targetSurfaceGraph.GetID();
 
-		TSharedPtr<FMOIDelta> addObjectDelta = MakeShareable(new FMOIDelta({ surfaceObjectData }));
-		OutDeltas.Add(addObjectDelta);
+		deltas.Add(MakeShareable(new FMOIDelta({ surfaceObjectData })));
+		deltas.Add(MakeShareable(new FGraph2DDelta(targetSurfaceGraph.GetID(), EGraph2DDeltaType::Add)));
 	}
 
 	// Make sure we have valid geometry from the target
@@ -327,11 +318,8 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 		return false;
 	}
 
-	TSharedPtr<FGraph2DDelta> fillGraphDelta = MakeShareable(new FGraph2DDelta(surfaceGraphID, graphDeltaType));
-
 	// Project all of the polygons to add to the target graph
 	TArray<TArray<FVector2D>> graphPolygonsToAdd;
-	TArray<int32> graphPolygonHostIDs;
 
 	TArray<FVector2D> &perimeterPolygon = graphPolygonsToAdd.AddDefaulted_GetRef();
 	Algo::Transform(HostCornerPositions, perimeterPolygon, [this](const FVector &WorldPoint) {
@@ -341,7 +329,6 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 	// Project the holes that the target has into graph polygons, if any
 	const auto &volumeGraph = GameState->Document.GetVolumeGraph();
 	const auto *hostParentFace = volumeGraph.FindFace(HostTarget->GetParentID());
-	graphPolygonHostIDs.Add(hostParentFace->ID);
 
 	// this only counts faces that are contained, not holes without faces (CachedIslands)
 	if (hostParentFace->ContainedFaceIDs.Num() != hostParentFace->CachedHoles.Num())
@@ -358,48 +345,20 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(TArray<TSharedPtr<FDelta>> &Ou
 			Algo::Transform(containedFace->CachedPositions, holePolygon, [this](const FVector &WorldPoint) {
 				return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
 			});
-			graphPolygonHostIDs.Add(containedFace->ID);
 		}
 	}
 
-	// Populate the target graph with the input polygons
-	TArray<int32> polygonVertexIDs;
-	for (int32 polygonIdx = 0; polygonIdx < graphPolygonsToAdd.Num(); polygonIdx++)
+	TArray<FGraph2DDelta> fillGraphDeltas;
+	if (!targetSurfaceGraph.PopulateFromPolygons(fillGraphDeltas, nextID, graphPolygonsToAdd, true))
 	{
-		const TArray<FVector2D> &graphPolygonToAdd = graphPolygonsToAdd[polygonIdx];
-		// Populate the target graph with the polygon vertices
-		polygonVertexIDs.Reset();
-		for (const FVector2D &vertex : graphPolygonToAdd)
-		{
-			polygonVertexIDs.Add(nextGraphObjID);
-			fillGraphDelta->AddNewVertex(vertex, nextGraphObjID);
-		}
-
-		// Populate the target graph with the polygon edges
-		int32 numPolygonVerts = graphPolygonToAdd.Num();
-		for (int32 polyPointIdxA = 0; polyPointIdxA < numPolygonVerts; ++polyPointIdxA)
-		{
-			int32 polyPointIdxB = (polyPointIdxA + 1) % numPolygonVerts;
-			fillGraphDelta->AddNewEdge(FGraphVertexPair(polygonVertexIDs[polyPointIdxA], polygonVertexIDs[polyPointIdxB]), nextGraphObjID);
-		}
-
-		// Populate the target graph with the polygon itself
-		fillGraphDelta->AddNewPolygon(polygonVertexIDs, nextGraphObjID, true);
-
-		// Populate the bounds formed by the polygon
-		if (polygonIdx == 0)
-		{
-			fillGraphDelta->BoundsUpdates.Value.OuterBounds = TPair<int32, TArray<int32>>(graphPolygonHostIDs[polygonIdx], polygonVertexIDs);
-		}
-		else
-		{
-			fillGraphDelta->BoundsUpdates.Value.InnerBounds.Add(graphPolygonHostIDs[polygonIdx], polygonVertexIDs);
-		}
+		return false;
 	}
 
-	OutDeltas.Add(fillGraphDelta);
-
-	return true;
+	for (FGraph2DDelta& graphDelta : fillGraphDeltas)
+	{
+		deltas.Add(MakeShareable(new FGraph2DDelta{ graphDelta }));
+	}
+	return GameState->Document.ApplyDeltas(deltas, GetWorld());
 }
 
 void USurfaceGraphTool::ResetTarget()

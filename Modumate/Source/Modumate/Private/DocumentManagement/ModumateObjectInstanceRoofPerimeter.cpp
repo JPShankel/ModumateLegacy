@@ -225,7 +225,7 @@ namespace Modumate
 		CachedEdgeIDs.Reset();
 		if (volumeGraph.Create2DGraph(TempGroupEdges, TempConnectedGraphIDs, CachedPerimeterGraph, CachedPlane, true, false))
 		{
-			const FGraph2DPolygon *perimeterPoly = CachedPerimeterGraph.GetExteriorPolygon();
+			const FGraph2DPolygon *perimeterPoly = CachedPerimeterGraph.GetRootPolygon();
 			if (ensure(perimeterPoly))
 			{
 				bValidPerimeterLoop = !perimeterPoly->bHasDuplicateVertex;

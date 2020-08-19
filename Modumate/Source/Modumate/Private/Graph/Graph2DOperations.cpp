@@ -702,6 +702,121 @@ namespace Modumate
 		return true;
 	}
 
+	bool FGraph2D::PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, TArray<TArray<FVector2D>>& InitialPolygons, bool bUseAsBounds)
+	{
+		if (!IsEmpty() || (InitialPolygons.Num() == 0))
+		{
+			return false;
+		}
+
+		TArray<FGraph2DDelta> appliedDeltas;
+
+		// Populate the target graph with the polygon vertices
+		FGraph2DDelta& addVerticesDelta = appliedDeltas.Add_GetRef(FGraph2DDelta(ID));
+		for (int32 polygonIdx = 0; polygonIdx < InitialPolygons.Num(); polygonIdx++)
+		{
+			const TArray<FVector2D>& polygonVertices = InitialPolygons[polygonIdx];
+
+			for (const FVector2D& polygonVertex : polygonVertices)
+			{
+				if (!AddVertexDirect(addVerticesDelta, NextID, polygonVertex))
+				{
+					ApplyInverseDeltas(appliedDeltas);
+					return false;
+				}
+			}
+		}
+
+		if (!ApplyDelta(addVerticesDelta))
+		{
+			ApplyInverseDeltas(appliedDeltas);
+			return false;
+		}
+
+		FGraph2DDelta& addEdgesDelta = appliedDeltas.Add_GetRef(FGraph2DDelta(ID));
+		for (int32 polygonIdx = 0; polygonIdx < InitialPolygons.Num(); polygonIdx++)
+		{
+			const TArray<FVector2D>& polygonVertices = InitialPolygons[polygonIdx];
+			int32 numPolygonVerts = polygonVertices.Num();
+			for (int32 polyPointIdxA = 0; polyPointIdxA < numPolygonVerts; ++polyPointIdxA)
+			{
+				int32 polyPointIdxB = (polyPointIdxA + 1) % numPolygonVerts;
+				const FGraph2DVertex* polyVertexA = FindVertex(polygonVertices[polyPointIdxA]);
+				const FGraph2DVertex* polyVertexB = FindVertex(polygonVertices[polyPointIdxB]);
+				int32 polyVertexIDA = polyVertexA ? polyVertexA->ID : MOD_ID_NONE;
+				int32 polyVertexIDB = polyVertexB ? polyVertexB->ID : MOD_ID_NONE;
+
+				if (!AddEdgeDirect(addEdgesDelta, NextID, polyVertexA->ID, polyVertexB->ID))
+				{
+					ApplyInverseDeltas(appliedDeltas);
+					return false;
+				}
+			}
+		}
+
+		if (!ApplyDelta(addEdgesDelta))
+		{
+			ApplyInverseDeltas(appliedDeltas);
+			return false;
+		}
+
+		if (!CalculatePolygons(appliedDeltas, NextID))
+		{
+			ApplyInverseDeltas(appliedDeltas);
+			return false;
+		}
+
+		// Make sure that the calculated polygons correspond to those that were intended to populate the graph
+		int32 numInteriorPolygons = 0;
+		for (auto& kvp : Polygons)
+		{
+			if (kvp.Value.bInterior)
+			{
+				numInteriorPolygons++;
+			}
+		}
+
+		if (numInteriorPolygons != InitialPolygons.Num())
+		{
+			ApplyInverseDeltas(appliedDeltas);
+			return false;
+		}
+
+		// Now, optionally set the bounds based on the resulting polygons
+		if (bUseAsBounds)
+		{
+			// We require that the graph has a well-defined root polygon (one that contains all the others) in order to set bounds
+			FGraph2DPolygon* outerPolygon = GetRootPolygon();
+			if (outerPolygon == nullptr)
+			{
+				ApplyInverseDeltas(appliedDeltas);
+				return false;
+			}
+			TPair<int32, TArray<int32>> outerBounds(outerPolygon->ID, outerPolygon->CachedPerimeterVertexIDs);
+
+			TMap<int32, TArray<int32>> innerBounds;
+			for (auto& kvp : Polygons)
+			{
+				if ((kvp.Key != outerPolygon->ID) && kvp.Value.bInterior)
+				{
+					innerBounds.Add(kvp.Key, kvp.Value.CachedPerimeterVertexIDs);
+				}
+			}
+
+			if (!SetBounds(appliedDeltas, outerBounds, innerBounds) || !ValidateAgainstBounds())
+			{
+				ApplyInverseDeltas(appliedDeltas);
+				return false;
+			}
+		}
+
+		// return graph in its original state
+		OutDeltas.Append(appliedDeltas);
+		ApplyInverseDeltas(appliedDeltas);
+
+		return true;
+	}
+
 	bool FGraph2D::JoinVertices(FGraph2DDelta &OutDelta, int32 &NextID, int32 SavedVertexID, int32 RemovedVertexID)
 	{
 		auto joinVertex = FindVertex(SavedVertexID);
@@ -838,6 +953,9 @@ namespace Modumate
 			}
 			OutDeltas.Add(updatePolygonsDelta);
 		}
+
+		// Clean all graph object derived data (including polygons, new and old), so we can use perimeters to calculate containment.
+		CleanDirtyObjects(true);
 
 		// determine which polygons are inside of others
 		FGraph2DDelta parentIDUpdatesDelta(ID);

@@ -115,8 +115,9 @@ bool UPlaneHostedObjTool::FrameUpdate()
 
 		if (bPendingPlaneValid && (PendingPlanePoints.Num() >= 3))
 		{
+			TArray<FPolyHole3D> holes;
 			bool bRecreatingGeometry = (PendingObjMesh->LayerGeometries.Num() == 0);
-			PendingObjMesh->CreateBasicLayerDefs(PendingPlanePoints, FVector::ZeroVector, ObjAssembly, GetDefaultJustificationValue());
+			PendingObjMesh->CreateBasicLayerDefs(PendingPlanePoints, FVector::ZeroVector, holes, ObjAssembly, GetDefaultJustificationValue());
 			PendingObjMesh->UpdatePlaneHostedMesh(bRecreatingGeometry, false, false, PendingPlanePoints[0]);
 			PendingObjMesh->SetActorHiddenInGame(false);
 		}

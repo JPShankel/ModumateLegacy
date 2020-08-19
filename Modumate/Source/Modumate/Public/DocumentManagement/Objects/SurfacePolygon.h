@@ -17,10 +17,12 @@ namespace Modumate
 
 	protected:
 		float MeshPointOffset;
+
+		FTransform CachedOrigin;
 		TArray<FVector> CachedOffsetPoints;
 		bool bInteriorPolygon;
+		bool bInnerBoundsPolygon;
 
-		bool UpdateCachedGraphData();
 		virtual float GetAlpha() const override;
 	};
 }

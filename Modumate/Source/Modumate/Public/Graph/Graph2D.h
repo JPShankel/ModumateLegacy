@@ -52,9 +52,9 @@ namespace Modumate
 		void ClearPolygons();
 
 		int32 GetID() const;
-		int32 GetExteriorPolygonID() const;
-		FGraph2DPolygon *GetExteriorPolygon();
-		const FGraph2DPolygon *GetExteriorPolygon() const;
+		int32 GetRootPolygonID() const;
+		FGraph2DPolygon *GetRootPolygon();
+		const FGraph2DPolygon *GetRootPolygon() const;
 
 		const TMap<int32, FGraph2DEdge> &GetEdges() const { return Edges; }
 		const TMap<int32, FGraph2DVertex> &GetVertices() const { return Vertices; }
@@ -148,6 +148,7 @@ namespace Modumate
 		void AggregateAddedEdges(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutEdges, const FVector2D &StartPosition, const FVector2D &EndPosition);
 
 		void GetOuterBoundsIDs(TArray<int32> &OutVertexIDs) const;
+		const TMap<int32, TArray<int32>>& GetInnerBounds() const;
 
 		// TODO: aggregate polygons constrained by polygon
 
@@ -190,6 +191,10 @@ namespace Modumate
 		// Set lists of vertex IDs to represent the bounds of the surface graph.  All vertices and edges must be inside the 
 		// OuterBounds (inclusive) and outside all InnerBounds (inclusive).
 		bool SetBounds(TArray<FGraph2DDelta> &OutDeltas, TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds);
+
+		// Create Deltas for an empty graph resulting in adding the specified polygons.
+		// If using as bounds, the bounds will be set based on the resulting polygons.
+		bool PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, TArray<TArray<FVector2D>>& InitialPolygons, bool bUseAsBounds);
 
 		// The "Direct" versions of helper functions are meant to be combined together to make deltas that result in
 		// more complicated operations, and do not apply the delta that they create.

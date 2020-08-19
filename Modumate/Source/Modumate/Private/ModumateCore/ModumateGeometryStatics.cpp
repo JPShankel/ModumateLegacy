@@ -1711,6 +1711,11 @@ bool UModumateGeometryStatics::AnalyzeCachedPositions(const TArray<FVector> &InP
 		Out2DPositions.Add(ProjectPoint2D(position, OutAxis2DX, OutAxis2DY, InPositions[0]));
 	}
 
+	if (!UModumateGeometryStatics::IsPolygon2DValid(Out2DPositions))
+	{
+		return false;
+	}
+
 	// Find a central point to use for casting rays
 	// (essential for concave polygons, where the centroid would not suffice)
 	FVector2D furthestPoint;

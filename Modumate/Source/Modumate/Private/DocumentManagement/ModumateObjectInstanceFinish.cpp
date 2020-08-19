@@ -15,7 +15,6 @@ namespace Modumate
 {
 	FMOIFinishImpl::FMOIFinishImpl(FModumateObjectInstance *moi)
 		: FDynamicModumateObjectInstanceImpl(moi)
-		, CachedNormal(ForceInitToZero)
 	{ }
 
 	FMOIFinishImpl::~FMOIFinishImpl()
@@ -25,21 +24,21 @@ namespace Modumate
 	FVector FMOIFinishImpl::GetCorner(int32 index) const
 	{
 		const FModumateObjectInstance *parentObj = MOI->GetParentObject();
-		if (!ensureMsgf(parentObj, TEXT("Finish ID %d does not have parent object!"), MOI->ID))
+		if (!ensure(parentObj) || (CachedPerimeter.Num() == 0))
 		{
-			return GetLocation();
+			return FVector::ZeroVector;
 		}
 
 		float thickness = MOI->CalculateThickness();
-		int32 numCP = MOI->GetControlPoints().Num();
-		FVector cornerOffset = (index < numCP) ? FVector::ZeroVector : (CachedNormal * thickness);
+		int32 numPoints = CachedPerimeter.Num();
+		FVector cornerOffset = (index < numPoints) ? FVector::ZeroVector : (GetNormal() * thickness);
 
-		return MOI->GetControlPoint(index % numCP) + cornerOffset;
+		return CachedPerimeter[index % numPoints] + cornerOffset;
 	}
 
 	FVector FMOIFinishImpl::GetNormal() const
 	{
-		return CachedNormal;
+		return CachedGraphOrigin.GetRotation().GetAxisZ();
 	}
 
 	bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
@@ -47,12 +46,38 @@ namespace Modumate
 		switch (DirtyFlag)
 		{
 		case EObjectDirtyFlags::Structure:
-			// For now, finishes are entirely defined by their mount to their parent wall,
-			// and they inherit any bored holes, so we can just leave their setup to Visual cleaning and dirty it here.
-			MOI->MarkDirty(EObjectDirtyFlags::Visuals);
+		{
+			// The finish requires a surface polygon parent from which to extrude its layered assembly
+			FModumateObjectInstance *surfacePolyParent = MOI->GetParentObject();
+			if ((surfacePolyParent == nullptr) || !ensure(surfacePolyParent->GetObjectType() == EObjectType::OTSurfacePolygon))
+			{
+				return false;
+			}
+
+			bool bInteriorPolygon, bInnerBoundsPolygon;
+			if (!UModumateObjectStatics::GetGeometryFromSurfacePoly(MOI->GetDocument(), surfacePolyParent->ID,
+				bInteriorPolygon, bInnerBoundsPolygon, CachedGraphOrigin, CachedPerimeter, CachedHoles))
+			{
+				return false;
+			}
+
+			// We shouldn't have been able to parent a finish to an invalid surface polygon, so don't bother trying to get geometry from it
+			if (!ensure(bInteriorPolygon && !bInnerBoundsPolygon) || (CachedPerimeter.Num() < 3))
+			{
+				return false;
+			}
+
+			bool bToleratePlanarErrors = true;
+			bool bLayerSetupSuccess = DynamicMeshActor->CreateBasicLayerDefs(CachedPerimeter, CachedGraphOrigin.GetRotation().GetAxisZ(), CachedHoles,
+				MOI->GetAssembly(), 0.0f, FVector::ZeroVector, 0.0f, bToleratePlanarErrors);
+
+			if (bLayerSetupSuccess)
+			{
+				DynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
+			}
+		}
 			break;
 		case EObjectDirtyFlags::Visuals:
-			SetupDynamicGeometry();
 			MOI->UpdateVisibilityAndCollision();
 			break;
 		default:
@@ -60,41 +85,6 @@ namespace Modumate
 		}
 
 		return true;
-	}
-
-	void FMOIFinishImpl::SetupDynamicGeometry()
-	{
-		// Clear adjustment handle without clearing the object tag
-		// TODO: why is this necessary?
-		MOI->ClearAdjustmentHandles();
-
-		FModumateObjectInstance *surfacePolyParent = MOI->GetParentObject();
-		if ((surfacePolyParent == nullptr) || !ensure(surfacePolyParent->GetObjectType() != EObjectType::OTSurfacePolygon))
-		{
-			return;
-		}
-
-		MOI->SetControlPoints(surfacePolyParent->GetControlPoints());
-		CachedNormal = surfacePolyParent->GetNormal();
-
-		if ((MOI->GetControlPoints().Num() < 3) || !CachedNormal.IsNormalized())
-		{
-			return;
-		}
-
-		bool bToleratePlanarErrors = true;
-		bool bLayerSetupSuccess = DynamicMeshActor->CreateBasicLayerDefs(MOI->GetControlPoints(), CachedNormal, MOI->GetAssembly(),
-			0.0f, FVector::ZeroVector, 0.0f, bToleratePlanarErrors);
-
-		if (bLayerSetupSuccess)
-		{
-			DynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
-		}
-	}
-
-	void FMOIFinishImpl::UpdateDynamicGeometry()
-	{
-		SetupDynamicGeometry();
 	}
 
 	void FMOIFinishImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const

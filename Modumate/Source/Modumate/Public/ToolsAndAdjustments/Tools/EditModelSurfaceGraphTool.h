@@ -2,8 +2,6 @@
 #pragma once
 
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
-
-#include "DocumentManagement/ModumateDelta.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 
 #include "EditModelSurfaceGraphTool.generated.h"
@@ -30,7 +28,7 @@ public:
 	float AffordanceLineInterval = 8.0f;
 
 protected:
-	bool CreateGraphFromFaceTarget(TArray<TSharedPtr<Modumate::FDelta>> &OutDeltas);
+	bool CreateGraphFromFaceTarget();
 	void ResetTarget();
 
 	UPROPERTY()

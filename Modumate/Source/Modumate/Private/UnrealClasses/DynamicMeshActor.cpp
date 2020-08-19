@@ -272,7 +272,7 @@ void ADynamicMeshActor::UpdateRailGeometry(const TArray<FVector> &points, float 
 }
 
 bool ADynamicMeshActor::CreateBasicLayerDefs(const TArray<FVector> &PlanePoints, const FVector &PlaneNormal,
-	const FBIMAssemblySpec &InAssembly, float PlaneOffsetPCT,
+	const TArray<FPolyHole3D>& Holes, const FBIMAssemblySpec &InAssembly, float PlaneOffsetPCT,
 	const FVector &AxisX, float UVRotOffset, bool bToleratePlanarErrors)
 {
 	TArray<FVector> layerPointsA, layerPointsB, fixedPlanePoints;
@@ -311,8 +311,7 @@ bool ADynamicMeshActor::CreateBasicLayerDefs(const TArray<FVector> &PlanePoints,
 			[planeGeom](const FVector &point) { return FVector::PointPlaneProject(point, planeGeom); });
 	}
 
-	FVector centroid = Algo::Accumulate(fixedPlanePoints, FVector::ZeroVector, [](const FVector &c, const FVector &p) { return c + p; }) / numPoints;
-	SetActorLocation(centroid);
+	SetActorLocation(FVector::ZeroVector);
 	SetActorRotation(FQuat::Identity);
 
 	FVector layersNormal = PlaneNormal.IsZero() ? FVector(planeGeom) : PlaneNormal;
@@ -332,12 +331,12 @@ bool ADynamicMeshActor::CreateBasicLayerDefs(const TArray<FVector> &PlanePoints,
 		layerPointsB.Reset(numPoints);
 		for (const FVector &planePoint : fixedPlanePoints)
 		{
-			layerPointsA.Add(planePoint + (totalOffset + accumThickness) * layersNormal - centroid);
-			layerPointsB.Add(planePoint + (totalOffset + accumThickness + layerThickness) * layersNormal - centroid);
+			layerPointsA.Add(planePoint + (totalOffset + accumThickness) * layersNormal);
+			layerPointsB.Add(planePoint + (totalOffset + accumThickness + layerThickness) * layersNormal);
 		}
 
 		FLayerGeomDef &layerGeomDef = LayerGeometries[layerIdx];
-		layerGeomDef.Init(layerPointsA, layerPointsB, layersNormal, commonAxisX, &Holes3D);
+		layerGeomDef.Init(layerPointsA, layerPointsB, layersNormal, commonAxisX, &Holes);
 		if (!commonAxisX.IsNormalized())
 		{
 			commonAxisX = layerGeomDef.AxisX;
@@ -762,7 +761,6 @@ void ADynamicMeshActor::SetupPlaneGeometry(const TArray<FVector> &points, const 
 	SetActorRotation(FQuat::Identity);
 
 	LayerGeometries.Reset();
-	Holes3D.Reset();
 
 
 	TArray<FVector> relativePoints;
@@ -802,7 +800,6 @@ void ADynamicMeshActor::SetupMetaPlaneGeometry(const TArray<FVector> &points, co
 	SetActorRotation(FQuat::Identity);
 
 	LayerGeometries.Reset();
-	Holes3D.Reset();
 
 
 	TArray<FVector> relativePoints;
@@ -858,7 +855,6 @@ void ADynamicMeshActor::SetupRoomGeometry(const TArray<TArray<FVector>> &Polygon
 	SetActorRotation(FQuat::Identity);
 
 	LayerGeometries.Reset();
-	Holes3D.Reset();
 
 	vertices.Reset();
 	normals.Reset();
@@ -926,7 +922,6 @@ bool ADynamicMeshActor::SetupStairPolys(const FVector &StairOrigin,
 	vertexColors.Reset();
 
 	LayerGeometries.Reset();
-	Holes3D.Reset();
 	Assembly = FBIMAssemblySpec();
 
 	TArray<FVector> layerPointsB;

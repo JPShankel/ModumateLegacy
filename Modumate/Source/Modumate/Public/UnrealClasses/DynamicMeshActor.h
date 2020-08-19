@@ -107,9 +107,8 @@ public:
 	void SetupRailGeometry(const TArray<FVector> &points, float height);
 	void UpdateRailGeometry(const TArray<FVector> &points, float height);
 
-	const TArray<FPolyHole3D> &GetHoles3D() const { return Holes3D; }
 	bool CreateBasicLayerDefs(const TArray<FVector> &PlanePoints, const FVector &PlaneNormal,
-		const FBIMAssemblySpec &InAssembly, float PlaneOffsetPCT,
+		const TArray<FPolyHole3D>& Holes, const FBIMAssemblySpec &InAssembly, float PlaneOffsetPCT,
 		const FVector &AxisX = FVector::ZeroVector, float UVRotOffset = 0.0f, bool bToleratePlanarErrors = false);
 	bool UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCollision, bool bEnableCollision,
 		const FVector &InUVAnchor = FVector::ZeroVector, float UVRotOffset = 0.0f);
@@ -156,9 +155,6 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	// The most recent list of hole sections used to bore holes in this geometry.
-	TArray<FPolyHole3D> Holes3D;
 
 	// The current set of error tags that are making this actor invalid.
 	TSet<FName> PlacementErrors;

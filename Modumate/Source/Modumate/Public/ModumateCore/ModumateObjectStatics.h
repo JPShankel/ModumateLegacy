@@ -5,6 +5,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Graph/Graph3DTypes.h"
 #include "ModumateCore/ModumateTypes.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UObject/Object.h"
 
@@ -83,6 +84,8 @@ public:
 		TArray<FVector>& OutFacePoints, FVector& OutNormal, FVector& OutFaceAxisX, FVector& OutFaceAxisY);
 	static bool GetGeometryFromFaceIndex(const Modumate::FModumateObjectInstance *Host, int32 FaceIndex,
 		TArray<FVector>& OutFacePoints, FTransform& OutFaceOrigin);
+	static bool GetGeometryFromSurfacePoly(const FModumateDocument* Doc, int32 SurfacePolyID, bool& bOutInterior, bool& bOutInnerBounds,
+		FTransform& OutOrigin, TArray<FVector>& OutPerimeter, TArray<FPolyHole3D>& OutHoles, float PlaneOffset = 0.0f);
 
 	// Meta Objects
 	static void EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const FModumateDocument *Doc,

@@ -351,8 +351,6 @@ namespace Modumate
 		TArray<FGraph2DDelta> deltas;
 		ensure(CalculatePolygons(deltas, NextPolyID));
 
-		CleanDirtyObjects(true);
-
 		return Polygons.Num();
 	}
 
@@ -367,21 +365,20 @@ namespace Modumate
 		return ID;
 	}
 
-	int32 FGraph2D::GetExteriorPolygonID() const
+	int32 FGraph2D::GetRootPolygonID() const
 	{
 		int32 resultID = MOD_ID_NONE;
 
 		for (auto &kvp : Polygons)
 		{
 			auto &polygon = kvp.Value;
-			if (!polygon.bInterior)
+			if (polygon.bInterior && (polygon.ParentID == MOD_ID_NONE))
 			{
 				if (resultID == MOD_ID_NONE)
 				{
 					resultID = polygon.ID;
-					
 				}
-				// If there's already another exterior polygon, then there's no singular exterior polygon, so return neither.
+				// If there's already another root polygon, then there's no singular root polygon, so return neither.
 				else
 				{
 					return MOD_ID_NONE;
@@ -392,14 +389,14 @@ namespace Modumate
 		return resultID;
 	}
 
-	FGraph2DPolygon *FGraph2D::GetExteriorPolygon()
+	FGraph2DPolygon *FGraph2D::GetRootPolygon()
 	{
-		return FindPolygon(GetExteriorPolygonID());
+		return FindPolygon(GetRootPolygonID());
 	}
 
-	const FGraph2DPolygon *FGraph2D::GetExteriorPolygon() const
+	const FGraph2DPolygon *FGraph2D::GetRootPolygon() const
 	{
-		return FindPolygon(GetExteriorPolygonID());
+		return FindPolygon(GetRootPolygonID());
 	}
 
 	bool FGraph2D::ToDataRecord(FGraph2DRecord* OutRecord, bool bSaveOpenPolygons, bool bSaveExteriorPolygons) const
@@ -1104,5 +1101,10 @@ namespace Modumate
 	void FGraph2D::GetOuterBoundsIDs(TArray<int32> &OutVertexIDs) const
 	{
 		OutVertexIDs = BoundingPolygon.Value;
+	}
+
+	const TMap<int32, TArray<int32>>& FGraph2D::GetInnerBounds() const
+	{
+		return BoundingContainedPolygons;
 	}
 }

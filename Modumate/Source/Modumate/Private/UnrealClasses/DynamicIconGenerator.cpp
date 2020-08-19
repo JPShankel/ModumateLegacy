@@ -112,8 +112,9 @@ bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FName &AsmKey, EToo
 	FVector p3 = FVector(WallLength * -0.5f, 0.f, WallHeight) + Root->GetComponentLocation();
 	FVector p4 = FVector(WallLength * 0.5f, 0.f, WallHeight) + Root->GetComponentLocation();
 	TArray<FVector> planePoints = { p1, p2, p3, p4};
+	TArray<FPolyHole3D> holes;
 
-	IconDynamicMeshActor->CreateBasicLayerDefs(planePoints, FVector::ZeroVector, *assembly, 0.5f, FVector::ZeroVector);
+	IconDynamicMeshActor->CreateBasicLayerDefs(planePoints, FVector::ZeroVector, holes, *assembly, 0.5f, FVector::ZeroVector);
 	IconDynamicMeshActor->Assembly = *assembly;
 	IconDynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
 
@@ -172,8 +173,9 @@ bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FName &AsmKey, ETo
 	FVector p3 = FVector(FloorLength * 0.5f, FloorDepth * -0.5f, 0.f) + Root->GetComponentLocation();
 	FVector p4 = FVector(FloorLength * -0.5f, FloorDepth * -0.5f, 0.f) + Root->GetComponentLocation();
 	TArray<FVector> planePoints = { p1, p2, p3, p4 };
+	TArray<FPolyHole3D> holes;
 
-	IconDynamicMeshActor->CreateBasicLayerDefs(planePoints, FVector::ZeroVector, *assembly, 1.f, FVector::ZeroVector);
+	IconDynamicMeshActor->CreateBasicLayerDefs(planePoints, FVector::ZeroVector, holes, *assembly, 1.f, FVector::ZeroVector);
 	IconDynamicMeshActor->Assembly = *assembly;
 	IconDynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
 

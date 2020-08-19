@@ -681,8 +681,6 @@ namespace Modumate
 			CachedHoles.Add(FPolyHole3D(TempHoleRelativePoints));
 		}
 
-		CachedHoles.Append(DynamicMeshActor->GetHoles3D());
-
 		if (!FMiterHelpers::UpdateMiteredLayerGeoms(MOI, planeFace, &CachedHoles, LayerGeometries))
 		{
 			return;

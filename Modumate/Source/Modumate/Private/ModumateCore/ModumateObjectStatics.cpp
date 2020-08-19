@@ -847,6 +847,63 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateO
 	return false;
 }
 
+bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument* Doc, int32 SurfacePolyID, bool& bOutInterior, bool& bOutInnerBounds,
+	FTransform& OutOrigin, TArray<FVector>& OutPerimeter, TArray<FPolyHole3D>& OutHoles, float PlaneOffset)
+{
+	OutOrigin = FTransform();
+	OutPerimeter.Reset();
+	OutHoles.Reset();
+
+	const FModumateObjectInstance* surfacePolyObj = Doc ? Doc->GetObjectById(SurfacePolyID) : nullptr;
+	int32 surfaceGraphID = surfacePolyObj ? surfacePolyObj->GetParentID() : MOD_ID_NONE;
+	const FGraph2D* surfaceGraph = Doc ? Doc->FindSurfaceGraph(surfaceGraphID) : nullptr;
+	const FModumateObjectInstance* surfaceGraphObj = Doc ? Doc->GetObjectById(surfaceGraphID) : nullptr;
+	const FGraph2DPolygon* surfacePolygon = surfaceGraph ? surfaceGraph->FindPolygon(SurfacePolyID) : nullptr;
+	if (!ensure(surfacePolygon))
+	{
+		return false;
+	}
+
+	bOutInterior = surfacePolygon->bInterior;
+	bOutInnerBounds = surfaceGraph->GetInnerBounds().Contains(SurfacePolyID);
+	OutOrigin = surfaceGraphObj->GetWorldTransform();
+	FVector offsetDelta = PlaneOffset * OutOrigin.GetRotation().GetAxisZ();
+
+	for (int32 perimeterVertexID : surfacePolygon->CachedPerimeterVertexIDs)
+	{
+		auto perimeterVertexObj = Doc->GetObjectById(perimeterVertexID);
+		if (!ensure(perimeterVertexObj) || perimeterVertexObj->IsDirty(EObjectDirtyFlags::Structure))
+		{
+			return false;
+		}
+
+		OutPerimeter.Add(perimeterVertexObj->GetObjectLocation() + offsetDelta);
+	}
+
+	for (int32 interiorPolyID : surfacePolygon->InteriorPolygons)
+	{
+		const FGraph2DPolygon* interiorSurfacePoly = surfaceGraph->FindPolygon(interiorPolyID);
+		if (!ensure(interiorSurfacePoly) || !interiorSurfacePoly->bInterior)
+		{
+			continue;
+		}
+
+		auto& hole = OutHoles.AddDefaulted_GetRef();
+		for (int32 interiorPerimeterVertexID : interiorSurfacePoly->CachedPerimeterVertexIDs)
+		{
+			auto perimeterVertexObj = Doc->GetObjectById(interiorPerimeterVertexID);
+			if (!ensure(perimeterVertexObj) || perimeterVertexObj->IsDirty(EObjectDirtyFlags::Structure))
+			{
+				return false;
+			}
+
+			hole.Points.Add(perimeterVertexObj->GetObjectLocation() + offsetDelta);
+		}
+	}
+
+	return true;
+}
+
 void UModumateObjectStatics::EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const FModumateDocument *Doc,
 	bool &bOutConnectedToEmptyPlane, bool &bOutConnectedToSelectedPlane)
 {
