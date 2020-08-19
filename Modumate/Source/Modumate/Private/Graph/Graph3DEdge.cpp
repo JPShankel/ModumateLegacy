@@ -290,4 +290,9 @@ namespace Modumate
 
 		return true;
 	}
+
+	void FGraph3DEdge::GetVertexIDs(TArray<int32>& OutVertexIDs) const
+	{
+		OutVertexIDs = { StartVertexID, EndVertexID };
+	}
 }

@@ -536,6 +536,11 @@ namespace Modumate
 		return true;
 	}
 
+	void FGraph3DFace::GetVertexIDs(TArray<int32>& OutVertexIDs) const
+	{
+		OutVertexIDs = VertexIDs;
+	}
+
 	bool FGraph3DFace::AssignVertices(const TArray<int32> &InVertexIDs)
 	{
 		VertexIDs = InVertexIDs;

@@ -33,5 +33,6 @@ namespace Modumate
 		virtual void Dirty(bool bConnected = true) override { }
 		virtual bool ValidateForTests() const override { return true; }
 		virtual EGraph3DObjectType GetType() const override { return EGraph3DObjectType::Polyhedron; }
+		virtual void GetVertexIDs(TArray<int32>& OutVertexIDs) const override;
 	};
 }

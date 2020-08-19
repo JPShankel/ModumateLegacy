@@ -18,42 +18,14 @@ bool FModumateObjectDeltaStatics::PreviewMovement(const TMap<int32, TArray<FVect
 		{
 			continue;
 		}
+		Modumate::EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType());
 
-		EObjectType objectType = moi->GetObjectType();
-		Modumate::EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
-
-		if (graph3DObjType != Modumate::EGraph3DObjectType::None)
+		if (auto graphObject = graph.FindObject(Modumate::FTypedGraphObjID(moi->ID, graph3DObjType)))
 		{
 			TArray<int32> vertexIDs;
-			if (moi->GetObjectType() == EObjectType::OTMetaVertex)
-			{
-				auto vertex = graph.FindVertex(moi->ID);
-				if (vertex == nullptr)
-				{
-					return false;
-				}
-				vertexIDs = { vertex->ID };
-			}
-			else if (moi->GetObjectType() == EObjectType::OTMetaEdge)
-			{
-				auto edge = graph.FindEdge(moi->ID);
-				if (edge == nullptr)
-				{
-					return false;
-				}
-				vertexIDs = { edge->StartVertexID, edge->EndVertexID };
-			}
-			else if (moi->GetObjectType() == EObjectType::OTMetaPlane)
-			{
-				auto face = graph.FindFace(moi->ID);
-				if (face == nullptr)
-				{
-					return false;
-				}
-				vertexIDs = face->VertexIDs;
-			}
+			graphObject->GetVertexIDs(vertexIDs);
 
-			if (vertexIDs.Num() != kvp.Value.Num())
+			if (!ensureAlways(vertexIDs.Num() == kvp.Value.Num()))
 			{
 				return false;
 			}

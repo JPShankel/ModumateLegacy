@@ -1,5 +1,7 @@
 #include "UI/DimensionManager.h"
 
+#include "Database/ModumateObjectEnums.h"
+#include "Graph/Graph3DTypes.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UI/DimensionActor.h"
 #include "UI/GraphDimensionActor.h"
@@ -37,26 +39,19 @@ void UDimensionManager::Shutdown()
 void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 {
 	// find which vertices are currently selected and create measuring dimension strings
-	auto& graph = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document.GetVolumeGraph();
+	auto& doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+	auto& graph = doc.GetVolumeGraph();
 
 	LastSelectedVertexIDs.Reset();
 	LastSelectedEdgeIDs.Reset();
 
+	auto moi = doc.GetObjectById(selectedGraphObjID);
+	EObjectType objectType = moi->GetObjectType();
+	Modumate::EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
 	// aggregate the unique selected vertices
-	if (auto vertex = graph.FindVertex(selectedGraphObjID))
+	if (auto graphObject = graph.FindObject(Modumate::FTypedGraphObjID(selectedGraphObjID, graph3DObjType)))
 	{
-		LastSelectedVertexIDs = { selectedGraphObjID };
-		LastSelectedEdgeIDs = {};
-	}
-	else if (auto edge = graph.FindEdge(selectedGraphObjID))
-	{
-		LastSelectedVertexIDs = { edge->StartVertexID, edge->EndVertexID };
-		LastSelectedEdgeIDs = {};
-	}
-	else if (auto face = graph.FindFace(selectedGraphObjID))
-	{
-		LastSelectedVertexIDs = face->VertexIDs;
-		LastSelectedEdgeIDs = face->EdgeIDs;
+		graphObject->GetVertexIDs(LastSelectedVertexIDs);
 	}
 	else
 	{
@@ -89,6 +84,7 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 		// and add a dimension string measuring the next and previous faces
 		if (auto face = graph.FindFace(selectedGraphObjID))
 		{
+			LastSelectedEdgeIDs = face->EdgeIDs;
 			// angle dimensions
 			for (int32 edgeID : LastSelectedEdgeIDs)
 			{

@@ -95,4 +95,9 @@ namespace Modumate {
 		}
 		return true;
 	}
+
+	void FGraph3DVertex::GetVertexIDs(TArray<int32>& OutVertexIDs) const
+	{
+		OutVertexIDs = { ID };
+	}
 }

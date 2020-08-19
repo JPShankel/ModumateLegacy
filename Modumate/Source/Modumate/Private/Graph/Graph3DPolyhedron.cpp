@@ -212,5 +212,22 @@ namespace Modumate
 
 		return facesGroupedByNormal;
 	}
+
+	void FGraph3DPolyhedron::GetVertexIDs(TArray<int32>& OutVertexIDs) const
+	{
+		TSet<int32> vertexIDs;
+
+		for (int32 faceID : FaceIDs)
+		{
+			auto face = Graph->FindFace(faceID);
+			if (face == nullptr)
+			{
+				continue;
+			}
+			vertexIDs.Append(face->VertexIDs);
+		}
+
+		OutVertexIDs = vertexIDs.Array();
+	}
 }
 

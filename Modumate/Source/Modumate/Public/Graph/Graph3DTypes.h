@@ -73,6 +73,8 @@ namespace Modumate
 		virtual EGraph3DObjectType GetType() const = 0;
 		FTypedGraphObjID GetTypedID() const { return FTypedGraphObjID(ID, GetType()); }
 
+		virtual void GetVertexIDs(TArray<int32>& OutVertexIDs) const = 0;
+
 	public:
 		int32 ID = MOD_ID_NONE; // The ID of the object, should match a corresponding MOI
 		bool bValid = false;	// Whether this object can be used in the graph

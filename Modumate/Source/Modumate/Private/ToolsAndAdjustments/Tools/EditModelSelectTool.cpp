@@ -186,42 +186,17 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 				break;
 			}
 		}
-		else if (graph3DObjType != EGraph3DObjectType::None)
+		else if (auto graphObject = volumeGraph.FindObject(Modumate::FTypedGraphObjID(targetID, graph3DObjType)))
 		{
-			switch (graph3DObjType)
+			TArray<int32> vertexIDs;
+			graphObject->GetVertexIDs(vertexIDs);
+			if (!ensureAlways(vertexIDs.Num() == targetCPs.Num()))
 			{
-			case EGraph3DObjectType::Vertex:
-			{
-				if (ensure(numCPs == 1))
-				{
-					vertex3DMovements.Add(targetID, targetCPs[0]);
-				}
-				break;
+				return;
 			}
-			case EGraph3DObjectType::Edge:
+			for (int32 idx = 0; idx < vertexIDs.Num(); idx++)
 			{
-				const FGraph3DEdge *edge = volumeGraph.FindEdge(targetID);
-				if (ensure(edge && (numCPs == 2)))
-				{
-					vertex3DMovements.Add(edge->StartVertexID, targetCPs[0]);
-					vertex3DMovements.Add(edge->EndVertexID, targetCPs[1]);
-				}
-				break;
-			}
-			case EGraph3DObjectType::Face:
-			{
-				const FGraph3DFace *face = volumeGraph.FindFace(targetID);
-				if (ensure(face && (face->VertexIDs.Num() == numCPs)))
-				{
-					for (int32 i = 0; i < numCPs; ++i)
-					{
-						vertex3DMovements.Add(face->VertexIDs[i], targetCPs[i]);
-					}
-				}
-				break;
-			}
-			default:
-				break;
+				vertex3DMovements.Add(vertexIDs[idx], targetCPs[idx]);
 			}
 		}
 		else
