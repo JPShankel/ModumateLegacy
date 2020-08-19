@@ -12,6 +12,7 @@
 #include "UI/Custom/ModumateButton.h"
 #include "Components/Image.h"
 #include "UI/ComponentPresetListItem.h"
+#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 
 UBIMBlockNode::UBIMBlockNode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -26,6 +27,14 @@ bool UBIMBlockNode::Initialize()
 	}
 
 	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+
+	if (!(ButtonSwapCollapsed && ButtonSwapExpanded))
+	{
+		return false;
+	}
+
+	ButtonSwapCollapsed->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonSwapReleased);
+	ButtonSwapExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonSwapReleased);
 
 	return true;
 }
@@ -103,6 +112,18 @@ void UBIMBlockNode::PerformDrag()
 	}
 }
 
+void UBIMBlockNode::OnButtonSwapReleased()
+{
+	UpdateNodeSwitchState(ENodeWidgetSwitchState::PendingSwap);
+	FName parentPresetID = NAME_None;
+	if (ParentID != -1)
+	{
+		parentPresetID = ParentBIMDesigner->GetPresetID(ParentID);
+	}
+	SelectionTray_Block_Swap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, ID);
+
+}
+
 void UBIMBlockNode::UpdateNodeDirty(bool NewDirty)
 {
 	NodeDirty = NewDirty;
@@ -114,11 +135,8 @@ void UBIMBlockNode::UpdateNodeDirty(bool NewDirty)
 void UBIMBlockNode::UpdateNodeCollapse(bool NewCollapse, bool AllowAutoArrange)
 {
 	NodeCollapse = NewCollapse;
-
-	// Switcher switches between which widget to display, depending on child order
-	// Collapsed widget is in first index, expanded widget is second
-	int32 newWidgetIndex = NodeCollapse ? 0 : 1;
-	NodeSwitcher->SetActiveWidgetIndex(newWidgetIndex);
+	ENodeWidgetSwitchState newNodeSwitchState = NodeCollapse ? ENodeWidgetSwitchState::Collapsed : ENodeWidgetSwitchState::Expanded;
+	UpdateNodeSwitchState(newNodeSwitchState);
 	if (AllowAutoArrange)
 	{
 		ParentBIMDesigner->AutoArrangeNodes();
@@ -155,6 +173,28 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 	return true;
 }
 
+void UBIMBlockNode::UpdateNodeSwitchState(ENodeWidgetSwitchState NewState)
+{
+	NodeSwitchState = NewState;
+	// Switcher switches between which widget to display, depending on child order
+	// Collapsed widget is in first index, expanded widget is second, swap is third
+	switch (NodeSwitchState)
+	{
+	case ENodeWidgetSwitchState::Collapsed:
+		NodeSwitcher->SetActiveWidgetIndex(0);
+		break;
+	case ENodeWidgetSwitchState::Expanded:
+		NodeSwitcher->SetActiveWidgetIndex(1);
+		break;
+	case ENodeWidgetSwitchState::PendingSwap:
+		NodeSwitcher->SetActiveWidgetIndex(2);
+		break;
+	default:
+		break;
+	}
+	ParentBIMDesigner->AutoArrangeNodes();
+}
+
 FVector2D UBIMBlockNode::GetEstimatedNodeSize()
 {
 	float estimatedSize = 0.f;
@@ -164,19 +204,25 @@ FVector2D UBIMBlockNode::GetEstimatedNodeSize()
 		estimatedSize += DirtyTabSize;
 	}
 
-	if (NodeCollapse)
+	switch (NodeSwitchState)
 	{
+	case ENodeWidgetSwitchState::Collapsed:
 		estimatedSize += CollapsedNodeSize;
-	}
-	else
-	{
+		break;
+
+	case ENodeWidgetSwitchState::Expanded:
 		estimatedSize += ExpandedImageSize;
 
-		// TODO: Get actual number of form items in node
-		int32 numberOfFormItems = 5;
-		estimatedSize += (FormItemSize * numberOfFormItems);
-
+		// TODO: Get actual number of form items in node, "5" is for testing purpose
+		estimatedSize += (FormItemSize * 5);
 		estimatedSize += BottomPadding;
+		break;
+
+	case ENodeWidgetSwitchState::PendingSwap:
+		estimatedSize += SwapNodeSize;
+		break;
+	default:
+		break;
 	}
 
 	return FVector2D(NodeWidth, estimatedSize);

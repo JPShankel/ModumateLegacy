@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "BIMKernel/BIMNodeEditor.h"
 
 #include "BIMDesigner.generated.h"
 
@@ -38,6 +39,7 @@ protected:
 
 	TMap<int32, class UBIMBlockNode*> IdToNodeMap;
 	TMap<FIntPoint, class UBIMBlockNode*> NodeCoordinateMap;
+	FBIMCraftingTreeNodePool InstancePool;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -84,6 +86,9 @@ public:
 
 	float GetCurrentZoomScale() const;
 	bool EditPresetInBIMDesigner(const FName& PresetID);
+	bool SetPresetForNodeInBIMDesigner(int32 InstanceID, const FName &PresetID);
+	void UpdateBIMDesigner();
 	void AutoArrangeNodes();
 	void DrawConnectSplineForNodes(const FPaintContext& context, class UBIMBlockNode* StartNode, class UBIMBlockNode* EndNode) const;
+	FName GetPresetID(int32 InstanceID);
 };

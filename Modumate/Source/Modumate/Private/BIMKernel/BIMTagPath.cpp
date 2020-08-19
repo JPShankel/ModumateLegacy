@@ -114,7 +114,7 @@ bool FBIMTagPath::MatchesExact(const FBIMTagPath &OtherPath) const
 
 bool FBIMTagPath::MatchesPartial(const FBIMTagPath& OtherPath) const
 {
-	for (int32 i = 0; i < FMath::Min(Num(), OtherPath.Num()); ++i)
+	for (int32 i = 0; i < FMath::Min(Num(),OtherPath.Num()); ++i)
 	{
 		if (!OtherPath[i].MatchesAny((*this)[i]))
 		{

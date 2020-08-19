@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Database/ModumateObjectEnums.h"
 #include "ToolTrayBlockAssembliesList.generated.h"
 
 /**
@@ -23,6 +24,12 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	UPROPERTY()
+	class AEditModelPlayerController_CPP* Controller;
+
+	UPROPERTY()
+	class AEditModelGameState_CPP *GameState;
+
 public:
 	UPROPERTY()
 	class UToolTrayWidget *ToolTray;
@@ -36,7 +43,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateAssembliesListForCurrentToolMode();
 
-	void CreatePresetListInNodeForSwap(int32 NodeID);
+	void CreatePresetListInNodeForSwap(const FName &ParentPresetID, const FName &PresetIDToSwap, int32 NodeID);
+	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FName &PresetID);
 
 	UFUNCTION()
 	void OnButtonAddReleased();

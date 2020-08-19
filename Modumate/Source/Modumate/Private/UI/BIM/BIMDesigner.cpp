@@ -9,7 +9,6 @@
 #include "UI/BIM/BIMBlockNode.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumatePresetManager.h"
-#include "BIMKernel/BIMNodeEditor.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "ModumateCore/ModumateSlateHelper.h"
 
@@ -138,24 +137,38 @@ float UBIMDesigner::GetCurrentZoomScale() const
 
 bool UBIMDesigner::EditPresetInBIMDesigner(const FName& PresetID)
 {
-	CanvasPanelForNodes->ClearChildren();
-	BIMBlockNodes.Empty();
-	IdToNodeMap.Empty();
-
-	FBIMCraftingTreeNodePool instancePool;
 	FBIMCraftingTreeNodeSharedPtr rootNode;
-	ECraftingResult getPresetResult = instancePool.InitFromPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, PresetID, rootNode);
+	ECraftingResult getPresetResult = InstancePool.InitFromPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, PresetID, rootNode);
 	if (getPresetResult != ECraftingResult::Success)
 	{
 		return false;
 	}
+	UpdateBIMDesigner();
+	return true;
+}
 
-	for (const FBIMCraftingTreeNodeSharedPtr& curInstance : instancePool.GetInstancePool())
+bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FName &PresetID)
+{
+	ECraftingResult result = InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, InstanceID, PresetID);
+	if (result != ECraftingResult::Success)
+	{
+		return false;
+	}
+	UpdateBIMDesigner();
+	return true;
+}
+
+void UBIMDesigner::UpdateBIMDesigner()
+{
+	CanvasPanelForNodes->ClearChildren();
+	BIMBlockNodes.Empty();
+	IdToNodeMap.Empty();
+	for (const FBIMCraftingTreeNodeSharedPtr& curInstance : InstancePool.GetInstancePool())
 	{
 		UBIMBlockNode *newBlockNode = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockNode>(BIMBlockNodeClass);
 		if (newBlockNode)
 		{
-			if (curInstance == rootNode)
+			if (!curInstance->ParentInstance.IsValid()) // assume instance without parent is king node
 			{
 				newBlockNode->IsKingNode = true;
 				// Do other kingly things, maybe auto focus when no other node is selected
@@ -171,9 +184,7 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FName& PresetID)
 			}
 		}
 	}
-
 	AutoArrangeNodes();
-	return true;
 }
 
 void UBIMDesigner::AutoArrangeNodes()
@@ -334,4 +345,14 @@ void UBIMDesigner::DrawConnectSplineForNodes(const FPaintContext& context, class
 	TArray<FVector2D> splinePts = { startPoint, FVector2D(startX, startPoint.Y), FVector2D(endX, endPoint.Y), endPoint };
 
 	UModumateSlateHelper::DrawCubicBezierSplineBP(context, splinePts, NodeSplineColor, NodeSplineThickness);
+}
+
+FName UBIMDesigner::GetPresetID(int32 InstanceID)
+{
+	FBIMCraftingTreeNodeSharedPtr instPtr = InstancePool.InstanceFromID(InstanceID);
+	if (ensureAlways(instPtr.IsValid()))
+	{
+		return instPtr->PresetID;
+	}
+	return NAME_None;
 }

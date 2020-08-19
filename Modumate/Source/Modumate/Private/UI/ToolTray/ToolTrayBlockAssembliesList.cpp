@@ -8,7 +8,6 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UI/EditModelUserWidget.h"
 #include "DocumentManagement/ModumatePresetManager.h"
-#include "Database/ModumateObjectEnums.h"
 #include "UI/ComponentListObject.h"
 #include "Components/ListView.h"
 
@@ -36,20 +35,19 @@ bool UToolTrayBlockAssembliesList::Initialize()
 void UToolTrayBlockAssembliesList::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	GameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 }
 
 void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-
-	FPresetManager &presetManager = gameState->Document.PresetManager;
-
-	if (controller && gameState)
+	if (Controller && GameState)
 	{
+		FPresetManager &presetManager = GameState->Document.PresetManager;
 		AssembliesList->ClearListItems();
 
-		EObjectType ot = UModumateTypeStatics::ObjectTypeFromToolMode(controller->GetToolMode());
+		EObjectType ot = UModumateTypeStatics::ObjectTypeFromToolMode(Controller->GetToolMode());
 		FPresetManager::FAssemblyDataCollection *assemblies = presetManager.AssembliesByObjectType.Find(ot);
 
 		if (assemblies == nullptr)
@@ -61,24 +59,60 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 		{
 			UComponentListObject *newCompListObj = NewObject<UComponentListObject>(this);
 			newCompListObj->ItemType = EComponentListItemType::AssemblyListItem;
-			newCompListObj->Mode = controller->GetToolMode();
+			newCompListObj->Mode = Controller->GetToolMode();
 			newCompListObj->UniqueKey = kvp.Value.UniqueKey();
 			AssembliesList->AddItem(newCompListObj);
 		}
 	}
 }
 
-void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(int32 NodeID)
+void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FName &ParentPresetID, const FName &PresetIDToSwap, int32 NodeID)
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	if (Controller && GameState)
+	{
+		FPresetManager &presetManager = GameState->Document.PresetManager;
+		AssembliesList->ClearListItems();
+
+		TArray<FName> availablePresets;
+		presetManager.GetAvailablePresetsForSwap(ParentPresetID, PresetIDToSwap, availablePresets);
+
+		for (auto &curPreset : availablePresets)
+		{
+			UComponentListObject *newCompListObj = NewObject<UComponentListObject>(this);
+			newCompListObj->ItemType = EComponentListItemType::SwapDesignerPreset;
+			newCompListObj->Mode = Controller->GetToolMode();
+			newCompListObj->UniqueKey = curPreset;
+			newCompListObj->BIMNodeInstanceID = NodeID;
+			AssembliesList->AddItem(newCompListObj);
+		}
+	}
+}
+
+void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FName &PresetID)
+{
+	if (Controller && GameState)
+	{
+		FPresetManager &presetManager = GameState->Document.PresetManager;
+		AssembliesList->ClearListItems();
+
+		TArray<FName> availablePresets;
+		presetManager.GetAvailablePresetsForSwap(NAME_None, PresetID, availablePresets);
+
+		for (auto &curPreset : availablePresets)
+		{
+			UComponentListObject *newCompListObj = NewObject<UComponentListObject>(this);
+			newCompListObj->ItemType = EComponentListItemType::SwapListItem;
+			newCompListObj->Mode = ToolMode;
+			newCompListObj->UniqueKey = curPreset;
+			AssembliesList->AddItem(newCompListObj);
+		}
+	}
 }
 
 void UToolTrayBlockAssembliesList::OnButtonAddReleased()
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	if (controller && controller->EditModelUserWidget)
+	if (Controller && Controller->EditModelUserWidget)
 	{
-		controller->EditModelUserWidget->EventNewCraftingAssembly(controller->GetToolMode());
+		Controller->EditModelUserWidget->EventNewCraftingAssembly(Controller->GetToolMode());
 	}
 }

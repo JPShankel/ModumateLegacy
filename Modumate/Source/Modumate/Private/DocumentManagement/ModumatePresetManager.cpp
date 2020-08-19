@@ -170,19 +170,64 @@ bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, cons
 Starting point: get a tree
 */
 
-	const FBIMAssemblySpec *FPresetManager::GetAssemblyByKey(EToolMode ToolMode, const FName &Key) const
+const FBIMAssemblySpec *FPresetManager::GetAssemblyByKey(EToolMode ToolMode, const FName &Key) const
+{
+	EObjectType objectType = UModumateTypeStatics::ObjectTypeFromToolMode(ToolMode);
+	const FAssemblyDataCollection *db = AssembliesByObjectType.Find(objectType);
+	if (db != nullptr)
 	{
-		EObjectType objectType = UModumateTypeStatics::ObjectTypeFromToolMode(ToolMode);
-		const FAssemblyDataCollection *db = AssembliesByObjectType.Find(objectType);
-		if (db != nullptr)
+		return db->GetData(Key);
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+ECraftingResult FPresetManager::GetAvailablePresetsForSwap(const FName& ParentPresetID, const FName &PresetIDToSwap, TArray<FName>& OutAvailablePresets)
+{
+	const FBIMPreset* preset = CraftingNodePresets.Presets.Find(PresetIDToSwap);
+	if (!ensureAlways(preset != nullptr))
+	{
+		return ECraftingResult::Error;
+	}
+
+	/*
+	If we don't have a parent, we're an object assembly, so return all compatible object assemblies
+	*/
+	if (ParentPresetID.IsNone())
+	{
+		if (!ensureAlways(preset->ObjectType != EObjectType::OTNone))
 		{
-			return db->GetData(Key);
+			return ECraftingResult::Error;
 		}
-		else
+		for (auto& candidate : CraftingNodePresets.Presets)
 		{
-			return nullptr;
+			if (candidate.Value.NodeType == preset->NodeType && candidate.Value.ObjectType == preset->ObjectType)
+			{
+				OutAvailablePresets.Add(candidate.Value.PresetID);
+			}
+		}
+	}
+	else // Otherwise, find all presets of same type that are supported by parent as indicated by tags
+	{
+		const FBIMPreset* parentPreset = CraftingNodePresets.Presets.Find(ParentPresetID);
+		if (!ensureAlways(parentPreset != nullptr))
+		{
+			return ECraftingResult::Error;
+		}
+
+		OutAvailablePresets.Empty();
+		for (auto& candidate : CraftingNodePresets.Presets)
+		{
+			if (candidate.Value.NodeType == preset->NodeType && parentPreset->SupportsChild(candidate.Value))
+			{
+				OutAvailablePresets.Add(candidate.Value.PresetID);
+			}
 		}
 	}
 
+	return ECraftingResult::Success;
+}
 
 

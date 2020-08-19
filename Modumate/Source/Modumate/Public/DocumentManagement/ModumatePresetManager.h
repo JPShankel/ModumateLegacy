@@ -55,4 +55,6 @@ public:
 	ECraftingResult ToDocumentRecord(FMOIDocumentRecord& OutRecord) const;
 
 	const FBIMAssemblySpec* GetAssemblyByKey(EToolMode Mode, const FName& Key) const;
+
+	ECraftingResult GetAvailablePresetsForSwap(const FName& ParentPresetID, const FName& PresetIDToSwap, TArray<FName>& OutAvailablePresets);
 };

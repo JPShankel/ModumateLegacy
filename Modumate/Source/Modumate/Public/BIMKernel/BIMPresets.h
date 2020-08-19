@@ -109,7 +109,8 @@ public:
 
 	FString GetDisplayName() const;
 
-	bool Matches(const FBIMPreset &OtherPreset) const;
+	bool Matches(const FBIMPreset& OtherPreset) const;
+	bool SupportsChild(const FBIMPreset& CandidateChild) const;
 
 	EObjectType ObjectType = EObjectType::OTNone;
 	EConfiguratorNodeIconType IconType = EConfiguratorNodeIconType::None;

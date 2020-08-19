@@ -35,10 +35,11 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-	FName AsmKey;
-	FName AsmName;
+	FName AsmKey = NAME_None; // Unique key such as assembly key or presetID
+	FName AsmName = NAME_None; // Display name, user-facing
 	EToolMode ToolMode = EToolMode::VE_NONE;
 	EComponentListItemType ItemType = EComponentListItemType::None;
+	int32 BIMInstanceID = -1;
 
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *EMPlayerController;
@@ -74,6 +75,12 @@ public:
 
 	UFUNCTION()
 	void OnButtonEditReleased();
+
+	UFUNCTION()
+	void OnButtonSwapReleased();
+
+	UFUNCTION()
+	void OnButtonConfirmReleased();
 
 	void UpdateItemType(EComponentListItemType NewItemType);
 	void UpdateSelectionItemCount(int32 ItemCount);

@@ -12,6 +12,15 @@
  *
  */
 
+UENUM(BlueprintType)
+enum class ENodeWidgetSwitchState : uint8
+{
+	Collapsed,
+	Expanded,
+	PendingSwap,
+	None
+};
+
 
 UCLASS()
 class MODUMATE_API UBIMBlockNode : public UUserWidget
@@ -40,11 +49,12 @@ protected:
 	bool DragReset = true;
 	bool NodeCollapse = true;
 	bool NodeDirty = false;
+	ENodeWidgetSwitchState NodeSwitchState = ENodeWidgetSwitchState::None;
 
 public:
 	// Size of node, should be constant regardless of dirty/collapse state
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
-	float NodeWidth = 288.f;
+	float NodeWidth = 312.f;
 
 	// Size of the tab on top of the node during dirty state
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
@@ -53,6 +63,10 @@ public:
 	// Size of the node during collapse state
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
 	float CollapsedNodeSize = 120.f;
+
+	// Size of the node during swap state
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
+	float SwapNodeSize = 500.f;
 
 	// Size from bottom edge the dirty tab to the top of the first form item
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
@@ -79,6 +93,15 @@ public:
 	class UComponentPresetListItem *ComponentPresetListItem;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *ButtonSwapCollapsed;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *ButtonSwapExpanded;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UToolTrayBlockAssembliesList *SelectionTray_Block_Swap;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UUserWidget *BIMBlockNodeDirty;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -98,9 +121,13 @@ public:
 	UFUNCTION()
 	void PerformDrag();
 
+	UFUNCTION()
+	void OnButtonSwapReleased();
+
 	void UpdateNodeDirty(bool NewDirty);
 	void UpdateNodeCollapse(bool NewCollapse, bool AllowAutoArrange = false);
 	bool BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCraftingTreeNodeSharedPtr &Node);
+	void UpdateNodeSwitchState(ENodeWidgetSwitchState NewState);
 
 	UFUNCTION(BlueprintPure)
 	FVector2D GetEstimatedNodeSize();

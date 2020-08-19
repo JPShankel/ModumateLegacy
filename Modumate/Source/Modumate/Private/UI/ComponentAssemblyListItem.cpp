@@ -13,6 +13,10 @@
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/ComponentPresetListItem.h"
 #include "UI/ComponentListObject.h"
+#include "UI/SelectionTray/SelectionTrayWidget.h"
+#include "UI/BIM/BIMDesigner.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 using namespace Modumate;
 
@@ -28,13 +32,15 @@ bool UComponentAssemblyListItem::Initialize()
 		return false;
 	}
 
-	if (!(ModumateButtonMain && ButtonEdit))
+	if (!(ModumateButtonMain && ButtonEdit && ButtonSwap && ButtonConfirm))
 	{
 		return false;
 	}
 
 	ModumateButtonMain->OnReleased.AddDynamic(this, &UComponentAssemblyListItem::OnModumateButtonMainReleased);
 	ButtonEdit->ModumateButton->OnReleased.AddDynamic(this, &UComponentAssemblyListItem::OnButtonEditReleased);
+	ButtonSwap->ModumateButton->OnReleased.AddDynamic(this, &UComponentAssemblyListItem::OnButtonSwapReleased);
+	ButtonConfirm->ModumateButton->OnReleased.AddDynamic(this, &UComponentAssemblyListItem::OnButtonConfirmReleased);
 
 	return true;
 }
@@ -129,6 +135,44 @@ void UComponentAssemblyListItem::OnButtonEditReleased()
 	}
 }
 
+void UComponentAssemblyListItem::OnButtonSwapReleased()
+{
+	if (EMPlayerController)
+	{
+		EMPlayerController->EditModelUserWidget->SelectionTrayWidget->OpenToolTrayForSwap(ToolMode, AsmKey);
+	}
+}
+
+void UComponentAssemblyListItem::OnButtonConfirmReleased()
+{
+	bool result = false;
+
+	switch (ItemType)
+	{
+	case EComponentListItemType::SwapDesignerPreset:
+		result = EMPlayerController->EditModelUserWidget->BIMDesigner->SetPresetForNodeInBIMDesigner(BIMInstanceID, AsmKey);
+		break;
+	case EComponentListItemType::SwapListItem:
+		FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+		const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, AsmKey);
+		if (assembly)
+		{
+			TArray<int32> objIDs;
+			TArray<FModumateObjectInstance*> mois = EMPlayerController->EMPlayerState->SelectedObjects;
+			for (auto& moi : mois)
+			{
+				if (moi->GetAssembly().UniqueKey() == EMPlayerController->EditModelUserWidget->SelectionTrayWidget->GetCurrentPresetToSwap())
+				{
+					objIDs.Add(moi->ID);
+				}
+			}
+			doc->SetAssemblyForObjects(GetWorld(), objIDs, *assembly);
+			result = true;
+		}
+		break;
+	}
+}
+
 bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 {
 	if (!EMPlayerController)
@@ -166,11 +210,20 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 		return;
 	}
 
+	UpdateItemType(compListObj->ItemType);
+	AsmKey = compListObj->UniqueKey;
 	EMPlayerController = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	FPresetManager &presetManager = gameState->Document.PresetManager;
 
-	AsmKey = compListObj->UniqueKey;
+	// Swappable preset item doesn't have BIMAssemblySpec yet.
+	if (compListObj->ItemType == EComponentListItemType::SwapDesignerPreset)
+	{
+		ComponentPresetItem->MainText->ChangeText(FText::FromName(compListObj->UniqueKey));
+		BIMInstanceID = compListObj->BIMNodeInstanceID;
+		return;
+	}
+
 	const FBIMAssemblySpec *assembly = presetManager.GetAssemblyByKey(compListObj->Mode,AsmKey);
 	if (!assembly)
 	{
@@ -178,7 +231,6 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 	}
 	AsmName = assembly->GetProperty(BIMPropertyNames::Name);
 	ToolMode = compListObj->Mode;
-	UpdateItemType(compListObj->ItemType);
 
 	switch (ItemType)
 	{

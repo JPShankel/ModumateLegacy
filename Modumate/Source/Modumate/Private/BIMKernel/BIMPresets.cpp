@@ -228,6 +228,18 @@ void FBIMPreset::SetProperties(const FBIMPropertySheet& InProperties)
 	Properties = InProperties;
 }
 
+bool FBIMPreset::SupportsChild(const FBIMPreset& CandidateChild) const
+{
+	for (auto& childPath : CandidateChild.ParentTagPaths)
+	{
+		if (childPath.MatchesPartial(MyTagPath))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 EObjectType FBIMPresetCollection::GetPresetObjectType(const FName &PresetID) const
 {
 	const FBIMPreset *preset = Presets.Find(PresetID);
@@ -534,7 +546,15 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 			else if (tableData.parentPathRange.IsIn(i) && !cell.IsEmpty())
 			{
 				FBIMTagPath &path = tableData.currentPreset.ParentTagPaths.AddDefaulted_GetRef();
-				path.FromString(tableData.parentPathRange.Get(i));
+				// TODO: standardize parent paths...matrix of Xs or lists in cells?
+				if (cell == TEXT("X"))
+				{
+					path.FromString(tableData.parentPathRange.Get(i));
+				}
+				else if (!cell.IsEmpty())
+				{
+					path.FromString(cell);
+				}
 			}
 			else if (tableData.pinRange.IsIn(i))
 			{

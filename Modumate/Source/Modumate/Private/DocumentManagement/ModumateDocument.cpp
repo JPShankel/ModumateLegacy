@@ -221,19 +221,20 @@ void FModumateDocument::SetDefaultJustificationXY(float newValue)
 void FModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, const FBIMAssemblySpec &assembly)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetAssemblyForWalls"));
-	ClearRedoBuffer();
-
-	TMap<FModumateObjectInstance *, const FBIMAssemblySpec> originals;
+	TArray<TSharedPtr<FDelta>> deltaStates;
 	for (auto id : ids)
 	{
 		FModumateObjectInstance* ob = GetObjectById(id);
 		if (ob != nullptr)
 		{
-			originals.Add(ob, ob->GetAssembly());
+			ob->BeginPreviewOperation();
 			ob->SetAssembly(assembly);
-			ob->OnAssemblyChanged();
+
+			deltaStates.Add(MakeShareable(new FMOIDelta({ ob })));
+			ob->EndPreviewOperation();
 		}
 	}
+	ApplyDeltas(deltaStates, world);
 }
 
 void FModumateDocument::AddHideObjectsById(UWorld *world, const TArray<int32> &ids)
