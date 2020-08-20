@@ -16,8 +16,6 @@ namespace Modumate
 		virtual void SetupDynamicGeometry() override;
 		virtual void UpdateDynamicGeometry() override;
 		virtual void OnSelected(bool bNewSelected) override;
-		virtual void SetFromDataRecordAndRotation(const FMOIDataRecordV1 &dataRec, const FVector &origin, const FQuat &rotation) override;
-		virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecordV1 &dataRec, const FVector &displacement) override;
 
 	protected:
 		void UpdateConnectedVisuals();

@@ -14,19 +14,7 @@ namespace Modumate
 {
 	FMOISurfaceVertexImpl::FMOISurfaceVertexImpl(FModumateObjectInstance *moi)
 		: FMOIVertexImplBase(moi)
-		, CachedLocation(ForceInitToZero)
 	{
-	}
-
-	FVector FMOISurfaceVertexImpl::GetLocation() const
-	{
-		return CachedLocation;
-	}
-
-	FVector FMOISurfaceVertexImpl::GetCorner(int32 index) const
-	{
-		ensure(index == 0);
-		return GetLocation();
 	}
 
 	void FMOISurfaceVertexImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
@@ -46,12 +34,6 @@ namespace Modumate
 
 	bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
-		// TODO: Use FMOIVertexImplBase once MetaVertex conforms to this non-ControlPoints-derived data.
-		/*if (!FMOIVertexImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
-		{
-			return false;
-		}*/
-
 		auto surfaceGraphObj = MOI ? MOI->GetParentObject() : nullptr;
 		if (!ensure(surfaceGraphObj && VertexActor.IsValid()))
 		{
@@ -62,25 +44,14 @@ namespace Modumate
 		{
 		case EObjectDirtyFlags::Structure:
 		{
-			if (MOI->GetIsInPreviewMode())
+			auto surfaceGraph = MOI->GetDocument()->FindSurfaceGraph(surfaceGraphObj->ID);
+			auto surfaceVertex = surfaceGraph ? surfaceGraph->FindVertex(MOI->ID) : nullptr;
+			if (ensureAlways(surfaceVertex))
 			{
-				if (ensureAlways(MOI->GetControlPoints().Num() == 1))
-				{
-					CachedLocation = MOI->GetControlPoint(0);
-				}
-			}
-			else
-			{
-				auto surfaceGraph = MOI->GetDocument()->FindSurfaceGraph(surfaceGraphObj->ID);
-				auto surfaceVertex = surfaceGraph ? surfaceGraph->FindVertex(MOI->ID) : nullptr;
-				if (ensureAlways(surfaceVertex))
-				{
-					FTransform surfaceGraphTransform = surfaceGraphObj->GetWorldTransform();
-					CachedLocation = UModumateGeometryStatics::Deproject2DPointTransform(surfaceVertex->Position, surfaceGraphTransform);
-				}
+				FTransform surfaceGraphTransform = surfaceGraphObj->GetWorldTransform();
+				VertexActor->SetMOILocation(UModumateGeometryStatics::Deproject2DPointTransform(surfaceVertex->Position, surfaceGraphTransform));
 			}
 
-			VertexActor->SetMOILocation(CachedLocation);
 			break;
 		}
 		case EObjectDirtyFlags::Visuals:

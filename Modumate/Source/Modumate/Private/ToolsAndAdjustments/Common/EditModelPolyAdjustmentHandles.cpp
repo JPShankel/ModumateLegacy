@@ -34,7 +34,13 @@ bool AAdjustPolyPointHandle::BeginUse()
 	}
 
 	OriginalDirection = GetHandleDirection();
-	OriginalPolyPoints = TargetMOI->GetControlPoints();
+
+	OriginalPolyPoints.Reset();
+	int32 numCorners = TargetMOI->GetNumCorners();
+	for (int32 i = 0; i < numCorners; ++i)
+	{
+		OriginalPolyPoints.Add(TargetMOI->GetCorner(i));
+	}
 	LastValidPolyPoints = OriginalPolyPoints;
 
 	FVector targetNormal = TargetMOI->GetNormal();
@@ -121,17 +127,16 @@ FVector AAdjustPolyPointHandle::GetHandlePosition() const
 	}
 
 	FVector averageTargetPos(ForceInitToZero);
-	const TArray<FVector> &controlPoints = TargetMOI->GetControlPoints();
-	int32 numPoints = controlPoints.Num();
+	int32 numCorners = TargetMOI->GetNumCorners();
 
 	if (bAdjustPolyEdge)
 	{
-		int32 edgeEndIdx = (TargetIndex + 1) % numPoints;
-		averageTargetPos = 0.5f * (controlPoints[TargetIndex] + controlPoints[edgeEndIdx]);
+		int32 edgeEndIdx = (TargetIndex + 1) % numCorners;
+		averageTargetPos = 0.5f * (TargetMOI->GetCorner(TargetIndex) + TargetMOI->GetCorner(edgeEndIdx));
 	}
 	else
 	{
-		averageTargetPos = controlPoints[TargetIndex];
+		averageTargetPos = TargetMOI->GetCorner(TargetIndex);
 	}
 
 	switch (TargetMOI->GetObjectType())
@@ -160,27 +165,31 @@ FVector AAdjustPolyPointHandle::GetHandleDirection() const
 		return FVector::ZeroVector;
 	}
 
-	const TArray<FVector> &targetCPs = TargetMOI->GetControlPoints();
+	int32 numPoints = TargetMOI->GetNumCorners();
+	TArray<FVector> targetPoints;
+	for (int32 i = 0; i < numPoints; ++i)
+	{
+		targetPoints.Add(TargetMOI->GetCorner(i));
+	}
 
 	// This would be redundant, but the handles need to recalculate the plane in order to determine
-	// how the points wind relative to the reported object normal.
+	// how the points wind, which may not result in the same plane normal as the reported object normal.
 	FPlane targetPlane;
-	if (!ensure(UModumateGeometryStatics::GetPlaneFromPoints(targetCPs, targetPlane)))
+	if (!ensure(UModumateGeometryStatics::GetPlaneFromPoints(targetPoints, targetPlane)))
 	{
 		return FVector::ZeroVector;
 	}
 
-	FVector targetNormal = TargetMOI->GetNormal();
-	float windingSign = targetNormal | targetPlane;
+	FVector targetNormal(targetPlane);
 
-	int32 numPolyPoints = targetCPs.Num();
+	int32 numPolyPoints = targetPoints.Num();
 	int32 edgeStartIdx = TargetIndex;
 	int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
 
-	const FVector &edgeStartPoint = TargetMOI->GetControlPoint(edgeStartIdx);
-	const FVector &edgeEndPoint = TargetMOI->GetControlPoint(edgeEndIdx);
+	const FVector &edgeStartPoint = targetPoints[edgeStartIdx];
+	const FVector &edgeEndPoint = targetPoints[edgeEndIdx];
 	FVector edgeDir = (edgeEndPoint - edgeStartPoint).GetSafeNormal();
-	FVector edgeNormal = windingSign * (edgeDir ^ targetNormal);
+	FVector edgeNormal = (edgeDir ^ targetNormal);
 
 	return edgeNormal;
 }

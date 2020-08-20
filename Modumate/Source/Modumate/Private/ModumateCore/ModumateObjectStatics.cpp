@@ -760,8 +760,7 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateO
 		}
 
 		FVector hostNormal = hostParent->GetNormal();
-		const auto &cps = hostParent->GetControlPoints();
-		int32 numCorners = cps.Num();
+		int32 numCorners = hostParent->GetNumCorners();
 		if (numCorners < 3)
 		{
 			return false;

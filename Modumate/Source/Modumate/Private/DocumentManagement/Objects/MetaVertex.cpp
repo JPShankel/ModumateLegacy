@@ -2,6 +2,8 @@
 
 #include "DocumentManagement/Objects/MetaVertex.h"
 
+#include "DocumentManagement/ModumateDocument.h"
+#include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/ModumateVertexActor_CPP.h"
 
@@ -29,20 +31,32 @@ namespace Modumate
 
 	bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
-		if (!FMOIVertexImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
+		switch (DirtyFlag)
 		{
-			return false;
+		case EObjectDirtyFlags::Structure:
+		{
+			auto vertex = MOI->GetDocument()->GetVolumeGraph().FindVertex(MOI->ID);
+			if (!ensure(vertex))
+			{
+				return false;
+			}
+
+			SetLocation(vertex->Position);
+		}
+		break;
+		case EObjectDirtyFlags::Visuals:
+		{
+			MOI->UpdateVisibilityAndCollision();
+		}
+		break;
 		}
 
-		if (MOI)
+		MOI->GetConnectedMOIs(CachedConnectedMOIs);
+		for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
 		{
-			MOI->GetConnectedMOIs(CachedConnectedMOIs);
-			for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
+			if (connectedMOI->GetObjectType() == EObjectType::OTMetaEdge)
 			{
-				if (connectedMOI->GetObjectType() == EObjectType::OTMetaEdge)
-				{
-					connectedMOI->MarkDirty(DirtyFlag);
-				}
+				connectedMOI->MarkDirty(DirtyFlag);
 			}
 		}
 

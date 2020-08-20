@@ -95,6 +95,7 @@ namespace Modumate
 		virtual FTransform GetWorldTransform() const = 0;
 
 		virtual FVector GetCorner(int32 index) const = 0;
+		virtual int32 GetNumCorners() const = 0;
 
 		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) = 0;
 
@@ -165,6 +166,7 @@ namespace Modumate
 		virtual FTransform GetWorldTransform() const override;
 
 		virtual FVector GetCorner(int32 index) const override;
+		virtual int32 GetNumCorners() const;
 
 		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
@@ -425,6 +427,7 @@ namespace Modumate
 		float CalculateThickness() const;
 		FVector GetWallDirection() const;
 		FVector GetCorner(int32 index) const;
+		int32 GetNumCorners() const;
 
 		const ILayeredObject* GetLayeredInterface() const;
 		const IMiterNode* GetMiterInterface() const;

@@ -63,13 +63,13 @@ namespace Modumate
 		case EObjectDirtyFlags::Structure:
 		{
 			if (!UModumateObjectStatics::GetGeometryFromSurfacePoly(MOI->GetDocument(), MOI->ID,
-				bInteriorPolygon, bInnerBoundsPolygon, CachedOrigin, CachedOffsetPoints, CachedHoles, MeshPointOffset))
+				bInteriorPolygon, bInnerBoundsPolygon, CachedOrigin, CachedPoints, CachedHoles, MeshPointOffset))
 			{
 				return false;
 			}
 
 			// Skip exterior polygons and inner bounds polygons; they can't be visible anyway, so they shouldn't set up any dynamic meshes.
-			if (!bInteriorPolygon || bInnerBoundsPolygon || (CachedOffsetPoints.Num() < 3))
+			if (!bInteriorPolygon || bInnerBoundsPolygon || (CachedPoints.Num() < 3))
 			{
 				return true;
 			}
@@ -78,7 +78,7 @@ namespace Modumate
 			MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
 			bool bEnableCollision = !MOI->GetIsInPreviewMode();
-			DynamicMeshActor->SetupMetaPlaneGeometry(CachedOffsetPoints, MaterialData, GetAlpha(), true, &CachedHoles, bEnableCollision);
+			DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, GetAlpha(), true, &CachedHoles, bEnableCollision);
 		}
 		case EObjectDirtyFlags::Visuals:
 			MOI->UpdateVisibilityAndCollision();

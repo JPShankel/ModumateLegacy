@@ -22,13 +22,17 @@ namespace Modumate
 
 	FVector FMOIPlaneImplBase::GetCorner(int32 index) const
 	{
-		int32 numCP = MOI->GetControlPoints().Num();
-		if (ensure(index < numCP))
+		if (ensure(CachedPoints.IsValidIndex(index)))
 		{
-			return MOI->GetControlPoint(index);
+			return CachedPoints[index];
 		}
 
 		return GetLocation();
+	}
+
+	int32 FMOIPlaneImplBase::GetNumCorners() const
+	{
+		return CachedPoints.Num();
 	}
 
 	FQuat FMOIPlaneImplBase::GetRotation() const
@@ -57,12 +61,13 @@ namespace Modumate
 	TArray<FModelDimensionString> FMOIPlaneImplBase::GetDimensionStrings() const
 	{
 		TArray<FModelDimensionString> ret;
-		for (int32 i = 0, numCP = MOI->GetControlPoints().Num(); i < numCP; ++i)
+		int32 numPoints = CachedPoints.Num();
+		for (int32 i = 0; i < numPoints; ++i)
 		{
 			FModelDimensionString ds;
 			ds.AngleDegrees = 0;
-			ds.Point1 = MOI->GetControlPoint(i);
-			ds.Point2 = MOI->GetControlPoint((i + 1) % numCP);
+			ds.Point1 = CachedPoints[i];
+			ds.Point2 = CachedPoints[(i + 1) % numPoints];
 			ds.Functionality = EEnterableField::None;
 			ds.Offset = 50;
 			ds.UniqueID = MOI->GetActor()->GetFName();
@@ -81,17 +86,16 @@ namespace Modumate
 			return;
 		}
 
-		int32 numPolyPoints = MOI->GetControlPoints().Num();
-
-		for (int32 i = 0; i < numPolyPoints; ++i)
+		int32 numPoints = CachedPoints.Num();
+		for (int32 pointIdxA = 0; pointIdxA < numPoints; ++pointIdxA)
 		{
-			int32 nextI = (i + 1) % numPolyPoints;
-			const FVector &cp1 = MOI->GetControlPoint(i);
-			const FVector &cp2 = MOI->GetControlPoint(nextI);
-			FVector dir = (cp2 - cp1).GetSafeNormal();
+			int32 pointIdxB = (pointIdxA + 1) % numPoints;
+			const FVector &pointA = CachedPoints[pointIdxA];
+			const FVector &pointB = CachedPoints[pointIdxB];
+			FVector dir = (pointB - pointA).GetSafeNormal();
 
-			outPoints.Add(FStructurePoint(cp1, dir, i));
-			outLines.Add(FStructureLine(cp1, cp2, i, nextI));
+			outPoints.Add(FStructurePoint(pointA, dir, pointIdxA));
+			outLines.Add(FStructureLine(pointA, pointB, pointIdxA, pointIdxB));
 		}
 	}
 
@@ -103,9 +107,8 @@ namespace Modumate
 			return;
 		}
 
-		int32 numCP = MOI->GetControlPoints().Num();
-
-		for (int32 i = 0; i < numCP; ++i)
+		int32 numPoints = CachedPoints.Num();
+		for (int32 i = 0; i < numPoints; ++i)
 		{
 			auto vertexHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
 			vertexHandle->SetTargetIndex(i);

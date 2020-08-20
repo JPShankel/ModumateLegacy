@@ -48,8 +48,7 @@ namespace Modumate
 			FVector curStartDelta, curEndDelta;
 			UModumateObjectStatics::GetExtrusionDeltas(PlaneHostedObj, curStartDelta, curEndDelta);
 
-			// TODO: we wish we could read from the graph, but the tools modify control points rather than the graph contents (for good reason)
-			const TArray<FVector> &planePoints = parentPlane->GetControlPoints();// PlaneFace->CachedPositions;
+			const TArray<FVector> &planePoints = PlaneFace->CachedPositions;
 			int32 numPoints = planePoints.Num();
 
 			// If we can't use the plane face's edge normals, then we won't be able to determine any mitering.

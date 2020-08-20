@@ -18,12 +18,6 @@ namespace Modumate
 
 	bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 	{
-		// TODO: Use FMOIEdgeImplBase once MetaEdge conforms to this non-ControlPoints-derived data.
-		/*if (!FMOIEdgeImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
-		{
-			return false;
-		}*/
-
 		auto surfaceGraphObj = MOI ? MOI->GetParentObject() : nullptr;
 		auto doc = MOI ? MOI->GetDocument() : nullptr;
 		if (!ensure(surfaceGraphObj && doc && LineActor.IsValid()))

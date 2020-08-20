@@ -19,7 +19,6 @@ namespace Modumate
 		float MeshPointOffset;
 
 		FTransform CachedOrigin;
-		TArray<FVector> CachedOffsetPoints;
 		bool bInteriorPolygon;
 		bool bInnerBoundsPolygon;
 

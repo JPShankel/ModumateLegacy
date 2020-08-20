@@ -986,11 +986,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	for (auto &kvp : Delta.VertexAdditions)
 	{
-		const FVector &vertexPos = kvp.Value;
-		controlPoints.SetNum(1);
-		controlPoints[0] = vertexPos;
-		CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaVertex,
-			kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
+		CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaVertex, kvp.Key);
 	}
 
 	for (auto &kvp : Delta.VertexDeletions)
@@ -1004,19 +1000,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	for (auto &kvp : Delta.EdgeAdditions)
 	{
-		const TArray<int32> &edgeVertexIDs = kvp.Value.Vertices;
-		ensureAlways(kvp.Value.Vertices.Num() == 2);
-		controlPoints.SetNum(2);
-		const FGraph3DVertex *startVertex = VolumeGraph.FindVertex(edgeVertexIDs[0]);
-		const FGraph3DVertex *endVertex = VolumeGraph.FindVertex(edgeVertexIDs[1]);
-		if (ensure(startVertex && endVertex))
-		{
-			controlPoints[0] = startVertex->Position;
-			controlPoints[1] = endVertex->Position;
-
-			CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaEdge,
-				kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
-		}
+		CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaEdge, kvp.Key);
 	}
 
 	for (auto &kvp : Delta.EdgeDeletions)
@@ -1030,14 +1014,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	for (auto &kvp : Delta.FaceAdditions)
 	{
-		controlPoints.Reset();
-		const FGraph3DFace* newFace = VolumeGraph.FindFace(kvp.Key);
-		if (ensureAlways(newFace && (newFace->CachedPerimeter.Num() >= 3)))
-		{
-			controlPoints = newFace->CachedPerimeter;
-			CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaPlane,
-				kvp.Key, MOD_ID_NONE, FVector::ZeroVector, &controlPoints, nullptr);
-		}
+		CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaPlane, kvp.Key);
 	}
 
 	// when modifying objects in the document, first add objects, then modify parent objects, then delete objects
@@ -1231,47 +1208,31 @@ void FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 			FModumateObjectInstance *vertexObj = GetObjectById(vertexID);
 			if (graphVertex && vertexObj && (vertexObj->GetObjectType() == EObjectType::OTMetaVertex))
 			{
-				vertexObj->SetObjectLocation(graphVertex->Position);
+				vertexObj->MarkDirty(EObjectDirtyFlags::Structure);
+				dirtyGroupIDs.Append(graphVertex->GroupIDs);
 			}
-			dirtyGroupIDs.Append(graphVertex->GroupIDs);
 		}
 
 		for (int32 edgeID : cleanedEdges)
 		{
 			FGraph3DEdge *graphEdge = VolumeGraph.FindEdge(edgeID);
 			FModumateObjectInstance *edgeObj = GetObjectById(edgeID);
-			if (!(graphEdge && edgeObj && (edgeObj->GetObjectType() == EObjectType::OTMetaEdge)))
+			if (graphEdge && edgeObj && (edgeObj->GetObjectType() == EObjectType::OTMetaEdge))
 			{
-				continue;
+				edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
+				dirtyGroupIDs.Append(graphEdge->GroupIDs);
 			}
-
-			FGraph3DVertex *startVertex = VolumeGraph.FindVertex(graphEdge->StartVertexID);
-			FGraph3DVertex *endVertex = VolumeGraph.FindVertex(graphEdge->EndVertexID);
-			if (!(startVertex && endVertex))
-			{
-				continue;
-			}
-
-			edgeObj->SetControlPoints({ startVertex->Position, endVertex->Position });
-			edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
-			dirtyGroupIDs.Append(graphEdge->GroupIDs);
 		}
 
 		for (int32 faceID : cleanedFaces)
 		{
 			FGraph3DFace *graphFace = VolumeGraph.FindFace(faceID);
 			FModumateObjectInstance *faceObj = GetObjectById(faceID);
-			if (!(graphFace && faceObj && (faceObj->GetObjectType() == EObjectType::OTMetaPlane)))
+			if (graphFace && faceObj && (faceObj->GetObjectType() == EObjectType::OTMetaPlane))
 			{
-				continue;
+				faceObj->MarkDirty(EObjectDirtyFlags::Structure);
+				dirtyGroupIDs.Append(graphFace->GroupIDs);
 			}
-
-			// using perimeter instead of cached positions, so adjustment handles
-			// show up on only exterior edges
-			faceObj->SetControlPoints(graphFace->CachedPerimeter);
-			
-			faceObj->MarkDirty(EObjectDirtyFlags::Structure);
-			dirtyGroupIDs.Append(graphFace->GroupIDs);
 		}
 	}
 

@@ -12,6 +12,7 @@ namespace Modumate
 		FMOIPlaneImplBase(FModumateObjectInstance *moi);
 
 		virtual FVector GetCorner(int32 index) const override;
+		virtual int32 GetNumCorners() const override;
 		virtual FQuat GetRotation() const override;
 		virtual void SetRotation(const FQuat& r) override;
 		virtual FVector GetLocation() const override;
@@ -26,6 +27,7 @@ namespace Modumate
 
 	protected:
 		FArchitecturalMaterial MaterialData;
+		TArray<FVector> CachedPoints;
 		FPlane CachedPlane;
 		FVector CachedAxisX, CachedAxisY, CachedOrigin, CachedCenter;
 		TArray<FPolyHole3D> CachedHoles;

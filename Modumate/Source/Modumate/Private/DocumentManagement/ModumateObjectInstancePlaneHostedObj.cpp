@@ -72,7 +72,7 @@ namespace Modumate
 		const FModumateObjectInstance *parent = MOI->GetParentObject();
 		if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
-			int32 numPlanePoints = parent->GetControlPoints().Num();
+			int32 numPlanePoints = parent->GetNumCorners();
 			bool bOnStartingSide = (CornerIndex < numPlanePoints);
 			int32 numLayers = LayerGeometries.Num();
 			int32 pointIndex = CornerIndex % numPlanePoints;
@@ -179,41 +179,37 @@ namespace Modumate
 
 	void FMOIPlaneHostedObjImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
-		int32 numCP = MOI->GetControlPoints().Num();
 		const FModumateObjectInstance *parent = MOI->GetParentObject();
 
-		if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane) && (numCP == 0)))
+		if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
-			numCP = parent->GetControlPoints().Num();
+			int32 numPlanePoints = parent->GetNumCorners();
 
-			for (int32 i = 0; i < numCP; ++i)
+			for (int32 i = 0; i < numPlanePoints; ++i)
 			{
 				int32 edgeIdxA = i;
-				int32 edgeIdxB = (i + 1) % numCP;
+				int32 edgeIdxB = (i + 1) % numPlanePoints;
 
 				FVector cornerMinA = GetCorner(edgeIdxA);
 				FVector cornerMinB = GetCorner(edgeIdxB);
 				FVector edgeDir = (cornerMinB - cornerMinA).GetSafeNormal();
 
-				FVector cornerMaxA = GetCorner(edgeIdxA + numCP);
-				FVector cornerMaxB = GetCorner(edgeIdxB + numCP);
+				FVector cornerMaxA = GetCorner(edgeIdxA + numPlanePoints);
+				FVector cornerMaxB = GetCorner(edgeIdxB + numPlanePoints);
 
 				outPoints.Add(FStructurePoint(cornerMinA, edgeDir, edgeIdxA));
 
 				outLines.Add(FStructureLine(cornerMinA, cornerMinB, edgeIdxA, edgeIdxB));
-				outLines.Add(FStructureLine(cornerMaxA, cornerMaxB, edgeIdxA + numCP, edgeIdxB + numCP));
-				outLines.Add(FStructureLine(cornerMinA, cornerMaxA, edgeIdxA, edgeIdxA + numCP));
+				outLines.Add(FStructureLine(cornerMaxA, cornerMaxB, edgeIdxA + numPlanePoints, edgeIdxB + numPlanePoints));
+				outLines.Add(FStructureLine(cornerMinA, cornerMaxA, edgeIdxA, edgeIdxA + numPlanePoints));
 			}
 		}
 	}
 
 	void FMOIPlaneHostedObjImpl::InternalUpdateGeometry()
 	{
-		// TODO: make sure children are portals
-
 		FModumateObjectInstance *parent = MOI->GetParentObject();
-		int32 numCP = MOI->GetControlPoints().Num();
-		if (!(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane) && (numCP == 0)))
+		if (!(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
 			return;
 		}
@@ -247,8 +243,8 @@ namespace Modumate
 		}
 
 		// Make the polygon adjustment handles, for modifying the parent plane's polygonal shape
-		int32 numCP = parent->GetControlPoints().Num();
-		for (int32 i = 0; i < numCP; ++i)
+		int32 numCorners = parent->GetNumCorners();
+		for (int32 i = 0; i < numCorners; ++i)
 		{
 			// Don't allow adjusting wall corners, since they're more likely to be edited edge-by-edge.
 			if (MOI->GetObjectType() != EObjectType::OTWallSegment)

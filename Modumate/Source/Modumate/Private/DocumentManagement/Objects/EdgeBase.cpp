@@ -19,27 +19,20 @@ namespace Modumate
 		, HoverColor(FColor::White)
 		, HoverThickness(3.0f)
 	{
-		MOI->SetControlPoints(TArray<FVector>());
-		MOI->AddControlPoint(FVector::ZeroVector);
-		MOI->AddControlPoint(FVector::ZeroVector);
 	}
 
 	void FMOIEdgeImplBase::SetLocation(const FVector &p)
 	{
-		FVector midPoint = GetLocation();
-		FVector delta = p - midPoint;
-		MOI->SetControlPoint(0,MOI->GetControlPoint(0) + delta);
-		MOI->SetControlPoint(1,MOI->GetControlPoint(1) + delta);
 	}
 
 	FVector FMOIEdgeImplBase::GetLocation() const
 	{
-		return 0.5f * (MOI->GetControlPoint(0) + MOI->GetControlPoint(1));
+		return LineActor.IsValid() ? (0.5f * (LineActor->Point1 + LineActor->Point2)) : FVector::ZeroVector;
 	}
 
 	FVector FMOIEdgeImplBase::GetCorner(int32 index) const
 	{
-		return MOI->GetControlPoint(index);
+		return LineActor.IsValid() ? ((index == 0) ? LineActor->Point1 : LineActor->Point2) : FVector::ZeroVector;
 	}
 
 	void FMOIEdgeImplBase::OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bEnableHover)
@@ -58,21 +51,6 @@ namespace Modumate
 		return LineActor.Get();
 	}
 
-	void FMOIEdgeImplBase::SetupDynamicGeometry()
-	{
-		if (ensureAlways((MOI->GetControlPoints().Num() == 2) && LineActor.IsValid()))
-		{
-			LineActor->Point1 = MOI->GetControlPoint(0);
-			LineActor->Point2 = MOI->GetControlPoint(1);
-			MOI->UpdateVisibilityAndCollision();
-		}
-	}
-
-	void FMOIEdgeImplBase::UpdateDynamicGeometry()
-	{
-		SetupDynamicGeometry();
-	}
-
 	void FMOIEdgeImplBase::OnSelected(bool bNewSelected)
 	{
 		FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
@@ -82,16 +60,21 @@ namespace Modumate
 
 	void FMOIEdgeImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
+		if (!LineActor.IsValid())
+		{
+			return;
+		}
+
 		// Don't report edge points for snapping, otherwise they will conflict with vertices
 		if (!bForSnapping)
 		{
-			FVector edgeDir = (MOI->GetControlPoint(1) - MOI->GetControlPoint(0)).GetSafeNormal();
+			FVector edgeDir = (LineActor->Point2 - LineActor->Point1).GetSafeNormal();
 
-			outPoints.Add(FStructurePoint(MOI->GetControlPoint(0), edgeDir, 0));
-			outPoints.Add(FStructurePoint(MOI->GetControlPoint(1), edgeDir, 1));
+			outPoints.Add(FStructurePoint(LineActor->Point1, edgeDir, 0));
+			outPoints.Add(FStructurePoint(LineActor->Point2, edgeDir, 1));
 		}
 
-		outLines.Add(FStructureLine(MOI->GetControlPoint(0), MOI->GetControlPoint(1), 0, 1));
+		outLines.Add(FStructureLine(LineActor->Point1, LineActor->Point2, 0, 1));
 	}
 
 	float FMOIEdgeImplBase::GetThicknessMultiplier() const

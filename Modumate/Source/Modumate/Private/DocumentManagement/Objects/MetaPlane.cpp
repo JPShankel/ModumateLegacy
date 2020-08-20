@@ -46,7 +46,7 @@ namespace Modumate
 
 		bool bEnableCollision = !MOI->GetIsInPreviewMode();
 
-		DynamicMeshActor->SetupMetaPlaneGeometry(MOI->GetControlPoints(), MaterialData, GetAlpha(), true, &CachedHoles, bEnableCollision);
+		DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, GetAlpha(), true, &CachedHoles, bEnableCollision);
 
 		MOI->UpdateVisibilityAndCollision();
 
@@ -55,60 +55,6 @@ namespace Modumate
 		if (bNewPlane || bChildrenChanged)
 		{
 			UpdateConnectedVisuals();
-		}
-	}
-
-	void FMOIMetaPlaneImpl::SetFromDataRecordAndRotation(const FMOIDataRecordV1 &dataRec, const FVector &origin, const FQuat &rotation)
-	{
-		if (ensure(dataRec.ControlPoints.Num() == MOI->GetControlPoints().Num()))
-		{
-			for (int32 i = 0; i < dataRec.ControlPoints.Num(); ++i)
-			{
-				MOI->SetControlPoint(i,origin + rotation.RotateVector(dataRec.ControlPoints[i] - origin));
-			}
-
-			const FGraph3DFace *graphFace = MOI ? MOI->GetDocument()->GetVolumeGraph().FindFace(MOI->ID) : nullptr;
-			if (ensure(graphFace && (graphFace->CachedPositions.Num() > 0)))
-			{
-				FVector planeNormal = graphFace->CachedPlane;
-				FVector planeBase = planeNormal * graphFace->CachedPlane.W;
-				FVector originIntercept = FVector::PointPlaneProject(origin, planeBase, planeNormal);
-				planeBase = origin + rotation.RotateVector(originIntercept - origin);
-
-				CachedPlane = FPlane(planeBase, rotation.RotateVector(planeNormal).GetSafeNormal());
-				CachedAxisX = rotation.RotateVector(graphFace->Cached2DX);
-				CachedAxisY = rotation.RotateVector(graphFace->Cached2DY);
-				CachedOrigin = origin + rotation.RotateVector(graphFace->CachedPositions[0] - origin);
-				CachedCenter = origin + rotation.RotateVector(graphFace->CachedCenter - origin);
-				CachedHoles = graphFace->CachedHoles;
-			}
-
-			MOI->MarkDirty(EObjectDirtyFlags::Structure);
-		}
-	}
-
-	void FMOIMetaPlaneImpl::SetFromDataRecordAndDisplacement(const FMOIDataRecordV1 &dataRec, const FVector &displacement)
-	{
-		if (ensure(dataRec.ControlPoints.Num() == MOI->GetControlPoints().Num()))
-		{
-			for (int32 i = 0; i < dataRec.ControlPoints.Num(); ++i)
-			{
-				MOI->SetControlPoint(i,dataRec.ControlPoints[i] + displacement);
-			}
-
-			const FGraph3DFace *graphFace = MOI ? MOI->GetDocument()->GetVolumeGraph().FindFace(MOI->ID) : nullptr;
-			if (ensure(graphFace && (graphFace->CachedPositions.Num() > 0)))
-			{
-				FVector planeNormal = graphFace->CachedPlane;
-				FVector planeBase = planeNormal * graphFace->CachedPlane.W;
-
-				CachedPlane = FPlane(planeBase + displacement, planeNormal);
-				CachedOrigin = graphFace->CachedPositions[0] + displacement;
-				CachedCenter = graphFace->CachedCenter + displacement;
-				CachedHoles = graphFace->CachedHoles;
-			}
-
-			MOI->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 	}
 
@@ -121,7 +67,7 @@ namespace Modumate
 
 		UpdateCachedGraphData();
 
-		DynamicMeshActor->SetupMetaPlaneGeometry(MOI->GetControlPoints(), MaterialData, GetAlpha(), false, &CachedHoles, true);
+		DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, GetAlpha(), false, &CachedHoles, true);
 
 		auto children = MOI->GetChildObjects();
 
@@ -159,17 +105,11 @@ namespace Modumate
 
 	void FMOIMetaPlaneImpl::UpdateCachedGraphData()
 	{
-		// Don't update from the graph directly if we're in preview mode
-		// TODO: we shouldn't be calling this anyway in that situation
-		if (MOI->GetIsInPreviewMode())
-		{
-			return;
-		}
-
 		const FGraph3DFace *graphFace = MOI ? MOI->GetDocument()->GetVolumeGraph().FindFace(MOI->ID) : nullptr;
 
 		if (ensure(graphFace && (graphFace->CachedPositions.Num() > 0)))
 		{
+			CachedPoints = graphFace->CachedPositions;
 			CachedPlane = graphFace->CachedPlane;
 			CachedAxisX = graphFace->Cached2DX;
 			CachedAxisY = graphFace->Cached2DY;

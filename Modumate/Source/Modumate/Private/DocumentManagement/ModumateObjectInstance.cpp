@@ -1081,6 +1081,11 @@ namespace Modumate
 		return Implementation->GetCorner(index);
 	}
 
+	int32 FModumateObjectInstance::GetNumCorners() const
+	{
+		return Implementation->GetNumCorners();
+	}
+
 	const ILayeredObject* FModumateObjectInstance::GetLayeredInterface() const
 	{
 		return Implementation->GetLayeredInterface();
@@ -1336,6 +1341,15 @@ namespace Modumate
 			}
 		}
 		return GetLocation();
+	}
+
+	int32 FModumateObjectInstanceImplBase::GetNumCorners() const
+	{
+		if (ensureAlways(MOI))
+		{
+			return MOI->GetControlPoints().Num();
+		}
+		return 0;
 	}
 
 	void FModumateObjectInstanceImplBase::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)

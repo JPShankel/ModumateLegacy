@@ -15,13 +15,10 @@ namespace Modumate
 		, DefaultHandleSize(0.0004f)
 		, SelectedHandleSize(0.0006f)
 	{
-		MOI->SetControlPoints(TArray<FVector>());
-		MOI->AddControlPoint(FVector::ZeroVector);
 	}
 
 	void FMOIVertexImplBase::SetLocation(const FVector &p)
 	{
-		MOI->SetControlPoint(0,p);
 		if (VertexActor.IsValid())
 		{
 			VertexActor->SetMOILocation(p);
@@ -30,17 +27,18 @@ namespace Modumate
 
 	FVector FMOIVertexImplBase::GetLocation() const
 	{
-		return MOI->GetControlPoint(0);
+		return VertexActor.IsValid() ? VertexActor->MoiLocation : FVector::ZeroVector;
 	}
 
 	FVector FMOIVertexImplBase::GetCorner(int32 index) const
 	{
+		ensure(index == 0);
 		return GetLocation();
 	}
 
 	void FMOIVertexImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
-		outPoints.Add(FStructurePoint(MOI->GetControlPoint(0), FVector::ZeroVector, 0));
+		outPoints.Add(FStructurePoint(GetLocation(), FVector::ZeroVector, 0));
 	}
 
 	AActor *FMOIVertexImplBase::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
@@ -54,20 +52,6 @@ namespace Modumate
 		VertexActor->SetHandleScaleScreenSize(DefaultHandleSize);
 
 		return VertexActor.Get();
-	}
-
-	void FMOIVertexImplBase::SetupDynamicGeometry()
-	{
-		if (ensureAlways((MOI->GetControlPoints().Num() == 1) && VertexActor.IsValid()))
-		{
-			VertexActor->SetMOILocation(MOI->GetControlPoint(0));
-			MOI->UpdateVisibilityAndCollision();
-		}
-	}
-
-	void FMOIVertexImplBase::UpdateDynamicGeometry()
-	{
-		SetupDynamicGeometry();
 	}
 
 	void FMOIVertexImplBase::OnSelected(bool bNewSelected)
