@@ -36,6 +36,11 @@ namespace Modumate
 		return GetLocation();
 	}
 
+	int32 FMOIVertexImplBase::GetNumCorners() const
+	{
+		return VertexActor.IsValid() ? 1 : 0;
+	}
+
 	void FMOIVertexImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 	{
 		outPoints.Add(FStructurePoint(GetLocation(), FVector::ZeroVector, 0));

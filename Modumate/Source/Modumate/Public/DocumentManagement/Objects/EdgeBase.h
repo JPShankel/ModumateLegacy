@@ -16,6 +16,7 @@ namespace Modumate
 		virtual void SetLocation(const FVector &p) override;
 		virtual FVector GetLocation() const override;
 		virtual FVector GetCorner(int32 index) const override;
+		virtual int32 GetNumCorners() const override;
 		virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bEnableHover) override;
 		virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 		virtual void OnSelected(bool bNewSelected) override;

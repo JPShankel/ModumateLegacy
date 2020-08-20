@@ -35,6 +35,11 @@ namespace Modumate
 		return LineActor.IsValid() ? ((index == 0) ? LineActor->Point1 : LineActor->Point2) : FVector::ZeroVector;
 	}
 
+	int32 FMOIEdgeImplBase::GetNumCorners() const
+	{
+		return LineActor.IsValid() ? 2 : 0;
+	}
+
 	void FMOIEdgeImplBase::OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bEnableHover)
 	{
 		FModumateObjectInstanceImplBase::OnCursorHoverActor(controller, bEnableHover);

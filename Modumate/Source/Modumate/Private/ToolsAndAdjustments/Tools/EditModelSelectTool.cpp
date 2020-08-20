@@ -43,7 +43,19 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 		case EObjectType::OTMetaEdge:
 		case EObjectType::OTMetaPlane:
 		case EObjectType::OTMetaVertex:
-			OriginalObjectData.Add(ob, ob->AsDataRecord());
+		{
+			FMOIDataRecord metaObjDataRecord = ob->AsDataRecord();
+
+			// TODO: this reinterpretation of corners as control points is a temporary hack,
+			// as long as we're still using data record for temporary object modifications.
+			metaObjDataRecord.ControlPoints.Reset();
+			int32 numCorners = ob->GetNumCorners();
+			for (int32 i = 0; i < numCorners; ++i)
+			{
+				metaObjDataRecord.ControlPoints.Add(ob->GetCorner(i));
+			}
+			OriginalObjectData.Add(ob, MoveTemp(metaObjDataRecord));
+		}
 			return true;
 		};
 
@@ -190,13 +202,14 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 		{
 			TArray<int32> vertexIDs;
 			graphObject->GetVertexIDs(vertexIDs);
-			if (!ensureAlways(vertexIDs.Num() == targetCPs.Num()))
+			int32 numCorners = targetMOI->GetNumCorners();
+			if (!ensureAlways(vertexIDs.Num() == numCorners))
 			{
 				return;
 			}
-			for (int32 idx = 0; idx < vertexIDs.Num(); idx++)
+			for (int32 idx = 0; idx < numCorners; idx++)
 			{
-				vertex3DMovements.Add(vertexIDs[idx], targetCPs[idx]);
+				vertex3DMovements.Add(vertexIDs[idx], targetMOI->GetCorner(idx));
 			}
 		}
 		else
