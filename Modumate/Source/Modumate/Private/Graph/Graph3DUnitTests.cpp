@@ -65,7 +65,7 @@ namespace Modumate
 	{
 		for (auto& kvp : InKnownGroupAmounts)
 		{
-			TSet<FTypedGraphObjID> OutCompare;
+			TSet<int32> OutCompare;
 			Graph.GetGroup(kvp.Key, OutCompare);
 			Test->TestTrue(TEXT("group set magnitude equality"), OutCompare.Num() == kvp.Value);
 		}
@@ -1579,9 +1579,9 @@ namespace Modumate
 		int32 bigJoinFaceID = 2455;
 		int32 smallJoinFaceID1 = 2451;
 		int32 smallJoinFaceID2 = 2430;
-		if (!graph.ContainsObject(FTypedGraphObjID(bigJoinFaceID, EGraph3DObjectType::Face)) ||
-			!graph.ContainsObject(FTypedGraphObjID(smallJoinFaceID2, EGraph3DObjectType::Face)) ||
-			!graph.ContainsObject(FTypedGraphObjID(smallJoinFaceID1, EGraph3DObjectType::Face)))
+		if (!graph.ContainsObject(bigJoinFaceID) ||
+			!graph.ContainsObject(smallJoinFaceID2) ||
+			!graph.ContainsObject(smallJoinFaceID1))
 		{
 			return false;
 		}
@@ -1660,7 +1660,7 @@ namespace Modumate
 		{
 			int32 edgeID = kvp.Key;
 			auto &graphEdge = kvp.Value;
-			groupIDsDelta.GroupIDsUpdates.Add(FTypedGraphObjID(edgeID, EGraph3DObjectType::Edge), FGraph3DGroupIDsDelta(groupIDsToAdd, groupIDsToRemove));
+			groupIDsDelta.GroupIDsUpdates.Add(edgeID, FGraph3DGroupIDsDelta(groupIDsToAdd, groupIDsToRemove));
 		}
 
 		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
@@ -1673,7 +1673,7 @@ namespace Modumate
 			TestTrue(TEXT("Edge has GroupID"), graphEdge.GroupIDs.Contains(groupID) && (graphEdge.GroupIDs.Num() == 1));
 		}
 
-		TSet<FTypedGraphObjID> groupMembers;
+		TSet<int32> groupMembers;
 		TestTrue(TEXT("Graph has cached group"), graph.GetGroup(groupID, groupMembers) && (groupMembers.Num() == 4));
 
 		// Add another face, adjacent to the first

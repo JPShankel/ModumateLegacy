@@ -37,7 +37,7 @@ namespace Modumate
 		FGraph2DPolygon* FindPolygon(int32 ID);
 		const FGraph2DPolygon* FindPolygon(int32 ID) const;
 
-		bool ContainsObject(int32 ID, EGraphObjectType GraphObjectType) const;
+		bool ContainsObject(int32 ID) const;
 		bool GetEdgeAngle(FGraphSignedID EdgeID, float &outEdgeAngle);
 
 		FGraph2DVertex *AddVertex(const FVector2D &Position, int32 InID = 0);

@@ -23,7 +23,7 @@ bool UGraph2DTool::Activate()
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	const FGraph3D &volumeGraph = gameState->Document.GetVolumeGraph();
 
-	TSet<FTypedGraphObjID> graphObjIDs, connectedGraphIDs;
+	TSet<int32> graphObjIDs, connectedGraphIDs;
 	UModumateObjectStatics::GetGraphIDsFromMOIs(Controller->EMPlayerState->SelectedObjects, graphObjIDs);
 
 	FGraph2D selectedGraph;

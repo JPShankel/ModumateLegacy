@@ -134,11 +134,11 @@ bool ARetractRoofFacesHandle::BeginUse()
 	}
 
 	TempFaceIDs.Reset();
-	for (const auto &groupMember : TempGroupMembers)
+	for (int32 groupMember : TempGroupMembers)
 	{
-		if (groupMember.Value == EGraph3DObjectType::Face)
+		if (auto face = volumeGraph.FindFace(groupMember))
 		{
-			TempFaceIDs.Add(groupMember.Key);
+			TempFaceIDs.Add(face->ID);
 		}
 	}
 

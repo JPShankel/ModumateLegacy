@@ -49,7 +49,7 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 	EObjectType objectType = moi->GetObjectType();
 	Modumate::EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
 	// aggregate the unique selected vertices
-	if (auto graphObject = graph.FindObject(Modumate::FTypedGraphObjID(selectedGraphObjID, graph3DObjType)))
+	if (auto graphObject = graph.FindObject(selectedGraphObjID))
 	{
 		graphObject->GetVertexIDs(LastSelectedVertexIDs);
 	}

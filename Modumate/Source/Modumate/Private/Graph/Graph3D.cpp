@@ -29,6 +29,7 @@ namespace Modumate
 		Vertices.Reset();
 		Edges.Reset();
 		Faces.Reset();
+		AllObjects.Reset();
 		Polyhedra.Reset();
 		DirtyFaces.Reset();
 		CachedGroups.Reset();
@@ -186,7 +187,7 @@ namespace Modumate
 		for (int32 groupID : GraphObject->GroupIDs)
 		{
 			auto &groupMembers = CachedGroups.FindOrAdd(groupID);
-			groupMembers.Add(GraphObject->GetTypedID());
+			groupMembers.Add(GraphObject->ID);
 		}
 	}
 
@@ -196,7 +197,7 @@ namespace Modumate
 		for (int32 groupID : GraphObject->GroupIDs)
 		{
 			auto &groupMembers = CachedGroups.FindOrAdd(groupID);
-			groupMembers.Remove(GraphObject->GetTypedID());
+			groupMembers.Remove(GraphObject->ID);
 
 			// Remove empty groups now to keep the map clean whenever possible
 			if (groupMembers.Num() == 0)
@@ -206,16 +207,14 @@ namespace Modumate
 		}
 	}
 
-	void FGraph3D::ApplyGroupIDsDelta(FTypedGraphObjID TypedObjectID, const FGraph3DGroupIDsDelta &GroupDelta)
+	void FGraph3D::ApplyGroupIDsDelta(int32 ID, const FGraph3DGroupIDsDelta &GroupDelta)
 	{
-		IGraph3DObject *GraphObject = FindObject(TypedObjectID);
+		IGraph3DObject *GraphObject = FindObject(ID);
 
 		if (!ensure(GraphObject))
 		{
 			return;
 		}
-
-		int32 objectID = GraphObject->ID;
 
 		// Remove this element from the membership of groups that it used to belong to
 		RemoveObjectFromGroups(GraphObject);
@@ -393,32 +392,42 @@ namespace Modumate
 	}
 
 	
-	IGraph3DObject* FGraph3D::FindObject(FTypedGraphObjID TypedObjID)
+	IGraph3DObject* FGraph3D::FindObject(int32 ID)
 	{
-		return const_cast<IGraph3DObject*>(static_cast<const FGraph3D *>(this)->FindObject(TypedObjID));
-	}
-
-	const IGraph3DObject* FGraph3D::FindObject(FTypedGraphObjID TypedObjID) const
-	{
-		int32 objID = TypedObjID.Key;
-		switch (TypedObjID.Value)
+		if (AllObjects.Contains(ID))
 		{
-		case EGraph3DObjectType::Vertex:
-			return FindVertex(objID);
-		case EGraph3DObjectType::Edge:
-			return FindEdge(objID);
-		case EGraph3DObjectType::Face:
-			return FindFace(objID);
-		case EGraph3DObjectType::Polyhedron:
-			return FindPolyhedron(objID);
-		default:
-			return nullptr;
+			switch (AllObjects[ID])
+			{
+				case EGraph3DObjectType::Vertex:
+					return FindVertex(ID);
+				case EGraph3DObjectType::Edge:
+					return FindEdge(ID);
+				case EGraph3DObjectType::Face:
+					return FindFace(ID);
+				case EGraph3DObjectType::Polyhedron:
+					return FindPolyhedron(ID);
+			}
 		}
+		return nullptr;
 	}
 
-	bool FGraph3D::ContainsObject(FTypedGraphObjID TypedObjID) const
+	const IGraph3DObject* FGraph3D::FindObject(int32 ID) const
 	{
-		return (FindObject(TypedObjID) != nullptr);
+		return const_cast<IGraph3DObject*>(const_cast<FGraph3D*>(this)->FindObject(ID));
+	}
+
+	bool FGraph3D::ContainsObject(int32 ID) const
+	{
+		return AllObjects.Contains(ID);
+	}
+
+	EGraph3DObjectType FGraph3D::GetObjectType(int32 ID) const
+	{
+		if (AllObjects.Contains(ID))
+		{
+			return AllObjects[ID];
+		}
+		return EGraph3DObjectType::None;
 	}
 
 	FGraph3DVertex *FGraph3D::AddVertex(const FVector &Position, int32 InID, const TSet<int32> &InGroupIDs)
@@ -434,6 +443,11 @@ namespace Modumate
 			return nullptr;
 		}
 
+		if (AllObjects.Contains(newID))
+		{
+			return nullptr;
+		}
+
 		FGraph3DVertex newVertex = FGraph3DVertex(newID, this, Position, InGroupIDs);
 		if (!ensureAlways(newVertex.bValid))
 		{
@@ -444,6 +458,7 @@ namespace Modumate
 		bDirty = true;
 
 		FGraph3DVertex *vertexPtr = &Vertices.Add(newID, MoveTemp(newVertex));
+		AllObjects.Add(newID, vertexPtr->GetType());
 		AddObjectToGroups(vertexPtr);
 
 		return vertexPtr;
@@ -462,6 +477,11 @@ namespace Modumate
 			return FindEdge(newID);
 		}
 
+		if (AllObjects.Contains(newID))
+		{
+			return nullptr;
+		}
+
 		FGraph3DEdge newEdge = FGraph3DEdge(newID, this, StartVertexID, EndVertexID, InGroupIDs);
 		if (!ensureAlways(newEdge.bValid))
 		{
@@ -475,6 +495,7 @@ namespace Modumate
 		EdgeIDsByVertexPair.Add(vertexPair, newID);
 
 		FGraph3DEdge *edgePtr = &Edges.Add(newID, MoveTemp(newEdge));
+		AllObjects.Add(newID, edgePtr->GetType());
 		AddObjectToGroups(edgePtr);
 
 		return edgePtr;
@@ -494,6 +515,11 @@ namespace Modumate
 			return FindFace(newID);
 		}
 
+		if (AllObjects.Contains(newID))
+		{
+			return nullptr;
+		}
+
 		FGraph3DFace newFace = FGraph3DFace(newID, this, VertexIDs, InGroupIDs, InContainingFaceID, InContainedFaceIDs);
 		if (!ensureAlways(newFace.bValid))
 		{
@@ -505,6 +531,7 @@ namespace Modumate
 
 		FGraph3DFace *facePtr = &Faces.Add(newID, MoveTemp(newFace));
 		AddObjectToGroups(facePtr);
+		AllObjects.Add(newID, facePtr->GetType());
 
 		return facePtr;
 	}
@@ -545,6 +572,7 @@ namespace Modumate
 			}
 		}
 
+		AllObjects.Remove(VertexID);
 		return Vertices.Remove(VertexID) > 0;
 	}
 
@@ -579,6 +607,7 @@ namespace Modumate
 			EdgeIDsByVertexPair.Remove(vertexPair);
 		}
 
+		AllObjects.Remove(EdgeID);
 		return Edges.Remove(EdgeID) > 0;
 	}
 
@@ -602,6 +631,7 @@ namespace Modumate
 			}
 		}
 
+		AllObjects.Remove(FaceID);
 		return Faces.Remove(FaceID) > 0;
 	}
 
@@ -683,7 +713,7 @@ namespace Modumate
 		return Polyhedra; 
 	}
 
-	bool FGraph3D::GetGroup(int32 GroupID, TSet<FTypedGraphObjID> &OutGroupMembers) const
+	bool FGraph3D::GetGroup(int32 GroupID, TSet<int32> &OutGroupMembers) const
 	{
 		OutGroupMembers.Reset();
 
@@ -697,7 +727,7 @@ namespace Modumate
 		return false;
 	}
 
-	const TMap<int32, TSet<FTypedGraphObjID>> &FGraph3D::GetGroups() const
+	const TMap<int32, TSet<int32>> &FGraph3D::GetGroups() const
 	{
 		return CachedGroups;
 	}
@@ -1591,7 +1621,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::Create2DGraph(const TSet<FTypedGraphObjID> &InitialGraphObjIDs, TSet<FTypedGraphObjID> &OutContainedGraphObjIDs,
+	bool FGraph3D::Create2DGraph(const TSet<int32> &InitialGraphObjIDs, TSet<int32> &OutContainedGraphObjIDs,
 		FGraph2D &OutGraph, FPlane &OutPlane, bool bRequireConnected, bool bRequireComplete) const
 	{
 		OutPlane = FPlane(ForceInitToZero);
@@ -1600,13 +1630,19 @@ namespace Modumate
 
 		// First, try to get the shared plane by finding the common plane for the given faces, if they are given.
 		// Additionally, expand the sets of vertices and edges to include those that are part of the provided faces.
-		for (const FTypedGraphObjID &graphObjID : InitialGraphObjIDs)
+		for (int32 graphObjID : InitialGraphObjIDs)
 		{
-			switch (graphObjID.Value)
+			auto obj = FindObject(graphObjID);
+			if (obj == nullptr)
+			{
+				continue;
+			}
+
+			switch (obj->GetType())
 			{
 			case EGraph3DObjectType::Face:
 			{
-				const FGraph3DFace *face = FindFace(graphObjID.Key);
+				const FGraph3DFace *face = FindFace(graphObjID);
 				if (!ensure(face))
 				{
 					return false;
@@ -1622,21 +1658,21 @@ namespace Modumate
 					return false;
 				}
 
-				Algo::Transform(face->VertexIDs, OutContainedGraphObjIDs, [](const int32 &VertexID) { return FTypedGraphObjID(VertexID, EGraph3DObjectType::Vertex); });
-				Algo::Transform(face->EdgeIDs, OutContainedGraphObjIDs, [](const FGraphSignedID &EdgeID) { return FTypedGraphObjID(FMath::Abs(EdgeID), EGraph3DObjectType::Edge); });
+				OutContainedGraphObjIDs.Append(face->VertexIDs);
+				OutContainedGraphObjIDs.Append(face->EdgeIDs);
 				break;
 			}
 			// Expand the sets of vertices to include those that are part of the provided edges.
 			case EGraph3DObjectType::Edge:
 			{
-				const FGraph3DEdge *edge = FindEdge(graphObjID.Key);
+				const FGraph3DEdge *edge = FindEdge(graphObjID);
 				if (!ensure(edge))
 				{
 					return false;
 				}
 
-				OutContainedGraphObjIDs.Add(FTypedGraphObjID(edge->StartVertexID, EGraph3DObjectType::Vertex));
-				OutContainedGraphObjIDs.Add(FTypedGraphObjID(edge->EndVertexID, EGraph3DObjectType::Vertex));
+				OutContainedGraphObjIDs.Add(edge->StartVertexID);
+				OutContainedGraphObjIDs.Add(edge->EndVertexID);
 				break;
 			}
 			default:
@@ -1648,12 +1684,11 @@ namespace Modumate
 		// Also, we may need to derive the shared plane from the provided vertex positions.
 		int32 initialVertexID = MOD_ID_NONE;
 		TArray<FVector> vertexPositions;
-		for (const FTypedGraphObjID &graphObjID : OutContainedGraphObjIDs)
+		for (int32 graphObjID : OutContainedGraphObjIDs)
 		{
-			if (graphObjID.Value == EGraph3DObjectType::Vertex)
+			if (GetObjectType(graphObjID) == EGraph3DObjectType::Vertex)
 			{
-				int32 vertexID = graphObjID.Key;
-				const FGraph3DVertex *vertex = FindVertex(vertexID);
+				const FGraph3DVertex *vertex = FindVertex(graphObjID);
 				if (!ensure(vertex))
 				{
 					return false;
@@ -1661,7 +1696,7 @@ namespace Modumate
 
 				if (initialVertexID == MOD_ID_NONE)
 				{
-					initialVertexID = vertexID;
+					initialVertexID = graphObjID;
 				}
 
 				vertexPositions.Add(vertex->Position);
@@ -1703,33 +1738,33 @@ namespace Modumate
 		// Check the completeness requirement, which fails if there were any input 3D graph objects that didn't make it into the output 2D graph
 		if (bRequireComplete)
 		{
-			for (const FTypedGraphObjID &graphObjID : OutContainedGraphObjIDs)
+			for (int32 graphObjID : OutContainedGraphObjIDs)
 			{
-				switch (graphObjID.Value)
+				switch (GetObjectType(graphObjID))
 				{
 				case EGraph3DObjectType::Vertex:
 				{
-					if (!OutGraph.ContainsObject(graphObjID.Key, EGraphObjectType::Vertex))
+					if (!OutGraph.ContainsObject(graphObjID))
 					{
-						UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Vertex #%d was missing!"), graphObjID.Key);
+						UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Vertex #%d was missing!"), graphObjID);
 						return false;
 					}
 					break;
 				}
 				case EGraph3DObjectType::Edge:
 				{
-					if (!OutGraph.ContainsObject(graphObjID.Key, EGraphObjectType::Edge))
+					if (!OutGraph.ContainsObject(graphObjID))
 					{
-						UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Edge #%d was missing!"), graphObjID.Key);
+						UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Edge #%d was missing!"), graphObjID);
 						return false;
 					}
 					break;
 				}
 				case EGraph3DObjectType::Face:
 				{
-					if (!face3DToPoly2D.Contains(graphObjID.Key))
+					if (!face3DToPoly2D.Contains(graphObjID))
 					{
-						UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Face #%d was missing!"), graphObjID.Key);
+						UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Face #%d was missing!"), graphObjID);
 						return false;
 					}
 					break;
@@ -1743,7 +1778,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph2D &OutGraph, const TSet<FTypedGraphObjID> *WhitelistIDs, TMap<int32, int32> *OutFace3DToPoly2D) const
+	bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph2D &OutGraph, const TSet<int32> *WhitelistIDs, TMap<int32, int32> *OutFace3DToPoly2D) const
 	{
 		OutGraph.Reset();
 
@@ -1781,7 +1816,7 @@ namespace Modumate
 
 			for (int32 edgeID : currentVertex->ConnectedEdgeIDs)
 			{
-				if (WhitelistIDs && !WhitelistIDs->Contains(FTypedGraphObjID(FMath::Abs(edgeID), EGraph3DObjectType::Edge)))
+				if (WhitelistIDs && !WhitelistIDs->Contains(FMath::Abs(edgeID)))
 				{
 					continue;
 				}
@@ -1790,7 +1825,7 @@ namespace Modumate
 				int32 nextVertexID = (edge->StartVertexID == currentVertexID) ? edge->EndVertexID : edge->StartVertexID;
 
 				if (visitedVertexIDs.Contains(nextVertexID) ||
-					(WhitelistIDs && !WhitelistIDs->Contains(FTypedGraphObjID(nextVertexID, EGraph3DObjectType::Vertex))))
+					(WhitelistIDs && !WhitelistIDs->Contains(nextVertexID)))
 				{
 					continue;
 				}

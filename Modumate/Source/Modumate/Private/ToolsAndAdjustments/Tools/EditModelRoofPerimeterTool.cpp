@@ -26,7 +26,7 @@ bool URoofPerimeterTool::Activate()
 	FModumateDocument &doc = gameState->Document;
 	const FGraph3D &volumeGraph = doc.GetVolumeGraph();
 
-	TSet<FTypedGraphObjID> graphObjIDs, connectedGraphIDs;
+	TSet<int32> graphObjIDs, connectedGraphIDs;
 	UModumateObjectStatics::GetGraphIDsFromMOIs(Controller->EMPlayerState->SelectedObjects, graphObjIDs);
 
 	// Try to make a 2D graph from the selected objects, in order to find a perimeter
@@ -61,8 +61,7 @@ bool URoofPerimeterTool::Activate()
 
 	int32 numEdges = perimeterEdgeIDs.Num();
 
-	TSet<FTypedGraphObjID> newPerimeterGroup;
-	Algo::Transform(perimeterEdgeIDs, newPerimeterGroup, [](const int32 &EdgeID) { return FTypedGraphObjID(EdgeID, EGraph3DObjectType::Edge); });
+	TSet<int32> newPerimeterGroup(perimeterEdgeIDs);
 
 	// Make sure that the resulting perimeter edge IDs aren't redundant with an existing one.
 	int32 existingPerimeterID = MOD_ID_NONE;
@@ -71,7 +70,7 @@ bool URoofPerimeterTool::Activate()
 	{
 		// Check for equality between sets with intersection
 		// TODO: if there are many groups or roof perimeters, optimize this by searching for group members a different way
-		const TSet<FTypedGraphObjID> &groupMembers = kvp.Value;
+		const TSet<int32> &groupMembers = kvp.Value;
 		if ((groupMembers.Num() == numEdges) && (groupMembers.Intersect(newPerimeterGroup).Num() == numEdges))
 		{
 			existingPerimeterID = kvp.Key;
@@ -104,8 +103,7 @@ bool URoofPerimeterTool::Activate()
 		FGraph3DGroupIDsDelta groupIDsDelta(TSet<int32>({ perimeterID }), TSet<int32>());
 		for (int32 edgeID : perimeterEdgeIDs)
 		{
-			FTypedGraphObjID typedEdgeID(edgeID, EGraph3DObjectType::Edge);
-			graphDelta->GroupIDsUpdates.Add(typedEdgeID, groupIDsDelta);
+			graphDelta->GroupIDsUpdates.Add(edgeID, groupIDsDelta);
 		}
 		deltasToApply.Add(graphDelta);
 

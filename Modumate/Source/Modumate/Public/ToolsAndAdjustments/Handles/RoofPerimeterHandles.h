@@ -42,7 +42,7 @@ public:
 protected:
 	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 
-	TSet<Modumate::FTypedGraphObjID> TempGroupMembers;
+	TSet<int32> TempGroupMembers;
 	TArray<int32> TempFaceIDs;
 };
 

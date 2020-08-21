@@ -130,19 +130,10 @@ namespace Modumate
 		return nullptr;
 	}
 
-	bool FGraph2D::ContainsObject(int32 GraphObjID, EGraphObjectType GraphObjectType) const
+	bool FGraph2D::ContainsObject(int32 GraphObjID) const
 	{
-		switch (GraphObjectType)
-		{
-		case EGraphObjectType::Vertex:
-			return Vertices.Contains(GraphObjID);
-		case EGraphObjectType::Edge:
-			return Edges.Contains(GraphObjID);
-		case EGraphObjectType::Polygon:
-			return Polygons.Contains(GraphObjID);
-		default:
-			return false;
-		}
+		// TODO: AllObjects map for 2D graph
+		return Vertices.Contains(GraphObjID) || Edges.Contains(GraphObjID) || Polygons.Contains(GraphObjID);
 	}
 
 	bool FGraph2D::GetEdgeAngle(FGraphSignedID EdgeID, float& OutEdgeAngle)

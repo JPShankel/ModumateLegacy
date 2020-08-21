@@ -1343,7 +1343,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &ob
 	}
 
 	TArray<int32> vertex3DDeletions, edge3DDeletions, face3DDeletions, graphGroupDeletions;
-	TSet<FTypedGraphObjID> graphGroupMembers;
+	TSet<int32> graphGroupMembers;
 	bool bDeletingObjectsInGraph = false;
 	bool bDeletingNavigableObjects = false;
 	for (int32 i = obs.Num() - 1; i >= 0; --i)
@@ -2764,7 +2764,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 			EGraph3DObjectType graphObjectType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectRecord.ObjectType);
 			if (graphObjectType != EGraph3DObjectType::None)
 			{
-				if (!VolumeGraph.ContainsObject(FTypedGraphObjID(objectRecord.ID, graphObjectType)))
+				if (!VolumeGraph.ContainsObject(objectRecord.ID))
 				{
 					UE_LOG(LogTemp, Warning, TEXT("MOI #%d was skipped because its corresponding %s was missing from the graph!"),
 						objectRecord.ID, *EnumValueString(EGraph3DObjectType, graphObjectType));
@@ -3217,7 +3217,7 @@ bool FModumateDocument::IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &O
 
 	OutObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType());
 	bool bIsVolumeGraphType = (OutObjType != EGraph3DObjectType::None);
-	bIsInGraph = VolumeGraph.ContainsObject(FTypedGraphObjID(ObjID, OutObjType));
+	bIsInGraph = VolumeGraph.ContainsObject(ObjID);
 	ensureAlways(bIsVolumeGraphType == bIsInGraph);
 
 	return bIsInGraph;

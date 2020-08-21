@@ -88,7 +88,7 @@ namespace Modumate
 		TMap<int32, FGraph3DHostedObjectDelta> ParentIDUpdates;
 
 		// Updates to GroupIDs for graph objects
-		TMap<FTypedGraphObjID, FGraph3DGroupIDsDelta> GroupIDsUpdates;
+		TMap<int32, FGraph3DGroupIDsDelta> GroupIDsUpdates;
 
 		void Reset();
 		bool IsEmpty();

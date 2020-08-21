@@ -1411,18 +1411,18 @@ namespace Modumate
 		// create deltas from adding the new face, deleting the old faces, 
 		// and deleting the vertices and edges contained in the shared seam
 		//int32 ExistingID, addedID;
-		TSet<FTypedGraphObjID> whitelistIDs, connectedGraphIDs;
+		TSet<int32> whitelistIDs, connectedGraphIDs;
 		for (int32 edgeID : face->EdgeIDs)
 		{
-			whitelistIDs.Add(FTypedGraphObjID(FMath::Abs(edgeID), EGraph3DObjectType::Edge));
+			whitelistIDs.Add(FMath::Abs(edgeID));
 		}
 		for (int32 edgeID : otherFace->EdgeIDs)
 		{
-			whitelistIDs.Add(FTypedGraphObjID(FMath::Abs(edgeID), EGraph3DObjectType::Edge));
+			whitelistIDs.Add(FMath::Abs(edgeID));
 		}
 		for (int32 edgeID : sharedEdgeIDs)
 		{
-			whitelistIDs.Remove(FTypedGraphObjID(FMath::Abs(edgeID), EGraph3DObjectType::Edge));
+			whitelistIDs.Remove(FMath::Abs(edgeID));
 		}
 		if (!ensureAlways(whitelistIDs.Num() >= 3))
 		{
@@ -1432,7 +1432,7 @@ namespace Modumate
 		int32 seedEdgeID = MOD_ID_NONE;
 		for (auto whitelistID : whitelistIDs)
 		{
-			seedEdgeID = whitelistID.Key;
+			seedEdgeID = whitelistID;
 			break;
 		}
 
@@ -1629,14 +1629,14 @@ namespace Modumate
 
 		// For any groups being deleted, remove the group from any objects that mark themselves as belonging to it.
 		// TODO: potentially add a flag here to delete objects that belong to a group that's being deleted
-		TSet<FTypedGraphObjID> tempGroupMembers;
+		TSet<int32> tempGroupMembers;
 		TSet<int32> groupIDsToAdd, groupIDsToRemove(GroupIDs);
 
 		for (int32 groupID : GroupIDs)
 		{
 			if (GetGroup(groupID, tempGroupMembers))
 			{
-				for (const FTypedGraphObjID &groupMember : tempGroupMembers)
+				for (int32 groupMember : tempGroupMembers)
 				{
 					OutDelta.GroupIDsUpdates.Add(groupMember, FGraph3DGroupIDsDelta(groupIDsToAdd, groupIDsToRemove));
 				}

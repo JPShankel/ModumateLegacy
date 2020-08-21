@@ -22,8 +22,6 @@ namespace Modumate
 		Polyhedron
 	};
 
-	typedef TPair<int32, EGraph3DObjectType> FTypedGraphObjID;
-
 	struct FEdgeIntersection
 	{
 		int32 EdgeIdxA;
@@ -71,7 +69,6 @@ namespace Modumate
 		virtual bool ValidateForTests() const = 0;
 
 		virtual EGraph3DObjectType GetType() const = 0;
-		FTypedGraphObjID GetTypedID() const { return FTypedGraphObjID(ID, GetType()); }
 
 		virtual void GetVertexIDs(TArray<int32>& OutVertexIDs) const = 0;
 

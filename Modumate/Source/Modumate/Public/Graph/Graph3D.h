@@ -52,16 +52,17 @@ namespace Modumate
 		FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID);
 		const FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID) const;
 
-		IGraph3DObject* FindObject(FTypedGraphObjID TypedObjID);
-		const IGraph3DObject* FindObject(FTypedGraphObjID TypedObjID) const;
-		bool ContainsObject(FTypedGraphObjID TypedObjID) const;
+		IGraph3DObject* FindObject(int32 ID);
+		const IGraph3DObject* FindObject(int32 ID) const;
+		bool ContainsObject(int32 ID) const;
+		EGraph3DObjectType GetObjectType(int32 ID) const;
 
 		const TMap<int32, FGraph3DEdge> &GetEdges() const;
 		const TMap<int32, FGraph3DVertex> &GetVertices() const;
 		const TMap<int32, FGraph3DFace> &GetFaces() const;
 		const TMap<int32, FGraph3DPolyhedron> &GetPolyhedra() const;
-		bool GetGroup(int32 GroupID, TSet<FTypedGraphObjID> &OutGroupMembers) const;
-		const TMap<int32, TSet<FTypedGraphObjID>> &GetGroups() const;
+		bool GetGroup(int32 GroupID, TSet<int32> &OutGroupMembers) const;
+		const TMap<int32, TSet<int32>> &GetGroups() const;
 
 
 	// graph analysis tools
@@ -79,12 +80,12 @@ namespace Modumate
 		// Create 2D graph representing the connecting set of vertices and edges that are part of the given selection of 3D graph object IDs, and allows some requirements:
 		// bRequireConnected - that the graph is fully connected (only one exterior polygonal perimeter)
 		// bRequireComplete - there are no extra 3D graph objects supplied that don't correspond to a 2D graph object
-		bool Create2DGraph(const TSet<FTypedGraphObjID> &InitialGraphObjIDs, TSet<FTypedGraphObjID> &OutContainedGraphObjIDs,
+		bool Create2DGraph(const TSet<int32> &InitialGraphObjIDs, TSet<int32> &OutContainedGraphObjIDs,
 			FGraph2D &OutGraph, FPlane &OutPlane, bool bRequireConnected, bool bRequireComplete) const;
 
 		// Create 2D graph representing the connecting set of vertices and edges that are on the cut plane and contain the starting vertex,
 		// optionally only traversing the whitelisted IDs, if a set is provided, and optionally creating a mapping from 3D Face IDs to 2D Poly IDs
-		bool Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph2D &OutGraph, const TSet<FTypedGraphObjID> *WhitelistIDs = nullptr, TMap<int32, int32> *OutFace3DToPoly2D = nullptr) const;
+		bool Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph2D &OutGraph, const TSet<int32> *WhitelistIDs = nullptr, TMap<int32, int32> *OutFace3DToPoly2D = nullptr) const;
 
 		// Create 2D graph representing faces, edges, and vertices that are sliced by the cut plane
 		bool Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, FGraph2D &OutGraph, TMap<int32, int32> &OutGraphIDToObjID) const;
@@ -118,8 +119,9 @@ namespace Modumate
 		TMap<int32, FGraph3DEdge> Edges;
 		TMap<int32, FGraph3DFace> Faces;
 		TMap<int32, FGraph3DPolyhedron> Polyhedra;
+		TMap<int32, EGraph3DObjectType> AllObjects;
 		TSet<FGraphSignedID> DirtyFaces;
-		TMap<int32, TSet<FTypedGraphObjID>> CachedGroups;
+		TMap<int32, TSet<int32>> CachedGroups;
 
 		mutable TSet<int32> TempInheritedGroupIDs;
 		mutable TArray<FVector2D> TempProjectedPoints;
@@ -204,7 +206,7 @@ namespace Modumate
 
 		void AddObjectToGroups(const IGraph3DObject *GraphObject);
 		void RemoveObjectFromGroups(const IGraph3DObject *GraphObject);
-		void ApplyGroupIDsDelta(FTypedGraphObjID TypedObjectID, const FGraph3DGroupIDsDelta &GroupDelta);
+		void ApplyGroupIDsDelta(int32 ID, const FGraph3DGroupIDsDelta &GroupDelta);
 
 		// calculate a list of vertices that are on the line between the two vertices provided
 		bool CalculateVerticesOnLine(const FGraphVertexPair &VertexPair, const FVector& StartPos, const FVector& EndPos, TArray<int32> &OutVertexIDs, TPair<int32, int32> &OutSplitEdgeIDs) const;

@@ -207,15 +207,15 @@ namespace Modumate
 		// Separate the edges from the faces, so the perimeter is only calculated out of the edges
 		TempGroupEdges.Reset();
 		CachedFaceIDs.Reset();
-		for (const FTypedGraphObjID &groupMember : TempGroupMembers)
+		for (int32 groupMember : TempGroupMembers)
 		{
-			switch (groupMember.Value)
+			switch (volumeGraph.GetObjectType(groupMember))
 			{
 			case EGraph3DObjectType::Edge:
 				TempGroupEdges.Add(groupMember);
 				break;
 			case EGraph3DObjectType::Face:
-				CachedFaceIDs.Add(groupMember.Key);
+				CachedFaceIDs.Add(groupMember);
 				break;
 			default:
 				break;
@@ -343,7 +343,7 @@ namespace Modumate
 		for (FGraphSignedID signedEdgeID : CachedEdgeIDs)
 		{
 			int32 edgeID = FMath::Abs(signedEdgeID);
-			if (volumeGraph.ContainsObject(FTypedGraphObjID(edgeID, EGraph3DObjectType::Edge)))
+			if (volumeGraph.ContainsObject(edgeID))
 			{
 				if (!LineActors.Contains(edgeID))
 				{

@@ -1091,7 +1091,7 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const Modumate::FModumateObj
 	}
 }
 
-void UModumateObjectStatics::GetGraphIDsFromMOIs(const TArray<Modumate::FModumateObjectInstance *> &MOIs, TSet<FTypedGraphObjID> &OutGraphObjIDs)
+void UModumateObjectStatics::GetGraphIDsFromMOIs(const TArray<Modumate::FModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs)
 {
 	OutGraphObjIDs.Reset();
 
@@ -1103,7 +1103,7 @@ void UModumateObjectStatics::GetGraphIDsFromMOIs(const TArray<Modumate::FModumat
 
 		if (graphObjType != EGraph3DObjectType::None)
 		{
-			OutGraphObjIDs.Add(FTypedGraphObjID(objectID, graphObjType));
+			OutGraphObjIDs.Add(objectID);
 		}
 	}
 }

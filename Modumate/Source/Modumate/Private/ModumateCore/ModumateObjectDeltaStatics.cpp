@@ -20,7 +20,7 @@ bool FModumateObjectDeltaStatics::PreviewMovement(const TMap<int32, TArray<FVect
 		}
 		Modumate::EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType());
 
-		if (auto graphObject = graph.FindObject(Modumate::FTypedGraphObjID(moi->ID, graph3DObjType)))
+		if (auto graphObject = graph.FindObject(moi->ID))
 		{
 			TArray<int32> vertexIDs;
 			graphObject->GetVertexIDs(vertexIDs);

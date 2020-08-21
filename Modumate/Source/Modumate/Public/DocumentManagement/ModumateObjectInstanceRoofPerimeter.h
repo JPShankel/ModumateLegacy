@@ -47,7 +47,7 @@ namespace Modumate
 		FGraph2D CachedPerimeterGraph;
 		FPlane CachedPlane;
 
-		TSet<FTypedGraphObjID> TempGroupMembers, TempGroupEdges, TempGroupFaces, TempConnectedGraphIDs;
+		TSet<int32> TempGroupMembers, TempGroupEdges, TempGroupFaces, TempConnectedGraphIDs;
 		TArray<FVector2D> TempPerimeterPoints2D;
 
 		TWeakObjectPtr<AActor> PerimeterActor;

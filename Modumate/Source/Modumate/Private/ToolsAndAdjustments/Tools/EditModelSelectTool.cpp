@@ -198,7 +198,7 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 				break;
 			}
 		}
-		else if (auto graphObject = volumeGraph.FindObject(Modumate::FTypedGraphObjID(targetID, graph3DObjType)))
+		else if (auto graphObject = volumeGraph.FindObject(targetID))
 		{
 			TArray<int32> vertexIDs;
 			graphObject->GetVertexIDs(vertexIDs);
