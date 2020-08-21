@@ -53,11 +53,12 @@ namespace Modumate
 
 	void FGraph2D::Reset()
 	{
-		NextEdgeID = NextVertexID = NextPolyID = 1;
+		NextObjID = 1;
 
 		Edges.Reset();
 		Vertices.Reset();
 		Polygons.Reset();
+		AllObjects.Reset();
 
 		ClearBounds();
 	}
@@ -130,10 +131,40 @@ namespace Modumate
 		return nullptr;
 	}
 
+	IGraph2DObject* FGraph2D::FindObject(int32 GraphObjID)
+	{
+		if (AllObjects.Contains(GraphObjID))
+		{
+			switch (AllObjects[GraphObjID])
+			{
+				case EGraphObjectType::Vertex:
+					return FindVertex(GraphObjID);
+				case EGraphObjectType::Edge:
+					return FindEdge(GraphObjID);
+				case EGraphObjectType::Polygon:
+					return FindPolygon(GraphObjID);
+			}
+		}
+		return nullptr;
+	}
+
+	const IGraph2DObject* FGraph2D::FindObject(int32 GraphObjID) const
+	{
+		return const_cast<IGraph2DObject*>(const_cast<FGraph2D*>(this)->FindObject(GraphObjID));
+	}
+
+	EGraphObjectType FGraph2D::GetObjectType(int32 GraphObjID)
+	{
+		if (AllObjects.Contains(GraphObjID))
+		{
+			return AllObjects[GraphObjID];
+		}
+		return EGraphObjectType::None;
+	}
+
 	bool FGraph2D::ContainsObject(int32 GraphObjID) const
 	{
-		// TODO: AllObjects map for 2D graph
-		return Vertices.Contains(GraphObjID) || Edges.Contains(GraphObjID) || Polygons.Contains(GraphObjID);
+		return AllObjects.Contains(GraphObjID);
 	}
 
 	bool FGraph2D::GetEdgeAngle(FGraphSignedID EdgeID, float& OutEdgeAngle)
@@ -158,7 +189,11 @@ namespace Modumate
 		int32 newID = InID;
 		if (newID == 0)
 		{
-			newID = NextVertexID++;
+			newID = NextObjID++;
+		}
+		else
+		{
+			NextObjID = FMath::Max(NextObjID, newID+1);
 		}
 
 		if (Vertices.Contains(newID))
@@ -166,8 +201,14 @@ namespace Modumate
 			return nullptr;
 		}
 
+		if (AllObjects.Contains(newID))
+		{
+			return nullptr;
+		}
+
 		FGraph2DVertex &newVertex = Vertices.Add(newID, FGraph2DVertex(newID, this, Position));
 		newVertex.Dirty(false);
+		AllObjects.Add(newID, EGraphObjectType::Vertex);
 
 		return &newVertex;
 	}
@@ -177,13 +218,23 @@ namespace Modumate
 		int32 newID = InID;
 		if (newID == 0)
 		{
-			newID = NextEdgeID++;
+			newID = NextObjID++;
+		}
+		else
+		{
+			NextObjID = FMath::Max(NextObjID, newID+1);
 		}
 
 		if (Edges.Contains(newID))
 		{
 			return nullptr;
 		}
+
+		if (AllObjects.Contains(newID))
+		{
+			return nullptr;
+		}
+
 		FGraph2DVertex *startVertex = FindVertex(StartVertexID);
 		FGraph2DVertex *endVertex = FindVertex(EndVertexID);
 		if (!ensureAlways(startVertex != nullptr && endVertex != nullptr))
@@ -194,25 +245,37 @@ namespace Modumate
 		FGraph2DEdge &newEdge = Edges.Add(newID, FGraph2DEdge(newID, this, StartVertexID, EndVertexID));
 
 		EdgeIDsByVertexPair.Add(FGraphVertexPair::MakeEdgeKey(newEdge.StartVertexID, newEdge.EndVertexID), newEdge.ID);
+		AllObjects.Add(newID, EGraphObjectType::Edge);
 
 		return &newEdge;
 	}
 
 	FGraph2DPolygon *FGraph2D::AddPolygon(TArray<int32> &VertexIDs, int32 InID, bool bInterior)
 	{
-		if (InID == MOD_ID_NONE)
+		int32 newID = InID;
+		if (newID == MOD_ID_NONE)
+		{
+			newID = NextObjID++;
+		}
+		else
+		{
+			NextObjID = FMath::Max(NextObjID, newID+1);
+		}
+
+		if (Polygons.Contains(newID))
 		{
 			return nullptr;
 		}
 
-		if (Polygons.Contains(InID))
+		if (AllObjects.Contains(newID))
 		{
 			return nullptr;
 		}
 
-		FGraph2DPolygon &newPoly = Polygons.Add(InID, FGraph2DPolygon(InID, this, VertexIDs, bInterior));
+		FGraph2DPolygon &newPoly = Polygons.Add(newID, FGraph2DPolygon(newID, this, VertexIDs, bInterior));
 
 		newPoly.Dirty(false);
+		AllObjects.Add(newID, EGraphObjectType::Polygon);
 
 		return &newPoly;
 	}
@@ -249,6 +312,7 @@ namespace Modumate
 		}
 
 		Vertices.Remove(VertexID);
+		AllObjects.Remove(VertexID);
 
 		return true;
 	}
@@ -281,6 +345,7 @@ namespace Modumate
 		}
 
 		Edges.Remove(EdgeID);
+		AllObjects.Remove(EdgeID);
 
 		return true;
 	}
@@ -316,6 +381,7 @@ namespace Modumate
 		}
 
 		Polygons.Remove(PolyID);
+		AllObjects.Remove(PolyID);
 
 		return true;
 	}
@@ -340,7 +406,7 @@ namespace Modumate
 		CleanDirtyObjects(false);
 
 		TArray<FGraph2DDelta> deltas;
-		ensure(CalculatePolygons(deltas, NextPolyID));
+		ensure(CalculatePolygons(deltas, NextObjID));
 
 		return Polygons.Num();
 	}
@@ -348,7 +414,6 @@ namespace Modumate
 	void FGraph2D::ClearPolygons()
 	{
 		Polygons.Reset();
-		NextPolyID = 1;
 	}
 
 	int32 FGraph2D::GetID() const
@@ -442,7 +507,7 @@ namespace Modumate
 				return false;
 			}
 
-			NextVertexID = FMath::Max(NextVertexID, newVertex->ID + 1);
+			NextObjID = FMath::Max(NextObjID, newVertex->ID + 1);
 		}
 
 		for (const auto &kvp : InRecord->Edges)
@@ -459,7 +524,7 @@ namespace Modumate
 				return false;
 			}
 
-			NextEdgeID = FMath::Max(NextEdgeID, newEdge->ID + 1);
+			NextObjID = FMath::Max(NextObjID, newEdge->ID + 1);
 		}
 
 		for (auto& kvp : Vertices)
@@ -482,7 +547,7 @@ namespace Modumate
 
 			Polygons.Add(poly.ID, poly);
 
-			NextPolyID = FMath::Max(NextPolyID, poly.ID + 1);
+			NextObjID = FMath::Max(NextObjID, poly.ID + 1);
 		}
 
 		for (auto& kvp : Polygons)
