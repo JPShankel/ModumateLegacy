@@ -47,6 +47,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *Button_3DViews;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *Button_CutPlanes;
+
 	UFUNCTION()
 	void OnButtonReleaseMetaPlane();
 
@@ -61,6 +64,9 @@ public:
 
 	UFUNCTION()
 	void OnButtonRelease3DViews();
+
+	UFUNCTION()
+	void OnButtonReleaseCutPlanes();
 
 protected:
 

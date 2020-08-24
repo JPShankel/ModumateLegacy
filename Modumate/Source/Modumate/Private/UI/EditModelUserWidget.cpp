@@ -10,6 +10,7 @@
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/BIM/BIMBlockDialogBox.h"
 #include "UI/RightMenu/ViewMenuWidget.h"
+#include "UI/RightMenu/CutPlaneMenuWidget.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -103,5 +104,7 @@ void UEditModelUserWidget::SwitchRightMenu(ERightMenuState NewMenuState)
 {
 	CurrentRightMenuState = NewMenuState;
 	bool newViewMenuVisibility = CurrentRightMenuState == ERightMenuState::ViewMenu;
+	bool newCutPlaneMenuVisibility = CurrentRightMenuState == ERightMenuState::CutPlaneMenu;
 	ViewMenu->SetViewMenuVisibility(newViewMenuVisibility);
+	CutPlaneMenu->SetViewMenuVisibility(newCutPlaneMenuVisibility);
 }

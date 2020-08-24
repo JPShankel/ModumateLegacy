@@ -33,6 +33,7 @@ bool UToolbarWidget::Initialize()
 	Button_SurfaceGraphs->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseSurfaceGraphs);
 	Button_Attachments->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseAttachments);
 	Button_3DViews->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonRelease3DViews);
+	Button_CutPlanes->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseCutPlanes);
 
 	return true;
 }
@@ -72,14 +73,28 @@ void UToolbarWidget::OnButtonRelease3DViews()
 {
 	if (EditModelUserWidget)
 	{
-		if (EditModelUserWidget->CurrentRightMenuState == ERightMenuState::None)
-		{
-			EditModelUserWidget->SwitchRightMenu(ERightMenuState::ViewMenu);
-		}
-		else
+		if (EditModelUserWidget->CurrentRightMenuState == ERightMenuState::ViewMenu)
 		{
 			EditModelUserWidget->SwitchRightMenu(ERightMenuState::None);
 		}
+		else
+		{
+			EditModelUserWidget->SwitchRightMenu(ERightMenuState::ViewMenu);
+		}
+	}
+}
 
+void UToolbarWidget::OnButtonReleaseCutPlanes()
+{
+	if (EditModelUserWidget)
+	{
+		if (EditModelUserWidget->CurrentRightMenuState == ERightMenuState::CutPlaneMenu)
+		{
+			EditModelUserWidget->SwitchRightMenu(ERightMenuState::None);
+		}
+		else
+		{
+			EditModelUserWidget->SwitchRightMenu(ERightMenuState::CutPlaneMenu);
+		}
 	}
 }

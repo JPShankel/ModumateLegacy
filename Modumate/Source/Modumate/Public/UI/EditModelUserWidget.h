@@ -52,6 +52,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UViewMenuWidget *ViewMenu;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UCutPlaneMenuWidget *CutPlaneMenu;
+
 	ERightMenuState CurrentRightMenuState = ERightMenuState::None;
 
 	UFUNCTION()
