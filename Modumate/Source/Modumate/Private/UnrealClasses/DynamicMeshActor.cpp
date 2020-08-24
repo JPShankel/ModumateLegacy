@@ -436,7 +436,7 @@ void ADynamicMeshActor::AddPrismGeometry(const TArray<FVector> &points, const FV
 		});
 	}
 
-	if (UModumateGeometryStatics::TriangulateVerticesPoly2Tri(points2D, holes2D, tris, &triangulatedPoints2D))
+	if (UModumateGeometryStatics::TriangulateVerticesGTE(points2D, holes2D, tris, &triangulatedPoints2D))
 	{
 		Algo::Transform(
 			triangulatedPoints2D,
@@ -1189,8 +1189,8 @@ void ADynamicMeshActor::SetupMasksGeometry(const TArray<TArray<FVector>> &Polygo
 		TArray<int32> tris2D;
 		TArray<FPolyHole2D> validHoles; // empty
 
-		UModumateGeometryStatics::TriangulateVerticesPoly2Tri(maskVertices2D, validHoles, tris2D, &vertices2D);
-		
+		UModumateGeometryStatics::TriangulateVerticesGTE(maskVertices2D, validHoles, tris2D, &vertices2D);
+
 		TArray<FVector> maskVertices;
 		TArray<FVector> maskNormals;
 		TArray<FVector2D> maskUVs;

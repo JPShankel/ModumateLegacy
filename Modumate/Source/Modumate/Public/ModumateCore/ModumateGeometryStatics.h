@@ -193,6 +193,9 @@ public:
 	static bool TriangulateVerticesPoly2Tri(const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& Holes,
 		TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid = true);
 
+	static bool TriangulateVerticesGTE(const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& Holes,
+		TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid = true);
+
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool SegmentIntersection2D(const FVector2D& SegmentStartA, const FVector2D& SegmentEndA, const FVector2D& SegmentStartB, const FVector2D& SegmentEndB, FVector2D& outIntersectionPoint, float Tolerance = SMALL_NUMBER);
 

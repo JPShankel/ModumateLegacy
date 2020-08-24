@@ -18,6 +18,8 @@ using namespace std;
 #include "../../poly2tri/poly2tri.h"
 #include "Algo/Reverse.h"
 
+#include "ConstrainedDelaunay2.h"
+
 #define DEBUG_CHECK_LAYERS (!UE_BUILD_SHIPPING)
 
 FLayerGeomDef::FLayerGeomDef()
@@ -306,7 +308,7 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &Ou
 
 	TArray<FVector2D> verticesA2D, verticesB2D;
 	TArray<int32> trisA2D, trisB2D;
-	bool bTriangulatedA = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(CachedPointsA2D, ValidHoles2D, trisA2D, &verticesA2D);
+	bool bTriangulatedA = UModumateGeometryStatics::TriangulateVerticesGTE(CachedPointsA2D, ValidHoles2D, trisA2D, &verticesA2D);
 
 	if (!bTriangulatedA)
 	{
@@ -317,7 +319,7 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &Ou
 
 	if (Thickness > PLANAR_DOT_EPSILON)
 	{
-		bool bTriangulatedB = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(CachedPointsB2D, ValidHoles2D, trisB2D, &verticesB2D);
+		bool bTriangulatedB = UModumateGeometryStatics::TriangulateVerticesGTE(CachedPointsB2D, ValidHoles2D, trisB2D, &verticesB2D);
 
 		if (!bTriangulatedB)
 		{
@@ -826,6 +828,63 @@ bool UModumateGeometryStatics::TriangulateVerticesPoly2Tri(const TArray<FVector2
 	}
 
 	return !bTriangulationError;
+}
+
+bool UModumateGeometryStatics::TriangulateVerticesGTE(const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& Holes,
+	TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid)
+{
+	OutTriangles.Reset();
+	if (OutCombinedVertices)
+	{
+		OutCombinedVertices->Reset();
+	}
+
+	TArray<FVector2f> vertices;
+	for (auto& vertex : Vertices)
+	{
+		vertices.Add(vertex);
+	}
+	if (OutCombinedVertices)
+	{
+		OutCombinedVertices->Append(Vertices);
+	}
+
+	FPolygon2f perimeter(vertices);
+	FGeneralPolygon2f polygon;
+	polygon.SetOuter(perimeter);
+
+	for (auto& hole : Holes)
+	{
+		vertices.Reset();
+		for (auto& vertex : hole.Points)
+		{
+			vertices.Add(vertex);
+		}
+		if (OutCombinedVertices)
+		{
+			OutCombinedVertices->Append(hole.Points);
+		}
+
+		FPolygon2f holePoly(vertices);
+		polygon.AddHole(holePoly, false, false);
+	}
+
+	TConstrainedDelaunay2<float> cdt;
+	cdt.bOutputCCW = true;
+	cdt.Add(polygon);
+	if (!cdt.Triangulate())
+	{
+		return false;
+	}
+
+	for (auto& triangle : cdt.Triangles)
+	{
+		OutTriangles.Add(triangle.A);
+		OutTriangles.Add(triangle.B);
+		OutTriangles.Add(triangle.C);
+	}
+
+	return true;
 }
 
 void UModumateGeometryStatics::GetPolygonWindingAndConcavity(const TArray<FVector2D> &Locations, bool &bOutClockwise, bool &bOutConcave)

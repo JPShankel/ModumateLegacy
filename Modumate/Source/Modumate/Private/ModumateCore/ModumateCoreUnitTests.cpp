@@ -1,11 +1,13 @@
 #include "CoreMinimal.h"
 
+#include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
+#include "Polygon2.h"
 
 namespace Modumate
 {
@@ -440,6 +442,74 @@ namespace Modumate
 		return bSuccess;
 	}
 
+	enum ETriangulationMethod
+	{
+		Poly2Tri,
+		GTE,
+	};
+
+	FPolygon2f VerticesToTPoly(const TArray<FVector2D>& Vertices)
+	{
+		TArray<FVector2f> convertedVertices;
+		for (const FVector2D& vertex : Vertices)
+		{
+			convertedVertices.Add(vertex);
+		}
+
+		return FPolygon2f(convertedVertices);
+	}
+
+	bool TestTriangulation(FAutomationTestBase* Test, const FString& Description, const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& Holes,
+		TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid,
+		bool bExpectedSuccess, int32 ExpectedNumTriIndices, int32 ExpectedNumVertices, ETriangulationMethod Method = ETriangulationMethod::GTE)
+	{
+		bool bSuccess = false;
+
+		float expectedArea = 0.0f, computedArea = 0.0f;
+		constexpr float areaEpsilon = 0.5f;
+
+		switch (Method)
+		{
+		case ETriangulationMethod::Poly2Tri:
+			bSuccess = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(Vertices, Holes, OutTriangles, OutCombinedVertices, bCheckValid);
+			break;
+		case ETriangulationMethod::GTE:
+		{
+			bSuccess = UModumateGeometryStatics::TriangulateVerticesGTE(Vertices, Holes, OutTriangles, OutCombinedVertices, bCheckValid);
+			if (bSuccess)
+			{
+				auto perimeterPoly = VerticesToTPoly(Vertices);
+				float perimeterArea = perimeterPoly.Area();
+
+				TArray<FPolygon2f> holePolys;
+				Algo::Transform(Holes, holePolys, [](const FPolyHole2D& hole) { return VerticesToTPoly(hole.Points); });
+				TArray<float> holeAreas;
+				Algo::Transform(holePolys, holeAreas, [](const FPolygon2f& holePoly) { return holePoly.Area(); });
+				float holesArea = Algo::Accumulate(holeAreas, 0.0f);
+				expectedArea = perimeterArea - holesArea;
+
+				TArray<FVector2D>& combinedVertices = *OutCombinedVertices;
+				for (int32 triIndexA = 0; triIndexA < OutTriangles.Num(); triIndexA += 3)
+				{
+					int32 triIndexB = triIndexA + 1;
+					int32 triIndexC = triIndexA + 2;
+					TArray<FVector2D> triangleVertices({ combinedVertices[OutTriangles[triIndexA]], combinedVertices[OutTriangles[triIndexB]], combinedVertices[OutTriangles[triIndexC]] });
+					auto triPoly = VerticesToTPoly(triangleVertices);
+					computedArea += triPoly.Area();
+				}
+			}
+		}
+			break;
+		}
+
+		return Test->TestTrue(Description,
+			(bSuccess == bExpectedSuccess) &&
+			(!bExpectedSuccess || (ExpectedNumTriIndices == OutTriangles.Num())) &&
+			(!bExpectedSuccess || (OutCombinedVertices == nullptr) || (ExpectedNumVertices == OutCombinedVertices->Num())) &&
+			(!bExpectedSuccess || ((computedArea > 0.0f) && FMath::IsNearlyEqual(expectedArea, computedArea, areaEpsilon)))
+		);
+	}
+
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometryTriangulateVertices, "Modumate.Core.Geometry.TriangulateVertices", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGeometryTriangulateVertices::RunTest(const FString& Parameters)
 	{
@@ -456,7 +526,7 @@ namespace Modumate
 			FVector2D(100.0f, 0.0f)
 		};
 
-		TestTrue(TEXT("simple square"), UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutTriangles, &OutVertices));
+		TestTriangulation(this, TEXT("simple square"), InVertices, InHoles, OutTriangles, &OutVertices, true, true, 6, 4);
 
 		return true;
 	}
@@ -467,9 +537,6 @@ namespace Modumate
 		TArray<FVector2D> perimeter, outVertices;
 		TArray<FPolyHole2D> holes;
 		TArray<int32> outTriangleIndices;
-		TSet<FVector2D> uniqueVertices;
-		bool bTriangulationSuccess;
-		int32 expectedUniqueVertices;
 
 		perimeter = {
 			FVector2D(0.0f, 0.0f),
@@ -485,49 +552,46 @@ namespace Modumate
 			FVector2D(25.0f, 75.0f)
 		}) };
 
-		bTriangulationSuccess = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(perimeter, holes, outTriangleIndices, &outVertices);
-		TestTrue(TEXT("Square with a hole in the middle"), bTriangulationSuccess && (outTriangleIndices.Num() > 6) && (outVertices.Num() == 8));
+		TestTriangulation(this, TEXT("CW square with a CCW hole in the middle"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 24, 8);
 
-		// Based on our current limitations and workarounds for triangulation, polygon "islands"
-		// (a polygon that is initially a subset of another polygon, and shares one vertex with the outer polygon)
-		// must be passed as holes in order to not pass duplicate vertices,
-		// and the island holes must be separated from the outer polygon in order to triangulate.
-#define PASS_ISLANDS_AS_HOLES 1
+		Algo::Reverse(perimeter);
+		TestTriangulation(this, TEXT("CCW square with a CCW hole in the middle"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 24, 8);
+		Algo::Reverse(holes[0].Points);
+		TestTriangulation(this, TEXT("CCW square with a CW hole in the middle"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 24, 8);
+		Algo::Reverse(perimeter);
+		TestTriangulation(this, TEXT("CW square with a CW hole in the middle"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 24, 8);
+
 
 		perimeter = {
 			FVector2D(0.0f, 0.0f),
-#if !PASS_ISLANDS_AS_HOLES
-			FVector2D(148.749756f, 639.932617f),
-			FVector2D(320.486328f, 276.400391f),
-			FVector2D(0.0f, 0.0f),
-#endif
 			FVector2D(1158.06592f, 0.0f),
-			FVector2D(1158.06592, 1337.09644f),
+			FVector2D(1158.06592f, 1337.09644f),
 			FVector2D(0.0f, 1337.09644f)
 		};
 
-		holes = {
-#if PASS_ISLANDS_AS_HOLES
-			FPolyHole2D({
-				FVector2D(320.486328f, 276.400391f),
-				FVector2D(148.749756f, 639.932617f),
-				FVector2D(0.0f, 0.0f)
-			})
-#endif
+		holes = { FPolyHole2D({
+			FVector2D(320.486328f, 276.400391f),
+			FVector2D(148.749756f, 639.932617f),
+			FVector2D(0.0f, 0.0f)
+		})};
+
+		TestTriangulation(this, TEXT("Square with a separate triangle touching at one corner, sharing a vertex"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 15, 7);
+
+
+		perimeter = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(148.749756f, 639.932617f),
+			FVector2D(320.486328f, 276.400391f),
+			FVector2D(0.0f, 0.0f),
+			FVector2D(1158.06592f, 0.0f),
+			FVector2D(1158.06592f, 1337.09644f),
+			FVector2D(0.0f, 1337.09644f)
 		};
 
-		bTriangulationSuccess = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(perimeter, holes, outTriangleIndices, &outVertices);
-		uniqueVertices.Reset();
-		uniqueVertices.Append(outVertices);
-#if PASS_ISLANDS_AS_HOLES
-		expectedUniqueVertices = 7;
-		int32 expectedNumTriangleIndices = 21;
-#else
-		expectedUniqueVertices = 6;
-		int32 expectedNumTriangleIndices = 15;
-#endif
-		TestTrue(TEXT("Square with an implicit triangular hole touching at one corner"), bTriangulationSuccess &&
-			(outTriangleIndices.Num() >= expectedNumTriangleIndices) && (outVertices.Num() == 7) && (uniqueVertices.Num() == expectedUniqueVertices));
+		holes.Reset();
+
+		TestTriangulation(this, TEXT("Square with an implicit triangular hole touching at one corner, repeating a vertex"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 15, 7);
+
 
 		perimeter = {
 			FVector2D(0.0f, 0.0f),
@@ -544,16 +608,96 @@ namespace Modumate
 			FVector2D(25.0f, 50.0f)
 		}) };
 
-		bTriangulationSuccess = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(perimeter, holes, outTriangleIndices, &outVertices);
-		uniqueVertices.Reset();
-		uniqueVertices.Append(outVertices);
-#if PASS_ISLANDS_AS_HOLES
-		expectedUniqueVertices = 9;
-#else
-		expectedUniqueVertices = 8;
-#endif
-		TestTrue(TEXT("Pentagon with a diamond hole touching at one point"), bTriangulationSuccess &&
-			(outTriangleIndices.Num() > 6) && (outVertices.Num() == 9) && (uniqueVertices.Num() == expectedUniqueVertices));
+		TestTriangulation(this, TEXT("Pentagon with a diamond hole touching at one point"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 21, 9);
+
+
+		perimeter = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(0.0f, 100.0f),
+			FVector2D(100.0f, 100.0f),
+			FVector2D(100.0f, 0.0f)
+		};
+
+		holes = { FPolyHole2D({
+			FVector2D(30.0f, 40.0f),
+			FVector2D(50.0f, 40.0f),
+			FVector2D(50.0f, 60.0f),
+			FVector2D(30.0f, 60.0f)
+		}), FPolyHole2D({
+			FVector2D(70.0f, 40.0f),
+			FVector2D(50.0f, 40.0f),
+			FVector2D(50.0f, 60.0f),
+			FVector2D(70.0f, 60.0f),
+		}) };
+
+		TestTriangulation(this, TEXT("Square with two square holes that share an edge"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 30, 12);
+
+
+		perimeter = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(0.0f, 100.0f),
+			FVector2D(100.0f, 100.0f),
+			FVector2D(100.0f, 0.0f)
+		};
+
+		holes = { FPolyHole2D({
+			FVector2D(30.0f, 50.0f),
+			FVector2D(40.0f, 60.0f),
+			FVector2D(50.0f, 50.0f),
+			FVector2D(60.0f, 60.0f),
+			FVector2D(70.0f, 50.0f),
+			FVector2D(60.0f, 40.0f),
+			FVector2D(50.0f, 50.0f),
+			FVector2D(40.0f, 40.0f)
+		}) };
+
+		TestTriangulation(this, TEXT("Square with a hole made of two diamonds that share a vertex"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 36, 12);
+
+
+		perimeter = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(0.0f, 100.0f),
+			FVector2D(100.0f, 100.0f),
+			FVector2D(100.0f, 0.0f)
+		};
+
+		holes = { FPolyHole2D({
+			FVector2D(30.0f, 50.0f),
+			FVector2D(40.0f, 60.0f),
+			FVector2D(50.0f, 50.0f),
+			FVector2D(40.0f, 40.0f)
+		}), FPolyHole2D({
+			FVector2D(70.0f, 50.0f),
+			FVector2D(60.0f, 60.0f),
+			FVector2D(50.0f, 50.0f),
+			FVector2D(60.0f, 40.0f),
+		}) };
+
+		TestTriangulation(this, TEXT("Square with two diamond holes that share a vertex"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 36, 12);
+
+
+		perimeter = {
+			FVector2D(0.0f, 0.0f),
+			FVector2D(0.0f, 100.0f),
+			FVector2D(100.0f, 100.0f),
+			FVector2D(100.0f, 0.0f)
+		};
+
+		holes = { FPolyHole2D({
+			FVector2D(0.0f, 25.0f),
+			FVector2D(0.0f, 75.0f),
+			FVector2D(50.0f, 75.0f),
+			FVector2D(50.0f, 25.0f)
+		})};
+
+		TestTriangulation(this, TEXT("CW square with CW hole whose edge lies within one of the outer polygon's edges"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 18, 8);
+
+		Algo::Reverse(holes[0].Points);
+		TestTriangulation(this, TEXT("CW square with CCW hole whose edge lies within one of the outer polygon's edges"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 18, 8);
+		Algo::Reverse(perimeter);
+		TestTriangulation(this, TEXT("CCW square with CCW hole whose edge lies within one of the outer polygon's edges"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 18, 8);
+		Algo::Reverse(holes[0].Points);
+		TestTriangulation(this, TEXT("CCW square with CW hole whose edge lies within one of the outer polygon's edges"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 18, 8);
 
 		return true;
 	}
@@ -577,7 +721,7 @@ namespace Modumate
 			FVector2D(50.0f, 0.0f)
 		};
 
-		TestTrue(TEXT("square with peninsula"), !UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutTriangles, &OutVertices));
+		TestTriangulation(this, TEXT("Square with peninsula"), InVertices, InHoles, OutTriangles, &OutVertices, true, false, 0, 0, ETriangulationMethod::Poly2Tri);
 
 		InVertices = {
 			FVector2D(0.0f, 0.0f),
@@ -594,7 +738,7 @@ namespace Modumate
 			FVector2D(25.0f, 0.0f)
 		};
 
-		TestTrue(TEXT("square with multiple peninsulas"), !UModumateGeometryStatics::TriangulateVerticesPoly2Tri(InVertices, InHoles, OutTriangles, &OutVertices));
+		TestTriangulation(this, TEXT("Square with multiple peninsulas"), InVertices, InHoles, OutTriangles, &OutVertices, true, false, 0, 0, ETriangulationMethod::Poly2Tri);
 
 		return false;
 	}

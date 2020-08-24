@@ -435,7 +435,7 @@ void UModumateFunctionLibrary::CalculateFloorParam(FVector Origin, TArray<FVecto
 	{
 		topVerts2D.Add(FVector2D(curVert));
 	}
-	UModumateGeometryStatics::TriangulateVerticesPoly2Tri(topVerts2D, holes2D, topTris, &topVerts2DOut);
+	UModumateGeometryStatics::TriangulateVerticesGTE(topVerts2D, holes2D, topTris, &topVerts2DOut);
 	for (int32 i = 0; i < topVerts2DOut.Num(); i++)
 	{
 		topVertsOut.Add(FVector(topVerts2DOut[i], topVerts[i].Z));

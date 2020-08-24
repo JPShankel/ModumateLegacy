@@ -60,6 +60,7 @@ public class Modumate : ModuleRules
 			"UMG",
 			"Cbor",
 			"Serialization",
+			"GeometryAlgorithms",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

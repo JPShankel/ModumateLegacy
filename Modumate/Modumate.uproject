@@ -66,6 +66,10 @@
 		{
 			"Name": "AnalyticsMulticast",
 			"Enabled": true
+		},
+		{
+			"Name": "GeometryProcessing",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
