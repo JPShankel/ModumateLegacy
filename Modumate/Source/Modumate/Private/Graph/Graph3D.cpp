@@ -97,9 +97,11 @@ namespace Modumate
 		}
 	}
 
-	int32 FGraph3D::FindFaceFullyContainingFace(int32 FaceID) const
+	int32 FGraph3D::FindMinFaceContainingFace(int32 FaceID, bool bAllowPartialContainment) const
 	{
-		int32 faceIDContainingPoly = MOD_ID_NONE;
+		int32 minFaceIDContainingPoly = MOD_ID_NONE;
+		bool bFullyContained = false;
+		bool bPartiallyContained = false;
 
 		auto face = FindFace(FaceID);
 		int32 numPolyPoints = face->VertexIDs.Num();
@@ -108,61 +110,36 @@ namespace Modumate
 			return MOD_ID_NONE;
 		}
 
-		// First, find a face that all of these vertices are contained by
-		TSet<int32> facesContainingPolygon;
-		TSet<int32> facesContainingVertex;
-		for (int32 vertexID : face->VertexIDs)
+		// First, for every other face in the graph, see if they contain the input face;
+		// full containment (no shared vertices / edges) is allowed, and partial containment is only allowed if specified by bAllowPartialContainment.
+		// Partial containment can not share edges for a graph whose vertex-edge intersections have already been resolved,
+		// so only a single shared vertex is possible here (i.e. an inner triangle touching an outer square at its corner, rather than a small square in the corner of a larger square).
+		TArray<int32> faceIDsContainingPolygon;
+		for (auto& kvp : Faces)
 		{
-			facesContainingVertex.Reset();
-			auto vertex = FindVertex(vertexID);
-			FindFacesContainingPosition(vertex->Position, facesContainingVertex);
-
-			if (facesContainingPolygon.Num() == 0)
+			if (GetFaceContainment(kvp.Key, FaceID, bFullyContained, bPartiallyContained) &&
+				(bFullyContained || (bAllowPartialContainment && bPartiallyContained)))
 			{
-				facesContainingPolygon = facesContainingVertex;
-			}
-			else
-			{
-				facesContainingPolygon = facesContainingPolygon.Intersect(facesContainingVertex);
-			}
-
-			if (facesContainingPolygon.Num() == 0)
-			{
-				return MOD_ID_NONE;
+				faceIDsContainingPolygon.Add(kvp.Key);
 			}
 		}
 
-		bool bFullyContained = false;
-		bool bPartiallyContained = false;
-		const FGraph3DFace *minFace = nullptr;
-		for (int32 faceID : facesContainingPolygon)
+		// Next, find the face that "minimally" contains the input face, as in it cannot contain a faces that contains the input face.
+		// Use the same partial containment critera as before.
+		for (int32 faceIDContainingPoly : faceIDsContainingPolygon)
 		{
-			auto containingFace = FindFace(faceID);
-			if (containingFace == nullptr)
+			if ((minFaceIDContainingPoly == MOD_ID_NONE) ||
+				(GetFaceContainment(minFaceIDContainingPoly, faceIDContainingPoly, bFullyContained, bPartiallyContained) &&
+				(bFullyContained || (bAllowPartialContainment && bPartiallyContained))))
 			{
-				continue;
-			}
-
-			bool bCurrentFaceSmaller = false; 
-			bool bNewFaceSmaller = false; 
-
-			if (minFace != nullptr)
-			{
-				bNewFaceSmaller = GetFaceContainment(minFace->ID, containingFace->ID, bFullyContained, bPartiallyContained) && bFullyContained;
-			}
-			
-			if (minFace == nullptr || bFullyContained)
-			{
-				minFace = FindFace(faceID);
+				minFaceIDContainingPoly = faceIDContainingPoly;
 			}
 		}
 
-		faceIDContainingPoly = minFace == nullptr ? MOD_ID_NONE : minFace->ID;
-
-		return faceIDContainingPoly;
+		return minFaceIDContainingPoly;
 	}
 
-	void FGraph3D::FindFacesFullyContainedByFace(int32 ContainingFaceID, TSet<int32> &OutContainedFaces) const
+	void FGraph3D::FindFacesContainedByFace(int32 ContainingFaceID, TSet<int32> &OutContainedFaces, bool bAllowPartialContainment) const
 	{
 		auto containingFace = FindFace(ContainingFaceID);
 		if (containingFace == nullptr)
@@ -174,7 +151,8 @@ namespace Modumate
 		{
 			int32 containedFaceID = kvp.Key;
 			bool bFullyContained, bPartiallyContained;
-			if (GetFaceContainment(ContainingFaceID, containedFaceID, bFullyContained, bPartiallyContained) && bFullyContained)
+			if (GetFaceContainment(ContainingFaceID, containedFaceID, bFullyContained, bPartiallyContained) &&
+				(bFullyContained || (bAllowPartialContainment && bPartiallyContained)))
 			{
 				OutContainedFaces.Add(containedFaceID);
 			}
@@ -286,12 +264,12 @@ namespace Modumate
 		return nullptr;
 	}
 
-	void FGraph3D::FindFacesContainingPosition(const FVector &Position, TSet<int32> &ContainingFaces) const
+	void FGraph3D::FindFacesContainingPosition(const FVector &Position, TSet<int32> &ContainingFaces, bool bAllowOverlaps) const
 	{
 		for (auto &kvp : Faces)
 		{
 			bool bOverlaps;
-			if (kvp.Value.ContainsPosition(Position, bOverlaps) && !bOverlaps)
+			if (kvp.Value.ContainsPosition(Position, bOverlaps) || (bAllowOverlaps && bOverlaps))
 			{
 				ContainingFaces.Add(kvp.Key);
 			}

@@ -39,7 +39,7 @@ namespace Modumate
 		FGraph3DFace* FindFace(FGraphSignedID FaceID);
 		const FGraph3DFace* FindFace(FGraphSignedID FaceID) const;
 		const FGraph3DFace* FindFaceByVertexIDs(const TArray<int32> &VertexIDs) const;
-		void FindFacesContainingPosition(const FVector &Position, TSet<int32> &ContainingFaces) const;
+		void FindFacesContainingPosition(const FVector &Position, TSet<int32> &ContainingFaces, bool bAllowOverlaps) const;
 
 		// Test if one face contains another; either fully (no touching vertices/edges) or partially (overlapping edges and/or touching vertices).
 		// NOTE: this requires that the faces have edges that are already full split, and do not intersect with one another except at vertices, and no vertices lie inside other edges.
@@ -201,8 +201,8 @@ namespace Modumate
 
 		// Find the face that minimally contains this face
 		// NOTE: this assumes that the graph is in a valid enough state that there are no face overlaps
-		int32 FindFaceFullyContainingFace(int32 FaceID) const;
-		void FindFacesFullyContainedByFace(int32 FaceID, TSet<int32> &OutContainedFaces) const;
+		int32 FindMinFaceContainingFace(int32 FaceID, bool bAllowPartialContainment) const;
+		void FindFacesContainedByFace(int32 FaceID, TSet<int32> &OutContainedFaces, bool bAllowPartialContainment) const;
 
 		void AddObjectToGroups(const IGraph3DObject *GraphObject);
 		void RemoveObjectFromGroups(const IGraph3DObject *GraphObject);

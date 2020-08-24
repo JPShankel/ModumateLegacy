@@ -490,8 +490,8 @@ namespace Modumate
 				continue;
 			}
 
-			int32 containingFaceID = FindFaceFullyContainingFace(face->ID);
-			FindFacesFullyContainedByFace(face->ID, sideEffectContainedFaceIDs);
+			int32 containingFaceID = FindMinFaceContainingFace(face->ID, true);
+			FindFacesContainedByFace(face->ID, sideEffectContainedFaceIDs, true);
 
 			sideEffectContainedFaceIDs.Append(face->ContainedFaceIDs);
 
@@ -527,7 +527,7 @@ namespace Modumate
 		{
 			if (auto face = FindFace(id))
 			{
-				int32 containingFaceID = FindFaceFullyContainingFace(face->ID);
+				int32 containingFaceID = FindMinFaceContainingFace(face->ID, true);
 				facesContainedByFace.Add(id, containingFaceID);
 			}
 		}

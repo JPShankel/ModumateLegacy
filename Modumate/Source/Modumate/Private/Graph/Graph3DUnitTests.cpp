@@ -2788,6 +2788,55 @@ namespace Modumate
 		return true;
 	}
 
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphFaceContainmentPartial, "Modumate.Graph.3D.FaceContainmentPartial", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphFaceContainmentPartial::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 nextID = 1;
+		int32 existingID = 0;
+
+		TArray<int32> faceIDs;
+		TArray<FVector> outerVertices = {
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(100.0f, 100.0f, 0.0f),
+			FVector(0.0f, 100.0f, 0.0f)
+		};
+
+		TArray<FVector> partiallyContainedVertices = {
+			FVector(10.0f, 50.0f, 0.0f),
+			FVector(50.0f, 10.0f, 0.0f),
+			FVector(0.0f, 0.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add outer face"), tempGraph.GetDeltaForFaceAddition(outerVertices, deltas, nextID, existingID));
+		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
+		int32 outerFaceID = graph.GetFaces().CreateConstIterator()->Key;
+
+		TestTrue(TEXT("Add partially contained face"), tempGraph.GetDeltaForFaceAddition(partiallyContainedVertices, deltas, nextID, existingID));
+		TestDeltas(this, deltas, graph, tempGraph, 2, 6, 7);
+
+		for (auto& kvp : graph.GetFaces())
+		{
+			const FGraph3DFace& face = kvp.Value;
+			if (kvp.Key == outerFaceID)
+			{
+				TestEqual(TEXT("Outer face does not have a containing face"), face.ContainingFaceID, MOD_ID_NONE);
+				TestEqual(TEXT("Outer face contains a face"), face.ContainedFaceIDs.Num(), 1);
+			}
+			else
+			{
+				TestEqual(TEXT("Partially contained face is contained by the outer face"), face.ContainingFaceID, outerFaceID);
+				TestEqual(TEXT("Partially contained face does not contain any faces"), face.ContainedFaceIDs.Num(), 0);
+			}
+		}
+
+		return true;
+	}
+
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphCheckInteriorPeninsula, "Modumate.Graph.3D.CheckInteriorPeninsula", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphCheckInteriorPeninsula::RunTest(const FString& Parameters)
 	{

@@ -410,7 +410,7 @@ namespace Modumate
 			FPolyHole3D& containedFaceHole = CachedHoles.AddDefaulted_GetRef();
 			FPolyHole2D& containedFace2DHole = Cached2DHoles.AddDefaulted_GetRef();
 
-			for (FVector& position : containedFace->CachedPositions)
+			for (FVector& position : containedFace->CachedPerimeter)
 			{
 				containedFaceHole.Points.Add(position);
 				containedFace2DHole.Points.Add(ProjectPosition2D(position));
