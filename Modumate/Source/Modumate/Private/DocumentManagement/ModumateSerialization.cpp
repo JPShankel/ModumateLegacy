@@ -3,6 +3,42 @@
 #include "DocumentManagement/ModumateSerialization.h"
 #include "DocumentManagement/ModumatePresetManager.h"
 
+FGraph3DVertexRecordV1::FGraph3DVertexRecordV1()
+	: ID(MOD_ID_NONE)
+	, Position(ForceInitToZero)
+{ }
+
+FGraph3DVertexRecordV1::FGraph3DVertexRecordV1(int32 InID, const FVector& InPosition)
+	: ID(InID)
+	, Position(InPosition)
+{ }
+
+FGraph3DEdgeRecordV1::FGraph3DEdgeRecordV1()
+	: ID(MOD_ID_NONE)
+	, StartVertexID(MOD_ID_NONE)
+	, EndVertexID(MOD_ID_NONE)
+{ }
+
+FGraph3DEdgeRecordV1::FGraph3DEdgeRecordV1(int32 InID, int32 InStartVertexID, int32 InEndVertexID, const TSet<int32>& InGroupIDs)
+	: ID(InID)
+	, StartVertexID(InStartVertexID)
+	, EndVertexID(InEndVertexID)
+	, GroupIDs(InGroupIDs)
+{ }
+
+FGraph3DFaceRecordV1::FGraph3DFaceRecordV1()
+	: ID(MOD_ID_NONE)
+	, ContainingFaceID(MOD_ID_NONE)
+{ }
+
+FGraph3DFaceRecordV1::FGraph3DFaceRecordV1(int32 InID, const TArray<int32>& InVertexIDs, const TSet<int32>& InGroupIDs, int32 InContainingFaceID, const TSet<int32>& InContainedFaceIDs)
+	: ID(InID)
+	, VertexIDs(InVertexIDs)
+	, GroupIDs(InGroupIDs)
+	, ContainingFaceID(InContainingFaceID)
+	, ContainedFaceIDs(InContainedFaceIDs)
+{ }
+
 
 void FMOIDocumentRecordV4::FromVersion3(const FMOIDocumentRecordV3 &v3)
 {

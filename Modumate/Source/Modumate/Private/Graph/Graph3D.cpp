@@ -1509,19 +1509,19 @@ namespace Modumate
 		OutGraph3DRecord->Vertices.Reset();
 		for (auto &kvp : Vertices)
 		{
-			OutGraph3DRecord->Vertices.Add(kvp.Key, { kvp.Key, kvp.Value.Position });
+			OutGraph3DRecord->Vertices.Add(kvp.Key, FGraph3DVertexRecord(kvp.Key, kvp.Value.Position));
 		}
 
 		OutGraph3DRecord->Edges.Reset();
 		for (auto &kvp : Edges)
 		{
-			OutGraph3DRecord->Edges.Add(kvp.Key, { kvp.Key, kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Value.GroupIDs });
+			OutGraph3DRecord->Edges.Add(kvp.Key, FGraph3DEdgeRecord(kvp.Key, kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Value.GroupIDs));
 		}
 
 		OutGraph3DRecord->Faces.Reset();
 		for (auto &kvp : Faces)
 		{
-			OutGraph3DRecord->Faces.Add(kvp.Key, { kvp.Key, kvp.Value.VertexIDs, kvp.Value.GroupIDs });
+			OutGraph3DRecord->Faces.Add(kvp.Key, FGraph3DFaceRecord(kvp.Key, kvp.Value.VertexIDs, kvp.Value.GroupIDs, kvp.Value.ContainingFaceID, kvp.Value.ContainedFaceIDs));
 		}
 	}
 

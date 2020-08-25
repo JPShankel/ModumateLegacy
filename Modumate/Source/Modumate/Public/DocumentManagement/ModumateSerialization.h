@@ -140,7 +140,10 @@ struct FGraph2DRecord
 USTRUCT()
 struct FGraph3DVertexRecordV1
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
+
+	FGraph3DVertexRecordV1();
+	FGraph3DVertexRecordV1(int32 InID, const FVector& InPosition);
 
 	UPROPERTY()
 	int32 ID;
@@ -156,7 +159,10 @@ typedef FGraph3DVertexRecordV1 FGraph3DVertexRecord;
 USTRUCT()
 struct FGraph3DEdgeRecordV1
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
+
+	FGraph3DEdgeRecordV1();
+	FGraph3DEdgeRecordV1(int32 InID, int32 InStartVertexID, int32 InEndVertexID, const TSet<int32>& InGroupIDs);
 
 	UPROPERTY()
 	int32 ID;
@@ -175,7 +181,10 @@ typedef FGraph3DEdgeRecordV1 FGraph3DEdgeRecord;
 USTRUCT()
 struct FGraph3DFaceRecordV1
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
+
+	FGraph3DFaceRecordV1();
+	FGraph3DFaceRecordV1(int32 InID, const TArray<int32>& InVertexIDs, const TSet<int32>& InGroupIDs, int32 InContainingFaceID, const TSet<int32>& InContainedFaceIDs);
 
 	UPROPERTY()
 	int32 ID;
@@ -197,7 +206,7 @@ typedef FGraph3DFaceRecordV1 FGraph3DFaceRecord;
 USTRUCT()
 struct FGraph3DRecordV1
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
 
 	UPROPERTY()
 	TMap<int32, FGraph3DVertexRecordV1> Vertices;
