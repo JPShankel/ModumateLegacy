@@ -604,7 +604,7 @@ FString UModumateDimensionStatics::DecimalToFractionString(float inches, bool bF
 	{
 		if (bSplitWholeNumber && inches > 12.0f)
 		{
-			int feet = (int)inches / 12;
+			int32 feet = (int32)inches / 12;
 			result = FString::FromInt(feet);
 			if (bFormat)
 			{
@@ -690,11 +690,11 @@ FModumateImperialUnits UModumateDimensionStatics::CentimeterToImperial(const flo
 	return returnUnit;
 }
 
-void UModumateDimensionStatics::CentimetersToImperialInches(float Centimeters, TArray<int>& ReturnImperial)
+void UModumateDimensionStatics::CentimetersToImperialInches(float Centimeters, TArray<int32>& ReturnImperial)
 {
 	ReturnImperial.Empty();
 	float Inches = CentimetersToInches * Centimeters;
-	int NonDecimal = (int)Inches;
+	int32 NonDecimal = (int32)Inches;
 	float Decimal = FMath::Abs(Inches - NonDecimal);
 	ReturnImperial.Add(NonDecimal / 12);
 	ReturnImperial.Add(NonDecimal % 12);
@@ -710,7 +710,7 @@ void UModumateDimensionStatics::CentimetersToImperialInches(float Centimeters, T
 	}
 	else
 	{
-		for (int num = 1; num < 8; num++)
+		for (int32 num = 1; num < 8; num++)
 		{
 			if ((float)num / 8 <= Decimal && Decimal <= (float)(num + 1) / 8)
 			{
@@ -721,14 +721,14 @@ void UModumateDimensionStatics::CentimetersToImperialInches(float Centimeters, T
 
 				if (ManhatDistFromLowToDec < ManhatDistFromDecToHigh)
 				{
-					int Gcd = FMath::GreatestCommonDivisor(num, 8);
+					int32 Gcd = FMath::GreatestCommonDivisor(num, 8);
 					ReturnImperial.Add(num / Gcd);
 					ReturnImperial.Add(8 / Gcd);
 					return;
 				}
 				else
 				{
-					int Gcd = FMath::GreatestCommonDivisor(num + 1, 8);
+					int32 Gcd = FMath::GreatestCommonDivisor(num + 1, 8);
 					ReturnImperial.Add((num + 1) / Gcd);
 					ReturnImperial.Add(8 / Gcd);
 					return;
@@ -741,7 +741,7 @@ void UModumateDimensionStatics::CentimetersToImperialInches(float Centimeters, T
 
 }
 
-FText UModumateDimensionStatics::ImperialInchesToDimensionStringText(TArray<int>& Imperial)
+FText UModumateDimensionStatics::ImperialInchesToDimensionStringText(TArray<int32>& Imperial)
 {
 	FString ImperialString("");
 	if (Imperial.Num() == 2)

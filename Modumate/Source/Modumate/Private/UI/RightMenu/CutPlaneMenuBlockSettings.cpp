@@ -20,14 +20,14 @@ bool UCutPlaneMenuBlockSettings::Initialize()
 		return false;
 	}
 
-	if (!(ButtonNewCutPlane && ButtonShowHideAll && ButtonExportSelected))
+	if (!(ButtonNewCutPlane && ButtonShowHideAll && ButtonExportAll))
 	{
 		return false;
 	}
 
 	ButtonNewCutPlane->ModumateButton->OnReleased.AddDynamic(this, &UCutPlaneMenuBlockSettings::OnButtonNewCutPlaneReleased);
 	ButtonShowHideAll->ModumateButton->OnReleased.AddDynamic(this, &UCutPlaneMenuBlockSettings::OnButtonShowHideAllReleased);
-	ButtonExportSelected->ModumateButton->OnReleased.AddDynamic(this, &UCutPlaneMenuBlockSettings::OnButtonExportSelectedReleased);
+	ButtonExportAll->ModumateButton->OnReleased.AddDynamic(this, &UCutPlaneMenuBlockSettings::OnButtonExportAllReleased);
 
 	return true;
 }
@@ -48,7 +48,7 @@ void UCutPlaneMenuBlockSettings::OnButtonShowHideAllReleased()
 	// TODO: Toggle all cut planes visibility (instance properties?)
 }
 
-void UCutPlaneMenuBlockSettings::OnButtonExportSelectedReleased()
+void UCutPlaneMenuBlockSettings::OnButtonExportAllReleased()
 {
-	// TODO: Get selected cut plane, and then export
+	Controller->OnCreateDwg();
 }

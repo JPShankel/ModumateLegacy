@@ -12,6 +12,7 @@
 #include "Components/Image.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "UI/RightMenu/ViewMenuBlockSavedViews.h"
+#include "UI/RightMenu/ViewMenuBlockProperties.h"
 
 
 UViewMenuWidget::UViewMenuWidget(const FObjectInitializer& ObjectInitializer)
@@ -55,6 +56,7 @@ void UViewMenuWidget::SetViewMenuVisibility(bool NewVisible)
 	{
 		this->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		ViewMenu_Block_SavedViews->UpdateSavedViewsList();
+		ViewMenu_Block_Properties->SyncTextBoxesWithSkyActorCurrentTime();
 	}
 	else
 	{

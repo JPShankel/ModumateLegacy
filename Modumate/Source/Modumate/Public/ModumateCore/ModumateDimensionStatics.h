@@ -42,9 +42,9 @@ public:
 	static FModumateImperialUnits CentimeterToImperial(const float centimeter, const int32 maxDenominator = 64);
 
 	UFUNCTION(BlueprintCallable)
-	static void CentimetersToImperialInches(float Centimeters, UPARAM(ref) TArray<int>& Imperial);
+	static void CentimetersToImperialInches(float Centimeters, UPARAM(ref) TArray<int32>& Imperial);
 
 	UFUNCTION(BlueprintCallable)
-	static FText ImperialInchesToDimensionStringText(UPARAM(ref) TArray<int>& Imperial);
+	static FText ImperialInchesToDimensionStringText(UPARAM(ref) TArray<int32>& Imperial);
 
 };

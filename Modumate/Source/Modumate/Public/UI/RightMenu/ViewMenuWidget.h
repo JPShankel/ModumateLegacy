@@ -52,6 +52,9 @@ public:
 	class UViewMenuBlockSavedViews *ViewMenu_Block_SavedViews;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UViewMenuBlockProperties *ViewMenu_Block_Properties;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UBorder *BorderPreview;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))

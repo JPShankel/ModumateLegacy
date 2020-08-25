@@ -36,7 +36,7 @@ public:
 	class UModumateButtonIconTextUserWidget *ButtonShowHideAll;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonIconTextUserWidget *ButtonExportSelected;
+	class UModumateButtonIconTextUserWidget *ButtonExportAll;
 
 	UFUNCTION()
 	void OnButtonNewCutPlaneReleased();
@@ -45,5 +45,5 @@ public:
 	void OnButtonShowHideAllReleased();
 
 	UFUNCTION()
-	void OnButtonExportSelectedReleased();
+	void OnButtonExportAllReleased();
 };

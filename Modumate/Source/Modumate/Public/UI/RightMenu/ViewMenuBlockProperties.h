@@ -23,6 +23,7 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual FReply NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *Controller;
@@ -38,8 +39,41 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateEditableTextBoxUserWidget *EditableTextBox_FOV;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateEditableTextBoxUserWidget *EditableTextBox_Month;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateEditableTextBoxUserWidget *EditableTextBox_Day;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateEditableTextBoxUserWidget *EditableTextBox_Hour;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateEditableTextBoxUserWidget *EditableTextBox_Minute;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButton *ModumateButton_AM;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateEditableTextBox *EditableTextBox_AM;
+
 	UFUNCTION()
 	void OnEditableTextBoxFOVCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void OnEditableTextBoxMonthCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void OnEditableTextBoxDayCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void OnEditableTextBoxHourCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void OnEditableTextBoxMinuteCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void OnReleaseButtonModumateButtonAM();
 
 	UFUNCTION()
 	void OnControlGravityOnChanged(bool IsChecked);
@@ -48,4 +82,5 @@ public:
 	void OnControlGravityOffChanged(bool IsChecked);
 
 	void ToggleGravityCheckboxes(bool NewEnable);
+	void SyncTextBoxesWithSkyActorCurrentTime();
 };

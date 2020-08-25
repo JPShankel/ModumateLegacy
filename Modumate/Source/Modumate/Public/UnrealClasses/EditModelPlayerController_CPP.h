@@ -149,6 +149,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pawn)
 	class AEditModelToggleGravityPawn_CPP *EMToggleGravityPawn;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class ASkyActor *SkyActor;
+
 	// Event overrides
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
