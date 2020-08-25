@@ -649,6 +649,52 @@ namespace Modumate
 		return true;
 	}
 
+	bool FGraph2D::MoveVerticesDirect(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TMap<int32, FVector2D>& NewVertexPositions)
+	{
+		int32 numVertices = NewVertexPositions.Num();
+
+		// move vertices
+		FGraph2DDelta moveVertexDelta(ID);
+		TMap<int32, int32> joinableVertexIDs;
+		TArray<int32> dirtyVertexIDs;
+
+		for (auto& kvp : NewVertexPositions)
+		{
+			int32 vertexID = kvp.Key;
+			const FGraph2DVertex *vertex = FindVertex(vertexID);
+
+			if (vertex == nullptr)
+			{
+				return false;
+			}
+
+			FVector2D oldPos = vertex->Position;
+			FVector2D newPos = kvp.Value;
+
+			const FGraph2DVertex *existingVertex = FindVertex(newPos);
+			if (!newPos.Equals(oldPos))
+			{
+				moveVertexDelta.VertexMovements.Add(vertexID, TPair<FVector2D, FVector2D>(oldPos, newPos));
+			}
+		}
+
+		if (!ApplyDelta(moveVertexDelta))
+		{
+			return false;
+		}
+		OutDeltas.Add(moveVertexDelta);
+
+		if (!ValidateAgainstBounds())
+		{
+			ApplyInverseDeltas(OutDeltas);
+			return false;
+		}
+
+		ApplyInverseDeltas(OutDeltas);
+
+		return true;
+	}
+
 	bool FGraph2D::MoveVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TArray<int32> &VertexIDs, const FVector2D& Offset)
 	{
 		TMap<int32, FVector2D> newVertexPositions;
@@ -924,6 +970,7 @@ namespace Modumate
 					}
 				}
 			}
+
 			int32 addedPolyID = NextID;
 			updatePolygonsDelta.AddNewPolygon(curVertexIDs, NextID, bPolyInterior, previousPolys.Array());
 

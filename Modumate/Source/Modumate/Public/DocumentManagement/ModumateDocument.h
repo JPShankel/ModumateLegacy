@@ -64,6 +64,9 @@ private:
 	// The surface graphs used by the current document, mapped by owning object ID
 	TMap<int32, Modumate::FGraph2D> SurfaceGraphs;
 
+	// Link between 2D graph objects and the surface graph they are a part of
+	TMap<int32, int32> SurfaceGraphsBy2DGraphObj;
+
 	TMap<EObjectDirtyFlags, TArray<Modumate::FModumateObjectInstance*>> DirtyObjectMap;
 
 public:
@@ -166,6 +169,9 @@ public:
 
 	const Modumate::FGraph2D *FindSurfaceGraph(int32 SurfaceGraphID) const;
 	Modumate::FGraph2D *FindSurfaceGraph(int32 SurfaceGraphID);
+
+	const Modumate::FGraph2D *FindSurfaceGraphByObjID(int32 GraphObjectID) const;
+	Modumate::FGraph2D *FindSurfaceGraphByObjID(int32 GraphObjectID);
 
 	int32 CalculatePolyhedra() { return VolumeGraph.CalculatePolyhedra(); }
 	bool IsObjectInVolumeGraph(int32 ObjID, Modumate::EGraph3DObjectType &OutObjType) const;

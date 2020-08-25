@@ -137,6 +137,7 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 		EGraphObjectType graph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(objectType);
 		EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
 
+
 		if (graph2DObjType != EGraphObjectType::None)
 		{
 			// TODO: all of parenting information is gathered here for projecting 3D control points into 2D surface graph positions,
@@ -160,42 +161,19 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 			FVector faceOrigin = facePoints[0];
 
 			TMap<int32, FVector2D>& vertex2DMovements = combinedVertex2DMovements.FindOrAdd(targetParentID);
-
-			switch (graph2DObjType)
+			if (auto graphObject = surfaceGraph->FindObject(targetID))
 			{
-			case EGraphObjectType::Vertex:
-			{
-				if (ensure(numCPs == 1))
+				TArray<int32> vertexIDs;
+				graphObject->GetVertexIDs(vertexIDs);
+				int32 numCorners = targetMOI->GetNumCorners();
+				if (!ensureAlways(vertexIDs.Num() == numCorners))
 				{
-					vertex2DMovements.Add(targetID, FVector2D(targetCPs[0]));
-					vertex2DMovements.Add(targetID, UModumateGeometryStatics::ProjectPoint2D(targetCPs[0], faceAxisX, faceAxisY, faceOrigin));
+					return;
 				}
-				break;
-			}
-			case EGraphObjectType::Edge:
-			{
-				const FGraph2DEdge* edge = surfaceGraph->FindEdge(targetID);
-				if (ensure(edge && (numCPs == 2)))
+				for (int32 idx = 0; idx < numCorners; idx++)
 				{
-					vertex2DMovements.Add(edge->StartVertexID, UModumateGeometryStatics::ProjectPoint2D(targetCPs[0], faceAxisX, faceAxisY, faceOrigin));
-					vertex2DMovements.Add(edge->EndVertexID, UModumateGeometryStatics::ProjectPoint2D(targetCPs[1], faceAxisX, faceAxisY, faceOrigin));
+					vertex2DMovements.Add(vertexIDs[idx], UModumateGeometryStatics::ProjectPoint2D(targetMOI->GetCorner(idx), faceAxisX, faceAxisY, faceOrigin));
 				}
-				break;
-			}
-			case EGraphObjectType::Polygon:
-			{
-				const FGraph2DPolygon* polygon = surfaceGraph->FindPolygon(targetID);
-				if (ensure(polygon && (polygon->VertexIDs.Num() == numCPs)))
-				{
-					for (int32 i = 0; i < numCPs; ++i)
-					{
-						vertex2DMovements.Add(polygon->VertexIDs[i], UModumateGeometryStatics::ProjectPoint2D(targetCPs[i], faceAxisX, faceAxisY, faceOrigin));
-					}
-				}
-				break;
-			}
-			default:
-				break;
 			}
 		}
 		else if (auto graphObject = volumeGraph.FindObject(targetID))

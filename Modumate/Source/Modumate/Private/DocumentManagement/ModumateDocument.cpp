@@ -875,7 +875,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	}
 
 	// delete hosted objects
-	for (auto objID : objsMarkedForDelete)
+	for (int32 objID : objsMarkedForDelete)
 	{
 		DeleteObjectImpl(GetObjectById(objID));
 	}
@@ -3203,6 +3203,22 @@ const FGraph2D *FModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID) const
 FGraph2D *FModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID)
 {
 	return SurfaceGraphs.Find(SurfaceGraphID);
+}
+
+const Modumate::FGraph2D *FModumateDocument::FindSurfaceGraphByObjID(int32 GraphObjectID) const
+{
+	return const_cast<FModumateDocument*>(this)->FindSurfaceGraphByObjID(GraphObjectID);
+}
+
+Modumate::FGraph2D *FModumateDocument::FindSurfaceGraphByObjID(int32 GraphObjectID)
+{
+	auto moi = GetObjectById(GraphObjectID);
+	if (moi == nullptr)
+	{
+		return nullptr;
+	}
+	int32 surfaceGraphID = moi->GetParentID();
+	return FindSurfaceGraph(surfaceGraphID);
 }
 
 bool FModumateDocument::IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &OutObjType) const

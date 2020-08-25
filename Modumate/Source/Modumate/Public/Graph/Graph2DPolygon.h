@@ -41,6 +41,7 @@ namespace Modumate
 		virtual bool Clean() override;
 
 		virtual EGraphObjectType GetType() const override { return EGraphObjectType::Polygon; };
+		virtual void GetVertexIDs(TArray<int32> &OutVertexIDs) const override;
 
 	protected:
 		TSet<int32> TempVertexSet;

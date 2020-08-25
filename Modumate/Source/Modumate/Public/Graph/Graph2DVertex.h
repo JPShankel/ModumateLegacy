@@ -25,6 +25,7 @@ namespace Modumate
 		virtual bool Clean() override;
 
 		virtual EGraphObjectType GetType() const override { return EGraphObjectType::Vertex; };
+		virtual void GetVertexIDs(TArray<int32> &OutVertexIDs) const override;
 
 	protected:
 		bool SortEdges();

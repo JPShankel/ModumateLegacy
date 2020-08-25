@@ -288,4 +288,9 @@ namespace Modumate
 
 		return true;
 	}
+
+	void FGraph2DPolygon::GetVertexIDs(TArray<int32> &OutVertexIDs) const
+	{
+		OutVertexIDs = VertexIDs;
+	}
 }

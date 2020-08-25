@@ -17,6 +17,9 @@ private:
 	TMap<int32, FTransform> StartTransforms;
 	int32 PendingSegmentID;
 
+	// TODO: this should replace OriginalObjectData eventually
+	TMap<int32, FVector> OriginalObjectPositions;
+
 public:
 	UMoveObjectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 

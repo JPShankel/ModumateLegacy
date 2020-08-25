@@ -28,6 +28,7 @@ namespace Modumate
 		virtual bool Clean() override;
 
 		virtual EGraphObjectType GetType() const override { return EGraphObjectType::Edge; };
+		virtual void GetVertexIDs(TArray<int32> &OutVertexIDs) const override;
 
 	protected:
 		bool CacheAngle();

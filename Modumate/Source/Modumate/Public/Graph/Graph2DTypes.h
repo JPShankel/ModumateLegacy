@@ -39,6 +39,7 @@ namespace Modumate
 		bool ClearModified();
 
 		virtual EGraphObjectType GetType() const = 0;
+		virtual void GetVertexIDs(TArray<int32> &OutVertexIDs) const = 0;
 
 	public:
 		int32 ID = MOD_ID_NONE;			// The ID of the object, can match a corresponding MOI

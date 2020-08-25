@@ -97,6 +97,11 @@ namespace Modumate
 		return true;
 	}
 
+	void FGraph2DEdge::GetVertexIDs(TArray<int32> &OutVertexIDs) const
+	{
+		OutVertexIDs = { StartVertexID, EndVertexID };
+	}
+
 	bool FGraph2DEdge::CacheAngle()
 	{
 		CachedAngle = 0.0f;

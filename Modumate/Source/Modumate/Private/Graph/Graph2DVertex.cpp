@@ -145,6 +145,11 @@ namespace Modumate
 		return true;
 	}
 
+	void FGraph2DVertex::GetVertexIDs(TArray<int32> &OutVertexIDs) const
+	{
+		OutVertexIDs = { ID };
+	}
+
 	bool FGraph2DVertex::SortEdges()
 	{
 		if (Graph->bDebugCheck)

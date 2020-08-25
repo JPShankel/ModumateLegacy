@@ -88,7 +88,7 @@ bool AAdjustPolyPointHandle::UpdateUse()
 		auto face = doc->GetVolumeGraph().FindFace(TargetMOI->ID);
 		if (face != nullptr)
 		{
-			TMap<int32, TArray<FVector>> objectInfo;
+			TMap<int32, FVector> objectInfo;
 			if (bAdjustPolyEdge)
 			{
 				int32 numPolyPoints = OriginalPolyPoints.Num();
@@ -99,13 +99,13 @@ bool AAdjustPolyPointHandle::UpdateUse()
 				FVector edgeStartPoint, edgeEndPoint;
 				if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
 				{
-					objectInfo.Add(face->VertexIDs[edgeStartIdx], { edgeStartPoint });
-					objectInfo.Add(face->VertexIDs[edgeEndIdx], { edgeEndPoint });
+					objectInfo.Add(face->VertexIDs[edgeStartIdx], edgeStartPoint);
+					objectInfo.Add(face->VertexIDs[edgeEndIdx], edgeEndPoint);
 				}
 			}
 			else
 			{
-				objectInfo.Add(face->VertexIDs[TargetIndex], { OriginalPolyPoints[TargetIndex] + dp });
+				objectInfo.Add(face->VertexIDs[TargetIndex], OriginalPolyPoints[TargetIndex] + dp);
 			}
 
 			FModumateObjectDeltaStatics::PreviewMovement(objectInfo, doc, Controller->GetWorld());

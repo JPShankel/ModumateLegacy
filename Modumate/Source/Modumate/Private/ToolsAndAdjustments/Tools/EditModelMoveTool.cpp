@@ -50,8 +50,26 @@ bool UMoveObjectTool::BeginUse()
 		AnchorPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorPoint, Controller->EMPlayerState->SnappedCursor.HitNormal, Controller->EMPlayerState->SnappedCursor.HitTangent);
 		PendingSegmentID = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass())->ID;
+
+		FModumateDocument* doc = Controller->GetDocument();
+		TArray<int32> objectIDs;
+		for (auto& kvp : OriginalObjectData)
+		{
+			objectIDs.Add(kvp.Key->ID);
+		}
+		TSet<int32> vertexIDs;
+		FModumateObjectDeltaStatics::GetVertexIDs(objectIDs, doc, vertexIDs);
+
+		for (int32 vertexID : vertexIDs)
+		{
+			auto obj = doc->GetObjectById(vertexID);
+			FVector pos = obj->GetCorner(0);
+			OriginalObjectPositions.Add(vertexID, pos);
+		}
+
 		return true;
 	}
+
 	return false;
 }
 
@@ -100,17 +118,13 @@ bool UMoveObjectTool::FrameUpdate()
 		FModumateDocument* doc = Controller->GetDocument();
 		if (doc != nullptr)
 		{
-			TMap<int32, TArray<FVector>> objectInfo;
 			FVector offset = hitLoc - AnchorPoint;
-			for (auto& kvp : OriginalObjectData)
+			TMap<int32, FVector> objectInfo;
+			for (auto& kvp : OriginalObjectPositions)
 			{
-				TArray<FVector> newPositions;
-				for (auto& pos : kvp.Value.ControlPoints)
-				{
-					newPositions.Add(pos + offset);
-				}
-				objectInfo.Add(kvp.Key->ID, newPositions);
+				objectInfo.Add(kvp.Key, kvp.Value + offset);
 			}
+
 			if (!FModumateObjectDeltaStatics::PreviewMovement(objectInfo, doc, Controller->GetWorld()))
 			{
 				for (auto& kvp : OriginalObjectData)
@@ -147,6 +161,7 @@ bool UMoveObjectTool::EndUse()
 	{
 		ReleaseObjectsAndApplyDeltas();
 	}
+	OriginalObjectPositions.Reset();
 
 	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 	PendingSegmentID = MOD_ID_NONE;
@@ -157,6 +172,7 @@ bool UMoveObjectTool::EndUse()
 bool UMoveObjectTool::AbortUse()
 {
 	ReleaseSelectedObjects();
+	OriginalObjectPositions.Reset();
 
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
