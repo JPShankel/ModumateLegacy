@@ -77,7 +77,6 @@ enum class EToolMode : uint8
 	VE_MOVEOBJECT,
 	VE_ROTATE,
 	VE_SCALE,
-	VE_SPLIT,
 	VE_WALL,
 	VE_FLOOR,
 	VE_DOOR,

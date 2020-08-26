@@ -57,7 +57,6 @@ enum class EInputCommand : uint8
 	ActivateTool_Move,
 	ActivateTool_Rotate,
 	ActivateTool_Scale,
-	ActivateTool_Split,
 	ActivateTool_Wall,
 	ActivateTool_Floor,
 	ActivateTool_Door,

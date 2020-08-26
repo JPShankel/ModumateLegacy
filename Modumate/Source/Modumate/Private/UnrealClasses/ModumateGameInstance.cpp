@@ -284,23 +284,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return false;
 	});
 
-	RegisterCommand(kSplit, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-
-		int32 id = params.GetValue(kObjectID);
-		TArray<FVector> pointsA = params.GetValue(TEXT("pointsA"));
-		TArray<FVector> pointsB = params.GetValue(TEXT("pointsB"));
-		TArray<int32> indicesA = params.GetValue(TEXT("indicesA"));
-		TArray<int32> indicesB = params.GetValue(TEXT("indicesB"));
-
-		FModumateDocument *doc = GetDocument();
-		if (doc != nullptr)
-		{
-			doc->Split(id, pointsA, pointsB, indicesA, indicesB);
-			return true;
-		}
-		return false;
-	});
-
 	RegisterCommand(kDumpScript, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		TArray<FString> inputHistory = GetDocument()->GetCommandHistory();

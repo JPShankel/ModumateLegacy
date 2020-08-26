@@ -54,7 +54,6 @@
 #include "ToolsAndAdjustments/Tools/EditModelRotateTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelScopeBoxTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
-#include "ToolsAndAdjustments/Tools/EditModelSplitTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelStairTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelStructureLineTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelSurfaceGraphTool.h"
@@ -413,7 +412,6 @@ void AEditModelPlayerController_CPP::CreateTools()
 	RegisterTool(CreateTool<UPlaceObjectTool>());
 	RegisterTool(CreateTool<UMoveObjectTool>());
 	RegisterTool(CreateTool<URotateObjectTool>());
-	RegisterTool(CreateTool<USplitObjectTool>());
 	RegisterTool(CreateTool<UWallTool>());
 	RegisterTool(CreateTool<UFloorTool>());
 	RegisterTool(CreateTool<UCeilingTool>());

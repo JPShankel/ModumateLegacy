@@ -49,7 +49,6 @@ EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 	case EToolMode::VE_MOVEOBJECT: return EObjectType::OTUnknown;
 	case EToolMode::VE_ROTATE: return EObjectType::OTUnknown;
 	case EToolMode::VE_SCALE: return EObjectType::OTUnknown;
-	case EToolMode::VE_SPLIT: return EObjectType::OTUnknown;
 	case EToolMode::VE_WALL: return EObjectType::OTWallSegment;
 	case EToolMode::VE_FLOOR: return EObjectType::OTFloorSegment;
 	case EToolMode::VE_CEILING: return EObjectType::OTCeiling;

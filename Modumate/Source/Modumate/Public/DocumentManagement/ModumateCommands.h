@@ -43,7 +43,6 @@ namespace Modumate
 		// Object mutators
 		MODUMATE_COMMAND(kUpdateMOIHoleParams, "update_moi_hole_params");
 		MODUMATE_COMMAND(kSetGeometry, "set_geometry");
-		MODUMATE_COMMAND(kSplit, "split");
 		MODUMATE_COMMAND(kInvertObjects, "invert_objects");
 		MODUMATE_COMMAND(kTransverseObjects, "transverse_objects");
 		MODUMATE_COMMAND(kSetAssemblyForObjects, "set_assembly_for_objects");
