@@ -92,11 +92,12 @@ public:
 	bool IsDayLightSaving = false;
 
 	FDateTime GetCurrentDateTime() const { return CurrentDateTime; }
-	void UpdateComponentsWithDateTime(FDateTime DateTime);
+	void UpdateComponentsWithDateTime(const FDateTime &DateTime);
+	void SetCurrentDateTime(const FDateTime &NewDateTime);
 	void SetCurrentMonth(int32 NewMonth);
 	void SetCurrentDay(int32 NewDay);
 	void SetCurrentHour(int32 NewHour);
 	void SetCurrentMinute(int32 NewMinute);
 	void ToggleCurrentMeridiem();
-	void AddTimespanToCurrentDateTime(FTimespan Timespan);
+	void AddTimespanToCurrentDateTime(const FTimespan &Timespan);
 };

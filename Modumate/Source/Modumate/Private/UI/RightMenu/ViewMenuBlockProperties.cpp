@@ -51,22 +51,7 @@ FReply UViewMenuBlockProperties::NativeOnMouseWheel(const FGeometry& InGeometry,
 	FTimespan deltaTime;
 
 	// Time change on mouse wheel direction
-	if (EditableTextBox_Month->GetTickSpaceGeometry().IsUnderLocation(InMouseEvent.GetScreenSpacePosition()))
-	{
-		FDateTime currentTime = Controller->SkyActor->GetCurrentDateTime();
-		if (InMouseEvent.GetWheelDelta() > 0)
-		{
-			deltaTime = FTimespan::FromDays(currentTime.DaysInMonth(currentTime.GetYear(), currentTime.GetMonth()));
-		}
-		else
-		{
-			int32 lastMonth = currentTime.GetMonth() == 1 ? 12 : currentTime.GetMonth() - 1;
-			int32 lastYear = lastMonth == 12 ? currentTime.GetYear() - 1 : currentTime.GetYear();
-			deltaTime = FTimespan::FromDays(currentTime.DaysInMonth(FMath::Max(0, lastYear), lastMonth)) * -1;
-		}
-		hasTimeChanged = true;
-	}
-	else if (EditableTextBox_Day->GetTickSpaceGeometry().IsUnderLocation(InMouseEvent.GetScreenSpacePosition()))
+	if (EditableTextBox_Day->GetTickSpaceGeometry().IsUnderLocation(InMouseEvent.GetScreenSpacePosition()))
 	{
 		deltaTime = FTimespan::FromDays(1) * InMouseEvent.GetWheelDelta();
 		hasTimeChanged = true;
@@ -85,6 +70,23 @@ FReply UViewMenuBlockProperties::NativeOnMouseWheel(const FGeometry& InGeometry,
 	if (hasTimeChanged)
 	{
 		Controller->SkyActor->AddTimespanToCurrentDateTime(deltaTime);
+		SyncTextBoxesWithSkyActorCurrentTime();
+	}
+
+	// FTimespan cannot be used for changing month. Use SetCurrentDateTime instead
+	if (EditableTextBox_Month->GetTickSpaceGeometry().IsUnderLocation(InMouseEvent.GetScreenSpacePosition()))
+	{
+		FDateTime currentTime = Controller->SkyActor->GetCurrentDateTime();
+		int32 newYear = currentTime.GetYear();
+		int32 newMonth = (currentTime.GetMonth() + (int32)InMouseEvent.GetWheelDelta()) % 12;
+		if (newMonth == 0)
+		{
+			newMonth = 12;
+			newYear = InMouseEvent.GetWheelDelta() > 0 ? currentTime.GetYear() + 1 : currentTime.GetYear() - 1;
+		}
+		int32 newDay = FMath::Clamp(currentTime.GetDay(), 1, FDateTime::DaysInMonth(newYear, newMonth));
+		FDateTime newDateTime = FDateTime(newYear, newMonth, newDay, currentTime.GetHour(), currentTime.GetMinute());
+		Controller->SkyActor->SetCurrentDateTime(newDateTime);
 		SyncTextBoxesWithSkyActorCurrentTime();
 	}
 

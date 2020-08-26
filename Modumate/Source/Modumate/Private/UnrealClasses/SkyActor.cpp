@@ -55,7 +55,7 @@ void ASkyActor::Tick(float DeltaTime)
 	}
 }
 
-void ASkyActor::UpdateComponentsWithDateTime(FDateTime DateTime)
+void ASkyActor::UpdateComponentsWithDateTime(const FDateTime &DateTime)
 {
 	// TODO: Refactor this function to accept FDateTime when old BP_Sky_Sphere is removed from project
 	FModumateSunPositionData sunPosition = UModumateFunctionLibrary::ModumateGetSunPosition(
@@ -94,6 +94,12 @@ void ASkyActor::UpdateComponentsWithDateTime(FDateTime DateTime)
 
 }
 
+void ASkyActor::SetCurrentDateTime(const FDateTime &NewDateTime)
+{
+	CurrentDateTime = NewDateTime;
+	UpdateComponentsWithDateTime(CurrentDateTime);
+}
+
 void ASkyActor::SetCurrentMonth(int32 NewMonth)
 {
 	int32 clampMonth = FMath::Clamp(NewMonth, 1, 12);
@@ -112,22 +118,12 @@ void ASkyActor::SetCurrentDay(int32 NewDay)
 void ASkyActor::SetCurrentHour(int32 NewHour)
 {
 	// Note: FDateTime uses 24-hour format, but our menu uses 12-Hour format with am/pm
-	int32 clampHour = FMath::Clamp(NewHour, 1, 12);
+	int32 clampHour = FMath::Clamp(NewHour, 1, 12) % 12;
 	if (CurrentDateTime.IsAfternoon())
 	{
 		clampHour += 12;
-		if (clampHour > 23)
-		{
-			clampHour = 12;
-		}
 	}
-	else
-	{
-		if (clampHour == 12)
-		{
-			clampHour = 0;
-		}
-	}
+
 	CurrentDateTime = FDateTime(CurrentDateTime.GetYear(), CurrentDateTime.GetMonth(), CurrentDateTime.GetDay(), clampHour, CurrentDateTime.GetMinute());
 	UpdateComponentsWithDateTime(CurrentDateTime);
 }
@@ -146,7 +142,7 @@ void ASkyActor::ToggleCurrentMeridiem()
 	UpdateComponentsWithDateTime(CurrentDateTime);
 }
 
-void ASkyActor::AddTimespanToCurrentDateTime(FTimespan Timespan)
+void ASkyActor::AddTimespanToCurrentDateTime(const FTimespan &Timespan)
 {
 	CurrentDateTime = CurrentDateTime + Timespan;
 	UpdateComponentsWithDateTime(CurrentDateTime);
