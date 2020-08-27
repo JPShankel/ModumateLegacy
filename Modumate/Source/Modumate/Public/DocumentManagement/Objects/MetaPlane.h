@@ -4,25 +4,22 @@
 #include "CoreMinimal.h"
 #include "DocumentManagement/Objects/PlaneBase.h"
 
-
-namespace Modumate
+class MODUMATE_API FMOIMetaPlaneImpl : public FMOIPlaneImplBase
 {
-	class MODUMATE_API FMOIMetaPlaneImpl : public FMOIPlaneImplBase
-	{
-	public:
-		FMOIMetaPlaneImpl(FModumateObjectInstance *moi);
+public:
+	FMOIMetaPlaneImpl(FModumateObjectInstance *moi);
 
-		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
-		virtual void SetupDynamicGeometry() override;
-		virtual void UpdateDynamicGeometry() override;
-		virtual void OnSelected(bool bNewSelected) override;
+	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual void SetupDynamicGeometry() override;
+	virtual void UpdateDynamicGeometry() override;
+	virtual void OnSelected(bool bNewSelected) override;
 
-	protected:
-		void UpdateConnectedVisuals();
-		void UpdateCachedGraphData();
-		virtual float GetAlpha() const override;
+protected:
+	void UpdateConnectedVisuals();
+	void UpdateCachedGraphData();
+	virtual float GetAlpha() const override;
 
-		TArray<FModumateObjectInstance *> TempConnectedMOIs;
-		TArray<int32> LastChildIDs;
-	};
-}
+	TArray<FModumateObjectInstance *> TempConnectedMOIs;
+	TArray<int32> LastChildIDs;
+};
+

@@ -11,10 +11,7 @@
 
 #include "AdjustmentHandleActor.generated.h"
 
-namespace Modumate
-{
-	class FModumateObjectInstance;
-}
+class FModumateObjectInstance;
 
 class FWidgetStyle;
 
@@ -54,7 +51,7 @@ public:
 	virtual FVector GetHandlePosition() const;
 	virtual FVector GetHandleDirection() const;
 
-	void SetTargetMOI(Modumate::FModumateObjectInstance *InTargetMOI);
+	void SetTargetMOI(FModumateObjectInstance *InTargetMOI);
 	void SetTargetIndex(int32 InTargetIndex);
 	void SetSign(float InSign);
 
@@ -62,11 +59,11 @@ public:
 	bool bIsInUse = false;
 
 	// The MOI that created this handle
-	Modumate::FModumateObjectInstance* SourceMOI = nullptr;
+	FModumateObjectInstance* SourceMOI = nullptr;
 	// The MOI that this handle effects
-	Modumate::FModumateObjectInstance* TargetMOI = nullptr;
+	FModumateObjectInstance* TargetMOI = nullptr;
 
-	TArray<Modumate::FModumateObjectInstance*> TargetDescendents;
+	TArray<FModumateObjectInstance*> TargetDescendents;
 
 	int32 TargetIndex = INDEX_NONE;
 	float Sign = 0.0f;

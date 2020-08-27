@@ -12,10 +12,8 @@ class AEditModelGameState_CPP;
 class AEditModelPlayerState_CPP;
 class ADynamicMeshActor;
 class ALineActor;
+class FModumateObjectInstance;
 
-namespace Modumate {
-	class FModumateObjectInstance;
-};
 
 UCLASS()
 class MODUMATE_API UStairTool : public UEditModelToolBase
@@ -47,7 +45,7 @@ protected:
 
 	bool UpdatePreviewStairs();
 	bool MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID);
-	bool ValidatePlaneTarget(const Modumate::FModumateObjectInstance *PlaneTarget);
+	bool ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget);
 	void MakePendingSegment(TWeakObjectPtr<ALineActor> &TargetSegment, const FVector &StartingPoint, const FColor &SegmentColor);
 	void MakePendingSegment(int32 &TargetSegmentID, const FVector &StartingPoint, const FColor &SegmentColor);
 	void ResetState();

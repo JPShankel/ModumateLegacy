@@ -9,7 +9,6 @@ class FModumateDocument;
 
 namespace Modumate
 {
-
 	class MODUMATE_API FDelta : public TSharedFromThis<FDelta>
 	{
 	public:

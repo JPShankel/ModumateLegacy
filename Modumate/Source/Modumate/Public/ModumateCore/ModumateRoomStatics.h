@@ -53,7 +53,8 @@ struct FRoomConfigurationBlueprint
 };
 
 // TODO: this should be defined by BIM, rather than a USTRUCT table row and a Blueprintable subclass
-class MODUMATE_API FModumateDocument;
+class FModumateDocument;
+class FModumateObjectInstance;
 namespace Modumate
 {
 	struct MODUMATE_API FRoomConfiguration : public FRoomConfigurationTableRow
@@ -63,8 +64,6 @@ namespace Modumate
 		FRoomConfigurationBlueprint AsBlueprintObject() const;
 		FRoomConfigurationBlueprint AsBlueprintObject(int32 InObjectID, const FString &InRoomNumber, float InArea, int32 InOccupantsNumber) const;
 	};
-
-	class MODUMATE_API FModumateObjectInstance;
 }
 
 // Helper functions for accessing / editing room data and interpreting room geometry.
@@ -80,17 +79,17 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Rooms")
 	static bool GetRoomConfigurationsFromProject(UObject* WorldContextObject, TArray<FRoomConfigurationBlueprint> &OutRoomConfigs);
 
-	static bool GetRoomConfig(const Modumate::FModumateObjectInstance *RoomObj, FRoomConfigurationBlueprint &OutRoomConfig);
+	static bool GetRoomConfig(const FModumateObjectInstance *RoomObj, FRoomConfigurationBlueprint &OutRoomConfig);
 
 	UFUNCTION(BlueprintPure, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Rooms")
 	static bool GetRoomConfig(UObject* WorldContextObject, int32 RoomID, FRoomConfigurationBlueprint &OutRoomConfig);
 
-	static bool SetRoomConfigFromKey(Modumate::FModumateObjectInstance *RoomObj, FName ConfigKey);
+	static bool SetRoomConfigFromKey(FModumateObjectInstance *RoomObj, FName ConfigKey);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Rooms")
 	static bool SetRoomConfigFromKey(UObject* WorldContextObject, int32 RoomID, FName ConfigKey);
 
-	static void UpdateDerivedRoomProperties(Modumate::FModumateObjectInstance *RoomObj);
+	static void UpdateDerivedRoomProperties(FModumateObjectInstance *RoomObj);
 
 	static bool CanRoomContainFace(const FModumateDocument *Document, FGraphSignedID FaceID);
 

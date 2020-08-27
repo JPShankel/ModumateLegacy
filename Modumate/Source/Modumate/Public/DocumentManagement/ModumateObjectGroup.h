@@ -5,33 +5,31 @@
 
 class AMOIGroupActor_CPP;
 
-namespace Modumate
+class FModumateObjectInstance;
+
+
+class MODUMATE_API FMOIGroupImpl : public FModumateObjectInstanceImplBase
 {
-	class FModumateObjectInstance;
+private:
+	TWeakObjectPtr<UWorld> World;
+	FVector Location;
 
-	class MODUMATE_API FMOIGroupImpl : public FModumateObjectInstanceImplBase
-	{
-	private:
-		TWeakObjectPtr<UWorld> World;
-		FVector Location;
+	// Only used temporarily inside of GetStructuralPointsAndLines
+	mutable TArray<FStructurePoint> TempPoints;
+	mutable TArray<FStructureLine> TempLines;
 
-		// Only used temporarily inside of GetStructuralPointsAndLines
-		mutable TArray<FStructurePoint> TempPoints;
-		mutable TArray<FStructureLine> TempLines;
+public:
+	FMOIGroupImpl(FModumateObjectInstance *moi);
+	virtual ~FMOIGroupImpl() {};
 
-	public:
-		FMOIGroupImpl(FModumateObjectInstance *moi);
-		virtual ~FMOIGroupImpl() {};
+	virtual void SetLocation(const FVector &p) override;
 
-		virtual void SetLocation(const FVector &p) override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
 
-		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
+	virtual AActor *RestoreActor() override;
+	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 
-		virtual AActor *RestoreActor() override;
-		virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
+	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 
-		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
-
-		static float StructuralExtentsExpansion;
-	};
-}
+	static float StructuralExtentsExpansion;
+};

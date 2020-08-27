@@ -23,12 +23,8 @@ class UEditModelInputAutomation;
 class UEditModelInputHandler;
 class UHUDDrawWidget;
 class FModumateDocument;
-
-namespace Modumate
-{
-	class FModumateSnappingView;
-	class FModumateObjectInstance;
-}
+class FModumateObjectInstance;
+class FModumateSnappingView;
 
 UENUM(BlueprintType)
 enum class ECameraMode : uint8
@@ -52,7 +48,7 @@ class MODUMATE_API AEditModelPlayerController_CPP : public APlayerController
 private:
 
 	FModumateDocument *Document;
-	Modumate::FModumateSnappingView *SnappingView;
+	FModumateSnappingView *SnappingView;
 
 	TSet<int32> SnappingIDsToIgnore;
 	TArray<AActor*> SnappingActorsToIgnore;
@@ -85,9 +81,9 @@ private:
 	FMouseWorldHitType GetUserSnapPointMouseHit(const FVector &mouseLoc, const FVector &mouseDir) const;
 
 	// These are cached helpers for GetObjectMouseHit, to avoid allocating new TArrays on each call for GetObjectMouseHit.
-	mutable TArray<Modumate::FModumateObjectInstance *> CurHitPointMOIs;
+	mutable TArray<FModumateObjectInstance *> CurHitPointMOIs;
 	mutable TArray<FVector> CurHitPointLocations;
-	mutable TArray<Modumate::FModumateObjectInstance *> CurHitLineMOIs;
+	mutable TArray<FModumateObjectInstance *> CurHitLineMOIs;
 	mutable TArray<TPair<FVector, FVector>> CurHitLineLocations;
 
 protected:
@@ -160,7 +156,7 @@ public:
 	void TickInput(float DeltaTime);
 
 	void AddAllOriginAffordances() const;
-	void SetObjectSelected(const Modumate::FModumateObjectInstance *ob, bool selected);
+	void SetObjectSelected(const FModumateObjectInstance *ob, bool selected);
 
 	UFUNCTION()
 	void OnControllerTimer();
@@ -221,12 +217,12 @@ public:
 	UFUNCTION()
 	void CleanSelectedObjects();
 
-	void SetViewGroupObject(const Modumate::FModumateObjectInstance *ob);
+	void SetViewGroupObject(const FModumateObjectInstance *ob);
 
 	Modumate::FModumateFunctionParameterSet ModumateCommand(const Modumate::FModumateCommand &cmd);
 
 	FModumateDocument *GetDocument() const { return Document; }
-	Modumate::FModumateSnappingView *GetSnappingView() const { return SnappingView; }
+	FModumateSnappingView *GetSnappingView() const { return SnappingView; }
 
 	/*  Assembly Layer Inputs */
 	UFUNCTION(BlueprintCallable, Category = Assembly)

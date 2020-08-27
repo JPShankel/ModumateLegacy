@@ -10,11 +10,7 @@
 #include "ModumateRoofStatics.generated.h"
 
 class FModumateDocument;
-
-namespace Modumate
-{
-	class FModumateObjectInstance;
-}
+class FModumateObjectInstance;
 
 class FBIMPropertySheet;
 
@@ -90,16 +86,16 @@ class MODUMATE_API UModumateRoofStatics : public UBlueprintFunctionLibrary
 public:
 	static void InitializeProperties(FBIMPropertySheet *RoofProperties, int32 NumEdges);
 
-	static bool GetAllProperties(const Modumate::FModumateObjectInstance *RoofObject,
+	static bool GetAllProperties(const FModumateObjectInstance *RoofObject,
 		TArray<FVector> &OutEdgePoints, TArray<int32> &OutEdgeIDs, FRoofEdgeProperties &OutDefaultProperties, TArray<FRoofEdgeProperties> &OutEdgeProperties);
 
-	static bool SetAllProperties(Modumate::FModumateObjectInstance *RoofObject, const FRoofEdgeProperties &DefaultProperties, const TArray<FRoofEdgeProperties> &EdgeProperties);
+	static bool SetAllProperties(FModumateObjectInstance *RoofObject, const FRoofEdgeProperties &DefaultProperties, const TArray<FRoofEdgeProperties> &EdgeProperties);
 
-	static bool GetEdgeProperties(const Modumate::FModumateObjectInstance *RoofObject, int32 EdgeID, FRoofEdgeProperties &OutProperties);
+	static bool GetEdgeProperties(const FModumateObjectInstance *RoofObject, int32 EdgeID, FRoofEdgeProperties &OutProperties);
 
-	static bool SetEdgeProperties(Modumate::FModumateObjectInstance *RoofObject, int32 EdgeID, const FRoofEdgeProperties &NewProperties);
+	static bool SetEdgeProperties(FModumateObjectInstance *RoofObject, int32 EdgeID, const FRoofEdgeProperties &NewProperties);
 
-	static bool UpdateRoofEdgeProperties(Modumate::FModumateObjectInstance *RoofObject, const TArray<int32> &NewEdgeIDs);
+	static bool UpdateRoofEdgeProperties(FModumateObjectInstance *RoofObject, const TArray<int32> &NewEdgeIDs);
 
 	static bool TessellateSlopedEdges(const TArray<FVector> &EdgePoints, const TArray<FRoofEdgeProperties> &EdgeProperties,
 		TArray<FVector> &OutCombinedPolyVerts, TArray<int32> &OutPolyVertIndices, const FVector &NormalHint = FVector::UpVector, UWorld *DebugDrawWorld = nullptr);

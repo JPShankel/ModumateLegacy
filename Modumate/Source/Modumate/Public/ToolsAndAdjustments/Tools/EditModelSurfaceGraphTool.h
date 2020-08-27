@@ -37,9 +37,9 @@ protected:
 	UPROPERTY()
 	class UDimensionManager* DimensionManager;
 
-	class Modumate::FModumateObjectInstance *HostTarget;
-	class Modumate::FModumateObjectInstance *GraphTarget;
-	class Modumate::FModumateObjectInstance *GraphElementTarget;
+	class FModumateObjectInstance *HostTarget;
+	class FModumateObjectInstance *GraphTarget;
+	class FModumateObjectInstance *GraphElementTarget;
 
 	UPROPERTY()
 	AActor* HitHostActor;

@@ -13,15 +13,14 @@
 
 class FBIMAssemblySpec;
 class FModumateDocument;
+class FModumateObjectInstance;
+struct FSimplePolygon;
 
 namespace Modumate
 {
-	class FModumateObjectInstance;
 	class FGraph3DEdge;
 };
 
-struct FModumateObjectAssembly;
-struct FSimplePolygon;
 
 UENUM(BlueprintType)
 enum class ETrimMiterOptions : uint8
@@ -55,10 +54,10 @@ public:
 		bool bUseLengthAsPercent, ETrimMiterOptions MiterOptionStart, ETrimMiterOptions MiterOptionEnd,
 		TArray<FVector> &OutControlPoints, TArray<int32> &OutControlIndices);
 
-	static bool GetTrimEdgePosition(const Modumate::FModumateObjectInstance* TargetObject,
+	static bool GetTrimEdgePosition(const FModumateObjectInstance* TargetObject,
 		int32 EdgeStartIndex, int32 EdgeEndIndex, FVector &OutEdgeStart, FVector &OutEdgeEnd);
 
-	static bool GetTrimGeometryOnEdge(const Modumate::FModumateObjectInstance* TargetObject,
+	static bool GetTrimGeometryOnEdge(const FModumateObjectInstance* TargetObject,
 		const FBIMAssemblySpec *TrimAssembly, int32 EdgeStartIndex, int32 EdgeEndIndex,
 		float TrimStartLength, float TrimEndLength, bool bUseLengthAsPercent,
 		ETrimMiterOptions TrimMiterStart, ETrimMiterOptions TrimMiterEnd,
@@ -67,22 +66,22 @@ public:
 		const FVector &HintNormal = FVector::ZeroVector, int32 HintMountIndex = -1, bool bDoMitering = false);
 
 	static bool GetRelativeTransformOnPlanarObj(
-		const Modumate::FModumateObjectInstance *PlanarObj,
+		const FModumateObjectInstance *PlanarObj,
 		const FVector &WorldPos, float DistanceFromBottom,
 		bool bUseDistanceFromBottom, FVector2D &OutRelativePos,
 		FQuat &OutRelativeRot);
 
 	static bool GetWorldTransformOnPlanarObj(
-		const Modumate::FModumateObjectInstance *PlanarObj,
+		const FModumateObjectInstance *PlanarObj,
 		const FVector2D &RelativePos, const FQuat &RelativeRot,
 		FVector &OutWorldPos, FQuat &OutWorldRot);
 
 	// Face-mounted objects
-	static int32 GetParentFaceIndex(const Modumate::FModumateObjectInstance *FaceMountedObj);
-	static int32 GetFaceIndexFromTargetHit(const Modumate::FModumateObjectInstance *HitObject, const FVector &HitLocation, const FVector &HitNormal);
-	static bool GetGeometryFromFaceIndex(const Modumate::FModumateObjectInstance *Host, int32 FaceIndex,
+	static int32 GetParentFaceIndex(const FModumateObjectInstance *FaceMountedObj);
+	static int32 GetFaceIndexFromTargetHit(const FModumateObjectInstance *HitObject, const FVector &HitLocation, const FVector &HitNormal);
+	static bool GetGeometryFromFaceIndex(const FModumateObjectInstance *Host, int32 FaceIndex,
 		TArray<FVector>& OutFacePoints, FVector& OutNormal, FVector& OutFaceAxisX, FVector& OutFaceAxisY);
-	static bool GetGeometryFromFaceIndex(const Modumate::FModumateObjectInstance *Host, int32 FaceIndex,
+	static bool GetGeometryFromFaceIndex(const FModumateObjectInstance *Host, int32 FaceIndex,
 		TArray<FVector>& OutFacePoints, FTransform& OutFaceOrigin);
 	static bool GetGeometryFromSurfacePoly(const FModumateDocument* Doc, int32 SurfacePolyID, bool& bOutInterior, bool& bOutInnerBounds,
 		FTransform& OutOrigin, TArray<FVector>& OutPerimeter, TArray<FPolyHole3D>& OutHoles, float PlaneOffset = 0.0f);
@@ -90,20 +89,20 @@ public:
 	// Meta Objects
 	static void EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const FModumateDocument *Doc,
 		bool &bOutConnectedToEmptyPlane, bool &bOutConnectedToSelectedPlane);
-	static void ShouldMetaObjBeEnabled(const Modumate::FModumateObjectInstance *MetaMOI,
+	static void ShouldMetaObjBeEnabled(const FModumateObjectInstance *MetaMOI,
 		bool &bOutShouldBeVisible, bool &bOutShouldCollisionBeEnabled, bool &bOutIsConnected);
 
-	static void GetGraphIDsFromMOIs(const TArray<Modumate::FModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs);
+	static void GetGraphIDsFromMOIs(const TArray<FModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs);
 
 	// Given a plane hosted object, find some basic values:
 	// the thickness of the assembly,
 	// the distance along its normal vector from which the rest of its layers are positioned,
 	// and the plane normal.
-	static void GetPlaneHostedValues(const Modumate::FModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal);
+	static void GetPlaneHostedValues(const FModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal);
 
 	// Given a plane hosted object, find the outermost delta vectors from the plane to its layer extents.
 	// This does not include finishes or other hosted children (yet).
-	static void GetExtrusionDeltas(const Modumate::FModumateObjectInstance *PlaneHostedObj, FVector &OutStartDelta, FVector &OutEndDelta);
+	static void GetExtrusionDeltas(const FModumateObjectInstance *PlaneHostedObj, FVector &OutStartDelta, FVector &OutEndDelta);
 
 	// FF&E
 	static bool GetMountedTransform(const FVector &MountOrigin, const FVector &MountNormal,

@@ -146,7 +146,7 @@ void AEditModelPlayerController_CPP::BeginPlay()
 		SetViewTargetWithBlend(EMPlayerPawn);
 	}
 
-	SnappingView = new Modumate::FModumateSnappingView(Document, this);
+	SnappingView = new FModumateSnappingView(Document, this);
 
 	CreateTools();
 	SetToolMode(EToolMode::VE_SELECT);

@@ -7,12 +7,9 @@
 
 #include "EditModelPlaneHostedObjTool.generated.h"
 
-class MODUMATE_API ADynamicMeshActor;
-
-class MODUMATE_API FModumateDocument;
-namespace Modumate {
-	class MODUMATE_API FModumateObjectInstance;
-}
+class ADynamicMeshActor;
+class FModumateDocument;
+class FModumateObjectInstance;
 
 UCLASS()
 class MODUMATE_API UPlaneHostedObjTool : public UMetaPlaneTool
@@ -28,7 +25,7 @@ protected:
 	int32 LastValidTargetID;
 	bool bWasShowingSnapCursor;
 
-	virtual bool ValidatePlaneTarget(const Modumate::FModumateObjectInstance *PlaneTarget);
+	virtual bool ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget);
 
 	bool IsTargetFacingDown();
 	float GetDefaultJustificationValue();

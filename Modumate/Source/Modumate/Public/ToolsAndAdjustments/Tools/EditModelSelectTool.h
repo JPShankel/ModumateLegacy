@@ -13,7 +13,7 @@ class MODUMATE_API FSelectedObjectToolMixin
 {
 protected:
 
-	TMap<Modumate::FModumateObjectInstance*, FMOIDataRecordV1> OriginalObjectData;
+	TMap<FModumateObjectInstance*, FMOIDataRecordV1> OriginalObjectData;
 	TWeakObjectPtr<class AEditModelPlayerController_CPP> ControllerPtr;
 
 	FSelectedObjectToolMixin(class AEditModelPlayerController_CPP *InController = nullptr);
@@ -50,8 +50,8 @@ public:
 	float MinDragDist = 1.0f;
 
 protected:
-	TMap<const Modumate::FModumateObjectInstance*, float> LastObjectSelectionAttemptTimes;
-	Modumate::FModumateObjectInstance *InitialClickedObject;
+	TMap<const FModumateObjectInstance*, float> LastObjectSelectionAttemptTimes;
+	FModumateObjectInstance *InitialClickedObject;
 	FVector2D InitialClickLocation;
 	bool Dragging;
 };

@@ -4,24 +4,21 @@
 #include "CoreMinimal.h"
 #include "DocumentManagement/Objects/PlaneBase.h"
 
-
-namespace Modumate
+class MODUMATE_API FMOISurfacePolygonImpl : public FMOIPlaneImplBase
 {
-	class MODUMATE_API FMOISurfacePolygonImpl : public FMOIPlaneImplBase
-	{
-	public:
-		FMOISurfacePolygonImpl(FModumateObjectInstance *moi);
+public:
+	FMOISurfacePolygonImpl(FModumateObjectInstance *moi);
 
-		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
-		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
+	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
 
-	protected:
-		float MeshPointOffset;
+protected:
+	float MeshPointOffset;
 
-		FTransform CachedOrigin;
-		bool bInteriorPolygon;
-		bool bInnerBoundsPolygon;
+	FTransform CachedOrigin;
+	bool bInteriorPolygon;
+	bool bInnerBoundsPolygon;
 
-		virtual float GetAlpha() const override;
-	};
-}
+	virtual float GetAlpha() const override;
+};
+

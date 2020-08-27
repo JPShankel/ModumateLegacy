@@ -7,59 +7,57 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/ModumateVertexActor_CPP.h"
 
-namespace Modumate
+FMOIMetaVertexImpl::FMOIMetaVertexImpl(FModumateObjectInstance *moi)
+	: FMOIVertexImplBase(moi)
 {
-	FMOIMetaVertexImpl::FMOIMetaVertexImpl(FModumateObjectInstance *moi)
-		: FMOIVertexImplBase(moi)
+}
+
+void FMOIMetaVertexImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+{
+	if (MOI && VertexActor.IsValid())
 	{
-	}
+		bool bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane;
+		UModumateObjectStatics::ShouldMetaObjBeEnabled(MOI, bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane);
+		bOutVisible = !MOI->IsRequestedHidden() && bShouldBeVisible;
+		bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bShouldCollisionBeEnabled;
 
-	void FMOIMetaVertexImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
-	{
-		if (MOI && VertexActor.IsValid())
-		{
-			bool bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane;
-			UModumateObjectStatics::ShouldMetaObjBeEnabled(MOI, bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane);
-			bOutVisible = !MOI->IsRequestedHidden() && bShouldBeVisible;
-			bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bShouldCollisionBeEnabled;
-
-			VertexActor->SetActorHiddenInGame(!bOutVisible);
-			VertexActor->SetActorTickEnabled(bOutVisible);
-			VertexActor->SetActorEnableCollision(bOutCollisionEnabled);
-		}
-	}
-
-	bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
-	{
-		switch (DirtyFlag)
-		{
-		case EObjectDirtyFlags::Structure:
-		{
-			auto vertex = MOI->GetDocument()->GetVolumeGraph().FindVertex(MOI->ID);
-			if (!ensure(vertex))
-			{
-				return false;
-			}
-
-			SetLocation(vertex->Position);
-		}
-		break;
-		case EObjectDirtyFlags::Visuals:
-		{
-			MOI->UpdateVisibilityAndCollision();
-		}
-		break;
-		}
-
-		MOI->GetConnectedMOIs(CachedConnectedMOIs);
-		for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
-		{
-			if (connectedMOI->GetObjectType() == EObjectType::OTMetaEdge)
-			{
-				connectedMOI->MarkDirty(DirtyFlag);
-			}
-		}
-
-		return true;
+		VertexActor->SetActorHiddenInGame(!bOutVisible);
+		VertexActor->SetActorTickEnabled(bOutVisible);
+		VertexActor->SetActorEnableCollision(bOutCollisionEnabled);
 	}
 }
+
+bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+{
+	switch (DirtyFlag)
+	{
+	case EObjectDirtyFlags::Structure:
+	{
+		auto vertex = MOI->GetDocument()->GetVolumeGraph().FindVertex(MOI->ID);
+		if (!ensure(vertex))
+		{
+			return false;
+		}
+
+		SetLocation(vertex->Position);
+	}
+	break;
+	case EObjectDirtyFlags::Visuals:
+	{
+		MOI->UpdateVisibilityAndCollision();
+	}
+	break;
+	}
+
+	MOI->GetConnectedMOIs(CachedConnectedMOIs);
+	for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
+	{
+		if (connectedMOI->GetObjectType() == EObjectType::OTMetaEdge)
+		{
+			connectedMOI->MarkDirty(DirtyFlag);
+		}
+	}
+
+	return true;
+}
+

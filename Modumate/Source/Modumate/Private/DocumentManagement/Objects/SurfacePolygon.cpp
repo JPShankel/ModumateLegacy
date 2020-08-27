@@ -9,89 +9,86 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
-namespace Modumate
+FMOISurfacePolygonImpl::FMOISurfacePolygonImpl(FModumateObjectInstance *moi)
+	: FMOIPlaneImplBase(moi)
+	, MeshPointOffset(0.25f)
+	, bInteriorPolygon(false)
+	, bInnerBoundsPolygon(false)
 {
-	FMOISurfacePolygonImpl::FMOISurfacePolygonImpl(FModumateObjectInstance *moi)
-		: FMOIPlaneImplBase(moi)
-		, MeshPointOffset(0.25f)
-		, bInteriorPolygon(false)
-		, bInnerBoundsPolygon(false)
-	{
 
-	}
+}
 
-	void FMOISurfacePolygonImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+void FMOISurfacePolygonImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+{
+	if (MOI && DynamicMeshActor.IsValid())
 	{
-		if (MOI && DynamicMeshActor.IsValid())
+		bOutVisible = false;
+		bOutCollisionEnabled = false;
+
+		if (bInteriorPolygon)
 		{
-			bOutVisible = false;
-			bOutCollisionEnabled = false;
-
-			if (bInteriorPolygon)
+			bool bHaveChildren = (MOI->GetChildIDs().Num() > 0);
+			auto controller = MOI->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+			switch (controller->EMPlayerState->GetSelectedViewMode())
 			{
-				bool bHaveChildren = (MOI->GetChildIDs().Num() > 0);
-				auto controller = MOI->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-				switch (controller->EMPlayerState->GetSelectedViewMode())
-				{
-				case EEditViewModes::SurfaceGraphs:
-					bOutVisible = true;
-					bOutCollisionEnabled = true;
-					break;
-				case EEditViewModes::ObjectEditing:
-					bOutVisible = !bHaveChildren;
-					bOutCollisionEnabled = !bHaveChildren;
-					break;
-				default:
-					break;
-				}
+			case EEditViewModes::SurfaceGraphs:
+				bOutVisible = true;
+				bOutCollisionEnabled = true;
+				break;
+			case EEditViewModes::ObjectEditing:
+				bOutVisible = !bHaveChildren;
+				bOutCollisionEnabled = !bHaveChildren;
+				break;
+			default:
+				break;
 			}
-
-			DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
-			DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
 		}
+
+		DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
+		DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
+	}
+}
+
+bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+{
+	if (!ensure(MOI))
+	{
+		return false;
 	}
 
-	bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
+	switch (DirtyFlag)
 	{
-		if (!ensure(MOI))
+	case EObjectDirtyFlags::Structure:
+	{
+		if (!UModumateObjectStatics::GetGeometryFromSurfacePoly(MOI->GetDocument(), MOI->ID,
+			bInteriorPolygon, bInnerBoundsPolygon, CachedOrigin, CachedPoints, CachedHoles, MeshPointOffset))
 		{
 			return false;
 		}
 
-		switch (DirtyFlag)
+		// Skip exterior polygons and inner bounds polygons; they can't be visible anyway, so they shouldn't set up any dynamic meshes.
+		if (!bInteriorPolygon || bInnerBoundsPolygon || (CachedPoints.Num() < 3))
 		{
-		case EObjectDirtyFlags::Structure:
-		{
-			if (!UModumateObjectStatics::GetGeometryFromSurfacePoly(MOI->GetDocument(), MOI->ID,
-				bInteriorPolygon, bInnerBoundsPolygon, CachedOrigin, CachedPoints, CachedHoles, MeshPointOffset))
-			{
-				return false;
-			}
-
-			// Skip exterior polygons and inner bounds polygons; they can't be visible anyway, so they shouldn't set up any dynamic meshes.
-			if (!bInteriorPolygon || bInnerBoundsPolygon || (CachedPoints.Num() < 3))
-			{
-				return true;
-			}
-
-			AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
-			MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
-
-			bool bEnableCollision = !MOI->GetIsInPreviewMode();
-			DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, GetAlpha(), true, &CachedHoles, bEnableCollision);
-		}
-		case EObjectDirtyFlags::Visuals:
-			MOI->UpdateVisibilityAndCollision();
-			break;
-		default:
-			break;
+			return true;
 		}
 
-		return true;
+		AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+		MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
+
+		bool bEnableCollision = !MOI->GetIsInPreviewMode();
+		DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, GetAlpha(), true, &CachedHoles, bEnableCollision);
+	}
+	case EObjectDirtyFlags::Visuals:
+		MOI->UpdateVisibilityAndCollision();
+		break;
+	default:
+		break;
 	}
 
-	float FMOISurfacePolygonImpl::GetAlpha() const
-	{
-		return 1.0f;
-	}
+	return true;
+}
+
+float FMOISurfacePolygonImpl::GetAlpha() const
+{
+	return 1.0f;
 }

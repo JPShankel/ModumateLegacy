@@ -6,10 +6,7 @@
 
 #include "CutPlaneCaptureActor.generated.h"
 
-namespace Modumate
-{
-	class ISceneCaptureObject;
-}
+class ISceneCaptureObject;
 class USceneCaptureComponent2D;
 class UTextureRenderTarget2D;
 
@@ -29,7 +26,7 @@ public:
 public:
 	ACutPlaneCaptureActor();
 
-	Modumate::ISceneCaptureObject *Parent;
+	ISceneCaptureObject *Parent;
 
 	int32 ObjID;
 	int32 ScopeBoxID;

@@ -3,11 +3,8 @@
 
 #include "DocumentManagement/ModumateObjectInstance.h"
 
-namespace Modumate
+class MODUMATE_API FMOIFactory
 {
-	class MODUMATE_API FMOIFactory
-	{
-	public:
-		static IModumateObjectInstanceImpl *MakeMOIImplementation(EObjectType ObjectType, FModumateObjectInstance *MOI);
-	};
-}
+public:
+	static IModumateObjectInstanceImpl *MakeMOIImplementation(EObjectType ObjectType, FModumateObjectInstance *MOI);
+};

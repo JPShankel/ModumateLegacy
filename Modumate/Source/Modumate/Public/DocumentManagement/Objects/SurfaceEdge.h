@@ -3,14 +3,11 @@
 
 #include "DocumentManagement/Objects/EdgeBase.h"
 
-namespace Modumate
+class MODUMATE_API FMOISurfaceEdgeImpl : public FMOIEdgeImplBase
 {
-	class MODUMATE_API FMOISurfaceEdgeImpl : public FMOIEdgeImplBase
-	{
-	public:
-		FMOISurfaceEdgeImpl(FModumateObjectInstance *moi);
+public:
+	FMOISurfaceEdgeImpl(FModumateObjectInstance *moi);
 
-		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
-		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
-	};
-}
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
+	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+};

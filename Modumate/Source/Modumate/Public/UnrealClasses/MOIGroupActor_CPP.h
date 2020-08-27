@@ -6,10 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "MOIGroupActor_CPP.generated.h"
 
-namespace Modumate
-{
-	class FModumateObjectInstance;
-}
+class FModumateObjectInstance;
 
 UCLASS()
 class MODUMATE_API AMOIGroupActor_CPP : public AActor
@@ -20,7 +17,7 @@ public:
 	// Sets default values for this actor's properties
 	AMOIGroupActor_CPP();
 
-	Modumate::FModumateObjectInstance *MOI;
+	FModumateObjectInstance *MOI;
 
 protected:
 	// Called when the game starts or when spawned

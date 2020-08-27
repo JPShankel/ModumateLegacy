@@ -100,7 +100,7 @@ bool UModumateObjectStatics::GetTrimControlsFromValues(float TrimStartLength, fl
 	return true;
 }
 
-bool UModumateObjectStatics::GetTrimEdgePosition(const Modumate::FModumateObjectInstance* TargetObject,
+bool UModumateObjectStatics::GetTrimEdgePosition(const FModumateObjectInstance* TargetObject,
 	int32 EdgeStartIndex, int32 EdgeEndIndex, FVector &OutEdgeStart, FVector &OutEdgeEnd)
 {
 	if (TargetObject == nullptr)
@@ -524,7 +524,7 @@ bool UModumateObjectStatics::GetTrimGeometryOnEdge(const FModumateObjectInstance
 // would create its parent metaplane; 2. from world-space corners and portal properties generate a world-space transform
 // and extents for the portal actor to update itself with slicing and stretching.
 bool UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
-	const Modumate::FModumateObjectInstance *PlanarObj,
+	const FModumateObjectInstance *PlanarObj,
 	const FVector &WorldPos, float DistanceFromBottom,
 	bool bUseDistanceFromBottom, FVector2D &OutRelativePos,
 	FQuat &OutRelativeRot)
@@ -607,7 +607,7 @@ bool UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
 }
 
 bool UModumateObjectStatics::GetWorldTransformOnPlanarObj(
-	const Modumate::FModumateObjectInstance *PlanarObj,
+	const FModumateObjectInstance *PlanarObj,
 	const FVector2D &RelativePos, const FQuat &RelativeRot,
 	FVector &OutWorldPos, FQuat &OutWorldRot)
 {
@@ -685,7 +685,7 @@ int32 UModumateObjectStatics::GetFaceIndexFromTargetHit(const FModumateObjectIns
 	case EObjectType::OTFloorSegment:
 	case EObjectType::OTCeiling:
 	{
-		const Modumate::FModumateObjectInstance *hostParent = HitObject->GetParentObject();
+		const FModumateObjectInstance *hostParent = HitObject->GetParentObject();
 		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
 			return INDEX_NONE;
@@ -753,7 +753,7 @@ int32 UModumateObjectStatics::GetFaceIndexFromTargetHit(const FModumateObjectIns
 	}
 }
 
-bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateObjectInstance *Host, int32 FaceIndex,
+bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInstance *Host, int32 FaceIndex,
 	TArray<FVector> &OutFacePoints, FVector &OutNormal, FVector &OutFaceAxisX, FVector &OutFaceAxisY)
 {
 	OutFacePoints.Reset();
@@ -770,7 +770,7 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateO
 	case EObjectType::OTFloorSegment:
 	case EObjectType::OTCeiling:
 	{
-		const Modumate::FModumateObjectInstance *hostParent = Host->GetParentObject();
+		const FModumateObjectInstance *hostParent = Host->GetParentObject();
 		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
 			return false;
@@ -848,7 +848,7 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateO
 	}
 }
 
-bool UModumateObjectStatics::GetGeometryFromFaceIndex(const Modumate::FModumateObjectInstance *Host, int32 FaceIndex,
+bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInstance *Host, int32 FaceIndex,
 	TArray<FVector>& OutFacePoints, FTransform& OutFaceOrigin)
 {
 	FVector faceNormal, faceAxisX, faceAxisY;
@@ -962,7 +962,7 @@ void UModumateObjectStatics::EdgeConnectedToValidPlane(const Modumate::FGraph3DE
 	}
 }
 
-void UModumateObjectStatics::ShouldMetaObjBeEnabled(const Modumate::FModumateObjectInstance *MetaMOI,
+void UModumateObjectStatics::ShouldMetaObjBeEnabled(const FModumateObjectInstance *MetaMOI,
 	bool &bOutShouldBeVisible, bool &bOutShouldCollisionBeEnabled, bool &bOutIsConnected)
 {
 	bOutShouldBeVisible = bOutShouldCollisionBeEnabled = bOutIsConnected = false;
@@ -1108,7 +1108,7 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const Modumate::FModumateObj
 	}
 }
 
-void UModumateObjectStatics::GetGraphIDsFromMOIs(const TArray<Modumate::FModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs)
+void UModumateObjectStatics::GetGraphIDsFromMOIs(const TArray<FModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs)
 {
 	OutGraphObjIDs.Reset();
 
@@ -1125,7 +1125,7 @@ void UModumateObjectStatics::GetGraphIDsFromMOIs(const TArray<Modumate::FModumat
 	}
 }
 
-void UModumateObjectStatics::GetPlaneHostedValues(const Modumate::FModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal)
+void UModumateObjectStatics::GetPlaneHostedValues(const FModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal)
 {
 	OutThickness = PlaneHostedObj->CalculateThickness();
 	float offsetPCT = PlaneHostedObj->GetExtents().X;

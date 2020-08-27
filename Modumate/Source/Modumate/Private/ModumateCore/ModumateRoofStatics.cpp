@@ -400,7 +400,7 @@ bool UModumateRoofStatics::GetAllProperties(
 	return true;
 }
 
-bool UModumateRoofStatics::SetAllProperties(Modumate::FModumateObjectInstance *RoofObject, const FRoofEdgeProperties &DefaultProperties, const TArray<FRoofEdgeProperties> &EdgeProperties)
+bool UModumateRoofStatics::SetAllProperties(FModumateObjectInstance *RoofObject, const FRoofEdgeProperties &DefaultProperties, const TArray<FRoofEdgeProperties> &EdgeProperties)
 {
 	if (!ensure(RoofObject))
 	{
@@ -433,7 +433,7 @@ bool UModumateRoofStatics::SetAllProperties(Modumate::FModumateObjectInstance *R
 	return true;
 }
 
-bool UModumateRoofStatics::GetEdgeProperties(const Modumate::FModumateObjectInstance *RoofObject, int32 EdgeID, FRoofEdgeProperties &OutProperties)
+bool UModumateRoofStatics::GetEdgeProperties(const FModumateObjectInstance *RoofObject, int32 EdgeID, FRoofEdgeProperties &OutProperties)
 {
 	if (!UModumateRoofStatics::GetAllProperties(RoofObject, TempEdgePoints, TempEdgeIDs, TempDefaultEdgeProperties, TempEdgeProperties))
 	{
@@ -453,7 +453,7 @@ bool UModumateRoofStatics::GetEdgeProperties(const Modumate::FModumateObjectInst
 	return false;
 }
 
-bool UModumateRoofStatics::SetEdgeProperties(Modumate::FModumateObjectInstance *RoofObject, int32 EdgeID, const FRoofEdgeProperties &NewProperties)
+bool UModumateRoofStatics::SetEdgeProperties(FModumateObjectInstance *RoofObject, int32 EdgeID, const FRoofEdgeProperties &NewProperties)
 {
 	if (!UModumateRoofStatics::GetAllProperties(RoofObject, TempEdgePoints, TempEdgeIDs, TempDefaultEdgeProperties, TempEdgeProperties))
 	{
@@ -473,7 +473,7 @@ bool UModumateRoofStatics::SetEdgeProperties(Modumate::FModumateObjectInstance *
 	return false;
 }
 
-bool UModumateRoofStatics::UpdateRoofEdgeProperties(Modumate::FModumateObjectInstance *RoofObject, const TArray<int32> &NewEdgeIDs)
+bool UModumateRoofStatics::UpdateRoofEdgeProperties(FModumateObjectInstance *RoofObject, const TArray<int32> &NewEdgeIDs)
 {
 	if (!UModumateRoofStatics::GetAllProperties(RoofObject, TempEdgePoints, TempEdgeIDs, TempDefaultEdgeProperties, TempEdgeProperties))
 	{

@@ -28,39 +28,37 @@ protected:
 	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 };
 
-namespace Modumate
+class FModumateObjectInstance;
+
+class MODUMATE_API FMOICabinetImpl : public FDynamicModumateObjectInstanceImpl
 {
-	class FModumateObjectInstance;
+public:
+	FMOICabinetImpl(FModumateObjectInstance *moi);
+	virtual ~FMOICabinetImpl();
 
-	class MODUMATE_API FMOICabinetImpl : public FDynamicModumateObjectInstanceImpl
-	{
-	public:
-		FMOICabinetImpl(FModumateObjectInstance *moi);
-		virtual ~FMOICabinetImpl();
+	virtual FVector GetCorner(int32 index) const override;
+	virtual FVector GetNormal() const override;
+	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual void SetupDynamicGeometry() override;
+	virtual void UpdateDynamicGeometry() override;
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
+	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);
+	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
+	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane,
+		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
+		TArray<TArray<FVector>> &OutPerimeters) const override;
+	static FName CabinetGeometryMatName;
 
-		virtual FVector GetCorner(int32 index) const override;
-		virtual FVector GetNormal() const override;
-		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
-		virtual void SetupDynamicGeometry() override;
-		virtual void UpdateDynamicGeometry() override;
-		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
-		virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);
-		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
-		virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane,
-			const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
-			TArray<TArray<FVector>> &OutPerimeters) const override;
-		static FName CabinetGeometryMatName;
+protected:
+	void UpdateToeKickDimensions();
+	void UpdateCabinetPortal();
 
-	protected:
-		void UpdateToeKickDimensions();
-		void UpdateCabinetPortal();
+	bool AdjustmentHandlesVisible;
+	TArray<TWeakObjectPtr<ASelectCabinetFrontHandle>> FrontSelectionHandles;
+	TWeakObjectPtr<ACompoundMeshActor> FrontFacePortalActor;
+	FVector2D ToeKickDimensions;
 
-		bool AdjustmentHandlesVisible;
-		TArray<TWeakObjectPtr<ASelectCabinetFrontHandle>> FrontSelectionHandles;
-		TWeakObjectPtr<ACompoundMeshActor> FrontFacePortalActor;
-		FVector2D ToeKickDimensions;
+private:
+	TArray<FVector> GetBoundsIntersections(const FPlane& Plane) const;
+};
 
-	private:
-		TArray<FVector> GetBoundsIntersections(const FPlane& Plane) const;
-	};
-}

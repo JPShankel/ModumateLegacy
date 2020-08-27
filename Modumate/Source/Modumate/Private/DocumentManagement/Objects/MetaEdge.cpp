@@ -11,101 +11,99 @@
 #include "UnrealClasses/LineActor.h"
 
 
-namespace Modumate
+FMOIMetaEdgeImpl::FMOIMetaEdgeImpl(FModumateObjectInstance *moi)
+	: FMOIEdgeImplBase(moi)
 {
-	FMOIMetaEdgeImpl::FMOIMetaEdgeImpl(FModumateObjectInstance *moi)
-		: FMOIEdgeImplBase(moi)
+}
+
+bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+{
+	switch (DirtyFlag)
 	{
+	case EObjectDirtyFlags::Structure:
+	{
+		auto& graph = MOI->GetDocument()->GetVolumeGraph();
+		auto edge = graph.FindEdge(MOI->ID);
+		auto vertexStart = edge ? graph.FindVertex(edge->StartVertexID) : nullptr;
+		auto vertexEnd = edge ? graph.FindVertex(edge->EndVertexID) : nullptr;
+		if (!ensure(LineActor.IsValid() && vertexStart && vertexEnd))
+		{
+			return false;
+		}
+
+		LineActor->Point1 = vertexStart->Position;
+		LineActor->Point2 = vertexEnd->Position;
+
+		// If our own geometry has been updated, then we need to re-evaluate our mitering.
+		MOI->MarkDirty(EObjectDirtyFlags::Mitering);
+	}
+	break;
+	case EObjectDirtyFlags::Mitering:
+	{
+		// TODO: clean the miter details by performing the mitering for this edge's connected plane-hosted objects
+		bool bUpdateSuccess = CachedMiterData.GatherDetails(MOI);
+		if (bUpdateSuccess)
+		{
+			bool bMiterSuccess = CachedMiterData.CalculateMitering();
+		}
+	}
+	break;
+	case EObjectDirtyFlags::Visuals:
+	{
+		MOI->UpdateVisibilityAndCollision();
+	}
+	break;
+	default:
+		break;
 	}
 
-	bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
+	if (MOI)
 	{
-		switch (DirtyFlag)
+		MOI->GetConnectedMOIs(CachedConnectedMOIs);
+		for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
 		{
-		case EObjectDirtyFlags::Structure:
-		{
-			auto& graph = MOI->GetDocument()->GetVolumeGraph();
-			auto edge = graph.FindEdge(MOI->ID);
-			auto vertexStart = edge ? graph.FindVertex(edge->StartVertexID) : nullptr;
-			auto vertexEnd = edge ? graph.FindVertex(edge->EndVertexID) : nullptr;
-			if (!ensure(LineActor.IsValid() && vertexStart && vertexEnd))
+			if (connectedMOI->GetObjectType() == EObjectType::OTMetaPlane)
 			{
-				return false;
+				connectedMOI->MarkDirty(DirtyFlag);
 			}
-
-			LineActor->Point1 = vertexStart->Position;
-			LineActor->Point2 = vertexEnd->Position;
-
-			// If our own geometry has been updated, then we need to re-evaluate our mitering.
-			MOI->MarkDirty(EObjectDirtyFlags::Mitering);
-		}
-		break;
-		case EObjectDirtyFlags::Mitering:
-		{
-			// TODO: clean the miter details by performing the mitering for this edge's connected plane-hosted objects
-			bool bUpdateSuccess = CachedMiterData.GatherDetails(MOI);
-			if (bUpdateSuccess)
-			{
-				bool bMiterSuccess = CachedMiterData.CalculateMitering();
-			}
-		}
-		break;
-		case EObjectDirtyFlags::Visuals:
-		{
-			MOI->UpdateVisibilityAndCollision();
-		}
-		break;
-		default:
-			break;
-		}
-
-		if (MOI)
-		{
-			MOI->GetConnectedMOIs(CachedConnectedMOIs);
-			for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
-			{
-				if (connectedMOI->GetObjectType() == EObjectType::OTMetaPlane)
-				{
-					connectedMOI->MarkDirty(DirtyFlag);
-				}
-			}
-		}
-
-		return true;
-	}
-
-	void FMOIMetaEdgeImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
-	{
-		if (MOI && LineActor.IsValid())
-		{
-			AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(LineActor->GetWorld()->GetFirstPlayerController()->PlayerState);
-
-			bool bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane;
-			UModumateObjectStatics::ShouldMetaObjBeEnabled(MOI, bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane);
-			bOutVisible = !MOI->IsRequestedHidden() && bShouldBeVisible;
-			bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bShouldCollisionBeEnabled;
-
-			LineActor->SetVisibilityInApp(bOutVisible);
-			if (bOutVisible)
-			{
-				float thicknessMultiplier = GetThicknessMultiplier();
-				if (MOI->IsHovered() && emPlayerState && emPlayerState->ShowHoverEffects)
-				{
-					LineActor->Color = HoverColor;
-					LineActor->Thickness = HoverThickness * thicknessMultiplier;
-				}
-				else
-				{
-					LineActor->UpdateMetaEdgeVisuals(bConnectedToAnyPlane, thicknessMultiplier);
-				}
-			}
-
-			LineActor->SetActorEnableCollision(bOutCollisionEnabled);
 		}
 	}
 
-	const FMiterData& FMOIMetaEdgeImpl::GetMiterData() const
+	return true;
+}
+
+void FMOIMetaEdgeImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+{
+	if (MOI && LineActor.IsValid())
 	{
-		return CachedMiterData;
+		AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(LineActor->GetWorld()->GetFirstPlayerController()->PlayerState);
+
+		bool bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane;
+		UModumateObjectStatics::ShouldMetaObjBeEnabled(MOI, bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane);
+		bOutVisible = !MOI->IsRequestedHidden() && bShouldBeVisible;
+		bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bShouldCollisionBeEnabled;
+
+		LineActor->SetVisibilityInApp(bOutVisible);
+		if (bOutVisible)
+		{
+			float thicknessMultiplier = GetThicknessMultiplier();
+			if (MOI->IsHovered() && emPlayerState && emPlayerState->ShowHoverEffects)
+			{
+				LineActor->Color = HoverColor;
+				LineActor->Thickness = HoverThickness * thicknessMultiplier;
+			}
+			else
+			{
+				LineActor->UpdateMetaEdgeVisuals(bConnectedToAnyPlane, thicknessMultiplier);
+			}
+		}
+
+		LineActor->SetActorEnableCollision(bOutCollisionEnabled);
 	}
 }
+
+const FMiterData& FMOIMetaEdgeImpl::GetMiterData() const
+{
+	return CachedMiterData;
+}
+

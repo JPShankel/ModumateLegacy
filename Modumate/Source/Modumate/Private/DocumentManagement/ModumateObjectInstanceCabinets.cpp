@@ -17,218 +17,215 @@
 #include "Drafting/ModumateDraftingElements.h"
 #include "Drafting/ModumateClippingTriangles.h"
 
-namespace Modumate
+using namespace Modumate::Units;
+
+FName FMOICabinetImpl::CabinetGeometryMatName(TEXT("Cabinet_Exterior_Finish"));
+
+FMOICabinetImpl::FMOICabinetImpl(FModumateObjectInstance *moi)
+	: FDynamicModumateObjectInstanceImpl(moi)
+	, AdjustmentHandlesVisible(false)
+	, ToeKickDimensions(ForceInitToZero)
 {
-	using namespace Units;
+}
 
-	FName FMOICabinetImpl::CabinetGeometryMatName(TEXT("Cabinet_Exterior_Finish"));
+FMOICabinetImpl::~FMOICabinetImpl()
+{
+}
 
-	FMOICabinetImpl::FMOICabinetImpl(FModumateObjectInstance *moi)
-		: FDynamicModumateObjectInstanceImpl(moi)
-		, AdjustmentHandlesVisible(false)
-		, ToeKickDimensions(ForceInitToZero)
+FVector FMOICabinetImpl::GetCorner(int32 index) const
+{
+	int32 numCP = MOI->GetControlPoints().Num();
+	float thickness = MOI->GetExtents().Y;
+	FVector extrusionDir = FVector::UpVector;
+
+	FPlane plane;
+	UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), plane);
+	// For now, make sure that the plane of the MOI is horizontal
+	if (ensureAlways((numCP >= 3) && FVector::Parallel(extrusionDir, plane)))
+
 	{
-	}
+		FVector corner = MOI->GetControlPoint(index % numCP);
 
-	FMOICabinetImpl::~FMOICabinetImpl()
+		if (index >= numCP)
+		{
+			corner += thickness * extrusionDir;
+		}
+
+		return corner;
+	}
+	else
 	{
+		return GetLocation();
 	}
+}
 
-	FVector FMOICabinetImpl::GetCorner(int32 index) const
+FVector FMOICabinetImpl::GetNormal() const
+{
+	return FVector::UpVector;
+}
+
+void FMOICabinetImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+{
+	FModumateObjectInstanceImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
+
+	if (FrontFacePortalActor.IsValid())
+	{
+		FrontFacePortalActor->SetActorHiddenInGame(!bOutVisible);
+		FrontFacePortalActor->SetActorEnableCollision(bOutCollisionEnabled);
+	}
+}
+
+void FMOICabinetImpl::SetupDynamicGeometry()
+{
+	UpdateToeKickDimensions();
+
+	int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
+
+	// TODO: get material from portal definition
+	DynamicMeshActor->SetupCabinetGeometry(MOI->GetControlPoints(), MOI->GetExtents().Y,
+		FArchitecturalMaterial(), ToeKickDimensions, frontFaceIndex);
+
+	// refresh handle visibility, don't destroy & recreate handles
+	AEditModelPlayerController_CPP *controller = DynamicMeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	// TODO: revisit the handle paradigm for cabinets
+	MOI->ShowAdjustmentHandles(controller, AdjustmentHandlesVisible);
+
+	UpdateCabinetPortal();
+}
+
+void FMOICabinetImpl::UpdateDynamicGeometry()
+{
+	SetupDynamicGeometry();
+}
+
+void FMOICabinetImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+{
+	FDynamicModumateObjectInstanceImpl::GetStructuralPointsAndLines(outPoints, outLines, bForSnapping, bForSelection);
+
+	int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
+	if ((ToeKickDimensions.X > 0.0f) && (frontFaceIndex != INDEX_NONE))
 	{
 		int32 numCP = MOI->GetControlPoints().Num();
-		float thickness = MOI->GetExtents().Y;
-		FVector extrusionDir = FVector::UpVector;
+		int32 frontFaceOtherIndex = (frontFaceIndex + 1) % numCP;
 
-		FPlane plane;
-		UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), plane);
-		// For now, make sure that the plane of the MOI is horizontal
-		if (ensureAlways((numCP >= 3) && FVector::Parallel(extrusionDir, plane)))
+		FVector frontFaceInNormal;
+		GetTriInternalNormalFromEdge(frontFaceIndex, frontFaceOtherIndex, frontFaceInNormal);
 
-		{
-			FVector corner = MOI->GetControlPoint(index % numCP);
+		FVector toeKickP1 = MOI->GetControlPoint(frontFaceIndex) + (ToeKickDimensions.X * frontFaceInNormal);
+		FVector toeKickP2 = MOI->GetControlPoint(frontFaceOtherIndex) + (ToeKickDimensions.X * frontFaceInNormal);
+		FVector dir = (toeKickP2 - toeKickP1).GetSafeNormal();
 
-			if (index >= numCP)
-			{
-				corner += thickness * extrusionDir;
-			}
+		outPoints.Add(FStructurePoint(toeKickP1, dir, frontFaceIndex));
+		outPoints.Add(FStructurePoint(toeKickP2, dir, frontFaceOtherIndex));
 
-			return corner;
-		}
-		else
-		{
-			return GetLocation();
-		}
+		outLines.Add(FStructureLine(toeKickP1, toeKickP2, frontFaceIndex, frontFaceOtherIndex));
+	}
+}
+
+void FMOICabinetImpl::UpdateToeKickDimensions()
+{
+	ToeKickDimensions.Set(0.0f, 0.0f);
+
+	if (ensureAlways(MOI))
+	{
+		UModumateFunctionLibrary::GetCabinetToeKickDimensions(MOI->GetAssembly(), ToeKickDimensions);
+	}
+}
+
+void FMOICabinetImpl::UpdateCabinetPortal()
+{
+	int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
+	if ((frontFaceIndex < 0) && FrontFacePortalActor.IsValid())
+	{
+		FrontFacePortalActor->Destroy();
+	}
+	else if ((frontFaceIndex >= 0) && !FrontFacePortalActor.IsValid())
+	{
+		FrontFacePortalActor = DynamicMeshActor->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass());
+		FrontFacePortalActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 	}
 
-	FVector FMOICabinetImpl::GetNormal() const
+	if (!FrontFacePortalActor.IsValid())
 	{
-		return FVector::UpVector;
+		return;
 	}
 
-	void FMOICabinetImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+	// Get enough geometric information to set up the portal assembly
+	FVector extrusionDir = FVector::UpVector;
+	FPlane plane;
+	if (!UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), plane))
 	{
-		FModumateObjectInstanceImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
+		return;
+	}
+	if (!FVector::Parallel(plane, extrusionDir))
+	{
+		return;
+	}
+	bool bCoincident = FVector::Coincident(FVector(plane), extrusionDir);
 
-		if (FrontFacePortalActor.IsValid())
-		{
-			FrontFacePortalActor->SetActorHiddenInGame(!bOutVisible);
-			FrontFacePortalActor->SetActorEnableCollision(bOutCollisionEnabled);
-		}
+	const FVector &p1 = MOI->GetControlPoint(frontFaceIndex);
+	const FVector &p2 = MOI->GetControlPoint((frontFaceIndex + 1) % MOI->GetControlPoints().Num());
+	FVector edgeDelta = p2 - p1;
+	float edgeLength = edgeDelta.Size();
+	if (!ensureAlways(!FMath::IsNearlyZero(edgeLength)))
+	{
+		return;
 	}
 
-	void FMOICabinetImpl::SetupDynamicGeometry()
+	FVector edgeDir = edgeDelta / edgeLength;
+
+	FVector faceNormal = (edgeDir ^ extrusionDir) * (bCoincident ? 1.0f : -1.0f);
+
+	float cabinetHeight = MOI->GetExtents().Y;
+	FVector toeKickOffset = ToeKickDimensions.Y * extrusionDir;
+
+	FrontFacePortalActor->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
+
+	// Now position the portal where it's supposed to go
+	FVector portalOrigin = toeKickOffset + (bCoincident ? p2 : p1);
+	FQuat portalRot = FRotationMatrix::MakeFromYZ(faceNormal, extrusionDir).ToQuat();
+
+	FrontFacePortalActor->SetActorLocationAndRotation(portalOrigin, portalRot);
+}
+
+void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+{
+	int32 numCP = MOI->GetControlPoints().Num();
+	for (int32 i = 0; i < numCP; ++i)
 	{
-		UpdateToeKickDimensions();
+		auto pointHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		pointHandle->SetTargetIndex(i);
 
-		int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
+		auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		edgeHandle->SetTargetIndex(i);
+		edgeHandle->SetAdjustPolyEdge(true);
 
-		// TODO: get material from portal definition
-		DynamicMeshActor->SetupCabinetGeometry(MOI->GetControlPoints(), MOI->GetExtents().Y,
-			FArchitecturalMaterial(), ToeKickDimensions, frontFaceIndex);
+		auto selectFrontHandle = MOI->MakeHandle<ASelectCabinetFrontHandle>();
+		selectFrontHandle->SetTargetIndex(i);
 
-		// refresh handle visibility, don't destroy & recreate handles
-		AEditModelPlayerController_CPP *controller = DynamicMeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-		// TODO: revisit the handle paradigm for cabinets
-		MOI->ShowAdjustmentHandles(controller, AdjustmentHandlesVisible);
-
-		UpdateCabinetPortal();
+		FrontSelectionHandles.Add(selectFrontHandle);
 	}
 
-	void FMOICabinetImpl::UpdateDynamicGeometry()
+	auto topExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
+	topExtrusionHandle->SetSign(1.0f);
+
+	auto bottomExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
+	bottomExtrusionHandle->SetSign(-1.0f);
+}
+
+void FMOICabinetImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
+{
+	FDynamicModumateObjectInstanceImpl::ShowAdjustmentHandles(Controller, bShow);
+
+	AdjustmentHandlesVisible = bShow;
+
+	// make sure that front selection handles are only visible if they are valid choices
+	for (auto frontHandle : FrontSelectionHandles)
 	{
-		SetupDynamicGeometry();
-	}
-
-	void FMOICabinetImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
-	{
-		FDynamicModumateObjectInstanceImpl::GetStructuralPointsAndLines(outPoints, outLines, bForSnapping, bForSelection);
-
-		int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
-		if ((ToeKickDimensions.X > 0.0f) && (frontFaceIndex != INDEX_NONE))
+		if (frontHandle.IsValid())
 		{
-			int32 numCP = MOI->GetControlPoints().Num();
-			int32 frontFaceOtherIndex = (frontFaceIndex + 1) % numCP;
-
-			FVector frontFaceInNormal;
-			GetTriInternalNormalFromEdge(frontFaceIndex, frontFaceOtherIndex, frontFaceInNormal);
-
-			FVector toeKickP1 = MOI->GetControlPoint(frontFaceIndex) + (ToeKickDimensions.X * frontFaceInNormal);
-			FVector toeKickP2 = MOI->GetControlPoint(frontFaceOtherIndex) + (ToeKickDimensions.X * frontFaceInNormal);
-			FVector dir = (toeKickP2 - toeKickP1).GetSafeNormal();
-
-			outPoints.Add(FStructurePoint(toeKickP1, dir, frontFaceIndex));
-			outPoints.Add(FStructurePoint(toeKickP2, dir, frontFaceOtherIndex));
-
-			outLines.Add(FStructureLine(toeKickP1, toeKickP2, frontFaceIndex, frontFaceOtherIndex));
-		}
-	}
-
-	void FMOICabinetImpl::UpdateToeKickDimensions()
-	{
-		ToeKickDimensions.Set(0.0f, 0.0f);
-
-		if (ensureAlways(MOI))
-		{
-			UModumateFunctionLibrary::GetCabinetToeKickDimensions(MOI->GetAssembly(), ToeKickDimensions);
-		}
-	}
-
-	void FMOICabinetImpl::UpdateCabinetPortal()
-	{
-		int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
-		if ((frontFaceIndex < 0) && FrontFacePortalActor.IsValid())
-		{
-			FrontFacePortalActor->Destroy();
-		}
-		else if ((frontFaceIndex >= 0) && !FrontFacePortalActor.IsValid())
-		{
-			FrontFacePortalActor = DynamicMeshActor->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass());
-			FrontFacePortalActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-		}
-
-		if (!FrontFacePortalActor.IsValid())
-		{
-			return;
-		}
-
-		// Get enough geometric information to set up the portal assembly
-		FVector extrusionDir = FVector::UpVector;
-		FPlane plane;
-		if (!UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), plane))
-		{
-			return;
-		}
-		if (!FVector::Parallel(plane, extrusionDir))
-		{
-			return;
-		}
-		bool bCoincident = FVector::Coincident(FVector(plane), extrusionDir);
-
-		const FVector &p1 = MOI->GetControlPoint(frontFaceIndex);
-		const FVector &p2 = MOI->GetControlPoint((frontFaceIndex + 1) % MOI->GetControlPoints().Num());
-		FVector edgeDelta = p2 - p1;
-		float edgeLength = edgeDelta.Size();
-		if (!ensureAlways(!FMath::IsNearlyZero(edgeLength)))
-		{
-			return;
-		}
-
-		FVector edgeDir = edgeDelta / edgeLength;
-
-		FVector faceNormal = (edgeDir ^ extrusionDir) * (bCoincident ? 1.0f : -1.0f);
-
-		float cabinetHeight = MOI->GetExtents().Y;
-		FVector toeKickOffset = ToeKickDimensions.Y * extrusionDir;
-
-		FrontFacePortalActor->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
-
-		// Now position the portal where it's supposed to go
-		FVector portalOrigin = toeKickOffset + (bCoincident ? p2 : p1);
-		FQuat portalRot = FRotationMatrix::MakeFromYZ(faceNormal, extrusionDir).ToQuat();
-
-		FrontFacePortalActor->SetActorLocationAndRotation(portalOrigin, portalRot);
-	}
-
-	void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
-	{
-		int32 numCP = MOI->GetControlPoints().Num();
-		for (int32 i = 0; i < numCP; ++i)
-		{
-			auto pointHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
-			pointHandle->SetTargetIndex(i);
-
-			auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
-			edgeHandle->SetTargetIndex(i);
-			edgeHandle->SetAdjustPolyEdge(true);
-
-			auto selectFrontHandle = MOI->MakeHandle<ASelectCabinetFrontHandle>();
-			selectFrontHandle->SetTargetIndex(i);
-
-			FrontSelectionHandles.Add(selectFrontHandle);
-		}
-
-		auto topExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
-		topExtrusionHandle->SetSign(1.0f);
-
-		auto bottomExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
-		bottomExtrusionHandle->SetSign(-1.0f);
-	}
-
-	void FMOICabinetImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
-	{
-		FDynamicModumateObjectInstanceImpl::ShowAdjustmentHandles(Controller, bShow);
-
-		AdjustmentHandlesVisible = bShow;
-
-		// make sure that front selection handles are only visible if they are valid choices
-		for (auto frontHandle : FrontSelectionHandles)
-		{
-			if (frontHandle.IsValid())
-			{
-				bool bHandleEnabled = bShow && ((MOI->GetControlPointIndices().Num() == 0) || (MOI->GetControlPointIndex(0) == frontHandle->TargetIndex));
-				frontHandle->SetEnabled(bHandleEnabled);
-			}
+			bool bHandleEnabled = bShow && ((MOI->GetControlPointIndices().Num() == 0) || (MOI->GetControlPointIndex(0) == frontHandle->TargetIndex));
+			frontHandle->SetEnabled(bHandleEnabled);
 		}
 	}
 }

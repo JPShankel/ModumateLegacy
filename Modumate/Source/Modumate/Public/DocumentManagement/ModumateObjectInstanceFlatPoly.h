@@ -3,21 +3,18 @@
 
 #include "DocumentManagement/ModumateDynamicObjectBase.h"
 
-namespace Modumate
+class MODUMATE_API FMOIFlatPolyImpl : public FDynamicModumateObjectInstanceImpl
 {
-	class MODUMATE_API FMOIFlatPolyImpl : public FDynamicModumateObjectInstanceImpl
-	{
-	public:
-		FMOIFlatPolyImpl(FModumateObjectInstance *moi, bool wantsInvertHandle = true);
-		virtual ~FMOIFlatPolyImpl();
+public:
+	FMOIFlatPolyImpl(FModumateObjectInstance *moi, bool wantsInvertHandle = true);
+	virtual ~FMOIFlatPolyImpl();
 
-		bool WantsInvertHandle;
+	bool WantsInvertHandle;
 
-		virtual FVector GetCorner(int32 index) const override;
-		float CalcThickness(const FBIMAssemblySpec &Assembly) const;
-		virtual void SetupDynamicGeometry() override;
-		virtual void UpdateDynamicGeometry() override;
-		void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller);
-		virtual TArray<FModelDimensionString> GetDimensionStrings() const override;
-	};
-}
+	virtual FVector GetCorner(int32 index) const override;
+	float CalcThickness(const FBIMAssemblySpec &Assembly) const;
+	virtual void SetupDynamicGeometry() override;
+	virtual void UpdateDynamicGeometry() override;
+	void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller);
+	virtual TArray<FModelDimensionString> GetDimensionStrings() const override;
+};

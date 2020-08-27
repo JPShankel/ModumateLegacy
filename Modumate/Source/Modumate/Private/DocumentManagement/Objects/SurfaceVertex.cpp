@@ -10,38 +10,36 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/ModumateVertexActor_CPP.h"
 
-namespace Modumate
+FMOISurfaceVertexImpl::FMOISurfaceVertexImpl(FModumateObjectInstance *moi)
+	: FMOIVertexImplBase(moi)
 {
-	FMOISurfaceVertexImpl::FMOISurfaceVertexImpl(FModumateObjectInstance *moi)
-		: FMOIVertexImplBase(moi)
+}
+
+void FMOISurfaceVertexImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+{
+	UWorld* world = MOI ? MOI->GetWorld() : nullptr;
+	auto controller = world ? world->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+	if (controller && VertexActor.IsValid())
 	{
+		bool bEnabledByViewMode = controller->EMPlayerState->IsObjectTypeEnabledByViewMode(EObjectType::OTSurfaceVertex);
+		bOutVisible = bOutCollisionEnabled = bEnabledByViewMode;
+
+		VertexActor->SetActorHiddenInGame(!bOutVisible);
+		VertexActor->SetActorTickEnabled(bOutVisible);
+		VertexActor->SetActorEnableCollision(bOutCollisionEnabled);
+	}
+}
+
+bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+{
+	auto surfaceGraphObj = MOI ? MOI->GetParentObject() : nullptr;
+	if (!ensure(surfaceGraphObj && VertexActor.IsValid()))
+	{
+		return false;
 	}
 
-	void FMOISurfaceVertexImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+	switch (DirtyFlag)
 	{
-		UWorld* world = MOI ? MOI->GetWorld() : nullptr;
-		auto controller = world ? world->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
-		if (controller && VertexActor.IsValid())
-		{
-			bool bEnabledByViewMode = controller->EMPlayerState->IsObjectTypeEnabledByViewMode(EObjectType::OTSurfaceVertex);
-			bOutVisible = bOutCollisionEnabled = bEnabledByViewMode;
-
-			VertexActor->SetActorHiddenInGame(!bOutVisible);
-			VertexActor->SetActorTickEnabled(bOutVisible);
-			VertexActor->SetActorEnableCollision(bOutCollisionEnabled);
-		}
-	}
-
-	bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
-	{
-		auto surfaceGraphObj = MOI ? MOI->GetParentObject() : nullptr;
-		if (!ensure(surfaceGraphObj && VertexActor.IsValid()))
-		{
-			return false;
-		}
-
-		switch (DirtyFlag)
-		{
 		case EObjectDirtyFlags::Structure:
 		{
 			auto surfaceGraph = MOI->GetDocument()->FindSurfaceGraph(surfaceGraphObj->ID);
@@ -59,20 +57,19 @@ namespace Modumate
 			break;
 		default:
 			break;
-		}
+	}
 
-		if (MOI)
+	if (MOI)
+	{
+		MOI->GetConnectedMOIs(CachedConnectedMOIs);
+		for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
 		{
-			MOI->GetConnectedMOIs(CachedConnectedMOIs);
-			for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
+			if (connectedMOI->GetObjectType() == EObjectType::OTSurfaceEdge)
 			{
-				if (connectedMOI->GetObjectType() == EObjectType::OTSurfaceEdge)
-				{
-					connectedMOI->MarkDirty(DirtyFlag);
-				}
+				connectedMOI->MarkDirty(DirtyFlag);
 			}
 		}
-
-		return true;
 	}
+
+	return true;
 }

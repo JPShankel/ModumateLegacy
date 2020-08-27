@@ -5,14 +5,11 @@
 
 class AModumateVertexActor_CPP;
 
-namespace Modumate
+class MODUMATE_API FMOISurfaceVertexImpl : public FMOIVertexImplBase
 {
-	class MODUMATE_API FMOISurfaceVertexImpl : public FMOIVertexImplBase
-	{
-	public:
-		FMOISurfaceVertexImpl(FModumateObjectInstance *moi);
+public:
+	FMOISurfaceVertexImpl(FModumateObjectInstance *moi);
 
-		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
-		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
-	};
-}
+	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
+};

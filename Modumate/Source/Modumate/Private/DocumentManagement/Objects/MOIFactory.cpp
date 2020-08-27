@@ -25,12 +25,10 @@
 #include "DocumentManagement/Objects/SurfacePolygon.h"
 #include "DocumentManagement/Objects/SurfaceVertex.h"
 
-namespace Modumate
+IModumateObjectInstanceImpl *FMOIFactory::MakeMOIImplementation(EObjectType ObjectType, FModumateObjectInstance *MOI)
 {
-	IModumateObjectInstanceImpl *FMOIFactory::MakeMOIImplementation(EObjectType ObjectType, FModumateObjectInstance *MOI)
+	switch (ObjectType)
 	{
-		switch (ObjectType)
-		{
 		case EObjectType::OTWallSegment: return new FMOIPlaneHostedObjImpl(MOI);
 		case EObjectType::OTRailSegment: return new FMOIRailImpl(MOI);
 		case EObjectType::OTFloorSegment: return new FMOIPlaneHostedObjImpl(MOI);
@@ -63,7 +61,6 @@ namespace Modumate
 			ensureAlwaysMsgf(false, TEXT("Tried to create a MOI from an unsupported ObjectType: %s!"),
 				*objectTypeString);
 			return nullptr;
-		}
 		}
 	}
 }

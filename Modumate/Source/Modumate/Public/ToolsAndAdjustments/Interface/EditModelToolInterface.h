@@ -8,11 +8,8 @@
 
 #include "EditModelToolInterface.generated.h"
 
-class MODUMATE_API AEditModelPlayerController_CPP;
-
-namespace Modumate {
-	class FModumateObjectInstance;
-}
+class AEditModelPlayerController_CPP;
+class FModumateObjectInstance;
 
 UINTERFACE(meta = (CannotImplementInterfaceInBlueprint))
 class UEditModelToolInterface : public UInterface

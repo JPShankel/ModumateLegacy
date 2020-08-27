@@ -4,9 +4,10 @@
 #include "BIMKernel/BIMAssemblySpec.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 
+class FModumateObjectInstance;
+
 namespace Modumate
 {
-	class FModumateObjectInstance;
 	class FGraph3DFace;
 
 	namespace Mitering

@@ -5,27 +5,23 @@
 #include "CoreMinimal.h"
 
 class AEditModelPlayerController_CPP;
+class FModumateObjectInstance;
 
-namespace Modumate
+class MODUMATE_API FMOIStaircaseImpl : public FDynamicModumateObjectInstanceImpl
 {
+public:
+	FMOIStaircaseImpl(FModumateObjectInstance *moi);
+	virtual ~FMOIStaircaseImpl();
+	virtual void SetupDynamicGeometry() override;
+	virtual void UpdateDynamicGeometry() override;
+	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override { }
+	virtual TArray<FModelDimensionString> GetDimensionStrings() const override;
 
-	class FModumateObjectInstance;
+protected:
+	bool bCachedUseRisers, bCachedStartRiser, bCachedEndRiser;
+	TArray<TArray<FVector>> CachedTreadPolys;
+	TArray<TArray<FVector>> CachedRiserPolys;
+	TArray<FVector> CachedRiserNormals;
+};
 
-	class MODUMATE_API FMOIStaircaseImpl : public FDynamicModumateObjectInstanceImpl
-	{
-	public:
-		FMOIStaircaseImpl(FModumateObjectInstance *moi);
-		virtual ~FMOIStaircaseImpl();
-		virtual void SetupDynamicGeometry() override;
-		virtual void UpdateDynamicGeometry() override;
-		virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
-		virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override { }
-		virtual TArray<FModelDimensionString> GetDimensionStrings() const override;
-
-	protected:
-		bool bCachedUseRisers, bCachedStartRiser, bCachedEndRiser;
-		TArray<TArray<FVector>> CachedTreadPolys;
-		TArray<TArray<FVector>> CachedRiserPolys;
-		TArray<FVector> CachedRiserNormals;
-	};
-}

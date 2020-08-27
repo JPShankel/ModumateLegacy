@@ -4,22 +4,20 @@
 #include "DocumentManagement/Objects/EdgeBase.h"
 #include "DocumentManagement/ModumateMiterNodeInterface.h"
 
-namespace Modumate
+class MODUMATE_API FMOIMetaEdgeImpl : public FMOIEdgeImplBase, IMiterNode
 {
-	class MODUMATE_API FMOIMetaEdgeImpl : public FMOIEdgeImplBase, IMiterNode
-	{
-	public:
-		FMOIMetaEdgeImpl(FModumateObjectInstance *moi);
+public:
+	FMOIMetaEdgeImpl(FModumateObjectInstance *moi);
 
-		virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas) override;
-		virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
-		virtual const IMiterNode* GetMiterInterface() const override { return this; }
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
+	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual const IMiterNode* GetMiterInterface() const override { return this; }
 
-		// Begin IMiterNode interface
-		virtual const FMiterData &GetMiterData() const;
-		// End IMiterNode interface
+	// Begin IMiterNode interface
+	virtual const FMiterData &GetMiterData() const;
+	// End IMiterNode interface
 
-	protected:
-		FMiterData CachedMiterData;
-	};
-}
+protected:
+	FMiterData CachedMiterData;
+};
+

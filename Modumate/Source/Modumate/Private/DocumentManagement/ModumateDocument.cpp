@@ -2497,16 +2497,16 @@ TArray<FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(EObjectType
 	});
 }
 
-TArray<const Modumate::FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(const FObjectTypeSet& types) const
+TArray<const FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(const FObjectTypeSet& types) const
 {
-	TArray<const Modumate::FModumateObjectInstance*> outArray;
+	TArray<const FModumateObjectInstance*> outArray;
 	Algo::TransformIf(ObjectInstanceArray, outArray, [&types](FModumateObjectInstance * moi)
 		{ return types.Contains(moi->GetObjectType()); },
 		[](FModumateObjectInstance * moi) {return moi; });
 	return outArray;
 }
 
-TArray<Modumate::FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(const FObjectTypeSet& types)
+TArray<FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(const FObjectTypeSet& types)
 {
 	return ObjectInstanceArray.FilterByPredicate([&types](FModumateObjectInstance *moi)
 		{ return types.Contains(moi->GetObjectType()); });

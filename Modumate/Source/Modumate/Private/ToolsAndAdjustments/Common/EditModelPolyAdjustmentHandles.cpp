@@ -409,7 +409,7 @@ bool AAdjustInvertHandle::BeginUse()
 
 	TargetMOI->BeginPreviewOperation();
 	TargetMOI->SetObjectInverted(!TargetMOI->GetObjectInverted());
-	auto delta = MakeShareable(new Modumate::FMOIDelta({ TargetMOI }));
+	auto delta = MakeShareable(new FMOIDelta({ TargetMOI }));
 	TargetMOI->EndPreviewOperation();
 
 	GameState->Document.ApplyDeltas({ delta }, GetWorld());
@@ -482,7 +482,7 @@ bool AJustificationHandle::BeginUse()
 		// to avoid unnecessary state changes like handle visibility.
 		TargetMOI->BeginPreviewOperation();
 		TargetMOI->SetExtents(FVector(JustificationValue, 0.0f, 0.0f));
-		auto delta = MakeShareable(new Modumate::FMOIDelta({ TargetMOI }));
+		auto delta = MakeShareable(new FMOIDelta({ TargetMOI }));
 		TargetMOI->EndPreviewOperation();
 
 		GameState->Document.ApplyDeltas({ delta }, GetWorld());
@@ -502,7 +502,7 @@ void AJustificationHandle::Tick(float DeltaTime)
 		FVector attachLocation = GetHandlePosition();
 
 		// Draw line from attachLocation to center of ParentMOI
-		Modumate::FModumateObjectInstance* parentMetaplane = TargetMOI->GetParentObject();
+		FModumateObjectInstance* parentMetaplane = TargetMOI->GetParentObject();
 		if (parentMetaplane != nullptr && parentMetaplane->GetObjectType() == EObjectType::OTMetaPlane)
 		{
 			FVector metaPlaneMidpoint = parentMetaplane->GetObjectLocation();

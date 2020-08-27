@@ -17,8 +17,6 @@ namespace Modumate
 		{ }
 	};
 
-	class FGraph3DFace;
-
 	class FGraph3DEdge : public IGraph3DObject
 	{
 	public:

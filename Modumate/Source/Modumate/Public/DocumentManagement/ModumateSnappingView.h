@@ -7,47 +7,44 @@
 #include "DocumentManagement/ModumateObjectInstance.h"
 
 class AEditModelPlayerController_CPP;
-class MODUMATE_API FModumateDocument;
+class FModumateDocument;
+class FModumateObjectInstance;
 
-namespace Modumate
+
+class MODUMATE_API FModumateSnappingView
 {
-	class FModumateObjectInstance;
+private:
+	FModumateDocument *Document;
+	AEditModelPlayerController_CPP *Controller;
 
-	class MODUMATE_API FModumateSnappingView
+	TArray<FStructurePoint> CurObjCorners;
+	TArray<FStructureLine> CurObjLineSegments;
+
+	TArray<FVector> CurrentToolPoints;
+	TArray<TPair<FVector, FVector>> CurrentToolLines;
+
+public:
+	FModumateSnappingView(FModumateDocument *document, AEditModelPlayerController_CPP *controller);
+	~FModumateSnappingView();
+
+	TArray<FStructurePoint> Corners;
+	TArray<FStructureLine> LineSegments;
+
+	struct FSnapIndices
 	{
-	private:
-		FModumateDocument *Document;
-		AEditModelPlayerController_CPP *Controller;
-
-		TArray<FStructurePoint> CurObjCorners;
-		TArray<FStructureLine> CurObjLineSegments;
-
-		TArray<FVector> CurrentToolPoints;
-		TArray<TPair<FVector, FVector>> CurrentToolLines;
-
-	public:
-		FModumateSnappingView(FModumateDocument *document, AEditModelPlayerController_CPP *controller);
-		~FModumateSnappingView();
-
-		TArray<FStructurePoint> Corners;
-		TArray<FStructureLine> LineSegments;
-
-		struct FSnapIndices
-		{
-			int32 CornerStartIndex;
-			int32 NumCorners;
-			int32 LineStartIndex;
-			int32 NumLines;
-		};
-
-		TMap<int32, FSnapIndices> SnapIndicesByObjectID;
-
-		void UpdateSnapPoints(const TSet<int32> &idsToIgnore, int32 collisionChannelMask = ~0, bool bForSnapping = false, bool bForSelection = false);
-
-		// Get the points and lines for a bounding box.
-		// Optionally constrain them to a single side of the box based on a unit axis.
-		static void GetBoundingBoxPointsAndLines(const FVector &center, const FQuat &rot, const FVector &halfExtents,
-			TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines,
-			const FVector &OverrideAxis = FVector::ZeroVector);
+		int32 CornerStartIndex;
+		int32 NumCorners;
+		int32 LineStartIndex;
+		int32 NumLines;
 	};
-}
+
+	TMap<int32, FSnapIndices> SnapIndicesByObjectID;
+
+	void UpdateSnapPoints(const TSet<int32> &idsToIgnore, int32 collisionChannelMask = ~0, bool bForSnapping = false, bool bForSelection = false);
+
+	// Get the points and lines for a bounding box.
+	// Optionally constrain them to a single side of the box based on a unit axis.
+	static void GetBoundingBoxPointsAndLines(const FVector &center, const FQuat &rot, const FVector &halfExtents,
+		TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines,
+		const FVector &OverrideAxis = FVector::ZeroVector);
+};

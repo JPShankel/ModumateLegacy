@@ -4,23 +4,20 @@
 #include "CoreMinimal.h"
 #include "DocumentManagement/ModumateObjectInstance.h"
 
-namespace Modumate
+class MODUMATE_API FModumateControlPointObjectBase : public FModumateObjectInstanceImplBase
 {
-	class MODUMATE_API FModumateControlPointObjectBase : public FModumateObjectInstanceImplBase
-	{
-	protected:
-		TArray<FVector> NormalControlPoints;
-		FVector AnchorLocation, NormalLocation;
-		FQuat NormalRotation;
+protected:
+	TArray<FVector> NormalControlPoints;
+	FVector AnchorLocation, NormalLocation;
+	FQuat NormalRotation;
 
-		bool GotGeometry = false;
+	bool GotGeometry = false;
 
-		void UpdateControlPoints();
-		void UpdateNormalization();
+	void UpdateControlPoints();
+	void UpdateNormalization();
 
-		virtual void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation) override;
-		virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) override;
+	virtual void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation) override;
+	virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) override;
 
-		FModumateControlPointObjectBase(FModumateObjectInstance *moi);
-	};
-}
+	FModumateControlPointObjectBase(FModumateObjectInstance *moi);
+};

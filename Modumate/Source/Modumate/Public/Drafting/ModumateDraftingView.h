@@ -10,11 +10,11 @@
 #include "Drafting/ModumateDraftingTags.h"
 #include "Runtime/Engine/Classes/Debug/ReporterGraph.h"
 
-class MODUMATE_API FModumateDocument;
+class FModumateDocument;
+class FModumateObjectInstance;
 
 namespace Modumate
 {
-	class FModumateObjectInstance;
 	class FDraftingSchedule;
 
 	using namespace Units;

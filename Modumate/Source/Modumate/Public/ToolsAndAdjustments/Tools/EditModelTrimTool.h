@@ -18,8 +18,8 @@ class MODUMATE_API UTrimTool : public UEditModelToolBase
 
 private:
 	bool bInverted;
-	class Modumate::FModumateObjectInstance *CurrentTarget;
-	TArray<class Modumate::FModumateObjectInstance *> CurrentTargetChildren;
+	class FModumateObjectInstance *CurrentTarget;
+	TArray<class FModumateObjectInstance *> CurrentTargetChildren;
 	TWeakObjectPtr<AActor> CurrentHitActor;
 	int32 CurrentStartIndex, CurrentEndIndex, CurrentMountIndex;
 	float CurrentStartAlongEdge, CurrentEndAlongEdge;

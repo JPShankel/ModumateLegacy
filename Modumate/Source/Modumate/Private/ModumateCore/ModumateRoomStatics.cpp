@@ -135,7 +135,7 @@ bool UModumateRoomStatics::GetRoomConfig(UObject* WorldContextObject, int32 Room
 	return GetRoomConfig(roomObj, OutRoomConfig);
 }
 
-bool UModumateRoomStatics::SetRoomConfigFromKey(Modumate::FModumateObjectInstance *RoomObj, FName ConfigKey)
+bool UModumateRoomStatics::SetRoomConfigFromKey(FModumateObjectInstance *RoomObj, FName ConfigKey)
 {
 	UWorld *world = RoomObj ? RoomObj->GetWorld() : nullptr;
 	AEditModelGameMode_CPP *gameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
@@ -172,7 +172,7 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(UObject* WorldContextObject, int
 	return SetRoomConfigFromKey(roomObj, ConfigKey);
 }
 
-void UModumateRoomStatics::UpdateDerivedRoomProperties(Modumate::FModumateObjectInstance *RoomObj)
+void UModumateRoomStatics::UpdateDerivedRoomProperties(FModumateObjectInstance *RoomObj)
 {
 	// Retreive the room area
 	ADynamicMeshActor *roomMesh = RoomObj ? Cast<ADynamicMeshActor>(RoomObj->GetActor()) : nullptr;
