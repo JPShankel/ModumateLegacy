@@ -577,11 +577,11 @@ bool UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
 				FVector2D edgeDir = edgeDelta / edgeLen;
 
 				FVector2D edgeIntersection, rayDists;
-				bool bRaysColinear;
 				bool bIntersection = UModumateGeometryStatics::RayIntersection2D(faceRelativePos, faceBottomRayDir, point1, edgeDir,
-					edgeIntersection, rayDists.X, rayDists.Y, bRaysColinear);
+					edgeIntersection, rayDists.X, rayDists.Y);
+				bool bRaysParallel = FMath::Abs(faceBottomRayDir | edgeDir) >= THRESH_NORMALS_ARE_PARALLEL;
 
-				if (bIntersection && !bRaysColinear && (rayDists.Y < edgeLen) &&
+				if (bIntersection && !bRaysParallel && (rayDists.Y < edgeLen) &&
 					((rayDists.X < minRayDist) || !bHaveRayHit))
 				{
 					minRayDist = rayDists.X;

@@ -222,12 +222,16 @@ namespace Modumate
 			edgeDirection.Normalize();
 
 			FVector2D intersection;
-			if (UModumateGeometryStatics::SegmentIntersection2D(
+			bool bSegmentsOverlap;
+			bool bSegmentsIntersect = UModumateGeometryStatics::SegmentIntersection2D(
 				pendingStartPosition,
 				pendingEndPosition,
 				startVertex->Position,
 				endVertex->Position,
-				intersection))
+				intersection,
+				bSegmentsOverlap);
+			
+			if (bSegmentsIntersect && !bSegmentsOverlap)
 			{
 				auto existingVertex = FindVertex(intersection);
 				if (existingVertex == nullptr)
@@ -250,7 +254,7 @@ namespace Modumate
 					AggregateAddedVertices({ addVertexDelta }, addedVertices);
 					edgesToSplitByVertex.Add(TPair<int32, int32>(edge.ID, addedVertices.Array()[0]));
 				}
-				else 
+				else
 				{
 					addedIDs.Add(existingVertex->ID);
 					if (existingVertex->ID != edge.StartVertexID && existingVertex->ID != edge.EndVertexID)

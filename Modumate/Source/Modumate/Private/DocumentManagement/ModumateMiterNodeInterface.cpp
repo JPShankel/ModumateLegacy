@@ -172,13 +172,12 @@ namespace Modumate
 		const FVector2D &otherExtensions = OtherParticipant.LayerGroupExtensions[otherLayerGroupIdx];
 		float otherExtension = bUseOtherStart ? otherExtensions.X : otherExtensions.Y;
 
-		bool bColinear = false;
 		float otherRayDist = 0.0f;
 		FVector2D intersection;
 
 		OutHitResult.bRayHit = UModumateGeometryStatics::RayIntersection2D(
 			thisOrigin, MiterDir2D, otherOrigin, OtherParticipant.MiterDir2D,
-			intersection, OutHitResult.Dist, otherRayDist, bColinear, false);
+			intersection, OutHitResult.Dist, otherRayDist, false);
 
 		OutHitResult.bPhysicalHit = OutHitResult.bRayHit &&
 			OtherParticipant.HaveExtendedLayerGroup[otherLayerGroupIdx] &&

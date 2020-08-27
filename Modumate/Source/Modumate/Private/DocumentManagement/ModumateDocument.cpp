@@ -3388,14 +3388,14 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 		int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceGraphObj);
 		if (!ensure(surfaceGraphObj && surfaceGraphParent && (surfaceGraphFaceIndex != INDEX_NONE)))
 		{
-			return;
+			continue;
 		}
 
 		TArray<FVector> facePoints;
 		FVector faceNormal, faceAxisX, faceAxisY;
 		if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceGraphParent, surfaceGraphFaceIndex, facePoints, faceNormal, faceAxisX, faceAxisY)))
 		{
-			return;
+			continue;
 		}
 		FVector faceOrigin = facePoints[0];
 

@@ -41,13 +41,8 @@ namespace Modumate
 		const FGraph3DFace* FindFaceByVertexIDs(const TArray<int32> &VertexIDs) const;
 		void FindFacesContainingPosition(const FVector &Position, TSet<int32> &ContainingFaces, bool bAllowOverlaps) const;
 
-		// Test if one face contains another; either fully (no touching vertices/edges) or partially (overlapping edges and/or touching vertices).
-		// NOTE: this requires that the faces have edges that are already full split, and do not intersect with one another except at vertices, and no vertices lie inside other edges.
-		// [param] bOutFullyContained: All vertices and edges of ContainedFaceID are inside of ContainingFaceID, and do not touch.
-		// [param] bOutPartiallyContained: All vertices and edges of ContainedFaceID are either inside of ContainingFaceID, or overlap with vertices and edges of ContainingFaceID, AND
-		//                                 at least one vertex and/or edge of ContainingFaceID is outside of ContainedFaceID, so they can not be identical.
-		// If neither are true, then the faces may or may not overlap geometrically; we could add out parameters to detect this if needed.
-		bool GetFaceContainment(int32 ContainingFaceID, int32 ContainedFaceID, bool& bOutFullyContained, bool& bOutPartiallyContained/*, bool& bOutOverlapping, bool& bOutTouching*/) const;
+		// Test if one face contains another, using the rules of UModumateGeometryStatics::GetPolygonContainment after projecting the faces in 2D.
+		bool GetFaceContainment(int32 ContainingFaceID, int32 ContainedFaceID, bool& bOutFullyContained, bool& bOutPartiallyContained) const;
 
 		FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID);
 		const FGraph3DPolyhedron* FindPolyhedron(int32 PolyhedronID) const;

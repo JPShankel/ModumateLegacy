@@ -17,8 +17,8 @@ namespace Modumate
 
 	bool FGraph2DPolygon::IsInside(const FGraph2DPolygon &otherPoly) const
 	{
-		// Polygons cannot be contained inside exterior polygons
-		if (!otherPoly.bInterior)
+		// Exterior polygons do not participate in containment
+		if (!bInterior || !otherPoly.bInterior)
 		{
 			return false;
 		}
@@ -36,20 +36,15 @@ namespace Modumate
 		}
 
 		// Early out by checking the AABBs
-		if (!otherPoly.AABB.IsInside(AABB))
+		if (!otherPoly.AABB.ExpandBy(Graph->Epsilon).IsInside(AABB))
 		{
 			return false;
 		}
 
-		for (const FVector2D &point : CachedPoints)
-		{
-			if (UModumateFunctionLibrary::PointInPoly2D(point, otherPoly.CachedPoints))
-			{
-				return true;
-			}
-		}
-
-		return false;
+		// Now, check the actual polygon perimeters for geometric containment, allowing partial containment with a shared vertex
+		bool bFullyContained, bPartiallyContained;
+		bool bValidContainment = UModumateGeometryStatics::GetPolygonContainment(otherPoly.CachedPerimeterPoints, CachedPerimeterPoints, bFullyContained, bPartiallyContained);
+		return bValidContainment && (bFullyContained || bPartiallyContained);
 	}
 
 	void FGraph2DPolygon::SetParent(int32 inParentID)

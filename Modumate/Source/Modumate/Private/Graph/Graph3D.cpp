@@ -276,7 +276,7 @@ namespace Modumate
 		}
 	}
 
-	bool FGraph3D::GetFaceContainment(int32 ContainingFaceID, int32 ContainedFaceID, bool& bOutFullyContained, bool& bOutPartiallyContained/*, bool& bOutOverlapping, bool& bOutTouching*/) const
+	bool FGraph3D::GetFaceContainment(int32 ContainingFaceID, int32 ContainedFaceID, bool& bOutFullyContained, bool& bOutPartiallyContained) const
 	{
 		FPointInPolyResult pointInPolyResult;
 		bOutFullyContained = false;
@@ -302,61 +302,7 @@ namespace Modumate
 			TempProjectedPoints.Add(containingFace->ProjectPosition2D(containedVertex));
 		}
 
-		// Now, see if every potentially contained vertex is indeed contained by the other face.
-		// - If any vertices are neither contained nor overlapping, then it's not fully contained.
-		//   If we needed to detect overlaps/touching, we would need to continue, but in this case we can early exit.
-		// - If any vertices are not contained, but are overlapping, then partial containment is still possible.
-		bOutFullyContained = true;
-		bOutPartiallyContained = true;
-		bool bAnyVerticesFullyContained = false;
-		for (const FVector2D& containedVertex : TempProjectedPoints)
-		{
-			if (!ensure(UModumateGeometryStatics::TestPointInPolygon(containedVertex, containingFace->Cached2DPositions, containingFace->Cached2DPerimeter, pointInPolyResult, Epsilon)))
-			{
-				return false;
-			}
-			bAnyVerticesFullyContained = bAnyVerticesFullyContained || (pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
-
-			if (!pointInPolyResult.bInside)
-			{
-				bOutFullyContained = false;
-
-				if (!pointInPolyResult.bOverlaps)
-				{
-					bOutPartiallyContained = false;
-					return true;
-				}
-			}
-		}
-
-		// If the vertices are all overlapping, but none are fully contained,
-		// then partial containment is only possible if one of the contained edges is fully contained by the containing polygon.
-		// Because edges don't intersect with each other, we can use the contained edge midpoints to test this.
-		if (bOutPartiallyContained && !bAnyVerticesFullyContained)
-		{
-			bOutPartiallyContained = false;
-
-			for (int32 edgeIdxA = 0; edgeIdxA < numContainedPoints; ++edgeIdxA)
-			{
-				int32 edgeIdxB = (edgeIdxA + 1) % numContainedPoints;
-				const FVector2D& edgePointA = TempProjectedPoints[edgeIdxA];
-				const FVector2D& edgePointB = TempProjectedPoints[edgeIdxB];
-				FVector2D edgeMidpoint = 0.5f * (edgePointA + edgePointB);
-
-				if (!ensure(UModumateGeometryStatics::TestPointInPolygon(edgeMidpoint, containingFace->Cached2DPositions, containingFace->Cached2DPerimeter, pointInPolyResult, Epsilon)))
-				{
-					return false;
-				}
-
-				if (pointInPolyResult.bInside && !pointInPolyResult.bOverlaps)
-				{
-					bOutPartiallyContained = true;
-					return true;
-				}
-			}
-		}
-
-		return true;
+		return UModumateGeometryStatics::GetPolygonContainment(containingFace->Cached2DPositions, TempProjectedPoints, bOutFullyContained, bOutPartiallyContained);
 	}
 
 	FGraph3DPolyhedron* FGraph3D::FindPolyhedron(int32 PolyhedronID) 
@@ -1142,18 +1088,13 @@ namespace Modumate
 
 			for (int32 polyID : { originalEdge2D->LeftPolyID, originalEdge2D->RightPolyID })
 			{
-				FGraph2DPolygon *face = graph2D.FindPolygon(polyID);
-				if (face == nullptr)
+				FGraph2DPolygon* polygon = graph2D.FindPolygon(polyID);
+				if ((polygon == nullptr) || !polygon->bInterior)
 				{
 					continue;
 				}
 
-				if (!face->bInterior)
-				{
-					continue;
-				}
-
-				OutVertexIDs.Add(face->CachedPerimeterVertexIDs);
+				OutVertexIDs.Add(polygon->CachedPerimeterVertexIDs);
 			}
 		}
 		return true;

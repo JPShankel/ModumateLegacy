@@ -12,7 +12,6 @@ namespace Modumate
 		: IGraph3DObject(InID, InGraph, InGroupIDs)
 		, ContainingFaceID(InContainingFaceID)
 		, ContainedFaceIDs(InContainedFaceIDs)
-		, CachedGraph(InID, InGraph->Epsilon, InGraph->bDebugCheck)
 	{
 		if (!UpdatePlane(InVertexIDs))
 		{
@@ -54,7 +53,7 @@ namespace Modumate
 		}
 
 		FPointInPolyResult pointInPolyResult;
-		if (!ensure(UModumateGeometryStatics::TestPointInPolygon(ProjectPosition2D(Position), Cached2DPositions, Cached2DPerimeter, pointInPolyResult, Graph->Epsilon)))
+		if (!ensure(UModumateGeometryStatics::TestPointInPolygon(ProjectPosition2D(Position), Cached2DPositions, pointInPolyResult, Graph->Epsilon)))
 		{
 			return false;
 		}
@@ -169,12 +168,6 @@ namespace Modumate
 
 			FGraphSignedID signedFaceID = ID * (bEdgeForward ? 1 : -1);
 			edge->AddFace(signedFaceID, edgeNormal);
-		}
-
-		if (!UpdateInternalGraph())
-		{
-			bValid = false;
-			return bValid;
 		}
 
 		bValid = true;
@@ -309,89 +302,10 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3DFace::UpdateInternalGraph()
-	{
-		// updated our 2D graph
-		CachedGraph.Reset();
-		for (int32 vertexIdx = 0; vertexIdx < VertexIDs.Num(); vertexIdx++)
-		{
-			CachedGraph.AddVertex(Cached2DPositions[vertexIdx], VertexIDs[vertexIdx]);
-		}
-		for (int32 edgeID : EdgeIDs)
-		{
-			auto edge = Graph->FindEdge(edgeID);
-			if (!ensureAlways(edge != nullptr))
-			{
-				return false;
-			}
-			CachedGraph.AddEdge(edge->StartVertexID, edge->EndVertexID, edge->ID);
-		}
-
-		int32 numPolygons = CachedGraph.CalculatePolygons();
-
-		CachedPerimeter.Reset();
-		Cached2DPerimeter.Reset();
-		CachedIslands.Reset();
-		Cached2DIslands.Reset();
-
-		if (numPolygons == 0)
-		{
-			return false;
-		}
-
-		for (auto& kvp : CachedGraph.GetPolygons())
-		{
-			auto& poly = kvp.Value;
-			if (!poly.bInterior)
-			{
-				Cached2DPerimeter = poly.CachedPoints;
-			}
-			else
-			{
-				bool bEnclosedPoly = true;
-				for (auto& edgeID : poly.Edges)
-				{
-					auto edge = CachedGraph.FindEdge(edgeID);
-					auto leftPoly = CachedGraph.FindPolygon(edge->LeftPolyID);
-					auto rightPoly = CachedGraph.FindPolygon(edge->RightPolyID);
-					if (!ensure(leftPoly != nullptr && rightPoly != nullptr))
-					{
-						continue;
-					}
-					if (!leftPoly->bInterior || !rightPoly->bInterior)
-					{
-						bEnclosedPoly = false;
-						break;
-					}
-				}
-				if (bEnclosedPoly)
-				{
-					Cached2DIslands.Add(FPolyHole2D(poly.CachedPoints));
-
-					FPolyHole3D& island = CachedIslands.AddDefaulted_GetRef();
-					for (const FVector2D& islandPoint2D : poly.CachedPoints)
-					{
-						island.Points.Add(DeprojectPosition(islandPoint2D));
-					}
-				}
-			}
-		}
-
-		for (const FVector2D& perimeterPoint2D : Cached2DPerimeter)
-		{
-			CachedPerimeter.Add(DeprojectPosition(perimeterPoint2D));
-		}
-
-		return true;
-	}
-
 	bool FGraph3DFace::UpdateHoles()
 	{
 		CachedHoles.Reset();
 		Cached2DHoles.Reset();
-
-		CachedHoles.Append(CachedIslands);
-		Cached2DHoles.Append(Cached2DIslands);
 
 		bool bSuccess = true;
 		TArray<FVector> holePoints;
@@ -410,7 +324,7 @@ namespace Modumate
 			FPolyHole3D& containedFaceHole = CachedHoles.AddDefaulted_GetRef();
 			FPolyHole2D& containedFace2DHole = Cached2DHoles.AddDefaulted_GetRef();
 
-			for (FVector& position : containedFace->CachedPerimeter)
+			for (FVector& position : containedFace->CachedPositions)
 			{
 				containedFaceHole.Points.Add(position);
 				containedFace2DHole.Points.Add(ProjectPosition2D(position));

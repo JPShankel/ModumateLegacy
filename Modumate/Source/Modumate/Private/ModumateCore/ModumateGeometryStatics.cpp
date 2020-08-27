@@ -190,13 +190,18 @@ bool FLayerGeomDef::CachePoints2D()
 			hole2D.Points.Add(ProjectPoint2D(holePoint3D));
 		}
 
-		bool bHoleInA, bHoleOverlapsA;
-		UModumateGeometryStatics::PolyIntersection(hole2D.Points, CachedPointsA2D, bHoleInA, bHoleOverlapsA);
+		// TODO: if triangulation is tolerant of holes that overlap with their containing polygon, or each other, then potentially remove these checks?
+		// Otherwise, they only exist to detect inconsistencies between triangulations of the front and back of the layer, based on different hole handling.
 
-		bool bHoleInB, bHoleOverlapsB;
-		UModumateGeometryStatics::PolyIntersection(hole2D.Points, CachedPointsB2D, bHoleInB, bHoleOverlapsB);
+		bool bHoleOverlapsA, bHolePartiallyInA, bHoleFullyInA;
+		bool bSuccessA = UModumateGeometryStatics::GetPolygonIntersection(CachedPointsA2D, hole2D.Points, bHoleOverlapsA, bHolePartiallyInA, bHoleFullyInA);
 
-		if (!bHoleInA || bHoleOverlapsA || !bHoleInB || bHoleOverlapsB)
+		bool bHoleOverlapsB, bHolePartiallyInB, bHoleFullyInB;
+		bool bSuccessB = UModumateGeometryStatics::GetPolygonIntersection(CachedPointsB2D, hole2D.Points, bHoleOverlapsB, bHolePartiallyInB, bHoleFullyInB);
+
+		if (!bSuccessA || !bSuccessB ||
+			bHoleOverlapsA || !(bHolePartiallyInA || bHoleFullyInA) ||
+			bHoleOverlapsB || !(bHolePartiallyInB || bHoleFullyInB))
 		{
 			bHoleValid = false;
 			continue;
@@ -204,10 +209,10 @@ bool FLayerGeomDef::CachePoints2D()
 
 		for (const FPolyHole2D &otherHole2D : ValidHoles2D)
 		{
-			bool bHoleInOther, bHoleOverlapsOther;
-			UModumateGeometryStatics::PolyIntersection(hole2D.Points, otherHole2D.Points, bHoleInOther, bHoleOverlapsOther);
+			bool bHoleOverlapsOther, bHolePartiallyInOther, bHoleFullyInOther;
+			UModumateGeometryStatics::GetPolygonIntersection(otherHole2D.Points, hole2D.Points, bHoleOverlapsOther, bHolePartiallyInOther, bHoleFullyInOther);
 
-			if (bHoleInOther || bHoleOverlapsOther)
+			if (bHoleOverlapsOther || bHolePartiallyInOther || bHoleFullyInOther)
 			{
 				bHoleValid = false;
 				break;
@@ -723,7 +728,8 @@ bool UModumateGeometryStatics::TriangulateVerticesPoly2Tri(const TArray<FVector2
 					}
 
 					FVector2D holePolyIntersection;
-					if (UModumateGeometryStatics::SegmentIntersection2D(polyEdgeStartPoint, polyEdgeEndPoint, holeEdgeStartPoint, holeEdgeEndPoint, holePolyIntersection, RAY_INTERSECT_TOLERANCE))
+					bool bEdgeOverlap;
+					if (UModumateGeometryStatics::SegmentIntersection2D(polyEdgeStartPoint, polyEdgeEndPoint, holeEdgeStartPoint, holeEdgeEndPoint, holePolyIntersection, bEdgeOverlap, RAY_INTERSECT_TOLERANCE))
 					{
 						if (!ensure(holePolyIntersection.Equals(polyEdgeStartPoint) || holePolyIntersection.Equals(polyEdgeEndPoint)))
 						{
@@ -1025,31 +1031,109 @@ bool UModumateGeometryStatics::GetPlaneFromPoints(const TArray<FVector> &Points,
 	return true;
 }
 
-// Copy of FMath::SegmentIntersection2D, but with an optional tolerance.
-bool UModumateGeometryStatics::SegmentIntersection2D(const FVector2D& SegmentStartA, const FVector2D& SegmentEndA, const FVector2D& SegmentStartB, const FVector2D& SegmentEndB, FVector2D& outIntersectionPoint, float Tolerance)
+// It would be nice to use FMath::SegmentIntersection2D directly, but we need to handle zero-length segments, variable epsilon values, and parallel segments
+bool UModumateGeometryStatics::SegmentIntersection2D(const FVector2D& SegmentStartA, const FVector2D& SegmentEndA, const FVector2D& SegmentStartB, const FVector2D& SegmentEndB, FVector2D& OutIntersectionPoint, bool& bOutOverlapping, float Tolerance)
 {
-	const FVector2D VectorA = SegmentEndA - SegmentStartA;
-	const FVector2D VectorB = SegmentEndB - SegmentStartB;
+	bOutOverlapping = false;
+	float signedTolerance = Tolerance;
+	Tolerance = FMath::Abs(Tolerance);
 
-	const float S = (-VectorA.Y * (SegmentStartA.X - SegmentStartB.X) + VectorA.X * (SegmentStartA.Y - SegmentStartB.Y)) / (-VectorB.X * VectorA.Y + VectorA.X * VectorB.Y);
-	const float T = (VectorB.X * (SegmentStartA.Y - SegmentStartB.Y) - VectorB.Y * (SegmentStartA.X - SegmentStartB.X)) / (-VectorB.X * VectorA.Y + VectorA.X * VectorB.Y);
+	FVector2D segmentADelta = SegmentEndA - SegmentStartA;
+	float segmentALength = segmentADelta.Size();
+	FVector2D segmentADir = FMath::IsNearlyZero(segmentALength, Tolerance) ? FVector2D::ZeroVector : (segmentADelta / segmentALength);
+	FVector2D segmentBDelta = SegmentEndB - SegmentStartB;
+	float segmentBLength = segmentBDelta.Size();
+	FVector2D segmentBDir = FMath::IsNearlyZero(segmentBLength, Tolerance) ? FVector2D::ZeroVector : (segmentBDelta / segmentBLength);
 
-	const bool bIntersects = (S >= -Tolerance && S <= 1 + Tolerance && T >= -Tolerance && T <= 1 + Tolerance);
-
-	if (bIntersects)
+	// First, check degenerate zero-length segments by seeing if points are equal, or if one point lies on another segment
+	if (segmentADir.IsZero() && segmentBDir.IsZero())
 	{
-		outIntersectionPoint.X = SegmentStartA.X + (T * VectorA.X);
-		outIntersectionPoint.Y = SegmentStartA.Y + (T * VectorA.Y);
+		if (SegmentStartA.Equals(SegmentStartB, Tolerance))
+		{
+			OutIntersectionPoint = SegmentStartA;
+			return true;
+		}
+		return false;
+	}
+	else if (segmentADir.IsZero())
+	{
+		FVector2D pointAOnSegmentB = FMath::ClosestPointOnSegment2D(SegmentStartA, SegmentStartB, SegmentEndB);
+		if (pointAOnSegmentB.Equals(SegmentStartA, Tolerance))
+		{
+			OutIntersectionPoint = SegmentStartA;
+			return true;
+		}
+		return false;
+	}
+	else if (segmentBDir.IsZero())
+	{
+		FVector2D pointBOnSegmentA = FMath::ClosestPointOnSegment2D(SegmentStartB, SegmentStartA, SegmentEndA);
+		if (pointBOnSegmentA.Equals(SegmentStartB, Tolerance))
+		{
+			OutIntersectionPoint = SegmentStartB;
+			return true;
+		}
+		return false;
 	}
 
-	return bIntersects;
+	// If the segments are parallel, then they may be overlapping in ways in which ray intersection can't handle, so handle it here
+	float segmentDirsDot = segmentADir | segmentBDir;
+	FVector2D startsDelta = (SegmentStartB - SegmentStartA);
+
+	if (FMath::Abs(segmentDirsDot) >= THRESH_NORMALS_ARE_PARALLEL)
+	{
+		float segBStartDistOnA = startsDelta | segmentADir;
+		float segBEndDistOnA = (SegmentEndB - SegmentStartA) | segmentADir;
+		float segBMinDistOnA = FMath::Min(segBStartDistOnA, segBEndDistOnA);
+		float segBMaxDistOnA = FMath::Max(segBStartDistOnA, segBEndDistOnA);
+
+		// If the segment points don't lie on the same line, then they can't overlap
+		FVector2D segBStartOnA = SegmentStartA + (segBStartDistOnA * segmentADir);
+		if (!SegmentStartB.Equals(segBStartOnA, Tolerance))
+		{
+			return false;
+		}
+
+		if ((segBMinDistOnA >= (segmentALength + signedTolerance)) || (segBMaxDistOnA <= -signedTolerance))
+		{
+			return false;
+		}
+
+		bOutOverlapping = true;
+		float overlapMinDistOnA = FMath::Max(segBMinDistOnA, 0.0f);
+		float overlapMaxDistOnA = FMath::Min(segBMaxDistOnA, segmentALength);
+		float overlapCenterDistOnA = 0.5f * (overlapMinDistOnA + overlapMaxDistOnA);
+		OutIntersectionPoint = SegmentStartA + (overlapCenterDistOnA * segmentADir);
+		return true;
+	}
+	// Otherwise, calculate the intersection directly since we know we won't divide by zero
+	else
+	{
+		FVector2D segmentANormal(-segmentADir.Y, segmentADir.X);
+		FVector2D segmentBNormal(-segmentBDir.Y, segmentBDir.X);
+
+		// Compute intersection between rays, using FMath::RayPlaneIntersection as a basis
+		// float Distance = (( PlaneOrigin - RayOrigin ) | PlaneNormal) / (RayDirection | PlaneNormal);
+		float intersectionADist = (startsDelta | segmentBNormal) / (segmentADir | segmentBNormal);
+		float intersectionBDist = (-startsDelta | segmentANormal) / (segmentBDir | segmentANormal);
+
+		FVector2D intersectionAPoint = SegmentStartA + (intersectionADist * segmentADir);
+		FVector2D intersectionBPoint = SegmentStartB + (intersectionBDist * segmentBDir);
+		if (!ensure(intersectionAPoint.Equals(intersectionBPoint, Tolerance)))
+		{
+			return false;
+		}
+
+		OutIntersectionPoint = intersectionAPoint;
+		return FMath::IsWithinInclusive(intersectionADist, -signedTolerance, segmentALength + signedTolerance) &&
+			FMath::IsWithinInclusive(intersectionBDist, -signedTolerance, segmentBLength + signedTolerance);
+	}
 }
 
 bool UModumateGeometryStatics::RayIntersection2D(const FVector2D& RayOriginA, const FVector2D& RayDirectionA, const FVector2D& RayOriginB, const FVector2D& RayDirectionB,
-	FVector2D& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool &bOutColinear, bool bRequirePositive, float Tolerance)
+	FVector2D& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool bRequirePositive, float Tolerance)
 {
 	OutRayADist = OutRayBDist = 0.0f;
-	bOutColinear = false;
 
 	// First, check if the rays start at the same origin
 	FVector2D originDelta = RayOriginB - RayOriginA;
@@ -1061,7 +1145,6 @@ bool UModumateGeometryStatics::RayIntersection2D(const FVector2D& RayOriginA, co
 	if (FMath::IsNearlyZero(originDist, Tolerance))
 	{
 		OutIntersectionPoint = RayOriginA;
-		bOutColinear = bParallel;
 		return true;
 	}
 
@@ -1081,8 +1164,6 @@ bool UModumateGeometryStatics::RayIntersection2D(const FVector2D& RayOriginA, co
 			return false;
 		}
 
-		bOutColinear = true;
-
 		// Coincident colinear rays
 		if (rayADotB > 0.0f)
 		{
@@ -1090,7 +1171,7 @@ bool UModumateGeometryStatics::RayIntersection2D(const FVector2D& RayOriginA, co
 
 			OutRayADist = FMath::Max(originBOnRayADist, 0.0f);
 			OutRayBDist = FMath::Max(originAOnRayBDist, 0.0f);
-			if (originBOnRayADist > 0.0f)
+			if (originBOnRayADist > -Tolerance)
 			{
 				OutIntersectionPoint = RayOriginB;
 			}
@@ -1110,7 +1191,7 @@ bool UModumateGeometryStatics::RayIntersection2D(const FVector2D& RayOriginA, co
 			OutRayADist = 0.5f * originBOnRayADist;
 			OutRayBDist = 0.5f * originAOnRayBDist;
 
-			return (originBOnRayADist > 0.0f) || !bRequirePositive;
+			return (originBOnRayADist > -Tolerance) || !bRequirePositive;
 		}
 	}
 
@@ -1124,7 +1205,7 @@ bool UModumateGeometryStatics::RayIntersection2D(const FVector2D& RayOriginA, co
 	OutRayBDist = (-originDelta | rayNormalA) / (RayDirectionB | rayNormalA);
 
 	// Potentially throw out results that are behind the origins of the rays
-	if (bRequirePositive && ((OutRayADist < 0.0f) || (OutRayBDist < 0.0f)))
+	if (bRequirePositive && ((OutRayADist < -Tolerance) || (OutRayBDist < -Tolerance)))
 	{
 		return false;
 	}
@@ -1230,7 +1311,7 @@ bool UModumateGeometryStatics::GetPolyEdgeInfo(const TArray<FVector2D>& Polygon,
 	return true;
 }
 
-bool UModumateGeometryStatics::TestPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, const TArray<FVector2D>& Perimeter, FPointInPolyResult& OutResult, float Tolerance)
+bool UModumateGeometryStatics::TestPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, FPointInPolyResult& OutResult, float Tolerance)
 {
 	int32 numPolyPoints = Polygon.Num();
 	OutResult.Reset();
@@ -1279,12 +1360,9 @@ bool UModumateGeometryStatics::TestPointInPolygon(const FVector2D& Point, const 
 		}
 	}
 
-	// Now that we've tested vertex and edge overlapping with the Polygon, we're only concerned with the Perimeter,
-	// since point containment isn't well-defined (or at least easy to write) for polygons with peninsulas.
-
-	// Get the winding for the input perimeter, so we can calculate internal edge normals to perform ray tests
+	// Get the winding for the input polygon, so we can calculate internal edge normals to perform ray tests
 	bool bPolyCW, bPolyConcave;
-	GetPolygonWindingAndConcavity(Perimeter, bPolyCW, bPolyConcave);
+	GetPolygonWindingAndConcavity(Polygon, bPolyCW, bPolyConcave);
 
 	// Choose an arbitrary ray direction from which to test if our sample point hits an odd number
 	// of polygon edges.
@@ -1303,27 +1381,29 @@ bool UModumateGeometryStatics::TestPointInPolygon(const FVector2D& Point, const 
 	// Test the ray against every edge, since we aren't using any kind of spatial data structure to rule out edges,
 	// and this is intended to work with concave polygons where being inside corners or on the same side of every edge
 	// wouldn't be sufficient.
-	int32 numPerimeterPoints = Perimeter.Num();
-	for (int32 pointIdx = 0; pointIdx < numPerimeterPoints; ++pointIdx)
+	for (int32 pointIdx = 0; pointIdx < numPolyPoints; ++pointIdx)
 	{
 		int32 edgeStartIdx = pointIdx;
 
 		float edgeLength;
 		FVector2D edgePoint1, edgePoint2, edgeDir, edgeNormal;
-		GetPolyEdgeInfo(Perimeter, bPolyCW, edgeStartIdx, edgePoint1, edgePoint2, edgeLength, edgeDir, edgeNormal, Tolerance);
+		GetPolyEdgeInfo(Polygon, bPolyCW, edgeStartIdx, edgePoint1, edgePoint2, edgeLength, edgeDir, edgeNormal, Tolerance);
 
 		// Now, try to intersect with the actual edge
 		FVector2D edgeIntersection;
 		float testRayDist, edgeRayDist;
-		bool bRaysColinear;
+		bool bRaysOpposite = (testRay | edgeDir) <= -THRESH_NORMALS_ARE_PARALLEL;
 		bool bHitEdge = UModumateGeometryStatics::RayIntersection2D(Point, testRay, edgePoint1, edgeDir,
-			edgeIntersection, testRayDist, edgeRayDist, bRaysColinear, true);
+			edgeIntersection, testRayDist, edgeRayDist, true);
 
 		// - Require an intersection of some kind
 		// - Require a shorter intersection than we've already had
 		// - Require an intersection against only either the start of the target edge or its inside;
 		//   the target edge's end point that will be considered with the next edge
-		if (bHitEdge && (testRayDist < minRayHitDist) &&
+		// - Require that the rays are not pointing opposite directions; otherwise, an intersection against a connected
+		//   edge's start vertex would've been or will be detected. Coincident edges are allowed, since the target
+		//   coincident edge is the one whose start vertex will be used to detect collision.
+		if (bHitEdge && !bRaysOpposite && (testRayDist < minRayHitDist) &&
 			FMath::IsWithinInclusive(edgeRayDist, -Tolerance, edgeLength - Tolerance))
 		{
 			minRayHitDist = testRayDist;
@@ -1359,10 +1439,10 @@ bool UModumateGeometryStatics::TestPointInPolygon(const FVector2D& Point, const 
 	// Otherwise, compare against both edge normals of the edges whose shared vertex we hit
 	else
 	{
-		int32 preEdgeIdx = (minHitEdgeStartIdx - 1 + numPerimeterPoints) % numPerimeterPoints;
+		int32 preEdgeIdx = (minHitEdgeStartIdx - 1 + numPolyPoints) % numPolyPoints;
 		float preEdgeLength;
 		FVector2D preEdgePoint1, preEdgePoint2, preEdgeDir, preEdgeNormal;
-		GetPolyEdgeInfo(Perimeter, bPolyCW, preEdgeIdx, preEdgePoint1, preEdgePoint2, preEdgeLength, preEdgeDir, preEdgeNormal, Tolerance);
+		GetPolyEdgeInfo(Polygon, bPolyCW, preEdgeIdx, preEdgePoint1, preEdgePoint2, preEdgeLength, preEdgeDir, preEdgeNormal, Tolerance);
 
 		bool bOverlaps;
 		OutResult.bInside = IsRayBoundedByRays(-preEdgeDir, hitEdgeDir, preEdgeNormal, hitEdgeNormal, -testRay, bOverlaps);
@@ -1371,67 +1451,31 @@ bool UModumateGeometryStatics::TestPointInPolygon(const FVector2D& Point, const 
 	return true;
 }
 
-bool UModumateGeometryStatics::TestPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, FPointInPolyResult& OutResult, float Tolerance)
+bool UModumateGeometryStatics::GetPolygonContainment(const TArray<FVector2D> &ContainingPolygon, const TArray<FVector2D> &ContainedPolygon, bool& bOutFullyContained, bool& bOutPartiallyContained)
 {
-	// debug n^2 check to ensure that Polygon is indeed a perimeter, and does not have peninsula edges.
-#if !UE_BUILD_SHIPPING
-	int32 numPoints = Polygon.Num();
-	for (int32 idxA = 0; idxA < numPoints; ++idxA)
+	int32 numContainingPoints = ContainingPolygon.Num();
+	int32 numContainedPoints = ContainedPolygon.Num();
+	if (!ensureAlways((numContainingPoints >= 3) && (numContainedPoints >= 3)))
 	{
-		const FVector2D& pointA = Polygon[idxA];
-		for (int32 idxB = idxA + 1; idxB < numPoints; ++idxB)
-		{
-			const FVector2D& pointB = Polygon[idxB];
-			if (!ensure(!pointA.Equals(pointB, Tolerance)))
-			{
-				UE_LOG(LogTemp, Error, TEXT("Input polygon is not a valid perimeter; indices %d and %d are the same point: %s"),
-					idxA, idxB, *pointA.ToString());
-				return false;
-			}
-		}
-	}
-#endif
-
-	return TestPointInPolygon(Point, Polygon, Polygon, OutResult, Tolerance);
-}
-
-void UModumateGeometryStatics::PolyIntersection(const TArray<FVector2D> &PolyA, const TArray<FVector2D> &PolyB,
-	bool &bOutAInB, bool &bOutOverlapping, float Tolerance)
-{
-	FPointInPolyResult pointInPolyResult;
-	bOutAInB = false;
-	bOutOverlapping = false;
-
-	int32 numPointsA = PolyA.Num();
-	int32 numPointsB = PolyB.Num();
-
-	FBox2D polyBoundsA(PolyA);
-	FBox2D polyBoundsB(PolyB);
-	FBox2D expandedBoundsA = polyBoundsA.ExpandBy(Tolerance);
-	FBox2D expandedBoundsB = polyBoundsB.ExpandBy(Tolerance);
-
-	// First, check for AABBs intersecting; if they don't, then we don't need to check edges.
-	if (!expandedBoundsA.Intersect(expandedBoundsB))
-	{
-		return;
+		return false;
 	}
 
-	bool bAOutsideOfB = false;
-
-	// Now, see if every potentially contained vertex is indeed contained by the other face.
+	// See if every potentially contained vertex is indeed contained by the other polygon.
 	// - If any vertices are neither contained nor overlapping, then it's not fully contained.
 	//   If we needed to detect overlaps/touching, we would need to continue, but in this case we can early exit.
 	// - If any vertices are not contained, but are overlapping, then partial containment is still possible.
-	bool bOutFullyContained = true;
-	bool bOutPartiallyContained = true;
+	FPointInPolyResult pointInPolyResult;
+	bOutFullyContained = true;
+	bOutPartiallyContained = true;
 	bool bAnyVerticesFullyContained = false;
-	for (const FVector2D& vertexA : PolyA)
+
+	for (const FVector2D& containedVertex : ContainedPolygon)
 	{
-		if (!UModumateGeometryStatics::TestPointInPolygon(vertexA, PolyB, pointInPolyResult, Tolerance))
+		if (!ensure(UModumateGeometryStatics::TestPointInPolygon(containedVertex, ContainingPolygon, pointInPolyResult)))
 		{
-			return;
+			return false;
 		}
-		bAnyVerticesFullyContained = bAnyVerticesFullyContained || pointInPolyResult.bInside;
+		bAnyVerticesFullyContained = bAnyVerticesFullyContained || (pointInPolyResult.bInside && !pointInPolyResult.bOverlaps);
 
 		if (!pointInPolyResult.bInside)
 		{
@@ -1440,9 +1484,15 @@ void UModumateGeometryStatics::PolyIntersection(const TArray<FVector2D> &PolyA, 
 			if (!pointInPolyResult.bOverlaps)
 			{
 				bOutPartiallyContained = false;
-				return;
+				return true;
 			}
 		}
+	}
+
+	// For clarity, if the containing polygon fully contains the contained polygon, we won't consider it partially contained
+	if (bOutFullyContained)
+	{
+		bOutPartiallyContained = false;
 	}
 
 	// If the vertices are all overlapping, but none are fully contained,
@@ -1451,30 +1501,65 @@ void UModumateGeometryStatics::PolyIntersection(const TArray<FVector2D> &PolyA, 
 	if (bOutPartiallyContained && !bAnyVerticesFullyContained)
 	{
 		bOutPartiallyContained = false;
-
-		for (int32 edgeStartIdx = 0; edgeStartIdx < numPointsA; ++edgeStartIdx)
+		for (int32 edgeIdxA = 0; edgeIdxA < numContainedPoints; ++edgeIdxA)
 		{
-			int32 edgeEndIdx = (edgeStartIdx + 1) % numPointsA;
-			const FVector2D& edgeStartPoint = PolyA[edgeStartIdx];
-			const FVector2D& edgeEndPointB = PolyA[edgeEndIdx];
-			FVector2D edgeMidpoint = 0.5f * (edgeStartPoint + edgeEndPointB);
+			int32 edgeIdxB = (edgeIdxA + 1) % numContainedPoints;
+			const FVector2D& edgePointA = ContainedPolygon[edgeIdxA];
+			const FVector2D& edgePointB = ContainedPolygon[edgeIdxB];
+			FVector2D edgeMidpoint = 0.5f * (edgePointA + edgePointB);
 
-			if (!UModumateGeometryStatics::TestPointInPolygon(edgeMidpoint, PolyB, pointInPolyResult, Tolerance))
+			if (!ensure(UModumateGeometryStatics::TestPointInPolygon(edgeMidpoint, ContainingPolygon, pointInPolyResult)))
 			{
-				return;
+				return false;
 			}
 
 			if (pointInPolyResult.bInside && !pointInPolyResult.bOverlaps)
 			{
 				bOutPartiallyContained = true;
-				bOutAInB = true;
-				return;
+				return true;
 			}
 		}
 	}
 
-	bOutAInB = true;
-	return;
+	return true;
+}
+
+bool UModumateGeometryStatics::GetPolygonIntersection(const TArray<FVector2D> &ContainingPolygon, const TArray<FVector2D> &ContainedPolygon, bool& bOverlapping, bool& bOutFullyContained, bool& bOutPartiallyContained)
+{
+	bOverlapping = false;
+	bOutFullyContained = false;
+	bOutPartiallyContained = false;
+
+	int32 numContainingPoints = ContainingPolygon.Num();
+	int32 numContainedPoints = ContainedPolygon.Num();
+	if (!ensureAlways((numContainingPoints >= 3) && (numContainedPoints >= 3)))
+	{
+		return false;
+	}
+
+	for (int32 containingEdgeStartIdx = 0; containingEdgeStartIdx < numContainingPoints; ++containingEdgeStartIdx)
+	{
+		int32 containingEdgeEndIdx = (containingEdgeStartIdx + 1) % numContainingPoints;
+		const FVector2D& containingEdgeStart = ContainingPolygon[containingEdgeStartIdx];
+		const FVector2D& containingEdgeEnd = ContainingPolygon[containingEdgeEndIdx];
+
+		for (int32 containedEdgeStartIdx = 0; containedEdgeStartIdx < numContainedPoints; ++containedEdgeStartIdx)
+		{
+			int32 containedEdgeEndIdx = (containedEdgeStartIdx + 1) % numContainedPoints;
+			const FVector2D& containedEdgeStart = ContainedPolygon[containedEdgeStartIdx];
+			const FVector2D& containedEdgeEnd = ContainedPolygon[containedEdgeEndIdx];
+
+			FVector2D edgeIntersection;
+			bool bEdgesOverlap;
+			if (UModumateGeometryStatics::SegmentIntersection2D(containingEdgeStart, containingEdgeEnd, containedEdgeStart, containedEdgeEnd, edgeIntersection, bEdgesOverlap, -RAY_INTERSECT_TOLERANCE))
+			{
+				bOverlapping = true;
+				return true;
+			}
+		}
+	}
+
+	return GetPolygonContainment(ContainingPolygon, ContainedPolygon, bOutFullyContained, bOutPartiallyContained);
 }
 
 bool UModumateGeometryStatics::RayIntersection3D(const FVector& RayOriginA, const FVector& RayDirectionA, const FVector& RayOriginB, const FVector& RayDirectionB,
@@ -1521,7 +1606,7 @@ bool UModumateGeometryStatics::RayIntersection3D(const FVector& RayOriginA, cons
 	OutRayBDist = (-originDelta | rayNormalA) / (RayDirectionB | rayNormalA);
 
 	// Potentially throw out results that are behind the origins of the rays
-	if (bRequirePositive && ((OutRayADist < 0.0f) || (OutRayBDist < 0.0f)))
+	if (bRequirePositive && ((OutRayADist < -Tolerance) || (OutRayBDist < -Tolerance)))
 	{
 		return false;
 	}
@@ -2154,7 +2239,8 @@ bool UModumateGeometryStatics::IsPolygon2DValid(const TArray<FVector2D> &Points,
 			if (!segAStart.Equals(segBEnd) && !segAEnd.Equals(segBStart) && !segAEnd.Equals(segBEnd))
 			{
 				FVector2D intersectionPoint;
-				if (UModumateGeometryStatics::SegmentIntersection2D(segAStart, segAEnd, segBStart, segBEnd, intersectionPoint, RAY_INTERSECT_TOLERANCE))
+				bool bSegmentsOverlap;
+				if (UModumateGeometryStatics::SegmentIntersection2D(segAStart, segAEnd, segBStart, segBEnd, intersectionPoint, bSegmentsOverlap, RAY_INTERSECT_TOLERANCE))
 				{
 					if (InWarn)
 					{
@@ -2263,13 +2349,17 @@ bool UModumateGeometryStatics::IsLineSegmentBoundedByPoints2D(const FVector2D &S
 	{
 		int32 nextIdx = (idx + 1) % numPoints;
 
-		if (UModumateGeometryStatics::SegmentIntersection2D(
+		bool bSegmentsOverlap;
+		bool bSegmentsIntersect = UModumateGeometryStatics::SegmentIntersection2D(
 			StartPosition,
 			EndPosition,
 			Positions[idx],
 			Positions[nextIdx],
 			intersection,
-			Epsilon))
+			bSegmentsOverlap,
+			Epsilon);
+
+		if (bSegmentsIntersect && !bSegmentsOverlap)
 		{
 			// if the intersection is on the vertices of the edges, there are special cases to be handled
 			bool bOnEdgeStart = intersection.Equals(StartPosition, Epsilon);

@@ -1303,13 +1303,13 @@ namespace Modumate
 			auto& interiorPolys = polykvp.Value.InteriorPolygons;
 			if (interiorPolys.Num() != 0)
 			{
-				TestTrue(TEXT("containing polygon contains 2 faces"),
-					interiorPolys.Num() == 2);
+				TestTrue(TEXT("containing polygon contains 1 face"),
+					interiorPolys.Num() == 1);
 				for (int32 containedID : interiorPolys)
 				{
 					auto containedPoly = graph.FindPolygon(containedID);
 					TestTrue(TEXT("contained poly exists and is contained by the same poly"),
-						containedPoly != nullptr && containedPoly->ParentID == polykvp.Key);
+						containedPoly != nullptr && containedPoly->bInterior && containedPoly->ParentID == polykvp.Key);
 				}
 
 				numContainingPolys++;
