@@ -50,8 +50,6 @@ public:
 	virtual bool HandleControlKey(bool pressed) override;
 	virtual bool HandleMouseUp() override { return true; }
 	virtual bool ShowSnapCursorAffordances() override { return true; }
-	virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override { };
-	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override { };
 	virtual void SetAssemblyKey(const FName &InAssemblyKey) override;
 };
 

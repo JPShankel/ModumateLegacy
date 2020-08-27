@@ -46,6 +46,7 @@ bool UPortalToolBase::Activate()
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
 	SetupCursor();
 	Active = true;
+	CreateObjectMode = EToolCreateObjectMode::Draw;
 	return true;
 }
 
@@ -307,65 +308,88 @@ bool UPortalToolBase::BeginUse()
 		return false;
 	}
 
-	// TODO: Get official extents from assembly.
-	FBox bounds(ForceInit);
-	for (const auto* mesh: CursorActor->StaticMeshComps)
+	const bool bPaintTool = CreateObjectMode == EToolCreateObjectMode::Apply;
+
+	TArray<TSharedPtr<FDelta>> deltas;
+	Document->BeginUndoRedoMacro();
+
+	if (bPaintTool)
 	{
-		FVector minPoint(ForceInitToZero);
-		FVector maxPoint(ForceInitToZero);
-		mesh->GetLocalBounds(minPoint, maxPoint);
-		bounds += minPoint;
-		bounds += maxPoint;
+		const TArray<int32>& planeChildren = parent->GetChildIDs();
+		if (planeChildren.Num() > 0)
+		{
+			int32 childId = planeChildren[0];
+			auto deleteChild = MakeShared<FMOIDelta>();
+			FMOIStateData childData =
+				static_cast<const FModumateDocument*>(Document)->GetObjectById(childId)->GetDataState();
+			childData.StateType = EMOIDeltaType::Destroy;
+			TArray<FMOIStateData> deleteStates(&childData, 1);
+			deleteChild->AddCreateDestroyStates(deleteStates);
+			deltas.Add(deleteChild);
+		}
 	}
 
-	FTransform portalTransform(worldRot, worldPos, FVector::OneVector);
+	int32 newParentId = HostID;
+	FVector2D newPosition(ForceInitToZero);
+	if (!bPaintTool)
+	{   // Create new mateplane to host portal.
+		// TODO: Get official extents from assembly.
+		FBox bounds(ForceInit);
+		for (const auto* mesh : CursorActor->StaticMeshComps)
+		{
+			FVector minPoint(ForceInitToZero);
+			FVector maxPoint(ForceInitToZero);
+			mesh->GetLocalBounds(minPoint, maxPoint);
+			bounds += minPoint;
+			bounds += maxPoint;
+		}
 
-	TArray<FVector> metaPlanePoints =
+		FTransform portalTransform(worldRot, worldPos, FVector::OneVector);
+
+		TArray<FVector> metaPlanePoints =
 		{ {bounds.Min.X, 0, bounds.Min.Z}, {bounds.Min.X, 0, bounds.Max.Z},
 		{bounds.Max.X, 0, bounds.Max.Z}, {bounds.Max.X, 0, bounds.Min.Z} };
 
-	for (auto& p: metaPlanePoints)
-	{
-		p = portalTransform.TransformPosition(p);
+		for (auto& p : metaPlanePoints)
+		{
+			p = portalTransform.TransformPosition(p);
+		}
+
+		TArray<int32> metaGraphIds;
+		if (Document->MakeMetaObject(world, metaPlanePoints, TArray<int32>(), EObjectType::OTMetaPlane, 0, metaGraphIds))
+		{
+			newParentId = metaGraphIds[0];
+			FModumateObjectInstance* newMetaPlane = Document->GetObjectById(newParentId);
+
+			// Reparent to new plane.
+			FQuat newRotation;
+			UModumateObjectStatics::GetRelativeTransformOnPlanarObj(newMetaPlane, worldPos, 0.0, false, newPosition, newRotation);
+		}
+		else
+		{
+			Document->EndUndoRedoMacro();
+			return false;
+		}
 	}
 
-	Document->BeginUndoRedoMacro();
+	auto addPortal = MakeShared<FMOIDelta>();
+	FMOIStateData portalData;
+	portalData.StateType = EMOIDeltaType::Create;
+	portalData.ObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
+	portalData.ParentID = HostID;
+	portalData.Location = FVector(newPosition, 0);
+	portalData.Orientation = FQuat::Identity;
+	portalData.ObjectAssemblyKey = AssemblyKey;
+	portalData.ParentID = newParentId;
+	portalData.ObjectID = Document->GetNextAvailableID();
 
-	TArray<int32> metaGraphIds;
-	if (Document->MakeMetaObject(world, metaPlanePoints, TArray<int32>(), EObjectType::OTMetaPlane, 0, metaGraphIds))
-	{
-		int32 faceId = metaGraphIds[0];
-		FModumateObjectInstance* newMetaPlane = Document->GetObjectById(faceId);
+	TArray<FMOIStateData> createStates(&portalData, 1);
+	addPortal->AddCreateDestroyStates(createStates);
 
-		// Reparent to new plane.
-		FVector2D newPosition;
-		FQuat newRotation;
-		UModumateObjectStatics::GetRelativeTransformOnPlanarObj(newMetaPlane, worldPos, 0.0, false, newPosition, newRotation);
+	deltas.Add(addPortal);
 
-		auto addPortal = MakeShared<FMOIDelta>();
-		FMOIStateData portalData;
-		portalData.StateType = EMOIDeltaType::Create;
-		portalData.ObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
-		portalData.ParentID = HostID;
-		portalData.Location = FVector(newPosition, 0);
-		portalData.Orientation = FQuat::Identity;
-		portalData.ObjectAssemblyKey = AssemblyKey;
-		portalData.ParentID = faceId;
-		portalData.ObjectID = Document->GetNextAvailableID();
-
-		TArray<FMOIStateData> createStates(&portalData, 1);
-		addPortal->AddCreateDestroyStates(createStates);
-
-		TArray<TSharedPtr<FDelta>> deltas;
-		deltas.Add(addPortal);
-
-		Document->ApplyDeltas(deltas, world);
-
-		Document->EndUndoRedoMacro();
-
-		return true;
-	}
-
+	Document->ApplyDeltas(deltas, world);
 	Document->EndUndoRedoMacro();
-	return false;
+
+	return true;
 }

@@ -89,6 +89,7 @@ enum class EInputCommand : uint8
 	ConstraintAxesNone,
 	ConstraintAxesXY,
 	ConstraintAxesZ,
+	PaintBucket,
 
 	// Non-tool modal commands
 	CycleEditModes,
