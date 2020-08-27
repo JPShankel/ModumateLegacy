@@ -39,6 +39,7 @@ public:
 	virtual bool Deactivate() override;
 	virtual bool IsInUse() const override { return false; }
 	virtual bool IsActive() const override { return Active; }
+	virtual bool BeginUse() override;
 	virtual bool FrameUpdate() override;
 	virtual bool EnterNextStage() override;
 	virtual bool EndUse() override;
@@ -60,10 +61,11 @@ class MODUMATE_API UDoorTool : public UPortalToolBase
 	GENERATED_BODY()
 
 public:
-	UDoorTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UDoorTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get())
+		: Super(ObjectInitializer)
+	{ }
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_DOOR; }
-	virtual bool BeginUse() override;
 };
 
 UCLASS()
@@ -72,8 +74,9 @@ class MODUMATE_API UWindowTool : public UPortalToolBase
 	GENERATED_BODY()
 
 public:
-	UWindowTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UWindowTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get())
+		: Super(ObjectInitializer)
+	{ }
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_WINDOW; }
-	virtual bool BeginUse() override;
 };

@@ -66,14 +66,14 @@ public:
 		FVector2D &OutTrimUpperExtensions, FVector2D &OutTrimOuterExtensions,
 		const FVector &HintNormal = FVector::ZeroVector, int32 HintMountIndex = -1, bool bDoMitering = false);
 
-	static bool GetRelativeTransformOnPlaneHostedObj(
-		const Modumate::FModumateObjectInstance *PlaneHostedObj,
-		const FVector &WorldPos, const FVector &WorldNormal,
-		float DistanceFromBottom, bool bUseDistanceFromBottom,
-		FVector2D &OutRelativePos, FQuat &OutRelativeRot);
+	static bool GetRelativeTransformOnPlanarObj(
+		const Modumate::FModumateObjectInstance *PlanarObj,
+		const FVector &WorldPos, float DistanceFromBottom,
+		bool bUseDistanceFromBottom, FVector2D &OutRelativePos,
+		FQuat &OutRelativeRot);
 
-	static bool GetWorldTransformOnPlaneHostedObj(
-		const Modumate::FModumateObjectInstance *PlaneHostedObj,
+	static bool GetWorldTransformOnPlanarObj(
+		const Modumate::FModumateObjectInstance *PlanarObj,
 		const FVector2D &RelativePos, const FQuat &RelativeRot,
 		FVector &OutWorldPos, FQuat &OutWorldRot);
 

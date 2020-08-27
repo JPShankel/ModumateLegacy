@@ -2173,44 +2173,6 @@ void FModumateDocument::TransverseObjects(const TArray<FModumateObjectInstance*>
 	}
 }
 
-int32 FModumateDocument::MakePortalAt_DEPRECATED(
-	UWorld* World,
-	EObjectType PortalType,
-	int32 ParentID,
-	const FVector2D& RelativePos,
-	const FQuat& RelativeRot,
-	bool Inverted,
-	const FBIMAssemblySpec& PAL)
-{
-	AEditModelGameMode_CPP* gameState = World->GetAuthGameMode<AEditModelGameMode_CPP>();
-	FModumateObjectInstance* portalParent = GetObjectById(ParentID);
-	if (!ensureAlways((gameState != nullptr) && (portalParent != nullptr)))
-	{
-		return 0;
-	}
-
-	// check whether the new portal would need to modify, split, or delete any existing trim objects
-	FVector worldPos(ForceInitToZero);
-	FQuat worldRot(ForceInit);
-	if (!UModumateObjectStatics::GetWorldTransformOnPlaneHostedObj(portalParent,
-		RelativePos, RelativeRot, worldPos, worldRot))
-	{
-		return 0;
-	}
-
-	int32 id = NextID++;
-
-	FModumateObjectInstance* newOb = CreateOrRestoreObjFromAssembly(World, PAL, id);
-
-	newOb->SetObjectLocation(FVector(RelativePos, 0.0f));
-	newOb->SetObjectRotation(RelativeRot);
-	newOb->SetParentObject(portalParent);
-	newOb->SetAssembly(PAL);
-	newOb->SetupGeometry();
-
-	return id;
-}
-
 int32 FModumateDocument::CreateFFE(
 	UWorld *world,
 	int32 parentID,

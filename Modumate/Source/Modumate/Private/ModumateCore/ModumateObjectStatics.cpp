@@ -519,27 +519,39 @@ bool UModumateObjectStatics::GetTrimGeometryOnEdge(const FModumateObjectInstance
 	return true;
 }
 
-bool UModumateObjectStatics::GetRelativeTransformOnPlaneHostedObj(
-	const Modumate::FModumateObjectInstance *PlaneHostedObj,
-	const FVector &WorldPos, const FVector &WorldNormal,
-	float DistanceFromBottom, bool bUseDistanceFromBottom,
-	FVector2D &OutRelativePos, FQuat &OutRelativeRot)
-{
-	const FModumateObjectInstance *hostParent = PlaneHostedObj->GetParentObject();
-	if (!(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
-	{
-		return false;
-	}
 
-	FVector hostOrigin = hostParent->GetObjectLocation();
-	FVector hostNormal = hostParent->GetNormal();
-	FQuat hostRot = hostParent->GetObjectRotation();
+// TODO: Separate into two functions: 1. from a potential world-space origin generate world-space corners for the portal that
+// would create its parent metaplane; 2. from world-space corners and portal properties generate a world-space transform
+// and extents for the portal actor to update itself with slicing and stretching.
+bool UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
+	const Modumate::FModumateObjectInstance *PlanarObj,
+	const FVector &WorldPos, float DistanceFromBottom,
+	bool bUseDistanceFromBottom, FVector2D &OutRelativePos,
+	FQuat &OutRelativeRot)
+{
+	const FModumateObjectInstance *metaPlaneObject = nullptr;
+	if (PlanarObj->GetObjectType() == EObjectType::OTMetaPlane)
+	{
+		metaPlaneObject = PlanarObj;
+	}
+	else
+	{
+		metaPlaneObject = PlanarObj->GetParentObject();
+		if (metaPlaneObject == nullptr || metaPlaneObject->GetObjectType() != EObjectType::OTMetaPlane)
+		{
+			return false;
+		}
+	}
+		
+	FVector hostOrigin = metaPlaneObject->GetObjectLocation();
+	FVector hostNormal = metaPlaneObject->GetNormal();
+	FQuat hostRot = metaPlaneObject->GetObjectRotation();
 
 	FVector pointToProject = WorldPos;
 
 	if (bUseDistanceFromBottom)
 	{
-		const FGraph3DFace *parentFace = PlaneHostedObj->GetDocument()->GetVolumeGraph().FindFace(hostParent->ID);
+		const FGraph3DFace *parentFace = PlanarObj->GetDocument()->GetVolumeGraph().FindFace(metaPlaneObject->ID);
 		FVector2D faceRelativePos = parentFace->ProjectPosition2D(WorldPos);
 
 		FVector2D faceRelativeRayEnd = parentFace->ProjectPosition2D(WorldPos - FVector::UpVector);
@@ -590,33 +602,38 @@ bool UModumateObjectStatics::GetRelativeTransformOnPlaneHostedObj(
 
 	OutRelativePos = UModumateGeometryStatics::ProjectPoint2D(pointToProject, hostRot.GetAxisX(), hostRot.GetAxisY(), hostOrigin);
 
-	// TODO: support more than just portal-style "flipped or not" relative rotation about Z
-	bool bSameNormals = FVector::Coincident(WorldNormal, hostNormal);
-	OutRelativeRot = FQuat(FVector::UpVector, bSameNormals ? 0.0f : PI);
-
+	OutRelativeRot = FQuat::Identity;
 	return true;
 }
 
-bool UModumateObjectStatics::GetWorldTransformOnPlaneHostedObj(
-	const Modumate::FModumateObjectInstance *PlaneHostedObj,
+bool UModumateObjectStatics::GetWorldTransformOnPlanarObj(
+	const Modumate::FModumateObjectInstance *PlanarObj,
 	const FVector2D &RelativePos, const FQuat &RelativeRot,
 	FVector &OutWorldPos, FQuat &OutWorldRot)
 {
-	const FModumateObjectInstance *hostParent = PlaneHostedObj->GetParentObject();
-	if (!(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
+	const FModumateObjectInstance *metaPlaneObject = nullptr;
+	if (PlanarObj->GetObjectType() == EObjectType::OTMetaPlane)
 	{
-		return false;
+		metaPlaneObject = PlanarObj;
+	}
+	else
+	{
+		metaPlaneObject = PlanarObj->GetParentObject();
+		if (metaPlaneObject == nullptr || metaPlaneObject->GetObjectType() != EObjectType::OTMetaPlane)
+		{
+			return false;
+		}
 	}
 
-	FVector hostOrigin = hostParent->GetObjectLocation();
-	FVector hostNormal = hostParent->GetNormal();
-	FQuat hostRot = hostParent->GetObjectRotation();
+	FVector hostOrigin = metaPlaneObject->GetObjectLocation();
+	FVector hostNormal = metaPlaneObject->GetNormal();
+	FQuat hostRot = metaPlaneObject->GetObjectRotation();
 
 	// TODO: support more than just portal-style "flipped or not" relative rotation about Z
 	bool bSameNormals = RelativeRot.IsIdentity(KINDA_SMALL_NUMBER);
 
 	FVector startExtrusionDelta, endExtrusionDelta;
-	UModumateObjectStatics::GetExtrusionDeltas(PlaneHostedObj, startExtrusionDelta, endExtrusionDelta);
+	UModumateObjectStatics::GetExtrusionDeltas(PlanarObj, startExtrusionDelta, endExtrusionDelta);
 	const FVector &extrusionDelta = bSameNormals ? endExtrusionDelta : startExtrusionDelta;
 
 	OutWorldPos = hostOrigin +
@@ -625,7 +642,7 @@ bool UModumateObjectStatics::GetWorldTransformOnPlaneHostedObj(
 		extrusionDelta;
 	
 	// Portal rotation should be +Z up, +Y away from the wall, and +X along the wall.
-	OutWorldRot = RelativeRot * FRotationMatrix::MakeFromYZ(hostNormal, -hostRot.GetAxisY()).ToQuat();
+	OutWorldRot = FRotationMatrix::MakeFromYZ(hostNormal, -hostRot.GetAxisY()).ToQuat() * RelativeRot;
 
 	return true;
 }

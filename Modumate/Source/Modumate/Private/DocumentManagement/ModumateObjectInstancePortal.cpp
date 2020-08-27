@@ -149,7 +149,7 @@ namespace Modumate
 			return false;
 		}
 
-		if (!UModumateObjectStatics::GetWorldTransformOnPlaneHostedObj(parentObj,
+		if (!UModumateObjectStatics::GetWorldTransformOnPlanarObj(parentObj,
 			CachedRelativePos, CachedRelativeRot, CachedWorldPos, CachedWorldRot))
 		{
 			return false;
@@ -255,8 +255,8 @@ namespace Modumate
 		{
 			FVector2D newRelativePos(ForceInitToZero);
 			FQuat newRelativeRot(ForceInit);
-			if (UModumateObjectStatics::GetRelativeTransformOnPlaneHostedObj(parentObject,
-				NewTransform.GetLocation(), NewTransform.GetRotation().GetAxisY(),
+			if (UModumateObjectStatics::GetRelativeTransformOnPlanarObj(parentObject,
+				NewTransform.GetLocation(),
 				0.0f, false, newRelativePos, newRelativeRot))
 			{
 				SetRelativeTransform(newRelativePos, newRelativeRot);
@@ -315,15 +315,15 @@ namespace Modumate
 
 		FVector displacedWorldPos = CachedWorldPos;
 		FQuat displacedWorldRot = CachedWorldRot;
-		if (UModumateObjectStatics::GetWorldTransformOnPlaneHostedObj(parentObj,
+		if (UModumateObjectStatics::GetWorldTransformOnPlanarObj(parentObj,
 			recordRelativePos, recordRelativeRot, displacedWorldPos, displacedWorldRot))
 		{
 			displacedWorldPos += displacement;
 
 			FVector2D displacedRelativePos = CachedRelativePos;
 			FQuat displacedRelativeRot = CachedRelativeRot;
-			if (UModumateObjectStatics::GetRelativeTransformOnPlaneHostedObj(parentObj,
-				displacedWorldPos, displacedWorldRot.GetAxisY(), 0.0f, false, displacedRelativePos, displacedRelativeRot))
+			if (UModumateObjectStatics::GetRelativeTransformOnPlanarObj(parentObj,
+				displacedWorldPos, 0.0f, false, displacedRelativePos, displacedRelativeRot))
 			{
 				SetRelativeTransform(displacedRelativePos, displacedRelativeRot);
 				parentObj->MarkDirty(EObjectDirtyFlags::Visuals);

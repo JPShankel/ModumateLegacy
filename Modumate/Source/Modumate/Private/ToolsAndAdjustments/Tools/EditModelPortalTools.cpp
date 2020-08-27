@@ -21,7 +21,7 @@ UPortalToolBase::UPortalToolBase(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, CursorActor(nullptr)
 	, Document(nullptr)
-	, HostID(0)
+	, HostID(MOD_ID_NONE)
 	, bUseFixedOffset(true)
 	, WorldPos(FVector::ZeroVector)
 	, RelativePos(FVector2D::ZeroVector)
@@ -40,7 +40,7 @@ UPortalToolBase::UPortalToolBase(const FObjectInitializer& ObjectInitializer)
 
 bool UPortalToolBase::Activate()
 {
-	HostID = 0;
+	HostID = MOD_ID_NONE;
 	Controller->DeselectAll();
 	Controller->EMPlayerState->SetHoveredObject(nullptr);
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
@@ -98,7 +98,7 @@ bool UPortalToolBase::Deactivate()
 		CursorActor = nullptr;
 	}
 
-	if (HostID != 0)
+	if (HostID != MOD_ID_NONE)
 	{
 		auto *lastHitWall = Document->GetObjectById(HostID);
 		if (lastHitWall)
@@ -159,20 +159,22 @@ static bool CalcPortalPositionOnHost(const FModumateObjectInstance *hostObj, con
 
 bool UPortalToolBase::FrameUpdate()
 {
-	int32 lastWallID = HostID;
+	static FName requesterName(TEXT("UPortalToolBase"));
+
+	int32 lastHostID = HostID;
 	FModumateObjectInstance *hitMOI = nullptr;
 	const auto &snapCursor = Controller->EMPlayerState->SnappedCursor;
 	FVector hitLoc = snapCursor.WorldPosition;
-	FVector hitNormal = snapCursor.HitNormal;
 
-	HostID = 0;
+	HostID = MOD_ID_NONE;
 
 	if (CursorActor && Controller->EMPlayerState->SnappedCursor.Visible)
 	{
 		hitMOI = Document->ObjectFromActor(Controller->EMPlayerState->SnappedCursor.Actor);
+
 		FModumateObjectInstance *hitMOIParent = hitMOI ? hitMOI->GetParentObject() : nullptr;
 
-		while (hitMOIParent && (hitMOIParent->GetObjectType() != EObjectType::OTMetaPlane))
+		while (hitMOIParent)
 		{
 			hitMOI = hitMOIParent;
 			hitMOIParent = hitMOI->GetParentObject();
@@ -192,10 +194,10 @@ bool UPortalToolBase::FrameUpdate()
 		heightFromBottom = Modumate::Units::FUnitValue::WorldInches(Document->GetDefaultWindowHeight()).AsWorldInches();
 	}
 
-	bool bHasRelativeTransform = hitMOI && UModumateObjectStatics::GetRelativeTransformOnPlaneHostedObj(
-		hitMOI, hitLoc, hitNormal, heightFromBottom, bUseFixedOffset, RelativePos, RelativeRot);
+	bool bHasRelativeTransform = hitMOI && UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
+		hitMOI, hitLoc, heightFromBottom, bUseFixedOffset, RelativePos, RelativeRot);
 
-	bool bHasWorldTransform = bHasRelativeTransform && UModumateObjectStatics::GetWorldTransformOnPlaneHostedObj(
+	bool bHasWorldTransform = bHasRelativeTransform && UModumateObjectStatics::GetWorldTransformOnPlanarObj(
 		hitMOI, RelativePos, RelativeRot, WorldPos, WorldRot);
 
 	if (bHasWorldTransform)
@@ -211,26 +213,25 @@ bool UPortalToolBase::FrameUpdate()
 	}
 	else
 	{
-		HostID = 0;
+		HostID = MOD_ID_NONE;
 	}
 
-	if (lastWallID != HostID)
+	if (lastHostID != HostID)
 	{
 		if (hitMOI && bValidPortalConfig)
 		{
 			hitMOI->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 
-		auto *lastHitWall = Document->GetObjectById(lastWallID);
-		if (lastHitWall)
+		auto *lastHitHost = Document->GetObjectById(lastHostID);
+		if (lastHitHost)
 		{
-			lastHitWall->MarkDirty(EObjectDirtyFlags::Structure);
+			lastHitHost->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 	}
 
 	if (hitMOI && HostID)
 	{
-		hitMOI->MarkDirty(EObjectDirtyFlags::Structure);
 		CursorActor->SetActorHiddenInGame(false);
 	}
 	else
@@ -285,15 +286,9 @@ bool UPortalToolBase::HandleControlKey(bool pressed)
 	return true;
 }
 
-
-UDoorTool::UDoorTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+bool UPortalToolBase::BeginUse()
 {
-}
-
-bool UDoorTool::BeginUse()
-{
-	const FBIMAssemblySpec* assembly = Document->PresetManager.GetAssemblyByKey(EToolMode::VE_DOOR, AssemblyKey);
+	const FBIMAssemblySpec* assembly = Document->PresetManager.GetAssemblyByKey(GetToolMode(), AssemblyKey);
 
 	FModumateObjectInstance* parent = Document->GetObjectById(HostID);
 
@@ -302,26 +297,75 @@ bool UDoorTool::BeginUse()
 		return false;
 	}
 
-	Document->MakePortalAt_DEPRECATED(GetWorld(), EObjectType::OTDoor, HostID, RelativePos, RelativeRot, false, *assembly);
+	UWorld* world = parent->GetWorld();
 
-	return true;
-}
-
-UWindowTool::UWindowTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-}
-
-bool UWindowTool::BeginUse()
-{
-	const FBIMAssemblySpec* assembly = Document->PresetManager.GetAssemblyByKey(EToolMode::VE_WINDOW, AssemblyKey);
-
-	if (assembly == nullptr)
+	FVector worldPos(ForceInitToZero);
+	FQuat worldRot(ForceInit);
+	if (!UModumateObjectStatics::GetWorldTransformOnPlanarObj(parent,
+		RelativePos, RelativeRot, worldPos, worldRot))
 	{
 		return false;
 	}
 
-	Document->MakePortalAt_DEPRECATED(GetWorld(), EObjectType::OTWindow, HostID, RelativePos, RelativeRot, false, *assembly);
+	// TODO: Get official extents from assembly.
+	FBox bounds(ForceInit);
+	for (const auto* mesh: CursorActor->StaticMeshComps)
+	{
+		FVector minPoint(ForceInitToZero);
+		FVector maxPoint(ForceInitToZero);
+		mesh->GetLocalBounds(minPoint, maxPoint);
+		bounds += minPoint;
+		bounds += maxPoint;
+	}
 
-	return true;
+	FTransform portalTransform(worldRot, worldPos, FVector::OneVector);
+
+	TArray<FVector> metaPlanePoints =
+		{ {bounds.Min.X, 0, bounds.Min.Z}, {bounds.Min.X, 0, bounds.Max.Z},
+		{bounds.Max.X, 0, bounds.Max.Z}, {bounds.Max.X, 0, bounds.Min.Z} };
+
+	for (auto& p: metaPlanePoints)
+	{
+		p = portalTransform.TransformPosition(p);
+	}
+
+	Document->BeginUndoRedoMacro();
+
+	TArray<int32> metaGraphIds;
+	if (Document->MakeMetaObject(world, metaPlanePoints, TArray<int32>(), EObjectType::OTMetaPlane, 0, metaGraphIds))
+	{
+		int32 faceId = metaGraphIds[0];
+		FModumateObjectInstance* newMetaPlane = Document->GetObjectById(faceId);
+
+		// Reparent to new plane.
+		FVector2D newPosition;
+		FQuat newRotation;
+		UModumateObjectStatics::GetRelativeTransformOnPlanarObj(newMetaPlane, worldPos, 0.0, false, newPosition, newRotation);
+
+		auto addPortal = MakeShared<FMOIDelta>();
+		FMOIStateData portalData;
+		portalData.StateType = EMOIDeltaType::Create;
+		portalData.ObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
+		portalData.ParentID = HostID;
+		portalData.Location = FVector(newPosition, 0);
+		portalData.Orientation = FQuat::Identity;
+		portalData.ObjectAssemblyKey = AssemblyKey;
+		portalData.ParentID = faceId;
+		portalData.ObjectID = Document->GetNextAvailableID();
+
+		TArray<FMOIStateData> createStates(&portalData, 1);
+		addPortal->AddCreateDestroyStates(createStates);
+
+		TArray<TSharedPtr<FDelta>> deltas;
+		deltas.Add(addPortal);
+
+		Document->ApplyDeltas(deltas, world);
+
+		Document->EndUndoRedoMacro();
+
+		return true;
+	}
+
+	Document->EndUndoRedoMacro();
+	return false;
 }
