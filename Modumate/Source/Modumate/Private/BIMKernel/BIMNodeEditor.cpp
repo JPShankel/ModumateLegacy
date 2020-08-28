@@ -431,6 +431,13 @@ FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPr
 	InstanceMap.Add(NextInstanceID, instance);
 	++NextInstanceID;
 
+	instance->AttachedChildren.SetNum(descriptor->ChildAttachments.Num());
+	for (int32 i = 0; i < instance->AttachedChildren.Num(); ++i)
+	{
+		instance->AttachedChildren[i].SetType.MinCount = descriptor->ChildAttachments[i].MinCount;
+		instance->AttachedChildren[i].SetType.MaxCount = descriptor->ChildAttachments[i].MaxCount;
+	}
+
 	instance->PresetID = preset->PresetID;
 	instance->CurrentOrientation = preset->Orientation;
 	instance->InstanceProperties = preset->Properties;

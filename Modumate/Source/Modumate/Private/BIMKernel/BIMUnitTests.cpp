@@ -284,6 +284,12 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 		}
 	}
 
+	TMap<FString, FBIMNameType> propertyForm;
+	if (presetCollection.GetPropertyFormForPreset(materialColorPresets[0], propertyForm) != ECraftingResult::Success)
+	{
+		return false;
+	}
+
 	for (auto &kvp : presetCollection.NodeDescriptors)
 	{
 		if (kvp.Value.TypeName == layer0Type)

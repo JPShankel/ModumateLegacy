@@ -274,6 +274,23 @@ EObjectType FBIMPresetCollection::GetPresetObjectType(const FName &PresetID) con
 	return preset->ObjectType;
 }
 
+ECraftingResult FBIMPresetCollection::GetPropertyFormForPreset(const FName &PresetID, TMap<FString, FBIMNameType> &OutForm) const
+{
+	const FBIMPreset* preset = Presets.Find(PresetID);
+	if (preset == nullptr)
+	{
+		return ECraftingResult::Error;
+	}
+
+	const FBIMPresetNodeType* descriptor = NodeDescriptors.Find(preset->NodeType);
+	if (descriptor == nullptr)
+	{
+		return ECraftingResult::Error;
+	}
+	OutForm = descriptor->FormItemToProperty;
+	return ECraftingResult::Success;
+}
+
 // TODO: Loading data from a CSV manifest file is not going to be required long term. 
 // Ultimately we will develop a compiler from this code that generates a record that can be read more efficiently
 // Once this compiler is in the shape we intend, we will determine where in the toolchain this code will reside we can refactor for long term sustainability

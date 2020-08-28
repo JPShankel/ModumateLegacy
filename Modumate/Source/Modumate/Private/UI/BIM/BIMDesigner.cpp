@@ -11,6 +11,8 @@
 #include "DocumentManagement/ModumatePresetManager.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "ModumateCore/ModumateSlateHelper.h"
+#include "BIMKernel/BIMNodeEditor.h"
+#include "UI/BIM/BIMBlockAddLayer.h"
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -163,6 +165,11 @@ void UBIMDesigner::UpdateBIMDesigner()
 	CanvasPanelForNodes->ClearChildren();
 	BIMBlockNodes.Empty();
 	IdToNodeMap.Empty();
+	NodesWithAddLayerButton.Empty();
+
+	// Child groups that allow user to add more nodes
+	TArray<const FBIMCraftingTreeNode::FAttachedChildGroup*> AddableChildGroup;
+
 	for (const FBIMCraftingTreeNodeSharedPtr& curInstance : InstancePool.GetInstancePool())
 	{
 		UBIMBlockNode *newBlockNode = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockNode>(BIMBlockNodeClass);
@@ -182,8 +189,50 @@ void UBIMDesigner::UpdateBIMDesigner()
 			{
 				canvasSlot->SetAutoSize(true);
 			}
+
+			// Save the node's child group if it can add child
+			for (auto& curChildGroup : curInstance->AttachedChildren)
+			{
+				if (curChildGroup.SetType.MaxCount > curChildGroup.Children.Num() || 
+					curChildGroup.SetType.MaxCount == -1)
+				{
+					AddableChildGroup.AddUnique(&curChildGroup);
+				}
+			}
 		}
 	}
+
+	for (int32 i = 0; i < AddableChildGroup.Num(); ++i)
+	{
+		// Place add button under the last attached child node
+		// TODO: Possible tech debt. This is under the assumption that addable node already has at least one child node attached
+		if (AddableChildGroup[i]->Children.Num() > 0)
+		{
+			int32 lastChildID = AddableChildGroup[i]->Children.Last().Pin()->GetInstanceID();
+			UBIMBlockNode *nodeWithAddButton = IdToNodeMap.FindRef(lastChildID);
+			if (nodeWithAddButton)
+			{
+				UBIMBlockAddLayer *newAddButton = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockAddLayer>(BIMAddLayerClass);
+				if (newAddButton)
+				{
+					NodesWithAddLayerButton.Add(nodeWithAddButton, newAddButton);
+
+					newAddButton->ParentID = AddableChildGroup[i]->Children.Last().Pin()->ParentInstance.Pin()->GetInstanceID();
+					newAddButton->PresetID = AddableChildGroup[i]->Children.Last().Pin()->PresetID;
+					newAddButton->ParentSetIndex = i;
+					newAddButton->ParentSetPosition = AddableChildGroup[i]->Children.Num();
+
+					CanvasPanelForNodes->AddChildToCanvas(newAddButton);
+					UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(newAddButton);
+					if (canvasSlot)
+					{
+						canvasSlot->SetAutoSize(true);
+					}
+				}
+			}
+		}
+	}
+
 	AutoArrangeNodes();
 }
 
@@ -278,6 +327,10 @@ void UBIMDesigner::AutoArrangeNodes()
 				{
 					FVector2D estimatedSize = curNodeToEstimate->GetEstimatedNodeSize();
 					curNodeY = curNodeY + estimatedSize.Y + NodeVerticalSpacing; // padding
+					if (NodesWithAddLayerButton.Contains(curNodeToEstimate))
+					{
+						curNodeY += AddButtonSpacingBetweenNodes;
+					}
 					curRow++;
 				}
 			}
@@ -286,6 +339,10 @@ void UBIMDesigner::AutoArrangeNodes()
 			{
 				maxCanvasHeight = curNodeY;
 				maxCanvasHeightBottomEdge = curNode->GetEstimatedNodeSize().Y + curNodeY;
+				if (NodesWithAddLayerButton.Contains(curNode))
+				{
+					maxCanvasHeightBottomEdge += AddButtonSpacingBetweenNodes;
+				}
 			}
 
 			float curMaxColumnHeight = maxColumnHeightMap.FindRef(mapColumn);
@@ -317,6 +374,25 @@ void UBIMDesigner::AutoArrangeNodes()
 				canvasSlot->SetPosition(FVector2D(curPos.X, curPos.Y + columnStartingHeight));
 			}
 		}
+	}
+
+	// Set AddButtons position
+	for (auto& curItem : NodesWithAddLayerButton)
+	{
+		UBIMBlockNode *nodeToAdd = curItem.Key;
+		UCanvasPanelSlot* nodeToAddCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(nodeToAdd);
+		if (nodeToAddCanvasSlot)
+		{
+			FVector2D addButtonPosition = nodeToAddCanvasSlot->GetPosition() + FVector2D(0.f, nodeToAdd->GetEstimatedNodeSize().Y + AddButtonGapFromNode);
+
+			UBIMBlockAddLayer *addButton = curItem.Value;
+			UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(addButton);
+			if (canvasSlot)
+			{
+				canvasSlot->SetPosition(addButtonPosition);
+			}
+		}
+
 	}
 }
 
@@ -355,4 +431,29 @@ FName UBIMDesigner::GetPresetID(int32 InstanceID)
 		return instPtr->PresetID;
 	}
 	return NAME_None;
+}
+
+bool UBIMDesigner::DeleteNode(int32 InstanceID)
+{
+	TArray<int32> outDestroyed;
+	ECraftingResult result = InstancePool.DestroyNodeInstance(InstanceID, outDestroyed);
+	if (result != ECraftingResult::Success)
+	{
+		return false;
+	}
+	UpdateBIMDesigner();
+	return true;
+}
+
+bool UBIMDesigner::AddNodeFromPreset(int32 ParentID, const FName& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
+{
+	FBIMCraftingTreeNodeSharedPtr newNode = InstancePool.CreateNodeInstanceFromPreset(
+		Controller->GetDocument()->PresetManager.CraftingNodePresets,
+		ParentID, PresetID, ParentSetIndex, ParentSetPosition);
+	if (!newNode.IsValid())
+	{
+		return false;
+	}
+	UpdateBIMDesigner();
+	return true;
 }

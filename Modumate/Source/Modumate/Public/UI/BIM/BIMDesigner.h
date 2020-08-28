@@ -37,8 +37,15 @@ protected:
 	UPROPERTY()
 	TArray<class UBIMBlockNode*> BIMBlockNodes;
 
+	UPROPERTY()
 	TMap<int32, class UBIMBlockNode*> IdToNodeMap;
+
+	UPROPERTY()
 	TMap<FIntPoint, class UBIMBlockNode*> NodeCoordinateMap;
+
+	UPROPERTY()
+	TMap<class UBIMBlockNode*, class UBIMBlockAddLayer*> NodesWithAddLayerButton;
+
 	FBIMCraftingTreeNodePool InstancePool;
 
 public:
@@ -69,6 +76,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float NodeVerticalSpacing = 20.f;
 
+	// Spacing for Add layer button under this node, if adding is allowed from its parent node
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AddButtonSpacingBetweenNodes = 60.f;
+
+	// The gap between this node and the add button, if adding is allowed from its parent node
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AddButtonGapFromNode = 10.f;
+
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *Controller;
 
@@ -81,6 +96,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockNode> BIMBlockNodeClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UBIMBlockAddLayer> BIMAddLayerClass;
+
 	UFUNCTION()
 	void PerformDrag();
 
@@ -91,4 +109,6 @@ public:
 	void AutoArrangeNodes();
 	void DrawConnectSplineForNodes(const FPaintContext& context, class UBIMBlockNode* StartNode, class UBIMBlockNode* EndNode) const;
 	FName GetPresetID(int32 InstanceID);
+	bool DeleteNode(int32 InstanceID);
+	bool AddNodeFromPreset(int32 ParentID, const FName& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
 };

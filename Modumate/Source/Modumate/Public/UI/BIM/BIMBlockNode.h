@@ -99,7 +99,16 @@ public:
 	class UModumateButtonUserWidget *ButtonSwapExpanded;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *ButtonDeleteExpanded;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *ButtonDeleteCollapsed;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UToolTrayBlockAssembliesList *SelectionTray_Block_Swap;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
+	class UVerticalBox *VerticalBoxProperties;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UUserWidget *BIMBlockNodeDirty;
@@ -113,6 +122,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UButton *Button_Debug;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UBIMBlockUserEnterable> BIMBlockUserEnterableClass;
+
 	FName PresetID;
 	int32 ID = -1;
 	int32 ParentID = -1;
@@ -123,6 +135,9 @@ public:
 
 	UFUNCTION()
 	void OnButtonSwapReleased();
+
+	UFUNCTION()
+	void OnButtonDeleteReleased();
 
 	void UpdateNodeDirty(bool NewDirty);
 	void UpdateNodeCollapse(bool NewCollapse, bool AllowAutoArrange = false);

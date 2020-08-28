@@ -13,6 +13,12 @@
 #include "Components/Image.h"
 #include "UI/ComponentPresetListItem.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumatePresetManager.h"
+#include "Components/VerticalBox.h"
+#include "UI/BIM/BIMBlockUserEnterable.h"
+#include "UI/EditModelPlayerHUD.h"
+#include "UI/Custom/ModumateTextBlockUserWidget.h"
 
 UBIMBlockNode::UBIMBlockNode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -28,13 +34,15 @@ bool UBIMBlockNode::Initialize()
 
 	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 
-	if (!(ButtonSwapCollapsed && ButtonSwapExpanded))
+	if (!(ButtonSwapCollapsed && ButtonSwapExpanded && ButtonDeleteCollapsed && ButtonDeleteExpanded))
 	{
 		return false;
 	}
 
 	ButtonSwapCollapsed->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonSwapReleased);
 	ButtonSwapExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonSwapReleased);
+	ButtonDeleteCollapsed->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDeleteReleased);
+	ButtonDeleteExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDeleteReleased);
 
 	return true;
 }
@@ -124,6 +132,11 @@ void UBIMBlockNode::OnButtonSwapReleased()
 
 }
 
+void UBIMBlockNode::OnButtonDeleteReleased()
+{
+	ParentBIMDesigner->DeleteNode(ID);
+}
+
 void UBIMBlockNode::UpdateNodeDirty(bool NewDirty)
 {
 	NodeDirty = NewDirty;
@@ -168,8 +181,26 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 		// TODO: Collapse state of non king node depends on current user selection
 		UpdateNodeCollapse(true);
 	}
-	// TODO: Get node dirty state
-	UpdateNodeDirty(false);
+
+	// Node status
+	UpdateNodeDirty(Node->GetPresetStatus(Controller->GetDocument()->PresetManager.CraftingNodePresets) == EBIMPresetEditorNodeStatus::Dirty);
+
+	// Build instance properties
+	VerticalBoxProperties->ClearChildren();
+	TMap<FString, FBIMNameType> properties;
+	Controller->GetDocument()->PresetManager.CraftingNodePresets.GetPropertyFormForPreset(PresetID, properties);
+	for (auto& curProperty : properties)
+	{
+		UBIMBlockUserEnterable *newEnterable = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockUserEnterable>(BIMBlockUserEnterableClass);
+		if (newEnterable)
+		{
+			newEnterable->Text_Title->ChangeText(FText::FromString(curProperty.Key));
+			VerticalBoxProperties->AddChildToVerticalBox(newEnterable);
+		}
+	}
+
+
+
 	return true;
 }
 
@@ -212,9 +243,7 @@ FVector2D UBIMBlockNode::GetEstimatedNodeSize()
 
 	case ENodeWidgetSwitchState::Expanded:
 		estimatedSize += ExpandedImageSize;
-
-		// TODO: Get actual number of form items in node, "5" is for testing purpose
-		estimatedSize += (FormItemSize * 5);
+		estimatedSize += (FormItemSize * VerticalBoxProperties->GetAllChildren().Num());
 		estimatedSize += BottomPadding;
 		break;
 

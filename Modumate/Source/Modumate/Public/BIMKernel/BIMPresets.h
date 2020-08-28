@@ -141,5 +141,7 @@ public:
 
 	ECraftingResult GetDependentPresets(const FName &PresetID, TSet<FName> &OutPresets) const;
 
+	ECraftingResult GetPropertyFormForPreset(const FName &PresetID, TMap<FString, FBIMNameType> &OutForm) const;
+
 	ECraftingResult LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMNameType>& OutStarters, TArray<FString>& OutMessages);
 };
