@@ -9,23 +9,6 @@
 
 #include "EditModelSelectTool.generated.h"
 
-class MODUMATE_API FSelectedObjectToolMixin
-{
-protected:
-
-	TMap<FModumateObjectInstance*, FMOIDataRecordV1> OriginalObjectData;
-	TWeakObjectPtr<class AEditModelPlayerController_CPP> ControllerPtr;
-
-	FSelectedObjectToolMixin(class AEditModelPlayerController_CPP *InController = nullptr);
-
-	void AcquireSelectedObjects();
-	void RestoreSelectedObjects();
-	void ReleaseSelectedObjects();
-	void ReleaseObjectsAndApplyDeltas();
-
-	static const FName StateRequestTag;
-};
-
 UCLASS()
 class MODUMATE_API USelectTool : public UEditModelToolBase
 {

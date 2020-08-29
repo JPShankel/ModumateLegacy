@@ -1,7 +1,8 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "ToolsAndAdjustments/Common/SelectedObjectToolMixin.h"
 
 #include "EditModelMoveTool.generated.h"
 
@@ -14,11 +15,7 @@ class MODUMATE_API UMoveObjectTool : public UEditModelToolBase, public FSelected
 
 private:
 	FVector AnchorPoint;
-	TMap<int32, FTransform> StartTransforms;
 	int32 PendingSegmentID;
-
-	// TODO: this should replace OriginalObjectData eventually
-	TMap<int32, FVector> OriginalObjectPositions;
 
 public:
 	UMoveObjectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());

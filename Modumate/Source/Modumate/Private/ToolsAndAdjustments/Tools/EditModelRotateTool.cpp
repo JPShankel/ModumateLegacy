@@ -2,15 +2,17 @@
 
 
 #include "ToolsAndAdjustments/Tools/EditModelRotateTool.h"
+
+#include "DocumentManagement/ModumateCommands.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "DocumentManagement/ModumateCommands.h"
 #include "UnrealClasses/LineActor.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
 
 using namespace Modumate;
 
@@ -37,6 +39,9 @@ bool URotateObjectTool::Deactivate()
 	{
 		AbortUse();
 	}
+
+	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
+
 	return UEditModelToolBase::Deactivate();
 }
 
@@ -48,15 +53,18 @@ bool URotateObjectTool::BeginUse()
 
 	PendingSegmentStart = Controller->GetWorld()->SpawnActor<ALineActor>();
 	PendingSegmentEnd = Controller->GetWorld()->SpawnActor<ALineActor>();
-	if (Controller->EMPlayerState->SnappedCursor.Visible)
+	if (!Controller->EMPlayerState->SnappedCursor.Visible)
 	{
-		Stage = AnchorPlaced;
-		AnchorPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorPoint, FVector::UpVector);
-		return true;
+		return false;
 	}
 
-	return false;
+	Stage = AnchorPlaced;
+	AnchorPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorPoint, FVector::UpVector);
+	bOriginalVerticalAffordanceSnap = Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap;
+	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
+
+	return true;
 }
 
 bool URotateObjectTool::EnterNextStage()
@@ -130,10 +138,20 @@ void URotateObjectTool::ApplyRotation()
 	float angle = CalcToolAngle();
 	FQuat rot = FRotator(0, angle, 0).Quaternion();
 
-	for (auto &kvp : OriginalObjectData)
+	TMap<int32, FVector> objectInfo;
+	for (auto& kvp : OriginalCornerTransforms)
 	{
-		kvp.Key->SetFromDataRecordAndRotation(kvp.Value, AnchorPoint, rot);
+		objectInfo.Add(kvp.Key, AnchorPoint + rot.RotateVector(kvp.Value.GetTranslation() - AnchorPoint));
 	}
+
+	FModumateObjectDeltaStatics::PreviewMovement(objectInfo, Controller->GetDocument(), Controller->GetWorld());
+	
+	// TODO: find a replacement for control points to account for non graph-hosted objects in PreviewMovement
+
+	//for (auto &kvp : OriginalCornerTransforms)
+	//{
+	//	kvp.Key->SetFromDataRecordAndRotation(kvp.Value, AnchorPoint, rot);
+	//}
 }
 
 float URotateObjectTool::CalcToolAngle()
@@ -247,7 +265,9 @@ bool URotateObjectTool::FrameUpdate()
 				EEnterableField::NonEditableText,
 				EAutoEditableBox::UponUserInput,
 				true);
+
 			ApplyRotation();
+
 			// Drawing protractor
 			Controller->DrawRotateToolDegree(CalcToolAngle(), AnchorPoint, PendingSegmentStart.Get(), PendingSegmentEnd.Get());
 		}

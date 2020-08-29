@@ -51,22 +51,6 @@ bool UMoveObjectTool::BeginUse()
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorPoint, Controller->EMPlayerState->SnappedCursor.HitNormal, Controller->EMPlayerState->SnappedCursor.HitTangent);
 		PendingSegmentID = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass())->ID;
 
-		FModumateDocument* doc = Controller->GetDocument();
-		TArray<int32> objectIDs;
-		for (auto& kvp : OriginalObjectData)
-		{
-			objectIDs.Add(kvp.Key->ID);
-		}
-		TSet<int32> vertexIDs;
-		FModumateObjectDeltaStatics::GetVertexIDs(objectIDs, doc, vertexIDs);
-
-		for (int32 vertexID : vertexIDs)
-		{
-			auto obj = doc->GetObjectById(vertexID);
-			FVector pos = obj->GetCorner(0);
-			OriginalObjectPositions.Add(vertexID, pos);
-		}
-
 		return true;
 	}
 
@@ -120,17 +104,21 @@ bool UMoveObjectTool::FrameUpdate()
 		{
 			FVector offset = hitLoc - AnchorPoint;
 			TMap<int32, FVector> objectInfo;
-			for (auto& kvp : OriginalObjectPositions)
+			for (auto& kvp : OriginalCornerTransforms)
 			{
-				objectInfo.Add(kvp.Key, kvp.Value + offset);
+				objectInfo.Add(kvp.Key, kvp.Value.GetTranslation() + offset);
 			}
 
 			if (!FModumateObjectDeltaStatics::PreviewMovement(objectInfo, doc, Controller->GetWorld()))
 			{
-				for (auto& kvp : OriginalObjectData)
-				{
-					kvp.Key->SetFromDataRecordAndDisplacement(kvp.Value, hitLoc - AnchorPoint);
-				}
+				// TODO: find a replacement for control points for non graph-hosted objects and 
+				// remove SetFromDataRecordAndDisplacement
+
+				//for (auto& kvp : OriginalCornerTransforms)
+				//{
+				//	auto obj = doc->GetObjectById(kvp.Key);
+				//	obj->SetFromDataRecordAndDisplacement(obj->AsDataRecord(), hitLoc - AnchorPoint);
+				//}
 			}
 		}
 
@@ -161,7 +149,6 @@ bool UMoveObjectTool::EndUse()
 	{
 		ReleaseObjectsAndApplyDeltas();
 	}
-	OriginalObjectPositions.Reset();
 
 	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 	PendingSegmentID = MOD_ID_NONE;
@@ -172,7 +159,6 @@ bool UMoveObjectTool::EndUse()
 bool UMoveObjectTool::AbortUse()
 {
 	ReleaseSelectedObjects();
-	OriginalObjectPositions.Reset();
 
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 

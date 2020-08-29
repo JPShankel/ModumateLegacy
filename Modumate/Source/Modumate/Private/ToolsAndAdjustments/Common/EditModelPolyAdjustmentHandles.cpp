@@ -121,7 +121,7 @@ bool AAdjustPolyPointHandle::UpdateUse()
 
 FVector AAdjustPolyPointHandle::GetHandlePosition() const
 {
-	if (!ensure(TargetMOI))
+	if (!ensure(TargetMOI && TargetIndex < TargetMOI->GetNumCorners()))
 	{
 		return FVector::ZeroVector;
 	}

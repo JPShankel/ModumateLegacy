@@ -3,7 +3,7 @@
 #pragma once
 
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
-#include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
+#include "ToolsAndAdjustments/Common/SelectedObjectToolMixin.h"
 
 #include "EditModelRotateTool.generated.h"
 
@@ -30,6 +30,8 @@ private:
 	TWeakObjectPtr<ALineActor> PendingSegmentEnd;
 	bool bOverrideAngleWithInput = false;
 	float InputAngle = 0.f;
+
+	bool bOriginalVerticalAffordanceSnap = false;
 
 public:
 	URotateObjectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
