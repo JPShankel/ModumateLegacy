@@ -17,6 +17,7 @@ namespace Modumate
 		: Epsilon(InEpsilon)
 		, bDebugCheck(bInDebugCheck)
 	{
+		TraversalGraph2D = MakeShared<FGraph2D>();
 		Reset();
 	}
 
@@ -29,10 +30,11 @@ namespace Modumate
 		Vertices.Reset();
 		Edges.Reset();
 		Faces.Reset();
-		AllObjects.Reset();
 		Polyhedra.Reset();
+		AllObjects.Reset();
 		DirtyFaces.Reset();
 		CachedGroups.Reset();
+		TraversalGraph2D->Reset();
 	}
 
 	FGraph3DEdge* FGraph3D::FindEdge(FGraphSignedID EdgeID)
@@ -1052,8 +1054,7 @@ namespace Modumate
 
 	bool FGraph3D::TraverseFacesFromEdge(int32 OriginalEdgeID, TArray<TArray<int32>> &OutVertexIDs) const
 	{
-		static FGraph2D graph2D;
-		graph2D.Reset();
+		TraversalGraph2D->Reset();
 
 		TArray<FPlane> planes;
 		GetPlanesForEdge(OriginalEdgeID, planes);
@@ -1075,12 +1076,12 @@ namespace Modumate
 			bool startVertexDistance = FMath::IsNearlyZero(plane.PlaneDot(startVertex->Position), Epsilon);
 			bool endVertexDistance = FMath::IsNearlyZero(plane.PlaneDot(startVertex->Position), Epsilon);
 			if (!startVertexDistance || !endVertexDistance || 
-				!Create2DGraph(edge->StartVertexID, plane, graph2D))
+				!Create2DGraph(edge->StartVertexID, plane, TraversalGraph2D))
 			{
 				continue;
 			}
 
-			auto originalEdge2D = graph2D.FindEdge(OriginalEdgeID);
+			auto originalEdge2D = TraversalGraph2D->FindEdge(OriginalEdgeID);
 			if (originalEdge2D == nullptr)
 			{
 				continue;
@@ -1088,7 +1089,7 @@ namespace Modumate
 
 			for (int32 polyID : { originalEdge2D->LeftPolyID, originalEdge2D->RightPolyID })
 			{
-				FGraph2DPolygon* polygon = graph2D.FindPolygon(polyID);
+				FGraph2DPolygon* polygon = TraversalGraph2D->FindPolygon(polyID);
 				if ((polygon == nullptr) || !polygon->bInterior)
 				{
 					continue;
@@ -1541,7 +1542,7 @@ namespace Modumate
 	}
 
 	bool FGraph3D::Create2DGraph(const TSet<int32> &InitialGraphObjIDs, TSet<int32> &OutContainedGraphObjIDs,
-		FGraph2D &OutGraph, FPlane &OutPlane, bool bRequireConnected, bool bRequireComplete) const
+		TSharedPtr<FGraph2D> OutGraph, FPlane &OutPlane, bool bRequireConnected, bool bRequireComplete) const
 	{
 		OutPlane = FPlane(ForceInitToZero);
 
@@ -1644,7 +1645,7 @@ namespace Modumate
 			return false;
 		}
 
-		int32 exteriorPolyID = OutGraph.GetRootPolygonID();
+		int32 exteriorPolyID = OutGraph->GetRootPolygonID();
 		bool bFullyConnected = (exteriorPolyID != MOD_ID_NONE);
 
 		// Check the connected requirement, which detects if there are multiple exterior polygons that indicate disconnected graphs
@@ -1663,7 +1664,7 @@ namespace Modumate
 				{
 				case EGraph3DObjectType::Vertex:
 				{
-					if (!OutGraph.ContainsObject(graphObjID))
+					if (!OutGraph->ContainsObject(graphObjID))
 					{
 						UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Vertex #%d was missing!"), graphObjID);
 						return false;
@@ -1672,7 +1673,7 @@ namespace Modumate
 				}
 				case EGraph3DObjectType::Edge:
 				{
-					if (!OutGraph.ContainsObject(graphObjID))
+					if (!OutGraph->ContainsObject(graphObjID))
 					{
 						UE_LOG(LogTemp, Log, TEXT("Graph2D was expected to completely contain the input objects, but Edge #%d was missing!"), graphObjID);
 						return false;
@@ -1697,9 +1698,9 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, FGraph2D &OutGraph, const TSet<int32> *WhitelistIDs, TMap<int32, int32> *OutFace3DToPoly2D) const
+	bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, TSharedPtr<FGraph2D> OutGraph, const TSet<int32> *WhitelistIDs, TMap<int32, int32> *OutFace3DToPoly2D) const
 	{
-		OutGraph.Reset();
+		OutGraph->Reset();
 
 		TQueue<int32> frontierVertexIDs;
 		frontierVertexIDs.Enqueue(StartVertexID);
@@ -1717,7 +1718,7 @@ namespace Modumate
 
 		FVector planeOrigin = startVertex->Position;
 
-		OutGraph.AddVertex(FVector2D(EForceInit::ForceInitToZero), startVertex->ID);
+		OutGraph->AddVertex(FVector2D(EForceInit::ForceInitToZero), startVertex->ID);
 
 		// BFS
 		while (!frontierVertexIDs.IsEmpty())
@@ -1760,17 +1761,17 @@ namespace Modumate
 				FVector difference = nextVertex->Position - planeOrigin;
 				FVector2D position2D = FVector2D(difference | Cached2DX, difference | Cached2DY);
 
-				OutGraph.AddVertex(position2D, nextVertex->ID);
+				OutGraph->AddVertex(position2D, nextVertex->ID);
 
 				frontierVertexIDs.Enqueue(nextVertexID);
 
 				if (edgeID < 0)
 				{
-					OutGraph.AddEdge(nextVertexID, currentVertexID, -edgeID);
+					OutGraph->AddEdge(nextVertexID, currentVertexID, -edgeID);
 				}
 				else
 				{
-					OutGraph.AddEdge(currentVertexID, nextVertexID, edgeID);
+					OutGraph->AddEdge(currentVertexID, nextVertexID, edgeID);
 				}
 
 				for (auto edgeFace : edge->ConnectedFaces)
@@ -1780,7 +1781,7 @@ namespace Modumate
 			}
 		}
 
-		OutGraph.CalculatePolygons();
+		OutGraph->CalculatePolygons();
 
 		if (OutFace3DToPoly2D && !Find2DGraphFaceMapping(adjacentFaceIDs, OutGraph, *OutFace3DToPoly2D))
 		{
@@ -1790,9 +1791,9 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, FGraph2D &OutGraph, TMap<int32, int32> &OutGraphIDToObjID) const
+	bool FGraph3D::Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TSharedPtr<FGraph2D> OutGraph, TMap<int32, int32> &OutGraphIDToObjID) const
 	{
-		OutGraph.Reset();
+		OutGraph->Reset();
 
 		int32 NextID = 0;
 		// TODO: unclear whether clipping needs to be done here or not.
@@ -1830,11 +1831,11 @@ namespace Modumate
 
 							// TODO: FindVertex is linear
 							FVector2D p = point;
-							auto existingVertex = OutGraph.FindVertex(p);
+							auto existingVertex = OutGraph->FindVertex(p);
 							if (existingVertex == nullptr)
 							{
 								NextID++;
-								OutGraph.AddVertex(point, NextID);
+								OutGraph->AddVertex(point, NextID);
 								edgeVertexIDs.Add(NextID);
 							}
 							else
@@ -1844,7 +1845,7 @@ namespace Modumate
 						}
 						NextID++;
 						ensureAlways(edgeVertexIDs.Num() == 2);
-						OutGraph.AddEdge(edgeVertexIDs[0], edgeVertexIDs[1], NextID);
+						OutGraph->AddEdge(edgeVertexIDs[0], edgeVertexIDs[1], NextID);
 
 						OutGraphIDToObjID.Add(NextID, face.ID);
 					}
@@ -1855,9 +1856,9 @@ namespace Modumate
 		return false;
 	}
 
-	bool FGraph3D::Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const FGraph2D &Graph, TMap<int32, int32> &OutFace3DToPoly2D) const
+	bool FGraph3D::Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const TSharedPtr<FGraph2D> Graph, TMap<int32, int32> &OutFace3DToPoly2D) const
 	{
-		const TMap<int32, FGraph2DPolygon> &graphPolys = Graph.GetPolygons();
+		const TMap<int32, FGraph2DPolygon> &graphPolys = Graph->GetPolygons();
 
 		// Compare 2D polygon vertex lists with 3D face vertex lists in order to create a mapping between the face IDs.
 		// Only consider interior, closed 2D polygons, since those are the only ones that can exist as 3D faces in the volume graph.
@@ -1878,7 +1879,7 @@ namespace Modumate
 			{
 				TArray<int32> sortedVerts;
 				Algo::Transform(polygon.Edges, sortedVerts, [&Graph](const FGraphSignedID &EdgeID) {
-					const FGraph2DEdge *edge = Graph.FindEdge(EdgeID);
+					const FGraph2DEdge *edge = Graph->FindEdge(EdgeID);
 					return (EdgeID > 0) ? edge->StartVertexID : edge->EndVertexID;
 				});
 				sortedVerts.Sort();

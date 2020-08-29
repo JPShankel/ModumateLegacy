@@ -108,15 +108,6 @@ struct FGraph2DPolygonRecord
 
 	UPROPERTY()
 	TArray<int32> VertexIDs;
-
-	UPROPERTY()
-	bool bInterior;
-
-	UPROPERTY()
-	int32 ContainingFaceID;
-
-	UPROPERTY()
-	TArray<int32> ContainedFaceIDs;
 };
 
 USTRUCT()

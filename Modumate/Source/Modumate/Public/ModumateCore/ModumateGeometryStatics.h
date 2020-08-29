@@ -103,27 +103,28 @@ struct MODUMATE_API FLayerGeomDef
 	FLayerGeomDef();
 
 	// A simplified constructor, for non-mitered, hole-less layers
-	FLayerGeomDef(const TArray<FVector> &Points, float InThickness, const FVector &InNormal);
+	FLayerGeomDef(const TArray<FVector>& Points, float InThickness, const FVector& InNormal);
 
-	FLayerGeomDef(const TArray<FVector> &InPointsA, const TArray<FVector> &InPointsB, const FVector &InNormal,
-		const FVector &InAxisX = FVector::ZeroVector, const TArray<FPolyHole3D> *InHoles = nullptr);
+	FLayerGeomDef(const TArray<FVector>& InPointsA, const TArray<FVector>& InPointsB, const FVector& InNormal,
+		const FVector& InAxisX = FVector::ZeroVector, const TArray<FPolyHole3D> *InHoles = nullptr);
 
-	void Init(const TArray<FVector> &InPointsA, const TArray<FVector> &InPointsB, const FVector &InNormal,
-		const FVector &InAxisX = FVector::ZeroVector, const TArray<FPolyHole3D> *InHoles = nullptr);
-	FVector2D ProjectPoint2D(const FVector &Point3D) const;
-	FVector Deproject2DPoint(const FVector2D &Point2D, bool bSideA) const;
+	void Init(const TArray<FVector>& InPointsA, const TArray<FVector>& InPointsB, const FVector& InNormal,
+		const FVector& InAxisX = FVector::ZeroVector, const TArray<FPolyHole3D> *InHoles = nullptr);
+	FVector2D ProjectPoint2D(const FVector& Point3D) const;
+	FVector2D ProjectPoint2DSnapped(const FVector& Point3D, float Tolerance = KINDA_SMALL_NUMBER) const;
+	FVector Deproject2DPoint(const FVector2D& Point2D, bool bSideA) const;
 	bool CachePoints2D();
 
-	static void AppendTriangles(const TArray<FVector> &Verts, const TArray<int32> &SourceTriIndices,
-		TArray<int32> &OutTris, bool bReverseTris);
-	bool TriangulateSideFace(const FVector2D &Point2DA1, const FVector2D &Point2DA2,
-		const FVector2D &Point2DB1, const FVector2D &Point2DB2, bool bReverseTris,
-		TArray<FVector> &OutVerts, TArray<int32> &OutTris,
-		TArray<FVector> &OutNormals, TArray<FVector2D> &OutUVs, TArray<FProcMeshTangent> &OutTangents,
-		const FVector2D &UVScale, const FVector &UVAnchor = FVector::ZeroVector, float UVRotOffset = 0.0f) const;
-	bool TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &OutTris,
-		TArray<FVector> &OutNormals, TArray<FVector2D> &OutUVs, TArray<FProcMeshTangent> &OutTangents,
-		const FVector &UVAnchor = FVector::ZeroVector, float UVRotOffset = 0.0f) const;
+	static void AppendTriangles(const TArray<FVector>& Verts, const TArray<int32>& SourceTriIndices,
+		TArray<int32>& OutTris, bool bReverseTris);
+	bool TriangulateSideFace(const FVector2D& Point2DA1, const FVector2D& Point2DA2,
+		const FVector2D& Point2DB1, const FVector2D& Point2DB2, bool bReverseTris,
+		TArray<FVector>& OutVerts, TArray<int32>& OutTris,
+		TArray<FVector>& OutNormals, TArray<FVector2D>& OutUVs, TArray<FProcMeshTangent>& OutTangents,
+		const FVector2D& UVScale, const FVector& UVAnchor = FVector::ZeroVector, float UVRotOffset = 0.0f) const;
+	bool TriangulateMesh(TArray<FVector>& OutVerts, TArray<int32>& OutTris,
+		TArray<FVector>& OutNormals, TArray<FVector2D>& OutUVs, TArray<FProcMeshTangent>& OutTangents,
+		const FVector& UVAnchor = FVector::ZeroVector, float UVRotOffset = 0.0f) const;
 };
 
 USTRUCT()

@@ -147,8 +147,8 @@ bool FModumateObjectDeltaStatics::PreviewMovement(const TMap<int32, FVector>& Ob
 		for (auto& kvp : combinedVertex2DMovements)
 		{
 			surfaceGraphDeltas.Reset();
-			Modumate::FGraph2D* surfaceGraph = doc->FindSurfaceGraph(kvp.Key);
-			if (!ensure(surfaceGraph) || (kvp.Value.Num() == 0) ||
+			auto surfaceGraph = doc->FindSurfaceGraph(kvp.Key);
+			if (!ensure(surfaceGraph.IsValid()) || (kvp.Value.Num() == 0) ||
 				!surfaceGraph->MoveVerticesDirect(surfaceGraphDeltas, nextID, kvp.Value))
 			{
 				continue;

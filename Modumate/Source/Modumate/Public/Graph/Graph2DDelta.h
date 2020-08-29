@@ -21,10 +21,6 @@ namespace Modumate
 
 		FGraph2DObjDelta(const TArray<int32> &InVertices);
 		FGraph2DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents);
-		FGraph2DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents, bool bIsInterior);
-
-		// TODO: unclear if this needs to be here or not long term
-		bool bInterior;
 	};
 
 	enum EGraph2DDeltaType
@@ -76,7 +72,6 @@ namespace Modumate
 
 		TMap<int32, FGraph2DObjDelta> PolygonAdditions;
 		TMap<int32, FGraph2DObjDelta> PolygonDeletions;
-		TMap<int32, TPair<int32, int32>> PolygonParentIDUpdates;
 
 		TPair<FBoundsUpdate, FBoundsUpdate> BoundsUpdates;
 
@@ -87,7 +82,7 @@ namespace Modumate
 
 		void AddNewVertex(const FVector2D& Position, int32& NextID);
 		void AddNewEdge(const FGraphVertexPair& VertexIDs, int32& NextID, const TArray<int32>& ParentIDs = TArray<int32>());
-		void AddNewPolygon(const TArray<int32>& VertexIDs, int32& NextID, bool bIsInterior, const TArray<int32>& ParentIDs = TArray<int32>());
+		void AddNewPolygon(const TArray<int32>& VertexIDs, int32& NextID, const TArray<int32>& ParentIDs = TArray<int32>());
 
 		void Invert();
 		TSharedPtr<FGraph2DDelta> MakeGraphInverse() const;

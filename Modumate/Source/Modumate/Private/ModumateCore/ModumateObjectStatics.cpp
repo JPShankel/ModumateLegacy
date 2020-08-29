@@ -870,11 +870,16 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument*
 	OutPerimeter.Reset();
 	OutHoles.Reset();
 
-	const FModumateObjectInstance* surfacePolyObj = Doc ? Doc->GetObjectById(SurfacePolyID) : nullptr;
+	if (!ensure(Doc))
+	{
+		return false;
+	}
+
+	const FModumateObjectInstance* surfacePolyObj = Doc->GetObjectById(SurfacePolyID);
 	int32 surfaceGraphID = surfacePolyObj ? surfacePolyObj->GetParentID() : MOD_ID_NONE;
-	const FGraph2D* surfaceGraph = Doc ? Doc->FindSurfaceGraph(surfaceGraphID) : nullptr;
-	const FModumateObjectInstance* surfaceGraphObj = Doc ? Doc->GetObjectById(surfaceGraphID) : nullptr;
-	const FGraph2DPolygon* surfacePolygon = surfaceGraph ? surfaceGraph->FindPolygon(SurfacePolyID) : nullptr;
+	auto surfaceGraph = Doc->FindSurfaceGraph(surfaceGraphID);
+	const FModumateObjectInstance* surfaceGraphObj = Doc->GetObjectById(surfaceGraphID);
+	const FGraph2DPolygon* surfacePolygon = surfaceGraph.IsValid() ? surfaceGraph->FindPolygon(SurfacePolyID) : nullptr;
 	if (!ensure(surfacePolygon))
 	{
 		return false;
@@ -896,7 +901,7 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument*
 		OutPerimeter.Add(perimeterVertexObj->GetObjectLocation() + offsetDelta);
 	}
 
-	for (int32 interiorPolyID : surfacePolygon->InteriorPolygons)
+	for (int32 interiorPolyID : surfacePolygon->ContainedPolyIDs)
 	{
 		const FGraph2DPolygon* interiorSurfacePoly = surfaceGraph->FindPolygon(interiorPolyID);
 		if (!ensure(interiorSurfacePoly) || !interiorSurfacePoly->bInterior)

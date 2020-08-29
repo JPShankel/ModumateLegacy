@@ -25,7 +25,7 @@ namespace Modumate
 	class IGraph2DObject
 	{
 	public:
-		IGraph2DObject(int32 InID, FGraph2D *InGraph);
+		IGraph2DObject(int32 InID, TWeakPtr<FGraph2D> InGraph);
 		virtual ~IGraph2DObject();
 
 	public:
@@ -47,6 +47,6 @@ namespace Modumate
 		bool bModified = false;			// Whether this object has been modified since the last time this flag was cleared (for updating reflected MOIs)
 		bool bDerivedDataDirty = false;	// Whether this object's definitional data has changed since its derived data has been updated
 
-		FGraph2D *Graph = nullptr;	// The graph that owns this object
+		TWeakPtr<FGraph2D> Graph;		// The graph that owns this object
 	};
 }

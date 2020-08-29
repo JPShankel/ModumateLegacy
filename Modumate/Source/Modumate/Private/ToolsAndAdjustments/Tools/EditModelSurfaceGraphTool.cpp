@@ -122,8 +122,8 @@ bool USurfaceGraphTool::EnterNextStage()
 		return false;
 	}
 
-	FGraph2D *targetSurfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
-	if ((targetSurfaceGraph == nullptr) || targetSurfaceGraph->IsEmpty())
+	auto targetSurfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
+	if (!targetSurfaceGraph.IsValid() || targetSurfaceGraph->IsEmpty())
 	{
 		return false;
 	}
@@ -278,21 +278,19 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget()
 
 	// If we're targeting a surface graph object, it has to be empty
 	int32 nextID = GameState->Document.GetNextAvailableID();
-	FGraph2D targetSurfaceGraph(nextID);
 	TArray<TSharedPtr<FDelta>> deltas;
 
 	if (GraphTarget)
 	{
-		FGraph2D* existingSurfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
-		if ((existingSurfaceGraph == nullptr) || !existingSurfaceGraph->IsEmpty())
+		TargetSurfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
+		if (!TargetSurfaceGraph.IsValid() || !TargetSurfaceGraph->IsEmpty())
 		{
 			return false;
 		}
-
-		targetSurfaceGraph = *existingSurfaceGraph;
 	}
 	else
 	{
+		TargetSurfaceGraph = MakeShared<FGraph2D>(nextID);
 		nextID++;
 	}
 
@@ -305,10 +303,10 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget()
 		surfaceObjectData.ObjectAssemblyKey = NAME_None;
 		surfaceObjectData.ParentID = HostTarget->ID;
 		surfaceObjectData.ControlIndices = { HitFaceIndex };
-		surfaceObjectData.ObjectID = targetSurfaceGraph.GetID();
+		surfaceObjectData.ObjectID = TargetSurfaceGraph->GetID();
 
 		deltas.Add(MakeShareable(new FMOIDelta({ surfaceObjectData })));
-		deltas.Add(MakeShareable(new FGraph2DDelta(targetSurfaceGraph.GetID(), EGraph2DDeltaType::Add)));
+		deltas.Add(MakeShareable(new FGraph2DDelta(TargetSurfaceGraph->GetID(), EGraph2DDeltaType::Add)));
 	}
 
 	// Make sure we have valid geometry from the target
@@ -349,10 +347,17 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget()
 	}
 
 	TArray<FGraph2DDelta> fillGraphDeltas;
-	if (!targetSurfaceGraph.PopulateFromPolygons(fillGraphDeltas, nextID, graphPolygonsToAdd, true))
+	if (!TargetSurfaceGraph->PopulateFromPolygons(fillGraphDeltas, nextID, graphPolygonsToAdd, true))
 	{
 		return false;
 	}
+
+	// If we created a surface graph for the purpose of generating deltas, then reset it now since we won't need it.
+	if (GraphTarget == nullptr)
+	{
+		TargetSurfaceGraph->Reset();
+	}
+	TargetSurfaceGraph.Reset();
 
 	for (FGraph2DDelta& graphDelta : fillGraphDeltas)
 	{

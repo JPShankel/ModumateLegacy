@@ -9,8 +9,128 @@
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Polygon2.h"
 
+
 namespace Modumate
 {
+	// Pointer tests
+
+#define POINTER_MEMBERS 1
+#define USE_STD_MEMORY 0
+
+#if USE_STD_MEMORY
+#else
+	class FPointerTestContainer;
+
+	class FPointerTestMember
+	{
+	public:
+		FPointerTestMember(int32 InID, TSharedPtr<FPointerTestContainer> InContainer);
+		~FPointerTestMember();
+
+		int32 ID = -1;
+		int32 ContainerID = -1;
+
+		TWeakPtr<FPointerTestContainer> Container;
+	};
+
+	class FPointerTestContainer : public TSharedFromThis<FPointerTestContainer>
+	{
+	public:
+		FPointerTestContainer() { }
+
+		FPointerTestContainer(int32 InID)
+			: ID(InID)
+		{
+		}
+
+		~FPointerTestContainer()
+		{
+			UE_LOG(LogTemp, Log, TEXT("Destroyed test container ID %d with %d members"), ID, Members.Num());
+		}
+
+#if POINTER_MEMBERS
+		TSharedPtr<FPointerTestMember> AddMember(int32 MemberID)
+		{
+			auto sharedThis = this->AsShared();
+			auto newMember = MakeShared<FPointerTestMember>(MemberID, sharedThis);
+			auto addedMember = Members.Add(MemberID, newMember);
+			ensure(newMember == addedMember);
+			return newMember;
+		}
+#else
+		FPointerTestMember* AddMember(int32 MemberID)
+		{
+			auto sharedThis = this->AsShared();
+			FPointerTestMember& addedMember = Members.Add(MemberID, FPointerTestMember(MemberID, sharedThis));
+			return &addedMember;
+		}
+#endif
+
+		void Reset()
+		{
+			Members.Reset();
+		}
+
+		int32 ID = -1;
+#if POINTER_MEMBERS
+		TMap<int32, TSharedPtr<FPointerTestMember>> Members;
+#else
+		TMap<int32, FPointerTestMember> Members;
+#endif
+	};
+
+	FPointerTestMember::FPointerTestMember(int32 InID, TSharedPtr<FPointerTestContainer> InContainer)
+		: ID(InID)
+		, Container(InContainer)
+	{
+		if (Container.IsValid())
+		{
+			ContainerID = Container.Pin()->ID;
+		}
+	}
+
+	FPointerTestMember::~FPointerTestMember()
+	{
+		int32 containerID = -1;
+
+		auto container = Container.Pin();
+		if (container.IsValid())
+		{
+			ensure(ContainerID == container->ID);
+			UE_LOG(LogTemp, Log, TEXT("Destroyed test member ID %d, contained by ID %d"), ID, container->ID);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Destroyed test member ID %d, after container ID %d was destroyed."), ID, ContainerID);
+		}
+	}
+#endif
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumatePointerTests, "Modumate.Core.Pointers", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumatePointerTests::RunTest(const FString& Parameters)
+	{
+		for (int32 i = 0; i < 16; ++i)
+		{
+			auto container = MakeShared<FPointerTestContainer>(i);
+
+			for (int32 j = 0; j < 16; ++j)
+			{
+				auto member = container->AddMember(j);
+				if (ensure(member))
+				{
+					UE_LOG(LogTemp, Log, TEXT("Added member ID %d to container ID %d"), member->ID, container->ID);
+				}
+			}
+
+			if ((container->ID % 2) == 0)
+			{
+				container->Reset();
+			}
+		}
+
+		return true;
+	}
+
 	// Modumate Geometry Statics
 
 	// Ray Intersection Tests

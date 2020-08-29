@@ -8,72 +8,101 @@
 
 namespace Modumate
 {
-	FGraph2DPolygon::FGraph2DPolygon(int32 InID, FGraph2D* InGraph, TArray<int32> &Vertices, bool bInInterior)
+	TSet<int32> FGraph2DPolygon::TempVertexSet;
+	TSet<FGraphSignedID> FGraph2DPolygon::TempVisitedEdges;
+
+	FGraph2DPolygon::FGraph2DPolygon()
+		: IGraph2DObject(MOD_ID_NONE, nullptr)
+	{ }
+
+	FGraph2DPolygon::FGraph2DPolygon(int32 InID, TWeakPtr<FGraph2D> InGraph)
 		: IGraph2DObject(InID, InGraph)
-		, bInterior(bInInterior)
+	{ }
+
+	FGraph2DPolygon::FGraph2DPolygon(int32 InID, TWeakPtr<FGraph2D> InGraph, const TArray<int32>& InVertices)
+		: IGraph2DObject(InID, InGraph)
 	{
-		SetVertices(Vertices);
+		SetVertices(InVertices);
 	}
 
-	bool FGraph2DPolygon::IsInside(const FGraph2DPolygon &otherPoly) const
+	bool FGraph2DPolygon::IsInside(int32 OtherPolyID) const
 	{
+		auto graph = Graph.Pin();
+		const FGraph2DPolygon* otherPoly = graph ? graph->FindPolygon(OtherPolyID) : nullptr;
+
+		if (!ensureAlways(!bDerivedDataDirty && otherPoly && !otherPoly->bDerivedDataDirty))
+		{
+			return false;
+		}
+
 		// Exterior polygons do not participate in containment
-		if (!bInterior || !otherPoly.bInterior)
+		if (!bInterior || !otherPoly->bInterior)
 		{
 			return false;
 		}
 
 		// If we've already established the other poly as a parent, return the cached result
-		if (ParentID == otherPoly.ID)
+		if (ContainingPolyID == otherPoly->ID)
 		{
 			return true;
 		}
 
 		// If this is a parent of the other polygon, the parent cannot be contained within the child
-		if (otherPoly.ParentID == ID)
+		if (otherPoly->ContainingPolyID == ID)
 		{
 			return false;
 		}
 
 		// Early out by checking the AABBs
-		if (!otherPoly.AABB.ExpandBy(Graph->Epsilon).IsInside(AABB))
+		if (!otherPoly->AABB.ExpandBy(graph->Epsilon).IsInside(AABB))
 		{
 			return false;
 		}
 
 		// Now, check the actual polygon perimeters for geometric containment, allowing partial containment with a shared vertex
 		bool bFullyContained, bPartiallyContained;
-		bool bValidContainment = UModumateGeometryStatics::GetPolygonContainment(otherPoly.CachedPerimeterPoints, CachedPerimeterPoints, bFullyContained, bPartiallyContained);
+		bool bValidContainment = UModumateGeometryStatics::GetPolygonContainment(otherPoly->CachedPerimeterPoints, CachedPerimeterPoints, bFullyContained, bPartiallyContained);
 		return bValidContainment && (bFullyContained || bPartiallyContained);
 	}
 
-	void FGraph2DPolygon::SetParent(int32 inParentID)
+	void FGraph2DPolygon::SetContainingPoly(int32 NewContainingPolyID)
 	{
-		if (ParentID != inParentID)
+		auto graph = Graph.Pin();
+		if (!ensure(graph.IsValid()))
+		{
+			return;
+		}
+
+		if (ContainingPolyID != NewContainingPolyID)
 		{
 			// remove self from old parent
-			if (ParentID != 0)
+			if (ContainingPolyID != MOD_ID_NONE)
 			{
-				FGraph2DPolygon *parentPoly = Graph->FindPolygon(ParentID);
+				FGraph2DPolygon *parentPoly = graph->FindPolygon(ContainingPolyID);
 				// parentPoly may be nullptr if the parent has been deleted
 				if (parentPoly != nullptr)
 				{
-					int32 numRemoved = parentPoly->InteriorPolygons.Remove(ID);
+					int32 numRemoved = parentPoly->ContainedPolyIDs.Remove(ID);
 					ensureAlways(numRemoved == 1);
 				}
 			}
 
-			ParentID = inParentID;
+			ContainingPolyID = NewContainingPolyID;
 
 			// add self to new parent
-			if (ParentID != 0)
+			if (ContainingPolyID != MOD_ID_NONE)
 			{
-				FGraph2DPolygon *parentPoly = Graph->FindPolygon(ParentID);
-				if (ensureAlways(parentPoly && !parentPoly->InteriorPolygons.Contains(ID)))
+				FGraph2DPolygon *parentPoly = graph->FindPolygon(ContainingPolyID);
+				if (ensureAlways(parentPoly && !parentPoly->ContainedPolyIDs.Contains(ID)))
 				{
-					parentPoly->InteriorPolygons.Add(ID);
+					parentPoly->ContainedPolyIDs.Add(ID);
 				}
 			}
+		}
+		else if (ContainingPolyID != MOD_ID_NONE)
+		{
+			FGraph2DPolygon *parentPoly = graph->FindPolygon(ContainingPolyID);
+			ensureAlways(parentPoly && parentPoly->ContainedPolyIDs.Contains(ID));
 		}
 	}
 
@@ -91,6 +120,13 @@ namespace Modumate
 		CachedPerimeterEdgeIDs.Reset();
 		CachedPerimeterPoints.Reset();
 		TempVertexSet.Reset();
+
+		ensureAlways(&InVertexIDs != &VertexIDs);
+		auto graph = Graph.Pin();
+		if (!ensure(graph.IsValid()))
+		{
+			return;
+		}
 		
 		Dirty(false);
 
@@ -99,7 +135,7 @@ namespace Modumate
 			int32 vertexID = InVertexIDs[vertexIdx];
 			int32 nextVertexID = InVertexIDs[(vertexIdx + 1) % numVertices];
 
-			auto vertex = Graph->FindVertex(vertexID);
+			auto vertex = graph->FindVertex(vertexID);
 			if (!ensureAlways(vertex && vertex->bValid && !vertex->bDerivedDataDirty))
 			{
 				return;
@@ -111,7 +147,7 @@ namespace Modumate
 			AABB += vertex->Position;
 
 			bool bCurEdgeForward;
-			auto edge = Graph->FindEdgeByVertices(vertexID, nextVertexID, bCurEdgeForward);
+			auto edge = graph->FindEdgeByVertices(vertexID, nextVertexID, bCurEdgeForward);
 			if (!ensureAlways(edge))
 			{
 				return;
@@ -130,25 +166,25 @@ namespace Modumate
 			Edges.Add(bCurEdgeForward ? edge->ID : -edge->ID);
 		}
 
-		// Extremely basic validity check; perimeter calculation will be more telling for polygons that can use it
+		// Extremely basic validity check; traversal and perimeter calculation will be more telling for polygons that can use it
 		bValid = numVertices > 1;
 		bHasDuplicateVertex = (numVertices != TempVertexSet.Num());
 	}
 
-	bool FGraph2DPolygon::ValidateTraversal()
+	bool FGraph2DPolygon::CalculateTraversal(bool& bOutCalculatedInterior)
 	{
 		int32 numEdges = Edges.Num();
-		if (numEdges == 0)
+		auto graph = Graph.Pin();
+		if ((numEdges == 0) || !ensure(graph.IsValid()))
 		{
 			return false;
 		}
 
 		TArray<FGraphSignedID> testEdgeIDs;
 		TArray<int32> testVertexIDs;
-		bool bTestInterior;
 		TempVisitedEdges.Empty(numEdges);
-		bool bValidPolygon = Graph->TraverseEdges(Edges[0], testEdgeIDs, testVertexIDs, bTestInterior, TempVisitedEdges);
-		return (testEdgeIDs == Edges) && (testVertexIDs == VertexIDs) && (bTestInterior == bInterior);
+		bool bValidPolygon = graph->TraverseEdges(Edges[0], testEdgeIDs, testVertexIDs, bOutCalculatedInterior, TempVisitedEdges);
+		return bValidPolygon && (testEdgeIDs == Edges) && (testVertexIDs == VertexIDs);
 	}
 
 	bool FGraph2DPolygon::CalculatePerimeter()
@@ -157,35 +193,26 @@ namespace Modumate
 		CachedPerimeterEdgeIDs.Reset();
 		CachedPerimeterPoints.Reset();
 
+		auto graph = Graph.Pin();
+		if (!ensure(graph.IsValid()))
+		{
+			return false;
+		}
+
 		// Only interior non-simple polygonal traversals are guaranteed to have simple polygonal perimeter traversals
-		int32 numEdges = Edges.Num();
-		if ((numEdges == 0) || !bInterior)
+		
+		if (!bValid || !bInterior)
 		{
 			return true;
 		}
 
-		// TODO: remove very excessive debug testing and cleaning
-		if (Graph->bDebugCheck)
-		{
-			if (!ensureAlways(ValidateTraversal()))
-			{
-				return false;
-			}
+		int32 numEdges = Edges.Num();
 
-			for (int32 vertexID : VertexIDs)
-			{
-				auto vertex = Graph->FindVertex(vertexID);
-				if (!ensureAlways(vertex && vertex->bValid && !vertex->bDerivedDataDirty))
-				{
-					return false;
-				}
-			}
-		}
-
-		TempAllowedPerimeterEdges.Empty(numEdges);
+		static TSet<FGraphSignedID> tempAllowedPerimeterEdges;
+		tempAllowedPerimeterEdges.Empty(numEdges);
 		for (FGraphSignedID edgeID : Edges)
 		{
-			TempAllowedPerimeterEdges.Add(-edgeID);
+			tempAllowedPerimeterEdges.Add(-edgeID);
 		}
 
 		// Try to traverse an external simple polygonal perimeter by going in the opposite direction of one of the edges in the polygon.
@@ -197,7 +224,7 @@ namespace Modumate
 			FGraphSignedID startingEdgeID = -Edges[edgeIdx];
 
 			// Don't try to traverse perimeters from edges that are duplicated in the original traversal
-			if (TempAllowedPerimeterEdges.Contains(-startingEdgeID))
+			if (tempAllowedPerimeterEdges.Contains(-startingEdgeID))
 			{
 				continue;
 			}
@@ -206,13 +233,13 @@ namespace Modumate
 			// since it only appears once within the original traversal's edge list, so we didn't already skip it.
 			bool bPerimeterInterior;
 			TempVisitedEdges.Empty(numEdges);
-			bValidPerimeter = Graph->TraverseEdges(startingEdgeID, CachedPerimeterEdgeIDs, CachedPerimeterVertexIDs, bPerimeterInterior, TempVisitedEdges, false, &TempAllowedPerimeterEdges);
+			bValidPerimeter = graph->TraverseEdges(startingEdgeID, CachedPerimeterEdgeIDs, CachedPerimeterVertexIDs, bPerimeterInterior, TempVisitedEdges, false, &tempAllowedPerimeterEdges);
 			bValidPerimeter = bValidPerimeter && !bPerimeterInterior;
 
 			if (bValidPerimeter)
 			{
 				// TODO: remove debug check if it turns out it's impossible to reach
-				if (Graph->bDebugCheck)
+				if (graph->bDebugCheck)
 				{
 					TempVertexSet.Empty(CachedPerimeterVertexIDs.Num());
 					TempVertexSet.Append(CachedPerimeterVertexIDs);
@@ -230,7 +257,7 @@ namespace Modumate
 		{
 			for (int32 perimeterVertexID : CachedPerimeterVertexIDs)
 			{
-				CachedPerimeterPoints.Add(Graph->FindVertex(perimeterVertexID)->Position);
+				CachedPerimeterPoints.Add(graph->FindVertex(perimeterVertexID)->Position);
 			}
 
 			return true;
@@ -250,10 +277,16 @@ namespace Modumate
 
 		if (bConnected)
 		{
+			auto graph = Graph.Pin();
+			if (!ensure(graph.IsValid()))
+			{
+				return;
+			}
+
 			bool bContinueConnected = false;
 			for (FGraphSignedID edgeID : Edges)
 			{
-				if (auto edge = Graph->FindEdge(edgeID))
+				if (auto edge = graph->FindEdge(edgeID))
 				{
 					edge->Dirty(bContinueConnected);
 				}
@@ -261,7 +294,7 @@ namespace Modumate
 
 			for (int32 vertexID : VertexIDs)
 			{
-				if (auto vertex = Graph->FindVertex(vertexID))
+				if (auto vertex = graph->FindVertex(vertexID))
 				{
 					vertex->Dirty(bContinueConnected);
 				}
@@ -276,7 +309,11 @@ namespace Modumate
 			return false;
 		}
 
-		if (ensure(CalculatePerimeter()))
+		static TArray<int32> tempVertexIDs;
+		tempVertexIDs = VertexIDs;
+		SetVertices(tempVertexIDs);
+
+		if (ensure(CalculateTraversal(bInterior) && CalculatePerimeter()))
 		{
 			bDerivedDataDirty = false;
 		}

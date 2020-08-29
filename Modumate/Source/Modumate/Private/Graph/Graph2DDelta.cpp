@@ -5,19 +5,11 @@ namespace Modumate
 {
 	FGraph2DObjDelta::FGraph2DObjDelta(const TArray<int32> &InVertices)
 		: Vertices(InVertices)
-		, bInterior(false)
 	{ }
 
 	FGraph2DObjDelta::FGraph2DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents)
 		: Vertices(InVertices)
 		, ParentObjIDs(InParents)
-		, bInterior(false)
-	{ }
-
-	FGraph2DObjDelta::FGraph2DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents, bool bIsInterior)
-		: Vertices(InVertices)
-		, ParentObjIDs(InParents)
-		, bInterior(bIsInterior)
 	{ }
 
 	FGraph2DDelta::FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType)
@@ -48,7 +40,6 @@ namespace Modumate
 
 		PolygonAdditions.Reset();
 		PolygonDeletions.Reset();
-		PolygonParentIDUpdates.Reset();
 
 		BoundsUpdates.Key.Reset();
 		BoundsUpdates.Value.Reset();
@@ -63,7 +54,6 @@ namespace Modumate
 		if (EdgeDeletions.Num() > 0) return false;
 		if (PolygonAdditions.Num() > 0) return false;
 		if (PolygonDeletions.Num() > 0) return false;
-		if (PolygonParentIDUpdates.Num() > 0) return false;
 		if (!BoundsUpdates.Key.IsEmpty() || !BoundsUpdates.Value.IsEmpty()) return false;
 
 		return true;
@@ -81,10 +71,10 @@ namespace Modumate
 		EdgeAdditions.Add(newEdgeID, FGraph2DObjDelta({ VertexIDs.Key, VertexIDs.Value }, ParentIDs));
 	}
 
-	void FGraph2DDelta::AddNewPolygon(const TArray<int32> &VertexIDs, int32 &NextID, bool bIsInterior, const TArray<int32> &ParentIDs)
+	void FGraph2DDelta::AddNewPolygon(const TArray<int32> &VertexIDs, int32 &NextID, const TArray<int32> &ParentIDs)
 	{
 		int32 newPolygonID = NextID++;
-		PolygonAdditions.Add(newPolygonID, FGraph2DObjDelta(VertexIDs, ParentIDs, bIsInterior));
+		PolygonAdditions.Add(newPolygonID, FGraph2DObjDelta(VertexIDs, ParentIDs));
 	}
 
 	void FGraph2DDelta::Invert()
@@ -110,13 +100,6 @@ namespace Modumate
 		Swap(VertexAdditions, VertexDeletions);
 		Swap(EdgeAdditions, EdgeDeletions);
 		Swap(PolygonAdditions, PolygonDeletions);
-
-		for (auto &kvp : PolygonParentIDUpdates)
-		{
-			TPair<int32, int32>& update = kvp.Value;
-			Swap(update.Key, update.Value);
-		}
-
 		Swap(BoundsUpdates.Key, BoundsUpdates.Value);
 	}
 

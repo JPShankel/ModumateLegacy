@@ -14,6 +14,7 @@ using namespace Modumate;
 UGraph2DTool::UGraph2DTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	SelectedGraph = MakeShared<FGraph2D>();
 }
 
 bool UGraph2DTool::Activate()
@@ -26,13 +27,12 @@ bool UGraph2DTool::Activate()
 	TSet<int32> graphObjIDs, connectedGraphIDs;
 	UModumateObjectStatics::GetGraphIDsFromMOIs(Controller->EMPlayerState->SelectedObjects, graphObjIDs);
 
-	FGraph2D selectedGraph;
 	FPlane graphPlane;
-	if (volumeGraph.Create2DGraph(graphObjIDs, connectedGraphIDs, selectedGraph, graphPlane, true, true))
+	if (volumeGraph.Create2DGraph(graphObjIDs, connectedGraphIDs, SelectedGraph, graphPlane, true, true))
 	{
 		FGraph2DRecord graphRecord;
 		FName graphKey;
-		if (selectedGraph.ToDataRecord(&graphRecord) &&
+		if (SelectedGraph->ToDataRecord(&graphRecord) &&
 			(gameState->Document.PresetManager.AddOrUpdateGraph2DRecord(NAME_None, graphRecord, graphKey) == ECraftingResult::Success))
 		{
 			UE_LOG(LogTemp, Log, TEXT("Added graph record \"%s\""), *graphKey.ToString());

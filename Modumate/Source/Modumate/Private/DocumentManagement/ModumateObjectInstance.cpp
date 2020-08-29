@@ -347,7 +347,7 @@ void FModumateObjectInstance::GetConnectedIDs(TArray<int32> &connectedIDs) const
 	EGraphObjectType graph2DObjectType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(objectType);
 	if (graph2DObjectType != EGraphObjectType::None)
 	{
-		if (const FGraph2D *surfaceGraph = Document->FindSurfaceGraph(GetParentID()))
+		if (auto surfaceGraph = Document->FindSurfaceGraph(GetParentID()))
 		{
 			switch (objectType)
 			{

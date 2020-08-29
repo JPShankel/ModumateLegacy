@@ -13,7 +13,7 @@ namespace Modumate
 		// Derived data
 		TArray<FGraphSignedID> Edges;					// The list of edges (sorted, clockwise, from +X) connected to this vertex
 
-		FGraph2DVertex(int32 InID, FGraph2D* InGraph, const FVector2D &InPos);
+		FGraph2DVertex(int32 InID, TWeakPtr<FGraph2D> InGraph, const FVector2D &InPos);
 
 		void SetPosition(const FVector2D& NewPosition);
 		bool AddEdge(FGraphSignedID EdgeID);

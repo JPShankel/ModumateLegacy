@@ -2,7 +2,7 @@
 	"ModumateHeader":
 	{
 		"version": 7,
-		"thumbnail": "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"
+		"thumbnail": "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"
 	},
 	"ModumateObjects":
 	{
@@ -10,7 +10,7 @@
 		"currentToolAssemblyMap":
 		{
 			"VE_PLACEOBJECT": "None",
-			"VE_WALL": "2Layer0D-->Abstract1Material0RawMaterialAbstract0Color-->AbstractFFFFFF-White0SrfTreatmentStandard0DimThk6inT-2Layer0D-->Abstract-->CastInPlaceConcrete1Material-->Aggregates-->Concrete0RawMaterialConcreteNormalAggregate0Color-->Aggregates-->ConcreteD6D7D8-Natural0SrfTreatmentStandard0DimThk6inT-2Layer0D-->Abstract1Material0RawMaterialAbstract0Color-->AbstractFFFFFF-White0SrfTreatmentStandard0DimThk6inT",
+			"VE_WALL": "2Layer0D-->Abstract1Material0RawMaterialAbstract0Color-->AbstractFFFFFF-White0SrfTreatmentStandard0DimThk6inT2Layer0D-->Abstract-->CastInPlaceConcrete1Material-->Aggregates-->Concrete0RawMaterialConcrete(NormalAggregate)0Color-->Aggregates-->ConcreteD6D7D8-Natural0SrfTreatmentStandard0DimThk6inT2Layer0D-->Abstract1Material0RawMaterialAbstract0Color-->AbstractFFFFFF-White0SrfTreatmentStandard0DimThk6inT",
 			"VE_FLOOR": "None",
 			"VE_DOOR": "None",
 			"VE_WINDOW": "None",
@@ -21,7 +21,8 @@
 			"VE_COUNTERTOP": "None",
 			"VE_STRUCTURELINE": "None",
 			"VE_TRIM": "None",
-			"VE_ROOF_FACE": "None"
+			"VE_ROOF_FACE": "None",
+			"VE_CEILING": "None"
 		},
 		"craftingPresetArrayV2": [],
 		"projectAssemblyPresets": [],
@@ -43,58 +44,58 @@
 					},
 					"13":
 					{
-						"x": 605.12158203125,
+						"x": 408.87368774414062,
 						"y": 0
 					},
 					"14":
 					{
-						"x": 605.12139892578125,
-						"y": -243.83999633789063
+						"x": 408.87368774414062,
+						"y": -243.83999633789062
 					},
 					"15":
 					{
-						"x": -0.00012581501505337656,
-						"y": -243.83999633789063
-					},
-					"21":
-					{
-						"x": 267.35260009765625,
-						"y": -173.32275390625
+						"x": 0,
+						"y": -243.83999633789062
 					},
 					"22":
 					{
-						"x": 226.88931274414063,
-						"y": -41.63336181640625
+						"x": 185.08137512207031,
+						"y": -189.66629028320312
 					},
-					"25":
+					"23":
 					{
-						"x": 322.3895263671875,
-						"y": -101.632568359375
+						"x": 124.61949920654297,
+						"y": -61.9793701171875
 					},
-					"28":
+					"26":
 					{
-						"x": 206.13740539550781,
-						"y": -124.50262451171875
+						"x": 237.27381896972656,
+						"y": -129.14968872070312
 					},
 					"29":
 					{
-						"x": 249.71766662597656,
-						"y": -115.92916107177734
+						"x": 118.43032836914062,
+						"y": -129.72457885742188
 					},
-					"36":
+					"30":
 					{
-						"x": 301.17776489257813,
-						"y": -42.98809814453125
+						"x": 156.61053466796875,
+						"y": -129.53988647460938
 					},
 					"37":
 					{
-						"x": 270.6800537109375,
-						"y": -69.145462036132813
+						"x": 217.70796203613281,
+						"y": -70.388916015625
 					},
 					"38":
 					{
-						"x": 242.71304321289063,
-						"y": -93.132316589355469
+						"x": 178.26280212402344,
+						"y": -93.964263916015625
+					},
+					"39":
+					{
+						"x": 148.2568359375,
+						"y": -111.89805603027344
 					}
 				},
 				"edges":
@@ -115,83 +116,72 @@
 					{
 						"vertexIds": [ 15, 12 ]
 					},
-					"33":
+					"34":
 					{
-						"vertexIds": [ 29, 28 ]
-					},
-					"42":
-					{
-						"vertexIds": [ 38, 22 ]
-					},
-					"45":
-					{
-						"vertexIds": [ 37, 36 ]
-					},
-					"30":
-					{
-						"vertexIds": [ 21, 29 ]
-					},
-					"32":
-					{
-						"vertexIds": [ 25, 29 ]
-					},
-					"40":
-					{
-						"vertexIds": [ 37, 25 ]
-					},
-					"39":
-					{
-						"vertexIds": [ 22, 37 ]
-					},
-					"41":
-					{
-						"vertexIds": [ 29, 38 ]
-					},
-					"44":
-					{
-						"vertexIds": [ 38, 37 ]
+						"vertexIds": [ 30, 29 ]
 					},
 					"43":
 					{
-						"vertexIds": [ 28, 38 ]
+						"vertexIds": [ 39, 23 ]
+					},
+					"46":
+					{
+						"vertexIds": [ 38, 37 ]
+					},
+					"31":
+					{
+						"vertexIds": [ 22, 30 ]
+					},
+					"33":
+					{
+						"vertexIds": [ 26, 30 ]
+					},
+					"41":
+					{
+						"vertexIds": [ 38, 26 ]
+					},
+					"40":
+					{
+						"vertexIds": [ 23, 38 ]
+					},
+					"42":
+					{
+						"vertexIds": [ 30, 39 ]
+					},
+					"45":
+					{
+						"vertexIds": [ 39, 38 ]
+					},
+					"44":
+					{
+						"vertexIds": [ 29, 39 ]
 					}
 				},
 				"polygons":
 				{
 					"20":
 					{
-						"vertexIds": [ 12, 13, 14, 15 ],
-						"bInterior": true,
-						"containingFaceId": 0,
-						"containedFaceIds": [ 47, 46, 48, 49 ]
+						"vertexIds": [ 12, 13, 14, 15 ]
 					},
-					"48":
+					"21":
 					{
-						"vertexIds": [ 38, 28, 29, 21, 29, 25, 37, 36, 37, 22 ],
-						"bInterior": false,
-						"containingFaceId": 20,
-						"containedFaceIds": []
+						"vertexIds": [ 13, 12, 15, 14 ]
 					},
 					"49":
 					{
-						"vertexIds": [ 22, 37, 38 ],
-						"bInterior": true,
-						"containingFaceId": 20,
-						"containedFaceIds": []
+						"vertexIds": [ 30, 39, 38, 26 ]
 					},
-					"46":
+					"50":
 					{
-						"vertexIds": [ 29, 38, 37, 25 ],
-						"bInterior": true,
-						"containingFaceId": 20,
-						"containedFaceIds": []
+						"vertexIds": [ 23, 38, 39 ]
 					},
 					"47":
 					{
-						"vertexIds": [ 38, 29, 28 ],
-						"bInterior": true,
-						"containingFaceId": 20,
-						"containedFaceIds": []
+						"vertexIds": [ 30, 29, 39 ]
+					},
+					"48":
+					{
+						"vertexIds": [ 29, 30, 22, 30, 26, 38, 37, 38, 23, 39 ]
 					}
 				}
 			}
@@ -205,8 +195,8 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 541.86260986328125,
-					"y": -285.876220703125,
+					"x": 0,
+					"y": 0,
 					"z": 0
 				},
 				"rotation":
@@ -217,17 +207,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 9.7596162894082909e-29,
-					"y": 1.4293244336113134e-43,
-					"z": 5.6051938572992683e-45
+					"x": -9.7023269984953958e+17,
+					"y": 3.2510124372335756e-43,
+					"z": 4.2038953929744512e-45
 				},
-				"controlPoints": [
-					{
-						"x": 541.86260986328125,
-						"y": -285.876220703125,
-						"z": 0
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -248,8 +232,8 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 1126.818115234375,
-					"y": -440.792236328125,
+					"x": 408.87368774414062,
+					"y": 0,
 					"z": 0
 				},
 				"rotation":
@@ -260,17 +244,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 1126.818115234375,
-						"y": -440.792236328125,
-						"z": 0
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -291,9 +269,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 1126.818115234375,
-					"y": -440.792236328125,
-					"z": 243.83999633789063
+					"x": 408.87368774414062,
+					"y": 0,
+					"z": 243.83999633789062
 				},
 				"rotation":
 				{
@@ -303,17 +281,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 1126.818115234375,
-						"y": -440.792236328125,
-						"z": 243.83999633789063
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -334,9 +306,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 541.86260986328125,
-					"y": -285.876220703125,
-					"z": 243.83999633789063
+					"x": 0,
+					"y": 0,
+					"z": 243.83999633789062
 				},
 				"rotation":
 				{
@@ -346,17 +318,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 541.86260986328125,
-						"y": -285.876220703125,
-						"z": 243.83999633789063
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -377,8 +343,8 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 834.34033203125,
-					"y": -363.334228515625,
+					"x": 204.43684387207031,
+					"y": 0,
 					"z": 0
 				},
 				"rotation":
@@ -389,22 +355,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 541.86260986328125,
-						"y": -285.876220703125,
-						"z": 0
-					},
-					{
-						"x": 1126.818115234375,
-						"y": -440.792236328125,
-						"z": 0
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -425,8 +380,8 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 1126.818115234375,
-					"y": -440.792236328125,
+					"x": 408.87368774414062,
+					"y": 0,
 					"z": 121.91999816894531
 				},
 				"rotation":
@@ -437,22 +392,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 1126.818115234375,
-						"y": -440.792236328125,
-						"z": 0
-					},
-					{
-						"x": 1126.818115234375,
-						"y": -440.792236328125,
-						"z": 243.83999633789063
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -473,9 +417,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 834.34033203125,
-					"y": -363.334228515625,
-					"z": 243.83999633789063
+					"x": 204.43684387207031,
+					"y": 0,
+					"z": 243.83999633789062
 				},
 				"rotation":
 				{
@@ -485,22 +429,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 1126.818115234375,
-						"y": -440.792236328125,
-						"z": 243.83999633789063
-					},
-					{
-						"x": 541.86260986328125,
-						"y": -285.876220703125,
-						"z": 243.83999633789063
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -521,8 +454,8 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 541.86260986328125,
-					"y": -285.876220703125,
+					"x": 0,
+					"y": 0,
 					"z": 121.91999816894531
 				},
 				"rotation":
@@ -533,22 +466,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 541.86260986328125,
-						"y": -285.876220703125,
-						"z": 243.83999633789063
-					},
-					{
-						"x": 541.86260986328125,
-						"y": -285.876220703125,
-						"z": 0
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -569,44 +491,23 @@
 				"childIds": [ 10 ],
 				"location":
 				{
-					"x": 834.3404541015625,
-					"y": -363.334228515625,
-					"z": 121.91999053955078
+					"x": 204.43684387207031,
+					"y": 0,
+					"z": 121.91999816894531
 				},
 				"rotation":
 				{
 					"pitch": 0,
-					"yaw": 165.16664123535156,
-					"roll": 90
+					"yaw": 180,
+					"roll": 89.999992370605469
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 541.86260986328125,
-						"y": -285.876220703125,
-						"z": 0
-					},
-					{
-						"x": 1126.818115234375,
-						"y": -440.792236328125,
-						"z": 0
-					},
-					{
-						"x": 1126.818115234375,
-						"y": -440.792236328125,
-						"z": 243.83999633789063
-					},
-					{
-						"x": 541.86260986328125,
-						"y": -285.876220703125,
-						"z": 243.83999633789063
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -622,26 +523,26 @@
 			{
 				"iD": 10,
 				"objectType": "OTWallSegment",
-				"assemblyKey": "2Layer0D-->Abstract1Material0RawMaterialAbstract0Color-->AbstractFFFFFF-White0SrfTreatmentStandard0DimThk6inT-2Layer0D-->Abstract-->CastInPlaceConcrete1Material-->Aggregates-->Concrete0RawMaterialConcreteNormalAggregate0Color-->Aggregates-->ConcreteD6D7D8-Natural0SrfTreatmentStandard0DimThk6inT-2Layer0D-->Abstract1Material0RawMaterialAbstract0Color-->AbstractFFFFFF-White0SrfTreatmentStandard0DimThk6inT",
+				"assemblyKey": "2Layer0D-->Abstract1Material0RawMaterialAbstract0Color-->AbstractFFFFFF-White0SrfTreatmentStandard0DimThk6inT2Layer0D-->Abstract-->CastInPlaceConcrete1Material-->Aggregates-->Concrete0RawMaterialConcrete(NormalAggregate)0Color-->Aggregates-->ConcreteD6D7D8-Natural0SrfTreatmentStandard0DimThk6inT2Layer0D-->Abstract1Material0RawMaterialAbstract0Color-->AbstractFFFFFF-White0SrfTreatmentStandard0DimThk6inT",
 				"parentId": 9,
 				"childIds": [ 11 ],
 				"location":
 				{
-					"x": 834.3404541015625,
-					"y": -363.334228515625,
-					"z": 121.91999053955078
+					"x": 204.43684387207031,
+					"y": 0,
+					"z": 121.91999816894531
 				},
 				"rotation":
 				{
 					"pitch": 0,
-					"yaw": 165.16664123535156,
-					"roll": 90
+					"yaw": 180,
+					"roll": 89.999992370605469
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
 				"controlPoints": [],
 				"controlIndices": [],
@@ -661,24 +562,24 @@
 				"objectType": "OTSurfaceGraph",
 				"assemblyKey": "None",
 				"parentId": 10,
-				"childIds": [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 25, 28, 29, 30, 32, 33, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 ],
+				"childIds": [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 26, 29, 30, 31, 33, 34, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50 ],
 				"location":
 				{
-					"x": 547.7149658203125,
-					"y": -263.77804565429688,
+					"x": 0,
+					"y": 22.860000610351562,
 					"z": 0
 				},
 				"rotation":
 				{
 					"pitch": 0,
-					"yaw": -14.83335018157959,
-					"roll": 90
+					"yaw": 0,
+					"roll": 89.999992370605469
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
 				"controlPoints": [],
 				"controlIndices": [ 1 ],
@@ -701,8 +602,8 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 547.7149658203125,
-					"y": -263.77804565429688,
+					"x": 0,
+					"y": 22.860000610351562,
 					"z": 0
 				},
 				"rotation":
@@ -713,17 +614,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 547.7149658203125,
-						"y": -263.77804565429688,
-						"z": 0
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -744,8 +639,8 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 1132.670654296875,
-					"y": -418.694091796875,
+					"x": 408.87368774414062,
+					"y": 22.860000610351562,
 					"z": 0
 				},
 				"rotation":
@@ -756,17 +651,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 1132.670654296875,
-						"y": -418.694091796875,
-						"z": 0
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -787,9 +676,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 1132.67041015625,
-					"y": -418.69406127929688,
-					"z": 243.83999633789063
+					"x": 408.87368774414062,
+					"y": 22.8599853515625,
+					"z": 243.83998107910156
 				},
 				"rotation":
 				{
@@ -799,17 +688,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 1132.67041015625,
-						"y": -418.69406127929688,
-						"z": 243.83999633789063
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -830,9 +713,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 547.71484375,
-					"y": -263.77801513671875,
-					"z": 243.83999633789063
+					"x": 0,
+					"y": 22.8599853515625,
+					"z": 243.83998107910156
 				},
 				"rotation":
 				{
@@ -842,17 +725,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 547.71484375,
-						"y": -263.77801513671875,
-						"z": 243.83999633789063
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -873,8 +750,8 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 840.19281005859375,
-					"y": -341.236083984375,
+					"x": 204.43684387207031,
+					"y": 22.860000610351562,
 					"z": 0
 				},
 				"rotation":
@@ -885,22 +762,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 547.7149658203125,
-						"y": -263.77804565429688,
-						"z": 0
-					},
-					{
-						"x": 1132.670654296875,
-						"y": -418.694091796875,
-						"z": 0
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -921,9 +787,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 1132.6705322265625,
-					"y": -418.694091796875,
-					"z": 121.91999816894531
+					"x": 408.87368774414062,
+					"y": 22.859992980957031,
+					"z": 121.91999053955078
 				},
 				"rotation":
 				{
@@ -933,22 +799,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 1132.670654296875,
-						"y": -418.694091796875,
-						"z": 0
-					},
-					{
-						"x": 1132.67041015625,
-						"y": -418.69406127929688,
-						"z": 243.83999633789063
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -969,9 +824,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 840.192626953125,
-					"y": -341.23602294921875,
-					"z": 243.83999633789063
+					"x": 204.43684387207031,
+					"y": 22.8599853515625,
+					"z": 243.83998107910156
 				},
 				"rotation":
 				{
@@ -981,22 +836,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 1132.67041015625,
-						"y": -418.69406127929688,
-						"z": 243.83999633789063
-					},
-					{
-						"x": 547.71484375,
-						"y": -263.77801513671875,
-						"z": 243.83999633789063
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1017,9 +861,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 547.71490478515625,
-					"y": -263.77801513671875,
-					"z": 121.91999816894531
+					"x": 0,
+					"y": 22.859992980957031,
+					"z": 121.91999053955078
 				},
 				"rotation":
 				{
@@ -1029,22 +873,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 547.71484375,
-						"y": -263.77801513671875,
-						"z": 243.83999633789063
-					},
-					{
-						"x": 547.7149658203125,
-						"y": -263.77804565429688,
-						"z": 0
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1072,37 +905,16 @@
 				"rotation":
 				{
 					"pitch": 0,
-					"yaw": -14.83335018157959,
-					"roll": 90
+					"yaw": 0,
+					"roll": 0
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 547.7149658203125,
-						"y": -263.77804565429688,
-						"z": 0
-					},
-					{
-						"x": 1132.670654296875,
-						"y": -418.694091796875,
-						"z": 0
-					},
-					{
-						"x": 1132.67041015625,
-						"y": -418.69406127929688,
-						"z": 243.83999633789063
-					},
-					{
-						"x": 547.71484375,
-						"y": -263.77801513671875,
-						"z": 243.83999633789063
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1117,15 +929,15 @@
 			},
 			{
 				"iD": 21,
-				"objectType": "OTSurfaceVertex",
+				"objectType": "OTSurfacePolygon",
 				"assemblyKey": "None",
 				"parentId": 11,
 				"childIds": [],
 				"location":
 				{
-					"x": 806.157958984375,
-					"y": -332.22247314453125,
-					"z": 173.32275390625
+					"x": 0,
+					"y": 0,
+					"z": 0
 				},
 				"rotation":
 				{
@@ -1135,17 +947,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 806.157958984375,
-						"y": -332.22247314453125,
-						"z": 173.32275390625
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1166,9 +972,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 767.0430908203125,
-					"y": -321.86355590820313,
-					"z": 41.63336181640625
+					"x": 185.08137512207031,
+					"y": 22.859989166259766,
+					"z": 189.66627502441406
 				},
 				"rotation":
 				{
@@ -1178,17 +984,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 767.0430908203125,
-						"y": -321.86355590820313,
-						"z": 41.63336181640625
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1202,16 +1002,16 @@
 				}
 			},
 			{
-				"iD": 25,
+				"iD": 23,
 				"objectType": "OTSurfaceVertex",
 				"assemblyKey": "None",
 				"parentId": 11,
 				"childIds": [],
 				"location":
 				{
-					"x": 859.3607177734375,
-					"y": -346.3123779296875,
-					"z": 101.632568359375
+					"x": 124.61949920654297,
+					"y": 22.859996795654297,
+					"z": 61.979366302490234
 				},
 				"rotation":
 				{
@@ -1221,17 +1021,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 859.3607177734375,
-						"y": -346.3123779296875,
-						"z": 101.632568359375
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1245,16 +1039,16 @@
 				}
 			},
 			{
-				"iD": 28,
+				"iD": 26,
 				"objectType": "OTSurfaceVertex",
 				"assemblyKey": "None",
 				"parentId": 11,
 				"childIds": [],
 				"location":
 				{
-					"x": 746.9827880859375,
-					"y": -316.5509033203125,
-					"z": 124.50262451171875
+					"x": 237.27381896972656,
+					"y": 22.859992980957031,
+					"z": 129.14967346191406
 				},
 				"rotation":
 				{
@@ -1264,17 +1058,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 746.9827880859375,
-						"y": -316.5509033203125,
-						"z": 124.50262451171875
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1295,9 +1083,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 789.1107177734375,
-					"y": -327.70779418945313,
-					"z": 115.92916107177734
+					"x": 118.43032836914062,
+					"y": 22.859992980957031,
+					"z": 129.72456359863281
 				},
 				"rotation":
 				{
@@ -1307,17 +1095,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 789.1107177734375,
-						"y": -327.70779418945313,
-						"z": 115.92916107177734
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1332,15 +1114,15 @@
 			},
 			{
 				"iD": 30,
-				"objectType": "OTSurfaceEdge",
+				"objectType": "OTSurfaceVertex",
 				"assemblyKey": "None",
 				"parentId": 11,
 				"childIds": [],
 				"location":
 				{
-					"x": 797.63433837890625,
-					"y": -329.96514892578125,
-					"z": 144.62596130371094
+					"x": 156.61053466796875,
+					"y": 22.859992980957031,
+					"z": 129.53987121582031
 				},
 				"rotation":
 				{
@@ -1350,22 +1132,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 806.157958984375,
-						"y": -332.22247314453125,
-						"z": 173.32275390625
-					},
-					{
-						"x": 789.1107177734375,
-						"y": -327.70779418945313,
-						"z": 115.92916107177734
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1379,16 +1150,16 @@
 				}
 			},
 			{
-				"iD": 32,
+				"iD": 31,
 				"objectType": "OTSurfaceEdge",
 				"assemblyKey": "None",
 				"parentId": 11,
 				"childIds": [],
 				"location":
 				{
-					"x": 824.2357177734375,
-					"y": -337.01007080078125,
-					"z": 108.78086853027344
+					"x": 170.845947265625,
+					"y": 22.859991073608398,
+					"z": 159.60307312011719
 				},
 				"rotation":
 				{
@@ -1398,22 +1169,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 859.3607177734375,
-						"y": -346.3123779296875,
-						"z": 101.632568359375
-					},
-					{
-						"x": 789.1107177734375,
-						"y": -327.70779418945313,
-						"z": 115.92916107177734
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1434,9 +1194,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 768.0467529296875,
-					"y": -322.12933349609375,
-					"z": 120.21589660644531
+					"x": 196.94216918945312,
+					"y": 22.859992980957031,
+					"z": 129.34477233886719
 				},
 				"rotation":
 				{
@@ -1446,22 +1206,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 789.1107177734375,
-						"y": -327.70779418945313,
-						"z": 115.92916107177734
-					},
-					{
-						"x": 746.9827880859375,
-						"y": -316.5509033203125,
-						"z": 124.50262451171875
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1475,16 +1224,16 @@
 				}
 			},
 			{
-				"iD": 36,
-				"objectType": "OTSurfaceVertex",
+				"iD": 34,
+				"objectType": "OTSurfaceEdge",
 				"assemblyKey": "None",
 				"parentId": 11,
 				"childIds": [],
 				"location":
 				{
-					"x": 838.8558349609375,
-					"y": -340.88201904296875,
-					"z": 42.98809814453125
+					"x": 137.52043151855469,
+					"y": 22.859992980957031,
+					"z": 129.63221740722656
 				},
 				"rotation":
 				{
@@ -1494,17 +1243,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 838.8558349609375,
-						"y": -340.88201904296875,
-						"z": 42.98809814453125
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1525,9 +1268,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 809.37451171875,
-					"y": -333.0743408203125,
-					"z": 69.145462036132813
+					"x": 217.70796203613281,
+					"y": 22.859996795654297,
+					"z": 70.388908386230469
 				},
 				"rotation":
 				{
@@ -1537,17 +1280,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 809.37451171875,
-						"y": -333.0743408203125,
-						"z": 69.145462036132813
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1568,9 +1305,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 782.3394775390625,
-					"y": -325.91455078125,
-					"z": 93.132316589355469
+					"x": 178.26280212402344,
+					"y": 22.859994888305664,
+					"z": 93.964256286621094
 				},
 				"rotation":
 				{
@@ -1580,17 +1317,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 782.3394775390625,
-						"y": -325.91455078125,
-						"z": 93.132316589355469
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1605,15 +1336,15 @@
 			},
 			{
 				"iD": 39,
-				"objectType": "OTSurfaceEdge",
+				"objectType": "OTSurfaceVertex",
 				"assemblyKey": "None",
 				"parentId": 11,
 				"childIds": [],
 				"location":
 				{
-					"x": 788.20880126953125,
-					"y": -327.46893310546875,
-					"z": 55.389411926269531
+					"x": 148.2568359375,
+					"y": 22.859994888305664,
+					"z": 111.89804840087891
 				},
 				"rotation":
 				{
@@ -1623,22 +1354,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 767.0430908203125,
-						"y": -321.86355590820313,
-						"z": 41.63336181640625
-					},
-					{
-						"x": 809.37451171875,
-						"y": -333.0743408203125,
-						"z": 69.145462036132813
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1659,9 +1379,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 834.36761474609375,
-					"y": -339.693359375,
-					"z": 85.389015197753906
+					"x": 151.44114685058594,
+					"y": 22.859996795654297,
+					"z": 77.971809387207031
 				},
 				"rotation":
 				{
@@ -1671,22 +1391,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 809.37451171875,
-						"y": -333.0743408203125,
-						"z": 69.145462036132813
-					},
-					{
-						"x": 859.3607177734375,
-						"y": -346.3123779296875,
-						"z": 101.632568359375
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1707,9 +1416,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 785.72509765625,
-					"y": -326.8111572265625,
-					"z": 104.53073883056641
+					"x": 207.768310546875,
+					"y": 22.859992980957031,
+					"z": 111.55696105957031
 				},
 				"rotation":
 				{
@@ -1719,22 +1428,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 789.1107177734375,
-						"y": -327.70779418945313,
-						"z": 115.92916107177734
-					},
-					{
-						"x": 782.3394775390625,
-						"y": -325.91455078125,
-						"z": 93.132316589355469
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1755,9 +1453,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 774.6912841796875,
-					"y": -323.8890380859375,
-					"z": 67.382843017578125
+					"x": 152.43368530273438,
+					"y": 22.859992980957031,
+					"z": 120.71896362304688
 				},
 				"rotation":
 				{
@@ -1767,22 +1465,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 782.3394775390625,
-						"y": -325.91455078125,
-						"z": 93.132316589355469
-					},
-					{
-						"x": 767.0430908203125,
-						"y": -321.86355590820313,
-						"z": 41.63336181640625
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1803,9 +1490,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 764.6611328125,
-					"y": -321.23272705078125,
-					"z": 108.81747436523438
+					"x": 136.43817138671875,
+					"y": 22.859996795654297,
+					"z": 86.938705444335938
 				},
 				"rotation":
 				{
@@ -1815,22 +1502,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 746.9827880859375,
-						"y": -316.5509033203125,
-						"z": 124.50262451171875
-					},
-					{
-						"x": 782.3394775390625,
-						"y": -325.91455078125,
-						"z": 93.132316589355469
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1851,9 +1527,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 795.85699462890625,
-					"y": -329.49444580078125,
-					"z": 81.138885498046875
+					"x": 133.34358215332031,
+					"y": 22.859992980957031,
+					"z": 120.81130981445312
 				},
 				"rotation":
 				{
@@ -1863,22 +1539,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 782.3394775390625,
-						"y": -325.91455078125,
-						"z": 93.132316589355469
-					},
-					{
-						"x": 809.37451171875,
-						"y": -333.0743408203125,
-						"z": 69.145462036132813
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1899,9 +1564,9 @@
 				"childIds": [],
 				"location":
 				{
-					"x": 824.11517333984375,
-					"y": -336.97817993164063,
-					"z": 56.066780090332031
+					"x": 163.25982666015625,
+					"y": 22.859994888305664,
+					"z": 102.93115234375
 				},
 				"rotation":
 				{
@@ -1911,22 +1576,11 @@
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 809.37451171875,
-						"y": -333.0743408203125,
-						"z": 69.145462036132813
-					},
-					{
-						"x": 838.8558349609375,
-						"y": -340.88201904296875,
-						"z": 42.98809814453125
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -1941,50 +1595,29 @@
 			},
 			{
 				"iD": 46,
-				"objectType": "OTSurfacePolygon",
+				"objectType": "OTSurfaceEdge",
 				"assemblyKey": "None",
 				"parentId": 11,
 				"childIds": [],
 				"location":
 				{
-					"x": 0,
-					"y": 0,
-					"z": 0
+					"x": 197.98538208007812,
+					"y": 22.859996795654297,
+					"z": 82.176582336425781
 				},
 				"rotation":
 				{
 					"pitch": 0,
-					"yaw": -14.83335018157959,
-					"roll": 90
+					"yaw": 0,
+					"roll": 0
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 789.1107177734375,
-						"y": -327.70779418945313,
-						"z": 115.92916107177734
-					},
-					{
-						"x": 782.3394775390625,
-						"y": -325.91455078125,
-						"z": 93.132316589355469
-					},
-					{
-						"x": 809.37451171875,
-						"y": -333.0743408203125,
-						"z": 69.145462036132813
-					},
-					{
-						"x": 859.3607177734375,
-						"y": -346.3123779296875,
-						"z": 101.632568359375
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -2012,32 +1645,16 @@
 				"rotation":
 				{
 					"pitch": 0,
-					"yaw": -14.83335018157959,
-					"roll": 90
+					"yaw": 0,
+					"roll": 0
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 782.3394775390625,
-						"y": -325.91455078125,
-						"z": 93.132316589355469
-					},
-					{
-						"x": 789.1107177734375,
-						"y": -327.70779418945313,
-						"z": 115.92916107177734
-					},
-					{
-						"x": 746.9827880859375,
-						"y": -316.5509033203125,
-						"z": 124.50262451171875
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -2065,67 +1682,16 @@
 				"rotation":
 				{
 					"pitch": 0,
-					"yaw": -14.83335018157959,
-					"roll": 90
+					"yaw": 0,
+					"roll": 0
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 782.3394775390625,
-						"y": -325.91455078125,
-						"z": 93.132316589355469
-					},
-					{
-						"x": 746.9827880859375,
-						"y": -316.5509033203125,
-						"z": 124.50262451171875
-					},
-					{
-						"x": 789.1107177734375,
-						"y": -327.70779418945313,
-						"z": 115.92916107177734
-					},
-					{
-						"x": 806.157958984375,
-						"y": -332.22247314453125,
-						"z": 173.32275390625
-					},
-					{
-						"x": 789.1107177734375,
-						"y": -327.70779418945313,
-						"z": 115.92916107177734
-					},
-					{
-						"x": 859.3607177734375,
-						"y": -346.3123779296875,
-						"z": 101.632568359375
-					},
-					{
-						"x": 809.37451171875,
-						"y": -333.0743408203125,
-						"z": 69.145462036132813
-					},
-					{
-						"x": 838.8558349609375,
-						"y": -340.88201904296875,
-						"z": 42.98809814453125
-					},
-					{
-						"x": 809.37451171875,
-						"y": -333.0743408203125,
-						"z": 69.145462036132813
-					},
-					{
-						"x": 767.0430908203125,
-						"y": -321.86355590820313,
-						"z": 41.63336181640625
-					}
-				],
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -2153,32 +1719,53 @@
 				"rotation":
 				{
 					"pitch": 0,
-					"yaw": -14.83335018157959,
-					"roll": 90
+					"yaw": 0,
+					"roll": 0
 				},
 				"uVAnchor":
 				{
-					"x": 3.4202772088018698e+19,
-					"y": 4.5914945482066956e-41,
-					"z": 9.7567659130905978e-29
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
 				},
-				"controlPoints": [
-					{
-						"x": 767.0430908203125,
-						"y": -321.86355590820313,
-						"z": 41.63336181640625
-					},
-					{
-						"x": 809.37451171875,
-						"y": -333.0743408203125,
-						"z": 69.145462036132813
-					},
-					{
-						"x": 782.3394775390625,
-						"y": -325.91455078125,
-						"z": 93.132316589355469
-					}
-				],
+				"controlPoints": [],
+				"controlIndices": [],
+				"extents":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"objectInverted": false,
+				"objectProperties":
+				{
+				}
+			},
+			{
+				"iD": 50,
+				"objectType": "OTSurfacePolygon",
+				"assemblyKey": "None",
+				"parentId": 11,
+				"childIds": [],
+				"location":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"rotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				},
+				"uVAnchor":
+				{
+					"x": -1.4903178788706201e-14,
+					"y": 4.5906537691281007e-41,
+					"z": -9.6990724440771789e+17
+				},
+				"controlPoints": [],
 				"controlIndices": [],
 				"extents":
 				{
@@ -2201,8 +1788,8 @@
 					"iD": 1,
 					"position":
 					{
-						"x": 541.86260986328125,
-						"y": -285.876220703125,
+						"x": 0,
+						"y": 0,
 						"z": 0
 					}
 				},
@@ -2211,8 +1798,8 @@
 					"iD": 2,
 					"position":
 					{
-						"x": 1126.818115234375,
-						"y": -440.792236328125,
+						"x": 408.87368774414062,
+						"y": 0,
 						"z": 0
 					}
 				},
@@ -2221,9 +1808,9 @@
 					"iD": 3,
 					"position":
 					{
-						"x": 1126.818115234375,
-						"y": -440.792236328125,
-						"z": 243.83999633789063
+						"x": 408.87368774414062,
+						"y": 0,
+						"z": 243.83999633789062
 					}
 				},
 				"4":
@@ -2231,9 +1818,9 @@
 					"iD": 4,
 					"position":
 					{
-						"x": 541.86260986328125,
-						"y": -285.876220703125,
-						"z": 243.83999633789063
+						"x": 0,
+						"y": 0,
+						"z": 243.83999633789062
 					}
 				}
 			},
@@ -2281,10 +1868,9 @@
 			}
 		},
 		"commandHistory": [
-			"{\"parameters\":{\"command\":\"{\\\"value\\\":\\\"deselect_all\\\"}\",\"version\":\"{\\\"value\\\":\\\"1\\\"}\",\"commandID\":\"{\\\"value\\\":\\\"30\\\"}\"}}",
-			"{\"parameters\":{\"command\":\"{\\\"value\\\":\\\"begin_undoredo_macro\\\"}\",\"version\":\"{\\\"value\\\":\\\"1\\\"}\",\"commandID\":\"{\\\"value\\\":\\\"31\\\"}\"}}",
-			"{\"parameters\":{\"command\":\"{\\\"value\\\":\\\"end_undoredo_macro\\\"}\",\"version\":\"{\\\"value\\\":\\\"1\\\"}\",\"commandID\":\"{\\\"value\\\":\\\"32\\\"}\"}}",
-			"{\"parameters\":{\"command\":\"{\\\"value\\\":\\\"debug\\\"}\",\"version\":\"{\\\"value\\\":\\\"1\\\"}\",\"commandID\":\"{\\\"value\\\":\\\"33\\\"}\",\"type\":\"{\\\"value\\\":\\\"surface\\\"}\"}}"
+			"{\"parameters\":{\"command\":\"{\\\"value\\\":\\\"deselect_all\\\"}\",\"version\":\"{\\\"value\\\":\\\"1\\\"}\",\"commandID\":\"{\\\"value\\\":\\\"2\\\"}\"}}",
+			"{\"parameters\":{\"command\":\"{\\\"value\\\":\\\"begin_undoredo_macro\\\"}\",\"version\":\"{\\\"value\\\":\\\"1\\\"}\",\"commandID\":\"{\\\"value\\\":\\\"3\\\"}\"}}",
+			"{\"parameters\":{\"command\":\"{\\\"value\\\":\\\"end_undoredo_macro\\\"}\",\"version\":\"{\\\"value\\\":\\\"1\\\"}\",\"commandID\":\"{\\\"value\\\":\\\"4\\\"}\"}}"
 		]
 	}
 }

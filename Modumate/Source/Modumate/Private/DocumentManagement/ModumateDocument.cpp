@@ -763,7 +763,7 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 
 void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World)
 {
-	FGraph2D *targetSurfaceGraph = nullptr;
+	TSharedPtr<FGraph2D> targetSurfaceGraph;
 
 	switch (Delta.DeltaType)
 	{
@@ -772,18 +772,19 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		{
 			return;
 		}
-		targetSurfaceGraph = &SurfaceGraphs.Add(Delta.ID, FGraph2D(Delta.ID));
+		targetSurfaceGraph = SurfaceGraphs.Add(Delta.ID, MakeShared<FGraph2D>(Delta.ID));
 		break;
 	case EGraph2DDeltaType::Edit:
 	case EGraph2DDeltaType::Remove:
-		if (!ensure(SurfaceGraphs.Contains(Delta.ID)))
-		{
-			return;
-		}
-		targetSurfaceGraph = SurfaceGraphs.Find(Delta.ID);
+		targetSurfaceGraph = SurfaceGraphs.FindRef(Delta.ID);
 		break;
 	default:
 		break;
+	}
+
+	if (!ensure(targetSurfaceGraph.IsValid()))
+	{
+		return;
 	}
 
 	int32 surfaceGraphID = targetSurfaceGraph->GetID();
@@ -1307,7 +1308,7 @@ bool FModumateDocument::PostApplyDeltas(UWorld *World)
 
 	for (auto& kvp : SurfaceGraphs)
 	{
-		kvp.Value.CleanDirtyObjects(true);
+		kvp.Value->CleanDirtyObjects(true);
 	}
 
 	// Now that objects may have been deleted, validate the player state so that none of them are incorrectly referenced.
@@ -2632,9 +2633,9 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 	// Save all of the surface graphs as records
 	for (const auto &kvp : SurfaceGraphs)
 	{
-		const FGraph2D &surfaceGraph = kvp.Value;
-		FGraph2DRecord &surfaceGraphRecord = docRec.SurfaceGraphs.Add(kvp.Key);
-		surfaceGraph.ToDataRecord(&surfaceGraphRecord, true, true);
+		auto& surfaceGraph = kvp.Value;
+		FGraph2DRecord& surfaceGraphRecord = docRec.SurfaceGraphs.Add(kvp.Key);
+		surfaceGraph->ToDataRecord(&surfaceGraphRecord, true, true);
 	}
 
 	docRec.CameraViews = SavedCameraViews;
@@ -2709,11 +2710,11 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 		// Load all of the surface graphs now
 		for (const auto &kvp : docRec.SurfaceGraphs)
 		{
-			const FGraph2DRecord &surfaceGraphRecord = kvp.Value;
-			FGraph2D surfaceGraph(kvp.Key);
-			if (surfaceGraph.FromDataRecord(&surfaceGraphRecord))
+			const FGraph2DRecord& surfaceGraphRecord = kvp.Value;
+			TSharedPtr<FGraph2D> surfaceGraph = MakeShared<FGraph2D>(kvp.Key);
+			if (surfaceGraph->FromDataRecord(&surfaceGraphRecord))
 			{
-				SurfaceGraphs.Add(kvp.Key, MoveTemp(surfaceGraph));
+				SurfaceGraphs.Add(kvp.Key, surfaceGraph);
 			}
 		}
 
@@ -3157,22 +3158,22 @@ void FModumateDocument::UpdateRoomAnalysis(UWorld *world)
 #endif
 }
 
-const FGraph2D *FModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID) const
+const TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID) const
 {
-	return SurfaceGraphs.Find(SurfaceGraphID);
+	return SurfaceGraphs.FindRef(SurfaceGraphID);
 }
 
-FGraph2D *FModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID)
+TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID)
 {
-	return SurfaceGraphs.Find(SurfaceGraphID);
+	return SurfaceGraphs.FindRef(SurfaceGraphID);
 }
 
-const Modumate::FGraph2D *FModumateDocument::FindSurfaceGraphByObjID(int32 GraphObjectID) const
+const TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraphByObjID(int32 GraphObjectID) const
 {
 	return const_cast<FModumateDocument*>(this)->FindSurfaceGraphByObjID(GraphObjectID);
 }
 
-Modumate::FGraph2D *FModumateDocument::FindSurfaceGraphByObjID(int32 GraphObjectID)
+TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraphByObjID(int32 GraphObjectID)
 {
 	auto moi = GetObjectById(GraphObjectID);
 	if (moi == nullptr)
@@ -3380,7 +3381,7 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 
 	for (auto& kvp : SurfaceGraphs)
 	{
-		auto& graph = kvp.Value;
+		auto graph = kvp.Value;
 
 		int32 surfaceGraphID = kvp.Key;
 		const FModumateObjectInstance *surfaceGraphObj = GetObjectById(surfaceGraphID);
@@ -3399,7 +3400,7 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 		}
 		FVector faceOrigin = facePoints[0];
 
-		for (auto& vertexkvp : graph.GetVertices())
+		for (auto& vertexkvp : graph->GetVertices())
 		{
 			const FGraph2DVertex &graphVertex = vertexkvp.Value;
 			FVector2D vertexPos = graphVertex.Position;
@@ -3413,11 +3414,11 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 			DrawDebugString(world, vertexDrawPos + textOffset, vertexString, nullptr, FColor::White, 0.0f, true);
 		}
 
-		for (const auto &edgekvp : graph.GetEdges())
+		for (const auto &edgekvp : graph->GetEdges())
 		{
 			const FGraph2DEdge &graphEdge = edgekvp.Value;
-			const FGraph2DVertex *startGraphVertex = graph.FindVertex(graphEdge.StartVertexID);
-			const FGraph2DVertex *endGraphVertex = graph.FindVertex(graphEdge.EndVertexID);
+			const FGraph2DVertex *startGraphVertex = graph->FindVertex(graphEdge.StartVertexID);
+			const FGraph2DVertex *endGraphVertex = graph->FindVertex(graphEdge.EndVertexID);
 			if (startGraphVertex && endGraphVertex)
 			{
 				FVector2D startPos = startGraphVertex->Position;
@@ -3431,7 +3432,7 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 			}
 		}
 
-		for (const auto &polykvp : graph.GetPolygons())
+		for (const auto &polykvp : graph->GetPolygons())
 		{
 			const FGraph2DPolygon &poly = polykvp.Value;
 
@@ -3441,9 +3442,9 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 			for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
 			{
 				FGraphSignedID edgeID = poly.Edges[edgeIdx];
-				const FGraph2DEdge *graphEdge = graph.FindEdge(edgeID);
-				const FGraph2DVertex *startGraphVertex = graph.FindVertex(graphEdge->StartVertexID);
-				const FGraph2DVertex *endGraphVertex = graph.FindVertex(graphEdge->EndVertexID);
+				const FGraph2DEdge *graphEdge = graph->FindEdge(edgeID);
+				const FGraph2DVertex *startGraphVertex = graph->FindVertex(graphEdge->StartVertexID);
+				const FGraph2DVertex *endGraphVertex = graph->FindVertex(graphEdge->EndVertexID);
 
 				FVector2D edgeNormal = FVector2D(graphEdge->CachedEdgeDir.Y, -graphEdge->CachedEdgeDir.X);
 				edgeNormal *= edgeID < 0 ? -1 : 1;
@@ -3458,9 +3459,9 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 				const FVector2D &prevEdgeNormal = edgeNormals[(edgeIdx + numEdges - 1) % numEdges];
 				const FVector2D &nextEdgeNormal = edgeNormals[(edgeIdx + 1) % numEdges];
 
-				const FGraph2DEdge *graphEdge = graph.FindEdge(edgeID);
-				const FGraph2DVertex *startGraphVertex = graph.FindVertex(graphEdge->StartVertexID);
-				const FGraph2DVertex *endGraphVertex = graph.FindVertex(graphEdge->EndVertexID);
+				const FGraph2DEdge *graphEdge = graph->FindEdge(edgeID);
+				const FGraph2DVertex *startGraphVertex = graph->FindVertex(graphEdge->StartVertexID);
+				const FGraph2DVertex *endGraphVertex = graph->FindVertex(graphEdge->EndVertexID);
 
 				bool bEdgeForward = (edgeID > 0);
 				FVector2D startPos = bEdgeForward ? startGraphVertex->Position : endGraphVertex->Position;

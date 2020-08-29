@@ -7,7 +7,6 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Graph/Graph3DDelta.h"
-#include "Graph/Graph2D.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateRoofStatics.h"
 
@@ -16,6 +15,7 @@ using namespace Modumate;
 URoofPerimeterTool::URoofPerimeterTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	SelectedGraph = MakeShared<FGraph2D>();
 }
 
 bool URoofPerimeterTool::Activate()
@@ -31,14 +31,13 @@ bool URoofPerimeterTool::Activate()
 
 	// Try to make a 2D graph from the selected objects, in order to find a perimeter
 	TArray<int32> perimeterEdgeIDs;
-	FGraph2D selectedGraph;
 	FPlane perimeterPlane;
-	if (volumeGraph.Create2DGraph(graphObjIDs, connectedGraphIDs, selectedGraph, perimeterPlane, true, false))
+	if (volumeGraph.Create2DGraph(graphObjIDs, connectedGraphIDs, SelectedGraph, perimeterPlane, true, false))
 	{
 		// Consider polygons with duplicate edges as invalid loops.
 		// TODO: this liberally invalidates polygons that have area, but also extra "peninsula" edges that double back on themselves;
 		// we could remove those duplicate edges from the loop and use the rest of the edges as a perimeter in the future.
-		const FGraph2DPolygon *perimeterPoly = selectedGraph.GetRootPolygon();
+		const FGraph2DPolygon *perimeterPoly = SelectedGraph->GetRootPolygon();
 		if (ensure(perimeterPoly) && !perimeterPoly->bHasDuplicateVertex)
 		{
 			for (auto signedEdgeID : perimeterPoly->Edges)

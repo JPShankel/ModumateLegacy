@@ -128,9 +128,9 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 			// TODO: all of parenting information is gathered here for projecting 3D control points into 2D surface graph positions,
 			// which should be unnecessary if surface graph MOIs expose their 2D information directly.
 			const FModumateObjectInstance* surfaceObj = doc->GetObjectById(targetParentID);
-			const FGraph2D* surfaceGraph = doc->FindSurfaceGraph(targetParentID);
+			auto surfaceGraph = doc->FindSurfaceGraph(targetParentID);
 			const FModumateObjectInstance* surfaceParent = surfaceObj ? surfaceObj->GetParentObject() : nullptr;
-			if (!ensure(surfaceObj && surfaceGraph && surfaceParent))
+			if (!ensure(surfaceObj && surfaceGraph.IsValid() && surfaceParent))
 			{
 				continue;
 			}
@@ -207,8 +207,8 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 		for (auto& kvp : combinedVertex2DMovements)
 		{
 			surfaceGraphDeltas.Reset();
-			FGraph2D* surfaceGraph = doc->FindSurfaceGraph(kvp.Key);
-			if (!ensure(surfaceGraph) || (kvp.Value.Num() == 0) ||
+			auto surfaceGraph = doc->FindSurfaceGraph(kvp.Key);
+			if (!ensure(surfaceGraph.IsValid()) || (kvp.Value.Num() == 0) ||
 				!surfaceGraph->MoveVertices(surfaceGraphDeltas, nextID, kvp.Value))
 			{
 				continue;

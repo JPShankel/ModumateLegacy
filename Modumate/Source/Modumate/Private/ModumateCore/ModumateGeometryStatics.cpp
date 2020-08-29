@@ -142,9 +142,24 @@ void FLayerGeomDef::Init(const TArray<FVector> &InPointsA, const TArray<FVector>
 	bValid = CachePoints2D();
 }
 
-FVector2D FLayerGeomDef::ProjectPoint2D(const FVector &Point3D) const
+FVector2D FLayerGeomDef::ProjectPoint2D(const FVector& Point3D) const
 {
 	return UModumateGeometryStatics::ProjectPoint2D(Point3D, AxisX, AxisY, Origin);
+}
+
+FVector2D FLayerGeomDef::ProjectPoint2DSnapped(const FVector& Point3D, float Tolerance) const
+{
+	FVector2D projectedPoint = ProjectPoint2D(Point3D);
+
+	for (const FVector2D& existingPoint : CachedPointsA2D)
+	{
+		if (projectedPoint.Equals(existingPoint, Tolerance))
+		{
+			return existingPoint;
+		}
+	}
+
+	return projectedPoint;
 }
 
 FVector FLayerGeomDef::Deproject2DPoint(const FVector2D &Point2D, bool bSideA) const
@@ -165,7 +180,7 @@ bool FLayerGeomDef::CachePoints2D()
 	CachedPointsB2D.Reset(PointsB.Num());
 	for (const FVector &pointB : PointsB)
 	{
-		CachedPointsB2D.Add(ProjectPoint2D(pointB));
+		CachedPointsB2D.Add(ProjectPoint2DSnapped(pointB));
 	}
 
 	// Make sure the polygons' edges are valid
@@ -187,7 +202,7 @@ bool FLayerGeomDef::CachePoints2D()
 		bool &bHoleValid = HolesValid.Add_GetRef(true);
 		for (const FVector &holePoint3D : hole3D.Points)
 		{
-			hole2D.Points.Add(ProjectPoint2D(holePoint3D));
+			hole2D.Points.Add(ProjectPoint2DSnapped(holePoint3D));
 		}
 
 		// TODO: if triangulation is tolerant of holes that overlap with their containing polygon, or each other, then potentially remove these checks?

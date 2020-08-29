@@ -6,7 +6,7 @@
 
 namespace Modumate
 {
-	FGraph2DEdge::FGraph2DEdge(int32 InID, FGraph2D* InGraph, int32 InStart, int32 InEnd)
+	FGraph2DEdge::FGraph2DEdge(int32 InID, TWeakPtr<FGraph2D> InGraph, int32 InStart, int32 InEnd)
 		: IGraph2DObject(InID, InGraph)
 	{
 		SetVertices(InStart, InEnd);
@@ -14,15 +14,21 @@ namespace Modumate
 
 	void FGraph2DEdge::SetVertices(int32 InStart, int32 InEnd)
 	{
+		auto graph = Graph.Pin();
+		if (!ensure(graph.IsValid()))
+		{
+			return;
+		}
+
 		if (StartVertexID != MOD_ID_NONE)
 		{
-			auto startVertex = Graph->FindVertex(StartVertexID);
+			auto startVertex = graph->FindVertex(StartVertexID);
 			ensureAlways(startVertex && startVertex->RemoveEdge(ID));
 		}
 
 		if (EndVertexID != MOD_ID_NONE)
 		{
-			auto endVertex = Graph->FindVertex(EndVertexID);
+			auto endVertex = graph->FindVertex(EndVertexID);
 			ensureAlways(endVertex && endVertex->RemoveEdge(-ID));
 		}
 
@@ -33,13 +39,13 @@ namespace Modumate
 
 		if (StartVertexID != MOD_ID_NONE)
 		{
-			auto startVertex = Graph->FindVertex(StartVertexID);
+			auto startVertex = graph->FindVertex(StartVertexID);
 			ensureAlways(startVertex && startVertex->AddEdge(ID));
 		}
 
 		if (EndVertexID != MOD_ID_NONE)
 		{
-			auto endVertex = Graph->FindVertex(EndVertexID);
+			auto endVertex = graph->FindVertex(EndVertexID);
 			ensureAlways(endVertex && endVertex->AddEdge(-ID));
 		}
 	}
@@ -51,27 +57,33 @@ namespace Modumate
 
 		if (bConnected)
 		{
+			auto graph = Graph.Pin();
+			if (!ensure(graph.IsValid()))
+			{
+				return;
+			}
+
 			bool bContinueConnected = false;
 
-			auto startVertex = Graph->FindVertex(StartVertexID);
+			auto startVertex = graph->FindVertex(StartVertexID);
 			if (startVertex != nullptr)
 			{
 				startVertex->Dirty(bContinueConnected);
 			}
 
-			auto endVertex = Graph->FindVertex(EndVertexID);
+			auto endVertex = graph->FindVertex(EndVertexID);
 			if (endVertex != nullptr)
 			{
 				endVertex->Dirty(bContinueConnected);
 			}
 
-			auto leftPoly = Graph->FindPolygon(LeftPolyID);
+			auto leftPoly = graph->FindPolygon(LeftPolyID);
 			if (leftPoly != nullptr)
 			{
 				leftPoly->Dirty(bContinueConnected);
 			}
 
-			auto rightPoly = Graph->FindPolygon(RightPolyID);
+			auto rightPoly = graph->FindPolygon(RightPolyID);
 			if (rightPoly != nullptr)
 			{
 				rightPoly->Dirty(bContinueConnected);
@@ -106,16 +118,17 @@ namespace Modumate
 	{
 		CachedAngle = 0.0f;
 		CachedEdgeDir = FVector2D::ZeroVector;
+		auto graph = Graph.Pin();
 
-		if (ensureAlways(Graph) && (StartVertexID != 0) && (EndVertexID != 0))
+		if (ensureAlways(graph.IsValid()) && (StartVertexID != 0) && (EndVertexID != 0))
 		{
-			FGraph2DVertex *startVertex = Graph->FindVertex(StartVertexID);
-			FGraph2DVertex *endVertex = Graph->FindVertex(EndVertexID);
+			FGraph2DVertex *startVertex = graph->FindVertex(StartVertexID);
+			FGraph2DVertex *endVertex = graph->FindVertex(EndVertexID);
 			if (ensureAlways(startVertex && endVertex))
 			{
 				FVector2D edgeDelta = endVertex->Position - startVertex->Position;
 				float edgeLength = edgeDelta.Size();
-				if (edgeLength > Graph->Epsilon)
+				if (edgeLength > graph->Epsilon)
 				{
 					CachedEdgeDir = edgeDelta / edgeLength;
 					CachedAngle = FRotator::ClampAxis(FMath::RadiansToDegrees(FMath::Atan2(CachedEdgeDir.Y, CachedEdgeDir.X)));

@@ -21,7 +21,7 @@ namespace Modumate
 
 		bool bPolygonDirty = false;							// An extra dirty flag for this edge to be used by the graph to re-calculate polygons
 
-		FGraph2DEdge(int32 InID, FGraph2D* InGraph, int32 InStart, int32 InEnd);
+		FGraph2DEdge(int32 InID, TWeakPtr<FGraph2D> InGraph, int32 InStart, int32 InEnd);
 		void SetVertices(int32 InStart, int32 InEnd);
 
 		virtual void Dirty(bool bConnected = true) override;

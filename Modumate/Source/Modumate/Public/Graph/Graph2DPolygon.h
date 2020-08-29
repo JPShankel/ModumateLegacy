@@ -14,8 +14,8 @@ namespace Modumate
 
 		// Derived data
 		TArray<FGraphSignedID> Edges;					// The list of edges that make up this polygon
-		int32 ParentID = MOD_ID_NONE;					// The ID of the polygon that contains this one, if any
-		TArray<int32> InteriorPolygons;					// The IDs of polygons that this polygon contains
+		int32 ContainingPolyID = MOD_ID_NONE;			// The ID of the polygon that contains this one, if any
+		TArray<int32> ContainedPolyIDs;					// The IDs of polygons that this polygon contains
 		bool bHasDuplicateVertex = false;				// Whether this polygon has any vertices that repeat (peninsulas/islands)
 		bool bInterior = false;							// Whether this is an interior (simple, solid) polygon; otherwise it is a perimeter
 		FBox2D AABB = FBox2D(ForceInitToZero);			// The axis-aligned bounding box for the polygon
@@ -24,18 +24,17 @@ namespace Modumate
 		TArray<FGraphSignedID> CachedPerimeterEdgeIDs;	// For interior polygons, the directed IDs of edges that make up the perimeter traversal
 		TArray<FVector2D> CachedPerimeterPoints;		// For interior polygons, the positions of vertices that make up the perimeter traversal
 
-		FGraph2DPolygon(int32 InID, FGraph2D* InGraph) : IGraph2DObject(InID, InGraph) { }
-		FGraph2DPolygon() : IGraph2DObject(MOD_ID_NONE, nullptr) { };
+		FGraph2DPolygon();
+		FGraph2DPolygon(int32 InID, TWeakPtr<FGraph2D> InGraph);
+		FGraph2DPolygon(int32 InID, TWeakPtr<FGraph2D> InGraph, const TArray<int32>& InVertices);
 
-		FGraph2DPolygon(int32 InID, FGraph2D* InGraph, TArray<int32> &Vertices, bool bInInterior);
-
-		bool IsInside(const FGraph2DPolygon &otherPoly) const;
-		void SetParent(int32 inParentID);
+		bool IsInside(int32 OtherPolyID) const;
+		void SetContainingPoly(int32 NewContainingPolyID);
 
 		void SetVertices(const TArray<int32> &Vertices);
 
 		// Double-check that the polygon's definition matches the minimal traversal in the graph.
-		bool ValidateTraversal();
+		bool CalculateTraversal(bool& bOutCalculatedInterior);
 
 		virtual void Dirty(bool bConnected = true) override;
 		virtual bool Clean() override;
@@ -44,9 +43,8 @@ namespace Modumate
 		virtual void GetVertexIDs(TArray<int32> &OutVertexIDs) const override;
 
 	protected:
-		TSet<int32> TempVertexSet;
-		TSet<FGraphSignedID> TempVisitedEdges;
-		TSet<FGraphSignedID> TempAllowedPerimeterEdges;
+		static TSet<int32> TempVertexSet;
+		static TSet<FGraphSignedID> TempVisitedEdges;
 
 		// Update the cached perimeter data from the polygon's definitional data; returns whether it was able to complete, if necessary.
 		bool CalculatePerimeter();

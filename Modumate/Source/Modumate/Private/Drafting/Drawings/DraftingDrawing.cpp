@@ -95,7 +95,7 @@ namespace Modumate {
 
 		auto plane = FPlane(scopeBoxOrigin, cutPlane->GetNormal());
 
-		FGraph2D graph;
+		auto graph = MakeShared<FGraph2D>();
 		TMap<int32, int32> objMap;
 		auto volumeGraph = Doc->GetVolumeGraph();
 		volumeGraph.Create2DGraph(plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, graph, objMap);
@@ -103,12 +103,12 @@ namespace Modumate {
 		Units::FThickness lineThickness = Units::FThickness::Points(0.15f);
 		FMColor lineColor = FMColor::Black;
 
-		for (auto& edgekvp : graph.GetEdges())
+		for (auto& edgekvp : graph->GetEdges())
 		{
 			auto& edge = edgekvp.Value;
 
-			auto startVertex = graph.FindVertex(edge.StartVertexID);
-			auto endVertex = graph.FindVertex(edge.EndVertexID);
+			auto startVertex = graph->FindVertex(edge.StartVertexID);
+			auto endVertex = graph->FindVertex(edge.EndVertexID);
 
 			Units::FCoordinates2D start = Units::FCoordinates2D::WorldCentimeters(startVertex->Position);
 			Units::FCoordinates2D end = Units::FCoordinates2D::WorldCentimeters(endVertex->Position);
@@ -311,7 +311,7 @@ namespace Modumate {
 		FVector origin = cutPlane->GetControlPoint(0);
 		UModumateGeometryStatics::AnalyzeCachedPositions(cutPlane->GetControlPoints(), plane, axisX, axisY, cached2DPositions, center);
 		TMap<int32, int32> objMap;
-		FGraph2D graph;
+		auto graph = MakeShared<FGraph2D>();
 
 		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(scopeBox->GetControlPoint(0), axisX, axisY, origin);
 		FVector scopeBoxOrigin = origin + (scopeBoxOrigin2D.X * axisX) + (scopeBoxOrigin2D.Y * axisY);
@@ -334,7 +334,7 @@ namespace Modumate {
 		TMap<int32, TArray<int32>> roomMap;
 		GetFacesConnectedToRooms(roomMap);
 
-		for (auto& edgekvp : graph.GetEdges())
+		for (auto& edgekvp : graph->GetEdges())
 		{
 			int32 metaplaneID = objMap[edgekvp.Key];
 			if (roomMap.Contains(metaplaneID))

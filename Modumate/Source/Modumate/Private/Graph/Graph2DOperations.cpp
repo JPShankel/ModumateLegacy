@@ -485,7 +485,7 @@ namespace Modumate
 				auto poly = FindPolygon(polyID);
 				if (poly != nullptr && !OutDelta.PolygonDeletions.Contains(poly->ID))
 				{
-					OutDelta.PolygonDeletions.Add(poly->ID, FGraph2DObjDelta(poly->VertexIDs, {}, poly->bInterior));
+					OutDelta.PolygonDeletions.Add(poly->ID, FGraph2DObjDelta(poly->VertexIDs, {}));
 				}
 			}
 		}
@@ -816,6 +816,9 @@ namespace Modumate
 			return false;
 		}
 
+		// Clean polygons now, to ensure that perimeters and interior/exterior values are up-to-date.
+		CleanDirtyObjects(true);
+
 		// Make sure that the calculated polygons correspond to those that were intended to populate the graph
 		int32 numInteriorPolygons = 0;
 		for (auto& kvp : Polygons)
@@ -976,7 +979,7 @@ namespace Modumate
 			}
 
 			int32 addedPolyID = NextID;
-			updatePolygonsDelta.AddNewPolygon(curVertexIDs, NextID, bPolyInterior, previousPolys.Array());
+			updatePolygonsDelta.AddNewPolygon(curVertexIDs, NextID, previousPolys.Array());
 
 			for (int32 previousID : previousPolys)
 			{
@@ -986,7 +989,7 @@ namespace Modumate
 					continue;
 				}
 
-				updatePolygonsDelta.PolygonDeletions.Add(previousID, FGraph2DObjDelta(polygon->VertexIDs, { addedPolyID }, polygon->bInterior));
+				updatePolygonsDelta.PolygonDeletions.Add(previousID, FGraph2DObjDelta(polygon->VertexIDs, { addedPolyID }));
 			}
 		}
 
@@ -1005,6 +1008,7 @@ namespace Modumate
 			OutDeltas.Add(updatePolygonsDelta);
 		}
 
+#if 0
 		// Clean all graph object derived data (including polygons, new and old), so we can use perimeters to calculate containment.
 		CleanDirtyObjects(true);
 
@@ -1050,6 +1054,7 @@ namespace Modumate
 
 			OutDeltas.Add(parentIDUpdatesDelta);
 		}
+#endif
 
 		return true;
 	}

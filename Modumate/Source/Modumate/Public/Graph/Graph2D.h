@@ -16,7 +16,7 @@ namespace Modumate
 {
 	class FGraph2D;
 
-	class MODUMATE_API FGraph2D
+	class MODUMATE_API FGraph2D : public TSharedFromThis<FGraph2D>
 	{
 	public:
 		FGraph2D(int32 InID = MOD_ID_NONE, float InEpsilon = DEFAULT_GRAPH_EPSILON, bool bInDebugCheck = !UE_BUILD_SHIPPING);
@@ -44,9 +44,9 @@ namespace Modumate
 		bool ContainsObject(int32 GraphObjID) const;
 		bool GetEdgeAngle(FGraphSignedID EdgeID, float &outEdgeAngle);
 
-		FGraph2DVertex *AddVertex(const FVector2D &Position, int32 InID = 0);
+		FGraph2DVertex *AddVertex(const FVector2D& Position, int32 InID = 0);
 		FGraph2DEdge *AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID = 0);
-		FGraph2DPolygon *AddPolygon(TArray<int32> &VertexIDs, int32 InID = 0, bool bInterior = false);
+		FGraph2DPolygon *AddPolygon(const TArray<int32>& VertexIDs, int32 InID = 0);
 
 		bool RemoveVertex(int32 VertexID);
 		bool RemoveEdge(int32 EdgeID);
@@ -56,6 +56,7 @@ namespace Modumate
 		void ClearPolygons();
 
 		int32 GetID() const;
+		int32 GetNextObjID() const;
 		int32 GetRootPolygonID() const;
 		FGraph2DPolygon *GetRootPolygon();
 		const FGraph2DPolygon *GetRootPolygon() const;
@@ -139,6 +140,9 @@ namespace Modumate
 
 		bool UpdateCachedBoundsPositions();
 		void UpdateCachedBoundsNormals();
+
+		// Helper function to update the derived containment values of all polygons, after they've been cleaned and have perimeters calculated.
+		void UpdateContainment();
 
 	public:
 		// outputs objects that would be added by the list of deltas.

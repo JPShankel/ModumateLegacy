@@ -1467,18 +1467,18 @@ namespace Modumate
 		// TODO: this kind of code may be useful somewhere else, and could be generalized to be 
 		// similar in use to GetDeltaForUpdateFaces
 		// only edges need to actually be calculated to use Create2DGraph
-		FGraph2D joinGraph;
+		TraversalGraph2D->Reset();
 		FPlane graphPlane;
 		TArray<int32> newFaceVertexIDs;
-		Create2DGraph(whitelistIDs, connectedGraphIDs, joinGraph, graphPlane, true, true);
-		for (auto &kvp : joinGraph.GetPolygons())
+		Create2DGraph(whitelistIDs, connectedGraphIDs, TraversalGraph2D, graphPlane, true, true);
+		for (auto &kvp : TraversalGraph2D->GetPolygons())
 		{
 			const FGraph2DPolygon &polygon = kvp.Value;
 			if (!polygon.bInterior)
 			{
 				for (int32 edgeID : polygon.Edges)
 				{
-					auto edge = joinGraph.FindEdge(edgeID);
+					auto edge = TraversalGraph2D->FindEdge(edgeID);
 					int32 vertexID = edgeID < 0 ? edge->EndVertexID : edge->StartVertexID;
 					newFaceVertexIDs.Add(vertexID);
 				}

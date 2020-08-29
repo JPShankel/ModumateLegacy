@@ -42,7 +42,7 @@ protected:
 	TArray<int32> CachedFaceIDs;
 	TArray<FVector> CachedPerimeterPoints;
 	FVector CachedPerimeterCenter;
-	Modumate::FGraph2D CachedPerimeterGraph;
+	TSharedPtr<Modumate::FGraph2D> CachedPerimeterGraph;
 	FPlane CachedPlane;
 
 	TSet<int32> TempGroupMembers, TempGroupEdges, TempGroupFaces, TempConnectedGraphIDs;

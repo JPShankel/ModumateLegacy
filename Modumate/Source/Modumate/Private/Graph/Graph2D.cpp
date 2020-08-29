@@ -15,7 +15,7 @@
 
 namespace Modumate
 {
-	IGraph2DObject::IGraph2DObject(int32 InID, FGraph2D *InGraph)
+	IGraph2DObject::IGraph2DObject(int32 InID, TWeakPtr<FGraph2D> InGraph)
 		: ID(InID)
 		, Graph(InGraph)
 	{
@@ -206,14 +206,15 @@ namespace Modumate
 			return nullptr;
 		}
 
-		FGraph2DVertex &newVertex = Vertices.Add(newID, FGraph2DVertex(newID, this, Position));
+		auto weakThis = TWeakPtr<FGraph2D>(AsShared());
+		FGraph2DVertex &newVertex = Vertices.Add(newID, FGraph2DVertex(newID, weakThis, Position));
 		newVertex.Dirty(false);
 		AllObjects.Add(newID, EGraphObjectType::Vertex);
 
 		return &newVertex;
 	}
 
-	FGraph2DEdge *FGraph2D::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID)
+	FGraph2DEdge* FGraph2D::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID)
 	{
 		int32 newID = InID;
 		if (newID == 0)
@@ -242,7 +243,8 @@ namespace Modumate
 			return nullptr;
 		}
 
-		FGraph2DEdge &newEdge = Edges.Add(newID, FGraph2DEdge(newID, this, StartVertexID, EndVertexID));
+		auto weakThis = TWeakPtr<FGraph2D>(AsShared());
+		FGraph2DEdge &newEdge = Edges.Add(newID, FGraph2DEdge(newID, weakThis, StartVertexID, EndVertexID));
 
 		EdgeIDsByVertexPair.Add(FGraphVertexPair::MakeEdgeKey(newEdge.StartVertexID, newEdge.EndVertexID), newEdge.ID);
 		AllObjects.Add(newID, EGraphObjectType::Edge);
@@ -250,7 +252,7 @@ namespace Modumate
 		return &newEdge;
 	}
 
-	FGraph2DPolygon *FGraph2D::AddPolygon(TArray<int32> &VertexIDs, int32 InID, bool bInterior)
+	FGraph2DPolygon* FGraph2D::AddPolygon(const TArray<int32>& VertexIDs, int32 InID)
 	{
 		int32 newID = InID;
 		if (newID == MOD_ID_NONE)
@@ -272,9 +274,10 @@ namespace Modumate
 			return nullptr;
 		}
 
-		FGraph2DPolygon &newPoly = Polygons.Add(newID, FGraph2DPolygon(newID, this, VertexIDs, bInterior));
-
+		auto weakThis = TWeakPtr<FGraph2D>(AsShared());
+		FGraph2DPolygon& newPoly = Polygons.Add(newID, FGraph2DPolygon(newID, weakThis, VertexIDs));
 		newPoly.Dirty(false);
+
 		AllObjects.Add(newID, EGraphObjectType::Polygon);
 
 		return &newPoly;
@@ -358,7 +361,19 @@ namespace Modumate
 			return false;
 		}
 
-		polyToRemove->SetParent(MOD_ID_NONE);
+		// Pass through containment for contained polygons, and clear containment for the polygon to remove
+		if (polyToRemove->ContainedPolyIDs.Num() > 0)
+		{
+			TArray<int32> oldContainedPolyIDs = polyToRemove->ContainedPolyIDs;
+			for (int32 containedPolyID : oldContainedPolyIDs)
+			{
+				if (FGraph2DPolygon *containedPoly = FindPolygon(containedPolyID))
+				{
+					containedPoly->SetContainingPoly(polyToRemove->ContainingPolyID);
+				}
+			}
+		}
+		polyToRemove->SetContainingPoly(MOD_ID_NONE);
 
 		for (int32 edgeID : polyToRemove->Edges)
 		{
@@ -374,7 +389,7 @@ namespace Modumate
 			// TODO: is this useful, or even correct, if we know we need to re-calculate polygons anyway?
 			if (edgePolyID == polyToRemove->ID)
 			{
-				edgePolyID = polyToRemove->ParentID;
+				edgePolyID = polyToRemove->ContainingPolyID;
 			}
 
 			edge->bPolygonDirty = true;
@@ -408,6 +423,9 @@ namespace Modumate
 		TArray<FGraph2DDelta> deltas;
 		ensure(CalculatePolygons(deltas, NextObjID));
 
+		// Similarly, without gathering/applying deltas, this is where we can update containment now that polygons are clean.
+		CleanDirtyObjects(true);
+
 		return Polygons.Num();
 	}
 
@@ -421,6 +439,11 @@ namespace Modumate
 		return ID;
 	}
 
+	int32 FGraph2D::GetNextObjID() const
+	{
+		return NextObjID;
+	}
+
 	int32 FGraph2D::GetRootPolygonID() const
 	{
 		int32 resultID = MOD_ID_NONE;
@@ -428,7 +451,7 @@ namespace Modumate
 		for (auto &kvp : Polygons)
 		{
 			auto &polygon = kvp.Value;
-			if (polygon.bInterior && (polygon.ParentID == MOD_ID_NONE))
+			if (polygon.bInterior && (polygon.ContainingPolyID == MOD_ID_NONE))
 			{
 				if (resultID == MOD_ID_NONE)
 				{
@@ -486,9 +509,6 @@ namespace Modumate
 
 			FGraph2DPolygonRecord polyRecord; 
 			polyRecord.VertexIDs = poly.VertexIDs; 
-			polyRecord.bInterior = poly.bInterior;
-			polyRecord.ContainingFaceID = poly.ParentID; 
-			polyRecord.ContainedFaceIDs = poly.InteriorPolygons;
 			OutRecord->Polygons.Add(poly.ID, polyRecord);
 		}
 
@@ -519,7 +539,7 @@ namespace Modumate
 			}
 
 			FGraph2DEdge *newEdge = AddEdge(edgeRecord.VertexIDs[0], edgeRecord.VertexIDs[1], kvp.Key);
-			if (!ensureAlways(newEdge && newEdge->Clean()))
+			if (!ensureAlways(newEdge))
 			{
 				return false;
 			}
@@ -527,38 +547,18 @@ namespace Modumate
 			NextObjID = FMath::Max(NextObjID, newEdge->ID + 1);
 		}
 
-		for (auto& kvp : Vertices)
-		{
-			if (!ensureAlways(kvp.Value.Clean()))
-			{
-				return false;
-			}
-		}
+		CleanDirtyObjects(false);
 
 		for (const auto &kvp : InRecord->Polygons)
 		{
 			const FGraph2DPolygonRecord &polyRecord = kvp.Value;
 
-			FGraph2DPolygon poly(kvp.Key, this);
-			poly.SetVertices(polyRecord.VertexIDs);
-			poly.bInterior = polyRecord.bInterior;
-			poly.ParentID = polyRecord.ContainingFaceID;
-			poly.InteriorPolygons = polyRecord.ContainedFaceIDs;
+			FGraph2DPolygon *newPoly = AddPolygon(polyRecord.VertexIDs, kvp.Key);
 
-			Polygons.Add(poly.ID, poly);
-
-			NextObjID = FMath::Max(NextObjID, poly.ID + 1);
+			NextObjID = FMath::Max(NextObjID, newPoly->ID + 1);
 		}
 
-		for (auto& kvp : Polygons)
-		{
-			kvp.Value.Clean();
-		}
-
-		if (!ensureAlways(!IsDirty()))
-		{
-			return false;
-		}
+		CleanDirtyObjects(true);
 
 		return true;
 	}
@@ -646,7 +646,7 @@ namespace Modumate
 				return false;
 			}
 
-			auto newPoly = AddPolygon(polyVertexIDs, polyID, kvp.Value.bInterior);
+			auto newPoly = AddPolygon(polyVertexIDs, polyID);
 			if (!ensure(newPoly))
 			{
 				ApplyInverseDeltas({ appliedDelta });
@@ -664,15 +664,6 @@ namespace Modumate
 				return false;
 			}
 			appliedDelta.PolygonDeletions.Add(kvp);
-		}
-
-		for (auto &kvp : Delta.PolygonParentIDUpdates)
-		{
-			auto childPoly = FindPolygon(kvp.Key);
-			if (childPoly != nullptr)
-			{
-				childPoly->SetParent(kvp.Value.Value);
-			}
 		}
 
 		if (!Delta.BoundsUpdates.Key.IsEmpty() || !Delta.BoundsUpdates.Value.IsEmpty())
@@ -750,6 +741,8 @@ namespace Modumate
 			{
 				bCleanedAnyObjects = kvp.Value.Clean() || bCleanedAnyObjects;
 			}
+
+			UpdateContainment();
 		}
 
 		return bCleanedAnyObjects;
@@ -1022,6 +1015,40 @@ namespace Modumate
 
 				FVector2D direction = (p2 - p1).GetSafeNormal();
 				bounds.EdgeNormals.Add(sign * FVector2D(direction.Y, -direction.X));
+			}
+		}
+	}
+
+	void FGraph2D::UpdateContainment()
+	{
+		// Require that all graph objects are clean, so we can use perimeters to calculate containment.
+		if (IsDirty())
+		{
+			return;
+		}
+
+		// determine which polygons are inside of others
+		// TODO: this can be expensive, keep track of which polygons need to have containment updated, similar to which edges are polygon-dirty
+		for (auto& containedKVP : Polygons)
+		{
+			FGraph2DPolygon& containedPoly = containedKVP.Value;
+			int32 bestContainingPolyID = MOD_ID_NONE;
+
+			for (auto& containingKVP : Polygons)
+			{
+				FGraph2DPolygon& containingPoly = containingKVP.Value;
+				FGraph2DPolygon* containingPolyPtr = FindPolygon(containingPoly.ID);
+
+				if (containedPoly.IsInside(containingPoly.ID) &&
+					((bestContainingPolyID == MOD_ID_NONE) || containingPoly.IsInside(bestContainingPolyID)))
+				{
+					bestContainingPolyID = containingPoly.ID;
+				}
+			}
+
+			if (bestContainingPolyID != MOD_ID_NONE)
+			{
+				containedPoly.SetContainingPoly(bestContainingPolyID);
 			}
 		}
 	}

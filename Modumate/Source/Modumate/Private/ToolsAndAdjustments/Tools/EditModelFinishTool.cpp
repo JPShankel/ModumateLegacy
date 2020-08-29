@@ -77,8 +77,8 @@ bool UFinishTool::BeginUse()
 			return false;
 		}
 
-		FGraph2D *surfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
-		if (surfaceGraph == nullptr)
+		auto surfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
+		if (!surfaceGraph.IsValid())
 		{
 			return false;
 		}
@@ -86,7 +86,7 @@ bool UFinishTool::BeginUse()
 		for (auto &kvp : surfaceGraph->GetPolygons())
 		{
 			const FGraph2DPolygon &surfacePolygon = kvp.Value;
-			if (surfacePolygon.bInterior && (surfacePolygon.ParentID == MOD_ID_NONE))
+			if (surfacePolygon.bInterior && (surfacePolygon.ContainingPolyID == MOD_ID_NONE))
 			{
 				GraphElementTarget = GameState->Document.GetObjectById(surfacePolygon.ID);
 				break;

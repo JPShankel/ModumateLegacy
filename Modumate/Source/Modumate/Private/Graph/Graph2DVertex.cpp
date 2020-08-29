@@ -4,7 +4,7 @@
 
 namespace Modumate
 {
-	FGraph2DVertex::FGraph2DVertex(int32 InID, FGraph2D* InGraph, const FVector2D &InPos)
+	FGraph2DVertex::FGraph2DVertex(int32 InID, TWeakPtr<FGraph2D> InGraph, const FVector2D &InPos)
 		: IGraph2DObject(InID, InGraph)
 		, Position(InPos)
 	{
@@ -80,9 +80,15 @@ namespace Modumate
 			return true;
 		}
 
+		auto graph = Graph.Pin();
+		if (!graph.IsValid())
+		{
+			return false;
+		}
+
 		float curEdgeAngle = 0.0f, nextEdgeAngle = 0.0f;
-		if (Graph->GetEdgeAngle(curEdgeFromVertexID, curEdgeAngle) &&
-			Graph->GetEdgeAngle(OutNextEdgeID, nextEdgeAngle) &&
+		if (graph->GetEdgeAngle(curEdgeFromVertexID, curEdgeAngle) &&
+			graph->GetEdgeAngle(OutNextEdgeID, nextEdgeAngle) &&
 			ensureAlways(!FMath::IsNearlyEqual(curEdgeAngle, nextEdgeAngle)))
 		{
 			OutAngleDelta = nextEdgeAngle - curEdgeAngle;
@@ -103,11 +109,17 @@ namespace Modumate
 
 		if (bConnected)
 		{
+			auto graph = Graph.Pin();
+			if (!ensure(graph.IsValid()))
+			{
+				return;
+			}
+
 			bool bContinueConnected = false;
 
 			for (int32 edgeID : Edges)
 			{
-				auto edge = Graph->FindEdge(edgeID);
+				auto edge = graph->FindEdge(edgeID);
 				if (edge == nullptr)
 				{
 					continue;
@@ -115,13 +127,13 @@ namespace Modumate
 
 				edge->Dirty(bContinueConnected);
 
-				auto leftPoly = Graph->FindPolygon(edge->LeftPolyID);
+				auto leftPoly = graph->FindPolygon(edge->LeftPolyID);
 				if (leftPoly != nullptr)
 				{
 					leftPoly->Dirty(bContinueConnected);
 				}
 
-				auto rightPoly = Graph->FindPolygon(edge->RightPolyID);
+				auto rightPoly = graph->FindPolygon(edge->RightPolyID);
 				if (rightPoly != nullptr)
 				{
 					rightPoly->Dirty(bContinueConnected);
@@ -152,11 +164,17 @@ namespace Modumate
 
 	bool FGraph2DVertex::SortEdges()
 	{
-		if (Graph->bDebugCheck)
+		auto graph = Graph.Pin();
+		if (!graph.IsValid())
+		{
+			return false;
+		}
+
+		if (graph->bDebugCheck)
 		{
 			for (FGraphSignedID edgeID : Edges)
 			{
-				FGraph2DEdge *edge = Graph->FindEdge(edgeID);
+				FGraph2DEdge *edge = graph->FindEdge(edgeID);
 				if (!ensureAlways(edge && edge->bValid && !edge->bDerivedDataDirty))
 				{
 					return false;
@@ -170,9 +188,9 @@ namespace Modumate
 			}
 		}
 
-		auto edgeSorter = [this](const FGraphSignedID &edgeID1, const FGraphSignedID &edgeID2) {
+		auto edgeSorter = [graph](const FGraphSignedID &edgeID1, const FGraphSignedID &edgeID2) {
 			float angle1 = 0.0f, angle2 = 0.0f;
-			if (ensureAlways(Graph->GetEdgeAngle(edgeID1, angle1) && Graph->GetEdgeAngle(edgeID2, angle2)))
+			if (ensureAlways(graph->GetEdgeAngle(edgeID1, angle1) && graph->GetEdgeAngle(edgeID2, angle2)))
 			{
 				return angle1 < angle2;
 			}

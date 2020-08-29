@@ -4,6 +4,7 @@
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/DynamicMeshActor.h"
+#include "Graph/Graph2D.h"
 
 #include "EditModelGraph2DTool.generated.h"
 
@@ -22,4 +23,7 @@ public:
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_GRAPH2D; }
 	virtual bool Activate() override;
 	virtual bool Deactivate() override;
+
+protected:
+	TSharedPtr<Modumate::FGraph2D> SelectedGraph;
 };

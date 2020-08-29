@@ -3,6 +3,7 @@
 
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
+#include "Graph/Graph2D.h"
 
 #include "EditModelSurfaceGraphTool.generated.h"
 
@@ -51,4 +52,5 @@ protected:
 	FVector TargetFaceOrigin, TargetFaceNormal, TargetFaceAxisX, TargetFaceAxisY;
 	EMouseMode OriginalMouseMode;
 	int32 PendingSegmentID;
+	TSharedPtr<Modumate::FGraph2D> TargetSurfaceGraph;
 };

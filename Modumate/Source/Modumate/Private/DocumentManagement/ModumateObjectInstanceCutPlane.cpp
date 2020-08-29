@@ -271,7 +271,7 @@ void FMOICutPlaneImpl::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposit
 	// bounding box is defined by the dimensions of the cut plane as opposed to the contents of the graph
 	FBox2D cutPlaneBox = FBox2D(boxPoints);
 
-	Modumate::FGraph2D graph;
+	auto graph = MakeShared<Modumate::FGraph2D>();
 	TMap<int32, int32> objMap;
 	volumeGraph.Create2DGraph(CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, graph, objMap);
 
@@ -280,12 +280,12 @@ void FMOICutPlaneImpl::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposit
 
 	TArray<TArray<FVector>> allMaskVerts;
 
-	for (auto& edgekvp : graph.GetEdges())
+	for (auto& edgekvp : graph->GetEdges())
 	{
 		auto& edge = edgekvp.Value;
 
-		auto startVertex = graph.FindVertex(edge.StartVertexID);
-		auto endVertex = graph.FindVertex(edge.EndVertexID);
+		auto startVertex = graph->FindVertex(edge.StartVertexID);
+		auto endVertex = graph->FindVertex(edge.EndVertexID);
 
 		Modumate::Units::FCoordinates2D start = Modumate::Units::FCoordinates2D::WorldCentimeters(startVertex->Position);
 		Modumate::Units::FCoordinates2D end = Modumate::Units::FCoordinates2D::WorldCentimeters(endVertex->Position);
