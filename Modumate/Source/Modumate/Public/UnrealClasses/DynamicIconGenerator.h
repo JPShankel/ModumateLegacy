@@ -55,10 +55,10 @@ public:
 	float TrimLength = 32.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
-	float WallIconScaleFactor = 0.5;
+	float WallIconScaleFactor = 0.35f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
-	float FloorIconScaleFactor = 0.32;
+	float FloorIconScaleFactor = 0.25f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
 	float PortalIconScaleFactor = 50.f;

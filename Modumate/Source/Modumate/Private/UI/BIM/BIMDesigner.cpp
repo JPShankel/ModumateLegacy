@@ -457,3 +457,15 @@ bool UBIMDesigner::AddNodeFromPreset(int32 ParentID, const FName& PresetID, int3
 	UpdateBIMDesigner();
 	return true;
 }
+
+bool UBIMDesigner::SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value)
+{
+	FBIMCraftingTreeNodeSharedPtr instPtr = InstancePool.InstanceFromID(NodeID);
+	if (!instPtr.IsValid())
+	{
+		return false;
+	}
+	instPtr->InstanceProperties.SetProperty(Scope, NameType, Value);
+	UpdateBIMDesigner();
+	return true;
+}

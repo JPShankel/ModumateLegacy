@@ -111,4 +111,5 @@ public:
 	FName GetPresetID(int32 InstanceID);
 	bool DeleteNode(int32 InstanceID);
 	bool AddNodeFromPreset(int32 ParentID, const FName& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
+	bool SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value);
 };

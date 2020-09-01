@@ -75,6 +75,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(const FName &AsmKey
 	case EToolMode::VE_FLOOR:
 	case EToolMode::VE_ROOF_FACE:
 	case EToolMode::VE_COUNTERTOP:
+	case EToolMode::VE_CEILING:
 		SetIconMeshForFloorAssembly(AsmKey, mode, RenderTarget);
 		return true;
 	case EToolMode::VE_DOOR:
@@ -107,10 +108,13 @@ bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FName &AsmKey, EToo
 		return false;
 	}
 	////////////////////////////////////////////////////////////////////
-	FVector p1 = FVector(WallLength * 0.5f, 0.f, 0.f) + Root->GetComponentLocation();
-	FVector p2 = FVector(WallLength * -0.5f, 0.f, 0.f) + Root->GetComponentLocation();
-	FVector p3 = FVector(WallLength * -0.5f, 0.f, WallHeight) + Root->GetComponentLocation();
-	FVector p4 = FVector(WallLength * 0.5f, 0.f, WallHeight) + Root->GetComponentLocation();
+
+	// TODO: Investigate component bounding box issue when location isn't in FVector::zero
+	IconDynamicMeshActor->SetActorLocation(FVector::ZeroVector);
+	FVector p1(WallLength * 0.5f, 0.f, 0.f);
+	FVector p2(WallLength * -0.5f, 0.f, 0.f);
+	FVector p3(WallLength * -0.5f, 0.f, WallHeight);
+	FVector p4(WallLength * 0.5f, 0.f, WallHeight);
 	TArray<FVector> planePoints = { p1, p2, p3, p4};
 	TArray<FPolyHole3D> holes;
 
@@ -143,8 +147,8 @@ bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FName &AsmKey, EToo
 	IconDynamicMeshActor->GetActorBounds(true, meshOrigin, meshExtent, true);
 	meshExtent.Normalize();
 	FVector meshSize = FVector(meshExtent.Size()) * WallIconScaleFactor;
-	FVector meshLocation = (meshOrigin - GetActorLocation()) * meshExtent * -1.f;
-	IconDynamicMeshActor->SetActorRelativeLocation(FVector(meshLocation.X, meshLocation.Y, 0.f));
+	FVector meshLocation = meshOrigin * meshExtent * -1.f;
+	IconDynamicMeshActor->SetActorRelativeLocation(FVector(meshLocation.X, 0.f, meshLocation.Z * 0.5f));
 	IconDynamicMeshActor->SetActorScale3D(meshSize);
 	SceneCaptureComp->TextureTarget = RenderTarget;
 	SceneCaptureComp->CaptureScene();
@@ -168,10 +172,13 @@ bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FName &AsmKey, ETo
 		return false;
 	}
 	////////////////////////////////////////////////////////////////////
-	FVector p1 = FVector(FloorLength * -0.5f, FloorDepth * 0.5f, 0.f) + Root->GetComponentLocation();
-	FVector p2 = FVector(FloorLength * 0.5f, FloorDepth * 0.5f, 0.f) + Root->GetComponentLocation();
-	FVector p3 = FVector(FloorLength * 0.5f, FloorDepth * -0.5f, 0.f) + Root->GetComponentLocation();
-	FVector p4 = FVector(FloorLength * -0.5f, FloorDepth * -0.5f, 0.f) + Root->GetComponentLocation();
+
+	// TODO: Investigate component bounding box issue when location isn't in FVector::zero
+	IconDynamicMeshActor->SetActorLocation(FVector::ZeroVector);
+	FVector p1(FloorLength * -0.5f, FloorDepth * 0.5f, 0.f);
+	FVector p2(FloorLength * 0.5f, FloorDepth * 0.5f, 0.f);
+	FVector p3(FloorLength * 0.5f, FloorDepth * -0.5f, 0.f);
+	FVector p4(FloorLength * -0.5f, FloorDepth * -0.5f, 0.f);
 	TArray<FVector> planePoints = { p1, p2, p3, p4 };
 	TArray<FPolyHole3D> holes;
 
@@ -212,7 +219,7 @@ bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FName &AsmKey, ETo
 	IconDynamicMeshActor->GetActorBounds(true, meshOrigin, meshExtent, true);
 	meshExtent.Normalize();
 	FVector meshSize = FVector(meshExtent.Size()) * FloorIconScaleFactor;
-	FVector meshLocation = (meshOrigin - GetActorLocation())* meshSize * -1.f;
+	FVector meshLocation = meshOrigin * meshSize * -1.f;
 	IconDynamicMeshActor->SetActorRelativeLocation(FVector(0.f, 0.f, meshLocation.Z));
 	IconDynamicMeshActor->SetActorScale3D(meshSize);
 

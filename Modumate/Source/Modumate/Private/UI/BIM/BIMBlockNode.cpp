@@ -19,6 +19,7 @@
 #include "UI/BIM/BIMBlockUserEnterable.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
+#include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 
 UBIMBlockNode::UBIMBlockNode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -194,7 +195,17 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 		UBIMBlockUserEnterable *newEnterable = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockUserEnterable>(BIMBlockUserEnterableClass);
 		if (newEnterable)
 		{
+			// Text title
 			newEnterable->Text_Title->ChangeText(FText::FromString(curProperty.Key));
+
+			// Text value: user enter-able
+			FBIMPropertyValue value(curProperty.Value);
+			FString valueString;
+			if (Node->InstanceProperties.TryGetProperty(value.Scope, value.Name, valueString))
+			{
+				newEnterable->BuildEnterableFieldFromProperty(ParentBIMDesigner, ID, value.Scope, value.Name, valueString);
+			}
+
 			VerticalBoxProperties->AddChildToVerticalBox(newEnterable);
 		}
 	}
