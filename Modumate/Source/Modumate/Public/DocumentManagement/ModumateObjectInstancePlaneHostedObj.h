@@ -27,7 +27,9 @@ public:
 
 	virtual const ILayeredObject* GetLayeredInterface() const override { return this; }
 	virtual const FCachedLayerDimsByType &GetCachedLayerDims() const override { return CachedLayerDims; }
-	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override;
+	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane,
+		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
+		TArray<TArray<FVector>> &OutPerimeters) const override;
 	// TODO: may want to integrate this back into GetDrafting lines to help cache some more variables
 	virtual bool GetRangesForHolesOnPlane(TArray<TPair<float, float>> &OutRanges, TPair<FVector, FVector> &Intersection, const FLayerGeomDef &Layer, const float CurrentThickness, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin) const;
 
@@ -40,6 +42,8 @@ protected:
 	// TODO: this should be replaced by FGraph3DFace::IntersectsPlane, and that code needs to be generalized first
 	void GetPlaneIntersections(TArray<FVector> &OutIntersections, const TArray<FVector> &InPoints, const FPlane &InPlane) const;
 	void UpdateConnectedEdges();
+	void GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+		const FBox2D& BoundingBox) const;
 
 	bool bGeometryDirty = false;
 	FCachedLayerDimsByType CachedLayerDims;

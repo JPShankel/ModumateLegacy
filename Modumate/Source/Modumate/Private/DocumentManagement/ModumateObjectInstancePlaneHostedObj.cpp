@@ -418,9 +418,6 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 	Modumate::FMColor outerColor = Modumate::FMColor::Gray32;
 	Modumate::FMColor structureColor = Modumate::FMColor::Black;
 
-	const FModumateObjectInstance *parent = MOI->GetParentObject();
-	const FVector parentLocation = parent->GetObjectLocation();
-
 	// this sorter is used to sort the intersections between a layer's points and a plane.
 	// assuming the points in a layer are planar, all intersections will fall on the same line.
 	// since the intersections are on a line, we can sort the vectors simply and know the intersections 
@@ -444,6 +441,9 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 	bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
 	{
+		const FModumateObjectInstance *parent = MOI->GetParentObject();
+		FVector parentLocation = parent->GetObjectLocation();
+
 		float currentThickness = 0.0f;
 		TArray<FVector2D> previousLinePoints;
 		int32 numLines = LayerGeometries.Num() + 1;
@@ -575,68 +575,7 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 	}
 	else  // Get far lines.
 	{
-		struct ClippedLine
-		{
-			TArray<FEdge> LineSections;
-			Modumate::FModumateLayerType LayerType { Modumate::FModumateLayerType::kDefault };
-		};
-		TArray<ClippedLine> backgroundLines;
-
-		if (LayerGeometries.Num() > 0)
-		{
-			auto& pointsA = LayerGeometries[0].PointsA;
-			int numPoints = pointsA.Num();
-			for (int i = 0; i < numPoints; ++i)
-			{
-				FEdge line(pointsA[i] + parentLocation,
-					pointsA[(i + 1) % numPoints] + parentLocation);
-				ClippedLine clippedLine{ ParentPage->lineClipping->ClipWorldLineToView(line), Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges };
-				backgroundLines.Emplace(MoveTemp(clippedLine));
-			}
-
-			auto& pointsB = LayerGeometries[LayerGeometries.Num() - 1].PointsB;
-			for (int i = 0; i < numPoints; ++i)
-			{
-				FEdge line(pointsB[i] + parentLocation,
-					pointsB[(i + 1) % numPoints] + parentLocation);
-				ClippedLine clippedLine{ ParentPage->lineClipping->ClipWorldLineToView(line), Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges };
-				backgroundLines.Emplace(MoveTemp(clippedLine));
-			}
-
-			FVector2D boxClipped0;
-			FVector2D boxClipped1;
-			for (const auto& line: backgroundLines)
-			{
-				for (const auto& lineSection: line.LineSections)
-				{
-					FVector2D vert0(lineSection.Vertex[0]);
-					FVector2D vert1(lineSection.Vertex[1]);
-
-					bool bObscured = false;
-					static constexpr float withinMaxDelta = 1.5f;
-					for (const auto& fgLine : ParentPage->inPlaneLines)
-					{
-						if (UModumateGeometryStatics::IsLineSegmentWithin2D(fgLine, lineSection, withinMaxDelta))
-						{
-							bObscured = true;
-							break;
-						}
-					}
-						
-					if (!bObscured && UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
-					{
-						TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShareable(new Modumate::FDraftingLine(
-							Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
-							Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
-							structureThickness, Modumate::FMColor::Black));
-						ParentPage->Children.Add(draftingLine);
-						draftingLine->SetLayerTypeRecursive(line.LayerType);
-					}
-				}
-			}
-		}
-
-
+		GetBeyondDraftingLines(ParentPage, Plane, BoundingBox);
 	}
 }
 
@@ -707,3 +646,91 @@ void FMOIPlaneHostedObjImpl::UpdateConnectedEdges()
 	}
 }
 
+void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+	const FBox2D& BoundingBox) const
+{
+	static const Modumate::Units::FThickness outerThickness = Modumate::Units::FThickness::Points(0.25f);
+
+	const FModumateObjectInstance *parent = MOI->GetParentObject();
+	FVector parentLocation = parent->GetObjectLocation();
+
+	TArray<TPair<FEdge, Modumate::FModumateLayerType>> backgroundLines;
+
+	const int numLayers = LayerGeometries.Num();
+
+	if (numLayers > 0)
+	{
+		auto addPerimeterLines = [&backgroundLines, parentLocation](const TArray<FVector>& points)
+		{
+			int numPoints = points.Num();
+			for (int i = 0; i < numPoints; ++i)
+			{
+				FEdge line(points[i] + parentLocation,
+					points[(i + 1) % numPoints] + parentLocation);
+				backgroundLines.Emplace(line, Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges);
+
+			}
+
+		};
+
+		addPerimeterLines(LayerGeometries[0].PointsA);
+		addPerimeterLines(LayerGeometries[numLayers - 1].PointsB);
+
+		auto addOpeningLines = [&backgroundLines](const FLayerGeomDef& layer, FVector parentLocation, bool bSideA)
+		{
+			const auto& holes = layer.CachedHoles2D;
+			for (const auto& hole: holes)
+			{
+				int32 n = hole.Points.Num();
+				for (int32 i = 0; i < n; ++i)
+				{
+					FVector v1 { layer.Deproject2DPoint(hole.Points[i], bSideA) + parentLocation};
+					FVector v2 { layer.Deproject2DPoint(hole.Points[(i + 1) % n], bSideA) + parentLocation};
+					FEdge line(v1, v2);
+					backgroundLines.Emplace(line, Modumate::FModumateLayerType::kOpeningSystemBeyond);
+				}
+			}
+
+		};
+
+		addOpeningLines(LayerGeometries[0], parentLocation, true);
+		addOpeningLines(LayerGeometries[numLayers - 1], parentLocation, false);
+
+		FVector2D boxClipped0;
+		FVector2D boxClipped1;
+		for (const auto& line : backgroundLines)
+		{
+			FVector v0 { line.Key.Vertex[0] };
+			FVector v1 { line.Key.Vertex[1] };
+
+			bool bV1Infront = Plane.PlaneDot(v0) >= 0.0f;
+			bool bV2Infront = Plane.PlaneDot(v1) >= 0.0f;
+			if (bV1Infront || bV2Infront)
+			{
+				if (!bV1Infront || !bV2Infront)
+				{   // Intersect with Plane:
+					FVector intersect { FMath::LinePlaneIntersection(v0, v1, Plane) };
+					(bV1Infront ? v1 : v0) = intersect;
+				}
+
+				TArray<FEdge> clippedLineSections = ParentPage->lineClipping->ClipWorldLineToView({ v0, v1 });
+				for (const auto& lineSection: clippedLineSections)
+				{
+					FVector2D vert0(lineSection.Vertex[0]);
+					FVector2D vert1(lineSection.Vertex[1]);
+
+					if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
+					{
+						TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShareable(new Modumate::FDraftingLine(
+							Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
+							Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
+							outerThickness, Modumate::FMColor::Black));
+						ParentPage->Children.Add(draftingLine);
+						draftingLine->SetLayerTypeRecursive(line.Value);
+					}
+				}
+			}
+		}
+	}
+
+}
