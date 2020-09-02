@@ -6,6 +6,7 @@
 #include "Drafting/DraftingManager.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Graph/Graph3DFace.h"
 #include "Kismet/KismetRenderingLibrary.h"
@@ -27,12 +28,23 @@ FMOICutPlaneImpl::FMOICutPlaneImpl(FModumateObjectInstance *moi)
 AActor* FMOICutPlaneImpl::CreateActor(UWorld* world, const FVector& loc, const FQuat& rot)
 {
 	AActor *returnActor = FMOIPlaneImplBase::CreateActor(world, loc, rot);
-	AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
-	if (emPlayerState)
+	auto controller = world->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	auto playerState = controller ? controller->EMPlayerState : nullptr;
+	if (playerState)
 	{
-		emPlayerState->OnUpdateCutPlanes.Broadcast();
+		playerState->OnUpdateCutPlanes.Broadcast();
 	}
 	return returnActor;
+}
+
+void FMOICutPlaneImpl::Destroy()
+{
+	auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+	auto playerState = controller ? controller->EMPlayerState : nullptr;
+	if (playerState)
+	{
+		playerState->OnUpdateCutPlanes.Broadcast();
+	}
 }
 
 void FMOICutPlaneImpl::SetupDynamicGeometry()

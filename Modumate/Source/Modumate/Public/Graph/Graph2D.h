@@ -186,7 +186,7 @@ namespace Modumate
 
 		// Create Deltas that delete all objects provided and also all objects that are invalidated by the deletions -
 		// For example, vertices that are no longer connected to any edges are also deleted.  
-		bool DeleteObjects(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs);
+		bool DeleteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const TArray<int32>& ObjectIDsToDelete);
 
 		// Create Deltas that move the provided vertices by the provided offset vector.  Moving vertices handles the 
 		// same kind of side effects that occur when you add objects (splitting edges, (TODO) handling new polygons).

@@ -17,6 +17,7 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual FVector GetNormal() const override;
+	virtual void Destroy() override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
@@ -42,6 +43,7 @@ protected:
 	// TODO: this should be replaced by FGraph3DFace::IntersectsPlane, and that code needs to be generalized first
 	void GetPlaneIntersections(TArray<FVector> &OutIntersections, const TArray<FVector> &InPoints, const FPlane &InPlane) const;
 	void UpdateConnectedEdges();
+	void MarkEdgesMiterDirty();
 	void GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FBox2D& BoundingBox) const;
 

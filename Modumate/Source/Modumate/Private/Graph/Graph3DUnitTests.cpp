@@ -1416,12 +1416,12 @@ namespace Modumate
 
 		OutDeltas.AddDefaulted();
 		TestTrue(TEXT("Delete face, including connected edges and vertices"),
-			tempGraph.GetDeltaForDeleteObjects({}, {}, { firstFaceID }, {}, OutDeltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ firstFaceID }, OutDeltas[0], true));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 4, 4);
 
 		OutDeltas.AddDefaulted();
 		TestTrue(TEXT("Delete face, excluding connected edges and vertices"),
-			tempGraph.GetDeltaForDeleteObjects({}, {}, { firstFaceID }, {}, OutDeltas[0], false));
+			tempGraph.GetDeltaForDeleteObjects({ firstFaceID }, OutDeltas[0], false));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 6, 7);
 
 		return true;
@@ -1867,7 +1867,7 @@ namespace Modumate
 		deltas.Reset();
 		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete face, including connected edges and vertices"),
-			tempGraph.GetDeltaForDeleteObjects({}, {}, { innerFaceID }, {}, deltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ innerFaceID }, deltas[0], true));
 
 		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
 
@@ -1945,7 +1945,7 @@ namespace Modumate
 		deltas.Reset();
 		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete outer face"),
-			tempGraph.GetDeltaForDeleteObjects({}, {}, { outerFaceID }, {}, deltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ outerFaceID }, deltas[0], true));
 
 		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
 
@@ -2590,7 +2590,7 @@ namespace Modumate
 		// remove and undo remove outer face
 		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete outer face"),
-			tempGraph.GetDeltaForDeleteObjects({}, {}, { outerFaceID }, {}, deltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ outerFaceID }, deltas[0], true));
 		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12, false);
 
 		TestTrue(TEXT("Middle face is not contained"), 
@@ -2611,7 +2611,7 @@ namespace Modumate
 		// remove and undo remove middle face
 		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete middle face"),
-			tempGraph.GetDeltaForDeleteObjects({}, {}, { middleFaceID }, {}, deltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ middleFaceID }, deltas[0], true));
 		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12, false);
 
 		TestTrue(TEXT("Inner faces are contained by outer face"), 
@@ -2632,7 +2632,7 @@ namespace Modumate
 		// remove and undo remove inner face
 		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete inner face"),
-			tempGraph.GetDeltaForDeleteObjects({}, {}, { innerLeftFaceID }, {}, deltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ innerLeftFaceID }, deltas[0], true));
 		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12, false);
 
 		TestTrue(TEXT("Middle face contains remaining inner face"),
@@ -2655,7 +2655,7 @@ namespace Modumate
 		// remove and undo remove two faces, one that contains the other
 		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete two faces"),
-			tempGraph.GetDeltaForDeleteObjects({}, {}, { middleFaceID, innerLeftFaceID }, {}, deltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ middleFaceID, innerLeftFaceID }, deltas[0], true));
 		TestDeltas(this, deltas, graph, tempGraph, 2, 8, 8, false);
 
 		TestTrue(TEXT("Outer face contains remaining inner face"),

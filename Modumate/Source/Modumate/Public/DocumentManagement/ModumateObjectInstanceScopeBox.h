@@ -9,6 +9,9 @@ class MODUMATE_API FMOIScopeBoxImpl : public FDynamicModumateObjectInstanceImpl
 public:
 	FMOIScopeBoxImpl(FModumateObjectInstance *moi);
 
+	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
+	virtual void Destroy() override;
+
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 

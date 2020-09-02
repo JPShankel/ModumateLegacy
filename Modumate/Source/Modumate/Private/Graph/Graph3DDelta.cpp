@@ -150,35 +150,19 @@ namespace Modumate
 		return MOD_ID_NONE;
 	}
 
-	void FGraph3DDelta::AggregateAddedObjects(TArray<int32> OutAddedFaceIDs, TArray<int32> OutAddedVertexIDs, TArray<int32> OutAddedEdgeIDs)
+	void FGraph3DDelta::AggregateDeletedObjects(TSet<int32>& OutDeletedObjIDs)
 	{
-		for (auto &kvp : FaceAdditions)
-		{
-		//	if (kvp.Value.ParentFaceIDs.Num() == 1 && GetObjectById(kvp.Value.ParentFaceIDs[0]) == nullptr)
-			{
-				OutAddedFaceIDs.Add(kvp.Key);
-			}
-		}
-		for (auto &kvp : VertexAdditions)
-		{
-			OutAddedVertexIDs.Add(kvp.Key);
-		}
-		for (auto &kvp : EdgeAdditions)
-		{
-			OutAddedEdgeIDs.Add(kvp.Key);
-		}
-
-		for (auto &kvp : FaceDeletions)
-		{
-			OutAddedFaceIDs.Remove(kvp.Key);
-		}
 		for (auto &kvp : VertexDeletions)
 		{
-			OutAddedVertexIDs.Remove(kvp.Key);
+			OutDeletedObjIDs.Add(kvp.Key);
 		}
 		for (auto &kvp : EdgeDeletions)
 		{
-			OutAddedEdgeIDs.Remove(kvp.Key);
+			OutDeletedObjIDs.Add(kvp.Key);
+		}
+		for (auto &kvp : FaceDeletions)
+		{
+			OutDeletedObjIDs.Add(kvp.Key);
 		}
 	}
 

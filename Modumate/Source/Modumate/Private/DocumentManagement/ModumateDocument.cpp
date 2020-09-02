@@ -505,7 +505,7 @@ void FModumateDocument::RestoreDeletedObjects(const TArray<int32> &ids)
 
 bool FModumateDocument::DeleteObjectImpl(FModumateObjectInstance *ob, bool keepInDeletedList)
 {
-	if (ob)
+	if (ob && !ob->IsDestroyed())
 	{
 		// Store off the connected objects, in case they will be affected by this deletion
 		TArray<FModumateObjectInstance *> connectedMOIs;
@@ -536,7 +536,8 @@ bool FModumateDocument::DeleteObjectImpl(FModumateObjectInstance *ob, bool keepI
 		// Update visibility & collision enabled on neighbors, in case it was dependent on this MOI.
 		for (FModumateObjectInstance *obj : connectedMOIs)
 		{
-			obj->UpdateVisibilityAndCollision();
+			obj->MarkDirty(EObjectDirtyFlags::Mitering);
+			obj->MarkDirty(EObjectDirtyFlags::Visuals);
 		}
 
 		return true;
@@ -711,11 +712,7 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 
 			case EMOIDeltaType::Destroy:
 			{
-				FModumateObjectInstance *obj = GetObjectById(targetState.ObjectID);
-				if (ensureAlways(obj != nullptr))
-				{
-					DeleteObjectImpl(obj);
-				}
+				DeleteObjectImpl(GetObjectById(targetState.ObjectID));
 			}
 			break;
 
@@ -1329,204 +1326,183 @@ void FModumateDocument::DeleteObjects(const TArray<int32> &obIds, bool bAllowRoo
 	);
 }
 
-void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &obs, bool bAllowRoomAnalysis, bool bDeleteConnected)
+void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &initialObjectsToDelete, bool bAllowRoomAnalysis, bool bDeleteConnected)
 {
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::DeleteObjects"));
-	if (obs.Num() == 0)
+	if (initialObjectsToDelete.Num() == 0)
 	{
 		return;
 	}
 
-	UWorld *world = obs[0]->GetWorld();
+	UWorld *world = initialObjectsToDelete[0]->GetWorld();
 	if (!ensureAlways(world != nullptr))
 	{
 		return;
 	}
 
-	TArray<int32> vertex3DDeletions, edge3DDeletions, face3DDeletions, graphGroupDeletions;
-	TSet<int32> graphGroupMembers;
-	bool bDeletingObjectsInGraph = false;
-	bool bDeletingNavigableObjects = false;
-	for (int32 i = obs.Num() - 1; i >= 0; --i)
-	{
-		FModumateObjectInstance *ob = obs[i];
+	// Keep track of all descendants of intended (and connected) objects to delete
+	TSet<FModumateObjectInstance*> allObjectsToDelete(initialObjectsToDelete);
+	TArray<TSharedPtr<FDelta>> combinedDeltas;
 
-		EGraph3DObjectType graphObjType;
-		if (IsObjectInVolumeGraph(ob->ID, graphObjType))
+	// Gather 3D graph objects, so we can generated deltas that will potentially delete connected objects.
+	TSet<int32> graph3DObjIDsToDelete;
+	TSet<FModumateObjectInstance*> graph3DDescendents;
+	for (FModumateObjectInstance* objToDelete : initialObjectsToDelete)
+	{
+		int32 objID = objToDelete->ID;
+		EGraph3DObjectType graph3DObjType;
+		if (IsObjectInVolumeGraph(objToDelete->ID, graph3DObjType) || VolumeGraph.ContainsGroup(objID))
 		{
-			bDeletingObjectsInGraph = true;
-			switch (graphObjType)
+			graph3DObjIDsToDelete.Add(objID);
+		}
+
+		allObjectsToDelete.Append(objToDelete->GetAllDescendents());
+	}
+
+	// Generate the delta to apply to the 3D volume graph for object deletion
+	TArray<TSharedPtr<FDelta>> graph3DDeltas;
+	if (graph3DObjIDsToDelete.Num() > 0)
+	{
+		FGraph3DDelta graph3DDelta;
+		if (TempVolumeGraph.GetDeltaForDeleteObjects(graph3DObjIDsToDelete.Array(), graph3DDelta, bDeleteConnected) && ensure(!graph3DDelta.IsEmpty()))
+		{
+			graph3DDelta.AggregateDeletedObjects(graph3DObjIDsToDelete);
+
+			for (int32 graph3DObjID : graph3DObjIDsToDelete)
 			{
-			case EGraph3DObjectType::Vertex:
-				vertex3DDeletions.Add(ob->ID);
-				break;
-			case EGraph3DObjectType::Edge:
-				edge3DDeletions.Add(ob->ID);
-				break;
-			case EGraph3DObjectType::Face:
-				face3DDeletions.Add(ob->ID);
-				break;
-			default:
-				break;
+				FModumateObjectInstance* graph3DObj = GetObjectById(graph3DObjID);
+				if (ensure(graph3DObj))
+				{
+					auto descendants = graph3DObj->GetAllDescendents();
+					allObjectsToDelete.Add(graph3DObj);
+					allObjectsToDelete.Append(descendants);
+					graph3DDescendents.Append(descendants);
+				}
+			}
+
+			graph3DDeltas.Add(MakeShared<FGraph3DDelta>(graph3DDelta));
+		}
+	}
+
+	// Group surface graph elements by surface graph, so we can generate deltas for each surface graph separately
+	// NOTE: for consistency and less code (at the cost of performance), deleting an entire surface graph (say, as a result of deleting its parent wall)
+	// is accomplished by getting the deltas for deleting all of its elements. This also allows undo to add them back as Graph2D element addition deltas.
+	TMap<int32, TArray<int32>> surfaceGraphDeletionMap;
+	for (FModumateObjectInstance* objToDelete : allObjectsToDelete)
+	{
+		EObjectType objType = objToDelete->GetObjectType();
+		bool bInSurfaceGraph = (UModumateTypeStatics::Graph2DObjectTypeFromObjectType(objType) != EGraphObjectType::None);
+		if (bInSurfaceGraph)
+		{
+			int32 surfaceGraphID = objToDelete->GetParentID();
+			if (SurfaceGraphs.Contains(surfaceGraphID))
+			{
+				surfaceGraphDeletionMap.FindOrAdd(surfaceGraphID).Add(objToDelete->ID);
 			}
 		}
-
-		if (ob->GetObjectType() == EObjectType::OTFloorSegment)
-		{
-			bDeletingNavigableObjects = true;
-		}
-
-		if (VolumeGraph.GetGroup(ob->ID, graphGroupMembers))
-		{
-			graphGroupDeletions.Add(ob->ID);
-			bDeletingObjectsInGraph = true;
-		}
 	}
 
-	// Do room analysis if we're affecting any room-related objects, such as meta graph objects or navigable objects
-	bool bDoRoomAnalysis = ((bDeletingObjectsInGraph || bDeletingNavigableObjects) && bAllowRoomAnalysis);
-
-	// TODO: we should strive to immediately delete these graph objects, to make this operation closer match other
-	// meta object functions, and then perform the rest of the object deletions. This will make the deltas simpler to use.
-	FGraph3DDelta graphDelta;
-	bool bApplyDelta = false;
-	if (bDeletingObjectsInGraph)
+	// Generate the deltas to apply to the 2D surface graphs for object deletion
+	TArray<FGraph2DDelta> tempSurfaceGraphDeltas;
+	TArray<TSharedPtr<FDelta>> combinedSurfaceGraphDeltas;
+	TSet<int32> combinedSurfaceGraphObjIDsToDelete;
+	TSet<FModumateObjectInstance*> surfaceGraphDescendents;
+	for (auto& kvp : surfaceGraphDeletionMap)
 	{
-		bApplyDelta = TempVolumeGraph.GetDeltaForDeleteObjects(vertex3DDeletions, edge3DDeletions, face3DDeletions, graphGroupDeletions, graphDelta, bDeleteConnected);
-	}
-
-	// If we're allowing room analysis, then start a macro since it may have side effects
-	if (bDoRoomAnalysis)
-	{
-		BeginUndoRedoMacro();
-	}
-
-	// GetDeltaForDeleteObjects will find additional objects to delete that are made invalid by the original deletes
-	// the descendants of these objects need to be deleted as well below
-	TArray<FModumateObjectInstance*> obsAndGraphObs = obs;
-	for (auto& kvp : graphDelta.FaceDeletions)
-	{
-		auto ob = GetObjectById(kvp.Key);
-		if (ob != nullptr)
+		int32 surfaceGraphID = kvp.Key;
+		const TArray<int32>& surfaceGraphObjToDelete = kvp.Value;
+		auto surfaceGraph = FindSurfaceGraph(surfaceGraphID);
+		tempSurfaceGraphDeltas.Reset();
+		bool bDeletionSuccess = surfaceGraph->DeleteObjects(tempSurfaceGraphDeltas, NextID, surfaceGraphObjToDelete);
+		if (bDeletionSuccess)
 		{
-			obsAndGraphObs.AddUnique(ob);
+			for (FGraph2DDelta& deletionDelta : tempSurfaceGraphDeltas)
+			{
+				if (ensure(!deletionDelta.IsEmpty()))
+				{
+					combinedSurfaceGraphDeltas.Add(MakeShared<FGraph2DDelta>(deletionDelta));
+					deletionDelta.AggregateDeletedObjects(combinedSurfaceGraphObjIDsToDelete);
+				}
+			}
 		}
 	}
-	for (auto& kvp : graphDelta.EdgeDeletions)
+	for (int32 surfaceGraphObjID : combinedSurfaceGraphObjIDsToDelete)
 	{
-		auto ob = GetObjectById(kvp.Key);
-		if (ob != nullptr)
+		FModumateObjectInstance* surfaceGraphObj = GetObjectById(surfaceGraphObjID);
+		if (ensure(surfaceGraphObj))
 		{
-			obsAndGraphObs.AddUnique(ob);
-		}
-	}
-	for (auto& kvp : graphDelta.VertexDeletions)
-	{
-		auto ob = GetObjectById(kvp.Key);
-		if (ob != nullptr)
-		{
-			obsAndGraphObs.AddUnique(ob);
+			auto descendants = surfaceGraphObj->GetAllDescendents();
+			allObjectsToDelete.Add(surfaceGraphObj);
+			allObjectsToDelete.Append(descendants);
+			surfaceGraphDescendents.Append(descendants);
 		}
 	}
 
-	// TODO: do we depend on order or can we add ob in main loop?
-	TArray<FModumateObjectInstance *> allobs;
-	for (auto &ob : obsAndGraphObs)
+	// Separate the full list of objects to delete, including connections and descendants, so we can delete non-graph objects correctly.
+	TArray<const FModumateObjectInstance*> graph3DDerivedObjects, surfaceGraphDerivedObjects, nonGraphDerivedObjects;
+	for (FModumateObjectInstance* objToDelete : allObjectsToDelete)
 	{
-		allobs.Append(ob->GetAllDescendents());
-	}
-	allobs.Append(obsAndGraphObs);
-
-	TArray<int32> deletedObjParentPlaneIDs;
-	for (int32 i = allobs.Num() - 1; i >= 0; --i)
-	{
-		FModumateObjectInstance *ob = allobs[i];
-
-		EGraph3DObjectType graphObjType;
-		if (IsObjectInVolumeGraph(ob->ID, graphObjType))
+		if (ensure(objToDelete))
 		{
-			allobs.RemoveAt(i);
-		}
+			int32 objID = objToDelete->ID;
+			EObjectType objType = objToDelete->GetObjectType();
+			bool bInGraph3D = (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objType) != EGraph3DObjectType::None);
+			bool bInSurfaceGraph = (UModumateTypeStatics::Graph2DObjectTypeFromObjectType(objType) != EGraphObjectType::None);
 
-		const FModumateObjectInstance *parent = ob->GetParentObject();
-		if (parent && (parent->GetObjectType() == EObjectType::OTMetaPlane))
-		{
-			deletedObjParentPlaneIDs.AddUnique(parent->ID);
-		}
+			if (bInGraph3D)
+			{
+				ensure(graph3DObjIDsToDelete.Contains(objID));
+			}
+			else if (bInSurfaceGraph)
+			{
+				ensure(combinedSurfaceGraphObjIDsToDelete.Contains(objID));
+			}
+			else
+			{
+				if (surfaceGraphDescendents.Contains(objToDelete))
+				{
+					surfaceGraphDerivedObjects.Add(objToDelete);
+				}
+				else if (graph3DDescendents.Contains(objToDelete))
+				{
+					graph3DDerivedObjects.Add(objToDelete);
+				}
+				else
+				{
+					nonGraphDerivedObjects.Add(objToDelete);
+				}
+			}
 
-		UModumateAnalyticsStatics::RecordObjectDeletion(world, ob->GetObjectType());
-	}
-
-	ClearRedoBuffer();
-
-	TArray<FModumateObjectInstance*> deletedObjs;
-
-	if (bApplyDelta)
-	{
-		// TODO: fix
-		ApplyGraph3DDelta(graphDelta, world);
-		PostApplyDeltas(world);
-	}
-
-	bool doorsDirty = false;
-	bool windowsDirty = false;
-	// TODO: Figure out a better way to broadcast BP widget changes to reduce complexity of this function
-	bool bCutPlanesDirty = false;
-	bool bScopeBoxesDirty = false;
-	for (auto *obj : allobs)
-	{
-		DeleteObjectImpl(obj);
-
-		if (obj->GetObjectType() == EObjectType::OTDoor)
-		{
-			doorsDirty = true;
-		}
-		if (obj->GetObjectType() == EObjectType::OTWindow)
-		{
-			windowsDirty = true;
-		}
-		if (obj->GetObjectType() == EObjectType::OTCutPlane)
-		{
-			bCutPlanesDirty = true;
-		}
-		if (obj->GetObjectType() == EObjectType::OTScopeBox)
-		{
-			bScopeBoxesDirty = true;
-		}
-
-		deletedObjs.Add(obj);
-	}
-
-	if (windowsDirty)
-	{
-		ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTWindow);
-	}
-
-	if (doorsDirty)
-	{
-		ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTDoor);
-	}
-
-	if (bCutPlanesDirty || bScopeBoxesDirty)
-	{
-		AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
-		if (bCutPlanesDirty && emPlayerState)
-		{
-			emPlayerState->OnUpdateCutPlanes.Broadcast();
-		}
-		if (bScopeBoxesDirty && emPlayerState)
-		{
-			emPlayerState->OnUpdateScopeBoxes.Broadcast();
+			UModumateAnalyticsStatics::RecordObjectDeletion(world, objType);
 		}
 	}
 
-	UpdateMitering(world, deletedObjParentPlaneIDs);
-
-	if (bDoRoomAnalysis)
+	auto gatherNonGraphDeletionDeltas = [&combinedDeltas](const TArray<const FModumateObjectInstance*>& objects)
 	{
-		UpdateRoomAnalysis(world);
-		EndUndoRedoMacro();
-	}
+		auto deleteDelta = MakeShared<FMOIDelta>();
+		TArray<FMOIStateData> deletionStates;
+		for (const FModumateObjectInstance* nonGraphObject : objects)
+		{
+			FMOIStateData deleteState = nonGraphObject->GetDataState();
+			deleteState.StateType = EMOIDeltaType::Destroy;
+			deletionStates.Add(deleteState);
+		}
+		deleteDelta->AddCreateDestroyStates(deletionStates);
+		combinedDeltas.Add(deleteDelta);
+	};
+
+	// Gather all of the deltas that apply to different types of objects, in a hierarchical order
+	// TODO: refactor object restoration / deletion so that data is not lost when trying to restore a child before a parent,
+	// or trying to delete a parent before a child, so that this order doesn't matter and we can simplify this function.
+	gatherNonGraphDeletionDeltas(surfaceGraphDerivedObjects);
+	combinedDeltas.Append(combinedSurfaceGraphDeltas);
+	gatherNonGraphDeletionDeltas(graph3DDerivedObjects);
+	combinedDeltas.Append(graph3DDeltas);
+	gatherNonGraphDeletionDeltas(nonGraphDerivedObjects);
+
+	// Finally, apply the combined deltas for all types of objects to delete
+	ApplyDeltas(combinedDeltas, world);
+
+	// TODO: represent room analysis as side effects
 }
 
 FModumateObjectInstance *FModumateDocument::TryGetDeletedObject(int32 id)

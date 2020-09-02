@@ -96,7 +96,7 @@ namespace Modumate
 		int32 FindAddedVertex(const FVector& Position);
 		int32 FindAddedEdge(const FGraphVertexPair& Edge);
 
-		void AggregateAddedObjects(TArray<int32> OutAddedFaceIDs, TArray<int32> OutAddedVertexIDs, TArray<int32> OutAddedEdgeIDs);
+		void AggregateDeletedObjects(TSet<int32>& OutDeletedObjIDs);
 
 		TSharedPtr<FGraph3DDelta> MakeGraphInverse() const;
 		virtual TSharedPtr<FDelta> MakeInverse() const override;

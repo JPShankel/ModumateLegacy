@@ -347,6 +347,11 @@ namespace Modumate
 		return AllObjects.Contains(ID);
 	}
 
+	bool FGraph3D::ContainsGroup(int32 GroupID) const
+	{
+		return CachedGroups.Contains(GroupID);
+	}
+
 	EGraph3DObjectType FGraph3D::GetObjectType(int32 ID) const
 	{
 		if (AllObjects.Contains(ID))

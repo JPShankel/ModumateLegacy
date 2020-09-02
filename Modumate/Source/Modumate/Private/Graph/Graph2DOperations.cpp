@@ -371,19 +371,30 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph2D::DeleteObjects(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs)
+	bool FGraph2D::DeleteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const TArray<int32>& ObjectIDsToDelete)
 	{
 		// the ids that are considered for deletion starts with the input arguments and grows based on object connectivity
-		TSet<int32> vertexIDsToDelete;
-		for (int32 vertexID : VertexIDs)
+		TSet<int32> vertexIDsToDelete, edgeIDsToDelete;
+		for (int32 signedIDToDelete : ObjectIDsToDelete)
 		{
-			vertexIDsToDelete.Add(FMath::Abs(vertexID));
-		}
-
-		TSet<int32> edgeIDsToDelete = TSet<int32>(EdgeIDs);
-		for (int32 edgeID : EdgeIDs)
-		{
-			edgeIDsToDelete.Add(FMath::Abs(edgeID));
+			int32 objectIDToDelete = FMath::Abs(signedIDToDelete);
+			switch (GetObjectType(objectIDToDelete))
+			{
+			case EGraphObjectType::Vertex:
+				vertexIDsToDelete.Add(objectIDToDelete);
+				break;
+			case EGraphObjectType::Edge:
+				edgeIDsToDelete.Add(objectIDToDelete);
+				break;
+			case EGraphObjectType::Polygon:
+				if (FGraph2DPolygon* polygon = FindPolygon(objectIDToDelete))
+				{
+					vertexIDsToDelete.Append(polygon->VertexIDs);
+				}
+				break;
+			default:
+				break;
+			}
 		}
 
 		for (int32 vertexID : vertexIDsToDelete)
@@ -429,7 +440,7 @@ namespace Modumate
 		}
 
 		FGraph2DDelta deleteDelta(ID);
-		if (!DeleteObjectsDirect(deleteDelta, vertexIDsToDelete, edgeIDsToDelete))
+		if (!DeleteObjectsDirect(deleteDelta, vertexIDsToDelete, edgeIDsToDelete) || deleteDelta.IsEmpty())
 		{
 			return false;
 		}
@@ -445,7 +456,26 @@ namespace Modumate
 			return false;
 		}
 
-		if (!ValidateAgainstBounds())
+		// If the deleted objects would result in an empty graph, then create another delta to delete the whole graph.
+		if (IsEmpty())
+		{
+			// TODO: clear the bounds at a better time, because undoing deletion will set the bounds before the vertices exist.
+			FGraph2DDelta graphDeletionDelta(ID, EGraph2DDeltaType::Remove);
+			graphDeletionDelta.BoundsUpdates.Key.OuterBounds = BoundingPolygon;
+			graphDeletionDelta.BoundsUpdates.Key.InnerBounds = BoundingContainedPolygons;
+			if (ApplyDelta(graphDeletionDelta))
+			{
+				OutDeltas.Add(graphDeletionDelta);
+			}
+			else
+			{
+				ApplyInverseDeltas(OutDeltas);
+				return false;
+			}
+		}
+		// Otherwise, we expect the bounds to be valid enough to use for validating the previous deletion deltas
+		// TODO: allow for auto-updating the bounds, i.e. after joining two exterior colinear edges.
+		else if (!ValidateAgainstBounds())
 		{
 			ApplyInverseDeltas(OutDeltas);
 			return false;
@@ -1007,54 +1037,6 @@ namespace Modumate
 			}
 			OutDeltas.Add(updatePolygonsDelta);
 		}
-
-#if 0
-		// Clean all graph object derived data (including polygons, new and old), so we can use perimeters to calculate containment.
-		CleanDirtyObjects(true);
-
-		// determine which polygons are inside of others
-		FGraph2DDelta parentIDUpdatesDelta(ID);
-		for (auto &childKVP : Polygons)
-		{
-			FGraph2DPolygon &childPoly = childKVP.Value;
-
-			for (auto &parentKVP : Polygons)
-			{
-				FGraph2DPolygon &parentPoly = parentKVP.Value;
-
-				if (childPoly.IsInside(parentPoly))
-				{
-					bool bNoParent = (childPoly.ParentID == MOD_ID_NONE);
-
-					FGraph2DPolygon* currentBestParentPoly = FindPolygon(childPoly.ParentID);
-					if (parentIDUpdatesDelta.PolygonParentIDUpdates.Contains(childPoly.ID))
-					{
-						currentBestParentPoly = FindPolygon(parentIDUpdatesDelta.PolygonParentIDUpdates[childPoly.ID].Value);
-					}
-					bool bBetterParent = !bNoParent && currentBestParentPoly && parentPoly.IsInside(*currentBestParentPoly);
-
-					// if the child polygon doesn't have a parent, then set it to the first polygon it's contained in
-					// otherwise, see if the new parent is more appropriate
-					if (bNoParent || bBetterParent)
-					{
-						auto& parentIDUpdate = parentIDUpdatesDelta.PolygonParentIDUpdates.FindOrAdd(childPoly.ID);
-						parentIDUpdate.Key = childPoly.ParentID;
-						parentIDUpdate.Value = parentPoly.ID;
-					}
-				}
-			}
-		}
-
-		if (!parentIDUpdatesDelta.IsEmpty())
-		{
-			if (!ApplyDelta(parentIDUpdatesDelta))
-			{
-				return false;
-			}
-
-			OutDeltas.Add(parentIDUpdatesDelta);
-		}
-#endif
 
 		return true;
 	}

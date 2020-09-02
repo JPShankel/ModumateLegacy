@@ -521,7 +521,7 @@ namespace Modumate
 		for (auto& edgekvp : graph->GetEdges())
 		{
 			TestTrue(TEXT("Delete Edge"),
-				graph->DeleteObjects(deltas, NextID, {}, { edgekvp.Key }));
+				graph->DeleteObjects(deltas, NextID, { edgekvp.Key }));
 			TestDeltasAndResetGraph(this, deltas, graph, 1, 2, 1);
 		}
 
@@ -533,17 +533,19 @@ namespace Modumate
 			int32 expectedNumPolygons = numConnectedEdges == 2 ? 0 : 1;
 
 			TestTrue(TEXT("Delete Vertex"),
-				graph->DeleteObjects(deltas, NextID, { vertexkvp.Key }, {}));
+				graph->DeleteObjects(deltas, NextID, { vertexkvp.Key }));
 
 			TestDeltasAndResetGraph(this, deltas, graph, expectedNumPolygons, expectedNumVertices, expectedNumEdges);
 		}
 
-		TArray<int32> allEdges, allVertices;
+		TArray<int32> allEdges, allVertices, combinedObjects;
 		graph->GetEdges().GenerateKeyArray(allEdges);
 		graph->GetVertices().GenerateKeyArray(allVertices);
+		combinedObjects.Append(allEdges);
+		combinedObjects.Append(allVertices);
 
 		TestTrue(TEXT("Delete All Objects"),
-			graph->DeleteObjects(deltas, NextID, allVertices, allEdges));
+			graph->DeleteObjects(deltas, NextID, combinedObjects));
 		TestDeltasAndResetGraph(this, deltas, graph, 0, 0, 0);
 
 		return true;

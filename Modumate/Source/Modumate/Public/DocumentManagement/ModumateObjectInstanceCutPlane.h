@@ -31,6 +31,7 @@ public:
 	virtual void PublishPage() override;
 
 	virtual AActor* CreateActor(UWorld* world, const FVector& loc, const FQuat& rot) override;
+	virtual void Destroy() override;
 
 	Modumate::FModumateHUDDraw DrawingInterface;
 

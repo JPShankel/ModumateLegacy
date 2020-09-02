@@ -2,30 +2,28 @@
 
 #include "DocumentManagement/ModumateObjectInstance.h"
 
-#include "Engine/Engine.h"
-#include "Engine/StaticMesh.h"
-#include "Engine/StaticMeshActor.h"
-#include "Engine/World.h"
+#include "Algo/Accumulate.h"
+#include "Algo/Transform.h"
+#include "Database/ModumateObjectDatabase.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/Objects/MOIFactory.h"
+#include "Drafting/ModumateDraftingElements.h"
 #include "GameFramework/Actor.h"
+#include "Graph/Graph2DTypes.h"
+#include "Graph/Graph3DTypes.h"
 #include "Materials/Material.h"
 #include "Misc/OutputDeviceNull.h"
-#include "UObject/ConstructorHelpers.h"
-#include "Algo/Transform.h"
-#include "Algo/Accumulate.h"
-
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
-#include "DocumentManagement/ModumateDocument.h"
+#include "UI/HUDDrawWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UI/HUDDrawWidget.h"
 #include "UnrealClasses/LineActor.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "DocumentManagement/Objects/MOIFactory.h"
-#include "Drafting/ModumateDraftingElements.h"
-#include "Database/ModumateObjectDatabase.h"
 #include "UnrealClasses/ModumateObjectComponent_CPP.h"
+#include "UObject/ConstructorHelpers.h"
 
+using namespace Modumate;
 class AEditModelPlayerController_CPP;
 
 FModumateObjectInstance::FModumateObjectInstance(
@@ -167,6 +165,11 @@ void FModumateObjectInstance::Destroy()
 {
 	if (!bDestroyed)
 	{
+		if (Implementation)
+		{
+			Implementation->Destroy();
+		}
+
 		// If we need to do anything else during destruction, like cached its destroyed state, that would go here.
 		DestroyActor();
 
@@ -1404,6 +1407,11 @@ AActor *FModumateObjectInstanceImplBase::RestoreActor()
 AActor *FModumateObjectInstanceImplBase::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
 	return world->SpawnActor<AActor>(loc, rot.Rotator());
+}
+
+void FModumateObjectInstanceImplBase::Destroy()
+{
+
 }
 
 bool FModumateObjectInstanceImplBase::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)

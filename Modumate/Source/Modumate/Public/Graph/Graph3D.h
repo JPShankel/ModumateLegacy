@@ -50,6 +50,7 @@ namespace Modumate
 		IGraph3DObject* FindObject(int32 ID);
 		const IGraph3DObject* FindObject(int32 ID) const;
 		bool ContainsObject(int32 ID) const;
+		bool ContainsGroup(int32 GroupID) const;
 		EGraph3DObjectType GetObjectType(int32 ID) const;
 
 		const TMap<int32, FGraph3DEdge> &GetEdges() const;
@@ -151,7 +152,7 @@ namespace Modumate
 	// object deletion
 	public:
 		// Propagates deletion to connected objects
-		bool GetDeltaForDeleteObjects(const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs, const TArray<int32> &FaceIDs, const TArray<int32> &GroupIDs, FGraph3DDelta &OutDelta, bool bGatherEdgesFromFaces);
+		bool GetDeltaForDeleteObjects(const TArray<int32>& ObjectIDsToDelete, FGraph3DDelta& OutDelta, bool bGatherEdgesFromFaces);
 	private:
 		// Deletes only the provided objects, used as in intermediate stage in other delta functions
 		bool GetDeltaForDeletions(const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs, const TArray<int32> &FaceIDs, FGraph3DDelta &OutDelta);

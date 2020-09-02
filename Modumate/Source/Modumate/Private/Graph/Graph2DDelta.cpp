@@ -18,9 +18,15 @@ namespace Modumate
 	{
 	}
 
+	FBoundsUpdate::FBoundsUpdate()
+	{
+		Reset();
+	}
+
 	void FBoundsUpdate::Reset()
 	{
-		OuterBounds = TPair<int32, TArray<int32>>();
+		OuterBounds.Key = MOD_ID_NONE;
+		OuterBounds.Value.Reset();
 		InnerBounds.Reset();
 	}
 
@@ -75,6 +81,27 @@ namespace Modumate
 	{
 		int32 newPolygonID = NextID++;
 		PolygonAdditions.Add(newPolygonID, FGraph2DObjDelta(VertexIDs, ParentIDs));
+	}
+
+	void FGraph2DDelta::AggregateDeletedObjects(TSet<int32>& OutDeletedObjIDs)
+	{
+		for (auto &kvp : VertexDeletions)
+		{
+			OutDeletedObjIDs.Add(kvp.Key);
+		}
+		for (auto &kvp : EdgeDeletions)
+		{
+			OutDeletedObjIDs.Add(kvp.Key);
+		}
+		for (auto &kvp : PolygonDeletions)
+		{
+			OutDeletedObjIDs.Add(kvp.Key);
+		}
+
+		if (DeltaType == EGraph2DDeltaType::Remove)
+		{
+			OutDeletedObjIDs.Add(ID);
+		}
 	}
 
 	void FGraph2DDelta::Invert()

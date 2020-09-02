@@ -100,6 +100,11 @@ FVector FMOIPlaneHostedObjImpl::GetNormal() const
 	}
 }
 
+void FMOIPlaneHostedObjImpl::Destroy()
+{
+	MarkEdgesMiterDirty();
+}
+
 bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
@@ -116,14 +121,8 @@ bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSh
 
 		// When structure (assembly, offset, or plane structure) changes, mark neighboring
 		// edges as miter-dirty, so they can re-evaluate mitering with our new structure.
-		UpdateConnectedEdges();
-
 		MOI->MarkDirty(EObjectDirtyFlags::Mitering);
-
-		for (FModumateObjectInstance *connectedEdge : CachedConnectedEdges)
-		{
-			connectedEdge->MarkDirty(EObjectDirtyFlags::Mitering);
-		}
+		MarkEdgesMiterDirty();
 	}
 	break;
 	case EObjectDirtyFlags::Mitering:
@@ -643,6 +642,15 @@ void FMOIPlaneHostedObjImpl::UpdateConnectedEdges()
 		{
 			CachedConnectedEdges.Add(planeConnectedMOI);
 		}
+	}
+}
+
+void FMOIPlaneHostedObjImpl::MarkEdgesMiterDirty()
+{
+	UpdateConnectedEdges();
+	for (FModumateObjectInstance *connectedEdge : CachedConnectedEdges)
+	{
+		connectedEdge->MarkDirty(EObjectDirtyFlags::Mitering);
 	}
 }
 

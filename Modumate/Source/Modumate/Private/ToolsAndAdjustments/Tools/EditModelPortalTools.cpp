@@ -319,13 +319,13 @@ bool UPortalToolBase::BeginUse()
 		if (planeChildren.Num() > 0)
 		{
 			int32 childId = planeChildren[0];
-			auto deleteChild = MakeShared<FMOIDelta>();
-			FMOIStateData childData =
-				static_cast<const FModumateDocument*>(Document)->GetObjectById(childId)->GetDataState();
-			childData.StateType = EMOIDeltaType::Destroy;
-			TArray<FMOIStateData> deleteStates(&childData, 1);
-			deleteChild->AddCreateDestroyStates(deleteStates);
-			deltas.Add(deleteChild);
+			const FModumateObjectInstance* childObj = Document->GetObjectById(childId);
+			FMOIStateData deleteState = childObj->GetDataState();
+			deleteState.StateType = EMOIDeltaType::Destroy;
+			auto deleteDelta = MakeShared<FMOIDelta>();
+			deleteDelta->AddCreateDestroyStates({ deleteState });
+
+			deltas.Add(deleteDelta);
 		}
 	}
 

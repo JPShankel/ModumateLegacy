@@ -5,18 +5,41 @@
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
 #include "UI/HUDDrawWidget.h"
 
 FMOIScopeBoxImpl::FMOIScopeBoxImpl(FModumateObjectInstance *moi)
-	: FDynamicModumateObjectInstanceImpl(moi),
-	EdgeSelectedColor(255.0f / 255.0f, 0.0f / 255.0f, 0.0f / 255.0f),
-	EdgeColor(255.0f / 255.0f, 45.0f / 255.0f, 45.0f / 255.0f),
-	HandleScale(0.0015f),
-	PolyPointHandleOffset(16.0f),
-	ExtrusionHandleOffset(0.0f)
+	: FDynamicModumateObjectInstanceImpl(moi)
+	, EdgeSelectedColor(255.0f / 255.0f, 0.0f / 255.0f, 0.0f / 255.0f)
+	, EdgeColor(255.0f / 255.0f, 45.0f / 255.0f, 45.0f / 255.0f)
+	, HandleScale(0.0015f)
+	, PolyPointHandleOffset(16.0f)
+	, ExtrusionHandleOffset(0.0f)
 {
 
+}
+
+AActor* FMOIScopeBoxImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+{
+	AActor* returnActor = FDynamicModumateObjectInstanceImpl::CreateActor(world, loc, rot);
+	auto controller = world->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	auto playerState = controller ? controller->EMPlayerState : nullptr;
+	if (playerState)
+	{
+		playerState->OnUpdateScopeBoxes.Broadcast();
+	}
+	return returnActor;
+}
+
+void FMOIScopeBoxImpl::Destroy()
+{
+	auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+	auto playerState = controller ? controller->EMPlayerState : nullptr;
+	if (playerState)
+	{
+		playerState->OnUpdateScopeBoxes.Broadcast();
+	}
 }
 
 void FMOIScopeBoxImpl::SetupDynamicGeometry()

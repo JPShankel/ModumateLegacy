@@ -2,24 +2,22 @@
 
 #pragma once
 
-#include <functional>
-
 #include "CoreMinimal.h"
-#include "Runtime/Engine/Classes/Materials/MaterialInterface.h"
-#include "UObject/Object.h"
-#include "Engine/StaticMeshActor.h"
 
+#include "DocumentManagement/ModumateCommands.h"
+#include "DocumentManagement/ModumateDelta.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateDimensionString.h"
-#include "UnrealClasses/DynamicMeshActor.h"
 #include "ModumateCore/ModumateTypes.h"
-#include "DocumentManagement/ModumateDelta.h"
-#include "DocumentManagement/ModumateCommands.h"
+#include "Runtime/Engine/Classes/Materials/MaterialInterface.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "UObject/Object.h"
 
 /**
  *
  */
 
+class AActor;
 class AAdjustmentHandleActor;
 class UIMaterialInterface;
 class AEditModelPlayerController_CPP;
@@ -109,6 +107,7 @@ public:
 
 	virtual AActor *RestoreActor() = 0;
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) = 0;
+	virtual void Destroy() = 0;
 
 	virtual FVector GetNormal() const = 0;
 
@@ -180,6 +179,7 @@ public:
 
 	virtual AActor *RestoreActor() override;
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
+	virtual void Destroy() override;
 
 	virtual FVector GetNormal() const override { return FVector::ZeroVector; }
 
@@ -433,7 +433,7 @@ public:
 	const ILayeredObject* GetLayeredInterface() const;
 	const IMiterNode* GetMiterInterface() const;
 	ISceneCaptureObject* GetSceneCaptureInterface();
-		
+
 	// Object delete/restore
 	void DestroyActor();
 	void RestoreActor();

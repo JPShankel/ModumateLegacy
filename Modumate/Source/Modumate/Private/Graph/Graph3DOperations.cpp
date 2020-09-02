@@ -1606,40 +1606,40 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltaForDeleteObjects(const TArray<int32> &VertexIDs, const TArray<int32> &EdgeIDs, const TArray<int32> &FaceIDs, const TArray<int32> &GroupIDs, FGraph3DDelta &OutDelta, bool bGatherEdgesFromFaces)
+	bool FGraph3D::GetDeltaForDeleteObjects(const TArray<int32>& ObjectIDsToDelete, FGraph3DDelta& OutDelta, bool bGatherEdgesFromFaces)
 	{
-		// the ids that are considered for deletion starts with the input arguments and grows based on object connectivity
-		TSet<int32> vertexIDsToDelete;
-		for (int32 vertexID : VertexIDs)
-		{
-			vertexIDsToDelete.Add(FMath::Abs(vertexID));
-		}
+		TSet<int32> vertexIDsToDelete, edgeIDsToDelete, faceIDsToDelete;
+		TSet<int32> tempGroupMembers, groupIDsToAdd, groupIDsToRemove;
 
-		TSet<int32> edgeIDsToDelete = TSet<int32>(EdgeIDs);
-		for (int32 edgeID : EdgeIDs)
-		{
-			edgeIDsToDelete.Add(FMath::Abs(edgeID));
-		}
-
-		TSet<int32> faceIDsToDelete = TSet<int32>(FaceIDs);
-		for (int32 faceID : FaceIDs)
-		{
-			faceIDsToDelete.Add(FMath::Abs(faceID));
-		}
-
-		// For any groups being deleted, remove the group from any objects that mark themselves as belonging to it.
+		// The ids that are considered for deletion start with the input arguments, and grow based on object connectivity.
+		// Also, for any groups being deleted, remove the group from any objects that mark themselves as belonging to it.
 		// TODO: potentially add a flag here to delete objects that belong to a group that's being deleted
-		TSet<int32> tempGroupMembers;
-		TSet<int32> groupIDsToAdd, groupIDsToRemove(GroupIDs);
-
-		for (int32 groupID : GroupIDs)
+		for (int32 signedIDToDelete : ObjectIDsToDelete)
 		{
-			if (GetGroup(groupID, tempGroupMembers))
+			int32 objectIDToDelete = FMath::Abs(signedIDToDelete);
+			switch (GetObjectType(objectIDToDelete))
 			{
-				for (int32 groupMember : tempGroupMembers)
+			case EGraph3DObjectType::None:
+				if (GetGroup(objectIDToDelete, tempGroupMembers))
 				{
-					OutDelta.GroupIDsUpdates.Add(groupMember, FGraph3DGroupIDsDelta(groupIDsToAdd, groupIDsToRemove));
+					groupIDsToRemove.Add(objectIDToDelete);
+					for (int32 groupMember : tempGroupMembers)
+					{
+						OutDelta.GroupIDsUpdates.Add(groupMember, FGraph3DGroupIDsDelta(groupIDsToAdd, groupIDsToRemove));
+					}
 				}
+				break;
+			case EGraph3DObjectType::Vertex:
+				vertexIDsToDelete.Add(objectIDToDelete);
+				break;
+			case EGraph3DObjectType::Edge:
+				edgeIDsToDelete.Add(objectIDToDelete);
+				break;
+			case EGraph3DObjectType::Face:
+				faceIDsToDelete.Add(objectIDToDelete);
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -1873,6 +1873,7 @@ namespace Modumate
 				containmentDelta.ContainedFaceIDsToRemove.Add(face->ID);
 			}
 		}
+
 		return true;
 	}
 

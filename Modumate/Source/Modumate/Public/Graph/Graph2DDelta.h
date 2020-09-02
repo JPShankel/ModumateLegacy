@@ -46,6 +46,8 @@ namespace Modumate
 
 	struct FBoundsUpdate
 	{
+		FBoundsUpdate();
+
 		TPair<int32, TArray<int32>> OuterBounds;
 		TMap<int32, TArray<int32>> InnerBounds;
 
@@ -83,6 +85,8 @@ namespace Modumate
 		void AddNewVertex(const FVector2D& Position, int32& NextID);
 		void AddNewEdge(const FGraphVertexPair& VertexIDs, int32& NextID, const TArray<int32>& ParentIDs = TArray<int32>());
 		void AddNewPolygon(const TArray<int32>& VertexIDs, int32& NextID, const TArray<int32>& ParentIDs = TArray<int32>());
+
+		void AggregateDeletedObjects(TSet<int32>& OutDeletedObjIDs);
 
 		void Invert();
 		TSharedPtr<FGraph2DDelta> MakeGraphInverse() const;
