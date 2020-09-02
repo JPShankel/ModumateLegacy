@@ -375,7 +375,9 @@ bool ADynamicMeshActor::UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCo
 		tangents.Reset();
 		vertexColors.Reset();
 
-		if (layerGeomDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents, UVAnchor, UVRotOffset))
+		bool bLayerVisible = layerGeomDef.bValid && (layerGeomDef.Thickness > 0.0f);
+
+		if (bLayerVisible && layerGeomDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents, UVAnchor, UVRotOffset))
 		{
 			// TODO: enable iterative mesh section updates when we can know that
 			// the order of vertices did not change as a result of re-triangulation

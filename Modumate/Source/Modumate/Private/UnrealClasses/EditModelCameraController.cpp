@@ -75,8 +75,11 @@ void UEditModelCameraController::BeginPlay()
 		spawnParams.Owner = GetOwner();
 		OrbitAnchorActor = world->SpawnActor<AStaticMeshActor>(spawnParams);
 
-		OrbitAnchorActor->GetStaticMeshComponent()->SetStaticMesh(OrbitAnchorMesh);
-		OrbitAnchorActor->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
+		UStaticMeshComponent* staticMeshComp = OrbitAnchorActor->GetStaticMeshComponent();
+		staticMeshComp->SetStaticMesh(OrbitAnchorMesh);
+		staticMeshComp->SetMobility(EComponentMobility::Movable);
+		staticMeshComp->SetCastShadow(false);
+
 		OrbitAnchorActor->SetActorEnableCollision(false);
 		OrbitAnchorActor->SetActorHiddenInGame(true);
 	}
