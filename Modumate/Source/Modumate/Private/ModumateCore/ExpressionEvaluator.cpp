@@ -312,5 +312,13 @@ namespace Modumate
 			Evaluate(vars, expr, ret);
 			return ret;
 		}
+
+		bool Modumate::Expression::FVectorExpression::Evaluate(const TMap<FString, float> &Vars, FVector& OutVector) const
+		{
+			OutVector.X = X.IsEmpty() ? 0 : Modumate::Expression::Evaluate(Vars, X);
+			OutVector.Y = Y.IsEmpty() ? 0 : Modumate::Expression::Evaluate(Vars, Y);
+			OutVector.Z = Z.IsEmpty() ? 0 : Modumate::Expression::Evaluate(Vars, Z);
+			return true;
+		}
 	}
 }

@@ -14,5 +14,17 @@ namespace Modumate
 		bool Evaluate(const TMap<FName, Units::FUnitValue> &vars, const FString &expr, Units::FUnitValue &result);
 		bool Evaluate(const FString &fexpr, float &result);
 		float Evaluate(const TMap<FString, float> &vars, const FString &expr);
+
+		class MODUMATE_API FVectorExpression
+		{
+		private:
+			FString X, Y, Z;
+
+		public:
+			FVectorExpression() {}
+			FVectorExpression(const FString &InX, const FString &InY, const FString &InZ) : X(InX), Y(InY), Z(InZ) {}
+
+			bool Evaluate(const TMap<FString, float> &Vars, FVector& OutVector) const;
+		};
 	}
 }

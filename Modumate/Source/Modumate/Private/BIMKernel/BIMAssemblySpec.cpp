@@ -7,6 +7,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "ModumateCore/ModumateUnits.h"
+#include "ModumateCore/ExpressionEvaluator.h"
 #include "Algo/Reverse.h"
 #include "Algo/Accumulate.h"
 
@@ -20,67 +21,138 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 	TArray<FName> presetStack;
 	presetStack.Push(PresetID);
 
-	TArray<EBIMValueScope> scopeStack;
-	scopeStack.Push(EBIMValueScope::Assembly);
-
+	// Depth first walk through the preset and its descandents
 	while (presetStack.Num() > 0)
 	{
 		FName presetID = presetStack.Pop();
-		EBIMValueScope pinScope = scopeStack.Pop();
 
 		const FBIMPreset* preset = PresetCollection.Presets.Find(presetID);
 		if (preset == nullptr)
 		{
 			ret = ECraftingResult::Error;
+			continue;
 		}
-		else
+
+		// There are 3 sections to an assembly spec: extrusions, layers and parts
+		// Extrusions and layers are added when we detect a node that defines them
+		// Parts are added below if we have any filled in part slots 
+		if (preset->NodeScope == EBIMValueScope::Profile)
 		{
-			const FBIMPresetNodeType* nodeType = PresetCollection.NodeDescriptors.Find(preset->NodeType);
-			if (ensureAlways(nodeType != nullptr))
+			Extrusions.AddDefaulted();
+			currentSheet = &Extrusions.Last().Properties;
+		}
+		else if (preset->NodeScope == EBIMValueScope::Layer)
+		{
+			Layers.AddDefaulted();
+			currentSheet = &Layers.Last().Properties;
+		}
+
+		// All nodes should have a scope
+		if (!ensureAlways(preset->NodeScope != EBIMValueScope::None))
+		{
+			ret = ECraftingResult::Error;
+			continue;
+		}
+
+		// Set the object type for this assembly, should only happen once 
+		if (preset->ObjectType != EObjectType::OTNone && ensureAlways(ObjectType == EObjectType::OTNone))
+		{
+			ObjectType = preset->ObjectType;
+		}
+
+		// TODO: refactor for type-safe properties, 
+		preset->Properties.ForEachProperty([this, &currentSheet, &preset, PresetID](const FString& Name, const Modumate::FModumateCommandParameter& MCP)
+		{
+			FBIMPropertyValue vs(*Name);
+			currentSheet->SetProperty(vs.Scope, vs.Name, MCP);
+		});
+
+		// Add our own children to DFS stack
+		for (auto& childPreset : preset->ChildPresets)
+		{
+			presetStack.Push(childPreset.PresetID);
+		}
+
+		// A preset with PartSlots represents a compound object like a door, window or FFE ensemble
+		if (preset->PartSlots.Num() > 0)
+		{
+			const FBIMPreset* slotConfigPreset = PresetCollection.Presets.Find(preset->SlotConfigPresetID);
+			if (!ensureAlways(slotConfigPreset != nullptr))
 			{
-				// TODO: Part scope for FFE
-				if (nodeType->Scope == EBIMValueScope::Profile)
-				{
-					Extrusions.AddDefaulted();
-					currentSheet = &Extrusions.Last().Properties;
-				}
-				else if (nodeType->Scope == EBIMValueScope::Layer)
-				{
-					Layers.AddDefaulted();
-					currentSheet = &Layers.Last().Properties;
-				}
-				
-				// All nodes should have a scope
-				if (ensureAlways(nodeType->Scope != EBIMValueScope::None))
-				{
-					pinScope = nodeType->Scope;
-				}
+				ret = ECraftingResult::Error;
+				continue;
 			}
 
-			EObjectType objectType = PresetCollection.GetPresetObjectType(presetID);
-			if (objectType != EObjectType::OTNone && ensureAlways(ObjectType == EObjectType::OTNone))
+			// Create a part entry in the assembly spec for each part in the preset
+			for (auto& partSlot : preset->PartSlots)
 			{
-				ObjectType = objectType;
-			}
+				FBIMPartSlotSpec &partSpec = Parts.AddDefaulted_GetRef();
+				partSpec.Properties = preset->Properties;
 
-			preset->Properties.ForEachProperty([this, &currentSheet, &preset, pinScope, PresetID](const FString& Name, const Modumate::FModumateCommandParameter& MCP)
-			{
-				FBIMPropertyValue vs(*Name);
-
-				// 'Node' scope values inherit their scope from their parents, specified on the pin
-				EBIMValueScope nodeScope = vs.Scope == EBIMValueScope::Node ? pinScope : vs.Scope;
-
-				// Preset properties only apply to the preset itself, not to its children
-				if (nodeScope != EBIMValueScope::Preset || preset->PresetID == PresetID)
+				// Find the preset for the part in the slot...this will contain the mesh, material and color information
+				const FBIMPreset* partPreset = PresetCollection.Presets.Find(partSlot.PartPreset);
+					
+				// Each child of a part represents one component (mesh, material or color)
+				// TODO: for now, ignoring material and color
+				for (auto& cp : partPreset->ChildPresets)
 				{
-					currentSheet->SetProperty(nodeScope, vs.Name, MCP);
-				}
-			});
+					if (cp.PresetID.IsNone())
+					{
+						ret = ECraftingResult::Error;
+						continue;
+					}
 
-			for (auto& childPreset : preset->ChildPresets)
-			{
-				presetStack.Push(childPreset.PresetID);
-				scopeStack.Push(pinScope);
+					const FBIMPreset* childPreset = PresetCollection.Presets.Find(cp.PresetID);
+
+					if (!ensureAlways(childPreset != nullptr))
+					{
+						ret = ECraftingResult::Error;
+						continue;
+					}
+
+					// If this child has a mesh asset ID, this fetch the mesh and use it 
+					FName meshAsset;
+					if (childPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))
+					{
+						const FArchitecturalMesh *mesh = InDB.GetArchitecturalMeshByKey(childPreset->PresetID);
+						if (!ensureAlways(mesh != nullptr))
+						{
+							ret = ECraftingResult::Error;
+							break;
+						}
+
+						partSpec.Mesh = *mesh;
+
+						// Now find the slot in the config that corresponds to the slot in the preset and fetch its parameterized transform
+						for (auto& childSlot : slotConfigPreset->ChildPresets)
+						{
+							if (childSlot.PresetID.IsEqual(partSlot.SlotName))
+							{
+								const FBIMPreset* childSlotPreset = PresetCollection.Presets.Find(childSlot.PresetID);
+								if (!ensureAlways(childSlotPreset != nullptr))
+								{
+									break;
+								}
+
+								// FVectorExpression holds 3 values as formula strings (ie "Parent.NativeSizeX * 0.5) that are evaluated in CompoundMeshActor
+
+								partSpec.Translation = Modumate::Expression::FVectorExpression(
+									childSlotPreset->GetProperty(TEXT("LocationX")),
+									childSlotPreset->GetProperty(TEXT("LocationY")),
+									childSlotPreset->GetProperty(TEXT("LocationZ")));
+
+								partSpec.Orientation = Modumate::Expression::FVectorExpression(
+									childSlotPreset->GetProperty(TEXT("RotationX")),
+									childSlotPreset->GetProperty(TEXT("RotationY")),
+									childSlotPreset->GetProperty(TEXT("RotationZ")));
+
+								// TODO: Size and flip data
+
+								break;
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -215,18 +287,29 @@ ECraftingResult FBIMPartSlotSpec::BuildFromProperties(const FModumateDatabase& I
 	return ECraftingResult::Error;
 }
 
-ECraftingResult FBIMAssemblySpec::MakeStubbyAssembly(const FModumateDatabase& InDB)
+ECraftingResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 {
-	FName meshKey = RootProperties.GetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID);
-	const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(meshKey);
-	if (mesh == nullptr)
+	// TODO: "Stubby" temporary FFE don't have parts, just one mesh on their root
+	if (Parts.Num() == 0)
 	{
-		return ECraftingResult::Error;
+		FName meshKey = RootProperties.GetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID);
+		const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(meshKey);
+		if (mesh == nullptr)
+		{
+			return ECraftingResult::Error;
+		}
+
+		FBIMPartSlotSpec& partSlot = Parts.AddDefaulted_GetRef();
+		partSlot.Mesh = *mesh;
+
+		return ECraftingResult::Success;
+	}
+	else
+	{
+		// TODO: slot transformations
 	}
 
-	FBIMPartSlotSpec& partSlot = Parts.AddDefaulted_GetRef();
-	partSlot.Mesh = *mesh;
-
+	// TODO: get orientation information from BIM system, express as properties
 	SetProperty(BIMPropertyNames::Normal, FVector(0, 0, 1));
 	SetProperty(BIMPropertyNames::Tangent, FVector(0, 1, 0));
 
@@ -247,7 +330,7 @@ ECraftingResult FBIMAssemblySpec::MakeLayeredAssembly(const FModumateDatabase& I
 	return ECraftingResult::Success;
 }
 
-ECraftingResult FBIMAssemblySpec::MakeStructureLineAssembly(const FModumateDatabase& InDB)
+ECraftingResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
 {
 	for (auto& extrusion : Extrusions)
 	{
@@ -286,25 +369,25 @@ ECraftingResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, 
 	ECraftingResult result = ECraftingResult::Error;
 	switch (ObjectType)
 	{
-		case EObjectType::OTStructureLine:
-			return MakeStructureLineAssembly(InDB);
+	case EObjectType::OTStructureLine:
+		return MakeExtrudedAssembly(InDB);
 
-		case EObjectType::OTFloorSegment:
-		case EObjectType::OTWallSegment:
-		case EObjectType::OTRoofFace:
-		case EObjectType::OTFinish:
-		case EObjectType::OTCeiling:
-			return MakeLayeredAssembly(InDB);
+	case EObjectType::OTFloorSegment:
+	case EObjectType::OTWallSegment:
+	case EObjectType::OTRoofFace:
+	case EObjectType::OTFinish:
+	case EObjectType::OTCeiling:
+		return MakeLayeredAssembly(InDB);
 
-		case EObjectType::OTCountertop:
-		case EObjectType::OTCabinet:
-		case EObjectType::OTFurniture:
-		case EObjectType::OTDoor:
-		case EObjectType::OTWindow:
-			return MakeStubbyAssembly(InDB);
+	case EObjectType::OTCountertop:
+	case EObjectType::OTCabinet:
+	case EObjectType::OTDoor:
+	case EObjectType::OTWindow:
+	case EObjectType::OTFurniture:
+		return MakeRiggedAssembly(InDB);
 
-		default:
-			ensureAlways(false);
+	default:
+		ensureAlways(false);
 	};
 
 	return ECraftingResult::Error;

@@ -2,6 +2,7 @@
 
 #include "Database/ModumateObjectDatabase.h"
 #include "BIMKernel/BIMAssemblySpec.h"
+#include "ModumateCore/ExpressionEvaluator.h"
 #include "Misc/FileHelper.h"
 #include "Serialization/Csv/CsvParser.h"
 
@@ -64,7 +65,7 @@ void FModumateDatabase::AddSimpleMesh(const FName& Key, const FString& Name, con
 	SimpleMeshes.AddData(mesh);
 }
 
-void FModumateDatabase::AddArchitecturalMesh(const FName& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+void FModumateDatabase::AddArchitecturalMesh(const FName& Key, const FString& Name, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -73,6 +74,8 @@ void FModumateDatabase::AddArchitecturalMesh(const FName& Key, const FString& Na
 
 	FArchitecturalMesh mesh;
 	mesh.AssetPath = AssetPath;
+	mesh.NativeSize = InNativeSize;
+	mesh.NineSliceBox = InNineSliceBox;
 	mesh.Key = Key;
 
 	mesh.EngineMesh = Cast<UStaticMesh>(AssetPath.TryLoad());
@@ -162,20 +165,63 @@ void FModumateDatabase::ReadPresetData()
 	FAddAssetFunction addMesh = [this](const FBIMPreset &Preset)
 	{
 		FString assetPath = Preset.GetScopedProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
+
+		// TODO: to be replaced with typesafe properties
 		if (assetPath.Len() != 0)
 		{
+			FVector nativeSize(
+				Preset.GetProperty(TEXT("NativeSizeX")), 
+				Preset.GetProperty(TEXT("NativeSizeY")), 
+				Preset.GetProperty(TEXT("NativeSizeZ"))
+			);
+
+			FBox nineSlice(
+				FVector(Preset.GetProperty(TEXT("SliceX1")),
+					Preset.GetProperty(TEXT("SliceY1")),
+					Preset.GetProperty(TEXT("SliceZ1"))),
+
+				FVector(Preset.GetProperty(TEXT("SliceX2")),
+					Preset.GetProperty(TEXT("SliceY2")),
+					Preset.GetProperty(TEXT("SliceZ2")))
+			);
+
 			FString name = Preset.GetProperty(BIMPropertyNames::Name);
-			AddArchitecturalMesh(Preset.PresetID, name, assetPath);
+			AddArchitecturalMesh(Preset.PresetID, name, nativeSize, nineSlice, assetPath);
 		}
 	};
 
-	FAddAssetFunction addMaterial = [this](const FBIMPreset &Preset)
+	FAddAssetFunction addRawMaterial = [this](const FBIMPreset &Preset)
 	{
 		FString assetPath = Preset.GetProperty(BIMPropertyNames::AssetPath);
 		if (assetPath.Len() != 0)
 		{
 			FString matName = Preset.GetProperty(BIMPropertyNames::Name);
 			AddArchitecturalMaterial(Preset.PresetID, matName, assetPath);
+		}
+	};
+
+	FAddAssetFunction addMaterial = [this](const FBIMPreset &Preset)
+	{
+		FName rawMaterial;
+		for (auto& cp : Preset.ChildPresets)
+		{
+			const FBIMPreset* childPreset = PresetManager.CraftingNodePresets.Presets.Find(cp.PresetID);
+			if (childPreset != nullptr && childPreset->NodeScope == EBIMValueScope::RawMaterial)
+			{
+				rawMaterial = cp.PresetID;
+				break;
+			}
+		}
+
+		if (!rawMaterial.IsNone())
+		{
+			const FBIMPreset* preset = PresetManager.CraftingNodePresets.Presets.Find(rawMaterial);
+			if (preset != nullptr)
+			{
+				FString assetPath = preset->GetProperty(BIMPropertyNames::AssetPath);
+				FString matName = Preset.GetProperty(BIMPropertyNames::Name);
+				AddArchitecturalMaterial(Preset.PresetID, matName, assetPath);
+			}
 		}
 	};
 
@@ -217,6 +263,7 @@ void FModumateDatabase::ReadPresetData()
 	const FString meshTag = TEXT("Mesh");
 	const FString profileTag = TEXT("Profile");
 	const FString rawMaterialTag = TEXT("RawMaterial");
+	const FString materialTag = TEXT("Material");
 
 	typedef TFunction<void(const FBIMTagPath &TagPath)> FAssetTargetAssignment;
 	TMap<FString, FAssetTargetAssignment> assetTargetMap;
@@ -224,7 +271,8 @@ void FModumateDatabase::ReadPresetData()
 	assetTargetMap.Add(colorTag, [addColor, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addColor)); });
 	assetTargetMap.Add(meshTag, [addMesh, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addMesh)); });
 	assetTargetMap.Add(profileTag, [addProfile, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addProfile)); });
-	assetTargetMap.Add(rawMaterialTag, [addMaterial, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addMaterial)); });
+	assetTargetMap.Add(rawMaterialTag, [addRawMaterial, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addRawMaterial)); });
+	assetTargetMap.Add(materialTag, [addMaterial, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addMaterial)); });
 
 	typedef TPair<FBIMTagPath, EObjectType> FObjectPathRef;
 	TArray<FObjectPathRef> objectPaths;

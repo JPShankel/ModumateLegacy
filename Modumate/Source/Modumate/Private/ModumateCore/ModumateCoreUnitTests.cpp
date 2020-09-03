@@ -1168,6 +1168,49 @@ namespace Modumate
 		return bSuccess;
 	}
 
+	static bool testVectorFormula()
+	{
+		Modumate::Expression::FVectorExpression vf1(TEXT("Parent.NativeSizeX-2.5"), TEXT("(1/2)*Parent.NativeSizeY"), TEXT("(1/2)*(12+Parent.NativeSizeZ-6)"));
+
+		TMap<FString, float> vars;
+		vars.Add(TEXT("Parent.NativeSizeX"), 3.0f);
+		vars.Add(TEXT("Parent.NativeSizeY"), 10.0f);
+		vars.Add(TEXT("Parent.NativeSizeZ"), 8.0f);
+
+		FVector outVector;
+		if (!vf1.Evaluate(vars, outVector))
+		{
+			return false;
+		}
+		if (!FMath::IsNearlyEqual(outVector.X, 0.5f))
+		{
+			return false;
+		}
+		if (!FMath::IsNearlyEqual(outVector.Y, 5.0f))
+		{
+			return false;
+		}
+		if (!FMath::IsNearlyEqual(outVector.Z, 7.0f))
+		{
+			return false;
+		}
+
+		Modumate::Expression::FVectorExpression vf2(TEXT("Parent.NativeSizeX-2.5"), TEXT(""), TEXT("(1/2)*(12+Parent.NativeSizeZ-6)"));
+
+		outVector = FVector::ZeroVector;
+		if (!vf2.Evaluate(vars, outVector))
+		{
+			return false;
+		}
+
+		if (!outVector.Y == 0.0f)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
 	// Modumate expressions test
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateExpressionUnitTest, "Modumate.Core.Expression.UnitTest", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 	bool FModumateExpressionUnitTest::RunTest(const FString& Parameters)
@@ -1220,9 +1263,11 @@ namespace Modumate
 		tryCase(TEXT("2W2"), 12.0f);
 		tryCase(TEXT("(1+W2)ZED"), 14.0f);
 
+		bool ret = testVectorFormula();
+
 		UE_LOG(LogUnitTest, Display, TEXT("Modumate Evaluator - Unit Test Ended"));
 
-		return true;
+		return ret;
 	}
 
 	// expression expected failures test

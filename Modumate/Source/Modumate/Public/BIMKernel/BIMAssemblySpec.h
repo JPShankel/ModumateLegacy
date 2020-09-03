@@ -10,6 +10,7 @@
 // All needed by ObjectAssembly, first step is to replace all inclusions of the object assembly header with this one
 #include "ModumateCore/ModumateUnits.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
+#include "ModumateCore/ExpressionEvaluator.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "Database/ModumateArchitecturalMesh.h"
 #include "Database/ModumateSimpleMesh.h"
@@ -48,9 +49,9 @@ TODO: transforms will be derived from hosting plane/moi parameters...to be hard 
 struct MODUMATE_API FBIMPartSlotSpec
 {
 	FBIMPropertySheet Properties;
-	FVector Translation = FVector::ZeroVector;
-	FVector Scale = FVector::OneVector;
-	FQuat Orientation = FQuat::Identity;
+
+	Modumate::Expression::FVectorExpression Translation, Scale, Orientation;
+
 	FArchitecturalMesh Mesh;
 	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
 };
@@ -70,8 +71,8 @@ class MODUMATE_API FBIMAssemblySpec
 {
 private:
 	ECraftingResult MakeLayeredAssembly(const FModumateDatabase& InDB);
-	ECraftingResult MakeStructureLineAssembly(const FModumateDatabase& InDB);
-	ECraftingResult MakeStubbyAssembly(const FModumateDatabase& InDB);	
+	ECraftingResult MakeExtrudedAssembly(const FModumateDatabase& InDB);
+	ECraftingResult MakeRiggedAssembly(const FModumateDatabase& InDB);	
 	ECraftingResult DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection);
 
 public:

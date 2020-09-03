@@ -1,1541 +1,2504 @@
-TYPENAME,,1Material,,Material,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,STRING,,Name,,Material.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildRawMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildColor,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildSrfTreatment,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,1,3,3,1,1,1,1,1,1,1,1,1,12,1,1,1,1,1,1,1,0,0,0,0,1,2,8,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,2,1,3,1,1,1,3,0,3,0,1,10,0,0,10,18,1,12,1,1,1,50,50,1,32,1,8,1,7,32,4,1,1,3,3,1,1,1,1,1,1,32,32,18,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Material.Name,DataType=InputPins,ChildRawMaterial,ChildColor,ChildSrfTreatment,DataType=TG_Parent Node+CategoryPath,2Layer0D --> Abstract,2Layer0D --> Abstract --> CastInPlaceConcrete,2Layer0D --> Mass --> PrecastConcrete,2Layer0D --> Mass --> CrossLaminatedTimber,2Layer0D --> Mass --> RammedEarth,2Layer0D --> Membrane --> BitumenousFelt,2Layer0D --> Membrane --> TPO,2Layer0D --> Membrane --> PVC,2Layer0D --> Membrane --> PolyethyleneVaporBarrier,2Layer0D --> Membrane --> EPDMRubber,2Layer0D --> Membrane --> RubberizedAsphalt,2Layer0D --> Roll --> Batt,2Layer0D --> Roll --> Carpet,2Layer0D --> Roll --> Cork,2Layer0D --> Roll --> Felt,2Layer0D --> Roll --> Foam,2Layer0D --> Roll --> LathMetal,2Layer0D --> Roll --> PlasticAdhesive,2Layer0D --> Roll --> PlasticUnderlayment,2Layer0D --> Roll --> Wallpaper,2Layer0D --> Sitework --> Gravel,2Layer0D --> Sitework --> Grass,2Layer0D --> Sitework --> DecomposedGranite,2Layer0D --> Sitework --> GeotextileFabric,2Layer0D --> Sitework --> Sand,2Layer0D --> Sitework --> Soil,2Layer0D --> Spread --> Asphalt,2Layer0D --> Spread --> Plaster,2Layer0D --> Spread --> JointCompound,2Layer0D --> Spread --> Paint,2Layer0D --> Spread --> ThinsetCement,2Layer0D --> Spread --> MasticResin,2Layer0D --> Void --> Air,2ModuleWDProfile --> Corrugated Plastic Sheet,2ModuleWDProfile --> Corrugated Steel Deck,2ModuleWDProfile --> Steel C-Channel,2ModuleWDProfile --> Steel C-H Channel,2ModuleWDProfile --> Steel Hat Channel,2ModuleWDProfile --> Steel Web Joist,2ModuleWDProfile --> Steel Z Channel,2ModuleWDProfile --> Wood Lumber,2ModuleWDProfile --> Wood Web Joist,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",2ModuleLWH --> Clay Brick,2ModuleLWH --> Concrete Masonry Unit,2ModuleLWH --> Glass Block,2ModuleLWT --> Board/Panel --> Cement,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,2ModuleLWT --> Board/Panel --> Foam,2ModuleLWT --> Board/Panel --> Wood Fiber,2ModuleLWT --> Board/Panel --> Gypsum,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),2ModuleLWT --> Board/Panel --> Metal,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),2ModuleLWT --> Board/Panel --> Particle Board,2ModuleLWT --> Board/Panel --> Plywood,2ModuleLWT --> Plank --> Engineered Wood,2ModuleLWT --> Plank --> Wood,2ModuleLWT --> Tile --> Brick Veneer,2ModuleLWT --> Tile --> Carpet,2ModuleLWT --> Tile --> Clay,2ModuleLWT --> Tile --> Cork,2ModuleLWT --> Tile --> Glass,2ModuleLWT --> Tile --> Laminate,2ModuleLWT --> Tile --> Luxury Vinyl,2ModuleLWT --> Tile --> Porcelain,2ModuleLWT --> Tile --> Stone,2ModuleLWT --> Tile --> Vinyl Composite,2ModuleLWT --> Shingle --> Asphalt,2ModuleLWT --> Shingle --> Clay,2ModuleLWT --> Shingle --> Metal,2ModuleLWT --> Shingle --> Stone,2ModuleLWT --> Shingle --> Wood,2Gap2D --> Tile Gaps,2Gap2D --> Masonry Gaps,2ExtrudedProfile --> Beam/Column --> ConcreteRectangular,2ExtrudedProfile --> Beam/Column --> ConcreteRound,2ExtrudedProfile --> Beam/Column --> SteelC,2ExtrudedProfile --> Beam/Column --> SteelHSS,2ExtrudedProfile --> Beam/Column --> SteelL,2ExtrudedProfile --> Beam/Column --> SteelTube,2ExtrudedProfile --> Beam/Column --> SteelW,2ExtrudedProfile --> Beam/Column --> SteelWT,2ExtrudedProfile --> Beam/Column --> StoneRectangular,2ExtrudedProfile --> Beam/Column --> StoneRound,2ExtrudedProfile --> Beam/Column --> WoodRectangular,2ExtrudedProfile --> Beam/Column --> WoodRound,2Part --> Cabinet --> Hinge,2Part --> Cabinet --> Handle,2Part --> Cabinet --> Lock,2Part --> Cabinet --> Frame,2Part --> Cabinet --> Panel,2Part --> Door --> Bell,2Part --> Door --> Caster,2Part --> Door --> Closer,2Part --> Door --> Frame,2Part --> Door --> Handle,2Part --> Door --> Hinge,2Part --> Door --> HingeSet,2Part --> Door --> Knocker,2Part --> Door --> Lock,2Part --> Door --> MailSlot,2Part --> Door --> Panel,2Part --> Door --> Peephole,2Part --> Door --> ProtectionPlate,2Part --> Door --> Screen,2Part --> Door --> Track,2Part --> Window --> Handle,2Part --> Window --> Hinge,2Part --> Window --> Frame,2Part --> Window --> Lock,2Part --> Window --> Panel,2Part --> Window --> Screen,2Part --> Window --> Shutter,2Part --> FFE --> Appliance,2Part --> FFE --> Decoration,2Part --> FFE --> Faucet,2Part --> FFE --> Furniture,2Part --> FFE --> FurnitureSet,2Part --> FFE --> Light,2Part --> FFE --> Plant,2Part --> FFE --> PlugInAppliance,,,,,,,,,
+TYPENAME,,1Material,,Material,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Material Asset ID,,Material.AssetID,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Material.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildRawMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildColor,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildSrfTreatment,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,,1,3,3,1,1,1,1,1,1,1,1,1,12,1,1,1,1,1,1,1,0,0,0,0,1,2,8,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,2,2,3,1,1,1,1,3,1,3,1,1,1,1,1,1,18,3,2,12,2,1,1,50,50,2,32,1,8,2,7,32,4,2,2,2,1,3,3,1,1,1,1,1,1,32,32,18,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Material.AssetID,Material.Name,DataType=InputPins,ChildRawMaterial,ChildColor,ChildSrfTreatment,DataType=TG_Parent Node+CategoryPath,2Layer0D --> Abstract,2Layer0D --> Abstract --> CastInPlaceConcrete,2Layer0D --> Mass --> PrecastConcrete,2Layer0D --> Mass --> CrossLaminatedTimber,2Layer0D --> Mass --> RammedEarth,2Layer0D --> Membrane --> BitumenousFelt,2Layer0D --> Membrane --> TPO,2Layer0D --> Membrane --> PVC,2Layer0D --> Membrane --> PolyethyleneVaporBarrier,2Layer0D --> Membrane --> EPDMRubber,2Layer0D --> Membrane --> RubberizedAsphalt,2Layer0D --> Roll --> Batt,2Layer0D --> Roll --> Carpet,2Layer0D --> Roll --> Cork,2Layer0D --> Roll --> Felt,2Layer0D --> Roll --> Foam,2Layer0D --> Roll --> LathMetal,2Layer0D --> Roll --> PlasticAdhesive,2Layer0D --> Roll --> PlasticUnderlayment,2Layer0D --> Roll --> Wallpaper,2Layer0D --> Sitework --> Gravel,2Layer0D --> Sitework --> Grass,2Layer0D --> Sitework --> DecomposedGranite,2Layer0D --> Sitework --> GeotextileFabric,2Layer0D --> Sitework --> Sand,2Layer0D --> Sitework --> Soil,2Layer0D --> Spread --> Asphalt,2Layer0D --> Spread --> Plaster,2Layer0D --> Spread --> JointCompound,2Layer0D --> Spread --> Paint,2Layer0D --> Spread --> ThinsetCement,2Layer0D --> Spread --> MasticResin,2Layer0D --> Void --> Air,2ModuleWDProfile --> Corrugated Plastic Sheet,2ModuleWDProfile --> Corrugated Steel Deck,2ModuleWDProfile --> Steel C-Channel,2ModuleWDProfile --> Steel C-H Channel,2ModuleWDProfile --> Steel Hat Channel,2ModuleWDProfile --> Steel Web Joist,2ModuleWDProfile --> Steel Z Channel,2ModuleWDProfile --> Wood Lumber,2ModuleWDProfile --> Wood Web Joist,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",2ModuleLWH --> Clay Brick,2ModuleLWH --> Concrete Masonry Unit,2ModuleLWH --> Earth Brick,2ModuleLWH --> Glass Block,2ModuleLWT --> Board/Panel --> Cement,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,2ModuleLWT --> Board/Panel --> Foam,2ModuleLWT --> Board/Panel --> Wood Fiber,2ModuleLWT --> Board/Panel --> Gypsum,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),2ModuleLWT --> Board/Panel --> Metal,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),2ModuleLWT --> Board/Panel --> Particle Board,2ModuleLWT --> Board/Panel --> Plywood,2ModuleLWT --> Plank --> Engineered Wood,2ModuleLWT --> Plank --> Wood,2ModuleLWT --> Tile --> Acoustic Ceiling Tile,2ModuleLWT --> Tile --> Brick Veneer,2ModuleLWT --> Tile --> Carpet,2ModuleLWT --> Tile --> Clay,2ModuleLWT --> Tile --> Cork,2ModuleLWT --> Tile --> Glass,2ModuleLWT --> Tile --> Laminate,2ModuleLWT --> Tile --> Luxury Vinyl,2ModuleLWT --> Tile --> Porcelain,2ModuleLWT --> Tile --> Stone,2ModuleLWT --> Tile --> Vinyl Composite,2ModuleLWT --> Shingle --> Asphalt,2ModuleLWT --> Shingle --> Clay,2ModuleLWT --> Shingle --> Metal,2ModuleLWT --> Shingle --> Stone,2ModuleLWT --> Shingle --> Wood,2Gap2D --> Mortar Gaps,2Gap2D --> Grout Gaps,2Gap2D --> Metal Gaps,2Gap2D --> Gapless,2ExtrudedProfile --> Beam/Column --> ConcreteRectangular,2ExtrudedProfile --> Beam/Column --> ConcreteRound,2ExtrudedProfile --> Beam/Column --> SteelC,2ExtrudedProfile --> Beam/Column --> SteelHSS,2ExtrudedProfile --> Beam/Column --> SteelL,2ExtrudedProfile --> Beam/Column --> SteelTube,2ExtrudedProfile --> Beam/Column --> SteelW,2ExtrudedProfile --> Beam/Column --> SteelWT,2ExtrudedProfile --> Beam/Column --> StoneRectangular,2ExtrudedProfile --> Beam/Column --> StoneRound,2ExtrudedProfile --> Beam/Column --> WoodRectangular,2ExtrudedProfile --> Beam/Column --> WoodRound,2Part --> Cabinet --> Hinge,2Part --> Cabinet --> Handle,2Part --> Cabinet --> Lock,2Part --> Cabinet --> Frame,2Part --> Cabinet --> Panel,2Part --> Door --> Bell,2Part --> Door --> Caster,2Part --> Door --> Closer,2Part --> Door --> Frame,2Part --> Door --> Handle,2Part --> Door --> Hinge,2Part --> Door --> Knocker,2Part --> Door --> Lock,2Part --> Door --> MailSlot,2Part --> Door --> Panel,2Part --> Door --> Peephole,2Part --> Door --> ProtectionPlate,2Part --> Door --> Screen,2Part --> Door --> Track,2Part --> Window --> Handle,2Part --> Window --> Hinge,2Part --> Window --> Frame,2Part --> Window --> Lock,2Part --> Window --> Panel,2Part --> Window --> Screen,2Part --> Window --> Shutter,2Part --> FFE --> Appliance,2Part --> FFE --> Decoration,2Part --> FFE --> Faucet,2Part --> FFE --> Furniture,2Part --> FFE --> FurnitureSet,2Part --> FFE --> Light,2Part --> FFE --> Plant,2Part --> FFE --> PlugInAppliance,3Layer1D --> Corrugated Deck,3Layer1D --> Furring,3Layer1D --> Joist,3Layer1D --> Stud,,,,,,,
 PRESET,,"1Material
 0RawMaterial
 Abstract
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Abstract,,,,"0RawMaterial
+Standard",,1Material --> Abstract,,"1Material
+0RawMaterial
+Abstract
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Abstract,,"0RawMaterial
 Abstract","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Asphalt
 0RawMaterial
 Asphalt
 0Color --> Aggregates --> Asphalt
 594D41-Barkwood
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Asphalt,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Asphalt,,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+594D41-Barkwood
+0SrfTreatment
+Standard",1Material --> Aggregates --> Asphalt,,"0RawMaterial
 Asphalt","0Color --> Aggregates --> Asphalt
 594D41-Barkwood","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Asphalt
 0RawMaterial
 Asphalt
 0Color --> Aggregates --> Asphalt
 52595B-PewterGray
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Asphalt,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Asphalt,,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+52595B-PewterGray
+0SrfTreatment
+Standard",1Material --> Aggregates --> Asphalt,,"0RawMaterial
 Asphalt","0Color --> Aggregates --> Asphalt
 52595B-PewterGray","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Asphalt
 0RawMaterial
 Asphalt
 0Color --> Aggregates --> Asphalt
 646963-Gray-GreenSlate
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Asphalt,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Asphalt,,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+646963-Gray-GreenSlate
+0SrfTreatment
+Standard",1Material --> Aggregates --> Asphalt,,"0RawMaterial
 Asphalt","0Color --> Aggregates --> Asphalt
 646963-Gray-GreenSlate","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Asphalt
 0RawMaterial
 Asphalt
 0Color --> Aggregates --> Asphalt
 743131-RichRed
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Asphalt,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Asphalt,,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+743131-RichRed
+0SrfTreatment
+Standard",1Material --> Aggregates --> Asphalt,,"0RawMaterial
 Asphalt","0Color --> Aggregates --> Asphalt
 743131-RichRed","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Asphalt
 0RawMaterial
 Asphalt
 0Color --> Aggregates --> Asphalt
 2F3336-Charcoal
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Asphalt,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Asphalt,,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+2F3336-Charcoal
+0SrfTreatment
+Standard",1Material --> Aggregates --> Asphalt,,"0RawMaterial
 Asphalt","0Color --> Aggregates --> Asphalt
 2F3336-Charcoal","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Asphalt
 0RawMaterial
 Asphalt
 0Color --> Aggregates --> Asphalt
 9A7957-Caramel
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Asphalt,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Asphalt,,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+9A7957-Caramel
+0SrfTreatment
+Standard",1Material --> Aggregates --> Asphalt,,"0RawMaterial
 Asphalt","0Color --> Aggregates --> Asphalt
 9A7957-Caramel","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Asphalt
 0RawMaterial
 Asphalt
 0Color --> Aggregates --> Asphalt
 6B6758-Olive
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Asphalt,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Asphalt,,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+6B6758-Olive
+0SrfTreatment
+Standard",1Material --> Aggregates --> Asphalt,,"0RawMaterial
 Asphalt","0Color --> Aggregates --> Asphalt
 6B6758-Olive","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Asphalt
 0RawMaterial
 Asphalt
 0Color --> Aggregates --> Asphalt
 856B5B-Driftwood
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Asphalt,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Asphalt,,"1Material --> Aggregates --> Asphalt
+0RawMaterial
+Asphalt
+0Color --> Aggregates --> Asphalt
+856B5B-Driftwood
+0SrfTreatment
+Standard",1Material --> Aggregates --> Asphalt,,"0RawMaterial
 Asphalt","0Color --> Aggregates --> Asphalt
 856B5B-Driftwood","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Cement,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Cement,,"1Material --> Aggregates --> Cement
+0RawMaterial
+Cement
+0Color --> Aggregates --> Cement
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Aggregates --> Cement,,"0RawMaterial
 Cement","0Color --> Aggregates --> Cement
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
 D6D7D8-Natural
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Cement,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Cement,,"1Material --> Aggregates --> Cement
+0RawMaterial
+Cement
+0Color --> Aggregates --> Cement
+D6D7D8-Natural
+0SrfTreatment
+Standard",1Material --> Aggregates --> Cement,,"0RawMaterial
 Cement","0Color --> Aggregates --> Cement
 D6D7D8-Natural","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
 A3A7A6-MediumGray
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Cement,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Cement,,"1Material --> Aggregates --> Cement
+0RawMaterial
+Cement
+0Color --> Aggregates --> Cement
+A3A7A6-MediumGray
+0SrfTreatment
+Standard",1Material --> Aggregates --> Cement,,"0RawMaterial
 Cement","0Color --> Aggregates --> Cement
 A3A7A6-MediumGray","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
 70716C-DarkGrey
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Cement,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Cement,,"1Material --> Aggregates --> Cement
+0RawMaterial
+Cement
+0Color --> Aggregates --> Cement
+70716C-DarkGrey
+0SrfTreatment
+Standard",1Material --> Aggregates --> Cement,,"0RawMaterial
 Cement","0Color --> Aggregates --> Cement
 70716C-DarkGrey","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
 2F3131-Black
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Cement,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Cement,,"1Material --> Aggregates --> Cement
+0RawMaterial
+Cement
+0Color --> Aggregates --> Cement
+2F3131-Black
+0SrfTreatment
+Standard",1Material --> Aggregates --> Cement,,"0RawMaterial
 Cement","0Color --> Aggregates --> Cement
 2F3131-Black","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
 AC998D-Maple
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Cement,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Cement,,"1Material --> Aggregates --> Cement
+0RawMaterial
+Cement
+0Color --> Aggregates --> Cement
+AC998D-Maple
+0SrfTreatment
+Standard",1Material --> Aggregates --> Cement,,"0RawMaterial
 Cement","0Color --> Aggregates --> Cement
 AC998D-Maple","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
 ABA283-Olive
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Cement,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Cement,,"1Material --> Aggregates --> Cement
+0RawMaterial
+Cement
+0Color --> Aggregates --> Cement
+ABA283-Olive
+0SrfTreatment
+Standard",1Material --> Aggregates --> Cement,,"0RawMaterial
 Cement","0Color --> Aggregates --> Cement
 ABA283-Olive","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
 CFB086-Buff
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Cement,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Cement,,"1Material --> Aggregates --> Cement
+0RawMaterial
+Cement
+0Color --> Aggregates --> Cement
+CFB086-Buff
+0SrfTreatment
+Standard",1Material --> Aggregates --> Cement,,"0RawMaterial
 Cement","0Color --> Aggregates --> Cement
 CFB086-Buff","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
 9FA08B-Moss
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Cement,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Cement,,"1Material --> Aggregates --> Cement
+0RawMaterial
+Cement
+0Color --> Aggregates --> Cement
+9FA08B-Moss
+0SrfTreatment
+Standard",1Material --> Aggregates --> Cement,,"0RawMaterial
 Cement","0Color --> Aggregates --> Cement
 9FA08B-Moss","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
 8F9AA0-Ocean
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Cement,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Cement,,"1Material --> Aggregates --> Cement
+0RawMaterial
+Cement
+0Color --> Aggregates --> Cement
+8F9AA0-Ocean
+0SrfTreatment
+Standard",1Material --> Aggregates --> Cement,,"0RawMaterial
 Cement","0Color --> Aggregates --> Cement
 8F9AA0-Ocean","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Cement
 0RawMaterial
 Cement
 0Color --> Aggregates --> Cement
 9F7D7B-Cabernet
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Cement,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Cement,,"1Material --> Aggregates --> Cement
+0RawMaterial
+Cement
+0Color --> Aggregates --> Cement
+9F7D7B-Cabernet
+0SrfTreatment
+Standard",1Material --> Aggregates --> Cement,,"0RawMaterial
 Cement","0Color --> Aggregates --> Cement
 9F7D7B-Cabernet","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Concrete
 0RawMaterial
 Concrete (Coarse Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Concrete,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Concrete,,"1Material --> Aggregates --> Concrete
+0RawMaterial
+Concrete (Coarse Aggregate)
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard",1Material --> Aggregates --> Concrete,,"0RawMaterial
 Concrete (Coarse Aggregate)","0Color --> Aggregates --> Concrete
 D6D7D8-Natural","0SrfTreatment
-Standard",,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Concrete
 0RawMaterial
 Concrete (Fine Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Concrete,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Concrete,,"1Material --> Aggregates --> Concrete
+0RawMaterial
+Concrete (Fine Aggregate)
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard",1Material --> Aggregates --> Concrete,,"0RawMaterial
 Concrete (Fine Aggregate)","0Color --> Aggregates --> Concrete
 D6D7D8-Natural","0SrfTreatment
-Standard",,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Concrete
 0RawMaterial
 Concrete (Normal Aggregate)
 0Color --> Aggregates --> Concrete
 D6D7D8-Natural
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Concrete,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Concrete,,"1Material --> Aggregates --> Concrete
+0RawMaterial
+Concrete (Normal Aggregate)
+0Color --> Aggregates --> Concrete
+D6D7D8-Natural
+0SrfTreatment
+Standard",1Material --> Aggregates --> Concrete,,"0RawMaterial
 Concrete (Normal Aggregate)","0Color --> Aggregates --> Concrete
 D6D7D8-Natural","0SrfTreatment
-Standard",,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,"1Material --> Aggregates --> Decomposed Granite
 0RawMaterial
 Decomposed Granite
 0Color --> Aggregates --> Decomposed Granite
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Decomposed Granite,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Decomposed Granite,,"1Material --> Aggregates --> Decomposed Granite
+0RawMaterial
+Decomposed Granite
+0Color --> Aggregates --> Decomposed Granite
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Aggregates --> Decomposed Granite,,"0RawMaterial
 Decomposed Granite","0Color --> Aggregates --> Decomposed Granite
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Fiber-Cement
 0RawMaterial
 Fibre Cement
 0Color --> Aggregates --> Decomposed Granite
 CCCCCC-LightGray
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Fiber-Cement,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Fiber-Cement,,"1Material --> Aggregates --> Fiber-Cement
+0RawMaterial
+Fibre Cement
+0Color --> Aggregates --> Decomposed Granite
+CCCCCC-LightGray
+0SrfTreatment
+Standard",1Material --> Aggregates --> Fiber-Cement,,"0RawMaterial
 Fibre Cement","0Color --> Aggregates --> Decomposed Granite
 CCCCCC-LightGray","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,"1Material --> Aggregates --> Gravel
 0RawMaterial
 Gravel
 0Color --> Aggregates --> Gravel
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Gravel,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Gravel,,"1Material --> Aggregates --> Gravel
+0RawMaterial
+Gravel
+0Color --> Aggregates --> Gravel
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Aggregates --> Gravel,,"0RawMaterial
 Gravel","0Color --> Aggregates --> Gravel
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Grout
 0RawMaterial
 Grout
 0Color --> Aggregates --> Grout
 EAECE7-White
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Grout,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Grout,,"1Material --> Aggregates --> Grout
+0RawMaterial
+Grout
+0Color --> Aggregates --> Grout
+EAECE7-White
+0SrfTreatment
+Standard",1Material --> Aggregates --> Grout,,"0RawMaterial
 Grout","0Color --> Aggregates --> Grout
 EAECE7-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
 Gypsum
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Gypsum,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Gypsum,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard",1Material --> Aggregates --> Gypsum,,"0RawMaterial
 Gypsum","0Color --> Aggregates --> Gypsum
 D6D7D1-Natural","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
 Gypsum (Moisture-Resistant)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Gypsum,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Gypsum,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum (Moisture-Resistant)
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard",1Material --> Aggregates --> Gypsum,,"0RawMaterial
 Gypsum (Moisture-Resistant)","0Color --> Aggregates --> Gypsum
 D6D7D1-Natural","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Gypsum
 0RawMaterial
 Gypsum (Type X)
 0Color --> Aggregates --> Gypsum
 D6D7D1-Natural
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Gypsum,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Gypsum,,"1Material --> Aggregates --> Gypsum
+0RawMaterial
+Gypsum (Type X)
+0Color --> Aggregates --> Gypsum
+D6D7D1-Natural
+0SrfTreatment
+Standard",1Material --> Aggregates --> Gypsum,,"0RawMaterial
 Gypsum (Type X)","0Color --> Aggregates --> Gypsum
 D6D7D1-Natural","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Mortar
 0RawMaterial
 Mortar
 0Color --> Aggregates --> Mortar
 C6C6C6-Natural
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Mortar,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Mortar,,"1Material --> Aggregates --> Mortar
+0RawMaterial
+Mortar
+0Color --> Aggregates --> Mortar
+C6C6C6-Natural
+0SrfTreatment
+Standard",1Material --> Aggregates --> Mortar,,"0RawMaterial
 Mortar","0Color --> Aggregates --> Mortar
 C6C6C6-Natural","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Rammed Earth
 0RawMaterial
 Rammed Earth
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Rammed Earth,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Rammed Earth,,"1Material --> Aggregates --> Rammed Earth
+0RawMaterial
+Rammed Earth
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Aggregates --> Rammed Earth,,"0RawMaterial
 Rammed Earth","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Sand
 0RawMaterial
 Sand
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Sand,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Sand,,"1Material --> Aggregates --> Sand
+0RawMaterial
+Sand
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Aggregates --> Sand,,"0RawMaterial
 Sand","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Terrazzo
 0RawMaterial
 Terrazzo (Beige)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Terrazzo,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Terrazzo,,"1Material --> Aggregates --> Terrazzo
+0RawMaterial
+Terrazzo (Beige)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Aggregates --> Terrazzo,,"0RawMaterial
 Terrazzo (Beige)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Aggregates --> Terrazzo
 0RawMaterial
 Terrazzo (Black)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Aggregates --> Terrazzo,,,,"0RawMaterial
+Standard",,1Material --> Aggregates --> Terrazzo,,"1Material --> Aggregates --> Terrazzo
+0RawMaterial
+Terrazzo (Black)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Aggregates --> Terrazzo,,"0RawMaterial
 Terrazzo (Black)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Low Profile)
 0Color --> Fabric and Upholstery --> Carpet
 E9EAE6-White
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Carpet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Carpet,,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+E9EAE6-White
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Carpet,,"0RawMaterial
 Carpet (Low Profile)","0Color --> Fabric and Upholstery --> Carpet
 E9EAE6-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Low Profile)
 0Color --> Fabric and Upholstery --> Carpet
 D0C6BD-Cream1
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Carpet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Carpet,,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+D0C6BD-Cream1
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Carpet,,"0RawMaterial
 Carpet (Low Profile)","0Color --> Fabric and Upholstery --> Carpet
 D0C6BD-Cream1","0SrfTreatment
-Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Low Profile)
 0Color --> Fabric and Upholstery --> Carpet
 BF945F-Saddle
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Carpet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Carpet,,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+BF945F-Saddle
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Carpet,,"0RawMaterial
 Carpet (Low Profile)","0Color --> Fabric and Upholstery --> Carpet
 BF945F-Saddle","0SrfTreatment
-Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Low Profile)
 0Color --> Fabric and Upholstery --> Carpet
 A99978-Parchment
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Carpet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Carpet,,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+A99978-Parchment
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Carpet,,"0RawMaterial
 Carpet (Low Profile)","0Color --> Fabric and Upholstery --> Carpet
 A99978-Parchment","0SrfTreatment
-Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Low Profile)
 0Color --> Fabric and Upholstery --> Carpet
 88543F-Copper
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Carpet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Carpet,,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+Carpet (Low Profile)
+0Color --> Fabric and Upholstery --> Carpet
+88543F-Copper
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Carpet,,"0RawMaterial
 Carpet (Low Profile)","0Color --> Fabric and Upholstery --> Carpet
 88543F-Copper","0SrfTreatment
-Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 E9EAE6-White
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Carpet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Carpet,,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+Carpet (Medium Profile)
+0Color --> Fabric and Upholstery --> Carpet
+E9EAE6-White
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Carpet,,"0RawMaterial
 Carpet (Medium Profile)","0Color --> Fabric and Upholstery --> Carpet
 E9EAE6-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 D0C6BD-Cream1
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Carpet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Carpet,,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+Carpet (Medium Profile)
+0Color --> Fabric and Upholstery --> Carpet
+D0C6BD-Cream1
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Carpet,,"0RawMaterial
 Carpet (Medium Profile)","0Color --> Fabric and Upholstery --> Carpet
 D0C6BD-Cream1","0SrfTreatment
-Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 BF945F-Saddle
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Carpet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Carpet,,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+Carpet (Medium Profile)
+0Color --> Fabric and Upholstery --> Carpet
+BF945F-Saddle
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Carpet,,"0RawMaterial
 Carpet (Medium Profile)","0Color --> Fabric and Upholstery --> Carpet
 BF945F-Saddle","0SrfTreatment
-Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 A99978-Parchment
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Carpet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Carpet,,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+Carpet (Medium Profile)
+0Color --> Fabric and Upholstery --> Carpet
+A99978-Parchment
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Carpet,,"0RawMaterial
 Carpet (Medium Profile)","0Color --> Fabric and Upholstery --> Carpet
 A99978-Parchment","0SrfTreatment
-Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 88543F-Copper
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Carpet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Carpet,,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+Carpet (Medium Profile)
+0Color --> Fabric and Upholstery --> Carpet
+88543F-Copper
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Carpet,,"0RawMaterial
 Carpet (Medium Profile)","0Color --> Fabric and Upholstery --> Carpet
 88543F-Copper","0SrfTreatment
-Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 464F3C-OliveGreen
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Carpet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Carpet,,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+Carpet (Medium Profile)
+0Color --> Fabric and Upholstery --> Carpet
+464F3C-OliveGreen
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Carpet,,"0RawMaterial
 Carpet (Medium Profile)","0Color --> Fabric and Upholstery --> Carpet
 464F3C-OliveGreen","0SrfTreatment
-Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Carpet
 0RawMaterial
 Carpet (Medium Profile)
 0Color --> Fabric and Upholstery --> Carpet
 7A878F-SilverBlue
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Carpet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Carpet,,"1Material --> Fabric and Upholstery --> Carpet
+0RawMaterial
+Carpet (Medium Profile)
+0Color --> Fabric and Upholstery --> Carpet
+7A878F-SilverBlue
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Carpet,,"0RawMaterial
 Carpet (Medium Profile)","0Color --> Fabric and Upholstery --> Carpet
 7A878F-SilverBlue","0SrfTreatment
-Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Cotton
 0RawMaterial
 Cotton
 0Color --> Fabric and Upholstery --> Cotton
 FFFFFF-Untinted
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Cotton,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Cotton,,"1Material --> Fabric and Upholstery --> Cotton
+0RawMaterial
+Cotton
+0Color --> Fabric and Upholstery --> Cotton
+FFFFFF-Untinted
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Cotton,,"0RawMaterial
 Cotton","0Color --> Fabric and Upholstery --> Cotton
 FFFFFF-Untinted","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Cotton
 0RawMaterial
 Felt
 0Color --> Fabric and Upholstery --> Felt
 2B2C30-Black
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Felt,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Felt,,"1Material --> Fabric and Upholstery --> Cotton
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+2B2C30-Black
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Felt,,"0RawMaterial
 Felt","0Color --> Fabric and Upholstery --> Felt
 2B2C30-Black","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Felt
 0RawMaterial
 Felt
 0Color --> Fabric and Upholstery --> Felt
 977953-Shakewood
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Felt,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Felt,,"1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+977953-Shakewood
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Felt,,"0RawMaterial
 Felt","0Color --> Fabric and Upholstery --> Felt
 977953-Shakewood","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Felt
 0RawMaterial
 Felt
 0Color --> Fabric and Upholstery --> Felt
 9E8C74-Tan
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Felt,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Felt,,"1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+9E8C74-Tan
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Felt,,"0RawMaterial
 Felt","0Color --> Fabric and Upholstery --> Felt
 9E8C74-Tan","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Felt
 0RawMaterial
 Felt
 0Color --> Fabric and Upholstery --> Felt
 564237-Brown
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Felt,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Felt,,"1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+564237-Brown
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Felt,,"0RawMaterial
 Felt","0Color --> Fabric and Upholstery --> Felt
 564237-Brown","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Felt
 0RawMaterial
 Felt
 0Color --> Fabric and Upholstery --> Felt
 44443C-WeatheredBrown
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Felt,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Felt,,"1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+44443C-WeatheredBrown
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Felt,,"0RawMaterial
 Felt","0Color --> Fabric and Upholstery --> Felt
 44443C-WeatheredBrown","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Felt
 0RawMaterial
 Felt
 0Color --> Fabric and Upholstery --> Felt
 AE5529-Aztec
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Felt,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Felt,,"1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+AE5529-Aztec
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Felt,,"0RawMaterial
 Felt","0Color --> Fabric and Upholstery --> Felt
 AE5529-Aztec","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Felt
 0RawMaterial
 Felt
 0Color --> Fabric and Upholstery --> Felt
 CDA488-Camel
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Felt,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Felt,,"1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+CDA488-Camel
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Felt,,"0RawMaterial
 Felt","0Color --> Fabric and Upholstery --> Felt
 CDA488-Camel","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Felt
 0RawMaterial
 Felt
 0Color --> Fabric and Upholstery --> Felt
 B9A081-Khaki
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Felt,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Felt,,"1Material --> Fabric and Upholstery --> Felt
+0RawMaterial
+Felt
+0Color --> Fabric and Upholstery --> Felt
+B9A081-Khaki
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Felt,,"0RawMaterial
 Felt","0Color --> Fabric and Upholstery --> Felt
 B9A081-Khaki","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Leather
 0RawMaterial
 Leather (Fine)
 0Color --> Fabric and Upholstery --> Leather
 B69377-Natural
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Leather,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Leather,,"1Material --> Fabric and Upholstery --> Leather
+0RawMaterial
+Leather (Fine)
+0Color --> Fabric and Upholstery --> Leather
+B69377-Natural
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Leather,,"0RawMaterial
 Leather (Fine)","0Color --> Fabric and Upholstery --> Leather
 B69377-Natural","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Leather
 0RawMaterial
 Leather (Grained)
 0Color --> Fabric and Upholstery --> Leather
 B69377-Natural
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Leather,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Leather,,"1Material --> Fabric and Upholstery --> Leather
+0RawMaterial
+Leather (Grained)
+0Color --> Fabric and Upholstery --> Leather
+B69377-Natural
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Leather,,"0RawMaterial
 Leather (Grained)","0Color --> Fabric and Upholstery --> Leather
 B69377-Natural","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Leather
 0RawMaterial
 Leather (Matte)
 0Color --> Fabric and Upholstery --> Leather
 B69377-Natural
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Leather,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Leather,,"1Material --> Fabric and Upholstery --> Leather
+0RawMaterial
+Leather (Matte)
+0Color --> Fabric and Upholstery --> Leather
+B69377-Natural
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Leather,,"0RawMaterial
 Leather (Matte)","0Color --> Fabric and Upholstery --> Leather
 B69377-Natural","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Silk
 0RawMaterial
 Silk
 0Color --> Fabric and Upholstery --> Silk
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Silk,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Silk,,"1Material --> Fabric and Upholstery --> Silk
+0RawMaterial
+Silk
+0Color --> Fabric and Upholstery --> Silk
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Silk,,"0RawMaterial
 Silk",0Color --> Fabric and Upholstery --> Silk,"0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Velvet
 0RawMaterial
 Velvet
 0Color --> Fabric and Upholstery --> Velvet
 FFFFFF-Untinted
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Velvet,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Velvet,,"1Material --> Fabric and Upholstery --> Velvet
+0RawMaterial
+Velvet
+0Color --> Fabric and Upholstery --> Velvet
+FFFFFF-Untinted
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Velvet,,"0RawMaterial
 Velvet","0Color --> Fabric and Upholstery --> Velvet
 FFFFFF-Untinted","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fabric and Upholstery --> Vinyl
 0RawMaterial
 Vinyl
 0Color --> Fabric and Upholstery --> Vinyl
 FFFFFF-Untinted
 0SrfTreatment
-Standard",,1Material --> Fabric and Upholstery --> Vinyl,,,,"0RawMaterial
+Standard",,1Material --> Fabric and Upholstery --> Vinyl,,"1Material --> Fabric and Upholstery --> Vinyl
+0RawMaterial
+Vinyl
+0Color --> Fabric and Upholstery --> Vinyl
+FFFFFF-Untinted
+0SrfTreatment
+Standard",1Material --> Fabric and Upholstery --> Vinyl,,"0RawMaterial
 Vinyl","0Color --> Fabric and Upholstery --> Vinyl
 FFFFFF-Untinted","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Ceramic --> Clay
 0RawMaterial
 Clay
 0Color --> Ceramic --> Clay
 A05633-Natural
 0SrfTreatment
-Standard",,1Material --> Ceramic --> Clay,,,,"0RawMaterial
+Standard",,1Material --> Ceramic --> Clay,,"1Material --> Ceramic --> Clay
+0RawMaterial
+Clay
+0Color --> Ceramic --> Clay
+A05633-Natural
+0SrfTreatment
+Standard",1Material --> Ceramic --> Clay,,"0RawMaterial
 Clay","0Color --> Ceramic --> Clay
 A05633-Natural","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,X,,X,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,X,X,,X,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"1Material --> Ceramic --> Clay
+0RawMaterial
+Clay
+0Color --> Ceramic --> Clay
+D5B795-Tan
+0SrfTreatment
+Standard",,1Material --> Ceramic --> Clay,,"1Material --> Ceramic --> Clay
+0RawMaterial
+Clay
+0Color --> Ceramic --> Clay
+D5B795-Tan
+0SrfTreatment
+Standard",1Material --> Ceramic --> Clay,,"0RawMaterial
+Clay","0Color --> Ceramic --> Clay
+D5B795-Tan","0SrfTreatment
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,X,X,,X,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"1Material --> Ceramic --> Porcelain
+0RawMaterial
+Porcelain
+0Color --> Ceramic --> Porcelain
+FAFAFA-NearlyWhite
+0SrfTreatment
+Standard",,1Material --> Ceramic --> Porcelain,,"1Material --> Ceramic --> Porcelain
+0RawMaterial
+Porcelain
+0Color --> Ceramic --> Porcelain
+FAFAFA-NearlyWhite
+0SrfTreatment
+Standard",1Material --> Ceramic --> Porcelain,,"0RawMaterial
+Porcelain","0Color --> Ceramic --> Porcelain
+FAFAFA-NearlyWhite","0SrfTreatment
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Ceramic --> Porcelain
 0RawMaterial
 Porcelain
 0Color --> Ceramic --> Porcelain
 E6E3DE-Eggshell
 0SrfTreatment
-Standard",,1Material --> Ceramic --> Porcelain,,,,"0RawMaterial
+Standard",,1Material --> Ceramic --> Porcelain,,"1Material --> Ceramic --> Porcelain
+0RawMaterial
+Porcelain
+0Color --> Ceramic --> Porcelain
+E6E3DE-Eggshell
+0SrfTreatment
+Standard",1Material --> Ceramic --> Porcelain,,"0RawMaterial
 Porcelain","0Color --> Ceramic --> Porcelain
 E6E3DE-Eggshell","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Glass and Transparent --> Air
 0RawMaterial
 Air
 0Color --> Glass and Transparent --> Air
 FFFFFF-Clear
 0SrfTreatment
-Standard",,1Material --> Glass and Transparent --> Air,,,,"0RawMaterial
+Standard",,1Material --> Glass and Transparent --> Air,,"1Material --> Glass and Transparent --> Air
+0RawMaterial
+Air
+0Color --> Glass and Transparent --> Air
+FFFFFF-Clear
+0SrfTreatment
+Standard",1Material --> Glass and Transparent --> Air,,"0RawMaterial
 Air","0Color --> Glass and Transparent --> Air
 FFFFFF-Clear","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,,,,,,,
 PRESET,,"1Material --> Glass and Transparent --> Air
 0RawMaterial
 Glass Block
 0Color --> Glass and Transparent --> Glass Block
 FFFFFF-Untinted
 0SrfTreatment
-Standard",,1Material --> Glass and Transparent --> Glass Block,,,,"0RawMaterial
+Standard",,1Material --> Glass and Transparent --> Glass Block,,"1Material --> Glass and Transparent --> Air
+0RawMaterial
+Glass Block
+0Color --> Glass and Transparent --> Glass Block
+FFFFFF-Untinted
+0SrfTreatment
+Standard",1Material --> Glass and Transparent --> Glass Block,,"0RawMaterial
 Glass Block","0Color --> Glass and Transparent --> Glass Block
 FFFFFF-Untinted","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Glass and Transparent --> Glass Block
 0RawMaterial
 Glass Block
 0Color --> Glass and Transparent --> Glass
 F2F2F2-White
 0SrfTreatment
-Standard",,1Material --> Glass and Transparent --> Glass,,,,"0RawMaterial
+Standard",,1Material --> Glass and Transparent --> Glass,,"1Material --> Glass and Transparent --> Glass Block
+0RawMaterial
+Glass Block
+0Color --> Glass and Transparent --> Glass
+F2F2F2-White
+0SrfTreatment
+Standard",1Material --> Glass and Transparent --> Glass,,"0RawMaterial
 Glass Block","0Color --> Glass and Transparent --> Glass
 F2F2F2-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Glass and Transparent --> Glass
 0RawMaterial
 Glass
 0Color --> Glass and Transparent --> Glass
-F2F2F2-White
+E1DDDA-Limestone
 0SrfTreatment
-Standard",,1Material --> Glass and Transparent --> Glass,,,,"0RawMaterial
+Standard",,1Material --> Glass and Transparent --> Glass,,"1Material --> Glass and Transparent --> Glass
+0RawMaterial
+Glass
+0Color --> Glass and Transparent --> Glass
+E1DDDA-Limestone
+0SrfTreatment
+Standard",1Material --> Glass and Transparent --> Glass,,"0RawMaterial
 Glass","0Color --> Glass and Transparent --> Glass
-F2F2F2-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,#REF!,,1Material --> Glass and Transparent --> Mesh Fly Screen,,,,"0RawMaterial
-Mesh Fly Screen",#REF!,"0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+E1DDDA-Limestone","0SrfTreatment
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"1Material --> Glass and Transparent --> Mesh Fly Screen
+0RawMaterial
+Mesh Fly Screen
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",,1Material --> Glass and Transparent --> Mesh Fly Screen,,"1Material --> Glass and Transparent --> Mesh Fly Screen
+0RawMaterial
+Mesh Fly Screen
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Glass and Transparent --> Mesh Fly Screen,,"0RawMaterial
+Mesh Fly Screen","0Color --> Abstract
+FFFFFF-White","0SrfTreatment
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Metal --> Aluminum
 0RawMaterial
 Aluminum
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1Material --> Metal --> Aluminum,,,,"0RawMaterial
+Standard",,1Material --> Metal --> Aluminum,,"1Material --> Metal --> Aluminum
+0RawMaterial
+Aluminum
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",1Material --> Metal --> Aluminum,,"0RawMaterial
 Aluminum","0Color --> Metal --> Aluminum
 FFFFFF-PureWhite","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Metal --> Chrome
 0RawMaterial
 Chrome
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1Material --> Metal --> Chrome,,,,"0RawMaterial
+Standard",,1Material --> Metal --> Chrome,,"1Material --> Metal --> Chrome
+0RawMaterial
+Chrome
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",1Material --> Metal --> Chrome,,"0RawMaterial
 Chrome","0Color --> Metal --> Aluminum
 FFFFFF-PureWhite","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Metal --> Copper
 0RawMaterial
 Copper
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1Material --> Metal --> Copper,,,,"0RawMaterial
+Standard",,1Material --> Metal --> Copper,,"1Material --> Metal --> Copper
+0RawMaterial
+Copper
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",1Material --> Metal --> Copper,,"0RawMaterial
 Copper","0Color --> Metal --> Aluminum
 FFFFFF-PureWhite","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Metal --> Iron
 0RawMaterial
 Iron
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1Material --> Metal --> Iron,,,,"0RawMaterial
+Standard",,1Material --> Metal --> Iron,,"1Material --> Metal --> Iron
+0RawMaterial
+Iron
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",1Material --> Metal --> Iron,,"0RawMaterial
 Iron","0Color --> Metal --> Aluminum
 FFFFFF-PureWhite","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Metal --> Nickel
 0RawMaterial
 Nickel
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1Material --> Metal --> Nickel,,,,"0RawMaterial
+Standard",,1Material --> Metal --> Nickel,,"1Material --> Metal --> Nickel
+0RawMaterial
+Nickel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",1Material --> Metal --> Nickel,,"0RawMaterial
 Nickel","0Color --> Metal --> Aluminum
 FFFFFF-PureWhite","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Metal --> Steel
 0RawMaterial
 Steel
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1Material --> Metal --> Steel,,,,"0RawMaterial
+Standard",,1Material --> Metal --> Steel,,"1Material --> Metal --> Steel
+0RawMaterial
+Steel
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",1Material --> Metal --> Steel,,"0RawMaterial
 Steel","0Color --> Metal --> Aluminum
 FFFFFF-PureWhite","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,X,X,X,X,X,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,X,X,X,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,X,X,X,X,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Metal --> Tin
 0RawMaterial
 Tin
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1Material --> Metal --> Tin,,,,"0RawMaterial
+Standard",,1Material --> Metal --> Tin,,"1Material --> Metal --> Tin
+0RawMaterial
+Tin
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",1Material --> Metal --> Tin,,"0RawMaterial
 Tin","0Color --> Metal --> Aluminum
 FFFFFF-PureWhite","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Metal --> Zinc
 0RawMaterial
 Zinc
 0Color --> Metal --> Aluminum
 FFFFFF-PureWhite
 0SrfTreatment
-Standard",,1Material --> Metal --> Zinc,,,,"0RawMaterial
+Standard",,1Material --> Metal --> Zinc,,"1Material --> Metal --> Zinc
+0RawMaterial
+Zinc
+0Color --> Metal --> Aluminum
+FFFFFF-PureWhite
+0SrfTreatment
+Standard",1Material --> Metal --> Zinc,,"0RawMaterial
 Zinc","0Color --> Metal --> Aluminum
 FFFFFF-PureWhite","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Spread --> Paint
 0RawMaterial
 Paint
 0Color --> Spread --> Paint
 F3F1ED-GentleWhite
 0SrfTreatment
-BuffPolished",,1Material --> Spread --> Paint,,,,"0RawMaterial
+BuffPolished",,1Material --> Spread --> Paint,,"1Material --> Spread --> Paint
+0RawMaterial
+Paint
+0Color --> Spread --> Paint
+F3F1ED-GentleWhite
+0SrfTreatment
+BuffPolished",1Material --> Spread --> Paint,,"0RawMaterial
 Paint","0Color --> Spread --> Paint
 F3F1ED-GentleWhite","0SrfTreatment
-BuffPolished",,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+BuffPolished",,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Spread --> Plaster
 0RawMaterial
 Plaster
 0Color --> Spread --> Plaster
 F7EBDB-Shell
 0SrfTreatment
-Standard",,1Material --> Spread --> Plaster,,,,"0RawMaterial
+Standard",,1Material --> Spread --> Plaster,,"1Material --> Spread --> Plaster
+0RawMaterial
+Plaster
+0Color --> Spread --> Plaster
+F7EBDB-Shell
+0SrfTreatment
+Standard",1Material --> Spread --> Plaster,,"0RawMaterial
 Plaster","0Color --> Spread --> Plaster
 F7EBDB-Shell","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
 Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
-Standard",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene,,,,"0RawMaterial
-Foam (Extruded Polystyrene)","0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
-ECB9BE-Pink","0SrfTreatment
-Standard",,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"1Material --> Synthetic and Polymer --> Foam - Polyethylene
+Standard",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene,,"1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 0RawMaterial
-Foam (Polyethylene)
+Foam (Extruded Polystyrene)
 0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink
 0SrfTreatment
-Standard",,1Material --> Synthetic and Polymer --> Foam - Polyethylene,,,,"0RawMaterial
-Foam (Polyethylene)","0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
+Standard",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene,,"0RawMaterial
+Foam (Extruded Polystyrene)","0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
 ECB9BE-Pink","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"1Material --> Synthetic and Polymer --> Foam - Polyethylene
+0RawMaterial
+Foam (Polyethylene)
+0Color --> Synthetic and Polymer --> Foam - Polyethylene
+FAFAFA-White
+0SrfTreatment
+Standard",,1Material --> Synthetic and Polymer --> Foam - Polyethylene,,"1Material --> Synthetic and Polymer --> Foam - Polyethylene
+0RawMaterial
+Foam (Polyethylene)
+0Color --> Synthetic and Polymer --> Foam - Polyethylene
+FAFAFA-White
+0SrfTreatment
+Standard",1Material --> Synthetic and Polymer --> Foam - Polyethylene,,"0RawMaterial
+Foam (Polyethylene)","0Color --> Synthetic and Polymer --> Foam - Polyethylene
+FAFAFA-White","0SrfTreatment
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,,,,,,,
 PRESET,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
 0RawMaterial
 Foam (Polyisocyanurate)
-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
-FAF1D0-Yellow
+0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate
+FAFAFA-White
 0SrfTreatment
-Standard",,1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate,,,,"0RawMaterial
-Foam (Polyisocyanurate)","0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene
-FAF1D0-Yellow","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate,,"1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
+0RawMaterial
+Foam (Polyisocyanurate)
+0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate
+FAFAFA-White
+0SrfTreatment
+Standard",1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate,,"0RawMaterial
+Foam (Polyisocyanurate)","0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate
+FAFAFA-White","0SrfTreatment
+Standard",,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,,,,,,,
 PRESET,,"1Material --> Synthetic and Polymer --> Plastic
 0RawMaterial
 Plastic
 0Color --> Abstract
 6B6B6B-Gray6
 0SrfTreatment
-Standard",,1Material --> Synthetic and Polymer --> Plastic,,,,"0RawMaterial
+Standard",,1Material --> Synthetic and Polymer --> Plastic,,"1Material --> Synthetic and Polymer --> Plastic
+0RawMaterial
+Plastic
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard",1Material --> Synthetic and Polymer --> Plastic,,"0RawMaterial
 Plastic","0Color --> Abstract
 6B6B6B-Gray6","0SrfTreatment
-Standard",,,,,,,,,X,X,X,,,,,,,,X,X,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,X,X,X,,,,,,,,X,X,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Synthetic and Polymer --> Rubber
 0RawMaterial
 Rubber
 0Color --> Abstract
 6B6B6B-Gray6
 0SrfTreatment
-Standard",,1Material --> Synthetic and Polymer --> Rubber,,,,"0RawMaterial
+Standard",,1Material --> Synthetic and Polymer --> Rubber,,"1Material --> Synthetic and Polymer --> Rubber
+0RawMaterial
+Rubber
+0Color --> Abstract
+6B6B6B-Gray6
+0SrfTreatment
+Standard",1Material --> Synthetic and Polymer --> Rubber,,"0RawMaterial
 Rubber","0Color --> Abstract
 6B6B6B-Gray6","0SrfTreatment
-Standard",,,,,,,X,X,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,X,X,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Synthetic and Polymer --> Vinyl Composite
 0RawMaterial
 Vinyl Composite
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Synthetic and Polymer --> Vinyl Composite,,,,"0RawMaterial
+Standard",,1Material --> Synthetic and Polymer --> Vinyl Composite,,"1Material --> Synthetic and Polymer --> Vinyl Composite
+0RawMaterial
+Vinyl Composite
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Synthetic and Polymer --> Vinyl Composite,,"0RawMaterial
 Vinyl Composite","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Alabaster
 0RawMaterial
 Alabaster
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Alabaster,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Alabaster,,"1Material --> Stone --> Alabaster
+0RawMaterial
+Alabaster
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Alabaster,,"0RawMaterial
 Alabaster","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Basalt
 0RawMaterial
 Basalt
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Basalt,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Basalt,,"1Material --> Stone --> Basalt
+0RawMaterial
+Basalt
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Basalt,,"0RawMaterial
 Basalt","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Basalt
 0RawMaterial
 Basalt (Rough)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Basalt,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Basalt,,"1Material --> Stone --> Basalt
+0RawMaterial
+Basalt (Rough)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Basalt,,"0RawMaterial
 Basalt (Rough)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Granite
 0RawMaterial
 Granite (Black 1)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Granite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Granite,,"1Material --> Stone --> Granite
+0RawMaterial
+Granite (Black 1)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Granite,,"0RawMaterial
 Granite (Black 1)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Granite
 0RawMaterial
 Granite (Black 2)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Granite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Granite,,"1Material --> Stone --> Granite
+0RawMaterial
+Granite (Black 2)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Granite,,"0RawMaterial
 Granite (Black 2)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Granite
 0RawMaterial
 Granite (Black 3)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Granite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Granite,,"1Material --> Stone --> Granite
+0RawMaterial
+Granite (Black 3)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Granite,,"0RawMaterial
 Granite (Black 3)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Granite
 0RawMaterial
 Granite (Black 4)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Granite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Granite,,"1Material --> Stone --> Granite
+0RawMaterial
+Granite (Black 4)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Granite,,"0RawMaterial
 Granite (Black 4)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Granite
 0RawMaterial
 Granite (Brown 1)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Granite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Granite,,"1Material --> Stone --> Granite
+0RawMaterial
+Granite (Brown 1)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Granite,,"0RawMaterial
 Granite (Brown 1)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Granite
 0RawMaterial
 Granite (Brown 2)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Granite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Granite,,"1Material --> Stone --> Granite
+0RawMaterial
+Granite (Brown 2)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Granite,,"0RawMaterial
 Granite (Brown 2)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Granite
 0RawMaterial
 Granite (Grey 1)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Granite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Granite,,"1Material --> Stone --> Granite
+0RawMaterial
+Granite (Grey 1)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Granite,,"0RawMaterial
 Granite (Grey 1)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Granite
 0RawMaterial
 Granite (Orange 1)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Granite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Granite,,"1Material --> Stone --> Granite
+0RawMaterial
+Granite (Orange 1)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Granite,,"0RawMaterial
 Granite (Orange 1)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Granite
 0RawMaterial
 Granite (Orange 2)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Granite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Granite,,"1Material --> Stone --> Granite
+0RawMaterial
+Granite (Orange 2)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Granite,,"0RawMaterial
 Granite (Orange 2)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Granite
 0RawMaterial
 Granite (Pink 1)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Granite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Granite,,"1Material --> Stone --> Granite
+0RawMaterial
+Granite (Pink 1)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Granite,,"0RawMaterial
 Granite (Pink 1)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Lava Stone
 0RawMaterial
 Lava Stone
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Lava Stone,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Lava Stone,,"1Material --> Stone --> Lava Stone
+0RawMaterial
+Lava Stone
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Lava Stone,,"0RawMaterial
 Lava Stone","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Limestone
 0RawMaterial
 Limestone (White)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Limestone,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Limestone,,"1Material --> Stone --> Limestone
+0RawMaterial
+Limestone (White)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Limestone,,"0RawMaterial
 Limestone (White)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Limestone
 0RawMaterial
 Limestone (Beige)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Limestone,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Limestone,,"1Material --> Stone --> Limestone
+0RawMaterial
+Limestone (Beige)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Limestone,,"0RawMaterial
 Limestone (Beige)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Marble
 0RawMaterial
 Marble (Black 1)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Marble,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Marble,,"1Material --> Stone --> Marble
+0RawMaterial
+Marble (Black 1)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Marble,,"0RawMaterial
 Marble (Black 1)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Marble
 0RawMaterial
 Marble (Black 2)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Marble,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Marble,,"1Material --> Stone --> Marble
+0RawMaterial
+Marble (Black 2)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Marble,,"0RawMaterial
 Marble (Black 2)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Marble
 0RawMaterial
 Marble (Calacatta)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Marble,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Marble,,"1Material --> Stone --> Marble
+0RawMaterial
+Marble (Calacatta)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Marble,,"0RawMaterial
 Marble (Calacatta)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Marble
 0RawMaterial
 Marble (Carrara)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Marble,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Marble,,"1Material --> Stone --> Marble
+0RawMaterial
+Marble (Carrara)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Marble,,"0RawMaterial
 Marble (Carrara)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Marble
 0RawMaterial
 Marble (Green 1)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Marble,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Marble,,"1Material --> Stone --> Marble
+0RawMaterial
+Marble (Green 1)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Marble,,"0RawMaterial
 Marble (Green 1)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Marble
 0RawMaterial
 Marble (Grey 1)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Marble,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Marble,,"1Material --> Stone --> Marble
+0RawMaterial
+Marble (Grey 1)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Marble,,"0RawMaterial
 Marble (Grey 1)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Onyx
 0RawMaterial
 Onyx
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Onyx,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Onyx,,"1Material --> Stone --> Onyx
+0RawMaterial
+Onyx
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Onyx,,"0RawMaterial
 Onyx","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Quartzite
 0RawMaterial
 Quartzite 1
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Quartzite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Quartzite,,"1Material --> Stone --> Quartzite
+0RawMaterial
+Quartzite 1
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Quartzite,,"0RawMaterial
 Quartzite 1","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Quartzite
 0RawMaterial
 Quartzite 2
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Quartzite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Quartzite,,"1Material --> Stone --> Quartzite
+0RawMaterial
+Quartzite 2
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Quartzite,,"0RawMaterial
 Quartzite 2","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Quartzite
 0RawMaterial
 Quartzite 3
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Quartzite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Quartzite,,"1Material --> Stone --> Quartzite
+0RawMaterial
+Quartzite 3
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Quartzite,,"0RawMaterial
 Quartzite 3","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Quartzite
 0RawMaterial
 Quartzite 4
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Quartzite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Quartzite,,"1Material --> Stone --> Quartzite
+0RawMaterial
+Quartzite 4
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Quartzite,,"0RawMaterial
 Quartzite 4","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Quartzite
 0RawMaterial
 Quartzite 5
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Quartzite,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Quartzite,,"1Material --> Stone --> Quartzite
+0RawMaterial
+Quartzite 5
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Quartzite,,"0RawMaterial
 Quartzite 5","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Sandstone
 0RawMaterial
 Sandstone
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Sandstone,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Sandstone,,"1Material --> Stone --> Sandstone
+0RawMaterial
+Sandstone
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Sandstone,,"0RawMaterial
 Sandstone","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Slate
 0RawMaterial
 Slate
 0Color --> Abstract
 ABABAB-Gray4
 0SrfTreatment
-Standard",,1Material --> Stone --> Slate,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Slate,,"1Material --> Stone --> Slate
+0RawMaterial
+Slate
+0Color --> Abstract
+ABABAB-Gray4
+0SrfTreatment
+Standard",1Material --> Stone --> Slate,,"0RawMaterial
 Slate","0Color --> Abstract
 ABABAB-Gray4","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Soapstone
 0RawMaterial
 Soapstone
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Soapstone,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Soapstone,,"1Material --> Stone --> Soapstone
+0RawMaterial
+Soapstone
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Soapstone,,"0RawMaterial
 Soapstone","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Stone --> Travertine
 0RawMaterial
 Travertine
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Stone --> Travertine,,,,"0RawMaterial
+Standard",,1Material --> Stone --> Travertine,,"1Material --> Stone --> Travertine
+0RawMaterial
+Travertine
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Stone --> Travertine,,"0RawMaterial
 Travertine","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,,,,,X,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Ash
 0RawMaterial
 Ash
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Ash,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Ash,,"1Material --> Wood --> Ash
+0RawMaterial
+Ash
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Ash,,"0RawMaterial
 Ash","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Bamboo
 0RawMaterial
 Bamboo
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Bamboo,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Bamboo,,"1Material --> Wood --> Bamboo
+0RawMaterial
+Bamboo
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Bamboo,,"0RawMaterial
 Bamboo","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Beech
 0RawMaterial
 Beech
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Beech,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Beech,,"1Material --> Wood --> Beech
+0RawMaterial
+Beech
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Beech,,"0RawMaterial
 Beech","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Birch
 0RawMaterial
 Birch (Yellow)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Birch,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Birch,,"1Material --> Wood --> Birch
+0RawMaterial
+Birch (Yellow)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Birch,,"0RawMaterial
 Birch (Yellow)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Cedar - Western Red
 0RawMaterial
 Cedar (Western Red)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Cedar - Western Red,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Cedar - Western Red,,"1Material --> Wood --> Cedar - Western Red
+0RawMaterial
+Cedar (Western Red)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Cedar - Western Red,,"0RawMaterial
 Cedar (Western Red)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Cedar - White
 0RawMaterial
 Cedar (White)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Cedar - White,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Cedar - White,,"1Material --> Wood --> Cedar - White
+0RawMaterial
+Cedar (White)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Cedar - White,,"0RawMaterial
 Cedar (White)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,X,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,X,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Cherry
 0RawMaterial
 Cherry
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Cherry,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Cherry,,"1Material --> Wood --> Cherry
+0RawMaterial
+Cherry
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Cherry,,"0RawMaterial
 Cherry","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Cypress - Bald
 0RawMaterial
 Cypress (Bald)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Cypress - Bald,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Cypress - Bald,,"1Material --> Wood --> Cypress - Bald
+0RawMaterial
+Cypress (Bald)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Cypress - Bald,,"0RawMaterial
 Cypress (Bald)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,X,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,X,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Ipe
 0RawMaterial
 Ipe
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Ipe,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Ipe,,"1Material --> Wood --> Ipe
+0RawMaterial
+Ipe
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Ipe,,"0RawMaterial
 Ipe","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Mahogany
 0RawMaterial
 Mahogany
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Mahogany,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Mahogany,,"1Material --> Wood --> Mahogany
+0RawMaterial
+Mahogany
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Mahogany,,"0RawMaterial
 Mahogany","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Maple
 0RawMaterial
 Maple
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Maple,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Maple,,"1Material --> Wood --> Maple
+0RawMaterial
+Maple
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Maple,,"0RawMaterial
 Maple","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Oak - Red
 0RawMaterial
 Oak (Red)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Oak - Red,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Oak - Red,,"1Material --> Wood --> Oak - Red
+0RawMaterial
+Oak (Red)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Oak - Red,,"0RawMaterial
 Oak (Red)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Oak - White
 0RawMaterial
 Oak (White)
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Oak - White,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Oak - White,,"1Material --> Wood --> Oak - White
+0RawMaterial
+Oak (White)
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Oak - White,,"0RawMaterial
 Oak (White)","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Redwood
 0RawMaterial
 Redwood
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Redwood,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Redwood,,"1Material --> Wood --> Redwood
+0RawMaterial
+Redwood
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Redwood,,"0RawMaterial
 Redwood","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,X,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,X,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Spruce-Pine-Fir
 0RawMaterial
 Spruce-Pine-Fir
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Spruce-Pine-Fir,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Spruce-Pine-Fir,,"1Material --> Wood --> Spruce-Pine-Fir
+0RawMaterial
+Spruce-Pine-Fir
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Spruce-Pine-Fir,,"0RawMaterial
 Spruce-Pine-Fir","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,X,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,X,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Sycamore
 0RawMaterial
 Sycamore
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Sycamore,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Sycamore,,"1Material --> Wood --> Sycamore
+0RawMaterial
+Sycamore
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Sycamore,,"0RawMaterial
 Sycamore","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Teak
 0RawMaterial
 Teak
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Teak,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Teak,,"1Material --> Wood --> Teak
+0RawMaterial
+Teak
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Teak,,"0RawMaterial
 Teak","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Wood --> Walnut
 0RawMaterial
 Walnut
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Unfinished",,1Material --> Wood --> Walnut,,,,"0RawMaterial
+Unfinished",,1Material --> Wood --> Walnut,,"1Material --> Wood --> Walnut
+0RawMaterial
+Walnut
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Unfinished",1Material --> Wood --> Walnut,,"0RawMaterial
 Walnut","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Unfinished",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Cork
 0RawMaterial
 Cork
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Cork,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Cork,,"1Material --> Fibrous --> Cork
+0RawMaterial
+Cork
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Fibrous --> Cork,,"0RawMaterial
 Cork","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
 Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+Cementitious Wood Fiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Fibrous --> Cementitious Wood Fiber,,"0RawMaterial
 Cementitious Wood Fiber","0Color --> Fibrous --> Cementitious Wood Fiber
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
 Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 D0C6BD-Cream1
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+Cementitious Wood Fiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+D0C6BD-Cream1
+0SrfTreatment
+Standard",1Material --> Fibrous --> Cementitious Wood Fiber,,"0RawMaterial
 Cementitious Wood Fiber","0Color --> Fibrous --> Cementitious Wood Fiber
 D0C6BD-Cream1","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
 Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 BF945F-Saddle
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+Cementitious Wood Fiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+BF945F-Saddle
+0SrfTreatment
+Standard",1Material --> Fibrous --> Cementitious Wood Fiber,,"0RawMaterial
 Cementitious Wood Fiber","0Color --> Fibrous --> Cementitious Wood Fiber
 BF945F-Saddle","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
 Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 A99978-Parchment
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+Cementitious Wood Fiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+A99978-Parchment
+0SrfTreatment
+Standard",1Material --> Fibrous --> Cementitious Wood Fiber,,"0RawMaterial
 Cementitious Wood Fiber","0Color --> Fibrous --> Cementitious Wood Fiber
 A99978-Parchment","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
 Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 88543F-Copper
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+Cementitious Wood Fiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+88543F-Copper
+0SrfTreatment
+Standard",1Material --> Fibrous --> Cementitious Wood Fiber,,"0RawMaterial
 Cementitious Wood Fiber","0Color --> Fibrous --> Cementitious Wood Fiber
 88543F-Copper","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
 Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 464F3C-OliveGreen
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+Cementitious Wood Fiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+464F3C-OliveGreen
+0SrfTreatment
+Standard",1Material --> Fibrous --> Cementitious Wood Fiber,,"0RawMaterial
 Cementitious Wood Fiber","0Color --> Fibrous --> Cementitious Wood Fiber
 464F3C-OliveGreen","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
 Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 7A878F-SilverBlue
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+Cementitious Wood Fiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+7A878F-SilverBlue
+0SrfTreatment
+Standard",1Material --> Fibrous --> Cementitious Wood Fiber,,"0RawMaterial
 Cementitious Wood Fiber","0Color --> Fibrous --> Cementitious Wood Fiber
 7A878F-SilverBlue","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
 Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 38485F-OrderlyBlue
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+Cementitious Wood Fiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+38485F-OrderlyBlue
+0SrfTreatment
+Standard",1Material --> Fibrous --> Cementitious Wood Fiber,,"0RawMaterial
 Cementitious Wood Fiber","0Color --> Fibrous --> Cementitious Wood Fiber
 38485F-OrderlyBlue","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
 Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 3C3B40-Ink
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+Cementitious Wood Fiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+3C3B40-Ink
+0SrfTreatment
+Standard",1Material --> Fibrous --> Cementitious Wood Fiber,,"0RawMaterial
 Cementitious Wood Fiber","0Color --> Fibrous --> Cementitious Wood Fiber
 3C3B40-Ink","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Cementitious Wood Fiber
 0RawMaterial
 Cementitious Wood Fiber
 0Color --> Fibrous --> Cementitious Wood Fiber
 534E4A-Charcoal
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Cementitious Wood Fiber,,"1Material --> Fibrous --> Cementitious Wood Fiber
+0RawMaterial
+Cementitious Wood Fiber
+0Color --> Fibrous --> Cementitious Wood Fiber
+534E4A-Charcoal
+0SrfTreatment
+Standard",1Material --> Fibrous --> Cementitious Wood Fiber,,"0RawMaterial
 Cementitious Wood Fiber","0Color --> Fibrous --> Cementitious Wood Fiber
 534E4A-Charcoal","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Mineral Fiber
 0RawMaterial
 Mineral Fiber
 0Color --> Fibrous --> Mineral Fiber
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Mineral Fiber,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Mineral Fiber,,"1Material --> Fibrous --> Mineral Fiber
+0RawMaterial
+Mineral Fiber
+0Color --> Fibrous --> Mineral Fiber
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Fibrous --> Mineral Fiber,,"0RawMaterial
 Mineral Fiber","0Color --> Fibrous --> Mineral Fiber
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Plywood
 0RawMaterial
 Plywood
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Plywood,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Plywood,,"1Material --> Fibrous --> Plywood
+0RawMaterial
+Plywood
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Fibrous --> Plywood,,"0RawMaterial
 Plywood","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Wood Fibers
 0RawMaterial
 Wood Fibers
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Wood Fibers,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Wood Fibers,,"1Material --> Fibrous --> Wood Fibers
+0RawMaterial
+Wood Fibers
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Fibrous --> Wood Fibers,,"0RawMaterial
 Wood Fibers","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Wood Particles
 0RawMaterial
 Wood Particles
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Wood Particles,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Wood Particles,,"1Material --> Fibrous --> Wood Particles
+0RawMaterial
+Wood Particles
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Fibrous --> Wood Particles,,"0RawMaterial
 Wood Particles","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Fibrous --> Wood Strands
 0RawMaterial
 Wood Strands
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Fibrous --> Wood Strands,,,,"0RawMaterial
+Standard",,1Material --> Fibrous --> Wood Strands,,"1Material --> Fibrous --> Wood Strands
+0RawMaterial
+Wood Strands
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Fibrous --> Wood Strands,,"0RawMaterial
 Wood Strands","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,X,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Sitework --> Grass
 0RawMaterial
 Grass
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Sitework --> Grass,,,,"0RawMaterial
+Standard",,1Material --> Sitework --> Grass,,"1Material --> Sitework --> Grass
+0RawMaterial
+Grass
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Sitework --> Grass,,"0RawMaterial
 Grass","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Sitework --> Moss
 0RawMaterial
 Moss
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Sitework --> Moss,,,,"0RawMaterial
+Standard",,1Material --> Sitework --> Moss,,"1Material --> Sitework --> Moss
+0RawMaterial
+Moss
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Sitework --> Moss,,"0RawMaterial
 Moss","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"1Material --> Sitework --> Soil
 0RawMaterial
 Soil
 0Color --> Abstract
 FFFFFF-White
 0SrfTreatment
-Standard",,1Material --> Sitework --> Soil,,,,"0RawMaterial
+Standard",,1Material --> Sitework --> Soil,,"1Material --> Sitework --> Soil
+0RawMaterial
+Soil
+0Color --> Abstract
+FFFFFF-White
+0SrfTreatment
+Standard",1Material --> Sitework --> Soil,,"0RawMaterial
 Soil","0Color --> Abstract
 FFFFFF-White","0SrfTreatment
-Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

@@ -1,169 +1,123 @@
-TYPENAME,,0Mesh,,Mesh,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,STRING,,Name,,Mesh.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,PRIVATE,,Mesh Asset Path,,Mesh.AssetPath,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,PRIVATE,,AvailableSlotArray,,Mesh.Slots,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,PRIVATE,,Editable Material Channel Array,,Mesh.EditableMaterialChannels,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath,DataType=Properties,Mesh.Name,Mesh.AssetPath,Native SizeX,NativeSizeY,NativeSizeZ,Normal,Tangent,SliceX1,SliceX2,SliceY1,SliceY2,SliceZ1,SliceZ2,DataType=Slots,Mesh.Slots,SlotSupportedNCPs,SlotDisplayName,SlotLocationX,SlotLocationY,SlotLocationZ,SlotSizeX,SlotSizeY,SlotSizeZ,SlotRotationAroundX,SlotRotationAroundY,SlotRotationAroundZ,SlotFlipAlongX,SlotFlipAlongY,SlotFlipAlongZ,DataType=MaterialChannels,Node.MaterialChannelKey,Node.MaterialSupportedNCPs,Node.MaterialChannelDisplayName,,,,,,
-,,"0Mesh
-Double-Rabbet Wood Frame",,0Mesh,,2Part --> Door --> Frame --> Swing --> Interior,,Double-Rabbet Wood Frame,Door-Frame-Swing-Interior-DoubleRabbetWood.fbx,36,3.5,80,,,0.375,35.625,,,0.000,79.625,,HingeSet1,2Part --> Door --> HingeSet --> Swing,Main Hinge Set,0,0,0,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,HingeSet2,2Part --> Door --> HingeSet --> Swing,Opposite Hinge Set,36,0,0,,,,,,,X,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Panel1of1,2Part --> Door --> Panel --> Swing,Single Panel,0,0,0,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Panel1of2,2Part --> Door --> Panel --> Swing,Left Panel,0,0,0,18,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Panel2of2,2Part --> Door --> Panel --> Swing,Right Panel,0,0,0,18,,,,,,X,,,,,,,,,,,,
-,,"0Mesh
-Single-Rabbet Wood Frame",,0Mesh,,2Part --> Door --> Frame --> Swing --> Interior,,Single-Rabbet Wood Frame,Door-Frame-Swing-Interior-SingleRabbetWood.fbx,36,3.5,80,,,0.375,35.625,,,0.000,79.625,,HingeSet1,2Part --> Door --> HingeSet --> Swing,Main Hinge Set,0,0,0,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,HingeSet2,2Part --> Door --> HingeSet --> Swing,Opposite Hinge Set,36,0,0,,,,,,,X,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Panel1of1,2Part --> Door --> Panel --> Swing,Single Panel,0,0,0,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Panel1of2,2Part --> Door --> Panel --> Swing,Left Panel,0,0,0,18,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Panel2of2,2Part --> Door --> Panel --> Swing,Right Panel,0,0,0,18,,,,,,X,,,,,,,,,,,,
-,,"0Mesh
-Knob Handle 1",,0Mesh,,2Part --> Door --> Handle --> Knob,,Knob Handle 1,Content/ShoppingData/Meshes/Door-Handle-Knob-01.fbx,3.691,3.74,3.691,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Knob Handle 2",,0Mesh,,2Part --> Door --> Handle --> Knob,,Knob Handle 2,Door-Handle-Knob-02.fbx,2.529,3.411,2.529,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Lever Handle 1",,0Mesh,,2Part --> Door --> Handle --> Lever,,Lever Handle 1,Door-Handle-Lever-01.fbx,5.684,2.633,1.918,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Lever Handle 2",,0Mesh,,2Part --> Door --> Handle --> Lever,,Lever Handle 2,Door-Handle-Lever-02.fbx,5.082,2.367,1.969,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Shallow Hinge",,0Mesh,,2Part --> Door --> Hinge --> Swing,,Shallow Hinge,Door-Hinge-Swing-01.fbx,0.374,1.726,5.206,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Deep Hinge",,0Mesh,,2Part --> Door --> Hinge --> Swing,,Deep Hinge,Door-Hinge-Swing-02.fbx,0.125,2.602,4,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-2-Hinge Set",,0Mesh,,2Part --> Door --> HingeSet --> Folding,,2-Hinge Set,N/A,,,,,,,,,,,,,Hinge1,2Part --> Door --> Hinge --> Folding,Bottom Hinge,0,0,12,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Hinge2,2Part --> Door --> Hinge --> Folding,Middle Hinge,0,0,74,,,,,,,,,,,,,,,,,,,
-,,"0Mesh
-3-Hinge Set",,0Mesh,,2Part --> Door --> HingeSet --> Folding,,3-Hinge Set,N/A,,,,,,,,,,,,,Hinge1,2Part --> Door --> Hinge --> Folding,Bottom Hinge,0,0,12,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Hinge2,2Part --> Door --> Hinge --> Folding,Middle Hinge,0,0,43,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Hinge3,2Part --> Door --> Hinge --> Folding,Top Hinge,0,0,74,,,,,,,,,,,,,,,,,,,
-,,"0Mesh
-2-Hinge Set",,0Mesh,,2Part --> Door --> HingeSet --> Swing,,2-Hinge Set,N/A,,,,,,,,,,,,,Hinge1,2Part --> Door --> Hinge --> Swing,Bottom Hinge,0,0,12,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Hinge2,2Part --> Door --> Hinge --> Swing,Middle Hinge,0,0,74,,,,,,,,,,,,,,,,,,,
-,,"0Mesh
-3-Hinge Set",,0Mesh,,2Part --> Door --> HingeSet --> Swing,,3-Hinge Set,N/A,,,,,,,,,,,,,Hinge1,2Part --> Door --> Hinge --> Swing,Bottom Hinge,0,0,12,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Hinge2,2Part --> Door --> Hinge --> Swing,Middle Hinge,0,0,43,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Hinge3,2Part --> Door --> Hinge --> Swing,Top Hinge,0,0,74,,,,,,,,,,,,,,,,,,,
-,,"0Mesh
-4-Hinge Set",,0Mesh,,2Part --> Door --> HingeSet --> Swing,,4-Hinge Set,N/A,,,,,,,,,,,,,Hinge1,2Part --> Door --> Hinge --> Swing,Bottom Hinge,0,0,12,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Hinge2,2Part --> Door --> Hinge --> Swing,Lower-Middle Hinge,0,0,32,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Hinge3,2Part --> Door --> Hinge --> Swing,Upper-Middle Hinge,0,0,54,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Hinge4,2Part --> Door --> Hinge --> Swing,Top Hinge,0,0,74,,,,,,,,,,,,,,,,,,,
-,,"0Mesh
-Knocker 1",,0Mesh,,2Part --> Door --> Knocker,,Knocker 1,Door-Knocker-01.fbx,5.244,1.057,6.749,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Knocker 2",,0Mesh,,2Part --> Door --> Knocker,,Knocker 2,Door-Knocker-02.fbx,6.158,2.175,9.002,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Deadbolt 1",,0Mesh,,2Part --> Door --> Lock --> Deadbolt,,Deadbolt 1,Door-Lock-Deadbolt-01.fbx,2.953,3.981,2.953,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Deadbolt 2",,0Mesh,,2Part --> Door --> Lock --> Deadbolt,,Deadbolt 2,Door-Lock-Deadbolt-02.fbx,2.953,3.732,2.953,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Surface Latch 1 (Bolt)",,0Mesh,,2Part --> Door --> Lock --> SurfaceLatch,,Surface Latch 1 (Bolt),Door-Lock-SurfaceLatch-Bolt-01.fbx,12.441,2.143,5.119,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Surface Bolt Lock (Clasp)",,0Mesh,,2Part --> Door --> Lock --> SurfaceLatch,,Surface Bolt Lock (Clasp),Door-Lock-SurfaceLatch-Clasp-02.fbx,5.224,1.002,2.331,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Mail Slot 1",,0Mesh,,2Part --> Door --> MailSlot,,Mail Slot 1,Door-MailSlot-01.fbx,14,0.302,4,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Mail Slot 2",,0Mesh,,2Part --> Door --> MailSlot,,Mail Slot 2,Door-MailSlot-02.fbx,14,0.176,4,,,,,,,,,,,,,,,,,,,,,,,,,,Finish,Material -->,Finish,,,,,,
-,,"0Mesh
-Flush Panel",,0Mesh,,2Part --> Door --> Panel --> Swing,,Flush Panel,Door-Panel-Swing-01.fbx,36,1.75,80,,,,,,,,,,HandleExterior,2Part --> Door --> Handle,Exterior Handle,33.5,0,36,,,,,,,,,,,FinishInterior,Material -->,Interior Finish,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,HandleInterior,2Part --> Door --> Handle,Interior Handle,33.5,1.75,36,,,,,,,,X,,,FinishExterior,Material -->,Exterior Finish,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Deadbolt1,2Part --> Door --> Lock --> Deadbolt,Deadbolt,36,0.875,42,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,SurfaceLatch1,2Part --> Door --> Lock --> SurfaceLatch,Surface Chain Latch,36,1.75,56,,,,,,,,X,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,SurfaceLatch2,2Part --> Door --> Lock --> SurfaceLatch,Surface Bolt Latch,36,1.75,60,,,,,,,,X,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Peephole1,2Part --> Door --> Peephole,Typical Peephole,18,0.875,60,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Peephole2,2Part --> Door --> Peephole,ADA Peephole,18,0.875,42,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,MailSlot1,2Part --> Door --> MailSlot,Mail Slot,18,0,16,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Knocker1,2Part --> Door --> Knocker,Knocker,18,0,66,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Bell1,2Part --> Door --> Bell,Bell,40,0,42,,,,,,,,,,,,,,,,,,,
-,,"0Mesh
-Panel With Glass",,0Mesh,,2Part --> Door --> Panel --> Swing,,Panel With Glass,Door-Panel-Swing-02.fbx,36,1.75,80,,,8.113,27.89,,,7.69,72.43,,Handle1,2Part --> Door --> Handle,Exterior Handle,33.5,0,36,,,,,,,,,,,FinishInterior,Material -->,Interior Finish,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Handle2,2Part --> Door --> Handle,Interior Handle,33.5,1.75,36,,,,,,,,X,,,FinishExterior,Material -->,Exterior Finish,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Deadbolt1,2Part --> Door --> Lock --> Deadbolt,Deadbolt,36,0.875,42,,,,,,,,,,,FinishGlass,Material -->,Glass Material,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,SurfaceLatch1,2Part --> Door --> Lock --> SurfaceLatch,,36,1.75,56,,,,,,,,X,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,SurfaceLatch2,2Part --> Door --> Lock --> SurfaceLatch,Surface Bolt Latch,36,1.75,60,,,,,,,,X,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Bell1,2Part --> Door --> Bell,Bell,40,0,42,,,,,,,,,,,,,,,,,,,
-,,"0Mesh
-Peephole 1",,0Mesh,,2Part --> Door --> Peephole,,Peephole 1,Door-Peephole-01.fbx,0.75,0.08,0.75,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Peephole 2",,0Mesh,,2Part --> Door --> Peephole,,Peephole 2,Door-Peephole-02.fbx,1,0.143,1,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Traditional Sliding Door Panel",,0Mesh,,2Part --> Door --> Panel --> Sliding,,Traditional Sliding Door Panel,,,,,,,,,,,,,,HandleExterior,2Part --> Door --> Handle --> LateralPull,Exterior Handle,33.5,0,36,,,,,,,,,,,MaterialBorder,Material -->,Border Material,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,HandleInterior,2Part --> Door --> Handle --> LateralPull,Interior Handle,33.5,1.75,36,,,,,,,,X,,,MaterialGlass,Material -->,Glass Material,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Lock1,2Part --> Door --> Lock --> InternalHook,Internal Hook Lock,34.5,0.875,42,,,,,,,,,,,,,,,,,,,
-,,"0Mesh
-Solid Sliding Door Panel",,0Mesh,,2Part --> Door --> Panel --> Sliding,,Solid Sliding Door Panel,,,,,,,,,,,,,,HandleExterior,2Part --> Door --> Handle,Exterior Handle,33.5,0,36,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,HandleInterior,2Part --> Door --> Handle,Interior Handle,33.5,1.75,36,,,,,,,,X,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Lock1,2Part --> Door --> Lock --> InternalHook,Internal Hook Lock,34.5,0.875,42,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Peephole1,2Part --> Door --> Peephole,Typical Peephole,18,0.875,60,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Peephole2,2Part --> Door --> Peephole,ADA Peephole,18,0.875,42,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,MailSlot1,2Part --> Door --> MailSlot,Mail Slot,18,0,16,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Knocker1,2Part --> Door --> Knocker,Knocker,18,0.875,66,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Bell1,2Part --> Door --> Bell,Bell,40,0,42,,,,,,,,,,,,,,,,,,,
-,,"0Mesh
-Sliding Screen",,0Mesh,,2Part --> Door --> Screen --> Sliding,,Sliding Screen,,,,,,,,,,,,,,HandleExterior,2Part --> Door --> Handle --> LateralPull,Exterior Handle,33.5,0,36,,,,,,,,,,,MaterialBorder,Material -->,Border Material,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,HandleInterior,2Part --> Door --> Handle --> LateralPull,Interior Handle,33.5,1.75,36,,,,,,,,X,,,MaterialScreen,Material -->,Screen Material,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Lock1,2Part --> Door --> Lock --> InternalHook,Internal Hook Lock,34.5,0.875,36,,,,,,,,,,,,,,,,,,,
-,,"0Mesh
-Swing Screen",,0Mesh,,2Part --> Door --> Screen --> Swing,,Swing Screen,,,,,,,,,,,,,,HandleExterior,2Part --> Door --> Handle,Exterior Handle,33.5,0,36,,,,,,,,,,,MaterialBorder,Material -->,Border Material,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,HandleInterior,2Part --> Door --> Handle,Interior Handle,33.5,1.75,36,,,,,,,,X,,,MaterialScreen,Material -->,Screen Material,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,SurfaceHook1,#REF!,SurfaceHook Latch,33.5,1.75,36,,,,,,,,X,,,,,,,,,,,
-,,"0Mesh
-Sliding Frame 1",,0Mesh,,2Part --> Window --> Frame --> Sliding,,Sliding Frame 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Sliding Frame 2",,0Mesh,,2Part --> Window --> Frame --> Sliding,,Sliding Frame 2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Swing Frame 1",,0Mesh,,2Part --> Window --> Frame --> Swing,,Swing Frame 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Swing Frame 2",,0Mesh,,2Part --> Window --> Frame --> Swing,,Swing Frame 2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Modern Panel",,0Mesh,,2Part --> Window --> Panel,,Modern Panel,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Traditional Panel",,0Mesh,,2Part --> Window --> Panel,,Traditional Panel,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Screen 1",,0Mesh,,2Part --> Window --> Screen,,Screen 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Screen 2",,0Mesh,,2Part --> Window --> Screen,,Screen 2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Shutter 1",,0Mesh,,2Part --> Window --> Shutter,,Shutter 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Shutter 2",,0Mesh,,2Part --> Window --> Shutter,,Shutter 2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Face Frame",,0Mesh,,2Part --> Cabinet --> Frame,,Face Frame,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-""Frameless"" Frame",,0Mesh,,2Part --> Cabinet --> Frame,,"""Frameless"" Frame",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Modern Cabinet Panel",,0Mesh,,2Part --> Cabinet --> Panel,,Modern Cabinet Panel,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Traditional Cabinet Panel",,0Mesh,,2Part --> Cabinet --> Panel,,Traditional Cabinet Panel,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
-,,"0Mesh
-Shaker Cabinet Panel",,0Mesh,,2Part --> Cabinet --> Panel,,Shaker Cabinet Panel,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
+TYPENAME,,0Mesh,,Mesh,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Asset ID,,Mesh.AssetID,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Asset Path,,Mesh.AssetPath,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Display Name,,Mesh.DisplayName,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Native Size X,,Mesh.NativeSizeX,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Native Size Y,,Mesh.NativeSizeY,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Native Size Z,,Mesh.NativeSizeZ,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Normal,,Mesh.Normal,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Tangent,,Mesh.Tangent,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,SliceX1,,Mesh.SliceX1,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,SliceX2,,Mesh.SliceX2,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,SliceY1,,Mesh.SliceY1,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,SliceY2,,Mesh.SliceY2,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,SliceZ1,,Mesh.SliceZ1,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,SliceZ2,,Mesh.SliceZ2,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,SlotConfigDims,,Mesh.SlotConfigDims,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Material Channels Keys,,Mesh.MaterialKey,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Material Channels Supported NCPs,,Mesh.MaterialChannelNCPs,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Material Channels Display Names,,Mesh.MaterialChannels,,,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath,DataType=Properties,Mesh.AssetID,Mesh.AssetPath,Mesh.DisplayName,Mesh.NativeSizeX,Mesh.NativeSizeY,Mesh.NativeSizeZ,Mesh.Normal,Mesh.Tangent,Mesh.SliceX1,Mesh.SliceX2,Mesh.SliceY1,Mesh.SliceY2,Mesh.SliceZ1,Mesh.SliceZ2,Mesh.SlotConfigDims,Mesh.MaterialKey,Mesh.MaterialChannelNCPs,,,,,,
 PRESET,,"0Mesh
-Square Table",,0Mesh,,2Part --> FFE --> Furniture --> Table,,Square Table,,,,,Z,X,,,,,,,,Chair1,2Part --> FFE --> Furniture --> Chair,Chair 1,28,0,0,,,,,,,,,,,MaterialTop,Material -->,Top Material,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,,,,Chair2,2Part --> FFE --> Furniture --> Chair,Chair 2,0,0,28,,,,,,90,,,,,MaterialBase,Material -->,Base Material,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,,,,Chair3,2Part --> FFE --> Furniture --> Chair,Chair 3,-28,0,0,,,,,,180,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,,,,Chair4,2Part --> FFE --> Furniture --> Chair,Chair 4,0,0,-28,,,,,,270,,,,,,,,,,,,,
+StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'",,0Mesh,,2Part --> Door --> Frame --> Swing --> Interior,,StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',Double-Rabbet Wood Frame,36,3.5,80,,,0.375,35.625,,,0.000,79.625,,Finish,1Material,,,,,,
 PRESET,,"0Mesh
-Rectangular Table",,0Mesh,,2Part --> FFE --> Furniture --> Table,,Rectangular Table,,,,,Z,X,,,,,,,,Chair1,2Part --> FFE --> Furniture --> Chair,Chair 1,0,44,0,,,,,,,,,,,Material1,Material -->,Material1,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,,,,Chair2,2Part --> FFE --> Furniture --> Chair,Chair 2,22,18,0,,,,,,90,,,,,Material2,Material -->,Material2,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,,,,Chair3,2Part --> FFE --> Furniture --> Chair,Chair 3,22,-18,0,,,,,,90,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,,,,Chair4,2Part --> FFE --> Furniture --> Chair,Chair 4,0,-44,0,,,,,,180,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,,,,Chair5,2Part --> FFE --> Furniture --> Chair,Chair 5,-22,-18,0,,,,,,270,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,,,,Chair6,2Part --> FFE --> Furniture --> Chair,Chair 6,-22,18,0,,,,,,270,,,,,,,,,,,,,
+StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'",,0Mesh,,2Part --> Door --> Frame --> Swing --> Interior,,StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',StaticMesh'/Game/ShoppingData/Meshes/Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',Single-Rabbet Wood Frame,36,3.5,80,,,0.375,35.625,,,0.000,79.625,,Finish,1Material,,,,,,
 PRESET,,"0Mesh
-Dining Chair 1",,0Mesh,,2Part --> FFE --> Furniture --> Chair --> Dining,,Dining Chair 1,,,,,Z,X,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
+StaticMesh'/Game/ShoppingData/Meshes/Door-Handle-Knob-01.Door-Handle-Knob-01'",,0Mesh,,2Part --> Door --> Handle --> Knob,,StaticMesh'/Game/ShoppingData/Meshes/Door-Handle-Knob-01.Door-Handle-Knob-01',StaticMesh'/Game/ShoppingData/Meshes/Door-Handle-Knob-01.Door-Handle-Knob-01',Knob Handle 1,3.691,3.74,3.691,,,,,,,,,,Finish,1Material,,,,,,
 PRESET,,"0Mesh
-Dining Chair 2 ",,0Mesh,,2Part --> FFE --> Furniture --> Chair --> Dining,,Dining Chair 2 ,,,,,Z,X,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
+StaticMesh'/Game/ShoppingData/Meshes/Door-Handle-Knob-02.Door-Handle-Knob-02'",,0Mesh,,2Part --> Door --> Handle --> Knob,,StaticMesh'/Game/ShoppingData/Meshes/Door-Handle-Knob-02.Door-Handle-Knob-02',StaticMesh'/Game/ShoppingData/Meshes/Door-Handle-Knob-02.Door-Handle-Knob-02',Knob Handle 2,2.529,3.411,2.529,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+StaticMesh'/Game/ShoppingData/Meshes/Door-Handle-Lever-01.Door-Handle-Lever-01'",,0Mesh,,2Part --> Door --> Handle --> Lever,,StaticMesh'/Game/ShoppingData/Meshes/Door-Handle-Lever-01.Door-Handle-Lever-01',StaticMesh'/Game/ShoppingData/Meshes/Door-Handle-Lever-01.Door-Handle-Lever-01',Lever Handle 1,5.684,2.633,1.918,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+StaticMesh'/Game/ShoppingData/Meshes/Door-Handle-Lever-02.Door-Handle-Lever-02'",,0Mesh,,2Part --> Door --> Handle --> Lever,,StaticMesh'/Game/ShoppingData/Meshes/Door-Handle-Lever-02.Door-Handle-Lever-02',StaticMesh'/Game/ShoppingData/Meshes/Door-Handle-Lever-02.Door-Handle-Lever-02',Lever Handle 2,5.082,2.367,1.969,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+StaticMesh'/Game/ShoppingData/Meshes/Door-Hinge-Swing-01.Door-Hinge-Swing-01'",,0Mesh,,2Part --> Door --> Hinge --> Swing,,StaticMesh'/Game/ShoppingData/Meshes/Door-Hinge-Swing-01.Door-Hinge-Swing-01',StaticMesh'/Game/ShoppingData/Meshes/Door-Hinge-Swing-01.Door-Hinge-Swing-01',Shallow Hinge,0.374,1.726,5.206,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+StaticMesh'/Game/ShoppingData/Meshes/Door-Hinge-Swing-02.Door-Hinge-Swing-02'",,0Mesh,,2Part --> Door --> Hinge --> Swing,,StaticMesh'/Game/ShoppingData/Meshes/Door-Hinge-Swing-02.Door-Hinge-Swing-02',StaticMesh'/Game/ShoppingData/Meshes/Door-Hinge-Swing-02.Door-Hinge-Swing-02',Deep Hinge,0.125,2.602,4,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+Knocker 1",,0Mesh,,2Part --> Door --> Knocker,,StaticMesh'/Game/ShoppingData/Meshes/Door-Knocker-01.Door-Knocker-01',StaticMesh'/Game/ShoppingData/Meshes/Door-Knocker-01.Door-Knocker-01',Knocker 1,5.244,1.057,6.749,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+Knocker 2",,0Mesh,,2Part --> Door --> Knocker,,StaticMesh'/Game/ShoppingData/Meshes/Door-Knocker-02.Door-Knocker-02',StaticMesh'/Game/ShoppingData/Meshes/Door-Knocker-02.Door-Knocker-02',Knocker 2,6.158,2.175,9.002,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+Deadbolt 1",,0Mesh,,2Part --> Door --> Lock --> Deadbolt,,StaticMesh'/Game/ShoppingData/Meshes/Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01',StaticMesh'/Game/ShoppingData/Meshes/Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01',Deadbolt 1,2.953,3.981,2.953,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+Deadbolt 2",,0Mesh,,2Part --> Door --> Lock --> Deadbolt,,StaticMesh'/Game/ShoppingData/Meshes/Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02',StaticMesh'/Game/ShoppingData/Meshes/Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02',Deadbolt 2,2.953,3.732,2.953,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+Surface Latch 1 (Bolt)",,0Mesh,,2Part --> Door --> Lock --> SurfaceLatch,,StaticMesh'/Game/ShoppingData/Meshes/Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01',StaticMesh'/Game/ShoppingData/Meshes/Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01',Surface Latch 1 (Bolt),12.441,2.143,5.119,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+Surface Bolt Lock (Clasp)",,0Mesh,,2Part --> Door --> Lock --> SurfaceLatch,,StaticMesh'/Game/ShoppingData/Meshes/Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01',StaticMesh'/Game/ShoppingData/Meshes/Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01',Surface Bolt Lock (Clasp),5.224,1.002,2.331,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+Mail Slot 1",,0Mesh,,2Part --> Door --> MailSlot,,StaticMesh'/Game/ShoppingData/Meshes/Door-MailSlot-01.Door-MailSlot-01',StaticMesh'/Game/ShoppingData/Meshes/Door-MailSlot-01.Door-MailSlot-01',Mail Slot 1,14,0.302,4,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+Mail Slot 2",,0Mesh,,2Part --> Door --> MailSlot,,StaticMesh'/Game/ShoppingData/Meshes/Door-MailSlot-02.Door-MailSlot-02',StaticMesh'/Game/ShoppingData/Meshes/Door-MailSlot-02.Door-MailSlot-02',Mail Slot 2,14,0.176,4,,,,,,,,,,Finish,1Material,,,,,,
+PRESET,,"0Mesh
+Flush Panel",,0Mesh,,2Part --> Door --> Panel --> Swing,,StaticMesh'/Game/ShoppingData/Meshes/Door-Panel-Swing-01.Door-Panel-Swing-01',StaticMesh'/Game/ShoppingData/Meshes/Door-Panel-Swing-01.Door-Panel-Swing-01',Flush Panel,36,1.75,80,,,,,,,,,,FinishInterior,1Material,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,FinishExterior,1Material,,,,,,
+PRESET,,"0Mesh
+Panel With Glass",,0Mesh,,2Part --> Door --> Panel --> Swing,,StaticMesh'/Game/ShoppingData/Meshes/Door-Panel-Swing-02.Door-Panel-Swing-02',StaticMesh'/Game/ShoppingData/Meshes/Door-Panel-Swing-02.Door-Panel-Swing-02',Panel With Glass,36,1.75,80,,,8.113,27.89,,,7.69,72.43,,FinishInterior,1Material,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,FinishExterior,1Material,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,FinishGlass,1Material,,,,,,
+PRESET,,"0Mesh
+Peephole 1",,0Mesh,,2Part --> Door --> Peephole,,StaticMesh'/Game/ShoppingData/Meshes/Door-Peephole-01.Door-Peephole-01',StaticMesh'/Game/ShoppingData/Meshes/Door-Peephole-01.Door-Peephole-01',Peephole 1,0.75,0.08,0.75,,,,,,,,,,Material,1Material,,,,,,
+PRESET,,"0Mesh
+Peephole 2",,0Mesh,,2Part --> Door --> Peephole,,StaticMesh'/Game/ShoppingData/Meshes/Door-Peephole-02.Door-Peephole-02',StaticMesh'/Game/ShoppingData/Meshes/Door-Peephole-02.Door-Peephole-02',Peephole 2,1,0.143,1,,,,,,,,,,Material,1Material,,,,,,
+PRESET,,"0Mesh
+Traditional Sliding Door Panel",,0Mesh,,2Part --> Door --> Panel --> Sliding,,0,,Traditional Sliding Door Panel,,,,,,,,,,,,,FinishInterior,1Material,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,FinishExterior,1Material,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,FinishGlass,1Material,,,,,,
 ,,"0Mesh
-Sofa 1",,0Mesh,,2Part --> FFE --> Furniture --> Sofa,,Sofa 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
+Solid Sliding Door Panel",,0Mesh,,2Part --> Door --> Panel --> Sliding,,0,,Solid Sliding Door Panel,,,,,,,,,,,,,Material,1Material,,,,,,
 ,,"0Mesh
-Sofa 2",,0Mesh,,2Part --> FFE --> Furniture --> Sofa,,Sofa 2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Material,Material -->,Material,,,,,,
+Sliding Screen",,0Mesh,,2Part --> Door --> Screen --> Sliding,,0,,Sliding Screen,,,,,,,,,,,,,FinishFrame,1Material,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,FinishScreen,1Material,,,,,,
 ,,"0Mesh
-Living Room Set 1",,0Mesh,,2Part --> FFE --> FurnitureSet --> LivingRoom,,Living Room Set 1,NONE,,,,,,,,,,,,,Sofa1,2Part --> FFE --> Furniture --> Sofa,Sofa,0,42,0,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,CoffeeTable,2Part --> FFE --> Furniture --> Table --> Coffee,Coffee Table,0,0,0,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Chair1,2Part --> FFE --> Furniture --> Chair --> Accent,Left Chair,-30,-30,0,,,,,,135,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,Chair1,2Part --> FFE --> Furniture --> Chair --> Accent,Right Chair,30,-30,0,,,,,,225,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,FloorLamp1,2Part --> FFE --> Furniture --> Chair --> Accent,Left Floor Lamp,-50,42,0,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,FloorLamp2,2Part --> FFE --> Furniture --> Chair --> Accent,Right Floor Lamp,50,42,0,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Swing Screen",,0Mesh,,2Part --> Door --> Screen --> Swing,,0,,Swing Screen,,,,,,,,,,,,,FinishFrame,1Material,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,FinishScreen,1Material,,,,,,
+,,"0Mesh
+Sliding Frame 1",,0Mesh,,2Part --> Window --> Frame --> Sliding,,0,,Sliding Frame 1,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Sliding Frame 2",,0Mesh,,2Part --> Window --> Frame --> Sliding,,0,,Sliding Frame 2,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Swing Frame 1",,0Mesh,,2Part --> Window --> Frame --> Swing,,0,,Swing Frame 1,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Swing Frame 2",,0Mesh,,2Part --> Window --> Frame --> Swing,,0,,Swing Frame 2,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Modern Panel",,0Mesh,,2Part --> Window --> Panel,,0,,Modern Panel,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Traditional Panel",,0Mesh,,2Part --> Window --> Panel,,0,,Traditional Panel,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Screen 1",,0Mesh,,2Part --> Window --> Screen,,0,,Screen 1,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Screen 2",,0Mesh,,2Part --> Window --> Screen,,0,,Screen 2,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Shutter 1",,0Mesh,,2Part --> Window --> Shutter,,0,,Shutter 1,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Shutter 2",,0Mesh,,2Part --> Window --> Shutter,,0,,Shutter 2,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Face Frame",,0Mesh,,2Part --> Cabinet --> Frame,,0,,Face Frame,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+""Frameless"" Frame",,0Mesh,,2Part --> Cabinet --> Frame,,0,,"""Frameless"" Frame",,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Modern Cabinet Panel",,0Mesh,,2Part --> Cabinet --> Panel,,0,,Modern Cabinet Panel,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Traditional Cabinet Panel",,0Mesh,,2Part --> Cabinet --> Panel,,0,,Traditional Cabinet Panel,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Shaker Cabinet Panel",,0Mesh,,2Part --> Cabinet --> Panel,,0,,Shaker Cabinet Panel,,,,,,,,,,,,,Material,1Material,,,,,,
+PRESET,,"0Mesh
+Square Table",,0Mesh,,2Part --> FFE --> Furniture --> Table,,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Dining-4/FFE-Table-Dining-4-Merged.FFE-Table-Dining-4-Merged',StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Dining-4/FFE-Table-Dining-4-Merged.FFE-Table-Dining-4-Merged',Square Table,74,74,72,Z,X,,,,,,,,FinishTop,1Material,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,FinishBase,1Material,,,,,,
+PRESET,,"0Mesh
+Rectangular Table",,0Mesh,,2Part --> FFE --> Furniture --> Table,,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Dining-1/FFE-Table-Dining-1.FFE-Table-Dining-1',StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Table-Dining-1/FFE-Table-Dining-1.FFE-Table-Dining-1',Rectangular Table,218,110,73,Z,X,,,,,,,,Material1,1Material,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,Material2,1Material,,,,,,
+PRESET,,"0Mesh
+Dining Chair 1",,0Mesh,,2Part --> FFE --> Furniture --> Chair --> Dining,,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged',StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged',Dining Chair 1,43,54,92,Z,X,,,,,,,,Material,1Material,,,,,,
+PRESET,,"0Mesh
+Dining Chair 2 ",,0Mesh,,2Part --> FFE --> Furniture --> Chair --> Dining,,StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02',StaticMesh'/Game/ShoppingData/AssetsPremade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02',Dining Chair 2 ,62,50,76,Z,X,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Sofa 1",,0Mesh,,2Part --> FFE --> Furniture --> Sofa,,,,Sofa 1,,,,,,,,,,,,,Material,1Material,,,,,,
+,,"0Mesh
+Sofa 2",,0Mesh,,2Part --> FFE --> Furniture --> Sofa,,,,Sofa 2,,,,,,,,,,,,,Material,1Material,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
