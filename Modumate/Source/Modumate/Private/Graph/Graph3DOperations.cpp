@@ -320,10 +320,7 @@ namespace Modumate
 		OutEdgeIDs = { edgeID };
 		if (!GetDeltasForEdgeSplits(splitEdgeDeltas, OutEdgeIDs, NextID))
 		{
-			for (auto& splitDelta : splitEdgeDeltas)
-			{
-				ApplyDelta(*splitDelta.MakeGraphInverse());
-			}
+			ApplyInverseDeltas(splitEdgeDeltas);
 			return false;
 		}
 		OutDeltas.Append(splitEdgeDeltas);

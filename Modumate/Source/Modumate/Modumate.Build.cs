@@ -61,6 +61,7 @@ public class Modumate : ModuleRules
 			"Cbor",
 			"Serialization",
 			"GeometryAlgorithms",
+			"GeometricObjects",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

@@ -813,7 +813,7 @@ namespace Modumate
 			// This shouldn't be possible if we're only calling TraverseEdges on graphs with valid vertex-edge connectivity;
 			// traversal should normally only end when we reach the beginning again, but this validation is fast and useful for validating usage.
 			bVisitedEdge = RefVisitedEdgeIDs.Contains(curEdgeID) || (!bUseDualEdges && RefVisitedEdgeIDs.Contains(-curEdgeID));
-			if (!ensureAlways(!bVisitedEdge))
+			if (!ensure(!bVisitedEdge))
 			{
 				break;
 			}
@@ -836,7 +836,7 @@ namespace Modumate
 
 			OutVertexIDs.Add(prevVertex->ID);
 
-			if (!ensureAlways(nextVertex->GetNextEdge(curEdgeID, nextEdgeID, angleDelta, AllowedEdgeIDs, true)))
+			if (!ensure(nextVertex->GetNextEdge(curEdgeID, nextEdgeID, angleDelta, AllowedEdgeIDs, true)))
 			{
 				return false;
 			}
@@ -853,7 +853,7 @@ namespace Modumate
 
 		int32 numEdges = OutEdgeIDs.Num();
 
-		if (!ensureAlways((numEdges >= 2) && (StartingEdgeID == curEdgeID)))
+		if (!ensure((numEdges >= 2) && (StartingEdgeID == curEdgeID)))
 		{
 			return false;
 		}

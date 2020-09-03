@@ -89,7 +89,7 @@ namespace Modumate
 		float curEdgeAngle = 0.0f, nextEdgeAngle = 0.0f;
 		if (graph->GetEdgeAngle(curEdgeFromVertexID, curEdgeAngle) &&
 			graph->GetEdgeAngle(OutNextEdgeID, nextEdgeAngle) &&
-			ensureAlways(!FMath::IsNearlyEqual(curEdgeAngle, nextEdgeAngle)))
+			ensure(!FMath::IsNearlyEqual(curEdgeAngle, nextEdgeAngle)))
 		{
 			OutAngleDelta = nextEdgeAngle - curEdgeAngle;
 			if (OutAngleDelta < 0.0f)

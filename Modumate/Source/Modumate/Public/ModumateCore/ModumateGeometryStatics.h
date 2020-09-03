@@ -11,8 +11,8 @@
 #include "ModumateGeometryStatics.generated.h"
 
 
-#define RAY_INTERSECT_TOLERANCE	(1.e-2f)
-#define PLANAR_DOT_EPSILON	(1.e-3f)
+#define RAY_INTERSECT_TOLERANCE	(0.2f)
+#define PLANAR_DOT_EPSILON	(0.1f)
 
 USTRUCT()
 struct MODUMATE_API FPolyHoleIndices

@@ -511,7 +511,7 @@ namespace Modumate
 	{
 		EdgeID = FMath::Abs(EdgeID);
 		FGraph3DEdge *edgeToRemove = FindEdge(EdgeID);
-		if (!ensureAlways(edgeToRemove))
+		if (!ensure(edgeToRemove))
 		{
 			return false;
 		}
@@ -522,13 +522,13 @@ namespace Modumate
 		if (edgeToRemove->StartVertexID != MOD_ID_NONE)
 		{
 			FGraph3DVertex *startVertex = FindVertex(edgeToRemove->StartVertexID);
-			ensureAlways(startVertex && startVertex->RemoveEdge(EdgeID));
+			ensure(startVertex && startVertex->RemoveEdge(EdgeID));
 		}
 
 		if (edgeToRemove->EndVertexID != MOD_ID_NONE)
 		{
 			FGraph3DVertex *endVertex = FindVertex(edgeToRemove->EndVertexID);
-			ensureAlways(endVertex && endVertex->RemoveEdge(-EdgeID));
+			ensure(endVertex && endVertex->RemoveEdge(-EdgeID));
 		}
 
 		// Remove the edge from the vertex pair mapping if it's still in there
@@ -546,7 +546,7 @@ namespace Modumate
 	{
 		FaceID = FMath::Abs(FaceID);
 		FGraph3DFace *faceToRemove = FindFace(FaceID);
-		if (!ensureAlways(faceToRemove))
+		if (!ensure(faceToRemove))
 		{
 			return false;
 		}
@@ -916,6 +916,19 @@ namespace Modumate
 		}
 
 		return bValidFaces;
+	}
+
+	bool FGraph3D::ApplyInverseDeltas(const TArray<FGraph3DDelta>& Deltas)
+	{
+		bool bSuccess = true;
+		int32 numDeltas = Deltas.Num();
+		for (int32 deltaIdx = numDeltas - 1; deltaIdx >= 0; deltaIdx--)
+		{
+			// TODO: mirror FGraph2D::ApplyInverseDeltas and implement void FGraph3DDelta::Invert() to avoid allocating as many new deltas
+			bSuccess = ApplyDelta(*Deltas[deltaIdx].MakeGraphInverse()) && bSuccess;
+		}
+
+		return bSuccess;
 	}
 
 	bool FGraph3D::CalculateVerticesOnLine(const FGraphVertexPair &VertexPair, const FVector& StartPos, const FVector& EndPos, TArray<int32> &OutVertexIDs, TPair<int32, int32> &OutSplitEdgeIDs) const

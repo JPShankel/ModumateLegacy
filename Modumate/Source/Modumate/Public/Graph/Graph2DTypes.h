@@ -10,7 +10,7 @@
 namespace Modumate
 {
 
-#define DEFAULT_GRAPH_EPSILON 0.05f
+#define DEFAULT_GRAPH_EPSILON 0.5f
 
 	enum EGraphObjectType
 	{

@@ -128,6 +128,7 @@ namespace Modumate
 	// Deltas are created by the (public) 
 	public:
 		bool ApplyDelta(const FGraph3DDelta &Delta);
+		bool ApplyInverseDeltas(const TArray<FGraph3DDelta>& Deltas);
 	private:
 		FGraph3DVertex *AddVertex(const FVector &Position, int32 InID, const TSet<int32> &InGroupIDs);
 		FGraph3DEdge *AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID, const TSet<int32> &InGroupIDs);

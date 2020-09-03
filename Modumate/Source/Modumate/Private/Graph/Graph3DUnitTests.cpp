@@ -25,14 +25,8 @@ namespace Modumate
 
 	void ApplyInverseDeltas(FAutomationTestBase *Test, FGraph3D &Graph, FGraph3D &TempGraph, TArray<FGraph3DDelta> &Deltas)
 	{
-		bool bValidDelta = true;
-		for (int32 deltaIdx = Deltas.Num() - 1; deltaIdx >= 0; deltaIdx--)
-		{
-			bValidDelta = Graph.ApplyDelta(*Deltas[deltaIdx].MakeGraphInverse());
-		}
+		Test->TestTrue(TEXT("Apply Inverse Deltas"), Graph.ApplyInverseDeltas(Deltas));
 		FGraph3D::CloneFromGraph(TempGraph, Graph);
-
-		Test->TestTrue(TEXT("Apply Inverse Deltas"), bValidDelta);
 	}
 
 	void TestGraph(FAutomationTestBase *Test, FGraph3D& Graph, int32 TestNumFaces = -1, int32 TestNumVertices = -1, int32 TestNumEdges = -1)

@@ -6,7 +6,7 @@
 #include "Graph/GraphCommon.h"
 #include "ModumateCore/ModumateTypes.h"
 
-#define DEFAULT_GRAPH3D_EPSILON 0.05f
+#define DEFAULT_GRAPH3D_EPSILON 0.5f
 
 namespace Modumate
 {

@@ -2,12 +2,14 @@
 
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
+#include "MathUtil.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Polygon2.h"
+#include "CompGeom/PolygonTriangulation.h"
 
 
 namespace Modumate
@@ -132,6 +134,73 @@ namespace Modumate
 	}
 
 	// Modumate Geometry Statics
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometryRayPrecision, "Modumate.Core.Geometry.RayPrecision", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGeometryRayPrecision::RunTest(const FString& Parameters)
+	{
+		static constexpr int32 numTests = 64;
+		static constexpr int32 numRepetitions = 16;
+		static constexpr double testSize = 1000.0;
+		static constexpr float goalFloatError = (1.e-2f);
+		static constexpr double goalDoubleError = (1.e-10);
+		FRandomStream rand;
+		int32 maxErrorTestIdx = INDEX_NONE;
+		float maxFloatError = 0.0f;
+		double maxDoubleError = 0.0;
+
+		// First, test precision of ray projection of standard float-based FVector types
+		for (int32 testIdx = 0; testIdx < numTests; ++testIdx)
+		{
+			FVector startPoint1 = testSize * rand.VRand();
+			FVector startPoint2 = testSize * rand.VRand();
+			FVector dir = (startPoint2 - startPoint1).GetSafeNormal();
+			FVector testPoint2 = startPoint2;
+			float error = 0.0f;
+
+			for (int32 iteration = 0; iteration < numRepetitions; ++iteration)
+			{
+				FVector projectedDelta = (testPoint2 - startPoint1).ProjectOnToNormal(dir);
+				testPoint2 = startPoint1 + projectedDelta;
+				error = FVector::Dist(testPoint2, startPoint2);
+			}
+
+			if ((error > maxFloatError) || (maxErrorTestIdx == INDEX_NONE))
+			{
+				maxFloatError = error;
+				maxErrorTestIdx = testIdx;
+			}
+		}
+
+		TestTrue(FString::Printf(TEXT("Maximum FVector projection error under %f"), goalFloatError), maxFloatError < goalFloatError);
+
+		rand.Reset();
+		maxErrorTestIdx = INDEX_NONE;
+		for (int32 testIdx = 0; testIdx < numTests; ++testIdx)
+		{
+			FVector startPoint1f = testSize * rand.VRand();
+			FVector startPoint2f = testSize * rand.VRand();
+
+			FVector3d startPoint1(startPoint1f.X, startPoint1f.Y, startPoint1f.Z);
+			FVector3d startPoint2(startPoint2f.X, startPoint2f.Y, startPoint2f.Z);
+
+			FVector3d dir = (startPoint2 - startPoint1).Normalized(SMALL_NUMBER);
+			FVector3d testPoint2 = startPoint2;
+			double error = 0.0;
+
+			for (int32 iteration = 0; iteration < numRepetitions; ++iteration)
+			{
+				FVector3d projectedDelta = dir * (testPoint2 - startPoint1).Dot(dir);
+				testPoint2 = startPoint1 + projectedDelta;
+				error = testPoint2.Distance(startPoint2);
+			}
+
+			maxDoubleError = FMath::Max(error, maxDoubleError);
+		}
+
+		TestTrue(FString::Printf(TEXT("Maximum FVector3d projection error under %f"), goalDoubleError), maxDoubleError < goalDoubleError);
+
+		return true;
+	}
 
 	// Ray Intersection Tests
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometryRayIntersection, "Modumate.Core.Geometry.RayIntersection", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
@@ -960,10 +1029,17 @@ namespace Modumate
 		uint32 firstRandInt = rand.GetUnsignedInt();
 		TestTrue(TEXT("Consistent first random uint"), (firstRandInt == 907633515));
 
-		for (int32 testIndex = 0; testIndex < 1000; ++testIndex)
+		// Keep track of which test and polygon contributes the most planarity error,
+		// for both our own plane generation method and the one from GeometricObjects.
+		float maxModError = 0.0f, maxGeoError = 0.0f;
+		int32 maxModErrorTestIdx = INDEX_NONE, maxModErrorPointIdx = INDEX_NONE;
+		int32 maxGeoErrorTestIdx = INDEX_NONE, maxGeoErrorPointIdx = INDEX_NONE;
+
+		for (int32 testIndex = 0; testIndex < 256; ++testIndex)
 		{
 			FVector planeN = rand.VRand();
 			float planeW = rand.FRandRange(-128.0f, 128.0f);
+			FVector planeBase = planeW * planeN;
 			FPlane randPlane(planeN, planeW);
 			int32 numPlanePoints = rand.RandRange(4, 8);
 			TArray<FVector> planePoints;
@@ -976,16 +1052,18 @@ namespace Modumate
 			{
 				float radius = 100.0f;
 				float angle = (i * 2 * PI) / numPlanePoints;
-				FVector randPoint =
+				FVector randPoint = planeBase +
 					(radius * FMath::Cos(angle) * planeBasisX) +
 					(radius * FMath::Sin(angle) * planeBasisY);
 
-				randPoint = FVector::PointPlaneProject(randPoint, randPlane);
 				float randPlaneDot = randPlane.PlaneDot(randPoint);
+				bool bPointCloseToPlane = FMath::IsNearlyZero(randPlaneDot, 4.0f * planarityTestEpsilon);
+				TestTrue(TEXT("Random point is close to plane"), bPointCloseToPlane);
+
+				randPoint -= randPlaneDot * randPlane;
+				randPlaneDot = randPlane.PlaneDot(randPoint);
 				bool bPointOnPlane = FMath::IsNearlyZero(randPlaneDot, planarityTestEpsilon);
-
-				TestTrue(TEXT("Random point is on plane"), bPointOnPlane);
-
+				TestTrue(TEXT("Fixed random point is on plane"), bPointOnPlane);
 				if (!bPointOnPlane)
 				{
 					return false;
@@ -994,40 +1072,63 @@ namespace Modumate
 				planePoints.Add(randPoint);
 			}
 
-			// Randomly shuffle the plane points
+			// Test the GeometricObjects method (requires a valid polygon, so we can't have out-of-order points)
+			TArray<FVector3f> planePointsGTE;
+			Algo::Transform(planePoints, planePointsGTE, [](const FVector& p) { return FVector3f(p.X, p.Y, p.Z); });
+			FVector3f geoPlaneNormal, geoPlaneBase;
+			PolygonTriangulation::ComputePolygonPlane(planePointsGTE, geoPlaneNormal, geoPlaneBase);
+			TestTrue(TEXT("ComputePolygonPlane found plane from generated planar points"), geoPlaneNormal.IsNormalized());
+			FPlane geoCalculatedPlane(FVector(geoPlaneBase.X, geoPlaneBase.Y, geoPlaneBase.Z), FVector(geoPlaneNormal.X, geoPlaneNormal.Y, geoPlaneNormal.Z));
+
+			// Randomly shuffle the plane points, for our own method that doesn't assuming a polygonal shape
+			TArray<FVector> shuffledPoints(planePoints);
 			for (int32 i = 0; i < numPlanePoints; ++i)
 			{
-				planePoints.Swap(i, rand.RandRange(0, numPlanePoints - 1));
+				shuffledPoints.Swap(i, rand.RandRange(0, numPlanePoints - 1));
 			}
 
-			// Make sure we can derive a plane using our own method
+			// Test our own method for deriving a plane from an arbitrary set of points
 			FPlane calculatedPlane;
-			bool bPointsPlanar = UModumateGeometryStatics::GetPlaneFromPoints(planePoints, calculatedPlane, planarityTestEpsilon);
+			bool bPointsPlanar = UModumateGeometryStatics::GetPlaneFromPoints(shuffledPoints, calculatedPlane, planarityTestEpsilon);
 			TestTrue(TEXT("GetPlaneFromPoints found plane from generated planar points"), bPointsPlanar);
 
 			// Make sure that the calculated plane's normal agrees with the actual normal
 			bool bCalculatedPlaneParallel = FVector::Parallel(planeN, FVector(calculatedPlane));
 			TestTrue(TEXT("GetPlaneFromPoints's normal agrees with generated plane normal"), bCalculatedPlaneParallel);
 
-			// Now, serialize and deserialize the plane points, to see if any significant error is introduced
-			TArray<FVector> deserializedPoints;
-			for (const FVector &planePoint : planePoints)
+			bool bGeoCalculatedPlaneParallel = FVector::Parallel(planeN, FVector(geoCalculatedPlane));
+			TestTrue(TEXT("ComputePolygonPlane's normal agrees with generated plane normal"), bGeoCalculatedPlaneParallel);
+
+			// Now, find the maximum planarity error of the points, compared to the computed plane
+			for (int32 pointIdx = 0; pointIdx < numPlanePoints; ++pointIdx)
 			{
-				FModumateCommandParameter serializedPoint(planePoint);
-				deserializedPoints.Add(serializedPoint);
+				const FVector& planePoint = planePoints[pointIdx];
+				float planeDist = FMath::Abs(calculatedPlane.PlaneDot(planePoint));
+				if ((planeDist > maxModError) || (maxModErrorTestIdx == INDEX_NONE) || (maxModErrorPointIdx == INDEX_NONE))
+				{
+					maxModError = planeDist;
+					maxModErrorTestIdx = testIndex;
+					maxModErrorPointIdx = pointIdx;
+				}
+
+				float geoPlaneDist = FMath::Abs(geoCalculatedPlane.PlaneDot(planePoint));
+				if ((geoPlaneDist > maxGeoError) || (maxGeoErrorTestIdx == INDEX_NONE) || (maxGeoErrorPointIdx == INDEX_NONE))
+				{
+					maxGeoError = geoPlaneDist;
+					maxGeoErrorTestIdx = testIndex;
+					maxGeoErrorPointIdx = pointIdx;
+				}
 			}
-
-			// Make sure we can derive a plane using the deserialized data
-			bPointsPlanar = UModumateGeometryStatics::GetPlaneFromPoints(deserializedPoints, calculatedPlane, planarityTestEpsilon);
-			TestTrue(TEXT("GetPlaneFromPoints found plane from deserialized planar points"), bPointsPlanar);
-
-			// Make sure that the deserialized plane's normal agrees with the actual normal
-			bCalculatedPlaneParallel = FVector::Parallel(planeN, FVector(calculatedPlane));
-			TestTrue(TEXT("GetPlaneFromPoints's normal agrees with deserialized plane normal"), bCalculatedPlaneParallel);
 		}
 
+		TestTrue(FString::Printf(TEXT("Maximum GetPlaneFromPoints planarity error %f (for test #%d, point #%d) are below tolerance: %f"),
+			maxModError, maxModErrorTestIdx, maxModErrorPointIdx), maxModError < planarityTestEpsilon);
+
+		TestTrue(FString::Printf(TEXT("Maximum ComputePolygonPlane planarity error %f (for test #%d, point #%d) are below tolerance: %f"),
+			maxGeoError, maxGeoErrorTestIdx, maxModErrorPointIdx), maxGeoError < planarityTestEpsilon);
+
 		uint32 finalRandInt = rand.GetUnsignedInt();
-		TestTrue(TEXT("Consistent final random uint"), (finalRandInt == 597090039));
+		TestTrue(TEXT("Consistent final random uint"), (finalRandInt == 3930641878));
 
 		return true;
 	}

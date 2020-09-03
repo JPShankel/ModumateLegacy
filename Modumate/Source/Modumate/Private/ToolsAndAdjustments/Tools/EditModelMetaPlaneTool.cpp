@@ -201,6 +201,7 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 				FVector currentSketchPlaneNormal(Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Normal);
 
 				FVector tangentDir = !FVector::Parallel(currentSketchPlaneNormal, segmentDirection) ? segmentDirection : Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Tangent;
+				bool bSetDefaultAffordance = true;
 
 				if (SketchPlanePoints.Num() == 0)
 				{
@@ -218,10 +219,7 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 						{
 							FVector transverse = FVector::CrossProduct(currentSketchPlaneNormal, segmentDirection);
 							Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, FVector::CrossProduct(transverse, tangentDir).GetSafeNormal(), tangentDir);
-						}
-						else
-						{
-							Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, currentSketchPlaneNormal, tangentDir);
+							bSetDefaultAffordance = false;
 						}
 					}
 				}
@@ -230,20 +228,22 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 				{
 					// If the third point is colinear, skip it and wait for the next one
 					FVector firstSegmentDir = (SketchPlanePoints[1] - SketchPlanePoints[0]).GetSafeNormal();
-					if (!FMath::IsNearlyZero(FMath::PointDistToLine(SketchPlanePoints[0], firstSegmentDir, constrainedEndPoint)))
+					FVector nextPointDir = (constrainedEndPoint - SketchPlanePoints[0]).GetSafeNormal();
+
+					if (!FVector::Parallel(firstSegmentDir, nextPointDir))
 					{
-						FVector thirdPointDir = constrainedEndPoint - SketchPlanePoints[0];
-						FVector n = FVector::CrossProduct(thirdPointDir, firstSegmentDir);
+						FVector sketchNormal = (firstSegmentDir ^ nextPointDir).GetSafeNormal();
 						// we should not have gotten a degenerate point, ensure
-						if (ensureAlways(!FMath::IsNearlyZero(n.Size())))
+						if (ensureAlways(sketchNormal.IsNormalized()))
 						{
-							Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, n.GetSafeNormal(), tangentDir);
+							Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, sketchNormal, tangentDir);
 							SketchPlanePoints.Add(constrainedEndPoint);
-							constrainedEndPoint = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(constrainedEndPoint);
+							bSetDefaultAffordance = false;
 						}
 					}
 				}
-				else
+
+				if (bSetDefaultAffordance)
 				{
 					Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, currentSketchPlaneNormal, tangentDir);
 				}
