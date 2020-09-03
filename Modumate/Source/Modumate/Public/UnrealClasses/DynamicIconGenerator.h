@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "DynamicIconGenerator.generated.h"
 
+class FBIMAssemblySpec;
 
 UCLASS()
 class MODUMATE_API ADynamicIconGenerator : public AActor
@@ -32,8 +33,13 @@ public:
 	class URectLightComponent* RectLight1;
 
 	// Reusable meshes
+	UPROPERTY()
 	class UStaticMeshComponent* IconStaticMesh;
+
+	UPROPERTY()
 	class ADynamicMeshActor* IconDynamicMeshActor;
+
+	UPROPERTY()
 	class ACompoundMeshActor* IconCompoundMeshActor;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Dimension")
@@ -81,25 +87,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")
-	bool SetIconMeshForAssemblyByToolMode(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForAssemblyByToolMode(bool UseAssemblyFromBIMDesigner, const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
 
-	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")
-	bool SetIconMeshForWallAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
-
-	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")
-	bool SetIconMeshForFloorAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
-
-	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")
-	bool SetIconMeshForPortalAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
-
-	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")
-	bool SetIconMeshForCabinetAssembly(const FName &AsmKey, UTextureRenderTarget2D* RenderTarget);
-
-	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")
-	bool SetIconMeshForTrimAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
-
-	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")
-	bool SetIconMeshForFFEAssembly(const FName &AsmKey, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForPortalAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget);
 
 	void GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal);
 	void GetFloorSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& StartPt, const FVector& EndPt, float Height, FVector& OutLocation, FVector& OutNormal, bool& OutSliced);

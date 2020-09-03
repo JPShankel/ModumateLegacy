@@ -13,6 +13,8 @@
 #include "ModumateCore/ModumateSlateHelper.h"
 #include "BIMKernel/BIMNodeEditor.h"
 #include "UI/BIM/BIMBlockAddLayer.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -156,12 +158,17 @@ bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FName &
 	{
 		return false;
 	}
+
 	UpdateBIMDesigner();
 	return true;
 }
 
 void UBIMDesigner::UpdateBIMDesigner()
 {
+	ECraftingResult asmResult = InstancePool.CreateAssemblyFromNodes(
+		Controller->GetDocument()->PresetManager.CraftingNodePresets,
+		*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly);
+
 	CanvasPanelForNodes->ClearChildren();
 	BIMBlockNodes.Empty();
 	IdToNodeMap.Empty();

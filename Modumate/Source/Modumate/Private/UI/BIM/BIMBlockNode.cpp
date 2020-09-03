@@ -20,6 +20,8 @@
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
+#include "Kismet/KismetRenderingLibrary.h"
+#include "UnrealClasses/DynamicIconGenerator.h"
 
 UBIMBlockNode::UBIMBlockNode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -210,7 +212,19 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 		}
 	}
 
-
+	if (IsKingNode)
+	{
+		// TODO: Use icon caching instead of creating new render target each time
+		IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8, FLinearColor::Black, true);
+		static const FName craftingkey(TEXT("BIMCraftingAssembly")); // This key is for identifying purpose only, does not affect BIM assembly generation
+		EToolMode toolMode = EToolMode::VE_NONE;
+		bool bCaptureSucess = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(true, craftingkey, toolMode, IconRenderTarget);
+		if (bCaptureSucess)
+		{
+			static const FName textureParamName(TEXT("Texture"));
+			IconImage->GetDynamicMaterial()->SetTextureParameterValue(textureParamName, IconRenderTarget);
+		}
+	}
 
 	return true;
 }

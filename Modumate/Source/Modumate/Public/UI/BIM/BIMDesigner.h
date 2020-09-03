@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/BIMNodeEditor.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 
 #include "BIMDesigner.generated.h"
 
@@ -101,6 +102,8 @@ public:
 
 	UFUNCTION()
 	void PerformDrag();
+
+	FBIMAssemblySpec CraftingAssembly;
 
 	float GetCurrentZoomScale() const;
 	bool EditPresetInBIMDesigner(const FName& PresetID);

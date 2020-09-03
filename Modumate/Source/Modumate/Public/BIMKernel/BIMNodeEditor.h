@@ -13,6 +13,7 @@
 
 class FBIMAssemblySpec;
 class FBIMCraftingTreeNode;
+class FModumateDatabase;
 
 typedef TSharedPtr<FBIMCraftingTreeNode> FBIMCraftingTreeNodeSharedPtr;
 typedef TWeakPtr<FBIMCraftingTreeNode> FBIMCraftingTreeNodeWeakPtr;
@@ -122,4 +123,6 @@ public:
 	bool ToDataRecord(TArray<FCustomAssemblyCraftingNodeRecord> &OutDataRecords) const;
 
 	bool ValidatePool() const;
+
+	ECraftingResult CreateAssemblyFromNodes(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec);
 };

@@ -11,6 +11,8 @@
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/BIM/BIMDesigner.h"
 
 using namespace Modumate;
 
@@ -64,51 +66,52 @@ void ADynamicIconGenerator::Tick(float DeltaTime)
 
 }
 
-bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(bool UseAssemblyFromBIMDesigner, const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
 {
-	switch (mode)
-	{
-	case EToolMode::VE_WALL:
-	case EToolMode::VE_FINISH:
-		SetIconMeshForWallAssembly(AsmKey, mode, RenderTarget);
-		return true;
-	case EToolMode::VE_FLOOR:
-	case EToolMode::VE_ROOF_FACE:
-	case EToolMode::VE_COUNTERTOP:
-	case EToolMode::VE_CEILING:
-		SetIconMeshForFloorAssembly(AsmKey, mode, RenderTarget);
-		return true;
-	case EToolMode::VE_DOOR:
-	case EToolMode::VE_WINDOW:
-		SetIconMeshForPortalAssembly(AsmKey, mode, RenderTarget);
-		return true;
-	case EToolMode::VE_STRUCTURELINE:
-	case EToolMode::VE_TRIM:
-		SetIconMeshForTrimAssembly(AsmKey, mode, RenderTarget);
-		return true;
-	case EToolMode::VE_CABINET:
-		SetIconMeshForCabinetAssembly(AsmKey, RenderTarget);
-		return true;
-	case EToolMode::VE_PLACEOBJECT:
-		SetIconMeshForFFEAssembly(AsmKey, RenderTarget);
-		return true;
-	}
-	return false;
-}
-
-bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
-{
-	// Step 1: Generate model
-	////////////////////////////////////////////////////////////////////
+	const FBIMAssemblySpec *assembly;
+	EToolMode iconMode = mode;
 	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-
-	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
+	if (UseAssemblyFromBIMDesigner)
+	{
+		AEditModelPlayerController_CPP *controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
+		assembly = &controller->EditModelUserWidget->BIMDesigner->CraftingAssembly;
+		iconMode = UModumateTypeStatics::ToolModeFromObjectType(assembly->ObjectType);
+	}
+	else
+	{
+		assembly = doc->PresetManager.GetAssemblyByKey(iconMode, AsmKey);
+	}
 	if (!assembly)
 	{
 		return false;
 	}
-	////////////////////////////////////////////////////////////////////
 
+	switch (iconMode)
+	{
+	case EToolMode::VE_WALL:
+	case EToolMode::VE_FINISH:
+		return SetIconMeshForWallAssembly(*assembly, iconMode, RenderTarget);
+	case EToolMode::VE_FLOOR:
+	case EToolMode::VE_ROOF_FACE:
+	case EToolMode::VE_COUNTERTOP:
+	case EToolMode::VE_CEILING:
+		return SetIconMeshForFloorAssembly(*assembly, iconMode, RenderTarget);
+	case EToolMode::VE_DOOR:
+	case EToolMode::VE_WINDOW:
+		return SetIconMeshForPortalAssembly(*assembly, iconMode, RenderTarget);
+	case EToolMode::VE_STRUCTURELINE:
+	case EToolMode::VE_TRIM:
+		return SetIconMeshForTrimAssembly(*assembly, iconMode, RenderTarget);
+	case EToolMode::VE_CABINET:
+		return SetIconMeshForCabinetAssembly(*assembly, RenderTarget);
+	case EToolMode::VE_PLACEOBJECT:
+		return SetIconMeshForFFEAssembly(*assembly, RenderTarget);
+	}
+	return false;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+{
 	// TODO: Investigate component bounding box issue when location isn't in FVector::zero
 	IconDynamicMeshActor->SetActorLocation(FVector::ZeroVector);
 	FVector p1(WallLength * 0.5f, 0.f, 0.f);
@@ -118,17 +121,17 @@ bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FName &AsmKey, EToo
 	TArray<FVector> planePoints = { p1, p2, p3, p4};
 	TArray<FPolyHole3D> holes;
 
-	IconDynamicMeshActor->CreateBasicLayerDefs(planePoints, FVector::ZeroVector, holes, *assembly, 0.5f, FVector::ZeroVector);
-	IconDynamicMeshActor->Assembly = *assembly;
+	IconDynamicMeshActor->CreateBasicLayerDefs(planePoints, FVector::ZeroVector, holes, Assembly, 0.5f, FVector::ZeroVector);
+	IconDynamicMeshActor->Assembly = Assembly;
 	IconDynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
 
 	// Slice each layer, assuming each layer is successfully made
-	for (int32 i = 0; i < assembly->Layers.Num(); ++i)
+	for (int32 i = 0; i < Assembly.Layers.Num(); ++i)
 	{
 		if (IconDynamicMeshActor->ProceduralSubLayers[i])
 		{
 			FVector sliceLocation, sliceNormal;
-			GetWallSliceLocationNormal(i, assembly->Layers.Num(), p2, p1, WallHeight, sliceLocation, sliceNormal);
+			GetWallSliceLocationNormal(i, Assembly.Layers.Num(), p2, p1, WallHeight, sliceLocation, sliceNormal);
 			UProceduralMeshComponent* otherHalfProcMesh;
 			UKismetProceduralMeshLibrary::SliceProceduralMesh(
 				IconDynamicMeshActor->ProceduralSubLayers[i],
@@ -160,19 +163,8 @@ bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FName &AsmKey, EToo
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
 {
-	// Step 1: Generate model
-	////////////////////////////////////////////////////////////////////
-	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-
-	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
-	if (!assembly)
-	{
-		return false;
-	}
-	////////////////////////////////////////////////////////////////////
-
 	// TODO: Investigate component bounding box issue when location isn't in FVector::zero
 	IconDynamicMeshActor->SetActorLocation(FVector::ZeroVector);
 	FVector p1(FloorLength * -0.5f, FloorDepth * 0.5f, 0.f);
@@ -182,22 +174,22 @@ bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FName &AsmKey, ETo
 	TArray<FVector> planePoints = { p1, p2, p3, p4 };
 	TArray<FPolyHole3D> holes;
 
-	IconDynamicMeshActor->CreateBasicLayerDefs(planePoints, FVector::ZeroVector, holes, *assembly, 1.f, FVector::ZeroVector);
-	IconDynamicMeshActor->Assembly = *assembly;
+	IconDynamicMeshActor->CreateBasicLayerDefs(planePoints, FVector::ZeroVector, holes, Assembly, 1.f, FVector::ZeroVector);
+	IconDynamicMeshActor->Assembly = Assembly;
 	IconDynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
 
 	// Slice each layer, assuming each layer is successfully made
-	for (int32 i = 0; i < assembly->Layers.Num(); ++i)
+	for (int32 i = 0; i < Assembly.Layers.Num(); ++i)
 	{
 		if (IconDynamicMeshActor->ProceduralSubLayers[i])
 		{
 			FVector sliceLocation, sliceNormal;
 			bool bSliced;
-			float layerRatio = 1.f / assembly->Layers.Num();
+			float layerRatio = 1.f / Assembly.Layers.Num();
 			FVector sliceStart = p4 + layerRatio * (p3 - p4);
 			FVector sliceEnd = p2 + layerRatio * (p1 - p2);
 
-			GetFloorSliceLocationNormal(i, assembly->Layers.Num(), sliceStart, sliceEnd, 0.f, sliceLocation, sliceNormal, bSliced);
+			GetFloorSliceLocationNormal(i, Assembly.Layers.Num(), sliceStart, sliceEnd, 0.f, sliceLocation, sliceNormal, bSliced);
 			if (bSliced)
 			{
 				UProceduralMeshComponent* otherHalfProcMesh;
@@ -233,19 +225,9 @@ bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FName &AsmKey, ETo
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
 {
-	// Step 1: Generate model
-	////////////////////////////////////////////////////////////////////
-	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-
-	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
-	if (!assembly)
-	{
-		return false;
-	}
-	////////////////////////////////////////////////////////////////////
-	IconCompoundMeshActor->MakeFromAssembly(*assembly, FVector::OneVector, false, true);
+	IconCompoundMeshActor->MakeFromAssembly(Assembly, FVector::OneVector, false, true);
 
 	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
 	float portalMinX = 0;// assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinX).AsWorldCentimeters();
@@ -275,25 +257,14 @@ bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FName &AsmKey, ET
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FName &AsmKey, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget)
 {
-	// Step 1: Generate model
-////////////////////////////////////////////////////////////////////
-	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-
-	const FBIMAssemblySpec *assemblyPtr = doc->PresetManager.GetAssemblyByKey(EToolMode::VE_CABINET,AsmKey);
-	if (!assemblyPtr)
-	{
-		return false;
-	}
-
-	////////////////////////////////////////////////////////////////////
 	// Now that we have a cabinet assembly, a DynamicMeshActor, and CompoundMeshActor,
 	// we can make a fake cabinet for icon generation the same way that FMOICabinetImpl does.
 
 	// Get the toe kick dimensions from the assembly
 	FVector2D toeKickDimensions;
-	UModumateFunctionLibrary::GetCabinetToeKickDimensions(*assemblyPtr, toeKickDimensions);
+	UModumateFunctionLibrary::GetCabinetToeKickDimensions(Assembly, toeKickDimensions);
 
 	// Get the exterior finish material for the cabinet
 	static const FName cabinetGeomMatName(TEXT("Cabinet_Exterior_Finish"));
@@ -318,7 +289,7 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FName &AsmKey, U
 	};
 	IconDynamicMeshActor->SetupCabinetGeometry(cabinetCPs, cabinetHeight, materialData, toeKickDimensions, 2);
 
-	IconCompoundMeshActor->MakeFromAssembly(*assemblyPtr, FVector::OneVector, false, false);
+	IconCompoundMeshActor->MakeFromAssembly(Assembly, FVector::OneVector, false, false);
 
 	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
 	// Scale IconDynamicMeshActor to fit
@@ -354,18 +325,8 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FName &AsmKey, U
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
 {
-	// Step 1: Generate model
-	////////////////////////////////////////////////////////////////////
-	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-
-	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(mode, AsmKey);
-	if (!assembly)
-	{
-		return false;
-	}
-	////////////////////////////////////////////////////////////////////
 	// Now that we have an assembly, a DynamicMeshActor, and CompoundMeshActor,
 	// we can make a mesh for icon generation.
 	FVector meshStartPos = FVector(TrimLength * 0.5f, 0.f, 0.f);
@@ -377,11 +338,11 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FName &AsmKey, EToo
 	FVector2D outerExtensions = FVector2D::ZeroVector;
 
 	FVector scaleVector;
-	if (!assembly->TryGetProperty(BIMPropertyNames::Scale, scaleVector))
+	if (!Assembly.TryGetProperty(BIMPropertyNames::Scale, scaleVector))
 	{
 		scaleVector = FVector::OneVector;
 	}
-	IconDynamicMeshActor->SetupExtrudedPolyGeometry(*assembly, meshStartPos, meshEndPos,
+	IconDynamicMeshActor->SetupExtrudedPolyGeometry(Assembly, meshStartPos, meshEndPos,
 		meshNormal, meshUp, upperExtensions, outerExtensions, scaleVector, true, false);
 
 	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
@@ -408,13 +369,13 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FName &AsmKey, EToo
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FName &AsmKey, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget)
 {
 	// Step 1: Generate model
 	////////////////////////////////////////////////////////////////////
 	TArray<UStaticMesh*> meshes;
 	AEditModelPlayerController_CPP *controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
-	UModumateIconMeshStatics::GetMeshesFromShoppingItem(controller, AsmKey, EToolMode::VE_PLACEOBJECT, meshes, false);
+	UModumateIconMeshStatics::GetMeshesFromShoppingItem(controller, Assembly.UniqueKey(), EToolMode::VE_PLACEOBJECT, meshes, false);
 	if (meshes.Num() == 0)
 	{
 		return false;

@@ -548,3 +548,28 @@ bool FBIMCraftingTreeNodePool::ValidatePool() const
 #endif
 	return ret;
 }
+
+ECraftingResult FBIMCraftingTreeNodePool::CreateAssemblyFromNodes(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec)
+{
+	ECraftingResult result = ECraftingResult::Error;
+
+	// Get root node
+	FBIMCraftingTreeNodeSharedPtr rootNode;
+	for (const auto &inst : InstancePool)
+	{
+		if (inst->ParentInstance == nullptr)
+		{
+			rootNode = inst;
+			break;
+		}
+	}
+
+	// Make assembly from root node
+	if (rootNode.IsValid())
+	{
+		//TODO: This should include changes from nodes in dirty state
+		result = OutAssemblySpec.FromPreset(InDB, PresetCollection, rootNode->PresetID);
+	}
+
+	return result;
+}

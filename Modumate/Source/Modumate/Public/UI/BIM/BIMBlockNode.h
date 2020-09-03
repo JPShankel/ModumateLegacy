@@ -44,6 +44,9 @@ protected:
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *Controller;
 
+	UPROPERTY()
+	class UTextureRenderTarget2D *IconRenderTarget;
+
 	bool DragTick = false;
 	FVector2D LastMousePosition = FVector2D::ZeroVector;
 	bool DragReset = true;
@@ -85,6 +88,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FKey ToggleCollapseKey = EKeys::LeftMouseButton;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UImage *IconImage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UImage *GrabHandleImage;
