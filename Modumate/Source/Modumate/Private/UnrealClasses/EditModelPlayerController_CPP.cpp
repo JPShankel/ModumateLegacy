@@ -2037,9 +2037,9 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 					DistanceBetweenWorldPointsInScreenSpace(snappedStructuralHit.Location, sketchHit.Location, screenSpaceDist) &&
 					(screenSpaceDist < SnapPointMaxScreenDistance))
 				{
-					ESnapType sketchSnapType = sketchHit.SnapType;
-					sketchHit = snappedStructuralHit;
-					sketchHit.SnapType = sketchSnapType;
+					// Only inherit the normal from the structural hit, because for dimensioning purposes, the world-snapped sketch hit location is more precise.
+					// TODO: resolve multiple constraints of being snapped/projected along axes, and also being planar with the other definitional points of the hit object.
+					sketchHit.Normal = snappedStructuralHit.Normal;
 				}
 			}
 
