@@ -11,6 +11,13 @@
  *
  */
 
+UENUM(BlueprintType)
+enum class ESwapType : uint8
+{
+	SwapFromNode,
+	SwapFromAssemblyList,
+	None
+};
 
 UCLASS()
 class MODUMATE_API UToolTrayBlockAssembliesList : public UUserWidget
@@ -30,6 +37,9 @@ protected:
 	UPROPERTY()
 	class AEditModelGameState_CPP *GameState;
 
+	ESwapType SwapType = ESwapType::None;
+	int32 CurrentNodeForSwap = -1;
+
 public:
 	UPROPERTY()
 	class UToolTrayWidget *ToolTray;
@@ -40,6 +50,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonAdd;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
+	class UModumateButtonUserWidget *ButtonCancel;
+
 	UFUNCTION(BlueprintCallable)
 	void CreateAssembliesListForCurrentToolMode();
 
@@ -48,4 +61,7 @@ public:
 
 	UFUNCTION()
 	void OnButtonAddReleased();
+
+	UFUNCTION()
+	void OnButtonCancelReleased();
 };

@@ -10,6 +10,9 @@
 #include "DocumentManagement/ModumatePresetManager.h"
 #include "UI/ComponentListObject.h"
 #include "Components/ListView.h"
+#include "UI/BIM/BIMDesigner.h"
+#include "Components/Sizebox.h"
+#include "UI/SelectionTray/SelectionTrayWidget.h"
 
 UToolTrayBlockAssembliesList::UToolTrayBlockAssembliesList(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -28,6 +31,10 @@ bool UToolTrayBlockAssembliesList::Initialize()
 	}
 
 	ButtonAdd->ModumateButton->OnReleased.AddDynamic(this, &UToolTrayBlockAssembliesList::OnButtonAddReleased);
+	if (ButtonCancel)
+	{
+		ButtonCancel->ModumateButton->OnReleased.AddDynamic(this, &UToolTrayBlockAssembliesList::OnButtonCancelReleased);
+	}
 
 	return true;
 }
@@ -68,6 +75,8 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 
 void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FName &ParentPresetID, const FName &PresetIDToSwap, int32 NodeID)
 {
+	SwapType = ESwapType::SwapFromNode;
+	CurrentNodeForSwap = NodeID;
 	if (Controller && GameState)
 	{
 		FPresetManager &presetManager = GameState->Document.PresetManager;
@@ -90,6 +99,7 @@ void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FName &Pa
 
 void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FName &PresetID)
 {
+	SwapType = ESwapType::SwapFromAssemblyList;
 	if (Controller && GameState)
 	{
 		FPresetManager &presetManager = GameState->Document.PresetManager;
@@ -114,5 +124,20 @@ void UToolTrayBlockAssembliesList::OnButtonAddReleased()
 	if (Controller && Controller->EditModelUserWidget)
 	{
 		Controller->EditModelUserWidget->EventNewCraftingAssembly(Controller->GetToolMode());
+	}
+}
+
+void UToolTrayBlockAssembliesList::OnButtonCancelReleased()
+{
+	if (Controller && Controller->EditModelUserWidget)
+	{
+		if (SwapType == ESwapType::SwapFromNode)
+		{
+			Controller->EditModelUserWidget->BIMDesigner->UpdateNodeSwapMenuVisibility(CurrentNodeForSwap, false);
+		}
+		else
+		{
+			Controller->EditModelUserWidget->SelectionTrayWidget->OpenToolTrayForSelection();
+		}
 	}
 }

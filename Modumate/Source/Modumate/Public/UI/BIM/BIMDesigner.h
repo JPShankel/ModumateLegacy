@@ -94,6 +94,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UCanvasPanel *CanvasPanelForNodes;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class USizeBox *SizeBoxSwapTray;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UToolTrayBlockAssembliesList *SelectionTray_Block_Swap;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockNode> BIMBlockNodeClass;
 
@@ -115,4 +121,5 @@ public:
 	bool DeleteNode(int32 InstanceID);
 	bool AddNodeFromPreset(int32 ParentID, const FName& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
 	bool SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value);
+	bool UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVisibility);
 };

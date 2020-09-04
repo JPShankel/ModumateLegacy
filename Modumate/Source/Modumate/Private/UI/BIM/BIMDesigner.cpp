@@ -15,6 +15,7 @@
 #include "UI/BIM/BIMBlockAddLayer.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "BIMKernel/BIMAssemblySpec.h"
+#include "Components/Sizebox.h"
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -169,7 +170,12 @@ void UBIMDesigner::UpdateBIMDesigner()
 		Controller->GetDocument()->PresetManager.CraftingNodePresets,
 		*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly);
 
-	CanvasPanelForNodes->ClearChildren();
+	// Remove old nodes
+	for (auto& curNodeWidget : BIMBlockNodes)
+	{
+		curNodeWidget->RemoveFromParent();
+	}
+
 	BIMBlockNodes.Empty();
 	IdToNodeMap.Empty();
 	NodesWithAddLayerButton.Empty();
@@ -474,5 +480,45 @@ bool UBIMDesigner::SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, co
 	}
 	instPtr->InstanceProperties.SetProperty(Scope, NameType, Value);
 	UpdateBIMDesigner();
+	return true;
+}
+
+bool UBIMDesigner::UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVisibility)
+{
+	UBIMBlockNode *blocknode = IdToNodeMap.FindRef(SwapFromNodeID);
+	if (!blocknode)
+	{
+		return false;
+	}
+
+	if (NewVisibility)
+	{
+		UCanvasPanelSlot* nodeCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(blocknode);
+		UCanvasPanelSlot* swapCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(SizeBoxSwapTray);
+		if (nodeCanvasSlot && swapCanvasSlot)
+		{
+			FVector2D newPosition = nodeCanvasSlot->GetPosition();
+			if (blocknode->NodeDirty)
+			{
+				newPosition.Y += blocknode->DirtyTabSize;
+			}
+			swapCanvasSlot->SetPosition(newPosition);
+		}
+		SizeBoxSwapTray->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	else
+	{
+		SizeBoxSwapTray->SetVisibility(ESlateVisibility::Collapsed);
+		if (blocknode->NodeCollapse)
+		{
+			blocknode->UpdateNodeSwitchState(ENodeWidgetSwitchState::Collapsed);
+		}
+		else
+		{
+			blocknode->UpdateNodeSwitchState(ENodeWidgetSwitchState::Expanded);
+		}
+
+	}
+
 	return true;
 }

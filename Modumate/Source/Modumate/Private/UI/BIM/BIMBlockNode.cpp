@@ -131,8 +131,11 @@ void UBIMBlockNode::OnButtonSwapReleased()
 	{
 		parentPresetID = ParentBIMDesigner->GetPresetID(ParentID);
 	}
-	SelectionTray_Block_Swap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, ID);
+	// Move swap menu to be in front of this node
+	ParentBIMDesigner->UpdateNodeSwapMenuVisibility(ID, true);
 
+	// Generate list of presets
+	ParentBIMDesigner->SelectionTray_Block_Swap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, ID);
 }
 
 void UBIMBlockNode::OnButtonDeleteReleased()
@@ -260,23 +263,15 @@ FVector2D UBIMBlockNode::GetEstimatedNodeSize()
 		estimatedSize += DirtyTabSize;
 	}
 
-	switch (NodeSwitchState)
+	if (NodeCollapse)
 	{
-	case ENodeWidgetSwitchState::Collapsed:
 		estimatedSize += CollapsedNodeSize;
-		break;
-
-	case ENodeWidgetSwitchState::Expanded:
+	}
+	else
+	{
 		estimatedSize += ExpandedImageSize;
 		estimatedSize += (FormItemSize * VerticalBoxProperties->GetAllChildren().Num());
 		estimatedSize += BottomPadding;
-		break;
-
-	case ENodeWidgetSwitchState::PendingSwap:
-		estimatedSize += SwapNodeSize;
-		break;
-	default:
-		break;
 	}
 
 	return FVector2D(NodeWidth, estimatedSize);

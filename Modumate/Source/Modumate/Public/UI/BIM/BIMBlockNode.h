@@ -50,8 +50,6 @@ protected:
 	bool DragTick = false;
 	FVector2D LastMousePosition = FVector2D::ZeroVector;
 	bool DragReset = true;
-	bool NodeCollapse = true;
-	bool NodeDirty = false;
 	ENodeWidgetSwitchState NodeSwitchState = ENodeWidgetSwitchState::None;
 
 public:
@@ -110,9 +108,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonDeleteCollapsed;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UToolTrayBlockAssembliesList *SelectionTray_Block_Swap;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UVerticalBox *VerticalBoxProperties;
 
@@ -135,6 +130,8 @@ public:
 	int32 ID = -1;
 	int32 ParentID = -1;
 	bool IsKingNode = false;
+	bool NodeDirty = false;
+	bool NodeCollapse = true;
 
 	UFUNCTION()
 	void PerformDrag();
