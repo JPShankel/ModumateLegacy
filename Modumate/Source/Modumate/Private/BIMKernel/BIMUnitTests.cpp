@@ -4,6 +4,70 @@
 #include "BIMKernel/BIMTagPath.h"
 #include "BIMKernel/BIMNodeEditor.h"
 #include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/BIMKey.h"
+
+static bool testKeys()
+{
+	FBIMKey key1(TEXT("Value1"));
+	FBIMKey key2(TEXT("Value1"));
+
+	if (key1 != key2)
+	{
+		return false;
+	}
+
+	FString ms1, ms2;
+
+	FString characters(TEXT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-><!@#$%^&*()_+=-"));
+	int32 numChars = characters.Len();
+	for (int32 i = 0; i < 2000; ++i)
+	{
+		int32 c = FMath::RandRange(0, numChars - 1);
+		ms1.AppendChar(characters[c]);
+		int32 d = FMath::RandRange(0, numChars - 1);
+		while (d == c)
+		{
+			d = FMath::RandRange(0, numChars - 1);
+		}
+		ms2.AppendChar(characters[d]);
+	}
+
+	key1 = FBIMKey(ms1);
+	key2 = FBIMKey(ms1);
+
+	if (key1 != key2)
+	{
+		return false;
+	}
+
+	key2 = FBIMKey(ms2);
+
+	if (key1 == key2)
+	{
+		return false;
+	}
+
+	TMap<FBIMKey, int32> testMap;
+
+	testMap.Add(key1, 1);
+	testMap.Add(key2, 2);
+
+	int32 *mapNum = testMap.Find(key1);
+
+	if (mapNum == nullptr || (*mapNum) != 1)
+	{
+		return false;
+	}
+
+	mapNum = testMap.Find(key2);
+
+	if (mapNum == nullptr || (*mapNum) != 2)
+	{
+		return false;
+	}
+
+	return true;
+}
 
 static bool testTags()
 {
@@ -248,6 +312,11 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateCraftingUnitTest, "Modumate.Database.M
 bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 {
 	if (!testTags())
+	{
+		return false;
+	}
+
+	if (!testKeys())
 	{
 		return false;
 	}
