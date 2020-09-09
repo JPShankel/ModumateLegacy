@@ -9,6 +9,8 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateObjectDeltaStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/AdjustmentHandleWidget.h"
@@ -268,16 +270,22 @@ void AAdjustmentHandleActor::EndUse()
 	// either in handles, the document, or through the MOI interface
 	TArray<TSharedPtr<FDelta>> deltas;
 
-	TArray<FVector> newMetaControlPoints;
-	bool bMetaPlaneTarget = (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane);
 
-	if (bMetaPlaneTarget)
+	// TODO: generalize this to GetTransformableIDs, which would be vertices for most objects, and the
+	// entire object for FF&E
+	TSet<int32> newVertexIDs;
+	FModumateObjectDeltaStatics::GetVertexIDs({ TargetMOI->ID }, Controller->GetDocument(), newVertexIDs);
+
+	TMap<int32, FVector> newPositions;
+	for (int32 id : newVertexIDs)
 	{
-		newMetaControlPoints = TargetMOI->GetControlPoints();
-	}
-	else
-	{
-		deltas.Add(MakeShareable(new FMOIDelta(TArray<FModumateObjectInstance*>({ TargetMOI }))));
+		auto obj = GameState->Document.GetObjectById(id);
+		if (obj == nullptr)
+		{
+			continue;
+		}
+
+		newPositions.Add(id, obj->GetWorldTransform().GetTranslation());
 	}
 
 	TargetMOI->EndPreviewOperation();
@@ -288,47 +296,93 @@ void AAdjustmentHandleActor::EndUse()
 
 	GameState->Document.ClearPreviewDeltas(Controller->GetWorld());
 
+	bool bMetaPlaneTarget = (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane);
+	bool bSurfacePolyTarget = (TargetMOI->GetObjectType() == EObjectType::OTSurfacePolygon);
 	if (bMetaPlaneTarget)
 	{
 		// Generate the minimum list of moved vertices, so we can generate graph deltas based only on those,
 		// rather than trying to update the entire geometry all at once.
+		int32 numNewPoints = newPositions.Num();
+
 		const FGraph3DFace* targetGraphFace = GameState->Document.GetVolumeGraph().FindFace(TargetMOI->ID);
-		const TArray<FVector>& originalControlPoints = TargetMOI->GetControlPoints();
-		int32 numNewPoints = newMetaControlPoints.Num();
-		int32 numOldPoints = originalControlPoints.Num();
-
-		if (ensure(targetGraphFace && (numNewPoints == numOldPoints)))
+		if (!ensure(targetGraphFace))
 		{
-			TArray<int32> movedVertexIDs;
-			TArray<FVector> newVertexPositions;
+			return;
+		}
 
-			for (int32 i = 0; i < numNewPoints; ++i)
-			{
-				const FVector& newPoint = newMetaControlPoints[i];
-				const FVector& oldPoint = originalControlPoints[i];
-				if (!newPoint.Equals(oldPoint))
-				{
-					int32 vertexID = targetGraphFace->FindVertexID(oldPoint);
-					if (ensure(vertexID != MOD_ID_NONE))
-					{
-						movedVertexIDs.Add(vertexID);
-						newVertexPositions.Add(newPoint);
-					}
-				}
-			}
+		TArray<int32> movedVertexIDs;
+		TArray<FVector> newVertexPositions;
 
-			if (newVertexPositions.Num() > 0)
+		for (auto& kvp : newPositions)
+		{
+			int32 vertexIdx = targetGraphFace->VertexIDs.Find(kvp.Key);
+			if (ensure(vertexIdx != INDEX_NONE))
 			{
-				GameState->Document.MoveMetaVertices(GetWorld(), movedVertexIDs, newVertexPositions);
+				movedVertexIDs.Add(kvp.Key);
+				newVertexPositions.Add(kvp.Value);
 			}
 		}
+
+		if (newVertexPositions.Num() > 0)
+		{
+			GameState->Document.MoveMetaVertices(GetWorld(), movedVertexIDs, newVertexPositions);
+		}
+	}
+	else if (bSurfacePolyTarget)
+	{
+		auto surfaceGraph = GameState->Document.FindSurfaceGraphByObjID(TargetMOI->ID);
+		auto surfaceObj = GameState->Document.GetObjectById(TargetMOI->GetParentID());
+		auto surfaceParent = surfaceObj ? surfaceObj->GetParentObject() : nullptr;
+		auto poly = surfaceGraph->FindPolygon(TargetMOI->ID);
+
+		if (!ensure(poly))
+		{
+			return;
+		}
+
+		int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceObj);
+		TArray<FVector> facePoints;
+		FVector faceNormal, faceAxisX, faceAxisY;
+		if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceParent, surfaceGraphFaceIndex, facePoints, faceNormal, faceAxisX, faceAxisY)))
+		{
+			return;
+		}
+		FVector faceOrigin = facePoints[0];
+
+		TArray<int32> movedVertexIDs;
+		TArray<FVector2D> newVertexPositions;
+		TMap<int32, FVector2D> vertexMovements;
+
+		for (auto& kvp : newPositions)
+		{
+			int32 vertexIdx = poly->VertexIDs.Find(kvp.Key);
+			if (ensure(vertexIdx != INDEX_NONE))
+			{
+				vertexMovements.Add(kvp.Key, UModumateGeometryStatics::ProjectPoint2D(kvp.Value, faceAxisX, faceAxisY, faceOrigin));
+			}
+		}
+
+		TArray<FGraph2DDelta> surfaceGraphDeltas;
+		int32 nextID = GameState->Document.GetNextAvailableID();
+		surfaceGraph->MoveVertices(surfaceGraphDeltas, nextID, vertexMovements);
+
+		for (auto& delta : surfaceGraphDeltas)
+		{
+			deltas.Add(MakeShareable<FDelta>(new FGraph2DDelta(delta)));
+		}
+
+		GameState->Document.ApplyDeltas(deltas, GetWorld());
 	}
 	else
 	{
 		GameState->Document.ApplyDeltas(deltas, GetWorld());
 	}
 
-	PostEndOrAbort();
+	// TODO: the deltas should be an outparam of EndUse (and EndUse would need to be refactored)
+	if (!IsActorBeingDestroyed())
+	{
+		PostEndOrAbort();
+	}
 }
 
 void AAdjustmentHandleActor::AbortUse()

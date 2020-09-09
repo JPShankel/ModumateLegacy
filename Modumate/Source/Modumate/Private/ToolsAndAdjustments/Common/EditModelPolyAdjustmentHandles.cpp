@@ -85,10 +85,13 @@ bool AAdjustPolyPointHandle::UpdateUse()
 	FModumateDocument* doc = Controller->GetDocument();
 	if (doc != nullptr)
 	{
-		auto face = doc->GetVolumeGraph().FindFace(TargetMOI->ID);
-		if (face != nullptr)
+		TMap<int32, FVector> objectInfo;
+		
+		bool bMetaPlaneTarget = (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane);
+		bool bSurfacePolyTarget = (TargetMOI->GetObjectType() == EObjectType::OTSurfacePolygon);
+		if (bMetaPlaneTarget)
 		{
-			TMap<int32, FVector> objectInfo;
+			auto face = doc->GetVolumeGraph().FindFace(TargetMOI->ID);
 			if (bAdjustPolyEdge)
 			{
 				int32 numPolyPoints = OriginalPolyPoints.Num();
@@ -107,13 +110,45 @@ bool AAdjustPolyPointHandle::UpdateUse()
 			{
 				objectInfo.Add(face->VertexIDs[TargetIndex], OriginalPolyPoints[TargetIndex] + dp);
 			}
+		}
+		else if (bSurfacePolyTarget)
+		{
+			auto surfaceGraph = GameState->Document.FindSurfaceGraphByObjID(TargetMOI->ID);
+			auto surfaceObj = GameState->Document.GetObjectById(TargetMOI->GetParentID());
+			auto surfaceParent = surfaceObj ? surfaceObj->GetParentObject() : nullptr;
+			auto poly = surfaceGraph->FindPolygon(TargetMOI->ID);
 
-			FModumateObjectDeltaStatics::PreviewMovement(objectInfo, doc, Controller->GetWorld());
+			if (!ensure(poly))
+			{
+				return false;
+			}
+
+			if (bAdjustPolyEdge)
+			{
+				int32 numPolyPoints = OriginalPolyPoints.Num();
+				int32 edgeStartIdx = TargetIndex;
+				int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
+
+				float translation = (dp | OriginalDirection);
+
+				FVector edgeStartPoint, edgeEndPoint;
+				if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
+				{
+					objectInfo.Add(poly->CachedPerimeterVertexIDs[edgeStartIdx], edgeStartPoint);
+					objectInfo.Add(poly->CachedPerimeterVertexIDs[edgeEndIdx], edgeEndPoint);
+				}
+			}
+			else
+			{
+				objectInfo.Add(poly->CachedPerimeterVertexIDs[TargetIndex], OriginalPolyPoints[TargetIndex] + dp);
+			}
 		}
 		else
 		{ // TODO: non-Graph 3D Objects?
 			return false;
 		}
+
+		FModumateObjectDeltaStatics::PreviewMovement(objectInfo, doc, Controller->GetWorld());
 	}
 
 	return true;

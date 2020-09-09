@@ -65,6 +65,7 @@ bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSh
 		{
 			return false;
 		}
+		CachedPlane = FPlane(CachedOrigin.GetLocation(), CachedOrigin.GetRotation().GetAxisZ());
 
 		// Skip exterior polygons and inner bounds polygons; they can't be visible anyway, so they shouldn't set up any dynamic meshes.
 		if (!bInteriorPolygon || bInnerBoundsPolygon || (CachedPoints.Num() < 3))
