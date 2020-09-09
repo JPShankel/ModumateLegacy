@@ -7,6 +7,7 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UI/RightMenu/ComponentSavedViewListItemObject.h"
 #include "Components/ListView.h"
+#include "UnrealClasses/SkyActor.h"
 
 
 UViewMenuBlockSavedViews::UViewMenuBlockSavedViews(const FObjectInitializer& ObjectInitializer)
@@ -40,7 +41,7 @@ void UViewMenuBlockSavedViews::OnButtonAddReleased()
 	UCameraComponent *cameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
 	if (cameraComp)
 	{
-		FDateTime dateTime;
+		FDateTime dateTime = Controller->SkyActor->GetCurrentDateTime();
 		FString newViewName = FString(TEXT("New Camera View ")) + FString::FromInt(SavedViewsList->GetNumItems() + 1);
 		UModumateBrowserStatics::SaveCameraView(this, cameraComp, newViewName, dateTime);
 	}

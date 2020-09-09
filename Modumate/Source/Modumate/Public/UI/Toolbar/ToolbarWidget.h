@@ -50,6 +50,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *Button_CutPlanes;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UToolbarTopWidget *ToolBarTopBP;
+
 	UFUNCTION()
 	void OnButtonReleaseMetaPlane();
 

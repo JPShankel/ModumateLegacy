@@ -13,6 +13,7 @@
 #include "Kismet/KismetRenderingLibrary.h"
 #include "UI/RightMenu/ViewMenuBlockSavedViews.h"
 #include "UI/RightMenu/ViewMenuBlockProperties.h"
+#include "UnrealClasses/SkyActor.h"
 
 
 UViewMenuWidget::UViewMenuWidget(const FObjectInitializer& ObjectInitializer)
@@ -96,6 +97,8 @@ void UViewMenuWidget::MouseEndHoverView(UComponentSavedViewListItem *Item)
 		EnableHoverCapture = false;
 		HoverCaptureTickCount = 0;
 	}
+	// Revert skyActor back to its original param
+	Controller->SkyActor->UpdateComponentsWithDateTime(Controller->SkyActor->GetCurrentDateTime());
 }
 
 void UViewMenuWidget::HoverCaptureTick()
@@ -112,6 +115,8 @@ void UViewMenuWidget::HoverCaptureTick()
 			PlayerPawn->CameraCaptureComponent2D->SetWorldLocationAndRotation(CurrentHoverViewItem->CameraView.Position, CurrentHoverViewItem->CameraView.Rotation);
 			PlayerPawn->CameraCaptureComponent2D->FOVAngle = CurrentHoverViewItem->CameraView.FOV;
 			PlayerPawn->CameraCaptureComponent2D->TextureTarget = PreviewRT;
+			// Set lighting param to match with saved camera view
+			Controller->SkyActor->UpdateComponentsWithDateTime(CurrentHoverViewItem->CameraView.TimeOfDay);
 		}
 
 		// Due to post-processing (ex: Light Propagation responding to time of day change), 

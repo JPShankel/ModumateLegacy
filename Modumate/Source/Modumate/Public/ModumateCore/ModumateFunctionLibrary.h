@@ -137,9 +137,6 @@ public:
 	static bool ProjectLineToCameraPlane(APlayerController const* player, const FVector point1, const FVector point2, FVector& newPoint1, FVector& newPoint2);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static FModumateSunPositionData ModumateGetSunPosition(float Latitude, float Longitude, float TimeZone, bool bIsDaylightSavingTime, int32 Year, int32 Month, int32 Day, int32 Hours, int32 Minutes, int32 Seconds);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
 	static void SetSkylightCubemapAngle(USkyLightComponent* SkyLight, float Angle);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")

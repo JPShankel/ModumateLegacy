@@ -9,6 +9,7 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "SunPosition/Public/SunPosition.h"
 
 
 // Sets default values
@@ -57,8 +58,8 @@ void ASkyActor::Tick(float DeltaTime)
 
 void ASkyActor::UpdateComponentsWithDateTime(const FDateTime &DateTime)
 {
-	// TODO: Refactor this function to accept FDateTime when old BP_Sky_Sphere is removed from project
-	FModumateSunPositionData sunPosition = UModumateFunctionLibrary::ModumateGetSunPosition(
+	FSunPositionData sunPositionData;
+	USunPositionFunctionLibrary::GetSunPosition(
 		Latitude,
 		Longitude,
 		TimeZone,
@@ -68,9 +69,10 @@ void ASkyActor::UpdateComponentsWithDateTime(const FDateTime &DateTime)
 		DateTime.GetDay(),
 		DateTime.GetHour(),
 		DateTime.GetMinute(),
-		DateTime.GetSecond());
+		DateTime.GetSecond(),
+		sunPositionData);
 
-	DirectionalLight->SetWorldRotation(FRotator(sunPosition.CorrectedElevation, (sunPosition.Azimuth - 90.f), 0.f));
+	DirectionalLight->SetWorldRotation(FRotator(sunPositionData.CorrectedElevation, (sunPositionData.Azimuth - 90.f), 0.f));
 
 	// Change light intensity based on angle
 	float newIntensity = UKismetMathLibrary::MapRangeClamped(

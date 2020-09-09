@@ -10,6 +10,8 @@
 #include "UI/EditModelUserWidget.h"
 #include "UI/RightMenu/ViewMenuWidget.h"
 #include "UI/RightMenu/ViewMenuBlockSavedViews.h"
+#include "UnrealClasses/SkyActor.h"
+#include "UI/RightMenu/ViewMenuBlockProperties.h"
 
 
 UComponentSavedViewListItem::UComponentSavedViewListItem(const FObjectInitializer& ObjectInitializer)
@@ -68,7 +70,7 @@ void UComponentSavedViewListItem::OnButtonUpdateReleased()
 	UCameraComponent *cameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
 	if (cameraComp)
 	{
-		FDateTime dateTime;
+		FDateTime dateTime = Controller->SkyActor->GetCurrentDateTime();
 		UModumateBrowserStatics::SaveCameraView(this, cameraComp, CameraView.Name, dateTime, ID);
 	}
 	Controller->EditModelUserWidget->ViewMenu->ViewMenu_Block_SavedViews->UpdateSavedViewsList();
@@ -80,6 +82,8 @@ void UComponentSavedViewListItem::ActivateCameraView()
 	if (pawn)
 	{
 		pawn->SetActorLocationAndRotation(CameraView.Position, CameraView.Rotation);
+		Controller->SkyActor->SetCurrentDateTime(CameraView.TimeOfDay);
+		Controller->EditModelUserWidget->ViewMenu->ViewMenu_Block_Properties->SyncTextBoxesWithSkyActorCurrentTime();
 		Controller->EditModelUserWidget->ViewMenu->MouseEndHoverView(this);
 	}
 }

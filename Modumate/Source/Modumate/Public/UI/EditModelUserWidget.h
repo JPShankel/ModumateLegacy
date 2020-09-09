@@ -67,6 +67,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
 	void EventNewCraftingAssembly(EToolMode ToolMode);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
+	void EventToggleProjectMenu();
+
 	void EditExistingAssembly(EToolMode ToolMode, FName AssemblyKey);
 	void ToggleBIMDesigner(bool Open);
 	void SwitchRightMenu(ERightMenuState NewMenuState);

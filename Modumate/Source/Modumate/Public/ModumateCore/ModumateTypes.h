@@ -39,30 +39,6 @@ struct FTriangle2D
 };
 
 USTRUCT(BlueprintType)
-struct FModumateSunPositionData
-{
-	GENERATED_BODY();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Modumate Vector")
-	float Elevation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Modumate Vector")
-	float CorrectedElevation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Modumate Vector")
-	float Azimuth;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Modumate Vector")
-	FTimespan SunriseTime;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Modumate Vector")
-	FTimespan SunsetTime;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Modumate Vector")
-	FTimespan SolarNoon;
-};
-
-USTRUCT(BlueprintType)
 struct FWallEdges
 {
 	GENERATED_BODY();

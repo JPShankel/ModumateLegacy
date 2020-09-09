@@ -62,6 +62,7 @@ public class Modumate : ModuleRules
 			"Serialization",
 			"GeometryAlgorithms",
 			"GeometricObjects",
+            "SunPosition"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
