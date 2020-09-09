@@ -39,7 +39,7 @@ bool FSnappedCursor::HasAffordanceSet() const
 void FSnappedCursor::SetAffordanceFrame(const FVector &origin, const FVector &normal, const FVector &tangent, bool bInVerticalAffordanceSnap, bool bInSnapGlobalAxes)
 {
 	AffordanceFrame.Origin = origin;
-	AffordanceFrame.Normal = normal;
+	AffordanceFrame.Normal = normal.IsZero() ? FVector::UpVector : normal;	// Default to the up-vector so that we always have a valid sketch plane to project against
 	AffordanceFrame.Tangent = tangent;
 	bHasCustomAffordance = true;
 	WantsVerticalAffordanceSnap = bInVerticalAffordanceSnap;
@@ -57,7 +57,7 @@ void FSnappedCursor::ClearAffordanceFrame()
 bool FSnappedCursor::TryGetRaySketchPlaneIntersection(const FVector &origin, const FVector &direction, FVector &outputPosition) const
 {
 	// RayPlaneIntersection is not safe, pre-reject parallel projection
-	if (FVector::Orthogonal(direction, AffordanceFrame.Normal))
+	if (!AffordanceFrame.Normal.IsNormalized() || FVector::Orthogonal(direction, AffordanceFrame.Normal))
 	{
 		return false;
 	}

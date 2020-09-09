@@ -20,6 +20,7 @@ public:
 	virtual void OnSelected(bool bNewSelected) override;
 	virtual bool ShowStructureOnSelection() const override { return false; }
 	virtual bool UseStructureDataForCollision() const override { return true; }
+	virtual void GetTangents(TArray<FVector>& OutTangents) const = 0;
 
 protected:
 	TWeakObjectPtr<UWorld> World;

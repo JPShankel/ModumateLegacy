@@ -10,8 +10,7 @@ class MODUMATE_API FMOIMetaVertexImpl : public FMOIVertexImplBase
 public:
 	FMOIMetaVertexImpl(FModumateObjectInstance *moi);
 
-	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& OutPoints, TArray<FStructureLine>& OutLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
+	virtual void GetTangents(TArray<FVector>& OutTangents) const override;
 };
-

@@ -41,7 +41,13 @@ int32 FMOIVertexImplBase::GetNumCorners() const
 
 void FMOIVertexImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	outPoints.Add(FStructurePoint(GetLocation(), FVector::ZeroVector, 0));
+	TArray<FVector> vertexTangents;
+	GetTangents(vertexTangents);
+
+	// TODO: support multiple axis affordances for a single point
+	FVector defaultTangent = (vertexTangents.Num() > 0) ? vertexTangents[0] : FVector::ZeroVector;
+
+	outPoints.Add(FStructurePoint(GetLocation(), defaultTangent, 0));
 }
 
 AActor *FMOIVertexImplBase::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)

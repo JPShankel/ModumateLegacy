@@ -80,6 +80,9 @@ bool USurfaceGraphTool::BeginUse()
 		}
 
 		// Otherwise, start drawing a poly-line on the target surface graph.
+		// TODO: use the normal and tangent of the hit cursor, and override the "global axes";
+		// this will allow appropriately-colored green and red lines for the surface graph's local X and Y axes,
+		// while also allowing tangent affordance(s) for any connected surface graph vertices that are the hit target.
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(HitLocation, TargetFaceNormal, TargetFaceAxisX, false, false);
 		InUse = true;
 

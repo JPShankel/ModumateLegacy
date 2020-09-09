@@ -82,3 +82,25 @@ bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSha
 
 	return true;
 }
+
+void FMOISurfaceVertexImpl::GetTangents(TArray<FVector>& OutTangents) const
+{
+	for (FModumateObjectInstance* connectedMOI : CachedConnectedMOIs)
+	{
+		if (connectedMOI && (connectedMOI->GetObjectType() == EObjectType::OTSurfaceEdge))
+		{
+			FVector edgeStart = connectedMOI->GetCorner(0);
+			FVector edgeEnd = connectedMOI->GetCorner(1);
+			FVector edgeDir = (edgeEnd - edgeStart).GetSafeNormal();
+
+			if (CachedDeprojectedLocation.Equals(edgeStart))
+			{
+				OutTangents.Add(edgeDir);
+			}
+			else if (CachedDeprojectedLocation.Equals(edgeEnd))
+			{
+				OutTangents.Add(-edgeDir);
+			}
+		}
+	}
+}

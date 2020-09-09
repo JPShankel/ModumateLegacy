@@ -12,21 +12,6 @@ FMOIMetaVertexImpl::FMOIMetaVertexImpl(FModumateObjectInstance *moi)
 {
 }
 
-void FMOIMetaVertexImpl::GetStructuralPointsAndLines(TArray<FStructurePoint>& OutPoints, TArray<FStructureLine>& OutLines, bool bForSnapping, bool bForSelection) const
-{
-	FVector pointSnapTangent(ForceInitToZero);
-	if (CachedConnectedMOIs.Num() > 0)
-	{
-		const FModumateObjectInstance* connectedMOI = CachedConnectedMOIs[0];
-		if (connectedMOI && (connectedMOI->GetObjectType() == EObjectType::OTMetaEdge) && ensure(connectedMOI->GetNumCorners() == 2))
-		{
-			pointSnapTangent = (connectedMOI->GetCorner(1) - connectedMOI->GetCorner(0)).GetSafeNormal();
-		}
-	}
-
-	OutPoints.Add(FStructurePoint(GetLocation(), pointSnapTangent, 0));
-}
-
 void FMOIMetaVertexImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	if (MOI && VertexActor.IsValid())
@@ -74,5 +59,29 @@ bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TShared
 	}
 
 	return true;
+}
+
+void FMOIMetaVertexImpl::GetTangents(TArray<FVector>& OutTangents) const
+{
+	FVector vertexLocation = GetLocation();
+
+	for (FModumateObjectInstance* connectedMOI : CachedConnectedMOIs)
+	{
+		if (connectedMOI && (connectedMOI->GetObjectType() == EObjectType::OTMetaEdge))
+		{
+			FVector edgeStart = connectedMOI->GetCorner(0);
+			FVector edgeEnd = connectedMOI->GetCorner(1);
+			FVector edgeDir = (edgeEnd - edgeStart).GetSafeNormal();
+
+			if (vertexLocation.Equals(edgeStart))
+			{
+				OutTangents.Add(edgeDir);
+			}
+			else if (vertexLocation.Equals(edgeEnd))
+			{
+				OutTangents.Add(-edgeDir);
+			}
+		}
+	}
 }
 
