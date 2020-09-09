@@ -24,7 +24,7 @@ void FMOIEdgeImplBase::SetLocation(const FVector &p)
 
 FVector FMOIEdgeImplBase::GetLocation() const
 {
-	return LineActor.IsValid() ? (0.5f * (LineActor->Point1 + LineActor->Point2)) : FVector::ZeroVector;
+	return 0.5f * (GetCorner(0) + GetCorner(1));
 }
 
 FVector FMOIEdgeImplBase::GetCorner(int32 index) const
@@ -34,7 +34,7 @@ FVector FMOIEdgeImplBase::GetCorner(int32 index) const
 
 int32 FMOIEdgeImplBase::GetNumCorners() const
 {
-	return LineActor.IsValid() ? 2 : 0;
+	return 2;
 }
 
 void FMOIEdgeImplBase::OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bEnableHover)
@@ -62,7 +62,9 @@ void FMOIEdgeImplBase::OnSelected(bool bNewSelected)
 
 void FMOIEdgeImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	if (!LineActor.IsValid())
+	FVector startPoint = GetCorner(0);
+	FVector endPoint = GetCorner(1);
+	if (startPoint.Equals(endPoint))
 	{
 		return;
 	}
@@ -70,17 +72,16 @@ void FMOIEdgeImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outP
 	// Don't report edge points for snapping, otherwise they will conflict with vertices
 	if (!bForSnapping)
 	{
-		FVector edgeDir = (LineActor->Point2 - LineActor->Point1).GetSafeNormal();
+		FVector edgeDir = (endPoint - startPoint).GetSafeNormal();
 
-		outPoints.Add(FStructurePoint(LineActor->Point1, edgeDir, 0));
-		outPoints.Add(FStructurePoint(LineActor->Point2, edgeDir, 1));
+		outPoints.Add(FStructurePoint(startPoint, edgeDir, 0));
+		outPoints.Add(FStructurePoint(endPoint, edgeDir, 1));
 	}
 
-	outLines.Add(FStructureLine(LineActor->Point1, LineActor->Point2, 0, 1));
+	outLines.Add(FStructureLine(startPoint, endPoint, 0, 1));
 }
 
 float FMOIEdgeImplBase::GetThicknessMultiplier() const
 {
 	return (MOI && MOI->IsSelected()) ? 3.0f : 1.0f;
 }
-

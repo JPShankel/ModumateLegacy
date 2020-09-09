@@ -16,6 +16,8 @@ public:
 	virtual FVector GetNormal() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
 
+	static constexpr float VisualNormalOffset = 0.25f;
+
 protected:
 	bool UpdateCachedGraphData();
 

@@ -84,7 +84,7 @@ public:
 	static bool GetGeometryFromFaceIndex(const FModumateObjectInstance *Host, int32 FaceIndex,
 		TArray<FVector>& OutFacePoints, FTransform& OutFaceOrigin);
 	static bool GetGeometryFromSurfacePoly(const FModumateDocument* Doc, int32 SurfacePolyID, bool& bOutInterior, bool& bOutInnerBounds,
-		FTransform& OutOrigin, TArray<FVector>& OutPerimeter, TArray<FPolyHole3D>& OutHoles, float PlaneOffset = 0.0f);
+		FTransform& OutOrigin, TArray<FVector>& OutPerimeter, TArray<FPolyHole3D>& OutHoles);
 
 	// Meta Objects
 	static void EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const FModumateDocument *Doc,

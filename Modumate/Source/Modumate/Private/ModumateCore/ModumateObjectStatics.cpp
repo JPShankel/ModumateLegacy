@@ -864,7 +864,7 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInsta
 }
 
 bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument* Doc, int32 SurfacePolyID, bool& bOutInterior, bool& bOutInnerBounds,
-	FTransform& OutOrigin, TArray<FVector>& OutPerimeter, TArray<FPolyHole3D>& OutHoles, float PlaneOffset)
+	FTransform& OutOrigin, TArray<FVector>& OutPerimeter, TArray<FPolyHole3D>& OutHoles)
 {
 	OutOrigin = FTransform();
 	OutPerimeter.Reset();
@@ -888,7 +888,6 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument*
 	bOutInterior = surfacePolygon->bInterior;
 	bOutInnerBounds = surfaceGraph->GetInnerBounds().Contains(SurfacePolyID);
 	OutOrigin = surfaceGraphObj->GetWorldTransform();
-	FVector offsetDelta = PlaneOffset * OutOrigin.GetRotation().GetAxisZ();
 
 	for (int32 perimeterVertexID : surfacePolygon->CachedPerimeterVertexIDs)
 	{
@@ -898,7 +897,7 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument*
 			return false;
 		}
 
-		OutPerimeter.Add(perimeterVertexObj->GetObjectLocation() + offsetDelta);
+		OutPerimeter.Add(perimeterVertexObj->GetObjectLocation());
 	}
 
 	for (int32 interiorPolyID : surfacePolygon->ContainedPolyIDs)
@@ -918,7 +917,7 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument*
 				return false;
 			}
 
-			hole.Points.Add(perimeterVertexObj->GetObjectLocation() + offsetDelta);
+			hole.Points.Add(perimeterVertexObj->GetObjectLocation());
 		}
 	}
 

@@ -3,6 +3,7 @@
 #include "DocumentManagement/Objects/SurfaceVertex.h"
 
 #include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/Objects/SurfaceGraph.h"
 #include "Graph/Graph2D.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
@@ -12,7 +13,13 @@
 
 FMOISurfaceVertexImpl::FMOISurfaceVertexImpl(FModumateObjectInstance *moi)
 	: FMOIVertexImplBase(moi)
+	, CachedDeprojectedLocation(ForceInitToZero)
 {
+}
+
+FVector FMOISurfaceVertexImpl::GetLocation() const
+{
+	return CachedDeprojectedLocation;
 }
 
 void FMOISurfaceVertexImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
@@ -47,7 +54,9 @@ bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSha
 			if (ensureAlways(surfaceVertex))
 			{
 				FTransform surfaceGraphTransform = surfaceGraphObj->GetWorldTransform();
-				VertexActor->SetMOILocation(UModumateGeometryStatics::Deproject2DPointTransform(surfaceVertex->Position, surfaceGraphTransform));
+				CachedDeprojectedLocation = UModumateGeometryStatics::Deproject2DPointTransform(surfaceVertex->Position, surfaceGraphTransform);
+				FVector offsetLocation = CachedDeprojectedLocation + (surfaceGraphTransform.GetRotation().GetAxisZ() * FMOISurfaceGraphImpl::VisualNormalOffset);
+				VertexActor->SetMOILocation(offsetLocation);
 			}
 
 			break;

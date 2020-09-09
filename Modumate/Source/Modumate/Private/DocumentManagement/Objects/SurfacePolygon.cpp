@@ -3,6 +3,7 @@
 #include "DocumentManagement/Objects/SurfacePolygon.h"
 
 #include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/Objects/SurfaceGraph.h"
 #include "Graph/Graph2D.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
@@ -11,7 +12,6 @@
 
 FMOISurfacePolygonImpl::FMOISurfacePolygonImpl(FModumateObjectInstance *moi)
 	: FMOIPlaneImplBase(moi)
-	, MeshPointOffset(0.25f)
 	, bInteriorPolygon(false)
 	, bInnerBoundsPolygon(false)
 {
@@ -61,7 +61,7 @@ bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSh
 	case EObjectDirtyFlags::Structure:
 	{
 		if (!UModumateObjectStatics::GetGeometryFromSurfacePoly(MOI->GetDocument(), MOI->ID,
-			bInteriorPolygon, bInnerBoundsPolygon, CachedOrigin, CachedPoints, CachedHoles, MeshPointOffset))
+			bInteriorPolygon, bInnerBoundsPolygon, CachedOrigin, CachedPoints, CachedHoles))
 		{
 			return false;
 		}
@@ -76,8 +76,25 @@ bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSh
 		AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
 		MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
+		// Offset the vertices used for the surface polygon away from the host, to prevent z-fighting
+		FVector offsetDelta = CachedOrigin.GetRotation().GetAxisZ() * FMOISurfaceGraphImpl::VisualNormalOffset;
+		CachedOffsetPoints = CachedPoints;
+		CachedOffsetHoles = CachedHoles;
+		for (FVector& offsetPoint : CachedOffsetPoints)
+		{
+			offsetPoint += offsetDelta;
+		}
+		for (auto& hole : CachedOffsetHoles)
+		{
+			for (FVector& offsetPoint : hole.Points)
+			{
+				offsetPoint += offsetDelta;
+			}
+		}
+
+		// Now build the triangulated mesh with holes for the surface polygon
 		bool bEnableCollision = !MOI->GetIsInPreviewMode();
-		DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, GetAlpha(), true, &CachedHoles, bEnableCollision);
+		DynamicMeshActor->SetupMetaPlaneGeometry(CachedOffsetPoints, MaterialData, GetAlpha(), true, &CachedOffsetHoles, bEnableCollision);
 	}
 	case EObjectDirtyFlags::Visuals:
 		MOI->UpdateVisibilityAndCollision();

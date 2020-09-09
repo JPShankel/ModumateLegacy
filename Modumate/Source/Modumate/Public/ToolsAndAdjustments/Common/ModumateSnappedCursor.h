@@ -77,9 +77,6 @@ struct MODUMATE_API FSnappedCursor
 	FVector OriginDirection = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	FVector2D AxisOrigin = FVector2D::ZeroVector;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	ESnapType SnapType = ESnapType::CT_NOSNAP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
@@ -144,7 +141,6 @@ struct MODUMATE_API FSnappedCursor
 	{
 		return (bValid == other.bValid) &&
 			(ScreenPosition == other.ScreenPosition) &&
-			(AxisOrigin == other.AxisOrigin) &&
 			(SnapType == other.SnapType) &&
 			(Visible == other.Visible) &&
 			(WorldPosition == other.WorldPosition) &&

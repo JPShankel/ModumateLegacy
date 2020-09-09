@@ -3,6 +3,7 @@
 #include "DocumentManagement/Objects/SurfaceEdge.h"
 
 #include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/Objects/SurfaceGraph.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/LineActor.h"
@@ -10,7 +11,14 @@
 
 FMOISurfaceEdgeImpl::FMOISurfaceEdgeImpl(FModumateObjectInstance *moi)
 	: FMOIEdgeImplBase(moi)
+	, CachedDeprojectedStart(ForceInitToZero)
+	, CachedDeprojectedEnd(ForceInitToZero)
 {
+}
+
+FVector FMOISurfaceEdgeImpl::GetCorner(int32 index) const
+{
+	return (index == 0) ? CachedDeprojectedStart : CachedDeprojectedEnd;
 }
 
 bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
@@ -26,6 +34,8 @@ bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TShare
 	{
 	case EObjectDirtyFlags::Structure:
 	{
+		FVector offsetDelta = FMOISurfaceGraphImpl::VisualNormalOffset * surfaceGraphObj->GetNormal();
+
 		auto surfaceGraph = doc->FindSurfaceGraph(surfaceGraphObj->ID);
 		auto surfaceEdge = surfaceGraph ? surfaceGraph->FindEdge(MOI->ID) : nullptr;
 		if (!ensureAlways(surfaceEdge))
@@ -41,8 +51,10 @@ bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TShare
 			return false;
 		}
 
-		LineActor->Point1 = startVertexObj->GetObjectLocation();
-		LineActor->Point2 = endVertexObj->GetObjectLocation();
+		CachedDeprojectedStart = startVertexObj->GetObjectLocation();
+		CachedDeprojectedEnd = endVertexObj->GetObjectLocation();
+		LineActor->Point1 = CachedDeprojectedStart + offsetDelta;
+		LineActor->Point2 = CachedDeprojectedEnd + offsetDelta;
 		break;
 	}
 	case EObjectDirtyFlags::Visuals:
@@ -55,7 +67,7 @@ bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TShare
 	if (MOI)
 	{
 		MOI->GetConnectedMOIs(CachedConnectedMOIs);
-		for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
+		for (FModumateObjectInstance* connectedMOI : CachedConnectedMOIs)
 		{
 			if (connectedMOI->GetObjectType() == EObjectType::OTSurfacePolygon)
 			{

@@ -13,12 +13,11 @@ public:
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
 
 protected:
-	float MeshPointOffset;
-
+	TArray<FVector> CachedOffsetPoints;
+	TArray<FPolyHole3D> CachedOffsetHoles;
 	FTransform CachedOrigin;
 	bool bInteriorPolygon;
 	bool bInnerBoundsPolygon;
 
 	virtual float GetAlpha() const override;
 };
-

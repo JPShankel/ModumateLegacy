@@ -2037,9 +2037,10 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 					DistanceBetweenWorldPointsInScreenSpace(snappedStructuralHit.Location, sketchHit.Location, screenSpaceDist) &&
 					(screenSpaceDist < SnapPointMaxScreenDistance))
 				{
-					// Only inherit the normal from the structural hit, because for dimensioning purposes, the world-snapped sketch hit location is more precise.
+					// Only inherit the normal and actor from the structural hit, because for dimensioning purposes, the world-snapped sketch hit location is more precise.
 					// TODO: resolve multiple constraints of being snapped/projected along axes, and also being planar with the other definitional points of the hit object.
 					sketchHit.Normal = snappedStructuralHit.Normal;
+					sketchHit.Actor = snappedStructuralHit.Actor;
 				}
 			}
 
@@ -2059,37 +2060,52 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 	EMPlayerState->SnappedCursor.CP1 = -1;
 	EMPlayerState->SnappedCursor.CP2 = -1;
 
-	if (projectedHit.Valid)
-	{
-		if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("HAVE PROJECTED")); }
-		EMPlayerState->SnappedCursor.bValid = true;
-		EMPlayerState->SnappedCursor.WorldPosition = projectedHit.Location;
-		EMPlayerState->SnappedCursor.Actor = projectedHit.Actor.Get();
-		ProjectWorldLocationToScreen(projectedHit.Location, EMPlayerState->SnappedCursor.ScreenPosition);
-		EMPlayerState->SnappedCursor.HasProjectedPosition = true;
-		EMPlayerState->SnappedCursor.ProjectedPosition = baseHit.Location;
-		EMPlayerState->SnappedCursor.SnapType = baseHit.SnapType;
-		EMPlayerState->SnappedCursor.HitNormal = baseHit.Normal;
-		EMPlayerState->SnappedCursor.HitTangent = baseHit.EdgeDir;
-		EMPlayerState->SnappedCursor.CP1 = baseHit.CP1;
-		EMPlayerState->SnappedCursor.CP2 = baseHit.CP2;
-	}
-	else
+	if (baseHit.Valid)
 	{
 		EMPlayerState->SnappedCursor.HasProjectedPosition = false;
-		if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("NOT PROJECTED")); }
-		if (baseHit.Valid)
+		FVector projectedLocation = baseHit.Location;
+
+		if (projectedHit.Valid)
 		{
-			EMPlayerState->SnappedCursor.bValid = true;
-			EMPlayerState->SnappedCursor.WorldPosition = baseHit.Location;
-			EMPlayerState->SnappedCursor.Actor = baseHit.Actor.Get();
-			EMPlayerState->SnappedCursor.SnapType = baseHit.SnapType;
-			EMPlayerState->SnappedCursor.HitNormal = baseHit.Normal;
-			EMPlayerState->SnappedCursor.HitTangent = baseHit.EdgeDir;
-			EMPlayerState->SnappedCursor.CP1 = baseHit.CP1;
-			EMPlayerState->SnappedCursor.CP2 = baseHit.CP2;
-			ProjectWorldLocationToScreen(baseHit.Location, EMPlayerState->SnappedCursor.ScreenPosition);
+			if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("HAVE PROJECTED")); }
+			EMPlayerState->SnappedCursor.HasProjectedPosition = true;
+
+			// Fully inherit the projected hit, which for now clears any structural information from the base hit.
+			ESnapType baseSnapType = baseHit.SnapType;
+			baseHit = projectedHit;
+			baseHit.SnapType = baseSnapType;
+
+			// If we have a projected hit, then similar to snapped sketch hits, we want to perform a structural hit in order to have accurate
+			// non-location hit result data for the projected location, so that tools can filter results accordingly.
+			FVector2D projectedHitScreenPos;
+			FVector projectedHitMouseOrigin, projectedHitMouseDir;
+			if (ProjectWorldLocationToScreen(projectedHit.Location, projectedHitScreenPos) &&
+				UGameplayStatics::DeprojectScreenToWorld(this, projectedHitScreenPos, projectedHitMouseOrigin, projectedHitMouseDir))
+			{
+				FMouseWorldHitType projectedStructuralHit = GetObjectMouseHit(projectedHitMouseOrigin, projectedHitMouseDir, true);
+
+				float screenSpaceDist;
+				if (projectedStructuralHit.Valid &&
+					DistanceBetweenWorldPointsInScreenSpace(projectedStructuralHit.Location, projectedHit.Location, screenSpaceDist) &&
+					(screenSpaceDist < SnapPointMaxScreenDistance))
+				{
+					baseHit = projectedStructuralHit;
+					baseHit.SnapType = baseSnapType;
+					baseHit.Location = projectedHit.Location;
+				}
+			}
 		}
+
+		EMPlayerState->SnappedCursor.bValid = true;
+		EMPlayerState->SnappedCursor.SnapType = baseHit.SnapType;
+		EMPlayerState->SnappedCursor.WorldPosition = baseHit.Location;
+		ProjectWorldLocationToScreen(baseHit.Location, EMPlayerState->SnappedCursor.ScreenPosition);
+		EMPlayerState->SnappedCursor.ProjectedPosition = projectedLocation;
+		EMPlayerState->SnappedCursor.Actor = baseHit.Actor.Get();
+		EMPlayerState->SnappedCursor.CP1 = baseHit.CP1;
+		EMPlayerState->SnappedCursor.CP2 = baseHit.CP2;
+		EMPlayerState->SnappedCursor.HitNormal = baseHit.Normal;
+		EMPlayerState->SnappedCursor.HitTangent = baseHit.EdgeDir;
 	}
 
 	if (EMPlayerState->ShowDebugSnaps)
@@ -2115,6 +2131,10 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 		};
 		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, *FString::Printf(TEXT("Snap Type: %s"), *msg));
 		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, *FString::Printf(TEXT("CP: %d %d"), EMPlayerState->SnappedCursor.CP1, EMPlayerState->SnappedCursor.CP2));
+		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, *FString::Printf(TEXT("Cursor Actor: %s"),
+			EMPlayerState->SnappedCursor.Actor ? *EMPlayerState->SnappedCursor.Actor->GetName() : TEXT("None")));
+		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, *FString::Printf(TEXT("Normal: %s"), *EMPlayerState->SnappedCursor.HitNormal.ToString()));
+		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, *FString::Printf(TEXT("Location: %s"), *EMPlayerState->SnappedCursor.WorldPosition.ToString()));
 	}
 
 	FModumateObjectInstance *newHoveredObject = nullptr;
@@ -2597,8 +2617,6 @@ Support function: given any of the hits (structural, object or sketch), if the u
 FMouseWorldHitType AEditModelPlayerController_CPP::GetShiftConstrainedMouseHit(const FMouseWorldHitType &baseHit) const
 {
 	FMouseWorldHitType ret;
-	ret.Valid = false;
-	ret.Actor = nullptr;
 
 	if (!IsShiftDown())
 	{
