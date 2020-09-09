@@ -2,6 +2,7 @@
 
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateObjectDeltaStatics.h"
+#include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -9,8 +10,6 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/LineActor.h"
-#include "UI/DimensionManager.h"
-#include "UI/PendingSegmentActor.h"
 
 using namespace Modumate;
 

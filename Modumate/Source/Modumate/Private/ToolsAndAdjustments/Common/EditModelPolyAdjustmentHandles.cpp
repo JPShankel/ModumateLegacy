@@ -12,9 +12,13 @@
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/AdjustmentHandleWidget.h"
 #include "UI/EditModelPlayerHUD.h"
+#include "UI/DimensionManager.h"
+#include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 
 AAdjustPolyPointHandle::AAdjustPolyPointHandle(const FObjectInitializer& ObjectInitializer)
@@ -53,6 +57,13 @@ bool AAdjustPolyPointHandle::BeginUse()
 	AnchorLoc = FVector::PointPlaneProject(GetHandlePosition(), PolyPlane);
 	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorLoc, FVector(PolyPlane));
 
+	if (auto world = GetWorld())
+	{
+		GameInstance = Cast<UModumateGameInstance>(GetWorld()->GetGameInstance());
+
+		PendingSegmentID = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass())->ID;
+	}
+
 	return true;
 }
 
@@ -79,6 +90,23 @@ bool AAdjustPolyPointHandle::UpdateUse()
 		affordance.StartPoint = FVector(hitPoint.X, hitPoint.Y, AnchorLoc.Z);
 		affordance.Interval = 4.0f;
 		Controller->EMPlayerState->AffordanceLines.Add(affordance);
+	}
+
+	ALineActor *pendingSegment = nullptr;
+	if (auto dimensionActor = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID))
+	{
+		pendingSegment = dimensionActor->GetLineActor();
+	}
+	if (pendingSegment != nullptr)
+	{
+		pendingSegment->Point1 = AnchorLoc;
+		pendingSegment->Point2 = AnchorLoc + OriginalDirection * (dp | OriginalDirection);
+		pendingSegment->Color = FColor::Black;
+		pendingSegment->Thickness = 3.0f;
+	}
+	else
+	{
+		return false;
 	}
 
 
@@ -152,6 +180,17 @@ bool AAdjustPolyPointHandle::UpdateUse()
 	}
 
 	return true;
+}
+
+void AAdjustPolyPointHandle::PostEndOrAbort()
+{
+	if (GameInstance && GameInstance->DimensionManager)
+	{
+		GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+		PendingSegmentID = MOD_ID_NONE;
+	}
+
+	Super::PostEndOrAbort();
 }
 
 FVector AAdjustPolyPointHandle::GetHandlePosition() const

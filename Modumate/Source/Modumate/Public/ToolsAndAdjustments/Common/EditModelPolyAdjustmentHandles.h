@@ -17,6 +17,7 @@ public:
 
 	virtual bool BeginUse() override;
 	virtual bool UpdateUse() override;
+	virtual void PostEndOrAbort() override;
 	virtual FVector GetHandlePosition() const override;
 	virtual FVector GetHandleDirection() const override;
 	virtual bool HandleInputNumber(float number) override;
@@ -32,6 +33,11 @@ protected:
 	TArray<FVector> OriginalPolyPoints;
 	TArray<FVector> LastValidPolyPoints;
 	FVector AnchorLoc;
+
+	// Dimension Widget
+	UPROPERTY()
+	class UModumateGameInstance *GameInstance;
+	int32 PendingSegmentID = MOD_ID_NONE;
 };
 
 UCLASS()
