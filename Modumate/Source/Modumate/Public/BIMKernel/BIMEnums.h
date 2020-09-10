@@ -129,6 +129,7 @@ enum class EBIMValueScope : uint8
 	Preset,
 	SlotConfig,
 	Slot,
+	SurfaceTreatment,
 
 	// These scopes are to be deprecated as we replace the BIM property sheets
 	ToeKick,

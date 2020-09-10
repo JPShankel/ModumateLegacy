@@ -1,6 +1,6 @@
 0-01_Color.csv
 0-02_RawMaterial.csv
-;0-03_SrfTreatment.csv
+0-03_SrfTreatment.csv
 0-04_Profile.csv
 0-05_Mesh.csv
 0-05A_StubbyPortals.csv
@@ -16,13 +16,18 @@
 0-16_DimWDWtFt.csv
 0-17_DimLWH.csv
 0-18_DimLW.csv
+0-20_LayerPatternStubby.csv
 1-00_Material.csv
 1-10_SlotConfig.csv
 2-00_Layer0D.csv
 2-01_ModuleWDProfile.csv
 2-02_ModuleLWH.csv
 2-03_ModuleLWT.csv
+2-10_Gap2D.csv
 2-20_ExtrudedProfile.csv
 2-30_Part.csv
+3-00_Layer1D.csv
+3-01_Layer2D.csv
+3-02_Layer3D.csv
+3-10_RiggedAssembly.csv
 4-00_LayeredAssembly.csv
-4-01_RiggedAssembly.csv

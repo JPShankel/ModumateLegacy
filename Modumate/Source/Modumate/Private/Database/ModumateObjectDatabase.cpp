@@ -213,10 +213,10 @@ void FModumateDatabase::ReadPresetData()
 			}
 		}
 
-		if (!rawMaterial.IsNone())
+		if (ensureAlways(!rawMaterial.IsNone()))
 		{
 			const FBIMPreset* preset = PresetManager.CraftingNodePresets.Presets.Find(rawMaterial);
-			if (preset != nullptr)
+			if (ensureAlways(preset != nullptr))
 			{
 				FString assetPath = preset->GetProperty(BIMPropertyNames::AssetPath);
 				FString matName = Preset.GetProperty(BIMPropertyNames::Name);

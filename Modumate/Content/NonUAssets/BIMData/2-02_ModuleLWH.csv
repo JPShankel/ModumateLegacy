@@ -9,611 +9,101 @@ INPUTPIN,,1..1,,ChildDimLWH,,,,,,,,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Module.Name,Module.AnchorPoint,DataType=InputPins,ChildMaterial,ChildDimLWH,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-7.625inL
-3.625inW
-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-11,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-7.625inL
-3.625inW
-2.29167inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-11,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard,0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-7.625inL
-3.125inW
-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-12,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-7.625inL
-3.125inW
-2.29167inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-7.625inL-3.125inW-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-12,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard,0DimLWH --> ClayBrick-7.625inL-3.125inW-2.29167inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-7.625inL
-2.29167inW
-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-13,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-7.625inL
-2.29167inW
-2.29167inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-7.625inL-2.29167inW-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-13,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-7.625inL-2.29167inW-2.29167inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-7.625inL
-3.625inW
-2.75inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-14,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-7.625inL
-3.625inW
-2.75inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-7.625inL-3.625inW-2.75inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-14,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-7.625inL-3.625inW-2.75inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-7.625inL
-3.125inW
-2.75inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-15,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-7.625inL
-3.125inW
-2.75inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-7.625inL-3.125inW-2.75inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-15,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-7.625inL-3.125inW-2.75inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-7.625inL
-3.625inW
-3.625inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-16,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-7.625inL
-3.625inW
-3.625inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-7.625inL-3.625inW-3.625inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-16,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-7.625inL-3.625inW-3.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-7.625inL
-3.625inW
-7.625inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-17,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-7.625inL
-3.625inW
-7.625inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-7.625inL-3.625inW-7.625inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-17,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-7.625inL-3.625inW-7.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-18,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-2.29167inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-11.625inL-3.625inW-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-18,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-11.625inL-3.625inW-2.29167inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-11.625inL
-3.125inW
-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-19,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-11.625inL
-3.125inW
-2.29167inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-11.625inL-3.125inW-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-19,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-11.625inL-3.125inW-2.29167inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-2.75inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-20,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-2.75inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-11.625inL-3.625inW-2.75inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-20,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-11.625inL-3.625inW-2.75inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-11.625inL
-3.125inW
-2.75inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-21,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-11.625inL
-3.125inW
-2.75inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-11.625inL-3.125inW-2.75inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-21,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-11.625inL-3.125inW-2.75inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-3.625inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-22,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-3.625inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-11.625inL-3.625inW-3.625inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-22,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-11.625inL-3.625inW-3.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-7.625inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-23,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-7.625inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-11.625inL-3.625inW-7.625inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-23,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-11.625inL-3.625inW-7.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-15.625inL
-3.625inW
-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-24,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-15.625inL
-3.625inW
-2.29167inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-15.625inL-3.625inW-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-24,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-15.625inL-3.625inW-2.29167inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-15.625inL
-3.125inW
-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-25,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-15.625inL
-3.125inW
-2.29167inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-15.625inL-3.125inW-2.29167inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-25,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-15.625inL-3.125inW-2.29167inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-15.625inL
-3.625inW
-2.75inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-26,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-15.625inL
-3.625inW
-2.75inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-15.625inL-3.625inW-2.75inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-26,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-15.625inL-3.625inW-2.75inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-15.625inL
-3.625inW
-7.625inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-27,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-15.625inL
-3.625inW
-7.625inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-15.625inL-3.625inW-7.625inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-27,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-15.625inL-3.625inW-7.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard
-0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-1.625inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-28,"0,0,0",,"1Material --> Ceramic --> Clay
-0RawMaterial
-Clay
-0Color --> Ceramic --> Clay
-A05633-Natural
-0SrfTreatment
-Standard","0DimLWH --> ClayBrick
-11.625inL
-3.625inW
-1.625inH",,3Layer3D,,,,,,,,,
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-11.625inL-3.625inW-1.625inH",,2ModuleLWH --> Clay Brick,,2ModuleLWH-28,"0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLWH --> ClayBrick-11.625inL-3.625inW-1.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard
-0DimLWH --> CMU
-7.625inL
-5.625inW
-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-29,"0,0,0",,"1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard","0DimLWH --> CMU
-7.625inL
-5.625inW
-7.625inH",,3Layer3D,,,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-7.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-29,"0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard,0DimLWH --> CMU-7.625inL-5.625inW-7.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard
-0DimLWH --> CMU
-15.625inL
-5.625inW
-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-30,"0,0,0",,"1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard","0DimLWH --> CMU
-15.625inL
-5.625inW
-7.625inH",,3Layer3D,,,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-15.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-30,"0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard,0DimLWH --> CMU-15.625inL-5.625inW-7.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard
-0DimLWH --> CMU
-7.625inL
-7.625inW
-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-31,"0,0,0",,"1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard","0DimLWH --> CMU
-7.625inL
-7.625inW
-7.625inH",,3Layer3D,,,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-7.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-31,"0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard,0DimLWH --> CMU-7.625inL-7.625inW-7.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard
-0DimLWH --> CMU
-15.625inL
-7.625inW
-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-32,"0,0,0",,"1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard","0DimLWH --> CMU
-15.625inL
-7.625inW
-7.625inH",,3Layer3D,,,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-15.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-32,"0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard,0DimLWH --> CMU-15.625inL-7.625inW-7.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard
-0DimLWH --> CMU
-7.625inL
-9.625inW
-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-33,"0,0,0",,"1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard","0DimLWH --> CMU
-7.625inL
-9.625inW
-7.625inH",,3Layer3D,,,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-7.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-33,"0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard,0DimLWH --> CMU-7.625inL-9.625inW-7.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard
-0DimLWH --> CMU
-15.625inL
-9.625inW
-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-34,"0,0,0",,"1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard","0DimLWH --> CMU
-15.625inL
-9.625inW
-7.625inH",,3Layer3D,,,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-15.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-34,"0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard,0DimLWH --> CMU-15.625inL-9.625inW-7.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard
-0DimLWH --> CMU
-7.625inL
-11.625inW
-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-35,"0,0,0",,"1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard","0DimLWH --> CMU
-7.625inL
-11.625inW
-7.625inH",,3Layer3D,,,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-7.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-35,"0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard,0DimLWH --> CMU-7.625inL-11.625inW-7.625inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard
-0DimLWH --> CMU
-15.625inL
-11.625inW
-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-36,"0,0,0",,"1Material --> Aggregates --> Concrete
-0RawMaterial
-Concrete (Normal Aggregate)
-0Color --> Aggregates --> Concrete
-D6D7D8-Natural
-0SrfTreatment
-Standard","0DimLWH --> CMU
-15.625inL
-11.625inW
-7.625inH",,3Layer3D,,,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-15.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,2ModuleLWH-36,"0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard,0DimLWH --> CMU-15.625inL-11.625inW-7.625inH,,3Layer3D,,,,,,,,,
+PRESET,,"2ModuleLWH --> Earth Brick
+1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLWH --> EarthBrick-11.614inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,2ModuleLWH-37,"0,0,0",,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLWH --> EarthBrick-11.614inL-5.512inW-3.543inH,,3Layer3D,,,,,,,,,
+PRESET,,"2ModuleLWH --> Earth Brick
+1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLWH --> EarthBrick-8.563inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,2ModuleLWH-38,"0,0,1",,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLWH --> EarthBrick-8.563inL-5.512inW-3.543inH,,3Layer3D,,,,,,,,,
+PRESET,,"2ModuleLWH --> Earth Brick
+1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLWH --> EarthBrick-5.512inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,2ModuleLWH-39,"0,0,2",,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLWH --> EarthBrick-5.512inL-5.512inW-3.543inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block
-0RawMaterial
-Glass Block
-0Color --> Glass and Transparent --> Glass
-F2F2F2-White
-0SrfTreatment
-Standard
-0DimLWH --> GlassBlock
-7.75inL
-3.875inW
-3.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-37,"0,0,0",,"1Material --> Glass and Transparent --> Glass Block
-0RawMaterial
-Glass Block
-0Color --> Glass and Transparent --> Glass
-F2F2F2-White
-0SrfTreatment
-Standard","0DimLWH --> GlassBlock
-7.75inL
-3.875inW
-3.75inH",,3Layer3D,,,,,,,,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-40,"0,0,0",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block
-0RawMaterial
-Glass Block
-0Color --> Glass and Transparent --> Glass
-F2F2F2-White
-0SrfTreatment
-Standard
-0DimLWH --> GlassBlock
-5.75inL
-3.875inW
-5.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-38,"0,0,0",,"1Material --> Glass and Transparent --> Glass Block
-0RawMaterial
-Glass Block
-0Color --> Glass and Transparent --> Glass
-F2F2F2-White
-0SrfTreatment
-Standard","0DimLWH --> GlassBlock
-5.75inL
-3.875inW
-5.75inH",,3Layer3D,,,,,,,,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-41,"0,0,0",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard,0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block
-0RawMaterial
-Glass Block
-0Color --> Glass and Transparent --> Glass
-F2F2F2-White
-0SrfTreatment
-Standard
-0DimLWH --> GlassBlock
-7.75inL
-3.875inW
-7.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-39,"0,0,0",,"1Material --> Glass and Transparent --> Glass Block
-0RawMaterial
-Glass Block
-0Color --> Glass and Transparent --> Glass
-F2F2F2-White
-0SrfTreatment
-Standard","0DimLWH --> GlassBlock
-7.75inL
-3.875inW
-7.75inH",,3Layer3D,,,,,,,,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-42,"0,0,0",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,

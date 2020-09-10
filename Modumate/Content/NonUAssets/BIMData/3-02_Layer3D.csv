@@ -1,14 +1,165 @@
-TYPENAME,3Layer3D,,,,,,,,,,,,,,,,,,,,,,,,
-,Definition,,,,,,,,,,,,,,,,,,,,,,,,
-,PropertyType,PropertyName,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,STRING,Name,Preset.Name,,,,,,,,,,,,,,,,,,,,,,
-,InputExtensibility,InputPreset,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,1..1,ChildLayerPattern,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,1..,ChildModuleLWHArray,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,1..,ChildGap2D,,,,,,,,,,,,,,,,,,,,,,,
-,Presets,,,,,,,,,,0,0,0,0,,0,0,0,0,0,0,0,0,0,0
-TAGPATHS,ID,,,DataType=Properties,Preset.Name,DataType=InputPins,ChildLayerPattern,ChildModuleLWHArray,ChildGap2D,DataType=TG_MyNode+CategoryPath,3Layer3D --> Clay Brick,3Layer3D --> Eartth Brick,3Layer3D --> Concrete Masonry Unit,3Layer3D --> Glass Block,DataType=TG_Parent Node+CategoryPath,4LayeredAssembly --> Wall,4LayeredAssembly --> Floor,4LayeredAssembly --> Roof,4LayeredAssembly --> Ceiling,4LayeredAssembly --> Finish,4LayeredAssembly --> System Panel,4LayeredAssembly --> Countertop,4LayeredAssembly --> Layered Tread,4LayeredAssembly --> Layered Riser,4LayeredAssembly --> Landscape
-PRESET,#REF!,,,,Double-Wythe Running Bond Modular Bricks,,#REF!,#REF!,#REF!,,,,,,,,,,,,,,,,
-PRESET,#REF!,,,,Double-Wythe Stack Bond Roman Bricks,,#REF!,#REF!,#REF!,,,,,,,,,,,,,,,,
-PRESET,#REF!,,,,Running Bond CMU,,#REF!,#REF!,#REF!,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,
+TYPENAME,,3Layer1D,,Layer,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Layer.Name,,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildLayerPattern,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..,,ChildModuleArray,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildGapArray,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,7,5,0,0,0,0,0,0,0,5
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Layer.Name,DataType=InputPins,ChildModuleArray,ChildGapArray,ChildLayerPattern,DataType=TG_Parent Node+CategoryPath,4LayeredAssembly --> Wall,4LayeredAssembly --> Floor,4LayeredAssembly --> Roof,4LayeredAssembly --> Ceiling,4LayeredAssembly --> Finish,4LayeredAssembly --> System Panel,4LayeredAssembly --> Countertop,4LayeredAssembly --> Layered Tread,4LayeredAssembly --> Layered Riser,4LayeredAssembly --> Landscape
+PRESET,,"3Layer3D --> Clay Brick
+2ModuleLWH --> Clay Brick
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0inD
+0Profile-Flat
+0LayerPattern --> 3D-RunningBondSingleWythe",,3Layer3D --> Clay Brick,,3Layer1D-11,,"2ModuleLWH --> Clay Brick
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0inD
+0Profile-Flat",0LayerPattern --> 3D-RunningBondSingleWythe,,X,X,,,,,,,,X
+PRESET,,"3Layer3D --> Clay Brick
+2ModuleLWH --> Clay Brick
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-7.625inL-3.125inW-2.29167inH
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 3D-StackBondSingleWythe",,3Layer3D --> Clay Brick,,3Layer1D-12,,"2ModuleLWH --> Clay Brick
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
+0DimLWH --> ClayBrick-7.625inL-3.125inW-2.29167inH","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.125inD
+0Profile-Flat",0LayerPattern --> 3D-StackBondSingleWythe,,X,X,,,,,,,,X
+PRESET,,"3Layer3D --> Earth Brick
+2ModuleLWH --> Earth Brick
+1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLWH --> EarthBrick-11.614inL-5.512inW-3.543inH
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 3D-ShinerBondSingleWythe",,3Layer3D --> Earth Brick,,3Layer1D-13,,"2ModuleLWH --> Earth Brick
+1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLWH --> EarthBrick-11.614inL-5.512inW-3.543inH","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.25inD
+0Profile-Flat",0LayerPattern --> 3D-ShinerBondSingleWythe,,X,X,,,,,,,,X
+PRESET,,"3Layer3D --> Earth Brick
+2ModuleLWH --> Earth Brick
+1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLWH --> EarthBrick-8.563inL-5.512inW-3.543inH
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.375inD
+0Profile-Flat
+0LayerPattern --> 3D-OneThirdBondSingleWythe",,3Layer3D --> Earth Brick,,3Layer1D-14,,"2ModuleLWH --> Earth Brick
+1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLWH --> EarthBrick-8.563inL-5.512inW-3.543inH","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.375inD
+0Profile-Flat",0LayerPattern --> 3D-OneThirdBondSingleWythe,,X,X,,,,,,,,X
+PRESET,,"3Layer3D --> Concrete Masonry Unit
+2ModuleLWH --> Concrete Masonry Unit
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-7.625inL-5.625inW-7.625inH
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0inD
+0Profile-Flat
+0LayerPattern --> 3D-OneQuarterBondSingleWythe",,3Layer3D --> Concrete Masonry Unit,,3Layer1D-15,,"2ModuleLWH --> Concrete Masonry Unit
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-7.625inL-5.625inW-7.625inH","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0inD
+0Profile-Flat",0LayerPattern --> 3D-OneQuarterBondSingleWythe,,X,X,,,,,,,,X
+PRESET,,"3Layer3D --> Concrete Masonry Unit
+2ModuleLWH --> Concrete Masonry Unit
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-15.625inL-5.625inW-7.625inH
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 3D-CascadingThirdsSingleWythe",,3Layer3D --> Concrete Masonry Unit,,3Layer1D-16,,"2ModuleLWH --> Concrete Masonry Unit
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-15.625inL-5.625inW-7.625inH","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.125inD
+0Profile-Flat",0LayerPattern --> 3D-CascadingThirdsSingleWythe,,X,X,,,,,,,,X
+PRESET,,"3Layer3D --> Concrete Masonry Unit
+2ModuleLWH --> Concrete Masonry Unit
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-7.625inL-7.625inW-7.625inH
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 3D-StackBondSingleWythe",,3Layer3D --> Concrete Masonry Unit,,3Layer1D-17,,"2ModuleLWH --> Concrete Masonry Unit
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-7.625inL-7.625inW-7.625inH","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.125inD
+0Profile-Flat",0LayerPattern --> 3D-StackBondSingleWythe,,X,X,,,,,,,,X
+PRESET,,"3Layer3D --> Concrete Masonry Unit
+2ModuleLWH --> Concrete Masonry Unit
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-15.625inL-7.625inW-7.625inH
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 3D-SoldierBondSingleWythe",,3Layer3D --> Concrete Masonry Unit,,3Layer1D-18,,"2ModuleLWH --> Concrete Masonry Unit
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-15.625inL-7.625inW-7.625inH","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.25inD
+0Profile-Flat",0LayerPattern --> 3D-SoldierBondSingleWythe,,X,X,,,,,,,,X
+PRESET,,"3Layer3D --> Concrete Masonry Unit
+2ModuleLWH --> Concrete Masonry Unit
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-7.625inL-9.625inW-7.625inH
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.375inD
+0Profile-Flat
+0LayerPattern --> 3D-RunningBondSingleWythe",,3Layer3D --> Concrete Masonry Unit,,3Layer1D-19,,"2ModuleLWH --> Concrete Masonry Unit
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
+0DimLWH --> CMU-7.625inL-9.625inW-7.625inH","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.375inD
+0Profile-Flat",0LayerPattern --> 3D-RunningBondSingleWythe,,X,X,,,,,,,,X
+PRESET,,"3Layer3D --> Glass Block
+2ModuleLWH --> Glass Block
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 3D-StackBondSingleWythe",,3Layer3D --> Glass Block,,3Layer1D-20,,"2ModuleLWH --> Glass Block
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.25inD
+0Profile-Flat",0LayerPattern --> 3D-StackBondSingleWythe,,X,,,,,,,,,
+PRESET,,"3Layer3D --> Glass Block
+2ModuleLWH --> Glass Block
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.375inD
+0Profile-Flat
+0LayerPattern --> 3D-SoldierBondSingleWythe",,3Layer3D --> Glass Block,,3Layer1D-21,,"2ModuleLWH --> Glass Block
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.375inD
+0Profile-Flat",0LayerPattern --> 3D-SoldierBondSingleWythe,,X,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,

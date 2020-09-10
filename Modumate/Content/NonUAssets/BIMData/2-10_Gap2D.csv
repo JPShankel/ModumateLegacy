@@ -1,64 +1,75 @@
-TYPENAME,2Gap2D,,,,,,,,,,,,,,
-,Definition,,,,,,,,,,,,,,
-,PropertyType,PropertyName,PropertyScope.Value,,,,,,,,,,,,
-PROPERTY,STRING,Name,Preset.Name,,,,,,,,,,,,
-,InputExtensibility,InputPreset,,,,,,,,,,,,,
-INPUTPIN,1..1,ChildMaterial,,,,,,,,,,,,,
-INPUTPIN,1..1,ChildDimension,,,,,,,,,,,,,
-INPUTPIN,1..1,ChildProfile,,,,,,,,,,,,,
-,Presets,,,,,,,,,,12,12,,24,24
-TAGPATHS,ID,,,DataType=Properties,Preset.Name,DataType=InputPins,ChildMaterial,ChildDimension,ChildProfile,DataType=TG_MyNode+CategoryPath,2Gap2D --> Tile Gaps,2Gap2D --> Masonry Gaps,DataType=TG_Parent Node+CategoryPath,3Layer2D,3Layer3D
-PRESET,#REF!,,,,"3/8"" x 1/4""",,"1Material --> Aggregates --> Mortar
-0RawMaterial
-Mortar
-0Color --> Aggregates --> Mortar
-C6C6C6-Natural
-0SrfTreatment
-Standard",#REF!,"0Profile
-Flat",,X,,,X,X
-PRESET,#REF!,,,,"1/4"" x 1/8""",,"1Material --> Aggregates --> Mortar
-0RawMaterial
-Mortar
-0Color --> Aggregates --> Mortar
-C6C6C6-Natural
-0SrfTreatment
-Standard",#REF!,"0Profile
-Flat",,X,,,X,X
-PRESET,,,,,,,,,,,X,,,X,X
-PRESET,,,,,,,,,,,X,,,X,X
-PRESET,,,,,,,,,,,X,,,X,X
-PRESET,,,,,,,,,,,X,,,X,X
-PRESET,,,,,,,,,,,X,,,X,X
-PRESET,,,,,,,,,,,X,,,X,X
-PRESET,,,,,,,,,,,X,,,X,X
-PRESET,,,,,,,,,,,X,,,X,X
-PRESET,,,,,,,,,,,X,,,X,X
-PRESET,,,,,,,,,,,X,,,X,X
-PRESET,,,,,,,,,,,,,,,
-PRESET,#REF!,,,,"1/8"" x 1/16"" Grout",,"1Material --> Aggregates --> Grout
-0RawMaterial
-Grout
-0Color --> Aggregates --> Grout
-EAECE7-White
-0SrfTreatment
-Standard",#REF!,"0Profile
-Flat",,,X,,X,X
-PRESET,#REF!,,,,"1/4"" Flush",,"1Material --> Aggregates --> Grout
-0RawMaterial
-Grout
-0Color --> Aggregates --> Grout
-EAECE7-White
-0SrfTreatment
-Standard",#REF!,"0Profile
-Flat",,,X,,X,X
-PRESET,,,,,,,,,,,,X,,X,X
-PRESET,,,,,,,,,,,,X,,X,X
-PRESET,,,,,,,,,,,,X,,X,X
-PRESET,,,,,,,,,,,,X,,X,X
-PRESET,,,,,,,,,,,,X,,X,X
-PRESET,,,,,,,,,,,,X,,X,X
-PRESET,,,,,,,,,,,,X,,X,X
-PRESET,,,,,,,,,,,,X,,X,X
-PRESET,,,,,,,,,,,,X,,X,X
-PRESET,,,,,,,,,,,,X,,X,X
-,,,,,,,,,,,,,,,
+TYPENAME,,2Gap2D,,Gap,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Gap.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildDimWD,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildProfile,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,9,4,1,1,1,9,1,1,1,9,9,4,5,1,9,9,9,9,9,9,13,9,1,1,1,1,1,5,5,5,5
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,MyNode+CategoryPath,DataType=Properties,Gap.Name,DataType=InputPins,ChildMaterial,ChildDimWD,ChildProfile,DataType=TG_Parent Node+CategoryPath,3Layer2D --> Board and Panel --> Cement,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,3Layer2D --> Board and Panel --> Insulation,3Layer2D --> Board and Panel --> Gypsum,3Layer2D --> Board and Panel --> MDF (Medium-Density Fiberboard),3Layer2D --> Board and Panel --> Metal,3Layer2D --> Board and Panel --> OSB (Oriented Strand Board),3Layer2D --> Board and Panel --> Particle Board,3Layer2D --> Board and Panel --> Plywood,3Layer2D --> Plank --> Engineered Wood,3Layer2D --> Plank --> Wood,3Layer2D --> Tile --> Acoustic Ceiling Tile,3Layer2D --> Tile --> Brick Veneer,3Layer2D --> Tile --> Carpet,3Layer2D --> Tile --> Clay,3Layer2D --> Tile --> Cork,3Layer2D --> Tile --> Glass,3Layer2D --> Tile --> Laminate,3Layer2D --> Tile --> Luxury Vinyl,3Layer2D --> Tile --> Porcelain,3Layer2D --> Tile --> Stone,3Layer2D --> Tile --> Vinyl Composite,3Layer2D --> Shingle --> Asphalt,3Layer2D --> Shingle --> Clay,3Layer2D --> Shingle --> Metal,3Layer2D --> Shingle --> Stone,3Layer2D --> Shingle --> Wood,3Layer3D --> Clay Brick,3Layer3D --> Earth Brick,3Layer3D --> Concrete Masonry Unit,3Layer3D --> Glass Block
+PRESET,,"2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat",,2Gap2D --> Gapless,,Gapless,,1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard,0DimWD-0inW-0inD,0Profile-Flat,,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+PRESET,,"2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
+0DimWD-0.125inW-0inD
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,2Gap2D12,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard,0DimWD-0.125inW-0inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+PRESET,,"2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
+0DimWD-0.125inW-0.0625inD
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,2Gap2D13,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard,0DimWD-0.125inW-0.0625inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+PRESET,,"2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
+0DimWD-0.25inW-0inD
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,2Gap2D14,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard,0DimWD-0.25inW-0inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+PRESET,,"2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
+0DimWD-0.25inW-0.0625inD
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,2Gap2D15,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard,0DimWD-0.25inW-0.0625inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+PRESET,,"2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
+0DimWD-0.25inW-0.125inD
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,2Gap2D16,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard,0DimWD-0.25inW-0.125inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+PRESET,,"2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,2Gap2D17,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard,0DimWD-0.25inW-0.1875inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+PRESET,,"2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
+0DimWD-0.25inW-0.25inD
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,2Gap2D18,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard,0DimWD-0.25inW-0.25inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+PRESET,,"2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
+0DimWD-0.375inW-0inD
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,2Gap2D19,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard,0DimWD-0.375inW-0inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+PRESET,,"2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0inD
+0Profile-Flat",,2Gap2D --> Grout Gaps,,2Gap2D20,,1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard,0DimWD-0.375inW-0inD,0Profile-Flat,,,,,,,,,,,,,,X,,,,,,,,X,,,,,,,X,X,X,X
+PRESET,,"2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.125inD
+0Profile-Flat",,2Gap2D --> Grout Gaps,,2Gap2D21,,1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard,0DimWD-0.375inW-0.125inD,0Profile-Flat,,,,,,,,,,,,,,X,,,,,,,,X,,,,,,,X,X,X,X
+PRESET,,"2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.25inD
+0Profile-Flat",,2Gap2D --> Grout Gaps,,2Gap2D22,,1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard,0DimWD-0.375inW-0.25inD,0Profile-Flat,,,,,,,,,,,,,,X,,,,,,,,X,,,,,,,X,X,X,X
+PRESET,,"2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
+0DimWD-0.375inW-0.375inD
+0Profile-Flat",,2Gap2D --> Grout Gaps,,2Gap2D23,,1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard,0DimWD-0.375inW-0.375inD,0Profile-Flat,,,,,,,,,,,,,,X,,,,,,,,X,,,,,,,X,X,X,X
+PRESET,,"2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat",,2Gap2D --> Metal Gaps,,2Gap2D24,,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-0.5625inW-0.25inD,0Profile-Flat,,,X,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,
+PRESET,,"2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+0DimWD-1inW-0inD
+0Profile-Flat",,2Gap2D --> Metal Gaps,,2Gap2D25,,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1inW-0inD,0Profile-Flat,,,X,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,
+PRESET,,"2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+0DimWD-1.5inW-0inD
+0Profile-Flat",,2Gap2D --> Metal Gaps,,2Gap2D26,,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.5inW-0inD,0Profile-Flat,,,X,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

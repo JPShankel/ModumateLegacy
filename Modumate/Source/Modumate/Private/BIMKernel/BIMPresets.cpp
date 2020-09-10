@@ -337,8 +337,10 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 
 	auto normalizeCell = [](const FString& Row)
 	{
+		// TODO: to be replaced with FString-based hash with no inherent limit
+		int32 sl = FMath::Min(NAME_SIZE-1, Row.Len());
+
 		FString cell;
-		int32 sl = Row.Len();
 		cell.Reserve(sl);
 		for (int32 j = 0; j < sl; ++j)
 		{
@@ -673,6 +675,11 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 						FString rowStr = cell;
 						rowStr.RemoveSpacesInline();
 						newCAP.PresetID = *rowStr;
+						if (newCAP.PresetID.IsNone() && tableData.currentPreset.ChildPresets.Num() > 1)
+						{
+							newCAP.PresetID = tableData.currentPreset.ChildPresets[0].PresetID;
+						}
+						ensureAlways(!newCAP.PresetID.IsNone());
 						found = true;
 					}
 				}
