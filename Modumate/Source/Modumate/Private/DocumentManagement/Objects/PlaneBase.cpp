@@ -2,10 +2,9 @@
 
 #include "DocumentManagement/Objects/PlaneBase.h"
 
-#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
 
 FMOIPlaneImplBase::FMOIPlaneImplBase(FModumateObjectInstance *moi)
 	: FDynamicModumateObjectInstanceImpl(moi)

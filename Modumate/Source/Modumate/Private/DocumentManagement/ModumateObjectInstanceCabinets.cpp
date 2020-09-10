@@ -2,20 +2,20 @@
 
 #include "DocumentManagement/ModumateObjectInstanceCabinets.h"
 
-#include "Math/ConvexHull2d.h"
-#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "Drafting/ModumateClippingTriangles.h"
+#include "Drafting/ModumateDraftingElements.h"
 #include "DrawDebugHelpers.h"
+#include "Math/ConvexHull2d.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyExtrusionHandle.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "ModumateCore/ModumateGeometryStatics.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/EditModelPlayerHUD.h"
-#include "Drafting/ModumateDraftingElements.h"
-#include "Drafting/ModumateClippingTriangles.h"
 
 using namespace Modumate::Units;
 

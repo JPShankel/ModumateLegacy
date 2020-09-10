@@ -2,11 +2,10 @@
 
 #include "DocumentManagement/ModumateObjectInstanceFlatPoly.h"
 
-#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
 #include "UnrealClasses/LineActor.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 

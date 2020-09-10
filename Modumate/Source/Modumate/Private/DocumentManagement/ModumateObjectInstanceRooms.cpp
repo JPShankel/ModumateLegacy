@@ -5,7 +5,6 @@
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
 #include "Graph/Graph3D.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "DocumentManagement/ModumateDocument.h"

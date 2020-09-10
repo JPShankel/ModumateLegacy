@@ -2,12 +2,12 @@
 
 #include "DocumentManagement/ModumateObjectInstanceScopeBox.h"
 
-#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyExtrusionHandle.h"
+#include "UI/HUDDrawWidget.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "ToolsAndAdjustments/Common/EditModelPolyAdjustmentHandles.h"
-#include "UI/HUDDrawWidget.h"
 
 FMOIScopeBoxImpl::FMOIScopeBoxImpl(FModumateObjectInstance *moi)
 	: FDynamicModumateObjectInstanceImpl(moi)
