@@ -188,6 +188,7 @@ public:
 	static const FName DocumentHideRequestTag;
 	void AddHideObjectsById(UWorld *world, const TArray<int32> &ids);
 	void UnhideAllObjects(UWorld *world);
+	void UnhideObjectsById(UWorld *world, const TArray<int32> &ids);
 
 	// Deletion and restoration functions used internally by undo/redo-aware functions
 private:

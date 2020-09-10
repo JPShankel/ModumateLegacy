@@ -19,7 +19,6 @@ class MODUMATE_API AGraphDimensionActor;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPostOnNewModel);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdateCutPlanes);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdateScopeBoxes);
 
 /**
@@ -106,10 +105,6 @@ public:
 	// Blueprints will use this to handle post load events
 	UPROPERTY(VisibleAnywhere, BlueprintAssignable, Category = "Tools")
 	FPostOnNewModel PostOnNewModel;
-
-	// Blueprints will use this to handle updates to cut plane browser
-	UPROPERTY(VisibleAnywhere, BlueprintAssignable, Category = "Tools")
-	FOnUpdateCutPlanes OnUpdateCutPlanes;
 
 	// Blueprints will use this to handle updates to scope box browser
 	UPROPERTY(VisibleAnywhere, BlueprintAssignable, Category = "Tools")

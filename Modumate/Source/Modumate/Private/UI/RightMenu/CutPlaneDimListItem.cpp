@@ -4,6 +4,8 @@
 #include "UI/RightMenu/CutPlaneDimListItemObject.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "Components/CheckBox.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 
 
 UCutPlaneDimListItem::UCutPlaneDimListItem(const FObjectInitializer& ObjectInitializer)
@@ -17,6 +19,11 @@ bool UCutPlaneDimListItem::Initialize()
 	{
 		return false;
 	}
+	if (!CheckBoxVisibility)
+	{
+		return false;
+	}
+	CheckBoxVisibility->OnCheckStateChanged.AddDynamic(this, &UCutPlaneDimListItem::OnCheckBoxVisibilityChanged);
 
 	return true;
 }
@@ -36,6 +43,24 @@ void UCutPlaneDimListItem::OnButtonSaveReleased()
 	// TODO: Export cut plane
 }
 
+void UCutPlaneDimListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
+{
+	AEditModelGameState_CPP *gameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
+	if (gameState)
+	{
+		TArray<int32> objIDs = { ObjID };
+		if (IsChecked)
+		{
+			gameState->Document.AddHideObjectsById(GetWorld(), objIDs);
+		}
+		else
+		{
+			gameState->Document.UnhideObjectsById(GetWorld(), objIDs);
+		}
+	}
+
+}
+
 void UCutPlaneDimListItem::OnButtonEditReleased()
 {
 	// TODO: Edit cut plane name
@@ -49,14 +74,16 @@ void UCutPlaneDimListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 		return;
 	}
 
+	UpdateCheckBoxVisibility(cutPlaneItemObject->Visibility);
+	ObjID = cutPlaneItemObject->ObjId;
 	TextTitle->ChangeText(FText::FromString(cutPlaneItemObject->DisplayName));
 	switch (cutPlaneItemObject->CutPlaneType)
 	{
 	case ECutPlaneType::Horizontal:
-		BuildAsHorizontalCutPlaneItem(cutPlaneItemObject->Rotation);
+		BuildAsHorizontalCutPlaneItem(cutPlaneItemObject->Location);
 		break;
 	case ECutPlaneType::Vertical:
-		BuildAsVerticalCutPlaneItem(cutPlaneItemObject->Location);
+		BuildAsVerticalCutPlaneItem(cutPlaneItemObject->Rotation);
 		break;
 	case ECutPlaneType::Other:
 	default:
@@ -66,16 +93,21 @@ void UCutPlaneDimListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 	
 }
 
-void UCutPlaneDimListItem::BuildAsVerticalCutPlaneItem(const FVector &Location)
+void UCutPlaneDimListItem::BuildAsVerticalCutPlaneItem(const FQuat &Rotation)
+{
+	float angle = Rotation.GetAngle();
+	TextDimension->ChangeText(FText::AsNumber(angle));
+}
+
+void UCutPlaneDimListItem::BuildAsHorizontalCutPlaneItem(const FVector &Location)
 {
 	TArray<int32> imperialsInches;
 	UModumateDimensionStatics::CentimetersToImperialInches(Location.Z, imperialsInches);
 	TextDimension->ChangeText(UModumateDimensionStatics::ImperialInchesToDimensionStringText(imperialsInches));
 }
 
-void UCutPlaneDimListItem::BuildAsHorizontalCutPlaneItem(const FQuat &Rotation)
+void UCutPlaneDimListItem::UpdateCheckBoxVisibility(bool NewVisible)
 {
-	float angle = Rotation.GetAngle();
-	TextDimension->ChangeText(FText::AsNumber(angle));
+	CheckBoxVisibility->SetIsChecked(!NewVisible);
 }
 

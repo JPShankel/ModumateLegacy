@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "ModumateCore/ModumateTypes.h"
 
 #include "CutPlaneMenuWidget.generated.h"
 
@@ -27,6 +28,15 @@ protected:
 	UPROPERTY()
 	class AEditModelGameState_CPP *GameState;
 
+	UPROPERTY()
+	TMap<int32, class UCutPlaneDimListItemObject*> HorizontalItemToIDMap;
+
+	UPROPERTY()
+	TMap<int32, class UCutPlaneDimListItemObject*> VerticalItemToIDMap;
+
+	UPROPERTY()
+	TMap<int32, class UCutPlaneDimListItemObject*> OtherItemToIDMap;
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -40,4 +50,7 @@ public:
 
 	void SetViewMenuVisibility(bool NewVisible);
 	void UpdateCutPlaneMenuBlocks();
+	UCutPlaneDimListItemObject *GetListItemFromObjID(int32 ObjID = MOD_ID_NONE);
+	bool RemoveCutPlaneFromMenuBlock(int32 ObjID = MOD_ID_NONE);
+	bool UpdateCutPlaneVisibilityInMenuBlock(bool IsVisible, int32 ObjID = MOD_ID_NONE);
 };

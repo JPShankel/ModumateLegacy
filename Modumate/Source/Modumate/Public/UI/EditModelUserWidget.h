@@ -73,5 +73,7 @@ public:
 	void EditExistingAssembly(EToolMode ToolMode, FName AssemblyKey);
 	void ToggleBIMDesigner(bool Open);
 	void SwitchRightMenu(ERightMenuState NewMenuState);
-
+	void UpdateCutPlanesList();
+	bool RemoveCutPlaneFromList(int32 ObjID = MOD_ID_NONE);
+	bool UpdateCutPlaneVisibilityinList(bool IsVisible, int32 ObjID = MOD_ID_NONE);
 };

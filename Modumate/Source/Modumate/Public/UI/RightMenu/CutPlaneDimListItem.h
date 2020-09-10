@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/IUserObjectListEntry.h"
+#include "ModumateCore/ModumateTypes.h"
 
 #include "CutPlaneDimListItem.generated.h"
 
@@ -32,6 +33,8 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+
+	int32 ObjID = MOD_ID_NONE;
 
 public:
 
@@ -62,9 +65,13 @@ public:
 	UFUNCTION()
 	void OnButtonSaveReleased();
 
+	UFUNCTION()
+	void OnCheckBoxVisibilityChanged(bool IsChecked);
+
 	// UserObjectListEntry interface
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 
-	void BuildAsVerticalCutPlaneItem(const FVector &Location);
-	void BuildAsHorizontalCutPlaneItem(const FQuat &Rotation);
+	void BuildAsVerticalCutPlaneItem(const FQuat &Rotation);
+	void BuildAsHorizontalCutPlaneItem(const FVector &Location);
+	void UpdateCheckBoxVisibility(bool NewVisible);
 };

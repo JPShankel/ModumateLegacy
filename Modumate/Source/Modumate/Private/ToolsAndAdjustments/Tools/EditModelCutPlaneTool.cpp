@@ -6,6 +6,7 @@
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UI/EditModelUserWidget.h"
 
 #include "DocumentManagement/ModumateCommands.h"
 

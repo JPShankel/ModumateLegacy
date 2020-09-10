@@ -107,6 +107,7 @@ public:
 
 	virtual AActor *RestoreActor() = 0;
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) = 0;
+	virtual void PostCreateObject(bool bNewObject) = 0;
 	virtual void Destroy() = 0;
 
 	virtual FVector GetNormal() const = 0;
@@ -179,6 +180,7 @@ public:
 
 	virtual AActor *RestoreActor() override;
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
+	virtual void PostCreateObject(bool bNewObject) override;
 	virtual void Destroy() override;
 
 	virtual FVector GetNormal() const override { return FVector::ZeroVector; }
@@ -437,7 +439,7 @@ public:
 	// Object delete/restore
 	void DestroyActor();
 	void RestoreActor();
-	void PostRestoreObject();
+	void PostCreateObject(bool bNewObject);
 
 	// Object transform getters/setters.
 	//   NOTE: ObjectLocation and ObjectRotation are intended to be interpreted by the object;

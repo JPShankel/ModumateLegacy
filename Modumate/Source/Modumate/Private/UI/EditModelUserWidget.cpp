@@ -108,3 +108,29 @@ void UEditModelUserWidget::SwitchRightMenu(ERightMenuState NewMenuState)
 	ViewMenu->SetViewMenuVisibility(newViewMenuVisibility);
 	CutPlaneMenu->SetViewMenuVisibility(newCutPlaneMenuVisibility);
 }
+
+void UEditModelUserWidget::UpdateCutPlanesList()
+{
+	if (CurrentRightMenuState == ERightMenuState::CutPlaneMenu)
+	{
+		CutPlaneMenu->UpdateCutPlaneMenuBlocks();
+	}
+}
+
+bool UEditModelUserWidget::RemoveCutPlaneFromList(int32 ObjID /*= MOD_ID_NONE*/)
+{
+	if (CurrentRightMenuState == ERightMenuState::CutPlaneMenu)
+	{
+		return CutPlaneMenu->RemoveCutPlaneFromMenuBlock(ObjID);
+	}
+	return false;
+}
+
+bool UEditModelUserWidget::UpdateCutPlaneVisibilityinList(bool IsVisible, int32 ObjID /*= MOD_ID_NONE*/)
+{
+	if (CurrentRightMenuState == ERightMenuState::CutPlaneMenu)
+	{
+		return CutPlaneMenu->UpdateCutPlaneVisibilityInMenuBlock(IsVisible, ObjID);
+	}
+	return false;
+}

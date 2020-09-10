@@ -1127,12 +1127,15 @@ void FModumateObjectInstance::RestoreActor()
 	SetupMOIComponent();
 }
 
-void FModumateObjectInstance::PostRestoreObject()
+void FModumateObjectInstance::PostCreateObject(bool bNewObject)
 {
-	if (ensureAlways(bDestroyed))
+	if (bDestroyed)
 	{
+		ensureAlways(!bNewObject);
 		bDestroyed = false;
 	}
+
+	Implementation->PostCreateObject(bNewObject);
 }
 
 void FModumateObjectInstance::InvertObject()
@@ -1407,6 +1410,11 @@ AActor *FModumateObjectInstanceImplBase::RestoreActor()
 AActor *FModumateObjectInstanceImplBase::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
 	return world->SpawnActor<AActor>(loc, rot.Rotator());
+}
+
+void FModumateObjectInstanceImplBase::PostCreateObject(bool bNewObject)
+{
+
 }
 
 void FModumateObjectInstanceImplBase::Destroy()

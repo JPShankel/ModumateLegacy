@@ -27,6 +27,9 @@ protected:
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *Controller;
 
+	UPROPERTY()
+	class AEditModelGameState_CPP *GameState;
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))

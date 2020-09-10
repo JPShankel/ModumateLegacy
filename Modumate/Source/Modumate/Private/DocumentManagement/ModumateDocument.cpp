@@ -241,8 +241,6 @@ void FModumateDocument::AddHideObjectsById(UWorld *world, const TArray<int32> &i
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::AddHideObjectsById"));
 
-	ClearRedoBuffer();
-
 	for (auto id : ids)
 	{
 		FModumateObjectInstance *obj = GetObjectById(id);
@@ -259,8 +257,6 @@ void FModumateDocument::UnhideAllObjects(UWorld *world)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UnhideAllObjects"));
 
-	ClearRedoBuffer();
-
 	TSet<int32> ids = HiddenObjectsID;
 
 	for (auto id : ids)
@@ -273,6 +269,28 @@ void FModumateDocument::UnhideAllObjects(UWorld *world)
 	}
 
 	HiddenObjectsID.Empty();
+	// TODO: Pending removal
+	for (FModumateObjectInstance *obj : ObjectInstanceArray)
+	{
+		obj->UpdateVisibilityAndCollision();
+	}
+}
+
+void FModumateDocument::UnhideObjectsById(UWorld *world, const TArray<int32> &ids)
+{
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UnhideObjectsById"));
+
+	for (auto id : ids)
+	{
+		FModumateObjectInstance *obj = GetObjectById(id);
+		if (obj && HiddenObjectsID.Contains(id))
+		{
+			obj->RequestHidden(FModumateDocument::DocumentHideRequestTag, false);
+			obj->RequestCollisionDisabled(FModumateDocument::DocumentHideRequestTag, false);
+			HiddenObjectsID.Remove(id);
+		}
+	}
+	// TODO: Pending removal
 	for (FModumateObjectInstance *obj : ObjectInstanceArray)
 	{
 		obj->UpdateVisibilityAndCollision();
@@ -556,7 +574,7 @@ bool FModumateDocument::RestoreObjectImpl(FModumateObjectInstance *obj)
 		obj->RestoreActor();
 		obj->SetParentObject(GetObjectById(obj->GetParentID()), true);
 		obj->MarkDirty(EObjectDirtyFlags::Visuals);
-		obj->PostRestoreObject();
+		obj->PostCreateObject(false);
 
 		RestoreChildrenImpl(obj);
 
@@ -658,6 +676,7 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
 		obj->SetupGeometry();
 		obj->SetParentObject(GetObjectById(ParentID));
 		obj->UpdateVisibilityAndCollision();
+		obj->PostCreateObject(true);
 
 		UModumateAnalyticsStatics::RecordObjectCreation(World, Assembly.ObjectType);
 
