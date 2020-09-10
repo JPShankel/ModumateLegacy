@@ -591,7 +591,11 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 			else if (tableData.propertyRange.IsIn(i))
 			{
 				FBIMPropertyValue propSpec(*tableData.propertyRange.Get(i));
-				tableData.currentPreset.SetScopedProperty(propSpec.Scope, propSpec.Name, cell);
+				// Only add blank properties if they don't already exist
+				if (!tableData.currentPreset.HasProperty(propSpec.Name) || !cell.IsEmpty())
+				{
+					tableData.currentPreset.SetScopedProperty(propSpec.Scope, propSpec.Name, cell);
+				}
 			}
 			else if (tableData.myPathRange.IsIn(i) && !cell.IsEmpty())
 			{

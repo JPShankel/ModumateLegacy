@@ -36,8 +36,19 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 		// There are 3 sections to an assembly spec: extrusions, layers and parts
 		// Extrusions and layers are added when we detect a node that defines them
 		// Parts are added below if we have any filled in part slots 
-		if (preset->NodeScope == EBIMValueScope::Profile)
+		
+		// TODO: ignore gaps until we can reconcile gap vs module dimensions
+		if (preset->NodeScope == EBIMValueScope::Gap)
 		{
+			continue;
+		}
+		else if (preset->NodeScope == EBIMValueScope::Profile)
+		{
+			// TODO: until we can combine extrusions and layers, ignore extrusions on layered assemblies
+			if (Layers.Num() > 0)
+			{
+				continue;
+			}
 			Extrusions.AddDefaulted();
 			currentSheet = &Extrusions.Last().Properties;
 		}
@@ -211,16 +222,26 @@ ECraftingResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB
 				customColor = InDB.GetCustomColorByKey(Value);
 			}
 		}
-
-		if (Var.Scope == EBIMValueScope::Dimension)
-		{
-			if (Var.Name == BIMPropertyNames::Thickness)
-			{
-				FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(Value);
-				Thickness = Modumate::Units::FUnitValue::WorldCentimeters(dim.Centimeters);
-			}
-		}	
 	});
+
+	FString thickness;
+	if (!Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, thickness))
+	{
+		if (!Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, thickness))
+		{
+			Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, thickness);
+		}
+	}
+
+	if (ensureAlways(!thickness.IsEmpty()))
+	{
+		FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(thickness);
+		Thickness = Modumate::Units::FUnitValue::WorldCentimeters(dim.Centimeters);
+	}
+	else
+	{
+		Thickness = Modumate::Units::FUnitValue::WorldCentimeters(1.0f);
+	}
 
 	if (customColor != nullptr)
 	{
