@@ -2,8 +2,6 @@
 
 #include "ModumateCore/ModumateGeometryStatics.h"
 
-#include "MeshDescription.h"
-#include "MeshAttributes.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "KismetProceduralMeshLibrary.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
@@ -2045,50 +2043,62 @@ bool UModumateGeometryStatics::ConvertProcMeshToLinesOnPlane(UProceduralMeshComp
 
 bool UModumateGeometryStatics::ConvertStaticMeshToLinesOnPlane(UStaticMeshComponent* InStaticMesh, FVector PlanePosition, FVector PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges)
 {
-	const FName& positionName = MeshAttribute::Vertex::Position;
-
 	const FTransform& localToWorld = InStaticMesh->GetComponentToWorld();
-	const UStaticMesh* staticMesh = InStaticMesh->GetStaticMesh();
+	UStaticMesh* staticMesh = InStaticMesh->GetStaticMesh();
 	if (staticMesh == nullptr)
 	{
 		return true;
 	}
 
 	static constexpr int32 levelOfDetailIndex = 0;
-	const FMeshDescription* meshDescription = staticMesh->GetMeshDescription(levelOfDetailIndex);
-	const FTriangleArray& triangleArray = meshDescription->Triangles();
-	const auto& vertexAttribs = meshDescription->VertexAttributes();
-	for (const auto triangleID: triangleArray.GetElementIDs())
-	{
-		auto vertexIDs = meshDescription->GetTriangleVertices(triangleID);
-		FVector verts[3];
-		for (int v = 0; v < 3; ++v)
-		{
-			FVector vert = vertexAttribs.GetAttribute<FVector>(vertexIDs[v], positionName);
-			verts[v] = localToWorld.TransformPosition(vert);
-		}
-		FVector intersections[2];
-		int intersectCount = 0;
-		for (int edge = 0; edge < 3; ++edge)
-		{
-			FVector& p1 = verts[edge];
-			FVector& p2 = verts[(edge + 1) % 3];
-			if ( ((p1 - PlanePosition) | PlaneNormal) * ((p2 - PlanePosition) | PlaneNormal) < 0.0f )
-			{   // Line crosses plane
-				intersections[intersectCount++] = FMath::LinePlaneIntersection(p1, p2, PlanePosition, PlaneNormal);
-				if (intersectCount == 2)
-				{
-					break;
-				}
 
+	const FStaticMeshLODResources& meshResources = staticMesh->GetLODForExport(levelOfDetailIndex);
+
+	TArray<FVector> positions;
+	TArray<int32> indices;
+	TArray<FVector> normals;
+	TArray<FVector2D> UVs;
+	TArray<FProcMeshTangent> tangents;
+
+	int32 numSections = meshResources.Sections.Num();
+	for (int32 section = 0; section < numSections; ++section)
+	{
+		UKismetProceduralMeshLibrary::GetSectionFromStaticMesh(staticMesh, levelOfDetailIndex, section, positions, indices, normals, UVs, tangents);
+		ensure(indices.Num() % 3 == 0);
+		int32 numTriangles = indices.Num() / 3;
+		FVector verts[3];
+		for (int32 triangle = 0; triangle < numTriangles; ++triangle)
+		{
+
+			for (int v = 0; v < 3; ++v)
+			{
+				FVector vert = positions[indices[triangle * 3 + v]];
+				verts[v] = localToWorld.TransformPosition(vert);
+			}
+
+			FVector intersections[2];
+			int intersectCount = 0;
+			for (int edge = 0; edge < 3; ++edge)
+			{
+				FVector& p1 = verts[edge];
+				FVector& p2 = verts[(edge + 1) % 3];
+				if (((p1 - PlanePosition) | PlaneNormal) * ((p2 - PlanePosition) | PlaneNormal) < 0.0f)
+				{   // Line crosses plane
+					intersections[intersectCount++] = FMath::LinePlaneIntersection(p1, p2, PlanePosition, PlaneNormal);
+					if (intersectCount == 2)
+					{
+						break;
+					}
+
+				}
+			}
+			if (intersectCount == 2)
+			{
+				OutEdges.Add(TPair<FVector, FVector>(intersections[0], intersections[1]));
 			}
 		}
-		if (intersectCount == 2)
-		{
-			OutEdges.Add(TPair<FVector, FVector>(intersections[0], intersections[1]));
-		}
-
 	}
+
 	return true;
 }
 

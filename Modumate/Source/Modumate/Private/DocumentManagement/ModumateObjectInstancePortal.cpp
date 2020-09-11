@@ -2,8 +2,6 @@
 
 #include "DocumentManagement/ModumateObjectInstancePortal.h"
 
-#include "MeshDescription.h"
-#include "MeshAttributes.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
@@ -16,6 +14,7 @@
 #include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Algo/ForEach.h"
 #include "Algo/Unique.h"
@@ -721,9 +720,8 @@ void FMOIPortalImpl::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 		{
 			continue;
 		}
-		const FName& positionName = MeshAttribute::Vertex::Position;  // This is "Position "!
-		const UStaticMesh* meshSection = meshComp->GetStaticMesh();
-		if (meshSection == nullptr)
+		UStaticMesh* staticMesh = meshComp->GetStaticMesh();
+		if (staticMesh == nullptr)
 		{
 			continue;
 		}
@@ -743,21 +741,35 @@ void FMOIPortalImpl::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 		};
 		TArray<FLocalEdge> edges;
 
-		const FMeshDescription* meshDescription = meshSection->GetMeshDescription(0);
-		const FTriangleArray& triangleArray = meshDescription->Triangles();
-		const auto triangleIDs = triangleArray.GetElementIDs();
-		const auto& attribs = meshDescription->VertexAttributes();
-		for (const auto triangleID: triangleIDs)
-		{
-			auto vertexIDs = meshDescription->GetTriangleVertices(triangleID);
-			FVector vert0 = attribs.GetAttribute<FVector>(vertexIDs[0], positionName);
-			FVector vert1 = attribs.GetAttribute<FVector>(vertexIDs[1], positionName);
-			FVector vert2 = attribs.GetAttribute<FVector>(vertexIDs[2], positionName);
-			FVector triNormal = ((vert1 - vert0) ^ (vert2 - vert0)).GetSafeNormal();
+		const int levelOfDetailIndex = 0;
+		const FStaticMeshLODResources& meshResources = staticMesh->GetLODForExport(levelOfDetailIndex);
 
-			edges.Add({ vert0, vert1, triNormal });
-			edges.Add({ vert1, vert2, triNormal });
-			edges.Add({ vert2, vert0, triNormal });
+		TArray<FVector> positions;
+		TArray<int32> indices;
+		TArray<FVector> normals;
+		TArray<FVector2D> UVs;
+		TArray<FProcMeshTangent> tangents;
+
+		int32 numSections = meshResources.Sections.Num();
+		for (int32 section = 0; section < numSections; ++section)
+		{
+			UKismetProceduralMeshLibrary::GetSectionFromStaticMesh(staticMesh, levelOfDetailIndex, section, positions, indices, normals, UVs, tangents);
+			ensure(indices.Num() % 3 == 0);
+			int32 numTriangles = indices.Num() / 3;
+			FVector verts[3];
+			for (int32 triangle = 0; triangle < numTriangles; ++triangle)
+			{
+
+				FVector vert0 = positions[indices[triangle * 3]];
+				FVector vert1 = positions[indices[triangle * 3 + 1]];
+				FVector vert2 = positions[indices[triangle * 3 + 2]];
+				FVector triNormal = ((vert1 - vert0) ^ (vert2 - vert0)).GetSafeNormal();
+
+				edges.Add({ vert0, vert1, triNormal });
+				edges.Add({ vert1, vert2, triNormal });
+				edges.Add({ vert2, vert0, triNormal });
+			}
+
 		}
 
 		for (auto& edge: edges)
