@@ -43,7 +43,7 @@ bool UMetaPlaneTool::HandleInputNumber(double n)
 	}
 	NewObjIDs.Reset();
 
-	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+	auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 
 	switch (Controller->EMPlayerState->CurrentDimensionStringGroupIndex)
 	{
@@ -138,7 +138,7 @@ bool UMetaPlaneTool::BeginUse()
 
 	State = NewSegmentPending;
 
-	auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+	auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
 	PendingSegmentID = dimensionActor->ID;
 
 	auto pendingSegment = dimensionActor->GetLineActor();
@@ -182,7 +182,7 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 	FModumateDocument &doc = GameState->Document;
 
 	bool bSuccess = false;
-	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+	auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 	FVector constrainedStartPoint = pendingSegment->Point1;
 	FVector constrainedEndPoint = Location;
 	ConstrainHitPoint(constrainedStartPoint);
@@ -312,7 +312,7 @@ bool UMetaPlaneTool::FrameUpdate()
 
 	if (State == NewSegmentPending)
 	{
-		auto dimensionActor = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID);
+		auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
 		ALineActor *pendingSegment = nullptr;
 		if (dimensionActor != nullptr)
 		{
@@ -344,7 +344,7 @@ bool UMetaPlaneTool::FrameUpdate()
 bool UMetaPlaneTool::EndUse()
 {
 	State = Neutral;
-	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+	DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 	PendingSegmentID = MOD_ID_NONE;
 
 	if (PendingPlane.IsValid())
@@ -378,7 +378,7 @@ void UMetaPlaneTool::UpdatePendingPlane()
 
 	if (PendingPlane.IsValid())
 	{
-		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+		auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 		if (State == NewSegmentPending && pendingSegment != nullptr &&
 			(FVector::Dist(pendingSegment->Point1, pendingSegment->Point2) >= MinPlaneSize))
 		{

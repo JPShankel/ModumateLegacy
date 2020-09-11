@@ -32,12 +32,6 @@ protected:
 	bool CreateGraphFromFaceTarget();
 	void ResetTarget();
 
-	UPROPERTY()
-	class AEditModelGameState_CPP* GameState;
-
-	UPROPERTY()
-	class UDimensionManager* DimensionManager;
-
 	class FModumateObjectInstance *HostTarget;
 	class FModumateObjectInstance *GraphTarget;
 	class FModumateObjectInstance *GraphElementTarget;

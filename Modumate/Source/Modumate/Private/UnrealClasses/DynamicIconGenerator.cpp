@@ -281,14 +281,15 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 	float cabinetDepth = cabinetDepthUnit.AsWorldCentimeters();
 
 	// Make the cabinet base + box geometry
-	TArray<FVector> cabinetCPs = {
+	TArray<FVector> cabinetBasePoints = {
 		FVector::ZeroVector,
 		FVector(cabinetWidth, 0.0f, 0.0f),
 		FVector(cabinetWidth, cabinetDepth, 0.0f),
 		FVector(0.0f, cabinetDepth, 0.0f),
 	};
-	IconDynamicMeshActor->SetupCabinetGeometry(cabinetCPs, cabinetHeight, materialData, toeKickDimensions, 2);
+	FVector extrusionDelta = cabinetHeight * FVector::UpVector;
 
+	IconDynamicMeshActor->SetupCabinetGeometry(cabinetBasePoints, extrusionDelta, materialData, false, false, toeKickDimensions, 2);
 	IconCompoundMeshActor->MakeFromAssembly(Assembly, FVector::OneVector, false, false);
 
 	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp

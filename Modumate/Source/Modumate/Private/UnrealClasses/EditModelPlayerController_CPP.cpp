@@ -1702,22 +1702,15 @@ void AEditModelPlayerController_CPP::UpdateMouseTraceParams()
 	case EToolMode::VE_RAIL:
 	case EToolMode::VE_STAIR:
 	case EToolMode::VE_METAPLANE:
-		MOITraceObjectQueryParams = FCollisionObjectQueryParams(COLLISION_META_MOI);
-		break;
-
-	case EToolMode::VE_FINISH:
-	case EToolMode::VE_TRIM:
-	case EToolMode::VE_PLACEOBJECT:
-	case EToolMode::VE_CABINET:
-	case EToolMode::VE_COUNTERTOP:
-		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_META_MOI);
-		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_DECORATOR_MOI);
-		break;
-
 	case EToolMode::VE_DOOR:
 	case EToolMode::VE_WINDOW:
-		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_DECORATOR_MOI);
+		MOITraceObjectQueryParams = FCollisionObjectQueryParams(COLLISION_META_MOI);
 		break;
+	case EToolMode::VE_FINISH:
+	case EToolMode::VE_TRIM:
+	case EToolMode::VE_CABINET:
+	case EToolMode::VE_PLACEOBJECT:
+	case EToolMode::VE_COUNTERTOP:
 	default:
 		break;
 	}
@@ -2452,8 +2445,9 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 		objectHit.Normal = hitSingleResult.Normal;
 
 		const FModumateObjectInstance* moi = Document->ObjectFromActor(objectHit.Actor.Get());
+		EObjectType objectType = moi ? moi->GetObjectType() : EObjectType::OTNone;
 		// TODO: this should be an interface function or there should be a way to find the planar object types
-		if (moi && moi->GetObjectType() == EObjectType::OTMetaPlane)
+		if ((objectType == EObjectType::OTMetaPlane) || (objectType == EObjectType::OTSurfacePolygon))
 		{
 			FVector moiNormal = moi->GetNormal();
 			FPlane plane = FPlane(moi->GetObjectLocation(), moiNormal);

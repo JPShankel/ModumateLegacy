@@ -582,102 +582,77 @@ void ADynamicMeshActor::UpdatePrismGeometry(const TArray<FVector> &points, float
 	return SetupPrismGeometry(points, height, materialData, uvRotOffset, bMakeSides, holes);
 }
 
-void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector> &points, float height, const FArchitecturalMaterial &materialData, const FVector2D &toeKickDimensions, int32 frontIdx1, float uvRotOffset)
+void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial& MaterialData, bool bUpdateCollision, bool bEnableCollision,
+	const FVector2D& ToeKickDimensions, int32 FrontIdxStart, float UVRotOffset)
 {
-	int32 numPoints = points.Num();
-	if (numPoints < 3)
+	int32 numPoints = BasePoints.Num();
+	float extrusionDist = ExtrusionDelta.Size();
+
+	if (!ensure((numPoints >= 3) && !FMath::IsNearlyZero(extrusionDist)))
 	{
 		return;
 	}
 
-	vertices.Reset();
-	normals.Reset();
-	triangles.Reset();
-	uv0.Reset();
-	vertexColors.Reset();
-
-	FVector centroid = Algo::Accumulate(points, FVector::ZeroVector, [](const FVector &c, const FVector &p) { return c + p; }) / points.Num();
-	SetActorLocation(centroid);
-
-	FPlane pointsPlane;
-	if (!UModumateGeometryStatics::GetPlaneFromPoints(points, pointsPlane))
+	// Ensure that the supplied points are planar, and consistent with the extrusion direction.
+	FVector extrusionNormal = ExtrusionDelta / extrusionDist;
+	FPlane basePlane;
+	bool bPlanarSuccess = UModumateGeometryStatics::GetPlaneFromPoints(BasePoints, basePlane);
+	if (!ensure(bPlanarSuccess && FVector::Parallel(extrusionNormal, basePlane)))
 	{
-		// TODO: this function should return a boolean
-		return;// false
-	}
-	FVector extrusionDir = pointsPlane;
-	if (FVector::Parallel(pointsPlane, FVector::UpVector))
-	{
-		extrusionDir = FVector::UpVector;
+		return;
 	}
 
-	// reset area and volume calculations
-	baseArea = meshVolume = 0.0f;
+	LayerGeometries.Reset();
+	SetActorLocation(FVector::ZeroVector);
+	SetActorRotation(FQuat::Identity);
 
-	// if there's no toe kick, then just make a prism
-	if ((toeKickDimensions.X == 0.0f) || (toeKickDimensions.Y == 0.0f) || (numPoints == 3) || (frontIdx1 < 0))
+	bool bHaveToeKick = (ToeKickDimensions.X > 0.0f) && (ToeKickDimensions.Y > 0.0f) && BasePoints.IsValidIndex(FrontIdxStart);
+	if (bHaveToeKick)
 	{
-		AddPrismGeometry(points, centroid, height, extrusionDir, uvRotOffset, true, true);
-	}
-	// otherwise, we need to make two prisms
-	else
-	{
-		// first, make the upper box on top of the base
-		float boxHeight = height - toeKickDimensions.Y;
-
-		bool bCoincident = FVector::Coincident(FVector(pointsPlane), FVector::UpVector);
-		FVector baseHeightDelta = extrusionDir * toeKickDimensions.Y;
-
-		TArray<FVector> boxBottomPoints;
-		Algo::Transform(points, boxBottomPoints, [baseHeightDelta](const FVector &p) {return p + baseHeightDelta; });
-		AddPrismGeometry(boxBottomPoints, centroid, boxHeight, extrusionDir, uvRotOffset, true, true);
-
-		// now, make the base of the cabinet
-		TArray<FVector> basePoints = points;
-
-		// figure out the edge for the chosen front face of the cabinet
-		int32 frontIdx2 = (frontIdx1 + 1) % numPoints;
-		int32 nextIdx1 = (frontIdx1 + numPoints - 1) % numPoints;
-		int32 nextIdx2 = (frontIdx2 + 1) % numPoints;
-		FVector &frontEdgeP1 = basePoints[frontIdx1];
-		FVector &frontEdgeP2 = basePoints[frontIdx2];
-		const FVector &frontNextP1 = basePoints[nextIdx1];
-		const FVector &frontNextP2 = basePoints[nextIdx2];
-
-		FVector frontEdgeDelta = frontEdgeP2 - frontEdgeP1;
-		float frontEdgeLen = frontEdgeDelta.Size();
-
-		if (!FMath::IsNearlyZero(frontEdgeLen))
-		{
-			FVector frontEdgeDir = frontEdgeDelta / frontEdgeLen;
-			FVector frontFaceNormal = extrusionDir ^ frontEdgeDir * (bCoincident ? 1.0f : -1.0f);
-			FVector depthOffset = toeKickDimensions.X * frontFaceNormal;
-			FVector nextEdgeDir1 = (frontEdgeP1 - frontNextP1).GetSafeNormal();
-			FVector nextEdgeDir2 = (frontEdgeP2 - frontNextP2).GetSafeNormal();
-
-			// retract the front face vertices based on the intersections of the retracted edge against its neighboring edges
-			FVector frontEdgeP1Cut = FMath::RayPlaneIntersection(frontEdgeP2 + depthOffset, -frontEdgeDir,
-				FPlane(frontNextP1, extrusionDir ^ nextEdgeDir1));
-			FVector frontEdgeP2Cut = FMath::RayPlaneIntersection(frontEdgeP1 + depthOffset, frontEdgeDir,
-				FPlane(frontNextP2, extrusionDir ^ nextEdgeDir2));
-
-			frontEdgeP1 = frontEdgeP1Cut;
-			frontEdgeP2 = frontEdgeP2Cut;
-
-			AddPrismGeometry(basePoints, centroid, toeKickDimensions.Y, extrusionDir, uvRotOffset, true, false);
-		}
+		// TODO: support toe kicks with consolidated mesh generation
 	}
 
-	Mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, true);
+	TArray<FVector> topPoints;
+	for (const FVector& basePoint : BasePoints)
+	{
+		topPoints.Add(basePoint + ExtrusionDelta);
+	}
 
+	FLayerGeomDef& cabinetMainPrism = LayerGeometries.AddDefaulted_GetRef();
+	cabinetMainPrism.Init(BasePoints, topPoints, extrusionNormal);
+
+	// Now, triangulate the intermediate cabinet box geometry data
+	int32 numLayers = LayerGeometries.Num();
+	SetupProceduralLayers(numLayers);
 	CachedMIDs.SetNumZeroed(1);
 
-	UModumateFunctionLibrary::SetMeshMaterial(Mesh, materialData, 0, &CachedMIDs[0]);
-}
+	for (int32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
+	{
+		UProceduralMeshComponent* procMeshComp = ProceduralSubLayers[layerIdx];
+		const FLayerGeomDef& layerGeomDef = LayerGeometries[layerIdx];
 
-void ADynamicMeshActor::UpdateCabinetGeometry(const TArray<FVector> &points, float height, const FArchitecturalMaterial &materialData, const FVector2D &toeKickDimensions, int32 frontIndexStart, float uvRotOffset)
-{
-	return SetupCabinetGeometry(points, height, materialData, toeKickDimensions, frontIndexStart, uvRotOffset);
+		vertices.Reset();
+		normals.Reset();
+		triangles.Reset();
+		uv0.Reset();
+		tangents.Reset();
+		vertexColors.Reset();
+
+		bool bLayerVisible = layerGeomDef.bValid && (layerGeomDef.Thickness > 0.0f);
+
+		if (bLayerVisible && layerGeomDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents, UVAnchor, UVRotOffset))
+		{
+			procMeshComp->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, bUpdateCollision);
+			procMeshComp->SetCollisionEnabled(bEnableCollision ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
+			procMeshComp->SetVisibility(true);
+
+			UModumateFunctionLibrary::SetMeshMaterial(procMeshComp, MaterialData, 0, &CachedMIDs[0]);
+		}
+		else
+		{
+			procMeshComp->SetVisibility(false);
+		}
+	}
 }
 
 void ADynamicMeshActor::SetupFlatPolyGeometry(const TArray<FVector> &points, const FBIMAssemblySpec &assembly)

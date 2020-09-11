@@ -121,8 +121,8 @@ public:
 	void UpdatePrismGeometry(const TArray<FVector> &points, float height, const FArchitecturalMaterial &material,
 		float uvRotOffset = 0.0f, bool bMakeSides = true, const TArray<FPolyHole3D> *holes = nullptr);
 
-	void SetupCabinetGeometry(const TArray<FVector> &points, float height, const FArchitecturalMaterial &material, const FVector2D &toeKickDimensions = FVector2D::ZeroVector, int32 frontIndexStart = 0, float uvRotOffset = 0.0f);
-	void UpdateCabinetGeometry(const TArray<FVector> &points, float height, const FArchitecturalMaterial &material, const FVector2D &toeKickDimensions = FVector2D::ZeroVector, int32 frontIndexStart = 0, float uvRotOffset = 0.0f);
+	void SetupCabinetGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial& MaterialData, bool bUpdateCollision, bool bEnableCollision,
+		const FVector2D& ToeKickDimensions = FVector2D::ZeroVector, int32 FrontIdxStart = 0, float UVRotOffset = 0.0f);
 
 	void SetupExtrudedPolyGeometry(const FBIMAssemblySpec &assembly, const FVector &p1, const FVector &p2, const FVector &objNormal, const FVector &objUp,
 		const FVector2D &upperExtensions = FVector2D::ZeroVector, const FVector2D &outerExtensions = FVector2D::ZeroVector, const FVector &scale = FVector::OneVector, bool bRecreateSection = true, bool bCreateCollision = true);

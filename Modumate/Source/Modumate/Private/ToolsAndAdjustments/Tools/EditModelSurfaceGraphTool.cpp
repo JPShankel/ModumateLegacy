@@ -40,16 +40,6 @@ bool USurfaceGraphTool::Activate()
 		return false;
 	}
 
-	UWorld *world = GetWorld();
-	GameState = world ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
-	UModumateGameInstance *gameInstance = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
-	DimensionManager = gameInstance ? gameInstance->DimensionManager : nullptr;
-
-	if (!(GameState && DimensionManager))
-	{
-		return false;
-	}
-
 	OriginalMouseMode = Controller->EMPlayerState->SnappedCursor.MouseMode;
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
 

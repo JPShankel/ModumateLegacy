@@ -5,6 +5,7 @@
 #include "Algo/Transform.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "DocumentManagement/ModumateObjectInstanceCabinets.h"
+#include "Graph/Graph2D.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -19,11 +20,13 @@ using namespace Modumate;
 
 UCabinetTool::UCabinetTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, State(Neutral)
-	, PendingSegmentID(MOD_ID_NONE)
+	, TargetPolygonID(MOD_ID_NONE)
+	, BaseOrigin(ForceInitToZero)
+	, BaseNormal(ForceInitToZero)
+	, ExtrusionDist(0.0f)
+	, ExtrusionDimensionID(MOD_ID_NONE)
+	, PrevMouseMode(EMouseMode::Object)
 {
-	Controller->EMPlayerState;
-	CabinetPlane = FPlane(FVector::UpVector, 0.0f);
 }
 
 bool UCabinetTool::Activate()
@@ -34,39 +37,62 @@ bool UCabinetTool::Activate()
 	}
 
 	Controller->DeselectAll();
-	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
+	PrevMouseMode = Controller->EMPlayerState->SnappedCursor.MouseMode;
+	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Object;
 
 	return true;
 }
 
-bool UCabinetTool::BeginUse()
+bool UCabinetTool::HandleInputNumber(double n)
 {
-	Super::BeginUse();
-
-	if (!Controller->EMPlayerState->SnappedCursor.Visible)
+	if (!IsInUse() || (n < MinimumExtrusionDist))
 	{
 		return false;
 	}
 
-	const FVector &hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+	ExtrusionDist = n;
 
-	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector);
+	if (!EnterNextStage())
+	{
+		EndUse();
+	}
 
-	State = NewSegmentPending;
+	return true;
+}
 
-	auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
-	PendingSegmentID = dimensionActor->ID;
+bool UCabinetTool::Deactivate()
+{
+	Controller->EMPlayerState->SnappedCursor.MouseMode = PrevMouseMode;
+
+	return Super::Deactivate();
+}
+
+bool UCabinetTool::BeginUse()
+{
+	int32 numBasePoints = BasePoints.Num();
+	if ((TargetPolygonID == MOD_ID_NONE) || (numBasePoints < 3) || !BaseNormal.IsNormalized() || !Super::BeginUse())
+	{
+		return false;
+	}
+
+	auto& cursor = Controller->EMPlayerState->SnappedCursor;
+	FPlane basePlane(BaseOrigin, BaseNormal);
+
+	// Correct the cursor affordance to start from the polygon's origin along its plane
+	BaseOrigin = FVector::PointPlaneProject(cursor.WorldPosition, basePlane);
+	cursor.SetAffordanceFrame(BaseOrigin, BaseNormal, FVector::ZeroVector, true, true);
+
+	ExtrusionDist = 0.0f;
+	auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+	ExtrusionDimensionID = dimensionActor->ID;
 
 	auto pendingSegment = dimensionActor->GetLineActor();
-	pendingSegment->Point1 = hitLoc;
-	pendingSegment->Point2 = hitLoc;
-	pendingSegment->Color = FColor::Green;
-	pendingSegment->Thickness = 2;
+	pendingSegment->Point1 = BaseOrigin;
+	pendingSegment->Point2 = BaseOrigin;
+	pendingSegment->Color = ExtrusionLineColor;
+	pendingSegment->Thickness = ExtrusionLineThickness;
 
-	LastPendingSegmentLoc = hitLoc;
-	LastPendingSegmentLocValid = true;
-
-	CabinetPlane = FPlane(hitLoc, FVector::UpVector);
+	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
 
 	return true;
 }
@@ -74,292 +100,175 @@ bool UCabinetTool::BeginUse()
 bool UCabinetTool::FrameUpdate()
 {
 	Super::FrameUpdate();
-	if (!Controller->EMPlayerState->SnappedCursor.Visible)
+
+	const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
+	if (!cursor.bValid)
 	{
 		return false;
 	}
 
-	const FSnappedCursor& snappedCursor = Controller->EMPlayerState->SnappedCursor;
-	FVector hitLoc = snappedCursor.WorldPosition;
+	auto& affordanceLines = Controller->EMPlayerState->AffordanceLines;
 
-	if (State == NewSegmentPending && PendingSegmentID != MOD_ID_NONE)
+	// We're choosing an extrusion along the normal of the base for the cabinet
+	if (IsInUse())
 	{
-		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-
-		FVector sketchPlanePoint = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(hitLoc);
-		if (!sketchPlanePoint.Equals(hitLoc))
+		auto dimensionActor = DimensionManager->GetDimensionActor(ExtrusionDimensionID);
+		auto dimensionLine = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
+		if (dimensionLine == nullptr)
 		{
-			hitLoc = sketchPlanePoint;
-			FAffordanceLine affordance;
-			affordance.Color = FLinearColor::Blue;
-			affordance.EndPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-			affordance.StartPoint = hitLoc;
-			affordance.Interval = 4.0f;
-			Controller->EMPlayerState->AffordanceLines.Add(affordance);
+			return false;
 		}
 
-		LastPendingSegmentLoc = hitLoc;
-		LastPendingSegmentLocValid = true;
-
-		pendingSegment->Point2 = hitLoc;
-	}
-
-	if (State == SetHeight)
-	{
-		FVector verticalPlaneOrigin = LastPendingSegmentLocValid ? LastPendingSegmentLoc : BaseSegs.Last()->Point2;
-		FVector projectedDeltaPos = hitLoc;
-
-		Controller->EMPlayerState->GetSnapCursorDeltaFromRay(verticalPlaneOrigin, CabinetPlane, projectedDeltaPos);
-		float newHeight = projectedDeltaPos | CabinetPlane;
-
-		FVector avgLocation(ForceInitToZero);
-		for (auto &seg : TopSegs)
+		float cursorExtrusion = (cursor.WorldPosition - BaseOrigin) | BaseNormal;
+		if (cursorExtrusion < MinimumExtrusionDist)
 		{
-			seg->Point1.Z = newHeight;
-			seg->Point2.Z = newHeight;
-		}
-		for (auto &seg : ConnectSegs)
-		{
-			seg->Point2.Z = newHeight;
-			avgLocation = (avgLocation + seg->Point2) / 2.f;
+			FVector extrusionIntersection, cursorIntersection;
+			float distBetweenRays;
+			if (UModumateGeometryStatics::FindShortestDistanceBetweenRays(BaseOrigin, BaseNormal, cursor.OriginPosition, cursor.OriginDirection, extrusionIntersection, cursorIntersection, distBetweenRays))
+			{
+				cursorExtrusion = (extrusionIntersection - BaseOrigin) | BaseNormal;
+			}
 		}
 
-		avgLocation.Z = 0.f;
-		FVector newHeightLocation = avgLocation;
-		newHeightLocation.Z = newHeight;
-
-		FVector camDir = Controller->PlayerCameraManager->GetCameraRotation().Vector();
-		camDir.Z = 0.f;
-		camDir = camDir.RotateAngleAxis(-90.f, FVector::UpVector);
-		// Dim string for cabinet height - Delta Only
-		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-		pendingSegment->Point1 = ConnectSegs[0]->Point1;
-		pendingSegment->Point2 = ConnectSegs[0]->Point2;
-	}
-
-	return true;
-}
-
-bool UCabinetTool::HandleInputNumber(double n)
-{
-	if (State == NewSegmentPending && PendingSegmentID != MOD_ID_NONE)
-	{
-		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-		FVector direction = (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal();
-		FVector origin = pendingSegment->Point1 + direction * n;
-		pendingSegment->Point2 = origin;
-		MakeSegment(origin);
-		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(origin, direction);
-	}
-	if (State == SetHeight)
-	{
-		if (TopSegs[0]->Point1.Z > BaseSegs[0]->Point1.Z)
+		if (cursorExtrusion < MinimumExtrusionDist)
 		{
-			TopSegs[0]->Point1.Z = BaseSegs[0]->Point1.Z + n;
+			ExtrusionDist = 0.0f;
 		}
 		else
 		{
-			TopSegs[0]->Point1.Z = BaseSegs[0]->Point1.Z - n;
+			ExtrusionDist = cursorExtrusion;
+			FVector extrusionDelta = ExtrusionDist * BaseNormal;
+
+			int32 numBasePoints = BasePoints.Num();
+			for (int32 baseIdxStart = 0; baseIdxStart < numBasePoints; ++baseIdxStart)
+			{
+				int32 baseIdxEnd = (baseIdxStart + 1) % numBasePoints;
+				const FVector& baseEdgeStart = BasePoints[baseIdxStart];
+				const FVector& baseEdgeEnd = BasePoints[baseIdxEnd];
+				FVector topEdgeStart = baseEdgeStart + extrusionDelta;
+				FVector topEdgeEnd = baseEdgeEnd + extrusionDelta;
+
+				affordanceLines.Add(FAffordanceLine(baseEdgeStart, baseEdgeEnd, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness));
+				affordanceLines.Add(FAffordanceLine(baseEdgeStart, topEdgeStart, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness));
+				affordanceLines.Add(FAffordanceLine(topEdgeStart, topEdgeEnd, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness));
+			}
+
+			dimensionLine->Point1 = BaseOrigin;
+			dimensionLine->Point2 = BaseOrigin + extrusionDelta;
 		}
-		EnterNextStage();
-		EndUse();
 	}
+	// We're choosing a polygon to host a cabinet to
+	else
+	{
+		TargetPolygonID = MOD_ID_NONE;
+		BasePoints.Reset();
+
+		auto targetMOI = GameState->Document.ObjectFromActor(cursor.Actor);
+		if (targetMOI && (targetMOI->GetObjectType() == EObjectType::OTSurfacePolygon))
+		{
+			auto surfaceGraph = GameState->Document.FindSurfaceGraphByObjID(targetMOI->ID);
+			if (!surfaceGraph.IsValid())
+			{
+				return false;
+			}
+
+			// TODO: we disallow polygons with holes here, but we should either officially support it,
+			// or have a more centralized way of validating which polygons that cabinets can be hosted to,
+			// and removing cabinets from polygons that are no longer valid.
+			auto surfacePoly = surfaceGraph->FindPolygon(targetMOI->ID);
+			if ((surfacePoly == nullptr) || (surfacePoly->ContainedPolyIDs.Num() > 0))
+			{
+				return false;
+			}
+
+			int32 existingCabinetID = MOD_ID_NONE;
+			auto targetChildren = targetMOI->GetChildObjects();
+			for (auto* targetChild : targetChildren)
+			{
+				if (targetChild && (targetChild->GetObjectType() == EObjectType::OTCabinet))
+				{
+					existingCabinetID = targetChild->ID;
+					break;
+				}
+			}
+
+			// TODO: allow replacing existing cabinet's assembly, or delete an existing cabinet entirely
+			if (existingCabinetID == MOD_ID_NONE)
+			{
+				TargetPolygonID = targetMOI->ID;
+
+				int32 numPoints = targetMOI->GetNumCorners();
+				for (int32 cornerIdx = 0; cornerIdx < numPoints; ++cornerIdx)
+				{
+					BasePoints.Add(targetMOI->GetCorner(cornerIdx));
+				}
+
+				BaseOrigin = targetMOI->GetObjectLocation();
+				BaseNormal = targetMOI->GetNormal();
+			}
+		}
+
+		// Show affordance lines for outline of current surface polygon target
+		if (TargetPolygonID != MOD_ID_NONE)
+		{
+			int32 numBasePoints = BasePoints.Num();
+			for (int32 baseIdxStart = 0; baseIdxStart < numBasePoints; ++baseIdxStart)
+			{
+				int32 baseIdxEnd = (baseIdxStart + 1) % numBasePoints;
+				const FVector& basePointStart = BasePoints[baseIdxStart];
+				const FVector& basePointEnd = BasePoints[baseIdxEnd];
+
+				affordanceLines.Add(FAffordanceLine(basePointStart, basePointEnd,
+					AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness)
+				);
+			}
+		}
+	}
+
 	return true;
 }
 
 bool UCabinetTool::AbortUse()
 {
-	if (State == SetHeight)
+	if (DimensionManager)
 	{
-		for (auto &seg : TopSegs)
-		{
-			seg->Destroy();
-		}
-
-		for (auto &seg : ConnectSegs)
-		{
-			seg->Destroy();
-		}
-
-		ConnectSegs.Empty();
-		TopSegs.Empty();
-
-		State = NewSegmentPending;
-	} 
-
-	// even if the state was set height, the most recent base segment should be reverted as well
-	if (BaseSegs.Num() == 0)
-	{
-		return EndUse();
+		DimensionManager->ReleaseDimensionActor(ExtrusionDimensionID);
 	}
-	
-	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-	auto poppedSegment = BaseSegs.Pop();
-	pendingSegment->Point1 = poppedSegment->Point1;
-	pendingSegment->Point2 = poppedSegment->Point2;
-	pendingSegment->Color = poppedSegment->Color;
-	pendingSegment->Thickness = poppedSegment->Thickness;
 
-	poppedSegment->Destroy();
+	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Object;
 
-	BasePoints.Pop();
-
-	return true;
+	return Super::AbortUse();
 }
 
 bool UCabinetTool::EndUse()
 {
-	Super::EndUse();
-
-	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
-	PendingSegmentID = MOD_ID_NONE;
-
-	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-
-	for (auto &seg : BaseSegs)
+	if (DimensionManager)
 	{
-		seg->Destroy();
+		DimensionManager->ReleaseDimensionActor(ExtrusionDimensionID);
 	}
 
-	for (auto &seg : TopSegs)
-	{
-		seg->Destroy();
-	}
-
-	for (auto &seg : ConnectSegs)
-	{
-		seg->Destroy();
-	}
-
-	ConnectSegs.Empty();
-	BaseSegs.Empty();
-	TopSegs.Empty();
-	BasePoints.Reset();
-
-	State = Neutral;
-	LastPendingSegmentLocValid = false;
-
-	return true;
-}
-
-void UCabinetTool::MakeSegment(const FVector &hitLoc)
-{
-	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-	if (pendingSegment == nullptr)
-	{
-		return;
-	}
-
-	// TODO: copy constructor(?)
-	auto baseSegment = GetWorld()->SpawnActor<ALineActor>();
-	baseSegment->Point1 = pendingSegment->Point1;
-	baseSegment->Point2 = pendingSegment->Point2;
-	baseSegment->Color = pendingSegment->Color;
-	baseSegment->Thickness = pendingSegment->Thickness;
-
-	// update base stacks
-	BaseSegs.Push(baseSegment);
-	BasePoints.Push(baseSegment->Point1);
-
-	bool bClosedLoop = BaseSegs[0]->Point1.Equals(BaseSegs[BaseSegs.Num() - 1]->Point2);
-	if (bClosedLoop && UModumateGeometryStatics::IsPolygonValid(BasePoints))
-	{
-		BeginSetHeightMode(BasePoints);
-	}
-
-	pendingSegment->Point1 = hitLoc;
-	pendingSegment->Point2 = hitLoc;
+	return Super::EndUse();
 }
 
 bool UCabinetTool::EnterNextStage()
 {
-	Super::EnterNextStage();
-	if (!Controller->EMPlayerState->SnappedCursor.Visible)
+	if ((TargetPolygonID == MOD_ID_NONE) || (BasePoints.Num() < 3) || !BaseNormal.IsNormalized() || (ExtrusionDist < MinimumExtrusionDist))
 	{
-		return false;
-	}
-	if (State == NewSegmentPending && PendingSegmentID != MOD_ID_NONE)
-	{
-		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-		FVector hitLoc = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
-		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector, (pendingSegment->Point1 - pendingSegment->Point2).GetSafeNormal());
-		MakeSegment(hitLoc);
-
 		return true;
 	}
-	if (State == SetHeight)
-	{
-		FModumateDocument &doc = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 
-		float h = TopSegs[0]->Point1.Z - BaseSegs[0]->Point1.Z;
+	FMOIStateData stateData;
+	stateData.StateType = EMOIDeltaType::Create;
+	stateData.ObjectType = EObjectType::OTCabinet;
+	stateData.ObjectAssemblyKey = AssemblyKey;
+	stateData.ParentID = TargetPolygonID;
+	stateData.ObjectID = GameState->Document.GetNextAvailableID();
+	stateData.Extents = FVector(0, ExtrusionDist, 0);
 
-		FMOIStateData stateData;
-		stateData.StateType = EMOIDeltaType::Create;
-		stateData.ObjectType = EObjectType::OTCabinet;
-		stateData.ObjectAssemblyKey = AssemblyKey;
-		stateData.ControlPoints = BasePoints;
-		stateData.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
-		stateData.ObjectID = doc.GetNextAvailableID();
-		stateData.Extents = FVector(0, h, 0);
+	TArray<TSharedPtr<FDelta>> deltas;
+	deltas.Add(MakeShareable(new FMOIDelta({ stateData })));
 
-		TArray<TSharedPtr<FDelta>> deltas;
-		deltas.Add(MakeShareable(new FMOIDelta({ stateData })));
+	GameState->Document.ApplyDeltas(deltas, GetWorld());
 
-		doc.ApplyDeltas(deltas,GetWorld());
-		
-		return false;
-	}
 	return false;
-}
-
-void UCabinetTool::GetSnappingPointsAndLines(TArray<FVector> &OutPoints, TArray<TPair<FVector, FVector>> &OutLines)
-{
-	OutPoints = BasePoints;
-
-	for (int32 idx = 0; idx < BasePoints.Num() - 1; idx++)
-	{
-		OutLines.Add(TPair<FVector, FVector>(BasePoints[idx], BasePoints[idx + 1]));
-	}
-
-	// if there is currently a closed loop, create the last line to close the loop
-	if (State == SetHeight)
-	{
-		OutLines.Add(TPair<FVector, FVector>(BasePoints[BasePoints.Num() - 1], BasePoints[0]));
-	}
-}
-
-void UCabinetTool::BeginSetHeightMode(const TArray<FVector> &basePoly)
-{
-	Super::BeginUse();
-
-	for (int i = 0; i < basePoly.Num(); ++i)
-	{
-		auto actor = Controller->GetWorld()->SpawnActor<ALineActor>();
-		actor->Point1 = basePoly[i];
-		actor->Point2 = basePoly[(i + 1) % basePoly.Num()];
-		TopSegs.Add(actor);
-
-		actor = Controller->GetWorld()->SpawnActor<ALineActor>();
-		actor->Point1 = basePoly[i];
-		actor->Point2 = basePoly[i];
-		ConnectSegs.Add(actor);
-	}
-
-	if (ensureAlways(basePoly.Num() > 0))
-	{
-		CabinetPlane = FPlane(basePoly[0], FVector::UpVector);
-	}
-
-	const FSnappedCursor& SnappedCursor = Controller->EMPlayerState->SnappedCursor;
-	if (SnappedCursor.Visible &&
-		SnappedCursor.SnapType != ESnapType::CT_NOSNAP)
-	{
-		LastPendingSegmentLoc = SnappedCursor.WorldPosition;
-		LastPendingSegmentLocValid = true;
-	}
-
-	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
-
-	State = SetHeight;
 }

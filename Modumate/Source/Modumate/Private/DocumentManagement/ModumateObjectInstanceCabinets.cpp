@@ -25,6 +25,7 @@ FMOICabinetImpl::FMOICabinetImpl(FModumateObjectInstance *moi)
 	: FDynamicModumateObjectInstanceImpl(moi)
 	, AdjustmentHandlesVisible(false)
 	, ToeKickDimensions(ForceInitToZero)
+	, CachedExtrusionDelta(ForceInitToZero)
 {
 }
 
@@ -34,34 +35,55 @@ FMOICabinetImpl::~FMOICabinetImpl()
 
 FVector FMOICabinetImpl::GetCorner(int32 index) const
 {
-	int32 numCP = MOI->GetControlPoints().Num();
-	float thickness = MOI->GetExtents().Y;
-	FVector extrusionDir = FVector::UpVector;
-
-	FPlane plane;
-	UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), plane);
-	// For now, make sure that the plane of the MOI is horizontal
-	if (ensureAlways((numCP >= 3) && FVector::Parallel(extrusionDir, plane)))
-
-	{
-		FVector corner = MOI->GetControlPoint(index % numCP);
-
-		if (index >= numCP)
-		{
-			corner += thickness * extrusionDir;
-		}
-
-		return corner;
-	}
-	else
+	int32 numBasePoints = CachedBasePoints.Num();
+	if ((numBasePoints < 3) || (index < 0) || (index >= GetNumCorners()))
 	{
 		return GetLocation();
 	}
+
+	bool bIsBasePoint = index < numBasePoints;
+	const FVector& basePoint = CachedBasePoints[index % numBasePoints];
+
+	return basePoint + (bIsBasePoint ? FVector::ZeroVector : CachedExtrusionDelta);
+}
+
+int32 FMOICabinetImpl::GetNumCorners() const
+{
+	return CachedBasePoints.Num() * 2;
 }
 
 FVector FMOICabinetImpl::GetNormal() const
 {
-	return FVector::UpVector;
+	return CachedBaseOrigin.GetRotation().GetAxisZ();
+}
+
+bool FMOICabinetImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+{
+	if (MOI == nullptr)
+	{
+		return false;
+	}
+
+	switch (DirtyFlag)
+	{
+	case EObjectDirtyFlags::Structure:
+	{
+		if (!UpdateCachedGeometryData())
+		{
+			return false;
+		}
+
+		SetupDynamicGeometry();
+	}
+		break;
+	case EObjectDirtyFlags::Visuals:
+		MOI->UpdateVisibilityAndCollision();
+		break;
+	default:
+		break;
+	}
+
+	return true;
 }
 
 void FMOICabinetImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
@@ -77,13 +99,18 @@ void FMOICabinetImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOut
 
 void FMOICabinetImpl::SetupDynamicGeometry()
 {
-	UpdateToeKickDimensions();
+	if (CachedBasePoints.Num() == 0)
+	{
+		return;
+	}
 
 	int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
 
-	// TODO: get material from portal definition
-	DynamicMeshActor->SetupCabinetGeometry(MOI->GetControlPoints(), MOI->GetExtents().Y,
-		FArchitecturalMaterial(), ToeKickDimensions, frontFaceIndex);
+	// TODO: get material from assembly spec
+	bool bUpdateCollision = !MOI->GetIsInPreviewMode();
+	bool bEnableCollision = !MOI->GetIsInPreviewMode();
+	DynamicMeshActor->SetupCabinetGeometry(CachedBasePoints, CachedExtrusionDelta, FArchitecturalMaterial(), bUpdateCollision, bEnableCollision,
+		ToeKickDimensions, frontFaceIndex);
 
 	// refresh handle visibility, don't destroy & recreate handles
 	AEditModelPlayerController_CPP *controller = DynamicMeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
@@ -93,43 +120,48 @@ void FMOICabinetImpl::SetupDynamicGeometry()
 	UpdateCabinetPortal();
 }
 
-void FMOICabinetImpl::UpdateDynamicGeometry()
+void FMOICabinetImpl::GetStructuralPointsAndLines(TArray<FStructurePoint>& OutPoints, TArray<FStructureLine>& OutLines, bool bForSnapping, bool bForSelection) const
 {
-	SetupDynamicGeometry();
-}
-
-void FMOICabinetImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
-{
-	FDynamicModumateObjectInstanceImpl::GetStructuralPointsAndLines(outPoints, outLines, bForSnapping, bForSelection);
-
-	int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
-	if ((ToeKickDimensions.X > 0.0f) && (frontFaceIndex != INDEX_NONE))
+	int32 numBasePoints = CachedBasePoints.Num();
+	for (int32 baseIdxStart = 0; baseIdxStart < numBasePoints; ++baseIdxStart)
 	{
-		int32 numCP = MOI->GetControlPoints().Num();
-		int32 frontFaceOtherIndex = (frontFaceIndex + 1) % numCP;
+		int32 baseIdxEnd = (baseIdxStart + 1) % numBasePoints;
+		const FVector& baseEdgeStart = CachedBasePoints[baseIdxStart];
+		const FVector& baseEdgeEnd = CachedBasePoints[baseIdxEnd];
+		FVector baseEdgeDir = (baseEdgeEnd - baseEdgeStart).GetSafeNormal();
+		FVector topEdgeStart = baseEdgeStart + CachedExtrusionDelta;
+		FVector topEdgeEnd = baseEdgeEnd + CachedExtrusionDelta;
 
-		FVector frontFaceInNormal;
-		GetTriInternalNormalFromEdge(frontFaceIndex, frontFaceOtherIndex, frontFaceInNormal);
+		OutPoints.Add(FStructurePoint(baseEdgeStart, baseEdgeDir, baseIdxStart));
+		OutPoints.Add(FStructurePoint(topEdgeStart, baseEdgeDir, baseIdxStart));
 
-		FVector toeKickP1 = MOI->GetControlPoint(frontFaceIndex) + (ToeKickDimensions.X * frontFaceInNormal);
-		FVector toeKickP2 = MOI->GetControlPoint(frontFaceOtherIndex) + (ToeKickDimensions.X * frontFaceInNormal);
-		FVector dir = (toeKickP2 - toeKickP1).GetSafeNormal();
-
-		outPoints.Add(FStructurePoint(toeKickP1, dir, frontFaceIndex));
-		outPoints.Add(FStructurePoint(toeKickP2, dir, frontFaceOtherIndex));
-
-		outLines.Add(FStructureLine(toeKickP1, toeKickP2, frontFaceIndex, frontFaceOtherIndex));
+		OutLines.Add(FStructureLine(baseEdgeStart, baseEdgeEnd, baseIdxStart, baseIdxEnd));
+		OutLines.Add(FStructureLine(baseEdgeStart, topEdgeStart, baseIdxStart, baseIdxStart + numBasePoints));
+		OutLines.Add(FStructureLine(topEdgeStart, topEdgeEnd, baseIdxStart + numBasePoints, baseIdxEnd + numBasePoints));
 	}
 }
 
-void FMOICabinetImpl::UpdateToeKickDimensions()
+bool FMOICabinetImpl::UpdateCachedGeometryData()
 {
-	ToeKickDimensions.Set(0.0f, 0.0f);
-
-	if (ensureAlways(MOI))
+	const FModumateObjectInstance* parentObj = MOI ? MOI->GetParentObject() : nullptr;
+	if (parentObj && (parentObj->GetObjectType() == EObjectType::OTSurfacePolygon))
 	{
+		CachedBaseOrigin = parentObj->GetWorldTransform();
+
+		int32 numBasePoints = parentObj->GetNumCorners();
+		CachedBasePoints.Reset(numBasePoints);
+		for (int32 cornerIdx = 0; cornerIdx < numBasePoints; ++cornerIdx)
+		{
+			CachedBasePoints.Add(parentObj->GetCorner(cornerIdx));
+		}
+
+		CachedExtrusionDelta = MOI->GetExtents().Y * GetNormal();
 		UModumateFunctionLibrary::GetCabinetToeKickDimensions(MOI->GetAssembly(), ToeKickDimensions);
+
+		return true;
 	}
+
+	return false;
 }
 
 void FMOICabinetImpl::UpdateCabinetPortal()
@@ -151,9 +183,9 @@ void FMOICabinetImpl::UpdateCabinetPortal()
 	}
 
 	// Get enough geometric information to set up the portal assembly
-	FVector extrusionDir = FVector::UpVector;
+	FVector extrusionDir = GetNormal();
 	FPlane plane;
-	if (!UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), plane))
+	if (!UModumateGeometryStatics::GetPlaneFromPoints(CachedBasePoints, plane))
 	{
 		return;
 	}
@@ -163,8 +195,8 @@ void FMOICabinetImpl::UpdateCabinetPortal()
 	}
 	bool bCoincident = FVector::Coincident(FVector(plane), extrusionDir);
 
-	const FVector &p1 = MOI->GetControlPoint(frontFaceIndex);
-	const FVector &p2 = MOI->GetControlPoint((frontFaceIndex + 1) % MOI->GetControlPoints().Num());
+	const FVector &p1 = CachedBasePoints[frontFaceIndex];
+	const FVector &p2 = CachedBasePoints[(frontFaceIndex + 1) % CachedBasePoints.Num()];
 	FVector edgeDelta = p2 - p1;
 	float edgeLength = edgeDelta.Size();
 	if (!ensureAlways(!FMath::IsNearlyZero(edgeLength)))
@@ -172,16 +204,12 @@ void FMOICabinetImpl::UpdateCabinetPortal()
 		return;
 	}
 
-	FVector edgeDir = edgeDelta / edgeLength;
-
-	FVector faceNormal = (edgeDir ^ extrusionDir) * (bCoincident ? 1.0f : -1.0f);
-
-	float cabinetHeight = MOI->GetExtents().Y;
-	FVector toeKickOffset = ToeKickDimensions.Y * extrusionDir;
-
 	FrontFacePortalActor->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
 
 	// Now position the portal where it's supposed to go
+	FVector edgeDir = edgeDelta / edgeLength;
+	FVector faceNormal = (edgeDir ^ extrusionDir) * (bCoincident ? 1.0f : -1.0f);
+	FVector toeKickOffset = ToeKickDimensions.Y * extrusionDir;
 	FVector portalOrigin = toeKickOffset + (bCoincident ? p2 : p1);
 	FQuat portalRot = FRotationMatrix::MakeFromYZ(faceNormal, extrusionDir).ToQuat();
 
@@ -190,15 +218,10 @@ void FMOICabinetImpl::UpdateCabinetPortal()
 
 void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
-	int32 numCP = MOI->GetControlPoints().Num();
-	for (int32 i = 0; i < numCP; ++i)
+	int32 numBasePoints = CachedBasePoints.Num();
+	for (int32 i = 0; i < numBasePoints; ++i)
 	{
-		auto pointHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
-		pointHandle->SetTargetIndex(i);
-
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
-		edgeHandle->SetTargetIndex(i);
-		edgeHandle->SetAdjustPolyEdge(true);
+		// TODO: show the adjustment handles for the underlying SurfacePolygon, so its shape can stretch without going into SurfaceGraph view mode
 
 		auto selectFrontHandle = MOI->MakeHandle<ASelectCabinetFrontHandle>();
 		selectFrontHandle->SetTargetIndex(i);
@@ -208,9 +231,6 @@ void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *con
 
 	auto topExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
 	topExtrusionHandle->SetSign(1.0f);
-
-	auto bottomExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
-	bottomExtrusionHandle->SetSign(-1.0f);
 }
 
 void FMOICabinetImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
@@ -262,10 +282,17 @@ bool ASelectCabinetFrontHandle::BeginUse()
 
 FVector ASelectCabinetFrontHandle::GetHandlePosition() const
 {
+	const FModumateObjectInstance* cabinetParent = TargetMOI ? TargetMOI->GetParentObject() : nullptr;
+	if (!ensure(cabinetParent && (cabinetParent->GetObjectType() == EObjectType::OTSurfacePolygon)))
+	{
+		return FVector::ZeroVector;
+	}
+
+	int32 numBasePoints = cabinetParent->GetNumCorners();
 	const auto &points = TargetMOI->GetControlPoints();
-	FVector edgeCenter = 0.5f * (points[TargetIndex] + points[(TargetIndex + 1) % points.Num()]);
-	FVector heightOffset = FVector(0, 0, 0.5f * TargetMOI->GetExtents().Y + FaceCenterHeightOffset);
-	return TargetMOI->GetObjectRotation().RotateVector(heightOffset + edgeCenter);
+	FVector edgeCenter = 0.5f * (TargetMOI->GetCorner(TargetIndex) + TargetMOI->GetCorner((TargetIndex + 1) % numBasePoints));
+	FVector extrusionDelta = ((0.5f * TargetMOI->GetExtents().Y) + FaceCenterHeightOffset) * TargetMOI->GetNormal();
+	return edgeCenter + extrusionDelta;
 }
 
 bool ASelectCabinetFrontHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const

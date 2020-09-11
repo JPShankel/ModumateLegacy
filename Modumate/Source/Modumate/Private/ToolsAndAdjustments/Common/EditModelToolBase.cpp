@@ -28,12 +28,19 @@ UEditModelToolBase::UEditModelToolBase(const FObjectInitializer& ObjectInitializ
 	Controller = Cast<AEditModelPlayerController_CPP>(GetOuter());
 	if (auto world = GetWorld())
 	{
-		GameInstance = Cast<UModumateGameInstance>(GetWorld()->GetGameInstance());
+		GameInstance = Cast<UModumateGameInstance>(world->GetGameInstance());
+		GameState = world->GetGameState<AEditModelGameState_CPP>();
+		DimensionManager = GameInstance ? GameInstance->DimensionManager : nullptr;
 	}
 }
 
 bool UEditModelToolBase::Activate()
 {
+	if (!ensure(Controller && GameInstance && GameState && DimensionManager))
+	{
+		return false;
+	}
+
 	Active = true;
 	return true;
 }

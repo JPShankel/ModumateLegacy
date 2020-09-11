@@ -48,7 +48,7 @@ bool UMoveObjectTool::BeginUse()
 	{
 		AnchorPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorPoint, Controller->EMPlayerState->SnappedCursor.HitNormal, Controller->EMPlayerState->SnappedCursor.HitTangent);
-		PendingSegmentID = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass())->ID;
+		PendingSegmentID = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass())->ID;
 
 		return true;
 	}
@@ -65,7 +65,7 @@ bool UMoveObjectTool::FrameUpdate()
 		const FVector &hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 
 		ALineActor *pendingSegment = nullptr;
-		if (auto dimensionActor = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID))
+		if (auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID))
 		{
 			pendingSegment = dimensionActor->GetLineActor();
 		}
@@ -149,7 +149,7 @@ bool UMoveObjectTool::EndUse()
 		ReleaseObjectsAndApplyDeltas();
 	}
 
-	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+	DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 	PendingSegmentID = MOD_ID_NONE;
 
 	return Super::EndUse();
@@ -161,7 +161,7 @@ bool UMoveObjectTool::AbortUse()
 
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
-	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+	DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 	PendingSegmentID = MOD_ID_NONE;
 
 	return UEditModelToolBase::AbortUse();

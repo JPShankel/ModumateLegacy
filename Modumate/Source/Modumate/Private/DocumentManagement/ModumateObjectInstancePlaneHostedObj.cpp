@@ -79,10 +79,12 @@ FVector FMOIPlaneHostedObjImpl::GetCorner(int32 CornerIndex) const
 
 		if (ensure((numLayers == MOI->GetAssembly().Layers.Num()) && numLayers > 0))
 		{
-			const FVector &layerGeomPoint = bOnStartingSide ?
-				LayerGeometries[0].PointsA[pointIndex] :
-				LayerGeometries[numLayers - 1].PointsB[pointIndex];
-			return parent->GetObjectLocation() + layerGeomPoint;
+			auto& layerPoints = bOnStartingSide ? LayerGeometries[0].PointsA : LayerGeometries[numLayers - 1].PointsB;
+
+			if (ensure(numPlanePoints == layerPoints.Num()))
+			{
+				return parent->GetObjectLocation() + layerPoints[pointIndex];
+			}
 		}
 	}
 

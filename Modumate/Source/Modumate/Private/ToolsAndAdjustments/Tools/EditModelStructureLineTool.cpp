@@ -113,7 +113,7 @@ bool UStructureLineTool::BeginUse()
 		LineStartPos = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 		LineEndPos = LineStartPos;
 
-		auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+		auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
 		PendingSegmentID = dimensionActor->ID;
 
 		auto pendingSegment = dimensionActor->GetLineActor();
@@ -142,7 +142,7 @@ bool UStructureLineTool::EnterNextStage()
 {
 	FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
 
-	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+	auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 	if ((CreateObjectMode == EToolCreateObjectMode::Draw) &&
 		pendingSegment != nullptr && !pendingSegment->Point1.Equals(pendingSegment->Point2))
 	{
@@ -166,7 +166,7 @@ bool UStructureLineTool::FrameUpdate()
 	{
 	case EToolCreateObjectMode::Draw:
 	{
-		auto dimensionActor = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID);
+		auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
 		if (IsInUse() && dimensionActor != nullptr)
 		{
 			auto pendingSegment = dimensionActor->GetLineActor();
@@ -458,7 +458,7 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 
 void UStructureLineTool::ResetState()
 {
-	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+	DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 	PendingSegmentID = MOD_ID_NONE;
 
 	bHaveSetUpGeometry = false;

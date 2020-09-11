@@ -125,7 +125,7 @@ bool UStairTool::FrameUpdate()
 	break;
 	case RunPending:
 	{
-		auto runSegment = GameInstance->DimensionManager->GetDimensionActor(RunSegmentID)->GetLineActor();
+		auto runSegment = DimensionManager->GetDimensionActor(RunSegmentID)->GetLineActor();
 		if (cursor.Visible && runSegment != nullptr)
 		{
 			FVector projectedCursor = cursor.SketchPlaneProject(cursor.WorldPosition);
@@ -161,7 +161,7 @@ bool UStairTool::FrameUpdate()
 	break;
 	case RisePending:
 	{
-		auto riseSegment = GameInstance->DimensionManager->GetDimensionActor(RiseSegmentID)->GetLineActor();
+		auto riseSegment = DimensionManager->GetDimensionActor(RiseSegmentID)->GetLineActor();
 		if (riseSegment != nullptr && cursor.Visible)
 		{
 			riseSegment->Point2 = RiseStartPos;
@@ -186,7 +186,7 @@ bool UStairTool::FrameUpdate()
 	break;
 	case WidthPending:
 	{
-		auto widthSegment = GameInstance->DimensionManager->GetDimensionActor(WidthSegmentID)->GetLineActor();
+		auto widthSegment = DimensionManager->GetDimensionActor(WidthSegmentID)->GetLineActor();
 		if (widthSegment != nullptr && cursor.Visible)
 		{
 			FVector rawWidthDelta = (cursor.WorldPosition - RiseEndPos);
@@ -261,7 +261,7 @@ bool UStairTool::AbortUse()
 	case RisePending:
 	{
 		PendingObjMesh->SetActorHiddenInGame(true);
-		GameInstance->DimensionManager->ReleaseDimensionActor(RiseSegmentID);
+		DimensionManager->ReleaseDimensionActor(RiseSegmentID);
 		RiseSegmentID = 0;
 		cursor.SetAffordanceFrame(RunStartPos, FVector::UpVector);
 		CurrentState = RunPending;
@@ -269,7 +269,7 @@ bool UStairTool::AbortUse()
 	break;
 	case WidthPending:
 	{
-		GameInstance->DimensionManager->ReleaseDimensionActor(WidthSegmentID);
+		DimensionManager->ReleaseDimensionActor(WidthSegmentID);
 		WidthSegmentID = 0;
 		cursor.SetAffordanceFrame(RiseStartPos, RunDir, WidthDir);
 		CurrentWidth = 0.0f;
@@ -312,7 +312,7 @@ bool UStairTool::EnterNextStage()
 	{
 		if (CurrentTreadNum > 0)
 		{
-			auto runSegment = GameInstance->DimensionManager->GetDimensionActor(RunSegmentID)->GetLineActor();
+			auto runSegment = DimensionManager->GetDimensionActor(RunSegmentID)->GetLineActor();
 			RiseStartPos = runSegment->Point2;
 			cursor.SetAffordanceFrame(RiseStartPos, RunDir, WidthDir);
 			MakePendingSegment(RiseSegmentID, RiseStartPos, RiseSegmentColor);
@@ -325,7 +325,7 @@ bool UStairTool::EnterNextStage()
 	{
 		if (!FMath::IsNearlyZero(CurrentRiserHeight))
 		{
-			auto riseSegment = GameInstance->DimensionManager->GetDimensionActor(RiseSegmentID)->GetLineActor();
+			auto riseSegment = DimensionManager->GetDimensionActor(RiseSegmentID)->GetLineActor();
 			RiseEndPos = riseSegment->Point2;
 			cursor.SetAffordanceFrame(RiseEndPos, RunDir, WidthDir);
 			MakePendingSegment(WidthSegmentID, RiseEndPos, WidthSegmentColor);
@@ -501,7 +501,7 @@ bool UStairTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
 
 void UStairTool::MakePendingSegment(int32 &TargetSegmentID, const FVector &StartingPoint, const FColor &SegmentColor)
 {
-	auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+	auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
 	TargetSegmentID = dimensionActor->ID;
 
 	auto segment = dimensionActor->GetLineActor();
@@ -516,7 +516,7 @@ void UStairTool::ResetState()
 	TArray<int32> pendingSegmentIDs = { RunSegmentID, RiseSegmentID, WidthSegmentID };
 	for (int32 &pendingSegmentID : pendingSegmentIDs)
 	{
-		GameInstance->DimensionManager->ReleaseDimensionActor(pendingSegmentID);
+		DimensionManager->ReleaseDimensionActor(pendingSegmentID);
 		pendingSegmentID = 0;
 	}
 

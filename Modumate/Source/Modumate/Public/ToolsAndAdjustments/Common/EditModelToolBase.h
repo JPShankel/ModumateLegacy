@@ -25,7 +25,13 @@ protected:
 	class AEditModelPlayerController_CPP* Controller;
 
 	UPROPERTY()
-	class UModumateGameInstance *GameInstance;
+	class UModumateGameInstance* GameInstance;
+
+	UPROPERTY()
+	class AEditModelGameState_CPP* GameState;
+
+	UPROPERTY()
+	class UDimensionManager* DimensionManager;
 
 	EAxisConstraint AxisConstraint;
 	EToolCreateObjectMode CreateObjectMode;
@@ -52,7 +58,6 @@ public:
 	virtual bool HandleControlKey(bool pressed) override { return true; }
 	virtual bool HandleMouseUp() override { return true; }
 	virtual bool ShowSnapCursorAffordances() { return true; }
-	virtual void GetSnappingPointsAndLines(TArray<FVector> &OutPoints, TArray<TPair<FVector, FVector>> &OutLines) {};
 
 	virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override { AxisConstraint = InAxisConstraint; }
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override { CreateObjectMode = InCreateObjectMode; }

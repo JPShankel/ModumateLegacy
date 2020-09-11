@@ -213,8 +213,14 @@ ECollisionChannel UModumateTypeStatics::CollisionTypeFromObjectType(EObjectType 
 	case EObjectType::OTMetaPlane:
 	case EObjectType::OTRoofPerimeter:
 		return COLLISION_META_MOI;
+	case EObjectType::OTSurfaceVertex:
+	case EObjectType::OTSurfaceEdge:
+	case EObjectType::OTSurfacePolygon:
+	case EObjectType::OTSurfaceGraph:
+		return COLLISION_SURFACE_MOI;
 	case EObjectType::OTFinish:
 	case EObjectType::OTTrim:
+	case EObjectType::OTCabinet:
 		return COLLISION_DECORATOR_MOI;
 	default:
 		return COLLISION_DEFAULT_MOI;

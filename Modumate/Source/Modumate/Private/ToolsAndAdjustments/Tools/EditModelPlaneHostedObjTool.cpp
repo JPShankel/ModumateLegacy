@@ -111,7 +111,7 @@ bool UPlaneHostedObjTool::FrameUpdate()
 
 	if (PendingObjMesh.IsValid() && PendingSegmentID != MOD_ID_NONE)
 	{
-		auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+		auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 
 		if (bPendingPlaneValid && (PendingPlanePoints.Num() >= 3))
 		{

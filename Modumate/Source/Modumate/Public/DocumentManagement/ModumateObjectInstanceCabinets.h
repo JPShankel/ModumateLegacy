@@ -37,10 +37,11 @@ public:
 	virtual ~FMOICabinetImpl();
 
 	virtual FVector GetCorner(int32 index) const override;
+	virtual int32 GetNumCorners() const override;
 	virtual FVector GetNormal() const override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
 	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupDynamicGeometry() override;
-	virtual void UpdateDynamicGeometry() override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
@@ -50,13 +51,17 @@ public:
 	static FName CabinetGeometryMatName;
 
 protected:
-	void UpdateToeKickDimensions();
+	bool UpdateCachedGeometryData();
 	void UpdateCabinetPortal();
 
 	bool AdjustmentHandlesVisible;
 	TArray<TWeakObjectPtr<ASelectCabinetFrontHandle>> FrontSelectionHandles;
 	TWeakObjectPtr<ACompoundMeshActor> FrontFacePortalActor;
 	FVector2D ToeKickDimensions;
+
+	FTransform CachedBaseOrigin;
+	TArray<FVector> CachedBasePoints;
+	FVector CachedExtrusionDelta;
 
 private:
 	TArray<FVector> GetBoundsIntersections(const FPlane& Plane) const;

@@ -35,7 +35,7 @@ bool UCountertopTool::HandleInputNumber(double n)
 	case 0:
 		if ((State == NewSegmentPending) && PendingSegmentID != MOD_ID_NONE)
 		{
-			auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+			auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 			FVector dir = (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal() * n;
 			pendingSegment->Point2 = pendingSegment->Point1 + dir;
 			return EnterNextStage();
@@ -44,7 +44,7 @@ bool UCountertopTool::HandleInputNumber(double n)
 	case 1:
 		if (PendingSegmentID != MOD_ID_NONE)
 		{
-			auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+			auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 			// Project segment to degree defined by user input
 			float currentSegmentLength = FMath::Max((pendingSegment->Point1 - pendingSegment->Point2).Size(), 100.f);
 
@@ -96,7 +96,7 @@ bool UCountertopTool::BeginUse()
 
 	State = NewSegmentPending;
 
-	auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+	auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
 	PendingSegmentID = dimensionActor->ID;
 
 	auto pendingSegment = dimensionActor->GetLineActor();
@@ -149,7 +149,7 @@ bool UCountertopTool::EnterNextStage()
 
 bool UCountertopTool::MakeSegment(const FVector &hitLoc)
 {
-	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+	auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 	if (pendingSegment == nullptr)
 	{
 		return false;
@@ -196,7 +196,7 @@ bool UCountertopTool::FrameUpdate()
 		return false;
 	}
 
-	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+	auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 
 	if (State == NewSegmentPending && pendingSegment != nullptr)
 	{
@@ -236,7 +236,7 @@ bool UCountertopTool::EndUse()
 {
 	State = Neutral;
 
-	GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+	DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 	PendingSegmentID = MOD_ID_NONE;
 
 	for (auto &seg : BaseSegs)
@@ -257,7 +257,7 @@ bool UCountertopTool::AbortUse()
 		return EndUse();
 	}
 	
-	auto pendingSegment = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+	auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 	auto poppedSegment = BaseSegs.Pop();
 	pendingSegment->Point1 = poppedSegment->Point1;
 	pendingSegment->Point2 = poppedSegment->Point2;
@@ -270,17 +270,6 @@ bool UCountertopTool::AbortUse()
 
 	return true;
 }
-
-void UCountertopTool::GetSnappingPointsAndLines(TArray<FVector> &OutPoints, TArray<TPair<FVector, FVector>> &OutLines)
-{
-	OutPoints = BasePoints;
-
-	for (int32 idx = 0; idx < BasePoints.Num() - 1; idx++)
-	{
-		OutLines.Add(TPair<FVector, FVector>(BasePoints[idx], BasePoints[idx + 1]));
-	}
-}
-
 
 bool UCountertopTool::HandleInvert()
 {

@@ -15,7 +15,7 @@ public:
 protected:
 	TArray<FVector> CachedOffsetPoints;
 	TArray<FPolyHole3D> CachedOffsetHoles;
-	FTransform CachedOrigin;
+	FTransform CachedTransform;
 	bool bInteriorPolygon;
 	bool bInnerBoundsPolygon;
 
