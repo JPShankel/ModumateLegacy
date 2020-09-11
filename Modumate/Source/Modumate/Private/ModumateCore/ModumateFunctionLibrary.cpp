@@ -41,11 +41,6 @@
 #include <regex>
 
 using namespace std;
-#include "../../poly2tri/poly2tri.h"
-using namespace p2t;
-
-
-
 using namespace Modumate;
 
 FVector UModumateFunctionLibrary::V3dToV2d(TArray<FVector2D> & OutV2d, TArray<FVector> InV3d)

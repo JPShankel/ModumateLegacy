@@ -48,7 +48,8 @@ void FMOIScopeBoxImpl::SetupDynamicGeometry()
 	MaterialData.EngineMaterial = gameMode ? gameMode->ScopeBoxMaterial : nullptr;
 
 	float thickness = MOI->GetExtents().Y;
-	DynamicMeshActor->SetupPrismGeometry(MOI->GetControlPoints(), thickness, MaterialData);
+	FVector extrusionDelta = thickness * FVector::UpVector;
+	DynamicMeshActor->SetupPrismGeometry(MOI->GetControlPoints(), extrusionDelta, MaterialData, true, true);
 
 	MOI->UpdateVisibilityAndCollision();
 

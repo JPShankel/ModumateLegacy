@@ -6,11 +6,9 @@
 #include "DocumentManagement/ModumateObjectInstanceCabinets.h"
 #include "DocumentManagement/ModumateObjectInstanceCutPlane.h"
 #include "DocumentManagement/ModumateObjectInstanceFinish.h"
-#include "DocumentManagement/ModumateObjectInstanceFlatPoly.h"
 #include "DocumentManagement/ModumateObjectInstanceFurniture.h"
 #include "DocumentManagement/ModumateObjectInstancePlaneHostedObj.h"
 #include "DocumentManagement/ModumateObjectInstancePortal.h"
-#include "DocumentManagement/ModumateObjectInstanceRails.h"
 #include "DocumentManagement/ModumateObjectInstanceRoofPerimeter.h"
 #include "DocumentManagement/ModumateObjectInstanceRooms.h"
 #include "DocumentManagement/ModumateObjectInstanceScopeBox.h"
@@ -29,12 +27,12 @@ IModumateObjectInstanceImpl *FMOIFactory::MakeMOIImplementation(EObjectType Obje
 {
 	switch (ObjectType)
 	{
-		case EObjectType::OTWallSegment: return new FMOIPlaneHostedObjImpl(MOI);
-		case EObjectType::OTRailSegment: return new FMOIRailImpl(MOI);
-		case EObjectType::OTFloorSegment: return new FMOIPlaneHostedObjImpl(MOI);
-		case EObjectType::OTCeiling: return new FMOIPlaneHostedObjImpl(MOI);
-		case EObjectType::OTRoofFace: return new FMOIPlaneHostedObjImpl(MOI);
-		case EObjectType::OTCountertop: return new FMOIFlatPolyImpl(MOI, false); // false = no invert handle
+		case EObjectType::OTWallSegment:
+		case EObjectType::OTRailSegment:
+		case EObjectType::OTFloorSegment:
+		case EObjectType::OTCeiling:
+		case EObjectType::OTRoofFace:
+		case EObjectType::OTCountertop: return new FMOIPlaneHostedObjImpl(MOI);
 		case EObjectType::OTDoor:
 		case EObjectType::OTWindow: return new FMOIPortalImpl(MOI);
 		case EObjectType::OTFurniture: return new FMOIObjectImpl(MOI);

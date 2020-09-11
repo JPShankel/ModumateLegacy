@@ -670,12 +670,6 @@ namespace Modumate
 		return bSuccess;
 	}
 
-	enum ETriangulationMethod
-	{
-		Poly2Tri,
-		GTE,
-	};
-
 	FPolygon2f VerticesToTPoly(const TArray<FVector2D>& Vertices)
 	{
 		TArray<FVector2f> convertedVertices;
@@ -689,45 +683,35 @@ namespace Modumate
 
 	bool TestTriangulation(FAutomationTestBase* Test, const FString& Description, const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& Holes,
 		TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid,
-		bool bExpectedSuccess, int32 ExpectedNumTriIndices, int32 ExpectedNumVertices, ETriangulationMethod Method = ETriangulationMethod::GTE)
+		bool bExpectedSuccess, int32 ExpectedNumTriIndices, int32 ExpectedNumVertices)
 	{
 		bool bSuccess = false;
 
 		float expectedArea = 0.0f, computedArea = 0.0f;
 		constexpr float areaEpsilon = 0.5f;
 
-		switch (Method)
+		bSuccess = UModumateGeometryStatics::TriangulateVerticesGTE(Vertices, Holes, OutTriangles, OutCombinedVertices, bCheckValid);
+		if (bSuccess)
 		{
-		case ETriangulationMethod::Poly2Tri:
-			bSuccess = UModumateGeometryStatics::TriangulateVerticesPoly2Tri(Vertices, Holes, OutTriangles, OutCombinedVertices, bCheckValid);
-			break;
-		case ETriangulationMethod::GTE:
-		{
-			bSuccess = UModumateGeometryStatics::TriangulateVerticesGTE(Vertices, Holes, OutTriangles, OutCombinedVertices, bCheckValid);
-			if (bSuccess)
+			auto perimeterPoly = VerticesToTPoly(Vertices);
+			float perimeterArea = perimeterPoly.Area();
+
+			TArray<FPolygon2f> holePolys;
+			Algo::Transform(Holes, holePolys, [](const FPolyHole2D& hole) { return VerticesToTPoly(hole.Points); });
+			TArray<float> holeAreas;
+			Algo::Transform(holePolys, holeAreas, [](const FPolygon2f& holePoly) { return holePoly.Area(); });
+			float holesArea = Algo::Accumulate(holeAreas, 0.0f);
+			expectedArea = perimeterArea - holesArea;
+
+			TArray<FVector2D>& combinedVertices = *OutCombinedVertices;
+			for (int32 triIndexA = 0; triIndexA < OutTriangles.Num(); triIndexA += 3)
 			{
-				auto perimeterPoly = VerticesToTPoly(Vertices);
-				float perimeterArea = perimeterPoly.Area();
-
-				TArray<FPolygon2f> holePolys;
-				Algo::Transform(Holes, holePolys, [](const FPolyHole2D& hole) { return VerticesToTPoly(hole.Points); });
-				TArray<float> holeAreas;
-				Algo::Transform(holePolys, holeAreas, [](const FPolygon2f& holePoly) { return holePoly.Area(); });
-				float holesArea = Algo::Accumulate(holeAreas, 0.0f);
-				expectedArea = perimeterArea - holesArea;
-
-				TArray<FVector2D>& combinedVertices = *OutCombinedVertices;
-				for (int32 triIndexA = 0; triIndexA < OutTriangles.Num(); triIndexA += 3)
-				{
-					int32 triIndexB = triIndexA + 1;
-					int32 triIndexC = triIndexA + 2;
-					TArray<FVector2D> triangleVertices({ combinedVertices[OutTriangles[triIndexA]], combinedVertices[OutTriangles[triIndexB]], combinedVertices[OutTriangles[triIndexC]] });
-					auto triPoly = VerticesToTPoly(triangleVertices);
-					computedArea += triPoly.Area();
-				}
+				int32 triIndexB = triIndexA + 1;
+				int32 triIndexC = triIndexA + 2;
+				TArray<FVector2D> triangleVertices({ combinedVertices[OutTriangles[triIndexA]], combinedVertices[OutTriangles[triIndexB]], combinedVertices[OutTriangles[triIndexC]] });
+				auto triPoly = VerticesToTPoly(triangleVertices);
+				computedArea += triPoly.Area();
 			}
-		}
-			break;
 		}
 
 		return Test->TestTrue(Description,
@@ -928,47 +912,6 @@ namespace Modumate
 		TestTriangulation(this, TEXT("CCW square with CW hole whose edge lies within one of the outer polygon's edges"), perimeter, holes, outTriangleIndices, &outVertices, true, true, 18, 8);
 
 		return true;
-	}
-
-	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometryTriangulationErrors, "Modumate.Core.Geometry.TriangulationErrors", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::NegativeFilter | EAutomationTestFlags::HighPriority)
-		bool FModumateGeometryTriangulationErrors::RunTest(const FString& Parameters)
-	{
-		TArray<FVector2D> OutVertices;
-		TArray<int32> OutTriangles;
-
-		TArray<FVector2D> InVertices;
-		TArray<FPolyHole2D> InHoles;
-
-		InVertices = {
-			FVector2D(0.0f, 0.0f),
-			FVector2D(0.0f, 100.0f),
-			FVector2D(100.0f, 100.0f),
-			FVector2D(100.0f, 0.0f),
-			FVector2D(50.0f, 0.0f),
-			FVector2D(50.0f, 50.0f),
-			FVector2D(50.0f, 0.0f)
-		};
-
-		TestTriangulation(this, TEXT("Square with peninsula"), InVertices, InHoles, OutTriangles, &OutVertices, true, false, 0, 0, ETriangulationMethod::Poly2Tri);
-
-		InVertices = {
-			FVector2D(0.0f, 0.0f),
-			FVector2D(0.0f, 100.0f),
-			FVector2D(100.0f, 100.0f),
-			FVector2D(100.0f, 0.0f),
-			FVector2D(50.0f, 0.0f),
-			FVector2D(50.0f, 50.0f),
-			FVector2D(50.0f, 0.0f),
-			FVector2D(25.0f, 0.0f),
-			FVector2D(25.0f, 50.0f),
-			FVector2D(30.0f, 50.0f),
-			FVector2D(25.0f, 50.0f),
-			FVector2D(25.0f, 0.0f)
-		};
-
-		TestTriangulation(this, TEXT("Square with multiple peninsulas"), InVertices, InHoles, OutTriangles, &OutVertices, true, false, 0, 0, ETriangulationMethod::Poly2Tri);
-
-		return false;
 	}
 
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGeometryBasisVectors, "Modumate.Core.Geometry.BasisVectors", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)

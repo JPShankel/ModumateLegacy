@@ -124,7 +124,7 @@ bool UScopeBoxTool::FrameUpdate()
 			float thickness = rawDelta | Normal;
 			if (thickness > KINDA_SMALL_NUMBER)
 			{
-				PendingBox->SetupPrismGeometry(PendingBoxBasePoints, thickness, PendingBoxMaterial);
+				PendingBox->SetupPrismGeometry(PendingBoxBasePoints, thickness * FVector::UpVector, PendingBoxMaterial, false, false);
 
 				Extrusion = thickness;
 			}

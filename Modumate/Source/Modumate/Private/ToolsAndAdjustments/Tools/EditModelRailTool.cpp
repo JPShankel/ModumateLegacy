@@ -1,7 +1,6 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #include "ToolsAndAdjustments/Tools/EditModelRailTool.h"
-#include "DocumentManagement/ModumateObjectInstanceRails.h"
 
 URailTool::URailTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

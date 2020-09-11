@@ -84,9 +84,6 @@ public:
 	void SetupProceduralLayers(int32 numProceduralLayers);
 	void ClearProceduralLayers();
 
-	void SetupFlatPolyGeometry(const TArray<FVector> &points, const FBIMAssemblySpec &assembly);
-	void UpdateFlatPolyGeometry(const TArray<FVector> &points, const FBIMAssemblySpec &assembly);
-
 	void SetupPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, bool bRecreateMesh, bool bCreateCollision = true);
 	void SetupMetaPlaneGeometry(const TArray<FVector> &points, 
 		const FArchitecturalMaterial &material, 
@@ -104,23 +101,13 @@ public:
 	void DynamicMeshActorMoved(const FVector& newPosition);
 	void DynamicMeshActorRotated(const FRotator& newRotation);
 
-	void SetupRailGeometry(const TArray<FVector> &points, float height);
-	void UpdateRailGeometry(const TArray<FVector> &points, float height);
-
 	bool CreateBasicLayerDefs(const TArray<FVector> &PlanePoints, const FVector &PlaneNormal,
 		const TArray<FPolyHole3D>& Holes, const FBIMAssemblySpec &InAssembly, float PlaneOffsetPCT,
 		const FVector &AxisX = FVector::ZeroVector, float UVRotOffset = 0.0f, bool bToleratePlanarErrors = false);
 	bool UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCollision, bool bEnableCollision,
 		const FVector &InUVAnchor = FVector::ZeroVector, float UVRotOffset = 0.0f);
 
-	void AddPrismGeometry(const TArray<FVector> &points, const FVector &centroid, float height, const FVector ExtrusionDir,
-		float uvRotOffset = 0.0f, bool bMakeBottom = true, bool bMakeTop = true, bool bMakeSides = true, const TArray<FPolyHole3D> *holes = nullptr);
-
-	void SetupPrismGeometry(const TArray<FVector> &points, float height, const FArchitecturalMaterial &material,
-		float uvRotOffset = 0.0f, bool bMakeSides = true, const TArray<FPolyHole3D> *holes = nullptr);
-	void UpdatePrismGeometry(const TArray<FVector> &points, float height, const FArchitecturalMaterial &material,
-		float uvRotOffset = 0.0f, bool bMakeSides = true, const TArray<FPolyHole3D> *holes = nullptr);
-
+	void SetupPrismGeometry(const TArray<FVector>& BasePpoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial& MaterialData, bool bUpdateCollision, bool bEnableCollision, float UVRotOffset = 0.0f);
 	void SetupCabinetGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial& MaterialData, bool bUpdateCollision, bool bEnableCollision,
 		const FVector2D& ToeKickDimensions = FVector2D::ZeroVector, int32 FrontIdxStart = 0, float UVRotOffset = 0.0f);
 

@@ -151,8 +151,7 @@ struct FPointInPolyResult
 	void Reset();
 };
 
-// Helper functions for geometric operations; anything that doesn't need to know about Modumate-specific object types,
-// and/or anything that needs to use Poly2Tri for underlying work.
+// Helper functions for geometric operations; anything that doesn't need to know about Modumate-specific object types
 UCLASS()
 class MODUMATE_API UModumateGeometryStatics : public UBlueprintFunctionLibrary
 {
@@ -183,17 +182,14 @@ public:
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool GetPlaneFromPoints(const TArray<FVector> &Points, FPlane &outPlane, float Tolerance = PLANAR_DOT_EPSILON);
 
-	/* Poly2Tri version of triangulation.
+	/* Triangulation helper function, using GeometryAlgorithms / Geometric Tools Engine
 	 * @param[in] Vertices: the simple polygon vertices to triangulate; concave/convex or CW/CCW are okay, but no self-intersections or repeating points
 	 * @param[in] Holes: the array of holes that should be bored in the polygon; can't overlap with each other, or intersect the polygon at more than 1 point
 	 * @param[out] OutTriangles: the triplets of indices of vertices that represent the triangulation of the input polygon
 	 * @param[out, optional] OutCombinedVertices: an optional convenience list that combines Vertices and the points in Holes together, as referenced by the indices in OutTriangles
 	 * @param[in, optional] bCheckValid: whether to perform validity and intersection checks on the input polygon and holes
-	 * @result: whether we could triangulate the polygon at all; fails on invalid input polygon/holes, or expected poly2tri failures.
+	 * @result: whether we could triangulate the polygon at all; fails on invalid input polygon/holes.
 	 */
-	static bool TriangulateVerticesPoly2Tri(const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& Holes,
-		TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid = true);
-
 	static bool TriangulateVerticesGTE(const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& Holes,
 		TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid = true);
 

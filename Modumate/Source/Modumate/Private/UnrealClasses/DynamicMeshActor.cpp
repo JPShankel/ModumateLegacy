@@ -235,42 +235,6 @@ void ADynamicMeshActor::CacheTriangleNormals(const TArray<FVector> &points, int3
 	}
 }
 
-void ADynamicMeshActor::SetupRailGeometry(const TArray<FVector> &points, float height)
-{
-	if (points.Num() == 0)
-	{
-		return;
-	}
-	vertices.Reset();
-	normals.Reset();
-	triangles.Reset();
-	uv0.Reset();
-	vertexColors.Reset();
-
-	FVector centroid = Algo::Accumulate(points, FVector::ZeroVector, [](const FVector &c, const FVector &p) { return c + p; }) / points.Num();
-
-	SetActorLocation(centroid);
-
-	for (size_t i = 0; i < points.Num() - 1; i += 2)
-	{
-		MakeTriangle(points[i] - centroid, points[i + 1] - centroid, points[i + 1] + FVector(0, 0, height) - centroid, 0, 0);
-		MakeTriangle(points[i] - centroid, points[i + 1] + FVector(0, 0, height) - centroid, points[i + 1] - centroid, 0, 0);
-
-		MakeTriangle(points[i] - centroid, points[i + 1] + FVector(0, 0, height) - centroid, points[i] + FVector(0, 0, height) - centroid, 0, 1);
-		MakeTriangle(points[i] - centroid, points[i] + FVector(0, 0, height) - centroid, points[i + 1] + FVector(0, 0, height) - centroid, 0, 1);
-	}
-
-	UMaterialInterface *greenMaterial = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->GreenMaterial;
-
-	Mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, true);
-	Mesh->SetMaterial(0, greenMaterial);
-}
-
-void ADynamicMeshActor::UpdateRailGeometry(const TArray<FVector> &points, float height)
-{
-	SetupRailGeometry(points, height);
-}
-
 bool ADynamicMeshActor::CreateBasicLayerDefs(const TArray<FVector> &PlanePoints, const FVector &PlaneNormal,
 	const TArray<FPolyHole3D>& Holes, const FBIMAssemblySpec &InAssembly, float PlaneOffsetPCT,
 	const FVector &AxisX, float UVRotOffset, bool bToleratePlanarErrors)
@@ -404,182 +368,57 @@ bool ADynamicMeshActor::UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCo
 	return true;
 }
 
-void ADynamicMeshActor::AddPrismGeometry(const TArray<FVector> &points, const FVector &centroid, float height, const FVector ExtrusionDir,
-	float uvRotOffset, bool bMakeBottom, bool bMakeTop, bool bMakeSides, const TArray<FPolyHole3D> *holes)
+void ADynamicMeshActor::SetupPrismGeometry(const TArray<FVector> &BasePoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial &MaterialData,
+	bool bUpdateCollision, bool bEnableCollision, float UVRotOffset)
 {
-	int32 numPoints = points.Num();
-	if (numPoints < 3)
+	int32 numPoints = BasePoints.Num();
+	float extrusionDist = ExtrusionDelta.Size();
+
+	if (!ensure((numPoints >= 3) && !FMath::IsNearlyZero(extrusionDist)))
 	{
 		return;
 	}
 
-	FVector extrusionDelta = height * ExtrusionDir;
-
-	TArray<FVector> perimeterPoints;
-
-	Algo::Transform(points,perimeterPoints,[centroid](const FVector &p) {return p - centroid; });
-
-	TArray<int32> tris, perimeterVertexHoleIndices;
-	TArray<FVector> bottomPoints;
-
-	auto projectPoint2D = [](const FVector &point) { return FVector2D(point); };
-
-	TArray<FVector2D> triangulatedPoints2D;
-	TArray<FVector2D> points2D;
-	TArray<FPolyHole2D> holes2D;
-
-	Algo::Transform(points, points2D, projectPoint2D);
-	if (holes)
-	{
-		Algo::Transform(*holes, holes2D, [projectPoint2D](const FPolyHole3D &hole3D) {
-			FPolyHole2D hole2D;
-			Algo::Transform(hole3D.Points, hole2D.Points, projectPoint2D);
-			return hole2D;
-		});
-	}
-
-	if (UModumateGeometryStatics::TriangulateVerticesGTE(points2D, holes2D, tris, &triangulatedPoints2D))
-	{
-		Algo::Transform(
-			triangulatedPoints2D,
-			bottomPoints,
-			[centroid](const FVector2D &triangulatedPoint2D)
-		{
-			return FVector(triangulatedPoint2D, centroid.Z) - centroid;
-		});
-	}
-
-	TArray<FVector> topPoints;
-	Algo::Transform(bottomPoints, topPoints, [extrusionDelta](const FVector &p) {return p + extrusionDelta; });
-
-	// Approximate the direction of the polygon's OBB by finding the longest edge, so we can rotate UVs appropriately.
-	// Ideally we would find the convex polygon and then use rotating calipers to find the minimum OBB, but that's fancier than we need.
-	float endFacesUVRot = 0.0f;
-	float longestEdgeLength = 0.0f;
-	FVector longestEdgeDir = FVector::ZeroVector;
-	for (int32 i1 = 0; i1 < numPoints; ++i1)
-	{
-		int32 i2 = (i1 + 1) % numPoints;
-		const FVector p1 = points[i1];
-		const FVector p2 = points[i2];
-		float edgeLength = FVector::Dist(p1, p2);
-		if (edgeLength > longestEdgeLength)
-		{
-			longestEdgeLength = edgeLength;
-			longestEdgeDir = (p2 - p1) / edgeLength;
-		}
-	}
-
-	if (longestEdgeLength > 0.0f)
-	{
-		endFacesUVRot = 90.0f + uvRotOffset + FMath::RadiansToDegrees(FMath::Atan2(longestEdgeDir.X, longestEdgeDir.Y));
-	}
-
-	for (int32 i = 0; i < tris.Num(); i += 3)
-	{
-		CacheTriangleNormals(topPoints, tris[i], tris[i + 1], tris[i + 2]);
-
-		if (bMakeTop)
-		{
-			MakeTriangle(topPoints[tris[i]], topPoints[tris[i + 1]], topPoints[tris[i + 2]], 0, -1, endFacesUVRot);
-			MakeTriangle(topPoints[tris[i + 2]], topPoints[tris[i + 1]], topPoints[tris[i]], 0, -1, endFacesUVRot);
-		}
-
-		if (bMakeBottom)
-		{
-			MakeTriangle(bottomPoints[tris[i]], bottomPoints[tris[i + 1]], bottomPoints[tris[i + 2]], 0, -1, endFacesUVRot);
-			MakeTriangle(bottomPoints[tris[i + 2]], bottomPoints[tris[i + 1]], bottomPoints[tris[i]], 0, -1, endFacesUVRot);
-		}
-
-		const auto &p1 = bottomPoints[tris[i]], &p2 = bottomPoints[tris[i + 1]], &p3 = bottomPoints[tris[i + 2]];
-		FVector triBaseDelta = p2 - p1;
-		float triBaseLen = triBaseDelta.Size();
-		float triHeight = FMath::PointDistToLine(p3, triBaseDelta, p1);
-		float triArea = 0.5f * triBaseLen * triHeight;
-		baseArea += triArea;
-
-		float triPrismVolume = triArea * height;
-		meshVolume += triPrismVolume;
-	}
-
-	if (bMakeSides)
-	{
-		float sideTriUVRot = 90.0f + uvRotOffset;
-
-		auto makeSideTriangles = [this, sideTriUVRot, extrusionDelta](const FVector &p1, const FVector &p2)
-		{
-			FVector p3 = p1 + extrusionDelta;
-			FVector p4 = p2 + extrusionDelta;
-
-			MakeTriangle(p1, p2, p4, 0, -1, sideTriUVRot);
-			MakeTriangle(p1, p4, p3, 0, -1, sideTriUVRot);
-
-			MakeTriangle(p2, p1, p4, 0, -1, sideTriUVRot);
-			MakeTriangle(p4, p1, p3, 0, -1, sideTriUVRot);
-		};
-
-		for (int32 pointIdx = 0; pointIdx < numPoints; pointIdx++)
-		{
-			FVector &p1 = perimeterPoints[pointIdx];
-			FVector &p2 = perimeterPoints[(pointIdx + 1) % numPoints];
-
-			makeSideTriangles(p1, p2);
-		}
-
-		if (holes)
-		{
-			for (int32 holeIdx = 0; holeIdx < holes->Num(); ++holeIdx)
-			{
-				const TArray<FVector> &hole = (*holes)[holeIdx].Points;
-				int32 numHolePoints = hole.Num();
-				for (int32 pointIdx = 0; pointIdx < numHolePoints; ++pointIdx)
-				{
-					FVector p1 = hole[pointIdx] - centroid;
-					FVector p2 = hole[(pointIdx + 1) % numHolePoints] - centroid;
-
-					makeSideTriangles(p1, p2);
-				}
-			}
-		}
-	}
-}
-
-void ADynamicMeshActor::SetupPrismGeometry(const TArray<FVector> &points, float height, const FArchitecturalMaterial &materialData,
-	float uvRotOffset, bool bMakeSides, const TArray<FPolyHole3D> *holes)
-{
-	int32 numPoints = points.Num();
-	if (numPoints < 3)
+	// Ensure that the supplied points are planar, and consistent with the extrusion direction.
+	FVector extrusionNormal = ExtrusionDelta / extrusionDist;
+	FPlane basePlane;
+	bool bPlanarSuccess = UModumateGeometryStatics::GetPlaneFromPoints(BasePoints, basePlane);
+	if (!ensure(bPlanarSuccess && FVector::Parallel(extrusionNormal, basePlane)))
 	{
 		return;
 	}
 
+	SetActorLocation(FVector::ZeroVector);
+	SetActorRotation(FQuat::Identity);
+
+	LayerGeometries.Reset(1);
+	FLayerGeomDef& prismDef = LayerGeometries.Add_GetRef(FLayerGeomDef(BasePoints, extrusionDist, extrusionNormal));
+	if (!prismDef.bValid)
+	{
+		return;
+	}
+
+	// Now, triangulate the prism geometry data
 	vertices.Reset();
 	normals.Reset();
 	triangles.Reset();
 	uv0.Reset();
+	tangents.Reset();
 	vertexColors.Reset();
 
-	FVector centroid = Algo::Accumulate(points, FVector::ZeroVector, [](const FVector &c, const FVector &p) { return c + p; }) / points.Num();
-	SetActorLocation(centroid);
+	if (prismDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents, UVAnchor, UVRotOffset))
+	{
+		Mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, bUpdateCollision);
+		Mesh->SetCollisionEnabled(bEnableCollision ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
+		Mesh->SetVisibility(true);
 
-	// reset area and volume calculations
-	baseArea = meshVolume = 0.0f;
-
-	FPlane pointsPlane(points[0], points[1], points[2]);
-	FVector extrusionDir = pointsPlane;
-
-	AddPrismGeometry(points, centroid, height, extrusionDir, uvRotOffset, true, true, bMakeSides, holes);
-
-	Mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, true);
-
-	CachedMIDs.SetNumZeroed(1);
-	UModumateFunctionLibrary::SetMeshMaterial(Mesh, materialData, 0, &CachedMIDs[0]);
-}
-
-void ADynamicMeshActor::UpdatePrismGeometry(const TArray<FVector> &points, float height, const FArchitecturalMaterial &materialData,
-	float uvRotOffset, bool bMakeSides, const TArray<FPolyHole3D> *holes)
-{
-	return SetupPrismGeometry(points, height, materialData, uvRotOffset, bMakeSides, holes);
+		CachedMIDs.SetNumZeroed(1);
+		UModumateFunctionLibrary::SetMeshMaterial(Mesh, MaterialData, 0, &CachedMIDs[0]);
+	}
+	else
+	{
+		Mesh->SetVisibility(false);
+	}
 }
 
 void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial& MaterialData, bool bUpdateCollision, bool bEnableCollision,
@@ -653,73 +492,6 @@ void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector>& BasePoints, 
 			procMeshComp->SetVisibility(false);
 		}
 	}
-}
-
-void ADynamicMeshActor::SetupFlatPolyGeometry(const TArray<FVector> &points, const FBIMAssemblySpec &assembly)
-{
-	Assembly = assembly;
-	TArray<FBIMLayerSpec> orderedFAL;
-	for (int32 i = 0; i < Assembly.Layers.Num(); ++i)
-	{
-		orderedFAL.Add(Assembly.Layers[i]);
-	}
-
-	float thickness = Algo::TransformAccumulate(orderedFAL,[](const FBIMLayerSpec &layer){return layer.Thickness.AsWorldCentimeters();},0.0f);
-
-	FVector centroid = Algo::Accumulate(points, FVector::ZeroVector, [](const FVector &c, const FVector &p) { return c + p; }) / points.Num();
-	vertices.Reset();
-	Algo::Transform(points, vertices, [centroid](const FVector &p) { return p - centroid; });
-	TArray<FVector> originalVertices = vertices;
-
-	SetActorLocation(centroid);
-
-	// Begin constructing sublayers for floor
-	UModumateFunctionLibrary::GetFloorAssemblyLayerControlPoints(originalVertices, Assembly.Layers, FloorAssemblyLayerControlPoints);
-	TArray<FVector> topControlPoints, bottomControlPoints, layerVerts, layerNormals;
-	TArray<int32> layerTris;
-	TArray<int32> layerTopTris;
-	TArray<FVector2D> layerUVs;
-
-	// If layers are more than procedural mesh components, add more procedural meshes
-	SetupProceduralLayers(FloorAssemblyLayerControlPoints.Num());
-
-	vertexColors.Reset();
-	tangents.Reset();
-
-	// Generate procedural mesh based on parameters from FloorAssemblyLayerControlPoints
-	int32 numLayers = FloorAssemblyLayerControlPoints.Num();
-	CachedMIDs.SetNumZeroed(numLayers);
-	for (int32 i = 0; i < numLayers; i++)
-	{
-		topControlPoints = FloorAssemblyLayerControlPoints[i].TopLayerControlPoints;
-		bottomControlPoints = FloorAssemblyLayerControlPoints[i].BottomLayerControlPoints;
-		UModumateFunctionLibrary::CalculateFloorParam(centroid, UVFloorAnchors, TopUVFloorAnchor, TopUVFloorRot, topControlPoints, bottomControlPoints, layerVerts, layerTris, layerNormals, layerUVs, layerTopTris);
-
-		// Create Mesh Sections
-		UProceduralMeshComponent *procMeshComp = ProceduralSubLayers[i];
-		procMeshComp->CreateMeshSection_LinearColor(0, layerVerts, layerTris, layerNormals, layerUVs, vertexColors, tangents, true);
-
-		UModumateFunctionLibrary::SetMeshMaterial(procMeshComp, orderedFAL[i].Material, 0, &CachedMIDs[i]);
-	}
-
-	// Setup UV Anchor
-	TArray<FVector> newCPNext;
-	for (int32 i = 0; i < points.Num(); i++)
-	{
-		int32 nextId = UModumateFunctionLibrary::LoopArrayGetNextIndex(i, points.Num());
-		newCPNext.Add(points[nextId]);
-	}
-
-	OldFloorCP1 = points;
-	OldFloorCP2 = newCPNext;
-
-	UpdateLayerMaterialsFromAssembly();
-}
-
-void ADynamicMeshActor::UpdateFlatPolyGeometry(const TArray<FVector> &points, const FBIMAssemblySpec &assembly)
-{
-	SetupFlatPolyGeometry(points, assembly);
-	return;
 }
 
 void ADynamicMeshActor::SetupPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, bool bRecreateMesh, bool bCreateCollision)
