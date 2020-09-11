@@ -1,0 +1,9 @@
+# Reference: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Use tabs for UE4-style indentation
+[*.{cs,cpp,h,uproject,uplugin}]
+indent_style = tab
+indent_size = 4
