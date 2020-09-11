@@ -785,6 +785,7 @@ namespace Modumate
 				{
 					face->ContainedFaceIDs.Remove(faceIDToRemove);
 				}
+				face->Dirty(false);
 			}
 		}
 
