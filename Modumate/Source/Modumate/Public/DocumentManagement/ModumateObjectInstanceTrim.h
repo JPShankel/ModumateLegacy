@@ -44,9 +44,6 @@ public:
 	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 
-	virtual FModumateWallMount GetWallMountForSelf(int32 originIndex) const override;
-	virtual void SetWallMountForSelf(const FModumateWallMount &wm) override;
-
 	virtual void SetIsDynamic(bool bIsDynamic) override;
 	virtual bool GetIsDynamic() const override;
 };

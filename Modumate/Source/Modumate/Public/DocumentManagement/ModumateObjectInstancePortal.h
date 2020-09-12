@@ -51,8 +51,6 @@ public:
 	virtual void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation) override;
 	virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) override;
 	virtual void TransverseObject() override;
-	virtual FModumateWallMount GetWallMountForSelf(int32 originIndex) const override;
-	virtual void SetWallMountForSelf(const FModumateWallMount &wm) override;
 
 	static void GetControlPointsFromAssembly(const FBIMAssemblySpec &ObjectAssembly, TArray<FVector> &ControlPoints);
 

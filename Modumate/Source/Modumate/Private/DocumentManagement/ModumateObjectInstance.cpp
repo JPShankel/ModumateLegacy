@@ -1246,41 +1246,6 @@ FMOIDataRecord FModumateObjectInstance::AsDataRecord() const
 	return ret;
 }
 
-FModumateWallMount FModumateObjectInstance::GetWallMountForChild(const FModumateObjectInstance *child, int32 originIndex) const
-{
-	if ((GetObjectType() != EObjectType::OTWallSegment) || (child == nullptr))
-	{
-		FModumateWallMount ret;
-		ret.OriginIndex = originIndex;
-		ret.RelativePosition = FVector::ZeroVector;
-		ret.OrientationDelta = FQuat::Identity;
-		ret.OriginalControlPoints = child->GetControlPoints();
-		return ret;
-	}
-
-	return child->GetWallMountForSelf(originIndex);
-}
-
-TMap<FModumateObjectInstance*, FModumateWallMount> FModumateObjectInstance::GetWallMountsForChildren(int32 originIndex)
-{
-	TMap<FModumateObjectInstance*, FModumateWallMount> childWallMounts;
-	for (auto &childOb : GetChildObjects())
-	{
-		childWallMounts.Add(childOb,GetWallMountForChild(childOb, originIndex));
-	}
-	return childWallMounts;
-}
-
-FModumateWallMount FModumateObjectInstance::GetWallMountForSelf(int32 originIndex) const
-{
-	return Implementation->GetWallMountForSelf(originIndex);
-}
-
-void FModumateObjectInstance::SetWallMountForSelf(const FModumateWallMount &wm)
-{
-	Implementation->SetWallMountForSelf(wm);
-}
-
 // FModumateObjectInstanceImplBase Implementation
 
 void FModumateObjectInstanceImplBase::SetRotation(const FQuat &r)
@@ -1442,20 +1407,4 @@ bool FModumateObjectInstanceImplBase::CleanObject(EObjectDirtyFlags DirtyFlag, T
 	}
 
 	return true;
-}
-
-FModumateWallMount FModumateObjectInstanceImplBase::GetWallMountForSelf(int32 originIndex) const
-{
-	ensureMsgf(false, TEXT("Unimplemented GetWallMountForSelf for object type %s!"),
-		MOI ? *EnumValueString(EObjectType, MOI->GetObjectType()) : TEXT("?"));
-
-	return FModumateWallMount();
-}
-
-void FModumateObjectInstanceImplBase::SetWallMountForSelf(const FModumateWallMount &wm)
-{
-	ensureMsgf(false, TEXT("Unimplemented SetWallMountForSelf for object type %s!"),
-		MOI ? *EnumValueString(EObjectType, MOI->GetObjectType()) : TEXT("?"));
-
-	return;
 }

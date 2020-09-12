@@ -68,14 +68,6 @@ struct FStructureLine
 	int32 CP1 = 0, CP2 = 0;
 };
 
-struct FModumateWallMount
-{
-	int32 OriginIndex = 0;
-	FVector RelativePosition = FVector::ZeroVector;
-	FQuat OrientationDelta = FQuat::Identity;
-	TArray<FVector> OriginalControlPoints;
-};
-
 class MODUMATE_API IModumateObjectInstanceImpl
 {
 public:
@@ -127,9 +119,6 @@ public:
 	virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) = 0;
 
 	virtual void TransverseObject() = 0;
-
-	virtual FModumateWallMount GetWallMountForSelf(int32 originIndex) const = 0;
-	virtual void SetWallMountForSelf(const FModumateWallMount &wm) = 0;
 
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const = 0;
 
@@ -200,9 +189,6 @@ public:
 	virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) override;
 
 	virtual void TransverseObject() override { }
-
-	virtual FModumateWallMount GetWallMountForSelf(int32 originIndex) const override;
-	virtual void SetWallMountForSelf(const FModumateWallMount &wm) override;
 
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const override { return TArray<FModelDimensionString>(); }
 
@@ -378,11 +364,6 @@ public:
 
 	void GetConnectedIDs(TArray<int32> &connectedIDs) const;
 	void GetConnectedMOIs(TArray<FModumateObjectInstance *> &connectedMOIs) const;
-
-	FModumateWallMount GetWallMountForChild(const FModumateObjectInstance *child, int32 originIndex) const;
-	TMap<FModumateObjectInstance*, FModumateWallMount> GetWallMountsForChildren(int32 originIndex);
-	FModumateWallMount GetWallMountForSelf(int32 originIndex) const;
-	void SetWallMountForSelf(const FModumateWallMount &wm);
 
 	// Property getters/setters that, for now, only pass through directly to ObjectProperties.
 	// TODO: use these for instance-level overrides, where they pass through to the assembly.
