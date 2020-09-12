@@ -36,6 +36,9 @@ protected:
 	bool DragReset = true;
 
 	UPROPERTY()
+	class UBIMBlockNode* RootNode;
+
+	UPROPERTY()
 	TArray<class UBIMBlockNode*> BIMBlockNodes;
 
 	UPROPERTY()
@@ -122,4 +125,6 @@ public:
 	bool AddNodeFromPreset(int32 ParentID, const FName& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
 	bool SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value);
 	bool UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVisibility);
+	bool GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, int32 NodeID);
+	bool SavePresetFromNode(bool SaveAs, int32 InstanceID);
 };

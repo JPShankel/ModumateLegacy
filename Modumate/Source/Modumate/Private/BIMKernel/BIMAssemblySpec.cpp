@@ -13,6 +13,7 @@
 
 ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FName& PresetID)
 {
+	Reset();
 	ECraftingResult ret = ECraftingResult::Success;
 	RootPreset = PresetID;
 
@@ -21,7 +22,7 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 	TArray<FName> presetStack;
 	presetStack.Push(PresetID);
 
-	// Depth first walk through the preset and its descandents
+	// Depth first walk through the preset and its descendents
 	while (presetStack.Num() > 0)
 	{
 		FName presetID = presetStack.Pop();
@@ -176,6 +177,19 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 
 	return DoMakeAssembly(InDB, PresetCollection);
 }
+
+void FBIMAssemblySpec::Reset()
+{
+	ObjectType = EObjectType::OTNone;
+
+	RootPreset = NAME_None;
+	RootProperties = FBIMPropertySheet();
+
+	Layers.Empty();
+	Parts.Empty();
+	Extrusions.Empty();
+}
+
 
 bool FBIMAssemblySpec::HasProperty(const FBIMNameType& Name) const
 {

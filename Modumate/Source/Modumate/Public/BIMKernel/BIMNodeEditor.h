@@ -81,7 +81,8 @@ public:
 	ECraftingResult AttachChild(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child);
 	ECraftingResult AttachChildAt(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child, int32 PinSetIndex, int32 PinSetPosition);
 	ECraftingResult FindChild(int32 ChildID, int32 &OutPinSetIndex, int32 &OutPinSetPosition);
-	ECraftingResult FindChildOrder(int32 ChildID, int32 &Order);
+	ECraftingResult FindOtherChildrenOnPin(TArray<int32> &OutChildIDs);
+	ECraftingResult GatherChildrenInOrder(TArray<int32> &OutChildIDs);
 };
 
 /*
@@ -125,4 +126,7 @@ public:
 	bool ValidatePool() const;
 
 	ECraftingResult CreateAssemblyFromNodes(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec);
+	ECraftingResult ReorderChildNode(int32 ChildNode, int32 FromPosition, int32 ToPosition);
+
+	bool GetSortedNodeIDs(TArray<int32> &OutNodeIDs);
 };

@@ -88,6 +88,8 @@ public:
 	// For DataCollection support in preset manager
 	FName UniqueKey() const { return RootPreset; }
 
+	void Reset();
+
 	ECraftingResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FName& PresetID);
 
 	// Helper functions for getting properties in the Assembly scope

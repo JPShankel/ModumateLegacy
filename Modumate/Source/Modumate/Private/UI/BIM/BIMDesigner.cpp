@@ -37,7 +37,6 @@ bool UBIMDesigner::Initialize()
 void UBIMDesigner::NativeConstruct()
 {
 	Super::NativeConstruct();
-
 }
 
 void UBIMDesigner::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -159,7 +158,7 @@ bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FName &
 	{
 		return false;
 	}
-
+	UpdateNodeSwapMenuVisibility(InstanceID, false);
 	UpdateBIMDesigner();
 	return true;
 }
@@ -175,13 +174,18 @@ void UBIMDesigner::UpdateBIMDesigner()
 	{
 		curNodeWidget->RemoveFromParent();
 	}
+	for (auto& curItem : NodesWithAddLayerButton)
+	{
+		auto& curAddButton = curItem.Value;
+		curAddButton->RemoveFromParent();
+	}
 
 	BIMBlockNodes.Empty();
 	IdToNodeMap.Empty();
 	NodesWithAddLayerButton.Empty();
 
-	// Child groups that allow user to add more nodes
-	TArray<const FBIMCraftingTreeNode::FAttachedChildGroup*> AddableChildGroup;
+	TArray<const FBIMCraftingTreeNode::FAttachedChildGroup*> addableChildGroup; // Child groups that allow user to add more nodes
+	TMap<int32, class UBIMBlockNode*> IdToNodeMapUnSorted; 	// Temp map used to aid sorting node order
 
 	for (const FBIMCraftingTreeNodeSharedPtr& curInstance : InstancePool.GetInstancePool())
 	{
@@ -191,12 +195,13 @@ void UBIMDesigner::UpdateBIMDesigner()
 			if (!curInstance->ParentInstance.IsValid()) // assume instance without parent is king node
 			{
 				newBlockNode->IsKingNode = true;
+				RootNode = newBlockNode;
 				// Do other kingly things, maybe auto focus when no other node is selected
 			}
 			newBlockNode->BuildNode(this, curInstance);
 			BIMBlockNodes.Add(newBlockNode);
 			CanvasPanelForNodes->AddChildToCanvas(newBlockNode);
-			IdToNodeMap.Add(curInstance->GetInstanceID(), newBlockNode);
+			IdToNodeMapUnSorted.Add(curInstance->GetInstanceID(), newBlockNode);
 			UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(newBlockNode);
 			if (canvasSlot)
 			{
@@ -209,19 +214,27 @@ void UBIMDesigner::UpdateBIMDesigner()
 				if (curChildGroup.SetType.MaxCount > curChildGroup.Children.Num() || 
 					curChildGroup.SetType.MaxCount == -1)
 				{
-					AddableChildGroup.AddUnique(&curChildGroup);
+					addableChildGroup.AddUnique(&curChildGroup);
 				}
 			}
 		}
 	}
 
-	for (int32 i = 0; i < AddableChildGroup.Num(); ++i)
+	TArray<int32> sortedNodeIDs;
+	InstancePool.GetSortedNodeIDs(sortedNodeIDs);
+	for (const auto& curID : sortedNodeIDs)
+	{
+		const auto& curNode = IdToNodeMapUnSorted.FindRef(curID);
+		IdToNodeMap.Add(curID, curNode);
+	}
+
+	for (int32 i = 0; i < addableChildGroup.Num(); ++i)
 	{
 		// Place add button under the last attached child node
 		// TODO: Possible tech debt. This is under the assumption that addable node already has at least one child node attached
-		if (AddableChildGroup[i]->Children.Num() > 0)
+		if (addableChildGroup[i]->Children.Num() > 0)
 		{
-			int32 lastChildID = AddableChildGroup[i]->Children.Last().Pin()->GetInstanceID();
+			int32 lastChildID = addableChildGroup[i]->Children.Last().Pin()->GetInstanceID();
 			UBIMBlockNode *nodeWithAddButton = IdToNodeMap.FindRef(lastChildID);
 			if (nodeWithAddButton)
 			{
@@ -230,10 +243,10 @@ void UBIMDesigner::UpdateBIMDesigner()
 				{
 					NodesWithAddLayerButton.Add(nodeWithAddButton, newAddButton);
 
-					newAddButton->ParentID = AddableChildGroup[i]->Children.Last().Pin()->ParentInstance.Pin()->GetInstanceID();
-					newAddButton->PresetID = AddableChildGroup[i]->Children.Last().Pin()->PresetID;
+					newAddButton->ParentID = addableChildGroup[i]->Children.Last().Pin()->ParentInstance.Pin()->GetInstanceID();
+					newAddButton->PresetID = addableChildGroup[i]->Children.Last().Pin()->PresetID;
 					newAddButton->ParentSetIndex = i;
-					newAddButton->ParentSetPosition = AddableChildGroup[i]->Children.Num();
+					newAddButton->ParentSetPosition = addableChildGroup[i]->Children.Num();
 
 					CanvasPanelForNodes->AddChildToCanvas(newAddButton);
 					UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(newAddButton);
@@ -520,5 +533,105 @@ bool UBIMDesigner::UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVi
 
 	}
 
+	return true;
+}
+
+bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, int32 NodeID)
+{
+	// Get the mouse position relative to BIM Designer current zoom and offset
+	UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(ScaleBoxForNodes);
+	if (!canvasSlot)
+	{
+		return false;
+	}
+	FVector2D localMousePos = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) - canvasSlot->GetPosition();
+	FVector2D localMousePosScaled = localMousePos / GetCurrentZoomScale();
+
+	// Groups of nodes to check for reorder. Assuming nodes in canvas already arranged vertically correctly
+	FBIMCraftingTreeNodeSharedPtr instPtr = InstancePool.InstanceFromID(NodeID);
+	if (!instPtr.IsValid())
+	{
+		return false;
+	}
+	TArray<UBIMBlockNode*> nodeGroup;
+	TArray<int32> relatives;
+	if (instPtr->FindOtherChildrenOnPin(relatives) == ECraftingResult::Success)
+	{
+		for (auto& curID : relatives)
+		{
+			UBIMBlockNode *nodeToAdd = IdToNodeMap.FindRef(curID);
+			if (nodeToAdd)
+			{
+				nodeGroup.Add(nodeToAdd);
+			}
+		}
+	}
+
+	// Check if reordering is possible
+	UBIMBlockNode *reorderFromNode = IdToNodeMap.FindRef(NodeID);
+	if (!(reorderFromNode && nodeGroup.Num() > 1))
+	{
+		return false;
+	}
+	int32 fromOrder = INDEX_NONE;
+	int32 toOrder = INDEX_NONE;
+	for (int32 order = 0; order < nodeGroup.Num(); ++order)
+	{
+		FVector2D nodePosition = FVector2D::ZeroVector;
+		// If this node is to be reordered, use its original position instead of current position
+		if (reorderFromNode == nodeGroup[order])
+		{
+			fromOrder = order;
+			nodePosition = OriginalNodeCanvasPosition;
+		}
+		// Other nodes can use their current position
+		else
+		{
+			UCanvasPanelSlot* curSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(nodeGroup[order]);
+			if (curSlot)
+			{
+				nodePosition = curSlot->GetPosition();
+			}
+		}
+		// Check node's position against mouse location
+		if (localMousePosScaled.Y > nodePosition.Y)
+		{
+			toOrder = order;
+		}
+	}
+	// Don't reorder if position remains the same
+	ECraftingResult result = ECraftingResult::None;
+	if ((fromOrder != toOrder) && (fromOrder != INDEX_NONE) && (toOrder != INDEX_NONE))
+	{
+		result = InstancePool.ReorderChildNode(NodeID, fromOrder, toOrder);
+		if (result == ECraftingResult::Success)
+		{
+			UpdateBIMDesigner();
+			return true;
+		}
+	}
+	AutoArrangeNodes();
+	return false;
+}
+
+bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
+{
+	FBIMCraftingTreeNodeSharedPtr node = InstancePool.InstanceFromID(InstanceID);
+	if (!ensureAlways(node.IsValid()))
+	{
+		return false;
+	}
+
+	FBIMPreset outPreset;
+	node->ToPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, outPreset);
+
+	if (SaveAs)
+	{
+		outPreset.PresetID = Controller->GetDocument()->PresetManager.GetAvailableKey(outPreset.PresetID);
+	}
+
+	Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Add(outPreset.PresetID,outPreset);
+
+	UpdateBIMDesigner();
 	return true;
 }

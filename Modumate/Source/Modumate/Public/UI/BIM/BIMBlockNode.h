@@ -50,6 +50,7 @@ protected:
 	bool DragTick = false;
 	FVector2D LastMousePosition = FVector2D::ZeroVector;
 	bool DragReset = true;
+	FVector2D PreDragCanvasPosition = FVector2D::ZeroVector;
 	ENodeWidgetSwitchState NodeSwitchState = ENodeWidgetSwitchState::None;
 
 public:
@@ -112,7 +113,7 @@ public:
 	class UVerticalBox *VerticalBoxProperties;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UUserWidget *BIMBlockNodeDirty;
+	class UBIMBlockNodeDirtyTab *BIMBlockNodeDirty;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UBorder *DirtyStateBorder;
@@ -142,10 +143,14 @@ public:
 	UFUNCTION()
 	void OnButtonDeleteReleased();
 
+	UFUNCTION()
+	void OnButtonDirtySaveAs();
+
 	void UpdateNodeDirty(bool NewDirty);
 	void UpdateNodeCollapse(bool NewCollapse, bool AllowAutoArrange = false);
 	bool BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCraftingTreeNodeSharedPtr &Node);
 	void UpdateNodeSwitchState(ENodeWidgetSwitchState NewState);
+	void BeginDrag();
 
 	UFUNCTION(BlueprintPure)
 	FVector2D GetEstimatedNodeSize();

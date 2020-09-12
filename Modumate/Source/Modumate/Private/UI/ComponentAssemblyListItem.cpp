@@ -212,6 +212,7 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 
 	UpdateItemType(compListObj->ItemType);
 	AsmKey = compListObj->UniqueKey;
+	ToolMode = compListObj->Mode;
 	EMPlayerController = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	FPresetManager &presetManager = gameState->Document.PresetManager;
@@ -230,7 +231,6 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 		return;
 	}
 	AsmName = assembly->GetProperty(BIMPropertyNames::Name);
-	ToolMode = compListObj->Mode;
 
 	switch (ItemType)
 	{

@@ -126,22 +126,6 @@ bool FBIMCraftingTreeNode::CanRemoveChild(const FBIMCraftingTreeNodeSharedPtrCon
 	return false;
 }
 
-ECraftingResult FBIMCraftingTreeNode::FindChildOrder(int32 ChildID, int32 &Order)
-{
-	int32 pinSetIndex = -1, pinSetPosition = -1;
-	ECraftingResult result = FindChild(ChildID, pinSetIndex, pinSetPosition);
-	if (result == ECraftingResult::Success)
-	{
-		Order = 0;
-		for (int32 i = 0; i < pinSetIndex - 1; ++i)
-		{
-			Order += AttachedChildren[i].Children.Num();
-		}
-		Order += pinSetPosition;
-	}
-	return result;
-}
-
 ECraftingResult FBIMCraftingTreeNode::FindChild(int32 ChildID, int32 &OutPinSetIndex, int32 &OutPinSetPosition)
 {
 	for (int32 pinIndex = 0; pinIndex < AttachedChildren.Num(); ++pinIndex)
@@ -158,6 +142,41 @@ ECraftingResult FBIMCraftingTreeNode::FindChild(int32 ChildID, int32 &OutPinSetI
 		}
 	}
 	return ECraftingResult::Error;
+}
+
+ECraftingResult FBIMCraftingTreeNode::FindOtherChildrenOnPin(TArray<int32> &OutChildIDs)
+{
+	if (ParentInstance != nullptr)
+	{
+		for (int32 pinIndex = 0; pinIndex < ParentInstance.Pin()->AttachedChildren.Num(); ++pinIndex)
+		{
+			FAttachedChildGroup &pinSet = ParentInstance.Pin()->AttachedChildren[pinIndex];
+			for (int32 pinPosition = 0; pinPosition < pinSet.Children.Num(); ++pinPosition)
+			{
+				if (pinSet.Children[pinPosition].Pin()->GetInstanceID() == InstanceID)
+				{
+					for (const auto& curChild : pinSet.Children)
+					{
+						OutChildIDs.Add(curChild.Pin()->GetInstanceID());
+					}
+					return ECraftingResult::Success;
+				}
+			}
+		}
+	}
+	return ECraftingResult::Error;
+}
+
+ECraftingResult FBIMCraftingTreeNode::GatherChildrenInOrder(TArray<int32> &OutChildIDs)
+{
+	for (auto& pin : AttachedChildren)
+	{
+		for (auto& child : pin.Children)
+		{
+			OutChildIDs.Add(child.Pin()->GetInstanceID());
+		}
+	}
+	return ECraftingResult::Success;
 }
 
 ECraftingResult FBIMCraftingTreeNode::DetachSelfFromParent()
@@ -572,4 +591,109 @@ ECraftingResult FBIMCraftingTreeNodePool::CreateAssemblyFromNodes(const FBIMPres
 	}
 
 	return result;
+}
+
+ECraftingResult FBIMCraftingTreeNodePool::ReorderChildNode(int32 ChildNode, int32 FromPosition, int32 ToPosition)
+{
+	FBIMCraftingTreeNodeSharedPtr childPtr = InstanceFromID(ChildNode);
+
+	if (!childPtr.IsValid())
+	{
+		return ECraftingResult::Error;
+	}
+
+	if (!childPtr->ParentInstance.IsValid())
+	{
+		return ECraftingResult::Error;
+	}
+
+	TArray<FBIMCraftingTreeNode::FAttachedChildGroup>& attachedChildren = childPtr->ParentInstance.Pin()->AttachedChildren;
+	for (auto& attachment : attachedChildren)
+	{
+		if (attachment.Children.Contains(childPtr))
+		{
+			attachment.Children.RemoveAt(FromPosition);
+			attachment.Children.EmplaceAt(ToPosition, childPtr);
+			return ECraftingResult::Success;
+		}
+	}
+
+
+	return ECraftingResult::Error;
+}
+
+bool FBIMCraftingTreeNodePool::GetSortedNodeIDs(TArray<int32> &OutNodeIDs)
+{
+	// Use the root node as starting point
+	FBIMCraftingTreeNodeSharedPtr startInst;
+	for (const auto& inst : InstancePool)
+	{
+		if (inst->ParentInstance == nullptr)
+		{
+			startInst = inst;
+			break;
+		}
+	}
+
+	while (OutNodeIDs.Num() != InstancePool.Num())
+	{
+		// Add current node to array
+		OutNodeIDs.AddUnique(startInst->GetInstanceID());
+		if (OutNodeIDs.Num() == InstancePool.Num())
+		{
+			return true;
+		}
+
+		TArray<int32> childrenIDs;
+		startInst->GatherChildrenInOrder(childrenIDs);
+
+		// Go through its children to find the next appropriate node
+		bool canUseNextChild = false;
+		if (childrenIDs.Num() > 0)
+		{
+			for (const auto& curChildID : childrenIDs)
+			{
+				if (!OutNodeIDs.Contains(curChildID))
+				{
+					startInst = InstanceFromID(curChildID);
+					canUseNextChild = true;
+					break;
+				}
+			}
+		}
+
+		// No available child, this can happen by:
+		// 1. This node is in the end of the tree
+		// 2. All of its children have been used 
+		if (!canUseNextChild)
+		{
+			// Keep searching from previous parents that has an available child
+			FBIMCraftingTreeNodeSharedPtr parentInst = startInst->ParentInstance.Pin();
+			if (!parentInst.IsValid())
+			{
+				return false;
+			}
+			bool validParent = false;
+			while (!validParent)
+			{
+				TArray<int32> otherChildrenPin;
+				parentInst->GatherChildrenInOrder(otherChildrenPin);
+				for (const auto& curOtherChildID : otherChildrenPin)
+				{
+					if (!OutNodeIDs.Contains(curOtherChildID))
+					{
+						validParent = true;
+						startInst = parentInst;
+					}
+				}
+				// If the current parent doesn't have an open child, then search its grandparent
+				if (!validParent)
+				{
+					parentInst = parentInst->ParentInstance.Pin();
+				}
+			}
+		}
+	}
+
+	return false;
 }

@@ -22,6 +22,7 @@
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
+#include "UI/BIM/BIMBlockNodeDirtyTab.h"
 
 UBIMBlockNode::UBIMBlockNode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -37,7 +38,7 @@ bool UBIMBlockNode::Initialize()
 
 	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 
-	if (!(ButtonSwapCollapsed && ButtonSwapExpanded && ButtonDeleteCollapsed && ButtonDeleteExpanded))
+	if (!(ButtonSwapCollapsed && ButtonSwapExpanded && ButtonDeleteCollapsed && ButtonDeleteExpanded && BIMBlockNodeDirty))
 	{
 		return false;
 	}
@@ -46,6 +47,7 @@ bool UBIMBlockNode::Initialize()
 	ButtonSwapExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonSwapReleased);
 	ButtonDeleteCollapsed->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDeleteReleased);
 	ButtonDeleteExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDeleteReleased);
+	BIMBlockNodeDirty->ButtonSaveAs->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtySaveAs);
 
 	return true;
 }
@@ -72,11 +74,11 @@ FReply UBIMBlockNode::NativeOnMouseButtonDown(const FGeometry& InGeometry, const
 	{
 		if (NodeCollapse && ComponentPresetListItem->GrabHandleImage->GetTickSpaceGeometry().IsUnderLocation(UWidgetLayoutLibrary::GetMousePositionOnPlatform()))
 		{
-			DragTick = true;
+			BeginDrag();
 		}
 		else if (GrabHandleImage->GetTickSpaceGeometry().IsUnderLocation(UWidgetLayoutLibrary::GetMousePositionOnPlatform()))
 		{
-			DragTick = true;
+			BeginDrag();
 		}
 	}
 	return reply;
@@ -118,8 +120,7 @@ void UBIMBlockNode::PerformDrag()
 	else
 	{
 		DragReset = true;
-		// TODO: Replace below with reorder function
-		ParentBIMDesigner->AutoArrangeNodes();
+		ParentBIMDesigner->GetNodeForReorder(PreDragCanvasPosition, ID);
 	}
 }
 
@@ -141,6 +142,11 @@ void UBIMBlockNode::OnButtonSwapReleased()
 void UBIMBlockNode::OnButtonDeleteReleased()
 {
 	ParentBIMDesigner->DeleteNode(ID);
+}
+
+void UBIMBlockNode::OnButtonDirtySaveAs()
+{
+	ParentBIMDesigner->SavePresetFromNode(false, ID);
 }
 
 void UBIMBlockNode::UpdateNodeDirty(bool NewDirty)
@@ -169,7 +175,8 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 
 	if (Button_Debug)
 	{
-		Button_Debug->SetToolTipText(FText::FromName(PresetID));
+		FString debugString = FString::FromInt(Node->GetInstanceID()) + FString::Printf(TEXT(":   ")) + PresetID.ToString();
+		Button_Debug->SetToolTipText(FText::FromString(debugString));
 	}
 
 	ID = Node->GetInstanceID();
@@ -252,6 +259,16 @@ void UBIMBlockNode::UpdateNodeSwitchState(ENodeWidgetSwitchState NewState)
 		break;
 	}
 	ParentBIMDesigner->AutoArrangeNodes();
+}
+
+void UBIMBlockNode::BeginDrag()
+{
+	DragTick = true;
+	UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
+	if (canvasSlot)
+	{
+		PreDragCanvasPosition = canvasSlot->GetPosition();
+	}
 }
 
 FVector2D UBIMBlockNode::GetEstimatedNodeSize()
