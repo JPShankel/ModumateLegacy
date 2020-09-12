@@ -62,8 +62,4 @@ protected:
 	FTransform CachedBaseOrigin;
 	TArray<FVector> CachedBasePoints;
 	FVector CachedExtrusionDelta;
-
-private:
-	TArray<FVector> GetBoundsIntersections(const FPlane& Plane) const;
 };
-

@@ -146,9 +146,18 @@ namespace Modumate
 
 		FEdge lineInViewSpace(TransformMatrix.TransformPosition(line.Vertex[0]),
 			TransformMatrix.TransformPosition(line.Vertex[1]));
-		if (!QuadTree.IsValid() || (lineInViewSpace.Vertex[0].Z <= 0.0f && lineInViewSpace.Vertex[1].Z <= 0.0f))
+		bool bVert0Forward = lineInViewSpace.Vertex[0].Z > 0; 
+		bool bVert1Forward = lineInViewSpace.Vertex[1].Z > 0;
+		if (!QuadTree.IsValid() || (!bVert0Forward && !bVert1Forward))
 		{   // Behind cut plane.
 			return outViewLines;
+		}
+
+		if (bVert0Forward ^ bVert1Forward)
+		{   // Clip to cut plane.
+			float d = -lineInViewSpace.Vertex[0].Z / (lineInViewSpace.Vertex[1].Z - lineInViewSpace.Vertex[0].Z);
+			FVector intersect = lineInViewSpace.Vertex[0] + d * (lineInViewSpace.Vertex[1] - lineInViewSpace.Vertex[0]);
+			(bVert0Forward ? lineInViewSpace.Vertex[1] : lineInViewSpace.Vertex[0]) = intersect;
 		}
 
 		inViewLines.Add(lineInViewSpace);

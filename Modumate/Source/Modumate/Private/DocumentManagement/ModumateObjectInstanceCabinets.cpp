@@ -301,12 +301,6 @@ bool ASelectCabinetFrontHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsse
 	return true;
 }
 
-namespace
-{
-	const int32 boxEdgeIndices[12][2] = {{0, 1}, {1, 2}, {2, 3}, {3, 0}, {0, 4}, {1, 5}, {2, 6}, {3, 7},
-		{4, 5}, {5, 6}, {6, 7}, {7, 4}};
-}
-
 void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane,
 	const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 	TArray<TArray<FVector>> &OutPerimeters) const
@@ -316,64 +310,90 @@ void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &Par
 	static FModumateLayerType dwgLayerType = FModumateLayerType::kCabinetCutCarcass;
 	OutPerimeters.Reset();
 
+	const ADynamicMeshActor * actor = DynamicMeshActor.Get();
+	const TArray<FLayerGeomDef>& LayerGeometries = actor->LayerGeometries;
+
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
 	{   // Cut-plane lines:
-		TArray<FVector> intersections(GetBoundsIntersections(Plane));
-		int numIntersections = intersections.Num();
-		if (numIntersections == 0)
+		TArray<TPair<FVector2D, FVector2D>> cutPlaneLines;
+		TArray<FVector2D> previousPoints;
+		int32 numLayerSides = LayerGeometries.Num() * 2;
+		for (int32 layerIdx = 0; layerIdx < numLayerSides; layerIdx++)
 		{
-			return;
-		}
-
-		TArray<FVector2D> points;
-		for (auto& intersect : intersections)
-		{
-			points.Emplace(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersect));
-		}
-		TArray<int32> hullIndices;
-		ConvexHull2D::ComputeConvexHull(points, hullIndices);
-		for (int32 i = 0; i < hullIndices.Num(); ++i)
-		{
-			FVector2D start = points[hullIndices[i]];
-			FVector2D end = points[hullIndices[(i + 1) % hullIndices.Num()]];
-			FVector2D clippedStart;
-			FVector2D clippedEnd;
-			if (UModumateFunctionLibrary::ClipLine2DToRectangle(start, end, BoundingBox, clippedStart, clippedEnd))
+			bool usePointsA = layerIdx % 2 == 0;
+			const TArray<FVector> layerPoints = usePointsA ? LayerGeometries[layerIdx / 2].PointsA : LayerGeometries[layerIdx / 2].PointsB;
+			TArray<FVector2D> intersections;
+			int32 numPoints = layerPoints.Num();
+			for (int32 point = 0; point < numPoints; ++point)
 			{
-				TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
-					Units::FCoordinates2D::WorldCentimeters(clippedStart),
-					Units::FCoordinates2D::WorldCentimeters(clippedEnd),
-					lineThickness, lineColor));
-				ParentPage->Children.Add(line);
-				line->SetLayerTypeRecursive(dwgLayerType);
+				FVector vertex1 = layerPoints[point];
+				FVector vertex2 = layerPoints[(point + 1) % numPoints];
+
+				FVector intersection;
+				if (FMath::SegmentPlaneIntersection(vertex1, vertex2, Plane, intersection))
+				{
+					intersections.Add(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersection));
+				}
 			}
 
+			const int numIntersections = intersections.Num();
+			if (numIntersections % 2 == 0)
+			{
+				for (int32 line = 0; line < numIntersections; line += 2)
+				{
+					cutPlaneLines.Emplace(intersections[line], intersections[line + 1]);
+				}
+			}
+
+			if (usePointsA)
+			{
+				previousPoints = intersections;
+			}
+			else
+			{
+				for (int32 p = 0; p < intersections.Num() && p < previousPoints.Num(); ++p)
+				{
+					if (p < previousPoints.Num())
+					{
+						cutPlaneLines.Emplace(previousPoints[p], intersections[p]);
+					}
+				}
+			}
+		}
+
+		for (const auto& line : cutPlaneLines)
+		{
+			FVector2D lineStart(line.Key);
+			FVector2D lineEnd(line.Value);
+			FVector2D clippedStart;
+			FVector2D clippedEnd;
+
+			if (UModumateFunctionLibrary::ClipLine2DToRectangle(lineStart, lineEnd, BoundingBox, clippedStart, clippedEnd))
+			{
+				TSharedPtr<Modumate::FDraftingLine> clippedLine = MakeShareable(new Modumate::FDraftingLine(
+					Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
+					Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+					lineThickness, lineColor));
+				ParentPage->Children.Add(clippedLine);
+				clippedLine->SetLayerTypeRecursive(dwgLayerType);
+			}
 		}
 	}
 	else
 	{   // Beyond lines:
-		const FModumateObjectInstance * moi = static_cast<const FModumateObjectInstance*>(MOI);
-
-		// Cabinet box base is control points, height is extents.Y.
-		const auto& controlPoints = moi->GetDataState().ControlPoints;
-		if (!ensureAlways(controlPoints.Num() == 4))
-		{
-			return;
-		}
-		FVector height(0.0f, 0.0f, moi->GetDataState().Extents.Y);
-
-		FVector points[8];
-		for (int32 point = 0; point < 4; ++point)
-		{
-			points[point] = controlPoints[point];
-			points[point + 4] = controlPoints[point] + height;
-		}
-
 		TArray<FEdge> cabinetEdges;
-		for (int32 edge = 0; edge < 12; ++edge)
+
+		int32 numLayers = LayerGeometries.Num();
+		for (const auto& layer : LayerGeometries)
 		{
-			cabinetEdges.Emplace(points[boxEdgeIndices[edge][0]], points[boxEdgeIndices[edge][1]]);
+			int32 numPoints = layer.PointsA.Num();
+			for (int point = 0; point < numPoints; ++point)
+			{
+				cabinetEdges.Emplace(layer.PointsA[point], layer.PointsA[(point + 1) % numPoints]);
+				cabinetEdges.Emplace(layer.PointsB[point], layer.PointsB[(point + 1) % numPoints]);
+				cabinetEdges.Emplace(layer.PointsA[point], layer.PointsB[point]);
+			}
 		}
 
 		for (const auto& edge : cabinetEdges)
@@ -382,7 +402,7 @@ void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &Par
 			for (const auto& viewLine : viewLines)
 			{
 				FVector2D start(viewLine.Vertex[0]);
-				FVector2D end (viewLine.Vertex[1]);
+				FVector2D end(viewLine.Vertex[1]);
 				FVector2D boxClipped0;
 				FVector2D boxClipped1;
 
@@ -401,45 +421,4 @@ void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &Par
 		}
 
 	}
-
-}
-
-TArray<FVector> FMOICabinetImpl::GetBoundsIntersections(const FPlane& Plane) const
-{
-	TArray<FVector> planeIntersects;
-	FVector location = MOI->GetObjectLocation();
-	const FModumateObjectInstance * moi = static_cast<const FModumateObjectInstance*>(MOI);
-
-	// Cabinet box base is control points, height is extents.Y.
-	const auto& controlPoints = moi->GetDataState().ControlPoints;
-	if (!ensureAlways(controlPoints.Num() == 4))
-	{
-		return planeIntersects;
-	}
-	FVector height(0.0f, 0.0f, moi->GetDataState().Extents.Y);
-
-	FVector points[8];
-	for (int32 point = 0; point < 4; ++point)
-	{
-		points[point] = controlPoints[point];
-		points[point + 4] = controlPoints[point] + height;
-	}
-
-	FBox objectBox(points, sizeof(points) / sizeof(points[0]));
-	if (!FMath::PlaneAABBIntersection(Plane, objectBox))
-	{
-		return planeIntersects;
-	}
-
-	for (int32 edge = 0; edge < 12; ++edge)
-	{
-		FVector intersect;
-		if (FMath::SegmentPlaneIntersection(points[boxEdgeIndices[edge][0]], points[boxEdgeIndices[edge][1]],
-			Plane, intersect))
-		{
-			planeIntersects.Add(intersect);
-		}
-	}
-
-	return planeIntersects;
 }
