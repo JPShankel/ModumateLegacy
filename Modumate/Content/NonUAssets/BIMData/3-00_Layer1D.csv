@@ -6,7 +6,7 @@ PROPERTY,,STRING,,Name,,Layer.Name,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildLayerPattern,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..,,ChildModuleArray,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildGapMaterial,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,6,13,13,13,5,0,0,0,0,0
+,,Presets,,,,,,,,,,7,14,14,14,6,0,0,0,0,0
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Layer.Name,DataType=InputPins,ChildModuleArray,ChildGapMaterial,ChildLayerPattern,DataType=TG_Parent Node+CategoryPath,4LayeredAssembly --> Wall,4LayeredAssembly --> Floor,4LayeredAssembly --> Roof,4LayeredAssembly --> Ceiling,4LayeredAssembly --> Finish,4LayeredAssembly --> System Panel,4LayeredAssembly --> Countertop,4LayeredAssembly --> Layered Tread,4LayeredAssembly --> Layered Riser,4LayeredAssembly --> Landscape
 PRESET,,"3Layer1D --> Corrugated Deck --> Plastic
 2ModuleWDProfile --> Corrugated Plastic Sheet
@@ -81,20 +81,30 @@ PRESET,,"3Layer1D --> Furring --> Steel Z Channel
 PRESET,,"3Layer1D --> Furring --> Steel Z Channel
 2ModuleWDProfile --> Steel Z Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimWD-2inW-1.5inD
+0DimWD-2inW-1inD
 0Profile-Steel Z Channel
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
 0LayerPattern --> 1D-24inOC",,3Layer1D --> Furring --> Steel Z Channel,,3Layer1D-18,,"2ModuleWDProfile --> Steel Z Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimWD-2inW-1.5inD
+0DimWD-2inW-1inD
 0Profile-Steel Z Channel",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,X,X,X,X,X,,,,,
+PRESET,,"3Layer1D --> Furring --> Steel Z Channel
+2ModuleWDProfile --> Steel Z Channel
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+0DimWD-2inW-1.5inD
+0Profile-Steel Z Channel
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0LayerPattern --> 1D-16inOC",,3Layer1D --> Furring --> Steel Z Channel,,3Layer1D-19,,"2ModuleWDProfile --> Steel Z Channel
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+0DimWD-2inW-1.5inD
+0Profile-Steel Z Channel",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard,0LayerPattern --> 1D-16inOC,,X,X,X,X,X,,,,,
 PRESET,,"3Layer1D --> Furring --> Wood Strips
 2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimWD-0.75inW-1.5inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
-0LayerPattern --> 1D-16inOC",,3Layer1D --> Furring --> Wood Strips,,3Layer1D-19,,"2ModuleWDProfile --> Wood Lumber
+0LayerPattern --> 1D-16inOC",,3Layer1D --> Furring --> Wood Strips,,3Layer1D-20,,"2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimWD-0.75inW-1.5inD
 0Profile-Solid Rectangle",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard,0LayerPattern --> 1D-16inOC,,X,X,X,X,X,,,,,
@@ -104,7 +114,7 @@ PRESET,,"3Layer1D --> Furring --> Wood Strips
 0DimWD-0.75inW-2.5inD
 0Profile-Solid Rectangle
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Furring --> Wood Strips,,3Layer1D-20,,"2ModuleWDProfile --> Wood Lumber
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Furring --> Wood Strips,,3Layer1D-21,,"2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimWD-0.75inW-2.5inD
 0Profile-Solid Rectangle",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,X,X,X,X,,,,,,
@@ -114,7 +124,7 @@ PRESET,,"3Layer1D --> Joist --> Wood
 0DimWD-1.5inW-5.5inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
-0LayerPattern --> 1D-16inOC",,3Layer1D --> Joist --> Wood,,3Layer1D-21,,"2ModuleWDProfile --> Wood Lumber
+0LayerPattern --> 1D-16inOC",,3Layer1D --> Joist --> Wood,,3Layer1D-22,,"2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimWD-1.5inW-5.5inD
 0Profile-Solid Rectangle",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard,0LayerPattern --> 1D-16inOC,,,X,X,X,,,,,,
@@ -124,7 +134,7 @@ PRESET,,"3Layer1D --> Joist --> Wood
 0DimWD-1.5inW-7.25inD
 0Profile-Solid Rectangle
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Wood,,3Layer1D-22,,"2ModuleWDProfile --> Wood Lumber
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Wood,,3Layer1D-23,,"2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimWD-1.5inW-7.25inD
 0Profile-Solid Rectangle",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -134,7 +144,7 @@ PRESET,,"3Layer1D --> Joist --> Engineered Wood
 0DimWD-1.5inW-3.5inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
-0LayerPattern --> 1D-16inOC",,3Layer1D --> Joist --> Engineered Wood,,3Layer1D-23,,"2ModuleWDProfile --> Wood Lumber
+0LayerPattern --> 1D-16inOC",,3Layer1D --> Joist --> Engineered Wood,,3Layer1D-24,,"2ModuleWDProfile --> Wood Lumber
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimWD-1.5inW-3.5inD
 0Profile-Solid Rectangle",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard,0LayerPattern --> 1D-16inOC,,,X,X,X,,,,,,
@@ -144,7 +154,7 @@ PRESET,,"3Layer1D --> Joist --> Engineered Wood
 0DimWD-1.5inW-5.5inD
 0Profile-Solid Rectangle
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Engineered Wood,,3Layer1D-24,,"2ModuleWDProfile --> Wood Lumber
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Engineered Wood,,3Layer1D-25,,"2ModuleWDProfile --> Wood Lumber
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimWD-1.5inW-5.5inD
 0Profile-Solid Rectangle",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -152,20 +162,20 @@ PRESET,,"3Layer1D --> Joist --> Engineered Wood
 2ModuleWDProfile --> Wood Lumber
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimWD-1.5inW-7.25inD
-0Profile-Solid Rectangle
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Engineered Wood,,3Layer1D-25,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimWD-1.5inW-7.25inD
-0Profile-Solid Rectangle",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
-PRESET,,"3Layer1D --> Joist --> Engineered Wood
-2ModuleWDProfile --> Wood Lumber
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimWD-1.5inW-9.25inD
 0Profile-Solid Rectangle
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
 0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Engineered Wood,,3Layer1D-26,,"2ModuleWDProfile --> Wood Lumber
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimWD-1.5inW-7.25inD
+0Profile-Solid Rectangle",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
+PRESET,,"3Layer1D --> Joist --> Engineered Wood
+2ModuleWDProfile --> Wood Lumber
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimWD-1.5inW-9.25inD
+0Profile-Solid Rectangle
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Engineered Wood,,3Layer1D-27,,"2ModuleWDProfile --> Wood Lumber
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimWD-1.5inW-9.25inD
 0Profile-Solid Rectangle",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
 PRESET,,"3Layer1D --> Joist --> Engineered Wood
@@ -174,7 +184,7 @@ PRESET,,"3Layer1D --> Joist --> Engineered Wood
 0DimWD-1.5inW-5.5inD
 0Profile-Solid Rectangle
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Engineered Wood,,3Layer1D-27,,"2ModuleWDProfile --> Wood Lumber
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Engineered Wood,,3Layer1D-28,,"2ModuleWDProfile --> Wood Lumber
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimWD-1.5inW-5.5inD
 0Profile-Solid Rectangle",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -184,7 +194,7 @@ PRESET,,"3Layer1D --> Joist --> Wood Web Joist
 0DimWD-3.5inW-9.5inD
 0Profile-Wood Web Joist
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
-0LayerPattern --> 1D-16inOC",,3Layer1D --> Joist --> Wood Web Joist,,3Layer1D-28,,"2ModuleWDProfile --> Wood Web Joist
+0LayerPattern --> 1D-16inOC",,3Layer1D --> Joist --> Wood Web Joist,,3Layer1D-29,,"2ModuleWDProfile --> Wood Web Joist
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimWD-3.5inW-9.5inD
 0Profile-Wood Web Joist",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard,0LayerPattern --> 1D-16inOC,,,X,X,X,,,,,,
@@ -194,7 +204,7 @@ PRESET,,"3Layer1D --> Joist --> Wood Web Joist
 0DimWD-3.5inW-11.875inD
 0Profile-Wood Web Joist
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Wood Web Joist,,3Layer1D-29,,"2ModuleWDProfile --> Wood Web Joist
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Wood Web Joist,,3Layer1D-30,,"2ModuleWDProfile --> Wood Web Joist
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimWD-3.5inW-11.875inD
 0Profile-Wood Web Joist",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -204,7 +214,7 @@ PRESET,,"3Layer1D --> Joist --> Wood-Chord, Steel-Web Joist
 0DimWD-3.5inW-9.5inD
 0Profile-Wood-Chord Steel-Web Joist
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,"3Layer1D --> Joist --> Wood-Chord, Steel-Web Joist",,3Layer1D-30,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
+0LayerPattern --> 1D-24inOC",,"3Layer1D --> Joist --> Wood-Chord, Steel-Web Joist",,3Layer1D-31,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-3.5inW-9.5inD
 0Profile-Wood-Chord Steel-Web Joist",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -214,7 +224,7 @@ PRESET,,"3Layer1D --> Joist --> Wood-Chord, Steel-Web Joist
 0DimWD-3.5inW-11.875inD
 0Profile-Wood-Chord Steel-Web Joist
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,"3Layer1D --> Joist --> Wood-Chord, Steel-Web Joist",,3Layer1D-31,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
+0LayerPattern --> 1D-24inOC",,"3Layer1D --> Joist --> Wood-Chord, Steel-Web Joist",,3Layer1D-32,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-3.5inW-11.875inD
 0Profile-Wood-Chord Steel-Web Joist",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -224,7 +234,7 @@ PRESET,,"3Layer1D --> Joist --> Steel C-Joist
 0DimWD-1.625inW-1.625inD
 0Profile-Steel C-Stud
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-32,,"2ModuleWDProfile --> Steel C-Channel
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-33,,"2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.625inW-1.625inD
 0Profile-Steel C-Stud",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -234,7 +244,7 @@ PRESET,,"3Layer1D --> Joist --> Steel C-Joist
 0DimWD-1.625inW-2inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-33,,"2ModuleWDProfile --> Steel C-Channel
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-34,,"2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.625inW-2inD
 0Profile-Steel C-Stud",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -244,7 +254,7 @@ PRESET,,"3Layer1D --> Joist --> Steel C-Joist
 0DimWD-1.625inW-2.5inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-34,,"2ModuleWDProfile --> Steel C-Channel
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-35,,"2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.625inW-2.5inD
 0Profile-Steel C-Stud",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -254,7 +264,7 @@ PRESET,,"3Layer1D --> Joist --> Steel C-Joist
 0DimWD-1.625inW-3inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-35,,"2ModuleWDProfile --> Steel C-Channel
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-36,,"2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.625inW-3inD
 0Profile-Steel C-Stud",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -264,7 +274,7 @@ PRESET,,"3Layer1D --> Joist --> Steel C-Joist
 0DimWD-1.625inW-3.5inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-36,,"2ModuleWDProfile --> Steel C-Channel
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-37,,"2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.625inW-3.5inD
 0Profile-Steel C-Stud",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -274,7 +284,7 @@ PRESET,,"3Layer1D --> Joist --> Steel C-Joist
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-37,,"2ModuleWDProfile --> Steel C-Channel
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-38,,"2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -284,7 +294,7 @@ PRESET,,"3Layer1D --> Joist --> Steel C-Joist
 0DimWD-1.625inW-4inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-38,,"2ModuleWDProfile --> Steel C-Channel
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-39,,"2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.625inW-4inD
 0Profile-Steel C-Stud",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -294,7 +304,7 @@ PRESET,,"3Layer1D --> Joist --> Steel C-Joist
 0DimWD-1.625inW-5.5inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-39,,"2ModuleWDProfile --> Steel C-Channel
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-40,,"2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.625inW-5.5inD
 0Profile-Steel C-Stud",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -304,7 +314,7 @@ PRESET,,"3Layer1D --> Joist --> Steel C-Joist
 0DimWD-1.625inW-6inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-40,,"2ModuleWDProfile --> Steel C-Channel
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel C-Joist,,3Layer1D-41,,"2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.625inW-6inD
 0Profile-Steel C-Stud",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -314,7 +324,7 @@ PRESET,,"3Layer1D --> Joist --> Steel Web Joist
 0DimWD-3.5inW-9.5inD
 0Profile-Steel Web Joist
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
-0LayerPattern --> 1D-16inOC",,3Layer1D --> Joist --> Steel Web Joist,,3Layer1D-41,,"2ModuleWDProfile --> Steel Web Joist
+0LayerPattern --> 1D-16inOC",,3Layer1D --> Joist --> Steel Web Joist,,3Layer1D-42,,"2ModuleWDProfile --> Steel Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-3.5inW-9.5inD
 0Profile-Steel Web Joist",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard,0LayerPattern --> 1D-16inOC,,,X,X,X,,,,,,
@@ -324,7 +334,7 @@ PRESET,,"3Layer1D --> Joist --> Steel Web Joist
 0DimWD-3.5inW-9.5inD
 0Profile-Steel Web Joist
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel Web Joist,,3Layer1D-42,,"2ModuleWDProfile --> Steel Web Joist
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel Web Joist,,3Layer1D-43,,"2ModuleWDProfile --> Steel Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-3.5inW-9.5inD
 0Profile-Steel Web Joist",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -334,7 +344,7 @@ PRESET,,"3Layer1D --> Joist --> Steel Web Joist
 0DimWD-3.5inW-11.875inD
 0Profile-Steel Web Joist
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel Web Joist,,3Layer1D-43,,"2ModuleWDProfile --> Steel Web Joist
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Joist --> Steel Web Joist,,3Layer1D-44,,"2ModuleWDProfile --> Steel Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-3.5inW-11.875inD
 0Profile-Steel Web Joist",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,,X,X,X,,,,,,
@@ -364,7 +374,7 @@ PRESET,,"3Layer1D --> Stud --> Steel C-Channel
 0DimWD-1.625inW-1.625inD
 0Profile-Steel C-Stud
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
-0LayerPattern --> 1D-16inOC",,3Layer1D --> Stud --> Steel C-Channel,,3Layer1D-46,,"2ModuleWDProfile --> Steel C-Channel
+0LayerPattern --> 1D-16inOC",,3Layer1D --> Stud --> Steel C-Channel,,3Layer1D-47,,"2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.625inW-1.625inD
 0Profile-Steel C-Stud",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard,0LayerPattern --> 1D-16inOC,,X,,,,,,,,,
@@ -374,7 +384,7 @@ PRESET,,"3Layer1D --> Stud --> Steel C-Channel
 0DimWD-1.625inW-2inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Stud --> Steel C-Channel,,3Layer1D-47,,"2ModuleWDProfile --> Steel C-Channel
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Stud --> Steel C-Channel,,3Layer1D-48,,"2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.625inW-2inD
 0Profile-Steel C-Stud",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,X,,,,,,,,,
@@ -384,7 +394,7 @@ PRESET,,"3Layer1D --> Stud --> Steel C-Channel
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-16inOC",,3Layer1D --> Stud --> Steel C-Channel,,3Layer1D-48,,"2ModuleWDProfile --> Steel C-Channel
+0LayerPattern --> 1D-16inOC",,3Layer1D --> Stud --> Steel C-Channel,,3Layer1D-49,,"2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-16inOC,,X,,,,,,,,,
@@ -394,7 +404,7 @@ PRESET,,"3Layer1D --> Stud --> Steel C-H Channel
 0DimWD-1.5inW-2.5inD
 0Profile-Steel C-H Stud
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
-0LayerPattern --> 1D-16inOC",,3Layer1D --> Stud --> Steel C-H Channel,,3Layer1D-49,,"2ModuleWDProfile --> Steel C-H Channel
+0LayerPattern --> 1D-16inOC",,3Layer1D --> Stud --> Steel C-H Channel,,3Layer1D-50,,"2ModuleWDProfile --> Steel C-H Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.5inW-2.5inD
 0Profile-Steel C-H Stud",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard,0LayerPattern --> 1D-16inOC,,X,,,,,,,,,
@@ -404,7 +414,7 @@ PRESET,,"3Layer1D --> Stud --> Steel C-H Channel
 0DimWD-1.5inW-4inD
 0Profile-Steel C-H Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0LayerPattern --> 1D-24inOC",,3Layer1D --> Stud --> Steel C-H Channel,,3Layer1D-50,,"2ModuleWDProfile --> Steel C-H Channel
+0LayerPattern --> 1D-24inOC",,3Layer1D --> Stud --> Steel C-H Channel,,3Layer1D-51,,"2ModuleWDProfile --> Steel C-H Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWD-1.5inW-4inD
 0Profile-Steel C-H Stud",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0LayerPattern --> 1D-24inOC,,X,,,,,,,,,

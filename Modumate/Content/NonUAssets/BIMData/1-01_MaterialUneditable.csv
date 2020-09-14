@@ -1,0 +1,409 @@
+TYPENAME,,1Material,,Material,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,STRING,,Name,,Material.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Material Asset ID,,Material.AssetID,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PRIVATE,,Material Asset Path,,Material.AssetPath,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,80,0,68,68,80,0,0,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Material.Name,Material.AssetID,Material.AssetPath,DataType=TG_Parent Node+CategoryPath,2Layer0D --> Abstract,2Layer0D --> Mass --> CastInPlaceConcrete,2Layer0D --> Mass --> PrecastConcrete,2Layer0D --> Mass --> CrossLaminatedTimber,2Layer0D --> Mass --> RammedEarth,2Layer0D --> Membrane --> BitumenousFelt,2Layer0D --> Membrane --> TPO,2Layer0D --> Membrane --> PVC,2Layer0D --> Membrane --> PolyethyleneVaporBarrier,2Layer0D --> Membrane --> EPDMRubber,2Layer0D --> Membrane --> RubberizedAsphalt,2Layer0D --> Roll --> Batt,2Layer0D --> Roll --> Carpet,2Layer0D --> Roll --> Cork,2Layer0D --> Roll --> Felt,2Layer0D --> Roll --> Foam,2Layer0D --> Roll --> LathMetal,2Layer0D --> Roll --> PlasticAdhesive,2Layer0D --> Roll --> PlasticUnderlayment,2Layer0D --> Roll --> Wallpaper,2Layer0D --> Sitework --> Gravel,2Layer0D --> Sitework --> Grass,2Layer0D --> Sitework --> DecomposedGranite,2Layer0D --> Sitework --> GeotextileFabric,2Layer0D --> Sitework --> Sand,2Layer0D --> Sitework --> Soil,2Layer0D --> Spread --> Asphalt,2Layer0D --> Spread --> Plaster,2Layer0D --> Spread --> JointCompound,2Layer0D --> Spread --> Paint,2Layer0D --> Spread --> ThinsetCement,2Layer0D --> Spread --> MasticResin,2Layer0D --> Void --> Air,2ModuleWDProfile --> Corrugated Plastic Sheet,2ModuleWDProfile --> Corrugated Steel Deck,2ModuleWDProfile --> Steel C-Channel,2ModuleWDProfile --> Steel C-H Channel,2ModuleWDProfile --> Steel Hat Channel,2ModuleWDProfile --> Steel Web Joist,2ModuleWDProfile --> Steel Z Channel,2ModuleWDProfile --> Wood Lumber,2ModuleWDProfile --> Wood Web Joist,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",2ModuleLWH --> Clay Brick,2ModuleLWH --> Concrete Masonry Unit,2ModuleLWH --> Glass Block,2ModuleLWT --> Board/Panel --> Cement,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,2ModuleLWT --> Board/Panel --> Foam,2ModuleLWT --> Board/Panel --> Wood Fiber,2ModuleLWT --> Board/Panel --> Gypsum,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),2ModuleLWT --> Board/Panel --> Metal,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),2ModuleLWT --> Board/Panel --> Particle Board,2ModuleLWT --> Board/Panel --> Plywood,2ModuleLWT --> Plank --> Engineered Wood,2ModuleLWT --> Plank --> Wood,2ModuleLWT --> Tile --> Brick Veneer,2ModuleLWT --> Tile --> Carpet,2ModuleLWT --> Tile --> Clay,2ModuleLWT --> Tile --> Cork,2ModuleLWT --> Tile --> Glass,2ModuleLWT --> Tile --> Laminate,2ModuleLWT --> Tile --> Luxury Vinyl,2ModuleLWT --> Tile --> Porcelain,2ModuleLWT --> Tile --> Stone,2ModuleLWT --> Tile --> Vinyl Composite,2ModuleLWT --> Shingle --> Asphalt,2ModuleLWT --> Shingle --> Clay,2ModuleLWT --> Shingle --> Metal,2ModuleLWT --> Shingle --> Stone,2ModuleLWT --> Shingle --> Wood,2Gap2D --> Mortar Gaps,2Gap2D --> Grout Gaps,2ExtrudedProfile --> Beam/Column --> ConcreteRectangular,2ExtrudedProfile --> Beam/Column --> ConcreteRound,2ExtrudedProfile --> Beam/Column --> SteelC,2ExtrudedProfile --> Beam/Column --> SteelHSS,2ExtrudedProfile --> Beam/Column --> SteelL,2ExtrudedProfile --> Beam/Column --> SteelTube,2ExtrudedProfile --> Beam/Column --> SteelW,2ExtrudedProfile --> Beam/Column --> SteelWT,2ExtrudedProfile --> Beam/Column --> StoneRectangular,2ExtrudedProfile --> Beam/Column --> StoneRound,2ExtrudedProfile --> Beam/Column --> WoodRectangular,2ExtrudedProfile --> Beam/Column --> WoodRound,2Part --> Cabinet --> Hinge,2Part --> Cabinet --> Handle,2Part --> Cabinet --> Lock,2Part --> Cabinet --> Frame,2Part --> Cabinet --> Panel,2Part --> Door --> Bell,2Part --> Door --> Caster,2Part --> Door --> Closer,2Part --> Door --> Frame,2Part --> Door --> Handle,2Part --> Door --> Hinge,#REF!,2Part --> Door --> Knocker,2Part --> Door --> Lock,2Part --> Door --> MailSlot,2Part --> Door --> Panel,2Part --> Door --> Peephole,2Part --> Door --> ProtectionPlate,2Part --> Door --> Screen,2Part --> Door --> Track,2Part --> Window --> Handle,2Part --> Window --> Hinge,2Part --> Window --> Frame,2Part --> Window --> Lock,2Part --> Window --> Panel,2Part --> Window --> Screen,2Part --> Window --> Shutter,2Part --> FFE --> Appliance,2Part --> FFE --> Decoration,2Part --> FFE --> Faucet,2Part --> FFE --> Furniture,2Part --> FFE --> FurnitureSet,2Part --> FFE --> Light,2Part --> FFE --> Plant,2Part --> FFE --> PlugInAppliance,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Cotton
+Upholstery, Beige 1",,1Material --> Fabric and Upholstery --> Cotton,,"Upholstery, Beige 1","1Material
+1Material --> Fabric and Upholstery --> Cotton
+Upholstery, Beige 1",/Game/ShoppingData/Materials/_SharedMaterials/Fabric_Upholstry_Beige_01/Fabric_Upholstry_Beige_01.Fabric_Upholstry_Beige_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Cotton
+Upholstery, Beige 2",,1Material --> Fabric and Upholstery --> Cotton,,"Upholstery, Beige 2","1Material
+1Material --> Fabric and Upholstery --> Cotton
+Upholstery, Beige 2",/Game/ShoppingData/Materials/_SharedMaterials/Fabric_Upholstry_Beige_02/Fabric_Upholstry_Beige_02.Fabric_Upholstry_Beige_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Cotton
+Upholstery, Light Brown ",,1Material --> Fabric and Upholstery --> Cotton,,"Upholstery, Light Brown ","1Material
+1Material --> Fabric and Upholstery --> Cotton
+Upholstery, Light Brown ",/Game/ShoppingData/Materials/_SharedMaterials/Fabric_Upholstry_Brown_01/Fabric_Upholstry_Brown_01.Fabric_Upholstry_Brown_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Cotton
+Upholstery, Dark Brown",,1Material --> Fabric and Upholstery --> Cotton,,"Upholstery, Dark Brown","1Material
+1Material --> Fabric and Upholstery --> Cotton
+Upholstery, Dark Brown",/Game/ShoppingData/Materials/_SharedMaterials/Fabric_Upholstry_Brown_02/Fabric_Upholstry_Brown_02.Fabric_Upholstry_Brown_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Cotton
+Mesh Upholstery",,1Material --> Fabric and Upholstery --> Cotton,,Mesh Upholstery,"1Material
+1Material --> Fabric and Upholstery --> Cotton
+Mesh Upholstery",/Game/ShoppingData/Materials/_SharedMaterials/Fabric_Upholstry_Mesh_01/Fabric_Upholstry_Mesh_01.Fabric_Upholstry_Mesh_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Cotton
+Upholstery, White",,1Material --> Fabric and Upholstery --> Cotton,,"Upholstery, White","1Material
+1Material --> Fabric and Upholstery --> Cotton
+Upholstery, White",/Game/ShoppingData/Materials/_SharedMaterials/Fabric_Upholstry_White_01/Fabric_Upholstry_White_01.Fabric_Upholstry_White_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Cotton
+Coarse Black Woven Upholstery",,1Material --> Fabric and Upholstery --> Cotton,,Coarse Black Woven Upholstery,"1Material
+1Material --> Fabric and Upholstery --> Cotton
+Coarse Black Woven Upholstery",/Game/ShoppingData/Materials/_SharedMaterials/Fabric_Upholstry_Woven_01/Fabric_Upholstry_Woven_Black_01.Fabric_Upholstry_Woven_Black_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Cotton
+Fine Woven Upholstery, Grey",,1Material --> Fabric and Upholstery --> Cotton,,"Fine Woven Upholstery, Grey","1Material
+1Material --> Fabric and Upholstery --> Cotton
+Fine Woven Upholstery, Grey",/Game/ShoppingData/Materials/_SharedMaterials/Fabric_Upholstry_Woven_02/Fabric_Upholstry_Woven_02.Fabric_Upholstry_Woven_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Cotton
+Fine Woven Upholstery, Blue",,1Material --> Fabric and Upholstery --> Cotton,,"Fine Woven Upholstery, Blue","1Material
+1Material --> Fabric and Upholstery --> Cotton
+Fine Woven Upholstery, Blue",/Game/ShoppingData/Materials/_SharedMaterials/Fabric_Upholstry_Woven_02/Fabric_Upholstry_Woven_02_Blue.Fabric_Upholstry_Woven_02_Blue,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Felt
+Felt, Dark Gray",,1Material --> Fabric and Upholstery --> Felt,,"Felt, Dark Gray","1Material
+1Material --> Fabric and Upholstery --> Felt
+Felt, Dark Gray",/Game/ShoppingData/Materials/_SharedMaterials/Fabric_Upholstry_Felt_Gray_01_Inst.Fabric_Upholstry_Felt_Gray_01_Inst,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Felt
+Felt, Light Gray",,1Material --> Fabric and Upholstery --> Felt,,"Felt, Light Gray","1Material
+1Material --> Fabric and Upholstery --> Felt
+Felt, Light Gray",/Game/ShoppingData/Materials/_SharedMaterials/Fabric_Upholstry_Felt_Gray_02_Inst.Fabric_Upholstry_Felt_Gray_02_Inst,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Leather
+Shiny Leather, Blue",,1Material --> Fabric and Upholstery --> Leather,,"Shiny Leather, Blue","1Material
+1Material --> Fabric and Upholstery --> Leather
+Shiny Leather, Blue",/Game/ShoppingData/Materials/_SharedMaterials/Leather_Upholstry_Blue_01/Leather_Upholstry_Blue_01.Leather_Upholstry_Blue_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Leather
+Leather, Dark Brown 1",,1Material --> Fabric and Upholstery --> Leather,,"Leather, Dark Brown 1","1Material
+1Material --> Fabric and Upholstery --> Leather
+Leather, Dark Brown 1",/Game/ShoppingData/Materials/_SharedMaterials/Leather_Upholstry_Brown_01/Leather_Upholstry_Brown_01.Leather_Upholstry_Brown_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Leather
+Leather, Dark Brown 2",,1Material --> Fabric and Upholstery --> Leather,,"Leather, Dark Brown 2","1Material
+1Material --> Fabric and Upholstery --> Leather
+Leather, Dark Brown 2",/Game/ShoppingData/Materials/_SharedMaterials/Leather_Upholstry_Brown_02/Leather_Upholstry_Brown_02.Leather_Upholstry_Brown_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Leather
+Distressed Leather",,1Material --> Fabric and Upholstery --> Leather,,Distressed Leather,"1Material
+1Material --> Fabric and Upholstery --> Leather
+Distressed Leather",/Game/ShoppingData/Materials/_SharedMaterials/Leather_Upholstry_Distressed_01/Leather_Upholstry_Distressed_01.Leather_Upholstry_Distressed_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Leather
+Leather, Gray",,1Material --> Fabric and Upholstery --> Leather,,"Leather, Gray","1Material
+1Material --> Fabric and Upholstery --> Leather
+Leather, Gray",/Game/ShoppingData/Materials/_SharedMaterials/Leather_Upholstry_gray_01/Leather_Upholstry_Gray_01.Leather_Upholstry_Gray_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Leather
+Leather, Black",,1Material --> Fabric and Upholstery --> Leather,,"Leather, Black","1Material
+1Material --> Fabric and Upholstery --> Leather
+Leather, Black",/Game/ShoppingData/Materials/_SharedMaterials/Leather_Black_01.Leather_Black_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Leather
+Leather, Gray",,1Material --> Fabric and Upholstery --> Leather,,"Leather, Gray","1Material
+1Material --> Fabric and Upholstery --> Leather
+Leather, Gray",/Game/ShoppingData/Materials/_SharedMaterials/Leather_Gray_01.Leather_Gray_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Silk
+Woven Rope",,1Material --> Fabric and Upholstery --> Silk,,Woven Rope,"1Material
+1Material --> Fabric and Upholstery --> Silk
+Woven Rope",/Game/ShoppingData/Materials/_SharedMaterials/Rope_Woven_01/Rope_Woven_01.Rope_Woven_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Fabric and Upholstery --> Velvet
+Velvet, Grey",,1Material --> Fabric and Upholstery --> Velvet,,"Velvet, Grey","1Material
+1Material --> Fabric and Upholstery --> Velvet
+Velvet, Grey",/Game/ShoppingData/Materials/_SharedMaterials/Fabric-Velvet_Inst./Fabric-Velvet_Inst,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Ceramic --> Porcelain
+Ceramic",,1Material --> Ceramic --> Porcelain,,Ceramic,"1Material
+1Material --> Ceramic --> Porcelain
+Ceramic",/Game/ShoppingData/Materials/_SharedMaterials/Ceramic_White_01.Ceramic_White_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Ceramic --> Porcelain
+Textured Ceramic",,1Material --> Ceramic --> Porcelain,,Textured Ceramic,"1Material
+1Material --> Ceramic --> Porcelain
+Textured Ceramic",/Game/ShoppingData/Materials/_SharedMaterials/Ceramic_Textured_Beige_01/Ceramic_Textured_Beige01.Ceramic_Textured_Beige01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Glass and Transparent --> Glass
+Glass, Grey Tinted",,1Material --> Glass and Transparent --> Glass,,"Glass, Grey Tinted","1Material
+1Material --> Glass and Transparent --> Glass
+Glass, Grey Tinted",/Game/ShoppingData/Materials/_SharedMaterials/Glass_Transparent_Gray.Glass_Transparent_Gray,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Chrome
+Chrome Metal, Textured ",,1Material --> Metal --> Chrome,,"Chrome Metal, Textured ","1Material
+1Material --> Metal --> Chrome
+Chrome Metal, Textured ",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Chrome_Textured_01/Metal_Chrome_Textured_01.Metal_Chrome_Textured_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Chrome
+Chrome Metal, Textured Bronze 1",,1Material --> Metal --> Chrome,,"Chrome Metal, Textured Bronze 1","1Material
+1Material --> Metal --> Chrome
+Chrome Metal, Textured Bronze 1",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Chrome_Textured_01/Metal_Chrome_Bronze_Textured_02.Metal_Chrome_Bronze_Textured_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Chrome
+Chrome Metal, Textured Bronze 2",,1Material --> Metal --> Chrome,,"Chrome Metal, Textured Bronze 2","1Material
+1Material --> Metal --> Chrome
+Chrome Metal, Textured Bronze 2",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Chrome_Textured_02/Metal_Chrome_Bronze_Textured_03.Metal_Chrome_Bronze_Textured_03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Chrome
+Chrome Metal, Reflective",,1Material --> Metal --> Chrome,,"Chrome Metal, Reflective","1Material
+1Material --> Metal --> Chrome
+Chrome Metal, Reflective",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Chrome_01.Metal_Chrome_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Chrome
+Chrome Metal, Grey",,1Material --> Metal --> Chrome,,"Chrome Metal, Grey","1Material
+1Material --> Metal --> Chrome
+Chrome Metal, Grey",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Chrome_02.Metal_Chrome_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Chrome
+Polished Metal, Black",,1Material --> Metal --> Chrome,,"Polished Metal, Black","1Material
+1Material --> Metal --> Chrome
+Polished Metal, Black",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Chrome_Black_01.Metal_Chrome_Black_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Copper
+Satin Metal, Copper",,1Material --> Metal --> Copper,,"Satin Metal, Copper","1Material
+1Material --> Metal --> Copper
+Satin Metal, Copper",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Matte_Copper.Metal_Matte_Copper,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Gold
+Satin Metal, Gold",,1Material --> Metal --> Gold,,"Satin Metal, Gold","1Material
+1Material --> Metal --> Gold
+Satin Metal, Gold",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Matte_Gold_01.Metal_Matte_Gold_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Nickel
+Matte Metal",,1Material --> Metal --> Nickel,,Matte Metal,"1Material
+1Material --> Metal --> Nickel
+Matte Metal",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Matte_Textured_01/Metal_Matte_Textured_01.Metal_Matte_Textured_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Nickel
+Matte Metal, Black",,1Material --> Metal --> Nickel,,"Matte Metal, Black","1Material
+1Material --> Metal --> Nickel
+Matte Metal, Black",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Matte_Textured_01/Metal_Matte_Black_Textured_01.Metal_Matte_Black_Textured_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Nickel
+Matte Metal, Bronze",,1Material --> Metal --> Nickel,,"Matte Metal, Bronze","1Material
+1Material --> Metal --> Nickel
+Matte Metal, Bronze",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Matte_Textured_01/Metal_Matte_Bronze_Textured_02.Metal_Matte_Bronze_Textured_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Nickel
+Matte Metal, Gray 1",,1Material --> Metal --> Nickel,,"Matte Metal, Gray 1","1Material
+1Material --> Metal --> Nickel
+Matte Metal, Gray 1",/Game/ShoppingData/Materials/_SharedMaterials/Metal_ExtraMatte_Gray_02.Metal_ExtraMatte_Gray_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Nickel
+Matte Metal, Gray 2",,1Material --> Metal --> Nickel,,"Matte Metal, Gray 2","1Material
+1Material --> Metal --> Nickel
+Matte Metal, Gray 2",/Game/ShoppingData/Materials/_SharedMaterials/Metal_ExtraMatte_Gray_03.Metal_ExtraMatte_Gray_03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Nickel
+Matte Metal, White",,1Material --> Metal --> Nickel,,"Matte Metal, White","1Material
+1Material --> Metal --> Nickel
+Matte Metal, White",/Game/ShoppingData/Materials/_SharedMaterials/Metal_ExtraMatte_White_01.Metal_ExtraMatte_White_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Nickel
+Satin Metal, Grey 1",,1Material --> Metal --> Nickel,,"Satin Metal, Grey 1","1Material
+1Material --> Metal --> Nickel
+Satin Metal, Grey 1",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Matte_01.Metal_Matte_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Nickel
+Satin Metal, Black",,1Material --> Metal --> Nickel,,"Satin Metal, Black","1Material
+1Material --> Metal --> Nickel
+Satin Metal, Black",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Matte_Black_01.Metal_Matte_Black_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Nickel
+Satin Metal, Grey 1",,1Material --> Metal --> Nickel,,"Satin Metal, Grey 1","1Material
+1Material --> Metal --> Nickel
+Satin Metal, Grey 1",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Matte_Gray_01.Metal_Matte_Gray_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Nickel
+Satin Metal, Grey 2",,1Material --> Metal --> Nickel,,"Satin Metal, Grey 2","1Material
+1Material --> Metal --> Nickel
+Satin Metal, Grey 2",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Matte_Gray_02.Metal_Matte_Gray_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Nickel
+Satin Metal, Grey 3",,1Material --> Metal --> Nickel,,"Satin Metal, Grey 3","1Material
+1Material --> Metal --> Nickel
+Satin Metal, Grey 3",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Matte_Gray_03.Metal_Matte_Gray_03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Nickel
+Satin Metal, Two Sided",,1Material --> Metal --> Nickel,,"Satin Metal, Two Sided","1Material
+1Material --> Metal --> Nickel
+Satin Metal, Two Sided",/Game/ShoppingData/Materials/_SharedMaterials/Metal_Matte_Gray_03_2Sided.Metal_Matte_Gray_03_2Sided,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Metal --> Zinc
+Emissive Light",,1Material --> Metal --> Zinc,,Emissive Light,"1Material
+1Material --> Metal --> Zinc
+Emissive Light",/Game/ShoppingData/Materials/_SharedMaterials/MasterPBREmissive_Inst.MasterPBREmissive_Inst,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Spread --> Paint
+Paint, Glossy, Gray",,1Material --> Spread --> Paint,,"Paint, Glossy, Gray","1Material
+1Material --> Spread --> Paint
+Paint, Glossy, Gray",/Game/ShoppingData/Materials/_SharedMaterials/Paint_Glossy_Gray_03.Paint_Glossy_Gray_03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Spread --> Paint
+Paint, Glossy, Red",,1Material --> Spread --> Paint,,"Paint, Glossy, Red","1Material
+1Material --> Spread --> Paint
+Paint, Glossy, Red",/Game/ShoppingData/Materials/_SharedMaterials/Paint_Glossy_Red_01.Paint_Glossy_Red_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Spread --> Paint
+Paint, Glossy, White",,1Material --> Spread --> Paint,,"Paint, Glossy, White","1Material
+1Material --> Spread --> Paint
+Paint, Glossy, White",/Game/ShoppingData/Materials/_SharedMaterials/Paint_Glossy_White_01.Paint_Glossy_White_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Stone --> Limestone
+Limestone",,1Material --> Stone --> Limestone,,Limestone,"1Material
+1Material --> Stone --> Limestone
+Limestone",/Game/ShoppingData/Materials/_SharedMaterials/LinestoneWhite_Inst_Inst.LinestoneWhite_Inst_Inst,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Textured Plastic",,1Material --> Synthetic and Polymer --> Plastic,,Textured Plastic,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Textured Plastic",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Matte_Textured_01/Plastic_Matte_Textured_01.Plastic_Matte_Textured_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,X,X,,,,X,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, Black",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Glossy, Black","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, Black",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Glossy_Black_01.Plastic_Glossy_Black_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,X,X,,,,X,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, Gray 1",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Glossy, Gray 1","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, Gray 1",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Glossy_Gray_01.Plastic_Glossy_Gray_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,X,X,,,,X,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, Gray 2",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Glossy, Gray 2","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, Gray 2",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Glossy_Gray_02.Plastic_Glossy_Gray_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,X,X,,,,X,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, Gray 3",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Glossy, Gray 3","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, Gray 3",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Glossy_Gray_03.Plastic_Glossy_Gray_03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,X,X,,,,X,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, Orange",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Glossy, Orange","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, Orange",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Glossy_Orange_01.Plastic_Glossy_Orange_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,X,X,,,,X,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, Red",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Glossy, Red","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, Red",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Glossy_Red_01.Plastic_Glossy_Red_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,X,X,,,,X,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, White",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Glossy, White","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Glossy, White",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Glossy_White.Plastic_Glossy_White,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,X,X,X,,,,X,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Matte, Black",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Matte, Black","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Matte, Black",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Matte_Black_01.Plastic_Matte_Black_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Matte, Gray",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Matte, Gray","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Matte, Gray",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Matte_Gray_01.Plastic_Matte_Gray_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Matte, Green",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Matte, Green","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Matte, Green",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Matte_Green_01.Plastic_Matte_Green_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Matte, Red",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Matte, Red","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Matte, Red",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Matte_Red.Plastic_Matte_Red,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Matte, White",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Matte, White","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Matte, White",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Matte_White.Plastic_Matte_White,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Matte, Yellow",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Matte, Yellow","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Matte, Yellow",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Matte_Yellow_01.Plastic_Matte_Yellow_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Transparent",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Transparent","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Transparent",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Transparent.Plastic_Transparent,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Transparent, Gray",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Transparent, Gray","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Transparent, Gray",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Transparent_Gray.Plastic_Transparent_Gray,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Transparent, Orange",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Transparent, Orange","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Transparent, Orange",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Transparent_Orange_01.Plastic_Transparent_Orange_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Transparent, Red",,1Material --> Synthetic and Polymer --> Plastic,,"Plastic, Transparent, Red","1Material
+1Material --> Synthetic and Polymer --> Plastic
+Plastic, Transparent, Red",/Game/ShoppingData/Materials/_SharedMaterials/Plastic_Transparent_Red.Plastic_Transparent_Red,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Maple
+Dark Wood 1",,1Material --> Wood --> Maple,,Dark Wood 1,"1Material
+1Material --> Wood --> Maple
+Dark Wood 1",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Dark_01/Wood_Dark_01.Wood_Dark_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Maple
+Dark Wood 2",,1Material --> Wood --> Maple,,Dark Wood 2,"1Material
+1Material --> Wood --> Maple
+Dark Wood 2",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Dark_02/Wood_Dark_02.Wood_Dark_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Maple
+Dark Wood 3",,1Material --> Wood --> Maple,,Dark Wood 3,"1Material
+1Material --> Wood --> Maple
+Dark Wood 3",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Dark_03/Wood_Dark_03.Wood_Dark_03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Maple
+Dark Wood 4",,1Material --> Wood --> Maple,,Dark Wood 4,"1Material
+1Material --> Wood --> Maple
+Dark Wood 4",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Dark_04/Wood_Dark_04.Wood_Dark_04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Oak - White
+Distressed Wood",,1Material --> Wood --> Oak - White,,Distressed Wood,"1Material
+1Material --> Wood --> Oak - White
+Distressed Wood",/Game/ShoppingData/Materials/_SharedMaterials/Wood_DIstressed_01/Wood_Distressed_01.Wood_Distressed_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Oak - White
+Distressed Wood, Grey",,1Material --> Wood --> Oak - White,,"Distressed Wood, Grey","1Material
+1Material --> Wood --> Oak - White
+Distressed Wood, Grey",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Distressed_02/Wood_Distressed_02.Wood_Distressed_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Oak - White
+Gray Wood, Dark",,1Material --> Wood --> Oak - White,,"Gray Wood, Dark","1Material
+1Material --> Wood --> Oak - White
+Gray Wood, Dark",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Gray_01/Wood_Gray_01.Wood_Gray_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Oak - White
+Gray Wood, Light",,1Material --> Wood --> Oak - White,,"Gray Wood, Light","1Material
+1Material --> Wood --> Oak - White
+Gray Wood, Light",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Gray_01/Wood_Gray_01_Inst_Light.Wood_Gray_01_Inst_Light,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Oak - White
+Oak Veneer, Light",,1Material --> Wood --> Oak - White,,"Oak Veneer, Light","1Material
+1Material --> Wood --> Oak - White
+Oak Veneer, Light",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Light_01/Wood_Light_01.Wood_Light_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Oak - White
+Oak Veneer, Dark",,1Material --> Wood --> Oak - White,,"Oak Veneer, Dark","1Material
+1Material --> Wood --> Oak - White
+Oak Veneer, Dark",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Light_01/Wood_Light_01_Inst.Wood_Light_01_Inst,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Oak - White
+Wood Veneer Strips 1",,1Material --> Wood --> Oak - White,,Wood Veneer Strips 1,"1Material
+1Material --> Wood --> Oak - White
+Wood Veneer Strips 1",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Veneer_01/Wood_Veneer_01.Wood_Veneer_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Oak - White
+Wood Veneer Strips 2",,1Material --> Wood --> Oak - White,,Wood Veneer Strips 2,"1Material
+1Material --> Wood --> Oak - White
+Wood Veneer Strips 2",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Veneer_02/Wood_Veneer_02.Wood_Veneer_02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Oak - White
+Wood Veneer Strips 3",,1Material --> Wood --> Oak - White,,Wood Veneer Strips 3,"1Material
+1Material --> Wood --> Oak - White
+Wood Veneer Strips 3",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Veneer_03/Wood_Veneer_03.Wood_Veneer_03,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+PRESET,,"1Material
+1Material --> Wood --> Walnut
+Dark Walnut",,1Material --> Wood --> Walnut,,Dark Walnut,"1Material
+1Material --> Wood --> Walnut
+Dark Walnut",/Game/ShoppingData/Materials/_SharedMaterials/Wood_Walnut_01/Wood_Walnut_01.Wood_Walnut_01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,X,X,X,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

@@ -1,0 +1,147 @@
+TYPENAME,,5Stair,,Layer,,,,,,
+,,Definition,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,
+PROPERTY,,STRING,,Name,,Preset.Name,,,,
+,,InputExtensibility,,InputPreset,,,,,,
+INPUTPIN,,1..1,,ChildTread,,,,,,
+INPUTPIN,,1..1,,ChildRiser,,,,,,
+INPUTPIN,,1..,,ChildStringerArray,,,,,,
+,,Presets,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,DataType=InputPins,ChildTread,ChildRiser,ChildStringerArray
+PRESET,,"5Stair
+4LayeredAssembly --> Layered Tread
+3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
+2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-SoldierBond
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-SoldierBond
+4LayeredAssembly --> Layered Riser
+3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
+2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-SoldierBond
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-SoldierBond",,5Stair,,5Stair-11,,"4LayeredAssembly --> Layered Tread
+3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
+2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-SoldierBond
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-SoldierBond","4LayeredAssembly --> Layered Riser
+3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
+2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-SoldierBond
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-SoldierBond","2ExtrudedProfile --> Stringer
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+0DimWDT --> HSS-7inW-7inD-0.233inT
+0Profile-Hollow Structural Section, HSS"
+PRESET,,"5Stair
+4LayeredAssembly --> Layered Tread
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-SoldierBond
+4LayeredAssembly --> Layered Riser
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-SoldierBond",,5Stair,,5Stair-12,,"4LayeredAssembly --> Layered Tread
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-SoldierBond","4LayeredAssembly --> Layered Riser
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-SoldierBond","2ExtrudedProfile --> Stringer
+1Material --> Metal --> Tin-0RawMaterial-Tin-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+0DimWDT --> HSS-3inW-7inD-0.465inT
+0Profile-Hollow Structural Section, HSS"
+PRESET,,,,,,,,,,"2ExtrudedProfile --> Stringer
+1Material --> Metal --> Tin-0RawMaterial-Tin-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+0DimWDT --> HSS-3inW-7inD-0.465inT
+0Profile-Hollow Structural Section, HSS"
+,,,,,,,,,,

@@ -674,5 +674,20 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> WoodRound
 1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimDi-48in
 0Profile-Tube Steel",,2ExtrudedProfile --> Beam/Column --> WoodRound,,2ExtrudedProfile178,,,,1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimDi-48in,0Profile-Tube Steel
-,,,,2ExtrudedProfile --> Trim --> FloorMoulding,,,,,,,,
+PRESET,,"2ExtrudedProfile --> Stringer
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+0DimWDT --> HSS-7inW-7inD-0.233inT
+0Profile-Hollow Structural Section, HSS",,2ExtrudedProfile --> Stringer,,Stringer,,,X,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWDT --> HSS-7inW-7inD-0.233inT,"0Profile-Hollow Structural Section, HSS"
+PRESET,,"2ExtrudedProfile --> Stringer
+1Material --> Metal --> Tin-0RawMaterial-Tin-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+0DimWDT --> HSS-3inW-7inD-0.465inT
+0Profile-Hollow Structural Section, HSS",,2ExtrudedProfile --> Stringer,,Stringer,,,X,1Material --> Metal --> Tin-0RawMaterial-Tin-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWDT --> HSS-3inW-7inD-0.465inT,"0Profile-Hollow Structural Section, HSS"
+PRESET,,"2ExtrudedProfile --> Trim --> FloorMoulding
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite-0SrfTreatment-Buff Polished
+0DimWDT --> HSS-3inW-7inD-0.349inT
+='0-04_Profile'!C36",,2ExtrudedProfile --> Trim --> FloorMoulding,,Wall Base,,,X,1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite-0SrfTreatment-Buff Polished,0DimWDT --> HSS-3inW-7inD-0.349inT,='0-04_Profile'!C36
+PRESET,,"2ExtrudedProfile --> Trim --> FloorMoulding
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite-0SrfTreatment-Buff Polished
+0DimWDT --> HSS-3inW-7inD-0.291inT
+='0-04_Profile'!C37",,2ExtrudedProfile --> Trim --> FloorMoulding,,Wall Base,,,X,1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite-0SrfTreatment-Buff Polished,0DimWDT --> HSS-3inW-7inD-0.291inT,='0-04_Profile'!C37
 ,,,,,,,,,,,,

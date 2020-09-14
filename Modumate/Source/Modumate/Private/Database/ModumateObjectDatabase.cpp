@@ -376,7 +376,8 @@ void FModumateDatabase::ReadPresetData()
 	{
 		const FBIMPreset *preset = PresetManager.CraftingNodePresets.Presets.Find(starter);
 
-		if (!ensureAlways(preset != nullptr && preset->ObjectType != EObjectType::OTNone))
+		// TODO: "starter" presets currently only refer to complete assemblies, will eventually include presets to be shopped from the marketplace
+		if (ensureAlways(preset != nullptr) && preset->ObjectType == EObjectType::OTNone)
 		{
 			continue;
 		}

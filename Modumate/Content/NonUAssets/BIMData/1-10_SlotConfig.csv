@@ -6,39 +6,54 @@ PROPERTY,,STRING,,Name,,SlotConfig.Name,,,,,,,
 INPUTPIN,,1..,,ChildSlotArray,,,,,,,,,
 ,,Presets,,,,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath,DataType=Properties,SlotConfig.Name,DataType=InputPins,ChildSlotArray,,,
+PRESET,,"1SlotConfig --> Cabinet --> Swing --> Frame
+0Slot-CabinetFrameSwing
+0Slot-CabinetPanelAssemblyFramed",,1SlotConfig --> Cabinet --> Swing --> Frame,,2Part --> Cabinet --> Frame,,Framed Swing Cabinet Face,,0Slot-CabinetFrameSwing,,,
+PRESET,,,,,,,,,,0Slot-CabinetPanelAssemblyFramed,,,
+PRESET,,"1SlotConfig --> Cabinet --> Swing --> Frame
+0Slot-CabinetFrameSwing
+0Slot-CabinetPanelAssemblyFrameless",,1SlotConfig --> Cabinet --> Swing --> Frame,,2Part --> Cabinet --> Frame,,Frameless Swing Cabinet Face,,0Slot-CabinetFrameSwing,,,
+PRESET,,,,,,,,,,0Slot-CabinetPanelAssemblyFrameless,,,
+PRESET,,"1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetHandleSwingMidStileTop
+0Slot-CabinetHandleSwingMidStileMid
+0Slot-CabinetHandleSwingMidStileBottom",,1SlotConfig --> Cabinet --> Swing --> Panel,,2Part --> Cabinet --> Panel,,Cabinet Panel,,0Slot-CabinetPanelPart,,,
+PRESET,,,,,,,,,,0Slot-CabinetHandleSwingMidStileTop,,,
+PRESET,,,,,,,,,,0Slot-CabinetHandleSwingMidStileMid,,,
+PRESET,,,,,,,,,,0Slot-CabinetHandleSwingMidStileBottom,,,
 PRESET,,"1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
 0Slot-DoorHingeLeftMiddle
 0Slot-DoorHingeLeftBottom
-0Slot-DoorPanelLeft",,1SlotConfig --> Door --> Swing --> Frame,,2Part --> Door --> Frame --> Swing --> Interior,,2-Hinge Single Swing Door,,0Slot-DoorFrameSwing,,,
+0Slot-DoorPanelAssemblyInterior",,1SlotConfig --> Door --> Swing --> Frame,,2Part --> Door --> Frame --> Swing --> Interior,,2-Hinge Single Swing Door,,0Slot-DoorFrameSwing,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeLeftMiddle,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeLeftBottom,,,
-PRESET,,,,,,,,,,0Slot-DoorPanelLeft,,,
-,,"1SlotConfig --> Door --> Swing --> Frame
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyInterior,,,
+PRESET,,"1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
 0Slot-DoorHingeLeftTop
 0Slot-DoorHingeLeftMiddle
 0Slot-DoorHingeLeftBottom
-0Slot-DoorPanelLeft",,1SlotConfig --> Door --> Swing --> Frame,,2Part --> Door --> Frame --> Swing --> Interior,,3-Hinge Swing Single Door,,0Slot-DoorFrameSwing,,,
-,,,,,,,,,,0Slot-DoorHingeLeftTop,,,
-,,,,,,,,,,0Slot-DoorHingeLeftMiddle,,,
-,,,,,,,,,,0Slot-DoorHingeLeftBottom,,,
-,,,,,,,,,,0Slot-DoorPanelLeft,,,
-,,"1SlotConfig --> Door --> Swing --> Frame
+0Slot-DoorPanelAssemblyInterior",,1SlotConfig --> Door --> Swing --> Frame,,2Part --> Door --> Frame --> Swing --> Interior,,3-Hinge Swing Single Door,,0Slot-DoorFrameSwing,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeLeftTop,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeLeftMiddle,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeLeftBottom,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyInterior,,,
+PRESET,,"1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
 0Slot-DoorHingeLeftTop
 0Slot-DoorHingeLeftBottom
 0Slot-DoorHingeRightTop
 0Slot-DoorHingeRightBottom
-0Slot-DoorPanelLeft
-0Slot-DoorPanelRight",,1SlotConfig --> Door --> Swing --> Frame,,2Part --> Door --> Frame --> Swing --> Interior,,2-Hinge Double Swing Door,,0Slot-DoorFrameSwing,,,
-,,,,,,,,,,0Slot-DoorHingeLeftTop,,,
-,,,,,,,,,,0Slot-DoorHingeLeftBottom,,,
-,,,,,,,,,,0Slot-DoorHingeRightTop,,,
-,,,,,,,,,,0Slot-DoorHingeRightBottom,,,
-,,,,,,,,,,0Slot-DoorPanelLeft,,,
-,,,,,,,,,,0Slot-DoorPanelRight,,,
-,,"1SlotConfig --> Door --> Swing --> Frame
+0Slot-DoorPanelAssemblyInteriorLeft
+0Slot-DoorPanelAssemblyInteriorRight",,1SlotConfig --> Door --> Swing --> Frame,,2Part --> Door --> Frame --> Swing --> Interior,,2-Hinge Swing Double Door,,0Slot-DoorFrameSwing,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeLeftTop,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeLeftBottom,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeRightTop,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeRightBottom,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyInteriorLeft,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyInteriorRight,,,
+PRESET,,"1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
 0Slot-DoorHingeLeftTop
 0Slot-DoorHingeLeftMiddle
@@ -46,18 +61,18 @@ PRESET,,,,,,,,,,0Slot-DoorPanelLeft,,,
 0Slot-DoorHingeRightTop
 0Slot-DoorHingeRightMiddle
 0Slot-DoorHingeRightBottom
-0Slot-DoorPanelLeft
-0Slot-DoorPanelRight",,1SlotConfig --> Door --> Swing --> Frame,,2Part --> Door --> Frame --> Swing --> Interior,,3-Hinge Double Single Door,,0Slot-DoorFrameSwing,,,
-,,,,,,,,,,0Slot-DoorHingeLeftTop,,,
-,,,,,,,,,,0Slot-DoorHingeLeftMiddle,,,
-,,,,,,,,,,0Slot-DoorHingeLeftBottom,,,
-,,,,,,,,,,0Slot-DoorHingeRightTop,,,
-,,,,,,,,,,0Slot-DoorHingeRightMiddle,,,
-,,,,,,,,,,0Slot-DoorHingeRightBottom,,,
-,,,,,,,,,,0Slot-DoorPanelLeft,,,
-,,,,,,,,,,0Slot-DoorPanelRight,,,
-,,"1SlotConfig --> Door --> Swing --> Panel
-0Slot-DoorPanel
+0Slot-DoorPanelAssemblyInteriorLeft
+0Slot-DoorPanelAssemblyInteriorRight",,1SlotConfig --> Door --> Swing --> Frame,,2Part --> Door --> Frame --> Swing --> Interior,,3-Hinge Swing Double Door,,0Slot-DoorFrameSwing,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeLeftTop,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeLeftMiddle,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeLeftBottom,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeRightTop,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeRightMiddle,,,
+PRESET,,,,,,,,,,0Slot-DoorHingeRightBottom,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyInteriorLeft,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyInteriorRight,,,
+PRESET,,"1SlotConfig --> Door --> Swing --> Panel
+0Slot-DoorPanelPart
 0Slot-DoorHandleExterior
 0Slot-DoorHandleInterior
 0Slot-DoorDeadbolt
@@ -66,23 +81,23 @@ PRESET,,,,,,,,,,0Slot-DoorPanelLeft,,,
 0Slot-DoorPeepholeRegular
 0Slot-DoorPeeholeADA
 0Slot-DoorKnocker
-0Slot-MailSlot",,1SlotConfig --> Door --> Swing --> Panel,,2Part --> Door --> Panel --> Swing,,Solid Swing Panel,,0Slot-DoorPanel,,,
-,,,,,,,,,,0Slot-DoorHandleExterior,,,
-,,,,,,,,,,0Slot-DoorHandleInterior,,,
-,,,,,,,,,,0Slot-DoorDeadbolt,,,
-,,,,,,,,,,0Slot-DoorSurfaceLockUpper,,,
-,,,,,,,,,,0Slot-DoorSurfaceLockLower,,,
-,,,,,,,,,,0Slot-DoorPeepholeRegular,,,
-,,,,,,,,,,0Slot-DoorPeeholeADA,,,
-,,,,,,,,,,0Slot-DoorKnocker,,,
-,,,,,,,,,,0Slot-MailSlot,,,
+0Slot-DoorMailSlot",,1SlotConfig --> Door --> Swing --> Panel,,2Part --> Door --> Panel --> Swing,,Solid Swing Panel,,0Slot-DoorPanelPart,,,
+PRESET,,,,,,,,,,0Slot-DoorHandleExterior,,,
+PRESET,,,,,,,,,,0Slot-DoorHandleInterior,,,
+PRESET,,,,,,,,,,0Slot-DoorDeadbolt,,,
+PRESET,,,,,,,,,,0Slot-DoorSurfaceLockUpper,,,
+PRESET,,,,,,,,,,0Slot-DoorSurfaceLockLower,,,
+PRESET,,,,,,,,,,0Slot-DoorPeepholeRegular,,,
+PRESET,,,,,,,,,,0Slot-DoorPeeholeADA,,,
+PRESET,,,,,,,,,,0Slot-DoorKnocker,,,
+PRESET,,,,,,,,,,0Slot-DoorMailSlot,,,
 PRESET,,"1SlotConfig --> Door --> Swing --> Panel
-0Slot-DoorPanel
+0Slot-DoorPanelPart
 0Slot-DoorHandleExterior
 0Slot-DoorHandleInterior
 0Slot-DoorDeadbolt
 0Slot-DoorSurfaceLockUpper
-0Slot-DoorSurfaceLockLower",,1SlotConfig --> Door --> Swing --> Panel,,2Part --> Door --> Panel --> Swing,,Mostly-Glass Swing,,0Slot-DoorPanel,,,
+0Slot-DoorSurfaceLockLower",,1SlotConfig --> Door --> Swing --> Panel,,2Part --> Door --> Panel --> Swing,,Mostly-Glass Swing,,0Slot-DoorPanelPart,,,
 PRESET,,,,,,,,,,0Slot-DoorHandleExterior,,,
 PRESET,,,,,,,,,,0Slot-DoorHandleInterior,,,
 PRESET,,,,,,,,,,0Slot-DoorDeadbolt,,,
@@ -108,7 +123,7 @@ PRESET,,,,,,,,,,0Slot-ChairAtTable0+2+2+0-1,,,
 PRESET,,,,,,,,,,0Slot-ChairAtTable0+2+2+0-2,,,
 PRESET,,,,,,,,,,0Slot-ChairAtTable0+2+2+0-3,,,
 PRESET,,,,,,,,,,0Slot-ChairAtTable0+2+2+0-4,,,
-,,"1SlotConfig --> FFE --> TableAndChairs
+PRESET,,"1SlotConfig --> FFE --> TableAndChairs
 0Slot-TableInTableAndChairs
 0Slot-ChairAtTable1+2+2+1-1
 0Slot-ChairAtTable1+2+2+1-2
@@ -116,9 +131,9 @@ PRESET,,,,,,,,,,0Slot-ChairAtTable0+2+2+0-4,,,
 0Slot-ChairAtTable1+2+2+1-4
 0Slot-ChairAtTable1+2+2+1-5
 0Slot-ChairAtTable1+2+2+1-6",,1SlotConfig --> FFE --> TableAndChairs,,2Part --> FFE --> Furniture --> Table --> Dining,,6 Chairs (1 + 2 + 2 + 1),,0Slot-TableInTableAndChairs,,,
-,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-1,,,
-,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-2,,,
-,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-3,,,
-,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-4,,,
-,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-5,,,
-,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-6,,,
+PRESET,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-1,,,
+PRESET,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-2,,,
+PRESET,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-3,,,
+PRESET,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-4,,,
+PRESET,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-5,,,
+PRESET,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-6,,,

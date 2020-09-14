@@ -27,222 +27,230 @@ PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
 PRESET,,"2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-1inT",,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT-15,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-1inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT-15,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-2inT",,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT-16,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-2inT,,3Layer2D
+0DimThk-1inT",,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT-16,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-1inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-3inT",,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT-17,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-3inT,,3Layer2D
+0DimThk-1.5inT",,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT-17,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-1.5inT,,3Layer2D
+PRESET,,"2ModuleLWT --> Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-2inT",,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT-18,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-2inT,,3Layer2D
+PRESET,,"2ModuleLWT --> Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
+0DimLW-96inL-48inW
+0DimThk-3inT",,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT-19,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-3inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-3inT",,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT-18,,1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-3inT,,3Layer2D
+0DimThk-3inT",,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT-20,,1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-3inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-3inT",,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT-19,,1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-3inT,,3Layer2D
+0DimThk-3inT",,2ModuleLWT --> Board/Panel --> Foam,,2ModuleLWT-21,,1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-3inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Wood Fiber
 1Material --> Fibrous --> Wood Fibers-0RawMaterial-Wood Fibers-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-1.5625inT",,2ModuleLWT --> Board/Panel --> Wood Fiber,,2ModuleLWT-20,,1Material --> Fibrous --> Wood Fibers-0RawMaterial-Wood Fibers-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-1.5625inT,,3Layer2D
+0DimThk-1.5625inT",,2ModuleLWT --> Board/Panel --> Wood Fiber,,2ModuleLWT-22,,1Material --> Fibrous --> Wood Fibers-0RawMaterial-Wood Fibers-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-1.5625inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Wood Fiber
 1Material --> Fibrous --> Wood Fibers-0RawMaterial-Wood Fibers-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-2.375inT",,2ModuleLWT --> Board/Panel --> Wood Fiber,,2ModuleLWT-21,,1Material --> Fibrous --> Wood Fibers-0RawMaterial-Wood Fibers-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-2.375inT,,3Layer2D
+0DimThk-2.375inT",,2ModuleLWT --> Board/Panel --> Wood Fiber,,2ModuleLWT-23,,1Material --> Fibrous --> Wood Fibers-0RawMaterial-Wood Fibers-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-2.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-0.5inT",,2ModuleLWT --> Board/Panel --> Gypsum,,2ModuleLWT-22,,1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Board/Panel --> Gypsum,,2ModuleLWT-24,,1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-0.625inT",,2ModuleLWT --> Board/Panel --> Gypsum,,2ModuleLWT-23,,1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.625inT,,3Layer2D
+0DimThk-0.625inT",,2ModuleLWT --> Board/Panel --> Gypsum,,2ModuleLWT-25,,1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.625inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard)
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-0.5inT",,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),,2ModuleLWT-24,,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),,2ModuleLWT-26,,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard)
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-0.75inT",,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),,2ModuleLWT-25,,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),,2ModuleLWT-27,,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimLW-12inL-12inW
-0DimThk-0.5inT",,2ModuleLWT --> Board/Panel --> Metal,,2ModuleLWT-26,,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Board/Panel --> Metal,,2ModuleLWT-28,,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimLW-16inL-12inW
-0DimThk-0.75inT",,2ModuleLWT --> Board/Panel --> Metal,,2ModuleLWT-27,,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimLW-16inL-12inW,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Board/Panel --> Metal,,2ModuleLWT-29,,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimLW-16inL-12inW,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-0.375inT",,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),,2ModuleLWT-28,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),,2ModuleLWT-30,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-0.4375inT",,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),,2ModuleLWT-29,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.4375inT,,3Layer2D
+0DimThk-0.4375inT",,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),,2ModuleLWT-31,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.4375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Particle Board
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-0.375inT",,2ModuleLWT --> Board/Panel --> Particle Board,,2ModuleLWT-30,,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Board/Panel --> Particle Board,,2ModuleLWT-32,,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Particle Board
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-0.5inT",,2ModuleLWT --> Board/Panel --> Particle Board,,2ModuleLWT-31,,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Board/Panel --> Particle Board,,2ModuleLWT-33,,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-0.34375inT",,2ModuleLWT --> Board/Panel --> Plywood,,2ModuleLWT-32,,1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.34375inT,,3Layer2D
+0DimThk-0.34375inT",,2ModuleLWT --> Board/Panel --> Plywood,,2ModuleLWT-34,,1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.34375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-96inL-48inW
-0DimThk-0.46875inT",,2ModuleLWT --> Board/Panel --> Plywood,,2ModuleLWT-33,,1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.46875inT,,3Layer2D
+0DimThk-0.46875inT",,2ModuleLWT --> Board/Panel --> Plywood,,2ModuleLWT-35,,1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-96inL-48inW,0DimThk-0.46875inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-32inL-5inW
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,2ModuleLWT-34,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-32inL-5inW,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,2ModuleLWT-36,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-32inL-5inW,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-48inL-5inW
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,2ModuleLWT-35,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-48inL-5inW,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,2ModuleLWT-37,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-48inL-5inW,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimLW-32inL-5inW
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,2ModuleLWT-36,,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimLW-32inL-5inW,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,2ModuleLWT-38,,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimLW-32inL-5inW,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimLW-48inL-5inW
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,2ModuleLWT-37,,1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimLW-48inL-5inW,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,2ModuleLWT-39,,1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimLW-48inL-5inW,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Acoustic Ceiling Tile
 1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-24inL-24inW
-0DimThk-0.5inT",,2ModuleLWT --> Tile --> Acoustic Ceiling Tile,,2ModuleLWT-38,,1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White-0SrfTreatment-Standard,0DimLW-24inL-24inW,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Tile --> Acoustic Ceiling Tile,,2ModuleLWT-40,,1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White-0SrfTreatment-Standard,0DimLW-24inL-24inW,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Acoustic Ceiling Tile
 1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-48inL-24inW
-0DimThk-0.75inT",,2ModuleLWT --> Tile --> Acoustic Ceiling Tile,,2ModuleLWT-39,,1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White-0SrfTreatment-Standard,0DimLW-48inL-24inW,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Tile --> Acoustic Ceiling Tile,,2ModuleLWT-41,,1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White-0SrfTreatment-Standard,0DimLW-48inL-24inW,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
 0DimLW-15.625inL-3.625inW
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Brick Veneer,,2ModuleLWT-40,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard,0DimLW-15.625inL-3.625inW,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Brick Veneer,,2ModuleLWT-42,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard,0DimLW-15.625inL-3.625inW,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
 0DimLW-7.625inL-7.625inW
-0DimThk-0.5inT",,2ModuleLWT --> Tile --> Brick Veneer,,2ModuleLWT-41,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLW-7.625inL-7.625inW,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Tile --> Brick Veneer,,2ModuleLWT-43,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLW-7.625inL-7.625inW,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Carpet
 1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White-0SrfTreatment-Standard
 0DimLW-12inL-12inW
-0DimThk-0.125inT",,2ModuleLWT --> Tile --> Carpet,,2ModuleLWT-42,,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.125inT,,3Layer2D
+0DimThk-0.125inT",,2ModuleLWT --> Tile --> Carpet,,2ModuleLWT-44,,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.125inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Carpet
 1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-D0C6BD-Cream1-0SrfTreatment-Standard
 0DimLW-18inL-12inW
-0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Carpet,,2ModuleLWT-43,,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-D0C6BD-Cream1-0SrfTreatment-Standard,0DimLW-18inL-12inW,0DimThk-0.1875inT,,3Layer2D
+0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Carpet,,2ModuleLWT-45,,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-D0C6BD-Cream1-0SrfTreatment-Standard,0DimLW-18inL-12inW,0DimThk-0.1875inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Clay
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
 0DimLW-3inL-3inW
-0DimThk-0.125inT",,2ModuleLWT --> Tile --> Clay,,2ModuleLWT-44,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard,0DimLW-3inL-3inW,0DimThk-0.125inT,,3Layer2D
+0DimThk-0.125inT",,2ModuleLWT --> Tile --> Clay,,2ModuleLWT-46,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard,0DimLW-3inL-3inW,0DimThk-0.125inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Clay
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
 0DimLW-4inL-3inW
-0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Clay,,2ModuleLWT-45,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard,0DimLW-4inL-3inW,0DimThk-0.1875inT,,3Layer2D
+0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Clay,,2ModuleLWT-47,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard,0DimLW-4inL-3inW,0DimThk-0.1875inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Cork
 1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-6inL-6inW
-0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Cork,,2ModuleLWT-46,,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-6inL-6inW,0DimThk-0.1875inT,,3Layer2D
+0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Cork,,2ModuleLWT-48,,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-6inL-6inW,0DimThk-0.1875inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Cork
 1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-12inL-6inW
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Cork,,2ModuleLWT-47,,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-6inW,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Cork,,2ModuleLWT-49,,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-6inW,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Glass
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone-0SrfTreatment-Standard
 0DimLW-4inL-4inW
-0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Glass,,2ModuleLWT-48,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone-0SrfTreatment-Standard,0DimLW-4inL-4inW,0DimThk-0.1875inT,,3Layer2D
+0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Glass,,2ModuleLWT-50,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone-0SrfTreatment-Standard,0DimLW-4inL-4inW,0DimThk-0.1875inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Glass
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone-0SrfTreatment-Standard
 0DimLW-6inL-4inW
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Glass,,2ModuleLWT-49,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone-0SrfTreatment-Standard,0DimLW-6inL-4inW,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Glass,,2ModuleLWT-51,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone-0SrfTreatment-Standard,0DimLW-6inL-4inW,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Laminate
 1Material --> Stone --> Granite-0RawMaterial-Granite (Black 1)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-12inL-12inW
-0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Laminate,,2ModuleLWT-50,,1Material --> Stone --> Granite-0RawMaterial-Granite (Black 1)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.1875inT,,3Layer2D
+0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Laminate,,2ModuleLWT-52,,1Material --> Stone --> Granite-0RawMaterial-Granite (Black 1)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.1875inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Laminate
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimLW-16inL-12inW
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,2ModuleLWT-51,,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimLW-16inL-12inW,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,2ModuleLWT-53,,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimLW-16inL-12inW,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
 1Material --> Stone --> Granite-0RawMaterial-Granite (Black 2)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-12inL-12inW
-0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,2ModuleLWT-52,,1Material --> Stone --> Granite-0RawMaterial-Granite (Black 2)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.1875inT,,3Layer2D
+0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,2ModuleLWT-54,,1Material --> Stone --> Granite-0RawMaterial-Granite (Black 2)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.1875inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
 1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimLW-16inL-12inW
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,2ModuleLWT-53,,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimLW-16inL-12inW,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,2ModuleLWT-55,,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimLW-16inL-12inW,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Porcelain
 1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-FAFAFA-NearlyWhite-0SrfTreatment-Standard
 0DimLW-8inL-4inW
-0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Porcelain,,2ModuleLWT-54,,1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-FAFAFA-NearlyWhite-0SrfTreatment-Standard,0DimLW-8inL-4inW,0DimThk-0.1875inT,,3Layer2D
+0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Porcelain,,2ModuleLWT-56,,1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-FAFAFA-NearlyWhite-0SrfTreatment-Standard,0DimLW-8inL-4inW,0DimThk-0.1875inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Porcelain
 1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-E6E3DE-Eggshell-0SrfTreatment-Standard
 0DimLW-12inL-4inW
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Porcelain,,2ModuleLWT-55,,1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-E6E3DE-Eggshell-0SrfTreatment-Standard,0DimLW-12inL-4inW,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Porcelain,,2ModuleLWT-57,,1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-E6E3DE-Eggshell-0SrfTreatment-Standard,0DimLW-12inL-4inW,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Stone
 1Material --> Stone --> Granite-0RawMaterial-Granite (Grey 1)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-6inL-3inW
-0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Stone,,2ModuleLWT-56,,1Material --> Stone --> Granite-0RawMaterial-Granite (Grey 1)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-6inL-3inW,0DimThk-0.1875inT,,3Layer2D
+0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Stone,,2ModuleLWT-58,,1Material --> Stone --> Granite-0RawMaterial-Granite (Grey 1)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-6inL-3inW,0DimThk-0.1875inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-12inL-3inW
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Stone,,2ModuleLWT-57,,1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-3inW,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Stone,,2ModuleLWT-59,,1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-3inW,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Vinyl Composite
 1Material --> Synthetic and Polymer --> Vinyl Composite-0RawMaterial-Vinyl Composite-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-12inL-12inW
-0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Vinyl Composite,,2ModuleLWT-58,,1Material --> Synthetic and Polymer --> Vinyl Composite-0RawMaterial-Vinyl Composite-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.1875inT,,3Layer2D
+0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Vinyl Composite,,2ModuleLWT-60,,1Material --> Synthetic and Polymer --> Vinyl Composite-0RawMaterial-Vinyl Composite-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.1875inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Vinyl Composite
 1Material --> Synthetic and Polymer --> Vinyl Composite-0RawMaterial-Vinyl Composite-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-16inL-12inW
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,2ModuleLWT-59,,1Material --> Synthetic and Polymer --> Vinyl Composite-0RawMaterial-Vinyl Composite-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-16inL-12inW,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,2ModuleLWT-61,,1Material --> Synthetic and Polymer --> Vinyl Composite-0RawMaterial-Vinyl Composite-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-16inL-12inW,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood-0SrfTreatment-Standard
 0DimLW-12inL-7inW
-0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Asphalt,,2ModuleLWT-60,,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood-0SrfTreatment-Standard,0DimLW-12inL-7inW,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Asphalt,,2ModuleLWT-62,,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood-0SrfTreatment-Standard,0DimLW-12inL-7inW,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-52595B-PewterGray-0SrfTreatment-Standard
 0DimLW-12inL-12inW
-0DimThk-0.75inT",,2ModuleLWT --> Shingle --> Asphalt,,2ModuleLWT-61,,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-52595B-PewterGray-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Shingle --> Asphalt,,2ModuleLWT-63,,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-52595B-PewterGray-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Clay
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
 0DimLW-12inL-7inW
-0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Clay,,2ModuleLWT-62,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard,0DimLW-12inL-7inW,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Clay,,2ModuleLWT-64,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard,0DimLW-12inL-7inW,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Clay
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard
 0DimLW-12inL-12inW
-0DimThk-0.75inT",,2ModuleLWT --> Shingle --> Clay,,2ModuleLWT-63,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Shingle --> Clay,,2ModuleLWT-65,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimLW-12inL-7inW
-0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Metal,,2ModuleLWT-64,,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimLW-12inL-7inW,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Metal,,2ModuleLWT-66,,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimLW-12inL-7inW,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Metal
 1Material --> Metal --> Chrome-0RawMaterial-Chrome-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimLW-12inL-12inW
-0DimThk-0.75inT",,2ModuleLWT --> Shingle --> Metal,,2ModuleLWT-65,,1Material --> Metal --> Chrome-0RawMaterial-Chrome-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Shingle --> Metal,,2ModuleLWT-67,,1Material --> Metal --> Chrome-0RawMaterial-Chrome-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Stone
-1Material --> Stone --> Alabaster-0RawMaterial-Alabaster-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Abstract-ABABAB-Gray4-0SrfTreatment-Standard
 0DimLW-12inL-7inW
-0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Stone,,2ModuleLWT-66,,1Material --> Stone --> Alabaster-0RawMaterial-Alabaster-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-7inW,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Stone,,2ModuleLWT-68,,1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Abstract-ABABAB-Gray4-0SrfTreatment-Standard,0DimLW-12inL-7inW,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Stone
 1Material --> Stone --> Basalt-0RawMaterial-Basalt-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLW-12inL-12inW
-0DimThk-0.75inT",,2ModuleLWT --> Shingle --> Stone,,2ModuleLWT-67,,1Material --> Stone --> Basalt-0RawMaterial-Basalt-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Shingle --> Stone,,2ModuleLWT-69,,1Material --> Stone --> Basalt-0RawMaterial-Basalt-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLW-12inL-12inW,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Wood
 1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimLW-12inL-7inW
-0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,2ModuleLWT-68,,1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimLW-12inL-7inW,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,2ModuleLWT-70,,1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimLW-12inL-7inW,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Wood
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
 0DimLW-12inL-12inW
-0DimThk-0.75inT",,2ModuleLWT --> Shingle --> Wood,,2ModuleLWT-69,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimLW-12inL-12inW,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Shingle --> Wood,,2ModuleLWT-71,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimLW-12inL-12inW,0DimThk-0.75inT,,3Layer2D
 ,,,,,,,,,,,,
 ,,,,,,,,,,,,

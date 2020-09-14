@@ -136,28 +136,28 @@ PRESET,,"3Layer3D --> Concrete Masonry Unit
 0Profile-Flat",0LayerPattern --> 3D-RunningBondSingleWythe,,X,X,,,,,,,,X
 PRESET,,"3Layer3D --> Glass Block
 2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
 0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
 0DimWD-0.375inW-0.25inD
 0Profile-Flat
 0LayerPattern --> 3D-StackBondSingleWythe",,3Layer3D --> Glass Block,,3Layer1D-20,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
 0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH","2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
 0DimWD-0.375inW-0.25inD
 0Profile-Flat",0LayerPattern --> 3D-StackBondSingleWythe,,X,,,,,,,,,
 PRESET,,"3Layer3D --> Glass Block
 2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
 0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
 0DimWD-0.375inW-0.375inD
 0Profile-Flat
 0LayerPattern --> 3D-SoldierBondSingleWythe",,3Layer3D --> Glass Block,,3Layer1D-21,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
 0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH","2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
 0DimWD-0.375inW-0.375inD

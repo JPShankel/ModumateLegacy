@@ -624,7 +624,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 						tableData.currentPreset.SlotConfigPresetID = *normalizeCell(cell);
 					}
 				}
-				else if (category.Equals(TEXT("PartPreset")))
+				else if (category.Equals(TEXT("PartPreset")) && ensureAlways(!cell.IsEmpty()))
 				{
 					if (tableData.currentPreset.PartSlots.Num() == 0 || !tableData.currentPreset.PartSlots.Last().PartPreset.IsNone())
 					{

@@ -96,14 +96,14 @@ PRESET,,"2ModuleLWH --> Earth Brick
 1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
 0DimLWH --> EarthBrick-5.512inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,2ModuleLWH-39,"0,0,2",,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimLWH --> EarthBrick-5.512inL-5.512inW-3.543inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
-0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-40,"0,0,0",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D,,,,,,,,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-40,"0,0,0",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
-0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-41,"0,0,0",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard,0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH,,3Layer3D,,,,,,,,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-41,"0,0,0",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard,0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH,,3Layer3D,,,,,,,,,
 PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
-0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-42,"0,0,0",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D,,,,,,,,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard
+0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,2ModuleLWH-42,"0,0,0",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White-0SrfTreatment-Standard,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,

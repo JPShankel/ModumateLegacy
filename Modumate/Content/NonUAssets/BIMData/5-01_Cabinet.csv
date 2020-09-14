@@ -1,0 +1,44 @@
+TYPENAME,,5Cabinet,,Layer,,,,,
+,,Definition,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,
+PROPERTY,,STRING,,Name,,Preset.Name,,,
+,,InputExtensibility,,InputPreset,,,,,
+INPUTPIN,,1..,,ChildCabinetFace,,,,,
+INPUTPIN,,1..,,ChildToeKickDims,,,,,
+,,Presets,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,DataType=InputPins,ChildCabinetFace,ChildToeKickDims
+PRESET,,"5Cabinet --> Floor
+3RiggedAssembly --> Cabinet --> Swing --> Frame
+1SlotConfig --> Cabinet --> Swing --> Frame
+0Slot-CabinetFrameSwing
+0Slot-CabinetPanelAssemblyFramed
+0Slot-CabinetFrameSwing
+2Part --> Cabinet --> Frame
+0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+0DimHD-4inW-3.5inD",,5Cabinet --> Floor,,5Cabinet-10,,"3RiggedAssembly --> Cabinet --> Swing --> Frame
+1SlotConfig --> Cabinet --> Swing --> Frame
+0Slot-CabinetFrameSwing
+0Slot-CabinetPanelAssemblyFramed
+0Slot-CabinetFrameSwing
+2Part --> Cabinet --> Frame
+0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished",0DimHD-4inW-3.5inD
+PRESET,,"5Cabinet --> Floor
+3RiggedAssembly --> Cabinet --> Swing --> Frame
+1SlotConfig --> Cabinet --> Swing --> Frame
+0Slot-CabinetFrameSwing
+0Slot-CabinetPanelAssemblyFrameless
+0Slot-CabinetFrameSwing
+2Part --> Cabinet --> Frame
+0Mesh-Cabinet-Frame-Frameless-01.Cabinet-Frame-Frameless-01'
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+0DimHD-4inW-4inD",,5Cabinet --> Floor,,5Cabinet-11,,"3RiggedAssembly --> Cabinet --> Swing --> Frame
+1SlotConfig --> Cabinet --> Swing --> Frame
+0Slot-CabinetFrameSwing
+0Slot-CabinetPanelAssemblyFrameless
+0Slot-CabinetFrameSwing
+2Part --> Cabinet --> Frame
+0Mesh-Cabinet-Frame-Frameless-01.Cabinet-Frame-Frameless-01'
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished",0DimHD-4inW-4inD
+,,,,,,,,,
