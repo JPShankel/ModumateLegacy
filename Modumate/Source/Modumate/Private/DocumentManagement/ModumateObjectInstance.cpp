@@ -1238,6 +1238,7 @@ FMOIDataRecord FModumateObjectInstance::AsDataRecord() const
 	ret.ChildIDs = Children;
 	ret.Location = GetObjectLocation();
 	ret.Rotation = GetObjectRotation().Rotator();
+	ret.UVAnchor = FVector::ZeroVector;
 	ret.ControlPoints = CurrentState.ControlPoints;
 	ret.ControlIndices = CurrentState.ControlIndices;
 	ret.Extents = CurrentState.Extents;
