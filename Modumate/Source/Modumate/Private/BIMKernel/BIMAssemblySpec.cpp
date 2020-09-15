@@ -404,6 +404,7 @@ ECraftingResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, 
 	ECraftingResult result = ECraftingResult::Error;
 	switch (ObjectType)
 	{
+	case EObjectType::OTTrim:
 	case EObjectType::OTStructureLine:
 		return MakeExtrudedAssembly(InDB);
 
