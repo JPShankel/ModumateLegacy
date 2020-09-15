@@ -95,6 +95,7 @@ bool URotateObjectTool::EndUse()
 	if (IsInUse())
 	{
 		Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
+
 		ReleaseObjectsAndApplyDeltas();
 	}
 
@@ -138,20 +139,13 @@ void URotateObjectTool::ApplyRotation()
 	float angle = CalcToolAngle();
 	FQuat rot = FRotator(0, angle, 0).Quaternion();
 
-	TMap<int32, FVector> objectInfo;
-	for (auto& kvp : OriginalCornerTransforms)
+	TMap<int32, FTransform> objectInfo;
+	for (auto& kvp : OriginalTransforms)
 	{
-		objectInfo.Add(kvp.Key, AnchorPoint + rot.RotateVector(kvp.Value.GetTranslation() - AnchorPoint));
+		objectInfo.Add(kvp.Key, FTransform(rot * kvp.Value.GetRotation(), AnchorPoint + rot.RotateVector(kvp.Value.GetTranslation() - AnchorPoint)));
 	}
 
-	FModumateObjectDeltaStatics::PreviewMovement(objectInfo, Controller->GetDocument(), Controller->GetWorld());
-	
-	// TODO: find a replacement for control points to account for non graph-hosted objects in PreviewMovement
-
-	//for (auto &kvp : OriginalCornerTransforms)
-	//{
-	//	kvp.Key->SetFromDataRecordAndRotation(kvp.Value, AnchorPoint, rot);
-	//}
+	FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Controller->GetDocument(), Controller->GetWorld(), true);
 }
 
 float URotateObjectTool::CalcToolAngle()

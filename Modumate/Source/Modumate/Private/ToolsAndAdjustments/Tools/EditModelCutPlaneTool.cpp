@@ -158,7 +158,10 @@ bool UCutPlaneTool::EnterNextStage()
 	FMOIStateData stateData;
 	stateData.StateType = EMOIDeltaType::Create;
 	stateData.ObjectType = EObjectType::OTCutPlane;
-	stateData.ControlPoints = PendingPlanePoints;
+	stateData.Extents.X = (PendingPlanePoints[1] - PendingPlanePoints[0]).Size();
+	stateData.Extents.Y = (PendingPlanePoints[2] - PendingPlanePoints[1]).Size();
+	stateData.Location = (PendingPlanePoints[0] + PendingPlanePoints[2]) * 0.5f;
+	stateData.Orientation = FRotationMatrix::MakeFromXY(BasisX, BasisY).ToQuat();
 	stateData.ObjectID = doc->GetNextAvailableID();
 
 	TArray<TSharedPtr<FDelta>> deltas;

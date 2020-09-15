@@ -102,22 +102,15 @@ bool UMoveObjectTool::FrameUpdate()
 		if (doc != nullptr)
 		{
 			FVector offset = hitLoc - AnchorPoint;
-			TMap<int32, FVector> objectInfo;
-			for (auto& kvp : OriginalCornerTransforms)
+			TMap<int32, FTransform> objectInfo;
+			for (auto& kvp : OriginalTransforms)
 			{
-				objectInfo.Add(kvp.Key, kvp.Value.GetTranslation() + offset);
+				objectInfo.Add(kvp.Key, FTransform(kvp.Value.GetRotation(), kvp.Value.GetTranslation() + offset));;
 			}
 
-			if (!FModumateObjectDeltaStatics::PreviewMovement(objectInfo, doc, Controller->GetWorld()))
+			if (!FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), true))
 			{
-				// TODO: find a replacement for control points for non graph-hosted objects and 
-				// remove SetFromDataRecordAndDisplacement
-
-				//for (auto& kvp : OriginalCornerTransforms)
-				//{
-				//	auto obj = doc->GetObjectById(kvp.Key);
-				//	obj->SetFromDataRecordAndDisplacement(obj->AsDataRecord(), hitLoc - AnchorPoint);
-				//}
+				return false;
 			}
 		}
 

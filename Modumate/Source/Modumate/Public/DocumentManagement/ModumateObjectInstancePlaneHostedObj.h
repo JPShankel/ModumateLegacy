@@ -34,9 +34,6 @@ public:
 	// TODO: may want to integrate this back into GetDrafting lines to help cache some more variables
 	virtual bool GetRangesForHolesOnPlane(TArray<TPair<float, float>> &OutRanges, TPair<FVector, FVector> &Intersection, const FLayerGeomDef &Layer, const float CurrentThickness, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin) const;
 
-	virtual void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation) override;
-	virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) override;
-
 protected:
 	void InternalUpdateGeometry();
 	void UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalculateEdgeExtensions);

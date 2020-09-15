@@ -298,36 +298,6 @@ TArray<FModelDimensionString> FMOIPortalImpl::GetDimensionStrings() const
 	return ret;
 }
 
-void FMOIPortalImpl::SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation)
-{
-	// Don't apply any rotation, we can't meaningfully rotate portals
-	SetFromDataRecordAndDisplacement(dataRec, FVector::ZeroVector);
-}
-
-void FMOIPortalImpl::SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement)
-{
-	FVector2D recordRelativePos(dataRec.Location);
-	FQuat recordRelativeRot(dataRec.Rotation);
-	FModumateObjectInstance *parentObj = MOI->GetParentObject();
-
-	FVector displacedWorldPos = CachedWorldPos;
-	FQuat displacedWorldRot = CachedWorldRot;
-	if (UModumateObjectStatics::GetWorldTransformOnPlanarObj(parentObj,
-		recordRelativePos, recordRelativeRot, displacedWorldPos, displacedWorldRot))
-	{
-		displacedWorldPos += displacement;
-
-		FVector2D displacedRelativePos = CachedRelativePos;
-		FQuat displacedRelativeRot = CachedRelativeRot;
-		if (UModumateObjectStatics::GetRelativeTransformOnPlanarObj(parentObj,
-			displacedWorldPos, 0.0f, false, displacedRelativePos, displacedRelativeRot))
-		{
-			SetRelativeTransform(displacedRelativePos, displacedRelativeRot);
-			parentObj->MarkDirty(EObjectDirtyFlags::Visuals);
-		}
-	}
-}
-
 void FMOIPortalImpl::TransverseObject()
 {
 	FModumateObjectInstance *parent = MOI ? MOI->GetParentObject() : nullptr;

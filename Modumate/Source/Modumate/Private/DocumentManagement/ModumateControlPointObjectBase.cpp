@@ -41,30 +41,3 @@ void FModumateControlPointObjectBase::UpdateNormalization()
 	AnchorLocation = NormalLocation;
 	NormalControlPoints = MOI->GetControlPoints();
 }
-
-void FModumateControlPointObjectBase::SetFromDataRecordAndRotation(const FMOIDataRecordV1 &dataRec, const FVector &origin, const FQuat &rotation)
-{
-	if (ensure(dataRec.ControlPoints.Num() == MOI->GetControlPoints().Num()))
-	{
-		for (int32 i = 0; i < dataRec.ControlPoints.Num(); ++i)
-		{
-			MOI->SetControlPoint(i,origin + rotation.RotateVector(dataRec.ControlPoints[i] - origin));
-		}
-		UpdateNormalization();
-		UpdateDynamicGeometry();
-	}
-}
-
-void FModumateControlPointObjectBase::SetFromDataRecordAndDisplacement(const FMOIDataRecordV1 &dataRec, const FVector &displacement)
-{
-	if (ensure(dataRec.ControlPoints.Num() == MOI->GetControlPoints().Num()))
-	{
-		for (int32 i = 0; i < dataRec.ControlPoints.Num(); ++i)
-		{
-			MOI->SetControlPoint(i,dataRec.ControlPoints[i] + displacement);
-		}
-		UpdateNormalization();
-		UpdateDynamicGeometry();
-	}
-}
-

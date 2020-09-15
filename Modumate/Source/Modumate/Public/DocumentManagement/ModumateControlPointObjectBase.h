@@ -16,8 +16,5 @@ protected:
 	void UpdateControlPoints();
 	void UpdateNormalization();
 
-	virtual void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation) override;
-	virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) override;
-
 	FModumateControlPointObjectBase(FModumateObjectInstance *moi);
 };

@@ -40,6 +40,28 @@ void FMOICutPlaneImpl::PostCreateObject(bool bNewObject)
 	{
 		controller->EditModelUserWidget->UpdateCutPlanesList();
 	}
+
+	AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+	MaterialData.EngineMaterial = gameMode ? gameMode->CutPlaneMaterial : nullptr;
+
+	// TODO: make sure that these are destroyed
+	// setup actors
+	if (gameMode != nullptr)
+	{
+		if (!CaptureActor.IsValid())
+		{
+			CaptureActor = World->SpawnActor<ACutPlaneCaptureActor>(gameMode->CutPlaneCaptureActorClass.Get());
+			CaptureActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
+			CaptureActor->ObjID = MOI->ID;
+			CaptureActor->Parent = this;
+		}
+
+		if (!MasksActor.IsValid())
+		{
+			MasksActor = World->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get());
+			MasksActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
+		}
+	}
 }
 
 void FMOICutPlaneImpl::Destroy()
@@ -64,38 +86,12 @@ void FMOICutPlaneImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOu
 
 void FMOICutPlaneImpl::SetupDynamicGeometry()
 {
-	bool bNewPlane = !GotGeometry;
-	GotGeometry = true;
+	// TODO: Migrate to CleanObject
 	UpdateCachedGeometryData();
 
-	AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
-	MaterialData.EngineMaterial = gameMode ? gameMode->CutPlaneMaterial : nullptr;
+	DynamicMeshActor->SetupPlaneGeometry(CachedPoints, MaterialData, true, true);
 
-	// TODO: can the cut plane do less?
-	DynamicMeshActor->SetupPlaneGeometry(MOI->GetControlPoints(), MaterialData, true, true);
-
-	if (bNewPlane)
-	{
-		MOI->UpdateVisibilityAndCollision();
-	}
-
-	// setup actors
-	if (gameMode != nullptr)
-	{
-		if (!CaptureActor.IsValid())
-		{
-			CaptureActor = World->SpawnActor<ACutPlaneCaptureActor>(gameMode->CutPlaneCaptureActorClass.Get());
-			CaptureActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
-			CaptureActor->ObjID = MOI->ID;
-			CaptureActor->Parent = this;
-		}
-
-		if (!MasksActor.IsValid())
-		{
-			MasksActor = World->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get());
-			MasksActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
-		}
-	}
+	MOI->UpdateVisibilityAndCollision();
 }
 
 void FMOICutPlaneImpl::UpdateDynamicGeometry()
@@ -107,7 +103,7 @@ void FMOICutPlaneImpl::UpdateDynamicGeometry()
 
 	UpdateCachedGeometryData();
 
-	DynamicMeshActor->SetupPlaneGeometry(MOI->GetControlPoints(), MaterialData, false, true);
+	DynamicMeshActor->SetupPlaneGeometry(CachedPoints, MaterialData, false, true);
 }
 
 void FMOICutPlaneImpl::OnSelected(bool bNewSelected)
@@ -178,7 +174,7 @@ bool FMOICutPlaneImpl::StartRender(FModumateDocument* doc /*= nullptr*/)
 #if 0
 	auto CaptureArea = nextRenderAreaKvp.Value;
 #else
-	auto CaptureArea = MOI->GetControlPoints();
+	auto CaptureArea = CachedPoints;
 #endif
 
 	float pixelsPerWorldCentimeter = 2.0f;
@@ -249,14 +245,25 @@ float FMOICutPlaneImpl::GetAlpha() const
 
 void FMOICutPlaneImpl::UpdateCachedGeometryData()
 {
-	if (!ensureAlways(MOI->GetControlPoints().Num() > 0))
-	{
-		return;
-	}
+	const FMOIStateData &dataState = ((const FModumateObjectInstance*)MOI)->GetDataState();
 
-	CachedOrigin = MOI->GetControlPoint(0);
-	TArray<FVector2D> cached2DPositions;
-	UModumateGeometryStatics::AnalyzeCachedPositions(MOI->GetControlPoints(), CachedPlane, CachedAxisX, CachedAxisY, cached2DPositions, CachedCenter);
+	CachedCenter = dataState.Location;
+	CachedAxisX = dataState.Orientation.GetAxisX();
+	CachedAxisY = dataState.Orientation.GetAxisY();
+	CachedPlane = FPlane(CachedCenter, dataState.Orientation.GetAxisZ());
+
+	FVector extents = MOI->GetExtents();
+
+	CachedPoints.Reset();
+	CachedPoints = {
+		CachedCenter - extents.X * CachedAxisX / 2.0f - extents.Y * CachedAxisY / 2.0f,
+		CachedCenter + extents.X * CachedAxisX / 2.0f - extents.Y * CachedAxisY / 2.0f,
+		CachedCenter + extents.X * CachedAxisX / 2.0f + extents.Y * CachedAxisY / 2.0f,
+		CachedCenter - extents.X * CachedAxisX / 2.0f + extents.Y * CachedAxisY / 2.0f
+	};
+
+	CachedOrigin = CachedPoints[0];
+
 	UpdateDraftingPreview();
 }
 
@@ -289,7 +296,7 @@ void FMOICutPlaneImpl::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposit
 	auto volumeGraph = doc.GetVolumeGraph();
 	TArray<FVector2D> boxPoints;
 
-	for (auto& point : MOI->GetControlPoints())
+	for (auto& point : CachedPoints)
 	{
 		FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, AxisX, AxisY, CachedOrigin);
 		boxPoints.Add(point2D);

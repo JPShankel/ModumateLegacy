@@ -5,7 +5,7 @@
 #include "Graph/Graph3DTypes.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 
-void FModumateObjectDeltaStatics::GetVertexIDs(const TArray<int32>& InObjectIDs, FModumateDocument *doc, TSet<int32>& OutVertexIDs)
+void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObjectIDs, FModumateDocument *doc, TSet<int32>& OutTransformableIDs)
 {
 	for (int32 id : InObjectIDs)
 	{
@@ -21,13 +21,13 @@ void FModumateObjectDeltaStatics::GetVertexIDs(const TArray<int32>& InObjectIDs,
 		{
 			TArray<int32> vertexIDs;
 			graphObject->GetVertexIDs(vertexIDs);
-			OutVertexIDs.Append(vertexIDs);
+			OutTransformableIDs.Append(vertexIDs);
 		}
 		else if (auto parentGraphObject = doc->GetVolumeGraph().FindObject(moi->GetParentID()))
 		{
 			TArray<int32> vertexIDs;
 			parentGraphObject->GetVertexIDs(vertexIDs);
-			OutVertexIDs.Append(vertexIDs);
+			OutTransformableIDs.Append(vertexIDs);
 		}
 		else if (graph2DObjType != Modumate::EGraphObjectType::None)
 		{
@@ -45,12 +45,16 @@ void FModumateObjectDeltaStatics::GetVertexIDs(const TArray<int32>& InObjectIDs,
 
 			TArray<int32> vertexIDs;
 			surfaceGraphObject->GetVertexIDs(vertexIDs);
-			OutVertexIDs.Append(vertexIDs);
+			OutTransformableIDs.Append(vertexIDs);
+		}
+		else
+		{
+			OutTransformableIDs.Add(id);
 		}
 	}
 }
 
-bool FModumateObjectDeltaStatics::PreviewMovement(const TMap<int32, FVector>& ObjectMovements, FModumateDocument *doc, UWorld *World)
+bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransform>& ObjectMovements, FModumateDocument *doc, UWorld *World, bool bIsPreview)
 {
 	doc->ClearPreviewDeltas(World);
 
@@ -81,7 +85,7 @@ bool FModumateObjectDeltaStatics::PreviewMovement(const TMap<int32, FVector>& Ob
 
 			if (!vertex3DMovements.Contains(graphObject->ID))
 			{
-				vertex3DMovements.Add(graphObject->ID, kvp.Value);
+				vertex3DMovements.Add(graphObject->ID, kvp.Value.GetTranslation());
 			}
 		}
 		else if (graph2DObjType != Modumate::EGraphObjectType::None)
@@ -115,12 +119,8 @@ bool FModumateObjectDeltaStatics::PreviewMovement(const TMap<int32, FVector>& Ob
 					return false;
 				}
 
-				vertex2DMovements.Add(surfaceGraphObject->ID, UModumateGeometryStatics::ProjectPoint2D(kvp.Value, faceAxisX, faceAxisY, faceOrigin));
+				vertex2DMovements.Add(surfaceGraphObject->ID, UModumateGeometryStatics::ProjectPoint2D(kvp.Value.GetTranslation(), faceAxisX, faceAxisY, faceOrigin));
 			}
-		}
-		else
-		{	// TODO: non-3D Graph objects
-			return false;
 		}
 	}
 
@@ -135,7 +135,9 @@ bool FModumateObjectDeltaStatics::PreviewMovement(const TMap<int32, FVector>& Ob
 			vertexMovePositions.Add(kvp.Value);
 		}
 
-		if (!doc->GetPreviewVertexMovementDeltas(vertexMoveIDs, vertexMovePositions, deltas))
+		if (bIsPreview ? 
+			!doc->GetPreviewVertexMovementDeltas(vertexMoveIDs, vertexMovePositions, deltas) :
+			!doc->GetVertexMovementDeltas(vertexMoveIDs, vertexMovePositions, deltas))
 		{
 			return false;
 		}
@@ -148,21 +150,51 @@ bool FModumateObjectDeltaStatics::PreviewMovement(const TMap<int32, FVector>& Ob
 		{
 			surfaceGraphDeltas.Reset();
 			auto surfaceGraph = doc->FindSurfaceGraph(kvp.Key);
-			if (!ensure(surfaceGraph.IsValid()) || (kvp.Value.Num() == 0) ||
-				!surfaceGraph->MoveVerticesDirect(surfaceGraphDeltas, nextID, kvp.Value))
+			if (!ensure(surfaceGraph.IsValid()) || (kvp.Value.Num() == 0))
 			{
 				continue;
 			}
+
+			if (bIsPreview ? 
+				!surfaceGraph->MoveVerticesDirect(surfaceGraphDeltas, nextID, kvp.Value) :
+				!surfaceGraph->MoveVertices(surfaceGraphDeltas, nextID, kvp.Value))
+			{
+				continue;
+			}
+
 			for (auto& delta : surfaceGraphDeltas)
 			{
 				deltas.Add(MakeShareable(new Modumate::FGraph2DDelta{ delta }));
 			}
 		}
 	}
+	else
+	{
+		for (auto& kvp : ObjectMovements)
+		{
+			auto moi = doc->GetObjectById(kvp.Key);
+			FMOIDelta delta = FMOIDelta({ moi });
+
+			int32 numCPs = delta.StatePairs[0].Value.ControlPoints.Num();
+			FVector displacement = kvp.Value.GetTranslation() - delta.StatePairs[0].Key.Location;
+
+			if (displacement.IsNearlyZero())
+			{
+				continue;
+			}
+
+			delta.StatePairs[0].Value.Location = kvp.Value.GetTranslation();
+			delta.StatePairs[0].Value.Orientation = kvp.Value.GetRotation();
+
+			deltas.Add(MakeShareable(new FMOIDelta(delta)));
+		}
+	}
 
 	if (deltas.Num() > 0)
 	{
-		doc->ApplyPreviewDeltas(deltas, World);
+		bIsPreview ? 
+			doc->ApplyPreviewDeltas(deltas, World) :
+			doc->ApplyDeltas(deltas, World);
 	}
 	else
 	{

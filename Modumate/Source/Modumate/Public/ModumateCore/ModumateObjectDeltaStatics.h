@@ -9,6 +9,7 @@ class FModumateDocument;
 class FModumateObjectDeltaStatics
 {
 public:
-	static void GetVertexIDs(const TArray<int32>& InObjectIDs, FModumateDocument *doc, TSet<int32>& OutVertexIDs);
-	static bool PreviewMovement(const TMap<int32, FVector>& ObjectMovements, FModumateDocument *doc, UWorld *World);
+	static void GetTransformableIDs(const TArray<int32>& InObjectIDs, FModumateDocument *doc, TSet<int32>& OutTransformableIDs);
+	// Get deltas for movement of an object
+	static bool MoveTransformableIDs(const TMap<int32, FTransform>& ObjectMovements, FModumateDocument *doc, UWorld *World, bool bIsPreview);
 };

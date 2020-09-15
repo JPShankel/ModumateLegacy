@@ -46,9 +46,9 @@ FModumateObjectInstance::FModumateObjectInstance(
 	FQuat rot = FQuat::Identity;
 	FVector loc(ForceInitToZero);
 
-	PreviewState.ObjectID = CurrentState.ObjectID = ID;
-	PreviewState.ObjectAssemblyKey = CurrentState.ObjectAssemblyKey = ObjectAssembly.UniqueKey();
-	PreviewState.ObjectType = CurrentState.ObjectType = obAsm.ObjectType;
+	CurrentState.ObjectID = ID;
+	CurrentState.ObjectAssemblyKey = ObjectAssembly.UniqueKey();
+	CurrentState.ObjectType = obAsm.ObjectType;
 
 	MakeImplementation();
 	MakeActor(loc, rot);
@@ -87,8 +87,7 @@ FModumateObjectInstance::FModumateObjectInstance(
 		ObjectAssembly.ObjectType = obRec.ObjectType;
 	}
 
-	PreviewState.ObjectAssemblyKey = CurrentState.ObjectAssemblyKey = ObjectAssembly.UniqueKey();
-	PreviewState.ObjectType = obRec.ObjectType;
+	CurrentState.ObjectAssemblyKey = ObjectAssembly.UniqueKey();
 	CurrentState.ObjectType = obRec.ObjectType;
 
 	MakeImplementation();
@@ -105,7 +104,6 @@ FModumateObjectInstance::FModumateObjectInstance(
 	SetObjectLocation(obRec.Location);
 
 	Implementation->SetIsDynamic(false);
-	PreviewState = CurrentState;
 }
 
 void FModumateObjectInstance::MakeImplementation()
@@ -745,20 +743,8 @@ void FMOIDelta::AddMutationStates(const TArray<FModumateObjectInstance*> &Object
 {
 	for (auto *ob : Objects)
 	{
-		if (!ob->GetIsInPreviewMode())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Tried to add mutation state for MOI #%d, but it wasn't in preview mode!"), ob->ID);
-			continue;
-		}
-
 		FMOIStateData baseState = ob->CurrentState;
 		FMOIStateData targetState = ob->PreviewState;
-
-		if (baseState == targetState)
-		{
-			UE_LOG(LogTemp, Log, TEXT("Tried to add mutation state for MOI #%d, but its preview state is identical to its saved state!"), ob->ID);
-			continue;
-		}
 
 		baseState.StateType = EMOIDeltaType::Mutate;
 		targetState.StateType = EMOIDeltaType::Mutate;
@@ -855,10 +841,6 @@ static inline FString MakeInstancePrefix(const FString &Prefix, int32 ID)
 
 bool FModumateObjectInstance::SetDataState(const FMOIStateData &DataState)
 {
-	if (!ensureAlways(!GetIsInPreviewMode()))
-	{
-		return false;
-	}
 	CurrentState = DataState;
 	PreviewState = DataState;
 	MarkDirty(EObjectDirtyFlags::Structure);
@@ -1136,6 +1118,10 @@ void FModumateObjectInstance::PostCreateObject(bool bNewObject)
 	}
 
 	Implementation->PostCreateObject(bNewObject);
+
+	PreviewState = CurrentState;
+
+	MarkDirty(EObjectDirtyFlags::Structure);
 }
 
 void FModumateObjectInstance::InvertObject()
@@ -1208,25 +1194,6 @@ void FModumateObjectInstance::SetAllProperties(const FBIMPropertySheet &NewPrope
 	GetDataState().ObjectProperties = NewProperties;
 }
 
-void FModumateObjectInstance::SetFromDataRecordAndRotation(const FMOIDataRecordV1 &dataRec, const FVector &origin, const FQuat &rotation)
-{
-	Implementation->SetFromDataRecordAndRotation(dataRec, origin, rotation);
-
-	// TODO: this is messy because we allow objects to customize how they respond to rotational deltas without modifying their data state,
-	// but we need to update the data state in order to use deltas. So for now, allow the existing implementations to mess with their actors
-	// however they want, but make sure we track the changes in the data state afterwards. We should either delete these functions,
-	// or ensure they behave consistently for objects in the same coordinate space.
-	GetDataState().Location = GetObjectLocation();
-	GetDataState().Orientation = GetObjectRotation();
-}
-
-void FModumateObjectInstance::SetFromDataRecordAndDisplacement(const FMOIDataRecordV1 &dataRec, const FVector &displacement)
-{
-	Implementation->SetFromDataRecordAndDisplacement(dataRec, displacement);
-	GetDataState().Location = GetObjectLocation();
-	GetDataState().Orientation = GetObjectRotation();
-}
-
 // data records are USTRUCTs used in serialization and clipboard operations
 FMOIDataRecord FModumateObjectInstance::AsDataRecord() const
 {
@@ -1288,17 +1255,6 @@ void FModumateObjectInstanceImplBase::SetWorldTransform(const FTransform &NewTra
 FTransform FModumateObjectInstanceImplBase::GetWorldTransform() const
 {
 	return FTransform(GetRotation(), GetLocation());
-}
-
-void FModumateObjectInstanceImplBase::SetFromDataRecordAndRotation(const FMOIDataRecordV1 &dataRec, const FVector &origin, const FQuat &rotation)
-{
-	SetRotation(dataRec.Rotation.Quaternion()*rotation);
-	SetLocation(origin + rotation.RotateVector(dataRec.Location - origin));
-}
-
-void FModumateObjectInstanceImplBase::SetFromDataRecordAndDisplacement(const FMOIDataRecordV1 &dataRec, const FVector &displacement)
-{
-	SetLocation(dataRec.Location + displacement);
 }
 
 FVector FModumateObjectInstanceImplBase::GetCorner(int32 index) const

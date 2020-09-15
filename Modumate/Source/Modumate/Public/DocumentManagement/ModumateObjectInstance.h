@@ -115,9 +115,6 @@ public:
 	virtual bool ShowStructureOnSelection() const = 0;
 	virtual bool UseStructureDataForCollision() const = 0;
 
-	virtual void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation) = 0;
-	virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) = 0;
-
 	virtual void TransverseObject() = 0;
 
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const = 0;
@@ -185,9 +182,6 @@ public:
 	virtual bool ShowStructureOnSelection() const override { return true; }
 	virtual bool UseStructureDataForCollision() const override { return false; }
 
-	virtual void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation) override;
-	virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) override;
-
 	virtual void TransverseObject() override { }
 
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const override { return TArray<FModelDimensionString>(); }
@@ -206,7 +200,7 @@ public:
 struct MODUMATE_API FMOIStateData
 {
 	EMOIDeltaType StateType = EMOIDeltaType::None;
-	int32 ObjectID = -1;
+	int32 ObjectID = MOD_ID_NONE;
 
 	// TODO: use this for instance-level overrides
 	FBIMPropertySheet ObjectProperties;
@@ -221,7 +215,7 @@ struct MODUMATE_API FMOIStateData
 	FVector Location = FVector::ZeroVector;
 	FQuat Orientation = FQuat::Identity;
 
-	int32 ParentID = -1;
+	int32 ParentID = MOD_ID_NONE;
 
 	// Store key instead of whole assembly to avoid old versions of an assembly from being re-applied
 	FName ObjectAssemblyKey;
@@ -469,8 +463,6 @@ public:
 
 	// Serialization
 	FMOIDataRecord AsDataRecord() const;
-	void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation);
-	void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement);
 
 	UMaterialInterface *GetMaterial();
 	void SetMaterial(UMaterialInterface *mat);

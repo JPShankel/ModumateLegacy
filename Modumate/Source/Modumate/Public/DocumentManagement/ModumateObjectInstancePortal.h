@@ -48,8 +48,6 @@ public:
 	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const override;
-	virtual void SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation) override;
-	virtual void SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement) override;
 	virtual void TransverseObject() override;
 
 	static void GetControlPointsFromAssembly(const FBIMAssemblySpec &ObjectAssembly, TArray<FVector> &ControlPoints);

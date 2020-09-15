@@ -582,13 +582,6 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 	}
 }
 
-// Plane-hosted objects have their geometry updated by their parents during pending move/rotate
-void FMOIPlaneHostedObjImpl::SetFromDataRecordAndRotation(const FMOIDataRecord &dataRec, const FVector &origin, const FQuat &rotation)
-{}
-
-void FMOIPlaneHostedObjImpl::SetFromDataRecordAndDisplacement(const FMOIDataRecord &dataRec, const FVector &displacement)
-{}
-
 void FMOIPlaneHostedObjImpl::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalculateEdgeExtensions)
 {
 	const FModumateDocument *doc = MOI ? MOI->GetDocument() : nullptr;

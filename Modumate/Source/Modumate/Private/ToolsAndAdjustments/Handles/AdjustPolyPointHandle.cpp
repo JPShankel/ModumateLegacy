@@ -104,7 +104,7 @@ bool AAdjustPolyPointHandle::UpdateUse()
 	FModumateDocument* doc = Controller->GetDocument();
 	if (doc != nullptr)
 	{
-		TMap<int32, FVector> objectInfo;
+		TMap<int32, FTransform> objectInfo;
 		
 		bool bMetaPlaneTarget = (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane);
 		bool bSurfacePolyTarget = (TargetMOI->GetObjectType() == EObjectType::OTSurfacePolygon);
@@ -121,13 +121,13 @@ bool AAdjustPolyPointHandle::UpdateUse()
 				FVector edgeStartPoint, edgeEndPoint;
 				if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
 				{
-					objectInfo.Add(face->VertexIDs[edgeStartIdx], edgeStartPoint);
-					objectInfo.Add(face->VertexIDs[edgeEndIdx], edgeEndPoint);
+					objectInfo.Add(face->VertexIDs[edgeStartIdx], FTransform(edgeStartPoint));
+					objectInfo.Add(face->VertexIDs[edgeEndIdx], FTransform(edgeEndPoint));
 				}
 			}
 			else
 			{
-				objectInfo.Add(face->VertexIDs[TargetIndex], OriginalPolyPoints[TargetIndex] + dp);
+				objectInfo.Add(face->VertexIDs[TargetIndex], FTransform(OriginalPolyPoints[TargetIndex] + dp));
 			}
 		}
 		else if (bSurfacePolyTarget)
@@ -153,13 +153,13 @@ bool AAdjustPolyPointHandle::UpdateUse()
 				FVector edgeStartPoint, edgeEndPoint;
 				if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
 				{
-					objectInfo.Add(poly->CachedPerimeterVertexIDs[edgeStartIdx], edgeStartPoint);
-					objectInfo.Add(poly->CachedPerimeterVertexIDs[edgeEndIdx], edgeEndPoint);
+					objectInfo.Add(poly->CachedPerimeterVertexIDs[edgeStartIdx], FTransform(edgeStartPoint));
+					objectInfo.Add(poly->CachedPerimeterVertexIDs[edgeEndIdx], FTransform(edgeEndPoint));
 				}
 			}
 			else
 			{
-				objectInfo.Add(poly->CachedPerimeterVertexIDs[TargetIndex], OriginalPolyPoints[TargetIndex] + dp);
+				objectInfo.Add(poly->CachedPerimeterVertexIDs[TargetIndex], FTransform(OriginalPolyPoints[TargetIndex] + dp));
 			}
 		}
 		else
@@ -167,7 +167,7 @@ bool AAdjustPolyPointHandle::UpdateUse()
 			return false;
 		}
 
-		FModumateObjectDeltaStatics::PreviewMovement(objectInfo, doc, Controller->GetWorld());
+		FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), true);
 	}
 
 	return true;

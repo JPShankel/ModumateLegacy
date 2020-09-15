@@ -709,7 +709,7 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 				// If we got an assembly, build the object with it, otherwise by type
 				FModumateObjectInstance *newInstance = (assembly != nullptr) ?
 					CreateOrRestoreObjFromAssembly(World, *assembly, targetState.ObjectID, targetState.ParentID, targetState.Extents, &targetState.ControlPoints, &targetState.ControlIndices, targetState.bObjectInverted) :
-					CreateOrRestoreObjFromObjectType(World, targetState.ObjectType, targetState.ObjectID, targetState.ParentID, FVector::ZeroVector, &targetState.ControlPoints, &targetState.ControlIndices, targetState.bObjectInverted);
+					CreateOrRestoreObjFromObjectType(World, targetState.ObjectType, targetState.ObjectID, targetState.ParentID, targetState.Extents, &targetState.ControlPoints, &targetState.ControlIndices, targetState.bObjectInverted);
 
 				if (newInstance != nullptr)
 				{
