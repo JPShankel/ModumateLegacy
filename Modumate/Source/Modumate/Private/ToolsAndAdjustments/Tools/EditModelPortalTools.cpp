@@ -337,11 +337,14 @@ bool UPortalToolBase::BeginUse()
 		FBox bounds(ForceInit);
 		for (const auto* mesh : CursorActor->StaticMeshComps)
 		{
-			FVector minPoint(ForceInitToZero);
-			FVector maxPoint(ForceInitToZero);
-			mesh->GetLocalBounds(minPoint, maxPoint);
-			bounds += minPoint;
-			bounds += maxPoint;
+			if (mesh != nullptr)
+			{
+				FVector minPoint(ForceInitToZero);
+				FVector maxPoint(ForceInitToZero);
+				mesh->GetLocalBounds(minPoint, maxPoint);
+				bounds += minPoint;
+				bounds += maxPoint;
+			}
 		}
 
 		FTransform portalTransform(worldRot, worldPos, FVector::OneVector);
