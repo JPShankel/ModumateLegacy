@@ -43,7 +43,10 @@ bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerCo
 		return false;
 	}
 	// TODO: Use icon caching instead of creating new render target each time
-	IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8, FLinearColor::Black, true);
+	if (!IconRenderTarget)
+	{
+		IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8, FLinearColor::Black, true);
+	}
 	bool bCaptureSucess = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(false, AsmKey, mode, IconRenderTarget);
 	if (bCaptureSucess)
 	{

@@ -43,6 +43,15 @@ ADynamicIconGenerator::ADynamicIconGenerator()
 	IconStaticMesh->SetMobility(EComponentMobility::Movable);
 	IconStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	IconStaticMesh->CastShadow = false;
+	IconStaticMesh->SetVisibility(false);
+
+	// IconSphereMesh
+	IconSphereMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("IconSphereMesh"));
+	IconSphereMesh->SetupAttachment(Root);
+	IconSphereMesh->SetMobility(EComponentMobility::Movable);
+	IconSphereMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	IconSphereMesh->CastShadow = false;
+	IconSphereMesh->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -106,6 +115,34 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(bool UseAssemblyFro
 		return SetIconMeshForCabinetAssembly(*assembly, RenderTarget);
 	case EToolMode::VE_PLACEOBJECT:
 		return SetIconMeshForFFEAssembly(*assembly, RenderTarget);
+	}
+	return false;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FName &PresetID, UTextureRenderTarget2D* RenderTarget)
+{
+	if (PresetID.IsNone())
+	{
+		return false;
+	}
+	AEditModelGameState_CPP *gameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
+	if (gameState == nullptr)
+	{
+		return false;
+	}
+	const FPresetManager &presetManager = gameState->Document.PresetManager;
+	const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
+	if (preset == nullptr)
+	{
+		return false;
+	}
+
+	switch (preset->NodeScope)
+	{
+	case EBIMValueScope::RawMaterial:
+		return SetIconMeshForMaterial(PresetID, RenderTarget);
+	default:
+		break;
 	}
 	return false;
 }
@@ -402,6 +439,28 @@ bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &As
 	IconStaticMesh->ResetRelativeTransform();
 	SetComponentForIconCapture(IconStaticMesh, false);
 	IconStaticMesh->SetVisibility(false);
+	return true;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForMaterial(const FName &MaterialKey, UTextureRenderTarget2D* RenderTarget)
+{
+	AEditModelPlayerController_CPP *controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
+	UMaterialInterface *mat;
+	UModumateIconMeshStatics::GetEngineMaterialByKey(controller, MaterialKey, mat);
+	if (!mat)
+	{
+		return false;
+	}
+	IconSphereMesh->SetMaterial(0, mat);
+
+	SetComponentForIconCapture(IconSphereMesh, true);
+	IconSphereMesh->SetVisibility(true);
+	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->CaptureScene();
+
+	// Step 3: Cleanup
+	SetComponentForIconCapture(IconSphereMesh, false);
+	IconSphereMesh->SetVisibility(false);
 	return true;
 }
 

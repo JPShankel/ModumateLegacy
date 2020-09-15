@@ -574,7 +574,7 @@ bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition
 		return false;
 	}
 	int32 fromOrder = INDEX_NONE;
-	int32 toOrder = INDEX_NONE;
+	int32 toOrder = 0; // If mouse position is lower than any node positions, this will remain 0
 	for (int32 order = 0; order < nodeGroup.Num(); ++order)
 	{
 		FVector2D nodePosition = FVector2D::ZeroVector;
@@ -601,7 +601,7 @@ bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition
 	}
 	// Don't reorder if position remains the same
 	ECraftingResult result = ECraftingResult::None;
-	if ((fromOrder != toOrder) && (fromOrder != INDEX_NONE) && (toOrder != INDEX_NONE))
+	if ((fromOrder != toOrder) && (fromOrder != INDEX_NONE))
 	{
 		result = InstancePool.ReorderChildNode(NodeID, fromOrder, toOrder);
 		if (result == ECraftingResult::Success)
