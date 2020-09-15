@@ -121,7 +121,6 @@ public:
 	EObjectType ObjectType = EObjectType::OTNone;
 	EConfiguratorNodeIconType IconType = EConfiguratorNodeIconType::None;
 	EConfiguratorNodeIconOrientation Orientation = EConfiguratorNodeIconOrientation::Inherited;
-	bool CanFlipOrientation = false;
 
 	ECraftingResult ToDataRecord(FCraftingPresetRecord &OutRecord) const;
 	ECraftingResult FromDataRecord(const FBIMPresetCollection &PresetCollection, const FCraftingPresetRecord &Records);

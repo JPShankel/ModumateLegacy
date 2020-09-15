@@ -334,7 +334,6 @@ ECraftingResult FBIMCraftingTreeNode::ToPreset(const FBIMPresetCollection& Prese
 	OutPreset.ObjectType = basePreset->ObjectType;
 	OutPreset.IconType = basePreset->IconType;
 	OutPreset.Orientation = basePreset->Orientation;
-	OutPreset.CanFlipOrientation = basePreset->CanFlipOrientation;
 
 	for (int32 pinSetIndex = 0; pinSetIndex < AttachedChildren.Num(); ++pinSetIndex)
 	{

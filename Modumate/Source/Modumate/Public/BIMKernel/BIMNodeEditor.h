@@ -63,8 +63,6 @@ public:
 	// May be fixed in type definition, inherited from parent or switchable
 	EConfiguratorNodeIconOrientation CurrentOrientation;
 
-	bool CanFlipOrientation = false;
-
 	int32 GetInstanceID() const;
 
 	EBIMPresetEditorNodeStatus GetPresetStatus(const FBIMPresetCollection &PresetCollection) const;
