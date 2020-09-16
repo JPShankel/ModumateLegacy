@@ -45,7 +45,7 @@ struct MODUMATE_API FLayerPatternModule
 {
 	GENERATED_BODY()
 
-	FName Key = FName();
+	FBIMKey Key;
 	FText DisplayName = FText::GetEmpty();
 
 	TArray<ELayerFormat> SupportedFormats;
@@ -58,7 +58,7 @@ struct MODUMATE_API FLayerPatternModule
 
 	void InitFromCraftingParameters(const Modumate::FModumateFunctionParameterSet &params);
 
-	FName UniqueKey() const { return Key; }
+	FBIMKey UniqueKey() const { return Key; }
 };
 
 USTRUCT()
@@ -66,7 +66,7 @@ struct MODUMATE_API FLayerPatternGap
 {
 	GENERATED_BODY()
 
-	FName Key = FName();
+	FBIMKey Key;
 	FText DisplayName = FText::GetEmpty();
 
 	FVector2D GapExtents;
@@ -77,7 +77,7 @@ struct MODUMATE_API FLayerPatternGap
 
 	void InitFromCraftingParameters(const Modumate::FModumateFunctionParameterSet &params);
 
-	FName UniqueKey() const { return Key; }
+	FBIMKey UniqueKey() const { return Key; }
 };
 
 USTRUCT()
@@ -142,7 +142,7 @@ struct MODUMATE_API FLayerPattern
 {
 	GENERATED_BODY()
 
-	FName Key = FName();
+	FBIMKey Key;
 	FText DisplayName = FText::GetEmpty();
 	TArray<ELayerFormat> SupportedFormats;
 	int32 ModuleCount = 1;
@@ -156,7 +156,7 @@ struct MODUMATE_API FLayerPattern
 
 	void InitFromCraftingParameters(const Modumate::FModumateFunctionParameterSet &params);
 
-	FName UniqueKey() const { return Key; }
+	FBIMKey UniqueKey() const { return Key; }
 };
 
 // TODO: add to BIM lighting kernel when it exists 
@@ -165,11 +165,11 @@ struct FLightConfiguration
 {
 	GENERATED_BODY()
 
-		FName Key;
+	FBIMKey Key;
 	float LightIntensity = 0.f;
 	FLinearColor LightColor = FLinearColor::White;
 	TWeakObjectPtr<UTextureLightProfile> LightProfile = nullptr;
 	bool bAsSpotLight = false;
 
-	FName UniqueKey() const { return Key; }
+	FBIMKey UniqueKey() const { return Key; }
 };

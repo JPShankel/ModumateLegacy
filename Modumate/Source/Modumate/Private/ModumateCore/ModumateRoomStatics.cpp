@@ -38,7 +38,7 @@ FRoomConfigurationBlueprint FRoomConfiguration::AsBlueprintObject(int32 InObject
 }
 
 
-const FName UModumateRoomStatics::DefaultRoomConfigKey(TEXT("Unassigned"));
+const FBIMKey UModumateRoomStatics::DefaultRoomConfigKey(TEXT("Unassigned"));
 
 bool UModumateRoomStatics::GetRoomConfigurationsFromTable(UObject* WorldContextObject, TArray<FRoomConfigurationBlueprint> &OutRoomConfigs)
 {
@@ -90,7 +90,9 @@ bool UModumateRoomStatics::GetRoomConfig(const FModumateObjectInstance *RoomObj,
 	// allow the proper serialization of types like FColor and FText to avoid unnecessary conversion.
 	bool bSuccess = true;
 
-	bSuccess = RoomObj->TryGetProperty<FName>(EBIMValueScope::Room, BIMPropertyNames::Preset, OutRoomConfig.Key) && bSuccess;
+	FString presetStr;
+	bSuccess = RoomObj->TryGetProperty<FString>(EBIMValueScope::Room, BIMPropertyNames::Preset, presetStr) && bSuccess;
+	OutRoomConfig.Key = FBIMKey(presetStr);
 
 	OutRoomConfig.ObjectID = RoomObj->ID;
 
@@ -135,7 +137,7 @@ bool UModumateRoomStatics::GetRoomConfig(UObject* WorldContextObject, int32 Room
 	return GetRoomConfig(roomObj, OutRoomConfig);
 }
 
-bool UModumateRoomStatics::SetRoomConfigFromKey(FModumateObjectInstance *RoomObj, FName ConfigKey)
+bool UModumateRoomStatics::SetRoomConfigFromKey(FModumateObjectInstance *RoomObj, const FBIMKey& ConfigKey)
 {
 	UWorld *world = RoomObj ? RoomObj->GetWorld() : nullptr;
 	AEditModelGameMode_CPP *gameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
@@ -145,7 +147,7 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(FModumateObjectInstance *RoomObj
 		return false;
 	}
 
-	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Preset, ConfigKey);
+	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Preset, ConfigKey.ToString());
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Color, roomConfig->HexValue);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Area, 0.0f);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Code, roomConfig->UseGroupCode);
@@ -163,7 +165,7 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(FModumateObjectInstance *RoomObj
 	return true;
 }
 
-bool UModumateRoomStatics::SetRoomConfigFromKey(UObject* WorldContextObject, int32 RoomID, FName ConfigKey)
+bool UModumateRoomStatics::SetRoomConfigFromKey(UObject* WorldContextObject, int32 RoomID, const FBIMKey& ConfigKey)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;

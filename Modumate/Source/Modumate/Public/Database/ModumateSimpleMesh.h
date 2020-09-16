@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BIMKernel/BIMKey.h"
 
 #include "ModumateSimpleMesh.generated.h"
 
@@ -52,10 +53,10 @@ struct MODUMATE_API FSimpleMeshRef
 {
 	GENERATED_USTRUCT_BODY()
 
-	FName Key = FName();
+	FBIMKey Key;
 
 	FSoftObjectPath AssetPath;
 	TWeakObjectPtr<USimpleMeshData> Asset = nullptr;
 
-	FName UniqueKey() const { return Key; }
+	FBIMKey UniqueKey() const { return Key; }
 };

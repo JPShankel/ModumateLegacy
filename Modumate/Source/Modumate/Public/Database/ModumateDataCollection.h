@@ -3,37 +3,38 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BIMKernel/BIMKey.h"
 #include "Algo/Transform.h"
 
 template<class T>
 class TModumateDataCollection
 {
 public:
-	typedef TMap<FName, T> FDataMap;		
+	typedef TMap<FBIMKey, T> FDataMap;		
 	FDataMap DataMap;
 
-	void AddData(const T &data)
+	void AddData(const T& Data)
 	{
-		RemoveData(data);
-		DataMap.Add(data.UniqueKey(), data);
+		RemoveData(Data);
+		DataMap.Add(Data.UniqueKey(), Data);
 	}
 
-	void AddDataIfNotPresent(const T &data)
+	void AddDataIfNotPresent(const T& Data)
 	{
-		if (GetData(data.UniqueKey()) == nullptr)
+		if (GetData(Data.UniqueKey()) == nullptr)
 		{
-			DataMap.Add(data.UniqueKey(), data);
+			DataMap.Add(Data.UniqueKey(), Data);
 		}
 	}
 
-	void RemoveData(const T &data)
+	void RemoveData(const T& Data)
 	{
-		DataMap.Remove(data.UniqueKey());
+		DataMap.Remove(Data.UniqueKey());
 	}
 
-	const T *GetData(const FName &str) const
+	const T *GetData(const FBIMKey& Str) const
 	{
-		return DataMap.Find(str);
+		return DataMap.Find(Str);
 	}
 
 	void Reset()

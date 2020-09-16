@@ -78,7 +78,7 @@ void UEditModelUserWidget::EMOnSelectionObjectChanged()
 	}
 }
 
-void UEditModelUserWidget::EditExistingAssembly(EToolMode ToolMode, FName AssemblyKey)
+void UEditModelUserWidget::EditExistingAssembly(EToolMode ToolMode, const FBIMKey& AssemblyKey)
 {
 	ToggleBIMDesigner(true);
 	BIMDesigner->EditPresetInBIMDesigner(AssemblyKey);

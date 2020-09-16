@@ -7,16 +7,17 @@
 #include "ModumateCore/ModumateTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/Object.h"
+#include "BIMKernel/BIMKey.h"
 
 #include "ModumateRoomStatics.generated.h"
 
 USTRUCT(BlueprintType)
 struct FRoomConfigurationBlueprint
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
-	FName Key;
+	FBIMKey Key;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
 	int32 ObjectID;
@@ -59,8 +60,8 @@ namespace Modumate
 {
 	struct MODUMATE_API FRoomConfiguration : public FRoomConfigurationTableRow
 	{
-		FName DatabaseKey;
-		FName UniqueKey() const { return DatabaseKey; }
+		FBIMKey DatabaseKey;
+		FBIMKey UniqueKey() const { return DatabaseKey; }
 		FRoomConfigurationBlueprint AsBlueprintObject() const;
 		FRoomConfigurationBlueprint AsBlueprintObject(int32 InObjectID, const FString &InRoomNumber, float InArea, int32 InOccupantsNumber) const;
 	};
@@ -84,10 +85,10 @@ public:
 	UFUNCTION(BlueprintPure, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Rooms")
 	static bool GetRoomConfig(UObject* WorldContextObject, int32 RoomID, FRoomConfigurationBlueprint &OutRoomConfig);
 
-	static bool SetRoomConfigFromKey(FModumateObjectInstance *RoomObj, FName ConfigKey);
+	static bool SetRoomConfigFromKey(FModumateObjectInstance *RoomObj, const FBIMKey& ConfigKey);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Rooms")
-	static bool SetRoomConfigFromKey(UObject* WorldContextObject, int32 RoomID, FName ConfigKey);
+	static bool SetRoomConfigFromKey(UObject* WorldContextObject, int32 RoomID, const FBIMKey& ConfigKey);
 
 	static void UpdateDerivedRoomProperties(FModumateObjectInstance *RoomObj);
 
@@ -100,5 +101,5 @@ public:
 	static void CalculateRoomNumbers(const FModumateDocument *Document,
 		TMap<int32, FString> &OutOldRoomNumbers, TMap<int32, FString> &OutNewRoomNumbers);
 
-	static const FName DefaultRoomConfigKey;
+	static const FBIMKey DefaultRoomConfigKey;
 };

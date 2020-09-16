@@ -34,6 +34,7 @@
 #include "ModumateCore/ModumateUnits.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Algo/Accumulate.h"
+#include "BIMKernel/BIMKey.h"
 
 #include <algorithm>
 #include <queue>
@@ -1138,7 +1139,7 @@ void UModumateFunctionLibrary::DocUnHideAllMoiActors(const AActor* Owner)
 	}
 }
 
-FName UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& bSuccess)
+FBIMKey UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& bSuccess)
 {
 	if (TargetActor != nullptr)
 	{
@@ -1153,7 +1154,7 @@ FName UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& 
 		}
 	}
 	bSuccess = false;
-	return NAME_None;
+	return FBIMKey();
 }
 
 using namespace Modumate;

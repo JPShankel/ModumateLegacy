@@ -105,7 +105,7 @@ UTexture2D* UThumbnailCacheManager::GetCachedThumbnail(FName ThumbnailKey)
 	return CachedThumbnailTextures.FindRef(ThumbnailKey);
 }
 
-FName UThumbnailCacheManager::GetThumbnailKeyForShoppingItemAndTool(const FName &Key, EToolMode ToolMode, UObject *WorldContextObject)
+FName UThumbnailCacheManager::GetThumbnailKeyForShoppingItemAndTool(const FBIMKey &Key, EToolMode ToolMode, UObject *WorldContextObject)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState_CPP *gameState = world ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
@@ -151,7 +151,7 @@ FString UThumbnailCacheManager::GetThumbnailCachePathForKey(FName ThumbnailKey)
 	}
 }
 
-UTexture2D* UThumbnailCacheManager::GetCachedThumbnailFromShoppingItemAndTool(const FName &Key, EToolMode ToolMode, UObject *WorldContextObject)
+UTexture2D* UThumbnailCacheManager::GetCachedThumbnailFromShoppingItemAndTool(const FBIMKey& Key, EToolMode ToolMode, UObject *WorldContextObject)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	UModumateGameInstance *modGameInst = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
@@ -167,7 +167,7 @@ UTexture2D* UThumbnailCacheManager::GetCachedThumbnailFromShoppingItemAndTool(co
 	return nullptr;
 }
 
-bool UThumbnailCacheManager::SaveThumbnailFromShoppingItemAndTool(UTexture *ThumbnailTexture, const FName &Key, EToolMode ToolMode, UTexture2D*& OutSavedTexture, UObject *WorldContextObject)
+bool UThumbnailCacheManager::SaveThumbnailFromShoppingItemAndTool(UTexture *ThumbnailTexture, const FBIMKey& Key, EToolMode ToolMode, UTexture2D*& OutSavedTexture, UObject *WorldContextObject)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	UModumateGameInstance *modGameInst = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Database/ModumateObjectEnums.h"
 #include "UI/ComponentAssemblyListItem.h"
+#include "BIMKernel/BIMKey.h"
 
 #include "ComponentListObject.generated.h"
 
@@ -18,7 +19,7 @@ public:
 
 	EComponentListItemType ItemType = EComponentListItemType::None;
 	EToolMode Mode = EToolMode::VE_NONE;
-	FName UniqueKey;
+	FBIMKey UniqueKey;
 	int32 SelectionItemCount = 0;
 
 	// The BIM node that is pending swap

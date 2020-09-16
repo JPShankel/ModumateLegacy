@@ -754,7 +754,7 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 				EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(targetState.ObjectType);
 				if (toolMode != EToolMode::VE_NONE)
 				{
-					FName assemblyKey = MOI->GetAssembly().UniqueKey();
+					FBIMKey assemblyKey = MOI->GetAssembly().UniqueKey();
 					if (targetState.ObjectAssemblyKey != assemblyKey)
 					{
 						const FBIMAssemblySpec *obAsm = PresetManager.GetAssemblyByKey(toolMode, targetState.ObjectAssemblyKey);
@@ -2169,54 +2169,6 @@ void FModumateDocument::TransverseObjects(const TArray<FModumateObjectInstance*>
 	}
 }
 
-int32 FModumateDocument::CreateFFE(
-	UWorld *world,
-	int32 parentID,
-	const FVector &loc,
-	const FQuat &rot,
-	const FBIMAssemblySpec &obAsm,
-	int32 parentFaceIdx)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::CreateObjectAt"));
-	UndoRedo *ur = new UndoRedo();
-
-	FVector locVal(loc);
-	FQuat rotVal(rot);
-
-	ClearRedoBuffer();
-
-	int32 id = NextID++;
-
-	// We may have to modify the assembly, preserve the old one for undo
-	FBIMAssemblySpec useAsm=obAsm;
-	FBIMAssemblySpec oldAsm=obAsm;
-
-	FName newFFECode;
-
-	/*
-	If the incoming assembly has no code name, this is its first placement in the document and needs a code name
-	*/
-	if (useAsm.GetProperty(BIMPropertyNames::Code).AsString().IsEmpty())
-	{
-		newFFECode = PresetManager.GetAvailableKey(TEXT("FFE"));
-		useAsm.SetProperty(BIMPropertyNames::Code, newFFECode);
-		for (auto &l : useAsm.Layers)
-		{
-			l.CodeName = useAsm.GetProperty(BIMPropertyNames::Code);
-		}
-	}
-
-
-	TArray<int32> controlIndices = { parentFaceIdx };
-	FModumateObjectInstance *newOb = CreateOrRestoreObjFromAssembly(world, useAsm, id, parentID,
-		FVector::ZeroVector, nullptr, &controlIndices);
-	newOb->SetObjectLocation(locVal);
-	newOb->SetObjectRotation(rotVal);
-	newOb->SetupGeometry();
-
-	return id;
-}
-
 bool FModumateDocument::CleanObjects(TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
 {
 	static TArray<FModumateObjectInstance*> curDirtyList;
@@ -2508,13 +2460,13 @@ TArray<FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(const FObje
 		{ return types.Contains(moi->GetObjectType()); });
 }
 
-void FModumateDocument::GetObjectIdsByAssembly(const FName &assemblyKey, TArray<int32> &outIds) const
+void FModumateDocument::GetObjectIdsByAssembly(const FBIMKey& AssemblyKey, TArray<int32>& OutIds) const
 {
 	for (const auto &moi : ObjectInstanceArray)
 	{
-		if (moi->GetAssembly().UniqueKey() == assemblyKey)
+		if (moi->GetAssembly().UniqueKey() == AssemblyKey)
 		{
-			outIds.Add(moi->ID);
+			OutIds.Add(moi->ID);
 		}
 	}
 }
@@ -2606,7 +2558,7 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 		TScriptInterface<IEditModelToolInterface> tool = emPlayerController->ModeToTool.FindRef(mode);
 		if (ensureAlways(tool))
 		{
-			docRec.CurrentToolAssemblyMap.Add(mode, tool->GetAssemblyKey());
+			docRec.CurrentToolAssemblyMap.Add(mode, tool->GetAssemblyKey().ToString());
 		}
 	}
 
@@ -2805,23 +2757,21 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 	return false;
 }
 
-int32 FModumateDocument::CreateObjectFromRecord(UWorld *world, const FMOIDataRecord &obRec)
+int32 FModumateDocument::CreateObjectFromRecord(UWorld* World, const FMOIDataRecord& ObRec)
 {
 	ClearRedoBuffer();
 	int32 id = NextID++;
 
-	const FBIMAssemblySpec *obAsm = nullptr;
-	if (obRec.AssemblyKey != "None")
+	const FBIMAssemblySpec *obAsm = PresetManager.GetAssemblyByKey(UModumateTypeStatics::ToolModeFromObjectType(ObRec.ObjectType), ObRec.AssemblyKey);
+	
+	if (obAsm != nullptr)
 	{
-		obAsm = PresetManager.GetAssemblyByKey(UModumateTypeStatics::ToolModeFromObjectType(obRec.ObjectType), FName(*obRec.AssemblyKey));
-		ensureAlways(obAsm != nullptr);
+		FModumateObjectInstance *obj = obAsm != nullptr ?
+			CreateOrRestoreObjFromAssembly(World, *obAsm, id, ObRec.ParentID, ObRec.Extents, &ObRec.ControlPoints, &ObRec.ControlIndices) :
+			CreateOrRestoreObjFromObjectType(World, ObRec.ObjectType, id, ObRec.ParentID, ObRec.Extents, &ObRec.ControlPoints, &ObRec.ControlIndices);
+
+		obj->SetupGeometry();
 	}
-
-	FModumateObjectInstance *obj = obAsm != nullptr ?
-		CreateOrRestoreObjFromAssembly(world, *obAsm, id, obRec.ParentID, obRec.Extents, &obRec.ControlPoints, &obRec.ControlIndices) :
-		CreateOrRestoreObjFromObjectType(world, obRec.ObjectType, id, obRec.ParentID, obRec.Extents, &obRec.ControlPoints, &obRec.ControlIndices);
-
-	obj->SetupGeometry();
 
 	return id;
 }
@@ -3231,12 +3181,12 @@ void FModumateDocument::DisplayDebugInfo(UWorld* world)
 	displayObjectCount(EObjectType::OTGroup, TEXT("OTGroup"));
 	displayObjectCount(EObjectType::OTRoom, TEXT("OTRoom"));
 
-	TSet<FString> asms;
+	TSet<FBIMKey> asms;
 
 	Algo::Transform(ObjectInstanceArray, asms,
 		[](const FModumateObjectInstance *ob)
 		{
-			return ob->GetAssembly().UniqueKey().ToString();
+			return ob->GetAssembly().UniqueKey();
 		}
 	);
 
@@ -3246,11 +3196,11 @@ void FModumateDocument::DisplayDebugInfo(UWorld* world)
 			ObjectInstanceArray, 0,
 			[a](int32 total, const FModumateObjectInstance *ob)
 			{
-				return ob->GetAssembly().UniqueKey().ToString() == a ? total + 1 : total;
+				return ob->GetAssembly().UniqueKey() == a ? total + 1 : total;
 			}
 		);
 
-		displayMsg(FString::Printf(TEXT("Assembly %s: %d"), *a, instanceCount));
+		displayMsg(FString::Printf(TEXT("Assembly %s: %d"), *a.ToString(), instanceCount));
 	}
 
 	displayMsg(FString::Printf(TEXT("Undo Buffer: %d"), UndoBuffer.Num()));

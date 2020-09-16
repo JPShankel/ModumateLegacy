@@ -346,7 +346,7 @@ bool UStairTool::EnterNextStage()
 	return true;
 }
 
-void UStairTool::SetAssemblyKey(const FName &InAssemblyKey)
+void UStairTool::SetAssemblyKey(const FBIMKey& InAssemblyKey)
 {
 	UEditModelToolBase::SetAssemblyKey(InAssemblyKey);
 

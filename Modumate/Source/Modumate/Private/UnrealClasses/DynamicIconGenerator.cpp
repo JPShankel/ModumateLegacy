@@ -75,7 +75,7 @@ void ADynamicIconGenerator::Tick(float DeltaTime)
 
 }
 
-bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(bool UseAssemblyFromBIMDesigner, const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(bool UseAssemblyFromBIMDesigner, const FBIMKey& AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
 {
 	const FBIMAssemblySpec *assembly;
 	EToolMode iconMode = mode;
@@ -119,7 +119,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(bool UseAssemblyFro
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FName &PresetID, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMKey& PresetID, UTextureRenderTarget2D* RenderTarget)
 {
 	if (PresetID.IsNone())
 	{
@@ -442,7 +442,7 @@ bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &As
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForMaterial(const FName &MaterialKey, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* RenderTarget)
 {
 	AEditModelPlayerController_CPP *controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
 	UMaterialInterface *mat;

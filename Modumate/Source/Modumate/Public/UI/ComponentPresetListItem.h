@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "BIMKernel/BIMKey.h"
 #include "Database/ModumateObjectEnums.h"
 
 #include "ComponentPresetListItem.generated.h"
@@ -39,5 +40,5 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UImage *GrabHandleImage;
 
-	bool CaptureIconFromPresetKey(class AEditModelPlayerController_CPP *Controller, const FName &AsmKey, EToolMode mode);
+	bool CaptureIconFromPresetKey(class AEditModelPlayerController_CPP *Controller, const FBIMKey& AsmKey, EToolMode mode);
 };

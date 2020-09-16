@@ -293,7 +293,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget()
 		FMOIStateData surfaceObjectData;
 		surfaceObjectData.StateType = EMOIDeltaType::Create;
 		surfaceObjectData.ObjectType = EObjectType::OTSurfaceGraph;
-		surfaceObjectData.ObjectAssemblyKey = NAME_None;
+		surfaceObjectData.ObjectAssemblyKey = FBIMKey();
 		surfaceObjectData.ParentID = HostTarget->ID;
 		surfaceObjectData.ControlIndices = { HitFaceIndex };
 		surfaceObjectData.ObjectID = TargetSurfaceGraph->GetID();

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BIMKernel/BIMKey.h"
 #include "Runtime/Engine/Classes/Materials/Material.h"
 
 #include "ModumateArchitecturalMaterial.generated.h"
@@ -10,42 +11,42 @@
 USTRUCT(BlueprintType)
 struct MODUMATE_API FCustomColor
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		FName Key;
+	FBIMKey Key;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		FColor Color = FColor::White;
+	FColor Color = FColor::White;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		FName Library;
+	FBIMKey Library;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		FText DisplayName;
+	FText DisplayName;
 
-	FString CombinedKey = FString();
+	FBIMKey CombinedKey;
 	bool bValid = false;
 
 	FCustomColor()
 		: bValid(false)
 	{ }
 
-	FCustomColor(FName InKey, FColor InColor, FName InLibrary, FText InDisplayName)
+	FCustomColor(const FBIMKey& InKey, FColor InColor, const FBIMKey& InLibrary, const FText& InDisplayName)
 		: Key(InKey)
 		, Color(InColor)
 		, Library(InLibrary)
 		, DisplayName(InDisplayName)
-		, CombinedKey(Library.ToString() + Key.ToString())
+		, CombinedKey(Library + Key)
 		, bValid(true)
 	{ }
 
-	FName UniqueKey() const { return *CombinedKey; }
+	FBIMKey UniqueKey() const { return CombinedKey; }
 	bool IsValid() const { return bValid; }
 
 	FString ToString() const
 	{
-		return IsValid() ? (CombinedKey.IsEmpty() ? Color.ToHex() : CombinedKey) : FString();
+		return IsValid() ? (CombinedKey.IsNone() ? Color.ToHex() : CombinedKey.StringValue) : FString();
 	}
 };
 
@@ -55,9 +56,9 @@ Materials like gypsum, wood, cement, etc located in ShoppingData/Materials
 USTRUCT()
 struct FArchitecturalMaterial
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
-	FName Key = FName();
+	FBIMKey Key;
 	FText DisplayName = FText::GetEmpty();
 
 	TWeakObjectPtr<UMaterialInterface> EngineMaterial = nullptr;
@@ -68,7 +69,7 @@ struct FArchitecturalMaterial
 	float UVScaleFactor = 1.0f;
 	float HSVRangeWhenTiled = 0.0f;
 
-	FName UniqueKey() const { return Key; }
+	FBIMKey UniqueKey() const { return Key; }
 
 	// Whether this material has been created with real data.
 	// TODO: make this more accurate once the underlying materials are lazy-loaded.
@@ -78,18 +79,18 @@ struct FArchitecturalMaterial
 USTRUCT(BlueprintType)
 struct MODUMATE_API FStaticIconTexture
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		FName Key;
+	FBIMKey Key;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		FText DisplayName = FText::GetEmpty();
+	FText DisplayName = FText::GetEmpty();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		TWeakObjectPtr<UTexture2D> Texture;
+	TWeakObjectPtr<UTexture2D> Texture;
 
-	FName UniqueKey() const { return Key; }
+	FBIMKey UniqueKey() const { return Key; }
 
 	// TODO: Like FArchitecturalMaterial, check if texture will be lazy-loaded.
 	bool IsValid() const { return Texture.IsValid(); }

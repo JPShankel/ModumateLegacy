@@ -37,14 +37,14 @@ void FModumateDatabase::ReadRoomConfigurations(UDataTable *data)
 			newRow.LoadFactorSpecialCalc = Row.LoadFactorSpecialCalc;
 			newRow.HexValue = Row.HexValue;
 
-			newRow.DatabaseKey = Key;
+			newRow.DatabaseKey = FBIMKey(Key.ToString());
 
 			RoomConfigurations.AddData(newRow);
 		}
 	});
 }
 
-void FModumateDatabase::AddSimpleMesh(const FName& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+void FModumateDatabase::AddSimpleMesh(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -65,7 +65,7 @@ void FModumateDatabase::AddSimpleMesh(const FName& Key, const FString& Name, con
 	SimpleMeshes.AddData(mesh);
 }
 
-void FModumateDatabase::AddArchitecturalMesh(const FName& Key, const FString& Name, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath)
+void FModumateDatabase::AddArchitecturalMesh(const FBIMKey& Key, const FString& Name, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -87,7 +87,7 @@ void FModumateDatabase::AddArchitecturalMesh(const FName& Key, const FString& Na
 	AMeshes.AddData(mesh);
 }
 
-void FModumateDatabase::AddArchitecturalMaterial(const FName& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+void FModumateDatabase::AddArchitecturalMaterial(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -108,11 +108,11 @@ void FModumateDatabase::AddArchitecturalMaterial(const FName& Key, const FString
 	AMaterials.AddData(mat);
 }
 
-void FModumateDatabase::AddCustomColor(const FName& Key, const FString& Name, const FString& HexValue)
+void FModumateDatabase::AddCustomColor(const FBIMKey& Key, const FString& Name, const FString& HexValue)
 {
 	FColor value = FColor::FromHex(HexValue);
-	FCustomColor namedColor = FCustomColor(Key, MoveTemp(value), NAME_None, FText::FromString(Name));
-	namedColor.CombinedKey = Key.ToString();
+	FCustomColor namedColor(Key, MoveTemp(value), FBIMKey(), FText::FromString(Name));
+	namedColor.CombinedKey = Key;
 	NamedColors.AddData(MoveTemp(namedColor));
 }
 
@@ -124,7 +124,7 @@ void FModumateDatabase::ReadPresetData()
 {
 	FString manifestPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
 	TArray<FString> errors;
-	TArray<FName> starters;
+	TArray<FBIMKey> starters;
 	if (!ensureAlways(PresetManager.CraftingNodePresets.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), starters, errors) == ECraftingResult::Success))
 	{
 		return;
@@ -202,7 +202,7 @@ void FModumateDatabase::ReadPresetData()
 
 	FAddAssetFunction addMaterial = [this](const FBIMPreset &Preset)
 	{
-		FName rawMaterial;
+		FBIMKey rawMaterial;
 		for (auto& cp : Preset.ChildPresets)
 		{
 			const FBIMPreset* childPreset = PresetManager.CraftingNodePresets.Presets.Find(cp.PresetID);
@@ -213,10 +213,10 @@ void FModumateDatabase::ReadPresetData()
 			}
 		}
 
-		if (ensureAlways(!rawMaterial.IsNone()))
+		if (!rawMaterial.IsNone())
 		{
 			const FBIMPreset* preset = PresetManager.CraftingNodePresets.Presets.Find(rawMaterial);
-			if (ensureAlways(preset != nullptr))
+			if (preset != nullptr)
 			{
 				FString assetPath = preset->GetProperty(BIMPropertyNames::AssetPath);
 				FString matName = Preset.GetProperty(BIMPropertyNames::Name);
@@ -390,7 +390,7 @@ void FModumateDatabase::ReadPresetData()
 		if (!gotDefault.Contains(outSpec.ObjectType))
 		{
 			gotDefault.Add(outSpec.ObjectType);
-			outSpec.RootPreset = TEXT("default");
+			outSpec.RootPreset = FBIMKey(TEXT("default"));
 			PresetManager.UpdateProjectAssembly(outSpec);
 		}
 	}
@@ -407,32 +407,32 @@ TArray<FString> FModumateDatabase::GetDebugInfo()
 Data Access
 */
 
-const FArchitecturalMaterial *FModumateDatabase::GetArchitecturalMaterialByKey(const FName& Key) const
+const FArchitecturalMaterial *FModumateDatabase::GetArchitecturalMaterialByKey(const FBIMKey& Key) const
 {
 	return AMaterials.GetData(Key);
 }
 
-const FArchitecturalMesh* FModumateDatabase::GetArchitecturalMeshByKey(const FName& Key) const
+const FArchitecturalMesh* FModumateDatabase::GetArchitecturalMeshByKey(const FBIMKey& Key) const
 {
 	return AMeshes.GetData(Key);
 }
 
-const FCustomColor *FModumateDatabase::GetCustomColorByKey(const FName& Key) const
+const FCustomColor *FModumateDatabase::GetCustomColorByKey(const FBIMKey& Key) const
 {
 	return NamedColors.GetData(Key);
 }
 
-const FSimpleMeshRef* FModumateDatabase::GetSimpleMeshByKey(const FName& Key) const
+const FSimpleMeshRef* FModumateDatabase::GetSimpleMeshByKey(const FBIMKey& Key) const
 {
 	return SimpleMeshes.GetData(Key);
 }
 
-const Modumate::FRoomConfiguration * FModumateDatabase::GetRoomConfigByKey(const FName &Key) const
+const Modumate::FRoomConfiguration * FModumateDatabase::GetRoomConfigByKey(const FBIMKey& Key) const
 {
 	return RoomConfigurations.GetData(Key);
 }
 
-const FStaticIconTexture * FModumateDatabase::GetStaticIconTextureByKey(const FName &Key) const
+const FStaticIconTexture * FModumateDatabase::GetStaticIconTextureByKey(const FBIMKey& Key) const
 {
 	return StaticIconTextures.GetData(Key);
 }

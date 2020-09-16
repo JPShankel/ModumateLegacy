@@ -35,7 +35,7 @@ void USelectionTrayBlockPresetList::NativeConstruct()
 void USelectionTrayBlockPresetList::BuildPresetListFromSelection()
 {
 	ClearPresetList();
-	TMap<FName, int32> numberOfObjectsWithKey;
+	TMap<FBIMKey, int32> numberOfObjectsWithKey;
 	for (auto& curObject : Controller->EMPlayerState->SelectedObjects)
 	{
 		if (curObject->GetActor())

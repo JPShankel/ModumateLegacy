@@ -4,6 +4,7 @@
 
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "CoreMinimal.h"
+#include "BIMKernel/BIMKey.h"
 #include "Engine/Engine.h"
 
 #include "EditModelToolBase.generated.h"
@@ -36,7 +37,7 @@ protected:
 	EAxisConstraint AxisConstraint;
 	EToolCreateObjectMode CreateObjectMode;
 
-	FName AssemblyKey;
+	FBIMKey AssemblyKey;
 
 public:
 
@@ -61,6 +62,6 @@ public:
 
 	virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override { AxisConstraint = InAxisConstraint; }
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override { CreateObjectMode = InCreateObjectMode; }
-	virtual void SetAssemblyKey(const FName &InAssemblyKey) override { AssemblyKey = InAssemblyKey; }
-	virtual FName GetAssemblyKey() const override { return AssemblyKey; }
+	virtual void SetAssemblyKey(const FBIMKey &InAssemblyKey) override { AssemblyKey = InAssemblyKey; }
+	virtual FBIMKey GetAssemblyKey() const override { return AssemblyKey; }
 };

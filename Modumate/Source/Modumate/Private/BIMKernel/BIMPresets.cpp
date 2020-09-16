@@ -199,7 +199,7 @@ ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCol
 Given a preset ID, recurse through all its children and gather all other presets that this one depends on
 Note: we don't empty the container because the function is recursive
 */
-ECraftingResult FBIMPresetCollection::GetDependentPresets(const FName &PresetID, TSet<FName> &OutPresets) const
+ECraftingResult FBIMPresetCollection::GetDependentPresets(const FBIMKey& PresetID, TSet<FBIMKey>& OutPresets) const
 {
 	const FBIMPreset *preset = Presets.Find(PresetID);
 	if (preset == nullptr)
@@ -264,7 +264,7 @@ bool FBIMPreset::SupportsChild(const FBIMPreset& CandidateChild) const
 	return false;
 }
 
-EObjectType FBIMPresetCollection::GetPresetObjectType(const FName &PresetID) const
+EObjectType FBIMPresetCollection::GetPresetObjectType(const FBIMKey& PresetID) const
 {
 	const FBIMPreset *preset = Presets.Find(PresetID);
 	if (preset == nullptr)
@@ -274,7 +274,7 @@ EObjectType FBIMPresetCollection::GetPresetObjectType(const FName &PresetID) con
 	return preset->ObjectType;
 }
 
-ECraftingResult FBIMPresetCollection::GetPropertyFormForPreset(const FName &PresetID, TMap<FString, FBIMNameType> &OutForm) const
+ECraftingResult FBIMPresetCollection::GetPropertyFormForPreset(const FBIMKey& PresetID, TMap<FString, FBIMNameType> &OutForm) const
 {
 	const FBIMPreset* preset = Presets.Find(PresetID);
 	if (preset == nullptr)
@@ -295,7 +295,7 @@ ECraftingResult FBIMPresetCollection::GetPropertyFormForPreset(const FName &Pres
 // Ultimately we will develop a compiler from this code that generates a record that can be read more efficiently
 // Once this compiler is in the shape we intend, we will determine where in the toolchain this code will reside we can refactor for long term sustainability
 // Until then this is a prototypical development space used to prototype the relational database structure being authored in Excel
-ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMNameType>& OutStarters, TArray<FString>& OutMessages)
+ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages)
 {
 	FModumateCSVScriptProcessor processor;
 
@@ -337,10 +337,8 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 
 	auto normalizeCell = [](const FString& Row)
 	{
-		// TODO: to be replaced with FString-based hash with no inherent limit
-		int32 sl = FMath::Min(NAME_SIZE-1, Row.Len());
-
 		FString cell;
+		int32 sl = Row.Len();
 		cell.Reserve(sl);
 		for (int32 j = 0; j < sl; ++j)
 		{
@@ -576,7 +574,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 						Presets.Add(tableData.currentPreset.PresetID, tableData.currentPreset);
 						tableData.currentPreset = FBIMPreset();
 					}
-					tableData.currentPreset.PresetID = *cell;
+					tableData.currentPreset.PresetID = FBIMKey(cell);
 					tableData.currentPreset.NodeType = tableData.nodeType.TypeName;
 					tableData.currentPreset.NodeScope = tableData.nodeType.Scope;
 				}
@@ -621,7 +619,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 				{
 					if (!cell.IsEmpty())
 					{
-						tableData.currentPreset.SlotConfigPresetID = *normalizeCell(cell);
+						tableData.currentPreset.SlotConfigPresetID = FBIMKey(normalizeCell(cell));
 					}
 				}
 				else if (category.Equals(TEXT("PartPreset")) && ensureAlways(!cell.IsEmpty()))
@@ -630,7 +628,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 					{
 						tableData.currentPreset.PartSlots.AddDefaulted();
 					}
-					tableData.currentPreset.PartSlots.Last().PartPreset = *normalizeCell(cell);
+					tableData.currentPreset.PartSlots.Last().PartPreset = FBIMKey(normalizeCell(cell));
 				}
 				else if (category.Equals(TEXT("ID")))
 				{
@@ -638,7 +636,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 					{
 						tableData.currentPreset.PartSlots.AddDefaulted();
 					}
-					tableData.currentPreset.PartSlots.Last().ID = *normalizeCell(cell);
+					tableData.currentPreset.PartSlots.Last().ID = normalizeCell(cell);
 				}
 				else if (category.Equals(TEXT("ParentID")))
 				{
@@ -646,7 +644,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 					{
 						tableData.currentPreset.PartSlots.AddDefaulted();
 					}
-					tableData.currentPreset.PartSlots.Last().ParentID = *normalizeCell(cell);
+					tableData.currentPreset.PartSlots.Last().ParentID = normalizeCell(cell);
 				}
 				else if (category.Equals(TEXT("SlotID")))
 				{
@@ -654,7 +652,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 					{
 						tableData.currentPreset.PartSlots.AddDefaulted();
 					}
-					tableData.currentPreset.PartSlots.Last().SlotName = *normalizeCell(cell);
+					tableData.currentPreset.PartSlots.Last().SlotName = normalizeCell(cell);
 				}
 			}
 			else if (tableData.pinRange.IsIn(i))
@@ -678,12 +676,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 						newCAP.ParentPinSetPosition = setPosition;
 						FString rowStr = cell;
 						rowStr.RemoveSpacesInline();
-						newCAP.PresetID = *rowStr;
-						if (newCAP.PresetID.IsNone() && tableData.currentPreset.ChildPresets.Num() > 1)
-						{
-							newCAP.PresetID = tableData.currentPreset.ChildPresets[0].PresetID;
-						}
-						ensureAlways(!newCAP.PresetID.IsNone());
+						newCAP.PresetID = FBIMKey(rowStr);
 						found = true;
 					}
 				}

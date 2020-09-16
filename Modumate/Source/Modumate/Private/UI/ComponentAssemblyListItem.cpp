@@ -220,7 +220,8 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 	// Swappable preset item doesn't have BIMAssemblySpec yet.
 	if (compListObj->ItemType == EComponentListItemType::SwapDesignerPreset)
 	{
-		ComponentPresetItem->MainText->ChangeText(FText::FromName(compListObj->UniqueKey));
+		// TODO: need human readable assembly name
+		ComponentPresetItem->MainText->ChangeText(FText::FromString(compListObj->UniqueKey.ToString()));
 		BIMInstanceID = compListObj->BIMNodeInstanceID;
 		return;
 	}

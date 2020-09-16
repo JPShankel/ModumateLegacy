@@ -36,3 +36,65 @@ struct FRoomConfigurationTableRow : public FTableRowBase
 	FString HexValue;
 };
 
+USTRUCT()
+struct FBIMSlotConfigDataTable : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString Name;
+
+	UPROPERTY()
+	FString Active;
+
+	UPROPERTY()
+	FString ID;
+
+	UPROPERTY()
+	FString ConfigName;
+
+	UPROPERTY()
+	FString SlotID;
+
+	UPROPERTY()
+	FString SupportedNCP;
+
+	UPROPERTY()
+	FString SlotName;
+
+	UPROPERTY()
+	FString LocationX;
+
+	UPROPERTY()
+	FString LocationY;
+
+	UPROPERTY()
+	FString LocationZ;
+
+	UPROPERTY()
+	FString SizeX;
+
+	UPROPERTY()
+	FString SizeY;
+
+	UPROPERTY()
+	FString SizeZ;
+
+	UPROPERTY()
+	FString RotationX;
+
+	UPROPERTY()
+	FString RotationY;
+
+	UPROPERTY()
+	FString RotationZ;
+
+	UPROPERTY()
+	FString FlipX;
+
+	UPROPERTY()
+	FString FlipY;
+
+	UPROPERTY()
+	FString FlipZ;
+};

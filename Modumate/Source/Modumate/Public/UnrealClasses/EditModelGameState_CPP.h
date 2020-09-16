@@ -28,8 +28,8 @@ public:
 	FModumateDocument Document;
 
 	UFUNCTION(BlueprintCallable, Category = "Shopping")
-	TArray<float> GetComponentsThicknessWithKey(EToolMode mode, const FString &assemblyKey) const;
+	TArray<float> GetComponentsThicknessWithKey(EToolMode Mode, const FBIMKey& AssemblyKey) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	bool GetPortalToolTip(EToolMode mode, const FName &assemblyKey, FString &type, FString &configName, TArray<FString> &parts);
+	bool GetPortalToolTip(EToolMode Mode, const FBIMKey& AssemblyKey, FString& Type, FString& ConfigName, TArray<FString>& Parts);
 };

@@ -37,7 +37,7 @@ void USelectionTrayWidget::OpenToolTrayForSelection()
 	// TODO: Set menu animation here
 }
 
-void USelectionTrayWidget::OpenToolTrayForSwap(EToolMode ToolMode, const FName &PresetToSwap)
+void USelectionTrayWidget::OpenToolTrayForSwap(EToolMode ToolMode, const FBIMKey& PresetToSwap)
 {
 	// Switcher switches between which widget to display, depending on child order
 	// SelectionTray is in first index, SwapTray is second

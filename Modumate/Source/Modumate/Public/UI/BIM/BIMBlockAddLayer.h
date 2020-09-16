@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-
+#include "BIMKernel/BIMKey.h"
 #include "BIMBlockAddLayer.generated.h"
 
 /**
@@ -37,7 +37,7 @@ public:
 	class UModumateButton *Button_AddLayer;
 
 	int32 ParentID = -1;
-	FName PresetID = NAME_None;
+	FBIMKey PresetID;
 	int32 ParentSetIndex = -1;
 	int32 ParentSetPosition = -1;
 

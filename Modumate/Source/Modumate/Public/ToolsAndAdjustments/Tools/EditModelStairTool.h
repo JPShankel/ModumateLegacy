@@ -32,7 +32,7 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
-	virtual void SetAssemblyKey(const FName &InAssemblyKey) override;
+	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
 
 protected:
 	enum EState

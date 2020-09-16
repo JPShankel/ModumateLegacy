@@ -6,6 +6,7 @@
 #include "Database/ModumateObjectEnums.h"
 #include "BIMKernel/BIMProperties.h"
 #include "BIMKernel/BIMEnums.h"
+#include "BIMKernel/BIMKey.h"
 
 // All needed by ObjectAssembly, first step is to replace all inclusions of the object assembly header with this one
 #include "ModumateCore/ModumateUnits.h"
@@ -78,7 +79,7 @@ private:
 public:
 	EObjectType ObjectType = EObjectType::OTNone;
 
-	FName RootPreset;
+	FBIMKey RootPreset;
 	FBIMPropertySheet RootProperties;
 
 	TArray<FBIMLayerSpec> Layers;
@@ -86,11 +87,11 @@ public:
 	TArray<FBIMExtrusionSpec> Extrusions;
 
 	// For DataCollection support in preset manager
-	FName UniqueKey() const { return RootPreset; }
+	FBIMKey UniqueKey() const { return RootPreset; }
 
 	void Reset();
 
-	ECraftingResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FName& PresetID);
+	ECraftingResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID);
 
 	// Helper functions for getting properties in the Assembly scope
 	// TODO: refactor for typesafe properties

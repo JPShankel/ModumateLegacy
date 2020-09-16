@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-
+#include "BIMKernel/BIMKey.h"
 #include "SelectionTrayBlockPresetList.generated.h"
 
 /**
@@ -25,7 +25,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
-	TMap<FName, class UComponentListObject*> ComponentItemMap;
+	TMap<FBIMKey, class UComponentListObject*> ComponentItemMap;
 
 public:
 	UPROPERTY()

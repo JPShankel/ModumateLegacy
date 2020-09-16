@@ -3,6 +3,7 @@
 #pragma once
 #include "ToolsAndAdjustments/Tools/EditModelMetaPlaneTool.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "BIMKernel/BIMKey.h"
 #include "BIMKernel/BIMAssemblySpec.h"
 
 #include "EditModelPlaneHostedObjTool.generated.h"
@@ -46,7 +47,7 @@ public:
 	virtual bool HandleInvert() override;
 
 	virtual bool MakeObject(const FVector &Location, TArray<int32> &newObjIDs) override;
-	virtual void SetAssemblyKey(const FName &InAssemblyKey) override;
+	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
 
 	// ModumateBlue
 	FColor AffordanceLineColor = FColor(28, 159, 255);

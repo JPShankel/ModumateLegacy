@@ -90,8 +90,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")
-	bool SetIconMeshForAssemblyByToolMode(bool UseAssemblyFromBIMDesigner, const FName &AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
-	bool SetIconMeshForBIMDesigner(const FName &PresetID, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForAssemblyByToolMode(bool UseAssemblyFromBIMDesigner, const FBIMKey& AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForBIMDesigner(const FBIMKey& PresetID, UTextureRenderTarget2D* RenderTarget);
 
 	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
@@ -100,7 +100,7 @@ public:
 	bool SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget);
 
-	bool SetIconMeshForMaterial(const FName &MaterialKey, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* RenderTarget);
 
 	void GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal);
 	void GetFloorSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& StartPt, const FVector& EndPt, float Height, FVector& OutLocation, FVector& OutNormal, bool& OutSliced);

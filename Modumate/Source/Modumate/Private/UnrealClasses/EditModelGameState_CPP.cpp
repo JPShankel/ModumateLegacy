@@ -23,17 +23,17 @@ AEditModelGameState_CPP::~AEditModelGameState_CPP()
 {
 }
 
-TArray<float> AEditModelGameState_CPP::GetComponentsThicknessWithKey(EToolMode mode, const FString &assemblyKey) const
+TArray<float> AEditModelGameState_CPP::GetComponentsThicknessWithKey(EToolMode Mode, const FBIMKey& AssemblyKey) const
 {
 	TArray<float> layersThickness;
 
 	// This may be called with an empty assembly, which legitimately should return empty results.
-	if (assemblyKey.IsEmpty())
+	if (AssemblyKey.IsNone())
 	{
 		return layersThickness;
 	}
 
-	const FBIMAssemblySpec *pMOA = Document.PresetManager.GetAssemblyByKey(mode, FName(*assemblyKey));
+	const FBIMAssemblySpec *pMOA = Document.PresetManager.GetAssemblyByKey(Mode, AssemblyKey);
 
 	if (ensureAlways(pMOA != nullptr))
 	{
@@ -48,9 +48,9 @@ TArray<float> AEditModelGameState_CPP::GetComponentsThicknessWithKey(EToolMode m
 	return layersThickness;
 }
 
-bool AEditModelGameState_CPP::GetPortalToolTip(EToolMode mode, const FName &assemblyKey, FString &type, FString &configName, TArray<FString> &parts)
+bool AEditModelGameState_CPP::GetPortalToolTip(EToolMode Mode, const FBIMKey& AssemblyKey, FString &Type, FString &ConfigName, TArray<FString>& Parts)
 {
-	type = TEXT("UNKNOWN PORTAL TYPE");
-	configName = TEXT("UNKNOWN PORTAL CONFIG");
+	Type = TEXT("UNKNOWN PORTAL TYPE");
+	ConfigName = TEXT("UNKNOWN PORTAL CONFIG");
 	return false;
 }

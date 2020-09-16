@@ -50,7 +50,7 @@ bool UPortalToolBase::Activate()
 	return true;
 }
 
-void UPortalToolBase::SetAssemblyKey(const FName &InAssemblyKey)
+void UPortalToolBase::SetAssemblyKey(const FBIMKey& InAssemblyKey)
 {
 	UEditModelToolBase::SetAssemblyKey(InAssemblyKey);
 	if (Active)

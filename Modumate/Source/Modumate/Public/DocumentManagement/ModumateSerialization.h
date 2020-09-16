@@ -28,7 +28,7 @@ DDL 2.0
 USTRUCT()
 struct FCustomAssemblyProperty
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	int32 LayerID;
@@ -46,7 +46,7 @@ struct FCustomAssemblyProperty
 USTRUCT()
 struct FMOIDataRecordV1
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	int32 ID;
@@ -55,7 +55,7 @@ struct FMOIDataRecordV1
 	EObjectType ObjectType;
 
 	UPROPERTY()
-	FString AssemblyKey;
+	FBIMKey AssemblyKey;
 
 	UPROPERTY()
 	int32 ParentID;
@@ -95,7 +95,7 @@ typedef FMOIDataRecordV1 FMOIDataRecord;
 USTRUCT()
 struct FGraph2DEdgeRecord
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	TArray<int32> VertexIDs;
@@ -104,7 +104,7 @@ struct FGraph2DEdgeRecord
 USTRUCT()
 struct FGraph2DPolygonRecord
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	TArray<int32> VertexIDs;
@@ -113,7 +113,7 @@ struct FGraph2DPolygonRecord
 USTRUCT()
 struct FGraph2DRecord
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	TMap<int32, FVector2D> Vertices;
@@ -131,7 +131,7 @@ struct FGraph2DRecord
 USTRUCT()
 struct FGraph3DVertexRecordV1
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	FGraph3DVertexRecordV1();
 	FGraph3DVertexRecordV1(int32 InID, const FVector& InPosition);
@@ -150,7 +150,7 @@ typedef FGraph3DVertexRecordV1 FGraph3DVertexRecord;
 USTRUCT()
 struct FGraph3DEdgeRecordV1
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	FGraph3DEdgeRecordV1();
 	FGraph3DEdgeRecordV1(int32 InID, int32 InStartVertexID, int32 InEndVertexID, const TSet<int32>& InGroupIDs);
@@ -172,7 +172,7 @@ typedef FGraph3DEdgeRecordV1 FGraph3DEdgeRecord;
 USTRUCT()
 struct FGraph3DFaceRecordV1
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	FGraph3DFaceRecordV1();
 	FGraph3DFaceRecordV1(int32 InID, const TArray<int32>& InVertexIDs, const TSet<int32>& InGroupIDs, int32 InContainingFaceID, const TSet<int32>& InContainedFaceIDs);
@@ -197,7 +197,7 @@ typedef FGraph3DFaceRecordV1 FGraph3DFaceRecord;
 USTRUCT()
 struct FGraph3DRecordV1
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	TMap<int32, FGraph3DVertexRecordV1> Vertices;
@@ -216,10 +216,10 @@ typedef FGraph3DRecordV1 FGraph3DRecord;
 USTRUCT()
 struct FCustomAssemblyRecordV3
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
-	FString DatabaseKey;
+	FBIMKey DatabaseKey;
 
 	UPROPERTY()
 	FString CodeName;
@@ -241,10 +241,10 @@ struct FCustomAssemblyRecordV3
 USTRUCT()
 struct FCustomAssemblyRecordV4
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
-	FString DatabaseKey;
+	FBIMKey DatabaseKey;
 
 	UPROPERTY()
 	FString DisplayName;
@@ -263,7 +263,7 @@ struct FCustomAssemblyRecordV4
 	TArray<FCustomAssemblyCraftingNodeRecord> CraftingNodes;
 
 	UPROPERTY()
-	FName RootPreset;
+	FBIMKey RootPreset;
 };
 typedef FCustomAssemblyRecordV4 FCustomAssemblyRecord;
 
@@ -273,7 +273,7 @@ typedef FCustomAssemblyRecordV4 FCustomAssemblyRecord;
 USTRUCT()
 struct FMOIDocumentRecordBASE
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	TArray<FMOIDataRecordV1> ObjectInstances;
@@ -288,7 +288,7 @@ struct FMOIDocumentRecordBASE
 USTRUCT()
 struct FMOIDocumentRecordV3 : public FMOIDocumentRecordBASE
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	TArray<FCustomAssemblyRecordV3> CustomAssemblies;
@@ -297,29 +297,29 @@ struct FMOIDocumentRecordV3 : public FMOIDocumentRecordBASE
 USTRUCT()
 struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	TArray<FCustomAssemblyRecordV4> CustomAssemblies;
 
 	UPROPERTY()
-	TMap<EToolMode, FName> CurrentToolAssemblyMap;
+	TMap<EToolMode, FBIMKey> CurrentToolAssemblyMap;
 
 	// DDL 2.0
 	UPROPERTY()
 	TArray<FCraftingPresetRecord> CraftingPresetArrayV2;
 
 	UPROPERTY()
-	TArray<FName> ProjectAssemblyPresets;
+	TArray<FBIMKey> ProjectAssemblyPresets;
 
 	UPROPERTY()
-	TSet<FName> KeyStore;
+	TSet<FString> KeyStore;
 
 	UPROPERTY()
 	TArray<FModumateCameraView> CameraViews;
 
 	UPROPERTY()
-	TMap<FName, FGraph2DRecord> CustomGraph2DRecords;
+	TMap<FString, FGraph2DRecord> CustomGraph2DRecords;
 
 	UPROPERTY()
 	TMap<int32, FGraph2DRecord> SurfaceGraphs;
@@ -332,7 +332,7 @@ typedef FMOIDocumentRecordV4 FMOIDocumentRecord;
 USTRUCT()
 struct FModumateDocumentHeaderV1
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	FString Version;
@@ -344,7 +344,7 @@ struct FModumateDocumentHeaderV1
 USTRUCT()
 struct FModumateDocumentHeaderV2
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	int32 Version;

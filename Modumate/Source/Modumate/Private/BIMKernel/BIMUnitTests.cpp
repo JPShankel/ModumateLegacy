@@ -1,6 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "CoreMinimal.h"
+#include "BIMKernel/BIMUnitTests.h"
+#include "JsonObjectConverter.h"
 #include "BIMKernel/BIMTagPath.h"
 #include "BIMKernel/BIMNodeEditor.h"
 #include "BIMKernel/BIMAssemblySpec.h"
@@ -123,6 +124,42 @@ static bool testKeys()
 	if (mapNum == nullptr || (*mapNum) != 2)
 	{
 		return false;
+	}
+
+	FTestBIMKeyContainer container;
+	container.TestMap.Add(FBIMKey("Test1"), 1);
+	container.TestMap.Add(FBIMKey("Test2"), 2);
+	container.TestMap.Add(FBIMKey("Test3"), 3);
+
+	auto jsonOb = FJsonObjectConverter::UStructToJsonObject<FTestBIMKeyContainer>(container);
+
+	FTestBIMKeyContainer deserialized;
+	FJsonObjectConverter::JsonObjectToUStruct<FTestBIMKeyContainer>(jsonOb.ToSharedRef(), &deserialized);
+
+	if (deserialized.TestMap.Num() != container.TestMap.Num())
+	{
+		return false;
+	}
+
+	TArray<FBIMKey> keyArrayContainer,keyArrayDeserialized;
+	TArray<int32> valueArrayContainer, valueArrayDeserialized;
+
+	container.TestMap.GenerateKeyArray(keyArrayContainer);
+	container.TestMap.GenerateValueArray(valueArrayContainer);
+
+	deserialized.TestMap.GenerateKeyArray(keyArrayDeserialized);
+	deserialized.TestMap.GenerateValueArray(valueArrayDeserialized);
+
+	for (int32 i = 0; i < keyArrayContainer.Num(); ++i)
+	{
+		if (keyArrayContainer[i] != keyArrayDeserialized[i])
+		{
+			return false;
+		}
+		if (valueArrayContainer[i] != valueArrayDeserialized[i])
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -334,7 +371,7 @@ static bool testTags()
 	return true;
 }
 
-bool testPreset(const FBIMPresetCollection &PresetCollection, const FName &PresetID)
+bool testPreset(const FBIMPresetCollection &PresetCollection, const FBIMKey& PresetID)
 {
 	const FBIMPreset *preset = PresetCollection.Presets.Find(PresetID);
 	if (preset == nullptr)
@@ -384,17 +421,18 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 
 	TArray<FString> errors;
 	FBIMPresetCollection presetCollection;
-	TArray<FName> starters;
+	TArray<FBIMKey> starters;
 
 	if (presetCollection.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), starters, errors) != ECraftingResult::Success)
 	{
 		return false;
 	}
 
-	TArray<FName> layeredAssemblies,materialColorPresets,layerPresets;
-	FName layeredType = TEXT("4LayeredAssembly");
-	FName layer0Type = TEXT("2Layer0D");
-	FName materialColorType = TEXT("1Material");
+	TArray<FBIMKey> layeredAssemblies,materialColorPresets,layerPresets;
+	FName layeredType(TEXT("4LayeredAssembly"));
+	FName layer0Type(TEXT("2Layer0D"));
+	FName materialColorType(TEXT("1Material"));
+
 	for (auto &kvp : presetCollection.Presets)
 	{
 		if (kvp.Value.NodeType == layeredType)
@@ -451,12 +489,9 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	*/
 	FBIMPreset *assemblyPreset = presetCollection.Presets.Find(layeredAssemblies[0]);
 	FBIMPreset *layerPreset = presetCollection.Presets.Find(layerPresets[0]);
-	FName assemblyPresetFirstLayer = assemblyPreset->ChildPresets[0].PresetID;
+	FBIMKey assemblyPresetFirstLayer = assemblyPreset->ChildPresets[0].PresetID;
 
-	FString str1 = assemblyPresetFirstLayer.ToString();
-	FString str2 = layerPresets[0].ToString();
-
-	if (!ensureAlways(layerPresets[0].IsEqual(assemblyPresetFirstLayer)))
+	if (!ensureAlways(layerPresets[0] == assemblyPresetFirstLayer))
 	{
 		return false;
 	}

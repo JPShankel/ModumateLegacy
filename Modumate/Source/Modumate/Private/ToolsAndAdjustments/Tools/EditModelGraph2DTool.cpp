@@ -31,9 +31,9 @@ bool UGraph2DTool::Activate()
 	if (volumeGraph.Create2DGraph(graphObjIDs, connectedGraphIDs, SelectedGraph, graphPlane, true, true))
 	{
 		FGraph2DRecord graphRecord;
-		FName graphKey;
+		FBIMKey graphKey;
 		if (SelectedGraph->ToDataRecord(&graphRecord) &&
-			(gameState->Document.PresetManager.AddOrUpdateGraph2DRecord(NAME_None, graphRecord, graphKey) == ECraftingResult::Success))
+			(gameState->Document.PresetManager.AddOrUpdateGraph2DRecord(FBIMKey(), graphRecord, graphKey) == ECraftingResult::Success))
 		{
 			UE_LOG(LogTemp, Log, TEXT("Added graph record \"%s\""), *graphKey.ToString());
 		}

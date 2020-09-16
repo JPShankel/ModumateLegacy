@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/BIMNodeEditor.h"
 #include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/BIMKey.h"
 
 #include "BIMDesigner.generated.h"
 
@@ -115,14 +116,14 @@ public:
 	FBIMAssemblySpec CraftingAssembly;
 
 	float GetCurrentZoomScale() const;
-	bool EditPresetInBIMDesigner(const FName& PresetID);
-	bool SetPresetForNodeInBIMDesigner(int32 InstanceID, const FName &PresetID);
+	bool EditPresetInBIMDesigner(const FBIMKey& PresetID);
+	bool SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey& PresetID);
 	void UpdateBIMDesigner();
 	void AutoArrangeNodes();
 	void DrawConnectSplineForNodes(const FPaintContext& context, class UBIMBlockNode* StartNode, class UBIMBlockNode* EndNode) const;
-	FName GetPresetID(int32 InstanceID);
+	FBIMKey GetPresetID(int32 InstanceID);
 	bool DeleteNode(int32 InstanceID);
-	bool AddNodeFromPreset(int32 ParentID, const FName& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
+	bool AddNodeFromPreset(int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
 	bool SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value);
 	bool UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVisibility);
 	bool GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, int32 NodeID);

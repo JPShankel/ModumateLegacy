@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "BIMKernel/BIMKey.h"
+#include "ModumateCore/ModumateTypes.h"
 #include "EditModelUserWidget.generated.h"
 
 /**
@@ -70,7 +72,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
 	void EventToggleProjectMenu();
 
-	void EditExistingAssembly(EToolMode ToolMode, FName AssemblyKey);
+	void EditExistingAssembly(EToolMode ToolMode, const FBIMKey& AssemblyKey);
 	void ToggleBIMDesigner(bool Open);
 	void SwitchRightMenu(ERightMenuState NewMenuState);
 	void UpdateCutPlanesList();

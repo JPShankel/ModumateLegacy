@@ -5,6 +5,7 @@
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Math/Box.h"
+#include "BIMKernel/BIMKey.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "ModumateCore/ModumateDimensionString.h"
 #include "UObject/Object.h"
@@ -190,7 +191,7 @@ public:
 	static void DocUnHideAllMoiActors(const AActor* Owner);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static FName GetShopItemFromActor(AActor* TargetActor, bool& bSuccess);
+	static FBIMKey GetShopItemFromActor(AActor* TargetActor, bool& bSuccess);
 
 	static bool GetCabinetToeKickDimensions(const FBIMAssemblySpec &obAsm, FVector2D &outToeKickDims);
 

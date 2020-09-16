@@ -7,7 +7,7 @@
 
 using namespace Modumate;
 
-bool UModumateIconMeshStatics::GetMeshesFromShoppingItem(AEditModelPlayerController_CPP *Controller, const FName &AsmKey, EToolMode FromToolMode, TArray<UStaticMesh*>& TargetComps, bool bMarketplaceAsm)
+bool UModumateIconMeshStatics::GetMeshesFromShoppingItem(AEditModelPlayerController_CPP *Controller, const FBIMKey& AsmKey, EToolMode FromToolMode, TArray<UStaticMesh*>& TargetComps, bool bMarketplaceAsm)
 {
 	FModumateDatabase *obDB = Controller->GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase;
 
@@ -29,7 +29,7 @@ bool UModumateIconMeshStatics::GetMeshesFromShoppingItem(AEditModelPlayerControl
 	return true;
 }
 
-bool UModumateIconMeshStatics::GetEngineMaterialByKey(AEditModelPlayerController_CPP *Controller, const FName &Key, UMaterialInterface* &ReturnMaterial)
+bool UModumateIconMeshStatics::GetEngineMaterialByKey(AEditModelPlayerController_CPP *Controller, const FBIMKey& Key, UMaterialInterface* &ReturnMaterial)
 {
 	if (Controller != nullptr)
 	{
@@ -45,7 +45,7 @@ bool UModumateIconMeshStatics::GetEngineMaterialByKey(AEditModelPlayerController
 	return false;
 }
 
-bool UModumateIconMeshStatics::GetEngineCustomColorByKey(AEditModelPlayerController_CPP *Controller, const FName &Key, FCustomColor &ModuleColor)
+bool UModumateIconMeshStatics::GetEngineCustomColorByKey(AEditModelPlayerController_CPP *Controller, const FBIMKey& Key, FCustomColor &ModuleColor)
 {
 	if (Controller != nullptr)
 	{
@@ -61,7 +61,7 @@ bool UModumateIconMeshStatics::GetEngineCustomColorByKey(AEditModelPlayerControl
 	return false;
 }
 
-bool UModumateIconMeshStatics::GetEngineStaticIconTextureByKey(AEditModelPlayerController_CPP *Controller, const FName &Key, FStaticIconTexture &StaticIcon)
+bool UModumateIconMeshStatics::GetEngineStaticIconTextureByKey(AEditModelPlayerController_CPP *Controller, const FBIMKey& Key, FStaticIconTexture &StaticIcon)
 {
 	if (Controller != nullptr)
 	{
@@ -77,7 +77,7 @@ bool UModumateIconMeshStatics::GetEngineStaticIconTextureByKey(AEditModelPlayerC
 	return false;
 }
 
-bool UModumateIconMeshStatics::MakeIconMeshFromPofileKey(AEditModelPlayerController_CPP *Controller, ADynamicMeshActor *DynamicMeshActor, EToolMode FromToolMode, const FName &ProfileKey, const FVector &RootLoation, float Length)
+bool UModumateIconMeshStatics::MakeIconMeshFromPofileKey(AEditModelPlayerController_CPP *Controller, ADynamicMeshActor *DynamicMeshActor, EToolMode FromToolMode, const FBIMKey& ProfileKey, const FVector &RootLoation, float Length)
 {
 	if (Controller != nullptr)
 	{
@@ -107,7 +107,7 @@ bool UModumateIconMeshStatics::MakeIconMeshFromPofileKey(AEditModelPlayerControl
 	return false;
 }
 
-bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContextObject, const FName &PresetKey, UMaterialInterface* &ModuleMaterial, FCustomColor &ModuleColor)
+bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContextObject, const FBIMKey& PresetKey, UMaterialInterface* &ModuleMaterial, FCustomColor &ModuleColor)
 {
 	if (PresetKey.IsNone())
 	{
@@ -126,11 +126,11 @@ bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContex
 	FBIMAssemblySpec presetSpec;
 	presetSpec.FromPreset(*db,presetManager.CraftingNodePresets, PresetKey);
 
-	FName materialName, colorName;
+	FString materialName, colorName;
 
 	if (presetSpec.RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::MaterialKey, materialName))
 	{
-		const FArchitecturalMaterial *mat = db->GetArchitecturalMaterialByKey(materialName);
+		const FArchitecturalMaterial *mat = db->GetArchitecturalMaterialByKey(FBIMKey(materialName));
 		if (ensureAlways(mat != nullptr) && ensureAlways(mat->EngineMaterial.IsValid()))
 		{
 			ModuleMaterial = mat->EngineMaterial.Get();
@@ -139,7 +139,7 @@ bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContex
 
 	if (presetSpec.RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Color, colorName))
 	{
-		const FCustomColor *color = db->GetCustomColorByKey(colorName);
+		const FCustomColor *color = db->GetCustomColorByKey(FBIMKey(colorName));
 		if (ensureAlways(color != nullptr))
 		{
 			ModuleColor = *color;

@@ -73,7 +73,7 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 	}
 }
 
-void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FName &ParentPresetID, const FName &PresetIDToSwap, int32 NodeID)
+void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, int32 NodeID)
 {
 	SwapType = ESwapType::SwapFromNode;
 	CurrentNodeForSwap = NodeID;
@@ -82,7 +82,7 @@ void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FName &Pa
 		FPresetManager &presetManager = GameState->Document.PresetManager;
 		AssembliesList->ClearListItems();
 
-		TArray<FName> availablePresets;
+		TArray<FBIMKey> availablePresets;
 		presetManager.GetAvailablePresetsForSwap(ParentPresetID, PresetIDToSwap, availablePresets);
 
 		for (auto &curPreset : availablePresets)
@@ -97,7 +97,7 @@ void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FName &Pa
 	}
 }
 
-void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FName &PresetID)
+void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FBIMKey& PresetID)
 {
 	SwapType = ESwapType::SwapFromAssemblyList;
 	if (Controller && GameState)
@@ -105,8 +105,8 @@ void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(ETool
 		FPresetManager &presetManager = GameState->Document.PresetManager;
 		AssembliesList->ClearListItems();
 
-		TArray<FName> availablePresets;
-		presetManager.GetAvailablePresetsForSwap(NAME_None, PresetID, availablePresets);
+		TArray<FBIMKey> availablePresets;
+		presetManager.GetAvailablePresetsForSwap(FBIMKey(), PresetID, availablePresets);
 
 		for (auto &curPreset : availablePresets)
 		{

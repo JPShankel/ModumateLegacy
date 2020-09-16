@@ -36,7 +36,7 @@ void UComponentPresetListItem::NativeDestruct()
 	}
 }
 
-bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerController_CPP *Controller, const FName &AsmKey, EToolMode mode)
+bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerController_CPP *Controller, const FBIMKey& AsmKey, EToolMode mode)
 {
 	if (!(Controller && IconImage))
 	{

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Database/ModumateObjectEnums.h"
+#include "BIMKernel/BIMKey.h"
 
 #include "SelectionTrayWidget.generated.h"
 
@@ -24,7 +25,7 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-	FName CurrentPresetToSwap = NAME_None;
+	FBIMKey CurrentPresetToSwap;
 
 public:
 
@@ -38,9 +39,9 @@ public:
 	class UWidgetSwitcher *WidgetSwitcherTray;
 
 	void OpenToolTrayForSelection();
-	void OpenToolTrayForSwap(EToolMode ToolMode, const FName &PresetToSwap);
+	void OpenToolTrayForSwap(EToolMode ToolMode, const FBIMKey& PresetToSwap);
 	void CloseToolTray();
-	FName GetCurrentPresetToSwap() { return CurrentPresetToSwap; }
+	const FBIMKey &GetCurrentPresetToSwap() const { return CurrentPresetToSwap; }
 
 protected:
 

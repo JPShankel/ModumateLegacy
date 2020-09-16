@@ -54,7 +54,7 @@ public:
 		TArray<FBIMCraftingTreeNodeWeakPtr> Children;
 	};
 
-	FName PresetID;
+	FBIMKey PresetID;
 	FBIMCraftingTreeNodeWeakPtr ParentInstance;
 
 	TArray<FAttachedChildGroup> AttachedChildren;
@@ -104,15 +104,15 @@ private:
 public:
 
 	ECraftingResult ResetInstances();
-	ECraftingResult InitFromPreset(const FBIMPresetCollection& PresetCollection, const FName& PresetID, FBIMCraftingTreeNodeSharedPtr &OutRootNode);
+	ECraftingResult InitFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID, FBIMCraftingTreeNodeSharedPtr &OutRootNode);
 
 	ECraftingResult DestroyNodeInstance(const FBIMCraftingTreeNodeSharedPtr& Instance, TArray<int32>& OutDestroyed);
 	ECraftingResult DestroyNodeInstance(int32 InstanceID, TArray<int32>& OutDestroyed);
 
 	const TArray<FBIMCraftingTreeNodeSharedPtr> &GetInstancePool() const { return InstancePool; }
 
-	FBIMCraftingTreeNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FName& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
-	ECraftingResult SetNewPresetForNode(const FBIMPresetCollection &PresetCollection, int32 InstanceID, const FName &PresetID);
+	FBIMCraftingTreeNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
+	ECraftingResult SetNewPresetForNode(const FBIMPresetCollection &PresetCollection, int32 InstanceID, const FBIMKey &PresetID);
 
 	const FBIMCraftingTreeNodeSharedPtr InstanceFromID(int32 InstanceID) const;
 	FBIMCraftingTreeNodeSharedPtr InstanceFromID(int32 InstanceID);

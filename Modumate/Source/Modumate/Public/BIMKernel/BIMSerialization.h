@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BIMKernel/BIMKey.h"
 #include "BIMSerialization.generated.h"
 
 USTRUCT()
@@ -32,7 +33,7 @@ struct MODUMATE_API FCraftingPresetRecord
 	FName NodeType;
 
 	UPROPERTY()
-	FName PresetID;
+	FBIMKey PresetID;
 
 	UPROPERTY()
 	FBIMPropertySheetRecord PropertyRecord;
@@ -44,7 +45,7 @@ struct MODUMATE_API FCraftingPresetRecord
 	TArray<int32> ChildSetPositions;
 
 	UPROPERTY()
-	TArray<FName> ChildPresets;
+	TArray<FBIMKey> ChildPresets;
 
 	UPROPERTY()
 	TArray<FString> ParentTagPaths;
@@ -53,19 +54,19 @@ struct MODUMATE_API FCraftingPresetRecord
 	FString MyTagPath;
 
 	UPROPERTY()
-	FName SlotConfigPresetID;
+	FBIMKey SlotConfigPresetID;
 
 	UPROPERTY()
-	TArray<FName> PartIDs;
+	TArray<FBIMKey> PartIDs;
 
 	UPROPERTY()
-	TArray<FName> PartParentIDs;
+	TArray<FBIMKey> PartParentIDs;
 
 	UPROPERTY()
-	TArray<FName> PartPresets;
+	TArray<FBIMKey> PartPresets;
 
 	UPROPERTY()
-	TArray<FName> PartSlotNames;
+	TArray<FBIMKey> PartSlotNames;
 };
 
 USTRUCT()
@@ -77,7 +78,7 @@ struct MODUMATE_API FCustomAssemblyCraftingNodeRecord
 	FName TypeName;
 
 	UPROPERTY()
-	FName PresetID;
+	FBIMKey PresetID;
 
 	UPROPERTY()
 	int32 InstanceID;
@@ -94,3 +95,4 @@ struct MODUMATE_API FCustomAssemblyCraftingNodeRecord
 	UPROPERTY()
 	int32 PinSetPosition;
 };
+

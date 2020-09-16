@@ -88,9 +88,6 @@ public:
 	// For now, just ask what the next ID will be
 	int32 GetNextAvailableID() const { return NextID; }
 
-	// Document modifiers
-	int32 CreateFFE(UWorld *world, int32 parentID, const FVector &loc, const FQuat &rot, const FBIMAssemblySpec &obAsm, int32 parentFaceIdx = INDEX_NONE);
-
 	const TArray<FModumateObjectInstance*>& GetObjectInstances() const { return ObjectInstanceArray; }
 	TArray<FModumateObjectInstance*>& GetObjectInstances() { return ObjectInstanceArray; }
 
@@ -183,7 +180,7 @@ public:
 	TArray<const FModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& types) const;
 	TArray<FModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& types);
 
-	void GetObjectIdsByAssembly(const FName &assemblyKey, TArray<int32> &outIDs) const;
+	void GetObjectIdsByAssembly(const FBIMKey& AssemblyKey, TArray<int32>& OutIDs) const;
 
 	static const FName DocumentHideRequestTag;
 	void AddHideObjectsById(UWorld *world, const TArray<int32> &ids);

@@ -136,7 +136,7 @@ void UBIMBlockNode::PerformDrag()
 void UBIMBlockNode::OnButtonSwapReleased()
 {
 	UpdateNodeSwitchState(ENodeWidgetSwitchState::PendingSwap);
-	FName parentPresetID = NAME_None;
+	FBIMKey parentPresetID;
 	if (ParentID != -1)
 	{
 		parentPresetID = ParentBIMDesigner->GetPresetID(ParentID);

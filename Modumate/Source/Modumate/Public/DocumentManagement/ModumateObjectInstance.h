@@ -218,7 +218,7 @@ struct MODUMATE_API FMOIStateData
 	int32 ParentID = MOD_ID_NONE;
 
 	// Store key instead of whole assembly to avoid old versions of an assembly from being re-applied
-	FName ObjectAssemblyKey;
+	FBIMKey ObjectAssemblyKey;
 
 	EObjectType ObjectType = EObjectType::OTNone;
 

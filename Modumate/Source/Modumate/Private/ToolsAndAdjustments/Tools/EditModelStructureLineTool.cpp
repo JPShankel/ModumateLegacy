@@ -235,7 +235,7 @@ bool UStructureLineTool::AbortUse()
 	return UEditModelToolBase::AbortUse();
 }
 
-void UStructureLineTool::SetAssemblyKey(const FName &InAssemblyKey)
+void UStructureLineTool::SetAssemblyKey(const FBIMKey& InAssemblyKey)
 {
 	Super::SetAssemblyKey(InAssemblyKey);
 
@@ -250,7 +250,7 @@ void UStructureLineTool::SetAssemblyKey(const FName &InAssemblyKey)
 	}
 	else
 	{
-		Super::SetAssemblyKey(NAME_None);
+		Super::SetAssemblyKey(FBIMKey());
 		ObjAssembly = FBIMAssemblySpec();
 	}
 }

@@ -139,7 +139,7 @@ float UBIMDesigner::GetCurrentZoomScale() const
 	return ScaleBoxForNodes->UserSpecifiedScale;
 }
 
-bool UBIMDesigner::EditPresetInBIMDesigner(const FName& PresetID)
+bool UBIMDesigner::EditPresetInBIMDesigner(const FBIMKey& PresetID)
 {
 	FBIMCraftingTreeNodeSharedPtr rootNode;
 	ECraftingResult getPresetResult = InstancePool.InitFromPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, PresetID, rootNode);
@@ -151,7 +151,7 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FName& PresetID)
 	return true;
 }
 
-bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FName &PresetID)
+bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey& PresetID)
 {
 	ECraftingResult result = InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, InstanceID, PresetID);
 	if (result != ECraftingResult::Success)
@@ -449,14 +449,14 @@ void UBIMDesigner::DrawConnectSplineForNodes(const FPaintContext& context, class
 	UModumateSlateHelper::DrawCubicBezierSplineBP(context, splinePts, NodeSplineColor, NodeSplineThickness);
 }
 
-FName UBIMDesigner::GetPresetID(int32 InstanceID)
+FBIMKey UBIMDesigner::GetPresetID(int32 InstanceID)
 {
 	FBIMCraftingTreeNodeSharedPtr instPtr = InstancePool.InstanceFromID(InstanceID);
 	if (ensureAlways(instPtr.IsValid()))
 	{
 		return instPtr->PresetID;
 	}
-	return NAME_None;
+	return FBIMKey();
 }
 
 bool UBIMDesigner::DeleteNode(int32 InstanceID)
@@ -471,7 +471,7 @@ bool UBIMDesigner::DeleteNode(int32 InstanceID)
 	return true;
 }
 
-bool UBIMDesigner::AddNodeFromPreset(int32 ParentID, const FName& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
+bool UBIMDesigner::AddNodeFromPreset(int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
 {
 	FBIMCraftingTreeNodeSharedPtr newNode = InstancePool.CreateNodeInstanceFromPreset(
 		Controller->GetDocument()->PresetManager.CraftingNodePresets,

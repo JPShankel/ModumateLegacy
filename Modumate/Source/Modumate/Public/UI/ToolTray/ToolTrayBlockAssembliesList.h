@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Database/ModumateObjectEnums.h"
+#include "BIMKernel/BIMKey.h"
 #include "ToolTrayBlockAssembliesList.generated.h"
 
 /**
@@ -56,8 +57,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateAssembliesListForCurrentToolMode();
 
-	void CreatePresetListInNodeForSwap(const FName &ParentPresetID, const FName &PresetIDToSwap, int32 NodeID);
-	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FName &PresetID);
+	void CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, int32 NodeID);
+	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FBIMKey& PresetID);
 
 	UFUNCTION()
 	void OnButtonAddReleased();

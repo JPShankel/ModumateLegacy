@@ -233,31 +233,6 @@ AEditModelGameMode_CPP *AEditModelPlayerState_CPP::GetEditModelGameMode()
 	return Cast<AEditModelGameMode_CPP>(GetWorld()->GetAuthGameMode());
 }
 
-
-void AEditModelPlayerState_CPP::SetAssemblyForActor(AActor *actor, const FName &assemblyKey)
-{
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument *doc = &gameState->Document;
-	FModumateObjectInstance *ob = doc->ObjectFromActor(actor);
-
-	if (ob != nullptr)
-	{
-		// Search for the right assembly from the correct tool mode
-		EToolMode searchInToolMode = UModumateTypeStatics::ToolModeFromObjectType(ob->GetObjectType());
-
-		FName modeName = FindEnumValueFullName<EToolMode>(TEXT("EToolMode"), searchInToolMode);
-
-		TArray<int32> ids;
-		ids.Add(ob->ID);
-
-		EMPlayerController->ModumateCommand(
-			Modumate::FModumateCommand(Modumate::Commands::kSetAssemblyForObjects)
-			.Param(Modumate::Parameters::kObjectIDs, ids)
-			.Param(Modumate::Parameters::kToolMode,modeName.ToString())
-			.Param(Modumate::Parameters::kAssembly, assemblyKey));
-	}
-}
-
 void AEditModelPlayerState_CPP::ToggleRoomViewMode()
 {
 	if (SelectedViewMode == EEditViewModes::Rooms)
@@ -927,22 +902,22 @@ void AEditModelPlayerState_CPP::Paste(FModumateDocument &document) const
 	document.EndUndoRedoMacro();
 }
 
-FName AEditModelPlayerState_CPP::GetAssemblyForToolMode(EToolMode mode)
+FBIMKey AEditModelPlayerState_CPP::GetAssemblyForToolMode(EToolMode mode)
 {
 	TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(mode);
 	if (ensureAlways(tool))
 	{
 		return tool->GetAssemblyKey();
 	}
-	return NAME_None;
+	return FBIMKey();
 }
 
-void AEditModelPlayerState_CPP::SetAssemblyForToolMode(EToolMode mode, const FName &assemblyKey)
+void AEditModelPlayerState_CPP::SetAssemblyForToolMode(EToolMode Mode, const FBIMKey& AssemblyKey)
 {
-	TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(mode);
+	TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(Mode);
 	if (ensureAlways(tool))
 	{
-		tool->SetAssemblyKey(assemblyKey);
+		tool->SetAssemblyKey(AssemblyKey);
 	}
 }
 

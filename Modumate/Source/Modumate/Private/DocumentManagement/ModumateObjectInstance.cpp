@@ -72,11 +72,10 @@ FModumateObjectInstance::FModumateObjectInstance(
 
 	PreviewState.ObjectID = CurrentState.ObjectID = ID;
 
-	// TODO: refactor assembly keys to use FName
-	if (obRec.AssemblyKey.Len() > 0 && obRec.AssemblyKey != TEXT("None"))
+	if (!obRec.AssemblyKey.IsNone())
 	{
 		FBIMAssemblySpec obAsm;
-		if (ensureAlways(doc->PresetManager.TryGetProjectAssemblyForPreset(obRec.ObjectType, *obRec.AssemblyKey, obAsm)))
+		if (ensureAlways(doc->PresetManager.TryGetProjectAssemblyForPreset(obRec.ObjectType, FBIMKey(obRec.AssemblyKey), obAsm)))
 		{
 			ObjectAssembly = obAsm;
 		}
@@ -775,7 +774,7 @@ bool FMOIStateData::ToParameterSet(const FString &Prefix, FModumateFunctionParam
 	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kControlPoints, ControlPoints);
 	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kIndices, ControlIndices);
 	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kInverted, bObjectInverted);
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kAssembly, ObjectAssemblyKey);
+	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kAssembly, ObjectAssemblyKey.ToString());
 	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kParent, ParentID);
 	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kLocation, Location);
 	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kQuaternion, Orientation);
@@ -809,7 +808,7 @@ bool FMOIStateData::FromParameterSet(const FString &Prefix, const FModumateFunct
 	ControlPoints = ParameterSet.GetValue(Prefix + Modumate::Parameters::kControlPoints);
 	ControlIndices = ParameterSet.GetValue(Prefix + Modumate::Parameters::kIndices);
 	bObjectInverted = ParameterSet.GetValue(Prefix + Modumate::Parameters::kInverted);
-	ObjectAssemblyKey = ParameterSet.GetValue(Prefix + Modumate::Parameters::kAssembly);
+	ObjectAssemblyKey = FBIMKey(ParameterSet.GetValue(Prefix + Modumate::Parameters::kAssembly).AsString());
 	ParentID = ParameterSet.GetValue(Prefix + Modumate::Parameters::kParent);
 	Location = ParameterSet.GetValue(Prefix + Modumate::Parameters::kLocation);
 	Orientation = ParameterSet.GetValue(Prefix + Modumate::Parameters::kQuaternion);

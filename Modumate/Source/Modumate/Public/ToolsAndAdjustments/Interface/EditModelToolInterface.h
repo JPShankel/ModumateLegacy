@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine.h"
+#include "BIMKernel/BIMKey.h"
 #include "Database/ModumateObjectEnums.h"
 
 #include "EditModelToolInterface.generated.h"
@@ -40,6 +41,6 @@ public:
 	virtual bool ShowSnapCursorAffordances() = 0;
 	virtual void SetAxisConstraint(EAxisConstraint AxisConstraint) = 0;
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) = 0;
-	virtual void SetAssemblyKey(const FName &InAssemblyKey) = 0;
-	virtual FName GetAssemblyKey() const = 0;
+	virtual void SetAssemblyKey(const FBIMKey &InAssemblyKey) = 0;
+	virtual FBIMKey GetAssemblyKey() const = 0;
 };

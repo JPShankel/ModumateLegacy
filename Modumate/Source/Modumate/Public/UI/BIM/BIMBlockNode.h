@@ -128,7 +128,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockUserEnterable> BIMBlockUserEnterableClass;
 
-	FName PresetID;
+	FBIMKey PresetID;
 	int32 ID = -1;
 	int32 ParentID = -1;
 	bool IsKingNode = false;

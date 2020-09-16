@@ -6,6 +6,7 @@
 #include "BIMKernel/BIMEnums.h"
 #include "BIMKernel/BIMProperties.h"
 #include "BIMKernel/BIMTagPath.h"
+#include "BIMKernel/BIMKey.h"
 #include "BIMKernel/BIMSerialization.h"
 
 /*
@@ -75,13 +76,13 @@ public:
 	struct FChildAttachment
 	{
 		int32 ParentPinSetIndex, ParentPinSetPosition;
-		FName PresetID;
+		FBIMKey PresetID;
 		bool operator==(const FChildAttachment& OtherAttachment) const;
 	};
 
 	struct FPartSlot
 	{
-		FName PartPreset, SlotName, ID, ParentID;
+		FBIMKey PartPreset,SlotName,ID,ParentID;
 	};
 
 	bool HasProperty(const FBIMNameType& Name) const;
@@ -104,7 +105,8 @@ public:
 	}
 
 	EBIMValueScope NodeScope;
-	FName NodeType, PresetID, SlotConfigPresetID;
+	FName NodeType;
+	FBIMKey PresetID, SlotConfigPresetID;
 	TArray<FChildAttachment> ChildPresets;
 	TArray<FBIMTagPath> ParentTagPaths;
 	TArray<FPartSlot> PartSlots;
@@ -131,16 +133,16 @@ class MODUMATE_API FBIMPresetCollection
 public:
 
 	TMap<FName, FBIMPresetNodeType> NodeDescriptors;
-	TMap<FName, FBIMPreset> Presets;
+	TMap<FBIMKey, FBIMPreset> Presets;
 
-	EObjectType GetPresetObjectType(const FName &PresetID) const;
+	EObjectType GetPresetObjectType(const FBIMKey &PresetID) const;
 
 	ECraftingResult ToDataRecords(TArray<FCraftingPresetRecord> &OutRecords) const;
 	ECraftingResult FromDataRecords(const TArray<FCraftingPresetRecord> &Record);
 
-	ECraftingResult GetDependentPresets(const FName &PresetID, TSet<FName> &OutPresets) const;
+	ECraftingResult GetDependentPresets(const FBIMKey &PresetID, TSet<FBIMKey> &OutPresets) const;
 
-	ECraftingResult GetPropertyFormForPreset(const FName &PresetID, TMap<FString, FBIMNameType> &OutForm) const;
+	ECraftingResult GetPropertyFormForPreset(const FBIMKey &PresetID, TMap<FString, FBIMNameType> &OutForm) const;
 
-	ECraftingResult LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMNameType>& OutStarters, TArray<FString>& OutMessages);
+	ECraftingResult LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages);
 };

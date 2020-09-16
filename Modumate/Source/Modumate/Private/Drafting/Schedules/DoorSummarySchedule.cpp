@@ -26,7 +26,7 @@ namespace Modumate {
 		auto doors = doc->GetObjectsOfType(EObjectType::OTDoor);
 		ensureAlways(doors.Num() > 0);
 
-		TMap<FName, TPair<int32, FBIMAssemblySpec>> doorsByKey;
+		TMap<FBIMKey, TPair<int32, FBIMAssemblySpec>> doorsByKey;
 		for (auto& door : doors)
 		{
 			if (!doorsByKey.Contains(door->GetAssembly().UniqueKey()))

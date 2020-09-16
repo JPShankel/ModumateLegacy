@@ -11,7 +11,7 @@
 #include "Algo/Reverse.h"
 #include "Algo/Accumulate.h"
 
-ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FName& PresetID)
+ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID)
 {
 	Reset();
 	ECraftingResult ret = ECraftingResult::Success;
@@ -19,13 +19,13 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 
 	FBIMPropertySheet* currentSheet = &RootProperties;
 
-	TArray<FName> presetStack;
+	TArray<FBIMKey> presetStack;
 	presetStack.Push(PresetID);
 
 	// Depth first walk through the preset and its descendents
 	while (presetStack.Num() > 0)
 	{
-		FName presetID = presetStack.Pop();
+		FBIMKey presetID = presetStack.Pop();
 
 		const FBIMPreset* preset = PresetCollection.Presets.Find(presetID);
 		if (preset == nullptr)
@@ -138,7 +138,7 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 						// Now find the slot in the config that corresponds to the slot in the preset and fetch its parameterized transform
 						for (auto& childSlot : slotConfigPreset->ChildPresets)
 						{
-							if (childSlot.PresetID.IsEqual(partSlot.SlotName))
+							if (childSlot.PresetID == partSlot.SlotName)
 							{
 								const FBIMPreset* childSlotPreset = PresetCollection.Presets.Find(childSlot.PresetID);
 								if (!ensureAlways(childSlotPreset != nullptr))
@@ -182,7 +182,7 @@ void FBIMAssemblySpec::Reset()
 {
 	ObjectType = EObjectType::OTNone;
 
-	RootPreset = NAME_None;
+	RootPreset = FBIMKey();
 	RootProperties = FBIMPropertySheet();
 
 	Layers.Empty();
@@ -222,7 +222,7 @@ ECraftingResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB
 			// TODO: to be replaced with modules & gaps with their own materials & colors
 			if (Var.Scope == EBIMValueScope::RawMaterial || Var.Scope == EBIMValueScope::Material)
 			{
-				const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(Value);
+				const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(FBIMKey(Value.AsString()));
 				if (ensureAlways(mat != nullptr))
 				{
 					Material = *mat;
@@ -233,7 +233,7 @@ ECraftingResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB
 			// Color may get set before or after material, so cache it
 			if (Var.Scope == EBIMValueScope::Color)
 			{
-				customColor = InDB.GetCustomColorByKey(Value);
+				customColor = InDB.GetCustomColorByKey(FBIMKey(Value.AsString()));
 			}
 		}
 	});
@@ -280,8 +280,8 @@ ECraftingResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& 
 		yDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::YExtents));
 	}
 
-	FName layerMaterialKey = Properties.GetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID);
-	FName profileKey = Properties.GetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID);
+	FBIMKey layerMaterialKey = FBIMKey(Properties.GetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID).AsString());
+	FBIMKey profileKey = FBIMKey(Properties.GetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID).AsString());
 
 	if (!profileKey.IsNone())
 	{
@@ -327,7 +327,7 @@ ECraftingResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& In
 	// TODO: "Stubby" temporary FFE don't have parts, just one mesh on their root
 	if (Parts.Num() == 0)
 	{
-		FName meshKey = RootProperties.GetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID);
+		FBIMKey meshKey = FBIMKey(RootProperties.GetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID).AsString());
 		const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(meshKey);
 		if (mesh == nullptr)
 		{

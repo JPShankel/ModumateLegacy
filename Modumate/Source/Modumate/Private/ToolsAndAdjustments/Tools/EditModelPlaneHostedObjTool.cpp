@@ -335,7 +335,7 @@ bool UPlaneHostedObjTool::EnterNextStage()
 	return UMetaPlaneTool::EnterNextStage();
 }
 
-void UPlaneHostedObjTool::SetAssemblyKey(const FName &InAssemblyKey)
+void UPlaneHostedObjTool::SetAssemblyKey(const FBIMKey& InAssemblyKey)
 {
 	UMetaPlaneTool::SetAssemblyKey(InAssemblyKey);
 

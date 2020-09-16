@@ -30,13 +30,18 @@ ECraftingResult FPresetManager::FromDocumentRecord(UWorld* World, const FModumat
 	for (auto& presetID : DocumentRecord.ProjectAssemblyPresets)
 	{
 		// this ensure will fire if expected presets have become obsolete, resave to fix
-		if (!ensureAlways(CraftingNodePresets.Presets.Contains(presetID)))
+		FBIMKey bimKey(presetID);
+		if (!ensureAlways(CraftingNodePresets.Presets.Contains(bimKey)))
 		{
 			continue;
 		}
 	}
 
-	GraphCollection = DocumentRecord.CustomGraph2DRecords;
+	GraphCollection.Empty();
+	for (auto& cgr : DocumentRecord.CustomGraph2DRecords)
+	{
+		GraphCollection.Add(cgr.Key, cgr.Value);
+	}
 
 	return ECraftingResult::Success;
 }
@@ -48,18 +53,21 @@ ECraftingResult FPresetManager::ToDocumentRecord(FMOIDocumentRecord &OutRecord) 
 	CraftingNodePresets.ToDataRecords(OutRecord.CraftingPresetArrayV2);
 	OutRecord.KeyStore = KeyStore;
 
-	OutRecord.CustomGraph2DRecords = GraphCollection;
+	for (auto& cgc : GraphCollection)
+	{
+		OutRecord.CustomGraph2DRecords.Add(cgc.Key.ToString(), cgc.Value);
+	}
 
 	return ECraftingResult::Success;
 }
 
-FName FPresetManager::GetAvailableKey(const FName &BaseKey)
+FBIMKey FPresetManager::GetAvailableKey(const FBIMKey& BaseKey)
 {
-	FName newKey;
+	FString newKey;
 	int32 num = 0;
 	do
 	{
-		newKey = *FString::Printf(TEXT("%s-%d"), *BaseKey.ToString(), ++num);
+		newKey = FString::Printf(TEXT("%s-%d"), *BaseKey.ToString(), ++num);
 	} while (KeyStore.Contains(newKey));
 
 	KeyStore.Add(newKey);
@@ -80,14 +88,14 @@ ECraftingResult FPresetManager::GetProjectAssembliesForObjectType(EObjectType Ob
 	return ECraftingResult::Success;
 }
 
-ECraftingResult FPresetManager::AddOrUpdateGraph2DRecord(FName Key, const FGraph2DRecord& Graph, FName& OutKey)
+ECraftingResult FPresetManager::AddOrUpdateGraph2DRecord(const FBIMKey& Key, const FGraph2DRecord& Graph, FBIMKey& OutKey)
 {
-	static const FName defaultGraphBaseKey(TEXT("Graph2D"));
-	Key = GetAvailableKey(defaultGraphBaseKey);
+	static const FString defaultGraphBaseKey(TEXT("Graph2D"));
+	OutKey = GetAvailableKey(defaultGraphBaseKey);
 	return ECraftingResult::Success;
 }
 
-ECraftingResult FPresetManager::GetGraph2DRecord(const FName& Key, FGraph2DRecord& OutGraph) const
+ECraftingResult FPresetManager::GetGraph2DRecord(const FBIMKey& Key, FGraph2DRecord& OutGraph) const
 {
 	if (GraphCollection.Contains(Key))
 	{
@@ -97,13 +105,13 @@ ECraftingResult FPresetManager::GetGraph2DRecord(const FName& Key, FGraph2DRecor
 	return ECraftingResult::Error;
 }
 
-ECraftingResult FPresetManager::RemoveGraph2DRecord(const FName& Key)
+ECraftingResult FPresetManager::RemoveGraph2DRecord(const FBIMKey& Key)
 {
 	int32 numRemoved = GraphCollection.Remove(Key);
 	return (numRemoved > 0) ? ECraftingResult::Success : ECraftingResult::Error;
 }
 
-ECraftingResult FPresetManager::RemoveProjectAssemblyForPreset(const FName& PresetID)
+ECraftingResult FPresetManager::RemoveProjectAssemblyForPreset(const FBIMKey& PresetID)
 {
 	FBIMAssemblySpec assembly;
 	EObjectType objectType = CraftingNodePresets.GetPresetObjectType(PresetID);
@@ -139,7 +147,7 @@ bool FPresetManager::TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAs
 	return false;
 }
 
-bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FName& PresetID, FBIMAssemblySpec& OutAssembly) const
+bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FBIMKey& PresetID, FBIMAssemblySpec& OutAssembly) const
 {
 	const TModumateDataCollection<FBIMAssemblySpec> *db = AssembliesByObjectType.Find(ObjectType);
 
@@ -155,7 +163,7 @@ bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, cons
 	// TODO: temp patch to support missing assemblies prior to assemblies being retired
 	if (presetAssembly == nullptr)
 	{
-		presetAssembly = db->GetData(TEXT("default"));
+		presetAssembly = db->GetData(FBIMKey(TEXT("default")));
 	}
 
 	if (presetAssembly != nullptr)
@@ -170,7 +178,7 @@ bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, cons
 Starting point: get a tree
 */
 
-const FBIMAssemblySpec *FPresetManager::GetAssemblyByKey(EToolMode ToolMode, const FName &Key) const
+const FBIMAssemblySpec *FPresetManager::GetAssemblyByKey(EToolMode ToolMode, const FBIMKey& Key) const
 {
 	EObjectType objectType = UModumateTypeStatics::ObjectTypeFromToolMode(ToolMode);
 	const FAssemblyDataCollection *db = AssembliesByObjectType.Find(objectType);
@@ -184,7 +192,7 @@ const FBIMAssemblySpec *FPresetManager::GetAssemblyByKey(EToolMode ToolMode, con
 	}
 }
 
-ECraftingResult FPresetManager::GetAvailablePresetsForSwap(const FName& ParentPresetID, const FName &PresetIDToSwap, TArray<FName>& OutAvailablePresets)
+ECraftingResult FPresetManager::GetAvailablePresetsForSwap(const FBIMKey& ParentPresetID, const FBIMKey &PresetIDToSwap, TArray<FBIMKey>& OutAvailablePresets)
 {
 	const FBIMPreset* preset = CraftingNodePresets.Presets.Find(PresetIDToSwap);
 	if (!ensureAlways(preset != nullptr))

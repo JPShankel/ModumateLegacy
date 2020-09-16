@@ -393,14 +393,14 @@ FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromDa
 	return instance;
 }
 
-ECraftingResult FBIMCraftingTreeNodePool::InitFromPreset(const FBIMPresetCollection& PresetCollection, const FName& PresetID, FBIMCraftingTreeNodeSharedPtr& OutRootNode)
+ECraftingResult FBIMCraftingTreeNodePool::InitFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID, FBIMCraftingTreeNodeSharedPtr& OutRootNode)
 {
 	ResetInstances();
 	OutRootNode = CreateNodeInstanceFromPreset(PresetCollection, 0, PresetID, 0, 0);
 	return OutRootNode.IsValid() ? ECraftingResult::Success : ECraftingResult::Error;
 }
 
-ECraftingResult FBIMCraftingTreeNodePool::SetNewPresetForNode(const FBIMPresetCollection &PresetCollection,int32 InstanceID,const FName &PresetID)
+ECraftingResult FBIMCraftingTreeNodePool::SetNewPresetForNode(const FBIMPresetCollection &PresetCollection,int32 InstanceID,const FBIMKey& PresetID)
 {
 	FBIMCraftingTreeNodeSharedPtr inst = InstanceFromID(InstanceID);
 
@@ -431,7 +431,7 @@ ECraftingResult FBIMCraftingTreeNodePool::SetNewPresetForNode(const FBIMPresetCo
 	return inst->FromDataRecord(*this, PresetCollection, dataRecord, true);
 }
 
-FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FName& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
+FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
 {
 	const FBIMPreset* preset = PresetCollection.Presets.Find(PresetID);
 	if (preset == nullptr)
