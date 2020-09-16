@@ -44,9 +44,8 @@ protected:
 	};
 
 	bool UpdatePreviewStairs();
-	bool MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID);
+	bool MakeStairs();
 	bool ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget);
-	void MakePendingSegment(TWeakObjectPtr<ALineActor> &TargetSegment, const FVector &StartingPoint, const FColor &SegmentColor);
 	void MakePendingSegment(int32 &TargetSegmentID, const FVector &StartingPoint, const FColor &SegmentColor);
 	void ResetState();
 

@@ -12,8 +12,8 @@ class MODUMATE_API FMOIStaircaseImpl : public FDynamicModumateObjectInstanceImpl
 public:
 	FMOIStaircaseImpl(FModumateObjectInstance *moi);
 	virtual ~FMOIStaircaseImpl();
-	virtual void SetupDynamicGeometry() override;
-	virtual void UpdateDynamicGeometry() override;
+
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override { }
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const override;

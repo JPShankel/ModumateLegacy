@@ -21,11 +21,24 @@ FMOIStaircaseImpl::FMOIStaircaseImpl(FModumateObjectInstance *moi)
 FMOIStaircaseImpl::~FMOIStaircaseImpl()
 {}
 
-void FMOIStaircaseImpl::SetupDynamicGeometry()
+bool FMOIStaircaseImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
 {
-	FModumateObjectInstance *planeParent = MOI ? MOI->GetParentObject() : nullptr;
-	if (planeParent && (planeParent->GetObjectType() == EObjectType::OTMetaPlane))
+	switch (DirtyFlag)
 	{
+	case EObjectDirtyFlags::Structure:
+	{
+		FModumateObjectInstance* planeParent = MOI ? MOI->GetParentObject() : nullptr;
+		if (!(planeParent && (planeParent->GetObjectType() == EObjectType::OTMetaPlane)))
+		{
+			return false;
+		}
+
+		TArray<FVector> runPlanePoints;
+		for (int32 pointIdx = 0; pointIdx < planeParent->GetNumCorners(); ++pointIdx)
+		{
+			runPlanePoints.Add(planeParent->GetCorner(pointIdx));
+		}
+
 		// TODO: get this material from a real assembly
 		FArchitecturalMaterial material;
 		material.EngineMaterial = DynamicMeshActor->StaircaseMaterial;
@@ -37,37 +50,34 @@ void FMOIStaircaseImpl::SetupDynamicGeometry()
 		// Calculate the polygons that make up the outer surfaces of each tread and riser of the linear stair run
 		float stepRun, stepRise;
 		FVector runDir(ForceInitToZero), stairOrigin(ForceInitToZero);
-		bool bStairSuccess = Modumate::FStairStatics::CalculateLinearRunPolysFromPlane(
-			planeParent->GetControlPoints(), goalRunDepth, bCachedUseRisers, bCachedStartRiser, bCachedEndRiser,
+		if (!Modumate::FStairStatics::CalculateLinearRunPolysFromPlane(
+			runPlanePoints, goalRunDepth, bCachedUseRisers, bCachedStartRiser, bCachedEndRiser,
 			stepRun, stepRise, runDir, stairOrigin,
-			CachedTreadPolys, CachedRiserPolys);
+			CachedTreadPolys, CachedRiserPolys))
+		{
+			return false;
+		}
 
 		// For linear stairs, each riser has the same normal, so populate them here
 		int32 numRisers = CachedRiserPolys.Num();
-		if (bStairSuccess)
+		CachedRiserNormals.SetNum(numRisers);
+		for (int32 i = 0; i < numRisers; ++i)
 		{
-			CachedRiserNormals.SetNum(numRisers);
-			for (int32 i = 0; i < numRisers; ++i)
-			{
-				CachedRiserNormals[i] = runDir;
-			}
+			CachedRiserNormals[i] = runDir;
 		}
 
 		// Set up the triangulated staircase mesh by extruding each tread and riser polygon
-		bStairSuccess = bStairSuccess && DynamicMeshActor->SetupStairPolys(
-			stairOrigin, CachedTreadPolys, CachedRiserPolys, CachedRiserNormals, treadThickness, material);
-
-		if (bStairSuccess)
-		{
-			UE_LOG(LogTemp, Log, TEXT("Stairs: num treads: %d, num risers: %d, step run: %.2fcm, step rise: %.2fcm"),
-				CachedTreadPolys.Num(), numRisers, stepRun, stepRise);
-		}
+		return DynamicMeshActor->SetupStairPolys(stairOrigin, CachedTreadPolys, CachedRiserPolys, CachedRiserNormals, treadThickness, material);
 	}
-}
+		break;
+	case EObjectDirtyFlags::Visuals:
+		MOI->UpdateVisibilityAndCollision();
+		break;
+	default:
+		break;
+	}
 
-void FMOIStaircaseImpl::UpdateDynamicGeometry()
-{
-	SetupDynamicGeometry();
+	return true;
 }
 
 void FMOIStaircaseImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const

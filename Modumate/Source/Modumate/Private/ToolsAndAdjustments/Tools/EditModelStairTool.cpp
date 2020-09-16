@@ -295,8 +295,7 @@ bool UStairTool::EnterNextStage()
 	{
 		if (LastValidTargetID != MOD_ID_NONE)
 		{
-			int32 newStairsID = MOD_ID_NONE;
-			bool bCreationSuccess = MakeStairs(LastValidTargetID, newStairsID);
+			bool bCreationSuccess = MakeStairs();
 			return !bCreationSuccess;
 		}
 		else
@@ -337,8 +336,7 @@ bool UStairTool::EnterNextStage()
 	{
 		if (!FMath::IsNearlyZero(CurrentWidth))
 		{
-			int32 newStairsID = MOD_ID_NONE;
-			bool bCreationSuccess = MakeStairs(LastValidTargetID, newStairsID);
+			bool bCreationSuccess = MakeStairs();
 			return false;
 		}
 	}
@@ -414,9 +412,12 @@ bool UStairTool::UpdatePreviewStairs()
 	return bStairSuccess;
 }
 
-bool UStairTool::MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID)
+bool UStairTool::MakeStairs()
 {
-	bool bMakePlane = (RefParentPlaneID == MOD_ID_NONE);
+	TArray<int32> hostPlaneIDs;
+	bool bMakePlane = (LastValidTargetID == MOD_ID_NONE);
+	bool bSuccess = false;
+
 	if (bMakePlane)
 	{
 		Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kBeginUndoRedoMacro));
@@ -431,51 +432,45 @@ bool UStairTool::MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID)
 			RunStartPos + totalRunDelta + totalRiseDelta
 		});
 
-		auto commandResult = Controller->ModumateCommand(
-			FModumateCommand(Commands::kMakeMetaPlane)
-			.Param(Parameters::kControlPoints, newPlanePoints)
-			.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID()));
-
-		if (!commandResult.GetValue(Parameters::kSuccess))
+		TArray<int32> newGraphObjIDs;
+		if (GameState->Document.MakeMetaObject(GetWorld(), newPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(), newGraphObjIDs))
 		{
-			return false;
-		}
-
-		TArray<int32> newPlaneIDs = commandResult.GetValue(Parameters::kObjectIDs);
-		if (newPlaneIDs.Num() != 1)
-		{
-			return false;
-		}
-		else
-		{
-			RefParentPlaneID = newPlaneIDs[0];
+			for (int32 newGraphObjID : newGraphObjIDs)
+			{
+				auto newGraphObj = GameState->Document.GetObjectById(newGraphObjID);
+				if (newGraphObj && (newGraphObj->GetObjectType() == EObjectType::OTMetaPlane))
+				{
+					hostPlaneIDs.Add(newGraphObjID);
+				}
+			}
 		}
 	}
-
-	OutStairsID = MOD_ID_NONE;
-
-	if (RefParentPlaneID != MOD_ID_NONE)
+	else
 	{
-		FModumateObjectInstance *parentPlaneObj = GameState->Document.GetObjectById(RefParentPlaneID);
+		hostPlaneIDs.Add(LastValidTargetID);
+	}
 
-		if (parentPlaneObj && (parentPlaneObj->GetObjectType() == EObjectType::OTMetaPlane))
+	if (hostPlaneIDs.Num() > 0)
+	{
+		int32 nextID = GameState->Document.GetNextAvailableID();
+		TArray<FMOIStateData> newStairStates;
+
+		for (int32 hostPlaneID : hostPlaneIDs)
 		{
-			OutStairsID = GameState->Document.GetNextAvailableID();
-
-			FMOIStateData newMOIData;
-			newMOIData.StateType = EMOIDeltaType::Create;
-			newMOIData.ObjectType = EObjectType::OTStaircase;
-			newMOIData.ParentID = RefParentPlaneID;
-			newMOIData.ObjectAssemblyKey = AssemblyKey;
-			newMOIData.bObjectInverted = false;
-			newMOIData.Extents = FVector(0.5f, 0, 0);
-			newMOIData.ObjectID = OutStairsID;
-
-			TArray<TSharedPtr<FDelta>> deltas;
-			deltas.Add(MakeShareable(new FMOIDelta({ newMOIData })));
-
-			GameState->Document.ApplyDeltas(deltas, GetWorld());
+			FMOIStateData& newStairState = newStairStates.AddDefaulted_GetRef();
+			newStairState.StateType = EMOIDeltaType::Create;
+			newStairState.ObjectType = EObjectType::OTStaircase;
+			newStairState.ParentID = hostPlaneID;
+			newStairState.ObjectAssemblyKey = AssemblyKey;
+			newStairState.bObjectInverted = false;
+			newStairState.Extents = FVector(0.5f, 0, 0);
+			newStairState.ObjectID = nextID++;
 		}
+
+		TArray<TSharedPtr<FDelta>> deltas;
+		deltas.Add(MakeShareable(new FMOIDelta(newStairStates)));
+
+		bSuccess = GameState->Document.ApplyDeltas(deltas, GetWorld());
 	}
 
 	if (bMakePlane)
@@ -483,7 +478,7 @@ bool UStairTool::MakeStairs(int32 &RefParentPlaneID, int32 &OutStairsID)
 		Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kEndUndoRedoMacro));
 	}
 
-	return (RefParentPlaneID != MOD_ID_NONE) && (OutStairsID != MOD_ID_NONE);
+	return bSuccess;
 }
 
 bool UStairTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
