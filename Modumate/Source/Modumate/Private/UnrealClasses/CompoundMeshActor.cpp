@@ -97,6 +97,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 		}
 
 		const FVector& nativeSize = obAsm.Parts[slotIdx].Mesh.NativeSize;
+		// Transform formulas are in inch domain.
 		vars.Add(TEXT("Part.NativeSizeX"), nativeSize.X);
 		vars.Add(TEXT("Part.NativeSizeY"), nativeSize.Y);
 		vars.Add(TEXT("Part.NativeSizeZ"), nativeSize.Z);
@@ -120,20 +121,26 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 
 		FVector partLocation,partEulers; 
 		assemblyPart.Translation.Evaluate(vars,partLocation);
+		partLocation *= Modumate::InchesToCentimeters;
 		assemblyPart.Orientation.Evaluate(vars, partEulers);
 		FRotator partRotator = FRotator::MakeFromEuler(partEulers);
+		FVector partSize;
+		assemblyPart.Size.Evaluate(vars, partSize);
+		FVector partScale = partSize / nativeSize;
+		// Convert flip boolean to scale factor.
+		FVector partFlip(
+			assemblyPart.Flip[0] ? -1.0f : 1.0f,
+			assemblyPart.Flip[1] ? -1.0f : 1.0f,
+			assemblyPart.Flip[2] ? -1.0f : 1.0f
+		);
 
 		FVector partNativeSize = assemblyPart.Mesh.NativeSize;
 		FVector partDesiredSize = partNativeSize;
-		FVector partScale = FVector::OneVector;
-
 
 #if DEBUG_NINE_SLICING
 			DrawDebugCoordinateSystem(GetWorld(), GetActorTransform().TransformPosition(partLocation), GetActorRotation(), 8.0f, false, -1.f, 255, 0.5f);
 #endif // DEBUG_NINE_SLICING
 
-		// TODO: add flipping and transverse operations
-		FVector partFlip = FVector::OneVector;
 		FBox nineSliceInterior = assemblyPart.Mesh.NineSliceBox;
 		FBox nativeExteriorSizes(nineSliceInterior.Min, partNativeSize - nineSliceInterior.Max);
 		FVector minNativeExteriorSizes = nativeExteriorSizes.Min.ComponentMin(nativeExteriorSizes.Max);
@@ -179,7 +186,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 			partStaticMeshComp->SetVisibility(true);
 			partStaticMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
-			partStaticMeshComp->SetRelativeLocation(partLocation);
+			partStaticMeshComp->SetRelativeLocation(partLocation * partFlip);
 			partStaticMeshComp->SetRelativeRotation(partRotator);
 			partStaticMeshComp->SetRelativeScale3D(partScale * partFlip);
 

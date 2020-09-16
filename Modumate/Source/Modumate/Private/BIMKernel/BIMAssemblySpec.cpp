@@ -158,7 +158,14 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 									childSlotPreset->GetProperty(TEXT("RotationY")),
 									childSlotPreset->GetProperty(TEXT("RotationZ")));
 
-								// TODO: Size and flip data
+								partSpec.Size = Modumate::Expression::FVectorExpression(
+									childSlotPreset->GetProperty(TEXT("SizeX")),
+									childSlotPreset->GetProperty(TEXT("SizeY")),
+									childSlotPreset->GetProperty(TEXT("SizeZ")));
+
+								partSpec.Flip[0] = !childSlotPreset->GetProperty(TEXT("FlipX")).AsString().IsEmpty();
+								partSpec.Flip[1] = !childSlotPreset->GetProperty(TEXT("FlipY")).AsString().IsEmpty();
+								partSpec.Flip[2] = !childSlotPreset->GetProperty(TEXT("FlipZ")).AsString().IsEmpty();
 
 								break;
 							}

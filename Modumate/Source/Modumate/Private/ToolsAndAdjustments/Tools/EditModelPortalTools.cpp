@@ -332,9 +332,10 @@ bool UPortalToolBase::BeginUse()
 	int32 newParentId = HostID;
 	FVector2D newPosition(ForceInitToZero);
 	if (!bPaintTool)
-	{   // Create new mateplane to host portal.
+	{   // Create new metaplane to host portal.
 		// TODO: Get official extents from assembly.
 		FBox bounds(ForceInit);
+		const FVector worldPosition(CursorActor->GetTransform().GetTranslation());
 		for (const auto* mesh : CursorActor->StaticMeshComps)
 		{
 			if (mesh != nullptr)
@@ -342,8 +343,9 @@ bool UPortalToolBase::BeginUse()
 				FVector minPoint(ForceInitToZero);
 				FVector maxPoint(ForceInitToZero);
 				mesh->GetLocalBounds(minPoint, maxPoint);
-				bounds += minPoint;
-				bounds += maxPoint;
+				FVector localPosition(mesh->GetRelativeTransform().GetTranslation());
+				bounds += minPoint + localPosition;
+				bounds += maxPoint + localPosition;
 			}
 		}
 

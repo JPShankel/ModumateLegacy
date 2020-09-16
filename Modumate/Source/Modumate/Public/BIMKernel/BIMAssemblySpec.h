@@ -51,7 +51,9 @@ struct MODUMATE_API FBIMPartSlotSpec
 {
 	FBIMPropertySheet Properties;
 
-	Modumate::Expression::FVectorExpression Translation, Scale, Orientation;
+	Modumate::Expression::FVectorExpression Translation, Size, Orientation;
+	using FBooleanVector = bool[3];
+	FBooleanVector Flip {false, false, false};
 
 	FArchitecturalMesh Mesh;
 	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
