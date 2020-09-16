@@ -61,7 +61,7 @@ public:
 
 	// Size of the tab on top of the node during dirty state
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
-	float DirtyTabSize = 80.f;
+	float DirtyTabSize = 100.f;
 
 	// Size of the node during collapse state
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")

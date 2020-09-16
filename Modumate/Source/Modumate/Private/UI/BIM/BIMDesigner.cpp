@@ -134,6 +134,12 @@ void UBIMDesigner::PerformDrag()
 
 }
 
+bool UBIMDesigner::UpdateCraftingAssembly()
+{
+	return InstancePool.CreateAssemblyFromNodes(Controller->GetDocument()->PresetManager.CraftingNodePresets,
+		*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly) == ECraftingResult::Success;
+}
+
 float UBIMDesigner::GetCurrentZoomScale() const
 {
 	return ScaleBoxForNodes->UserSpecifiedScale;
@@ -159,6 +165,7 @@ bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey
 		return false;
 	}
 	UpdateNodeSwapMenuVisibility(InstanceID, false);
+	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
 	return true;
 }
@@ -467,6 +474,7 @@ bool UBIMDesigner::DeleteNode(int32 InstanceID)
 	{
 		return false;
 	}
+	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
 	return true;
 }
@@ -480,6 +488,7 @@ bool UBIMDesigner::AddNodeFromPreset(int32 ParentID, const FBIMKey& PresetID, in
 	{
 		return false;
 	}
+	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
 	return true;
 }
@@ -492,6 +501,7 @@ bool UBIMDesigner::SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, co
 		return false;
 	}
 	instPtr->InstanceProperties.SetProperty(Scope, NameType, Value);
+	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
 	return true;
 }
@@ -606,6 +616,7 @@ bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition
 		result = InstancePool.ReorderChildNode(NodeID, fromOrder, toOrder);
 		if (result == ECraftingResult::Success)
 		{
+			UpdateCraftingAssembly();
 			UpdateBIMDesigner();
 			return true;
 		}
@@ -631,6 +642,12 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 	}
 
 	Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Add(outPreset.PresetID,outPreset);
+
+	// TODO: Only root node can make assembly for now, but stairs can have assembly in child node 
+	if (!node->ParentInstance.IsValid())
+	{
+		Controller->GetDocument()->PresetManager.UpdateProjectAssembly(CraftingAssembly);
+	}
 
 	UpdateBIMDesigner();
 	return true;

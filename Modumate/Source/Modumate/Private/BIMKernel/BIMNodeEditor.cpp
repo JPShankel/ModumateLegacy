@@ -326,6 +326,7 @@ ECraftingResult FBIMCraftingTreeNode::ToPreset(const FBIMPresetCollection& Prese
 		return ECraftingResult::Error;
 	}
 
+	OutPreset.NodeScope = basePreset->NodeScope;
 	OutPreset.NodeType = basePreset->NodeType;
 	OutPreset.SetProperties(InstanceProperties);
 	OutPreset.PresetID = basePreset->PresetID;
@@ -570,7 +571,6 @@ bool FBIMCraftingTreeNodePool::ValidatePool() const
 ECraftingResult FBIMCraftingTreeNodePool::CreateAssemblyFromNodes(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec)
 {
 	ECraftingResult result = ECraftingResult::Error;
-
 	// Get root node
 	FBIMCraftingTreeNodeSharedPtr rootNode;
 	for (const auto &inst : InstancePool)
@@ -581,14 +581,32 @@ ECraftingResult FBIMCraftingTreeNodePool::CreateAssemblyFromNodes(const FBIMPres
 			break;
 		}
 	}
-
 	// Make assembly from root node
 	if (rootNode.IsValid())
 	{
-		//TODO: This should include changes from nodes in dirty state
-		result = OutAssemblySpec.FromPreset(InDB, PresetCollection, rootNode->PresetID);
+		// Build the preset collection must reflect the dirty state of the node
+		FBIMPresetCollection previewCollection;
+		for (auto& instance : InstancePool)
+		{
+			if (instance->GetPresetStatus(PresetCollection) == EBIMPresetEditorNodeStatus::Dirty)
+			{
+				FBIMPreset dirtyPreset;
+				if (ensureAlways(instance->ToPreset(PresetCollection, dirtyPreset) != ECraftingResult::Error))
+				{
+					previewCollection.Presets.Add(dirtyPreset.PresetID, dirtyPreset);
+				}
+			}
+			else
+			{
+				const FBIMPreset* original = PresetCollection.Presets.Find(instance->PresetID);
+				if (ensureAlways(original != nullptr))
+				{
+					previewCollection.Presets.Add(original->PresetID, *original);
+				}
+			}
+		}
+		result = OutAssemblySpec.FromPreset(InDB, previewCollection, rootNode->PresetID);
 	}
-
 	return result;
 }
 

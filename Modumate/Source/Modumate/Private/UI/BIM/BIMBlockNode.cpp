@@ -241,17 +241,17 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 	{
 		IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8, FLinearColor::Black, true);
 	}
-	bool bCaptureSucess = false;
+	bool bCaptureSuccess = false;
 	if (IsKingNode) // Root node should be able to create full assembly
 	{
 		EToolMode toolMode = EToolMode::VE_NONE;
-		bCaptureSucess = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(true, Node->PresetID, toolMode, IconRenderTarget);
+		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(true, Node->PresetID, toolMode, IconRenderTarget);
 	}
 	else
 	{
-		bCaptureSucess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(PresetID, IconRenderTarget);
+		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(PresetID, IconRenderTarget);
 	}
-	if (bCaptureSucess)
+	if (bCaptureSuccess)
 	{
 		static const FName textureParamName(TEXT("Texture"));
 		IconImage->GetDynamicMaterial()->SetTextureParameterValue(textureParamName, IconRenderTarget);

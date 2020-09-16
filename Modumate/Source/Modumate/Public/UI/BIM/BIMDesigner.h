@@ -114,6 +114,7 @@ public:
 	void PerformDrag();
 
 	FBIMAssemblySpec CraftingAssembly;
+	bool UpdateCraftingAssembly();
 
 	float GetCurrentZoomScale() const;
 	bool EditPresetInBIMDesigner(const FBIMKey& PresetID);
