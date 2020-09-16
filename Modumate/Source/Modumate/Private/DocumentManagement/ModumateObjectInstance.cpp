@@ -201,7 +201,7 @@ void FModumateObjectInstance::SetParentObject(FModumateObjectInstance *newParent
 			SetParentID(newParentID);
 		}
 
-		MarkDirty(EObjectDirtyFlags::Structure);
+		MarkDirty(EObjectDirtyFlags::All);
 	}
 }
 
@@ -253,12 +253,12 @@ bool FModumateObjectInstance::AddChild(FModumateObjectInstance *child, bool bUpd
 
 		if (Children.AddUnique(child->ID) != INDEX_NONE)
 		{
-			MarkDirty(EObjectDirtyFlags::Structure);
+			MarkDirty(EObjectDirtyFlags::All);
 		}
 
 		if (bUpdateChildHierarchy)
 		{
-			child->MarkDirty(EObjectDirtyFlags::Structure);
+			child->MarkDirty(EObjectDirtyFlags::All);
 		}
 
 		return true;
@@ -280,12 +280,12 @@ bool FModumateObjectInstance::RemoveChild(FModumateObjectInstance *child, bool b
 
 		if (Children.Remove(child->ID) > 0)
 		{
-			MarkDirty(EObjectDirtyFlags::Structure);
+			MarkDirty(EObjectDirtyFlags::All);
 		}
 
 		if (bUpdateChildHierarchy)
 		{
-			child->MarkDirty(EObjectDirtyFlags::Structure);
+			child->MarkDirty(EObjectDirtyFlags::All);
 		}
 
 		return true;
@@ -616,19 +616,22 @@ void FModumateObjectInstance::OnAssemblyChanged()
 	Implementation->OnAssemblyChanged();
 }
 
-void FModumateObjectInstance::MarkDirty(EObjectDirtyFlags DirtyFlag)
+void FModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
 {
-	if (!IsDirty(DirtyFlag))
+	for (EObjectDirtyFlags dirtyFlag : UModumateTypeStatics::OrderedDirtyFlags)
 	{
-		DirtyFlags |= DirtyFlag;
-		Document->RegisterDirtyObject(DirtyFlag, this, true);
-		Implementation->SetIsDynamic(true);
+		if (((NewDirtyFlags & dirtyFlag) == dirtyFlag) && !IsDirty(dirtyFlag))
+		{
+			DirtyFlags |= dirtyFlag;
+			Document->RegisterDirtyObject(dirtyFlag, this, true);
+			Implementation->SetIsDynamic(true);
+		}
 	}
 }
 
-bool FModumateObjectInstance::IsDirty(EObjectDirtyFlags DirtyFlag) const
+bool FModumateObjectInstance::IsDirty(EObjectDirtyFlags CheckDirtyFlags) const
 {
-	return ((DirtyFlags & DirtyFlag) == DirtyFlag);
+	return ((DirtyFlags & CheckDirtyFlags) == CheckDirtyFlags);
 }
 
 bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
@@ -636,8 +639,8 @@ bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TS
 	bool bSuccess = false;
 
 	// Only one flag being cleaned at a time is supported; check that here
-	int32 flagInt = (int32)DirtyFlag;
-	if (!ensureAlwaysMsgf((DirtyFlag != EObjectDirtyFlags::None) && ((flagInt & (flagInt - 1)) == 0),
+	int32 flagsInt = (int32)DirtyFlag;
+	if (!ensureAlwaysMsgf((DirtyFlag != EObjectDirtyFlags::None) && ((flagsInt & (flagsInt - 1)) == 0),
 		TEXT("Passed multiple dirty flags to clean at once, invalid operation!")))
 	{
 		return bSuccess;

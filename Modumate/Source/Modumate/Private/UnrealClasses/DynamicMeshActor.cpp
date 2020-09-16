@@ -762,30 +762,25 @@ void ADynamicMeshActor::ClearProceduralLayers()
 	ProceduralSubLayers.Reset();
 }
 
-void ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec &inAssembly, const FVector &inP1, const FVector &inP2, const FVector &objNormal, const FVector &objUp,
-	const FVector2D &upperExtensions, const FVector2D &outerExtensions, const FVector &scale, bool bRecreateSection, bool bCreateCollision)
+bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint, const FVector& ObjNormal, const FVector& ObjUp,
+	const FVector2D& UpperExtensions, const FVector2D& OuterExtensions, const FVector& InScale, bool bRecreateSection, bool bCreateCollision)
 {
-	if (!ensureAlways(inAssembly.Extrusions.Num() >= 1))
-	{
-		return;
-	}
-
-	Assembly = inAssembly;
-
 	const FSimplePolygon *polyProfile = nullptr;
-	if (!UModumateObjectStatics::GetPolygonProfile(&Assembly, polyProfile))
+	if (!UModumateObjectStatics::GetPolygonProfile(&InAssembly, polyProfile))
 	{
-		return;
+		return false;
 	}
 
-	FVector midPoint = 0.5f * (inP1 + inP2);
-	FVector baseStartPoint = inP1 - midPoint;
-	FVector baseEndPoint = inP2 - midPoint;
+	Assembly = InAssembly;
+
+	FVector midPoint = 0.5f * (InStartPoint + InEndPoint);
+	FVector baseStartPoint = InStartPoint - midPoint;
+	FVector baseEndPoint = InEndPoint - midPoint;
 	FVector baseExtrusionDelta = baseEndPoint - baseStartPoint;
 	float baseExtrusionLength = baseExtrusionDelta.Size();
 	if (!ensureAlways(!FMath::IsNearlyZero(baseExtrusionLength)))
 	{
-		return;
+		return false;
 	}
 	FVector extrusionDir = baseExtrusionDelta / baseExtrusionLength;
 	SetActorLocation(midPoint);
@@ -801,13 +796,13 @@ void ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec &inAsse
 	vertexColors.Reset();
 
 	// TODO: scale should come in as an FVector2D
-	FVector2D scale2D(scale);
+	FVector2D scale2D(InScale);
 
 	const FBox2D &profileExtents = polyProfile->Extents;
 	FVector2D profileExtentsMin = profileExtents.Min * scale2D;
 	FVector2D profileExtentsSize = profileExtents.GetSize() * scale2D;
 
-	auto offsetPoint = [extrusionDir, objNormal, objUp, profileExtentsMin, profileExtentsSize, upperExtensions, outerExtensions]
+	auto offsetPoint = [extrusionDir, ObjNormal, ObjUp, profileExtentsMin, profileExtentsSize, UpperExtensions, OuterExtensions]
 	(const FVector &worldPoint, const FVector2D &polyPoint, bool bAtStart)
 	{
 		FVector2D pointRelative = polyPoint - profileExtentsMin;
@@ -816,14 +811,14 @@ void ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec &inAsse
 
 		if (bAtStart)
 		{
-			lengthExtension = (-pointPCT.X * upperExtensions.X) + (-pointPCT.Y * outerExtensions.X);
+			lengthExtension = (-pointPCT.X * UpperExtensions.X) + (-pointPCT.Y * OuterExtensions.X);
 		}
 		else
 		{
-			lengthExtension = (pointPCT.X * upperExtensions.Y) + (pointPCT.Y * outerExtensions.Y);
+			lengthExtension = (pointPCT.X * UpperExtensions.Y) + (pointPCT.Y * OuterExtensions.Y);
 		}
 
-		return worldPoint + (lengthExtension * extrusionDir) + (polyPoint.Y * objNormal) + (polyPoint.X * objUp);
+		return worldPoint + (lengthExtension * extrusionDir) + (polyPoint.Y * ObjNormal) + (polyPoint.X * ObjUp);
 	};
 
 	static const float uvFactor = 0.01f;
@@ -910,12 +905,8 @@ void ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec &inAsse
 	// Update the material (and its parameters, if any)
 	CachedMIDs.SetNumZeroed(1);
 	UModumateFunctionLibrary::SetMeshMaterial(Mesh, Assembly.Extrusions[0].Material, 0, &CachedMIDs[0]);
-}
 
-void ADynamicMeshActor::UpdateExtrudedPolyGeometry(const FBIMAssemblySpec &inAssembly, const FVector &p1, const FVector &p2, const FVector &objNormal, const FVector &objUp,
-	const FVector2D &upperExtensions, const FVector2D &outerExtensions, const FVector &scale, bool bCreateCollision)
-{
-	SetupExtrudedPolyGeometry(inAssembly, p1, p2, objNormal, objUp, upperExtensions, outerExtensions, scale, false, bCreateCollision);
+	return true;
 }
 
 void ADynamicMeshActor::SetupMasksGeometry(const TArray<TArray<FVector>> &Polygons, const FPlane &Plane, const FVector &Origin, const FVector &AxisX, const FVector &AxisY)

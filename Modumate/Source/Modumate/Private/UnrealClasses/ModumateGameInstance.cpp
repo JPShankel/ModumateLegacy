@@ -554,10 +554,7 @@ void UModumateGameInstance::RegisterAllCommands()
 			TArray<FModumateObjectInstance *> &allObjects = doc->GetObjectInstances();
 			for (FModumateObjectInstance *obj : allObjects)
 			{
-				for (EObjectDirtyFlags dirtyFlag : UModumateTypeStatics::OrderedDirtyFlags)
-				{
-					obj->MarkDirty(dirtyFlag);
-				}
+				obj->MarkDirty(EObjectDirtyFlags::All);
 			}
 
 			doc->CleanObjects();

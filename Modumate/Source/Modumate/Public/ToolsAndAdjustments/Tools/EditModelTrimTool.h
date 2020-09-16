@@ -2,37 +2,13 @@
 #pragma once
 
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
-#include "Engine/Engine.h"
-#include "BIMKernel/BIMAssemblySpec.h"
-#include "ModumateCore/ModumateObjectStatics.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 #include "EditModelTrimTool.generated.h"
-
-class ADynamicMeshActor;
 
 UCLASS()
 class MODUMATE_API UTrimTool : public UEditModelToolBase
 {
 	GENERATED_BODY()
-
-private:
-	bool bInverted;
-	class FModumateObjectInstance *CurrentTarget;
-	TArray<class FModumateObjectInstance *> CurrentTargetChildren;
-	TWeakObjectPtr<AActor> CurrentHitActor;
-	int32 CurrentStartIndex, CurrentEndIndex, CurrentMountIndex;
-	float CurrentStartAlongEdge, CurrentEndAlongEdge;
-	bool bCurrentLengthsArePCT;
-	FVector CurrentEdgeStart, CurrentEdgeEnd;
-	ETrimMiterOptions MiterOptionStart, MiterOptionEnd;
-	EMouseMode OriginalMouseMode;
-	FBIMAssemblySpec TrimAssembly;
-	TWeakObjectPtr<ADynamicMeshActor> PendingTrimActor;
-
-	void ResetTarget();
-	bool HasValidTarget() const;
-	void OnAssemblySet();
 
 public:
 	UTrimTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
@@ -43,11 +19,12 @@ public:
 	virtual bool Deactivate() override;
 	virtual bool BeginUse() override;
 	virtual bool FrameUpdate() override;
-	virtual bool EndUse() override;
-	virtual bool AbortUse() override;
-	virtual bool HandleInvert() override;
-	virtual void SetAssemblyKey(const FName &InAssemblyKey) override;
+
+protected:
+	int32 TargetEdgeID;
+	FVector TargetEdgeStartPos, TargetEdgeEndPos;
 
 	FColor AffordanceLineColor = FColor::Orange;
 	float AffordanceLineInterval = 4.0f;
+	float AffordanceLineThickness = 2.0f;
 };

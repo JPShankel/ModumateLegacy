@@ -111,10 +111,8 @@ public:
 	void SetupCabinetGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial& MaterialData, bool bUpdateCollision, bool bEnableCollision,
 		const FVector2D& ToeKickDimensions = FVector2D::ZeroVector, int32 FrontIdxStart = 0, float UVRotOffset = 0.0f);
 
-	void SetupExtrudedPolyGeometry(const FBIMAssemblySpec &assembly, const FVector &p1, const FVector &p2, const FVector &objNormal, const FVector &objUp,
-		const FVector2D &upperExtensions = FVector2D::ZeroVector, const FVector2D &outerExtensions = FVector2D::ZeroVector, const FVector &scale = FVector::OneVector, bool bRecreateSection = true, bool bCreateCollision = true);
-	void UpdateExtrudedPolyGeometry(const FBIMAssemblySpec &assembly, const FVector &p1, const FVector &p2, const FVector &objNormal, const FVector &objUp,
-		const FVector2D &upperExtensions = FVector2D::ZeroVector, const FVector2D &outerExtensions = FVector2D::ZeroVector, const FVector &scale = FVector::OneVector, bool bCreateCollision = true);
+	bool SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint, const FVector& ObjNormal, const FVector& ObjUp,
+		const FVector2D& UpperExtensions = FVector2D::ZeroVector, const FVector2D& OuterExtensions = FVector2D::ZeroVector, const FVector& InScale = FVector::OneVector, bool bRecreateSection = true, bool bCreateCollision = true);
 
 	void SetupMasksGeometry(const TArray<TArray<FVector>> &Polygons, const FPlane &Plane, const FVector &Origin, const FVector &AxisX, const FVector &AxisY);
 

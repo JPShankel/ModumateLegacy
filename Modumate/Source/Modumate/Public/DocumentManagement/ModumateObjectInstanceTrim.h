@@ -14,20 +14,6 @@ class FModumateObjectInstance;
 
 class MODUMATE_API FMOITrimImpl : public FModumateObjectInstanceImplBase
 {
-protected:
-	TWeakObjectPtr<ADynamicMeshActor> DynamicMeshActor;
-	TWeakObjectPtr<UWorld> World;
-
-	// Cached values for the trim, interpreted from MOI's ControlPoints and ControlIndices
-	float StartAlongEdge, EndAlongEdge;
-	int32 EdgeStartIndex, EdgeEndIndex, EdgeMountIndex;
-	bool bUseLengthAsPercent;
-	ETrimMiterOptions MiterOptionStart, MiterOptionEnd;
-	FVector TrimStartPos, TrimEndPos, TrimNormal, TrimUp, TrimDir;
-	FVector2D UpperExtensions, OuterExtensions;
-
-	void InternalUpdateGeometry(bool bRecreate, bool bCreateCollision);
-
 public:
 	FMOITrimImpl(FModumateObjectInstance *moi);
 	virtual ~FMOITrimImpl();
@@ -38,13 +24,29 @@ public:
 	virtual void SetLocation(const FVector &p) override;
 	virtual FVector GetLocation() const override;
 
+	virtual FVector GetNormal() const override;
+
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP* Controller) override;
+	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow) override;
+
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 
-	virtual void SetupDynamicGeometry() override;
-	virtual void UpdateDynamicGeometry() override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 
 	virtual void SetIsDynamic(bool bIsDynamic) override;
 	virtual bool GetIsDynamic() const override;
+
+protected:
+	TWeakObjectPtr<ADynamicMeshActor> DynamicMeshActor;
+	TWeakObjectPtr<UWorld> World;
+
+	// Cached values for the trim, derived from instance properties and the parent SurfaceEdge
+	FVector TrimStartPos, TrimEndPos, TrimNormal, TrimUp, TrimDir, TrimScale;
+	FVector2D UpperExtensions, OuterExtensions;
+
+	bool UpdateCachedStructure();
+	bool UpdateMitering();
+	bool InternalUpdateGeometry(bool bRecreate, bool bCreateCollision);
 };
 

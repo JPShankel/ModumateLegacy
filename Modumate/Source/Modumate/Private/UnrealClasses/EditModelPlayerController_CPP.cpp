@@ -1085,6 +1085,11 @@ bool AEditModelPlayerController_CPP::HandleEscapeKey()
 	ClearUserSnapPoints();
 	EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
+	if (GetPawn<AEditModelToggleGravityPawn_CPP>())
+	{
+		ToggleGravityPawn();
+	}
+
 	if (HoverHandleActor != nullptr)
 	{
 		HoverHandleActor = nullptr;
@@ -1115,10 +1120,7 @@ bool AEditModelPlayerController_CPP::HandleEscapeKey()
 		EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 		return true;
 	}
-	else if (GetPawn<AEditModelToggleGravityPawn_CPP>())
-	{
-		ToggleGravityPawn();
-	}
+
 	return false;
 }
 
@@ -1546,10 +1548,7 @@ void AEditModelPlayerController_CPP::CleanSelectedObjects()
 
 	for (auto *obj : objectsToClean)
 	{
-		for (EObjectDirtyFlags dirtyFlag : UModumateTypeStatics::OrderedDirtyFlags)
-		{
-			obj->MarkDirty(dirtyFlag);
-		}
+		obj->MarkDirty(EObjectDirtyFlags::All);
 	}
 
 	Document->CleanObjects();

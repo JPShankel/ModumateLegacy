@@ -377,8 +377,8 @@ public:
 	TArray<const FModumateObjectInstance *> GetAllDescendents() const;
 
 	// Geometry
-	void MarkDirty(EObjectDirtyFlags DirtyFlag);
-	bool IsDirty(EObjectDirtyFlags DirtyFlag) const;
+	void MarkDirty(EObjectDirtyFlags NewDirtyFlags);
+	bool IsDirty(EObjectDirtyFlags CheckDirtyFlags) const;
 	bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas);
 
 	void SetupGeometry();

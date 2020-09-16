@@ -182,10 +182,12 @@ enum class ESelectObjectMode : uint8
 UENUM(BlueprintType, meta = (Bitflags))
 enum class EObjectDirtyFlags : uint8
 {
-	None = 0x00,
-	Structure = 0x01,
-	Mitering = 0x02,
-	Visuals = 0x04
+	None		= 0		UMETA(Hidden),
+	Structure	= 1 << 0,
+	Mitering	= 1 << 1,
+	Visuals		= 1 << 2,
+
+	All = Structure | Mitering | Visuals	UMETA(Hidden)
 };
 ENUM_CLASS_FLAGS(EObjectDirtyFlags);
 
