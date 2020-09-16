@@ -7,14 +7,13 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 FMOIPlaneImplBase::FMOIPlaneImplBase(FModumateObjectInstance *moi)
-	: FDynamicModumateObjectInstanceImpl(moi)
+	: FModumateObjectInstanceImplBase(moi)
 	, CachedPlane(ForceInitToZero)
 	, CachedAxisX(ForceInitToZero)
 	, CachedAxisY(ForceInitToZero)
 	, CachedOrigin(ForceInitToZero)
 	, CachedCenter(ForceInitToZero)
 {
-	bDrawHUDTags = false;
 }
 
 FVector FMOIPlaneImplBase::GetCorner(int32 index) const

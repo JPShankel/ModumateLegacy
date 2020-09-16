@@ -2,9 +2,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DocumentManagement/ModumateDynamicObjectBase.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 
-class MODUMATE_API FMOIScopeBoxImpl : public FDynamicModumateObjectInstanceImpl
+class MODUMATE_API FMOIScopeBoxImpl : public FModumateObjectInstanceImplBase
 {
 public:
 	FMOIScopeBoxImpl(FModumateObjectInstance *moi);

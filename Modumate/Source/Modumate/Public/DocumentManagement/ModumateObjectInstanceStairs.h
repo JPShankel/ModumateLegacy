@@ -1,13 +1,13 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "DocumentManagement/ModumateDynamicObjectBase.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 #include "CoreMinimal.h"
 
 class AEditModelPlayerController_CPP;
 class FModumateObjectInstance;
 
-class MODUMATE_API FMOIStaircaseImpl : public FDynamicModumateObjectInstanceImpl
+class MODUMATE_API FMOIStaircaseImpl : public FModumateObjectInstanceImplBase
 {
 public:
 	FMOIStaircaseImpl(FModumateObjectInstance *moi);

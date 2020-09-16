@@ -26,7 +26,7 @@ class AEditModelPlayerController_CPP;
 using namespace Modumate::Mitering;
 
 FMOIPlaneHostedObjImpl::FMOIPlaneHostedObjImpl(FModumateObjectInstance *InMOI)
-	: FDynamicModumateObjectInstanceImpl(InMOI)
+	: FModumateObjectInstanceImplBase(InMOI)
 {
 	CachedLayerDims.UpdateLayersFromAssembly(MOI->GetAssembly());
 	CachedLayerDims.UpdateFinishFromObject(MOI);
@@ -157,15 +157,12 @@ bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSh
 
 void FMOIPlaneHostedObjImpl::SetupDynamicGeometry()
 {
-	GotGeometry = true;
 	bGeometryDirty = true;
 	InternalUpdateGeometry();
 }
 
 void FMOIPlaneHostedObjImpl::UpdateDynamicGeometry()
 {
-	if (!GotGeometry) return;
-
 	// If our parent metaplane is being adjusted, then just update our own mesh to match rather than derive points from the doc graph
 	const FModumateObjectInstance *parent = MOI->GetParentObject();
 	if (ensure(parent != nullptr) && parent->GetIsInPreviewMode())
@@ -287,7 +284,7 @@ void FMOIPlaneHostedObjImpl::SetupAdjustmentHandles(AEditModelPlayerController_C
 
 void FMOIPlaneHostedObjImpl::OnSelected(bool bNewSelected)
 {
-	FDynamicModumateObjectInstanceImpl::OnSelected(bNewSelected);
+	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
 
 	if (const FModumateObjectInstance *parent = MOI ? MOI->GetParentObject() : nullptr)
 	{

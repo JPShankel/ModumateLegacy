@@ -6,7 +6,7 @@
 #include "CoreMinimal.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "Database/ModumateArchitecturalMaterial.h"
-#include "DocumentManagement/ModumateDynamicObjectBase.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 
 #include "ModumateObjectInstanceCabinets.generated.h"
 
@@ -30,7 +30,7 @@ protected:
 
 class FModumateObjectInstance;
 
-class MODUMATE_API FMOICabinetImpl : public FDynamicModumateObjectInstanceImpl
+class MODUMATE_API FMOICabinetImpl : public FModumateObjectInstanceImplBase
 {
 public:
 	FMOICabinetImpl(FModumateObjectInstance *moi);

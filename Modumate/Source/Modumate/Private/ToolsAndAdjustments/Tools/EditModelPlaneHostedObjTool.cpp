@@ -408,7 +408,6 @@ UWallTool::UWallTool(const FObjectInitializer& ObjectInitializer)
 	SetAxisConstraint(EAxisConstraint::AxisZ);
 }
 
-
 UFloorTool::UFloorTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -420,5 +419,12 @@ UCeilingTool::UCeilingTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	ObjectType = EObjectType::OTCeiling;
+	SetAxisConstraint(EAxisConstraint::AxesXY);
+}
+
+UCountertopTool::UCountertopTool(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	ObjectType = EObjectType::OTCountertop;
 	SetAxisConstraint(EAxisConstraint::AxesXY);
 }

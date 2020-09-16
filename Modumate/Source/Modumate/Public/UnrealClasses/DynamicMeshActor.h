@@ -65,7 +65,6 @@ private:
 	TArray<FVector2D> uv0;
 	TArray<FProcMeshTangent> tangents;
 	TArray<FLinearColor> vertexColors;
-	TMap<TPair<int32, int32>, FVector> exteriorTriangleNormals;
 	float baseArea = 0.0f;
 	float meshVolume = 0.0f;
 
@@ -74,7 +73,6 @@ private:
 
 	void MakeTriangle(const FVector &p1, const FVector &p2, const FVector &p3, int32 dir, int32 facedir, const float uvRot = 0.0f);
 	void MakeTriangleUVs(const FVector &p1, const FVector &p2, const FVector &p3, int32 dir, int32 facedir, float uvRot = 0.0f);
-	void CacheTriangleNormals(const TArray<FVector> &points, int32 cp1, int32 cp2, int32 cp3);
 
 
 public:
@@ -117,8 +115,6 @@ public:
 	void SetupMasksGeometry(const TArray<TArray<FVector>> &Polygons, const FPlane &Plane, const FVector &Origin, const FVector &AxisX, const FVector &AxisY);
 
 	void UpdateLayerMaterialsFromAssembly();
-
-	bool GetTriInternalNormalFromEdge(int32 cp1, int32 cp2, FVector &outNormal) const;
 
 	bool HasPlacementError() const { return PlacementErrors.Num() > 0; }
 	bool SetPlacementError(FName errorTag, bool bIsError);
@@ -213,18 +209,3 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsDynamic = true;
 };
-
-class UTexture;
-
-UCLASS()
-class MODUMATE_API ADynamicCursor : public AActor
-{
-	GENERATED_BODY()
-
-public:
-	// Sets default values for this actor's properties
-	ADynamicCursor();
-	//TSubclassOf<class ADynamicCursor> C_DynamicCursor_BP;
-};
-
-//TSubclassOf<class ADynamicCursor> C_DynamicCursor_BP;

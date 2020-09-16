@@ -16,6 +16,7 @@
 #include "Misc/OutputDeviceNull.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UI/HUDDrawWidget.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -1033,11 +1034,6 @@ void FModumateObjectInstance::GetStructuralPointsAndLines(TArray<FStructurePoint
 	}
 }
 
-bool FModumateObjectInstance::GetTriInternalNormalFromEdge(int32 cp1, int32 cp2, FVector &outNormal) const
-{
-	return Implementation->GetTriInternalNormalFromEdge(cp1, cp2, outNormal);
-}
-
 void FModumateObjectInstance::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 {
 	Implementation->AddDraftingLines(HUDDrawWidget);
@@ -1123,7 +1119,7 @@ void FModumateObjectInstance::PostCreateObject(bool bNewObject)
 
 	PreviewState = CurrentState;
 
-	MarkDirty(EObjectDirtyFlags::Structure);
+	MarkDirty(EObjectDirtyFlags::All);
 }
 
 void FModumateObjectInstance::InvertObject()
@@ -1333,7 +1329,20 @@ AActor *FModumateObjectInstanceImplBase::RestoreActor()
 
 AActor *FModumateObjectInstanceImplBase::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
-	return world->SpawnActor<AActor>(loc, rot.Rotator());
+	World = world;
+
+	if (AEditModelGameMode_CPP* gameMode = World->GetAuthGameMode<AEditModelGameMode_CPP>())
+	{
+		DynamicMeshActor = World->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get(), FTransform(rot, loc));
+
+		if (MOI && DynamicMeshActor.IsValid() && DynamicMeshActor->Mesh)
+		{
+			ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->GetObjectType());
+			DynamicMeshActor->Mesh->SetCollisionObjectType(collisionObjType);
+		}
+	}
+
+	return DynamicMeshActor.Get();
 }
 
 void FModumateObjectInstanceImplBase::PostCreateObject(bool bNewObject)

@@ -96,11 +96,6 @@ void FMOICutPlaneImpl::SetupDynamicGeometry()
 
 void FMOICutPlaneImpl::UpdateDynamicGeometry()
 {
-	if (!GotGeometry)
-	{
-		return;
-	}
-
 	UpdateCachedGeometryData();
 
 	DynamicMeshActor->SetupPlaneGeometry(CachedPoints, MaterialData, false, true);
@@ -108,7 +103,7 @@ void FMOICutPlaneImpl::UpdateDynamicGeometry()
 
 void FMOICutPlaneImpl::OnSelected(bool bNewSelected)
 {
-	FDynamicModumateObjectInstanceImpl::OnSelected(bNewSelected);
+	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
 
 	if (bNewSelected)
 	{

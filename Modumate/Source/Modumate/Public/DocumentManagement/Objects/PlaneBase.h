@@ -2,9 +2,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DocumentManagement/ModumateDynamicObjectBase.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 
-class MODUMATE_API FMOIPlaneImplBase : public FDynamicModumateObjectInstanceImpl
+class MODUMATE_API FMOIPlaneImplBase : public FModumateObjectInstanceImplBase
 {
 public:
 	FMOIPlaneImplBase(FModumateObjectInstance *moi);

@@ -6,7 +6,7 @@
 #include "CoreMinimal.h"
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "Database/ModumateArchitecturalMaterial.h"
-#include "DocumentManagement/ModumateDynamicObjectBase.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 
 class AEditModelPlayerController_CPP;
@@ -16,9 +16,6 @@ class FModumateObjectInstance;
 class MODUMATE_API FMOIStructureLine : public FModumateObjectInstanceImplBase
 {
 protected:
-	TWeakObjectPtr<ADynamicMeshActor> DynamicMeshActor;
-	TWeakObjectPtr<UWorld> World;
-
 	FVector LineStartPos, LineEndPos, LineDir, LineNormal, LineUp;
 	FVector2D UpperExtensions, OuterExtensions;
 
@@ -35,8 +32,6 @@ public:
 
 	virtual FQuat GetRotation() const override;
 	virtual FVector GetLocation() const override;
-
-	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;

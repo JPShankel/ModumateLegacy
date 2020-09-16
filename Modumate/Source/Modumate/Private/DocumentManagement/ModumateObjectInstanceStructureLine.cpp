@@ -50,25 +50,6 @@ FVector FMOIStructureLine::GetLocation() const
 	return FVector::ZeroVector;
 }
 
-AActor *FMOIStructureLine::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
-{
-	World = world;
-
-	AEditModelGameMode_CPP *gameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
-	if (gameMode)
-	{
-		DynamicMeshActor = world->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get(), FTransform(rot, loc));
-
-		if (MOI && DynamicMeshActor.IsValid() && DynamicMeshActor->Mesh)
-		{
-			ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->GetObjectType());
-			DynamicMeshActor->Mesh->SetCollisionObjectType(collisionObjType);
-		}
-	}
-
-	return DynamicMeshActor.Get();
-}
-
 void FMOIStructureLine::SetupDynamicGeometry()
 {
 	InternalUpdateGeometry(true, true);

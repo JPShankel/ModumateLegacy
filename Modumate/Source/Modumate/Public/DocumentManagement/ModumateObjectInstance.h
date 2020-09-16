@@ -109,7 +109,6 @@ public:
 	virtual void SetupDynamicGeometry() = 0;
 	virtual void UpdateDynamicGeometry() = 0;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const = 0;
-	virtual bool GetTriInternalNormalFromEdge(int32 cp1, int32 cp2, FVector &outNormal) const = 0;
 
 	virtual bool IsSelectableByUser() const = 0;
 	virtual bool ShowStructureOnSelection() const = 0;
@@ -134,6 +133,11 @@ class MODUMATE_API FModumateObjectInstanceImplBase : public IModumateObjectInsta
 {
 protected:
 	FModumateObjectInstance* MOI;
+
+	// TODO: remove when MOIs are actors or DynamicMeshActor is a component that manages procedural meshes.
+	TWeakObjectPtr<ADynamicMeshActor> DynamicMeshActor;
+
+	TWeakObjectPtr<UWorld> World;
 
 	FModumateObjectInstanceImplBase(FModumateObjectInstance* InMOI)
 		: MOI(InMOI)
@@ -176,7 +180,6 @@ public:
 	virtual void SetupDynamicGeometry() override { }
 	virtual void UpdateDynamicGeometry() override { }
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override { }
-	virtual bool GetTriInternalNormalFromEdge(int32 cp1, int32 cp2, FVector &outNormal) const override { return false; }
 
 	virtual bool IsSelectableByUser() const override { return true; }
 	virtual bool ShowStructureOnSelection() const override { return true; }
@@ -384,7 +387,6 @@ public:
 	void SetupGeometry();
 	void UpdateGeometry();
 	void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const;
-	bool GetTriInternalNormalFromEdge(int32 cp1, int32 cp2, FVector &outNormal) const;
 
 	// Drafting
 	void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget);

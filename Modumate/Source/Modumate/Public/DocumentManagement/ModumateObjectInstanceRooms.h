@@ -25,7 +25,6 @@ public:
 
 	virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover) override;
 	virtual void OnSelected(bool bNewSelected) override;
-	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
@@ -39,7 +38,6 @@ protected:
 	mutable TArray<FStructureLine> TempLines;
 
 	TWeakObjectPtr<UMaterialInstanceDynamic> DynamicMaterial;
-	TWeakObjectPtr<ADynamicMeshActor> DynamicMeshActor;
 	TWeakObjectPtr<UMaterialInstanceDynamic> VolumeMaterial;
 	TWeakObjectPtr<UWorld> World;
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;

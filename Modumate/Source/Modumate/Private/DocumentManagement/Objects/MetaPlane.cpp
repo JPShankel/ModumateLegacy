@@ -15,6 +15,11 @@ FMOIMetaPlaneImpl::FMOIMetaPlaneImpl(FModumateObjectInstance *moi)
 
 }
 
+void FMOIMetaPlaneImpl::PostCreateObject(bool bNewObject)
+{
+	UpdateConnectedVisuals();
+}
+
 void FMOIMetaPlaneImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	if (MOI && DynamicMeshActor.IsValid())
@@ -30,9 +35,6 @@ void FMOIMetaPlaneImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bO
 
 void FMOIMetaPlaneImpl::SetupDynamicGeometry()
 {
-	bool bNewPlane = !GotGeometry;
-	GotGeometry = true;
-
 	const TArray<int32> &newChildIDs = MOI->GetChildIDs();
 	bool bChildrenChanged = (newChildIDs != LastChildIDs);
 	LastChildIDs = newChildIDs;
@@ -48,36 +50,17 @@ void FMOIMetaPlaneImpl::SetupDynamicGeometry()
 
 	MOI->UpdateVisibilityAndCollision();
 
-	// If this plane was just created, or if its children changed, then make sure its neighbors
+	// If this plane's children changed, then make sure its neighbors
 	// have the correct visuals and collision as well, since they might be dependent on this one.
-	if (bNewPlane || bChildrenChanged)
+	if (bChildrenChanged)
 	{
 		UpdateConnectedVisuals();
 	}
 }
 
-void FMOIMetaPlaneImpl::UpdateDynamicGeometry()
-{
-	if (!GotGeometry)
-	{
-		return;
-	}
-
-	UpdateCachedGraphData();
-
-	DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, GetAlpha(), false, &CachedHoles, true);
-
-	auto children = MOI->GetChildObjects();
-
-	for (auto *child : children)
-	{
-		child->UpdateGeometry();
-	}
-}
-
 void FMOIMetaPlaneImpl::OnSelected(bool bNewSelected)
 {
-	FDynamicModumateObjectInstanceImpl::OnSelected(bNewSelected);
+	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
 
 	if (MOI && DynamicMeshActor.IsValid())
 	{

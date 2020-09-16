@@ -1,14 +1,14 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "DocumentManagement/ModumateDynamicObjectBase.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "DocumentManagement/ModumateLayeredObjectInterface.h"
 
 class AEditModelPlayerController_CPP;
 class FModumateObjectInstance;
 
-class MODUMATE_API FMOIPlaneHostedObjImpl : public FDynamicModumateObjectInstanceImpl, ILayeredObject
+class MODUMATE_API FMOIPlaneHostedObjImpl : public FModumateObjectInstanceImplBase, ILayeredObject
 {
 public:
 	FMOIPlaneHostedObjImpl(FModumateObjectInstance *InMOI);

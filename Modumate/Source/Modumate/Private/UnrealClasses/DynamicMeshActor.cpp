@@ -27,12 +27,6 @@ ADynamicMeshActor::ADynamicMeshActor()
 	Height = 0;
 }
 
-// Setup Blueprint for access in cpp
-ADynamicCursor::ADynamicCursor()
-{
-
-}
-
 // Called when the game starts or when spawned
 void ADynamicMeshActor::BeginPlay()
 {
@@ -171,7 +165,6 @@ void ADynamicMeshActor::MakeTriangleUVs(const FVector &p1, const FVector &p2, co
 	}
 }
 
-
 void ADynamicMeshActor::MakeTriangle(const FVector &p1, const FVector &p2, const FVector &p3, int32 dir, int32 facedir, float uvRot)
 {
 	int32 startIndex = vertices.Num();
@@ -200,39 +193,6 @@ void ADynamicMeshActor::MakeTriangle(const FVector &p1, const FVector &p2, const
 	vertexColors.Add(FLinearColor(1, 1, 1, 1.0));
 	vertexColors.Add(FLinearColor(1, 1, 1, 1.0));
 	vertexColors.Add(FLinearColor(1, 1, 1, 1.0));
-}
-
-void ADynamicMeshActor::CacheTriangleNormals(const TArray<FVector> &points, int32 cp1, int32 cp2, int32 cp3)
-{
-	const FVector &p1 = points[cp1];
-	const FVector &p2 = points[cp2];
-	const FVector &p3 = points[cp3];
-	int32 numPoints = points.Num();
-
-	FVector centroid = (p1 + p2 + p3) / 3.0f;
-	FPlane trianglePlane(p1, p2, p3);
-
-	FVector cpPositions[] = { p1, p2, p3 };
-	int32 cpIndices[] = { cp1, cp2, cp3 };
-	for (int i = 0; i < 3; ++i)
-	{
-		int32 cpA = cpIndices[i];
-		int32 cpB = cpIndices[(i + 1) % 3];
-		const FVector &cpAPos = cpPositions[i];
-		const FVector &cpBPos = cpPositions[(i + 1) % 3];
-
-		TPair<int32, int32> edgeIndicesPair(FMath::Min(cpA, cpB), FMath::Max(cpA, cpB));
-
-		if ((cpA == ((cpB + 1) % numPoints)) || (cpB == ((cpA + 1) % numPoints)))
-		{
-			FVector edgeNormal = trianglePlane ^ (cpBPos - cpAPos).GetSafeNormal();
-			if ((edgeNormal | (centroid - cpAPos).GetSafeNormal()) < 0.0f)
-			{
-				edgeNormal *= -1.0f;
-			}
-			exteriorTriangleNormals.Add(edgeIndicesPair, edgeNormal);
-		}
-	}
 }
 
 bool ADynamicMeshActor::CreateBasicLayerDefs(const TArray<FVector> &PlanePoints, const FVector &PlaneNormal,
@@ -975,20 +935,6 @@ void ADynamicMeshActor::UpdateLayerMaterialsFromAssembly()
 	}
 	UModumateFunctionLibrary::UpdateMaterialsFromAssembly(updateLayers, Assembly, TilingMaterials, MasterPBRMaterial,
 		&CachedMIDs);
-}
-
-bool ADynamicMeshActor::GetTriInternalNormalFromEdge(int32 cp1, int32 cp2, FVector &outNormal) const
-{
-	int32 lowerCP = FMath::Min(cp1, cp2);
-	int32 higherCP = FMath::Max(cp1, cp2);
-	TPair<int32, int32> edgeIndicesPair(lowerCP, higherCP);
-	if (const FVector *interalNormalPtr = exteriorTriangleNormals.Find(edgeIndicesPair))
-	{
-		outNormal = *interalNormalPtr;
-		return true;
-	}
-
-	return false;
 }
 
 bool ADynamicMeshActor::SetPlacementError(FName errorTag, bool bIsError)

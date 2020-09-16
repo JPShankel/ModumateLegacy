@@ -72,45 +72,6 @@ void FMOITrimImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Control
 	return FModumateObjectInstanceImplBase::ShowAdjustmentHandles(Controller, bShow);
 }
 
-AActor *FMOITrimImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
-{
-	World = world;
-
-	if (ensureAlways(world != nullptr))
-	{
-		AEditModelGameMode_CPP* gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
-		if (gameMode)
-		{
-			DynamicMeshActor = world->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get(), FTransform(rot, loc));
-
-			if (MOI && DynamicMeshActor.IsValid() && DynamicMeshActor->Mesh)
-			{
-				ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->GetObjectType());
-				DynamicMeshActor->Mesh->SetCollisionObjectType(collisionObjType);
-			}
-		}
-
-		AEditModelGameState_CPP* gameState = world->GetAuthGameMode<AEditModelGameState_CPP>();
-		if (gameState)
-		{
-			FModumateObjectInstance* parent = gameState->Document.GetObjectById(MOI->GetParentID());
-			if (parent)
-			{
-				auto siblings = parent->GetChildObjects();
-				for (FModumateObjectInstance* sibling : siblings)
-				{
-					if (sibling && (sibling->ID != MOI->ID))
-					{
-						sibling->UpdateGeometry();
-					}
-				}
-			}
-		}
-	}
-
-	return DynamicMeshActor.Get();
-}
-
 bool FMOITrimImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)

@@ -87,3 +87,14 @@ public:
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_CEILING; }
 };
+
+UCLASS()
+class MODUMATE_API UCountertopTool : public UPlaneHostedObjTool
+{
+	GENERATED_BODY()
+
+public:
+	UCountertopTool(const FObjectInitializer& ObjectInitializer);
+
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_COUNTERTOP; }
+};

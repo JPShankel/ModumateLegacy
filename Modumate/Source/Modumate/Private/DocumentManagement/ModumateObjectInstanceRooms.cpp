@@ -15,8 +15,6 @@
 FMOIRoomImpl::FMOIRoomImpl(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
 	, DynamicMaterial(nullptr)
-	, DynamicMeshActor(nullptr)
-	, World(nullptr)
 {
 }
 
@@ -59,22 +57,6 @@ void FMOIRoomImpl::OnSelected(bool bNewSelected)
 	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
 
 	UpdateMaterial();
-}
-
-AActor *FMOIRoomImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
-{
-	World = world;
-	GameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
-
-	DynamicMeshActor = World->SpawnActor<ADynamicMeshActor>(GameMode->DynamicMeshActorClass.Get(), FTransform(rot, loc));
-
-	if (MOI && DynamicMeshActor.IsValid() && DynamicMeshActor->Mesh)
-	{
-		ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->GetObjectType());
-		DynamicMeshActor->Mesh->SetCollisionObjectType(collisionObjType);
-	}
-
-	return DynamicMeshActor.Get();
 }
 
 void FMOIRoomImpl::SetupDynamicGeometry()

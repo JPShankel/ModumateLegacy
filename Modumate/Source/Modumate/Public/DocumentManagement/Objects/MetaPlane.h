@@ -9,9 +9,9 @@ class MODUMATE_API FMOIMetaPlaneImpl : public FMOIPlaneImplBase
 public:
 	FMOIMetaPlaneImpl(FModumateObjectInstance *moi);
 
+	virtual void PostCreateObject(bool bNewObject) override;
 	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupDynamicGeometry() override;
-	virtual void UpdateDynamicGeometry() override;
 	virtual void OnSelected(bool bNewSelected) override;
 
 protected:

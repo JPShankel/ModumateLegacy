@@ -21,16 +21,6 @@ namespace Modumate
 	class FGraph3DEdge;
 };
 
-
-UENUM(BlueprintType)
-enum class ETrimMiterOptions : uint8
-{
-	None,
-	MiterAngled,
-	RunPast,
-	RunUntil,
-};
-
 // Helper functions for creating / updating MOIs and their geometry.
 // When multiple systems need to understand the relationship between control points/indices and MOI geometry,
 // such as Tools, procedural meshes, icon generation, MOI interface implementations, etc., those functions can go here.
@@ -40,30 +30,7 @@ class MODUMATE_API UModumateObjectStatics : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	// Trims
-	static ETrimMiterOptions GetMiterOptionFromAdjacentTrim(ETrimMiterOptions OtherMiterOption);
-
 	static bool GetPolygonProfile(const FBIMAssemblySpec *TrimAssembly, const FSimplePolygon*& OutProfile);
-
-	static bool GetTrimValuesFromControls(const TArray<FVector> &ControlPoints, const TArray<int32> &ControlIndices,
-		float &OutTrimStartLength, float &OutTrimEndLength, int32 &OutEdgeStartIndex, int32 &OutEdgeEndIndex,
-		int32 &OutMountIndex, bool &bOutUseLengthAsPercent, ETrimMiterOptions &OutMiterOptionStart, ETrimMiterOptions &OutMiterOptionEnd);
-
-	static bool GetTrimControlsFromValues(float TrimStartLength, float TrimEndLength,
-		int32 EdgeStartIndex, int32 EdgeEndIndex, int32 MountIndex,
-		bool bUseLengthAsPercent, ETrimMiterOptions MiterOptionStart, ETrimMiterOptions MiterOptionEnd,
-		TArray<FVector> &OutControlPoints, TArray<int32> &OutControlIndices);
-
-	static bool GetTrimEdgePosition(const FModumateObjectInstance* TargetObject,
-		int32 EdgeStartIndex, int32 EdgeEndIndex, FVector &OutEdgeStart, FVector &OutEdgeEnd);
-
-	static bool GetTrimGeometryOnEdge(const FModumateObjectInstance* TargetObject,
-		const FBIMAssemblySpec *TrimAssembly, int32 EdgeStartIndex, int32 EdgeEndIndex,
-		float TrimStartLength, float TrimEndLength, bool bUseLengthAsPercent,
-		ETrimMiterOptions TrimMiterStart, ETrimMiterOptions TrimMiterEnd,
-		FVector &OutTrimStart, FVector &OutTrimEnd, FVector &OutTrimNormal, FVector &OutTrimUp, int32 &OutMountIndex,
-		FVector2D &OutTrimUpperExtensions, FVector2D &OutTrimOuterExtensions,
-		const FVector &HintNormal = FVector::ZeroVector, int32 HintMountIndex = -1, bool bDoMitering = false);
 
 	static bool GetRelativeTransformOnPlanarObj(
 		const FModumateObjectInstance *PlanarObj,

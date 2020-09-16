@@ -1719,6 +1719,11 @@ namespace Modumate
 
 	bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, TSharedPtr<FGraph2D> OutGraph, const TSet<int32> *WhitelistIDs, TMap<int32, int32> *OutFace3DToPoly2D) const
 	{
+		if (!ensure(OutGraph.IsValid()))
+		{
+			return false;
+		}
+
 		OutGraph->Reset();
 
 		TQueue<int32> frontierVertexIDs;

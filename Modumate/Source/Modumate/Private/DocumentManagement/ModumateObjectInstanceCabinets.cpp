@@ -22,7 +22,7 @@ using namespace Modumate::Units;
 FName FMOICabinetImpl::CabinetGeometryMatName(TEXT("Cabinet_Exterior_Finish"));
 
 FMOICabinetImpl::FMOICabinetImpl(FModumateObjectInstance *moi)
-	: FDynamicModumateObjectInstanceImpl(moi)
+	: FModumateObjectInstanceImplBase(moi)
 	, AdjustmentHandlesVisible(false)
 	, ToeKickDimensions(ForceInitToZero)
 	, CachedExtrusionDelta(ForceInitToZero)
@@ -235,7 +235,7 @@ void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *con
 
 void FMOICabinetImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
 {
-	FDynamicModumateObjectInstanceImpl::ShowAdjustmentHandles(Controller, bShow);
+	FModumateObjectInstanceImplBase::ShowAdjustmentHandles(Controller, bShow);
 
 	AdjustmentHandlesVisible = bShow;
 

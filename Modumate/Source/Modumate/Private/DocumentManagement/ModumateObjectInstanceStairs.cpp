@@ -10,7 +10,7 @@ class AEditModelPlayerController_CPP;
 
 
 FMOIStaircaseImpl::FMOIStaircaseImpl(FModumateObjectInstance *moi)
-	: FDynamicModumateObjectInstanceImpl(moi)
+	: FModumateObjectInstanceImplBase(moi)
 	, bCachedUseRisers(true)
 	, bCachedStartRiser(true)
 	, bCachedEndRiser(true)

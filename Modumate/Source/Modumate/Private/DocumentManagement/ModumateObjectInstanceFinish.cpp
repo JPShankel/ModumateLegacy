@@ -11,7 +11,7 @@
 #include "DocumentManagement/ModumateObjectInstance.h"
 
 FMOIFinishImpl::FMOIFinishImpl(FModumateObjectInstance *moi)
-	: FDynamicModumateObjectInstanceImpl(moi)
+	: FModumateObjectInstanceImplBase(moi)
 { }
 
 FMOIFinishImpl::~FMOIFinishImpl()

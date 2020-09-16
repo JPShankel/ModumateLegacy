@@ -10,7 +10,7 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 FMOIScopeBoxImpl::FMOIScopeBoxImpl(FModumateObjectInstance *moi)
-	: FDynamicModumateObjectInstanceImpl(moi)
+	: FModumateObjectInstanceImplBase(moi)
 	, EdgeSelectedColor(255.0f / 255.0f, 0.0f / 255.0f, 0.0f / 255.0f)
 	, EdgeColor(255.0f / 255.0f, 45.0f / 255.0f, 45.0f / 255.0f)
 	, HandleScale(0.0015f)
@@ -22,7 +22,7 @@ FMOIScopeBoxImpl::FMOIScopeBoxImpl(FModumateObjectInstance *moi)
 
 AActor* FMOIScopeBoxImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
-	AActor* returnActor = FDynamicModumateObjectInstanceImpl::CreateActor(world, loc, rot);
+	AActor* returnActor = FModumateObjectInstanceImplBase::CreateActor(world, loc, rot);
 	auto controller = world->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 	auto playerState = controller ? controller->EMPlayerState : nullptr;
 	if (playerState)

@@ -1,14 +1,14 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "DocumentManagement/ModumateDynamicObjectBase.h"
+#include "DocumentManagement/ModumateObjectInstance.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 
 class AEditModelPlayerController_CPP;
 
 class FModumateObjectInstance;
 
-class MODUMATE_API FMOIFinishImpl : public FDynamicModumateObjectInstanceImpl
+class MODUMATE_API FMOIFinishImpl : public FModumateObjectInstanceImplBase
 {
 public:
 	FMOIFinishImpl(FModumateObjectInstance *moi);
