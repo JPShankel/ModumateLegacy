@@ -128,9 +128,10 @@ bool FTessellationPolygon::ClipWithPolygon(const FTessellationPolygon &ClippingP
 		// If this polygon is a triangle, make sure the clip points are inside the triangle.
 		if (bCachedEndsConverge)
 		{
+			static float constexpr BARY_EPSILON = 0.05f;
 			FVector clipStartBary = FMath::ComputeBaryCentric2D(clipStartPoint, StartPoint, EndPoint, CachedEdgeIntersection);
 			FVector clipEndBary = FMath::ComputeBaryCentric2D(clipEndPoint, StartPoint, EndPoint, CachedEdgeIntersection);
-			if ((clipStartBary.GetMin() < -RAY_INTERSECT_TOLERANCE) || clipEndBary.GetMin() < -RAY_INTERSECT_TOLERANCE)
+			if ((clipStartBary.GetMin() < -BARY_EPSILON) || clipEndBary.GetMin() < -BARY_EPSILON)
 			{
 				return false;
 			}

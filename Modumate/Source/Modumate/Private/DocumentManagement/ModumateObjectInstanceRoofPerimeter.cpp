@@ -220,7 +220,12 @@ bool FMOIRoofPerimeterImpl::UpdateConnectedIDs()
 		}
 	}
 
+	if (!CachedPerimeterGraph.IsValid())
+	{
+		CachedPerimeterGraph = MakeShared<Modumate::FGraph2D>();
+	}
 	CachedEdgeIDs.Reset();
+
 	if (volumeGraph.Create2DGraph(TempGroupEdges, TempConnectedGraphIDs, CachedPerimeterGraph, CachedPlane, true, false))
 	{
 		const Modumate::FGraph2DPolygon *perimeterPoly = CachedPerimeterGraph->GetRootPolygon();
