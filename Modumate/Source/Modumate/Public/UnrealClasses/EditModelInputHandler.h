@@ -30,6 +30,7 @@ enum class EInputCommand : uint8
 	Redo,
 	TakeScreenshot,
 	SavePDF,
+	EscapeKey,
 
 	// General object commands
 	Copy,

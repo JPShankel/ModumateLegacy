@@ -168,6 +168,11 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 		Controller->TrySavePDF();
 		return true;
 	}
+	case EInputCommand::EscapeKey:
+	{
+		Controller->HandleEscapeKey();
+		return true;
+	}
 
 	// General object commands
 
