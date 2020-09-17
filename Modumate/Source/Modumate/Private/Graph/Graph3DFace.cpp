@@ -193,7 +193,9 @@ namespace Modumate
 		}
 
 		FVector2D intersection2D = OtherFace->ProjectPosition2D(intersectionPoint);
-		return UModumateFunctionLibrary::PointInPoly2D(intersection2D, OtherFace->Cached2DPositions);
+		FPointInPolyResult pointInPolyResult;
+		bool bTestSuccess = UModumateGeometryStatics::TestPointInPolygon(intersection2D, OtherFace->Cached2DPositions, pointInPolyResult);
+		return bTestSuccess && (pointInPolyResult.bInside || pointInPolyResult.bOverlaps);
 	}
 
 	bool FGraph3DFace::IntersectsFace(const FGraph3DFace *OtherFace, TArray<TPair<FVector, FVector>> &OutEdges) const

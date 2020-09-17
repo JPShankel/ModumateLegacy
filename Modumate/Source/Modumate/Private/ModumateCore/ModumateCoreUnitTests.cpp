@@ -1383,25 +1383,6 @@ namespace Modumate
 		return ret;
 	}
 
-	// Modumate expressions test
-	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateNumericalSequenceUnitTest, "Modumate.Core.NumericalSequence.UnitTest", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
-		bool FModumateNumericalSequenceUnitTest::RunTest(const FString& Parameters)
-	{
-		FString testSeqStr;
-
-		testSeqStr = UModumateFunctionLibrary::GetNextStringInNumericalSequence(testSeqStr, TCHAR('a'), TCHAR('z'));
-		bool ret = ensureAlways(testSeqStr == TEXT("a"));
-
-		int32 j;
-		for (j = 0; j < 25; ++j)
-		{
-			testSeqStr = UModumateFunctionLibrary::GetNextStringInNumericalSequence(testSeqStr, TCHAR('a'), TCHAR('z'));
-		}
-		ret = ensureAlways(testSeqStr == TEXT("z")) && ret;
-
-		return ret;
-	}
-
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateIDListNormalization, "Modumate.Core.IDListNormalization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateIDListNormalization::RunTest(const FString& Parameters)
 	{

@@ -29,11 +29,7 @@ namespace Modumate
 		MODUMATE_COMMAND(kSetFOV, "set_fov");
 
 		// Object creators
-		MODUMATE_COMMAND(kAddDoor, "add_door");
-		MODUMATE_COMMAND(kAddWindow, "add_window");
-		MODUMATE_COMMAND(kMakeMetaVertex, "make_vertex");
 		MODUMATE_COMMAND(kMakeMetaEdge, "make_edge");
-		MODUMATE_COMMAND(kMakeMetaPlane, "make_plane");
 		MODUMATE_COMMAND(kMakeScopeBox, "make_scopebox");
 
 		// Groups
@@ -41,11 +37,8 @@ namespace Modumate
 		MODUMATE_COMMAND(kGroup, "group");
 
 		// Object mutators
-		MODUMATE_COMMAND(kUpdateMOIHoleParams, "update_moi_hole_params");
-		MODUMATE_COMMAND(kSetGeometry, "set_geometry");
 		MODUMATE_COMMAND(kInvertObjects, "invert_objects");
 		MODUMATE_COMMAND(kTransverseObjects, "transverse_objects");
-		MODUMATE_COMMAND(kSetAssemblyForObjects, "set_assembly_for_objects");
 
 		// Selected Objects
 		MODUMATE_COMMAND(kDeleteSelectedObjects, "delete_selected");
@@ -66,10 +59,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kRedo, "redo");
 		MODUMATE_COMMAND(kBeginUndoRedoMacro, "begin_undoredo_macro");
 		MODUMATE_COMMAND(kEndUndoRedoMacro, "end_undoredo_macro");
-
-		// Crafting
-		MODUMATE_COMMAND(kUpdateCraftingPreset, "update_crafting_preset");
-		MODUMATE_COMMAND(kRemovePresetProjectAssembly, "remove_preset_project_assembly");
 	}
 
 	namespace Parameters

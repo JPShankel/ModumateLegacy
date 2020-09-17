@@ -24,27 +24,3 @@ protected:
 
 	bool bShouldTransvert = false;
 };
-
-UCLASS()
-class MODUMATE_API AAdjustPortalPointHandle : public AAdjustmentHandleActor
-{
-	GENERATED_BODY()
-
-public:
-	virtual bool BeginUse() override;
-	virtual bool UpdateUse() override;
-	virtual void Tick(float DeltaTime) override;
-	virtual void EndUse() override;
-	virtual FVector GetHandlePosition() const override;
-	virtual bool HandleInputNumber(float number) override;
-
-protected:
-	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
-
-	TArray<int32> CP;
-	TArray<FVector> OriginalP;
-	FVector AnchorLoc;
-	FVector OrginalLoc;
-	FVector OriginalLocHandle;
-	TArray<FVector> LastValidPendingCPLocations;
-};

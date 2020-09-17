@@ -1031,34 +1031,6 @@ bool AEditModelPlayerController_CPP::HandleInputNumber(double inputNumber)
 		}
 	}
 
-	// Check if there's text box widget that can accept user input
-	if (DimStringWidgetSelectedObject)
-	{
-		bool bCanSetPortalDimension = false;
-		FModumateObjectInstance *moi = Document->ObjectFromActor(DimStringWidgetSelectedObject);
-		if (moi != nullptr)
-		{
-			if ((moi->GetObjectType() == EObjectType::OTDoor) ||
-				(moi->GetObjectType() == EObjectType::OTWindow))
-			{
-				bCanSetPortalDimension = true;
-			}
-		}
-		if (bCanSetPortalDimension)
-		{
-			float userInput = UModumateDimensionStatics::StringToMetric(GetTextBoxUserInput());
-			if (EnablePortalVerticalInput)
-			{
-				UModumateFunctionLibrary::MoiPortalSetNewHeight(DimStringWidgetSelectedObject, userInput);
-			}
-			if (EnablePortalHorizontalInput)
-			{
-				UModumateFunctionLibrary::MoiPortalSetNewWidth(DimStringWidgetSelectedObject, userInput);
-			}
-			return true;
-		}
-	}
-
 	return false;
 }
 
@@ -1616,41 +1588,6 @@ float AEditModelPlayerController_CPP::GetDefaultJustificationZ() const
 float AEditModelPlayerController_CPP::GetDefaultJustificationXY() const
 {
 	return Document->GetDefaultJustificationXY();
-}
-
-bool AEditModelPlayerController_CPP::GetMetaPlaneHostedObjJustificationValue(AActor* actor, float& value)
-{
-	if (actor != nullptr)
-	{
-		FModumateObjectInstance *moi = Document->ObjectFromActor(actor);
-		FModumateObjectInstance *parentObj = moi ? moi->GetParentObject() : nullptr;
-		if (parentObj && (parentObj->GetObjectType() == EObjectType::OTMetaPlane))
-		{
-			value = moi->GetExtents().X;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void AEditModelPlayerController_CPP::SetMetaPlaneHostedObjJustificationValue(float newValue, AActor* actor)
-{
-	if (actor != nullptr)
-	{
-		FModumateObjectInstance *moi = Document->ObjectFromActor(actor);
-		FModumateObjectInstance *parentObj = moi ? moi->GetParentObject() : nullptr;
-		if (parentObj && (parentObj->GetObjectType() == EObjectType::OTMetaPlane))
-		{
-			TArray<FVector> points;
-			auto result = ModumateCommand(
-				FModumateCommand(Commands::kSetGeometry)
-				.Param(Parameters::kObjectID, moi->ID)
-				.Param(Parameters::kControlPoints, points)
-				.Param(Parameters::kExtents, FVector(newValue, 0.0f, 0.0f))
-			);
-		}
-	}
 }
 
 void AEditModelPlayerController_CPP::ToolAbortUse()

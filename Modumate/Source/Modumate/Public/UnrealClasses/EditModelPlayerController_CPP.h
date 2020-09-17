@@ -250,12 +250,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Justification)
 	float GetDefaultJustificationXY() const;
 
-	UFUNCTION(BlueprintCallable, Category = Justification)
-	bool GetMetaPlaneHostedObjJustificationValue(AActor* actor, float& value);
-
-	UFUNCTION(BlueprintCallable, Category = Justification)
-	void SetMetaPlaneHostedObjJustificationValue(float newValue, AActor* actor);
-
 	UFUNCTION(BlueprintCallable, Category = Assembly)
 	void ToolAbortUse();
 

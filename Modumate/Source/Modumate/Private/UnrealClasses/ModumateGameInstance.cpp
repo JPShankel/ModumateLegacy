@@ -205,18 +205,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
-	RegisterCommand(kMakeMetaVertex, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		TArray<FVector> points = { params.GetValue(kLocation) };
-		TArray<int32> ids;
-		int32 parentID = params.GetValue(kParent);
-		TArray<int32> newObjIDs;
-
-		bool bSuccess = GetDocument()->MakeMetaObject(GetWorld(), points, ids, EObjectType::OTMetaVertex, parentID, newObjIDs);
-		output.SetValue(kObjectIDs, newObjIDs);
-
-		return bSuccess;
-	});
-
 	RegisterCommand(kMakeMetaEdge, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		TArray<FVector> points = params.GetValue(kControlPoints);
 		TArray<int32> ids = params.GetValue(kObjectIDs);
@@ -224,18 +212,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		TArray<int32> newObjIDs;
 
 		bool bSuccess = GetDocument()->MakeMetaObject(GetWorld(), points, ids, EObjectType::OTMetaEdge, parentID, newObjIDs);
-		output.SetValue(kObjectIDs, newObjIDs);
-
-		return bSuccess;
-	});
-
-	RegisterCommand(kMakeMetaPlane, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		TArray<FVector> points = params.GetValue(kControlPoints);
-		TArray<int32> ids = params.GetValue(kObjectIDs);
-		int32 parentID = params.GetValue(kParent);
-		TArray<int32> newObjIDs;
-
-		bool bSuccess = GetDocument()->MakeMetaObject(GetWorld(), points, ids, EObjectType::OTMetaPlane, parentID, newObjIDs);
 		output.SetValue(kObjectIDs, newObjIDs);
 
 		return bSuccess;
@@ -258,30 +234,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		output.SetValue(kObjectIDs, newObjIDs);
 
 		return bSuccess;
-	});
-
-	RegisterCommand(kSetGeometry, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-
-		int32 id = params.GetValue(kObjectID);
-		TArray<FVector> points = params.GetValue(kControlPoints);
-
-		FModumateDocument *doc = GetDocument();
-		if (doc)
-		{
-			FModumateObjectInstance *target = doc->GetObjectById(id);
-			if (target)
-			{
-				// Default to the existing extents, unless the parameter was passed in.
-				FVector extents = target->GetExtents();
-				if (params.HasValue(kExtents))
-				{
-					extents = params.GetValue(kExtents);
-				}
-
-				return doc->UpdateGeometry(GetWorld(), id, points, extents);
-			}
-		}
-		return false;
 	});
 
 	RegisterCommand(kDumpScript, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
@@ -494,11 +446,6 @@ void UModumateGameInstance::RegisterAllCommands()
 	{
 		AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		playerState->Paste(*GetDocument());
-		return true;
-	});
-
-	RegisterCommand(kUpdateMOIHoleParams, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		GetDocument()->AdjustMoiHoleVerts(params.GetValue(kObjectID), params.GetValue(kLocation), params.GetValue(kControlPoints));
 		return true;
 	});
 

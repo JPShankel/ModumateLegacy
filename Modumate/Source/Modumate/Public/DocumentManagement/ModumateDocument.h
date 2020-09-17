@@ -121,14 +121,9 @@ public:
 	void SetDefaultJustificationXY(float newValue);
 	float GetDefaultJustificationXY() const { return DefaultJustificationXY; } // return DJXY from private;
 
-	void AdjustMoiHoleVerts(int32 id, const FVector &location, const TArray<FVector> &holeVerts);
-
 	void TransverseObjects(const TArray<FModumateObjectInstance*> &obs);
 
 	int32 MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs);
-	int32 MakePointsObject(UWorld *world, const TArray<int32> &idsToDelete, const TArray<FVector> &points, const TArray<int32> &controlIndices,
-		EObjectType objectType, bool inverted, const FBIMAssemblySpec &assembly, int32 parentID, bool bUpdateSiblingGeometry = false);
-
 	bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, const TArray<int32> &IDs, EObjectType objectType, int32 parentID, TArray<int32> &OutObjIDs);
 
 	bool MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height);
@@ -136,11 +131,6 @@ public:
 	// Allocates IDs for new objects, finds new parent IDs for objects, and marks objects for deletion after another graph operation
 	bool FinalizeGraph2DDelta(const Modumate::FGraph2DDelta &Delta, TMap<int32, Modumate::FGraph2DHostedObjectDelta> &OutParentIDUpdates);
 	bool FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, Modumate::FGraph3DDelta &Delta);
-
-	bool UpdateGeometry(UWorld *world, int32 id, const TArray<FVector> &points, const FVector& extents);
-	void UpdateControlIndices(int32 id, const TArray<int32> &indices);
-	void UpdateControlValues(int32 id, const TArray<FVector> &controlPoints, const TArray<int32> &controlIndices);
-	void Split(int32 id, const TArray<FVector> &pointsA, const TArray<FVector> &pointsB, const TArray<int32> &indicesA, const TArray<int32> &indicesB);
 
 	bool GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<TSharedPtr<Modumate::FDelta>>& OutDeltas);
 	bool MoveMetaVertices(UWorld* World, const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions);
@@ -301,8 +291,6 @@ public:
 		
 	// Not deprecated, but will be refactored for object type and preset key
 	void OnAssemblyUpdated(UWorld *world, EToolMode mode, const FBIMAssemblySpec &assembly);
-
-	int32 MakePortalAt_DEPRECATED(UWorld* World,EObjectType PortalType,int32 ParentID,const FVector2D& RelativePos,const FQuat& RelativeRot,bool Inverted,const FBIMAssemblySpec& Pal);
 
 private:
 	// TODO: All sequencing/coding schemes etc to be handled by a single key pool in the preset manager
