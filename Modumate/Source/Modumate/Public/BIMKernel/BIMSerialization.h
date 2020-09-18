@@ -30,6 +30,9 @@ struct MODUMATE_API FCraftingPresetRecord
 	FString DisplayName;
 
 	UPROPERTY()
+	FString CategoryTitle;
+
+	UPROPERTY()
 	FName NodeType;
 
 	UPROPERTY()

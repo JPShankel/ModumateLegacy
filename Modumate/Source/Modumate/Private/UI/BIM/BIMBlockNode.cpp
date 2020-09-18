@@ -47,7 +47,8 @@ bool UBIMBlockNode::Initialize()
 	ButtonSwapExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonSwapReleased);
 	ButtonDeleteCollapsed->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDeleteReleased);
 	ButtonDeleteExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDeleteReleased);
-	BIMBlockNodeDirty->ButtonSaveAs->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtySaveAs);
+	BIMBlockNodeDirty->ButtonSave->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtySave);
+	BIMBlockNodeDirty->ButtonAddNew->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtyAddNew);
 
 	return true;
 }
@@ -153,9 +154,14 @@ void UBIMBlockNode::OnButtonDeleteReleased()
 	ParentBIMDesigner->DeleteNode(ID);
 }
 
-void UBIMBlockNode::OnButtonDirtySaveAs()
+void UBIMBlockNode::OnButtonDirtySave()
 {
 	ParentBIMDesigner->SavePresetFromNode(false, ID);
+}
+
+void UBIMBlockNode::OnButtonDirtyAddNew()
+{
+	ParentBIMDesigner->SavePresetFromNode(true, ID);
 }
 
 void UBIMBlockNode::UpdateNodeDirty(bool NewDirty)
@@ -181,6 +187,8 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 {
 	ParentBIMDesigner = OuterBIMDesigner;
 	PresetID = Node->PresetID;
+	TitleNodeCollapsed->ChangeText(FText::FromString(Node->CategoryTitle));
+	TitleNodeExpanded->ChangeText(FText::FromString(Node->CategoryTitle));
 
 	if (Button_Debug)
 	{
@@ -249,7 +257,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 	}
 	else
 	{
-		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(PresetID, IconRenderTarget);
+		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(PresetID, IconRenderTarget, ID);
 	}
 	if (bCaptureSuccess)
 	{

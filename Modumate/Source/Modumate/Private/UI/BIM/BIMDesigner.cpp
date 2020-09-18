@@ -16,6 +16,7 @@
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "BIMKernel/BIMAssemblySpec.h"
 #include "Components/Sizebox.h"
+#include "UI/EditModelUserWidget.h"
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -639,6 +640,8 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 	if (SaveAs)
 	{
 		outPreset.PresetID = Controller->GetDocument()->PresetManager.GetAvailableKey(outPreset.PresetID);
+		CraftingAssembly.RootPreset = outPreset.PresetID;
+		node->PresetID = outPreset.PresetID;
 	}
 
 	Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Add(outPreset.PresetID,outPreset);
@@ -647,6 +650,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 	if (!node->ParentInstance.IsValid())
 	{
 		Controller->GetDocument()->PresetManager.UpdateProjectAssembly(CraftingAssembly);
+		Controller->EditModelUserWidget->RefreshAssemblyList();
 	}
 
 	UpdateBIMDesigner();

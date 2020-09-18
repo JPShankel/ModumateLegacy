@@ -244,15 +244,22 @@ void FModumateDatabase::ReadPresetData()
 	const FString assetTypeS = TEXT("AssetType");
 	int32 assetTypeI = -1;
 
+	const FString bimDesignerTitle = TEXT("BIMDesigner-NodeTitle");
+	int32 bimDesignerTitleI = -1;
+
 	for (int32 column = 0; column < NCPRows[0].Num(); ++column)
 	{
 		if (objectTypeS.Equals(NCPRows[0][column]))
 		{
 			objectTypeI = column;
 		}
-		if (assetTypeS.Equals(NCPRows[0][column]))
+		else if (assetTypeS.Equals(NCPRows[0][column]))
 		{
 			assetTypeI = column;
+		}
+		else if (bimDesignerTitle.Equals(NCPRows[0][column]))
+		{
+			bimDesignerTitleI = column;
 		}
 	}
 
@@ -277,16 +284,25 @@ void FModumateDatabase::ReadPresetData()
 	typedef TPair<FBIMTagPath, EObjectType> FObjectPathRef;
 	TArray<FObjectPathRef> objectPaths;
 
+	typedef TPair<FBIMTagPath, FString> FTagTitleRef;
+	TArray<FTagTitleRef> tagTitles;
+
 	for (int32 row = 1; row < NCPRows.Num(); ++row)
 	{
+		FString tagStr = FString(NCPRows[row][0]).Replace(TEXT(" "), TEXT(""));
+		if (tagStr.IsEmpty())
+		{
+			continue;
+		}
+
+		FBIMTagPath tagPath;
+		tagPath.FromString(tagStr);
+
 		// Get the object type cell and add it to the object map if applicable
 		FString cell = NCPRows[row][objectTypeI];
 		if (!cell.IsEmpty())
 		{
 			EObjectType ot = EnumValueByString(EObjectType, cell);
-			FBIMTagPath tagPath;
-			FString tagStr = NCPRows[row][0];
-			tagPath.FromString(FString(NCPRows[row][0]).Replace(TEXT(" "),TEXT("")));
 			objectPaths.Add(FObjectPathRef(tagPath, ot));
 		}
 
@@ -297,10 +313,27 @@ void FModumateDatabase::ReadPresetData()
 			FAssetTargetAssignment *assignment = assetTargetMap.Find(cell);
 			if (assignment != nullptr)
 			{
-				FString tagStr = NCPRows[row][0];
-				FBIMTagPath tagPath;
-				tagPath.FromString(tagStr);
 				(*assignment)(tagPath);
+			}
+		}
+
+		cell = NCPRows[row][bimDesignerTitleI];
+		if (!cell.IsEmpty())
+		{
+			tagTitles.Add(FTagTitleRef(tagPath, cell));
+		}
+	}
+
+	// More specific matches further down the table
+	Algo::Reverse(tagTitles);
+
+	for (auto& preset : PresetManager.CraftingNodePresets.Presets)
+	{
+		for (auto& tag : tagTitles)
+		{
+			if (preset.Value.MyTagPath.MatchesPartial(tag.Key))
+			{
+				preset.Value.CategoryTitle = tag.Value;
 			}
 		}
 	}

@@ -104,6 +104,8 @@ public:
 		return false;
 	}
 
+	FString CategoryTitle = TEXT("Unknown Category");
+
 	EBIMValueScope NodeScope;
 	FName NodeType;
 	FBIMKey PresetID, SlotConfigPresetID;

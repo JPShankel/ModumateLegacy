@@ -11,6 +11,7 @@
 #include "UI/BIM/BIMBlockDialogBox.h"
 #include "UI/RightMenu/ViewMenuWidget.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
+#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -133,4 +134,9 @@ bool UEditModelUserWidget::UpdateCutPlaneVisibilityinList(bool IsVisible, int32 
 		return CutPlaneMenu->UpdateCutPlaneVisibilityInMenuBlock(IsVisible, ObjID);
 	}
 	return false;
+}
+
+void UEditModelUserWidget::RefreshAssemblyList()
+{
+	ToolTrayWidget->ToolTrayBlockAssembliesList->CreateAssembliesListForCurrentToolMode();
 }

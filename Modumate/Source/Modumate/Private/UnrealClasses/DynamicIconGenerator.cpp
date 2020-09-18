@@ -13,6 +13,8 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/BIM/BIMDesigner.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/ModumateUnits.h"
 
 using namespace Modumate;
 
@@ -52,6 +54,14 @@ ADynamicIconGenerator::ADynamicIconGenerator()
 	IconSphereMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	IconSphereMesh->CastShadow = false;
 	IconSphereMesh->SetVisibility(false);
+
+	// IconCubeMesh
+	IconCubeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("IconCubeMesh"));
+	IconCubeMesh->SetupAttachment(Root);
+	IconCubeMesh->SetMobility(EComponentMobility::Movable);
+	IconCubeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	IconCubeMesh->CastShadow = false;
+	IconCubeMesh->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -59,13 +69,17 @@ void ADynamicIconGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AEditModelGameMode_CPP* gamemode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+	Gamemode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+	GameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
+	Controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
 
-	IconDynamicMeshActor = GetWorld()->SpawnActor<ADynamicMeshActor>(gamemode->DynamicMeshActorClass.Get());
+	IconDynamicMeshActor = GetWorld()->SpawnActor<ADynamicMeshActor>(Gamemode->DynamicMeshActorClass.Get());
 	IconDynamicMeshActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
 
 	IconCompoundMeshActor = GetWorld()->SpawnActor<ACompoundMeshActor>();
 	IconCompoundMeshActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
+
+	DynSphereMaterial = IconSphereMesh->CreateDynamicMaterialInstance(0, IconSphereMaterial);
 }
 
 // Called every frame
@@ -79,11 +93,10 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(bool UseAssemblyFro
 {
 	const FBIMAssemblySpec *assembly;
 	EToolMode iconMode = mode;
-	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+	FModumateDocument *doc = &GameState->Document;
 	if (UseAssemblyFromBIMDesigner)
 	{
-		AEditModelPlayerController_CPP *controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
-		assembly = &controller->EditModelUserWidget->BIMDesigner->CraftingAssembly;
+		assembly = &Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly;
 		iconMode = UModumateTypeStatics::ToolModeFromObjectType(assembly->ObjectType);
 	}
 	else
@@ -119,18 +132,13 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(bool UseAssemblyFro
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMKey& PresetID, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMKey& PresetID, UTextureRenderTarget2D* RenderTarget, int32 NodeID)
 {
 	if (PresetID.IsNone())
 	{
 		return false;
 	}
-	AEditModelGameState_CPP *gameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
-	if (gameState == nullptr)
-	{
-		return false;
-	}
-	const FPresetManager &presetManager = gameState->Document.PresetManager;
+	const FPresetManager &presetManager = GameState->Document.PresetManager;
 	const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
 	if (preset == nullptr)
 	{
@@ -140,7 +148,13 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMKey& PresetID, U
 	switch (preset->NodeScope)
 	{
 	case EBIMValueScope::RawMaterial:
-		return SetIconMeshForMaterial(PresetID, RenderTarget);
+		return SetIconMeshForRawMaterial(PresetID, RenderTarget);
+	case EBIMValueScope::Color:
+		return SetIconMeshForColor(PresetID, RenderTarget);
+	case EBIMValueScope::Dimension:
+		return SetIconMeshForDimension(NodeID, RenderTarget);
+	case EBIMValueScope::Material:
+		return SetIconMeshForMaterial(NodeID, RenderTarget);
 	default:
 		break;
 	}
@@ -412,8 +426,7 @@ bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &As
 	// Step 1: Generate model
 	////////////////////////////////////////////////////////////////////
 	TArray<UStaticMesh*> meshes;
-	AEditModelPlayerController_CPP *controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
-	UModumateIconMeshStatics::GetMeshesFromShoppingItem(controller, Assembly.UniqueKey(), EToolMode::VE_PLACEOBJECT, meshes, false);
+	UModumateIconMeshStatics::GetMeshesFromShoppingItem(Controller, Assembly.UniqueKey(), EToolMode::VE_PLACEOBJECT, meshes, false);
 	if (meshes.Num() == 0)
 	{
 		return false;
@@ -442,17 +455,18 @@ bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &As
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForRawMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* RenderTarget)
 {
-	AEditModelPlayerController_CPP *controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
+	// Step 1: Get material
 	UMaterialInterface *mat;
-	UModumateIconMeshStatics::GetEngineMaterialByKey(controller, MaterialKey, mat);
+	UModumateIconMeshStatics::GetEngineMaterialByKey(Controller, MaterialKey, mat);
 	if (!mat)
 	{
 		return false;
 	}
 	IconSphereMesh->SetMaterial(0, mat);
 
+	// Step 2: Setup mesh for material
 	SetComponentForIconCapture(IconSphereMesh, true);
 	IconSphereMesh->SetVisibility(true);
 	SceneCaptureComp->TextureTarget = RenderTarget;
@@ -462,6 +476,112 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(const FBIMKey& MaterialKey, U
 	SetComponentForIconCapture(IconSphereMesh, false);
 	IconSphereMesh->SetVisibility(false);
 	return true;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForColor(const FBIMKey& ColorKey, UTextureRenderTarget2D* RenderTarget)
+{
+	// Step 1: Get color
+	FCustomColor customColor;
+	if (UModumateIconMeshStatics::GetEngineCustomColorByKey(Controller, ColorKey, customColor))
+	{
+		IconSphereMesh->SetMaterial(0, DynSphereMaterial);
+		DynSphereMaterial->SetVectorParameterValue(MaterialColorParamName, customColor.Color);
+
+		// Step 2: Set color to material
+		SetComponentForIconCapture(IconSphereMesh, true);
+		IconSphereMesh->SetVisibility(true);
+		SceneCaptureComp->TextureTarget = RenderTarget;
+		SceneCaptureComp->CaptureScene();
+
+		// Step 3: Cleanup
+		SetComponentForIconCapture(IconSphereMesh, false);
+		IconSphereMesh->SetVisibility(false);
+		return true;
+	}
+	return false;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForDimension(int32 NodeID, UTextureRenderTarget2D* RenderTarget)
+{
+	// Step 1: Get params
+	FString width, length, depth, height, thickness;
+	GetDimensionFromNode(NodeID, width, length, depth, height, thickness);
+	FVector vSize = FVector::OneVector;
+	if (!width.IsEmpty())
+	{
+		vSize.Y = UModumateDimensionStatics::StringToFormattedDimension(width).Centimeters;
+	}
+	if (!length.IsEmpty())
+	{
+		vSize.X = UModumateDimensionStatics::StringToFormattedDimension(length).Centimeters;
+	}
+	if (!depth.IsEmpty())
+	{
+		vSize.Y = UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters;
+	}
+	if (!height.IsEmpty())
+	{
+		vSize.Z = UModumateDimensionStatics::StringToFormattedDimension(height).Centimeters;
+	}
+
+	FVector nSize = vSize.GetSafeNormal() * 0.5f;
+	IconCubeMesh->SetWorldScale3D(nSize);
+
+	// Step 2: Set for capture
+	SetComponentForIconCapture(IconCubeMesh, true);
+	IconCubeMesh->SetVisibility(true);
+	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->CaptureScene();
+
+	// Step 3: Cleanup
+	IconCubeMesh->ResetRelativeTransform();
+	SetComponentForIconCapture(IconCubeMesh, false);
+	IconCubeMesh->SetVisibility(false);
+
+	return true;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForMaterial(int32 NodeID, UTextureRenderTarget2D* RenderTarget)
+{
+	// Step 1: Get params
+	UMaterialInterface *mat = IconSphereMaterial;
+	FCustomColor customColor;
+	const FPresetManager &presetManager = GameState->Document.PresetManager;
+	const FBIMCraftingTreeNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+
+	TArray<FBIMCraftingTreeNodeSharedPtr> childrenNodes;
+	inst->GatherAllChildNodes(childrenNodes);
+
+	for (const auto& child : childrenNodes)
+	{
+		const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
+		if (preset->NodeScope == EBIMValueScope::RawMaterial)
+		{
+			UModumateIconMeshStatics::GetEngineMaterialByKey(Controller, child->PresetID, mat);
+		}
+		if (preset->NodeScope == EBIMValueScope::Color)
+		{
+			UModumateIconMeshStatics::GetEngineCustomColorByKey(Controller, child->PresetID, customColor);
+		}
+	}
+	// Step 2: Set color to material
+	if (customColor.bValid)
+	{
+		IconSphereMesh->SetMaterial(0, mat);
+		auto* dynMat = IconSphereMesh->CreateDynamicMaterialInstance(0, mat);
+		dynMat->SetVectorParameterValue(MaterialColorParamName, customColor.Color);
+
+		SetComponentForIconCapture(IconSphereMesh, true);
+		IconSphereMesh->SetVisibility(true);
+		SceneCaptureComp->TextureTarget = RenderTarget;
+		SceneCaptureComp->CaptureScene();
+
+		// Step 3: Cleanup
+		SetComponentForIconCapture(IconSphereMesh, false);
+		IconSphereMesh->SetVisibility(false);
+		return true;
+	}
+	return false;
 }
 
 void ADynamicIconGenerator::GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal)
@@ -530,4 +650,14 @@ void ADynamicIconGenerator::SetIconCompoundMeshActorForCapture(bool Visible)
 		SetComponentForIconCapture(curComp, Visible);
 	}
 	IconCompoundMeshActor->SetActorHiddenInGame(!Visible);
+}
+
+void ADynamicIconGenerator::GetDimensionFromNode(int32 NodeID, FString &OutWidth, FString &OutLength, FString &OutDepth, FString &OutHeight, FString &OutThickness)
+{
+	const FBIMCraftingTreeNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+	inst->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, OutWidth);
+	inst->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, OutLength);
+	inst->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, OutDepth);
+	inst->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, OutHeight);
+	inst->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, OutThickness);
 }

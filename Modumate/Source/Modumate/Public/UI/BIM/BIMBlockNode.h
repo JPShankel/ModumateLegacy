@@ -125,6 +125,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UButton *Button_Debug;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateTextBlockUserWidget *TitleNodeCollapsed;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateTextBlockUserWidget *TitleNodeExpanded;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockUserEnterable> BIMBlockUserEnterableClass;
 
@@ -145,7 +151,10 @@ public:
 	void OnButtonDeleteReleased();
 
 	UFUNCTION()
-	void OnButtonDirtySaveAs();
+	void OnButtonDirtySave();
+
+	UFUNCTION()
+	void OnButtonDirtyAddNew();
 
 	void UpdateNodeDirty(bool NewDirty);
 	void UpdateNodeCollapse(bool NewCollapse, bool AllowAutoArrange = false);

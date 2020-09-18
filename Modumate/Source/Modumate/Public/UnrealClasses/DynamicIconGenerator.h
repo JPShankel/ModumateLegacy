@@ -39,11 +39,20 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* IconSphereMesh;
 
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* IconCubeMesh;
+
 	UPROPERTY()
 	class ADynamicMeshActor* IconDynamicMeshActor;
 
 	UPROPERTY()
 	class ACompoundMeshActor* IconCompoundMeshActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMaterialInterface* IconSphereMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DimensionString)
+	FName MaterialColorParamName = TEXT("ColorMultiplier");
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Dimension")
 	float WallLength = 91.44f;
@@ -85,13 +94,25 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
+	class AEditModelGameMode_CPP* Gamemode;
+
+	UPROPERTY()
+	class AEditModelGameState_CPP* GameState;
+
+	UPROPERTY()
+	class AEditModelPlayerController_CPP* Controller;
+
+	UPROPERTY()
+	class UMaterialInstanceDynamic* DynSphereMaterial;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")
 	bool SetIconMeshForAssemblyByToolMode(bool UseAssemblyFromBIMDesigner, const FBIMKey& AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
-	bool SetIconMeshForBIMDesigner(const FBIMKey& PresetID, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForBIMDesigner(const FBIMKey& PresetID, UTextureRenderTarget2D* RenderTarget, int32 NodeID);
 
 	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
@@ -100,11 +121,15 @@ public:
 	bool SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget);
 
-	bool SetIconMeshForMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForRawMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForColor(const FBIMKey& ColorKey, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForDimension(int32 NodeID, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForMaterial(int32 NodeID, UTextureRenderTarget2D* RenderTarget);
 
 	void GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal);
 	void GetFloorSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& StartPt, const FVector& EndPt, float Height, FVector& OutLocation, FVector& OutNormal, bool& OutSliced);
 	bool SetComponentForIconCapture(UPrimitiveComponent* Comp, bool CanCapture);
 	void SetIconDynamicMeshLayersForCapture(bool Visible);
 	void SetIconCompoundMeshActorForCapture(bool Visible);
+	void GetDimensionFromNode(int32 NodeID, FString &OutWidth, FString &OutLength, FString &OutDepth, FString &OutHeight, FString &OutThickness);
 };

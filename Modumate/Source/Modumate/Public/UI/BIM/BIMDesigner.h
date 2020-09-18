@@ -51,8 +51,6 @@ protected:
 	UPROPERTY()
 	TMap<class UBIMBlockNode*, class UBIMBlockAddLayer*> NodesWithAddLayerButton;
 
-	FBIMCraftingTreeNodePool InstancePool;
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FKey DragKey = EKeys::MiddleMouseButton;
@@ -113,6 +111,7 @@ public:
 	UFUNCTION()
 	void PerformDrag();
 
+	FBIMCraftingTreeNodePool InstancePool;
 	FBIMAssemblySpec CraftingAssembly;
 	bool UpdateCraftingAssembly();
 

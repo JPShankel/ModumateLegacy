@@ -53,7 +53,7 @@ ECraftingResult FBIMCraftingTreeNode::GatherAllChildNodes(TArray<FBIMCraftingTre
 EBIMPresetEditorNodeStatus FBIMCraftingTreeNode::GetPresetStatus(const FBIMPresetCollection &PresetCollection) const
 {
 	const FBIMPreset *preset = PresetCollection.Presets.Find(PresetID);
-	if (preset == nullptr)
+	if (!ensureAlways(preset != nullptr))
 	{
 		return EBIMPresetEditorNodeStatus::None;
 	}
@@ -65,6 +65,7 @@ EBIMPresetEditorNodeStatus FBIMCraftingTreeNode::GetPresetStatus(const FBIMPrese
 	{
 		return EBIMPresetEditorNodeStatus::UpToDate;
 	}
+
 	return EBIMPresetEditorNodeStatus::Dirty;
 }
 
@@ -276,6 +277,7 @@ ECraftingResult FBIMCraftingTreeNode::FromDataRecord(
 		}
 	}
 
+	CategoryTitle = preset->CategoryTitle;
 	PresetID = DataRecord.PresetID;
 	InstanceProperties.FromDataRecord(DataRecord.PropertyRecord);
 
@@ -435,13 +437,13 @@ ECraftingResult FBIMCraftingTreeNodePool::SetNewPresetForNode(const FBIMPresetCo
 FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
 {
 	const FBIMPreset* preset = PresetCollection.Presets.Find(PresetID);
-	if (preset == nullptr)
+	if (!ensureAlways(preset != nullptr))
 	{
 		return nullptr;
 	}
 
 	const FBIMPresetNodeType* descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
-	if (descriptor == nullptr)
+	if (!ensureAlways(descriptor != nullptr))
 	{
 		return nullptr;
 	}
@@ -457,6 +459,7 @@ FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPr
 		instance->AttachedChildren[i].SetType.MaxCount = descriptor->ChildAttachments[i].MaxCount;
 	}
 
+	instance->CategoryTitle = preset->CategoryTitle;
 	instance->PresetID = preset->PresetID;
 	instance->CurrentOrientation = preset->Orientation;
 	instance->InstanceProperties = preset->Properties;

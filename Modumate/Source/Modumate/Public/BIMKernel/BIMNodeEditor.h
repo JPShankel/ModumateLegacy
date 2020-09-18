@@ -38,8 +38,6 @@ private:
 
 	int32 InstanceID;
 
-	ECraftingResult GatherAllChildNodes(TArray<FBIMCraftingTreeNodeSharedPtr> &OutChildren);
-
 public:
 	~FBIMCraftingTreeNode()
 	{
@@ -56,6 +54,7 @@ public:
 
 	FBIMKey PresetID;
 	FBIMCraftingTreeNodeWeakPtr ParentInstance;
+	FString CategoryTitle = TEXT("Unknown Category");
 
 	TArray<FAttachedChildGroup> AttachedChildren;
 	FBIMPropertySheet InstanceProperties;
@@ -81,6 +80,7 @@ public:
 	ECraftingResult FindChild(int32 ChildID, int32 &OutPinSetIndex, int32 &OutPinSetPosition);
 	ECraftingResult FindOtherChildrenOnPin(TArray<int32> &OutChildIDs);
 	ECraftingResult GatherChildrenInOrder(TArray<int32> &OutChildIDs);
+	ECraftingResult GatherAllChildNodes(TArray<FBIMCraftingTreeNodeSharedPtr> &OutChildren);
 };
 
 /*

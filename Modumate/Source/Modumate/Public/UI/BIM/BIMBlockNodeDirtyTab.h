@@ -28,5 +28,8 @@ protected:
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonSaveAs;
+	class UModumateButtonUserWidget *ButtonSave;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *ButtonAddNew;
 };
