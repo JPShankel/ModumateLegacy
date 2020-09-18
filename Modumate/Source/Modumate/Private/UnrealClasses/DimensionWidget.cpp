@@ -8,7 +8,7 @@
 UDimensionWidget::UDimensionWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-
+	bIsFocusable = true;
 }
 
 void UDimensionWidget::SetIsEditable(bool bIsEditable)

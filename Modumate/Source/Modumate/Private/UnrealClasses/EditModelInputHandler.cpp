@@ -36,6 +36,28 @@ void UEditModelInputHandler::SetupBindings()
 
 	if (ensureAlways(Controller && Controller->InputComponent && inputSettings && InputCommandDataTable))
 	{
+		FKey NumberKeys[10] = {
+			EKeys::Zero,
+			EKeys::One,
+			EKeys::Two,
+			EKeys::Three,
+			EKeys::Four,
+			EKeys::Five,
+			EKeys::Six,
+			EKeys::Seven,
+			EKeys::Eight,
+			EKeys::Nine
+		};
+
+		for (int32 i = 0; i < 10; ++i)
+		{
+			FName chordActionName(*FString::Printf(TEXT("InputDigit_%d"), i));
+			FInputActionKeyMapping commandMapping(chordActionName, NumberKeys[i], false, false, false, false);
+			inputSettings->AddActionMapping(commandMapping, true);
+
+			Controller->InputComponent->BindAction<FInputDigitDelegate>(chordActionName, EInputEvent::IE_Pressed, this, &UEditModelInputHandler::HandleDigitKey, i);
+		}
+
 		RootCommandTrie = MakeShareable(new FCommandTrieNode());
 		BoundChords.Reset();
 
@@ -519,6 +541,11 @@ void UEditModelInputHandler::HandleBoundChord(FInputChord Chord)
 	{
 		CurCommandNode = RootCommandTrie;
 	}
+}
+
+void UEditModelInputHandler::HandleDigitKey(int32 DigitNumber)
+{
+	Controller->HandleDigitKey(DigitNumber);
 }
 
 void UEditModelInputHandler::OnCommandReset()

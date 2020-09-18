@@ -169,6 +169,7 @@ struct MODUMATE_API FCommandTrieNode : public TSharedFromThis<FCommandTrieNode>
 // Delegate definitions purely for passing stored arguments via UPlayerInput action bindings.
 DECLARE_DELEGATE_OneParam(FInputCommandDelegate, EInputCommand);
 DECLARE_DELEGATE_OneParam(FInputChordDelegate, FInputChord);
+DECLARE_DELEGATE_OneParam(FInputDigitDelegate, int32);
 
 
 // The central input handler, whose purpose is to:
@@ -230,6 +231,9 @@ public:
 protected:
 	UFUNCTION()
 	void HandleBoundChord(FInputChord Chord);
+
+	UFUNCTION()
+	void HandleDigitKey(int32 DigitNumber);
 
 	UFUNCTION()
 	void OnCommandReset();

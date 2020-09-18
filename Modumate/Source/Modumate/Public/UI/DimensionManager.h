@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ModumateCore/ModumateTypes.h"
 #include "UObject/Object.h"
 
 #include "DimensionManager.generated.h"
@@ -37,6 +38,9 @@ public:
 	ADimensionActor *GetDimensionActor(int32 id);
 	void ReleaseDimensionActor(int32 id);
 
+	ADimensionActor *GetActiveActor();
+	void SetActiveActorID(int32 ID);
+
 private:
 
 	int32 LastSelectedObjID;
@@ -47,5 +51,6 @@ private:
 	TArray<int32> CurrentGraphDimensionStrings;
 
 	TMap<int32, ADimensionActor*> DimensionActors;
+	int32 ActiveActorID = MOD_ID_NONE;
 	int32 NextID = 1;
 };

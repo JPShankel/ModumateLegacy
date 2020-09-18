@@ -21,10 +21,15 @@ public:
 	virtual FVector GetHandleDirection() const override;
 	virtual bool HandleInputNumber(float number) override;
 
+	UFUNCTION()
+	void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
 	void SetAdjustPolyEdge(bool bInAdjustPolyEdge);
 
 protected:
 	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
+
+	bool GetTransforms(const FVector Offset, TMap<int32, FTransform>& OutTransforms);
 
 	bool bAdjustPolyEdge;
 	FPlane PolyPlane;

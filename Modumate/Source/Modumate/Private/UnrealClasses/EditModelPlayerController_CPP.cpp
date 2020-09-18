@@ -4,6 +4,7 @@
 
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
+#include "Components/EditableTextBox.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "Drafting/APDFLLib.h"
 #include "DocumentManagement/ModumateCommands.h"
@@ -17,6 +18,8 @@
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "UnrealClasses/DimensionWidget.h"
+#include "UnrealClasses/DynamicIconGenerator.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -30,7 +33,8 @@
 #include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
 #include "UnrealClasses/ModumateViewportClient.h"
 #include "UI/AdjustmentHandleWidget.h"
-#include "UnrealClasses/DynamicIconGenerator.h"
+#include "UI/DimensionActor.h"
+#include "UI/DimensionManager.h"
 #include "UI/EditModelUserWidget.h"
 
 
@@ -1295,6 +1299,28 @@ bool AEditModelPlayerController_CPP::InputKey(FKey Key, EInputEvent EventType, f
 	}
 
 	return bResult;
+}
+
+void AEditModelPlayerController_CPP::HandleDigitKey(int32 DigitKey)
+{
+	FInputModeUIOnly newMode;
+	UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
+	auto dimensionManager = gameInstance->DimensionManager;
+	if (gameInstance == nullptr || dimensionManager == nullptr)
+	{
+		return;
+	}
+	auto dimensionActor = dimensionManager->GetActiveActor();
+	if (dimensionActor == nullptr)
+	{
+		return;
+	}
+
+	if (ensure(!dimensionActor->DimensionText->Measurement->HasAnyUserFocus()))
+	{
+		dimensionActor->DimensionText->Measurement->SetUserFocus(this);
+		dimensionActor->DimensionText->Measurement->SetText(FText::AsNumber(DigitKey));
+	}
 }
 
 void AEditModelPlayerController_CPP::HandleRawLeftMouseButtonPressed()

@@ -167,6 +167,8 @@ public:
 	//  indirectly as FInputChords, interpreted as actions, etc.)
 	virtual bool InputKey(FKey Key, EInputEvent EventType, float AmountDepressed, bool bGamepad) override;
 
+	void HandleDigitKey(int32 DigitKey);
+
 	// Raw mouse input handling functions, so that C++ owns the primary bindings.
 	UFUNCTION(Category = Input)
 	void HandleRawLeftMouseButtonPressed();

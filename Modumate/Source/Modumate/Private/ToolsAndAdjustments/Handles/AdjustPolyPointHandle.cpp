@@ -1,11 +1,15 @@
 #include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
 
+#include "Components/EditableTextBox.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateObjectInstance.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/DimensionManager.h"
+#include "UI/DimensionActor.h"
 #include "UI/PendingSegmentActor.h"
+#include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -52,7 +56,14 @@ bool AAdjustPolyPointHandle::BeginUse()
 	{
 		GameInstance = Cast<UModumateGameInstance>(GetWorld()->GetGameInstance());
 
-		PendingSegmentID = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass())->ID;
+		auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+		PendingSegmentID = dimensionActor->ID;
+
+		auto dimensionWidget = dimensionActor->DimensionText;
+		dimensionWidget->Measurement->SetIsReadOnly(false);
+		dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &AAdjustPolyPointHandle::OnTextCommitted);
+
+		GameInstance->DimensionManager->SetActiveActorID(PendingSegmentID);
 	}
 
 	return true;
@@ -65,6 +76,12 @@ bool AAdjustPolyPointHandle::UpdateUse()
 	Super::UpdateUse();
 
 	if (!Controller->EMPlayerState->SnappedCursor.Visible)
+	{
+		return true;
+	}
+
+	auto dimensionWidget = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->DimensionText;
+	if (dimensionWidget && dimensionWidget->Measurement->HasAnyUserFocus())
 	{
 		return true;
 	}
@@ -83,7 +100,7 @@ bool AAdjustPolyPointHandle::UpdateUse()
 		Controller->EMPlayerState->AffordanceLines.Add(affordance);
 	}
 
-	ALineActor *pendingSegment = nullptr;
+	ALineActor* pendingSegment = nullptr;
 	if (auto dimensionActor = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID))
 	{
 		pendingSegment = dimensionActor->GetLineActor();
@@ -102,71 +119,9 @@ bool AAdjustPolyPointHandle::UpdateUse()
 
 
 	FModumateDocument* doc = Controller->GetDocument();
-	if (doc != nullptr)
+	TMap<int32, FTransform> objectInfo;
+	if (GetTransforms(dp, objectInfo))
 	{
-		TMap<int32, FTransform> objectInfo;
-		
-		bool bMetaPlaneTarget = (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane);
-		bool bSurfacePolyTarget = (TargetMOI->GetObjectType() == EObjectType::OTSurfacePolygon);
-		if (bMetaPlaneTarget)
-		{
-			auto face = doc->GetVolumeGraph().FindFace(TargetMOI->ID);
-			if (bAdjustPolyEdge)
-			{
-				int32 numPolyPoints = OriginalPolyPoints.Num();
-				int32 edgeStartIdx = TargetIndex;
-				int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
-
-				float translation = (dp | OriginalDirection);
-				FVector edgeStartPoint, edgeEndPoint;
-				if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
-				{
-					objectInfo.Add(face->VertexIDs[edgeStartIdx], FTransform(edgeStartPoint));
-					objectInfo.Add(face->VertexIDs[edgeEndIdx], FTransform(edgeEndPoint));
-				}
-			}
-			else
-			{
-				objectInfo.Add(face->VertexIDs[TargetIndex], FTransform(OriginalPolyPoints[TargetIndex] + dp));
-			}
-		}
-		else if (bSurfacePolyTarget)
-		{
-			auto surfaceGraph = GameState->Document.FindSurfaceGraphByObjID(TargetMOI->ID);
-			auto surfaceObj = GameState->Document.GetObjectById(TargetMOI->GetParentID());
-			auto surfaceParent = surfaceObj ? surfaceObj->GetParentObject() : nullptr;
-			auto poly = surfaceGraph->FindPolygon(TargetMOI->ID);
-
-			if (!ensure(poly))
-			{
-				return false;
-			}
-
-			if (bAdjustPolyEdge)
-			{
-				int32 numPolyPoints = OriginalPolyPoints.Num();
-				int32 edgeStartIdx = TargetIndex;
-				int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
-
-				float translation = (dp | OriginalDirection);
-
-				FVector edgeStartPoint, edgeEndPoint;
-				if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
-				{
-					objectInfo.Add(poly->CachedPerimeterVertexIDs[edgeStartIdx], FTransform(edgeStartPoint));
-					objectInfo.Add(poly->CachedPerimeterVertexIDs[edgeEndIdx], FTransform(edgeEndPoint));
-				}
-			}
-			else
-			{
-				objectInfo.Add(poly->CachedPerimeterVertexIDs[TargetIndex], FTransform(OriginalPolyPoints[TargetIndex] + dp));
-			}
-		}
-		else
-		{ // TODO: non-Graph 3D Objects?
-			return false;
-		}
-
 		FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), true);
 	}
 
@@ -177,6 +132,9 @@ void AAdjustPolyPointHandle::PostEndOrAbort()
 {
 	if (GameInstance && GameInstance->DimensionManager)
 	{
+		auto dimensionWidget = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->DimensionText;
+		dimensionWidget->Measurement->OnTextCommitted.RemoveDynamic(this, &AAdjustPolyPointHandle::OnTextCommitted);
+
 		GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 		PendingSegmentID = MOD_ID_NONE;
 	}
@@ -265,6 +223,53 @@ bool AAdjustPolyPointHandle::HandleInputNumber(float number)
 	return false;
 }
 
+void AAdjustPolyPointHandle::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	if (CommitMethod != ETextCommit::OnEnter)
+	{
+		return;
+	}
+
+	float lengthValue;
+	// TODO: handle units
+	// get the desired length from the text (assuming the text is entered in feet)
+	// shrinking the edge be zero length is not allowed
+	if (!(UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), lengthValue) && lengthValue > 0.05f))
+	{
+		return;
+	}
+
+	lengthValue *= Modumate::InchesPerFoot * Modumate::InchesToCentimeters;
+
+	auto dimensionWidget = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->DimensionText;
+	dimensionWidget->UpdateText(lengthValue);
+
+	FModumateDocument* doc = Controller->GetDocument();
+	TMap<int32, FTransform> objectInfo;
+	if (GetTransforms(lengthValue * OriginalDirection, objectInfo))
+	{
+		// TODO: preview operation is no longer necessary, but removing this could cause ensures
+		// until the other handles are refactored
+		TargetMOI->EndPreviewOperation();
+
+		// Now that we've reverted the target object back to its original state, clean all objects so that
+		// deltas can be applied to the original state, and all of its dependent changes.
+		GameState->Document.CleanObjects();
+
+		FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), false);
+
+		// TODO: the deltas should be an outparam of EndUse (and EndUse would need to be refactored)
+		if (!IsActorBeingDestroyed())
+		{
+			PostEndOrAbort();
+		}
+	}
+	else
+	{
+		EndUse();
+	}
+}
+
 void AAdjustPolyPointHandle::SetAdjustPolyEdge(bool bInAdjustPolyEdge)
 {
 	bAdjustPolyEdge = bInAdjustPolyEdge;
@@ -282,6 +287,77 @@ bool AAdjustPolyPointHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*&
 	{
 		OutButtonStyle = PlayerHUD->HandleAssets->GenericPointStyle;
 		OutWidgetSize = FVector2D(12.0f, 12.0f);
+	}
+
+	return true;
+}
+
+bool AAdjustPolyPointHandle::GetTransforms(const FVector Offset, TMap<int32, FTransform>& OutTransforms)
+{
+	FModumateDocument* doc = Controller->GetDocument();
+	if (doc == nullptr)
+	{
+		return false;
+	}
+
+	float translation = Offset | OriginalDirection;
+
+	bool bMetaPlaneTarget = (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane);
+	bool bSurfacePolyTarget = (TargetMOI->GetObjectType() == EObjectType::OTSurfacePolygon);
+	if (bMetaPlaneTarget)
+	{
+		auto face = doc->GetVolumeGraph().FindFace(TargetMOI->ID);
+		if (bAdjustPolyEdge)
+		{
+			int32 numPolyPoints = OriginalPolyPoints.Num();
+			int32 edgeStartIdx = TargetIndex;
+			int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
+
+			FVector edgeStartPoint, edgeEndPoint;
+			if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
+			{
+				OutTransforms.Add(face->VertexIDs[edgeStartIdx], FTransform(edgeStartPoint));
+				OutTransforms.Add(face->VertexIDs[edgeEndIdx], FTransform(edgeEndPoint));
+			}
+		}
+		else
+		{
+			OutTransforms.Add(face->VertexIDs[TargetIndex], FTransform(OriginalPolyPoints[TargetIndex] + Offset));
+		}
+	}
+	else if (bSurfacePolyTarget)
+	{
+		auto surfaceGraph = GameState->Document.FindSurfaceGraphByObjID(TargetMOI->ID);
+		auto surfaceObj = GameState->Document.GetObjectById(TargetMOI->GetParentID());
+		auto surfaceParent = surfaceObj ? surfaceObj->GetParentObject() : nullptr;
+		auto poly = surfaceGraph->FindPolygon(TargetMOI->ID);
+
+		if (!ensure(poly))
+		{
+			return false;
+		}
+
+		if (bAdjustPolyEdge)
+		{
+			int32 numPolyPoints = OriginalPolyPoints.Num();
+			int32 edgeStartIdx = TargetIndex;
+			int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
+
+			FVector edgeStartPoint, edgeEndPoint;
+			if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
+			{
+				OutTransforms.Add(poly->CachedPerimeterVertexIDs[edgeStartIdx], FTransform(edgeStartPoint));
+				OutTransforms.Add(poly->CachedPerimeterVertexIDs[edgeEndIdx], FTransform(edgeEndPoint));
+			}
+		}
+		else
+		{
+			OutTransforms.Add(poly->CachedPerimeterVertexIDs[TargetIndex], FTransform(OriginalPolyPoints[TargetIndex] + Offset));
+		}
+	}
+	else
+	{ // TODO: non-Graph 3D Objects? (cut-plane handles)
+		return false;
 	}
 
 	return true;

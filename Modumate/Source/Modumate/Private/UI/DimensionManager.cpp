@@ -3,9 +3,11 @@
 #include "Database/ModumateObjectEnums.h"
 #include "Graph/Graph3DTypes.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/DimensionWidget.h"
 #include "UI/DimensionActor.h"
 #include "UI/GraphDimensionActor.h"
 #include "UI/AngleDimensionActor.h"
+#include "Widgets/SWidget.h"
 
 UDimensionManager::UDimensionManager(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -155,4 +157,29 @@ void UDimensionManager::ReleaseDimensionActor(int32 id)
 		DimensionActors[id]->Destroy();
 		DimensionActors.Remove(id);
 	}
+
+	if (ActiveActorID == id)
+	{
+		SetActiveActorID(MOD_ID_NONE);
+	}
+}
+
+ADimensionActor *UDimensionManager::GetActiveActor()
+{
+	if (!DimensionActors.Contains(ActiveActorID))
+	{
+		return nullptr;
+	}
+
+	return DimensionActors[ActiveActorID];
+}
+
+void UDimensionManager::SetActiveActorID(int32 ID)
+{
+	if (ID == MOD_ID_NONE)
+	{
+		FSlateApplication::Get().SetAllUserFocusToGameViewport(EFocusCause::SetDirectly);
+	}
+
+	ActiveActorID = ID;
 }
