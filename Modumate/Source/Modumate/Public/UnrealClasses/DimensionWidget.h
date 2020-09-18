@@ -14,6 +14,7 @@ class MODUMATE_API UDimensionWidget : public UUserWidget
 
 public:
 	UDimensionWidget(const FObjectInitializer& ObjectInitializer);
+	virtual bool Initialize() override;
 
 	void SetIsEditable(bool bIsEditable);
 
@@ -24,6 +25,8 @@ public:
 	void ResetText();
 
 protected:
+	virtual void OnWidgetRebuilt() override;
+
 	// TODO: potentially have this used by more things depending on how 
 	// unique this format is
 	void SanitizeInput(float InLength, FText &OutText);

@@ -80,6 +80,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Actors")
 	TSubclassOf<AArcActor> ArcClass;
 
+	UPROPERTY(EditAnywhere)
+	FName WorldViewportWidgetTag;
+
 	// Take a viewport screenshot, saves it in the playerController, then applies it to an UImage.
 	// Should only be used during viewport draw, else there will be a TextureRHI ensure
 	UFUNCTION(BlueprintCallable, Category = HUD)

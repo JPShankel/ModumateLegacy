@@ -1696,6 +1696,7 @@ bool AEditModelPlayerController_CPP::IsCursorOverWidget() const
 	TSharedPtr<SViewport> gameViewport = slateApp.GetGameViewport();
 	FWeakWidgetPath widgetPath = slateUser->GetLastWidgetsUnderCursor();
 	TWeakPtr<SWidget> hoverWidgetWeak = widgetPath.IsValid() ? widgetPath.GetLastWidget() : TWeakPtr<SWidget>();
+	auto playerHUD = GetEditModelHUD();
 
 	if (!hoverWidgetWeak.IsValid())
 	{
@@ -1715,12 +1716,18 @@ bool AEditModelPlayerController_CPP::IsCursorOverWidget() const
 		return false;
 	}
 
-	// If we're hovering over the widget for an object's handle, then don't consider that as a widget that would consume or block the mouse input.
+	// If we're hovering over a widget that's used in the world viewport (or one of its children), then don't consider that as a widget that would consume or block the mouse input.
 	// TODO: we probably shouldn't rely on Slate widget tags, but for now it's better than making an engine change to add a function like Advanced_IsUwerWidget()
-	if ((hoverWidget->GetTag() == UAdjustmentHandleWidget::SlateTag) ||
-		(hoverWidget->IsParentValid() && (hoverWidget->GetParentWidget()->GetTag() == UAdjustmentHandleWidget::SlateTag)))
+	TSharedPtr<SWidget> potentialWorldWidget = hoverWidget;
+	bool bIsWorldWidget = false;
+	while (potentialWorldWidget.IsValid() && (potentialWorldWidget != gameViewport))
 	{
-		return false;
+		if (potentialWorldWidget->GetTag() == playerHUD->WorldViewportWidgetTag)
+		{
+			return false;
+		}
+
+		potentialWorldWidget = potentialWorldWidget->GetParentWidget();
 	}
 
 	return true;

@@ -4,11 +4,10 @@
 
 #include "Components/Button.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "UI/EditModelPlayerHUD.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "Widgets/SWidget.h"
 
-
-const FName UAdjustmentHandleWidget::SlateTag(TEXT("AdjustmentHandle"));
 
 UAdjustmentHandleWidget::UAdjustmentHandleWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -86,8 +85,13 @@ void UAdjustmentHandleWidget::OnWidgetRebuilt()
 {
 	Super::OnWidgetRebuilt();
 
-	TSharedRef<SWidget> slateWidget = TakeWidget();
-	slateWidget->SetTag(SlateTag);
+	auto controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	auto playerHUD = controller ? controller->GetEditModelHUD() : nullptr;
+	if (playerHUD)
+	{
+		TSharedRef<SWidget> slateWidget = TakeWidget();
+		slateWidget->SetTag(playerHUD->WorldViewportWidgetTag);
+	}
 }
 
 void UAdjustmentHandleWidget::OnHoverChanged(bool bNewHovered)

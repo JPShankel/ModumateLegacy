@@ -13,8 +13,6 @@ class MODUMATE_API UAdjustmentHandleWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	const static FName SlateTag;
-
 	UAdjustmentHandleWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 

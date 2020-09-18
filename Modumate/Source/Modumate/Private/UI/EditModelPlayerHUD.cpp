@@ -22,6 +22,7 @@ FAffordanceLine::FAffordanceLine(const FVector &InStartPoint, const FVector &InE
 
 AEditModelPlayerHUD::AEditModelPlayerHUD(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
+	, WorldViewportWidgetTag(TEXT("WorldViewportWidget"))
 {
 }
 

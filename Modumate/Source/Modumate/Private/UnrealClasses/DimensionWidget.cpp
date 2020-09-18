@@ -2,6 +2,8 @@
 
 #include "Components/EditableTextBox.h"
 #include "ModumateCore/ModumateUnits.h"
+#include "UI/EditModelPlayerHUD.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 #define LOCTEXT_NAMESPACE "UDimensionWidget"
 
@@ -9,6 +11,23 @@ UDimensionWidget::UDimensionWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	bIsFocusable = true;
+}
+
+bool UDimensionWidget::Initialize()
+{
+	if (!Super::Initialize())
+	{
+		return false;
+	}
+
+	if (Measurement == nullptr)
+	{
+		return false;
+	}
+
+	Measurement->AllowContextMenu = false;
+
+	return true;
 }
 
 void UDimensionWidget::SetIsEditable(bool bIsEditable)
@@ -147,6 +166,19 @@ void UDimensionWidget::UpdateDegreeText(float angle)
 void UDimensionWidget::ResetText()
 {
 	Measurement->SetText(LastCommittedText);
+}
+
+void UDimensionWidget::OnWidgetRebuilt()
+{
+	Super::OnWidgetRebuilt();
+
+	auto controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	auto playerHUD = controller ? controller->GetEditModelHUD() : nullptr;
+	if (playerHUD)
+	{
+		TSharedRef<SWidget> slateWidget = TakeWidget();
+		slateWidget->SetTag(playerHUD->WorldViewportWidgetTag);
+	}
 }
 
 #undef LOCTEXT_NAMESPACE
