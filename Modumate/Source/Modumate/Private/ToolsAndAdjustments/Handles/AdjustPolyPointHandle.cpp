@@ -233,16 +233,9 @@ void AAdjustPolyPointHandle::OnTextCommitted(const FText& Text, ETextCommit::Typ
 		return;
 	}
 
-	float lengthValue;
-	// TODO: handle units
-	// get the desired length from the text (assuming the text is entered in feet)
-	// shrinking the edge be zero length is not allowed
-	if (!(UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), lengthValue) && lengthValue > 0.05f))
-	{
-		return;
-	}
+	auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString());
 
-	lengthValue *= Modumate::InchesPerFoot * Modumate::InchesToCentimeters;
+	float lengthValue = dimension.Centimeters;
 
 	auto dimensionWidget = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->DimensionText;
 	dimensionWidget->UpdateText(lengthValue);

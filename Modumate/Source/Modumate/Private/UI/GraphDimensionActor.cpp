@@ -115,15 +115,12 @@ void AGraphDimensionActor::OnMeasurementTextCommitted(const FText& Text, ETextCo
 	bool bVerticesMoved = false;
 	if (CommitMethod == ETextCommit::OnEnter)
 	{
-		float lengthValue;
 		// get the desired length from the text (assuming the text is entered in feet)
 		// shrinking the edge be zero length is not allowed
-		if (UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), lengthValue) && lengthValue > Graph->Epsilon)
+		float lengthValue = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString()).Centimeters;
+		if (lengthValue > Graph->Epsilon)
 		{
-			lengthValue *= Modumate::InchesPerFoot * Modumate::InchesToCentimeters;
-
 			// construct deltas
-
 			TArray<int32> vertexIDs;
 
 			// gather vertices that will be translated (all vertices contained within the selected object)
