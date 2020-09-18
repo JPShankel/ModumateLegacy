@@ -75,6 +75,16 @@ bool UJoinTool::HandleMouseUp()
 					FrontierObjectIDs.Add(faceID);
 				}
 			}
+
+			// joining a contained face with its parent results in deleting the contained face
+			for (int32 faceID : face->ContainedFaceIDs)
+			{
+				FrontierObjectIDs.Add(faceID);
+			}
+			if (face->ContainingFaceID != MOD_ID_NONE)
+			{
+				FrontierObjectIDs.Add(face->ContainingFaceID);
+			}
 		}
 
 		Controller->EMPlayerState->SetObjectSelected(newTarget, true);

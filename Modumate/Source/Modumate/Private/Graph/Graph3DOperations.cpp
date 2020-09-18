@@ -1307,6 +1307,20 @@ namespace Modumate
 			return false;
 		}
 
+		// if the faces contain each other, use delete instead
+		int32 containedFaceID =
+			(face->ContainingFaceID == otherFace->ID ? face->ID :
+			(otherFace->ContainingFaceID == face->ID ? otherFace->ID : MOD_ID_NONE));
+		if (containedFaceID != MOD_ID_NONE)
+		{
+			FGraph3DDelta deleteDelta;
+			TArray<int32> deletedFaceIDs = { containedFaceID };
+			GetDeltaForDeleteObjects(deletedFaceIDs, deleteDelta, true);
+			OutDeltas.Add(deleteDelta);
+
+			return true;
+		}
+
 		int32 faceIdx = INDEX_NONE;
 		int32 otherSharedIdx = INDEX_NONE;
 

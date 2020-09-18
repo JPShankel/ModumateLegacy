@@ -2831,6 +2831,39 @@ namespace Modumate
 		return true;
 	}
 
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphContainedFaceJoins, "Modumate.Graph.3D.ContainedFaceJoins", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphContainedFaceJoins::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 NextID = 1;
+		int32 existingID = 0;
+
+		TArray<int32> faceIDs;
+		if (!SetupContainedFace(this, graph, tempGraph, NextID, faceIDs))
+		{
+			return false;
+		}
+
+		int32 outerFaceID = faceIDs[0];
+		int32 innerFaceID = faceIDs[1];
+		auto outerFace = graph.FindFace(outerFaceID);
+		auto innerFace = graph.FindFace(innerFaceID);
+
+		TestTrue(TEXT("join faces"),
+			tempGraph.GetDeltasForObjectJoin(deltas, { outerFaceID, innerFaceID }, NextID, EGraph3DObjectType::Face));
+		TestDeltasAndResetGraph(this, deltas, graph, tempGraph, 1, 4, 4);
+
+		TestTrue(TEXT("join faces"),
+			tempGraph.GetDeltasForObjectJoin(deltas, { innerFaceID, outerFaceID }, NextID, EGraph3DObjectType::Face));
+		TestDeltasAndResetGraph(this, deltas, graph, tempGraph, 1, 4, 4);
+
+		return true;
+	}
+
+
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphCheckInteriorPeninsula, "Modumate.Graph.3D.CheckInteriorPeninsula", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphCheckInteriorPeninsula::RunTest(const FString& Parameters)
 	{
