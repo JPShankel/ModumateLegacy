@@ -105,10 +105,13 @@ bool AAdjustPolyPointHandle::UpdateUse()
 	{
 		pendingSegment = dimensionActor->GetLineActor();
 	}
+
 	if (pendingSegment != nullptr)
 	{
+		FVector offset = bAdjustPolyEdge ? OriginalDirection * (dp | OriginalDirection) : dp;
+
 		pendingSegment->Point1 = AnchorLoc;
-		pendingSegment->Point2 = AnchorLoc + OriginalDirection * (dp | OriginalDirection);
+		pendingSegment->Point2 = AnchorLoc + offset;
 		pendingSegment->Color = FColor::Black;
 		pendingSegment->Thickness = 3.0f;
 	}
