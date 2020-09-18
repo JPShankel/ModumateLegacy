@@ -240,5 +240,7 @@ namespace Modumate
 		bool JoinVertices(FGraph2DDelta &OutDelta, int32 &NextID, int32 SavedVertexID, int32 RemovedVertexID);
 
 		bool CalculatePolygons(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID);
+
+		bool IsVertexIDBounding(int32 VertexID);
 	};
 }

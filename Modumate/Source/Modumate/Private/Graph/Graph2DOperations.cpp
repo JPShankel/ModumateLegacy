@@ -702,6 +702,11 @@ namespace Modumate
 				return false;
 			}
 
+			if (IsVertexIDBounding(vertexID))
+			{
+				return false;
+			}
+
 			FVector2D oldPos = vertex->Position;
 			FVector2D newPos = kvp.Value;
 
@@ -1039,5 +1044,23 @@ namespace Modumate
 		}
 
 		return true;
+	}
+
+	bool FGraph2D::IsVertexIDBounding(int32 VertexID)
+	{
+		if (BoundingPolygon.Value.Find(VertexID) != INDEX_NONE)
+		{
+			return true;
+		}
+
+		for (auto& kvp : BoundingContainedPolygons)
+		{
+			if (kvp.Value.Find(VertexID) != INDEX_NONE)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
