@@ -294,7 +294,7 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 			continue;
 		}
 
-		FPlane plane = FPlane(cutPlane->GetControlPoint(0), cutPlane->GetNormal());
+		FPlane plane = FPlane(cutPlane->GetCorner(0), cutPlane->GetNormal());
 
 // disabled implementation of scope boxes determining drawing transforms, extents
 #if 0

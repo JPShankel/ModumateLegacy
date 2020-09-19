@@ -2462,6 +2462,11 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 			}
 		}
 
+		for (auto obj : ObjectInstanceArray)
+		{
+			obj->PostCreateObject(true);
+		}
+
 		// Now that all objects have been created and parented correctly, we can clean all of them.
 		// This should take care of anything that depends on relationships between objects, like mitering.
 		CleanObjects(nullptr);

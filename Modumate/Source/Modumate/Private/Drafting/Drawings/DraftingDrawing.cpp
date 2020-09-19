@@ -14,6 +14,23 @@ namespace Modumate {
 	FDraftingDrawing::FDraftingDrawing(const FModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID) :
 		Doc(doc), World(world), CaptureObjID(captureObjID) {}
 
+	namespace {
+		TArray<FVector> GetCorners(const FModumateObjectInstance * Object)
+		{
+			TArray<FVector> corners;
+			if (ensureAlways(Object->GetNumCorners() == 4))
+			{
+				for (int32 c = 0; c < 4; ++c)
+				{
+					corners.Add(Object->GetCorner(c));
+				}
+
+			}
+			return corners;
+		}
+	}
+
+
 	EDrawError FDraftingDrawing::Draw(IModumateDraftingDraw *drawingInterface,
 		Units::FCoordinates2D position,
 		Units::FAngle orientation,
@@ -71,7 +88,7 @@ namespace Modumate {
 		auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
 		TArray<FVector> controlPoints;
 
-		FVector cutPlaneOrigin = cutPlane->GetControlPoint(0);
+		FVector cutPlaneOrigin = cutPlane->GetCorner(0);
 
 		// for now, the entire cut plane is used instead of using the scope box at all
 #if 0
@@ -80,7 +97,7 @@ namespace Modumate {
 		controlPoints = scopeBox->GetControlPoints();
 #else
 		FVector scopeBoxOrigin = cutPlaneOrigin;
-		controlPoints = cutPlane->GetControlPoints();
+		controlPoints = GetCorners(cutPlane);
 #endif
 		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(controlPoints[0], AxisX, AxisY, cutPlaneOrigin);
 
@@ -163,7 +180,7 @@ namespace Modumate {
 
 		// Clipping of beyond-cut-plane lines.
 		ParentPage->lineClipping.Reset(new FModumateClippingTriangles(*cutPlane));
-		ParentPage->lineClipping->SetTransform(cutPlane->GetControlPoint(0), AxisX, 1.0f);
+		ParentPage->lineClipping->SetTransform(cutPlane->GetCorner(0), AxisX, 1.0f);
 		ParentPage->lineClipping->AddTrianglesFromDoc(Doc);
 
 		// Draw all separators, portals.
@@ -198,7 +215,7 @@ namespace Modumate {
 #endif
 		
 
-		FPlane plane = FPlane(cutPlane->GetControlPoint(0), cutPlane->GetNormal());
+		FPlane plane = FPlane(cutPlane->GetCorner(0), cutPlane->GetNormal());
 		bool bValidIntersection = true;
 		int32 numPoints = 4;
 		TArray<FVector> intersection;
@@ -213,7 +230,7 @@ namespace Modumate {
 			bValidIntersection = bValidIntersection && bIntersects;
 		}
 #else
-		intersection = cutPlane->GetControlPoints();
+		intersection = GetCorners(cutPlane);
 #endif
 
 		FVector axisX, axisY, center;
@@ -308,8 +325,8 @@ namespace Modumate {
 		FPlane plane;
 		FVector axisX, axisY, center;
 		TArray<FVector2D> cached2DPositions;
-		FVector origin = cutPlane->GetControlPoint(0);
-		UModumateGeometryStatics::AnalyzeCachedPositions(cutPlane->GetControlPoints(), plane, axisX, axisY, cached2DPositions, center);
+		FVector origin = cutPlane->GetCorner(0);
+		UModumateGeometryStatics::AnalyzeCachedPositions(GetCorners(cutPlane), plane, axisX, axisY, cached2DPositions, center);
 		TMap<int32, int32> objMap;
 		auto graph = MakeShared<FGraph2D>();
 
