@@ -3,13 +3,13 @@ TYPENAME,,2ExtrudedProfile,,Assembly,,,,,,,,
 ICON,,ExtrudedProfile,,,,,,,,,,
 OUTPUT,,"OTStructureLine[NOT TRUE, ALSO TRIM, REVISIT THIS CONCEPT??]",,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,
-PROPERTY,,STRING,,Name,,Assembly.Name,,,,,,
+PROPERTY,,String,,Name,,Assembly.Name,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,
 INPUTPIN,,1..1,,ChildMaterial,,,,,,,,
 INPUTPIN,,1..1,,ChildDimension,,,,,,,,
 INPUTPIN,,1..1,,ChildProfile,,,,,,,,
 ,,Presets,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,,DataType=Properties,Assembly.Name,DataType=StartsInProject,,DataType=InputPins,ChildMaterial,ChildDimension,ChildProfile
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,,DataType=Properties,Assembly.Name,DataType=StartsInProject,X,DataType=InputPins,ChildMaterial,ChildDimension,ChildProfile
 PRESET,,"2ExtrudedProfile --> Beam/Column --> ConcreteRectangular
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural-0SrfTreatment-Standard
 0DimDi-6in
@@ -677,18 +677,18 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> WoodRound
 PRESET,,"2ExtrudedProfile --> Stringer
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWDT --> HSS-7inW-7inD-0.233inT
-0Profile-Hollow Structural Section, HSS",,2ExtrudedProfile --> Stringer,,Stringer,,,X,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWDT --> HSS-7inW-7inD-0.233inT,"0Profile-Hollow Structural Section, HSS"
+0Profile-Hollow Structural Section, HSS",,2ExtrudedProfile --> Stringer,,Stringer,,X,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWDT --> HSS-7inW-7inD-0.233inT,"0Profile-Hollow Structural Section, HSS"
 PRESET,,"2ExtrudedProfile --> Stringer
 1Material --> Metal --> Tin-0RawMaterial-Tin-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
 0DimWDT --> HSS-3inW-7inD-0.465inT
-='0-04_Profile'!$C$22",,2ExtrudedProfile --> Stringer,,Stringer,,,X,1Material --> Metal --> Tin-0RawMaterial-Tin-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWDT --> HSS-3inW-7inD-0.465inT,='0-04_Profile'!$C$22
+0Profile-Hollow Structural Section, HSS",,2ExtrudedProfile --> Stringer,,Stringer,,X,,1Material --> Metal --> Tin-0RawMaterial-Tin-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWDT --> HSS-3inW-7inD-0.465inT,"0Profile-Hollow Structural Section, HSS"
 PRESET,,"2ExtrudedProfile --> Trim --> FloorMoulding
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite-0SrfTreatment-Buff Polished
 0DimWDT --> HSS-3inW-7inD-0.349inT
-0Profile-Colonial Base",,2ExtrudedProfile --> Trim --> FloorMoulding,,Wall Base,,X,,1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite-0SrfTreatment-Buff Polished,0DimWDT --> HSS-3inW-7inD-0.349inT,0Profile-Colonial Base
+='0-04_Profile'!$C$36",,2ExtrudedProfile --> Trim --> FloorMoulding,,Wall Base,,X,,1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite-0SrfTreatment-Buff Polished,0DimWDT --> HSS-3inW-7inD-0.349inT,='0-04_Profile'!$C$36
 PRESET,,"2ExtrudedProfile --> Trim --> FloorMoulding
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite-0SrfTreatment-Buff Polished
 0DimWDT --> HSS-3inW-7inD-0.291inT
-0Profile-Cove Base",,2ExtrudedProfile --> Trim --> FloorMoulding,,Wall Base,,X,,1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite-0SrfTreatment-Buff Polished,0DimWDT --> HSS-3inW-7inD-0.291inT,0Profile-Cove Base
+='0-04_Profile'!$C$37",,2ExtrudedProfile --> Trim --> FloorMoulding,,Wall Base,,X,,1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite-0SrfTreatment-Buff Polished,0DimWDT --> HSS-3inW-7inD-0.291inT,='0-04_Profile'!$C$37
 ,,,,,,,,,,,,
 ,,,,,,,,,,,,

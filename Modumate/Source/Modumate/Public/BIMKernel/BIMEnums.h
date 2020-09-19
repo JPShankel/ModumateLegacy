@@ -91,20 +91,11 @@ UENUM()
 enum class EBIMValueType : uint8
 {
 	None = 0,
-	UserString,
-	FixedText,
-	Number,
-	Integer,
+	String,
+	Angle,
 	Bool,
-	Color,
 	Dimension,
-	Material,
 	Formula,
-	Subcategory,
-	Select,
-	TableSelect,
-	DynamicList,
-	Form,
 	Error = 255
 };
 

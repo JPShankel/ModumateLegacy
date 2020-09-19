@@ -6,6 +6,7 @@
 #include "BIMKernel/BIMEnums.h"
 #include "BIMKernel/BIMProperties.h"
 #include "BIMKernel/BIMTagPath.h"
+#include "BIMKernel/BIMUProperties.h"
 #include "BIMKernel/BIMKey.h"
 #include "BIMKernel/BIMSerialization.h"
 
@@ -138,6 +139,7 @@ public:
 	TMap<FBIMKey, FBIMPreset> Presets;
 
 	EObjectType GetPresetObjectType(const FBIMKey &PresetID) const;
+
 
 	ECraftingResult ToDataRecords(TArray<FCraftingPresetRecord> &OutRecords) const;
 	ECraftingResult FromDataRecords(const TArray<FCraftingPresetRecord> &Record);

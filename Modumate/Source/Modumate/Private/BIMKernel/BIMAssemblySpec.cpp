@@ -420,9 +420,10 @@ ECraftingResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, 
 	case EObjectType::OTRoofFace:
 	case EObjectType::OTFinish:
 	case EObjectType::OTCeiling:
+	case EObjectType::OTRailSegment:
+	case EObjectType::OTCountertop:
 		return MakeLayeredAssembly(InDB);
 
-	case EObjectType::OTCountertop:
 	case EObjectType::OTCabinet:
 	case EObjectType::OTDoor:
 	case EObjectType::OTWindow:

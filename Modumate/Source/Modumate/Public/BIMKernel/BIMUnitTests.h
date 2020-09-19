@@ -1,5 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
+#pragma once
+
 #include "CoreMinimal.h"
 #include "BIMKernel/BIMKey.h"
 #include "BIMUnitTests.generated.h"

@@ -56,7 +56,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDatabaseBIMTest, "Modumate.Database.BI
 	ret = vs.Type == EBIMValueType::None && ret;
 	ret = vs.Name == TEXT("");
 
-	vs = FBIMPropertyValue(EBIMValueScope::Assembly, EBIMValueType::FixedText, TEXT("Name"));
+	vs = FBIMPropertyValue(EBIMValueScope::Assembly, EBIMValueType::String, TEXT("Name"));
 
 	FBIMNameType fqn = vs.QN();
 	ret = (fqn == TEXT("Assembly.Name")) && ret;

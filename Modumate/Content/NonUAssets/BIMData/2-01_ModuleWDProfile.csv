@@ -1,7 +1,7 @@
 TYPENAME,,2ModuleWDProfile,,Module,,,,,,,,,,,,,,,,,,,,,
 ,,Definition,,,,,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,
-PROPERTY,,STRING,,Name,,Module.Name,,,,,,,,,,,,,,,,,,,
+PROPERTY,,String,,Name,,Module.Name,,,,,,,,,,,,,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildDimWD,,,,,,,,,,,,,,,,,,,,,
@@ -325,5 +325,3 @@ PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
 0DimWD-3.5inW-28inD
 0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,2ModuleWDProfile-89,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-28inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,
-

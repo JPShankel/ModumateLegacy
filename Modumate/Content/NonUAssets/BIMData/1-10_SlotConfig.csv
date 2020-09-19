@@ -1,7 +1,7 @@
 TYPENAME,,1SlotConfig,,SlotConfig,,,,,,,,,
 ,,Definition,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,Scope.Property,,,,,,,
-PROPERTY,,STRING,,Name,,SlotConfig.Name,,,,,,,
+PROPERTY,,String,,Name,,SlotConfig.Name,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,
 INPUTPIN,,1..,,ChildSlotArray,,,,,,,,,
 ,,Presets,,,,,,,,,,,
@@ -21,38 +21,44 @@ PRESET,,"1SlotConfig --> Cabinet --> Swing --> Panel
 PRESET,,,,,,,,,,0Slot-CabinetHandleSwingMidStileTop,,,
 PRESET,,,,,,,,,,0Slot-CabinetHandleSwingMidStileMid,,,
 PRESET,,,,,,,,,,0Slot-CabinetHandleSwingMidStileBottom,,,
+PRESET,,"1SlotConfig --> Door --> Sliding --> Frame
+0Slot-DoorFrameSliding
+0Slot-DoorPanelAssemblySlidingXO-1
+0Slot-DoorPanelAssemblySlidingXO-2",,1SlotConfig --> Door --> Sliding --> Frame,,3RiggedAssembly --> Door --> Sliding --> Frame,,2 Track Sliding Door,,0Slot-DoorFrameSliding,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblySlidingXO-1,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblySlidingXO-2,,,
 PRESET,,"1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
 0Slot-DoorHingeLeftMiddle
 0Slot-DoorHingeLeftBottom
-0Slot-DoorPanelAssemblyInterior",,1SlotConfig --> Door --> Swing --> Frame,,2Part --> Door --> Frame --> Swing --> Interior,,2-Hinge Single Swing Door,,0Slot-DoorFrameSwing,,,
+0Slot-DoorPanelAssemblySwing",,1SlotConfig --> Door --> Swing --> Frame,,3RiggedAssembly --> Door --> Swing --> Frame,,2-Hinge Single Swing Door,,0Slot-DoorFrameSwing,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeLeftMiddle,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeLeftBottom,,,
-PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyInterior,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblySwing,,,
 PRESET,,"1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
 0Slot-DoorHingeLeftTop
 0Slot-DoorHingeLeftMiddle
 0Slot-DoorHingeLeftBottom
-0Slot-DoorPanelAssemblyInterior",,1SlotConfig --> Door --> Swing --> Frame,,2Part --> Door --> Frame --> Swing --> Interior,,3-Hinge Swing Single Door,,0Slot-DoorFrameSwing,,,
+0Slot-DoorPanelAssemblySwing",,1SlotConfig --> Door --> Swing --> Frame,,3RiggedAssembly --> Door --> Swing --> Frame,,3-Hinge Swing Single Door,,0Slot-DoorFrameSwing,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeLeftTop,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeLeftMiddle,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeLeftBottom,,,
-PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyInterior,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblySwing,,,
 PRESET,,"1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
 0Slot-DoorHingeLeftTop
 0Slot-DoorHingeLeftBottom
 0Slot-DoorHingeRightTop
 0Slot-DoorHingeRightBottom
-0Slot-DoorPanelAssemblyInteriorLeft
-0Slot-DoorPanelAssemblyInteriorRight",,1SlotConfig --> Door --> Swing --> Frame,,2Part --> Door --> Frame --> Swing --> Interior,,2-Hinge Swing Double Door,,0Slot-DoorFrameSwing,,,
+0Slot-DoorPanelAssemblyLeftSwing
+0Slot-DoorPanelAssemblyRightSwing",,1SlotConfig --> Door --> Swing --> Frame,,3RiggedAssembly --> Door --> Swing --> Frame,,2-Hinge Swing Double Door,,0Slot-DoorFrameSwing,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeLeftTop,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeLeftBottom,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeRightTop,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeRightBottom,,,
-PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyInteriorLeft,,,
-PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyInteriorRight,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyLeftSwing,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyRightSwing,,,
 PRESET,,"1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
 0Slot-DoorHingeLeftTop
@@ -61,16 +67,22 @@ PRESET,,"1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorHingeRightTop
 0Slot-DoorHingeRightMiddle
 0Slot-DoorHingeRightBottom
-0Slot-DoorPanelAssemblyInteriorLeft
-0Slot-DoorPanelAssemblyInteriorRight",,1SlotConfig --> Door --> Swing --> Frame,,2Part --> Door --> Frame --> Swing --> Interior,,3-Hinge Swing Double Door,,0Slot-DoorFrameSwing,,,
+0Slot-DoorPanelAssemblyLeftSwing
+0Slot-DoorPanelAssemblyRightSwing",,1SlotConfig --> Door --> Swing --> Frame,,3RiggedAssembly --> Door --> Swing --> Frame,,3-Hinge Swing Double Door,,0Slot-DoorFrameSwing,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeLeftTop,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeLeftMiddle,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeLeftBottom,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeRightTop,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeRightMiddle,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeRightBottom,,,
-PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyInteriorLeft,,,
-PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyInteriorRight,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyLeftSwing,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyRightSwing,,,
+PRESET,,"1SlotConfig --> Door --> Sliding --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandleExterior
+0Slot-DoorHandleInterior",,1SlotConfig --> Door --> Sliding --> Panel,,3RiggedAssembly --> Door --> Sliding --> Panel,,Sliding Door Panel,,0Slot-DoorPanelPart,,,
+,,,,,,,,,,0Slot-DoorHandleExterior,,,
+,,,,,,,,,,0Slot-DoorHandleInterior,,,
 PRESET,,"1SlotConfig --> Door --> Swing --> Panel
 0Slot-DoorPanelPart
 0Slot-DoorHandleExterior
@@ -81,7 +93,7 @@ PRESET,,"1SlotConfig --> Door --> Swing --> Panel
 0Slot-DoorPeepholeRegular
 0Slot-DoorPeeholeADA
 0Slot-DoorKnocker
-0Slot-DoorMailSlot",,1SlotConfig --> Door --> Swing --> Panel,,2Part --> Door --> Panel --> Swing,,Solid Swing Panel,,0Slot-DoorPanelPart,,,
+0Slot-DoorMailSlot",,1SlotConfig --> Door --> Swing --> Panel,,3RiggedAssembly --> Door --> Swing --> Panel,,Solid Swing Panel,,0Slot-DoorPanelPart,,,
 PRESET,,,,,,,,,,0Slot-DoorHandleExterior,,,
 PRESET,,,,,,,,,,0Slot-DoorHandleInterior,,,
 PRESET,,,,,,,,,,0Slot-DoorDeadbolt,,,

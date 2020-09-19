@@ -1,9 +1,9 @@
 TYPENAME,,0DimWD,,Dimension,,,,,,,,,,,,,,,,,,,,,,
 ,,Definition,,,,,,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,STRING,,Name,,Dimension.Name,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DIMENSION,,Width,,Dimension.Width,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DIMENSION,,Depth,,Dimension.Depth,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,String,,Name,,Dimension.Name,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,Dimension,,Width,,Dimension.Width,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,Dimension,,Depth,,Dimension.Depth,,,,,,,,,,,,,,,,,,,,
 ,,Presets,,,,,,,,6,4,12,3,3,11,5,8,11,11,9,5,4,1,13,13,9
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Width,Dimension.Depth,DataType=TG_Parent Node+CategoryPath,2ModuleWDProfile --> Corrugated Plastic Sheet,2ModuleWDProfile --> Corrugated Steel Deck,2ModuleWDProfile --> Steel C-Channel,2ModuleWDProfile --> Steel C-H Channel,2ModuleWDProfile --> Steel Hat Channel,2ModuleWDProfile --> Steel Web Joist,2ModuleWDProfile --> Steel Z Channel,2ModuleWDProfile --> Wood Lumber,2ModuleWDProfile --> Wood Web Joist,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",2Gap2D --> Mortar Gaps,2Gap2D --> Grout Gaps,2Gap2D --> Metal Gaps,2Gap2D --> Gapless,2ExtrudedProfile --> Beam/Column --> ConcreteRectangular,2ExtrudedProfile --> Beam/Column --> StoneRectangular,2ExtrudedProfile --> Beam/Column --> WoodRectangular
 PRESET,,0DimWD-0inW-0inD,,0DimWD,,0in x 0in,0in,0in,,,,,,,,,,,,X,X,X,X,,,

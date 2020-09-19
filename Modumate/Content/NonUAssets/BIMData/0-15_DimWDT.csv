@@ -1,10 +1,10 @@
 TYPENAME,,0DimWDT,,Dimension,,,,,,,
 ,,Definition,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,
-PROPERTY,,STRING,,Name,,Dimension.Name,,,,,
-PROPERTY,,DIMENSION,,Width,,Dimension.Width,,,,,
-PROPERTY,,DIMENSION,,Depth,,Dimension.Depth,,,,,
-PROPERTY,,DIMENSION,,Thickness,,Dimension.Thickness,,,,,
+PROPERTY,,String,,Name,,Dimension.Name,,,,,
+PROPERTY,,Dimension,,Width,,Dimension.Width,,,,,
+PROPERTY,,Dimension,,Depth,,Dimension.Depth,,,,,
+PROPERTY,,Dimension,,Thickness,,Dimension.Thickness,,,,,
 ,,Presets,,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Width,Dimension.Depth,Dimension.Thickness,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
 PRESET,,0DimWDT --> LAngle-12inW-12inD-1.38inT,,0DimWDT --> LAngle,,L12X12X1-3/8,12in,12in,1.38in,,2ExtrudedProfile --> Beam/Column --> SteelL
@@ -532,5 +532,4 @@ PRESET,,0DimWDT --> HSS-1.5inW-2inD-0.174inT,,0DimWDT --> HSS,,HSS2X1-1/2X3/16,1
 PRESET,,0DimWDT --> HSS-1.5inW-2inD-0.116inT,,0DimWDT --> HSS,,HSS2X1-1/2X1/8,1.5in,2in,0.116in,,2ExtrudedProfile --> Beam/Column --> SteelHSS
 PRESET,,0DimWDT --> HSS-1inW-2inD-0.174inT,,0DimWDT --> HSS,,HSS2X1X3/16,1in,2in,0.174in,,2ExtrudedProfile --> Beam/Column --> SteelHSS
 PRESET,,0DimWDT --> HSS-1inW-2inD-0.116inT,,0DimWDT --> HSS,,HSS2X1X1/8,1in,2in,0.116in,,2ExtrudedProfile --> Beam/Column --> SteelHSS
-,,,,,,,,,,,
 ,,,,,,,,,,,

@@ -1,8 +1,8 @@
 TYPENAME,,2Layer0D,,Layer,,,,,,,,,,,,,,,,,,
 ,,Definition,,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,
-PROPERTY,,STRING,,Name,,Layer.Name,,,,,,,,,,,,,,,,
-PROPERTY,,PRIVATE,,Anchor Point,,Layer.AnchorPoint,,,,,,,,,,,,,,,,
+PROPERTY,,String,,Name,,Layer.Name,,,,,,,,,,,,,,,,
+PROPERTY,,String,,,,Layer.AnchorPoint,,,,,,,,,,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,Child1Material,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,Child0DimThk,,,,,,,,,,,,,,,,,,
@@ -494,4 +494,5 @@ PRESET,,"2Layer0D --> Void --> Air
 PRESET,,"2Layer0D --> Void --> Air
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
 0DimThk-12inT",,2Layer0D --> Void --> Air,,2Layer0D-172,"0,0,1",,1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard,0DimThk-12inT,,X,,,,,X,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,

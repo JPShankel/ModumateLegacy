@@ -1,10 +1,10 @@
 TYPENAME,,0RawMaterial,,RawMaterial,,,,,,,
 ,,Definition,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,
-PROPERTY,,STRING,,Name,,RawMaterial.Name,,,,,
-PROPERTY,,Private,,Engine Material ID,,RawMaterial.AssetID,,,,,
-PROPERTY,,PRIVATE,,Engine Material File Path,,RawMaterial.AssetPath,,,,,
-PROPERTY,,PRIVATE,,Texture Tiling Size,,RawMaterial.TextureTilingSize,,,,,
+PROPERTY,,String,,Name,,RawMaterial.Name,,,,,
+PROPERTY,,String,,,,RawMaterial.AssetID,,,,,
+PROPERTY,,String,,,,RawMaterial.AssetPath,,,,,
+PROPERTY,,String,,,,RawMaterial.TextureTilingSize,,,,,
 ,,Presets,,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,RawMaterial.Name,RawMaterial.AssetPath,RawMaterial.AssetID,RawMaterial.TextureTilingSize,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
 PRESET,,0RawMaterial-Abstract,,0RawMaterial,,Abstract,/Game/ShoppingData/Materials/Abstract/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Abstract,1,,1Material --> Abstract
@@ -118,4 +118,4 @@ PRESET,,0RawMaterial-Grass,,0RawMaterial,,Grass,/Game/ShoppingData/Materials/Gra
 ,,0RawMaterial-Moss,,0RawMaterial,,Moss,,0RawMaterial-Moss,1,,1Material --> Sitework --> Moss
 PRESET,,0RawMaterial-Soil,,0RawMaterial,,Soil,/Game/ShoppingData/Materials/Soil-Coarse/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Soil,1,,1Material --> Sitework --> Soil
 ,,,,,,,,,,,
-,,,,,,,,,,,
+

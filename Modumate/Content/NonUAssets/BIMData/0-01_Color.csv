@@ -1,8 +1,8 @@
 TYPENAME,,0Color,,Color,,,,,,
 ,,Definition,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,
-PROPERTY,,PRIVATE,,Display Name,,Color.Name,,,,
-PROPERTY,,PRIVATE,,HEXValue,,Color.HEXValue,,,,
+PROPERTY,,String,,Name,,Color.Name,,,,
+PROPERTY,,String,,,,Color.HEXValue,,,,
 ,,Presets,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Color.Name,Color.HEXValue,,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
 PRESET,,0Color --> Abstract-FFFFFF-White,,0Color --> Abstract,,White,FFFFFF,,,1Material --> Abstract

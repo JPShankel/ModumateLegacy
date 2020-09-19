@@ -1,11 +1,11 @@
 TYPENAME,,4LayeredAssembly,,Assembly,,,,,,,,
 ,,Definition,,,,,,,,,,
 ,,PropertyType,,PropertyName,,Scope.Property,,,,,,
-PROPERTY,,STRING,,Name,,Assembly.Name,,,,,,
+PROPERTY,,String,,Name,,Assembly.Name,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,
 INPUTPIN,,1..,,ChildLayerArray,,,,,,,,
 ,,Presets,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,MyNode+CategoryPath,DataType=Properties,Assembly.Name,DataType=StartsInProject,,DataType=InputPins,ChildLayerArray,DataType=TG_Parent Node+CategoryPath,5Stair
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,MyNode+CategoryPath,DataType=Properties,Assembly.Name,DataType=StartsInProject,X,DataType=InputPins,ChildLayerArray,DataType=TG_Parent Node+CategoryPath,5Stair
 PRESET,,"4LayeredAssembly --> Wall
 2Layer0D --> Abstract
 1Material --> Abstract-0RawMaterial-Abstract-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
@@ -16,7 +16,7 @@ PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -33,7 +33,7 @@ PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -42,7 +42,7 @@ PRESET,,"4LayeredAssembly --> Wall
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> Wall,,2x4 Interior Wood Stud,,X,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -59,7 +59,7 @@ PRESET,,,,,,,,,,"3Layer1D --> Stud --> Wood
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -70,7 +70,7 @@ PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -87,7 +87,7 @@ PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -99,7 +99,7 @@ PRESET,,"4LayeredAssembly --> Wall
 0DimThk-0.0625inT",,4LayeredAssembly --> Wall,,2x4 Exterior Wood Stud,,X,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -116,7 +116,7 @@ PRESET,,,,,,,,,,"3Layer1D --> Stud --> Wood
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -130,7 +130,7 @@ PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -147,7 +147,7 @@ PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -156,7 +156,7 @@ PRESET,,"4LayeredAssembly --> Wall
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> Wall,,3 5/8in Interior Metal Stud,,X,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -173,7 +173,7 @@ PRESET,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -184,7 +184,7 @@ PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -201,7 +201,7 @@ PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -213,7 +213,7 @@ PRESET,,"4LayeredAssembly --> Wall
 0DimThk-0.0625inT",,4LayeredAssembly --> Wall,,3 5/8in Exterior Metal Stud,,X,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -230,7 +230,7 @@ PRESET,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -244,7 +244,7 @@ PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -260,7 +260,7 @@ PRESET,,"4LayeredAssembly --> Wall
 0LayerPattern --> 1D-24inOC",,4LayeredAssembly --> Wall,,"2-1/2"" Metal Furring",,X,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -284,7 +284,7 @@ PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -311,7 +311,7 @@ PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -320,7 +320,7 @@ PRESET,,"4LayeredAssembly --> Wall
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> Wall,,"3 5/8"" Interior Metal Stud 6"" Cavity",,X,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -347,7 +347,7 @@ PRESET,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -484,7 +484,7 @@ PRESET,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -497,7 +497,7 @@ PRESET,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -514,7 +514,7 @@ PRESET,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -535,7 +535,7 @@ PRESET,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 ,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -548,7 +548,7 @@ PRESET,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 ,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -565,7 +565,7 @@ PRESET,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 ,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -627,7 +627,7 @@ PRESET,,"4LayeredAssembly --> Floor
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -643,7 +643,7 @@ PRESET,,"4LayeredAssembly --> Floor
 0LayerPattern --> 1D-24inOC",,4LayeredAssembly --> Floor,,2x8 Wood Joist,,X,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -661,7 +661,7 @@ PRESET,,"4LayeredAssembly --> Floor
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -677,7 +677,7 @@ PRESET,,"4LayeredAssembly --> Floor
 0LayerPattern --> 1D-24inOC",,4LayeredAssembly --> Floor,,2x8 Engineered Wood Joist,,X,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -695,7 +695,7 @@ PRESET,,"4LayeredAssembly --> Floor
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -711,7 +711,7 @@ PRESET,,"4LayeredAssembly --> Floor
 0LayerPattern --> 1D-24inOC",,4LayeredAssembly --> Floor,,"6"" Light Gauge Steel Joist",,X,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -849,7 +849,7 @@ PRESET,,"4LayeredAssembly --> Roof
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -859,7 +859,7 @@ PRESET,,"4LayeredAssembly --> Roof
 3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-3inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -887,7 +887,7 @@ PRESET,,,,,,,,,,"2Layer0D --> Membrane --> BitumenousFelt
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -897,7 +897,7 @@ PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-3inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -927,7 +927,7 @@ PRESET,,"4LayeredAssembly --> Roof
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -937,7 +937,7 @@ PRESET,,"4LayeredAssembly --> Roof
 3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-3inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -965,7 +965,7 @@ PRESET,,,,,,,,,,"2Layer0D --> Membrane --> BitumenousFelt
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -975,7 +975,7 @@ PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-3inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1005,7 +1005,7 @@ PRESET,,"4LayeredAssembly --> Roof
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1015,7 +1015,7 @@ PRESET,,"4LayeredAssembly --> Roof
 3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-3inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1043,7 +1043,7 @@ PRESET,,,,,,,,,,"2Layer0D --> Membrane --> BitumenousFelt
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1053,7 +1053,7 @@ PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-3inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1086,7 +1086,7 @@ PRESET,,"4LayeredAssembly --> Roof
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1096,7 +1096,7 @@ PRESET,,"4LayeredAssembly --> Roof
 3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-3inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1124,7 +1124,7 @@ PRESET,,,,,,,,,,"2Layer0D --> Membrane --> RubberizedAsphalt
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1134,7 +1134,7 @@ PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-3inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1155,7 +1155,7 @@ PRESET,,"4LayeredAssembly --> Roof
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1171,7 +1171,7 @@ PRESET,,"4LayeredAssembly --> Roof
 0LayerPattern --> 1D-24inOC",,4LayeredAssembly --> Roof,,2x8 Wood Joist,,X,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1189,7 +1189,7 @@ PRESET,,"4LayeredAssembly --> Roof
 3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-3inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1201,7 +1201,7 @@ PRESET,,"4LayeredAssembly --> Roof
 0DimThk-0.0625inT",,4LayeredAssembly --> Roof,,2x8 Insulated Wood Joist,,X,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-3inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1214,7 +1214,7 @@ PRESET,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
 ,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1266,7 +1266,7 @@ PRESET,,"4LayeredAssembly --> Roof
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1282,7 +1282,7 @@ PRESET,,"4LayeredAssembly --> Roof
 0LayerPattern --> 1D-24inOC",,4LayeredAssembly --> Roof,,"18"" Open Web Steel Joist, Plywood Sheathing",,X,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1307,7 +1307,7 @@ PRESET,,"4LayeredAssembly --> Ceiling
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1323,7 +1323,7 @@ PRESET,,"4LayeredAssembly --> Ceiling
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1383,7 +1383,7 @@ PRESET,,"4LayeredAssembly --> Ceiling
 3Layer2D --> Tile --> Acoustic Ceiling Tile
 2ModuleLWT --> Tile --> Acoustic Ceiling Tile
 1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-24inL-24inW
+0DimLW-24in-24in
 0DimThk-0.5inT
 2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
@@ -1409,7 +1409,7 @@ PRESET,,,,,,,,,,"3Layer1D --> Furring --> Steel Hat Channel
 PRESET,,,,,,,,,,"3Layer2D --> Tile --> Acoustic Ceiling Tile
 2ModuleLWT --> Tile --> Acoustic Ceiling Tile
 1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-24inL-24inW
+0DimLW-24in-24in
 0DimThk-0.5inT
 2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
@@ -1434,7 +1434,7 @@ PRESET,,"4LayeredAssembly --> Ceiling
 3Layer2D --> Board and Panel --> Cementitious Wood Fiber
 2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
 1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-24inL-24inW
+0DimLW-24in-24in
 0DimThk-0.375inT
 2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
@@ -1460,7 +1460,7 @@ PRESET,,,,,,,,,,"3Layer1D --> Furring --> Steel Hat Channel
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
 2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
 1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-24inL-24inW
+0DimLW-24in-24in
 0DimThk-0.375inT
 2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
@@ -1489,7 +1489,7 @@ PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Tile --> Porcelain
 2ModuleLWT --> Tile --> Porcelain
 1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-E6E3DE-Eggshell-0SrfTreatment-Standard
-0DimLW-12inL-4inW
+0DimLW-12in-4in
 0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -1501,7 +1501,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimThk-0.5inT",,4LayeredAssembly --> Finish,,Porcelain Tile,,X,,"3Layer2D --> Tile --> Porcelain
 2ModuleLWT --> Tile --> Porcelain
 1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-E6E3DE-Eggshell-0SrfTreatment-Standard
-0DimLW-12inL-4inW
+0DimLW-12in-4in
 0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -1515,7 +1515,7 @@ PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Tile --> Brick Veneer
 2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
-0DimLW-15.625inL-3.625inW
+0DimLW-15.625in-3.625in
 0DimThk-0.25inT
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
@@ -1527,7 +1527,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimThk-0.5inT",,4LayeredAssembly --> Finish,,"Thin Brick Veneer, Thinset",,X,,"3Layer2D --> Tile --> Brick Veneer
 2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
-0DimLW-15.625inL-3.625inW
+0DimLW-15.625in-3.625in
 0DimThk-0.25inT
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
@@ -1541,7 +1541,7 @@ PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Tile --> Brick Veneer
 2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
-0DimLW-15.625inL-3.625inW
+0DimLW-15.625in-3.625in
 0DimThk-0.25inT
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
@@ -1556,7 +1556,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimThk-0.125inT",,4LayeredAssembly --> Finish,,"Thin Brick Veneer, Thickset",,X,,"3Layer2D --> Tile --> Brick Veneer
 2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
-0DimLW-15.625inL-3.625inW
+0DimLW-15.625in-3.625in
 0DimThk-0.25inT
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White-0SrfTreatment-Standard
@@ -1573,7 +1573,7 @@ PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
-0DimLW-48inL-5inW
+0DimLW-48in-5in
 0DimThk-0.75inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -1585,7 +1585,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimThk-5mmT",,4LayeredAssembly --> Finish,,"Wood Plank Floor, Direct Applied",,X,,"3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
-0DimLW-48inL-5inW
+0DimLW-48in-5in
 0DimThk-0.75inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -1599,7 +1599,7 @@ PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
-0DimLW-32inL-5inW
+0DimLW-32in-5in
 0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -1615,7 +1615,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 1D-16inOC",,4LayeredAssembly --> Finish,,Wood Rainscreen,,X,,"3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
-0DimLW-32inL-5inW
+0DimLW-32in-5in
 0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -1639,7 +1639,7 @@ PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Tile --> Carpet
 2ModuleLWT --> Tile --> Carpet
 1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White-0SrfTreatment-Standard
-0DimLW-12inL-12inW
+0DimLW-12in-12in
 0DimThk-0.125inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1648,7 +1648,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> Finish,,Carpet Tile,,X,,"3Layer2D --> Tile --> Carpet
 2ModuleLWT --> Tile --> Carpet
 1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White-0SrfTreatment-Standard
-0DimLW-12inL-12inW
+0DimLW-12in-12in
 0DimThk-0.125inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1659,7 +1659,7 @@ PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Tile --> Stone
 2ModuleLWT --> Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-12inL-3inW
+0DimLW-12in-3in
 0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -1668,7 +1668,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> Finish,,Stone Tile,,X,,"3Layer2D --> Tile --> Stone
 2ModuleLWT --> Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-12inL-3inW
+0DimLW-12in-3in
 0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -1682,7 +1682,7 @@ PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Shingle --> Asphalt
 2ModuleLWT --> Shingle --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood-0SrfTreatment-Standard
-0DimLW-12inL-7inW
+0DimLW-12in-7in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1691,7 +1691,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> Finish,,Asphalt Shingle,,X,,"3Layer2D --> Shingle --> Asphalt
 2ModuleLWT --> Shingle --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood-0SrfTreatment-Standard
-0DimLW-12inL-7inW
+0DimLW-12in-7in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1702,7 +1702,7 @@ PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Shingle --> Clay
 2ModuleLWT --> Shingle --> Clay
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
-0DimLW-12inL-7inW
+0DimLW-12in-7in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1711,7 +1711,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-StackBond",,4LayeredAssembly --> Finish,,Clay Shingle,,X,,"3Layer2D --> Shingle --> Clay
 2ModuleLWT --> Shingle --> Clay
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural-0SrfTreatment-Standard
-0DimLW-12inL-7inW
+0DimLW-12in-7in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1722,7 +1722,7 @@ PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Shingle --> Metal
 2ModuleLWT --> Shingle --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-12inL-7inW
+0DimLW-12in-7in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1731,7 +1731,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-RunningBond",,4LayeredAssembly --> Finish,,Metal Shingle,,X,,"3Layer2D --> Shingle --> Metal
 2ModuleLWT --> Shingle --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-12inL-7inW
+0DimLW-12in-7in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1742,7 +1742,7 @@ PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Shingle --> Stone
 2ModuleLWT --> Shingle --> Stone
 1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Abstract-ABABAB-Gray4-0SrfTreatment-Standard
-0DimLW-12inL-7inW
+0DimLW-12in-7in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1751,7 +1751,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> Finish,,Slate Shingle,,X,,"3Layer2D --> Shingle --> Stone
 2ModuleLWT --> Shingle --> Stone
 1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Abstract-ABABAB-Gray4-0SrfTreatment-Standard
-0DimLW-12inL-7inW
+0DimLW-12in-7in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1762,7 +1762,7 @@ PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Shingle --> Wood
 2ModuleLWT --> Shingle --> Wood
 1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
-0DimLW-12inL-7inW
+0DimLW-12in-7in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1771,7 +1771,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-StackBond",,4LayeredAssembly --> Finish,,Wood Shingle,,X,,"3Layer2D --> Shingle --> Wood
 2ModuleLWT --> Shingle --> Wood
 1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
-0DimLW-12inL-7inW
+0DimLW-12in-7in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1869,7 +1869,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.75inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1879,7 +1879,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1891,7 +1891,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 ,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.75inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1901,7 +1901,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 ,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1915,7 +1915,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-1inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1925,7 +1925,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1937,7 +1937,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 ,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-1inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1947,7 +1947,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 ,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1958,7 +1958,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-12inL-12inW
+0DimLW-12in-12in
 0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -1968,7 +1968,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-1inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -1978,7 +1978,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-12inL-12inW
+0DimLW-12in-12in
 0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -1987,7 +1987,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> System Panel,,"Insulated Aluminum panel, 1""",,X,,"3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-12inL-12inW
+0DimLW-12in-12in
 0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -1997,7 +1997,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-1inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2007,7 +2007,7 @@ PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-12inL-12inW
+0DimLW-12in-12in
 0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -2018,7 +2018,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-12inL-12inW
+0DimLW-12in-12in
 0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -2028,7 +2028,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-1inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2038,7 +2038,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-12inL-12inW
+0DimLW-12in-12in
 0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -2047,7 +2047,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> System Panel,,"Insulated Aluminum panel, 1-1/2""",,X,,"3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-12inL-12inW
+0DimLW-12in-12in
 0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -2057,7 +2057,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-1inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2067,7 +2067,7 @@ PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-12inL-12inW
+0DimLW-12in-12in
 0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -2078,7 +2078,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-16inL-12inW
+0DimLW-16in-12in
 0DimThk-0.75inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -2088,7 +2088,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2098,7 +2098,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-16inL-12inW
+0DimLW-16in-12in
 0DimThk-0.75inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -2107,7 +2107,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 0LayerPattern --> 2D-RunningBond",,4LayeredAssembly --> System Panel,,"Insulated Aluminum panel, 2""",,X,,"3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-16inL-12inW
+0DimLW-16in-12in
 0DimThk-0.75inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -2117,7 +2117,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2127,7 +2127,7 @@ PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
-0DimLW-16inL-12inW
+0DimLW-16in-12in
 0DimThk-0.75inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural-0SrfTreatment-Standard
@@ -2162,7 +2162,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2172,7 +2172,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2181,7 +2181,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> Layered Tread,,Plywood + OSB Tread,,X,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2191,7 +2191,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2202,7 +2202,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2211,7 +2211,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> Layered Tread,,Plywood Tread,,X,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2222,7 +2222,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2232,7 +2232,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2241,7 +2241,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> Layered Riser,,Plywood + OSB Riser,,X,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2251,7 +2251,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 PRESET,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2262,7 +2262,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2271,7 +2271,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0LayerPattern --> 2D-SoldierBond",,4LayeredAssembly --> Layered Riser,,Plywood Riser,,X,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
-0DimLW-96inL-48inW
+0DimLW-96in-48in
 0DimThk-0.46875inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear-0SrfTreatment-Standard
@@ -2281,13 +2281,13 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 PRESET,,"4LayeredAssembly --> Railing
 2Layer0D --> Fence
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-646963-Gray-GreenSlate-0SrfTreatment-Standard
-0DimThk-0.03125inT",,4LayeredAssembly --> Railing,,Chain Link Fence,,,,"2Layer0D --> Fence
+0DimThk-0.03125inT",,4LayeredAssembly --> Railing,,Chain Link Fence,,X,,"2Layer0D --> Fence
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-646963-Gray-GreenSlate-0SrfTreatment-Standard
 0DimThk-0.03125inT",,
 PRESET,,"4LayeredAssembly --> Railing
 2Layer0D --> Fence
 1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-8F9AA0-Ocean-0SrfTreatment-Standard
-0DimThk-0.5inT",,4LayeredAssembly --> Railing,,Picket Fence,,,,"2Layer0D --> Fence
+0DimThk-0.5inT",,4LayeredAssembly --> Railing,,Picket Fence,,X,,"2Layer0D --> Fence
 1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-8F9AA0-Ocean-0SrfTreatment-Standard
 0DimThk-0.5inT",,
 ,,4LayeredAssembly --> Landscape,,4LayeredAssembly --> Landscape,,,,,,,,

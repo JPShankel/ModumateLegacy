@@ -1,7 +1,7 @@
 TYPENAME,,5Cabinet,,Layer,,,,,
 ,,Definition,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,
-PROPERTY,,STRING,,Name,,Preset.Name,,,
+PROPERTY,,String,,Name,,Preset.Name,,,
 ,,InputExtensibility,,InputPreset,,,,,
 INPUTPIN,,1..,,ChildCabinetFace,,,,,
 INPUTPIN,,1..,,ChildToeKickDims,,,,,
@@ -41,4 +41,5 @@ PRESET,,"5Cabinet --> Floor
 2Part --> Cabinet --> Frame
 0Mesh-Cabinet-Frame-Frameless-01.Cabinet-Frame-Frameless-01'
 1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished",0DimHD-4inW-4inD
+,,,,,,,,,
 ,,,,,,,,,

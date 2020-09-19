@@ -52,6 +52,12 @@ public:
 	float Length = MOD_DIM_NONE;
 
 	UPROPERTY()
+	float Diameter = MOD_DIM_NONE;
+	
+	UPROPERTY()
+	float Radius = MOD_DIM_NONE;
+
+	UPROPERTY()
 	float WebThickness = MOD_DIM_NONE;
 
 	UPROPERTY()

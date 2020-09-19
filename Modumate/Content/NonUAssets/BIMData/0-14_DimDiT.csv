@@ -1,9 +1,9 @@
 TYPENAME,,0DimDiT,,Dimension,,,,,,
 ,,Definition,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,
-PROPERTY,,STRING,,Name,,Dimension.Name,,,,
-PROPERTY,,DIMENSION,,Diameter,,Dimension.Diameter,,,,
-PROPERTY,,DIMENSION,,Thickness,,Dimension.Thickness,,,,
+PROPERTY,,String,,Name,,Dimension.Name,,,,
+PROPERTY,,Dimension,,Diameter,,Dimension.Diameter,,,,
+PROPERTY,,Dimension,,Thickness,,Dimension.Thickness,,,,
 ,,Presets,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Diameter,Dimension.Thickness,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
 PRESET,,0DimDiT-12.75inDi-0.375inT,,0DimDiT,,D12X0.375,12.75in,0.375in,,2ExtrudedProfile --> Beam/Column --> SteelTube
