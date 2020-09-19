@@ -156,6 +156,9 @@ public:
 	UFUNCTION()
 	void OnButtonDirtyAddNew();
 
+	UFUNCTION()
+	void OnButtonDirtyCancel();
+
 	void UpdateNodeDirty(bool NewDirty);
 	void UpdateNodeCollapse(bool NewCollapse, bool AllowAutoArrange = false);
 	bool BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCraftingTreeNodeSharedPtr &Node);

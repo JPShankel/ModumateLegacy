@@ -79,7 +79,7 @@ void ADynamicIconGenerator::BeginPlay()
 	IconCompoundMeshActor = GetWorld()->SpawnActor<ACompoundMeshActor>();
 	IconCompoundMeshActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
 
-	DynSphereMaterial = IconSphereMesh->CreateDynamicMaterialInstance(0, IconSphereMaterial);
+	DynCustomMaterial = IconSphereMesh->CreateDynamicMaterialInstance(0, CustomMaterialBase);
 }
 
 // Called every frame
@@ -152,9 +152,12 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMKey& PresetID, U
 	case EBIMValueScope::Color:
 		return SetIconMeshForColor(PresetID, RenderTarget);
 	case EBIMValueScope::Dimension:
-		return SetIconMeshForDimension(NodeID, RenderTarget);
+		return SetIconMeshForDimension(NodeID, CustomMaterialBase, RenderTarget);
 	case EBIMValueScope::Material:
 		return SetIconMeshForMaterial(NodeID, RenderTarget);
+	case EBIMValueScope::Module:
+		return SetIconMeshForModule(NodeID, RenderTarget);
+
 	default:
 		break;
 	}
@@ -484,8 +487,8 @@ bool ADynamicIconGenerator::SetIconMeshForColor(const FBIMKey& ColorKey, UTextur
 	FCustomColor customColor;
 	if (UModumateIconMeshStatics::GetEngineCustomColorByKey(Controller, ColorKey, customColor))
 	{
-		IconSphereMesh->SetMaterial(0, DynSphereMaterial);
-		DynSphereMaterial->SetVectorParameterValue(MaterialColorParamName, customColor.Color);
+		IconSphereMesh->SetMaterial(0, DynCustomMaterial);
+		DynCustomMaterial->SetVectorParameterValue(MaterialColorParamName, customColor.Color);
 
 		// Step 2: Set color to material
 		SetComponentForIconCapture(IconSphereMesh, true);
@@ -501,7 +504,7 @@ bool ADynamicIconGenerator::SetIconMeshForColor(const FBIMKey& ColorKey, UTextur
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForDimension(int32 NodeID, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForDimension(int32 NodeID, UMaterialInterface* InMaterial, UTextureRenderTarget2D* RenderTarget)
 {
 	// Step 1: Get params
 	FString width, length, depth, height, thickness;
@@ -528,6 +531,7 @@ bool ADynamicIconGenerator::SetIconMeshForDimension(int32 NodeID, UTextureRender
 	IconCubeMesh->SetWorldScale3D(nSize);
 
 	// Step 2: Set for capture
+	IconCubeMesh->SetMaterial(0, InMaterial);
 	SetComponentForIconCapture(IconCubeMesh, true);
 	IconCubeMesh->SetVisibility(true);
 	SceneCaptureComp->TextureTarget = RenderTarget;
@@ -544,7 +548,7 @@ bool ADynamicIconGenerator::SetIconMeshForDimension(int32 NodeID, UTextureRender
 bool ADynamicIconGenerator::SetIconMeshForMaterial(int32 NodeID, UTextureRenderTarget2D* RenderTarget)
 {
 	// Step 1: Get params
-	UMaterialInterface *mat = IconSphereMaterial;
+	UMaterialInterface *mat = CustomMaterialBase;
 	FCustomColor customColor;
 	const FPresetManager &presetManager = GameState->Document.PresetManager;
 	const FBIMCraftingTreeNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
@@ -567,9 +571,9 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(int32 NodeID, UTextureRenderT
 	// Step 2: Set color to material
 	if (customColor.bValid)
 	{
-		IconSphereMesh->SetMaterial(0, mat);
 		auto* dynMat = IconSphereMesh->CreateDynamicMaterialInstance(0, mat);
 		dynMat->SetVectorParameterValue(MaterialColorParamName, customColor.Color);
+		IconSphereMesh->SetMaterial(0, dynMat);
 
 		SetComponentForIconCapture(IconSphereMesh, true);
 		IconSphereMesh->SetVisibility(true);
@@ -580,6 +584,48 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(int32 NodeID, UTextureRenderT
 		SetComponentForIconCapture(IconSphereMesh, false);
 		IconSphereMesh->SetVisibility(false);
 		return true;
+	}
+	return false;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForModule(int32 NodeID, UTextureRenderTarget2D* RenderTarget)
+{
+	// Step 1: Get params
+	UMaterialInterface *mat = CustomMaterialBase;
+	FCustomColor customColor;
+	int32 dimensionNodeID = INDEX_NONE;
+	const FBIMCraftingTreeNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+
+	TArray<FBIMCraftingTreeNodeSharedPtr> childrenNodes;
+	inst->GatherAllChildNodes(childrenNodes);
+
+	for (const auto& child : childrenNodes)
+	{
+		const FBIMPreset* preset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(child->PresetID);
+		if (preset->NodeScope == EBIMValueScope::RawMaterial)
+		{
+			const FArchitecturalMaterial *aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByKey(preset->PresetID);
+			if (aMat->EngineMaterial.IsValid())
+			{
+				mat = aMat->EngineMaterial.Get();
+			}
+		}
+		if (preset->NodeScope == EBIMValueScope::Color)
+		{
+			customColor = *Gamemode->ObjectDatabase->GetCustomColorByKey(preset->PresetID);
+		}
+		if (preset->NodeScope == EBIMValueScope::Dimension)
+		{
+			dimensionNodeID = child->GetInstanceID();
+		}
+	}
+
+	if (customColor.bValid && dimensionNodeID != INDEX_NONE)
+	{
+		auto* dynMat = IconSphereMesh->CreateDynamicMaterialInstance(0, mat);
+		dynMat->SetVectorParameterValue(MaterialColorParamName, customColor.Color);
+
+		return SetIconMeshForDimension(dimensionNodeID, dynMat, RenderTarget);
 	}
 	return false;
 }

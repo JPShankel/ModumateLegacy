@@ -49,6 +49,7 @@ bool UBIMBlockNode::Initialize()
 	ButtonDeleteExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDeleteReleased);
 	BIMBlockNodeDirty->ButtonSave->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtySave);
 	BIMBlockNodeDirty->ButtonAddNew->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtyAddNew);
+	BIMBlockNodeDirty->ButtonCancel->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtyCancel);
 
 	return true;
 }
@@ -162,6 +163,16 @@ void UBIMBlockNode::OnButtonDirtySave()
 void UBIMBlockNode::OnButtonDirtyAddNew()
 {
 	ParentBIMDesigner->SavePresetFromNode(true, ID);
+}
+
+void UBIMBlockNode::OnButtonDirtyCancel()
+{
+	ECraftingResult result = ParentBIMDesigner->InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, ID, PresetID);
+	if (result == ECraftingResult::Success)
+	{
+		ParentBIMDesigner->UpdateCraftingAssembly();
+		ParentBIMDesigner->UpdateBIMDesigner();
+	}
 }
 
 void UBIMBlockNode::UpdateNodeDirty(bool NewDirty)

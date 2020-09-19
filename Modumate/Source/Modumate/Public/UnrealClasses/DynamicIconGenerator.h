@@ -49,7 +49,7 @@ public:
 	class ACompoundMeshActor* IconCompoundMeshActor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMaterialInterface* IconSphereMaterial;
+	UMaterialInterface* CustomMaterialBase;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DimensionString)
 	FName MaterialColorParamName = TEXT("ColorMultiplier");
@@ -104,7 +104,7 @@ protected:
 	class AEditModelPlayerController_CPP* Controller;
 
 	UPROPERTY()
-	class UMaterialInstanceDynamic* DynSphereMaterial;
+	class UMaterialInstanceDynamic* DynCustomMaterial;
 
 public:
 	// Called every frame
@@ -123,8 +123,9 @@ public:
 
 	bool SetIconMeshForRawMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForColor(const FBIMKey& ColorKey, UTextureRenderTarget2D* RenderTarget);
-	bool SetIconMeshForDimension(int32 NodeID, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForDimension(int32 NodeID, UMaterialInterface* InMaterial, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForMaterial(int32 NodeID, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForModule(int32 NodeID, UTextureRenderTarget2D* RenderTarget);
 
 	void GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal);
 	void GetFloorSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& StartPt, const FVector& EndPt, float Height, FVector& OutLocation, FVector& OutNormal, bool& OutSliced);
