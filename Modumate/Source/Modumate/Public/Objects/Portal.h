@@ -13,9 +13,7 @@ protected:
 	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
 	TWeakObjectPtr<AEditModelPlayerController_CPP> Controller;
 
-	void SetControlPointsFromAssembly();
-	void UpdateAssemblyFromControlPoints();
-	void SetupCompoundActor();
+	bool SetupCompoundActorGeometry();
 	bool SetRelativeTransform(const FVector2D &InRelativePos, const FQuat &InRelativeRot);
 	bool CacheCorners();
 	void GetFarDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane &Plane, const FBox2D& BoundingBox) const;
@@ -41,7 +39,6 @@ public:
 	virtual FVector GetCorner(int32 index) const override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 
-	virtual void OnAssemblyChanged() override;
 	virtual FVector GetNormal() const;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
 	virtual void SetupDynamicGeometry() override;
@@ -49,8 +46,6 @@ public:
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const override;
 	virtual void TransverseObject() override;
-
-	static void GetControlPointsFromAssembly(const FBIMAssemblySpec &ObjectAssembly, TArray<FVector> &ControlPoints);
 
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override;
 

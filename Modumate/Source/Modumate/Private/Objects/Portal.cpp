@@ -16,6 +16,8 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "DocumentManagement//ModumateDocument.h"
+#include "Graph/Graph3D.h"
 #include "Algo/ForEach.h"
 #include "Algo/Unique.h"
 
@@ -32,26 +34,6 @@ FMOIPortalImpl::FMOIPortalImpl(FModumateObjectInstance *moi)
 	, CachedWorldRot(ForceInit)
 	, bHaveValidTransform(false)
 {
-	SetControlPointsFromAssembly();
-}
-
-void FMOIPortalImpl::GetControlPointsFromAssembly(const FBIMAssemblySpec &ObjectAssembly, TArray<FVector> &ControlPoints)
-{
-}
-
-void FMOIPortalImpl::SetControlPointsFromAssembly()
-{
-	TArray<FVector> controlPoints;
-	GetControlPointsFromAssembly(MOI->GetAssembly(), controlPoints);
-	MOI->SetControlPoints(controlPoints);
-}
-
-void FMOIPortalImpl::UpdateAssemblyFromControlPoints()
-{
-	if (MOI->GetControlPoints().Num() < 4)
-	{
-		return;
-	}
 }
 
 FMOIPortalImpl::~FMOIPortalImpl()
@@ -60,13 +42,6 @@ FMOIPortalImpl::~FMOIPortalImpl()
 AActor *FMOIPortalImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
 	return world->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform(rot, loc));
-}
-
-void FMOIPortalImpl::OnAssemblyChanged()
-{
-	SetControlPointsFromAssembly();
-	SetupCompoundActor();
-	CacheCorners();
 }
 
 FVector FMOIPortalImpl::GetNormal() const
@@ -95,6 +70,8 @@ bool FMOIPortalImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<
 		auto *parentObj = MOI ? MOI->GetParentObject() : nullptr;
 		if (parentObj)
 		{
+			const Modumate::FGraph3DFace * parentFace = MOI->GetDocument()->GetVolumeGraph().FindFace(parentObj->ID);
+
 			parentObj->MarkDirty(EObjectDirtyFlags::Visuals);
 		}
 		else
@@ -110,14 +87,7 @@ bool FMOIPortalImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<
 
 void FMOIPortalImpl::SetupDynamicGeometry()
 {
-	// If the MOI's control points got reset, then we need to recreate them here before they're used.
-	if (MOI->GetControlPoints().Num() == 0)
-	{
-		SetControlPointsFromAssembly();
-	}
-
-	UpdateAssemblyFromControlPoints();
-	SetupCompoundActor();
+	SetupCompoundActorGeometry();
 	SetRelativeTransform(CachedRelativePos, CachedRelativeRot);
 }
 
@@ -126,12 +96,38 @@ void FMOIPortalImpl::UpdateDynamicGeometry()
 	SetupDynamicGeometry();
 }
 
-void FMOIPortalImpl::SetupCompoundActor()
+bool FMOIPortalImpl::SetupCompoundActorGeometry()
 {
+	bool bResult = false;
 	if (ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(MOI->GetActor()))
 	{
-		cma->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
+		FVector scale(FVector::OneVector);
+		int32 parentID = MOI->GetParentID();
+		if (parentID != MOD_ID_NONE)
+		{
+			const Modumate::FGraph3DFace * parentFace = MOI->GetDocument()->GetVolumeGraph().FindFace(parentID);
+			// Get size of parent metaplane.
+			if (parentFace != nullptr)
+			{
+				FBox2D faceSize(parentFace->Cached2DPositions);
+				FVector2D planeSize = faceSize.GetSize();
+				FVector2D localPosition(-faceSize.GetExtent().X, faceSize.GetExtent().Y);
+				SetRelativeTransform(localPosition, CachedRelativeRot);
+
+				const FBIMAssemblySpec& assembly = MOI->GetAssembly();
+				if (assembly.Parts.Num() > 0 && !assembly.Parts[0].Mesh.NativeSize.IsZero())
+				{	// Assume first part for native size.
+					FVector nativeSize = assembly.Parts[0].Mesh.NativeSize * Modumate::InchesToCentimeters;
+					scale.X = planeSize.X / nativeSize.X;
+					scale.Z = planeSize.Y / nativeSize.Z;
+					bResult = true;
+				}
+			}
+		}
+
+		cma->MakeFromAssembly(MOI->GetAssembly(), scale, MOI->GetObjectInverted(), true);
 	}
+	return bResult;
 }
 
 bool FMOIPortalImpl::SetRelativeTransform(const FVector2D &InRelativePos, const FQuat &InRelativeRot)

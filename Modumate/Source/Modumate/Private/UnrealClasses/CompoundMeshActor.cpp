@@ -79,12 +79,13 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 	int32 numSlots = obAsm.Parts.Num();
 
 	// TODO: we assume the first part is the global "parent," to be refactored with parenting info in DDL tables
+	// Eventually Parent will change for each Part.
 	if (numSlots > 0)
 	{
-		const FVector& nativeSize = obAsm.Parts[0].Mesh.NativeSize;
-		vars.Add(TEXT("Parent.NativeSizeX"), nativeSize.X);
-		vars.Add(TEXT("Parent.NativeSizeY"), nativeSize.Y);
-		vars.Add(TEXT("Parent.NativeSizeZ"), nativeSize.Z);
+		const FVector& scaledNativeSize = obAsm.Parts[0].Mesh.NativeSize * scale;
+		vars.Add(TEXT("Parent.NativeSizeX"), scaledNativeSize.X);
+		vars.Add(TEXT("Parent.NativeSizeY"), scaledNativeSize.Y);
+		vars.Add(TEXT("Parent.NativeSizeZ"), scaledNativeSize.Z);
 	}
 
 	for (int32 slotIdx = 0; slotIdx < numSlots; ++slotIdx)
@@ -134,14 +135,16 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 			assemblyPart.Flip[2] ? -1.0f : 1.0f
 		);
 
-		FVector partNativeSize = assemblyPart.Mesh.NativeSize;
-		FVector partDesiredSize = partNativeSize;
+		FVector partNativeSize = assemblyPart.Mesh.NativeSize * Modumate::InchesToCentimeters;
+		FVector partDesiredSize = partScale * partNativeSize;
 
 #if DEBUG_NINE_SLICING
 			DrawDebugCoordinateSystem(GetWorld(), GetActorTransform().TransformPosition(partLocation), GetActorRotation(), 8.0f, false, -1.f, 255, 0.5f);
 #endif // DEBUG_NINE_SLICING
 
 		FBox nineSliceInterior = assemblyPart.Mesh.NineSliceBox;
+		nineSliceInterior.Min *= Modumate::InchesToCentimeters;
+		nineSliceInterior.Max *= Modumate::InchesToCentimeters;
 		FBox nativeExteriorSizes(nineSliceInterior.Min, partNativeSize - nineSliceInterior.Max);
 		FVector minNativeExteriorSizes = nativeExteriorSizes.Min.ComponentMin(nativeExteriorSizes.Max);
 

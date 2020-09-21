@@ -9,6 +9,7 @@ class APortalFrameActor_CPP;
 class AEditModelPlayerController_CPP;
 class ACompoundMeshActor;
 class FModumateDocument;
+class FBIMAssemblySpec;
 
 UCLASS()
 class MODUMATE_API UPortalToolBase : public UEditModelToolBase
@@ -31,6 +32,7 @@ protected:
 	bool bValidPortalConfig;
 
 	void SetupCursor();
+	FVector AssemblyNativeSize(const FBIMAssemblySpec& assembly) const;
 
 public:
 	UPortalToolBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());

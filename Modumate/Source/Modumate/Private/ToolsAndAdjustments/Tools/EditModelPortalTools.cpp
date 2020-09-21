@@ -91,6 +91,20 @@ void UPortalToolBase::SetupCursor()
 	CursorActor->TempObjectToolMode = GetToolMode();
 }
 
+
+//TODO: Obtain correct assembly native size when it becomes better defined.
+FVector UPortalToolBase::AssemblyNativeSize(const FBIMAssemblySpec& assembly) const
+{
+	if (ensure(assembly.Parts.Num() > 0))
+	{
+		return assembly.Parts[0].Mesh.NativeSize * Modumate::InchesToCentimeters;
+	}
+	else
+	{
+		return FVector::ZeroVector;
+	}
+}
+
 bool UPortalToolBase::Deactivate()
 {
 	if (CursorActor != nullptr)
@@ -327,33 +341,41 @@ bool UPortalToolBase::BeginUse()
 
 			deltas.Add(deleteDelta);
 		}
+
 	}
 
 	int32 newParentId = HostID;
-	FVector2D newPosition(ForceInitToZero);
 	if (!bPaintTool)
 	{   // Create new metaplane to host portal.
-		// TODO: Get official extents from assembly.
 		FBox bounds(ForceInit);
-		const FVector worldPosition(CursorActor->GetTransform().GetTranslation());
-		for (const auto* mesh : CursorActor->StaticMeshComps)
-		{
-			if (mesh != nullptr)
+		FVector nativeSize(AssemblyNativeSize(*assembly));
+
+		if (nativeSize.IsZero())
+		{	// No supplied native size - use meshes:
+			for (const auto* mesh : CursorActor->StaticMeshComps)
 			{
-				FVector minPoint(ForceInitToZero);
-				FVector maxPoint(ForceInitToZero);
-				mesh->GetLocalBounds(minPoint, maxPoint);
-				FVector localPosition(mesh->GetRelativeTransform().GetTranslation());
-				bounds += minPoint + localPosition;
-				bounds += maxPoint + localPosition;
+				if (mesh != nullptr)
+				{
+					FVector minPoint(ForceInitToZero);
+					FVector maxPoint(ForceInitToZero);
+					mesh->GetLocalBounds(minPoint, maxPoint);
+					FVector localPosition(mesh->GetRelativeTransform().GetTranslation());
+					bounds += minPoint + localPosition;
+					bounds += maxPoint + localPosition;
+				}
 			}
+		}
+		else
+		{
+			bounds.Max = nativeSize;
 		}
 
 		FTransform portalTransform(worldRot, worldPos, FVector::OneVector);
 
 		TArray<FVector> metaPlanePoints =
-		{ {bounds.Min.X, 0, bounds.Min.Z}, {bounds.Min.X, 0, bounds.Max.Z},
-		{bounds.Max.X, 0, bounds.Max.Z}, {bounds.Max.X, 0, bounds.Min.Z} };
+			{ {bounds.Min.X, 0, bounds.Min.Z}, { bounds.Min.X, 0, bounds.Max.Z },
+			{bounds.Max.X, 0, bounds.Max.Z}, { bounds.Max.X, 0, bounds.Min.Z } };
+
 
 		for (auto& p : metaPlanePoints)
 		{
@@ -361,14 +383,17 @@ bool UPortalToolBase::BeginUse()
 		}
 
 		TArray<int32> metaGraphIds;
-		if (Document->MakeMetaObject(world, metaPlanePoints, TArray<int32>(), EObjectType::OTMetaPlane, 0, metaGraphIds))
+		if (Document->MakeMetaObject(world, metaPlanePoints, TArray<int32>(), EObjectType::OTMetaPlane, 0, metaGraphIds)
+			&& metaGraphIds.Num() > 0)
 		{
 			newParentId = metaGraphIds[0];
-			FModumateObjectInstance* newMetaPlane = Document->GetObjectById(newParentId);
-
-			// Reparent to new plane.
-			FQuat newRotation;
-			UModumateObjectStatics::GetRelativeTransformOnPlanarObj(newMetaPlane, worldPos, 0.0, false, newPosition, newRotation);
+			// Check for a single new face.
+			if (Document->GetVolumeGraph().FindFace(newParentId) == nullptr
+				|| (metaGraphIds.Num() > 1 && Document->GetVolumeGraph().FindFace(metaGraphIds[1]) != nullptr))
+			{
+				Document->EndUndoRedoMacro();
+				return false;
+			}
 		}
 		else
 		{
@@ -382,7 +407,6 @@ bool UPortalToolBase::BeginUse()
 	portalData.StateType = EMOIDeltaType::Create;
 	portalData.ObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
 	portalData.ParentID = HostID;
-	portalData.Location = FVector(newPosition, 0);
 	portalData.Orientation = FQuat::Identity;
 	portalData.ObjectAssemblyKey = AssemblyKey;
 	portalData.ParentID = newParentId;
