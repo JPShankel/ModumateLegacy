@@ -2,7 +2,7 @@
 
 #include "ModumateCore/ModumateBrowserStatics.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 
 using namespace Modumate;

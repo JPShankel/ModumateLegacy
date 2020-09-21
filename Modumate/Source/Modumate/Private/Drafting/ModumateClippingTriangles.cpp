@@ -2,7 +2,7 @@
 
 #include "Drafting/ModumateClippingTriangles.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 

@@ -4,7 +4,7 @@
 
 #include "Components/SkyLightComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "DocumentManagement/ModumateObjectInstancePortal.h"
+#include "Objects/Portal.h"
 #include "DrawDebugHelpers.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
@@ -26,7 +26,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Database/ModumateObjectDatabase.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Runtime/Core/Public/Math/RandomStream.h"
 #include "UnrealClasses/CompoundMeshActor.h"

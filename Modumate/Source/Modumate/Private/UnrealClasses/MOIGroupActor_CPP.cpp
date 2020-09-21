@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UnrealClasses/MOIGroupActor_CPP.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "Algo/Transform.h"
 
 using namespace Modumate;

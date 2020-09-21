@@ -2,7 +2,7 @@
 
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "UI/RightMenu/CutPlaneDimListItemObject.h"
 #include "UI/RightMenu/CutPlaneMenuBlock.h"
 #include "Components/ListView.h"

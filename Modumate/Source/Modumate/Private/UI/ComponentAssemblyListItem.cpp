@@ -15,7 +15,7 @@
 #include "UI/ComponentListObject.h"
 #include "UI/SelectionTray/SelectionTrayWidget.h"
 #include "UI/BIM/BIMDesigner.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 using namespace Modumate;

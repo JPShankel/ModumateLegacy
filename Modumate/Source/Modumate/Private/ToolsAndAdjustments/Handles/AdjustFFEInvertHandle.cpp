@@ -1,6 +1,6 @@
 #include "ToolsAndAdjustments/Handles/AdjustFFEInvertHandle.h"
 
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/AdjustmentHandleAssetData.h"
 

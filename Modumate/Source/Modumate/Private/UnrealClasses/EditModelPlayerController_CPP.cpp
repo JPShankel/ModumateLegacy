@@ -52,7 +52,6 @@
 #include "ToolsAndAdjustments/Tools/EditModelPlaneHostedObjTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelPortalTools.h"
 #include "ToolsAndAdjustments/Tools/EditModelRailTool.h"
-#include "ToolsAndAdjustments/Tools/EditModelRoofFaceTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelRoofPerimeterTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelRotateTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelScopeBoxTool.h"

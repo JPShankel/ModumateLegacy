@@ -10,7 +10,7 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "Database/ModumateObjectDatabase.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateRoomStatics.h"
 #include "DocumentManagement/ModumateSceneCaptureObjectInterface.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"

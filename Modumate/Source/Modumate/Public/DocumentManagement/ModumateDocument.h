@@ -9,7 +9,7 @@
 #include "Graph/Graph2D.h"
 #include "DocumentManagement/ModumatePresetManager.h"
 #include "Graph/Graph3D.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "Runtime/Engine/Classes/Debug/ReporterGraph.h"
 #include "DocumentManagement/ModumateCameraView.h"
 

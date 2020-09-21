@@ -3,7 +3,7 @@
 #include "UI/SelectionTray/SelectionTrayBlockPresetList.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "UI/ComponentAssemblyListItem.h"
 #include "Database/ModumateObjectEnums.h"
 #include "Components/ListView.h"

@@ -12,7 +12,7 @@
 #include "Algo/Reverse.h"
 #include "Algo/Transform.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 
 
 AEditModelGameState_CPP::AEditModelGameState_CPP()

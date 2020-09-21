@@ -3,7 +3,7 @@
 #include "Drafting/DraftingManager.h"
 #include "Drafting/Drawings/DrawingArea.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 
 using namespace Modumate::Units;
 

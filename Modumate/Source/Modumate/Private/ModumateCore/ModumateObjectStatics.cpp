@@ -11,7 +11,7 @@
 #include "BIMKernel/BIMProperties.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "Database/ModumateSimpleMesh.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 

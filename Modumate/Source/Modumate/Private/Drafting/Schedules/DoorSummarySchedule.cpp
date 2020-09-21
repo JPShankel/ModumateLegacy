@@ -3,7 +3,7 @@
 #include "Drafting/Schedules/IconElement.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Drafting/ModumateDraftingTags.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 
 using namespace Modumate::Units;

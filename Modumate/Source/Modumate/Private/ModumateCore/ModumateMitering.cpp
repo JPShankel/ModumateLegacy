@@ -2,9 +2,9 @@
 
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "DocumentManagement/ModumateMiterNodeInterface.h"
+#include "Objects/MiterNode.h"
 #include "ModumateCore/ModumateObjectStatics.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "DrawDebugHelpers.h"
 
 namespace Modumate

@@ -4,7 +4,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "Drafting/ModumateDraftingTags.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "Algo/Copy.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDefaultDrawing"

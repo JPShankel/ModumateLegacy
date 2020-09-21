@@ -8,7 +8,7 @@
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "Graph/Graph3D.h"
 #include "Database/ModumateObjectDatabase.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 
 using namespace Modumate;
 

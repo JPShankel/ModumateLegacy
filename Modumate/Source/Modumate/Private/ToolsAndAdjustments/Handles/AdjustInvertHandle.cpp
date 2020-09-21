@@ -1,6 +1,6 @@
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
 
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"

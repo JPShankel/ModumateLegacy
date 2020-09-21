@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Database/ModumateObjectEnums.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "GameFramework/PlayerState.h"
 #include "ModumateCore/ModumateDimensionString.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"

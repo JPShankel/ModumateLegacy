@@ -5,7 +5,7 @@
 #include "UI/Custom/ModumateButtonIconTextUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 
 
 using namespace Modumate;

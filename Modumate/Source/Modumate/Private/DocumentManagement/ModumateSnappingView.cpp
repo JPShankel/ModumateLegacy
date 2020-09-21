@@ -1,7 +1,7 @@
 #include "DocumentManagement/ModumateSnappingView.h"
 
 #include "DocumentManagement/ModumateDocument.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateStats.h"
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"

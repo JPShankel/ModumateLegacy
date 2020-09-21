@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Runtime/Core/Public/Containers/Array.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 
 class AEditModelPlayerController_CPP;
 class FModumateDocument;

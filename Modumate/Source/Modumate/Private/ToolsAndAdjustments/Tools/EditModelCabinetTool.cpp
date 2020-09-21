@@ -4,7 +4,7 @@
 
 #include "Algo/Transform.h"
 #include "DocumentManagement/ModumateCommands.h"
-#include "DocumentManagement/ModumateObjectInstanceCabinets.h"
+#include "Objects/Cabinet.h"
 #include "Graph/Graph2D.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"

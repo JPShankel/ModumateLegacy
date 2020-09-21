@@ -2,7 +2,7 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelSurfaceGraphTool.h"
 
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UI/DimensionManager.h"

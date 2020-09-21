@@ -3,7 +3,7 @@
 #include "ModumateCore/ModumateRoofStatics.h"
 
 #include "BIMKernel/BIMProperties.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 
 #define DEBUG_ROOFS UE_BUILD_DEBUG

@@ -78,6 +78,18 @@ public:
 };
 
 UCLASS()
+class MODUMATE_API URoofFaceTool : public UPlaneHostedObjTool
+{
+	GENERATED_BODY()
+
+public:
+	URoofFaceTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_ROOF_FACE; }
+
+};
+
+UCLASS()
 class MODUMATE_API UCeilingTool : public UPlaneHostedObjTool
 {
 	GENERATED_BODY()

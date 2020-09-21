@@ -415,6 +415,13 @@ UFloorTool::UFloorTool(const FObjectInitializer& ObjectInitializer)
 	SetAxisConstraint(EAxisConstraint::AxesXY);
 }
 
+URoofFaceTool::URoofFaceTool(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	ObjectType = EObjectType::OTRoofFace;
+	SetAxisConstraint(EAxisConstraint::AxesXY);
+}
+
 UCeilingTool::UCeilingTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

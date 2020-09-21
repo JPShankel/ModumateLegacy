@@ -2,7 +2,7 @@
 
 #include "Components/EditableTextBox.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "UI/AdjustmentHandleAssetData.h"

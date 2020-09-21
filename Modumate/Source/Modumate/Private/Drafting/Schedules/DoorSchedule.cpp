@@ -2,7 +2,7 @@
 
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "Drafting/Schedules/ScheduleGrid.h"
 
 using namespace Modumate::Units;

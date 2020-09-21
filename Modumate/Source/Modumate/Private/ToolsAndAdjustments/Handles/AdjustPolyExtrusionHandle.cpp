@@ -1,7 +1,7 @@
 #include "ToolsAndAdjustments/Handles/AdjustPolyExtrusionHandle.h"
 
 #include "Algo/Accumulate.h"
-#include "DocumentManagement/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
