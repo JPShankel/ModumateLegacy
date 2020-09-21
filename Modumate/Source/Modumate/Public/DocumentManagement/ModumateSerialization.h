@@ -362,7 +362,7 @@ namespace Modumate
 	// Version 5: portal locations and rotations are now relative to their parent, rather than in world space.
 	// Version 6: Roof was split into RoofFace and RoofPerimeter (EToolMode VE_ROOF -> VE_ROOF_FACE and EObjectType OTRoof -> OTRoofFace)
 	// Version 7: Preset structure change, throw out presets and preserve graph for old file load
-	static const int32 DocVersion = 7;
+	static const int32 DocVersion = 8;
 
 	static const TCHAR * DocObjectInstanceField = TEXT("ModumateObjects");
 	static const TCHAR * DocHeaderField = TEXT("ModumateHeader");
