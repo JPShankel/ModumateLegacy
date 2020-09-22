@@ -283,14 +283,14 @@ ECraftingResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& 
 	}
 	else
 	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::XExtents));
-		yDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::YExtents));
+		xDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width));
+		yDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth));
 	}
 
 	FBIMKey layerMaterialKey = FBIMKey(Properties.GetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID).AsString());
 	FBIMKey profileKey = FBIMKey(Properties.GetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID).AsString());
 
-	if (!profileKey.IsNone())
+	if (ensureAlways(!profileKey.IsNone()))
 	{
 		const FSimpleMeshRef* trimMesh = InDB.GetSimpleMeshByKey(profileKey);
 
@@ -300,7 +300,7 @@ ECraftingResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& 
 		}
 	}
 
-	if (!layerMaterialKey.IsNone())
+	if (ensureAlways(!layerMaterialKey.IsNone()))
 	{
 		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(layerMaterialKey);
 		if (ensureAlways(mat != nullptr))

@@ -227,7 +227,4 @@ namespace BIMPropertyNames
 	const FBIMNameType TrimProfile = TEXT("TrimProfile");
 	const FBIMNameType UseGroupType = TEXT("UseGroupType");
 	const FBIMNameType Width = TEXT("Width");
-	const FBIMNameType XExtents = TEXT("XExtents");
-	const FBIMNameType YExtents = TEXT("YExtents");;
-	const FBIMNameType ZExtents = TEXT("ZExtents");;
 }

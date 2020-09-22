@@ -94,9 +94,6 @@ namespace BIMPropertyNames
 	extern const FBIMNameType TrimProfile;
 	extern const FBIMNameType UseGroupType;
 	extern const FBIMNameType Width;
-	extern const FBIMNameType XExtents;
-	extern const FBIMNameType YExtents;
-	extern const FBIMNameType ZExtents;
 }
 
 class MODUMATE_API FBIMPropertySheet : public Modumate::FModumateFunctionParameterSet
