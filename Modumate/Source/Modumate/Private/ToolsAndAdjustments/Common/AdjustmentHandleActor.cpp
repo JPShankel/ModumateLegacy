@@ -3,10 +3,11 @@
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Components/EditableTextBox.h"
 #include "Graph/Graph3D.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Materials/MaterialInstanceDynamic.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateObjectDeltaStatics.h"
@@ -14,12 +15,17 @@
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/AdjustmentHandleWidget.h"
+#include "UI/DimensionManager.h"
 #include "UI/EditModelPlayerHUD.h"
+#include "UI/PendingSegmentActor.h"
 #include "UI/HUDDrawWidget.h"
 #include "UI/WidgetClassAssetData.h"
+#include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 
 using namespace Modumate;
@@ -146,6 +152,23 @@ void AAdjustmentHandleActor::PostEndOrAbort()
 		}
 	}
 
+	if (HasDimensionActor() && GameInstance && GameInstance->DimensionManager)
+	{
+		UDimensionWidget* dimensionWidget = nullptr;
+		auto dimensionActor = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID);
+		if (ensure(dimensionActor))
+		{
+			dimensionWidget = dimensionActor->DimensionText;
+		}
+		if (dimensionWidget != nullptr)
+		{
+			dimensionWidget->Measurement->OnTextCommitted.RemoveDynamic(this, &AAdjustmentHandleActor::OnTextCommitted);
+
+			GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+			PendingSegmentID = MOD_ID_NONE;
+		}
+	}
+
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
 	if (SourceMOI && !SourceMOI->IsDestroyed())
@@ -254,12 +277,56 @@ bool AAdjustmentHandleActor::BeginUse()
 
 	bIsInUse = true;
 
+	if (auto world = GetWorld())
+	{
+		GameInstance = Cast<UModumateGameInstance>(GetWorld()->GetGameInstance());
+
+		if (HasDimensionActor())
+		{
+			auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+			PendingSegmentID = dimensionActor->ID;
+
+			auto dimensionWidget = dimensionActor->DimensionText;
+			dimensionWidget->Measurement->SetIsReadOnly(false);
+			dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &AAdjustmentHandleActor::OnTextCommitted);
+
+			GameInstance->DimensionManager->SetActiveActorID(PendingSegmentID);
+		}
+	}
+
+	AnchorLoc = GetHandlePosition();
+
 	return true;
 }
 
 bool AAdjustmentHandleActor::UpdateUse()
 {
 	Controller->AddAllOriginAffordances();
+
+	if (HasDimensionActor())
+	{
+		ALineActor* pendingSegment = nullptr;
+		auto dimensionActor = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID);
+		if (ensure(dimensionActor))
+		{
+			pendingSegment = dimensionActor->GetLineActor();
+		}
+
+		if (pendingSegment != nullptr)
+		{
+			FVector hitPoint = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
+			FVector offset = hitPoint - AnchorLoc;
+
+			pendingSegment->Point1 = AnchorLoc;
+			pendingSegment->Point2 = AnchorLoc + offset;
+			pendingSegment->Color = FColor::Black;
+			pendingSegment->Thickness = 3.0f;
+		}
+		else
+		{
+			return false;
+		}
+	}
 
 	return true;
 }
@@ -313,6 +380,11 @@ bool AAdjustmentHandleActor::HandleInputNumber(float number)
 	return false;
 }
 
+bool AAdjustmentHandleActor::HasDimensionActor()
+{
+	return true;
+}
+
 FVector AAdjustmentHandleActor::GetHandlePosition() const
 {
 	return SourceMOI ? SourceMOI->GetObjectLocation() : FVector::ZeroVector;
@@ -344,4 +416,24 @@ void AAdjustmentHandleActor::SetSign(float InSign)
 	{
 		Sign = InSign;
 	}
+}
+
+void AAdjustmentHandleActor::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	if (CommitMethod != ETextCommit::OnEnter)
+	{
+		return;
+	}
+
+	auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString());
+
+	float lengthValue = dimension.Centimeters;
+
+	auto dimensionWidget = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->DimensionText;
+	// unnecessary if every implementation ends up calling EndUse
+	dimensionWidget->UpdateText(lengthValue);
+
+	// TODO: there is other shared behavior that could be useful here in the Controller's implementation, 
+	// like setting the mouse cursor position
+	HandleInputNumber(lengthValue);
 }

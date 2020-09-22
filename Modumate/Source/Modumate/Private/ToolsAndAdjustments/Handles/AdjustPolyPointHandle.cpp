@@ -52,20 +52,6 @@ bool AAdjustPolyPointHandle::BeginUse()
 	AnchorLoc = FVector::PointPlaneProject(GetHandlePosition(), PolyPlane);
 	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorLoc, FVector(PolyPlane));
 
-	if (auto world = GetWorld())
-	{
-		GameInstance = Cast<UModumateGameInstance>(GetWorld()->GetGameInstance());
-
-		auto dimensionActor = GameInstance->DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
-		PendingSegmentID = dimensionActor->ID;
-
-		auto dimensionWidget = dimensionActor->DimensionText;
-		dimensionWidget->Measurement->SetIsReadOnly(false);
-		dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &AAdjustPolyPointHandle::OnTextCommitted);
-
-		GameInstance->DimensionManager->SetActiveActorID(PendingSegmentID);
-	}
-
 	return true;
 }
 
@@ -129,20 +115,6 @@ bool AAdjustPolyPointHandle::UpdateUse()
 	}
 
 	return true;
-}
-
-void AAdjustPolyPointHandle::PostEndOrAbort()
-{
-	if (GameInstance && GameInstance->DimensionManager)
-	{
-		auto dimensionWidget = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->DimensionText;
-		dimensionWidget->Measurement->OnTextCommitted.RemoveDynamic(this, &AAdjustPolyPointHandle::OnTextCommitted);
-
-		GameInstance->DimensionManager->ReleaseDimensionActor(PendingSegmentID);
-		PendingSegmentID = MOD_ID_NONE;
-	}
-
-	Super::PostEndOrAbort();
 }
 
 FVector AAdjustPolyPointHandle::GetHandlePosition() const
@@ -223,26 +195,9 @@ FVector AAdjustPolyPointHandle::GetHandleDirection() const
 bool AAdjustPolyPointHandle::HandleInputNumber(float number)
 {
 	// TODO: reimplement with UModumateGeometryStatics::TranslatePolygonEdge and new dimension string manager
-	return false;
-}
-
-void AAdjustPolyPointHandle::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
-{
-	if (CommitMethod != ETextCommit::OnEnter)
-	{
-		return;
-	}
-
-	auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString());
-
-	float lengthValue = dimension.Centimeters;
-
-	auto dimensionWidget = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->DimensionText;
-	dimensionWidget->UpdateText(lengthValue);
-
 	FModumateDocument* doc = Controller->GetDocument();
 	TMap<int32, FTransform> objectInfo;
-	if (GetTransforms(lengthValue * OriginalDirection, objectInfo))
+	if (GetTransforms(number * OriginalDirection, objectInfo))
 	{
 		// TODO: preview operation is no longer necessary, but removing this could cause ensures
 		// until the other handles are refactored
@@ -264,6 +219,8 @@ void AAdjustPolyPointHandle::OnTextCommitted(const FText& Text, ETextCommit::Typ
 	{
 		EndUse();
 	}
+
+	return true;
 }
 
 void AAdjustPolyPointHandle::SetAdjustPolyEdge(bool bInAdjustPolyEdge)

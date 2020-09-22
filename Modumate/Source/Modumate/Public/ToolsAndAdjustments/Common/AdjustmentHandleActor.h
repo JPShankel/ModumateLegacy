@@ -47,6 +47,7 @@ public:
 	virtual void AbortUse();
 	virtual bool IsInUse() const;
 	virtual bool HandleInputNumber(float number);
+	virtual bool HasDimensionActor();
 	virtual bool HandleInvert();
 	virtual FVector GetHandlePosition() const;
 	virtual FVector GetHandleDirection() const;
@@ -54,6 +55,9 @@ public:
 	void SetTargetMOI(FModumateObjectInstance *InTargetMOI);
 	void SetTargetIndex(int32 InTargetIndex);
 	void SetSign(float InSign);
+
+	UFUNCTION()
+	void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
 	bool bEnabled = false;
 	bool bIsInUse = false;
@@ -67,10 +71,17 @@ public:
 
 	int32 TargetIndex = INDEX_NONE;
 	float Sign = 0.0f;
+	FVector AnchorLoc;
 
 	EMouseMode OriginalMouseMode;
 	bool AcceptRawInputNumber = false; // Raw user input is accepted if true, else it converts to imperial unit
 
+	// Dimension Widget
+	UPROPERTY()
+	class UModumateGameInstance *GameInstance;
+	int32 PendingSegmentID = MOD_ID_NONE;
+
+	// Handle sprite widget
 	UPROPERTY()
 	class UAdjustmentHandleWidget* Widget;
 
