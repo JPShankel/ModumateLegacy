@@ -1,7 +1,12 @@
 #include "ToolsAndAdjustments/Handles/AdjustFFEPointHandle.h"
 
+#include "ModumateCore/ModumateObjectDeltaStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "UI/EditModelPlayerHUD.h"
+#include "UI/AdjustmentHandleAssetData.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 using namespace Modumate;
 
@@ -21,17 +26,13 @@ bool AAdjustFFEPointHandle::BeginUse()
 		return false;
 	}
 
-	FVector actorLoc = GetHandlePosition();
-	AnchorLoc = FVector(actorLoc.X, actorLoc.Y, TargetMOI->GetActor()->GetActorLocation().Z);
-
-	OriginalHandleLoc = GetHandlePosition();
 	OriginalObjectLoc = TargetMOI->GetActor()->GetActorLocation();
 	OriginalObjectRot = TargetMOI->GetObjectRotation();
 
 	FVector curObjectNormal = OriginalObjectRot.RotateVector(AssemblyNormal);
 	FVector curObjectTangent = OriginalObjectRot.RotateVector(AssemblyTangent);
 
-	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(OriginalHandleLoc, curObjectNormal, curObjectTangent);
+	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorLoc, curObjectNormal, curObjectTangent);
 
 	return true;
 }
@@ -42,56 +43,20 @@ bool AAdjustFFEPointHandle::UpdateUse()
 
 	Super::UpdateUse();
 
-	if (!UpdateTarget())
+	FTransform newTransform;
+	if (!GetTransform(newTransform))
 	{
 		return false;
 	}
 
-	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
-	FTransform newTransform = TargetMOI->GetActor()->GetActorTransform();
-	FVector translation = newTransform.GetLocation() - OriginalObjectLoc;
-
-	// If the object has moved along its existing mounting plane, then show dimension strings
-	if (newTransform.GetRotation().Equals(OriginalObjectRot) &&
-		FMath::IsNearlyZero(translation | cursor.AffordanceFrame.Normal, PLANAR_DOT_EPSILON))
-	{
-		FVector newHandleLoc = GetHandlePosition();
-
-		FVector axisTangent = cursor.AffordanceFrame.Tangent;
-		FVector axisBitangent = cursor.AffordanceFrame.Tangent ^ cursor.AffordanceFrame.Normal;
-
-		FVector offsetTangent = translation.ProjectOnToNormal(axisTangent);
-		FVector offsetBitangent = translation.ProjectOnToNormal(axisBitangent);
-
-		// Add tangent dimension string (repurposing the Delta ID)
-		UModumateFunctionLibrary::AddNewDimensionString(
-			Controller,
-			newHandleLoc - offsetTangent,
-			newHandleLoc,
-			axisBitangent,
-			Controller->DimensionStringGroupID_Default,
-			Controller->DimensionStringUniqueID_Delta,
-			0,
-			TargetMOI->GetActor(),
-			EDimStringStyle::HCamera);
-
-		// Add bitangent dimension string (repurposing the Total ID)
-		UModumateFunctionLibrary::AddNewDimensionString(
-			Controller,
-			newHandleLoc - offsetBitangent,
-			newHandleLoc,
-			axisTangent,
-			Controller->DimensionStringGroupID_Default,
-			Controller->DimensionStringUniqueID_Total,
-			1,
-			TargetMOI->GetActor(),
-			EDimStringStyle::Fixed);
-	}
+	TMap<int32, FTransform> objectInfo;
+	objectInfo.Add(TargetMOI->ID, newTransform);
+	FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Controller->GetDocument(), Controller->GetWorld(), true);
 
 	return true;
 }
 
-bool AAdjustFFEPointHandle::UpdateTarget()
+bool AAdjustFFEPointHandle::GetTransform(FTransform &OutTransform)
 {
 	// Fail out if the actor is ever unavailable
 	AActor *moiActor = TargetMOI->GetActor();
@@ -107,44 +72,33 @@ bool AAdjustFFEPointHandle::UpdateTarget()
 		return true;
 	}
 
-	FTransform newTransform = moiActor->GetActorTransform();
+	OutTransform = moiActor->GetActorTransform();
 
 	// If we have a hit normal, then compute a mounting transform based on the cursor.
-	if (UModumateObjectStatics::GetFFEMountedTransform(&TargetMOI->GetAssembly(), cursor, newTransform))
+	if (UModumateObjectStatics::GetFFEMountedTransform(&TargetMOI->GetAssembly(), cursor, OutTransform))
 	{
 		// If we hit a face that isn't coincident with the original mounting plane,
 		// then use the new mounting transform's rotation, as if we're placing the FF&E for the first time.
 		if (FVector::Coincident(cursor.HitNormal, cursor.AffordanceFrame.Normal))
 		{
-			newTransform.SetRotation(OriginalObjectRot);
+			OutTransform.SetRotation(OriginalObjectRot);
 		}
 
-		FVector newHandleOffset = newTransform.TransformVector(LocalHandlePos);
+		FVector newHandleOffset = OutTransform.TransformVector(LocalHandlePos);
 		FVector newHandlePlanarOffset = FVector::VectorPlaneProject(newHandleOffset, cursor.HitNormal);
-		FVector newActorPos = newTransform.GetLocation() - newHandlePlanarOffset;
+		FVector newActorPos = OutTransform.GetLocation() - newHandlePlanarOffset;
 
-		newTransform.SetLocation(newActorPos);
+		OutTransform.SetLocation(newActorPos);
 	}
 	// Otherwise, just translate the FF&E along the sketch plane
 	else
 	{
-		FVector translation = (cursor.SketchPlaneProject(cursor.WorldPosition) - OriginalHandleLoc);
-		newTransform.SetLocation(OriginalObjectLoc + translation);
-		newTransform.SetRotation(OriginalObjectRot);
+		FVector translation = (cursor.SketchPlaneProject(cursor.WorldPosition) - AnchorLoc);
+		OutTransform.SetLocation(OriginalObjectLoc + translation);
+		OutTransform.SetRotation(OriginalObjectRot);
 	}
 
-	TargetMOI->SetWorldTransform(newTransform);
-	//moiActor->SetActorTransform(newTransform);
-
 	return true;
-}
-
-void AAdjustFFEPointHandle::EndUse()
-{
-	// Update the target now, in case the cursor has changed since the last UpdateUse (i.e. during HandleInputNumber)
-	UpdateTarget();
-
-	Super::EndUse();
 }
 
 void AAdjustFFEPointHandle::AbortUse()
@@ -183,42 +137,25 @@ bool AAdjustFFEPointHandle::HandleInputNumber(float number)
 		return true;
 	}
 
-	FTransform curTransform = moiActor->GetActorTransform();
-	FVector curTranslation = curTransform.GetLocation() - OriginalObjectLoc;
-	FQuat curRotation = curTransform.GetRotation();
-
-	// If the object has moved off of its original mounting plane, don't handle the input numbers
-	if (!curRotation.Equals(OriginalObjectRot) ||
-		!FMath::IsNearlyZero(curTranslation | cursor.AffordanceFrame.Normal, PLANAR_DOT_EPSILON))
+	FTransform newTransform;
+	if (!GetTransform(newTransform))
 	{
 		return false;
 	}
 
-	// Delta ID was used for tangent
-	FVector moveAxis(ForceInitToZero);
-	if (Controller->EnableDrawDeltaLine)
+	FVector direction = newTransform.GetTranslation() - OriginalObjectLoc;
+	direction.Normalize();
+
+	FVector delta = number * direction;
+	TMap<int32, FTransform> objectInfo;
+	objectInfo.Add(TargetMOI->ID, FTransform(newTransform.GetRotation(), OriginalObjectLoc + delta));
+	FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Controller->GetDocument(), Controller->GetWorld(), false);
+
+	if (!IsActorBeingDestroyed())
 	{
-		moveAxis = cursor.AffordanceFrame.Tangent;
-	}
-	// Total ID was used for bitangent
-	else if (Controller->EnableDrawTotalLine)
-	{
-		moveAxis = cursor.AffordanceFrame.Tangent ^ cursor.AffordanceFrame.Normal;
-	}
-	else
-	{
-		return false;
+		PostEndOrAbort();
 	}
 
-	if ((moveAxis | curTranslation) < 0.0f)
-	{
-		moveAxis *= -1.0f;
-	}
-
-	FVector delta = number * moveAxis;
-	TargetMOI->SetObjectLocation(OriginalObjectLoc + delta);
-
-	EndUse();
 	return true;
 }
 

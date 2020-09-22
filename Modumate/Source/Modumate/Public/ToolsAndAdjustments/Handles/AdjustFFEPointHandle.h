@@ -16,7 +16,6 @@ public:
 
 	virtual bool BeginUse() override;
 	virtual bool UpdateUse() override;
-	virtual void EndUse() override;
 	virtual void AbortUse() override;
 	virtual FVector GetHandlePosition() const override;
 	virtual bool HandleInputNumber(float number) override;
@@ -29,13 +28,11 @@ protected:
 	FVector AssemblyTangent;
 	FVector LocalHandlePos;
 
-	FVector AnchorLoc;
 	FVector OriginalObjectLoc;
 	FQuat OriginalObjectRot;
-	FVector OriginalHandleLoc;
 		
 	TArray<FVector> LastValidPendingCPLocations;
 	FVector MeshExtent;
 
-	bool UpdateTarget();
+	bool GetTransform(FTransform &OutTransform);
 };
