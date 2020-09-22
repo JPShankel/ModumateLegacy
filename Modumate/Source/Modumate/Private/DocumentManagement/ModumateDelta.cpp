@@ -1,13 +1,11 @@
-#include "DocumentManagement/ModumateDelta.h"
+#include "DocumentManagement/DocumentDelta.h"
 
-namespace Modumate
+FDocumentDelta::FDocumentDelta()
 {
-	FDelta::FDelta()
-	{
 
-	}
-	FDelta::~FDelta()
-	{
+}
 
-	}
+FDocumentDelta::~FDocumentDelta()
+{
+
 }

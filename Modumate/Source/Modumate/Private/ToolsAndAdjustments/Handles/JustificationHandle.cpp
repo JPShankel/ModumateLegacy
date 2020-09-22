@@ -39,7 +39,7 @@ bool AJustificationHandle::BeginUse()
 		// to avoid unnecessary state changes like handle visibility.
 		TargetMOI->BeginPreviewOperation();
 		TargetMOI->SetExtents(FVector(JustificationValue, 0.0f, 0.0f));
-		auto delta = MakeShareable(new FMOIDelta({ TargetMOI }));
+		auto delta = MakeShared<FMOIDelta>(TargetMOI);
 		TargetMOI->EndPreviewOperation();
 
 		GameState->Document.ApplyDeltas({ delta }, GetWorld());

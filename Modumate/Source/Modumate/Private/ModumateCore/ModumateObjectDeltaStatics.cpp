@@ -124,7 +124,7 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 		}
 	}
 
-	TArray<TSharedPtr<Modumate::FDelta>> deltas;
+	TArray<FDeltaPtr> deltas;
 	if (vertex3DMovements.Num() > 0)
 	{
 		TArray<int32> vertexMoveIDs;
@@ -145,7 +145,7 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 	else if (combinedVertex2DMovements.Num() > 0)
 	{
 		int32 nextID = doc->GetNextAvailableID();
-		TArray<Modumate::FGraph2DDelta> surfaceGraphDeltas;
+		TArray<FGraph2DDelta> surfaceGraphDeltas;
 		for (auto& kvp : combinedVertex2DMovements)
 		{
 			surfaceGraphDeltas.Reset();
@@ -164,7 +164,7 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 
 			for (auto& delta : surfaceGraphDeltas)
 			{
-				deltas.Add(MakeShareable(new Modumate::FGraph2DDelta{ delta }));
+				deltas.Add(MakeShareable(new FGraph2DDelta{ delta }));
 			}
 		}
 	}
@@ -173,7 +173,7 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 		for (auto& kvp : ObjectMovements)
 		{
 			auto moi = doc->GetObjectById(kvp.Key);
-			FMOIDelta delta = FMOIDelta({ moi });
+			FMOIDelta delta = FMOIDelta(moi);
 
 			int32 numCPs = delta.StatePairs[0].Value.ControlPoints.Num();
 			FVector displacement = kvp.Value.GetTranslation() - delta.StatePairs[0].Key.Location;
@@ -186,7 +186,7 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 			delta.StatePairs[0].Value.Location = kvp.Value.GetTranslation();
 			delta.StatePairs[0].Value.Orientation = kvp.Value.GetRotation();
 
-			deltas.Add(MakeShareable(new FMOIDelta(delta)));
+			deltas.Add(MakeShared<FMOIDelta>(delta));
 		}
 	}
 

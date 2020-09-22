@@ -57,8 +57,8 @@ bool UTrimTool::BeginUse()
 		stateData.ParentID = TargetEdgeID;
 		stateData.ObjectID = GameState->Document.GetNextAvailableID();
 
-		TArray<TSharedPtr<FDelta>> deltas;
-		deltas.Add(MakeShareable(new FMOIDelta({ stateData })));
+		TArray<FDeltaPtr> deltas;
+		deltas.Add(MakeShared<FMOIDelta>(stateData));
 
 		GameState->Document.ApplyDeltas(deltas, GetWorld());
 

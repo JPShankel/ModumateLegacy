@@ -27,7 +27,7 @@ void FMOIMetaVertexImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &b
 	}
 }
 
-bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{

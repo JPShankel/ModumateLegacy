@@ -89,10 +89,10 @@ bool ACreateRoofFacesHandle::BeginUse()
 			return false;
 		}
 
-		TArray<TSharedPtr<FDelta>> deltaPtrs;
+		TArray<FDeltaPtr> deltaPtrs;
 		for (const FGraph3DDelta &graphDelta : graphDeltas)
 		{
-			deltaPtrs.Add(MakeShareable(new FGraph3DDelta(graphDelta)));
+			deltaPtrs.Add(MakeShared<FGraph3DDelta>(graphDelta));
 		}
 
 		bool bAppliedDeltas = doc.ApplyDeltas(deltaPtrs, world);

@@ -21,7 +21,7 @@ FVector FMOISurfaceEdgeImpl::GetCorner(int32 index) const
 	return (index == 0) ? CachedDeprojectedStart : CachedDeprojectedEnd;
 }
 
-bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	auto surfaceGraphObj = MOI ? MOI->GetParentObject() : nullptr;
 	auto doc = MOI ? MOI->GetDocument() : nullptr;

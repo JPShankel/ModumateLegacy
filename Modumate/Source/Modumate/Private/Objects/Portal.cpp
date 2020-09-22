@@ -56,7 +56,7 @@ FVector FMOIPortalImpl::GetNormal() const
 	return portalTransform.GetUnitAxis(EAxis::Y);
 }
 
-bool FMOIPortalImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+bool FMOIPortalImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	if (!FModumateObjectInstanceImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
 	{
@@ -341,10 +341,10 @@ void FMOIPortalImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCompos
 			FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Key);
 			FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Value);
 
-			TSharedPtr<Modumate::FDraftingLine> line = MakeShareable(new Modumate::FDraftingLine(
+			TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
 				Modumate::Units::FCoordinates2D::WorldCentimeters(start),
 				Modumate::Units::FCoordinates2D::WorldCentimeters(end),
-				defaultThickness, defaultColor));
+				defaultThickness, defaultColor);
 			line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemCutLine);
 			ParentPage->Children.Add(line);
 		}
@@ -426,11 +426,11 @@ void FMOIPortalImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCompos
 					float width = windowDiagonal.X / numPanels;
 
 					// create arc object
-					TSharedPtr<FDraftingArc> doorSwing = MakeShareable(new FDraftingArc(
+					TSharedPtr<FDraftingArc> doorSwing = MakeShared<FDraftingArc>(
 						Units::FRadius::WorldCentimeters(width),
 						Units::FAngle::Degrees(defaultDoorOpeningDegrees),
 						defaultThickness,
-						swingColor));
+						swingColor);
 					doorSwing->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemOperatorLine);
 
 					FVector2D hingeLocation2D = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, hingeLocation);
@@ -439,7 +439,7 @@ void FMOIPortalImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCompos
 
 					ParentPage->Children.Add(doorSwing);
 
-					TSharedPtr<FDraftingLine> doorLine = MakeShareable(new FDraftingLine(Units::FLength::WorldCentimeters(width), defaultThickness, swingColor));
+					TSharedPtr<FDraftingLine> doorLine = MakeShared<FDraftingLine>(Units::FLength::WorldCentimeters(width), defaultThickness, swingColor);
 					doorLine->SetLocalPosition(Units::FCoordinates2D::WorldCentimeters(hingeLocation2D));
 					doorLine->SetLocalOrientation(Units::FAngle::Radians(angle + (PI*-0.5f)));
 					doorLine->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemOperatorLine);
@@ -743,10 +743,10 @@ void FMOIPortalImpl::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 		if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 		{
 
-			TSharedPtr<Modumate::FDraftingLine> line = MakeShareable(new Modumate::FDraftingLine(
+			TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
 				Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
 				Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
-				Modumate::Units::FThickness::Points(0.125f), Modumate::FMColor::Gray64));
+				Modumate::Units::FThickness::Points(0.125f), Modumate::FMColor::Gray64);
 			ParentPage->Children.Add(line);
 			line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemBeyond);
 		}

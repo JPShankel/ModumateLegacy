@@ -206,10 +206,10 @@ void FMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 
 				if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 				{
-					TSharedPtr<Modumate::FDraftingLine> line = MakeShareable(new Modumate::FDraftingLine(
+					TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
 						Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
 						Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
-						Modumate::Units::FThickness::Points(0.25f), Modumate::FMColor::Black));
+						Modumate::Units::FThickness::Points(0.25f), Modumate::FMColor::Black);
 					ParentPage->Children.Add(line);
 					line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kBeamColumnCut);
 				}
@@ -240,11 +240,11 @@ void FMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 
 			if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 			{
-				TSharedPtr<Modumate::FDraftingLine> line = MakeShareable(new Modumate::FDraftingLine(
+				TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
 					Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
 					Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
 					Modumate::Units::FThickness::Points(bool(clippedLine.Count) ? 0.15f : 0.05f),
-					Modumate::FMColor::Gray128));
+					Modumate::FMColor::Gray128);
 				ParentPage->Children.Add(line);
 				line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kBeamColumnBeyond);
 			}

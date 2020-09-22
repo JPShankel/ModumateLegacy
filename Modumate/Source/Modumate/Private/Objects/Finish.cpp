@@ -38,7 +38,7 @@ FVector FMOIFinishImpl::GetNormal() const
 	return CachedGraphOrigin.GetRotation().GetAxisZ();
 }
 
-bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{

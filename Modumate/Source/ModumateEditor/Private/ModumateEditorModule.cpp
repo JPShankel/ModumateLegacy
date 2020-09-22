@@ -39,7 +39,7 @@ void FModumateEditorModule::StartupModule()
 	IAssetTools& assetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
 
 	ModumateAssetCategory = assetTools.RegisterAdvancedAssetCategory(AssetCategoryName, assetCategoryText);
-	assetTools.RegisterAssetTypeActions(MakeShareable(new FAssetTypeActions_SimpleMeshData));
+	assetTools.RegisterAssetTypeActions(MakeShared<FAssetTypeActions_SimpleMeshData>());
 }
 
 void FModumateEditorModule::ShutdownModule()

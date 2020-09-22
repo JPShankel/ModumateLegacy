@@ -432,8 +432,8 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 			stateData.ParentID = targetEdgeID;
 			stateData.ObjectID = GameState->Document.GetNextAvailableID();
 
-			TArray<TSharedPtr<FDelta>> deltas;
-			deltas.Add(MakeShareable(new FMOIDelta({ stateData })));
+			TArray<FDeltaPtr> deltas;
+			deltas.Add(MakeShared<FMOIDelta>(stateData));
 
 			if (!GameState->Document.ApplyDeltas(deltas, GetWorld()))
 			{

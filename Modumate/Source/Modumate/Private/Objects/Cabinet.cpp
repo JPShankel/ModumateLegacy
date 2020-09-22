@@ -57,7 +57,7 @@ FVector FMOICabinetImpl::GetNormal() const
 	return CachedBaseOrigin.GetRotation().GetAxisZ();
 }
 
-bool FMOICabinetImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+bool FMOICabinetImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	if (MOI == nullptr)
 	{
@@ -272,8 +272,8 @@ bool ASelectCabinetFrontHandle::BeginUse()
 
 	EndUse();
 
-	TArray<TSharedPtr<FDelta>> deltas;
-	deltas.Add(MakeShareable(new FMOIDelta({ TargetMOI })));
+	TArray<FDeltaPtr> deltas;
+	deltas.Add(MakeShared<FMOIDelta>(TargetMOI));
 	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	FModumateDocument* doc = &gameState->Document;
 
@@ -371,10 +371,10 @@ void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &Par
 
 			if (UModumateFunctionLibrary::ClipLine2DToRectangle(lineStart, lineEnd, BoundingBox, clippedStart, clippedEnd))
 			{
-				TSharedPtr<Modumate::FDraftingLine> clippedLine = MakeShareable(new Modumate::FDraftingLine(
+				TSharedPtr<Modumate::FDraftingLine> clippedLine = MakeShared<Modumate::FDraftingLine>(
 					Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
 					Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
-					lineThickness, lineColor));
+					lineThickness, lineColor);
 				ParentPage->Children.Add(clippedLine);
 				clippedLine->SetLayerTypeRecursive(dwgLayerType);
 			}
@@ -409,10 +409,10 @@ void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &Par
 				if (UModumateFunctionLibrary::ClipLine2DToRectangle(start, end, BoundingBox, boxClipped0, boxClipped1))
 				{
 
-					TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
+					TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 						Units::FCoordinates2D::WorldCentimeters(boxClipped0),
 						Units::FCoordinates2D::WorldCentimeters(boxClipped1),
-						Units::FThickness::Points(0.15f), FMColor::Gray144));
+						Units::FThickness::Points(0.15f), FMColor::Gray144);
 					ParentPage->Children.Add(line);
 					line->SetLayerTypeRecursive(FModumateLayerType::kCabinetBeyond);
 				}

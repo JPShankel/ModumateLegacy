@@ -218,8 +218,8 @@ bool USelectTool::HandleInvert()
 		ob->EndPreviewOperation();
 	}
 
-	TArray<TSharedPtr<FDelta>> deltas;
-	deltas.Add(MakeShareable(new FMOIDelta(Controller->EMPlayerState->SelectedObjects)));
+	TArray<FDeltaPtr> deltas;
+	deltas.Add(MakeShared<FMOIDelta>(Controller->EMPlayerState->SelectedObjects));
 
 	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	FModumateDocument* doc = &gameState->Document;

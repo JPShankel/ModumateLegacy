@@ -324,7 +324,7 @@ bool UPortalToolBase::BeginUse()
 
 	const bool bPaintTool = CreateObjectMode == EToolCreateObjectMode::Apply;
 
-	TArray<TSharedPtr<FDelta>> deltas;
+	TArray<FDeltaPtr> deltas;
 	Document->BeginUndoRedoMacro();
 
 	if (bPaintTool)

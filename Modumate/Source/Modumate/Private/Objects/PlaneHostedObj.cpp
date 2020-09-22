@@ -109,7 +109,7 @@ void FMOIPlaneHostedObjImpl::Destroy()
 	MarkEdgesMiterDirty();
 }
 
-bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{
@@ -534,10 +534,10 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 
 					if (UModumateFunctionLibrary::ClipLine2DToRectangle(rangeStart, rangeEnd, BoundingBox, clippedStart, clippedEnd))
 					{
-						TSharedPtr<Modumate::FDraftingLine> line = MakeShareable(new Modumate::FDraftingLine(
+						TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
 							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
 							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
-							lineThickness, lineColor));
+							lineThickness, lineColor);
 						ParentPage->Children.Add(line);
 						line->SetLayerTypeRecursive(dwgLayerType);
 					}
@@ -545,19 +545,19 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 					{
 						if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint], rangeStart, BoundingBox, clippedStart, clippedEnd))
 						{
-							TSharedPtr<Modumate::FDraftingLine> line = MakeShareable(new Modumate::FDraftingLine(
+							TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
 								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
 								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
-								lineThickness, lineColor));
+								lineThickness, lineColor);
 							ParentPage->Children.Add(line);
 							line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kSeparatorCutOuterSurface);
 						}
 						if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint+1], rangeEnd, BoundingBox, clippedStart, clippedEnd))
 						{
-							TSharedPtr<Modumate::FDraftingLine> line = MakeShareable(new Modumate::FDraftingLine(
+							TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
 								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
 								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
-								lineThickness, lineColor));
+								lineThickness, lineColor);
 							ParentPage->Children.Add(line);
 							line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kSeparatorCutOuterSurface);
 						}
@@ -723,10 +723,10 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 
 					if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 					{
-						TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShareable(new Modumate::FDraftingLine(
+						TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShared<Modumate::FDraftingLine>(
 							Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
 							Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
-							outerThickness, Modumate::FMColor::Black));
+							outerThickness, Modumate::FMColor::Black);
 						ParentPage->Children.Add(draftingLine);
 						draftingLine->SetLayerTypeRecursive(line.Value);
 					}

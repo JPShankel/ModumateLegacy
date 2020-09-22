@@ -2,23 +2,21 @@
 
 #pragma once
 
-#include <functional>
-#include "UnrealClasses/DynamicMeshActor.h"
-#include "DocumentManagement/ModumateSerialization.h"
 #include "Database/ModumateObjectDatabase.h"
-#include "Graph/Graph2D.h"
-#include "DocumentManagement/ModumatePresetManager.h"
-#include "Graph/Graph3D.h"
-#include "Objects/ModumateObjectInstance.h"
-#include "Runtime/Engine/Classes/Debug/ReporterGraph.h"
+#include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/ModumateCameraView.h"
+#include "DocumentManagement/ModumatePresetManager.h"
+#include "DocumentManagement/ModumateSerialization.h"
+#include "Graph/Graph2D.h"
+#include "Graph/Graph2DDelta.h"
+#include "Graph/Graph3D.h"
+#include "Graph/Graph3DDelta.h"
+#include "Objects/ModumateObjectInstance.h"
 
-class AEditModelPlayerState_CPP;
 
 namespace Modumate
 {
 	class FModumateDraftingView;
-	class FDelta;
 }
 
 class FModumateObjectInstance;
@@ -29,11 +27,11 @@ private:
 
 	struct UndoRedo
 	{
-		TArray<TSharedPtr<Modumate::FDelta>> Deltas;
+		TArray<FDeltaPtr> Deltas;
 	};
 
 	TArray<TSharedPtr<UndoRedo>> UndoBuffer, RedoBuffer;
-	TArray<TSharedPtr<Modumate::FDelta>> PreviewDeltas;
+	TArray<FDeltaPtr> PreviewDeltas;
 
 	int32 NextID;
 
@@ -91,7 +89,7 @@ public:
 	const TArray<FModumateObjectInstance*>& GetObjectInstances() const { return ObjectInstanceArray; }
 	TArray<FModumateObjectInstance*>& GetObjectInstances() { return ObjectInstanceArray; }
 
-	bool CleanObjects(TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas = nullptr);
+	bool CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas = nullptr);
 	void RegisterDirtyObject(EObjectDirtyFlags DirtyType, FModumateObjectInstance *DirtyObj, bool bDirty);
 
 	void AddCommandToHistory(const FString &cmd);
@@ -129,10 +127,10 @@ public:
 	bool MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height);
 
 	// Allocates IDs for new objects, finds new parent IDs for objects, and marks objects for deletion after another graph operation
-	bool FinalizeGraph2DDelta(const Modumate::FGraph2DDelta &Delta, TMap<int32, Modumate::FGraph2DHostedObjectDelta> &OutParentIDUpdates);
-	bool FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, Modumate::FGraph3DDelta &Delta);
+	bool FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<int32, FGraph2DHostedObjectDelta> &OutParentIDUpdates);
+	bool FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, FGraph3DDelta &Delta);
 
-	bool GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<TSharedPtr<Modumate::FDelta>>& OutDeltas);
+	bool GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);
 	bool MoveMetaVertices(UWorld* World, const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions);
 
 	bool JoinMetaObjects(UWorld *World, const TArray<int32> &ObjectIDs);
@@ -193,21 +191,21 @@ private:
 
 	// Preview Operations
 public:
-	bool ApplyPreviewDeltas(const TArray<TSharedPtr<Modumate::FDelta>> &Deltas, UWorld *World);
+	bool ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World);
 	void ClearPreviewDeltas(UWorld *World);
 
-	bool GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<TSharedPtr<Modumate::FDelta>>& OutDeltas);
+	bool GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);
 
 public:
 	bool ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World);
-	void ApplyGraph2DDelta(const Modumate::FGraph2DDelta &Delta, UWorld *World);
-	void ApplyGraph3DDelta(const Modumate::FGraph3DDelta &Delta, UWorld *World);
-	bool ApplyDeltas(const TArray<TSharedPtr<Modumate::FDelta>> &Deltas, UWorld *World);
+	void ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World);
+	void ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World);
+	bool ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World);
 
 	void UpdateVolumeGraphObjects(UWorld *World);
 
 private:
-	bool FinalizeGraphDeltas(TArray <Modumate::FGraph3DDelta> &Deltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs);
+	bool FinalizeGraphDeltas(TArray <FGraph3DDelta> &Deltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs);
 	bool PostApplyDeltas(UWorld *World);
 
 	// Helper function for ObjectFromActor

@@ -92,13 +92,13 @@ bool URoofPerimeterTool::Activate()
 		state.ObjectID = perimeterID;
 		UModumateRoofStatics::InitializeProperties(&state.ObjectProperties, numEdges);
 
-		TSharedPtr<FMOIDelta> perimeterCreationDelta = MakeShareable(new FMOIDelta({ state }));
+		TSharedPtr<FMOIDelta> perimeterCreationDelta = MakeShared<FMOIDelta>(state);
 
-		TArray<TSharedPtr<FDelta>> deltasToApply;
+		TArray<FDeltaPtr> deltasToApply;
 		deltasToApply.Add(perimeterCreationDelta);
 
 		// Now create the graph delta to assign the perimeter object to the GroupIDs of its edges
-		TSharedPtr<FGraph3DDelta> graphDelta = MakeShareable(new FGraph3DDelta());
+		auto graphDelta = MakeShared<FGraph3DDelta>();
 		FGraph3DGroupIDsDelta groupIDsDelta(TSet<int32>({ perimeterID }), TSet<int32>());
 		for (int32 edgeID : perimeterEdgeIDs)
 		{

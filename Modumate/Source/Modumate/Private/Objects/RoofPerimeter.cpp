@@ -155,7 +155,7 @@ FVector FMOIRoofPerimeterImpl::GetNormal() const
 	return CachedPlane;
 }
 
-bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	if (MOI == nullptr)
 	{

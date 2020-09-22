@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
-#include "DocumentManagement/ModumateDelta.h"
+#include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/ModumateSerialization.h"
 
 #include "EditModelSelectTool.generated.h"

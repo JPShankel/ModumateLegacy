@@ -18,7 +18,7 @@ bool AAdjustInvertHandle::BeginUse()
 
 	TargetMOI->BeginPreviewOperation();
 	TargetMOI->SetObjectInverted(!TargetMOI->GetObjectInverted());
-	auto delta = MakeShareable(new FMOIDelta({ TargetMOI }));
+	auto delta = MakeShared<FMOIDelta>(TargetMOI);
 	TargetMOI->EndPreviewOperation();
 
 	GameState->Document.ApplyDeltas({ delta }, GetWorld());

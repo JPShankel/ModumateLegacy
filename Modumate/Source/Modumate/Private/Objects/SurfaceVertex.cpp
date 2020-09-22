@@ -37,7 +37,7 @@ void FMOISurfaceVertexImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool
 	}
 }
 
-bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	auto surfaceGraphObj = MOI ? MOI->GetParentObject() : nullptr;
 	if (!ensure(surfaceGraphObj && VertexActor.IsValid()))

@@ -247,8 +247,8 @@ bool UPlaneHostedObjTool::BeginUse()
 						child->BeginPreviewOperation();
 						child->SetAssembly(ObjAssembly);
 
-						TArray<TSharedPtr<FDelta>> deltas;
-						deltas.Add(MakeShareable(new FMOIDelta({ child })));
+						TArray<FDeltaPtr> deltas;
+						deltas.Add(MakeShared<FMOIDelta>(child));
 						GameState->Document.ApplyDeltas(deltas, GetWorld());
 
 						child->EndPreviewOperation();
@@ -278,8 +278,8 @@ bool UPlaneHostedObjTool::BeginUse()
 			newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
 			newMOIData.ObjectID = GameState->Document.GetNextAvailableID();
 
-			TArray<TSharedPtr<FDelta>> deltas;
-			deltas.Add(MakeShareable(new FMOIDelta({ deltaStates })));
+			TArray<FDeltaPtr> deltas;
+			deltas.Add(MakeShared<FMOIDelta>(deltaStates));
 
 			GameState->Document.ApplyDeltas(deltas, GetWorld());
 			EndUse();
@@ -385,8 +385,8 @@ bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &new
 				newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
 				newMOIData.ObjectID = newObjID;
 
-				TArray<TSharedPtr<FDelta>> deltas;
-				deltas.Add(MakeShareable(new FMOIDelta({ newMOIData })));
+				TArray<FDeltaPtr> deltas;
+				deltas.Add(MakeShared<FMOIDelta>(newMOIData));
 
 				GameState->Document.ApplyDeltas(deltas, GetWorld());
 

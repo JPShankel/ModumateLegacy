@@ -58,7 +58,7 @@ void UEditModelInputHandler::SetupBindings()
 			Controller->InputComponent->BindAction<FInputDigitDelegate>(chordActionName, EInputEvent::IE_Pressed, this, &UEditModelInputHandler::HandleDigitKey, i);
 		}
 
-		RootCommandTrie = MakeShareable(new FCommandTrieNode());
+		RootCommandTrie = MakeShared<FCommandTrieNode>();
 		BoundChords.Reset();
 
 		// First, combine all of the input command rows to the central command data map
@@ -108,7 +108,7 @@ void UEditModelInputHandler::SetupBindings()
 
 					if (!curTrieNode->Children.Contains(curChord))
 					{
-						curTrieNode->Children.Add(curChord, MakeShareable(new FCommandTrieNode()));
+						curTrieNode->Children.Add(curChord, MakeShared<FCommandTrieNode>());
 					}
 					curTrieNode = curTrieNode->Children[curChord];
 					if (chordIdx == (numChords - 1))

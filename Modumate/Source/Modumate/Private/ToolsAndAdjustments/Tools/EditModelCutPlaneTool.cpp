@@ -164,8 +164,8 @@ bool UCutPlaneTool::EnterNextStage()
 	stateData.Orientation = FRotationMatrix::MakeFromXY(BasisX, BasisY).ToQuat();
 	stateData.ObjectID = doc->GetNextAvailableID();
 
-	TArray<TSharedPtr<FDelta>> deltas;
-	deltas.Add(MakeShareable(new FMOIDelta({ stateData })));
+	TArray<FDeltaPtr> deltas;
+	deltas.Add(MakeShared<FMOIDelta>(stateData));
 	return doc->ApplyDeltas(deltas, GetWorld());
 }
 

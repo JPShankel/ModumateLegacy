@@ -132,9 +132,8 @@ bool UPlaceObjectTool::BeginUse()
 	state.ObjectType = EObjectType::OTFurniture;
 	state.ObjectID = doc->GetNextAvailableID();
 	
-	TArray<TSharedPtr<FDelta>> deltas;
-	deltas.Add(MakeShareable(new FMOIDelta({ state })));
-
+	TArray<FDeltaPtr> deltas;
+	deltas.Add(MakeShared<FMOIDelta>(state));
 	doc->ApplyDeltas(deltas, GetWorld());
 
 	return true;

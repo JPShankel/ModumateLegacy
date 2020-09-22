@@ -14,7 +14,7 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual FVector GetNormal() const override;
-	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
 	static constexpr float VisualNormalOffset = 0.1f;
 

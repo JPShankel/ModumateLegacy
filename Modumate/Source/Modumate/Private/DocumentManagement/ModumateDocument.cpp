@@ -24,7 +24,7 @@
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
-#include "DocumentManagement/ModumateDelta.h"
+#include "DocumentManagement/DocumentDelta.h"
 #include "Drafting/ModumateDraftingView.h"
 #include "ModumateCore/ModumateMitering.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -75,12 +75,12 @@ void FModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 		TSharedPtr <UndoRedo> ur = FromBuffer.Last(0);
 		FromBuffer.RemoveAt(FromBuffer.Num() - 1);
 
-		TArray<TSharedPtr<FDelta>> fromDeltas = ur->Deltas;
+		TArray<FDeltaPtr> fromDeltas = ur->Deltas;
 		Algo::Reverse(fromDeltas);
 
 		ur->Deltas.Empty();
-		Algo::Transform(fromDeltas, ur->Deltas, [](const TSharedPtr<FDelta>& DeltaPtr) {return DeltaPtr->MakeInverse(); });
-		Algo::ForEach(ur->Deltas, [this, World](TSharedPtr<FDelta>& DeltaPtr) {DeltaPtr->ApplyTo(this, World); });
+		Algo::Transform(fromDeltas, ur->Deltas, [](const FDeltaPtr& DeltaPtr) {return DeltaPtr->MakeInverse(); });
+		Algo::ForEach(ur->Deltas, [this, World](FDeltaPtr& DeltaPtr) {DeltaPtr->ApplyTo(this, World); });
 
 		ToBuffer.Add(ur);
 
@@ -143,7 +143,7 @@ void FModumateDocument::EndUndoRedoMacro()
 		section.Add(UndoBuffer[i]);
 	}
 
-	TSharedPtr<UndoRedo> ur = MakeShareable(new UndoRedo());
+	TSharedPtr<UndoRedo> ur = MakeShared<UndoRedo>();
 	for (auto s : section)
 	{
 		ur->Deltas.Append(s->Deltas);
@@ -221,7 +221,7 @@ void FModumateDocument::SetDefaultJustificationXY(float newValue)
 void FModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, const FBIMAssemblySpec &assembly)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetAssemblyForWalls"));
-	TArray<TSharedPtr<FDelta>> deltaStates;
+	TArray<FDeltaPtr> deltaPtrs;
 	for (auto id : ids)
 	{
 		FModumateObjectInstance* ob = GetObjectById(id);
@@ -230,11 +230,11 @@ void FModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, c
 			ob->BeginPreviewOperation();
 			ob->SetAssembly(assembly);
 
-			deltaStates.Add(MakeShareable(new FMOIDelta({ ob })));
+			deltaPtrs.Add(MakeShared<FMOIDelta>(ob));
 			ob->EndPreviewOperation();
 		}
 	}
-	ApplyDeltas(deltaStates, world);
+	ApplyDeltas(deltaPtrs, world);
 }
 
 void FModumateDocument::AddHideObjectsById(UWorld *world, const TArray<int32> &ids)
@@ -915,7 +915,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 	}
 }
 
-bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UWorld *World)
+bool FModumateDocument::ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World)
 {
 	ClearPreviewDeltas(World);
 
@@ -923,7 +923,7 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 
 	BeginUndoRedoMacro();
 
-	TSharedPtr<UndoRedo> ur = MakeShareable(new UndoRedo());
+	TSharedPtr<UndoRedo> ur = MakeShared<UndoRedo>();
 	ur->Deltas = Deltas;
 
 	UndoBuffer.Add(ur);
@@ -939,7 +939,7 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 	// apply side effect deltas, and add them to the undo/redo-able list of deltas.
 	// Prevent infinite loops, but allow for iteration due to multiple levels of dependency.
 	int32 sideEffectIterationGuard = 8;
-	TArray<TSharedPtr<FDelta>> sideEffectDeltas;
+	TArray<FDeltaPtr> sideEffectDeltas;
 	do
 	{
 		sideEffectDeltas.Reset();
@@ -967,7 +967,7 @@ bool FModumateDocument::ApplyDeltas(const TArray<TSharedPtr<FDelta>> &Deltas, UW
 	return true;
 }
 
-bool FModumateDocument::ApplyPreviewDeltas(const TArray<TSharedPtr<Modumate::FDelta>> &Deltas, UWorld *World)
+bool FModumateDocument::ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World)
 {
 	ClearPreviewDeltas(World);
 
@@ -991,7 +991,7 @@ void FModumateDocument::ClearPreviewDeltas(UWorld *World)
 		return;
 	}
 
-	TArray<TSharedPtr<FDelta>> inversePreviewDeltas = PreviewDeltas;
+	TArray<FDeltaPtr> inversePreviewDeltas = PreviewDeltas;
 	Algo::Reverse(inversePreviewDeltas);
 
 	// First, apply the input deltas, generated from the first pass of user intent
@@ -1175,7 +1175,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 
 	// Keep track of all descendants of intended (and connected) objects to delete
 	TSet<FModumateObjectInstance*> allObjectsToDelete(initialObjectsToDelete);
-	TArray<TSharedPtr<FDelta>> combinedDeltas;
+	TArray<FDeltaPtr> combinedDeltas;
 
 	// Gather 3D graph objects, so we can generated deltas that will potentially delete connected objects.
 	TSet<int32> graph3DObjIDsToDelete;
@@ -1193,7 +1193,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 	}
 
 	// Generate the delta to apply to the 3D volume graph for object deletion
-	TArray<TSharedPtr<FDelta>> graph3DDeltas;
+	TArray<FDeltaPtr> graph3DDeltas;
 	if (graph3DObjIDsToDelete.Num() > 0)
 	{
 		FGraph3DDelta graph3DDelta;
@@ -1237,7 +1237,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 
 	// Generate the deltas to apply to the 2D surface graphs for object deletion
 	TArray<FGraph2DDelta> tempSurfaceGraphDeltas;
-	TArray<TSharedPtr<FDelta>> combinedSurfaceGraphDeltas;
+	TArray<FDeltaPtr> combinedSurfaceGraphDeltas;
 	TSet<int32> combinedSurfaceGraphObjIDsToDelete;
 	TSet<FModumateObjectInstance*> surfaceGraphDescendents;
 	for (auto& kvp : surfaceGraphDeletionMap)
@@ -1393,7 +1393,7 @@ void FModumateDocument::UnmakeGroupObjects(UWorld *world, const TArray<int32> &g
 	}
 }
 
-bool FModumateDocument::GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<TSharedPtr<FDelta>>& OutDeltas)
+bool FModumateDocument::GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas)
 {
 	TArray<FGraph3DDelta> deltas;
 
@@ -1412,13 +1412,13 @@ bool FModumateDocument::GetVertexMovementDeltas(const TArray<int32>& VertexIDs, 
 
 	for (auto& delta : deltas)
 	{
-		OutDeltas.Add(MakeShareable<FDelta>(new FGraph3DDelta(delta)));
+		OutDeltas.Add(MakeShared<FGraph3DDelta>(delta));
 	}
 
 	return true;
 }
 
-bool FModumateDocument::GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<TSharedPtr<Modumate::FDelta>>& OutDeltas)
+bool FModumateDocument::GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas)
 {
 	TArray<FGraph3DDelta> deltas;
 
@@ -1437,7 +1437,7 @@ bool FModumateDocument::GetPreviewVertexMovementDeltas(const TArray<int32>& Vert
 
 	for (auto& delta : deltas)
 	{
-		OutDeltas.Add(MakeShareable<FDelta>(new FGraph3DDelta(delta)));
+		OutDeltas.Add(MakeShared<FGraph3DDelta>(delta));
 	}
 
 	return true;
@@ -1445,7 +1445,7 @@ bool FModumateDocument::GetPreviewVertexMovementDeltas(const TArray<int32>& Vert
 
 bool FModumateDocument::MoveMetaVertices(UWorld* World, const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions)
 {
-	TArray<TSharedPtr<FDelta>> deltas;
+	TArray<FDeltaPtr> deltas;
 	if (GetVertexMovementDeltas(VertexIDs, VertexPositions, deltas))
 	{
 		return ApplyDeltas(deltas, World);
@@ -1481,12 +1481,12 @@ bool FModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &Obje
 		return false;
 	}
 
-	TArray<TSharedPtr<FDelta>> deltaptrs;
+	TArray<FDeltaPtr> deltaPtrs;
 	for (auto& delta : graphDeltas)
 	{
-		deltaptrs.Add(MakeShareable<FDelta>(new FGraph3DDelta(delta)));
+		deltaPtrs.Add(MakeShared<FGraph3DDelta>(delta));
 	}
-	return ApplyDeltas(deltaptrs, World);
+	return ApplyDeltas(deltaPtrs, World);
 }
 
 int32 FModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs)
@@ -1577,12 +1577,12 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 		return false;
 	}
 
-	TArray<TSharedPtr<FDelta>> deltaptrs;
+	TArray<FDeltaPtr> deltaPtrs;
 	for (auto& delta : deltas)
 	{
-		deltaptrs.Add(MakeShareable<FDelta>(new FGraph3DDelta(delta)));
+		deltaPtrs.Add(MakeShared<FGraph3DDelta>(delta));
 	}
-	bool bSuccess = ApplyDeltas(deltaptrs, world);
+	bool bSuccess = ApplyDeltas(deltaPtrs, world);
 
 	OutObjIDs.Append(faceIDs);
 	OutObjIDs.Append(vertexIDs);
@@ -1928,7 +1928,7 @@ void FModumateDocument::TransverseObjects(const TArray<FModumateObjectInstance*>
 	}
 }
 
-bool FModumateDocument::CleanObjects(TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
+bool FModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	static TArray<FModumateObjectInstance*> curDirtyList;
 	curDirtyList.Reset();
@@ -2259,7 +2259,7 @@ bool FModumateDocument::ExportPDF(UWorld *world, const TCHAR *filepath, const FV
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ExportPDF"));
 
-	CurrentDraftingView = MakeShareable(new FModumateDraftingView(world, this, FModumateDraftingView::kPDF));
+	CurrentDraftingView = MakeShared<FModumateDraftingView>(world, this, FModumateDraftingView::kPDF);
 	CurrentDraftingView->CurrentFilePath = FString(filepath);
 
 	return true;
@@ -2268,7 +2268,7 @@ bool FModumateDocument::ExportPDF(UWorld *world, const TCHAR *filepath, const FV
 bool FModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ExportDWG"));
-	CurrentDraftingView = MakeShareable(new FModumateDraftingView(world, this, FModumateDraftingView::kDWG));
+	CurrentDraftingView = MakeShared<FModumateDraftingView>(world, this, FModumateDraftingView::kDWG);
 	CurrentDraftingView->CurrentFilePath = FString(filepath);
 
 	return true;
@@ -2281,8 +2281,8 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 	AEditModelGameMode_CPP *gameMode = Cast<AEditModelGameMode_CPP>(world->GetAuthGameMode());
 
 
-	TSharedPtr<FJsonObject> FileJson = MakeShareable(new FJsonObject());
-	TSharedPtr<FJsonObject> HeaderJson = MakeShareable(new FJsonObject());
+	TSharedPtr<FJsonObject> FileJson = MakeShared<FJsonObject>();
+	TSharedPtr<FJsonObject> HeaderJson = MakeShared<FJsonObject>();
 
 	// Header is its own
 	FModumateDocumentHeader header;

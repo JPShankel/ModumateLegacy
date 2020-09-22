@@ -265,8 +265,8 @@ bool UCabinetTool::EnterNextStage()
 	stateData.ObjectID = GameState->Document.GetNextAvailableID();
 	stateData.Extents = FVector(0, ExtrusionDist, 0);
 
-	TArray<TSharedPtr<FDelta>> deltas;
-	deltas.Add(MakeShareable(new FMOIDelta({ stateData })));
+	TArray<FDeltaPtr> deltas;
+	deltas.Add(MakeShared<FMOIDelta>(stateData));
 
 	GameState->Document.ApplyDeltas(deltas, GetWorld());
 

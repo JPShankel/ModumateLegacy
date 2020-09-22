@@ -62,7 +62,7 @@ TSharedPtr<FSlateDynamicImageBrush> FModumateThumbnailHelpers::LoadProjectThumbn
 				if (FSlateApplication::Get().GetRenderer()->GenerateDynamicImageResource(
 					resourceName, imageWidth, imageHeight, imageRawBytesReordered))
 				{
-					thumbnailBrush = MakeShareable(new FSlateDynamicImageBrush(resourceName, FVector2D(imageWidth, imageHeight)));
+					thumbnailBrush = MakeShared<FSlateDynamicImageBrush>(resourceName, FVector2D(imageWidth, imageHeight));
 				}
 			}
 		}

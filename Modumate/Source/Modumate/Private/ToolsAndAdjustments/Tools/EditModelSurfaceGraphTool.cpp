@@ -134,9 +134,9 @@ bool USurfaceGraphTool::EnterNextStage()
 
 	if (addEdgeDeltas.Num() > 0)
 	{
-		TArray<TSharedPtr<FDelta>> deltaPtrs;
+		TArray<FDeltaPtr> deltaPtrs;
 		Algo::Transform(addEdgeDeltas, deltaPtrs, [](const FGraph2DDelta &graphDelta) {
-			return MakeShareable(new FGraph2DDelta{ graphDelta });
+			return MakeShared<FGraph2DDelta>(graphDelta);
 		});
 
 		if (!GameState->Document.ApplyDeltas(deltaPtrs, GetWorld()))
@@ -271,7 +271,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget()
 
 	// If we're targeting a surface graph object, it has to be empty
 	int32 nextID = GameState->Document.GetNextAvailableID();
-	TArray<TSharedPtr<FDelta>> deltas;
+	TArray<FDeltaPtr> deltas;
 
 	if (GraphTarget)
 	{
@@ -298,8 +298,8 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget()
 		surfaceObjectData.ControlIndices = { HitFaceIndex };
 		surfaceObjectData.ObjectID = TargetSurfaceGraph->GetID();
 
-		deltas.Add(MakeShareable(new FMOIDelta({ surfaceObjectData })));
-		deltas.Add(MakeShareable(new FGraph2DDelta(TargetSurfaceGraph->GetID(), EGraph2DDeltaType::Add)));
+		deltas.Add(MakeShared<FMOIDelta>(surfaceObjectData));
+		deltas.Add(MakeShared<FGraph2DDelta>(TargetSurfaceGraph->GetID(), EGraph2DDeltaType::Add));
 	}
 
 	// Make sure we have valid geometry from the target
@@ -354,7 +354,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget()
 
 	for (FGraph2DDelta& graphDelta : fillGraphDeltas)
 	{
-		deltas.Add(MakeShareable(new FGraph2DDelta{ graphDelta }));
+		deltas.Add(MakeShared<FGraph2DDelta>(graphDelta));
 	}
 	return GameState->Document.ApplyDeltas(deltas, GetWorld());
 }

@@ -634,7 +634,7 @@ bool FModumateObjectInstance::IsDirty(EObjectDirtyFlags CheckDirtyFlags) const
 	return ((DirtyFlags & CheckDirtyFlags) == CheckDirtyFlags);
 }
 
-bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
+bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	bool bSuccess = false;
 
@@ -701,9 +701,19 @@ bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TS
 	return bSuccess;
 }
 
+FMOIDelta::FMOIDelta(const FMOIStateData& State)
+{
+	AddCreateDestroyState(State);
+}
+
 FMOIDelta::FMOIDelta(const TArray<FMOIStateData> &States)
 {
 	AddCreateDestroyStates(States);
+}
+
+FMOIDelta::FMOIDelta(FModumateObjectInstance* Object)
+{
+
 }
 
 FMOIDelta::FMOIDelta(const TArray<FModumateObjectInstance*> &Objects)
@@ -716,122 +726,53 @@ bool FMOIDelta::ApplyTo(FModumateDocument *doc, UWorld *world) const
 	return doc->ApplyMOIDelta(*this, world);
 }
 
-TSharedPtr<FDelta> FMOIDelta::MakeInverse() const
+FDeltaPtr FMOIDelta::MakeInverse() const
 {
-	TSharedPtr<FMOIDelta> delta = MakeShareable(new FMOIDelta());
+	auto inverse = MakeShared<FMOIDelta>();
 
 	for (auto &sp : StatePairs)
 	{
-		delta->StatePairs.Add(FStatePair(sp.Value, sp.Key));
+		inverse->StatePairs.Add(FStatePair(sp.Value, sp.Key));
 	}
 
-	return delta;
+	return inverse;
 }
 
-void FMOIDelta::AddCreateDestroyStates(const TArray<FMOIStateData> &States)
+void FMOIDelta::AddCreateDestroyState(const FMOIStateData& State)
 {
-	for (auto &state : States)
+	if (ensureAlways(State.StateType == EMOIDeltaType::Create || State.StateType == EMOIDeltaType::Destroy))
 	{
-		if (ensureAlways(state.StateType == EMOIDeltaType::Create || state.StateType == EMOIDeltaType::Destroy))
-		{
-			FMOIStateData baseState = state;
-			FMOIStateData targetState = state;
-			baseState.StateType = targetState.StateType == EMOIDeltaType::Create ? EMOIDeltaType::Destroy : EMOIDeltaType::Create;
-			StatePairs.Add(FStatePair(baseState, targetState));
-		}
-	}
-}
-
-void FMOIDelta::AddMutationStates(const TArray<FModumateObjectInstance*> &Objects)
-{
-	for (auto *ob : Objects)
-	{
-		FMOIStateData baseState = ob->CurrentState;
-		FMOIStateData targetState = ob->PreviewState;
-
-		baseState.StateType = EMOIDeltaType::Mutate;
-		targetState.StateType = EMOIDeltaType::Mutate;
+		FMOIStateData baseState = State;
+		FMOIStateData targetState = State;
+		baseState.StateType = targetState.StateType == EMOIDeltaType::Create ? EMOIDeltaType::Destroy : EMOIDeltaType::Create;
 		StatePairs.Add(FStatePair(baseState, targetState));
 	}
 }
 
-bool FMOIStateData::ToParameterSet(const FString &Prefix, FModumateFunctionParameterSet &OutParameterSet) const
+void FMOIDelta::AddCreateDestroyStates(const TArray<FMOIStateData> &States)
 {
-	TMap<FString, FString> propertyMap;
-	if (!ObjectProperties.ToStringMap(propertyMap))
+	for (auto& state : States)
 	{
-		return false;
+		AddCreateDestroyState(state);
 	}
-
-	TArray<FString> propertyNames, propertyValues;
-
-	propertyMap.GenerateKeyArray(propertyNames);
-	propertyMap.GenerateValueArray(propertyValues);
-
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kPropertyNames, propertyNames);
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kPropertyValues, propertyValues);
-
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kExtents, Extents);
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kControlPoints, ControlPoints);
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kIndices, ControlIndices);
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kInverted, bObjectInverted);
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kAssembly, ObjectAssemblyKey.ToString());
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kParent, ParentID);
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kLocation, Location);
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kQuaternion, Orientation);
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kType, EnumValueString(EMOIDeltaType,StateType));
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kObjectType, EnumValueString(EObjectType, ObjectType));
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kObjectID, ObjectID);
-
-	return true;
 }
 
-bool FMOIStateData::FromParameterSet(const FString &Prefix, const FModumateFunctionParameterSet &ParameterSet)
+void FMOIDelta::AddMutationState(FModumateObjectInstance* Object)
 {
-	TArray<FString> propertyNames, propertyValues;
-	propertyNames = ParameterSet.GetValue(Prefix + Modumate::Parameters::kPropertyNames, propertyNames);
-	propertyValues = ParameterSet.GetValue(Prefix + Modumate::Parameters::kPropertyValues, propertyValues);
+	FMOIStateData baseState = Object->CurrentState;
+	FMOIStateData targetState = Object->PreviewState;
 
-	if (!ensureAlways(propertyNames.Num() == propertyValues.Num()))
-	{
-		return false;
-	}
-
-	FModumateFunctionParameterSet::FStringMap propertyMap;
-	for (int32 i = 0; propertyNames.Num(); ++i)
-	{
-		propertyMap.Add(propertyNames[i], propertyValues[i]);
-	}
-
-	ObjectProperties.FromStringMap(propertyMap);
-
-	Extents = ParameterSet.GetValue(Prefix + Modumate::Parameters::kExtents);
-	ControlPoints = ParameterSet.GetValue(Prefix + Modumate::Parameters::kControlPoints);
-	ControlIndices = ParameterSet.GetValue(Prefix + Modumate::Parameters::kIndices);
-	bObjectInverted = ParameterSet.GetValue(Prefix + Modumate::Parameters::kInverted);
-	ObjectAssemblyKey = FBIMKey(ParameterSet.GetValue(Prefix + Modumate::Parameters::kAssembly).AsString());
-	ParentID = ParameterSet.GetValue(Prefix + Modumate::Parameters::kParent);
-	Location = ParameterSet.GetValue(Prefix + Modumate::Parameters::kLocation);
-	Orientation = ParameterSet.GetValue(Prefix + Modumate::Parameters::kQuaternion);
-	StateType = EnumValueByString(EMOIDeltaType,ParameterSet.GetValue(Prefix + Modumate::Parameters::kType).AsString());
-	ObjectID = ParameterSet.GetValue(Prefix + Modumate::Parameters::kObjectID);
-	ObjectType = EnumValueByString(EObjectType, ParameterSet.GetValue(Prefix + Modumate::Parameters::kObjectType).AsString());
-
-	return true;
+	baseState.StateType = EMOIDeltaType::Mutate;
+	targetState.StateType = EMOIDeltaType::Mutate;
+	StatePairs.Add(FStatePair(baseState, targetState));
 }
 
-bool FMOIStateData::operator==(const FMOIStateData& Other) const
+void FMOIDelta::AddMutationStates(const TArray<FModumateObjectInstance*>& Objects)
 {
-	// TODO: replace with better per-property equality checks, when we no longer use FModumateFunctionParameterSet for serialization.
-	FModumateFunctionParameterSet thisParamSet, otherParamSet;
-	TMap<FString, FString> thisStringMap, otherStringMap;
-	if (ToParameterSet(TEXT(""), thisParamSet) && Other.ToParameterSet(TEXT(""), otherParamSet) &&
-		thisParamSet.ToStringMap(thisStringMap) && otherParamSet.ToStringMap(otherStringMap))
+	for (auto *ob : Objects)
 	{
-		return thisStringMap.OrderIndependentCompareEqual(otherStringMap);
+		AddMutationState(ob);
 	}
-
-	return false;
 }
 
 static const FString BaseStatePrefix = TEXT("BaseState");
@@ -1355,7 +1296,7 @@ void FModumateObjectInstanceImplBase::Destroy()
 
 }
 
-bool FModumateObjectInstanceImplBase::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<FDelta>>* OutSideEffectDeltas)
+bool FModumateObjectInstanceImplBase::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	if (MOI == nullptr)
 	{

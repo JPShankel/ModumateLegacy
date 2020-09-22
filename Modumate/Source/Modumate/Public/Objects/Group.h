@@ -24,7 +24,7 @@ public:
 
 	virtual void SetLocation(const FVector &p) override;
 
-	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
 	virtual AActor *RestoreActor() override;
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;

@@ -113,7 +113,7 @@ bool UFinishTool::BeginUse()
 			child->BeginPreviewOperation();
 			child->SetAssembly(*assembly);
 
-			TSharedPtr<FMOIDelta> swapAssemblyDelta = MakeShareable(new FMOIDelta({ child }));
+			auto swapAssemblyDelta = MakeShared<FMOIDelta>(child);
 			child->EndPreviewOperation();
 
 			return GameState->Document.ApplyDeltas({ swapAssemblyDelta }, GetWorld());
@@ -128,7 +128,7 @@ bool UFinishTool::BeginUse()
 	stateData.ParentID = GraphElementTarget->ID;
 	stateData.ObjectID = GameState->Document.GetNextAvailableID();
 
-	TSharedPtr<FMOIDelta> createFinishDelta = MakeShareable(new FMOIDelta({ stateData }));
+	auto createFinishDelta = MakeShared<FMOIDelta>(stateData);
 	return GameState->Document.ApplyDeltas({ createFinishDelta }, GetWorld());
 }
 

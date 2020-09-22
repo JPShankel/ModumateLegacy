@@ -72,7 +72,7 @@ void FMOITrimImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Control
 	return FModumateObjectInstanceImplBase::ShowAdjustmentHandles(Controller, bShow);
 }
 
-bool FMOITrimImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+bool FMOITrimImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{

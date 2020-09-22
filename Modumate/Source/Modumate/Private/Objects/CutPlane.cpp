@@ -269,7 +269,7 @@ void FMOICutPlaneImpl::UpdateDraftingPreview()
 	{
 		return;
 	}
-	PreviewHUDLines = MakeShareable(new Modumate::FDraftingComposite());
+	PreviewHUDLines = MakeShared<Modumate::FDraftingComposite>();
 
 	FVector axisY = CachedAxisY * -1.0f;
 

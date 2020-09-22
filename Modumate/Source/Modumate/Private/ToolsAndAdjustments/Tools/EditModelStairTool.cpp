@@ -467,8 +467,8 @@ bool UStairTool::MakeStairs()
 			newStairState.ObjectID = nextID++;
 		}
 
-		TArray<TSharedPtr<FDelta>> deltas;
-		deltas.Add(MakeShareable(new FMOIDelta(newStairStates)));
+		TArray<FDeltaPtr> deltas;
+		deltas.Add(MakeShared<FMOIDelta>(newStairStates));
 
 		bSuccess = GameState->Document.ApplyDeltas(deltas, GetWorld());
 	}

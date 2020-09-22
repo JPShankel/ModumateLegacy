@@ -4,27 +4,20 @@
 
 #include "CoreMinimal.h"
 
-#include "DocumentManagement/ModumateCommands.h"
-#include "DocumentManagement/ModumateDelta.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateDimensionString.h"
 #include "ModumateCore/ModumateTypes.h"
-#include "Runtime/Engine/Classes/Materials/MaterialInterface.h"
-#include "UnrealClasses/DynamicMeshActor.h"
+#include "Objects/MOIDelta.h"
+#include "Objects/MOIState.h"
+#include "Objects/MOIStructureData.h"
 #include "UObject/Object.h"
+#include "UnrealClasses/DynamicMeshActor.h"
 
-/**
- *
- */
 
 class AActor;
 class AAdjustmentHandleActor;
-class UIMaterialInterface;
 class AEditModelPlayerController_CPP;
-class ALineActor;
 class UHUDDrawWidget;
-
-struct FMOIDataRecordV1;
 class FModumateDocument;
 
 namespace Modumate {
@@ -36,37 +29,6 @@ class ILayeredObject;
 class ISceneCaptureObject;
 
 class FModumateObjectInstance;
-
-struct FStructurePoint
-{
-	FStructurePoint() {}
-	FStructurePoint(const FVector &point, const FVector &dir, int32 cp1, int32 cp2 = -1, int32 objID = MOD_ID_NONE)
-		: ObjID(objID)
-		, Point(point)
-		, Direction(dir)
-		, CP1(cp1), CP2(cp2)
-	{ }
-
-	int32 ObjID = MOD_ID_NONE;
-	FVector Point = FVector::ZeroVector;
-	FVector Direction = FVector::ZeroVector;
-	int32 CP1 = INDEX_NONE;
-	int32 CP2 = INDEX_NONE;
-};
-
-struct FStructureLine
-{
-	FStructureLine() {}
-	FStructureLine(const FVector &p1, const FVector &p2, int32 cp1, int32 cp2, int32 objID = MOD_ID_NONE)
-		: ObjID(objID)
-		, P1(p1), P2(p2)
-		, CP1(cp1), CP2(cp2)
-	{ }
-
-	int32 ObjID = MOD_ID_NONE;
-	FVector P1 = FVector::ZeroVector, P2 = FVector::ZeroVector;
-	int32 CP1 = 0, CP2 = 0;
-};
 
 class MODUMATE_API IModumateObjectInstanceImpl
 {
@@ -104,7 +66,7 @@ public:
 
 	virtual FVector GetNormal() const = 0;
 
-	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) = 0;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) = 0;
 
 	virtual void SetupDynamicGeometry() = 0;
 	virtual void UpdateDynamicGeometry() = 0;
@@ -175,7 +137,7 @@ public:
 
 	virtual FVector GetNormal() const override { return FVector::ZeroVector; }
 
-	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas) override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
 	virtual void SetupDynamicGeometry() override { }
 	virtual void UpdateDynamicGeometry() override { }
@@ -200,57 +162,6 @@ public:
 	virtual bool GetIsDynamic() const override { return false; }
 };
 
-struct MODUMATE_API FMOIStateData
-{
-	EMOIDeltaType StateType = EMOIDeltaType::None;
-	int32 ObjectID = MOD_ID_NONE;
-
-	// TODO: use this for instance-level overrides
-	FBIMPropertySheet ObjectProperties;
-
-	//<Thickness, Height, UNUSED>
-	FVector Extents = FVector::ZeroVector;
-
-	TArray<FVector> ControlPoints;
-	TArray<int32> ControlIndices;
-	bool bObjectInverted = false;
-
-	FVector Location = FVector::ZeroVector;
-	FQuat Orientation = FQuat::Identity;
-
-	int32 ParentID = MOD_ID_NONE;
-
-	// Store key instead of whole assembly to avoid old versions of an assembly from being re-applied
-	FBIMKey ObjectAssemblyKey;
-
-	EObjectType ObjectType = EObjectType::OTNone;
-
-	// TODO: to be deprecated when Commands 2.0 is developed, meantime...
-	bool ToParameterSet(const FString &Prefix,Modumate::FModumateFunctionParameterSet &OutParameterSet) const;
-	bool FromParameterSet(const FString &Prefix,const Modumate::FModumateFunctionParameterSet &ParameterSet);
-
-	bool operator==(const FMOIStateData& Other) const;
-};
-
-class FModumateObjectInstance;
-
-class MODUMATE_API FMOIDelta : public Modumate::FDelta
-{
-public:
-
-	FMOIDelta() {}
-	FMOIDelta(const TArray<FMOIStateData> &States);
-	FMOIDelta(const TArray<FModumateObjectInstance*> &Objects);
-
-	void AddCreateDestroyStates(const TArray<FMOIStateData> &States);
-	void AddMutationStates(const TArray<FModumateObjectInstance*> &Objects);
-
-	virtual bool ApplyTo(FModumateDocument *doc, UWorld *world) const override;
-	virtual TSharedPtr<FDelta> MakeInverse() const override;
-
-	typedef TPair<FMOIStateData, FMOIStateData> FStatePair;
-	TArray<FStatePair> StatePairs;
-};
 
 class MODUMATE_API FModumateObjectInstance
 {
@@ -382,7 +293,7 @@ public:
 	// Geometry
 	void MarkDirty(EObjectDirtyFlags NewDirtyFlags);
 	bool IsDirty(EObjectDirtyFlags CheckDirtyFlags) const;
-	bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas);
+	bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas);
 
 	void SetupGeometry();
 	void UpdateGeometry();

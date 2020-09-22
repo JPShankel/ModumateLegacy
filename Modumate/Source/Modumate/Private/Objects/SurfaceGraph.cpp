@@ -38,7 +38,7 @@ FVector FMOISurfaceGraphImpl::GetNormal() const
 	return CachedFaceOrigin.GetUnitAxis(EAxis::Z);
 }
 
-bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
@@ -94,12 +94,12 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TShar
 
 			// Attempt to generate deltas with the projected positions
 			int32 nextID = doc->GetNextAvailableID();
-			TArray<Modumate::FGraph2DDelta> moveDeltas;
+			TArray<FGraph2DDelta> moveDeltas;
 			if ((vertexMoves.Num() > 0) && surfaceGraph->MoveVertices(moveDeltas, nextID, vertexMoves))
 			{
 				for (auto& delta : moveDeltas)
 				{
-					OutSideEffectDeltas->Add(MakeShareable(new Modumate::FGraph2DDelta(delta)));
+					OutSideEffectDeltas->Add(MakeShared<FGraph2DDelta>(delta));
 				}
 			}
 			// Otherwise, delete the surface graph if it cannot be preserved after the underlying geometry changes
@@ -116,7 +116,7 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TShar
 					deletionState.ObjectID = descendent->ID;
 				}
 
-				auto deleteSurfaceDelta = MakeShareable(new FMOIDelta(deletionStates));
+				auto deleteSurfaceDelta = MakeShared<FMOIDelta>(deletionStates);
 				OutSideEffectDeltas->Add(deleteSurfaceDelta);
 			}
 		}

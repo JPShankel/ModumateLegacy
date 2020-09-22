@@ -49,7 +49,7 @@ void FMOISurfacePolygonImpl::UpdateVisibilityAndCollision(bool &bOutVisible, boo
 	}
 }
 
-bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	if (!ensure(MOI))
 	{

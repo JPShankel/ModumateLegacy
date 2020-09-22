@@ -21,7 +21,7 @@ FMOIStaircaseImpl::FMOIStaircaseImpl(FModumateObjectInstance *moi)
 FMOIStaircaseImpl::~FMOIStaircaseImpl()
 {}
 
-bool FMOIStaircaseImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<TSharedPtr<Modumate::FDelta>>* OutSideEffectDeltas)
+bool FMOIStaircaseImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{

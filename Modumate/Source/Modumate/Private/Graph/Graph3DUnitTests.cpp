@@ -1,6 +1,6 @@
 #include "CoreMinimal.h"
 
-#include "DocumentManagement/ModumateDelta.h"
+#include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "Graph/Graph3D.h"
 #include "Graph/Graph3DDelta.h"
