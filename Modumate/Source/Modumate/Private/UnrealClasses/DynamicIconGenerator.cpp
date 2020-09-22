@@ -112,12 +112,12 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(bool UseAssemblyFro
 	{
 	case EToolMode::VE_WALL:
 	case EToolMode::VE_FINISH:
-		return SetIconMeshForWallAssembly(*assembly, iconMode, RenderTarget);
+		return SetIconMeshForWallAssembly(*assembly, RenderTarget);
 	case EToolMode::VE_FLOOR:
 	case EToolMode::VE_ROOF_FACE:
 	case EToolMode::VE_COUNTERTOP:
 	case EToolMode::VE_CEILING:
-		return SetIconMeshForFloorAssembly(*assembly, iconMode, RenderTarget);
+		return SetIconMeshForFloorAssembly(*assembly, RenderTarget);
 	case EToolMode::VE_DOOR:
 	case EToolMode::VE_WINDOW:
 		return SetIconMeshForPortalAssembly(*assembly, iconMode, RenderTarget);
@@ -157,14 +157,17 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMKey& PresetID, U
 		return SetIconMeshForMaterial(NodeID, RenderTarget);
 	case EBIMValueScope::Module:
 		return SetIconMeshForModule(NodeID, RenderTarget);
-
+	case EBIMValueScope::Layer:
+		return SetIconMeshForLayer(NodeID, RenderTarget);
+	case EBIMValueScope::Profile:
+		return SetIconMeshForProfile(PresetID, RenderTarget);
 	default:
 		break;
 	}
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget)
 {
 	// TODO: Investigate component bounding box issue when location isn't in FVector::zero
 	IconDynamicMeshActor->SetActorLocation(FVector::ZeroVector);
@@ -217,7 +220,7 @@ bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FBIMAssemblySpec &A
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget)
 {
 	// TODO: Investigate component bounding box issue when location isn't in FVector::zero
 	IconDynamicMeshActor->SetActorLocation(FVector::ZeroVector);
@@ -504,6 +507,16 @@ bool ADynamicIconGenerator::SetIconMeshForColor(const FBIMKey& ColorKey, UTextur
 	return false;
 }
 
+bool ADynamicIconGenerator::SetIconMeshForProfile(const FBIMKey& ProfileKey, UTextureRenderTarget2D* RenderTarget)
+{
+	const FSimpleMeshRef* meshRef = Gamemode->ObjectDatabase->GetSimpleMeshByKey(ProfileKey);
+	if (!meshRef)
+	{
+		return false;
+	}
+	return true;
+}
+
 bool ADynamicIconGenerator::SetIconMeshForDimension(int32 NodeID, UMaterialInterface* InMaterial, UTextureRenderTarget2D* RenderTarget)
 {
 	// Step 1: Get params
@@ -628,6 +641,15 @@ bool ADynamicIconGenerator::SetIconMeshForModule(int32 NodeID, UTextureRenderTar
 		return SetIconMeshForDimension(dimensionNodeID, dynMat, RenderTarget);
 	}
 	return false;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForLayer(int32 NodeID, UTextureRenderTarget2D* RenderTarget)
+{
+	FBIMAssemblySpec assembly;
+	Controller->EditModelUserWidget->BIMDesigner->InstancePool.CreateAssemblyFromLayerNode(
+		Controller->GetDocument()->PresetManager.CraftingNodePresets,
+		*Gamemode->ObjectDatabase, NodeID, assembly);
+	return SetIconMeshForWallAssembly(assembly, RenderTarget);
 }
 
 void ADynamicIconGenerator::GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal)

@@ -613,6 +613,90 @@ ECraftingResult FBIMCraftingTreeNodePool::CreateAssemblyFromNodes(const FBIMPres
 	return result;
 }
 
+/*
+Build a layered assembly based on a single layer, used by the icon generator to produce layer previews
+*/
+ECraftingResult FBIMCraftingTreeNodePool::CreateAssemblyFromLayerNode(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, int32 LayerNodeID, FBIMAssemblySpec& OutAssemblySpec)
+{
+	// Because FBIMAssemblySpec::FromPreset must have an assembly scope, we're 'borrowing' the preset from root node, then presets from layer node 
+	FBIMPresetCollection previewCollection;
+
+	// Add layer node preset
+	FBIMCraftingTreeNodeSharedPtr layerNode = InstanceFromID(LayerNodeID);
+	if (!layerNode.IsValid())
+	{
+		return ECraftingResult::Error;
+	}
+
+	// Build a temporary top-level assembly node to host the single layer
+	FBIMPreset assemblyPreset;
+	assemblyPreset.PresetID = FBIMKey(TEXT("TempIconPreset"));
+	assemblyPreset.NodeScope = EBIMValueScope::Assembly;
+
+	// Give the temporary assembly a single layer child
+	FBIMPreset::FChildAttachment &attachment = assemblyPreset.ChildPresets.AddDefaulted_GetRef();
+	attachment.ParentPinSetIndex = 0;
+	attachment.ParentPinSetPosition = 0;
+	attachment.PresetID = layerNode->PresetID;
+
+	// Fetch the root node to get node and object type information for the temp assembly
+	for (const auto &inst : InstancePool)
+	{
+		if (inst->ParentInstance == nullptr)
+		{
+			const FBIMPreset *rootPreset = PresetCollection.Presets.Find(inst->PresetID);
+			if (ensureAlways(rootPreset != nullptr))
+			{
+				assemblyPreset.NodeType = rootPreset->NodeType;
+				assemblyPreset.ObjectType = rootPreset->ObjectType;
+			}
+			else
+			{
+				return ECraftingResult::Error;
+			}
+			break;
+		}
+	}
+
+	// Add the temp assembly and layer presets
+	previewCollection.Presets.Add(assemblyPreset.PresetID, assemblyPreset);
+
+	const FBIMPreset* layerPreset = PresetCollection.Presets.Find(layerNode->PresetID);
+	if (ensureAlways(layerPreset != nullptr))
+	{
+		previewCollection.Presets.Add(layerPreset->PresetID, *layerPreset);
+	}
+	else
+	{
+		return ECraftingResult::Error;
+	}
+
+	// Add presets from children of the layer node 
+	TArray<FBIMCraftingTreeNodeSharedPtr> childrenNodes;
+	layerNode->GatherAllChildNodes(childrenNodes);
+	for (auto& child : childrenNodes)
+	{
+		if (child->GetPresetStatus(PresetCollection) == EBIMPresetEditorNodeStatus::Dirty)
+		{
+			FBIMPreset dirtyPreset;
+			if (ensureAlways(child->ToPreset(PresetCollection, dirtyPreset) != ECraftingResult::Error))
+			{
+				previewCollection.Presets.Add(dirtyPreset.PresetID, dirtyPreset);
+			}
+		}
+		else
+		{
+			const FBIMPreset* original = PresetCollection.Presets.Find(child->PresetID);
+			if (ensureAlways(original != nullptr))
+			{
+				previewCollection.Presets.Add(original->PresetID, *original);
+			}
+		}
+	}
+	
+	return OutAssemblySpec.FromPreset(InDB, previewCollection, assemblyPreset.PresetID);
+}
+
 ECraftingResult FBIMCraftingTreeNodePool::ReorderChildNode(int32 ChildNode, int32 FromPosition, int32 ToPosition)
 {
 	FBIMCraftingTreeNodeSharedPtr childPtr = InstanceFromID(ChildNode);

@@ -114,8 +114,8 @@ public:
 	bool SetIconMeshForAssemblyByToolMode(bool UseAssemblyFromBIMDesigner, const FBIMKey& AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForBIMDesigner(const FBIMKey& PresetID, UTextureRenderTarget2D* RenderTarget, int32 NodeID);
 
-	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
-	bool SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForPortalAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
@@ -123,9 +123,11 @@ public:
 
 	bool SetIconMeshForRawMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForColor(const FBIMKey& ColorKey, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForProfile(const FBIMKey& ProfileKey, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForDimension(int32 NodeID, UMaterialInterface* InMaterial, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForMaterial(int32 NodeID, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForModule(int32 NodeID, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForLayer(int32 NodeID, UTextureRenderTarget2D* RenderTarget);
 
 	void GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal);
 	void GetFloorSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& StartPt, const FVector& EndPt, float Height, FVector& OutLocation, FVector& OutNormal, bool& OutSliced);

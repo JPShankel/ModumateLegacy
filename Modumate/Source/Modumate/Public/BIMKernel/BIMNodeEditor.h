@@ -124,6 +124,7 @@ public:
 	bool ValidatePool() const;
 
 	ECraftingResult CreateAssemblyFromNodes(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec);
+	ECraftingResult CreateAssemblyFromLayerNode(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, int32 LayerNodeID, FBIMAssemblySpec& OutAssemblySpec);
 	ECraftingResult ReorderChildNode(int32 ChildNode, int32 FromPosition, int32 ToPosition);
 
 	bool GetSortedNodeIDs(TArray<int32> &OutNodeIDs);
