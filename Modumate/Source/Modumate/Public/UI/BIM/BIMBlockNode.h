@@ -34,7 +34,6 @@ public:
 protected:
 
 	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
@@ -44,9 +43,6 @@ protected:
 
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *Controller;
-
-	UPROPERTY()
-	class UTextureRenderTarget2D *IconRenderTarget;
 
 	bool DragTick = false;
 	FVector2D LastMousePosition = FVector2D::ZeroVector;

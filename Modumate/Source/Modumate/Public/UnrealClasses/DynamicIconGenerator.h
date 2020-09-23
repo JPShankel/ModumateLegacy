@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "BIMKernel/BIMKey.h"
+#include "Database/ModumateObjectEnums.h"
 #include "DynamicIconGenerator.generated.h"
 
 class FBIMAssemblySpec;
@@ -48,11 +50,23 @@ public:
 	UPROPERTY()
 	class ACompoundMeshActor* IconCompoundMeshActor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
 	UMaterialInterface* CustomMaterialBase;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DimensionString)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
 	FName MaterialColorParamName = TEXT("ColorMultiplier");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
+	UMaterialInterface* IconMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
+	UMaterialInterface* IconColorMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
+	UMaterialInterface* IconDimensionMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
+	FName MaterialIconTextureParamName = TEXT("Texture");
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Dimension")
 	float WallLength = 91.44f;
@@ -110,9 +124,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Dynamic Icon Generator")
-	bool SetIconMeshForAssemblyByToolMode(bool UseAssemblyFromBIMDesigner, const FBIMKey& AsmKey, EToolMode mode, UTextureRenderTarget2D* RenderTarget);
-	bool SetIconMeshForBIMDesigner(const FBIMKey& PresetID, UTextureRenderTarget2D* RenderTarget, int32 NodeID);
+	bool SetIconMeshForAssemblyByToolMode(bool UseAssemblyFromBIMDesigner, const FBIMKey& AsmKey, EToolMode mode, UMaterialInterface*& OutMaterial);
+	bool SetIconMeshForBIMDesigner(const FBIMKey& PresetID, UMaterialInterface*& OutMaterial, int32 NodeID);
+	bool GetSavedIconFromPreset(const FBIMKey& PresetID, UTexture*& OutTexture);
 
 	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget);
@@ -122,7 +136,7 @@ public:
 	bool SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget);
 
 	bool SetIconMeshForRawMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* RenderTarget);
-	bool SetIconMeshForColor(const FBIMKey& ColorKey, UTextureRenderTarget2D* RenderTarget);
+	bool SetIconMeshForColor(const FBIMKey& ColorKey, UMaterialInterface*& OutMaterial);
 	bool SetIconMeshForProfile(const FBIMKey& ProfileKey, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForDimension(int32 NodeID, UMaterialInterface* InMaterial, UTextureRenderTarget2D* RenderTarget);
 	bool SetIconMeshForMaterial(int32 NodeID, UTextureRenderTarget2D* RenderTarget);

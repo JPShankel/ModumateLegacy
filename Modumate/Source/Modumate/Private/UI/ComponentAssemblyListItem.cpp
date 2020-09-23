@@ -225,6 +225,8 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 		// TODO: need human readable assembly name
 		ComponentPresetItem->MainText->ChangeText(FText::FromString(compListObj->UniqueKey.ToString()));
 		BIMInstanceID = compListObj->BIMNodeInstanceID;
+		// TODO: swap item icons shouldn't take dirty values from children, make BIMInstanceID = none?
+		ComponentPresetItem->CaptureIconForBIMDesignerSwap(EMPlayerController, compListObj->UniqueKey, BIMInstanceID);
 		return;
 	}
 

@@ -3,7 +3,6 @@
 #include "UI/ComponentPresetListItem.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
-#include "Kismet/KismetRenderingLibrary.h"
 #include "Components/Image.h"
 
 
@@ -27,31 +26,32 @@ void UComponentPresetListItem::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UComponentPresetListItem::NativeDestruct()
-{
-	Super::NativeDestruct();
-	if (IconRenderTarget)
-	{
-		IconRenderTarget->ReleaseResource();
-	}
-}
-
 bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerController_CPP *Controller, const FBIMKey& AsmKey, EToolMode mode)
 {
 	if (!(Controller && IconImage))
 	{
 		return false;
 	}
-	// TODO: Use icon caching instead of creating new render target each time
-	if (!IconRenderTarget)
+	UMaterialInterface* iconMat = nullptr;
+	bool result = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(false, AsmKey, mode, iconMat);
+	if (result)
 	{
-		IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8, FLinearColor::Black, true);
+		IconImage->SetBrushFromMaterial(iconMat);
 	}
-	bool bCaptureSucess = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(false, AsmKey, mode, IconRenderTarget);
-	if (bCaptureSucess)
+	return result;
+}
+
+bool UComponentPresetListItem::CaptureIconForBIMDesignerSwap(class AEditModelPlayerController_CPP *Controller, const FBIMKey& PresetKey, int32 NodeID)
+{
+	if (!(Controller && IconImage))
 	{
-		static const FName textureParamName(TEXT("Texture"));
-		IconImage->GetDynamicMaterial()->SetTextureParameterValue(textureParamName, IconRenderTarget);
+		return false;
 	}
-	return bCaptureSucess;
+	UMaterialInterface* iconMat = nullptr;
+	bool result = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(PresetKey, iconMat, NodeID);
+	if (result)
+	{
+		IconImage->SetBrushFromMaterial(iconMat);
+	}
+	return result;
 }

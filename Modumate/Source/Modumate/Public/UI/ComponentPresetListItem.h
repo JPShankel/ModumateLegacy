@@ -25,9 +25,6 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
-
-	class UTextureRenderTarget2D *IconRenderTarget;
 
 public:
 
@@ -41,4 +38,5 @@ public:
 	class UImage *GrabHandleImage;
 
 	bool CaptureIconFromPresetKey(class AEditModelPlayerController_CPP *Controller, const FBIMKey& AsmKey, EToolMode mode);
+	bool CaptureIconForBIMDesignerSwap(class AEditModelPlayerController_CPP *Controller, const FBIMKey& PresetKey, int32 NodeID);
 };

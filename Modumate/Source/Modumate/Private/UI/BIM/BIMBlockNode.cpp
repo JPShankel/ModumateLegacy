@@ -20,7 +20,6 @@
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
-#include "Kismet/KismetRenderingLibrary.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "UI/BIM/BIMBlockNodeDirtyTab.h"
 
@@ -57,15 +56,6 @@ bool UBIMBlockNode::Initialize()
 void UBIMBlockNode::NativeConstruct()
 {
 	Super::NativeConstruct();
-}
-
-void UBIMBlockNode::NativeDestruct()
-{
-	Super::NativeDestruct();
-	if (IconRenderTarget)
-	{
-		IconRenderTarget->ReleaseResource();
-	}
 }
 
 void UBIMBlockNode::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -255,26 +245,21 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 		}
 	}
 
-	// TODO: Use icon caching instead of creating new render target each time
-	if (!IconRenderTarget)
-	{
-		IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8, FLinearColor::Black, true);
-	}
 	bool bCaptureSuccess = false;
+	UMaterialInterface* iconMat;
 	if (IsKingNode) // Root node should be able to create full assembly
 	{
 		EToolMode toolMode = EToolMode::VE_NONE;
-		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(true, Node->PresetID, toolMode, IconRenderTarget);
+		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(true, Node->PresetID, toolMode, iconMat);
 	}
 	else
 	{
-		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(PresetID, IconRenderTarget, ID);
+		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(PresetID, iconMat, ID);
 	}
 	if (bCaptureSuccess)
 	{
-		static const FName textureParamName(TEXT("Texture"));
-		IconImage->GetDynamicMaterial()->SetTextureParameterValue(textureParamName, IconRenderTarget);
-		ComponentPresetListItem->IconImage->GetDynamicMaterial()->SetTextureParameterValue(textureParamName, IconRenderTarget);
+		IconImage->SetBrushFromMaterial(iconMat);
+		ComponentPresetListItem->IconImage->SetBrushFromMaterial(iconMat);
 	}
 
 	return true;
