@@ -78,15 +78,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 	TMap<FString, float> vars;
 	int32 numSlots = obAsm.Parts.Num();
 
-	// TODO: we assume the first part is the global "parent," to be refactored with parenting info in DDL tables
-	// Eventually Parent will change for each Part.
-	if (numSlots > 0)
-	{
-		const FVector& scaledNativeSize = obAsm.Parts[0].Mesh.NativeSize * scale;
-		vars.Add(TEXT("Parent.NativeSizeX"), scaledNativeSize.X);
-		vars.Add(TEXT("Parent.NativeSizeY"), scaledNativeSize.Y);
-		vars.Add(TEXT("Parent.NativeSizeZ"), scaledNativeSize.Z);
-	}
+	int32 parentIndex = -1;
 
 	for (int32 slotIdx = 0; slotIdx < numSlots; ++slotIdx)
 	{
@@ -95,6 +87,26 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 		if (!assemblyPart.Mesh.EngineMesh.IsValid())
 		{
 			continue;
+		}
+
+		/*
+		Simple assemblies (with no embedded assemblies) use Parts[0] as the basis for parent size
+		Complex assemblies with embedded parts indicate which part is their 'root'
+		TODO: Parent.NativeSize to be explicitly stored in assemblies as properties
+		      In and upcoming refactor, parts will carry these size values explicitly.
+		TODO: Some parts want to be scaled and others do not. Make scale a variable and express it in the formulas
+		*/
+
+		if (assemblyPart.ParentSlotIndex != parentIndex)
+		{
+			parentIndex = assemblyPart.ParentSlotIndex;
+			if (ensureAlways(parentIndex < obAsm.Parts.Num()))
+			{
+				const FVector& scaledNativeSize = obAsm.Parts[parentIndex].Mesh.NativeSize * scale;
+				vars.Add(TEXT("Parent.NativeSizeX"), scaledNativeSize.X);
+				vars.Add(TEXT("Parent.NativeSizeY"), scaledNativeSize.Y);
+				vars.Add(TEXT("Parent.NativeSizeZ"), scaledNativeSize.Z);
+			}
 		}
 
 		const FVector& nativeSize = obAsm.Parts[slotIdx].Mesh.NativeSize;

@@ -22,7 +22,7 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 	TArray<FBIMKey> presetStack;
 	presetStack.Push(PresetID);
 
-	// Depth first walk through the preset and its descendents
+	// Depth first walk through the preset and its descendants
 	while (presetStack.Num() > 0)
 	{
 		FBIMKey presetID = presetStack.Pop();
@@ -95,6 +95,10 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 				continue;
 			}
 
+			// Some assemblies have parts that are themselves assemblies
+			// Cache these sub-assemblies and extract their parts below
+			TArray<FBIMAssemblySpec> subSpecs;
+
 			// Create a part entry in the assembly spec for each part in the preset
 			for (auto& partSlot : preset->PartSlots)
 			{
@@ -103,6 +107,19 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 
 				// Find the preset for the part in the slot...this will contain the mesh, material and color information
 				const FBIMPreset* partPreset = PresetCollection.Presets.Find(partSlot.PartPreset);
+
+				if (!ensureAlways(partPreset != nullptr))
+				{
+					continue;
+				}
+
+				// If we encounter a sub-assembly (ie a complex panel on a door), recurse and stash
+				if (partPreset->NodeScope == EBIMValueScope::Assembly)
+				{
+					FBIMAssemblySpec& spec = subSpecs.AddDefaulted_GetRef();
+					ensureAlways(spec.FromPreset(InDB, PresetCollection, partPreset->PresetID) == ECraftingResult::Success);
+					continue;
+				}
 					
 				// Each child of a part represents one component (mesh, material or color)
 				// TODO: for now, ignoring material and color
@@ -172,6 +189,18 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 						}
 					}
 				}
+			}
+
+			// TODO: for now, sub-assemblies only care about parts
+			// Some complex types (ie stairs) may need similar treatment for extrusions and layers
+			// To be determined: continue with flat layout or build hierarchy of specs?
+			for (auto& subSpec : subSpecs)
+			{
+				for (auto& part : subSpec.Parts)
+				{
+					part.ParentSlotIndex += Parts.Num();
+				}
+				Parts.Append(subSpec.Parts);
 			}
 		}
 	}

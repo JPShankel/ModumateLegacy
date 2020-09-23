@@ -350,6 +350,10 @@ ECraftingResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row,
 		}
 		else if (PinRange.IsIn(i))
 		{
+			if (cell.IsEmpty())
+			{
+				continue;
+			}
 			FName pinName = *PinRange.Get(i);
 			bool found = false;
 			for (int32 setIndex = 0; setIndex < NodeType.ChildAttachments.Num(); ++setIndex)

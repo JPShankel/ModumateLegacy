@@ -57,10 +57,13 @@ private:
 	FBIMPropertySheet Properties;
 	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
 
+
 public:
 	Modumate::Expression::FVectorExpression Translation, Size, Orientation;
 	using FBooleanVector = bool[3];
 	FBooleanVector Flip {false, false, false};
+
+	int32 ParentSlotIndex = 0;
 
 	FArchitecturalMesh Mesh;
 };

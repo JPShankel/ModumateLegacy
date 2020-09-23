@@ -88,16 +88,16 @@ PRESET,,"2Part --> Door --> MailSlot
 PRESET,,"2Part --> Door --> Panel --> Sliding
 0Mesh-Door-Panel-Sliding-Contemporary-01.Door-Panel-Sliding-Contemporary-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard",,2Part --> Door --> Panel --> Sliding,,2Part36,,,0Mesh-Door-Panel-Sliding-Contemporary-01.Door-Panel-Sliding-Contemporary-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,,Finish,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,
-PRESET,,,,,,,,,0Mesh-Door-Panel-Sliding-Contemporary-01.Door-Panel-Sliding-Contemporary-01',1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone-0SrfTreatment-Standard,,FinishGlass,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone-0SrfTreatment-Standard,,FinishGlass,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished",,2Part --> Door --> Panel --> Swing,,2Part38,,,0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01',1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,,FinishInterior,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,,,,,,,,0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01',1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,,FinishExterior,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,,FinishExterior,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished",,2Part --> Door --> Panel --> Swing,,2Part40,,,0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,,FinishInterior,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,,,,,,,,0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02',1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,,FinishExterior,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,,,,,,,,0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02',1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone-0SrfTreatment-Standard,,FinishGlass,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,,FinishExterior,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone-0SrfTreatment-Standard,,FinishGlass,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"2Part --> Door --> Peephole
 0Mesh-Door-Peephole-01.Door-Peephole-01'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard",,2Part --> Door --> Peephole,,2Part43,,,0Mesh-Door-Peephole-01.Door-Peephole-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
@@ -107,11 +107,11 @@ PRESET,,"2Part --> Door --> Peephole
 PRESET,,"2Part --> FFE --> Furniture --> Table --> Dining
 0Mesh-remade/FFE-Table-Dining-4/FFE-Table-Dining-4-Merged.FFE-Table-Dining-4-Merged'
 1Material --> Stone --> Marble-0RawMaterial-Marble (Calacatta)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard",,2Part --> FFE --> Furniture --> Table --> Dining,,2Part45,X,,0Mesh-remade/FFE-Table-Dining-4/FFE-Table-Dining-4-Merged.FFE-Table-Dining-4-Merged',1Material --> Stone --> Marble-0RawMaterial-Marble (Calacatta)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,,FinishTop,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,
-PRESET,,,,,,,,,0Mesh-remade/FFE-Table-Dining-4/FFE-Table-Dining-4-Merged.FFE-Table-Dining-4-Merged',1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,,FinishBase,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,,FinishBase,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"2Part --> FFE --> Furniture --> Table --> Dining
 0Mesh-remade/FFE-Table-Dining-1/FFE-Table-Dining-1.FFE-Table-Dining-1'
 1Material --> Stone --> Granite-0RawMaterial-Granite (Brown 1)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard",,2Part --> FFE --> Furniture --> Table --> Dining,,2Part47,X,,0Mesh-remade/FFE-Table-Dining-1/FFE-Table-Dining-1.FFE-Table-Dining-1',1Material --> Stone --> Granite-0RawMaterial-Granite (Brown 1)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,,Material1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,
-PRESET,,,,,,,,,0Mesh-remade/FFE-Table-Dining-1/FFE-Table-Dining-1.FFE-Table-Dining-1',1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,,Material2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,,Material2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard",,2Part --> FFE --> Furniture --> Chair --> Dining,,2Part49,X,,0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,,Material,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,
