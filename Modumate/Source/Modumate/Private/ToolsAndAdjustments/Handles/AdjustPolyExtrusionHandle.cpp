@@ -1,11 +1,14 @@
 #include "ToolsAndAdjustments/Handles/AdjustPolyExtrusionHandle.h"
 
-#include "Algo/Accumulate.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "Objects/ModumateObjectInstance.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UI/AdjustmentHandleAssetData.h"
+#include "UI/DimensionManager.h"
+#include "UI/DimensionActor.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 bool AAdjustPolyExtrusionHandle::BeginUse()
 {
@@ -22,11 +25,14 @@ bool AAdjustPolyExtrusionHandle::BeginUse()
 		return false;
 	}
 
-	OriginalControlPoints = TargetMOI->GetControlPoints();
-	OriginalPlane = FPlane(TargetMOI->GetControlPoints().Num() > 0 ? TargetMOI->GetControlPoint(0) : TargetMOI->GetObjectLocation(), TargetMOI->GetNormal());
+	if (!ensure(TargetMOI->GetNumCorners() > 0))
+	{
+		return false;
+	}
+
+	OriginalPlane = FPlane(TargetMOI->GetCorner(0), TargetMOI->GetNormal());
 	OriginalExtrusion = TargetMOI->GetExtents().Y;
 	LastValidExtrusion = OriginalExtrusion;
-	AnchorLoc = GetHandlePosition();
 
 	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorLoc, TargetMOI->GetNormal());
 
@@ -59,78 +65,65 @@ bool AAdjustPolyExtrusionHandle::UpdateUse()
 			extrusionDelta = (projectedDeltaPos - AnchorLoc) | (Sign * OriginalPlane);
 		}
 	}
+
+	// project pending segment onto extrusion vector
+	float newExtrusion = OriginalExtrusion + extrusionDelta;
+	ALineActor* pendingSegment = nullptr;
+	if (auto dimensionActor = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID))
+	{
+		pendingSegment = dimensionActor->GetLineActor();
+	}
+
+	if (pendingSegment != nullptr)
+	{
+		pendingSegment->Point2 = AnchorLoc + OriginalPlane * Sign * extrusionDelta;
+	}
+
 	if (snapCursor || snapStructural)
 	{
-		float newExtrusion = OriginalExtrusion + extrusionDelta;
 		if ((newExtrusion > 0.0f) && (newExtrusion != LastValidExtrusion))
 		{
-			FVector extents = TargetMOI->GetExtents();
-			extents.Y = newExtrusion;
-			TargetMOI->SetExtents(extents);
-
 			LastValidExtrusion = newExtrusion;
-
-			if (Sign < 0.0f)
-			{
-				for (int32 i = 0; i < TargetMOI->GetControlPoints().Num(); ++i)
-				{
-					TargetMOI->SetControlPoint(i,OriginalControlPoints[i] - (OriginalPlane * extrusionDelta));
-				}
-			}
-
-			UpdateTargetGeometry();
+			ApplyExtrusion(true);
 		}
 	}
-	FVector camDir = Controller->PlayerCameraManager->GetCameraRotation().Vector();
-	camDir.Z = 0.f;
-	camDir = camDir.RotateAngleAxis(90.f, FVector::UpVector);
 
-	// Dim string for vertical extrusion handle - Delta
-	UModumateFunctionLibrary::AddNewDimensionString(
-		Controller,
-		AnchorLoc,
-		GetHandlePosition(),
-		camDir,
-		Controller->DimensionStringGroupID_Default,
-		Controller->DimensionStringUniqueID_Delta,
-		0,
-		TargetMOI->GetActor(),
-		EDimStringStyle::Fixed);
-
-	FVector bottomStringLoc = FVector(GetHandlePosition().X, GetHandlePosition().Y, TargetMOI->GetControlPoint(0).Z);
-	FVector topStringLoc = bottomStringLoc + FVector(0.f, 0.f, TargetMOI->GetExtents().Y);
-
-	// Dim string for vertical extrusion handle - Total
-	UModumateFunctionLibrary::AddNewDimensionString(
-		Controller,
-		bottomStringLoc,
-		topStringLoc,
-		camDir,
-		Controller->DimensionStringGroupID_Default,
-		Controller->DimensionStringUniqueID_Total,
-		1,
-		TargetMOI->GetActor(),
-		EDimStringStyle::Fixed);
 	return true;
+}
+
+void AAdjustPolyExtrusionHandle::EndUse()
+{
+	ApplyExtrusion(false);
+
+	if (!IsActorBeingDestroyed())
+	{
+		PostEndOrAbort();
+	}
 }
 
 FVector AAdjustPolyExtrusionHandle::GetHandlePosition() const
 {
-	if (TargetMOI->GetControlPoints().Num() > 0)
-	{
-		FVector objectNormal = TargetMOI->GetNormal();
-		FVector offset = (Sign > 0.0f) ? (TargetMOI->GetExtents().Y * objectNormal) : FVector::ZeroVector;
-		FVector centroid = Algo::Accumulate(
-			TargetMOI->GetControlPoints(), 
-			FVector::ZeroVector,
-			[](FVector centroid, const FVector &p) { return centroid + p; }) / TargetMOI->GetControlPoints().Num();
-
-		return offset + centroid;
-	}
-	else
+	int32 numCorners = TargetMOI->GetNumCorners();
+	if (!ensure(numCorners > 0))
 	{
 		return TargetMOI->GetObjectLocation();
 	}
+
+	FVector objectNormal = TargetMOI->GetNormal();
+	FVector offset = (Sign > 0.0f) ? (TargetMOI->GetExtents().Y * objectNormal) : FVector::ZeroVector;
+
+	// this is assuming that the target object is a prism and GetCorner enumerates the base points first
+	int32 numBasePoints = numCorners / 2.0f;
+
+	FVector centroid = FVector::ZeroVector;
+	for (int32 cornerIdx = 0; cornerIdx < numBasePoints; cornerIdx++)
+	{
+		centroid += TargetMOI->GetCorner(cornerIdx);
+	}
+	
+	centroid /= numBasePoints;
+
+	return offset + centroid;
 }
 
 FVector AAdjustPolyExtrusionHandle::GetHandleDirection() const
@@ -140,36 +133,32 @@ FVector AAdjustPolyExtrusionHandle::GetHandleDirection() const
 
 bool AAdjustPolyExtrusionHandle::HandleInputNumber(float number)
 {
-	TArray<FVector> newPoints;
-	FVector newExtents(ForceInitToZero);
+	float dir = FMath::Sign(LastValidExtrusion - OriginalExtrusion);
+	LastValidExtrusion = OriginalExtrusion + number * dir;
 
-	if (Controller->EMPlayerState->CurrentDimensionStringWithInputUniqueID == Controller->DimensionStringUniqueID_Delta)
+	EndUse();
+	return true;
+}
+
+void AAdjustPolyExtrusionHandle::ApplyExtrusion(bool bIsPreview)
+{
+	FMOIDelta delta;
+	auto state = ((const FModumateObjectInstance*)TargetMOI)->GetDataState();
+	state.StateType = EMOIDeltaType::Mutate;
+	delta.StatePairs.Add(TPair<FMOIStateData, FMOIStateData>(state, state));
+	delta.StatePairs[0].Value.Extents.Y = LastValidExtrusion;
+
+	TArray<FDeltaPtr> deltas;
+	deltas.Add(MakeShared<FMOIDelta>(delta));
+
+	if (bIsPreview)
 	{
-		float dir = FMath::Sign(TargetMOI->GetExtents().Y - OriginalExtrusion);
-		if (Sign > 0.f)
-		{
-			newPoints = TargetMOI->GetControlPoints();
-		}
-		else
-		{
-			newPoints = OriginalControlPoints;
-			for (int32 i = 0; i < newPoints.Num(); ++i)
-			{
-				newPoints[i].Z = newPoints[i].Z - number * dir;
-			}
-		}
-		newExtents.Y = OriginalExtrusion + number * dir;
+		Controller->GetDocument()->ApplyPreviewDeltas(deltas, Controller->GetWorld());
 	}
 	else
 	{
-		newExtents.Y = number;
-		newPoints = TargetMOI->GetControlPoints();
+		Controller->GetDocument()->ApplyDeltas(deltas, Controller->GetWorld());
 	}
-
-	TargetMOI->SetControlPoints(newPoints);
-	TargetMOI->SetExtents(newExtents);
-	Super::EndUse();
-	return true;
 }
 
 bool AAdjustPolyExtrusionHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const

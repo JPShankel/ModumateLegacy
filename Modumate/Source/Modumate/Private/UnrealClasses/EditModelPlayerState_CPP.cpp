@@ -993,10 +993,6 @@ void AEditModelPlayerState_CPP::AddDimensionStringsToHUDDrawWidget()
 		{
 			EMPlayerController->HUDDrawWidget->LinesToDraw.Append(convertedLines);
 		}
-		if (curDim.Functionality == EEnterableField::EditableText_ImperialUnits_UserInput)
-		{
-			CurrentDimensionStringWithInputUniqueID = curDim.UniqueID;
-		}
 	}
 
 	DimensionStrings.Reset();

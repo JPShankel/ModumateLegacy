@@ -89,10 +89,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	int32 CurrentDimensionStringGroupIndexMax = 0;
 
-	// The UniqueID of dim string that is expecting user input
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	FName CurrentDimensionStringWithInputUniqueID = NAME_None;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	FSnappedCursor SnappedCursor;
 
