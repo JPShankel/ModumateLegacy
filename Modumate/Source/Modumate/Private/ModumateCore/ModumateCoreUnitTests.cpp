@@ -1,7 +1,12 @@
-#include "CoreMinimal.h"
+// Copyright 2020 Modumate, Inc. All Rights Reserved.
+#include "ModumateCore/ModumateCoreUnitTests.h"
 
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
+#include "Backends/CborStructDeserializerBackend.h"
+#include "Backends/CborStructSerializerBackend.h"
+#include "CompGeom/PolygonTriangulation.h"
+#include "JsonObjectConverter.h"
 #include "MathUtil.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
@@ -9,77 +14,105 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Polygon2.h"
-#include "CompGeom/PolygonTriangulation.h"
+#include "StructDeserializer.h"
+#include "StructSerializer.h"
 
+
+FModumateTestInstanceData::FModumateTestInstanceData()
+	: bValid(false)
+	, DebugStructName(NAME_None)
+{ }
+
+FModumateTestInstanceData::FModumateTestInstanceData(const UModumateTestObjectBase* SrcObject)
+{
+	bValid = false;
+
+	UScriptStruct* dataStructDef;
+	const void* dataStructPtr;
+	if (!SrcObject->GetInstanceData(dataStructDef, dataStructPtr))
+	{
+		return;
+	}
+
+	DebugStructName = dataStructDef->GetFName();
+
+	if (!FJsonObjectConverter::UStructToJsonObjectString(dataStructDef, dataStructPtr, DataJsonString, 0, 0))
+	{
+		return;
+	}
+
+	DataCborBuffer.Reset();
+	FMemoryWriter writer(DataCborBuffer);
+	FCborStructSerializerBackend serializerBackend(writer, EStructSerializerBackendFlags::Default);
+
+	FStructSerializerPolicies policies;
+	policies.NullValues = EStructSerializerNullValuePolicies::Ignore;
+
+	FStructSerializer::Serialize(dataStructPtr, *dataStructDef, serializerBackend, policies);
+
+	bValid = !DataJsonString.IsEmpty() && (DataCborBuffer.Num() > 0);
+}
+
+bool FModumateTestInstanceData::LoadInstanceData(UModumateTestObjectBase* DestObject) const
+{
+	if (!bValid)
+	{
+		return false;
+	}
+
+	UScriptStruct* dataStructDef;
+	void* dataStructPtr;
+	if (!DestObject->GetInstanceData(dataStructDef, dataStructPtr) ||
+		!ensure(DebugStructName == dataStructDef->GetFName()))
+	{
+		return false;
+	}
+
+	FMemoryReader reader(DataCborBuffer);
+	FCborStructDeserializerBackend deserializerBackend(reader);
+
+	return FStructDeserializer::Deserialize(dataStructPtr, *dataStructDef, deserializerBackend);
+}
+
+bool UModumateTestObjectBase::GetInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+{
+	OutStructDef = nullptr;
+	OutStructPtr = nullptr;
+
+	if (auto structProp = GetInstanceField())
+	{
+		OutStructDef = structProp->Struct;
+		OutStructPtr = structProp->ContainerPtrToValuePtr<void>(this);
+	}
+
+	return (OutStructDef != nullptr) && (OutStructPtr != nullptr);
+}
+
+bool UModumateTestObjectBase::GetInstanceData(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const
+{
+	void* mutableStructPtr;
+	bool bSuccess = const_cast<UModumateTestObjectBase*>(this)->GetInstanceData(OutStructDef, mutableStructPtr);
+	OutStructPtr = const_cast<const void*>(mutableStructPtr);
+	return bSuccess;
+}
+
+FStructProperty* UModumateTestObjectBase::GetInstanceField() const
+{
+	static const FName instanceDataPropName(TEXT("InstanceData"));
+	return CastField<FStructProperty>(GetClass()->FindPropertyByName(instanceDataPropName));
+}
+
+bool UModumateTestObject3::GetInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+{
+	OutStructDef = CustomData.StaticStruct();
+	OutStructPtr = &CustomData;
+	return true;
+}
 
 namespace Modumate
 {
 	// Pointer tests
 
-#define POINTER_MEMBERS 1
-#define USE_STD_MEMORY 0
-
-#if USE_STD_MEMORY
-#else
-	class FPointerTestContainer;
-
-	class FPointerTestMember
-	{
-	public:
-		FPointerTestMember(int32 InID, TSharedPtr<FPointerTestContainer> InContainer);
-		~FPointerTestMember();
-
-		int32 ID = -1;
-		int32 ContainerID = -1;
-
-		TWeakPtr<FPointerTestContainer> Container;
-	};
-
-	class FPointerTestContainer : public TSharedFromThis<FPointerTestContainer>
-	{
-	public:
-		FPointerTestContainer() { }
-
-		FPointerTestContainer(int32 InID)
-			: ID(InID)
-		{
-		}
-
-		~FPointerTestContainer()
-		{
-			UE_LOG(LogTemp, Log, TEXT("Destroyed test container ID %d with %d members"), ID, Members.Num());
-		}
-
-#if POINTER_MEMBERS
-		TSharedPtr<FPointerTestMember> AddMember(int32 MemberID)
-		{
-			auto sharedThis = this->AsShared();
-			auto newMember = MakeShared<FPointerTestMember>(MemberID, sharedThis);
-			auto addedMember = Members.Add(MemberID, newMember);
-			ensure(newMember == addedMember);
-			return newMember;
-		}
-#else
-		FPointerTestMember* AddMember(int32 MemberID)
-		{
-			auto sharedThis = this->AsShared();
-			FPointerTestMember& addedMember = Members.Add(MemberID, FPointerTestMember(MemberID, sharedThis));
-			return &addedMember;
-		}
-#endif
-
-		void Reset()
-		{
-			Members.Reset();
-		}
-
-		int32 ID = -1;
-#if POINTER_MEMBERS
-		TMap<int32, TSharedPtr<FPointerTestMember>> Members;
-#else
-		TMap<int32, FPointerTestMember> Members;
-#endif
-	};
 
 	FPointerTestMember::FPointerTestMember(int32 InID, TSharedPtr<FPointerTestContainer> InContainer)
 		: ID(InID)
@@ -99,16 +132,10 @@ namespace Modumate
 		if (container.IsValid())
 		{
 			ensure(ContainerID == container->ID);
-			UE_LOG(LogTemp, Log, TEXT("Destroyed test member ID %d, contained by ID %d"), ID, container->ID);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Log, TEXT("Destroyed test member ID %d, after container ID %d was destroyed."), ID, ContainerID);
 		}
 	}
-#endif
 
-	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumatePointerTests, "Modumate.Core.Pointers", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumatePointerTests, "Modumate.Core.Pointers", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::LowPriority)
 		bool FModumatePointerTests::RunTest(const FString& Parameters)
 	{
 		for (int32 i = 0; i < 16; ++i)
@@ -129,6 +156,156 @@ namespace Modumate
 				container->Reset();
 			}
 		}
+
+		return true;
+	}
+
+	// Serialization tests
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUStructSerializationTest, "Modumate.Core.UStructSerialization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::LowPriority)
+		bool FModumateUStructSerializationTest::RunTest(const FString& Parameters)
+	{
+		// Struct 1 property comparison
+
+		FModumateTestStruct1 testStruct1A{ false, 1.0 / 2.54, {1, 2, 3, 4} };
+		FModumateTestStruct1 testStruct1B{ true, 1.0 / 2.54, {1, 0, 3, 4} };
+		FModumateTestStruct1 testStruct1C{ true, 1.0 / 2.54, {1, 2, 3, 4} };
+
+		for (TFieldIterator<FProperty> propIter(FModumateTestStruct1::StaticStruct()); propIter; ++propIter)
+		{
+			FProperty* propDef = *propIter;
+
+			FString propName;
+			propDef->GetName(propName);
+
+			const void* structPropValueA = propDef->ContainerPtrToValuePtr<void>(&testStruct1A);
+			const void* structPropValueB = propDef->ContainerPtrToValuePtr<void>(&testStruct1B);
+			const void* structPropValueC = propDef->ContainerPtrToValuePtr<void>(&testStruct1C);
+			bool bPropsEqualAB = propDef->Identical(structPropValueA, structPropValueB);
+			bool bPropsEqualBC = propDef->Identical(structPropValueB, structPropValueC);
+			bool bPropsEqualAC = propDef->Identical(structPropValueA, structPropValueC);
+
+			if (propName.Equals(TEXT("bValue")))
+			{
+				TestFalse(TEXT("A.bValue != B.bValue"), bPropsEqualAB);
+				TestTrue(TEXT("B.bValue == C.bValue"), bPropsEqualBC);
+				TestFalse(TEXT("A.bValue != C.bValue"), bPropsEqualAC);
+			}
+			else if (propName.Equals(TEXT("Integers")))
+			{
+				TestFalse(TEXT("A.Integers != B.Integers"), bPropsEqualAB);
+				TestFalse(TEXT("B.Integers != C.Integers"), bPropsEqualBC);
+				TestTrue(TEXT("A.Integers == C.Integers"), bPropsEqualAC);
+			}
+		}
+
+		// Struct 2 property comparison
+
+		FModumateTestStruct2 testStruct2A;
+		testStruct2A.VectorMap.Add(FName(TEXT("Handle")), FVector(6.0f, 36.0f, 0.0f));
+		testStruct2A.VectorMap.Add(FName(TEXT("Frame")), FVector(0.0f, 0.0f, 0.0f));
+		testStruct2A.VectorMap.Add(FName(TEXT("Panel")), FVector(0.0f, 0.0f, 1.0f));
+
+		FModumateTestStruct2 testStruct2B;
+		testStruct2B.VectorMap.Add(FName(TEXT("Frame")), FVector(0.0f, 0.0f, 0.0f));
+		testStruct2B.VectorMap.Add(FName(TEXT("Panel")), FVector(0.0f, 0.0f, 1.0f));
+		testStruct2B.VectorMap.Add(FName(TEXT("Handle")), FVector(6.0f, 36.0f, 0.0f));
+
+		for (TFieldIterator<FProperty> propIter(FModumateTestStruct2::StaticStruct()); propIter; ++propIter)
+		{
+			FProperty* propDef = *propIter;
+
+			const void* structPropValueA = propDef->ContainerPtrToValuePtr<void>(&testStruct2A);
+			const void* structPropValueB = propDef->ContainerPtrToValuePtr<void>(&testStruct2B);
+			bool bPropsEqualAB = propDef->Identical(structPropValueA, structPropValueB);
+			TestTrue(TEXT("A.VectorMap == B.VectorMap"), bPropsEqualAB);
+		}
+
+		// JSON serialization
+
+		FString testStructWithObjString;
+		TestTrue(TEXT("JSON write success"), FJsonObjectConverter::UStructToJsonObjectString(testStruct1A, testStructWithObjString));
+
+		FModumateTestStruct1 testStruct1AJSONDeserialized;
+		TestTrue(TEXT("JSON read success"), FJsonObjectConverter::JsonObjectStringToUStruct(testStructWithObjString, &testStruct1AJSONDeserialized, 0, 0));
+
+		TestEqual(TEXT("JSON read == original"), testStruct1AJSONDeserialized, testStruct1A);
+
+		// Cbor serialization
+
+		TArray<uint8> buffer;
+		FMemoryWriter writer(buffer);
+		FCborStructSerializerBackend serializerBackend(writer, EStructSerializerBackendFlags::Default);
+
+		FStructSerializerPolicies policies;
+		policies.NullValues = EStructSerializerNullValuePolicies::Ignore;
+
+		FStructSerializer::Serialize(testStruct1A, serializerBackend, policies);
+		TestTrue(TEXT("Cbor write success"), buffer.Num() > 0);
+
+		FMemoryReader reader(buffer);
+		FCborStructDeserializerBackend deserializerBackend(reader);
+
+		FModumateTestStruct1 testStruct1ACBorDeserialized;
+		FModumateTestStruct2 testStruct2ACBorDeserialized;
+		TestTrue(TEXT("Cbor struct1 read success"), FStructDeserializer::Deserialize(testStruct1ACBorDeserialized, deserializerBackend));
+		TestEqual(TEXT("Cbor read == original"), testStruct1ACBorDeserialized, testStruct1A);
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUObjectSerializationTest, "Modumate.Core.UObjectSerialization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::LowPriority)
+		bool FModumateUObjectSerializationTest::RunTest(const FString& Parameters)
+	{
+		// UObject duplication
+
+		auto testObject1Original = NewObject<UModumateTestObject1>();
+		testObject1Original->InstanceData.bValue = true;
+		testObject1Original->InstanceData.Number = 1.0 / 2.54;
+		testObject1Original->InstanceData.Integers = { 1, 2, 3, 4 };
+		UModumateTestObjectBase* testObject1OriginalBase = testObject1Original;
+
+		auto testObject1CloneBase = StaticDuplicateObject(testObject1OriginalBase, (UObject*)GetTransientPackage());
+		auto testObject1Clone = Cast<UModumateTestObject1>(testObject1CloneBase);
+
+		UTEST_TRUE(TEXT("Cloned correct UClass"), testObject1Clone != nullptr);
+		UTEST_EQUAL(TEXT("Cloned correct properties"), testObject1Original->InstanceData, testObject1Clone->InstanceData);
+
+		for (TFieldIterator<FProperty> propIter(UModumateTestObject1::StaticClass()); propIter; ++propIter)
+		{
+			FProperty* propDef = *propIter;
+
+			FString propName;
+			propDef->GetName(propName);
+
+			const void* objPropValueA = propDef->ContainerPtrToValuePtr<void>(testObject1Original);
+			const void* objPropValueB = propDef->ContainerPtrToValuePtr<void>(testObject1Clone);
+			bool bPropsEqualAB = propDef->Identical(objPropValueA, objPropValueB);
+			TestTrue(FString::Printf(TEXT("Original.%s == Clone.%s"), *propName, *propName), bPropsEqualAB);
+		}
+
+		// UObject UStruct members and shared serialization
+
+		FModumateTestInstanceData object1Data(testObject1Original);
+		auto testObject1Loaded = NewObject<UModumateTestObject1>();
+		TestTrue(TEXT("TestObject1 data loaded"), object1Data.LoadInstanceData(testObject1Loaded));
+		TestEqual(TEXT("TestObject1 data loaded correctly"), testObject1Original->InstanceData, testObject1Loaded->InstanceData);
+
+		auto testObject2Original = NewObject<UModumateTestObject2>();
+		testObject2Original->InstanceData.VectorMap.Add(FName(TEXT("Handle")), FVector(6.0f, 36.0f, 0.0f));
+		testObject2Original->InstanceData.VectorMap.Add(FName(TEXT("Frame")), FVector(0.0f, 0.0f, 0.0f));
+		testObject2Original->InstanceData.VectorMap.Add(FName(TEXT("Panel")), FVector(0.0f, 0.0f, 1.0f));
+		FModumateTestInstanceData object2Data(testObject2Original);
+		auto testObject2Loaded = NewObject<UModumateTestObject2>();
+		TestTrue(TEXT("TestObject2 data loaded"), object2Data.LoadInstanceData(testObject2Loaded));
+		TestTrue(TEXT("TestObject2 data loaded correctly"), testObject2Original->InstanceData.VectorMap.OrderIndependentCompareEqual(testObject2Loaded->InstanceData.VectorMap));
+
+		auto testObject3Original = NewObject<UModumateTestObject3>();
+		testObject3Original->CustomData = testObject1Original->InstanceData;
+		FModumateTestInstanceData object3Data(testObject3Original);
+		auto testObject3Loaded = NewObject<UModumateTestObject3>();
+		TestTrue(TEXT("TestObject3 data loaded"), object3Data.LoadInstanceData(testObject3Loaded));
+		TestEqual(TEXT("TestObject3 data loaded correctly"), testObject3Original->CustomData, testObject3Loaded->CustomData);
 
 		return true;
 	}
