@@ -1,327 +1,327 @@
-TYPENAME,,2ModuleWDProfile,,Module,,,,,,,,,,,,,,,,,,,,,
-,,Definition,,,,,,,,,,,,,,,,,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,
-PROPERTY,,String,,Name,,Module.Name,,,,,,,,,,,,,,,,,,,
-,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildDimWD,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildProfile,,,,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,0,4,3,5,3,9,5,11,11,12,11,14,12,3
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Module.Name,DataType=InputPins,ChildMaterial,ChildDimWD,ChildProfile,DataType=TG_Parent Node+CategoryPath,3Layer1D --> Corrugated Deck --> Plastic,3Layer1D --> Corrugated Deck --> Steel,3Layer1D --> Furring --> Steel Hat Channel,3Layer1D --> Furring --> Steel Z Channel,3Layer1D --> Furring --> Wood Strips,3Layer1D --> Joist --> Wood,3Layer1D --> Joist --> Engineered Wood,3Layer1D --> Joist --> Wood Web Joist,"3Layer1D --> Joist --> Wood-Chord, Steel-Web Joist",3Layer1D --> Joist --> Steel C-Joist,3Layer1D --> Joist --> Steel Web Joist,3Layer1D --> Stud --> Wood,3Layer1D --> Stud --> Steel C-Channel,3Layer1D --> Stud --> Steel C-H Channel
+TYPENAME,,2ModuleWDProfile,,Module,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,String,,Name,,Module.Name,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,String,,IconLength,,Module.IconLength,,,,,,,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildDimWD,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildProfile,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,,0,4,3,5,3,9,5,11,11,12,11,14,12,3
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Module.Name,Module.IconLength,DataType=InputPins,ChildMaterial,ChildDimWD,ChildProfile,DataType=TG_Parent Node+CategoryPath,3Layer1D --> Corrugated Deck --> Plastic,3Layer1D --> Corrugated Deck --> Steel,3Layer1D --> Furring --> Steel Hat Channel,3Layer1D --> Furring --> Steel Z Channel,3Layer1D --> Furring --> Wood Strips,3Layer1D --> Joist --> Wood,3Layer1D --> Joist --> Engineered Wood,3Layer1D --> Joist --> Wood Web Joist,"3Layer1D --> Joist --> Wood-Chord, Steel-Web Joist",3Layer1D --> Joist --> Steel C-Joist,3Layer1D --> Joist --> Steel Web Joist,3Layer1D --> Stud --> Wood,3Layer1D --> Stud --> Steel C-Channel,3Layer1D --> Stud --> Steel C-H Channel
 PRESET,,"2ModuleWDProfile --> Corrugated Plastic Sheet
-1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6-0SrfTreatment-Standard
+1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimWD-6inW-1.5inD
-0Profile-Corrugated Plastic",,2ModuleWDProfile --> Corrugated Plastic Sheet,,2ModuleWDProfile-11,,1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6-0SrfTreatment-Standard,0DimWD-6inW-1.5inD,0Profile-Corrugated Plastic,,,X,,,,,,,,,,,,
+0Profile-Corrugated Plastic",,2ModuleWDProfile --> Corrugated Plastic Sheet,,"6in x 1.5in, Corrugated Plastic Sheet, Plastic, Gray 6",96in,,1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6,0DimWD-6inW-1.5inD,0Profile-Corrugated Plastic,,,X,,,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Corrugated Plastic Sheet
-1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6-0SrfTreatment-Standard
+1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimWD-6inW-2inD
-0Profile-Corrugated Plastic",,2ModuleWDProfile --> Corrugated Plastic Sheet,,2ModuleWDProfile-12,,1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6-0SrfTreatment-Standard,0DimWD-6inW-2inD,0Profile-Corrugated Plastic,,,X,,,,,,,,,,,,
+0Profile-Corrugated Plastic",,2ModuleWDProfile --> Corrugated Plastic Sheet,,"6in x 2in, Corrugated Plastic Sheet, Plastic, Gray 6",96in,,1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6,0DimWD-6inW-2inD,0Profile-Corrugated Plastic,,,X,,,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Corrugated Steel Deck
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-6inW-1.5inD
-0Profile-Corrugated Steel",,2ModuleWDProfile --> Corrugated Steel Deck,,2ModuleWDProfile-13,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-6inW-1.5inD,0Profile-Corrugated Steel,,,X,,,,,,,,,,,,
+0Profile-Corrugated Steel",,2ModuleWDProfile --> Corrugated Steel Deck,,"6in x 1.5in, Corrugated Steel Deck, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-6inW-1.5inD,0Profile-Corrugated Steel,,,X,,,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Corrugated Steel Deck
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-6inW-2inD
-0Profile-Corrugated Steel",,2ModuleWDProfile --> Corrugated Steel Deck,,2ModuleWDProfile-14,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-6inW-2inD,0Profile-Corrugated Steel,,,X,,,,,,,,,,,,
+0Profile-Corrugated Steel",,2ModuleWDProfile --> Corrugated Steel Deck,,"6in x 2in, Corrugated Steel Deck, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-6inW-2inD,0Profile-Corrugated Steel,,,X,,,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Corrugated Steel Deck
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-6inW-3inD
-0Profile-Corrugated Steel",,2ModuleWDProfile --> Corrugated Steel Deck,,2ModuleWDProfile-15,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-6inW-3inD,0Profile-Corrugated Steel,,,X,,,,,,,,,,,,
+0Profile-Corrugated Steel",,2ModuleWDProfile --> Corrugated Steel Deck,,"6in x 3in, Corrugated Steel Deck, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-6inW-3inD,0Profile-Corrugated Steel,,,X,,,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Corrugated Steel Deck
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-6inW-4.5inD
-0Profile-Corrugated Steel",,2ModuleWDProfile --> Corrugated Steel Deck,,2ModuleWDProfile-16,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-6inW-4.5inD,0Profile-Corrugated Steel,,,X,,,,,,,,,,,,
+0Profile-Corrugated Steel",,2ModuleWDProfile --> Corrugated Steel Deck,,"6in x 4.5in, Corrugated Steel Deck, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-6inW-4.5inD,0Profile-Corrugated Steel,,,X,,,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.625inW-1.625inD
-0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,2ModuleWDProfile-17,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.625inW-1.625inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,"1.625in x 1.625in, Steel C-Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.625inW-1.625inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
 PRESET,,"2ModuleWDProfile --> Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.625inW-2inD
-0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,2ModuleWDProfile-18,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.625inW-2inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,"1.625in x 2in, Steel C-Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.625inW-2inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
 PRESET,,"2ModuleWDProfile --> Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.625inW-2.5inD
-0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,2ModuleWDProfile-19,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.625inW-2.5inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,"1.625in x 2.5in, Steel C-Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.625inW-2.5inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
 PRESET,,"2ModuleWDProfile --> Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.625inW-3inD
-0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,2ModuleWDProfile-20,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.625inW-3inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,"1.625in x 3in, Steel C-Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.625inW-3inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
 PRESET,,"2ModuleWDProfile --> Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.625inW-3.5inD
-0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,2ModuleWDProfile-21,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.625inW-3.5inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,"1.625in x 3.5in, Steel C-Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.625inW-3.5inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
 PRESET,,"2ModuleWDProfile --> Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.625inW-3.625inD
-0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,2ModuleWDProfile-22,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.625inW-3.625inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,"1.625in x 3.625in, Steel C-Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.625inW-3.625inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
 PRESET,,"2ModuleWDProfile --> Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.625inW-4inD
-0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,2ModuleWDProfile-23,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.625inW-4inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,"1.625in x 4in, Steel C-Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.625inW-4inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
 PRESET,,"2ModuleWDProfile --> Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.625inW-5.5inD
-0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,2ModuleWDProfile-24,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.625inW-5.5inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,"1.625in x 5.5in, Steel C-Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.625inW-5.5inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
 PRESET,,"2ModuleWDProfile --> Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.625inW-6inD
-0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,2ModuleWDProfile-25,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.625inW-6inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,"1.625in x 6in, Steel C-Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.625inW-6inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
 PRESET,,"2ModuleWDProfile --> Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.625inW-8inD
-0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,2ModuleWDProfile-26,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.625inW-8inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,"1.625in x 8in, Steel C-Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.625inW-8inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
 PRESET,,"2ModuleWDProfile --> Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.625inW-10inD
-0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,2ModuleWDProfile-27,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.625inW-10inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,"1.625in x 10in, Steel C-Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.625inW-10inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
 PRESET,,"2ModuleWDProfile --> Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.625inW-14inD
-0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,2ModuleWDProfile-28,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.625inW-14inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+0Profile-Steel C-Stud",,2ModuleWDProfile --> Steel C-Channel,,"1.625in x 14in, Steel C-Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.625inW-14inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
 PRESET,,"2ModuleWDProfile --> Steel C-H Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.5inW-2.5inD
-0Profile-Steel C-H Stud",,2ModuleWDProfile --> Steel C-H Channel,,2ModuleWDProfile-29,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.5inW-2.5inD,0Profile-Steel C-H Stud,,,,,,,,,,,,,,,X
+0Profile-Steel C-H Stud",,2ModuleWDProfile --> Steel C-H Channel,,"1.5in x 2.5in, Steel C-H Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.5inW-2.5inD,0Profile-Steel C-H Stud,,,,,,,,,,,,,,,X
 PRESET,,"2ModuleWDProfile --> Steel C-H Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.5inW-4inD
-0Profile-Steel C-H Stud",,2ModuleWDProfile --> Steel C-H Channel,,2ModuleWDProfile-30,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.5inW-4inD,0Profile-Steel C-H Stud,,,,,,,,,,,,,,,X
+0Profile-Steel C-H Stud",,2ModuleWDProfile --> Steel C-H Channel,,"1.5in x 4in, Steel C-H Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.5inW-4inD,0Profile-Steel C-H Stud,,,,,,,,,,,,,,,X
 PRESET,,"2ModuleWDProfile --> Steel C-H Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.5inW-6inD
-0Profile-Steel C-H Stud",,2ModuleWDProfile --> Steel C-H Channel,,2ModuleWDProfile-31,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.5inW-6inD,0Profile-Steel C-H Stud,,,,,,,,,,,,,,,X
+0Profile-Steel C-H Stud",,2ModuleWDProfile --> Steel C-H Channel,,"1.5in x 6in, Steel C-H Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.5inW-6inD,0Profile-Steel C-H Stud,,,,,,,,,,,,,,,X
 PRESET,,"2ModuleWDProfile --> Steel Hat Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.25inW-0.5inD
-0Profile-Steel Hat Channel",,2ModuleWDProfile --> Steel Hat Channel,,2ModuleWDProfile-32,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.25inW-0.5inD,0Profile-Steel Hat Channel,,,,X,,,,,,,,,,,
+0Profile-Steel Hat Channel",,2ModuleWDProfile --> Steel Hat Channel,,"1.25in x 0.5in, Steel Hat Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.25inW-0.5inD,0Profile-Steel Hat Channel,,,,X,,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Steel Hat Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.25inW-0.875inD
-0Profile-Steel Hat Channel",,2ModuleWDProfile --> Steel Hat Channel,,2ModuleWDProfile-33,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.25inW-0.875inD,0Profile-Steel Hat Channel,,,,X,,,,,,,,,,,
+0Profile-Steel Hat Channel",,2ModuleWDProfile --> Steel Hat Channel,,"1.25in x 0.875in, Steel Hat Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.25inW-0.875inD,0Profile-Steel Hat Channel,,,,X,,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Steel Hat Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.25inW-1.5inD
-0Profile-Steel Hat Channel",,2ModuleWDProfile --> Steel Hat Channel,,2ModuleWDProfile-34,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-1.25inW-1.5inD,0Profile-Steel Hat Channel,,,,X,,,,,,,,,,,
+0Profile-Steel Hat Channel",,2ModuleWDProfile --> Steel Hat Channel,,"1.25in x 1.5in, Steel Hat Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.25inW-1.5inD,0Profile-Steel Hat Channel,,,,X,,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Steel Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-9.5inD
-0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,2ModuleWDProfile-35,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-9.5inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
+0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,"3.5in x 9.5in, Steel Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-9.5inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
 PRESET,,"2ModuleWDProfile --> Steel Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-11.875inD
-0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,2ModuleWDProfile-36,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-11.875inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
+0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,"3.5in x 11.875in, Steel Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-11.875inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
 PRESET,,"2ModuleWDProfile --> Steel Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-12inD
-0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,2ModuleWDProfile-37,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-12inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
+0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,"3.5in x 12in, Steel Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-12inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
 PRESET,,"2ModuleWDProfile --> Steel Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-14inD
-0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,2ModuleWDProfile-38,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-14inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
+0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,"3.5in x 14in, Steel Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-14inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
 PRESET,,"2ModuleWDProfile --> Steel Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-16inD
-0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,2ModuleWDProfile-39,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-16inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
+0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,"3.5in x 16in, Steel Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-16inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
 PRESET,,"2ModuleWDProfile --> Steel Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-18inD
-0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,2ModuleWDProfile-40,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-18inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
+0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,"3.5in x 18in, Steel Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-18inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
 PRESET,,"2ModuleWDProfile --> Steel Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-20inD
-0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,2ModuleWDProfile-41,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-20inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
+0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,"3.5in x 20in, Steel Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-20inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
 PRESET,,"2ModuleWDProfile --> Steel Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-22inD
-0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,2ModuleWDProfile-42,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-22inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
+0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,"3.5in x 22in, Steel Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-22inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
 PRESET,,"2ModuleWDProfile --> Steel Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-24inD
-0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,2ModuleWDProfile-43,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-24inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
+0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,"3.5in x 24in, Steel Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-24inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
 PRESET,,"2ModuleWDProfile --> Steel Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-26inD
-0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,2ModuleWDProfile-44,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-26inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
+0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,"3.5in x 26in, Steel Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-26inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
 PRESET,,"2ModuleWDProfile --> Steel Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-28inD
-0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,2ModuleWDProfile-45,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-28inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
+0Profile-Steel Web Joist",,2ModuleWDProfile --> Steel Web Joist,,"3.5in x 28in, Steel Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-28inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
 PRESET,,"2ModuleWDProfile --> Steel Z Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-2inW-1inD
-0Profile-Steel Z Channel",,2ModuleWDProfile --> Steel Z Channel,,2ModuleWDProfile-46,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-2inW-1inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
+0Profile-Steel Z Channel",,2ModuleWDProfile --> Steel Z Channel,,"2in x 1in, Steel Z Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-2inW-1inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Steel Z Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-2inW-1.5inD
-0Profile-Steel Z Channel",,2ModuleWDProfile --> Steel Z Channel,,2ModuleWDProfile-47,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-2inW-1.5inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
+0Profile-Steel Z Channel",,2ModuleWDProfile --> Steel Z Channel,,"2in x 1.5in, Steel Z Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-2inW-1.5inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Steel Z Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-2inW-2inD
-0Profile-Steel Z Channel",,2ModuleWDProfile --> Steel Z Channel,,2ModuleWDProfile-48,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-2inW-2inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
+0Profile-Steel Z Channel",,2ModuleWDProfile --> Steel Z Channel,,"2in x 2in, Steel Z Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-2inW-2inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Steel Z Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-2inW-2.5inD
-0Profile-Steel Z Channel",,2ModuleWDProfile --> Steel Z Channel,,2ModuleWDProfile-49,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-2inW-2.5inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
+0Profile-Steel Z Channel",,2ModuleWDProfile --> Steel Z Channel,,"2in x 2.5in, Steel Z Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-2inW-2.5inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Steel Z Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-2inW-3inD
-0Profile-Steel Z Channel",,2ModuleWDProfile --> Steel Z Channel,,2ModuleWDProfile-50,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-2inW-3inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
+0Profile-Steel Z Channel",,2ModuleWDProfile --> Steel Z Channel,,"2in x 3in, Steel Z Channel, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-2inW-3inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-0.75inW-1.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,1x2,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-0.75inW-1.5inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"0.75in x 1.5in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-0.75inW-1.5inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-0.75inW-2.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,1x3,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-0.75inW-2.5inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"0.75in x 2.5in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-0.75inW-2.5inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-0.75inW-3.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,1x4,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-0.75inW-3.5inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"0.75in x 3.5in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-0.75inW-3.5inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-1.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,2x2,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-1.5inW-1.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 1.5in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-1.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-2.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,2x3,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-1.5inW-2.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 2.5in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-2.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-3.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,2x4,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-1.5inW-3.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 3.5in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-3.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-5.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,2x6,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-1.5inW-5.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 5.5in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-5.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-7.25inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,2x8,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-1.5inW-7.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 7.25in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-7.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-9.25inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,2x10,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-1.5inW-9.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 9.25in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-9.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-11.25inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,2x12,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-1.5inW-11.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 11.25in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-11.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-1.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,Engineered 2x2,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimWD-1.5inW-1.5inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 1.5in, Wood Lumber, Wood Strands, White",96in,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-1.5inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-2.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,Engineered 2x3,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimWD-1.5inW-2.5inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 2.5in, Wood Lumber, Wood Strands, White",96in,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-2.5inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-3.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,Engineered 2x4,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimWD-1.5inW-3.5inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 3.5in, Wood Lumber, Wood Strands, White",96in,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-3.5inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-5.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,Engineered 2x6,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimWD-1.5inW-5.5inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 5.5in, Wood Lumber, Wood Strands, White",96in,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-5.5inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-7.25inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,Engineered 2x8,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimWD-1.5inW-7.25inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 7.25in, Wood Lumber, Wood Strands, White",96in,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-7.25inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-9.25inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,Engineered 2x10,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimWD-1.5inW-9.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 9.25in, Wood Lumber, Wood Strands, White",96in,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-9.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-11.25inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,Engineered 2x12,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Standard,0DimWD-1.5inW-11.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 11.25in, Wood Lumber, Wood Strands, White",96in,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-11.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-3.5inW-9.5inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,2ModuleWDProfile-68,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-3.5inW-9.5inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 9.5in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-9.5inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-3.5inW-11.875inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,2ModuleWDProfile-69,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-3.5inW-11.875inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 11.875in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-11.875inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-3.5inW-12inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,2ModuleWDProfile-70,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-3.5inW-12inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 12in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-12inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-3.5inW-14inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,2ModuleWDProfile-71,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-3.5inW-14inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 14in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-14inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-3.5inW-16inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,2ModuleWDProfile-72,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-3.5inW-16inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 16in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-16inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-3.5inW-18inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,2ModuleWDProfile-73,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-3.5inW-18inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 18in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-18inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-3.5inW-20inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,2ModuleWDProfile-74,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-3.5inW-20inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 20in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-20inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-3.5inW-22inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,2ModuleWDProfile-75,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-3.5inW-22inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 22in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-22inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-3.5inW-24inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,2ModuleWDProfile-76,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-3.5inW-24inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 24in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-24inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-3.5inW-26inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,2ModuleWDProfile-77,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-3.5inW-26inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 26in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-26inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimWD-3.5inW-28inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,2ModuleWDProfile-78,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White-0SrfTreatment-Unfinished,0DimWD-3.5inW-28inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 28in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-28inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-9.5inD
-0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,2ModuleWDProfile-79,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-9.5inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
+0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,"3.5in x 9.5in, Wood-Chord, Steel-Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-9.5inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
 PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-11.875inD
-0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,2ModuleWDProfile-80,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-11.875inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
+0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,"3.5in x 11.875in, Wood-Chord, Steel-Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-11.875inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
 PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-12inD
-0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,2ModuleWDProfile-81,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-12inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
+0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,"3.5in x 12in, Wood-Chord, Steel-Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-12inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
 PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-14inD
-0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,2ModuleWDProfile-82,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-14inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
+0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,"3.5in x 14in, Wood-Chord, Steel-Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-14inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
 PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-16inD
-0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,2ModuleWDProfile-83,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-16inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
+0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,"3.5in x 16in, Wood-Chord, Steel-Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-16inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
 PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-18inD
-0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,2ModuleWDProfile-84,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-18inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
+0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,"3.5in x 18in, Wood-Chord, Steel-Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-18inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
 PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-20inD
-0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,2ModuleWDProfile-85,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-20inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
+0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,"3.5in x 20in, Wood-Chord, Steel-Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-20inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
 PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-22inD
-0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,2ModuleWDProfile-86,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-22inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
+0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,"3.5in x 22in, Wood-Chord, Steel-Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-22inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
 PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-24inD
-0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,2ModuleWDProfile-87,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-24inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
+0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,"3.5in x 24in, Wood-Chord, Steel-Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-24inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
 PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-26inD
-0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,2ModuleWDProfile-88,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-26inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
+0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,"3.5in x 26in, Wood-Chord, Steel-Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-26inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
 PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-3.5inW-28inD
-0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,2ModuleWDProfile-89,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite-0SrfTreatment-Standard,0DimWD-3.5inW-28inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,
+0Profile-Wood-Chord Steel-Web Joist",,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist",,"3.5in x 28in, Wood-Chord, Steel-Web Joist, Steel, Pure White",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-3.5inW-28inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,

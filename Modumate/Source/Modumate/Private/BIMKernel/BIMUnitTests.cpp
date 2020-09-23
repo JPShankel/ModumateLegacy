@@ -505,7 +505,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 		return false;
 	}
 
-	FBIMKey dirtyTestKey = FBIMKey(TEXT("1Material-->Wood-->Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color-->Abstract-FFFFFF-White-0SrfTreatment-Unfinished"));
+	FBIMKey dirtyTestKey = FBIMKey(TEXT("1Material-->Wood-->Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color-->Abstract-FFFFFF-White"));
 	instancePool.InitFromPreset(presetCollection, dirtyTestKey, rootNode);
 
 	if (!ensureAlways(rootNode->GetPresetStatus(presetCollection) == EBIMPresetEditorNodeStatus::UpToDate))

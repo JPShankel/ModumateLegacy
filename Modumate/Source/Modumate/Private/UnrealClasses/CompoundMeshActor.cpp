@@ -103,17 +103,17 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 			if (ensureAlways(parentIndex < obAsm.Parts.Num()))
 			{
 				const FVector& scaledNativeSize = obAsm.Parts[parentIndex].Mesh.NativeSize * scale;
-				vars.Add(TEXT("Parent.NativeSizeX"), scaledNativeSize.X);
-				vars.Add(TEXT("Parent.NativeSizeY"), scaledNativeSize.Y);
-				vars.Add(TEXT("Parent.NativeSizeZ"), scaledNativeSize.Z);
+				vars.Add(TEXT("Parent.SizeX"), scaledNativeSize.X);
+				vars.Add(TEXT("Parent.SizeY"), scaledNativeSize.Y);
+				vars.Add(TEXT("Parent.SizeZ"), scaledNativeSize.Z);
 			}
 		}
 
 		const FVector& nativeSize = obAsm.Parts[slotIdx].Mesh.NativeSize;
 		// Transform formulas are in inch domain.
-		vars.Add(TEXT("Part.NativeSizeX"), nativeSize.X);
-		vars.Add(TEXT("Part.NativeSizeY"), nativeSize.Y);
-		vars.Add(TEXT("Part.NativeSizeZ"), nativeSize.Z);
+		vars.Add(TEXT("Part.SizeX"), nativeSize.X);
+		vars.Add(TEXT("Part.SizeY"), nativeSize.Y);
+		vars.Add(TEXT("Part.SizeZ"), nativeSize.Z);
 
 		UStaticMesh *partMesh = assemblyPart.Mesh.EngineMesh.Get();
 

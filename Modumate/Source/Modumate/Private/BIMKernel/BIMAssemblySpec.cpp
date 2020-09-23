@@ -28,7 +28,7 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 		FBIMKey presetID = presetStack.Pop();
 
 		const FBIMPreset* preset = PresetCollection.Presets.Find(presetID);
-		if (preset == nullptr)
+		if (!ensureAlways(preset != nullptr))
 		{
 			ret = ECraftingResult::Error;
 			continue;
@@ -439,6 +439,7 @@ ECraftingResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, 
 	case EObjectType::OTCeiling:
 	case EObjectType::OTRailSegment:
 	case EObjectType::OTCountertop:
+	case EObjectType::OTSystemPanel:
 		return MakeLayeredAssembly(InDB);
 
 	case EObjectType::OTCabinet:

@@ -1391,12 +1391,12 @@ namespace Modumate
 
 	static bool testVectorFormula()
 	{
-		Modumate::Expression::FVectorExpression vf1(TEXT("Parent.NativeSizeX-2.5"), TEXT("(1/2)*Parent.NativeSizeY"), TEXT("(1/2)*(12+Parent.NativeSizeZ-6)"));
+		Modumate::Expression::FVectorExpression vf1(TEXT("Parent.SizeX-2.5"), TEXT("(1/2)*Parent.SizeY"), TEXT("(1/2)*(12+Parent.SizeZ-6)"));
 
 		TMap<FString, float> vars;
-		vars.Add(TEXT("Parent.NativeSizeX"), 3.0f);
-		vars.Add(TEXT("Parent.NativeSizeY"), 10.0f);
-		vars.Add(TEXT("Parent.NativeSizeZ"), 8.0f);
+		vars.Add(TEXT("Parent.SizeX"), 3.0f);
+		vars.Add(TEXT("Parent.SizeY"), 10.0f);
+		vars.Add(TEXT("Parent.SizeZ"), 8.0f);
 
 		FVector outVector;
 		if (!vf1.Evaluate(vars, outVector))
@@ -1416,7 +1416,7 @@ namespace Modumate
 			return false;
 		}
 
-		Modumate::Expression::FVectorExpression vf2(TEXT("Parent.NativeSizeX-2.5"), TEXT(""), TEXT("(1/2)*(12+Parent.NativeSizeZ-6)"));
+		Modumate::Expression::FVectorExpression vf2(TEXT("Parent.SizeX-2.5"), TEXT(""), TEXT("(1/2)*(12+Parent.SizeZ-6)"));
 
 		outVector = FVector::ZeroVector;
 		if (!vf2.Evaluate(vars, outVector))
