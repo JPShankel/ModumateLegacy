@@ -174,7 +174,6 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 		{
 			auto moi = doc->GetObjectById(kvp.Key);
 			FMOIDelta delta = FMOIDelta(moi);
-
 			FVector displacement = kvp.Value.GetTranslation() - delta.StatePairs[0].Key.Location;
 
 			if (displacement.IsNearlyZero())

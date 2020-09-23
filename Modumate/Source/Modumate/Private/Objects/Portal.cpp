@@ -149,64 +149,17 @@ bool FMOIPortalImpl::SetRelativeTransform(const FVector2D &InRelativePos, const 
 	}
 
 	portalActor->SetActorLocationAndRotation(CachedWorldPos, CachedWorldRot);
-	CacheCorners();
 	bHaveValidTransform = true;
-
-	return true;
-}
-
-bool FMOIPortalImpl::CacheCorners()
-{
-	CachedCorners.Reset(CachedCorners.Num());
-
-	FModumateObjectInstance *parentMOI = MOI ? MOI->GetParentObject() : nullptr;
-	if (parentMOI == nullptr)
-	{
-		return false;
-	}
-
-	FTransform portalTransform = MOI->GetActor()->GetActorTransform();
-	float parentThickness = MOI->GetParentObject()->CalculateThickness();
-	FVector portalNormal = portalTransform.GetUnitAxis(EAxis::Y);
-	FVector oppositeSideDelta = -parentThickness * portalNormal;
-	int32 numCP = MOI->GetControlPoints().Num();
-
-	for (int32 i = 0; i < 2 * numCP; ++i)
-	{
-		const FVector &cp = MOI->GetControlPoint(i % numCP);
-		FVector corner = portalTransform.TransformPosition(cp);
-		if (i >= numCP)
-		{
-			corner += oppositeSideDelta;
-		}
-
-		CachedCorners.Add(MoveTemp(corner));
-	}
 
 	return true;
 }
 
 void FMOIPortalImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	int32 numCP = MOI->GetControlPoints().Num();
-	if (!ensure(CachedCorners.Num() == (2 * numCP)))
+	FModumateObjectInstance* parentObject = MOI ? MOI->GetParentObject() : nullptr;
+	if (parentObject && (parentObject->GetObjectType() == EObjectType::OTMetaPlane))
 	{
-		return;
-	}
-
-	FTransform portalTransform = MOI->GetActor()->GetActorTransform();
-	FVector portalNormal = portalTransform.GetUnitAxis(EAxis::Y);
-
-	for (int32 i = 0; i < 2 * numCP; ++i)
-	{
-		int32 cpIdx = i % numCP;
-		int32 nextCPIdx = (cpIdx + 1) % numCP;
-		int32 cpOffset = i - cpIdx;
-		int32 nextI = nextCPIdx + cpOffset;
-		float normalSign = (i < numCP) ? 1.0f : -1.0f;
-
-		outPoints.Add(FStructurePoint(CachedCorners[i], normalSign * portalNormal, i));
-		outLines.Add(FStructureLine(CachedCorners[i], CachedCorners[nextI], i, nextI));
+		parentObject->GetStructuralPointsAndLines(outPoints, outLines, bForSnapping, bForSelection);
 	}
 }
 
@@ -227,13 +180,13 @@ void FMOIPortalImpl::SetLocation(const FVector &p)
 
 FVector FMOIPortalImpl::GetCorner(int32 index) const
 {
-	int32 numCP = MOI->GetControlPoints().Num();
-	if (!ensureAlways(CachedCorners.Num() == (2 * numCP)))
+	FModumateObjectInstance* parentObject = MOI ? MOI->GetParentObject() : nullptr;
+	if (parentObject && (parentObject->GetObjectType() == EObjectType::OTMetaPlane))
 	{
-		return CachedWorldPos;
+		return parentObject->GetCorner(index);
 	}
 
-	return CachedCorners[index];
+	return FVector::ZeroVector;
 }
 
 FVector FMOIPortalImpl::GetLocation() const
@@ -266,34 +219,6 @@ void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *cont
 {
 }
 
-TArray<FModelDimensionString> FMOIPortalImpl::GetDimensionStrings() const
-{
-	TArray<FModelDimensionString> ret;
-
-	if (MOI->GetControlPoints().Num() > 3)
-	{
-		FModelDimensionString ds;
-		ds.AngleDegrees = 0;
-		ds.Point1 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(2));
-		ds.Point2 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(1));
-		ds.Functionality = EEnterableField::EditableText_ImperialUnits_UserInput;
-		ds.Offset = 50;
-		ds.UniqueID = MOI->GetActor()->GetFName();
-		ds.Owner = MOI->GetActor();
-		ret.Add(ds);
-
-		ds.Point1 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(3));
-		ds.Point2 = MOI->GetActor()->GetActorTransform().TransformPosition(MOI->GetControlPoint(0));
-		ds.Functionality = EEnterableField::EditableText_ImperialUnits_UserInput;
-		ds.Offset = 100;
-		ds.UniqueID = MOI->GetActor()->GetFName();
-		ret.Add(ds);
-
-	}
-
-	return ret;
-}
-
 void FMOIPortalImpl::TransverseObject()
 {
 	FModumateObjectInstance *parent = MOI ? MOI->GetParentObject() : nullptr;
@@ -302,8 +227,10 @@ void FMOIPortalImpl::TransverseObject()
 		FQuat parentRot = parent->GetObjectRotation();
 		FVector parentAxisX = parentRot.GetAxisX();
 
-		FVector portalOriginOffset = MOI->GetControlPoint(0);
-		FVector portalSize = MOI->GetControlPoint(2) - MOI->GetControlPoint(0);
+		// TODO: transverse may need to be rewritten for MetaPlane-hosted portals (as opposed to old-school wall-hosted ControlPoints-based portals)
+		// either calculate dimensions from the parent MetaPlane, or reimplement with a different scheme.
+		FVector portalOriginOffset(ForceInitToZero);
+		FVector portalSize(ForceInitToZero);
 		FVector portalXDir = CachedWorldRot.GetAxisX();
 		float translationSign = parentAxisX | portalXDir;
 		float flipXOffset = 2.0f * portalOriginOffset.X + portalSize.X;

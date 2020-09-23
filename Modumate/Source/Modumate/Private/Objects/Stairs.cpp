@@ -90,11 +90,3 @@ void FMOIStaircaseImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 		planeParent->GetStructuralPointsAndLines(outPoints, outLines, true);
 	}
 }
-
-TArray<FModelDimensionString> FMOIStaircaseImpl::GetDimensionStrings() const
-{
-	TArray<FModelDimensionString> ret;
-
-	return ret;
-}
-

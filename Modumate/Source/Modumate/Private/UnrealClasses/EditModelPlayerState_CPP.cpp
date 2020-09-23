@@ -748,59 +748,6 @@ bool AEditModelPlayerState_CPP::IsObjectReachableInView(FModumateObjectInstance*
 	return LastReachableObjectSet.Contains(obj);
 }
 
-bool AEditModelPlayerState_CPP::SetObjectHeight(FModumateObjectInstance *obj, float newHeight, bool bSetBaseElevation, bool bUpdateGeometry)
-{
-	static const float minHeight = 0.1f;
-	static const FName invalidHeightErrorName(TEXT("InvalidHeight"));
-
-	if (obj && (obj->GetControlPoints().Num() > 0))
-	{
-		float oldBaseElevation = obj->GetControlPoint(0).Z;
-		float newBaseElevation = oldBaseElevation;
-		float oldHeight = obj->GetExtents().Y;
-		if (bSetBaseElevation)
-		{
-			newBaseElevation = newHeight;
-			newHeight = oldBaseElevation + oldHeight - newBaseElevation;
-		}
-
-		bool bValidHeight = (newHeight >= minHeight);
-		newHeight = FMath::Max(newHeight, minHeight);
-		if (bSetBaseElevation)
-		{
-			newBaseElevation = oldBaseElevation + oldHeight - newHeight;
-		}
-
-		if (ADynamicMeshActor *meshActor = Cast<ADynamicMeshActor>(obj->GetActor()))
-		{
-			meshActor->SetPlacementError(invalidHeightErrorName, !bValidHeight);
-		}
-
-		if (bSetBaseElevation)
-		{
-			for (int32 i=0;i<obj->GetControlPoints().Num();++i)
-			{
-				FVector CP = obj->GetControlPoint(i);
-				CP.Z = newBaseElevation;
-				obj->SetControlPoint(i, CP);
-			}
-		}
-
-		FVector extents = obj->GetExtents();
-		extents.Y = newHeight;
-		obj->SetExtents(extents);
-
-		if (bUpdateGeometry)
-		{
-			obj->UpdateGeometry();
-		}
-
-		return bValidHeight;
-	}
-
-	return false;
-}
-
 void AEditModelPlayerState_CPP::GetSelectorModumateObjects(TArray<AActor*>& ModumateObjects)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::GetSelectorModumateObjects"));

@@ -54,25 +54,6 @@ FVector FMOIPlaneImplBase::GetNormal() const
 	return CachedPlane;
 }
 
-TArray<FModelDimensionString> FMOIPlaneImplBase::GetDimensionStrings() const
-{
-	TArray<FModelDimensionString> ret;
-	int32 numPoints = CachedPoints.Num();
-	for (int32 i = 0; i < numPoints; ++i)
-	{
-		FModelDimensionString ds;
-		ds.AngleDegrees = 0;
-		ds.Point1 = CachedPoints[i];
-		ds.Point2 = CachedPoints[(i + 1) % numPoints];
-		ds.Functionality = EEnterableField::None;
-		ds.Offset = 50;
-		ds.UniqueID = MOI->GetActor()->GetFName();
-		ds.Owner = MOI->GetActor();
-		ret.Add(ds);
-	}
-	return ret;
-}
-
 void FMOIPlaneImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	// Don't return points or lines if we're snapping,

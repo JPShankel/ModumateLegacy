@@ -44,6 +44,8 @@ void FMOIScopeBoxImpl::Destroy()
 
 void FMOIScopeBoxImpl::SetupDynamicGeometry()
 {
+	// TODO: generate plane points and extrusion from extents and transform, rather than old-school control points
+#if 0
 	AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
 	MaterialData.EngineMaterial = gameMode ? gameMode->ScopeBoxMaterial : nullptr;
 
@@ -57,6 +59,7 @@ void FMOIScopeBoxImpl::SetupDynamicGeometry()
 	UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), outPlane);
 
 	Normal = FVector(outPlane);
+#endif
 }
 
 void FMOIScopeBoxImpl::UpdateDynamicGeometry()
@@ -66,20 +69,7 @@ void FMOIScopeBoxImpl::UpdateDynamicGeometry()
 
 FVector FMOIScopeBoxImpl::GetCorner(int32 index) const
 {
-	int32 numCP = MOI->GetControlPoints().Num();
-
-	if (ensureAlways(numCP == 4) && index < numCP * 2)
-	{
-		FVector corner = MOI->GetControlPoint(index % numCP);
-
-		if (index >= numCP)
-		{
-			corner += Normal * MOI->GetExtents().Y;
-		}
-
-		return corner;
-	}
-
+	// TODO: derive from extents and transform, rather than old-school control points
 	return GetLocation();
 }
 
@@ -97,6 +87,8 @@ void FMOIScopeBoxImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outP
 		return;
 	}
 
+	// TODO: derive from extents and transform, rather than old-school control points
+#if 0
 	int32 numPolyPoints = MOI->GetControlPoints().Num();
 	FVector offset = MOI->GetExtents().Y * Normal;
  
@@ -116,6 +108,7 @@ void FMOIScopeBoxImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outP
 		outLines.Add(FStructureLine(cp1n, cp2n, i + numPolyPoints, nextI + numPolyPoints));
 		outLines.Add(FStructureLine(cp1, cp1n, i + numPolyPoints * 2, nextI + numPolyPoints * 2));
 	}
+#endif
 }
 
 void FMOIScopeBoxImpl::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
@@ -145,13 +138,7 @@ bool FMOIScopeBoxImpl::ShowStructureOnSelection() const
 
 void FMOIScopeBoxImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
-	int32 numCP = MOI->GetControlPoints().Num();
-	if (!ensureAlways(numCP == 4))
-	{
-		return;
-	}
-
-	for (int32 i = 0; i < numCP; ++i)
+	for (int32 i = 0; i < 4; ++i)
 	{
 		auto pointHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
 		pointHandle->SetTargetIndex(i);
@@ -167,4 +154,3 @@ void FMOIScopeBoxImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *co
 	auto bottomExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
 	bottomExtrusionHandle->SetSign(-1.0f);
 }
-

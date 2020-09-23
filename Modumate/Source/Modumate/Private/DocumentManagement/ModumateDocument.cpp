@@ -435,13 +435,12 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromObjectType(
 	int32 ID,
 	int32 ParentID,
 	const FVector &Extents,
-	const TArray<FVector> *CPS,
 	const TArray<int32> *CPI,
 	bool bInverted)
 {
 	FBIMAssemblySpec obAsm;
 	obAsm.ObjectType = OT;
-	return CreateOrRestoreObjFromAssembly(World, obAsm, ID, ParentID, Extents, CPS, CPI, bInverted);
+	return CreateOrRestoreObjFromAssembly(World, obAsm, ID, ParentID, Extents, CPI, bInverted);
 }
 
 FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
@@ -450,7 +449,6 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
 	int32 ID,
 	int32 ParentID,
 	const FVector &Extents,
-	const TArray<FVector> *CPS,
 	const TArray<int32> *CPI,
 	bool bInverted)
 {
@@ -478,10 +476,6 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
 		ObjectInstanceArray.AddUnique(obj);
 		ObjectsByID.Add(ID, obj);
 
-		if (CPS)
-		{
-			obj->SetControlPoints(*CPS);
-		}
 		if (CPI)
 		{
 			obj->SetControlPointIndices(*CPI);
@@ -523,8 +517,8 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
 
 				// If we got an assembly, build the object with it, otherwise by type
 				FModumateObjectInstance *newInstance = (assembly != nullptr) ?
-					CreateOrRestoreObjFromAssembly(World, *assembly, targetState.ObjectID, targetState.ParentID, targetState.Extents, &targetState.ControlPoints, &targetState.ControlIndices, targetState.bObjectInverted) :
-					CreateOrRestoreObjFromObjectType(World, targetState.ObjectType, targetState.ObjectID, targetState.ParentID, targetState.Extents, &targetState.ControlPoints, &targetState.ControlIndices, targetState.bObjectInverted);
+					CreateOrRestoreObjFromAssembly(World, *assembly, targetState.ObjectID, targetState.ParentID, targetState.Extents, &targetState.ControlIndices, targetState.bObjectInverted) :
+					CreateOrRestoreObjFromObjectType(World, targetState.ObjectType, targetState.ObjectID, targetState.ParentID, targetState.Extents, &targetState.ControlIndices, targetState.bObjectInverted);
 
 				if (newInstance != nullptr)
 				{
@@ -669,7 +663,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 			auto hostedObj = GetObjectById(objUpdate.PreviousHostedObjID);
 			if (hostedObj)
 			{
-				auto newObj = CreateOrRestoreObjFromAssembly(World, hostedObj->GetAssembly(), kvp.Key, objUpdate.NextParentID, hostedObj->GetExtents(), nullptr, &hostedObj->GetControlPointIndices(), hostedObj->GetObjectInverted());
+				auto newObj = CreateOrRestoreObjFromAssembly(World, hostedObj->GetAssembly(), kvp.Key, objUpdate.NextParentID, hostedObj->GetExtents(), &hostedObj->GetControlPointIndices(), hostedObj->GetObjectInverted());
 			}
 			// Otherwise, attempt to restore the previous object (during undo)
 			else
@@ -861,7 +855,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 			auto hostedObj = GetObjectById(objUpdate.PreviousHostedObjID);
 			if (hostedObj)
 			{
-				auto newObj = CreateOrRestoreObjFromAssembly(World, hostedObj->GetAssembly(), kvp.Key, objUpdate.NextParentID, hostedObj->GetExtents(), nullptr, &hostedObj->GetControlPointIndices(), hostedObj->GetObjectInverted());
+				auto newObj = CreateOrRestoreObjFromAssembly(World, hostedObj->GetAssembly(), kvp.Key, objUpdate.NextParentID, hostedObj->GetExtents(), &hostedObj->GetControlPointIndices(), hostedObj->GetObjectInverted());
 			}
 			// Otherwise, attempt to restore the previous object (during undo)
 			else
@@ -1499,7 +1493,7 @@ int32 FModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &F
 	int id = NextID++;
 
 	FModumateObjectInstance *newRoomObj = CreateOrRestoreObjFromObjectType(World, EObjectType::OTRoom,
-		id, MOD_ID_NONE, FVector::ZeroVector, nullptr, &FaceIDs);
+		id, MOD_ID_NONE, FVector::ZeroVector, &FaceIDs);
 
 	UModumateRoomStatics::SetRoomConfigFromKey(newRoomObj, UModumateRoomStatics::DefaultRoomConfigKey);
 
@@ -1599,7 +1593,7 @@ bool FModumateDocument::MakeScopeBoxObject(UWorld *world, const TArray<FVector> 
 
 	FVector extents = FVector(0.0f, Height, 0.0f);
 
-	auto newObj = CreateOrRestoreObjFromObjectType(world, EObjectType::OTScopeBox, id, 0, extents, &points);
+	auto newObj = CreateOrRestoreObjFromObjectType(world, EObjectType::OTScopeBox, id, 0, extents);
 	AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
 	if (emPlayerState)
 	{
@@ -2531,8 +2525,8 @@ int32 FModumateDocument::CreateObjectFromRecord(UWorld* World, const FMOIDataRec
 	if (obAsm != nullptr)
 	{
 		FModumateObjectInstance *obj = obAsm != nullptr ?
-			CreateOrRestoreObjFromAssembly(World, *obAsm, id, ObRec.ParentID, ObRec.Extents, &ObRec.ControlPoints, &ObRec.ControlIndices) :
-			CreateOrRestoreObjFromObjectType(World, ObRec.ObjectType, id, ObRec.ParentID, ObRec.Extents, &ObRec.ControlPoints, &ObRec.ControlIndices);
+			CreateOrRestoreObjFromAssembly(World, *obAsm, id, ObRec.ParentID, ObRec.Extents, &ObRec.ControlIndices) :
+			CreateOrRestoreObjFromObjectType(World, ObRec.ObjectType, id, ObRec.ParentID, ObRec.Extents, &ObRec.ControlIndices);
 
 		obj->SetupGeometry();
 	}
@@ -2598,11 +2592,6 @@ TArray<FModumateObjectInstance *> FModumateDocument::CloneObjects(UWorld *world,
 		[this,world,&oldToNew,offsetTransform](FModumateObjectInstance *obj)
 		{
 			FModumateObjectInstance *newOb = GetObjectById(CloneObject(world, obj));
-			for (int32 i=0;i<newOb->GetControlPoints().Num();++i)
-			{
-				FVector p = offsetTransform.TransformPosition(newOb->GetControlPoint(i));
-				newOb->SetControlPoint(i, p);
-			}
 			oldToNew.Add(obj, newOb);
 			return newOb;
 		}

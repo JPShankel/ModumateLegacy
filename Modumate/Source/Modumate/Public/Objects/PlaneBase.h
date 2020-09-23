@@ -15,7 +15,6 @@ public:
 	virtual void SetRotation(const FQuat& r) override;
 	virtual FVector GetLocation() const override;
 	virtual FVector GetNormal() const override;
-	virtual TArray<FModelDimensionString> GetDimensionStrings() const override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
 	void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller);
 	virtual bool ShowStructureOnSelection() const override;

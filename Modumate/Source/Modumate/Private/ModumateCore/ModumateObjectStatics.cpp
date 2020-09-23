@@ -225,7 +225,7 @@ int32 UModumateObjectStatics::GetFaceIndexFromTargetHit(const FModumateObjectIns
 		{
 			TArray<FVector> sidePoints;
 			TArray<FVector2D> sidePoints2D;
-			int32 numCorners = hostParent->GetControlPoints().Num();
+			int32 numCorners = hostParent->GetNumCorners();
 			for (int32 curBottomIdx = 0; curBottomIdx < numCorners; ++curBottomIdx)
 			{
 				int32 nextBottomIdx = (curBottomIdx + 1) % numCorners;

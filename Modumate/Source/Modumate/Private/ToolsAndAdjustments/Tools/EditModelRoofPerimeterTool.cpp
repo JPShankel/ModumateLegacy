@@ -83,7 +83,6 @@ bool URoofPerimeterTool::Activate()
 		// Create the MOI delta for constructing the perimeter object
 		FMOIStateData state;
 		state.StateType = EMOIDeltaType::Create;
-		state.ControlPoints = { };
 		state.ControlIndices = perimeterEdgeIDs;
 
 		int32 perimeterID = doc.GetNextAvailableID();

@@ -20,7 +20,6 @@ struct MODUMATE_API FMOIStateData
 	//<Thickness, Height, UNUSED>
 	FVector Extents = FVector::ZeroVector;
 
-	TArray<FVector> ControlPoints;
 	TArray<int32> ControlIndices;
 	bool bObjectInverted = false;
 

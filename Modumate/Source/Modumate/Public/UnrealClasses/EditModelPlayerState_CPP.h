@@ -111,8 +111,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Tools")
 	EEditViewModes GetSelectedViewMode() { return SelectedViewMode; }
 
-	bool SetObjectHeight(FModumateObjectInstance *obj, float newHeight, bool bSetBaseElevation, bool bUpdateGeometry);
-
 	UFUNCTION(BlueprintCallable, Category = "Tools")
 	void ToggleRoomViewMode();
 

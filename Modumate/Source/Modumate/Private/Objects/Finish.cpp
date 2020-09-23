@@ -86,25 +86,26 @@ bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 
 void FMOIFinishImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	int32 numCP = MOI->GetControlPoints().Num();
+	int32 numPoints = CachedPerimeter.Num();
+	FVector extrusionDelta = MOI->CalculateThickness() * GetNormal();
 
-	for (int32 i = 0; i < numCP; ++i)
+	for (int32 i = 0; i < numPoints; ++i)
 	{
 		int32 edgeIdxA = i;
-		int32 edgeIdxB = (i + 1) % numCP;
+		int32 edgeIdxB = (i + 1) % numPoints;
 
-		FVector cornerMinA = GetCorner(edgeIdxA);
-		FVector cornerMinB = GetCorner(edgeIdxB);
+		FVector cornerMinA = CachedPerimeter[edgeIdxA];
+		FVector cornerMinB = CachedPerimeter[edgeIdxB];
 		FVector edgeDir = (cornerMinB - cornerMinA).GetSafeNormal();
 
-		FVector cornerMaxA = GetCorner(edgeIdxA + numCP);
-		FVector cornerMaxB = GetCorner(edgeIdxB + numCP);
+		FVector cornerMaxA = cornerMinA + extrusionDelta;
+		FVector cornerMaxB = cornerMinB + extrusionDelta;
 
 		outPoints.Add(FStructurePoint(cornerMinA, edgeDir, edgeIdxA));
 
 		outLines.Add(FStructureLine(cornerMinA, cornerMinB, edgeIdxA, edgeIdxB));
-		outLines.Add(FStructureLine(cornerMaxA, cornerMaxB, edgeIdxA + numCP, edgeIdxB + numCP));
-		outLines.Add(FStructureLine(cornerMinA, cornerMaxA, edgeIdxA, edgeIdxA + numCP));
+		outLines.Add(FStructureLine(cornerMaxA, cornerMaxB, edgeIdxA + numPoints, edgeIdxB + numPoints));
+		outLines.Add(FStructureLine(cornerMinA, cornerMaxA, edgeIdxA, edgeIdxA + numPoints));
 	}
 }
 

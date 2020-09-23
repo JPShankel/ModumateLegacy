@@ -289,8 +289,7 @@ FVector ASelectCabinetFrontHandle::GetHandlePosition() const
 	}
 
 	int32 numBasePoints = cabinetParent->GetNumCorners();
-	const auto &points = TargetMOI->GetControlPoints();
-	FVector edgeCenter = 0.5f * (TargetMOI->GetCorner(TargetIndex) + TargetMOI->GetCorner((TargetIndex + 1) % numBasePoints));
+	FVector edgeCenter = 0.5f * (cabinetParent->GetCorner(TargetIndex) + cabinetParent->GetCorner((TargetIndex + 1) % numBasePoints));
 	FVector extrusionDelta = ((0.5f * TargetMOI->GetExtents().Y) + FaceCenterHeightOffset) * TargetMOI->GetNormal();
 	return edgeCenter + extrusionDelta;
 }

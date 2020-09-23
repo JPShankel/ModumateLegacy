@@ -95,7 +95,6 @@ FModumateObjectInstance::FModumateObjectInstance(
 
 	CurrentState.Extents = obRec.Extents;
 	CurrentState.ParentID = obRec.ParentID;
-	CurrentState.ControlPoints = obRec.ControlPoints;
 	CurrentState.ControlIndices = obRec.ControlIndices;
 	CurrentState.bObjectInverted = obRec.ObjectInverted;
 	CurrentState.ObjectProperties.FromStringMap(obRec.ObjectProperties);
@@ -136,11 +135,6 @@ void FModumateObjectInstance::SetupMOIComponent()
 	}
 
 	moiComponent->ObjectID = ID;
-}
-
-TArray<FModelDimensionString> FModumateObjectInstance::GetDimensionStrings() const
-{
-	return Implementation->GetDimensionStrings();
 }
 
 EObjectType FModumateObjectInstance::GetObjectType() const
@@ -884,20 +878,6 @@ void FModumateObjectInstance::SetAssemblyLayersReversed(bool bNewLayersReversed)
 	}
 }
 
-void FModumateObjectInstance::SetControlPoint(int32 Index, const FVector &Value)
-{
-	if (ensureAlways(GetDataState().ControlPoints.Num() > Index))
-	{
-		GetDataState().ControlPoints[Index] = Value;
-	}
-}
-
-const FVector &FModumateObjectInstance::GetControlPoint(int32 Index) const
-{
-	ensureAlways(Index < GetDataState().ControlPoints.Num());
-	return GetDataState().ControlPoints[Index];
-}
-
 void FModumateObjectInstance::SetControlPointIndex(int32 IndexNum, int32 IndexVal)
 {
 	if (ensureAlways(GetDataState().ControlIndices.Num() > IndexNum))
@@ -912,29 +892,14 @@ int32 FModumateObjectInstance::GetControlPointIndex(int32 IndexNum) const
 	return GetDataState().ControlIndices[IndexNum];
 }
 
-const TArray<FVector> &FModumateObjectInstance::GetControlPoints() const
-{
-	return GetDataState().ControlPoints;
-}
-
 const TArray<int32> &FModumateObjectInstance::GetControlPointIndices() const
 {
 	return GetDataState().ControlIndices;
 }
 
-void FModumateObjectInstance::AddControlPoint(const FVector &ControlPoint)
-{
-	GetDataState().ControlPoints.Add(ControlPoint);
-}
-
 void FModumateObjectInstance::AddControlPointIndex(int32 Index)
 {
 	GetDataState().ControlIndices.Add(Index);
-}
-
-void FModumateObjectInstance::SetControlPoints(const TArray<FVector> &NewControlPoints)
-{
-	GetDataState().ControlPoints = NewControlPoints;
 }
 
 void FModumateObjectInstance::SetControlPointIndices(const TArray<int32> &NewControlPointIndices)
@@ -983,19 +948,6 @@ void FModumateObjectInstance::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 void FModumateObjectInstance::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
 {
 	Implementation->GetDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox, OutPerimeters);
-}
-
-FVector FModumateObjectInstance::GetWallDirection() const
-{
-	if (GetDataState().ControlPoints.Num() >= 2)
-	{
-		FVector delta = (GetDataState().ControlPoints[1] - GetDataState().ControlPoints[0]).GetSafeNormal();
-		return FVector::CrossProduct(FVector(0, 0, 1), delta);
-	}
-	else
-	{
-		return Implementation->GetNormal();
-	}
 }
 
 FVector FModumateObjectInstance::GetCorner(int32 index) const
@@ -1145,7 +1097,6 @@ FMOIDataRecord FModumateObjectInstance::AsDataRecord() const
 	ret.Location = GetObjectLocation();
 	ret.Rotation = GetObjectRotation().Rotator();
 	ret.UVAnchor = FVector::ZeroVector;
-	ret.ControlPoints = CurrentState.ControlPoints;
 	ret.ControlIndices = CurrentState.ControlIndices;
 	ret.Extents = CurrentState.Extents;
 	CurrentState.ObjectProperties.ToStringMap(ret.ObjectProperties);
@@ -1198,22 +1149,11 @@ FTransform FModumateObjectInstanceImplBase::GetWorldTransform() const
 
 FVector FModumateObjectInstanceImplBase::GetCorner(int32 index) const
 {
-	if (ensureAlways((MOI != nullptr) && (index >= 0)))
-	{
-		if (index < MOI->GetControlPoints().Num())
-		{
-			return MOI->GetControlPoint(index);
-		}
-	}
-	return GetLocation();
+	return FVector::ZeroVector;
 }
 
 int32 FModumateObjectInstanceImplBase::GetNumCorners() const
 {
-	if (ensureAlways(MOI))
-	{
-		return MOI->GetControlPoints().Num();
-	}
 	return 0;
 }
 

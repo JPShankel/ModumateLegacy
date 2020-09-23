@@ -73,9 +73,6 @@ struct FMOIDataRecordV1
 	FVector UVAnchor;
 
 	UPROPERTY()
-	TArray<FVector> ControlPoints;
-
-	UPROPERTY()
 	TArray<int32> ControlIndices;
 
 	UPROPERTY()

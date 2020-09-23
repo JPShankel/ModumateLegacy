@@ -183,11 +183,11 @@ private:
 
 	FModumateObjectInstance* CreateOrRestoreObjFromAssembly(UWorld *World, const FBIMAssemblySpec &Assembly,
 		int32 ID, int32 ParentID = MOD_ID_NONE, const FVector &Extents = FVector::ZeroVector,
-		const TArray<FVector> *CPS = nullptr, const TArray<int32> *CPI = nullptr, bool bInverted = false);
+		const TArray<int32> *CPI = nullptr, bool bInverted = false);
 
 	FModumateObjectInstance* CreateOrRestoreObjFromObjectType(UWorld *World, EObjectType OT,
 		int32 ID, int32 ParentID = MOD_ID_NONE, const FVector &Extents = FVector::ZeroVector,
-		const TArray<FVector> *CPS = nullptr, const TArray<int32> *CPI = nullptr, bool bInverted = false);
+		const TArray<int32> *CPI = nullptr, bool bInverted = false);
 
 	// Preview Operations
 public:

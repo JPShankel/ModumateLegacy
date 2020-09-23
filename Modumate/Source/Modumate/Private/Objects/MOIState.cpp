@@ -23,7 +23,6 @@ bool FMOIStateData::ToParameterSet(const FString& Prefix, Modumate::FModumateFun
 	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kPropertyValues, propertyValues);
 
 	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kExtents, Extents);
-	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kControlPoints, ControlPoints);
 	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kIndices, ControlIndices);
 	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kInverted, bObjectInverted);
 	OutParameterSet.SetValue(Prefix + Modumate::Parameters::kAssembly, ObjectAssemblyKey.ToString());
@@ -57,7 +56,6 @@ bool FMOIStateData::FromParameterSet(const FString& Prefix, const Modumate::FMod
 	ObjectProperties.FromStringMap(propertyMap);
 
 	Extents = ParameterSet.GetValue(Prefix + Modumate::Parameters::kExtents);
-	ControlPoints = ParameterSet.GetValue(Prefix + Modumate::Parameters::kControlPoints);
 	ControlIndices = ParameterSet.GetValue(Prefix + Modumate::Parameters::kIndices);
 	bObjectInverted = ParameterSet.GetValue(Prefix + Modumate::Parameters::kInverted);
 	ObjectAssemblyKey = FBIMKey(ParameterSet.GetValue(Prefix + Modumate::Parameters::kAssembly).AsString());

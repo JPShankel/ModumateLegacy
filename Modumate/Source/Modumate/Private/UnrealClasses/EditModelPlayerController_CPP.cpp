@@ -1178,12 +1178,6 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 
 			FVector d = sob->GetObjectRotation().RotateVector(FVector(40, 0, 0));
 			GetWorld()->LineBatcher->DrawLine(p, p + d, FColor::Green, SDPG_MAX, 2, 0.0);
-
-			for (auto &cp : sob->GetControlPoints())
-			{
-				GetWorld()->LineBatcher->DrawLine(cp - FVector(20, 0, 0), cp + FVector(20, 0, 0), FColor::Blue, SDPG_MAX, 2, 0.0);
-				GetWorld()->LineBatcher->DrawLine(cp - FVector(0, 20, 0), cp + FVector(0, 20, 0), FColor::Blue, SDPG_MAX, 2, 0.0);
-			}
 		}
 	}
 

@@ -320,31 +320,43 @@ namespace Modumate {
 	{
 		auto volumeGraph = Doc->GetVolumeGraph();
 		auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
+		// scope boxes are deprecated for now
+#if 0
 		auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
+#endif
 
 		FPlane plane;
 		FVector axisX, axisY, center;
 		TArray<FVector2D> cached2DPositions;
 		FVector origin = cutPlane->GetCorner(0);
-		UModumateGeometryStatics::AnalyzeCachedPositions(GetCorners(cutPlane), plane, axisX, axisY, cached2DPositions, center);
+		auto cutPlanePoints = GetCorners(cutPlane);
+		UModumateGeometryStatics::AnalyzeCachedPositions(cutPlanePoints, plane, axisX, axisY, cached2DPositions, center);
 		TMap<int32, int32> objMap;
 		auto graph = MakeShared<FGraph2D>();
 
+		TArray<FVector2D> points2D;
+#if 0
 		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(scopeBox->GetControlPoint(0), axisX, axisY, origin);
 		FVector scopeBoxOrigin = origin + (scopeBoxOrigin2D.X * axisX) + (scopeBoxOrigin2D.Y * axisY);
 
-		TArray<FVector2D> boxPoints;
 		for (auto& point : scopeBox->GetControlPoints())
 		{
 			FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, axisX, axisY, scopeBoxOrigin);
-			boxPoints.Add(point2D);
+			points2D.Add(point2D);
 		}
+#else
+		for (auto& point : cutPlanePoints)
+		{
+			FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, axisX, axisY, origin);
+			points2D.Add(point2D);
+		}
+#endif
 
 		// bounding box is defined by the dimensions of the cut plane as opposed to the contents of the graph
-		FBox2D drawingBox = FBox2D(boxPoints);
-		plane = FPlane(scopeBoxOrigin, cutPlane->GetNormal());
+		FBox2D drawingBox = FBox2D(points2D);
+		plane = FPlane(origin, cutPlane->GetNormal());
 
-		volumeGraph.Create2DGraph(plane, axisX, axisY, scopeBoxOrigin, drawingBox, graph, objMap);
+		volumeGraph.Create2DGraph(plane, axisX, axisY, origin, drawingBox, graph, objMap);
 
 		TSet<int32> foundRooms;
 
@@ -386,7 +398,7 @@ namespace Modumate {
 
 				if (plane.PlaneDot(centroid) > 0)
 				{
-					FVector2D centroidOnPlane = UModumateGeometryStatics::ProjectPoint2D(scopeBoxOrigin, -axisX, -axisY, centroid);
+					FVector2D centroidOnPlane = UModumateGeometryStatics::ProjectPoint2D(origin, -axisX, -axisY, centroid);
 					OutRoomsAndLocations.Add(roomID, centroidOnPlane);
 					break;
 				}

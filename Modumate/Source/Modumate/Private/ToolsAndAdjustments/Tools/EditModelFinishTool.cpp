@@ -141,13 +141,12 @@ bool UFinishTool::FrameUpdate()
 
 	if (GraphElementTarget && (GraphElementTarget->GetObjectType() == EObjectType::OTSurfacePolygon))
 	{
-		const TArray<FVector> &surfacePolyCPs = GraphElementTarget->GetControlPoints();
-		int32 numCPs = surfacePolyCPs.Num();
-		for (int32 curPointIdx = 0; curPointIdx < numCPs; ++curPointIdx)
+		int32 numCorners = GraphElementTarget->GetNumCorners();
+		for (int32 curPointIdx = 0; curPointIdx < numCorners; ++curPointIdx)
 		{
-			int32 nextPointIdx = (curPointIdx + 1) % numCPs;
+			int32 nextPointIdx = (curPointIdx + 1) % numCorners;
 
-			Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(surfacePolyCPs[curPointIdx], surfacePolyCPs[nextPointIdx],
+			Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(GraphElementTarget->GetCorner(curPointIdx), GraphElementTarget->GetCorner(nextPointIdx),
 				AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness)
 			);
 		}

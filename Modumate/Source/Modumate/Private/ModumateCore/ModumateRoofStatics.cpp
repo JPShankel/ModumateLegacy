@@ -353,8 +353,9 @@ bool UModumateRoofStatics::GetAllProperties(
 		return false;
 	}
 
-	const TArray<FVector> &ControlPoints = RoofObject->GetControlPoints();
-	const TArray<int32> &ControlIndices = RoofObject->GetControlPointIndices();
+	// TODO: reimplement with roof-specific instance properties structure
+	const TArray<FVector> ControlPoints;// = RoofObject->GetControlPoints();
+	const TArray<int32> ControlIndices;// = RoofObject->GetControlPointIndices();
 
 	int32 numCP = ControlPoints.Num();
 	int32 numCI = ControlIndices.Num();

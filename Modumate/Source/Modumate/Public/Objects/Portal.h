@@ -15,15 +15,12 @@ protected:
 
 	bool SetupCompoundActorGeometry();
 	bool SetRelativeTransform(const FVector2D &InRelativePos, const FQuat &InRelativeRot);
-	bool CacheCorners();
 	void GetFarDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane &Plane, const FBox2D& BoundingBox) const;
 
 	FVector2D CachedRelativePos;
 	FVector CachedWorldPos;
 	FQuat CachedRelativeRot, CachedWorldRot;
 	bool bHaveValidTransform;
-
-	TArray<FVector> CachedCorners;
 public:
 
 	FMOIPortalImpl(FModumateObjectInstance *moi);
@@ -44,7 +41,6 @@ public:
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
-	virtual TArray<FModelDimensionString> GetDimensionStrings() const override;
 	virtual void TransverseObject() override;
 
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override;

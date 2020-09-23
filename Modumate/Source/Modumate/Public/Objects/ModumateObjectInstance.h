@@ -222,19 +222,13 @@ public:
 	const FVector &GetExtents() const;
 	void SetExtents(const FVector &NewExtents);
 
-	void SetControlPoint(int32 Index, const FVector &Value);
-	const FVector &GetControlPoint(int32 Index) const;
-
 	void SetControlPointIndex(int32 IndexNum, int32 IndexVal);
 	int32 GetControlPointIndex(int32 IndexNum) const;
 
-	const TArray<FVector> &GetControlPoints() const;
 	const TArray<int32> &GetControlPointIndices() const;
 
-	void AddControlPoint(const FVector &ControlPoint);
 	void AddControlPointIndex(int32 Index);
 
-	void SetControlPoints(const TArray<FVector> &NewControlPoints);
 	void SetControlPointIndices(const TArray<int32> &NewControlPointIndices);
 
 	const TArray<int32> &GetChildren() const {return Children;}
@@ -303,8 +297,6 @@ public:
 	void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget);
 	void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const;
 
-	TArray<FModelDimensionString> GetDimensionStrings() const;
-
 	// Wall interface
 	// TODO: move some of these to ILayeredObject, or make them more general
 	void OnAssemblyChanged();
@@ -316,7 +308,6 @@ public:
 	// TODO: generalize or delete these functions, especially if they are
 	// only relevant for objects that will only be hosted by meta planes
 	float CalculateThickness() const;
-	FVector GetWallDirection() const;
 	FVector GetCorner(int32 index) const;
 	int32 GetNumCorners() const;
 

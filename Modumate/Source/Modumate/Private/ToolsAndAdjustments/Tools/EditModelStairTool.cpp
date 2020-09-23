@@ -105,7 +105,7 @@ bool UStairTool::FrameUpdate()
 
 		if (LastValidTargetID)
 		{
-			int32 numCorners = hitMOI->GetControlPoints().Num();
+			int32 numCorners = hitMOI->GetNumCorners();
 			for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
 			{
 				int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;

@@ -126,52 +126,6 @@ bool UPortalToolBase::Deactivate()
 	return true;
 }
 
-static bool CalcPortalPositionOnHost(const FModumateObjectInstance *hostObj, const FVector &hitLoc, const FVector &hitNormal,
-	bool bUseGroundOffset, const FVector &offsetFromGround, FTransform &outTransform)
-{
-	const FModumateObjectInstance *hostParent = hostObj->GetParentObject();
-	if (!(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
-	{
-		return false;
-	}
-
-	FVector hostOrigin = hostParent->GetControlPoint(0);
-	FVector positionOnHost = hitLoc;
-	if (bUseGroundOffset)
-	{
-		positionOnHost.Z = hostOrigin.Z + offsetFromGround.Z;
-	}
-
-	FVector mountedNormal = hitNormal;
-	FVector hostNormal = hostObj->GetNormal();
-	float hostThickness = hostObj->CalculateThickness();
-	if (!FVector::Parallel(hitNormal, hostNormal))
-	{
-		FVector hitDeltaFromOrigin = positionOnHost - hostOrigin;
-		float distFromHostPlaneA = FMath::Abs(hitDeltaFromOrigin | hostNormal);
-		float distFromHostPlaneB = FMath::Abs((hitDeltaFromOrigin | hostNormal) - hostThickness);
-
-		if ((distFromHostPlaneA < distFromHostPlaneB) && (distFromHostPlaneA < KINDA_SMALL_NUMBER))
-		{
-			mountedNormal = -hostNormal;
-		}
-		else if ((distFromHostPlaneB < distFromHostPlaneA) && (distFromHostPlaneB < KINDA_SMALL_NUMBER))
-		{
-			mountedNormal = hostNormal;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	// mounted transform should be +Z up, +Y away from the wall, and +X along the wall.
-	FQuat rot = FRotationMatrix::MakeFromYZ(mountedNormal, FVector::UpVector).ToQuat();
-
-	outTransform = FTransform(rot, positionOnHost, FVector::OneVector);
-	return true;
-}
-
 bool UPortalToolBase::FrameUpdate()
 {
 	static FName requesterName(TEXT("UPortalToolBase"));

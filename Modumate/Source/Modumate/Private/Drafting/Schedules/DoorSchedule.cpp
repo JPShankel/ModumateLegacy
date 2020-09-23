@@ -92,6 +92,8 @@ namespace Modumate {
 			);
 			*/
 
+			// TODO: use meta plane parent for portal dimensions
+			/*
 			// Dimensions
 			FVector doorDiagonal = door->GetControlPoint(2) - door->GetControlPoint(0);
 			FWidth w = FWidth::WorldCentimeters(doorDiagonal.X);
@@ -101,6 +103,7 @@ namespace Modumate {
 			FText heightText = FText::FromString(UModumateDimensionStatics::DecimalToFractionString(h.AsWorldInches(), true, true));
 			row.Add(MakeDraftingText(widthText));
 			row.Add(MakeDraftingText(heightText));
+			*/
 
 			// Hardware
 			FString partsList;

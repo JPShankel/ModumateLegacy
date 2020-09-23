@@ -315,7 +315,8 @@ void FMOIRoofPerimeterImpl::UpdatePerimeterGeometry()
 		}
 	}
 
-	MOI->SetControlPoints(CachedPerimeterPoints);
+	// TODO: update roof perimeter with different data
+	//MOI->SetControlPoints(CachedPerimeterPoints);
 
 	FVector perimeterAxisX, perimeterAxisY;
 	UModumateGeometryStatics::AnalyzeCachedPositions(CachedPerimeterPoints, CachedPlane, perimeterAxisX, perimeterAxisY, TempPerimeterPoints2D, CachedPerimeterCenter, false);
