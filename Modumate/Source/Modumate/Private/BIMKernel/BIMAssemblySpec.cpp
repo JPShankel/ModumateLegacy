@@ -197,22 +197,6 @@ void FBIMAssemblySpec::Reset()
 	Extrusions.Empty();
 }
 
-
-bool FBIMAssemblySpec::HasProperty(const FBIMNameType& Name) const
-{
-	return RootProperties.HasProperty(EBIMValueScope::Assembly, Name);
-}
-
-Modumate::FModumateCommandParameter FBIMAssemblySpec::GetProperty(const FBIMNameType& Name) const
-{
-	return RootProperties.GetProperty(EBIMValueScope::Assembly, Name);
-}
-
-void FBIMAssemblySpec::SetProperty(const FBIMNameType& Name, const Modumate::FModumateCommandParameter& Value)
-{
-	RootProperties.SetProperty(EBIMValueScope::Assembly, Name, Value);
-}
-
 void FBIMAssemblySpec::ReverseLayers()
 {
 	Algo::Reverse(Layers);
@@ -351,10 +335,6 @@ ECraftingResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& In
 		// TODO: slot transformations
 	}
 
-	// TODO: get orientation information from BIM system, express as properties
-	SetProperty(BIMPropertyNames::Normal, FVector(0, 0, 1));
-	SetProperty(BIMPropertyNames::Tangent, FVector(0, 1, 0));
-
 	return ECraftingResult::Success;
 }
 
@@ -381,10 +361,6 @@ ECraftingResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& 
 		{
 			return res;
 		}
-
-		// TODO: currently only one extrusion per assembly so only one scale
-		FVector scale = extrusion.Properties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Scale);
-		SetProperty(BIMPropertyNames::Scale, scale);
 	}
 	return ECraftingResult::Success;
 }
@@ -407,6 +383,18 @@ Modumate::Units::FUnitValue FBIMAssemblySpec::CalculateThickness() const
 
 ECraftingResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection)
 {
+	DisplayName = RootProperties.GetProperty(EBIMValueScope::Assembly,BIMPropertyNames::Name);
+	Comments = RootProperties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Comments);
+	CodeName = RootProperties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Code);
+
+	FString depth, height;
+	if (RootProperties.TryGetProperty(EBIMValueScope::ToeKick, BIMPropertyNames::Depth, depth)
+		&& RootProperties.TryGetProperty(EBIMValueScope::ToeKick, BIMPropertyNames::Height, height))
+	{
+		ToeKickDepth = Modumate::Units::FUnitValue::WorldCentimeters(UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters);
+		ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(UModumateDimensionStatics::StringToFormattedDimension(height).Centimeters);
+	}
+
 	// TODO: move assembly synthesis to each tool mode or MOI implementation (TBD)
 	ECraftingResult result = ECraftingResult::Error;
 	switch (ObjectType)

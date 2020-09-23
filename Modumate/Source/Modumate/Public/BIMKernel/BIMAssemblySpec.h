@@ -26,10 +26,14 @@ Assemblies have three categories of subcomponent: layers, part slots and extrusi
 
 An assembly layer (for walls, floors and other sandwich objects) references an FArchitecturalMaterial and some metadata
 */
-struct MODUMATE_API FBIMLayerSpec
+class MODUMATE_API FBIMLayerSpec
 {
+	friend class FBIMAssemblySpec;
+private:
 	FBIMPropertySheet Properties;
+	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
 
+public:
 	ELayerFunction Function = ELayerFunction::None;
 
 	FString CodeName;
@@ -40,34 +44,40 @@ struct MODUMATE_API FBIMLayerSpec
 	// TODO: Modules with materials, patterns that reference modules
 	FArchitecturalMaterial Material;
 
-	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
 };
 
 /*
 An assembly part slot contains a mesh and local transform
 TODO: transforms will be derived from hosting plane/moi parameters...to be hard coded initially
 */
-struct MODUMATE_API FBIMPartSlotSpec
+class MODUMATE_API FBIMPartSlotSpec
 {
+	friend class FBIMAssemblySpec;
+private:
 	FBIMPropertySheet Properties;
+	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
 
+public:
 	Modumate::Expression::FVectorExpression Translation, Size, Orientation;
 	using FBooleanVector = bool[3];
 	FBooleanVector Flip {false, false, false};
 
 	FArchitecturalMesh Mesh;
-	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
 };
 
 /*
 An extrusion is a simple 2D mesh extruded along a hosted edge
 */
-struct MODUMATE_API FBIMExtrusionSpec
+class MODUMATE_API FBIMExtrusionSpec
 {
+	friend class FBIMAssemblySpec;
+private:
 	FBIMPropertySheet Properties;
+	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
+
+public:
 	FArchitecturalMaterial Material;
 	TArray<FSimpleMeshRef> SimpleMeshes;
-	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
 };
 
 class MODUMATE_API FBIMAssemblySpec
@@ -78,15 +88,24 @@ private:
 	ECraftingResult MakeRiggedAssembly(const FModumateDatabase& InDB);	
 	ECraftingResult DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection);
 
+	FBIMPropertySheet RootProperties;
+
 public:
 	EObjectType ObjectType = EObjectType::OTNone;
 
 	FBIMKey RootPreset;
-	FBIMPropertySheet RootProperties;
 
 	TArray<FBIMLayerSpec> Layers;
 	TArray<FBIMPartSlotSpec> Parts;
 	TArray<FBIMExtrusionSpec> Extrusions;
+
+	FString DisplayName,Comments,CodeName;
+
+	FVector Normal = FVector(0, 0, 1);
+	FVector Tangent = FVector(0, 1, 0);
+
+	Modumate::Units::FUnitValue ToeKickDepth = Modumate::Units::FUnitValue::WorldCentimeters(0);
+	Modumate::Units::FUnitValue ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(0);
 
 	// For DataCollection support in preset manager
 	FBIMKey UniqueKey() const { return RootPreset; }
@@ -94,23 +113,6 @@ public:
 	void Reset();
 
 	ECraftingResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID);
-
-	// Helper functions for getting properties in the Assembly scope
-	// TODO: refactor for typesafe properties
-	Modumate::FModumateCommandParameter GetProperty(const FBIMNameType& Name) const;
-	void SetProperty(const FBIMNameType& Name, const Modumate::FModumateCommandParameter& Value);
-	bool HasProperty(const FBIMNameType& Name) const;
-
-	template <class T>
-	bool TryGetProperty(const FBIMNameType& Name, T& OutT) const
-	{
-		if (HasProperty(Name))
-		{
-			OutT = GetProperty(Name);
-			return true;
-		}
-		return false;
-	}
 
 	Modumate::Units::FUnitValue CalculateThickness() const;
 

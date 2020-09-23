@@ -395,13 +395,8 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &A
 	FVector2D upperExtensions = FVector2D::ZeroVector;
 	FVector2D outerExtensions = FVector2D::ZeroVector;
 
-	FVector scaleVector;
-	if (!Assembly.TryGetProperty(BIMPropertyNames::Scale, scaleVector))
-	{
-		scaleVector = FVector::OneVector;
-	}
 	IconDynamicMeshActor->SetupExtrudedPolyGeometry(Assembly, meshStartPos, meshEndPos,
-		meshNormal, meshUp, upperExtensions, outerExtensions, scaleVector, true, false);
+		meshNormal, meshUp, upperExtensions, outerExtensions, FVector::OneVector, true, false);
 
 	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
 	FVector meshExtent = IconDynamicMeshActor->Mesh->Bounds.BoxExtent;

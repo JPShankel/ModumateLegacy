@@ -579,18 +579,8 @@ FBIMKey UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool
 using namespace Modumate;
 bool UModumateFunctionLibrary::GetCabinetToeKickDimensions(const FBIMAssemblySpec &obAsm, FVector2D &outToeKickDims)
 {
-	outToeKickDims.Set(0.0f, 0.0f);
-
-	FString depth, height;
-	if (obAsm.RootProperties.TryGetProperty(EBIMValueScope::ToeKick, BIMPropertyNames::Depth,depth)
-		&& obAsm.RootProperties.TryGetProperty(EBIMValueScope::ToeKick, BIMPropertyNames::Height,height))
-	{
-		outToeKickDims.X = UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters;
-		outToeKickDims.Y = UModumateDimensionStatics::StringToFormattedDimension(height).Centimeters;
-		return true;
-	}
-
-	return false;
+	outToeKickDims.Set(obAsm.ToeKickDepth.AsWorldCentimeters(), obAsm.ToeKickHeight.AsWorldCentimeters());
+	return true;
 }
 
 bool UModumateFunctionLibrary::SetMeshMaterial(UMeshComponent *MeshComponent, const FArchitecturalMaterial &Material, int32 MatIndex, UMaterialInstanceDynamic** CachedMIDPtr)

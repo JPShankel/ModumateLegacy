@@ -168,20 +168,15 @@ void AAdjustFFEPointHandle::Initialize()
 		return;
 	}
 
-	bool bHaveMountingProperties =
-		TargetMOI->GetAssembly().TryGetProperty(BIMPropertyNames::Normal, AssemblyNormal) &&
-		TargetMOI->GetAssembly().TryGetProperty(BIMPropertyNames::Tangent, AssemblyTangent);
-	ensure(bHaveMountingProperties);
-
 	AActor *moiActor = TargetMOI->GetActor();
 
 	TArray<FVector> boxSidePoints;
 	if (ensure(moiActor && (TargetIndex >= 0) && (TargetIndex < 4)) &&
-		UModumateObjectStatics::GetFFEBoxSidePoints(moiActor, AssemblyNormal, boxSidePoints))
+		UModumateObjectStatics::GetFFEBoxSidePoints(moiActor, TargetMOI->GetAssembly().Normal, boxSidePoints))
 	{
 		FVector actorLoc = moiActor->GetActorLocation();
 		FQuat actorRot = moiActor->GetActorQuat();
-		FVector curObjectNormal = actorRot.RotateVector(AssemblyNormal);
+		FVector curObjectNormal = actorRot.RotateVector(TargetMOI->GetAssembly().Normal);
 		FVector handleCornerPos = boxSidePoints[TargetIndex];
 		FVector curHandlePos = FVector::PointPlaneProject(handleCornerPos, actorLoc, curObjectNormal);
 		LocalHandlePos = moiActor->GetActorTransform().InverseTransformPosition(curHandlePos);

@@ -96,11 +96,10 @@ void FMOIFFEImpl::UpdateDynamicGeometry()
 void FMOIFFEImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	ACompoundMeshActor *cma = MOI ? Cast<ACompoundMeshActor>(MOI->GetActor()) : nullptr;
-	FVector assemblyNormal;
+	FVector assemblyNormal = MOI->GetAssembly().Normal;
 	TArray<FVector> boxSidePoints;
 
-	if (cma && MOI->GetAssembly().TryGetProperty(BIMPropertyNames::Normal, assemblyNormal) &&
-		UModumateObjectStatics::GetFFEBoxSidePoints(cma, assemblyNormal, boxSidePoints))
+	if (cma && UModumateObjectStatics::GetFFEBoxSidePoints(cma, assemblyNormal, boxSidePoints))
 	{
 		// For any structure line computation, we want the points and lines projected on the plane of the actor's origin
 		FVector actorLoc = cma->GetActorLocation();

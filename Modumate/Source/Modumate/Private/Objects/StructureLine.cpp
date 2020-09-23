@@ -81,12 +81,6 @@ void FMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 	{
 		FVector2D profileSize = profile->Extents.GetSize();
 
-		FVector2D scaleVector;
-		if (MOI->GetAssembly().TryGetProperty(BIMPropertyNames::Scale, scaleVector))
-		{
-			profileSize *= scaleVector;
-		}
-
 		FVector centroid = 0.5f * (LineStartPos + LineEndPos);
 		FVector boxExtents(FVector::Dist(LineStartPos, LineEndPos), profileSize.X, profileSize.Y);
 		FQuat boxRot = FRotationMatrix::MakeFromYZ(LineUp, LineNormal).ToQuat();
@@ -114,15 +108,8 @@ void FMOIStructureLine::InternalUpdateGeometry(bool bRecreate, bool bCreateColli
 	LineDir = (LineEndPos - LineStartPos).GetSafeNormal();
 	UModumateGeometryStatics::FindBasisVectors(LineNormal, LineUp, LineDir);
 
-	FVector scaleVector;
-
-	if (!MOI->GetAssembly().TryGetProperty(BIMPropertyNames::Scale, scaleVector))
-	{
-		scaleVector = FVector::OneVector;
-	}
-
 	DynamicMeshActor->SetupExtrudedPolyGeometry(MOI->GetAssembly(), LineStartPos, LineEndPos,
-		LineNormal, LineUp, UpperExtensions, OuterExtensions, scaleVector, bRecreate, bCreateCollision);
+		LineNormal, LineUp, UpperExtensions, OuterExtensions, FVector::OneVector, bRecreate, bCreateCollision);
 }
 
 void FMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
@@ -265,17 +252,9 @@ bool FMOIStructureLine::GetPerimeterPoints(TArray<FVector>& outPerimeterPoints) 
 		return false;
 	}
 		
-	if (!MOI->GetAssembly().TryGetProperty(BIMPropertyNames::Scale, scaleVector))
-	{
-		scaleVector = FVector::OneVector;
-	}
-
-	FVector2D scaleVector2D(scaleVector);
-
 	for (const auto& point : polyProfile->Points)
 	{
-		FVector2D p(point * scaleVector2D);
-		outPerimeterPoints.Add(localToWorld.TransformPosition(p.X * LineUp + p.Y * LineNormal));
+		outPerimeterPoints.Add(localToWorld.TransformPosition(point.X * LineUp + point.Y * LineNormal));
 	}
 
 	return true;

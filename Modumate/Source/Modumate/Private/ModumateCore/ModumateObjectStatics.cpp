@@ -701,13 +701,10 @@ bool UModumateObjectStatics::GetMountedTransform(const FVector &MountOrigin, con
 bool UModumateObjectStatics::GetFFEMountedTransform(
 	const FBIMAssemblySpec *Assembly, const FSnappedCursor &SnappedCursor, FTransform &OutTransform)
 {
-	FVector localDesiredNormal, localDesiredTangent;
-	if (!SnappedCursor.HitNormal.IsNearlyZero() && ensure(Assembly &&
-		Assembly->TryGetProperty(BIMPropertyNames::Normal, localDesiredNormal) &&
-		Assembly->TryGetProperty(BIMPropertyNames::Tangent, localDesiredTangent)))
+	if (!SnappedCursor.HitNormal.IsNearlyZero())
 	{
 		return GetMountedTransform(SnappedCursor.WorldPosition, SnappedCursor.HitNormal,
-			localDesiredNormal, localDesiredTangent, OutTransform);
+			Assembly->Normal, Assembly->Tangent, OutTransform);
 	}
 
 	return false;

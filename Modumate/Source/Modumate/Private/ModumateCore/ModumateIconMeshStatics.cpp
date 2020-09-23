@@ -107,44 +107,8 @@ bool UModumateIconMeshStatics::MakeIconMeshFromPofileKey(AEditModelPlayerControl
 	return false;
 }
 
+//TODO: deprecated
 bool UModumateIconMeshStatics::GetEngineMaterialByPresetKey(UObject* WorldContextObject, const FBIMKey& PresetKey, UMaterialInterface* &ModuleMaterial, FCustomColor &ModuleColor)
 {
-	if (PresetKey.IsNone())
-	{
-		return false;
-	}
-
-	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
-	FModumateDatabase *db = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase : nullptr;
-	if (gameState == nullptr && db == nullptr)
-	{
-		return false;
-	}
-	const FPresetManager &presetManager = gameState->Document.PresetManager;
-
-	FBIMAssemblySpec presetSpec;
-	presetSpec.FromPreset(*db,presetManager.CraftingNodePresets, PresetKey);
-
-	FString materialName, colorName;
-
-	if (presetSpec.RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::MaterialKey, materialName))
-	{
-		const FArchitecturalMaterial *mat = db->GetArchitecturalMaterialByKey(FBIMKey(materialName));
-		if (ensureAlways(mat != nullptr) && ensureAlways(mat->EngineMaterial.IsValid()))
-		{
-			ModuleMaterial = mat->EngineMaterial.Get();
-		}
-	}
-
-	if (presetSpec.RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Color, colorName))
-	{
-		const FCustomColor *color = db->GetCustomColorByKey(FBIMKey(colorName));
-		if (ensureAlways(color != nullptr))
-		{
-			ModuleColor = *color;
-		}
-	}
-
 	return true;
 }

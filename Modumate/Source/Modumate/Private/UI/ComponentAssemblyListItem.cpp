@@ -187,6 +187,7 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 		return false;
 	}
 
+#if 0 // TODO: refactor for propertyless layers:
 	FModumateFunctionParameterSet params;
 	for (auto &curLayer : assembly->Layers)
 	{
@@ -199,6 +200,7 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 			OutTips.Add(layerThickness + FString(TEXT(", ")) + layerFunction);
 		}
 	}
+#endif
 	return true;
 }
 
@@ -231,7 +233,7 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 	{
 		return;
 	}
-	AsmName = assembly->GetProperty(BIMPropertyNames::Name);
+	AsmName = *(assembly->DisplayName);
 
 	switch (ItemType)
 	{
