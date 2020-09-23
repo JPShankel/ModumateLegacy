@@ -22,7 +22,11 @@ FPresetManager::~FPresetManager()
 ECraftingResult FPresetManager::FromDocumentRecord(UWorld* World, const FModumateDocumentHeader& DocumentHeader, const FMOIDocumentRecord& DocumentRecord)
 {
 	KeyStore = DocumentRecord.KeyStore;
-	CraftingNodePresets.FromDataRecords(DocumentRecord.CraftingPresetArrayV2);
+
+	if (DocumentRecord.CraftingPresetArrayV2.Num() != 0)
+	{
+		CraftingNodePresets.FromDataRecords(DocumentRecord.CraftingPresetArrayV2);
+	}
 
 	FBIMPresetCollection &presetCollection = CraftingNodePresets;
 
@@ -48,8 +52,6 @@ ECraftingResult FPresetManager::FromDocumentRecord(UWorld* World, const FModumat
 
 ECraftingResult FPresetManager::ToDocumentRecord(FMOIDocumentRecord &OutRecord) const
 {
-	//TODO: deactivated for DDL 2.0 refactor, crafting disabled 
-	return ECraftingResult::Success;
 	CraftingNodePresets.ToDataRecords(OutRecord.CraftingPresetArrayV2);
 	OutRecord.KeyStore = KeyStore;
 
