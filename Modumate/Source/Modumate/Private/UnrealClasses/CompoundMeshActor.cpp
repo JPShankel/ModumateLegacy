@@ -60,10 +60,12 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 				staticMeshComp->DestroyComponent();
 				StaticMeshComps[compIdx] = nullptr;
 			}
+			UseSlicedMesh[compIdx] = false;
 		}
 	}
 	// Clear out StaticMeshComponents beyond what we need (SetNumZeroed leaves existing elements intact)
 	StaticMeshComps.SetNumZeroed(maxNumMeshes);
+	UseSlicedMesh.SetNumZeroed(maxNumMeshes);
 
 	ResetProcMeshComponents(NineSliceComps, maxNumMeshes);
 	ResetProcMeshComponents(NineSliceLowLODComps, maxNumMeshes);
@@ -392,6 +394,8 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 						comp->SetVisibility(true);
 						comp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 					}
+
+					UseSlicedMesh[slotIdx] = true;
 
 #if DEBUG_NINE_SLICING
 					DrawDebugBox(GetWorld(), procMeshComp->Bounds.Origin, procMeshComp->Bounds.BoxExtent,

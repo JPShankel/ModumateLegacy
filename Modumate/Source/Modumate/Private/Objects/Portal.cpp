@@ -254,9 +254,30 @@ void FMOIPortalImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCompos
 	else
 	{
 		ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(MOI->GetActor());
-
 		TArray<TPair<FVector, FVector>> OutEdges;
-		actor->ConvertStaticMeshToLinesOnPlane(Origin, FVector(Plane), OutEdges);
+
+		const int32 numComponents = actor->StaticMeshComps.Num();
+		for (int32 component = 0; component < numComponents; ++component)
+		{
+			UStaticMeshComponent* staticMeshComponent = actor->StaticMeshComps[component];
+			if (staticMeshComponent == nullptr)
+			{
+				continue;
+			}
+
+			if (actor->UseSlicedMesh[component])
+			{   // Component has been nine-sliced.
+				for (int32 slice = 9 * component; slice < 9 * (component + 1); ++slice)
+				{
+					UModumateGeometryStatics::ConvertProcMeshToLinesOnPlane(actor->NineSliceLowLODComps[slice], Origin, Plane, OutEdges);
+				}
+			}
+			else
+			{
+				UModumateGeometryStatics::ConvertStaticMeshToLinesOnPlane(staticMeshComponent, Origin, Plane, OutEdges);
+			}
+
+		}
 
 		Modumate::Units::FThickness defaultThickness = Modumate::Units::FThickness::Points(0.125f);
 		Modumate::FMColor defaultColor = Modumate::FMColor::Gray64;
@@ -402,9 +423,8 @@ bool FMOIPortalImpl::GetIsDynamic() const
 void FMOIPortalImpl::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane &Plane, const FBox2D& BoundingBox) const
 {
 	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(MOI->GetActor());
-	const FTransform& localToWorld = actor->ActorToWorld();
+	const FTransform& actorToWorld = actor->ActorToWorld();
 	const FVector viewNormal = Plane;
-	const FVector localViewNormal(localToWorld.ToMatrixWithScale().GetTransposed().TransformVector(viewNormal));
 
 	TArray<FEdge> portalEdges;
 
@@ -444,195 +464,198 @@ void FMOIPortalImpl::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 		return a.X < b.X;
 	};
 
-#if 0	// Code for extracting from nine-slice ProcMeshes:
-	for (auto meshComp : actor->NineSliceLowLODComps)
+	struct FLocalEdge
 	{
-		if (meshComp == nullptr)
+		FVector A;
+		FVector B;
+		FVector N;
+		bool bIsValid{ true };
+		operator bool() const { return bIsValid; }
+		void Normalize() { if (lexicalVectorCompare(B, A)) { Swap(A, B); } }
+		bool operator==(const FLocalEdge& rhs) const
+		{
+			return A == rhs.A && B == rhs.B || A == rhs.B && B == rhs.A;
+		}
+		bool operator<(const FLocalEdge& rhs) const
+		{
+			return A == rhs.A ? lexicalVectorCompare(B, rhs.B) : lexicalVectorCompare(A, rhs.A);
+		}
+	};
+
+	const int32 numComponents = actor->StaticMeshComps.Num();
+	for (int32 component = 0; component < numComponents; ++component)
+	{
+		const UStaticMeshComponent* staticMeshComponent = actor->StaticMeshComps[component];
+		if (staticMeshComponent == nullptr)
 		{
 			continue;
 		}
-		int numSections = meshComp->GetNumSections();
-		for (int section = 0; section < numSections; ++section)
-		{
-			const FProcMeshSection* meshSection = meshComp->GetProcMeshSection(section);
-			if (meshSection == nullptr)
-			{
-				continue;
-			}
-			const auto& vertices = meshSection->ProcVertexBuffer;
-			const auto& indices = meshSection->ProcIndexBuffer;
-			const int numIndices = indices.Num();
-			ensure(numIndices % 3 == 0);
 
-			if (numIndices > 0)
+		if (actor->UseSlicedMesh[component])
+		{   // Component has been nine-sliced.
+			for (int32 slice = 9 * component; slice < 9 * (component + 1); ++slice)
 			{
-				// Delete any edge that's in neighbouring triangles on assumption it's a quad.
-				static const int Invalid = -1;
-				struct LineIndices
-				{
-					int A{ Invalid };
-					int B{ Invalid };
-					void Normalize() { if (A > B) { Swap(A, B); } }
-					bool operator==(const LineIndices& rhs) const { return A == rhs.A && B == rhs.B; }
-				} lineIndices[6];
+				UProceduralMeshComponent* meshComponent = actor->NineSliceLowLODComps[slice];
 
-				for (int triangle = 0; triangle < numIndices; triangle += 3)
+				if (meshComponent == nullptr)
 				{
-					bool bBackFacing = true;
-					for (int vert = 0; bBackFacing && vert < 3; ++vert)
-					{
-						bBackFacing &= (vertices[indices[triangle + vert]].Normal | localViewNormal) > 0;
-					}
-					if (bBackFacing)
+					continue;
+				}
+
+				TArray<FLocalEdge> edges;
+
+				const FTransform localToWorld = meshComponent->GetRelativeTransform() * actorToWorld;
+				int numSections = meshComponent->GetNumSections();
+				for (int section = 0; section < numSections; ++section)
+				{
+					const FProcMeshSection* meshSection = meshComponent->GetProcMeshSection(section);
+					if (meshSection == nullptr)
 					{
 						continue;
 					}
+					const auto& vertices = meshSection->ProcVertexBuffer;
+					const auto& indices = meshSection->ProcIndexBuffer;
+					const int32 numIndices = indices.Num();
+					ensure(numIndices % 3 == 0);
 
-					for (int edge = 0; edge < 3; ++edge)
+					const int32 numTriangles = numIndices / 3;
+					for (int32 triangle = 0; triangle < numTriangles; ++triangle)
 					{
-						lineIndices[edge + 3] = { (int)indices[triangle + edge], (int)indices[triangle + (edge + 1) % 3] };
-						lineIndices[edge + 3].Normalize();
-					}
 
-					for (int edge = 0; edge < 3; ++edge)
-					{
-						if (lineIndices[edge] == lineIndices[3])
+						FVector vert0 = localToWorld.TransformPosition(vertices[indices[triangle * 3]].Position);
+						FVector vert1 = localToWorld.TransformPosition(vertices[indices[triangle * 3 + 1]].Position);
+						FVector vert2 = localToWorld.TransformPosition(vertices[indices[triangle * 3 + 2]].Position);
+						FVector triNormal = ((vert2 - vert0) ^ (vert1 - vert0)).GetSafeNormal();
+						if ((viewNormal | triNormal) <= 0.0f)
 						{
-							lineIndices[edge].A = -1; lineIndices[3].A = -1;
+							edges.Add({ vert0, vert1, triNormal });
+							edges.Add({ vert1, vert2, triNormal });
+							edges.Add({ vert2, vert0, triNormal });
 						}
-						else if (lineIndices[edge] == lineIndices[4])
-						{
-							lineIndices[edge].A = -1; lineIndices[4].A = -1;
-						}
-						else if (lineIndices[edge] == lineIndices[5])
-						{
-							lineIndices[edge].A = -1; lineIndices[5].A = -1;
-						}
-					}
-
-					for (int edge = 0; edge < 3; ++edge)
-					{
-						if (lineIndices[edge].A != Invalid)
-						{
-							portalEdges.Emplace(vertices[lineIndices[edge].A].Position, vertices[lineIndices[edge].B].Position);
-						}
-						lineIndices[edge] = lineIndices[3 + edge];
 					}
 
 				}
-				for (int edge = 0; edge < 3; ++edge)
+
+				const int numEdges = edges.Num();
+				for (auto& edge : edges)
 				{
-					if (lineIndices[edge].A != -1)
+					edge.Normalize();
+				}
+
+				static constexpr float distDeltaSquare = 0.5f * 0.5f;  // 5 mm
+				static constexpr float angleThreshold = 0.996f;  // 5 degrees
+
+				// Brute-force search for internal lines.
+				for (int32 e1 = 0; e1 < numEdges; ++e1)
+				{
+					for (int32 e2 = e1 + 1; e2 < numEdges; ++e2)
 					{
-						portalEdges.Emplace(vertices[lineIndices[edge].A].Position, vertices[lineIndices[edge].B].Position);
+						auto& edge1 = edges[e1];
+						auto& edge2 = edges[e2];
+						if (FVector::DistSquared(edge1.A, edge2.A) < distDeltaSquare && FVector::DistSquared(edge1.B, edge2.B) < distDeltaSquare
+							&& FMath::Abs(edge1.N | edge2.N) > angleThreshold)
+						{
+							edge1.bIsValid = false;
+							edge2.bIsValid = false;
+						}
+					}
+				}
+
+				for (auto& edge : edges)
+				{
+					if (edge)
+					{
+						portalEdges.Emplace(edge.A, edge.B);
 					}
 				}
 
 			}
+		}
+		else
+		{
+			const FTransform localToWorld = staticMeshComponent->GetRelativeTransform() * actorToWorld;
+			UStaticMesh* staticMesh = staticMeshComponent->GetStaticMesh();
+			if (staticMesh == nullptr)
+			{
+				continue;
+			}
+
+			TArray<FLocalEdge> edges;
+
+			const int levelOfDetailIndex = staticMesh->GetNumLODs() - 1;
+			const FStaticMeshLODResources& meshResources = staticMesh->GetLODForExport(levelOfDetailIndex);
+
+			TArray<FVector> positions;
+			TArray<int32> indices;
+			TArray<FVector> normals;
+			TArray<FVector2D> UVs;
+			TArray<FProcMeshTangent> tangents;
+
+			int32 numSections = meshResources.Sections.Num();
+			for (int32 section = 0; section < numSections; ++section)
+			{
+				UKismetProceduralMeshLibrary::GetSectionFromStaticMesh(staticMesh, levelOfDetailIndex, section, positions, indices, normals, UVs, tangents);
+				ensure(indices.Num() % 3 == 0);
+				int32 numTriangles = indices.Num() / 3;
+				for (int32 triangle = 0; triangle < numTriangles; ++triangle)
+				{
+					FVector pos[3];
+					for (int32 v = 0; v < 3; ++v)
+					{
+						int32 index = indices[triangle * 3 + v];
+						pos[v] = localToWorld.TransformPosition(positions[index]);
+					}
+
+					// Verts are CW from front.
+					FVector geomNormal = (pos[2] - pos[0]) ^ (pos[1] - pos[0]);
+					bool geomFrontFacing = (geomNormal | viewNormal) <= 0.0f;
+					if (geomFrontFacing)
+					{
+						geomNormal.Normalize();
+						edges.Add({ pos[0], pos[1], geomNormal });
+						edges.Add({ pos[1], pos[2], geomNormal });
+						edges.Add({ pos[2], pos[0], geomNormal });
+					}
+				}
+
+			}
+
+			for (auto& edge : edges)
+			{
+				edge.Normalize();
+			}
+			const int numEdges = edges.Num();
+			Algo::Sort(edges);
+			// Remove all common edges with common directions. 
+			for (int e1 = 0; e1 < numEdges; ++e1)
+			{
+				FLocalEdge& edge1 = edges[e1];
+				for (int e2 = e1 + 1; e2 < numEdges; ++e2)
+				{
+					FLocalEdge& edge2 = edges[e2];
+					if (!(edge1 == edge2))
+					{
+						break;
+					}
+					if (edge2 && FMath::Abs(edge1.N | edge2.N) > THRESH_NORMALS_ARE_PARALLEL)
+					{
+						edge1.bIsValid = false;
+						edge2.bIsValid = false;
+						break;
+					}
+				}
+			}
+
+			for (auto& edge : edges)
+			{
+				if (edge)
+				{
+					portalEdges.Emplace(edge.A, edge.B);
+				}
+			}
+
 		}
 	}
-
-#else
-
-
-	for (auto meshComp : actor->StaticMeshComps)
-	{
-		if (meshComp == nullptr)
-		{
-			continue;
-		}
-		UStaticMesh* staticMesh = meshComp->GetStaticMesh();
-		if (staticMesh == nullptr)
-		{
-			continue;
-		}
-
-		struct FLocalEdge
-		{
-			FVector A;
-			FVector B;
-			FVector N;
-			bool bIsValid { true };
-			operator bool() const { return bIsValid; }
-			void Normalize() { if (lexicalVectorCompare(B, A)) { Swap(A, B); } }
-			bool operator==(const FLocalEdge& rhs) const
-				{ return A == rhs.A && B == rhs.B || A == rhs.B && B == rhs.A; }
-			bool operator<(const FLocalEdge& rhs) const
-				{ return A == rhs.A ? lexicalVectorCompare(B, rhs.B) : lexicalVectorCompare(A, rhs.A); }
-		};
-		TArray<FLocalEdge> edges;
-
-		const int levelOfDetailIndex = 0;
-		const FStaticMeshLODResources& meshResources = staticMesh->GetLODForExport(levelOfDetailIndex);
-
-		TArray<FVector> positions;
-		TArray<int32> indices;
-		TArray<FVector> normals;
-		TArray<FVector2D> UVs;
-		TArray<FProcMeshTangent> tangents;
-
-		int32 numSections = meshResources.Sections.Num();
-		for (int32 section = 0; section < numSections; ++section)
-		{
-			UKismetProceduralMeshLibrary::GetSectionFromStaticMesh(staticMesh, levelOfDetailIndex, section, positions, indices, normals, UVs, tangents);
-			ensure(indices.Num() % 3 == 0);
-			int32 numTriangles = indices.Num() / 3;
-			FVector verts[3];
-			for (int32 triangle = 0; triangle < numTriangles; ++triangle)
-			{
-
-				FVector vert0 = positions[indices[triangle * 3]];
-				FVector vert1 = positions[indices[triangle * 3 + 1]];
-				FVector vert2 = positions[indices[triangle * 3 + 2]];
-				FVector triNormal = ((vert1 - vert0) ^ (vert2 - vert0)).GetSafeNormal();
-
-				edges.Add({ vert0, vert1, triNormal });
-				edges.Add({ vert1, vert2, triNormal });
-				edges.Add({ vert2, vert0, triNormal });
-			}
-
-		}
-
-		for (auto& edge: edges)
-		{
-			edge.Normalize();
-		}
-		const int numEdges = edges.Num();
-		Algo::Sort(edges);
-		// Remove all common edges with common directions. 
-		for (int e1 = 0; e1 < numEdges; ++e1)
-		{
-			FLocalEdge& edge1 = edges[e1];
-			for (int e2 = e1 + 1; e2 < numEdges; ++e2)
-			{
-				FLocalEdge& edge2 = edges[e2];
-				if (!(edge1 == edge2))
-				{
-					break;
-				}
-				if (edge2 && FMath::Abs(edge1.N | edge2.N) > THRESH_NORMALS_ARE_PARALLEL)
-				{
-					edge1.bIsValid = false;
-					edge2.bIsValid = false;
-					break;
-				}
-			}
-		}
-
-		for (auto& edge: edges)
-		{
-			if (edge)
-			{
-				portalEdges.Emplace(edge.A, edge.B);
-			}
-		}
-
-	}
-
-#endif
-
-	Algo::ForEach(portalEdges, [localToWorld](FEdge& edge) {edge.Vertex[0] = localToWorld.TransformPosition(edge.Vertex[0]);
-		edge.Vertex[1] = localToWorld.TransformPosition(edge.Vertex[1]); });
 
 	TArray<FEdge> clippedLines;
 	for (const auto& edge: portalEdges)

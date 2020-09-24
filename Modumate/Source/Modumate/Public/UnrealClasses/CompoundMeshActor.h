@@ -43,6 +43,9 @@ public:
 	bool GetIsDynamic() const { return bIsDynamic; }
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TArray<bool> UseSlicedMesh;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<UStaticMeshComponent*> StaticMeshComps;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
