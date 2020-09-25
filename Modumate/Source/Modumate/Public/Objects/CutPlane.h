@@ -29,11 +29,14 @@ public:
 	virtual bool AddCaptureArea(int32 ScopeBoxID, TArray<FVector> CaptureArea) override;
 	virtual bool StartRender(FModumateDocument* doc = nullptr) override;
 	virtual void PublishPage() override;
+	virtual void TraceRequestComplete() override;
 
 	virtual AActor* CreateActor(UWorld* world, const FVector& loc, const FQuat& rot) override;
 	virtual void PostCreateObject(bool bNewObject) override;
 	virtual void Destroy() override;
 	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+
+	void SetTracedOutlinesJson(FString Json) { TracedOutlinesJson = MoveTemp(Json); }
 
 	Modumate::FModumateHUDDraw DrawingInterface;
 
@@ -49,11 +52,13 @@ protected:
 	void UpdateCachedGeometryData();
 	void UpdateDraftingPreview();
 	void GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting = false);
+	void ConvertToOutlines(const FString& renderTargetFilename);
 
 	TWeakObjectPtr<ACutPlaneCaptureActor> CaptureActor;
 
 	FLinearColor EdgeSelectedColor;
 	FLinearColor EdgeColor;
+	FString TracedOutlinesJson;
 
 	TArray<TPair<int32, TArray<FVector>>> PendingCaptureAreas;
 };

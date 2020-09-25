@@ -179,6 +179,36 @@ namespace Modumate
 		return outViewLines;
 	}
 
+	TArray<FEdge> FModumateClippingTriangles::ClipViewLineToView(FEdge lineInViewSpace)
+	{
+		TArray<FEdge> outViewLines;
+		TArray<FEdge> inViewLines;
+
+		if (!QuadTree.IsValid() || (lineInViewSpace.Vertex[0].Z <= 0.0f && lineInViewSpace.Vertex[1].Z <= 0.0f))
+		{   // Behind cut plane.
+			return outViewLines;
+		}
+
+		inViewLines.Add(lineInViewSpace);
+		while (inViewLines.Num() != 0)
+		{
+			FEdge viewLine = inViewLines.Pop();
+
+			if (Vec2::Distance(Vec2(viewLine.Vertex[1]), Vec2(viewLine.Vertex[0])) <= LineClipEpsilon * Scale)
+			{
+				continue;
+			}
+
+			if (QuadTree->Apply(viewLine, [this, &viewLine, &inViewLines](const Occluder& occluder)
+			{return ClipSingleWorldLine(viewLine, occluder, inViewLines); }))
+			{
+				outViewLines.Add(viewLine);
+			}
+		}
+		return outViewLines;
+
+	}
+
 	bool FModumateClippingTriangles::ClipSingleWorldLine(FEdge& viewLine, Occluder occluder, TArray<FEdge>& generatedLines)
 	{
 		float maxZ = FMath::Max(viewLine.Vertex[0].Z, viewLine.Vertex[1].Z);

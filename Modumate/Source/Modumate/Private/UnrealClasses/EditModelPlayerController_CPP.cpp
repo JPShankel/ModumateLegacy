@@ -844,6 +844,21 @@ bool AEditModelPlayerController_CPP::OnSavePDF()
 		return false;
 	}
 
+	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (!gameInstance)
+	{
+		return false;
+	}
+
+	static const FText dialogTitle = FText::FromString(FString(TEXT("PDF Creation")) );
+	if (gameInstance->LoginStatus() != ELoginStatus::Connected)
+	{
+		FMessageDialog::Open(EAppMsgType::Ok,
+			FText::FromString(FString(TEXT("You must be logged in to export to a PDF file") )),
+			&dialogTitle);
+		return false;
+	}
+
 	EMPlayerState->ShowingFileDialog = true;
 
 	FString filename;
@@ -884,7 +899,7 @@ bool AEditModelPlayerController_CPP::OnCreateDwg()
 
 	bool retValue = true;
 
-	UModumateGameInstance* gameInstance = dynamic_cast<UModumateGameInstance*>(GetGameInstance());
+	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
 	if (!gameInstance)
 	{
 		return false;
@@ -894,7 +909,7 @@ bool AEditModelPlayerController_CPP::OnCreateDwg()
 	if (gameInstance->LoginStatus() != ELoginStatus::Connected)
 	{
 		FMessageDialog::Open(EAppMsgType::Ok,
-			FText::FromString(FString(TEXT("You must be logged in to use the DWG server")) ),
+			FText::FromString(FString(TEXT("You must be logged in to export to DWG files")) ),
 			&dialogTitle);
 		return false;
 	}

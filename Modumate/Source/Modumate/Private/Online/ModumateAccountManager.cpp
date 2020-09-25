@@ -7,18 +7,24 @@
 
 namespace Modumate
 {
-	const FString FModumateAccountManager::ModumateIdentityURL
-		{ TEXT("https://account.modumate.com/api/v1/") };
-
 	const FString FModumateAccountManager::ApiKey
 		{ TEXT("384hj4592323f2434242354t5") };
+
+	FString FModumateAccountManager::GetAmsAddress()
+	{
+#if 1   // For testing against staging server:
+		return TEXT("https://beta.account.modumate.com");
+#else
+		return TEXT("https://account.modumate.com");
+#endif
+	}
 
 	FModumateAccountManager::FModumateAccountManager() : LoginStatus(ELoginStatus::Disconnected)
 	{ }
 
 	FString FModumateAccountManager::ModumateIdentityEndpoint(const FString& api)
 	{
-		return ModumateIdentityURL + api;
+		return GetAmsAddress() + TEXT("/api/v1/") + api;
 	}
 
 	void FModumateAccountManager::OnLoginResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)

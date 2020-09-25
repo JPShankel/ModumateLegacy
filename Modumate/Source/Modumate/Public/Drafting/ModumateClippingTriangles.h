@@ -16,6 +16,7 @@ namespace Modumate
 		void SetTransform(FVector ViewPosition, FVector ViewXAxis, float ViewScale);
 		void AddTrianglesFromDoc(const FModumateDocument* doc);
 		TArray<FEdge> ClipWorldLineToView(FEdge line);
+		TArray<FEdge> ClipViewLineToView(FEdge line);
 
 	private:
 		bool IsPointInFront(FVector Point) const;

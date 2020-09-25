@@ -13,9 +13,6 @@
 
 namespace Modumate
 {
-	//const FString FModumateDwgConnect::ServerAddress { TEXT("http://192.168.124.98:8080") };
-	const FString FModumateDwgConnect::ServerAddress { TEXT("https://account.modumate.com") };
-
 	FModumateDwgConnect::FModumateDwgConnect(const FModumateDwgDraw& dwgDraw)
 		: DwgDraw(dwgDraw)
 	{ }
@@ -170,7 +167,6 @@ namespace Modumate
 			});
 
 		request->SetVerb(TEXT("POST"));
-		request->SetURL(ServerAddress + TEXT("/api/v1/service/jsontodwg"));
 		request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
 		request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
@@ -181,16 +177,11 @@ namespace Modumate
 		request->SetURL(ServerAddress + TEXT("/jsontodwg"));
 #else
 		// Send via AMS public web-server.
-		auto contentJsonObject = MakeShared<FJsonObject>();
-		contentJsonObject->SetStringField(TEXT("key"), AccountManager->GetApiKey());
-		contentJsonObject->SetStringField(TEXT("idToken"), AccountManager->GetIdToken());
-		contentJsonObject->SetStringField(TEXT("json"), FBase64::Encode(jsonString));
-		FString contentjson;
-		auto serializer = TJsonWriterFactory<>::Create(&contentjson);
-		FJsonSerializer::Serialize(contentJsonObject, serializer);
-		request->SetContentAsString(contentjson);
-#endif
+		request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + AccountManager->GetIdToken());
 
+		request->SetURL(AccountManager->GetAmsAddress() + TEXT("/api/v2/service/jsontodwg"));
+		request->SetContentAsString(jsonString);
+#endif
 		request->ProcessRequest();
 
 		return true;

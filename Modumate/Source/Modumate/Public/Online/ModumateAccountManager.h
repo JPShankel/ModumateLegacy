@@ -102,6 +102,7 @@ namespace Modumate
 		FString GetEmail() const { return UserInfo.email; }
 		FString GetIdToken() const { return IdToken; }
 		static const FString& GetApiKey() { return ApiKey; }
+		static FString GetAmsAddress();  // AMS address as URL.
 
 	private:
 		void OnLoginResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
@@ -114,7 +115,6 @@ namespace Modumate
 		FString LocalId;
 		FModumateUserInfo UserInfo;
 
-		static const FString ModumateIdentityURL;
 		// API key from Josh.
 		static const FString ApiKey;
 	};

@@ -10,7 +10,10 @@ float Kernel[9] =
      2,-12,2,
      1,2,1};
 
+float Depth = 0.0f;
 float WeightSum = 0.0f;
+// Sync with ModumateObjectInstanceCutPlane.cpp.
+const float OutDepthScale = 3000.0f;
 
 // TODO: may want to check the custom stencil value for adjacent pixels to help remove edges around miter zones
 int idx = 0;
@@ -23,7 +26,8 @@ for (int x = -Radius; x <= Radius; x++)
         MaterialFloat2 bufferUV = ViewportUVToBufferUV(Offset);
 		MaterialFloat2 clampedUV = min(max(bufferUV,View.BufferBilinearUVMinMax.xy),View.BufferBilinearUVMinMax.zw);
 
-    	WeightSum += CalcSceneDepth(clampedUV) * Kernel[idx];
+        Depth = CalcSceneDepth(clampedUV);
+        WeightSum += Depth * Kernel[idx];
         if (SceneTextureLookup(clampedUV, 25, false).r == 4)
         {
             bPixelInMask = true;
@@ -52,6 +56,8 @@ MaterialFloat4 FillColor = MaterialFloat4(1.0, 1.0, 1.0, 1.0);
 MaterialFloat4 EdgeColor = MaterialFloat4(0.0, 0.0, 0.0, 1.0);
 
 MaterialFloat4 ResultColor = lerp(FillColor,EdgeColor,WeightSum);
+
+ResultColor.b = Depth / OutDepthScale;
 
 if (bPixelInMask)
 {

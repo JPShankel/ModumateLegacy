@@ -194,6 +194,8 @@ namespace Modumate {
 		{
 			object->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
 		}
+		// Cut plane holds traced FFE lines.
+		cutPlane->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
 
 	}
 
@@ -251,10 +253,6 @@ namespace Modumate {
 		float orthoHeight = drawingBox.GetSize().Y;
 
 		Units::FCoordinates2D dimensions = Units::FCoordinates2D(Units::FXCoord::WorldCentimeters(orthoWidth), Units::FYCoord::WorldCentimeters(orthoHeight));
-
-		TSharedPtr<FImagePrimitive> image = MakeShareable(new FImagePrimitive(file, dimensions));
-		totalPage->Children.Add(image);
-
 
 		TSharedPtr<FDraftingComposite> foregroundLines = MakeShareable(new FDraftingComposite());
 		TArray<TArray<FVector>> outPerimeters;
