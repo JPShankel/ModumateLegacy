@@ -49,13 +49,12 @@ void AGraphDimensionActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CreateWidget();
 	DimensionText->Measurement->OnTextCommitted.AddDynamic(this, &AGraphDimensionActor::OnMeasurementTextCommitted);
 }
 
 void AGraphDimensionActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	ReleaseWidget();
+	DimensionText->Measurement->OnTextCommitted.RemoveDynamic(this, &AGraphDimensionActor::OnMeasurementTextCommitted);
 
 	Super::EndPlay(EndPlayReason);
 }

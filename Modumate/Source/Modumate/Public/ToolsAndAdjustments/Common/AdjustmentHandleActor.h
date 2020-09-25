@@ -48,6 +48,7 @@ public:
 	virtual bool IsInUse() const;
 	virtual bool HandleInputNumber(float number);
 	virtual bool HasDimensionActor();
+	virtual bool HasDistanceTextInput();
 	virtual bool HandleInvert();
 	virtual FVector GetHandlePosition() const;
 	virtual FVector GetHandleDirection() const;
@@ -81,6 +82,12 @@ public:
 	class UModumateGameInstance *GameInstance;
 	int32 PendingSegmentID = MOD_ID_NONE;
 
+	UPROPERTY()
+	FColor SegmentColor = FColor::Black;
+
+	UPROPERTY()
+	float SegmentThickness = 3.0f;
+
 	// Handle sprite widget
 	UPROPERTY()
 	class UAdjustmentHandleWidget* Widget;
@@ -99,6 +106,7 @@ public:
 
 	UPROPERTY()
 	class AEditModelPlayerHUD *PlayerHUD;
+
 
 	const static FName StateRequestTag;
 };

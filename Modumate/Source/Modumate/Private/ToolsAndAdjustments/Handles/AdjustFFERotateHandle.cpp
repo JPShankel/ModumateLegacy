@@ -1,13 +1,26 @@
 #include "ToolsAndAdjustments/Handles/AdjustFFERotateHandle.h"
 
 #include "Algo/Accumulate.h"
+#include "Components/EditableTextBox.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
-#include "UI/EditModelPlayerHUD.h"
 #include "UI/AdjustmentHandleAssetData.h"
+#include "UI/DimensionManager.h"
+#include "UI/PendingAngleActor.h"
+#include "UI/EditModelPlayerHUD.h"
+#include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+
+AAdjustFFERotateHandle::AAdjustFFERotateHandle(const FObjectInitializer &ObjectInitializer)
+	: Super(ObjectInitializer)
+	, AssemblyNormal(FVector::UpVector)
+	, AssemblyTangent(FVector::RightVector)
+{ }
 
 bool AAdjustFFERotateHandle::BeginUse()
 {
@@ -30,6 +43,24 @@ bool AAdjustFFERotateHandle::BeginUse()
 	// Setup location for world axis snap
 	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorLoc, curObjectNormal, curObjectTangent);
 
+	BaseLine->SetVisibilityInApp(true);
+	RotationLine->SetVisibilityInApp(true);
+
+	BaseLine->Point2 = AnchorDirLocation;
+
+	APendingAngleActor* dimensionActor = Cast<APendingAngleActor>(GameInstance->DimensionManager->AddDimensionActor(APendingAngleActor::StaticClass()));
+	dimensionActor->SetHidden(false);
+	PendingSegmentID = dimensionActor->ID;
+	dimensionActor->WorldPosition = TargetMOI->GetObjectLocation();
+	dimensionActor->WorldDirection = BaseLine->Point2 - BaseLine->Point1;
+	dimensionActor->WorldDirection.Normalize();
+
+	auto dimensionWidget = dimensionActor->DimensionText;
+	dimensionWidget->Measurement->SetIsReadOnly(false);
+	dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &AAdjustmentHandleActor::OnTextCommitted);
+
+	GameInstance->DimensionManager->SetActiveActorID(PendingSegmentID);
+
 	return true;
 }
 
@@ -42,77 +73,33 @@ bool AAdjustFFERotateHandle::UpdateUse()
 	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
 	FVector projectedCursorPos = cursor.SketchPlaneProject(cursor.WorldPosition);
 
-	Super::UpdateUse();
-	if (Controller->EMPlayerState->SnappedCursor.Visible)
+	BaseLine->Point2 = AnchorDirLocation;
+	RotationLine->Point2 = projectedCursorPos;
+
+	FTransform newTransform;
+	if (!GetTransform(newTransform))
 	{
-		FQuat originalQuat = OriginalRotation;
-		FQuat userQuat = GetAnchorQuatFromCursor();
-		FVector userAxis;
-		float userAngle;
-		userQuat.ToAxisAndAngle(userAxis, userAngle);
-		bClockwise = ((userAxis | cursor.AffordanceFrame.Normal) > 0.0f);
-		FQuat quatRot = originalQuat * userQuat;
-
-		TargetMOI->SetObjectRotation(quatRot);
-
-		// Start to draw dim string when object has been rotated
-		if (!TargetMOI->GetObjectRotation().Equals(OriginalRotation, 0.1f))
-		{
-			UModumateFunctionLibrary::AddNewDegreeString(
-				Controller,
-				AnchorLoc, //degree location
-				AnchorDirLocation, // start
-				projectedCursorPos, // end
-				bClockwise,
-				Controller->DimensionStringGroupID_PlayerController, // ControllerGroup
-				Controller->DimensionStringUniqueID_Delta,
-				0,
-				Controller,
-				EDimStringStyle::DegreeString,
-				EEnterableField::NonEditableText,
-				EAutoEditableBox::UponUserInput,
-				true);
-
-			// Line dim strings needs to be separate group from degree string to prevent TAB switching
-			FName rotateDimLineGroup = FName(TEXT("DimLine"));
-
-			// Dim string from AnchorLoc to cursor
-			UModumateFunctionLibrary::AddNewDimensionString(
-				Controller,
-				AnchorLoc,
-				projectedCursorPos,
-				FVector::ZeroVector,
-				rotateDimLineGroup,
-				Controller->DimensionStringUniqueID_Delta,
-				1,
-				Controller,
-				EDimStringStyle::RotateToolLine,
-				EEnterableField::None,
-				40.f,
-				EAutoEditableBox::Never,
-				true,
-				FColor::White);
-
-			// Dim string from AnchorLoc to AnchorAngle
-			UModumateFunctionLibrary::AddNewDimensionString(
-				Controller,
-				AnchorLoc,
-				AnchorDirLocation,
-				FVector::ZeroVector,
-				rotateDimLineGroup,
-				Controller->DimensionStringUniqueID_Delta,
-				1,
-				Controller,
-				EDimStringStyle::RotateToolLine,
-				EEnterableField::None,
-				40.f,
-				EAutoEditableBox::Never,
-				true,
-				FColor::Green);
-		}
-
+		return false;
 	}
+
+	TMap<int32, FTransform> objectInfo;
+	objectInfo.Add(TargetMOI->ID, newTransform);
+	FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Controller->GetDocument(), Controller->GetWorld(), true);
+
+
+	FVector baseDir = BaseLine->Point2 - BaseLine->Point1;
+	FVector rotationDir = RotationLine->Point2 - RotationLine->Point1;
+
+
 	return true;
+}
+
+void AAdjustFFERotateHandle::PostEndOrAbort()
+{
+	BaseLine->SetVisibilityInApp(false);
+	RotationLine->SetVisibilityInApp(false);
+
+	Super::PostEndOrAbort();
 }
 
 FVector AAdjustFFERotateHandle::GetHandlePosition() const
@@ -145,35 +132,54 @@ bool AAdjustFFERotateHandle::HandleInputNumber(float number)
 	float radians = FMath::DegreesToRadians(number);
 	FQuat deltaRot(AssemblyNormal, radians * clockwiseScale);
 
-	TargetMOI->SetObjectRotation(deltaRot * OriginalRotation);
-	EndUse();
+	TMap<int32, FTransform> objectInfo;
+	objectInfo.Add(TargetMOI->ID, FTransform(deltaRot * OriginalRotation, TargetMOI->GetObjectLocation()));
+	FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Controller->GetDocument(), Controller->GetWorld(), false);
+
+	if (!IsActorBeingDestroyed())
+	{
+		PostEndOrAbort();
+	}
 
 	return true;
 }
 
 FQuat AAdjustFFERotateHandle::GetAnchorQuatFromCursor()
 {
-	FVector basisV = AnchorDirLocation - AnchorLoc;
-	basisV.Normalize();
+	// TODO: this function should probably be static and replace RotateTool::CalcToolAngle
+	FVector basisV = OriginalRotation.RotateVector(AssemblyTangent);
 
 	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
 	FVector projectedCursorPos = cursor.SketchPlaneProject(cursor.WorldPosition);
 	FVector refV = (projectedCursorPos - AnchorLoc).GetSafeNormal();
+	refV.Normalize();
 
-	if (FVector::Coincident(basisV, refV))
+	FVector cr = FVector::CrossProduct(basisV, refV);
+	float dp = FMath::Acos(FVector::DotProduct(basisV, refV));
+
+	if (cr.Z < 0)
 	{
-		return FQuat::Identity;
+		dp = -dp;
 	}
-	else if (FVector::Parallel(basisV, refV))
-	{
-		return FQuat(AssemblyNormal, PI);
-	}
-	else 
-	{
-		float unsignedAngle = FMath::Acos(basisV | refV);
-		float angleSign = FMath::Sign((basisV ^ refV) | cursor.AffordanceFrame.Normal);
-		return FQuat(AssemblyNormal, angleSign * unsignedAngle);
-	}
+
+	auto dimensionActor = Cast<APendingAngleActor>(GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID));
+
+	FVector offsetDirection = (refV + basisV) / 2.0f;
+	offsetDirection.Normalize();
+
+	dimensionActor->WorldDirection = offsetDirection * -1.0f;
+
+	return FQuat(AssemblyNormal, dp);
+}
+
+bool AAdjustFFERotateHandle::HasDimensionActor()
+{
+	return false;
+}
+
+bool AAdjustFFERotateHandle::HasDistanceTextInput()
+{
+	return false;
 }
 
 void AAdjustFFERotateHandle::Initialize()
@@ -198,11 +204,50 @@ void AAdjustFFERotateHandle::Initialize()
 		FVector curHandlePos = FVector::PointPlaneProject(averageBoxSidePos, actorLoc, curObjectNormal);
 		LocalHandlePos = moiActor->GetActorTransform().InverseTransformPosition(curHandlePos);
 	}
+
+	BaseLine = Controller->GetWorld()->SpawnActor<ALineActor>();
+	RotationLine = Controller->GetWorld()->SpawnActor<ALineActor>();
+
+	for (auto line : { BaseLine, RotationLine })
+	{
+		line->Point1 = TargetMOI->GetObjectLocation();
+		line->Color = SegmentColor;
+		line->Thickness = SegmentThickness;
+		line->SetVisibilityInApp(false);
+	}
 }
 
 bool AAdjustFFERotateHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
 {
 	OutButtonStyle = PlayerHUD->HandleAssets->RotateStyle;
 	OutWidgetSize = FVector2D(48.0f, 48.0f);
+	return true;
+}
+
+bool AAdjustFFERotateHandle::GetTransform(FTransform& OutTransform)
+{
+	// Fail out if the actor is ever unavailable
+	AActor *moiActor = TargetMOI->GetActor();
+	if (moiActor == nullptr)
+	{
+		return false;
+	}
+
+	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+	FQuat userQuat = GetAnchorQuatFromCursor();
+
+	FVector userAxis;
+	float userAngle;
+	userQuat.ToAxisAndAngle(userAxis, userAngle);
+
+	bClockwise = ((userAxis | cursor.AffordanceFrame.Normal) > 0.0f);
+	FQuat quatRot = OriginalRotation * userQuat;
+
+	auto dimensionActor = Cast<APendingAngleActor>(GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID));
+	dimensionActor->CurrentAngle = userAngle;
+
+	OutTransform = moiActor->GetActorTransform();
+	OutTransform.SetRotation(quatRot);
+
 	return true;
 }

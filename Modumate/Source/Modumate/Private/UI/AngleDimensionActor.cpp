@@ -39,7 +39,6 @@ void AAngleDimensionActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CreateWidget();
 	// Angle dimensions strings are read-only for the foreseeable future
 	DimensionText->SetIsEditable(false);
 
@@ -57,7 +56,6 @@ void AAngleDimensionActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		PendingArc->Destroy();
 	}
-	ReleaseWidget();
 
 	Super::EndPlay(EndPlayReason);
 }

@@ -152,11 +152,11 @@ void AAdjustmentHandleActor::PostEndOrAbort()
 		}
 	}
 
-	if (HasDimensionActor() && GameInstance && GameInstance->DimensionManager)
+	if (GameInstance && GameInstance->DimensionManager)
 	{
 		UDimensionWidget* dimensionWidget = nullptr;
 		auto dimensionActor = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID);
-		if (ensure(dimensionActor))
+		if (dimensionActor)
 		{
 			dimensionWidget = dimensionActor->DimensionText;
 		}
@@ -277,6 +277,8 @@ bool AAdjustmentHandleActor::BeginUse()
 
 	bIsInUse = true;
 
+	AnchorLoc = GetHandlePosition();
+
 	if (auto world = GetWorld())
 	{
 		GameInstance = Cast<UModumateGameInstance>(GetWorld()->GetGameInstance());
@@ -291,10 +293,13 @@ bool AAdjustmentHandleActor::BeginUse()
 			dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &AAdjustmentHandleActor::OnTextCommitted);
 
 			GameInstance->DimensionManager->SetActiveActorID(PendingSegmentID);
+
+			auto pendingSegment = dimensionActor->GetLineActor();
+			pendingSegment->Thickness = SegmentThickness;
+			pendingSegment->Color = SegmentColor;
+			pendingSegment->Point1 = AnchorLoc;
 		}
 	}
-
-	AnchorLoc = GetHandlePosition();
 
 	return true;
 }
@@ -314,13 +319,9 @@ bool AAdjustmentHandleActor::UpdateUse()
 
 		if (pendingSegment != nullptr)
 		{
-			FVector hitPoint = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
-			FVector offset = hitPoint - AnchorLoc;
 
-			pendingSegment->Point1 = AnchorLoc;
-			pendingSegment->Point2 = AnchorLoc + offset;
-			pendingSegment->Color = FColor::Black;
-			pendingSegment->Thickness = 3.0f;
+			auto cursor = Controller->EMPlayerState->SnappedCursor;
+			pendingSegment->Point2 = cursor.SketchPlaneProject(cursor.WorldPosition);
 		}
 		else
 		{
@@ -385,6 +386,11 @@ bool AAdjustmentHandleActor::HasDimensionActor()
 	return true;
 }
 
+bool AAdjustmentHandleActor::HasDistanceTextInput()
+{
+	return true;
+}
+
 FVector AAdjustmentHandleActor::GetHandlePosition() const
 {
 	return SourceMOI ? SourceMOI->GetObjectLocation() : FVector::ZeroVector;
@@ -425,13 +431,22 @@ void AAdjustmentHandleActor::OnTextCommitted(const FText& Text, ETextCommit::Typ
 		return;
 	}
 
-	auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString());
-
-	float lengthValue = dimension.Centimeters;
-
 	auto dimensionWidget = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->DimensionText;
-	// unnecessary if every implementation ends up calling EndUse
-	dimensionWidget->UpdateText(lengthValue);
+
+	float lengthValue = 0.0f;
+	if (HasDistanceTextInput())
+	{
+		auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString());
+
+		lengthValue = dimension.Centimeters;
+
+		// unnecessary if every implementation ends up calling EndUse
+		dimensionWidget->UpdateText(lengthValue);
+	}
+	else if (UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), lengthValue))
+	{
+		dimensionWidget->UpdateDegreeText(lengthValue);
+	}
 
 	// TODO: there is other shared behavior that could be useful here in the Controller's implementation, 
 	// like setting the mouse cursor position

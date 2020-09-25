@@ -12,6 +12,18 @@ ADimensionActor::ADimensionActor(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void ADimensionActor::BeginPlay()
+{
+	Super::BeginPlay();
+	CreateWidget();
+}
+
+void ADimensionActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	ReleaseWidget();
+	Super::EndPlay(EndPlayReason);
+}
+
 void ADimensionActor::CreateWidget()
 {
 	TWeakObjectPtr<AEditModelPlayerController_CPP> playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();

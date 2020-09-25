@@ -177,14 +177,6 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 			auto state = ((const FModumateObjectInstance*)moi)->GetDataState();
 			state.StateType = EMOIDeltaType::Mutate;
 			delta.StatePairs.Add(TPair<FMOIStateData, FMOIStateData>(state, state));
-
-			FVector displacement = kvp.Value.GetTranslation() - delta.StatePairs[0].Key.Location;
-
-			if (displacement.IsNearlyZero())
-			{
-				continue;
-			}
-
 			delta.StatePairs[0].Value.Location = kvp.Value.GetTranslation();
 			delta.StatePairs[0].Value.Orientation = kvp.Value.GetRotation();
 

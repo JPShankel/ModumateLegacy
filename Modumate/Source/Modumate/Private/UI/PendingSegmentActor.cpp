@@ -20,8 +20,6 @@ void APendingSegmentActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CreateWidget();
-
 	// TODO: this can be removed if input can be handled through here
 	DimensionText->SetIsEditable(false);
 
@@ -30,8 +28,6 @@ void APendingSegmentActor::BeginPlay()
 
 void APendingSegmentActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	ReleaseWidget();
-
 	if (PendingSegment != nullptr)
 	{
 		PendingSegment->Destroy();
