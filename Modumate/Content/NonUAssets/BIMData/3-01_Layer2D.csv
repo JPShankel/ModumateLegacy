@@ -6,72 +6,328 @@ PROPERTY,,String,,Name,,Layer.Name,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildLayerPattern,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..,,ChildModuleArray,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildGapArray,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,12,12,12,12,14,0,0,0,0,0
+,,Presets,,,,,,,,,,12,12,12,12,22,0,0,0,0,0
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Layer.Name,DataType=InputPins,ChildModuleArray,ChildGapArray,ChildLayerPattern,DataType=TG_Parent Node+CategoryPath,4LayeredAssembly --> Wall,4LayeredAssembly --> Floor,4LayeredAssembly --> Roof,4LayeredAssembly --> Ceiling,4LayeredAssembly --> Finish,4LayeredAssembly --> System Panel,4LayeredAssembly --> Countertop,4LayeredAssembly --> Layered Tread,4LayeredAssembly --> Layered Riser,4LayeredAssembly --> Landscape
 PRESET,,"3Layer2D --> Board and Panel --> Cement
 2ModuleLWT --> Board/Panel --> Cement
 1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-D6D7D8-Natural
-0DimLW-96in-48in
-0DimThk-0.5inT
+0DimLW-36in-36in
+0DimThk-0.375inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-StackBond",,3Layer2D --> Board and Panel --> Cement,,"48in x 96in, 1/2in, Cement, Cement, Natural, Stack Bond",,"2ModuleLWT --> Board/Panel --> Cement
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Board and Panel --> Cement,,"36in x 36in, 3/8in, Cement, Cement, Natural, Stack Bond",,"2ModuleLWT --> Board/Panel --> Cement
 1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-D6D7D8-Natural
-0DimLW-96in-48in
-0DimThk-0.5inT","2Gap2D --> Mortar Gaps
+0DimLW-36in-36in
+0DimThk-0.375inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-StackBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Cement
 2ModuleLWT --> Board/Panel --> Cement
 1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-A3A7A6-MediumGray
+0DimLW-48in-36in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0.0625inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Cement,,"36in x 48in, 3/8in, Cement, Cement, Medium Gray, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-A3A7A6-MediumGray
+0DimLW-48in-36in
+0DimThk-0.375inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0.0625inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-70716C-DarkGrey
+0DimLW-60in-36in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Cement,,"36in x 60in, 3/8in, Cement, Cement, Dark Grey, Running Bond",,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-70716C-DarkGrey
+0DimLW-60in-36in
+0DimThk-0.375inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-2F3131-Black
+0DimLW-72in-36in
+0DimThk-0.5inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.0625inD
+0Profile-Flat
+0LayerPattern --> 2D-One-Third Bond",,3Layer2D --> Board and Panel --> Cement,,"36in x 72in, 1/2in, Cement, Cement, Black, One-Third Bond",,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-2F3131-Black
+0DimLW-72in-36in
+0DimThk-0.5inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.0625inD
+0Profile-Flat",0LayerPattern --> 2D-One-Third Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-AC998D-Maple
+0DimLW-96in-36in
+0DimThk-0.5inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 2D-Cascading Thirds",,3Layer2D --> Board and Panel --> Cement,,"36in x 96in, 1/2in, Cement, Cement, Maple, Cascading Thirds",,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-AC998D-Maple
+0DimLW-96in-36in
+0DimThk-0.5inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.125inD
+0Profile-Flat",0LayerPattern --> 2D-Cascading Thirds,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-ABA283-Olive
+0DimLW-48in-48in
+0DimThk-0.5inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Cement,,"48in x 48in, 1/2in, Cement, Cement, Olive, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-ABA283-Olive
+0DimLW-48in-48in
+0DimThk-0.5inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-CFB086-Buff
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.125inW-0.0625inD
+0DimWD-0.25inW-0.25inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Cement,,"48in x 96in, 5/8in, Cement, Cement, Medium Gray, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Cement
-1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-A3A7A6-MediumGray
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Cement,,"48in x 96in, 5/8in, Cement, Cement, Buff, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-CFB086-Buff
 0DimLW-96in-48in
 0DimThk-0.625inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-9FA08B-Moss
+0DimLW-36in-36in
+0DimThk-0.625inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.375inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Cement,,"36in x 36in, 5/8in, Cement, Cement, Moss, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-9FA08B-Moss
+0DimLW-36in-36in
+0DimThk-0.625inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.375inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-8F9AA0-Ocean
+0DimLW-48in-36in
+0DimThk-0.625inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Cascading Fourths",,3Layer2D --> Board and Panel --> Cement,,"36in x 48in, 5/8in, Cement, Cement, Ocean, Cascading Fourths",,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-8F9AA0-Ocean
+0DimLW-48in-36in
+0DimThk-0.625inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Cascading Fourths,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-9F7D7B-Cabernet
+0DimLW-60in-36in
+0DimThk-0.75inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0.0625inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat
+0LayerPattern --> 2D-English Bond",,3Layer2D --> Board and Panel --> Cement,,"36in x 60in, 3/4in, Cement, Cement, Cabernet, English Bond",,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-9F7D7B-Cabernet
+0DimLW-60in-36in
+0DimThk-0.75inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0.0625inD
+0Profile-Flat",0LayerPattern --> 2D-English Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
 2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
 1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-FFFFFF-White
 0DimLW-24in-24in
 0DimThk-0.375inT
-2Gap2D --> Metal Gaps
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-0DimWD-0.5625inW-0.25inD
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-StackBond",,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,,"24in x 24in, 3/8in, Cementitious Wood Fiber, Cementitious Wood Fiber, White, Stack Bond",,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,,"24in x 24in, 3/8in, Cementitious Wood Fiber, Cementitious Wood Fiber, White, Stack Bond",,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
 1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-FFFFFF-White
 0DimLW-24in-24in
-0DimThk-0.375inT","2Gap2D --> Metal Gaps
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-0DimWD-0.5625inW-0.25inD
-0Profile-Flat",0LayerPattern --> 2D-StackBond,,X,X,X,X,X,,,,,
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
 2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
 1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-D0C6BD-Cream1
-0DimLW-48in-24in
-0DimThk-0.4375inT
-2Gap2D --> Metal Gaps
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-0DimWD-1inW-0inD
+0DimLW-30in-24in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-RunningBond",,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,,"24in x 48in, 7/16in, Cementitious Wood Fiber, Cementitious Wood Fiber, Cream 1, Running Bond",,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,,"24in x 30in, 3/8in, Cementitious Wood Fiber, Cementitious Wood Fiber, Cream 1, Running Bond",,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
 1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-D0C6BD-Cream1
+0DimLW-30in-24in
+0DimThk-0.375inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
+2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-BF945F-Saddle
+0DimLW-36in-24in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0.0625inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,,"24in x 36in, 3/8in, Cementitious Wood Fiber, Cementitious Wood Fiber, Saddle, Running Bond",,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-BF945F-Saddle
+0DimLW-36in-24in
+0DimThk-0.375inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0.0625inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
+2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-A99978-Parchment
 0DimLW-48in-24in
-0DimThk-0.4375inT","2Gap2D --> Metal Gaps
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-0DimWD-1inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-RunningBond,,X,X,X,X,X,,,,,
+0DimThk-0.625inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,,"24in x 48in, 5/8in, Cementitious Wood Fiber, Cementitious Wood Fiber, Parchment, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-A99978-Parchment
+0DimLW-48in-24in
+0DimThk-0.625inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
+2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-88543F-Copper
+0DimLW-96in-24in
+0DimThk-0.625inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.0625inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,,"24in x 96in, 5/8in, Cementitious Wood Fiber, Cementitious Wood Fiber, Copper, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-88543F-Copper
+0DimLW-96in-24in
+0DimThk-0.625inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.0625inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
+2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-464F3C-OliveGreen
+0DimLW-30in-30in
+0DimThk-0.625inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 2D-Cascading Fourths",,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,,"30in x 30in, 5/8in, Cementitious Wood Fiber, Cementitious Wood Fiber, Olive Green, Cascading Fourths",,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-464F3C-OliveGreen
+0DimLW-30in-30in
+0DimThk-0.625inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.125inD
+0Profile-Flat",0LayerPattern --> 2D-Cascading Fourths,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
+2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-7A878F-SilverBlue
+0DimLW-32in-32in
+0DimThk-0.5inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat
+0LayerPattern --> 2D-English Bond",,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,,"32in x 32in, 1/2in, Cementitious Wood Fiber, Cementitious Wood Fiber, Silver Blue, English Bond",,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-7A878F-SilverBlue
+0DimLW-32in-32in
+0DimThk-0.5inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat",0LayerPattern --> 2D-English Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
+2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-38485F-OrderlyBlue
+0DimLW-64in-32in
+0DimThk-0.5inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,,"32in x 64in, 1/2in, Cementitious Wood Fiber, Cementitious Wood Fiber, Orderly Blue, Stack Bond",,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-38485F-OrderlyBlue
+0DimLW-64in-32in
+0DimThk-0.5inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
+2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-3C3B40-Ink
+0DimLW-96in-32in
+0DimThk-0.75inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.375inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,,"32in x 96in, 3/4in, Cementitious Wood Fiber, Cementitious Wood Fiber, Ink, Running Bond",,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-3C3B40-Ink
+0DimLW-96in-32in
+0DimThk-0.75inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.375inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
+2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-534E4A-Charcoal
+0DimLW-36in-36in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,,"36in x 36in, 3/4in, Cementitious Wood Fiber, Cementitious Wood Fiber, Charcoal, Running Bond",,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-534E4A-Charcoal
+0DimLW-36in-36in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
@@ -81,13 +337,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Insulation
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 3/4in, Foam, Foam (Extruded Polystyrene), Pink, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 3/4in, Foam, Foam (Extruded Polystyrene), Pink, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
 0DimThk-0.75inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
@@ -97,13 +353,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Insulation
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 1in, Foam, Foam (Extruded Polystyrene), Pink, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 1in, Foam, Foam (Extruded Polystyrene), Pink, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
 0DimThk-1inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
@@ -113,13 +369,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Insulation
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 1in, Foam, Foam (Extruded Polystyrene), Pink, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 1in, Foam, Foam (Extruded Polystyrene), Pink, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
 0DimThk-1inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
@@ -129,13 +385,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Insulation
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 2in, Foam, Foam (Extruded Polystyrene), Pink, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 2in, Foam, Foam (Extruded Polystyrene), Pink, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
 0DimThk-2inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
@@ -145,45 +401,45 @@ PRESET,,"3Layer2D --> Board and Panel --> Insulation
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 3in, Foam, Foam (Extruded Polystyrene), Pink, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 3in, Foam, Foam (Extruded Polystyrene), Pink, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
 0DimThk-3inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Insulation
 2ModuleLWT --> Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
+0DimLW-96in-48in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 3/4in, Foam, Foam (Polyethylene), White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
+0DimLW-96in-48in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Insulation
+2ModuleLWT --> Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow
 0DimLW-96in-48in
 0DimThk-3inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 3in, Foam, Foam (Polyethylene), White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 3in, Foam, Foam (Polyisocyanurate), Yellow, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow
 0DimLW-96in-48in
 0DimThk-3inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
-PRESET,,"3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White
-0DimLW-96in-48in
-0DimThk-3inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Insulation,,"48in x 96in, 3in, Foam, Foam (Polyisocyanurate), White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White
-0DimLW-96in-48in
-0DimThk-3inT","2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
@@ -193,13 +449,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Gypsum
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Gypsum,,"48in x 96in, 1/2in, Gypsum, Gypsum, Natural, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Gypsum
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Gypsum,,"48in x 96in, 1/2in, Gypsum, Gypsum, Natural, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.5inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
@@ -209,13 +465,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Gypsum
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Gypsum,,"48in x 96in, 5/8in, Gypsum, Gypsum, Natural, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Gypsum
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Gypsum,,"48in x 96in, 5/8in, Gypsum, Gypsum, Natural, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> MDF (Medium-Density Fiberboard)
 2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard)
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
@@ -225,13 +481,13 @@ PRESET,,"3Layer2D --> Board and Panel --> MDF (Medium-Density Fiberboard)
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> MDF (Medium-Density Fiberboard),,"48in x 96in, 1/2in, MDF (Medium-Density Fiberboard), Wood Particles, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard)
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> MDF (Medium-Density Fiberboard),,"48in x 96in, 1/2in, MDF (Medium-Density Fiberboard), Wood Particles, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard)
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.5inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> MDF (Medium-Density Fiberboard)
 2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard)
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
@@ -241,45 +497,173 @@ PRESET,,"3Layer2D --> Board and Panel --> MDF (Medium-Density Fiberboard)
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> MDF (Medium-Density Fiberboard),,"48in x 96in, 3/4in, MDF (Medium-Density Fiberboard), Wood Particles, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard)
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> MDF (Medium-Density Fiberboard),,"48in x 96in, 3/4in, MDF (Medium-Density Fiberboard), Wood Particles, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard)
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.75inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimLW-12in-12in
+0DimThk-0.25inT
+2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Metal,,"12in x 12in, 1/2in, Metal, Aluminum, Pure White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimLW-12in-12in
+0DimThk-0.25inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Metal
+2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-AAAB8C-GreenGray
+0DimLW-16in-12in
 0DimThk-0.5inT
-2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.125inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Metal,,"12in x 12in, 1/2in, Metal, Aluminum, Pure White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Metal
+2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-0DimLW-12in-12in
-0DimThk-0.5inT","2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.125inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,,,,,X,,,,,
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Metal,,"12in x 16in, 3/4in, Metal, Aluminum, Green Gray, Running Bond",,"2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-AAAB8C-GreenGray
+0DimLW-16in-12in
+0DimThk-0.5inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Metal
 2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-634C44-Brown
+0DimLW-18in-12in
+0DimThk-0.5inT
+2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-0DimLW-16in-12in
-0DimThk-0.75inT
-2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.125inW-0.0625inD
+0DimWD-0.5625inW-0.25inD
 0Profile-Flat
-0LayerPattern --> 2D-RunningBond",,3Layer2D --> Board and Panel --> Metal,,"12in x 16in, 3/4in, Metal, Aluminum, Pure White, Running Bond",,"2ModuleLWT --> Board/Panel --> Metal
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Metal,,"12in x 18in, 1in, Metal, Aluminum, Brown, Running Bond",,"2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-634C44-Brown
+0DimLW-18in-12in
+0DimThk-0.5inT","2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-0DimLW-16in-12in
-0DimThk-0.75inT","2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.125inW-0.0625inD
-0Profile-Flat",0LayerPattern --> 2D-RunningBond,,,,,,X,,,,,
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Metal
+2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-535B50-Yorktown
+0DimLW-24in-12in
+0DimThk-0.5inT
+2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Metal,,"12in x 24in, 1in, Metal, Aluminum, Yorktown, Running Bond",,"2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-535B50-Yorktown
+0DimLW-24in-12in
+0DimThk-0.5inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Metal
+2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
+0DimLW-30in-12in
+0DimThk-0.5inT
+2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Metal,,"12in x 30in, 1in, Metal, Aluminum, Quaker, Running Bond",,"2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
+0DimLW-30in-12in
+0DimThk-0.5inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Metal
+2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-3E282A-Amber
+0DimLW-36in-12in
+0DimThk-0.5inT
+2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Metal,,"12in x 36in, 1in, Metal, Aluminum, Amber, Running Bond",,"2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-3E282A-Amber
+0DimLW-36in-12in
+0DimThk-0.5inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Metal
+2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+0DimLW-18in-12in
+0DimThk-0.75inT
+2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Metal,,"12in x 18in, 3/4in, Metal, Aluminum, Patrician Bronze, Running Bond",,"2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+0DimLW-18in-12in
+0DimThk-0.75inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Metal
+2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-DDB486-BurntAlmond
+0DimLW-24in-12in
+0DimThk-0.75inT
+2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Metal,,"12in x 24in, 3/4in, Metal, Aluminum, Burnt Almond, Running Bond",,"2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-DDB486-BurntAlmond
+0DimLW-24in-12in
+0DimThk-0.75inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Metal
+2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BD9C2B-Gold
+0DimLW-30in-12in
+0DimThk-0.75inT
+2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Metal,,"12in x 30in, 3/4in, Metal, Aluminum, Gold, Running Bond",,"2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BD9C2B-Gold
+0DimLW-30in-12in
+0DimThk-0.75inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Metal
+2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe
+0DimLW-36in-12in
+0DimThk-0.75inT
+2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Metal,,"12in x 36in, 3/4in, Metal, Aluminum, Taupe, Running Bond",,"2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe
+0DimLW-36in-12in
+0DimThk-0.75inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
@@ -289,13 +673,13 @@ PRESET,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> OSB (Oriented Strand Board),,"48in x 96in, 3/8in, OSB (Oriented Strand Board), Wood Strands, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> OSB (Oriented Strand Board),,"48in x 96in, 3/8in, OSB (Oriented Strand Board), Wood Strands, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
@@ -305,13 +689,13 @@ PRESET,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> OSB (Oriented Strand Board),,"48in x 96in, 7/16in, OSB (Oriented Strand Board), Wood Strands, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> OSB (Oriented Strand Board),,"48in x 96in, 7/16in, OSB (Oriented Strand Board), Wood Strands, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.4375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Particle Board
 2ModuleLWT --> Board/Panel --> Particle Board
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
@@ -321,13 +705,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Particle Board
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Particle Board,,"48in x 96in, 3/8in, Particle Board, Wood Particles, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Particle Board
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Particle Board,,"48in x 96in, 3/8in, Particle Board, Wood Particles, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Particle Board
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Particle Board
 2ModuleLWT --> Board/Panel --> Particle Board
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
@@ -337,13 +721,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Particle Board
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Particle Board,,"48in x 96in, 1/2in, Particle Board, Wood Particles, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Particle Board
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Particle Board,,"48in x 96in, 1/2in, Particle Board, Wood Particles, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Particle Board
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.5inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
@@ -353,13 +737,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Plywood
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Plywood,,"48in x 96in, 11/32in, Plywood, Plywood, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Plywood
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Plywood,,"48in x 96in, 11/32in, Plywood, Plywood, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.34375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
@@ -369,429 +753,813 @@ PRESET,,"3Layer2D --> Board and Panel --> Plywood
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Board and Panel --> Plywood,,"48in x 96in, 15/32in, Plywood, Plywood, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Plywood
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Plywood,,"48in x 96in, 15/32in, Plywood, Plywood, White, Soldier Bond",,"2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Plank --> Engineered Wood
 2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
 0DimLW-32in-5in
 0DimThk-0.375inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-RunningBond",,3Layer2D --> Plank --> Engineered Wood,,"5in x 32in, 3/8in, Engineered Wood, Wood Strands, White, Running Bond",,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Plank --> Engineered Wood,,"5in x 32in, 3/8in, Engineered Wood, Ash, White, Running Bond",,"2ModuleLWT --> Plank --> Engineered Wood
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
 0DimLW-32in-5in
 0DimThk-0.375inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-RunningBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Plank --> Engineered Wood
 2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
 0DimLW-48in-5in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0.0625inD
+0Profile-Flat
+0LayerPattern --> 2D-One-Third Bond",,3Layer2D --> Plank --> Engineered Wood,,"5in x 48in, 3/8in, Engineered Wood, Bamboo, White, One-Third Bond",,"2ModuleLWT --> Plank --> Engineered Wood
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
+0DimLW-48in-5in
+0DimThk-0.375inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0.0625inD
+0Profile-Flat",0LayerPattern --> 2D-One-Third Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+0DimLW-32in-5in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Cascading Thirds",,3Layer2D --> Plank --> Wood,,"5in x 32in, 3/8in, Wood, Ash, White, Cascading Thirds",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+0DimLW-32in-5in
+0DimThk-0.375inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Cascading Thirds,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
+0DimLW-48in-5in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.0625inD
+0Profile-Flat
+0LayerPattern --> 2D-Cascading Fourths",,3Layer2D --> Plank --> Wood,,"5in x 48in, 3/8in, Wood, Bamboo, White, Cascading Fourths",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
+0DimLW-48in-5in
+0DimThk-0.375inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.0625inD
+0Profile-Flat",0LayerPattern --> 2D-Cascading Fourths,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White
+0DimLW-60in-5in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Plank --> Wood,,"5in x 60in, 3/8in, Wood, Beech, White, Running Bond",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White
+0DimLW-60in-5in
+0DimThk-0.375inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.125inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+0DimLW-48in-7in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Plank --> Wood,,"7in x 48in, 3/8in, Wood, Birch (Yellow), White, Running Bond",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+0DimLW-48in-7in
+0DimThk-0.375inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White
+0DimLW-60in-7in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Plank --> Wood,,"7in x 60in, 3/8in, Wood, Cedar (Western Red), White, Soldier Bond",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White
+0DimLW-60in-7in
+0DimThk-0.375inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White
+0DimLW-72in-7in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.375inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Cascading Fourths",,3Layer2D --> Plank --> Wood,,"7in x 72in, 3/8in, Wood, Cedar (White), White, Cascading Fourths",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White
+0DimLW-72in-7in
+0DimThk-0.375inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.375inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Cascading Fourths,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+0DimLW-32in-5in
+0DimThk-0.5inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Plank --> Wood,,"5in x 32in, 1/2in, Wood, Cherry, White, Running Bond",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+0DimLW-32in-5in
+0DimThk-0.5inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White
+0DimLW-48in-5in
+0DimThk-0.5inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Plank --> Wood,,"5in x 48in, 1/2in, Wood, Cypress (Bald), White, Running Bond",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White
+0DimLW-48in-5in
+0DimThk-0.5inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.125inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Abstract-FFFFFF-White
+0DimLW-60in-5in
 0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0.0625inD
 0Profile-Flat
-0LayerPattern --> 2D-OneThirdBond",,3Layer2D --> Plank --> Engineered Wood,,"5in x 48in, 1/2in, Engineered Wood, Wood Strands, White, One-Third Bond",,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimLW-48in-5in
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Plank --> Wood,,"5in x 60in, 1/2in, Wood, Ipe, White, Soldier Bond",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Abstract-FFFFFF-White
+0DimLW-60in-5in
 0DimThk-0.5inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0.0625inD
-0Profile-Flat",0LayerPattern --> 2D-OneThirdBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
-0DimLW-32in-5in
+1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White
+0DimLW-48in-7in
 0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-OneQuarterBond",,3Layer2D --> Plank --> Wood,,"5in x 32in, 1/2in, Wood, Ash, White, One-Quarter Bond",,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
-0DimLW-32in-5in
+0LayerPattern --> 2D-English Bond",,3Layer2D --> Plank --> Wood,,"7in x 48in, 1/2in, Wood, Mahogany, White, English Bond",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White
+0DimLW-48in-7in
 0DimThk-0.5inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-OneQuarterBond,,,,,,X,,,,,
-PRESET,,"3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
-0DimLW-48in-5in
-0DimThk-0.75inT
-2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.25inW-0.0625inD
-0Profile-Flat
-0LayerPattern --> 2D-CascadingThirds",,3Layer2D --> Plank --> Wood,,"5in x 48in, 3/4in, Wood, Bamboo, White, Cascading Thirds",,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
-0DimLW-48in-5in
-0DimThk-0.75inT","2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.25inW-0.0625inD
-0Profile-Flat",0LayerPattern --> 2D-CascadingThirds,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-English Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Acoustic Ceiling Tile
 2ModuleLWT --> Tile --> Acoustic Ceiling Tile
 1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
 0DimLW-24in-24in
-0DimThk-0.5inT
+0DimThk-1inT
 2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-0.5625inW-0.25inD
 0Profile-Flat
-0LayerPattern --> 2D-StackBond",,3Layer2D --> Tile --> Acoustic Ceiling Tile,,"24in x 24in, 1/2in, Acoustic Ceiling Tile, Mineral Fiber, White, Stack Bond",,"2ModuleLWT --> Tile --> Acoustic Ceiling Tile
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Acoustic Ceiling Tile,,"24in x 24in, 1in, Acoustic Ceiling Tile, Mineral Fiber, White, Stack Bond",,"2ModuleLWT --> Tile --> Acoustic Ceiling Tile
 1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
 0DimLW-24in-24in
-0DimThk-0.5inT","2Gap2D --> Metal Gaps
+0DimThk-1inT","2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-0.5625inW-0.25inD
-0Profile-Flat",0LayerPattern --> 2D-StackBond,,,,,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,X,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Acoustic Ceiling Tile
+2ModuleLWT --> Tile --> Acoustic Ceiling Tile
+1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
+0DimLW-30in-24in
+0DimThk-1inT
+2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-1inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Random Blocks",,3Layer2D --> Tile --> Acoustic Ceiling Tile,,"24in x 30in, 1in, Acoustic Ceiling Tile, Mineral Fiber, White, Random Blocks",,"2ModuleLWT --> Tile --> Acoustic Ceiling Tile
+1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
+0DimLW-30in-24in
+0DimThk-1inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-1inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Random Blocks,,,,,X,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Acoustic Ceiling Tile
+2ModuleLWT --> Tile --> Acoustic Ceiling Tile
+1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
+0DimLW-36in-24in
+0DimThk-1inT
+2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-1.5inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Acoustic Ceiling Tile,,"24in x 36in, 1in, Acoustic Ceiling Tile, Mineral Fiber, White, Stack Bond",,"2ModuleLWT --> Tile --> Acoustic Ceiling Tile
+1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
+0DimLW-36in-24in
+0DimThk-1inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-1.5inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,X,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Acoustic Ceiling Tile
 2ModuleLWT --> Tile --> Acoustic Ceiling Tile
 1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
 0DimLW-48in-24in
-0DimThk-0.75inT
+0DimThk-1inT
+2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Acoustic Ceiling Tile,,"24in x 48in, 1in, Acoustic Ceiling Tile, Mineral Fiber, White, Running Bond",,"2ModuleLWT --> Tile --> Acoustic Ceiling Tile
+1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
+0DimLW-48in-24in
+0DimThk-1inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-0.5625inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,X,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Acoustic Ceiling Tile
+2ModuleLWT --> Tile --> Acoustic Ceiling Tile
+1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
+0DimLW-96in-24in
+0DimThk-1inT
 2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-CascadingThirds",,3Layer2D --> Tile --> Acoustic Ceiling Tile,,"24in x 48in, 3/4in, Acoustic Ceiling Tile, Mineral Fiber, White, Cascading Thirds",,"2ModuleLWT --> Tile --> Acoustic Ceiling Tile
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Acoustic Ceiling Tile,,"24in x 96in, 1in, Acoustic Ceiling Tile, Mineral Fiber, White, Stack Bond",,"2ModuleLWT --> Tile --> Acoustic Ceiling Tile
 1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
-0DimLW-48in-24in
-0DimThk-0.75inT","2Gap2D --> Metal Gaps
+0DimLW-96in-24in
+0DimThk-1inT","2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-CascadingThirds,,,,,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,X,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Acoustic Ceiling Tile
+2ModuleLWT --> Tile --> Acoustic Ceiling Tile
+1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
+0DimLW-30in-30in
+0DimThk-1inT
+2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-1.5inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Acoustic Ceiling Tile,,"30in x 30in, 1in, Acoustic Ceiling Tile, Mineral Fiber, White, Stack Bond",,"2ModuleLWT --> Tile --> Acoustic Ceiling Tile
+1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
+0DimLW-30in-30in
+0DimThk-1inT","2Gap2D --> Metal Gaps
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimWD-1.5inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,X,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Brick Veneer
 2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLW-15.625in-3.625in
-0DimThk-0.25inT
+0DimLW-7.625in-2.29167in
+0DimThk-0.5inT
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-CascadingFourths",,3Layer2D --> Tile --> Brick Veneer,,"3.625in x 15.625in, 1/4in, Brick Veneer, Clay, Natural, Cascading Fourths",,"2ModuleLWT --> Tile --> Brick Veneer
+0LayerPattern --> 2D-Cascading Thirds",,3Layer2D --> Tile --> Brick Veneer,,"8in Modular, 1/2in, Brick Veneer, Clay, Natural, Cascading Thirds",,"2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLW-15.625in-3.625in
-0DimThk-0.25inT","2Gap2D --> Grout Gaps
+0DimLW-7.625in-2.29167in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-CascadingFourths,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Cascading Thirds,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Brick Veneer
 2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan
-0DimLW-7.625in-7.625in
+0DimLW-7.625in-2.29167in
 0DimThk-0.5inT
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.125inD
 0Profile-Flat
-0LayerPattern --> 2D-EnglishBond2Tile",,3Layer2D --> Tile --> Brick Veneer,,"7.625in x 7.625in, 1/2in, Brick Veneer, Clay, Tan, English Bond (2-Tile)",,"2ModuleLWT --> Tile --> Brick Veneer
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Brick Veneer,,"8in Modular, 1/2in, Brick Veneer, Clay, Tan, Running Bond",,"2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan
-0DimLW-7.625in-7.625in
+0DimLW-7.625in-2.29167in
 0DimThk-0.5inT","2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.125inD
-0Profile-Flat",0LayerPattern --> 2D-EnglishBond2Tile,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Brick Veneer
+2ModuleLWT --> Tile --> Brick Veneer
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry
+0DimLW-7.625in-2.75in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Brick Veneer,,"Tall 8in Modular, 1/2in, Brick Veneer, Clay, Mulberry, Running Bond",,"2ModuleLWT --> Tile --> Brick Veneer
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry
+0DimLW-7.625in-2.75in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Brick Veneer
+2ModuleLWT --> Tile --> Brick Veneer
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream
+0DimLW-11.625in-2.29167in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.375inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Brick Veneer,,"Norman, 1/2in, Brick Veneer, Clay, Cream, Running Bond",,"2ModuleLWT --> Tile --> Brick Veneer
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream
+0DimLW-11.625in-2.29167in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.375inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Brick Veneer
+2ModuleLWT --> Tile --> Brick Veneer
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry
+0DimLW-11.625in-2.75in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Brick Veneer,,"Tall Norman, 1/2in, Brick Veneer, Clay, Ashberry, Running Bond",,"2ModuleLWT --> Tile --> Brick Veneer
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry
+0DimLW-11.625in-2.75in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Brick Veneer
+2ModuleLWT --> Tile --> Brick Veneer
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown
+0DimLW-15.625in-2.29167in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Brick Veneer,,"Monarch, 1/2in, Brick Veneer, Clay, Brown, Running Bond",,"2ModuleLWT --> Tile --> Brick Veneer
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown
+0DimLW-15.625in-2.29167in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.125inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Carpet
 2ModuleLWT --> Tile --> Carpet
 1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White
-0DimLW-12in-12in
-0DimThk-0.125inT
+0DimLW-32in-16in
+0DimThk-0.5inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Tile --> Carpet,,"12in x 12in, 1/8in, Carpet, Carpet (Low Profile), White, Soldier Bond",,"2ModuleLWT --> Tile --> Carpet
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Carpet,,"16in x 32in, 1/2in, Carpet, Carpet (Low Profile), White, Stack Bond",,"2ModuleLWT --> Tile --> Carpet
 1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White
-0DimLW-12in-12in
-0DimThk-0.125inT","2Gap2D --> Gapless
+0DimLW-32in-16in
+0DimThk-0.5inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Carpet
 2ModuleLWT --> Tile --> Carpet
 1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-D0C6BD-Cream1
-0DimLW-18in-12in
-0DimThk-0.1875inT
+0DimLW-48in-16in
+0DimThk-0.5inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-RunningBond",,3Layer2D --> Tile --> Carpet,,"12in x 18in, 3/16in, Carpet, Carpet (Low Profile), Cream 1, Running Bond",,"2ModuleLWT --> Tile --> Carpet
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Carpet,,"16in x 48in, 1/2in, Carpet, Carpet (Low Profile), Cream 1, Running Bond",,"2ModuleLWT --> Tile --> Carpet
 1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-D0C6BD-Cream1
-0DimLW-18in-12in
-0DimThk-0.1875inT","2Gap2D --> Gapless
+0DimLW-48in-16in
+0DimThk-0.5inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-RunningBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Clay
 2ModuleLWT --> Tile --> Clay
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLW-3in-3in
-0DimThk-0.125inT
+0DimLW-2in-2in
+0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-OneThirdBond",,3Layer2D --> Tile --> Clay,,"3in x 3in, 1/8in, Clay, Clay, Natural, One-Third Bond",,"2ModuleLWT --> Tile --> Clay
+0LayerPattern --> 2D-One-Third Bond",,3Layer2D --> Tile --> Clay,,"2in x 2in, 1/2in, Clay, Clay, Natural, One-Third Bond",,"2ModuleLWT --> Tile --> Clay
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLW-3in-3in
-0DimThk-0.125inT","2Gap2D --> Mortar Gaps
+0DimLW-2in-2in
+0DimThk-0.5inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-OneThirdBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-One-Third Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Clay
 2ModuleLWT --> Tile --> Clay
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLW-4in-3in
-0DimThk-0.1875inT
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan
+0DimLW-3in-2in
+0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.0625inD
 0Profile-Flat
-0LayerPattern --> 2D-OneQuarterBond",,3Layer2D --> Tile --> Clay,,"3in x 4in, 3/16in, Clay, Clay, Natural, One-Quarter Bond",,"2ModuleLWT --> Tile --> Clay
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLW-4in-3in
-0DimThk-0.1875inT","2Gap2D --> Mortar Gaps
+0LayerPattern --> 2D-Cascading Thirds",,3Layer2D --> Tile --> Clay,,"2in x 3in, 1/2in, Clay, Clay, Tan, Cascading Thirds",,"2ModuleLWT --> Tile --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan
+0DimLW-3in-2in
+0DimThk-0.5inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.0625inD
-0Profile-Flat",0LayerPattern --> 2D-OneQuarterBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Cascading Thirds,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Cork
 2ModuleLWT --> Tile --> Cork
-1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-White
 0DimLW-6in-6in
-0DimThk-0.1875inT
+0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.125inD
 0Profile-Flat
-0LayerPattern --> 2D-CascadingThirds",,3Layer2D --> Tile --> Cork,,"6in x 6in, 3/16in, Cork, Cork, White, Cascading Thirds",,"2ModuleLWT --> Tile --> Cork
-1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White
+0LayerPattern --> 2D-Cascading Fourths",,3Layer2D --> Tile --> Cork,,"6in x 6in, 1/4in, Cork, Cork, White, Cascading Fourths",,"2ModuleLWT --> Tile --> Cork
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-White
 0DimLW-6in-6in
-0DimThk-0.1875inT","2Gap2D --> Mortar Gaps
+0DimThk-0.25inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.125inD
-0Profile-Flat",0LayerPattern --> 2D-CascadingThirds,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Cascading Fourths,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Cork
 2ModuleLWT --> Tile --> Cork
-1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-D0C6BD-Cream1
 0DimLW-12in-6in
 0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.1875inD
 0Profile-Flat
-0LayerPattern --> 2D-CascadingFourths",,3Layer2D --> Tile --> Cork,,"6in x 12in, 1/4in, Cork, Cork, White, Cascading Fourths",,"2ModuleLWT --> Tile --> Cork
-1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White
+0LayerPattern --> 2D-Flemish Bond",,3Layer2D --> Tile --> Cork,,"6in x 12in, 1/4in, Cork, Cork, Cream 1, Flemish Bond",,"2ModuleLWT --> Tile --> Cork
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-D0C6BD-Cream1
 0DimLW-12in-6in
 0DimThk-0.25inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.1875inD
-0Profile-Flat",0LayerPattern --> 2D-CascadingFourths,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Flemish Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Glass
 2ModuleLWT --> Tile --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
-0DimLW-4in-4in
-0DimThk-0.1875inT
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
+0DimLW-2in-2in
+0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.25inD
 0Profile-Flat
-0LayerPattern --> 2D-EnglishBond2Tile",,3Layer2D --> Tile --> Glass,,"4in x 4in, 3/16in, Glass, Glass, Limestone, English Bond (2-Tile)",,"2ModuleLWT --> Tile --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
-0DimLW-4in-4in
-0DimThk-0.1875inT","2Gap2D --> Mortar Gaps
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Glass,,"2in x 2in, 1/4in, Glass, Glass, Untinted, Stack Bond",,"2ModuleLWT --> Tile --> Glass
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
+0DimLW-2in-2in
+0DimThk-0.25inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.25inD
-0Profile-Flat",0LayerPattern --> 2D-EnglishBond2Tile,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Glass
 2ModuleLWT --> Tile --> Glass
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
-0DimLW-6in-4in
+0DimLW-3in-2in
 0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.375inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-RunningBond",,3Layer2D --> Tile --> Glass,,"4in x 6in, 1/4in, Glass, Glass, Limestone, Running Bond",,"2ModuleLWT --> Tile --> Glass
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Glass,,"2in x 3in, 1/4in, Glass, Glass, Limestone, Stack Bond",,"2ModuleLWT --> Tile --> Glass
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
-0DimLW-6in-4in
+0DimLW-3in-2in
 0DimThk-0.25inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.375inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-RunningBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Laminate
 2ModuleLWT --> Tile --> Laminate
-1Material --> Stone --> Granite-0RawMaterial-Granite (Black 1)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
 0DimLW-12in-12in
-0DimThk-0.1875inT
+0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-StackBond",,3Layer2D --> Tile --> Laminate,,"12in x 12in, 3/16in, Laminate, Granite (Black 1), White, Stack Bond",,"2ModuleLWT --> Tile --> Laminate
-1Material --> Stone --> Granite-0RawMaterial-Granite (Black 1)-0Color --> Abstract-FFFFFF-White
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Laminate,,"12in x 12in, 1/4in, Laminate, Ash, White, Stack Bond",,"2ModuleLWT --> Tile --> Laminate
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
 0DimLW-12in-12in
-0DimThk-0.1875inT","2Gap2D --> Mortar Gaps
+0DimThk-0.25inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-StackBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Laminate
 2ModuleLWT --> Tile --> Laminate
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
 0DimLW-16in-12in
 0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0.0625inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Tile --> Laminate,,"12in x 16in, 1/4in, Laminate, Ash, White, Soldier Bond",,"2ModuleLWT --> Tile --> Laminate
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Tile --> Laminate,,"12in x 16in, 1/4in, Laminate, Bamboo, White, Soldier Bond",,"2ModuleLWT --> Tile --> Laminate
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
 0DimLW-16in-12in
 0DimThk-0.25inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0.0625inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Luxury Vinyl
 2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Stone --> Granite-0RawMaterial-Granite (Black 2)-0Color --> Abstract-FFFFFF-White
-0DimLW-12in-12in
-0DimThk-0.1875inT
+1Material --> Stone --> Basalt-0RawMaterial-Basalt-0Color --> Abstract-FFFFFF-White
+0DimLW-8in-8in
+0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-RunningBond",,3Layer2D --> Tile --> Luxury Vinyl,,"12in x 12in, 3/16in, Luxury Vinyl, Granite (Black 2), White, Running Bond",,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Stone --> Granite-0RawMaterial-Granite (Black 2)-0Color --> Abstract-FFFFFF-White
-0DimLW-12in-12in
-0DimThk-0.1875inT","2Gap2D --> Mortar Gaps
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Luxury Vinyl,,"8in x 8in, 1/4in, Luxury Vinyl, Basalt, White, Running Bond",,"2ModuleLWT --> Tile --> Luxury Vinyl
+1Material --> Stone --> Basalt-0RawMaterial-Basalt-0Color --> Abstract-FFFFFF-White
+0DimLW-8in-8in
+0DimThk-0.25inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-RunningBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Luxury Vinyl
 2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
-0DimLW-16in-12in
+1Material --> Stone --> Basalt-0RawMaterial-Basalt (Rough)-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-8in
 0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.0625inD
 0Profile-Flat
-0LayerPattern --> 2D-StackBond",,3Layer2D --> Tile --> Luxury Vinyl,,"12in x 16in, 1/4in, Luxury Vinyl, Cherry, White, Stack Bond",,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
-0DimLW-16in-12in
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Luxury Vinyl,,"8in x 12in, 1/4in, Luxury Vinyl, Basalt (Rough), White, Stack Bond",,"2ModuleLWT --> Tile --> Luxury Vinyl
+1Material --> Stone --> Basalt-0RawMaterial-Basalt (Rough)-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-8in
 0DimThk-0.25inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.0625inD
-0Profile-Flat",0LayerPattern --> 2D-StackBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Porcelain
 2ModuleLWT --> Tile --> Porcelain
 1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-FAFAFA-NearlyWhite
-0DimLW-8in-4in
+0DimLW-6in-3in
 0DimThk-0.1875inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.125inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Tile --> Porcelain,,"4in x 8in, 3/16in, Porcelain, Porcelain, Nearly White, Soldier Bond",,"2ModuleLWT --> Tile --> Porcelain
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Tile --> Porcelain,,"3in x 6in, 3/16in, Porcelain, Porcelain, Nearly White, Soldier Bond",,"2ModuleLWT --> Tile --> Porcelain
 1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-FAFAFA-NearlyWhite
-0DimLW-8in-4in
+0DimLW-6in-3in
 0DimThk-0.1875inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.125inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Porcelain
 2ModuleLWT --> Tile --> Porcelain
 1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-E6E3DE-Eggshell
-0DimLW-12in-4in
+0DimLW-4in-4in
 0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.1875inD
 0Profile-Flat
-0LayerPattern --> 2D-RunningBond",,3Layer2D --> Tile --> Porcelain,,"4in x 12in, 1/4in, Porcelain, Porcelain, Eggshell, Running Bond",,"2ModuleLWT --> Tile --> Porcelain
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Porcelain,,"4in x 4in, 1/4in, Porcelain, Porcelain, Eggshell, Running Bond",,"2ModuleLWT --> Tile --> Porcelain
 1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-E6E3DE-Eggshell
-0DimLW-12in-4in
+0DimLW-4in-4in
 0DimThk-0.25inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.1875inD
-0Profile-Flat",0LayerPattern --> 2D-RunningBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Stone
 2ModuleLWT --> Tile --> Stone
 1Material --> Stone --> Granite-0RawMaterial-Granite (Grey 1)-0Color --> Abstract-FFFFFF-White
-0DimLW-6in-3in
-0DimThk-0.1875inT
+0DimLW-3in-3in
+0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.25inD
 0Profile-Flat
-0LayerPattern --> 2D-StackBond",,3Layer2D --> Tile --> Stone,,"3in x 6in, 3/16in, Stone, Granite (Grey 1), White, Stack Bond",,"2ModuleLWT --> Tile --> Stone
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Stone,,"3in x 3in, 1/2in, Stone, Granite (Grey 1), White, Stack Bond",,"2ModuleLWT --> Tile --> Stone
 1Material --> Stone --> Granite-0RawMaterial-Granite (Grey 1)-0Color --> Abstract-FFFFFF-White
-0DimLW-6in-3in
-0DimThk-0.1875inT","2Gap2D --> Mortar Gaps
+0DimLW-3in-3in
+0DimThk-0.5inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.25inD
-0Profile-Flat",0LayerPattern --> 2D-StackBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Stone
 2ModuleLWT --> Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White
-0DimLW-12in-3in
-0DimThk-0.25inT
+0DimLW-4in-3in
+0DimThk-0.5inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.375inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Tile --> Stone,,"3in x 12in, 1/4in, Stone, Limestone (White), White, Soldier Bond",,"2ModuleLWT --> Tile --> Stone
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Tile --> Stone,,"3in x 4in, 1/2in, Stone, Limestone (White), White, Soldier Bond",,"2ModuleLWT --> Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White
-0DimLW-12in-3in
-0DimThk-0.25inT","2Gap2D --> Mortar Gaps
+0DimLW-4in-3in
+0DimThk-0.5inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.375inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Stone
+2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
+0DimLW-6in-3in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Stone,,"3in x 6in, 1/2in, Stone, Limestone (Beige), White, Running Bond",,"2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
+0DimLW-6in-3in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Stone
+2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Marble-0RawMaterial-Marble (Black 1)-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-3in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Stone,,"3in x 12in, 1/2in, Stone, Marble (Black 1), White, Stack Bond",,"2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Marble-0RawMaterial-Marble (Black 1)-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-3in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.125inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Stone
+2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Marble-0RawMaterial-Marble (Black 2)-0Color --> Abstract-FFFFFF-White
+0DimLW-4in-4in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Tile --> Stone,,"4in x 4in, 1/2in, Stone, Marble (Black 2), White, Soldier Bond",,"2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Marble-0RawMaterial-Marble (Black 2)-0Color --> Abstract-FFFFFF-White
+0DimLW-4in-4in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Stone
+2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Marble-0RawMaterial-Marble (Calacatta)-0Color --> Abstract-FFFFFF-White
+0DimLW-6in-4in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.375inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Stone,,"4in x 6in, 1/2in, Stone, Marble (Calacatta), White, Running Bond",,"2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Marble-0RawMaterial-Marble (Calacatta)-0Color --> Abstract-FFFFFF-White
+0DimLW-6in-4in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.375inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Stone
+2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Marble-0RawMaterial-Marble (Carrara)-0Color --> Abstract-FFFFFF-White
+0DimLW-8in-4in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Stone,,"4in x 8in, 1/2in, Stone, Marble (Carrara), White, Stack Bond",,"2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Marble-0RawMaterial-Marble (Carrara)-0Color --> Abstract-FFFFFF-White
+0DimLW-8in-4in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Stone
+2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Marble-0RawMaterial-Marble (Green 1)-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-4in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Tile --> Stone,,"4in x 12in, 1/2in, Stone, Marble (Green 1), White, Soldier Bond",,"2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Marble-0RawMaterial-Marble (Green 1)-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-4in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.125inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Stone
+2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Marble-0RawMaterial-Marble (Grey 1)-0Color --> Abstract-FFFFFF-White
+0DimLW-8in-8in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.25inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Stone,,"8in x 8in, 1/2in, Stone, Marble (Grey 1), White, Running Bond",,"2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Marble-0RawMaterial-Marble (Grey 1)-0Color --> Abstract-FFFFFF-White
+0DimLW-8in-8in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.25inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Tile --> Stone
+2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Onyx-0RawMaterial-Onyx-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-8in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.375inD
+0Profile-Flat
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Stone,,"8in x 12in, 1/2in, Stone, Onyx, White, Stack Bond",,"2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Onyx-0RawMaterial-Onyx-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-8in
+0DimThk-0.5inT","2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0.375inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Vinyl Composite
 2ModuleLWT --> Tile --> Vinyl Composite
 1Material --> Synthetic and Polymer --> Vinyl Composite-0RawMaterial-Vinyl Composite-0Color --> Abstract-FFFFFF-White
-0DimLW-12in-12in
+0DimLW-8in-8in
 0DimThk-0.1875inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-RunningBond",,3Layer2D --> Tile --> Vinyl Composite,,"12in x 12in, 3/16in, Vinyl Composite, Vinyl Composite, White, Running Bond",,"2ModuleLWT --> Tile --> Vinyl Composite
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Vinyl Composite,,"8in x 8in, 3/16in, Vinyl Composite, Vinyl Composite, White, Running Bond",,"2ModuleLWT --> Tile --> Vinyl Composite
 1Material --> Synthetic and Polymer --> Vinyl Composite-0RawMaterial-Vinyl Composite-0Color --> Abstract-FFFFFF-White
-0DimLW-12in-12in
+0DimLW-8in-8in
 0DimThk-0.1875inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-RunningBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Vinyl Composite
 2ModuleLWT --> Tile --> Vinyl Composite
-1Material --> Synthetic and Polymer --> Vinyl Composite-0RawMaterial-Vinyl Composite-0Color --> Abstract-FFFFFF-White
-0DimLW-16in-12in
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-8in
 0DimThk-0.25inT
 2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0.0625inD
 0Profile-Flat
-0LayerPattern --> 2D-StackBond",,3Layer2D --> Tile --> Vinyl Composite,,"12in x 16in, 1/4in, Vinyl Composite, Vinyl Composite, White, Stack Bond",,"2ModuleLWT --> Tile --> Vinyl Composite
-1Material --> Synthetic and Polymer --> Vinyl Composite-0RawMaterial-Vinyl Composite-0Color --> Abstract-FFFFFF-White
-0DimLW-16in-12in
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Tile --> Vinyl Composite,,"8in x 12in, 1/4in, Vinyl Composite, Ash, White, Stack Bond",,"2ModuleLWT --> Tile --> Vinyl Composite
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-8in
 0DimThk-0.25inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0.0625inD
-0Profile-Flat",0LayerPattern --> 2D-StackBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Shingle --> Asphalt
 2ModuleLWT --> Shingle --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
@@ -801,61 +1569,285 @@ PRESET,,"3Layer2D --> Shingle --> Asphalt
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Shingle --> Asphalt,,"7in x 12in, 3/8in, Asphalt, Asphalt, Barkwood, Soldier Bond",,"2ModuleLWT --> Shingle --> Asphalt
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Shingle --> Asphalt,,"7in x 12in, 3/8in, Asphalt, Asphalt, Barkwood, Soldier Bond",,"2ModuleLWT --> Shingle --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimLW-12in-7in
 0DimThk-0.375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Shingle --> Asphalt
 2ModuleLWT --> Shingle --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-52595B-PewterGray
-0DimLW-12in-12in
-0DimThk-0.75inT
+0DimLW-12in-7in
+0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-RunningBond",,3Layer2D --> Shingle --> Asphalt,,"12in x 12in, 3/4in, Asphalt, Asphalt, Pewter Gray, Running Bond",,"2ModuleLWT --> Shingle --> Asphalt
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Asphalt,,"7in x 12in, 3/8in, Asphalt, Asphalt, Pewter Gray, Running Bond",,"2ModuleLWT --> Shingle --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-52595B-PewterGray
-0DimLW-12in-12in
-0DimThk-0.75inT","2Gap2D --> Gapless
+0DimLW-12in-7in
+0DimThk-0.375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-RunningBond,,,,,,X,,,,,
-PRESET,,"3Layer2D --> Shingle --> Clay
-2ModuleLWT --> Shingle --> Clay
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Asphalt
+2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-646963-Gray-GreenSlate
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Asphalt,,"12in x 12in, 3/8in, Asphalt, Asphalt, Gray-Green Slate, Running Bond",,"2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-646963-Gray-GreenSlate
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Asphalt
+2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-743131-RichRed
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Asphalt,,"12in x 12in, 3/8in, Asphalt, Asphalt, Rich Red, Running Bond",,"2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-743131-RichRed
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Asphalt
+2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-2F3336-Charcoal
+0DimLW-24in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Asphalt,,"12in x 24in, 3/8in, Asphalt, Asphalt, Charcoal, Running Bond",,"2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-2F3336-Charcoal
+0DimLW-24in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Asphalt
+2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-9A7957-Caramel
+0DimLW-24in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Asphalt,,"12in x 24in, 3/8in, Asphalt, Asphalt, Caramel, Running Bond",,"2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-9A7957-Caramel
+0DimLW-24in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Asphalt
+2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-6B6758-Olive
+0DimLW-16in-16in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Asphalt,,"16in x 16in, 3/8in, Asphalt, Asphalt, Olive, Running Bond",,"2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-6B6758-Olive
+0DimLW-16in-16in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Asphalt
+2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-856B5B-Driftwood
+0DimLW-16in-16in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Asphalt,,"16in x 16in, 3/8in, Asphalt, Asphalt, Driftwood, Running Bond",,"2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-856B5B-Driftwood
+0DimLW-16in-16in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Asphalt
+2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimLW-12in-7in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-StackBond",,3Layer2D --> Shingle --> Clay,,"7in x 12in, 3/8in, Clay, Clay, Natural, Stack Bond",,"2ModuleLWT --> Shingle --> Clay
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Asphalt,,"7in x 12in, 3/8in, Asphalt, Asphalt, Barkwood, Running Bond",,"2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimLW-12in-7in
 0DimThk-0.375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-StackBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Asphalt
+2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-52595B-PewterGray
+0DimLW-12in-7in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Asphalt,,"7in x 12in, 3/8in, Asphalt, Asphalt, Pewter Gray, Running Bond",,"2ModuleLWT --> Shingle --> Asphalt
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-52595B-PewterGray
+0DimLW-12in-7in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Clay
+2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
+0DimLW-12in-7in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Shingle --> Clay,,"7in x 12in, 3/4in, Clay, Clay, Natural, Stack Bond",,"2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
+0DimLW-12in-7in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Shingle --> Clay
 2ModuleLWT --> Shingle --> Clay
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan
+0DimLW-12in-7in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Clay,,"7in x 12in, 3/4in, Clay, Clay, Tan, Running Bond",,"2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan
+0DimLW-12in-7in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Clay
+2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry
 0DimLW-12in-12in
 0DimThk-0.75inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Shingle --> Clay,,"12in x 12in, 3/4in, Clay, Clay, Tan, Soldier Bond",,"2ModuleLWT --> Shingle --> Clay
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Clay,,"12in x 12in, 3/4in, Clay, Clay, Mulberry, Running Bond",,"2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry
 0DimLW-12in-12in
 0DimThk-0.75inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Clay
+2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream
+0DimLW-12in-12in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Clay,,"12in x 12in, 3/4in, Clay, Clay, Cream, Running Bond",,"2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream
+0DimLW-12in-12in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Clay
+2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry
+0DimLW-24in-12in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Clay,,"12in x 24in, 3/4in, Clay, Clay, Ashberry, Running Bond",,"2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry
+0DimLW-24in-12in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Clay
+2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown
+0DimLW-24in-12in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Clay,,"12in x 24in, 3/4in, Clay, Clay, Brown, Running Bond",,"2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown
+0DimLW-24in-12in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Clay
+2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-FEF9F3-White
+0DimLW-16in-16in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Clay,,"16in x 16in, 3/4in, Clay, Clay, White, Running Bond",,"2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-FEF9F3-White
+0DimLW-16in-16in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Clay
+2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-4F4B48-Midnight
+0DimLW-16in-16in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Clay,,"16in x 16in, 3/4in, Clay, Clay, Midnight, Running Bond",,"2ModuleLWT --> Shingle --> Clay
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-4F4B48-Midnight
+0DimLW-16in-16in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Shingle --> Metal
 2ModuleLWT --> Shingle --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
@@ -865,61 +1857,285 @@ PRESET,,"3Layer2D --> Shingle --> Metal
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-RunningBond",,3Layer2D --> Shingle --> Metal,,"7in x 12in, 3/8in, Metal, Aluminum, Pure White, Running Bond",,"2ModuleLWT --> Shingle --> Metal
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Metal,,"7in x 12in, 3/8in, Metal, Aluminum, Pure White, Running Bond",,"2ModuleLWT --> Shingle --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimLW-12in-7in
 0DimThk-0.375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-RunningBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Shingle --> Metal
 2ModuleLWT --> Shingle --> Metal
-1Material --> Metal --> Chrome-0RawMaterial-Chrome-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray
+0DimLW-12in-7in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Shingle --> Metal,,"7in x 12in, 3/4in, Metal, Aluminum, Light Gray, Stack Bond",,"2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray
+0DimLW-12in-7in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Metal
+2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-C4B99D-Sandstone
 0DimLW-12in-12in
 0DimThk-0.75inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-StackBond",,3Layer2D --> Shingle --> Metal,,"12in x 12in, 3/4in, Metal, Chrome, Pure White, Stack Bond",,"2ModuleLWT --> Shingle --> Metal
-1Material --> Metal --> Chrome-0RawMaterial-Chrome-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Shingle --> Metal,,"12in x 12in, 3/4in, Metal, Aluminum, Sandstone, Stack Bond",,"2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-C4B99D-Sandstone
 0DimLW-12in-12in
 0DimThk-0.75inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-StackBond,,,,,,X,,,,,
-PRESET,,"3Layer2D --> Shingle --> Stone
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Metal
+2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-F4F3D7-Birch
+0DimLW-12in-12in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Shingle --> Metal,,"12in x 12in, 3/4in, Metal, Aluminum, Birch, Stack Bond",,"2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-F4F3D7-Birch
+0DimLW-12in-12in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Metal
+2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-D0C0A9-Portland
+0DimLW-24in-12in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Metal,,"12in x 24in, 3/4in, Metal, Aluminum, Portland, Running Bond",,"2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-D0C0A9-Portland
+0DimLW-24in-12in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Metal
+2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-AAAB8C-GreenGray
+0DimLW-24in-12in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Shingle --> Metal,,"12in x 24in, 3/4in, Metal, Aluminum, Green Gray, Stack Bond",,"2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-AAAB8C-GreenGray
+0DimLW-24in-12in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Metal
+2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-634C44-Brown
+0DimLW-16in-16in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Metal,,"16in x 16in, 3/4in, Metal, Aluminum, Brown, Running Bond",,"2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-634C44-Brown
+0DimLW-16in-16in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Metal
+2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-535B50-Yorktown
+0DimLW-16in-16in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Shingle --> Metal,,"16in x 16in, 3/4in, Metal, Aluminum, Yorktown, Stack Bond",,"2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-535B50-Yorktown
+0DimLW-16in-16in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Metal
 2ModuleLWT --> Shingle --> Stone
-1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Abstract-ABABAB-Gray4
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-FFFFFF-White
 0DimLW-12in-7in
 0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Shingle --> Stone,,"7in x 12in, 3/8in, Stone, Slate, Gray 4, Soldier Bond",,"2ModuleLWT --> Shingle --> Stone
-1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Abstract-ABABAB-Gray4
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Metal,,"7in x 12in, 3/8in, Stone, Slate, White, Running Bond",,"2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-FFFFFF-White
 0DimLW-12in-7in
 0DimThk-0.375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Metal
+2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimLW-12in-7in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Stack Bond",,3Layer2D --> Shingle --> Metal,,"7in x 12in, 3/8in, Metal, Aluminum, Pure White, Stack Bond",,"2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0DimLW-12in-7in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Stack Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Shingle --> Stone
-2ModuleLWT --> Shingle --> Stone
-1Material --> Stone --> Basalt-0RawMaterial-Basalt-0Color --> Abstract-FFFFFF-White
-0DimLW-12in-12in
+2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray
+0DimLW-12in-7in
 0DimThk-0.75inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-RunningBond",,3Layer2D --> Shingle --> Stone,,"12in x 12in, 3/4in, Stone, Basalt, White, Running Bond",,"2ModuleLWT --> Shingle --> Stone
-1Material --> Stone --> Basalt-0RawMaterial-Basalt-0Color --> Abstract-FFFFFF-White
-0DimLW-12in-12in
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Stone,,"7in x 12in, 3/4in, Metal, Aluminum, Light Gray, Running Bond",,"2ModuleLWT --> Shingle --> Metal
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray
+0DimLW-12in-7in
 0DimThk-0.75inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-RunningBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Stone
+2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-EAEAEA-Gray1
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Stone,,"12in x 12in, 3/8in, Stone, Slate, Gray 1, Running Bond",,"2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-EAEAEA-Gray1
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Stone
+2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-D5D5D5-Gray2
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Stone,,"12in x 12in, 3/8in, Stone, Slate, Gray 2, Running Bond",,"2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-D5D5D5-Gray2
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Stone
+2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-C0C0C0-Gray3
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Stone,,"12in x 12in, 3/8in, Stone, Slate, Gray 3, Running Bond",,"2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-C0C0C0-Gray3
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Stone
+2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-ABABAB-Gray4
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Stone,,"12in x 12in, 3/8in, Stone, Slate, Gray 4, Running Bond",,"2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-ABABAB-Gray4
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Stone
+2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-959595-Gray5
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Stone,,"12in x 12in, 3/8in, Stone, Slate, Gray 5, Running Bond",,"2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-959595-Gray5
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Stone
+2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-6B6B6B-Gray6
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Stone,,"12in x 12in, 3/8in, Stone, Slate, Gray 6, Running Bond",,"2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-6B6B6B-Gray6
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Stone
+2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-555555-Gray7
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Stone,,"12in x 12in, 3/8in, Stone, Slate, Gray 7, Running Bond",,"2ModuleLWT --> Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-555555-Gray7
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Shingle --> Wood
 2ModuleLWT --> Shingle --> Wood
 1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White
@@ -929,26 +2145,122 @@ PRESET,,"3Layer2D --> Shingle --> Wood
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-StackBond",,3Layer2D --> Shingle --> Wood,,"7in x 12in, 3/8in, Wood, Redwood, White, Stack Bond",,"2ModuleLWT --> Shingle --> Wood
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Wood,,"7in x 12in, 3/8in, Wood, Redwood, White, Running Bond",,"2ModuleLWT --> Shingle --> Wood
 1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White
 0DimLW-12in-7in
 0DimThk-0.375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-StackBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Shingle --> Wood
 2ModuleLWT --> Shingle --> Wood
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimLW-12in-12in
-0DimThk-0.75inT
+0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-SoldierBond",,3Layer2D --> Shingle --> Wood,,"12in x 12in, 3/4in, Wood, Spruce-Pine-Fir, White, Soldier Bond",,"2ModuleLWT --> Shingle --> Wood
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Spruce-Pine-Fir, White, Running Bond",,"2ModuleLWT --> Shingle --> Wood
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimLW-12in-12in
-0DimThk-0.75inT","2Gap2D --> Gapless
+0DimThk-0.375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-SoldierBond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Wood
+2ModuleLWT --> Shingle --> Wood
+1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Sycamore, White, Running Bond",,"2ModuleLWT --> Shingle --> Wood
+1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Wood
+2ModuleLWT --> Shingle --> Wood
+1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Teak, White, Running Bond",,"2ModuleLWT --> Shingle --> Wood
+1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Wood
+2ModuleLWT --> Shingle --> Wood
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Walnut, White, Running Bond",,"2ModuleLWT --> Shingle --> Wood
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Abstract-FFFFFF-White
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Wood
+2ModuleLWT --> Shingle --> Wood
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-White
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Cork, White, Running Bond",,"2ModuleLWT --> Shingle --> Wood
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-White
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Wood
+2ModuleLWT --> Shingle --> Wood
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-D0C6BD-Cream1
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Cork, Cream 1, Running Bond",,"2ModuleLWT --> Shingle --> Wood
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-D0C6BD-Cream1
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Shingle --> Wood
+2ModuleLWT --> Shingle --> Wood
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-BF945F-Saddle
+0DimLW-12in-12in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Cork, Saddle, Running Bond",,"2ModuleLWT --> Shingle --> Wood
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-BF945F-Saddle
+0DimLW-12in-12in
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,

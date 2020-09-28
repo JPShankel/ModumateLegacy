@@ -206,12 +206,12 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 	}
 
 	// All assembly specs must bind to an object type
-	if (ObjectType == EObjectType::OTNone)
+	if (ObjectType != EObjectType::OTNone)
 	{
-		return ECraftingResult::Error;
+		return DoMakeAssembly(InDB, PresetCollection);
 	}
 
-	return DoMakeAssembly(InDB, PresetCollection);
+	return ECraftingResult::Success;
 }
 
 void FBIMAssemblySpec::Reset()

@@ -19,6 +19,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Slot-CabinetPanelAssemblyFramed
 3RiggedAssembly --> Cabinet --> Swing --> Panel
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -36,6 +37,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Slot-CabinetPanelAssemblyFrameless
 3RiggedAssembly --> Cabinet --> Swing --> Panel
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -44,6 +46,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Mesh-Cabinet-Panel-Shaker-01.Cabinet-Panel-Shaker-01'
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -56,6 +59,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02'
 1Material --> Metal --> Chrome-0RawMaterial-Chrome-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -78,6 +82,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Slot-CabinetPanelAssemblyFramed
 3RiggedAssembly --> Cabinet --> Swing --> Panel
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -95,6 +100,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Slot-CabinetPanelAssemblyFrameless
 3RiggedAssembly --> Cabinet --> Swing --> Panel
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -103,6 +109,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Mesh-Cabinet-Panel-Shaker-01.Cabinet-Panel-Shaker-01'
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -115,6 +122,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02'
 1Material --> Metal --> Chrome-0RawMaterial-Chrome-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -137,6 +145,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Slot-CabinetPanelAssemblyFramed
 3RiggedAssembly --> Cabinet --> Swing --> Panel
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -154,6 +163,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Slot-CabinetPanelAssemblyFrameless
 3RiggedAssembly --> Cabinet --> Swing --> Panel
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -162,6 +172,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Mesh-Cabinet-Panel-Shaker-01.Cabinet-Panel-Shaker-01'
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -174,6 +185,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02'
 1Material --> Metal --> Chrome-0RawMaterial-Chrome-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -185,6 +197,165 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 2Part --> Cabinet --> Handle --> Pull
 0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02'
 1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1SlotConfig --> Door --> Barn --> Frame
+0Slot-DoorFrameSwing
+0Slot-DoorTrackBarnSingle
+0Slot-DoorFrameSwing
+2Part --> Door --> Frame --> Swing
+0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+0Slot-DoorTrackBarnSingle
+2Part --> Door --> Track --> Barn
+0Mesh-Door-Track-Barn-01.Door-Track-Barn-01'
+1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Slot-DoorPanelAssemblyBarn
+3RiggedAssembly --> Door --> Barn --> Panel
+1SlotConfig --> Door --> Barn --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorCasterBarnLeft
+0Slot-DoorCasterBarnRight
+0Slot-DoorHandlePocketExterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1SlotConfig --> Door --> Barn --> Frame
+0Slot-DoorFrameSwing
+0Slot-DoorTrackBarnDouble
+0Slot-DoorPanelAssemblyBarnLeft
+0Slot-DoorFrameSwing
+2Part --> Door --> Frame --> Swing
+0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+0Slot-DoorTrackBarnDouble
+2Part --> Door --> Track --> Barn
+0Mesh-Door-Track-Barn-02.Door-Track-Barn-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Slot-DoorPanelAssemblyBarnLeft
+3RiggedAssembly --> Door --> Barn --> Panel
+1SlotConfig --> Door --> Barn --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorCasterBarnLeft
+0Slot-DoorCasterBarnRight
+0Slot-DoorHandlePocketExterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
+1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
+1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Slot-DoorPanelAssemblyBarnRight
+3RiggedAssembly --> Door --> Barn --> Panel
+1SlotConfig --> Door --> Barn --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorCasterBarnLeft
+0Slot-DoorCasterBarnRight
+0Slot-DoorHandlePocketExterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
+1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
+1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1SlotConfig --> Door --> Pocket --> Frame
+0Slot-DoorFramePocket
+0Slot-DoorPanelAssemblyPocket
+0Slot-DoorFramePocket
+2Part --> Door --> Frame --> Pocket
+0Mesh-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01'
+1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White
+0Slot-DoorPanelAssemblyPocket
+3RiggedAssembly --> Door --> Pocket --> Panel
+1SlotConfig --> Door --> Pocket --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandlePocketExterior
+0Slot-DoorHandlePocketInterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1SlotConfig --> Door --> Pocket --> Frame
+0Slot-DoorFramePocket
+0Slot-DoorPanelAssemblyPocketLeft
+0Slot-DoorPanelAssemblyPocketRight
+0Slot-DoorFramePocket
+2Part --> Door --> Frame --> Pocket
+0Mesh-Door-Frame-Pocket-Double-01.Door-Frame-Pocket-Double-01'
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White
+0Slot-DoorPanelAssemblyPocketLeft
+3RiggedAssembly --> Door --> Pocket --> Panel
+1SlotConfig --> Door --> Sliding --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandleExterior
+0Slot-DoorHandleInterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Slot-DoorPanelAssemblyPocketRight
+3RiggedAssembly --> Door --> Pocket --> Panel
+1SlotConfig --> Door --> Sliding --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandleExterior
+0Slot-DoorHandleInterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 1SlotConfig --> Door --> Sliding --> Frame
 0Slot-DoorFrameSliding
 0Slot-DoorPanelAssemblySlidingXO-1
@@ -207,6 +378,7 @@ PRESET,,"3RiggedAssembly --> Cabinet --> Swing --> Frame
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-CabinetPanelAssemblyFramed,"3RiggedAssembly --> Cabinet --> Swing --> Panel
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -228,6 +400,7 @@ PRESET,,"3RiggedAssembly --> Cabinet --> Swing --> Frame
 1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-CabinetPanelAssemblyFrameless,"3RiggedAssembly --> Cabinet --> Swing --> Panel
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -237,6 +410,7 @@ PRESET,,,,,,,,,,,,,0Slot-CabinetPanelAssemblyFrameless,"3RiggedAssembly --> Cabi
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White",,,,,,
 PRESET,,"3RiggedAssembly --> Cabinet --> Swing --> Panel
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -244,6 +418,7 @@ PRESET,,"3RiggedAssembly --> Cabinet --> Swing --> Panel
 2Part --> Cabinet --> Panel
 0Mesh-Cabinet-Panel-Slab-01.Cabinet-Panel-Slab-01'
 1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White",,3RiggedAssembly --> Cabinet --> Swing --> Panel,,Cabinet Panel With Upper Handle,,,,X,,"1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom",0Slot-CabinetPanelPart,"2Part --> Cabinet --> Panel
@@ -254,6 +429,7 @@ PRESET,,,,,,,,,,,,,0Slot-CabinetHandleSwingMidStileTop,"2Part --> Cabinet --> Ha
 1Material --> Metal --> Chrome-0RawMaterial-Chrome-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"3RiggedAssembly --> Cabinet --> Swing --> Panel
 1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom
@@ -261,6 +437,7 @@ PRESET,,"3RiggedAssembly --> Cabinet --> Swing --> Panel
 2Part --> Cabinet --> Panel
 0Mesh-Cabinet-Panel-Shaker-01.Cabinet-Panel-Shaker-01'
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White",,3RiggedAssembly --> Cabinet --> Swing --> Panel,,Cabinet Panel With Lower Handle,,,,X,,"1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom",0Slot-CabinetPanelPart,"2Part --> Cabinet --> Panel
@@ -273,8 +450,180 @@ PRESET,,,,,,,,,,,,,0Slot-CabinetHandleSwingMidStileBottom,"2Part --> Cabinet -->
 ,,3RiggedAssembly --> Door --> Folding,,3RiggedAssembly --> Door --> Folding,,,,,,,,,,,,,,,,
 ,,3RiggedAssembly --> Door --> Overhead,,3RiggedAssembly --> Door --> Overhead,,,,,,,,,,,,,,,,
 ,,3RiggedAssembly --> Door --> Pivot,,3RiggedAssembly --> Door --> Pivot,,,,,,,,,,,,,,,,
-,,3RiggedAssembly --> Door --> Pocket,,3RiggedAssembly --> Door --> Pocket,,,,,,,,,,,,,,,,
-PRESET,,"3RiggedAssembly --> Door --> Sliding
+PRESET,,"3RiggedAssembly --> Door --> Barn --> Frame
+1SlotConfig --> Door --> Barn --> Frame
+0Slot-DoorFrameSwing
+0Slot-DoorTrackBarnSingle
+0Slot-DoorFrameSwing
+2Part --> Door --> Frame --> Swing
+0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White",,3RiggedAssembly --> Door --> Barn --> Frame,,Single Barn Door,36in,80in,,X,,"1SlotConfig --> Door --> Barn --> Frame
+0Slot-DoorFrameSwing
+0Slot-DoorTrackBarnSingle",0Slot-DoorFrameSwing,"2Part --> Door --> Frame --> Swing
+0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorTrackBarnSingle,"2Part --> Door --> Track --> Barn
+0Mesh-Door-Track-Barn-01.Door-Track-Barn-01'
+1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyBarn,"3RiggedAssembly --> Door --> Barn --> Panel
+1SlotConfig --> Door --> Barn --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorCasterBarnLeft
+0Slot-DoorCasterBarnRight
+0Slot-DoorHandlePocketExterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"3RiggedAssembly --> Door --> Barn --> Frame
+1SlotConfig --> Door --> Barn --> Frame
+0Slot-DoorFrameSwing
+0Slot-DoorTrackBarnDouble
+0Slot-DoorPanelAssemblyBarnLeft
+0Slot-DoorFrameSwing
+2Part --> Door --> Frame --> Swing
+0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White",,3RiggedAssembly --> Door --> Barn --> Frame,,Single Barn Door,36in,80in,,X,,"1SlotConfig --> Door --> Barn --> Frame
+0Slot-DoorFrameSwing
+0Slot-DoorTrackBarnDouble
+0Slot-DoorPanelAssemblyBarnLeft",0Slot-DoorFrameSwing,"2Part --> Door --> Frame --> Swing
+0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorTrackBarnDouble,"2Part --> Door --> Track --> Barn
+0Mesh-Door-Track-Barn-02.Door-Track-Barn-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyBarnLeft,"3RiggedAssembly --> Door --> Barn --> Panel
+1SlotConfig --> Door --> Barn --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorCasterBarnLeft
+0Slot-DoorCasterBarnRight
+0Slot-DoorHandlePocketExterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
+1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
+1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyBarnRight,"3RiggedAssembly --> Door --> Barn --> Panel
+1SlotConfig --> Door --> Barn --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorCasterBarnLeft
+0Slot-DoorCasterBarnRight
+0Slot-DoorHandlePocketExterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
+1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
+1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"3RiggedAssembly --> Door --> Pocket --> Frame
+1SlotConfig --> Door --> Pocket --> Frame
+0Slot-DoorFramePocket
+0Slot-DoorPanelAssemblyPocket
+0Slot-DoorFramePocket
+2Part --> Door --> Frame --> Pocket
+0Mesh-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01'
+1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White",,3RiggedAssembly --> Door --> Pocket --> Frame,,Single Pocket Door,36in,80in,,X,,"1SlotConfig --> Door --> Pocket --> Frame
+0Slot-DoorFramePocket
+0Slot-DoorPanelAssemblyPocket",0Slot-DoorFramePocket,"2Part --> Door --> Frame --> Pocket
+0Mesh-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01'
+1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyPocket,"3RiggedAssembly --> Door --> Pocket --> Panel
+1SlotConfig --> Door --> Pocket --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandlePocketExterior
+0Slot-DoorHandlePocketInterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"3RiggedAssembly --> Door --> Pocket --> Frame
+1SlotConfig --> Door --> Pocket --> Frame
+0Slot-DoorFramePocket
+0Slot-DoorPanelAssemblyPocketLeft
+0Slot-DoorPanelAssemblyPocketRight
+0Slot-DoorFramePocket
+2Part --> Door --> Frame --> Pocket
+0Mesh-Door-Frame-Pocket-Double-01.Door-Frame-Pocket-Double-01'
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White",,3RiggedAssembly --> Door --> Pocket --> Frame,,Double Pocket Door,72in,80in,,X,,"1SlotConfig --> Door --> Pocket --> Frame
+0Slot-DoorFramePocket
+0Slot-DoorPanelAssemblyPocketLeft
+0Slot-DoorPanelAssemblyPocketRight",0Slot-DoorFramePocket,"2Part --> Door --> Frame --> Pocket
+0Mesh-Door-Frame-Pocket-Double-01.Door-Frame-Pocket-Double-01'
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyPocketLeft,"3RiggedAssembly --> Door --> Pocket --> Panel
+1SlotConfig --> Door --> Sliding --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandleExterior
+0Slot-DoorHandleInterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyPocketRight,"3RiggedAssembly --> Door --> Pocket --> Panel
+1SlotConfig --> Door --> Sliding --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandleExterior
+0Slot-DoorHandleInterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"3RiggedAssembly --> Door --> Sliding --> Frame
 1SlotConfig --> Door --> Sliding --> Frame
 0Slot-DoorFrameSliding
 0Slot-DoorPanelAssemblySlidingXO-1
@@ -282,7 +631,7 @@ PRESET,,"3RiggedAssembly --> Door --> Sliding
 0Slot-DoorFrameSliding
 2Part --> Door --> Frame --> Sliding
 0Mesh-Door-Frame-Sliding-TwoTrack-01.Door-Frame-Sliding-TwoTrack-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Sliding,,Two Panel Sliding Door,36in*(# of Panel children),80in,,X,,"1SlotConfig --> Door --> Sliding --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Sliding --> Frame,,Two Panel Sliding Door,36in*(# of Panel children),80in,,X,,"1SlotConfig --> Door --> Sliding --> Frame
 0Slot-DoorFrameSliding
 0Slot-DoorPanelAssemblySlidingXO-1
 0Slot-DoorPanelAssemblySlidingXO-2",0Slot-DoorFrameSliding,"2Part --> Door --> Frame --> Sliding
@@ -296,20 +645,12 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblySlidingXO-1,"3RiggedAssembly --> Door 
 2Part --> Door --> Panel --> Sliding
 0Mesh-Door-Panel-Sliding-Contemporary-01.Door-Panel-Sliding-Contemporary-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> LateralPull
 0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
 0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-2Part --> Door --> Panel --> Swing
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
-2Part --> Door --> Handle --> Lever
-0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-2Part --> Door --> Handle --> Knob
-0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblySlidingXO-2,"3RiggedAssembly --> Door --> Sliding --> Panel
 1SlotConfig --> Door --> Sliding --> Panel
@@ -319,22 +660,14 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblySlidingXO-2,"3RiggedAssembly --> Door 
 2Part --> Door --> Panel --> Sliding
 0Mesh-Door-Panel-Sliding-Contemporary-01.Door-Panel-Sliding-Contemporary-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> LateralPull
 0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
 0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-2Part --> Door --> Panel --> Swing
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
-2Part --> Door --> Handle --> Lever
-0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-2Part --> Door --> Handle --> Knob
-0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,"3RiggedAssembly --> Door --> Swing
+PRESET,,"3RiggedAssembly --> Door --> Swing --> Frame
 1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
 0Slot-DoorHingeLeftTop
@@ -348,16 +681,16 @@ PRESET,,"3RiggedAssembly --> Door --> Swing
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White
 2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 3RiggedAssembly --> Door --> Swing --> Panel
 1SlotConfig --> Door --> Swing --> Panel
 0Slot-DoorPanelPart
@@ -369,6 +702,8 @@ PRESET,,"3RiggedAssembly --> Door --> Swing
 2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> Lever
 0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
@@ -377,10 +712,10 @@ PRESET,,"3RiggedAssembly --> Door --> Swing
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Lock --> Deadbolt
 0Mesh-Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 2Part --> Door --> Lock --> SurfaceLatch
 0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 3RiggedAssembly --> Door --> Swing --> Panel
 1SlotConfig --> Door --> Swing --> Panel
 0Slot-DoorPanelPart
@@ -392,6 +727,8 @@ PRESET,,"3RiggedAssembly --> Door --> Swing
 2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> Lever
 0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
@@ -400,10 +737,10 @@ PRESET,,"3RiggedAssembly --> Door --> Swing
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Lock --> Deadbolt
 0Mesh-Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 2Part --> Door --> Lock --> SurfaceLatch
 0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Swing,,Double Swing Door,36in*(# of Panel children),80in,,X,,"1SlotConfig --> Door --> Swing --> Frame
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,3RiggedAssembly --> Door --> Swing --> Frame,,Double Swing Door,36in*(# of Panel children),80in,,X,,"1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
 0Slot-DoorHingeLeftTop
 0Slot-DoorHingeLeftBottom
@@ -415,16 +752,16 @@ PRESET,,"3RiggedAssembly --> Door --> Swing
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHingeLeftTop,"2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHingeLeftBottom,"2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHingeRightTop,"2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHingeRightBottom,"2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyLeftSwing,"3RiggedAssembly --> Door --> Swing --> Panel
 1SlotConfig --> Door --> Swing --> Panel
 0Slot-DoorPanelPart
@@ -436,6 +773,8 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyLeftSwing,"3RiggedAssembly --> Door --
 2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> Lever
 0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
@@ -444,10 +783,10 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyLeftSwing,"3RiggedAssembly --> Door --
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Lock --> Deadbolt
 0Mesh-Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 2Part --> Door --> Lock --> SurfaceLatch
 0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyRightSwing,"3RiggedAssembly --> Door --> Swing --> Panel
 1SlotConfig --> Door --> Swing --> Panel
 0Slot-DoorPanelPart
@@ -459,6 +798,8 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyRightSwing,"3RiggedAssembly --> Door -
 2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> Lever
 0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
@@ -467,11 +808,11 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyRightSwing,"3RiggedAssembly --> Door -
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Lock --> Deadbolt
 0Mesh-Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 2Part --> Door --> Lock --> SurfaceLatch
 0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,"3RiggedAssembly --> Door --> Swing
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,"3RiggedAssembly --> Door --> Swing --> Frame
 1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
 0Slot-DoorHingeLeftTop
@@ -487,13 +828,37 @@ PRESET,,"3RiggedAssembly --> Door --> Swing
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White
 2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Swing,,Interior Single Swing Door,36in*(# of Panel children),80in,,X,,"1SlotConfig --> Door --> Swing --> Frame
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+3RiggedAssembly --> Door --> Swing --> Panel
+1SlotConfig --> Door --> Swing --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandleExterior
+0Slot-DoorHandleInterior
+0Slot-DoorDeadbolt
+0Slot-DoorSurfaceLockUpper
+0Slot-DoorSurfaceLockLower
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+2Part --> Door --> Handle --> Lever
+0Mesh-Door-Handle-Lever-02.Door-Handle-Lever-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> Knob
+0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray
+2Part --> Door --> Lock --> Deadbolt
+0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+2Part --> Door --> Lock --> SurfaceLatch
+0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,3RiggedAssembly --> Door --> Swing --> Frame,,Interior Single Swing Door,36in*(# of Panel children),80in,,X,,"1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
 0Slot-DoorHingeLeftTop
 0Slot-DoorHingeLeftMiddle
@@ -507,13 +872,13 @@ PRESET,,"3RiggedAssembly --> Door --> Swing
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHingeLeftTop,"2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHingeLeftMiddle,"2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHingeLeftBottom,"2Part --> Door --> Hinge --> Swing
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyLeftSwing,"3RiggedAssembly --> Door --> Swing --> Panel
 1SlotConfig --> Door --> Swing --> Panel
 0Slot-DoorPanelPart
@@ -525,6 +890,7 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyLeftSwing,"3RiggedAssembly --> Door --
 2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
 2Part --> Door --> Handle --> Lever
 0Mesh-Door-Handle-Lever-02.Door-Handle-Lever-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
@@ -533,10 +899,150 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyLeftSwing,"3RiggedAssembly --> Door --
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray
 2Part --> Door --> Lock --> Deadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 2Part --> Door --> Lock --> SurfaceLatch
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,"3RiggedAssembly --> Door --> Barn --> Panel
+1SlotConfig --> Door --> Barn --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorCasterBarnLeft
+0Slot-DoorCasterBarnRight
+0Slot-DoorHandlePocketExterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Barn --> Panel,,Barn Door Panel 1,,,,X,,"1SlotConfig --> Door --> Barn --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorCasterBarnLeft
+0Slot-DoorCasterBarnRight
+0Slot-DoorHandlePocketExterior",0Slot-DoorPanelPart,"2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorCasterBarnLeft,"2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorCasterBarnRight,"2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorHandlePocketExterior,"2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorHandlePocketInterior,"2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"3RiggedAssembly --> Door --> Barn --> Panel
+1SlotConfig --> Door --> Barn --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorCasterBarnLeft
+0Slot-DoorCasterBarnRight
+0Slot-DoorHandlePocketExterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
+1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
+1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Barn --> Panel,,Barn Door Panel 2,,,,X,,"1SlotConfig --> Door --> Barn --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorCasterBarnLeft
+0Slot-DoorCasterBarnRight
+0Slot-DoorHandlePocketExterior",0Slot-DoorPanelPart,"2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorCasterBarnLeft,"2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
+1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorCasterBarnRight,"2Part --> Door --> Caster --> Barn
+0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
+1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorHandlePocketExterior,"2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorHandlePocketInterior,"2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"3RiggedAssembly --> Door --> Pocket --> Panel
+1SlotConfig --> Door --> Pocket --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandlePocketExterior
+0Slot-DoorHandlePocketInterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Pocket --> Panel,,Pocket Door Panel 1,,,,X,,"1SlotConfig --> Door --> Pocket --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandlePocketExterior
+0Slot-DoorHandlePocketInterior",0Slot-DoorPanelPart,"2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorHandlePocketExterior,"2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorHandlePocketInterior,"2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"3RiggedAssembly --> Door --> Pocket --> Panel
+1SlotConfig --> Door --> Sliding --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandleExterior
+0Slot-DoorHandleInterior
+2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Pocket --> Panel,,Pocket Door Panel 2,,,,X,,"1SlotConfig --> Door --> Sliding --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandleExterior
+0Slot-DoorHandleInterior",0Slot-DoorPanelPart,"2Part --> Door --> Panel --> Swing
+0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorHandleExterior,"2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-DoorHandleInterior,"2Part --> Door --> Handle --> LateralPull
+0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"3RiggedAssembly --> Door --> Sliding --> Panel
 1SlotConfig --> Door --> Sliding --> Panel
 0Slot-DoorPanelPart
@@ -545,26 +1051,19 @@ PRESET,,"3RiggedAssembly --> Door --> Sliding --> Panel
 2Part --> Door --> Panel --> Sliding
 0Mesh-Door-Panel-Sliding-Contemporary-01.Door-Panel-Sliding-Contemporary-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> LateralPull
 0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
 0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-2Part --> Door --> Panel --> Swing
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
-2Part --> Door --> Handle --> Lever
-0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-2Part --> Door --> Handle --> Knob
-0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Sliding --> Panel,,Sliding Door Panel,,,,X,,"1SlotConfig --> Door --> Sliding --> Panel
 0Slot-DoorPanelPart
 0Slot-DoorHandleExterior
 0Slot-DoorHandleInterior",0Slot-DoorPanelPart,"2Part --> Door --> Panel --> Sliding
 0Mesh-Door-Panel-Sliding-Contemporary-01.Door-Panel-Sliding-Contemporary-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandleExterior,"2Part --> Door --> Handle --> LateralPull
 0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
@@ -582,6 +1081,8 @@ PRESET,,"3RiggedAssembly --> Door --> Swing --> Panel
 2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> Lever
 0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
@@ -590,10 +1091,10 @@ PRESET,,"3RiggedAssembly --> Door --> Swing --> Panel
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Lock --> Deadbolt
 0Mesh-Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 2Part --> Door --> Lock --> SurfaceLatch
 0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Swing --> Panel,,Mostly Glass Door Panel,,,,X,,"1SlotConfig --> Door --> Swing --> Panel
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,3RiggedAssembly --> Door --> Swing --> Panel,,Mostly Glass Swing Door Panel,,,,X,,"1SlotConfig --> Door --> Swing --> Panel
 0Slot-DoorPanelPart
 0Slot-DoorHandleExterior
 0Slot-DoorHandleInterior
@@ -601,7 +1102,9 @@ PRESET,,"3RiggedAssembly --> Door --> Swing --> Panel
 0Slot-DoorSurfaceLockUpper
 0Slot-DoorSurfaceLockLower",0Slot-DoorPanelPart,"2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White",,,,,,
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandleExterior,"2Part --> Door --> Handle --> Lever
 0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
@@ -610,10 +1113,10 @@ PRESET,,,,,,,,,,,,,0Slot-DoorHandleInterior,"2Part --> Door --> Handle --> Knob
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorDeadbolt,"2Part --> Door --> Lock --> Deadbolt
 0Mesh-Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorSurfaceLockUpper,"2Part --> Door --> Lock --> SurfaceLatch
 0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,"3RiggedAssembly --> Door --> Swing --> Panel
 1SlotConfig --> Door --> Swing --> Panel
 0Slot-DoorPanelPart
@@ -625,6 +1128,7 @@ PRESET,,"3RiggedAssembly --> Door --> Swing --> Panel
 2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
 2Part --> Door --> Handle --> Lever
 0Mesh-Door-Handle-Lever-02.Door-Handle-Lever-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
@@ -633,10 +1137,10 @@ PRESET,,"3RiggedAssembly --> Door --> Swing --> Panel
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray
 2Part --> Door --> Lock --> Deadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 2Part --> Door --> Lock --> SurfaceLatch
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Swing --> Panel,,Solid Door Panel,,,,X,,"1SlotConfig --> Door --> Swing --> Panel
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,3RiggedAssembly --> Door --> Swing --> Panel,,Solid Swing Door Panel,,,,X,,"1SlotConfig --> Door --> Swing --> Panel
 0Slot-DoorPanelPart
 0Slot-DoorHandleExterior
 0Slot-DoorHandleInterior
@@ -644,7 +1148,8 @@ PRESET,,"3RiggedAssembly --> Door --> Swing --> Panel
 0Slot-DoorSurfaceLockUpper
 0Slot-DoorSurfaceLockLower",0Slot-DoorPanelPart,"2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
-1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White",,,,,,
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandleExterior,"2Part --> Door --> Handle --> Lever
 0Mesh-Door-Handle-Lever-02.Door-Handle-Lever-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
@@ -653,10 +1158,127 @@ PRESET,,,,,,,,,,,,,0Slot-DoorHandleInterior,"2Part --> Door --> Handle --> Knob
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorDeadbolt,"2Part --> Door --> Lock --> Deadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorSurfaceLockUpper,"2Part --> Door --> Lock --> SurfaceLatch
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,"3RiggedAssembly --> Window --> Fixed --> Frame
+1SlotConfig --> Window --> Fixed --> Frame
+0Slot-WindowFrameFixed
+0Slot-WindowPanelFixed
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXO-1
+0Slot-WindowPanelSlidingXO-2
+0Slot-WindowFrameSliding
+2Part --> Window --> Frame --> Fixed
+0Mesh-Window-Frame-Fixed-01.Window-Frame-Fixed-01'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+2Part --> Window --> Panel --> Fixed
+0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,3RiggedAssembly --> Window --> Fixed --> Frame,,Fixed Window 1,,,,X,,"1SlotConfig --> Window --> Fixed --> Frame
+0Slot-WindowFrameFixed
+0Slot-WindowPanelFixed
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXO-1
+0Slot-WindowPanelSlidingXO-2
+0Slot-WindowFrameSliding",0Slot-WindowFrameFixed,"2Part --> Window --> Frame --> Fixed
+0Mesh-Window-Frame-Fixed-01.Window-Frame-Fixed-01'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-WindowPanelFixed,"2Part --> Window --> Panel --> Fixed
+0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,"3RiggedAssembly --> Window --> Fixed --> Frame
+1SlotConfig --> Window --> Fixed --> Frame
+0Slot-WindowFrameFixed
+0Slot-WindowPanelFixed
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXO-1
+0Slot-WindowPanelSlidingXO-2
+0Slot-WindowFrameSliding
+2Part --> Window --> Frame --> Fixed
+0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+2Part --> Window --> Panel --> Fixed
+0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,3RiggedAssembly --> Window --> Fixed --> Frame,,Fixed Window 2,,,,X,,"1SlotConfig --> Window --> Fixed --> Frame
+0Slot-WindowFrameFixed
+0Slot-WindowPanelFixed
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXO-1
+0Slot-WindowPanelSlidingXO-2
+0Slot-WindowFrameSliding",0Slot-WindowFrameFixed,"2Part --> Window --> Frame --> Fixed
+0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-WindowPanelFixed,"2Part --> Window --> Panel --> Fixed
+0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,"3RiggedAssembly --> Window --> Sliding --> Frame
+1SlotConfig --> Window --> Sliding --> Frame
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXO-1
+0Slot-WindowPanelSlidingXO-2
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXOX-1
+0Slot-WindowPanelSlidingXOX-2
+0Slot-WindowPanelSlidingXOX-3
+0Slot-TableInTableAndChairs
+2Part --> Window --> Frame --> Sliding
+0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+2Part --> Window --> Panel --> Sliding
+0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,3RiggedAssembly --> Window --> Sliding --> Frame,,Sliding Window (XO),,,,X,,"1SlotConfig --> Window --> Sliding --> Frame
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXO-1
+0Slot-WindowPanelSlidingXO-2
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXOX-1
+0Slot-WindowPanelSlidingXOX-2
+0Slot-WindowPanelSlidingXOX-3
+0Slot-TableInTableAndChairs",0Slot-WindowFrameSliding,"2Part --> Window --> Frame --> Sliding
+0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-WindowPanelSlidingXO-1,"2Part --> Window --> Panel --> Sliding
+0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-WindowPanelSlidingXO-2,"2Part --> Window --> Panel --> Sliding
+0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,"3RiggedAssembly --> Window --> Sliding --> Frame
+1SlotConfig --> Window --> Sliding --> Frame
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXOX-1
+0Slot-WindowPanelSlidingXOX-2
+0Slot-WindowPanelSlidingXOX-3
+0Slot-TableInTableAndChairs
+0Slot-ChairAtTable1+1+1+1-1
+0Slot-ChairAtTable1+1+1+1-2
+0Slot-ChairAtTable1+1+1+1-3
+2Part --> Window --> Frame --> Sliding
+0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+2Part --> Window --> Panel --> Sliding
+0Mesh-Window-Panel-Sliding-02.Window-Panel-Sliding-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,3RiggedAssembly --> Window --> Sliding --> Frame,,Sliding Window (XOX),,,,X,,"1SlotConfig --> Window --> Sliding --> Frame
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXOX-1
+0Slot-WindowPanelSlidingXOX-2
+0Slot-WindowPanelSlidingXOX-3
+0Slot-TableInTableAndChairs
+0Slot-ChairAtTable1+1+1+1-1
+0Slot-ChairAtTable1+1+1+1-2
+0Slot-ChairAtTable1+1+1+1-3",0Slot-WindowFrameSliding,"2Part --> Window --> Frame --> Sliding
+0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-WindowPanelSlidingXOX-1,"2Part --> Window --> Panel --> Sliding
+0Mesh-Window-Panel-Sliding-02.Window-Panel-Sliding-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-WindowPanelSlidingXOX-2,"2Part --> Window --> Panel --> Sliding
+0Mesh-Window-Panel-Sliding-02.Window-Panel-Sliding-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-WindowPanelSlidingXOX-3,"2Part --> Window --> Panel --> Sliding
+0Mesh-Window-Panel-Sliding-02.Window-Panel-Sliding-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 ,,"3RiggedAssembly --> Door --> Swing
 1SlotConfig --> Door --> Swing --> Frame
 0Slot-DoorFrameSwing
@@ -675,13 +1297,15 @@ PRESET,,,,,,,,,,,,,0Slot-DoorSurfaceLockUpper,"2Part --> Door --> Lock --> Surfa
 0Slot-DoorSurfaceLockUpper
 0Slot-DoorSurfaceLockLower
 0Slot-DoorPeepholeRegular
-0Slot-DoorPeeholeADA
+0Slot-DoorPeepholeADA
 0Slot-DoorKnocker
 0Slot-DoorMailSlot
 0Slot-DoorPanelAssemblySwing
 2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 XXXXHardwareGroup --> Door --> Swing
 Passage Swing Single Door
 0Slot-DoorFrameSwing
@@ -715,11 +1339,13 @@ HardwareGroupMember5",,3RiggedAssembly --> Door --> Swing,,Front Single Swing Do
 0Slot-DoorSurfaceLockUpper
 0Slot-DoorSurfaceLockLower
 0Slot-DoorPeepholeRegular
-0Slot-DoorPeeholeADA
+0Slot-DoorPeepholeADA
 0Slot-DoorKnocker
 0Slot-DoorMailSlot",0Slot-DoorPanelAssemblySwing,"2Part --> Door --> Panel --> Swing
 0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White",,,,,,
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
 ,,,,,,,,,,,,,,"XXXXHardwareGroup --> Door --> Swing
 Passage Swing Single Door",,,,,,
 ,,,,,,,,,,,,,0Slot-DoorFrameSwing,HardwareGroupMember1,,,,,,
@@ -744,19 +1370,19 @@ PRESET,,"3RiggedAssembly --> FFESet
 0Slot-ChairAtTable1+1+1+1-1
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0Slot-ChairAtTable1+1+1+1-2
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0Slot-ChairAtTable1+1+1+1-3
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0Slot-ChairAtTable1+1+1+1-4
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> FFESet,,Table with 4 Chairs,,,,X,,"1SlotConfig --> FFE --> TableAndChairs
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,3RiggedAssembly --> FFESet,,Table with 4 Chairs,,,,X,,"1SlotConfig --> FFE --> TableAndChairs
 0Slot-TableInTableAndChairs
 0Slot-ChairAtTable1+1+1+1-1
 0Slot-ChairAtTable1+1+1+1-2
@@ -766,17 +1392,17 @@ PRESET,,"3RiggedAssembly --> FFESet
 1Material --> Stone --> Marble-0RawMaterial-Marble (Calacatta)-0Color --> Abstract-FFFFFF-White",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-1,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-2,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-3,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-4,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-,,"3RiggedAssembly --> FFESet
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,"3RiggedAssembly --> FFESet
 1SlotConfig --> FFE --> TableAndChairs
 0Slot-TableInTableAndChairs
 0Slot-ChairAtTable1+2+2+1-1
@@ -792,27 +1418,27 @@ PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-4,"2Part --> FFE --> Furniture --> 
 0Slot-ChairAtTable1+2+2+1-1
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0Slot-ChairAtTable1+2+2+1-2
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0Slot-ChairAtTable1+2+2+1-3
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0Slot-ChairAtTable1+2+2+1-4
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0Slot-ChairAtTable1+2+2+1-5
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0Slot-ChairAtTable1+2+2+1-6
 2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> FFESet,,Table with 6 Chairs,,,,X,,"1SlotConfig --> FFE --> TableAndChairs
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,3RiggedAssembly --> FFESet,,Table with 6 Chairs,,,,X,,"1SlotConfig --> FFE --> TableAndChairs
 0Slot-TableInTableAndChairs
 0Slot-ChairAtTable1+2+2+1-1
 0Slot-ChairAtTable1+2+2+1-2
@@ -822,24 +1448,24 @@ PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-4,"2Part --> FFE --> Furniture --> 
 0Slot-ChairAtTable1+2+2+1-6",0Slot-TableInTableAndChairs,"2Part --> FFE --> Furniture --> Table --> Dining
 0Mesh-remade/FFE-Table-Dining-1/FFE-Table-Dining-1.FFE-Table-Dining-1'
 1Material --> Stone --> Granite-0RawMaterial-Granite (Brown 1)-0Color --> Abstract-FFFFFF-White",,,,,,
-,,,,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-1,"2Part --> FFE --> Furniture --> Chair --> Dining
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-1,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-,,,,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-2,"2Part --> FFE --> Furniture --> Chair --> Dining
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-2,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-,,,,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-3,"2Part --> FFE --> Furniture --> Chair --> Dining
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-3,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-,,,,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-4,"2Part --> FFE --> Furniture --> Chair --> Dining
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-4,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-,,,,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-5,"2Part --> FFE --> Furniture --> Chair --> Dining
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-5,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-,,,,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-6,"2Part --> FFE --> Furniture --> Chair --> Dining
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+2+2+1-6,"2Part --> FFE --> Furniture --> Chair --> Dining
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 ,,3RiggedAssembly --> Window --> Awning,,3RiggedAssembly --> Window --> Awning,,,,,,,,,,,,,,,,
 ,,3RiggedAssembly --> Window --> Casement,,3RiggedAssembly --> Window --> Casement,,,,,,,,,,,,,,,,
 ,,3RiggedAssembly --> Window --> Double-Action,,3RiggedAssembly --> Window --> Double-Action,,,,,,,,,,,,,,,,

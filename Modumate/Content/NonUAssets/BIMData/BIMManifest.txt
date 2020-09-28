@@ -18,6 +18,7 @@
 0-17_DimLWH.csv
 0-18_DimLW.csv
 0-20_LayerPatternStubby.csv
+0-20_2019Patterns.csv
 1-00_Material.csv
 1-10_SlotConfig.csv
 2-00_Layer0D.csv

@@ -20,6 +20,7 @@ PRESET,,0RawMaterial-Grout,,0RawMaterial,,Grout,/Game/ShoppingData/Materials/Gro
 PRESET,,0RawMaterial-Gypsum,,0RawMaterial,,Gypsum,/Game/ShoppingData/Materials/Gypsum/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Gypsum,1,,1Material --> Aggregates --> Gypsum
 PRESET,,0RawMaterial-Gypsum (Moisture-Resistant),,0RawMaterial,,Gypsum (Moisture-Resistant),/Game/ShoppingData/Materials/Gypsum/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Gypsum (Moisture-Resistant),1,,1Material --> Aggregates --> Gypsum
 PRESET,,0RawMaterial-Gypsum (Type X),,0RawMaterial,,Gypsum (Type X),/Game/ShoppingData/Materials/Gypsum/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Gypsum (Type X),1,,1Material --> Aggregates --> Gypsum
+PRESET,,0RawMaterial-Joint Compound,,0RawMaterial,,Joint Compound,/Game/ShoppingData/Materials/Gypsum/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Joint Compound,1,,1Material --> Aggregates --> Joint Compound
 PRESET,,0RawMaterial-Mortar,,0RawMaterial,,Mortar,/Game/ShoppingData/Materials/Mortar/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Mortar,1,,1Material --> Aggregates --> Mortar
 PRESET,,0RawMaterial-Rammed Earth,,0RawMaterial,,Rammed Earth,/Game/ShoppingData/Materials/RammedEarth/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Rammed Earth,1,,1Material --> Aggregates --> Rammed Earth
 PRESET,,0RawMaterial-Sand,,0RawMaterial,,Sand,/Game/ShoppingData/Materials/Sand/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Sand,1,,1Material --> Aggregates --> Sand

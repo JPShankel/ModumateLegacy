@@ -163,9 +163,7 @@ PRESET,,0Color --> Ceramic --> Porcelain-EEE7D5-Butter,,0Color --> Ceramic --> P
 PRESET,,0Color --> Ceramic --> Porcelain-D7E5D8-Mint,,0Color --> Ceramic --> Porcelain,,Mint,D7E5D8,,,1Material --> Ceramic --> Porcelain
 PRESET,,0Color --> Ceramic --> Porcelain-A5CCDB-Cerulean,,0Color --> Ceramic --> Porcelain,,Cerulean,A5CCDB,,,1Material --> Ceramic --> Porcelain
 PRESET,,0Color --> Glass and Transparent --> Air-FFFFFF-Clear,,0Color --> Glass and Transparent --> Air,,Clear,FFFFFF,,,1Material --> Glass and Transparent --> Air
-PRESET,,0Color --> Glass and Transparent --> Glass Block-FFFFFF-Untinted,,0Color --> Glass and Transparent --> Glass Block,,Untinted,FFFFFF,,,1Material --> Glass and Transparent --> Glass Block
-PRESET,,0Color --> Glass and Transparent --> Glass Block-CCCCCC-Dark,,0Color --> Glass and Transparent --> Glass Block,,Dark,CCCCCC,,,1Material --> Glass and Transparent --> Glass Block
-PRESET,,0Color --> Glass and Transparent --> Glass-F2F2F2-White,,0Color --> Glass and Transparent --> Glass,,White,F2F2F2,,,1Material --> Glass and Transparent --> Glass
+PRESET,,0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,,0Color --> Glass and Transparent --> Glass,,Untinted,F2F2F2,,,1Material --> Glass and Transparent --> Glass
 PRESET,,0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,0Color --> Glass and Transparent --> Glass,,Limestone,E1DDDA,,,1Material --> Glass and Transparent --> Glass
 PRESET,,0Color --> Glass and Transparent --> Glass-D6DADB-Slate,,0Color --> Glass and Transparent --> Glass,,Slate,D6DADB,,,1Material --> Glass and Transparent --> Glass
 PRESET,,0Color --> Glass and Transparent --> Glass-BAC7CD-ChillyBlue,,0Color --> Glass and Transparent --> Glass,,Chilly Blue,BAC7CD,,,1Material --> Glass and Transparent --> Glass
@@ -232,7 +230,17 @@ PRESET,,0Color --> Metal --> Iron-CCCCCC-Dark,,0Color --> Metal --> Iron,,Dark,C
 PRESET,,0Color --> Metal --> Nickel-FFFFFF-Untinted,,0Color --> Metal --> Nickel,,Untinted,FFFFFF,,,1Material --> Metal --> Nickel
 PRESET,,0Color --> Metal --> Nickel-CCCCCC-Dark,,0Color --> Metal --> Nickel,,Dark,CCCCCC,,,1Material --> Metal --> Nickel
 PRESET,,0Color --> Metal --> Steel-FFFFFF-Untinted,,0Color --> Metal --> Steel,,Untinted,FFFFFF,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Steel-CCCCCC-Dark,,0Color --> Metal --> Steel,,Dark,CCCCCC,,,1Material --> Metal --> Steel
+PRESET,,0Color --> Metal --> Steel-EAEAEA-Gray1,,0Color --> Metal --> Steel,,Gray 1,EAEAEA,,,1Material --> Metal --> Steel
+PRESET,,0Color --> Metal --> Steel-D5D5D5-Gray2,,0Color --> Metal --> Steel,,Gray 2,D5D5D5,,,1Material --> Metal --> Steel
+PRESET,,0Color --> Metal --> Steel-C0C0C0-Gray3,,0Color --> Metal --> Steel,,Gray 3,C0C0C0,,,1Material --> Metal --> Steel
+PRESET,,0Color --> Metal --> Steel-ABABAB-Gray4,,0Color --> Metal --> Steel,,Gray 4,ABABAB,,,1Material --> Metal --> Steel
+PRESET,,0Color --> Metal --> Steel-959595-Gray5,,0Color --> Metal --> Steel,,Gray 5,959595,,,1Material --> Metal --> Steel
+PRESET,,0Color --> Metal --> Steel-6B6B6B-Gray6,,0Color --> Metal --> Steel,,Gray 6,6B6B6B,,,1Material --> Metal --> Steel
+PRESET,,0Color --> Metal --> Steel-555555-Gray7,,0Color --> Metal --> Steel,,Gray 7,555555,,,1Material --> Metal --> Steel
+PRESET,,0Color --> Metal --> Steel-404040-Gray8,,0Color --> Metal --> Steel,,Gray 8,404040,,,1Material --> Metal --> Steel
+PRESET,,0Color --> Metal --> Steel-2B2B2B-Gray9,,0Color --> Metal --> Steel,,Gray 9,2B2B2B,,,1Material --> Metal --> Steel
+PRESET,,0Color --> Metal --> Steel-151515-Gray10,,0Color --> Metal --> Steel,,Gray 10,151515,,,1Material --> Metal --> Steel
+PRESET,,0Color --> Metal --> Steel-000000-Black,,0Color --> Metal --> Steel,,Black,000000,,,1Material --> Metal --> Steel
 PRESET,,0Color --> Metal --> Tin-FFFFFF-Untinted,,0Color --> Metal --> Tin,,Untinted,FFFFFF,,,1Material --> Metal --> Tin
 PRESET,,0Color --> Metal --> Tin-CCCCCC-Dark,,0Color --> Metal --> Tin,,Dark,CCCCCC,,,1Material --> Metal --> Tin
 PRESET,,0Color --> Metal --> Zinc-FFFFFF-Untinted,,0Color --> Metal --> Zinc,,Untinted,FFFFFF,,,1Material --> Metal --> Zinc
@@ -291,6 +299,17 @@ PRESET,,0Color --> Stone --> Onyx-FFFFFF-White,,0Color --> Stone --> Onyx,,White
 PRESET,,0Color --> Stone --> Quartzite-FFFFFF-White,,0Color --> Stone --> Quartzite,,White,FFFFFF,,,1Material --> Stone --> Quartzite
 PRESET,,0Color --> Stone --> Sandstone-FFFFFF-White,,0Color --> Stone --> Sandstone,,White,FFFFFF,,,1Material --> Stone --> Sandstone
 PRESET,,0Color --> Stone --> Slate-FFFFFF-White,,0Color --> Stone --> Slate,,White,FFFFFF,,,1Material --> Stone --> Slate
+PRESET,,0Color --> Stone --> Slate-EAEAEA-Gray1,,0Color --> Stone --> Slate,,Gray 1,EAEAEA,,,1Material --> Stone --> Slate
+PRESET,,0Color --> Stone --> Slate-D5D5D5-Gray2,,0Color --> Stone --> Slate,,Gray 2,D5D5D5,,,1Material --> Stone --> Slate
+PRESET,,0Color --> Stone --> Slate-C0C0C0-Gray3,,0Color --> Stone --> Slate,,Gray 3,C0C0C0,,,1Material --> Stone --> Slate
+PRESET,,0Color --> Stone --> Slate-ABABAB-Gray4,,0Color --> Stone --> Slate,,Gray 4,ABABAB,,,1Material --> Stone --> Slate
+PRESET,,0Color --> Stone --> Slate-959595-Gray5,,0Color --> Stone --> Slate,,Gray 5,959595,,,1Material --> Stone --> Slate
+PRESET,,0Color --> Stone --> Slate-6B6B6B-Gray6,,0Color --> Stone --> Slate,,Gray 6,6B6B6B,,,1Material --> Stone --> Slate
+PRESET,,0Color --> Stone --> Slate-555555-Gray7,,0Color --> Stone --> Slate,,Gray 7,555555,,,1Material --> Stone --> Slate
+PRESET,,0Color --> Stone --> Slate-404040-Gray8,,0Color --> Stone --> Slate,,Gray 8,404040,,,1Material --> Stone --> Slate
+PRESET,,0Color --> Stone --> Slate-2B2B2B-Gray9,,0Color --> Stone --> Slate,,Gray 9,2B2B2B,,,1Material --> Stone --> Slate
+PRESET,,0Color --> Stone --> Slate-151515-Gray10,,0Color --> Stone --> Slate,,Gray 10,151515,,,1Material --> Stone --> Slate
+PRESET,,0Color --> Stone --> Slate-000000-Black,,0Color --> Stone --> Slate,,Black,000000,,,1Material --> Stone --> Slate
 PRESET,,0Color --> Stone --> Soapstone-FFFFFF-White,,0Color --> Stone --> Soapstone,,White,FFFFFF,,,1Material --> Stone --> Soapstone
 PRESET,,0Color --> Stone --> Travertine-FFFFFF-White,,0Color --> Stone --> Travertine,,White,FFFFFF,,,1Material --> Stone --> Travertine
 PRESET,,0Color --> Wood --> Ash-FFFFFF-White,,0Color --> Wood --> Ash,,White,FFFFFF,,,1Material --> Wood --> Ash
@@ -312,6 +331,15 @@ PRESET,,0Color --> Wood --> Sycamore-FFFFFF-White,,0Color --> Wood --> Sycamore,
 PRESET,,0Color --> Wood --> Teak-FFFFFF-White,,0Color --> Wood --> Teak,,White,FFFFFF,,,1Material --> Wood --> Teak
 PRESET,,0Color --> Wood --> Walnut-FFFFFF-White,,0Color --> Wood --> Walnut,,White,FFFFFF,,,1Material --> Wood --> Walnut
 PRESET,,0Color --> Fibrous --> Cork-FFFFFF-White,,0Color --> Fibrous --> Cork,,White,FFFFFF,,,1Material --> Fibrous --> Cork
+PRESET,,0Color --> Fibrous --> Cork-D0C6BD-Cream1,,0Color --> Fibrous --> Cork,,Cream 1,D0C6BD,,,1Material --> Fibrous --> Cork
+PRESET,,0Color --> Fibrous --> Cork-BF945F-Saddle,,0Color --> Fibrous --> Cork,,Saddle,BF945F,,,1Material --> Fibrous --> Cork
+PRESET,,0Color --> Fibrous --> Cork-A99978-Parchment,,0Color --> Fibrous --> Cork,,Parchment,A99978,,,1Material --> Fibrous --> Cork
+PRESET,,0Color --> Fibrous --> Cork-88543F-Copper,,0Color --> Fibrous --> Cork,,Copper,88543F,,,1Material --> Fibrous --> Cork
+PRESET,,0Color --> Fibrous --> Cork-464F3C-OliveGreen,,0Color --> Fibrous --> Cork,,Olive Green,464F3C,,,1Material --> Fibrous --> Cork
+PRESET,,0Color --> Fibrous --> Cork-7A878F-SilverBlue,,0Color --> Fibrous --> Cork,,Silver Blue,7A878F,,,1Material --> Fibrous --> Cork
+PRESET,,0Color --> Fibrous --> Cork-38485F-OrderlyBlue,,0Color --> Fibrous --> Cork,,Orderly Blue,38485F,,,1Material --> Fibrous --> Cork
+PRESET,,0Color --> Fibrous --> Cork-3C3B40-Ink,,0Color --> Fibrous --> Cork,,Ink,3C3B40,,,1Material --> Fibrous --> Cork
+PRESET,,0Color --> Fibrous --> Cork-534E4A-Charcoal,,0Color --> Fibrous --> Cork,,Charcoal,534E4A,,,1Material --> Fibrous --> Cork
 PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-FFFFFF-White,,0Color --> Fibrous --> Cementitious Wood Fiber,,White,FFFFFF,,,1Material --> Fibrous --> Cementitious Wood Fiber
 PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-D0C6BD-Cream1,,0Color --> Fibrous --> Cementitious Wood Fiber,,Cream 1,D0C6BD,,,1Material --> Fibrous --> Cementitious Wood Fiber
 PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-BF945F-Saddle,,0Color --> Fibrous --> Cementitious Wood Fiber,,Saddle,BF945F,,,1Material --> Fibrous --> Cementitious Wood Fiber

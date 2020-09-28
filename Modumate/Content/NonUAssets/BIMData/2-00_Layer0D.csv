@@ -5,7 +5,7 @@ PROPERTY,,String,,Name,,Layer.Name,,,,,,,,,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,Child1Material,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,Child0DimThk,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,68,65,65,62,52,28,4,20,20,2,34
+,,Presets,,,,,,,,,68,65,65,62,75,28,26,20,20,2,27
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Layer.Name,DataType=InputPins,Child1Material,Child0DimThk,DataType=TG_Parent Node+CategoryPath,4LayeredAssembly --> Wall,4LayeredAssembly --> Floor,4LayeredAssembly --> Roof,4LayeredAssembly --> Ceiling,4LayeredAssembly --> Finish,4LayeredAssembly --> System Panel,4LayeredAssembly --> Countertop,4LayeredAssembly --> Layered Tread,4LayeredAssembly --> Layered Riser,4LayeredAssembly --> Railing,4LayeredAssembly --> Landscape
 PRESET,,"2Layer0D --> Abstract
 1Material --> Abstract-0RawMaterial-Abstract-0Color --> Abstract-FFFFFF-White
@@ -47,32 +47,32 @@ PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"3in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-3inT,,X,X,X,X,,,,X,X,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-6inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"6in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-6inT,,X,X,X,X,,,,X,X,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray
+0DimThk-6inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"6in, Concrete (Normal Aggregate), Medium Gray",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,0DimThk-6inT,,X,X,X,X,,,,X,X,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-8inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"8in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-8inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey
+0DimThk-8inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"8in, Concrete (Normal Aggregate), Dark Grey",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey,0DimThk-8inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-10inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"10in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-10inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black
+0DimThk-10inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"10in, Concrete (Normal Aggregate), Black",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black,0DimThk-10inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-12inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"12in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-12inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
+0DimThk-12inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"12in, Concrete (Normal Aggregate), Maple",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple,0DimThk-12inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-14inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"14in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-14inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive
+0DimThk-14inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"14in, Concrete (Normal Aggregate), Olive",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive,0DimThk-14inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-16inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"16in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-16inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff
+0DimThk-16inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"16in, Concrete (Normal Aggregate), Buff",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff,0DimThk-16inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-18inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"18in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-18inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss
+0DimThk-18inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"18in, Concrete (Normal Aggregate), Moss",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss,0DimThk-18inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-20inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"20in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-20inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean
+0DimThk-20inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"20in, Concrete (Normal Aggregate), Ocean",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean,0DimThk-20inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-22inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"22in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-22inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet
+0DimThk-22inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"22in, Concrete (Normal Aggregate), Cabernet",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet,0DimThk-22inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-24inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"24in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-24inT,,X,X,X,X,,,,,,,
@@ -80,32 +80,32 @@ PRESET,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT",,2Layer0D --> Mass --> PrecastConcrete,,"3in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-3inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-6inT",,2Layer0D --> Mass --> PrecastConcrete,,"6in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-6inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray
+0DimThk-6inT",,2Layer0D --> Mass --> PrecastConcrete,,"6in, Concrete (Normal Aggregate), Medium Gray",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,0DimThk-6inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-8inT",,2Layer0D --> Mass --> PrecastConcrete,,"8in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-8inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey
+0DimThk-8inT",,2Layer0D --> Mass --> PrecastConcrete,,"8in, Concrete (Normal Aggregate), Dark Grey",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey,0DimThk-8inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-10inT",,2Layer0D --> Mass --> PrecastConcrete,,"10in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-10inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black
+0DimThk-10inT",,2Layer0D --> Mass --> PrecastConcrete,,"10in, Concrete (Normal Aggregate), Black",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black,0DimThk-10inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-12inT",,2Layer0D --> Mass --> PrecastConcrete,,"12in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-12inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
+0DimThk-12inT",,2Layer0D --> Mass --> PrecastConcrete,,"12in, Concrete (Normal Aggregate), Maple",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple,0DimThk-12inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-14inT",,2Layer0D --> Mass --> PrecastConcrete,,"14in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-14inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive
+0DimThk-14inT",,2Layer0D --> Mass --> PrecastConcrete,,"14in, Concrete (Normal Aggregate), Olive",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive,0DimThk-14inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-16inT",,2Layer0D --> Mass --> PrecastConcrete,,"16in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-16inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff
+0DimThk-16inT",,2Layer0D --> Mass --> PrecastConcrete,,"16in, Concrete (Normal Aggregate), Buff",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff,0DimThk-16inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-18inT",,2Layer0D --> Mass --> PrecastConcrete,,"18in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-18inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss
+0DimThk-18inT",,2Layer0D --> Mass --> PrecastConcrete,,"18in, Concrete (Normal Aggregate), Moss",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss,0DimThk-18inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-20inT",,2Layer0D --> Mass --> PrecastConcrete,,"20in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-20inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean
+0DimThk-20inT",,2Layer0D --> Mass --> PrecastConcrete,,"20in, Concrete (Normal Aggregate), Ocean",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean,0DimThk-20inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-22inT",,2Layer0D --> Mass --> PrecastConcrete,,"22in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-22inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet
+0DimThk-22inT",,2Layer0D --> Mass --> PrecastConcrete,,"22in, Concrete (Normal Aggregate), Cabernet",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet,0DimThk-22inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
 0DimThk-3.5inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,"3-1/2in, Spruce-Pine-Fir, White",,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimThk-3.5inT,,X,X,X,X,,,,,,,
@@ -155,11 +155,77 @@ PRESET,,"2Layer0D --> Mass --> StoneSlab
 1Material --> Stone --> Granite-0RawMaterial-Granite (Black 2)-0Color --> Abstract-FFFFFF-White
 0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Granite (Black 2), White",,1Material --> Stone --> Granite-0RawMaterial-Granite (Black 2)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
 PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Granite-0RawMaterial-Granite (Black 3)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Granite (Black 3), White",,1Material --> Stone --> Granite-0RawMaterial-Granite (Black 3)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Granite-0RawMaterial-Granite (Black 4)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Granite (Black 4), White",,1Material --> Stone --> Granite-0RawMaterial-Granite (Black 4)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Granite-0RawMaterial-Granite (Brown 1)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Granite (Brown 1), White",,1Material --> Stone --> Granite-0RawMaterial-Granite (Brown 1)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Granite-0RawMaterial-Granite (Brown 2)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Granite (Brown 2), White",,1Material --> Stone --> Granite-0RawMaterial-Granite (Brown 2)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Granite-0RawMaterial-Granite (Grey 1)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Granite (Grey 1), White",,1Material --> Stone --> Granite-0RawMaterial-Granite (Grey 1)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Granite-0RawMaterial-Granite (Orange 1)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Granite (Orange 1), White",,1Material --> Stone --> Granite-0RawMaterial-Granite (Orange 1)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Granite-0RawMaterial-Granite (Orange 2)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Granite (Orange 2), White",,1Material --> Stone --> Granite-0RawMaterial-Granite (Orange 2)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Granite-0RawMaterial-Granite (Pink 1)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Granite (Pink 1), White",,1Material --> Stone --> Granite-0RawMaterial-Granite (Pink 1)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Lava Stone-0RawMaterial-Lava Stone-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Lava Stone, White",,1Material --> Stone --> Lava Stone-0RawMaterial-Lava Stone-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Limestone (White), White",,1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Limestone (Beige), White",,1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
 1Material --> Stone --> Marble-0RawMaterial-Marble (Black 1)-0Color --> Abstract-FFFFFF-White
-0DimThk-3inT",,2Layer0D --> Mass --> StoneSlab,,"3in, Marble (Black 1), White",,1Material --> Stone --> Marble-0RawMaterial-Marble (Black 1)-0Color --> Abstract-FFFFFF-White,0DimThk-3inT,,,,,,,,X,,,,
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Marble (Black 1), White",,1Material --> Stone --> Marble-0RawMaterial-Marble (Black 1)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Marble-0RawMaterial-Marble (Black 2)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Marble (Black 2), White",,1Material --> Stone --> Marble-0RawMaterial-Marble (Black 2)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Marble-0RawMaterial-Marble (Calacatta)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Marble (Calacatta), White",,1Material --> Stone --> Marble-0RawMaterial-Marble (Calacatta)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Marble-0RawMaterial-Marble (Carrara)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Marble (Carrara), White",,1Material --> Stone --> Marble-0RawMaterial-Marble (Carrara)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Marble-0RawMaterial-Marble (Green 1)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Marble (Green 1), White",,1Material --> Stone --> Marble-0RawMaterial-Marble (Green 1)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Marble-0RawMaterial-Marble (Grey 1)-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Marble (Grey 1), White",,1Material --> Stone --> Marble-0RawMaterial-Marble (Grey 1)-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Onyx-0RawMaterial-Onyx-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Onyx, White",,1Material --> Stone --> Onyx-0RawMaterial-Onyx-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Quartzite-0RawMaterial-Quartzite 1-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Quartzite 1, White",,1Material --> Stone --> Quartzite-0RawMaterial-Quartzite 1-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Quartzite-0RawMaterial-Quartzite 2-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Quartzite 2, White",,1Material --> Stone --> Quartzite-0RawMaterial-Quartzite 2-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Quartzite-0RawMaterial-Quartzite 3-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Quartzite 3, White",,1Material --> Stone --> Quartzite-0RawMaterial-Quartzite 3-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Quartzite-0RawMaterial-Quartzite 4-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Quartzite 4, White",,1Material --> Stone --> Quartzite-0RawMaterial-Quartzite 4-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
+PRESET,,"2Layer0D --> Mass --> StoneSlab
+1Material --> Stone --> Quartzite-0RawMaterial-Quartzite 5-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Mass --> StoneSlab,,"2in, Quartzite 5, White",,1Material --> Stone --> Quartzite-0RawMaterial-Quartzite 5-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,X,,,,
 PRESET,,"2Layer0D --> Membrane --> BitumenousFelt
-1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-B9A081-Khaki
-0DimThk-0.0625inT",,2Layer0D --> Membrane --> BitumenousFelt,,"1/16in, Felt, Khaki",,1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-B9A081-Khaki,0DimThk-0.0625inT,,X,X,X,X,,X,,,,,
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
+0DimThk-0.0625inT",,2Layer0D --> Membrane --> BitumenousFelt,,"1/16in, Asphalt, Barkwood",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood,0DimThk-0.0625inT,,X,X,X,X,,X,,,,,
 PRESET,,"2Layer0D --> Membrane --> TPO
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT",,2Layer0D --> Membrane --> TPO,,"1/16in, Plastic, Gray 6",,1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6,0DimThk-0.0625inT,,X,X,X,X,,,,,,,
@@ -179,62 +245,119 @@ PRESET,,"2Layer0D --> Roll --> Carpet
 1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White
 0DimThk-0.25inT",,2Layer0D --> Roll --> Carpet,,"1/4in, Carpet (Low Profile), White",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White,0DimThk-0.25inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Carpet
-1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White
-0DimThk-0.5inT",,2Layer0D --> Roll --> Carpet,,"1/2in, Carpet (Low Profile), White",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White,0DimThk-0.5inT,,,,,,X,,,,,,
+1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-D0C6BD-Cream1
+0DimThk-0.5inT",,2Layer0D --> Roll --> Carpet,,"1/2in, Carpet (Low Profile), Cream 1",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-D0C6BD-Cream1,0DimThk-0.5inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Carpet
-1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White
-0DimThk-0.75inT",,2Layer0D --> Roll --> Carpet,,"3/4in, Carpet (Low Profile), White",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White,0DimThk-0.75inT,,,,,,X,,,,,,
+1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-BF945F-Saddle
+0DimThk-0.75inT",,2Layer0D --> Roll --> Carpet,,"3/4in, Carpet (Low Profile), Saddle",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-BF945F-Saddle,0DimThk-0.75inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Carpet
-1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White
-0DimThk-1inT",,2Layer0D --> Roll --> Carpet,,"1in, Carpet (Low Profile), White",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White,0DimThk-1inT,,,,,,X,,,,,,
+1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-A99978-Parchment
+0DimThk-1inT",,2Layer0D --> Roll --> Carpet,,"1in, Carpet (Low Profile), Parchment",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-A99978-Parchment,0DimThk-1inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Carpet
-1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-7A878F-SilverBlue
-0DimThk-0.25inT",,2Layer0D --> Roll --> Carpet,,"1/4in, Carpet (Medium Profile), Silver Blue",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-7A878F-SilverBlue,0DimThk-0.25inT,,,,,,X,,,,,,
+1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-88543F-Copper
+0DimThk-0.25inT",,2Layer0D --> Roll --> Carpet,,"1/4in, Carpet (Low Profile), Copper",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-88543F-Copper,0DimThk-0.25inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Carpet
-1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-7A878F-SilverBlue
-0DimThk-0.5inT",,2Layer0D --> Roll --> Carpet,,"1/2in, Carpet (Medium Profile), Silver Blue",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-7A878F-SilverBlue,0DimThk-0.5inT,,,,,,X,,,,,,
+1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White
+0DimThk-0.5inT",,2Layer0D --> Roll --> Carpet,,"1/2in, Carpet (Medium Profile), White",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White,0DimThk-0.5inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Carpet
-1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-7A878F-SilverBlue
-0DimThk-0.75inT",,2Layer0D --> Roll --> Carpet,,"3/4in, Carpet (Medium Profile), Silver Blue",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-7A878F-SilverBlue,0DimThk-0.75inT,,,,,,X,,,,,,
+1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-D0C6BD-Cream1
+0DimThk-0.75inT",,2Layer0D --> Roll --> Carpet,,"3/4in, Carpet (Medium Profile), Cream 1",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-D0C6BD-Cream1,0DimThk-0.75inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Carpet
-1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-7A878F-SilverBlue
-0DimThk-1inT",,2Layer0D --> Roll --> Carpet,,"1in, Carpet (Medium Profile), Silver Blue",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-7A878F-SilverBlue,0DimThk-1inT,,,,,,X,,,,,,
+1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-BF945F-Saddle
+0DimThk-1inT",,2Layer0D --> Roll --> Carpet,,"1in, Carpet (Medium Profile), Saddle",,1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Medium Profile)-0Color --> Fabric and Upholstery --> Carpet-BF945F-Saddle,0DimThk-1inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Cork
-1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White
-0DimThk-0.125inT",,2Layer0D --> Roll --> Cork,,"1/8in, Cork, White",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White,0DimThk-0.125inT,,,,,,X,,,,,,
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-White
+0DimThk-0.125inT",,2Layer0D --> Roll --> Cork,,"1/8in, Cork, White",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-White,0DimThk-0.125inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Cork
-1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White
-0DimThk-0.1875inT",,2Layer0D --> Roll --> Cork,,"3/16in, Cork, White",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White,0DimThk-0.1875inT,,,,,,X,,,,,,
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-D0C6BD-Cream1
+0DimThk-0.125inT",,2Layer0D --> Roll --> Cork,,"1/8in, Cork, Cream 1",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-D0C6BD-Cream1,0DimThk-0.125inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Cork
-1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White
-0DimThk-0.25inT",,2Layer0D --> Roll --> Cork,,"1/4in, Cork, White",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White,0DimThk-0.25inT,,,,,,X,,,,,,
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-BF945F-Saddle
+0DimThk-0.1875inT",,2Layer0D --> Roll --> Cork,,"3/16in, Cork, Saddle",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-BF945F-Saddle,0DimThk-0.1875inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Cork
-1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White
-0DimThk-0.5inT",,2Layer0D --> Roll --> Cork,,"1/2in, Cork, White",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Abstract-FFFFFF-White,0DimThk-0.5inT,,,,,,X,,,,,,
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-A99978-Parchment
+0DimThk-0.1875inT",,2Layer0D --> Roll --> Cork,,"3/16in, Cork, Parchment",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-A99978-Parchment,0DimThk-0.1875inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Cork
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-88543F-Copper
+0DimThk-0.25inT",,2Layer0D --> Roll --> Cork,,"1/4in, Cork, Copper",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-88543F-Copper,0DimThk-0.25inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Cork
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-464F3C-OliveGreen
+0DimThk-0.25inT",,2Layer0D --> Roll --> Cork,,"1/4in, Cork, Olive Green",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-464F3C-OliveGreen,0DimThk-0.25inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Cork
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-7A878F-SilverBlue
+0DimThk-0.5inT",,2Layer0D --> Roll --> Cork,,"1/2in, Cork, Silver Blue",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-7A878F-SilverBlue,0DimThk-0.5inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Cork
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-38485F-OrderlyBlue
+0DimThk-0.5inT",,2Layer0D --> Roll --> Cork,,"1/2in, Cork, Orderly Blue",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-38485F-OrderlyBlue,0DimThk-0.5inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Felt
-1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-B9A081-Khaki
-0DimThk-2mmT",,2Layer0D --> Roll --> Felt,,"2mm, Felt, Khaki",,1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-B9A081-Khaki,0DimThk-2mmT,,,,,,X,,,,,,
+1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-2B2C30-Black
+0DimThk-2mmT",,2Layer0D --> Roll --> Felt,,"2mm, Felt, Black",,1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-2B2C30-Black,0DimThk-2mmT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Felt
-1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-B9A081-Khaki
-0DimThk-3mmT",,2Layer0D --> Roll --> Felt,,"3mm, Felt, Khaki",,1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-B9A081-Khaki,0DimThk-3mmT,,,,,,X,,,,,,
+1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-977953-Shakewood
+0DimThk-2mmT",,2Layer0D --> Roll --> Felt,,"2mm, Felt, Shakewood",,1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-977953-Shakewood,0DimThk-2mmT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Felt
-1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-B9A081-Khaki
-0DimThk-5mmT",,2Layer0D --> Roll --> Felt,,"5mm, Felt, Khaki",,1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-B9A081-Khaki,0DimThk-5mmT,,,,,,X,,,,,,
+1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-9E8C74-Tan
+0DimThk-3mmT",,2Layer0D --> Roll --> Felt,,"3mm, Felt, Tan",,1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-9E8C74-Tan,0DimThk-3mmT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Felt
+1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-564237-Brown
+0DimThk-3mmT",,2Layer0D --> Roll --> Felt,,"3mm, Felt, Brown",,1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-564237-Brown,0DimThk-3mmT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Felt
+1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-44443C-WeatheredBrown
+0DimThk-5mmT",,2Layer0D --> Roll --> Felt,,"5mm, Felt, Weathered Brown",,1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-44443C-WeatheredBrown,0DimThk-5mmT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Felt
+1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-AE5529-Aztec
+0DimThk-5mmT",,2Layer0D --> Roll --> Felt,,"5mm, Felt, Aztec",,1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-AE5529-Aztec,0DimThk-5mmT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimThk-0.125inT",,2Layer0D --> Roll --> Foam,,"1/8in, Foam (Extruded Polystyrene), Pink",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink,0DimThk-0.125inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-CFDEE4-Blue
+0DimThk-0.125inT",,2Layer0D --> Roll --> Foam,,"1/8in, Foam (Extruded Polystyrene), Blue",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-CFDEE4-Blue,0DimThk-0.125inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-FAF1D0-Yellow
+0DimThk-0.125inT",,2Layer0D --> Roll --> Foam,,"1/8in, Foam (Extruded Polystyrene), Yellow",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-FAF1D0-Yellow,0DimThk-0.125inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
+0DimThk-0.125inT",,2Layer0D --> Roll --> Foam,,"1/8in, Foam (Extruded Polystyrene), White",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White,0DimThk-0.125inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimThk-0.1875inT",,2Layer0D --> Roll --> Foam,,"3/16in, Foam (Extruded Polystyrene), Pink",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink,0DimThk-0.1875inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-CFDEE4-Blue
+0DimThk-0.1875inT",,2Layer0D --> Roll --> Foam,,"3/16in, Foam (Extruded Polystyrene), Blue",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-CFDEE4-Blue,0DimThk-0.1875inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-FAF1D0-Yellow
+0DimThk-0.1875inT",,2Layer0D --> Roll --> Foam,,"3/16in, Foam (Extruded Polystyrene), Yellow",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-FAF1D0-Yellow,0DimThk-0.1875inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
+0DimThk-0.1875inT",,2Layer0D --> Roll --> Foam,,"3/16in, Foam (Extruded Polystyrene), White",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White,0DimThk-0.1875inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimThk-0.25inT",,2Layer0D --> Roll --> Foam,,"1/4in, Foam (Extruded Polystyrene), Pink",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink,0DimThk-0.25inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-CFDEE4-Blue
+0DimThk-0.25inT",,2Layer0D --> Roll --> Foam,,"1/4in, Foam (Extruded Polystyrene), Blue",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-CFDEE4-Blue,0DimThk-0.25inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-FAF1D0-Yellow
+0DimThk-0.25inT",,2Layer0D --> Roll --> Foam,,"1/4in, Foam (Extruded Polystyrene), Yellow",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-FAF1D0-Yellow,0DimThk-0.25inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
+0DimThk-0.25inT",,2Layer0D --> Roll --> Foam,,"1/4in, Foam (Extruded Polystyrene), White",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White,0DimThk-0.25inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimThk-0.5inT",,2Layer0D --> Roll --> Foam,,"1/2in, Foam (Extruded Polystyrene), Pink",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink,0DimThk-0.5inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-CFDEE4-Blue
+0DimThk-0.5inT",,2Layer0D --> Roll --> Foam,,"1/2in, Foam (Extruded Polystyrene), Blue",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-CFDEE4-Blue,0DimThk-0.5inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-FAF1D0-Yellow
+0DimThk-0.5inT",,2Layer0D --> Roll --> Foam,,"1/2in, Foam (Extruded Polystyrene), Yellow",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-FAF1D0-Yellow,0DimThk-0.5inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Roll --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
+0DimThk-0.5inT",,2Layer0D --> Roll --> Foam,,"1/2in, Foam (Extruded Polystyrene), White",,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White,0DimThk-0.5inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> LathMetal
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-0DimThk-0.125inT",,2Layer0D --> Roll --> LathMetal,,"1/8in, Aluminum, Pure White",,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimThk-0.125inT,,X,X,X,X,X,,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-F4F3D7-Birch
+0DimThk-0.125inT",,2Layer0D --> Roll --> LathMetal,,"1/8in, Aluminum, Birch",,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-F4F3D7-Birch,0DimThk-0.125inT,,X,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Roll --> PlasticAdhesive
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.09375inT",,2Layer0D --> Roll --> PlasticAdhesive,,"3/32in, Plastic, Gray 6",,1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6,0DimThk-0.09375inT,,X,X,X,X,,,,,,,
@@ -272,35 +395,35 @@ PRESET,,"2Layer0D --> Sitework --> Gravel
 1Material --> Aggregates --> Gravel-0RawMaterial-Gravel-0Color --> Aggregates --> Gravel-FFFFFF-White
 0DimThk-12inT",,2Layer0D --> Sitework --> Gravel,,"12in, Gravel, White",,1Material --> Aggregates --> Gravel-0RawMaterial-Gravel-0Color --> Aggregates --> Gravel-FFFFFF-White,0DimThk-12inT,,,,,,X,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
-1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
-0DimThk-1inT",,2Layer0D --> Sitework --> Grass,,"1in, Wood Particles, White",,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White,0DimThk-1inT,,,,,,,,,,,,X
+1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
+0DimThk-1inT",,2Layer0D --> Sitework --> Grass,,"1in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-1inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
-1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
-0DimThk-2inT",,2Layer0D --> Sitework --> Grass,,"2in, Wood Particles, White",,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,,,,,X
+1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Sitework --> Grass,,"2in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
-1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
-0DimThk-3inT",,2Layer0D --> Sitework --> Grass,,"3in, Wood Particles, White",,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White,0DimThk-3inT,,,,,,,,,,,,X
+1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
+0DimThk-3inT",,2Layer0D --> Sitework --> Grass,,"3in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-3inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
-1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
-0DimThk-4inT",,2Layer0D --> Sitework --> Grass,,"4in, Wood Particles, White",,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White,0DimThk-4inT,,,,,,,,,,,,X
+1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
+0DimThk-4inT",,2Layer0D --> Sitework --> Grass,,"4in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-4inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
-1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
-0DimThk-6inT",,2Layer0D --> Sitework --> Grass,,"6in, Wood Particles, White",,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White,0DimThk-6inT,,,,,,,,,,,,X
+1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
+0DimThk-6inT",,2Layer0D --> Sitework --> Grass,,"6in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-6inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
-1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
-0DimThk-8inT",,2Layer0D --> Sitework --> Grass,,"8in, Wood Particles, White",,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White,0DimThk-8inT,,,,,,,,,,,,X
+1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
+0DimThk-8inT",,2Layer0D --> Sitework --> Grass,,"8in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-8inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Grass
-1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
-0DimThk-12inT",,2Layer0D --> Sitework --> Grass,,"12in, Wood Particles, White",,1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White,0DimThk-12inT,,,,,,,,,,,,X
+1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
+0DimThk-12inT",,2Layer0D --> Sitework --> Grass,,"12in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-12inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> DecomposedGranite
 1Material --> Aggregates --> Decomposed Granite-0RawMaterial-Decomposed Granite-0Color --> Aggregates --> Decomposed Granite-FFFFFF-White
 0DimThk-1inT",,2Layer0D --> Sitework --> DecomposedGranite,,"1in, Decomposed Granite, White",,1Material --> Aggregates --> Decomposed Granite-0RawMaterial-Decomposed Granite-0Color --> Aggregates --> Decomposed Granite-FFFFFF-White,0DimThk-1inT,,,X,X,,X,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> DecomposedGranite
-1Material --> Aggregates --> Decomposed Granite-0RawMaterial-Decomposed Granite-0Color --> Aggregates --> Decomposed Granite-FFFFFF-White
-0DimThk-2inT",,2Layer0D --> Sitework --> DecomposedGranite,,"2in, Decomposed Granite, White",,1Material --> Aggregates --> Decomposed Granite-0RawMaterial-Decomposed Granite-0Color --> Aggregates --> Decomposed Granite-FFFFFF-White,0DimThk-2inT,,,X,X,,X,,,,,,X
+1Material --> Aggregates --> Decomposed Granite-0RawMaterial-Decomposed Granite-0Color --> Aggregates --> Decomposed Granite-CCCCCC-LightGray
+0DimThk-2inT",,2Layer0D --> Sitework --> DecomposedGranite,,"2in, Decomposed Granite, Light Gray",,1Material --> Aggregates --> Decomposed Granite-0RawMaterial-Decomposed Granite-0Color --> Aggregates --> Decomposed Granite-CCCCCC-LightGray,0DimThk-2inT,,,X,X,,X,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> DecomposedGranite
-1Material --> Aggregates --> Decomposed Granite-0RawMaterial-Decomposed Granite-0Color --> Aggregates --> Decomposed Granite-FFFFFF-White
-0DimThk-3inT",,2Layer0D --> Sitework --> DecomposedGranite,,"3in, Decomposed Granite, White",,1Material --> Aggregates --> Decomposed Granite-0RawMaterial-Decomposed Granite-0Color --> Aggregates --> Decomposed Granite-FFFFFF-White,0DimThk-3inT,,,X,X,,X,,,,,,X
+1Material --> Aggregates --> Decomposed Granite-0RawMaterial-Decomposed Granite-0Color --> Aggregates --> Decomposed Granite-CCCCCC-LightGray
+0DimThk-3inT",,2Layer0D --> Sitework --> DecomposedGranite,,"3in, Decomposed Granite, Light Gray",,1Material --> Aggregates --> Decomposed Granite-0RawMaterial-Decomposed Granite-0Color --> Aggregates --> Decomposed Granite-CCCCCC-LightGray,0DimThk-3inT,,,X,X,,X,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Sand
 1Material --> Aggregates --> Sand-0RawMaterial-Sand-0Color --> Abstract-FFFFFF-White
 0DimThk-1inT",,2Layer0D --> Sitework --> Sand,,"1in, Sand, White",,1Material --> Aggregates --> Sand-0RawMaterial-Sand-0Color --> Abstract-FFFFFF-White,0DimThk-1inT,,,X,X,X,X,,,,,,X
@@ -311,83 +434,74 @@ PRESET,,"2Layer0D --> Sitework --> Sand
 1Material --> Aggregates --> Sand-0RawMaterial-Sand-0Color --> Abstract-FFFFFF-White
 0DimThk-3inT",,2Layer0D --> Sitework --> Sand,,"3in, Sand, White",,1Material --> Aggregates --> Sand-0RawMaterial-Sand-0Color --> Abstract-FFFFFF-White,0DimThk-3inT,,,X,X,X,X,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimThk-1inT",,2Layer0D --> Sitework --> Soil,,"1in, Wood Strands, White",,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimThk-1inT,,,,,,,,,,,,X
+1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White
+0DimThk-1inT",,2Layer0D --> Sitework --> Soil,,"1in, Soil, White",,1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White,0DimThk-1inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimThk-2inT",,2Layer0D --> Sitework --> Soil,,"2in, Wood Strands, White",,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,,,,,X
+1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White
+0DimThk-2inT",,2Layer0D --> Sitework --> Soil,,"2in, Soil, White",,1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimThk-3inT",,2Layer0D --> Sitework --> Soil,,"3in, Wood Strands, White",,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimThk-3inT,,,,,,,,,,,,X
+1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White
+0DimThk-3inT",,2Layer0D --> Sitework --> Soil,,"3in, Soil, White",,1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White,0DimThk-3inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimThk-4inT",,2Layer0D --> Sitework --> Soil,,"4in, Wood Strands, White",,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimThk-4inT,,,,,,,,,,,,X
+1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White
+0DimThk-4inT",,2Layer0D --> Sitework --> Soil,,"4in, Soil, White",,1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White,0DimThk-4inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimThk-6inT",,2Layer0D --> Sitework --> Soil,,"6in, Wood Strands, White",,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimThk-6inT,,,,,,,,,,,,X
+1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White
+0DimThk-6inT",,2Layer0D --> Sitework --> Soil,,"6in, Soil, White",,1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White,0DimThk-6inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimThk-8inT",,2Layer0D --> Sitework --> Soil,,"8in, Wood Strands, White",,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimThk-8inT,,,,,,,,,,,,X
+1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White
+0DimThk-8inT",,2Layer0D --> Sitework --> Soil,,"8in, Soil, White",,1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White,0DimThk-8inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimThk-12inT",,2Layer0D --> Sitework --> Soil,,"12in, Wood Strands, White",,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimThk-12inT,,,,,,,,,,,,X
-PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
-0DimThk-1inT",,2Layer0D --> Sitework --> Soil,,"1in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-1inT,,,,,,,,,,,,X
-PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
-0DimThk-2inT",,2Layer0D --> Sitework --> Soil,,"2in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-2inT,,,,,,,,,,,,X
-PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
-0DimThk-3inT",,2Layer0D --> Sitework --> Soil,,"3in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-3inT,,,,,,,,,,,,X
-PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
-0DimThk-4inT",,2Layer0D --> Sitework --> Soil,,"4in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-4inT,,,,,,,,,,,,X
-PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
-0DimThk-6inT",,2Layer0D --> Sitework --> Soil,,"6in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-6inT,,,,,,,,,,,,X
-PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
-0DimThk-8inT",,2Layer0D --> Sitework --> Soil,,"8in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-8inT,,,,,,,,,,,,X
-PRESET,,"2Layer0D --> Sitework --> Soil
-1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White
-0DimThk-12inT",,2Layer0D --> Sitework --> Soil,,"12in, Grass, White",,1Material --> Sitework --> Grass-0RawMaterial-Grass-0Color --> Abstract-FFFFFF-White,0DimThk-12inT,,,,,,,,,,,,X
+1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White
+0DimThk-12inT",,2Layer0D --> Sitework --> Soil,,"12in, Soil, White",,1Material --> Sitework --> Soil-0RawMaterial-Soil-0Color --> Abstract-FFFFFF-White,0DimThk-12inT,,,,,,,,,,,,X
 PRESET,,"2Layer0D --> Spread --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimThk-1inT",,2Layer0D --> Spread --> Asphalt,,"1in, Asphalt, Barkwood",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood,0DimThk-1inT,,X,X,X,X,,,,X,X,,
 PRESET,,"2Layer0D --> Spread --> Asphalt
-1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
-0DimThk-2inT",,2Layer0D --> Spread --> Asphalt,,"2in, Asphalt, Barkwood",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood,0DimThk-2inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-52595B-PewterGray
+0DimThk-2inT",,2Layer0D --> Spread --> Asphalt,,"2in, Asphalt, Pewter Gray",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-52595B-PewterGray,0DimThk-2inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Spread --> Asphalt
-1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
-0DimThk-3inT",,2Layer0D --> Spread --> Asphalt,,"3in, Asphalt, Barkwood",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood,0DimThk-3inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-646963-Gray-GreenSlate
+0DimThk-3inT",,2Layer0D --> Spread --> Asphalt,,"3in, Asphalt, Gray-Green Slate",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-646963-Gray-GreenSlate,0DimThk-3inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Spread --> Asphalt
-1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
-0DimThk-4inT",,2Layer0D --> Spread --> Asphalt,,"4in, Asphalt, Barkwood",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood,0DimThk-4inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-743131-RichRed
+0DimThk-4inT",,2Layer0D --> Spread --> Asphalt,,"4in, Asphalt, Rich Red",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-743131-RichRed,0DimThk-4inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Spread --> Asphalt
-1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
-0DimThk-6inT",,2Layer0D --> Spread --> Asphalt,,"6in, Asphalt, Barkwood",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood,0DimThk-6inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-2F3336-Charcoal
+0DimThk-6inT",,2Layer0D --> Spread --> Asphalt,,"6in, Asphalt, Charcoal",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-2F3336-Charcoal,0DimThk-6inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Spread --> Asphalt
-1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
-0DimThk-8inT",,2Layer0D --> Spread --> Asphalt,,"8in, Asphalt, Barkwood",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood,0DimThk-8inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-9A7957-Caramel
+0DimThk-8inT",,2Layer0D --> Spread --> Asphalt,,"8in, Asphalt, Caramel",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-9A7957-Caramel,0DimThk-8inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Spread --> Asphalt
-1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
-0DimThk-12inT",,2Layer0D --> Spread --> Asphalt,,"12in, Asphalt, Barkwood",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood,0DimThk-12inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-6B6758-Olive
+0DimThk-12inT",,2Layer0D --> Spread --> Asphalt,,"12in, Asphalt, Olive",,1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-6B6758-Olive,0DimThk-12inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Spread --> Plaster
 1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-F7EBDB-Shell
 0DimThk-0.375inT",,2Layer0D --> Spread --> Plaster,,"3/8in, Plaster, Shell",,1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-F7EBDB-Shell,0DimThk-0.375inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Spread --> Plaster
-1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-F7EBDB-Shell
-0DimThk-0.5inT",,2Layer0D --> Spread --> Plaster,,"1/2in, Plaster, Shell",,1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-F7EBDB-Shell,0DimThk-0.5inT,,,,,,X,,,,,,
+1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-F8F8F6-Pearl
+0DimThk-0.375inT",,2Layer0D --> Spread --> Plaster,,"3/8in, Plaster, Pearl",,1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-F8F8F6-Pearl,0DimThk-0.375inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Spread --> Plaster
-1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-F7EBDB-Shell
-0DimThk-0.625inT",,2Layer0D --> Spread --> Plaster,,"5/8in, Plaster, Shell",,1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-F7EBDB-Shell,0DimThk-0.625inT,,,,,,X,,,,,,
+1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-B4B4B2-Raw
+0DimThk-0.5inT",,2Layer0D --> Spread --> Plaster,,"1/2in, Plaster, Raw",,1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-B4B4B2-Raw,0DimThk-0.5inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Spread --> Plaster
-1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-F7EBDB-Shell
-0DimThk-0.75inT",,2Layer0D --> Spread --> Plaster,,"3/4in, Plaster, Shell",,1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-F7EBDB-Shell,0DimThk-0.75inT,,,,,,X,,,,,,
+1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-FAF1D0-Champagne
+0DimThk-0.5inT",,2Layer0D --> Spread --> Plaster,,"1/2in, Plaster, Champagne",,1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-FAF1D0-Champagne,0DimThk-0.5inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> Plaster
+1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-CBBDA2-Tan
+0DimThk-0.625inT",,2Layer0D --> Spread --> Plaster,,"5/8in, Plaster, Tan",,1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-CBBDA2-Tan,0DimThk-0.625inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> Plaster
+1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-E5CAAD-Coral
+0DimThk-0.625inT",,2Layer0D --> Spread --> Plaster,,"5/8in, Plaster, Coral",,1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-E5CAAD-Coral,0DimThk-0.625inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> Plaster
+1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-B5B5B7-MediumGray
+0DimThk-0.75inT",,2Layer0D --> Spread --> Plaster,,"3/4in, Plaster, Medium Gray",,1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-B5B5B7-MediumGray,0DimThk-0.75inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> Plaster
+1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-92918D-DarkGray
+0DimThk-0.75inT",,2Layer0D --> Spread --> Plaster,,"3/4in, Plaster, Dark Gray",,1Material --> Spread --> Plaster-0RawMaterial-Plaster-0Color --> Spread --> Plaster-92918D-DarkGray,0DimThk-0.75inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Spread --> JointCompound
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
-0DimThk-0.03125inT",,2Layer0D --> Spread --> JointCompound,,"1/32in, Gypsum, Natural",,1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural,0DimThk-0.03125inT,,X,X,X,X,X,,,,,,
+1Material --> Aggregates --> Joint Compound-0RawMaterial-Joint Compound-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+0DimThk-0.03125inT",,2Layer0D --> Spread --> JointCompound,,"1/32in, Joint Compound, Natural",,1Material --> Aggregates --> Joint Compound-0RawMaterial-Joint Compound-0Color --> Aggregates --> Gypsum-D6D7D1-Natural,0DimThk-0.03125inT,,X,X,X,X,X,,,,,,
 PRESET,,"2Layer0D --> Spread --> Paint
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
 0DimThk-0.02inT",,2Layer0D --> Spread --> Paint,,"Typical Coat (1/50in), Paint, Gentle White",,1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,0DimThk-0.02inT,,,,,,X,,,,,,
@@ -401,71 +515,71 @@ PRESET,,"2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-0.0625inT",,2Layer0D --> Spread --> ThinsetCement,,"1/16in, Concrete (Fine Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-0.0625inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Spread --> ThinsetCement
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-0.09375inT",,2Layer0D --> Spread --> ThinsetCement,,"3/32in, Concrete (Fine Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-0.09375inT,,,,,,X,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray
+0DimThk-0.09375inT",,2Layer0D --> Spread --> ThinsetCement,,"3/32in, Concrete (Fine Aggregate), Medium Gray",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,0DimThk-0.09375inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Spread --> ThinsetCement
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-0.125inT",,2Layer0D --> Spread --> ThinsetCement,,"1/8in, Concrete (Fine Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-0.125inT,,,,,,X,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey
+0DimThk-0.125inT",,2Layer0D --> Spread --> ThinsetCement,,"1/8in, Concrete (Fine Aggregate), Dark Grey",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey,0DimThk-0.125inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Spread --> ThinsetCement
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-0.25inT",,2Layer0D --> Spread --> ThinsetCement,,"1/4in, Concrete (Fine Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-0.25inT,,,,,,X,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black
+0DimThk-0.25inT",,2Layer0D --> Spread --> ThinsetCement,,"1/4in, Concrete (Fine Aggregate), Black",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black,0DimThk-0.25inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Spread --> ThinsetCement
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-0.5inT",,2Layer0D --> Spread --> ThinsetCement,,"1/2in, Concrete (Fine Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-0.5inT,,,,,,X,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
+0DimThk-0.5inT",,2Layer0D --> Spread --> ThinsetCement,,"1/2in, Concrete (Fine Aggregate), Maple",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple,0DimThk-0.5inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Spread --> ThinsetCement
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimThk-0.75inT",,2Layer0D --> Spread --> ThinsetCement,,"3/4in, Concrete (Fine Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-0.75inT,,,,,,X,,,,,,
-PRESET,,"2Layer0D --> Spread --> MasticResin
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive
+0DimThk-0.75inT",,2Layer0D --> Spread --> ThinsetCement,,"3/4in, Concrete (Fine Aggregate), Olive",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive,0DimThk-0.75inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> MasticResinMortar
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimThk-0.25inT",,2Layer0D --> Spread --> MasticResin,,"1/4in, Mortar, Natural",,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimThk-0.25inT,,,,,,X,,,,,,
+0DimThk-0.25inT",,2Layer0D --> Spread --> MasticResinMortar,,"1/4in, Mortar, Natural",,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimThk-0.25inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.09375inT",,2Layer0D --> Transparent --> Glass,,"3/32in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.09375inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
+0DimThk-0.09375inT",,2Layer0D --> Transparent --> Glass,,"3/32in, Glass, Untinted",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,0DimThk-0.09375inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.125inT",,2Layer0D --> Transparent --> Glass,,"1/8in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.125inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
+0DimThk-0.125inT",,2Layer0D --> Transparent --> Glass,,"1/8in, Glass, Untinted",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,0DimThk-0.125inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.1875inT",,2Layer0D --> Transparent --> Glass,,"3/16in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.1875inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
+0DimThk-0.1875inT",,2Layer0D --> Transparent --> Glass,,"3/16in, Glass, Untinted",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,0DimThk-0.1875inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.25inT",,2Layer0D --> Transparent --> Glass,,"1/4in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.25inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
+0DimThk-0.25inT",,2Layer0D --> Transparent --> Glass,,"1/4in, Glass, Untinted",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,0DimThk-0.25inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.375inT",,2Layer0D --> Transparent --> Glass,,"3/8in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.375inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
+0DimThk-0.375inT",,2Layer0D --> Transparent --> Glass,,"3/8in, Glass, Untinted",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,0DimThk-0.375inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.5inT",,2Layer0D --> Transparent --> Glass,,"1/2in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.5inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
+0DimThk-0.5inT",,2Layer0D --> Transparent --> Glass,,"1/2in, Glass, Untinted",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,0DimThk-0.5inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.75inT",,2Layer0D --> Transparent --> Glass,,"3/4in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.75inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
+0DimThk-0.75inT",,2Layer0D --> Transparent --> Glass,,"3/4in, Glass, Untinted",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,0DimThk-0.75inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-1inT",,2Layer0D --> Transparent --> Glass,,"1in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-1inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
+0DimThk-1inT",,2Layer0D --> Transparent --> Glass,,"1in, Glass, Untinted",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,0DimThk-1inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.09375inT",,2Layer0D --> Transparent --> Glass,,"3/32in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.09375inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
+0DimThk-0.09375inT",,2Layer0D --> Transparent --> Glass,,"3/32in, Glass, Slate",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate,0DimThk-0.09375inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.125inT",,2Layer0D --> Transparent --> Glass,,"1/8in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.125inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
+0DimThk-0.125inT",,2Layer0D --> Transparent --> Glass,,"1/8in, Glass, Slate",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate,0DimThk-0.125inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.1875inT",,2Layer0D --> Transparent --> Glass,,"3/16in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.1875inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
+0DimThk-0.1875inT",,2Layer0D --> Transparent --> Glass,,"3/16in, Glass, Slate",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate,0DimThk-0.1875inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.25inT",,2Layer0D --> Transparent --> Glass,,"1/4in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.25inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
+0DimThk-0.25inT",,2Layer0D --> Transparent --> Glass,,"1/4in, Glass, Slate",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate,0DimThk-0.25inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.375inT",,2Layer0D --> Transparent --> Glass,,"3/8in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.375inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
+0DimThk-0.375inT",,2Layer0D --> Transparent --> Glass,,"3/8in, Glass, Slate",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate,0DimThk-0.375inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.5inT",,2Layer0D --> Transparent --> Glass,,"1/2in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.5inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
+0DimThk-0.5inT",,2Layer0D --> Transparent --> Glass,,"1/2in, Glass, Slate",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate,0DimThk-0.5inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-0.75inT",,2Layer0D --> Transparent --> Glass,,"3/4in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-0.75inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
+0DimThk-0.75inT",,2Layer0D --> Transparent --> Glass,,"3/4in, Glass, Slate",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate,0DimThk-0.75inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White
-0DimThk-1inT",,2Layer0D --> Transparent --> Glass,,"1in, Glass, White",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-White,0DimThk-1inT,,,,,,,X,,X,X,,
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
+0DimThk-1inT",,2Layer0D --> Transparent --> Glass,,"1in, Glass, Slate",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate,0DimThk-1inT,,,,,,,X,,X,X,,
 PRESET,,"2Layer0D --> Void --> Air
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-0.5inT",,2Layer0D --> Void --> Air,,"1/2in, Air, Clear",,1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear,0DimThk-0.5inT,,X,,,,,X,,,,,

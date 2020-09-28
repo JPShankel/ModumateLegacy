@@ -15,16 +15,39 @@ PRESET,,"1SlotConfig --> Cabinet --> Swing --> Frame
 0Slot-CabinetPanelAssemblyFrameless",,1SlotConfig --> Cabinet --> Swing --> Frame,,2Part --> Cabinet --> Frame,,Frameless Swing Cabinet Face,,0Slot-CabinetFrameSwing,,,
 PRESET,,,,,,,,,,0Slot-CabinetPanelAssemblyFrameless,,,
 PRESET,,"1SlotConfig --> Cabinet --> Swing --> Panel
+0Slot-CabinetPanelPart
 0Slot-CabinetHandleSwingMidStileTop
 0Slot-CabinetHandleSwingMidStileMid
 0Slot-CabinetHandleSwingMidStileBottom",,1SlotConfig --> Cabinet --> Swing --> Panel,,2Part --> Cabinet --> Panel,,Cabinet Panel,,0Slot-CabinetPanelPart,,,
 PRESET,,,,,,,,,,0Slot-CabinetHandleSwingMidStileTop,,,
 PRESET,,,,,,,,,,0Slot-CabinetHandleSwingMidStileMid,,,
 PRESET,,,,,,,,,,0Slot-CabinetHandleSwingMidStileBottom,,,
+PRESET,,"1SlotConfig --> Door --> Barn --> Frame
+0Slot-DoorFrameSwing
+0Slot-DoorTrackBarnSingle",,1SlotConfig --> Door --> Barn --> Frame,,3RiggedAssembly --> Door --> Barn --> Frame,,Single Barn Door,,0Slot-DoorFrameSwing,,,
+PRESET,,,,,,,,,,0Slot-DoorTrackBarnSingle,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyBarn,,,
+PRESET,,"1SlotConfig --> Door --> Barn --> Frame
+0Slot-DoorFrameSwing
+0Slot-DoorTrackBarnDouble
+0Slot-DoorPanelAssemblyBarnLeft",,1SlotConfig --> Door --> Barn --> Frame,,3RiggedAssembly --> Door --> Barn --> Frame,,Double Barn Door,,0Slot-DoorFrameSwing,,,
+PRESET,,,,,,,,,,0Slot-DoorTrackBarnDouble,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyBarnLeft,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyBarnRight,,,
+PRESET,,"1SlotConfig --> Door --> Pocket --> Frame
+0Slot-DoorFramePocket
+0Slot-DoorPanelAssemblyPocket",,1SlotConfig --> Door --> Pocket --> Frame,,3RiggedAssembly --> Door --> Pocket --> Frame,,Single Pocket Door,,0Slot-DoorFramePocket,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyPocket,,,
+PRESET,,"1SlotConfig --> Door --> Pocket --> Frame
+0Slot-DoorFramePocket
+0Slot-DoorPanelAssemblyPocketLeft
+0Slot-DoorPanelAssemblyPocketRight",,1SlotConfig --> Door --> Pocket --> Frame,,3RiggedAssembly --> Door --> Pocket --> Frame,,Double Pocket Door,,0Slot-DoorFramePocket,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyPocketLeft,,,
+PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyPocketRight,,,
 PRESET,,"1SlotConfig --> Door --> Sliding --> Frame
 0Slot-DoorFrameSliding
 0Slot-DoorPanelAssemblySlidingXO-1
-0Slot-DoorPanelAssemblySlidingXO-2",,1SlotConfig --> Door --> Sliding --> Frame,,3RiggedAssembly --> Door --> Sliding --> Frame,,2 Track Sliding Door,,0Slot-DoorFrameSliding,,,
+0Slot-DoorPanelAssemblySlidingXO-2",,1SlotConfig --> Door --> Sliding --> Frame,,3RiggedAssembly --> Door --> Sliding --> Frame,,Sliding Door (XO),,0Slot-DoorFrameSliding,,,
 PRESET,,,,,,,,,,0Slot-DoorPanelAssemblySlidingXO-1,,,
 PRESET,,,,,,,,,,0Slot-DoorPanelAssemblySlidingXO-2,,,
 PRESET,,"1SlotConfig --> Door --> Swing --> Frame
@@ -77,12 +100,27 @@ PRESET,,,,,,,,,,0Slot-DoorHingeRightMiddle,,,
 PRESET,,,,,,,,,,0Slot-DoorHingeRightBottom,,,
 PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyLeftSwing,,,
 PRESET,,,,,,,,,,0Slot-DoorPanelAssemblyRightSwing,,,
+PRESET,,"1SlotConfig --> Door --> Barn --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorCasterBarnLeft
+0Slot-DoorCasterBarnRight
+0Slot-DoorHandlePocketExterior",,1SlotConfig --> Door --> Barn --> Panel,,3RiggedAssembly --> Door --> Barn --> Panel,,Barn Door Panel,,0Slot-DoorPanelPart,,,
+PRESET,,,,,,,,,,0Slot-DoorCasterBarnLeft,,,
+PRESET,,,,,,,,,,0Slot-DoorCasterBarnRight,,,
+PRESET,,,,,,,,,,0Slot-DoorHandlePocketExterior,,,
+PRESET,,,,,,,,,,0Slot-DoorHandlePocketInterior,,,
+PRESET,,"1SlotConfig --> Door --> Pocket --> Panel
+0Slot-DoorPanelPart
+0Slot-DoorHandlePocketExterior
+0Slot-DoorHandlePocketInterior",,1SlotConfig --> Door --> Pocket --> Panel,,3RiggedAssembly --> Door --> Pocket --> Panel,,Pocket Door Panel,,0Slot-DoorPanelPart,,,
+PRESET,,,,,,,,,,0Slot-DoorHandlePocketExterior,,,
+PRESET,,,,,,,,,,0Slot-DoorHandlePocketInterior,,,
 PRESET,,"1SlotConfig --> Door --> Sliding --> Panel
 0Slot-DoorPanelPart
 0Slot-DoorHandleExterior
 0Slot-DoorHandleInterior",,1SlotConfig --> Door --> Sliding --> Panel,,3RiggedAssembly --> Door --> Sliding --> Panel,,Sliding Door Panel,,0Slot-DoorPanelPart,,,
-,,,,,,,,,,0Slot-DoorHandleExterior,,,
-,,,,,,,,,,0Slot-DoorHandleInterior,,,
+PRESET,,,,,,,,,,0Slot-DoorHandleExterior,,,
+PRESET,,,,,,,,,,0Slot-DoorHandleInterior,,,
 PRESET,,"1SlotConfig --> Door --> Swing --> Panel
 0Slot-DoorPanelPart
 0Slot-DoorHandleExterior
@@ -91,16 +129,16 @@ PRESET,,"1SlotConfig --> Door --> Swing --> Panel
 0Slot-DoorSurfaceLockUpper
 0Slot-DoorSurfaceLockLower
 0Slot-DoorPeepholeRegular
-0Slot-DoorPeeholeADA
+0Slot-DoorPeepholeADA
 0Slot-DoorKnocker
-0Slot-DoorMailSlot",,1SlotConfig --> Door --> Swing --> Panel,,3RiggedAssembly --> Door --> Swing --> Panel,,Solid Swing Panel,,0Slot-DoorPanelPart,,,
+0Slot-DoorMailSlot",,1SlotConfig --> Door --> Swing --> Panel,,3RiggedAssembly --> Window --> Fixed --> Frame,,Solid Swing Panel,,0Slot-DoorPanelPart,,,
 PRESET,,,,,,,,,,0Slot-DoorHandleExterior,,,
 PRESET,,,,,,,,,,0Slot-DoorHandleInterior,,,
 PRESET,,,,,,,,,,0Slot-DoorDeadbolt,,,
 PRESET,,,,,,,,,,0Slot-DoorSurfaceLockUpper,,,
 PRESET,,,,,,,,,,0Slot-DoorSurfaceLockLower,,,
 PRESET,,,,,,,,,,0Slot-DoorPeepholeRegular,,,
-PRESET,,,,,,,,,,0Slot-DoorPeeholeADA,,,
+PRESET,,,,,,,,,,0Slot-DoorPeepholeADA,,,
 PRESET,,,,,,,,,,0Slot-DoorKnocker,,,
 PRESET,,,,,,,,,,0Slot-DoorMailSlot,,,
 PRESET,,"1SlotConfig --> Door --> Swing --> Panel
@@ -115,6 +153,37 @@ PRESET,,,,,,,,,,0Slot-DoorHandleInterior,,,
 PRESET,,,,,,,,,,0Slot-DoorDeadbolt,,,
 PRESET,,,,,,,,,,0Slot-DoorSurfaceLockUpper,,,
 PRESET,,,,,,,,,,0Slot-DoorSurfaceLockLower,,,
+PRESET,,"1SlotConfig --> Window --> Fixed --> Frame
+0Slot-WindowFrameFixed
+0Slot-WindowPanelFixed
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXO-1
+0Slot-WindowPanelSlidingXO-2
+0Slot-WindowFrameSliding",,1SlotConfig --> Window --> Fixed --> Frame,,3RiggedAssembly --> Window --> Fixed --> Frame,,Fixed Window,,0Slot-WindowFrameFixed,,,
+PRESET,,,,,,,,,,0Slot-WindowPanelFixed,,,
+PRESET,,"1SlotConfig --> Window --> Sliding --> Frame
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXO-1
+0Slot-WindowPanelSlidingXO-2
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXOX-1
+0Slot-WindowPanelSlidingXOX-2
+0Slot-WindowPanelSlidingXOX-3
+0Slot-TableInTableAndChairs",,1SlotConfig --> Window --> Sliding --> Frame,,3RiggedAssembly --> Window --> Sliding --> Frame,,Sliding Window (XO),,0Slot-WindowFrameSliding,,,
+PRESET,,,,,,,,,,0Slot-WindowPanelSlidingXO-1,,,
+PRESET,,,,,,,,,,0Slot-WindowPanelSlidingXO-2,,,
+PRESET,,"1SlotConfig --> Window --> Sliding --> Frame
+0Slot-WindowFrameSliding
+0Slot-WindowPanelSlidingXOX-1
+0Slot-WindowPanelSlidingXOX-2
+0Slot-WindowPanelSlidingXOX-3
+0Slot-TableInTableAndChairs
+0Slot-ChairAtTable1+1+1+1-1
+0Slot-ChairAtTable1+1+1+1-2
+0Slot-ChairAtTable1+1+1+1-3",,1SlotConfig --> Window --> Sliding --> Frame,,3RiggedAssembly --> Window --> Sliding --> Frame,,Sliding Window (XOX),,0Slot-WindowFrameSliding,,,
+PRESET,,,,,,,,,,0Slot-WindowPanelSlidingXOX-1,,,
+PRESET,,,,,,,,,,0Slot-WindowPanelSlidingXOX-2,,,
+PRESET,,,,,,,,,,0Slot-WindowPanelSlidingXOX-3,,,
 PRESET,,"1SlotConfig --> FFE --> TableAndChairs
 0Slot-TableInTableAndChairs
 0Slot-ChairAtTable1+1+1+1-1
