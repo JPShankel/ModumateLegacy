@@ -36,7 +36,7 @@ namespace Modumate
 		int totalTriangles = 0;
 		for (const auto& object: separatorObjects)
 		{
-			const ADynamicMeshActor* meshActor = dynamic_cast<const ADynamicMeshActor*>(object->GetActor());
+			const ADynamicMeshActor* meshActor = Cast<ADynamicMeshActor>(object->GetActor());
 			if (!meshActor)
 			{
 				continue;
