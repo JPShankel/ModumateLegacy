@@ -2,7 +2,11 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelMetaPlaneTool.h"
 
+#include "Components/EditableTextBox.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "UI/DimensionManager.h"
+#include "UI/PendingSegmentActor.h"
+#include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -10,15 +14,12 @@
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/LineActor.h"
-#include "UI/DimensionManager.h"
-#include "UI/PendingSegmentActor.h"
 
 using namespace Modumate;
 
 UMetaPlaneTool::UMetaPlaneTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, State(Neutral)
-	, PendingSegmentID(MOD_ID_NONE)
 	, PendingPlane(nullptr)
 	, AnchorPointDegree(ForceInitToZero)
 	, bPendingSegmentValid(false)
@@ -37,6 +38,8 @@ UMetaPlaneTool::UMetaPlaneTool(const FObjectInitializer& ObjectInitializer)
 
 bool UMetaPlaneTool::HandleInputNumber(double n)
 {
+	Super::HandleInputNumber(n);
+
 	if (!Controller->EMPlayerState->SnappedCursor.Visible)
 	{
 		return false;
@@ -45,44 +48,19 @@ bool UMetaPlaneTool::HandleInputNumber(double n)
 
 	auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 
-	switch (Controller->EMPlayerState->CurrentDimensionStringGroupIndex)
+	if ((State == NewSegmentPending) && pendingSegment != nullptr)
 	{
-	case 0:
-		if ((State == NewSegmentPending) && pendingSegment != nullptr)
+		FVector dir = (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal() * n;
+
+		// TODO: until the UI flow can allow for separate X and Y distances, do not respond
+		// to typing a number for XY planes
+		if (AxisConstraint == EAxisConstraint::AxesXY)
 		{
-			FVector dir = (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal() * n;
-
-			// TODO: until the UI flow can allow for separate X and Y distances, do not respond
-			// to typing a number for XY planes
-			if (AxisConstraint == EAxisConstraint::AxesXY)
-			{
-				return false;
-			}
-
-			return MakeObject(pendingSegment->Point1 + dir, NewObjIDs);
+			return false;
 		}
-		return true;
-	case 1:
-		// Project segment to degree defined by user input
-		float currentSegmentLength = FMath::Max((pendingSegment->Point1 - pendingSegment->Point2).Size(), 100.f);
 
-		FVector startPos = pendingSegment->Point1;
-		FVector degreeDir = (AnchorPointDegree - startPos).GetSafeNormal();
-		degreeDir = degreeDir.RotateAngleAxis(n + 180.f, FVector::UpVector);
-
-		FVector projectedInputPoint = startPos + degreeDir * currentSegmentLength;
-
-		FVector2D projectedCursorScreenPos;
-		if (Controller->ProjectWorldLocationToScreen(projectedInputPoint, projectedCursorScreenPos))
-		{
-			Controller->SetMouseLocation(projectedCursorScreenPos.X, projectedCursorScreenPos.Y);
-			Controller->ClearUserSnapPoints();
-
-			Controller->EMPlayerState->SnappedCursor.WorldPosition = projectedInputPoint;
-		}
-		return true;
+		return MakeObject(pendingSegment->Point1 + dir, NewObjIDs);
 	}
-
 	return true;
 }
 
@@ -141,6 +119,12 @@ bool UMetaPlaneTool::BeginUse()
 	auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
 	PendingSegmentID = dimensionActor->ID;
 
+	auto dimensionWidget = dimensionActor->DimensionText;
+	dimensionWidget->Measurement->SetIsReadOnly(false);
+	dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &UEditModelToolBase::OnTextCommitted);
+
+	GameInstance->DimensionManager->SetActiveActorID(PendingSegmentID);
+
 	auto pendingSegment = dimensionActor->GetLineActor();
 	pendingSegment->Point1 = hitLoc;
 	pendingSegment->Point2 = hitLoc;
@@ -182,7 +166,9 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 	FModumateDocument &doc = GameState->Document;
 
 	bool bSuccess = false;
-	auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
+	auto pendingSegment = dimensionActor->GetLineActor();
+
 	FVector constrainedStartPoint = pendingSegment->Point1;
 	FVector constrainedEndPoint = Location;
 	ConstrainHitPoint(constrainedStartPoint);

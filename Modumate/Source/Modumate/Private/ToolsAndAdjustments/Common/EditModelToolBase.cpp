@@ -2,12 +2,17 @@
 
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 
+#include "Components/EditableTextBox.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "Runtime/Engine/Classes/Components/LineBatchComponent.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
+#include "UI/DimensionActor.h"
+#include "UI/DimensionManager.h"
 #include "UnrealClasses/CompoundMeshActor.h"
+#include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -24,6 +29,7 @@ UEditModelToolBase::UEditModelToolBase(const FObjectInitializer& ObjectInitializ
 	, GameInstance(nullptr)
 	, AxisConstraint(EAxisConstraint::None)
 	, CreateObjectMode(EToolCreateObjectMode::Draw)
+	, PendingSegmentID(MOD_ID_NONE)
 {
 	Controller = Cast<AEditModelPlayerController_CPP>(GetOuter());
 	if (auto world = GetWorld())
@@ -82,14 +88,30 @@ bool UEditModelToolBase::FrameUpdate()
 
 bool UEditModelToolBase::EndUse()
 {
-	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-	InUse = false;
-	return true;
+	return PostEndOrAbort();
 }
 
 bool UEditModelToolBase::AbortUse()
 {
+	return PostEndOrAbort();
+}
+
+bool UEditModelToolBase::PostEndOrAbort()
+{
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 	InUse = false;
+
+	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
+	if (dimensionActor != nullptr)
+	{
+		dimensionActor->DimensionText->Measurement->OnTextCommitted.RemoveDynamic(this, &UEditModelToolBase::OnTextCommitted);
+		DimensionManager->SetActiveActorID(MOD_ID_NONE);
+	}
+
 	return true;
+}
+
+void UEditModelToolBase::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	Controller->OnTextCommitted(Text, CommitMethod);
 }

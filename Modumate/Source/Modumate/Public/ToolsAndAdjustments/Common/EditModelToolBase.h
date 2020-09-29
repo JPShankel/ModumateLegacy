@@ -39,6 +39,8 @@ protected:
 
 	FBIMKey AssemblyKey;
 
+	int32 PendingSegmentID;
+
 public:
 
 	UEditModelToolBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
@@ -55,6 +57,7 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
+	virtual bool PostEndOrAbort() override;
 	virtual bool HandleInvert() override { return true; }
 	virtual bool HandleControlKey(bool pressed) override { return true; }
 	virtual bool HandleMouseUp() override { return true; }
@@ -64,4 +67,7 @@ public:
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override { CreateObjectMode = InCreateObjectMode; }
 	virtual void SetAssemblyKey(const FBIMKey &InAssemblyKey) override { AssemblyKey = InAssemblyKey; }
 	virtual FBIMKey GetAssemblyKey() const override { return AssemblyKey; }
+
+	UFUNCTION()
+	void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 };

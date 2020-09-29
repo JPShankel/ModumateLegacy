@@ -436,10 +436,10 @@ public:
 	void SetToolCreateObjectMode(EToolCreateObjectMode CreateObjectMode);
 
 	UFUNCTION(BlueprintCallable, Category = Tools)
-	bool HandleToolInputText(FString InputText);
+	void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
-	UFUNCTION(BlueprintPure, Category = "Tools")
-	bool CanCurrentHandleShowRawInput();
+	UPROPERTY()
+	bool bResetFocusToGameViewport = false;
 
 	// Input handling
 	void OnHoverHandleWidget(class UAdjustmentHandleWidget* HandleWidget, bool bIsHovered);

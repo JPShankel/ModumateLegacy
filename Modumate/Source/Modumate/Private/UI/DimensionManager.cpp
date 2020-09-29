@@ -176,10 +176,5 @@ ADimensionActor *UDimensionManager::GetActiveActor()
 
 void UDimensionManager::SetActiveActorID(int32 ID)
 {
-	if (ID == MOD_ID_NONE)
-	{
-		FSlateApplication::Get().SetAllUserFocusToGameViewport(EFocusCause::SetDirectly);
-	}
-
 	ActiveActorID = ID;
 }

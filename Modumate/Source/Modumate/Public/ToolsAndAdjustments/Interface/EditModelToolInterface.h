@@ -33,6 +33,7 @@ public:
 	virtual bool FrameUpdate() = 0;
 	virtual bool EndUse() = 0;
 	virtual bool AbortUse() = 0;
+	virtual bool PostEndOrAbort() = 0;
 	virtual bool ScrollToolOption(int32 dir) = 0;
 	virtual bool HandleInputNumber(double n) = 0;
 	virtual bool HandleInvert() = 0;

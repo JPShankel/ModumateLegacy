@@ -4,6 +4,7 @@
 
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/EditableTextBox.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "Drafting/APDFLLib.h"
@@ -332,21 +333,33 @@ void AEditModelPlayerController_CPP::SetToolCreateObjectMode(EToolCreateObjectMo
 	}
 }
 
-bool AEditModelPlayerController_CPP::HandleToolInputText(FString InputText)
+void AEditModelPlayerController_CPP::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
+	// TODO: Currently the widgets set the user's focus to "None" after committing text, which
+	// locks the user out of keyboard input.  However, mouse input is still available and clicking
+	// resets the state because the correct SViewport is the widget under the cursor.
+
+	// This flag is a temporary fix, it sets the focus back to the SViewport on the next actor tick, 
+	// which happens to occur after the focus is cleared to None.  To debug this process, type the command
+	// SlateDebugger.Start and open the Output Log.
+	bResetFocusToGameViewport = true;
+
+	if (CommitMethod != ETextCommit::OnEnter)
+	{
+		return;
+	}
+
 	EToolMode curToolMode = GetToolMode();
 	float v = 0.f;
 	// Most cases input is in imperial unit, unless is specific handle or tool mode
 	if (curToolMode == EToolMode::VE_ROTATE || // Rotate tool uses degree
-		(curToolMode == EToolMode::VE_FLOOR && EMPlayerState->CurrentDimensionStringGroupIndex == 1) || // Floor tool degree string uses degree
-		(curToolMode == EToolMode::VE_COUNTERTOP && EMPlayerState->CurrentDimensionStringGroupIndex == 1) || // CounterTop tool degree string uses degree
-		CanCurrentHandleShowRawInput())
+		(InteractionHandle && !InteractionHandle->HasDistanceTextInput()))
 	{
-		v = FCString::Atof(*InputText);
+		UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), v);
 	}
 	else
 	{
-		v = UModumateDimensionStatics::StringToMetric(InputText, true);
+		v = UModumateDimensionStatics::StringToMetric(Text.ToString(), true);
 	}
 
 	const float MAX_DIMENSION = 525600 * 12 * 2.54;
@@ -357,7 +370,7 @@ bool AEditModelPlayerController_CPP::HandleToolInputText(FString InputText)
 		// in case a user snap point is taking input.
 		if (HandleInputNumber(v))
 		{
-			return true;
+			return;
 		}
 
 		if (InteractionHandle)
@@ -365,25 +378,15 @@ bool AEditModelPlayerController_CPP::HandleToolInputText(FString InputText)
 			if (InteractionHandle->HandleInputNumber(v))
 			{
 				InteractionHandle = nullptr;
-				return true;
+				return;
 			}
 		}
 		else if (CurrentTool && CurrentTool->IsInUse())
 		{
-			return CurrentTool->HandleInputNumber(v);
+			CurrentTool->HandleInputNumber(v);
+			return;
 		}
 	}
-
-	return false;
-}
-
-bool AEditModelPlayerController_CPP::CanCurrentHandleShowRawInput()
-{
-	if (InteractionHandle)
-	{
-		return InteractionHandle->AcceptRawInputNumber;
-	}
-	return false;
 }
 
 void AEditModelPlayerController_CPP::SetupInputComponent()
@@ -1244,6 +1247,12 @@ void AEditModelPlayerController_CPP::TickInput(float DeltaTime)
 	// Do not allow side effect delta generation / application while cleaning objects during tick;
 	// this step is meant only to clean objects whose client side representations need updating after underlying data changes.
 	Document->CleanObjects(nullptr);
+
+	if (bResetFocusToGameViewport)
+	{
+		bResetFocusToGameViewport = false;
+		FSlateApplication::Get().SetAllUserFocusToGameViewport();
+	}
 }
 
 FVector AEditModelPlayerController_CPP::CalculateViewLocationForSphere(const FSphere &TargetSphere, const FVector &ViewVector, float AspectRatio, float FOV)

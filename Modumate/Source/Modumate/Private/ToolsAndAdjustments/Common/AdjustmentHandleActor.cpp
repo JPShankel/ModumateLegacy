@@ -426,29 +426,5 @@ void AAdjustmentHandleActor::SetSign(float InSign)
 
 void AAdjustmentHandleActor::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	if (CommitMethod != ETextCommit::OnEnter)
-	{
-		return;
-	}
-
-	auto dimensionWidget = GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID)->DimensionText;
-
-	float lengthValue = 0.0f;
-	if (HasDistanceTextInput())
-	{
-		auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString());
-
-		lengthValue = dimension.Centimeters;
-
-		// unnecessary if every implementation ends up calling EndUse
-		dimensionWidget->UpdateText(lengthValue);
-	}
-	else if (UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), lengthValue))
-	{
-		dimensionWidget->UpdateDegreeText(lengthValue);
-	}
-
-	// TODO: there is other shared behavior that could be useful here in the Controller's implementation, 
-	// like setting the mouse cursor position
-	HandleInputNumber(lengthValue);
+	Controller->OnTextCommitted(Text, CommitMethod);
 }
