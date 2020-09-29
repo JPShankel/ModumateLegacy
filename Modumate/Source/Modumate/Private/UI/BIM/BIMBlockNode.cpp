@@ -246,20 +246,11 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 	}
 
 	bool bCaptureSuccess = false;
-	UMaterialInterface* iconMat;
-	if (IsKingNode) // Root node should be able to create full assembly
-	{
-		EToolMode toolMode = EToolMode::VE_NONE;
-		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(true, Node->PresetID, toolMode, iconMat);
-	}
-	else
-	{
-		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(PresetID, iconMat, ID);
-	}
+	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, IconTexture, ID);
 	if (bCaptureSuccess)
 	{
-		IconImage->SetBrushFromMaterial(iconMat);
-		ComponentPresetListItem->IconImage->SetBrushFromMaterial(iconMat);
+		IconImage->SetBrushFromMaterial(IconMaterial);
+		ComponentPresetListItem->IconImage->SetBrushFromMaterial(IconMaterial);
 	}
 
 	return true;

@@ -588,6 +588,8 @@ ECraftingResult FBIMCraftingTreeNodePool::CreateAssemblyFromNodes(const FBIMPres
 	if (rootNode.IsValid())
 	{
 		// Build the preset collection must reflect the dirty state of the node
+		// Clean presets should never override dirty presets regardless of node order
+		// Therefore dirty presets are added unconditional, and clean presets are added only if they don't already exist
 		FBIMPresetCollection previewCollection;
 		for (auto& instance : InstancePool)
 		{
@@ -602,7 +604,7 @@ ECraftingResult FBIMCraftingTreeNodePool::CreateAssemblyFromNodes(const FBIMPres
 			else
 			{
 				const FBIMPreset* original = PresetCollection.Presets.Find(instance->PresetID);
-				if (ensureAlways(original != nullptr))
+				if (ensureAlways(original != nullptr) && !previewCollection.Presets.Contains(original->PresetID))
 				{
 					previewCollection.Presets.Add(original->PresetID, *original);
 				}

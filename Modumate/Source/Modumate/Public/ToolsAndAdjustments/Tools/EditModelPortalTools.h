@@ -32,7 +32,6 @@ protected:
 	bool bValidPortalConfig;
 
 	void SetupCursor();
-	FVector AssemblyNativeSize(const FBIMAssemblySpec& assembly) const;
 
 public:
 	UPortalToolBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());

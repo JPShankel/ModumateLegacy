@@ -117,7 +117,7 @@ bool FMOIPortalImpl::SetupCompoundActorGeometry()
 				const FBIMAssemblySpec& assembly = MOI->GetAssembly();
 				if (assembly.Parts.Num() > 0 && !assembly.Parts[0].Mesh.NativeSize.IsZero())
 				{	// Assume first part for native size.
-					FVector nativeSize = assembly.Parts[0].Mesh.NativeSize * Modumate::InchesToCentimeters;
+					FVector nativeSize = assembly.GetRiggedAssemblyNativeSize();
 					scale.X = planeSize.X / nativeSize.X;
 					scale.Z = planeSize.Y / nativeSize.Z;
 					bResult = true;

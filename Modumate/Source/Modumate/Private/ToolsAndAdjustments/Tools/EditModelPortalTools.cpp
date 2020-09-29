@@ -91,20 +91,6 @@ void UPortalToolBase::SetupCursor()
 	CursorActor->TempObjectToolMode = GetToolMode();
 }
 
-
-//TODO: Obtain correct assembly native size when it becomes better defined.
-FVector UPortalToolBase::AssemblyNativeSize(const FBIMAssemblySpec& assembly) const
-{
-	if (ensure(assembly.Parts.Num() > 0))
-	{
-		return assembly.Parts[0].Mesh.NativeSize * Modumate::InchesToCentimeters;
-	}
-	else
-	{
-		return FVector::ZeroVector;
-	}
-}
-
 bool UPortalToolBase::Deactivate()
 {
 	if (CursorActor != nullptr)
@@ -302,7 +288,7 @@ bool UPortalToolBase::BeginUse()
 	if (!bPaintTool)
 	{   // Create new metaplane to host portal.
 		FBox bounds(ForceInit);
-		FVector nativeSize(AssemblyNativeSize(*assembly));
+		FVector nativeSize(assembly->GetRiggedAssemblyNativeSize());
 
 		if (nativeSize.IsZero())
 		{	// No supplied native size - use meshes:

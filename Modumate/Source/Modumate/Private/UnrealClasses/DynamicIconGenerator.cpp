@@ -16,6 +16,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "Kismet/KismetRenderingLibrary.h"
+#include "UnrealClasses/ThumbnailCacheManager.h"
 
 using namespace Modumate;
 
@@ -81,6 +82,8 @@ void ADynamicIconGenerator::BeginPlay()
 	IconCompoundMeshActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
 
 	DynCustomMaterial = IconSphereMesh->CreateDynamicMaterialInstance(0, CustomMaterialBase);
+
+	IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
 }
 
 // Called every frame
@@ -90,90 +93,47 @@ void ADynamicIconGenerator::Tick(float DeltaTime)
 
 }
 
-bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(bool UseAssemblyFromBIMDesigner, const FBIMKey& AsmKey, EToolMode mode, UMaterialInterface*& OutMaterial)
+bool ADynamicIconGenerator::SetIconMeshForAssemblyByToolMode(const FBIMKey& AsmKey, EToolMode Mode, UMaterialInterface*& OutMaterial)
 {
-	// TODO: Attempt to use cached icon first, make new if not available
+	// TODO: Remove tool mode usage
 	OutMaterial = nullptr;
 	UTexture* iconTexture = nullptr;
-	if (!UseAssemblyFromBIMDesigner && GetSavedIconFromPreset(AsmKey, iconTexture))
+
+	if (GetSavedIconFromPreset(AsmKey, iconTexture))
 	{
-		// TODO: Make OutMaterial from texture
+		OutMaterial = CreateMaterialForIconTexture(AsmKey, iconTexture);
 		return true;
 	}
-	UTextureRenderTarget2D* renderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8, FLinearColor::Black, true);
 
-	const FBIMAssemblySpec *assembly;
-	EToolMode iconMode = mode;
-	FModumateDocument *doc = &GameState->Document;
-	if (UseAssemblyFromBIMDesigner)
-	{
-		assembly = &Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly;
-		iconMode = UModumateTypeStatics::ToolModeFromObjectType(assembly->ObjectType);
-	}
-	else
-	{
-		assembly = doc->PresetManager.GetAssemblyByKey(iconMode, AsmKey);
-	}
+	const FBIMAssemblySpec* assembly = GameState->Document.PresetManager.GetAssemblyByKey(Mode, AsmKey);
 	if (!assembly)
 	{
 		return false;
 	}
 
-	bool captureSuccess = false;
-	switch (iconMode)
-	{
-	case EToolMode::VE_WALL:
-	case EToolMode::VE_FINISH:
-		captureSuccess = SetIconMeshForWallAssembly(*assembly, renderTarget);
-		break;
-	case EToolMode::VE_FLOOR:
-	case EToolMode::VE_ROOF_FACE:
-	case EToolMode::VE_COUNTERTOP:
-	case EToolMode::VE_CEILING:
-		captureSuccess = SetIconMeshForFloorAssembly(*assembly, renderTarget);
-		break;
-	case EToolMode::VE_DOOR:
-	case EToolMode::VE_WINDOW:
-		captureSuccess = SetIconMeshForPortalAssembly(*assembly, iconMode, renderTarget);
-		break;
-	case EToolMode::VE_STRUCTURELINE:
-	case EToolMode::VE_TRIM:
-		captureSuccess = SetIconMeshForTrimAssembly(*assembly, iconMode, renderTarget);
-		break;
-	case EToolMode::VE_CABINET:
-		captureSuccess = SetIconMeshForCabinetAssembly(*assembly, renderTarget);
-		break;
-	case EToolMode::VE_PLACEOBJECT:
-		captureSuccess = SetIconMeshForFFEAssembly(*assembly, renderTarget);
-		break;
-	}
-
+	bool captureSuccess = SetIconMeshForAssemblyType(*assembly, IconRenderTarget);
 	if (captureSuccess)
 	{
-		// TODO: Save texture cache, release RT resource
-		iconTexture = renderTarget;
-		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
-		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, iconTexture);
-		OutMaterial = dynMat;
-		return true;
+		UTexture2D* outSavedTexture = nullptr;
+		captureSuccess = UThumbnailCacheManager::SaveThumbnailFromShoppingItemAndTool(IconRenderTarget, AsmKey, Mode, outSavedTexture, this);
+		OutMaterial = CreateMaterialForIconTexture(AsmKey, outSavedTexture);
 	}
-	else
-	{
-		renderTarget->ReleaseResource();
-		return false;
-	}
+
+	return captureSuccess;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMKey& PresetID, UMaterialInterface*& OutMaterial, int32 NodeID)
+bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, const FBIMKey& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, int32 NodeID)
 {
 	// TODO: Attempt to use cached icon first, make new if not available
 	OutMaterial = nullptr;
-	UTexture* iconTexture = nullptr;
+	OutTexture = nullptr;
+#if 0
 	if (GetSavedIconFromPreset(PresetID, iconTexture))
 	{
 		// TODO: Make OutMaterial from texture
 		return true;
 	}
+#endif
 
 	const FPresetManager &presetManager = GameState->Document.PresetManager;
 	const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
@@ -198,6 +158,9 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMKey& PresetID, U
 	bool captureSuccess = false;
 	switch (preset->NodeScope)
 	{
+	case EBIMValueScope::Assembly:
+		captureSuccess = SetIconMeshForAssemblyType(Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly, renderTarget);
+		break;
 	case EBIMValueScope::RawMaterial:
 		captureSuccess = SetIconMeshForRawMaterial(PresetID, renderTarget);
 		break;
@@ -205,22 +168,30 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMKey& PresetID, U
 		captureSuccess = SetIconMeshForProfile(PresetID, renderTarget);
 		break;
 	case EBIMValueScope::Material:
-		captureSuccess = SetIconMeshForMaterial(NodeID, renderTarget);
+		captureSuccess = SetIconMeshForMaterial(UseDependentPreset, PresetID, NodeID, renderTarget);
 		break;
 	case EBIMValueScope::Module:
-		captureSuccess = SetIconMeshForModule(NodeID, renderTarget);
+		captureSuccess = SetIconMeshForModule(UseDependentPreset, PresetID, NodeID, renderTarget);
 		break;
 	case EBIMValueScope::Layer:
-		captureSuccess = SetIconMeshForLayer(NodeID, renderTarget);
+		if (UseDependentPreset)
+		{
+			captureSuccess = SetIconMeshForLayerPreset(PresetID, renderTarget);
+		}
+		else
+		{
+			captureSuccess = SetIconMeshForLayerNodeID(NodeID, renderTarget);
+		}
+
 		break;
 	}
 	
 	if (captureSuccess)
 	{
 		// TODO: Save texture cache, release RT resource
-		iconTexture = renderTarget;
+		OutTexture = renderTarget;
 		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
-		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, iconTexture);
+		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, OutTexture);
 		OutMaterial = dynMat;
 		return true;
 	}
@@ -233,11 +204,63 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMKey& PresetID, U
 
 bool ADynamicIconGenerator::GetSavedIconFromPreset(const FBIMKey& PresetID, UTexture*& OutTexture)
 {
-	// TODO: find cached texture for presetID
+	OutTexture = nullptr;
+	const FPresetManager &presetManager = GameState->Document.PresetManager;
+	const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
+	if (preset == nullptr)
+	{
+		return false;
+	}
+
+	if (preset->NodeScope == EBIMValueScope::Assembly)
+	{
+		OutTexture = UThumbnailCacheManager::GetCachedThumbnailFromShoppingItemAndTool(PresetID, UModumateTypeStatics::ToolModeFromObjectType(preset->ObjectType), this);
+	}
+	else
+	{
+		// TODO: support cache for other preset scope
+		return false;
+	}
+
+	return OutTexture != nullptr;
+}
+
+UMaterialInterface* ADynamicIconGenerator::CreateMaterialForIconTexture(const FBIMKey& PresetID, UTexture* InTexture)
+{
+	UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
+	dynMat->SetTextureParameterValue(MaterialIconTextureParamName, InTexture);
+	return dynMat;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
+{
+	// TODO: Use ObjectType instead of EToolMode
+	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(Assembly.ObjectType);
+	switch (toolMode)
+	{
+	case EToolMode::VE_WALL:
+	case EToolMode::VE_FINISH:
+		return SetIconMeshForWallAssembly(Assembly, InRenderTarget);
+	case EToolMode::VE_FLOOR:
+	case EToolMode::VE_ROOF_FACE:
+	case EToolMode::VE_COUNTERTOP:
+	case EToolMode::VE_CEILING:
+		return SetIconMeshForFloorAssembly(Assembly, InRenderTarget);
+	case EToolMode::VE_DOOR:
+	case EToolMode::VE_WINDOW:
+		return SetIconMeshForPortalAssembly(Assembly, toolMode, InRenderTarget);
+	case EToolMode::VE_STRUCTURELINE:
+	case EToolMode::VE_TRIM:
+		return SetIconMeshForTrimAssembly(Assembly, toolMode, InRenderTarget);
+	case EToolMode::VE_CABINET:
+		return SetIconMeshForCabinetAssembly(Assembly, InRenderTarget);
+	case EToolMode::VE_PLACEOBJECT:
+		return SetIconMeshForFFEAssembly(Assembly, InRenderTarget);
+	}
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
 {
 	// TODO: Investigate component bounding box issue when location isn't in FVector::zero
 	IconDynamicMeshActor->SetActorLocation(FVector::ZeroVector);
@@ -280,7 +303,7 @@ bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FBIMAssemblySpec &A
 	FVector meshLocation = meshOrigin * meshExtent * -1.f;
 	IconDynamicMeshActor->SetActorRelativeLocation(FVector(meshLocation.X, 0.f, meshLocation.Z * 0.5f));
 	IconDynamicMeshActor->SetActorScale3D(meshSize);
-	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
 	// Step 3: Cleanup
@@ -290,7 +313,7 @@ bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FBIMAssemblySpec &A
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
 {
 	// TODO: Investigate component bounding box issue when location isn't in FVector::zero
 	IconDynamicMeshActor->SetActorLocation(FVector::ZeroVector);
@@ -342,7 +365,7 @@ bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FBIMAssemblySpec &
 	IconDynamicMeshActor->SetActorRelativeLocation(FVector(0.f, 0.f, meshLocation.Z));
 	IconDynamicMeshActor->SetActorScale3D(meshSize);
 
-	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
 	// Step 3: Cleanup
@@ -352,17 +375,15 @@ bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FBIMAssemblySpec &
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* InRenderTarget)
 {
 	IconCompoundMeshActor->MakeFromAssembly(Assembly, FVector::OneVector, false, true);
 
-	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
-	float portalMinX = 0;// assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinX).AsWorldCentimeters();
-	float portalMaxX = 100; // assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMaxX).AsWorldCentimeters();
-	float portalMinZ = 0; // assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMinZ).AsWorldCentimeters();
-	float portalMaxZ = 180; // assembly->CachedAssembly.PortalConfiguration.CachedDimensions.FindRef(FPortalConfiguration::RefPlaneNameMaxZ).AsWorldCentimeters();
-	float portalWidth = portalMaxX - portalMinX;
-	float portalHeight = portalMaxZ - portalMinZ;
+	// Step 1: Calculate and adjust model to fit inside the view of SceneCaptureComp
+	// TODO: Some assemblies have native size = 0 
+	FVector portalSize = Assembly.GetRiggedAssemblyNativeSize();
+	float portalWidth = portalSize.X;
+	float portalHeight = portalSize.Z;
 
 	FVector meshSize = (PortalIconScaleFactor / FVector(portalWidth, 0.f, portalHeight).Size()) * FVector::OneVector;
 	FVector meshLocation = (FVector(portalWidth, 0.f, portalHeight)) * meshSize * -0.5f;
@@ -370,10 +391,10 @@ bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FBIMAssemblySpec 
 	IconCompoundMeshActor->SetActorRelativeLocation(meshLocation);
 	IconCompoundMeshActor->SetActorRelativeScale3D(meshSize);
 
-	// Set bound render to prevent mesh from being occluded by front mesh
+	// Step 2: Set bound render to prevent mesh from being occluded by front mesh
 	SetIconCompoundMeshActorForCapture(true);
 
-	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
 	// Step 3: Cleanup
@@ -384,7 +405,7 @@ bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FBIMAssemblySpec 
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Now that we have a cabinet assembly, a DynamicMeshActor, and CompoundMeshActor,
 	// we can make a fake cabinet for icon generation the same way that FMOICabinetImpl does.
@@ -439,7 +460,7 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 	IconDynamicMeshActor->Mesh->SetVisibility(true);
 	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, true);
 
-	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
 	// Step 3: Cleanup
@@ -453,7 +474,7 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Now that we have an assembly, a DynamicMeshActor, and CompoundMeshActor,
 	// we can make a mesh for icon generation.
@@ -481,7 +502,7 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &A
 	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, true);
 	IconDynamicMeshActor->Mesh->SetVisibility(true);
 
-	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
 	// Step 3: Cleanup
@@ -492,7 +513,7 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &A
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Step 1: Generate model
 	////////////////////////////////////////////////////////////////////
@@ -516,7 +537,7 @@ bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &As
 
 	SetComponentForIconCapture(IconStaticMesh, true);
 	IconStaticMesh->SetVisibility(true);
-	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
 	// Step 3: Cleanup
@@ -526,7 +547,7 @@ bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &As
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForRawMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForRawMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Step 1: Get material
 	UMaterialInterface *mat;
@@ -540,7 +561,7 @@ bool ADynamicIconGenerator::SetIconMeshForRawMaterial(const FBIMKey& MaterialKey
 	// Step 2: Setup mesh for material
 	SetComponentForIconCapture(IconSphereMesh, true);
 	IconSphereMesh->SetVisibility(true);
-	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
 	// Step 3: Cleanup
@@ -563,7 +584,7 @@ bool ADynamicIconGenerator::SetIconMeshForColor(const FBIMKey& ColorKey, UMateri
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForProfile(const FBIMKey& ProfileKey, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForProfile(const FBIMKey& ProfileKey, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Step 1: Get profile
 	const FSimpleMeshRef* meshRef = Gamemode->ObjectDatabase->GetSimpleMeshByKey(ProfileKey);
@@ -581,27 +602,27 @@ bool ADynamicIconGenerator::SetIconMeshForProfile(const FBIMKey& ProfileKey, UTe
 	// Geometry params for setting up dynamic mesh actor
 	FVector meshStartPos = FVector(1.f, 0.f, 0.f);
 	FVector meshEndPos = FVector(-1.f, 0.f, 0.f);
-	FVector meshNormal = FVector::LeftVector;
-	FVector meshUp = FVector::DownVector;
+	// Profile assets orientation is different in BeamColumns vs trim
+	bool asBeamProfile = Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly.ObjectType == EObjectType::OTStructureLine;
+	FVector meshNormal = asBeamProfile ? FVector::LeftVector : FVector::RightVector;
+	FVector meshUp = asBeamProfile ? FVector::DownVector : FVector::UpVector;
 
 	IconDynamicMeshActor->SetupExtrudedPolyGeometry(obAsm, meshStartPos, meshEndPos,
 		meshNormal, meshUp, FVector2D::ZeroVector, FVector2D::ZeroVector, FVector::OneVector, true, false);
 
 	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
-	FVector meshExtent = IconDynamicMeshActor->Mesh->Bounds.BoxExtent;
-	FVector meshOrigin = IconDynamicMeshActor->Mesh->Bounds.Origin;
-	FVector meshSize = ((TrimIconScaleFactor / meshExtent.Size()) * FVector::OneVector);
-	FVector meshLocation = meshOrigin * meshSize * -1.f;
-
+	FVector meshScale = ((ProfileIconScaleFactor / IconDynamicMeshActor->Mesh->Bounds.SphereRadius) * FVector::OneVector);
+	FVector meshLocation = (IconDynamicMeshActor->Mesh->Bounds.Origin * meshScale) * -1.f;
 	IconDynamicMeshActor->SetActorRelativeLocation(meshLocation);
-	IconDynamicMeshActor->SetActorRelativeScale3D(meshSize);
-	// For 2D profile icon, rotation the mesh to point directly at capture comp
-	IconDynamicMeshActor->SetActorRotation(SpringArm->GetComponentRotation());
+	IconDynamicMeshActor->SetActorRelativeScale3D(meshScale);
+	// For 2D profile icon, rotation the capture comp to point directly at profile mesh
+	FRotator originalSpringArmRotation = SpringArm->GetRelativeRotation();
+	SpringArm->SetRelativeRotation(FRotator::ZeroRotator);
 
 	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, true);
 	IconDynamicMeshActor->Mesh->SetVisibility(true);
 
-	SceneCaptureComp->TextureTarget = RenderTarget;
+	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
 	// Step 3: Cleanup
@@ -610,86 +631,74 @@ bool ADynamicIconGenerator::SetIconMeshForProfile(const FBIMKey& ProfileKey, UTe
 	IconDynamicMeshActor->SetActorRotation(FRotator::ZeroRotator);
 	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, false);
 	IconDynamicMeshActor->Mesh->SetVisibility(false);
+	SpringArm->SetRelativeRotation(originalSpringArmRotation);
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForDimension(int32 NodeID, UMaterialInterface* InMaterial, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForMaterial(bool UseDependentPreset, const FBIMKey& PresetID, int32 NodeID, UTextureRenderTarget2D* InRenderTarget)
 {
-	// Step 1: Get params
-	FString width, length, depth, height, thickness;
-	GetDimensionFromNode(NodeID, width, length, depth, height, thickness);
-	FVector vSize = FVector::OneVector;
-	if (!width.IsEmpty())
-	{
-		vSize.Y = UModumateDimensionStatics::StringToFormattedDimension(width).Centimeters;
-	}
-	if (!length.IsEmpty())
-	{
-		vSize.X = UModumateDimensionStatics::StringToFormattedDimension(length).Centimeters;
-	}
-	if (!depth.IsEmpty())
-	{
-		vSize.Y = UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters;
-	}
-	if (!height.IsEmpty())
-	{
-		vSize.Z = UModumateDimensionStatics::StringToFormattedDimension(height).Centimeters;
-	}
-
-	FVector nSize = vSize.GetSafeNormal() * 0.5f;
-	IconCubeMesh->SetWorldScale3D(nSize);
-
-	// Step 2: Set for capture
-	IconCubeMesh->SetMaterial(0, InMaterial);
-	SetComponentForIconCapture(IconCubeMesh, true);
-	IconCubeMesh->SetVisibility(true);
-	SceneCaptureComp->TextureTarget = RenderTarget;
-	SceneCaptureComp->CaptureScene();
-
-	// Step 3: Cleanup
-	IconCubeMesh->ResetRelativeTransform();
-	SetComponentForIconCapture(IconCubeMesh, false);
-	IconCubeMesh->SetVisibility(false);
-
-	return true;
-}
-
-bool ADynamicIconGenerator::SetIconMeshForMaterial(int32 NodeID, UTextureRenderTarget2D* RenderTarget)
-{
-	// Step 1: Get params
-	UMaterialInterface *mat = CustomMaterialBase;
-	FCustomColor customColor;
+	// Step 1: Get params needed to make material icon
+	FBIMKey rawMaterialKey;
+	FBIMKey colorKey;
 	const FPresetManager &presetManager = GameState->Document.PresetManager;
-	const FBIMCraftingTreeNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
 
-	TArray<FBIMCraftingTreeNodeSharedPtr> childrenNodes;
-	inst->GatherAllChildNodes(childrenNodes);
-
-	for (const auto& child : childrenNodes)
+	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
+	if (UseDependentPreset)
 	{
-		const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
-		if (preset->NodeScope == EBIMValueScope::RawMaterial)
+		TArray<FBIMKey> dependentPresetIDs;
+		presetManager.CraftingNodePresets.GetDependentPresets(PresetID, dependentPresetIDs);
+		for (const auto& curPresetID : dependentPresetIDs)
 		{
-			UModumateIconMeshStatics::GetEngineMaterialByKey(Controller, child->PresetID, mat);
-		}
-		if (preset->NodeScope == EBIMValueScope::Color)
-		{
-			UModumateIconMeshStatics::GetEngineCustomColorByKey(Controller, child->PresetID, customColor);
+			const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(curPresetID);
+			if (preset->NodeScope == EBIMValueScope::RawMaterial)
+			{
+				rawMaterialKey = curPresetID;
+			}
+			if (preset->NodeScope == EBIMValueScope::Color)
+			{
+				colorKey = curPresetID;
+			}
 		}
 	}
-	// Step 2: Set color to material
-	if (customColor.bValid)
+	else
+	{
+		const FBIMCraftingTreeNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+		TArray<FBIMCraftingTreeNodeSharedPtr> childrenNodes;
+		inst->GatherAllChildNodes(childrenNodes);
+		for (const auto& child : childrenNodes)
+		{
+			const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
+			if (preset->NodeScope == EBIMValueScope::RawMaterial)
+			{
+				rawMaterialKey = child->PresetID;
+			}
+			if (preset->NodeScope == EBIMValueScope::Color)
+			{
+				colorKey = child->PresetID;
+			}
+		}
+	}
+
+	// Step 3: Get assets from key
+	UMaterialInterface *mat = nullptr;
+	FCustomColor customColor = FCustomColor();
+	UModumateIconMeshStatics::GetEngineMaterialByKey(Controller, rawMaterialKey, mat);
+	UModumateIconMeshStatics::GetEngineCustomColorByKey(Controller, colorKey, customColor);
+
+	// Step 4: Set assets
+	if (mat!= nullptr && customColor.bValid)
 	{
 		auto* dynMat = IconSphereMesh->CreateDynamicMaterialInstance(0, mat);
 		dynMat->SetVectorParameterValue(MaterialColorParamName, customColor.Color);
 		IconSphereMesh->SetMaterial(0, dynMat);
 
+		// Step 5: Capture icon
 		SetComponentForIconCapture(IconSphereMesh, true);
 		IconSphereMesh->SetVisibility(true);
-		SceneCaptureComp->TextureTarget = RenderTarget;
+		SceneCaptureComp->TextureTarget = InRenderTarget;
 		SceneCaptureComp->CaptureScene();
 
-		// Step 3: Cleanup
+		// Step 6: Cleanup
 		SetComponentForIconCapture(IconSphereMesh, false);
 		IconSphereMesh->SetVisibility(false);
 		return true;
@@ -697,55 +706,131 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(int32 NodeID, UTextureRenderT
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForModule(int32 NodeID, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForModule(bool UseDependentPreset, const FBIMKey& PresetID, int32 NodeID, UTextureRenderTarget2D* InRenderTarget)
 {
-	// Step 1: Get params
-	UMaterialInterface *mat = CustomMaterialBase;
-	FCustomColor customColor;
-	int32 dimensionNodeID = INDEX_NONE;
-	const FBIMCraftingTreeNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+	// TODO: Need dimension schema 
 
-	TArray<FBIMCraftingTreeNodeSharedPtr> childrenNodes;
-	inst->GatherAllChildNodes(childrenNodes);
+	// Step 1: Get params needed to make module icon
+	FBIMKey rawMaterialKey;
+	FBIMKey colorKey;
+	FString widthString, lengthString, depthString, heightString;
+	const FPresetManager &presetManager = GameState->Document.PresetManager;
 
-	for (const auto& child : childrenNodes)
+	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
+	if (UseDependentPreset)
 	{
-		const FBIMPreset* preset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(child->PresetID);
-		if (preset->NodeScope == EBIMValueScope::RawMaterial)
+		TArray<FBIMKey> dependentPresetIDs;
+		presetManager.CraftingNodePresets.GetDependentPresets(PresetID, dependentPresetIDs);
+		for (const auto& curPresetID : dependentPresetIDs)
 		{
-			const FArchitecturalMaterial *aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByKey(preset->PresetID);
-			if (aMat->EngineMaterial.IsValid())
+			const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(curPresetID);
+			if (preset->NodeScope == EBIMValueScope::RawMaterial)
 			{
-				mat = aMat->EngineMaterial.Get();
+				rawMaterialKey = curPresetID;
+			}
+			if (preset->NodeScope == EBIMValueScope::Color)
+			{
+				colorKey = curPresetID;
+			}
+			if (preset->NodeScope == EBIMValueScope::Dimension)
+			{
+				preset->TryGetProperty(BIMPropertyNames::Width, widthString);
+				preset->TryGetProperty(BIMPropertyNames::Length, lengthString);
+				preset->TryGetProperty(BIMPropertyNames::Depth, depthString);
+				preset->TryGetProperty(BIMPropertyNames::Height, heightString);
 			}
 		}
-		if (preset->NodeScope == EBIMValueScope::Color)
-		{
-			customColor = *Gamemode->ObjectDatabase->GetCustomColorByKey(preset->PresetID);
-		}
-		if (preset->NodeScope == EBIMValueScope::Dimension)
-		{
-			dimensionNodeID = child->GetInstanceID();
-		}
 	}
-
-	if (customColor.bValid && dimensionNodeID != INDEX_NONE)
+	else
 	{
-		auto* dynMat = IconSphereMesh->CreateDynamicMaterialInstance(0, mat);
-		dynMat->SetVectorParameterValue(MaterialColorParamName, customColor.Color);
-
-		return SetIconMeshForDimension(dimensionNodeID, dynMat, RenderTarget);
+		const FBIMCraftingTreeNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+		TArray<FBIMCraftingTreeNodeSharedPtr> childrenNodes;
+		inst->GatherAllChildNodes(childrenNodes);
+		for (const auto& child : childrenNodes)
+		{
+			const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
+			if (preset->NodeScope == EBIMValueScope::RawMaterial)
+			{
+				rawMaterialKey = child->PresetID;
+			}
+			if (preset->NodeScope == EBIMValueScope::Color)
+			{
+				colorKey = child->PresetID;
+			}
+			if (preset->NodeScope == EBIMValueScope::Dimension)
+			{
+				child->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, widthString);
+				child->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, lengthString);
+				child->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, depthString);
+				child->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, heightString);
+			}
+		}
 	}
+
+	// Step 3: Get assets from key, and size from dimension
+	UMaterialInterface *mat = nullptr;
+	FCustomColor customColor = FCustomColor();
+	FVector vSize = FVector::OneVector;
+
+	UModumateIconMeshStatics::GetEngineMaterialByKey(Controller, rawMaterialKey, mat);
+	UModumateIconMeshStatics::GetEngineCustomColorByKey(Controller, colorKey, customColor);
+	if (!widthString.IsEmpty())
+	{
+		vSize.Y = UModumateDimensionStatics::StringToFormattedDimension(widthString).Centimeters;
+	}
+	if (!lengthString.IsEmpty())
+	{
+		vSize.X = UModumateDimensionStatics::StringToFormattedDimension(lengthString).Centimeters;
+	}
+	if (!depthString.IsEmpty())
+	{
+		vSize.Y = UModumateDimensionStatics::StringToFormattedDimension(depthString).Centimeters;
+	}
+	if (!heightString.IsEmpty())
+	{
+		vSize.Z = UModumateDimensionStatics::StringToFormattedDimension(heightString).Centimeters;
+	}
+
+	// Step 4: Set assets
+	if (mat != nullptr && customColor.bValid)
+	{
+		auto* dynMat = IconCubeMesh->CreateDynamicMaterialInstance(0, mat);
+		dynMat->SetVectorParameterValue(MaterialColorParamName, customColor.Color);
+		IconCubeMesh->SetMaterial(0, dynMat);
+		FVector normalizedSize = vSize.GetSafeNormal() * 0.5f;
+		IconCubeMesh->SetWorldScale3D(normalizedSize);
+
+		// Step 5: Capture icon
+		SetComponentForIconCapture(IconCubeMesh, true);
+		IconCubeMesh->SetVisibility(true);
+		SceneCaptureComp->TextureTarget = InRenderTarget;
+		SceneCaptureComp->CaptureScene();
+
+		// Step 6: Cleanup
+		IconCubeMesh->ResetRelativeTransform();
+		SetComponentForIconCapture(IconCubeMesh, false);
+		IconCubeMesh->SetVisibility(false);
+		return true;
+	}
+
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForLayer(int32 NodeID, UTextureRenderTarget2D* RenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForLayerNodeID(int32 NodeID, UTextureRenderTarget2D* InRenderTarget)
 {
 	FBIMAssemblySpec assembly;
 	Controller->EditModelUserWidget->BIMDesigner->InstancePool.CreateAssemblyFromLayerNode(
 		Controller->GetDocument()->PresetManager.CraftingNodePresets,
 		*Gamemode->ObjectDatabase, NodeID, assembly);
-	return SetIconMeshForWallAssembly(assembly, RenderTarget);
+	return SetIconMeshForWallAssembly(assembly, InRenderTarget);
+}
+
+bool ADynamicIconGenerator::SetIconMeshForLayerPreset(const FBIMKey& PresetID, UTextureRenderTarget2D* InRenderTarget)
+{
+	FBIMAssemblySpec assembly;
+	EObjectType objType = EObjectType::OTWallSegment; // TODO: Get object type, default to wall for now
+	ECraftingResult result = Controller->GetDocument()->PresetManager.CraftingNodePresets.CreateAssemblyFromLayerPreset(*Gamemode->ObjectDatabase, PresetID, objType, assembly);
+	return SetIconMeshForWallAssembly(assembly, InRenderTarget);
 }
 
 void ADynamicIconGenerator::GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal)
@@ -814,14 +899,4 @@ void ADynamicIconGenerator::SetIconCompoundMeshActorForCapture(bool Visible)
 		SetComponentForIconCapture(curComp, Visible);
 	}
 	IconCompoundMeshActor->SetActorHiddenInGame(!Visible);
-}
-
-void ADynamicIconGenerator::GetDimensionFromNode(int32 NodeID, FString &OutWidth, FString &OutLength, FString &OutDepth, FString &OutHeight, FString &OutThickness)
-{
-	const FBIMCraftingTreeNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
-	inst->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, OutWidth);
-	inst->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, OutLength);
-	inst->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, OutDepth);
-	inst->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, OutHeight);
-	inst->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, OutThickness);
 }

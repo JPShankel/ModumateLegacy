@@ -9,6 +9,7 @@
 #include "BIMKernel/BIMUProperties.h"
 #include "BIMKernel/BIMKey.h"
 #include "BIMKernel/BIMSerialization.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 
 /*
 A pin set defines a minimum and maximum number of attached children (each child is a pin), which lists define legal
@@ -144,9 +145,10 @@ public:
 	ECraftingResult ToDataRecords(TArray<FCraftingPresetRecord> &OutRecords) const;
 	ECraftingResult FromDataRecords(const TArray<FCraftingPresetRecord> &Record);
 
-	ECraftingResult GetDependentPresets(const FBIMKey &PresetID, TSet<FBIMKey> &OutPresets) const;
+	ECraftingResult GetDependentPresets(const FBIMKey &PresetID, TArray<FBIMKey>& OutPresets) const;
 
 	ECraftingResult GetPropertyFormForPreset(const FBIMKey &PresetID, TMap<FString, FBIMNameType> &OutForm) const;
 
 	ECraftingResult LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages);
+	ECraftingResult CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FBIMKey& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec);
 };

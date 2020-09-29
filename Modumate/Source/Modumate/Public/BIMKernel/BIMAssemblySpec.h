@@ -120,4 +120,6 @@ public:
 	Modumate::Units::FUnitValue CalculateThickness() const;
 
 	void ReverseLayers();
+
+	FVector GetRiggedAssemblyNativeSize() const;
 };

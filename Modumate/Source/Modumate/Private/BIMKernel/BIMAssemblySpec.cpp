@@ -58,7 +58,10 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 			Layers.AddDefaulted();
 			currentSheet = &Layers.Last().Properties;
 		}
-
+		else if (preset->NodeScope == EBIMValueScope::Color)
+		{
+			currentSheet->SetProperty(EBIMValueScope::Color, BIMPropertyNames::AssetID, preset->PresetID.StringValue);
+		}
 		// All nodes should have a scope
 		if (!ensureAlways(preset->NodeScope != EBIMValueScope::None))
 		{
@@ -231,6 +234,18 @@ void FBIMAssemblySpec::ReverseLayers()
 	Algo::Reverse(Layers);
 }
 
+FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
+{
+	if (ensure(Parts.Num() > 0))
+	{
+		return Parts[0].Mesh.NativeSize * Modumate::InchesToCentimeters;
+	}
+	else
+	{
+		return FVector::ZeroVector;
+	}
+}
+
 ECraftingResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB)
 {
 	const FCustomColor* customColor = nullptr;
@@ -257,6 +272,15 @@ ECraftingResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB
 			}
 		}
 	});
+
+	if (customColor == nullptr)
+	{
+		FString colorName;
+		if (Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::Name, colorName))
+		{
+			customColor = InDB.GetCustomColorByKey(FBIMKey(colorName));
+		}
+	}
 
 	FString thickness;
 	if (!Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, thickness))

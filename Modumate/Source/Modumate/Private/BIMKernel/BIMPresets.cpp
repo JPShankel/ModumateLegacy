@@ -202,7 +202,7 @@ ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCol
 Given a preset ID, recurse through all its children and gather all other presets that this one depends on
 Note: we don't empty the container because the function is recursive
 */
-ECraftingResult FBIMPresetCollection::GetDependentPresets(const FBIMKey& PresetID, TSet<FBIMKey>& OutPresets) const
+ECraftingResult FBIMPresetCollection::GetDependentPresets(const FBIMKey& PresetID, TArray<FBIMKey>& OutPresets) const
 {
 	const FBIMPreset *preset = Presets.Find(PresetID);
 	if (preset == nullptr)
@@ -387,4 +387,50 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 	}
 	OutMessages.Add(FString::Printf(TEXT("Failed to load manifest file %s"), *ManifestFile));
 	return ECraftingResult::Error;
+}
+
+ECraftingResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FBIMKey& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec)
+{
+	FBIMPresetCollection previewCollection;
+
+	// Build a temporary top-level assembly preset to host the single layer
+	FBIMPreset assemblyPreset;
+	assemblyPreset.PresetID = FBIMKey(TEXT("TempIconPreset"));
+	assemblyPreset.NodeScope = EBIMValueScope::Assembly;
+
+	// Give the temporary assembly a single layer child
+	FBIMPreset::FChildAttachment &attachment = assemblyPreset.ChildPresets.AddDefaulted_GetRef();
+	attachment.ParentPinSetIndex = 0;
+	attachment.ParentPinSetPosition = 0;
+	attachment.PresetID = LayerPresetKey;
+	assemblyPreset.ObjectType = ObjectType;
+
+	// Add the temp assembly and layer presets
+	previewCollection.Presets.Add(assemblyPreset.PresetID, assemblyPreset);
+
+	const FBIMPreset* layerPreset = Presets.Find(LayerPresetKey);
+	if (ensureAlways(layerPreset != nullptr))
+	{
+		previewCollection.Presets.Add(layerPreset->PresetID, *layerPreset);
+	}
+	else
+	{
+		return ECraftingResult::Error;
+	}
+
+	// Add presets from dependents
+	TArray<FBIMKey> outpresetKeys;
+	GetDependentPresets(LayerPresetKey, outpresetKeys);
+	for (auto& curPreset : outpresetKeys)
+	{
+		{
+			const FBIMPreset* original = Presets.Find(curPreset);
+			if (ensureAlways(original != nullptr))
+			{
+				previewCollection.Presets.Add(original->PresetID, *original);
+			}
+		}
+	}
+
+	return OutAssemblySpec.FromPreset(InDB, previewCollection, assemblyPreset.PresetID);
 }

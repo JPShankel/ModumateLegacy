@@ -41,6 +41,8 @@ public:
 
 	static FName GetThumbnailKeyForAssembly(const FBIMAssemblySpec &Assembly);
 
+	static FName GetThumbnailKeyForPreset(const FBIMKey& PresetID);
+
 	UFUNCTION(BlueprintPure, Category = "Modumate|Thumbnails")
 	static FString GetThumbnailCacheDir();
 

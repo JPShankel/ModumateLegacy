@@ -124,12 +124,17 @@ FName UThumbnailCacheManager::GetThumbnailKeyForShoppingItemAndTool(const FBIMKe
 
 FName UThumbnailCacheManager::GetThumbnailKeyForAssembly(const FBIMAssemblySpec &Assembly)
 {
+	return GetThumbnailKeyForPreset(Assembly.UniqueKey());
+}
+
+FName UThumbnailCacheManager::GetThumbnailKeyForPreset(const FBIMKey& PresetID)
+{
+	// TODO: version suffix
 	static const FString thumbnailKeySuffix(TEXT("_Ver0"));
 
-	FString wholeKey = Assembly.RootPreset.ToString() + thumbnailKeySuffix;
-	FString shortKey = FMD5::HashAnsiString(*wholeKey);
+	FString hashKey = FString::Printf(TEXT("%08X%s"), GetTypeHash(PresetID), *thumbnailKeySuffix);
+	return FName(*hashKey);
 
-	return FName(*shortKey);
 }
 
 FString UThumbnailCacheManager::GetThumbnailCacheDir()

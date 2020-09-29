@@ -33,7 +33,7 @@ bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerCo
 		return false;
 	}
 	UMaterialInterface* iconMat = nullptr;
-	bool result = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(false, AsmKey, mode, iconMat);
+	bool result = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(AsmKey, mode, iconMat);
 	if (result)
 	{
 		IconImage->SetBrushFromMaterial(iconMat);
@@ -47,11 +47,10 @@ bool UComponentPresetListItem::CaptureIconForBIMDesignerSwap(class AEditModelPla
 	{
 		return false;
 	}
-	UMaterialInterface* iconMat = nullptr;
-	bool result = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(PresetKey, iconMat, NodeID);
+	bool result = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(true, PresetKey, IconMaterial, IconTexture, NodeID);
 	if (result)
 	{
-		IconImage->SetBrushFromMaterial(iconMat);
+		IconImage->SetBrushFromMaterial(IconMaterial);
 	}
 	return result;
 }

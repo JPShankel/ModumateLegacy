@@ -17,6 +17,7 @@
 #include "BIMKernel/BIMAssemblySpec.h"
 #include "Components/Sizebox.h"
 #include "UI/EditModelUserWidget.h"
+#include "UnrealClasses/ThumbnailCacheManager.h"
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -644,11 +645,14 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 		node->PresetID = outPreset.PresetID;
 	}
 
-	Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Add(outPreset.PresetID,outPreset);
+	Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Add(outPreset.PresetID, outPreset);
 
 	// TODO: Only root node can make assembly for now, but stairs can have assembly in child node 
 	if (!node->ParentInstance.IsValid())
 	{
+		UTexture2D* outTexture;
+		UThumbnailCacheManager::SaveThumbnailFromShoppingItemAndTool(RootNode->IconTexture, node->PresetID, UModumateTypeStatics::ToolModeFromObjectType(CraftingAssembly.ObjectType), outTexture, this);
+
 		Controller->GetDocument()->PresetManager.UpdateProjectAssembly(CraftingAssembly);
 		Controller->EditModelUserWidget->RefreshAssemblyList();
 	}

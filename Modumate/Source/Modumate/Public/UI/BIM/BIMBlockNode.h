@@ -130,6 +130,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockUserEnterable> BIMBlockUserEnterableClass;
 
+	UPROPERTY()
+	class UMaterialInterface* IconMaterial;
+
+	UPROPERTY()
+	class UTexture* IconTexture;
+
 	FBIMKey PresetID;
 	int32 ID = -1;
 	int32 ParentID = -1;
