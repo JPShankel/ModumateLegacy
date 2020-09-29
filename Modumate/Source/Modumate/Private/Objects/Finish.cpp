@@ -2,13 +2,12 @@
 
 #include "Objects/Finish.h"
 
-#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
-#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 FMOIFinishImpl::FMOIFinishImpl(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
@@ -109,3 +108,25 @@ void FMOIFinishImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoi
 	}
 }
 
+void FMOIFinishImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
+{
+	// parent handles
+	FModumateObjectInstance* parent = MOI->GetParentObject();
+	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTSurfacePolygon)))
+	{
+		return;
+	}
+
+	int32 numCorners = parent->GetNumCorners();
+	for (int32 i = 0; i < numCorners; ++i)
+	{
+		auto cornerHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		cornerHandle->SetTargetIndex(i);
+		cornerHandle->SetTargetMOI(parent);
+
+		auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		edgeHandle->SetTargetIndex(i);
+		edgeHandle->SetAdjustPolyEdge(true);
+		edgeHandle->SetTargetMOI(parent);
+	}
+}

@@ -114,6 +114,7 @@ void FMOICabinetImpl::SetupDynamicGeometry()
 
 	// refresh handle visibility, don't destroy & recreate handles
 	AEditModelPlayerController_CPP *controller = DynamicMeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+
 	// TODO: revisit the handle paradigm for cabinets
 	MOI->ShowAdjustmentHandles(controller, AdjustmentHandlesVisible);
 
@@ -231,6 +232,26 @@ void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *con
 
 	auto topExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
 	topExtrusionHandle->SetSign(1.0f);
+
+	// parent handles
+	FModumateObjectInstance *parent = MOI->GetParentObject();
+	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTSurfacePolygon)))
+	{
+		return;
+	}
+
+	int32 numCorners = parent->GetNumCorners();
+	for (int32 i = 0; i < numCorners; ++i)
+	{
+		auto cornerHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		cornerHandle->SetTargetIndex(i);
+		cornerHandle->SetTargetMOI(parent);
+
+		auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		edgeHandle->SetTargetIndex(i);
+		edgeHandle->SetAdjustPolyEdge(true);
+		edgeHandle->SetTargetMOI(parent);
+	}
 }
 
 void FMOICabinetImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
