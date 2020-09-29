@@ -98,7 +98,7 @@ public:
 
 	FBIMKey RootPreset;
 
-	TArray<FBIMLayerSpec> Layers;
+	TArray<FBIMLayerSpec> Layers,TreadLayers,RiserLayers;
 	TArray<FBIMPartSlotSpec> Parts;
 	TArray<FBIMExtrusionSpec> Extrusions;
 
@@ -109,6 +109,7 @@ public:
 
 	Modumate::Units::FUnitValue ToeKickDepth = Modumate::Units::FUnitValue::WorldCentimeters(0);
 	Modumate::Units::FUnitValue ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(0);
+	Modumate::Units::FUnitValue TreadDepth = Modumate::Units::FUnitValue::WorldCentimeters(0);
 
 	// For DataCollection support in preset manager
 	FBIMKey UniqueKey() const { return RootPreset; }

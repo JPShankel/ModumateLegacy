@@ -99,6 +99,18 @@ ECraftingResult FBIMCSVReader::ProcessInputPinRow(const TArray<const TCHAR*>& Ro
 		childAttachment.MaxCount = -1; // -1 indicates no maximum...TODO: make a named constant
 	}
 
+	FName target = Row[6];
+	
+	EBIMPinTarget targetEnum = FindEnumValueByName<EBIMPinTarget>(TEXT("EBIMPinTarget"), target);
+	if (targetEnum != EBIMPinTarget::None)
+	{
+		childAttachment.PinTarget = targetEnum;
+	}
+	else
+	{
+		childAttachment.PinTarget = EBIMPinTarget::Default;
+	}
+
 	return ECraftingResult::Success;
 }
 
@@ -371,6 +383,8 @@ ECraftingResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row,
 					FBIMPreset::FChildAttachment &newCAP = Preset.ChildPresets.AddDefaulted_GetRef();
 					newCAP.ParentPinSetIndex = setIndex;
 					newCAP.ParentPinSetPosition = setPosition;
+					newCAP.Target = NodeType.ChildAttachments[setIndex].PinTarget;
+
 					FString rowStr = cell;
 					rowStr.RemoveSpacesInline();
 					newCAP.PresetID = FBIMKey(*rowStr);

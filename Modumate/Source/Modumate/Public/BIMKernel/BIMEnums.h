@@ -131,6 +131,15 @@ enum class EBIMValueScope : uint8
 };
 
 UENUM()
+enum class EBIMPinTarget : uint8
+{
+	None = 0,
+	Default,
+	Tread,
+	Riser
+};
+
+UENUM()
 enum class EBIMPresetEditorNodeStatus : uint8
 {
 	None = 0,

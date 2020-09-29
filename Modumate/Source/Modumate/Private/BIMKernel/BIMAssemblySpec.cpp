@@ -19,13 +19,22 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 
 	FBIMPropertySheet* currentSheet = &RootProperties;
 
-	TArray<FBIMKey> presetStack;
-	presetStack.Push(PresetID);
+	TArray<FBIMPreset::FChildAttachment> childStack;
+
+	FBIMPreset::FChildAttachment rootAttachment;
+
+	rootAttachment.PresetID = PresetID;
+	childStack.Push(rootAttachment);
+
+	// Layer targets are specified on the pin that attaches a child to a parent
+	// Legal targets are Default (used for walls, floors and other basic layers), Tread or Riser (used in stairs)
+	EBIMPinTarget currentLayerTarget = EBIMPinTarget::Default;
 
 	// Depth first walk through the preset and its descendants
-	while (presetStack.Num() > 0)
+	while (childStack.Num() > 0)
 	{
-		FBIMKey presetID = presetStack.Pop();
+		FBIMPreset::FChildAttachment childAttachment = childStack.Pop();
+		FBIMKey presetID = childAttachment.PresetID;
 
 		const FBIMPreset* preset = PresetCollection.Presets.Find(presetID);
 		if (!ensureAlways(preset != nullptr))
@@ -43,6 +52,10 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 		{
 			continue;
 		}
+		else if (preset->NodeScope == EBIMValueScope::Assembly)
+		{
+			currentLayerTarget = childAttachment.Target;
+		}
 		else if (preset->NodeScope == EBIMValueScope::Profile)
 		{
 			// TODO: until we can combine extrusions and layers, ignore extrusions on layered assemblies
@@ -55,8 +68,24 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 		}
 		else if (preset->NodeScope == EBIMValueScope::Layer)
 		{
-			Layers.AddDefaulted();
-			currentSheet = &Layers.Last().Properties;
+			switch (currentLayerTarget)
+			{
+			case EBIMPinTarget::Default:
+				Layers.AddDefaulted_GetRef();
+				currentSheet = &Layers.Last().Properties;
+				break;
+			case EBIMPinTarget::Tread:
+				TreadLayers.AddDefaulted_GetRef();
+				currentSheet = &TreadLayers.Last().Properties;
+				break;
+			case EBIMPinTarget::Riser:
+				RiserLayers.AddDefaulted_GetRef();
+				currentSheet = &RiserLayers.Last().Properties;
+				break;
+			default:
+				ensureAlways(false);
+				break;
+			};
 		}
 		else if (preset->NodeScope == EBIMValueScope::Color)
 		{
@@ -85,7 +114,7 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 		// Add our own children to DFS stack
 		for (auto& childPreset : preset->ChildPresets)
 		{
-			presetStack.Push(childPreset.PresetID);
+			childStack.Push(childPreset);
 		}
 
 		// A preset with PartSlots represents a compound object like a door, window or FFE ensemble
@@ -393,16 +422,32 @@ ECraftingResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& In
 
 ECraftingResult FBIMAssemblySpec::MakeLayeredAssembly(const FModumateDatabase& InDB)
 {
-	for (auto& layer : Layers)
+	auto buildLayers = [InDB](TArray<FBIMLayerSpec>& Layers)
 	{
-		ECraftingResult res = layer.BuildFromProperties(InDB);
-		if (!ensureAlways(res == ECraftingResult::Success))
+		for (auto& layer : Layers)
 		{
-			return res;
+			ECraftingResult res = layer.BuildFromProperties(InDB);
+			if (res != ECraftingResult::Success)
+			{
+				return res;
+			}
 		}
+		return ECraftingResult::Success;
+	};
+
+	ECraftingResult res = buildLayers(Layers);
+	
+	if (res == ECraftingResult::Success)
+	{
+		res = buildLayers(TreadLayers);
 	}
 
-	return ECraftingResult::Success;
+	if (res == ECraftingResult::Success)
+	{
+		res = buildLayers(RiserLayers);
+	}
+
+	return res;
 }
 
 ECraftingResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
@@ -448,6 +493,11 @@ ECraftingResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, 
 		ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(UModumateDimensionStatics::StringToFormattedDimension(height).Centimeters);
 	}
 
+	if (RootProperties.TryGetProperty(EBIMValueScope::Assembly, TEXT("IdealTreadDepth"), depth))
+	{
+		TreadDepth = Modumate::Units::FUnitValue::WorldCentimeters(UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters);
+	}
+
 	// TODO: move assembly synthesis to each tool mode or MOI implementation (TBD)
 	ECraftingResult result = ECraftingResult::Error;
 	switch (ObjectType)
@@ -464,6 +514,7 @@ ECraftingResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, 
 	case EObjectType::OTRailSegment:
 	case EObjectType::OTCountertop:
 	case EObjectType::OTSystemPanel:
+	case EObjectType::OTStaircase:
 		return MakeLayeredAssembly(InDB);
 
 	case EObjectType::OTCabinet:

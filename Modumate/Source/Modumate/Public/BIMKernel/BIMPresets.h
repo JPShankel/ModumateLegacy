@@ -23,6 +23,7 @@ struct MODUMATE_API FChildAttachmentType
 {
 	FName SetName;
 	int32 MinCount, MaxCount;
+	EBIMPinTarget PinTarget = EBIMPinTarget::Default;
 
 	FChildAttachmentType(FName InSetName, int32 InMinCount, int32 InMaxCount) :
 		SetName(InSetName), MinCount(InMinCount), MaxCount(InMaxCount)
@@ -79,6 +80,7 @@ public:
 	{
 		int32 ParentPinSetIndex, ParentPinSetPosition;
 		FBIMKey PresetID;
+		EBIMPinTarget Target = EBIMPinTarget::Default;
 		bool operator==(const FChildAttachment& OtherAttachment) const;
 	};
 
