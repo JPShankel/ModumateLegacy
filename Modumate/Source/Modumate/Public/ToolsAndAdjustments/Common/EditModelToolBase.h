@@ -68,6 +68,9 @@ public:
 	virtual void SetAssemblyKey(const FBIMKey &InAssemblyKey) override { AssemblyKey = InAssemblyKey; }
 	virtual FBIMKey GetAssemblyKey() const override { return AssemblyKey; }
 
+	// TODO: potentially duplicate with handles
+	virtual bool HasDimensionActor() { return false; }
+
 	UFUNCTION()
 	void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 };

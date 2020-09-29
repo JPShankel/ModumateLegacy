@@ -26,12 +26,13 @@ public:
 	virtual bool EndUse() override;
 	virtual bool EnterNextStage() override;
 
+	virtual bool HasDimensionActor() { return true; }
+
 protected:
 	int32 TargetPolygonID;
 	TArray<FVector> BasePoints;
 	FVector BaseOrigin, BaseNormal;
 	float ExtrusionDist;
-	int32 ExtrusionDimensionID;
 	EMouseMode PrevMouseMode;
 
 	FColor AffordanceLineColor = FColor::Orange;

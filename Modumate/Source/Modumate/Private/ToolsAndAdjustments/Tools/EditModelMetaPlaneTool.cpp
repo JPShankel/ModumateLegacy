@@ -116,20 +116,15 @@ bool UMetaPlaneTool::BeginUse()
 
 	State = NewSegmentPending;
 
-	auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
-	PendingSegmentID = dimensionActor->ID;
-
-	auto dimensionWidget = dimensionActor->DimensionText;
-	dimensionWidget->Measurement->SetIsReadOnly(false);
-	dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &UEditModelToolBase::OnTextCommitted);
-
-	GameInstance->DimensionManager->SetActiveActorID(PendingSegmentID);
-
-	auto pendingSegment = dimensionActor->GetLineActor();
-	pendingSegment->Point1 = hitLoc;
-	pendingSegment->Point2 = hitLoc;
-	pendingSegment->Color = FColor::White;
-	pendingSegment->Thickness = 2;
+	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
+	if (dimensionActor != nullptr)
+	{
+		auto pendingSegment = dimensionActor->GetLineActor();
+		pendingSegment->Point1 = hitLoc;
+		pendingSegment->Point2 = hitLoc;
+		pendingSegment->Color = FColor::White;
+		pendingSegment->Thickness = 2;
+	}
 
 	AnchorPointDegree = hitLoc + FVector(0.f, -1.f, 0.f); // Make north as AnchorPointDegree at new segment
 
@@ -330,8 +325,6 @@ bool UMetaPlaneTool::FrameUpdate()
 bool UMetaPlaneTool::EndUse()
 {
 	State = Neutral;
-	DimensionManager->ReleaseDimensionActor(PendingSegmentID);
-	PendingSegmentID = MOD_ID_NONE;
 
 	if (PendingPlane.IsValid())
 	{
@@ -341,13 +334,13 @@ bool UMetaPlaneTool::EndUse()
 
 	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
 
-	return UEditModelToolBase::EndUse();
+	return Super::EndUse();
 }
 
 bool UMetaPlaneTool::AbortUse()
 {
 	EndUse();
-	return UEditModelToolBase::AbortUse();
+	return Super::AbortUse();
 }
 
 void UMetaPlaneTool::SetAxisConstraint(EAxisConstraint InAxisConstraint)

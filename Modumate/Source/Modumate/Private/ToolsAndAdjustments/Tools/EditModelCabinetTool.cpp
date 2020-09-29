@@ -24,7 +24,6 @@ UCabinetTool::UCabinetTool(const FObjectInitializer& ObjectInitializer)
 	, BaseOrigin(ForceInitToZero)
 	, BaseNormal(ForceInitToZero)
 	, ExtrusionDist(0.0f)
-	, ExtrusionDimensionID(MOD_ID_NONE)
 	, PrevMouseMode(EMouseMode::Object)
 {
 }
@@ -69,6 +68,11 @@ bool UCabinetTool::Deactivate()
 
 bool UCabinetTool::BeginUse()
 {
+	if (!Super::BeginUse())
+	{
+		return false;
+	}
+
 	int32 numBasePoints = BasePoints.Num();
 	if ((TargetPolygonID == MOD_ID_NONE) || (numBasePoints < 3) || !BaseNormal.IsNormalized() || !Super::BeginUse())
 	{
@@ -83,14 +87,16 @@ bool UCabinetTool::BeginUse()
 	cursor.SetAffordanceFrame(BaseOrigin, BaseNormal, FVector::ZeroVector, true, true);
 
 	ExtrusionDist = 0.0f;
-	auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
-	ExtrusionDimensionID = dimensionActor->ID;
+	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
 
-	auto pendingSegment = dimensionActor->GetLineActor();
-	pendingSegment->Point1 = BaseOrigin;
-	pendingSegment->Point2 = BaseOrigin;
-	pendingSegment->Color = ExtrusionLineColor;
-	pendingSegment->Thickness = ExtrusionLineThickness;
+	if (dimensionActor != nullptr)
+	{
+		auto pendingSegment = dimensionActor->GetLineActor();
+		pendingSegment->Point1 = BaseOrigin;
+		pendingSegment->Point2 = BaseOrigin;
+		pendingSegment->Color = ExtrusionLineColor;
+		pendingSegment->Thickness = ExtrusionLineThickness;
+	}
 
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
 
@@ -112,7 +118,7 @@ bool UCabinetTool::FrameUpdate()
 	// We're choosing an extrusion along the normal of the base for the cabinet
 	if (IsInUse())
 	{
-		auto dimensionActor = DimensionManager->GetDimensionActor(ExtrusionDimensionID);
+		auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
 		auto dimensionLine = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
 		if (dimensionLine == nullptr)
 		{
@@ -232,7 +238,7 @@ bool UCabinetTool::AbortUse()
 {
 	if (DimensionManager)
 	{
-		DimensionManager->ReleaseDimensionActor(ExtrusionDimensionID);
+		DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 	}
 
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Object;
@@ -244,7 +250,7 @@ bool UCabinetTool::EndUse()
 {
 	if (DimensionManager)
 	{
-		DimensionManager->ReleaseDimensionActor(ExtrusionDimensionID);
+		DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 	}
 
 	return Super::EndUse();

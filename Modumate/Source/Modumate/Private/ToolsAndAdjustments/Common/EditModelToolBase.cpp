@@ -11,6 +11,7 @@
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "UI/DimensionActor.h"
 #include "UI/DimensionManager.h"
+#include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -67,6 +68,18 @@ bool UEditModelToolBase::BeginUse()
 	FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
 	cursor.SetAffordanceFrame(cursor.WorldPosition, cursor.HitNormal, cursor.HitTangent, true, true);
 
+	if (HasDimensionActor())
+	{
+		auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+		PendingSegmentID = dimensionActor->ID;
+
+		auto dimensionWidget = dimensionActor->DimensionText;
+		dimensionWidget->Measurement->SetIsReadOnly(false);
+		dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &UEditModelToolBase::OnTextCommitted);
+
+		GameInstance->DimensionManager->SetActiveActorID(PendingSegmentID);
+	}
+
 	InUse = true;
 	return true;
 }
@@ -106,6 +119,7 @@ bool UEditModelToolBase::PostEndOrAbort()
 	{
 		dimensionActor->DimensionText->Measurement->OnTextCommitted.RemoveDynamic(this, &UEditModelToolBase::OnTextCommitted);
 		DimensionManager->SetActiveActorID(MOD_ID_NONE);
+		DimensionManager->ReleaseDimensionActor(PendingSegmentID);
 	}
 
 	return true;

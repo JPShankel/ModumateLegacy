@@ -55,6 +55,8 @@ public:
 	virtual bool AbortUse() override;
 	virtual void SetAxisConstraint(EAxisConstraint AxisConstraint) override;
 
+	virtual bool HasDimensionActor() { return true; }
+
 protected:
 	virtual bool MakeObject(const FVector &Location, TArray<int32> &OutNewObjIDs);
 	void UpdatePendingPlane();
