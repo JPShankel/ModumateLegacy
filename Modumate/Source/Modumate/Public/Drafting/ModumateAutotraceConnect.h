@@ -10,8 +10,6 @@ class FModumateDocument;
 
 namespace Modumate
 {
-	class FModumateAccountManager;
-
 	// TODO: Combine with FModumateDwgConnnect (ModumateCloudConnect?).
 	class FModumateAutotraceConnect
 	{

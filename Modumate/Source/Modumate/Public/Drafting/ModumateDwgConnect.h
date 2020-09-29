@@ -6,10 +6,11 @@
 #include "Drafting/ModumateDwgDraw.h"
 #include "Runtime/Online/HTTP/Public/Http.h"
 
+
+class FModumateAccountManager;
+
 namespace Modumate
 {
-	class FModumateAccountManager;
-
 	/**
 	 * Encapsulate connection to cloud drafting server.
 	 */
@@ -24,7 +25,7 @@ namespace Modumate
 	private:
 		const FModumateDwgDraw& DwgDraw;
 		FString Filename;
-		TSharedPtr<Modumate::FModumateAccountManager> AccountManager;
+		TSharedPtr<FModumateAccountManager> AccountManager;
 
 		static const FString ServerAddress;
 

@@ -13,37 +13,10 @@ struct MODUMATE_API FModumateLoginParams
 	GENERATED_USTRUCT_BODY();
 
 	UPROPERTY()
-	FString key;
+	FString Username;
 
 	UPROPERTY()
-	FString username;
-
-	UPROPERTY()
-	FString password;
-};
-
-USTRUCT()
-struct MODUMATE_API FModumateLoginResponse
-{
-	GENERATED_USTRUCT_BODY();
-
-	UPROPERTY()
-	FString idToken;
-
-	UPROPERTY()
-	FString email;
-
-	UPROPERTY()
-	FString refreshToken;
-
-	UPROPERTY()
-	FString expiresIn;
-
-	UPROPERTY()
-	FString localId;
-
-	UPROPERTY()
-	FString registered;
+	FString Password;
 };
 
 USTRUCT()
@@ -52,70 +25,119 @@ struct MODUMATE_API FModumateUserInfo
 	GENERATED_USTRUCT_BODY();
 
 	UPROPERTY()
-	FString firstname;
+	FString Firstname;
 
 	UPROPERTY()
-	FString lastname;
+	FString Lastname;
 
 	UPROPERTY()
-	FString email;
+	FString Email;
 
 	UPROPERTY()
-	FString uid;
+	FString Uid;
 
 	UPROPERTY()
-	int points;
+	int32 Points;
 
 	UPROPERTY()
-	FString zipcode;
+	FString Zipcode;
 };
 
 USTRUCT()
-struct MODUMATE_API FModumateTokenInfo
+struct MODUMATE_API FModumateUserNotification
 {
 	GENERATED_USTRUCT_BODY();
 
 	UPROPERTY()
-	FString idToken;
+	FString Type;
 
 	UPROPERTY()
-	FString refreshToken;
+	FString Text;
 
 	UPROPERTY()
-	FModumateUserInfo user;
+	FString Url;
+};
+
+USTRUCT()
+struct MODUMATE_API FModumateUserStatus
+{
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY()
+	bool Active;
+
+	UPROPERTY()
+	TArray<FModumateUserNotification> Notifications;
+
+	UPROPERTY()
+	TArray<FString> Permissions;
+};
+
+USTRUCT()
+struct MODUMATE_API FModumateUserVerifyParams
+{
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY()
+	FString IdToken;
+
+	UPROPERTY()
+	FString RefreshToken;
+
+	UPROPERTY()
+	FModumateUserInfo User;
+
+	UPROPERTY()
+	FModumateUserStatus Status;
 };
 
 enum class ELoginStatus : uint8;
 
-namespace Modumate
+UENUM(BlueprintType)
+enum class EModumatePermission : uint8 { None, View, Edit, Save, Export };
+
+class FModumateAccountManager
 {
-	class FModumateAccountManager
-	{
-	public:
-		FModumateAccountManager();
-		void Login(const FString& userName, const FString& password);
+public:
+	FModumateAccountManager();
 
-		ELoginStatus GetLoginStatus() const { return LoginStatus; }
-		FString GetLocalId() const { return LocalId; }
-		FString GetFirstname() const { return UserInfo.firstname; }
-		FString GetLastname() const { return UserInfo.lastname; }
-		FString GetEmail() const { return UserInfo.email; }
-		FString GetIdToken() const { return IdToken; }
-		static const FString& GetApiKey() { return ApiKey; }
-		static FString GetAmsAddress();  // AMS address as URL.
+	using FPermissionSet = TSet<EModumatePermission>;
 
-	private:
-		void OnLoginResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-		void ProcessLogin(const FHttpResponsePtr Response);
-		static FString ModumateIdentityEndpoint(const FString& api);
+	void Login(const FString& userName, const FString& password);
 
-		ELoginStatus LoginStatus;
-		FString IdToken;
-		FString RefreshToken;
-		FString LocalId;
-		FModumateUserInfo UserInfo;
+	ELoginStatus GetLoginStatus() const { return LoginStatus; }
+	FString GetLocalId() const { return LocalId; }
+	FString GetFirstname() const { return UserInfo.Firstname; }
+	FString GetLastname() const { return UserInfo.Lastname; }
+	FString GetEmail() const { return UserInfo.Email; }
+	FString GetIdToken() const { return IdToken; }
 
-		// API key from Josh.
-		static const FString ApiKey;
-	};
-}
+	void RequestIdTokenRefresh(TBaseDelegate<void, bool>* callback = nullptr);
+	void RequestStatus();
+	bool HasPermission(EModumatePermission requestedPermission) const;
+
+	void Tick();
+
+	static FString GetAmsAddress();  // AMS address as URL.
+
+	enum ResponseCodes {kSuccess = 200, kInvalidIdToken = 401, kBackendError = 463};
+
+private:
+	void OnAmsResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	void OnStatusResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	void ProcessLogin(const FHttpResponsePtr Response);
+	void ProcessUserStatus(const FModumateUserStatus& userStatus);
+	static FString ModumateIdentityEndpoint(const FString& api);
+
+	ELoginStatus LoginStatus;
+	FString IdToken;
+	FString RefreshToken;
+	FString LocalId;
+	FModumateUserInfo UserInfo;
+	TArray<TBaseDelegate<void, bool>> TokenRefreshDelegates;
+
+	FDateTime IdTokenTimestamp;
+
+	FPermissionSet CurrentPermissions;
+	const static FTimespan IdTokenTimeout;
+};

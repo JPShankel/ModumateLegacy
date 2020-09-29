@@ -18,6 +18,7 @@
 #include "ModumateCore/ModumateThumbnailHelpers.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAnalyticsStatics.h"
+#include "Online/ModumateAccountManager.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
@@ -1139,6 +1140,8 @@ void AEditModelPlayerController_CPP::OnControllerTimer()
 			WantAutoSave = true;
 		}
 	}
+
+	gameInstance->GetAccountManager()->Tick();
 }
 
 DECLARE_CYCLE_STAT(TEXT("Edit tick"), STAT_ModumateEditTick, STATGROUP_Modumate)

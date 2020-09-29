@@ -15,11 +15,7 @@ static const TCHAR *kModumateRecoveryFileBackup = TEXT("_tempBackupOld.mdmt");
 static const TCHAR *kModumateCleanShutdownFile = TEXT("_modumateDidNotShutDownCleanly.txt");
 
 class MODUMATE_API FModumateDocument;
-
-namespace Modumate
-{
-	class MODUMATE_API FModumateAccountManager;
-}
+class MODUMATE_API FModumateAccountManager;
 
 class IAnalyticsProvider;
 
@@ -28,10 +24,10 @@ enum class ELoginStatus : uint8
 {
 	None = 0,
 	Disconnected,
-	ValidRefreshToken,
+	HaveValidRefreshToken,
 	Connected,
 	WaitingForRefreshToken,
-	WaitingForAuthId,
+	WaitingForVerify,
 	InvalidEmail,
 	InvalidPassword,
 	UserDisabled,
@@ -53,7 +49,7 @@ private:
 	void ProcessCommandQueue();
 	TMap<FString, Modumate::FModumateFunction*> CommandMap;
 	TSharedPtr<IAnalyticsProvider> AnalyticsInstance;
-	TSharedPtr<Modumate::FModumateAccountManager> AccountManager;
+	TSharedPtr<FModumateAccountManager> AccountManager;
 
 	FModumateDocument *GetDocument();
 
@@ -75,7 +71,7 @@ public:
 
 	IAnalyticsProvider *GetAnalytics() const { return AnalyticsInstance.Get(); }
 
-	TSharedPtr<Modumate::FModumateAccountManager> GetAccountManager() const;
+	TSharedPtr<FModumateAccountManager> GetAccountManager() const;
 
 	UFUNCTION(BlueprintCallable)
 	ELoginStatus LoginStatus() const;

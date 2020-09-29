@@ -5,152 +5,249 @@
 #include "Dom/JsonObject.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
-namespace Modumate
+// Period for requesting refresh of IdToken.
+const FTimespan FModumateAccountManager::IdTokenTimeout = { 0, 10 /* min */, 0 };
+
+FString FModumateAccountManager::GetAmsAddress()
 {
-	const FString FModumateAccountManager::ApiKey
-		{ TEXT("384hj4592323f2434242354t5") };
-
-	FString FModumateAccountManager::GetAmsAddress()
-	{
 #if 1   // For testing against staging server:
-		return TEXT("https://beta.account.modumate.com");
+	return TEXT("https://beta.account.modumate.com");
 #else
-		return TEXT("https://account.modumate.com");
+	return TEXT("https://account.modumate.com");
 #endif
-	}
+}
 
-	FModumateAccountManager::FModumateAccountManager() : LoginStatus(ELoginStatus::Disconnected)
-	{ }
+FModumateAccountManager::FModumateAccountManager() : LoginStatus(ELoginStatus::Disconnected)
+{ }
 
-	FString FModumateAccountManager::ModumateIdentityEndpoint(const FString& api)
+FString FModumateAccountManager::ModumateIdentityEndpoint(const FString& api)
+{
+	return GetAmsAddress() + TEXT("/api/v2/") + api;
+}
+
+void FModumateAccountManager::OnAmsResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	if (bWasSuccessful)
 	{
-		return GetAmsAddress() + TEXT("/api/v1/") + api;
-	}
-
-	void FModumateAccountManager::OnLoginResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
-	{
-		if (bWasSuccessful)
+		int32 code = Response->GetResponseCode();
+		if (code == kSuccess)
 		{
-			int32 code = Response->GetResponseCode();
-			if (code == 200)
+			ProcessLogin(Response);
+		}
+		else
+		{
+			if (code == kInvalidIdToken)
 			{
-				ProcessLogin(Response);
+				LoginStatus = ELoginStatus::InvalidPassword;
 			}
 			else
 			{
-				FString content = Response->GetContentAsString();
+				LoginStatus = ELoginStatus::UnknownError;
+			}
+		}
+	}
+	else
+	{
+		LoginStatus = ELoginStatus::ConnectionError;
+	}
+}
 
-				if (content == TEXT("Unauthorized"))
+void FModumateAccountManager::OnStatusResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	if (bWasSuccessful)
+	{
+		int32 code = Response->GetResponseCode();
+		if (code == kSuccess)
+		{
+			FString content = Response->GetContentAsString();
+			FModumateUserStatus userStatus;
+			if (FJsonObjectConverter::JsonObjectStringToUStruct<FModumateUserStatus>(content, &userStatus, 0, 0))
+			{
+				if (!userStatus.Active)
 				{
-					LoginStatus = ELoginStatus::InvalidPassword;
+					LoginStatus = ELoginStatus::UserDisabled;
 				}
-				else
-				{
-					LoginStatus = ELoginStatus::UnknownError;
-				}
+				ProcessUserStatus(userStatus);
 			}
 		}
 		else
 		{
-			LoginStatus = ELoginStatus::ConnectionError;
+			LoginStatus = ELoginStatus::Disconnected;
 		}
 	}
-
-
-	void FModumateAccountManager::Login(const FString& userName, const FString& password)
+	else
 	{
-		TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest();
-		Request->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
-			{this->OnLoginResponseReceived(Request, Response, bWasSuccessful); });
-		FModumateLoginParams loginParams;
-		loginParams.key = ApiKey;
-		loginParams.username = userName;
-		loginParams.password = password;
-
-		Request->SetURL(ModumateIdentityEndpoint(TEXT("auth/login")) );
-		Request->SetVerb(TEXT("POST"));
-		Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-		Request->SetHeader(TEXT("Accepts"), TEXT("application/json"));
-		Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
-
-		FString payload;
-		FJsonObjectConverter::UStructToJsonObjectString<FModumateLoginParams>(loginParams, payload,
-			0, 0, 0, nullptr, false);
-		Request->SetContentAsString(payload);
-		LoginStatus = ELoginStatus::WaitingForRefreshToken;
-		Request->ProcessRequest();
+		LoginStatus = ELoginStatus::ConnectionError;
 	}
+}
 
-	void FModumateAccountManager::ProcessLogin(const FHttpResponsePtr Response)
+void FModumateAccountManager::Login(const FString& userName, const FString& password)
+{
+	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest();
+	Request->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+		{this->OnAmsResponseReceived(Request, Response, bWasSuccessful); });
+	FModumateLoginParams loginParams;
+	loginParams.Username = userName;
+	loginParams.Password = password;
+
+	Request->SetURL(ModumateIdentityEndpoint(TEXT("auth/login")) );
+	Request->SetVerb(TEXT("POST"));
+	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	Request->SetHeader(TEXT("Accepts"), TEXT("application/json"));
+	Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
+
+	FString payload;
+	FJsonObjectConverter::UStructToJsonObjectString<FModumateLoginParams>(loginParams, payload,
+		0, 0, 0, nullptr, false);
+	Request->SetContentAsString(payload);
+	LoginStatus = ELoginStatus::WaitingForRefreshToken;
+	Request->ProcessRequest();
+}
+
+void FModumateAccountManager::ProcessLogin(const FHttpResponsePtr Response)
+{
+	switch (LoginStatus)
 	{
-		switch (LoginStatus)
+	case ELoginStatus::WaitingForRefreshToken:
+	{
+		FString content = Response->GetContentAsString();
+		auto JsonResponse = TJsonReaderFactory<>::Create(content);
+		TSharedPtr<FJsonValue> responseValue;
+		FJsonSerializer::Deserialize(JsonResponse, responseValue);
+		auto responseObject = responseValue->AsObject();
+		if (responseObject)
 		{
-		case ELoginStatus::WaitingForRefreshToken:
-		{
-			FString content = Response->GetContentAsString();
-
-			FModumateLoginResponse loginResponse;
-			FJsonObjectConverter::JsonObjectStringToUStruct<FModumateLoginResponse>(content, &loginResponse, 0, 0);
-			if (!loginResponse.refreshToken.IsEmpty())
+			FString refreshToken = responseObject->GetStringField(TEXT("refreshToken"));
+			if (!refreshToken.IsEmpty())
 			{
-				RefreshToken = loginResponse.refreshToken;
-				LoginStatus = ELoginStatus::ValidRefreshToken;
+				RefreshToken = refreshToken;
+				LoginStatus = ELoginStatus::HaveValidRefreshToken;
 				ProcessLogin(nullptr);
 			}
-			else
-			{
-				LoginStatus = ELoginStatus::UnknownError;
-			}
-			break;
 		}
-
-		case ELoginStatus::ValidRefreshToken:
+		else
 		{
-			TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest();
-			Request->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
-				{this->OnLoginResponseReceived(Request, Response, bWasSuccessful); });
-
-			Request->SetURL(ModumateIdentityEndpoint(TEXT("auth/verify")) );
-			Request->SetVerb(TEXT("POST"));
-			Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-			Request->SetHeader(TEXT("Accepts"), TEXT("application/json"));
-			Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
-
-			TSharedPtr<FJsonObject> tokenRequestJson = MakeShared<FJsonObject>();
-			tokenRequestJson->SetStringField(TEXT("key"), ApiKey);
-			tokenRequestJson->SetStringField(TEXT("refreshToken"), RefreshToken);
-			FJsonDataBag serialize;
-			serialize.JsonObject = tokenRequestJson;
-			FString payload = serialize.ToJson(false);
-
-			Request->SetContentAsString(payload);
-			LoginStatus = ELoginStatus::WaitingForAuthId;
-			Request->ProcessRequest();
-			break;
+			LoginStatus = ELoginStatus::UnknownError;
 		}
+		break;
+	}
 
-		case ELoginStatus::WaitingForAuthId:
+	case ELoginStatus::HaveValidRefreshToken:
+	{
+		RequestIdTokenRefresh();
+		break;
+	}
+
+	case ELoginStatus::WaitingForVerify:
+	{
+		FString content = Response->GetContentAsString();
+		FModumateUserVerifyParams userVerifyInfo;
+		FJsonObjectConverter::JsonObjectStringToUStruct<FModumateUserVerifyParams>(content, &userVerifyInfo, 0, 0);
+		if (!userVerifyInfo.IdToken.IsEmpty())
 		{
-			FString content = Response->GetContentAsString();
-			FModumateTokenInfo tokenInfo;
-			FJsonObjectConverter::JsonObjectStringToUStruct<FModumateTokenInfo>(content, &tokenInfo, 0, 0);
-			if (!tokenInfo.idToken.IsEmpty())
-			{
-				LocalId = tokenInfo.user.uid;
-				RefreshToken = tokenInfo.refreshToken;
-				IdToken = tokenInfo.idToken;
-				UserInfo = tokenInfo.user;
-				LoginStatus = ELoginStatus::Connected;
-			}
-			else
-			{
-				LoginStatus = ELoginStatus::UnknownError;
-			}
-			break;
+			LocalId = userVerifyInfo.User.Uid;
+			RefreshToken = userVerifyInfo.RefreshToken;
+			IdToken = userVerifyInfo.IdToken;
+			UserInfo = userVerifyInfo.User;
+			IdTokenTimestamp = FDateTime::Now();
+			LoginStatus = ELoginStatus::Connected;
+			ProcessUserStatus(userVerifyInfo.Status);
+		}
+		else
+		{
+			LoginStatus = ELoginStatus::UnknownError;
 		}
 
-		default:
-			break;
+		for (auto& callback: TokenRefreshDelegates)
+		{
+			callback.Execute(LoginStatus == ELoginStatus::Connected);
 		}
+		TokenRefreshDelegates.Empty();
+		break;
+	}
+
+	default:
+		break;
+	}
+}
+
+void FModumateAccountManager::RequestIdTokenRefresh(TBaseDelegate<void, bool>* callback)
+{
+	if (LoginStatus != ELoginStatus::HaveValidRefreshToken && LoginStatus != ELoginStatus::Connected)
+	{
+		return;
+	}
+
+	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest();
+	Request->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+		{this->OnAmsResponseReceived(Request, Response, bWasSuccessful); });
+
+	Request->SetURL(ModumateIdentityEndpoint(TEXT("auth/verify")));
+	Request->SetVerb(TEXT("POST"));
+	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	Request->SetHeader(TEXT("Accepts"), TEXT("application/json"));
+	Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
+
+	TSharedPtr<FJsonObject> tokenRequestJson = MakeShared<FJsonObject>();
+	tokenRequestJson->SetStringField(TEXT("refreshToken"), RefreshToken);
+	FJsonDataBag serialize;
+	serialize.JsonObject = tokenRequestJson;
+	FString payload = serialize.ToJson(false);
+
+	if (callback != nullptr)
+	{
+		TokenRefreshDelegates.Add(*callback);
+	}
+	Request->SetContentAsString(payload);
+	LoginStatus = ELoginStatus::WaitingForVerify;
+	Request->ProcessRequest();
+}
+
+void FModumateAccountManager::RequestStatus()
+{
+	if (LoginStatus != ELoginStatus::Connected)
+	{
+		return;
+	}
+
+	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest();
+	Request->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+		{this->OnStatusResponseReceived(Request, Response, bWasSuccessful); });
+
+	Request->SetURL(ModumateIdentityEndpoint(TEXT("status")));
+	Request->SetVerb(TEXT("GET"));
+	Request->SetHeader(TEXT("Accepts"), TEXT("application/json"));
+	Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
+	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + GetIdToken());
+
+	Request->ProcessRequest();
+}
+
+bool FModumateAccountManager::HasPermission(EModumatePermission requestedPermission) const
+{
+	return CurrentPermissions.Contains(requestedPermission);
+}
+
+void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& userStatus)
+{
+	// TODO: process announcements:
+	CurrentPermissions.Empty();
+
+	for (const FString& perm: userStatus.Permissions)
+	{
+		auto permissionIndex = StaticEnum<EModumatePermission>()->GetValueByNameString(perm);
+		if (permissionIndex != INDEX_NONE)
+		{
+			CurrentPermissions.Add(EModumatePermission(permissionIndex));
+		}
+	}
+}
+
+void FModumateAccountManager::Tick()
+{
+	if (LoginStatus == ELoginStatus::Connected && FDateTime::Now() - IdTokenTimestamp > IdTokenTimeout)
+	{
+		IdTokenTimestamp = FDateTime::Now();
+		RequestStatus();
 	}
 }

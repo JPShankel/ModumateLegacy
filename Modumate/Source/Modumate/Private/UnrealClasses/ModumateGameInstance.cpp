@@ -56,7 +56,7 @@ FModumateDocument *UModumateGameInstance::GetDocument()
 void UModumateGameInstance::Init()
 {
 	AnalyticsInstance = UModumateAnalyticsStatics::InitAnalytics();
-	AccountManager = MakeShared<Modumate::FModumateAccountManager>();
+	AccountManager = MakeShared<FModumateAccountManager>();
 
 	UModumateFunctionLibrary::SetWindowTitle();
 
@@ -76,7 +76,7 @@ void UModumateGameInstance::Init()
 	DimensionManager->Init();
 }
 
-TSharedPtr<Modumate::FModumateAccountManager> UModumateGameInstance::GetAccountManager() const
+TSharedPtr<FModumateAccountManager> UModumateGameInstance::GetAccountManager() const
 {
 	return AccountManager;
 }
