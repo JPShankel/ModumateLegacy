@@ -66,6 +66,7 @@ public:
 	int32 ParentSlotIndex = 0;
 
 	FArchitecturalMesh Mesh;
+	TMap<FName, FArchitecturalMaterial> ChannelMaterials;
 };
 
 /*

@@ -207,9 +207,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 			partStaticMeshComp->SetRelativeRotation(partRotator);
 			partStaticMeshComp->SetRelativeScale3D(partScale * partFlip);
 
-#if 0
-			UModumateFunctionLibrary::SetMeshMaterialsFromMapping(partStaticMeshComp, portalConfig.MaterialsPerChannel);
-#endif
+			UModumateFunctionLibrary::SetMeshMaterialsFromMapping(partStaticMeshComp, assemblyPart.ChannelMaterials);
 
 			// And also, disable the proc mesh components that we won't be using for this slot
 			for (int32 sliceIdx = 0; sliceIdx < 9; ++sliceIdx)
@@ -405,19 +403,16 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 			}
 
 			// TODO: reactivate when DDL 2 materials come online
-#if 0
 			for (int32 sliceIdx = 0; sliceIdx < 9; ++sliceIdx)
 			{
 				int32 compIdx = sliceCompIdxStart + sliceIdx;
 				UProceduralMeshComponent *procMeshComp = NineSliceComps[compIdx];
-				UModumateFunctionLibrary::SetMeshMaterialsFromMapping(procMeshComp, portalConfig.MaterialsPerChannel, &matIndexMapping);
+				UModumateFunctionLibrary::SetMeshMaterialsFromMapping(procMeshComp, assemblyPart.ChannelMaterials, &matIndexMapping);
 
 				procMeshComp = NineSliceLowLODComps[compIdx];
-				UModumateFunctionLibrary::SetMeshMaterialsFromMapping(procMeshComp, portalConfig.MaterialsPerChannel, &matIndexMapping);
+				UModumateFunctionLibrary::SetMeshMaterialsFromMapping(procMeshComp, assemblyPart.ChannelMaterials, &matIndexMapping);
 				procMeshComp->SetVisibility(false);
 			}
-#endif
-
 		}
 	}
 	SetIsDynamic(origDynamicStatus);

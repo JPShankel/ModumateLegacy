@@ -3,7 +3,6 @@
 0-03_SrfTreatment.csv
 0-04_Profile.csv
 0-05_Mesh.csv
-0-05A_StubbyPortals.csv
 0-05B_StubbyFFE.csv
 0-05C_StubbyCabinets.csv
 0-05D_StubbyCountertops.csv

@@ -80,6 +80,7 @@ public:
 	{
 		int32 ParentPinSetIndex, ParentPinSetPosition;
 		FBIMKey PresetID;
+		FName PinChannel;
 		EBIMPinTarget Target = EBIMPinTarget::Default;
 		bool operator==(const FChildAttachment& OtherAttachment) const;
 	};

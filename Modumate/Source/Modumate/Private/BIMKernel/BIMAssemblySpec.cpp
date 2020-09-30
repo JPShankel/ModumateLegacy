@@ -157,7 +157,7 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 				// TODO: for now, ignoring material and color
 				for (auto& cp : partPreset->ChildPresets)
 				{
-					if (cp.PresetID.IsNone())
+					if (!ensureAlways(!cp.PresetID.IsNone()))
 					{
 						ret = ECraftingResult::Error;
 						continue;
@@ -171,11 +171,33 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 						continue;
 					}
 
+					// If this preset has a material asset ID, then its ID is an architectural material
+					FString materialAsset;
+					if (childPreset->Properties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialAsset))
+					{
+						// Pin channels are defined in the DDL spreadsheet
+						// Each row of a preset can define a separate "channel" to which its pin assignments apply
+						// The only use case for this right now is binding material assignments in parts, 
+						// so all parts must define pin channels.
+						if (ensureAlways(!cp.PinChannel.IsNone()))
+						{
+							// Pin channel names are set in the spreadsheet/database
+							// They do NOT conform to channel names in the mesh itself
+							// the Material property binds a channel by name to a material
+							// the Mesh property binds a channel by name to a material index in the engine mesh
+							const FArchitecturalMaterial* material = InDB.GetArchitecturalMaterialByKey(childPreset->PresetID);
+							if (ensureAlways(material != nullptr))
+							{
+								partSpec.ChannelMaterials.Add(cp.PinChannel, *material);
+							}
+						}
+					}
+
 					// If this child has a mesh asset ID, this fetch the mesh and use it 
-					FName meshAsset;
+					FString meshAsset;
 					if (childPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))
 					{
-						const FArchitecturalMesh *mesh = InDB.GetArchitecturalMeshByKey(childPreset->PresetID);
+						const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(childPreset->PresetID);
 						if (!ensureAlways(mesh != nullptr))
 						{
 							ret = ECraftingResult::Error;

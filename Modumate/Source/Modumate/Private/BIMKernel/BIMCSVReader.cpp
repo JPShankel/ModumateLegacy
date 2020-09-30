@@ -179,6 +179,10 @@ ECraftingResult FBIMCSVReader::ProcessTagPathRow(const TArray<const TCHAR*>& Row
 			{
 				setColumnRange(IDRange, i + 1);
 			}
+			else if (dataType[1].Equals(TEXT("PinChannel")))
+			{
+				setColumnRange(PinChannelRange, i + 1);
+			}
 			else
 			{
 				currentRange = nullptr;
@@ -400,6 +404,22 @@ ECraftingResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row,
 			if (!found)
 			{
 				OutMessages.Add(FString::Printf(TEXT("Could not find pin %s"), *PinRange.Get(i)));
+			}
+		}
+		else if (PinChannelRange.IsIn(i))
+		{
+			// Pin channels are used to assign materials to meshes
+			// Materials are siblings of their meshes, so we tag all siblings with the pin channel to link them in FBimAssemblSpec::FromPreset
+			if (ensureAlways(Preset.ChildPresets.Num() > 0))
+			{
+				int32 channelPosition = Preset.ChildPresets.Last().ParentPinSetPosition;
+				for (auto& cp : Preset.ChildPresets)
+				{
+					if (cp.ParentPinSetPosition == channelPosition)
+					{
+						cp.PinChannel = *cell;
+					}
+				}
 			}
 		}
 	}
