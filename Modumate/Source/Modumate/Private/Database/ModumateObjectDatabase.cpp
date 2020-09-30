@@ -359,7 +359,6 @@ void FModumateDatabase::ReadPresetData()
 	/*
 	For every preset, load its dependent assets (if any) and set its object type based on tag path
 	*/
-	TSet<EObjectType> gotDefault;
 	for (auto &kvp : PresetManager.CraftingNodePresets.Presets)
 	{
 		// Load assets (mesh, material, profile or color)
@@ -420,11 +419,9 @@ void FModumateDatabase::ReadPresetData()
 		outSpec.ObjectType = preset->ObjectType;PresetManager.UpdateProjectAssembly(outSpec);
 
 		// TODO: default assemblies added to allow interim loading during assembly refactor, to be eliminated
-		if (!gotDefault.Contains(outSpec.ObjectType))
+		if (!PresetManager.DefaultAssembliesByObjectType.Contains(outSpec.ObjectType))
 		{
-			gotDefault.Add(outSpec.ObjectType);
-			outSpec.RootPreset = FBIMKey(TEXT("default"));
-			PresetManager.UpdateProjectAssembly(outSpec);
+			PresetManager.DefaultAssembliesByObjectType.Add(outSpec.ObjectType, outSpec);
 		}
 	}
 }

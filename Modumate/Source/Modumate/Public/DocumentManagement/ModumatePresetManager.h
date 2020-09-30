@@ -23,6 +23,9 @@ private:
 	FGraphCollection GraphCollection;
 	TSet<FString> KeyStore;
 
+	//When an assembly can't be found, use a default
+	TMap<EObjectType, FBIMAssemblySpec> DefaultAssembliesByObjectType;
+
 public:
 	TMap<EObjectType, FAssemblyDataCollection> AssembliesByObjectType;
 

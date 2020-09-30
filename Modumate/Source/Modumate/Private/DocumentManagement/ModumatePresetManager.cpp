@@ -165,7 +165,7 @@ bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, cons
 	// TODO: temp patch to support missing assemblies prior to assemblies being retired
 	if (presetAssembly == nullptr)
 	{
-		presetAssembly = db->GetData(FBIMKey(TEXT("default")));
+		presetAssembly = DefaultAssembliesByObjectType.Find(ObjectType);
 	}
 
 	if (presetAssembly != nullptr)
