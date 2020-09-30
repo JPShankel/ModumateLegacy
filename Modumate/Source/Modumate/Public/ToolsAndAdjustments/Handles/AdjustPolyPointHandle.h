@@ -29,7 +29,7 @@ protected:
 
 	bool bAdjustPolyEdge;
 	FPlane PolyPlane;
-	FVector OriginalDirection;
+	FVector CurrentDirection;
 	TArray<FVector> OriginalPolyPoints;
 	TArray<FVector> LastValidPolyPoints;
 };

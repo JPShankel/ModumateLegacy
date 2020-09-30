@@ -3,11 +3,12 @@
 #include "Objects/SurfaceEdge.h"
 
 #include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "Objects/SurfaceGraph.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/LineActor.h"
-#include "ModumateCore/ModumateObjectStatics.h"
 
 FMOISurfaceEdgeImpl::FMOISurfaceEdgeImpl(FModumateObjectInstance *moi)
 	: FMOIEdgeImplBase(moi)
@@ -119,5 +120,20 @@ void FMOISurfaceEdgeImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &
 		}
 
 		LineActor->SetActorEnableCollision(bOutCollisionEnabled);
+	}
+}
+
+void FMOISurfaceEdgeImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
+{
+	if (MOI->HasAdjustmentHandles())
+	{
+		return;
+	}
+
+	// Edges always have two vertices
+	for (int32 i = 0; i < 2; ++i)
+	{
+		auto vertexHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		vertexHandle->SetTargetIndex(i);
 	}
 }

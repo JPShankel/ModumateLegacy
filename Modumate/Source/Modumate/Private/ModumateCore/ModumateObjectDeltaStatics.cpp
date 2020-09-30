@@ -14,7 +14,6 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 		{
 			continue;
 		}
-		Modumate::EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType());
 		Modumate::EGraphObjectType graph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType());
 
 		if (auto graphObject = doc->GetVolumeGraph().FindObject(id))

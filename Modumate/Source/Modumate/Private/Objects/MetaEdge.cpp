@@ -3,9 +3,10 @@
 #include "Objects/MetaEdge.h"
 
 #include "DocumentManagement/ModumateDocument.h"
-#include "Objects/MiterNode.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/MiterNode.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/LineActor.h"
@@ -99,6 +100,21 @@ void FMOIMetaEdgeImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOu
 		}
 
 		LineActor->SetActorEnableCollision(bOutCollisionEnabled);
+	}
+}
+
+void FMOIMetaEdgeImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
+{
+	if (MOI->HasAdjustmentHandles())
+	{
+		return;
+	}
+
+	// Edges always have two vertices
+	for (int32 i = 0; i < 2; ++i)
+	{
+		auto vertexHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		vertexHandle->SetTargetIndex(i);
 	}
 }
 

@@ -2,15 +2,16 @@
 
 #include "Objects/StructureLine.h"
 
+#include "Algo/ForEach.h"
+#include "DocumentManagement/ModumateSnappingView.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "ModumateCore/ModumateGeometryStatics.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "DocumentManagement/ModumateSnappingView.h"
-#include "Drafting/ModumateDraftingElements.h"
-#include "Algo/ForEach.h"
 
 FMOIStructureLine::FMOIStructureLine(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
@@ -58,6 +59,23 @@ void FMOIStructureLine::SetupDynamicGeometry()
 void FMOIStructureLine::UpdateDynamicGeometry()
 {
 	InternalUpdateGeometry(false, true);
+}
+
+void FMOIStructureLine::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
+{
+	FModumateObjectInstance* parent = MOI->GetParentObject();
+	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaEdge)))
+	{
+		return;
+	}
+
+	// edges have two vertices and want an adjustment handle for each
+	for (int32 i = 0; i < 2; i++)
+	{
+		auto cornerHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		cornerHandle->SetTargetIndex(i);
+		cornerHandle->SetTargetMOI(parent);
+	}
 }
 
 void FMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
