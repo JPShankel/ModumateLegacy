@@ -410,7 +410,7 @@ PRESET,,"4LayeredAssembly --> Wall
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.375inD
 0Profile-Flat
-0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Wall,,Double Wythe Composite Brick,64in,48in,,X,,"3Layer3D --> Clay Brick
+0LayerPattern --> 2D-Stack Bond",,4LayeredAssembly --> Wall,,Double Wythe Composite Brick,64in,48in,,X,,"3Layer3D --> Clay Brick
 2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
 0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
@@ -427,7 +427,7 @@ PRESET,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.375inD
 0Profile-Flat
-0LayerPattern --> 2D-Running Bond",,
+0LayerPattern --> 2D-Stack Bond",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer3D --> Clay Brick
 2ModuleLWH --> Clay Brick
@@ -449,7 +449,7 @@ PRESET,,"4LayeredAssembly --> Wall
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.375inD
 0Profile-Flat
-0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Wall,,Exterior Brick Composite Cavity,64in,48in,,X,,"3Layer3D --> Clay Brick
+0LayerPattern --> 2D-Stack Bond",,4LayeredAssembly --> Wall,,Exterior Brick Composite Cavity,64in,48in,,X,,"3Layer3D --> Clay Brick
 2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
 0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
@@ -469,7 +469,7 @@ PRESET,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.375inD
 0Profile-Flat
-0LayerPattern --> 2D-Running Bond",,
+0LayerPattern --> 2D-Stack Bond",,
 ,,"4LayeredAssembly --> Wall
 3Layer3D --> Clay Brick
 2ModuleLWH --> Clay Brick
@@ -1497,7 +1497,7 @@ PRESET,,"4LayeredAssembly --> Finish
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.1875inD
 0Profile-Flat
-0LayerPattern --> 2D-Running Bond
+0LayerPattern --> 2D-Flemish Bond
 2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
 0DimThk-0.5inT",,4LayeredAssembly --> Finish,,Porcelain Tile,64in,48in,,X,,"3Layer2D --> Tile --> Porcelain
@@ -1509,7 +1509,7 @@ PRESET,,"4LayeredAssembly --> Finish
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.1875inD
 0Profile-Flat
-0LayerPattern --> 2D-Running Bond",,
+0LayerPattern --> 2D-Flemish Bond",,
 PRESET,,,,,,,,,,,,"2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
 0DimThk-0.5inT",,
@@ -1667,7 +1667,7 @@ PRESET,,"4LayeredAssembly --> Finish
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.375inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Finish,,Stone Tile,64in,48in,,X,,"3Layer2D --> Tile --> Stone
+0LayerPattern --> 2D-Flemish Bond",,4LayeredAssembly --> Finish,,Stone Tile,64in,48in,,X,,"3Layer2D --> Tile --> Stone
 2ModuleLWT --> Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White
 0DimLW-4in-3in
@@ -1676,7 +1676,7 @@ PRESET,,"4LayeredAssembly --> Finish
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.375inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,
+0LayerPattern --> 2D-Flemish Bond",,
 PRESET,,,,,,,,,,,,"2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive
 0DimThk-0.75inT",,
@@ -1690,7 +1690,7 @@ PRESET,,"4LayeredAssembly --> Finish
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Finish,,Asphalt Shingle,64in,48in,,X,,"3Layer2D --> Shingle --> Asphalt
+0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Finish,,Asphalt Shingle,64in,48in,,X,,"3Layer2D --> Shingle --> Asphalt
 2ModuleLWT --> Shingle --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimLW-12in-7in
@@ -1699,7 +1699,7 @@ PRESET,,"4LayeredAssembly --> Finish
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,
+0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Shingle --> Clay
 2ModuleLWT --> Shingle --> Clay

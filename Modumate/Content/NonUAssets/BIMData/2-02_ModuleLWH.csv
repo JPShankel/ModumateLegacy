@@ -146,3 +146,6 @@ PRESET,,"2ModuleLWH --> Glass Block
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-AC8F8B-DeepBlush
 0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Deep Blush","0,0,2",,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-AC8F8B-DeepBlush,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D
+PRESET,,"2ModuleLWH --> Glass Block
+1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-292D38-Indigo
+0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Indigo","0,0,3",,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-292D38-Indigo,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D

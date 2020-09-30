@@ -33,3 +33,4 @@
 3-02_Layer3D.csv
 3-10_RiggedAssembly.csv
 4-00_LayeredAssembly.csv
+5-00_Stair.csv
