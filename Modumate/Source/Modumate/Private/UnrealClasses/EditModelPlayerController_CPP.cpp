@@ -955,55 +955,6 @@ void AEditModelPlayerController_CPP::DeleteActionOnlySelected()
 	);
 }
 
-bool AEditModelPlayerController_CPP::HandleTabKeyForDimensionString()
-{
-	// Loop through dimension strings from the same groupID
-	// TODO: Use dim string uniqueID and the currentGroupID from playerState to identify which dim strings to loop through
-	EMPlayerState->CurrentDimensionStringGroupIndex = (EMPlayerState->CurrentDimensionStringGroupIndex + 1) % (EMPlayerState->CurrentDimensionStringGroupIndexMax + 1);
-
-	// Check if there's any EditableTextBox widget
-	// Currently portal objects have 2 widget for controlling its width and height
-	// Hitting Tab allows user to switch between vertical and horizontal text box
-	if (DimStringWidgetSelectedObject)
-	{
-		if (EnablePortalVerticalInput)
-		{
-			EnablePortalVerticalInput = false; EnablePortalHorizontalInput = true;
-		}
-		else
-		{
-			EnablePortalHorizontalInput = false; EnablePortalVerticalInput = true;
-		}
-		return true;
-	}
-
-	// Allow switch between drawing delta and total dimension string based on current handle object type
-	if (!InteractionHandle)
-	{
-		return false;
-	}
-	if (!InteractionHandle->TargetMOI)
-	{
-		return false;
-	}
-	if (EnableDrawTotalLine)
-	{
-		EnableDrawTotalLine = false; EnableDrawDeltaLine = true;
-	}
-	else
-	{
-		EnableDrawTotalLine = true; EnableDrawDeltaLine = false;
-	}
-	return true;
-}
-
-void AEditModelPlayerController_CPP::ResetDimensionStringTabState()
-{
-	EnableDrawDeltaLine = true;
-	EnableDrawTotalLine = false;
-	EMPlayerState->CurrentDimensionStringGroupIndex = 0;
-}
-
 bool AEditModelPlayerController_CPP::HandleInputNumber(double inputNumber)
 {
 	// This input number handler is intended as a fallback, when the player state's tools do not handle it.

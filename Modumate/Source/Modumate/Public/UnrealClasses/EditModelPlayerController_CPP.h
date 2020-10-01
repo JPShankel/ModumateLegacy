@@ -360,33 +360,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Snap)
 	float SnapOcclusionEpsilon = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DimensionString)
-	FName DimensionStringGroupID_Default = TEXT("Default");
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DimensionString)
-	FName DimensionStringGroupID_PlayerController = TEXT("PlayerController");
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DimensionString)
-	FName DimensionStringUniqueID_Delta = TEXT("Delta");
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DimensionString)
-	FName DimensionStringUniqueID_Total = TEXT("Total");
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DimensionString)
-	FName DimensionStringUniqueID_ControllerLine = TEXT("ControllerLine");
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DimensionString)
-	FName DimensionStringUniqueID_PortalWidth = TEXT("PortalWidth");
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DimensionString)
-	FName DimensionStringUniqueID_PortalHeight = TEXT("PortalHeight");
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DimensionString)
-	FName DimensionStringUniqueID_SideEdge0 = TEXT("SideEdge0");
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DimensionString)
-	FName DimensionStringUniqueID_SideEdge1 = TEXT("SideEdge1");
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Visibility)
 	bool bCutPlaneVisible = false;
 
@@ -460,13 +433,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Keyboard)
 	bool HandleEscapeKey();
 
-	UFUNCTION(BlueprintCallable, Category = Keyboard)
-	bool HandleTabKeyForDimensionString();
-
-	// Set dim. string tab state back to default
-	UFUNCTION(BlueprintCallable, Category = Keyboard)
-	void ResetDimensionStringTabState();
-
 	UFUNCTION(BlueprintPure, Category = Keyboard)
 	FString GetTextBoxUserInput() { return TextBoxUserInput; }
 
@@ -478,14 +444,10 @@ public:
 
 	bool HandleInputNumber(double inputNumber);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = Draw)
-	void DrawRotateToolDegree(const float Degree, const FVector Location, const AActor* DrawLine1, const AActor* DrawLine2);
-
 	UFUNCTION(BlueprintPure)
 	class AEditModelPlayerHUD* GetEditModelHUD() const;
 
 	// Persistence
-
 	UFUNCTION(BlueprintCallable, Category = Persistence)
 	bool SaveModelAs();
 

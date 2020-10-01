@@ -69,38 +69,6 @@ public:
 	static float GetViewportDPIScale();
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static void AddNewDimensionString(const AEditModelPlayerController_CPP *controller,
-		const FVector &p1,
-		const FVector &p2,
-		const FVector &offsetDir, // Direction the text of the dim string will be offset
-		const FName &groupID, // The group this dim string will be part of. Used when user press tab to switch between dimension
-		const FName &uniqueID, // Useful for identification, ex: "delta", "total"
-		const int32 groupIndex, // Order inside the dim string group
-		const AActor* owner, // Useful for contextual purpose. ex: Text box can can know what the current object type is
-		EDimStringStyle style = EDimStringStyle::Fixed,
-		EEnterableField functionality = EEnterableField::NonEditableText,
-		const float offset = 40.f,
-		EAutoEditableBox autoTextBox = EAutoEditableBox::UponUserInput, // Auto turn functionality from nonEditable to Editable
-		const bool alwaysVisible = false, // This dim string will always be visible
-		const FLinearColor &color = FLinearColor::White);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static void AddNewDegreeString(const AEditModelPlayerController_CPP *controller,
-		const FVector &location, // The world location showing the degree string
-		const FVector &start, // Form a line between "start" position and "location", use that line as anchor line
-		const FVector &end, // Form a line between "end" position and "location" use the angle between anchor line and this line to calculate degree
-		const bool clockwise,
-		const FName &groupID,
-		const FName &uniqueID,
-		const int32 groupIndex,
-		const AActor* owner,
-		EDimStringStyle style = EDimStringStyle::DegreeString,
-		EEnterableField functionality = EEnterableField::NonEditableText,
-		EAutoEditableBox autoTextBox = EAutoEditableBox::UponUserInput,
-		const bool alwaysVisible = false,
-		const FLinearColor &color = FLinearColor::White);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
 	static FBoxSphereBounds GetSelectedExtents(const AEditModelPlayerController_CPP *Controller);
 
 	UFUNCTION(BlueprintCallable, Category = "System")

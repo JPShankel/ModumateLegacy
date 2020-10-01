@@ -145,6 +145,9 @@ namespace Modumate
 			FGraphSignedID edgeID = edge->ID * (bEdgeForward ? 1 : -1);
 			EdgeIDs.Add(edgeID);
 
+			// TODO: it is possible that the edge hasn't been cleaned by this point, so the CachedDir is wrong
+			edge->SetVertices(edge->StartVertexID, edge->EndVertexID);
+
 			FVector edgeDir = edge->CachedDir * (bEdgeForward ? 1.0f : -1.0f);
 			FVector edgeNormal = CachedPlane ^ edgeDir;
 			if (!ensure(!edgeNormal.IsNearlyZero()))

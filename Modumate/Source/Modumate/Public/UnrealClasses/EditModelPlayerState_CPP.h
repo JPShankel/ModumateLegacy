@@ -79,17 +79,6 @@ public:
 	TArray<FAffordanceLine> AffordanceLines;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	TArray<FModelDimensionString> DimensionStrings;
-
-	// Current index of dimension string within the group ID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	int32 CurrentDimensionStringGroupIndex = 0;
-
-	// Max index supported by the current dim string group. Used for TAB switching between dim string of the same groupID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	int32 CurrentDimensionStringGroupIndexMax = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	FSnappedCursor SnappedCursor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tools")
@@ -196,12 +185,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Shopping")
 	FBIMKey GetAssemblyForToolMode(EToolMode mode);
-
-	UFUNCTION(BlueprintCallable, Category = Keyboard)
-	void AddDimensionStringsToHUDDrawWidget();
-
-	UFUNCTION(BlueprintCallable, Category = Keyboard)
-	TArray<FModumateLines> ConvertDimensionStringsToModumateLines(FModelDimensionString dimString);
 
 	UFUNCTION(BlueprintCallable)
 	void SetEditViewModeDirect(EEditViewModes NewEditViewMode, bool bForceUpdate = false);

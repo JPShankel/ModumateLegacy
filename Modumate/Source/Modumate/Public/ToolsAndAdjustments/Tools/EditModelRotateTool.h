@@ -32,6 +32,7 @@ private:
 	float InputAngle = 0.f;
 
 	bool bOriginalVerticalAffordanceSnap = false;
+	bool bClockwise = true;
 
 public:
 	URotateObjectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
@@ -43,8 +44,9 @@ public:
 	virtual bool EnterNextStage() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
+	virtual bool PostEndOrAbort() override;
 	void ApplyRotation();
-	float CalcToolAngle();
+	FQuat CalcToolAngle();
 	virtual bool FrameUpdate() override;
 	virtual bool HandleInputNumber(double n) override;
 };
