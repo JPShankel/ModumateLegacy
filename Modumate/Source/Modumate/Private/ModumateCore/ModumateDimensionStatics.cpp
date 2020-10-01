@@ -24,7 +24,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 {
 	std::wstring dimCStr = *dimStr;
 
-	//Matches any integer...bare integers are interpreted as inches
+	//Matches any integer...bare integers are interpreted as feet
 	static std::wstring integerString = L"\\d+";
 	static std::wregex integerPattern(integerString);
 
@@ -58,6 +58,9 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	//Metric recognizes decimal places, decimal numbers are integers with optional mantissa
 	static std::wregex decimalPattern(decimalString);
 
+	//Plain feet, ie '1.2ft'
+	static std::wregex justFeetPattern(L"(" + decimalString + L")ft");
+
 	//Plain meters, ie '1.2m'
 	static std::wregex justMetersPattern(L"(" + decimalString + L")m");
 
@@ -72,20 +75,20 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 
 	std::wsmatch match;
 
-	// Bare integers are assumed to be plain inches
+	// Bare integers are assumed to be plain feet
 	if (std::regex_match(dimCStr, match, integerPattern))
 	{
-		ret.Format = EDimensionFormat::JustInches;
-		ret.Centimeters = FCString::Atof(*dimStr) * InchesToCentimeters;
+		ret.Format = EDimensionFormat::JustFeet;
+		ret.Centimeters = FCString::Atof(*dimStr) * InchesToCentimeters * 12;
 		return ret;
 
 	}
 
-	// Bare decimal values are assumed to be plain centimeters
+	// Bare decimal values are assumed to be plain feet
 	if (std::regex_match(dimCStr, match, decimalPattern))
 	{
-		ret.Format = EDimensionFormat::JustCentimeters;
-		ret.Centimeters = FCString::Atof(*dimStr);
+		ret.Format = EDimensionFormat::JustFeet;
+		ret.Centimeters = FCString::Atof(*dimStr) * InchesToCentimeters * 12;
 		return ret;
 	}
 
@@ -229,6 +232,21 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 			{
 				ret.Format = EDimensionFormat::Error;
 			}
+		}
+		else
+		{
+			ret.Format = EDimensionFormat::Error;
+		}
+		return ret;
+	}
+
+	// A decimal value of feet, ie 1.234ft
+	if (std::regex_match(dimCStr, match, justFeetPattern))
+	{
+		if (match.size() > 1)
+		{
+			ret.Format = EDimensionFormat::JustFeet;
+			ret.Centimeters = FCString::Atof(match[1].str().c_str()) * InchesToCentimeters * 12;
 		}
 		else
 		{

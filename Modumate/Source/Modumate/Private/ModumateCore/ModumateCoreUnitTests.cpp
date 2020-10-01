@@ -1,6 +1,8 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #include "ModumateCore/ModumateCoreUnitTests.h"
 
+#include "CoreMinimal.h"
+
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
 #include "Backends/CborStructDeserializerBackend.h"
@@ -17,6 +19,7 @@
 #include "StructDeserializer.h"
 #include "StructSerializer.h"
 
+#define LOCTEXT_NAMESPACE "CoreUnitTests"
 
 FModumateTestInstanceData::FModumateTestInstanceData()
 	: bValid(false)
@@ -1523,12 +1526,13 @@ namespace Modumate
 		};
 
 		static TArray<TestCase> testCases = { 
-			{TEXT("1"),EDimensionFormat::JustInches,InchesToCentimeters * 1},
-			{TEXT("33"),EDimensionFormat::JustInches,InchesToCentimeters * 33},
-			{TEXT("1.2"),EDimensionFormat::JustCentimeters,1.2f},
-			{TEXT("0.1"),EDimensionFormat::JustCentimeters,0.1f},
+			{TEXT("1"),EDimensionFormat::JustFeet,InchesToCentimeters * 1 * 12},
+			{TEXT("33"),EDimensionFormat::JustFeet,InchesToCentimeters * 33 * 12},
+			{TEXT("1.2"),EDimensionFormat::JustFeet,InchesToCentimeters * 1.2f * 12},
+			{TEXT("0.1"),EDimensionFormat::JustFeet,InchesToCentimeters * 0.1f * 12},
 			{TEXT("4'"),EDimensionFormat::JustFeet,InchesToCentimeters * 4 * 12},
 			{TEXT("15ft"),EDimensionFormat::JustFeet,InchesToCentimeters * 15 * 12},
+			{TEXT("2.3ft"),EDimensionFormat::JustFeet,InchesToCentimeters * 2.3 * 12},
 			{TEXT("3\""),EDimensionFormat::JustInches,InchesToCentimeters * 3},
 			{TEXT(".5\""),EDimensionFormat::JustInches,InchesToCentimeters * 0.5f},
 			{TEXT("3.2\""),EDimensionFormat::JustInches,InchesToCentimeters * 3.2f},
@@ -1551,13 +1555,15 @@ namespace Modumate
 			{TEXT("11ft 2cm"),EDimensionFormat::Error,0.0f}
 		};
 
-		bool ret = true;
+		int32 testIdx = 0;
 		for (auto &tc : testCases)
 		{
 			FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(tc.dimStr);
-			ret = (dim.Format == tc.expectedFormat && FMath::IsNearlyEqual(dim.Centimeters, tc.expectedCentimeters)) && ret;
+			TestTrue(FString::Printf(TEXT("test %d"), testIdx), dim.Format == tc.expectedFormat);
+			TestTrue(FString::Printf(TEXT("test %d %f %f"), testIdx, dim.Centimeters, tc.expectedCentimeters), FMath::IsNearlyEqual(dim.Centimeters, tc.expectedCentimeters, KINDA_SMALL_NUMBER));
+			testIdx++;
 		}
-		return ret;
+		return true;
 	}
 
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateIDListNormalization, "Modumate.Core.IDListNormalization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
@@ -1581,3 +1587,5 @@ namespace Modumate
 		return true;
 	}
 }
+
+#undef LOCTEXT_NAMESPACE 
