@@ -15,7 +15,6 @@ class MODUMATE_API UMoveObjectTool : public UEditModelToolBase, public FSelected
 
 private:
 	FVector AnchorPoint;
-	int32 PendingSegmentID;
 
 public:
 	UMoveObjectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
@@ -29,4 +28,5 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual bool HandleControlKey(bool pressed) override;
+	virtual bool HasDimensionActor() { return true; };
 };

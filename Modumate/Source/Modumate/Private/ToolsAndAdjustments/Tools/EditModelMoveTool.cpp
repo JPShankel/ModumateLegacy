@@ -48,7 +48,6 @@ bool UMoveObjectTool::BeginUse()
 	{
 		AnchorPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorPoint, Controller->EMPlayerState->SnappedCursor.HitNormal, Controller->EMPlayerState->SnappedCursor.HitTangent);
-		PendingSegmentID = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass())->ID;
 
 		return true;
 	}
@@ -122,13 +121,30 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 {
 	if (Controller->EMPlayerState->SnappedCursor.Visible)
 	{
-		FVector direction = (Controller->EMPlayerState->SnappedCursor.WorldPosition - AnchorPoint).GetSafeNormal();
-		FVector oldPos = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-		Controller->EMPlayerState->SnappedCursor.WorldPosition = AnchorPoint + direction * n;
-		EndUse();
-		Controller->EMPlayerState->SnappedCursor.WorldPosition = oldPos;
+		const FVector &hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+		FModumateDocument* doc = Controller->GetDocument();
+		if (doc != nullptr)
+		{
+			FVector direction = hitLoc - AnchorPoint;
+			direction.Normalize();
+			FVector offset = direction * n;
+
+			TMap<int32, FTransform> objectInfo;
+			for (auto& kvp : OriginalTransforms)
+			{
+				objectInfo.Add(kvp.Key, FTransform(kvp.Value.GetRotation(), kvp.Value.GetTranslation() + offset));;
+			}
+
+			if (!FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), false))
+			{
+				return false;
+			}
+		}
 	}
-	return true;
+
+	ReleaseSelectedObjects();
+
+	return Super::PostEndOrAbort();
 }
 
 bool UMoveObjectTool::EndUse()
@@ -142,9 +158,6 @@ bool UMoveObjectTool::EndUse()
 		ReleaseObjectsAndApplyDeltas();
 	}
 
-	DimensionManager->ReleaseDimensionActor(PendingSegmentID);
-	PendingSegmentID = MOD_ID_NONE;
-
 	return Super::EndUse();
 }
 
@@ -154,10 +167,7 @@ bool UMoveObjectTool::AbortUse()
 
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
-	DimensionManager->ReleaseDimensionActor(PendingSegmentID);
-	PendingSegmentID = MOD_ID_NONE;
-
-	return UEditModelToolBase::AbortUse();
+	return Super::AbortUse();
 }
 
 bool UMoveObjectTool::HandleControlKey(bool pressed)
