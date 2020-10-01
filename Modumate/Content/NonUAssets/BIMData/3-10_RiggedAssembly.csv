@@ -225,10 +225,10 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
 1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 1SlotConfig --> Door --> Barn --> Frame
 0Slot-DoorFrameSwing
@@ -260,10 +260,10 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
 1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0Slot-DoorPanelAssemblyBarnRight
 3RiggedAssembly --> Door --> Barn --> Panel
@@ -283,10 +283,10 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
 1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 1SlotConfig --> Door --> Pocket --> Frame
 0Slot-DoorFramePocket
@@ -305,10 +305,10 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 1SlotConfig --> Door --> Pocket --> Frame
 0Slot-DoorFramePocket
@@ -329,10 +329,10 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0Slot-DoorPanelAssemblyPocketRight
 3RiggedAssembly --> Door --> Pocket --> Panel
@@ -345,10 +345,10 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 1SlotConfig --> Door --> Sliding --> Frame
 0Slot-DoorFrameSliding
@@ -475,10 +475,10 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyBarn,"3RiggedAssembly --> Door --> Bar
 0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
 1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"3RiggedAssembly --> Door --> Barn --> Frame
 1SlotConfig --> Door --> Barn --> Frame
@@ -514,10 +514,10 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyBarnLeft,"3RiggedAssembly --> Door -->
 0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
 1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyBarnRight,"3RiggedAssembly --> Door --> Barn --> Panel
 1SlotConfig --> Door --> Barn --> Panel
@@ -536,10 +536,10 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyBarnRight,"3RiggedAssembly --> Door --
 0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
 1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"3RiggedAssembly --> Door --> Pocket --> Frame
 1SlotConfig --> Door --> Pocket --> Frame
@@ -562,10 +562,10 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyPocket,"3RiggedAssembly --> Door --> P
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"3RiggedAssembly --> Door --> Pocket --> Frame
 1SlotConfig --> Door --> Pocket --> Frame
@@ -591,10 +591,10 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyPocketLeft,"3RiggedAssembly --> Door -
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyPocketRight,"3RiggedAssembly --> Door --> Pocket --> Panel
 1SlotConfig --> Door --> Sliding --> Panel
@@ -606,10 +606,10 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblyPocketRight,"3RiggedAssembly --> Door 
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"3RiggedAssembly --> Door --> Sliding --> Frame
 1SlotConfig --> Door --> Sliding --> Frame
@@ -635,10 +635,10 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblySlidingXO-1,"3RiggedAssembly --> Door 
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblySlidingXO-2,"3RiggedAssembly --> Door --> Sliding --> Panel
 1SlotConfig --> Door --> Sliding --> Panel
@@ -650,10 +650,10 @@ PRESET,,,,,,,,,,,,,0Slot-DoorPanelAssemblySlidingXO-2,"3RiggedAssembly --> Door 
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"3RiggedAssembly --> Door --> Swing --> Frame
 1SlotConfig --> Door --> Swing --> Frame
@@ -901,10 +901,10 @@ PRESET,,"3RiggedAssembly --> Door --> Barn --> Panel
 0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
 1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Barn --> Panel,,Barn Door Panel 1,,,,X,,"1SlotConfig --> Door --> Barn --> Panel
 0Slot-DoorPanelPart
 0Slot-DoorCasterBarnLeft
@@ -919,10 +919,10 @@ PRESET,,,,,,,,,,,,,0Slot-DoorCasterBarnRight,"2Part --> Door --> Caster --> Barn
 0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
 1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandlePocketExterior,"2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandlePocketInterior,"2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"3RiggedAssembly --> Door --> Barn --> Panel
 1SlotConfig --> Door --> Barn --> Panel
@@ -941,10 +941,10 @@ PRESET,,"3RiggedAssembly --> Door --> Barn --> Panel
 0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
 1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Barn --> Panel,,Barn Door Panel 2,,,,X,,"1SlotConfig --> Door --> Barn --> Panel
 0Slot-DoorPanelPart
 0Slot-DoorCasterBarnLeft
@@ -960,10 +960,10 @@ PRESET,,,,,,,,,,,,,0Slot-DoorCasterBarnRight,"2Part --> Door --> Caster --> Barn
 0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
 1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandlePocketExterior,"2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandlePocketInterior,"2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"3RiggedAssembly --> Door --> Pocket --> Panel
 1SlotConfig --> Door --> Pocket --> Panel
@@ -974,10 +974,10 @@ PRESET,,"3RiggedAssembly --> Door --> Pocket --> Panel
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Pocket --> Panel,,Pocket Door Panel 1,,,,X,,"1SlotConfig --> Door --> Pocket --> Panel
 0Slot-DoorPanelPart
 0Slot-DoorHandlePocketExterior
@@ -985,10 +985,10 @@ PRESET,,"3RiggedAssembly --> Door --> Pocket --> Panel
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandlePocketExterior,"2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandlePocketInterior,"2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"3RiggedAssembly --> Door --> Pocket --> Panel
 1SlotConfig --> Door --> Sliding --> Panel
@@ -1000,10 +1000,10 @@ PRESET,,"3RiggedAssembly --> Door --> Pocket --> Panel
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Pocket --> Panel,,Pocket Door Panel 2,,,,X,,"1SlotConfig --> Door --> Sliding --> Panel
 0Slot-DoorPanelPart
 0Slot-DoorHandleExterior
@@ -1012,10 +1012,10 @@ PRESET,,"3RiggedAssembly --> Door --> Pocket --> Panel
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandleExterior,"2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandleInterior,"2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"3RiggedAssembly --> Door --> Sliding --> Panel
 1SlotConfig --> Door --> Sliding --> Panel
@@ -1027,10 +1027,10 @@ PRESET,,"3RiggedAssembly --> Door --> Sliding --> Panel
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,3RiggedAssembly --> Door --> Sliding --> Panel,,Sliding Door Panel,,,,X,,"1SlotConfig --> Door --> Sliding --> Panel
 0Slot-DoorPanelPart
 0Slot-DoorHandleExterior
@@ -1039,10 +1039,10 @@ PRESET,,"3RiggedAssembly --> Door --> Sliding --> Panel
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandleExterior,"2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-DoorHandleInterior,"2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"3RiggedAssembly --> Door --> Swing --> Panel
 1SlotConfig --> Door --> Swing --> Panel

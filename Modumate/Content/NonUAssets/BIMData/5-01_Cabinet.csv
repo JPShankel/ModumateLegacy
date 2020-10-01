@@ -1,15 +1,16 @@
-TYPENAME,,5Cabinet,,Layer,,,,,,,,
-,,Definition,,,,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,
-PROPERTY,,String,,Name,,Preset.Name,,,,,,
-PROPERTY,,String,,,,Preset.IconWidth,,,,,,
-PROPERTY,,String,,,,Preset.IconDepth,,,,,,
-PROPERTY,,String,,,,Preset.IconHeight,,,,,,
-,,InputExtensibility,,InputPreset,,,,,,,,
-INPUTPIN,,1..1,,ChildCabinetFace,,,,,,,,
-INPUTPIN,,1..1,,ChildToeKickDims,,,,,,,,
-,,Presets,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Preset.Name,Preset.IconWidth,Preset.IconDepth,Preset.IconHeight,DataType=InputPins,ChildCabinetFace,ChildToeKickDims
+TYPENAME,,5Cabinet,,Assembly,,,,,,,,,
+,,Definition,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,
+PROPERTY,,String,,Name,,Assembly.Name,,,,,,,
+PROPERTY,,String,,,,Assembly.IconWidth,,,,,,,
+PROPERTY,,String,,,,Assembly.IconDepth,,,,,,,
+PROPERTY,,String,,,,Assembly.IconHeight,,,,,,,
+,,InputExtensibility,,InputPreset,,PinTarget,,,,,,,
+INPUTPIN,,1..1,,ChildCabinetFace,,CabinetFace,,,,,,,
+INPUTPIN,,1..1,,ChildToeKickDims,,ToeKick,,,,,,,
+INPUTPIN,,1..1,,ChildToeKickDims,,CarcassMaterial,,,,,,,
+,,Presets,,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Assembly.IconWidth,Assembly.IconDepth,Assembly.IconHeight,DataType=InputPins,CabinetFace,ToeKick,CarcassMaterial
 PRESET,,"5Cabinet --> Floor
 3RiggedAssembly --> Cabinet --> Swing --> Frame
 1SlotConfig --> Cabinet --> Swing --> Frame
@@ -26,7 +27,7 @@ PRESET,,"5Cabinet --> Floor
 0Slot-CabinetFrameSwing
 2Part --> Cabinet --> Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White",0DimHD-4inW-3.5inD
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White",0DimHD-4inW-3.5inD,1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Abstract-FFFFFF-White
 PRESET,,"5Cabinet --> Floor
 3RiggedAssembly --> Cabinet --> Swing --> Frame
 1SlotConfig --> Cabinet --> Swing --> Frame
@@ -43,4 +44,4 @@ PRESET,,"5Cabinet --> Floor
 0Slot-CabinetFrameSwing
 2Part --> Cabinet --> Frame
 0Mesh-Cabinet-Frame-Frameless-01.Cabinet-Frame-Frameless-01'
-1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White",0DimHD-4inW-4inD
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White",0DimHD-4inW-4inD,1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Abstract-FFFFFF-White

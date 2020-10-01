@@ -74,8 +74,8 @@ PRESET,,"2Part --> Door --> Handle --> Knob
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray",,2Part --> Door --> Handle --> Knob,,"Knob Handle 2, Aluminum, Light Gray",,,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
 PRESET,,"2Part --> Door --> Handle --> LateralPull
-0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Door --> Handle --> LateralPull,,"Lateral Pull Handle 1, Aluminum, Pure White",,,0Mesh-Door-Handle-Pull-01.Door-Handle-Pull-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,X,,X,,,,,,,,,,
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Door --> Handle --> LateralPull,,"Lateral Pull Handle 1, Aluminum, Pure White",,,0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,X,,X,,,,,,,,,,
 PRESET,,"2Part --> Door --> Handle --> Lever
 0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Door --> Handle --> Lever,,"Lever Handle 1, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
@@ -136,13 +136,13 @@ PRESET,,"2Part --> Door --> Track --> Barn
 1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Door --> Track --> Barn,,"Barn Door Track 1, Iron, Pure White",,,0Mesh-Door-Track-Barn-01.Door-Track-Barn-01',1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,
 PRESET,,"2Part --> Door --> Track --> Barn
 0Mesh-Door-Track-Barn-02.Door-Track-Barn-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Track --> Barn,,"Barn Door Track (Glass Mount), Steel, Untinted",,,0Mesh-Door-Track-Barn-02.Door-Track-Barn-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Track --> Barn,,"Barn Door Track 2 (Glass Mount), Steel, Untinted",,,0Mesh-Door-Track-Barn-02.Door-Track-Barn-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,
 PRESET,,"2Part --> Window --> Frame --> Fixed
 0Mesh-Window-Frame-Fixed-01.Window-Frame-Fixed-01'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Window --> Frame --> Fixed,,"Fixed Frame 1, Steel, Untinted",,,0Mesh-Window-Frame-Fixed-01.Window-Frame-Fixed-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,
 PRESET,,"2Part --> Window --> Frame --> Fixed
 0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Window --> Frame --> Fixed,,"Fixed Frame 1, Steel, Untinted",,,0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Window --> Frame --> Fixed,,"Fixed Frame 2, Steel, Untinted",,,0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,
 PRESET,,"2Part --> Window --> Frame --> Sliding
 0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Window --> Frame --> Sliding,,"Sliding Frame 1, Steel, Untinted",,,0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X

@@ -10,7 +10,7 @@ PROPERTY,,String,,,,Assembly.IconWidth,,,,,,,,,
 INPUTPIN,,1..1,,ChildTread,,Tread,,,,,,,,,
 INPUTPIN,,1..1,,ChildRiser,,Riser,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Assembly.IdealTreadDepth,Assembly.IconRise,Assembly.IconRun,Assembly.IconWidth,DataType=StartsInProject,X,DataType=InputPins,ChildTread,ChildRiser
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Assembly.IdealTreadDepth,Assembly.IconRise,Assembly.IconRun,Assembly.IconWidth,DataType=StartsInProject,X,DataType=InputPins,Tread,Riser
 PRESET,,"5Stair
 4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
