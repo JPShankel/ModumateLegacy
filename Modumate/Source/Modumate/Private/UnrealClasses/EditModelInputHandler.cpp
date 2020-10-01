@@ -36,7 +36,7 @@ void UEditModelInputHandler::SetupBindings()
 
 	if (ensureAlways(Controller && Controller->InputComponent && inputSettings && InputCommandDataTable))
 	{
-		FKey NumberKeys[10] = {
+		FKey NumberKeys[11] = {
 			EKeys::Zero,
 			EKeys::One,
 			EKeys::Two,
@@ -46,10 +46,11 @@ void UEditModelInputHandler::SetupBindings()
 			EKeys::Six,
 			EKeys::Seven,
 			EKeys::Eight,
-			EKeys::Nine
+			EKeys::Nine,
+			EKeys::Hyphen
 		};
 
-		for (int32 i = 0; i < 10; ++i)
+		for (int32 i = 0; i < 11; ++i)
 		{
 			FName chordActionName(*FString::Printf(TEXT("InputDigit_%d"), i));
 			FInputActionKeyMapping commandMapping(chordActionName, NumberKeys[i], false, false, false, false);

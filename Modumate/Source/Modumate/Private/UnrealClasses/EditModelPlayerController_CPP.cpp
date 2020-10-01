@@ -1339,7 +1339,16 @@ void AEditModelPlayerController_CPP::HandleDigitKey(int32 DigitKey)
 	if (ensure(!dimensionActor->DimensionText->Measurement->HasAnyUserFocus()))
 	{
 		dimensionActor->DimensionText->Measurement->SetUserFocus(this);
-		dimensionActor->DimensionText->Measurement->SetText(FText::AsNumber(DigitKey));
+
+		// hyphen is also included with the digits so that typing a negative number triggers the focus events
+		if (DigitKey != 10)
+		{
+			dimensionActor->DimensionText->Measurement->SetText(FText::AsNumber(DigitKey));
+		}
+		else
+		{
+			dimensionActor->DimensionText->Measurement->SetText(FText::FromString("-"));
+		}
 	}
 }
 
