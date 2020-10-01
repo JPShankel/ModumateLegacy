@@ -248,6 +248,6 @@ void FModumateAccountManager::Tick()
 	if (LoginStatus == ELoginStatus::Connected && FDateTime::Now() - IdTokenTimestamp > IdTokenTimeout)
 	{
 		IdTokenTimestamp = FDateTime::Now();
-		RequestStatus();
+		RequestIdTokenRefresh();
 	}
 }
