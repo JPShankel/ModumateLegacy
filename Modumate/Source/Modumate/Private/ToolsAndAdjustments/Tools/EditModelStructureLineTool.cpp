@@ -26,7 +26,6 @@ UStructureLineTool::UStructureLineTool(const FObjectInitializer& ObjectInitializ
 	, bWantedVerticalSnap(false)
 	, LastValidTargetID(MOD_ID_NONE)
 	, LastTargetStructureLineID(MOD_ID_NONE)
-	, PendingSegmentID(MOD_ID_NONE)
 	, PendingObjMesh(nullptr)
 	, GameMode(nullptr)
 	, GameState(nullptr)
@@ -74,7 +73,17 @@ bool UStructureLineTool::Activate()
 
 bool UStructureLineTool::HandleInputNumber(double n)
 {
-	return false;
+	FVector direction = LineEndPos - LineStartPos;
+	direction.Normalize();
+
+	LineEndPos = LineStartPos + direction * n;
+
+	if (MakeStructureLine())
+	{
+		EndUse();
+	}
+
+	return true;
 }
 
 bool UStructureLineTool::Deactivate()
@@ -113,14 +122,16 @@ bool UStructureLineTool::BeginUse()
 		LineStartPos = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 		LineEndPos = LineStartPos;
 
-		auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
-		PendingSegmentID = dimensionActor->ID;
+		auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
 
-		auto pendingSegment = dimensionActor->GetLineActor();
-		pendingSegment->Point1 = LineStartPos;
-		pendingSegment->Point2 = LineStartPos;
-		pendingSegment->Color = FColor::White;
-		pendingSegment->Thickness = 2;
+		if (dimensionActor != nullptr)
+		{
+			auto pendingSegment = dimensionActor->GetLineActor();
+			pendingSegment->Point1 = LineStartPos;
+			pendingSegment->Point2 = LineStartPos;
+			pendingSegment->Color = FColor::Black;
+			pendingSegment->Thickness = 3;
+		}
 	}
 	break;
 	case EToolCreateObjectMode::Apply:
@@ -452,9 +463,6 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 
 void UStructureLineTool::ResetState()
 {
-	DimensionManager->ReleaseDimensionActor(PendingSegmentID);
-	PendingSegmentID = MOD_ID_NONE;
-
 	bHaveSetUpGeometry = false;
 	SetTargetID(MOD_ID_NONE);
 	LineStartPos = FVector::ZeroVector;

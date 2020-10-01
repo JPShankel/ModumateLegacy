@@ -31,6 +31,7 @@ public:
 	virtual bool AbortUse() override;
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override;
 	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
+	virtual bool HasDimensionActor() override { return true; }
 
 protected:
 	void SetTargetID(int32 NewTargetID);
@@ -46,7 +47,6 @@ protected:
 	int32 LastValidTargetID;
 	int32 LastTargetStructureLineID;
 	FBIMAssemblySpec ObjAssembly;
-	int32 PendingSegmentID;
 	TWeakObjectPtr<ADynamicMeshActor> PendingObjMesh;
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
 	TWeakObjectPtr<AEditModelGameState_CPP> GameState;
