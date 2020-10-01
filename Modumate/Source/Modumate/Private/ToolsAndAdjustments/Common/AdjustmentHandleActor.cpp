@@ -249,8 +249,6 @@ bool AAdjustmentHandleActor::BeginUse()
 		return false;
 	}
 
-	// TODO: refactor with new dimension string manager
-	Controller->DimStringWidgetSelectedObject = nullptr; // Reset reference to object that was selected from widget
 	UWidgetBlueprintLibrary::SetFocusToGameViewport(); // Takes keyboard focus away from any potential widget text field
 
 	OriginalMouseMode = Controller->EMPlayerState->SnappedCursor.MouseMode;

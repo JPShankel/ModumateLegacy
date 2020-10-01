@@ -55,8 +55,6 @@ private:
 
 	FCollisionObjectQueryParams MOITraceObjectQueryParams, HandleTraceObjectQueryParams;
 	FCollisionQueryParams MOITraceQueryParams, HandleTraceQueryParams;
-	 
-	FString TextBoxUserInput;
 
 	static FLinearColor GetSnapAffordanceColor(const FAffordanceLine &a);
 	bool AddSnapAffordance(const FVector &startLoc, const FVector &endLoc, const FLinearColor &overrideColor = FLinearColor::Transparent) const;
@@ -309,33 +307,8 @@ public:
 	// Calculate the location needed to view the boundary set by TargetSphere
 	FVector CalculateViewLocationForSphere(const FSphere &TargetSphere, const FVector &ViewVector, float AspectRatio, float FOV);
 
-	// Draw "Total Line" during interaction with adjustment handle
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
-	bool EnableDrawTotalLine = true;
-
-	// Draw "Delta Line" during interaction with adjustment handle
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
-	bool EnableDrawDeltaLine = true;
-
-	// Let user input override vertical dimension string of portal obj
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
-	bool EnablePortalVerticalInput = true;
-
-	// Let user input override horizontal dimension string of portal obj
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
-	bool EnablePortalHorizontalInput = true;
-
-	// The actor selected by editing text box widget.
-	// When portal obj is selected, it shows both horizontal and vertical dim string Editable Text Box
-	// This saves which actor should the Editable Text Box be editing
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modeling)
-	AActor* DimStringWidgetSelectedObject;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD, meta = (DeprecatedProperty))
 	UHUDDrawWidget* HUDDrawWidget;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
-	bool RenderPreviewAssembly = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
 	UTexture2D* StaticCamTexture;
@@ -432,15 +405,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Keyboard)
 	bool HandleEscapeKey();
-
-	UFUNCTION(BlueprintPure, Category = Keyboard)
-	FString GetTextBoxUserInput() { return TextBoxUserInput; }
-
-	UFUNCTION(BlueprintCallable, Category = Keyboard)
-	void SetTextBoxUserInput(const FString Input) { TextBoxUserInput = Input; }
-
-	UFUNCTION(BlueprintPure, Category = Keyboard)
-	bool HasPendingTextBoxUserInput() { return !TextBoxUserInput.IsEmpty(); }
 
 	bool HandleInputNumber(double inputNumber);
 
