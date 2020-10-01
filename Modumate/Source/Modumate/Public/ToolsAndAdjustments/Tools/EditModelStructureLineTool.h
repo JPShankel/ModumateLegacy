@@ -51,8 +51,4 @@ protected:
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
 	TWeakObjectPtr<AEditModelGameState_CPP> GameState;
 	FVector LineStartPos, LineEndPos, LineDir, ObjNormal, ObjUp;
-
-	FColor TargetEdgeDotColor = FColor::Orange;
-	float TargetEdgeDotThickness = 4.0f;
-	float TargetEdgeDotInterval = 8.0f;
 };

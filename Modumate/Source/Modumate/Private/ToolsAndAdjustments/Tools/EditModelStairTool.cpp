@@ -47,9 +47,7 @@ UStairTool::UStairTool(const FObjectInitializer& ObjectInitializer)
 	, bWantStartRiser(true)
 	, bWantEndRiser(true)
 	, bFixTreadDepth(true)
-	, RunSegmentColor(0xFF, 0x80, 0x80)
-	, RiseSegmentColor(0x80, 0x80, 0xFF)
-	, WidthSegmentColor(0x80, 0xFF, 0x80)
+	, SegmentColor(0x00, 0x00, 0x00)
 {
 	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
 	if (world)
@@ -114,7 +112,7 @@ bool UStairTool::FrameUpdate()
 				FVector nextCornerPos = hitMOI->GetCorner(nextCornerIdx);
 
 				Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(
-					curCornerPos, nextCornerPos, TargetPlaneDotColor, TargetPlaneDotInterval, TargetPlaneDotThickness, 1)
+					curCornerPos, nextCornerPos, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness, 1)
 				);
 			}
 		}
@@ -302,7 +300,7 @@ bool UStairTool::EnterNextStage()
 		{
 			RunStartPos = cursor.WorldPosition;
 			cursor.SetAffordanceFrame(RunStartPos, FVector::UpVector);
-			MakePendingSegment(RunSegmentID, RunStartPos, RunSegmentColor);
+			MakePendingSegment(RunSegmentID, RunStartPos);
 			CurrentState = RunPending;
 		}
 	}
@@ -314,7 +312,7 @@ bool UStairTool::EnterNextStage()
 			auto runSegment = DimensionManager->GetDimensionActor(RunSegmentID)->GetLineActor();
 			RiseStartPos = runSegment->Point2;
 			cursor.SetAffordanceFrame(RiseStartPos, RunDir, WidthDir);
-			MakePendingSegment(RiseSegmentID, RiseStartPos, RiseSegmentColor);
+			MakePendingSegment(RiseSegmentID, RiseStartPos);
 			PendingObjMesh->SetActorHiddenInGame(false);
 			CurrentState = RisePending;
 		}
@@ -327,7 +325,7 @@ bool UStairTool::EnterNextStage()
 			auto riseSegment = DimensionManager->GetDimensionActor(RiseSegmentID)->GetLineActor();
 			RiseEndPos = riseSegment->Point2;
 			cursor.SetAffordanceFrame(RiseEndPos, RunDir, WidthDir);
-			MakePendingSegment(WidthSegmentID, RiseEndPos, WidthSegmentColor);
+			MakePendingSegment(WidthSegmentID, RiseEndPos);
 			CurrentState = WidthPending;
 		}
 	}
@@ -494,7 +492,7 @@ bool UStairTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
 	return FMath::IsWithinInclusive(normalUpDot, THRESH_NORMALS_ARE_ORTHOGONAL, THRESH_NORMALS_ARE_PARALLEL);
 }
 
-void UStairTool::MakePendingSegment(int32 &TargetSegmentID, const FVector &StartingPoint, const FColor &SegmentColor)
+void UStairTool::MakePendingSegment(int32 &TargetSegmentID, const FVector &StartingPoint)
 {
 	auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
 	TargetSegmentID = dimensionActor->ID;

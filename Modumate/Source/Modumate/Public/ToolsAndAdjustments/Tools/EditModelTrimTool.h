@@ -23,8 +23,4 @@ public:
 protected:
 	int32 TargetEdgeID;
 	FVector TargetEdgeStartPos, TargetEdgeEndPos;
-
-	FColor AffordanceLineColor = FColor::Orange;
-	float AffordanceLineInterval = 4.0f;
-	float AffordanceLineThickness = 2.0f;
 };

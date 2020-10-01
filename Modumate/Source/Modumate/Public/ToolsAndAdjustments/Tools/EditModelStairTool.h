@@ -46,7 +46,7 @@ protected:
 	bool UpdatePreviewStairs();
 	bool MakeStairs();
 	bool ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget);
-	void MakePendingSegment(int32 &TargetSegmentID, const FVector &StartingPoint, const FColor &SegmentColor);
+	void MakePendingSegment(int32 &TargetSegmentID, const FVector &StartingPoint);
 	void ResetState();
 
 	EState CurrentState;
@@ -69,8 +69,5 @@ protected:
 	TArray<TArray<FVector>> CachedRiserPolys;
 	TArray<FVector> CachedRiserNormals;
 
-	FColor TargetPlaneDotColor = FColor::Orange;
-	float TargetPlaneDotThickness = 4.0f;
-	float TargetPlaneDotInterval = 8.0f;
-	FColor RunSegmentColor, RiseSegmentColor, WidthSegmentColor;
+	FColor SegmentColor;
 };

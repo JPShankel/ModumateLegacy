@@ -35,11 +35,8 @@ protected:
 	float ExtrusionDist;
 	EMouseMode PrevMouseMode;
 
-	FColor AffordanceLineColor = FColor::Orange;
-	float AffordanceLineThickness = 4.0f;
-	float AffordanceLineInterval = 8.0f;
-	FColor ExtrusionLineColor = FColor::White;
-	float ExtrusionLineThickness = 2.0f;
+	FColor ExtrusionLineColor = FColor::Black;
+	float ExtrusionLineThickness = 3.0f;
 	
 	float MinimumExtrusionDist = 1.0f;
 };

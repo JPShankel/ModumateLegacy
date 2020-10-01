@@ -48,11 +48,6 @@ public:
 
 	virtual bool MakeObject(const FVector &Location, TArray<int32> &newObjIDs) override;
 	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
-
-	// ModumateBlue
-	FColor AffordanceLineColor = FColor(28, 159, 255);
-	float AffordanceLineThickness = 3.0f;
-	float AffordanceLineInterval = 6.0f;
 };
 
 UCLASS()

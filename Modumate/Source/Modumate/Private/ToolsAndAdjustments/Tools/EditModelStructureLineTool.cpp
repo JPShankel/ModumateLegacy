@@ -208,7 +208,7 @@ bool UStructureLineTool::FrameUpdate()
 
 			Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(
 				LineStartPos, LineEndPos,
-				TargetEdgeDotColor, TargetEdgeDotInterval, TargetEdgeDotThickness, 1)
+				AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness, 1)
 			);
 		}
 

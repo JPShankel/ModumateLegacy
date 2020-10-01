@@ -41,6 +41,11 @@ protected:
 
 	int32 PendingSegmentID;
 
+	// ModumateBlue
+	FColor AffordanceLineColor = FColor(28, 159, 255);
+	float AffordanceLineThickness = 3.0f;
+	float AffordanceLineInterval = 6.0f;
+
 public:
 
 	UEditModelToolBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());

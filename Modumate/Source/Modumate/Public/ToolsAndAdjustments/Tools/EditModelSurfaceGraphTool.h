@@ -24,10 +24,6 @@ public:
 	virtual bool AbortUse() override;
 	virtual bool FrameUpdate() override;
 
-	FColor AffordanceLineColor = FColor::Orange;
-	float AffordanceLineThickness = 4.0f;
-	float AffordanceLineInterval = 8.0f;
-
 protected:
 	bool CreateGraphFromFaceTarget();
 	void ResetTarget();
