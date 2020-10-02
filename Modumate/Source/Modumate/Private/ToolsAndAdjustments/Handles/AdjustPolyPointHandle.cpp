@@ -214,6 +214,15 @@ bool AAdjustPolyPointHandle::HandleInputNumber(float number)
 {
 	// TODO: reimplement with UModumateGeometryStatics::TranslatePolygonEdge and new dimension string manager
 	FModumateDocument* doc = Controller->GetDocument();
+
+	FVector hitPoint = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
+	FVector dp = hitPoint - AnchorLoc;
+	
+	if ((dp | CurrentDirection) < 0)
+	{
+		number *= -1;
+	}
+
 	TMap<int32, FTransform> objectInfo;
 	if (GetTransforms(number * CurrentDirection, objectInfo))
 	{
