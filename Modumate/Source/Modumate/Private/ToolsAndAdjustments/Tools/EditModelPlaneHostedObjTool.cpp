@@ -4,6 +4,7 @@
 
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateCommands.h"
+#include "Objects/PlaneHostedObj.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -232,56 +233,48 @@ bool UPlaneHostedObjTool::BeginUse()
 			return false;
 		}
 
-		FModumateObjectInstance *parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
+		FModumateObjectInstance* parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
 
 		if (ensureAlways(parentMOI != nullptr))
 		{
-			TArray<FMOIStateData> deltaStates;
-			for (auto &childID : parentMOI->GetChildren())
+			auto delta = MakeShared<FMOIDelta>();
+			FModumateObjectInstance* existingLayeredObj = nullptr;
+			for (auto child : parentMOI->GetChildObjects())
 			{
-				FModumateObjectInstance *child = GameState->Document.GetObjectById(childID);
-				if (ensureAlways(child != nullptr))
+				if ((child->GetLayeredInterface() != nullptr) && ensureAlways(existingLayeredObj == nullptr))
 				{
+					existingLayeredObj = child;
+
 					if (child->GetObjectType() == ObjectType)
 					{
-						child->BeginPreviewOperation();
-						child->SetAssembly(ObjAssembly);
+						FMOIStateData& newState = delta->AddMutationState(child);
+						newState.AssemblyKey = AssemblyKey;
 
-						TArray<FDeltaPtr> deltas;
-						deltas.Add(MakeShared<FMOIDelta>(child));
-						GameState->Document.ApplyDeltas(deltas, GetWorld());
-
-						child->EndPreviewOperation();
+						GameState->Document.ApplyDeltas({ delta }, GetWorld());
 
 						EndUse();
+						return false;
 					}
-					else if (child->GetLayeredInterface() != nullptr)
+					else
 					{
-						FMOIStateData &replacedMOIData = deltaStates.AddDefaulted_GetRef();
-						replacedMOIData.StateType = EMOIDeltaType::Destroy;
-						replacedMOIData.ObjectType = child->GetObjectType();
-						replacedMOIData.ParentID = LastValidTargetID;
-						replacedMOIData.ObjectAssemblyKey = child->GetAssembly().UniqueKey();
-						replacedMOIData.bObjectInverted = child->GetObjectInverted();
-						replacedMOIData.Extents = child->GetExtents();
-						replacedMOIData.ObjectID = child->ID;
+						delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
 					}
 				}
 			}
 
-			FMOIStateData &newMOIData = deltaStates.AddDefaulted_GetRef();
-			newMOIData.StateType = EMOIDeltaType::Create;
+			FMOIPlaneHostedObjData newMOICustomData;
+			newMOICustomData.bLayersInverted = GetAppliedInversionValue();
+			newMOICustomData.Justification = GetDefaultJustificationValue();
+
+			FMOIStateData newMOIData;
+			newMOIData.ID = GameState->Document.GetNextAvailableID();
 			newMOIData.ObjectType = ObjectType;
 			newMOIData.ParentID = LastValidTargetID;
-			newMOIData.ObjectAssemblyKey = AssemblyKey;
-			newMOIData.bObjectInverted = GetAppliedInversionValue();
-			newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
-			newMOIData.ObjectID = GameState->Document.GetNextAvailableID();
+			newMOIData.AssemblyKey = AssemblyKey;
+			newMOIData.CustomData.SaveStructData(newMOICustomData);
+			delta->AddCreateDestroyState(newMOIData, EMOIDeltaType::Create);
 
-			TArray<FDeltaPtr> deltas;
-			deltas.Add(MakeShared<FMOIDelta>(deltaStates));
-
-			GameState->Document.ApplyDeltas(deltas, GetWorld());
+			GameState->Document.ApplyDeltas({ delta }, GetWorld());
 			EndUse();
 		}
 		else
@@ -362,37 +355,37 @@ bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &new
 {
 	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kBeginUndoRedoMacro));
 
-	int32 newObjID = MOD_ID_NONE;
 	TArray<int32> newGraphObjIDs;
 	bool bSuccess = UMetaPlaneTool::MakeObject(Location, newGraphObjIDs);
 
 	if (bSuccess)
 	{
+		auto delta = MakeShared<FMOIDelta>();
+		int32 nextID = GameState->Document.GetNextAvailableID();
+
+		FMOIPlaneHostedObjData newMOICustomData;
+		newMOICustomData.bLayersInverted = bInverted;
+		newMOICustomData.Justification = GetDefaultJustificationValue();
+
 		for (int32 newGraphObjID : newGraphObjIDs)
 		{
 			FModumateObjectInstance *newGraphObj = GameState->Document.GetObjectById(newGraphObjID);
 
 			if (newGraphObj && (newGraphObj->GetObjectType() == EObjectType::OTMetaPlane))
 			{
-				newObjID = GameState->Document.GetNextAvailableID();
-
 				FMOIStateData newMOIData;
-				newMOIData.StateType = EMOIDeltaType::Create;
+				newMOIData.ID = nextID++;
 				newMOIData.ObjectType = ObjectType;
 				newMOIData.ParentID = newGraphObjID;
-				newMOIData.ObjectAssemblyKey = AssemblyKey;
-				newMOIData.bObjectInverted = bInverted;
-				newMOIData.Extents = FVector(GetDefaultJustificationValue(), 0, 0);
-				newMOIData.ObjectID = newObjID;
+				newMOIData.AssemblyKey = AssemblyKey;
+				newMOIData.CustomData.SaveStructData(newMOICustomData);
+				delta->AddCreateDestroyState(newMOIData, EMOIDeltaType::Create);
 
-				TArray<FDeltaPtr> deltas;
-				deltas.Add(MakeShared<FMOIDelta>(newMOIData));
-
-				GameState->Document.ApplyDeltas(deltas, GetWorld());
-
-				newObjIDs.Add(newObjID);
+				newObjIDs.Add(newMOIData.ID);
 			}
 		}
+
+		GameState->Document.ApplyDeltas({ delta }, GetWorld());
 	}
 
 	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kEndUndoRedoMacro));

@@ -105,31 +105,38 @@ bool UFinishTool::BeginUse()
 		return false;
 	}
 
+#if 1
+	ensureMsgf(false, TEXT("TODO: reimplement with new FMOIDelta!"));
+	return false;
+#else
 	// If we're replacing an existing finish, just swap its assembly
 	for (FModumateObjectInstance *child : GraphElementTarget->GetChildObjects())
 	{
 		if (child->GetObjectType() == EObjectType::OTFinish)
 		{
-			child->BeginPreviewOperation();
+			
+
+			child->BeginPreviewOperation_DEPRECATED();
 			child->SetAssembly(*assembly);
 
-			auto swapAssemblyDelta = MakeShared<FMOIDelta>(child);
-			child->EndPreviewOperation();
+			auto swapAssemblyDelta = MakeShared<FMOIDelta_DEPRECATED>(child);
+			child->EndPreviewOperation_DEPRECATED();
 
 			return GameState->Document.ApplyDeltas({ swapAssemblyDelta }, GetWorld());
 		}
 	}
 
 	// Otherwise, create a new finish object on the target surface graph polygon
-	FMOIStateData stateData;
+	FMOIStateData_DEPRECATED stateData;
 	stateData.StateType = EMOIDeltaType::Create;
 	stateData.ObjectType = EObjectType::OTFinish;
 	stateData.ObjectAssemblyKey = AssemblyKey;
 	stateData.ParentID = GraphElementTarget->ID;
 	stateData.ObjectID = GameState->Document.GetNextAvailableID();
 
-	auto createFinishDelta = MakeShared<FMOIDelta>(stateData);
+	auto createFinishDelta = MakeShared<FMOIDelta_DEPRECATED>(stateData);
 	return GameState->Document.ApplyDeltas({ createFinishDelta }, GetWorld());
+#endif
 }
 
 bool UFinishTool::FrameUpdate()

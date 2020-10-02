@@ -258,18 +258,19 @@ bool UCabinetTool::EnterNextStage()
 		return true;
 	}
 
+	FMOICabinetData newCabinetData;
+	newCabinetData.ExtrusionDist = ExtrusionDist;
+
 	FMOIStateData stateData;
-	stateData.StateType = EMOIDeltaType::Create;
+	stateData.ID = GameState->Document.GetNextAvailableID();
 	stateData.ObjectType = EObjectType::OTCabinet;
-	stateData.ObjectAssemblyKey = AssemblyKey;
 	stateData.ParentID = TargetPolygonID;
-	stateData.ObjectID = GameState->Document.GetNextAvailableID();
-	stateData.Extents = FVector(0, ExtrusionDist, 0);
+	stateData.AssemblyKey = AssemblyKey;
+	stateData.CustomData.SaveStructData(newCabinetData);
 
-	TArray<FDeltaPtr> deltas;
-	deltas.Add(MakeShared<FMOIDelta>(stateData));
-
-	GameState->Document.ApplyDeltas(deltas, GetWorld());
+	auto delta = MakeShared<FMOIDelta>();
+	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+	GameState->Document.ApplyDeltas({ delta }, GetWorld());
 
 	return false;
 }

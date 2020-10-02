@@ -9,6 +9,7 @@
 #include "JsonObjectConverter.h"
 #include "BIMKernel/BIMSerialization.h"
 #include "DocumentManagement/ModumateCameraView.h"
+#include "Objects/MOIState.h"
 
 #include "ModumateSerialization.generated.h"
 
@@ -84,7 +85,7 @@ struct FMOIDataRecordV1
 	UPROPERTY()
 	TMap<FString, FString> ObjectProperties;
 };
-typedef FMOIDataRecordV1 FMOIDataRecord;
+typedef FMOIDataRecordV1 FMOIDataRecord_DEPRECATED;
 
 
 // ---------------- Graph2D serialization ----------------
@@ -297,6 +298,9 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 	GENERATED_BODY()
 
 	UPROPERTY()
+	TArray<FMOIStateData> ObjectData;
+
+	UPROPERTY()
 	TArray<FCustomAssemblyRecordV4> CustomAssemblies;
 
 	UPROPERTY()
@@ -359,7 +363,9 @@ namespace Modumate
 	// Version 5: portal locations and rotations are now relative to their parent, rather than in world space.
 	// Version 6: Roof was split into RoofFace and RoofPerimeter (EToolMode VE_ROOF -> VE_ROOF_FACE and EObjectType OTRoof -> OTRoofFace)
 	// Version 7: Preset structure change, throw out presets and preserve graph for old file load
-	static const int32 DocVersion = 8;
+	// Version 8: Empty FName keys serialized as "None", BIMKeys as empty string
+	// Version 9: Object state data serialized directly, deprecated FMOIDataRecord
+	static const int32 DocVersion = 9;
 
 	static const TCHAR * DocObjectInstanceField = TEXT("ModumateObjects");
 	static const TCHAR * DocHeaderField = TEXT("ModumateHeader");

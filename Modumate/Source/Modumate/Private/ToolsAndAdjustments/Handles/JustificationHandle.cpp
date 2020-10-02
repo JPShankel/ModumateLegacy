@@ -1,6 +1,7 @@
 #include "ToolsAndAdjustments/Handles/JustificationHandle.h"
 
 #include "Objects/ModumateObjectInstance.h"
+#include "Objects/PlaneHostedObj.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/HUDDrawWidget.h"
@@ -37,10 +38,15 @@ bool AJustificationHandle::BeginUse()
 		// If this handle is performing an operation on the target MOI,
 		// then just create a delta and apply it, without using BeginUse or End/AbortUse,
 		// to avoid unnecessary state changes like handle visibility.
-		TargetMOI->BeginPreviewOperation();
-		TargetMOI->SetExtents(FVector(JustificationValue, 0.0f, 0.0f));
-		auto delta = MakeShared<FMOIDelta>(TargetMOI);
-		TargetMOI->EndPreviewOperation();
+		auto delta = MakeShared<FMOIDelta>();
+		auto& modifiedStateData = delta->AddMutationState(TargetMOI);
+
+		FMOIPlaneHostedObjData modifiedCustomData;
+		if (ensure(modifiedStateData.CustomData.LoadStructData(modifiedCustomData)))
+		{
+			modifiedCustomData.Justification = JustificationValue;
+			modifiedStateData.CustomData.SaveStructData(modifiedCustomData);
+		}
 
 		GameState->Document.ApplyDeltas({ delta }, GetWorld());
 	}

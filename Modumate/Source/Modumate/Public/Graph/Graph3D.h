@@ -56,6 +56,7 @@ namespace Modumate
 		const TMap<int32, FGraph3DVertex> &GetVertices() const;
 		const TMap<int32, FGraph3DFace> &GetFaces() const;
 		const TMap<int32, FGraph3DPolyhedron> &GetPolyhedra() const;
+		const TMap<int32, EGraph3DObjectType>& GetAllObjects() const;
 		bool GetGroup(int32 GroupID, TSet<int32> &OutGroupMembers) const;
 		const TMap<int32, TSet<int32>> &GetGroups() const;
 

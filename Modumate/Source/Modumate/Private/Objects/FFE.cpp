@@ -70,6 +70,12 @@ FVector FMOIFFEImpl::GetLocation() const
 	return CachedLocation;
 }
 
+void FMOIFFEImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+{
+	OutStructDef = InstanceData.StaticStruct();
+	OutStructPtr = &InstanceData;
+}
+
 void FMOIFFEImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
 	for (int32 i = 0; i < 4; ++i)
@@ -135,15 +141,15 @@ void FMOIFFEImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints
 		}
 	}
 }
+
 void FMOIFFEImpl::InternalUpdateGeometry()
 {
 	ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(MOI->GetActor());
-	cma->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
+	cma->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, InstanceData.bLateralInverted, true);
 
 	FTransform dataStateTransform;
-	const FMOIStateData &dataState = ((const FModumateObjectInstance*)MOI)->GetDataState();
-	dataStateTransform.SetLocation(dataState.Location);
-	dataStateTransform.SetRotation(dataState.Orientation);
+	dataStateTransform.SetLocation(InstanceData.Location);
+	dataStateTransform.SetRotation(InstanceData.Rotation);
 
 	cma->SetActorTransform(dataStateTransform);
 }
@@ -165,4 +171,14 @@ bool FMOIFFEImpl::GetIsDynamic() const
 		return meshActor->GetIsDynamic();
 	}
 	return false;
+}
+
+bool FMOIFFEImpl::GetInvertedState(FMOIStateData& OutState) const
+{
+	OutState = MOI->GetStateData();
+
+	FMOIFFEData modifiedFFEData = InstanceData;
+	modifiedFFEData.bLateralInverted = !modifiedFFEData.bLateralInverted;
+
+	return OutState.CustomData.SaveStructData(modifiedFFEData);
 }

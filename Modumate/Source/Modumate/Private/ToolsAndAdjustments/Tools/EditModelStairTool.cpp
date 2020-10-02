@@ -451,24 +451,18 @@ bool UStairTool::MakeStairs()
 	if (hostPlaneIDs.Num() > 0)
 	{
 		int32 nextID = GameState->Document.GetNextAvailableID();
-		TArray<FMOIStateData> newStairStates;
+
+		auto newStairsDelta = MakeShared<FMOIDelta>();
 
 		for (int32 hostPlaneID : hostPlaneIDs)
 		{
-			FMOIStateData& newStairState = newStairStates.AddDefaulted_GetRef();
-			newStairState.StateType = EMOIDeltaType::Create;
-			newStairState.ObjectType = EObjectType::OTStaircase;
-			newStairState.ParentID = hostPlaneID;
-			newStairState.ObjectAssemblyKey = AssemblyKey;
-			newStairState.bObjectInverted = false;
-			newStairState.Extents = FVector(0.5f, 0, 0);
-			newStairState.ObjectID = nextID++;
+			// TODO: fill in custom instance data for stairs, once we define and rely on it
+			FMOIStateData newStairState(nextID++, EObjectType::OTStaircase, hostPlaneID);
+			newStairState.AssemblyKey = AssemblyKey;
+			newStairsDelta->AddCreateDestroyState(newStairState, EMOIDeltaType::Create);
 		}
 
-		TArray<FDeltaPtr> deltas;
-		deltas.Add(MakeShared<FMOIDelta>(newStairStates));
-
-		bSuccess = GameState->Document.ApplyDeltas(deltas, GetWorld());
+		bSuccess = GameState->Document.ApplyDeltas({ newStairsDelta }, GetWorld());
 	}
 
 	if (bMakePlane)

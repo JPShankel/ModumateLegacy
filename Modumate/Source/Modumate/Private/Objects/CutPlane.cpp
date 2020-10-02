@@ -27,6 +27,12 @@ FMOICutPlaneImpl::FMOICutPlaneImpl(FModumateObjectInstance *moi)
 {
 }
 
+void FMOICutPlaneImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+{
+	OutStructDef = InstanceData.StaticStruct();
+	OutStructPtr = &InstanceData;
+}
+
 AActor* FMOICutPlaneImpl::CreateActor(UWorld* world, const FVector& loc, const FQuat& rot)
 {
 	AActor *returnActor = FMOIPlaneImplBase::CreateActor(world, loc, rot);
@@ -351,21 +357,18 @@ float FMOICutPlaneImpl::GetAlpha() const
 
 void FMOICutPlaneImpl::UpdateCachedGeometryData()
 {
-	const FMOIStateData &dataState = ((const FModumateObjectInstance*)MOI)->GetDataState();
+	CachedCenter = InstanceData.Location;
+	CachedAxisX = InstanceData.Rotation.GetAxisX();
+	CachedAxisY = InstanceData.Rotation.GetAxisY();
+	CachedPlane = FPlane(CachedCenter, InstanceData.Rotation.GetAxisZ());
 
-	CachedCenter = dataState.Location;
-	CachedAxisX = dataState.Orientation.GetAxisX();
-	CachedAxisY = dataState.Orientation.GetAxisY();
-	CachedPlane = FPlane(CachedCenter, dataState.Orientation.GetAxisZ());
-
-	FVector extents = MOI->GetExtents();
-
-	CachedPoints.Reset();
+	FVector halfExtentsX = 0.5f * InstanceData.Extents.X * CachedAxisX;
+	FVector halfExtentsY = 0.5f * InstanceData.Extents.Y * CachedAxisY;
 	CachedPoints = {
-		CachedCenter - extents.X * CachedAxisX / 2.0f - extents.Y * CachedAxisY / 2.0f,
-		CachedCenter + extents.X * CachedAxisX / 2.0f - extents.Y * CachedAxisY / 2.0f,
-		CachedCenter + extents.X * CachedAxisX / 2.0f + extents.Y * CachedAxisY / 2.0f,
-		CachedCenter - extents.X * CachedAxisX / 2.0f + extents.Y * CachedAxisY / 2.0f
+		CachedCenter - halfExtentsX - halfExtentsY,
+		CachedCenter + halfExtentsX - halfExtentsY,
+		CachedCenter + halfExtentsX + halfExtentsY,
+		CachedCenter - halfExtentsX + halfExtentsY
 	};
 
 	CachedOrigin = CachedPoints[0];

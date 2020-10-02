@@ -119,8 +119,6 @@ public:
 	void SetDefaultJustificationXY(float newValue);
 	float GetDefaultJustificationXY() const { return DefaultJustificationXY; } // return DJXY from private;
 
-	void TransverseObjects(const TArray<FModumateObjectInstance*> &obs);
-
 	int32 MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs);
 	bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, const TArray<int32> &IDs, EObjectType objectType, int32 parentID, TArray<int32> &OutObjIDs);
 
@@ -181,13 +179,7 @@ private:
 	bool RestoreObjectImpl(FModumateObjectInstance *ob);
 	bool RestoreChildrenImpl(FModumateObjectInstance *obj);
 
-	FModumateObjectInstance* CreateOrRestoreObjFromAssembly(UWorld *World, const FBIMAssemblySpec &Assembly,
-		int32 ID, int32 ParentID = MOD_ID_NONE, const FVector &Extents = FVector::ZeroVector,
-		const TArray<int32> *CPI = nullptr, bool bInverted = false);
-
-	FModumateObjectInstance* CreateOrRestoreObjFromObjectType(UWorld *World, EObjectType OT,
-		int32 ID, int32 ParentID = MOD_ID_NONE, const FVector &Extents = FVector::ZeroVector,
-		const TArray<int32> *CPI = nullptr, bool bInverted = false);
+	FModumateObjectInstance* CreateOrRestoreObj(UWorld* World, const FMOIStateData& StateData);
 
 	// Preview Operations
 public:
@@ -197,7 +189,7 @@ public:
 	bool GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);
 
 public:
-	bool ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World);
+	bool ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World);
 	void ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World);
 	void ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World);
 	bool ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World);
@@ -218,7 +210,6 @@ public:
 	FModumateObjectInstance *TryGetDeletedObject(int32 id);
 
 	void DeleteObjects(const TArray<FModumateObjectInstance*> &obs, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
-	bool InvertObjects(const TArray<FModumateObjectInstance*> &obs);
 	void RestoreDeletedObjects(const TArray<int32> &ids);
 	void DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
 
@@ -226,8 +217,6 @@ public:
 	bool Save(UWorld *world, const FString &path);
 	bool Load(UWorld *world, const FString &path, bool setAsCurrentProject);
 	void SetCurrentProjectPath(const FString& currentProjectPath = FString());
-
-	int32 CreateObjectFromRecord(UWorld *world, const FMOIDataRecord &obRec);
 
 	TArray<int32> CloneObjects(UWorld *world, const TArray<int32> &obs, const FTransform& offsetTransform = FTransform::Identity);
 	TArray<FModumateObjectInstance *> CloneObjects(UWorld *world, const TArray<FModumateObjectInstance *> &obs, const FTransform& offsetTransform = FTransform::Identity);

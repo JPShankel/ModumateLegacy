@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "ModumateCore/StructDataWrapper.h"
+
 #include "ModumateCoreUnitTests.generated.h"
 
 
@@ -95,22 +96,14 @@ struct MODUMATE_API FModumateTestInstanceData
 {
 	GENERATED_BODY()
 
-	FModumateTestInstanceData();
-	FModumateTestInstanceData(const class UModumateTestObjectBase* SrcObject);
-
-	bool LoadInstanceData(UModumateTestObjectBase* DestObject) const;
+	UPROPERTY()
+	int32 InstanceID;
 
 	UPROPERTY()
-	bool bValid;
+	FString InstanceName;
 
 	UPROPERTY()
-	FName DebugStructName;
-
-	UPROPERTY()
-	FString DataJsonString;
-
-	UPROPERTY()
-	TArray<uint8> DataCborBuffer;
+	FStructDataWrapper CustomInstanceData;
 };
 
 UCLASS()

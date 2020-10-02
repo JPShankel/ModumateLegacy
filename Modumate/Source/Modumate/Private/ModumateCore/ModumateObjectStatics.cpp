@@ -2,18 +2,20 @@
 
 #include "ModumateCore/ModumateObjectStatics.h"
 
+#include "BIMKernel/BIMProperties.h"
+#include "Database/ModumateSimpleMesh.h"
+#include "DocumentManagement/ModumateSnappingView.h"
+#include "Graph/Graph3D.h"
+#include "ModumateCore/ExpressionEvaluator.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "Objects/ModumateObjectInstance.h"
+#include "Objects/PlaneHostedObj.h"
+#include "Objects/SurfaceGraph.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "ModumateCore/ExpressionEvaluator.h"
-#include "Graph/Graph3D.h"
-#include "BIMKernel/BIMProperties.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "ModumateCore/ModumateGeometryStatics.h"
-#include "Objects/ModumateObjectInstance.h"
-#include "Database/ModumateSimpleMesh.h"
-#include "DocumentManagement/ModumateSnappingView.h"
 
 using namespace Modumate;
 
@@ -169,21 +171,16 @@ bool UModumateObjectStatics::GetWorldTransformOnPlanarObj(
 
 int32 UModumateObjectStatics::GetParentFaceIndex(const FModumateObjectInstance *FaceMountedObj)
 {
-	if (FaceMountedObj == nullptr)
+	// TODO: generalize face-mounted data through an interface/virtual function, for FF&E mounting support
+	if ((FaceMountedObj == nullptr) || !ensure(FaceMountedObj->GetObjectType() == EObjectType::OTSurfaceGraph))
 	{
 		return INDEX_NONE;
 	}
 
-	switch (FaceMountedObj->GetObjectType())
+	FMOISurfaceGraphData surfaceGraphData;
+	if (FaceMountedObj->GetStateData().CustomData.LoadStructData(surfaceGraphData))
 	{
-	case EObjectType::OTSurfaceGraph:
-	case EObjectType::OTFurniture:
-		if (FaceMountedObj->GetControlPointIndices().Num() >= 1)
-		{
-			return FaceMountedObj->GetControlPointIndex(0);
-		}
-	default:
-		break;
+		return surfaceGraphData.ParentFaceIndex;
 	}
 
 	return INDEX_NONE;
@@ -652,7 +649,14 @@ void UModumateObjectStatics::GetGraphIDsFromMOIs(const TArray<FModumateObjectIns
 void UModumateObjectStatics::GetPlaneHostedValues(const FModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal)
 {
 	OutThickness = PlaneHostedObj->CalculateThickness();
-	float offsetPCT = PlaneHostedObj->GetExtents().X;
+	float offsetPCT = 0.0f;
+
+	FMOIPlaneHostedObjData planeHostedObjData;
+	if (PlaneHostedObj->GetStateData().CustomData.LoadStructData(planeHostedObjData))
+	{
+		offsetPCT = planeHostedObjData.Justification;
+	}
+
 	OutStartOffset = -offsetPCT * OutThickness;
 	OutNormal = PlaneHostedObj->GetNormal();
 }

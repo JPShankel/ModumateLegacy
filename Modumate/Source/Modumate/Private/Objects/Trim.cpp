@@ -51,6 +51,12 @@ FVector FMOITrimImpl::GetNormal() const
 	return TrimUp;
 }
 
+void FMOITrimImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+{
+	OutStructDef = InstanceData.StaticStruct();
+	OutStructPtr = &InstanceData;
+}
+
 FVector FMOITrimImpl::GetLocation() const
 {
 	const FModumateObjectInstance* parentMOI = MOI ? MOI->GetParentObject() : nullptr;
@@ -138,6 +144,16 @@ bool FMOITrimImpl::GetIsDynamic() const
 	return DynamicMeshActor.IsValid() && DynamicMeshActor->GetIsDynamic();
 }
 
+bool FMOITrimImpl::GetInvertedState(FMOIStateData& OutState) const
+{
+	OutState = MOI->GetStateData();
+
+	FMOITrimData modifiedTrimData = InstanceData;
+	modifiedTrimData.bUpInverted = !modifiedTrimData.bUpInverted;
+
+	return OutState.CustomData.SaveStructData(modifiedTrimData);
+}
+
 bool FMOITrimImpl::UpdateCachedStructure()
 {
 	const FBIMAssemblySpec& trimAssembly = MOI->GetAssembly();
@@ -168,15 +184,14 @@ bool FMOITrimImpl::UpdateCachedStructure()
 	TrimNormal = surfaceGraphMOI->GetNormal();
 
 	TrimUp = TrimDir ^ TrimNormal;
-	if (MOI->GetObjectInverted())
+	if (InstanceData.bUpInverted)
 	{
 		TrimUp *= -1.0f;
 	}
 
 	TrimScale = FVector::OneVector;
 
-	// TODO: store justification
-	float justification = MOI->GetExtents().Z;
+	float justification = InstanceData.UpJustification;
 	float justificationDist = justification * polyProfile->Extents.GetSize().Y;
 	FVector justificationDelta = justificationDist * TrimUp;
 

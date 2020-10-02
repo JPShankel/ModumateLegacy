@@ -56,6 +56,12 @@ FVector FMOIPortalImpl::GetNormal() const
 	return portalTransform.GetUnitAxis(EAxis::Y);
 }
 
+void FMOIPortalImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+{
+	OutStructDef = InstanceData.StaticStruct();
+	OutStructPtr = &InstanceData;
+}
+
 bool FMOIPortalImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	if (!FModumateObjectInstanceImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
@@ -125,7 +131,7 @@ bool FMOIPortalImpl::SetupCompoundActorGeometry()
 			}
 		}
 
-		cma->MakeFromAssembly(MOI->GetAssembly(), scale, MOI->GetObjectInverted(), true);
+		cma->MakeFromAssembly(MOI->GetAssembly(), scale, InstanceData.bLateralInverted, true);
 	}
 	return bResult;
 }
@@ -219,29 +225,14 @@ void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *cont
 {
 }
 
-void FMOIPortalImpl::TransverseObject()
+bool FMOIPortalImpl::GetInvertedState(FMOIStateData& OutState) const
 {
-	FModumateObjectInstance *parent = MOI ? MOI->GetParentObject() : nullptr;
-	if (parent)
-	{
-		FQuat parentRot = parent->GetObjectRotation();
-		FVector parentAxisX = parentRot.GetAxisX();
+	OutState = MOI->GetStateData();
 
-		// TODO: transverse may need to be rewritten for MetaPlane-hosted portals (as opposed to old-school wall-hosted ControlPoints-based portals)
-		// either calculate dimensions from the parent MetaPlane, or reimplement with a different scheme.
-		FVector portalOriginOffset(ForceInitToZero);
-		FVector portalSize(ForceInitToZero);
-		FVector portalXDir = CachedWorldRot.GetAxisX();
-		float translationSign = parentAxisX | portalXDir;
-		float flipXOffset = 2.0f * portalOriginOffset.X + portalSize.X;
-		CachedRelativePos.X += translationSign * flipXOffset;
+	FMOIPortalData modifiedTrimData = InstanceData;
+	modifiedTrimData.bNormalInverted = !modifiedTrimData.bNormalInverted;
 
-		bool bPortalRotated = !CachedRelativeRot.IsIdentity(KINDA_SMALL_NUMBER);
-		CachedRelativeRot = FQuat(FVector::UpVector, bPortalRotated ? 0.0f : PI);
-
-		MOI->InvertObject();
-		MOI->MarkDirty(EObjectDirtyFlags::Structure);
-	}
+	return OutState.CustomData.SaveStructData(modifiedTrimData);
 }
 
 void FMOIPortalImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const

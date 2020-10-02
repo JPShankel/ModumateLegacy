@@ -644,6 +644,11 @@ namespace Modumate
 		return Polyhedra; 
 	}
 
+	const TMap<int32, EGraph3DObjectType>& FGraph3D::GetAllObjects() const
+	{
+		return AllObjects;
+	}
+
 	bool FGraph3D::GetGroup(int32 GroupID, TSet<int32> &OutGroupMembers) const
 	{
 		OutGroupMembers.Reset();

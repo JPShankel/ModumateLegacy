@@ -210,20 +210,20 @@ bool USelectTool::HandleInvert()
 		return false;
 	}
 
-	// Put selected objects into preview mode and invert
-	for (auto &ob : Controller->EMPlayerState->SelectedObjects)
+	auto delta = MakeShared<FMOIDelta>();
+	FMOIStateData invertedState;
+
+	// Put a selected object supports inversion, add it to the delta
+	for (auto obj : Controller->EMPlayerState->SelectedObjects)
 	{
-		ob->BeginPreviewOperation();
-		ob->InvertObject();
-		ob->EndPreviewOperation();
+		if (obj->GetInvertedState(invertedState))
+		{
+			delta->AddMutationState(obj, obj->GetStateData(), invertedState);
+		}
 	}
 
-	TArray<FDeltaPtr> deltas;
-	deltas.Add(MakeShared<FMOIDelta>(Controller->EMPlayerState->SelectedObjects));
-
 	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument* doc = &gameState->Document;
-	doc->ApplyDeltas(deltas, GetWorld());
+	gameState->Document.ApplyDeltas({ delta }, GetWorld());
 
 	return true;
 }

@@ -52,6 +52,12 @@ int32 FMOICabinetImpl::GetNumCorners() const
 	return CachedBasePoints.Num() * 2;
 }
 
+void FMOICabinetImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+{
+	OutStructDef = InstanceData.StaticStruct();
+	OutStructPtr = &InstanceData;
+}
+
 FVector FMOICabinetImpl::GetNormal() const
 {
 	return CachedBaseOrigin.GetRotation().GetAxisZ();
@@ -142,6 +148,16 @@ void FMOICabinetImpl::GetStructuralPointsAndLines(TArray<FStructurePoint>& OutPo
 	}
 }
 
+bool FMOICabinetImpl::GetInvertedState(FMOIStateData& OutState) const
+{
+	OutState = MOI->GetStateData();
+
+	FMOICabinetData modifiedCabinetData = InstanceData;
+	modifiedCabinetData.bFrontFaceLateralInverted = !modifiedCabinetData.bFrontFaceLateralInverted;
+
+	return OutState.CustomData.SaveStructData(modifiedCabinetData);
+}
+
 bool FMOICabinetImpl::UpdateCachedGeometryData()
 {
 	const FModumateObjectInstance* parentObj = MOI ? MOI->GetParentObject() : nullptr;
@@ -156,7 +172,7 @@ bool FMOICabinetImpl::UpdateCachedGeometryData()
 			CachedBasePoints.Add(parentObj->GetCorner(cornerIdx));
 		}
 
-		CachedExtrusionDelta = MOI->GetExtents().Y * GetNormal();
+		CachedExtrusionDelta = InstanceData.ExtrusionDist * GetNormal();
 		UModumateFunctionLibrary::GetCabinetToeKickDimensions(MOI->GetAssembly(), ToeKickDimensions);
 
 		return true;
@@ -205,7 +221,7 @@ void FMOICabinetImpl::UpdateCabinetPortal()
 		return;
 	}
 
-	FrontFacePortalActor->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, MOI->GetObjectInverted(), true);
+	FrontFacePortalActor->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, InstanceData.bFrontFaceLateralInverted, true);
 
 	// Now position the portal where it's supposed to go
 	FVector edgeDir = edgeDelta / edgeLength;
@@ -293,8 +309,13 @@ bool ASelectCabinetFrontHandle::BeginUse()
 
 	EndUse();
 
+
 	TArray<FDeltaPtr> deltas;
-	deltas.Add(MakeShared<FMOIDelta>(TargetMOI));
+#if 1
+	ensureMsgf(false, TEXT("TODO: reimplement with new FMOIDelta!"));
+#else
+	deltas.Add(MakeShared<FMOIDelta_DEPRECATED>(TargetMOI));
+#endif
 	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	FModumateDocument* doc = &gameState->Document;
 
@@ -311,7 +332,14 @@ FVector ASelectCabinetFrontHandle::GetHandlePosition() const
 
 	int32 numBasePoints = cabinetParent->GetNumCorners();
 	FVector edgeCenter = 0.5f * (cabinetParent->GetCorner(TargetIndex) + cabinetParent->GetCorner((TargetIndex + 1) % numBasePoints));
-	FVector extrusionDelta = ((0.5f * TargetMOI->GetExtents().Y) + FaceCenterHeightOffset) * TargetMOI->GetNormal();
+
+	FVector extrusionDelta(ForceInitToZero);
+	FMOICabinetData cabinetInstanceData;
+	if (TargetMOI->GetStateData().CustomData.LoadStructData(cabinetInstanceData))
+	{
+		extrusionDelta = ((0.5f * cabinetInstanceData.ExtrusionDist) + FaceCenterHeightOffset) * TargetMOI->GetNormal();
+	}
+
 	return edgeCenter + extrusionDelta;
 }
 

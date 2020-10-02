@@ -169,18 +169,22 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 	}
 	else
 	{
+#if 1
+		ensureMsgf(false, TEXT("TODO: reimplement with new FMOIDelta!"));
+#else
 		for (auto& kvp : ObjectMovements)
 		{
 			auto moi = doc->GetObjectById(kvp.Key);
-			FMOIDelta delta;
-			auto state = ((const FModumateObjectInstance*)moi)->GetDataState();
+			FMOIDelta_DEPRECATED delta;
+			auto state = ((const FModumateObjectInstance*)moi)->GetDataState_DEPRECATED();
 			state.StateType = EMOIDeltaType::Mutate;
-			delta.StatePairs.Add(TPair<FMOIStateData, FMOIStateData>(state, state));
+			delta.StatePairs.Add(TPair<FMOIStateData_DEPRECATED, FMOIStateData_DEPRECATED>(state, state));
 			delta.StatePairs[0].Value.Location = kvp.Value.GetTranslation();
 			delta.StatePairs[0].Value.Orientation = kvp.Value.GetRotation();
 
-			deltas.Add(MakeShared<FMOIDelta>(delta));
+			deltas.Add(MakeShared<FMOIDelta_DEPRECATED>(delta));
 		}
+#endif
 	}
 
 	if (deltas.Num() > 0)

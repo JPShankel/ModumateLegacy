@@ -6,6 +6,23 @@
 #include "Drafting/ModumateHUDDraw.h"
 #include "DocumentManagement/ModumateSceneCaptureObjectInterface.h"
 
+#include "CutPlane.generated.h"
+
+USTRUCT()
+struct MODUMATE_API FMOICutPlaneData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FVector Location;
+
+	UPROPERTY()
+	FQuat Rotation;
+
+	UPROPERTY()
+	FVector2D Extents;
+};
+
 class ACutPlaneCaptureActor;
 
 namespace Modumate
@@ -19,6 +36,7 @@ class MODUMATE_API FMOICutPlaneImpl : public FMOIPlaneImplBase, public ISceneCap
 public:
 	FMOICutPlaneImpl(FModumateObjectInstance *moi);
 
+	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 	virtual void OnSelected(bool bNewSelected) override;
@@ -61,5 +79,7 @@ protected:
 	FString TracedOutlinesJson;
 
 	TArray<TPair<int32, TArray<FVector>>> PendingCaptureAreas;
+
+	FMOICutPlaneData InstanceData;
 };
 

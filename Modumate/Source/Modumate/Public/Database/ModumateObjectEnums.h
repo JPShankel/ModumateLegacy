@@ -223,8 +223,10 @@ public:
 	static EToolMode ToolModeFromObjectType(EObjectType ot);
 
 	static Modumate::EGraph3DObjectType Graph3DObjectTypeFromObjectType(EObjectType ot);
+	static EObjectType ObjectTypeFromGraph3DType(Modumate::EGraph3DObjectType GraphType);
 
 	static Modumate::EGraphObjectType Graph2DObjectTypeFromObjectType(EObjectType ObjectType);
+	static EObjectType ObjectTypeFromGraph2DType(Modumate::EGraphObjectType GraphType);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Types")
 	static FText GetTextForObjectType(EObjectType ObjectType, bool bPlural = false);

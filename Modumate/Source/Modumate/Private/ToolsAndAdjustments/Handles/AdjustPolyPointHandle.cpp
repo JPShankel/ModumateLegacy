@@ -165,18 +165,8 @@ FVector AAdjustPolyPointHandle::GetHandlePosition() const
 		averageTargetPos = TargetMOI->GetCorner(TargetIndex);
 	}
 
-	switch (TargetMOI->GetObjectType())
-	{
-		// TODO: this is an awkward stand-in for the fact that these all inherit from FMOIPlaneImplBase, this should be cleaner
-	case EObjectType::OTMetaPlane:
-	case EObjectType::OTSurfacePolygon:
-	case EObjectType::OTCutPlane:
-		return averageTargetPos;
-	case EObjectType::OTScopeBox:
-		return TargetMOI->GetObjectRotation().RotateVector(TargetMOI->GetNormal() * 0.5f * TargetMOI->GetExtents().Y + averageTargetPos);
-	default:
-		return TargetMOI->GetObjectRotation().RotateVector(FVector(0, 0, 0.5f * TargetMOI->GetExtents().Y) + averageTargetPos);
-	}
+	// TODO: offset handle position by some amount of the target object's extrusion, if relevant
+	return averageTargetPos;
 }
 
 FVector AAdjustPolyPointHandle::GetHandleDirection() const
@@ -229,7 +219,7 @@ bool AAdjustPolyPointHandle::HandleInputNumber(float number)
 	{
 		// TODO: preview operation is no longer necessary, but removing this could cause ensures
 		// until the other handles are refactored
-		TargetMOI->EndPreviewOperation();
+		TargetMOI->EndPreviewOperation_DEPRECATED();
 
 		// Now that we've reverted the target object back to its original state, clean all objects so that
 		// deltas can be applied to the original state, and all of its dependent changes.

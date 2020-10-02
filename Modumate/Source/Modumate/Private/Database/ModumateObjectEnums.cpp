@@ -189,6 +189,21 @@ EGraph3DObjectType UModumateTypeStatics::Graph3DObjectTypeFromObjectType(EObject
 	}
 }
 
+EObjectType UModumateTypeStatics::ObjectTypeFromGraph3DType(EGraph3DObjectType GraphType)
+{
+	switch (GraphType)
+	{
+	case EGraph3DObjectType::Vertex:
+		return EObjectType::OTMetaVertex;
+	case EGraph3DObjectType::Edge:
+		return EObjectType::OTMetaEdge;
+	case EGraph3DObjectType::Face:
+		return EObjectType::OTMetaPlane;
+	default:
+		return EObjectType::OTNone;
+	}
+}
+
 EGraphObjectType UModumateTypeStatics::Graph2DObjectTypeFromObjectType(EObjectType ObjectType)
 {
 	switch (ObjectType)
@@ -201,6 +216,21 @@ EGraphObjectType UModumateTypeStatics::Graph2DObjectTypeFromObjectType(EObjectTy
 		return EGraphObjectType::Polygon;
 	default:
 		return EGraphObjectType::None;
+	}
+}
+
+EObjectType UModumateTypeStatics::ObjectTypeFromGraph2DType(EGraphObjectType GraphType)
+{
+	switch (GraphType)
+	{
+	case EGraphObjectType::Vertex:
+		return EObjectType::OTSurfaceVertex;
+	case EGraphObjectType::Edge:
+		return EObjectType::OTSurfaceEdge;
+	case EGraphObjectType::Polygon:
+		return EObjectType::OTSurfacePolygon;
+	default:
+		return EObjectType::OTNone;
 	}
 }
 

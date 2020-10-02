@@ -64,6 +64,7 @@ namespace Modumate
 		const TMap<int32, FGraph2DEdge> &GetEdges() const { return Edges; }
 		const TMap<int32, FGraph2DVertex> &GetVertices() const { return Vertices; }
 		const TMap<int32, FGraph2DPolygon> &GetPolygons() const { return Polygons; }
+		const TMap<int32, EGraphObjectType>& GetAllObjects() const { return AllObjects; }
 
 		bool ToDataRecord(FGraph2DRecord* OutRecord, bool bSaveOpenPolygons = false, bool bSaveExteriorPolygons = false) const;
 		bool FromDataRecord(const FGraph2DRecord* InRecord);

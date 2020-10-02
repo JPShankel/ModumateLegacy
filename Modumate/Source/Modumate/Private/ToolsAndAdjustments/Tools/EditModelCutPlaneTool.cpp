@@ -2,15 +2,14 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelCutPlaneTool.h"
 
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "Objects/CutPlane.h"
+#include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UI/EditModelUserWidget.h"
-
-#include "DocumentManagement/ModumateCommands.h"
-
-#include "ModumateCore/ModumateGeometryStatics.h"
 
 using namespace Modumate;
 
@@ -155,18 +154,18 @@ bool UCutPlaneTool::EnterNextStage()
 		Origin + BasisX * slice.Min.X + BasisY * slice.Max.Y
 	};
 
-	FMOIStateData stateData;
-	stateData.StateType = EMOIDeltaType::Create;
-	stateData.ObjectType = EObjectType::OTCutPlane;
-	stateData.Extents.X = (PendingPlanePoints[1] - PendingPlanePoints[0]).Size();
-	stateData.Extents.Y = (PendingPlanePoints[2] - PendingPlanePoints[1]).Size();
-	stateData.Location = (PendingPlanePoints[0] + PendingPlanePoints[2]) * 0.5f;
-	stateData.Orientation = FRotationMatrix::MakeFromXY(BasisX, BasisY).ToQuat();
-	stateData.ObjectID = doc->GetNextAvailableID();
+	FMOICutPlaneData cutPlaneData;
+	cutPlaneData.Location = Origin;
+	cutPlaneData.Rotation = FRotationMatrix::MakeFromXY(BasisX, BasisY).ToQuat();
+	cutPlaneData.Extents = slice.GetSize();
 
-	TArray<FDeltaPtr> deltas;
-	deltas.Add(MakeShared<FMOIDelta>(stateData));
-	return doc->ApplyDeltas(deltas, GetWorld());
+	FMOIStateData stateData(doc->GetNextAvailableID(), EObjectType::OTCutPlane);
+	stateData.CustomData.SaveStructData(cutPlaneData);
+
+	auto delta = MakeShared<FMOIDelta>();
+	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+
+	return doc->ApplyDeltas({ delta }, GetWorld());
 }
 
 bool UCutPlaneTool::EndUse()

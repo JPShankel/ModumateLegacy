@@ -9,6 +9,7 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
+#include "Objects/Trim.h"
 
 using namespace Modumate;
 
@@ -50,17 +51,14 @@ bool UTrimTool::BeginUse()
 {
 	if (TargetEdgeID != MOD_ID_NONE)
 	{
-		FMOIStateData stateData;
-		stateData.StateType = EMOIDeltaType::Create;
-		stateData.ObjectType = EObjectType::OTTrim;
-		stateData.ObjectAssemblyKey = AssemblyKey;
-		stateData.ParentID = TargetEdgeID;
-		stateData.ObjectID = GameState->Document.GetNextAvailableID();
+		FMOITrimData trimCustomData;
+		FMOIStateData stateData(GameState->Document.GetNextAvailableID(), EObjectType::OTTrim, TargetEdgeID);
+		stateData.AssemblyKey = AssemblyKey;
+		stateData.CustomData.SaveStructData(trimCustomData);
 
-		TArray<FDeltaPtr> deltas;
-		deltas.Add(MakeShared<FMOIDelta>(stateData));
-
-		GameState->Document.ApplyDeltas(deltas, GetWorld());
+		auto delta = MakeShared<FMOIDelta>();
+		delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+		GameState->Document.ApplyDeltas({ delta }, GetWorld());
 
 		EndUse();
 	}

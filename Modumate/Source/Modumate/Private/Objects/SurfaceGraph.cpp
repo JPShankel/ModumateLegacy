@@ -38,6 +38,12 @@ FVector FMOISurfaceGraphImpl::GetNormal() const
 	return CachedFaceOrigin.GetUnitAxis(EAxis::Z);
 }
 
+void FMOISurfaceGraphImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+{
+	OutStructDef = InstanceData.StaticStruct();
+	OutStructPtr = &InstanceData;
+}
+
 bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
@@ -108,16 +114,21 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 				TArray<FModumateObjectInstance*> objectsToDelete = MOI->GetAllDescendents();
 				objectsToDelete.Add(MOI);
 
-				TArray<FMOIStateData> deletionStates;
+#if 1
+				ensureMsgf(false, TEXT("TODO: reimplement with new FMOIDelta!"));
+#else
+
+				TArray<FMOIStateData_DEPRECATED> deletionStates;
 				for (FModumateObjectInstance* descendent : objectsToDelete)
 				{
-					FMOIStateData& deletionState = deletionStates.AddDefaulted_GetRef();
+					FMOIStateData_DEPRECATED& deletionState = deletionStates.AddDefaulted_GetRef();
 					deletionState.StateType = EMOIDeltaType::Destroy;
 					deletionState.ObjectID = descendent->ID;
 				}
 
-				auto deleteSurfaceDelta = MakeShared<FMOIDelta>(deletionStates);
+				auto deleteSurfaceDelta = MakeShared<FMOIDelta_DEPRECATED>(deletionStates);
 				OutSideEffectDeltas->Add(deleteSurfaceDelta);
+#endif
 			}
 		}
 	}
@@ -133,6 +144,5 @@ bool FMOISurfaceGraphImpl::UpdateCachedGraphData()
 		return false;
 	}
 
-	int32 faceIndex = UModumateObjectStatics::GetParentFaceIndex(MOI);
-	return UModumateObjectStatics::GetGeometryFromFaceIndex(parentObj, faceIndex, CachedFacePoints, CachedFaceOrigin);
+	return UModumateObjectStatics::GetGeometryFromFaceIndex(parentObj, InstanceData.ParentFaceIndex, CachedFacePoints, CachedFaceOrigin);
 }

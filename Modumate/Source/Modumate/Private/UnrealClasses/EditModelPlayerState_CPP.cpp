@@ -817,15 +817,7 @@ bool AEditModelPlayerState_CPP::DoesObjectHaveAnyError(int32 ObjectID) const
 void AEditModelPlayerState_CPP::CopySelectedToClipboard(const FModumateDocument &document)
 {
 	ClipboardEntries.Reset();
-	Algo::Transform(
-		SelectedObjects,
-		ClipboardEntries,
-		[](FModumateObjectInstance *ob)
-		{
-			FMOIDataRecord ret = ob->AsDataRecord();
-			ret.ID = 0;
-			return ret;
-		});
+	// TODO: re-implement
 }
 
 void AEditModelPlayerState_CPP::Paste(FModumateDocument &document) const
@@ -835,10 +827,7 @@ void AEditModelPlayerState_CPP::Paste(FModumateDocument &document) const
 		return;
 	}
 	document.BeginUndoRedoMacro();
-	for (auto ce : ClipboardEntries)
-	{
-		document.CreateObjectFromRecord(GetWorld(), ce);
-	}
+	// TODO: re-implement
 	document.EndUndoRedoMacro();
 }
 

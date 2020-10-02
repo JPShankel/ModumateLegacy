@@ -21,62 +21,6 @@
 
 #define LOCTEXT_NAMESPACE "CoreUnitTests"
 
-FModumateTestInstanceData::FModumateTestInstanceData()
-	: bValid(false)
-	, DebugStructName(NAME_None)
-{ }
-
-FModumateTestInstanceData::FModumateTestInstanceData(const UModumateTestObjectBase* SrcObject)
-{
-	bValid = false;
-
-	UScriptStruct* dataStructDef;
-	const void* dataStructPtr;
-	if (!SrcObject->GetInstanceData(dataStructDef, dataStructPtr))
-	{
-		return;
-	}
-
-	DebugStructName = dataStructDef->GetFName();
-
-	if (!FJsonObjectConverter::UStructToJsonObjectString(dataStructDef, dataStructPtr, DataJsonString, 0, 0))
-	{
-		return;
-	}
-
-	DataCborBuffer.Reset();
-	FMemoryWriter writer(DataCborBuffer);
-	FCborStructSerializerBackend serializerBackend(writer, EStructSerializerBackendFlags::Default);
-
-	FStructSerializerPolicies policies;
-	policies.NullValues = EStructSerializerNullValuePolicies::Ignore;
-
-	FStructSerializer::Serialize(dataStructPtr, *dataStructDef, serializerBackend, policies);
-
-	bValid = !DataJsonString.IsEmpty() && (DataCborBuffer.Num() > 0);
-}
-
-bool FModumateTestInstanceData::LoadInstanceData(UModumateTestObjectBase* DestObject) const
-{
-	if (!bValid)
-	{
-		return false;
-	}
-
-	UScriptStruct* dataStructDef;
-	void* dataStructPtr;
-	if (!DestObject->GetInstanceData(dataStructDef, dataStructPtr) ||
-		!ensure(DebugStructName == dataStructDef->GetFName()))
-	{
-		return false;
-	}
-
-	FMemoryReader reader(DataCborBuffer);
-	FCborStructDeserializerBackend deserializerBackend(reader);
-
-	return FStructDeserializer::Deserialize(dataStructPtr, *dataStructDef, deserializerBackend);
-}
-
 bool UModumateTestObjectBase::GetInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = nullptr;
@@ -165,7 +109,7 @@ namespace Modumate
 
 	// Serialization tests
 
-	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUStructSerializationTest, "Modumate.Core.UStructSerialization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::LowPriority)
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUStructSerializationTest, "Modumate.Core.Serialization.UStructSerialization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::LowPriority)
 		bool FModumateUStructSerializationTest::RunTest(const FString& Parameters)
 	{
 		// Struct 1 property comparison
@@ -244,20 +188,20 @@ namespace Modumate
 		policies.NullValues = EStructSerializerNullValuePolicies::Ignore;
 
 		FStructSerializer::Serialize(testStruct1A, serializerBackend, policies);
-		TestTrue(TEXT("Cbor write success"), buffer.Num() > 0);
+		TestTrue(TEXT("CBOR write success"), buffer.Num() > 0);
 
 		FMemoryReader reader(buffer);
 		FCborStructDeserializerBackend deserializerBackend(reader);
 
 		FModumateTestStruct1 testStruct1ACBorDeserialized;
 		FModumateTestStruct2 testStruct2ACBorDeserialized;
-		TestTrue(TEXT("Cbor struct1 read success"), FStructDeserializer::Deserialize(testStruct1ACBorDeserialized, deserializerBackend));
-		TestEqual(TEXT("Cbor read == original"), testStruct1ACBorDeserialized, testStruct1A);
+		TestTrue(TEXT("CBOR struct1 read success"), FStructDeserializer::Deserialize(testStruct1ACBorDeserialized, deserializerBackend));
+		TestEqual(TEXT("CBOR read == original"), testStruct1ACBorDeserialized, testStruct1A);
 
 		return true;
 	}
 
-	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUObjectSerializationTest, "Modumate.Core.UObjectSerialization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::LowPriority)
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUObjectSerializationTest, "Modumate.Core.Serialization.UObjectSerialization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::LowPriority)
 		bool FModumateUObjectSerializationTest::RunTest(const FString& Parameters)
 	{
 		// UObject duplication
@@ -287,28 +231,93 @@ namespace Modumate
 			TestTrue(FString::Printf(TEXT("Original.%s == Clone.%s"), *propName, *propName), bPropsEqualAB);
 		}
 
-		// UObject UStruct members and shared serialization
+		return true;
+	}
 
-		FModumateTestInstanceData object1Data(testObject1Original);
-		auto testObject1Loaded = NewObject<UModumateTestObject1>();
-		TestTrue(TEXT("TestObject1 data loaded"), object1Data.LoadInstanceData(testObject1Loaded));
-		TestEqual(TEXT("TestObject1 data loaded correctly"), testObject1Original->InstanceData, testObject1Loaded->InstanceData);
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateEmbeddedStructSerializationTest, "Modumate.Core.Serialization.EmbeddedStructSerialization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateEmbeddedStructSerializationTest::RunTest(const FString& Parameters)
+	{
+		FString objData1JsonString;
 
-		auto testObject2Original = NewObject<UModumateTestObject2>();
-		testObject2Original->InstanceData.VectorMap.Add(FName(TEXT("Handle")), FVector(6.0f, 36.0f, 0.0f));
-		testObject2Original->InstanceData.VectorMap.Add(FName(TEXT("Frame")), FVector(0.0f, 0.0f, 0.0f));
-		testObject2Original->InstanceData.VectorMap.Add(FName(TEXT("Panel")), FVector(0.0f, 0.0f, 1.0f));
-		FModumateTestInstanceData object2Data(testObject2Original);
-		auto testObject2Loaded = NewObject<UModumateTestObject2>();
-		TestTrue(TEXT("TestObject2 data loaded"), object2Data.LoadInstanceData(testObject2Loaded));
-		TestTrue(TEXT("TestObject2 data loaded correctly"), testObject2Original->InstanceData.VectorMap.OrderIndependentCompareEqual(testObject2Loaded->InstanceData.VectorMap));
+		// Make a "MOI" and edit some of its instance data
+		auto testObject1Original = NewObject<UModumateTestObject1>();
+		testObject1Original->InstanceData = FModumateTestStruct1{ false, 1.0 / 2.54, {1, 2, 3, 4} };
 
-		auto testObject3Original = NewObject<UModumateTestObject3>();
-		testObject3Original->CustomData = testObject1Original->InstanceData;
-		FModumateTestInstanceData object3Data(testObject3Original);
-		auto testObject3Loaded = NewObject<UModumateTestObject3>();
-		TestTrue(TEXT("TestObject3 data loaded"), object3Data.LoadInstanceData(testObject3Loaded));
-		TestEqual(TEXT("TestObject3 data loaded correctly"), testObject3Original->CustomData, testObject3Loaded->CustomData);
+		// Save
+		{
+			// Get ready to save it, needing only a pointer to the base class
+			FModumateTestInstanceData objData1Orig;
+			objData1Orig.InstanceID = 7;
+			objData1Orig.InstanceName = FString(TEXT("Door1"));
+
+			UScriptStruct* structDef;
+			const void* structPtr;
+			UTEST_TRUE(TEXT("Get original instance data struct"), testObject1Original->GetInstanceData(structDef, structPtr));
+			objData1Orig.CustomInstanceData.SaveStructData(structDef, structPtr, true);
+
+			// Save it out to a "document"
+			TestTrue(TEXT("JSON write success"), FJsonObjectConverter::UStructToJsonObjectString(objData1Orig, objData1JsonString));
+		}
+
+		// Load
+		{
+			// Load just the struct data from the "document"
+			FModumateTestInstanceData objData1Loaded;
+			TestTrue(TEXT("JSON read success"), FJsonObjectConverter::JsonObjectStringToUStruct(objData1JsonString, &objData1Loaded, 0, 0));
+			objData1Loaded.CustomInstanceData.SaveCborFromJson();
+			TestTrue(TEXT("Struct data load success"), objData1Loaded.CustomInstanceData.IsValid());
+
+			// Create the loaded "MOI" from the instance data
+			auto testObject1Loaded = NewObject<UModumateTestObject1>();
+			UScriptStruct* outStructDef1;
+			void* outStructPtr1;
+			TestTrue(TEXT("Get loaded instance data struct"), testObject1Loaded->GetInstanceData(outStructDef1, outStructPtr1));
+			TestTrue(TEXT("Instance data load success"), objData1Loaded.CustomInstanceData.LoadStructData(outStructDef1, outStructPtr1));
+
+			TestEqual(TEXT("Instance data loaded correctly"), testObject1Original->InstanceData, testObject1Loaded->InstanceData);
+
+			// Try to load the "MOI" into the incorrect type
+			auto testObject2Loaded = NewObject<UModumateTestObject2>();
+			UScriptStruct* outStructDef2;
+			void* outStructPtr2;
+			TestTrue(TEXT("Get loaded instance data struct"), testObject2Loaded->GetInstanceData(outStructDef2, outStructPtr2));
+			TestFalse(TEXT("Wrong instance data load failure"), objData1Loaded.CustomInstanceData.LoadStructData(outStructDef2, outStructPtr2));
+
+			// Copy and modify the typed instance data of the loaded "MOI"
+			auto modifiedInstanceData1 = testObject1Loaded->InstanceData;
+			modifiedInstanceData1.Number = PI;
+
+			// Save the modified instance data, creating a snapshot of the edit
+			FModumateTestInstanceData objData1Modified = objData1Loaded;
+			TestTrue(TEXT("Save out modified instance data struct"), objData1Modified.CustomInstanceData.SaveStructData(modifiedInstanceData1));
+
+			// Load the modified snapshot back into the original "MOI"
+			TestTrue(TEXT("Load in modified instance data struct"), objData1Modified.CustomInstanceData.LoadStructData(testObject1Loaded->InstanceData));
+			TestEqual(TEXT("Loaded in correct instance data"), testObject1Loaded->InstanceData.Number, (double)PI);
+
+			// Test CBOR serialization of contained custom struct data
+			// This is not very helpful because CBOR auto-USTRUCT-serialization will end up only serialization the wrapper's JSON string, rather than the CBOR buffer.
+			// TODO: customize serialization behavior so that CBOR can pass through the buffer directly, like how UStructToJsonObject will pass through the wrapper JSON object directly.
+			TArray<uint8> buffer;
+			FMemoryWriter writer(buffer);
+			FCborStructSerializerBackend serializerBackend(writer, EStructSerializerBackendFlags::Default);
+
+			FStructSerializerPolicies policies;
+			policies.NullValues = EStructSerializerNullValuePolicies::Ignore;
+
+			objData1Modified.CustomInstanceData.SaveJsonFromCbor();
+			FStructSerializer::Serialize(objData1Modified, serializerBackend, policies);
+			TestTrue(TEXT("CBOR instance data write success"), buffer.Num() > 0);
+
+			// Test CBOR deserialization of contained custom struct data
+			FMemoryReader reader(buffer);
+			FCborStructDeserializerBackend deserializerBackend(reader);
+
+			FModumateTestInstanceData objData1CborDeserialized;
+			TestTrue(TEXT("CBOR instance data read success"), FStructDeserializer::Deserialize(objData1CborDeserialized, deserializerBackend));
+			TestTrue(TEXT("CBOR data post-load success"), objData1CborDeserialized.CustomInstanceData.SaveFromJsonString());
+			TestEqual(TEXT("CBOR instance data read == original"), objData1CborDeserialized.CustomInstanceData, objData1Modified.CustomInstanceData);
+		}
 
 		return true;
 	}

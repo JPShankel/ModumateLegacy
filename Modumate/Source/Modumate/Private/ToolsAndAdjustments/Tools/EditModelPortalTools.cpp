@@ -14,6 +14,7 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UnrealClasses/PortalFrameActor_CPP.h"
+#include "Objects/Portal.h"
 
 using namespace Modumate;
 
@@ -274,10 +275,9 @@ bool UPortalToolBase::BeginUse()
 		{
 			int32 childId = planeChildren[0];
 			const FModumateObjectInstance* childObj = Document->GetObjectById(childId);
-			FMOIStateData deleteState = childObj->GetDataState();
-			deleteState.StateType = EMOIDeltaType::Destroy;
+
 			auto deleteDelta = MakeShared<FMOIDelta>();
-			deleteDelta->AddCreateDestroyStates({ deleteState });
+			deleteDelta->AddCreateDestroyState(childObj->GetStateData(), EMOIDeltaType::Destroy);
 
 			deltas.Add(deleteDelta);
 		}
@@ -342,18 +342,14 @@ bool UPortalToolBase::BeginUse()
 		}
 	}
 
-	auto addPortal = MakeShared<FMOIDelta>();
-	FMOIStateData portalData;
-	portalData.StateType = EMOIDeltaType::Create;
-	portalData.ObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
-	portalData.ParentID = HostID;
-	portalData.Orientation = FQuat::Identity;
-	portalData.ObjectAssemblyKey = AssemblyKey;
-	portalData.ParentID = newParentId;
-	portalData.ObjectID = Document->GetNextAvailableID();
+	FMOIPortalData portalInstanceData;
 
-	TArray<FMOIStateData> createStates(&portalData, 1);
-	addPortal->AddCreateDestroyStates(createStates);
+	FMOIStateData objectStateData(Document->GetNextAvailableID(), UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), newParentId);
+	objectStateData.AssemblyKey = AssemblyKey;
+	objectStateData.CustomData.SaveStructData(portalInstanceData);
+
+	auto addPortal = MakeShared<FMOIDelta>();
+	addPortal->AddCreateDestroyState(objectStateData, EMOIDeltaType::Create);
 
 	deltas.Add(addPortal);
 

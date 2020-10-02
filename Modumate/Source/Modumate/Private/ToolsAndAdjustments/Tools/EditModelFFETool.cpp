@@ -1,12 +1,14 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #include "ToolsAndAdjustments/Tools/EditModelFFETool.h"
-#include "UnrealClasses/CompoundMeshActor.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
+
 #include "Database/ModumateObjectDatabase.h"
+#include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/FFE.h"
+#include "UnrealClasses/CompoundMeshActor.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
@@ -121,20 +123,20 @@ bool UPlaceObjectTool::BeginUse()
 	int32 parentID = hitMOI != nullptr ? hitMOI->ID : Controller->EMPlayerState->GetViewGroupObjectID();
 	int32 parentFaceIdx = UModumateObjectStatics::GetFaceIndexFromTargetHit(hitMOI, hitLoc, snappedCursor.HitNormal);
 
-	FMOIStateData state;
+	FMOIFFEData ffeData;
+	ffeData.Location = hitLoc;
+	ffeData.Rotation = CursorCompoundMesh->GetActorRotation().Quaternion();
+	ffeData.bLateralInverted = false;
+	ffeData.ParentFaceIndex = parentFaceIdx;
 
-	state.StateType = EMOIDeltaType::Create;
-	state.ControlIndices = { parentFaceIdx };
-	state.Location = hitLoc;
-	state.Orientation = CursorCompoundMesh->GetActorRotation().Quaternion();
-	state.ParentID = parentID;
-	state.ObjectAssemblyKey = key;
-	state.ObjectType = EObjectType::OTFurniture;
-	state.ObjectID = doc->GetNextAvailableID();
-	
-	TArray<FDeltaPtr> deltas;
-	deltas.Add(MakeShared<FMOIDelta>(state));
-	doc->ApplyDeltas(deltas, GetWorld());
+	FMOIStateData stateData(doc->GetNextAvailableID(), EObjectType::OTFurniture, parentID);
+	stateData.AssemblyKey = key;
+	stateData.CustomData.SaveStructData(ffeData);
+
+	auto delta = MakeShared<FMOIDelta>();
+	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+
+	doc->ApplyDeltas({ delta }, GetWorld());
 
 	return true;
 }

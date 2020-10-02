@@ -11,6 +11,7 @@
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateMitering.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
@@ -54,11 +55,12 @@ FVector FMOIPlaneHostedObjImpl::GetLocation() const
 	const FModumateObjectInstance *parent = MOI->GetParentObject();
 	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
-		float thickness = MOI->CalculateThickness();
-		FVector planeNormal = parent->GetNormal();
+		float thickness, startOffset;
+		FVector normal;
+		UModumateObjectStatics::GetPlaneHostedValues(MOI, thickness, startOffset, normal);
+
 		FVector planeLocation = parent->GetObjectLocation();
-		float offsetPct = MOI->GetExtents().X;
-		return planeLocation + ((0.5f - offsetPct) * thickness * planeNormal);
+		return planeLocation + (startOffset + (0.5f * thickness)) * normal;
 	}
 	else
 	{
@@ -104,6 +106,12 @@ FVector FMOIPlaneHostedObjImpl::GetNormal() const
 	}
 }
 
+void FMOIPlaneHostedObjImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+{
+	OutStructDef = InstanceData.StaticStruct();
+	OutStructPtr = &InstanceData;
+}
+
 void FMOIPlaneHostedObjImpl::Destroy()
 {
 	MarkEdgesMiterDirty();
@@ -118,7 +126,7 @@ bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDe
 		// TODO: as long as the assembly is not stored inside of the data state, and its layers can be reversed,
 		// then this is the centralized opportunity to match up the reversal of layers with whatever the intended inversion state is,
 		// based on preview/current state changing, assembly changing, object creation, etc.
-		MOI->SetAssemblyLayersReversed(MOI->GetObjectInverted());
+		MOI->SetAssemblyLayersReversed(InstanceData.bLayersInverted);
 
 		CachedLayerDims.UpdateLayersFromAssembly(MOI->GetAssembly());
 		CachedLayerDims.UpdateFinishFromObject(MOI);
@@ -295,6 +303,16 @@ void FMOIPlaneHostedObjImpl::OnSelected(bool bNewSelected)
 			connectedMOI->UpdateVisibilityAndCollision();
 		}
 	}
+}
+
+bool FMOIPlaneHostedObjImpl::GetInvertedState(FMOIStateData& OutState) const
+{
+	OutState = MOI->GetStateData();
+
+	FMOIPlaneHostedObjData modifiedPlaneHostedObjData = InstanceData;
+	modifiedPlaneHostedObjData.bLayersInverted = !modifiedPlaneHostedObjData.bLayersInverted;
+
+	return OutState.CustomData.SaveStructData(modifiedPlaneHostedObjData);
 }
 
 void FMOIPlaneHostedObjImpl::GetPlaneIntersections(TArray<FVector> &OutIntersections, const TArray<FVector> &InPoints, const FPlane &InPlane) const

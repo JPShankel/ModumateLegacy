@@ -6,7 +6,7 @@
 #include "DocumentManagement/ModumateCommands.h"
 
 
-bool FMOIStateData::ToParameterSet(const FString& Prefix, Modumate::FModumateFunctionParameterSet& OutParameterSet) const
+bool FMOIStateData_DEPRECATED::ToParameterSet(const FString& Prefix, Modumate::FModumateFunctionParameterSet& OutParameterSet) const
 {
 	TMap<FString, FString> propertyMap;
 	if (!ObjectProperties.ToStringMap(propertyMap))
@@ -36,7 +36,7 @@ bool FMOIStateData::ToParameterSet(const FString& Prefix, Modumate::FModumateFun
 	return true;
 }
 
-bool FMOIStateData::FromParameterSet(const FString& Prefix, const Modumate::FModumateFunctionParameterSet& ParameterSet)
+bool FMOIStateData_DEPRECATED::FromParameterSet(const FString& Prefix, const Modumate::FModumateFunctionParameterSet& ParameterSet)
 {
 	TArray<FString> propertyNames, propertyValues;
 	propertyNames = ParameterSet.GetValue(Prefix + Modumate::Parameters::kPropertyNames, propertyNames);
@@ -69,7 +69,7 @@ bool FMOIStateData::FromParameterSet(const FString& Prefix, const Modumate::FMod
 	return true;
 }
 
-bool FMOIStateData::operator==(const FMOIStateData& Other) const
+bool FMOIStateData_DEPRECATED::operator==(const FMOIStateData_DEPRECATED& Other) const
 {
 	// TODO: replace with better per-property equality checks, when we no longer use FModumateFunctionParameterSet for serialization.
 	Modumate::FModumateFunctionParameterSet thisParamSet, otherParamSet;
@@ -81,4 +81,29 @@ bool FMOIStateData::operator==(const FMOIStateData& Other) const
 	}
 
 	return false;
+}
+
+FMOIStateData::FMOIStateData()
+{
+}
+
+FMOIStateData::FMOIStateData(int32 InID, EObjectType InObjectType, int32 InParentID)
+	: ID(InID)
+	, ObjectType(InObjectType)
+	, ParentID(InParentID)
+{
+}
+
+bool FMOIStateData::operator==(const FMOIStateData& Other) const
+{
+	return (ID == Other.ID) &&
+		(ObjectType == Other.ObjectType) &&
+		(ParentID == Other.ParentID) &&
+		(AssemblyKey == Other.AssemblyKey) &&
+		(CustomData == Other.CustomData);
+}
+
+bool FMOIStateData::operator!=(const FMOIStateData& Other) const
+{
+	return !(*this == Other);
 }

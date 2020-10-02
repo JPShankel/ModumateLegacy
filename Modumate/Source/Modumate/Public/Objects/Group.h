@@ -12,7 +12,8 @@ class MODUMATE_API FMOIGroupImpl : public FModumateObjectInstanceImplBase
 {
 private:
 	TWeakObjectPtr<UWorld> World;
-	FVector Location;
+	FVector CachedLocation;
+	FVector CachedExtents;
 
 	// Only used temporarily inside of GetStructuralPointsAndLines
 	mutable TArray<FStructurePoint> TempPoints;
@@ -21,8 +22,6 @@ private:
 public:
 	FMOIGroupImpl(FModumateObjectInstance *moi);
 	virtual ~FMOIGroupImpl() {};
-
-	virtual void SetLocation(const FVector &p) override;
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 

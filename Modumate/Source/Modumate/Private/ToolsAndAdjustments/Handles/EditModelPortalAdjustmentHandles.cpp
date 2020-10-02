@@ -2,40 +2,43 @@
 
 #include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 
+#include "DocumentManagement/ModumateCommands.h"
+#include "Objects/Portal.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
+#include "UI/AdjustmentHandleAssetData.h"
+#include "UI/AdjustmentHandleWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
-#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
-#include "UI/AdjustmentHandleAssetData.h"
-#include "UI/AdjustmentHandleWidget.h"
 
 using namespace Modumate;
 bool AAdjustPortalInvertHandle::BeginUse()
 {
-	if (!Super::BeginUse())
+	if (!ensure(TargetMOI))
 	{
 		return false;
 	}
 
-	TArray<int32> ids = { TargetMOI->ID };
+	auto delta = MakeShared<FMOIDelta>();
+	auto& modifiedStateData = delta->AddMutationState(TargetMOI);
 
-	if (bShouldTransvert)
+	FMOIPortalData modifiedCustomData;
+	if (ensure(modifiedStateData.CustomData.LoadStructData(modifiedCustomData)))
 	{
-		Controller->ModumateCommand(
-			FModumateCommand(Commands::kTransverseObjects)
-			.Param(Parameters::kObjectIDs, ids));
-	}
-	else
-	{
-		Controller->ModumateCommand(
-			FModumateCommand(Commands::kInvertObjects)
-			.Param(Parameters::kObjectIDs, ids));
+		if (bShouldTransvert)
+		{
+			modifiedCustomData.bLateralInverted = !modifiedCustomData.bLateralInverted;
+		}
+		else
+		{
+			modifiedCustomData.bNormalInverted = !modifiedCustomData.bNormalInverted;
+		}
+
+		modifiedStateData.CustomData.SaveStructData(modifiedCustomData);
 	}
 
-	EndUse();
+	GameState->Document.ApplyDeltas({ delta }, GetWorld());
 	return false;
 }
 

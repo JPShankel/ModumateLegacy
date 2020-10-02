@@ -2,6 +2,7 @@
 
 #include "DocumentManagement/ModumateDocument.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "Objects/Cabinet.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/DimensionManager.h"
 #include "UI/DimensionActor.h"
@@ -30,8 +31,15 @@ bool AAdjustPolyExtrusionHandle::BeginUse()
 		return false;
 	}
 
+	// TODO: generalize extrusion for objects besides cabinets once ScopeBox is back online
+	FMOICabinetData cabinetData;
+	if (!TargetOriginalState.CustomData.LoadStructData(cabinetData))
+	{
+		return false;
+	}
+
 	OriginalPlane = FPlane(TargetMOI->GetCorner(0), TargetMOI->GetNormal());
-	OriginalExtrusion = TargetMOI->GetExtents().Y;
+	OriginalExtrusion = cabinetData.ExtrusionDist;
 	LastValidExtrusion = OriginalExtrusion;
 
 	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorLoc, TargetMOI->GetNormal());
@@ -103,14 +111,16 @@ void AAdjustPolyExtrusionHandle::EndUse()
 
 FVector AAdjustPolyExtrusionHandle::GetHandlePosition() const
 {
+	// TODO: generalize extrusion for objects besides cabinets once ScopeBox is back online
+	FMOICabinetData cabinetData;
 	int32 numCorners = TargetMOI->GetNumCorners();
-	if (!ensure(numCorners > 0))
+	if (!ensure((numCorners > 0) && TargetMOI->GetStateData().CustomData.LoadStructData(cabinetData)))
 	{
 		return TargetMOI->GetObjectLocation();
 	}
 
 	FVector objectNormal = TargetMOI->GetNormal();
-	FVector offset = (Sign > 0.0f) ? (TargetMOI->GetExtents().Y * objectNormal) : FVector::ZeroVector;
+	FVector offset = (Sign > 0.0f) ? (cabinetData.ExtrusionDist * objectNormal) : FVector::ZeroVector;
 
 	// this is assuming that the target object is a prism and GetCorner enumerates the base points first
 	int32 numBasePoints = numCorners / 2.0f;
@@ -142,22 +152,26 @@ bool AAdjustPolyExtrusionHandle::HandleInputNumber(float number)
 
 void AAdjustPolyExtrusionHandle::ApplyExtrusion(bool bIsPreview)
 {
-	FMOIDelta delta;
-	auto state = ((const FModumateObjectInstance*)TargetMOI)->GetDataState();
-	state.StateType = EMOIDeltaType::Mutate;
-	delta.StatePairs.Add(TPair<FMOIStateData, FMOIStateData>(state, state));
-	delta.StatePairs[0].Value.Extents.Y = LastValidExtrusion;
+	auto delta = MakeShared<FMOIDelta>();
 
-	TArray<FDeltaPtr> deltas;
-	deltas.Add(MakeShared<FMOIDelta>(delta));
+	// TODO: generalize extrusion for objects besides cabinets once ScopeBox is back online
+	FMOIStateData targetModifiedState = TargetOriginalState;
+	FMOICabinetData modifiedCabinetData;
+	if (ensure(targetModifiedState.CustomData.LoadStructData(modifiedCabinetData)))
+	{
+		modifiedCabinetData.ExtrusionDist = LastValidExtrusion;
+		targetModifiedState.CustomData.SaveStructData(modifiedCabinetData);
 
-	if (bIsPreview)
-	{
-		Controller->GetDocument()->ApplyPreviewDeltas(deltas, Controller->GetWorld());
-	}
-	else
-	{
-		Controller->GetDocument()->ApplyDeltas(deltas, Controller->GetWorld());
+		delta->AddMutationState(TargetMOI, TargetOriginalState, targetModifiedState);
+
+		if (bIsPreview)
+		{
+			Controller->GetDocument()->ApplyPreviewDeltas({ delta }, Controller->GetWorld());
+		}
+		else
+		{
+			Controller->GetDocument()->ApplyDeltas({ delta }, Controller->GetWorld());
+		}
 	}
 }
 

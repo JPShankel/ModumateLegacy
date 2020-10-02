@@ -11,6 +11,21 @@
 #include "Cabinet.generated.h"
 
 
+USTRUCT()
+struct MODUMATE_API FMOICabinetData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	float ExtrusionDist = 0.0f;
+
+	UPROPERTY()
+	int32 FrontFaceIndex = INDEX_NONE;
+
+	UPROPERTY()
+	bool bFrontFaceLateralInverted = false;
+};
+
 class AEditModelPlayerController_CPP;
 
 UCLASS()
@@ -38,6 +53,7 @@ public:
 
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const override;
+	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual FVector GetNormal() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
@@ -45,6 +61,7 @@ public:
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
+	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane,
 		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 		TArray<TArray<FVector>> &OutPerimeters) const override;
@@ -62,4 +79,6 @@ protected:
 	FTransform CachedBaseOrigin;
 	TArray<FVector> CachedBasePoints;
 	FVector CachedExtrusionDelta;
+
+	FMOICabinetData InstanceData;
 };

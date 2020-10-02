@@ -50,6 +50,8 @@ public:
 	virtual FVector GetCorner(int32 index) const = 0;
 	virtual int32 GetNumCorners() const = 0;
 
+	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) = 0;
+
 	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) = 0;
 
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) = 0;
@@ -76,7 +78,7 @@ public:
 	virtual bool ShowStructureOnSelection() const = 0;
 	virtual bool UseStructureDataForCollision() const = 0;
 
-	virtual void TransverseObject() = 0;
+	virtual bool GetInvertedState(FMOIStateData& OutState) const = 0;
 
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const = 0;
 
@@ -121,6 +123,8 @@ public:
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const;
 
+	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
+
 	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override { }
@@ -147,7 +151,7 @@ public:
 	virtual bool ShowStructureOnSelection() const override { return true; }
 	virtual bool UseStructureDataForCollision() const override { return false; }
 
-	virtual void TransverseObject() override { }
+	virtual bool GetInvertedState(FMOIStateData& OutState) const override { return false; }
 
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const override { return TArray<FModelDimensionString>(); }
 
@@ -174,7 +178,8 @@ private:
 	IModumateObjectInstanceImpl *Implementation = nullptr;
 	FModumateDocument *Document = nullptr;
 
-	FMOIStateData CurrentState, PreviewState;
+	FMOIStateData_DEPRECATED CurrentState_DEPRECATED, PreviewState_DEPRECATED;
+	FMOIStateData StateData_V2;
 
 	// Carry a bespoke copy of your assembly
 	// TODO: this is motivated by object-level overrides and anticipated serialization needs
@@ -184,7 +189,7 @@ private:
 	// itself isn't stored in the FMOIStateData. So if CurrentState / PreviewState get modified (or swapped), this flag lets us maintain the layer order.
 	bool bAssemblyLayersReversed = false;
 
-	TArray<int32> Children;
+	TArray<int32> CachedChildIDs;
 	bool bDestroyed = false;
 	bool bHovered = false;
 	bool bSelected = false;
@@ -201,26 +206,30 @@ private:
 
 	EObjectDirtyFlags DirtyFlags = EObjectDirtyFlags::None;
 
-	FMOIStateData &GetDataState();
+	FMOIStateData_DEPRECATED& GetDataState_DEPRECATED();
 
-	void MakeImplementation();
-	void MakeActor(const FVector &Loc, const FQuat &Rot);
+	bool GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr);
+	bool GetTypedInstanceData(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const;
+
+	void AddCachedChildID(int32 ChildID);
+	void RemoveCachedChildID(int32 ChildID);
+
 	void SetupMOIComponent();
 
 	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
 
 public:
-	FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FBIMAssemblySpec &obAsm, int32 id);
-	FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FMOIDataRecord &obRec);
+	FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FMOIStateData& InStateData);
 	~FModumateObjectInstance();
 
-	const FMOIStateData &GetDataState() const;
+	FMOIStateData& GetStateData();
+	const FMOIStateData& GetStateData() const;
+	bool SetStateData(const FMOIStateData& NewStateData);
 
-	bool GetObjectInverted() const;
-	void SetObjectInverted(bool bNewInverted);
+	bool UpdateStateDataFromObject();
+	bool UpdateInstanceData();
 
-	const FVector &GetExtents() const;
-	void SetExtents(const FVector &NewExtents);
+	const FMOIStateData_DEPRECATED &GetDataState_DEPRECATED() const;
 
 	void SetControlPointIndex(int32 IndexNum, int32 IndexVal);
 	int32 GetControlPointIndex(int32 IndexNum) const;
@@ -231,16 +240,14 @@ public:
 
 	void SetControlPointIndices(const TArray<int32> &NewControlPointIndices);
 
-	const TArray<int32> &GetChildren() const {return Children;}
-
-	bool BeginPreviewOperation();
-	bool EndPreviewOperation();
+	bool BeginPreviewOperation_DEPRECATED();
+	bool EndPreviewOperation_DEPRECATED();
 	bool GetIsInPreviewMode() const;
 
-	bool SetDataState(const FMOIStateData &DataState);
+	bool SetDataState_DEPRECATED(const FMOIStateData_DEPRECATED &DataState);
 
 	int32 GetParentID() const;
-	void SetParentID(int32 NewID);
+	void SetParentID(int32 NewParentID);
 
 	UWorld *GetWorld() const { return World.Get(); }
 	// Actor management
@@ -260,9 +267,11 @@ public:
 	const FModumateObjectInstance *GetParentObject() const;
 	TArray<FModumateObjectInstance *> GetChildObjects();
 	TArray<const FModumateObjectInstance *> GetChildObjects() const;
-	const TArray<int32> &GetChildIDs() const { return Children; }
-	bool AddChild(FModumateObjectInstance *child, bool bUpdateChildHierarchy = true);
-	bool RemoveChild(FModumateObjectInstance *child, bool bUpdateChildHierarchy = true);
+	const TArray<int32> &GetChildIDs() const { return CachedChildIDs; }
+	bool HasChildID(int32 ChildID) const;
+
+	bool AddChild_DEPRECATED(FModumateObjectInstance *child, bool bUpdateChildHierarchy = true);
+	bool RemoveChild_DEPRECATED(FModumateObjectInstance *child, bool bUpdateChildHierarchy = true);
 
 	void GetConnectedIDs(TArray<int32> &connectedIDs) const;
 	void GetConnectedMOIs(TArray<FModumateObjectInstance *> &connectedMOIs) const;
@@ -345,8 +354,7 @@ public:
 	bool ShowStructureOnSelection() const;
 	bool UseStructureDataForCollision() const;
 
-	void InvertObject();
-	void TransverseObject();
+	bool GetInvertedState(FMOIStateData& OutState) const;
 
 	// Manipulation
 	void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);
@@ -366,7 +374,7 @@ public:
 	bool CanBeSplit() const;
 
 	// Serialization
-	FMOIDataRecord AsDataRecord() const;
+	FMOIDataRecord_DEPRECATED AsDataRecord_DEPRECATED() const;
 
 	UMaterialInterface *GetMaterial();
 	void SetMaterial(UMaterialInterface *mat);

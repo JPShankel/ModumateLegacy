@@ -36,10 +36,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kViewGroupObject, "view_group_object");
 		MODUMATE_COMMAND(kGroup, "group");
 
-		// Object mutators
-		MODUMATE_COMMAND(kInvertObjects, "invert_objects");
-		MODUMATE_COMMAND(kTransverseObjects, "transverse_objects");
-
 		// Selected Objects
 		MODUMATE_COMMAND(kDeleteSelectedObjects, "delete_selected");
 		MODUMATE_COMMAND(kDeleteObjects, "delete_objects");

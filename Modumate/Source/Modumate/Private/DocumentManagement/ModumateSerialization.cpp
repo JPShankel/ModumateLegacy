@@ -155,7 +155,7 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 			int32 numObjs = OutRecord.ObjectInstances.Num();
 			for (int32 i = numObjs - 1; i >= 0; --i)
 			{
-				const FMOIDataRecord& objRecord = OutRecord.ObjectInstances[i];
+				const FMOIDataRecord_DEPRECATED& objRecord = OutRecord.ObjectInstances[i];
 
 				if (removedObjIDs.Contains(objRecord.ParentID) ||
 					(objRecord.ObjectType == EObjectType::OTDoor) ||
@@ -193,7 +193,7 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 			EObjectType::OTRoom };
 
 		OutRecord.ObjectInstances = OutRecord.ObjectInstances.FilterByPredicate(
-			[&whiteList](const FMOIDataRecord &Record)
+			[&whiteList](const FMOIDataRecord_DEPRECATED &Record)
 		{
 			return whiteList.Contains(Record.ObjectType);
 		});

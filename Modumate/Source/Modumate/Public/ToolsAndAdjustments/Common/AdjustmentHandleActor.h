@@ -2,12 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "UObject/Object.h"
-#include "UObject/WeakObjectPtr.h"
 #include "Database/ModumateObjectEnums.h"
+#include "GameFramework/Actor.h"
+#include "Objects/MOIState.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
+#include "UObject/WeakObjectPtr.h"
 
 #include "AdjustmentHandleActor.generated.h"
 
@@ -67,6 +66,8 @@ public:
 	FModumateObjectInstance* SourceMOI = nullptr;
 	// The MOI that this handle effects
 	FModumateObjectInstance* TargetMOI = nullptr;
+
+	FMOIStateData TargetOriginalState;
 
 	TArray<FModumateObjectInstance*> TargetDescendents;
 

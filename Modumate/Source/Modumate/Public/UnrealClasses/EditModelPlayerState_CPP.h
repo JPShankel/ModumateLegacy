@@ -34,7 +34,7 @@ class MODUMATE_API AEditModelPlayerState_CPP : public APlayerState
 	virtual void Tick(float DeltaSeconds) override;
 
 	friend class AEditModelPlayerController_CPP;
-	TArray<FMOIDataRecord> ClipboardEntries;
+	TArray<FMOIDataRecord_DEPRECATED> ClipboardEntries;
 
 protected:
 	void BatchRenderLines();

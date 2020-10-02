@@ -55,8 +55,9 @@ bool UModumateBrowserStatics::GetScopeBoxesFromProject(UObject* WorldContextObje
 		auto &scopeBoxParam = OutScopeBoxParams.AddDefaulted_GetRef();
 		scopeBoxParam.ObjectID = scopeBoxObj->ID;
 		scopeBoxParam.bVisiblity = scopeBoxObj->IsVisible();
-		scopeBoxParam.Location = scopeBoxObj->GetObjectLocation();
-		scopeBoxParam.Extent = scopeBoxObj->GetExtents();
+		// TODO: re-implement scope box data
+		//scopeBoxParam.Location = scopeBoxObj->GetObjectLocation();
+		//scopeBoxParam.Extent = scopeBoxObj->GetExtents();
 
 		// TODO: Copy other parameters?
 		//scopeBoxParam.DisplayName;

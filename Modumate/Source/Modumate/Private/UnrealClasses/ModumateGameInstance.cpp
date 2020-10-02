@@ -397,30 +397,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
-	RegisterCommand(kInvertObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		TArray<int32> objIDs = params.GetValue(kObjectIDs);
-		TArray<FModumateObjectInstance*> curMOIs;
-		for (auto& id : objIDs)
-		{
-			curMOIs.Add(GetDocument()->GetObjectById(id));
-		}
-		GetDocument()->InvertObjects(curMOIs);
-		return true;
-	});
-
-	RegisterCommand(kTransverseObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		TArray<int32> objIDs = params.GetValue(kObjectIDs);
-		TArray<FModumateObjectInstance*> curMOIs;
-		for (auto& id : objIDs)
-		{
-			curMOIs.Add(GetDocument()->GetObjectById(id));
-		}
-		GetDocument()->TransverseObjects(curMOIs);
-		return true;
-	});
-
 	auto copySelected = [this]()
 	{
 		AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);

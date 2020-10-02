@@ -424,28 +424,30 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 
 	bool bAnyFailure = false;
 
+	TSharedPtr<FMOIDelta> structureLineDelta;
+
 	for (int32 targetEdgeID : targetEdgeIDs)
 	{
 		FModumateObjectInstance *parentEdgeObj = GameState->Document.GetObjectById(targetEdgeID);
 
 		if (parentEdgeObj && (parentEdgeObj->GetObjectType() == EObjectType::OTMetaEdge))
 		{
-			FMOIStateData stateData;
-			stateData.StateType = EMOIDeltaType::Create;
-			stateData.ObjectType = EObjectType::OTStructureLine;
-			stateData.ObjectAssemblyKey = AssemblyKey;
-			stateData.ParentID = targetEdgeID;
-			stateData.ObjectID = GameState->Document.GetNextAvailableID();
+			// TODO: fill in custom instance data for stairs, once we define and rely on it
+			FMOIStateData stateData(GameState->Document.GetNextAvailableID(), EObjectType::OTStructureLine, targetEdgeID);
+			stateData.AssemblyKey = AssemblyKey;
 
-			TArray<FDeltaPtr> deltas;
-			deltas.Add(MakeShared<FMOIDelta>(stateData));
-
-			if (!GameState->Document.ApplyDeltas(deltas, GetWorld()))
+			if (!structureLineDelta.IsValid())
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Failed to create StructureLine on edge ID %d!"), targetEdgeID);
-				bAnyFailure = true;
+				structureLineDelta = MakeShared<FMOIDelta>();
 			}
+			structureLineDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 		}
+	}
+
+	if (!GameState->Document.ApplyDeltas({ structureLineDelta }, GetWorld()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to create StructureLines!"));
+		bAnyFailure = true;
 	}
 
 	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kEndUndoRedoMacro));

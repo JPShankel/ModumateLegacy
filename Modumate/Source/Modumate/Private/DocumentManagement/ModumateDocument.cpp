@@ -227,11 +227,15 @@ void FModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, c
 		FModumateObjectInstance* ob = GetObjectById(id);
 		if (ob != nullptr)
 		{
-			ob->BeginPreviewOperation();
+#if 1
+			ensureMsgf(false, TEXT("TODO: reimplement with new FMOIDelta!"));
+#else
+			ob->BeginPreviewOperation_DEPRECATED();
 			ob->SetAssembly(assembly);
 
-			deltaPtrs.Add(MakeShared<FMOIDelta>(ob));
-			ob->EndPreviewOperation();
+			deltaPtrs.Add(MakeShared<FMOIDelta_DEPRECATED>(ob));
+			ob->EndPreviewOperation_DEPRECATED();
+#endif
 		}
 	}
 	ApplyDeltas(deltaPtrs, world);
@@ -297,24 +301,6 @@ void FModumateDocument::UnhideObjectsById(UWorld *world, const TArray<int32> &id
 	}
 }
 
-bool FModumateDocument::InvertObjects(const TArray<FModumateObjectInstance*> &obs)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::InvertObjects"));
-	if (obs.Num() == 0)
-	{
-		return false;
-	}
-
-	ClearRedoBuffer();
-
-	for (auto &s : obs)
-	{
-		s->InvertObject();
-	}
-
-	return true;
-}
-
 void FModumateDocument::RestoreDeletedObjects(const TArray<int32> &ids)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::RestoreDeletedObjects"));
@@ -343,15 +329,6 @@ bool FModumateDocument::DeleteObjectImpl(FModumateObjectInstance *ob, bool keepI
 		// Store off the connected objects, in case they will be affected by this deletion
 		TArray<FModumateObjectInstance *> connectedMOIs;
 		ob->GetConnectedMOIs(connectedMOIs);
-
-		// Remove a deleted object from its parent, so the hierarchy can be correct
-		if (auto *parent = ob->GetParentObject())
-		{
-			parent->RemoveChild(ob);
-
-			// But also store the old parent, in case the deleted object is restored
-			ob->SetParentID(parent->ID);
-		}
 
 		ob->Destroy();
 		ObjectInstanceArray.Remove(ob);
@@ -406,7 +383,7 @@ bool FModumateDocument::RestoreChildrenImpl(FModumateObjectInstance *obj)
 {
 	if (obj)
 	{
-		for (int32 childID : obj->GetChildren())
+		for (int32 childID : obj->GetChildIDs())
 		{
 			auto childObj = GetObjectById(childID);
 			if (childObj)
@@ -429,65 +406,35 @@ bool FModumateDocument::RestoreChildrenImpl(FModumateObjectInstance *obj)
 	return false;
 }
 
-FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromObjectType(
-	UWorld *World,
-	EObjectType OT,
-	int32 ID,
-	int32 ParentID,
-	const FVector &Extents,
-	const TArray<int32> *CPI,
-	bool bInverted)
+FModumateObjectInstance* FModumateDocument::CreateOrRestoreObj(UWorld* World, const FMOIStateData& StateData)
 {
-	FBIMAssemblySpec obAsm;
-	obAsm.ObjectType = OT;
-	return CreateOrRestoreObjFromAssembly(World, obAsm, ID, ParentID, Extents, CPI, bInverted);
-}
-
-FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
-	UWorld *World,
-	const FBIMAssemblySpec &Assembly,
-	int32 ID,
-	int32 ParentID,
-	const FVector &Extents,
-	const TArray<int32> *CPI,
-	bool bInverted)
-{
-
 	// Check to make sure NextID represents the next highest ID we can allocate to a new object.
-	if (ID >= NextID)
+	if (StateData.ID >= NextID)
 	{
-		NextID = ID + 1;
+		NextID = StateData.ID + 1;
 	}
 
-	FModumateObjectInstance* obj = TryGetDeletedObject(ID);
+	FModumateObjectInstance* obj = TryGetDeletedObject(StateData.ID);
 	if (obj && RestoreObjectImpl(obj))
 	{
 		return obj;
 	}
 	else
 	{
-		if (!ensureAlwaysMsgf(!ObjectsByID.Contains(ID),
-			TEXT("Tried to create a new object with the same ID (%d) as an existing one!"), ID))
+		if (!ensureAlwaysMsgf(!ObjectsByID.Contains(StateData.ID),
+			TEXT("Tried to create a new object with the same ID (%d) as an existing one!"), StateData.ID))
 		{
 			return nullptr;
 		}
 
-		obj = new FModumateObjectInstance(World, this, Assembly, ID);
+		obj = new FModumateObjectInstance(World, this, StateData);
 		ObjectInstanceArray.AddUnique(obj);
-		ObjectsByID.Add(ID, obj);
+		ObjectsByID.Add(StateData.ID, obj);
 
-		if (CPI)
-		{
-			obj->SetControlPointIndices(*CPI);
-		}
-		obj->SetObjectInverted(bInverted);
-		obj->SetExtents(Extents);
-		obj->SetupGeometry();
-		obj->SetParentObject(GetObjectById(ParentID));
-		obj->UpdateVisibilityAndCollision();
+		obj->SetStateData(StateData);
 		obj->PostCreateObject(true);
 
-		UModumateAnalyticsStatics::RecordObjectCreation(World, Assembly.ObjectType);
+		UModumateAnalyticsStatics::RecordObjectCreation(World, StateData.ObjectType);
 
 		return obj;
 	}
@@ -495,94 +442,50 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObjFromAssembly(
 	return nullptr;
 }
 
-bool FModumateDocument::ApplyMOIDelta(const FMOIDelta &Delta, UWorld *World)
+bool FModumateDocument::ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World)
 {
-	for (auto &kvp : Delta.StatePairs)
+	for (auto& deltaState : Delta.States)
 	{
-		const FMOIStateData &baseState = kvp.Key;
-		const FMOIStateData &targetState = kvp.Value;
+		auto& targetState = deltaState.NewState;
 
-		switch (kvp.Value.StateType)
+		switch (deltaState.DeltaType)
 		{
-			case EMOIDeltaType::Create:
+		case EMOIDeltaType::Create:
+		{
+			FModumateObjectInstance* newInstance = CreateOrRestoreObj(World, targetState);
+			if (ensureAlways(newInstance) && (NextID <= newInstance->ID))
 			{
-				/*
-				TODO: consolidate all object creation code here
-				*/
-				EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(targetState.ObjectType);
-
-				// No tool mode implies a line segment (used by multiple tools with no assembly)
-				// TODO: generalize assemblyless/tool modeless non-graph MOIs
-				const FBIMAssemblySpec* assembly = PresetManager.GetAssemblyByKey(toolMode, targetState.ObjectAssemblyKey);
-
-				// If we got an assembly, build the object with it, otherwise by type
-				FModumateObjectInstance *newInstance = (assembly != nullptr) ?
-					CreateOrRestoreObjFromAssembly(World, *assembly, targetState.ObjectID, targetState.ParentID, targetState.Extents, &targetState.ControlIndices, targetState.bObjectInverted) :
-					CreateOrRestoreObjFromObjectType(World, targetState.ObjectType, targetState.ObjectID, targetState.ParentID, targetState.Extents, &targetState.ControlIndices, targetState.bObjectInverted);
-
-				if (newInstance != nullptr)
-				{
-					if (NextID <= newInstance->ID)
-					{
-						NextID = newInstance->ID + 1;
-					}
-					newInstance->SetObjectLocation(targetState.Location);
-					newInstance->SetObjectRotation(targetState.Orientation);
-
-					// TODO: this is relatively safe, but shouldn't be necessary; either
-					// - properties should be in the construct explicitly,
-					// - the FModumateObjectInstance constructor should accept FMOIStateData,
-					// - or the creation flow should allow setting the entire state, as Mutate does, except after creation.
-					newInstance->SetAllProperties(targetState.ObjectProperties);
-				}
+				NextID = newInstance->ID + 1;
 			}
-			break;
+		}
+		break;
 
-			case EMOIDeltaType::Destroy:
+		case EMOIDeltaType::Destroy:
+		{
+			DeleteObjectImpl(GetObjectById(targetState.ID));
+		}
+		break;
+
+		case EMOIDeltaType::Mutate:
+		{
+			FModumateObjectInstance* MOI = GetObjectById(targetState.ID);
+			if (ensureAlways(MOI))
 			{
-				DeleteObjectImpl(GetObjectById(targetState.ObjectID));
+				MOI->SetStateData(targetState);
 			}
-			break;
-
-			case EMOIDeltaType::Mutate:
+			else
 			{
-				FModumateObjectInstance *MOI = GetObjectById(targetState.ObjectID);
-
-				if (!ensureAlways(MOI != nullptr))
-				{
-					return false;
-				}
-
-				switch (MOI->GetObjectType())
-				{
-				case EObjectType::OTMetaPlane:
-					ensureAlwaysMsgf(false, TEXT("Illegal MOI type sent to ApplyMOIDelta"));
-					return false;
-				};
-
-				EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(targetState.ObjectType);
-				if (toolMode != EToolMode::VE_NONE)
-				{
-					FBIMKey assemblyKey = MOI->GetAssembly().UniqueKey();
-					if (targetState.ObjectAssemblyKey != assemblyKey)
-					{
-						const FBIMAssemblySpec *obAsm = PresetManager.GetAssemblyByKey(toolMode, targetState.ObjectAssemblyKey);
-						if (ensureAlwaysMsgf(obAsm != nullptr, TEXT("Could not find assembly by key %s"), *targetState.ObjectAssemblyKey.ToString()))
-						{
-							MOI->SetAssembly(*obAsm);
-						}
-					}
-				}
-
-				MOI->SetDataState(targetState);
+				return false;
 			}
-			break;
+		}
+		break;
 
-			default:
-				ensureAlways(false);
-			break;
+		default:
+			ensureAlways(false);
+			return false;
 		};
 	}
+
 	return true;
 }
 
@@ -631,12 +534,12 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	// add objects
 	for (auto &kvp : Delta.VertexAdditions)
 	{
-		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceVertex, kvp.Key, surfaceGraphID);
+		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTSurfaceVertex, surfaceGraphID));
 	}
 
 	for (auto &kvp : Delta.EdgeAdditions)
 	{
-		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfaceEdge, kvp.Key, surfaceGraphID);
+		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTSurfaceEdge, surfaceGraphID));
 	}
 
 	for (auto &kvp : Delta.PolygonAdditions)
@@ -644,7 +547,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		// It would be ideal to only create SurfacePolgyon objects for interior polygons, but if we don't then the graph will try creating
 		// deltas that use IDs that the document will try to re-purpose for other objects.
 		// TODO: allow allocating IDs from graph deltas in a way that the document can't use them
-		CreateOrRestoreObjFromObjectType(World, EObjectType::OTSurfacePolygon, kvp.Key, surfaceGraphID);
+		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTSurfacePolygon, surfaceGraphID));
 	}
 
 	// finalize objects after all of them have been added
@@ -663,7 +566,10 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 			auto hostedObj = GetObjectById(objUpdate.PreviousHostedObjID);
 			if (hostedObj)
 			{
-				auto newObj = CreateOrRestoreObjFromAssembly(World, hostedObj->GetAssembly(), kvp.Key, objUpdate.NextParentID, hostedObj->GetExtents(), &hostedObj->GetControlPointIndices(), hostedObj->GetObjectInverted());
+				auto newStateData = hostedObj->GetStateData();
+				newStateData.ID = kvp.Key;
+				newStateData.ParentID = objUpdate.NextParentID;
+				auto newObj = CreateOrRestoreObj(World, newStateData);
 			}
 			// Otherwise, attempt to restore the previous object (during undo)
 			else
@@ -690,7 +596,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 			if (newParentObj != nullptr)
 			{
 				FTransform worldTransform = obj->GetWorldTransform();
-				newParentObj->AddChild(obj);
+				newParentObj->AddChild_DEPRECATED(obj);
 				obj->SetWorldTransform(worldTransform);
 			}
 			else
@@ -812,7 +718,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	for (auto &kvp : Delta.VertexAdditions)
 	{
-		CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaVertex, kvp.Key);
+		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTMetaVertex));
 	}
 
 	for (auto &kvp : Delta.VertexDeletions)
@@ -826,7 +732,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	for (auto &kvp : Delta.EdgeAdditions)
 	{
-		CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaEdge, kvp.Key);
+		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTMetaEdge));
 	}
 
 	for (auto &kvp : Delta.EdgeDeletions)
@@ -840,7 +746,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	for (auto &kvp : Delta.FaceAdditions)
 	{
-		CreateOrRestoreObjFromObjectType(World, EObjectType::OTMetaPlane, kvp.Key);
+		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTMetaPlane));
 	}
 
 	// when modifying objects in the document, first add objects, then modify parent objects, then delete objects
@@ -855,7 +761,10 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 			auto hostedObj = GetObjectById(objUpdate.PreviousHostedObjID);
 			if (hostedObj)
 			{
-				auto newObj = CreateOrRestoreObjFromAssembly(World, hostedObj->GetAssembly(), kvp.Key, objUpdate.NextParentID, hostedObj->GetExtents(), &hostedObj->GetControlPointIndices(), hostedObj->GetObjectInverted());
+				auto newStateData = hostedObj->GetStateData();
+				newStateData.ID = kvp.Key;
+				newStateData.ParentID = objUpdate.NextParentID;
+				auto newObj = CreateOrRestoreObj(World, newStateData);
 			}
 			// Otherwise, attempt to restore the previous object (during undo)
 			else
@@ -884,7 +793,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 				// Save off the world transform of the portal, since we want it to be the same regardless
 				// of its changed relative transforms between its old and new parents.
 				FTransform worldTransform = obj->GetWorldTransform();
-				newParentObj->AddChild(obj);
+				newParentObj->AddChild_DEPRECATED(obj);
 				obj->SetWorldTransform(worldTransform);
 			}
 			else
@@ -1245,7 +1154,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 		{
 			for (FGraph2DDelta& deletionDelta : tempSurfaceGraphDeltas)
 			{
-				if (ensure(!deletionDelta.IsEmpty()))
+				if (ensure((deletionDelta.DeltaType == EGraph2DDeltaType::Remove) || !deletionDelta.IsEmpty()))
 				{
 					combinedSurfaceGraphDeltas.Add(MakeShared<FGraph2DDelta>(deletionDelta));
 					deletionDelta.AggregateDeletedObjects(combinedSurfaceGraphObjIDsToDelete);
@@ -1307,20 +1216,14 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 	auto gatherNonGraphDeletionDeltas = [&combinedDeltas](const TArray<const FModumateObjectInstance*>& objects)
 	{
 		auto deleteDelta = MakeShared<FMOIDelta>();
-		TArray<FMOIStateData> deletionStates;
 		for (const FModumateObjectInstance* nonGraphObject : objects)
 		{
-			FMOIStateData deleteState = nonGraphObject->GetDataState();
-			deleteState.StateType = EMOIDeltaType::Destroy;
-			deletionStates.Add(deleteState);
+			deleteDelta->AddCreateDestroyState(nonGraphObject->GetStateData(), EMOIDeltaType::Destroy);
 		}
-		deleteDelta->AddCreateDestroyStates(deletionStates);
 		combinedDeltas.Add(deleteDelta);
 	};
 
-	// Gather all of the deltas that apply to different types of objects, in a hierarchical order
-	// TODO: refactor object restoration / deletion so that data is not lost when trying to restore a child before a parent,
-	// or trying to delete a parent before a child, so that this order doesn't matter and we can simplify this function.
+	// Gather all of the deltas that apply to different types of objects
 	gatherNonGraphDeletionDeltas(surfaceGraphDerivedObjects);
 	combinedDeltas.Append(combinedSurfaceGraphDeltas);
 	gatherNonGraphDeletionDeltas(graph3DDerivedObjects);
@@ -1354,7 +1257,7 @@ int32 FModumateDocument::MakeGroupObject(UWorld *world, const TArray<int32> &ids
 		oldParents.Add(ob, ob->GetParentObject());
 	}
 
-	auto *groupObj = CreateOrRestoreObjFromObjectType(world, EObjectType::OTGroup, id, parentID);
+	auto *groupObj = CreateOrRestoreObj(world, FMOIStateData(id, EObjectType::OTGroup, parentID));
 
 	for (auto ob : obs)
 	{
@@ -1487,19 +1390,10 @@ int32 FModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &F
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeRoom"));
 
-	UndoRedo *ur = new UndoRedo();
-	ClearRedoBuffer();
+	// TODO: reimplement
+	//UModumateRoomStatics::SetRoomConfigFromKey(newRoomObj, UModumateRoomStatics::DefaultRoomConfigKey);
 
-	int id = NextID++;
-
-	FModumateObjectInstance *newRoomObj = CreateOrRestoreObjFromObjectType(World, EObjectType::OTRoom,
-		id, MOD_ID_NONE, FVector::ZeroVector, &FaceIDs);
-
-	UModumateRoomStatics::SetRoomConfigFromKey(newRoomObj, UModumateRoomStatics::DefaultRoomConfigKey);
-
-	newRoomObj->UpdateVisibilityAndCollision();
-
-	return id;
+	return MOD_ID_NONE;
 }
 
 bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &points, const TArray<int32> &IDs, EObjectType objectType, int32 parentID, TArray<int32> &OutObjIDs)
@@ -1587,22 +1481,8 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 
 bool FModumateDocument::MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height)
 {
-	UndoRedo *ur = new UndoRedo();
-	ClearRedoBuffer();
-	int32 id = NextID++;
-
-	FVector extents = FVector(0.0f, Height, 0.0f);
-
-	auto newObj = CreateOrRestoreObjFromObjectType(world, EObjectType::OTScopeBox, id, 0, extents);
-	AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
-	if (emPlayerState)
-	{
-		emPlayerState->OnUpdateScopeBoxes.Broadcast();
-	}
-
-	OutObjIDs.Add(id);
-
-	return true;
+	// TODO: reimplement
+	return false;
 }
 
 bool FModumateDocument::FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<int32, FGraph2DHostedObjectDelta> &OutParentIDUpdates)
@@ -1647,21 +1527,21 @@ bool FModumateDocument::FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<in
 		int32 parentID = kvp.Key;
 		auto parentObj = GetObjectById(parentID);
 
-		if (parentObj == nullptr || parentObj->GetChildren().Num() == 0)
+		if (parentObj == nullptr || parentObj->GetChildIDs().Num() == 0)
 		{
 			continue;
 		}
 
-		for (int32 childIdx = 0; childIdx < parentObj->GetChildren().Num(); childIdx++)
+		for (int32 childIdx = 0; childIdx < parentObj->GetChildIDs().Num(); childIdx++)
 		{
-			auto childObj = GetObjectById(parentObj->GetChildren()[childIdx]);
+			auto childObj = GetObjectById(parentObj->GetChildIDs()[childIdx]);
 
 			for (int32 childFaceID : kvp.Value)
 			{
 				if (!idsWithObjects.Contains(childFaceID))
 				{
 					int32 newObjID = NextID++;
-					OutParentIDUpdates.Add(newObjID, FGraph2DHostedObjectDelta(parentObj->GetChildren()[childIdx], MOD_ID_NONE, childFaceID));
+					OutParentIDUpdates.Add(newObjID, FGraph2DHostedObjectDelta(parentObj->GetChildIDs()[childIdx], MOD_ID_NONE, childFaceID));
 					childFaceIDToHostedID.Add(childFaceID, newObjID);
 					idsWithObjects.Add(childFaceID);
 				}
@@ -1683,11 +1563,11 @@ bool FModumateDocument::FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<in
 	{
 		auto obj = GetObjectById(objID);
 
-		if (obj && obj->GetChildren().Num() > 0)
+		if (obj && obj->GetChildIDs().Num() > 0)
 		{
-			for (int32 childIdx = 0; childIdx < obj->GetChildren().Num(); childIdx++)
+			for (int32 childIdx = 0; childIdx < obj->GetChildIDs().Num(); childIdx++)
 			{
-				OutParentIDUpdates.Add(obj->GetChildren()[childIdx], FGraph2DHostedObjectDelta(MOD_ID_NONE, objID, MOD_ID_NONE));
+				OutParentIDUpdates.Add(obj->GetChildIDs()[childIdx], FGraph2DHostedObjectDelta(MOD_ID_NONE, objID, MOD_ID_NONE));
 			}
 		}
 	}
@@ -1747,31 +1627,31 @@ bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &D
 		// obtained from the original graph because this face is removed by now
 		auto parentFace = VolumeGraph.FindFace(parentID);
 
-		if (parentObj && parentObj->GetChildren().Num() > 0)
+		if (parentObj && parentObj->GetChildIDs().Num() > 0)
 		{
-			for (int32 childIdx = 0; childIdx < parentObj->GetChildren().Num(); childIdx++)
+			for (int32 childIdx = 0; childIdx < parentObj->GetChildIDs().Num(); childIdx++)
 			{
-				auto childObj = GetObjectById(parentObj->GetChildren()[childIdx]);
+				auto childObj = GetObjectById(parentObj->GetChildIDs()[childIdx]);
 				// wall/floor objects need to be cloned to each child object, and will be deleted during face deletions
 				for (int32 childFaceID : kvp.Value)
 				{
 					if (!idsWithObjects.Contains(childFaceID))
 					{
 						int32 newObjID = NextID++;
-						Delta.ParentIDUpdates.Add(newObjID, FGraph3DHostedObjectDelta(parentObj->GetChildren()[childIdx], MOD_ID_NONE, childFaceID));
+						Delta.ParentIDUpdates.Add(newObjID, FGraph3DHostedObjectDelta(parentObj->GetChildIDs()[childIdx], MOD_ID_NONE, childFaceID));
 						childFaceIDToHostedID.Add(childFaceID, newObjID);
 						idsWithObjects.Add(childFaceID);
 					}
 					else
 					{
-						rejectedObjects.Add(parentObj->GetChildren()[childIdx]);
+						rejectedObjects.Add(parentObj->GetChildIDs()[childIdx]);
 					}
 				}
 
 				// loop through children to find the new planes that they apply to
 				// TODO: implementation is object specific and should be moved there
 				// portals should be on 0 or 1 of the new planes, and finishes should be on all applicable planes
-				for (int32 childObjId : childObj->GetChildren())
+				for (int32 childObjId : childObj->GetChildIDs())
 				{
 					auto childHostedObj = GetObjectById(childObjId);
 					if (childHostedObj && (childHostedObj->GetObjectType() == EObjectType::OTWindow || childHostedObj->GetObjectType() == EObjectType::OTDoor))
@@ -1852,11 +1732,11 @@ bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &D
 	{
 		auto obj = GetObjectById(objID);
 
-		if (obj && obj->GetChildren().Num() > 0)
+		if (obj && obj->GetChildIDs().Num() > 0)
 		{
-			for (int32 childIdx = 0; childIdx < obj->GetChildren().Num(); childIdx++)
+			for (int32 childIdx = 0; childIdx < obj->GetChildIDs().Num(); childIdx++)
 			{
-				Delta.ParentIDUpdates.Add(obj->GetChildren()[childIdx], FGraph3DHostedObjectDelta(MOD_ID_NONE, objID, MOD_ID_NONE));
+				Delta.ParentIDUpdates.Add(obj->GetChildIDs()[childIdx], FGraph3DHostedObjectDelta(MOD_ID_NONE, objID, MOD_ID_NONE));
 			}
 		}
 	}
@@ -1904,22 +1784,6 @@ FBoxSphereBounds FModumateDocument::CalculateProjectBounds() const
 
 	FBoxSphereBounds projectBounds(allMOIPoints.GetData(), allMOIPoints.Num());
 	return projectBounds;
-}
-
-void FModumateDocument::TransverseObjects(const TArray<FModumateObjectInstance*> &obs)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::TransversePortalObjects"));
-	if (obs.Num() == 0)
-	{
-		return;
-	}
-
-	ClearRedoBuffer();
-
-	for (auto &s : obs)
-	{
-		s->TransverseObject();
-	}
 }
 
 bool FModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
@@ -2321,12 +2185,19 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 	PresetManager.ToDocumentRecord(docRec);
 
 	// Capture object instances into doc struct
-	Algo::Transform(ObjectInstanceArray,docRec.ObjectInstances,
-		[](const FModumateObjectInstance *ob)
-			{
-				return ob->AsDataRecord();
-			}
-		);
+	for (FModumateObjectInstance* obj : ObjectInstanceArray)
+	{
+		// Don't save graph-reflected MOIs, since their information is stored in separate graph structures
+		EObjectType objectType = obj ? obj->GetObjectType() : EObjectType::OTNone;
+		EGraph3DObjectType graph3DType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
+		EGraphObjectType graph2DType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(objectType);
+		if (obj && (graph3DType == EGraph3DObjectType::None) && (graph2DType == EGraphObjectType::None))
+		{
+			FMOIStateData& stateData = obj->GetStateData();
+			stateData.CustomData.SaveJsonFromCbor();
+			docRec.ObjectData.Add(stateData);
+		}
+	}
 
 	VolumeGraph.Save(&docRec.VolumeGraph);
 
@@ -2420,45 +2291,45 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 
 		SavedCameraViews = docRec.CameraViews;
 
+		// Create the MOIs whose state data was stored
 		NextID = 1;
-		for (auto &objectRecord : docRec.ObjectInstances)
+		for (auto& stateData : docRec.ObjectData)
 		{
-			// Before loading an object that requires a graph association, make sure it was successfully loaded from the graph.
-			EGraph3DObjectType graphObjectType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectRecord.ObjectType);
-			if (graphObjectType != EGraph3DObjectType::None)
+			if (ensure(stateData.CustomData.SaveCborFromJson()))
 			{
-				if (!VolumeGraph.ContainsObject(objectRecord.ID))
+				CreateOrRestoreObj(world, stateData);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("MOI %d (%s) cannot load its instance data!"),
+					stateData.ID, *EnumValueString(EObjectType, stateData.ObjectType));
+			}
+		}
+
+		// Create MOIs reflected from the volume graph
+		for (const auto& kvp : VolumeGraph.GetAllObjects())
+		{
+			EObjectType objectType = UModumateTypeStatics::ObjectTypeFromGraph3DType(kvp.Value);
+			if (ensure(!ObjectsByID.Contains(kvp.Key)) && (objectType != EObjectType::OTNone))
+			{
+				CreateOrRestoreObj(world, FMOIStateData(kvp.Key, objectType));
+			}
+		}
+
+		// Create MOIs reflected from the surface graphs
+		for (const auto& surfaceGraphKVP : SurfaceGraphs)
+		{
+			if (surfaceGraphKVP.Value.IsValid())
+			{
+				for (const auto& surfaceGraphObjKVP : surfaceGraphKVP.Value->GetAllObjects())
 				{
-					UE_LOG(LogTemp, Warning, TEXT("MOI #%d was skipped because its corresponding %s was missing from the graph!"),
-						objectRecord.ID, *EnumValueString(EGraph3DObjectType, graphObjectType));
-					continue;
+					EObjectType objectType = UModumateTypeStatics::ObjectTypeFromGraph2DType(surfaceGraphObjKVP.Value);
+					if (ensure(!ObjectsByID.Contains(surfaceGraphObjKVP.Key)) && (objectType != EObjectType::OTNone))
+					{
+						CreateOrRestoreObj(world, FMOIStateData(surfaceGraphObjKVP.Key, objectType, surfaceGraphKVP.Key));
+					}
 				}
 			}
-
-			FModumateObjectInstance *obj = new FModumateObjectInstance(world, this, objectRecord);
-			ObjectInstanceArray.AddUnique(obj);
-			ObjectsByID.Add(obj->ID, obj);
-			NextID = FMath::Max(NextID, obj->ID + 1);
-
-			for (EObjectDirtyFlags dirtyFlag : UModumateTypeStatics::OrderedDirtyFlags)
-			{
-				obj->MarkDirty(dirtyFlag);
-			}
-		}
-
-		for (auto obj : ObjectInstanceArray)
-		{
-			FModumateObjectInstance *parent = GetObjectById(obj->GetParentID());
-			if (parent != 0)
-			{
-				obj->SetParentID(0);
-				parent->AddChild(obj);
-			}
-		}
-
-		for (auto obj : ObjectInstanceArray)
-		{
-			obj->PostCreateObject(true);
 		}
 
 		// Now that all objects have been created and parented correctly, we can clean all of them.
@@ -2515,25 +2386,6 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 	return false;
 }
 
-int32 FModumateDocument::CreateObjectFromRecord(UWorld* World, const FMOIDataRecord& ObRec)
-{
-	ClearRedoBuffer();
-	int32 id = NextID++;
-
-	const FBIMAssemblySpec *obAsm = PresetManager.GetAssemblyByKey(UModumateTypeStatics::ToolModeFromObjectType(ObRec.ObjectType), ObRec.AssemblyKey);
-	
-	if (obAsm != nullptr)
-	{
-		FModumateObjectInstance *obj = obAsm != nullptr ?
-			CreateOrRestoreObjFromAssembly(World, *obAsm, id, ObRec.ParentID, ObRec.Extents, &ObRec.ControlIndices) :
-			CreateOrRestoreObjFromObjectType(World, ObRec.ObjectType, id, ObRec.ParentID, ObRec.Extents, &ObRec.ControlIndices);
-
-		obj->SetupGeometry();
-	}
-
-	return id;
-}
-
 TArray<int32> FModumateDocument::CloneObjects(UWorld *world, const TArray<int32> &objs, const FTransform& offsetTransform)
 {
 	// make a list of MOI objects from the IDs, send them to the MOI version of this function return array of IDs.
@@ -2556,26 +2408,8 @@ TArray<int32> FModumateDocument::CloneObjects(UWorld *world, const TArray<int32>
 
 int32 FModumateDocument::CloneObject(UWorld *world, const FModumateObjectInstance *original)
 {
-	UndoRedo *ur = new UndoRedo();
-	ClearRedoBuffer();
-	int32 id = NextID++;
-
-	FModumateObjectInstance* obj = TryGetDeletedObject(id);
-	if (obj != nullptr)
-	{
-		RestoreObjectImpl(obj);
-	}
-	else
-	{
-		obj = new FModumateObjectInstance(world, this, original->AsDataRecord());
-		obj->SetupGeometry();
-		obj->ID = id;
-		obj->SetParentObject(GetObjectById(original->GetParentID()));
-		ObjectInstanceArray.AddUnique(obj);
-		ObjectsByID.Add(obj->ID, obj);
-	}
-
-	return id;
+	// TODO: reimplement
+	return MOD_ID_NONE;
 }
 
 TArray<FModumateObjectInstance *> FModumateDocument::CloneObjects(UWorld *world, const TArray<FModumateObjectInstance *> &objs, const FTransform& offsetTransform)
@@ -2967,7 +2801,7 @@ void FModumateDocument::DisplayDebugInfo(UWorld* world)
 		selected += TEXT(" | ");
 		for (auto &sel : emPlayerState->SelectedObjects)
 		{
-			selected += FString::Printf(TEXT("SEL: %d #CHILD: %d PARENTID: %d"), sel->ID, sel->GetChildren().Num(),sel->GetParentID());
+			selected += FString::Printf(TEXT("SEL: %d #CHILD: %d PARENTID: %d"), sel->ID, sel->GetChildIDs().Num(),sel->GetParentID());
 		}
 	}
 	displayMsg(selected);

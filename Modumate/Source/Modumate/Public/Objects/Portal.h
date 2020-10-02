@@ -2,11 +2,25 @@
 #pragma once
 
 #include "Objects/ModumateObjectInstance.h"
-#include "CoreMinimal.h"
+
+#include "Portal.generated.h"
+
+
+USTRUCT()
+struct MODUMATE_API FMOIPortalData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	bool bNormalInverted = false;
+
+	UPROPERTY()
+	bool bLateralInverted = false;
+};
 
 class AAdjustmentHandleActor;
-
 class FModumateObjectInstance;
+
 class MODUMATE_API FMOIPortalImpl : public FModumateObjectInstanceImplBase
 {
 protected:
@@ -21,6 +35,8 @@ protected:
 	FVector CachedWorldPos;
 	FQuat CachedRelativeRot, CachedWorldRot;
 	bool bHaveValidTransform;
+
+	FMOIPortalData InstanceData;
 public:
 
 	FMOIPortalImpl(FModumateObjectInstance *moi);
@@ -37,11 +53,12 @@ public:
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 
 	virtual FVector GetNormal() const;
+	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
-	virtual void TransverseObject() override;
+	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
 
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override;
 

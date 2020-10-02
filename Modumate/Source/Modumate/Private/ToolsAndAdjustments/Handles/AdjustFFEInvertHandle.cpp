@@ -13,7 +13,7 @@ bool AAdjustFFEInvertHandle::BeginUse()
 		return false;
 	}
 
-	TargetMOI->InvertObject();
+	//TargetMOI->InvertObject_DEPRECATED();
 
 	EndUse();
 	return false;

@@ -16,12 +16,14 @@ bool AAdjustInvertHandle::BeginUse()
 		return false;
 	}
 
-	TargetMOI->BeginPreviewOperation();
-	TargetMOI->SetObjectInverted(!TargetMOI->GetObjectInverted());
-	auto delta = MakeShared<FMOIDelta>(TargetMOI);
-	TargetMOI->EndPreviewOperation();
+	FMOIStateData invertedState;
+	if (TargetMOI->GetInvertedState(invertedState))
+	{
+		auto delta = MakeShared<FMOIDelta>();
+		delta->AddMutationState(TargetMOI, TargetMOI->GetStateData(), invertedState);
+		GameState->Document.ApplyDeltas({ delta }, GetWorld());
+	}
 
-	GameState->Document.ApplyDeltas({ delta }, GetWorld());
 	return false;
 }
 

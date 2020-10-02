@@ -2,8 +2,9 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelSurfaceGraphTool.h"
 
-#include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectInstance.h"
+#include "Objects/SurfaceGraph.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
@@ -290,15 +291,19 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget()
 	// Create the delta for adding the surface graph object, if it didn't already exist
 	if (GraphTarget == nullptr)
 	{
-		FMOIStateData surfaceObjectData;
-		surfaceObjectData.StateType = EMOIDeltaType::Create;
-		surfaceObjectData.ObjectType = EObjectType::OTSurfaceGraph;
-		surfaceObjectData.ObjectAssemblyKey = FBIMKey();
-		surfaceObjectData.ParentID = HostTarget->ID;
-		surfaceObjectData.ControlIndices = { HitFaceIndex };
-		surfaceObjectData.ObjectID = TargetSurfaceGraph->GetID();
+		FMOISurfaceGraphData surfaceCustomData;
+		surfaceCustomData.ParentFaceIndex = HitFaceIndex;
 
-		deltas.Add(MakeShared<FMOIDelta>(surfaceObjectData));
+		FMOIStateData surfaceStateData;
+		surfaceStateData.ID = TargetSurfaceGraph->GetID();
+		surfaceStateData.ObjectType = EObjectType::OTSurfaceGraph;
+		surfaceStateData.ParentID = HostTarget->ID;
+		surfaceStateData.CustomData.SaveStructData(surfaceCustomData);
+
+		auto surfaceObjectDelta = MakeShared<FMOIDelta>();
+		surfaceObjectDelta->AddCreateDestroyState(surfaceStateData, EMOIDeltaType::Create);
+
+		deltas.Add(surfaceObjectDelta);
 		deltas.Add(MakeShared<FGraph2DDelta>(TargetSurfaceGraph->GetID(), EGraph2DDeltaType::Add));
 	}
 

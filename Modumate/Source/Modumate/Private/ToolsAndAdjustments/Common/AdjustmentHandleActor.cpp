@@ -138,7 +138,7 @@ void AAdjustmentHandleActor::PostEndOrAbort()
 	{
 		if (TargetMOI->GetIsInPreviewMode())
 		{
-			TargetMOI->EndPreviewOperation();
+			TargetMOI->EndPreviewOperation_DEPRECATED();
 		}
 
 		TargetMOI->RequestCollisionDisabled(StateRequestTag, false);
@@ -257,7 +257,7 @@ bool AAdjustmentHandleActor::BeginUse()
 	// By default, disable collision on the target MOI so that its current modified state doesn't interfere with handle usage
 	if (TargetMOI)
 	{
-		TargetMOI->BeginPreviewOperation();
+		TargetMOI->BeginPreviewOperation_DEPRECATED();
 		TargetMOI->RequestCollisionDisabled(StateRequestTag, true);
 
 		TargetDescendents = TargetMOI->GetAllDescendents();
@@ -265,6 +265,8 @@ bool AAdjustmentHandleActor::BeginUse()
 		{
 			descendent->RequestCollisionDisabled(StateRequestTag, true);
 		}
+
+		TargetOriginalState = TargetMOI->GetStateData();
 	}
 
 	// By default, hide all adjustment handles while one is in use
@@ -349,7 +351,7 @@ void AAdjustmentHandleActor::EndUse()
 
 	// TODO: preview operation is no longer necessary, but removing this could cause ensures
 	// until the other handles are refactored
-	TargetMOI->EndPreviewOperation();
+	TargetMOI->EndPreviewOperation_DEPRECATED();
 
 	// Now that we've reverted the target object back to its original state, clean all objects so that
 	// deltas can be applied to the original state, and all of its dependent changes.

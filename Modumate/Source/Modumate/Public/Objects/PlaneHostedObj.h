@@ -5,8 +5,25 @@
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "Objects/LayeredObjectInterface.h"
 
+#include "PlaneHostedObj.generated.h"
+
 class AEditModelPlayerController_CPP;
 class FModumateObjectInstance;
+
+USTRUCT()
+struct MODUMATE_API FMOIPlaneHostedObjData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	bool bLayersInverted = false;
+
+	UPROPERTY()
+	float Justification = 0.5f;
+
+	UPROPERTY()
+	int32 OverrideOriginIndex = INDEX_NONE;
+};
 
 class MODUMATE_API FMOIPlaneHostedObjImpl : public FModumateObjectInstanceImplBase, ILayeredObject
 {
@@ -17,6 +34,7 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual FVector GetNormal() const override;
+	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual void Destroy() override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void SetupDynamicGeometry() override;
@@ -28,6 +46,9 @@ public:
 
 	virtual const ILayeredObject* GetLayeredInterface() const override { return this; }
 	virtual const FCachedLayerDimsByType &GetCachedLayerDims() const override { return CachedLayerDims; }
+
+	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
+
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane,
 		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 		TArray<TArray<FVector>> &OutPerimeters) const override;
@@ -43,6 +64,8 @@ protected:
 	void MarkEdgesMiterDirty();
 	void GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FBox2D& BoundingBox) const;
+
+	FMOIPlaneHostedObjData InstanceData;
 
 	bool bGeometryDirty = false;
 	FCachedLayerDimsByType CachedLayerDims;

@@ -12,15 +12,9 @@ float FMOIGroupImpl::StructuralExtentsExpansion = 20.0f;
 FMOIGroupImpl::FMOIGroupImpl(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
 	, World(nullptr)
-	, Location(ForceInitToZero)
+	, CachedLocation(ForceInitToZero)
+	, CachedExtents(ForceInitToZero)
 { }
-
-void FMOIGroupImpl::SetLocation(const FVector &p)
-{
-	FModumateObjectInstanceImplBase::SetLocation(p);
-
-	Location = p;
-}
 
 bool FMOIGroupImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
@@ -29,26 +23,27 @@ bool FMOIGroupImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* 
 		return false;
 	}
 
-	TArray<FStructurePoint> descendentPoints;
-	TArray<FStructureLine> descendentLines;
-	FBox groupAABB(ForceInitToZero);
-
-	auto allChildObjs = MOI->GetAllDescendents();
-	for (auto *childObj : allChildObjs)
+	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
-		descendentPoints.Reset();
-		descendentLines.Reset();
-		childObj->GetStructuralPointsAndLines(descendentPoints, descendentLines);
-		for (auto &point : descendentPoints)
-		{
-			groupAABB += point.Point;
-		}
-	}
+		TArray<FStructurePoint> descendentPoints;
+		TArray<FStructureLine> descendentLines;
+		FBox groupAABB(ForceInitToZero);
 
-	// TODO: preserve rotation if it was already set
-	MOI->SetObjectLocation(groupAABB.GetCenter());
-	MOI->SetObjectRotation(FQuat::Identity);
-	MOI->SetExtents(groupAABB.GetSize());
+		auto allChildObjs = MOI->GetAllDescendents();
+		for (auto* childObj : allChildObjs)
+		{
+			descendentPoints.Reset();
+			descendentLines.Reset();
+			childObj->GetStructuralPointsAndLines(descendentPoints, descendentLines);
+			for (auto& point : descendentPoints)
+			{
+				groupAABB += point.Point;
+			}
+		}
+
+		CachedLocation = groupAABB.GetCenter();
+		CachedExtents = groupAABB.GetSize();
+	}
 
 	return true;
 }
@@ -56,10 +51,10 @@ bool FMOIGroupImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* 
 AActor *FMOIGroupImpl::RestoreActor()
 {
 	if (World.IsValid())
-	{			
+	{
 		AMOIGroupActor_CPP *groupActor = World->SpawnActor<AMOIGroupActor_CPP>(World->GetAuthGameMode<AEditModelGameMode_CPP>()->MOIGroupActorClass);
 		groupActor->MOI = MOI;
-		groupActor->SetActorLocation(Location);
+		groupActor->SetActorLocation(CachedLocation);
 
 		return groupActor;
 	}
@@ -70,13 +65,13 @@ AActor *FMOIGroupImpl::RestoreActor()
 AActor *FMOIGroupImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
 	World = world;
-	Location = loc;
+	CachedLocation = loc;
 	return RestoreActor();
 }
 
 void FMOIGroupImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	if (MOI && !MOI->GetExtents().IsZero())
+	if (MOI && !CachedExtents.IsZero())
 	{
 		// Don't use groups for snapping
 		if (bForSnapping)
@@ -96,15 +91,10 @@ void FMOIGroupImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoin
 		// Otherwise, use the AABB to render a preview of the group
 		else
 		{
-			FVector center = GetLocation();
-
-			FVector halfExtents = 0.5f * MOI->GetExtents();
+			FVector halfExtents = 0.5f * CachedExtents;
 			halfExtents += FVector(StructuralExtentsExpansion);
 
-			FQuat rot = GetRotation();
-
-			FModumateSnappingView::GetBoundingBoxPointsAndLines(center, rot, halfExtents, outPoints, outLines);
+			FModumateSnappingView::GetBoundingBoxPointsAndLines(CachedLocation, FQuat::Identity, halfExtents, outPoints, outLines);
 		}
 	}
 }
-
