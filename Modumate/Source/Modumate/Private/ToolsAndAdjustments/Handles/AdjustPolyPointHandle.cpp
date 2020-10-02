@@ -43,6 +43,7 @@ bool AAdjustPolyPointHandle::BeginUse()
 	LastValidPolyPoints = OriginalPolyPoints;
 
 	FVector targetNormal = TargetMOI->GetNormal();
+	PolyPlane = FPlane(ForceInitToZero);
 	if (targetNormal.IsNormalized() && OriginalPolyPoints.Num() > 0)
 	{
 		PolyPlane = FPlane(OriginalPolyPoints[0], targetNormal);
@@ -50,19 +51,34 @@ bool AAdjustPolyPointHandle::BeginUse()
 	// TODO: coming up with a plane of movement when there is only an edge is not ideal
 	else if (TargetMOI->GetObjectType() == EObjectType::OTMetaEdge)
 	{
-		FVector direction = TargetMOI->GetCorner(1) - TargetMOI->GetCorner(0);
-		direction.Normalize();
-
-		if (FVector::Parallel(direction, FVector::UpVector))
+		// if the edge is connected to a face, arbitrarily pick one as the plane for the tool
+		auto& graph = Controller->GetDocument()->GetVolumeGraph();
+		auto edge = graph.FindEdge(TargetMOI->ID);
+		if (edge != nullptr && edge->ConnectedFaces.Num() > 0)
 		{
-			PolyPlane = FPlane(OriginalPolyPoints[0], FVector(0.0f, -1.0f, 0.0f));
+			auto& faceConnection = edge->ConnectedFaces[0];
+			auto face = graph.FindFace(faceConnection.FaceID);
+			if (face != nullptr)
+			{
+				PolyPlane = face->CachedPlane;
+			}
 		}
 		else
-		{
-			FVector v2 = FVector::CrossProduct(direction, FVector::UpVector);
-			v2.Normalize();
-			FVector normal = FVector::CrossProduct(direction, v2);
-			PolyPlane = FPlane(OriginalPolyPoints[0], normal);
+		{	// Fallback when edge is not connected to faces
+			FVector direction = TargetMOI->GetCorner(1) - TargetMOI->GetCorner(0);
+			direction.Normalize();
+
+			if (FVector::Parallel(direction, FVector::UpVector))
+			{	// XZ plane
+				PolyPlane = FPlane(OriginalPolyPoints[0], FVector(0.0f, -1.0f, 0.0f));
+			}
+			else
+			{
+				FVector v2 = FVector::CrossProduct(direction, FVector::UpVector);
+				v2.Normalize();
+				FVector normal = FVector::CrossProduct(direction, v2);
+				PolyPlane = FPlane(OriginalPolyPoints[0], normal);
+			}
 		}
 	}
 	else if (TargetMOI->GetObjectType() == EObjectType::OTSurfaceEdge)
@@ -70,6 +86,12 @@ bool AAdjustPolyPointHandle::BeginUse()
 		int32 targetParentID = TargetMOI->GetParentID();
 		auto surfaceObj = Controller->GetDocument()->GetObjectById(targetParentID);
 		PolyPlane = FPlane(OriginalPolyPoints[0], surfaceObj->GetNormal());
+	}
+
+	// not able to find a plane of movement for the tool
+	if (FVector(PolyPlane).IsZero())
+	{
+		return false;
 	}
 
 	AnchorLoc = FVector::PointPlaneProject(GetHandlePosition(), PolyPlane);
