@@ -68,11 +68,6 @@ bool UCabinetTool::Deactivate()
 
 bool UCabinetTool::BeginUse()
 {
-	if (!Super::BeginUse())
-	{
-		return false;
-	}
-
 	int32 numBasePoints = BasePoints.Num();
 	if ((TargetPolygonID == MOD_ID_NONE) || (numBasePoints < 3) || !BaseNormal.IsNormalized() || !Super::BeginUse())
 	{
