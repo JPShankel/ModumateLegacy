@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/BIMKey.h"
 #include "ModumateCore/ModumateTypes.h"
+#include "Database/ModumateObjectEnums.h"
 #include "EditModelUserWidget.generated.h"
 
 /**
@@ -57,6 +58,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UCutPlaneMenuWidget *CutPlaneMenu;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UAlertAccountDialogWidget* AlertFreeAccountDialogWidget;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UAlertAccountDialogWidget* AlertPausedAccountDialogWidget;
+
 	ERightMenuState CurrentRightMenuState = ERightMenuState::None;
 
 	UFUNCTION()
@@ -79,4 +86,7 @@ public:
 	bool RemoveCutPlaneFromList(int32 ObjID = MOD_ID_NONE);
 	bool UpdateCutPlaneVisibilityinList(bool IsVisible, int32 ObjID = MOD_ID_NONE);
 	void RefreshAssemblyList();
+	void ShowAlertPausedAccountDialog();
+	void ShowAlertFreeAccountDialog();
+	void UpdateViewModeIndicator(EEditViewModes NewViewMode);
 };

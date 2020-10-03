@@ -12,6 +12,9 @@
 #include "UI/RightMenu/ViewMenuWidget.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
+#include "UI/ModalDialog/AlertAccountDialogWidget.h"
+#include "UI/Toolbar/ToolbarTopWidget.h"
+#include "UI/Toolbar/ViewModeIndicatorWidget.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -139,4 +142,19 @@ bool UEditModelUserWidget::UpdateCutPlaneVisibilityinList(bool IsVisible, int32 
 void UEditModelUserWidget::RefreshAssemblyList()
 {
 	ToolTrayWidget->ToolTrayBlockAssembliesList->CreateAssembliesListForCurrentToolMode();
+}
+
+void UEditModelUserWidget::ShowAlertPausedAccountDialog()
+{
+	AlertPausedAccountDialogWidget->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UEditModelUserWidget::ShowAlertFreeAccountDialog()
+{
+	AlertFreeAccountDialogWidget->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UEditModelUserWidget::UpdateViewModeIndicator(EEditViewModes NewViewMode)
+{
+	ToolbarWidget->ToolBarTopBP->ViewModeIndicator->SwitchToViewMode(NewViewMode);
 }

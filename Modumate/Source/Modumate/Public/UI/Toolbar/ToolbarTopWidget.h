@@ -35,6 +35,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonModumateHome;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UViewModeIndicatorWidget* ViewModeIndicator;
+
 	UFUNCTION()
 	void OnButtonReleaseModumateHome();
 

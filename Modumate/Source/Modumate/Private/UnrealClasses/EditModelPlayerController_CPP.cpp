@@ -595,6 +595,11 @@ Load/Save menu
 
 bool AEditModelPlayerController_CPP::SaveModel()
 {
+	if (!CheckUserPlanAndPermission(EModumatePermission::Save))
+	{
+		return false;
+	}
+
 	if (EMPlayerState->LastFilePath.IsEmpty())
 	{
 		return SaveModelAs();
@@ -604,6 +609,11 @@ bool AEditModelPlayerController_CPP::SaveModel()
 
 bool AEditModelPlayerController_CPP::SaveModelAs()
 {
+	if (!CheckUserPlanAndPermission(EModumatePermission::Save))
+	{
+		return false;
+	}
+
 	if (EMPlayerState->ShowingFileDialog)
 	{
 		return false;
@@ -829,8 +839,26 @@ void AEditModelPlayerController_CPP::TrySavePDF()
 	OnSavePDF();
 }
 
+bool AEditModelPlayerController_CPP::CheckUserPlanAndPermission(EModumatePermission Permission)
+{
+	// TODO: Check if user is still login, refresh and request permission status
+	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (ensure(gameInstance) && gameInstance->GetAccountManager().Get()->HasPermission(Permission))
+	{
+		return true;
+	}
+	// TODO: Check if user is on paid plan
+	EditModelUserWidget->ShowAlertFreeAccountDialog();
+	return false;
+}
+
 bool AEditModelPlayerController_CPP::OnSavePDF()
 {
+	if (!CheckUserPlanAndPermission(EModumatePermission::Export))
+	{
+		return false;
+	}
+
 	if (EMPlayerState->ShowingFileDialog)
 	{
 		return false;
@@ -894,6 +922,11 @@ bool AEditModelPlayerController_CPP::OnSavePDF()
 
 bool AEditModelPlayerController_CPP::OnCreateDwg()
 {
+	if (!CheckUserPlanAndPermission(EModumatePermission::Export))
+	{
+		return false;
+	}
+
 	EMPlayerState->ShowingFileDialog = true;
 
 	if (ToolIsInUse())
