@@ -49,36 +49,19 @@ bool UFinishTool::BeginUse()
 	}
 
 	// If we aren't already targeting a surface polygon, then we'll try to create an implicit one and a graph on the target host.
-	if ((GraphElementTarget == nullptr) || (GraphElementTarget->GetObjectType() != EObjectType::OTSurfacePolygon))
+	if (GraphElementTarget == nullptr)
 	{
-		// If we are targeting a graph, then it should have a polygon that we can target, so don't create a new one.
-		if (GraphTarget != nullptr)
+		// Use the base class SurfaceGraphTool to create a graph, if it doesn't already exist
+		int32 newSurfaceGraphID;
+		if (!CreateGraphFromFaceTarget(newSurfaceGraphID))
 		{
 			return false;
 		}
 
-		// TODO: replace with implicit graph creation
-		if (!Super::BeginUse())
-		{
-			return false;
-		}
+		GraphTarget = GameState->Document.GetObjectById(newSurfaceGraphID);
+		auto surfaceGraph = GameState->Document.FindSurfaceGraph(newSurfaceGraphID);
 
-		for (FModumateObjectInstance *hostChild : HostTarget->GetChildObjects())
-		{
-			if (hostChild->GetObjectType() == EObjectType::OTSurfaceGraph)
-			{
-				GraphTarget = hostChild;
-				break;
-			}
-		}
-
-		if (GraphTarget == nullptr)
-		{
-			return false;
-		}
-
-		auto surfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
-		if (!surfaceGraph.IsValid())
+		if (!ensure(GraphTarget && (GraphTarget->GetObjectType() == EObjectType::OTSurfaceGraph) && surfaceGraph.IsValid()))
 		{
 			return false;
 		}
@@ -92,51 +75,41 @@ bool UFinishTool::BeginUse()
 				break;
 			}
 		}
+
+		if (GraphElementTarget == nullptr)
+		{
+			return false;
+		}
 	}
 
-	if (GraphElementTarget == nullptr)
-	{
-		return false;
-	}
-	const FBIMAssemblySpec* assembly = GameState->Document.PresetManager.GetAssemblyByKey(EToolMode::VE_FINISH, AssemblyKey);
-
-	if (!ensureAlways(assembly))
-	{
-		return false;
-	}
-
-#if 1
-	ensureMsgf(false, TEXT("TODO: reimplement with new FMOIDelta!"));
-	return false;
-#else
 	// If we're replacing an existing finish, just swap its assembly
 	for (FModumateObjectInstance *child : GraphElementTarget->GetChildObjects())
 	{
 		if (child->GetObjectType() == EObjectType::OTFinish)
 		{
-			
+			if (child->GetAssembly().UniqueKey() != AssemblyKey)
+			{
+				auto swapAssemblyDelta = MakeShared<FMOIDelta>();
+				auto& newState = swapAssemblyDelta->AddMutationState(child);
+				newState.AssemblyKey = AssemblyKey;
 
-			child->BeginPreviewOperation_DEPRECATED();
-			child->SetAssembly(*assembly);
-
-			auto swapAssemblyDelta = MakeShared<FMOIDelta_DEPRECATED>(child);
-			child->EndPreviewOperation_DEPRECATED();
-
-			return GameState->Document.ApplyDeltas({ swapAssemblyDelta }, GetWorld());
+				return GameState->Document.ApplyDeltas({ swapAssemblyDelta }, GetWorld());
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 
 	// Otherwise, create a new finish object on the target surface graph polygon
-	FMOIStateData_DEPRECATED stateData;
-	stateData.StateType = EMOIDeltaType::Create;
-	stateData.ObjectType = EObjectType::OTFinish;
-	stateData.ObjectAssemblyKey = AssemblyKey;
-	stateData.ParentID = GraphElementTarget->ID;
-	stateData.ObjectID = GameState->Document.GetNextAvailableID();
+	FMOIStateData newFinishState(GameState->Document.GetNextAvailableID(), EObjectType::OTFinish, GraphElementTarget->ID);
+	newFinishState.AssemblyKey = AssemblyKey;
 
-	auto createFinishDelta = MakeShared<FMOIDelta_DEPRECATED>(stateData);
+	auto createFinishDelta = MakeShared<FMOIDelta>();
+	createFinishDelta->AddCreateDestroyState(newFinishState, EMOIDeltaType::Create);
+
 	return GameState->Document.ApplyDeltas({ createFinishDelta }, GetWorld());
-#endif
 }
 
 bool UFinishTool::FrameUpdate()

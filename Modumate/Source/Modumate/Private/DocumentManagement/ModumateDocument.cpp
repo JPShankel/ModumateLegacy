@@ -224,25 +224,23 @@ void FModumateDocument::SetDefaultJustificationXY(float newValue)
 
 void FModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, const FBIMAssemblySpec &assembly)
 {
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetAssemblyForWalls"));
-	TArray<FDeltaPtr> deltaPtrs;
+	if (ids.Num() == 0)
+	{
+		return;
+	}
+
+	auto delta = MakeShared<FMOIDelta>();
 	for (auto id : ids)
 	{
-		FModumateObjectInstance* ob = GetObjectById(id);
-		if (ob != nullptr)
+		FModumateObjectInstance* obj = GetObjectById(id);
+		if (obj != nullptr)
 		{
-#if 1
-			ensureMsgf(false, TEXT("TODO: reimplement with new FMOIDelta!"));
-#else
-			ob->BeginPreviewOperation_DEPRECATED();
-			ob->SetAssembly(assembly);
-
-			deltaPtrs.Add(MakeShared<FMOIDelta_DEPRECATED>(ob));
-			ob->EndPreviewOperation_DEPRECATED();
-#endif
+			auto& newState = delta->AddMutationState(obj);
+			newState.AssemblyKey = assembly.UniqueKey();
 		}
 	}
-	ApplyDeltas(deltaPtrs, world);
+
+	ApplyDeltas({ delta }, world);
 }
 
 void FModumateDocument::AddHideObjectsById(UWorld *world, const TArray<int32> &ids)
@@ -2299,15 +2297,9 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 		NextID = 1;
 		for (auto& stateData : docRec.ObjectData)
 		{
-			if (ensure(stateData.CustomData.SaveCborFromJson()))
-			{
-				CreateOrRestoreObj(world, stateData);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("MOI %d (%s) cannot load its instance data!"),
-					stateData.ID, *EnumValueString(EObjectType, stateData.ObjectType));
-			}
+			// TODO: distinguish errors due to missing instance data vs. mismatched types or versions
+			stateData.CustomData.SaveCborFromJson();
+			CreateOrRestoreObj(world, stateData);
 		}
 
 		// Create MOIs reflected from the volume graph
@@ -3025,24 +3017,4 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 			DrawDebugString(world, originDrawPos, faceString, nullptr, FColor::White, 0.0f, true);
 		}
 	}
-}
-
-
-void FModumateDocument::OnAssemblyUpdated(
-	UWorld *world,
-	EToolMode mode,
-	const FBIMAssemblySpec &assembly)
-{
-	TArray<FModumateObjectInstance*> mois = GetObjectsOfType(assembly.ObjectType);
-	for (auto &moi : mois)
-	{
-		if (moi->GetAssembly().UniqueKey() == assembly.UniqueKey())
-		{
-			moi->SetAssembly(assembly);
-			moi->OnAssemblyChanged();
-		}
-	}
-
-	AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
-	playerState->RefreshActiveAssembly();
 }

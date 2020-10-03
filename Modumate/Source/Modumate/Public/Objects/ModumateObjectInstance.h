@@ -183,7 +183,7 @@ private:
 
 	// Carry a bespoke copy of your assembly
 	// TODO: this is motivated by object-level overrides and anticipated serialization needs
-	FBIMAssemblySpec ObjectAssembly;
+	FBIMAssemblySpec CachedAssembly;
 
 	// TODO: this flag is helpful to keep the above ObjectAssembly layer orders correct, especially because the assembly
 	// itself isn't stored in the FMOIStateData. So if CurrentState / PreviewState get modified (or swapped), this flag lets us maintain the layer order.
@@ -215,6 +215,7 @@ private:
 	void RemoveCachedChildID(int32 ChildID);
 
 	void SetupMOIComponent();
+	void UpdateAssemblyFromKey();
 
 	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
 
@@ -306,12 +307,7 @@ public:
 	void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget);
 	void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const;
 
-	// Wall interface
-	// TODO: move some of these to ILayeredObject, or make them more general
-	void OnAssemblyChanged();
-
 	const FBIMAssemblySpec &GetAssembly() const;
-	void SetAssembly(const FBIMAssemblySpec &NewAssembly);
 	void SetAssemblyLayersReversed(bool bNewLayersReversed);
 
 	// TODO: generalize or delete these functions, especially if they are

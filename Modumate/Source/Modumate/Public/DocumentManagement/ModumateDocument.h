@@ -275,9 +275,6 @@ public:
 	TArray<FDraftRevision> Revisions;
 
 	FPresetManager PresetManager;
-		
-	// Not deprecated, but will be refactored for object type and preset key
-	void OnAssemblyUpdated(UWorld *world, EToolMode mode, const FBIMAssemblySpec &assembly);
 
 private:
 	// TODO: All sequencing/coding schemes etc to be handled by a single key pool in the preset manager

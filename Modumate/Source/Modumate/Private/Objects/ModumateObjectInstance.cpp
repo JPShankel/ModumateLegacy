@@ -43,11 +43,11 @@ FModumateObjectInstance::FModumateObjectInstance(UWorld *world, FModumateDocumen
 	const FBIMAssemblySpec* existingAssembly = Document->PresetManager.GetAssemblyByKey(assemblyToolMode, StateData_V2.AssemblyKey);
 	if (existingAssembly)
 	{
-		ObjectAssembly = *existingAssembly;
+		CachedAssembly = *existingAssembly;
 	}
 	else
 	{
-		ObjectAssembly.ObjectType = StateData_V2.ObjectType;
+		CachedAssembly.ObjectType = StateData_V2.ObjectType;
 	}
 
 	Implementation = FMOIFactory::MakeMOIImplementation(StateData_V2.ObjectType, this);
@@ -55,6 +55,7 @@ FModumateObjectInstance::FModumateObjectInstance(UWorld *world, FModumateDocumen
 	{
 		MeshActor = Implementation->CreateActor(world, FVector::ZeroVector, FQuat::Identity);
 		SetupMOIComponent();
+		UpdateAssemblyFromKey();
 	}
 }
 
@@ -76,9 +77,31 @@ void FModumateObjectInstance::SetupMOIComponent()
 	moiComponent->ObjectID = ID;
 }
 
+void FModumateObjectInstance::UpdateAssemblyFromKey()
+{
+	if (CachedAssembly.UniqueKey() != StateData_V2.AssemblyKey)
+	{
+		// TODO: we should neither need to store the assembly by value, nor should we need to get it by ToolMode rather than ObjectType.
+		EToolMode assemblyToolMode = UModumateTypeStatics::ToolModeFromObjectType(StateData_V2.ObjectType);
+		const FBIMAssemblySpec* existingAssembly = Document->PresetManager.GetAssemblyByKey(assemblyToolMode, StateData_V2.AssemblyKey);
+		if (existingAssembly)
+		{
+			CachedAssembly = *existingAssembly;
+		}
+		else
+		{
+			CachedAssembly = FBIMAssemblySpec();
+			CachedAssembly.RootPreset = StateData_V2.AssemblyKey;
+			CachedAssembly.ObjectType = StateData_V2.ObjectType;
+		}
+
+		bAssemblyLayersReversed = false;
+	}
+}
+
 EObjectType FModumateObjectInstance::GetObjectType() const
 {
-	return ObjectAssembly.ObjectType;
+	return CachedAssembly.ObjectType;
 }
 
 FModumateObjectInstance::~FModumateObjectInstance()
@@ -552,17 +575,12 @@ bool FModumateObjectInstance::CanBeSplit() const
 
 float FModumateObjectInstance::CalculateThickness() const
 {
-	return ObjectAssembly.CalculateThickness().AsWorldCentimeters();
+	return CachedAssembly.CalculateThickness().AsWorldCentimeters();
 }
 
 FVector FModumateObjectInstance::GetNormal() const
 {
 	return Implementation->GetNormal();
-}
-
-void FModumateObjectInstance::OnAssemblyChanged()
-{
-	Implementation->OnAssemblyChanged();
 }
 
 void FModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
@@ -630,6 +648,13 @@ bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FD
 		// Now actually clean the object.
 		if (bValidObjectToClean)
 		{
+			// Some default behavior to ensure that assemblies are up-to-date
+			if (DirtyFlag == EObjectDirtyFlags::Structure)
+			{
+				UpdateAssemblyFromKey();
+			}
+
+			// Let the implementation handle all the specific cleaning
 			bSuccess = Implementation->CleanObject(DirtyFlag, OutSideEffectDeltas);
 		}
 
@@ -824,21 +849,14 @@ void FModumateObjectInstance::SetParentID(int32 NewParentID)
 
 const FBIMAssemblySpec &FModumateObjectInstance::GetAssembly() const
 {
-	return ObjectAssembly;
-}
-
-void FModumateObjectInstance::SetAssembly(const FBIMAssemblySpec &NewAssembly)
-{
-	StateData_V2.AssemblyKey = NewAssembly.UniqueKey();
-	ObjectAssembly = NewAssembly;
-	bAssemblyLayersReversed = false;
+	return CachedAssembly;
 }
 
 void FModumateObjectInstance::SetAssemblyLayersReversed(bool bNewLayersReversed)
 {
 	if (bNewLayersReversed != bAssemblyLayersReversed)
 	{
-		ObjectAssembly.ReverseLayers();
+		CachedAssembly.ReverseLayers();
 		bAssemblyLayersReversed = bNewLayersReversed;
 	}
 }
@@ -973,7 +991,8 @@ void FModumateObjectInstance::PostCreateObject(bool bNewObject)
 		bDestroyed = false;
 	}
 
-	ensure(UpdateInstanceData());
+	// TODO: distinguish errors due to missing instance data vs. mismatched types or versions
+	UpdateInstanceData();
 
 	// This isn't strictly necessary, but it will save some flag cleaning if the parent already exists at the time of creation.
 	if (FModumateObjectInstance* parentObj = GetParentObject())
@@ -1055,7 +1074,7 @@ FMOIDataRecord_DEPRECATED FModumateObjectInstance::AsDataRecord_DEPRECATED() con
 	FMOIDataRecord_DEPRECATED ret;
 	ret.ID = ID;
 	ret.ObjectType = GetObjectType();
-	ret.AssemblyKey = ObjectAssembly.UniqueKey().ToString();
+	ret.AssemblyKey = CachedAssembly.UniqueKey().ToString();
 	ret.ParentID = GetParentID();
 	ret.ChildIDs = CachedChildIDs;
 	ret.Location = GetObjectLocation();

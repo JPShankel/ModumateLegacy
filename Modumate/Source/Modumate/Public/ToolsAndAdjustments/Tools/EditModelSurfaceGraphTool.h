@@ -25,7 +25,7 @@ public:
 	virtual bool FrameUpdate() override;
 
 protected:
-	bool CreateGraphFromFaceTarget();
+	bool CreateGraphFromFaceTarget(int32& OutSurfaceGraphID);
 	void ResetTarget();
 
 	class FModumateObjectInstance *HostTarget;

@@ -67,7 +67,8 @@ bool USurfaceGraphTool::BeginUse()
 		// before starting any poly-line drawing.
 		if (GraphTarget == nullptr)
 		{
-			return CreateGraphFromFaceTarget();
+			int32 newSurfaceGraphID;
+			return CreateGraphFromFaceTarget(newSurfaceGraphID);
 		}
 
 		// Otherwise, start drawing a poly-line on the target surface graph.
@@ -263,8 +264,10 @@ bool USurfaceGraphTool::FrameUpdate()
 	return true;
 }
 
-bool USurfaceGraphTool::CreateGraphFromFaceTarget()
+bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 {
+	OutSurfaceGraphID = MOD_ID_NONE;
+
 	if (!(HostTarget && HitHostActor && (HitFaceIndex != INDEX_NONE)))
 	{
 		return false;
@@ -276,7 +279,8 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget()
 
 	if (GraphTarget)
 	{
-		TargetSurfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
+		OutSurfaceGraphID = GraphTarget->ID;
+		TargetSurfaceGraph = GameState->Document.FindSurfaceGraph(OutSurfaceGraphID);
 		if (!TargetSurfaceGraph.IsValid() || !TargetSurfaceGraph->IsEmpty())
 		{
 			return false;
@@ -284,8 +288,8 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget()
 	}
 	else
 	{
-		TargetSurfaceGraph = MakeShared<FGraph2D>(nextID);
-		nextID++;
+		OutSurfaceGraphID = nextID++;
+		TargetSurfaceGraph = MakeShared<FGraph2D>(OutSurfaceGraphID);
 	}
 
 	// Create the delta for adding the surface graph object, if it didn't already exist
@@ -350,11 +354,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget()
 		return false;
 	}
 
-	// If we created a surface graph for the purpose of generating deltas, then reset it now since we won't need it.
-	if (GraphTarget == nullptr)
-	{
-		TargetSurfaceGraph->Reset();
-	}
+	// We no longer need neither an existing target surface graph, or a temporary one used to create deltas.
 	TargetSurfaceGraph.Reset();
 
 	for (FGraph2DDelta& graphDelta : fillGraphDeltas)
