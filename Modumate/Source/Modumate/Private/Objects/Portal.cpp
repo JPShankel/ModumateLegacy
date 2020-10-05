@@ -2,24 +2,19 @@
 
 #include "Objects/Portal.h"
 
-#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "Algo/Unique.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "Graph/Graph3D.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
 #include "UnrealClasses/CompoundMeshActor.h"
-#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
-#include "ModumateCore/ExpressionEvaluator.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "Drafting/ModumateDraftingElements.h"
 #include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
-#include "ModumateCore/ModumateObjectStatics.h"
-#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
-#include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
-#include "DocumentManagement//ModumateDocument.h"
-#include "Graph/Graph3D.h"
-#include "Algo/ForEach.h"
-#include "Algo/Unique.h"
 
 
 class AEditModelPlayerController_CPP;
@@ -223,6 +218,21 @@ FTransform FMOIPortalImpl::GetWorldTransform() const
 
 void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
+	FModumateObjectInstance *parent = MOI->GetParentObject();
+	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
+	{
+		return;
+	}
+
+	// Make the polygon adjustment handles, for modifying the parent plane's polygonal shape
+	int32 numCorners = parent->GetNumCorners();
+	for (int32 i = 0; i < numCorners; ++i)
+	{
+		auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		edgeHandle->SetTargetIndex(i);
+		edgeHandle->SetAdjustPolyEdge(true);
+		edgeHandle->SetTargetMOI(parent);
+	}
 }
 
 bool FMOIPortalImpl::GetInvertedState(FMOIStateData& OutState) const
