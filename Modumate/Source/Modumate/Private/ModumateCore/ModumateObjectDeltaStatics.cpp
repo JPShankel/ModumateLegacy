@@ -4,6 +4,8 @@
 #include "Graph/Graph2DDelta.h"
 #include "Graph/Graph3DTypes.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/CutPlane.h"
+#include "Objects/FFE.h"
 
 void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObjectIDs, FModumateDocument *doc, TSet<int32>& OutTransformableIDs)
 {
@@ -169,22 +171,38 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 	}
 	else
 	{
-#if 1
-		ensureMsgf(false, TEXT("TODO: reimplement with new FMOIDelta!"));
-#else
 		for (auto& kvp : ObjectMovements)
 		{
-			auto moi = doc->GetObjectById(kvp.Key);
-			FMOIDelta_DEPRECATED delta;
-			auto state = ((const FModumateObjectInstance*)moi)->GetDataState_DEPRECATED();
-			state.StateType = EMOIDeltaType::Mutate;
-			delta.StatePairs.Add(TPair<FMOIStateData_DEPRECATED, FMOIStateData_DEPRECATED>(state, state));
-			delta.StatePairs[0].Value.Location = kvp.Value.GetTranslation();
-			delta.StatePairs[0].Value.Orientation = kvp.Value.GetRotation();
+			// TODO: ffe and cutplanes should extend an interface that provides a 
+			// GetTransformedLocationState() kind of function, like the existing GetInvertedState()
+			FModumateObjectInstance* moi = doc->GetObjectById(kvp.Key);
+			FMOIDelta delta;
+			auto& currentData = delta.AddMutationState(moi);
 
-			deltas.Add(MakeShared<FMOIDelta_DEPRECATED>(delta));
+			if (moi->GetObjectType() == EObjectType::OTFurniture)
+			{
+				FMOIFFEData structData;
+				currentData.CustomData.LoadStructData<FMOIFFEData>(structData);
+
+				structData.Location = kvp.Value.GetLocation();
+				structData.Rotation = kvp.Value.GetRotation();
+
+				currentData.CustomData.SaveStructData<FMOIFFEData>(structData);
+
+			}
+			else if (moi->GetObjectType() == EObjectType::OTCutPlane)
+			{
+				FMOICutPlaneData structData;
+				currentData.CustomData.LoadStructData<FMOICutPlaneData>(structData);
+
+				structData.Location = kvp.Value.GetLocation();
+				structData.Rotation = kvp.Value.GetRotation();
+
+				currentData.CustomData.SaveStructData<FMOICutPlaneData>(structData);
+			}
+
+			deltas.Add(MakeShared<FMOIDelta>(delta));
 		}
-#endif
 	}
 
 	if (deltas.Num() > 0)
