@@ -1174,7 +1174,7 @@ void FModumateObjectInstanceImplBase::OnSelected(bool bNewSelected)
 {
 	AActor *moiActor = MOI ? MOI->GetActor() : nullptr;
 	auto *controller = moiActor ? moiActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
-	if (controller)
+	if (controller && controller->EMPlayerState->SelectedObjects.Num() == 1)
 	{
 		MOI->ShowAdjustmentHandles(controller, bNewSelected);
 	}
