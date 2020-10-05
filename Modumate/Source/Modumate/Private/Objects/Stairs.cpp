@@ -5,6 +5,7 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateStairStatics.h"
 #include "ModumateCore/ModumateUnits.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
 
 class AEditModelPlayerController_CPP;
 
@@ -88,5 +89,24 @@ void FMOIStaircaseImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 	if (planeParent)
 	{
 		planeParent->GetStructuralPointsAndLines(outPoints, outLines, true);
+	}
+}
+
+void FMOIStaircaseImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+{
+	FModumateObjectInstance *parent = MOI->GetParentObject();
+	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
+	{
+		return;
+	}
+
+	// Make the polygon adjustment handles, for modifying the parent plane's polygonal shape
+	int32 numCorners = parent->GetNumCorners();
+	for (int32 i = 0; i < numCorners; ++i)
+	{
+		auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		edgeHandle->SetTargetIndex(i);
+		edgeHandle->SetAdjustPolyEdge(true);
+		edgeHandle->SetTargetMOI(parent);
 	}
 }
