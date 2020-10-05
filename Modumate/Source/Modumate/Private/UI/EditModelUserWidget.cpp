@@ -156,5 +156,8 @@ void UEditModelUserWidget::ShowAlertFreeAccountDialog()
 
 void UEditModelUserWidget::UpdateViewModeIndicator(EEditViewModes NewViewMode)
 {
-	ToolbarWidget->ToolBarTopBP->ViewModeIndicator->SwitchToViewMode(NewViewMode);
+	if (ToolbarWidget != nullptr && ToolbarWidget->ToolBarTopBP != nullptr && ToolbarWidget->ToolBarTopBP->ViewModeIndicator != nullptr)
+	{
+		ToolbarWidget->ToolBarTopBP->ViewModeIndicator->SwitchToViewMode(NewViewMode);
+	}
 }

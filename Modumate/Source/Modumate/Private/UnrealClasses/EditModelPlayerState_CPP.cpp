@@ -856,7 +856,10 @@ void AEditModelPlayerState_CPP::SetEditViewModeDirect(EEditViewModes NewEditView
 	{
 		SelectedViewMode = NewEditViewMode;
 		EMPlayerController->UpdateMouseTraceParams();
-		EMPlayerController->EditModelUserWidget->UpdateViewModeIndicator(NewEditViewMode);
+		if (EMPlayerController->EditModelUserWidget != nullptr)
+		{
+			EMPlayerController->EditModelUserWidget->UpdateViewModeIndicator(NewEditViewMode);
+		}
 
 		// Update global meta plane material params
 		if (MetaPlaneMatParamCollection)
