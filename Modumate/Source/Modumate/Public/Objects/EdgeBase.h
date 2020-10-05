@@ -11,7 +11,6 @@ class MODUMATE_API FMOIEdgeImplBase : public FModumateObjectInstanceImplBase
 public:
 	FMOIEdgeImplBase(FModumateObjectInstance *moi);
 
-	virtual void SetLocation(const FVector &p) override;
 	virtual FVector GetLocation() const override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const override;

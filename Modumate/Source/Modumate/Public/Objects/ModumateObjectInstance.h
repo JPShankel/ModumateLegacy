@@ -38,15 +38,10 @@ public:
 	virtual void SetMaterial(UMaterialInterface *m) = 0;
 	virtual UMaterialInterface *GetMaterial() = 0;
 
-	virtual void SetRotation(const FQuat &r) = 0;
-	virtual FQuat GetRotation() const = 0;
-
-	virtual void SetLocation(const FVector &p) = 0;
 	virtual FVector GetLocation() const = 0;
-
-	virtual void SetWorldTransform(const FTransform &NewTransform) = 0;
+	virtual FQuat GetRotation() const = 0;
 	virtual FTransform GetWorldTransform() const = 0;
-
+	virtual FVector GetNormal() const = 0;
 	virtual FVector GetCorner(int32 index) const = 0;
 	virtual int32 GetNumCorners() const = 0;
 
@@ -65,8 +60,6 @@ public:
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) = 0;
 	virtual void PostCreateObject(bool bNewObject) = 0;
 	virtual void Destroy() = 0;
-
-	virtual FVector GetNormal() const = 0;
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) = 0;
 
@@ -111,15 +104,10 @@ public:
 	virtual void SetMaterial(UMaterialInterface *m) override { }
 	virtual UMaterialInterface *GetMaterial() override { return nullptr; }
 
-	virtual void SetRotation(const FQuat &r) override;
-	virtual FQuat GetRotation() const override;
-
-	virtual void SetLocation(const FVector &p) override;
 	virtual FVector GetLocation() const override;
-
-	virtual void SetWorldTransform(const FTransform &NewTransform) override;
+	virtual FQuat GetRotation() const override;
 	virtual FTransform GetWorldTransform() const override;
-
+	virtual FVector GetNormal() const override { return FVector::ZeroVector; }
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const;
 
@@ -138,8 +126,6 @@ public:
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 	virtual void PostCreateObject(bool bNewObject) override;
 	virtual void Destroy() override;
-
-	virtual FVector GetNormal() const override { return FVector::ZeroVector; }
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
@@ -313,8 +299,6 @@ public:
 	// TODO: generalize or delete these functions, especially if they are
 	// only relevant for objects that will only be hosted by meta planes
 	float CalculateThickness() const;
-	FVector GetCorner(int32 index) const;
-	int32 GetNumCorners() const;
 
 	const ILayeredObject* GetLayeredInterface() const;
 	const IMiterNode* GetMiterInterface() const;
@@ -332,13 +316,11 @@ public:
 	//   Setting any of these values does not guarantee that getting it will return the same value;
 	//   objects will do their best to interpret an intended transform value, based on any constraints it might have.
 	FVector GetObjectLocation() const;
-	void SetObjectLocation(const FVector &p);
 	FQuat GetObjectRotation() const;
-	void SetObjectRotation(const FQuat &r);
-	void SetWorldTransform(const FTransform &NewTransform);
 	FTransform GetWorldTransform() const;
-
 	FVector GetNormal() const;
+	FVector GetCorner(int32 index) const;
+	int32 GetNumCorners() const;
 
 	void MouseHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover);
 	bool IsHovered() const { return bHovered; }

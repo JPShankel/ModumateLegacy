@@ -18,10 +18,8 @@ public:
 	FMOIRoomImpl(FModumateObjectInstance *moi);
 	virtual ~FMOIRoomImpl();
 
-	virtual void SetRotation(const FQuat &r) override;
-	virtual FQuat GetRotation() const override;
-	virtual void SetLocation(const FVector &p) override;
 	virtual FVector GetLocation() const override;
+	virtual FQuat GetRotation() const override;
 
 	virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover) override;
 	virtual void OnSelected(bool bNewSelected) override;

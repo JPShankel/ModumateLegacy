@@ -10,8 +10,9 @@ FMOISurfaceGraphImpl::FMOISurfaceGraphImpl(FModumateObjectInstance *moi)
 {
 }
 
-void FMOISurfaceGraphImpl::SetRotation(const FQuat &r)
+FVector FMOISurfaceGraphImpl::GetLocation() const
 {
+	return CachedFaceOrigin.GetLocation();
 }
 
 FQuat FMOISurfaceGraphImpl::GetRotation() const
@@ -19,23 +20,14 @@ FQuat FMOISurfaceGraphImpl::GetRotation() const
 	return CachedFaceOrigin.GetRotation();
 }
 
-void FMOISurfaceGraphImpl::SetLocation(const FVector &p)
+FVector FMOISurfaceGraphImpl::GetNormal() const
 {
-}
-
-FVector FMOISurfaceGraphImpl::GetLocation() const
-{
-	return CachedFaceOrigin.GetLocation();
+	return CachedFaceOrigin.GetUnitAxis(EAxis::Z);
 }
 
 FVector FMOISurfaceGraphImpl::GetCorner(int32 index) const
 {
 	return ensure(CachedFacePoints.IsValidIndex(index)) ? CachedFacePoints[index] : GetLocation();
-}
-
-FVector FMOISurfaceGraphImpl::GetNormal() const
-{
-	return CachedFaceOrigin.GetUnitAxis(EAxis::Z);
 }
 
 void FMOISurfaceGraphImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)

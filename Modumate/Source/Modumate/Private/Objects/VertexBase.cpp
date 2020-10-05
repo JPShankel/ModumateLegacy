@@ -15,14 +15,6 @@ FMOIVertexImplBase::FMOIVertexImplBase(FModumateObjectInstance *moi)
 {
 }
 
-void FMOIVertexImplBase::SetLocation(const FVector &p)
-{
-	if (VertexActor.IsValid())
-	{
-		VertexActor->SetMOILocation(p);
-	}
-}
-
 FVector FMOIVertexImplBase::GetLocation() const
 {
 	return VertexActor.IsValid() ? VertexActor->MoiLocation : FVector::ZeroVector;

@@ -43,11 +43,8 @@ public:
 	virtual ~FMOIPortalImpl();
 
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
-	virtual void SetRotation(const FQuat &r) override;
-	virtual FQuat GetRotation() const override;
-	virtual void SetLocation(const FVector &p) override;
 	virtual FVector GetLocation() const override;
-	virtual void SetWorldTransform(const FTransform &NewTransform) override;
+	virtual FQuat GetRotation() const override;
 	virtual FTransform GetWorldTransform() const override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;

@@ -10,7 +10,6 @@ class MODUMATE_API FMOIVertexImplBase : public FModumateObjectInstanceImplBase
 public:
 	FMOIVertexImplBase(FModumateObjectInstance *moi);
 
-	virtual void SetLocation(const FVector &p) override;
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override { return FQuat::Identity; }
 	virtual FVector GetCorner(int32 index) const override;
@@ -30,4 +29,3 @@ protected:
 	float DefaultHandleSize;
 	float SelectedHandleSize;
 };
-

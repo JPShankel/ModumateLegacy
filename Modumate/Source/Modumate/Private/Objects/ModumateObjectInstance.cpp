@@ -1014,28 +1014,9 @@ FVector FModumateObjectInstance::GetObjectLocation() const
 	return Implementation->GetLocation();
 }
 
-void FModumateObjectInstance::SetObjectLocation(const FVector &p)
-{
-	GetDataState_DEPRECATED().Location = p;
-	Implementation->SetLocation(p);
-}
-
 FQuat FModumateObjectInstance::GetObjectRotation() const
 {
 	return Implementation->GetRotation();
-}
-
-void FModumateObjectInstance::SetObjectRotation(const FQuat &r)
-{
-	GetDataState_DEPRECATED().Orientation = r;
-	Implementation->SetRotation(r);
-}
-
-void FModumateObjectInstance::SetWorldTransform(const FTransform &NewTransform)
-{
-	GetDataState_DEPRECATED().Location = NewTransform.GetLocation();
-	GetDataState_DEPRECATED().Orientation = NewTransform.GetRotation();
-	return Implementation->SetWorldTransform(NewTransform);
 }
 
 FTransform FModumateObjectInstance::GetWorldTransform() const
@@ -1089,40 +1070,16 @@ FMOIDataRecord_DEPRECATED FModumateObjectInstance::AsDataRecord_DEPRECATED() con
 
 // FModumateObjectInstanceImplBase Implementation
 
-void FModumateObjectInstanceImplBase::SetRotation(const FQuat &r)
+FVector FModumateObjectInstanceImplBase::GetLocation() const
 {
-	AActor *moiActor = MOI ? MOI->GetActor() : nullptr;
-	if (moiActor)
-	{
-		moiActor->SetActorRotation(r);
-	}
+	AActor* moiActor = MOI ? MOI->GetActor() : nullptr;
+	return moiActor ? moiActor->GetActorLocation() : FVector::ZeroVector;
 }
 
 FQuat FModumateObjectInstanceImplBase::GetRotation() const
 {
 	AActor *moiActor = MOI ? MOI->GetActor() : nullptr;
 	return moiActor ? moiActor->GetActorQuat() : FQuat::Identity;
-}
-
-void FModumateObjectInstanceImplBase::SetLocation(const FVector &p)
-{
-	AActor *moiActor = MOI ? MOI->GetActor() : nullptr;
-	if (moiActor)
-	{
-		moiActor->SetActorLocation(p);
-	}
-}
-
-FVector FModumateObjectInstanceImplBase::GetLocation() const
-{
-	AActor *moiActor = MOI ? MOI->GetActor() : nullptr;
-	return moiActor ? moiActor->GetActorLocation() : FVector::ZeroVector;
-}
-
-void FModumateObjectInstanceImplBase::SetWorldTransform(const FTransform &NewTransform)
-{
-	SetLocation(NewTransform.GetLocation());
-	SetRotation(NewTransform.GetRotation());
 }
 
 FTransform FModumateObjectInstanceImplBase::GetWorldTransform() const

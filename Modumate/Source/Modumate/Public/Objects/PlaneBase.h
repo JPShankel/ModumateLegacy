@@ -9,12 +9,11 @@ class MODUMATE_API FMOIPlaneImplBase : public FModumateObjectInstanceImplBase
 public:
 	FMOIPlaneImplBase(FModumateObjectInstance *moi);
 
+	virtual FVector GetLocation() const override;
+	virtual FQuat GetRotation() const override;
+	virtual FVector GetNormal() const override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const override;
-	virtual FQuat GetRotation() const override;
-	virtual void SetRotation(const FQuat& r) override;
-	virtual FVector GetLocation() const override;
-	virtual FVector GetNormal() const override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
 	void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller);
 	virtual bool ShowStructureOnSelection() const override;

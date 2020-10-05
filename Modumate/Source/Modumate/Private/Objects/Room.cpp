@@ -22,20 +22,6 @@ FMOIRoomImpl::~FMOIRoomImpl()
 {
 }
 
-void FMOIRoomImpl::SetRotation(const FQuat &r)
-{
-}
-
-FQuat FMOIRoomImpl::GetRotation() const
-{
-	return FQuat::Identity;
-}
-
-void FMOIRoomImpl::SetLocation(const FVector &p)
-{
-
-}
-
 FVector FMOIRoomImpl::GetLocation() const
 {
 	if (DynamicMeshActor != nullptr)
@@ -43,6 +29,11 @@ FVector FMOIRoomImpl::GetLocation() const
 		return DynamicMeshActor->GetActorLocation();
 	}
 	return FVector::ZeroVector;
+}
+
+FQuat FMOIRoomImpl::GetRotation() const
+{
+	return FQuat::Identity;
 }
 
 void FMOIRoomImpl::OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bEnableHover)

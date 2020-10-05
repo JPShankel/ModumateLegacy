@@ -39,7 +39,7 @@ bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 			return false;
 		}
 
-		SetLocation(vertex->Position);
+		VertexActor->SetMOILocation(vertex->Position);
 	}
 	break;
 	case EObjectDirtyFlags::Visuals:

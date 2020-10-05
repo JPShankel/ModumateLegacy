@@ -18,10 +18,6 @@ FMOIEdgeImplBase::FMOIEdgeImplBase(FModumateObjectInstance *moi)
 {
 }
 
-void FMOIEdgeImplBase::SetLocation(const FVector &p)
-{
-}
-
 FVector FMOIEdgeImplBase::GetLocation() const
 {
 	return 0.5f * (GetCorner(0) + GetCorner(1));

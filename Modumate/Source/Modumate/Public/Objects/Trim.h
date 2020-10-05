@@ -30,12 +30,8 @@ public:
 	FMOITrimImpl(FModumateObjectInstance *moi);
 	virtual ~FMOITrimImpl();
 
-	virtual void SetRotation(const FQuat &r) override;
-	virtual FQuat GetRotation() const override;
-
-	virtual void SetLocation(const FVector &p) override;
 	virtual FVector GetLocation() const override;
-
+	virtual FQuat GetRotation() const override;
 	virtual FVector GetNormal() const override;
 
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;

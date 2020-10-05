@@ -45,10 +45,8 @@ public:
 	FMOIFFEImpl(FModumateObjectInstance *moi);
 	virtual ~FMOIFFEImpl();
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
-	virtual void SetRotation(const FQuat &r) override;
-	virtual FQuat GetRotation() const override;
-	virtual void SetLocation(const FVector &p) override;
 	virtual FVector GetLocation() const override;
+	virtual FQuat GetRotation() const override;
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override;
 	virtual void SetupDynamicGeometry() override;

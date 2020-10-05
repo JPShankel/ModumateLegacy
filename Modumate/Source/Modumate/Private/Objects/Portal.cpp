@@ -164,19 +164,9 @@ void FMOIPortalImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoi
 	}
 }
 
-void FMOIPortalImpl::SetRotation(const FQuat &r)
-{
-	SetRelativeTransform(CachedRelativePos, r);
-}
-
 FQuat FMOIPortalImpl::GetRotation() const
 {
 	return CachedRelativeRot;
-}
-
-void FMOIPortalImpl::SetLocation(const FVector &p)
-{
-	SetRelativeTransform(FVector2D(p), CachedRelativeRot);
 }
 
 FVector FMOIPortalImpl::GetCorner(int32 index) const
@@ -193,22 +183,6 @@ FVector FMOIPortalImpl::GetCorner(int32 index) const
 FVector FMOIPortalImpl::GetLocation() const
 {
 	return FVector(CachedRelativePos, 0.0f);
-}
-
-void FMOIPortalImpl::SetWorldTransform(const FTransform &NewTransform)
-{
-	FModumateObjectInstance *parentObject = MOI ? MOI->GetParentObject() : nullptr;
-	if (parentObject)
-	{
-		FVector2D newRelativePos(ForceInitToZero);
-		FQuat newRelativeRot(ForceInit);
-		if (UModumateObjectStatics::GetRelativeTransformOnPlanarObj(parentObject,
-			NewTransform.GetLocation(),
-			0.0f, false, newRelativePos, newRelativeRot))
-		{
-			SetRelativeTransform(newRelativePos, newRelativeRot);
-		}
-	}
 }
 
 FTransform FMOIPortalImpl::GetWorldTransform() const

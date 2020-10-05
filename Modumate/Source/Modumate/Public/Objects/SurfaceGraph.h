@@ -19,10 +19,8 @@ class MODUMATE_API FMOISurfaceGraphImpl : public FModumateObjectInstanceImplBase
 public:
 	FMOISurfaceGraphImpl(FModumateObjectInstance *moi);
 
-	virtual void SetRotation(const FQuat &r) override;
-	virtual FQuat GetRotation() const override;
-	virtual void SetLocation(const FVector &p) override;
 	virtual FVector GetLocation() const override;
+	virtual FQuat GetRotation() const override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual FVector GetNormal() const override;
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;

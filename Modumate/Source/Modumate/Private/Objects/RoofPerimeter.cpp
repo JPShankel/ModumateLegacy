@@ -22,10 +22,6 @@ FMOIRoofPerimeterImpl::FMOIRoofPerimeterImpl(FModumateObjectInstance *moi)
 {
 }
 
-void FMOIRoofPerimeterImpl::SetLocation(const FVector &p)
-{
-}
-
 FVector FMOIRoofPerimeterImpl::GetLocation() const
 {
 	return CachedPerimeterCenter;

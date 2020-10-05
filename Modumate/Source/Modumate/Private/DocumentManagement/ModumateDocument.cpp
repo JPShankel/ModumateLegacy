@@ -599,7 +599,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 			{
 				FTransform worldTransform = obj->GetWorldTransform();
 				newParentObj->AddChild_DEPRECATED(obj);
-				obj->SetWorldTransform(worldTransform);
+				//obj->SetWorldTransform(worldTransform);
 			}
 			else
 			{
@@ -796,7 +796,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 				// of its changed relative transforms between its old and new parents.
 				FTransform worldTransform = obj->GetWorldTransform();
 				newParentObj->AddChild_DEPRECATED(obj);
-				obj->SetWorldTransform(worldTransform);
+				//obj->SetWorldTransform(worldTransform);
 			}
 			else
 			{

@@ -36,11 +36,14 @@ AActor *FMOIFFEImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat 
 	return world->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform(rot, loc));
 }
 
-void FMOIFFEImpl::SetRotation(const FQuat &r)
+FVector FMOIFFEImpl::GetLocation() const
 {
-	FModumateObjectInstanceImplBase::SetRotation(r);
+	if (MOI->GetActor() != nullptr)
+	{
+		return MOI->GetActor()->GetActorLocation();
+	}
 
-	CachedRotation = r;
+	return CachedLocation;
 }
 
 FQuat FMOIFFEImpl::GetRotation() const
@@ -51,23 +54,6 @@ FQuat FMOIFFEImpl::GetRotation() const
 	}
 
 	return CachedRotation;
-}
-
-void FMOIFFEImpl::SetLocation(const FVector &p)
-{
-	FModumateObjectInstanceImplBase::SetLocation(p);
-
-	CachedLocation = p;
-}
-
-FVector FMOIFFEImpl::GetLocation() const
-{
-	if (MOI->GetActor() != nullptr)
-	{
-		return MOI->GetActor()->GetActorLocation();
-	}
-
-	return CachedLocation;
 }
 
 void FMOIFFEImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)

@@ -27,8 +27,15 @@ FMOITrimImpl::~FMOITrimImpl()
 {
 }
 
-void FMOITrimImpl::SetRotation(const FQuat &r)
+FVector FMOITrimImpl::GetLocation() const
 {
+	const FModumateObjectInstance* parentMOI = MOI ? MOI->GetParentObject() : nullptr;
+	if (parentMOI)
+	{
+		return parentMOI->GetObjectLocation();
+	}
+
+	return FVector::ZeroVector;
 }
 
 FQuat FMOITrimImpl::GetRotation() const
@@ -42,10 +49,6 @@ FQuat FMOITrimImpl::GetRotation() const
 	return FQuat::Identity;
 }
 
-void FMOITrimImpl::SetLocation(const FVector &p)
-{
-}
-
 FVector FMOITrimImpl::GetNormal() const
 {
 	return TrimUp;
@@ -55,17 +58,6 @@ void FMOITrimImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& Out
 {
 	OutStructDef = InstanceData.StaticStruct();
 	OutStructPtr = &InstanceData;
-}
-
-FVector FMOITrimImpl::GetLocation() const
-{
-	const FModumateObjectInstance* parentMOI = MOI ? MOI->GetParentObject() : nullptr;
-	if (parentMOI)
-	{
-		return parentMOI->GetObjectLocation();
-	}
-
-	return FVector::ZeroVector;
 }
 
 void FMOITrimImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* Controller)

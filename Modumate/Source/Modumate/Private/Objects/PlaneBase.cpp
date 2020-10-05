@@ -36,14 +36,6 @@ FQuat FMOIPlaneImplBase::GetRotation() const
 	return FRotationMatrix::MakeFromXY(CachedAxisX, CachedAxisY).ToQuat();
 }
 
-void FMOIPlaneImplBase::SetRotation(const FQuat& r)
-{
-	if (DynamicMeshActor.IsValid())
-	{
-		DynamicMeshActor->SetActorRotation(FQuat::Identity);
-	}
-}
-
 FVector FMOIPlaneImplBase::GetLocation() const
 {
 	return CachedCenter;
