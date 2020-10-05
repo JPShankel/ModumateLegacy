@@ -48,14 +48,23 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 	LastSelectedEdgeIDs.Reset();
 
 	auto moi = doc.GetObjectById(selectedGraphObjID);
-	EObjectType objectType = moi->GetObjectType();
-	Modumate::EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
+
 	// aggregate the unique selected vertices
 	if (auto graphObject = graph.FindObject(selectedGraphObjID))
 	{
 		graphObject->GetVertexIDs(LastSelectedVertexIDs);
 	}
-	else
+	else if (auto parentMoi = doc.GetObjectById(moi->GetParentID()))
+	{
+		if (auto parentGraphObject = graph.FindObject(parentMoi->ID))
+		{
+			parentGraphObject->GetVertexIDs(LastSelectedVertexIDs);
+			selectedGraphObjID = parentMoi->ID;
+		}
+	}
+	// TODO: surface graph objects?
+
+	if (LastSelectedVertexIDs.Num() == 0)
 	{
 		selectedGraphObjID = MOD_ID_NONE;
 	}
