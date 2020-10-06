@@ -96,6 +96,11 @@ public:
 		const TArray<TArray<FVector>> &TreadPolys, const TArray<TArray<FVector>> &RiserPolys, const TArray<FVector> &RiserNormals,
 		float StepThickness, const FArchitecturalMaterial &Material);
 
+	// Layered version
+	bool SetupStairPolys(const FVector &StairOrigin,
+		const TArray<TArray<FVector>> &TreadPolys, const TArray<TArray<FVector>> &RiserPolys, const TArray<FVector> &RiserNormals,
+		const TArray<FLayerGeomDef>& TreadLayers, const TArray<FLayerGeomDef>& RiserLayers, const FBIMAssemblySpec& Assembly);
+
 	void DynamicMeshActorMoved(const FVector& newPosition);
 	void DynamicMeshActorRotated(const FRotator& newRotation);
 

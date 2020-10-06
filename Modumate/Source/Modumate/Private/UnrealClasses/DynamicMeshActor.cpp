@@ -678,6 +678,65 @@ bool ADynamicMeshActor::SetupStairPolys(const FVector &StairOrigin,
 	return true;
 }
 
+bool ADynamicMeshActor::SetupStairPolys(const FVector& StairOrigin, const TArray<TArray<FVector>>& TreadPolys,
+	const TArray<TArray<FVector>>& RiserPolys, const TArray<FVector>& RiserNormals,
+	const TArray<FLayerGeomDef>& TreadLayers, const TArray<FLayerGeomDef>& RiserLayers, const FBIMAssemblySpec& AssemblySpec)
+{
+	SetActorLocation(StairOrigin);
+	SetActorRotation(FQuat::Identity);
+
+	LayerGeometries.Reset();
+	CachedMIDs.SetNum(TreadLayers.Num() + RiserLayers.Num());
+
+	using FGeomLayers = TArray<FLayerGeomDef>;
+
+	Assembly = AssemblySpec;
+
+	// Create a FLayerGeomDef for each tread & riser layer
+	int32 sectionIndex = 0;
+	const int32 numTreadLayers = TreadLayers.Num();
+	bool bProcessingRisers = false;
+	TArray<FVector> stairPoints;
+	for (const auto* stairElement: { &TreadLayers, &RiserLayers })
+	{
+		int32 materialIndex = 0;
+		const TArray<TArray<FVector>>&  polys = bProcessingRisers ? RiserPolys : TreadPolys;
+		for (const auto& inLayer: *stairElement)
+		{
+			vertices.Reset();
+			triangles.Reset();
+			normals.Reset();
+			uv0.Reset();
+			tangents.Reset();
+			vertexColors.Reset();
+
+			for (const TArray<FVector>& elementPoly: polys)
+			{
+				FVector stepDelta(elementPoly[0] - polys[0][0]);
+				stairPoints = inLayer.PointsA;
+				for (auto& point: stairPoints)
+				{
+					point += stepDelta;
+				}
+
+				FLayerGeomDef& newLayerGeom = LayerGeometries.Emplace_GetRef(stairPoints, inLayer.Thickness, inLayer.Normal);
+				newLayerGeom.TriangulateMesh(vertices, triangles, normals, uv0, tangents);
+			}
+
+			const FArchitecturalMaterial& material =
+				bProcessingRisers ?
+					Assembly.RiserLayers[materialIndex++].Material : Assembly.TreadLayers[materialIndex++].Material;
+			Mesh->CreateMeshSection_LinearColor(sectionIndex, vertices, triangles, normals, uv0, vertexColors, tangents, true);
+			UModumateFunctionLibrary::SetMeshMaterial(Mesh, material, sectionIndex, &CachedMIDs[sectionIndex]);
+			++sectionIndex;
+		}
+
+		bProcessingRisers = true;
+	}
+
+	return true;
+}
+
 void ADynamicMeshActor::DynamicMeshActorMoved(const FVector& newPosition)
 {
 }

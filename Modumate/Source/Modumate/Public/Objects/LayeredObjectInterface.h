@@ -38,7 +38,8 @@ struct FCachedLayerDimsByType
 	bool HasStartFinish() const;
 	bool HasEndFinish() const;
 
-	void UpdateLayersFromAssembly(const FBIMAssemblySpec &Assembly);
+	void UpdateLayersFromAssembly(const FBIMAssemblySpec& Assembly);
+	void UpdateLayersFromAssembly(const TArray<FBIMLayerSpec>& AssemblyLayers);
 	void UpdateFinishFromObject(const FModumateObjectInstance *MOI);
 };
 

@@ -131,12 +131,12 @@ namespace Modumate
 			}
 
 			if ((minXPointIdx == INDEX_NONE) ||
-				((point | runPlaneX) < (RunPlanePoints[minZPointIdx] | runPlaneX)))
+				((point | runPlaneX) < (RunPlanePoints[minXPointIdx] | runPlaneX)))
 			{
 				minXPointIdx = pointIdx;
 			}
 			if ((maxXPointIdx == INDEX_NONE) ||
-				((point | runPlaneX) > (RunPlanePoints[maxZPointIdx] | runPlaneX)))
+				((point | runPlaneX) > (RunPlanePoints[maxXPointIdx] | runPlaneX)))
 			{
 				maxXPointIdx = pointIdx;
 			}

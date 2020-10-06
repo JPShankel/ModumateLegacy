@@ -55,7 +55,7 @@ FLayerGeomDef::FLayerGeomDef(const TArray<FVector> &Points, float InThickness, c
 
 	Origin = PointsA[0];
 	AxisX = (Points[1] - Points[0]).GetSafeNormal();
-	AxisY = (AxisX ^ Normal).GetSafeNormal();
+	AxisY = (Normal ^ AxisX).GetSafeNormal();
 	bValid = CachePoints2D();
 }
 

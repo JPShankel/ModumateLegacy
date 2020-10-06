@@ -29,10 +29,10 @@ bool FCachedLayerDimsByType::HasEndFinish() const
 	return bHasEndFinish;
 }
 
-void FCachedLayerDimsByType::UpdateLayersFromAssembly(const FBIMAssemblySpec &Assembly)
+void FCachedLayerDimsByType::UpdateLayersFromAssembly(const TArray<FBIMLayerSpec>& AssemblyLayers)
 {
 	// reset layer dimensions
-	NumLayers = Assembly.Layers.Num();
+	NumLayers = AssemblyLayers.Num();
 	StructuralLayerStartIdx = StructuralLayerEndIdx = INDEX_NONE;
 	StructureWidthStart = StructureWidthEnd = 0.0f;
 
@@ -55,7 +55,7 @@ void FCachedLayerDimsByType::UpdateLayersFromAssembly(const FBIMAssemblySpec &As
 	for (int32 layerIdx = 0; layerIdx < NumLayers; ++layerIdx)
 	{
 		LayerOffsets.Add(curThickness);
-		const FBIMLayerSpec &layer = Assembly.Layers[layerIdx];
+		const FBIMLayerSpec &layer = AssemblyLayers[layerIdx];
 		float layerThickness = layer.Thickness.AsWorldCentimeters();
 
 		if ((layer.Function == ELayerFunction::Membrane) && (StructuralLayerStartIdx == INDEX_NONE))
@@ -79,7 +79,7 @@ void FCachedLayerDimsByType::UpdateLayersFromAssembly(const FBIMAssemblySpec &As
 	// Next, traverse backwards for the end layers
 	for (int32 layerIdx = NumLayers - 1; layerIdx >= 0; --layerIdx)
 	{
-		const FBIMLayerSpec &layer = Assembly.Layers[layerIdx];
+		const FBIMLayerSpec &layer = AssemblyLayers[layerIdx];
 		float layerThickness = layer.Thickness.AsWorldCentimeters();
 
 		if ((layer.Function == ELayerFunction::Membrane) && (StructuralLayerEndIdx == INDEX_NONE))
@@ -107,6 +107,11 @@ void FCachedLayerDimsByType::UpdateLayersFromAssembly(const FBIMAssemblySpec &As
 		StructureWidthStart = 0.0f;
 		StructureWidthEnd = TotalUnfinishedWidth;
 	}
+}
+
+void FCachedLayerDimsByType::UpdateLayersFromAssembly(const FBIMAssemblySpec& Assembly)
+{
+	UpdateLayersFromAssembly(Assembly.Layers);
 }
 
 void FCachedLayerDimsByType::UpdateFinishFromObject(const FModumateObjectInstance* MOI)
