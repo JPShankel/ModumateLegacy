@@ -50,10 +50,32 @@ void UEditModelInputHandler::SetupBindings()
 			EKeys::Hyphen
 		};
 
+		FKey NumpadKeys[10] = {
+			EKeys::NumPadZero,
+			EKeys::NumPadOne,
+			EKeys::NumPadTwo,
+			EKeys::NumPadThree,
+			EKeys::NumPadFour,
+			EKeys::NumPadFive,
+			EKeys::NumPadSix,
+			EKeys::NumPadSeven,
+			EKeys::NumPadEight,
+			EKeys::NumPadNine
+		};
+
 		for (int32 i = 0; i < 11; ++i)
 		{
 			FName chordActionName(*FString::Printf(TEXT("InputDigit_%d"), i));
 			FInputActionKeyMapping commandMapping(chordActionName, NumberKeys[i], false, false, false, false);
+			inputSettings->AddActionMapping(commandMapping, true);
+
+			Controller->InputComponent->BindAction<FInputDigitDelegate>(chordActionName, EInputEvent::IE_Pressed, this, &UEditModelInputHandler::HandleDigitKey, i);
+		}
+
+		for (int32 i = 0; i < 10; ++i)
+		{
+			FName chordActionName(*FString::Printf(TEXT("InputDigit_numpad%d"), i));
+			FInputActionKeyMapping commandMapping(chordActionName, NumpadKeys[i], false, false, false, false);
 			inputSettings->AddActionMapping(commandMapping, true);
 
 			Controller->InputComponent->BindAction<FInputDigitDelegate>(chordActionName, EInputEvent::IE_Pressed, this, &UEditModelInputHandler::HandleDigitKey, i);
