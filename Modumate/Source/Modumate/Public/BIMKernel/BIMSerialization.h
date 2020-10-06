@@ -70,6 +70,9 @@ struct MODUMATE_API FCraftingPresetRecord
 
 	UPROPERTY()
 	TArray<FBIMKey> PartSlotNames;
+
+	UPROPERTY()
+	EObjectType ObjectType;
 };
 
 USTRUCT()

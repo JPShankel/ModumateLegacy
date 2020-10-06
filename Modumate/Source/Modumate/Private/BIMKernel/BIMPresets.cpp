@@ -98,6 +98,7 @@ ECraftingResult FBIMPreset::ToDataRecord(FCraftingPresetRecord& OutRecord) const
 	OutRecord.PresetID = PresetID;
 	OutRecord.SlotConfigPresetID = SlotConfigPresetID;
 	OutRecord.CategoryTitle = CategoryTitle;
+	OutRecord.ObjectType = ObjectType;
 	MyTagPath.ToString(OutRecord.MyTagPath);
 
 	for (auto& ptp : ParentTagPaths)
@@ -156,6 +157,7 @@ ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCol
 
 	PresetID = Record.PresetID;
 	SlotConfigPresetID = Record.SlotConfigPresetID;
+	ObjectType = Record.ObjectType;
 
 	Properties.Empty();
 	ChildPresets.Empty();
