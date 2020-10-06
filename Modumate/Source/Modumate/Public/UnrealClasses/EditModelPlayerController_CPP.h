@@ -237,6 +237,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Assembly)
 	float GetDefaultWindowHeightFromDoc() const;
 
+	UFUNCTION(BlueprintCallable, Category = Assembly)
+	float GetDefaultRailingsHeightFromDoc() const;
+
 	// Layer Justification
 	UFUNCTION(BlueprintCallable, Category = Justification)
 	void UpdateDefaultJustificationZ(float newValue);

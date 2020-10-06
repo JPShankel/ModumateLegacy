@@ -201,6 +201,7 @@ int32 UModumateObjectStatics::GetFaceIndexFromTargetHit(const FModumateObjectIns
 	case EObjectType::OTWallSegment:
 	case EObjectType::OTFloorSegment:
 	case EObjectType::OTCeiling:
+	case EObjectType::OTRailSegment:
 	{
 		const FModumateObjectInstance *hostParent = HitObject->GetParentObject();
 		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
@@ -286,6 +287,7 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInsta
 	case EObjectType::OTWallSegment:
 	case EObjectType::OTFloorSegment:
 	case EObjectType::OTCeiling:
+	case EObjectType::OTRailSegment:
 	{
 		const FModumateObjectInstance *hostParent = Host->GetParentObject();
 		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))

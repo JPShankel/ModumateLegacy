@@ -370,8 +370,7 @@ void UMetaPlaneTool::UpdatePendingPlane()
 			case EAxisConstraint::AxisZ:
 			{
 				bPendingPlaneValid = true;
-
-				FVector verticalRectOffset = FVector::UpVector * Controller->GetDefaultWallHeightFromDoc();
+				FVector verticalRectOffset = FVector::UpVector * GetDefaultPlaneHeight();
 
 				PendingPlanePoints = {
 					pendingSegment->Point1,
@@ -445,3 +444,7 @@ bool UMetaPlaneTool::ConstrainHitPoint(FVector &hitPoint)
 	return false;
 }
 
+float UMetaPlaneTool::GetDefaultPlaneHeight() const
+{
+	return Controller->GetDefaultWallHeightFromDoc();
+}

@@ -41,7 +41,7 @@ private:
 
 	void GatherDocumentMetadata();
 	float DefaultWallHeight;
-	float DefaultRailHeight = 100.f;
+	float DefaultRailHeight = 106.68f;
 	float DefaultCabinetHeight = 87.63f;
 	float DefaultDoorHeight = 203.2f;
 	float DefaultDoorWidth = 91.44f;

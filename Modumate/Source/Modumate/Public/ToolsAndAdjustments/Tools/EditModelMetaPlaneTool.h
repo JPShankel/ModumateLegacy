@@ -41,6 +41,8 @@ protected:
 
 	TArray<int32> NewObjIDs;
 
+	virtual float GetDefaultPlaneHeight() const;
+
 public:
 	UMetaPlaneTool(const FObjectInitializer& ObjectInitializer);
 

@@ -1609,6 +1609,11 @@ float AEditModelPlayerController_CPP::GetDefaultWindowHeightFromDoc() const
 	return Document->GetDefaultWindowHeight();
 }
 
+float AEditModelPlayerController_CPP::GetDefaultRailingsHeightFromDoc() const
+{
+	return Document->GetDefaultRailHeight();
+}
+
 void AEditModelPlayerController_CPP::UpdateDefaultJustificationZ(float newValue)
 {
 	Document->SetDefaultJustificationZ(newValue);

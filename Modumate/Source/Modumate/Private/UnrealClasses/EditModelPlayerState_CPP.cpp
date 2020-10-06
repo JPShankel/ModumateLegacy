@@ -909,6 +909,7 @@ bool AEditModelPlayerState_CPP::IsObjectTypeEnabledByViewMode(EObjectType Object
 	case EObjectType::OTFloorSegment:
 	case EObjectType::OTCeiling:
 	case EObjectType::OTRoofFace:
+	case EObjectType::OTRailSegment:
 		return (SelectedViewMode == EEditViewModes::ObjectEditing) || (SelectedViewMode == EEditViewModes::SurfaceGraphs);
 	default:
 		return SelectedViewMode == EEditViewModes::ObjectEditing;

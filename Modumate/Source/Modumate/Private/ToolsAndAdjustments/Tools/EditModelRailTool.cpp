@@ -1,44 +1,16 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #include "ToolsAndAdjustments/Tools/EditModelRailTool.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 URailTool::URailTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-{}
-
-bool URailTool::Activate()
 {
-	return UEditModelToolBase::Activate();
+	ObjectType = EObjectType::OTRailSegment;
+	SetAxisConstraint(EAxisConstraint::AxisZ);
 }
 
-bool URailTool::BeginUse()
+float URailTool::GetDefaultPlaneHeight() const
 {
-	return Super::BeginUse();
+	return Controller->GetDefaultRailingsHeightFromDoc();
 }
-
-bool URailTool::EnterNextStage()
-{
-	return Super::EnterNextStage();
-}
-
-bool URailTool::FrameUpdate()
-{
-	return UEditModelToolBase::FrameUpdate();
-}
-
-bool URailTool::EndUse()
-{
-	return UEditModelToolBase::EndUse();
-}
-
-bool URailTool::AbortUse()
-{
-	return UEditModelToolBase::AbortUse();
-}
-
-bool URailTool::HandleInputNumber(double n)
-{
-	return true;
-}
-
-

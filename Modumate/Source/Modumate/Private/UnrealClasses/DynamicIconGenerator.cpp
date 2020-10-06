@@ -240,6 +240,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 	{
 	case EToolMode::VE_WALL:
 	case EToolMode::VE_FINISH:
+	case EToolMode::VE_RAIL:
 		return SetIconMeshForWallAssembly(Assembly, InRenderTarget);
 	case EToolMode::VE_FLOOR:
 	case EToolMode::VE_ROOF_FACE:
