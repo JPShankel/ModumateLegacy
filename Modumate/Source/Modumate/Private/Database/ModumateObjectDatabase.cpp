@@ -155,14 +155,14 @@ void FModumateDatabase::ReadPresetData()
 	typedef TPair<FBIMTagPath, FAddAssetFunction> FAddAssetPath;
 	TArray<FAddAssetPath> assetTargetPaths;
 
-	FAddAssetFunction addColor = [this](const FBIMPreset &Preset)
+	FAddAssetFunction addColor = [this](const FBIMPreset& Preset)
 	{
 		FString hexValue = Preset.GetProperty(BIMPropertyNames::HexValue);
 		FString colorName = Preset.GetProperty(BIMPropertyNames::Name);
 		AddCustomColor(Preset.PresetID, colorName, hexValue);
 	};
 
-	FAddAssetFunction addMesh = [this](const FBIMPreset &Preset)
+	FAddAssetFunction addMesh = [this](const FBIMPreset& Preset)
 	{
 		FString assetPath = Preset.GetScopedProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
 
@@ -190,7 +190,7 @@ void FModumateDatabase::ReadPresetData()
 		}
 	};
 
-	FAddAssetFunction addRawMaterial = [this](const FBIMPreset &Preset)
+	FAddAssetFunction addRawMaterial = [this](const FBIMPreset& Preset)
 	{
 		FString assetPath = Preset.GetProperty(BIMPropertyNames::AssetPath);
 		if (assetPath.Len() != 0)
@@ -200,7 +200,7 @@ void FModumateDatabase::ReadPresetData()
 		}
 	};
 
-	FAddAssetFunction addMaterial = [this](const FBIMPreset &Preset)
+	FAddAssetFunction addMaterial = [this](const FBIMPreset& Preset)
 	{
 		FBIMKey rawMaterial;
 		for (auto& cp : Preset.ChildPresets)
@@ -225,7 +225,7 @@ void FModumateDatabase::ReadPresetData()
 		}
 	};
 
-	FAddAssetFunction addProfile = [this](const FBIMPreset &Preset)
+	FAddAssetFunction addProfile = [this](const FBIMPreset& Preset)
 	{
 		FString assetPath = Preset.GetProperty(BIMPropertyNames::AssetPath);
 		if (assetPath.Len() != 0)
@@ -233,6 +233,13 @@ void FModumateDatabase::ReadPresetData()
 			FString name = Preset.GetProperty(BIMPropertyNames::Name);
 			AddSimpleMesh(Preset.PresetID, name, assetPath);
 		}
+	};
+
+	FAddAssetFunction addPattern = [this](const FBIMPreset& Preset)
+	{
+		FLayerPattern newPattern;
+		newPattern.InitFromCraftingPreset(Preset);
+		Patterns.AddData(newPattern);
 	};
 
 	/*
@@ -271,15 +278,17 @@ void FModumateDatabase::ReadPresetData()
 	const FString profileTag = TEXT("Profile");
 	const FString rawMaterialTag = TEXT("RawMaterial");
 	const FString materialTag = TEXT("Material");
+	const FString patternTag = TEXT("Pattern");
 
 	typedef TFunction<void(const FBIMTagPath &TagPath)> FAssetTargetAssignment;
 	TMap<FString, FAssetTargetAssignment> assetTargetMap;
 
-	assetTargetMap.Add(colorTag, [addColor, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addColor)); });
-	assetTargetMap.Add(meshTag, [addMesh, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addMesh)); });
-	assetTargetMap.Add(profileTag, [addProfile, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addProfile)); });
-	assetTargetMap.Add(rawMaterialTag, [addRawMaterial, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addRawMaterial)); });
-	assetTargetMap.Add(materialTag, [addMaterial, &assetTargetPaths](const FBIMTagPath &TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addMaterial)); });
+	assetTargetMap.Add(colorTag, [addColor, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addColor)); });
+	assetTargetMap.Add(meshTag, [addMesh, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addMesh)); });
+	assetTargetMap.Add(profileTag, [addProfile, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addProfile)); });
+	assetTargetMap.Add(rawMaterialTag, [addRawMaterial, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addRawMaterial)); });
+	assetTargetMap.Add(materialTag, [addMaterial, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addMaterial)); });
+	assetTargetMap.Add(patternTag, [addPattern, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addPattern)); });
 
 	typedef TPair<FBIMTagPath, EObjectType> FObjectPathRef;
 	TArray<FObjectPathRef> objectPaths;
@@ -338,15 +347,9 @@ void FModumateDatabase::ReadPresetData()
 		}
 	}
 
-	/*
-	Temp hack: until cabinets and portals are reintroduced, we match the "stubby" representations
-	*/
-	const TArray<TPair<FString, EObjectType>> stubbies = {
-		TPair <FString,EObjectType>(TEXT("4RiggedAssembly-->Door"),EObjectType::OTDoor),
-		TPair <FString,EObjectType>(TEXT("4RiggedAssembly-->Window"),EObjectType::OTWindow),
-		TPair <FString,EObjectType>(TEXT("2Part0Slice-->FF&E"),EObjectType::OTFurniture),
-		TPair <FString,EObjectType>(TEXT("4RiggedAssembly-->CabinetFace"),EObjectType::OTCabinet),
-		TPair <FString,EObjectType>(TEXT("4RiggedAssembly-->Countertop"),EObjectType::OTCountertop) };
+	const TArray<TPair<FString, EObjectType>> stubbies({
+		TPair <FString,EObjectType>(TEXT("2Part0Slice-->FF&E"),EObjectType::OTFurniture)
+	});
 
 	for (auto& stubby : stubbies)
 	{
@@ -391,11 +394,7 @@ void FModumateDatabase::ReadPresetData()
 		// "Stubby" assemblies used for portals are temporary, don't have starter codes, so add 'em all
 		switch (*ot)
 		{
-			case EObjectType::OTDoor:
-			case EObjectType::OTWindow:
 			case EObjectType::OTFurniture:
-			case EObjectType::OTCabinet:
-			case EObjectType::OTCountertop:
 				starters.Add(kvp.Key);
 			break;
 		}
@@ -465,6 +464,11 @@ const Modumate::FRoomConfiguration * FModumateDatabase::GetRoomConfigByKey(const
 const FStaticIconTexture * FModumateDatabase::GetStaticIconTextureByKey(const FBIMKey& Key) const
 {
 	return StaticIconTextures.GetData(Key);
+}
+
+const FLayerPattern* FModumateDatabase::GetLayerByKey(const FBIMKey& Key) const
+{
+	return Patterns.GetData(Key);
 }
 
 void FModumateDatabase::InitPresetManagerForNewDocument(FPresetManager &OutManager) const

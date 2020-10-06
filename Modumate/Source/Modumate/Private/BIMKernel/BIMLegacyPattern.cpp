@@ -1,6 +1,7 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
 #include "BIMKernel/BIMLegacyPattern.h"
+#include "BIMKernel/BIMPresets.h"
 #include "Algo/Transform.h"
 
 using namespace Modumate::Units;
@@ -32,7 +33,6 @@ namespace Modumate
 		const FString TrimProfileNativeSizeX = TEXT("TrimProfile.NativeSizeX");
 		const FString TrimProfileNativeSizeY = TEXT("TrimProfile.NativeSizeY");
 	}
-
 }
 
 void FLayerPatternModule::InitFromCraftingParameters(const Modumate::FModumateFunctionParameterSet &params)
@@ -85,19 +85,29 @@ FPatternModuleTemplate::FPatternModuleTemplate(const FString &DimensionStringsCo
 		(ModuleDefIndex >= 0);
 }
 
-void FLayerPattern::InitFromCraftingParameters(const Modumate::FModumateFunctionParameterSet &params)
+void FLayerPattern::InitFromCraftingPreset(const FBIMPreset& Preset)
 {
-	ModuleCount = params.GetValue(Modumate::CraftingParameters::PatternModuleCount);
-	ParameterizedExtents = params.GetValue(Modumate::CraftingParameters::PatternExtents);
-	ParameterizedThickness = params.GetValue(Modumate::CraftingParameters::PatternThickness);
+	Key = Preset.PresetID;
+	ensureAlways(Preset.TryGetProperty(BIMPropertyNames::ModuleCount, ModuleCount));
 
-	Algo::Transform(
-		params.GetValue(Modumate::CraftingParameters::PatternModuleDimensions).AsStringArray(), 
-		ParameterizedModuleDimensions,
-		[](const FString &modDim)
-		{
-			return FPatternModuleTemplate(modDim);
-		}
-	);
+	FString localName;
+	if (Preset.TryGetProperty(BIMPropertyNames::Name, localName))
+	{
+		DisplayName = FText::FromString(localName);
+	}
+
+	ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Extents, ParameterizedExtents));
+	ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Thickness, ParameterizedThickness));
+
+	int32 moduleIndex = 1;
+	FString modString = FString::Printf(TEXT("Module%dDimensions"), moduleIndex);
+	FString dimParam;
+	while (Preset.TryGetProperty(*modString, dimParam))
+	{
+		ParameterizedModuleDimensions.Add(FPatternModuleTemplate(dimParam));
+		++moduleIndex;
+		modString = FString::Printf(TEXT("Module%dDimensions"), moduleIndex);
+	}
 }
+
 

@@ -44,6 +44,7 @@ public:
 	// TODO: Modules with materials, patterns that reference modules
 	FArchitecturalMaterial Material;
 
+	FLayerPattern Pattern;
 };
 
 /*

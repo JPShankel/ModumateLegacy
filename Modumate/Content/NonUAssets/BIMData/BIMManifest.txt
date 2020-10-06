@@ -4,8 +4,6 @@
 0-04_Profile.csv
 0-05_Mesh.csv
 0-05B_StubbyFFE.csv
-0-05C_StubbyCabinets.csv
-0-05D_StubbyCountertops.csv
 0-06_Slot.csv
 0-10_Dim.csv
 0-10_DimThk.csv
@@ -16,7 +14,6 @@
 0-16_DimWDWtFt.csv
 0-17_DimLWH.csv
 0-18_DimLW.csv
-0-20_LayerPatternStubby.csv
 0-20_2019Patterns.csv
 1-00_Material.csv
 1-10_SlotConfig.csv

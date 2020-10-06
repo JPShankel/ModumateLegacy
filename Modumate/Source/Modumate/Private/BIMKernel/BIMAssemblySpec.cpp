@@ -52,6 +52,27 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 		{
 			continue;
 		}
+		else if (preset->NodeScope == EBIMValueScope::Pattern)
+		{
+			const FLayerPattern* pattern = InDB.GetLayerByKey(preset->PresetID);
+			if (ensureAlways(pattern != nullptr))
+			{
+				switch (currentLayerTarget)
+				{
+				case EBIMPinTarget::Default :
+					Layers.Last().Pattern = *pattern;
+					break;
+				case EBIMPinTarget::Tread:
+					TreadLayers.Last().Pattern = *pattern;
+					break;
+				case EBIMPinTarget::Riser:
+					RiserLayers.Last().Pattern = *pattern;
+					break;
+				default:
+					ensureAlways(false);
+				};
+			}
+		}
 		else if (preset->NodeScope == EBIMValueScope::Assembly)
 		{
 			currentLayerTarget = childAttachment.Target;

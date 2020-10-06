@@ -14,7 +14,7 @@ TG_MyNode+CategoryPath,ToolMode,ObjectType,AssetType,IconType,IconOrientation,To
 0DimWDWtFt,,,,Dimensions,Image,,,,Dimensions,[Dimension.Width]X[Dimension.Depth],
 0DimLWH,,,,Dimensions,Image,,,,Dimensions,[Dimension.Length] x [Dimension.Width] x [Dimension.Height],
 0DimLW,,,,Dimensions,Image,,,,Dimensions,[Dimension.Length] x [Dimension.Width],
-0LayerPattern,,,,Pattern,Flat,,,,Pattern,[Preset.Name],
+0LayerPattern,,,Pattern,Pattern,Flat,,,,Pattern,[Preset.Name],
 1Material,,,Material,Sphere,Vertical,,,,Material,"[RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
 1MaterialUneditable,,,,,,,,,,[Material.Name],
 2Layer0D,,,,Layer,Vertical,,,,Layer,"[Dimension.Thickness] [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]",Include [Preset.ColloquialName] value is not Standard
