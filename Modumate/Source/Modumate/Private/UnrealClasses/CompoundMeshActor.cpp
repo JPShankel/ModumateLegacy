@@ -516,7 +516,12 @@ void ACompoundMeshActor::ResetProcMeshComponents(TArray<UProceduralMeshComponent
 			int32 compIdx = 9 * meshIdx + sliceIdx;
 			if (UProceduralMeshComponent *procMeshComp = ProcMeshComps[compIdx])
 			{
-				if (meshIdx >= maxNumMeshes)
+				if (meshIdx < maxNumMeshes)
+				{
+					procMeshComp->SetVisibility(false);
+					procMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				}
+				else
 				{
 					procMeshComp->DestroyComponent();
 					ProcMeshComps[compIdx] = nullptr;
