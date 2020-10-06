@@ -74,7 +74,7 @@ public:
 	float NodeSplineBezierEndPercentage = 0.55f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float NodeHorizontalSpacing = 400.f;
+	float NodeHorizontalSpacing = 80.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float NodeVerticalSpacing = 20.f;
@@ -86,6 +86,18 @@ public:
 	// The gap between this node and the add button, if adding is allowed from its parent node
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AddButtonGapFromNode = 10.f;
+
+	// Starting position for the first slot item, offset from top of the node
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SlotListStartOffset = 50.f;
+
+	// Starting position for the first slot item, offset from top of the node when it is dirty
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SlotListStartOffsetDirty = 150.f;
+
+	// Height of slot item
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SlotListItemHeight = 16.f;
 
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *Controller;
@@ -104,6 +116,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockNode> BIMBlockNodeClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UBIMBlockNode> BIMBlockRiggedNodeClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockAddLayer> BIMAddLayerClass;

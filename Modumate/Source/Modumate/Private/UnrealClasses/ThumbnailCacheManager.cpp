@@ -105,23 +105,6 @@ UTexture2D* UThumbnailCacheManager::GetCachedThumbnail(FName ThumbnailKey)
 	return CachedThumbnailTextures.FindRef(ThumbnailKey);
 }
 
-FName UThumbnailCacheManager::GetThumbnailKeyForShoppingItemAndTool(const FBIMKey &Key, EToolMode ToolMode, UObject *WorldContextObject)
-{
-	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
-	const FBIMAssemblySpec *assembly = gameState ? gameState->Document.PresetManager.GetAssemblyByKey(ToolMode, Key) : nullptr;
-
-	if (assembly)
-	{
-		return GetThumbnailKeyForAssembly(*assembly);
-	}
-	else
-	{
-		return NAME_None;
-	}
-	return NAME_None;
-}
-
 FName UThumbnailCacheManager::GetThumbnailKeyForAssembly(const FBIMAssemblySpec &Assembly)
 {
 	return GetThumbnailKeyForPreset(Assembly.UniqueKey());
@@ -156,13 +139,13 @@ FString UThumbnailCacheManager::GetThumbnailCachePathForKey(FName ThumbnailKey)
 	}
 }
 
-UTexture2D* UThumbnailCacheManager::GetCachedThumbnailFromShoppingItemAndTool(const FBIMKey& Key, EToolMode ToolMode, UObject *WorldContextObject)
+UTexture2D* UThumbnailCacheManager::GetCachedThumbnailFromPresetKey(const FBIMKey& PresetKey, UObject *WorldContextObject)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	UModumateGameInstance *modGameInst = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
 	UThumbnailCacheManager *thumbnailCacheMan = modGameInst ? modGameInst->ThumbnailCacheManager : nullptr;
 
-	FName thumbnailKey = GetThumbnailKeyForShoppingItemAndTool(Key, ToolMode, WorldContextObject);
+	FName thumbnailKey = GetThumbnailKeyForPreset(PresetKey);
 
 	if (thumbnailCacheMan && !thumbnailKey.IsNone())
 	{
@@ -172,13 +155,13 @@ UTexture2D* UThumbnailCacheManager::GetCachedThumbnailFromShoppingItemAndTool(co
 	return nullptr;
 }
 
-bool UThumbnailCacheManager::SaveThumbnailFromShoppingItemAndTool(UTexture *ThumbnailTexture, const FBIMKey& Key, EToolMode ToolMode, UTexture2D*& OutSavedTexture, UObject *WorldContextObject)
+bool UThumbnailCacheManager::SaveThumbnailFromPresetKey(UTexture *ThumbnailTexture, const FBIMKey& PresetKey, UTexture2D*& OutSavedTexture, UObject *WorldContextObject)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	UModumateGameInstance *modGameInst = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
 	UThumbnailCacheManager *thumbnailCacheMan = modGameInst ? modGameInst->ThumbnailCacheManager : nullptr;
 
-	FName thumbnailKey = GetThumbnailKeyForShoppingItemAndTool(Key, ToolMode, WorldContextObject);
+	FName thumbnailKey = GetThumbnailKeyForPreset(PresetKey);
 
 	if (thumbnailCacheMan && !thumbnailKey.IsNone())
 	{

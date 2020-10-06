@@ -49,6 +49,8 @@ public:
 	struct FAttachedChildGroup
 	{
 		FChildAttachmentType SetType;
+		FBIMPreset::FPartSlot PartSlot;
+		bool IsPart() const { return !PartSlot.PartPreset.IsNone(); }
 		TArray<FBIMCraftingTreeNodeWeakPtr> Children;
 	};
 
@@ -72,11 +74,13 @@ public:
 	ECraftingResult FromDataRecord(FBIMCraftingTreeNodePool &InstancePool, const FBIMPresetCollection &PresetCollection, const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets);
 
 	bool CanRemoveChild(const FBIMCraftingTreeNodeSharedPtrConst &Child) const;
+	bool CanReorderChild(const FBIMCraftingTreeNodeSharedPtrConst &Child) const;
 
 	ECraftingResult DetachSelfFromParent();
 
 	ECraftingResult AttachChild(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child);
 	ECraftingResult AttachChildAt(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child, int32 PinSetIndex, int32 PinSetPosition);
+	ECraftingResult AttachPartChild(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child, const FName& PartName);
 	ECraftingResult FindChild(int32 ChildID, int32 &OutPinSetIndex, int32 &OutPinSetPosition);
 	ECraftingResult FindOtherChildrenOnPin(TArray<int32> &OutChildIDs);
 	ECraftingResult GatherChildrenInOrder(TArray<int32> &OutChildIDs);

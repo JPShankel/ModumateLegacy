@@ -107,6 +107,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
 	float ProfileIconScaleFactor = 24.f;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
+	float StairIconScaleFactor = 24.f;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -131,7 +134,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	bool SetIconMeshForAssemblyByToolMode(const FBIMKey& AsmKey, EToolMode Mode, UMaterialInterface*& OutMaterial);
+	bool SetIconMeshForAssembly(const FBIMKey& AsmKey, UMaterialInterface*& OutMaterial);
 	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FBIMKey& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, int32 NodeID);
 	bool GetSavedIconFromPreset(const FBIMKey& PresetID, UTexture*& OutTexture);
 	UMaterialInterface* CreateMaterialForIconTexture(const FBIMKey& PresetID, UTexture* InTexture);
@@ -139,14 +142,17 @@ public:
 
 	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForPortalAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForPortalAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, EToolMode mode, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForStairAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 
 	bool SetIconMeshForRawMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForColor(const FBIMKey& ColorKey, UMaterialInterface*& OutMaterial);
 	bool SetIconMeshForProfile(const FBIMKey& ProfileKey, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForMesh(const FBIMKey& MeshKey, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForPart(bool UseDependentPreset, const FBIMKey& PresetID, int32 NodeID, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForMaterial(bool UseDependentPreset, const FBIMKey& PresetID, int32 NodeID, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForModule(bool UseDependentPreset, const FBIMKey& PresetID, int32 NodeID, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForLayerNodeID(int32 NodeID, UTextureRenderTarget2D* InRenderTarget);

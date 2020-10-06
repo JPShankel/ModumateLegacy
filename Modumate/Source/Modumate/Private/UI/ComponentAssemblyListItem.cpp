@@ -77,6 +77,12 @@ void UComponentAssemblyListItem::UpdateItemType(EComponentListItemType NewItemTy
 		ButtonEdit->SetVisibility(ESlateVisibility::Collapsed);
 		ButtonConfirm->SetVisibility(ESlateVisibility::Visible);
 		break;
+	case EComponentListItemType::SwapDesignerPreset:
+		ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonEdit->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonConfirm->SetVisibility(ESlateVisibility::Visible);
+		break;
 	}
 }
 
@@ -121,7 +127,7 @@ bool UComponentAssemblyListItem::BuildFromAssembly()
 
 void UComponentAssemblyListItem::OnModumateButtonMainReleased()
 {
-	if (EMPlayerController && EMPlayerController->EMPlayerState)
+	if (ItemType == EComponentListItemType::AssemblyListItem  && EMPlayerController && EMPlayerController->EMPlayerState)
 	{
 		EMPlayerController->EMPlayerState->SetAssemblyForToolMode(ToolMode, AsmKey);
 	}
@@ -240,6 +246,7 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 	switch (ItemType)
 	{
 	case EComponentListItemType::AssemblyListItem:
+	case EComponentListItemType::SwapListItem:
 		ComponentPresetItem->MainText->ChangeText(FText::FromName(AsmName));
 		BuildFromAssembly();
 		break;

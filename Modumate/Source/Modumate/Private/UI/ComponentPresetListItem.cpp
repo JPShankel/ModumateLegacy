@@ -33,7 +33,7 @@ bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerCo
 		return false;
 	}
 	UMaterialInterface* iconMat = nullptr;
-	bool result = Controller->DynamicIconGenerator->SetIconMeshForAssemblyByToolMode(AsmKey, mode, iconMat);
+	bool result = Controller->DynamicIconGenerator->SetIconMeshForAssembly(AsmKey, iconMat);
 	if (result)
 	{
 		IconImage->SetBrushFromMaterial(iconMat);

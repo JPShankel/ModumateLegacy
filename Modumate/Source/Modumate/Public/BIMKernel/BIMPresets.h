@@ -144,7 +144,6 @@ public:
 
 	EObjectType GetPresetObjectType(const FBIMKey &PresetID) const;
 
-
 	ECraftingResult ToDataRecords(TArray<FCraftingPresetRecord> &OutRecords) const;
 	ECraftingResult FromDataRecords(const TArray<FCraftingPresetRecord> &Record);
 

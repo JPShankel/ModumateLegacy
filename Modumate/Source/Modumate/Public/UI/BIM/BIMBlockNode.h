@@ -48,12 +48,15 @@ protected:
 	FVector2D LastMousePosition = FVector2D::ZeroVector;
 	bool DragReset = true;
 	FVector2D PreDragCanvasPosition = FVector2D::ZeroVector;
-	ENodeWidgetSwitchState NodeSwitchState = ENodeWidgetSwitchState::None;
 
 public:
 	// Size of node, should be constant regardless of dirty/collapse state
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
 	float NodeWidth = 312.f;
+
+	// Similar to NodeWidth, but for nodes with slots (parts)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
+	float SlotNodeWidth = 442.f;
 
 	// Size of the tab on top of the node during dirty state
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
@@ -86,49 +89,55 @@ public:
 	FKey ToggleCollapseKey = EKeys::LeftMouseButton;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UImage *IconImage;
+	class UImage* IconImage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UImage *GrabHandleImage;
+	class UImage* GrabHandleImage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UComponentPresetListItem *ComponentPresetListItem;
+	class UComponentPresetListItem* ComponentPresetListItem;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonSwapCollapsed;
+	class UModumateButtonUserWidget* ButtonSwapCollapsed;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonSwapExpanded;
+	class UModumateButtonUserWidget* ButtonSwapExpanded;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonDeleteExpanded;
+	class UModumateButtonUserWidget* ButtonDeleteExpanded;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonDeleteCollapsed;
+	class UModumateButtonUserWidget* ButtonDeleteCollapsed;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
-	class UVerticalBox *VerticalBoxProperties;
+	class UVerticalBox* VerticalBoxProperties;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UBIMBlockNodeDirtyTab *BIMBlockNodeDirty;
+	class UBIMBlockNodeDirtyTab* BIMBlockNodeDirty;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UBorder *DirtyStateBorder;
+	class UBorder* DirtyStateBorder;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UWidgetSwitcher *NodeSwitcher;
+	class UWidgetSwitcher* NodeSwitcher;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
-	class UButton *Button_Debug;
+	class UButton* Button_Debug;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateTextBlockUserWidget *TitleNodeCollapsed;
+	class UModumateTextBlockUserWidget* TitleNodeCollapsed;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateTextBlockUserWidget *TitleNodeExpanded;
+	class UModumateTextBlockUserWidget* TitleNodeExpanded;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateTextBlockUserWidget* Preset_Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockUserEnterable> BIMBlockUserEnterableClass;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
+	class UBIMBlockSlotList* BIMBlockSlotList;
 
 	UPROPERTY()
 	class UMaterialInterface* IconMaterial;
@@ -142,6 +151,8 @@ public:
 	bool IsKingNode = false;
 	bool NodeDirty = false;
 	bool NodeCollapse = true;
+	bool bNodeHasSlotPart = false;
+	ENodeWidgetSwitchState NodeSwitchState = ENodeWidgetSwitchState::None;
 
 	UFUNCTION()
 	void PerformDrag();
@@ -163,9 +174,10 @@ public:
 
 	void UpdateNodeDirty(bool NewDirty);
 	void UpdateNodeCollapse(bool NewCollapse, bool AllowAutoArrange = false);
-	bool BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCraftingTreeNodeSharedPtr &Node);
+	bool BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCraftingTreeNodeSharedPtr &Node, bool bAsSlot);
 	void UpdateNodeSwitchState(ENodeWidgetSwitchState NewState);
 	void BeginDrag();
+	void SetNameForNode(const FString& NewName);
 
 	UFUNCTION(BlueprintPure)
 	FVector2D GetEstimatedNodeSize();

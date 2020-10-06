@@ -18,6 +18,8 @@
 #include "Components/Sizebox.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
+#include "UI/BIM/BIMBlockSlotList.h"
+#include "UI/BIM/BIMBlockSlotListItem.h"
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -155,6 +157,7 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FBIMKey& PresetID)
 	{
 		return false;
 	}
+
 	UpdateBIMDesigner();
 	return true;
 }
@@ -198,7 +201,18 @@ void UBIMDesigner::UpdateBIMDesigner()
 
 	for (const FBIMCraftingTreeNodeSharedPtr& curInstance : InstancePool.GetInstancePool())
 	{
-		UBIMBlockNode *newBlockNode = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockNode>(BIMBlockNodeClass);
+		// Create a normal node or a rigged assembly node, depends on whether any of its children have parts
+		bool bChildrenHasPart = false;
+		for (const auto& curChild : curInstance->AttachedChildren)
+		{
+			if (curChild.IsPart())
+			{
+				bChildrenHasPart = true;
+				break;
+			}
+		}
+		TSubclassOf<UBIMBlockNode> nodeWidgetClass = bChildrenHasPart ? BIMBlockRiggedNodeClass : BIMBlockNodeClass;
+		UBIMBlockNode* newBlockNode = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockNode>(nodeWidgetClass);
 		if (newBlockNode)
 		{
 			if (!curInstance->ParentInstance.IsValid()) // assume instance without parent is king node
@@ -207,7 +221,7 @@ void UBIMDesigner::UpdateBIMDesigner()
 				RootNode = newBlockNode;
 				// Do other kingly things, maybe auto focus when no other node is selected
 			}
-			newBlockNode->BuildNode(this, curInstance);
+			newBlockNode->BuildNode(this, curInstance, bChildrenHasPart);
 			BIMBlockNodes.Add(newBlockNode);
 			CanvasPanelForNodes->AddChildToCanvas(newBlockNode);
 			IdToNodeMapUnSorted.Add(curInstance->GetInstanceID(), newBlockNode);
@@ -282,6 +296,7 @@ void UBIMDesigner::AutoArrangeNodes()
 
 	TMap<class UBIMBlockNode*, int32> nodeColumnMap;
 	TMap<class UBIMBlockNode*, int32> nodeRowMap;
+	TMap<int32, float> columnWidthMap;
 
 	// Assign nodes to columns
 	for (auto& curItem : IdToNodeMap)
@@ -309,6 +324,10 @@ void UBIMDesigner::AutoArrangeNodes()
 			}
 		}
 		nodeColumnMap.Add(curItem.Value, column);
+		// Assign column width based on the node's width
+		float curNodeWidth = curItem.Value->GetEstimatedNodeSize().X;
+		float curColumnWidth = columnWidthMap.FindRef(column);
+		columnWidthMap.Add(column, FMath::Max(curColumnWidth, curNodeWidth));
 	}
 
 	// Assign nodes to row and NodeCoordinateMap(in rows and columns)
@@ -369,7 +388,13 @@ void UBIMDesigner::AutoArrangeNodes()
 					curRow++;
 				}
 			}
-			screenPosNodeMap.Add(curNode, FVector2D(mapColumn * NodeHorizontalSpacing, curNodeY));
+			// Find x position by column width
+			float posX = 0.f;
+			for (int32 i = 0; i < mapColumn; ++i)
+			{
+				posX += columnWidthMap.FindRef(i) + NodeHorizontalSpacing;
+			}
+			screenPosNodeMap.Add(curNode, FVector2D(posX, curNodeY));
 			if (curNodeY > maxCanvasHeight)
 			{
 				maxCanvasHeight = curNodeY;
@@ -445,6 +470,16 @@ void UBIMDesigner::DrawConnectSplineForNodes(const FPaintContext& context, class
 	FVector2D endNodeSize = EndNode->GetEstimatedNodeSize();
 
 	FVector2D startNodePos = canvasSlotStart->GetPosition() + FVector2D(startNodeSize.X, startNodeSize.Y / 2.f);
+	// If there's a slot item connect to the node, use slot item's position instead of node's mid position
+	if (StartNode->bNodeHasSlotPart && StartNode->NodeSwitchState == ENodeWidgetSwitchState::Expanded)
+	{
+		UBIMBlockSlotListItem* slotListItem = StartNode->BIMBlockSlotList->NodeIDToSlotMapItem.FindRef(EndNode->ID);
+		if (slotListItem)
+		{
+			float slotOffset = StartNode->NodeDirty ? SlotListStartOffsetDirty : SlotListStartOffset;
+			startNodePos.Y = canvasSlotStart->GetPosition().Y + slotOffset + (slotListItem->SlotID * SlotListItemHeight);
+		}
+	}
 	FVector2D endNodePos = canvasSlotEnd->GetPosition() + FVector2D(0.f, endNodeSize.Y / 2.f);
 
 	FVector2D startPoint = (startNodePos * GetCurrentZoomScale()) + canvasSlotScaleBox->GetPosition();
@@ -651,7 +686,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 	if (!node->ParentInstance.IsValid())
 	{
 		UTexture2D* outTexture;
-		UThumbnailCacheManager::SaveThumbnailFromShoppingItemAndTool(RootNode->IconTexture, node->PresetID, UModumateTypeStatics::ToolModeFromObjectType(CraftingAssembly.ObjectType), outTexture, this);
+		UThumbnailCacheManager::SaveThumbnailFromPresetKey(RootNode->IconTexture, node->PresetID, outTexture, this);
 
 		Controller->GetDocument()->PresetManager.UpdateProjectAssembly(CraftingAssembly);
 		Controller->EditModelUserWidget->RefreshAssemblyList();

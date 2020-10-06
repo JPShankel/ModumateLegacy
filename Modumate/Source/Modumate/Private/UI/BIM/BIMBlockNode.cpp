@@ -22,6 +22,7 @@
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "UI/BIM/BIMBlockNodeDirtyTab.h"
+#include "UI/BIM/BIMBlockSlotList.h"
 
 UBIMBlockNode::UBIMBlockNode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -184,10 +185,11 @@ void UBIMBlockNode::UpdateNodeCollapse(bool NewCollapse, bool AllowAutoArrange)
 	}
 }
 
-bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCraftingTreeNodeSharedPtr &Node)
+bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCraftingTreeNodeSharedPtr &Node, bool bAsSlot)
 {
 	ParentBIMDesigner = OuterBIMDesigner;
 	PresetID = Node->PresetID;
+	bNodeHasSlotPart = bAsSlot;
 	TitleNodeCollapsed->ChangeText(FText::FromString(Node->CategoryTitle));
 	TitleNodeExpanded->ChangeText(FText::FromString(Node->CategoryTitle));
 
@@ -239,10 +241,38 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 			if (Node->InstanceProperties.TryGetProperty(value.Scope, value.Name, valueString))
 			{
 				newEnterable->BuildEnterableFieldFromProperty(ParentBIMDesigner, ID, value.Scope, value.Name, valueString);
+				// If this is a "Name" property, apply its value to the node's name text
+				if (curProperty.Key == BIMPropertyNames::Name.ToString())
+				{
+					ComponentPresetListItem->MainText->ChangeText(FText::FromString(valueString));
+				}
 			}
 
 			VerticalBoxProperties->AddChildToVerticalBox(newEnterable);
 		}
+	}
+
+	// Additional panel for this node if it is part of rigged assembly
+	if (bNodeHasSlotPart)
+	{
+		if (BIMBlockSlotList != nullptr)
+		{
+			BIMBlockSlotList->BuildSlotAssignmentList(Node);
+		}
+	}
+
+	// Remove delete button if removal of this node is not allow
+	if (bNodeHasSlotPart || !Node->ParentInstance.IsValid() || !Node->ParentInstance.Pin()->CanRemoveChild(Node))
+	{
+		ButtonDeleteCollapsed->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonDeleteExpanded->SetVisibility(ESlateVisibility::Collapsed);
+	}
+
+	// Remove grab handle if reordering is not allow
+	if (bNodeHasSlotPart || !Node->ParentInstance.IsValid() || !Node->ParentInstance.Pin()->CanReorderChild(Node))
+	{
+		GrabHandleImage->SetVisibility(ESlateVisibility::Collapsed);
+		ComponentPresetListItem->GrabHandleImage->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
 	bool bCaptureSuccess = false;
@@ -308,5 +338,7 @@ FVector2D UBIMBlockNode::GetEstimatedNodeSize()
 		estimatedSize += BottomPadding;
 	}
 
-	return FVector2D(NodeWidth, estimatedSize);
+	float outWidth = bNodeHasSlotPart ? SlotNodeWidth : NodeWidth;
+
+	return FVector2D(outWidth, estimatedSize);
 }

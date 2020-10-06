@@ -206,22 +206,31 @@ Note: we don't empty the container because the function is recursive
 */
 ECraftingResult FBIMPresetCollection::GetDependentPresets(const FBIMKey& PresetID, TArray<FBIMKey>& OutPresets) const
 {
-	const FBIMPreset *preset = Presets.Find(PresetID);
-	if (preset == nullptr)
+	TArray<FBIMKey> presetStack;
+	presetStack.Push(PresetID);
+	while (presetStack.Num() > 0)
 	{
-		return ECraftingResult::Error;
-	}
-
-	for (auto &childNode : preset->ChildPresets)
-	{
-		/*
-		Only recurse if we haven't processed this ID yet
-		Even if the same preset appears multiple times in a tree, its children will always be the same
-		*/
-		if (!OutPresets.Contains(childNode.PresetID))
+		FBIMKey presetID = presetStack.Pop();
+		const FBIMPreset *preset = Presets.Find(presetID);
+		if (!ensureAlways(preset != nullptr))
 		{
-			OutPresets.Add(childNode.PresetID);
-			GetDependentPresets(childNode.PresetID, OutPresets);
+			return ECraftingResult::Error;
+		}
+
+		for (auto &childNode : preset->ChildPresets)
+		{
+			OutPresets.AddUnique(childNode.PresetID);
+			presetStack.Push(childNode.PresetID);
+		}
+		if (!preset->SlotConfigPresetID.IsNone())
+		{
+			OutPresets.AddUnique(preset->SlotConfigPresetID);
+			presetStack.Push(preset->SlotConfigPresetID);
+		}
+		for (auto& part : preset->PartSlots)
+		{
+			OutPresets.AddUnique(part.PartPreset);
+			presetStack.Push(part.PartPreset);
 		}
 	}
 	return ECraftingResult::Success;
@@ -425,12 +434,10 @@ ECraftingResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModum
 	GetDependentPresets(LayerPresetKey, outpresetKeys);
 	for (auto& curPreset : outpresetKeys)
 	{
+		const FBIMPreset* original = Presets.Find(curPreset);
+		if (ensureAlways(original != nullptr))
 		{
-			const FBIMPreset* original = Presets.Find(curPreset);
-			if (ensureAlways(original != nullptr))
-			{
-				previewCollection.Presets.Add(original->PresetID, *original);
-			}
+			previewCollection.Presets.Add(original->PresetID, *original);
 		}
 	}
 

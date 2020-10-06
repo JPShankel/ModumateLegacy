@@ -428,13 +428,18 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 		return false;
 	}
 
-	TArray<FBIMKey> layeredAssemblies,materialColorPresets,layerPresets;
+	TArray<FBIMKey> layeredAssemblies,materialColorPresets,layerPresets,riggedPresets;
 	FName layeredType(TEXT("4LayeredAssembly"));
 	FName layer0Type(TEXT("2Layer0D"));
 	FName materialColorType(TEXT("1Material"));
+	FName riggedType(TEXT("3RiggedAssembly"));
 
 	for (auto &kvp : presetCollection.Presets)
 	{
+		if (kvp.Value.NodeType == riggedType)
+		{
+			riggedPresets.Add(kvp.Key);
+		}
 		if (kvp.Value.NodeType == layeredType)
 		{
 			kvp.Value.ObjectType = EObjectType::OTWallSegment;
@@ -511,6 +516,26 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	if (!ensureAlways(rootNode->GetPresetStatus(presetCollection) == EBIMPresetEditorNodeStatus::UpToDate))
 	{
 		return false;
+	}
+
+
+	for (auto& riggedPreset : riggedPresets)
+	{
+		if (!ensureAlways(testPreset(presetCollection, riggedPreset)))
+		{
+			return false;
+		}
+
+		if (!ensureAlways(instancePool.InitFromPreset(presetCollection, riggedPreset, rootNode) == ECraftingResult::Success))
+		{
+			return false;
+		}
+
+		if (!ensureAlways(rootNode->GetPresetStatus(presetCollection) == EBIMPresetEditorNodeStatus::UpToDate))
+		{
+			rootNode->GetPresetStatus(presetCollection);
+			return false;
+		}
 	}
 
 	return true;
