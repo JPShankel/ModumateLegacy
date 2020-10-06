@@ -84,8 +84,8 @@ bool USurfaceGraphTool::BeginUse()
 		auto pendingSegment = dimensionActor->GetLineActor();
 		pendingSegment->Point1 = HitLocation;
 		pendingSegment->Point2 = HitLocation;
-		pendingSegment->Color = FColor::White;
-		pendingSegment->Thickness = 2;
+		pendingSegment->Color = FColor::Black;
+		pendingSegment->Thickness = 3;
 	}
 
 	return true;
