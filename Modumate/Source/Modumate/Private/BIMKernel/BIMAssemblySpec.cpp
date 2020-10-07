@@ -547,6 +547,7 @@ ECraftingResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, 
 	{
 	case EObjectType::OTTrim:
 	case EObjectType::OTStructureLine:
+	case EObjectType::OTMullion:
 		return MakeExtrudedAssembly(InDB);
 
 	case EObjectType::OTFloorSegment:

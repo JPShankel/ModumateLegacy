@@ -2757,9 +2757,11 @@ void FModumateDocument::DisplayDebugInfo(UWorld* world)
 	displayObjectCount(EObjectType::OTRoofFace, TEXT("OTRoof"));
 	displayObjectCount(EObjectType::OTDoor, TEXT("OTDoor"));
 	displayObjectCount(EObjectType::OTWindow, TEXT("OTWindow"));
+	displayObjectCount(EObjectType::OTSystemPanel, TEXT("OTSystemPanel"));
 	displayObjectCount(EObjectType::OTFurniture, TEXT("OTFurniture"));
 	displayObjectCount(EObjectType::OTCabinet, TEXT("OTCabinet"));
 	displayObjectCount(EObjectType::OTStaircase, TEXT("OTStaircase"));
+	displayObjectCount(EObjectType::OTMullion, TEXT("OTMullion"));
 	displayObjectCount(EObjectType::OTFinish, TEXT("OTFinish"));
 	displayObjectCount(EObjectType::OTGroup, TEXT("OTGroup"));
 	displayObjectCount(EObjectType::OTRoom, TEXT("OTRoom"));

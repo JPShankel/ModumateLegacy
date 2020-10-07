@@ -198,7 +198,7 @@ bool UStructureLineTool::FrameUpdate()
 		{
 			hitMOI = GameState->Document.ObjectFromActor(cursor.Actor);
 
-			if (hitMOI && (hitMOI->GetObjectType() == EObjectType::OTStructureLine))
+			if (hitMOI && (hitMOI->GetObjectType() == UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()) ))
 			{
 				hitMOI = hitMOI->GetParentObject();
 			}
@@ -250,7 +250,7 @@ void UStructureLineTool::SetAssemblyKey(const FBIMKey& InAssemblyKey)
 {
 	Super::SetAssemblyKey(InAssemblyKey);
 
-	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(EObjectType::OTStructureLine);
+	EToolMode toolMode = GetToolMode();
 	const FBIMAssemblySpec *assembly = GameState.IsValid() ?
 		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, InAssemblyKey) : nullptr;
 
@@ -293,7 +293,7 @@ void UStructureLineTool::SetTargetID(int32 NewTargetID)
 			TArray<FModumateObjectInstance*> children = targetObj->GetChildObjects();
 			for (FModumateObjectInstance *child : children)
 			{
-				if (child && (child->GetObjectType() == EObjectType::OTStructureLine))
+				if (child && (child->GetObjectType() == UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()) ))
 				{
 					newTargetStructureLineID = child->ID;
 					break;
@@ -433,7 +433,8 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 		if (parentEdgeObj && (parentEdgeObj->GetObjectType() == EObjectType::OTMetaEdge))
 		{
 			// TODO: fill in custom instance data for stairs, once we define and rely on it
-			FMOIStateData stateData(GameState->Document.GetNextAvailableID(), EObjectType::OTStructureLine, targetEdgeID);
+			FMOIStateData stateData(GameState->Document.GetNextAvailableID(),
+				UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), targetEdgeID);
 			stateData.AssemblyKey = AssemblyKey;
 
 			if (!structureLineDelta.IsValid())
@@ -474,3 +475,6 @@ void UStructureLineTool::ResetState()
 	ObjUp = FVector::ZeroVector;
 }
 
+UMullionTool::UMullionTool(const FObjectInitializer& ObjectInitializer)
+	: UStructureLineTool(ObjectInitializer)
+{ }

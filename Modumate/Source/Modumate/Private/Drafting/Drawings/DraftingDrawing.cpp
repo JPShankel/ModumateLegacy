@@ -187,7 +187,8 @@ namespace Modumate {
 		TArray<const FModumateObjectInstance*> beyondCutObjects(Doc->GetObjectsOfType({
 			EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTCeiling,
 			EObjectType::OTRoofFace, EObjectType::OTWindow, EObjectType::OTDoor,
-			EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTRailSegment
+			EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTRailSegment,
+			EObjectType::OTSystemPanel, EObjectType::OTMullion
 			}));
 
 		for (auto object: beyondCutObjects)

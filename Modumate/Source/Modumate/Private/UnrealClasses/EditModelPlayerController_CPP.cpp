@@ -441,6 +441,8 @@ void AEditModelPlayerController_CPP::CreateTools()
 	RegisterTool(CreateTool<UDrawingTool>());
 	RegisterTool(CreateTool<UGraph2DTool>());
 	RegisterTool(CreateTool<USurfaceGraphTool>());
+	RegisterTool(CreateTool<UPanelTool>());
+	RegisterTool(CreateTool<UMullionTool>());
 }
 
 void AEditModelPlayerController_CPP::RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool)

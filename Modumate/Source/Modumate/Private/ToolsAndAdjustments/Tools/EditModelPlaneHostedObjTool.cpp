@@ -428,3 +428,10 @@ UCountertopTool::UCountertopTool(const FObjectInitializer& ObjectInitializer)
 	ObjectType = EObjectType::OTCountertop;
 	SetAxisConstraint(EAxisConstraint::AxesXY);
 }
+
+UPanelTool::UPanelTool(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	ObjectType = EObjectType::OTSystemPanel;
+	SetAxisConstraint(EAxisConstraint::AxisZ);
+}

@@ -25,6 +25,8 @@ EToolCategories UModumateTypeStatics::GetToolCategory(EToolMode ToolMode)
 	case EToolMode::VE_RAIL:
 	case EToolMode::VE_ROOF_FACE:
 	case EToolMode::VE_STRUCTURELINE:
+	case EToolMode::VE_PANEL:
+	case EToolMode::VE_MULLION:
 		return EToolCategories::Separators;
 	case EToolMode::VE_PLACEOBJECT:
 	case EToolMode::VE_CABINET:
@@ -70,6 +72,8 @@ EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 	case EToolMode::VE_STRUCTURELINE: return EObjectType::OTStructureLine;
 	case EToolMode::VE_DRAWING: return EObjectType::OTDrawing;
 	case EToolMode::VE_SURFACEGRAPH: return EObjectType::OTSurfaceGraph;
+	case EToolMode::VE_PANEL: return EObjectType::OTSystemPanel;
+	case EToolMode::VE_MULLION: return EObjectType::OTMullion;
 	}
 	return EObjectType::OTUnknown;
 }
@@ -105,6 +109,8 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTStructureLine: return EToolMode::VE_STRUCTURELINE;
 	case EObjectType::OTDrawing: return EToolMode::VE_DRAWING;
 	case EObjectType::OTRoofPerimeter: return EToolMode::VE_ROOF_PERIMETER;
+	case EObjectType::OTSystemPanel: return EToolMode::VE_PANEL;
+	case EObjectType::OTMullion: return EToolMode::VE_MULLION;
 	case EObjectType::OTUnknown: return EToolMode::VE_NONE;
 	};
 	return EToolMode::VE_NONE;
@@ -166,6 +172,10 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTStructureLines", "Beams & Columns") : LOCTEXT("OTStructureLine", "Beam/Column");
 	case EObjectType::OTDrawing:
 		return bPlural ? LOCTEXT("OTDrawings", "Drawings") : LOCTEXT("OTDrawing", "Drawing");
+	case EObjectType::OTSystemPanel:
+		return bPlural ? LOCTEXT("OTSystemPanels", "System Panels") : LOCTEXT("OTSystemPanel", "System	Panel");
+	case EObjectType::OTMullion:
+		return bPlural ? LOCTEXT("OTMullions", "Mullions") : LOCTEXT("OTMullion", "Mullion");
 	case EObjectType::OTUnknown:
 	default:
 		return bPlural ? LOCTEXT("OTUnknowns", "Unknowns") : LOCTEXT("OTUnknown", "Unknown");

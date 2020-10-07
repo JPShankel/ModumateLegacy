@@ -63,6 +63,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *Button_Railing;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *Button_SystemPanel;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *Button_Mullion;
+
 	UFUNCTION(BlueprintCallable)
 	void ChangeToSeparatorToolsButtons();
 

@@ -567,6 +567,7 @@ bool FModumateObjectInstance::CanBeSplit() const
 	case EObjectType::OTFloorSegment:
 		//case OTRoofSegment:
 	case EObjectType::OTCabinet:
+	case EObjectType::OTSystemPanel:
 		return true;
 	default:
 		return false;

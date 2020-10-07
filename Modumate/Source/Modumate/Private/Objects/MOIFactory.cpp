@@ -22,6 +22,7 @@
 #include "Objects/SurfacePolygon.h"
 #include "Objects/SurfaceVertex.h"
 #include "Objects/Trim.h"
+#include "Objects/Mullion.h"
 
 IModumateObjectInstanceImpl *FMOIFactory::MakeMOIImplementation(EObjectType ObjectType, FModumateObjectInstance *MOI)
 {
@@ -32,7 +33,8 @@ IModumateObjectInstanceImpl *FMOIFactory::MakeMOIImplementation(EObjectType Obje
 		case EObjectType::OTFloorSegment:
 		case EObjectType::OTCeiling:
 		case EObjectType::OTRoofFace:
-		case EObjectType::OTCountertop: return new FMOIPlaneHostedObjImpl(MOI);
+		case EObjectType::OTCountertop:
+		case EObjectType::OTSystemPanel: return new FMOIPlaneHostedObjImpl(MOI);
 		case EObjectType::OTDoor:
 		case EObjectType::OTWindow: return new FMOIPortalImpl(MOI);
 		case EObjectType::OTFurniture: return new FMOIFFEImpl(MOI);
@@ -53,6 +55,7 @@ IModumateObjectInstanceImpl *FMOIFactory::MakeMOIImplementation(EObjectType Obje
 		case EObjectType::OTScopeBox: return new FMOIScopeBoxImpl(MOI);
 		case EObjectType::OTStructureLine: return new FMOIStructureLine(MOI);
 		case EObjectType::OTRoofPerimeter: return new FMOIRoofPerimeterImpl(MOI);
+		case EObjectType::OTMullion: return new FMOIMullion(MOI);
 		default:
 		{
 			FString objectTypeString = EnumValueString(EObjectType, ObjectType);

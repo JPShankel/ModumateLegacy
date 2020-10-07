@@ -52,3 +52,13 @@ protected:
 	TWeakObjectPtr<AEditModelGameState_CPP> GameState;
 	FVector LineStartPos, LineEndPos, LineDir, ObjNormal, ObjUp;
 };
+
+UCLASS()
+class MODUMATE_API UMullionTool : public UStructureLineTool
+{
+	GENERATED_BODY()
+
+public:
+	UMullionTool(const FObjectInitializer& ObjectInitializer);
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_MULLION; }
+};

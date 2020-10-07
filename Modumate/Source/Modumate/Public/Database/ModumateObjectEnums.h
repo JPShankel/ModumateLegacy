@@ -101,6 +101,8 @@ enum class EToolMode : uint8
 	VE_GRAPH2D,
 	VE_SURFACEGRAPH,
 	VE_CEILING,
+	VE_PANEL,
+	VE_MULLION,
 };
 
 UENUM(BlueprintType)
@@ -135,6 +137,7 @@ enum class EObjectType : uint8
 	OTRoofPerimeter,
 	OTCeiling,
 	OTSystemPanel,
+	OTMullion,
 	OTUnknown
 };
 
