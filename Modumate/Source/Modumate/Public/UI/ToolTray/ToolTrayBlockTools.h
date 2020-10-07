@@ -22,52 +22,52 @@ public:
 	virtual bool Initialize() override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Wall;
+	class UModumateButtonUserWidget* Button_Wall;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Floor;
+	class UModumateButtonUserWidget* Button_Floor;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Ceiling;
+	class UModumateButtonUserWidget* Button_Ceiling;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Roof;
+	class UModumateButtonUserWidget* Button_Roof;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Stair;
+	class UModumateButtonUserWidget* Button_Stair;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Door;
+	class UModumateButtonUserWidget* Button_Door;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Window;
+	class UModumateButtonUserWidget* Button_Window;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_BeamColumn;
+	class UModumateButtonUserWidget* Button_SystemPanel;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Finish;
+	class UModumateButtonUserWidget* Button_Mullion;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Trim;
+	class UModumateButtonUserWidget* Button_BeamColumn;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Cabinet;
+	class UModumateButtonUserWidget* Button_Finish;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Countertop;
+	class UModumateButtonUserWidget* Button_Trim;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_FFE;
+	class UModumateButtonUserWidget* Button_Cabinet;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Railing;
+	class UModumateButtonUserWidget* Button_Countertop;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_SystemPanel;
+	class UModumateButtonUserWidget* Button_FFE;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_Mullion;
+	class UModumateButtonUserWidget* Button_Railing;
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeToSeparatorToolsButtons();

@@ -15,6 +15,7 @@
 #include "UI/ModalDialog/AlertAccountDialogWidget.h"
 #include "UI/Toolbar/ToolbarTopWidget.h"
 #include "UI/Toolbar/ViewModeIndicatorWidget.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -43,6 +44,9 @@ bool UEditModelUserWidget::Initialize()
 void UEditModelUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	// Update current menu visibility according to tool mode
+	EMOnToolModeChanged();
 }
 
 void UEditModelUserWidget::EMOnToolModeChanged()
@@ -67,6 +71,18 @@ void UEditModelUserWidget::EMOnToolModeChanged()
 		break;
 	default:
 		ToolTrayWidget->CloseToolTray();
+	}
+	
+	if (CurrentActiveToolButton && UEditModelInputHandler::ToolModeFromInputCommand(CurrentActiveToolButton->InputCommand) != Controller->GetToolMode())
+	{
+		CurrentActiveToolButton->SwitchToNormalStyle();
+		CurrentActiveToolButton = nullptr;
+	}
+	UModumateButtonUserWidget* toolToButton = ToolToButtonMap.FindRef(Controller->GetToolMode());
+	if (toolToButton)
+	{
+		CurrentActiveToolButton = toolToButton;
+		CurrentActiveToolButton->SwitchToActiveStyle();
 	}
 }
 

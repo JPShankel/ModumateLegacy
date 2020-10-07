@@ -25,9 +25,9 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-	EToolCategories CurrentToolCategory;
-
 public:
+
+	EToolCategories CurrentToolCategory;
 
 	UPROPERTY()
 	class UEditModelUserWidget *EditModelUserWidget;
@@ -63,7 +63,4 @@ public:
 	bool IsToolTrayVisible();
 	void OpenToolTray();
 	void CloseToolTray();
-
-protected:
-
 };

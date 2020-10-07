@@ -46,6 +46,10 @@ void UToolbarWidget::NativeConstruct()
 void UToolbarWidget::OnButtonReleaseMetaPlane()
 {
 	Controller->SetToolMode(EToolMode::VE_METAPLANE);
+	if (EditModelUserWidget->ToolTrayWidget->CurrentToolCategory != EToolCategories::MetaGraph)
+	{
+		EditModelUserWidget->ToolTrayWidget->ChangeBlockToMetaPlaneTools();
+	}
 }
 
 void UToolbarWidget::OnButtonReleaseSeparators()
@@ -59,6 +63,10 @@ void UToolbarWidget::OnButtonReleaseSeparators()
 void UToolbarWidget::OnButtonReleaseSurfaceGraphs()
 {
 	Controller->SetToolMode(EToolMode::VE_SURFACEGRAPH);
+	if (EditModelUserWidget->ToolTrayWidget->CurrentToolCategory != EToolCategories::SurfaceGraphs)
+	{
+		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSurfaceGraphTools();
+	}
 }
 
 void UToolbarWidget::OnButtonReleaseAttachments()

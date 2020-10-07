@@ -64,6 +64,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UAlertAccountDialogWidget* AlertPausedAccountDialogWidget;
 
+	UPROPERTY()
+	TMap<EToolMode, class UModumateButtonUserWidget*> ToolToButtonMap;
+
+	UPROPERTY()
+	class UModumateButtonUserWidget* CurrentActiveToolButton;
+
 	ERightMenuState CurrentRightMenuState = ERightMenuState::None;
 
 	UFUNCTION()

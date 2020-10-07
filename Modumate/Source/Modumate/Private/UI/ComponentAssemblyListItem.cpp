@@ -173,6 +173,8 @@ void UComponentAssemblyListItem::OnButtonConfirmReleased()
 				}
 			}
 			doc->SetAssemblyForObjects(GetWorld(), objIDs, *assembly);
+			//Refresh swap menu
+			EMPlayerController->EditModelUserWidget->SelectionTrayWidget->OpenToolTrayForSwap(ToolMode, AsmKey);
 			result = true;
 		}
 		break;

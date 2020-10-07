@@ -7,6 +7,9 @@
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UI/ToolTray/ToolTrayBlockModes.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/Toolbar/ToolbarWidget.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
 
 UToolTrayWidget::UToolTrayWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -42,6 +45,10 @@ bool UToolTrayWidget::ChangeBlockToMetaPlaneTools()
 	CurrentToolCategory = EToolCategories::MetaGraph;
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockModes->ChangeToMetaPlaneToolsButtons();
+	if (EditModelUserWidget)
+	{
+		EditModelUserWidget->ToolbarWidget->Button_Metaplanes->SwitchToActiveStyle();
+	}
 
 	return true;
 }
@@ -59,6 +66,10 @@ bool UToolTrayWidget::ChangeBlockToSeparatorTools(EToolMode Toolmode)
 	CurrentToolCategory = EToolCategories::Separators;
 	ToolTrayBlockTools->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockTools->ChangeToSeparatorToolsButtons();
+	if (EditModelUserWidget)
+	{
+		EditModelUserWidget->ToolbarWidget->Button_Separators->SwitchToActiveStyle();
+	}
 	if (UModumateTypeStatics::GetToolCategory(Toolmode) != CurrentToolCategory)
 	{
 		ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetToolCategoryText(EToolCategories::Separators));
@@ -86,6 +97,10 @@ bool UToolTrayWidget::ChangeBlockToSurfaceGraphTools()
 	HideAllToolTrayBlocks();
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockModes->ChangeToSurfaceGraphToolsButtons();
+	if (EditModelUserWidget)
+	{
+		EditModelUserWidget->ToolbarWidget->Button_SurfaceGraphs->SwitchToActiveStyle();
+	}
 
 	return true;
 }
@@ -103,6 +118,10 @@ bool UToolTrayWidget::ChangeBlockToAttachmentTools(EToolMode Toolmode)
 	CurrentToolCategory = EToolCategories::Attachments;
 	ToolTrayBlockTools->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockTools->ChangeToAttachmentToolsButtons();
+	if (EditModelUserWidget)
+	{
+		EditModelUserWidget->ToolbarWidget->Button_Attachments->SwitchToActiveStyle();
+	}
 	if (UModumateTypeStatics::GetToolCategory(Toolmode) != CurrentToolCategory)
 	{
 		ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetToolCategoryText(EToolCategories::Attachments));
@@ -125,6 +144,13 @@ void UToolTrayWidget::HideAllToolTrayBlocks()
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::Collapsed);
 	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::Collapsed);
 	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::Collapsed);
+	if (EditModelUserWidget)
+	{
+		EditModelUserWidget->ToolbarWidget->Button_Metaplanes->SwitchToNormalStyle();
+		EditModelUserWidget->ToolbarWidget->Button_Separators->SwitchToNormalStyle();
+		EditModelUserWidget->ToolbarWidget->Button_SurfaceGraphs->SwitchToNormalStyle();
+		EditModelUserWidget->ToolbarWidget->Button_Attachments->SwitchToNormalStyle();
+	}
 }
 
 bool UToolTrayWidget::IsToolTrayVisible()
@@ -144,4 +170,5 @@ void UToolTrayWidget::CloseToolTray()
 {
 	// TODO: Set menu animation here
 	SetVisibility(ESlateVisibility::Collapsed);
+	HideAllToolTrayBlocks();
 }

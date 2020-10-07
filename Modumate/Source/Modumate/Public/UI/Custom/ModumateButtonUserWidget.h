@@ -24,6 +24,13 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
+
+	UPROPERTY()
+	FButtonStyle NormalButtonStyle;
+
+	UPROPERTY()
+	FButtonStyle ActiveButtonStyle;
 
 public:
 
@@ -36,6 +43,6 @@ public:
 	UFUNCTION()
 	void OnButtonPress();
 
-protected:
-
+	void SwitchToNormalStyle();
+	void SwitchToActiveStyle();
 };
