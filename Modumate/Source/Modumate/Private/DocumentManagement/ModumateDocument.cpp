@@ -2696,20 +2696,36 @@ TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraph(int32 Surface
 	return SurfaceGraphs.FindRef(SurfaceGraphID);
 }
 
-const TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraphByObjID(int32 GraphObjectID) const
+const TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraphByObjID(int32 ObjectID) const
 {
-	return const_cast<FModumateDocument*>(this)->FindSurfaceGraphByObjID(GraphObjectID);
+	return const_cast<FModumateDocument*>(this)->FindSurfaceGraphByObjID(ObjectID);
 }
 
-TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraphByObjID(int32 GraphObjectID)
+TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraphByObjID(int32 ObjectID)
 {
-	auto moi = GetObjectById(GraphObjectID);
+	auto moi = GetObjectById(ObjectID);
 	if (moi == nullptr)
 	{
 		return nullptr;
 	}
-	int32 surfaceGraphID = moi->GetParentID();
-	return FindSurfaceGraph(surfaceGraphID);
+	int32 parentID = moi->GetParentID();
+	TSharedPtr<Modumate::FGraph2D> surfaceGraph = nullptr;
+
+	// this handles the case where the object is a surface graph object
+	surfaceGraph = FindSurfaceGraph(parentID);
+	if (surfaceGraph)
+	{
+		return surfaceGraph;
+	}
+
+	// this handles the case where the object is a surface graph-hosted object
+	auto parentMoi = GetObjectById(parentID);
+	if (parentMoi)
+	{
+		surfaceGraph = FindSurfaceGraph(parentMoi->GetParentID());
+	}
+
+	return surfaceGraph;
 }
 
 bool FModumateDocument::IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &OutObjType) const

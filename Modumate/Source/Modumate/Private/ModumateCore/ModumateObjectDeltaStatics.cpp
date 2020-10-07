@@ -30,9 +30,8 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 			parentGraphObject->GetVertexIDs(vertexIDs);
 			OutTransformableIDs.Append(vertexIDs);
 		}
-		else if (graph2DObjType != Modumate::EGraphObjectType::None)
+		else if (auto surfaceGraph = doc->FindSurfaceGraphByObjID(id))
 		{
-			auto surfaceGraph = doc->FindSurfaceGraphByObjID(id);
 			if (surfaceGraph == nullptr)
 			{
 				continue;
@@ -41,7 +40,11 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 			auto surfaceGraphObject = surfaceGraph->FindObject(id);
 			if (surfaceGraphObject == nullptr)
 			{
-				continue;
+				surfaceGraphObject = surfaceGraph->FindObject(moi->GetParentID());
+				if (surfaceGraphObject == nullptr)
+				{
+					continue;
+				}
 			}
 
 			TArray<int32> vertexIDs;

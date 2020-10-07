@@ -154,8 +154,8 @@ public:
 	const TSharedPtr<Modumate::FGraph2D> FindSurfaceGraph(int32 SurfaceGraphID) const;
 	TSharedPtr<Modumate::FGraph2D> FindSurfaceGraph(int32 SurfaceGraphID);
 
-	const TSharedPtr<Modumate::FGraph2D> FindSurfaceGraphByObjID(int32 GraphObjectID) const;
-	TSharedPtr<Modumate::FGraph2D> FindSurfaceGraphByObjID(int32 GraphObjectID);
+	const TSharedPtr<Modumate::FGraph2D> FindSurfaceGraphByObjID(int32 ObjectID) const;
+	TSharedPtr<Modumate::FGraph2D> FindSurfaceGraphByObjID(int32 ObjectID);
 
 	int32 CalculatePolyhedra() { return VolumeGraph.CalculatePolyhedra(); }
 	bool IsObjectInVolumeGraph(int32 ObjID, Modumate::EGraph3DObjectType &OutObjType) const;
