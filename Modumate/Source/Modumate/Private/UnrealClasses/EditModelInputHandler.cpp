@@ -36,7 +36,7 @@ void UEditModelInputHandler::SetupBindings()
 
 	if (ensureAlways(Controller && Controller->InputComponent && inputSettings && InputCommandDataTable))
 	{
-		FKey NumberKeys[11] = {
+		FKey NumberKeys[12] = {
 			EKeys::Zero,
 			EKeys::One,
 			EKeys::Two,
@@ -47,10 +47,11 @@ void UEditModelInputHandler::SetupBindings()
 			EKeys::Seven,
 			EKeys::Eight,
 			EKeys::Nine,
-			EKeys::Hyphen
+			EKeys::Hyphen,
+			EKeys::Period
 		};
 
-		FKey NumpadKeys[10] = {
+		FKey NumpadKeys[12] = {
 			EKeys::NumPadZero,
 			EKeys::NumPadOne,
 			EKeys::NumPadTwo,
@@ -60,25 +61,23 @@ void UEditModelInputHandler::SetupBindings()
 			EKeys::NumPadSix,
 			EKeys::NumPadSeven,
 			EKeys::NumPadEight,
-			EKeys::NumPadNine
+			EKeys::NumPadNine,
+			EKeys::Subtract,
+			EKeys::Decimal
 		};
 
-		for (int32 i = 0; i < 11; ++i)
+		int32 keysIdx = 1;
+		for (auto& keys : { NumberKeys, NumpadKeys })
 		{
-			FName chordActionName(*FString::Printf(TEXT("InputDigit_%d"), i));
-			FInputActionKeyMapping commandMapping(chordActionName, NumberKeys[i], false, false, false, false);
-			inputSettings->AddActionMapping(commandMapping, true);
+			for (int32 i = 0; i < 12; ++i)
+			{
+				FName chordActionName(*FString::Printf(TEXT("InputDigit_%s%d"), (keysIdx == 1 ? TEXT("number") : TEXT("numpad")), i));
+				FInputActionKeyMapping commandMapping(chordActionName, keys[i], false, false, false, false);
+				inputSettings->AddActionMapping(commandMapping, true);
 
-			Controller->InputComponent->BindAction<FInputDigitDelegate>(chordActionName, EInputEvent::IE_Pressed, this, &UEditModelInputHandler::HandleDigitKey, i);
-		}
-
-		for (int32 i = 0; i < 10; ++i)
-		{
-			FName chordActionName(*FString::Printf(TEXT("InputDigit_numpad%d"), i));
-			FInputActionKeyMapping commandMapping(chordActionName, NumpadKeys[i], false, false, false, false);
-			inputSettings->AddActionMapping(commandMapping, true);
-
-			Controller->InputComponent->BindAction<FInputDigitDelegate>(chordActionName, EInputEvent::IE_Pressed, this, &UEditModelInputHandler::HandleDigitKey, i);
+				Controller->InputComponent->BindAction<FInputDigitDelegate>(chordActionName, EInputEvent::IE_Pressed, this, &UEditModelInputHandler::HandleDigitKey, i);
+			}
+			keysIdx++;
 		}
 
 		RootCommandTrie = MakeShared<FCommandTrieNode>();

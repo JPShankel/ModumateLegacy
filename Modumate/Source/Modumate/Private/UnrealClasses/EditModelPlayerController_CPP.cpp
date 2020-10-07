@@ -369,10 +369,13 @@ void AEditModelPlayerController_CPP::OnTextCommitted(const FText& Text, ETextCom
 	{
 		// First, try to use the player controller's input number handling,
 		// in case a user snap point is taking input.
+		// TODO: this function is not working well anymore - it may need to be updated
+		/*
 		if (HandleInputNumber(v))
 		{
 			return;
 		}
+		//*/
 
 		if (InteractionHandle)
 		{
@@ -1326,15 +1329,27 @@ void AEditModelPlayerController_CPP::HandleDigitKey(int32 DigitKey)
 	{
 		dimensionActor->DimensionText->Measurement->SetUserFocus(this);
 
-		// hyphen is also included with the digits so that typing a negative number triggers the focus events
-		if (DigitKey != 10)
+		FText initialText;
+		switch (DigitKey)
 		{
-			dimensionActor->DimensionText->Measurement->SetText(FText::AsNumber(DigitKey));
+			// hyphen is also included with the digits so that typing a negative number triggers the focus events
+			case 10:
+			{
+				initialText = FText::FromString(TEXT("-"));
+			} break;
+			// period is included with the digits so that decimals can by typed without typing 0
+			case 11:
+			{
+				initialText = FText::FromString(TEXT("."));
+			} break;
+			// 0-9
+			default:
+			{
+				initialText = FText::AsNumber(DigitKey);
+			} break;
 		}
-		else
-		{
-			dimensionActor->DimensionText->Measurement->SetText(FText::FromString("-"));
-		}
+
+		dimensionActor->DimensionText->Measurement->SetText(initialText);
 	}
 }
 
