@@ -168,3 +168,14 @@ bool FMOIFFEImpl::GetInvertedState(FMOIStateData& OutState) const
 
 	return OutState.CustomData.SaveStructData(modifiedFFEData);
 }
+
+bool FMOIFFEImpl::GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const
+{
+	OutState = MOI->GetStateData();
+
+	FMOIFFEData modifiedFFEData = InstanceData;
+	modifiedFFEData.Location = Transform.GetLocation();
+	modifiedFFEData.Rotation = Transform.GetRotation();
+
+	return OutState.CustomData.SaveStructData(modifiedFFEData);
+}

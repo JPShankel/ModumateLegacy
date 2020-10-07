@@ -55,6 +55,7 @@ public:
 	virtual void SetIsDynamic(bool bIsDynamic) override;
 	virtual bool GetIsDynamic() const override;
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
+	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
 
 protected:
 	void InternalUpdateGeometry();

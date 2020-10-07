@@ -138,6 +138,17 @@ void FMOICutPlaneImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* co
 		edgeHandle->SetTargetIndex(i);
 	}
 }
+	
+bool FMOICutPlaneImpl::GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const
+{
+	OutState = MOI->GetStateData();
+
+	FMOICutPlaneData modifiedFFEData = InstanceData;
+	modifiedFFEData.Location = Transform.GetLocation();
+	modifiedFFEData.Rotation = Transform.GetRotation();
+
+	return OutState.CustomData.SaveStructData(modifiedFFEData);
+}
 
 void FMOICutPlaneImpl::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 {

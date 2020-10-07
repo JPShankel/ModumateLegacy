@@ -72,6 +72,7 @@ public:
 	virtual bool UseStructureDataForCollision() const = 0;
 
 	virtual bool GetInvertedState(FMOIStateData& OutState) const = 0;
+	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const = 0;
 
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const = 0;
 
@@ -138,6 +139,7 @@ public:
 	virtual bool UseStructureDataForCollision() const override { return false; }
 
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override { return false; }
+	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override { return false; };
 
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const override { return TArray<FModelDimensionString>(); }
 
@@ -333,6 +335,7 @@ public:
 	bool UseStructureDataForCollision() const;
 
 	bool GetInvertedState(FMOIStateData& OutState) const;
+	bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const;
 
 	// Manipulation
 	void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);

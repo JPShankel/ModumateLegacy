@@ -1010,6 +1010,11 @@ bool FModumateObjectInstance::GetInvertedState(FMOIStateData& OutState) const
 	return Implementation->GetInvertedState(OutState);
 }
 
+bool FModumateObjectInstance::GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const
+{
+	return Implementation->GetTransformedLocationState(Transform, OutState);
+}
+
 FVector FModumateObjectInstance::GetObjectLocation() const
 {
 	return Implementation->GetLocation();

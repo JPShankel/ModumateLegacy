@@ -176,35 +176,13 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 	{
 		for (auto& kvp : ObjectMovements)
 		{
-			// TODO: ffe and cutplanes should extend an interface that provides a 
-			// GetTransformedLocationState() kind of function, like the existing GetInvertedState()
 			FModumateObjectInstance* moi = doc->GetObjectById(kvp.Key);
 			FMOIDelta delta;
 			auto& currentData = delta.AddMutationState(moi);
-
-			if (moi->GetObjectType() == EObjectType::OTFurniture)
+			if (moi->GetTransformedLocationState(kvp.Value, currentData))
 			{
-				FMOIFFEData structData;
-				currentData.CustomData.LoadStructData<FMOIFFEData>(structData);
-
-				structData.Location = kvp.Value.GetLocation();
-				structData.Rotation = kvp.Value.GetRotation();
-
-				currentData.CustomData.SaveStructData<FMOIFFEData>(structData);
-
+				deltas.Add(MakeShared<FMOIDelta>(delta));
 			}
-			else if (moi->GetObjectType() == EObjectType::OTCutPlane)
-			{
-				FMOICutPlaneData structData;
-				currentData.CustomData.LoadStructData<FMOICutPlaneData>(structData);
-
-				structData.Location = kvp.Value.GetLocation();
-				structData.Rotation = kvp.Value.GetRotation();
-
-				currentData.CustomData.SaveStructData<FMOICutPlaneData>(structData);
-			}
-
-			deltas.Add(MakeShared<FMOIDelta>(delta));
 		}
 	}
 

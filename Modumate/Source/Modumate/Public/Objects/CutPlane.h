@@ -42,6 +42,7 @@ public:
 	virtual void OnSelected(bool bNewSelected) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 
+	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
 	virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) override;
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override;
 	virtual ISceneCaptureObject* GetSceneCaptureInterface() override { return this; }
