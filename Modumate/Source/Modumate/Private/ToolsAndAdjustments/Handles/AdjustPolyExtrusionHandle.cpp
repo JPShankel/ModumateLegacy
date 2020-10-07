@@ -1,8 +1,8 @@
 #include "ToolsAndAdjustments/Handles/AdjustPolyExtrusionHandle.h"
 
 #include "DocumentManagement/ModumateDocument.h"
-#include "Objects/ModumateObjectInstance.h"
 #include "Objects/Cabinet.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/DimensionManager.h"
 #include "UI/DimensionActor.h"

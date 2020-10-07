@@ -2,23 +2,24 @@
 
 #include "Objects/CutPlane.h"
 
-#include "UnrealClasses/CutPlaneCaptureActor.h"
 #include "Drafting/DraftingManager.h"
+#include "Drafting/ModumateAutotraceConnect.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "Drafting/ModumateDraftingView.h"
+#include "Drafting/ModumateTrace.h"
+#include "Graph/Graph3DFace.h"
+#include "JsonUtilities/Public/JsonObjectConverter.h"
+#include "Kismet/KismetRenderingLibrary.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "ModumateCore/ModumateUserSettings.h"
+#include "ToolsAndAdjustments/Handles/AdjustCutPlaneExtentsHandle.h"
+#include "UI/EditModelUserWidget.h"
+#include "UnrealClasses/CutPlaneCaptureActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UI/EditModelUserWidget.h"
-#include "Graph/Graph3DFace.h"
-#include "Kismet/KismetRenderingLibrary.h"
-#include "JsonUtilities/Public/JsonObjectConverter.h"
-#include "ModumateCore/ModumateUserSettings.h"
-#include "Drafting/ModumateDraftingElements.h"
-#include "Drafting/ModumateDraftingView.h"
-#include "ModumateCore/ModumateUnits.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "Drafting/ModumateAutotraceConnect.h"
 #include "UnrealClasses/ModumateGameInstance.h"
-#include "Drafting/ModumateTrace.h"
 
 FMOICutPlaneImpl::FMOICutPlaneImpl(FModumateObjectInstance *moi)
 	: FMOIPlaneImplBase(moi),
@@ -120,6 +121,21 @@ void FMOICutPlaneImpl::OnSelected(bool bNewSelected)
 	else
 	{
 		PreviewHUDLines = nullptr;
+	}
+}
+
+void FMOICutPlaneImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
+{
+	if (MOI->HasAdjustmentHandles())
+	{
+		return;
+	}
+
+	int32 numPoints = CachedPoints.Num();
+	for (int32 i = 0; i < numPoints; ++i)
+	{
+		auto edgeHandle = MOI->MakeHandle<AAdjustCutPlaneExtentsHandle>();
+		edgeHandle->SetTargetIndex(i);
 	}
 }
 

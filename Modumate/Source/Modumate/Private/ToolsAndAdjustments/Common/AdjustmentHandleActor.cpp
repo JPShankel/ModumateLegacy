@@ -398,7 +398,38 @@ FVector AAdjustmentHandleActor::GetHandlePosition() const
 
 FVector AAdjustmentHandleActor::GetHandleDirection() const
 {
-	return FVector::ZeroVector;
+	if (!ensure(TargetMOI))
+	{
+		return FVector::ZeroVector;
+	}
+
+	int32 numPoints = TargetMOI->GetNumCorners();
+	TArray<FVector> targetPoints;
+	for (int32 i = 0; i < numPoints; ++i)
+	{
+		targetPoints.Add(TargetMOI->GetCorner(i));
+	}
+
+	// This would be redundant, but the handles need to recalculate the plane in order to determine
+	// how the points wind, which may not result in the same plane normal as the reported object normal.
+	FPlane targetPlane;
+	if (!ensure(UModumateGeometryStatics::GetPlaneFromPoints(targetPoints, targetPlane)))
+	{
+		return FVector::ZeroVector;
+	}
+
+	FVector targetNormal(targetPlane);
+
+	int32 numPolyPoints = targetPoints.Num();
+	int32 edgeStartIdx = TargetIndex;
+	int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
+
+	const FVector &edgeStartPoint = targetPoints[edgeStartIdx];
+	const FVector &edgeEndPoint = targetPoints[edgeEndIdx];
+	FVector edgeDir = (edgeEndPoint - edgeStartPoint).GetSafeNormal();
+	FVector edgeNormal = (edgeDir ^ targetNormal);
+
+	return edgeNormal;
 }
 
 bool AAdjustmentHandleActor::HandleInvert()

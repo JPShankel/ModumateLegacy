@@ -15,7 +15,7 @@ public:
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
-	void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller);
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 	virtual bool ShowStructureOnSelection() const override;
 
 protected:
