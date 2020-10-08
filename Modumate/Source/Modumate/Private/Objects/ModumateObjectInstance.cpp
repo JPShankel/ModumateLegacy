@@ -144,15 +144,6 @@ void FModumateObjectInstance::Destroy()
 	}
 }
 
-void FModumateObjectInstance::SetParentObject(FModumateObjectInstance *newParentObj, bool bForceUpdate)
-{
-	int32 newParentID = newParentObj ? newParentObj->ID : 0;
-	if ((GetParentID() != newParentID) || bForceUpdate)
-	{
-		SetParentID(newParentID);
-	}
-}
-
 FModumateObjectInstance *FModumateObjectInstance::GetParentObject()
 {
 	return Document->GetObjectById(GetParentID());

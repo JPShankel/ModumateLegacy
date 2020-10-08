@@ -36,7 +36,7 @@ FMOICabinetImpl::~FMOICabinetImpl()
 FVector FMOICabinetImpl::GetCorner(int32 index) const
 {
 	int32 numBasePoints = CachedBasePoints.Num();
-	if ((numBasePoints < 3) || (index < 0) || (index >= GetNumCorners()))
+	if ((numBasePoints < 3) || (index < 0) || (index >= (2 * numBasePoints)))
 	{
 		return GetLocation();
 	}
@@ -49,7 +49,7 @@ FVector FMOICabinetImpl::GetCorner(int32 index) const
 
 int32 FMOICabinetImpl::GetNumCorners() const
 {
-	return CachedBasePoints.Num() * 2;
+	return CachedBasePoints.Num();
 }
 
 void FMOICabinetImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
@@ -110,13 +110,11 @@ void FMOICabinetImpl::SetupDynamicGeometry()
 		return;
 	}
 
-	int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
-
 	// TODO: get material from assembly spec
 	bool bUpdateCollision = !MOI->GetIsInPreviewMode();
 	bool bEnableCollision = !MOI->GetIsInPreviewMode();
 	DynamicMeshActor->SetupCabinetGeometry(CachedBasePoints, CachedExtrusionDelta, FArchitecturalMaterial(), bUpdateCollision, bEnableCollision,
-		ToeKickDimensions, frontFaceIndex);
+		ToeKickDimensions, InstanceData.FrontFaceIndex);
 
 	// refresh handle visibility, don't destroy & recreate handles
 	AEditModelPlayerController_CPP *controller = DynamicMeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
@@ -183,8 +181,8 @@ bool FMOICabinetImpl::UpdateCachedGeometryData()
 
 void FMOICabinetImpl::UpdateCabinetPortal()
 {
-	int32 frontFaceIndex = (MOI->GetControlPointIndices().Num() > 0) ? MOI->GetControlPointIndex(0) : INDEX_NONE;
-	if ((frontFaceIndex < 0) && FrontFacePortalActor.IsValid())
+	int32 frontFaceIndex = InstanceData.FrontFaceIndex;
+	if ((frontFaceIndex == INDEX_NONE) && FrontFacePortalActor.IsValid())
 	{
 		FrontFacePortalActor->Destroy();
 	}
@@ -281,7 +279,7 @@ void FMOICabinetImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Cont
 	{
 		if (frontHandle.IsValid())
 		{
-			bool bHandleEnabled = bShow && ((MOI->GetControlPointIndices().Num() == 0) || (MOI->GetControlPointIndex(0) == frontHandle->TargetIndex));
+			bool bHandleEnabled = bShow && ((InstanceData.FrontFaceIndex == INDEX_NONE) || (InstanceData.FrontFaceIndex == frontHandle->TargetIndex));
 			frontHandle->SetEnabled(bHandleEnabled);
 		}
 	}
@@ -293,33 +291,31 @@ const float ASelectCabinetFrontHandle::FaceCenterHeightOffset = 20.0f;
 
 bool ASelectCabinetFrontHandle::BeginUse()
 {
-	if (!Super::BeginUse())
+	if (!ensure(TargetMOI))
 	{
 		return false;
 	}
 
-	TArray<int32> newControlIndices;
+	auto delta = MakeShared<FMOIDelta>();
+	auto& modifiedStateData = delta->AddMutationState(TargetMOI);
 
-	if ((TargetMOI->GetControlPointIndices().Num() == 0) || (TargetMOI->GetControlPointIndex(0) != TargetIndex))
+	FMOICabinetData modifiedCustomData;
+	if (ensure(modifiedStateData.CustomData.LoadStructData(modifiedCustomData)))
 	{
-		newControlIndices.Add(TargetIndex);
+		if (modifiedCustomData.FrontFaceIndex == TargetIndex)
+		{
+			modifiedCustomData.FrontFaceIndex = INDEX_NONE;
+		}
+		else
+		{
+			modifiedCustomData.FrontFaceIndex = TargetIndex;
+		}
+
+		modifiedStateData.CustomData.SaveStructData(modifiedCustomData);
+		GameState->Document.ApplyDeltas({ delta }, GetWorld());
 	}
 
-	TargetMOI->SetControlPointIndices(newControlIndices);
-
-	EndUse();
-
-
-	TArray<FDeltaPtr> deltas;
-#if 1
-	ensureMsgf(false, TEXT("TODO: reimplement with new FMOIDelta!"));
-#else
-	deltas.Add(MakeShared<FMOIDelta_DEPRECATED>(TargetMOI));
-#endif
-	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument* doc = &gameState->Document;
-
-	return doc->ApplyDeltas(deltas, GetWorld());
+	return false;
 }
 
 FVector ASelectCabinetFrontHandle::GetHandlePosition() const

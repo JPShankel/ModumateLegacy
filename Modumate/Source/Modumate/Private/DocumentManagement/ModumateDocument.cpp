@@ -366,41 +366,7 @@ bool FModumateDocument::RestoreObjectImpl(FModumateObjectInstance *obj)
 		ObjectInstanceArray.AddUnique(obj);
 		ObjectsByID.Add(obj->ID, obj);
 		obj->RestoreActor();
-		obj->SetParentObject(GetObjectById(obj->GetParentID()), true);
-		obj->MarkDirty(EObjectDirtyFlags::Visuals);
 		obj->PostCreateObject(false);
-
-		RestoreChildrenImpl(obj);
-
-		return true;
-	}
-
-	return false;
-}
-
-// TODO: this function results in extra SetupGeometry calls.  It should be replaced by a 
-// RestoreObjectsImpl that can restore the actors and recover the parent/child relationships
-// and then SetupGeometry given a correct object heirarchy
-bool FModumateDocument::RestoreChildrenImpl(FModumateObjectInstance *obj)
-{
-	if (obj)
-	{
-		for (int32 childID : obj->GetChildIDs())
-		{
-			auto childObj = GetObjectById(childID);
-			if (childObj)
-			{
-				childObj->RestoreActor();
-				childObj->SetupGeometry();
-				childObj->SetParentObject(obj, true);
-
-				// TODO: this code hits an ensureAlways when the childObj is already not destroyed,
-				// possibly because PostRestoreObject is called in RestoreObjectImpl
-				//obj->PostRestoreObject();
-
-				RestoreChildrenImpl(childObj);
-			}
-		}
 
 		return true;
 	}
@@ -1263,7 +1229,7 @@ int32 FModumateDocument::MakeGroupObject(UWorld *world, const TArray<int32> &ids
 
 	for (auto ob : obs)
 	{
-		ob->SetParentObject(groupObj);
+		ob->SetParentID(id);
 	}
 
 	return id;
@@ -1286,7 +1252,7 @@ void FModumateDocument::UnmakeGroupObjects(UWorld *world, const TArray<int32> &g
 		oldChildren.Add(ob, children);
 		for (auto child : children)
 		{
-			child->SetParentObject(nullptr);
+			child->SetParentID(MOD_ID_NONE);
 		}
 		DeleteObjectImpl(ob);
 	}
@@ -2435,10 +2401,8 @@ TArray<FModumateObjectInstance *> FModumateDocument::CloneObjects(UWorld *world,
 
 		if (oldParent && newParent)
 		{
-			newObj->SetParentObject(newParent);
+			newObj->SetParentID(newParent->ID);
 		}
-
-		newObj->MarkDirty(EObjectDirtyFlags::Structure);
 	}
 
 	EndUndoRedoMacro();

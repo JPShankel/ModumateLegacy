@@ -40,13 +40,6 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 {
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
-		// Only use the Prev* members for side-effect evaluation, in order to know which two reference frames the surface graph elements are moving between
-		if (OutSideEffectDeltas != nullptr)
-		{
-			PrevFacePoints = CachedFacePoints;
-			PrevFaceOrigin = CachedFaceOrigin;
-		}
-
 		FModumateDocument* doc = MOI ? MOI->GetDocument() : nullptr;
 		if (!ensure(doc))
 		{
@@ -106,23 +99,18 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 				TArray<FModumateObjectInstance*> objectsToDelete = MOI->GetAllDescendents();
 				objectsToDelete.Add(MOI);
 
-#if 1
-				ensureMsgf(false, TEXT("TODO: reimplement with new FMOIDelta!"));
-#else
-
-				TArray<FMOIStateData_DEPRECATED> deletionStates;
+				auto deleteSurfaceDelta = MakeShared<FMOIDelta>();
 				for (FModumateObjectInstance* descendent : objectsToDelete)
 				{
-					FMOIStateData_DEPRECATED& deletionState = deletionStates.AddDefaulted_GetRef();
-					deletionState.StateType = EMOIDeltaType::Destroy;
-					deletionState.ObjectID = descendent->ID;
+					deleteSurfaceDelta->AddCreateDestroyState(descendent->GetStateData(), EMOIDeltaType::Destroy);
 				}
 
-				auto deleteSurfaceDelta = MakeShared<FMOIDelta_DEPRECATED>(deletionStates);
 				OutSideEffectDeltas->Add(deleteSurfaceDelta);
-#endif
 			}
 		}
+
+		PrevFacePoints = CachedFacePoints;
+		PrevFaceOrigin = CachedFaceOrigin;
 	}
 
 	return true;

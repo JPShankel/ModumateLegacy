@@ -250,9 +250,7 @@ public:
 
 	bool IsDestroyed() const { return bDestroyed; }
 
-	void SetParentObject(FModumateObjectInstance *parent, bool bForceUpdate = false);
 	FModumateObjectInstance *GetParentObject();
-
 	const FModumateObjectInstance *GetParentObject() const;
 	TArray<FModumateObjectInstance *> GetChildObjects();
 	TArray<const FModumateObjectInstance *> GetChildObjects() const;

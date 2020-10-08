@@ -177,7 +177,6 @@ public:
 private:
 	bool DeleteObjectImpl(FModumateObjectInstance *ob, bool keepInDeletedList = true);
 	bool RestoreObjectImpl(FModumateObjectInstance *ob);
-	bool RestoreChildrenImpl(FModumateObjectInstance *obj);
 
 	FModumateObjectInstance* CreateOrRestoreObj(UWorld* World, const FMOIStateData& StateData);
 
