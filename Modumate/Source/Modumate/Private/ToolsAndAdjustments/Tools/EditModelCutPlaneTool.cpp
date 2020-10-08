@@ -155,9 +155,9 @@ bool UCutPlaneTool::EnterNextStage()
 	};
 
 	FMOICutPlaneData cutPlaneData;
-	cutPlaneData.Location = Origin;
-	cutPlaneData.Rotation = FRotationMatrix::MakeFromXY(BasisX, BasisY).ToQuat();
 	cutPlaneData.Extents = slice.GetSize();
+	cutPlaneData.Location = PendingPlanePoints[0] + cutPlaneData.Extents.X * BasisX * 0.5f + cutPlaneData.Extents.Y * BasisY * 0.5f;
+	cutPlaneData.Rotation = FRotationMatrix::MakeFromXY(BasisX, BasisY).ToQuat();
 
 	FMOIStateData stateData(doc->GetNextAvailableID(), EObjectType::OTCutPlane);
 	stateData.CustomData.SaveStructData(cutPlaneData);
