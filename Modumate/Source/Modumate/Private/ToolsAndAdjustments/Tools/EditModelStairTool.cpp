@@ -2,12 +2,14 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelStairTool.h"
 
+#include "Components/EditableTextBox.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateStairStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
+#include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -218,7 +220,49 @@ bool UStairTool::Deactivate()
 
 bool UStairTool::HandleInputNumber(double n)
 {
-	return false;
+	FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+
+	switch (CurrentState)
+	{
+	case (RunPending):
+	{
+		auto runSegment = DimensionManager->GetDimensionActor(RunSegmentID)->GetLineActor();
+		FVector runDirection = runSegment->Point2 - runSegment->Point1;
+		runDirection.Normalize();
+
+		cursor.WorldPosition = runSegment->Point1 + runDirection * n;
+		runSegment->Point2 = cursor.WorldPosition;
+
+	} break;
+	case (RisePending):
+	{
+		auto riseSegment = DimensionManager->GetDimensionActor(RiseSegmentID)->GetLineActor();
+		FVector riseDirection = riseSegment->Point2 - riseSegment->Point1;
+		riseDirection.Normalize();
+
+		cursor.WorldPosition = riseSegment->Point1 + riseDirection * n;
+		riseSegment->Point2 = cursor.WorldPosition;
+
+	} break;
+	case (WidthPending):
+	{
+		auto widthSegment = DimensionManager->GetDimensionActor(WidthSegmentID)->GetLineActor();
+		FVector widthDirection = widthSegment->Point2 - widthSegment->Point1;
+		widthDirection.Normalize();
+
+		cursor.WorldPosition = widthSegment->Point1 + widthDirection * n;
+		widthSegment->Point2 = cursor.WorldPosition;
+
+	} break;
+	}
+
+	FrameUpdate();
+	if (!EnterNextStage())
+	{
+		EndUse();
+	}
+
+	return true;
 }
 
 bool UStairTool::BeginUse()
@@ -259,19 +303,36 @@ bool UStairTool::AbortUse()
 	case RisePending:
 	{
 		PendingObjMesh->SetActorHiddenInGame(true);
+
+		auto dimensionActor = DimensionManager->GetDimensionActor(RiseSegmentID);
+		if (dimensionActor != nullptr)
+		{
+			auto dimensionWidget = dimensionActor->DimensionText;
+			dimensionWidget->Measurement->OnTextCommitted.RemoveDynamic(this, &UEditModelToolBase::OnTextCommitted);
+		}
 		DimensionManager->ReleaseDimensionActor(RiseSegmentID);
+
 		RiseSegmentID = 0;
 		cursor.SetAffordanceFrame(RunStartPos, FVector::UpVector);
 		CurrentState = RunPending;
+		DimensionManager->SetActiveActorID(RunSegmentID);
 	}
 	break;
 	case WidthPending:
 	{
+		auto dimensionActor = DimensionManager->GetDimensionActor(WidthSegmentID);
+		if (dimensionActor != nullptr)
+		{
+			auto dimensionWidget = dimensionActor->DimensionText;
+			dimensionWidget->Measurement->OnTextCommitted.RemoveDynamic(this, &UEditModelToolBase::OnTextCommitted);
+		}
 		DimensionManager->ReleaseDimensionActor(WidthSegmentID);
+
 		WidthSegmentID = 0;
 		cursor.SetAffordanceFrame(RiseStartPos, RunDir, WidthDir);
 		CurrentWidth = 0.0f;
 		CurrentState = RisePending;
+		DimensionManager->SetActiveActorID(RiseSegmentID);
 	}
 	break;
 	}
@@ -335,6 +396,8 @@ bool UStairTool::EnterNextStage()
 		if (!FMath::IsNearlyZero(CurrentWidth))
 		{
 			bool bCreationSuccess = MakeStairs();
+
+			DimensionManager->SetActiveActorID(MOD_ID_NONE);
 			return false;
 		}
 	}
@@ -490,6 +553,11 @@ void UStairTool::MakePendingSegment(int32 &TargetSegmentID, const FVector &Start
 {
 	auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
 	TargetSegmentID = dimensionActor->ID;
+	DimensionManager->SetActiveActorID(TargetSegmentID);
+
+	auto dimensionWidget = dimensionActor->DimensionText;
+	dimensionWidget->Measurement->SetIsReadOnly(false);
+	dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &UEditModelToolBase::OnTextCommitted);
 
 	auto segment = dimensionActor->GetLineActor();
 	segment->Point1 = StartingPoint;
@@ -503,9 +571,16 @@ void UStairTool::ResetState()
 	TArray<int32> pendingSegmentIDs = { RunSegmentID, RiseSegmentID, WidthSegmentID };
 	for (int32 &pendingSegmentID : pendingSegmentIDs)
 	{
+		auto dimensionActor = DimensionManager->GetDimensionActor(pendingSegmentID);
+		if (dimensionActor != nullptr)
+		{
+			auto dimensionWidget = dimensionActor->DimensionText;
+			dimensionWidget->Measurement->OnTextCommitted.RemoveDynamic(this, &UEditModelToolBase::OnTextCommitted);
+		}
 		DimensionManager->ReleaseDimensionActor(pendingSegmentID);
 		pendingSegmentID = 0;
 	}
+	DimensionManager->SetActiveActorID(MOD_ID_NONE);
 
 	if (PendingObjMesh.IsValid())
 	{
