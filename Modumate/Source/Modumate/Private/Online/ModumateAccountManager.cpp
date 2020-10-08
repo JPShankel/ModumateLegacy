@@ -10,10 +10,10 @@ const FTimespan FModumateAccountManager::IdTokenTimeout = { 0, 10 /* min */, 0 }
 
 FString FModumateAccountManager::GetAmsAddress()
 {
-#if 1   // For testing against staging server:
-	return TEXT("https://beta.account.modumate.com");
-#else
+#if UE_BUILD_SHIPPING
 	return TEXT("https://account.modumate.com");
+#else  // Developer builds login to staging server.
+	return TEXT("https://beta.account.modumate.com");
 #endif
 }
 
