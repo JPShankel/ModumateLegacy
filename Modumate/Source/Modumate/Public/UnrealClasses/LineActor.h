@@ -32,6 +32,7 @@ protected:
 	bool MakeGeometry();
 	bool UpdateGeometry();
 	bool CalculateVertices();
+	void UpdateColor();
 
 	TArray<FVector> Vertices;
 	TArray<FVector> Normals;
@@ -89,7 +90,7 @@ public:
 	void SetIsHUD(bool bRenderScreenSpace);
 	void SetVisibilityInApp(bool bVisible);
 
-	void UpdateMetaEdgeVisuals(bool bConnected, float ThicknessMultiplier = 1.0f);
+	void UpdateVisuals(bool bConnected, float ThicknessMultiplier = 1.0f, FColor NewColor = FColor::Black);
 
 private:
 	bool bIsHUD = true;

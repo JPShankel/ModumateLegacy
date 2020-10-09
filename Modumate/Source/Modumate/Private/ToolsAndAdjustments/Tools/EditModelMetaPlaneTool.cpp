@@ -313,7 +313,7 @@ bool UMetaPlaneTool::FrameUpdate()
 			}
 
 			pendingSegment->Point2 = hitLoc;
-			pendingSegment->UpdateMetaEdgeVisuals(false);
+			pendingSegment->UpdateVisuals(false);
 		}
 
 		UpdatePendingPlane();

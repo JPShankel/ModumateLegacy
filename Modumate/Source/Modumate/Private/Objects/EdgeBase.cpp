@@ -13,8 +13,11 @@ FMOIEdgeImplBase::FMOIEdgeImplBase(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
 	, World(nullptr)
 	, LineActor(nullptr)
-	, HoverColor(FColor::White)
-	, HoverThickness(3.0f)
+	, SelectedColor(0x1C, 0x9F, 0xFF)
+	, HoveredColor(0x00, 0x00, 0x00)
+	, BaseColor(0x00, 0x00, 0x00)
+	, HoverThickness(4.5f)
+	, SelectedThickness(3.0f)
 {
 }
 
@@ -45,7 +48,7 @@ AActor *FMOIEdgeImplBase::CreateActor(UWorld *world, const FVector &loc, const F
 	World = world;
 	LineActor = world->SpawnActor<ALineActor>();
 	LineActor->SetIsHUD(false);
-	LineActor->UpdateMetaEdgeVisuals(false);
+	LineActor->UpdateVisuals(false);
 	return LineActor.Get();
 }
 
@@ -54,6 +57,36 @@ void FMOIEdgeImplBase::OnSelected(bool bNewSelected)
 	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
 
 	MOI->UpdateVisibilityAndCollision();
+}
+
+void FMOIEdgeImplBase::UpdateVisibilityAndCollision(bool& bOutVisible, bool& bOutCollisionEnabled)
+{
+	FModumateObjectInstanceImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
+
+	if (MOI && LineActor.IsValid())
+	{
+		AEditModelGameMode_CPP* gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+		// Color
+		if (gameMode)
+		{
+			
+			FColor color;
+			if (MOI->IsSelected())
+			{
+				color = SelectedColor;
+			}
+			else if (MOI->IsHovered())
+			{
+				color = HoveredColor;
+			}
+			else
+			{
+				color = BaseColor;
+			}
+
+			LineActor->UpdateVisuals(true, GetThicknessMultiplier(), color);
+		}
+	}
 }
 
 void FMOIEdgeImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
@@ -79,5 +112,14 @@ void FMOIEdgeImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outP
 
 float FMOIEdgeImplBase::GetThicknessMultiplier() const
 {
-	return (MOI && MOI->IsSelected()) ? 3.0f : 1.0f;
+	if (MOI->IsSelected())
+	{
+		return SelectedThickness;
+	}
+	else if (MOI->IsHovered())
+	{
+		return HoverThickness;
+	}
+
+	return 1.0f;
 }

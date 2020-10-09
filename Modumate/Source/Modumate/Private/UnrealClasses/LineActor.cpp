@@ -1,16 +1,16 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
-
 #include "UnrealClasses/LineActor.h"
-#include "ProceduralMeshComponent.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UI/EditModelPlayerHUD.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+
+#include "Graph/Graph3D.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "Graph/Graph3D.h"
+#include "ProceduralMeshComponent.h"
+#include "UI/EditModelPlayerHUD.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 // Sets default values
 ALineActor::ALineActor(const FObjectInitializer& ObjectInitializer)
@@ -121,6 +121,11 @@ bool ALineActor::CalculateVertices()
 	return true;
 }
 
+void ALineActor::UpdateColor()
+{
+	Colors.Init(Color, 4);
+}
+
 bool ALineActor::MakeGeometry()
 {
 	ProceduralMesh->ClearAllMeshSections();
@@ -129,14 +134,13 @@ bool ALineActor::MakeGeometry()
 	{
 		return false;
 	}
+	UpdateColor();
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, Vertices, Tris, Normals, Uvs, Colors, Tangents, false);
+
 	FArchitecturalMaterial materialData;
 	materialData.EngineMaterial = EMGameMode ? EMGameMode->LineMaterial : nullptr;
-	if (EMGameMode != nullptr)
-	{
-		ProceduralMesh->SetMaterial(0, materialData.EngineMaterial.Get());
-	}
+	ProceduralMesh->SetMaterial(0, materialData.EngineMaterial.Get());
 
 	return true;
 }
@@ -147,6 +151,7 @@ bool ALineActor::UpdateGeometry()
 	{
 		return false;
 	}
+	UpdateColor();
 
 	ProceduralMesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, Uvs, Colors, Tangents);
 
@@ -156,6 +161,7 @@ bool ALineActor::UpdateGeometry()
 // Called every frame
 void ALineActor::Tick(float DeltaTime)
 {
+	// TODO: conditionally update geometry based on the camera changing (ex vertex actor)
 	Super::Tick(DeltaTime);
 	if (!bIsHUD)
 	{
@@ -197,12 +203,29 @@ void ALineActor::SetVisibilityInApp(bool bVisible)
 	SetActorHiddenInGame(!(bVisibleInApp && bLastRenderValid));
 }
 
-void ALineActor::UpdateMetaEdgeVisuals(bool bConnected, float ThicknessMultiplier)
+void ALineActor::UpdateVisuals(bool bConnected, float ThicknessMultiplier, FColor NewColor)
 {
-	FVector normal = (Point2 - Point1).GetSafeNormal();
+	float newThickness = 2.0f * ThicknessMultiplier;
+	bool bUpdateThickness = newThickness != Thickness;
+	bool bUpdateColor = Color != NewColor;
 
-	// Changing the color here would require modifying the material (currently EMGameMode->LineMaterial)
-	Color = FColor::Black;
-	Thickness = 2.0f * ThicknessMultiplier;
+	if (bUpdateColor)
+	{
+		Color = NewColor;
+		UpdateColor();
+	}
+	if (bUpdateThickness)
+	{
+		Thickness = newThickness;
+		if (!CalculateVertices())
+		{
+			return;
+		}
+	}
+
+	if (bUpdateThickness || bUpdateColor)
+	{
+		ProceduralMesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, Uvs, Colors, Tangents);
+	}
 }
 

@@ -72,6 +72,7 @@ bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelta
 
 void FMOISurfaceEdgeImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
+	FMOIEdgeImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
 	if (MOI && LineActor.IsValid())
 	{
 		AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(LineActor->GetWorld()->GetFirstPlayerController()->PlayerState);
@@ -95,20 +96,6 @@ void FMOISurfaceEdgeImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &
 		}
 
 		LineActor->SetVisibilityInApp(bOutVisible);
-		if (bOutVisible)
-		{
-			float thicknessMultiplier = GetThicknessMultiplier();
-			if (MOI->IsHovered() && emPlayerState && emPlayerState->ShowHoverEffects)
-			{
-				LineActor->Color = HoverColor;
-				LineActor->Thickness = HoverThickness * thicknessMultiplier;
-			}
-			else
-			{
-				LineActor->UpdateMetaEdgeVisuals(true, thicknessMultiplier);
-			}
-		}
-
 		LineActor->SetActorEnableCollision(bOutCollisionEnabled);
 	}
 }
