@@ -39,7 +39,7 @@ public:
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
-	virtual void OnSelected(bool bNewSelected) override;
+	virtual void OnSelected(bool bIsSelected) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;

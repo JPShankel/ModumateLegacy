@@ -12,8 +12,8 @@ public:
 	virtual void PostCreateObject(bool bNewObject) override;
 	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupDynamicGeometry() override;
-	virtual void OnCursorHoverActor(AEditModelPlayerController_CPP* controller, bool EnableHover) override;
-	virtual void OnSelected(bool bNewSelected) override;
+	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
+	virtual void OnSelected(bool bIsSelected) override;
 
 protected:
 	void UpdateConnectedVisuals();

@@ -103,15 +103,15 @@ void FMOIRoofPerimeterImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP
 	}
 }
 
-void FMOIRoofPerimeterImpl::OnCursorHoverActor(AEditModelPlayerController_CPP *Controller, bool bIsHovered)
+void FMOIRoofPerimeterImpl::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
-	FModumateObjectInstanceImplBase::OnCursorHoverActor(Controller, bIsHovered);
+	FModumateObjectInstanceImplBase::OnHovered(controller, bIsHovered);
 	UpdateLineActors();
 }
 
-void FMOIRoofPerimeterImpl::OnSelected(bool bNewSelected)
+void FMOIRoofPerimeterImpl::OnSelected(bool bIsSelected)
 {
-	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
+	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
 	UpdateLineActors();
 }
 

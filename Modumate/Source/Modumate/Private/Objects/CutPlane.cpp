@@ -110,11 +110,11 @@ void FMOICutPlaneImpl::UpdateDynamicGeometry()
 	DynamicMeshActor->SetupPlaneGeometry(CachedPoints, MaterialData, false, true);
 }
 
-void FMOICutPlaneImpl::OnSelected(bool bNewSelected)
+void FMOICutPlaneImpl::OnSelected(bool bIsSelected)
 {
-	FMOIPlaneImplBase::OnSelected(bNewSelected);
+	FMOIPlaneImplBase::OnSelected(bIsSelected);
 
-	if (bNewSelected)
+	if (bIsSelected)
 	{
 		UpdateDraftingPreview();
 	}

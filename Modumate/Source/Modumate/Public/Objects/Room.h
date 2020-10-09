@@ -21,8 +21,8 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
 
-	virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover) override;
-	virtual void OnSelected(bool bNewSelected) override;
+	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
+	virtual void OnSelected(bool bIsSelected) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;

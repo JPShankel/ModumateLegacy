@@ -51,8 +51,8 @@ public:
 
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) = 0;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) = 0;
-	virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover) = 0;
-	virtual void OnSelected(bool bNewSelected) = 0;
+	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) = 0;
+	virtual void OnSelected(bool bIsSelected) = 0;
 
 	virtual void OnAssemblyChanged() = 0;
 
@@ -118,8 +118,8 @@ public:
 
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override { }
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) override;
-	virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover) override { }
-	virtual void OnSelected(bool bNewSelected) override;
+	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override { }
+	virtual void OnSelected(bool bIsSelected) override;
 
 	virtual void OnAssemblyChanged() override;
 

@@ -55,14 +55,14 @@ AActor *FMOIVertexImplBase::CreateActor(UWorld *world, const FVector &loc, const
 	return VertexActor.Get();
 }
 
-void FMOIVertexImplBase::OnSelected(bool bNewSelected)
+void FMOIVertexImplBase::OnSelected(bool bIsSelected)
 {
-	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
+	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
 
 	MOI->UpdateVisibilityAndCollision();
 
 	if (VertexActor.IsValid())
 	{
-		VertexActor->SetHandleScaleScreenSize(bNewSelected ? SelectedHandleSize : DefaultHandleSize);
+		VertexActor->SetHandleScaleScreenSize(bIsSelected ? SelectedHandleSize : DefaultHandleSize);
 	}
 }

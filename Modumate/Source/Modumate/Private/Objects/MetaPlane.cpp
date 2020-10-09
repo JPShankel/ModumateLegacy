@@ -60,9 +60,9 @@ void FMOIMetaPlaneImpl::SetupDynamicGeometry()
 	}
 }
 
-void FMOIMetaPlaneImpl::OnCursorHoverActor(AEditModelPlayerController_CPP* controller, bool EnableHover)
+void FMOIMetaPlaneImpl::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
-	FMOIPlaneImplBase::OnCursorHoverActor(controller, EnableHover);
+	FMOIPlaneImplBase::OnHovered(controller, bIsHovered);
 
 	if (MOI && DynamicMeshActor.IsValid())
 	{
@@ -70,9 +70,9 @@ void FMOIMetaPlaneImpl::OnCursorHoverActor(AEditModelPlayerController_CPP* contr
 	}
 }
 
-void FMOIMetaPlaneImpl::OnSelected(bool bNewSelected)
+void FMOIMetaPlaneImpl::OnSelected(bool bIsSelected)
 {
-	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
+	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
 
 	if (MOI && DynamicMeshActor.IsValid())
 	{

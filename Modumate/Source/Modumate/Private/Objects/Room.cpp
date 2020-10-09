@@ -36,16 +36,16 @@ FQuat FMOIRoomImpl::GetRotation() const
 	return FQuat::Identity;
 }
 
-void FMOIRoomImpl::OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bEnableHover)
+void FMOIRoomImpl::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
-	FModumateObjectInstanceImplBase::OnCursorHoverActor(controller, bEnableHover);
+	FModumateObjectInstanceImplBase::OnHovered(controller, bIsHovered);
 
 	UpdateMaterial();
 }
 
-void FMOIRoomImpl::OnSelected(bool bNewSelected)
+void FMOIRoomImpl::OnSelected(bool bIsSelected)
 {
-	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
+	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
 
 	UpdateMaterial();
 }

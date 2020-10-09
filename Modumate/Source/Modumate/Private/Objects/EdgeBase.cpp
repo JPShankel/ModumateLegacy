@@ -36,9 +36,9 @@ int32 FMOIEdgeImplBase::GetNumCorners() const
 	return 2;
 }
 
-void FMOIEdgeImplBase::OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bEnableHover)
+void FMOIEdgeImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
-	FModumateObjectInstanceImplBase::OnCursorHoverActor(controller, bEnableHover);
+	FModumateObjectInstanceImplBase::OnHovered(controller, bIsHovered);
 
 	MOI->UpdateVisibilityAndCollision();
 }
@@ -52,9 +52,9 @@ AActor *FMOIEdgeImplBase::CreateActor(UWorld *world, const FVector &loc, const F
 	return LineActor.Get();
 }
 
-void FMOIEdgeImplBase::OnSelected(bool bNewSelected)
+void FMOIEdgeImplBase::OnSelected(bool bIsSelected)
 {
-	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
+	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
 
 	MOI->UpdateVisibilityAndCollision();
 }

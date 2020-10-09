@@ -24,8 +24,8 @@ public:
 	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) override;
-	virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
-	virtual void OnSelected(bool bNewSelected) override;
+	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
+	virtual void OnSelected(bool bIsSelected) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual AActor *RestoreActor() override;
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;

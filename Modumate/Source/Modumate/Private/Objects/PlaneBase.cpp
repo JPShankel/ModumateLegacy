@@ -129,16 +129,16 @@ void FMOIPlaneImplBase::UpdateVisibilityAndCollision(bool& bOutVisible, bool& bO
 	}
 }
 
-void FMOIPlaneImplBase::OnSelected(bool bNewSelected)
+void FMOIPlaneImplBase::OnSelected(bool bIsSelected)
 {
 	MOI->UpdateVisibilityAndCollision();
-	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
+	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
 }
 
-void FMOIPlaneImplBase::OnCursorHoverActor(AEditModelPlayerController_CPP* controller, bool EnableHover)
+void FMOIPlaneImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
 	MOI->UpdateVisibilityAndCollision();
-	FModumateObjectInstanceImplBase::OnCursorHoverActor(controller, EnableHover);
+	FModumateObjectInstanceImplBase::OnHovered(controller, bIsHovered);
 }
 
 float FMOIPlaneImplBase::GetAlpha() const

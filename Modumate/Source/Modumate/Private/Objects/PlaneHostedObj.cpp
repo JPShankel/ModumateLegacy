@@ -290,9 +290,9 @@ void FMOIPlaneHostedObjImpl::SetupAdjustmentHandles(AEditModelPlayerController_C
 	}
 }
 
-void FMOIPlaneHostedObjImpl::OnSelected(bool bNewSelected)
+void FMOIPlaneHostedObjImpl::OnSelected(bool bIsSelected)
 {
-	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
+	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
 
 	if (const FModumateObjectInstance *parent = MOI ? MOI->GetParentObject() : nullptr)
 	{

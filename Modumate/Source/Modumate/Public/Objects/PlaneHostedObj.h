@@ -41,8 +41,8 @@ public:
 	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
-	virtual void OnCursorHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover) override {};
-	virtual void OnSelected(bool bNewSelected) override;
+	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override {};
+	virtual void OnSelected(bool bIsSelected) override;
 
 	virtual const ILayeredObject* GetLayeredInterface() const override { return this; }
 	virtual const FCachedLayerDimsByType &GetCachedLayerDims() const override { return CachedLayerDims; }

@@ -19,8 +19,8 @@ public:
 	virtual bool ShowStructureOnSelection() const override;
 	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
-	virtual void OnSelected(bool bNewSelected) override;
-	virtual void OnCursorHoverActor(AEditModelPlayerController_CPP* controller, bool EnableHover) override;
+	virtual void OnSelected(bool bIsSelected) override;
+	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
 
 protected:
 	virtual float GetAlpha() const;

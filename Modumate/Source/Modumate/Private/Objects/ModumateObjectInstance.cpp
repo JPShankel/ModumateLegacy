@@ -414,7 +414,7 @@ void FModumateObjectInstance::MouseHoverActor(AEditModelPlayerController_CPP *co
 	{
 		bHovered = EnableHover;
 
-		Implementation->OnCursorHoverActor(controller, EnableHover);
+		Implementation->OnHovered(controller, EnableHover);
 	}
 }
 
@@ -1132,13 +1132,13 @@ void FModumateObjectInstanceImplBase::ShowAdjustmentHandles(AEditModelPlayerCont
 	}
 }
 
-void FModumateObjectInstanceImplBase::OnSelected(bool bNewSelected)
+void FModumateObjectInstanceImplBase::OnSelected(bool bIsSelected)
 {
 	AActor *moiActor = MOI ? MOI->GetActor() : nullptr;
 	auto *controller = moiActor ? moiActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
 	if (controller && controller->EMPlayerState->SelectedObjects.Num() == 1)
 	{
-		MOI->ShowAdjustmentHandles(controller, bNewSelected);
+		MOI->ShowAdjustmentHandles(controller, bIsSelected);
 	}
 }
 

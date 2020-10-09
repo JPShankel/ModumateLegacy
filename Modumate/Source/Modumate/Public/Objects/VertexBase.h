@@ -16,7 +16,7 @@ public:
 	virtual int32 GetNumCorners() const override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
-	virtual void OnSelected(bool bNewSelected) override;
+	virtual void OnSelected(bool bIsSelected) override;
 	virtual bool ShowStructureOnSelection() const override { return false; }
 	virtual bool UseStructureDataForCollision() const override { return true; }
 	virtual void GetTangents(TArray<FVector>& OutTangents) const = 0;
