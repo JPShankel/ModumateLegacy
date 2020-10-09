@@ -26,6 +26,34 @@ int32 FBIMCraftingTreeNode::GetInstanceID() const
 	return InstanceID;
 }
 
+ECraftingResult FBIMCraftingTreeNode::NodeIamEmbeddedIn(int32& OutNodeId) const
+{
+	OutNodeId = INDEX_NONE;
+	if (AttachedChildren.Num() == 0 && ParentInstance.IsValid())
+	{
+		OutNodeId = ParentInstance.Pin()->GetInstanceID();
+		return ECraftingResult::Success;
+	}
+	return ECraftingResult::Error;
+}
+
+ECraftingResult FBIMCraftingTreeNode::NodesEmbeddedInMe(TArray<int32>& OutNodeIds) const
+{
+	OutNodeIds.Empty();
+	for (const auto& pin : AttachedChildren)
+	{
+		for (const auto& childPin : pin.Children)
+		{
+			int32 embeddedInId;
+			if (childPin.Pin()->NodeIamEmbeddedIn(embeddedInId) == ECraftingResult::Success && embeddedInId == InstanceID)
+			{
+				OutNodeIds.Add(childPin.Pin()->GetInstanceID());
+			}
+		}
+	}
+	return OutNodeIds.Num() > 0 ? ECraftingResult::Success : ECraftingResult::Error;
+}
+
 ECraftingResult FBIMCraftingTreeNode::GatherAllChildNodes(TArray<FBIMCraftingTreeNodeSharedPtr> &OutChildren)
 {
 	TArray<FBIMCraftingTreeNodeSharedPtr> nodeStack;

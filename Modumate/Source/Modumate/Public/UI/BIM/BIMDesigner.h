@@ -140,7 +140,7 @@ public:
 	bool DeleteNode(int32 InstanceID);
 	bool AddNodeFromPreset(int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
 	bool SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value);
-	bool UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVisibility);
+	bool UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVisibility, FVector2D offset = FVector2D::ZeroVector);
 	bool GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, int32 NodeID);
 	bool SavePresetFromNode(bool SaveAs, int32 InstanceID);
 };

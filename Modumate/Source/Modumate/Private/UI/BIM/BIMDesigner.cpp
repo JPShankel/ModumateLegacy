@@ -169,7 +169,6 @@ bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey
 	{
 		return false;
 	}
-	UpdateNodeSwapMenuVisibility(InstanceID, false);
 	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
 	return true;
@@ -201,43 +200,49 @@ void UBIMDesigner::UpdateBIMDesigner()
 
 	for (const FBIMCraftingTreeNodeSharedPtr& curInstance : InstancePool.GetInstancePool())
 	{
-		// Create a normal node or a rigged assembly node, depends on whether any of its children have parts
-		bool bChildrenHasPart = false;
-		for (const auto& curChild : curInstance->AttachedChildren)
+		// Create widget for this node only if it's not embedded
+		int32 embeddedInId = INDEX_NONE;
+		curInstance->NodeIamEmbeddedIn(embeddedInId);
+		if (embeddedInId == INDEX_NONE)
 		{
-			if (curChild.IsPart())
+			// Create a normal node or a rigged assembly node, depends on whether any of its children have parts
+			bool bChildrenHasPart = false;
+			for (const auto& curChild : curInstance->AttachedChildren)
 			{
-				bChildrenHasPart = true;
-				break;
-			}
-		}
-		TSubclassOf<UBIMBlockNode> nodeWidgetClass = bChildrenHasPart ? BIMBlockRiggedNodeClass : BIMBlockNodeClass;
-		UBIMBlockNode* newBlockNode = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockNode>(nodeWidgetClass);
-		if (newBlockNode)
-		{
-			if (!curInstance->ParentInstance.IsValid()) // assume instance without parent is king node
-			{
-				newBlockNode->IsKingNode = true;
-				RootNode = newBlockNode;
-				// Do other kingly things, maybe auto focus when no other node is selected
-			}
-			newBlockNode->BuildNode(this, curInstance, bChildrenHasPart);
-			BIMBlockNodes.Add(newBlockNode);
-			CanvasPanelForNodes->AddChildToCanvas(newBlockNode);
-			IdToNodeMapUnSorted.Add(curInstance->GetInstanceID(), newBlockNode);
-			UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(newBlockNode);
-			if (canvasSlot)
-			{
-				canvasSlot->SetAutoSize(true);
-			}
-
-			// Save the node's child group if it can add child
-			for (auto& curChildGroup : curInstance->AttachedChildren)
-			{
-				if (curChildGroup.SetType.MaxCount > curChildGroup.Children.Num() || 
-					curChildGroup.SetType.MaxCount == -1)
+				if (curChild.IsPart())
 				{
-					addableChildGroup.AddUnique(&curChildGroup);
+					bChildrenHasPart = true;
+					break;
+				}
+			}
+			TSubclassOf<UBIMBlockNode> nodeWidgetClass = bChildrenHasPart ? BIMBlockRiggedNodeClass : BIMBlockNodeClass;
+			UBIMBlockNode* newBlockNode = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockNode>(nodeWidgetClass);
+			if (newBlockNode)
+			{
+				if (!curInstance->ParentInstance.IsValid()) // assume instance without parent is king node
+				{
+					newBlockNode->IsKingNode = true;
+					RootNode = newBlockNode;
+					// Do other kingly things, maybe auto focus when no other node is selected
+				}
+				newBlockNode->BuildNode(this, curInstance, bChildrenHasPart);
+				BIMBlockNodes.Add(newBlockNode);
+				CanvasPanelForNodes->AddChildToCanvas(newBlockNode);
+				IdToNodeMapUnSorted.Add(curInstance->GetInstanceID(), newBlockNode);
+				UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(newBlockNode);
+				if (canvasSlot)
+				{
+					canvasSlot->SetAutoSize(true);
+				}
+
+				// Save the node's child group if it can add child
+				for (auto& curChildGroup : curInstance->AttachedChildren)
+				{
+					if (curChildGroup.SetType.MaxCount > curChildGroup.Children.Num() ||
+						curChildGroup.SetType.MaxCount == -1)
+					{
+						addableChildGroup.AddUnique(&curChildGroup);
+					}
 				}
 			}
 		}
@@ -248,7 +253,10 @@ void UBIMDesigner::UpdateBIMDesigner()
 	for (const auto& curID : sortedNodeIDs)
 	{
 		const auto& curNode = IdToNodeMapUnSorted.FindRef(curID);
-		IdToNodeMap.Add(curID, curNode);
+		if (curNode)
+		{
+			IdToNodeMap.Add(curID, curNode);
+		}
 	}
 
 	for (int32 i = 0; i < addableChildGroup.Num(); ++i)
@@ -395,7 +403,7 @@ void UBIMDesigner::AutoArrangeNodes()
 				posX += columnWidthMap.FindRef(i) + NodeHorizontalSpacing;
 			}
 			screenPosNodeMap.Add(curNode, FVector2D(posX, curNodeY));
-			if (curNodeY > maxCanvasHeight)
+			if (curNodeY > maxCanvasHeight || FMath::IsNearlyEqual(curNodeY, maxCanvasHeight))
 			{
 				maxCanvasHeight = curNodeY;
 				maxCanvasHeightBottomEdge = curNode->GetEstimatedNodeSize().Y + curNodeY;
@@ -406,7 +414,7 @@ void UBIMDesigner::AutoArrangeNodes()
 			}
 
 			float curMaxColumnHeight = maxColumnHeightMap.FindRef(mapColumn);
-			if (curNodeY > curMaxColumnHeight)
+			if (curNodeY > curMaxColumnHeight || FMath::IsNearlyEqual(curNodeY, curMaxColumnHeight))
 			{
 				maxColumnHeightMap.Add(mapColumn, curNodeY);
 			}
@@ -543,11 +551,25 @@ bool UBIMDesigner::SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, co
 	return true;
 }
 
-bool UBIMDesigner::UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVisibility)
+bool UBIMDesigner::UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVisibility, FVector2D offset)
 {
-	UBIMBlockNode *blocknode = IdToNodeMap.FindRef(SwapFromNodeID);
+	const FBIMCraftingTreeNodeWeakPtr inst = InstancePool.InstanceFromID(SwapFromNodeID);
+	if (!inst.IsValid())
+	{
+		SizeBoxSwapTray->SetVisibility(ESlateVisibility::Collapsed);
+		return false;
+	}
+	int32 idSearch = INDEX_NONE;
+	inst.Pin()->NodeIamEmbeddedIn(idSearch);
+	if (idSearch == INDEX_NONE)
+	{
+		idSearch = SwapFromNodeID;
+	}
+
+	UBIMBlockNode* blocknode = IdToNodeMap.FindRef(idSearch);
 	if (!blocknode)
 	{
+		SizeBoxSwapTray->SetVisibility(ESlateVisibility::Collapsed);
 		return false;
 	}
 
@@ -562,6 +584,7 @@ bool UBIMDesigner::UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVi
 			{
 				newPosition.Y += blocknode->DirtyTabSize;
 			}
+			newPosition += offset;
 			swapCanvasSlot->SetPosition(newPosition);
 		}
 		SizeBoxSwapTray->SetVisibility(ESlateVisibility::SelfHitTestInvisible);

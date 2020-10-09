@@ -65,6 +65,8 @@ public:
 	EConfiguratorNodeIconOrientation CurrentOrientation;
 
 	int32 GetInstanceID() const;
+	ECraftingResult NodeIamEmbeddedIn(int32& OutNodeId) const;
+	ECraftingResult NodesEmbeddedInMe(TArray<int32>& OutNodeIds) const;
 
 	EBIMPresetEditorNodeStatus GetPresetStatus(const FBIMPresetCollection &PresetCollection) const;
 

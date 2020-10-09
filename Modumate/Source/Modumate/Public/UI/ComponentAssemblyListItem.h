@@ -40,7 +40,7 @@ protected:
 	FName AsmName = NAME_None; // Display name, user-facing
 	EToolMode ToolMode = EToolMode::VE_NONE;
 	EComponentListItemType ItemType = EComponentListItemType::None;
-	int32 BIMInstanceID = -1;
+	int32 BIMInstanceID = INDEX_NONE;
 
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *EMPlayerController;

@@ -136,6 +136,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockUserEnterable> BIMBlockUserEnterableClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UBIMBlockDropdownPreset> BIMBlockDropdownPresetClass;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UBIMBlockSlotList* BIMBlockSlotList;
 

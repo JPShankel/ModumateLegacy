@@ -23,5 +23,5 @@ public:
 	int32 SelectionItemCount = 0;
 
 	// The BIM node that is pending swap
-	int32 BIMNodeInstanceID = -1;
+	int32 BIMNodeInstanceID = INDEX_NONE;
 };

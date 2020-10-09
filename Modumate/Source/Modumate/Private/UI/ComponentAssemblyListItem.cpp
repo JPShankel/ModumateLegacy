@@ -156,6 +156,7 @@ void UComponentAssemblyListItem::OnButtonConfirmReleased()
 	switch (ItemType)
 	{
 	case EComponentListItemType::SwapDesignerPreset:
+		EMPlayerController->EditModelUserWidget->BIMDesigner->UpdateNodeSwapMenuVisibility(BIMInstanceID, false);
 		result = EMPlayerController->EditModelUserWidget->BIMDesigner->SetPresetForNodeInBIMDesigner(BIMInstanceID, AsmKey);
 		break;
 	case EComponentListItemType::SwapListItem:

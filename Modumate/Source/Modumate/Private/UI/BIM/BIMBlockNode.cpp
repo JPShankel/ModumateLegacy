@@ -23,6 +23,7 @@
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "UI/BIM/BIMBlockNodeDirtyTab.h"
 #include "UI/BIM/BIMBlockSlotList.h"
+#include "UI/BIM/BIMBlockDropdownPreset.h"
 
 UBIMBlockNode::UBIMBlockNode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -249,6 +250,22 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 			}
 
 			VerticalBoxProperties->AddChildToVerticalBox(newEnterable);
+		}
+	}
+
+	TArray<int32> embeddedNodeIds;
+	Node->NodesEmbeddedInMe(embeddedNodeIds);
+	for (const auto& curEmbeddedID : embeddedNodeIds)
+	{
+		UBIMBlockDropdownPreset* newDropdown = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockDropdownPreset>(BIMBlockDropdownPresetClass);
+		if (newDropdown)
+		{
+			FVector2D dropDownOffset = FVector2D::ZeroVector;
+			dropDownOffset.Y += ExpandedImageSize;
+			dropDownOffset.Y += (FormItemSize * VerticalBoxProperties->GetAllChildren().Num());
+			
+			newDropdown->BuildDropdownFromProperty(ParentBIMDesigner, this, curEmbeddedID, ID, dropDownOffset);
+			VerticalBoxProperties->AddChildToVerticalBox(newDropdown);
 		}
 	}
 
