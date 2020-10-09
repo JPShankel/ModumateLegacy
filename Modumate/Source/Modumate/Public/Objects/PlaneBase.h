@@ -17,12 +17,17 @@ public:
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 	virtual bool ShowStructureOnSelection() const override;
+	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+
+	virtual void OnSelected(bool bNewSelected) override;
+	virtual void OnCursorHoverActor(AEditModelPlayerController_CPP* controller, bool EnableHover) override;
 
 protected:
 	virtual float GetAlpha() const;
 
 protected:
 	FArchitecturalMaterial MaterialData;
+	FColor SelectedColor, HoveredColor, BaseColor;
 	TArray<FVector> CachedPoints;
 	FPlane CachedPlane;
 	FVector CachedAxisX, CachedAxisY, CachedOrigin, CachedCenter;

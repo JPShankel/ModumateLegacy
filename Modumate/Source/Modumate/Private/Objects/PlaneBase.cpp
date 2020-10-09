@@ -2,12 +2,16 @@
 
 #include "Objects/PlaneBase.h"
 
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 FMOIPlaneImplBase::FMOIPlaneImplBase(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
+	, SelectedColor(0x1C, 0x9F, 0xFF)
+	, HoveredColor(0xCF, 0xCF, 0xCF)
+	, BaseColor(0xFF, 0xFF, 0xFF)
 	, CachedPlane(ForceInitToZero)
 	, CachedAxisX(ForceInitToZero)
 	, CachedAxisY(ForceInitToZero)
@@ -91,6 +95,50 @@ void FMOIPlaneImplBase::SetupAdjustmentHandles(AEditModelPlayerController_CPP *c
 bool FMOIPlaneImplBase::ShowStructureOnSelection() const
 {
 	return false;
+}
+
+void FMOIPlaneImplBase::UpdateVisibilityAndCollision(bool& bOutVisible, bool& bOutCollisionEnabled)
+{
+	FModumateObjectInstanceImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
+
+	if (MOI && DynamicMeshActor.IsValid())
+	{
+		AEditModelGameMode_CPP* gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+		// Color
+		if (gameMode)
+		{
+			MaterialData.EngineMaterial = gameMode->MetaPlaneMaterial;
+			if (MOI->IsSelected())
+			{
+				MaterialData.DefaultBaseColor.Color = SelectedColor;
+			}
+			else if (MOI->IsHovered())
+			{
+				MaterialData.DefaultBaseColor.Color = HoveredColor;
+			}
+			else
+			{
+				MaterialData.DefaultBaseColor.Color = BaseColor;
+			}
+
+			MaterialData.DefaultBaseColor.bValid = true;
+
+			DynamicMeshActor->CachedMIDs.SetNumZeroed(1);
+			UModumateFunctionLibrary::SetMeshMaterial(DynamicMeshActor->Mesh, MaterialData, 0, &DynamicMeshActor->CachedMIDs[0]);
+		}
+	}
+}
+
+void FMOIPlaneImplBase::OnSelected(bool bNewSelected)
+{
+	MOI->UpdateVisibilityAndCollision();
+	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
+}
+
+void FMOIPlaneImplBase::OnCursorHoverActor(AEditModelPlayerController_CPP* controller, bool EnableHover)
+{
+	MOI->UpdateVisibilityAndCollision();
+	FModumateObjectInstanceImplBase::OnCursorHoverActor(controller, EnableHover);
 }
 
 float FMOIPlaneImplBase::GetAlpha() const

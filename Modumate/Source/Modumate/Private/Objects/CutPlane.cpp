@@ -112,7 +112,7 @@ void FMOICutPlaneImpl::UpdateDynamicGeometry()
 
 void FMOICutPlaneImpl::OnSelected(bool bNewSelected)
 {
-	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
+	FMOIPlaneImplBase::OnSelected(bNewSelected);
 
 	if (bNewSelected)
 	{

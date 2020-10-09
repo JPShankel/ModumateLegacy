@@ -22,6 +22,8 @@ void FMOIMetaPlaneImpl::PostCreateObject(bool bNewObject)
 
 void FMOIMetaPlaneImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
+	FMOIPlaneImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
+
 	if (MOI && DynamicMeshActor.IsValid())
 	{
 		bool bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane;
@@ -58,6 +60,16 @@ void FMOIMetaPlaneImpl::SetupDynamicGeometry()
 	}
 }
 
+void FMOIMetaPlaneImpl::OnCursorHoverActor(AEditModelPlayerController_CPP* controller, bool EnableHover)
+{
+	FMOIPlaneImplBase::OnCursorHoverActor(controller, EnableHover);
+
+	if (MOI && DynamicMeshActor.IsValid())
+	{
+		UpdateConnectedVisuals();
+	}
+}
+
 void FMOIMetaPlaneImpl::OnSelected(bool bNewSelected)
 {
 	FModumateObjectInstanceImplBase::OnSelected(bNewSelected);
@@ -72,6 +84,7 @@ void FMOIMetaPlaneImpl::UpdateConnectedVisuals()
 {
 	if (MOI)
 	{
+		MOI->UpdateVisibilityAndCollision();
 		// Update the visuals of all of our connected edges
 		MOI->GetConnectedMOIs(TempConnectedMOIs);
 		for (FModumateObjectInstance *connectedMOI : TempConnectedMOIs)
