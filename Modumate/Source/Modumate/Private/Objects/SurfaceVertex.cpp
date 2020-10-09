@@ -57,6 +57,30 @@ bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 				CachedDeprojectedLocation = UModumateGeometryStatics::Deproject2DPointTransform(surfaceVertex->Position, surfaceGraphTransform);
 				FVector offsetLocation = CachedDeprojectedLocation + (surfaceGraphTransform.GetRotation().GetAxisZ() * FMOISurfaceGraphImpl::VisualNormalOffset);
 				VertexActor->SetMOILocation(offsetLocation);
+
+				// Mark the connected edges and polygons dirty
+				for (FGraphSignedID connectedEdgeID : surfaceVertex->Edges)
+				{
+					auto surfaceEdge = surfaceGraph->FindEdge(connectedEdgeID);
+					auto edgeMOI = MOI->GetDocument()->GetObjectById(FMath::Abs(connectedEdgeID));
+					if (ensure(surfaceEdge && edgeMOI))
+					{
+						edgeMOI->MarkDirty(DirtyFlag);
+
+						for (int32 polyID : {surfaceEdge->LeftPolyID, surfaceEdge->RightPolyID})
+						{
+							if (polyID != MOD_ID_NONE)
+							{
+								auto surfacePoly = surfaceGraph->FindPolygon(polyID);
+								auto polyMOI = MOI->GetDocument()->GetObjectById(polyID);
+								if (ensure(surfacePoly && polyMOI) && surfacePoly->bInterior)
+								{
+									polyMOI->MarkDirty(DirtyFlag);
+								}
+							}
+						}
+					}
+				}
 			}
 
 			break;
@@ -66,18 +90,6 @@ bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 			break;
 		default:
 			break;
-	}
-
-	if (MOI)
-	{
-		MOI->GetConnectedMOIs(CachedConnectedMOIs);
-		for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
-		{
-			if (connectedMOI->GetObjectType() == EObjectType::OTSurfaceEdge)
-			{
-				connectedMOI->MarkDirty(DirtyFlag);
-			}
-		}
 	}
 
 	return true;

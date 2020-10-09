@@ -35,6 +35,8 @@ bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelta
 	{
 	case EObjectDirtyFlags::Structure:
 	{
+		MOI->GetConnectedMOIs(CachedConnectedMOIs);
+
 		FVector offsetDelta = FMOISurfaceGraphImpl::VisualNormalOffset * surfaceGraphObj->GetNormal();
 
 		auto surfaceGraph = doc->FindSurfaceGraph(surfaceGraphObj->ID);
@@ -63,18 +65,6 @@ bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelta
 		break;
 	default:
 		break;
-	}
-
-	if (MOI)
-	{
-		MOI->GetConnectedMOIs(CachedConnectedMOIs);
-		for (FModumateObjectInstance* connectedMOI : CachedConnectedMOIs)
-		{
-			if (connectedMOI->GetObjectType() == EObjectType::OTSurfacePolygon)
-			{
-				connectedMOI->MarkDirty(DirtyFlag);
-			}
-		}
 	}
 
 	return true;

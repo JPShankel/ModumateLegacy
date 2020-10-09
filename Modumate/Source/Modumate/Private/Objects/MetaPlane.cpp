@@ -89,9 +89,9 @@ void FMOIMetaPlaneImpl::UpdateConnectedVisuals()
 		MOI->GetConnectedMOIs(TempConnectedMOIs);
 		for (FModumateObjectInstance *connectedMOI : TempConnectedMOIs)
 		{
-			if (connectedMOI)
+			if ((connectedMOI->GetObjectType() == EObjectType::OTMetaEdge))
 			{
-				connectedMOI->UpdateVisibilityAndCollision();
+				connectedMOI->MarkDirty(EObjectDirtyFlags::Visuals);
 			}
 		}
 	}

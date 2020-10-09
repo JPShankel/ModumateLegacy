@@ -1756,6 +1756,9 @@ FBoxSphereBounds FModumateDocument::CalculateProjectBounds() const
 
 bool FModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
+	static TMap<int32, EObjectDirtyFlags> curCleanedFlags;
+	curCleanedFlags.Reset();
+
 	static TArray<FModumateObjectInstance*> curDirtyList;
 	curDirtyList.Reset();
 
@@ -1784,7 +1787,21 @@ bool FModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 
 				for (FModumateObjectInstance *objToClean : curDirtyList)
 				{
-					bModifiedAnyObjects = objToClean->CleanObject(flagToClean, OutSideEffectDeltas) || bModifiedAnyObjects;
+					EObjectDirtyFlags& cleanedFlags = curCleanedFlags.FindOrAdd(objToClean->ID, EObjectDirtyFlags::None);
+					if (!ensure((cleanedFlags & flagToClean) == EObjectDirtyFlags::None))
+					{
+						UE_LOG(LogTemp, Error, TEXT("Already cleaned %s ID #%d flag %s this frame!"),
+							*EnumValueString(EObjectType, objToClean->GetObjectType()), objToClean->ID,
+							*EnumValueString(EObjectDirtyFlags, flagToClean));
+					}
+
+					bool bCleaned = objToClean->CleanObject(flagToClean, OutSideEffectDeltas);
+					if (bCleaned)
+					{
+						cleanedFlags |= flagToClean;
+					}
+
+					bModifiedAnyObjects |= bCleaned;
 					if (bModifiedAnyObjects)
 					{
 						++objectCleans;

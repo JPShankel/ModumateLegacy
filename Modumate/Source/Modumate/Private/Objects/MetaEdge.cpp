@@ -23,6 +23,8 @@ bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 	{
 	case EObjectDirtyFlags::Structure:
 	{
+		MOI->GetConnectedMOIs(CachedConnectedMOIs);
+
 		auto& graph = MOI->GetDocument()->GetVolumeGraph();
 		auto edge = graph.FindEdge(MOI->ID);
 		auto vertexStart = edge ? graph.FindVertex(edge->StartVertexID) : nullptr;
@@ -51,23 +53,19 @@ bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 	break;
 	case EObjectDirtyFlags::Visuals:
 	{
+		for (FModumateObjectInstance* connectedMOI : CachedConnectedMOIs)
+		{
+			if ((connectedMOI->GetObjectType() == EObjectType::OTMetaPlane) && connectedMOI->IsDirty(EObjectDirtyFlags::Visuals))
+			{
+				return false;
+			}
+		}
+
 		MOI->UpdateVisibilityAndCollision();
 	}
 	break;
 	default:
 		break;
-	}
-
-	if (MOI)
-	{
-		MOI->GetConnectedMOIs(CachedConnectedMOIs);
-		for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
-		{
-			if (connectedMOI->GetObjectType() == EObjectType::OTMetaPlane)
-			{
-				connectedMOI->MarkDirty(DirtyFlag);
-			}
-		}
 	}
 
 	return true;

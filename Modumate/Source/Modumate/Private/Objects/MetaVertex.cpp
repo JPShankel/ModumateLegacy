@@ -49,15 +49,6 @@ bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 	break;
 	}
 
-	MOI->GetConnectedMOIs(CachedConnectedMOIs);
-	for (FModumateObjectInstance *connectedMOI : CachedConnectedMOIs)
-	{
-		if (connectedMOI->GetObjectType() == EObjectType::OTMetaEdge)
-		{
-			connectedMOI->MarkDirty(DirtyFlag);
-		}
-	}
-
 	return true;
 }
 

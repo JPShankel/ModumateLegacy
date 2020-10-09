@@ -621,19 +621,27 @@ bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FD
 			return false;
 		}
 
-		// If we have a parent assigned, then by assume that
-		// it needs to be exist and be clean before we can clean ourselves.
-		// NOTE: this is expected if we try to clean children before parents, like during loading.
+		// If this object has a parent assigned, then it needs to have been created and cleaned, and contain this object, before it can clean itself.
+		// NOTE: this is expected if we try to clean children before parents, like during loading, or undoing deletion of parented objects.
 		if (GetParentID() != MOD_ID_NONE)
 		{
 			FModumateObjectInstance *parentObj = Document->GetObjectById(GetParentID());
-			if ((parentObj == nullptr) || parentObj->IsDirty(DirtyFlag))
+			if (parentObj == nullptr)
 			{
 				bValidObjectToClean = false;
 			}
-			else if (!parentObj->HasChildID(ID))
+			else
 			{
-				parentObj->AddCachedChildID(ID);
+				if (!parentObj->HasChildID(ID))
+				{
+					parentObj->AddCachedChildID(ID);
+					bValidObjectToClean = false;
+				}
+
+				if (parentObj->IsDirty(DirtyFlag))
+				{
+					bValidObjectToClean = false;
+				}
 			}
 		}
 
