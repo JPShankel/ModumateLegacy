@@ -343,6 +343,11 @@ bool UMetaPlaneTool::AbortUse()
 	return Super::AbortUse();
 }
 
+TArray<EEditViewModes> UMetaPlaneTool::GetRequiredEditModes() const
+{
+	return { EEditViewModes::MetaPlanes };
+}
+
 void UMetaPlaneTool::SetAxisConstraint(EAxisConstraint InAxisConstraint)
 {
 	Super::SetAxisConstraint(InAxisConstraint);

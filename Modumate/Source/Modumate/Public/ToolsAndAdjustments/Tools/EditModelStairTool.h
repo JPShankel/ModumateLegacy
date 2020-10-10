@@ -32,6 +32,7 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
+	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
 
 protected:

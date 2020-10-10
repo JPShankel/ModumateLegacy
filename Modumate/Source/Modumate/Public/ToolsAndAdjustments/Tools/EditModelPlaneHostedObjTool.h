@@ -45,6 +45,7 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual bool HandleInvert() override;
+	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 
 	virtual bool MakeObject(const FVector &Location, TArray<int32> &newObjIDs) override;
 	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;

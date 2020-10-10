@@ -274,3 +274,8 @@ bool UCabinetTool::EnterNextStage()
 
 	return false;
 }
+
+TArray<EEditViewModes> UCabinetTool::GetRequiredEditModes() const
+{
+	return { EEditViewModes::ObjectEditing, EEditViewModes::SurfaceGraphs };
+}

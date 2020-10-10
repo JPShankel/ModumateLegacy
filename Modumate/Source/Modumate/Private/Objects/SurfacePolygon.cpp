@@ -30,7 +30,7 @@ void FMOISurfacePolygonImpl::UpdateVisibilityAndCollision(bool &bOutVisible, boo
 		{
 			bool bHaveChildren = (MOI->GetChildIDs().Num() > 0);
 			auto controller = MOI->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-			switch (controller->EMPlayerState->GetSelectedViewMode())
+			switch (controller->EMPlayerState->GetEditMode())
 			{
 			case EEditViewModes::SurfaceGraphs:
 				bOutVisible = true;

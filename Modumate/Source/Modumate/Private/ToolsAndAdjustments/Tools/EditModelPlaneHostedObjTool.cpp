@@ -217,6 +217,11 @@ bool UPlaneHostedObjTool::HandleInvert()
 	return true;
 }
 
+TArray<EEditViewModes> UPlaneHostedObjTool::GetRequiredEditModes() const
+{
+	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
+}
+
 bool UPlaneHostedObjTool::BeginUse()
 {
 	// TODO: require assemblies for stairs, once they can be crafted

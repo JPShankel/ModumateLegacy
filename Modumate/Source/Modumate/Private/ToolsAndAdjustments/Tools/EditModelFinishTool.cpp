@@ -134,3 +134,8 @@ bool UFinishTool::FrameUpdate()
 
 	return true;
 }
+
+TArray<EEditViewModes> UFinishTool::GetRequiredEditModes() const
+{
+	return { EEditViewModes::ObjectEditing, EEditViewModes::SurfaceGraphs };
+}

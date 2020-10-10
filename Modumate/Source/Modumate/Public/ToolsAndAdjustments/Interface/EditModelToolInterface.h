@@ -40,6 +40,7 @@ public:
 	virtual bool HandleControlKey(bool pressed) = 0;
 	virtual bool HandleMouseUp() = 0;
 	virtual bool ShowSnapCursorAffordances() = 0;
+	virtual TArray<EEditViewModes> GetRequiredEditModes() const = 0;
 	virtual void SetAxisConstraint(EAxisConstraint AxisConstraint) = 0;
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) = 0;
 	virtual void SetAssemblyKey(const FBIMKey &InAssemblyKey) = 0;

@@ -26,16 +26,16 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UPROPERTY()
-	class UComponentSavedViewListItem *CurrentHoverViewItem;
+	class UComponentSavedViewListItem* CurrentHoverViewItem;
 
 	UPROPERTY()
-	class UTextureRenderTarget2D *PreviewRT;
+	class UTextureRenderTarget2D* PreviewRT;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController_CPP* Controller;
 
 	UPROPERTY()
-	class AEditModelPlayerPawn_CPP *PlayerPawn;
+	class AEditModelPlayerPawn_CPP* PlayerPawn;
 
 	int32 HoverCaptureTickCount = 0;
 	bool EnableHoverCapture = false;
@@ -49,22 +49,25 @@ public:
 	int32 NumberOfTickForHoverPreview = 10;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UViewMenuBlockSavedViews *ViewMenu_Block_SavedViews;
+	class UViewMenuBlockViewMode* ViewMenu_Block_ViewMode;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UViewMenuBlockProperties *ViewMenu_Block_Properties;
+	class UViewMenuBlockSavedViews* ViewMenu_Block_SavedViews;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UBorder *BorderPreview;
+	class UViewMenuBlockProperties* ViewMenu_Block_Properties;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UImage *ImagePreview;
+	class UBorder* BorderPreview;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UImage *ImageBG;
+	class UImage* ImagePreview;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UImage* ImageBG;
 
 	void SetViewMenuVisibility(bool NewVisible);
-	void MouseOnHoverView(UComponentSavedViewListItem *Item);
-	void MouseEndHoverView(UComponentSavedViewListItem *Item);
+	void MouseOnHoverView(UComponentSavedViewListItem* Item);
+	void MouseEndHoverView(UComponentSavedViewListItem* Item);
 	void HoverCaptureTick();
 };

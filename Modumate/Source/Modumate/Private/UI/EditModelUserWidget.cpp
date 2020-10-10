@@ -1,21 +1,24 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/EditModelUserWidget.h"
-#include "UI/Toolbar/ToolbarWidget.h"
-#include "UI/ToolTray/ToolTrayWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelInputHandler.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UI/SelectionTray/SelectionTrayWidget.h"
-#include "UI/BIM/BIMDesigner.h"
+
 #include "UI/BIM/BIMBlockDialogBox.h"
-#include "UI/RightMenu/ViewMenuWidget.h"
-#include "UI/RightMenu/CutPlaneMenuWidget.h"
-#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
-#include "UI/ModalDialog/AlertAccountDialogWidget.h"
-#include "UI/Toolbar/ToolbarTopWidget.h"
-#include "UI/Toolbar/ViewModeIndicatorWidget.h"
+#include "UI/BIM/BIMDesigner.h"
+#include "UI/Custom/ModumateButton.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/ModalDialog/AlertAccountDialogWidget.h"
+#include "UI/RightMenu/CutPlaneMenuWidget.h"
+#include "UI/RightMenu/ViewMenuBlockViewMode.h"
+#include "UI/RightMenu/ViewMenuWidget.h"
+#include "UI/SelectionTray/SelectionTrayWidget.h"
+#include "UI/Toolbar/ToolbarTopWidget.h"
+#include "UI/Toolbar/ToolbarWidget.h"
+#include "UI/Toolbar/ViewModeIndicatorWidget.h"
+#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
+#include "UI/ToolTray/ToolTrayWidget.h"
+#include "UnrealClasses/EditModelInputHandler.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -83,6 +86,11 @@ void UEditModelUserWidget::EMOnToolModeChanged()
 	{
 		CurrentActiveToolButton = toolToButton;
 		CurrentActiveToolButton->SwitchToActiveStyle();
+	}
+
+	if (ViewMenu && ViewMenu->ViewMenu_Block_ViewMode)
+	{
+		ViewMenu->ViewMenu_Block_ViewMode->UpdateEnabledEditModes(Controller->ValidEditModes);
 	}
 }
 
@@ -176,5 +184,10 @@ void UEditModelUserWidget::UpdateViewModeIndicator(EEditViewModes NewViewMode)
 	if (ToolbarWidget != nullptr && ToolbarWidget->ToolBarTopBP != nullptr && ToolbarWidget->ToolBarTopBP->ViewModeIndicator != nullptr)
 	{
 		ToolbarWidget->ToolBarTopBP->ViewModeIndicator->SwitchToViewMode(NewViewMode);
+	}
+
+	if (ViewMenu && ViewMenu->ViewMenu_Block_ViewMode)
+	{
+		ViewMenu->ViewMenu_Block_ViewMode->SetActiveEditMode(NewViewMode);
 	}
 }

@@ -375,40 +375,30 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 
 	case EInputCommand::CycleEditModes:
 	{
-		switch (Controller->EMPlayerState->GetSelectedViewMode())
+		EEditViewModes curEditMode = Controller->EMPlayerState->GetEditMode();
+		int32 curEditModeIndex = Controller->ValidEditModes.Find(curEditMode);
+		if (ensure(curEditModeIndex != INDEX_NONE))
 		{
-		case EEditViewModes::MetaPlanes:
-			Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::ObjectEditing);
-			return true;
-		case EEditViewModes::ObjectEditing:
-			Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::SurfaceGraphs);
-			return true;
-		case EEditViewModes::SurfaceGraphs:
-			Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::MetaPlanes);
-			return true;
-		default:
-			return false;
+			EEditViewModes nextEditMode = Controller->ValidEditModes[(curEditModeIndex + 1) % Controller->ValidEditModes.Num()];
+			return Controller->EMPlayerState->SetEditMode(nextEditMode);
 		}
+		return false;
 	}
 	case EInputCommand::SetEditMode_ObjectEditing:
 	{
-		Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::ObjectEditing);
-		return true;
+		return Controller->EMPlayerState->SetEditMode(EEditViewModes::ObjectEditing);
 	}
 	case EInputCommand::SetEditMode_MetaPlanes:
 	{
-		Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::MetaPlanes);
-		return true;
+		return Controller->EMPlayerState->SetEditMode(EEditViewModes::MetaPlanes);
 	}
 	case EInputCommand::SetEditMode_SurfaceGraphs:
 	{
-		Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::SurfaceGraphs);
-		return true;
+		return Controller->EMPlayerState->SetEditMode(EEditViewModes::SurfaceGraphs);
 	}
 	case EInputCommand::SetEditMode_Rooms:
 	{
-		Controller->EMPlayerState->SetEditViewModeDirect(EEditViewModes::Rooms);
-		return true;
+		return Controller->EMPlayerState->SetEditMode(EEditViewModes::Rooms);
 	}
 	case EInputCommand::ToggleRoomView:
 	{

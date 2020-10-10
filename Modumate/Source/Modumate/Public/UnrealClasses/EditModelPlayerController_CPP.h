@@ -366,6 +366,12 @@ public:
 	UPROPERTY()
 	float CurrentToolUseDuration;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TArray<EEditViewModes> ValidEditModes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<EEditViewModes> DefaultEditModes;
+
 	UFUNCTION(BlueprintPure, Category = Tools)
 	bool ToolIsInUse() const;
 

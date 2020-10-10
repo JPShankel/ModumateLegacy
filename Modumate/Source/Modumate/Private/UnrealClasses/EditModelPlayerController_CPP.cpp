@@ -92,6 +92,8 @@ AEditModelPlayerController_CPP::AEditModelPlayerController_CPP()
 
 	InputHandlerComponent = CreateDefaultSubobject<UEditModelInputHandler>(TEXT("InputHandlerComponent"));
 	CameraController = CreateDefaultSubobject<UEditModelCameraController>(TEXT("CameraController"));
+
+	DefaultEditModes = { EEditViewModes::ObjectEditing, EEditViewModes::SurfaceGraphs, EEditViewModes::MetaPlanes };
 }
 
 AEditModelPlayerController_CPP::~AEditModelPlayerController_CPP()
@@ -276,6 +278,16 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 	CurrentTool = ModeToTool.FindRef(NewToolMode);
 	if (CurrentTool)
 	{
+		ValidEditModes = CurrentTool->GetRequiredEditModes();
+		if (ValidEditModes.Num() == 0)
+		{
+			ValidEditModes = DefaultEditModes;
+		}
+		else if (!ValidEditModes.Contains(EMPlayerState->GetEditMode()))
+		{
+			EMPlayerState->SetEditMode(ValidEditModes[0]);
+		}
+
 		// TODO: runtime assemblies to be replaced with presets 
 		// meantime this will ensure tools start with a default assembly
 		if (CurrentTool->GetAssemblyKey().IsNone())
@@ -418,7 +430,7 @@ void AEditModelPlayerController_CPP::SetupInputComponent()
 void AEditModelPlayerController_CPP::CreateTools()
 {
 	RegisterTool(CreateTool<USelectTool>());
-	RegisterTool(CreateTool<UPlaceObjectTool>());
+	RegisterTool(CreateTool<UFFETool>());
 	RegisterTool(CreateTool<UMoveObjectTool>());
 	RegisterTool(CreateTool<URotateObjectTool>());
 	RegisterTool(CreateTool<UWallTool>());

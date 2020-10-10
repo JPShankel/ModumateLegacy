@@ -3,9 +3,9 @@
 #pragma once
 
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
-#include "CoreMinimal.h"
+
 #include "BIMKernel/BIMKey.h"
-#include "Engine/Engine.h"
+#include "Database/ModumateObjectEnums.h"
 
 #include "EditModelToolBase.generated.h"
 
@@ -66,7 +66,8 @@ public:
 	virtual bool HandleInvert() override { return true; }
 	virtual bool HandleControlKey(bool pressed) override { return true; }
 	virtual bool HandleMouseUp() override { return true; }
-	virtual bool ShowSnapCursorAffordances() { return true; }
+	virtual bool ShowSnapCursorAffordances() override { return true; }
+	virtual TArray<EEditViewModes> GetRequiredEditModes() const override { return {}; }
 
 	virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override { AxisConstraint = InAxisConstraint; }
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override { CreateObjectMode = InCreateObjectMode; }

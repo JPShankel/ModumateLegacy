@@ -407,6 +407,11 @@ bool UStairTool::EnterNextStage()
 	return true;
 }
 
+TArray<EEditViewModes> UStairTool::GetRequiredEditModes() const
+{
+	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
+}
+
 void UStairTool::SetAssemblyKey(const FBIMKey& InAssemblyKey)
 {
 	UEditModelToolBase::SetAssemblyKey(InAssemblyKey);

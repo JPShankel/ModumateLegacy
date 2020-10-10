@@ -98,7 +98,7 @@ public:
 	bool GetSnapCursorDeltaFromRay(const FVector& RayOrigin, const FVector& RayDir, FVector& OutPosition) const;
 
 	UFUNCTION(BlueprintPure, Category = "Tools")
-	EEditViewModes GetSelectedViewMode() { return SelectedViewMode; }
+	EEditViewModes GetEditMode() { return SelectedViewMode; }
 
 	UFUNCTION(BlueprintCallable, Category = "Tools")
 	void ToggleRoomViewMode();
@@ -186,8 +186,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Shopping")
 	FBIMKey GetAssemblyForToolMode(EToolMode mode);
 
-	UFUNCTION(BlueprintCallable)
-	void SetEditViewModeDirect(EEditViewModes NewEditViewMode, bool bForceUpdate = false);
+	UFUNCTION()
+	bool SetEditMode(EEditViewModes NewEditViewMode, bool bForceUpdate = false);
 
 	UFUNCTION()
 	void UpdateObjectVisibilityAndCollision();

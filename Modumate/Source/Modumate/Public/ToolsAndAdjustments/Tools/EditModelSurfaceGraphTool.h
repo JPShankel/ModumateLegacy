@@ -23,6 +23,7 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual bool FrameUpdate() override;
+	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 
 protected:
 	bool CreateGraphFromFaceTarget(int32& OutSurfaceGraphID);

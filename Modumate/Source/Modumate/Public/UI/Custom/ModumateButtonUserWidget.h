@@ -21,6 +21,7 @@ class MODUMATE_API UModumateButtonUserWidget : public UUserWidget
 public:
 	UModumateButtonUserWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
+	virtual void SetIsEnabled(bool bInIsEnabled) override;
 
 protected:
 	virtual void NativeConstruct() override;
@@ -42,6 +43,9 @@ public:
 
 	UFUNCTION()
 	void OnButtonPress();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnEnabled(bool bNewIsEnabled);
 
 	void SwitchToNormalStyle();
 	void SwitchToActiveStyle();

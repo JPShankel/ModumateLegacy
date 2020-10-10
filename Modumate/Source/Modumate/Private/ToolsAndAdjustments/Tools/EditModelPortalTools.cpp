@@ -51,6 +51,11 @@ bool UPortalToolBase::Activate()
 	return true;
 }
 
+TArray<EEditViewModes> UPortalToolBase::GetRequiredEditModes() const
+{
+	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
+}
+
 void UPortalToolBase::SetAssemblyKey(const FBIMKey& InAssemblyKey)
 {
 	UEditModelToolBase::SetAssemblyKey(InAssemblyKey);

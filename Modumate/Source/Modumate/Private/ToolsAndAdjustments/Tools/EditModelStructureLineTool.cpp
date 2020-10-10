@@ -280,6 +280,11 @@ void UStructureLineTool::SetCreateObjectMode(EToolCreateObjectMode InCreateObjec
 	}
 }
 
+TArray<EEditViewModes> UStructureLineTool::GetRequiredEditModes() const
+{
+	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
+}
+
 void UStructureLineTool::SetTargetID(int32 NewTargetID)
 {
 	if (LastValidTargetID != NewTargetID)

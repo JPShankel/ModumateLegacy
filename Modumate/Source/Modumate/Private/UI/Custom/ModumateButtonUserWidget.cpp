@@ -26,6 +26,13 @@ bool UModumateButtonUserWidget::Initialize()
 	return true;
 }
 
+void UModumateButtonUserWidget::SetIsEnabled(bool bInIsEnabled)
+{
+	Super::SetIsEnabled(bInIsEnabled);
+
+	OnEnabled(bInIsEnabled);
+}
+
 void UModumateButtonUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

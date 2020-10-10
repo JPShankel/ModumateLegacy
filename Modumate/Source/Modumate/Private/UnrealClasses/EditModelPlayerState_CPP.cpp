@@ -58,7 +58,7 @@ void AEditModelPlayerState_CPP::BeginPlay()
 	}
 
 	PostSelectionOrViewChanged();
-	SetEditViewModeDirect(EEditViewModes::ObjectEditing, true);
+	SetEditMode(EEditViewModes::ObjectEditing, true);
 }
 
 void AEditModelPlayerState_CPP::Tick(float DeltaSeconds)
@@ -236,12 +236,12 @@ void AEditModelPlayerState_CPP::ToggleRoomViewMode()
 {
 	if (SelectedViewMode == EEditViewModes::Rooms)
 	{
-		SetEditViewModeDirect(PreviousModeFromToggleRoomView);
+		SetEditMode(PreviousModeFromToggleRoomView);
 	}
 	else
 	{
 		PreviousModeFromToggleRoomView = SelectedViewMode;
-		SetEditViewModeDirect(EEditViewModes::Rooms);
+		SetEditMode(EEditViewModes::Rooms);
 	}
 }
 
@@ -850,9 +850,9 @@ void AEditModelPlayerState_CPP::SetAssemblyForToolMode(EToolMode Mode, const FBI
 	}
 }
 
-void AEditModelPlayerState_CPP::SetEditViewModeDirect(EEditViewModes NewEditViewMode, bool bForceUpdate)
+bool AEditModelPlayerState_CPP::SetEditMode(EEditViewModes NewEditViewMode, bool bForceUpdate)
 {
-	if ((SelectedViewMode != NewEditViewMode) || bForceUpdate)
+	if (((SelectedViewMode != NewEditViewMode) || bForceUpdate) && EMPlayerController && EMPlayerController->ValidEditModes.Contains(NewEditViewMode))
 	{
 		SelectedViewMode = NewEditViewMode;
 		EMPlayerController->UpdateMouseTraceParams();
@@ -871,7 +871,10 @@ void AEditModelPlayerState_CPP::SetEditViewModeDirect(EEditViewModes NewEditView
 		}
 
 		UpdateObjectVisibilityAndCollision();
+		return true;
 	}
+
+	return false;
 }
 
 void AEditModelPlayerState_CPP::UpdateObjectVisibilityAndCollision()

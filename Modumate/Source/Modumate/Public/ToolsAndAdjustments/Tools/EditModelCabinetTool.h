@@ -25,6 +25,7 @@ public:
 	virtual bool AbortUse() override;
 	virtual bool EndUse() override;
 	virtual bool EnterNextStage() override;
+	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 
 	virtual bool HasDimensionActor() { return true; }
 

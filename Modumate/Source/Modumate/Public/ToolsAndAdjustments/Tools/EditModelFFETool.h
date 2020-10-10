@@ -9,7 +9,7 @@
 class ACompoundMeshActor;
 
 UCLASS()
-class MODUMATE_API UPlaceObjectTool : public UEditModelToolBase
+class MODUMATE_API UFFETool : public UEditModelToolBase
 {
 	GENERATED_BODY()
 
@@ -17,7 +17,7 @@ private:
 	AStaticMeshActor * Cursor;
 	ACompoundMeshActor* CursorCompoundMesh;
 public:
-	UPlaceObjectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UFFETool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	FBIMAssemblySpec CurrentFFEAssembly;
 
@@ -28,4 +28,5 @@ public:
 
 	virtual bool FrameUpdate() override;
 	virtual bool BeginUse() override;
+	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 };

@@ -14,12 +14,12 @@
 
 using namespace Modumate;
 
-UPlaceObjectTool::UPlaceObjectTool(const FObjectInitializer& ObjectInitializer)
+UFFETool::UFFETool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, Cursor(nullptr)
 {}
 
-bool UPlaceObjectTool::Activate()
+bool UFFETool::Activate()
 {
 	Super::Activate();
 	// Spawn CompoundMeshActor as cursor
@@ -50,12 +50,12 @@ bool UPlaceObjectTool::Activate()
 	return true;
 }
 
-bool UPlaceObjectTool::ScrollToolOption(int32 dir)
+bool UFFETool::ScrollToolOption(int32 dir)
 {
 	return false;
 }
 
-bool UPlaceObjectTool::Deactivate()
+bool UFFETool::Deactivate()
 {
 	Super::Deactivate();
 	if (Cursor != nullptr)
@@ -72,7 +72,7 @@ bool UPlaceObjectTool::Deactivate()
 	return true;
 }
 
-bool UPlaceObjectTool::FrameUpdate()
+bool UFFETool::FrameUpdate()
 {
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	FModumateDocument *doc = &gameState->Document;
@@ -107,7 +107,7 @@ bool UPlaceObjectTool::FrameUpdate()
 	return true;
 }
 
-bool UPlaceObjectTool::BeginUse()
+bool UFFETool::BeginUse()
 {
 	Super::BeginUse();
 	Super::EndUse();
@@ -139,4 +139,9 @@ bool UPlaceObjectTool::BeginUse()
 	doc->ApplyDeltas({ delta }, GetWorld());
 
 	return true;
+}
+
+TArray<EEditViewModes> UFFETool::GetRequiredEditModes() const
+{
+	return { EEditViewModes::ObjectEditing };
 }

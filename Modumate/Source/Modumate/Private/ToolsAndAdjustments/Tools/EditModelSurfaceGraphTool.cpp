@@ -264,6 +264,11 @@ bool USurfaceGraphTool::FrameUpdate()
 	return true;
 }
 
+TArray<EEditViewModes> USurfaceGraphTool::GetRequiredEditModes() const
+{
+	return { EEditViewModes::SurfaceGraphs };
+}
+
 bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 {
 	OutSurfaceGraphID = MOD_ID_NONE;

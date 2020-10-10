@@ -50,6 +50,7 @@ public:
 	virtual bool HandleInvert() override;
 	virtual bool HandleControlKey(bool pressed) override;
 	virtual bool HandleMouseUp() override { return true; }
+	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 	virtual bool ShowSnapCursorAffordances() override { return true; }
 	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
 };

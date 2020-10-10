@@ -55,6 +55,7 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
+	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 	virtual void SetAxisConstraint(EAxisConstraint AxisConstraint) override;
 
 	virtual bool HasDimensionActor() { return true; }

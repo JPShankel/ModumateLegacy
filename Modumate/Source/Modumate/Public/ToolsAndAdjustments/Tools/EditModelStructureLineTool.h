@@ -31,6 +31,7 @@ public:
 	virtual bool AbortUse() override;
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override;
 	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
+	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 	virtual bool HasDimensionActor() override { return true; }
 
 protected:
