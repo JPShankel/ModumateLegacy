@@ -13,10 +13,10 @@ FMOIEdgeImplBase::FMOIEdgeImplBase(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
 	, World(nullptr)
 	, LineActor(nullptr)
-	, SelectedColor(0x1C, 0x9F, 0xFF)
+	, SelectedColor(0x02, 0x58, 0xFF)
 	, HoveredColor(0x00, 0x00, 0x00)
 	, BaseColor(0x00, 0x00, 0x00)
-	, HoverThickness(4.5f)
+	, HoverThickness(2.0f)
 	, SelectedThickness(3.0f)
 {
 }
