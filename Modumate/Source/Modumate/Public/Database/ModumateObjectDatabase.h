@@ -4,19 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Database/ModumateDataCollection.h"
-#include "BIMKernel/BIMKey.h"
+#include "Database/ModumateArchitecturalMaterial.h"
+#include "Database/ModumateArchitecturalMesh.h"
+
 #include "DocumentManagement/ModumatePresetManager.h"
-#include "BIMKernel/BIMLegacyPattern.h"
 #include "ModumateCore/ModumateRoomStatics.h"
 
-/**
- *
- */
-
+#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/BIMLegacyPattern.h"
 
 class MODUMATE_API FModumateDatabase
 {
-
 private:
 
 	TModumateDataCollection<FArchitecturalMaterial> AMaterials;

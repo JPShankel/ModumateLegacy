@@ -2,6 +2,7 @@
 
 #include "BIMKernel/BIMAssemblySpec.h"
 #include "BIMKernel/BIMPresets.h"
+#include "BIMKernel/BIMLayerSpec.h"
 #include "BIMKernel/BIMNodeEditor.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
@@ -17,131 +18,178 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 	ECraftingResult ret = ECraftingResult::Success;
 	RootPreset = PresetID;
 
-	FBIMPropertySheet* currentSheet = &RootProperties;
-
-	TArray<FBIMPreset::FChildAttachment> childStack;
-
-	FBIMPreset::FChildAttachment rootAttachment;
-
-	rootAttachment.PresetID = PresetID;
-	childStack.Push(rootAttachment);
-
-	// Layer targets are specified on the pin that attaches a child to a parent
-	// Legal targets are Default (used for walls, floors and other basic layers), Tread or Riser (used in stairs)
-	EBIMPinTarget currentLayerTarget = EBIMPinTarget::Default;
-
-	// Depth first walk through the preset and its descendants
-	while (childStack.Num() > 0)
+	/*
+	We build an assembly spec by iterating through the tree of presets and assigning BIM values to specific targets like structural layers, risers, treads, etc		
+	Layers for stair tread and risers can be in embedded layered assemblies...when we get to those layers we need to know where they land in the top level assembly
+	*/
+	enum ELayerTarget
 	{
-		FBIMPreset::FChildAttachment childAttachment = childStack.Pop();
-		FBIMKey presetID = childAttachment.PresetID;
+		None = 0,
+		Assembly,
+		TreadLayer,
+		RiserLayer
+	};
 
-		const FBIMPreset* preset = PresetCollection.Presets.Find(presetID);
-		if (!ensureAlways(preset != nullptr))
+	// Structure used to walk the tree of presets
+	struct FPresetIterator
+	{
+		FBIMKey PresetID;
+		const FBIMPreset* Preset = nullptr;
+
+		// As we iterate, we keep track of which layer and which property sheet to set modifier values on
+		ELayerTarget Target = ELayerTarget::Assembly;
+		FBIMLayerSpec* TargetLayer = nullptr;
+		FBIMPropertySheet* TargetProperties = nullptr;
+	};
+
+	// We use a stack of iterators to perform a depth-first visitation of child presets
+	TArray<FPresetIterator> iteratorStack;
+	FPresetIterator rootIterator;
+	rootIterator.PresetID = PresetID;
+	rootIterator.TargetProperties = &RootProperties;
+	iteratorStack.Push(rootIterator);
+
+	while (iteratorStack.Num() > 0)
+	{
+		// Make a copy of the top iterator
+		//It will get modified below to set the context for subsequent children
+		FPresetIterator presetIterator = iteratorStack.Pop();
+
+		presetIterator.Preset = PresetCollection.Presets.Find(presetIterator.PresetID);
+		if (!ensureAlways(presetIterator.Preset != nullptr))
 		{
 			ret = ECraftingResult::Error;
 			continue;
 		}
 
-		// There are 3 sections to an assembly spec: extrusions, layers and parts
-		// Extrusions and layers are added when we detect a node that defines them
-		// Parts are added below if we have any filled in part slots 
-		
-		// TODO: ignore gaps until we can reconcile gap vs module dimensions
-		if (preset->NodeScope == EBIMValueScope::Gap)
-		{
-			continue;
-		}
-		else if (preset->NodeScope == EBIMValueScope::Pattern)
-		{
-			const FLayerPattern* pattern = InDB.GetLayerByKey(preset->PresetID);
-			if (ensureAlways(pattern != nullptr))
-			{
-				switch (currentLayerTarget)
-				{
-				case EBIMPinTarget::Default :
-					Layers.Last().Pattern = *pattern;
-					break;
-				case EBIMPinTarget::Tread:
-					TreadLayers.Last().Pattern = *pattern;
-					break;
-				case EBIMPinTarget::Riser:
-					RiserLayers.Last().Pattern = *pattern;
-					break;
-				default:
-					ensureAlways(false);
-				};
-			}
-		}
-		else if (preset->NodeScope == EBIMValueScope::Assembly)
-		{
-			currentLayerTarget = childAttachment.Target;
-		}
-		else if (preset->NodeScope == EBIMValueScope::Profile)
-		{
-			// TODO: until we can combine extrusions and layers, ignore extrusions on layered assemblies
-			if (Layers.Num() > 0)
-			{
-				continue;
-			}
-			Extrusions.AddDefaulted();
-			currentSheet = &Extrusions.Last().Properties;
-		}
-		else if (preset->NodeScope == EBIMValueScope::Layer)
-		{
-			switch (currentLayerTarget)
-			{
-			case EBIMPinTarget::Default:
-				Layers.AddDefaulted_GetRef();
-				currentSheet = &Layers.Last().Properties;
-				break;
-			case EBIMPinTarget::Tread:
-				TreadLayers.AddDefaulted_GetRef();
-				currentSheet = &TreadLayers.Last().Properties;
-				break;
-			case EBIMPinTarget::Riser:
-				RiserLayers.AddDefaulted_GetRef();
-				currentSheet = &RiserLayers.Last().Properties;
-				break;
-			default:
-				ensureAlways(false);
-				break;
-			};
-		}
-		else if (preset->NodeScope == EBIMValueScope::Color)
-		{
-			currentSheet->SetProperty(EBIMValueScope::Color, BIMPropertyNames::AssetID, preset->PresetID.StringValue);
-		}
 		// All nodes should have a scope
-		if (!ensureAlways(preset->NodeScope != EBIMValueScope::None))
+		if (!ensureAlways(presetIterator.Preset->NodeScope != EBIMValueScope::None))
 		{
 			ret = ECraftingResult::Error;
 			continue;
 		}
 
 		// Set the object type for this assembly, should only happen once 
-		if (preset->ObjectType != EObjectType::OTNone && ensureAlways(ObjectType == EObjectType::OTNone))
+		if (presetIterator.Preset->ObjectType != EObjectType::OTNone && ensureAlways(ObjectType == EObjectType::OTNone))
 		{
-			ObjectType = preset->ObjectType;
+			ObjectType = presetIterator.Preset->ObjectType;
 		}
 
-		// TODO: refactor for type-safe properties, 
-		preset->Properties.ForEachProperty([this, &currentSheet, &preset, PresetID](const FString& Name, const Modumate::FModumateCommandParameter& MCP)
+		/*
+		Every preset has a scope (defined in the CSV sheets)
+		Based on the scope of the current preset, determine how to modify the iterator and set properties		
+		*/
+
+		// When we encounter a Layer node, figure out if it's the main assembly layer or a tread or riser and track the target layer
+		if (presetIterator.Preset->NodeScope == EBIMValueScope::Layer)
+		{
+			switch (presetIterator.Target)
+			{
+			case ELayerTarget::Assembly:
+				Layers.AddDefaulted_GetRef();
+				presetIterator.TargetLayer = &Layers.Last();
+				presetIterator.TargetProperties = &Layers.Last().LayerProperties;
+				break;
+			case ELayerTarget::TreadLayer:
+				TreadLayers.AddDefaulted_GetRef();
+				presetIterator.TargetLayer = &TreadLayers.Last();
+				presetIterator.TargetProperties = &TreadLayers.Last().LayerProperties;
+				break;
+			case ELayerTarget::RiserLayer:
+				RiserLayers.AddDefaulted_GetRef();
+				presetIterator.TargetLayer = &RiserLayers.Last();
+				presetIterator.TargetProperties = &RiserLayers.Last().LayerProperties;
+				break;
+			default:
+				ensureAlways(false);
+				break;
+			};
+		}
+		// Patterns only apply to layers, so we can go ahead and look it up and assign it to the target
+		// TODO: if patterns gain a wider scope, we may just need to track it as a property
+		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Pattern)
+		{
+			const FLayerPattern* pattern = InDB.GetLayerByKey(presetIterator.PresetID);
+
+			if (ensureAlways(pattern != nullptr && presetIterator.TargetLayer != nullptr))
+			{
+				presetIterator.TargetLayer->Pattern = *pattern;
+			}
+		}
+		// TODO: until we can combine extrusions and layers, ignore extrusions on layered assemblies
+		// This limits extrusions to Trim, Beams, Columns and Mullions for the time being
+		// For extrusions not hosted on a metabeam, we will need assembly-level geometric data
+		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Profile)
+		{
+			if (Layers.Num() == 0 && TreadLayers.Num() == 0 && RiserLayers.Num() == 0)
+			{
+				presetIterator.TargetProperties = &Extrusions.AddDefaulted_GetRef().Properties;
+			}
+		}
+		// Color can be applied to a number of targets, so just set the asset to the current property sheet and DoMakeAssembly will sort it
+		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Color)
+		{
+			if (ensureAlways(presetIterator.TargetProperties != nullptr))
+			{
+				presetIterator.TargetProperties->SetProperty(EBIMValueScope::Color, BIMPropertyNames::AssetID, presetIterator.Preset->PresetID.StringValue);
+			}
+		}
+		// When we encounter a module, we'll expect children to apply color, material and dimension data
+		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Module)
+		{
+			if (ensureAlways(presetIterator.TargetLayer != nullptr))
+			{
+				presetIterator.TargetProperties = &presetIterator.TargetLayer->ModuleProperties.AddDefaulted_GetRef();
+			}
+		}
+		// Gaps have the same rules as modules
+		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Gap)
+		{
+			if (ensureAlways(presetIterator.TargetLayer != nullptr))
+			{
+				presetIterator.TargetProperties = &presetIterator.TargetLayer->GapProperties;
+			}
+		}
+
+		// Having analyzed the preset and retargeted (if necessary) the properties, apply all of the preset's properties to the target
+		presetIterator.Preset->Properties.ForEachProperty([this, presetIterator](const FString& Name, const Modumate::FModumateCommandParameter& MCP)
 		{
 			FBIMPropertyValue vs(*Name);
-			currentSheet->SetProperty(vs.Scope, vs.Name, MCP);
+			presetIterator.TargetProperties->SetProperty(vs.Scope, vs.Name, MCP);
 		});
 
 		// Add our own children to DFS stack
-		for (auto& childPreset : preset->ChildPresets)
+		for (auto childPreset : presetIterator.Preset->ChildPresets)
 		{
-			childStack.Push(childPreset);
+			// Each child inherits the targeting information from its parent (presetIterator)
+			FPresetIterator childIterator = presetIterator;
+			childIterator.PresetID = childPreset.PresetID;
+			childIterator.Preset = nullptr;
+
+			/*
+			If the preset pin target suggests a change in layer target, take it
+			This is the only current use case of pin targets, so we may look for ways to use one of the other mechanisms for this choice
+			*/
+
+			switch (childPreset.Target)
+			{
+			case EBIMPinTarget::Tread:
+				childIterator.Target = ELayerTarget::TreadLayer;
+				break;
+			case EBIMPinTarget::Riser:
+				childIterator.Target = ELayerTarget::RiserLayer;
+				break;
+			default:
+				break;
+			}
+			iteratorStack.Push(childIterator);
 		}
 
 		// A preset with PartSlots represents a compound object like a door, window or FFE ensemble
-		if (preset->PartSlots.Num() > 0)
+		// TBD: It is unclear whether part slots should be stored as pins. They're treated as pins by the Node Editor
+		if (presetIterator.Preset->PartSlots.Num() > 0)
 		{
-			const FBIMPreset* slotConfigPreset = PresetCollection.Presets.Find(preset->SlotConfigPresetID);
+			const FBIMPreset* slotConfigPreset = PresetCollection.Presets.Find(presetIterator.Preset->SlotConfigPresetID);
 			if (!ensureAlways(slotConfigPreset != nullptr))
 			{
 				ret = ECraftingResult::Error;
@@ -153,10 +201,10 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 			TArray<FBIMAssemblySpec> subSpecs;
 
 			// Create a part entry in the assembly spec for each part in the preset
-			for (auto& partSlot : preset->PartSlots)
+			for (auto& partSlot : presetIterator.Preset->PartSlots)
 			{
 				FBIMPartSlotSpec &partSpec = Parts.AddDefaulted_GetRef();
-				partSpec.Properties = preset->Properties;
+				partSpec.Properties = presetIterator.Preset->Properties;
 
 				// Find the preset for the part in the slot...this will contain the mesh, material and color information
 				const FBIMPreset* partPreset = PresetCollection.Presets.Find(partSlot.PartPreset);
@@ -318,126 +366,6 @@ FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 	}
 }
 
-ECraftingResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB)
-{
-	const FCustomColor* customColor = nullptr;
-	Properties.ForEachProperty([this,&InDB,&customColor](const FString& VarQN, const Modumate::FModumateCommandParameter& Value)
-	{
-		FBIMPropertyValue Var(*VarQN);
-		if (Var.Name == BIMPropertyNames::AssetID)
-		{
-			// TODO: to be replaced with modules & gaps with their own materials & colors
-			if (Var.Scope == EBIMValueScope::RawMaterial || Var.Scope == EBIMValueScope::Material)
-			{
-				const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(FBIMKey(Value.AsString()));
-				if (ensureAlways(mat != nullptr))
-				{
-					Material = *mat;
-					ensureAlways(Material.EngineMaterial != nullptr);
-				}
-			}
-
-			// Color may get set before or after material, so cache it
-			if (Var.Scope == EBIMValueScope::Color)
-			{
-				customColor = InDB.GetCustomColorByKey(FBIMKey(Value.AsString()));
-			}
-		}
-	});
-
-	if (customColor == nullptr)
-	{
-		FString colorName;
-		if (Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::Name, colorName))
-		{
-			customColor = InDB.GetCustomColorByKey(FBIMKey(colorName));
-		}
-	}
-
-	FString thickness;
-	if (!Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, thickness))
-	{
-		if (!Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, thickness))
-		{
-			Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, thickness);
-		}
-	}
-
-	if (ensureAlways(!thickness.IsEmpty()))
-	{
-		FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(thickness);
-		Thickness = Modumate::Units::FUnitValue::WorldCentimeters(dim.Centimeters);
-	}
-	else
-	{
-		Thickness = Modumate::Units::FUnitValue::WorldCentimeters(1.0f);
-	}
-
-	if (customColor != nullptr)
-	{
-		Material.DefaultBaseColor = *customColor;
-	}
-
-	return ECraftingResult::Success;
-}
-
-ECraftingResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& InDB)
-{
-	FString diameterString;
-	FModumateFormattedDimension xDim, yDim;
-	if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter, diameterString))
-	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter));
-		yDim = xDim;
-	}
-	else
-	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width));
-		yDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth));
-	}
-
-	FBIMKey layerMaterialKey = FBIMKey(Properties.GetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID).AsString());
-	FBIMKey profileKey = FBIMKey(Properties.GetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID).AsString());
-
-	if (ensureAlways(!profileKey.IsNone()))
-	{
-		const FSimpleMeshRef* trimMesh = InDB.GetSimpleMeshByKey(profileKey);
-
-		if (ensureAlways(trimMesh != nullptr))
-		{
-			SimpleMeshes.Add(*trimMesh);
-		}
-	}
-
-	if (ensureAlways(!layerMaterialKey.IsNone()))
-	{
-		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(layerMaterialKey);
-		if (ensureAlways(mat != nullptr))
-		{
-			Material = *mat;
-			ensureAlways(Material.EngineMaterial != nullptr);
-		}
-	}
-
-	// TODO: re-orient column meshes so width is along X instead of depth
-	FVector profileSize(xDim.Centimeters, yDim.Centimeters, 1);
-
-	if (ensureAlways(SimpleMeshes.Num() > 0 && SimpleMeshes[0].Asset.Get()->Polygons.Num() > 0))
-	{
-		FSimplePolygon& polygon = SimpleMeshes[0].Asset.Get()->Polygons[0];
-		FVector polyExtents(polygon.Extents.Max.X - polygon.Extents.Min.X, polygon.Extents.Max.Y - polygon.Extents.Min.Y, 1);
-		Properties.SetProperty(EBIMValueScope::Assembly,BIMPropertyNames::Scale, profileSize / polyExtents);
-	}	
-	return ECraftingResult::Success;
-}
-
-ECraftingResult FBIMPartSlotSpec::BuildFromProperties(const FModumateDatabase& InDB)
-{
-	// TODO: not yet implemented
-	ensureAlways(false);
-	return ECraftingResult::Error;
-}
-
 ECraftingResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 {
 	// TODO: "Stubby" temporary FFE don't have parts, just one mesh on their root
@@ -497,6 +425,23 @@ ECraftingResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& 
 {
 	for (auto& extrusion : Extrusions)
 	{
+		FString materialAsset;
+		if (RootProperties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialAsset))
+		{
+			const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(materialAsset);
+			if (ensureAlways(mat != nullptr))
+			{
+				extrusion.Material = *mat;
+				if (RootProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::AssetID, materialAsset))
+				{
+					const FCustomColor* color = InDB.GetCustomColorByKey(materialAsset);
+					if (ensureAlways(color != nullptr))
+					{
+						extrusion.Material.DefaultBaseColor = *color;
+					}
+				}
+			}
+		}
 		ECraftingResult res = extrusion.BuildFromProperties(InDB);
 		if (!ensureAlways(res == ECraftingResult::Success))
 		{

@@ -1554,6 +1554,7 @@ namespace Modumate
 			{TEXT("11ft 5 1/2in"),EDimensionFormat::FeetAndInches,InchesToCentimeters * (12.0f * 11.0f + 5.0f + (1.0f / 2.0f))},
 			{TEXT("8' 2 5/8\""),EDimensionFormat::FeetAndInches,InchesToCentimeters * (12.0f * 8.0f + 2.0f + (5.0f / 8.0f))},
 			{TEXT("6m"),EDimensionFormat::JustMeters,600.0f},
+			{TEXT("23mm"),EDimensionFormat::JustMillimeters,2.3f},
 			{TEXT("1.6m"),EDimensionFormat::JustMeters,160.0f},
 			{TEXT("8cm"),EDimensionFormat::JustCentimeters,8.0f},
 			{TEXT("9.6cm"),EDimensionFormat::JustCentimeters,9.6f},
@@ -1568,8 +1569,8 @@ namespace Modumate
 		for (auto &tc : testCases)
 		{
 			FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(tc.dimStr);
-			TestTrue(FString::Printf(TEXT("test %d"), testIdx), dim.Format == tc.expectedFormat);
-			TestTrue(FString::Printf(TEXT("test %d %f %f"), testIdx, dim.Centimeters, tc.expectedCentimeters), FMath::IsNearlyEqual(dim.Centimeters, tc.expectedCentimeters, KINDA_SMALL_NUMBER));
+			ensureAlways(TestTrue(FString::Printf(TEXT("test %d"), testIdx), dim.Format == tc.expectedFormat));
+			ensureAlways(TestTrue(FString::Printf(TEXT("test %d %f %f"), testIdx, dim.Centimeters, tc.expectedCentimeters), FMath::IsNearlyEqual(dim.Centimeters, tc.expectedCentimeters, KINDA_SMALL_NUMBER)));
 			testIdx++;
 		}
 		return true;

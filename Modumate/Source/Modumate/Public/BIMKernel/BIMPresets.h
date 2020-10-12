@@ -11,6 +11,9 @@
 #include "BIMKernel/BIMSerialization.h"
 #include "BIMKernel/BIMAssemblySpec.h"
 
+class FModumateDatabase;
+struct FBIMKey;
+
 /*
 A pin set defines a minimum and maximum number of attached children (each child is a pin), which lists define legal
 children for this pin (ie a list of colors or materials available for a given object) and pointers to node instances

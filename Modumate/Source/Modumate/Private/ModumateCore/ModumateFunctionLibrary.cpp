@@ -625,7 +625,6 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 	const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial, UMaterialInstanceDynamic** CachedMIDPtr)
 {
 
-#if 0 // TODO: refactor for new patterns
 	static const FString continuousPatternKey(TEXT("Continuous"));
 	static const FName masterPBRTexParamBaseColor(TEXT("BaseColor"));
 	static const FName masterPBRTexParamMRSA(TEXT("MRSA"));
@@ -642,11 +641,11 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 	{
 		const auto &pattern = Layer.Pattern;
 		int32 numModuleTiles = pattern.ParameterizedModuleDimensions.Num();
-		auto *layerOverrideMat = Layer.Material.EngineMaterial.Get();
 
 		// Check if incoming key from pattern is continuous, if true, modify color only
-		if (MeshComponent && !pattern.Key.IsNone() && (pattern.Key.ToString() != continuousPatternKey) && (numModuleTiles > 0) &&
-			ensure((pattern.ModuleCount == Layer.Modules.Num()) && numModuleTiles <= TilingMaterials.Num()) &&
+		if (MeshComponent && pattern.ModuleCount != 0 && (numModuleTiles > 0) &&
+			ensure((pattern.ModuleCount == Layer.Modules.Num()) && 
+			numModuleTiles <= TilingMaterials.Num()) &&
 			TilingMaterials[numModuleTiles - 1])
 		{
 			TMap<FString, float> patternExprVars;
@@ -761,9 +760,7 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 
 					moduleInstParams.TileTexDetails.A = moduleMaterialData.UVScaleFactor;
 
-					auto *moduleSourceMat = Layer.Material.IsValid() ?
-						Layer.Material.EngineMaterial.Get() :
-						moduleMaterialData.EngineMaterial.Get();
+					auto *moduleSourceMat = moduleMaterialData.EngineMaterial.Get();
 
 					auto *moduleMatInst = Cast<UMaterialInstance>(moduleSourceMat);
 					if (moduleMatInst && (moduleMatInst->Parent == MasterPBRMaterial))
@@ -772,17 +769,6 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 						moduleSourceMat->GetTextureParameterValue(FMaterialParameterInfo(masterPBRTexParamMRSA), moduleInstParams.MRSATex);
 						moduleSourceMat->GetTextureParameterValue(FMaterialParameterInfo(masterPBRTexParamNormal), moduleInstParams.NormalTex);
 					}
-				}
-
-				// NOTE: this assumes the provided colors are in sRGB space,
-				// otherwise we should use layerData.BaseColor.ReinterpretAsLinear()
-				if (Layer.BaseColor.IsValid())
-				{
-					moduleInstParams.Color = Layer.BaseColor.Color;
-				}
-				else if (Layer.Material.IsValid() && Layer.Material.DefaultBaseColor.IsValid())
-				{
-					moduleInstParams.Color = Layer.Material.DefaultBaseColor.Color;
 				}
 
 				auto makeTileParamName = [moduleInstIdx](const TCHAR* paramSuffix) {
@@ -800,16 +786,7 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 
 			return true;
 		}
-		else
-		{
-			auto* dynMat = MeshComponent->CreateDynamicMaterialInstance(0, MeshComponent->GetMaterial(0));
-			if (dynMat != nullptr)
-			{
-				dynMat->SetVectorParameterValue(TEXT("ColorMultiplier"), Layer.BaseColor.Color);
-			}
-		}
 	}
-#endif
 	return false;
 }
 

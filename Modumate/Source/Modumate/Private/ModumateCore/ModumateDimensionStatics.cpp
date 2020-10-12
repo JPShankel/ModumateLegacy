@@ -64,8 +64,11 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	//Plain meters, ie '1.2m'
 	static std::wregex justMetersPattern(L"(" + decimalString + L")m");
 
-	//Plain meters, ie '1.2cm'
+	//Plain centimeters, ie '1.2cm'
 	static std::wregex justCentimetersPattern(L"(" + decimalString + L")cm");
+
+	//Plain millimeters, ie '1.2mm'
+	static std::wregex justMillimetersPattern(L"(" + decimalString + L")mm");
 
 	//Meters and centimeters with meters as an integer, ie '2m 45.3cm' 
 	static std::wregex metersAndCentimetersPattern(L"(" + integerString + L")m\\s+(" + decimalString + L")cm");
@@ -81,7 +84,6 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 		ret.Format = EDimensionFormat::JustFeet;
 		ret.Centimeters = FCString::Atof(*dimStr) * InchesToCentimeters * 12;
 		return ret;
-
 	}
 
 	// Bare decimal values are assumed to be plain feet
@@ -269,6 +271,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 		}
 		return ret;
 	}
+
 	// A decimal value of centimeters, ie 1.234cm
 	if (std::regex_match(dimCStr, match, justCentimetersPattern))
 	{
@@ -283,6 +286,22 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 		}
 		return ret;
 	}
+
+	// A decimal value of millimeters, ie 1.234mm
+	if (std::regex_match(dimCStr, match, justMillimetersPattern))
+	{
+		if (match.size() > 1)
+		{
+			ret.Format = EDimensionFormat::JustMillimeters;
+			ret.Centimeters = FCString::Atof(match[1].str().c_str()) * 0.1f;
+		}
+		else
+		{
+			ret.Format = EDimensionFormat::Error;
+		}
+		return ret;
+	}
+
 	// A number of meters and centimeters, ie 3m 16.2cm
 	if (std::regex_match(dimCStr, match, metersAndCentimetersPattern))
 	{
@@ -297,6 +316,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 		}
 		return ret;
 	}
+
 	ret.Format = EDimensionFormat::Error;
 	ret.Centimeters = 0;
 

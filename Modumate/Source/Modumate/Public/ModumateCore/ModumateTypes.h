@@ -280,6 +280,7 @@ enum class EDimensionFormat : uint8
 	MetersAndCentimeters,
 	JustMeters,
 	JustCentimeters,
+	JustMillimeters, 
 	Error
 };
 

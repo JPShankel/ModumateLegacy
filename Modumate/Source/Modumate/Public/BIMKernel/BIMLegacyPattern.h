@@ -14,34 +14,6 @@
 
 class FBIMPreset;
 
-namespace Modumate
-{
-	struct FCraftingPatternOption;
-	struct FCraftingDimensionalOption;
-
-	namespace CraftingParameters
-	{
-		extern const FString ThicknessValue;
-		extern const FString ThicknessUnits;
-		extern const FString MaterialColorMaterial;
-		extern const FString MaterialColorColor;
-		extern const FString DimensionLength;
-		extern const FString DimensionWidth;
-		extern const FString DimensionHeight;
-		extern const FString DimensionDepth;
-		extern const FString DimensionThickness;
-		extern const FString DimensionBevelWidth;
-		extern const FString PatternModuleCount;
-		extern const FString PatternExtents;
-		extern const FString PatternThickness;
-		extern const FString PatternGap;
-		extern const FString PatternName;
-		extern const FString PatternModuleDimensions;
-		extern const FString TrimProfileNativeSizeX;
-		extern const FString TrimProfileNativeSizeY;
-	}
-}
-
 USTRUCT()
 struct MODUMATE_API FLayerPatternModule
 {
@@ -58,8 +30,6 @@ struct MODUMATE_API FLayerPatternModule
 
 	FArchitecturalMaterial Material;
 
-	void InitFromCraftingParameters(const Modumate::FModumateFunctionParameterSet &params);
-
 	FBIMKey UniqueKey() const { return Key; }
 };
 
@@ -71,13 +41,11 @@ struct MODUMATE_API FLayerPatternGap
 	FBIMKey Key;
 	FText DisplayName = FText::GetEmpty();
 
-	FVector2D GapExtents;
+	FVector2D GapExtents = FVector2D::ZeroVector;
 
 	FArchitecturalMaterial Material;
 	FCustomColor BaseColor;
 	TArray<ELayerFormat> SupportedFormats;
-
-	void InitFromCraftingParameters(const Modumate::FModumateFunctionParameterSet &params);
 
 	FBIMKey UniqueKey() const { return Key; }
 };
@@ -147,7 +115,7 @@ struct MODUMATE_API FLayerPattern
 	FBIMKey Key;
 	FText DisplayName = FText::GetEmpty();
 	TArray<ELayerFormat> SupportedFormats;
-	int32 ModuleCount = 1;
+	int32 ModuleCount = 0;
 
 	FString ParameterizedExtents;
 	FString ParameterizedThickness;
