@@ -32,12 +32,12 @@ protected:
 	bool bInitialized = false;
 
 	virtual void Initialize();
-	virtual void ApplyWidgetStyle();
 	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const;
 	virtual void PostEndOrAbort();
 	virtual void UpdateTargetGeometry();
 
 public:
+	virtual void ApplyWidgetStyle();
 	virtual void SetEnabled(bool bNewEnabled);
 	virtual bool BeginUse();
 	virtual bool UpdateUse();
@@ -108,6 +108,8 @@ public:
 	UPROPERTY()
 	class AEditModelPlayerHUD *PlayerHUD;
 
+	UPROPERTY()
+	float HoveredScale;
 
 	const static FName StateRequestTag;
 };

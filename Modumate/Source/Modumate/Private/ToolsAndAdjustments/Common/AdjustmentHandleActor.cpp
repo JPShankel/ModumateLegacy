@@ -34,6 +34,7 @@ const FName AAdjustmentHandleActor::StateRequestTag(TEXT("AdjustmentHandle"));
 // Sets default values
 AAdjustmentHandleActor::AAdjustmentHandleActor(const FObjectInitializer &ObjectInitializer)
 	: Super(ObjectInitializer)
+	, HoveredScale(1.5f)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -110,12 +111,19 @@ void AAdjustmentHandleActor::ApplyWidgetStyle()
 			Widget->SetMainButtonStyle(overrideMainButtonStyle);
 		}
 
+		// TODO: who is supposed to own these variables?
+		float defaultScale = 1.0f;
+		float hoveredScale = Widget->IsButtonHovered() ? HoveredScale : defaultScale;
+
+		// hoveredOffset is the average because the padding is on one side
+		float hoveredOffset = Widget->IsButtonHovered() ? (hoveredScale + defaultScale)/2.0f : defaultScale;
+
 		if (overrideWidgetSize.GetMin() > 0.0f)
 		{
-			Widget->DesiredSize = overrideWidgetSize;
+			Widget->DesiredSize = overrideWidgetSize * hoveredScale;
 		}
 
-		Widget->MainButtonOffset = overrideMainButtonOffset;
+		Widget->MainButtonOffset = overrideMainButtonOffset * hoveredOffset;
 	}
 }
 

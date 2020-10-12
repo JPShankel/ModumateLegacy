@@ -105,6 +105,8 @@ void UAdjustmentHandleWidget::OnHoverChanged(bool bNewHovered)
 		{
 			controller->OnHoverHandleWidget(this, bNewHovered);
 		}
+
+		HandleActor->ApplyWidgetStyle();
 	}
 }
 
