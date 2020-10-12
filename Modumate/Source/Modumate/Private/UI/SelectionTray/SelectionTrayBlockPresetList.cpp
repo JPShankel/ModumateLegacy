@@ -38,36 +38,40 @@ void USelectionTrayBlockPresetList::BuildPresetListFromSelection()
 	TMap<FBIMKey, int32> numberOfObjectsWithKey;
 	for (auto& curObject : Controller->EMPlayerState->SelectedObjects)
 	{
-		if (curObject->GetActor())
+		FBIMKey itemKey = curObject->GetAssembly().UniqueKey();
+		if (itemKey.IsNone())
 		{
-			UComponentListObject *compItem = ComponentItemMap.FindRef(curObject->GetAssembly().UniqueKey());
-			if (compItem)
-			{
-				int32 numberOfObj = numberOfObjectsWithKey.FindRef(curObject->GetAssembly().UniqueKey());
-				numberOfObjectsWithKey.Add(curObject->GetAssembly().UniqueKey(), numberOfObj + 1);
-				compItem->SelectionItemCount = numberOfObj + 1;
+			// If no assembly key is found, use its object type to track its selection, ex: meta edges and planes
+			itemKey = UModumateTypeStatics::GetTextForObjectType(curObject->GetObjectType()).ToString();
+		}
 
-				UUserWidget *entryWidget = AssembliesList->GetEntryWidgetFromItem(compItem);
-				if (entryWidget)
+		UComponentListObject* compItem = ComponentItemMap.FindRef(itemKey);
+		if (compItem)
+		{
+			int32 numberOfObj = numberOfObjectsWithKey.FindRef(itemKey);
+			numberOfObjectsWithKey.Add(itemKey, numberOfObj + 1);
+			compItem->SelectionItemCount = numberOfObj + 1;
+
+			UUserWidget* entryWidget = AssembliesList->GetEntryWidgetFromItem(compItem);
+			if (entryWidget)
+			{
+				UComponentAssemblyListItem* compListWidget = Cast<UComponentAssemblyListItem>(entryWidget);
+				if (compListWidget)
 				{
-					UComponentAssemblyListItem *compListWidget = Cast<UComponentAssemblyListItem>(entryWidget);
-					if (compListWidget)
-					{
-						compListWidget->UpdateSelectionItemCount(compItem->SelectionItemCount);
-					}
+					compListWidget->UpdateSelectionItemCount(compItem->SelectionItemCount);
 				}
 			}
-			else
-			{
-				UComponentListObject *newCompListObj = NewObject<UComponentListObject>(this);
-				newCompListObj->ItemType = EComponentListItemType::SelectionListItem;
-				newCompListObj->Mode = UModumateTypeStatics::ToolModeFromObjectType(curObject->GetObjectType());
-				newCompListObj->UniqueKey = curObject->GetAssembly().UniqueKey();
-				newCompListObj->SelectionItemCount = 1;
-				AssembliesList->AddItem(newCompListObj);
-				ComponentItemMap.Add(curObject->GetAssembly().UniqueKey(), newCompListObj);
-				numberOfObjectsWithKey.Add(curObject->GetAssembly().UniqueKey(), newCompListObj->SelectionItemCount);
-			}
+		}
+		else
+		{
+			UComponentListObject* newCompListObj = NewObject<UComponentListObject>(this);
+			newCompListObj->ItemType = EComponentListItemType::SelectionListItem;
+			newCompListObj->Mode = UModumateTypeStatics::ToolModeFromObjectType(curObject->GetObjectType());
+			newCompListObj->UniqueKey = itemKey;
+			newCompListObj->SelectionItemCount = 1;
+			AssembliesList->AddItem(newCompListObj);
+			ComponentItemMap.Add(itemKey, newCompListObj);
+			numberOfObjectsWithKey.Add(itemKey, newCompListObj->SelectionItemCount);
 		}
 	}
 }

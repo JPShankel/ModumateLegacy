@@ -37,10 +37,11 @@ protected:
 	virtual void NativeConstruct() override;
 
 	FBIMKey AsmKey; // Unique key such as assembly key or presetID
-	FName AsmName = NAME_None; // Display name, user-facing
+	FText ItemDisplayName; // Display name, user-facing
 	EToolMode ToolMode = EToolMode::VE_NONE;
 	EComponentListItemType ItemType = EComponentListItemType::None;
 	int32 BIMInstanceID = INDEX_NONE;
+	bool bIsNonAssemblyObjectSelectItem = false;
 
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *EMPlayerController;

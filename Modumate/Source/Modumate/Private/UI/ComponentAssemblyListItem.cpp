@@ -17,6 +17,7 @@
 #include "UI/BIM/BIMDesigner.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "Components/Image.h"
 
 using namespace Modumate;
 
@@ -57,6 +58,12 @@ void UComponentAssemblyListItem::UpdateItemType(EComponentListItemType NewItemTy
 	{
 		return;
 	}
+
+	ComponentPresetItem->IconImage->SetVisibility(bIsNonAssemblyObjectSelectItem ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+	ComponentPresetItem->TextNumber->SetVisibility(bIsNonAssemblyObjectSelectItem ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+	ComponentPresetItem->GrabHandleImage->SetVisibility(bIsNonAssemblyObjectSelectItem ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+	ComponentPresetItem->IconImageBackground->SetVisibility(bIsNonAssemblyObjectSelectItem ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+
 	switch (ItemType)
 	{
 	case EComponentListItemType::AssemblyListItem:
@@ -66,9 +73,9 @@ void UComponentAssemblyListItem::UpdateItemType(EComponentListItemType NewItemTy
 		ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
 		break;
 	case EComponentListItemType::SelectionListItem:
-		ButtonSwap->SetVisibility(ESlateVisibility::Visible);
+		ButtonSwap->SetVisibility(bIsNonAssemblyObjectSelectItem ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonEdit->SetVisibility(ESlateVisibility::Visible);
+		ButtonEdit->SetVisibility(bIsNonAssemblyObjectSelectItem ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 		ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
 		break;
 	case EComponentListItemType::SwapListItem:
@@ -94,11 +101,11 @@ void UComponentAssemblyListItem::UpdateSelectionItemCount(int32 ItemCount)
 	}
 	if (ItemCount > 1)
 	{
-		ComponentPresetItem->MainText->ChangeText(FText::FromString(FString(TEXT("(")) + FString::FromInt(ItemCount) + FString(TEXT(") ")) + AsmName.ToString()));
+		ComponentPresetItem->MainText->ChangeText(FText::FromString(FString(TEXT("(")) + FString::FromInt(ItemCount) + FString(TEXT(") ")) + ItemDisplayName.ToString()));
 	}
 	else
 	{
-		ComponentPresetItem->MainText->ChangeText(FText::FromName(AsmName));
+		ComponentPresetItem->MainText->ChangeText(ItemDisplayName);
 	}
 }
 
@@ -221,42 +228,56 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 		return;
 	}
 
-	UpdateItemType(compListObj->ItemType);
 	AsmKey = compListObj->UniqueKey;
 	ToolMode = compListObj->Mode;
 	EMPlayerController = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	FPresetManager &presetManager = gameState->Document.PresetManager;
+	
+	// Find the assembly for this list item. Note some item types do not require assembly
+	const FBIMAssemblySpec* assembly = presetManager.GetAssemblyByKey(compListObj->Mode, AsmKey);
 
-	// Swappable preset item doesn't have BIMAssemblySpec yet.
-	if (compListObj->ItemType == EComponentListItemType::SwapDesignerPreset)
+	switch (compListObj->ItemType)
 	{
+	case EComponentListItemType::SwapDesignerPreset:
 		// TODO: need human readable assembly name
 		ComponentPresetItem->MainText->ChangeText(FText::FromString(compListObj->UniqueKey.ToString()));
 		BIMInstanceID = compListObj->BIMNodeInstanceID;
-		// TODO: swap item icons shouldn't take dirty values from children, make BIMInstanceID = none?
 		ComponentPresetItem->CaptureIconForBIMDesignerSwap(EMPlayerController, compListObj->UniqueKey, BIMInstanceID);
+		bIsNonAssemblyObjectSelectItem = false;
+		UpdateItemType(compListObj->ItemType);
 		return;
-	}
 
-	const FBIMAssemblySpec *assembly = presetManager.GetAssemblyByKey(compListObj->Mode,AsmKey);
-	if (!assembly)
-	{
-		return;
-	}
-	AsmName = *(assembly->DisplayName);
-
-	switch (ItemType)
-	{
 	case EComponentListItemType::AssemblyListItem:
 	case EComponentListItemType::SwapListItem:
-		ComponentPresetItem->MainText->ChangeText(FText::FromName(AsmName));
+		if (!assembly)
+		{
+			return;
+		}
+		ItemDisplayName = FText::FromString(assembly->DisplayName);
+		ComponentPresetItem->MainText->ChangeText(ItemDisplayName);
 		BuildFromAssembly();
-		break;
+		bIsNonAssemblyObjectSelectItem = false;
+		UpdateItemType(compListObj->ItemType);
+		return;
+
 	case EComponentListItemType::SelectionListItem:
+		if (!assembly)
+		{
+			// Display the UniqueKey from compListObj if assembly is missing
+			// This can happen during selection of meta objects like edges and meta planes
+			ItemDisplayName = FText::FromString(compListObj->UniqueKey.ToString());
+			UpdateSelectionItemCount(compListObj->SelectionItemCount);
+			bIsNonAssemblyObjectSelectItem = true;
+			UpdateItemType(compListObj->ItemType);
+			return;
+		}
+		ItemDisplayName = FText::FromString(assembly->DisplayName);
 		UpdateSelectionItemCount(compListObj->SelectionItemCount);
 		BuildFromAssembly();
-		break;
+		bIsNonAssemblyObjectSelectItem = false;
+		UpdateItemType(compListObj->ItemType);
+		return;
 	}
 }
 

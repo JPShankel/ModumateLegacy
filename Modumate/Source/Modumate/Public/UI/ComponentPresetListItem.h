@@ -29,13 +29,19 @@ protected:
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateTextBlockUserWidget *MainText;
+	class UModumateTextBlockUserWidget* MainText;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UImage *IconImage;
+	class UImage* IconImage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UImage *GrabHandleImage;
+	class UImage* GrabHandleImage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UImage* IconImageBackground;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateTextBlockUserWidget* TextNumber;
 
 	UPROPERTY()
 	class UMaterialInterface* IconMaterial;
