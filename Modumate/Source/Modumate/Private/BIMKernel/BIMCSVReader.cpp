@@ -223,6 +223,11 @@ ECraftingResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row,
 			{
 				if (!Preset.PresetID.IsNone())
 				{
+					FString presetName;
+					if (Preset.TryGetProperty(BIMPropertyNames::Name, presetName))
+					{
+						Preset.DisplayName = FText::FromString(presetName.Replace(TEXT(","),TEXT(", ")));
+					}
 					OutPresets.Add(Preset.PresetID, Preset);
 					Preset = FBIMPreset();
 				}

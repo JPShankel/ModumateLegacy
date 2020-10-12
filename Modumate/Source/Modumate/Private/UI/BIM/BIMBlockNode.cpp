@@ -191,8 +191,8 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 	ParentBIMDesigner = OuterBIMDesigner;
 	PresetID = Node->PresetID;
 	bNodeHasSlotPart = bAsSlot;
-	TitleNodeCollapsed->ChangeText(FText::FromString(Node->CategoryTitle));
-	TitleNodeExpanded->ChangeText(FText::FromString(Node->CategoryTitle));
+	TitleNodeCollapsed->ChangeText(Node->CategoryTitle);
+	TitleNodeExpanded->ChangeText(Node->CategoryTitle);
 
 	if (Button_Debug)
 	{

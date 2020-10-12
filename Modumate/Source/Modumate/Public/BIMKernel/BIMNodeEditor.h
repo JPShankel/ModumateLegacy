@@ -56,7 +56,7 @@ public:
 
 	FBIMKey PresetID;
 	FBIMCraftingTreeNodeWeakPtr ParentInstance;
-	FString CategoryTitle = TEXT("Unknown Category");
+	FText CategoryTitle = FText::FromString(TEXT("Unknown Category"));
 
 	TArray<FAttachedChildGroup> AttachedChildren;
 	FBIMPropertySheet InstanceProperties;

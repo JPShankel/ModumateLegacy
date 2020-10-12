@@ -112,7 +112,8 @@ public:
 		return false;
 	}
 
-	FString CategoryTitle = TEXT("Unknown Category");
+	FText CategoryTitle = FText::FromString(TEXT("Unknown Category"));
+	FText DisplayName = FText::FromString(TEXT("Unknown Preset"));
 
 	EBIMValueScope NodeScope;
 	FName NodeType;

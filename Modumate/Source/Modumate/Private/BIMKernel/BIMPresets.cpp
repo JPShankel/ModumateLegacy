@@ -97,7 +97,7 @@ ECraftingResult FBIMPreset::ToDataRecord(FCraftingPresetRecord& OutRecord) const
 	OutRecord.NodeType = NodeType;
 	OutRecord.PresetID = PresetID;
 	OutRecord.SlotConfigPresetID = SlotConfigPresetID;
-	OutRecord.CategoryTitle = CategoryTitle;
+	OutRecord.CategoryTitle = CategoryTitle.ToString();
 	OutRecord.ObjectType = ObjectType;
 	MyTagPath.ToString(OutRecord.MyTagPath);
 
@@ -146,7 +146,7 @@ ECraftingResult FBIMPreset::SortChildNodes()
 ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCollection, const FCraftingPresetRecord &Record)
 {
 	NodeType = Record.NodeType;
-	CategoryTitle = Record.CategoryTitle;
+	CategoryTitle = FText::FromString(Record.CategoryTitle);
 
 	const FBIMPresetNodeType *nodeType = PresetCollection.NodeDescriptors.Find(NodeType);
 	// TODO: this ensure will fire if expected presets have become obsolete, resave to fix

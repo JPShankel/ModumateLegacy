@@ -342,7 +342,7 @@ void FModumateDatabase::ReadPresetData()
 		{
 			if (preset.Value.MyTagPath.MatchesPartial(tag.Key))
 			{
-				preset.Value.CategoryTitle = tag.Value;
+				preset.Value.CategoryTitle = FText::FromString(tag.Value);
 			}
 		}
 	}

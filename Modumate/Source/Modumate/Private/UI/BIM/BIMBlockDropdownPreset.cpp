@@ -70,7 +70,7 @@ void UBIMBlockDropdownPreset::BuildDropdownFromProperty(class UBIMDesigner* Oute
 	}
 
 	// TextTitle
-	TextTitle->ChangeText(FText::FromString(nodePtr->CategoryTitle));
+	TextTitle->ChangeText(nodePtr->CategoryTitle);
 
 	// Icon
 	bool bCaptureSuccess = false;
