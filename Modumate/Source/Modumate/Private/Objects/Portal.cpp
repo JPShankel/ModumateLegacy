@@ -11,6 +11,9 @@
 #include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPortalInvertHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPortalReverseHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPortalJustifyHandle.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -110,16 +113,19 @@ bool FMOIPortalImpl::SetupCompoundActorGeometry()
 			// Get size of parent metaplane.
 			if (parentFace != nullptr)
 			{
+				float lateralInvertFactor = InstanceData.bLateralInverted ? -1.0f : 1.0f;
+				float normalInvertFactor = InstanceData.bNormalInverted ? -1.0f : 1.0f;
 				FBox2D faceSize(parentFace->Cached2DPositions);
 				FVector2D planeSize = faceSize.GetSize();
-				FVector2D localPosition(-faceSize.GetExtent().X, faceSize.GetExtent().Y);
+				FVector2D localPosition(lateralInvertFactor * -faceSize.GetExtent().X, faceSize.GetExtent().Y);
 				SetRelativeTransform(localPosition, CachedRelativeRot);
 
 				const FBIMAssemblySpec& assembly = MOI->GetAssembly();
 				if (assembly.Parts.Num() > 0 && !assembly.Parts[0].Mesh.NativeSize.IsZero())
 				{	// Assume first part for native size.
 					FVector nativeSize = assembly.GetRiggedAssemblyNativeSize();
-					scale.X = planeSize.X / nativeSize.X;
+					scale.X = planeSize.X / nativeSize.X * lateralInvertFactor;
+					scale.Y *= normalInvertFactor;
 					scale.Z = planeSize.Y / nativeSize.Z;
 					bResult = true;
 				}
@@ -149,6 +155,7 @@ bool FMOIPortalImpl::SetRelativeTransform(const FVector2D &InRelativePos, const 
 		return false;
 	}
 
+	CachedWorldPos += InstanceData.Justification * parentObj->GetNormal();
 	portalActor->SetActorLocationAndRotation(CachedWorldPos, CachedWorldRot);
 	bHaveValidTransform = true;
 
@@ -207,6 +214,10 @@ void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *cont
 		edgeHandle->SetAdjustPolyEdge(true);
 		edgeHandle->SetTargetMOI(parent);
 	}
+
+	MOI->MakeHandle<AAdjustPortalInvertHandle>();
+	MOI->MakeHandle<AAdjustPortalJustifyHandle>();
+	MOI->MakeHandle<AAdjustPortalReverseHandle>();
 }
 
 bool FMOIPortalImpl::GetInvertedState(FMOIStateData& OutState) const

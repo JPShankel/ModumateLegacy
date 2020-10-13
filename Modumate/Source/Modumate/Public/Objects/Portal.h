@@ -16,6 +16,9 @@ struct MODUMATE_API FMOIPortalData
 
 	UPROPERTY()
 	bool bLateralInverted = false;
+
+	UPROPERTY()
+	float Justification = 0.0f;
 };
 
 class AAdjustmentHandleActor;
@@ -24,7 +27,6 @@ class FModumateObjectInstance;
 class MODUMATE_API FMOIPortalImpl : public FModumateObjectInstanceImplBase
 {
 protected:
-	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
 	TWeakObjectPtr<AEditModelPlayerController_CPP> Controller;
 
 	bool SetupCompoundActorGeometry();

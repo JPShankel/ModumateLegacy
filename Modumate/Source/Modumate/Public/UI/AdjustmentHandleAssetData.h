@@ -41,4 +41,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	class USlateWidgetStyleAsset* CabinetFrontFaceStyle;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	class USlateWidgetStyleAsset* PortalJustifyStyle;
 };

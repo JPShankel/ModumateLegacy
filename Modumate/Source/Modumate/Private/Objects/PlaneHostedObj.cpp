@@ -16,7 +16,6 @@
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
 #include "ToolsAndAdjustments/Handles/JustificationHandle.h"
-#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"

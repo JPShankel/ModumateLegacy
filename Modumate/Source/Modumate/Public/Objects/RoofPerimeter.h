@@ -1,7 +1,6 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "Graph/Graph2D.h"
 #include "Graph/Graph3DTypes.h"

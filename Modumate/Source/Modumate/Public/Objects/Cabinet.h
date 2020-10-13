@@ -4,7 +4,7 @@
 
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "CoreMinimal.h"
-#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "Objects/ModumateObjectInstance.h"
 

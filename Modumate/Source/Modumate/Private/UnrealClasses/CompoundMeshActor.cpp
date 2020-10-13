@@ -104,13 +104,14 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 			parentIndex = assemblyPart.ParentSlotIndex;
 			if (ensureAlways(parentIndex < obAsm.Parts.Num()))
 			{
-				const FVector& scaledNativeSize = obAsm.Parts[parentIndex].Mesh.NativeSize * scale;
+				const FVector scaledNativeSize = obAsm.Parts[parentIndex].Mesh.NativeSize * scale.GetAbs();
 				vars.Add(TEXT("Parent.SizeX"), scaledNativeSize.X);
 				vars.Add(TEXT("Parent.SizeY"), scaledNativeSize.Y);
 				vars.Add(TEXT("Parent.SizeZ"), scaledNativeSize.Z);
 			}
 		}
 
+		// Native sizes includes and requested inversions.
 		const FVector& nativeSize = obAsm.Parts[slotIdx].Mesh.NativeSize;
 		// Transform formulas are in inch domain.
 		vars.Add(TEXT("Part.SizeX"), nativeSize.X);
@@ -148,6 +149,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 			assemblyPart.Flip[1] ? -1.0f : 1.0f,
 			assemblyPart.Flip[2] ? -1.0f : 1.0f
 		);
+		partFlip *= scale.GetSignVector();
 
 		FVector partNativeSize = assemblyPart.Mesh.NativeSize * Modumate::InchesToCentimeters;
 		FVector partDesiredSize = partScale * partNativeSize;

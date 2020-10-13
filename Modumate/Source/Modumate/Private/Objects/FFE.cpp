@@ -5,7 +5,6 @@
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "DocumentManagement/ModumateSnappingView.h"
-#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "ToolsAndAdjustments/Handles/AdjustFFEPointHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustFFERotateHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustFFEInvertHandle.h"

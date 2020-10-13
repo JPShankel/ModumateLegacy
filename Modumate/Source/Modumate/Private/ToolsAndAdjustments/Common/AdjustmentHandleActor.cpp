@@ -12,7 +12,6 @@
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
-#include "ToolsAndAdjustments/Handles/EditModelPortalAdjustmentHandles.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/AdjustmentHandleWidget.h"
 #include "UI/DimensionManager.h"
