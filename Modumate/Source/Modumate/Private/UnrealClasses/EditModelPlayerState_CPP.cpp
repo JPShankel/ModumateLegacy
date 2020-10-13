@@ -136,6 +136,10 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 			objectSelectionLine.DashSpacing = 10.0f;
 			objectSelectionLine.Color.A = inViewGroup ? 0.2f : 1.0f;
 		}
+		else
+		{
+			objectSelectionLine.Color = FLinearColor(FColor(0x1C, 0x9F, 0xFF));
+		}
 
 		EMPlayerController->HUDDrawWidget->LinesToDraw.Add(MoveTemp(objectSelectionLine));
 	}
