@@ -149,6 +149,7 @@ bool FMOITrimImpl::GetInvertedState(FMOIStateData& OutState) const
 bool FMOITrimImpl::UpdateCachedStructure()
 {
 	const FBIMAssemblySpec& trimAssembly = MOI->GetAssembly();
+	const FModumateDocument* doc = MOI->GetDocument();
 
 	const FSimplePolygon* polyProfile = nullptr;
 	if (!UModumateObjectStatics::GetPolygonProfile(&trimAssembly, polyProfile))
@@ -158,20 +159,51 @@ bool FMOITrimImpl::UpdateCachedStructure()
 
 	// Find the parent surface edge MOI to set up mounting.
 	// This can fail gracefully, if the object is still getting set up before it has a parent assigned.
-	const FModumateObjectInstance* parentMOI = MOI->GetParentObject();
-	if ((parentMOI == nullptr) || (parentMOI->GetObjectType() != EObjectType::OTSurfaceEdge))
+	const FModumateObjectInstance* surfaceEdgeMOI = MOI->GetParentObject();
+	if ((surfaceEdgeMOI == nullptr) || (surfaceEdgeMOI->GetObjectType() != EObjectType::OTSurfaceEdge) || surfaceEdgeMOI->IsDirty(EObjectDirtyFlags::Structure))
 	{
 		return false;
 	}
 
-	const FModumateObjectInstance* surfaceGraphMOI = parentMOI->GetParentObject();
-	if ((surfaceGraphMOI == nullptr) || (surfaceGraphMOI->GetObjectType() != EObjectType::OTSurfaceGraph))
+	const FModumateObjectInstance* surfaceGraphMOI = surfaceEdgeMOI->GetParentObject();
+	if ((surfaceGraphMOI == nullptr) || (surfaceGraphMOI->GetObjectType() != EObjectType::OTSurfaceGraph) || surfaceGraphMOI->IsDirty(EObjectDirtyFlags::Structure))
 	{
 		return false;
 	}
 
-	TrimStartPos = parentMOI->GetCorner(0);
-	TrimEndPos = parentMOI->GetCorner(1);
+	auto surfaceGraph = doc->FindSurfaceGraph(surfaceGraphMOI->ID);
+	auto surfaceEdge = surfaceGraph ? surfaceGraph->FindEdge(surfaceEdgeMOI->ID) : nullptr;
+	if (!surfaceGraph.IsValid() || (surfaceEdge == nullptr))
+	{
+		return false;
+	}
+
+	// See if the trim should be offset based on its neighboring polygons
+	float maxNeighboringThickness = 0.0f;
+	const FModumateObjectInstance* leftPolyMOI = doc->GetObjectById(surfaceEdge->LeftPolyID);
+	const FModumateObjectInstance* rightPolyMOI = doc->GetObjectById(surfaceEdge->RightPolyID);
+	for (auto neighborPolyMOI : {leftPolyMOI, rightPolyMOI})
+	{
+		if (neighborPolyMOI && (neighborPolyMOI->GetObjectType() == EObjectType::OTSurfacePolygon))
+		{
+			for (auto neighborPolyChild : neighborPolyMOI->GetChildObjects())
+			{
+				if (neighborPolyChild->GetObjectType() == EObjectType::OTFinish)
+				{
+					if (neighborPolyChild->IsDirty(EObjectDirtyFlags::Structure))
+					{
+						return false;
+					}
+
+					float neighborFinishThickness = neighborPolyChild->CalculateThickness();
+					maxNeighboringThickness = FMath::Max(maxNeighboringThickness, neighborFinishThickness);
+				}
+			}
+		}
+	}
+
+	TrimStartPos = surfaceEdgeMOI->GetCorner(0);
+	TrimEndPos = surfaceEdgeMOI->GetCorner(1);
 	TrimDir = (TrimEndPos - TrimStartPos).GetSafeNormal();
 	TrimNormal = surfaceGraphMOI->GetNormal();
 
@@ -186,9 +218,10 @@ bool FMOITrimImpl::UpdateCachedStructure()
 	float justification = InstanceData.UpJustification;
 	float justificationDist = justification * polyProfile->Extents.GetSize().Y;
 	FVector justificationDelta = justificationDist * TrimUp;
+	FVector neighborOffsetDelta = maxNeighboringThickness * TrimNormal;
 
-	TrimStartPos += justificationDelta;
-	TrimEndPos += justificationDelta;
+	TrimStartPos += justificationDelta + neighborOffsetDelta;
+	TrimEndPos += justificationDelta + neighborOffsetDelta;
 
 	return true;
 }

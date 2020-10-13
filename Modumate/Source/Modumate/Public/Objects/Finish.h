@@ -14,6 +14,7 @@ public:
 	FMOIFinishImpl(FModumateObjectInstance *moi);
 	virtual ~FMOIFinishImpl();
 
+	virtual void Destroy() override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual FVector GetNormal() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
@@ -21,7 +22,12 @@ public:
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller) override;
 
 protected:
+	void UpdateConnectedEdges();
+	void MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags DirtyFlags);
+
 	FTransform CachedGraphOrigin;
 	TArray<FVector> CachedPerimeter;
 	TArray<FPolyHole3D> CachedHoles;
+	TArray<FModumateObjectInstance*> CachedParentConnectedMOIs;
+	TArray<FModumateObjectInstance*> CachedConnectedEdgeChildren;
 };

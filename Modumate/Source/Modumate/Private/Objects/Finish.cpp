@@ -2,6 +2,8 @@
 
 #include "Objects/Finish.h"
 
+#include "DocumentManagement/ModumateDocument.h"
+#include "Graph/Graph2D.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Objects/ModumateObjectInstance.h"
@@ -15,6 +17,11 @@ FMOIFinishImpl::FMOIFinishImpl(FModumateObjectInstance *moi)
 
 FMOIFinishImpl::~FMOIFinishImpl()
 {
+}
+
+void FMOIFinishImpl::Destroy()
+{
+	MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags::Structure);
 }
 
 FVector FMOIFinishImpl::GetCorner(int32 index) const
@@ -71,6 +78,8 @@ bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 		{
 			DynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
 		}
+
+		MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags::Structure);
 	}
 		break;
 	case EObjectDirtyFlags::Visuals:
@@ -128,5 +137,35 @@ void FMOIFinishImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* cont
 		edgeHandle->SetTargetIndex(i);
 		edgeHandle->SetAdjustPolyEdge(true);
 		edgeHandle->SetTargetMOI(parent);
+	}
+}
+
+void FMOIFinishImpl::UpdateConnectedEdges()
+{
+	CachedParentConnectedMOIs.Reset();
+
+	const FModumateObjectInstance* polyParent = MOI ? MOI->GetParentObject() : nullptr;
+	if (polyParent)
+	{
+		polyParent->GetConnectedMOIs(CachedParentConnectedMOIs);
+	}
+
+	CachedConnectedEdgeChildren.Reset();
+	for (FModumateObjectInstance* polyConnectedMOI : CachedParentConnectedMOIs)
+	{
+		if (polyConnectedMOI && (polyConnectedMOI->GetObjectType() == EObjectType::OTSurfaceEdge))
+		{
+			CachedConnectedEdgeChildren.Append(polyConnectedMOI->GetChildObjects());
+		}
+	}
+}
+
+void FMOIFinishImpl::MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags DirtyFlags)
+{
+	UpdateConnectedEdges();
+
+	for (FModumateObjectInstance* connectedEdgeChild : CachedConnectedEdgeChildren)
+	{
+		connectedEdgeChild->MarkDirty(DirtyFlags);
 	}
 }

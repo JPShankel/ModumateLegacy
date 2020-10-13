@@ -797,7 +797,7 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 	FVector baseEndPoint = InEndPoint - midPoint;
 	FVector baseExtrusionDelta = baseEndPoint - baseStartPoint;
 	float baseExtrusionLength = baseExtrusionDelta.Size();
-	if (!ensureAlways(!FMath::IsNearlyZero(baseExtrusionLength)))
+	if (!ensure(!FMath::IsNearlyZero(baseExtrusionLength)))
 	{
 		return false;
 	}
