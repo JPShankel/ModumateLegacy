@@ -10,6 +10,7 @@
 #include "Components/Image.h"
 #include "UI/BIM/BIMBlockNode.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
+#include "DocumentManagement/ModumateDocument.h"
 
 UBIMBlockDropdownPreset::UBIMBlockDropdownPreset(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -82,5 +83,9 @@ void UBIMBlockDropdownPreset::BuildDropdownFromProperty(class UBIMDesigner* Oute
 
 	// PresetText
 	PresetID = nodePtr->PresetID;
-	PresetText->ChangeText(FText::FromString(PresetID.ToString()));
+	const FBIMPreset* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
+	if (preset != nullptr)
+	{
+		PresetText->ChangeText(preset->DisplayName);
+	}
 }

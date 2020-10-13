@@ -13,6 +13,9 @@
 #include "UI/BIM/BIMDesigner.h"
 #include "Components/Sizebox.h"
 #include "UI/SelectionTray/SelectionTrayWidget.h"
+#include "UI/ComponentPresetListItem.h"
+#include "BIMKernel/BIMAssemblySpec.h"
+#include "UI/Custom/ModumateTextBlockUserWidget.h"
 
 UToolTrayBlockAssembliesList::UToolTrayBlockAssembliesList(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -85,6 +88,16 @@ void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& 
 		TArray<FBIMKey> availablePresets;
 		presetManager.GetAvailablePresetsForSwap(ParentPresetID, PresetIDToSwap, availablePresets);
 
+		if (ComponentPresetItem)
+		{
+			const FBIMPreset* preset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(PresetIDToSwap);
+			if (preset != nullptr)
+			{
+				ComponentPresetItem->MainText->ChangeText(preset->DisplayName);
+				ComponentPresetItem->CaptureIconForBIMDesignerSwap(Controller, PresetIDToSwap, NodeID);
+			}
+		}
+
 		for (auto &curPreset : availablePresets)
 		{
 			UComponentListObject *newCompListObj = NewObject<UComponentListObject>(this);
@@ -107,6 +120,16 @@ void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(ETool
 
 		TArray<FBIMKey> availablePresets;
 		presetManager.GetAvailablePresetsForSwap(FBIMKey(), PresetID, availablePresets);
+
+		if (ComponentPresetItem)
+		{
+			const FBIMPreset* preset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(PresetID);
+			if (preset != nullptr)
+			{
+				ComponentPresetItem->MainText->ChangeText(preset->DisplayName);
+				ComponentPresetItem->CaptureIconFromPresetKey(Controller, PresetID);
+			}
+		}
 
 		for (auto &curPreset : availablePresets)
 		{

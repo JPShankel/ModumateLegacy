@@ -193,6 +193,12 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 	bNodeHasSlotPart = bAsSlot;
 	TitleNodeCollapsed->ChangeText(Node->CategoryTitle);
 	TitleNodeExpanded->ChangeText(Node->CategoryTitle);
+	const FBIMPreset* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
+	if (preset != nullptr)
+	{
+		ComponentPresetListItem->MainText->ChangeText(preset->DisplayName);
+		Preset_Name->ChangeText(preset->DisplayName);
+	}
 
 	if (Button_Debug)
 	{
@@ -242,11 +248,6 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 			if (Node->InstanceProperties.TryGetProperty(value.Scope, value.Name, valueString))
 			{
 				newEnterable->BuildEnterableFieldFromProperty(ParentBIMDesigner, ID, value.Scope, value.Name, valueString);
-				// If this is a "Name" property, apply its value to the node's name text
-				if (curProperty.Key == BIMPropertyNames::Name.ToString())
-				{
-					ComponentPresetListItem->MainText->ChangeText(FText::FromString(valueString));
-				}
 			}
 
 			VerticalBoxProperties->AddChildToVerticalBox(newEnterable);

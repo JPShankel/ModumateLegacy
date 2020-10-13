@@ -36,7 +36,7 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-	FBIMKey AsmKey; // Unique key such as assembly key or presetID
+	FBIMKey BIMKey; // Unique key such as assembly key or presetID
 	FText ItemDisplayName; // Display name, user-facing
 	EToolMode ToolMode = EToolMode::VE_NONE;
 	EComponentListItemType ItemType = EComponentListItemType::None;

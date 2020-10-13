@@ -111,11 +111,11 @@ void UComponentAssemblyListItem::UpdateSelectionItemCount(int32 ItemCount)
 
 bool UComponentAssemblyListItem::BuildFromAssembly()
 {
-	if (!ComponentPresetItem || AsmKey.IsNone())
+	if (!ComponentPresetItem || BIMKey.IsNone())
 	{
 		return false;
 	}
-	ComponentPresetItem->CaptureIconFromPresetKey(EMPlayerController, AsmKey, ToolMode);
+	ComponentPresetItem->CaptureIconFromPresetKey(EMPlayerController, BIMKey);
 
 	TArray<FString> propertyTips;
 	GetItemTips(propertyTips);
@@ -136,7 +136,7 @@ void UComponentAssemblyListItem::OnModumateButtonMainReleased()
 {
 	if (ItemType == EComponentListItemType::AssemblyListItem  && EMPlayerController && EMPlayerController->EMPlayerState)
 	{
-		EMPlayerController->EMPlayerState->SetAssemblyForToolMode(ToolMode, AsmKey);
+		EMPlayerController->EMPlayerState->SetAssemblyForToolMode(ToolMode, BIMKey);
 	}
 }
 
@@ -144,7 +144,7 @@ void UComponentAssemblyListItem::OnButtonEditReleased()
 {
 	if (EMPlayerController)
 	{
-		EMPlayerController->EditModelUserWidget->EditExistingAssembly(ToolMode, AsmKey);
+		EMPlayerController->EditModelUserWidget->EditExistingAssembly(ToolMode, BIMKey);
 	}
 }
 
@@ -152,7 +152,7 @@ void UComponentAssemblyListItem::OnButtonSwapReleased()
 {
 	if (EMPlayerController)
 	{
-		EMPlayerController->EditModelUserWidget->SelectionTrayWidget->OpenToolTrayForSwap(ToolMode, AsmKey);
+		EMPlayerController->EditModelUserWidget->SelectionTrayWidget->OpenToolTrayForSwap(ToolMode, BIMKey);
 	}
 }
 
@@ -164,11 +164,11 @@ void UComponentAssemblyListItem::OnButtonConfirmReleased()
 	{
 	case EComponentListItemType::SwapDesignerPreset:
 		EMPlayerController->EditModelUserWidget->BIMDesigner->UpdateNodeSwapMenuVisibility(BIMInstanceID, false);
-		result = EMPlayerController->EditModelUserWidget->BIMDesigner->SetPresetForNodeInBIMDesigner(BIMInstanceID, AsmKey);
+		result = EMPlayerController->EditModelUserWidget->BIMDesigner->SetPresetForNodeInBIMDesigner(BIMInstanceID, BIMKey);
 		break;
 	case EComponentListItemType::SwapListItem:
 		FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-		const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, AsmKey);
+		const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, BIMKey);
 		if (assembly)
 		{
 			TArray<int32> objIDs;
@@ -182,7 +182,7 @@ void UComponentAssemblyListItem::OnButtonConfirmReleased()
 			}
 			doc->SetAssemblyForObjects(GetWorld(), objIDs, *assembly);
 			//Refresh swap menu
-			EMPlayerController->EditModelUserWidget->SelectionTrayWidget->OpenToolTrayForSwap(ToolMode, AsmKey);
+			EMPlayerController->EditModelUserWidget->SelectionTrayWidget->OpenToolTrayForSwap(ToolMode, BIMKey);
 			result = true;
 		}
 		break;
@@ -197,7 +197,7 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 	}
 
 	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, AsmKey);
+	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, BIMKey);
 	if (!assembly)
 	{
 		return false;
@@ -228,20 +228,22 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 		return;
 	}
 
-	AsmKey = compListObj->UniqueKey;
+	BIMKey = compListObj->UniqueKey;
 	ToolMode = compListObj->Mode;
 	EMPlayerController = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	FPresetManager &presetManager = gameState->Document.PresetManager;
 	
-	// Find the assembly for this list item. Note some item types do not require assembly
-	const FBIMAssemblySpec* assembly = presetManager.GetAssemblyByKey(compListObj->Mode, AsmKey);
+	// Find the preset for this list item. Note some item types do not require preset
+	const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(BIMKey);
 
 	switch (compListObj->ItemType)
 	{
 	case EComponentListItemType::SwapDesignerPreset:
-		// TODO: need human readable assembly name
-		ComponentPresetItem->MainText->ChangeText(FText::FromString(compListObj->UniqueKey.ToString()));
+		if (preset != nullptr)
+		{
+			ComponentPresetItem->MainText->ChangeText(preset->DisplayName);
+		}
 		BIMInstanceID = compListObj->BIMNodeInstanceID;
 		ComponentPresetItem->CaptureIconForBIMDesignerSwap(EMPlayerController, compListObj->UniqueKey, BIMInstanceID);
 		bIsNonAssemblyObjectSelectItem = false;
@@ -250,11 +252,11 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 
 	case EComponentListItemType::AssemblyListItem:
 	case EComponentListItemType::SwapListItem:
-		if (!assembly)
+		if (preset == nullptr)
 		{
 			return;
 		}
-		ItemDisplayName = FText::FromString(assembly->DisplayName);
+		ItemDisplayName = preset->DisplayName;
 		ComponentPresetItem->MainText->ChangeText(ItemDisplayName);
 		BuildFromAssembly();
 		bIsNonAssemblyObjectSelectItem = false;
@@ -262,9 +264,9 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 		return;
 
 	case EComponentListItemType::SelectionListItem:
-		if (!assembly)
+		if (preset == nullptr)
 		{
-			// Display the UniqueKey from compListObj if assembly is missing
+			// Display the UniqueKey from compListObj if preset is missing
 			// This can happen during selection of meta objects like edges and meta planes
 			ItemDisplayName = FText::FromString(compListObj->UniqueKey.ToString());
 			UpdateSelectionItemCount(compListObj->SelectionItemCount);
@@ -272,7 +274,7 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 			UpdateItemType(compListObj->ItemType);
 			return;
 		}
-		ItemDisplayName = FText::FromString(assembly->DisplayName);
+		ItemDisplayName = preset->DisplayName;
 		UpdateSelectionItemCount(compListObj->SelectionItemCount);
 		BuildFromAssembly();
 		bIsNonAssemblyObjectSelectItem = false;
