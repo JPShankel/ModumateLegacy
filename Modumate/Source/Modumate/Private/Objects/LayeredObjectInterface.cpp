@@ -2,6 +2,7 @@
 
 #include "Objects/LayeredObjectInterface.h"
 
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "Objects/ModumateObjectInstance.h"
 
 bool FCachedLayerDimsByType::HasStructuralLayers() const
@@ -118,27 +119,8 @@ void FCachedLayerDimsByType::UpdateFinishFromObject(const FModumateObjectInstanc
 {
 	bHasStartFinish = bHasEndFinish = false;
 	StartFinishThickness = EndFinishThickness = 0.0f;
-	TArray<const FModumateObjectInstance *> children = MOI->GetChildObjects();
 
-	for (const FModumateObjectInstance *child : children)
-	{
-		if (child && (child->GetObjectType() == EObjectType::OTFinish) && ensureAlways(child->GetControlPointIndices().Num() == 1))
-		{
-			float finishThickness = child->CalculateThickness();
-			int32 finishSideIdx = child->GetControlPointIndex(0);
-
-			if (finishSideIdx == 0)
-			{
-				bHasEndFinish = true;
-				EndFinishThickness = finishThickness;
-			}
-			else if (finishSideIdx == 1)
-			{
-				bHasStartFinish = true;
-				StartFinishThickness = finishThickness;
-			}
-		}
-	}
+	// TODO: now that surface graphs can make inconsistent thickness of plane-hosted layered assemblies, "finish thickness" needs attention.
 
 	TotalFinishedWidth = TotalUnfinishedWidth + StartFinishThickness + EndFinishThickness;
 }

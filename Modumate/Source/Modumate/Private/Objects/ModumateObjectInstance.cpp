@@ -861,33 +861,9 @@ void FModumateObjectInstance::SetAssemblyLayersReversed(bool bNewLayersReversed)
 	}
 }
 
-void FModumateObjectInstance::SetControlPointIndex(int32 IndexNum, int32 IndexVal)
-{
-	if (ensureAlways(GetDataState_DEPRECATED().ControlIndices.Num() > IndexNum))
-	{
-		GetDataState_DEPRECATED().ControlIndices[IndexNum] = IndexVal;
-	}
-}
-
-int32 FModumateObjectInstance::GetControlPointIndex(int32 IndexNum) const
-{
-	ensureAlways(IndexNum < GetDataState_DEPRECATED().ControlIndices.Num());
-	return GetDataState_DEPRECATED().ControlIndices[IndexNum];
-}
-
 const TArray<int32> &FModumateObjectInstance::GetControlPointIndices() const
 {
 	return GetDataState_DEPRECATED().ControlIndices;
-}
-
-void FModumateObjectInstance::AddControlPointIndex(int32 Index)
-{
-	GetDataState_DEPRECATED().ControlIndices.Add(Index);
-}
-
-void FModumateObjectInstance::SetControlPointIndices(const TArray<int32> &NewControlPointIndices)
-{
-	GetDataState_DEPRECATED().ControlIndices = NewControlPointIndices;
 }
 
 void FModumateObjectInstance::SetupGeometry()

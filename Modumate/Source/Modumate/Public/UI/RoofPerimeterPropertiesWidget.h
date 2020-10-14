@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Graph/GraphCommon.h"
 #include "ModumateCore/ModumateRoofStatics.h"
 
 #include "RoofPerimeterPropertiesWidget.generated.h"
@@ -22,7 +23,8 @@ public:
 	URoofPerimeterPropertiesWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
-	void SetTarget(int32 InTargetPerimeterID, int32 InTargetEdgeID, class AAdjustmentHandleActor *InOwningHandle);
+	void SetTarget(int32 InTargetPerimeterID, FGraphSignedID InTargetEdgeID, class AAdjustmentHandleActor *InOwningHandle);
+	void UpdateEditFields();
 	void UpdateTransform();
 
 protected:
@@ -72,6 +74,8 @@ public:
 	FRoofEdgeProperties CurrentProperties;
 
 protected:
+	FMOIRoofPerimeterData TempInitialCombinedProperties;
+
 	UPROPERTY()
 	class AEditModelGameState_CPP *GameState;
 

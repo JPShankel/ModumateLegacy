@@ -153,44 +153,34 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kUndo, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		AEditModelPlayerController_CPP *playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
-		AEditModelPlayerState_CPP *playerState = playerController->EMPlayerState;
+		FModumateDocument* doc = GetDocument();
+		AEditModelPlayerController_CPP* playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
+		AEditModelPlayerState_CPP* playerState = playerController->EMPlayerState;
 
-		if (playerController->ToolIsInUse())
+		if (doc && !doc->IsPreviewingDeltas())
 		{
-			playerController->AbortUseTool();
+			doc->Undo(GetWorld());
+			playerState->ValidateSelectionsAndView();
 			return true;
 		}
 
-		if (playerController->InteractionHandle)
-		{
-			return true;
-		}
-
-		GetDocument()->Undo(GetWorld());
-		playerState->ValidateSelectionsAndView();
-		return true;
+		return false;
 	});
 
 	RegisterCommand(kRedo, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		AEditModelPlayerController_CPP *playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
-		AEditModelPlayerState_CPP *playerState = playerController->EMPlayerState;
+		FModumateDocument* doc = GetDocument();
+		AEditModelPlayerController_CPP* playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
+		AEditModelPlayerState_CPP* playerState = playerController->EMPlayerState;
 
-		if (playerController->ToolIsInUse())
+		if (doc && !doc->IsPreviewingDeltas())
 		{
-			playerController->AbortUseTool();
+			doc->Redo(GetWorld());
+			playerState->ValidateSelectionsAndView();
 			return true;
 		}
 
-		if (playerController->InteractionHandle)
-		{
-			return true;
-		}
-
-		GetDocument()->Redo(GetWorld());
-		playerState->ValidateSelectionsAndView();
-		return true;
+		return false;
 	});
 
 	RegisterCommand(kBeginUndoRedoMacro, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)

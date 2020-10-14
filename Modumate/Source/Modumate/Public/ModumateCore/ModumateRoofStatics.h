@@ -42,26 +42,14 @@ struct MODUMATE_API FTessellationPolygon
 };
 
 
-// Helper struct for storing edge properties
-// TODO: until more generic serialization works in BIM, this can only be used temporarily, rather than for serialized property storage
+// Helper struct for storing roof perimeter edge properties
 USTRUCT()
 struct MODUMATE_API FRoofEdgeProperties
 {
 	GENERATED_USTRUCT_BODY()
 
-	FRoofEdgeProperties()
-		: bOverridden(false)
-		, Slope(0.0f)
-		, bHasFace(true)
-		, Overhang(0.0f)
-	{ }
-
-	FRoofEdgeProperties(bool bInOverridden, float InSlope, bool bInHasFace, float InOverhang)
-		: bOverridden(bInOverridden)
-		, Slope(InSlope)
-		, bHasFace(bInHasFace)
-		, Overhang(InOverhang)
-	{ }
+	FRoofEdgeProperties();
+	FRoofEdgeProperties(bool bInOverridden, float InSlope, bool bInHasFace, float InOverhang);
 
 	UPROPERTY()
 	bool bOverridden;
@@ -76,6 +64,15 @@ struct MODUMATE_API FRoofEdgeProperties
 	float Overhang;
 };
 
+USTRUCT()
+struct MODUMATE_API FMOIRoofPerimeterData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TMap<int32, FRoofEdgeProperties> EdgeProperties;
+};
+
 
 // Helper functions for accessing / editing roof data, shared between roof tools and objects
 UCLASS(BlueprintType)
@@ -87,32 +84,10 @@ public:
 	static void InitializeProperties(FBIMPropertySheet *RoofProperties, int32 NumEdges);
 
 	static bool GetAllProperties(const FModumateObjectInstance *RoofObject,
-		TArray<FVector> &OutEdgePoints, TArray<int32> &OutEdgeIDs, FRoofEdgeProperties &OutDefaultProperties, TArray<FRoofEdgeProperties> &OutEdgeProperties);
-
-	static bool SetAllProperties(FModumateObjectInstance *RoofObject, const FRoofEdgeProperties &DefaultProperties, const TArray<FRoofEdgeProperties> &EdgeProperties);
-
-	static bool GetEdgeProperties(const FModumateObjectInstance *RoofObject, int32 EdgeID, FRoofEdgeProperties &OutProperties);
-
-	static bool SetEdgeProperties(FModumateObjectInstance *RoofObject, int32 EdgeID, const FRoofEdgeProperties &NewProperties);
-
-	static bool UpdateRoofEdgeProperties(FModumateObjectInstance *RoofObject, const TArray<int32> &NewEdgeIDs);
+		TArray<FVector> &OutEdgePoints, TArray<FGraphSignedID> &OutEdgeIDs, FRoofEdgeProperties &OutDefaultProperties, TArray<FRoofEdgeProperties> &OutEdgeProperties);
 
 	static bool TessellateSlopedEdges(const TArray<FVector> &EdgePoints, const TArray<FRoofEdgeProperties> &EdgeProperties,
 		TArray<FVector> &OutCombinedPolyVerts, TArray<int32> &OutPolyVertIndices, const FVector &NormalHint = FVector::UpVector, UWorld *DebugDrawWorld = nullptr);
 
 	static FRoofEdgeProperties DefaultEdgeProperties;
-
-private:
-	static TArray<FVector> TempEdgePoints;
-	static TArray<int32> TempEdgeIDs;
-
-	static FRoofEdgeProperties TempDefaultEdgeProperties;
-	static TArray<FRoofEdgeProperties> TempEdgeProperties;
-	static TArray<FRoofEdgeProperties> TempCombinedEdgeProperties;
-	static TArray<bool> TempEdgeOverrides;
-	static TArray<float> TempEdgeSlopes;
-	static TArray<bool> TempEdgesHaveFaces;
-	static TArray<float> TempEdgeOverhangs;
-
-	static TMap<int32, FRoofEdgeProperties> TempEdgePropertyMap;
 };

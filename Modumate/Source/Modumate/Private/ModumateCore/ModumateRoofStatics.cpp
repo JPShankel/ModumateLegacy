@@ -2,8 +2,10 @@
 
 #include "ModumateCore/ModumateRoofStatics.h"
 
-#include "BIMKernel/BIMProperties.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "Graph/Graph3D.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "Objects/RoofPerimeter.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 
 #define DEBUG_ROOFS UE_BUILD_DEBUG
@@ -312,198 +314,60 @@ void FTessellationPolygon::DrawDebug(const FColor &Color, UWorld* World, const F
 	}
 }
 
-FRoofEdgeProperties UModumateRoofStatics::DefaultEdgeProperties(false, 0.5f, true, 0.0f);
-TArray<FVector> UModumateRoofStatics::TempEdgePoints;
-TArray<int32> UModumateRoofStatics::TempEdgeIDs;
-FRoofEdgeProperties UModumateRoofStatics::TempDefaultEdgeProperties;
-TArray<FRoofEdgeProperties> UModumateRoofStatics::TempEdgeProperties;
-TArray<FRoofEdgeProperties> UModumateRoofStatics::TempCombinedEdgeProperties;
-TArray<bool> UModumateRoofStatics::TempEdgeOverrides;
-TArray<float> UModumateRoofStatics::TempEdgeSlopes;
-TArray<bool> UModumateRoofStatics::TempEdgesHaveFaces;
-TArray<float> UModumateRoofStatics::TempEdgeOverhangs;
-TMap<int32, FRoofEdgeProperties> UModumateRoofStatics::TempEdgePropertyMap;
-
-void UModumateRoofStatics::InitializeProperties(FBIMPropertySheet *RoofProperties, int32 NumEdges)
+FRoofEdgeProperties::FRoofEdgeProperties()
+	: bOverridden(false)
+	, Slope(0.5f)
+	, bHasFace(true)
+	, Overhang(0.0f)
 {
-	if (!ensure(RoofProperties))
-	{
-		return;
-	}
+}
 
-	int32 numProperties = NumEdges + 1;
-	TempEdgeOverrides.Init(UModumateRoofStatics::DefaultEdgeProperties.bOverridden, numProperties);
-	TempEdgeSlopes.Init(UModumateRoofStatics::DefaultEdgeProperties.Slope, numProperties);
-	TempEdgesHaveFaces.Init(UModumateRoofStatics::DefaultEdgeProperties.bHasFace, numProperties);
-	TempEdgeOverhangs.Init(UModumateRoofStatics::DefaultEdgeProperties.Overhang, numProperties);
-
-	RoofProperties->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::Override, FBIMPropertyValue::FValue(TempEdgeOverrides));
-	RoofProperties->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::Slope, FBIMPropertyValue::FValue(TempEdgeSlopes));
-	RoofProperties->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::HasFace, FBIMPropertyValue::FValue(TempEdgesHaveFaces));
-	RoofProperties->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::Overhang, FBIMPropertyValue::FValue(TempEdgeOverhangs));
+FRoofEdgeProperties::FRoofEdgeProperties(bool bInOverridden, float InSlope, bool bInHasFace, float InOverhang)
+	: bOverridden(bInOverridden)
+	, Slope(InSlope)
+	, bHasFace(bInHasFace)
+	, Overhang(InOverhang)
+{
 }
 
 bool UModumateRoofStatics::GetAllProperties(
 	const FModumateObjectInstance *RoofObject,
-	TArray<FVector> &OutEdgePoints, TArray<int32> &OutEdgeIDs,
+	TArray<FVector> &OutEdgePoints, TArray<FGraphSignedID> &OutEdgeIDs,
 	FRoofEdgeProperties &OutDefaultProperties, TArray<FRoofEdgeProperties> &OutEdgeProperties)
 {
-	if (!ensure(RoofObject))
+	OutEdgePoints.Reset();
+	OutEdgeIDs.Reset();
+	OutDefaultProperties = FRoofEdgeProperties();
+	OutEdgeProperties.Reset();
+
+	FMOIRoofPerimeterData roofPerimeterData;
+	if (!ensure(RoofObject && (RoofObject->GetObjectType() == EObjectType::OTRoofPerimeter) &&
+		RoofObject->GetStateData().CustomData.LoadStructData(roofPerimeterData)))
 	{
 		return false;
 	}
 
-	// TODO: reimplement with roof-specific instance properties structure
-	const TArray<FVector> ControlPoints;// = RoofObject->GetControlPoints();
-	const TArray<int32> ControlIndices;// = RoofObject->GetControlPointIndices();
+	// TODO: remove this ASAP - it's only here because the ordered edge ID list is derived, non-definitional implementation-specific data
+	// that belongs in neither the top-level StateData (i.e. via interpreting ControlPoints/Indices or BIMProperties)
+	// nor the serialized CustomData that should only be modified via deltas. Solutions:
+	// - When MOIs are UObjects that can be safely and performantly down-casted, this implementation-specific derived data can be safely exposed publicly
+	// - Alternatively, the ordered edge ID list can be stored in CustomData, but needs to be modified during delta application via side effect deltas
+	const FModumateDocument* doc = RoofObject->GetDocument();
+	const FMOIRoofPerimeterImpl* roofPerimeterImpl = (const FMOIRoofPerimeterImpl*)RoofObject->Implementation;
+	OutEdgeIDs = roofPerimeterImpl->GetCachedEdgeIDs();
+	int32 numEdges = OutEdgeIDs.Num();
 
-	int32 numCP = ControlPoints.Num();
-	int32 numCI = ControlIndices.Num();
-
-	if (!ensureAlways(numCI == numCP))
+	for (FGraphSignedID signedEdgeID : OutEdgeIDs)
 	{
-		return false;
-	}
+		int32 edgeID = FMath::Abs(signedEdgeID);
+		const FModumateObjectInstance* edgeMOI = doc->GetObjectById(edgeID);
+		FVector edgeStart = edgeMOI->GetCorner(signedEdgeID > 0 ? 0 : 1);
+		OutEdgePoints.Add(edgeStart);
 
-	int32 numEdges = numCI;
-	int32 numProperties = numEdges + 1;
-	OutEdgePoints = ControlPoints;
-	OutEdgeIDs = ControlIndices;
-	OutEdgeProperties.Reset(numEdges);
-
-	EBIMValueScope propertyScope = EBIMValueScope::Roof;
-
-	if (!RoofObject->TryGetProperty<TArray<bool>>(propertyScope, BIMPropertyNames::Override, TempEdgeOverrides) || (TempEdgeOverrides.Num() != numProperties) ||
-		!RoofObject->TryGetProperty<TArray<float>>(propertyScope, BIMPropertyNames::Slope, TempEdgeSlopes) || (TempEdgeSlopes.Num() != numProperties) ||
-		!RoofObject->TryGetProperty<TArray<bool>>(propertyScope, BIMPropertyNames::HasFace, TempEdgesHaveFaces) || (TempEdgesHaveFaces.Num() != numProperties) ||
-		!RoofObject->TryGetProperty<TArray<float>>(propertyScope, BIMPropertyNames::Overhang, TempEdgeOverhangs) || (TempEdgeOverhangs.Num() != numProperties))
-	{
-		return false;
-	}
-
-	OutDefaultProperties.bOverridden = false;
-	OutDefaultProperties.Slope = TempEdgeSlopes[0];
-	OutDefaultProperties.bHasFace = TempEdgesHaveFaces[0];
-	OutDefaultProperties.Overhang = TempEdgeOverhangs[0];
-
-	for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
-	{
-		int32 propertyIdx = edgeIdx + 1;
-		if (TempEdgeOverrides[propertyIdx])
-		{
-			OutEdgeProperties.Add(FRoofEdgeProperties(true, TempEdgeSlopes[propertyIdx], TempEdgesHaveFaces[propertyIdx], TempEdgeOverhangs[propertyIdx]));
-		}
-		else
-		{
-			OutEdgeProperties.Add(OutDefaultProperties);
-		}
+		OutEdgeProperties.Add(roofPerimeterData.EdgeProperties.FindRef(edgeID));
 	}
 
 	return true;
-}
-
-bool UModumateRoofStatics::SetAllProperties(FModumateObjectInstance *RoofObject, const FRoofEdgeProperties &DefaultProperties, const TArray<FRoofEdgeProperties> &EdgeProperties)
-{
-	if (!ensure(RoofObject))
-	{
-		return false;
-	}
-
-	int32 numEdges = EdgeProperties.Num();
-	int32 numProperties = numEdges + 1;
-	TempCombinedEdgeProperties.Reset(numEdges + 1);
-	TempCombinedEdgeProperties.Add(DefaultProperties);
-	TempCombinedEdgeProperties.Append(EdgeProperties);
-
-	TempEdgeOverrides.Reset(numProperties);
-	TempEdgeSlopes.Reset(numProperties);
-	TempEdgesHaveFaces.Reset(numProperties);
-	TempEdgeOverhangs.Reset(numProperties);
-	for (const FRoofEdgeProperties &edgeProperties : TempCombinedEdgeProperties)
-	{
-		TempEdgeOverrides.Add(edgeProperties.bOverridden);
-		TempEdgeSlopes.Add(edgeProperties.Slope);
-		TempEdgesHaveFaces.Add(edgeProperties.bHasFace);
-		TempEdgeOverhangs.Add(edgeProperties.Overhang);
-	}
-
-	RoofObject->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::Override, FBIMPropertyValue::FValue(TempEdgeOverrides));
-	RoofObject->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::Slope, FBIMPropertyValue::FValue(TempEdgeSlopes));
-	RoofObject->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::HasFace, FBIMPropertyValue::FValue(TempEdgesHaveFaces));
-	RoofObject->SetProperty(EBIMValueScope::Roof, BIMPropertyNames::Overhang, FBIMPropertyValue::FValue(TempEdgeOverhangs));
-
-	return true;
-}
-
-bool UModumateRoofStatics::GetEdgeProperties(const FModumateObjectInstance *RoofObject, int32 EdgeID, FRoofEdgeProperties &OutProperties)
-{
-	if (!UModumateRoofStatics::GetAllProperties(RoofObject, TempEdgePoints, TempEdgeIDs, TempDefaultEdgeProperties, TempEdgeProperties))
-	{
-		return false;
-	}
-
-	int32 numEdges = TempEdgeIDs.Num();
-	for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
-	{
-		if (TempEdgeIDs[edgeIdx] == EdgeID)
-		{
-			OutProperties = TempEdgeProperties[edgeIdx];
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool UModumateRoofStatics::SetEdgeProperties(FModumateObjectInstance *RoofObject, int32 EdgeID, const FRoofEdgeProperties &NewProperties)
-{
-	if (!UModumateRoofStatics::GetAllProperties(RoofObject, TempEdgePoints, TempEdgeIDs, TempDefaultEdgeProperties, TempEdgeProperties))
-	{
-		return false;
-	}
-
-	int32 numEdges = TempEdgeIDs.Num();
-	for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
-	{
-		if (TempEdgeIDs[edgeIdx] == EdgeID)
-		{
-			TempEdgeProperties[edgeIdx] = NewProperties;
-			return SetAllProperties(RoofObject, TempDefaultEdgeProperties, TempEdgeProperties);
-		}
-	}
-
-	return false;
-}
-
-bool UModumateRoofStatics::UpdateRoofEdgeProperties(FModumateObjectInstance *RoofObject, const TArray<int32> &NewEdgeIDs)
-{
-	if (!UModumateRoofStatics::GetAllProperties(RoofObject, TempEdgePoints, TempEdgeIDs, TempDefaultEdgeProperties, TempEdgeProperties))
-	{
-		return false;
-	}
-
-	TempEdgePropertyMap.Reset();
-	int32 numEdges = TempEdgeIDs.Num();
-	for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
-	{
-		TempEdgePropertyMap.Add(TempEdgeIDs[edgeIdx], TempEdgeProperties[edgeIdx]);
-	}
-
-	TempEdgeProperties.Reset(numEdges);
-	for (int32 newEdgeID : NewEdgeIDs)
-	{
-		FRoofEdgeProperties *edgeProperties = TempEdgePropertyMap.Find(newEdgeID);
-		if (edgeProperties)
-		{
-			TempEdgeProperties.Add(*edgeProperties);
-		}
-		else
-		{
-			TempEdgeProperties.Add(UModumateRoofStatics::DefaultEdgeProperties);
-		}
-	}
-
-	return SetAllProperties(RoofObject, TempDefaultEdgeProperties, TempEdgeProperties);
 }
 
 bool UModumateRoofStatics::TessellateSlopedEdges(const TArray<FVector> &EdgePoints, const TArray<FRoofEdgeProperties> &EdgeProperties,

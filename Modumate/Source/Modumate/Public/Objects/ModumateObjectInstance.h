@@ -161,6 +161,9 @@ private:
 
 	friend class FMOIDelta;
 
+	// SUPER TEMPORARY TODO: we don't have a way to expose derived/non-definitional implementation-specific data, so this will be here until MOIs are UObjects.
+	friend class UModumateRoofStatics;
+
 	TWeakObjectPtr<AActor> MeshActor = nullptr;
 	TWeakObjectPtr<UWorld> World = nullptr;
 	IModumateObjectInstanceImpl *Implementation = nullptr;
@@ -220,14 +223,7 @@ public:
 
 	const FMOIStateData_DEPRECATED &GetDataState_DEPRECATED() const;
 
-	void SetControlPointIndex(int32 IndexNum, int32 IndexVal);
-	int32 GetControlPointIndex(int32 IndexNum) const;
-
 	const TArray<int32> &GetControlPointIndices() const;
-
-	void AddControlPointIndex(int32 Index);
-
-	void SetControlPointIndices(const TArray<int32> &NewControlPointIndices);
 
 	bool BeginPreviewOperation_DEPRECATED();
 	bool EndPreviewOperation_DEPRECATED();

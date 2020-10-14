@@ -82,23 +82,15 @@ bool URoofPerimeterTool::Activate()
 	{
 		TArray<FDeltaPtr> deltasToApply;
 		int32 perimeterID = doc.GetNextAvailableID();
-#if 1
-		ensureMsgf(false, TEXT("TODO: reimplement with new FMOIDelta!"));
-#else
+
 		// Create the MOI delta for constructing the perimeter object
-		FMOIStateData_DEPRECATED state;
-		state.StateType = EMOIDeltaType::Create;
-		state.ControlIndices = perimeterEdgeIDs;
+		FMOIRoofPerimeterData newPerimeterInstanceData;
+		FMOIStateData newPerimeterState(perimeterID, EObjectType::OTRoofPerimeter, Controller->EMPlayerState->GetViewGroupObjectID());
+		newPerimeterState.CustomData.SaveStructData(newPerimeterInstanceData);
 
-		state.ParentID = Controller->EMPlayerState->GetViewGroupObjectID();
-		state.ObjectType = EObjectType::OTRoofPerimeter;
-		state.ObjectID = perimeterID;
-		UModumateRoofStatics::InitializeProperties(&state.ObjectProperties, numEdges);
-
-		TSharedPtr<FMOIDelta_DEPRECATED> perimeterCreationDelta = MakeShared<FMOIDelta_DEPRECATED>(state);
-
+		auto perimeterCreationDelta = MakeShared<FMOIDelta>();
+		perimeterCreationDelta->AddCreateDestroyState(newPerimeterState, EMOIDeltaType::Create);
 		deltasToApply.Add(perimeterCreationDelta);
-#endif
 
 		// Now create the graph delta to assign the perimeter object to the GroupIDs of its edges
 		auto graphDelta = MakeShared<FGraph3DDelta>();

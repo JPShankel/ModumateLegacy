@@ -231,6 +231,14 @@ void AEditRoofEdgeHandle::SetTargetEdge(FGraphSignedID InTargetEdgeID)
 	TargetEdgeID = InTargetEdgeID;
 }
 
+void AEditRoofEdgeHandle::UpdateWidgetData()
+{
+	if (IsInUse() && PropertiesWidget)
+	{
+		PropertiesWidget->UpdateEditFields();
+	}
+}
+
 bool AEditRoofEdgeHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
 {
 	OutButtonStyle = PlayerHUD->HandleAssets->RoofEditEdgeStyle;

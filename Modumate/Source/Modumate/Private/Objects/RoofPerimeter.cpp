@@ -48,6 +48,12 @@ FVector FMOIRoofPerimeterImpl::GetCorner(int32 index) const
 	return GetLocation();
 }
 
+void FMOIRoofPerimeterImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+{
+	OutStructDef = InstanceData.StaticStruct();
+	OutStructPtr = &InstanceData;
+}
+
 void FMOIRoofPerimeterImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	// TODO: update visibility/collision based on edit mode, whether roof faces have been created, etc.
@@ -169,6 +175,15 @@ bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 			return false;
 		}
 
+		// Update edge handles with the latest instance data, in case they are active and displaying data for editing.
+		for (auto& kvp : EdgeHandlesByID)
+		{
+			if (kvp.Value.IsValid())
+			{
+				kvp.Value->UpdateWidgetData();
+			}
+		}
+
 		UpdatePerimeterGeometry();
 		MOI->MarkDirty(EObjectDirtyFlags::Visuals);
 		break;
@@ -269,7 +284,7 @@ bool FMOIRoofPerimeterImpl::UpdateConnectedIDs()
 
 	// If edges are out of date, then clear out the handles
 	auto playerController = Cast<AEditModelPlayerController_CPP>(World->GetFirstPlayerController());
-	if (!bEdgesMatchHandles || (CachedEdgeIDs != MOI->GetControlPointIndices()))
+	if (!bEdgesMatchHandles || (PrevCachedEdgeIDs != CachedEdgeIDs))
 	{
 		// TODO: may not need to destroy -all- of the existing handles
 		MOI->ClearAdjustmentHandles();
@@ -278,8 +293,7 @@ bool FMOIRoofPerimeterImpl::UpdateConnectedIDs()
 	// Update the handles regardless; this is the last opportunity to toggle visibility between face creation / retraction handles, etc.
 	MOI->ShowAdjustmentHandles(playerController, bAdjustmentHandlesVisible);
 
-	// TODO: maybe don't store the ordered edge list in ControlIndices?
-	MOI->SetControlPointIndices(CachedEdgeIDs);
+	PrevCachedEdgeIDs = CachedEdgeIDs;
 
 	return (CachedEdgeIDs.Num() > 0);
 }
@@ -310,9 +324,6 @@ void FMOIRoofPerimeterImpl::UpdatePerimeterGeometry()
 			}
 		}
 	}
-
-	// TODO: update roof perimeter with different data
-	//MOI->SetControlPoints(CachedPerimeterPoints);
 
 	FVector perimeterAxisX, perimeterAxisY;
 	UModumateGeometryStatics::AnalyzeCachedPositions(CachedPerimeterPoints, CachedPlane, perimeterAxisX, perimeterAxisY, TempPerimeterPoints2D, CachedPerimeterCenter, false);
@@ -398,7 +409,6 @@ void FMOIRoofPerimeterImpl::UpdateLineActors()
 				if (!lineActor.IsValid())
 				{
 					lineActor = World->SpawnActor<ALineActor>();
-					lineActor->AttachToActor(PerimeterActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
 				}
 
 				// Keep the line actor with the same direction as the original graph edge, for consistency

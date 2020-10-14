@@ -62,6 +62,7 @@ public:
 	virtual FVector GetHandlePosition() const override;
 
 	void SetTargetEdge(FGraphSignedID InTargetEdgeID);
+	void UpdateWidgetData();
 
 protected:
 	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;

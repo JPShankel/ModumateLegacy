@@ -10,6 +10,7 @@
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "Objects/MOIDelta.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -49,12 +50,17 @@ bool URoofPerimeterPropertiesWidget::Initialize()
 	return true;
 }
 
-void URoofPerimeterPropertiesWidget::SetTarget(int32 InTargetPerimeterID, int32 InTargetEdgeID, AAdjustmentHandleActor *InOwningHandle)
+void URoofPerimeterPropertiesWidget::SetTarget(int32 InTargetPerimeterID, FGraphSignedID InTargetEdgeID, AAdjustmentHandleActor* InOwningHandle)
 {
 	TargetPerimeterID = InTargetPerimeterID;
-	TargetEdgeID = InTargetEdgeID;
+	TargetEdgeID = FMath::Abs(InTargetEdgeID);
 	OwningHandle = InOwningHandle;
 
+	UpdateEditFields();
+}
+
+void URoofPerimeterPropertiesWidget::UpdateEditFields()
+{
 	UWorld *world = GetWorld();
 	GameState = world ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
 	if (!ensure(GameState))
@@ -68,11 +74,12 @@ void URoofPerimeterPropertiesWidget::SetTarget(int32 InTargetPerimeterID, int32 
 	}
 
 	const FModumateObjectInstance *targetPerimeter = GameState->Document.GetObjectById(TargetPerimeterID);
-	if (!UModumateRoofStatics::GetEdgeProperties(targetPerimeter, TargetEdgeID, InitialProperties))
+	if (!ensure(targetPerimeter && targetPerimeter->GetStateData().CustomData.LoadStructData(TempInitialCombinedProperties)))
 	{
 		return;
 	}
 
+	InitialProperties = TempInitialCombinedProperties.EdgeProperties.FindRef(TargetEdgeID);
 	CurrentProperties = InitialProperties;
 
 	ControlGabled->SetCheckedState(CurrentProperties.bHasFace ? ECheckBoxState::Unchecked : ECheckBoxState::Checked);
@@ -90,7 +97,7 @@ void URoofPerimeterPropertiesWidget::SetTarget(int32 InTargetPerimeterID, int32 
 
 void URoofPerimeterPropertiesWidget::UpdateTransform()
 {
-	const FModumateObjectInstance *targetObj = GameState->Document.GetObjectById(FMath::Abs(TargetEdgeID));
+	const FModumateObjectInstance *targetObj = GameState->Document.GetObjectById(TargetEdgeID);
 	auto controller = GetOwningPlayer();
 
 	FVector2D targetScreenPosition;
@@ -193,7 +200,8 @@ void URoofPerimeterPropertiesWidget::OnButtonPressedCommit()
 	if (controller && (controller->InteractionHandle == OwningHandle))
 	{
 		// TODO: this is a sign that we need a better tool/handle API
-		controller->OnLButtonDown();
+		controller->InteractionHandle->EndUse();
+		controller->InteractionHandle = nullptr;
 	}
 }
 
@@ -222,11 +230,46 @@ void URoofPerimeterPropertiesWidget::SetEdgeSlope(float SlopeValue)
 
 void URoofPerimeterPropertiesWidget::SaveEdgeProperties()
 {
-
-
 	FModumateObjectInstance *targetObj = GameState->Document.GetObjectById(TargetPerimeterID);
-	if (targetObj)
+	auto controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+
+	if (!(targetObj && controller && (controller->InteractionHandle == OwningHandle)))
 	{
-		UModumateRoofStatics::SetEdgeProperties(targetObj, TargetEdgeID, CurrentProperties);
+		return;
 	}
+
+	auto delta = MakeShared<FMOIDelta>();
+	auto& modifiedState = delta->AddMutationState(targetObj);
+
+	FMOIRoofPerimeterData roofPerimeterData;
+	if (!ensure(modifiedState.CustomData.LoadStructData(roofPerimeterData)))
+	{
+		return;
+	}
+
+	// Save the current properties for this widget's target edge
+	roofPerimeterData.EdgeProperties.Emplace(TargetEdgeID, CurrentProperties);
+
+	// Also take this opportunity to remove stale edge data
+	// TODO: splitting/merging edges should cleanly transfer customized edge properties via side effects
+	TArray<int32> staleEdgeIDs;
+	for (auto& kvp : roofPerimeterData.EdgeProperties)
+	{
+		const FModumateObjectInstance* edgeMOI = GameState->Document.GetObjectById(kvp.Key);
+		if ((edgeMOI == nullptr) || edgeMOI->IsDestroyed() || (edgeMOI->GetObjectType() != EObjectType::OTMetaEdge))
+		{
+			staleEdgeIDs.Add(kvp.Key);
+		}
+	}
+	for (int32 staleEdgeID : staleEdgeIDs)
+	{
+		roofPerimeterData.EdgeProperties.Remove(staleEdgeID);
+	}
+
+	if (!ensure(modifiedState.CustomData.SaveStructData(roofPerimeterData)))
+	{
+		return;
+	}
+
+	controller->GetDocument()->ApplyDeltas({ delta }, controller->GetWorld());
 }

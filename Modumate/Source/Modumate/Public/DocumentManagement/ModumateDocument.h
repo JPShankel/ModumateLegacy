@@ -183,6 +183,7 @@ private:
 	// Preview Operations
 public:
 	bool ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World);
+	bool IsPreviewingDeltas() const;
 	void ClearPreviewDeltas(UWorld *World);
 
 	bool GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);

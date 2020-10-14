@@ -855,6 +855,11 @@ bool FModumateDocument::ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWor
 	return true;
 }
 
+bool FModumateDocument::IsPreviewingDeltas() const
+{
+	return (PreviewDeltas.Num() > 0);
+}
+
 void FModumateDocument::ClearPreviewDeltas(UWorld *World)
 {
 	if (PreviewDeltas.Num() == 0)

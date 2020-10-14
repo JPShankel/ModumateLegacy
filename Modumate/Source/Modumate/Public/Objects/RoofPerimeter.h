@@ -1,9 +1,10 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "Objects/ModumateObjectInstance.h"
 #include "Graph/Graph2D.h"
 #include "Graph/Graph3DTypes.h"
+#include "Objects/ModumateObjectInstance.h"
+#include "ModumateCore/ModumateRoofStatics.h"
 
 class AAdjustmentHandleActor;
 class ACreateRoofFacesHandle;
@@ -20,6 +21,7 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override { return FQuat::Identity; }
 	virtual FVector GetCorner(int32 index) const override;
+	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) override;
@@ -33,10 +35,12 @@ public:
 	virtual bool ShowStructureOnSelection() const override { return false; }
 	virtual bool UseStructureDataForCollision() const override { return true; }
 
+	const TArray<FGraphSignedID>& GetCachedEdgeIDs() const { return CachedEdgeIDs; }
+
 protected:
 	TWeakObjectPtr<UWorld> World;
 	bool bValidPerimeterLoop;
-	TArray<FGraphSignedID> CachedEdgeIDs;
+	TArray<FGraphSignedID> CachedEdgeIDs, PrevCachedEdgeIDs;
 	TArray<int32> CachedFaceIDs;
 	TArray<FVector> CachedPerimeterPoints;
 	FVector CachedPerimeterCenter;
@@ -55,6 +59,8 @@ protected:
 	TWeakObjectPtr<ARetractRoofFacesHandle> RetractFacesHandle;
 	TWeakObjectPtr<URoofPerimeterPropertiesWidget> DefaultPropertiesWidget;
 	TMap<int32, TWeakObjectPtr<AEditRoofEdgeHandle>> EdgeHandlesByID;
+
+	FMOIRoofPerimeterData InstanceData;
 
 	bool UpdateConnectedIDs();
 	void UpdatePerimeterGeometry();
