@@ -276,9 +276,7 @@ void FMOIPlaneHostedObjImpl::SetupAdjustmentHandles(AEditModelPlayerController_C
 	backJustificationHandle->SetJustification(1.0f);
 	rootHandleChildren.Add(backJustificationHandle);
 
-	// Make the invert handle, as a child of the justification handle root
 	auto invertHandle = MOI->MakeHandle<AAdjustInvertHandle>();
-	rootHandleChildren.Add(invertHandle);
 
 	auto rootJustificationHandle = MOI->MakeHandle<AJustificationHandle>();
 	rootJustificationHandle->SetJustification(0.5f);

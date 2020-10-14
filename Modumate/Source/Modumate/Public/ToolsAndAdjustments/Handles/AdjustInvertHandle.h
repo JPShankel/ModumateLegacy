@@ -19,6 +19,5 @@ public:
 protected:
 	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 
-	const static float DesiredWorldDist;
 	const static float MaxScreenDist;
 };

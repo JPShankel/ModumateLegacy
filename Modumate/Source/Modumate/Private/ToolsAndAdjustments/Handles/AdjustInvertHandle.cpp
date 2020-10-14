@@ -6,8 +6,7 @@
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
-const float AAdjustInvertHandle::DesiredWorldDist = 25.0f;
-const float AAdjustInvertHandle::MaxScreenDist = 30.0f;
+const float AAdjustInvertHandle::MaxScreenDist = 2000.0f;
 
 bool AAdjustInvertHandle::BeginUse()
 {
@@ -35,11 +34,26 @@ FVector AAdjustInvertHandle::GetHandlePosition() const
 	}
 
 	FVector objectPos = TargetMOI->GetObjectLocation();
-	FVector attachNormal = -FVector::UpVector;
+	FVector objectNormal = TargetMOI->GetNormal();
+	FVector attachDirection(ForceInitToZero);
+	float faceExtent = 0.0f;
+
+	auto parent = TargetMOI->GetParentObject();
+	if (parent)
+	{
+		attachDirection = -parent->GetObjectRotation().GetAxisY();
+		int32 numCorners = parent->GetNumCorners();
+		for (int32 c = 0; c < numCorners; ++c)
+		{
+			faceExtent = FMath::Max(faceExtent, (parent->GetCorner(c) - objectPos) | attachDirection);
+		}
+	}
+	
+	float desiredWorldDist = 0.5f * faceExtent;
 
 	FVector attachPosWorld;
 	FVector2D attachPosScreen;
-	if (Controller->GetScreenScaledDelta(objectPos, attachNormal, DesiredWorldDist, MaxScreenDist, attachPosWorld, attachPosScreen))
+	if (Controller->GetScreenScaledDelta(objectPos, attachDirection, desiredWorldDist, MaxScreenDist, attachPosWorld, attachPosScreen))
 	{
 		return attachPosWorld;
 	}
