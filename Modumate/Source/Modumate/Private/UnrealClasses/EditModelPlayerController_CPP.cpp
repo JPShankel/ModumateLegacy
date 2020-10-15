@@ -1582,7 +1582,7 @@ void AEditModelPlayerController_CPP::CleanSelectedObjects()
 	}
 	else
 	{
-		objectsToClean.Append(EMPlayerState->SelectedObjects);
+		objectsToClean.Append(EMPlayerState->SelectedObjects.Array());
 	}
 
 	for (auto *obj : objectsToClean)

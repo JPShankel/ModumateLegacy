@@ -633,7 +633,7 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const FModumateObjectInstanc
 	}
 }
 
-void UModumateObjectStatics::GetGraphIDsFromMOIs(const TArray<FModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs)
+void UModumateObjectStatics::GetGraphIDsFromMOIs(const TSet<FModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs)
 {
 	OutGraphObjIDs.Reset();
 

@@ -25,13 +25,7 @@ bool USelectTool::Activate()
 	Super::Activate();
 
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Object;
-
-	const TArray<FModumateObjectInstance*> &sels = Controller->EMPlayerState->SelectedObjects;
-	for (auto &ob : sels)
-	{
-		ob->ShowAdjustmentHandles(Controller, true);
-	}
-
+	Controller->EMPlayerState->PostSelectionChanged();
 	Controller->EMPlayerState->SetShowHoverEffects(true);
 
 	return true;
@@ -82,7 +76,7 @@ bool USelectTool::HandleMouseUp()
 		}
 	}
 
-	const TArray<FModumateObjectInstance*> &sels = Controller->EMPlayerState->SelectedObjects;
+	auto &sels = Controller->EMPlayerState->SelectedObjects;
 	int32 numSelections = sels.Num();
 
 	FModumateObjectInstance *currentViewGroup = Controller->EMPlayerState->ViewGroupObject;

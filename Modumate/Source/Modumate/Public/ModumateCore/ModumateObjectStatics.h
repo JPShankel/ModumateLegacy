@@ -59,7 +59,7 @@ public:
 	static void ShouldMetaObjBeEnabled(const FModumateObjectInstance *MetaMOI,
 		bool &bOutShouldBeVisible, bool &bOutShouldCollisionBeEnabled, bool &bOutIsConnected);
 
-	static void GetGraphIDsFromMOIs(const TArray<FModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs);
+	static void GetGraphIDsFromMOIs(const TSet<FModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs);
 
 	// Given a plane hosted object, find some basic values:
 	// the thickness of the assembly,

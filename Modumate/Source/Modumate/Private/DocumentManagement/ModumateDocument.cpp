@@ -95,9 +95,7 @@ void FModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 		AEditModelPlayerState_CPP* EMPlayerState = Cast<AEditModelPlayerState_CPP>(World->GetFirstPlayerController()->PlayerState);
 		EMPlayerState->RefreshActiveAssembly();
 
-		// TODO: currently needed to correctly update graph dimension strings, but it might be
-		// better to separate that part out of PostSelectionOrViewChanged
-		EMPlayerState->PostSelectionOrViewChanged();
+		EMPlayerState->PostSelectionChanged();
 
 #if WITH_EDITOR
 		ensureAlways(fromBufferSize == FromBuffer.Num());

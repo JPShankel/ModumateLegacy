@@ -70,7 +70,6 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 		}
 
 		moi->RequestCollisionDisabled(StateRequestTag, true);
-		moi->ShowAdjustmentHandles(nullptr, false);
 	}
 }
 

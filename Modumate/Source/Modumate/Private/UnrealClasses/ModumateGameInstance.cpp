@@ -331,7 +331,7 @@ void UModumateGameInstance::RegisterAllCommands()
 	RegisterCommand(kDeleteSelectedObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		AEditModelPlayerController_CPP *playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
 		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(playerController->PlayerState);
-		TArray<FModumateObjectInstance*> obs = playerState->SelectedObjects;
+		TArray<FModumateObjectInstance*> obs = playerState->SelectedObjects.Array();
 		playerState->DeselectAll();
 
 		if (playerController->ToolIsInUse())
@@ -402,7 +402,7 @@ void UModumateGameInstance::RegisterAllCommands()
 	{
 		copySelected();
 		AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		TArray<FModumateObjectInstance*> toBeCut = playerState->SelectedObjects;
+		TArray<FModumateObjectInstance*> toBeCut = playerState->SelectedObjects.Array();
 		playerState->DeselectAll();
 		GetDocument()->DeleteObjects(toBeCut);
 		return true;

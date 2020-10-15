@@ -38,6 +38,7 @@ class MODUMATE_API AEditModelPlayerState_CPP : public APlayerState
 
 protected:
 	void BatchRenderLines();
+	void UpdateRenderFlags(const TSet<FModumateObjectInstance*>& ChangedObjects);
 
 public:
 
@@ -120,7 +121,8 @@ public:
 	void SelectInverse();
 	void DeselectAll();
 	void SetActorRenderValues(AActor* actor, int32 stencilValue, bool bNeverCull);
-	void PostSelectionOrViewChanged();
+	void PostSelectionChanged();
+	void PostViewChanged();
 
 	void CopySelectedToClipboard(const FModumateDocument &document);
 	void Paste(FModumateDocument &document) const;
@@ -139,11 +141,18 @@ public:
 	// Selecting one of its children that is also a group will deepen the view to that new group.
 	FModumateObjectInstance *ViewGroupObject = nullptr;
 
-	TArray<FModumateObjectInstance *> SelectedObjects;
+	TSet<FModumateObjectInstance *> SelectedObjects;
 	TSet<FModumateObjectInstance *> LastSelectedObjectSet;
+
+	TSet<FModumateObjectInstance *> ViewGroupDescendents;
 	TSet<FModumateObjectInstance *> LastViewGroupDescendentsSet;
+
+	TSet<FModumateObjectInstance *> HoveredObjectDescendents;
 	TSet<FModumateObjectInstance *> LastHoveredObjectSet;
+
+	TSet<FModumateObjectInstance *> ErrorObjects;
 	TSet<FModumateObjectInstance *> LastErrorObjectSet;
+
 	TSet<FModumateObjectInstance *> LastReachableObjectSet;
 	bool ShowHoverEffects;
 

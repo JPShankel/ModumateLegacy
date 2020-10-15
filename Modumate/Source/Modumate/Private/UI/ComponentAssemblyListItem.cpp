@@ -172,8 +172,7 @@ void UComponentAssemblyListItem::OnButtonConfirmReleased()
 		if (assembly)
 		{
 			TArray<int32> objIDs;
-			TArray<FModumateObjectInstance*> mois = EMPlayerController->EMPlayerState->SelectedObjects;
-			for (auto& moi : mois)
+			for (auto& moi : EMPlayerController->EMPlayerState->SelectedObjects)
 			{
 				if (moi->GetAssembly().UniqueKey() == EMPlayerController->EditModelUserWidget->SelectionTrayWidget->GetCurrentPresetToSwap())
 				{

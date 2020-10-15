@@ -57,7 +57,8 @@ void AEditModelPlayerState_CPP::BeginPlay()
 		check(EMPlayerController);
 	}
 
-	PostSelectionOrViewChanged();
+	PostSelectionChanged();
+	PostViewChanged();
 	SetEditMode(EEditViewModes::ObjectEditing, true);
 }
 
@@ -208,6 +209,25 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	}
 }
 
+void AEditModelPlayerState_CPP::UpdateRenderFlags(const TSet<FModumateObjectInstance*>& ChangedObjects)
+{
+	for (FModumateObjectInstance *moi : ChangedObjects)
+	{
+		if (moi && !moi->IsDestroyed())
+		{
+			bool bHovered = (ShowHoverEffects && HoveredObjectDescendents.Contains(moi));
+
+			int32 selectionValue = SelectedObjects.Contains(moi) ? 0x1 : 0x0;
+			int32 viewGroupValue = ViewGroupDescendents.Contains(moi) ? 0x2 : 0x0;
+			int32 hoverValue = bHovered ? 0x4 : 0x0;
+			int32 errorValue = ErrorObjects.Contains(moi) ? 0x8 : 0x0;
+			int32 stencilValue = selectionValue | viewGroupValue | hoverValue | errorValue;
+
+			SetActorRenderValues(moi->GetActor(), stencilValue, bHovered);
+		}
+	}
+}
+
 void AEditModelPlayerState_CPP::SetShowGraphDebug(bool bShow)
 {
 	if (bShowGraphDebug != bShow)
@@ -299,26 +319,28 @@ bool AEditModelPlayerState_CPP::ValidateSelectionsAndView()
 	// Most other parts of the codebase that point to FModumateObjectInstances assume that they clear out their pointers
 	// as soon as they become invalid (i.e. deleting objects in a parent-child hierarchy).
 
-	bool selectionOrViewChanged = false;
+	bool selectionChanged = false;
+	bool viewChanged = false;
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	FModumateDocument *doc = &gameState->Document;
 
-	for (int32 i = SelectedObjects.Num() - 1; i >= 0; --i)
+	TSet<FModumateObjectInstance*> pendingDeselectObjects;
+	for (auto& moi : SelectedObjects)
 	{
-		FModumateObjectInstance *selectedObj = SelectedObjects[i];
-		if ((selectedObj == nullptr) || selectedObj->IsDestroyed())
+		if ((moi == nullptr) || moi->IsDestroyed())
 		{
-			SelectedObjects.RemoveAt(i);
-			selectionOrViewChanged = true;
+			pendingDeselectObjects.Add(moi);
+			selectionChanged = true;
 		}
 	}
+	SelectedObjects = SelectedObjects.Difference(pendingDeselectObjects);
 
 	auto *nextViewGroup = ViewGroupObject;
 	while (nextViewGroup && nextViewGroup->IsDestroyed())
 	{
 		nextViewGroup = nextViewGroup->GetParentObject();
-		selectionOrViewChanged = true;
+		viewChanged = true;
 	}
 
 	TArray<int32> invalidErrorIDs;
@@ -329,7 +351,7 @@ bool AEditModelPlayerState_CPP::ValidateSelectionsAndView()
 		if ((obj == nullptr) || obj->IsDestroyed())
 		{
 			invalidErrorIDs.Add(objID);
-			selectionOrViewChanged = true;
+			viewChanged = true;
 		}
 	}
 	for (int32 invalidObjID : invalidErrorIDs)
@@ -340,15 +362,19 @@ bool AEditModelPlayerState_CPP::ValidateSelectionsAndView()
 	if (HoveredObject && HoveredObject->IsDestroyed())
 	{
 		HoveredObject = nullptr;
-		selectionOrViewChanged = true;
+		viewChanged = true;
 	}
 
-	if (selectionOrViewChanged)
+	if (selectionChanged)
 	{
-		PostSelectionOrViewChanged();
+		PostSelectionChanged();
+	}
+	if (viewChanged)
+	{
+		PostViewChanged();
 	}
 
-	return selectionOrViewChanged;
+	return selectionChanged || viewChanged;
 }
 
 void AEditModelPlayerState_CPP::SelectAll()
@@ -373,7 +399,7 @@ void AEditModelPlayerState_CPP::SelectAll()
 		}
 	}
 
-	PostSelectionOrViewChanged();
+	PostSelectionChanged();
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
@@ -402,7 +428,7 @@ void AEditModelPlayerState_CPP::SelectInverse()
 		}
 	}
 
-	PostSelectionOrViewChanged();
+	PostSelectionChanged();
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
@@ -427,7 +453,7 @@ void AEditModelPlayerState_CPP::DeselectAll()
 
 	SelectedObjects.Empty();
 
-	PostSelectionOrViewChanged();
+	PostSelectionChanged();
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
@@ -454,100 +480,95 @@ void AEditModelPlayerState_CPP::SetActorRenderValues(AActor* actor, int32 stenci
 	}
 }
 
-void AEditModelPlayerState_CPP::PostSelectionOrViewChanged()
+void AEditModelPlayerState_CPP::PostSelectionChanged()
+{
+	OnSelectionChanged.Broadcast();
+
+	auto gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
+	if (SelectedObjects.Num() == 1)
+	{
+		FModumateObjectInstance* moi = *SelectedObjects.CreateConstIterator();
+
+		gameInstance->DimensionManager->UpdateGraphDimensionStrings(moi->ID);
+		moi->ShowAdjustmentHandles(EMPlayerController, true);
+	}
+	else
+	{
+		gameInstance->DimensionManager->ClearGraphDimensionStrings();
+		for (auto obj : LastSelectedObjectSet)
+		{
+			obj->ShowAdjustmentHandles(EMPlayerController, false);
+		}
+	}
+
+	TSet<FModumateObjectInstance *> allChangedObjects;
+	allChangedObjects.Append(SelectedObjects);
+	allChangedObjects.Append(LastSelectedObjectSet);
+
+	UpdateRenderFlags(allChangedObjects);
+
+	LastSelectedObjectSet.Reset();
+	LastSelectedObjectSet.Append(SelectedObjects);
+}
+
+void AEditModelPlayerState_CPP::PostViewChanged()
 {
 	// Gather a set of objects whose render mode may have changed due to either
 	// selection, hover, or view group hierarchy
 	TSet<FModumateObjectInstance *> allChangedObjects;
 
-	// Gather all previously selected and currently selected objects
-	TSet<FModumateObjectInstance *> selectedObjectSet(SelectedObjects);
-	allChangedObjects.Append(selectedObjectSet);
-	allChangedObjects.Append(LastSelectedObjectSet);
-
 	// Gather all objects previously and currently under the view group object
-	TSet<FModumateObjectInstance *> viewGroupDescendentsSet;
+	ViewGroupDescendents.Reset();
 	if (ViewGroupObject)
 	{
-		viewGroupDescendentsSet.Add(ViewGroupObject);
-		viewGroupDescendentsSet.Append(ViewGroupObject->GetAllDescendents());
+		ViewGroupDescendents.Add(ViewGroupObject);
+		ViewGroupDescendents.Append(ViewGroupObject->GetAllDescendents());
 	}
-	allChangedObjects.Append(viewGroupDescendentsSet);
+	allChangedObjects.Append(ViewGroupDescendents);
 	allChangedObjects.Append(LastViewGroupDescendentsSet);
 
 	// Gather all objects previously and currently hovered objects
-	TSet<FModumateObjectInstance *> hoveredObjectsSet;
+	HoveredObjectDescendents.Reset();
 	if (HoveredObject)
 	{
-		hoveredObjectsSet.Add(HoveredObject);
-		hoveredObjectsSet.Append(HoveredObject->GetAllDescendents());
+		HoveredObjectDescendents.Add(HoveredObject);
+		HoveredObjectDescendents.Append(HoveredObject->GetAllDescendents());
 	}
-	allChangedObjects.Append(hoveredObjectsSet);
+	allChangedObjects.Append(HoveredObjectDescendents);
 	allChangedObjects.Append(LastHoveredObjectSet);
 
 	// Gather all objects previously and currently having errors
 	auto &doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-	TSet<FModumateObjectInstance *> errorObjectSet;
 	for (auto &kvp : ObjectErrorMap)
 	{
 		if (kvp.Value.Num() > 0)
 		{
 			if (auto *moi = doc.GetObjectById(kvp.Key))
 			{
-				errorObjectSet.Add(moi);
+				ErrorObjects.Add(moi);
 			}
 		}
 	}
-	allChangedObjects.Append(errorObjectSet);
+	allChangedObjects.Append(ErrorObjects);
 	allChangedObjects.Append(LastErrorObjectSet);
 
 	// Iterate through all objects whose render mode may have changed due to either selection or view group hierarchy
 	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> adjustHandleActors;
-	for (FModumateObjectInstance *moi : allChangedObjects)
-	{
-		if (moi && !moi->IsDestroyed())
-		{
-			bool bHovered = (ShowHoverEffects && hoveredObjectsSet.Contains(moi));
-
-			int32 selectionValue = selectedObjectSet.Contains(moi) ? 0x1 : 0x0;
-			int32 viewGroupValue = viewGroupDescendentsSet.Contains(moi) ? 0x2 : 0x0;
-			int32 hoverValue = bHovered ? 0x4 : 0x0;
-			int32 errorValue = errorObjectSet.Contains(moi) ? 0x8 : 0x0;
-			int32 stencilValue = selectionValue | viewGroupValue | hoverValue | errorValue;
-
-			SetActorRenderValues(moi->GetActor(), stencilValue, bHovered);
-		}
-	}
-
-	OnSelectionChanged.Broadcast();
-
-	LastSelectedObjectSet.Reset();
-	LastSelectedObjectSet.Append(selectedObjectSet);
+	UpdateRenderFlags(allChangedObjects);
 
 	LastViewGroupDescendentsSet.Reset();
-	LastViewGroupDescendentsSet.Append(viewGroupDescendentsSet);
+	LastViewGroupDescendentsSet.Append(ViewGroupDescendents);
 
 	LastHoveredObjectSet.Reset();
-	LastHoveredObjectSet.Append(hoveredObjectsSet);
+	LastHoveredObjectSet.Append(HoveredObjectDescendents);
 
 	LastErrorObjectSet.Reset();
-	LastErrorObjectSet.Append(errorObjectSet);
+	LastErrorObjectSet.Append(ErrorObjects);
 
 	// Also, use this opportunity to iterate through the scene graph and cache the set of objects
 	// underneath the current view group (if it's set), and are not underneath a group.
 	// TODO: only call this when necessary (when ViewGroupObject or the object list/hierarchy changes).
 	FindReachableObjects(LastReachableObjectSet);
-
-	auto gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
-	if (SelectedObjects.Num() == 1)
-	{
-		gameInstance->DimensionManager->UpdateGraphDimensionStrings(SelectedObjects[0]->ID);
-	}
-	else
-	{
-		gameInstance->DimensionManager->ClearGraphDimensionStrings();
-	}
-
 }
 
 void AEditModelPlayerState_CPP::OnNewModel()
@@ -573,7 +594,7 @@ void AEditModelPlayerState_CPP::OnNewModel()
 	ObjectErrorMap.Reset();
 	LastFilePath.Empty();
 
-	PostSelectionOrViewChanged();
+	PostViewChanged();
 
 	auto gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 	gameInstance->DimensionManager->Reset();
@@ -584,7 +605,7 @@ void AEditModelPlayerState_CPP::OnNewModel()
 void AEditModelPlayerState_CPP::SetShowHoverEffects(bool showHoverEffects)
 {
 	ShowHoverEffects = showHoverEffects;
-	PostSelectionOrViewChanged();
+	PostViewChanged();
 }
 
 FModumateObjectInstance *AEditModelPlayerState_CPP::GetValidHoveredObjectInView(FModumateObjectInstance *hoverTarget) const
@@ -638,7 +659,7 @@ void AEditModelPlayerState_CPP::SetHoveredObject(FModumateObjectInstance *ob)
 		{
 			ob->MouseHoverActor(EMPlayerController, true);
 		}
-		PostSelectionOrViewChanged();
+		PostViewChanged();
 	}
 }
 
@@ -648,7 +669,7 @@ void AEditModelPlayerState_CPP::SetObjectSelected(FModumateObjectInstance *ob, b
 
 	if (selected)
 	{
-		SelectedObjects.AddUnique(ob);
+		SelectedObjects.Add(ob);
 	}
 	else
 	{
@@ -657,14 +678,14 @@ void AEditModelPlayerState_CPP::SetObjectSelected(FModumateObjectInstance *ob, b
 
 	ob->OnSelected(selected);
 
-	PostSelectionOrViewChanged();
+	PostSelectionChanged();
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
 void AEditModelPlayerState_CPP::SetViewGroupObject(FModumateObjectInstance *ob)
 {
 	ViewGroupObject = ob;
-	PostSelectionOrViewChanged();
+	PostViewChanged();
 }
 
 bool AEditModelPlayerState_CPP::IsObjectInCurViewGroup(FModumateObjectInstance *obj) const
@@ -786,7 +807,7 @@ bool AEditModelPlayerState_CPP::SetErrorForObject(int32 ObjectID, FName ErrorTag
 
 	if (bChanged)
 	{
-		PostSelectionOrViewChanged();
+		PostViewChanged();
 	}
 
 	return bChanged;
@@ -799,7 +820,7 @@ bool AEditModelPlayerState_CPP::ClearErrorsForObject(int32 ObjectID)
 	if (objectErrors && (objectErrors->Num() > 0))
 	{
 		objectErrors->Reset();
-		PostSelectionOrViewChanged();
+		PostViewChanged();
 		return true;
 	}
 
