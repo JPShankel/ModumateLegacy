@@ -33,7 +33,7 @@ const FName AAdjustmentHandleActor::StateRequestTag(TEXT("AdjustmentHandle"));
 // Sets default values
 AAdjustmentHandleActor::AAdjustmentHandleActor(const FObjectInitializer &ObjectInitializer)
 	: Super(ObjectInitializer)
-	, HoveredScale(1.5f)
+	, HoveredScale(1.2f)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
