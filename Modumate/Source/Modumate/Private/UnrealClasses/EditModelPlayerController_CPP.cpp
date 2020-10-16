@@ -2159,6 +2159,8 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 	newHoveredObject = EMPlayerState->GetValidHoveredObjectInView(newHoveredObject);
 	EMPlayerState->SetHoveredObject(newHoveredObject);
 
+	// Automatic user snap creation is disabled
+#if 0
 	if (LastSnappedCursor == EMPlayerState->SnappedCursor)
 	{
 		if (CanMakeUserSnapPointAtCursor(EMPlayerState->SnappedCursor))
@@ -2199,6 +2201,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 		UserSnapAutoCreationElapsed = 0.0f;
 		LastSnappedCursor = EMPlayerState->SnappedCursor;
 	}
+#endif
 }
 
 FModumateFunctionParameterSet AEditModelPlayerController_CPP::ModumateCommand(const FModumateCommand &cmd)

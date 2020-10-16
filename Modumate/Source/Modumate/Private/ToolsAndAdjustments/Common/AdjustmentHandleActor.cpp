@@ -157,6 +157,11 @@ void AAdjustmentHandleActor::PostEndOrAbort()
 				descendent->RequestCollisionDisabled(StateRequestTag, false);
 			}
 		}
+
+		for (auto* connectedMOI : TargetConnected)
+		{
+			connectedMOI->RequestCollisionDisabled(StateRequestTag, false);
+		}
 	}
 
 	if (GameInstance && GameInstance->DimensionManager)
@@ -271,6 +276,12 @@ bool AAdjustmentHandleActor::BeginUse()
 		for (auto *descendent : TargetDescendents)
 		{
 			descendent->RequestCollisionDisabled(StateRequestTag, true);
+		}
+
+		TargetMOI->GetConnectedMOIs(TargetConnected);
+		for (auto* connectedMOI : TargetConnected)
+		{
+			connectedMOI->RequestCollisionDisabled(StateRequestTag, true);
 		}
 
 		TargetOriginalState = TargetMOI->GetStateData();

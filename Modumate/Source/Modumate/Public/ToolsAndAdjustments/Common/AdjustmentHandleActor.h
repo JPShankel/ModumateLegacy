@@ -70,6 +70,7 @@ public:
 	FMOIStateData TargetOriginalState;
 
 	TArray<FModumateObjectInstance*> TargetDescendents;
+	TArray<FModumateObjectInstance*> TargetConnected;
 
 	int32 TargetIndex = INDEX_NONE;
 	float Sign = 0.0f;
