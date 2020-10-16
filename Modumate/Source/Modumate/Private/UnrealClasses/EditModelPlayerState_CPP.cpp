@@ -211,6 +211,11 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 
 void AEditModelPlayerState_CPP::UpdateRenderFlags(const TSet<FModumateObjectInstance*>& ChangedObjects)
 {
+	if (ChangedObjects.Num() > 0)
+	{
+		OnSelectionOrViewChanged.Broadcast();
+	}
+
 	for (FModumateObjectInstance *moi : ChangedObjects)
 	{
 		if (moi && !moi->IsDestroyed())
@@ -482,8 +487,6 @@ void AEditModelPlayerState_CPP::SetActorRenderValues(AActor* actor, int32 stenci
 
 void AEditModelPlayerState_CPP::PostSelectionChanged()
 {
-	OnSelectionChanged.Broadcast();
-
 	auto gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 	if (SelectedObjects.Num() == 1)
 	{

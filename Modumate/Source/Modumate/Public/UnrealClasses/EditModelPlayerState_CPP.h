@@ -17,7 +17,7 @@
 class MODUMATE_API FModumateDocument;
 class MODUMATE_API AGraphDimensionActor;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionOrViewChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPostOnNewModel);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdateScopeBoxes);
 
@@ -86,7 +86,7 @@ public:
 	bool bShowSnappedCursor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintAssignable, Category = "Tools")
-	FOnSelectionChanged OnSelectionChanged;
+	FOnSelectionOrViewChanged OnSelectionOrViewChanged;
 
 	// Blueprints will use this to handle post load events
 	UPROPERTY(VisibleAnywhere, BlueprintAssignable, Category = "Tools")
