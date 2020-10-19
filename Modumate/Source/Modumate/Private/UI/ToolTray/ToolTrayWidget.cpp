@@ -77,7 +77,8 @@ bool UToolTrayWidget::ChangeBlockToSeparatorTools(EToolMode Toolmode)
 	OpenToolTray();
 	HideAllToolTrayBlocks();
 	CurrentToolCategory = EToolCategories::Separators;
-
+	ToolTrayBlockTools->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ToolTrayBlockTools->ChangeToSeparatorToolsButtons();
 	if (EditModelUserWidget)
 	{
 		EditModelUserWidget->ToolbarWidget->Button_Separators->SwitchToActiveStyle();

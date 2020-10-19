@@ -38,6 +38,9 @@ protected:
 
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName TooltipID_CheckBoxVisibility;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UCheckBox *CheckBoxVisibility;
 
@@ -74,4 +77,9 @@ public:
 	void BuildAsVerticalCutPlaneItem(const FQuat &Rotation);
 	void BuildAsHorizontalCutPlaneItem(const FVector &Location);
 	void UpdateCheckBoxVisibility(bool NewVisible);
+
+protected:
+
+	UFUNCTION()
+	UWidget* OnCheckBoxTooltipWidget();
 };

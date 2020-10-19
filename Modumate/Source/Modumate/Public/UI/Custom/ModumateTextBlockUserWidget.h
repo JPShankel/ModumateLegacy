@@ -26,6 +26,9 @@ protected:
 
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName TooltipID;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlock *ModumateTextBlock;
 
@@ -48,4 +51,6 @@ public:
 
 protected:
 
+	UFUNCTION()
+	UWidget* OnTooltipWidget();
 };

@@ -29,6 +29,7 @@
 #include "UnrealClasses/EditModelPlayerPawn_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
+#include "UnrealClasses/TooltipManager.h"
 
 using namespace Modumate::Commands;
 using namespace Modumate::Parameters;
@@ -74,6 +75,12 @@ void UModumateGameInstance::Init()
 
 	DimensionManager = NewObject<UDimensionManager>(this);
 	DimensionManager->Init();
+
+	if (ensure(TooltipManagerClass))
+	{
+		TooltipManager = NewObject<UTooltipManager>(this, TooltipManagerClass);
+		TooltipManager->Init();
+	}
 }
 
 TSharedPtr<FModumateAccountManager> UModumateGameInstance::GetAccountManager() const
@@ -640,6 +647,11 @@ void UModumateGameInstance::Shutdown()
 	if (DimensionManager)
 	{
 		DimensionManager->Shutdown();
+	}
+
+	if (TooltipManager)
+	{
+		TooltipManager->Shutdown();
 	}
 
 	UModumateAnalyticsStatics::ShutdownAnalytics(AnalyticsInstance);

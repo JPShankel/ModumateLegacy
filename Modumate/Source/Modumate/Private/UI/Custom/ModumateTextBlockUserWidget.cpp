@@ -3,6 +3,7 @@
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/Custom//ModumateTextBlock.h"
 #include "UI/ModumateUIStatics.h"
+#include "UnrealClasses/TooltipManager.h"
 
 UModumateTextBlockUserWidget::UModumateTextBlockUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -21,6 +22,7 @@ bool UModumateTextBlockUserWidget::Initialize()
 	{
 		ModumateTextBlock->OverrideTextWrap(AutoWrapTextOverride, WrapTextAtOverride, WrappingPolicyOverride);
 	}
+	ToolTipWidgetDelegate.BindDynamic(this, &UModumateTextBlockUserWidget::OnTooltipWidget);
 	return true;
 }
 
@@ -46,4 +48,9 @@ void UModumateTextBlockUserWidget::ChangeText(const FText &NewText, bool Ellipsi
 		ModumateTextBlock->SetText(NewText);
 	}
 
+}
+
+UWidget* UModumateTextBlockUserWidget::OnTooltipWidget()
+{
+	return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID, this);
 }

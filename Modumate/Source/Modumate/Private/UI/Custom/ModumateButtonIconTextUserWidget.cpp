@@ -4,6 +4,7 @@
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "Components/Image.h"
 #include "UI/Custom//ModumateTextBlock.h"
+#include "UnrealClasses/TooltipManager.h"
 
 UModumateButtonIconTextUserWidget::UModumateButtonIconTextUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -29,10 +30,16 @@ bool UModumateButtonIconTextUserWidget::Initialize()
 	{
 		ButtonIcon->SetBrushFromTexture(ButtonImageOverride);
 	}
+	ToolTipWidgetDelegate.BindDynamic(this, &UModumateButtonIconTextUserWidget::OnTooltipWidget);
 	return true;
 }
 
 void UModumateButtonIconTextUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
+
+UWidget* UModumateButtonIconTextUserWidget::OnTooltipWidget()
+{
+	return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID, this);
 }

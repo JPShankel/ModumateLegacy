@@ -6,6 +6,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Components/CheckBox.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/TooltipManager.h"
 
 
 UCutPlaneDimListItem::UCutPlaneDimListItem(const FObjectInitializer& ObjectInitializer)
@@ -24,6 +25,7 @@ bool UCutPlaneDimListItem::Initialize()
 		return false;
 	}
 	CheckBoxVisibility->OnCheckStateChanged.AddDynamic(this, &UCutPlaneDimListItem::OnCheckBoxVisibilityChanged);
+	CheckBoxVisibility->ToolTipWidgetDelegate.BindDynamic(this, &UCutPlaneDimListItem::OnCheckBoxTooltipWidget);
 
 	return true;
 }
@@ -109,5 +111,10 @@ void UCutPlaneDimListItem::BuildAsHorizontalCutPlaneItem(const FVector &Location
 void UCutPlaneDimListItem::UpdateCheckBoxVisibility(bool NewVisible)
 {
 	CheckBoxVisibility->SetIsChecked(!NewVisible);
+}
+
+UWidget* UCutPlaneDimListItem::OnCheckBoxTooltipWidget()
+{
+	return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID_CheckBoxVisibility, this);
 }
 

@@ -98,3 +98,16 @@ struct FBIMSlotConfigDataTable : public FTableRowBase
 	UPROPERTY()
 	FString FlipZ;
 };
+
+// Struct for the Tooltip data table
+USTRUCT(BlueprintType)
+struct MODUMATE_API FTooltipNonInputDataRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText TooltipTitle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText TooltipText;
+};

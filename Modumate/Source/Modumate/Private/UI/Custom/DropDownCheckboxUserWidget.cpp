@@ -2,6 +2,7 @@
 
 #include "UI/Custom/DropDownCheckboxUserWidget.h"
 #include "UI/Custom/ModumateComboBoxString.h"
+#include "UnrealClasses/TooltipManager.h"
 
 UDropDownCheckboxUserWidget::UDropDownCheckboxUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -20,7 +21,7 @@ bool UDropDownCheckboxUserWidget::Initialize()
 	}
 
 	ModumateComboBox->OnSelectionChanged.AddDynamic(this, &UDropDownCheckboxUserWidget::OnDropDownSelectionChanged);
-
+	ToolTipWidgetDelegate.BindDynamic(this, &UDropDownCheckboxUserWidget::OnTooltipWidget);
 	return true;
 }
 
@@ -33,4 +34,9 @@ void UDropDownCheckboxUserWidget::OnDropDownSelectionChanged(FString SelectedIte
 {
 	// DropDownCheckbox doesn't use selection. It allows user to toggle check boxes in its item list 
 	ModumateComboBox->ClearSelection();
+}
+
+UWidget* UDropDownCheckboxUserWidget::OnTooltipWidget()
+{
+	return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID, this);
 }

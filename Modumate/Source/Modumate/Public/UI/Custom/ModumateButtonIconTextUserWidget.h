@@ -53,6 +53,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ETextWrappingPolicy ButtonTextWrappingPolicyOverride = ETextWrappingPolicy::DefaultWrapping;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName TooltipID;
+
 protected:
 
+	UFUNCTION()
+	UWidget* OnTooltipWidget();
 };

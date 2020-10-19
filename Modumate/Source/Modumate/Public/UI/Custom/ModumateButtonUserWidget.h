@@ -35,6 +35,9 @@ protected:
 
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName TooltipID;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButton *ModumateButton;
 
@@ -49,4 +52,9 @@ public:
 
 	void SwitchToNormalStyle();
 	void SwitchToActiveStyle();
+
+protected:
+
+	UFUNCTION()
+	UWidget* OnTooltipWidget();
 };

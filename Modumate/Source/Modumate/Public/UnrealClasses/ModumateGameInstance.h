@@ -73,6 +73,9 @@ public:
 
 	TSharedPtr<FModumateAccountManager> GetAccountManager() const;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Tooltips)
+	TSubclassOf<class UTooltipManager> TooltipManagerClass;
+
 	UFUNCTION(BlueprintCallable)
 	ELoginStatus LoginStatus() const;
 
@@ -93,6 +96,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UDimensionManager* DimensionManager;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UTooltipManager* TooltipManager;
 
 	static const FString TestScriptRelativePath;
 

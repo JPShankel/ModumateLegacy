@@ -9,6 +9,7 @@
 
 UStartRootMenuWidget::UStartRootMenuWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
+	, UserWidgetPool(*this)
 {
 }
 
@@ -49,6 +50,13 @@ void UStartRootMenuWidget::NativeTick(const FGeometry& MyGeometry, float InDelta
 			Start_Home_BP->OpenRecentProjectMenu();
 		}
 	}
+}
+
+void UStartRootMenuWidget::ReleaseSlateResources(bool bReleaseChildren)
+{
+	Super::ReleaseSlateResources(bReleaseChildren);
+
+	UserWidgetPool.ReleaseAllSlateResources();
 }
 
 void UStartRootMenuWidget::OnButtonReleasedQuit()

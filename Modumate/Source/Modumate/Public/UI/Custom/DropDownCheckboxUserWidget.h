@@ -21,6 +21,8 @@ public:
 	UDropDownCheckboxUserWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName TooltipID;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateComboBoxString *ModumateComboBox;
@@ -31,4 +33,6 @@ protected:
 	UFUNCTION()
 	void OnDropDownSelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
 
+	UFUNCTION()
+	UWidget* OnTooltipWidget();
 };

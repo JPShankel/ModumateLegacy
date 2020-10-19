@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/UserWidgetPool.h"
 #include "StartRootMenuWidget.generated.h"
 
 /**
@@ -33,9 +34,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UStartBlockHomeWidget *Start_Home_BP;
 
+	UPROPERTY(Transient)
+	FUserWidgetPool UserWidgetPool;
+
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
 
 	UFUNCTION()
 	void OnButtonReleasedQuit();

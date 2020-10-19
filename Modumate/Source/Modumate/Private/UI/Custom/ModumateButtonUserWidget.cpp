@@ -3,6 +3,7 @@
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/TooltipManager.h"
 #include "UI/EditModelUserWidget.h"
 
 UModumateButtonUserWidget::UModumateButtonUserWidget(const FObjectInitializer& ObjectInitializer)
@@ -23,6 +24,7 @@ bool UModumateButtonUserWidget::Initialize()
 	}
 
 	ModumateButton->OnReleased.AddDynamic(this, &UModumateButtonUserWidget::OnButtonPress);
+	ToolTipWidgetDelegate.BindDynamic(this, &UModumateButtonUserWidget::OnTooltipWidget);
 	return true;
 }
 
@@ -79,4 +81,18 @@ void UModumateButtonUserWidget::SwitchToNormalStyle()
 void UModumateButtonUserWidget::SwitchToActiveStyle()
 {
 	ModumateButton->SetStyle(ActiveButtonStyle);
+}
+
+UWidget* UModumateButtonUserWidget::OnTooltipWidget()
+{
+	if (!TooltipID.IsNone())
+	{
+		return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID, this);
+	}
+	else if (InputCommand != EInputCommand::None)
+	{
+		return UTooltipManager::GenerateTooltipWithInputWidget(InputCommand, this);
+	}
+
+	return nullptr;
 }
