@@ -1,15 +1,17 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/ToolTray/ToolTrayWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "UI/Custom//ModumateTextBlock.h"
-#include "UI/ToolTray/ToolTrayBlockTools.h"
-#include "UI/ToolTray/ToolTrayBlockProperties.h"
-#include "UI/ToolTray/ToolTrayBlockModes.h"
-#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Toolbar/ToolbarWidget.h"
-#include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
+#include "UI/ToolTray/ToolTrayBlockModes.h"
+#include "UI/ToolTray/ToolTrayBlockProperties.h"
+#include "UI/ToolTray/ToolTrayBlockTools.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 UToolTrayWidget::UToolTrayWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -39,12 +41,23 @@ void UToolTrayWidget::NativeConstruct()
 
 bool UToolTrayWidget::ChangeBlockToMetaPlaneTools()
 {
+	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	if (!controller)
+	{
+		return false;
+	}
+
 	OpenToolTray();
 	ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetToolCategoryText(EToolCategories::MetaGraph));
 	HideAllToolTrayBlocks();
 	CurrentToolCategory = EToolCategories::MetaGraph;
+
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockModes->ChangeToMetaPlaneToolsButtons();
+
+	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ToolTrayBlockProperties->ChangeBlockProperties(Cast<UEditModelToolBase>(controller->CurrentTool.GetObject()));
+
 	if (EditModelUserWidget)
 	{
 		EditModelUserWidget->ToolbarWidget->Button_Metaplanes->SwitchToActiveStyle();
@@ -64,8 +77,7 @@ bool UToolTrayWidget::ChangeBlockToSeparatorTools(EToolMode Toolmode)
 	OpenToolTray();
 	HideAllToolTrayBlocks();
 	CurrentToolCategory = EToolCategories::Separators;
-	ToolTrayBlockTools->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockTools->ChangeToSeparatorToolsButtons();
+
 	if (EditModelUserWidget)
 	{
 		EditModelUserWidget->ToolbarWidget->Button_Separators->SwitchToActiveStyle();
@@ -81,7 +93,7 @@ bool UToolTrayWidget::ChangeBlockToSeparatorTools(EToolMode Toolmode)
 	ToolTrayBlockModes->ChangeToSeparatorToolsButtons(controller->GetToolMode());
 
 	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockProperties->ChangeBlockProperties(controller->GetToolMode());
+	ToolTrayBlockProperties->ChangeBlockProperties(Cast<UEditModelToolBase>(controller->CurrentTool.GetObject()));
 
 	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockAssembliesList->CreateAssembliesListForCurrentToolMode();

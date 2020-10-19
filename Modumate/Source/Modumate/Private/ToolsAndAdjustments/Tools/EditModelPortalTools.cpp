@@ -31,6 +31,8 @@ UPortalToolBase::UPortalToolBase(const FObjectInitializer& ObjectInitializer)
 	, Active(false)
 	, Inverted(false)
 	, bValidPortalConfig(false)
+	, InstanceStampSize(FVector::ZeroVector)
+	, InstanceBottomOffset(0.0f)
 {
 	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
 	if (world)
@@ -63,6 +65,7 @@ void UPortalToolBase::SetAssemblyKey(const FBIMKey& InAssemblyKey)
 	{
 		SetupCursor();
 	}
+	CalculateNativeSize();
 }
 
 void UPortalToolBase::SetupCursor()
@@ -84,8 +87,7 @@ void UPortalToolBase::SetupCursor()
 	CursorActor = Controller->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass());
 	CursorActor->SetActorEnableCollision(false);
 
-	auto *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	const FBIMAssemblySpec *obAsm = gameState->Document.PresetManager.GetAssemblyByKey(GetToolMode(),AssemblyKey);
+	const FBIMAssemblySpec *obAsm = GameState->Document.PresetManager.GetAssemblyByKey(GetToolMode(),AssemblyKey);
 	bValidPortalConfig = true;
 
 	float invMul = Inverted ? 1 : -1;
@@ -95,6 +97,46 @@ void UPortalToolBase::SetupCursor()
 	// Store data used for previewing this object as if it were a fully-created MOI
 	CursorActor->TempAssemblyKey = AssemblyKey;
 	CursorActor->TempObjectToolMode = GetToolMode();
+}
+
+bool UPortalToolBase::CalculateNativeSize()
+{
+	const FBIMAssemblySpec* assembly = GameState->Document.PresetManager.GetAssemblyByKey(GetToolMode(), AssemblyKey);
+	if (assembly == nullptr)
+	{
+		return false;
+	}
+
+	// Calculate the native size of the mesh
+	FVector nativeSize(assembly->GetRiggedAssemblyNativeSize());
+	if (!nativeSize.IsZero())
+	{
+		InstanceStampSize = nativeSize;
+		return true;
+	}
+	else if (CursorActor)
+	{
+		// No supplied native size - use meshes:
+		// TODO: don't rely on the CursorActor to compute a property of the assembly
+		FBox bounds(ForceInitToZero);
+		for (const auto* mesh : CursorActor->StaticMeshComps)
+		{
+			if (mesh != nullptr)
+			{
+				FVector minPoint(ForceInitToZero);
+				FVector maxPoint(ForceInitToZero);
+				mesh->GetLocalBounds(minPoint, maxPoint);
+				FVector localPosition(mesh->GetRelativeTransform().GetTranslation());
+				bounds += minPoint + localPosition;
+				bounds += maxPoint + localPosition;
+			}
+		}
+
+		InstanceStampSize = bounds.GetSize();
+		return true;
+	}
+
+	return false;
 }
 
 bool UPortalToolBase::Deactivate()
@@ -142,21 +184,8 @@ bool UPortalToolBase::FrameUpdate()
 		}
 	}
 
-	float heightFromBottom = 0.0f;
-
-	// Use default heights from document for doors and windows
-	// To be deprecated in favor of instance level overrides
-	if (Controller->GetToolMode() == EToolMode::VE_DOOR)
-	{
-		heightFromBottom = Modumate::Units::FUnitValue::WorldInches(Document->GetDefaultDoorHeight()).AsWorldInches();
-	}
-	else if (Controller->GetToolMode() == EToolMode::VE_WINDOW)
-	{
-		heightFromBottom = Modumate::Units::FUnitValue::WorldInches(Document->GetDefaultWindowHeight()).AsWorldInches();
-	}
-
 	bool bHasRelativeTransform = hitMOI && UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
-		hitMOI, hitLoc, heightFromBottom, bUseFixedOffset, RelativePos, RelativeRot);
+		hitMOI, hitLoc, GetInstanceBottomOffset(), bUseFixedOffset, RelativePos, RelativeRot);
 
 	bool bHasWorldTransform = bHasRelativeTransform && UModumateObjectStatics::GetWorldTransformOnPlanarObj(
 		hitMOI, RelativePos, RelativeRot, WorldPos, WorldRot);
@@ -286,41 +315,17 @@ bool UPortalToolBase::BeginUse()
 
 			deltas.Add(deleteDelta);
 		}
-
 	}
 
 	int32 newParentId = HostID;
 	if (!bPaintTool)
-	{   // Create new metaplane to host portal.
-		FBox bounds(ForceInit);
-		FVector nativeSize(assembly->GetRiggedAssemblyNativeSize());
-
-		if (nativeSize.IsZero())
-		{	// No supplied native size - use meshes:
-			for (const auto* mesh : CursorActor->StaticMeshComps)
-			{
-				if (mesh != nullptr)
-				{
-					FVector minPoint(ForceInitToZero);
-					FVector maxPoint(ForceInitToZero);
-					mesh->GetLocalBounds(minPoint, maxPoint);
-					FVector localPosition(mesh->GetRelativeTransform().GetTranslation());
-					bounds += minPoint + localPosition;
-					bounds += maxPoint + localPosition;
-				}
-			}
-		}
-		else
-		{
-			bounds.Max = nativeSize;
-		}
-
+	{
 		FTransform portalTransform(worldRot, worldPos, FVector::OneVector);
 
-		TArray<FVector> metaPlanePoints =
-			{ {bounds.Min.X, 0, bounds.Min.Z}, { bounds.Min.X, 0, bounds.Max.Z },
-			{bounds.Max.X, 0, bounds.Max.Z}, { bounds.Max.X, 0, bounds.Min.Z } };
-
+		TArray<FVector> metaPlanePoints = {
+			{0, 0, 0}, { 0, 0, InstanceStampSize.Z },
+			{InstanceStampSize.X, 0, InstanceStampSize.Z}, { InstanceStampSize.X, 0, 0 }
+		};
 
 		for (auto& p : metaPlanePoints)
 		{
@@ -362,4 +367,50 @@ bool UPortalToolBase::BeginUse()
 	Document->EndUndoRedoMacro();
 
 	return true;
+}
+
+void UPortalToolBase::SetInstanceWidth(const float InWidth)
+{
+	InstanceStampSize.X = InWidth;
+}
+
+void UPortalToolBase::SetInstanceHeight(const float InHeight)
+{
+	InstanceStampSize.Z = InHeight;
+}
+
+void UPortalToolBase::SetInstanceBottomOffset(const float InBottomOffset)
+{
+	InstanceBottomOffset = InBottomOffset;
+}
+
+float UPortalToolBase::GetInstanceWidth() const
+{
+	return InstanceStampSize.X;
+}
+
+float UPortalToolBase::GetInstanceHeight() const
+{
+	return InstanceStampSize.Z;
+}
+
+float UPortalToolBase::GetInstanceBottomOffset() const
+{
+	return InstanceBottomOffset;
+}
+
+
+UDoorTool::UDoorTool(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	InstanceStampSize = FVector(91.44f, 0.0f, 203.2f);
+	InstanceBottomOffset = 0.0f;
+}
+
+
+UWindowTool::UWindowTool(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	InstanceStampSize = FVector(50.f, 0.0f, 100.f);
+	InstanceBottomOffset = 91.44f;
 }

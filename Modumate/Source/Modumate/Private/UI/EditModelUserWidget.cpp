@@ -38,6 +38,13 @@ bool UEditModelUserWidget::Initialize()
 		return false;
 	}
 
+	if (Controller)
+	{
+		Controller->OnToolModeChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
+		Controller->OnToolAxisConstraintChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
+		Controller->OnToolCreateObjectModeChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
+	}
+
 	ToolbarWidget->EditModelUserWidget = this;
 	ToolTrayWidget->EditModelUserWidget = this;
 
@@ -49,10 +56,10 @@ void UEditModelUserWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	// Update current menu visibility according to tool mode
-	EMOnToolModeChanged();
+	UpdateToolTray();
 }
 
-void UEditModelUserWidget::EMOnToolModeChanged()
+void UEditModelUserWidget::UpdateToolTray()
 {
 	if (!(Controller && ToolTrayWidget))
 	{

@@ -36,6 +36,11 @@ UMetaPlaneTool::UMetaPlaneTool(const FObjectInitializer& ObjectInitializer)
 	}
 }
 
+void UMetaPlaneTool::Initialize()
+{
+	InstanceHeight = GetDefaultPlaneHeight();
+}
+
 bool UMetaPlaneTool::HandleInputNumber(double n)
 {
 	Super::HandleInputNumber(n);
@@ -355,6 +360,18 @@ void UMetaPlaneTool::SetAxisConstraint(EAxisConstraint InAxisConstraint)
 	UpdatePendingPlane();
 }
 
+void UMetaPlaneTool::SetInstanceHeight(const float InHeight)
+{
+	InstanceHeight = InHeight;
+
+	UpdatePendingPlane();
+}
+
+float UMetaPlaneTool::GetInstanceHeight() const
+{
+	return InstanceHeight;
+}
+
 void UMetaPlaneTool::UpdatePendingPlane()
 {
 	bPendingSegmentValid = false;
@@ -375,7 +392,7 @@ void UMetaPlaneTool::UpdatePendingPlane()
 			case EAxisConstraint::AxisZ:
 			{
 				bPendingPlaneValid = true;
-				FVector verticalRectOffset = FVector::UpVector * GetDefaultPlaneHeight();
+				FVector verticalRectOffset = FVector::UpVector * InstanceHeight;
 
 				PendingPlanePoints = {
 					pendingSegment->Point1,

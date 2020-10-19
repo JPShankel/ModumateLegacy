@@ -38,6 +38,7 @@ protected:
 	FPlane PendingPlaneGeom;
 	float MinPlaneSize;
 	float PendingPlaneAlpha;
+	float InstanceHeight;
 
 	TArray<int32> NewObjIDs;
 
@@ -47,6 +48,7 @@ public:
 	UMetaPlaneTool(const FObjectInitializer& ObjectInitializer);
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_METAPLANE; }
+	virtual void Initialize() override;
 	virtual bool Activate() override;
 	virtual bool HandleInputNumber(double n) override;
 	virtual bool Deactivate() override;
@@ -59,6 +61,9 @@ public:
 	virtual void SetAxisConstraint(EAxisConstraint AxisConstraint) override;
 
 	virtual bool HasDimensionActor() { return true; }
+
+	void SetInstanceHeight(const float InHeight);
+	float GetInstanceHeight() const;
 
 protected:
 	virtual bool MakeObject(const FVector &Location, TArray<int32> &OutNewObjIDs);

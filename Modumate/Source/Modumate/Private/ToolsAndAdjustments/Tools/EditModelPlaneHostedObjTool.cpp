@@ -24,7 +24,9 @@ UPlaneHostedObjTool::UPlaneHostedObjTool(const FObjectInitializer& ObjectInitial
 	, ObjectType(EObjectType::OTNone)
 	, LastValidTargetID(MOD_ID_NONE)
 	, bWasShowingSnapCursor(true)
+	, InstanceJustification(0.0f)
 {
+	InstanceJustification = GetDefaultJustificationValue();
 }
 
 bool UPlaneHostedObjTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
@@ -118,7 +120,7 @@ bool UPlaneHostedObjTool::FrameUpdate()
 		{
 			TArray<FPolyHole3D> holes;
 			bool bRecreatingGeometry = (PendingObjMesh->LayerGeometries.Num() == 0);
-			PendingObjMesh->CreateBasicLayerDefs(PendingPlanePoints, FVector::ZeroVector, holes, ObjAssembly, GetDefaultJustificationValue());
+			PendingObjMesh->CreateBasicLayerDefs(PendingPlanePoints, FVector::ZeroVector, holes, ObjAssembly, InstanceJustification);
 			PendingObjMesh->UpdatePlaneHostedMesh(bRecreatingGeometry, false, false, PendingPlanePoints[0]);
 			PendingObjMesh->SetActorHiddenInGame(false);
 		}
@@ -269,7 +271,7 @@ bool UPlaneHostedObjTool::BeginUse()
 
 			FMOIPlaneHostedObjData newMOICustomData;
 			newMOICustomData.bLayersInverted = GetAppliedInversionValue();
-			newMOICustomData.Justification = GetDefaultJustificationValue();
+			newMOICustomData.Justification = InstanceJustification;
 
 			FMOIStateData newMOIData;
 			newMOIData.ID = GameState->Document.GetNextAvailableID();
@@ -370,7 +372,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &new
 
 		FMOIPlaneHostedObjData newMOICustomData;
 		newMOICustomData.bLayersInverted = bInverted;
-		newMOICustomData.Justification = GetDefaultJustificationValue();
+		newMOICustomData.Justification = InstanceJustification;
 
 		for (int32 newGraphObjID : newGraphObjIDs)
 		{
@@ -396,6 +398,16 @@ bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &new
 	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kEndUndoRedoMacro));
 
 	return bSuccess;
+}
+
+void UPlaneHostedObjTool::SetInstanceJustification(const float InJustification)
+{
+	InstanceJustification = InJustification;
+}
+
+float UPlaneHostedObjTool::GetInstanceJustification() const
+{
+	return InstanceJustification;
 }
 
 

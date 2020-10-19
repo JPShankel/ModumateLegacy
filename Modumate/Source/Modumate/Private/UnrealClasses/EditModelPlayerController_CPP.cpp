@@ -304,10 +304,8 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 
 	UpdateMouseTraceParams();
 	EMPlayerState->UpdateObjectVisibilityAndCollision();
-	if (EditModelUserWidget)
-	{
-		EditModelUserWidget->EMOnToolModeChanged();
-	}
+
+	OnToolModeChanged.Broadcast();
 }
 
 void AEditModelPlayerController_CPP::AbortUseTool()
@@ -335,6 +333,7 @@ void AEditModelPlayerController_CPP::SetToolAxisConstraint(EAxisConstraint AxisC
 	if (CurrentTool)
 	{
 		CurrentTool->SetAxisConstraint(AxisConstraint);
+		OnToolAxisConstraintChanged.Broadcast();
 	}
 }
 
@@ -343,6 +342,7 @@ void AEditModelPlayerController_CPP::SetToolCreateObjectMode(EToolCreateObjectMo
 	if (CurrentTool)
 	{
 		CurrentTool->SetCreateObjectMode(CreateObjectMode);
+		OnToolCreateObjectModeChanged.Broadcast();
 	}
 }
 
@@ -473,6 +473,7 @@ void AEditModelPlayerController_CPP::RegisterTool(TScriptInterface<IEditModelToo
 		return;
 	}
 
+	NewTool->Initialize();
 	ModeToTool.Add(newToolMode, NewTool);
 }
 

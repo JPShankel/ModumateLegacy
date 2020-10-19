@@ -32,6 +32,9 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	UFUNCTION()
+	void UpdateToolTray();
+
 public:
 
 	UPROPERTY()
@@ -71,9 +74,6 @@ public:
 	class UModumateButtonUserWidget* CurrentActiveToolButton;
 
 	ERightMenuState CurrentRightMenuState = ERightMenuState::None;
-
-	UFUNCTION()
-	void EMOnToolModeChanged();
 
 	UFUNCTION()
 	void EMOnSelectionObjectChanged();

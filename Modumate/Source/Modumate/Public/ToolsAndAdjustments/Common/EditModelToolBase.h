@@ -51,6 +51,7 @@ public:
 	UEditModelToolBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_NONE; }
+	virtual void Initialize() override {};
 	virtual bool Activate() override;
 	virtual bool HandleInputNumber(double n) override;
 	virtual bool Deactivate() override;
@@ -69,6 +70,7 @@ public:
 	virtual bool ShowSnapCursorAffordances() override { return true; }
 	virtual TArray<EEditViewModes> GetRequiredEditModes() const override { return {}; }
 
+	virtual EAxisConstraint GetAxisConstraint() const { return AxisConstraint; }
 	virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override { AxisConstraint = InAxisConstraint; }
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override { CreateObjectMode = InCreateObjectMode; }
 	virtual void SetAssemblyKey(const FBIMKey &InAssemblyKey) override { AssemblyKey = InAssemblyKey; }

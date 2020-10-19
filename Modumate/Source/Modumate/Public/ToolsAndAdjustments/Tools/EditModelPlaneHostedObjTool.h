@@ -26,6 +26,8 @@ protected:
 	int32 LastValidTargetID;
 	bool bWasShowingSnapCursor;
 
+	float InstanceJustification;
+
 	virtual bool ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget);
 
 	bool IsTargetFacingDown();
@@ -49,6 +51,9 @@ public:
 
 	virtual bool MakeObject(const FVector &Location, TArray<int32> &newObjIDs) override;
 	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
+
+	void SetInstanceJustification(const float InJustification);
+	float GetInstanceJustification() const;
 };
 
 UCLASS()
