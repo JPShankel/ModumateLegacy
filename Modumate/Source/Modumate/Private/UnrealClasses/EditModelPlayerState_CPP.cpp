@@ -2,6 +2,7 @@
 
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
+#include "Database/ModumateObjectEnums.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
@@ -220,7 +221,10 @@ void AEditModelPlayerState_CPP::UpdateRenderFlags(const TSet<FModumateObjectInst
 	{
 		if (moi && !moi->IsDestroyed())
 		{
-			bool bHovered = (ShowHoverEffects && HoveredObjectDescendents.Contains(moi));
+			auto type = moi->GetObjectType();
+			bool bIsGraphType = (UModumateTypeStatics::Graph2DObjectTypeFromObjectType(type) != Modumate::EGraphObjectType::None) ||
+				(UModumateTypeStatics::Graph3DObjectTypeFromObjectType(type) != Modumate::EGraph3DObjectType::None);
+			bool bHovered = (ShowHoverEffects && !bIsGraphType && HoveredObjectDescendents.Contains(moi));
 
 			int32 selectionValue = SelectedObjects.Contains(moi) ? 0x1 : 0x0;
 			int32 viewGroupValue = ViewGroupDescendents.Contains(moi) ? 0x2 : 0x0;
