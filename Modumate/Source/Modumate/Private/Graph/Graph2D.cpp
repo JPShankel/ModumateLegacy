@@ -563,6 +563,39 @@ namespace Modumate
 		return true;
 	}
 
+	void FGraph2D::CheckTranslationValidity(const TArray<int32>& InVertexIDs, TMap<int32, bool>& OutEdgeIDToValidity) const
+	{
+		TSet<int32> connectedEdges;
+		for (int32 vertexID : InVertexIDs)
+		{
+			auto vertex = FindVertex(vertexID);
+			if (vertex == nullptr)
+			{
+				continue;
+			}
+
+			for (int32 edgeID : vertex->Edges)
+			{
+				connectedEdges.Add(FMath::Abs(edgeID));
+			}
+		}
+
+		for (int32 edgeID : connectedEdges)
+		{
+			auto currentEdge = FindEdge(edgeID);
+			bool bHasStartVertexID = InVertexIDs.Find(currentEdge->StartVertexID) != INDEX_NONE;
+			bool bHasEndVertexID = InVertexIDs.Find(currentEdge->EndVertexID) != INDEX_NONE;
+			if (bHasStartVertexID && bHasEndVertexID)
+			{
+				OutEdgeIDToValidity.Add(edgeID, false);
+			}
+			else
+			{
+				OutEdgeIDToValidity.Add(edgeID, true);
+			}
+		}
+	}
+
 	bool FGraph2D::ApplyDelta(const FGraph2DDelta &Delta)
 	{
 		FGraph2DDelta appliedDelta(ID);

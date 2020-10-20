@@ -69,6 +69,8 @@ namespace Modumate
 		bool ToDataRecord(FGraph2DRecord* OutRecord, bool bSaveOpenPolygons = false, bool bSaveExteriorPolygons = false) const;
 		bool FromDataRecord(const FGraph2DRecord* InRecord);
 
+		void CheckTranslationValidity(const TArray<int32> &InVertexIDs, TMap<int32, bool> &OutEdgeIDToValidity) const;
+
 		float Epsilon;
 		bool bDebugCheck;
 

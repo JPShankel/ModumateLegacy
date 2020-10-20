@@ -106,6 +106,20 @@ namespace Modumate
 		}
 	}
 
+	int32 FGraph2DPolygon::FindEdgeIndex(FGraphSignedID edgeID, bool& bOutSameDirection) const
+	{
+		for (int32 edgeIdx = 0; edgeIdx < Edges.Num(); edgeIdx++)
+		{
+			int32 id = Edges[edgeIdx];
+			if (FMath::Abs(id) == FMath::Abs(edgeID))
+			{
+				bOutSameDirection = (id == edgeID);
+				return edgeIdx;
+			}
+		}
+		return INDEX_NONE;
+	}
+
 	void FGraph2DPolygon::SetVertices(const TArray<int32> &InVertexIDs)
 	{
 		int32 numVertices = InVertexIDs.Num();
@@ -118,6 +132,7 @@ namespace Modumate
 		CachedPoints.Reset(numVertices);
 		CachedPerimeterVertexIDs.Reset();
 		CachedPerimeterEdgeIDs.Reset();
+		CachedPerimeterEdgeNormals.Reset();
 		CachedPerimeterPoints.Reset();
 		TempVertexSet.Reset();
 
@@ -192,6 +207,7 @@ namespace Modumate
 		CachedPerimeterVertexIDs.Reset();
 		CachedPerimeterEdgeIDs.Reset();
 		CachedPerimeterPoints.Reset();
+		CachedPerimeterEdgeNormals.Reset();
 
 		auto graph = Graph.Pin();
 		if (!ensure(graph.IsValid()))
@@ -260,6 +276,13 @@ namespace Modumate
 				CachedPerimeterPoints.Add(graph->FindVertex(perimeterVertexID)->Position);
 			}
 
+			for (int32 edgeID : CachedPerimeterEdgeIDs)
+			{
+				auto edge = graph->FindEdge(edgeID);
+				FVector2D dir = edge->CachedEdgeDir;
+				CachedPerimeterEdgeNormals.Add(edgeID > 0 ? FVector2D(dir.Y, -dir.X) : FVector2D(-dir.Y, dir.X));
+			}
+
 			return true;
 		}
 		else
@@ -267,6 +290,7 @@ namespace Modumate
 			UE_LOG(LogTemp, Error, TEXT("Graph2DPolygon #%d failed to calculate a valid perimeter!"), ID);
 			CachedPerimeterVertexIDs.Reset();
 			CachedPerimeterEdgeIDs.Reset();
+			CachedPerimeterEdgeNormals.Reset();
 			return false;
 		}
 	}

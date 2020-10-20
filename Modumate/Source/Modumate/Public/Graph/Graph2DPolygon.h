@@ -23,6 +23,7 @@ namespace Modumate
 		TArray<int32> CachedPerimeterVertexIDs;			// For interior polygons, the IDs of vertices that make up the perimeter traversal
 		TArray<FGraphSignedID> CachedPerimeterEdgeIDs;	// For interior polygons, the directed IDs of edges that make up the perimeter traversal
 		TArray<FVector2D> CachedPerimeterPoints;		// For interior polygons, the positions of vertices that make up the perimeter traversal
+		TArray<FVector2D> CachedPerimeterEdgeNormals;	// The normal of an edge pointing inside the polygon
 
 		FGraph2DPolygon();
 		FGraph2DPolygon(int32 InID, TWeakPtr<FGraph2D> InGraph);
@@ -30,6 +31,7 @@ namespace Modumate
 
 		bool IsInside(int32 OtherPolyID) const;
 		void SetContainingPoly(int32 NewContainingPolyID);
+		int32 FindEdgeIndex(FGraphSignedID edgeID, bool& bOutSameDirection) const;
 
 		void SetVertices(const TArray<int32> &Vertices);
 

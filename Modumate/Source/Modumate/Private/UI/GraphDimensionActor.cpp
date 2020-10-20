@@ -1,8 +1,11 @@
 #include "UI/GraphDimensionActor.h"
 
 #include "Components/EditableTextBox.h"
+#include "Graph/Graph2D.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/ModumateObjectDeltaStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -14,7 +17,7 @@ AGraphDimensionActor::AGraphDimensionActor(const FObjectInitializer& ObjectIniti
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void AGraphDimensionActor::SetTarget(int32 InTargetEdgeID, int32 InTargetObjID, bool bIsEditable)
+void AGraphDimensionActor::SetTarget(int32 InTargetEdgeID, int32 InTargetObjID, bool bIsEditable, int32 InTargetSurfaceGraphID)
 {
 	TargetEdgeID = InTargetEdgeID;
 	TargetObjID = InTargetObjID;
@@ -25,7 +28,15 @@ void AGraphDimensionActor::SetTarget(int32 InTargetEdgeID, int32 InTargetObjID, 
 	{
 		return;
 	}
-	Graph = &GameState->Document.GetVolumeGraph();
+
+	if (InTargetSurfaceGraphID == MOD_ID_NONE)
+	{
+		Graph = &GameState->Document.GetVolumeGraph();
+	}
+	else
+	{
+		SurfaceGraph = GameState->Document.FindSurfaceGraph(InTargetSurfaceGraphID);
+	}
 
 	if (DimensionText != nullptr)
 	{
@@ -63,35 +74,99 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	auto targetEdge = Graph->FindEdge(FMath::Abs(TargetEdgeID));
+	FVector startPosition, endPosition, midpoint, offset;
+	offset = FVector::ZeroVector;
+	if (Graph != nullptr)
+	{
+		auto targetEdge = Graph->FindEdge(FMath::Abs(TargetEdgeID));
+		auto startVertex = Graph->FindVertex(targetEdge->StartVertexID);
+		auto endVertex = Graph->FindVertex(targetEdge->EndVertexID);
+
+		startPosition = startVertex->Position;
+		endPosition = endVertex->Position;
+		midpoint = targetEdge->CachedMidpoint;
+
+		auto targetFace = Graph ? Graph->FindFace(TargetObjID) : nullptr;
+		bool bOutSameDirection;
+		int32 edgeIdx = targetFace ? targetFace->FindEdgeIndex(TargetEdgeID, bOutSameDirection) : INDEX_NONE;
+		if (edgeIdx != INDEX_NONE)
+		{
+			offset = targetFace->CachedEdgeNormals[edgeIdx];
+		}
+
+		CurrentDirection = targetEdge->CachedDir;
+	}
+	else if (SurfaceGraph != nullptr)
+	{
+		auto targetEdge = SurfaceGraph->FindEdge(FMath::Abs(TargetEdgeID));
+		auto startVertex = SurfaceGraph->FindVertex(targetEdge->StartVertexID);
+		auto endVertex = SurfaceGraph->FindVertex(targetEdge->EndVertexID);
+		auto surfaceGraphObj = GameState->Document.GetObjectById(SurfaceGraph->GetID());
+		auto surfaceGraphParent = GameState->Document.GetObjectById(surfaceGraphObj->GetParentID());
+
+		int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceGraphObj);
+		if (surfaceGraphFaceIndex == INDEX_NONE)
+		{
+			return;
+		}
+
+		TArray<FVector> facePoints;
+		FVector faceNormal;
+		if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceGraphParent, surfaceGraphFaceIndex, facePoints, faceNormal, AxisX, AxisY)))
+		{
+			return;
+		}
+		Origin = facePoints[0];
+
+		startPosition = UModumateGeometryStatics::Deproject2DPoint(startVertex->Position, AxisX, AxisY, Origin);
+		endPosition = UModumateGeometryStatics::Deproject2DPoint(endVertex->Position, AxisX, AxisY, Origin);
+		midpoint = (endPosition + startPosition) * 0.5f;
+
+		auto targetFace = SurfaceGraph ? SurfaceGraph->FindPolygon(TargetObjID) : nullptr;
+		bool bOutSameDirection;
+		int32 edgeIdx = targetFace ? targetFace->FindEdgeIndex(TargetEdgeID, bOutSameDirection) : INDEX_NONE;
+
+		FVector2D dir = endVertex->Position - startVertex->Position;
+		dir.Normalize();
+		
+		FVector2D offset2D;
+		if (edgeIdx != INDEX_NONE)
+		{
+			float sign = bOutSameDirection ? 1.0f : -1.0f;
+			offset2D = targetFace->CachedPerimeterEdgeNormals[edgeIdx] * sign;
+			offset = AxisX * offset2D.X + AxisY * offset2D.Y;
+			offset.Normalize();
+		}
+
+		CurrentDirection = endPosition - startPosition;
+		CurrentDirection.Normalize();
+	}
+	else
+	{
+		return;
+	}
+
+	CurrentLength = (endPosition - startPosition).Size();
 
 	auto controller = DimensionText->GetOwningPlayer();
 
 	FVector2D targetScreenPosition;
-	if (targetEdge && controller &&
-		controller->ProjectWorldLocationToScreen(targetEdge->CachedMidpoint, targetScreenPosition))
+	if (controller && controller->ProjectWorldLocationToScreen(midpoint, targetScreenPosition))
 	{
-		auto startVertex = Graph->FindVertex(targetEdge->StartVertexID);
-		auto endVertex = Graph->FindVertex(targetEdge->EndVertexID);
-
 		// Calculate angle/offset
 		// if the target object is a face, determine the offset direction from the cached edge normals 
 		// so that the measurement doesn't overlap with the handles
 		FVector2D projStart, projEnd, edgeDirection, offsetDirection;
-		controller->ProjectWorldLocationToScreen(startVertex->Position, projStart);
-		controller->ProjectWorldLocationToScreen(endVertex->Position, projEnd);
+		controller->ProjectWorldLocationToScreen(startPosition, projStart);
+		controller->ProjectWorldLocationToScreen(endPosition, projEnd);
 
 		edgeDirection = projEnd - projStart;
 		edgeDirection.Normalize();
 
-		auto targetFace = Graph->FindFace(TargetObjID);
-		bool bOutSameDirection;
-		int32 edgeIdx = targetFace ? targetFace->FindEdgeIndex(TargetEdgeID, bOutSameDirection) : INDEX_NONE;
-		if (targetFace && edgeIdx != INDEX_NONE)
+		if (!offset.IsNearlyZero())
 		{
-			FVector offset = targetFace->CachedEdgeNormals[edgeIdx];
 			FVector2D screenPositionOffset;
-			controller->ProjectWorldLocationToScreen(targetEdge->CachedMidpoint + offset, screenPositionOffset);
+			controller->ProjectWorldLocationToScreen(midpoint + offset, screenPositionOffset);
 			offsetDirection = (targetScreenPosition - screenPositionOffset);
 			offsetDirection.Normalize();
 		}
@@ -103,7 +178,7 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 
 		if (DimensionText != nullptr)
 		{
-			float length = (endVertex->Position - startVertex->Position).Size();
+			float length = (endPosition - startPosition).Size();
 			DimensionText->UpdateLengthTransform(targetScreenPosition, edgeDirection, offsetDirection, length);
 		}
 	}
@@ -117,48 +192,52 @@ void AGraphDimensionActor::OnMeasurementTextCommitted(const FText& Text, ETextCo
 		// get the desired length from the text (assuming the text is entered in feet)
 		// shrinking the edge be zero length is not allowed
 		float lengthValue = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString()).Centimeters;
-		if (lengthValue > Graph->Epsilon)
+		float epsilon = Graph ? Graph->Epsilon : SurfaceGraph->Epsilon;
+		if (lengthValue > epsilon)
 		{
 			// construct deltas
-			TArray<int32> vertexIDs;
+			TSet<int32> vertexIDs;
 
-			// gather vertices that will be translated (all vertices contained within the selected object)
-			if (auto vertex = Graph->FindVertex(TargetObjID))
-			{
-				vertexIDs = { TargetObjID };
-			}
-			else if (auto edge = Graph->FindEdge(TargetObjID))
-			{
-				vertexIDs = { edge->StartVertexID, edge->EndVertexID };
-			}
-			else if (auto face = Graph->FindFace(TargetObjID))
-			{
-				vertexIDs = face->VertexIDs;
-			}
+			FModumateObjectDeltaStatics::GetTransformableIDs({ TargetObjID }, &GameState->Document, vertexIDs);
 
 			// the selected object will be translated towards the vertex that it does not contain
-			auto edge = Graph->FindEdge(TargetEdgeID);
-			auto startVertex = Graph->FindVertex(edge->StartVertexID);
-			auto endVertex = Graph->FindVertex(edge->EndVertexID);
-			FVector offsetDir = vertexIDs.Find(startVertex->ID) != INDEX_NONE ?
-				edge->CachedDir : edge->CachedDir * -1.0f;
+			int32 startID = MOD_ID_NONE;
+			if (Graph)
+			{
+				auto edge = Graph->FindEdge(TargetEdgeID);
+				startID = edge->StartVertexID;
+			}
+			else if (SurfaceGraph)
+			{
+				auto edge = SurfaceGraph->FindEdge(TargetEdgeID);
+				startID = edge->StartVertexID;
+			}
+
+			FVector offsetDir = vertexIDs.Contains(startID) ?
+				CurrentDirection : CurrentDirection * -1.0f;
 
 			// lengthValue is the desired resulting length of the edge after the translation,
 			// so subtract from the current value to translate by the difference
-			float edgeLength = (endVertex->Position - startVertex->Position).Size();
-			float offsetMagnitude = edgeLength - lengthValue;
+			float offsetMagnitude = CurrentLength - lengthValue;
 			FVector offset = offsetDir * offsetMagnitude;
 
-			TArray<FVector> positions;
+			TMap<int32, FTransform> objectInfo;
 			for (int32 vertexID : vertexIDs)
 			{
-				auto vertex = Graph->FindVertex(vertexID);
-				positions.Add(vertex->Position + offset);
+				if (Graph)
+				{
+					auto vertex = Graph->FindVertex(vertexID);
+					objectInfo.Add(vertexID, FTransform(vertex->Position + offset));
+				}
+				else if (SurfaceGraph)
+				{
+					auto vertex = SurfaceGraph->FindVertex(vertexID);
+
+					FVector position = UModumateGeometryStatics::Deproject2DPoint(vertex->Position, AxisX, AxisY, Origin);
+					objectInfo.Add(vertexID, FTransform(position + offset));
+				}
 			}
-
-			auto &doc = GameState->Document;
-			bVerticesMoved = doc.MoveMetaVertices(GetWorld(), vertexIDs, positions);
-
+			FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, &GameState->Document, GetWorld(), false);
 		}
 	}
 

@@ -49,10 +49,29 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 
 	auto moi = doc.GetObjectById(selectedGraphObjID);
 
+	bool bFoundVolumeGraphObject = false;
+	bool bFoundSurfaceGraphObject = false;
+
+	TSharedPtr<Modumate::FGraph2D> surfaceGraph = nullptr;
 	// aggregate the unique selected vertices
 	if (auto graphObject = graph.FindObject(selectedGraphObjID))
 	{
 		graphObject->GetVertexIDs(LastSelectedVertexIDs);
+		bFoundVolumeGraphObject = true;
+	}
+	else if (surfaceGraph = doc.FindSurfaceGraphByObjID(moi->ID))
+	{
+		auto surfaceGraphObject = surfaceGraph->FindObject(moi->ID);
+		if (surfaceGraphObject == nullptr)
+		{
+			surfaceGraphObject = surfaceGraph->FindObject(moi->GetParentID());
+			selectedGraphObjID = moi->GetParentID();
+		}
+		if (surfaceGraphObject != nullptr)
+		{
+			bFoundSurfaceGraphObject = true;
+			surfaceGraphObject->GetVertexIDs(LastSelectedVertexIDs);
+		}
 	}
 	else if (auto parentMoi = doc.GetObjectById(moi->GetParentID()))
 	{
@@ -60,9 +79,9 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 		{
 			parentGraphObject->GetVertexIDs(LastSelectedVertexIDs);
 			selectedGraphObjID = parentMoi->ID;
+			bFoundVolumeGraphObject = true;
 		}
 	}
-	// TODO: surface graph objects?
 
 	if (LastSelectedVertexIDs.Num() == 0)
 	{
@@ -80,58 +99,72 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 
 	// edges are editable when translating the selected object along that edge is valid
 	TMap<int32, bool> edgeIDToEditability;
-
-	// if the input selected ID was not in the graph, no new actors will be created
-	graph.CheckTranslationValidity(LastSelectedVertexIDs, edgeIDToEditability);
-
-	for (auto kvp : edgeIDToEditability)
+	if (bFoundSurfaceGraphObject)
 	{
-		auto dimensionActor = AddDimensionActor<AGraphDimensionActor>();
-		dimensionActor->SetTarget(kvp.Key, selectedGraphObjID, kvp.Value);
-		CurrentGraphDimensionStrings.Add(dimensionActor->ID);
-	}
+		surfaceGraph->CheckTranslationValidity(LastSelectedVertexIDs, edgeIDToEditability);
 
-	// if a face has been selected, look at its edge's face connections 
-	// and add a dimension string measuring the next and previous faces
-	if (auto face = graph.FindFace(selectedGraphObjID))
-	{
-		LastSelectedEdgeIDs = face->EdgeIDs;
-		// angle dimensions
-		for (int32 edgeID : LastSelectedEdgeIDs)
+		for (auto kvp : edgeIDToEditability)
 		{
-			auto currentEdge = graph.FindEdge(edgeID);
+			auto dimensionActor = AddDimensionActor<AGraphDimensionActor>();
+			dimensionActor->SetTarget(kvp.Key, selectedGraphObjID, kvp.Value, surfaceGraph->GetID());
+			CurrentGraphDimensionStrings.Add(dimensionActor->ID);
+		}
+	}
+	else if (bFoundVolumeGraphObject)
+	{
 
-			auto connectedFaces = currentEdge->ConnectedFaces;
-			int32 numFaces = connectedFaces.Num();
+		// if the input selected ID was not in the graph, no new actors will be created
+		graph.CheckTranslationValidity(LastSelectedVertexIDs, edgeIDToEditability);
 
-			for(int32 connectionIdx = 0; connectionIdx < numFaces; connectionIdx++)
+		for (auto kvp : edgeIDToEditability)
+		{
+			auto dimensionActor = AddDimensionActor<AGraphDimensionActor>();
+			dimensionActor->SetTarget(kvp.Key, selectedGraphObjID, kvp.Value);
+			CurrentGraphDimensionStrings.Add(dimensionActor->ID);
+		}
+
+		// if a face has been selected, look at its edge's face connections 
+		// and add a dimension string measuring the next and previous faces
+		if (auto face = graph.FindFace(selectedGraphObjID))
+		{
+			LastSelectedEdgeIDs = face->EdgeIDs;
+			// angle dimensions
+			for (int32 edgeID : LastSelectedEdgeIDs)
 			{
-				auto& connection = connectedFaces[connectionIdx];
+				auto currentEdge = graph.FindEdge(edgeID);
 
-				if (FMath::Abs(connection.FaceID) == face->ID)
+				auto connectedFaces = currentEdge->ConnectedFaces;
+				int32 numFaces = connectedFaces.Num();
+
+				for (int32 connectionIdx = 0; connectionIdx < numFaces; connectionIdx++)
 				{
-					if (numFaces == 2)
-					{
-						// other face
-						auto angleActor = AddDimensionActor<AAngleDimensionActor>();
-						angleActor->SetTarget(edgeID, TPair<int32, int32>(connection.FaceID,
-							connectedFaces[(connectionIdx + 1) % numFaces].FaceID));
-						CurrentGraphDimensionStrings.Add(angleActor->ID);
-					}
-					else if (numFaces >= 3)
-					{
-						// previous face
-						auto angleActor = AddDimensionActor<AAngleDimensionActor>();
-						angleActor->SetTarget(edgeID, TPair<int32, int32>(connection.FaceID,
-							connectedFaces[(connectionIdx + numFaces - 1) % numFaces].FaceID));
-						CurrentGraphDimensionStrings.Add(angleActor->ID);
+					auto& connection = connectedFaces[connectionIdx];
 
-						// next face
-						angleActor = AddDimensionActor<AAngleDimensionActor>();
-						angleActor->SetTarget(edgeID, TPair<int32, int32>(connection.FaceID,
-							connectedFaces[(connectionIdx + 1) % numFaces].FaceID));
-						CurrentGraphDimensionStrings.Add(angleActor->ID);
+					if (FMath::Abs(connection.FaceID) == face->ID)
+					{
+						if (numFaces == 2)
+						{
+							// other face
+							auto angleActor = AddDimensionActor<AAngleDimensionActor>();
+							angleActor->SetTarget(edgeID, TPair<int32, int32>(connection.FaceID,
+								connectedFaces[(connectionIdx + 1) % numFaces].FaceID));
+							CurrentGraphDimensionStrings.Add(angleActor->ID);
+						}
+						else if (numFaces >= 3)
+						{
+							// previous face
+							auto angleActor = AddDimensionActor<AAngleDimensionActor>();
+							angleActor->SetTarget(edgeID, TPair<int32, int32>(connection.FaceID,
+								connectedFaces[(connectionIdx + numFaces - 1) % numFaces].FaceID));
+							CurrentGraphDimensionStrings.Add(angleActor->ID);
 
+							// next face
+							angleActor = AddDimensionActor<AAngleDimensionActor>();
+							angleActor->SetTarget(edgeID, TPair<int32, int32>(connection.FaceID,
+								connectedFaces[(connectionIdx + 1) % numFaces].FaceID));
+							CurrentGraphDimensionStrings.Add(angleActor->ID);
+
+						}
 					}
 				}
 			}
