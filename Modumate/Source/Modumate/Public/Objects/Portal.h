@@ -5,6 +5,11 @@
 
 #include "Portal.generated.h"
 
+UENUM()
+enum class EPortalOrientation : uint8 { Up, Left, Down, Right };
+
+inline constexpr EPortalOrientation operator+(EPortalOrientation a, int b)
+	{ return (EPortalOrientation)( ((int)a + b + 4) % 4 ); }
 
 USTRUCT()
 struct MODUMATE_API FMOIPortalData
@@ -19,6 +24,9 @@ struct MODUMATE_API FMOIPortalData
 
 	UPROPERTY()
 	float Justification = 0.0f;
+
+	UPROPERTY()
+	EPortalOrientation Orientation = EPortalOrientation::Up;
 };
 
 class AAdjustmentHandleActor;

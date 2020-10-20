@@ -14,6 +14,7 @@
 #include "ToolsAndAdjustments/Handles/AdjustPortalInvertHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPortalReverseHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPortalJustifyHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPortalOrientHandle.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -115,18 +116,36 @@ bool FMOIPortalImpl::SetupCompoundActorGeometry()
 			{
 				float lateralInvertFactor = InstanceData.bLateralInverted ? -1.0f : 1.0f;
 				float normalInvertFactor = InstanceData.bNormalInverted ? -1.0f : 1.0f;
+				int32 numRotations = (int32)InstanceData.Orientation;
+				FQuat localRotation = FQuat::MakeFromEuler(FVector(0.0f, 90.0f * numRotations, 0.0f));
 				FBox2D faceSize(parentFace->Cached2DPositions);
 				FVector2D planeSize = faceSize.GetSize();
 				FVector2D localPosition(lateralInvertFactor * -faceSize.GetExtent().X, faceSize.GetExtent().Y);
-				SetRelativeTransform(localPosition, CachedRelativeRot);
+				auto localPosition3d = localRotation.RotateVector(FVector(localPosition.Y, 0.0f, localPosition.X));
+				localPosition = FVector2D(localPosition3d.Z, localPosition3d.X);
+
 
 				const FBIMAssemblySpec& assembly = MOI->GetAssembly();
 				if (assembly.Parts.Num() > 0 && !assembly.Parts[0].Mesh.NativeSize.IsZero())
 				{	// Assume first part for native size.
 					FVector nativeSize = assembly.GetRiggedAssemblyNativeSize();
-					scale.X = planeSize.X / nativeSize.X * lateralInvertFactor;
-					scale.Y *= normalInvertFactor;
-					scale.Z = planeSize.Y / nativeSize.Z;
+					if (numRotations % 2 == 0)
+					{
+						scale.X = planeSize.X / nativeSize.X * lateralInvertFactor;
+						scale.Y *= normalInvertFactor;
+						scale.Z = planeSize.Y / nativeSize.Z;
+					}
+					else
+					{
+						scale.X = planeSize.Y / nativeSize.X * lateralInvertFactor;
+						scale.Y *= normalInvertFactor;
+						scale.Z = planeSize.X / nativeSize.Z;
+						localPosition.X = localPosition.X * planeSize.X / planeSize.Y;
+						localPosition.Y = localPosition.Y * planeSize.Y / planeSize.X;
+					}
+
+					SetRelativeTransform(localPosition, localRotation);
+
 					bResult = true;
 				}
 			}
@@ -218,6 +237,10 @@ void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *cont
 	MOI->MakeHandle<AAdjustPortalInvertHandle>();
 	MOI->MakeHandle<AAdjustPortalJustifyHandle>();
 	MOI->MakeHandle<AAdjustPortalReverseHandle>();
+	auto cwOrientHandle = MOI->MakeHandle<AAdjustPortalOrientHandle>();
+	cwOrientHandle->CounterClockwise = false;
+	auto ccwOrientHandle = MOI->MakeHandle<AAdjustPortalOrientHandle>();
+	ccwOrientHandle->CounterClockwise = true;
 }
 
 bool FMOIPortalImpl::GetInvertedState(FMOIStateData& OutState) const

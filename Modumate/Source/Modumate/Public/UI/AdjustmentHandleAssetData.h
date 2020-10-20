@@ -44,4 +44,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	class USlateWidgetStyleAsset* PortalJustifyStyle;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	class USlateWidgetStyleAsset* RotateCWStyle;
 };
