@@ -2,6 +2,9 @@
 
 #include "UI/ToolTray/ToolTrayBlockModes.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "Components/WrapBox.h"
 
 UToolTrayBlockModes::UToolTrayBlockModes(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -21,38 +24,95 @@ bool UToolTrayBlockModes::Initialize()
 void UToolTrayBlockModes::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	for (const auto& curButton : WrapBox_Buttons->GetAllChildren())
+	{
+		UModumateButtonUserWidget* asModumateButton = Cast<UModumateButtonUserWidget>(curButton);
+		if (asModumateButton)
+		{
+			AllModumateButtons.AddUnique(asModumateButton);
+		}
+	}
 }
 
 void UToolTrayBlockModes::ChangeToMetaPlaneToolsButtons()
 {
-	ButtonAxesNone->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonAxesXY->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonAxesZ->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonMPBucket->SetVisibility(ESlateVisibility::Collapsed);
-	ButtonRoofPerimeter->SetVisibility(ESlateVisibility::Collapsed);
+	TArray<UModumateButtonUserWidget*> buttonsToShow = { ButtonMetaPlaneLine, ButtonMetaPlaneHorizontal, ButtonMetaPlaneVertical };
+	SetButtonsState(buttonsToShow);
 }
 
 void UToolTrayBlockModes::ChangeToSurfaceGraphToolsButtons()
 {
-	ButtonAxesNone->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonAxesXY->SetVisibility(ESlateVisibility::Collapsed);
-	ButtonAxesZ->SetVisibility(ESlateVisibility::Collapsed);
-	ButtonMPBucket->SetVisibility(ESlateVisibility::Collapsed);
-	ButtonRoofPerimeter->SetVisibility(ESlateVisibility::Collapsed);
+	TArray<UModumateButtonUserWidget*> buttonsToShow = { ButtonAxesNone };
+	SetButtonsState(buttonsToShow);
 }
 
 void UToolTrayBlockModes::ChangeToSeparatorToolsButtons(EToolMode mode)
 {
-	ButtonAxesNone->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonAxesXY->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonAxesZ->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ButtonMPBucket->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	TArray<UModumateButtonUserWidget*> buttonsToShow = { ButtonAxesNone, ButtonAxesXY, ButtonAxesZ, ButtonMPBucket };
 	if (mode == EToolMode::VE_ROOF_FACE || mode == EToolMode::VE_ROOF_PERIMETER)
 	{
-		ButtonRoofPerimeter->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		buttonsToShow.Add(ButtonRoofPerimeter);
+	}
+	SetButtonsState(buttonsToShow);
+}
+
+void UToolTrayBlockModes::SetButtonsState(const TArray<UModumateButtonUserWidget*>& ButtonsToShow)
+{
+	for (auto curButton : AllModumateButtons)
+	{
+		curButton->SetVisibility(ButtonsToShow.Contains(curButton) ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+		curButton->SwitchToNormalStyle();
+	}
+
+	// Set button active state based on current tool
+	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	if (!controller)
+	{
+		return;
+	}
+
+	UEditModelToolBase* currentTool = Cast<UEditModelToolBase>(controller->CurrentTool.GetObject());
+	if (!currentTool)
+	{
+		return;
+	}
+
+	EAxisConstraint currentConstraint = currentTool->GetAxisConstraint();
+	EToolCreateObjectMode currentDrawMode = currentTool->GetCreateObjectMode();
+
+	if (controller->GetToolMode() == EToolMode::VE_METAPLANE)
+	{
+		switch (currentConstraint)
+		{
+		case EAxisConstraint::None:
+			ButtonMetaPlaneLine->SwitchToActiveStyle();
+			break;
+		case EAxisConstraint::AxisZ:
+			ButtonMetaPlaneHorizontal->SwitchToActiveStyle();
+			break;
+		case EAxisConstraint::AxesXY:
+			ButtonMetaPlaneVertical->SwitchToActiveStyle();
+			break;
+		}
+	}
+	else if (currentDrawMode == EToolCreateObjectMode::Apply)
+	{
+		ButtonMPBucket->SwitchToActiveStyle();
 	}
 	else
 	{
-		ButtonRoofPerimeter->SetVisibility(ESlateVisibility::Collapsed);
+		switch (currentConstraint)
+		{
+		case EAxisConstraint::None:
+			ButtonAxesNone->SwitchToActiveStyle();
+			break;
+		case EAxisConstraint::AxisZ:
+			ButtonAxesXY->SwitchToActiveStyle();
+			break;
+		case EAxisConstraint::AxesXY:
+			ButtonAxesZ->SwitchToActiveStyle();
+			break;
+		}
 	}
 }

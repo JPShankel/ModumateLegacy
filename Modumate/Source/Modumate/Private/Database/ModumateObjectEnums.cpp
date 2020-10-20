@@ -289,13 +289,13 @@ FText UModumateTypeStatics::GetToolCategoryText(EToolCategories ToolCategory)
 	case EToolCategories::Unknown:
 		return LOCTEXT("ToolCategory_Unknown", "Unknown");
 	case EToolCategories::MetaGraph:
-		return LOCTEXT("ToolCategory_MetaGraph", "MetaGraph");
+		return LOCTEXT("ToolCategory_MetaGraph", "Meta Tools");
 	case EToolCategories::Separators:
-		return LOCTEXT("ToolCategory_Separators", "Separators");
+		return LOCTEXT("ToolCategory_Separators", "Separator Tools");
 	case EToolCategories::SurfaceGraphs:
-		return LOCTEXT("ToolCategory_SurfaceGraphs", "SurfaceGraphs");
+		return LOCTEXT("ToolCategory_SurfaceGraphs", "Surface Tools");
 	case EToolCategories::Attachments:
-		return LOCTEXT("ToolCategory_Attachments", "Attachments");
+		return LOCTEXT("ToolCategory_Attachments", "Attachment Tools");
 	default:
 		return FText::GetEmpty();
 	}

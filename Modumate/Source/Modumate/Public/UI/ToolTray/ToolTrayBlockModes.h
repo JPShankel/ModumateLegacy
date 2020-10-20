@@ -25,21 +25,36 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	UPROPERTY()
+	TArray<class UModumateButtonUserWidget*> AllModumateButtons;
+
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonAxesNone;
+	class UWrapBox* WrapBox_Buttons;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonAxesXY;
+	class UModumateButtonUserWidget* ButtonAxesNone;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonAxesZ;
+	class UModumateButtonUserWidget* ButtonAxesXY;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonMPBucket;
+	class UModumateButtonUserWidget* ButtonAxesZ;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonRoofPerimeter;
+	class UModumateButtonUserWidget* ButtonMPBucket;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonRoofPerimeter;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonMetaPlaneLine;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonMetaPlaneHorizontal;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonMetaPlaneVertical;
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeToMetaPlaneToolsButtons();
@@ -49,4 +64,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeToSeparatorToolsButtons(EToolMode mode);
+
+	void SetButtonsState(const TArray<UModumateButtonUserWidget*>& ButtonsToShow);
 };
