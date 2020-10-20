@@ -371,6 +371,12 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 		return true;
 	}
 
+	case EInputCommand::OpeningStamp:
+	{
+		Controller->SetToolCreateObjectMode(EToolCreateObjectMode::Stamp);
+		return true;
+	}
+
 	// Non-tool modal commands
 
 	case EInputCommand::CycleEditModes:

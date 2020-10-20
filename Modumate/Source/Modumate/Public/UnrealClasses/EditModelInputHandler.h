@@ -93,6 +93,8 @@ enum class EInputCommand : uint8
 	ConstraintAxesXY,
 	ConstraintAxesZ,
 	PaintBucket,
+	OpeningStamp,
+	OpeningSystem,
 
 	// Non-tool modal commands
 	CycleEditModes,

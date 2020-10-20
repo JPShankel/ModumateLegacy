@@ -50,9 +50,17 @@ void UToolTrayBlockModes::ChangeToSurfaceGraphToolsButtons()
 void UToolTrayBlockModes::ChangeToSeparatorToolsButtons(EToolMode mode)
 {
 	TArray<UModumateButtonUserWidget*> buttonsToShow = { ButtonAxesNone, ButtonAxesXY, ButtonAxesZ, ButtonMPBucket };
-	if (mode == EToolMode::VE_ROOF_FACE || mode == EToolMode::VE_ROOF_PERIMETER)
+	switch (mode)
 	{
+	case EToolMode::VE_ROOF_FACE:
+	case EToolMode::VE_ROOF_PERIMETER:
 		buttonsToShow.Add(ButtonRoofPerimeter);
+		break;
+
+	case EToolMode::VE_DOOR:
+	case EToolMode::VE_WINDOW:
+		buttonsToShow.Add(ButtonOpeningStamp);
+		break;
 	}
 	SetButtonsState(buttonsToShow);
 }
@@ -99,6 +107,10 @@ void UToolTrayBlockModes::SetButtonsState(const TArray<UModumateButtonUserWidget
 	else if (currentDrawMode == EToolCreateObjectMode::Apply)
 	{
 		ButtonMPBucket->SwitchToActiveStyle();
+	}
+	else if (currentDrawMode == EToolCreateObjectMode::Stamp)
+	{
+		ButtonOpeningStamp->SwitchToActiveStyle();
 	}
 	else
 	{
