@@ -73,3 +73,5 @@ void UTooltipWidget::AddWidgetToHorizontalBoxForKeys(class UWidget* InWidget)
 	UHorizontalBoxSlot* horzSlot = UWidgetLayoutLibrary::SlotAsHorizontalBoxSlot(InWidget);
 	horzSlot->SetPadding(FMargin(1.f, 0.f, 1.f, 0.f));
 }
+
+#undef LOCTEXT_NAMESPACE
