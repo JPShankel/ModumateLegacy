@@ -18,7 +18,48 @@ class MODUMATE_API UEditModelToolBase : public UObject, public IEditModelToolInt
 {
 	GENERATED_BODY()
 
+public:
+
+	UEditModelToolBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_NONE; }
+	virtual void Initialize() override {};
+	virtual bool Activate() override;
+	virtual bool HandleInputNumber(double n) override;
+	virtual bool Deactivate() override;
+	virtual bool IsInUse() const override { return InUse; }
+	virtual bool IsActive() const override { return Active; }
+	virtual bool BeginUse() override;
+	virtual bool EnterNextStage() override;
+	virtual bool ScrollToolOption(int32 dir) override;
+	virtual bool FrameUpdate() override;
+	virtual bool EndUse() override;
+	virtual bool AbortUse() override;
+	virtual bool PostEndOrAbort() override;
+	virtual bool HandleInvert() override { return true; }
+	virtual bool HandleControlKey(bool pressed) override { return true; }
+	virtual bool HandleMouseUp() override { return true; }
+	virtual bool ShowSnapCursorAffordances() override { return true; }
+	virtual TArray<EEditViewModes> GetRequiredEditModes() const override { return {}; }
+
+	virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override;
+	virtual EAxisConstraint GetAxisConstraint() const { return AxisConstraint; }
+	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override;
+	virtual EToolCreateObjectMode GetCreateObjectMode() const override { return CreateObjectMode; }
+	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
+	virtual FBIMKey GetAssemblyKey() const override { return AssemblyKey; }
+
+	// TODO: potentially duplicate with handles
+	virtual bool HasDimensionActor() { return false; }
+
 protected:
+	UFUNCTION()
+	void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+	virtual void OnAxisConstraintChanged();
+	virtual void OnCreateObjectModeChanged();
+	virtual void OnAssemblyChanged();
+
 	bool InUse;
 	bool Active;
 
@@ -45,40 +86,4 @@ protected:
 	FColor AffordanceLineColor = FColor(28, 159, 255);
 	float AffordanceLineThickness = 3.0f;
 	float AffordanceLineInterval = 6.0f;
-
-public:
-
-	UEditModelToolBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
-	virtual EToolMode GetToolMode() override { return EToolMode::VE_NONE; }
-	virtual void Initialize() override {};
-	virtual bool Activate() override;
-	virtual bool HandleInputNumber(double n) override;
-	virtual bool Deactivate() override;
-	virtual bool IsInUse() const override { return InUse; }
-	virtual bool IsActive() const override { return Active; }
-	virtual bool BeginUse() override;
-	virtual bool EnterNextStage() override;
-	virtual bool ScrollToolOption(int32 dir) override;
-	virtual bool FrameUpdate() override;
-	virtual bool EndUse() override;
-	virtual bool AbortUse() override;
-	virtual bool PostEndOrAbort() override;
-	virtual bool HandleInvert() override { return true; }
-	virtual bool HandleControlKey(bool pressed) override { return true; }
-	virtual bool HandleMouseUp() override { return true; }
-	virtual bool ShowSnapCursorAffordances() override { return true; }
-	virtual TArray<EEditViewModes> GetRequiredEditModes() const override { return {}; }
-
-	virtual EAxisConstraint GetAxisConstraint() const { return AxisConstraint; }
-	virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override { AxisConstraint = InAxisConstraint; }
-	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override { CreateObjectMode = InCreateObjectMode; }
-	virtual void SetAssemblyKey(const FBIMKey &InAssemblyKey) override { AssemblyKey = InAssemblyKey; }
-	virtual FBIMKey GetAssemblyKey() const override { return AssemblyKey; }
-
-	// TODO: potentially duplicate with handles
-	virtual bool HasDimensionActor() { return false; }
-
-	UFUNCTION()
-	void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 };

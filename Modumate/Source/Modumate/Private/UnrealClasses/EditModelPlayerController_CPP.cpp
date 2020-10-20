@@ -333,7 +333,6 @@ void AEditModelPlayerController_CPP::SetToolAxisConstraint(EAxisConstraint AxisC
 	if (CurrentTool)
 	{
 		CurrentTool->SetAxisConstraint(AxisConstraint);
-		OnToolAxisConstraintChanged.Broadcast();
 	}
 }
 
@@ -342,7 +341,6 @@ void AEditModelPlayerController_CPP::SetToolCreateObjectMode(EToolCreateObjectMo
 	if (CurrentTool)
 	{
 		CurrentTool->SetCreateObjectMode(CreateObjectMode);
-		OnToolCreateObjectModeChanged.Broadcast();
 	}
 }
 

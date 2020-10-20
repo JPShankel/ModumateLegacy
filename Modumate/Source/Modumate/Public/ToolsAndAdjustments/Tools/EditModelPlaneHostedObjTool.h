@@ -17,23 +17,6 @@ class MODUMATE_API UPlaneHostedObjTool : public UMetaPlaneTool
 {
 	GENERATED_BODY()
 
-protected:
-	TWeakObjectPtr<ADynamicMeshActor> PendingObjMesh;
-	bool bInverted;
-	bool bRequireHoverMetaPlane;
-	EObjectType ObjectType;
-	FBIMAssemblySpec ObjAssembly;
-	int32 LastValidTargetID;
-	bool bWasShowingSnapCursor;
-
-	float InstanceJustification;
-
-	virtual bool ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget);
-
-	bool IsTargetFacingDown();
-	float GetDefaultJustificationValue();
-	bool GetAppliedInversionValue();
-
 public:
 
 	UPlaneHostedObjTool(const FObjectInitializer& ObjectInitializer);
@@ -49,11 +32,28 @@ public:
 	virtual bool HandleInvert() override;
 	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 
-	virtual bool MakeObject(const FVector &Location, TArray<int32> &newObjIDs) override;
-	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
-
 	void SetInstanceJustification(const float InJustification);
 	float GetInstanceJustification() const;
+
+protected:
+	virtual void OnAssemblyChanged() override;
+
+	virtual bool MakeObject(const FVector& Location, TArray<int32>& newObjIDs) override;
+	virtual bool ValidatePlaneTarget(const FModumateObjectInstance* PlaneTarget);
+
+	bool IsTargetFacingDown();
+	float GetDefaultJustificationValue();
+	bool GetAppliedInversionValue();
+
+	TWeakObjectPtr<ADynamicMeshActor> PendingObjMesh;
+	bool bInverted;
+	bool bRequireHoverMetaPlane;
+	EObjectType ObjectType;
+	FBIMAssemblySpec ObjAssembly;
+	int32 LastValidTargetID;
+	bool bWasShowingSnapCursor;
+
+	float InstanceJustification;
 };
 
 UCLASS()

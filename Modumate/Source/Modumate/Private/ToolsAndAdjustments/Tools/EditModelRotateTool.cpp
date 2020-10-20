@@ -96,7 +96,7 @@ bool URotateObjectTool::EnterNextStage()
 
 		auto dimensionWidget = dimensionActor->DimensionText;
 		dimensionWidget->Measurement->SetIsReadOnly(false);
-		dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &UEditModelToolBase::OnTextCommitted);
+		dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &URotateObjectTool::OnTextCommitted);
 
 		DimensionManager->SetActiveActorID(PendingSegmentID);
 

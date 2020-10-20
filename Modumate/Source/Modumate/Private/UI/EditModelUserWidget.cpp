@@ -43,6 +43,7 @@ bool UEditModelUserWidget::Initialize()
 		Controller->OnToolModeChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
 		Controller->OnToolAxisConstraintChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
 		Controller->OnToolCreateObjectModeChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
+		Controller->OnToolAssemblyChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
 	}
 
 	ToolbarWidget->EditModelUserWidget = this;

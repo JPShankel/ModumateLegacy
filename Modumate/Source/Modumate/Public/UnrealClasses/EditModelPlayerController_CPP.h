@@ -38,6 +38,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUserSnapPointEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolModeChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolAxisConstraintChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolCreateObjectModeChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolAssemblyChanged);
 
 UCLASS(Config=Game)
 class MODUMATE_API AEditModelPlayerController_CPP : public APlayerController
@@ -141,6 +142,9 @@ public:
 
 	UPROPERTY()
 	FOnToolCreateObjectModeChanged OnToolCreateObjectModeChanged;
+
+	UPROPERTY()
+	FOnToolAssemblyChanged OnToolAssemblyChanged;
 
 	bool DistanceBetweenWorldPointsInScreenSpace(const FVector &Point1, const FVector &Point2, float &OutScreenDist) const;
 	bool GetScreenScaledDelta(const FVector &Origin, const FVector &Normal, const float DesiredWorldDist, const float MaxScreenDist,

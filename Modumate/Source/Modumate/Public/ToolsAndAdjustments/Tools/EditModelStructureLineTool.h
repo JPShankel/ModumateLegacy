@@ -29,12 +29,13 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
-	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override;
-	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
 	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 	virtual bool HasDimensionActor() override { return true; }
 
 protected:
+	virtual void OnCreateObjectModeChanged() override;
+	virtual void OnAssemblyChanged() override;
+
 	void SetTargetID(int32 NewTargetID);
 	bool SetStructureLineHidden(int32 StructureLineID, bool bHidden);
 	bool UpdatePreviewStructureLine();

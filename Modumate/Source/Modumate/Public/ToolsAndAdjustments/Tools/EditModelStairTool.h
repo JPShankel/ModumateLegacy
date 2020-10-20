@@ -33,7 +33,6 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
-	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
 
 protected:
 	enum EState
@@ -43,6 +42,8 @@ protected:
 		RisePending,
 		WidthPending
 	};
+
+	virtual void OnAssemblyChanged() override;
 
 	bool UpdatePreviewStairs();
 	bool MakeStairs();

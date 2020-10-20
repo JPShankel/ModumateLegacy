@@ -58,16 +58,6 @@ TArray<EEditViewModes> UPortalToolBase::GetRequiredEditModes() const
 	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
 }
 
-void UPortalToolBase::SetAssemblyKey(const FBIMKey& InAssemblyKey)
-{
-	UEditModelToolBase::SetAssemblyKey(InAssemblyKey);
-	if (Active)
-	{
-		SetupCursor();
-	}
-	CalculateNativeSize();
-}
-
 void UPortalToolBase::SetupCursor()
 {
 	if (CursorActor != nullptr)
@@ -397,6 +387,17 @@ float UPortalToolBase::GetInstanceHeight() const
 float UPortalToolBase::GetInstanceBottomOffset() const
 {
 	return InstanceBottomOffset;
+}
+
+void UPortalToolBase::OnAssemblyChanged()
+{
+	Super::OnAssemblyChanged();
+
+	if (Active)
+	{
+		SetupCursor();
+	}
+	CalculateNativeSize();
 }
 
 

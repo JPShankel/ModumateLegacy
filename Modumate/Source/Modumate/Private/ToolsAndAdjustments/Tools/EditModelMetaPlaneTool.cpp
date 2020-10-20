@@ -353,13 +353,6 @@ TArray<EEditViewModes> UMetaPlaneTool::GetRequiredEditModes() const
 	return { EEditViewModes::MetaPlanes };
 }
 
-void UMetaPlaneTool::SetAxisConstraint(EAxisConstraint InAxisConstraint)
-{
-	Super::SetAxisConstraint(InAxisConstraint);
-
-	UpdatePendingPlane();
-}
-
 void UMetaPlaneTool::SetInstanceHeight(const float InHeight)
 {
 	InstanceHeight = InHeight;
@@ -370,6 +363,12 @@ void UMetaPlaneTool::SetInstanceHeight(const float InHeight)
 float UMetaPlaneTool::GetInstanceHeight() const
 {
 	return InstanceHeight;
+}
+
+void UMetaPlaneTool::OnAxisConstraintChanged()
+{
+	Super::OnAxisConstraintChanged();
+	UpdatePendingPlane();
 }
 
 void UMetaPlaneTool::UpdatePendingPlane()

@@ -246,29 +246,14 @@ bool UStructureLineTool::AbortUse()
 	return UEditModelToolBase::AbortUse();
 }
 
-void UStructureLineTool::SetAssemblyKey(const FBIMKey& InAssemblyKey)
+TArray<EEditViewModes> UStructureLineTool::GetRequiredEditModes() const
 {
-	Super::SetAssemblyKey(InAssemblyKey);
-
-	EToolMode toolMode = GetToolMode();
-	const FBIMAssemblySpec *assembly = GameState.IsValid() ?
-		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, InAssemblyKey) : nullptr;
-
-	if (assembly != nullptr)
-	{
-		ObjAssembly = *assembly;
-		bHaveSetUpGeometry = false;
-	}
-	else
-	{
-		Super::SetAssemblyKey(FBIMKey());
-		ObjAssembly = FBIMAssemblySpec();
-	}
+	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
 }
 
-void UStructureLineTool::SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode)
+void UStructureLineTool::OnCreateObjectModeChanged()
 {
-	Super::SetCreateObjectMode(InCreateObjectMode);
+	Super::OnCreateObjectModeChanged();
 
 	if ((CreateObjectMode == EToolCreateObjectMode::Apply) && IsInUse())
 	{
@@ -280,9 +265,24 @@ void UStructureLineTool::SetCreateObjectMode(EToolCreateObjectMode InCreateObjec
 	}
 }
 
-TArray<EEditViewModes> UStructureLineTool::GetRequiredEditModes() const
+void UStructureLineTool::OnAssemblyChanged()
 {
-	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
+	Super::OnAssemblyChanged();
+
+	EToolMode toolMode = GetToolMode();
+	const FBIMAssemblySpec* assembly = GameState.IsValid() ?
+		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
+
+	if (assembly != nullptr)
+	{
+		ObjAssembly = *assembly;
+		bHaveSetUpGeometry = false;
+	}
+	else
+	{
+		AssemblyKey = FBIMKey();
+		ObjAssembly = FBIMAssemblySpec();
+	}
 }
 
 void UStructureLineTool::SetTargetID(int32 NewTargetID)

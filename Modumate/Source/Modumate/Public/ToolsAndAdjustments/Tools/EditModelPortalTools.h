@@ -56,7 +56,6 @@ public:
 	virtual bool HandleMouseUp() override { return true; }
 	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 	virtual bool ShowSnapCursorAffordances() override { return true; }
-	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
 
 	void SetInstanceWidth(const float InWidth);
 	void SetInstanceHeight(const float InHeight);
@@ -64,6 +63,9 @@ public:
 	float GetInstanceWidth() const;
 	float GetInstanceHeight() const;
 	float GetInstanceBottomOffset() const;
+
+protected:
+	virtual void OnAssemblyChanged() override;
 };
 
 UCLASS()

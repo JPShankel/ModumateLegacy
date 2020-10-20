@@ -125,7 +125,61 @@ bool UEditModelToolBase::PostEndOrAbort()
 	return true;
 }
 
+void UEditModelToolBase::SetAxisConstraint(EAxisConstraint InAxisConstraint)
+{
+	if (AxisConstraint != InAxisConstraint)
+	{
+		AxisConstraint = InAxisConstraint;
+		OnAxisConstraintChanged();
+
+		if (Controller)
+		{
+			Controller->OnToolAxisConstraintChanged.Broadcast();
+		}
+	}
+}
+
+void UEditModelToolBase::SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode)
+{
+	if (CreateObjectMode != InCreateObjectMode)
+	{
+		CreateObjectMode = InCreateObjectMode;
+		OnCreateObjectModeChanged();
+
+		if (Controller)
+		{
+			Controller->OnToolCreateObjectModeChanged.Broadcast();
+		}
+	}
+}
+
+void UEditModelToolBase::SetAssemblyKey(const FBIMKey& InAssemblyKey)
+{
+	if (AssemblyKey != InAssemblyKey)
+	{
+		AssemblyKey = InAssemblyKey;
+		OnAssemblyChanged();
+
+		if (Controller)
+		{
+			Controller->OnToolAssemblyChanged.Broadcast();
+		}
+	}
+}
+
 void UEditModelToolBase::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	Controller->OnTextCommitted(Text, CommitMethod);
+}
+
+void UEditModelToolBase::OnAxisConstraintChanged()
+{
+}
+
+void UEditModelToolBase::OnCreateObjectModeChanged()
+{
+}
+
+void UEditModelToolBase::OnAssemblyChanged()
+{
 }

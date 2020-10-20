@@ -58,7 +58,6 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
-	virtual void SetAxisConstraint(EAxisConstraint AxisConstraint) override;
 
 	virtual bool HasDimensionActor() { return true; }
 
@@ -66,6 +65,8 @@ public:
 	float GetInstanceHeight() const;
 
 protected:
+	virtual void OnAxisConstraintChanged() override;
+
 	virtual bool MakeObject(const FVector &Location, TArray<int32> &OutNewObjIDs);
 	void UpdatePendingPlane();
 	bool ConstrainHitPoint(FVector &hitPoint);

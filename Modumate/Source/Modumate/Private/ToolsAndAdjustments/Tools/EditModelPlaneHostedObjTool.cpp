@@ -29,74 +29,9 @@ UPlaneHostedObjTool::UPlaneHostedObjTool(const FObjectInitializer& ObjectInitial
 	InstanceJustification = GetDefaultJustificationValue();
 }
 
-bool UPlaneHostedObjTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
-{
-	return (PlaneTarget != nullptr) && (PlaneTarget->GetObjectType() == EObjectType::OTMetaPlane);
-}
-
-bool UPlaneHostedObjTool::IsTargetFacingDown()
-{
-	if (LastValidTargetID != MOD_ID_NONE)
-	{
-		FModumateObjectInstance *parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
-		return (parentMOI && (parentMOI->GetNormal().Z < 0.0f));
-	}
-	else if (bPendingPlaneValid && PendingPlaneGeom.IsNormalized())
-	{
-		return (PendingPlaneGeom.Z < 0.0f);
-	}
-
-	return false;
-}
-
-float UPlaneHostedObjTool::GetDefaultJustificationValue()
-{
-	if (GameState == nullptr)
-	{
-		return 0.5f;
-	}
-
-	// For walls, use the default justification for vertically-oriented objects
-	if (ObjectType == EObjectType::OTWallSegment)
-	{
-		return GameState->Document.GetDefaultJustificationZ();
-	}
-
-	// Otherwise, start with the default justification for horizontally-oriented objects
-	float defaultJustificationXY = GameState->Document.GetDefaultJustificationXY();
-
-	// Now flip the justification if the target plane is not facing downwards
-	if (!IsTargetFacingDown())
-	{
-		defaultJustificationXY = (1.0f - defaultJustificationXY);
-	}
-
-	return defaultJustificationXY;
-}
-
-bool UPlaneHostedObjTool::GetAppliedInversionValue()
-{
-	// When applying walls to meta planes, keep the original inversion value
-	if (ObjectType == EObjectType::OTWallSegment)
-	{
-		return bInverted;
-	}
-
-	// Otherwise, use the same criteria as justification values, where if the target is not facing down,
-	// flip the inversion value so that it matches the intent for object types that lie flat by default.
-	bool bInversionValue = bInverted;
-
-	if (!IsTargetFacingDown())
-	{
-		bInversionValue = !bInversionValue;
-	}
-
-	return bInversionValue;
-}
-
 bool UPlaneHostedObjTool::Activate()
 {
-	if (!UMetaPlaneTool::Activate())
+	if (!Super::Activate())
 	{
 		return false;
 	}
@@ -105,83 +40,9 @@ bool UPlaneHostedObjTool::Activate()
 	return true;
 }
 
-bool UPlaneHostedObjTool::FrameUpdate()
+bool UPlaneHostedObjTool::HandleInputNumber(double n)
 {
-	if (!UMetaPlaneTool::FrameUpdate())
-	{
-		return false;
-	}
-
-	if (PendingObjMesh.IsValid() && PendingSegmentID != MOD_ID_NONE)
-	{
-		auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-
-		if (bPendingPlaneValid && (PendingPlanePoints.Num() >= 3))
-		{
-			TArray<FPolyHole3D> holes;
-			bool bRecreatingGeometry = (PendingObjMesh->LayerGeometries.Num() == 0);
-			PendingObjMesh->CreateBasicLayerDefs(PendingPlanePoints, FVector::ZeroVector, holes, ObjAssembly, InstanceJustification);
-			PendingObjMesh->UpdatePlaneHostedMesh(bRecreatingGeometry, false, false, PendingPlanePoints[0]);
-			PendingObjMesh->SetActorHiddenInGame(false);
-		}
-		else
-		{
-			PendingObjMesh->SetActorHiddenInGame(true);
-		}
-
-		if (pendingSegment)
-		{
-			pendingSegment->SetActorHiddenInGame(!bPendingSegmentValid || bPendingPlaneValid);
-		}
-
-		// Always hide the pending plane mesh inherited from the MetaPlaneTool
-		if (PendingPlane.IsValid())
-		{
-			PendingPlane->SetActorHiddenInGame(true);
-		}
-	}
-	else
-	{
-		// Determine whether we can apply the plane hosted object to a plane targeted by the cursor
-		const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
-		LastValidTargetID = MOD_ID_NONE;
-		const FModumateObjectInstance *hitMOI = nullptr;
-
-		if ((cursor.SnapType == ESnapType::CT_FACESELECT) && cursor.Actor)
-		{
-			hitMOI = GameState->Document.ObjectFromActor(cursor.Actor);
-			if (hitMOI && (hitMOI->GetObjectType() == ObjectType))
-			{
-				hitMOI = GameState->Document.GetObjectById(hitMOI->GetParentID());
-			}
-
-			if (ValidatePlaneTarget(hitMOI))
-			{
-				LastValidTargetID = hitMOI->ID;
-			}
-		}
-
-		if (LastValidTargetID)
-		{
-			int32 numCorners = hitMOI->GetNumCorners();
-			for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
-			{
-				int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
-
-				FVector curCornerPos = hitMOI->GetCorner(curCornerIdx);
-				FVector nextCornerPos = hitMOI->GetCorner(nextCornerIdx);
-
-				Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(
-					curCornerPos, nextCornerPos, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness, 1)
-				);
-			}
-		}
-
-		// Don't show the snap cursor if we're targeting a plane.
-		Controller->EMPlayerState->bShowSnappedCursor = (LastValidTargetID == MOD_ID_NONE);
-	}
-
-	return true;
+	return Super::HandleInputNumber(n);
 }
 
 bool UPlaneHostedObjTool::Deactivate()
@@ -197,31 +58,7 @@ bool UPlaneHostedObjTool::Deactivate()
 		Controller->EMPlayerState->bShowSnappedCursor = bWasShowingSnapCursor;
 	}
 
-	return UMetaPlaneTool::Deactivate();
-}
-
-bool UPlaneHostedObjTool::HandleInputNumber(double n)
-{
-	return UMetaPlaneTool::HandleInputNumber(n);
-}
-
-bool UPlaneHostedObjTool::HandleInvert()
-{
-	if (!IsInUse())
-	{
-		return false;
-	}
-	if (PendingObjMesh.IsValid())
-	{
-		bInverted = !bInverted;
-		ObjAssembly.ReverseLayers();
-	}
-	return true;
-}
-
-TArray<EEditViewModes> UPlaneHostedObjTool::GetRequiredEditModes() const
-{
-	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
+	return Super::Deactivate();
 }
 
 bool UPlaneHostedObjTool::BeginUse()
@@ -292,7 +129,7 @@ bool UPlaneHostedObjTool::BeginUse()
 	}
 	else if (!bRequireHoverMetaPlane)
 	{
-		if (!UMetaPlaneTool::BeginUse())
+		if (!Super::BeginUse())
 		{
 			return false;
 		}
@@ -308,6 +145,90 @@ bool UPlaneHostedObjTool::BeginUse()
 	return false;
 }
 
+bool UPlaneHostedObjTool::EnterNextStage()
+{
+	return Super::EnterNextStage();
+}
+
+bool UPlaneHostedObjTool::FrameUpdate()
+{
+	if (!Super::FrameUpdate())
+	{
+		return false;
+	}
+
+	if (PendingObjMesh.IsValid() && PendingSegmentID != MOD_ID_NONE)
+	{
+		auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
+
+		if (bPendingPlaneValid && (PendingPlanePoints.Num() >= 3))
+		{
+			TArray<FPolyHole3D> holes;
+			bool bRecreatingGeometry = (PendingObjMesh->LayerGeometries.Num() == 0);
+			PendingObjMesh->CreateBasicLayerDefs(PendingPlanePoints, FVector::ZeroVector, holes, ObjAssembly, InstanceJustification);
+			PendingObjMesh->UpdatePlaneHostedMesh(bRecreatingGeometry, false, false, PendingPlanePoints[0]);
+			PendingObjMesh->SetActorHiddenInGame(false);
+		}
+		else
+		{
+			PendingObjMesh->SetActorHiddenInGame(true);
+		}
+
+		if (pendingSegment)
+		{
+			pendingSegment->SetActorHiddenInGame(!bPendingSegmentValid || bPendingPlaneValid);
+		}
+
+		// Always hide the pending plane mesh inherited from the MetaPlaneTool
+		if (PendingPlane.IsValid())
+		{
+			PendingPlane->SetActorHiddenInGame(true);
+		}
+	}
+	else
+	{
+		// Determine whether we can apply the plane hosted object to a plane targeted by the cursor
+		const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
+		LastValidTargetID = MOD_ID_NONE;
+		const FModumateObjectInstance* hitMOI = nullptr;
+
+		if ((cursor.SnapType == ESnapType::CT_FACESELECT) && cursor.Actor)
+		{
+			hitMOI = GameState->Document.ObjectFromActor(cursor.Actor);
+			if (hitMOI && (hitMOI->GetObjectType() == ObjectType))
+			{
+				hitMOI = GameState->Document.GetObjectById(hitMOI->GetParentID());
+			}
+
+			if (ValidatePlaneTarget(hitMOI))
+			{
+				LastValidTargetID = hitMOI->ID;
+			}
+		}
+
+		if (LastValidTargetID)
+		{
+			int32 numCorners = hitMOI->GetNumCorners();
+			for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
+			{
+				int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
+
+				FVector curCornerPos = hitMOI->GetCorner(curCornerIdx);
+				FVector nextCornerPos = hitMOI->GetCorner(nextCornerIdx);
+
+				Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(
+					curCornerPos, nextCornerPos, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness, 1)
+				);
+			}
+		}
+
+		// Don't show the snap cursor if we're targeting a plane.
+		Controller->EMPlayerState->bShowSnappedCursor = (LastValidTargetID == MOD_ID_NONE);
+	}
+
+	return true;
+}
+
 bool UPlaneHostedObjTool::EndUse()
 {
 	if (PendingObjMesh.IsValid())
@@ -316,7 +237,7 @@ bool UPlaneHostedObjTool::EndUse()
 		PendingObjMesh = nullptr;
 	}
 
-	return UMetaPlaneTool::EndUse();
+	return Super::EndUse();
 }
 
 bool UPlaneHostedObjTool::AbortUse()
@@ -327,21 +248,45 @@ bool UPlaneHostedObjTool::AbortUse()
 		PendingObjMesh = nullptr;
 	}
 
-	return UMetaPlaneTool::AbortUse();
+	return Super::AbortUse();
 }
 
-bool UPlaneHostedObjTool::EnterNextStage()
+bool UPlaneHostedObjTool::HandleInvert()
 {
-	return UMetaPlaneTool::EnterNextStage();
+	if (!IsInUse())
+	{
+		return false;
+	}
+	if (PendingObjMesh.IsValid())
+	{
+		bInverted = !bInverted;
+		ObjAssembly.ReverseLayers();
+	}
+	return true;
 }
 
-void UPlaneHostedObjTool::SetAssemblyKey(const FBIMKey& InAssemblyKey)
+TArray<EEditViewModes> UPlaneHostedObjTool::GetRequiredEditModes() const
 {
-	UMetaPlaneTool::SetAssemblyKey(InAssemblyKey);
+	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
+}
+
+void UPlaneHostedObjTool::SetInstanceJustification(const float InJustification)
+{
+	InstanceJustification = InJustification;
+}
+
+float UPlaneHostedObjTool::GetInstanceJustification() const
+{
+	return InstanceJustification;
+}
+
+void UPlaneHostedObjTool::OnAssemblyChanged()
+{
+	Super::OnAssemblyChanged();
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(ObjectType);
-	const FBIMAssemblySpec *assembly = GameState.IsValid() ?
-		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, InAssemblyKey) : nullptr;
+	const FBIMAssemblySpec* assembly = GameState.IsValid() ?
+		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
 
 	if (assembly != nullptr)
 	{
@@ -355,15 +300,18 @@ void UPlaneHostedObjTool::SetAssemblyKey(const FBIMKey& InAssemblyKey)
 		}
 	}
 
-	FrameUpdate();
+	if (Active)
+	{
+		FrameUpdate();
+	}
 }
 
-bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &newObjIDs)
+bool UPlaneHostedObjTool::MakeObject(const FVector& Location, TArray<int32>& newObjIDs)
 {
 	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kBeginUndoRedoMacro));
 
 	TArray<int32> newGraphObjIDs;
-	bool bSuccess = UMetaPlaneTool::MakeObject(Location, newGraphObjIDs);
+	bool bSuccess = Super::MakeObject(Location, newGraphObjIDs);
 
 	if (bSuccess)
 	{
@@ -376,7 +324,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &new
 
 		for (int32 newGraphObjID : newGraphObjIDs)
 		{
-			FModumateObjectInstance *newGraphObj = GameState->Document.GetObjectById(newGraphObjID);
+			FModumateObjectInstance* newGraphObj = GameState->Document.GetObjectById(newGraphObjID);
 
 			if (newGraphObj && (newGraphObj->GetObjectType() == EObjectType::OTMetaPlane))
 			{
@@ -400,14 +348,69 @@ bool UPlaneHostedObjTool::MakeObject(const FVector &Location, TArray<int32> &new
 	return bSuccess;
 }
 
-void UPlaneHostedObjTool::SetInstanceJustification(const float InJustification)
+bool UPlaneHostedObjTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
 {
-	InstanceJustification = InJustification;
+	return (PlaneTarget != nullptr) && (PlaneTarget->GetObjectType() == EObjectType::OTMetaPlane);
 }
 
-float UPlaneHostedObjTool::GetInstanceJustification() const
+bool UPlaneHostedObjTool::IsTargetFacingDown()
 {
-	return InstanceJustification;
+	if (LastValidTargetID != MOD_ID_NONE)
+	{
+		FModumateObjectInstance *parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
+		return (parentMOI && (parentMOI->GetNormal().Z < 0.0f));
+	}
+	else if (bPendingPlaneValid && PendingPlaneGeom.IsNormalized())
+	{
+		return (PendingPlaneGeom.Z < 0.0f);
+	}
+
+	return false;
+}
+
+float UPlaneHostedObjTool::GetDefaultJustificationValue()
+{
+	if (GameState == nullptr)
+	{
+		return 0.5f;
+	}
+
+	// For walls, use the default justification for vertically-oriented objects
+	if (ObjectType == EObjectType::OTWallSegment)
+	{
+		return GameState->Document.GetDefaultJustificationZ();
+	}
+
+	// Otherwise, start with the default justification for horizontally-oriented objects
+	float defaultJustificationXY = GameState->Document.GetDefaultJustificationXY();
+
+	// Now flip the justification if the target plane is not facing downwards
+	if (!IsTargetFacingDown())
+	{
+		defaultJustificationXY = (1.0f - defaultJustificationXY);
+	}
+
+	return defaultJustificationXY;
+}
+
+bool UPlaneHostedObjTool::GetAppliedInversionValue()
+{
+	// When applying walls to meta planes, keep the original inversion value
+	if (ObjectType == EObjectType::OTWallSegment)
+	{
+		return bInverted;
+	}
+
+	// Otherwise, use the same criteria as justification values, where if the target is not facing down,
+	// flip the inversion value so that it matches the intent for object types that lie flat by default.
+	bool bInversionValue = bInverted;
+
+	if (!IsTargetFacingDown())
+	{
+		bInversionValue = !bInversionValue;
+	}
+
+	return bInversionValue;
 }
 
 

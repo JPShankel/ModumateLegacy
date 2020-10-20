@@ -308,7 +308,7 @@ bool UStairTool::AbortUse()
 		if (dimensionActor != nullptr)
 		{
 			auto dimensionWidget = dimensionActor->DimensionText;
-			dimensionWidget->Measurement->OnTextCommitted.RemoveDynamic(this, &UEditModelToolBase::OnTextCommitted);
+			dimensionWidget->Measurement->OnTextCommitted.RemoveDynamic(this, &UStairTool::OnTextCommitted);
 		}
 		DimensionManager->ReleaseDimensionActor(RiseSegmentID);
 
@@ -324,7 +324,7 @@ bool UStairTool::AbortUse()
 		if (dimensionActor != nullptr)
 		{
 			auto dimensionWidget = dimensionActor->DimensionText;
-			dimensionWidget->Measurement->OnTextCommitted.RemoveDynamic(this, &UEditModelToolBase::OnTextCommitted);
+			dimensionWidget->Measurement->OnTextCommitted.RemoveDynamic(this, &UStairTool::OnTextCommitted);
 		}
 		DimensionManager->ReleaseDimensionActor(WidthSegmentID);
 
@@ -412,13 +412,13 @@ TArray<EEditViewModes> UStairTool::GetRequiredEditModes() const
 	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
 }
 
-void UStairTool::SetAssemblyKey(const FBIMKey& InAssemblyKey)
+void UStairTool::OnAssemblyChanged()
 {
-	UEditModelToolBase::SetAssemblyKey(InAssemblyKey);
+	Super::OnAssemblyChanged();
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(EObjectType::OTStaircase);
-	const FBIMAssemblySpec *assembly = GameState.IsValid() ?
-		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, InAssemblyKey) : nullptr;
+	const FBIMAssemblySpec* assembly = GameState.IsValid() ?
+		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
 
 	if (assembly != nullptr)
 	{
@@ -562,7 +562,7 @@ void UStairTool::MakePendingSegment(int32 &TargetSegmentID, const FVector &Start
 
 	auto dimensionWidget = dimensionActor->DimensionText;
 	dimensionWidget->Measurement->SetIsReadOnly(false);
-	dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &UEditModelToolBase::OnTextCommitted);
+	dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &UStairTool::OnTextCommitted);
 
 	auto segment = dimensionActor->GetLineActor();
 	segment->Point1 = StartingPoint;
@@ -580,7 +580,7 @@ void UStairTool::ResetState()
 		if (dimensionActor != nullptr)
 		{
 			auto dimensionWidget = dimensionActor->DimensionText;
-			dimensionWidget->Measurement->OnTextCommitted.RemoveDynamic(this, &UEditModelToolBase::OnTextCommitted);
+			dimensionWidget->Measurement->OnTextCommitted.RemoveDynamic(this, &UStairTool::OnTextCommitted);
 		}
 		DimensionManager->ReleaseDimensionActor(pendingSegmentID);
 		pendingSegmentID = 0;
