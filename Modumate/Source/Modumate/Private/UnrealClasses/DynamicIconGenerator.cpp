@@ -254,6 +254,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 	case EObjectType::OTWallSegment:
 	case EObjectType::OTFinish:
 	case EObjectType::OTRailSegment:
+	case EObjectType::OTSystemPanel:
 		return SetIconMeshForWallAssembly(Assembly, InRenderTarget);
 	case EObjectType::OTFloorSegment:
 	case EObjectType::OTRoofFace:
