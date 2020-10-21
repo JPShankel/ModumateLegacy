@@ -87,7 +87,7 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 		midpoint = targetEdge->CachedMidpoint;
 
 		auto targetFace = Graph ? Graph->FindFace(TargetObjID) : nullptr;
-		bool bOutSameDirection;
+		bool bOutSameDirection = true;
 		int32 edgeIdx = targetFace ? targetFace->FindEdgeIndex(TargetEdgeID, bOutSameDirection) : INDEX_NONE;
 		if (edgeIdx != INDEX_NONE)
 		{
@@ -123,7 +123,7 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 		midpoint = (endPosition + startPosition) * 0.5f;
 
 		auto targetFace = SurfaceGraph ? SurfaceGraph->FindPolygon(TargetObjID) : nullptr;
-		bool bOutSameDirection;
+		bool bOutSameDirection = true;
 		int32 edgeIdx = targetFace ? targetFace->FindEdgeIndex(TargetEdgeID, bOutSameDirection) : INDEX_NONE;
 
 		FVector2D dir = endVertex->Position - startVertex->Position;
