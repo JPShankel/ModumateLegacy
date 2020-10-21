@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Database/ModumateObjectEnums.h"
+#include "UnrealClasses/EditModelInputHandler.h"
 
 #include "ViewModeIndicatorWidget.generated.h"
 
@@ -42,6 +43,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UTexture2D* IconSurfaceGraphs;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButton* IndicatorButton;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText TextObjectEditing;
 
@@ -51,6 +55,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText TextSurfaceGraphs;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	EInputCommand InputCommand;
+
+	UFUNCTION()
+	void OnIndicatorButtonPress();
+
 	void SwitchToViewMode(EEditViewModes NewViewMode);
+
+protected:
+
+	UFUNCTION()
+	UWidget* OnTooltipWidget();
 
 };

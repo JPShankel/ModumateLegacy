@@ -3,6 +3,9 @@
 #include "UI/Toolbar/ViewModeIndicatorWidget.h"
 #include "Components/Image.h"
 #include "UI/Custom/ModumateTextBlock.h"
+#include "UI/Custom/ModumateButton.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/TooltipManager.h"
 
 
 UViewModeIndicatorWidget::UViewModeIndicatorWidget(const FObjectInitializer& ObjectInitializer)
@@ -16,12 +19,28 @@ bool UViewModeIndicatorWidget::Initialize()
 	{
 		return false;
 	}
+
+	if (IndicatorButton)
+	{
+		IndicatorButton->OnReleased.AddDynamic(this, &UViewModeIndicatorWidget::OnIndicatorButtonPress);
+	}
+	ToolTipWidgetDelegate.BindDynamic(this, &UViewModeIndicatorWidget::OnTooltipWidget);
+
 	return true;
 }
 
 void UViewModeIndicatorWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
+
+void UViewModeIndicatorWidget::OnIndicatorButtonPress()
+{
+	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	if (controller)
+	{
+		controller->InputHandlerComponent->TryCommand(InputCommand);
+	}
 }
 
 void UViewModeIndicatorWidget::SwitchToViewMode(EEditViewModes NewViewMode)
@@ -43,4 +62,9 @@ void UViewModeIndicatorWidget::SwitchToViewMode(EEditViewModes NewViewMode)
 	default:
 		break;
 	}
+}
+
+UWidget* UViewModeIndicatorWidget::OnTooltipWidget()
+{
+	return UTooltipManager::GenerateTooltipWithInputWidget(InputCommand, this);
 }

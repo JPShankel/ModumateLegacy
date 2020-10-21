@@ -39,6 +39,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UHorizontalBox* HorizontalBoxForKeys;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetAnim))
+	class UWidgetAnimation* FadeInAnim;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Menu)
 	TSubclassOf<class UTooltipKeyTextWidget> TooltipKeyTextWidgetClass;
 

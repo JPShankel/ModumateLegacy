@@ -60,9 +60,11 @@ void UComponentAssemblyListItem::UpdateItemType(EComponentListItemType NewItemTy
 	}
 
 	ComponentPresetItem->IconImage->SetVisibility(bIsNonAssemblyObjectSelectItem ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
-	ComponentPresetItem->TextNumber->SetVisibility(bIsNonAssemblyObjectSelectItem ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
-	ComponentPresetItem->GrabHandleImage->SetVisibility(bIsNonAssemblyObjectSelectItem ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 	ComponentPresetItem->IconImageBackground->SetVisibility(bIsNonAssemblyObjectSelectItem ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+
+	// TODO: TextNumber and GrabHandleImage are collapsed for now until assembly list can be rearranged
+	ComponentPresetItem->TextNumber->SetVisibility(ESlateVisibility::Collapsed);
+	ComponentPresetItem->GrabHandleImage->SetVisibility(ESlateVisibility::Collapsed);
 
 	switch (ItemType)
 	{

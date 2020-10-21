@@ -28,6 +28,8 @@ bool UTooltipWidget::Initialize()
 void UTooltipWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	PlayAnimation(FadeInAnim);
 }
 
 void UTooltipWidget::BuildPrimaryTooltip(const FTooltipData& InData)

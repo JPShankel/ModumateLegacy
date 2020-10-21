@@ -39,19 +39,19 @@ void UTooltipManager::Shutdown()
 {
 }
 
-class UTooltipWidget* UTooltipManager::GetOrCreateSecondaryTooltipWidget()
+class UTooltipWidget* UTooltipManager::GetOrCreateTooltipWidgetFromPool(TSubclassOf<class UTooltipWidget> TooltipClass)
 {
 	AEditModelPlayerController_CPP* EditModelController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 	if (EditModelController && EditModelController->EditModelUserWidget)
 	{
-		return EditModelController->GetEditModelHUD()->GetOrCreateWidgetInstance<UTooltipWidget>(SecondaryTooltipWidgetClass);
+		return EditModelController->GetEditModelHUD()->GetOrCreateWidgetInstance<UTooltipWidget>(TooltipClass);
 	}
 	else
 	{
 		AMainMenuController_CPP* MainMenuController = GetWorld()->GetFirstPlayerController<AMainMenuController_CPP>();
 		if (MainMenuController && MainMenuController->StartRootMenuWidget)
 		{
-			return MainMenuController->StartRootMenuWidget->UserWidgetPool.GetOrCreateInstance<UTooltipWidget>(SecondaryTooltipWidgetClass);
+			return MainMenuController->StartRootMenuWidget->UserWidgetPool.GetOrCreateInstance<UTooltipWidget>(TooltipClass);
 		}
 	}
 	return nullptr;
@@ -67,11 +67,23 @@ class UWidget* UTooltipManager::GenerateTooltipNonInputWidget(const FName& Toolt
 		const auto& tooltipData = manager->TooltipsMap.FindRef(TooltipID);
 		if (!tooltipData.TooltipText.IsEmpty())
 		{
-			UTooltipWidget* newTooltipWidget = manager->GetOrCreateSecondaryTooltipWidget();
-			if (newTooltipWidget)
+			if (tooltipData.TooltipTitle.IsEmpty())
 			{
-				newTooltipWidget->BuildSecondaryTooltip(tooltipData);
-				return newTooltipWidget;
+				UTooltipWidget* newSecondaryTooltip = manager->GetOrCreateTooltipWidgetFromPool(manager->SecondaryTooltipWidgetClass);
+				if (newSecondaryTooltip)
+				{
+					newSecondaryTooltip->BuildSecondaryTooltip(tooltipData);
+					return newSecondaryTooltip;
+				}
+			}
+			else
+			{
+				UTooltipWidget* newPrimaryTooltip = manager->GetOrCreateTooltipWidgetFromPool(manager->PrimaryTooltipWidgetClass);
+				if (newPrimaryTooltip)
+				{
+					newPrimaryTooltip->BuildPrimaryTooltip(tooltipData);
+					return newPrimaryTooltip;
+				}
 			}
 		}
 	}
