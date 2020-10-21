@@ -34,6 +34,7 @@ UPortalToolBase::UPortalToolBase(const FObjectInitializer& ObjectInitializer)
 	, InstanceStampSize(FVector::ZeroVector)
 	, InstanceBottomOffset(0.0f)
 {
+	CreateObjectMode = EToolCreateObjectMode::Stamp;
 	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
 	if (world)
 	{
@@ -49,7 +50,6 @@ bool UPortalToolBase::Activate()
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
 	SetupCursor();
 	Active = true;
-	CreateObjectMode = EToolCreateObjectMode::Draw;
 	return true;
 }
 
