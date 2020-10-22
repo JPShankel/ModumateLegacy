@@ -29,21 +29,15 @@ namespace Modumate
 
 	void FModumateClippingTriangles::AddTrianglesFromDoc(const FModumateDocument * doc)
 	{
-		TArray<const FModumateObjectInstance*> separatorObjects(doc->GetObjectsOfType({
+		TArray<const FModumateObjectInstance*> occluderObjects(doc->GetObjectsOfType({
 			EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTRoofFace, EObjectType::OTCeiling,
-			EObjectType::OTSystemPanel }));
+			EObjectType::OTSystemPanel, EObjectType::OTDoor, EObjectType::OTWindow }));
 
-		const int numObjects = separatorObjects.Num();
+		const int numObjects = occluderObjects.Num();
 		int totalTriangles = 0;
-		for (const auto& object: separatorObjects)
+		for (const auto& object: occluderObjects)
 		{
-			const ADynamicMeshActor* meshActor = Cast<ADynamicMeshActor>(object->GetActor());
-			if (!meshActor)
-			{
-				continue;
-			}
-
-			FTransform localToWorld = meshActor->ActorToWorld();
+			FTransform localToWorld;
 			TArray<FVector> vertices;
 			TArray<int32> triangles;
 			TArray<FVector> normals;
@@ -51,8 +45,29 @@ namespace Modumate
 			TArray<FProcMeshTangent> tangents;
 			const FVector uvAnchor;
 
+			const EObjectType objectType = object->GetObjectType();
+			const ADynamicMeshActor* meshActor = nullptr;
+			if (objectType == EObjectType::OTDoor || objectType == EObjectType::OTWindow)
+			{
+				const auto* parent = object->GetParentObject();
+				if (parent)
+				{
+					meshActor = Cast<ADynamicMeshActor>(parent->GetActor());
+				}
+			}
+			else
+			{
+				meshActor = Cast<ADynamicMeshActor>(object->GetActor());
+			}
+
+			if (!meshActor)
+			{
+				continue;
+			}
+
+			localToWorld = meshActor->ActorToWorld();
 			const TArray<FLayerGeomDef>& layerGeoms = meshActor->LayerGeometries;
-			for (const auto& layerGeom: layerGeoms)
+			for (const auto& layerGeom : layerGeoms)
 			{
 				layerGeom.TriangulateMesh(vertices, triangles, normals, uvs, tangents, uvAnchor, 0.0f);
 			}
