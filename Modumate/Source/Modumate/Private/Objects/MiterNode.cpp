@@ -244,20 +244,18 @@ bool FMiterData::GatherDetails(const FModumateObjectInstance *InMiterObject)
 		ParticipantsByID.Add(participantID, MoveTemp(participant));
 	}
 
-	int32 numParticipants = ParticipantsByID.Num();
-
 	// Sort the participants by angle
 	SortedMiterIDs.Sort([this](const int32 &IDA, const int32 &IDB) {
 		return ParticipantsByID[IDA].MiterAngle > ParticipantsByID[IDB].MiterAngle;
 	});
 
-	// Return whether we can miter, given the participants for this node
-	return (numParticipants >= 2);
+	// Return whether we gathered all of the necessary data for mitering
+	return true;
 }
 
 bool FMiterData::CalculateMitering()
 {
-	bool bTotalMiterSuccess = false;
+	bool bTotalMiterSuccess = true;
 	int32 numParticipants = ParticipantsByID.Num();
 
 	// Now, for each object, extend its structural layer group
@@ -285,9 +283,10 @@ bool FMiterData::ExtendLayerGroup(int32 ParticipantIndex, EMiterLayerGroup Miter
 	FMiterParticipantData &participant = ParticipantsByID[curID];
 	int32 numParticipants = SortedMiterIDs.Num();
 
+	// If the participant is missing a particular layer group, then we report success without doing any work.
 	if (!participant.HaveLayerGroup[layerGroupIdx] || (numParticipants < 2))
 	{
-		return false;
+		return true;
 	}
 
 	int32 participantID = participant.MOI->ID;
@@ -359,13 +358,13 @@ bool FMiterData::ExtendLayerGroup(int32 ParticipantIndex, EMiterLayerGroup Miter
 	// Using the collision results for extended sides,
 	// try to get actual extension values against the neighboring layer groups
 	if (startHitResult.bRayHit && endHitResult.bRayHit)
-		{
-			layerGroupExtensions.X = startHitResult.Dist;
-			layerGroupExtensions.Y = endHitResult.Dist;
-			participant.LayerGroupExtensions[layerGroupIdx] = layerGroupExtensions;
-			participant.FinishLayerGroupExtension(MiterLayerGroup);
-			return true;
-		}
-
-		return false;
+	{
+		layerGroupExtensions.X = startHitResult.Dist;
+		layerGroupExtensions.Y = endHitResult.Dist;
+		participant.LayerGroupExtensions[layerGroupIdx] = layerGroupExtensions;
+		participant.FinishLayerGroupExtension(MiterLayerGroup);
+		return true;
 	}
+
+	return false;
+}

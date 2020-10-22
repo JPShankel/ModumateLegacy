@@ -19,13 +19,15 @@ FMOIMetaEdgeImpl::FMOIMetaEdgeImpl(FModumateObjectInstance *moi)
 
 bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
+	FModumateDocument* doc = MOI->GetDocument();
+
 	switch (DirtyFlag)
 	{
 	case EObjectDirtyFlags::Structure:
 	{
 		MOI->GetConnectedMOIs(CachedConnectedMOIs);
 
-		auto& graph = MOI->GetDocument()->GetVolumeGraph();
+		auto& graph = doc->GetVolumeGraph();
 		auto edge = graph.FindEdge(MOI->ID);
 		auto vertexStart = edge ? graph.FindVertex(edge->StartVertexID) : nullptr;
 		auto vertexEnd = edge ? graph.FindVertex(edge->EndVertexID) : nullptr;
@@ -44,10 +46,21 @@ bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 	case EObjectDirtyFlags::Mitering:
 	{
 		// TODO: clean the miter details by performing the mitering for this edge's connected plane-hosted objects
-		bool bUpdateSuccess = CachedMiterData.GatherDetails(MOI);
-		if (bUpdateSuccess)
+		if (!CachedMiterData.GatherDetails(MOI))
 		{
-			bool bMiterSuccess = CachedMiterData.CalculateMitering();
+			return false;
+		}
+
+		CachedMiterData.CalculateMitering();
+
+		// If the miter participants aren't already miter-dirty, then mark them dirty now so that they can update their layer extensions.
+		for (auto& kvp : CachedMiterData.ParticipantsByID)
+		{
+			FModumateObjectInstance* miterParticipantMOI = doc->GetObjectById(kvp.Key);
+			if (miterParticipantMOI)
+			{
+				miterParticipantMOI->MarkDirty(EObjectDirtyFlags::Mitering);
+			}
 		}
 	}
 	break;
