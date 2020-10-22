@@ -31,7 +31,8 @@ namespace Modumate
 	{
 		TArray<const FModumateObjectInstance*> occluderObjects(doc->GetObjectsOfType({
 			EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTRoofFace, EObjectType::OTCeiling,
-			EObjectType::OTSystemPanel, EObjectType::OTDoor, EObjectType::OTWindow }));
+			EObjectType::OTSystemPanel, EObjectType::OTDoor, EObjectType::OTWindow,EObjectType::OTStructureLine,
+			EObjectType::OTMullion }));
 
 		const int numObjects = occluderObjects.Num();
 		int totalTriangles = 0;
@@ -46,6 +47,7 @@ namespace Modumate
 			const FVector uvAnchor;
 
 			const EObjectType objectType = object->GetObjectType();
+
 			const ADynamicMeshActor* meshActor = nullptr;
 			if (objectType == EObjectType::OTDoor || objectType == EObjectType::OTWindow)
 			{
@@ -64,10 +66,25 @@ namespace Modumate
 			{
 				continue;
 			}
-
 			localToWorld = meshActor->ActorToWorld();
+
+			if (objectType == EObjectType::OTStructureLine || objectType == EObjectType::OTMullion)
+			{
+				UProceduralMeshComponent* meshComponent = meshActor->Mesh;
+				const FProcMeshSection* meshSection = meshComponent->GetProcMeshSection(0);
+				if (meshSection)
+				{
+					for (const auto& vertex: meshSection->ProcVertexBuffer)
+					{
+						vertices.Add((vertex.Position));
+					}
+					triangles.Append(meshSection->ProcIndexBuffer);
+				}
+
+			}
+
 			const TArray<FLayerGeomDef>& layerGeoms = meshActor->LayerGeometries;
-			for (const auto& layerGeom : layerGeoms)
+			for (const auto& layerGeom: layerGeoms)
 			{
 				layerGeom.TriangulateMesh(vertices, triangles, normals, uvs, tangents, uvAnchor, 0.0f);
 			}
