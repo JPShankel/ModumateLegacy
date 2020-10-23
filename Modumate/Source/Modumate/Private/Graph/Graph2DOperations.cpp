@@ -999,6 +999,10 @@ namespace Modumate
 				continue;
 			}
 
+			bool bEdgesOnSamePoly = true;
+			bool bPolyIDAssigned = false;
+			int32 polyID = MOD_ID_NONE;
+
 			TSet<int32> previousPolys;
 			for (FGraphSignedID edgeID : curPolyEdges)
 			{
@@ -1010,21 +1014,31 @@ namespace Modumate
 					{
 						previousPolys.Add(adjacentPolyID);
 					}
+
+					if (!bPolyIDAssigned)
+					{
+						polyID = adjacentPolyID;
+						bPolyIDAssigned = true;
+					}
+					bEdgesOnSamePoly = bEdgesOnSamePoly && (polyID == adjacentPolyID);
 				}
 			}
 
-			int32 addedPolyID = NextID;
-			updatePolygonsDelta.AddNewPolygon(curVertexIDs, NextID, previousPolys.Array());
-
-			for (int32 previousID : previousPolys)
+			if (!bEdgesOnSamePoly || polyID == MOD_ID_NONE)
 			{
-				auto polygon = FindPolygon(previousID);
-				if (polygon == nullptr)
-				{
-					continue;
-				}
+				int32 addedPolyID = NextID;
+				updatePolygonsDelta.AddNewPolygon(curVertexIDs, NextID, previousPolys.Array());
 
-				updatePolygonsDelta.PolygonDeletions.Add(previousID, FGraph2DObjDelta(polygon->VertexIDs, { addedPolyID }));
+				for (int32 previousID : previousPolys)
+				{
+					auto polygon = FindPolygon(previousID);
+					if (polygon == nullptr)
+					{
+						continue;
+					}
+
+					updatePolygonsDelta.PolygonDeletions.Add(previousID, FGraph2DObjDelta(polygon->VertexIDs, { addedPolyID }));
+				}
 			}
 		}
 
