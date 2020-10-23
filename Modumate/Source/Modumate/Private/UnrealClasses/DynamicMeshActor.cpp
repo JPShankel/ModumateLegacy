@@ -725,7 +725,7 @@ bool ADynamicMeshActor::SetupStairPolys(const FVector& StairOrigin, const TArray
 
 			const FArchitecturalMaterial& material =
 				bProcessingRisers ?
-					Assembly.RiserLayers[materialIndex++].Material : Assembly.TreadLayers[materialIndex++].Material;
+					Assembly.RiserLayers[materialIndex++].Material_DEPRECATED : Assembly.TreadLayers[materialIndex++].Material_DEPRECATED;
 			Mesh->CreateMeshSection_LinearColor(sectionIndex, vertices, triangles, normals, uv0, vertexColors, tangents, true);
 			UModumateFunctionLibrary::SetMeshMaterial(Mesh, material, sectionIndex, &CachedMIDs[sectionIndex]);
 			++sectionIndex;
@@ -1025,7 +1025,7 @@ bool ADynamicMeshActor::SetPlacementError(FName errorTag, bool bIsError)
 			else
 			{
 				const FBIMLayerSpec &layerData = Assembly.Layers[i];
-				UModumateFunctionLibrary::SetMeshMaterial(procMeshComp, layerData.Material, 0, &CachedMIDs[i]);
+				UModumateFunctionLibrary::SetMeshMaterial(procMeshComp, layerData.Material_DEPRECATED, 0, &CachedMIDs[i]);
 			}
 		}
 	}

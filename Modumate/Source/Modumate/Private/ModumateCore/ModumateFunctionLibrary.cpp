@@ -819,7 +819,7 @@ bool UModumateFunctionLibrary::UpdateMaterialsFromAssembly(const TArray<UProcedu
 			}
 			else
 			{
-				UModumateFunctionLibrary::SetMeshMaterial(layerMesh, layerData.Material, 0, cachedMIDPtr);
+				UModumateFunctionLibrary::SetMeshMaterial(layerMesh, layerData.Material_DEPRECATED, 0, cachedMIDPtr);
 			}
 		}
 	}

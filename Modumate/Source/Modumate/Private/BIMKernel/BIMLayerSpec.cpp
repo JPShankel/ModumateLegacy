@@ -38,8 +38,8 @@ ECraftingResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& In
 		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(FBIMKey(materialKey));
 		if (ensureAlways(mat != nullptr))
 		{
-			Material = *mat;
-			ensureAlways(Material.EngineMaterial != nullptr);
+			Material_DEPRECATED = *mat;
+			ensureAlways(Material_DEPRECATED.EngineMaterial != nullptr);
 		}
 	}
 
@@ -49,7 +49,7 @@ ECraftingResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& In
 		const FCustomColor* customColor = InDB.GetCustomColorByKey(FBIMKey(colorKey));
 		if (customColor != nullptr)
 		{
-			Material.DefaultBaseColor = *customColor;
+			Material_DEPRECATED.DefaultBaseColor = *customColor;
 		}
 	}
 
@@ -208,6 +208,9 @@ ECraftingResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB
 	{
 		Thickness = Modumate::Units::FUnitValue::WorldCentimeters(Modules[0].ModuleExtents.Z);
 	}
+
+	// TODO: 1-dimensional patterns still depend on deprecated layer material
+	Material_DEPRECATED = Modules[0].Material;
 
 	return ECraftingResult::Success;
 }
