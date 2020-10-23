@@ -29,10 +29,17 @@ namespace Modumate
 
 	void FModumateClippingTriangles::AddTrianglesFromDoc(const FModumateDocument * doc)
 	{
-		TArray<const FModumateObjectInstance*> occluderObjects(doc->GetObjectsOfType({
-			EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTRoofFace, EObjectType::OTCeiling,
-			EObjectType::OTSystemPanel, EObjectType::OTDoor, EObjectType::OTWindow,EObjectType::OTStructureLine,
-			EObjectType::OTMullion }));
+		const TSet<EObjectType> separatorOccluderTypes({ EObjectType::OTWallSegment, EObjectType::OTFloorSegment,
+			EObjectType::OTRoofFace, EObjectType::OTCeiling, EObjectType::OTSystemPanel, EObjectType::OTDoor,
+			EObjectType::OTWindow });
+
+		const TSet<EObjectType>  actorMeshOccluderTypes({ EObjectType::OTStructureLine,
+			EObjectType::OTMullion, EObjectType::OTCabinet });
+
+		TSet<EObjectType> occluderTypes(separatorOccluderTypes);
+		occluderTypes.Append(actorMeshOccluderTypes);
+
+		TArray<const FModumateObjectInstance*> occluderObjects(doc->GetObjectsOfType(occluderTypes));
 
 		const int numObjects = occluderObjects.Num();
 		int totalTriangles = 0;
@@ -68,7 +75,7 @@ namespace Modumate
 			}
 			localToWorld = meshActor->ActorToWorld();
 
-			if (objectType == EObjectType::OTStructureLine || objectType == EObjectType::OTMullion)
+			if (actorMeshOccluderTypes.Contains(objectType))
 			{
 				UProceduralMeshComponent* meshComponent = meshActor->Mesh;
 				const FProcMeshSection* meshSection = meshComponent->GetProcMeshSection(0);
