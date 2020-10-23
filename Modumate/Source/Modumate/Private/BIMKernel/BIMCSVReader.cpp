@@ -226,7 +226,7 @@ ECraftingResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row,
 					FString presetName;
 					if (Preset.TryGetProperty(BIMPropertyNames::Name, presetName))
 					{
-						Preset.DisplayName = FText::FromString(presetName.Replace(TEXT(","),TEXT(", ")));
+						Preset.DisplayName = FText::FromString(presetName);
 					}
 					OutPresets.Add(Preset.PresetID, Preset);
 					Preset = FBIMPreset();
@@ -276,7 +276,18 @@ ECraftingResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row,
 			// Only add blank properties if they don't already exist
 			if (!Preset.HasProperty(propSpec.Name) || !cell.IsEmpty())
 			{
-				Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, cell);
+				/*
+				TODO: refactored BIM properties will distinguish user-facing string properties from keys (which need whitespace stripped)
+				For now, use the unstripped string for 'Name,' which is always user facing
+				*/
+				if (propSpec.Name == BIMPropertyNames::Name)
+				{
+					Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, Row[i]);
+				}
+				else
+				{
+					Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, cell);
+				}
 			}
 
 			if (UPropertySheet != nullptr)
