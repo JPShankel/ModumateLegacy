@@ -197,6 +197,12 @@ ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCol
 		ParentTagPaths.AddDefaulted_GetRef().FromString(ptp);
 	}
 
+	FString displayName;
+	if (TryGetProperty(BIMPropertyNames::Name, displayName))
+	{
+		DisplayName = FText::FromString(displayName);
+	}
+
 	return ECraftingResult::Success;
 }
 
