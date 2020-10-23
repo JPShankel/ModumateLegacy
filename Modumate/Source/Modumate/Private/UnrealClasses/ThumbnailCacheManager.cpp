@@ -112,10 +112,10 @@ FName UThumbnailCacheManager::GetThumbnailKeyForAssembly(const FBIMAssemblySpec 
 
 FName UThumbnailCacheManager::GetThumbnailKeyForPreset(const FBIMKey& PresetID)
 {
-	// TODO: version suffix
-	static const FString thumbnailKeySuffix(TEXT("_Ver0"));
+	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
+	const FString& projectVersion = projectSettings->ProjectVersion;
 
-	FString hashKey = FString::Printf(TEXT("%08X%s"), GetTypeHash(PresetID), *thumbnailKeySuffix);
+	FString hashKey = FString::Printf(TEXT("%08X%s"), GetTypeHash(PresetID), *projectVersion);
 	return FName(*hashKey);
 
 }
