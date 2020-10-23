@@ -202,18 +202,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
-	RegisterCommand(kMakeMetaEdge, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		TArray<FVector> points = params.GetValue(kControlPoints);
-		TArray<int32> ids = params.GetValue(kObjectIDs);
-		int32 parentID = params.GetValue(kParent);
-		TArray<int32> newObjIDs;
-
-		bool bSuccess = GetDocument()->MakeMetaObject(GetWorld(), points, ids, EObjectType::OTMetaEdge, parentID, newObjIDs);
-		output.SetValue(kObjectIDs, newObjIDs);
-
-		return bSuccess;
-	});
-
 	RegisterCommand(kMakeScopeBox, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		FModumateDocument *doc = GetDocument();
 		if (doc == nullptr)

@@ -29,7 +29,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kSetFOV, "set_fov");
 
 		// Object creators
-		MODUMATE_COMMAND(kMakeMetaEdge, "make_edge");
 		MODUMATE_COMMAND(kMakeScopeBox, "make_scopebox");
 
 		// Groups

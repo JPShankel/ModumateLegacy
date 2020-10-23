@@ -6,12 +6,6 @@
 #include "BIMKernel/BIMAssemblySpec.h"
 #include "EditModelStructureLineTool.generated.h"
 
-class AEditModelGameMode_CPP;
-class AEditModelGameState_CPP;
-class AEditModelPlayerState_CPP;
-class ADynamicMeshActor;
-class ALineActor;
-
 UCLASS()
 class MODUMATE_API UStructureLineTool : public UEditModelToolBase
 {
@@ -49,9 +43,13 @@ protected:
 	int32 LastValidTargetID;
 	int32 LastTargetStructureLineID;
 	FBIMAssemblySpec ObjAssembly;
-	TWeakObjectPtr<ADynamicMeshActor> PendingObjMesh;
-	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
-	TWeakObjectPtr<AEditModelGameState_CPP> GameState;
+
+	UPROPERTY()
+	class ADynamicMeshActor* PendingObjMesh;
+
+	UPROPERTY()
+	class AEditModelGameMode_CPP* GameMode;
+
 	FVector LineStartPos, LineEndPos, LineDir, ObjNormal, ObjUp;
 };
 

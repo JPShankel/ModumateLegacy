@@ -28,7 +28,6 @@ UStructureLineTool::UStructureLineTool(const FObjectInitializer& ObjectInitializ
 	, LastTargetStructureLineID(MOD_ID_NONE)
 	, PendingObjMesh(nullptr)
 	, GameMode(nullptr)
-	, GameState(nullptr)
 	, LineStartPos(ForceInitToZero)
 	, LineEndPos(ForceInitToZero)
 	, LineDir(ForceInitToZero)
@@ -39,7 +38,6 @@ UStructureLineTool::UStructureLineTool(const FObjectInitializer& ObjectInitializ
 	if (world)
 	{
 		GameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
-		GameState = world->GetGameState<AEditModelGameState_CPP>();
 	}
 }
 
@@ -60,7 +58,7 @@ bool UStructureLineTool::Activate()
 
 	ResetState();
 
-	if (!PendingObjMesh.IsValid())
+	if (PendingObjMesh == nullptr)
 	{
 		PendingObjMesh = Controller->GetWorld()->SpawnActor<ADynamicMeshActor>(GameMode->DynamicMeshActorClass.Get());
 	}
@@ -90,10 +88,10 @@ bool UStructureLineTool::Deactivate()
 {
 	ResetState();
 
-	if (PendingObjMesh.IsValid())
+	if (PendingObjMesh)
 	{
 		PendingObjMesh->Destroy();
-		PendingObjMesh.Reset();
+		PendingObjMesh = nullptr;
 	}
 
 	if (Controller)
@@ -270,7 +268,7 @@ void UStructureLineTool::OnAssemblyChanged()
 	Super::OnAssemblyChanged();
 
 	EToolMode toolMode = GetToolMode();
-	const FBIMAssemblySpec* assembly = GameState.IsValid() ?
+	const FBIMAssemblySpec* assembly = GameState ?
 		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
 
 	if (assembly != nullptr)
@@ -321,7 +319,7 @@ void UStructureLineTool::SetTargetID(int32 NewTargetID)
 
 bool UStructureLineTool::SetStructureLineHidden(int32 StructureLineID, bool bHidden)
 {
-	if (GameState.IsValid() && (StructureLineID != MOD_ID_NONE))
+	if (GameState && (StructureLineID != MOD_ID_NONE))
 	{
 		FModumateObjectInstance *structureLineObj = GameState->Document.GetObjectById(StructureLineID);
 		if (structureLineObj)
@@ -337,7 +335,7 @@ bool UStructureLineTool::SetStructureLineHidden(int32 StructureLineID, bool bHid
 
 bool UStructureLineTool::UpdatePreviewStructureLine()
 {
-	if (!PendingObjMesh.IsValid() || AssemblyKey.IsNone())
+	if ((PendingObjMesh == nullptr) || AssemblyKey.IsNone())
 	{
 		return false;
 	}
@@ -361,11 +359,12 @@ bool UStructureLineTool::UpdatePreviewStructureLine()
 
 bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 {
-	if (!GameState.IsValid())
+	if (GameState == nullptr)
 	{
 		return false;
 	}
 
+	TArray<FDeltaPtr> deltas;
 	TArray<int32> targetEdgeIDs;
 	bool bMakeEdge = (TargetEdgeID == MOD_ID_NONE);
 	if (bMakeEdge)
@@ -384,19 +383,18 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 
 		TArray<FVector> points({ LineStartPos, LineEndPos });
 
-		auto commandResult = Controller->ModumateCommand(
-			FModumateCommand(Commands::kMakeMetaEdge)
-			.Param(Parameters::kControlPoints, points)
-			.Param(Parameters::kParent, Controller->EMPlayerState->GetViewGroupObjectID()));
-
-		bool bCommandSuccess = commandResult.GetValue(Parameters::kSuccess);
-		TArray<int32> newEdgeIDs = commandResult.GetValue(Parameters::kObjectIDs);
+		TArray<int32> addedVertexIDs, addedEdgeIDs, addedFaceIDs;
+		if (!GameState->Document.MakeMetaObject(Controller->GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
+			addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltas))
+		{
+			return false;
+		}
 
 		// For each edge that the graph command created that is contained within the pending line,
 		// keep track of the edge as a target edge, on which to create a StructureLine object.
 		const FGraph3D &volumeGraph = GameState->Document.GetVolumeGraph();
 
-		for (int32 newEdgeID : newEdgeIDs)
+		for (int32 newEdgeID : addedEdgeIDs)
 		{
 			const FGraph3DEdge *newEdge = volumeGraph.FindEdge(newEdgeID);
 			if (newEdge)

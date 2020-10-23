@@ -1,6 +1,8 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #pragma once
+
+#include "DocumentManagement/DocumentDelta.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 
 #include "EditModelPortalTools.generated.h"
@@ -15,27 +17,6 @@ UCLASS()
 class MODUMATE_API UPortalToolBase : public UEditModelToolBase
 {
 	GENERATED_BODY()
-
-protected:
-	UPROPERTY()
-	ACompoundMeshActor * CursorActor;
-
-	FModumateDocument *Document;
-	int32 HostID;
-	bool bHasBoringError;
-	bool bUseFixedOffset;
-	FVector WorldPos;
-	FVector2D RelativePos;
-	FQuat WorldRot, RelativeRot;
-
-	bool Active,Inverted;
-	bool bValidPortalConfig;
-
-	FVector InstanceStampSize;
-	float InstanceBottomOffset;
-
-	void SetupCursor();
-	bool CalculateNativeSize();
 
 public:
 	UPortalToolBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
@@ -66,6 +47,22 @@ public:
 
 protected:
 	virtual void OnAssemblyChanged() override;
+
+	bool GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas);
+	bool CalculateNativeSize();
+
+	int32 CurTargetPlaneID;
+	bool bUseBottomOffset;
+	FVector WorldPos;
+	FVector2D RelativePos;
+	FQuat WorldRot, RelativeRot;
+
+	bool Active, Inverted;
+	bool bValidPortalConfig;
+	TArray<FDeltaPtr> Deltas;
+
+	FVector InstanceStampSize;
+	float InstanceBottomOffset;
 };
 
 UCLASS()

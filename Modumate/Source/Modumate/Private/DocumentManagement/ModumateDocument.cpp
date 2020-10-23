@@ -49,8 +49,12 @@ using namespace Modumate;
 
 const FName FModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
 
-FModumateDocument::FModumateDocument() :
-	NextID(1)
+FModumateDocument::FModumateDocument()
+	: NextID(1)
+	, PrePreviewNextID(1)
+	, bApplyingPreviewDeltas(false)
+	, bFastClearingPreviewDeltas(false)
+	, bSlowClearingPreviewDeltas(false)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ModumateDocument"));
 
@@ -322,32 +326,32 @@ void FModumateDocument::RestoreDeletedObjects(const TArray<int32> &ids)
 	}
 }
 
-bool FModumateDocument::DeleteObjectImpl(FModumateObjectInstance *ob, bool keepInDeletedList)
+bool FModumateDocument::DeleteObjectImpl(FModumateObjectInstance *ObjToDelete)
 {
-	if (ob && !ob->IsDestroyed())
+	if (ObjToDelete && !ObjToDelete->IsDestroyed())
 	{
 		// Store off the connected objects, in case they will be affected by this deletion
 		TArray<FModumateObjectInstance *> connectedMOIs;
-		ob->GetConnectedMOIs(connectedMOIs);
+		ObjToDelete->GetConnectedMOIs(connectedMOIs);
+		int32 objID = ObjToDelete->ID;
 
-		ob->Destroy();
-		ObjectInstanceArray.Remove(ob);
-		ObjectsByID.Remove(ob->ID);
-
-		if (keepInDeletedList)
+		if (bSlowClearingPreviewDeltas)
 		{
-			DeletedObjects.Add(ob->ID, ob);
+			delete ObjToDelete;
 		}
 		else
 		{
-			delete ob;
+			ObjToDelete->Destroy(!bFastClearingPreviewDeltas);
+			DeletedObjects.Add(ObjToDelete->ID, ObjToDelete);
 		}
 
-		// Update visibility & collision enabled on neighbors, in case it was dependent on this MOI.
-		for (FModumateObjectInstance *obj : connectedMOIs)
+		ObjectInstanceArray.Remove(ObjToDelete);
+		ObjectsByID.Remove(objID);
+
+		// Update mitering, visibility & collision enabled on neighbors, in case they were dependent on this MOI.
+		for (FModumateObjectInstance *connectedMOI : connectedMOIs)
 		{
-			obj->MarkDirty(EObjectDirtyFlags::Mitering);
-			obj->MarkDirty(EObjectDirtyFlags::Visuals);
+			connectedMOI->MarkDirty(EObjectDirtyFlags::Mitering | EObjectDirtyFlags::Visuals);
 		}
 
 		return true;
@@ -363,8 +367,7 @@ bool FModumateDocument::RestoreObjectImpl(FModumateObjectInstance *obj)
 		DeletedObjects.Remove(obj->ID);
 		ObjectInstanceArray.AddUnique(obj);
 		ObjectsByID.Add(obj->ID, obj);
-		obj->RestoreActor();
-		obj->PostCreateObject(false);
+		obj->Restore();
 
 		return true;
 	}
@@ -381,7 +384,7 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObj(UWorld* World, co
 	}
 
 	FModumateObjectInstance* obj = TryGetDeletedObject(StateData.ID);
-	if (obj && RestoreObjectImpl(obj))
+	if (obj && (obj->GetStateData() == StateData) && RestoreObjectImpl(obj))
 	{
 		return obj;
 	}
@@ -786,7 +789,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 bool FModumateDocument::ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World)
 {
-	ClearPreviewDeltas(World);
+	ClearPreviewDeltas(World, false);
 
 	ClearRedoBuffer();
 
@@ -836,9 +839,26 @@ bool FModumateDocument::ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *Wor
 	return true;
 }
 
+bool FModumateDocument::StartPreviewing()
+{
+	if (bApplyingPreviewDeltas || bFastClearingPreviewDeltas)
+	{
+		return false;
+	}
+
+	bApplyingPreviewDeltas = true;
+	PrePreviewNextID = NextID;
+	return true;
+}
+
 bool FModumateDocument::ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World)
 {
-	ClearPreviewDeltas(World);
+	ClearPreviewDeltas(World, true);
+
+	if (!bApplyingPreviewDeltas)
+	{
+		StartPreviewing();
+	}
 
 	PreviewDeltas = Deltas;
 
@@ -855,28 +875,45 @@ bool FModumateDocument::ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWor
 
 bool FModumateDocument::IsPreviewingDeltas() const
 {
-	return (PreviewDeltas.Num() > 0);
+	return bApplyingPreviewDeltas;
 }
 
-void FModumateDocument::ClearPreviewDeltas(UWorld *World)
+void FModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
 {
-	if (PreviewDeltas.Num() == 0)
+	if (!bApplyingPreviewDeltas || !ensure(!bFastClearingPreviewDeltas && !bSlowClearingPreviewDeltas))
 	{
 		return;
 	}
 
-	TArray<FDeltaPtr> inversePreviewDeltas = PreviewDeltas;
-	Algo::Reverse(inversePreviewDeltas);
-
-	// First, apply the input deltas, generated from the first pass of user intent
-	for (auto& delta : inversePreviewDeltas)
+	if (bFastClear)
 	{
-		delta->MakeInverse()->ApplyTo(this, World);
+		bFastClearingPreviewDeltas = true;
+	}
+	else
+	{
+		bSlowClearingPreviewDeltas = true;
 	}
 
-	PostApplyDeltas(World);
+	if (PreviewDeltas.Num() > 0)
+	{
+		TArray<FDeltaPtr> inversePreviewDeltas = PreviewDeltas;
+		Algo::Reverse(inversePreviewDeltas);
 
-	PreviewDeltas.Reset();
+		// First, apply the input deltas, generated from the first pass of user intent
+		for (auto& delta : inversePreviewDeltas)
+		{
+			delta->MakeInverse()->ApplyTo(this, World);
+		}
+
+		PostApplyDeltas(World);
+
+		PreviewDeltas.Reset();
+	}
+
+	NextID = PrePreviewNextID;
+	bApplyingPreviewDeltas = false;
+	bFastClearingPreviewDeltas = false;
+	bSlowClearingPreviewDeltas = false;
 }
 
 void FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
@@ -1367,10 +1404,14 @@ int32 FModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &F
 	return MOD_ID_NONE;
 }
 
-bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &points, const TArray<int32> &IDs, EObjectType objectType, int32 parentID, TArray<int32> &OutObjIDs)
+bool FModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& points, const TArray<int32>& IDs, EObjectType objectType, int32 parentID,
+	TArray<int32>& OutAddedVertexIDs, TArray<int32>& OutAddedEdgeIDs, TArray<int32>& OutAddedFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeMetaObject"));
-	OutObjIDs.Reset();
+	OutAddedVertexIDs.Reset();
+	OutAddedEdgeIDs.Reset();
+	OutAddedFaceIDs.Reset();
+	OutDeltaPtrs.Reset();
 
 	EGraph3DObjectType graphObjectType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
 	if (!ensureAlways(graphObjectType != EGraph3DObjectType::None))
@@ -1390,9 +1431,13 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 	case EGraph3DObjectType::Vertex:
 	{
 		bValidDelta = (numPoints == 1) && TempVolumeGraph.GetDeltaForVertexAddition(points[0], graphDelta, NextID, id);
+		if (!bValidDelta && (id != MOD_ID_NONE))
+		{
+			OutAddedVertexIDs.Add(id);
+		}
 		deltas = { graphDelta };
 	}
-		break;
+	break;
 	case EGraph3DObjectType::Edge:
 	{
 		TArray<int32> OutEdgeIDs;
@@ -1405,49 +1450,36 @@ bool FModumateDocument::MakeMetaObject(UWorld *world, const TArray<FVector> &poi
 			bValidDelta = false;
 		}
 	}
-		break;
+	break;
 	case EGraph3DObjectType::Face:
 	{
 		if (numPoints >= 3)
 		{
 			bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, deltas, NextID, id);
+			if (!bValidDelta && (id != MOD_ID_NONE))
+			{
+				OutAddedFaceIDs.Add(id);
+			}
 		}
 	}
-		break;
+	break;
 	default:
 		break;
 	}
 
-	if (!bValidDelta)
+	if (!bValidDelta || !FinalizeGraphDeltas(deltas, OutAddedFaceIDs, OutAddedVertexIDs, OutAddedEdgeIDs))
 	{
 		// delta will be false if the object exists, out object ids should contain the existing id
-		if (id != MOD_ID_NONE)
-		{
-			OutObjIDs.Add(id);
-		}
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
 	}
 
-	TArray<int32> faceIDs, vertexIDs, edgeIDs;
-	if (!ensureAlways(FinalizeGraphDeltas(deltas, faceIDs, vertexIDs, edgeIDs)))
-	{
-		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
-		return false;
-	}
-
-	TArray<FDeltaPtr> deltaPtrs;
 	for (auto& delta : deltas)
 	{
-		deltaPtrs.Add(MakeShared<FGraph3DDelta>(delta));
+		OutDeltaPtrs.Add(MakeShared<FGraph3DDelta>(delta));
 	}
-	bool bSuccess = ApplyDeltas(deltaPtrs, world);
 
-	OutObjIDs.Append(faceIDs);
-	OutObjIDs.Append(vertexIDs);
-	OutObjIDs.Append(edgeIDs);
-
-	return bSuccess;
+	return (OutDeltaPtrs.Num() > 0);
 }
 
 bool FModumateDocument::MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height)

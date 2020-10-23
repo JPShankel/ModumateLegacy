@@ -3,6 +3,7 @@
 #include "ToolsAndAdjustments/Tools/EditModelPortalTools.h"
 
 #include "DrawDebugHelpers.h"
+#include "Graph/Graph3DFace.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -20,10 +21,8 @@ using namespace Modumate;
 
 UPortalToolBase::UPortalToolBase(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, CursorActor(nullptr)
-	, Document(nullptr)
-	, HostID(MOD_ID_NONE)
-	, bUseFixedOffset(true)
+	, CurTargetPlaneID(MOD_ID_NONE)
+	, bUseBottomOffset(true)
 	, WorldPos(FVector::ZeroVector)
 	, RelativePos(FVector2D::ZeroVector)
 	, WorldRot(FQuat::Identity)
@@ -35,20 +34,14 @@ UPortalToolBase::UPortalToolBase(const FObjectInitializer& ObjectInitializer)
 	, InstanceBottomOffset(0.0f)
 {
 	CreateObjectMode = EToolCreateObjectMode::Stamp;
-	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
-	if (world)
-	{
-		Document = &world->GetGameState<AEditModelGameState_CPP>()->Document;
-	}
 }
 
 bool UPortalToolBase::Activate()
 {
-	HostID = MOD_ID_NONE;
+	CurTargetPlaneID = MOD_ID_NONE;
 	Controller->DeselectAll();
 	Controller->EMPlayerState->SetHoveredObject(nullptr);
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
-	SetupCursor();
 	Active = true;
 	return true;
 }
@@ -58,93 +51,9 @@ TArray<EEditViewModes> UPortalToolBase::GetRequiredEditModes() const
 	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
 }
 
-void UPortalToolBase::SetupCursor()
-{
-	if (CursorActor != nullptr)
-	{
-		CursorActor->Destroy();
-	}
-
-	if (HostID != 0)
-	{
-		auto *lastHitHost = Document->GetObjectById(HostID);
-		if (lastHitHost)
-		{
-			lastHitHost->MarkDirty(EObjectDirtyFlags::Structure);
-		}
-	}
-
-	CursorActor = Controller->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass());
-	CursorActor->SetActorEnableCollision(false);
-
-	const FBIMAssemblySpec *obAsm = GameState->Document.PresetManager.GetAssemblyByKey(GetToolMode(),AssemblyKey);
-	bValidPortalConfig = true;
-
-	float invMul = Inverted ? 1 : -1;
-
-	CursorActor->MakeFromAssembly(*obAsm, FVector::OneVector, Inverted, false);
-
-	// Store data used for previewing this object as if it were a fully-created MOI
-	CursorActor->TempAssemblyKey = AssemblyKey;
-	CursorActor->TempObjectToolMode = GetToolMode();
-}
-
-bool UPortalToolBase::CalculateNativeSize()
-{
-	const FBIMAssemblySpec* assembly = GameState->Document.PresetManager.GetAssemblyByKey(GetToolMode(), AssemblyKey);
-	if (assembly == nullptr)
-	{
-		return false;
-	}
-
-	// Calculate the native size of the mesh
-	FVector nativeSize(assembly->GetRiggedAssemblyNativeSize());
-	if (!nativeSize.IsZero())
-	{
-		InstanceStampSize = nativeSize;
-		return true;
-	}
-	else if (CursorActor)
-	{
-		// No supplied native size - use meshes:
-		// TODO: don't rely on the CursorActor to compute a property of the assembly
-		FBox bounds(ForceInitToZero);
-		for (const auto* mesh : CursorActor->StaticMeshComps)
-		{
-			if (mesh != nullptr)
-			{
-				FVector minPoint(ForceInitToZero);
-				FVector maxPoint(ForceInitToZero);
-				mesh->GetLocalBounds(minPoint, maxPoint);
-				FVector localPosition(mesh->GetRelativeTransform().GetTranslation());
-				bounds += minPoint + localPosition;
-				bounds += maxPoint + localPosition;
-			}
-		}
-
-		InstanceStampSize = bounds.GetSize();
-		return true;
-	}
-
-	return false;
-}
-
 bool UPortalToolBase::Deactivate()
 {
-	if (CursorActor != nullptr)
-	{
-		CursorActor->Destroy();
-		CursorActor = nullptr;
-	}
-
-	if (HostID != MOD_ID_NONE)
-	{
-		auto *lastHitWall = Document->GetObjectById(HostID);
-		if (lastHitWall)
-		{
-			lastHitWall->MarkDirty(EObjectDirtyFlags::Structure);
-		}
-	}
+	GameState->Document.ClearPreviewDeltas(GameState->GetWorld());
 
 	Active = false;
 	return true;
@@ -152,73 +61,53 @@ bool UPortalToolBase::Deactivate()
 
 bool UPortalToolBase::FrameUpdate()
 {
-	static FName requesterName(TEXT("UPortalToolBase"));
-
-	int32 lastHostID = HostID;
-	FModumateObjectInstance *hitMOI = nullptr;
+	int32 lastTargetPlaneID = CurTargetPlaneID;
+	FModumateObjectInstance *targetPlaneMOI = nullptr;
 	const auto &snapCursor = Controller->EMPlayerState->SnappedCursor;
 	FVector hitLoc = snapCursor.WorldPosition;
 
-	HostID = MOD_ID_NONE;
+	CurTargetPlaneID = MOD_ID_NONE;
 
-	if (CursorActor && Controller->EMPlayerState->SnappedCursor.Visible)
+	if (snapCursor.Visible)
 	{
-		hitMOI = Document->ObjectFromActor(Controller->EMPlayerState->SnappedCursor.Actor);
+		targetPlaneMOI = GameState->Document.ObjectFromActor(snapCursor.Actor);
 
-		FModumateObjectInstance *hitMOIParent = hitMOI ? hitMOI->GetParentObject() : nullptr;
-
-		while (hitMOIParent)
+		while (targetPlaneMOI && (targetPlaneMOI->GetObjectType() != EObjectType::OTMetaPlane))
 		{
-			hitMOI = hitMOIParent;
-			hitMOIParent = hitMOI->GetParentObject();
+			targetPlaneMOI = targetPlaneMOI->GetParentObject();
 		}
 	}
 
-	bool bHasRelativeTransform = hitMOI && UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
-		hitMOI, hitLoc, GetInstanceBottomOffset(), bUseFixedOffset, RelativePos, RelativeRot);
+	bool bHasRelativeTransform = targetPlaneMOI && UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
+		targetPlaneMOI, hitLoc, GetInstanceBottomOffset(), bUseBottomOffset, RelativePos, RelativeRot);
 
+	FVector prevWorldPos = WorldPos;
+	FQuat prevWorldRot = WorldRot;
 	bool bHasWorldTransform = bHasRelativeTransform && UModumateObjectStatics::GetWorldTransformOnPlanarObj(
-		hitMOI, RelativePos, RelativeRot, WorldPos, WorldRot);
+		targetPlaneMOI, RelativePos, RelativeRot, WorldPos, WorldRot);
 
 	if (bHasWorldTransform)
 	{
-		HostID = hitMOI->ID;
+		CurTargetPlaneID = targetPlaneMOI->ID;
 
 #if UE_BUILD_DEBUG
 		DrawDebugCoordinateSystem(Controller->GetWorld(), WorldPos, WorldRot.Rotator(), 20.0f, false, -1.f, 255, 2.0f);
 #endif
-
-		CursorActor->SetActorLocation(WorldPos);
-		CursorActor->SetActorRotation(WorldRot);
 	}
 	else
 	{
-		HostID = MOD_ID_NONE;
+		CurTargetPlaneID = MOD_ID_NONE;
 	}
 
-	if (lastHostID != HostID)
+	if ((lastTargetPlaneID != CurTargetPlaneID) || (prevWorldPos != WorldPos) || (prevWorldRot != WorldRot))
 	{
-		if (hitMOI && bValidPortalConfig)
-		{
-			hitMOI->MarkDirty(EObjectDirtyFlags::Structure);
-		}
+		UWorld* world = Controller->GetWorld();
+		GameState->Document.ClearPreviewDeltas(world, true);
+		GameState->Document.StartPreviewing();
 
-		auto *lastHitHost = Document->GetObjectById(lastHostID);
-		if (lastHitHost)
+		if (GetPortalCreationDeltas(Deltas))
 		{
-			lastHitHost->MarkDirty(EObjectDirtyFlags::Structure);
-		}
-	}
-
-	if (hitMOI && HostID)
-	{
-		CursorActor->SetActorHiddenInGame(false);
-	}
-	else
-	{
-		if (CursorActor != nullptr)
-		{
-			CursorActor->SetActorHiddenInGame(true);
+			GameState->Document.ApplyPreviewDeltas(Deltas, world);
 		}
 	}
 
@@ -257,7 +146,6 @@ bool UPortalToolBase::HandleInvert()
 		return false;
 	}
 	Inverted = !Inverted;
-	SetupCursor();
 	return true;
 }
 
@@ -268,9 +156,9 @@ bool UPortalToolBase::HandleControlKey(bool pressed)
 
 bool UPortalToolBase::BeginUse()
 {
-	const FBIMAssemblySpec* assembly = Document->PresetManager.GetAssemblyByKey(GetToolMode(), AssemblyKey);
+	const FBIMAssemblySpec* assembly = GameState->Document.PresetManager.GetAssemblyByKey(GetToolMode(), AssemblyKey);
 
-	FModumateObjectInstance* parent = Document->GetObjectById(HostID);
+	FModumateObjectInstance* parent = GameState->Document.GetObjectById(CurTargetPlaneID);
 
 	if (assembly == nullptr || parent == nullptr)
 	{
@@ -279,82 +167,11 @@ bool UPortalToolBase::BeginUse()
 
 	UWorld* world = parent->GetWorld();
 
-	FVector worldPos(ForceInitToZero);
-	FQuat worldRot(ForceInit);
-	if (!UModumateObjectStatics::GetWorldTransformOnPlanarObj(parent,
-		RelativePos, RelativeRot, worldPos, worldRot))
+	GameState->Document.ClearPreviewDeltas(world);
+	if (GetPortalCreationDeltas(Deltas))
 	{
-		return false;
+		GameState->Document.ApplyDeltas(Deltas, world);
 	}
-
-	const bool bPaintTool = CreateObjectMode == EToolCreateObjectMode::Apply;
-
-	TArray<FDeltaPtr> deltas;
-	Document->BeginUndoRedoMacro();
-
-	if (bPaintTool)
-	{
-		const TArray<int32>& planeChildren = parent->GetChildIDs();
-		if (planeChildren.Num() > 0)
-		{
-			int32 childId = planeChildren[0];
-			const FModumateObjectInstance* childObj = Document->GetObjectById(childId);
-
-			auto deleteDelta = MakeShared<FMOIDelta>();
-			deleteDelta->AddCreateDestroyState(childObj->GetStateData(), EMOIDeltaType::Destroy);
-
-			deltas.Add(deleteDelta);
-		}
-	}
-
-	int32 newParentId = HostID;
-	if (!bPaintTool)
-	{
-		FTransform portalTransform(worldRot, worldPos, FVector::OneVector);
-
-		TArray<FVector> metaPlanePoints = {
-			{0, 0, 0}, { 0, 0, InstanceStampSize.Z },
-			{InstanceStampSize.X, 0, InstanceStampSize.Z}, { InstanceStampSize.X, 0, 0 }
-		};
-
-		for (auto& p : metaPlanePoints)
-		{
-			p = portalTransform.TransformPosition(p);
-		}
-
-		TArray<int32> metaGraphIds;
-		if (Document->MakeMetaObject(world, metaPlanePoints, TArray<int32>(), EObjectType::OTMetaPlane, 0, metaGraphIds)
-			&& metaGraphIds.Num() > 0)
-		{
-			newParentId = metaGraphIds[0];
-			// Check for a single new face.
-			if (Document->GetVolumeGraph().FindFace(newParentId) == nullptr
-				|| (metaGraphIds.Num() > 1 && Document->GetVolumeGraph().FindFace(metaGraphIds[1]) != nullptr))
-			{
-				Document->EndUndoRedoMacro();
-				return false;
-			}
-		}
-		else
-		{
-			Document->EndUndoRedoMacro();
-			return false;
-		}
-	}
-
-	FMOIPortalData portalInstanceData;
-
-	FMOIStateData objectStateData(Document->GetNextAvailableID(), UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), newParentId);
-	objectStateData.AssemblyKey = AssemblyKey;
-	objectStateData.CustomData.SaveStructData(portalInstanceData);
-
-	auto addPortal = MakeShared<FMOIDelta>();
-	addPortal->AddCreateDestroyState(objectStateData, EMOIDeltaType::Create);
-
-	deltas.Add(addPortal);
-
-	Document->ApplyDeltas(deltas, world);
-	Document->EndUndoRedoMacro();
 
 	return true;
 }
@@ -393,11 +210,134 @@ void UPortalToolBase::OnAssemblyChanged()
 {
 	Super::OnAssemblyChanged();
 
-	if (Active)
-	{
-		SetupCursor();
-	}
 	CalculateNativeSize();
+}
+
+bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
+{
+	OutDeltas.Reset();
+
+	UWorld* world = Controller->GetWorld();
+	int32 newParentID = MOD_ID_NONE;
+	FModumateObjectInstance* curTargetPlaneObj = GameState->Document.GetObjectById(CurTargetPlaneID);
+	const FGraph3DFace* curTargetFace = GameState->Document.GetVolumeGraph().FindFace(CurTargetPlaneID);
+
+	if ((curTargetPlaneObj == nullptr) || (curTargetFace == nullptr))
+	{
+		return false;
+	}
+
+	switch (CreateObjectMode)
+	{
+	case EToolCreateObjectMode::Draw:
+		return false;
+	case EToolCreateObjectMode::Apply:
+	{
+		newParentID = CurTargetPlaneID;
+
+		if (curTargetPlaneObj->GetChildIDs().Num() > 0)
+		{
+			auto deleteChildrenDelta = MakeShared<FMOIDelta>();
+
+			for (FModumateObjectInstance* curTargetPlaneChild : curTargetPlaneObj->GetChildObjects())
+			{
+				deleteChildrenDelta->AddCreateDestroyState(curTargetPlaneChild->GetStateData(), EMOIDeltaType::Destroy);
+			}
+
+			OutDeltas.Add(deleteChildrenDelta);
+		}
+	}
+	break;
+	case EToolCreateObjectMode::Stamp:
+	{
+		FTransform portalTransform(WorldRot, WorldPos, FVector::OneVector);
+
+		TArray<FVector> metaPlanePoints = {
+			{0, 0, 0}, { 0, 0, InstanceStampSize.Z },
+			{InstanceStampSize.X, 0, InstanceStampSize.Z}, { InstanceStampSize.X, 0, 0 }
+		};
+
+		for (FVector& metaPlanePoint : metaPlanePoints)
+		{
+			metaPlanePoint = portalTransform.TransformPosition(metaPlanePoint);
+		}
+
+		// Require that stamped faces are either fully or partially contained by the target face
+		bool bValidContainedFace = true;
+		for (const FVector& metaPlanePoint : metaPlanePoints)
+		{
+			bool bPointOverlaps;
+			if (!curTargetFace->ContainsPosition(metaPlanePoint, bPointOverlaps) && !bPointOverlaps)
+			{
+				bValidContainedFace = false;
+			}
+
+			FPointInPolyResult holeTestResult;
+			FVector2D projectedPoint = curTargetFace->ProjectPosition2D(metaPlanePoint);
+			for (auto& hole : curTargetFace->Cached2DHoles)
+			{
+				if (!UModumateGeometryStatics::TestPointInPolygon(projectedPoint, hole.Points, holeTestResult) || holeTestResult.bInside)
+				{
+					bValidContainedFace = false;
+					break;
+				}
+			}
+
+			if (!bValidContainedFace)
+			{
+				break;
+			}
+		}
+
+		TArray<int32> addedVertexIDs, addedEdgeIDs, addedFaceIDs;
+		if (bValidContainedFace &&
+			GameState->Document.MakeMetaObject(world, metaPlanePoints, {}, EObjectType::OTMetaPlane, MOD_ID_NONE,
+				addedVertexIDs, addedEdgeIDs, addedFaceIDs, OutDeltas) &&
+			(addedFaceIDs.Num() > 0))
+		{
+			newParentID = addedFaceIDs[0];
+		}
+	}
+	break;
+	default:
+		return false;
+	}
+
+	if (newParentID != MOD_ID_NONE)
+	{
+		FMOIPortalData portalInstanceData;
+
+		FMOIStateData objectStateData(GameState->Document.GetNextAvailableID(), UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), newParentID);
+		objectStateData.AssemblyKey = AssemblyKey;
+		objectStateData.CustomData.SaveStructData(portalInstanceData);
+
+		auto addPortal = MakeShared<FMOIDelta>();
+		addPortal->AddCreateDestroyState(objectStateData, EMOIDeltaType::Create);
+
+		OutDeltas.Add(addPortal);
+		return true;
+	}
+
+	return OutDeltas.Num() > 0;
+}
+
+bool UPortalToolBase::CalculateNativeSize()
+{
+	const FBIMAssemblySpec* assembly = GameState->Document.PresetManager.GetAssemblyByKey(GetToolMode(), AssemblyKey);
+	if (assembly == nullptr)
+	{
+		return false;
+	}
+
+	// Calculate the native size of the mesh
+	FVector nativeSize = assembly->GetRiggedAssemblyNativeSize();
+	if (nativeSize.IsZero())
+	{
+		return false;
+	}
+
+	InstanceStampSize = nativeSize;
+	return true;
 }
 
 

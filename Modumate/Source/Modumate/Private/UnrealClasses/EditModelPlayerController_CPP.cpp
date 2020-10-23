@@ -283,7 +283,7 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 		{
 			ValidEditModes = DefaultEditModes;
 		}
-		else if (!ValidEditModes.Contains(EMPlayerState->GetEditMode()))
+		else
 		{
 			EMPlayerState->SetEditMode(ValidEditModes[0]);
 		}
@@ -1874,6 +1874,12 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 	FVector mouseLoc, mouseDir;
 	FMouseWorldHitType baseHit, projectedHit;
 
+	// If we're off-screen (or the window doesn't have focus), skip updating the cursor
+	if (!DeprojectMousePositionToWorld(mouseLoc, mouseDir))
+	{
+		return;
+	}
+
 	// Reset frame defaults
 	baseHit.Valid = false;
 	projectedHit.Valid = false;
@@ -1886,8 +1892,8 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 
 	AActor *actorUnderMouse = nullptr;
 
-	// If we're off the screen or hovering at widgets, then return with the snapped cursor turned off
-	if (!DeprojectMousePositionToWorld(mouseLoc, mouseDir) || bIsCursorAtAnyWidget)
+	// If hovering at widgets, then return with the snapped cursor turned off
+	if (bIsCursorAtAnyWidget)
 	{
 		EMPlayerState->SetHoveredObject(nullptr);
 		return;

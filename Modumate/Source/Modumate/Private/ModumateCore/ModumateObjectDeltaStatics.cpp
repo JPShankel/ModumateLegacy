@@ -60,7 +60,7 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 
 bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransform>& ObjectMovements, FModumateDocument *doc, UWorld *World, bool bIsPreview)
 {
-	doc->ClearPreviewDeltas(World);
+	doc->ClearPreviewDeltas(World, bIsPreview);
 
 	TMap<int32, FVector> vertex3DMovements;
 	TMap<int32, TMap<int32, FVector2D>> combinedVertex2DMovements;

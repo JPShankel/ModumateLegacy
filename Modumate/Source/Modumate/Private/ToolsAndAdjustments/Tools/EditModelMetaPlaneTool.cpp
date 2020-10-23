@@ -174,10 +174,13 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 	ConstrainHitPoint(constrainedStartPoint);
 	ConstrainHitPoint(constrainedEndPoint);
 	OutNewObjIDs.Reset();
+	TArray<int32> addedVertexIDs, addedEdgeIDs, addedFaceIDs;
 
 	if (State == NewSegmentPending && pendingSegment != nullptr &&
 		(FVector::Dist(constrainedStartPoint, constrainedEndPoint) >= MinPlaneSize))
 	{
+		TArray<FDeltaPtr> deltaPtrs;
+
 		switch (AxisConstraint)
 		{
 			case EAxisConstraint::None:
@@ -240,7 +243,8 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 
 				TArray<FVector> points = { constrainedStartPoint, constrainedEndPoint };
 
-				bSuccess = doc.MakeMetaObject(GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(), OutNewObjIDs);
+				bSuccess = doc.MakeMetaObject(GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
+					addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltaPtrs);
 
 				break;
 			}
@@ -252,7 +256,8 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 
 				if (bPendingPlaneValid)
 				{
-					bSuccess = doc.MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(), OutNewObjIDs);
+					bSuccess = doc.MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
+						addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltaPtrs);
 
 					// set up cursor affordance so snapping works on the next chained segment
 					Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, FVector::UpVector, (pendingSegment->Point1 - pendingSegment->Point2).GetSafeNormal());
@@ -268,7 +273,8 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 			{
 				if (bPendingPlaneValid)
 				{
-					bSuccess = doc.MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(), OutNewObjIDs);
+					bSuccess = doc.MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
+						addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltaPtrs);
 
 					// Don't chain horizontal planes, so end the tool's use here
 					if (bSuccess)
@@ -279,6 +285,16 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 
 				break;
 			}
+		}
+
+		if (bSuccess)
+		{
+			bSuccess = doc.ApplyDeltas(deltaPtrs, GetWorld());
+
+			// TODO: remove OutNewObjIDs
+			OutNewObjIDs.Append(addedFaceIDs);
+			OutNewObjIDs.Append(addedVertexIDs);
+			OutNewObjIDs.Append(addedEdgeIDs);
 		}
 	}
 

@@ -483,11 +483,10 @@ bool UStairTool::MakeStairs()
 	TArray<int32> hostPlaneIDs;
 	bool bMakePlane = (LastValidTargetID == MOD_ID_NONE);
 	bool bSuccess = false;
+	TArray<FDeltaPtr> deltas;
 
 	if (bMakePlane)
 	{
-		Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kBeginUndoRedoMacro));
-
 		FVector totalRunDelta = ((CurrentTreadDepth * CurrentTreadNum) * RunDir);
 		FVector totalRiseDelta = ((CurrentRiserHeight * CurrentRiserNum) * FVector::UpVector);
 		FVector totalWidthDelta = (CurrentWidth * WidthDir);
@@ -498,17 +497,11 @@ bool UStairTool::MakeStairs()
 			RunStartPos + totalRunDelta + totalRiseDelta
 		});
 
-		TArray<int32> newGraphObjIDs;
-		if (GameState->Document.MakeMetaObject(GetWorld(), newPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(), newGraphObjIDs))
+		TArray<int32> addedVertexIDs, addedEdgeIDs, addedFaceIDs;
+		if (GameState->Document.MakeMetaObject(GetWorld(), newPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
+			addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltas))
 		{
-			for (int32 newGraphObjID : newGraphObjIDs)
-			{
-				auto newGraphObj = GameState->Document.GetObjectById(newGraphObjID);
-				if (newGraphObj && (newGraphObj->GetObjectType() == EObjectType::OTMetaPlane))
-				{
-					hostPlaneIDs.Add(newGraphObjID);
-				}
-			}
+			hostPlaneIDs = addedFaceIDs;
 		}
 	}
 	else
@@ -521,6 +514,7 @@ bool UStairTool::MakeStairs()
 		int32 nextID = GameState->Document.GetNextAvailableID();
 
 		auto newStairsDelta = MakeShared<FMOIDelta>();
+		deltas.Add(newStairsDelta);
 
 		for (int32 hostPlaneID : hostPlaneIDs)
 		{
@@ -530,12 +524,7 @@ bool UStairTool::MakeStairs()
 			newStairsDelta->AddCreateDestroyState(newStairState, EMOIDeltaType::Create);
 		}
 
-		bSuccess = GameState->Document.ApplyDeltas({ newStairsDelta }, GetWorld());
-	}
-
-	if (bMakePlane)
-	{
-		Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kEndUndoRedoMacro));
+		bSuccess = GameState->Document.ApplyDeltas(deltas, GetWorld());
 	}
 
 	return bSuccess;

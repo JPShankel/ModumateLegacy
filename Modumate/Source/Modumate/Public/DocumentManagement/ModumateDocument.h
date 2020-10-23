@@ -34,6 +34,8 @@ private:
 	TArray<FDeltaPtr> PreviewDeltas;
 
 	int32 NextID;
+	int32 PrePreviewNextID;
+	bool bApplyingPreviewDeltas, bFastClearingPreviewDeltas, bSlowClearingPreviewDeltas;
 
 	TArray<FModumateObjectInstance*> ObjectInstanceArray;
 	TMap<int32, FModumateObjectInstance*> ObjectsByID;
@@ -120,7 +122,8 @@ public:
 	float GetDefaultJustificationXY() const { return DefaultJustificationXY; } // return DJXY from private;
 
 	int32 MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs);
-	bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, const TArray<int32> &IDs, EObjectType objectType, int32 parentID, TArray<int32> &OutObjIDs);
+	bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, const TArray<int32> &IDs, EObjectType objectType, int32 parentID,
+		TArray<int32>& OutAddedVertexIDs, TArray<int32>& OutAddedEdgeIDs, TArray<int32>& OutAddedFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs);
 
 	bool MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height);
 
@@ -175,16 +178,17 @@ public:
 
 	// Deletion and restoration functions used internally by undo/redo-aware functions
 private:
-	bool DeleteObjectImpl(FModumateObjectInstance *ob, bool keepInDeletedList = true);
+	bool DeleteObjectImpl(FModumateObjectInstance *ob);
 	bool RestoreObjectImpl(FModumateObjectInstance *ob);
 
 	FModumateObjectInstance* CreateOrRestoreObj(UWorld* World, const FMOIStateData& StateData);
 
 	// Preview Operations
 public:
+	bool StartPreviewing();
 	bool ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World);
 	bool IsPreviewingDeltas() const;
-	void ClearPreviewDeltas(UWorld *World);
+	void ClearPreviewDeltas(UWorld *World, bool bFastClear = false);
 
 	bool GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);
 

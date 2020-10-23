@@ -106,7 +106,7 @@ EObjectType FModumateObjectInstance::GetObjectType() const
 
 FModumateObjectInstance::~FModumateObjectInstance()
 {
-	Destroy();
+	Destroy(true);
 
 	if (Implementation)
 	{
@@ -115,7 +115,7 @@ FModumateObjectInstance::~FModumateObjectInstance()
 	}
 }
 
-void FModumateObjectInstance::Destroy()
+void FModumateObjectInstance::Destroy(bool bFullDelete)
 {
 	if (!bDestroyed)
 	{
@@ -131,7 +131,7 @@ void FModumateObjectInstance::Destroy()
 		}
 
 		// If we need to do anything else during destruction, like cached its destroyed state, that would go here.
-		DestroyActor();
+		DestroyActor(bFullDelete);
 
 		// Clear dirty flags, since we won't be able to clean the object later
 		DirtyFlags = EObjectDirtyFlags::None;
@@ -934,29 +934,56 @@ ISceneCaptureObject* FModumateObjectInstance::GetSceneCaptureInterface()
 	return Implementation->GetSceneCaptureInterface();
 }
 
-void FModumateObjectInstance::DestroyActor()
+static const FName PartialActorDestructionRequest(TEXT("DestroyActorPartial"));
+
+void FModumateObjectInstance::DestroyActor(bool bFullDelete)
 {
-	if (MeshActor.IsValid())
+	if (bFullDelete)
 	{
 		ClearAdjustmentHandles();
 
-		TArray<AActor*> attachedActors;
-		MeshActor->GetAttachedActors(attachedActors);
-		for (auto *attachedActor : attachedActors)
+		if (MeshActor.IsValid())
 		{
-			attachedActor->Destroy();
-		}
+			TArray<AActor*> attachedActors;
+			MeshActor->GetAttachedActors(attachedActors);
+			for (auto* attachedActor : attachedActors)
+			{
+				attachedActor->Destroy();
+			}
 
-		MeshActor->Destroy();
-		MeshActor.Reset();
+			MeshActor->Destroy();
+			MeshActor.Reset();
+		}
+	}
+	else
+	{
+		auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+		ShowAdjustmentHandles(controller, false);
+
+		RequestHidden(PartialActorDestructionRequest, true);
+		RequestCollisionDisabled(PartialActorDestructionRequest, true);
 	}
 }
 
-void FModumateObjectInstance::RestoreActor()
+void FModumateObjectInstance::Restore()
 {
-	DestroyActor();
-	MeshActor = Implementation->RestoreActor();
-	SetupMOIComponent();
+	if (!ensure(bDestroyed))
+	{
+		return;
+	}
+
+	if (MeshActor.IsValid())
+	{
+		RequestHidden(PartialActorDestructionRequest, false);
+		RequestCollisionDisabled(PartialActorDestructionRequest, false);
+	}
+	else
+	{
+		MeshActor = Implementation->RestoreActor();
+		SetupMOIComponent();
+	}
+
+	PostCreateObject(false);
 }
 
 void FModumateObjectInstance::PostCreateObject(bool bNewObject)

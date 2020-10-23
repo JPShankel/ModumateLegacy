@@ -208,6 +208,8 @@ private:
 	void SetupMOIComponent();
 	void UpdateAssemblyFromKey();
 
+	void DestroyActor(bool bFullDelete);
+
 	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
 
 public:
@@ -242,7 +244,9 @@ public:
 	FModumateDocument* GetDocument() { return Document; }
 	const FModumateDocument* GetDocument() const { return Document; }
 
-	void Destroy();
+	void PostCreateObject(bool bNewObject);
+	void Destroy(bool bFullDelete);
+	void Restore();
 
 	bool IsDestroyed() const { return bDestroyed; }
 
@@ -299,11 +303,6 @@ public:
 	const ILayeredObject* GetLayeredInterface() const;
 	const IMiterNode* GetMiterInterface() const;
 	ISceneCaptureObject* GetSceneCaptureInterface();
-
-	// Object delete/restore
-	void DestroyActor();
-	void RestoreActor();
-	void PostCreateObject(bool bNewObject);
 
 	// Object transform getters/setters.
 	//   NOTE: ObjectLocation and ObjectRotation are intended to be interpreted by the object;
