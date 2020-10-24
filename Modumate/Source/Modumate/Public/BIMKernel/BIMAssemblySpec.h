@@ -31,8 +31,6 @@ Assemblies have three categories of subcomponent: layers, part slots and extrusi
 An assembly layer (for walls, floors and other sandwich objects) references an FArchitecturalMaterial and some metadata
 */
 
-
-
 class MODUMATE_API FBIMAssemblySpec
 {
 private:
@@ -44,6 +42,7 @@ private:
 	FBIMPropertySheet RootProperties;
 
 public:
+
 	EObjectType ObjectType = EObjectType::OTNone;
 
 	FBIMKey RootPreset;

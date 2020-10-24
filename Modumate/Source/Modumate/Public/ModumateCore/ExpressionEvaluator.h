@@ -9,11 +9,12 @@ namespace Modumate
 {
 	namespace Expression
 	{
-		bool ReplaceVariable(FString &exprString, const FString &varName, float varValue);
-		bool Evaluate(const TMap<FString, float> &vars, const FString &expr, float &result);
-		bool Evaluate(const TMap<FName, Units::FUnitValue> &vars, const FString &expr, Units::FUnitValue &result);
-		bool Evaluate(const FString &fexpr, float &result);
-		float Evaluate(const TMap<FString, float> &vars, const FString &expr);
+		bool ReplaceVariable(FString &ExprString, const FString &VarName, float VarValue);
+		bool Evaluate(const TMap<FString, float> &Vars, const FString &Expr, float &Result);
+		bool Evaluate(const TMap<FName, Units::FUnitValue> &Vars, const FString &Expr, Units::FUnitValue &Result);
+		bool Evaluate(const FString &Expr, float &Result);
+		float Evaluate(const TMap<FString, float> &Vars, const FString &Expr);
+		bool ExtractVariables(const FString &ExprString, TArray<FString>& OutVariables);
 
 		class MODUMATE_API FVectorExpression
 		{
@@ -25,6 +26,7 @@ namespace Modumate
 			FVectorExpression(const FString &InX, const FString &InY, const FString &InZ) : X(InX), Y(InY), Z(InZ) {}
 
 			bool Evaluate(const TMap<FString, float> &Vars, FVector& OutVector) const;
+			bool ExtractVariables(TArray<FString>& OutVariables) const;
 		};
 	}
 }

@@ -1,306 +1,368 @@
-TYPENAME,,2Part,,Part,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,String,,Name,,Part.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildMesh,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Part.Name,DataType=StartsInProject,DataType=InputPins,ChildMesh,ChildMaterial,DataType=PinChannel,AppliesToMaterialChannel,DataType=TG_Parent Node+CategoryPath,XXXXHardwareGroup --> Cabinet --> Door,XXXXHardwareGroup --> Cabinet --> Drawer,XXXXHardwareGroup --> Door --> Barn,XXXXHardwareGroup --> Door --> Folding,XXXXHardwareGroup --> Door --> Overhead,XXXXHardwareGroup --> Door --> Pivot,XXXXHardwareGroup --> Door --> Pocket,XXXXHardwareGroup --> Door --> Sliding,XXXXHardwareGroup --> Door --> Revolving,XXXXHardwareGroup --> Door --> Swing,XXXXHardwareGroup --> RailingPanel --> Glass,XXXXHardwareGroup --> RailingPanel --> Solid,XXXXHardwareGroup --> Window --> Awning,XXXXHardwareGroup --> Window --> Casement,XXXXHardwareGroup --> Window --> Double-Action,XXXXHardwareGroup --> Window --> Fixed,XXXXHardwareGroup --> Window --> Hopper,XXXXHardwareGroup --> Window --> Jalousie,3RiggedAssembly --> Cabinet --> Drawer,3RiggedAssembly --> Cabinet --> Overhead,3RiggedAssembly --> Cabinet --> Sliding,3RiggedAssembly --> Cabinet --> Swing,3RiggedAssembly --> Door --> Barn,3RiggedAssembly --> Door --> Folding,3RiggedAssembly --> Door --> Overhead,3RiggedAssembly --> Door --> Pivot,3RiggedAssembly --> Door --> Pocket,3RiggedAssembly --> Door --> Revolving,3RiggedAssembly --> Door --> Sliding,3RiggedAssembly --> Door --> Swing,3RiggedAssembly --> FFESet,3RiggedAssembly --> Window --> Awning,3RiggedAssembly --> Window --> Casement,3RiggedAssembly --> Window --> Double-Action,3RiggedAssembly --> Window --> Fixed,3RiggedAssembly --> Window --> Hopper,3RiggedAssembly --> Window --> Hung,3RiggedAssembly --> Window --> Jalousie,3RiggedAssembly --> Window --> Sliding
-PRESET,,"2Part --> Cabinet --> Frame
+TYPENAME,,Object,,Part,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,String,,Name,,Part.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildMesh,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Part.Name,DataType=StartsInProject,DataType=InputPins,ChildMesh,ChildMaterial,DataType=PinChannel,AppliesToMaterialChannel,DataType=TG_Parent Node+CategoryPath,XXXXHardwareGroup --> Cabinet --> Door,XXXXHardwareGroup --> Cabinet --> Drawer,XXXXHardwareGroup --> Door --> Barn,XXXXHardwareGroup --> Door --> Folding,XXXXHardwareGroup --> Door --> Overhead,XXXXHardwareGroup --> Door --> Pivot,XXXXHardwareGroup --> Door --> Pocket,XXXXHardwareGroup --> Door --> Sliding,XXXXHardwareGroup --> Door --> Revolving,XXXXHardwareGroup --> Door --> Swing,XXXXHardwareGroup --> RailingPanel --> Glass,XXXXHardwareGroup --> RailingPanel --> Solid,XXXXHardwareGroup --> Window --> Awning,XXXXHardwareGroup --> Window --> Casement,XXXXHardwareGroup --> Window --> Double-Action,XXXXHardwareGroup --> Window --> Fixed,XXXXHardwareGroup --> Window --> Hopper,XXXXHardwareGroup --> Window --> Jalousie,Assembly --> Cabinet --> Drawer,Assembly --> Cabinet --> Overhead,Assembly --> Cabinet --> Sliding,Assembly --> Cabinet --> Swing,Assembly --> Door --> Barn,Assembly --> Door --> Folding,Assembly --> Door --> Overhead,Assembly --> Door --> Pivot,Assembly --> Door --> Pocket,Assembly --> Door --> Revolving,Assembly --> Door --> Sliding,Assembly --> Door --> Swing,Assembly --> FFESet,Assembly --> Window --> Awning,Assembly --> Window --> Casement,Assembly --> Window --> Double-Action,Assembly --> Window --> Fixed,Assembly --> Window --> Hopper,Assembly --> Window --> Hung,Assembly --> Window --> Jalousie,Assembly --> Window --> Sliding,AssemblyHingeSet,AssemblyPanel,AssemblyCabinetFace,AssemblyDoor,AssemblyWindow,AssemblyFFESet,
+PRESET,,"Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White",,2Part --> Cabinet --> Frame,,"Face Frame, Ash, White",,,0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Frame
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,Frame,,"Face Frame, Ash, Natural",,,0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
+PRESET,,"Frame
 0Mesh-Cabinet-Frame-Frameless-01.Cabinet-Frame-Frameless-01'
-1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White",,2Part --> Cabinet --> Frame,,"""Frameless"" Frame, Bamboo, White",,,0Mesh-Cabinet-Frame-Frameless-01.Cabinet-Frame-Frameless-01',1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Knob
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural",,Frame,,"""Frameless"" Frame, Bamboo, Natural",,,0Mesh-Cabinet-Frame-Frameless-01.Cabinet-Frame-Frameless-01',1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BD9C2B-Gold",,2Part --> Cabinet --> Handle --> Knob,,"Knob Handle 1, Aluminum, Gold",,,0Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BD9C2B-Gold,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Knob
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BD9C2B-Gold",,HandleStatic,,"Knob Handle 1, Aluminum, Gold",,,0Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BD9C2B-Gold,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe",,2Part --> Cabinet --> Handle --> Knob,,"Knob Handle 2, Aluminum, Taupe",,,0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Knob
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe",,HandleStatic,,"Knob Handle 2, Aluminum, Taupe",,,0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Knob-03.Cabinet-Handle-Knob-03'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-81B46F-SpringHill",,2Part --> Cabinet --> Handle --> Knob,,"Knob Handle 3, Aluminum, Spring Hill",,,0Mesh-Cabinet-Handle-Knob-03.Cabinet-Handle-Knob-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-81B46F-SpringHill,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Knob
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-81B46F-SpringHill",,HandleStatic,,"Knob Handle 3, Aluminum, Spring Hill",,,0Mesh-Cabinet-Handle-Knob-03.Cabinet-Handle-Knob-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-81B46F-SpringHill,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina",,2Part --> Cabinet --> Handle --> Knob,,"Knob Handle 4, Aluminum, Patina",,,0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Pull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina",,HandleStatic,,"Knob Handle 4, Aluminum, Patina",,,0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
-1Material --> Metal --> Copper-0RawMaterial-Copper-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Cabinet --> Handle --> Pull,,"Pull Handle 1, Copper, Pure White",,,0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01',1Material --> Metal --> Copper-0RawMaterial-Copper-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Pull
+1Material --> Metal --> Copper-0RawMaterial-Copper-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Pull Handle 1, Copper, Pure White",,,0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01',1Material --> Metal --> Copper-0RawMaterial-Copper-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina",,2Part --> Cabinet --> Handle --> Pull,,"Pull Handle 2, Aluminum, Patina",,,0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Pull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina",,HandleStatic,,"Pull Handle 2, Aluminum, Patina",,,0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-1F4D29-Olive",,2Part --> Cabinet --> Handle --> Pull,,"Pull Handle 3, Aluminum, Olive",,,0Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-1F4D29-Olive,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Pull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-1F4D29-Olive",,HandleStatic,,"Pull Handle 3, Aluminum, Olive",,,0Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-1F4D29-Olive,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",,2Part --> Cabinet --> Handle --> Pull,,"Pull Handle 4, Aluminum, Sea Green",,,0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Pull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",,HandleStatic,,"Pull Handle 4, Aluminum, Sea Green",,,0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-05.Cabinet-Handle-Pull-05'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-003A21-Jungle",,2Part --> Cabinet --> Handle --> Pull,,"Pull Handle 5, Aluminum, Jungle",,,0Mesh-Cabinet-Handle-Pull-05.Cabinet-Handle-Pull-05',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-003A21-Jungle,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Pull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-003A21-Jungle",,HandleStatic,,"Pull Handle 5, Aluminum, Jungle",,,0Mesh-Cabinet-Handle-Pull-05.Cabinet-Handle-Pull-05',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-003A21-Jungle,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-013119-Forest",,2Part --> Cabinet --> Handle --> Pull,,"Pull Handle 6, Aluminum, Forest",,,0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-013119-Forest,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Pull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-013119-Forest",,HandleStatic,,"Pull Handle 6, Aluminum, Forest",,,0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-013119-Forest,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-07.Cabinet-Handle-Pull-07'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-00280D-Edwardian",,2Part --> Cabinet --> Handle --> Pull,,"Pull Handle 7, Aluminum, Edwardian",,,0Mesh-Cabinet-Handle-Pull-07.Cabinet-Handle-Pull-07',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-00280D-Edwardian,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Pull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-00280D-Edwardian",,HandleStatic,,"Pull Handle 7, Aluminum, Edwardian",,,0Mesh-Cabinet-Handle-Pull-07.Cabinet-Handle-Pull-07',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-00280D-Edwardian,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-08.Cabinet-Handle-Pull-08'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-4AA7B9-Aqua",,2Part --> Cabinet --> Handle --> Pull,,"Pull Handle 8, Aluminum, Aqua",,,0Mesh-Cabinet-Handle-Pull-08.Cabinet-Handle-Pull-08',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-4AA7B9-Aqua,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Pull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-4AA7B9-Aqua",,HandleStatic,,"Pull Handle 8, Aluminum, Aqua",,,0Mesh-Cabinet-Handle-Pull-08.Cabinet-Handle-Pull-08',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-4AA7B9-Aqua,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-0084AB-Harbor",,2Part --> Cabinet --> Handle --> Pull,,"Pull Handle 9, Aluminum, Harbor",,,0Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-0084AB-Harbor,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Handle --> Pull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-0084AB-Harbor",,HandleStatic,,"Pull Handle 9, Aluminum, Harbor",,,0Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-0084AB-Harbor,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-10.Cabinet-Handle-Pull-10'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-657189-Legacy",,2Part --> Cabinet --> Handle --> Pull,,"Pull Handle 10, Aluminum, Legacy",,,0Mesh-Cabinet-Handle-Pull-10.Cabinet-Handle-Pull-10',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-657189-Legacy,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-657189-Legacy",,HandleStatic,,"Pull Handle 10, Aluminum, Legacy",,,0Mesh-Cabinet-Handle-Pull-10.Cabinet-Handle-Pull-10',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-657189-Legacy,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"Panel
 0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
-1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White",,2Part --> Cabinet --> Panel,,"Slab Panel, Beech, White",,,0Mesh-Cabinet-Panel-01.Cabinet-Panel-01',1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Panel
+1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural",,Panel,,"Slab Panel, Beech, Natural",,,0Mesh-Cabinet-Panel-01.Cabinet-Panel-01',1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
+PRESET,,"Panel
 0Mesh-Cabinet-Panel-02.Cabinet-Panel-02'
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White",,2Part --> Cabinet --> Panel,,"Shaker Panel, Birch (Yellow), White",,,0Mesh-Cabinet-Panel-02.Cabinet-Panel-02',1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Panel
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural",,Panel,,"Shaker Panel, Birch (Yellow), Natural",,,0Mesh-Cabinet-Panel-02.Cabinet-Panel-02',1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
+PRESET,,"Panel
 0Mesh-Cabinet-Panel-03.Cabinet-Panel-03'
-1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White",,2Part --> Cabinet --> Panel,,"Slab Panel, Raised Edges, Cedar (Western Red), White",,,0Mesh-Cabinet-Panel-03.Cabinet-Panel-03',1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Panel
+1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural",,Panel,,"Slab Panel, Raised Edges, Cedar (Western Red), Natural",,,0Mesh-Cabinet-Panel-03.Cabinet-Panel-03',1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
+PRESET,,"Panel
 0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
-1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White",,2Part --> Cabinet --> Panel,,"Raised Panel, Cedar (White), White",,,0Mesh-Cabinet-Panel-04.Cabinet-Panel-04',1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Panel
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural",,Panel,,"Raised Panel, Cedar (White), Natural",,,0Mesh-Cabinet-Panel-04.Cabinet-Panel-04',1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
+PRESET,,"Panel
 0Mesh-Cabinet-Panel-05.Cabinet-Panel-05'
-1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Abstract-FFFFFF-White",,2Part --> Cabinet --> Panel,,"Glass Panel, Maple, White",,,0Mesh-Cabinet-Panel-05.Cabinet-Panel-05',1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-829CA9-BayBlue,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Panel
+1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Wood --> Maple-FFFFFF-Natural",,Panel,,"Glass Panel, Maple, Natural",,,0Mesh-Cabinet-Panel-05.Cabinet-Panel-05',1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Wood --> Maple-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-829CA9-BayBlue,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Panel
 0Mesh-Cabinet-Panel-06.Cabinet-Panel-06'
-1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Abstract-FFFFFF-White",,2Part --> Cabinet --> Panel,,"Arched Panel, Oak (White), White",,,0Mesh-Cabinet-Panel-06.Cabinet-Panel-06',1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Cabinet --> Panel
+1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural",,Panel,,"Arched Panel, Oak (White), Natural",,,0Mesh-Cabinet-Panel-06.Cabinet-Panel-06',1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,,"Panel
 0Mesh-Cabinet-Panel-07.Cabinet-Panel-07'
-1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White",,2Part --> Cabinet --> Panel,,"Louvered Panel, Redwood, White",,,0Mesh-Cabinet-Panel-07.Cabinet-Panel-07',1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Door --> Caster --> Barn
+1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Wood --> Redwood-FFFFFF-Natural",,Panel,,"Louvered Panel, Redwood, Natural",,,0Mesh-Cabinet-Panel-07.Cabinet-Panel-07',1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Wood --> Redwood-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,,"Caster
 0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
-1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Door --> Caster --> Barn,,"Barn Door Caster 1, Iron, Pure White",,,0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01',1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Door --> Caster --> Barn
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,Caster,,"Barn Door Caster 1, Aluminum, Pure White",,,0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"Caster
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,Caster,,"Barn Door Caster 1, Aluminum, Pure White",,,0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"Caster
 0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Door --> Caster --> Barn,,"Barn Door Caster 2, Nickel, Pure White",,,0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02',1Material --> Metal --> Nickel-0RawMaterial-Nickel-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Door --> Frame --> Pocket
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,Caster,,"Barn Door Caster 2, Aluminum, Pure White",,,0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,"Frame
 0Mesh-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01'
-1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White",,2Part --> Door --> Frame --> Pocket,,"Single Pocket Door Frame, Cedar (Western Red), White",,,0Mesh-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01',1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Door --> Frame --> Pocket
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,Frame,,"Single Pocket Door Frame, Walnut, Natural",,,0Mesh-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01',1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
+0Mesh-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,Frame,,"Single Pocket Door Frame, Ash, Natural",,,0Mesh-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
+0Mesh-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,Frame,,"Single Pocket Door Frame, Paint, Gentle White",,,0Mesh-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01',1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
 0Mesh-Door-Frame-Pocket-Double-01.Door-Frame-Pocket-Double-01'
-1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White",,2Part --> Door --> Frame --> Pocket,,"Double Pocket Door Frame, Cedar (White), White",,,0Mesh-Door-Frame-Pocket-Double-01.Door-Frame-Pocket-Double-01',1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Door --> Frame --> Sliding
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,Frame,,"Double Pocket Door Frame, Walnut, Natural",,,0Mesh-Door-Frame-Pocket-Double-01.Door-Frame-Pocket-Double-01',1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
+0Mesh-Door-Frame-Pocket-Double-01.Door-Frame-Pocket-Double-01'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,Frame,,"Double Pocket Door Frame, Ash, Natural",,,0Mesh-Door-Frame-Pocket-Double-01.Door-Frame-Pocket-Double-01',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
+0Mesh-Door-Frame-Pocket-Double-01.Door-Frame-Pocket-Double-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,Frame,,"Double Pocket Door Frame, Paint, Gentle White",,,0Mesh-Door-Frame-Pocket-Double-01.Door-Frame-Pocket-Double-01',1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
 0Mesh-Door-Frame-Sliding-TwoTrack-01.Door-Frame-Sliding-TwoTrack-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Door --> Frame --> Sliding,,"Two Track Sliding Door Frame, Aluminum, Pure White",,,0Mesh-Door-Frame-Sliding-TwoTrack-01.Door-Frame-Sliding-TwoTrack-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,
-PRESET,,"2Part --> Door --> Frame --> Swing
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,Frame,,"Two Track Sliding Door Frame, Aluminum, Pure White",,,0Mesh-Door-Frame-Sliding-TwoTrack-01.Door-Frame-Sliding-TwoTrack-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
+0Mesh-Door-Frame-Sliding-TwoTrack-01.Door-Frame-Sliding-TwoTrack-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,Frame,,"Two Track Sliding Door Frame, Paint, Gentle White",,,0Mesh-Door-Frame-Sliding-TwoTrack-01.Door-Frame-Sliding-TwoTrack-01',1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
 0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White",,2Part --> Door --> Frame --> Swing,,"Cased Opening Wood Frame, Birch (Yellow), White",,,0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01',1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Frame --> Swing
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,Frame,,"Cased Opening Wood Frame, Walnut, Natural",,,0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01',1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
+0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,Frame,,"Cased Opening Wood Frame, Ash, Natural",,,0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
+0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,Frame,,"Cased Opening Wood Frame, Paint, Gentle White",,,0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01',1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
-1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White",,2Part --> Door --> Frame --> Swing,,"Double-Rabbet Wood Frame, Cedar (Western Red), White",,,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Frame --> Swing
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,Frame,,"Double-Rabbet Wood Frame, Walnut, Natural",,,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
+0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,Frame,,"Double-Rabbet Wood Frame, Ash, Natural",,,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
+0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,Frame,,"Double-Rabbet Wood Frame, Paint, Gentle White",,,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
 0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
-1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White",,2Part --> Door --> Frame --> Swing,,"Single-Rabbet Wood Frame, Cedar (White), White",,,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Frame --> Swing
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,Frame,,"Single-Rabbet Wood Frame, Walnut, Natural",,,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
 0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
-1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Abstract-FFFFFF-White",,2Part --> Door --> Frame --> Swing,,"Single-Rabbet Wood Frame, Maple, White",,,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Knob
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,Frame,,"Single-Rabbet Wood Frame, Ash, Natural",,,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
+0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,Frame,,"Single-Rabbet Wood Frame, Paint, Gentle White",,,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Door --> Handle --> Knob,,"Knob Handle 1, Aluminum, Pure White",,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Knob
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Knob Handle 1, Aluminum, Pure White",,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray",,2Part --> Door --> Handle --> Knob,,"Knob Handle 1, Aluminum, Light Gray",,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Knob
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Knob Handle 1, Aluminum, Patrician Bronze",,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-C4B99D-Sandstone",,2Part --> Door --> Handle --> Knob,,"Knob Handle 1, Aluminum, Sandstone",,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-C4B99D-Sandstone,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Knob
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Knob Handle 1, Aluminum, Pure White",,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-F4F3D7-Birch",,2Part --> Door --> Handle --> Knob,,"Knob Handle 1, Aluminum, Birch",,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-F4F3D7-Birch,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Knob
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Knob Handle 1, Aluminum, Pure White",,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Door --> Handle --> Knob,,"Knob Handle 2, Aluminum, Pure White",,,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Knob
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Knob Handle 2, Aluminum, Pure White",,,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray",,2Part --> Door --> Handle --> Knob,,"Knob Handle 2, Aluminum, Light Gray",,,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Knob
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Knob Handle 2, Aluminum, Pure White",,,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-AAAB8C-GreenGray",,2Part --> Door --> Handle --> Knob,,"Knob Handle 2, Aluminum, Green Gray",,,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-AAAB8C-GreenGray,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Knob
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Knob Handle 2, Aluminum, Pure White",,,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Knob-03.Door-Handle-Knob-03'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-634C44-Brown",,2Part --> Door --> Handle --> Knob,,"Knob Handle 3, Aluminum, Brown",,,0Mesh-Door-Handle-Knob-03.Door-Handle-Knob-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-634C44-Brown,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Knob
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Knob Handle 3, Aluminum, Pure White",,,0Mesh-Door-Handle-Knob-03.Door-Handle-Knob-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Knob-04.Door-Handle-Knob-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-535B50-Yorktown",,2Part --> Door --> Handle --> Knob,,"Knob Handle 4, Aluminum, Yorktown",,,0Mesh-Door-Handle-Knob-04.Door-Handle-Knob-04',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-535B50-Yorktown,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Knob
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Knob Handle 4, Aluminum, Pure White",,,0Mesh-Door-Handle-Knob-04.Door-Handle-Knob-04',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Knob-05.Door-Handle-Knob-05'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-535B50-Yorktown",,2Part --> Door --> Handle --> Knob,,"Knob Handle 5, Aluminum, Yorktown",,,0Mesh-Door-Handle-Knob-05.Door-Handle-Knob-05',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-535B50-Yorktown,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-BAC7CD-ChillyBlue,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> LateralPull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Knob Handle 5, Aluminum, Pure White",,,0Mesh-Door-Handle-Knob-05.Door-Handle-Knob-05',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-BAC7CD-ChillyBlue,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray",,2Part --> Door --> Handle --> LateralPull,,"Lateral Pull Handle 1, Aluminum, Light Gray",,,0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,X,,X,,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> LateralPull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Lateral Pull Handle 1, Aluminum, Pure White",,,0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,X,,X,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BD9C2B-Gold",,2Part --> Door --> Handle --> LateralPull,,"Lateral Pull Handle 2, Aluminum, Gold",,,0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BD9C2B-Gold,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,X,,X,,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> LateralPull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Lateral Pull Handle 2, Aluminum, Pure White",,,0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,X,,X,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe",,2Part --> Door --> Handle --> LateralPull,,"Lateral Pull Handle 3, Aluminum, Taupe",,,0Mesh-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,X,,X,,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> LateralPull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Lateral Pull Handle 3, Aluminum, Pure White",,,0Mesh-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,X,,X,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-LateralPull-04.Door-Handle-LateralPull-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-81B46F-SpringHill",,2Part --> Door --> Handle --> LateralPull,,"Lateral Pull Handle 4, Aluminum, Spring Hill",,,0Mesh-Door-Handle-LateralPull-04.Door-Handle-LateralPull-04',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-81B46F-SpringHill,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,X,,X,,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> LateralPull
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Lateral Pull Handle 4, Aluminum, Pure White",,,0Mesh-Door-Handle-LateralPull-04.Door-Handle-LateralPull-04',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,X,,X,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-LateralPull-05.Door-Handle-LateralPull-05'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",,2Part --> Door --> Handle --> LateralPull,,"Lateral Pull Handle 5, Aluminum, Sea Green",,,0Mesh-Door-Handle-LateralPull-05.Door-Handle-LateralPull-05',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,X,,X,,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Lever
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Lateral Pull Handle 5, Aluminum, Pure White",,,0Mesh-Door-Handle-LateralPull-05.Door-Handle-LateralPull-05',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,X,,X,,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Door --> Handle --> Lever,,"Rounded Lever Handle 1, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Lever
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Rounded Lever Handle 1, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Lever-02.Door-Handle-Lever-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Door --> Handle --> Lever,,"Rounded Lever Handle 2, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-02.Door-Handle-Lever-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Lever
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Rounded Lever Handle 2, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-02.Door-Handle-Lever-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Lever-19.Door-Handle-Lever-19'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray",,2Part --> Door --> Handle --> Lever,,"Rounded Lever Handle 3, Aluminum, Light Gray",,,0Mesh-Door-Handle-Lever-19.Door-Handle-Lever-19',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Lever
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Rounded Lever Handle 3, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-19.Door-Handle-Lever-19',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Lever-20.Door-Handle-Lever-20'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-C4B99D-Sandstone",,2Part --> Door --> Handle --> Lever,,"Rounded Lever Handle 4, Aluminum, Sandstone",,,0Mesh-Door-Handle-Lever-20.Door-Handle-Lever-20',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-C4B99D-Sandstone,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Lever
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Rounded Lever Handle 4, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-20.Door-Handle-Lever-20',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-F4F3D7-Birch",,2Part --> Door --> Handle --> Lever,,"Rounded Lever Handle 5, Aluminum, Birch",,,0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-F4F3D7-Birch,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Lever
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Rounded Lever Handle 5, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Lever-03.Door-Handle-Lever-03'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-F4F3D7-Birch",,2Part --> Door --> Handle --> Lever,,"Rectangular Lever Handle 1, Aluminum, Birch",,,0Mesh-Door-Handle-Lever-03.Door-Handle-Lever-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-F4F3D7-Birch,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Lever
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Rectangular Lever Handle 1, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-03.Door-Handle-Lever-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
+0Mesh-Door-Handle-Lever-03.Door-Handle-Lever-03'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Rectangular Lever Handle 1, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-03.Door-Handle-Lever-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Lever-12.Door-Handle-Lever-12'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BD9C2B-Gold",,2Part --> Door --> Handle --> Lever,,"Rectangular Lever Handle 2, Aluminum, Gold",,,0Mesh-Door-Handle-Lever-12.Door-Handle-Lever-12',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BD9C2B-Gold,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Lever
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Rectangular Lever Handle 2, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-12.Door-Handle-Lever-12',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Lever-21.Door-Handle-Lever-21'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe",,2Part --> Door --> Handle --> Lever,,"Rectangular Lever Handle 3, Aluminum, Taupe",,,0Mesh-Door-Handle-Lever-21.Door-Handle-Lever-21',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Lever
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Rectangular Lever Handle 3, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-21.Door-Handle-Lever-21',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Lever-26.Door-Handle-Lever-26'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-81B46F-SpringHill",,2Part --> Door --> Handle --> Lever,,"Rectangular Lever Handle 4, Aluminum, Spring Hill",,,0Mesh-Door-Handle-Lever-26.Door-Handle-Lever-26',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-81B46F-SpringHill,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Lever
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Rectangular Lever Handle 4, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-26.Door-Handle-Lever-26',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Lever-05.Door-Handle-Lever-05'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-AAAB8C-GreenGray",,2Part --> Door --> Handle --> Lever,,"Angular Lever Handle, Aluminum, Green Gray",,,0Mesh-Door-Handle-Lever-05.Door-Handle-Lever-05',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-AAAB8C-GreenGray,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Handle --> Lever
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Angular Lever Handle, Aluminum, Pure White",,,0Mesh-Door-Handle-Lever-05.Door-Handle-Lever-05',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"HandleStatic
 0Mesh-Door-Handle-Lever-06.Door-Handle-Lever-06'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,2Part --> Door --> Handle --> Lever,,"Cylindrical Lever Handle, Aluminum, Patrician Bronze",,,0Mesh-Door-Handle-Lever-06.Door-Handle-Lever-06',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Hinge --> Swing
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Cylindrical Lever Handle, Aluminum, Patrician Bronze",,,0Mesh-Door-Handle-Lever-06.Door-Handle-Lever-06',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"Hinge
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Hinge --> Swing,,"Shallow Hinge, Steel, Untinted",,,0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Hinge --> Swing
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,Hinge,,"Shallow Hinge, Steel, Untinted",,,0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,X,,,,,,
+PRESET,,"Hinge
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,Hinge,,"Shallow Hinge, Aluminum, Patrician Bronze",,,0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,X,,,,,,
+PRESET,,"Hinge
 0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Hinge --> Swing,,"Deep Hinge, Steel, Untinted",,,0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Knocker
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,Hinge,,"Deep Hinge, Steel, Untinted",,,0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,X,,,,,,
+PRESET,,"Knocker
 0Mesh-Door-Knocker-01.Door-Knocker-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Knocker,,"Knocker 1, Steel, Untinted",,,0Mesh-Door-Knocker-01.Door-Knocker-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Knocker
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,Knocker,,"Knocker 1, Steel, Untinted",,,0Mesh-Door-Knocker-01.Door-Knocker-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"Knocker
+0Mesh-Door-Knocker-01.Door-Knocker-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,Knocker,,"Knocker 1, Aluminum, Patrician Bronze",,,0Mesh-Door-Knocker-01.Door-Knocker-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"Knocker
 0Mesh-Door-Knocker-02.Door-Knocker-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Knocker,,"Knocker 2, Steel, Untinted",,,0Mesh-Door-Knocker-02.Door-Knocker-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Lock --> Deadbolt
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,Knocker,,"Knocker 2, Steel, Untinted",,,0Mesh-Door-Knocker-02.Door-Knocker-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Lock --> Deadbolt,,"Deadbolt 1, Steel, Untinted",,,0Mesh-Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Lock --> Deadbolt
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,LockDeadbolt,,"Deadbolt 1, Steel, Untinted",,,0Mesh-Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Lock --> Deadbolt,,"Deadbolt 2, Steel, Untinted",,,0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Lock --> Deadbolt
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,LockDeadbolt,,"Deadbolt 2, Aluminum, Patrician Bronze",,,0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"LockDeadbolt
+0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,LockDeadbolt,,"Deadbolt 2, Steel, Untinted",,,0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-03.Door-Lock-Deadbolt-03'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Lock --> Deadbolt,,"Single Sided, Deadbolt 3, Steel, Untinted",,,0Mesh-Door-Lock-Deadbolt-03.Door-Lock-Deadbolt-03',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Lock --> SurfaceLatch
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,LockDeadbolt,,"Single Sided, Deadbolt 3, Steel, Untinted",,,0Mesh-Door-Lock-Deadbolt-03.Door-Lock-Deadbolt-03',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Lock --> SurfaceLatch,,"Surface Latch 1 (Bolt), Steel, Untinted",,,0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Lock --> SurfaceLatch
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,LockSurface,,"Surface Latch 1 (Bolt), Steel, Untinted",,,0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Chain-01.Door-Lock-SurfaceLatch-Chain-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-EAEAEA-Gray1",,2Part --> Door --> Lock --> SurfaceLatch,,"Surface Chain Lock, Steel, Gray 1",,,0Mesh-Door-Lock-SurfaceLatch-Chain-01.Door-Lock-SurfaceLatch-Chain-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-EAEAEA-Gray1,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Lock --> SurfaceLatch
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-EAEAEA-Gray1",,LockSurface,,"Surface Chain Lock, Steel, Gray 1",,,0Mesh-Door-Lock-SurfaceLatch-Chain-01.Door-Lock-SurfaceLatch-Chain-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-EAEAEA-Gray1,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Lock --> SurfaceLatch,,"Surface Bolt Lock (Clasp), Steel, Untinted",,,0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> MailSlot
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,LockSurface,,"Surface Bolt Lock (Clasp), Steel, Untinted",,,0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"MailSlot
 0Mesh-Door-MailSlot-01.Door-MailSlot-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> MailSlot,,"Mail Slot 1, Steel, Untinted",,,0Mesh-Door-MailSlot-01.Door-MailSlot-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> MailSlot
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,MailSlot,,"Mail Slot 1, Steel, Untinted",,,0Mesh-Door-MailSlot-01.Door-MailSlot-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"MailSlot
 0Mesh-Door-MailSlot-02.Door-MailSlot-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> MailSlot,,"Mail Slot 2, Steel, Untinted",,,0Mesh-Door-MailSlot-02.Door-MailSlot-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Panel --> Sliding
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,MailSlot,,"Mail Slot 2, Steel, Untinted",,,0Mesh-Door-MailSlot-02.Door-MailSlot-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"Panel
 0Mesh-Door-Panel-Sliding-01.Door-Panel-Sliding-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,2Part --> Door --> Panel --> Sliding,,"Sliding Door Panel 1, Aluminum, Pure White",,,0Mesh-Door-Panel-Sliding-01.Door-Panel-Sliding-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,
-PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Door --> Panel --> Swing
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,Panel,,"Sliding Door Panel 1, Paint, Gentle White",,,0Mesh-Door-Panel-Sliding-01.Door-Panel-Sliding-01',1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,X,,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Panel
+0Mesh-Door-Panel-Sliding-01.Door-Panel-Sliding-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,Panel,,"Sliding Door Panel 1, Aluminum, Patrician Bronze",,,0Mesh-Door-Panel-Sliding-01.Door-Panel-Sliding-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,X,,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Panel
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
-1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White",,2Part --> Door --> Panel --> Swing,,"Flush Panel, Cherry, White",,,0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01',1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Panel --> Swing
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,Panel,,"Flush Panel, Walnut, Natural",,,0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01',1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Panel
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,Panel,,"Flush Panel, Ash, Natural",,,0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Panel
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,Panel,,"Flush Panel, Paint, Gentle White",,,0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01',1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Panel
 0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,2Part --> Door --> Panel --> Swing,,"Panel With Glass, Ash, White",,,0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Door --> Panel --> Swing
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,Panel,,"Panel With Glass, Ash, Natural",,,0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Panel
 0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03'
-1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White",,2Part --> Door --> Panel --> Swing,,"Paneled Panel, Mahogany, White",,,0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03',1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Panel --> Swing
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,Panel,,"Paneled Panel, Walnut, Natural",,,0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03',1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Panel
 0Mesh-Door-Panel-Swing-04.Door-Panel-Swing-04'
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-829CA9-BayBlue",,2Part --> Door --> Panel --> Swing,,"2 Panel Glass with Muntins, Birch (Yellow), White",,,0Mesh-Door-Panel-Swing-04.Door-Panel-Swing-04',1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-829CA9-BayBlue,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Door --> Panel --> Swing
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-829CA9-BayBlue",,Panel,,"2 Panel Glass with Muntins, Ash, Natural",,,0Mesh-Door-Panel-Swing-04.Door-Panel-Swing-04',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-829CA9-BayBlue,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Panel
 0Mesh-Door-Panel-Swing-05.Door-Panel-Swing-05'
-1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Abstract-FFFFFF-White",,2Part --> Door --> Panel --> Swing,,"6 Panel Door, Oak (White), White",,,0Mesh-Door-Panel-Swing-05.Door-Panel-Swing-05',1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Panel --> Swing
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,Panel,,"6 Panel Door, Ash, Natural",,,0Mesh-Door-Panel-Swing-05.Door-Panel-Swing-05',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,"Panel
 0Mesh-Door-Panel-Swing-06.Door-Panel-Swing-06'
-1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow",,2Part --> Door --> Panel --> Swing,,"Wide Vision Panel, Cypress (Bald), White",,,0Mesh-Door-Panel-Swing-06.Door-Panel-Swing-06',1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Door --> Panel --> Swing
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow",,Panel,,"Wide Vision Panel, Ash, Natural",,,0Mesh-Door-Panel-Swing-06.Door-Panel-Swing-06',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Panel
 0Mesh-Door-Panel-Swing-07.Door-Panel-Swing-07'
-1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-292D38-Indigo",,2Part --> Door --> Panel --> Swing,,"Narrow Vision Panel, Mahogany, White",,,0Mesh-Door-Panel-Swing-07.Door-Panel-Swing-07',1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-292D38-Indigo,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Door --> Peephole
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-292D38-Indigo",,Panel,,"Narrow Vision Panel, Walnut, Natural",,,0Mesh-Door-Panel-Swing-07.Door-Panel-Swing-07',1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-292D38-Indigo,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Peephole
 0Mesh-Door-Peephole-01.Door-Peephole-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Peephole,,"Peephole 1, Steel, Untinted",,,0Mesh-Door-Peephole-01.Door-Peephole-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Peephole
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,Peephole,,"Peephole 1, Aluminum, Pure White",,,0Mesh-Door-Peephole-01.Door-Peephole-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"Peephole
+0Mesh-Door-Peephole-01.Door-Peephole-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,Peephole,,"Peephole 1, Aluminum, Patrician Bronze",,,0Mesh-Door-Peephole-01.Door-Peephole-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"Peephole
 0Mesh-Door-Peephole-02.Door-Peephole-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Peephole,,"Peephole 2, Steel, Untinted",,,0Mesh-Door-Peephole-02.Door-Peephole-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,
-PRESET,,"2Part --> Door --> Track --> Barn
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,Peephole,,"Peephole 2, Aluminum, Pure White",,,0Mesh-Door-Peephole-02.Door-Peephole-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,"TrackBarn
 0Mesh-Door-Track-Barn-01.Door-Track-Barn-01'
-1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,2Part --> Door --> Track --> Barn,,"Barn Door Track 1, Iron, Pure White",,,0Mesh-Door-Track-Barn-01.Door-Track-Barn-01',1Material --> Metal --> Iron-0RawMaterial-Iron-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Door --> Track --> Barn
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,TrackBarn,,"Barn Door Track 1, Aluminum, Pure White",,,0Mesh-Door-Track-Barn-01.Door-Track-Barn-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,,"TrackBarn
+0Mesh-Door-Track-Barn-01.Door-Track-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,TrackBarn,,"Barn Door Track 1, Aluminum, Patrician Bronze",,,0Mesh-Door-Track-Barn-01.Door-Track-Barn-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,,"TrackBarn
 0Mesh-Door-Track-Barn-02.Door-Track-Barn-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Door --> Track --> Barn,,"Barn Door Track 2 (Glass Mount), Steel, Untinted",,,0Mesh-Door-Track-Barn-02.Door-Track-Barn-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Window --> Frame --> Fixed
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,TrackBarn,,"Barn Door Track 2 (Glass Mount), Aluminum, Pure White",,,0Mesh-Door-Track-Barn-02.Door-Track-Barn-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,
+PRESET,,"Frame
 0Mesh-Window-Frame-Fixed-01.Window-Frame-Fixed-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Window --> Frame --> Fixed,,"Fixed Frame 1, Steel, Untinted",,,0Mesh-Window-Frame-Fixed-01.Window-Frame-Fixed-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,
-PRESET,,"2Part --> Window --> Frame --> Fixed
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,Frame,,"Fixed Frame 1, Aluminum, Pure White",,,0Mesh-Window-Frame-Fixed-01.Window-Frame-Fixed-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,X,,
+PRESET,,"Frame
 0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Window --> Frame --> Fixed,,"Fixed Frame 2, Steel, Untinted",,,0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,
-PRESET,,"2Part --> Window --> Frame --> Sliding
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,Frame,,"Fixed Frame 2, Aluminum, Pure White",,,0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,X,,
+PRESET,,"Frame
 0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Window --> Frame --> Sliding,,"Sliding Frame 1, Steel, Untinted",,,0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X
-PRESET,,"2Part --> Window --> Panel --> Fixed
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,Frame,,"Sliding Frame 1, Aluminum, Pure White",,,0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,X,,
+PRESET,,"Panel
 0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Window --> Panel --> Fixed,,"Fixed Panel 1, Steel, Untinted",,,0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,
-PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Window --> Panel --> Fixed
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,Panel,,"Fixed Panel 1, Aluminum, Patrician Bronze",,,0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,X,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Panel
 0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Window --> Panel --> Fixed,,"Fixed Panel 2, Steel, Untinted",,,0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X
-PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Window --> Panel --> Sliding
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,Panel,,"Fixed Panel 2, Aluminum, Patrician Bronze",,,0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,X,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Panel
 0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Window --> Panel --> Sliding,,"Sliding Panel 1, Steel, Untinted",,,0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X
-PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> Window --> Panel --> Sliding
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,Panel,,"Sliding Panel 1, Aluminum, Patrician Bronze",,,0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,X,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Panel
 0Mesh-Window-Panel-Sliding-02.Window-Panel-Sliding-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> Window --> Panel --> Sliding,,"Sliding Panel 2, Steel, Untinted",,,0Mesh-Window-Panel-Sliding-02.Window-Panel-Sliding-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X
-PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> FFE --> Furniture --> Table --> Dining
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,Panel,,"Sliding Panel 2, Aluminum, Patrician Bronze",,,0Mesh-Window-Panel-Sliding-02.Window-Panel-Sliding-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,X,,
+PRESET,,,,,,,,,,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,Finish2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Table
 0Mesh-remade/FFE-Table-Dining-4/FFE-Table-Dining-4-Merged.FFE-Table-Dining-4-Merged'
-1Material --> Stone --> Marble-0RawMaterial-Marble (Calacatta)-0Color --> Abstract-FFFFFF-White",,2Part --> FFE --> Furniture --> Table --> Dining,,"Square Table, Marble (Calacatta), White",X,,0Mesh-remade/FFE-Table-Dining-4/FFE-Table-Dining-4-Merged.FFE-Table-Dining-4-Merged',1Material --> Stone --> Marble-0RawMaterial-Marble (Calacatta)-0Color --> Abstract-FFFFFF-White,,FinishTop,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,
-PRESET,,,,,,,,,,,,FinishBase,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> FFE --> Furniture --> Table --> Dining
+1Material --> Stone --> Marble-0RawMaterial-Marble (Calacatta)-0Color --> Abstract-FFFFFF-White",,Table,,"Square Table, Marble (Calacatta), White",X,,0Mesh-remade/FFE-Table-Dining-4/FFE-Table-Dining-4-Merged.FFE-Table-Dining-4-Merged',1Material --> Stone --> Marble-0RawMaterial-Marble (Calacatta)-0Color --> Abstract-FFFFFF-White,,FinishTop,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,FinishBase,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Table
 0Mesh-remade/FFE-Table-Dining-1/FFE-Table-Dining-1.FFE-Table-Dining-1'
-1Material --> Stone --> Granite-0RawMaterial-Granite (Brown 1)-0Color --> Abstract-FFFFFF-White",,2Part --> FFE --> Furniture --> Table --> Dining,,"Rectangular Table, Granite (Brown 1), White",X,,0Mesh-remade/FFE-Table-Dining-1/FFE-Table-Dining-1.FFE-Table-Dining-1',1Material --> Stone --> Granite-0RawMaterial-Granite (Brown 1)-0Color --> Abstract-FFFFFF-White,,Material1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,
-PRESET,,,,,,,,,,,,Material2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,"2Part --> FFE --> Furniture --> Chair --> Dining
+1Material --> Stone --> Granite-0RawMaterial-Granite (Brown 1)-0Color --> Abstract-FFFFFF-White",,Table,,"Rectangular Table, Granite (Brown 1), White",X,,0Mesh-remade/FFE-Table-Dining-1/FFE-Table-Dining-1.FFE-Table-Dining-1',1Material --> Stone --> Granite-0RawMaterial-Granite (Brown 1)-0Color --> Abstract-FFFFFF-White,,Material1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,Material2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,"Chair
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> FFE --> Furniture --> Chair --> Dining,,"Dining Chair 1, Steel, Untinted",X,,0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,
-PRESET,,"2Part --> FFE --> Furniture --> Chair --> Dining
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,Chair,,"Dining Chair 1, Steel, Untinted",X,,0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,
+PRESET,,"Chair
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,2Part --> FFE --> Furniture --> Chair --> Dining,,"Dining Chair 2 , Steel, Untinted",X,,0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,Chair,,"Dining Chair 2 , Steel, Untinted",X,,0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02',1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,

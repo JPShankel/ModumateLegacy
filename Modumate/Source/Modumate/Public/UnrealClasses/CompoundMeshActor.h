@@ -32,7 +32,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void MakeFromAssembly(const FBIMAssemblySpec &obAsm, const FVector &scale, bool bLateralInvert, bool bMakeCollision);
+	void MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector Scale, bool bLateralInvert, bool bMakeCollision);
 	void UpdateLightFromLightConfig(UStaticMeshComponent* parentMesh, const FLightConfiguration &lightConfig, const FTransform &lightTransform);
 	void RemoveAllLights();
 

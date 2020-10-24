@@ -11,6 +11,7 @@
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "Algo/Reverse.h"
 #include "Algo/Accumulate.h"
+#include "Containers/Queue.h"
 
 ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID)
 {
@@ -48,6 +49,15 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 	rootIterator.PresetID = PresetID;
 	rootIterator.TargetProperties = &RootProperties;
 	iteratorStack.Push(rootIterator);
+
+	// When we encounter a part hierarchy, we want to iterate breadth-first, so use a queue of part iterators
+	struct FPartIterator
+	{
+		FBIMPreset::FPartSlot Slot;
+		FBIMKey SlotConfigPreset;
+		int32 ParentSlotIndex = 0;
+	};
+	TQueue<FPartIterator> partIteratorQueue;
 
 	while (iteratorStack.Num() > 0)
 	{
@@ -159,7 +169,7 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 		});
 
 		// Add our own children to DFS stack
-		for (auto childPreset : presetIterator.Preset->ChildPresets)
+		for (const auto& childPreset : presetIterator.Preset->ChildPresets)
 		{
 			// Each child inherits the targeting information from its parent (presetIterator)
 			FPresetIterator childIterator = presetIterator;
@@ -185,145 +195,154 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 			iteratorStack.Push(childIterator);
 		}
 
-		// A preset with PartSlots represents a compound object like a door, window or FFE ensemble
-		// TBD: It is unclear whether part slots should be stored as pins. They're treated as pins by the Node Editor
-		if (presetIterator.Preset->PartSlots.Num() > 0)
+		// If a preset has parts, add them to the part queue for processing below
+		for (const auto& part : presetIterator.Preset->PartSlots)
 		{
-			const FBIMPreset* slotConfigPreset = PresetCollection.Presets.Find(presetIterator.Preset->SlotConfigPresetID);
-			if (!ensureAlways(slotConfigPreset != nullptr))
+			FPartIterator partIterator;
+			partIterator.SlotConfigPreset = presetIterator.Preset->SlotConfigPresetID;
+			partIterator.Slot = part;
+			partIteratorQueue.Enqueue(partIterator);
+		}
+	}
+
+	// If we encountered any parts, add a root part to the top of the list to be the parent of the others
+	if (!partIteratorQueue.IsEmpty())
+	{
+		const FBIMPreset* assemblyPreset = PresetCollection.Presets.Find(PresetID);
+
+		FBIMPartSlotSpec& partSpec = Parts.AddDefaulted_GetRef();
+		partSpec.ParentSlotIndex = INDEX_NONE;
+		partSpec.NodeCategoryPath = assemblyPreset->MyTagPath;
+		partSpec.Translation = Modumate::Expression::FVectorExpression(TEXT("0"), TEXT("0"), TEXT("0"));
+		partSpec.Size = Modumate::Expression::FVectorExpression(TEXT("Self.ScaledSizeX"), TEXT("Self.ScaledSizeY"), TEXT("Self.ScaledSizeZ"));
+#if WITH_EDITOR //for debugging
+		//TODO: add _DEBUG tag
+		partSpec.NodeScope = EBIMValueScope::Assembly;
+		partSpec.PresetID = PresetID;
+#endif
+	}
+
+	// For each part in the iterator queue, add a part to the assembly list, set its parents and add children to back of queue
+	// This ensures that parents will always appear ahead of children in the array so we can process it from front to back
+	while (!partIteratorQueue.IsEmpty())
+	{
+		FPartIterator partIterator;
+		partIteratorQueue.Dequeue(partIterator);
+		const FBIMPreset* partPreset = PresetCollection.Presets.Find(partIterator.Slot.PartPreset);
+		const FBIMPreset* slotConfigPreset = PresetCollection.Presets.Find(partIterator.SlotConfigPreset);
+
+		if (ensureAlways(partPreset != nullptr) && ensureAlways(slotConfigPreset != nullptr))
+		{
+			// Each child of a part represents one component (mesh, material or color)
+			FBIMPartSlotSpec& partSpec = Parts.AddDefaulted_GetRef();
+			partSpec.ParentSlotIndex = partIterator.ParentSlotIndex;
+			partSpec.NodeCategoryPath = partPreset->MyTagPath;
+
+#if WITH_EDITOR //for debugging
+			//TODO: add _DEBUG tag
+
+			partSpec.NodeScope = partPreset->NodeScope;
+			partSpec.PresetID = partPreset->PresetID;
+			partSpec.SlotName = partIterator.Slot.SlotName;
+#endif
+			// Look for asset child presets (mesh and material) and cache assets in the part
+			for (auto& cp : partPreset->ChildPresets)
 			{
-				ret = ECraftingResult::Error;
-				continue;
-			}
-
-			// Some assemblies have parts that are themselves assemblies
-			// Cache these sub-assemblies and extract their parts below
-			TArray<FBIMAssemblySpec> subSpecs;
-
-			// Create a part entry in the assembly spec for each part in the preset
-			for (auto& partSlot : presetIterator.Preset->PartSlots)
-			{
-				FBIMPartSlotSpec &partSpec = Parts.AddDefaulted_GetRef();
-				partSpec.Properties = presetIterator.Preset->Properties;
-
-				// Find the preset for the part in the slot...this will contain the mesh, material and color information
-				const FBIMPreset* partPreset = PresetCollection.Presets.Find(partSlot.PartPreset);
-
-				if (!ensureAlways(partPreset != nullptr))
+				if (!ensureAlways(!cp.PresetID.IsNone()))
 				{
+					ret = ECraftingResult::Error;
 					continue;
 				}
 
-				// If we encounter a sub-assembly (ie a complex panel on a door), recurse and stash
-				if (partPreset->NodeScope == EBIMValueScope::Assembly)
+				const FBIMPreset* childPreset = PresetCollection.Presets.Find(cp.PresetID);
+
+				if (!ensureAlways(childPreset != nullptr))
 				{
-					FBIMAssemblySpec& spec = subSpecs.AddDefaulted_GetRef();
-					ensureAlways(spec.FromPreset(InDB, PresetCollection, partPreset->PresetID) == ECraftingResult::Success);
+					ret = ECraftingResult::Error;
 					continue;
 				}
-					
-				// Each child of a part represents one component (mesh, material or color)
-				// TODO: for now, ignoring material and color
-				for (auto& cp : partPreset->ChildPresets)
+
+				// If this preset has a material asset ID, then its ID is an architectural material
+				FString materialAsset;
+				if (childPreset->Properties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialAsset))
 				{
-					if (!ensureAlways(!cp.PresetID.IsNone()))
+					// Pin channels are defined in the DDL spreadsheet
+					// Each row of a preset can define a separate "channel" to which its pin assignments apply
+					// The only use case for this right now is binding material assignments in parts, 
+					// so all parts must define pin channels.
+					if (ensureAlways(!cp.PinChannel.IsNone()))
+					{
+						// Pin channel names are set in the spreadsheet/database
+						// They do NOT conform to channel names in the mesh itself
+						// the Material property binds a channel by name to a material
+						// the Mesh property binds a channel by name to a material index in the engine mesh
+						const FArchitecturalMaterial* material = InDB.GetArchitecturalMaterialByKey(childPreset->PresetID);
+						if (ensureAlways(material != nullptr))
+						{
+							partSpec.ChannelMaterials.Add(cp.PinChannel, *material);
+						}
+					}
+				}
+
+				// If this child has a mesh asset ID, this fetch the mesh and use it 
+				FString meshAsset;
+				if (childPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))
+				{
+					const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(childPreset->PresetID);
+					if (!ensureAlways(mesh != nullptr))
 					{
 						ret = ECraftingResult::Error;
-						continue;
+						break;
 					}
 
-					const FBIMPreset* childPreset = PresetCollection.Presets.Find(cp.PresetID);
-
-					if (!ensureAlways(childPreset != nullptr))
-					{
-						ret = ECraftingResult::Error;
-						continue;
-					}
-
-					// If this preset has a material asset ID, then its ID is an architectural material
-					FString materialAsset;
-					if (childPreset->Properties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialAsset))
-					{
-						// Pin channels are defined in the DDL spreadsheet
-						// Each row of a preset can define a separate "channel" to which its pin assignments apply
-						// The only use case for this right now is binding material assignments in parts, 
-						// so all parts must define pin channels.
-						if (ensureAlways(!cp.PinChannel.IsNone()))
-						{
-							// Pin channel names are set in the spreadsheet/database
-							// They do NOT conform to channel names in the mesh itself
-							// the Material property binds a channel by name to a material
-							// the Mesh property binds a channel by name to a material index in the engine mesh
-							const FArchitecturalMaterial* material = InDB.GetArchitecturalMaterialByKey(childPreset->PresetID);
-							if (ensureAlways(material != nullptr))
-							{
-								partSpec.ChannelMaterials.Add(cp.PinChannel, *material);
-							}
-						}
-					}
-
-					// If this child has a mesh asset ID, this fetch the mesh and use it 
-					FString meshAsset;
-					if (childPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))
-					{
-						const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(childPreset->PresetID);
-						if (!ensureAlways(mesh != nullptr))
-						{
-							ret = ECraftingResult::Error;
-							break;
-						}
-
-						partSpec.Mesh = *mesh;
-
-						// Now find the slot in the config that corresponds to the slot in the preset and fetch its parameterized transform
-						for (auto& childSlot : slotConfigPreset->ChildPresets)
-						{
-							if (childSlot.PresetID == partSlot.SlotName)
-							{
-								const FBIMPreset* childSlotPreset = PresetCollection.Presets.Find(childSlot.PresetID);
-								if (!ensureAlways(childSlotPreset != nullptr))
-								{
-									break;
-								}
-
-								// FVectorExpression holds 3 values as formula strings (ie "Parent.NativeSizeX * 0.5) that are evaluated in CompoundMeshActor
-
-								partSpec.Translation = Modumate::Expression::FVectorExpression(
-									childSlotPreset->GetProperty(TEXT("LocationX")),
-									childSlotPreset->GetProperty(TEXT("LocationY")),
-									childSlotPreset->GetProperty(TEXT("LocationZ")));
-
-								partSpec.Orientation = Modumate::Expression::FVectorExpression(
-									childSlotPreset->GetProperty(TEXT("RotationX")),
-									childSlotPreset->GetProperty(TEXT("RotationY")),
-									childSlotPreset->GetProperty(TEXT("RotationZ")));
-
-								partSpec.Size = Modumate::Expression::FVectorExpression(
-									childSlotPreset->GetProperty(TEXT("SizeX")),
-									childSlotPreset->GetProperty(TEXT("SizeY")),
-									childSlotPreset->GetProperty(TEXT("SizeZ")));
-
-								partSpec.Flip[0] = !childSlotPreset->GetProperty(TEXT("FlipX")).AsString().IsEmpty();
-								partSpec.Flip[1] = !childSlotPreset->GetProperty(TEXT("FlipY")).AsString().IsEmpty();
-								partSpec.Flip[2] = !childSlotPreset->GetProperty(TEXT("FlipZ")).AsString().IsEmpty();
-
-								break;
-							}
-						}
-					}
+					partSpec.Mesh = *mesh;
 				}
 			}
 
-			// TODO: for now, sub-assemblies only care about parts
-			// Some complex types (ie stairs) may need similar treatment for extrusions and layers
-			// To be determined: continue with flat layout or build hierarchy of specs?
-			for (auto& subSpec : subSpecs)
+			// Find which slot this child belongs to and fetch transform data
+			for (auto& childSlot : slotConfigPreset->ChildPresets)
 			{
-				for (auto& part : subSpec.Parts)
+				if (childSlot.PresetID == partIterator.Slot.SlotName)
 				{
-					part.ParentSlotIndex += Parts.Num();
+					const FBIMPreset* childSlotPreset = PresetCollection.Presets.Find(childSlot.PresetID);
+					if (!ensureAlways(childSlotPreset != nullptr))
+					{
+						break;
+					}
+
+					// FVectorExpression holds 3 values as formula strings (ie "Parent.NativeSizeX * 0.5) that are evaluated in CompoundMeshActor
+					partSpec.Translation = Modumate::Expression::FVectorExpression(
+						childSlotPreset->GetProperty(TEXT("LocationX")),
+						childSlotPreset->GetProperty(TEXT("LocationY")),
+						childSlotPreset->GetProperty(TEXT("LocationZ")));
+
+					partSpec.Orientation = Modumate::Expression::FVectorExpression(
+						childSlotPreset->GetProperty(TEXT("RotationX")),
+						childSlotPreset->GetProperty(TEXT("RotationY")),
+						childSlotPreset->GetProperty(TEXT("RotationZ")));
+
+					partSpec.Size = Modumate::Expression::FVectorExpression(
+						childSlotPreset->GetProperty(TEXT("SizeX")),
+						childSlotPreset->GetProperty(TEXT("SizeY")),
+						childSlotPreset->GetProperty(TEXT("SizeZ")));
+
+					partSpec.Flip[0] = !childSlotPreset->GetProperty(TEXT("FlipX")).AsString().IsEmpty();
+					partSpec.Flip[1] = !childSlotPreset->GetProperty(TEXT("FlipY")).AsString().IsEmpty();
+					partSpec.Flip[2] = !childSlotPreset->GetProperty(TEXT("FlipZ")).AsString().IsEmpty();
+
+					break;
 				}
-				Parts.Append(subSpec.Parts);
+			}
+
+			// If this part is an assembly, then establish this part as the parent of its children, otherwise use the current parent
+			int32 parentSlotIndex = partPreset->NodeScope == EBIMValueScope::Assembly ? Parts.Num() - 1 : partIterator.ParentSlotIndex;
+			for (const auto& part : partPreset->PartSlots)
+			{
+				FPartIterator nextPartIterator;
+				nextPartIterator.ParentSlotIndex = parentSlotIndex;
+				nextPartIterator.Slot = part;
+				nextPartIterator.SlotConfigPreset = partPreset->SlotConfigPresetID;
+				partIteratorQueue.Enqueue(nextPartIterator);
 			}
 		}
 	}
@@ -356,14 +375,17 @@ void FBIMAssemblySpec::ReverseLayers()
 
 FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 {
-	if (ensure(Parts.Num() > 0))
+	//The first part with a mesh defines the assembly native size
+	//Parts without meshes represent parents of sets of mesh parts, so we skip those
+	//TODO: read an assembly's native size from data
+	for (auto& part : Parts)
 	{
-		return Parts[0].Mesh.NativeSize * Modumate::InchesToCentimeters;
+		if (part.Mesh.EngineMesh.IsValid())
+		{
+			return part.Mesh.NativeSize * Modumate::InchesToCentimeters;
+		}
 	}
-	else
-	{
-		return FVector::ZeroVector;
-	}
+	return FVector::ZeroVector;
 }
 
 ECraftingResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
@@ -380,14 +402,8 @@ ECraftingResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& In
 
 		FBIMPartSlotSpec& partSlot = Parts.AddDefaulted_GetRef();
 		partSlot.Mesh = *mesh;
-
-		return ECraftingResult::Success;
+		partSlot.ParentSlotIndex = INDEX_NONE;
 	}
-	else
-	{
-		// TODO: slot transformations
-	}
-
 	return ECraftingResult::Success;
 }
 

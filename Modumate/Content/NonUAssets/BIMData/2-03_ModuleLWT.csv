@@ -397,149 +397,149 @@ PRESET,,"2ModuleLWT --> Board/Panel --> Plywood
 0DimLW-96in-48in
 0DimThk-1.25inT",,2ModuleLWT --> Board/Panel --> Plywood,,"48in x 96in, 1-1/4in, Plywood, Plywood, White",,1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White,0DimLW-96in-48in,0DimThk-1.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
 0DimLW-32in-5in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 32in, 3/8in, Engineered Wood, Ash, White",,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White,0DimLW-32in-5in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 32in, 3/8in, Engineered Wood, Ash, Natural",,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,0DimLW-32in-5in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural
 0DimLW-48in-5in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 48in, 3/8in, Engineered Wood, Bamboo, White",,1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White,0DimLW-48in-5in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 48in, 3/8in, Engineered Wood, Bamboo, Natural",,1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural,0DimLW-48in-5in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural
 0DimLW-60in-5in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 60in, 3/8in, Engineered Wood, Beech, White",,1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White,0DimLW-60in-5in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 60in, 3/8in, Engineered Wood, Beech, Natural",,1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural,0DimLW-60in-5in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-48in-7in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 48in, 3/8in, Engineered Wood, Birch (Yellow), White",,1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White,0DimLW-48in-7in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 48in, 3/8in, Engineered Wood, Birch (Yellow), Natural",,1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural,0DimLW-48in-7in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural
 0DimLW-60in-7in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 60in, 3/8in, Engineered Wood, Cedar (Western Red), White",,1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White,0DimLW-60in-7in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 60in, 3/8in, Engineered Wood, Cedar (Western Red), Natural",,1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural,0DimLW-60in-7in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural
 0DimLW-72in-7in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 72in, 3/8in, Engineered Wood, Cedar (White), White",,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White,0DimLW-72in-7in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 72in, 3/8in, Engineered Wood, Cedar (White), Natural",,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural,0DimLW-72in-7in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural
 0DimLW-32in-5in
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 32in, 1/2in, Engineered Wood, Cherry, White",,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White,0DimLW-32in-5in,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 32in, 1/2in, Engineered Wood, Cherry, Natural",,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural,0DimLW-32in-5in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural
 0DimLW-48in-5in
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 48in, 1/2in, Engineered Wood, Cypress (Bald), White",,1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White,0DimLW-48in-5in,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 48in, 1/2in, Engineered Wood, Cypress (Bald), Natural",,1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural,0DimLW-48in-5in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Wood --> Ipe-FFFFFF-Natural
 0DimLW-60in-5in
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 60in, 1/2in, Engineered Wood, Ipe, White",,1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Abstract-FFFFFF-White,0DimLW-60in-5in,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 60in, 1/2in, Engineered Wood, Ipe, Natural",,1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Wood --> Ipe-FFFFFF-Natural,0DimLW-60in-5in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural
 0DimLW-48in-7in
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 48in, 1/2in, Engineered Wood, Mahogany, White",,1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White,0DimLW-48in-7in,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 48in, 1/2in, Engineered Wood, Mahogany, Natural",,1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural,0DimLW-48in-7in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Wood --> Maple-FFFFFF-Natural
 0DimLW-60in-7in
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 60in, 1/2in, Engineered Wood, Maple, White",,1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Abstract-FFFFFF-White,0DimLW-60in-7in,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 60in, 1/2in, Engineered Wood, Maple, Natural",,1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Wood --> Maple-FFFFFF-Natural,0DimLW-60in-7in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Wood --> Oak - Red-FFFFFF-Natural
 0DimLW-72in-7in
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 72in, 1/2in, Engineered Wood, Oak (Red), White",,1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Abstract-FFFFFF-White,0DimLW-72in-7in,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 72in, 1/2in, Engineered Wood, Oak (Red), Natural",,1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Wood --> Oak - Red-FFFFFF-Natural,0DimLW-72in-7in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural
 0DimLW-32in-5in
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 32in, 3/4in, Engineered Wood, Oak (White), White",,1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Abstract-FFFFFF-White,0DimLW-32in-5in,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 32in, 3/4in, Engineered Wood, Oak (White), Natural",,1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural,0DimLW-32in-5in,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Wood --> Redwood-FFFFFF-Natural
 0DimLW-48in-5in
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 48in, 3/4in, Engineered Wood, Redwood, White",,1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White,0DimLW-48in-5in,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 48in, 3/4in, Engineered Wood, Redwood, Natural",,1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Wood --> Redwood-FFFFFF-Natural,0DimLW-48in-5in,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimLW-60in-5in
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 60in, 3/4in, Engineered Wood, Spruce-Pine-Fir, White",,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimLW-60in-5in,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Engineered Wood,,"5in x 60in, 3/4in, Engineered Wood, Spruce-Pine-Fir, Natural",,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimLW-60in-5in,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Wood --> Sycamore-FFFFFF-Natural
 0DimLW-48in-7in
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 48in, 3/4in, Engineered Wood, Sycamore, White",,1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Abstract-FFFFFF-White,0DimLW-48in-7in,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 48in, 3/4in, Engineered Wood, Sycamore, Natural",,1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Wood --> Sycamore-FFFFFF-Natural,0DimLW-48in-7in,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural
 0DimLW-60in-7in
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 60in, 3/4in, Engineered Wood, Teak, White",,1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Abstract-FFFFFF-White,0DimLW-60in-7in,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 60in, 3/4in, Engineered Wood, Teak, Natural",,1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural,0DimLW-60in-7in,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Engineered Wood
-1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0DimLW-72in-7in
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 72in, 3/4in, Engineered Wood, Walnut, White",,1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Abstract-FFFFFF-White,0DimLW-72in-7in,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Engineered Wood,,"7in x 72in, 3/4in, Engineered Wood, Walnut, Natural",,1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural,0DimLW-72in-7in,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
 0DimLW-32in-5in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"5in x 32in, 3/8in, Wood, Ash, White",,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White,0DimLW-32in-5in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"5in x 32in, 3/8in, Wood, Ash, Natural",,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,0DimLW-32in-5in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural
 0DimLW-48in-5in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"5in x 48in, 3/8in, Wood, Bamboo, White",,1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White,0DimLW-48in-5in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"5in x 48in, 3/8in, Wood, Bamboo, Natural",,1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural,0DimLW-48in-5in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural
 0DimLW-60in-5in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"5in x 60in, 3/8in, Wood, Beech, White",,1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White,0DimLW-60in-5in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"5in x 60in, 3/8in, Wood, Beech, Natural",,1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural,0DimLW-60in-5in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-48in-7in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"7in x 48in, 3/8in, Wood, Birch (Yellow), White",,1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White,0DimLW-48in-7in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"7in x 48in, 3/8in, Wood, Birch (Yellow), Natural",,1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural,0DimLW-48in-7in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural
 0DimLW-60in-7in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"7in x 60in, 3/8in, Wood, Cedar (Western Red), White",,1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White,0DimLW-60in-7in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"7in x 60in, 3/8in, Wood, Cedar (Western Red), Natural",,1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural,0DimLW-60in-7in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural
 0DimLW-72in-7in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"7in x 72in, 3/8in, Wood, Cedar (White), White",,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White,0DimLW-72in-7in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"7in x 72in, 3/8in, Wood, Cedar (White), Natural",,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural,0DimLW-72in-7in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural
 0DimLW-32in-5in
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,"5in x 32in, 1/2in, Wood, Cherry, White",,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White,0DimLW-32in-5in,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,"5in x 32in, 1/2in, Wood, Cherry, Natural",,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural,0DimLW-32in-5in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural
 0DimLW-48in-5in
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,"5in x 48in, 1/2in, Wood, Cypress (Bald), White",,1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White,0DimLW-48in-5in,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,"5in x 48in, 1/2in, Wood, Cypress (Bald), Natural",,1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural,0DimLW-48in-5in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Wood --> Ipe-FFFFFF-Natural
 0DimLW-60in-5in
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,"5in x 60in, 1/2in, Wood, Ipe, White",,1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Abstract-FFFFFF-White,0DimLW-60in-5in,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,"5in x 60in, 1/2in, Wood, Ipe, Natural",,1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Wood --> Ipe-FFFFFF-Natural,0DimLW-60in-5in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural
 0DimLW-48in-7in
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,"7in x 48in, 1/2in, Wood, Mahogany, White",,1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White,0DimLW-48in-7in,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,"7in x 48in, 1/2in, Wood, Mahogany, Natural",,1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural,0DimLW-48in-7in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Wood --> Maple-FFFFFF-Natural
 0DimLW-60in-7in
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,"7in x 60in, 1/2in, Wood, Maple, White",,1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Abstract-FFFFFF-White,0DimLW-60in-7in,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,"7in x 60in, 1/2in, Wood, Maple, Natural",,1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Wood --> Maple-FFFFFF-Natural,0DimLW-60in-7in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Wood --> Oak - Red-FFFFFF-Natural
 0DimLW-72in-7in
-0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,"7in x 72in, 1/2in, Wood, Oak (Red), White",,1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Abstract-FFFFFF-White,0DimLW-72in-7in,0DimThk-0.5inT,,3Layer2D
+0DimThk-0.5inT",,2ModuleLWT --> Plank --> Wood,,"7in x 72in, 1/2in, Wood, Oak (Red), Natural",,1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Wood --> Oak - Red-FFFFFF-Natural,0DimLW-72in-7in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural
 0DimLW-32in-5in
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,"5in x 32in, 3/4in, Wood, Oak (White), White",,1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Abstract-FFFFFF-White,0DimLW-32in-5in,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,"5in x 32in, 3/4in, Wood, Oak (White), Natural",,1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural,0DimLW-32in-5in,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Wood --> Redwood-FFFFFF-Natural
 0DimLW-48in-5in
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,"5in x 48in, 3/4in, Wood, Redwood, White",,1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White,0DimLW-48in-5in,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,"5in x 48in, 3/4in, Wood, Redwood, Natural",,1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Wood --> Redwood-FFFFFF-Natural,0DimLW-48in-5in,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimLW-60in-5in
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,"5in x 60in, 3/4in, Wood, Spruce-Pine-Fir, White",,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimLW-60in-5in,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,"5in x 60in, 3/4in, Wood, Spruce-Pine-Fir, Natural",,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimLW-60in-5in,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Wood --> Sycamore-FFFFFF-Natural
 0DimLW-48in-7in
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,"7in x 48in, 3/4in, Wood, Sycamore, White",,1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Abstract-FFFFFF-White,0DimLW-48in-7in,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,"7in x 48in, 3/4in, Wood, Sycamore, Natural",,1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Wood --> Sycamore-FFFFFF-Natural,0DimLW-48in-7in,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural
 0DimLW-60in-7in
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,"7in x 60in, 3/4in, Wood, Teak, White",,1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Abstract-FFFFFF-White,0DimLW-60in-7in,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,"7in x 60in, 3/4in, Wood, Teak, Natural",,1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural,0DimLW-60in-7in,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0DimLW-72in-7in
-0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,"7in x 72in, 3/4in, Wood, Walnut, White",,1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Abstract-FFFFFF-White,0DimLW-72in-7in,0DimThk-0.75inT,,3Layer2D
+0DimThk-0.75inT",,2ModuleLWT --> Plank --> Wood,,"7in x 72in, 3/4in, Wood, Walnut, Natural",,1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural,0DimLW-72in-7in,0DimThk-0.75inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Acoustic Ceiling Tile
 1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
 0DimLW-24in-24in
@@ -701,9 +701,9 @@ PRESET,,"2ModuleLWT --> Tile --> Clay
 0DimLW-6in-4in
 0DimThk-0.5inT",,2ModuleLWT --> Tile --> Clay,,"4in x 6in, 1/2in, Clay, Clay, Yellow",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EDCB6E-Yellow,0DimLW-6in-4in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Cork
-1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-White
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-Natural
 0DimLW-6in-6in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Cork,,"6in x 6in, 1/4in, Cork, Cork, White",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-White,0DimLW-6in-6in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Cork,,"6in x 6in, 1/4in, Cork, Cork, Natural",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-Natural,0DimLW-6in-6in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Cork
 1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-D0C6BD-Cream1
 0DimLW-12in-6in
@@ -741,9 +741,9 @@ PRESET,,"2ModuleLWT --> Tile --> Cork
 0DimLW-18in-18in
 0DimThk-0.25inT",,2ModuleLWT --> Tile --> Cork,,"18in x 18in, 1/4in, Cork, Cork, Charcoal",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-534E4A-Charcoal,0DimLW-18in-18in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Cork
-1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-White
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-Natural
 0DimLW-20in-20in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Cork,,"20in x 20in, 1/4in, Cork, Cork, White",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-White,0DimLW-20in-20in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Cork,,"20in x 20in, 1/4in, Cork, Cork, Natural",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-Natural,0DimLW-20in-20in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Glass
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
 0DimLW-2in-2in
@@ -785,45 +785,45 @@ PRESET,,"2ModuleLWT --> Tile --> Glass
 0DimLW-6in-4in
 0DimThk-0.25inT",,2ModuleLWT --> Tile --> Glass,,"4in x 6in, 1/4in, Glass, Glass, Indigo",,1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-292D38-Indigo,0DimLW-6in-4in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Laminate
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
 0DimLW-12in-12in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"12in x 12in, 1/4in, Laminate, Ash, White",,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White,0DimLW-12in-12in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"12in x 12in, 1/4in, Laminate, Ash, Natural",,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,0DimLW-12in-12in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Laminate
-1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural
 0DimLW-16in-12in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"12in x 16in, 1/4in, Laminate, Bamboo, White",,1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White,0DimLW-16in-12in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"12in x 16in, 1/4in, Laminate, Bamboo, Natural",,1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural,0DimLW-16in-12in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Laminate
-1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural
 0DimLW-18in-12in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"12in x 18in, 1/4in, Laminate, Beech, White",,1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White,0DimLW-18in-12in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"12in x 18in, 1/4in, Laminate, Beech, Natural",,1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural,0DimLW-18in-12in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Laminate
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-24in-12in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"12in x 24in, 1/4in, Laminate, Birch (Yellow), White",,1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White,0DimLW-24in-12in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"12in x 24in, 1/4in, Laminate, Birch (Yellow), Natural",,1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural,0DimLW-24in-12in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Laminate
-1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural
 0DimLW-30in-12in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"12in x 30in, 1/4in, Laminate, Cedar (Western Red), White",,1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White,0DimLW-30in-12in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"12in x 30in, 1/4in, Laminate, Cedar (Western Red), Natural",,1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural,0DimLW-30in-12in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Laminate
-1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural
 0DimLW-36in-12in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"12in x 36in, 1/4in, Laminate, Cedar (White), White",,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White,0DimLW-36in-12in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"12in x 36in, 1/4in, Laminate, Cedar (White), Natural",,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural,0DimLW-36in-12in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Laminate
-1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural
 0DimLW-16in-16in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"16in x 16in, 1/4in, Laminate, Cherry, White",,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White,0DimLW-16in-16in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"16in x 16in, 1/4in, Laminate, Cherry, Natural",,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural,0DimLW-16in-16in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Laminate
-1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural
 0DimLW-24in-16in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"16in x 24in, 1/4in, Laminate, Cypress (Bald), White",,1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White,0DimLW-24in-16in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"16in x 24in, 1/4in, Laminate, Cypress (Bald), Natural",,1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural,0DimLW-24in-16in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Laminate
-1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Wood --> Ipe-FFFFFF-Natural
 0DimLW-32in-16in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"16in x 32in, 1/4in, Laminate, Ipe, White",,1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Abstract-FFFFFF-White,0DimLW-32in-16in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"16in x 32in, 1/4in, Laminate, Ipe, Natural",,1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Wood --> Ipe-FFFFFF-Natural,0DimLW-32in-16in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Laminate
-1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural
 0DimLW-48in-16in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"16in x 48in, 1/4in, Laminate, Mahogany, White",,1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White,0DimLW-48in-16in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Laminate,,"16in x 48in, 1/4in, Laminate, Mahogany, Natural",,1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural,0DimLW-48in-16in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
 1Material --> Stone --> Basalt-0RawMaterial-Basalt-0Color --> Abstract-FFFFFF-White
 0DimLW-8in-8in
@@ -869,49 +869,49 @@ PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
 0DimLW-24in-12in
 0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"12in x 24in, 1/4in, Luxury Vinyl, Granite (Orange 2), White",,1Material --> Stone --> Granite-0RawMaterial-Granite (Orange 2)-0Color --> Abstract-FFFFFF-White,0DimLW-24in-12in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
 0DimLW-30in-12in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"12in x 30in, 1/4in, Luxury Vinyl, Ash, White",,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White,0DimLW-30in-12in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"12in x 30in, 1/4in, Luxury Vinyl, Ash, Natural",,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,0DimLW-30in-12in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural
 0DimLW-36in-12in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"12in x 36in, 1/4in, Luxury Vinyl, Bamboo, White",,1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White,0DimLW-36in-12in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"12in x 36in, 1/4in, Luxury Vinyl, Bamboo, Natural",,1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural,0DimLW-36in-12in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural
 0DimLW-16in-16in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"16in x 16in, 1/4in, Luxury Vinyl, Beech, White",,1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White,0DimLW-16in-16in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"16in x 16in, 1/4in, Luxury Vinyl, Beech, Natural",,1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural,0DimLW-16in-16in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-24in-16in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"16in x 24in, 1/4in, Luxury Vinyl, Birch (Yellow), White",,1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White,0DimLW-24in-16in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"16in x 24in, 1/4in, Luxury Vinyl, Birch (Yellow), Natural",,1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural,0DimLW-24in-16in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural
 0DimLW-32in-16in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"16in x 32in, 1/4in, Luxury Vinyl, Cedar (Western Red), White",,1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White,0DimLW-32in-16in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"16in x 32in, 1/4in, Luxury Vinyl, Cedar (Western Red), Natural",,1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural,0DimLW-32in-16in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural
 0DimLW-48in-16in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"16in x 48in, 1/4in, Luxury Vinyl, Cedar (White), White",,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White,0DimLW-48in-16in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"16in x 48in, 1/4in, Luxury Vinyl, Cedar (White), Natural",,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural,0DimLW-48in-16in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural
 0DimLW-18in-18in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"18in x 18in, 1/4in, Luxury Vinyl, Cherry, White",,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White,0DimLW-18in-18in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"18in x 18in, 1/4in, Luxury Vinyl, Cherry, Natural",,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural,0DimLW-18in-18in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural
 0DimLW-24in-18in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"18in x 24in, 1/4in, Luxury Vinyl, Cypress (Bald), White",,1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White,0DimLW-24in-18in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"18in x 24in, 1/4in, Luxury Vinyl, Cypress (Bald), Natural",,1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural,0DimLW-24in-18in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Wood --> Ipe-FFFFFF-Natural
 0DimLW-36in-18in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"18in x 36in, 1/4in, Luxury Vinyl, Ipe, White",,1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Abstract-FFFFFF-White,0DimLW-36in-18in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"18in x 36in, 1/4in, Luxury Vinyl, Ipe, Natural",,1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Wood --> Ipe-FFFFFF-Natural,0DimLW-36in-18in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural
 0DimLW-20in-20in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"20in x 20in, 1/4in, Luxury Vinyl, Mahogany, White",,1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White,0DimLW-20in-20in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"20in x 20in, 1/4in, Luxury Vinyl, Mahogany, Natural",,1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural,0DimLW-20in-20in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Luxury Vinyl
-1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Wood --> Maple-FFFFFF-Natural
 0DimLW-24in-20in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"20in x 24in, 1/4in, Luxury Vinyl, Maple, White",,1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Abstract-FFFFFF-White,0DimLW-24in-20in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Luxury Vinyl,,"20in x 24in, 1/4in, Luxury Vinyl, Maple, Natural",,1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Wood --> Maple-FFFFFF-Natural,0DimLW-24in-20in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Porcelain
 1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-FAFAFA-NearlyWhite
 0DimLW-6in-3in
@@ -1029,41 +1029,41 @@ PRESET,,"2ModuleLWT --> Tile --> Vinyl Composite
 0DimLW-8in-8in
 0DimThk-0.1875inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"8in x 8in, 3/16in, Vinyl Composite, Vinyl Composite, White",,1Material --> Synthetic and Polymer --> Vinyl Composite-0RawMaterial-Vinyl Composite-0Color --> Abstract-FFFFFF-White,0DimLW-8in-8in,0DimThk-0.1875inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Vinyl Composite
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
 0DimLW-12in-8in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"8in x 12in, 1/4in, Vinyl Composite, Ash, White",,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Abstract-FFFFFF-White,0DimLW-12in-8in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"8in x 12in, 1/4in, Vinyl Composite, Ash, Natural",,1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,0DimLW-12in-8in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Vinyl Composite
-1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural
 0DimLW-16in-8in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"8in x 16in, 1/4in, Vinyl Composite, Bamboo, White",,1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Abstract-FFFFFF-White,0DimLW-16in-8in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"8in x 16in, 1/4in, Vinyl Composite, Bamboo, Natural",,1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural,0DimLW-16in-8in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Vinyl Composite
-1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural
 0DimLW-24in-8in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"8in x 24in, 1/4in, Vinyl Composite, Beech, White",,1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Abstract-FFFFFF-White,0DimLW-24in-8in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"8in x 24in, 1/4in, Vinyl Composite, Beech, Natural",,1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural,0DimLW-24in-8in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Vinyl Composite
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-24in-8in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"8in x 24in, 1/4in, Vinyl Composite, Birch (Yellow), White",,1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Abstract-FFFFFF-White,0DimLW-24in-8in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"8in x 24in, 1/4in, Vinyl Composite, Birch (Yellow), Natural",,1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural,0DimLW-24in-8in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Vinyl Composite
-1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural
 0DimLW-10in-10in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"10in x 10in, 1/4in, Vinyl Composite, Cedar (Western Red), White",,1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Abstract-FFFFFF-White,0DimLW-10in-10in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"10in x 10in, 1/4in, Vinyl Composite, Cedar (Western Red), Natural",,1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural,0DimLW-10in-10in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Vinyl Composite
-1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural
 0DimLW-20in-10in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"10in x 20in, 1/4in, Vinyl Composite, Cedar (White), White",,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Abstract-FFFFFF-White,0DimLW-20in-10in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"10in x 20in, 1/4in, Vinyl Composite, Cedar (White), Natural",,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural,0DimLW-20in-10in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Vinyl Composite
-1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural
 0DimLW-12in-12in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"12in x 12in, 1/4in, Vinyl Composite, Cherry, White",,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Abstract-FFFFFF-White,0DimLW-12in-12in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"12in x 12in, 1/4in, Vinyl Composite, Cherry, Natural",,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural,0DimLW-12in-12in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Vinyl Composite
-1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural
 0DimLW-16in-12in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"12in x 16in, 1/4in, Vinyl Composite, Cypress (Bald), White",,1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Abstract-FFFFFF-White,0DimLW-16in-12in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"12in x 16in, 1/4in, Vinyl Composite, Cypress (Bald), Natural",,1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural,0DimLW-16in-12in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Vinyl Composite
-1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural
 0DimLW-18in-12in
-0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"12in x 18in, 1/4in, Vinyl Composite, Mahogany, White",,1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Abstract-FFFFFF-White,0DimLW-18in-12in,0DimThk-0.25inT,,3Layer2D
+0DimThk-0.25inT",,2ModuleLWT --> Tile --> Vinyl Composite,,"12in x 18in, 1/4in, Vinyl Composite, Mahogany, Natural",,1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural,0DimLW-18in-12in,0DimThk-0.25inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimLW-12in-7in
@@ -1193,29 +1193,29 @@ PRESET,,"2ModuleLWT --> Shingle --> Stone
 0DimLW-12in-12in
 0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Stone,,"12in x 12in, 3/8in, Stone, Slate, Gray 7",,1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-555555-Gray7,0DimLW-12in-12in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Wood
-1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Wood --> Redwood-FFFFFF-Natural
 0DimLW-12in-7in
-0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,"7in x 12in, 3/8in, Wood, Redwood, White",,1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Abstract-FFFFFF-White,0DimLW-12in-7in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,"7in x 12in, 3/8in, Wood, Redwood, Natural",,1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Wood --> Redwood-FFFFFF-Natural,0DimLW-12in-7in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Wood
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimLW-12in-12in
-0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Spruce-Pine-Fir, White",,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimLW-12in-12in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Spruce-Pine-Fir, Natural",,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimLW-12in-12in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Wood
-1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Wood --> Sycamore-FFFFFF-Natural
 0DimLW-12in-12in
-0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Sycamore, White",,1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Abstract-FFFFFF-White,0DimLW-12in-12in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Sycamore, Natural",,1Material --> Wood --> Sycamore-0RawMaterial-Sycamore-0Color --> Wood --> Sycamore-FFFFFF-Natural,0DimLW-12in-12in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Wood
-1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural
 0DimLW-12in-12in
-0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Teak, White",,1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Abstract-FFFFFF-White,0DimLW-12in-12in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Teak, Natural",,1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural,0DimLW-12in-12in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Wood
-1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0DimLW-12in-12in
-0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Walnut, White",,1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Abstract-FFFFFF-White,0DimLW-12in-12in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Walnut, Natural",,1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural,0DimLW-12in-12in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Wood
-1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-White
+1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-Natural
 0DimLW-12in-12in
-0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Cork, White",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-White,0DimLW-12in-12in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Shingle --> Wood,,"12in x 12in, 3/8in, Wood, Cork, Natural",,1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-FFFFFF-Natural,0DimLW-12in-12in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Shingle --> Wood
 1Material --> Fibrous --> Cork-0RawMaterial-Cork-0Color --> Fibrous --> Cork-D0C6BD-Cream1
 0DimLW-12in-12in

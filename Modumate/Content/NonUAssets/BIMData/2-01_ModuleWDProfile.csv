@@ -182,45 +182,45 @@ PRESET,,"2ModuleWDProfile --> Steel Z Channel
 0DimWD-2inW-3inD
 0Profile-Steel Z Channel",,2ModuleWDProfile --> Steel Z Channel,,"2in x 3in, Steel Z Channel, Steel, Untinted",96in,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-2inW-3inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-1.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1x2, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-0.75inW-1.5inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1x2, Wood Lumber, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-0.75inW-1.5inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-2.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"0.75in x 2.5in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-0.75inW-2.5inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"0.75in x 2.5in, Wood Lumber, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-0.75inW-2.5inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-3.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"0.75in x 3.5in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-0.75inW-3.5inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"0.75in x 3.5in, Wood Lumber, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-0.75inW-3.5inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-1.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 1.5in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-1.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 1.5in, Wood Lumber, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-1.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-2.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 2.5in, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-2.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"1.5in x 2.5in, Wood Lumber, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-2.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-3.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"2x4, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-3.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"2x4, Wood Lumber, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-3.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-5.5inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"2x6, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-5.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"2x6, Wood Lumber, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-5.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-7.25inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"2x8, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-7.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"2x8, Wood Lumber, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-7.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-9.25inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"2x10, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-9.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"2x10, Wood Lumber, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-9.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-11.25inD
-0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"2x12, Wood Lumber, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-11.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"2x12, Wood Lumber, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-11.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Lumber
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-1.5inD
@@ -250,49 +250,49 @@ PRESET,,"2ModuleWDProfile --> Wood Lumber
 0DimWD-1.5inW-11.25inD
 0Profile-Solid Rectangle",,2ModuleWDProfile --> Wood Lumber,,"2x12, Wood Lumber, Wood Strands, White",96in,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-11.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-9.5inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 9.5in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-9.5inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 9.5in, Wood Web Joist, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-9.5inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-11.875inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 11.875in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-11.875inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 11.875in, Wood Web Joist, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-11.875inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-12inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 12in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-12inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 12in, Wood Web Joist, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-12inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-14inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 14in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-14inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 14in, Wood Web Joist, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-14inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-16inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 16in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-16inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 16in, Wood Web Joist, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-16inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-18inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 18in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-18inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 18in, Wood Web Joist, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-18inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-20inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 20in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-20inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 20in, Wood Web Joist, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-20inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-22inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 22in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-22inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 22in, Wood Web Joist, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-22inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-24inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 24in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-24inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 24in, Wood Web Joist, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-24inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-26inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 26in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-26inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 26in, Wood Web Joist, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-26inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-28inD
-0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 28in, Wood Web Joist, Spruce-Pine-Fir, White",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Abstract-FFFFFF-White,0DimWD-3.5inW-28inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+0Profile-Wood Web Joist",,2ModuleWDProfile --> Wood Web Joist,,"3.5in x 28in, Wood Web Joist, Spruce-Pine-Fir, Natural",96in,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-28inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
 PRESET,,"2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-3.5inW-9.5inD

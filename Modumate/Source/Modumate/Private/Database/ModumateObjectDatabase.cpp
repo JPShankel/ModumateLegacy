@@ -65,7 +65,7 @@ void FModumateDatabase::AddSimpleMesh(const FBIMKey& Key, const FString& Name, c
 	SimpleMeshes.AddData(mesh);
 }
 
-void FModumateDatabase::AddArchitecturalMesh(const FBIMKey& Key, const FString& Name, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath)
+void FModumateDatabase::AddArchitecturalMesh(const FBIMKey& Key, const FString& Name, const FString& InNamedParams, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -77,6 +77,7 @@ void FModumateDatabase::AddArchitecturalMesh(const FBIMKey& Key, const FString& 
 	mesh.NativeSize = InNativeSize;
 	mesh.NineSliceBox = InNineSliceBox;
 	mesh.Key = Key;
+	mesh.ReadNamedDimensions(InNamedParams);
 
 	mesh.EngineMesh = Cast<UStaticMesh>(AssetPath.TryLoad());
 	if (ensureAlways(mesh.EngineMesh.IsValid()))
@@ -99,7 +100,7 @@ void FModumateDatabase::AddArchitecturalMaterial(const FBIMKey& Key, const FStri
 	mat.DisplayName = FText::FromString(Name);
 
 	mat.EngineMaterial = Cast<UMaterialInterface>(AssetPath.TryLoad());
-	if (ensure(mat.EngineMaterial.IsValid()))
+	if (ensureAlways(mat.EngineMaterial.IsValid()))
 	{
 		mat.EngineMaterial->AddToRoot();
 	}
@@ -123,6 +124,26 @@ In the meantime, we read a manifest of CSV files and look for expected presets t
 void FModumateDatabase::ReadPresetData()
 {
 	FString manifestPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
+
+	// Parts may have unique values like "JambLeftSizeX" or "PeepholeDistanceZ"
+	// If a part is expected to have one of these values but doesn't, we provide defaults here
+	TArray<FString> partDefaultVals;
+	if (FFileHelper::LoadFileToStringArray(partDefaultVals, *(manifestPath / TEXT("DefaultPartParams.txt"))))
+	{
+		FBIMPartSlotSpec::DefaultNamedParameterMap.Empty();
+		for (auto& partValStr : partDefaultVals)
+		{
+			partValStr.RemoveSpacesInline();
+			TArray<FString> partValPair;
+			partValStr.ParseIntoArray(partValPair, TEXT("="));
+			if (ensureAlways(partValPair.Num() == 2))
+			{
+				float inches = FCString::Atof(*partValPair[1].TrimStartAndEnd());
+				FBIMPartSlotSpec::DefaultNamedParameterMap.Add(partValPair[0].TrimStartAndEnd(), Modumate::Units::FUnitValue::WorldInches(inches));
+			}
+		}
+	}
+
 	TArray<FString> errors;
 	TArray<FBIMKey> starters;
 	if (!ensureAlways(PresetManager.CraftingNodePresets.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), starters, errors) == ECraftingResult::Success))
@@ -186,7 +207,9 @@ void FModumateDatabase::ReadPresetData()
 			);
 
 			FString name = Preset.GetProperty(BIMPropertyNames::Name);
-			AddArchitecturalMesh(Preset.PresetID, name, nativeSize, nineSlice, assetPath);
+			FString namedDimensions;
+			Preset.TryGetProperty(BIMPropertyNames::NamedDimensions,namedDimensions);
+			AddArchitecturalMesh(Preset.PresetID, name, namedDimensions, nativeSize, nineSlice, assetPath);
 		}
 	};
 

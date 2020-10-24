@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Runtime/Engine/Classes/Materials/Material.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "BIMKernel/BIMKey.h"
 
 #include "ModumateArchitecturalMesh.generated.h"
 
@@ -24,4 +26,8 @@ struct FArchitecturalMesh
 	FBox NineSliceBox = FBox(ForceInit);
 
 	FBIMKey UniqueKey() const { return Key; }
+
+	TMap<FString, Modumate::Units::FUnitValue> NamedDimensions;
+
+	void ReadNamedDimensions(const FString& InNamedDimensions);
 };

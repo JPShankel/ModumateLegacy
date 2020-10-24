@@ -11,21 +11,21 @@ namespace Modumate
 {
 	namespace Expression
 	{
-		bool ReplaceVariable(FString &exprString, const FString &varName, float varValue)
+		bool ReplaceVariable(FString &ExprString, const FString &VarName, float VarValue)
 		{
 			// Adapated from FString::Replace, but with some expression-specific features and optimizations.
 
-			if (exprString.IsEmpty())
+			if (ExprString.IsEmpty())
 			{
 				return false;
 			}
 
 			// get a pointer into the character data
-			const TCHAR* exprPtr = *exprString;
+			const TCHAR* exprPtr = *ExprString;
 			const TCHAR* travelPtr = exprPtr;
 
 			// precalc the lengths of the replacement strings
-			const TCHAR* varNamePtr = *varName;
+			const TCHAR* varNamePtr = *VarName;
 			int32 varNameLen = FCString::Strlen(varNamePtr);
 
 			FString varValueStr;
@@ -43,7 +43,7 @@ namespace Modumate
 				// populate the replacement string once it's first found
 				if (varValueStrPtr == nullptr)
 				{
-					varValueStr = FString::Printf(TEXT("%f"), varValue);
+					varValueStr = FString::Printf(TEXT("%f"), VarValue);
 					varValueStrPtr = *varValueStr;
 					varValueStrLen = varValueStr.Len();
 				}
@@ -111,7 +111,7 @@ namespace Modumate
 			// copy anything left over
 			resultString += travelPtr;
 
-			exprString = resultString;
+			ExprString = resultString;
 			return true;
 		}
 
@@ -319,6 +319,28 @@ namespace Modumate
 			OutVector.Y = Y.IsEmpty() ? 0 : Modumate::Expression::Evaluate(Vars, Y);
 			OutVector.Z = Z.IsEmpty() ? 0 : Modumate::Expression::Evaluate(Vars, Z);
 			return true;
+		}
+
+		// Variables are dot-qualified paths of arbitrary length, ie: "Parent.Frame.JambSizeX"
+		bool Modumate::Expression::ExtractVariables(const FString &ExprString, TArray<FString>& OutVariables)
+		{
+			// Note: do not clear the container, this is meant to be called across multiple expressions
+			static const std::wregex varMatch(L"[a-zA-Z][a-zA-Z0-9]+([.][a-zA-Z0-9]+)*");
+			std::wsmatch match;
+			std::wstring exprWString = *ExprString;
+			while (std::regex_search(exprWString, match, varMatch))
+			{
+				OutVariables.AddUnique(match[0].str().c_str());
+				exprWString = match.suffix();
+			}
+			return true;
+		}
+
+		bool Modumate::Expression::FVectorExpression::ExtractVariables(TArray<FString>& OutVariables) const
+		{
+			return Modumate::Expression::ExtractVariables(X, OutVariables) &&
+					Modumate::Expression::ExtractVariables(Y, OutVariables) &&
+					Modumate::Expression::ExtractVariables(Z, OutVariables);
 		}
 	}
 }

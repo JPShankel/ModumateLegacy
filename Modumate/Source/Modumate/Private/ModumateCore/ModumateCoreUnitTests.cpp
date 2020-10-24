@@ -1401,6 +1401,28 @@ namespace Modumate
 		return bSuccess;
 	}
 
+	static bool testVariableExtraction()
+	{
+		TArray<FString> outVars;
+		Modumate::Expression::ExtractVariables(TEXT("1.75*Globe.Radius + (5 1/2) * TotalArea + 15/(My.Brilliant.Career)"), outVars);
+		if (outVars.Num() != 3)
+		{
+			return false;
+		}
+
+		FString vars[] = { TEXT("Globe.Radius"),TEXT("TotalArea"),TEXT("My.Brilliant.Career") };
+
+		for (int32 i = 0; i < 3; ++i)
+		{
+			if (!outVars[i].Equals(vars[i]))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	static bool testVectorFormula()
 	{
 		Modumate::Expression::FVectorExpression vf1(TEXT("Parent.SizeX-2.5"), TEXT("(1/2)*Parent.SizeY"), TEXT("(1/2)*(12+Parent.SizeZ-6)"));
@@ -1497,6 +1519,8 @@ namespace Modumate
 		tryCase(TEXT("(1+W2)ZED"), 14.0f);
 
 		bool ret = testVectorFormula();
+
+		ret = testVariableExtraction() && ret;
 
 		UE_LOG(LogUnitTest, Display, TEXT("Modumate Evaluator - Unit Test Ended"));
 

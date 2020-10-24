@@ -1,19 +1,21 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
+
 #include "UnrealClasses/CompoundMeshActor.h"
 
-#include "Components/StaticMeshComponent.h"
-#include "DrawDebugHelpers.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "Engine/Engine.h"
-#include "ModumateCore/ExpressionEvaluator.h"
+#include "DrawDebugHelpers.h"
 #include "KismetProceduralMeshLibrary.h"
-#include "Materials/MaterialInstanceDynamic.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "ModumateCore/ModumateUnits.h"
 #include "ProceduralMeshComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Components/PointLightComponent.h"
 #include "Components/SpotLightComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ExpressionEvaluator.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "BIMKernel/BIMPartLayout.h"
 
 using namespace Modumate;
 
@@ -31,7 +33,6 @@ ACompoundMeshActor::ACompoundMeshActor()
 void ACompoundMeshActor::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame
@@ -40,11 +41,11 @@ void ACompoundMeshActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const FVector &scale, bool bLateralInvert, bool bMakeCollision)
+void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector Scale, bool bLateralInvert, bool bMakeCollision)
 {
 	// Figure out how many components we might need.
 
-	int32 maxNumMeshes = obAsm.Parts.Num();
+	int32 maxNumMeshes = ObAsm.Parts.Num();
 
 	for (int32 compIdx = 0; compIdx < StaticMeshComps.Num(); ++compIdx)
 	{
@@ -77,47 +78,35 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 	const bool origDynamicStatus = GetIsDynamic();
 	SetIsDynamic(true);
 
-	TMap<FString, float> vars;
-	int32 numSlots = obAsm.Parts.Num();
+	FVector rootFlip = Scale.GetSignVector();
+	Scale = Scale.GetAbs();
 
-	int32 parentIndex = -1;
+	// Fetch scaled part layout for assembly
+	FBIMPartLayout partLayout;
+	if (!ensureAlways(partLayout.FromAssembly(ObAsm,Scale)))
+	{
+		return;
+	}
+
+	// Walk over part layout and build mesh components
+	int32 numSlots = ObAsm.Parts.Num();
+
+	if (!ensureAlways(numSlots == partLayout.PartSlotInstances.Num()))
+	{
+		return;
+	}
 
 	for (int32 slotIdx = 0; slotIdx < numSlots; ++slotIdx)
 	{
-		const FBIMPartSlotSpec& assemblyPart = obAsm.Parts[slotIdx];
-
+		const FBIMPartSlotSpec& assemblyPart = ObAsm.Parts[slotIdx];
+		// Part[0] and potentially other parts are mesh-less containers used to store parenting values
+		// All they need is their VariableValues set, there are no mesh components to make
 		if (!assemblyPart.Mesh.EngineMesh.IsValid())
 		{
 			continue;
 		}
 
-		/*
-		Simple assemblies (with no embedded assemblies) use Parts[0] as the basis for parent size
-		Complex assemblies with embedded parts indicate which part is their 'root'
-		TODO: Parent.NativeSize to be explicitly stored in assemblies as properties
-		      In and upcoming refactor, parts will carry these size values explicitly.
-		TODO: Some parts want to be scaled and others do not. Make scale a variable and express it in the formulas
-		*/
-
-		if (assemblyPart.ParentSlotIndex != parentIndex)
-		{
-			parentIndex = assemblyPart.ParentSlotIndex;
-			if (ensureAlways(parentIndex < obAsm.Parts.Num()))
-			{
-				const FVector scaledNativeSize = obAsm.Parts[parentIndex].Mesh.NativeSize * scale.GetAbs();
-				vars.Add(TEXT("Parent.SizeX"), scaledNativeSize.X);
-				vars.Add(TEXT("Parent.SizeY"), scaledNativeSize.Y);
-				vars.Add(TEXT("Parent.SizeZ"), scaledNativeSize.Z);
-			}
-		}
-
-		// Native sizes includes and requested inversions.
-		const FVector& nativeSize = obAsm.Parts[slotIdx].Mesh.NativeSize;
-		// Transform formulas are in inch domain.
-		vars.Add(TEXT("Part.SizeX"), nativeSize.X);
-		vars.Add(TEXT("Part.SizeY"), nativeSize.Y);
-		vars.Add(TEXT("Part.SizeZ"), nativeSize.Z);
-
+		// Now make the mesh component and set it up using the cached transform data
 		UStaticMesh *partMesh = assemblyPart.Mesh.EngineMesh.Get();
 
 		// Make sure that there's a static mesh component for each part that has the engine mesh.
@@ -128,31 +117,18 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 			partStaticMeshComp->SetupAttachment(rootComp);
 			AddOwnedComponent(partStaticMeshComp);
 			partStaticMeshComp->RegisterComponent();
-
 			StaticMeshComps[slotIdx] = partStaticMeshComp;
 		}
 
 		bool bMeshChanged = partStaticMeshComp->SetStaticMesh(partMesh);
 		partStaticMeshComp->SetMobility(EComponentMobility::Movable);
 
-		FVector partLocation,partEulers; 
-		assemblyPart.Translation.Evaluate(vars,partLocation);
-		partLocation *= Modumate::InchesToCentimeters;
-		assemblyPart.Orientation.Evaluate(vars, partEulers);
-		FRotator partRotator = FRotator::MakeFromEuler(partEulers);
-		FVector partSize;
-		assemblyPart.Size.Evaluate(vars, partSize);
-		FVector partScale = partSize / nativeSize;
-		// Convert flip boolean to scale factor.
-		FVector partFlip(
-			assemblyPart.Flip[0] ? -1.0f : 1.0f,
-			assemblyPart.Flip[1] ? -1.0f : 1.0f,
-			assemblyPart.Flip[2] ? -1.0f : 1.0f
-		);
-		partFlip *= scale.GetSignVector();
-
+		FRotator partRotator = FRotator::MakeFromEuler(partLayout.PartSlotInstances[slotIdx].Rotation);
 		FVector partNativeSize = assemblyPart.Mesh.NativeSize * Modumate::InchesToCentimeters;
-		FVector partDesiredSize = partScale * partNativeSize;
+
+ 		FVector partScale = partLayout.PartSlotInstances[slotIdx].Size / partNativeSize;
+
+		FVector partDesiredSize = partLayout.PartSlotInstances[slotIdx].Size;
 
 #if DEBUG_NINE_SLICING
 			DrawDebugCoordinateSystem(GetWorld(), GetActorTransform().TransformPosition(partLocation), GetActorRotation(), 8.0f, false, -1.f, 255, 0.5f);
@@ -205,9 +181,9 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 			partStaticMeshComp->SetVisibility(true);
 			partStaticMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
-			partStaticMeshComp->SetRelativeLocation(partLocation * partFlip);
+			partStaticMeshComp->SetRelativeLocation(rootFlip * partLayout.PartSlotInstances[slotIdx].Location);
 			partStaticMeshComp->SetRelativeRotation(partRotator);
-			partStaticMeshComp->SetRelativeScale3D(partScale * partFlip);
+			partStaticMeshComp->SetRelativeScale3D(rootFlip * partScale * partLayout.PartSlotInstances[slotIdx].FlipVector);
 
 			UModumateFunctionLibrary::SetMeshMaterialsFromMapping(partStaticMeshComp, assemblyPart.ChannelMaterials);
 
@@ -273,7 +249,6 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 				}
 			}
 
-
 #if DEBUG_NINE_SLICING
 			static FColor debugSliceColors[9] = {
 				FColor::Red, FColor::Green, FColor::Blue,
@@ -294,7 +269,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 				UProceduralMeshComponent *procMeshLowLODComp = NineSliceLowLODComps[compIdx];
 				if (procMeshComp && (procMeshComp->GetNumSections() > 0))
 				{
-					FVector relativePos = partLocation;
+					FVector relativePos = partLayout.PartSlotInstances[slotIdx].Location;
 					FVector sliceScale = FVector::OneVector;
 
 					if (!partScale.Equals(FVector::OneVector))
@@ -382,15 +357,15 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &obAsm, const F
 						}
 
 						sliceScale = newBoundsSize / originalBoundsSize;
-						relativePos = partLocation + partFlip * (newBounds.Min - (originalBounds.Min * sliceScale));
+						relativePos = partLayout.PartSlotInstances[slotIdx].Location + partLayout.PartSlotInstances[slotIdx].FlipVector * (newBounds.Min - (originalBounds.Min * sliceScale));
 					}
 
 					for (auto* comp : { procMeshComp, procMeshLowLODComp })
 					{
-						comp->SetRelativeLocation(relativePos);
+						comp->SetRelativeLocation(rootFlip * relativePos);
 						comp->SetRelativeRotation(FQuat::Identity);
 						comp->SetRelativeRotation(partRotator);
-						comp->SetRelativeScale3D(sliceScale * partFlip);
+						comp->SetRelativeScale3D(rootFlip * sliceScale * partLayout.PartSlotInstances[slotIdx].FlipVector);
 						comp->SetVisibility(true);
 						comp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 					}

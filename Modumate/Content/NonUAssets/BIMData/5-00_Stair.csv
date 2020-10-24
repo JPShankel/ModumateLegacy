@@ -8,7 +8,7 @@ PROPERTY,,String,,,,Assembly.IconRun,,,,,,,,,
 PROPERTY,,String,,,,Assembly.IconWidth,,,,,,,,,
 ,,InputExtensibility,,InputPreset,,PinTarget,,,,,,,,,
 INPUTPIN,,1..1,,ChildTread,,Tread,,,,,,,,,
-INPUTPIN,,1..1,,ChildRiser,,Riser,,,,,,,,,
+INPUTPIN,,0..1,,ChildRiser,,Riser,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Assembly.IdealTreadDepth,Assembly.IconRise,Assembly.IconRun,Assembly.IconWidth,DataType=StartsInProject,X,DataType=InputPins,ChildTread,ChildRiser
 PRESET,,"5Stair
@@ -53,7 +53,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,5Stair,,5Stair-14,11in,36in,66in,48in,,X,,"4LayeredAssembly --> Layered Tread
+0LayerPattern --> 2D-Soldier Bond",,5Stair,,OSB + Plywood Stair,11in,36in,66in,48in,,X,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
@@ -116,7 +116,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,5Stair,,5Stair-15,11in,36in,66in,48in,,X,,"4LayeredAssembly --> Layered Tread
+0LayerPattern --> 2D-Soldier Bond",,5Stair,,Plywood stair,11in,36in,66in,48in,,X,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
@@ -137,4 +137,179 @@ PRESET,,"5Stair
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond"
-PRESET,,,,,,,,,,,,,,,
+PRESET,,"5Stair
+4LayeredAssembly --> Layered Tread
+3Layer2D --> Tile --> Stone
+2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
+0DimLW-6in-3in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-English Bond
+4LayeredAssembly --> Layered Riser
+3Layer2D --> Tile --> Stone
+2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
+0DimLW-6in-3in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-English Bond",,5Stair,,Limestone Stair,11in,36in,66in,48in,,X,,"4LayeredAssembly --> Layered Tread
+3Layer2D --> Tile --> Stone
+2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
+0DimLW-6in-3in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-English Bond","4LayeredAssembly --> Layered Riser
+3Layer2D --> Tile --> Stone
+2ModuleLWT --> Tile --> Stone
+1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
+0DimLW-6in-3in
+0DimThk-0.5inT
+2Gap2D --> Grout Gaps
+1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
+0DimWD-0.375inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-English Bond"
+PRESET,,"5Stair
+4LayeredAssembly --> Layered Tread
+3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
+0DimLW-48in-7in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
+0DimLW-96in-48in
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond
+4LayeredAssembly --> Layered Riser
+3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
+0DimLW-48in-7in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
+0DimLW-96in-48in
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,5Stair,,Birch Stair,11in,36in,66in,48in,,X,,"4LayeredAssembly --> Layered Tread
+3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
+0DimLW-48in-7in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
+0DimLW-96in-48in
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond","4LayeredAssembly --> Layered Riser
+3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
+0DimLW-48in-7in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
+0DimLW-96in-48in
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond"
+PRESET,,"5Stair
+4LayeredAssembly --> Layered Tread
+3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
+0DimLW-72in-7in
+0DimThk-0.75inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.0625inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
+0DimLW-96in-48in
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,5Stair,,Walnut Open Tread Stair,11in,36in,66in,48in,,X,,"4LayeredAssembly --> Layered Tread
+3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
+0DimLW-72in-7in
+0DimThk-0.75inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.0625inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond
+3Layer2D --> Board and Panel --> Plywood
+2ModuleLWT --> Board/Panel --> Plywood
+1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
+0DimLW-96in-48in
+0DimThk-0.46875inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",
+PRESET,,"5Stair
+4LayeredAssembly --> Layered Tread
+2Layer0D --> Transparent --> Glass
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
+0DimThk-1inT",,5Stair,,Glass Open Tread Stair,11in,36in,66in,48in,,X,,"4LayeredAssembly --> Layered Tread
+2Layer0D --> Transparent --> Glass
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
+0DimThk-1inT",

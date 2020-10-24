@@ -312,25 +312,25 @@ PRESET,,0Color --> Stone --> Slate-151515-Gray10,,0Color --> Stone --> Slate,,Gr
 PRESET,,0Color --> Stone --> Slate-000000-Black,,0Color --> Stone --> Slate,,Black,000000,,,1Material --> Stone --> Slate
 PRESET,,0Color --> Stone --> Soapstone-FFFFFF-White,,0Color --> Stone --> Soapstone,,White,FFFFFF,,,1Material --> Stone --> Soapstone
 PRESET,,0Color --> Stone --> Travertine-FFFFFF-White,,0Color --> Stone --> Travertine,,White,FFFFFF,,,1Material --> Stone --> Travertine
-PRESET,,0Color --> Wood --> Ash-FFFFFF-White,,0Color --> Wood --> Ash,,White,FFFFFF,,,1Material --> Wood --> Ash
-PRESET,,0Color --> Wood --> Bamboo-FFFFFF-White,,0Color --> Wood --> Bamboo,,White,FFFFFF,,,1Material --> Wood --> Bamboo
-PRESET,,0Color --> Wood --> Beech-FFFFFF-White,,0Color --> Wood --> Beech,,White,FFFFFF,,,1Material --> Wood --> Beech
-PRESET,,0Color --> Wood --> Birch-FFFFFF-White,,0Color --> Wood --> Birch,,White,FFFFFF,,,1Material --> Wood --> Birch
-PRESET,,0Color --> Wood --> Cedar - Western Red-FFFFFF-White,,0Color --> Wood --> Cedar - Western Red,,White,FFFFFF,,,1Material --> Wood --> Cedar - Western Red
-PRESET,,0Color --> Wood --> Cedar - White-FFFFFF-White,,0Color --> Wood --> Cedar - White,,White,FFFFFF,,,1Material --> Wood --> Cedar - White
-PRESET,,0Color --> Wood --> Cherry-FFFFFF-White,,0Color --> Wood --> Cherry,,White,FFFFFF,,,1Material --> Wood --> Cherry
-PRESET,,0Color --> Wood --> Cypress - Bald-FFFFFF-White,,0Color --> Wood --> Cypress - Bald,,White,FFFFFF,,,1Material --> Wood --> Cypress - Bald
-PRESET,,0Color --> Wood --> Ipe-FFFFFF-White,,0Color --> Wood --> Ipe,,White,FFFFFF,,,1Material --> Wood --> Ipe
-PRESET,,0Color --> Wood --> Mahogany-FFFFFF-White,,0Color --> Wood --> Mahogany,,White,FFFFFF,,,1Material --> Wood --> Mahogany
-PRESET,,0Color --> Wood --> Maple-FFFFFF-White,,0Color --> Wood --> Maple,,White,FFFFFF,,,1Material --> Wood --> Maple
-PRESET,,0Color --> Wood --> Oak - Red-FFFFFF-White,,0Color --> Wood --> Oak - Red,,White,FFFFFF,,,1Material --> Wood --> Oak - Red
-PRESET,,0Color --> Wood --> Oak - White-FFFFFF-White,,0Color --> Wood --> Oak - White,,White,FFFFFF,,,1Material --> Wood --> Oak - White
-PRESET,,0Color --> Wood --> Redwood-FFFFFF-White,,0Color --> Wood --> Redwood,,White,FFFFFF,,,1Material --> Wood --> Redwood
-PRESET,,0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-White,,0Color --> Wood --> Spruce-Pine-Fir,,White,FFFFFF,,,1Material --> Wood --> Spruce-Pine-Fir
-PRESET,,0Color --> Wood --> Sycamore-FFFFFF-White,,0Color --> Wood --> Sycamore,,White,FFFFFF,,,1Material --> Wood --> Sycamore
-PRESET,,0Color --> Wood --> Teak-FFFFFF-White,,0Color --> Wood --> Teak,,White,FFFFFF,,,1Material --> Wood --> Teak
-PRESET,,0Color --> Wood --> Walnut-FFFFFF-White,,0Color --> Wood --> Walnut,,White,FFFFFF,,,1Material --> Wood --> Walnut
-PRESET,,0Color --> Fibrous --> Cork-FFFFFF-White,,0Color --> Fibrous --> Cork,,White,FFFFFF,,,1Material --> Fibrous --> Cork
+PRESET,,0Color --> Wood --> Ash-FFFFFF-Natural,,0Color --> Wood --> Ash,,Natural,FFFFFF,,,1Material --> Wood --> Ash
+PRESET,,0Color --> Wood --> Bamboo-FFFFFF-Natural,,0Color --> Wood --> Bamboo,,Natural,FFFFFF,,,1Material --> Wood --> Bamboo
+PRESET,,0Color --> Wood --> Beech-FFFFFF-Natural,,0Color --> Wood --> Beech,,Natural,FFFFFF,,,1Material --> Wood --> Beech
+PRESET,,0Color --> Wood --> Birch-FFFFFF-Natural,,0Color --> Wood --> Birch,,Natural,FFFFFF,,,1Material --> Wood --> Birch
+PRESET,,0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural,,0Color --> Wood --> Cedar - Western Red,,Natural,FFFFFF,,,1Material --> Wood --> Cedar - Western Red
+PRESET,,0Color --> Wood --> Cedar - White-FFFFFF-Natural,,0Color --> Wood --> Cedar - White,,Natural,FFFFFF,,,1Material --> Wood --> Cedar - White
+PRESET,,0Color --> Wood --> Cherry-FFFFFF-Natural,,0Color --> Wood --> Cherry,,Natural,FFFFFF,,,1Material --> Wood --> Cherry
+PRESET,,0Color --> Wood --> Cypress - Bald-FFFFFF-Natural,,0Color --> Wood --> Cypress - Bald,,Natural,FFFFFF,,,1Material --> Wood --> Cypress - Bald
+PRESET,,0Color --> Wood --> Ipe-FFFFFF-Natural,,0Color --> Wood --> Ipe,,Natural,FFFFFF,,,1Material --> Wood --> Ipe
+PRESET,,0Color --> Wood --> Mahogany-FFFFFF-Natural,,0Color --> Wood --> Mahogany,,Natural,FFFFFF,,,1Material --> Wood --> Mahogany
+PRESET,,0Color --> Wood --> Maple-FFFFFF-Natural,,0Color --> Wood --> Maple,,Natural,FFFFFF,,,1Material --> Wood --> Maple
+PRESET,,0Color --> Wood --> Oak - Red-FFFFFF-Natural,,0Color --> Wood --> Oak - Red,,Natural,FFFFFF,,,1Material --> Wood --> Oak - Red
+PRESET,,0Color --> Wood --> Oak - White-FFFFFF-Natural,,0Color --> Wood --> Oak - White,,Natural,FFFFFF,,,1Material --> Wood --> Oak - White
+PRESET,,0Color --> Wood --> Redwood-FFFFFF-Natural,,0Color --> Wood --> Redwood,,Natural,FFFFFF,,,1Material --> Wood --> Redwood
+PRESET,,0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,,0Color --> Wood --> Spruce-Pine-Fir,,Natural,FFFFFF,,,1Material --> Wood --> Spruce-Pine-Fir
+PRESET,,0Color --> Wood --> Sycamore-FFFFFF-Natural,,0Color --> Wood --> Sycamore,,Natural,FFFFFF,,,1Material --> Wood --> Sycamore
+PRESET,,0Color --> Wood --> Teak-FFFFFF-Natural,,0Color --> Wood --> Teak,,Natural,FFFFFF,,,1Material --> Wood --> Teak
+PRESET,,0Color --> Wood --> Walnut-FFFFFF-Natural,,0Color --> Wood --> Walnut,,Natural,FFFFFF,,,1Material --> Wood --> Walnut
+PRESET,,0Color --> Fibrous --> Cork-FFFFFF-Natural,,0Color --> Fibrous --> Cork,,Natural,FFFFFF,,,1Material --> Fibrous --> Cork
 PRESET,,0Color --> Fibrous --> Cork-D0C6BD-Cream1,,0Color --> Fibrous --> Cork,,Cream 1,D0C6BD,,,1Material --> Fibrous --> Cork
 PRESET,,0Color --> Fibrous --> Cork-BF945F-Saddle,,0Color --> Fibrous --> Cork,,Saddle,BF945F,,,1Material --> Fibrous --> Cork
 PRESET,,0Color --> Fibrous --> Cork-A99978-Parchment,,0Color --> Fibrous --> Cork,,Parchment,A99978,,,1Material --> Fibrous --> Cork

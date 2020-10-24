@@ -8,8 +8,10 @@
 #include "BIMKernel/BIMProperties.h"
 #include "BIMKernel/BIMEnums.h"
 #include "BIMKernel/BIMKey.h"
+#include "BIMKernel/BIMTagPath.h"
 
 #include "ModumateCore/ExpressionEvaluator.h"
+#include "ModumateCore/ModumateUnits.h"
 
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "Database/ModumateArchitecturalMesh.h"
@@ -27,6 +29,13 @@ private:
 	FBIMPropertySheet Properties;
 	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
 
+#if WITH_EDITOR
+	// For debugging
+	FBIMKey PresetID, SlotName;
+	EBIMValueScope NodeScope;
+
+	// Default values for fine part parameters like "jamb width" and "handle backset"
+#endif
 
 public:
 	Modumate::Expression::FVectorExpression Translation, Size, Orientation;
@@ -35,6 +44,11 @@ public:
 
 	int32 ParentSlotIndex = 0;
 
+	FBIMTagPath NodeCategoryPath;
+
 	FArchitecturalMesh Mesh;
 	TMap<FName, FArchitecturalMaterial> ChannelMaterials;
+
+	static TMap<FString, Modumate::Units::FUnitValue> DefaultNamedParameterMap;
+	static bool TryGetDefaultNamedParameter(const FString& Name, Modumate::Units::FUnitValue& OutVal);
 };

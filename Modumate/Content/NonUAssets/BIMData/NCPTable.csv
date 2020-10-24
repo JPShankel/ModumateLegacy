@@ -27,10 +27,12 @@ TG_MyNode+CategoryPath,ToolMode,ObjectType,AssetType,IconType,IconOrientation,To
 ,,,,,,Rotation,0,,,,
 ,,,,,,FlipX,No,,,,
 ,,,,,,FlipY,No,,,,
+2ExtrudedProfile --> Mullion,VE_MULLION,OTMullion,,ExtrudedProfile,Vertical,OffsetX,0,ExtrudedProfile,Mullion,"[ChildDimension] [Profile.Name], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
+,,,,,,FlipX,No,,,,
 2ExtrudedProfile --> Trim,VE_TRIM,OTTrim,,ExtrudedProfile,Horizontal,OffsetX,0,ExtrudedProfile,Trim,"[ChildDimension] [Profile.Name], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
 ,,,,,,FlipX,No,,,,
-2Part,,,,TexturedMeshes,Vertical,,,,Part,"[Level3NCP], [Mesh.DisplayName] [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
-2Part --> FFE,VE_PLACEOBJECT,OTFurniture,,TexturedMeshes,Vertical,,,,Part,"[Level3NCP], [Mesh.DisplayName] [Mesh.MaterialKey1] [RawMaterial.Name], [Mesh.MaterialKey2] [RawMaterial.Name], etc",none
+Object,,,,TexturedMeshes,Vertical,,,,Part,"[Level3NCP], [Mesh.DisplayName] [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
+Object --> FFE,VE_PLACEOBJECT,OTFurniture,,TexturedMeshes,Vertical,,,,Part,"[Level3NCP], [Mesh.DisplayName] [Mesh.MaterialKey1] [RawMaterial.Name], [Mesh.MaterialKey2] [RawMaterial.Name], etc",none
 2SawtoothStringer,,,,Stringer,Vertical,,,,Stringer,"[Dimension.Thickness]X[Dimension.Depth], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
 3Layer1D,,,,Layer,Vertical,,,,Layer,"[Level1NCP], [Module.Dimension], [Module.Material], [Pattern], [Gap.Dimension] [Gap.Material]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
 3Layer2D,,,,Layer,Vertical,,,,Layer,"[Level1NCP], [Module.Dimension], [Module.Material], [Pattern], [Gap.Dimension] [Gap.Material]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
@@ -52,16 +54,13 @@ XXXXHardwareGroup,,,,HardwareGroup,Vertical,,,,Hardware Group,none,
 4LayeredAssembly --> Layered Riser,,,,LayeredAssembly,Vertical,,,,Layered Riser,none,
 4LayeredAssembly --> Railing,VE_RAIL,OTRailSegment,,RiggedAssembly,Vertical,,,Railing,Railing,none,
 4LayeredAssembly --> Landscape,,,,LayeredAssembly,Horizontal,,,,Landscape,none,
-3RiggedAssembly --> Door --> Barn --> Frame,VE_DOOR,OTDoor,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Door,none,
-3RiggedAssembly --> Door --> Pocket --> Frame,VE_DOOR,OTDoor,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Door,none,
-3RiggedAssembly --> Door --> Sliding --> Frame,VE_DOOR,OTDoor,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Door,none,
-3RiggedAssembly --> Door --> Swing --> Frame,VE_DOOR,OTDoor,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Door,none,
+AssemblyDoor,VE_DOOR,OTDoor,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Door,none,
 ,,,,,,Flip,None,,,,
 ,,,,,,Reverse,None,,,,
 ,,,,,,Open,0,,,,
-3RiggedAssembly --> Cabinet,VE_CABINET,OTCabinet,,RiggedAssembly,,,,,,,
-3RiggedAssembly --> FFESet,VE_PLACEOBJECT,OTFurniture,,RiggedAssembly,Vertical,,,FFE,FF&E Group,none,
-3RiggedAssembly --> Window,VE_WINDOW,OTWindow,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Window,none,
+Assembly --> Cabinet,VE_CABINET,OTCabinet,,RiggedAssembly,,,,,,,
+Assembly --> FFESet,VE_PLACEOBJECT,OTFurniture,,RiggedAssembly,Vertical,,,FFE,FF&E Group,none,
+AssemblyWindow,VE_WINDOW,OTWindow,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Window,none,
 ,,,,,,Flip,None,,,,
 ,,,,,,Reverse,None,,,,
 ,,,,,,Open,0,,,,

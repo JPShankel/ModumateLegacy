@@ -72,6 +72,7 @@ namespace BIMPropertyNames
 	extern const FBIMNameType Mesh;
 	extern const FBIMNameType ModuleCount;
 	extern const FBIMNameType Name;
+	extern const FBIMNameType NamedDimensions;
 	extern const FBIMNameType Normal;
 	extern const FBIMNameType Number;
 	extern const FBIMNameType OccupantLoadFactor;

@@ -205,6 +205,7 @@ namespace BIMPropertyNames
 	const FBIMNameType Mesh = TEXT("Mesh");
 	const FBIMNameType ModuleCount = TEXT("ModuleCount");
 	const FBIMNameType Name = TEXT("Name");
+	const FBIMNameType NamedDimensions = TEXT("NamedDimensions");
 	const FBIMNameType Normal = TEXT("Normal");
 	const FBIMNameType Number = TEXT("Number");
 	const FBIMNameType OccupantLoadFactor = TEXT("OccupantLoadFactor");

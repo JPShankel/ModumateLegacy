@@ -116,5 +116,6 @@ PRESET,,0RawMaterial-Wood Fibers,,0RawMaterial,,Wood Fibers,/Game/ShoppingData/M
 PRESET,,0RawMaterial-Wood Particles,,0RawMaterial,,Wood Particles,/Game/ShoppingData/Materials/Particle/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Wood Particles,1,,1Material --> Fibrous --> Wood Particles
 PRESET,,0RawMaterial-Wood Strands,,0RawMaterial,,Wood Strands,/Game/ShoppingData/Materials/OrientedStrand/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Wood Strands,1,,1Material --> Fibrous --> Wood Strands
 PRESET,,0RawMaterial-Grass,,0RawMaterial,,Grass,/Game/ShoppingData/Materials/Grass-Short/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Grass,0.5,,1Material --> Sitework --> Grass
-,,0RawMaterial-Moss,,0RawMaterial,,Moss,,0RawMaterial-Moss,1,,1Material --> Sitework --> Moss
+PRESET,,0RawMaterial-Moss,,0RawMaterial,,Moss,/Game/ShoppingData/Materials/Moss/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Moss,1,,1Material --> Sitework --> Moss
 PRESET,,0RawMaterial-Soil,,0RawMaterial,,Soil,/Game/ShoppingData/Materials/Soil-Coarse/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Soil,1,,1Material --> Sitework --> Soil
+PRESET,,0RawMaterial-Metal Wire Fence,,0RawMaterial,,Metal Wire Fence,/Game/ShoppingData/Materials/Railing-Fence-MetalWire/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Metal Wire Fence,2,,1Material --> RailingFence --> Metal Wire Fence
