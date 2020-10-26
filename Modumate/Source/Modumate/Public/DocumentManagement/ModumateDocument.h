@@ -189,6 +189,7 @@ public:
 	bool ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World);
 	bool IsPreviewingDeltas() const;
 	void ClearPreviewDeltas(UWorld *World, bool bFastClear = false);
+	void CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWorld* World);
 
 	bool GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);
 

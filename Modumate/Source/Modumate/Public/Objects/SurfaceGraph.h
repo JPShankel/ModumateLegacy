@@ -31,8 +31,9 @@ public:
 protected:
 	bool UpdateCachedGraphData();
 
-	TArray<FVector> CachedFacePoints, PrevFacePoints;
-	FTransform PrevFaceOrigin, CachedFaceOrigin;
+	TMap<int32, int32> FaceIdxToVertexID;
+	TArray<FVector> CachedFacePoints;
+	FTransform CachedFaceOrigin;
 
 	FMOISurfaceGraphData InstanceData;
 };

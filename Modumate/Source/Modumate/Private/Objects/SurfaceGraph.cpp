@@ -2,6 +2,7 @@
 
 #include "Objects/SurfaceGraph.h"
 
+#include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "DocumentManagement/ModumateDocument.h"
 
@@ -58,35 +59,45 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 			return true;
 		}
 
+		int32 numIDs = FaceIdxToVertexID.Num();
 		// If the cached host face geometry has changed after it was created, then the surface graph may need to be updated or deleted to match the new host face
-		int32 numPrevPoints = PrevFacePoints.Num();
-		if ((CachedFacePoints != PrevFacePoints) && (numPrevPoints > 0))
+		if (numIDs > 0)
 		{
+			bool bFoundAllVertices = true;
 			TMap<int32, FVector2D> vertexMoves;
 
-			if (numPrevPoints == CachedFacePoints.Num())
-			{
-				TArray<int32> boundingVertexIDs;
-				surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
+			TArray<int32> boundingVertexIDs;
+			surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
 
-				// For now, only attempt to generate new vertex movement positions for points that are part of the surface graph bounds,
-				// and are included in the surface graph's mounting face point list
-				for (int32 facePointIdx = 0; facePointIdx < numPrevPoints; ++facePointIdx)
+			// For now, only attempt to generate new vertex movement positions for points that are part of the surface graph bounds,
+			// and are included in the surface graph's mounting face point list
+			for (int32 facePointIdx = 0; facePointIdx < CachedFacePoints.Num(); ++facePointIdx)
+			{
+				Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(FaceIdxToVertexID[facePointIdx]);
+				if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
 				{
-					FVector2D prevPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(PrevFacePoints[facePointIdx], PrevFaceOrigin);
-					Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(prevPos2D);
-					if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
+					FVector2D newPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
+					if (!newPos2D.Equals(vertex->Position, PLANAR_DOT_EPSILON))
 					{
-						FVector2D newPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
 						vertexMoves.Add(vertex->ID, newPos2D);
 					}
+				}
+				else
+				{
+					bFoundAllVertices = false;
 				}
 			}
 
 			// Attempt to generate deltas with the projected positions
 			int32 nextID = doc->GetNextAvailableID();
 			TArray<FGraph2DDelta> moveDeltas;
-			if ((vertexMoves.Num() > 0) && surfaceGraph->MoveVertices(moveDeltas, nextID, vertexMoves))
+			bool bValidGraph = bFoundAllVertices;
+			if (bValidGraph && (vertexMoves.Num() > 0))
+			{
+				bValidGraph = surfaceGraph->MoveVertices(moveDeltas, nextID, vertexMoves);
+			}
+
+			if (bValidGraph)
 			{
 				for (auto& delta : moveDeltas)
 				{
@@ -108,9 +119,20 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 				OutSideEffectDeltas->Add(deleteSurfaceDelta);
 			}
 		}
-
-		PrevFacePoints = CachedFacePoints;
-		PrevFaceOrigin = CachedFaceOrigin;
+		else if (numIDs == 0)
+		{
+			TArray<int32> boundingVertexIDs;
+			surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
+			for (int32 facePointIdx = 0; facePointIdx < CachedFacePoints.Num(); ++facePointIdx)
+			{
+				FVector2D prevPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
+				Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(prevPos2D);
+				if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
+				{
+					FaceIdxToVertexID.Add(facePointIdx, vertex->ID);
+				}
+			}
+		}
 	}
 
 	return true;

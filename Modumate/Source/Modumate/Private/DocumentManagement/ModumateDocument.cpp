@@ -807,29 +807,7 @@ bool FModumateDocument::ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *Wor
 	}
 	PostApplyDeltas(World);
 
-	// Next, clean objects while gathering potential side effect deltas,
-	// apply side effect deltas, and add them to the undo/redo-able list of deltas.
-	// Prevent infinite loops, but allow for iteration due to multiple levels of dependency.
-	int32 sideEffectIterationGuard = 8;
-	TArray<FDeltaPtr> sideEffectDeltas;
-	do
-	{
-		sideEffectDeltas.Reset();
-		CleanObjects(&sideEffectDeltas);
-		for (auto& delta : sideEffectDeltas)
-		{
-			ur->Deltas.Add(delta);
-			delta->ApplyTo(this, World);
-		}
-		PostApplyDeltas(World);
-
-		if (!ensure(--sideEffectIterationGuard > 0))
-		{
-			UE_LOG(LogTemp, Error, TEXT("Iterative CleanObjects generated too many side effects; preventing infinite loop!"));
-			break;
-		}
-
-	} while (sideEffectDeltas.Num() > 0);
+	CalculateSideEffectDeltas(ur->Deltas, World);
 
 	// TODO: this should be a proper side effect
 	UpdateRoomAnalysis(World);
@@ -867,8 +845,9 @@ bool FModumateDocument::ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWor
 	{
 		delta->ApplyTo(this, World);
 	}
-
 	PostApplyDeltas(World);
+
+	CalculateSideEffectDeltas(PreviewDeltas, World);
 
 	return true;
 }
@@ -914,6 +893,35 @@ void FModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
 	bApplyingPreviewDeltas = false;
 	bFastClearingPreviewDeltas = false;
 	bSlowClearingPreviewDeltas = false;
+
+	CleanObjects(nullptr);
+}
+
+void FModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWorld* World)
+{
+	// Next, clean objects while gathering potential side effect deltas,
+	// apply side effect deltas, and add them to the undo/redo-able list of deltas.
+	// Prevent infinite loops, but allow for iteration due to multiple levels of dependency.
+	int32 sideEffectIterationGuard = 8;
+	TArray<FDeltaPtr> sideEffectDeltas;
+	do
+	{
+		sideEffectDeltas.Reset();
+		CleanObjects(&sideEffectDeltas);
+		for (auto& delta : sideEffectDeltas)
+		{
+			Deltas.Add(delta);
+			delta->ApplyTo(this, World);
+		}
+		PostApplyDeltas(World);
+
+		if (!ensure(--sideEffectIterationGuard > 0))
+		{
+			UE_LOG(LogTemp, Error, TEXT("Iterative CleanObjects generated too many side effects; preventing infinite loop!"));
+			break;
+		}
+
+	} while (sideEffectDeltas.Num() > 0);
 }
 
 void FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
@@ -1823,7 +1831,7 @@ bool FModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 				for (FModumateObjectInstance *objToClean : curDirtyList)
 				{
 					EObjectDirtyFlags& cleanedFlags = curCleanedFlags.FindOrAdd(objToClean->ID, EObjectDirtyFlags::None);
-					if (!ensure((cleanedFlags & flagToClean) == EObjectDirtyFlags::None))
+					if (!((cleanedFlags & flagToClean) == EObjectDirtyFlags::None))
 					{
 						UE_LOG(LogTemp, Error, TEXT("Already cleaned %s ID #%d flag %s this frame!"),
 							*EnumValueString(EObjectType, objToClean->GetObjectType()), objToClean->ID,
