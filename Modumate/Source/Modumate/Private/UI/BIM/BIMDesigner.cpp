@@ -184,11 +184,13 @@ void UBIMDesigner::UpdateBIMDesigner()
 	for (auto& curNodeWidget : BIMBlockNodes)
 	{
 		curNodeWidget->RemoveFromParent();
+		curNodeWidget->ReleaseNode();
 	}
 	for (auto& curItem : NodesWithAddLayerButton)
 	{
 		auto& curAddButton = curItem.Value;
 		curAddButton->RemoveFromParent();
+		Controller->HUDDrawWidget->UserWidgetPool.Release(curAddButton);
 	}
 
 	BIMBlockNodes.Empty();
@@ -221,7 +223,6 @@ void UBIMDesigner::UpdateBIMDesigner()
 			{
 				if (!curInstance->ParentInstance.IsValid()) // assume instance without parent is king node
 				{
-					newBlockNode->IsKingNode = true;
 					RootNode = newBlockNode;
 					// Do other kingly things, maybe auto focus when no other node is selected
 				}
@@ -314,7 +315,7 @@ void UBIMDesigner::AutoArrangeNodes()
 		int32 column = 0;
 		while (searchingColumn)
 		{
-			if (curNodeToSearch->ID == 0)
+			if (curNodeToSearch->IsKingNode)
 			{
 				searchingColumn = false;
 			}

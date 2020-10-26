@@ -204,6 +204,9 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 	if (captureSuccess)
 	{
 		// TODO: Save texture cache, release RT resource
+		ReleaseSavedRenderTarget(PresetID);
+		BIMKeyToRenderTarget.Add(PresetID, renderTarget);
+
 		OutTexture = renderTarget;
 		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
 		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, OutTexture);
@@ -1124,4 +1127,14 @@ void ADynamicIconGenerator::SetIconCompoundMeshActorForCapture(bool Visible)
 		SetComponentForIconCapture(curComp, Visible);
 	}
 	IconCompoundMeshActor->SetActorHiddenInGame(!Visible);
+}
+
+void ADynamicIconGenerator::ReleaseSavedRenderTarget(const FBIMKey& PresetID)
+{
+	UTextureRenderTarget2D* existingRenderTarget = BIMKeyToRenderTarget.FindRef(PresetID);
+	if (existingRenderTarget)
+	{
+		existingRenderTarget->ReleaseResource();
+		BIMKeyToRenderTarget.Remove(PresetID);
+	}
 }

@@ -45,7 +45,13 @@ void UTooltipWidget::BuildPrimaryTooltip(const FTooltipData& InData)
 		return;
 	}
 
+	for (auto keyWidget : HorizontalBoxForKeys->GetAllChildren())
+	{
+		UUserWidget* asUserWidget = Cast<UUserWidget>(keyWidget);
+		controller->HUDDrawWidget->UserWidgetPool.Release(asUserWidget);
+	}
 	HorizontalBoxForKeys->ClearChildren();
+
 	for (int32 i = 0; i < InData.AllBindings.Num(); ++i)
 	{
 		for (auto& curInput : InData.AllBindings[i])

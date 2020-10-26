@@ -31,6 +31,8 @@ void UBIMBlockSlotList::NativeConstruct()
 void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMCraftingTreeNodeSharedPtr& NodePtr)
 {
 	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	NodeIDToSlotMapItem.Empty();
+	VerticalBoxSlots->ClearChildren();
 
 	for (int32 i = 0; i < NodePtr->AttachedChildren.Num(); ++i)
 	{
@@ -45,6 +47,19 @@ void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMCraftingTreeNodeShared
 			newSlot->TextBlockWidget->ChangeText(FText::FromString(presetString));
 			newSlot->SlotID = i;
 			VerticalBoxSlots->AddChildToVerticalBox(newSlot);
+		}
+	}
+}
+
+void UBIMBlockSlotList::ReleaseSlotAssignmentList()
+{
+	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	for (auto curWidget : VerticalBoxSlots->GetAllChildren())
+	{
+		UUserWidget* asUserWidget = Cast<UUserWidget>(curWidget);
+		if (asUserWidget)
+		{
+			controller->HUDDrawWidget->UserWidgetPool.Release(asUserWidget);
 		}
 	}
 }

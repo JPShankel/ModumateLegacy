@@ -39,20 +39,23 @@ void UTooltipManager::Shutdown()
 {
 }
 
-class UTooltipWidget* UTooltipManager::GetOrCreateTooltipWidgetFromPool(TSubclassOf<class UTooltipWidget> TooltipClass)
+class UTooltipWidget* UTooltipManager::GetOrCreateTooltipWidget(TSubclassOf<class UTooltipWidget> TooltipClass)
 {
-	AEditModelPlayerController_CPP* EditModelController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-	if (EditModelController && EditModelController->EditModelUserWidget)
+	if (TooltipClass == PrimaryTooltipWidgetClass)
 	{
-		return EditModelController->GetEditModelHUD()->GetOrCreateWidgetInstance<UTooltipWidget>(TooltipClass);
-	}
-	else
-	{
-		AMainMenuController_CPP* MainMenuController = GetWorld()->GetFirstPlayerController<AMainMenuController_CPP>();
-		if (MainMenuController && MainMenuController->StartRootMenuWidget)
+		if (!PrimaryTooltipWidget)
 		{
-			return MainMenuController->StartRootMenuWidget->UserWidgetPool.GetOrCreateInstance<UTooltipWidget>(TooltipClass);
+			PrimaryTooltipWidget = Cast<UTooltipWidget>(CreateWidget(GetWorld()->GetGameInstance(), PrimaryTooltipWidgetClass));
 		}
+		return PrimaryTooltipWidget;
+	}
+	else if (TooltipClass == SecondaryTooltipWidgetClass)
+	{
+		if (!SecondaryTooltipWidget)
+		{
+			SecondaryTooltipWidget = Cast<UTooltipWidget>(CreateWidget(GetWorld()->GetGameInstance(), SecondaryTooltipWidgetClass));
+		}
+		return SecondaryTooltipWidget;
 	}
 	return nullptr;
 }
@@ -69,7 +72,7 @@ class UWidget* UTooltipManager::GenerateTooltipNonInputWidget(const FName& Toolt
 		{
 			if (tooltipData.TooltipTitle.IsEmpty())
 			{
-				UTooltipWidget* newSecondaryTooltip = manager->GetOrCreateTooltipWidgetFromPool(manager->SecondaryTooltipWidgetClass);
+				UTooltipWidget* newSecondaryTooltip = manager->GetOrCreateTooltipWidget(manager->SecondaryTooltipWidgetClass);
 				if (newSecondaryTooltip)
 				{
 					newSecondaryTooltip->BuildSecondaryTooltip(tooltipData);
@@ -78,7 +81,7 @@ class UWidget* UTooltipManager::GenerateTooltipNonInputWidget(const FName& Toolt
 			}
 			else
 			{
-				UTooltipWidget* newPrimaryTooltip = manager->GetOrCreateTooltipWidgetFromPool(manager->PrimaryTooltipWidgetClass);
+				UTooltipWidget* newPrimaryTooltip = manager->GetOrCreateTooltipWidget(manager->PrimaryTooltipWidgetClass);
 				if (newPrimaryTooltip)
 				{
 					newPrimaryTooltip->BuildPrimaryTooltip(tooltipData);
@@ -112,7 +115,7 @@ class UWidget* UTooltipManager::GenerateTooltipWithInputWidget(EInputCommand Inp
 		newTooltipData.TooltipText = inputData.EnabledDescription;
 		newTooltipData.AllBindings = inputData.AllBindings;
 
-		UTooltipWidget* newTooltipWidget = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UTooltipWidget>(manager->PrimaryTooltipWidgetClass);
+		UTooltipWidget* newTooltipWidget = manager->GetOrCreateTooltipWidget(manager->PrimaryTooltipWidgetClass);
 		if (newTooltipWidget)
 		{
 			newTooltipWidget->BuildPrimaryTooltip(newTooltipData);

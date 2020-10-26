@@ -188,6 +188,7 @@ void UBIMBlockNode::UpdateNodeCollapse(bool NewCollapse, bool AllowAutoArrange)
 
 bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCraftingTreeNodeSharedPtr &Node, bool bAsSlot)
 {
+	IsKingNode = Node->ParentInstance == nullptr;
 	ParentBIMDesigner = OuterBIMDesigner;
 	PresetID = Node->PresetID;
 	bNodeHasSlotPart = bAsSlot;
@@ -302,6 +303,26 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 	}
 
 	return true;
+}
+
+void UBIMBlockNode::ReleaseNode()
+{
+	if (ensure(Controller))
+	{
+		for (auto curWidget : VerticalBoxProperties->GetAllChildren())
+		{
+			UUserWidget* asUserWidget = Cast<UUserWidget>(curWidget);
+			if (asUserWidget)
+			{
+				Controller->HUDDrawWidget->UserWidgetPool.Release(asUserWidget);
+			}
+		}
+		if (BIMBlockSlotList)
+		{
+			BIMBlockSlotList->ReleaseSlotAssignmentList();
+		}
+		Controller->HUDDrawWidget->UserWidgetPool.Release(this);
+	}
 }
 
 void UBIMBlockNode::UpdateNodeSwitchState(ENodeWidgetSwitchState NewState)

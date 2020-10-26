@@ -121,7 +121,17 @@ bool UComponentAssemblyListItem::BuildFromAssembly()
 
 	TArray<FString> propertyTips;
 	GetItemTips(propertyTips);
+
+	for (auto curWidget : VerticalBoxProperties->GetAllChildren())
+	{
+		UUserWidget* asUserWidget = Cast<UUserWidget>(curWidget);
+		if (asUserWidget)
+		{
+			EMPlayerController->HUDDrawWidget->UserWidgetPool.Release(asUserWidget);
+		}
+	}
 	VerticalBoxProperties->ClearChildren();
+
 	for (auto &curTip : propertyTips)
 	{
 		UModumateTextBlockUserWidget *newModumateTextBlockUserWidget = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UModumateTextBlockUserWidget>(ModumateTextBlockUserWidgetClass);

@@ -40,7 +40,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Tooltips)
 	TSubclassOf<class UTooltipWidget> SecondaryTooltipWidgetClass;
 
-	class UTooltipWidget* GetOrCreateTooltipWidgetFromPool(TSubclassOf<class UTooltipWidget> TooltipClass);
+	class UTooltipWidget* GetOrCreateTooltipWidget(TSubclassOf<class UTooltipWidget> TooltipClass);
 
 	static class UWidget* GenerateTooltipNonInputWidget(const FName& TooltipID, const class UWidget* FromWidget);
 	static class UWidget* GenerateTooltipWithInputWidget(EInputCommand InputCommand, const class UWidget* FromWidget);
@@ -48,4 +48,10 @@ public:
 protected:
 	UPROPERTY()
 	TMap<FName, FTooltipData> TooltipsMap;
+
+	UPROPERTY()
+	class UTooltipWidget* PrimaryTooltipWidget;
+
+	UPROPERTY()
+	class UTooltipWidget* SecondaryTooltipWidget;
 };

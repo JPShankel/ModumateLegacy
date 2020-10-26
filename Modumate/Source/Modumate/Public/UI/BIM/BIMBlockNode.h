@@ -149,8 +149,8 @@ public:
 	class UTexture* IconTexture;
 
 	FBIMKey PresetID;
-	int32 ID = -1;
-	int32 ParentID = -1;
+	int32 ID = INDEX_NONE;
+	int32 ParentID = INDEX_NONE;
 	bool IsKingNode = false;
 	bool NodeDirty = false;
 	bool NodeCollapse = true;
@@ -178,6 +178,7 @@ public:
 	void UpdateNodeDirty(bool NewDirty);
 	void UpdateNodeCollapse(bool NewCollapse, bool AllowAutoArrange = false);
 	bool BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCraftingTreeNodeSharedPtr &Node, bool bAsSlot);
+	void ReleaseNode();
 	void UpdateNodeSwitchState(ENodeWidgetSwitchState NewState);
 	void BeginDrag();
 	void SetNameForNode(const FString& NewName);

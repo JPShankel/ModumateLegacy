@@ -39,4 +39,5 @@ public:
 	TMap<int32, class UBIMBlockSlotListItem*> NodeIDToSlotMapItem;
 
 	void BuildSlotAssignmentList(const FBIMCraftingTreeNodeSharedPtr& NodePtr);
+	void ReleaseSlotAssignmentList();
 };

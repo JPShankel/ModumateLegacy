@@ -131,6 +131,10 @@ public:
 	UPROPERTY()
 	UTextureRenderTarget2D* IconRenderTarget;
 
+	// TODO: Temporary for storing render target until BIMKey can guarantee unique appearance
+	UPROPERTY()
+	TMap<FBIMKey, UTextureRenderTarget2D*> BIMKeyToRenderTarget;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -163,4 +167,8 @@ public:
 	bool SetComponentForIconCapture(UPrimitiveComponent* Comp, bool CanCapture);
 	void SetIconDynamicMeshLayersForCapture(bool Visible);
 	void SetIconCompoundMeshActorForCapture(bool Visible);
+
+	// TODO: This is a temp function for releasing saved render targets related to BIM presets
+	// When BIMKey can guarantee unique appearance, then BIMKeyToRenderTarget map and this function can be removed
+	void ReleaseSavedRenderTarget(const FBIMKey& PresetID);
 };
