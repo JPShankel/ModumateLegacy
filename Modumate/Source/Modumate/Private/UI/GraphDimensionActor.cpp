@@ -124,7 +124,7 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 
 		auto targetFace = SurfaceGraph ? SurfaceGraph->FindPolygon(TargetObjID) : nullptr;
 		bool bOutSameDirection = true;
-		int32 edgeIdx = targetFace ? targetFace->FindEdgeIndex(TargetEdgeID, bOutSameDirection) : INDEX_NONE;
+		int32 edgeIdx = targetFace ? targetFace->FindPerimeterEdgeIndex(TargetEdgeID, bOutSameDirection) : INDEX_NONE;
 
 		FVector2D dir = endVertex->Position - startVertex->Position;
 		dir.Normalize();

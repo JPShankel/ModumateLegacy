@@ -106,11 +106,11 @@ namespace Modumate
 		}
 	}
 
-	int32 FGraph2DPolygon::FindEdgeIndex(FGraphSignedID edgeID, bool& bOutSameDirection) const
+	int32 FGraph2DPolygon::FindPerimeterEdgeIndex(FGraphSignedID edgeID, bool& bOutSameDirection) const
 	{
-		for (int32 edgeIdx = 0; edgeIdx < Edges.Num(); edgeIdx++)
+		for (int32 edgeIdx = 0; edgeIdx < CachedPerimeterEdgeIDs.Num(); edgeIdx++)
 		{
-			int32 id = Edges[edgeIdx];
+			int32 id = CachedPerimeterEdgeIDs[edgeIdx];
 			if (FMath::Abs(id) == FMath::Abs(edgeID))
 			{
 				bOutSameDirection = (id == edgeID);
