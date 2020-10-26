@@ -88,7 +88,7 @@ void FModumateDatabase::AddArchitecturalMesh(const FBIMKey& Key, const FString& 
 	AMeshes.AddData(mesh);
 }
 
-void FModumateDatabase::AddArchitecturalMaterial(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+void FModumateDatabase::AddArchitecturalMaterial(const FBIMKey& Key, const FString& Name, const FBIMKey& ColorKey, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -103,6 +103,12 @@ void FModumateDatabase::AddArchitecturalMaterial(const FBIMKey& Key, const FStri
 	if (ensureAlways(mat.EngineMaterial.IsValid()))
 	{
 		mat.EngineMaterial->AddToRoot();
+	}
+
+	const FCustomColor *color = GetCustomColorByKey(ColorKey);
+	if (color != nullptr)
+	{
+		mat.DefaultBaseColor = *color;
 	}
 
 	mat.UVScaleFactor = 1;
@@ -219,20 +225,28 @@ void FModumateDatabase::ReadPresetData()
 		if (assetPath.Len() != 0)
 		{
 			FString matName = Preset.GetProperty(BIMPropertyNames::Name);
-			AddArchitecturalMaterial(Preset.PresetID, matName, assetPath);
+			AddArchitecturalMaterial(Preset.PresetID, matName, FBIMKey(),assetPath);
 		}
 	};
 
 	FAddAssetFunction addMaterial = [this](const FBIMPreset& Preset)
 	{
 		FBIMKey rawMaterial;
+		FBIMKey color;
+
 		for (auto& cp : Preset.ChildPresets)
 		{
 			const FBIMPreset* childPreset = PresetManager.CraftingNodePresets.Presets.Find(cp.PresetID);
-			if (childPreset != nullptr && childPreset->NodeScope == EBIMValueScope::RawMaterial)
+			if (childPreset != nullptr)
 			{
-				rawMaterial = cp.PresetID;
-				break;
+				if (childPreset->NodeScope == EBIMValueScope::RawMaterial)
+				{
+					rawMaterial = cp.PresetID;
+				}
+				else if (childPreset->NodeScope == EBIMValueScope::Color)
+				{
+					color = cp.PresetID;
+				}
 			}
 		}
 
@@ -243,7 +257,7 @@ void FModumateDatabase::ReadPresetData()
 			{
 				FString assetPath = preset->GetProperty(BIMPropertyNames::AssetPath);
 				FString matName = Preset.GetProperty(BIMPropertyNames::Name);
-				AddArchitecturalMaterial(Preset.PresetID, matName, assetPath);
+				AddArchitecturalMaterial(Preset.PresetID, matName, color, assetPath);
 			}
 		}
 	};

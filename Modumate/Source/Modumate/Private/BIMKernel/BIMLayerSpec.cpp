@@ -132,7 +132,14 @@ ECraftingResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB
 			}
 		}
 
-		if (modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, dimStr))
+		// The layer's thickness is either the module's thickness or whichever parameter (Depth or Width) the pattern specifies
+		dimStr.Empty();
+		if (!modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, dimStr))
+		{
+			modProps.TryGetProperty(EBIMValueScope::Dimension, *Pattern.ParameterizedThickness, dimStr);
+		}
+
+		if (!dimStr.IsEmpty())
 		{
 			FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(dimStr);
 			if (ensureAlways(dim.Format != EDimensionFormat::Error))

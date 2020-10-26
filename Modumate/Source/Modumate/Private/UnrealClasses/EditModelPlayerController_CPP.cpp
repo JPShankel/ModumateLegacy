@@ -857,6 +857,9 @@ void AEditModelPlayerController_CPP::TrySavePDF()
 
 bool AEditModelPlayerController_CPP::CheckUserPlanAndPermission(EModumatePermission Permission)
 {
+#if WITH_EDITOR
+	return true;
+#endif
 	// TODO: Check if user is still login, refresh and request permission status
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
 	if (ensure(gameInstance) && gameInstance->GetAccountManager().Get()->HasPermission(Permission))

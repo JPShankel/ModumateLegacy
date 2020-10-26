@@ -55,6 +55,34 @@ PRESET,,,,,,,,,,,,,0Slot-Hinge2of3,"Hinge
 PRESET,,,,,,,,,,,,,0Slot-Hinge3of3,"Hinge
 0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,"AssemblyHingeSet
+1SlotConfig --> HingeSet
+0Slot-Hinge1of3
+0Slot-Hinge2of3
+0Slot-Hinge3of3
+0Slot-Hinge1of3
+Hinge
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+0Slot-Hinge2of3
+Hinge
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+0Slot-Hinge3of3
+Hinge
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyHingeSet,,"3-Hinge Set, Patrician Bronze",0,80,,X,,"1SlotConfig --> HingeSet
+0Slot-Hinge1of3
+0Slot-Hinge2of3
+0Slot-Hinge3of3",0Slot-Hinge1of3,"Hinge
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-Hinge2of3,"Hinge
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-Hinge3of3,"Hinge
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -172,12 +200,12 @@ Caster
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,Barn Door Panel 1,36,80,,X,,"1SlotConfig --> Panel
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Barn Door Panel 1, Walnut",36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -201,10 +229,10 @@ PRESET,,,,,,,,,,,,,0Slot-CasterBarnRight,"Caster
 0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
 1SlotConfig --> Panel
@@ -224,25 +252,24 @@ PRESET,,"AssemblyPanel
 0Slot-MailSlot
 0Slot-Panel
 Panel
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 0Slot-CasterBarnLeft
 Caster
-0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-CasterBarnRight
 Caster
-0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,Barn Door Panel 2,36,80,,X,,"1SlotConfig --> Panel
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Barn Door Panel 2, Ash",36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -257,21 +284,20 @@ HandleStatic
 0Slot-PeepholeUpper
 0Slot-Knocker
 0Slot-MailSlot",0Slot-Panel,"Panel
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
+0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-CasterBarnLeft,"Caster
-0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-CasterBarnRight,"Caster
-0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -338,15 +364,15 @@ PRESET,,"AssemblyPanel
 0Slot-PeepholeUpper
 0Slot-Knocker
 0Slot-MailSlot
-0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-Panel
 Panel
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
-0Slot-Deadbolt
+0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-0Slot-SurfaceLockLower
+0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Pocket Door Panel 1, Paint",36,80,,X,,"1SlotConfig --> Panel
@@ -363,13 +389,13 @@ HandleStatic
 0Slot-PeepholeLower
 0Slot-PeepholeUpper
 0Slot-Knocker
-0Slot-MailSlot",0Slot-HandleXBacksetYInsideZHandleHeight,"Panel
+0Slot-MailSlot",0Slot-Panel,"Panel
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
-PRESET,,,,,,,,,,,,,0Slot-Deadbolt,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,0Slot-SurfaceLockLower,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
@@ -390,9 +416,8 @@ PRESET,,"AssemblyPanel
 0Slot-MailSlot
 0Slot-Panel
 Panel
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
@@ -415,9 +440,8 @@ HandleStatic
 0Slot-PeepholeUpper
 0Slot-Knocker
 0Slot-MailSlot",0Slot-Panel,"Panel
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
+0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03'
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
@@ -452,7 +476,7 @@ HandleStatic
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,Sliding Door Panel,36,80,,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,White Sliding Door Panel (Active),36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -494,6 +518,134 @@ PRESET,,"AssemblyPanel
 0Slot-MailSlot
 0Slot-Panel
 Panel
+0Mesh-Door-Panel-Sliding-01.Door-Panel-Sliding-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,AssemblyPanel,,White Sliding Door Panel (Passive),36,80,,X,,"1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot",0Slot-Panel,"Panel
+0Mesh-Door-Panel-Sliding-01.Door-Panel-Sliding-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
+PRESET,,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot
+0Slot-Panel
+Panel
+0Mesh-Door-Panel-Sliding-02.Door-Panel-Sliding-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
+0Slot-HandleXBacksetYInsideZHandleHeight
+HandleStatic
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Slot-HandleXBacksetYOutsideZHandleHeight
+HandleStatic
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,Bronze Sliding Door Panel (Active),36,80,,X,,"1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot",0Slot-Panel,"Panel
+0Mesh-Door-Panel-Sliding-02.Door-Panel-Sliding-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot
+0Slot-Panel
+Panel
+0Mesh-Door-Panel-Sliding-02.Door-Panel-Sliding-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate",,AssemblyPanel,,Bronze Sliding Door Panel (Passive),36,80,,X,,"1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot",0Slot-Panel,"Panel
+0Mesh-Door-Panel-Sliding-02.Door-Panel-Sliding-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate",,,,,,
+PRESET,,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot
+0Slot-Panel
+Panel
 0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
@@ -508,11 +660,11 @@ HandleStatic
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0Slot-SurfaceLockLower
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyPanel,,Mostly Glass Door Panel,36,80,,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,Mostly Glass Door Panel,36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -538,10 +690,10 @@ PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-Deadbolt,"LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-SurfaceLockLower,"LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -561,8 +713,8 @@ PRESET,,"AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Door-Panel-Swing-06.Door-Panel-Swing-06'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-292D38-Indigo
 0Slot-HandleXBacksetYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Lever-03.Door-Handle-Lever-03'
@@ -574,7 +726,7 @@ HandleStatic
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyPanel,,Vision Panel Swing Door Panel,36,80,,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,Vision Panel Swing Door Panel,36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -590,8 +742,8 @@ LockDeadbolt
 0Slot-Knocker
 0Slot-MailSlot",0Slot-Panel,"Panel
 0Mesh-Door-Panel-Swing-06.Door-Panel-Swing-06'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow",,,,,,
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-292D38-Indigo",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Lever-03.Door-Handle-Lever-03'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
@@ -600,7 +752,7 @@ PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-Deadbolt,"LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -628,15 +780,15 @@ HandleStatic
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0Slot-SurfaceLockUpper
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyPanel,,Solid Swing Door Panel,36,80,,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Solid Swing Door Panel, Walnut",36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -658,13 +810,13 @@ PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-Deadbolt,"LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-SurfaceLockUpper,"LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -688,19 +840,19 @@ Panel
 0Slot-HandleXBacksetYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-SurfaceLockLower
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyPanel,,Paneled Swing Door Panel,36,80,,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Paneled Swing Door Panel, Ash",36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -719,16 +871,66 @@ LockSurface
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-Deadbolt,"LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-SurfaceLockLower,"LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot
+0Slot-Panel
+Panel
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXBacksetYInsideZHandleHeight
+HandleStatic
+0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Slot-HandleXBacksetYOutsideZHandleHeight
+HandleStatic
+0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Solid Swing Door Panel, Paint, White",36,80,,X,,"1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot",0Slot-Panel,"Panel
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
+0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
+0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -738,7 +940,23 @@ PRESET,,"AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,Fixed Window Panel 1,36,48,,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Fixed Window Panel 1, Aluminum, White",36,48,,X,,"1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper",0Slot-Panel,"Panel
+0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-Panel
+Panel
+0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Fixed Window Panel 1, Aluminum, Patrician Bronze",36,48,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 0Slot-SurfaceLockLower
@@ -754,7 +972,23 @@ PRESET,,"AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,Fixed Window Panel 2,36,48,,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Fixed Window Panel 2, Aluminum, White",36,48,,X,,"1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper",0Slot-Panel,"Panel
+0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-Panel
+Panel
+0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Fixed Window Panel 2, Aluminum, Patrician Bronze",36,48,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 0Slot-SurfaceLockLower
@@ -770,13 +1004,52 @@ PRESET,,"AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,Hung Window Panel,36,48,,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Hung Window Panel, Aluminum, White",36,48,,X,,"1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper",0Slot-Panel,"Panel
+0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-Panel
+Panel
+0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Hung Window Panel, Aluminum, Patrician Bronze",36,48,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 0Slot-SurfaceLockLower
 0Slot-SurfaceLockUpper",0Slot-Panel,"Panel
 0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-Panel
+Panel
+0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Slot-SurfaceLockXMiddleYInsideZTop
+LockSurface
+0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Hung Window Panel (With Lock), Aluminum, White",36,48,,X,,"1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper",0Slot-Panel,"Panel
+0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-SurfaceLockXMiddleYInsideZTop,"LockSurface
+0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -790,7 +1063,7 @@ Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyPanel,,Hung Window Panel (With Lock),36,48,,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Hung Window Panel (With Lock), Aluminum, Patrician Bronze",36,48,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 0Slot-SurfaceLockLower
@@ -799,7 +1072,7 @@ LockSurface
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-SurfaceLockXMiddleYInsideZTop,"LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
@@ -1125,11 +1398,11 @@ Caster
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,Single Barn Door,36in,80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-TrackBarnSingle
@@ -1169,11 +1442,11 @@ Caster
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyDoor
 1SlotConfig --> Frame
@@ -1208,25 +1481,24 @@ AssemblyPanel
 0Slot-MailSlot
 0Slot-Panel
 Panel
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 0Slot-CasterBarnLeft
 Caster
-0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-CasterBarnRight
 Caster
-0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-AssemblyPanelBarnRight
 AssemblyPanel
 1SlotConfig --> Panel
@@ -1246,25 +1518,24 @@ AssemblyPanel
 0Slot-MailSlot
 0Slot-Panel
 Panel
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 0Slot-CasterBarnLeft
 Caster
-0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-CasterBarnRight
 Caster
-0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,Double Barn Door,36in,80in,,X,,"1SlotConfig --> Frame
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyDoor,,"Double Barn Door, Ash",36in,80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-TrackBarnDouble
 0Slot-AssemblyPanelBarnLeft
@@ -1292,25 +1563,24 @@ PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelBarnLeft,"AssemblyPanel
 0Slot-MailSlot
 0Slot-Panel
 Panel
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 0Slot-CasterBarnLeft
 Caster
-0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-CasterBarnRight
 Caster
-0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelBarnRight,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -1329,25 +1599,24 @@ PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelBarnRight,"AssemblyPanel
 0Slot-MailSlot
 0Slot-Panel
 Panel
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
+0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
 0Slot-CasterBarnLeft
 Caster
-0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-CasterBarnRight
 Caster
-0Mesh-Door-Caster-Barn-02.Door-Caster-Barn-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyDoor
 1SlotConfig --> Frame
 0Slot-Frame
@@ -1376,7 +1645,7 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
-1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
@@ -1384,7 +1653,7 @@ HandleStatic
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,Single Pocket Door,36in,80in,,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,"Single Pocket Door, Paint, White",36in,80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelPocket1of1",0Slot-Frame,"Frame
 0Mesh-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01'
@@ -1408,7 +1677,7 @@ PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelPocket1of1,"AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
-1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
@@ -1445,9 +1714,8 @@ AssemblyPanel
 0Slot-MailSlot
 0Slot-Panel
 Panel
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
@@ -1475,9 +1743,8 @@ AssemblyPanel
 0Slot-MailSlot
 0Slot-Panel
 Panel
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
@@ -1485,7 +1752,7 @@ HandleStatic
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,Double Pocket Door,72in,80in,,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,"Double Pocket Door, Walnut",72in,80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelPocketLeft
 0Slot-AssemblyPanelPocketRight",0Slot-Frame,"Frame
@@ -1509,9 +1776,8 @@ PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelPocketLeft,"AssemblyPanel
 0Slot-MailSlot
 0Slot-Panel
 Panel
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
@@ -1538,9 +1804,8 @@ PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelPocketRight,"AssemblyPanel
 0Slot-MailSlot
 0Slot-Panel
 Panel
-0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0Slot-HandleXEdgeYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
@@ -1609,15 +1874,7 @@ AssemblyPanel
 Panel
 0Mesh-Door-Panel-Sliding-01.Door-Panel-Sliding-01'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
-0Slot-HandleXBacksetYInsideZHandleHeight
-HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
-0Slot-HandleXBacksetYOutsideZHandleHeight
-HandleStatic
-0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,Two Panel Sliding Door,72in,80in,,X,,"1SlotConfig --> Frame
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,AssemblyDoor,,Two Panel Sliding Door (Light),72in,80in,,X,,"1SlotConfig --> Frame
 0Slot-FrameSliding
 0Slot-AssemblyPanelSlidingXO-1
 0Slot-AssemblyPanelSlidingXO-2",0Slot-FrameSliding,"Frame
@@ -1672,7 +1929,94 @@ PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-2,"AssemblyPanel
 Panel
 0Mesh-Door-Panel-Sliding-01.Door-Panel-Sliding-01'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
+PRESET,,"AssemblyDoor
+1SlotConfig --> Frame
+0Slot-FrameSliding
+0Slot-AssemblyPanelSlidingXO-1
+0Slot-AssemblyPanelSlidingXO-2
+0Slot-FrameSliding
+Frame
+0Mesh-Door-Frame-Sliding-TwoTrack-01.Door-Frame-Sliding-TwoTrack-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Slot-AssemblyPanelSlidingXO-1
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot
+0Slot-Panel
+Panel
+0Mesh-Door-Panel-Sliding-02.Door-Panel-Sliding-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
+0Slot-HandleXBacksetYInsideZHandleHeight
+HandleStatic
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Slot-HandleXBacksetYOutsideZHandleHeight
+HandleStatic
+0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Slot-AssemblyPanelSlidingXO-2
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot
+0Slot-Panel
+Panel
+0Mesh-Door-Panel-Sliding-02.Door-Panel-Sliding-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate",,AssemblyDoor,,Two Panel Sliding Door (Dark),72in,80in,,X,,"1SlotConfig --> Frame
+0Slot-FrameSliding
+0Slot-AssemblyPanelSlidingXO-1
+0Slot-AssemblyPanelSlidingXO-2",0Slot-FrameSliding,"Frame
+0Mesh-Door-Frame-Sliding-TwoTrack-01.Door-Frame-Sliding-TwoTrack-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-1,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot
+0Slot-Panel
+Panel
+0Mesh-Door-Panel-Sliding-02.Door-Panel-Sliding-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
 0Slot-HandleXBacksetYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
@@ -1681,6 +2025,27 @@ HandleStatic
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-2,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot
+0Slot-Panel
+Panel
+0Mesh-Door-Panel-Sliding-02.Door-Panel-Sliding-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate",,,,,,
 PRESET,,"AssemblyDoor
 1SlotConfig --> Frame
 0Slot-Frame
@@ -1691,7 +2056,7 @@ PRESET,,"AssemblyDoor
 0Slot-Frame
 Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
-1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
 0Slot-AssemblyHingeSetLeft
 AssemblyHingeSet
 1SlotConfig --> HingeSet
@@ -1700,16 +2065,16 @@ AssemblyHingeSet
 0Slot-Hinge3of3
 0Slot-Hinge1of3
 Hinge
-0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Hinge2of3
 Hinge
-0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Hinge3of3
 Hinge
-0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-AssemblyHingeSetRight
 AssemblyHingeSet
 1SlotConfig --> HingeSet
@@ -1718,16 +2083,16 @@ AssemblyHingeSet
 0Slot-Hinge3of3
 0Slot-Hinge1of3
 Hinge
-0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Hinge2of3
 Hinge
-0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Hinge3of3
 Hinge
-0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-AssemblyPanelSwingLeft
 AssemblyPanel
 1SlotConfig --> Panel
@@ -1752,19 +2117,19 @@ Panel
 0Slot-HandleXBacksetYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-SurfaceLockLower
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-AssemblyPanelSwingRight
 AssemblyPanel
 1SlotConfig --> Panel
@@ -1789,26 +2154,26 @@ Panel
 0Slot-HandleXBacksetYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-SurfaceLockLower
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyDoor,,Double Swing Door,72in,80in,,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyDoor,,"Double Swing Door, Ash",72in,80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyHingeSetRight
 0Slot-AssemblyPanelSwingLeft
 0Slot-AssemblyPanelSwingRight",0Slot-Frame,"Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
-1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,,,,,
+1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -1816,16 +2181,16 @@ PRESET,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
 0Slot-Hinge3of3
 0Slot-Hinge1of3
 Hinge
-0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Hinge2of3
 Hinge
-0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Hinge3of3
 Hinge
-0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-AssemblyHingeSetRight,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -1833,16 +2198,16 @@ PRESET,,,,,,,,,,,,,0Slot-AssemblyHingeSetRight,"AssemblyHingeSet
 0Slot-Hinge3of3
 0Slot-Hinge1of3
 Hinge
-0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Hinge2of3
 Hinge
-0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Hinge3of3
 Hinge
-0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSwingLeft,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -1866,19 +2231,19 @@ Panel
 0Slot-HandleXBacksetYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-SurfaceLockLower
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSwingRight,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -1902,19 +2267,125 @@ Panel
 0Slot-HandleXBacksetYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-SurfaceLockLower
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,"AssemblyDoor
+1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyPanelSwing1of1
+0Slot-Frame
+Frame
+0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-AssemblyHingeSetLeft
+AssemblyHingeSet
+1SlotConfig --> HingeSet
+0Slot-Hinge1of3
+0Slot-Hinge2of3
+0Slot-Hinge3of3
+0Slot-Hinge1of3
+Hinge
+0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Slot-Hinge2of3
+Hinge
+0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Slot-Hinge3of3
+Hinge
+0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Slot-AssemblyPanelSwing1of1
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot
+0Slot-Panel
+Panel
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXBacksetYInsideZHandleHeight
+HandleStatic
+0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Slot-HandleXBacksetYOutsideZHandleHeight
+HandleStatic
+0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,"Solid Swing Door, Paint, White",36in*(# of Panel children),80in,,X,,"1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyPanelSwing1of1",0Slot-Frame,"Frame
+0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
+1SlotConfig --> HingeSet
+0Slot-Hinge1of3
+0Slot-Hinge2of3
+0Slot-Hinge3of3
+0Slot-Hinge1of3
+Hinge
+0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Slot-Hinge2of3
+Hinge
+0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Slot-Hinge3of3
+Hinge
+0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSwing1of1,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetYInsideZHandleHeight
+0Slot-HandleXBacksetYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot
+0Slot-Panel
+Panel
+0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXBacksetYInsideZHandleHeight
+HandleStatic
+0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Slot-HandleXBacksetYOutsideZHandleHeight
+HandleStatic
+0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyDoor
 1SlotConfig --> Frame
 0Slot-Frame
@@ -1970,15 +2441,15 @@ HandleStatic
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0Slot-SurfaceLockUpper
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyDoor,,Solid Swing Door,36in*(# of Panel children),80in,,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,"Solid Swing Door, Walnut",36in*(# of Panel children),80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelSwing1of1",0Slot-Frame,"Frame
@@ -2028,15 +2499,15 @@ HandleStatic
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0Slot-SurfaceLockUpper
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyDoor
 1SlotConfig --> Frame
 0Slot-Frame
@@ -2085,19 +2556,19 @@ Panel
 0Slot-HandleXBacksetYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-SurfaceLockLower
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyDoor,,Paneled Swing Door,36in*(# of Panel children),80in,,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyDoor,,"Paneled Swing Door, Ash",36in*(# of Panel children),80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelSwing1of1",0Slot-Frame,"Frame
@@ -2143,19 +2614,19 @@ Panel
 0Slot-HandleXBacksetYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-SurfaceLockLower
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyDoor
 1SlotConfig --> Frame
 0Slot-Frame
@@ -2163,7 +2634,7 @@ PRESET,,"AssemblyDoor
 0Slot-AssemblyPanelSwing1of1
 Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
-1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
 AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -2200,8 +2671,8 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Door-Panel-Swing-06.Door-Panel-Swing-06'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-292D38-Indigo
 0Slot-HandleXBacksetYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Lever-03.Door-Handle-Lever-03'
@@ -2213,12 +2684,12 @@ HandleStatic
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyDoor,,Vision Panel Swing Door,36in*(# of Panel children),80in,,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,Vision Panel Swing Door,36in*(# of Panel children),80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelSwing1of1",0Slot-Frame,"Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
-1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,,,,,
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -2255,8 +2726,8 @@ PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSwing1of1,"AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Door-Panel-Swing-06.Door-Panel-Swing-06'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-292D38-Indigo
 0Slot-HandleXBacksetYInsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Lever-03.Door-Handle-Lever-03'
@@ -2268,7 +2739,7 @@ HandleStatic
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyWindow
 1SlotConfig --> Frame
 0Slot-Frame
@@ -2285,11 +2756,42 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,Fixed Window 1,,,,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyWindow,,Fixed Window 1,,,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelFixed1of1",0Slot-Frame,"Frame
 0Mesh-Window-Frame-Fixed-01.Window-Frame-Fixed-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelFixed1of1,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-Panel
+Panel
+0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"AssemblyWindow
+1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelFixed1of1
+Frame
+0Mesh-Window-Frame-Fixed-01.Window-Frame-Fixed-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-Panel
+Panel
+0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,"Fixed Window 1, Patrician Bronze",,,,X,,"1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelFixed1of1",0Slot-Frame,"Frame
+0Mesh-Window-Frame-Fixed-01.Window-Frame-Fixed-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelFixed1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -2316,11 +2818,42 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,Fixed Window 2,,,,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyWindow,,Fixed Window 2,,,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelFixed1of1",0Slot-Frame,"Frame
 0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelFixed1of1,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-Panel
+Panel
+0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"AssemblyWindow
+1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelFixed1of1
+Frame
+0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-Panel
+Panel
+0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,Fixed Window 2. Patrician Bronze,,,,X,,"1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelFixed1of1",0Slot-Frame,"Frame
+0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelFixed1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -2337,8 +2870,8 @@ PRESET,,"AssemblyWindow
 0Slot-AssemblyPanelHung1of2
 0Slot-AssemblyPanelHung2of2
 Frame
-0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Mesh-Window-Frame-Hung-01.Window-Frame-Hung-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -2348,12 +2881,59 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,Hung Window 1,,,,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyWindow,,Hung Window 1,,,,X,,"1SlotConfig --> Frame
 0Slot-FrameSliding
 0Slot-AssemblyPanelHung1of2
 0Slot-AssemblyPanelHung2of2",0Slot-FrameSliding,"Frame
-0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01'
+0Mesh-Window-Frame-Hung-01.Window-Frame-Hung-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelHung1of2,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-Panel
+Panel
+0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelHung2of2,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-Panel
+Panel
+0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
+0Slot-SurfaceLockXMiddleYInsideZTop
+LockSurface
+0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
+PRESET,,"AssemblyWindow
+1SlotConfig --> Frame
+0Slot-FrameSliding
+0Slot-AssemblyPanelHung1of2
+0Slot-AssemblyPanelHung2of2
+Frame
+0Mesh-Window-Frame-Hung-02.Window-Frame-Hung-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-SurfaceLockXMiddleYInsideZTop
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-Panel
+Panel
+0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,"Hung Window 1, Patrician Bronze",,,,X,,"1SlotConfig --> Frame
+0Slot-FrameSliding
+0Slot-AssemblyPanelHung1of2
+0Slot-AssemblyPanelHung2of2",0Slot-FrameSliding,"Frame
+0Mesh-Window-Frame-Hung-02.Window-Frame-Hung-02'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelHung1of2,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -2377,7 +2957,7 @@ Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyWindow
 1SlotConfig --> Frame
 0Slot-FrameSliding
@@ -2461,7 +3041,7 @@ AssemblyPanel
 0Slot-SurfaceLockUpper
 0Slot-Panel
 Panel
-0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
+0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,Sliding Window (XOX),,,,X,,"1SlotConfig --> Frame
 0Slot-FrameSliding
 0Slot-AssemblyPanelSlidingXOX-1
@@ -2496,7 +3076,7 @@ PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXOX-3,"AssemblyPanel
 0Slot-SurfaceLockUpper
 0Slot-Panel
 Panel
-0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
+0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyFFESet
 1SlotConfig --> FFESet

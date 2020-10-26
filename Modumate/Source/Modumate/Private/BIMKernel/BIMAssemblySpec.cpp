@@ -169,8 +169,10 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 		});
 
 		// Add our own children to DFS stack
-		for (const auto& childPreset : presetIterator.Preset->ChildPresets)
+		// Iterate in reverse order because stack operations are LIFO
+		for (int32 i=presetIterator.Preset->ChildPresets.Num()-1;i>=0;--i)
 		{
+			const FBIMPreset::FChildAttachment& childPreset = presetIterator.Preset->ChildPresets[i];
 			// Each child inherits the targeting information from its parent (presetIterator)
 			FPresetIterator childIterator = presetIterator;
 			childIterator.PresetID = childPreset.PresetID;

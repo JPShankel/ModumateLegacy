@@ -24,7 +24,7 @@ private:
 	TModumateDataCollection<FStaticIconTexture> StaticIconTextures;
 	TModumateDataCollection<FLayerPattern> Patterns;
 
-	void AddArchitecturalMaterial(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath);
+	void AddArchitecturalMaterial(const FBIMKey& Key, const FString& Name, const FBIMKey& ColorKey,const FSoftObjectPath& AssetPath);
 	void AddArchitecturalMesh(const FBIMKey& Key, const FString& Name, const FString& InNamedParameters, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath);
 	void AddSimpleMesh(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 	void AddCustomColor(const FBIMKey& Key, const FString& Name, const FString& HexValue);

@@ -158,6 +158,7 @@ ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCol
 	PresetID = Record.PresetID;
 	SlotConfigPresetID = Record.SlotConfigPresetID;
 	ObjectType = Record.ObjectType;
+	NodeScope = nodeType->Scope;
 
 	Properties.Empty();
 	ChildPresets.Empty();
