@@ -50,35 +50,35 @@ PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"3in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-3inT,,X,X,X,X,,,,X,X,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray
-0DimThk-6inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"6in, Concrete (Normal Aggregate), Medium Gray",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,0DimThk-6inT,,X,X,X,X,,,,X,X,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-6inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"6in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-6inT,,X,X,X,X,,,,X,X,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-8inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"8in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-8inT,,X,X,X,X,,,,X,X,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey
-0DimThk-8inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"8in, Concrete (Normal Aggregate), Dark Grey",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey,0DimThk-8inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-8inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"8in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-8inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black
-0DimThk-10inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"10in, Concrete (Normal Aggregate), Black",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black,0DimThk-10inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-10inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"10in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-10inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
-0DimThk-12inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"12in, Concrete (Normal Aggregate), Maple",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple,0DimThk-12inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-12inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"12in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-12inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive
-0DimThk-14inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"14in, Concrete (Normal Aggregate), Olive",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive,0DimThk-14inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-14inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"14in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-14inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff
-0DimThk-16inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"16in, Concrete (Normal Aggregate), Buff",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff,0DimThk-16inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-16inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"16in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-16inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss
-0DimThk-18inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"18in, Concrete (Normal Aggregate), Moss",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss,0DimThk-18inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-18inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"18in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-18inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean
-0DimThk-20inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"20in, Concrete (Normal Aggregate), Ocean",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean,0DimThk-20inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-20inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"20in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-20inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet
-0DimThk-22inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"22in, Concrete (Normal Aggregate), Cabernet",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet,0DimThk-22inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-22inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"22in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-22inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-24inT",,2Layer0D --> Mass --> CastInPlaceConcrete,,"24in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-24inT,,X,X,X,X,,,,,,,
@@ -86,32 +86,32 @@ PRESET,,"2Layer0D --> Mass --> PrecastConcrete
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT",,2Layer0D --> Mass --> PrecastConcrete,,"3in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-3inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray
-0DimThk-6inT",,2Layer0D --> Mass --> PrecastConcrete,,"6in, Concrete (Normal Aggregate), Medium Gray",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,0DimThk-6inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-6inT",,2Layer0D --> Mass --> PrecastConcrete,,"6in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-6inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey
-0DimThk-8inT",,2Layer0D --> Mass --> PrecastConcrete,,"8in, Concrete (Normal Aggregate), Dark Grey",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey,0DimThk-8inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-8inT",,2Layer0D --> Mass --> PrecastConcrete,,"8in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-8inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black
-0DimThk-10inT",,2Layer0D --> Mass --> PrecastConcrete,,"10in, Concrete (Normal Aggregate), Black",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black,0DimThk-10inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-10inT",,2Layer0D --> Mass --> PrecastConcrete,,"10in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-10inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
-0DimThk-12inT",,2Layer0D --> Mass --> PrecastConcrete,,"12in, Concrete (Normal Aggregate), Maple",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple,0DimThk-12inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-12inT",,2Layer0D --> Mass --> PrecastConcrete,,"12in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-12inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive
-0DimThk-14inT",,2Layer0D --> Mass --> PrecastConcrete,,"14in, Concrete (Normal Aggregate), Olive",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive,0DimThk-14inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-14inT",,2Layer0D --> Mass --> PrecastConcrete,,"14in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-14inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff
-0DimThk-16inT",,2Layer0D --> Mass --> PrecastConcrete,,"16in, Concrete (Normal Aggregate), Buff",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff,0DimThk-16inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-16inT",,2Layer0D --> Mass --> PrecastConcrete,,"16in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-16inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss
-0DimThk-18inT",,2Layer0D --> Mass --> PrecastConcrete,,"18in, Concrete (Normal Aggregate), Moss",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss,0DimThk-18inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-18inT",,2Layer0D --> Mass --> PrecastConcrete,,"18in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-18inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean
-0DimThk-20inT",,2Layer0D --> Mass --> PrecastConcrete,,"20in, Concrete (Normal Aggregate), Ocean",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean,0DimThk-20inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-20inT",,2Layer0D --> Mass --> PrecastConcrete,,"20in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-20inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> PrecastConcrete
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet
-0DimThk-22inT",,2Layer0D --> Mass --> PrecastConcrete,,"22in, Concrete (Normal Aggregate), Cabernet",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet,0DimThk-22inT,,X,X,X,X,,,,,,,
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimThk-22inT",,2Layer0D --> Mass --> PrecastConcrete,,"22in, Concrete (Normal Aggregate), Natural",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimThk-22inT,,X,X,X,X,,,,,,,
 PRESET,,"2Layer0D --> Mass --> CrossLaminatedTimber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimThk-3.5inT",,2Layer0D --> Mass --> CrossLaminatedTimber,,"3-1/2in, Spruce-Pine-Fir, Natural",,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimThk-3.5inT,,X,X,X,X,,,,,,,

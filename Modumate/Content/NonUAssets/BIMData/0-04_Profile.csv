@@ -33,5 +33,14 @@ PRESET,,0Profile-Raked,,0Profile,,Raked,/Game/ShoppingData/Profiles/Mullion-Rect
 PRESET,,0Profile-V,,0Profile,,V,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-V,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
 PRESET,,0Profile-Upslope,,0Profile,,Upslope,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Upslope,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
 PRESET,,0Profile-Downslope,,0Profile,,Downslope,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Downslope,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Colonial Base,,0Profile,,Colonial Base,/Game/ShoppingData/Profiles/Trim-Base-Colonial-01,0Profile-Colonial Base,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
-PRESET,,0Profile-Cove Base,,0Profile,,Cove Base,/Game/ShoppingData/Profiles/Trim-Base-Cove-01,0Profile-Cove Base,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,"0Profile-Colonial Base, 3 1/2""",,0Profile,,"Colonial Base, 3 1/2""",/Game/ShoppingData/Profiles/Trim-Base-Colonial-01,"0Profile-Colonial Base, 3 1/2""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,"0Profile-Colonial Base, 5 1/4""",,0Profile,,"Colonial Base, 5 1/4""",/Game/ShoppingData/Profiles/Trim-Base-Speed-514,"0Profile-Colonial Base, 5 1/4""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,"0Profile-Cove, 4""",,0Profile,,"Cove, 4""",/Game/ShoppingData/Profiles/Trim-Base-Cove-01,"0Profile-Cove, 4""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,"0Profile-Cove, 6""",,0Profile,,"Cove, 6""",/Game/ShoppingData/Profiles/Trim-Base-Cove-02,"0Profile-Cove, 6""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,"0Profile-Victorian, 5 1/4""",,0Profile,,"Victorian, 5 1/4""",/Game/ShoppingData/Profiles/Trim-Base-Victorian-01,"0Profile-Victorian, 5 1/4""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,"0Profile-Victorian, 6 1/2""",,0Profile,,"Victorian, 6 1/2""",/Game/ShoppingData/Profiles/Trim-Base-Victorian-02,"0Profile-Victorian, 6 1/2""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,"0Profile-Rectangle, 3 1/2"" x 1""",,0Profile,,"Rectangle, 3 1/2"" x 1""",/Game/ShoppingData/Profiles/Trim-Casing-Exterior-01,"0Profile-Rectangle, 3 1/2"" x 1""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,"0Profile-Rectangle, 1"" x 1""",,0Profile,,"Rectangle, 1"" x 1""",/Game/ShoppingData/Profiles/Trim-Casing-Exterior-02,"0Profile-Rectangle, 1"" x 1""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,"0Profile-Rectangle, 1 1/2"" x 1 1/2""",,0Profile,,"Rectangle, 1 1/2"" x 1 1/2""",/Game/ShoppingData/Profiles/Trim-Casing-Exterior-03,"0Profile-Rectangle, 1 1/2"" x 1 1/2""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,"0Profile-Windsor, 3""",,0Profile,,"Windsor, 3""",/Game/ShoppingData/Profiles/Trim-Casing-Windsor-01,"0Profile-Windsor, 3""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,0Profile-Crown 1,,0Profile,,Crown 1,/Game/ShoppingData/Profiles/Trim-Crown-Contemporary-01,0Profile-Crown 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
