@@ -376,48 +376,13 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 		{
 			return false;
 		}
-		FVector lineDir = lineDelta / lineLength;
-
-		// Start the full macro, since we will be creating meta edge(s) *and* StructureLine object(s)
-		Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kBeginUndoRedoMacro));
 
 		TArray<FVector> points({ LineStartPos, LineEndPos });
-
-		TArray<int32> addedVertexIDs, addedEdgeIDs, addedFaceIDs;
+		TArray<int32> addedVertexIDs, addedFaceIDs;
 		if (!GameState->Document.MakeMetaObject(Controller->GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
-			addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltas))
+			addedVertexIDs, targetEdgeIDs, addedFaceIDs, deltas))
 		{
 			return false;
-		}
-
-		// For each edge that the graph command created that is contained within the pending line,
-		// keep track of the edge as a target edge, on which to create a StructureLine object.
-		const FGraph3D &volumeGraph = GameState->Document.GetVolumeGraph();
-
-		for (int32 newEdgeID : addedEdgeIDs)
-		{
-			const FGraph3DEdge *newEdge = volumeGraph.FindEdge(newEdgeID);
-			if (newEdge)
-			{
-				const FGraph3DVertex *startVertex = volumeGraph.FindVertex(newEdge->StartVertexID);
-				const FGraph3DVertex *endVertex = volumeGraph.FindVertex(newEdge->EndVertexID);
-				if (startVertex && endVertex)
-				{
-					static const float lineEpsilon = RAY_INTERSECT_TOLERANCE;
-
-					float startDistAlongLine = (startVertex->Position - LineStartPos) | LineDir;
-					float endDistAlongLine = (endVertex->Position - LineStartPos) | LineDir;
-
-					// Make sure the start and end vertices of the edge in question lie on the pending line segment.
-					if (FMath::IsWithinInclusive(startDistAlongLine, -lineEpsilon, lineLength + lineEpsilon) &&
-						FMath::IsWithinInclusive(endDistAlongLine, -lineEpsilon, lineLength + lineEpsilon) &&
-						startVertex->Position.Equals(LineStartPos + (startDistAlongLine * LineDir)) &&
-						endVertex->Position.Equals(LineStartPos + (endDistAlongLine * LineDir)))
-					{
-						targetEdgeIDs.Add(newEdgeID);
-					}
-				}
-			}
 		}
 	}
 	else
@@ -425,46 +390,32 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 		targetEdgeIDs.Add(TargetEdgeID);
 	}
 
-	bool bAnyFailure = false;
-
 	TSharedPtr<FMOIDelta> structureLineDelta;
-
+	int32 nextStructureLineID = GameState->Document.GetNextAvailableID();
 	for (int32 targetEdgeID : targetEdgeIDs)
 	{
-		FModumateObjectInstance *parentEdgeObj = GameState->Document.GetObjectById(targetEdgeID);
+		// TODO: fill in custom instance data for StructureLine, once we define and rely on it
+		FMOIStateData stateData(nextStructureLineID++,
+			UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), targetEdgeID);
+		stateData.AssemblyKey = AssemblyKey;
 
-		if (parentEdgeObj && (parentEdgeObj->GetObjectType() == EObjectType::OTMetaEdge))
+		if (!structureLineDelta.IsValid())
 		{
-			// TODO: fill in custom instance data for stairs, once we define and rely on it
-			FMOIStateData stateData(GameState->Document.GetNextAvailableID(),
-				UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), targetEdgeID);
-			stateData.AssemblyKey = AssemblyKey;
-
-			if (!structureLineDelta.IsValid())
-			{
-				structureLineDelta = MakeShared<FMOIDelta>();
-			}
-			structureLineDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+			structureLineDelta = MakeShared<FMOIDelta>();
 		}
+		structureLineDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+	}
+	if (structureLineDelta.IsValid())
+	{
+		deltas.Add(structureLineDelta);
 	}
 
-	if (!GameState->Document.ApplyDeltas({ structureLineDelta }, GetWorld()))
+	if (deltas.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to create StructureLines!"));
-		bAnyFailure = true;
-	}
-
-	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kEndUndoRedoMacro));
-
-	// We failed to create a structure line, so undo the operation and exit here.
-	if (bAnyFailure)
-	{
-		GameState->Document.Undo(Controller->GetWorld());
 		return false;
 	}
 
-	// Otherwise, we're done!
-	return true;
+	return GameState->Document.ApplyDeltas(deltas, GetWorld());
 }
 
 void UStructureLineTool::ResetState()
