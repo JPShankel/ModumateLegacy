@@ -65,28 +65,28 @@ public:
 	EConfiguratorNodeIconOrientation CurrentOrientation;
 
 	int32 GetInstanceID() const;
-	ECraftingResult NodeIamEmbeddedIn(int32& OutNodeId) const;
-	ECraftingResult NodesEmbeddedInMe(TArray<int32>& OutNodeIds) const;
+	EBIMResult NodeIamEmbeddedIn(int32& OutNodeId) const;
+	EBIMResult NodesEmbeddedInMe(TArray<int32>& OutNodeIds) const;
 
 	EBIMPresetEditorNodeStatus GetPresetStatus(const FBIMPresetCollection &PresetCollection) const;
 
-	ECraftingResult ToPreset(const FBIMPresetCollection& PresetCollection, FBIMPreset& OutPreset) const;
+	EBIMResult ToPreset(const FBIMPresetCollection& PresetCollection, FBIMPreset& OutPreset) const;
 
-	ECraftingResult ToDataRecord(FCustomAssemblyCraftingNodeRecord &OutRecord) const;
-	ECraftingResult FromDataRecord(FBIMCraftingTreeNodePool &InstancePool, const FBIMPresetCollection &PresetCollection, const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets);
+	EBIMResult ToDataRecord(FCustomAssemblyCraftingNodeRecord &OutRecord) const;
+	EBIMResult FromDataRecord(FBIMCraftingTreeNodePool &InstancePool, const FBIMPresetCollection &PresetCollection, const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets);
 
 	bool CanRemoveChild(const FBIMCraftingTreeNodeSharedPtrConst &Child) const;
 	bool CanReorderChild(const FBIMCraftingTreeNodeSharedPtrConst &Child) const;
 
-	ECraftingResult DetachSelfFromParent();
+	EBIMResult DetachSelfFromParent();
 
-	ECraftingResult AttachChild(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child);
-	ECraftingResult AttachChildAt(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child, int32 PinSetIndex, int32 PinSetPosition);
-	ECraftingResult AttachPartChild(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child, const FName& PartName);
-	ECraftingResult FindChild(int32 ChildID, int32 &OutPinSetIndex, int32 &OutPinSetPosition);
-	ECraftingResult FindOtherChildrenOnPin(TArray<int32> &OutChildIDs);
-	ECraftingResult GatherChildrenInOrder(TArray<int32> &OutChildIDs);
-	ECraftingResult GatherAllChildNodes(TArray<FBIMCraftingTreeNodeSharedPtr> &OutChildren);
+	EBIMResult AttachChild(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child);
+	EBIMResult AttachChildAt(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child, int32 PinSetIndex, int32 PinSetPosition);
+	EBIMResult AttachPartChild(const FBIMPresetCollection &PresetCollection, const FBIMCraftingTreeNodeSharedPtr &Child, const FName& PartName);
+	EBIMResult FindChild(int32 ChildID, int32 &OutPinSetIndex, int32 &OutPinSetPosition);
+	EBIMResult FindOtherChildrenOnPin(TArray<int32> &OutChildIDs);
+	EBIMResult GatherChildrenInOrder(TArray<int32> &OutChildIDs);
+	EBIMResult GatherAllChildNodes(TArray<FBIMCraftingTreeNodeSharedPtr> &OutChildren);
 };
 
 /*
@@ -109,16 +109,16 @@ private:
 
 public:
 
-	ECraftingResult ResetInstances();
-	ECraftingResult InitFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID, FBIMCraftingTreeNodeSharedPtr &OutRootNode);
+	EBIMResult ResetInstances();
+	EBIMResult InitFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID, FBIMCraftingTreeNodeSharedPtr &OutRootNode);
 
-	ECraftingResult DestroyNodeInstance(const FBIMCraftingTreeNodeSharedPtr& Instance, TArray<int32>& OutDestroyed);
-	ECraftingResult DestroyNodeInstance(int32 InstanceID, TArray<int32>& OutDestroyed);
+	EBIMResult DestroyNodeInstance(const FBIMCraftingTreeNodeSharedPtr& Instance, TArray<int32>& OutDestroyed);
+	EBIMResult DestroyNodeInstance(int32 InstanceID, TArray<int32>& OutDestroyed);
 
 	const TArray<FBIMCraftingTreeNodeSharedPtr> &GetInstancePool() const { return InstancePool; }
 
 	FBIMCraftingTreeNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
-	ECraftingResult SetNewPresetForNode(const FBIMPresetCollection &PresetCollection, int32 InstanceID, const FBIMKey &PresetID);
+	EBIMResult SetNewPresetForNode(const FBIMPresetCollection &PresetCollection, int32 InstanceID, const FBIMKey &PresetID);
 
 	const FBIMCraftingTreeNodeSharedPtr InstanceFromID(int32 InstanceID) const;
 	FBIMCraftingTreeNodeSharedPtr InstanceFromID(int32 InstanceID);
@@ -129,9 +129,9 @@ public:
 
 	bool ValidatePool() const;
 
-	ECraftingResult CreateAssemblyFromNodes(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec);
-	ECraftingResult CreateAssemblyFromLayerNode(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, int32 LayerNodeID, FBIMAssemblySpec& OutAssemblySpec);
-	ECraftingResult ReorderChildNode(int32 ChildNode, int32 FromPosition, int32 ToPosition);
+	EBIMResult CreateAssemblyFromNodes(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec);
+	EBIMResult CreateAssemblyFromLayerNode(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, int32 LayerNodeID, FBIMAssemblySpec& OutAssemblySpec);
+	EBIMResult ReorderChildNode(int32 ChildNode, int32 FromPosition, int32 ToPosition);
 
 	bool GetSortedNodeIDs(TArray<int32> &OutNodeIDs);
 };

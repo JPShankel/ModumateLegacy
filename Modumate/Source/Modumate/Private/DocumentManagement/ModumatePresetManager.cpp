@@ -19,7 +19,7 @@ FPresetManager::FPresetManager()
 FPresetManager::~FPresetManager()
 {}
 
-ECraftingResult FPresetManager::FromDocumentRecord(UWorld* World, const FModumateDocumentHeader& DocumentHeader, const FMOIDocumentRecord& DocumentRecord)
+EBIMResult FPresetManager::FromDocumentRecord(UWorld* World, const FModumateDocumentHeader& DocumentHeader, const FMOIDocumentRecord& DocumentRecord)
 {
 	KeyStore = DocumentRecord.KeyStore;
 
@@ -47,10 +47,10 @@ ECraftingResult FPresetManager::FromDocumentRecord(UWorld* World, const FModumat
 		GraphCollection.Add(cgr.Key, cgr.Value);
 	}
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FPresetManager::ToDocumentRecord(FMOIDocumentRecord &OutRecord) const
+EBIMResult FPresetManager::ToDocumentRecord(FMOIDocumentRecord &OutRecord) const
 {
 	CraftingNodePresets.ToDataRecords(OutRecord.CraftingPresetArrayV2);
 	OutRecord.KeyStore = KeyStore;
@@ -60,7 +60,7 @@ ECraftingResult FPresetManager::ToDocumentRecord(FMOIDocumentRecord &OutRecord) 
 		OutRecord.CustomGraph2DRecords.Add(cgc.Key.ToString(), cgc.Value);
 	}
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
 FBIMKey FPresetManager::GetAvailableKey(const FBIMKey& BaseKey)
@@ -76,44 +76,44 @@ FBIMKey FPresetManager::GetAvailableKey(const FBIMKey& BaseKey)
 	return newKey;
 }
 
-ECraftingResult FPresetManager::GetProjectAssembliesForObjectType(EObjectType ObjectType, TArray<FBIMAssemblySpec>& OutAssemblies) const
+EBIMResult FPresetManager::GetProjectAssembliesForObjectType(EObjectType ObjectType, TArray<FBIMAssemblySpec>& OutAssemblies) const
 {
 	const FAssemblyDataCollection* db = AssembliesByObjectType.Find(ObjectType);
 	if (db == nullptr)
 	{
-		return ECraftingResult::Success;
+		return EBIMResult::Success;
 	}
 	for (auto& kvp : db->DataMap)
 	{
 		OutAssemblies.Add(kvp.Value);
 	}
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FPresetManager::AddOrUpdateGraph2DRecord(const FBIMKey& Key, const FGraph2DRecord& Graph, FBIMKey& OutKey)
+EBIMResult FPresetManager::AddOrUpdateGraph2DRecord(const FBIMKey& Key, const FGraph2DRecord& Graph, FBIMKey& OutKey)
 {
 	static const FString defaultGraphBaseKey(TEXT("Graph2D"));
 	OutKey = GetAvailableKey(defaultGraphBaseKey);
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FPresetManager::GetGraph2DRecord(const FBIMKey& Key, FGraph2DRecord& OutGraph) const
+EBIMResult FPresetManager::GetGraph2DRecord(const FBIMKey& Key, FGraph2DRecord& OutGraph) const
 {
 	if (GraphCollection.Contains(Key))
 	{
 		OutGraph = GraphCollection.FindChecked(Key);
-		return ECraftingResult::Success;
+		return EBIMResult::Success;
 	}
-	return ECraftingResult::Error;
+	return EBIMResult::Error;
 }
 
-ECraftingResult FPresetManager::RemoveGraph2DRecord(const FBIMKey& Key)
+EBIMResult FPresetManager::RemoveGraph2DRecord(const FBIMKey& Key)
 {
 	int32 numRemoved = GraphCollection.Remove(Key);
-	return (numRemoved > 0) ? ECraftingResult::Success : ECraftingResult::Error;
+	return (numRemoved > 0) ? EBIMResult::Success : EBIMResult::Error;
 }
 
-ECraftingResult FPresetManager::RemoveProjectAssemblyForPreset(const FBIMKey& PresetID)
+EBIMResult FPresetManager::RemoveProjectAssemblyForPreset(const FBIMKey& PresetID)
 {
 	FBIMAssemblySpec assembly;
 	EObjectType objectType = CraftingNodePresets.GetPresetObjectType(PresetID);
@@ -123,17 +123,17 @@ ECraftingResult FPresetManager::RemoveProjectAssemblyForPreset(const FBIMKey& Pr
 		if (ensureAlways(db != nullptr))
 		{
 			db->RemoveData(assembly);
-			return ECraftingResult::Success;
+			return EBIMResult::Success;
 		}
 	}
-	return ECraftingResult::Error;
+	return EBIMResult::Error;
 }
 
-ECraftingResult FPresetManager::UpdateProjectAssembly(const FBIMAssemblySpec& Assembly)
+EBIMResult FPresetManager::UpdateProjectAssembly(const FBIMAssemblySpec& Assembly)
 {
 	FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(Assembly.ObjectType);
 	db.AddData(Assembly);
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
 bool FPresetManager::TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAssemblySpec& OutAssembly) const
@@ -194,12 +194,12 @@ const FBIMAssemblySpec *FPresetManager::GetAssemblyByKey(EToolMode ToolMode, con
 	}
 }
 
-ECraftingResult FPresetManager::GetAvailablePresetsForSwap(const FBIMKey& ParentPresetID, const FBIMKey &PresetIDToSwap, TArray<FBIMKey>& OutAvailablePresets)
+EBIMResult FPresetManager::GetAvailablePresetsForSwap(const FBIMKey& ParentPresetID, const FBIMKey &PresetIDToSwap, TArray<FBIMKey>& OutAvailablePresets)
 {
 	const FBIMPreset* preset = CraftingNodePresets.Presets.Find(PresetIDToSwap);
 	if (!ensureAlways(preset != nullptr))
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 
 	/*
@@ -209,7 +209,7 @@ ECraftingResult FPresetManager::GetAvailablePresetsForSwap(const FBIMKey& Parent
 	{
 		if (!ensureAlways(preset->ObjectType != EObjectType::OTNone))
 		{
-			return ECraftingResult::Error;
+			return EBIMResult::Error;
 		}
 		for (auto& candidate : CraftingNodePresets.Presets)
 		{
@@ -224,7 +224,7 @@ ECraftingResult FPresetManager::GetAvailablePresetsForSwap(const FBIMKey& Parent
 		const FBIMPreset* parentPreset = CraftingNodePresets.Presets.Find(ParentPresetID);
 		if (!ensureAlways(parentPreset != nullptr))
 		{
-			return ECraftingResult::Error;
+			return EBIMResult::Error;
 		}
 
 		OutAvailablePresets.Empty();
@@ -237,7 +237,7 @@ ECraftingResult FPresetManager::GetAvailablePresetsForSwap(const FBIMKey& Parent
 		}
 	}
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
 

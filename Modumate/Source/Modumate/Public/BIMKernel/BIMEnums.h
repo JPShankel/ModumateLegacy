@@ -42,7 +42,7 @@ enum class EConfiguratorNodeIconOrientation : uint8
 };
 
 UENUM(BlueprintType)
-enum class ECraftingResult : uint8
+enum class EBIMResult : uint8
 {
 	None = 0,
 	Success,

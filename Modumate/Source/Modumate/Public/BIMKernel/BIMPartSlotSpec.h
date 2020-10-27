@@ -27,7 +27,7 @@ class MODUMATE_API FBIMPartSlotSpec
 	friend class FBIMAssemblySpec;
 private:
 	FBIMPropertySheet Properties;
-	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
+	EBIMResult BuildFromProperties(const FModumateDatabase& InDB);
 
 #if WITH_EDITOR
 	// For debugging

@@ -4,33 +4,33 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Database/ModumateObjectDatabase.h"
 
-ECraftingResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB)
+EBIMResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB)
 {
 	if (ModuleProperties.Num() == 0)
 	{
-		ECraftingResult res = BuildUnpatternedLayer(InDB);
-		if (res != ECraftingResult::Success)
+		EBIMResult res = BuildUnpatternedLayer(InDB);
+		if (res != EBIMResult::Success)
 		{
 			return res;
 		}
 	}
 	else
 	{
-		ECraftingResult res = BuildPatternedLayer(InDB);
-		if (res != ECraftingResult::Success)
+		EBIMResult res = BuildPatternedLayer(InDB);
+		if (res != EBIMResult::Success)
 		{
 			return res;
 		}
 	}
 
-	return ensureAlways(Thickness.AsWorldCentimeters() > 0.0f) ? ECraftingResult::Success : ECraftingResult::Error;
+	return ensureAlways(Thickness.AsWorldCentimeters() > 0.0f) ? EBIMResult::Success : EBIMResult::Error;
 }
 
 /*
 TODO: an "unpatterened" layer (ie abstract, cast in place concrete, etc), just has a material and thickness.
 As we refactor patterns, we would like "unpatterened" layers to consist of a single module with a single dimension (thickness)
 */
-ECraftingResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
+EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 {
 	FString materialKey;
 	if (ensureAlways(LayerProperties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialKey)))
@@ -73,10 +73,10 @@ ECraftingResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& In
 	}
 	else
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
 /*
@@ -84,7 +84,7 @@ TODO: a "patterened" layer reads properties corresponding to the DDL 1.0 table e
 The parameters established here are accessed in UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer
 We want to refactor this for new patterns
 */
-ECraftingResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
+EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 {
 	/*
 	ModuleProperties contain the properties for each uniquely materialed module in the pattern
@@ -219,6 +219,6 @@ ECraftingResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB
 	// TODO: 1-dimensional patterns still depend on deprecated layer material
 	Material_DEPRECATED = Modules[0].Material;
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 

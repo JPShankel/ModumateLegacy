@@ -159,8 +159,8 @@ void UBIMBlockNode::OnButtonDirtyAddNew()
 
 void UBIMBlockNode::OnButtonDirtyCancel()
 {
-	ECraftingResult result = ParentBIMDesigner->InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, ID, PresetID);
-	if (result == ECraftingResult::Success)
+	EBIMResult result = ParentBIMDesigner->InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, ID, PresetID);
+	if (result == EBIMResult::Success)
 	{
 		ParentBIMDesigner->UpdateCraftingAssembly();
 		ParentBIMDesigner->UpdateBIMDesigner();

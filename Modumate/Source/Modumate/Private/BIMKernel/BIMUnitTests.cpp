@@ -214,17 +214,17 @@ static bool testTags()
 	path1.Add(group1);
 	path1.Add(group2);
 
-	if (!ensureAlways(path1.ToString(outString1) == ECraftingResult::Success))
+	if (!ensureAlways(path1.ToString(outString1) == EBIMResult::Success))
 	{
 		return false;
 	}
 
-	if (!ensureAlways(path2.FromString(outString1) == ECraftingResult::Success))
+	if (!ensureAlways(path2.FromString(outString1) == EBIMResult::Success))
 	{
 		return false;
 	}
 
-	if (!ensureAlways(path2.ToString(outString2) == ECraftingResult::Success))
+	if (!ensureAlways(path2.ToString(outString2) == EBIMResult::Success))
 	{
 		return false;
 	}
@@ -323,12 +323,12 @@ bool testPreset(const FBIMPresetCollection &PresetCollection, const FBIMKey& Pre
 	FBIMPreset outPreset;
 	FCraftingPresetRecord record;
 
-	if (preset->ToDataRecord(record) != ECraftingResult::Success)
+	if (preset->ToDataRecord(record) != EBIMResult::Success)
 	{
 		return false;
 	}
 
-	if (outPreset.FromDataRecord(PresetCollection, record) != ECraftingResult::Success)
+	if (outPreset.FromDataRecord(PresetCollection, record) != EBIMResult::Success)
 	{
 		return false;
 	}
@@ -364,7 +364,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	FBIMPresetCollection presetCollection;
 	TArray<FBIMKey> starters;
 
-	if (presetCollection.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), starters, errors) != ECraftingResult::Success)
+	if (presetCollection.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), starters, errors) != EBIMResult::Success)
 	{
 		return false;
 	}
@@ -397,7 +397,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	}
 
 	TMap<FString, FBIMNameType> propertyForm;
-	if (presetCollection.GetPropertyFormForPreset(materialColorPresets[0], propertyForm) != ECraftingResult::Success)
+	if (presetCollection.GetPropertyFormForPreset(materialColorPresets[0], propertyForm) != EBIMResult::Success)
 	{
 		return false;
 	}
@@ -441,7 +441,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 
 	FBIMCraftingTreeNodePool instancePool;
 	FBIMCraftingTreeNodeSharedPtr rootNode;
-	if (!ensureAlways(instancePool.InitFromPreset(presetCollection, layeredAssemblies[0], rootNode) == ECraftingResult::Success))
+	if (!ensureAlways(instancePool.InitFromPreset(presetCollection, layeredAssemblies[0], rootNode) == EBIMResult::Success))
 	{
 		return false;
 	}
@@ -453,7 +453,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 			return false;
 		}
 
-		if (!ensureAlways(instancePool.InitFromPreset(presetCollection, riggedPreset, rootNode) == ECraftingResult::Success))
+		if (!ensureAlways(instancePool.InitFromPreset(presetCollection, riggedPreset, rootNode) == EBIMResult::Success))
 		{
 			return false;
 		}

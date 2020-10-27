@@ -34,7 +34,7 @@ static FString NormalizeCell(const FString& Row)
 	return cell;
 };
 
-ECraftingResult FBIMCSVReader::ProcessNodeTypeRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages)
+EBIMResult FBIMCSVReader::ProcessNodeTypeRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages)
 {
 	//Row Format:
 	//[TYPENAME][][Name][][Scope][][Property Class]
@@ -45,26 +45,26 @@ ECraftingResult FBIMCSVReader::ProcessNodeTypeRow(const TArray<const TCHAR*>& Ro
 
 	if (NodeType.TypeName.IsNone())
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 
 	FName scope = Row[4];
 	if (scope.IsNone())
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 	
 	NodeType.Scope = BIMValueScopeFromName(scope);
 
 	if (NodeType.Scope == EBIMValueScope::Error || NodeType.Scope == EBIMValueScope::None)
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FBIMCSVReader::ProcessInputPinRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages)
+EBIMResult FBIMCSVReader::ProcessInputPinRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages)
 {
 	//Row Format:
 	//[INPUTPIN][][extensibility][][set name] where extensibility is min..max for the number of children supported
@@ -73,7 +73,7 @@ ECraftingResult FBIMCSVReader::ProcessInputPinRow(const TArray<const TCHAR*>& Ro
 
 	if (extensibility.IsEmpty())
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 	FChildAttachmentType &childAttachment = NodeType.ChildAttachments.AddDefaulted_GetRef();
 
@@ -106,10 +106,10 @@ ECraftingResult FBIMCSVReader::ProcessInputPinRow(const TArray<const TCHAR*>& Ro
 		childAttachment.PinTarget = EBIMPinTarget::Default;
 	}
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FBIMCSVReader::ProcessTagPathRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages)
+EBIMResult FBIMCSVReader::ProcessTagPathRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages)
 {
 	//Row Format:
 	//[TAGPATHS][DataType=ID][ID]([DataType=?][..])*
@@ -196,10 +196,10 @@ ECraftingResult FBIMCSVReader::ProcessTagPathRow(const TArray<const TCHAR*>& Row
 			}
 		}
 	}
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TMap<FBIMKey, FBIMPreset>& OutPresets, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages)
+EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TMap<FBIMKey, FBIMPreset>& OutPresets, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages)
 {
 	//Row Format:
 	//[Preset]([]([column data]+))*
@@ -377,10 +377,10 @@ ECraftingResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row,
 			}
 		}
 	}
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FBIMCSVReader::ProcessPropertyDeclarationRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages)
+EBIMResult FBIMCSVReader::ProcessPropertyDeclarationRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages)
 {
 	//Row Format:
 	//[PROPERTY][][Property Type][][Property Name][][Property Value]
@@ -391,14 +391,14 @@ ECraftingResult FBIMCSVReader::ProcessPropertyDeclarationRow(const TArray<const 
 
 	if (!TryFindEnumValueByName<EBIMValueType>(TEXT("EBIMValueType"), propertyTypeName, propertyTypeEnum))
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 
 	PropertyTypeMap.Add(*propertyName, propertyTypeEnum);
 
 	if (propertyValue.Scope == EBIMValueScope::None)
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 	else
 	{
@@ -410,5 +410,5 @@ ECraftingResult FBIMCSVReader::ProcessPropertyDeclarationRow(const TArray<const 
 			NodeType.FormItemToProperty.Add(propertyName, propertyValue.QN());
 		}
 	}
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }

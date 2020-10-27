@@ -24,7 +24,7 @@ class MODUMATE_API FBIMExtrusionSpec
 	friend class FBIMAssemblySpec;
 private:
 	FBIMPropertySheet Properties;
-	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
+	EBIMResult BuildFromProperties(const FModumateDatabase& InDB);
 
 public:
 	FArchitecturalMaterial Material;

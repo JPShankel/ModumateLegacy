@@ -13,10 +13,10 @@
 #include "Algo/Accumulate.h"
 #include "Containers/Queue.h"
 
-ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID)
+EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID)
 {
 	Reset();
-	ECraftingResult ret = ECraftingResult::Success;
+	EBIMResult ret = EBIMResult::Success;
 	RootPreset = PresetID;
 
 	/*
@@ -68,14 +68,14 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 		presetIterator.Preset = PresetCollection.Presets.Find(presetIterator.PresetID);
 		if (!ensureAlways(presetIterator.Preset != nullptr))
 		{
-			ret = ECraftingResult::Error;
+			ret = EBIMResult::Error;
 			continue;
 		}
 
 		// All nodes should have a scope
 		if (!ensureAlways(presetIterator.Preset->NodeScope != EBIMValueScope::None))
 		{
-			ret = ECraftingResult::Error;
+			ret = EBIMResult::Error;
 			continue;
 		}
 
@@ -249,7 +249,7 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 			{
 				if (!ensureAlways(!cp.PresetID.IsNone()))
 				{
-					ret = ECraftingResult::Error;
+					ret = EBIMResult::Error;
 					continue;
 				}
 
@@ -257,7 +257,7 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 
 				if (!ensureAlways(childPreset != nullptr))
 				{
-					ret = ECraftingResult::Error;
+					ret = EBIMResult::Error;
 					continue;
 				}
 
@@ -290,7 +290,7 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 					const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(childPreset->PresetID);
 					if (!ensureAlways(mesh != nullptr))
 					{
-						ret = ECraftingResult::Error;
+						ret = EBIMResult::Error;
 						break;
 					}
 
@@ -352,7 +352,7 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 		return DoMakeAssembly(InDB, PresetCollection);
 	}
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
 void FBIMAssemblySpec::Reset()
@@ -376,7 +376,7 @@ FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 {
 	//The first part with a mesh defines the assembly native size
 	//Parts without meshes represent parents of sets of mesh parts, so we skip those
-	//TODO: read an assembly's native size from data
+	//TODO: read an assembly's native size from data 
 	for (auto& part : Parts)
 	{
 		if (part.Mesh.EngineMesh.IsValid())
@@ -387,7 +387,7 @@ FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 	return FVector::ZeroVector;
 }
 
-ECraftingResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
+EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 {
 	// TODO: "Stubby" temporary FFE don't have parts, just one mesh on their root
 	if (Parts.Num() == 0)
@@ -396,39 +396,39 @@ ECraftingResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& In
 		const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(meshKey);
 		if (mesh == nullptr)
 		{
-			return ECraftingResult::Error;
+			return EBIMResult::Error;
 		}
 
 		FBIMPartSlotSpec& partSlot = Parts.AddDefaulted_GetRef();
 		partSlot.Mesh = *mesh;
 		partSlot.ParentSlotIndex = INDEX_NONE;
 	}
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FBIMAssemblySpec::MakeLayeredAssembly(const FModumateDatabase& InDB)
+EBIMResult FBIMAssemblySpec::MakeLayeredAssembly(const FModumateDatabase& InDB)
 {
 	auto buildLayers = [InDB](TArray<FBIMLayerSpec>& Layers)
 	{
 		for (auto& layer : Layers)
 		{
-			ECraftingResult res = layer.BuildFromProperties(InDB);
-			if (res != ECraftingResult::Success)
+			EBIMResult res = layer.BuildFromProperties(InDB);
+			if (res != EBIMResult::Success)
 			{
 				return res;
 			}
 		}
-		return ECraftingResult::Success;
+		return EBIMResult::Success;
 	};
 
-	ECraftingResult res = buildLayers(Layers);
+	EBIMResult res = buildLayers(Layers);
 	
-	if (res == ECraftingResult::Success)
+	if (res == EBIMResult::Success)
 	{
 		res = buildLayers(TreadLayers);
 	}
 
-	if (res == ECraftingResult::Success)
+	if (res == EBIMResult::Success)
 	{
 		res = buildLayers(RiserLayers);
 	}
@@ -436,7 +436,7 @@ ECraftingResult FBIMAssemblySpec::MakeLayeredAssembly(const FModumateDatabase& I
 	return res;
 }
 
-ECraftingResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
+EBIMResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
 {
 	for (auto& extrusion : Extrusions)
 	{
@@ -457,13 +457,13 @@ ECraftingResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& 
 				}
 			}
 		}
-		ECraftingResult res = extrusion.BuildFromProperties(InDB);
-		if (!ensureAlways(res == ECraftingResult::Success))
+		EBIMResult res = extrusion.BuildFromProperties(InDB);
+		if (!ensureAlways(res == EBIMResult::Success))
 		{
 			return res;
 		}
 	}
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
 Modumate::Units::FUnitValue FBIMAssemblySpec::CalculateThickness() const
@@ -482,7 +482,7 @@ Modumate::Units::FUnitValue FBIMAssemblySpec::CalculateThickness() const
 	));
 }
 
-ECraftingResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection)
+EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection)
 {
 	DisplayName = RootProperties.GetProperty(EBIMValueScope::Assembly,BIMPropertyNames::Name);
 	Comments = RootProperties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Comments);
@@ -502,7 +502,7 @@ ECraftingResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, 
 	}
 
 	// TODO: move assembly synthesis to each tool mode or MOI implementation (TBD)
-	ECraftingResult result = ECraftingResult::Error;
+	EBIMResult result = EBIMResult::Error;
 	switch (ObjectType)
 	{
 	case EObjectType::OTTrim:
@@ -531,5 +531,5 @@ ECraftingResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, 
 		ensureAlways(false);
 	};
 
-	return ECraftingResult::Error;
+	return EBIMResult::Error;
 }

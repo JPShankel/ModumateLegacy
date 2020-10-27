@@ -13,8 +13,8 @@ public:
 	bool MatchesAny(const FBIMTagGroup &OtherGroup) const;
 	bool MatchesAll(const FBIMTagGroup &OtherGroup) const;
 
-	ECraftingResult FromString(const FString &InString);
-	ECraftingResult ToString(FString &OutString) const;
+	EBIMResult FromString(const FString &InString);
+	EBIMResult ToString(FString &OutString) const;
 };
 
 class FBIMTagPath : public TArray<FBIMTagGroup>
@@ -23,6 +23,6 @@ public:
 	bool MatchesExact(const FBIMTagPath &OtherPath) const;
 	bool MatchesPartial(const FBIMTagPath& OtherPath) const;
 
-	ECraftingResult FromString(const FString &InString);
-	ECraftingResult ToString(FString &OutString) const;
+	EBIMResult FromString(const FString &InString);
+	EBIMResult ToString(FString &OutString) const;
 };

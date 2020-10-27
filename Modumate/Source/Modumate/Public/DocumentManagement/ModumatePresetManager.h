@@ -40,13 +40,13 @@ public:
 	bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FBIMKey& PresetID, FBIMAssemblySpec& OutAssembly) const;
 	bool TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAssemblySpec& OutAssembly) const;
 
-	ECraftingResult GetProjectAssembliesForObjectType(EObjectType ObjectType, TArray<FBIMAssemblySpec>& OutAssemblies) const;
-	ECraftingResult RemoveProjectAssemblyForPreset(const FBIMKey& PresetID);
-	ECraftingResult UpdateProjectAssembly(const FBIMAssemblySpec& Assembly);
+	EBIMResult GetProjectAssembliesForObjectType(EObjectType ObjectType, TArray<FBIMAssemblySpec>& OutAssemblies) const;
+	EBIMResult RemoveProjectAssemblyForPreset(const FBIMKey& PresetID);
+	EBIMResult UpdateProjectAssembly(const FBIMAssemblySpec& Assembly);
 
-	ECraftingResult AddOrUpdateGraph2DRecord(const FBIMKey& Key, const FGraph2DRecord& Graph, FBIMKey& OutKey);
-	ECraftingResult RemoveGraph2DRecord(const FBIMKey& Key);
-	ECraftingResult GetGraph2DRecord(const FBIMKey& Key, FGraph2DRecord& OutGraph) const;
+	EBIMResult AddOrUpdateGraph2DRecord(const FBIMKey& Key, const FGraph2DRecord& Graph, FBIMKey& OutKey);
+	EBIMResult RemoveGraph2DRecord(const FBIMKey& Key);
+	EBIMResult GetGraph2DRecord(const FBIMKey& Key, FGraph2DRecord& OutGraph) const;
 
 	// Intended as a general way to generate keys: given a base name, append with increment integers until an unused name is found
 	// This pattern is used through out the app, particularly in FModumateDocument, to generate IDs for new objects
@@ -54,10 +54,10 @@ public:
 	// TODO: the key store is likely to grow, so we may need to add some scope discrimination or a more complex scheme down the road
 	FBIMKey GetAvailableKey(const FBIMKey& BaseKey);
 
-	ECraftingResult FromDocumentRecord(UWorld* World, const FModumateDocumentHeader& DocumentHeader, const FMOIDocumentRecord& DocumentRecord);
-	ECraftingResult ToDocumentRecord(FMOIDocumentRecord& OutRecord) const;
+	EBIMResult FromDocumentRecord(UWorld* World, const FModumateDocumentHeader& DocumentHeader, const FMOIDocumentRecord& DocumentRecord);
+	EBIMResult ToDocumentRecord(FMOIDocumentRecord& OutRecord) const;
 
 	const FBIMAssemblySpec* GetAssemblyByKey(EToolMode Mode, const FBIMKey& Key) const;
 
-	ECraftingResult GetAvailablePresetsForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, TArray<FBIMKey>& OutAvailablePresets);
+	EBIMResult GetAvailablePresetsForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, TArray<FBIMKey>& OutAvailablePresets);
 };

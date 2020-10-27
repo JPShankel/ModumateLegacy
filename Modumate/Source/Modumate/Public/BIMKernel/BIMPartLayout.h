@@ -22,7 +22,7 @@ public:
 	};
 
 	TArray<FPartSlotInstance> PartSlotInstances;
-	ECraftingResult FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const FVector& InScale);
+	EBIMResult FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const FVector& InScale);
 
 	static const FString ScaledSizeX;
 	static const FString ScaledSizeY;

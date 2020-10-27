@@ -34,10 +34,10 @@ An assembly layer (for walls, floors and other sandwich objects) references an F
 class MODUMATE_API FBIMAssemblySpec
 {
 private:
-	ECraftingResult MakeLayeredAssembly(const FModumateDatabase& InDB);
-	ECraftingResult MakeExtrudedAssembly(const FModumateDatabase& InDB);
-	ECraftingResult MakeRiggedAssembly(const FModumateDatabase& InDB);	
-	ECraftingResult DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection);
+	EBIMResult MakeLayeredAssembly(const FModumateDatabase& InDB);
+	EBIMResult MakeExtrudedAssembly(const FModumateDatabase& InDB);
+	EBIMResult MakeRiggedAssembly(const FModumateDatabase& InDB);	
+	EBIMResult DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection);
 
 	FBIMPropertySheet RootProperties;
 
@@ -65,7 +65,7 @@ public:
 
 	void Reset();
 
-	ECraftingResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID);
+	EBIMResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID);
 
 	Modumate::Units::FUnitValue CalculateThickness() const;
 

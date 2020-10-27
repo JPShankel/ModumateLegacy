@@ -87,14 +87,14 @@ bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, 
 }
 
 // Build a layout for a given rigged assembly
-ECraftingResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const FVector& InScale)
+EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const FVector& InScale)
 {
 	int32 numSlots = InAssemblySpec.Parts.Num();
 	PartSlotInstances.SetNum(numSlots);
 
 	if (!ensureAlways(numSlots != 0))
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 
 	// The first part is created as a parent to the others with no bespoke sizing operation
@@ -216,5 +216,5 @@ ECraftingResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblyS
 		}
 	}
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }

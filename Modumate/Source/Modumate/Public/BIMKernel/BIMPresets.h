@@ -123,7 +123,7 @@ public:
 	FBIMTagPath MyTagPath;
 
 	// Sort child nodes by PinSetIndex and PinSetPosition so serialization will be consistent
-	ECraftingResult SortChildNodes();
+	EBIMResult SortChildNodes();
 
 	FString GetDisplayName() const;
 
@@ -134,8 +134,8 @@ public:
 	EConfiguratorNodeIconType IconType = EConfiguratorNodeIconType::None;
 	EConfiguratorNodeIconOrientation Orientation = EConfiguratorNodeIconOrientation::Inherited;
 
-	ECraftingResult ToDataRecord(FCraftingPresetRecord &OutRecord) const;
-	ECraftingResult FromDataRecord(const FBIMPresetCollection &PresetCollection, const FCraftingPresetRecord &Records);
+	EBIMResult ToDataRecord(FCraftingPresetRecord &OutRecord) const;
+	EBIMResult FromDataRecord(const FBIMPresetCollection &PresetCollection, const FCraftingPresetRecord &Records);
 };
 
 class MODUMATE_API FBIMPresetCollection
@@ -147,13 +147,13 @@ public:
 
 	EObjectType GetPresetObjectType(const FBIMKey &PresetID) const;
 
-	ECraftingResult ToDataRecords(TArray<FCraftingPresetRecord> &OutRecords) const;
-	ECraftingResult FromDataRecords(const TArray<FCraftingPresetRecord> &Record);
+	EBIMResult ToDataRecords(TArray<FCraftingPresetRecord> &OutRecords) const;
+	EBIMResult FromDataRecords(const TArray<FCraftingPresetRecord> &Record);
 
-	ECraftingResult GetDependentPresets(const FBIMKey &PresetID, TArray<FBIMKey>& OutPresets) const;
+	EBIMResult GetDependentPresets(const FBIMKey &PresetID, TArray<FBIMKey>& OutPresets) const;
 
-	ECraftingResult GetPropertyFormForPreset(const FBIMKey &PresetID, TMap<FString, FBIMNameType> &OutForm) const;
+	EBIMResult GetPropertyFormForPreset(const FBIMKey &PresetID, TMap<FString, FBIMNameType> &OutForm) const;
 
-	ECraftingResult LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages);
-	ECraftingResult CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FBIMKey& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec);
+	EBIMResult LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages);
+	EBIMResult CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FBIMKey& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec);
 };

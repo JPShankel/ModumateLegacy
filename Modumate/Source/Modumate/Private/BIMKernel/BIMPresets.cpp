@@ -14,30 +14,30 @@ bool FBIMPreset::FChildAttachment::operator==(const FBIMPreset::FChildAttachment
 		PresetID == OtherAttachment.PresetID;
 }
 
-ECraftingResult FBIMPresetCollection::ToDataRecords(TArray<FCraftingPresetRecord> &OutRecords) const
+EBIMResult FBIMPresetCollection::ToDataRecords(TArray<FCraftingPresetRecord> &OutRecords) const
 {
 	for (auto &kvp : Presets)
 	{
 		FCraftingPresetRecord &presetRec = OutRecords.AddDefaulted_GetRef();
 		kvp.Value.ToDataRecord(presetRec);
 	}
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FBIMPresetCollection::FromDataRecords(const TArray<FCraftingPresetRecord> &Records)
+EBIMResult FBIMPresetCollection::FromDataRecords(const TArray<FCraftingPresetRecord> &Records)
 {
 	Presets.Empty();
 
 	for (auto &presetRecord : Records)
 	{
 		FBIMPreset newPreset;
-		if (newPreset.FromDataRecord(*this, presetRecord) == ECraftingResult::Success)
+		if (newPreset.FromDataRecord(*this, presetRecord) == EBIMResult::Success)
 		{
 			Presets.Add(newPreset.PresetID, newPreset);
 		}
 	}
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
 bool FBIMPreset::Matches(const FBIMPreset &OtherPreset) const
@@ -91,7 +91,7 @@ bool FBIMPreset::Matches(const FBIMPreset &OtherPreset) const
 	return true;
 }
 
-ECraftingResult FBIMPreset::ToDataRecord(FCraftingPresetRecord& OutRecord) const
+EBIMResult FBIMPreset::ToDataRecord(FCraftingPresetRecord& OutRecord) const
 {
 	OutRecord.DisplayName = GetDisplayName();
 	OutRecord.NodeType = NodeType;
@@ -123,10 +123,10 @@ ECraftingResult FBIMPreset::ToDataRecord(FCraftingPresetRecord& OutRecord) const
 
 	Properties.ToDataRecord(OutRecord.PropertyRecord);
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FBIMPreset::SortChildNodes()
+EBIMResult FBIMPreset::SortChildNodes()
 {
 	ChildPresets.Sort([](const FBIMPreset::FChildAttachment &lhs, const FBIMPreset::FChildAttachment &rhs)
 	{
@@ -140,10 +140,10 @@ ECraftingResult FBIMPreset::SortChildNodes()
 		}
 		return lhs.ParentPinSetPosition < rhs.ParentPinSetPosition;
 	});
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCollection, const FCraftingPresetRecord &Record)
+EBIMResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCollection, const FCraftingPresetRecord &Record)
 {
 	NodeType = Record.NodeType;
 	CategoryTitle = FText::FromString(Record.CategoryTitle);
@@ -152,7 +152,7 @@ ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCol
 	// TODO: this ensure will fire if expected presets have become obsolete, resave to fix
 	if (!ensureAlways(nodeType != nullptr))
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 
 	PresetID = Record.PresetID;
@@ -204,14 +204,14 @@ ECraftingResult FBIMPreset::FromDataRecord(const FBIMPresetCollection &PresetCol
 		DisplayName = FText::FromString(displayName);
 	}
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
 /*
 Given a preset ID, recurse through all its children and gather all other presets that this one depends on
 Note: we don't empty the container because the function is recursive
 */
-ECraftingResult FBIMPresetCollection::GetDependentPresets(const FBIMKey& PresetID, TArray<FBIMKey>& OutPresets) const
+EBIMResult FBIMPresetCollection::GetDependentPresets(const FBIMKey& PresetID, TArray<FBIMKey>& OutPresets) const
 {
 	TArray<FBIMKey> presetStack;
 	presetStack.Push(PresetID);
@@ -221,7 +221,7 @@ ECraftingResult FBIMPresetCollection::GetDependentPresets(const FBIMKey& PresetI
 		const FBIMPreset *preset = Presets.Find(presetID);
 		if (!ensureAlways(preset != nullptr))
 		{
-			return ECraftingResult::Error;
+			return EBIMResult::Error;
 		}
 
 		for (auto &childNode : preset->ChildPresets)
@@ -240,7 +240,7 @@ ECraftingResult FBIMPresetCollection::GetDependentPresets(const FBIMKey& PresetI
 			presetStack.Push(part.PartPreset);
 		}
 	}
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
 FString FBIMPreset::GetDisplayName() const
@@ -295,28 +295,28 @@ EObjectType FBIMPresetCollection::GetPresetObjectType(const FBIMKey& PresetID) c
 	return preset->ObjectType;
 }
 
-ECraftingResult FBIMPresetCollection::GetPropertyFormForPreset(const FBIMKey& PresetID, TMap<FString, FBIMNameType> &OutForm) const
+EBIMResult FBIMPresetCollection::GetPropertyFormForPreset(const FBIMKey& PresetID, TMap<FString, FBIMNameType> &OutForm) const
 {
 	const FBIMPreset* preset = Presets.Find(PresetID);
 	if (preset == nullptr)
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 
 	const FBIMPresetNodeType* descriptor = NodeDescriptors.Find(preset->NodeType);
 	if (descriptor == nullptr)
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 	OutForm = descriptor->FormItemToProperty;
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
 // TODO: Loading data from a CSV manifest file is not going to be required long term. 
 // Ultimately we will develop a compiler from this code that generates a record that can be read more efficiently
 // Once this compiler is in the shape we intend, we will determine where in the toolchain this code will reside we can refactor for long term sustainability
 // Until then this is a prototypical development space used to prototype the relational database structure being authored in Excel
-ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages)
+EBIMResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages)
 {
 	FModumateCSVScriptProcessor processor;
 
@@ -332,12 +332,12 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 
 	processor.AddRule(kTypeName, [&OutMessages, &tableData](const TArray<const TCHAR*> &Row, int32 RowNumber)
 	{
-		ensureAlways(tableData.ProcessNodeTypeRow(Row, RowNumber, OutMessages)==ECraftingResult::Success);
+		ensureAlways(tableData.ProcessNodeTypeRow(Row, RowNumber, OutMessages)==EBIMResult::Success);
 	});
 
 	processor.AddRule(kProperty, [&OutMessages, &tableData](const TArray<const TCHAR*> &Row, int32 RowNumber)
 	{
-		ensureAlways(tableData.ProcessPropertyDeclarationRow(Row, RowNumber, OutMessages) == ECraftingResult::Success);
+		ensureAlways(tableData.ProcessPropertyDeclarationRow(Row, RowNumber, OutMessages) == EBIMResult::Success);
 	});
 
 	processor.AddRule(kTagPaths, [&OutMessages, &tableData, this](const TArray<const TCHAR*> &Row, int32 RowNumber)
@@ -351,17 +351,17 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 			NodeDescriptors.Add(tableData.NodeType.TypeName, tableData.NodeType);
 		}
 
-		ensureAlways(tableData.ProcessTagPathRow(Row, RowNumber, OutMessages) == ECraftingResult::Success);
+		ensureAlways(tableData.ProcessTagPathRow(Row, RowNumber, OutMessages) == EBIMResult::Success);
 	});
 
 	processor.AddRule(kPreset, [&OutMessages, &OutStarters, &tableData, &ManifestFile, this](const TArray<const TCHAR*> &Row, int32 RowNumber)
 	{
-		ensureAlways(tableData.ProcessPresetRow(Row, RowNumber, Presets, OutStarters, OutMessages)==ECraftingResult::Success);
+		ensureAlways(tableData.ProcessPresetRow(Row, RowNumber, Presets, OutStarters, OutMessages)==EBIMResult::Success);
 	});
 
 	processor.AddRule(kInputPin, [&OutMessages, &tableData](const TArray<const TCHAR*> &Row, int32 RowNumber)
 	{
-		ensureAlways(tableData.ProcessInputPinRow(Row, RowNumber, OutMessages) == ECraftingResult::Success);
+		ensureAlways(tableData.ProcessInputPinRow(Row, RowNumber, OutMessages) == EBIMResult::Success);
 	});
 
 	TArray<FString> fileList;
@@ -385,7 +385,7 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 			if (!processor.ParseFile(*(ManifestPath / file)))
 			{
 				OutMessages.Add(FString::Printf(TEXT("Failed to load CSV file %s"), *file));
-				return ECraftingResult::Error;
+				return EBIMResult::Error;
 			}
 
 			// Make sure the last preset we were reading ends up in the map
@@ -394,13 +394,13 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 				Presets.Add(tableData.Preset.PresetID, tableData.Preset);
 			}
 		}
-		return ECraftingResult::Success;
+		return EBIMResult::Success;
 	}
 	OutMessages.Add(FString::Printf(TEXT("Failed to load manifest file %s"), *ManifestFile));
-	return ECraftingResult::Error;
+	return EBIMResult::Error;
 }
 
-ECraftingResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FBIMKey& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec)
+EBIMResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FBIMKey& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec)
 {
 	FBIMPresetCollection previewCollection;
 
@@ -426,7 +426,7 @@ ECraftingResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModum
 	}
 	else
 	{
-		return ECraftingResult::Error;
+		return EBIMResult::Error;
 	}
 
 	// Add presets from dependents

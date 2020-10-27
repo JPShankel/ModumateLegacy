@@ -4,7 +4,7 @@
 #include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 
-ECraftingResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& InDB)
+EBIMResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& InDB)
 {
 	FString diameterString;
 	FModumateFormattedDimension xDim, yDim;
@@ -40,5 +40,5 @@ ECraftingResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& 
 		FVector polyExtents(polygon.Extents.Max.X - polygon.Extents.Min.X, polygon.Extents.Max.Y - polygon.Extents.Min.Y, 1);
 		Properties.SetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Scale, profileSize / polyExtents);
 	}
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }

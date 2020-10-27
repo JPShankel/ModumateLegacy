@@ -21,9 +21,9 @@ private:
 	TArray<FBIMPropertySheet> ModuleProperties;
 	FBIMPropertySheet GapProperties;
 
-	ECraftingResult BuildUnpatternedLayer(const FModumateDatabase& InDB);
-	ECraftingResult BuildPatternedLayer(const FModumateDatabase& InDB);
-	ECraftingResult BuildFromProperties(const FModumateDatabase& InDB);
+	EBIMResult BuildUnpatternedLayer(const FModumateDatabase& InDB);
+	EBIMResult BuildPatternedLayer(const FModumateDatabase& InDB);
+	EBIMResult BuildFromProperties(const FModumateDatabase& InDB);
 
 public:
 	ELayerFunction Function = ELayerFunction::None;

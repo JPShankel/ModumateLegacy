@@ -51,9 +51,9 @@ struct FBIMCSVReader
 
 	FColumnRange PropertyRange, MyPathRange, ParentPathRange, PinRange, IDRange, StartInProjectRange, SlotRange, PinChannelRange;
 
-	ECraftingResult ProcessNodeTypeRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
-	ECraftingResult ProcessPropertyDeclarationRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
-	ECraftingResult ProcessTagPathRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
-	ECraftingResult ProcessPresetRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TMap<FBIMKey, FBIMPreset>& OutPresets, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages);
-	ECraftingResult ProcessInputPinRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
+	EBIMResult ProcessNodeTypeRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
+	EBIMResult ProcessPropertyDeclarationRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
+	EBIMResult ProcessTagPathRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
+	EBIMResult ProcessPresetRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TMap<FBIMKey, FBIMPreset>& OutPresets, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages);
+	EBIMResult ProcessInputPinRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
 };

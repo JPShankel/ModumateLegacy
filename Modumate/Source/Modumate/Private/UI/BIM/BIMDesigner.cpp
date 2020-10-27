@@ -141,7 +141,7 @@ void UBIMDesigner::PerformDrag()
 bool UBIMDesigner::UpdateCraftingAssembly()
 {
 	return InstancePool.CreateAssemblyFromNodes(Controller->GetDocument()->PresetManager.CraftingNodePresets,
-		*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly) == ECraftingResult::Success;
+		*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly) == EBIMResult::Success;
 }
 
 float UBIMDesigner::GetCurrentZoomScale() const
@@ -152,8 +152,8 @@ float UBIMDesigner::GetCurrentZoomScale() const
 bool UBIMDesigner::EditPresetInBIMDesigner(const FBIMKey& PresetID)
 {
 	FBIMCraftingTreeNodeSharedPtr rootNode;
-	ECraftingResult getPresetResult = InstancePool.InitFromPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, PresetID, rootNode);
-	if (getPresetResult != ECraftingResult::Success)
+	EBIMResult getPresetResult = InstancePool.InitFromPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, PresetID, rootNode);
+	if (getPresetResult != EBIMResult::Success)
 	{
 		return false;
 	}
@@ -164,8 +164,8 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FBIMKey& PresetID)
 
 bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey& PresetID)
 {
-	ECraftingResult result = InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, InstanceID, PresetID);
-	if (result != ECraftingResult::Success)
+	EBIMResult result = InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, InstanceID, PresetID);
+	if (result != EBIMResult::Success)
 	{
 		return false;
 	}
@@ -176,7 +176,7 @@ bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey
 
 void UBIMDesigner::UpdateBIMDesigner()
 {
-	ECraftingResult asmResult = InstancePool.CreateAssemblyFromNodes(
+	EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(
 		Controller->GetDocument()->PresetManager.CraftingNodePresets,
 		*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly);
 
@@ -515,8 +515,8 @@ FBIMKey UBIMDesigner::GetPresetID(int32 InstanceID)
 bool UBIMDesigner::DeleteNode(int32 InstanceID)
 {
 	TArray<int32> outDestroyed;
-	ECraftingResult result = InstancePool.DestroyNodeInstance(InstanceID, outDestroyed);
-	if (result != ECraftingResult::Success)
+	EBIMResult result = InstancePool.DestroyNodeInstance(InstanceID, outDestroyed);
+	if (result != EBIMResult::Success)
 	{
 		return false;
 	}
@@ -626,7 +626,7 @@ bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition
 	}
 	TArray<UBIMBlockNode*> nodeGroup;
 	TArray<int32> relatives;
-	if (instPtr->FindOtherChildrenOnPin(relatives) == ECraftingResult::Success)
+	if (instPtr->FindOtherChildrenOnPin(relatives) == EBIMResult::Success)
 	{
 		for (auto& curID : relatives)
 		{
@@ -671,11 +671,11 @@ bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition
 		}
 	}
 	// Don't reorder if position remains the same
-	ECraftingResult result = ECraftingResult::None;
+	EBIMResult result = EBIMResult::None;
 	if ((fromOrder != toOrder) && (fromOrder != INDEX_NONE))
 	{
 		result = InstancePool.ReorderChildNode(NodeID, fromOrder, toOrder);
-		if (result == ECraftingResult::Success)
+		if (result == EBIMResult::Success)
 		{
 			UpdateCraftingAssembly();
 			UpdateBIMDesigner();

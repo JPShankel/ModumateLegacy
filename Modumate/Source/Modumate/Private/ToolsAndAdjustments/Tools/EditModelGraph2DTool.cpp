@@ -33,7 +33,7 @@ bool UGraph2DTool::Activate()
 		FGraph2DRecord graphRecord;
 		FBIMKey graphKey;
 		if (SelectedGraph->ToDataRecord(&graphRecord) &&
-			(gameState->Document.PresetManager.AddOrUpdateGraph2DRecord(FBIMKey(), graphRecord, graphKey) == ECraftingResult::Success))
+			(gameState->Document.PresetManager.AddOrUpdateGraph2DRecord(FBIMKey(), graphRecord, graphKey) == EBIMResult::Success))
 		{
 			UE_LOG(LogTemp, Log, TEXT("Added graph record \"%s\""), *graphKey.ToString());
 		}

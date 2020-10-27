@@ -6,11 +6,11 @@
 
 TMap<FString, Modumate::Units::FUnitValue> FBIMPartSlotSpec::DefaultNamedParameterMap;
 
-ECraftingResult FBIMPartSlotSpec::BuildFromProperties(const FModumateDatabase& InDB)
+EBIMResult FBIMPartSlotSpec::BuildFromProperties(const FModumateDatabase& InDB)
 {
 	// TODO: not yet implemented
 	ensureAlways(false);
-	return ECraftingResult::Error;
+	return EBIMResult::Error;
 }
 
 bool FBIMPartSlotSpec::TryGetDefaultNamedParameter(const FString& Name, Modumate::Units::FUnitValue& OutVal)

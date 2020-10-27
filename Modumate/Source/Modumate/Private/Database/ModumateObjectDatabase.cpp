@@ -152,7 +152,7 @@ void FModumateDatabase::ReadPresetData()
 
 	TArray<FString> errors;
 	TArray<FBIMKey> starters;
-	if (!ensureAlways(PresetManager.CraftingNodePresets.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), starters, errors) == ECraftingResult::Success))
+	if (!ensureAlways(PresetManager.CraftingNodePresets.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), starters, errors) == EBIMResult::Success))
 	{
 		return;
 	}

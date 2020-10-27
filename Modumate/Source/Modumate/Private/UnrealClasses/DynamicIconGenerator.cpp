@@ -1057,7 +1057,7 @@ bool ADynamicIconGenerator::SetIconMeshForLayerPreset(const FBIMKey& PresetID, U
 {
 	FBIMAssemblySpec assembly;
 	EObjectType objType = EObjectType::OTWallSegment; // TODO: Get object type, default to wall for now
-	ECraftingResult result = Controller->GetDocument()->PresetManager.CraftingNodePresets.CreateAssemblyFromLayerPreset(*Gamemode->ObjectDatabase, PresetID, objType, assembly);
+	EBIMResult result = Controller->GetDocument()->PresetManager.CraftingNodePresets.CreateAssemblyFromLayerPreset(*Gamemode->ObjectDatabase, PresetID, objType, assembly);
 	return SetIconMeshForWallAssembly(assembly, InRenderTarget);
 }
 

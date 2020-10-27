@@ -31,7 +31,7 @@ bool FBIMTagGroup::MatchesAll(const FBIMTagGroup &OtherGroup) const
 	return true;
 }
 
-ECraftingResult FBIMTagGroup::FromString(const FString &InString)
+EBIMResult FBIMTagGroup::FromString(const FString &InString)
 {
 	TArray<FString> tags;
 	InString.ParseIntoArray(tags, TEXT(","));
@@ -40,24 +40,24 @@ ECraftingResult FBIMTagGroup::FromString(const FString &InString)
 	{
 		Add(*tag);
 	}
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FBIMTagGroup::ToString(FString &OutString) const
+EBIMResult FBIMTagGroup::ToString(FString &OutString) const
 {
 	if (Num() == 0)
 	{
-		return ECraftingResult::Success;
+		return EBIMResult::Success;
 	}
 	OutString = (*this)[0].ToString();
 	for (int32 i = 1; i < Num(); ++i)
 	{
 		OutString = FString::Printf(TEXT("%s,%s"), *OutString, *(*this)[i].ToString());
 	}
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FBIMTagPath::FromString(const FString &InString)
+EBIMResult FBIMTagPath::FromString(const FString &InString)
 {
 	Empty();
 	TArray<FString> groups;
@@ -67,14 +67,14 @@ ECraftingResult FBIMTagPath::FromString(const FString &InString)
 		FBIMTagGroup &newGroup = AddDefaulted_GetRef();
 		newGroup.FromString(*group);
 	}
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
-ECraftingResult FBIMTagPath::ToString(FString &OutString) const
+EBIMResult FBIMTagPath::ToString(FString &OutString) const
 {
 	if (Num() == 0)
 	{
-		return ECraftingResult::Success;
+		return EBIMResult::Success;
 	}
 
 	OutString = (*this)[0][0].ToString();
@@ -82,8 +82,8 @@ ECraftingResult FBIMTagPath::ToString(FString &OutString) const
 	for (int32 i = 1; i < Num(); ++i)
 	{
 		FString groupString;
-		ECraftingResult result = (*this)[i].ToString(groupString);
-		if (result != ECraftingResult::Success)
+		EBIMResult result = (*this)[i].ToString(groupString);
+		if (result != EBIMResult::Success)
 		{
 			return result;
 		}
@@ -91,7 +91,7 @@ ECraftingResult FBIMTagPath::ToString(FString &OutString) const
 		OutString = FString::Printf(TEXT("%s-->%s"), *OutString, *groupString);
 	}
 
-	return ECraftingResult::Success;
+	return EBIMResult::Success;
 }
 
 bool FBIMTagPath::MatchesExact(const FBIMTagPath &OtherPath) const
