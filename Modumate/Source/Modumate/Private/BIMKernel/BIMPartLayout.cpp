@@ -64,11 +64,7 @@ bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, 
 					break;
 				}
 			}
-			// TODO: make an ensuremsg
-			if (!ensureAlways(found))
-			{
-				UE_LOG(LogTemp, Log, TEXT("COULD NOT FIND BIM SCOPE %s"), *scopes[i]);
-			}
+			ensureAlwaysMsgf(found, TEXT("COULD NOT FIND BIM SCOPE %s"), *scopes[i]);
 		}
 	}
 
@@ -78,13 +74,11 @@ bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, 
 	if (returnVal == nullptr)
 	{
 		Modumate::Units::FUnitValue unitVal;
-		// TODO: make an ensuremsg
-		if (ensureAlways(FBIMPartSlotSpec::TryGetDefaultNamedParameter(scopes.Last(), unitVal)))
+		if (ensureAlwaysMsgf(FBIMPartSlotSpec::TryGetDefaultNamedParameter(scopes.Last(), unitVal), TEXT("COULD NOT FIND BIM VALUE %s"), *InVar))
 		{
 			OutVal = unitVal.AsWorldCentimeters();
 			return true;
 		}
-		UE_LOG(LogTemp, Log, TEXT("COULD NOT FIND BIM VALUE %s"), *InVar);
 		OutVal = 0.0f;
 		return false;
 	}
@@ -93,13 +87,33 @@ bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, 
 }
 
 // Build a layout for a given rigged assembly
-bool FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const FVector& InScale)
+ECraftingResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const FVector& InScale)
 {
 	int32 numSlots = InAssemblySpec.Parts.Num();
 	PartSlotInstances.SetNum(numSlots);
 
+	if (!ensureAlways(numSlots != 0))
+	{
+		return ECraftingResult::Error;
+	}
+
+	// The first part is created as a parent to the others with no bespoke sizing operation
+	// Children will depend on its scaled size (native*scale)
+	// This is the one and only input of InScale to the derived placement math
+	FVector assemblyNativeSize = InAssemblySpec.GetRiggedAssemblyNativeSize();
+
+	PartSlotInstances[0].VariableValues.Add(NativeSizeX, assemblyNativeSize.X);
+	PartSlotInstances[0].VariableValues.Add(NativeSizeY, assemblyNativeSize.Y);
+	PartSlotInstances[0].VariableValues.Add(NativeSizeZ, assemblyNativeSize.Z);
+
+	assemblyNativeSize *= InScale;
+	PartSlotInstances[0].VariableValues.Add(ScaledSizeX, assemblyNativeSize.X);
+	PartSlotInstances[0].VariableValues.Add(ScaledSizeY, assemblyNativeSize.Y);
+	PartSlotInstances[0].VariableValues.Add(ScaledSizeZ, assemblyNativeSize.Z);
+
+
 	// First pass, acquire all the a-priori information for these parts, including their meshes and their initial size values
-	for (int32 slotIdx = 0; slotIdx < numSlots; ++slotIdx)
+	for (int32 slotIdx = 1; slotIdx < numSlots; ++slotIdx)
 	{
 		const FBIMPartSlotSpec& assemblyPart = InAssemblySpec.Parts[slotIdx];
 
@@ -125,11 +139,6 @@ bool FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const 
 			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeX, nativeSize.X);
 			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeY, nativeSize.Y);
 			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeZ, nativeSize.Z);
-
-			nativeSize *= InScale;
-			PartSlotInstances[slotIdx].VariableValues.Add(ScaledSizeX, nativeSize.X);
-			PartSlotInstances[slotIdx].VariableValues.Add(ScaledSizeY, nativeSize.Y);
-			PartSlotInstances[slotIdx].VariableValues.Add(ScaledSizeZ, nativeSize.Z);
 
 			// Meshes have idiosyncratic named dimensions depending on what they are
 			// If the mesh is not valid, NamedDimensions will be empty, so safe to proceed
@@ -174,7 +183,7 @@ bool FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const 
 
 		// Evaluate each part of the transform and keep the values locally for use with mesh components
 		assemblyPart.Size.Evaluate(PartSlotInstances[slotIdx].VariableValues, PartSlotInstances[slotIdx].Size);
-		// TODO: don't feed back to ScaledSizeX, use FinalSize
+
 		PartSlotInstances[slotIdx].VariableValues.Add(ScaledSizeX, PartSlotInstances[slotIdx].Size.X);
 		PartSlotInstances[slotIdx].VariableValues.Add(ScaledSizeY, PartSlotInstances[slotIdx].Size.Y);
 		PartSlotInstances[slotIdx].VariableValues.Add(ScaledSizeZ, PartSlotInstances[slotIdx].Size.Z);
@@ -207,5 +216,5 @@ bool FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const 
 		}
 	}
 
-	return true;
+	return ECraftingResult::Success;
 }

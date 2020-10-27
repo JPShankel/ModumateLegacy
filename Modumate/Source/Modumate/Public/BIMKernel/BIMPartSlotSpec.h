@@ -31,8 +31,8 @@ private:
 
 #if WITH_EDITOR
 	// For debugging
-	FBIMKey PresetID, SlotName;
-	EBIMValueScope NodeScope;
+	FBIMKey DEBUGPresetID, DEBUGSlotName;
+	EBIMValueScope DEBUGNodeScope;
 
 	// Default values for fine part parameters like "jamb width" and "handle backset"
 #endif

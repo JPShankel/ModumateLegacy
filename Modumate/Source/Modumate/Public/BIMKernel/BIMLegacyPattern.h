@@ -117,8 +117,9 @@ struct MODUMATE_API FLayerPattern
 	TArray<ELayerFormat> SupportedFormats;
 	int32 ModuleCount = 0;
 
+	FBIMNameType ThicknessDimensionPropertyName;
+
 	FString ParameterizedExtents;
-	FString ParameterizedThickness;
 	TArray<FPatternModuleTemplate> ParameterizedModuleDimensions;
 
 	FLayerPatternGap DefaultGap;

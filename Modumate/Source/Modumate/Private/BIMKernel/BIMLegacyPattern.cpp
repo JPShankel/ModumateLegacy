@@ -40,7 +40,7 @@ void FLayerPattern::InitFromCraftingPreset(const FBIMPreset& Preset)
 
 	ensureAlways(Preset.TryGetProperty(BIMPropertyNames::ModuleCount, ModuleCount));
 	ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Extents, ParameterizedExtents));
-	ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Thickness, ParameterizedThickness));
+	ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Thickness, ThicknessDimensionPropertyName));
 
 	int32 moduleIndex = 1;
 	FString modString = FString::Printf(TEXT("Module%dDimensions"), moduleIndex);

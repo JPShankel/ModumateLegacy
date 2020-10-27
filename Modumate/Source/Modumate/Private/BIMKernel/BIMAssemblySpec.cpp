@@ -218,9 +218,8 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 		partSpec.Translation = Modumate::Expression::FVectorExpression(TEXT("0"), TEXT("0"), TEXT("0"));
 		partSpec.Size = Modumate::Expression::FVectorExpression(TEXT("Self.ScaledSizeX"), TEXT("Self.ScaledSizeY"), TEXT("Self.ScaledSizeZ"));
 #if WITH_EDITOR //for debugging
-		//TODO: add _DEBUG tag
-		partSpec.NodeScope = EBIMValueScope::Assembly;
-		partSpec.PresetID = PresetID;
+		partSpec.DEBUGNodeScope = EBIMValueScope::Assembly;
+		partSpec.DEBUGPresetID = PresetID;
 #endif
 	}
 
@@ -241,11 +240,9 @@ ECraftingResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, cons
 			partSpec.NodeCategoryPath = partPreset->MyTagPath;
 
 #if WITH_EDITOR //for debugging
-			//TODO: add _DEBUG tag
-
-			partSpec.NodeScope = partPreset->NodeScope;
-			partSpec.PresetID = partPreset->PresetID;
-			partSpec.SlotName = partIterator.Slot.SlotName;
+			partSpec.DEBUGNodeScope = partPreset->NodeScope;
+			partSpec.DEBUGPresetID = partPreset->PresetID;
+			partSpec.DEBUGSlotName = partIterator.Slot.SlotName;
 #endif
 			// Look for asset child presets (mesh and material) and cache assets in the part
 			for (auto& cp : partPreset->ChildPresets)

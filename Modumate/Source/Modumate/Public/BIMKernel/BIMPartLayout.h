@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BIMKernel/BIMEnums.h"
 
 class FBIMAssemblySpec;
 
@@ -21,7 +22,7 @@ public:
 	};
 
 	TArray<FPartSlotInstance> PartSlotInstances;
-	bool FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const FVector& InScale);
+	ECraftingResult FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const FVector& InScale);
 
 	static const FString ScaledSizeX;
 	static const FString ScaledSizeY;

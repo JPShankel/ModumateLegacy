@@ -136,7 +136,7 @@ ECraftingResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB
 		dimStr.Empty();
 		if (!modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, dimStr))
 		{
-			modProps.TryGetProperty(EBIMValueScope::Dimension, *Pattern.ParameterizedThickness, dimStr);
+			modProps.TryGetProperty(EBIMValueScope::Dimension, Pattern.ThicknessDimensionPropertyName, dimStr);
 		}
 
 		if (!dimStr.IsEmpty())

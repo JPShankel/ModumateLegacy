@@ -83,7 +83,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 
 	// Fetch scaled part layout for assembly
 	FBIMPartLayout partLayout;
-	if (!ensureAlways(partLayout.FromAssembly(ObAsm,Scale)))
+	if (!ensureAlways(partLayout.FromAssembly(ObAsm,Scale)==ECraftingResult::Success))
 	{
 		return;
 	}
