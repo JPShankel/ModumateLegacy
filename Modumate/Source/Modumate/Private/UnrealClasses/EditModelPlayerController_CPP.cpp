@@ -1218,6 +1218,13 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 
 void AEditModelPlayerController_CPP::TickInput(float DeltaTime)
 {
+	// Skip input updates if there are no OS windows with active input focus
+	auto viewportClient = Cast<UModumateViewportClient>(GetWorld()->GetGameViewport());
+	if ((viewportClient == nullptr) || !viewportClient->AreWindowsActive())
+	{
+		return;
+	}
+
 	bIsCursorAtAnyWidget = IsCursorOverWidget();
 	FSnappedCursor &cursor = EMPlayerState->SnappedCursor;
 

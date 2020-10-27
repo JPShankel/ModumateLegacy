@@ -25,8 +25,20 @@ public:
 	//~ Begin FViewportClient Interface.
 	virtual void LostFocus(FViewport* Viewport) override;
 	virtual void ReceivedFocus(FViewport* Viewport) override;
+
+	virtual void Activated(FViewport* InViewport, const FWindowActivateEvent& InActivateEvent) override;
+	virtual void Deactivated(FViewport* InViewport, const FWindowActivateEvent& InActivateEvent) override;
 	//~ End FViewportClient Interface.
 
 	FOnMouseEnter OnMouseEnterDelegate;
 	FOnMouseLeave OnMouseLeaveDelegate;
+
+	bool AreWindowsActive() const { return bWindowsActive; }
+	bool AreWindowsVisible() const { return bWindowsVisible; }
+
+protected:
+	void CheckWindows();
+
+	bool bWindowsActive = false;
+	bool bWindowsVisible = false;
 };

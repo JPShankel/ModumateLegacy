@@ -11,6 +11,9 @@ void UModumateViewportClient::Init(struct FWorldContext& WorldContext, UGameInst
 
 	SetCaptureMouseOnClick(EMouseCaptureMode::CaptureDuringRightMouseDown);
 	SetHideCursorDuringCapture(true);
+
+	bWindowsActive = true;
+	bWindowsVisible = true;
 }
 
 void UModumateViewportClient::MouseEnter(FViewport* InViewport, int32 x, int32 y)
@@ -34,30 +37,56 @@ void UModumateViewportClient::MouseLeave(FViewport* InViewport)
 void UModumateViewportClient::LostFocus(FViewport* InViewport)
 {
 	Super::LostFocus(InViewport);
-
-	bool bAllHidden = true;
-	auto windows = FSlateApplication::Get().GetInteractiveTopLevelWindows();
-
-	for (const TSharedRef<SWindow>& window : windows)
-	{
-		if (!window->IsWindowMinimized() && window->IsVisible())
-		{
-			bAllHidden = false;
-			break;
-		}
-	}
-
-	if (bAllHidden)
-	{
-		FViewport::SetGameRenderingEnabled(false);
-		GEngine->OnLostFocusPause(true);
-	}
+	CheckWindows();
 }
 
 void UModumateViewportClient::ReceivedFocus(FViewport* InViewport)
 {
 	Super::ReceivedFocus(InViewport);
+	CheckWindows();
+}
 
-	FViewport::SetGameRenderingEnabled(true);
-	GEngine->OnLostFocusPause(false);
+void UModumateViewportClient::Activated(FViewport* InViewport, const FWindowActivateEvent& InActivateEvent)
+{
+	Super::Activated(InViewport, InActivateEvent);
+	CheckWindows();
+}
+
+void UModumateViewportClient::Deactivated(FViewport* InViewport, const FWindowActivateEvent& InActivateEvent)
+{
+	Super::Deactivated(InViewport, InActivateEvent);
+	CheckWindows();
+}
+
+void UModumateViewportClient::CheckWindows()
+{
+	bool bNewWindowsActive = false;
+	bool bNewWindowsVisible = false;
+
+	auto windows = FSlateApplication::Get().GetInteractiveTopLevelWindows();
+
+	for (const TSharedRef<SWindow>& window : windows)
+	{
+		if (window->IsActive())
+		{
+			bNewWindowsActive = true;
+		}
+
+		if (!window->IsWindowMinimized() && window->IsVisible())
+		{
+			bNewWindowsVisible = true;
+		}
+	}
+
+	if (bWindowsActive != bNewWindowsActive)
+	{
+		bWindowsActive = bNewWindowsActive;
+	}
+
+	if (bWindowsVisible != bNewWindowsVisible)
+	{
+		bWindowsVisible = bNewWindowsVisible;
+		FViewport::SetGameRenderingEnabled(bWindowsVisible);
+		GEngine->OnLostFocusPause(!bWindowsVisible);
+	}
 }
