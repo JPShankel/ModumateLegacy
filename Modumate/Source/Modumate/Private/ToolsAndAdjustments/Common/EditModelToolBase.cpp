@@ -70,14 +70,7 @@ bool UEditModelToolBase::BeginUse()
 
 	if (HasDimensionActor())
 	{
-		auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
-		PendingSegmentID = dimensionActor->ID;
-
-		auto dimensionWidget = dimensionActor->DimensionText;
-		dimensionWidget->Measurement->SetIsReadOnly(false);
-		dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &UEditModelToolBase::OnTextCommitted);
-
-		GameInstance->DimensionManager->SetActiveActorID(PendingSegmentID);
+		InitializeDimension();
 	}
 
 	InUse = true;
@@ -170,6 +163,18 @@ void UEditModelToolBase::SetAssemblyKey(const FBIMKey& InAssemblyKey)
 void UEditModelToolBase::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	Controller->OnTextCommitted(Text, CommitMethod);
+}
+
+void UEditModelToolBase::InitializeDimension()
+{
+	auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+	PendingSegmentID = dimensionActor->ID;
+
+	auto dimensionWidget = dimensionActor->DimensionText;
+	dimensionWidget->Measurement->SetIsReadOnly(false);
+	dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &UEditModelToolBase::OnTextCommitted);
+
+	GameInstance->DimensionManager->SetActiveActorID(PendingSegmentID);
 }
 
 void UEditModelToolBase::OnAxisConstraintChanged()

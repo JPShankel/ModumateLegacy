@@ -30,7 +30,6 @@ USurfaceGraphTool::USurfaceGraphTool(const FObjectInitializer& ObjectInitializer
 	, TargetFaceAxisX(ForceInitToZero)
 	, TargetFaceAxisY(ForceInitToZero)
 	, OriginalMouseMode(EMouseMode::Object)
-	, PendingSegmentID(MOD_ID_NONE)
 {
 }
 
@@ -63,14 +62,6 @@ bool USurfaceGraphTool::BeginUse()
 {
 	if (HostTarget && (HostTarget->ID != 0))
 	{
-		// If there's no graph on the target, then just create an explicit surface graph for the face,
-		// before starting any poly-line drawing.
-		if (GraphTarget == nullptr)
-		{
-			int32 newSurfaceGraphID;
-			return CreateGraphFromFaceTarget(newSurfaceGraphID);
-		}
-
 		// Otherwise, start drawing a poly-line on the target surface graph.
 		// TODO: use the normal and tangent of the hit cursor, and override the "global axes";
 		// this will allow appropriately-colored green and red lines for the surface graph's local X and Y axes,
@@ -78,14 +69,24 @@ bool USurfaceGraphTool::BeginUse()
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(HitLocation, TargetFaceNormal, TargetFaceAxisX, false, false);
 		InUse = true;
 
-		auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
-		PendingSegmentID = dimensionActor->ID;
-
-		auto pendingSegment = dimensionActor->GetLineActor();
-		pendingSegment->Point1 = HitLocation;
-		pendingSegment->Point2 = HitLocation;
-		pendingSegment->Color = FColor::Black;
-		pendingSegment->Thickness = 3;
+		// If there's no graph on the target, then just create an explicit surface graph for the face,
+		// before starting any poly-line drawing.
+		if (GraphTarget == nullptr)
+		{
+			int32 newSurfaceGraphID;
+			if (!CreateGraphFromFaceTarget(newSurfaceGraphID))
+			{
+				return false;
+			}
+			GraphTarget = GameState->Document.GetObjectById(newSurfaceGraphID);
+		}
+		else
+		{
+			if (!InitializeSegment())
+			{
+				return false;
+			}
+		}
 	}
 
 	return true;
@@ -100,14 +101,15 @@ bool USurfaceGraphTool::EnterNextStage()
 	}
 
 	// Make sure we have a valid edge to add to a valid target graph
-	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+	const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
 	FVector projectedHitPosition = cursor.SketchPlaneProject(cursor.WorldPosition);
 
-	auto *dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
-	auto *pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
+	auto* dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
+	auto* pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
 	if (pendingSegment == nullptr)
 	{
-		return false;
+		HitLocation = projectedHitPosition;
+		return InitializeSegment();
 	}
 
 	FVector edgeStartPos = cursor.SketchPlaneProject(pendingSegment->Point1);
@@ -117,34 +119,9 @@ bool USurfaceGraphTool::EnterNextStage()
 		return false;
 	}
 
-	auto targetSurfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
-	if (!targetSurfaceGraph.IsValid() || targetSurfaceGraph->IsEmpty())
+	if (!AddEdge(edgeStartPos, edgeEndPos))
 	{
 		return false;
-	}
-
-	FVector2D startPos = UModumateGeometryStatics::ProjectPoint2D(edgeStartPos, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
-	FVector2D endPos = UModumateGeometryStatics::ProjectPoint2D(edgeEndPos, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
-
-	// Try to add the edge to the graph, and apply the delta(s) to the document
-	TArray<FGraph2DDelta> addEdgeDeltas;
-	int32 nextID = GameState->Document.GetNextAvailableID();
-	if (!targetSurfaceGraph->AddEdge(addEdgeDeltas, nextID, startPos, endPos))
-	{
-		return false;
-	}
-
-	if (addEdgeDeltas.Num() > 0)
-	{
-		TArray<FDeltaPtr> deltaPtrs;
-		Algo::Transform(addEdgeDeltas, deltaPtrs, [](const FGraph2DDelta &graphDelta) {
-			return MakeShared<FGraph2DDelta>(graphDelta);
-		});
-
-		if (!GameState->Document.ApplyDeltas(deltaPtrs, GetWorld()))
-		{
-			return false;
-		}
 	}
 
 	// If successful so far, continue from the end point for adding the next line segment
@@ -156,13 +133,6 @@ bool USurfaceGraphTool::EnterNextStage()
 
 bool USurfaceGraphTool::EndUse()
 {
-	if (DimensionManager)
-	{
-		DimensionManager->ReleaseDimensionActor(PendingSegmentID);
-	}
-
-	PendingSegmentID = MOD_ID_NONE;
-
 	return Super::EndUse();
 }
 
@@ -264,9 +234,67 @@ bool USurfaceGraphTool::FrameUpdate()
 	return true;
 }
 
+bool USurfaceGraphTool::HandleInputNumber(double n)
+{
+	auto *dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
+	auto *pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
+	if (!pendingSegment)
+	{
+		return false;
+	}
+
+	FVector direction = pendingSegment->Point2 - pendingSegment->Point1;
+	if (direction.IsNearlyZero())
+	{
+		return false;
+	}
+
+	direction.Normalize();
+
+	FVector newEndPos = pendingSegment->Point1 + direction * n;
+
+	if (!AddEdge(pendingSegment->Point1, newEndPos))
+	{
+		return false;
+	}
+
+	// If successful so far, continue from the end point for adding the next line segment
+	pendingSegment->Point1 = newEndPos;
+	pendingSegment->Point2 = newEndPos;
+	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(newEndPos, TargetFaceNormal, TargetFaceAxisX, false, false);
+
+	return true;
+}
+
 TArray<EEditViewModes> USurfaceGraphTool::GetRequiredEditModes() const
 {
 	return { EEditViewModes::SurfaceGraphs };
+}
+
+bool USurfaceGraphTool::InitializeSegment()
+{
+	InitializeDimension();
+
+	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
+	if (!dimensionActor)
+	{
+		return false;
+	}
+
+	auto pendingSegment = dimensionActor->GetLineActor();
+	if (!pendingSegment)
+	{
+		return false;
+	}
+
+	// TODO: this could also likely be generalized to be in InitializeDimension, but would have to be 
+	// done for all of the tools
+	pendingSegment->Point1 = HitLocation;
+	pendingSegment->Point2 = HitLocation;
+	pendingSegment->Color = FColor::Black;
+	pendingSegment->Thickness = 3;
+
+	return true;
 }
 
 bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
@@ -367,6 +395,41 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 		deltas.Add(MakeShared<FGraph2DDelta>(graphDelta));
 	}
 	return GameState->Document.ApplyDeltas(deltas, GetWorld());
+}
+
+bool USurfaceGraphTool::AddEdge(FVector StartPos, FVector EndPos)
+{
+	auto targetSurfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
+	if (!targetSurfaceGraph.IsValid() || targetSurfaceGraph->IsEmpty())
+	{
+		return false;
+	}
+
+	FVector2D startPos = UModumateGeometryStatics::ProjectPoint2D(StartPos, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
+	FVector2D endPos = UModumateGeometryStatics::ProjectPoint2D(EndPos, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
+
+	// Try to add the edge to the graph, and apply the delta(s) to the document
+	TArray<FGraph2DDelta> addEdgeDeltas;
+	int32 nextID = GameState->Document.GetNextAvailableID();
+	if (!targetSurfaceGraph->AddEdge(addEdgeDeltas, nextID, startPos, endPos))
+	{
+		return false;
+	}
+
+	if (addEdgeDeltas.Num() > 0)
+	{
+		TArray<FDeltaPtr> deltaPtrs;
+		Algo::Transform(addEdgeDeltas, deltaPtrs, [](const FGraph2DDelta &graphDelta) {
+			return MakeShared<FGraph2DDelta>(graphDelta);
+		});
+
+		if (!GameState->Document.ApplyDeltas(deltaPtrs, GetWorld()))
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void USurfaceGraphTool::ResetTarget()

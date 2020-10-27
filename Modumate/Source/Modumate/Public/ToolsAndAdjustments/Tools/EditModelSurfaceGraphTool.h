@@ -23,10 +23,15 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual bool FrameUpdate() override;
+	virtual bool HandleInputNumber(double n) override;
 	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 
+	virtual bool HasDimensionActor() { return true; }
+
 protected:
+	bool InitializeSegment();
 	bool CreateGraphFromFaceTarget(int32& OutSurfaceGraphID);
+	bool AddEdge(FVector StartPos, FVector EndPos);
 	void ResetTarget();
 
 	class FModumateObjectInstance *HostTarget;
@@ -42,6 +47,5 @@ protected:
 	TArray<FVector> HostCornerPositions;
 	FVector TargetFaceOrigin, TargetFaceNormal, TargetFaceAxisX, TargetFaceAxisY;
 	EMouseMode OriginalMouseMode;
-	int32 PendingSegmentID;
 	TSharedPtr<Modumate::FGraph2D> TargetSurfaceGraph;
 };

@@ -56,6 +56,7 @@ protected:
 	UFUNCTION()
 	void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
+	virtual void InitializeDimension();
 	virtual void OnAxisConstraintChanged();
 	virtual void OnCreateObjectModeChanged();
 	virtual void OnAssemblyChanged();
