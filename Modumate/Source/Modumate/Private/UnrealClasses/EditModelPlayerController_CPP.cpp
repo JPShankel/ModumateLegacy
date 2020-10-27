@@ -1225,6 +1225,11 @@ void AEditModelPlayerController_CPP::TickInput(float DeltaTime)
 	{
 		GetMousePosition(cursor.ScreenPosition.X, cursor.ScreenPosition.Y);
 
+		// TODO: ideally this wouldn't be necessary if we could prevent preview deltas from polluting snap/cursor data,
+		// especially so we could avoid re-applying identical preview deltas multiple frames in a row,
+		// but this may require changing our method of raycasting against authoritative collision data.
+		Document->ClearPreviewDeltas(GetWorld(), true);
+
 		UpdateMouseHits(DeltaTime);
 		UpdateUserSnapPoint();
 

@@ -335,14 +335,17 @@ bool FModumateDocument::DeleteObjectImpl(FModumateObjectInstance *ObjToDelete)
 		ObjToDelete->GetConnectedMOIs(connectedMOIs);
 		int32 objID = ObjToDelete->ID;
 
-		if (bSlowClearingPreviewDeltas)
+		bool bKeepDeletedObj = !bSlowClearingPreviewDeltas;
+		bool bDestroyActor = !bFastClearingPreviewDeltas && !bApplyingPreviewDeltas;
+
+		if (bKeepDeletedObj)
 		{
-			delete ObjToDelete;
+			ObjToDelete->Destroy(bDestroyActor);
+			DeletedObjects.Add(ObjToDelete->ID, ObjToDelete);
 		}
 		else
 		{
-			ObjToDelete->Destroy(!bFastClearingPreviewDeltas);
-			DeletedObjects.Add(ObjToDelete->ID, ObjToDelete);
+			delete ObjToDelete;
 		}
 
 		ObjectInstanceArray.Remove(ObjToDelete);

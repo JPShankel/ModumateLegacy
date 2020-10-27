@@ -630,8 +630,15 @@ void FMOIPlaneHostedObjImpl::UpdateMeshWithLayers(bool bRecreateMesh, bool bReca
 	DynamicMeshActor->Assembly = MOI->GetAssembly();
 	DynamicMeshActor->LayerGeometries = LayerGeometries;
 
-	bool bEnableCollision = !MOI->GetIsInPreviewMode() && !parentPlane->GetIsInPreviewMode();
-	DynamicMeshActor->UpdatePlaneHostedMesh(bRecreateMesh, bEnableCollision, bEnableCollision);
+	// TODO: now that preview deltas have replaced object-specific preview mode, this change might be too overreaching and affect too many objects.
+	// We should reevaluate the tradeoffs between all updating objects consistently not updating their collision during preview deltas vs
+	// keeping track of which objects are affected by preview deltas and only preserving old collision for those.
+	// In addition, this logic shouldn't even be necessary if cursor raycast results could be correctly read from physics geometry
+	// modified during the same frame before generating preview deltas in tools,
+	// but relying on PhysX collision cooking and deferred actor/mesh flag updating may prevent that.
+	bool bEnableCollision = true;
+	bool bUpdateCollision = !doc->IsPreviewingDeltas();
+	DynamicMeshActor->UpdatePlaneHostedMesh(bRecreateMesh, bUpdateCollision, bEnableCollision);
 }
 
 void FMOIPlaneHostedObjImpl::UpdateConnectedEdges()

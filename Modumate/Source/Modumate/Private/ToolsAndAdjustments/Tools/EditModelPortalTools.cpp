@@ -62,6 +62,10 @@ bool UPortalToolBase::Deactivate()
 bool UPortalToolBase::FrameUpdate()
 {
 	int32 lastTargetPlaneID = CurTargetPlaneID;
+	FVector lastWorldPos = WorldPos;
+	FQuat lastWorldRot = WorldRot;
+
+	UWorld* world = Controller->GetWorld();
 	FModumateObjectInstance *targetPlaneMOI = nullptr;
 	const auto &snapCursor = Controller->EMPlayerState->SnappedCursor;
 	FVector hitLoc = snapCursor.WorldPosition;
@@ -78,31 +82,25 @@ bool UPortalToolBase::FrameUpdate()
 		}
 	}
 
-	bool bHasRelativeTransform = targetPlaneMOI && UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
+	bool bSuccess = targetPlaneMOI && UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
 		targetPlaneMOI, hitLoc, GetInstanceBottomOffset(), bUseBottomOffset, RelativePos, RelativeRot);
 
-	FVector prevWorldPos = WorldPos;
-	FQuat prevWorldRot = WorldRot;
-	bool bHasWorldTransform = bHasRelativeTransform && UModumateObjectStatics::GetWorldTransformOnPlanarObj(
+	bSuccess = bSuccess && UModumateObjectStatics::GetWorldTransformOnPlanarObj(
 		targetPlaneMOI, RelativePos, RelativeRot, WorldPos, WorldRot);
 
-	if (bHasWorldTransform)
-	{
-		CurTargetPlaneID = targetPlaneMOI->ID;
-
 #if UE_BUILD_DEBUG
-		DrawDebugCoordinateSystem(Controller->GetWorld(), WorldPos, WorldRot.Rotator(), 20.0f, false, -1.f, 255, 2.0f);
+	if (bSuccess)
+	{
+		DrawDebugCoordinateSystem(world, WorldPos, WorldRot.Rotator(), 20.0f, false, -1.f, 255, 2.0f);
+	}
 #endif
-	}
-	else
-	{
-		CurTargetPlaneID = MOD_ID_NONE;
-	}
 
-	if ((lastTargetPlaneID != CurTargetPlaneID) || (prevWorldPos != WorldPos) || (prevWorldRot != WorldRot))
+	CurTargetPlaneID = (bSuccess && targetPlaneMOI) ? targetPlaneMOI->ID : MOD_ID_NONE;
+
+	// TODO: it would be great to optimize and only re-apply preview deltas if the results would be different than the last frame,
+	// but that's only possible if the application of preview deltas doesn't affect cursor results.
+	if (bSuccess)
 	{
-		UWorld* world = Controller->GetWorld();
-		GameState->Document.ClearPreviewDeltas(world, true);
 		GameState->Document.StartPreviewing();
 
 		if (GetPortalCreationDeltas(Deltas))
@@ -156,18 +154,9 @@ bool UPortalToolBase::HandleControlKey(bool pressed)
 
 bool UPortalToolBase::BeginUse()
 {
-	const FBIMAssemblySpec* assembly = GameState->Document.PresetManager.GetAssemblyByKey(GetToolMode(), AssemblyKey);
-
-	FModumateObjectInstance* parent = GameState->Document.GetObjectById(CurTargetPlaneID);
-
-	if (assembly == nullptr || parent == nullptr)
-	{
-		return false;
-	}
-
-	UWorld* world = parent->GetWorld();
-
+	UWorld* world = Controller->GetWorld();
 	GameState->Document.ClearPreviewDeltas(world);
+
 	if (GetPortalCreationDeltas(Deltas))
 	{
 		GameState->Document.ApplyDeltas(Deltas, world);
