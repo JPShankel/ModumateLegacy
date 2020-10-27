@@ -45,15 +45,9 @@ struct FBIMCSVReader
 
 	FBIMPresetNodeType NodeType;
 
-	TMap<FName, TFunction<UBIMPropertyBase*()>> PropertyFactoryMap;
-
 	TMap<FBIMNameType, EBIMValueType> PropertyTypeMap;
 
 	FBIMPreset Preset;
-
-	FName PropertyClass;
-
-	UBIMPropertyBase* UPropertySheet = nullptr;
 
 	FColumnRange PropertyRange, MyPathRange, ParentPathRange, PinRange, IDRange, StartInProjectRange, SlotRange, PinChannelRange;
 

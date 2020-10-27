@@ -393,13 +393,6 @@ ECraftingResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPat
 			{
 				Presets.Add(tableData.Preset.PresetID, tableData.Preset);
 			}
-
-			if (tableData.UPropertySheet != nullptr)
-			{
-				tableData.UPropertySheet->RemoveFromRoot();
-				tableData.UPropertySheet = nullptr;
-			}
-
 		}
 		return ECraftingResult::Success;
 	}

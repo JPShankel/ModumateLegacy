@@ -5,66 +5,7 @@
 #include "BIMKernel/BIMTagPath.h"
 #include "BIMKernel/BIMNodeEditor.h"
 #include "BIMKernel/BIMAssemblySpec.h"
-#include "BIMKernel/BIMUProperties.h"
 #include "BIMKernel/BIMKey.h"
-
-static bool testUBIMProps()
-{
-	FName thicknessPropName = TEXT("Thickness");
-	FName namePropName = TEXT("Name");
-	FName nonExistent = TEXT("NonExistent");
-
-	UObject* bimUObject = NewObject<UBIMPropertiesDIM>();
-	if (bimUObject == nullptr)
-	{
-		return false;
-	}
-	bimUObject->AddToRoot();
-
-	UBIMPropertiesDIM* bimCastProps = Cast<UBIMPropertiesDIM>(bimUObject);
-	if (bimCastProps == nullptr)
-	{
-		return false;
-	}
-
-	ECraftingResult result = bimCastProps->SetFloatProperty(thicknessPropName, 5.0f);
-
-	if (result != ECraftingResult::Success)
-	{
-		return false;
-	}
-
-	if (bimCastProps->Thickness != 5.0f)
-	{
-		return false;
-	}
-
-	result = bimCastProps->SetStringProperty(namePropName, TEXT("My Name"));
-	if (result != ECraftingResult::Success)
-	{
-		return false;
-	}
-
-	if (!bimCastProps->Name.Equals(TEXT("My Name")))
-	{
-		return false;
-	}
-
-	result = bimCastProps->SetStringProperty(thicknessPropName, TEXT("6.0"));
-	if (result != ECraftingResult::Error)
-	{
-		return false;
-	}
-
-	result = bimCastProps->SetFloatProperty(nonExistent, 1.0f);
-	if (result != ECraftingResult::Error)
-	{
-		return false;
-	}
-
-	bimUObject->RemoveFromRoot();
-	return true;
-}
 
 static bool testKeys()
 {
@@ -480,11 +421,6 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	}
 
 	if (!ensureAlways(testPreset(presetCollection, materialColorPresets[0])))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(testUBIMProps()))
 	{
 		return false;
 	}

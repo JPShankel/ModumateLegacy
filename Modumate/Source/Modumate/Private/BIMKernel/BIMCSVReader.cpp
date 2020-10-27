@@ -4,9 +4,6 @@
 
 FBIMCSVReader::FBIMCSVReader()
 {
-	PropertyFactoryMap.Add(UBIMPropertiesDIM::StaticClass()->GetFName(), []() {return NewObject<UBIMPropertiesDIM>(); });
-	PropertyFactoryMap.Add(UBIMPropertiesSlot::StaticClass()->GetFName(), []() {return NewObject<UBIMPropertiesSlot>(); });
-
 	ParentPathRange.wantTags = true;
 }
 
@@ -58,8 +55,6 @@ ECraftingResult FBIMCSVReader::ProcessNodeTypeRow(const TArray<const TCHAR*>& Ro
 	}
 	
 	NodeType.Scope = BIMValueScopeFromName(scope);
-
-	PropertyClass = Row[6];
 
 	if (NodeType.Scope == EBIMValueScope::Error || NodeType.Scope == EBIMValueScope::None)
 	{
@@ -232,35 +227,9 @@ ECraftingResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row,
 					Preset = FBIMPreset();
 				}
 
-				if (UPropertySheet != nullptr)
-				{
-					UPropertySheet->RemoveFromRoot();
-				}
-
 				Preset.PresetID = FBIMKey(*cell);
 				Preset.NodeType = NodeType.TypeName;
 				Preset.NodeScope = NodeType.Scope;
-
-				// TODO: UPropertySheet to be added to a preset UPROPERTY, meantime don't actually make any unless testing
-#ifdef TEST_BIM_UPROPERTIES
-				if (!PropertyClass.IsNone())
-				{
-					auto* factoryFunc = PropertyFactoryMap.Find(PropertyClass);
-					if (ensureAlways(factoryFunc != nullptr))
-					{
-						UPropertySheet = (*factoryFunc)();
-						if (ensureAlways(UPropertySheet != nullptr))
-						{
-							UPropertySheet->AddToRoot();
-						}
-					}
-					else
-					{
-						OutMessages.Add(FString::Printf(TEXT("Unidentified BIM Property Type %s"), Row[6]));
-						return ECraftingResult::Error;
-					}
-				}
-#endif
 			}
 		}
 		else if (StartInProjectRange.IsIn(i))
@@ -288,37 +257,6 @@ ECraftingResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row,
 				{
 					Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, cell);
 				}
-			}
-
-			if (UPropertySheet != nullptr)
-			{
-				EBIMValueType* valueType = PropertyTypeMap.Find(propSpec.Name);
-
-				if (valueType == nullptr)
-				{
-					return ECraftingResult::Error;
-				}
-
-				switch (*valueType)
-				{
-				case EBIMValueType::Formula:
-				case EBIMValueType::String:
-					UPropertySheet->SetStringProperty(propSpec.Name, cell);
-					break;
-
-				case EBIMValueType::Dimension:
-				case EBIMValueType::Angle:
-				{
-					if (!cell.IsEmpty())
-					{
-						UPropertySheet->SetFloatProperty(propSpec.Name, FCString::Atof(*cell));
-					}
-				}
-					break;
-				default:
-					return ECraftingResult::Error;
-
-				};
 			}
 		}
 		else if (MyPathRange.IsIn(i) && !cell.IsEmpty())

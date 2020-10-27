@@ -6,7 +6,6 @@
 #include "BIMKernel/BIMEnums.h"
 #include "BIMKernel/BIMProperties.h"
 #include "BIMKernel/BIMTagPath.h"
-#include "BIMKernel/BIMUProperties.h"
 #include "BIMKernel/BIMKey.h"
 #include "BIMKernel/BIMSerialization.h"
 #include "BIMKernel/BIMAssemblySpec.h"
