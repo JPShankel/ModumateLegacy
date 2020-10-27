@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include <functional>
+#include "Database/ModumateArchitecturalMaterial.h"
 #include "Engine/StaticMeshActor.h"
-#include "ModumateVertexActor_CPP.generated.h"
+#include "VertexActor.generated.h"
 
 /**
  * 
@@ -13,19 +14,18 @@
 class AEditModelPlayerController_CPP;
 
 UCLASS()
-class MODUMATE_API AModumateVertexActor_CPP : public AStaticMeshActor
+class MODUMATE_API AVertexActor : public AStaticMeshActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	AModumateVertexActor_CPP();
+	AVertexActor();
 
 	UPROPERTY()
 	UStaticMeshComponent* MeshComp;
 
-	UPROPERTY()
-	UMaterialInstanceDynamic* DynamicMaterial;
+	FArchitecturalMaterial Material;
 
 	UPROPERTY()
 	AEditModelPlayerController_CPP *Controller;
@@ -36,6 +36,7 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 	void SetActorMesh(UStaticMesh *mesh);
+	void SetActorMaterial(FArchitecturalMaterial& MaterialData);
 	void SetHandleScaleScreenSize(float NewSize);
 	void SetMOILocation(const FVector &NewMOILocation);
 

@@ -3,7 +3,7 @@
 
 #include "Objects/ModumateObjectInstance.h"
 
-class AModumateVertexActor_CPP;
+class AVertexActor;
 
 class MODUMATE_API FMOIVertexImplBase : public FModumateObjectInstanceImplBase
 {
@@ -23,9 +23,10 @@ public:
 
 protected:
 	TWeakObjectPtr<UWorld> World;
-	TWeakObjectPtr<AModumateVertexActor_CPP> VertexActor;
+	TWeakObjectPtr<AVertexActor> VertexActor;
 	TArray<FModumateObjectInstance*> CachedConnectedMOIs;
 
+	FColor SelectedColor, BaseColor;
 	float DefaultHandleSize;
 	float SelectedHandleSize;
 };

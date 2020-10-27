@@ -3,7 +3,7 @@
 
 #include "Objects/VertexBase.h"
 
-class AModumateVertexActor_CPP;
+class AVertexActor;
 
 class MODUMATE_API FMOISurfaceVertexImpl : public FMOIVertexImplBase
 {

@@ -9,7 +9,7 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UnrealClasses/ModumateVertexActor_CPP.h"
+#include "UnrealClasses/VertexActor.h"
 
 FMOISurfaceVertexImpl::FMOISurfaceVertexImpl(FModumateObjectInstance *moi)
 	: FMOIVertexImplBase(moi)

@@ -2,16 +2,19 @@
 
 #include "Objects/VertexBase.h"
 
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "ModumateCore/ModumateObjectStatics.h"
-#include "UnrealClasses/ModumateVertexActor_CPP.h"
+#include "UnrealClasses/VertexActor.h"
 
 FMOIVertexImplBase::FMOIVertexImplBase(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
 	, DefaultHandleSize(0.0004f)
 	, SelectedHandleSize(0.0006f)
+	, SelectedColor(0x02, 0x58, 0xFF)
+	, BaseColor(0x00, 0x00, 0x00)
 {
 }
 
@@ -45,12 +48,18 @@ void FMOIVertexImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &ou
 AActor *FMOIVertexImplBase::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
 	World = world;
-	VertexActor = World->SpawnActor<AModumateVertexActor_CPP>(AModumateVertexActor_CPP::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
+	VertexActor = World->SpawnActor<AVertexActor>(AVertexActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
 
 	// Set appearance
 	AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
 	VertexActor->SetActorMesh(gameMode->MetaPlaneVertexIconMesh);
 	VertexActor->SetHandleScaleScreenSize(DefaultHandleSize);
+
+	FArchitecturalMaterial material;
+	material.EngineMaterial = gameMode ? gameMode->VertexMaterial : nullptr;
+	material.DefaultBaseColor.Color = BaseColor;
+	material.DefaultBaseColor.bValid = true;
+	VertexActor->SetActorMaterial(material);
 
 	return VertexActor.Get();
 }
@@ -64,5 +73,10 @@ void FMOIVertexImplBase::OnSelected(bool bIsSelected)
 	if (VertexActor.IsValid())
 	{
 		VertexActor->SetHandleScaleScreenSize(bIsSelected ? SelectedHandleSize : DefaultHandleSize);
+
+		VertexActor->Material.DefaultBaseColor.Color = bIsSelected ? SelectedColor : BaseColor;
+		VertexActor->Material.DefaultBaseColor.bValid = true;
+
+		UModumateFunctionLibrary::SetMeshMaterial(VertexActor->MeshComp, VertexActor->Material, 0);
 	}
 }

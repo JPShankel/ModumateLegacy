@@ -10,7 +10,7 @@
 #include "UnrealClasses/LineActor.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "UnrealClasses/ModumateVertexActor_CPP.h"
+#include "UnrealClasses/VertexActor.h"
 #include "ToolsAndAdjustments/Handles/RoofPerimeterHandles.h"
 #include "UI/RoofPerimeterPropertiesWidget.h"
 

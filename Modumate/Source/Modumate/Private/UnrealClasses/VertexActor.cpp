@@ -1,14 +1,13 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
+#include "UnrealClasses/VertexActor.h"
 
-#include "UnrealClasses/ModumateVertexActor_CPP.h"
-#include "Materials/MaterialInstanceDynamic.h"
 #include "Engine/StaticMesh.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 // Sets default values
-AModumateVertexActor_CPP::AModumateVertexActor_CPP()
+AVertexActor::AVertexActor()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -20,7 +19,7 @@ AModumateVertexActor_CPP::AModumateVertexActor_CPP()
 }
 
 // Called when the game starts or when spawned
-void AModumateVertexActor_CPP::BeginPlay()
+void AVertexActor::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -44,7 +43,7 @@ void AModumateVertexActor_CPP::BeginPlay()
 }
 
 // Called every frame
-void AModumateVertexActor_CPP::Tick(float DeltaTime)
+void AVertexActor::Tick(float DeltaTime)
 {
 	FVector newCameraLoc = Controller->PlayerCameraManager->GetCameraLocation();
 	if (!CameraLocation.Equals(newCameraLoc))
@@ -55,24 +54,28 @@ void AModumateVertexActor_CPP::Tick(float DeltaTime)
 	}
 }
 
-void AModumateVertexActor_CPP::SetActorMesh(UStaticMesh *mesh)
+void AVertexActor::SetActorMesh(UStaticMesh *mesh)
 {
 	if (GetStaticMeshComponent() != nullptr)
 	{
 		MeshComp = GetStaticMeshComponent();
 		MeshComp->SetStaticMesh(mesh);
-		DynamicMaterial = UMaterialInstanceDynamic::Create(mesh->GetMaterial(0), this);
-		MeshComp->SetMaterial(0, DynamicMaterial);
 	}
 }
 
-void AModumateVertexActor_CPP::SetHandleScaleScreenSize(float NewSize)
+void AVertexActor::SetActorMaterial(FArchitecturalMaterial& MaterialData)
+{
+	Material = MaterialData;
+	UModumateFunctionLibrary::SetMeshMaterial(MeshComp, Material, 0);
+}
+
+void AVertexActor::SetHandleScaleScreenSize(float NewSize)
 {
 	HandleScreenSize = NewSize;
 	UpdateVisuals();
 }
 
-void AModumateVertexActor_CPP::SetMOILocation(const FVector &NewMOILocation)
+void AVertexActor::SetMOILocation(const FVector &NewMOILocation)
 {
 	if (!MoiLocation.Equals(NewMOILocation, 0.0f))
 	{
@@ -81,7 +84,7 @@ void AModumateVertexActor_CPP::SetMOILocation(const FVector &NewMOILocation)
 	}
 }
 
-void AModumateVertexActor_CPP::UpdateVisuals()
+void AVertexActor::UpdateVisuals()
 {
 	FHitResult hitResult;
 	FVector dirToCamera = (CameraLocation - MoiLocation).GetSafeNormal();

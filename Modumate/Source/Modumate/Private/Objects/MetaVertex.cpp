@@ -5,7 +5,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateObjectStatics.h"
-#include "UnrealClasses/ModumateVertexActor_CPP.h"
+#include "UnrealClasses/VertexActor.h"
 
 FMOIMetaVertexImpl::FMOIMetaVertexImpl(FModumateObjectInstance *moi)
 	: FMOIVertexImplBase(moi)
