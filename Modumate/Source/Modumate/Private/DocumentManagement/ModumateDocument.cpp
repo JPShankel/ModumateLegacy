@@ -2159,6 +2159,7 @@ bool FModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ExportDWG"));
 	CurrentDraftingView = MakeShared<FModumateDraftingView>(world, this, FModumateDraftingView::kDWG);
 	CurrentDraftingView->CurrentFilePath = FString(filepath);
+	CurrentDraftingView->GeneratePagesFromCutPlanes(world);
 
 	return true;
 }

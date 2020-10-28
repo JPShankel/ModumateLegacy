@@ -17,6 +17,7 @@ namespace Modumate
 		UWorld* World;
 		FMOICutPlaneImpl* CutPlane;
 		int32 CutPlaneID { 0 };
+		int32 RenderID{ 0 };
 
 		enum ResponseCode { kInvalidIdToken = 401, kErrorConverting = 463 };
 	};
@@ -44,12 +45,11 @@ namespace Modumate
 
 		if (document.GetObjectById(CutPlaneID) != nullptr)
 		{	// Cut plane exists.
-			CutPlane->SetTracedOutlinesJson(jsonResponse);
-			CutPlane->TraceRequestComplete();
+			CutPlane->TraceRequestComplete(RenderID, MoveTemp(jsonResponse));
 		}
 	}
 
-	bool FModumateAutotraceConnect::ConvertImageFromFile(const FString& filename, FMOICutPlaneImpl* cutPlane, int32 cutPlaneID, UWorld* world)
+	bool FModumateAutotraceConnect::ConvertImageFromFile(const FString& filename, int32 renderID, FMOICutPlaneImpl* cutPlane, int32 cutPlaneID, UWorld* world)
 	{
 		TArray<uint8> pngFile;
 		if (!FFileHelper::LoadFileToArray(pngFile, *filename))
@@ -65,6 +65,7 @@ namespace Modumate
 		handler.World = world;
 		handler.CutPlaneID = cutPlaneID;
 		handler.CutPlane = cutPlane;
+		handler.RenderID = renderID;
 		request->OnProcessRequestComplete().BindLambda(handler);
 
 		request->SetVerb(TEXT("POST"));

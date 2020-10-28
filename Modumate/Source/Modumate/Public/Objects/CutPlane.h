@@ -48,16 +48,15 @@ public:
 	virtual ISceneCaptureObject* GetSceneCaptureInterface() override { return this; }
 
 	virtual bool AddCaptureArea(int32 ScopeBoxID, TArray<FVector> CaptureArea) override;
+	virtual void SetupPendingRenders() override;
 	virtual bool StartRender(FModumateDocument* doc = nullptr) override;
-	virtual void PublishPage() override;
-	virtual void TraceRequestComplete() override;
+	virtual void CaptureComplete() override;
+	virtual void TraceRequestComplete(int32 TraceID, FString TraceString) override;
 
 	virtual AActor* CreateActor(UWorld* world, const FVector& loc, const FQuat& rot) override;
 	virtual void PostCreateObject(bool bNewObject) override;
 	virtual void Destroy() override;
 	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
-
-	void SetTracedOutlinesJson(FString Json) { TracedOutlinesJson = MoveTemp(Json); }
 
 	Modumate::FModumateHUDDraw DrawingInterface;
 
@@ -79,10 +78,11 @@ protected:
 
 	FLinearColor EdgeSelectedColor;
 	FLinearColor EdgeColor;
-	FString TracedOutlinesJson;
 
 	TArray<TPair<int32, TArray<FVector>>> PendingCaptureAreas;
+	TQueue<FPendingObjectRender> PendingObjectRenders;
+	FPendingObjectRender CurrentObjectRender;
+	TMap<int32, FPendingObjectRender> InprocessRenders;
 
 	FMOICutPlaneData InstanceData;
 };
-

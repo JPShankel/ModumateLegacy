@@ -20,6 +20,9 @@
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/CompoundMeshActor.h"
+
+static constexpr float PixelsToWorldCentimeters = 0.5f;
 
 FMOICutPlaneImpl::FMOICutPlaneImpl(FModumateObjectInstance *moi)
 	: FMOIPlaneImplBase(moi),
@@ -182,13 +185,15 @@ void FMOICutPlaneImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComp
 {
 	// In-sync with OutDepthScale in EdgeDetection.usf:
 	static constexpr float depthScaleFactor = 3000.0f;
-	static constexpr float pixelsToWorldCentimeters = 0.5f;
 
 	// Add any traced splines.
-	if (!TracedOutlinesJson.IsEmpty())
+	for(const auto& traceResponse: InprocessRenders)
 	{
 		FModumateTraceObject trace;
-		bool result = FJsonObjectConverter::JsonObjectStringToUStruct<FModumateTraceObject>(TracedOutlinesJson, &trace, 0, 0);
+		TSharedPtr<Modumate::FDraftingComposite> singleOutlineElement = MakeShareable(new Modumate::FDraftingComposite);
+		ParentPage->Children.Add(singleOutlineElement);
+
+		bool result = FJsonObjectConverter::JsonObjectStringToUStruct<FModumateTraceObject>(traceResponse.Value.JsonTrace, &trace, 0, 0);
 		if (!ensureMsgf(result, TEXT("Couldn't parse trace JSON")) )
 		{
 			return;
@@ -197,9 +202,10 @@ void FMOICutPlaneImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComp
 		FVector currentPoint(0.0f);
 		FVector startPoint(0.0f);
 		bool bClosedCurve = false;
-		float lineDepth = 0.0f;
-		TArray<FEdge> ffeLines;
-		int lineStartIndex = ffeLines.Num();
+		const float lineDepth = traceResponse.Value.Depth;
+		const FVector tracePosition(traceResponse.Value.PagePosition, lineDepth);
+		TArray<FEdge> outlineLines;
+		int lineStartIndex = outlineLines.Num();
 		for (const FModumateTraceSplineEntry& entry: trace.lines)
 		{
 			if (!FMath::IsNaN(entry.open.x))
@@ -219,7 +225,7 @@ void FMOICutPlaneImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComp
 			else if (!FMath::IsNaN(entry.linear.x))
 			{
 				FVector newPoint(entry.linear.x, entry.linear.y, 0.0f);
-				ffeLines.Emplace(currentPoint, newPoint);
+				outlineLines.Emplace(currentPoint, newPoint);
 				currentPoint = newPoint;
 			}
 			else if (entry.cubic.Num() > 0)
@@ -232,10 +238,10 @@ void FMOICutPlaneImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComp
 				FVector au((currentPoint + u) * 0.5);
 				FVector uv((u + v) * 0.5);
 				FVector vw((v + w) * 0.5);
-				ffeLines.Emplace(currentPoint, au);
-				ffeLines.Emplace(au, uv);
-				ffeLines.Emplace(uv, vw);
-				ffeLines.Emplace(vw, w);
+				outlineLines.Emplace(currentPoint, au);
+				outlineLines.Emplace(au, uv);
+				outlineLines.Emplace(uv, vw);
+				outlineLines.Emplace(vw, w);
 				currentPoint = w;
 			}
 			else if (!FMath::IsNaN(entry.depth))
@@ -243,16 +249,8 @@ void FMOICutPlaneImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComp
 				if (bClosedCurve)
 				{
 					// close current curve.
-					ffeLines.Emplace(currentPoint, startPoint);
+					outlineLines.Emplace(currentPoint, startPoint);
 				}
-				lineDepth = entry.depth * depthScaleFactor;
-				int newStartIndex = ffeLines.Num();
-				for (int l = lineStartIndex; l < newStartIndex; ++l)
-				{
-					// Go back & fill-in depth.
-					ffeLines[l].Vertex[0].Z = lineDepth;
-				}
-				lineStartIndex = newStartIndex;
 			}
 			else
 			{	// Empty entry
@@ -260,16 +258,17 @@ void FMOICutPlaneImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComp
 			}
 		}
 
-		for (auto& line: ffeLines)
+		for (auto& line: outlineLines)
 		{
-			line.Vertex[0] *= FVector(-pixelsToWorldCentimeters, -pixelsToWorldCentimeters, 1.0f);
-			line.Vertex[1] *= FVector(-pixelsToWorldCentimeters, -pixelsToWorldCentimeters, 1.0f);
+			line.Vertex[0] *= FVector(-PixelsToWorldCentimeters, -PixelsToWorldCentimeters, 1.0f);
+			line.Vertex[1] *= FVector(-PixelsToWorldCentimeters, -PixelsToWorldCentimeters, 1.0f);
+			line.Vertex[0] += tracePosition;
+			line.Vertex[1] += tracePosition;
 		}
 
-		for (auto& ffeLine: ffeLines)
+		for (auto& outlineLine: outlineLines)
 		{
-			ffeLine.Vertex[1].Z = ffeLine.Vertex[0].Z;
-			auto clippedLines = ParentPage->lineClipping->ClipViewLineToView(ffeLine);
+			auto clippedLines = ParentPage->lineClipping->ClipViewLineToView(outlineLine);
 			for (const auto& clippedLine : clippedLines)
 			{
 				FVector2D vert0(clippedLine.Vertex[0]);
@@ -279,12 +278,12 @@ void FMOICutPlaneImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComp
 
 				if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 				{
-					TSharedPtr<Modumate::FDraftingLine> line = MakeShareable(new Modumate::FDraftingLine(
+					TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShareable(new Modumate::FDraftingLine(
 						Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
 						Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
 						Modumate::Units::FThickness::Points(0.15f), Modumate::FMColor::Gray144));
-					ParentPage->Children.Add(line);
-					line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kFfeOutline);
+					singleOutlineElement->Children.Add(draftingLine);
+					draftingLine->SetLayerTypeRecursive(traceResponse.Value.LayerType);
 				}
 			}
 		}
@@ -301,22 +300,18 @@ bool FMOICutPlaneImpl::AddCaptureArea(int32 ScopeBoxID, TArray<FVector> CaptureA
 
 bool FMOICutPlaneImpl::StartRender(FModumateDocument* doc /*= nullptr*/)
 {
-	if (PendingCaptureAreas.Num() == 0)
+	FPendingObjectRender objectRender;
+	FModumateObjectInstance* object = nullptr;
+	do
 	{
-		return false;
-	}
+		if (!PendingObjectRenders.Dequeue(objectRender))
+		{
+			return false;
+		}
+		object = MOI->GetDocument()->GetObjectById(objectRender.MoiId);
+	} while (object == nullptr);
 
-	auto nextRenderAreaKvp = PendingCaptureAreas.Pop();
-
-	// for now, using the entire cut plane area instead of the scope box intersection
-	CaptureActor->ScopeBoxID = nextRenderAreaKvp.Key;
-#if 0
-	auto CaptureArea = nextRenderAreaKvp.Value;
-#else
-	auto CaptureArea = CachedPoints;
-#endif
-
-	float pixelsPerWorldCentimeter = 2.0f;
+	static constexpr float pixelsPerWorldCentimeter = 1.0f / PixelsToWorldCentimeters;
 
 	FMatrix endMatrix;
 
@@ -330,49 +325,57 @@ bool FMOICutPlaneImpl::StartRender(FModumateDocument* doc /*= nullptr*/)
 
 	FQuat rotation;
 	rotation = FQuat(endMatrix);
+	ACompoundMeshActor* actor = CastChecked<ACompoundMeshActor>(object->GetActor());
 
-	FVector scopeBoxOrigin = CaptureArea[0];
-	TArray<FVector2D> boxPoints;
-	for (auto& point : CaptureArea)
+	FBox bounds(ForceInitToZero);
+	for (const auto* mesh : actor->StaticMeshComps)
 	{
-		FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, endAxisX, endAxisY, scopeBoxOrigin);
-		boxPoints.Add(point2D);
+		if (mesh != nullptr)
+		{
+			FVector minPoint(ForceInitToZero);
+			FVector maxPoint(ForceInitToZero);
+			mesh->GetLocalBounds(minPoint, maxPoint);
+			bounds += minPoint;
+			bounds += maxPoint;
+		}
 	}
-	FBox2D box = FBox2D(boxPoints);
+	float maxDimension = bounds.GetSize().GetMax();
 
-	float orthoWidth = box.GetSize().X;
-	float orthoHeight = box.GetSize().Y;
-	FVector captureAreaOrigin = scopeBoxOrigin + box.GetCenter().X * endAxisX + box.GetCenter().Y * endAxisY;
-
+	FVector location = object->GetObjectLocation();
+	FVector2D projectedLocation = UModumateGeometryStatics::ProjectPoint2D(location, endAxisX, endAxisY, CachedPoints[0]);
+	FVector2D renderOrigin = projectedLocation + FVector2D(maxDimension, -maxDimension);
+	FVector2D renderSize = 2.0f * FVector2D(maxDimension, maxDimension);
+	float depth = CachedPlane.PlaneDot(location);
+	renderOrigin.Y = -renderOrigin.Y;  // !?
+	objectRender.PagePosition = renderOrigin;
+	objectRender.Size = renderSize;
+	objectRender.Depth = depth;
+	
 	// setup texture target
-	CaptureActor->CurrentTextureTarget = UKismetRenderingLibrary::CreateRenderTarget2D(DynamicMeshActor->GetWorld(), (int)(orthoWidth*pixelsPerWorldCentimeter), (int)(orthoHeight*pixelsPerWorldCentimeter), ETextureRenderTargetFormat::RTF_RGBA8);
-	CaptureActor->CurrentTextureTarget->ClearColor = FLinearColor(1.f, 1.f, 1.f);
+	CaptureActor->CurrentTextureTarget = UKismetRenderingLibrary::CreateRenderTarget2D(DynamicMeshActor->GetWorld(), (int)(renderSize.X * pixelsPerWorldCentimeter),
+		(int)(renderSize.Y * pixelsPerWorldCentimeter), ETextureRenderTargetFormat::RTF_RGBA8);
+	CaptureActor->CurrentTextureTarget->ClearColor = FLinearColor(1.0f, 1.0f, 1.0f);
+	CaptureActor->ScopeBoxID = objectRender.LocalId;
 
 	// setup capture component
 	auto* captureComponent = CaptureActor->CaptureComponent;
 	FTransform cutPlaneTransform;
-	cutPlaneTransform.SetTranslation(captureAreaOrigin);
+	cutPlaneTransform.SetTranslation(location);
 
 	cutPlaneTransform.SetRotation(rotation);
 
 	captureComponent->TextureTarget = CaptureActor->CurrentTextureTarget;
-	captureComponent->OrthoWidth = orthoWidth;
+	captureComponent->OrthoWidth = renderSize.X;
 	captureComponent->SetWorldTransform(cutPlaneTransform);
 
-	// Setup scene.
-	if (doc)
-	{
-		captureComponent->ClearShowOnlyComponents();
-		auto bitmapObjects = doc->GetObjectsOfType(EObjectType::OTFurniture);
-		for (FModumateObjectInstance* moi : bitmapObjects)
-		{
-			captureComponent->ShowOnlyActorComponents(moi->GetActor(), true);
-		}
-	}
+	captureComponent->ClearShowOnlyComponents();
+	captureComponent->ShowOnlyActorComponents(object->GetActor(), true);
 
 	// capture scene
 	captureComponent->bCaptureEveryFrame = true;
 	CaptureActor->bRenderOnTick = true;
+
+	CurrentObjectRender = objectRender;
 
 	return true;
 }
@@ -516,7 +519,7 @@ void FMOICutPlaneImpl::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposit
 	}
 }
 
-void FMOICutPlaneImpl::PublishPage()
+void FMOICutPlaneImpl::CaptureComplete()
 {
 	TPair<int32, int32> SceneCaptureObjID = TPair<int32, int32>(CaptureActor->ObjID, CaptureActor->ScopeBoxID);
 	FString imageFilePath;
@@ -526,19 +529,40 @@ void FMOICutPlaneImpl::PublishPage()
 	CaptureActor->ResetHiddenActorsToDefault();
 	MasksActor->ClearProceduralLayers();
 
-	if (!StartRender() && PendingTraceRequests == 0)
-	{
-		// TODO: potentially this can happen each time one render finishes, instead of when all of the renders finish
-		CaptureDelegate.Broadcast();
-	}
-
+	StartRender();
 }
 
-void FMOICutPlaneImpl::TraceRequestComplete()
+void FMOICutPlaneImpl::SetupPendingRenders()
 {
-	if (--PendingTraceRequests == 0 && PendingCaptureAreas.Num() == 0)
+	int32 renderId = 0;
+	PendingObjectRenders.Empty();
+	InprocessRenders.Empty();
+
+	TArray<FModumateObjectInstance*> bitmapObjects = MOI->GetDocument()->GetObjectsOfType(EObjectType::OTFurniture);
+	for (const auto object: bitmapObjects)
 	{
-		CaptureDelegate.Broadcast();
+		FPendingObjectRender renderInfo;
+		renderInfo.LocalId = renderId++;
+		renderInfo.MoiId = object->ID;
+		renderInfo.LayerType = Modumate::FModumateLayerType::kFfeOutline;
+		PendingObjectRenders.Enqueue(renderInfo);
+	}
+}
+
+void FMOICutPlaneImpl::TraceRequestComplete(int32 TraceID, FString TraceString)
+{
+	FPendingObjectRender* render = InprocessRenders.Find(TraceID);
+	if (render)
+	{
+		render->JsonTrace = MoveTemp(TraceString);
+		if (--PendingTraceRequests == 0 && PendingObjectRenders.IsEmpty())
+		{
+			CaptureDelegate.Broadcast();
+		}
+	}
+	else
+	{
+		UE_LOG(LogAutoDrafting, Error, TEXT("Unknown Autotrace ID %d"), TraceID);
 	}
 }
 
@@ -546,8 +570,9 @@ void FMOICutPlaneImpl::ConvertToOutlines(const FString& renderTargetFilename)
 {
 	Modumate::FModumateAutotraceConnect autotraceServer;
 
-	if (autotraceServer.ConvertImageFromFile(renderTargetFilename, this, MOI->ID, MOI->GetWorld()))
+	if (autotraceServer.ConvertImageFromFile(renderTargetFilename, CurrentObjectRender.LocalId, this, MOI->ID, MOI->GetWorld()))
 	{
+		InprocessRenders.Add(CurrentObjectRender.LocalId, CurrentObjectRender);
 		++PendingTraceRequests;
 	}
 }

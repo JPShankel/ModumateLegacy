@@ -57,11 +57,6 @@ FModumateDraftingView::FModumateDraftingView(UWorld *world, FModumateDocument *d
 	ExportType(draftType)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDraftingView::ModumateDraftingView"));
-
-	// TODO: this should be temporary - potentially the cut planes will have some data that populates the
-	// type of drawing they represent (floorplane, elevation, section), the name of the drawing,
-	// and some desired pagination information
-	GeneratePagesFromCutPlanes(world);
 }
 
 bool FModumateDraftingView::ExportDraft(UWorld *world,const TCHAR *filepath)
@@ -281,13 +276,16 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 		DrawingInterface = MakeShared<FModumateLineCorral>();
 	}
 
+	draftMan->CurrentDraftingView = this;
+	draftMan->CurrentDrawingInterface = DrawingInterface.Get();
+
 	for (FModumateObjectInstance* cutPlane : cutPlanes)
 	{
-		if (cutPlane == nullptr)
-		{
-			continue;
-		}
+		draftMan->RequestRender(TPair<int32, int32>(cutPlane->ID, MOD_ID_NONE));
+	}
 
+	for (FModumateObjectInstance* cutPlane : cutPlanes)
+	{
 		ISceneCaptureObject* sceneCaptureInterface = cutPlane->GetSceneCaptureInterface();
 		if (sceneCaptureInterface == nullptr)
 		{
@@ -296,68 +294,7 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 
 		FPlane plane = FPlane(cutPlane->GetCorner(0), cutPlane->GetNormal());
 
-// disabled implementation of scope boxes determining drawing transforms, extents
-#if 0
-		for (FModumateObjectInstance* scopeBox : scopeBoxes)
-		{
-			if (scopeBox == nullptr)
-			{
-				continue;
-			}
-
-			FVector scopeBoxNormal = scopeBox->GetNormal();
-			int32 numPoints = scopeBox->GetControlPoints().Num();
-			// cut plane and scope box must be facing the same direction to produce a drawing
-			if (!FVector::Coincident(scopeBoxNormal, cutPlane->GetNormal()))
-			{
-				continue;
-			}
-
-			// drawings will only be created when all four extruded segments of the scope box 
-			// intersect with the cut plane
-			bool bValidIntersection = true;
-
-			TArray<FVector> intersection;
-			intersection.SetNumZeroed(numPoints);
-
-			for (int32 cornerIdx = 0; cornerIdx < numPoints; cornerIdx++)
-			{
-				FVector corner = scopeBox->GetCorner(cornerIdx);
-				FVector extrudedCorner = corner + (scopeBoxNormal * scopeBox->GetExtents().Y);
-
-				bool bIntersects = FMath::SegmentPlaneIntersection(corner, extrudedCorner, plane, intersection[cornerIdx]);
-				bValidIntersection = bValidIntersection && bIntersects;
-			}
-
-			if (!bValidIntersection)
-			{
-				continue;
-			}
-
-			FVector origin = intersection[0];
-			FVector width = intersection[1] - origin;
-			FVector height = intersection[3] - origin;
-
-			sceneCaptureInterface->AddCaptureArea(scopeBox->ID, intersection);
-
-			// TODO: pages need to be associated with drawings, preferably in the app
-			// in theory, make all of the drawings that are associated to the cut plane here
-			auto page = CreateAndAddPage();
-			TSharedPtr<FPresentationPlan> presentationPlan = MakeShareable(new FPresentationPlan(Document, world, TPair<int32, int32>(cutPlane->ID, scopeBox->ID)));
-			presentationPlan->InitializeDimensions(presentationSeriesSize - (drawingMargin*2.0f), drawingMargin);
-			presentationPlan->SetLocalPosition(pageMargin);
-
-			page->Children.Add(presentationPlan);
-			page->Dimensions = presentationSeriesSize;
-			draftMan->RequestRender(TPair<int32, int32>(cutPlane->ID, scopeBox->ID));
-			sceneCaptureInterface->CaptureDelegate.AddSP(presentationPlan.Get(), &FPresentationPlan::OnPageCompleted);
-			
-
-		}
-#else
-		// TODO: normally would be the intersection between the scope box and this cut plane. 
-		// currently the entire cut plane area is used
-		sceneCaptureInterface->AddCaptureArea(MOD_ID_NONE, {});
+		sceneCaptureInterface->SetupPendingRenders();
 
 		auto page = CreateAndAddPage();
 		TSharedPtr<FFloorplan> floorplan = MakeShareable(new FFloorplan(Document, world, TPair<int32, int32>(cutPlane->ID, MOD_ID_NONE)));
@@ -366,10 +303,11 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 
 		page->Children.Add(floorplan);
 		page->Dimensions = presentationSeriesSize;
-		draftMan->RequestRender(TPair<int32, int32>(cutPlane->ID, MOD_ID_NONE));
 		sceneCaptureInterface->CaptureDelegate.AddSP(floorplan.Get(), &FFloorplan::OnPageCompleted);
-#endif
-		sceneCaptureInterface->StartRender(Document);
+		if (!sceneCaptureInterface->StartRender(Document))
+		{
+			sceneCaptureInterface->CaptureDelegate.Broadcast();
+		}
 	}
 
 	// TODO: potentially, FDraftingView doesn't exist at all anymore, if
