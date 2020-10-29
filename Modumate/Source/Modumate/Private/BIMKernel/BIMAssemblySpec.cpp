@@ -433,6 +433,13 @@ EBIMResult FBIMAssemblySpec::MakeLayeredAssembly(const FModumateDatabase& InDB)
 		res = buildLayers(RiserLayers);
 	}
 
+	// NOTE: Layers for finishes are designed veneer first, then barriers and adhesives
+	// but should be built adhesive first, then barriers and veneers, so we reverse layer order
+	if (ObjectType == EObjectType::OTFinish)
+	{
+		Algo::Reverse(Layers);
+	}
+
 	return res;
 }
 
@@ -513,11 +520,11 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 	case EObjectType::OTFloorSegment:
 	case EObjectType::OTWallSegment:
 	case EObjectType::OTRoofFace:
-	case EObjectType::OTFinish:
 	case EObjectType::OTCeiling:
 	case EObjectType::OTRailSegment:
 	case EObjectType::OTCountertop:
 	case EObjectType::OTSystemPanel:
+	case EObjectType::OTFinish:
 	case EObjectType::OTStaircase:
 		return MakeLayeredAssembly(InDB);
 
