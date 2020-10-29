@@ -5,7 +5,7 @@ OUTPUT,,"OTStructureLine[NOT TRUE, ALSO TRIM, REVISIT THIS CONCEPT??]",,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,
 PROPERTY,,String,,Name,,Assembly.Name,,,,,,,,
 PROPERTY,,String,,IconLength,,Assembly.IconLength,,,,,,,,
-PROPERTY,,String,,NamedDimensions,,Assembly.NamedDimensions,,,,,,,,
+PROPERTY,,String,,,,Assembly.NamedDimensions,,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,,
 INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,
 INPUTPIN,,1..1,,ChildDimension,,,,,,,,,,
@@ -347,7 +347,7 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWDWtFt --> WideFlangeSteel-43.3W-15.8D-1.42Wt-0.785Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W44X262, Steel, Untinted",48in,,,X,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-43.3W-15.8D-1.42Wt-0.785Ft,"0Profile-Wide Flange, W"
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W44X262, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-43.3W-15.8D-1.42Wt-0.785Ft,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWDWtFt --> WideFlangeSteel-42.9W-15.8D-1.22Wt-0.71Ft
@@ -383,7 +383,7 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWDWtFt --> WideFlangeSteel-40.2W-15.9D-1.81Wt-1Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X324, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-40.2W-15.9D-1.81Wt-1Ft,"0Profile-Wide Flange, W"
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X324, Steel, Untinted",48in,,,X,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-40.2W-15.9D-1.81Wt-1Ft,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWDWtFt --> TSteel-22W-15.9D-1.77Wt-1.03Ft
@@ -395,7 +395,7 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWDWtFt --> TSteel-21.7W-15.8D-1.42Wt-0.785Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT22X131, Steel, Untinted",48in,,,X,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-21.7W-15.8D-1.42Wt-0.785Ft,"0Profile-Tee, WT"
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT22X131, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-21.7W-15.8D-1.42Wt-0.785Ft,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWDWtFt --> TSteel-21.5W-15.8D-1.22Wt-0.71Ft
@@ -451,7 +451,7 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWDWtFt --> TSteel-19.3W-15.8D-1.07Wt-0.65Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X99.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-19.3W-15.8D-1.07Wt-0.65Ft,"0Profile-Tee, WT"
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X99.5, Steel, Untinted",48in,,,X,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-19.3W-15.8D-1.07Wt-0.65Ft,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> StoneRectangular
 1Material --> Stone --> Alabaster-0RawMaterial-Alabaster-0Color --> Abstract-FFFFFF-White
 0DimWD-10inW-10inD
@@ -479,7 +479,7 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> StoneRectangular
 PRESET,,"2ExtrudedProfile --> Beam/Column --> StoneRectangular
 1Material --> Stone --> Granite-0RawMaterial-Granite (Black 4)-0Color --> Abstract-FFFFFF-White
 0DimWD-18inW-36inD
-0Profile-Plate Section",,2ExtrudedProfile --> Beam/Column --> StoneRectangular,,"18in x 36in, Granite (Black 4), White",48in,,,,,1Material --> Stone --> Granite-0RawMaterial-Granite (Black 4)-0Color --> Abstract-FFFFFF-White,0DimWD-18inW-36inD,0Profile-Plate Section
+0Profile-Plate Section",,2ExtrudedProfile --> Beam/Column --> StoneRectangular,,"18in x 36in, Granite (Black 4), White",48in,,,X,,1Material --> Stone --> Granite-0RawMaterial-Granite (Black 4)-0Color --> Abstract-FFFFFF-White,0DimWD-18inW-36inD,0Profile-Plate Section
 PRESET,,"2ExtrudedProfile --> Beam/Column --> StoneRound
 1Material --> Stone --> Alabaster-0RawMaterial-Alabaster-0Color --> Abstract-FFFFFF-White
 0DimDi-6in
@@ -539,7 +539,7 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> StoneRound
 PRESET,,"2ExtrudedProfile --> Beam/Column --> StoneRound
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White
 0DimDi-34in
-0Profile-Tube Steel",,2ExtrudedProfile --> Beam/Column --> StoneRound,,"34in, Limestone (White), White",48in,,,,,1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White,0DimDi-34in,0Profile-Tube Steel
+0Profile-Tube Steel",,2ExtrudedProfile --> Beam/Column --> StoneRound,,"34in, Limestone (White), White",48in,,,X,,1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White,0DimDi-34in,0Profile-Tube Steel
 PRESET,,"2ExtrudedProfile --> Beam/Column --> StoneRound
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
 0DimDi-36in
@@ -579,7 +579,7 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> WoodRectangular
 PRESET,,"2ExtrudedProfile --> Beam/Column --> WoodRectangular
 1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural
 0DimWD-7inW-9inD
-0Profile-Plate Section",,2ExtrudedProfile --> Beam/Column --> WoodRectangular,,"7in x 9in, Cypress (Bald), Natural",48in,,,,,1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural,0DimWD-7inW-9inD,0Profile-Plate Section
+0Profile-Plate Section",,2ExtrudedProfile --> Beam/Column --> WoodRectangular,,"7in x 9in, Cypress (Bald), Natural",48in,,,X,,1Material --> Wood --> Cypress - Bald-0RawMaterial-Cypress (Bald)-0Color --> Wood --> Cypress - Bald-FFFFFF-Natural,0DimWD-7inW-9inD,0Profile-Plate Section
 PRESET,,"2ExtrudedProfile --> Beam/Column --> WoodRectangular
 1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Wood --> Oak - Red-FFFFFF-Natural
 0DimWD-8inW-10inD
@@ -627,7 +627,7 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> WoodRound
 PRESET,,"2ExtrudedProfile --> Beam/Column --> WoodRound
 1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Wood --> Oak - Red-FFFFFF-Natural
 0DimDi-24in
-0Profile-Tube Steel",,2ExtrudedProfile --> Beam/Column --> WoodRound,,"24in, Oak (Red), Natural",48in,,,,,1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Wood --> Oak - Red-FFFFFF-Natural,0DimDi-24in,0Profile-Tube Steel
+0Profile-Tube Steel",,2ExtrudedProfile --> Beam/Column --> WoodRound,,"24in, Oak (Red), Natural",48in,,,X,,1Material --> Wood --> Oak - Red-0RawMaterial-Oak (Red)-0Color --> Wood --> Oak - Red-FFFFFF-Natural,0DimDi-24in,0Profile-Tube Steel
 PRESET,,"2ExtrudedProfile --> Beam/Column --> WoodRound
 1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural
 0DimDi-26in

@@ -4,7 +4,7 @@ TYPENAME,,4LayeredAssembly,,Assembly,,,,,,,,,,,
 PROPERTY,,String,,Name,,Assembly.Name,,,,,,,,,
 PROPERTY,,String,,,,Assembly.IconDimX,,,,,,,,,
 PROPERTY,,String,,,,Assembly.IconDimZ,,,,,,,,,
-PROPERTY,,String,,NamedDimensions,,Assembly.NamedDimensions,,,,,,,,,
+PROPERTY,,String,,,,Assembly.NamedDimensions,,,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,,,
 INPUTPIN,,1..,,ChildLayerArray,,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,
@@ -124,11 +124,14 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,"4LayeredAssembly --> Wall
-3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+2Layer0D --> Membrane --> PolyethyleneVaporBarrier
+1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
+0DimThk-0.0625inT
+3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
+2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
-0DimThk-0.625inT
+0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -141,23 +144,23 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.
-3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.375inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond
-2Layer0D --> Membrane --> PolyethyleneVaporBarrier
-1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
-0DimThk-0.0625inT",,4LayeredAssembly --> Wall,,2x4 Exterior Wood Stud,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Gypsum
+3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Wall,,2x4 Exterior Wood Stud,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
+1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
+0DimThk-0.0625inT",,
+PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
+2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
+0DimLW-96in-48in
+0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -170,19 +173,16 @@ PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Wood
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.",,
-PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
+PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
+2ModuleLWT --> Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
-0DimThk-0.375inT
+0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
-PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
-1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
-0DimThk-0.0625inT",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
@@ -238,11 +238,14 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,"4LayeredAssembly --> Wall
-3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+2Layer0D --> Membrane --> PolyethyleneVaporBarrier
+1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
+0DimThk-0.0625inT
+3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
+2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
-0DimThk-0.625inT
+0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -255,23 +258,23 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-16-Inch O.C.
-3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.375inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond
-2Layer0D --> Membrane --> PolyethyleneVaporBarrier
-1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
-0DimThk-0.0625inT",,4LayeredAssembly --> Wall,,3 5/8in Exterior Metal Stud,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Gypsum
+3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Wall,,3 5/8in Exterior Metal Stud,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
+1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
+0DimThk-0.0625inT",,
+PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
+2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
+0DimLW-96in-48in
+0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -284,19 +287,16 @@ PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-16-Inch O.C.",,
-PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
+PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
+2ModuleLWT --> Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
-0DimThk-0.375inT
+0DimThk-0.625inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
-PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
-1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
-0DimThk-0.0625inT",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
@@ -519,7 +519,7 @@ PRESET,,"4LayeredAssembly --> Wall
 0DimWD-0.375inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
-,,,,,,,,,,,,,"2Layer0D --> Void --> Air
+PRESET,,,,,,,,,,,,,"2Layer0D --> Void --> Air
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-3inT",,
 PRESET,,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
@@ -531,7 +531,7 @@ PRESET,,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 0DimWD-0.375inW-0.375inD
 0Profile-Flat
 0LayerPattern --> 2D-Stack Bond",,
-,,"4LayeredAssembly --> Wall
+PRESET,,"4LayeredAssembly --> Wall
 3Layer3D --> Clay Brick
 2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
@@ -592,10 +592,10 @@ PRESET,,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 0DimWD-0.375inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
-,,,,,,,,,,,,,"2Layer0D --> Void --> Air
+PRESET,,,,,,,,,,,,,"2Layer0D --> Void --> Air
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-1inT",,
-,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
+PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
@@ -605,10 +605,10 @@ PRESET,,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
-,,,,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
+PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT",,
-,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
+PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
@@ -618,14 +618,14 @@ PRESET,,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
-,,,,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
+PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
 2ModuleWDProfile --> Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-16-Inch O.C.",,
-,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
+PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 2ModuleLWT --> Board/Panel --> Gypsum
 1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
