@@ -158,6 +158,8 @@ bool UCutPlaneTool::EnterNextStage()
 	cutPlaneData.Extents = slice.GetSize();
 	cutPlaneData.Location = PendingPlanePoints[0] + cutPlaneData.Extents.X * BasisX * 0.5f + cutPlaneData.Extents.Y * BasisY * 0.5f;
 	cutPlaneData.Rotation = FRotationMatrix::MakeFromXY(BasisX, BasisY).ToQuat();
+	cutPlaneData.Name = GetNextName();
+	cutPlaneData.bIsExported = true;
 
 	FMOIStateData stateData(doc->GetNextAvailableID(), EObjectType::OTCutPlane);
 	stateData.CustomData.SaveStructData(cutPlaneData);
@@ -189,3 +191,27 @@ bool UCutPlaneTool::AbortUse()
 	return UEditModelToolBase::AbortUse();
 }
 
+FString UCutPlaneTool::GetNextName() const
+{
+	static const TCHAR namePattern[] = TEXT("CutPlane %d");
+	int32 n = 1;
+	const FModumateDocument* doc = &GameState->Document;
+
+	auto existingCutPlanes = doc->GetObjectsOfType(EObjectType::OTCutPlane);
+	TArray<FString> existingNames;
+	for (const auto* cutPlane: existingCutPlanes)
+	{
+		FMOIStateData stateData = cutPlane->GetStateData();
+		FMOICutPlaneData cutPlaneData;
+		stateData.CustomData.LoadStructData(cutPlaneData);
+		existingNames.Add(cutPlaneData.Name);
+	}
+
+	FString candidate;
+	do
+	{
+		candidate = FString::Printf(namePattern, n++);
+	} while (existingNames.Contains(candidate));
+
+	return candidate;
+}

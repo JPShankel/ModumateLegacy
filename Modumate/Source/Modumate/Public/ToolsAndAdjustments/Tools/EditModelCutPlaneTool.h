@@ -41,5 +41,7 @@ protected:
 	FVector Normal;
 	EMouseMode OriginalMouseMode;
 
+	FString GetNextName() const;
+
 	float DefaultPlaneDimension = 100.0f;
 };

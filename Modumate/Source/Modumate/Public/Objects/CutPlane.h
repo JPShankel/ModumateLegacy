@@ -21,6 +21,12 @@ struct MODUMATE_API FMOICutPlaneData
 
 	UPROPERTY()
 	FVector2D Extents;
+
+	UPROPERTY()
+	FString Name;
+
+	UPROPERTY()
+	bool bIsExported { false };
 };
 
 class ACutPlaneCaptureActor;

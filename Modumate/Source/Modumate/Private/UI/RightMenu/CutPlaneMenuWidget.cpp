@@ -2,7 +2,7 @@
 
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
-#include "Objects/ModumateObjectInstance.h"
+#include "Objects/CutPlane.h"
 #include "UI/RightMenu/CutPlaneDimListItemObject.h"
 #include "UI/RightMenu/CutPlaneMenuBlock.h"
 #include "Components/ListView.h"
@@ -59,7 +59,10 @@ void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 	for (int32 i = 0; i < cutPlaneMois.Num(); ++i)
 	{
 		UCutPlaneDimListItemObject *newCutPlaneObj = NewObject<UCutPlaneDimListItemObject>(this);
-		newCutPlaneObj->DisplayName = FString(TEXT("CutPlane ")) + (FString::Printf(TEXT("%d"), cutPlaneMois[i]->ID)); //TODO: get name from moi property
+		FMOICutPlaneData cutPlaneData;
+		cutPlaneMois[i]->GetStateData().CustomData.LoadStructData(cutPlaneData);
+		newCutPlaneObj->DisplayName = cutPlaneData.Name.IsEmpty() ? FString(TEXT("OldCutPlane ")) + (FString::Printf(TEXT("%d"), cutPlaneMois[i]->ID))
+			: cutPlaneData.Name;
 		newCutPlaneObj->ObjId = cutPlaneMois[i]->ID;
 		newCutPlaneObj->Location = cutPlaneMois[i]->GetObjectLocation();
 		newCutPlaneObj->Rotation = cutPlaneMois[i]->GetObjectRotation();
