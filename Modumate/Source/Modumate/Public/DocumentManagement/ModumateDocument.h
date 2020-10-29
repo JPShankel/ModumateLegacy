@@ -129,7 +129,7 @@ public:
 
 	// Allocates IDs for new objects, finds new parent IDs for objects, and marks objects for deletion after another graph operation
 	bool FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<int32, FGraph2DHostedObjectDelta> &OutParentIDUpdates);
-	bool FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, FGraph3DDelta &Delta);
+	bool FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, const FGraph3DDelta &Delta, TArray<FDeltaPtr> &OutSideEffectDeltas);
 
 	bool GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);
 	bool MoveMetaVertices(UWorld* World, const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions);
@@ -202,7 +202,7 @@ public:
 	void UpdateVolumeGraphObjects(UWorld *World);
 
 private:
-	bool FinalizeGraphDeltas(TArray <FGraph3DDelta> &Deltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs);
+	bool FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs);
 	bool PostApplyDeltas(UWorld *World);
 
 	// Helper function for ObjectFromActor

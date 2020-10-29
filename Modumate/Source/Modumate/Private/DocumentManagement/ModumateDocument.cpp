@@ -641,7 +641,6 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 
 void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World)
 {
-
 	TArray<FVector> controlPoints;
 
 	// TODO: the graph may need an understanding of "net" deleted objects
@@ -719,65 +718,6 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 	for (auto &kvp : Delta.FaceAdditions)
 	{
 		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTMetaPlane));
-	}
-
-	// when modifying objects in the document, first add objects, then modify parent objects, then delete objects
-	for (auto &kvp : Delta.ParentIDUpdates)
-	{
-		auto obj = GetObjectById(kvp.Key);
-		if (obj == nullptr)
-		{
-			const FGraph3DHostedObjectDelta& objUpdate = kvp.Value;
-			auto newParentObj = GetObjectById(objUpdate.NextParentID);
-			// When the previous object exists, use its information to clone a new object
-			auto hostedObj = GetObjectById(objUpdate.PreviousHostedObjID);
-			if (hostedObj)
-			{
-				auto newStateData = hostedObj->GetStateData();
-				newStateData.ID = kvp.Key;
-				newStateData.ParentID = objUpdate.NextParentID;
-				auto newObj = CreateOrRestoreObj(World, newStateData);
-			}
-			// Otherwise, attempt to restore the previous object (during undo)
-			else
-			{
-				auto *oldObj = TryGetDeletedObject(kvp.Key);
-				if (ensureAlways(oldObj != nullptr))
-				{
-					RestoreObjectImpl(oldObj);
-				}
-			}
-		}
-	}
-
-	// there is a separate loop afterwards because re-parenting objects may rely on objects that are being added
-	TSet<int32> objsMarkedForDelete;
-	for (auto &kvp : Delta.ParentIDUpdates)
-	{
-		auto obj = GetObjectById(kvp.Key);
-		if (obj != nullptr)
-		{
-			FGraph3DHostedObjectDelta objUpdate = kvp.Value;
-			auto newParentObj = GetObjectById(objUpdate.NextParentID);
-
-			if (newParentObj != nullptr)
-			{
-				// Save off the world transform of the portal, since we want it to be the same regardless
-				// of its changed relative transforms between its old and new parents.
-				FTransform worldTransform = obj->GetWorldTransform();
-				newParentObj->AddChild_DEPRECATED(obj);
-				//obj->SetWorldTransform(worldTransform);
-			}
-			else
-			{
-				objsMarkedForDelete.Add(kvp.Key);
-			}
-		}
-	}
-
-	for (auto objID : objsMarkedForDelete)
-	{
-		DeleteObjectImpl(GetObjectById(objID));
 	}
 
 	for (auto &kvp : Delta.FaceDeletions)
@@ -1001,14 +941,15 @@ void FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 	}
 }
 
-bool FModumateDocument::FinalizeGraphDeltas(TArray <FGraph3DDelta> &Deltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs)
+bool FModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs)
 {
 	FGraph3D moiTempGraph;
 	FGraph3D::CloneFromGraph(moiTempGraph, VolumeGraph);
 
-	for (auto& delta : Deltas)
+	for (auto& delta : InDeltas)
 	{
-		if (!FinalizeGraphDelta(moiTempGraph, delta))
+		TArray<FDeltaPtr> sideEffectDeltas;
+		if (!FinalizeGraphDelta(moiTempGraph, delta, sideEffectDeltas))
 		{
 			return false;
 		}
@@ -1041,6 +982,9 @@ bool FModumateDocument::FinalizeGraphDeltas(TArray <FGraph3DDelta> &Deltas, TArr
 		{
 			OutAddedEdgeIDs.Remove(kvp.Key);
 		}
+
+		OutDeltas.Add(MakeShared<FGraph3DDelta>(delta));
+		OutDeltas.Append(sideEffectDeltas);
 	}
 
 	for (int32 faceID : OutAddedFaceIDs)
@@ -1320,15 +1264,10 @@ bool FModumateDocument::GetVertexMovementDeltas(const TArray<int32>& VertexIDs, 
 	}
 
 	TArray<int32> faceIDs, vertexIDs, edgeIDs;
-	if (!FinalizeGraphDeltas(deltas, faceIDs, vertexIDs, edgeIDs))
+	if (!FinalizeGraphDeltas(deltas, OutDeltas, faceIDs, vertexIDs, edgeIDs))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
-	}
-
-	for (auto& delta : deltas)
-	{
-		OutDeltas.Add(MakeShared<FGraph3DDelta>(delta));
 	}
 
 	return true;
@@ -1345,15 +1284,10 @@ bool FModumateDocument::GetPreviewVertexMovementDeltas(const TArray<int32>& Vert
 	}
 
 	TArray<int32> faceIDs, vertexIDs, edgeIDs;
-	if (!FinalizeGraphDeltas(deltas, faceIDs, vertexIDs, edgeIDs))
+	if (!FinalizeGraphDeltas(deltas, OutDeltas, faceIDs, vertexIDs, edgeIDs))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
-	}
-
-	for (auto& delta : deltas)
-	{
-		OutDeltas.Add(MakeShared<FGraph3DDelta>(delta));
 	}
 
 	return true;
@@ -1391,16 +1325,11 @@ bool FModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &Obje
 	}
 
 	TArray<int32> faceIDs, vertexIDs, edgeIDs;
-	if (!FinalizeGraphDeltas(graphDeltas, faceIDs, vertexIDs, edgeIDs))
+	TArray<FDeltaPtr> deltaPtrs;
+	if (!FinalizeGraphDeltas(graphDeltas, deltaPtrs, faceIDs, vertexIDs, edgeIDs))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
-	}
-
-	TArray<FDeltaPtr> deltaPtrs;
-	for (auto& delta : graphDeltas)
-	{
-		deltaPtrs.Add(MakeShared<FGraph3DDelta>(delta));
 	}
 	return ApplyDeltas(deltaPtrs, World);
 }
@@ -1478,16 +1407,11 @@ bool FModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 		break;
 	}
 
-	if (!bValidDelta || !FinalizeGraphDeltas(deltas, OutAddedFaceIDs, OutAddedVertexIDs, OutAddedEdgeIDs))
+	if (!bValidDelta || !FinalizeGraphDeltas(deltas, OutDeltaPtrs, OutAddedFaceIDs, OutAddedVertexIDs, OutAddedEdgeIDs))
 	{
 		// delta will be false if the object exists, out object ids should contain the existing id
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
-	}
-
-	for (auto& delta : deltas)
-	{
-		OutDeltaPtrs.Add(MakeShared<FGraph3DDelta>(delta));
 	}
 
 	return (OutDeltaPtrs.Num() > 0);
@@ -1589,7 +1513,7 @@ bool FModumateDocument::FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<in
 	return true;
 }
 
-bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &Delta)
+bool FModumateDocument::FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, const FGraph3DDelta &Delta, TArray<FDeltaPtr> &OutSideEffectDeltas)
 {
 	TMap<int32, TArray<int32>> parentIDToChildrenIDs;
 
@@ -1629,9 +1553,7 @@ bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &D
 	// child object are supposed to go (the original graph is used to populate parentFace below)
 	TempGraph.ApplyDelta(Delta);
 
-	TMap<int32, int32> childFaceIDToHostedID;
 	TSet<int32> idsWithObjects;
-	TSet<int32> rejectedObjects;
 
 	for (auto &kvp : parentIDToChildrenIDs)
 	{
@@ -1651,81 +1573,15 @@ bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &D
 				{
 					if (!idsWithObjects.Contains(childFaceID))
 					{
-						int32 newObjID = NextID++;
-						Delta.ParentIDUpdates.Add(newObjID, FGraph3DHostedObjectDelta(parentObj->GetChildIDs()[childIdx], MOD_ID_NONE, childFaceID));
-						childFaceIDToHostedID.Add(childFaceID, newObjID);
+						FMOIStateData stateData = childObj->GetStateData();
+						stateData.ID = NextID++;
+						stateData.ParentID = childFaceID;
+
+						auto delta = MakeShared<FMOIDelta>();
+						delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+						OutSideEffectDeltas.Add(delta);
+
 						idsWithObjects.Add(childFaceID);
-					}
-					else
-					{
-						rejectedObjects.Add(parentObj->GetChildIDs()[childIdx]);
-					}
-				}
-
-				// loop through children to find the new planes that they apply to
-				// TODO: implementation is object specific and should be moved there
-				// portals should be on 0 or 1 of the new planes, and finishes should be on all applicable planes
-				for (int32 childObjId : childObj->GetChildIDs())
-				{
-					auto childHostedObj = GetObjectById(childObjId);
-					if (childHostedObj && (childHostedObj->GetObjectType() == EObjectType::OTWindow || childHostedObj->GetObjectType() == EObjectType::OTDoor))
-					{
-						auto childFaceIDs = parentIDToChildrenIDs[parentID];
-
-						TArray<FVector> corners;
-						for (int32 corneridx = 0; corneridx < 4; corneridx++)
-						{
-							corners.Add(childHostedObj->GetCorner(corneridx));
-						}
-						TArray<FVector2D> portalCornersOnFace;
-						for (FVector& corner : corners)
-						{
-							portalCornersOnFace.Add(parentFace->ProjectPosition2D(corner));
-						}
-						FBox2D portalBB = FBox2D(portalCornersOnFace);
-
-						for (int32 childFaceID : childFaceIDs)
-						{
-							auto childFace = TempGraph.FindFace(childFaceID);
-							// TODO: AABBs will not work for concave faces, and will even have problems for faces that aren't rectangles
-							TArray<FVector2D> childCornersOnFace;
-							for (FVector& childPos : childFace->CachedPositions)
-							{
-								childCornersOnFace.Add(parentFace->ProjectPosition2D(childPos));
-							}
-							// FBox2D functions are strict, so this adds tolerance
-							FBox2D faceBB = FBox2D(childCornersOnFace).ExpandBy(VolumeGraph.Epsilon);
-
-							if (faceBB.IsInside(portalBB))
-							{
-								Delta.ParentIDUpdates.Add(childObjId, FGraph3DHostedObjectDelta(MOD_ID_NONE, childObj->ID, childFaceIDToHostedID[childFaceID]));
-
-								break;
-							}
-							// reject all cases where a portal would be split
-							else 
-							{
-								// FBox2D functions are strict, so this adds tolerance
-								faceBB = faceBB.ExpandBy(-VolumeGraph.Epsilon * 2.0f);
-								if (faceBB.Intersect(portalBB))
-								{
-									return false;
-								}
-							}
-						}
-					}
-					else if (childHostedObj && (childHostedObj->GetObjectType() == EObjectType::OTFinish))
-					{
-						auto childFaceIDs = parentIDToChildrenIDs[parentID];
-						for (int32 childFaceID : childFaceIDs)
-						{
-							if (!rejectedObjects.Contains(childObj->ID))
-							{
-								int32 newObjID = NextID++;
-								Delta.ParentIDUpdates.Add(newObjID, FGraph3DHostedObjectDelta(childObjId, MOD_ID_NONE, childFaceIDToHostedID[childFaceID]));
-							}
-						}
-						Delta.ParentIDUpdates.Add(childObjId, FGraph3DHostedObjectDelta(MOD_ID_NONE, childObj->ID, MOD_ID_NONE));
 					}
 				}
 			}
@@ -1748,9 +1604,61 @@ bool FModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, FGraph3DDelta &D
 
 		if (obj && obj->GetChildIDs().Num() > 0)
 		{
-			for (int32 childIdx = 0; childIdx < obj->GetChildIDs().Num(); childIdx++)
+			auto& childIDs = obj->GetChildIDs();
+			for (int32 childIdx = 0; childIdx < childIDs.Num(); childIdx++)
 			{
-				Delta.ParentIDUpdates.Add(obj->GetChildIDs()[childIdx], FGraph3DHostedObjectDelta(MOD_ID_NONE, objID, MOD_ID_NONE));
+				auto childObj = GetObjectById(childIDs[childIdx]);
+				if (!childObj)
+				{
+					continue;
+				}
+
+				auto deleteObjectDelta = MakeShared<FMOIDelta>();
+				deleteObjectDelta->AddCreateDestroyState(childObj->GetStateData(), EMOIDeltaType::Destroy);
+				OutSideEffectDeltas.Add(deleteObjectDelta);
+
+				if (childObj->GetChildIDs().Num() == 0)
+				{
+					continue;
+				}
+
+				auto& grandchildIDs = childObj->GetChildIDs();
+				for (int32 grandchildIdx = 0; grandchildIdx < grandchildIDs.Num(); grandchildIdx++)
+				{
+					auto surfaceGraphObj = GetObjectById(grandchildIDs[grandchildIdx]);
+					if (!surfaceGraphObj || !SurfaceGraphs.Contains(surfaceGraphObj->ID))
+					{
+						continue;
+					}
+
+					// delete all objects in the surface graph
+					auto surfaceGraph = SurfaceGraphs[surfaceGraphObj->ID];
+					TArray<FGraph2DDelta> deltas;
+					TArray<int32> allIDs;
+					surfaceGraph->GetAllObjects().GenerateKeyArray(allIDs);
+					surfaceGraph->DeleteObjects(deltas, NextID, allIDs);
+
+					for (auto& delta : deltas)
+					{
+						OutSideEffectDeltas.Add(MakeShared<FGraph2DDelta>(delta));
+					};
+
+					// delete remaining mois (mois reflecting the surface graph are deleted by the FGraph2DDeltas)
+					// TODO: consolidate this kind of behavior with DeleteObjects
+					TArray<FModumateObjectInstance*> objectsToDelete = surfaceGraphObj->GetAllDescendents();
+					objectsToDelete.Add(surfaceGraphObj);
+
+					auto deleteSurfaceDelta = MakeShared<FMOIDelta>();
+					for (FModumateObjectInstance* descendent : objectsToDelete)
+					{
+						if (UModumateTypeStatics::Graph2DObjectTypeFromObjectType(descendent->GetObjectType()) == EGraphObjectType::None)
+						{
+							deleteSurfaceDelta->AddCreateDestroyState(descendent->GetStateData(), EMOIDeltaType::Destroy);
+						}
+					}
+
+					OutSideEffectDeltas.Add(deleteSurfaceDelta);
+				}
 			}
 		}
 	}

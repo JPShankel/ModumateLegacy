@@ -1149,7 +1149,7 @@ AActor *FModumateObjectInstanceImplBase::RestoreActor()
 {
 	if (UWorld *world = MOI ? MOI->GetWorld() : nullptr)
 	{
-		return CreateActor(world, MOI->GetObjectLocation(), MOI->GetObjectRotation());
+		return CreateActor(world, FVector::ZeroVector, FQuat::Identity);
 	}
 
 	return nullptr;

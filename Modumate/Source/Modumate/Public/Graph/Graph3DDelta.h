@@ -27,19 +27,6 @@ struct FGraph3DObjDelta
 		const TSet<int32>& InGroupIDs = TSet<int32>());
 };
 
-struct FGraph3DHostedObjectDelta
-{
-	int32 PreviousHostedObjID;
-	int32 PreviousParentID;
-	int32 NextParentID;
-
-	FGraph3DHostedObjectDelta(int32 prevHostedObjID, int32 prevParentID, int32 nextParentID)
-		: PreviousHostedObjID(prevHostedObjID)
-		, PreviousParentID(prevParentID)
-		, NextParentID(nextParentID)
-	{ }
-};
-
 struct FGraph3DGroupIDsDelta
 {
 	TSet<int32> GroupIDsToAdd, GroupIDsToRemove;
@@ -83,8 +70,6 @@ public:
 	// map from faceID to a map from vertex index to new ID
 	TMap<int32, TMap<int32, int32>> FaceVertexAdditions;
 	TMap<int32, TMap<int32, int32>> FaceVertexRemovals;
-
-	TMap<int32, FGraph3DHostedObjectDelta> ParentIDUpdates;
 
 	// Updates to GroupIDs for graph objects
 	TMap<int32, FGraph3DGroupIDsDelta> GroupIDsUpdates;

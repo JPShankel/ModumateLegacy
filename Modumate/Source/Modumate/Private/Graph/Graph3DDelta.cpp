@@ -95,8 +95,6 @@ void FGraph3DDelta::Reset()
 
 	FaceVertexAdditions.Reset();
 	FaceVertexRemovals.Reset();
-
-	ParentIDUpdates.Reset();
 }
 
 bool FGraph3DDelta::IsEmpty()
@@ -111,7 +109,6 @@ bool FGraph3DDelta::IsEmpty()
 	if (FaceContainmentUpdates.Num() > 0) return false;
 	if (FaceVertexAdditions.Num() > 0) return false;
 	if (FaceVertexRemovals.Num() > 0) return false;
-	if (ParentIDUpdates.Num() > 0) return false;
 
 	return true;
 }
@@ -193,14 +190,6 @@ TSharedPtr<FGraph3DDelta> FGraph3DDelta::MakeGraphInverse() const
 
 	inverse->FaceAdditions = FaceDeletions;
 	inverse->FaceDeletions = FaceAdditions;
-
-	for (const auto& kvp : ParentIDUpdates)
-	{
-		int32 parentID = kvp.Key;
-		const FGraph3DHostedObjectDelta& idUpdate = kvp.Value;
-
-		inverse->ParentIDUpdates.Add(parentID, FGraph3DHostedObjectDelta(idUpdate.PreviousHostedObjID, idUpdate.NextParentID, idUpdate.PreviousParentID));
-	}
 
 	for (const auto& kvp : GroupIDsUpdates)
 	{
