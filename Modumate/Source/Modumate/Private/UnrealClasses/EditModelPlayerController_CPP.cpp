@@ -902,7 +902,7 @@ bool AEditModelPlayerController_CPP::OnSavePDF()
 	}
 
 	static const FText dialogTitle = FText::FromString(FString(TEXT("PDF Creation")) );
-	if (gameInstance->LoginStatus() != ELoginStatus::Connected)
+	if (!gameInstance->IsloggedIn())
 	{
 		FMessageDialog::Open(EAppMsgType::Ok,
 			FText::FromString(FString(TEXT("You must be logged in to export to a PDF file") )),
@@ -962,7 +962,7 @@ bool AEditModelPlayerController_CPP::OnCreateDwg()
 	}
 
 	static const FText dialogTitle = FText::FromString(FString(TEXT("DWG Creation")));
-	if (gameInstance->LoginStatus() != ELoginStatus::Connected)
+	if (!gameInstance->IsloggedIn())
 	{
 		FMessageDialog::Open(EAppMsgType::Ok,
 			FText::FromString(FString(TEXT("You must be logged in to export to DWG files")) ),

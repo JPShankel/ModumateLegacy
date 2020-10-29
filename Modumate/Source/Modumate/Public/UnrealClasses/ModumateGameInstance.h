@@ -28,6 +28,7 @@ enum class ELoginStatus : uint8
 	Connected,
 	WaitingForRefreshToken,
 	WaitingForVerify,
+	WaitingForReverify,
 	InvalidEmail,
 	InvalidPassword,
 	UserDisabled,
@@ -78,6 +79,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	ELoginStatus LoginStatus() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsloggedIn() const;
 
 	UFUNCTION(BlueprintCallable, Category = ModumateLogin)
 	void Login(const FString &userName, const FString &password);

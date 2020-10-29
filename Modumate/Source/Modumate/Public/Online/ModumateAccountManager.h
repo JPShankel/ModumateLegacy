@@ -71,6 +71,9 @@ struct MODUMATE_API FModumateUserStatus
 
 	UPROPERTY()
 	TArray<FString> Permissions;
+
+	UPROPERTY()
+	FString latest_modumate_version;
 };
 
 USTRUCT()
@@ -114,6 +117,7 @@ public:
 
 	void RequestIdTokenRefresh(TBaseDelegate<void, bool>* callback = nullptr);
 	void RequestStatus();
+	bool IsloggedIn() const;
 	bool HasPermission(EModumatePermission requestedPermission) const;
 
 	void Tick();
@@ -134,6 +138,7 @@ private:
 	FString RefreshToken;
 	FString LocalId;
 	FModumateUserInfo UserInfo;
+	FString LatestVersion;
 	TArray<TBaseDelegate<void, bool>> TokenRefreshDelegates;
 
 	FDateTime IdTokenTimestamp;

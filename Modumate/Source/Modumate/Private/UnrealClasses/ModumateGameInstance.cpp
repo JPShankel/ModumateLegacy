@@ -669,3 +669,8 @@ ELoginStatus UModumateGameInstance::LoginStatus() const
 {
 	return AccountManager->GetLoginStatus();
 }
+
+bool UModumateGameInstance::IsloggedIn() const
+{
+	return AccountManager->IsloggedIn();
+}

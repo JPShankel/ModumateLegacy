@@ -139,6 +139,7 @@ void FModumateAccountManager::ProcessLogin(const FHttpResponsePtr Response)
 	}
 
 	case ELoginStatus::WaitingForVerify:
+	case ELoginStatus::WaitingForReverify:
 	{
 		FString content = Response->GetContentAsString();
 		FModumateUserVerifyParams userVerifyInfo;
@@ -150,8 +151,19 @@ void FModumateAccountManager::ProcessLogin(const FHttpResponsePtr Response)
 			IdToken = userVerifyInfo.IdToken;
 			UserInfo = userVerifyInfo.User;
 			IdTokenTimestamp = FDateTime::Now();
-			LoginStatus = ELoginStatus::Connected;
 			ProcessUserStatus(userVerifyInfo.Status);
+
+			const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
+			if (LoginStatus == ELoginStatus::WaitingForVerify && !LatestVersion.IsEmpty() && LatestVersion != projectSettings->ProjectVersion)
+			{   // Notify user of new version:
+				static const FText dialogTitle = FText::FromString(FString(TEXT("New Release")));
+				static const FString downloadUrl("https://www.modumate.com/product#Beta");
+				FString message = FString::Printf(TEXT("A new release of Modumate (v%s) is available. Your current version is v%s.\n\n   %s"),
+					*LatestVersion, *projectSettings->ProjectVersion, *downloadUrl);
+				FMessageDialog::Open(EAppMsgType::Ok,
+					FText::FromString(message), &dialogTitle);;
+			}
+			LoginStatus = ELoginStatus::Connected;
 		}
 		else
 		{
@@ -199,7 +211,7 @@ void FModumateAccountManager::RequestIdTokenRefresh(TBaseDelegate<void, bool>* c
 		TokenRefreshDelegates.Add(*callback);
 	}
 	Request->SetContentAsString(payload);
-	LoginStatus = ELoginStatus::WaitingForVerify;
+	LoginStatus = LoginStatus == ELoginStatus::Connected ? ELoginStatus::WaitingForReverify  : ELoginStatus::WaitingForVerify;
 	Request->ProcessRequest();
 }
 
@@ -223,6 +235,11 @@ void FModumateAccountManager::RequestStatus()
 	Request->ProcessRequest();
 }
 
+bool FModumateAccountManager::IsloggedIn() const
+{
+	return LoginStatus == ELoginStatus::Connected || LoginStatus == ELoginStatus::WaitingForReverify;
+}
+
 bool FModumateAccountManager::HasPermission(EModumatePermission requestedPermission) const
 {
 	return CurrentPermissions.Contains(requestedPermission);
@@ -240,6 +257,12 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& userS
 		{
 			CurrentPermissions.Add(EModumatePermission(permissionIndex));
 		}
+	}
+
+	FString version = userStatus.latest_modumate_version;
+	if (!version.IsEmpty())
+	{
+		LatestVersion = version;
 	}
 }
 
