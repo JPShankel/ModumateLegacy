@@ -19,11 +19,12 @@ bool UStartBlockLoginWidget::Initialize()
 		return false;
 	}
 	ModumateGameInstance = Cast<UModumateGameInstance>(GetGameInstance());
-	if (!(ButtonCreateAccount && ButtonLogin))
+	if (!(ButtonCreateAccount && ButtonLogin && ButtonForgotPassword))
 	{
 		return false;
 	}
 	ButtonCreateAccount->ModumateButton->OnReleased.AddDynamic(this, &UStartBlockLoginWidget::OnButtonReleasedCreateAccount);
+	ButtonForgotPassword->ModumateButton->OnReleased.AddDynamic(this, &UStartBlockLoginWidget::OnButtonReleasedForgotPassword);
 	ButtonLogin->ModumateButton->OnReleased.AddDynamic(this, &UStartBlockLoginWidget::Login);
 	EmailBox->OnTextCommitted.AddDynamic(this, &UStartBlockLoginWidget::OnTextBlockCommittedLogin);
 	PasswordBox->OnTextCommitted.AddDynamic(this, &UStartBlockLoginWidget::OnTextBlockCommittedLogin);
@@ -58,6 +59,11 @@ void UStartBlockLoginWidget::NativeTick(const FGeometry& MyGeometry, float InDel
 void UStartBlockLoginWidget::OnButtonReleasedCreateAccount()
 {
 	FPlatformProcess::LaunchURL(*CreateAccountURL, nullptr, nullptr);
+}
+
+void UStartBlockLoginWidget::OnButtonReleasedForgotPassword()
+{
+	FPlatformProcess::LaunchURL(*ForgotPasswordURL, nullptr, nullptr);
 }
 
 void UStartBlockLoginWidget::OnTextBlockCommittedLogin(const FText& Text, ETextCommit::Type CommitMethod)

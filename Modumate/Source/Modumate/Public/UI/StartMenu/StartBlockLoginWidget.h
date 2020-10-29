@@ -24,8 +24,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString CreateAccountURL;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString ForgotPasswordURL;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonCreateAccount;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget *ButtonForgotPassword;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonLogin;
@@ -45,6 +51,9 @@ protected:
 
 	UFUNCTION()
 	void OnButtonReleasedCreateAccount();
+
+	UFUNCTION()
+	void OnButtonReleasedForgotPassword();
 
 	UFUNCTION()
 	void OnTextBlockCommittedLogin(const FText& Text, ETextCommit::Type CommitMethod);
