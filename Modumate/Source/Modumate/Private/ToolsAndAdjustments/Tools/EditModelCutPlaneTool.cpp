@@ -26,7 +26,6 @@ bool UCutPlaneTool::Activate()
 	Controller->EMPlayerState->SetHoveredObject(nullptr);
 	OriginalMouseMode = Controller->EMPlayerState->SnappedCursor.MouseMode;
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
-	Controller->SetCutPlaneVisibility(true);
 
 	return UEditModelToolBase::Activate();
 }

@@ -7,6 +7,7 @@
 #include "UI/RightMenu/CutPlaneMenuBlock.h"
 #include "Components/ListView.h"
 #include "UI/RightMenu/CutPlaneDimListItem.h"
+#include "Objects/CutPlane.h"
 
 using namespace Modumate;
 
@@ -64,9 +65,9 @@ void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 		newCutPlaneObj->DisplayName = cutPlaneData.Name.IsEmpty() ? FString(TEXT("OldCutPlane ")) + (FString::Printf(TEXT("%d"), cutPlaneMois[i]->ID))
 			: cutPlaneData.Name;
 		newCutPlaneObj->ObjId = cutPlaneMois[i]->ID;
-		newCutPlaneObj->Location = cutPlaneMois[i]->GetObjectLocation();
-		newCutPlaneObj->Rotation = cutPlaneMois[i]->GetObjectRotation();
-		newCutPlaneObj->Visibility = cutPlaneMois[i]->IsVisible();
+		newCutPlaneObj->Location = cutPlaneData.Location;
+		newCutPlaneObj->Rotation = cutPlaneData.Rotation;
+		newCutPlaneObj->Visibility = !cutPlaneMois[i]->IsRequestedHidden();
 
 		// Place cut plane item by its orientation
 		float cutPlaneUpDot = FMath::Abs(newCutPlaneObj->Rotation.GetUpVector() | FVector::UpVector);

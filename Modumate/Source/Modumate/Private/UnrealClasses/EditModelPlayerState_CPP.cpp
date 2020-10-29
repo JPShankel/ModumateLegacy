@@ -186,27 +186,24 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	}
 
 	// TODO: move this code - either be able to ask objects which lines to draw or enable objects to bypass this function
-	if (EMPlayerController->bCutPlaneVisible)
+	for (FModumateObjectInstance *cutPlaneObj : doc.GetObjectsOfType(EObjectType::OTCutPlane))
 	{
-		for (FModumateObjectInstance *cutPlaneObj : doc.GetObjectsOfType(EObjectType::OTCutPlane))
+		if (!cutPlaneObj || !cutPlaneObj->IsVisible())
 		{
-			if (!cutPlaneObj || !cutPlaneObj->IsVisible())
-			{
-				continue;
-			}
-
-			cutPlaneObj->AddDraftingLines(EMPlayerController->HUDDrawWidget);
+			continue;
 		}
 
-		for (FModumateObjectInstance *scopeBoxObj : doc.GetObjectsOfType(EObjectType::OTScopeBox))
-		{
-			if (!scopeBoxObj || !scopeBoxObj->IsVisible())
-			{
-				continue;
-			}
+		cutPlaneObj->AddDraftingLines(EMPlayerController->HUDDrawWidget);
+	}
 
-			scopeBoxObj->AddDraftingLines(EMPlayerController->HUDDrawWidget);
+	for (FModumateObjectInstance *scopeBoxObj : doc.GetObjectsOfType(EObjectType::OTScopeBox))
+	{
+		if (!scopeBoxObj || !scopeBoxObj->IsVisible())
+		{
+			continue;
 		}
+
+		scopeBoxObj->AddDraftingLines(EMPlayerController->HUDDrawWidget);
 	}
 }
 
@@ -938,8 +935,8 @@ bool AEditModelPlayerState_CPP::IsObjectTypeEnabledByViewMode(EObjectType Object
 	case EObjectType::OTSurfacePolygon:
 		return SelectedViewMode == EEditViewModes::SurfaceGraphs;
 	case EObjectType::OTCutPlane:
-	case EObjectType::OTScopeBox: // TODO: cut planes and scope boxes will have individually toggled visibility in the app
-		return EMPlayerController->bCutPlaneVisible;
+	case EObjectType::OTScopeBox:
+		return true;
 	case EObjectType::OTWallSegment:
 	case EObjectType::OTFloorSegment:
 	case EObjectType::OTCeiling:

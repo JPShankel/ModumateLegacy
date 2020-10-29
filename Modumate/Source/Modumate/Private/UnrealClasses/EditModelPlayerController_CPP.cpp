@@ -844,12 +844,6 @@ bool AEditModelPlayerController_CPP::GetScreenshotFileNameWithDialog(FString &fi
 	return bChoseFile;
 }
 
-void AEditModelPlayerController_CPP::SetCutPlaneVisibility(bool bVisible)
-{
-	bCutPlaneVisible = bVisible;
-	EMPlayerState->UpdateObjectVisibilityAndCollision();
-}
-
 void AEditModelPlayerController_CPP::TrySavePDF()
 {
 	OnSavePDF();

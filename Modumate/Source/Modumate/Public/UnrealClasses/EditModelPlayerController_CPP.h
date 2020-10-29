@@ -352,9 +352,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Snap)
 	float SnapOcclusionEpsilon = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Visibility)
-	bool bCutPlaneVisible = false;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input)
 	UEditModelInputAutomation* InputAutomationComponent;
 
@@ -484,9 +481,6 @@ public:
 
 	UPROPERTY()
 	class ASceneCapture2D* ThumbnailCapturer;
-
-	UFUNCTION(BlueprintCallable)
-	void SetCutPlaneVisibility(bool bVisible);
 
 	UFUNCTION(BlueprintCallable, Category = CameraViewMenu)
 	bool ToggleGravityPawn();

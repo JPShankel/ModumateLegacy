@@ -31,7 +31,6 @@ bool UScopeBoxTool::Activate()
 	Controller->EMPlayerState->SetHoveredObject(nullptr);
 	OriginalMouseMode = Controller->EMPlayerState->SnappedCursor.MouseMode;
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
-	Controller->SetCutPlaneVisibility(true);
 
 	CurrentState = SeekingCutPlane;
 
