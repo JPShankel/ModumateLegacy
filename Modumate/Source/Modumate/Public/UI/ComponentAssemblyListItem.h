@@ -46,6 +46,12 @@ protected:
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *EMPlayerController;
 
+	UPROPERTY()
+	FButtonStyle NormalButtonStyle;
+
+	UPROPERTY()
+	FButtonStyle ActiveButtonStyle;
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -88,6 +94,9 @@ public:
 	void UpdateSelectionItemCount(int32 ItemCount);
 	bool BuildFromAssembly();
 	bool GetItemTips(TArray<FString> &OutTips);
+	void SwitchToNormalStyle();
+	void SwitchToActiveStyle();
+	void CheckIsCurrentToolAssemblyState();
 
 	// UserObjectListEntry interface
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;

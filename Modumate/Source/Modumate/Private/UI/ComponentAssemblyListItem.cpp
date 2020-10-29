@@ -49,6 +49,11 @@ bool UComponentAssemblyListItem::Initialize()
 void UComponentAssemblyListItem::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	NormalButtonStyle = ModumateButtonMain->WidgetStyle;
+	ActiveButtonStyle = ModumateButtonMain->WidgetStyle;
+	ActiveButtonStyle.Normal = NormalButtonStyle.Pressed;
+	ActiveButtonStyle.Hovered = NormalButtonStyle.Pressed;
 }
 
 void UComponentAssemblyListItem::UpdateItemType(EComponentListItemType NewItemType)
@@ -231,6 +236,29 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 	return true;
 }
 
+void UComponentAssemblyListItem::SwitchToNormalStyle()
+{
+	ModumateButtonMain->SetStyle(NormalButtonStyle);
+}
+
+void UComponentAssemblyListItem::SwitchToActiveStyle()
+{
+	ModumateButtonMain->SetStyle(ActiveButtonStyle);
+}
+
+void UComponentAssemblyListItem::CheckIsCurrentToolAssemblyState()
+{
+	FBIMKey asmKey = EMPlayerController->EMPlayerState->GetAssemblyForToolMode(ToolMode);
+	if (!asmKey.IsNone() && asmKey == BIMKey)
+	{
+		SwitchToActiveStyle();
+	}
+	else
+	{
+		SwitchToNormalStyle();
+	}
+}
+
 void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
 	UComponentListObject *compListObj = Cast<UComponentListObject>(ListItemObject);
@@ -272,6 +300,10 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 		BuildFromAssembly();
 		bIsNonAssemblyObjectSelectItem = false;
 		UpdateItemType(compListObj->ItemType);
+		if (compListObj->ItemType == EComponentListItemType::AssemblyListItem)
+		{
+			CheckIsCurrentToolAssemblyState();
+		}
 		return;
 
 	case EComponentListItemType::SelectionListItem:
