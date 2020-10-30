@@ -11,7 +11,7 @@
 
 FMOIVertexImplBase::FMOIVertexImplBase(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
-	, SelectedColor(0x02, 0x58, 0xFF)
+	, SelectedColor(0x00, 0x35, 0xFF)
 	, BaseColor(0x00, 0x00, 0x00)
 	, DefaultHandleSize(0.0004f)
 	, SelectedHandleSize(0.0006f)
