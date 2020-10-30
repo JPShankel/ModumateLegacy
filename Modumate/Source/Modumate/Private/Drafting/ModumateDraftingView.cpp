@@ -10,7 +10,7 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "Database/ModumateObjectDatabase.h"
-#include "Objects/ModumateObjectInstance.h"
+#include "Objects/CutPlane.h"
 #include "ModumateCore/ModumateRoomStatics.h"
 #include "DocumentManagement/ModumateSceneCaptureObjectInterface.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
@@ -70,7 +70,7 @@ bool FModumateDraftingView::ExportDraft(UWorld *world,const TCHAR *filepath)
 	{
 
 		if (!DrawingInterface->StartPage(page->PageNumber,
-			page->Dimensions.X.AsFloorplanInches(), page->Dimensions.Y.AsFloorplanInches()) )
+			page->Dimensions.X.AsFloorplanInches(), page->Dimensions.Y.AsFloorplanInches(), page->Name) )
 		{
 			return false;
 		}
@@ -82,7 +82,7 @@ bool FModumateDraftingView::ExportDraft(UWorld *world,const TCHAR *filepath)
 	return result;
 }
 
-TSharedPtr<FDraftingPage> FModumateDraftingView::CreateAndAddPage(FText name, FText number)
+TSharedPtr<FDraftingPage> FModumateDraftingView::CreateAndAddPage(FString name, FString number)
 {
 	TSharedPtr<FDraftingPage> newPage = MakeShareable(new FDraftingPage());
 
@@ -154,7 +154,7 @@ void FModumateDraftingView::PaginateScheduleViews(IModumateDraftingDraw *drawing
 	int32 scheduleIndex = 1;
 	FText schedulePageName = LOCTEXT("schedulepage_name", "SCHEDULES");
 	FText sheetNumberFormat = LOCTEXT("schedulepage_number", "A7.{0}");
-	TSharedPtr<FDraftingPage> currentPage = CreateAndAddPage(schedulePageName,FText::Format(sheetNumberFormat, FText::AsNumber(scheduleIndex)));
+	TSharedPtr<FDraftingPage> currentPage = CreateAndAddPage(schedulePageName.ToString(), FText::Format(sheetNumberFormat, FText::AsNumber(scheduleIndex)).ToString());
 	scheduleIndex++;
 
 	// fill column with schedules until the available area is consumed
@@ -204,7 +204,7 @@ void FModumateDraftingView::PaginateScheduleViews(IModumateDraftingDraw *drawing
 				currentScheduleArea->SetLocalPosition(PageMargin);
 				currentScheduleArea->Children.Add(MakeShareable(new FDraftingRectangle(drawableDimensions)));
 				currentPage->Children.Add(currentScheduleArea);
-				currentPage = CreateAndAddPage(schedulePageName,FText::Format(sheetNumberFormat, FText::AsNumber(scheduleIndex)));
+				currentPage = CreateAndAddPage(schedulePageName.ToString(), FText::Format(sheetNumberFormat, FText::AsNumber(scheduleIndex)).ToString());
 				scheduleIndex++;
 				availableX = maxAvailableX;
 			}
@@ -238,7 +238,7 @@ void FModumateDraftingView::PaginateScheduleViews(IModumateDraftingDraw *drawing
 		currentScheduleArea->SetLocalPosition(PageMargin);
 		currentScheduleArea->Children.Add(MakeShareable(new FDraftingRectangle(drawableDimensions)));
 		currentPage->Children.Add(currentScheduleArea);
-		currentPage = CreateAndAddPage(schedulePageName,FText::Format(sheetNumberFormat, FText::AsNumber(scheduleIndex)));
+		currentPage = CreateAndAddPage(schedulePageName.ToString(), FText::Format(sheetNumberFormat, FText::AsNumber(scheduleIndex)).ToString());
 		scheduleIndex++;
 		availableX = maxAvailableX;
 	}
@@ -296,7 +296,11 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 
 		sceneCaptureInterface->SetupPendingRenders();
 
-		auto page = CreateAndAddPage();
+		FMOICutPlaneData cutPlaneData;
+		cutPlane->GetStateData().CustomData.LoadStructData(cutPlaneData);
+		FString cutPlaneName = cutPlaneData.Name;
+		cutPlaneName.ReplaceInline(TEXT("/"), TEXT("_"));
+		auto page = CreateAndAddPage(cutPlaneName);
 		TSharedPtr<FFloorplan> floorplan = MakeShareable(new FFloorplan(Document, world, TPair<int32, int32>(cutPlane->ID, MOD_ID_NONE)));
 		floorplan->InitializeDimensions(presentationSeriesSize - (drawingMargin*2.0f), drawingMargin);
 		floorplan->SetLocalPosition(pageMargin);

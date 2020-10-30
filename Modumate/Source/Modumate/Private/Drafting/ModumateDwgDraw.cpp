@@ -237,9 +237,10 @@ namespace Modumate
 		return EDrawError::ErrorNone;
 	}
 
-	bool FModumateDwgDraw::StartPage(int32 pageNumber, float widthInches, float heightInches)
+	bool FModumateDwgDraw::StartPage(int32 pageNumber, float widthInches, float heightInches, FString pageName /*= FString()*/)
 	{
 		JsonDocument.Push(FValueArray());
+		PageNames.Push(MoveTemp(pageName));
 		return true;
 	}
 
@@ -279,4 +280,17 @@ namespace Modumate
 
 		return true;
 	}
+
+	FString FModumateDwgDraw::GetPageName(int index) const
+	{
+		if (PageNames.IsValidIndex(index))
+		{
+			return PageNames[index];
+		}
+		else
+		{
+			return FString();
+		}
+	}
+
 }

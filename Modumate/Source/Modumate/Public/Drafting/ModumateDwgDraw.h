@@ -91,11 +91,12 @@ namespace Modumate
 			FModumateLayerType layerType = FModumateLayerType::kDefault
 		) override;
 
-		virtual bool StartPage(int32 pageNumber, float widthInches, float heightInches) override;
+		virtual bool StartPage(int32 pageNumber, float widthInches, float heightInches, FString pageName = FString()) override;
 		virtual bool SaveDocument(const FString& filename) override;
 
 		int GetNumPages() const { return JsonDocument.Num(); }
 		FString GetJsonAsString(int index) const;
+		FString GetPageName(int index) const;
 
 		const TArray<FString>& GetImages() const { return ImageFilepaths; }
 
@@ -107,6 +108,7 @@ namespace Modumate
 		static FJsonValuePtr LinePatternToJson(const LinePattern& linePattern);
 
 		TArray<FValueArray> JsonDocument;
+		TArray<FString> PageNames;
 
 		TArray<FString> ImageFilepaths;
 

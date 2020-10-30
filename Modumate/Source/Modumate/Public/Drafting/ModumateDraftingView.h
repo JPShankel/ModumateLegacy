@@ -52,7 +52,7 @@ namespace Modumate
 
 		// name and number are defaulted - often name and number are fields that are dependent on pageNumber
 		// the fields are public in FDraftingPage so they can be set after this function with the desired format
-		TSharedPtr<FDraftingPage> CreateAndAddPage(FText name = FText(), FText number = FText());
+		TSharedPtr<FDraftingPage> CreateAndAddPage(FString name = FString(), FString number = FString());
 
 	// Receive pages
 	public:

@@ -19,8 +19,8 @@ namespace Modumate {
 		// Sheet Info
 		int32 PageNumber;
 		FText Date;
-		FText Name;
-		FText Number;
+		FString Name;
+		FString Number;
 
 		float DrawingScale;
 	};

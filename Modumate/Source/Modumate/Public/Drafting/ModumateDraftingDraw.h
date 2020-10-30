@@ -154,7 +154,7 @@ namespace Modumate
 			FModumateLayerType layerType = FModumateLayerType::kDefault
 		) = 0;
 
-		virtual bool StartPage(int32 pageNumber, float widthInches, float heightInches)
+		virtual bool StartPage(int32 pageNumber, float widthInches, float heightInches, FString pageName = FString())
 		{ return true; }
 
 		virtual bool SaveDocument(const FString& filename)

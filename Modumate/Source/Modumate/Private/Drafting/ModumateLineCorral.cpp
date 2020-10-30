@@ -182,10 +182,10 @@ Modumate::EDrawError FModumateLineCorral::FillCircle(
 	return Next->FillCircle(cx, cy, radius, color, layerType);
 }
 
-bool FModumateLineCorral::StartPage(int32 pageNumber, float widthInches, float heightInches)
+bool FModumateLineCorral::StartPage(int32 pageNumber, float widthInches, float heightInches, FString pageName)
 {
 	ProcessLines();
-	return Next->StartPage(pageNumber, widthInches, heightInches);
+	return Next->StartPage(pageNumber, widthInches, heightInches, pageName);
 }
 
 bool FModumateLineCorral::SaveDocument(const FString& filename)

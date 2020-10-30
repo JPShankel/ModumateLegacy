@@ -1020,7 +1020,7 @@ namespace Modumate
 
 	using namespace PDF;
 
-	bool Modumate::FModumatePDFDraw::StartPage(int32 pageNumber, float widthInches, float heightInches)
+	bool Modumate::FModumatePDFDraw::StartPage(int32 pageNumber, float widthInches, float heightInches, FString pageName)
 	{
 		PageNum = pageNumber;
 		AddPage(Doc.Object, widthInches, heightInches);

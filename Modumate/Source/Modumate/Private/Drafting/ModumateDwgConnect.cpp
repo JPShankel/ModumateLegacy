@@ -139,7 +139,12 @@ namespace Modumate
 		
 		for (int page = 0; page < numPages; ++page)
 		{
-			FString filenameDwg = FString::Printf(TEXT("%s/%s%d.dwg"), *zipDirectory, *basename, page + 1);
+			FString filenameDwg = DwgDraw.GetPageName(page);
+			if (filenameDwg.IsEmpty())
+			{
+				filenameDwg = FString::Printf(TEXT("%s_%d"), *basename, page + 1);
+			}
+			filenameDwg = zipDirectory / filenameDwg + TEXT(".dwg");
 			FString pageJson = DwgDraw.GetJsonAsString(page);
 			CallDwgServer(pageJson, filenameDwg);
 		}

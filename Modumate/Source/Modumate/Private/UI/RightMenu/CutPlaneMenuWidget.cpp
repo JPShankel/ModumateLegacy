@@ -62,8 +62,7 @@ void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 		UCutPlaneDimListItemObject *newCutPlaneObj = NewObject<UCutPlaneDimListItemObject>(this);
 		FMOICutPlaneData cutPlaneData;
 		cutPlaneMois[i]->GetStateData().CustomData.LoadStructData(cutPlaneData);
-		newCutPlaneObj->DisplayName = cutPlaneData.Name.IsEmpty() ? FString(TEXT("OldCutPlane ")) + (FString::Printf(TEXT("%d"), cutPlaneMois[i]->ID))
-			: cutPlaneData.Name;
+		newCutPlaneObj->DisplayName = cutPlaneData.Name;
 		newCutPlaneObj->ObjId = cutPlaneMois[i]->ID;
 		newCutPlaneObj->Location = cutPlaneData.Location;
 		newCutPlaneObj->Rotation = cutPlaneData.Rotation;
