@@ -22,7 +22,7 @@
 #include "BIMKernel/BIMLegacyPattern.h"
 #include "DocumentManagement/ModumateSerialization.h"
 
-class FBIMPresetCollection;
+struct FBIMPresetCollection;
 class FModumateDatabase;
 
 /*

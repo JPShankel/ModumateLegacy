@@ -5,6 +5,8 @@
 #include "BIMKernel/BIMTagPath.h"
 #include "BIMKernel/BIMNodeEditor.h"
 #include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/BIMPresetCollection.h"
+#include "BIMKernel/BIMPresetInstance.h"
 #include "BIMKernel/BIMKey.h"
 
 static bool testKeys()
@@ -314,13 +316,13 @@ static bool testTags()
 
 bool testPreset(const FBIMPresetCollection &PresetCollection, const FBIMKey& PresetID)
 {
-	const FBIMPreset *preset = PresetCollection.Presets.Find(PresetID);
+	const FBIMPresetInstance* preset = PresetCollection.Presets.Find(PresetID);
 	if (preset == nullptr)
 	{
 		return false;
 	}
 
-	FBIMPreset outPreset;
+	FBIMPresetInstance outPreset;
 	FCraftingPresetRecord record;
 
 	if (preset->ToDataRecord(record) != EBIMResult::Success)
@@ -428,8 +430,8 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	/*
 	Make sure preset keys are consistent between known parents and children
 	*/
-	FBIMPreset *assemblyPreset = presetCollection.Presets.Find(layeredAssemblies[0]);
-	FBIMPreset *layerPreset = presetCollection.Presets.Find(layerPresets[0]);
+	FBIMPresetInstance* assemblyPreset = presetCollection.Presets.Find(layeredAssemblies[0]);
+	FBIMPresetInstance* layerPreset = presetCollection.Presets.Find(layerPresets[0]);
 	FBIMKey assemblyPresetFirstLayer = assemblyPreset->ChildPresets[0].PresetID;
 
 	if (!ensureAlways(layerPresets[0] == assemblyPresetFirstLayer))
@@ -437,7 +439,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 		return false;
 	}
 
-	FBIMPresetNodeType *nodeType = presetCollection.NodeDescriptors.Find(assemblyPreset->NodeType);
+	FBIMPresetTypeDefinition *nodeType = presetCollection.NodeDescriptors.Find(assemblyPreset->NodeType);
 
 	FBIMCraftingTreeNodePool instancePool;
 	FBIMCraftingTreeNodeSharedPtr rootNode;

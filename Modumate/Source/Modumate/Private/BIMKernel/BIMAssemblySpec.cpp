@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "BIMKernel/BIMAssemblySpec.h"
-#include "BIMKernel/BIMPresets.h"
+#include "BIMKernel/BIMPresetInstance.h"
 #include "BIMKernel/BIMLayerSpec.h"
 #include "BIMKernel/BIMNodeEditor.h"
 #include "Database/ModumateObjectDatabase.h"
@@ -35,7 +35,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	struct FPresetIterator
 	{
 		FBIMKey PresetID;
-		const FBIMPreset* Preset = nullptr;
+		const FBIMPresetInstance* Preset = nullptr;
 
 		// As we iterate, we keep track of which layer and which property sheet to set modifier values on
 		ELayerTarget Target = ELayerTarget::Assembly;
@@ -53,7 +53,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	// When we encounter a part hierarchy, we want to iterate breadth-first, so use a queue of part iterators
 	struct FPartIterator
 	{
-		FBIMPreset::FPartSlot Slot;
+		FBIMPresetPartSlot Slot;
 		FBIMKey SlotConfigPreset;
 		int32 ParentSlotIndex = 0;
 	};
@@ -172,7 +172,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		// Iterate in reverse order because stack operations are LIFO
 		for (int32 i=presetIterator.Preset->ChildPresets.Num()-1;i>=0;--i)
 		{
-			const FBIMPreset::FChildAttachment& childPreset = presetIterator.Preset->ChildPresets[i];
+			const FBIMPresetPinAttachment& childPreset = presetIterator.Preset->ChildPresets[i];
 			// Each child inherits the targeting information from its parent (presetIterator)
 			FPresetIterator childIterator = presetIterator;
 			childIterator.PresetID = childPreset.PresetID;
@@ -210,7 +210,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	// If we encountered any parts, add a root part to the top of the list to be the parent of the others
 	if (!partIteratorQueue.IsEmpty())
 	{
-		const FBIMPreset* assemblyPreset = PresetCollection.Presets.Find(PresetID);
+		const FBIMPresetInstance* assemblyPreset = PresetCollection.Presets.Find(PresetID);
 
 		FBIMPartSlotSpec& partSpec = Parts.AddDefaulted_GetRef();
 		partSpec.ParentSlotIndex = INDEX_NONE;
@@ -229,8 +229,8 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	{
 		FPartIterator partIterator;
 		partIteratorQueue.Dequeue(partIterator);
-		const FBIMPreset* partPreset = PresetCollection.Presets.Find(partIterator.Slot.PartPreset);
-		const FBIMPreset* slotConfigPreset = PresetCollection.Presets.Find(partIterator.SlotConfigPreset);
+		const FBIMPresetInstance* partPreset = PresetCollection.Presets.Find(partIterator.Slot.PartPreset);
+		const FBIMPresetInstance* slotConfigPreset = PresetCollection.Presets.Find(partIterator.SlotConfigPreset);
 
 		if (ensureAlways(partPreset != nullptr) && ensureAlways(slotConfigPreset != nullptr))
 		{
@@ -253,7 +253,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 					continue;
 				}
 
-				const FBIMPreset* childPreset = PresetCollection.Presets.Find(cp.PresetID);
+				const FBIMPresetInstance* childPreset = PresetCollection.Presets.Find(cp.PresetID);
 
 				if (!ensureAlways(childPreset != nullptr))
 				{
@@ -303,7 +303,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			{
 				if (childSlot.PresetID == partIterator.Slot.SlotName)
 				{
-					const FBIMPreset* childSlotPreset = PresetCollection.Presets.Find(childSlot.PresetID);
+					const FBIMPresetInstance* childSlotPreset = PresetCollection.Presets.Find(childSlot.PresetID);
 					if (!ensureAlways(childSlotPreset != nullptr))
 					{
 						break;

@@ -75,7 +75,7 @@ EBIMResult FBIMCSVReader::ProcessInputPinRow(const TArray<const TCHAR*>& Row, in
 	{
 		return EBIMResult::Error;
 	}
-	FChildAttachmentType &childAttachment = NodeType.ChildAttachments.AddDefaulted_GetRef();
+	FBIMPresetNodePinSet& childAttachment = NodeType.PinSets.AddDefaulted_GetRef();
 
 	childAttachment.SetName = Row[4];
 
@@ -199,7 +199,7 @@ EBIMResult FBIMCSVReader::ProcessTagPathRow(const TArray<const TCHAR*>& Row, int
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TMap<FBIMKey, FBIMPreset>& OutPresets, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages)
+EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TMap<FBIMKey, FBIMPresetInstance>& OutPresets, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages)
 {
 	//Row Format:
 	//[Preset]([]([column data]+))*
@@ -224,7 +224,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 						Preset.DisplayName = FText::FromString(presetName);
 					}
 					OutPresets.Add(Preset.PresetID, Preset);
-					Preset = FBIMPreset();
+					Preset = FBIMPresetInstance();
 				}
 
 				Preset.PresetID = FBIMKey(*cell);
@@ -326,9 +326,9 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 			}
 			FName pinName = *PinRange.Get(i);
 			bool found = false;
-			for (int32 setIndex = 0; setIndex < NodeType.ChildAttachments.Num(); ++setIndex)
+			for (int32 setIndex = 0; setIndex < NodeType.PinSets.Num(); ++setIndex)
 			{
-				if (NodeType.ChildAttachments[setIndex].SetName == pinName)
+				if (NodeType.PinSets[setIndex].SetName == pinName)
 				{
 					int32 setPosition = 0;
 					for (auto &cap : Preset.ChildPresets)
@@ -338,10 +338,11 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 							setPosition = FMath::Max(cap.ParentPinSetPosition + 1, setPosition);
 						}
 					}
-					FBIMPreset::FChildAttachment &newCAP = Preset.ChildPresets.AddDefaulted_GetRef();
+
+					FBIMPresetPinAttachment &newCAP = Preset.ChildPresets.AddDefaulted_GetRef();
 					newCAP.ParentPinSetIndex = setIndex;
 					newCAP.ParentPinSetPosition = setPosition;
-					newCAP.Target = NodeType.ChildAttachments[setIndex].PinTarget;
+					newCAP.Target = NodeType.PinSets[setIndex].PinTarget;
 
 					FString rowStr = cell;
 					rowStr.RemoveSpacesInline();

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Database/ModumateObjectEnums.h"
-#include "BIMKernel/BIMPresets.h"
+#include "BIMKernel/BIMPresetInstance.h"
 
 /*
 	Crafting trees are acyclical networks of crafting node instances
@@ -48,8 +48,8 @@ public:
 
 	struct FAttachedChildGroup
 	{
-		FChildAttachmentType SetType;
-		FBIMPreset::FPartSlot PartSlot;
+		FBIMPresetNodePinSet SetType;
+		FBIMPresetPartSlot PartSlot;
 		bool IsPart() const { return !PartSlot.PartPreset.IsNone(); }
 		TArray<FBIMCraftingTreeNodeWeakPtr> Children;
 	};
@@ -70,7 +70,7 @@ public:
 
 	EBIMPresetEditorNodeStatus GetPresetStatus(const FBIMPresetCollection &PresetCollection) const;
 
-	EBIMResult ToPreset(const FBIMPresetCollection& PresetCollection, FBIMPreset& OutPreset) const;
+	EBIMResult ToPreset(const FBIMPresetCollection& PresetCollection, FBIMPresetInstance& OutPreset) const;
 
 	EBIMResult ToDataRecord(FCustomAssemblyCraftingNodeRecord &OutRecord) const;
 	EBIMResult FromDataRecord(FBIMCraftingTreeNodePool &InstancePool, const FBIMPresetCollection &PresetCollection, const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets);

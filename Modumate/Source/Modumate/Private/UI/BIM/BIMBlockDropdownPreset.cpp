@@ -83,7 +83,7 @@ void UBIMBlockDropdownPreset::BuildDropdownFromProperty(class UBIMDesigner* Oute
 
 	// PresetText
 	PresetID = nodePtr->PresetID;
-	const FBIMPreset* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
+	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
 	if (preset != nullptr)
 	{
 		PresetText->ChangeText(preset->DisplayName);

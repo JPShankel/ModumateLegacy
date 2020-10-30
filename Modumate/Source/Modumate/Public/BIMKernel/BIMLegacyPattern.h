@@ -12,7 +12,7 @@
 #include "BIMKernel/BIMEnums.h"
 #include "BIMLegacyPattern.generated.h"
 
-class FBIMPreset;
+struct FBIMPresetInstance;
 
 USTRUCT()
 struct MODUMATE_API FLayerPatternModule
@@ -125,7 +125,7 @@ struct MODUMATE_API FLayerPattern
 	FLayerPatternGap DefaultGap;
 	TArray<FLayerPatternModule> DefaultModules;
 
-	void InitFromCraftingPreset(const FBIMPreset& Preset);
+	void InitFromCraftingPreset(const FBIMPresetInstance& Preset);
 
 	FBIMKey UniqueKey() const { return Key; }
 };

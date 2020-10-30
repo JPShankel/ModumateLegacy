@@ -274,7 +274,7 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 	FPresetManager &presetManager = gameState->Document.PresetManager;
 	
 	// Find the preset for this list item. Note some item types do not require preset
-	const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(BIMKey);
+	const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(BIMKey);
 
 	switch (compListObj->ItemType)
 	{

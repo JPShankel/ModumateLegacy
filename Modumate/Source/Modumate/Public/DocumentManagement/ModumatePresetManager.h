@@ -5,7 +5,8 @@
 #include "CoreMinimal.h"
 #include "Database/ModumateDataCollection.h"
 #include "BIMKernel/BIMAssemblySpec.h"
-#include "BIMKernel/BIMPresets.h"
+#include "BIMKernel/BIMPresetInstance.h"
+#include "BIMKernel/BIMPresetCollection.h"
 #include "DocumentManagement/ModumateSerialization.h"
 
 class MODUMATE_API FPresetManager

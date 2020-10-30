@@ -196,7 +196,7 @@ const FBIMAssemblySpec *FPresetManager::GetAssemblyByKey(EToolMode ToolMode, con
 
 EBIMResult FPresetManager::GetAvailablePresetsForSwap(const FBIMKey& ParentPresetID, const FBIMKey &PresetIDToSwap, TArray<FBIMKey>& OutAvailablePresets)
 {
-	const FBIMPreset* preset = CraftingNodePresets.Presets.Find(PresetIDToSwap);
+	const FBIMPresetInstance* preset = CraftingNodePresets.Presets.Find(PresetIDToSwap);
 	if (!ensureAlways(preset != nullptr))
 	{
 		return EBIMResult::Error;
@@ -221,7 +221,7 @@ EBIMResult FPresetManager::GetAvailablePresetsForSwap(const FBIMKey& ParentPrese
 	}
 	else // Otherwise, find all presets of same type that are supported by parent as indicated by tags
 	{
-		const FBIMPreset* parentPreset = CraftingNodePresets.Presets.Find(ParentPresetID);
+		const FBIMPresetInstance* parentPreset = CraftingNodePresets.Presets.Find(ParentPresetID);
 		if (!ensureAlways(parentPreset != nullptr))
 		{
 			return EBIMResult::Error;

@@ -178,18 +178,18 @@ void FModumateDatabase::ReadPresetData()
 
 	*/
 
-	typedef TFunction<void(const FBIMPreset &Preset)> FAddAssetFunction;
+	typedef TFunction<void(const FBIMPresetInstance &Preset)> FAddAssetFunction;
 	typedef TPair<FBIMTagPath, FAddAssetFunction> FAddAssetPath;
 	TArray<FAddAssetPath> assetTargetPaths;
 
-	FAddAssetFunction addColor = [this](const FBIMPreset& Preset)
+	FAddAssetFunction addColor = [this](const FBIMPresetInstance& Preset)
 	{
 		FString hexValue = Preset.GetProperty(BIMPropertyNames::HexValue);
 		FString colorName = Preset.GetProperty(BIMPropertyNames::Name);
 		AddCustomColor(Preset.PresetID, colorName, hexValue);
 	};
 
-	FAddAssetFunction addMesh = [this](const FBIMPreset& Preset)
+	FAddAssetFunction addMesh = [this](const FBIMPresetInstance& Preset)
 	{
 		FString assetPath = Preset.GetScopedProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
 
@@ -219,7 +219,7 @@ void FModumateDatabase::ReadPresetData()
 		}
 	};
 
-	FAddAssetFunction addRawMaterial = [this](const FBIMPreset& Preset)
+	FAddAssetFunction addRawMaterial = [this](const FBIMPresetInstance& Preset)
 	{
 		FString assetPath = Preset.GetProperty(BIMPropertyNames::AssetPath);
 		if (assetPath.Len() != 0)
@@ -229,14 +229,14 @@ void FModumateDatabase::ReadPresetData()
 		}
 	};
 
-	FAddAssetFunction addMaterial = [this](const FBIMPreset& Preset)
+	FAddAssetFunction addMaterial = [this](const FBIMPresetInstance& Preset)
 	{
 		FBIMKey rawMaterial;
 		FBIMKey color;
 
 		for (auto& cp : Preset.ChildPresets)
 		{
-			const FBIMPreset* childPreset = PresetManager.CraftingNodePresets.Presets.Find(cp.PresetID);
+			const FBIMPresetInstance* childPreset = PresetManager.CraftingNodePresets.Presets.Find(cp.PresetID);
 			if (childPreset != nullptr)
 			{
 				if (childPreset->NodeScope == EBIMValueScope::RawMaterial)
@@ -252,7 +252,7 @@ void FModumateDatabase::ReadPresetData()
 
 		if (!rawMaterial.IsNone())
 		{
-			const FBIMPreset* preset = PresetManager.CraftingNodePresets.Presets.Find(rawMaterial);
+			const FBIMPresetInstance* preset = PresetManager.CraftingNodePresets.Presets.Find(rawMaterial);
 			if (preset != nullptr)
 			{
 				FString assetPath = preset->GetProperty(BIMPropertyNames::AssetPath);
@@ -262,7 +262,7 @@ void FModumateDatabase::ReadPresetData()
 		}
 	};
 
-	FAddAssetFunction addProfile = [this](const FBIMPreset& Preset)
+	FAddAssetFunction addProfile = [this](const FBIMPresetInstance& Preset)
 	{
 		FString assetPath = Preset.GetProperty(BIMPropertyNames::AssetPath);
 		if (assetPath.Len() != 0)
@@ -272,7 +272,7 @@ void FModumateDatabase::ReadPresetData()
 		}
 	};
 
-	FAddAssetFunction addPattern = [this](const FBIMPreset& Preset)
+	FAddAssetFunction addPattern = [this](const FBIMPresetInstance& Preset)
 	{
 		FLayerPattern newPattern;
 		newPattern.InitFromCraftingPreset(Preset);
@@ -442,7 +442,7 @@ void FModumateDatabase::ReadPresetData()
 	*/
 	for (auto &starter : starters)
 	{
-		const FBIMPreset *preset = PresetManager.CraftingNodePresets.Presets.Find(starter);
+		const FBIMPresetInstance* preset = PresetManager.CraftingNodePresets.Presets.Find(starter);
 
 		// TODO: "starter" presets currently only refer to complete assemblies, will eventually include presets to be shopped from the marketplace
 		if (ensureAlways(preset != nullptr) && preset->ObjectType == EObjectType::OTNone)

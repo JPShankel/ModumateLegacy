@@ -1,7 +1,7 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
 #include "BIMKernel/BIMLegacyPattern.h"
-#include "BIMKernel/BIMPresets.h"
+#include "BIMKernel/BIMPresetInstance.h"
 #include "Algo/Transform.h"
 
 using namespace Modumate::Units;
@@ -28,7 +28,7 @@ FPatternModuleTemplate::FPatternModuleTemplate(const FString &DimensionStringsCo
 		(ModuleDefIndex >= 0);
 }
 
-void FLayerPattern::InitFromCraftingPreset(const FBIMPreset& Preset)
+void FLayerPattern::InitFromCraftingPreset(const FBIMPresetInstance& Preset)
 {
 	Key = Preset.PresetID;
 

@@ -90,7 +90,7 @@ void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& 
 
 		if (ComponentPresetItem)
 		{
-			const FBIMPreset* preset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(PresetIDToSwap);
+			const FBIMPresetInstance* preset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(PresetIDToSwap);
 			if (preset != nullptr)
 			{
 				ComponentPresetItem->MainText->ChangeText(preset->DisplayName);
@@ -123,7 +123,7 @@ void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(ETool
 
 		if (ComponentPresetItem)
 		{
-			const FBIMPreset* preset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(PresetID);
+			const FBIMPresetInstance* preset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(PresetID);
 			if (preset != nullptr)
 			{
 				ComponentPresetItem->MainText->ChangeText(preset->DisplayName);

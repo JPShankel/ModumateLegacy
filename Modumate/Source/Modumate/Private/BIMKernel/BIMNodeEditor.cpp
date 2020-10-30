@@ -80,13 +80,13 @@ EBIMResult FBIMCraftingTreeNode::GatherAllChildNodes(TArray<FBIMCraftingTreeNode
 // The preset on a crafting node is 'dirty' if the node's properties or input pins is inconsistent with the values in its preset
 EBIMPresetEditorNodeStatus FBIMCraftingTreeNode::GetPresetStatus(const FBIMPresetCollection &PresetCollection) const
 {
-	const FBIMPreset *preset = PresetCollection.Presets.Find(PresetID);
+	const FBIMPresetInstance* preset = PresetCollection.Presets.Find(PresetID);
 	if (!ensureAlways(preset != nullptr))
 	{
 		return EBIMPresetEditorNodeStatus::None;
 	}
 
-	FBIMPreset instanceAsPreset;
+	FBIMPresetInstance instanceAsPreset;
 	ToPreset(PresetCollection, instanceAsPreset);
 
 	if (preset->Matches(instanceAsPreset))
@@ -306,13 +306,13 @@ EBIMResult FBIMCraftingTreeNode::FromDataRecord(
 	const FCustomAssemblyCraftingNodeRecord &DataRecord,
 	bool RecursePresets)
 {
-	const FBIMPreset *preset = PresetCollection.Presets.Find(DataRecord.PresetID);
+	const FBIMPresetInstance* preset = PresetCollection.Presets.Find(DataRecord.PresetID);
 	if (preset == nullptr)
 	{
 		return EBIMResult::Error;
 	}
 
-	const FBIMPresetNodeType *descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
+	const FBIMPresetTypeDefinition *descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
 	if (descriptor == nullptr)
 	{
 		return EBIMResult::Error;
@@ -371,9 +371,9 @@ EBIMResult FBIMCraftingTreeNode::FromDataRecord(
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMCraftingTreeNode::ToPreset(const FBIMPresetCollection& PresetCollection, FBIMPreset& OutPreset) const
+EBIMResult FBIMCraftingTreeNode::ToPreset(const FBIMPresetCollection& PresetCollection, FBIMPresetInstance& OutPreset) const
 {
-	const FBIMPreset* basePreset = PresetCollection.Presets.Find(PresetID);
+	const FBIMPresetInstance* basePreset = PresetCollection.Presets.Find(PresetID);
 	if (basePreset == nullptr)
 	{
 		return EBIMResult::Error;
@@ -394,7 +394,7 @@ EBIMResult FBIMCraftingTreeNode::ToPreset(const FBIMPresetCollection& PresetColl
 		const FBIMCraftingTreeNode::FAttachedChildGroup& pinSet = AttachedChildren[pinSetIndex];
 		if (pinSet.IsPart())
 		{
-			FBIMPreset::FPartSlot& partSlot = OutPreset.PartSlots.AddDefaulted_GetRef();
+			FBIMPresetPartSlot& partSlot = OutPreset.PartSlots.AddDefaulted_GetRef();
 			partSlot.PartPreset = pinSet.PartSlot.PartPreset;
 			partSlot.SlotName = FBIMKey(pinSet.SetType.SetName.ToString());
 		}
@@ -402,7 +402,7 @@ EBIMResult FBIMCraftingTreeNode::ToPreset(const FBIMPresetCollection& PresetColl
 		{
 			for (int32 pinSetPosition = 0; pinSetPosition < pinSet.Children.Num(); ++pinSetPosition)
 			{
-				FBIMPreset::FChildAttachment& pinSpec = OutPreset.ChildPresets.AddDefaulted_GetRef();
+				FBIMPresetPinAttachment& pinSpec = OutPreset.ChildPresets.AddDefaulted_GetRef();
 				pinSpec.ParentPinSetIndex = pinSetIndex;
 				pinSpec.ParentPinSetPosition = pinSetPosition;
 
@@ -471,7 +471,7 @@ EBIMResult FBIMCraftingTreeNodePool::SetNewPresetForNode(const FBIMPresetCollect
 		return EBIMResult::Error;
 	}
 
-	const FBIMPreset *preset = PresetCollection.Presets.Find(PresetID);
+	const FBIMPresetInstance* preset = PresetCollection.Presets.Find(PresetID);
 
 	if (!ensureAlways(preset != nullptr))
 	{
@@ -525,13 +525,13 @@ FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPr
 	{
 		FPresetTreeIterator iterator = iteratorStack.Pop();
 
-		const FBIMPreset* preset = PresetCollection.Presets.Find(iterator.PresetID);
+		const FBIMPresetInstance* preset = PresetCollection.Presets.Find(iterator.PresetID);
 		if (!ensureAlways(preset != nullptr))
 		{
 			return nullptr;
 		}
 
-		const FBIMPresetNodeType* descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
+		const FBIMPresetTypeDefinition* descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
 		if (!ensureAlways(descriptor != nullptr))
 		{
 			return nullptr;
@@ -541,12 +541,12 @@ FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPr
 		InstanceMap.Add(NextInstanceID, instance);
 		++NextInstanceID;
 
-		instance->AttachedChildren.SetNum(descriptor->ChildAttachments.Num());
+		instance->AttachedChildren.SetNum(descriptor->PinSets.Num());
 
 		for (int32 i = 0; i < instance->AttachedChildren.Num(); ++i)
 		{
-			instance->AttachedChildren[i].SetType.MinCount = descriptor->ChildAttachments[i].MinCount;
-			instance->AttachedChildren[i].SetType.MaxCount = descriptor->ChildAttachments[i].MaxCount;
+			instance->AttachedChildren[i].SetType.MinCount = descriptor->PinSets[i].MinCount;
+			instance->AttachedChildren[i].SetType.MaxCount = descriptor->PinSets[i].MaxCount;
 		}
 
 		instance->CategoryTitle = preset->CategoryTitle;
@@ -706,7 +706,7 @@ EBIMResult FBIMCraftingTreeNodePool::CreateAssemblyFromNodes(const FBIMPresetCol
 		{
 			if (instance->GetPresetStatus(PresetCollection) == EBIMPresetEditorNodeStatus::Dirty)
 			{
-				FBIMPreset dirtyPreset;
+				FBIMPresetInstance dirtyPreset;
 				if (ensureAlways(instance->ToPreset(PresetCollection, dirtyPreset) != EBIMResult::Error))
 				{
 					previewCollection.Presets.Add(dirtyPreset.PresetID, dirtyPreset);
@@ -714,7 +714,7 @@ EBIMResult FBIMCraftingTreeNodePool::CreateAssemblyFromNodes(const FBIMPresetCol
 			}
 			else
 			{
-				const FBIMPreset* original = PresetCollection.Presets.Find(instance->PresetID);
+				const FBIMPresetInstance* original = PresetCollection.Presets.Find(instance->PresetID);
 				if (ensureAlways(original != nullptr) && !previewCollection.Presets.Contains(original->PresetID))
 				{
 					previewCollection.Presets.Add(original->PresetID, *original);
@@ -727,7 +727,7 @@ EBIMResult FBIMCraftingTreeNodePool::CreateAssemblyFromNodes(const FBIMPresetCol
 		{
 			if (!previewCollection.Presets.Contains(depPres))
 			{
-				const FBIMPreset* depPreset = PresetCollection.Presets.Find(depPres);
+				const FBIMPresetInstance* depPreset = PresetCollection.Presets.Find(depPres);
 				if (ensureAlways(depPreset != nullptr))
 				{
 					previewCollection.Presets.Add(depPreset->PresetID, *depPreset);
@@ -756,12 +756,12 @@ EBIMResult FBIMCraftingTreeNodePool::CreateAssemblyFromLayerNode(const FBIMPrese
 	}
 
 	// Build a temporary top-level assembly node to host the single layer
-	FBIMPreset assemblyPreset;
+	FBIMPresetInstance assemblyPreset;
 	assemblyPreset.PresetID = FBIMKey(TEXT("TempIconPreset"));
 	assemblyPreset.NodeScope = EBIMValueScope::Assembly;
 
 	// Give the temporary assembly a single layer child
-	FBIMPreset::FChildAttachment &attachment = assemblyPreset.ChildPresets.AddDefaulted_GetRef();
+	FBIMPresetPinAttachment& attachment = assemblyPreset.ChildPresets.AddDefaulted_GetRef();
 	attachment.ParentPinSetIndex = 0;
 	attachment.ParentPinSetPosition = 0;
 	attachment.PresetID = layerNode->PresetID;
@@ -771,7 +771,7 @@ EBIMResult FBIMCraftingTreeNodePool::CreateAssemblyFromLayerNode(const FBIMPrese
 	{
 		if (inst->ParentInstance == nullptr)
 		{
-			const FBIMPreset *rootPreset = PresetCollection.Presets.Find(inst->PresetID);
+			const FBIMPresetInstance* rootPreset = PresetCollection.Presets.Find(inst->PresetID);
 			if (ensureAlways(rootPreset != nullptr))
 			{
 				assemblyPreset.NodeType = rootPreset->NodeType;
@@ -788,7 +788,7 @@ EBIMResult FBIMCraftingTreeNodePool::CreateAssemblyFromLayerNode(const FBIMPrese
 	// Add the temp assembly and layer presets
 	previewCollection.Presets.Add(assemblyPreset.PresetID, assemblyPreset);
 
-	const FBIMPreset* layerPreset = PresetCollection.Presets.Find(layerNode->PresetID);
+	const FBIMPresetInstance* layerPreset = PresetCollection.Presets.Find(layerNode->PresetID);
 	if (ensureAlways(layerPreset != nullptr))
 	{
 		previewCollection.Presets.Add(layerPreset->PresetID, *layerPreset);
@@ -805,7 +805,7 @@ EBIMResult FBIMCraftingTreeNodePool::CreateAssemblyFromLayerNode(const FBIMPrese
 	{
 		if (child->GetPresetStatus(PresetCollection) == EBIMPresetEditorNodeStatus::Dirty)
 		{
-			FBIMPreset dirtyPreset;
+			FBIMPresetInstance dirtyPreset;
 			if (ensureAlways(child->ToPreset(PresetCollection, dirtyPreset) != EBIMResult::Error))
 			{
 				previewCollection.Presets.Add(dirtyPreset.PresetID, dirtyPreset);
@@ -813,7 +813,7 @@ EBIMResult FBIMCraftingTreeNodePool::CreateAssemblyFromLayerNode(const FBIMPrese
 		}
 		else
 		{
-			const FBIMPreset* original = PresetCollection.Presets.Find(child->PresetID);
+			const FBIMPresetInstance* original = PresetCollection.Presets.Find(child->PresetID);
 			if (ensureAlways(original != nullptr))
 			{
 				previewCollection.Presets.Add(original->PresetID, *original);

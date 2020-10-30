@@ -43,17 +43,17 @@ struct FBIMCSVReader
 
 	FBIMCSVReader();
 
-	FBIMPresetNodeType NodeType;
+	FBIMPresetTypeDefinition NodeType;
 
 	TMap<FBIMNameType, EBIMValueType> PropertyTypeMap;
 
-	FBIMPreset Preset;
+	FBIMPresetInstance Preset;
 
 	FColumnRange PropertyRange, MyPathRange, ParentPathRange, PinRange, IDRange, StartInProjectRange, SlotRange, PinChannelRange;
 
 	EBIMResult ProcessNodeTypeRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
 	EBIMResult ProcessPropertyDeclarationRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
 	EBIMResult ProcessTagPathRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
-	EBIMResult ProcessPresetRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TMap<FBIMKey, FBIMPreset>& OutPresets, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages);
+	EBIMResult ProcessPresetRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TMap<FBIMKey, FBIMPresetInstance>& OutPresets, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages);
 	EBIMResult ProcessInputPinRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
 };

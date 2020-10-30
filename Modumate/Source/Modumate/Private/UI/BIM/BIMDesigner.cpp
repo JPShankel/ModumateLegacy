@@ -694,7 +694,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 		return false;
 	}
 
-	FBIMPreset outPreset;
+	FBIMPresetInstance outPreset;
 	node->ToPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, outPreset);
 
 	if (SaveAs)

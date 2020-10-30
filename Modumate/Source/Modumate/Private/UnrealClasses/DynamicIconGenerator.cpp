@@ -104,7 +104,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssembly(const FBIMKey& AsmKey, UMater
 		return true;
 	}
 
-	const FBIMPreset* childPreset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(AsmKey);
+	const FBIMPresetInstance* childPreset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(AsmKey);
 	if (childPreset == nullptr)
 	{
 		return false;
@@ -145,7 +145,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 #endif
 
 	const FPresetManager &presetManager = GameState->Document.PresetManager;
-	const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
+	const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
 	if (preset == nullptr)
 	{
 		return false;
@@ -224,7 +224,7 @@ bool ADynamicIconGenerator::GetSavedIconFromPreset(const FBIMKey& PresetID, UTex
 {
 	OutTexture = nullptr;
 	const FPresetManager &presetManager = GameState->Document.PresetManager;
-	const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
+	const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
 	if (preset == nullptr)
 	{
 		return false;
@@ -785,7 +785,7 @@ bool ADynamicIconGenerator::SetIconMeshForPart(bool UseDependentPreset, const FB
 		presetManager.CraftingNodePresets.GetDependentPresets(PresetID, dependentPresetIDs);
 		for (const auto& curPresetID : dependentPresetIDs)
 		{
-			const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(curPresetID);
+			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(curPresetID);
 			if (preset->NodeScope == EBIMValueScope::RawMaterial)
 			{
 				rawMaterialKey = curPresetID;
@@ -807,7 +807,7 @@ bool ADynamicIconGenerator::SetIconMeshForPart(bool UseDependentPreset, const FB
 		inst->GatherAllChildNodes(childrenNodes);
 		for (const auto& child : childrenNodes)
 		{
-			const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
+			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
 			if (preset->NodeScope == EBIMValueScope::RawMaterial)
 			{
 				rawMaterialKey = child->PresetID;
@@ -881,7 +881,7 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(bool UseDependentPreset, cons
 		presetManager.CraftingNodePresets.GetDependentPresets(PresetID, dependentPresetIDs);
 		for (const auto& curPresetID : dependentPresetIDs)
 		{
-			const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(curPresetID);
+			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(curPresetID);
 			if (preset->NodeScope == EBIMValueScope::RawMaterial)
 			{
 				rawMaterialKey = curPresetID;
@@ -899,7 +899,7 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(bool UseDependentPreset, cons
 		inst->GatherAllChildNodes(childrenNodes);
 		for (const auto& child : childrenNodes)
 		{
-			const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
+			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
 			if (preset->NodeScope == EBIMValueScope::RawMaterial)
 			{
 				rawMaterialKey = child->PresetID;
@@ -953,7 +953,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(bool UseDependentPreset, const 
 		presetManager.CraftingNodePresets.GetDependentPresets(PresetID, dependentPresetIDs);
 		for (const auto& curPresetID : dependentPresetIDs)
 		{
-			const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(curPresetID);
+			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(curPresetID);
 			if (preset->NodeScope == EBIMValueScope::RawMaterial)
 			{
 				rawMaterialKey = curPresetID;
@@ -978,7 +978,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(bool UseDependentPreset, const 
 		inst->GatherAllChildNodes(childrenNodes);
 		for (const auto& child : childrenNodes)
 		{
-			const FBIMPreset* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
+			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
 			if (preset->NodeScope == EBIMValueScope::RawMaterial)
 			{
 				rawMaterialKey = child->PresetID;

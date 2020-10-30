@@ -194,7 +194,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 	bNodeHasSlotPart = bAsSlot;
 	TitleNodeCollapsed->ChangeText(Node->CategoryTitle);
 	TitleNodeExpanded->ChangeText(Node->CategoryTitle);
-	const FBIMPreset* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
+	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
 	if (preset != nullptr)
 	{
 		ComponentPresetListItem->MainText->ChangeText(preset->DisplayName);

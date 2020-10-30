@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BIMKernel/BIMKey.h"
+#include "Database/ModumateObjectEnums.h"
 #include "BIMSerialization.generated.h"
 
 USTRUCT()
