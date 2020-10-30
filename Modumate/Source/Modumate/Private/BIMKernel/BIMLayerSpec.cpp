@@ -119,6 +119,11 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 		For now "everyone has a depth or a length and a thickness and a width" is a reasonable approximation
 		*/
 		FString dimStr;
+		if (modProps.TryGetProperty(EBIMValueScope::Module, BIMPropertyNames::BevelWidth, dimStr))
+		{
+			FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(dimStr);
+			module.BevelWidth = Modumate::Units::FUnitValue::WorldCentimeters(dim.Centimeters);
+		}
 		if (!modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, dimStr))
 		{
 			modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, dimStr);
