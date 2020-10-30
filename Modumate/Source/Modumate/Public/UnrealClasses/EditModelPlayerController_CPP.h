@@ -150,6 +150,10 @@ public:
 	bool GetScreenScaledDelta(const FVector &Origin, const FVector &Normal, const float DesiredWorldDist, const float MaxScreenDist,
 		FVector &OutWorldPos, FVector2D &OutScreenPos) const;
 
+	// TODO: this should not need to exist if the PlayerController can handle all desires to simulate cursor hit results at positions other than the current mouse position.
+	// (unified HandleInputNumber and refactored UserSnapPoint(s) need to be addressed in order for this to be the case)
+	FMouseWorldHitType GetSimulatedStructureHit(const FVector& HitTarget) const;
+
 	UPROPERTY()
 	AEditModelPlayerState_CPP *EMPlayerState;
 

@@ -1380,11 +1380,12 @@ bool UModumateGeometryStatics::GetPolygonIntersection(const TArray<FVector2D> &C
 }
 
 bool UModumateGeometryStatics::RayIntersection3D(const FVector& RayOriginA, const FVector& RayDirectionA, const FVector& RayOriginB, const FVector& RayDirectionB,
-	FVector& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool bRequirePositive, float Tolerance)
+	FVector& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool bRequirePositive, float IntersectionTolerance, float RayNormalTolerance)
 {
 	// Find the plane shared by the ray directions
+	// NOTE: using a different tolerance here, because otherwise a forgiving intersection tolerance here would reject rays that are still detectably non-parallel
 	FVector planeNormal = RayDirectionA ^ RayDirectionB;
-	if (!planeNormal.Normalize(Tolerance))
+	if (!planeNormal.Normalize(RayNormalTolerance))
 	{
 		return false;
 	}
@@ -1393,7 +1394,7 @@ bool UModumateGeometryStatics::RayIntersection3D(const FVector& RayOriginA, cons
 	float planeDistB = RayOriginB | planeNormal;
 
 	// Ray origins must be in the same plane as their rays' shared plane
-	if (!FMath::IsNearlyEqual(planeDistA, planeDistB, Tolerance))
+	if (!FMath::IsNearlyEqual(planeDistA, planeDistB, IntersectionTolerance))
 	{
 		return false;
 	}
@@ -1401,7 +1402,7 @@ bool UModumateGeometryStatics::RayIntersection3D(const FVector& RayOriginA, cons
 	FVector originDelta = RayOriginB - RayOriginA;
 	float originDist = originDelta.Size();
 
-	if (FMath::IsNearlyZero(originDist, Tolerance))
+	if (FMath::IsNearlyZero(originDist, IntersectionTolerance))
 	{
 		OutRayADist = OutRayBDist = 0.0f;
 		OutIntersectionPoint = RayOriginA;
@@ -1412,7 +1413,7 @@ bool UModumateGeometryStatics::RayIntersection3D(const FVector& RayOriginA, cons
 	FVector rayNormalA = (RayDirectionA ^ planeNormal);
 	FVector rayNormalB = (RayDirectionB ^ planeNormal);
 
-	if (!rayNormalA.IsUnit(Tolerance) || !rayNormalB.IsUnit(Tolerance))
+	if (!rayNormalA.IsUnit(IntersectionTolerance) || !rayNormalB.IsUnit(IntersectionTolerance))
 	{
 		return false;
 	}
@@ -1423,7 +1424,7 @@ bool UModumateGeometryStatics::RayIntersection3D(const FVector& RayOriginA, cons
 	OutRayBDist = (-originDelta | rayNormalA) / (RayDirectionB | rayNormalA);
 
 	// Potentially throw out results that are behind the origins of the rays
-	if (bRequirePositive && ((OutRayADist < -Tolerance) || (OutRayBDist < -Tolerance)))
+	if (bRequirePositive && ((OutRayADist < -IntersectionTolerance) || (OutRayBDist < -IntersectionTolerance)))
 	{
 		return false;
 	}
@@ -1431,7 +1432,7 @@ bool UModumateGeometryStatics::RayIntersection3D(const FVector& RayOriginA, cons
 	// Ensure that intersection points are consistent
 	FVector rayAOnBPoint = RayOriginA + (OutRayADist * RayDirectionA);
 	FVector rayBOnAPoint = RayOriginB + (OutRayBDist * RayDirectionB);
-	if (!FVector::PointsAreNear(rayAOnBPoint, rayBOnAPoint, Tolerance))
+	if (!FVector::PointsAreNear(rayAOnBPoint, rayBOnAPoint, IntersectionTolerance))
 	{
 		return false;
 	}

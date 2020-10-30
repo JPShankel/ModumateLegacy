@@ -76,20 +76,28 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 
 			// For now, only attempt to generate new vertex movement positions for points that are part of the surface graph bounds,
 			// and are included in the surface graph's mounting face point list
-			for (int32 facePointIdx = 0; facePointIdx < CachedFacePoints.Num(); ++facePointIdx)
+			int32 numCachedFacePoints = CachedFacePoints.Num();
+			if (numCachedFacePoints != numIDs)
 			{
-				Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(FaceIdxToVertexID[facePointIdx]);
-				if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
+				bFoundAllVertices = false;
+			}
+			else
+			{
+				for (int32 facePointIdx = 0; facePointIdx < numCachedFacePoints; ++facePointIdx)
 				{
-					FVector2D newPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
-					if (!newPos2D.Equals(vertex->Position, PLANAR_DOT_EPSILON))
+					Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(FaceIdxToVertexID[facePointIdx]);
+					if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
 					{
-						vertexMoves.Add(vertex->ID, newPos2D);
+						FVector2D newPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
+						if (!newPos2D.Equals(vertex->Position, PLANAR_DOT_EPSILON))
+						{
+							vertexMoves.Add(vertex->ID, newPos2D);
+						}
 					}
-				}
-				else
-				{
-					bFoundAllVertices = false;
+					else
+					{
+						bFoundAllVertices = false;
+					}
 				}
 			}
 

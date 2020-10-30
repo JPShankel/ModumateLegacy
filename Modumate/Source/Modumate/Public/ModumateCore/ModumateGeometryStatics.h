@@ -236,7 +236,7 @@ public:
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool RayIntersection3D(const FVector& RayOriginA, const FVector& RayDirectionA, const FVector& RayOriginB, const FVector& RayDirectionB,
-		FVector& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool bRequirePositive = true, float Tolerance = RAY_INTERSECT_TOLERANCE);
+		FVector& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool bRequirePositive = true, float IntersectionTolerance = RAY_INTERSECT_TOLERANCE, float RayNormalTolerance = KINDA_SMALL_NUMBER);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool TranslatePolygonEdge(const TArray<FVector> &PolyPoints, const FVector &PolyNormal, int32 EdgeStartIdx, float Translation, FVector &OutStartPoint, FVector &OutEndPoint);

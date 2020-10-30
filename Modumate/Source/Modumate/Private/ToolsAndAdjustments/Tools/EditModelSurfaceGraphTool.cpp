@@ -89,20 +89,11 @@ bool USurfaceGraphTool::BeginUse()
 		bValidStart = true;
 	}
 
-	if (bValidStart)
+	if (bValidStart && InitializeSegment())
 	{
-		// Start drawing a poly-line on the target surface graph.
-		// TODO: use the normal and tangent of the hit cursor, and override the "global axes";
-		// this will allow appropriately-colored green and red lines for the surface graph's local X and Y axes,
-		// while also allowing tangent affordance(s) for any connected surface graph vertices that are the hit target.
-		//Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(HitLocation, HitNormal);
-
-		if (InitializeSegment())
-		{
-			InUse = true;
-			Controller->UpdateMouseTraceParams();
-			return true;
-		}
+		InUse = true;
+		Controller->UpdateMouseTraceParams();
+		return true;
 	}
 
 	return false;
@@ -199,9 +190,18 @@ bool USurfaceGraphTool::HandleInputNumber(double n)
 
 	direction.Normalize();
 
-	PendingSegment->Point2 = PendingSegment->Point1 + direction * n;
+	FVector endPoint = PendingSegment->Point1 + direction * n;
+	PendingSegment->Point2 = endPoint;
 
-	if (!UpdateTarget(TargetGraphMOI, PendingSegment->Point2, FVector::ZeroVector))
+	const FModumateObjectInstance* projectedHitGraphMOI = TargetGraphMOI;
+
+	if (projectedHitGraphMOI == nullptr)
+	{
+		FMouseWorldHitType projectedHitResult = Controller->GetSimulatedStructureHit(endPoint);
+		projectedHitGraphMOI = (projectedHitResult.Valid && projectedHitResult.Actor.IsValid()) ? GameState->Document.ObjectFromActor(projectedHitResult.Actor.Get()) : nullptr;
+	}
+
+	if (!UpdateTarget(projectedHitGraphMOI, PendingSegment->Point2, FVector::ZeroVector))
 	{
 		return false;
 	}
@@ -230,6 +230,11 @@ bool USurfaceGraphTool::UpdateTarget(const FModumateObjectInstance* HitObject, c
 
 		if (HitSurfaceGraph.IsValid())
 		{
+			if (HitSurfaceGraph->ContainsObject(HitObject->ID))
+			{
+				HitGraphElementMOI = HitObject;
+			}
+
 			int32 hitSurfaceGraphID = HitSurfaceGraph->GetID();
 			HitGraphMOI = GameState->Document.GetObjectById(hitSurfaceGraphID);
 			HitGraphHostMOI = GameState->Document.GetObjectById(HitGraphMOI ? HitGraphMOI->GetParentID() : MOD_ID_NONE);
@@ -254,6 +259,14 @@ bool USurfaceGraphTool::UpdateTarget(const FModumateObjectInstance* HitObject, c
 		}
 
 		UModumateTargetingStatics::GetConnectedSurfaceGraphs(HitObject, Location, HitAdjacentGraphMOIs);
+
+		// If we are only adjacent to one surface graph, but didn't find it from the original cursor hit result,
+		// then pretend like we hit it directly so that subsequent targeting is unambiguous.
+		if (HitAdjacentGraphMOIs.Num() == 1)
+		{
+			HitGraphMOI = HitAdjacentGraphMOIs[0];
+			HitAdjacentGraphMOIs.Reset();
+		}
 	}
 
 	if (IsInUse())
@@ -302,15 +315,11 @@ bool USurfaceGraphTool::UpdateTarget(const FModumateObjectInstance* HitObject, c
 			ResetTarget();
 			return false;
 		}
-
-		if (HitFaceIndex == INDEX_NONE)
-		{
-			HitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(HitGraphMOI);
-		}
 	}
 
 	if (HitGraphMOI)
 	{
+		HitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(HitGraphMOI);
 		HitGraphHostMOI = GameState->Document.GetObjectById(HitGraphMOI->GetParentID());
 		HitSurfaceGraph = GameState->Document.FindSurfaceGraph(HitGraphMOI->ID);
 	}

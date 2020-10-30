@@ -1879,6 +1879,19 @@ bool AEditModelPlayerController_CPP::GetScreenScaledDelta(const FVector &Origin,
 	return true;
 }
 
+FMouseWorldHitType AEditModelPlayerController_CPP::GetSimulatedStructureHit(const FVector& HitTarget) const
+{
+	FVector2D hitTargetScreenPos;
+	FVector mouseOrigin, mouseDir;
+	if (ProjectWorldLocationToScreen(HitTarget, hitTargetScreenPos) &&
+		UGameplayStatics::DeprojectScreenToWorld(this, hitTargetScreenPos, mouseOrigin, mouseDir))
+	{
+		return GetObjectMouseHit(mouseOrigin, mouseDir, true);
+	}
+
+	return FMouseWorldHitType();
+}
+
 /*
 Called every frame, based on mouse mode set in the player state,
 we put the mouse's snapped position and projected position into
@@ -2061,9 +2074,13 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 		}
 		else if (sketchDist < (structuralDist - StructuralSnapPreferenceEpsilon) || bCombineStructuralSketchSnaps)
 		{
-			if (bCombineStructuralSketchSnaps && (structuralHit.SnapType == ESnapType::CT_EDGESNAP))
+			// For combined structural/sketch snaps on edges, we want to override the position to be where the edge and sketch axis intersect if possible.
+			FVector lineIntersection;
+			float sketchRayDist, structuralEdgeDist;
+			if (bCombineStructuralSketchSnaps && (structuralHit.SnapType == ESnapType::CT_EDGESNAP) &&
+				UModumateGeometryStatics::RayIntersection3D(sketchHit.Origin, sketchHit.Normal, structuralHit.Origin, structuralHit.EdgeDir, lineIntersection, sketchRayDist, structuralEdgeDist, false))
 			{
-				sketchHit.Location = FMath::ClosestPointOnInfiniteLine(sketchHit.Origin, sketchHit.Location, structuralHit.Location);
+				sketchHit.Location = lineIntersection;
 			}
 
 			// If this sketch hit is being used because of a world or custom axis snap, then allow it to just be a snapped structural hit.
@@ -2078,7 +2095,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 				FMouseWorldHitType snappedStructuralHit = GetObjectMouseHit(sketchMouseOrigin, sketchMouseDir, true);
 
 				float screenSpaceDist;
-				if (snappedStructuralHit.Valid &&// (snappedStructuralHit.Actor.Get() == structuralHit.Actor.Get()) &&
+				if (snappedStructuralHit.Valid &&
 					DistanceBetweenWorldPointsInScreenSpace(snappedStructuralHit.Location, sketchHit.Location, screenSpaceDist) &&
 					(screenSpaceDist < SnapPointMaxScreenDistance))
 				{
@@ -2539,16 +2556,18 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 		if (FindBestMousePointHit(CurHitPointLocations, mouseLoc, mouseDir, objectHitDist, bestVirtualHitIndex, bestVirtualHitDist))
 		{
 			FStructurePoint &bestPoint = SnappingView->Corners[bestVirtualHitIndex];
+
+			objectHit.Valid = true;
+			objectHit.Location = bestPoint.Point;
+			objectHit.EdgeDir = bestPoint.Direction;
+			objectHit.CP1 = bestPoint.CP1;
+			objectHit.CP2 = bestPoint.CP2;
+
 			FModumateObjectInstance *bestObj = Document->GetObjectById(bestPoint.ObjID);
 			if (bestObj)
 			{
-				objectHit.Valid = true;
-				objectHit.Location = bestPoint.Point;
-				objectHit.EdgeDir = bestPoint.Direction;
 				objectHit.Actor = bestObj->GetActor();
 				objectHit.SnapType = (bestPoint.CP2 == INDEX_NONE) ? ESnapType::CT_CORNERSNAP : ESnapType::CT_MIDSNAP;
-				objectHit.CP1 = bestPoint.CP1;
-				objectHit.CP2 = bestPoint.CP2;
 				if (objectHit.Actor == directHitActor)
 				{
 					objectHit.Normal = directHitNormal;
@@ -2556,27 +2575,29 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 			}
 			else if (bestPoint.ObjID == MOD_ID_NONE)
 			{
-				objectHit.Valid = true;
-				objectHit.Location = bestPoint.Point;
-				objectHit.EdgeDir = bestPoint.Direction;
 				objectHit.SnapType = ESnapType::CT_CORNERSNAP;
-				objectHit.CP1 = bestPoint.CP1;
-				objectHit.CP2 = bestPoint.CP2;
+			}
+			else
+			{
+				objectHit.Valid = false;
 			}
 		}
 		else if (FindBestMouseLineHit(CurHitLineLocations, mouseLoc, mouseDir, objectHitDist, bestVirtualHitIndex, bestLineIntersection, bestVirtualHitDist))
 		{
 			FStructureLine &bestLine = SnappingView->LineSegments[bestVirtualHitIndex];
+
+			objectHit.Valid = true;
+			objectHit.Location = bestLineIntersection;
+			objectHit.Origin = bestLine.P1;
+			objectHit.EdgeDir = (bestLine.P2 - bestLine.P1).GetSafeNormal();
+			objectHit.CP1 = bestLine.CP1;
+			objectHit.CP2 = bestLine.CP2;
+
 			FModumateObjectInstance *bestObj = Document->GetObjectById(bestLine.ObjID);
 			if (bestObj)
 			{
-				objectHit.Valid = true;
-				objectHit.Location = bestLineIntersection;
-				objectHit.EdgeDir = (bestLine.P2 - bestLine.P1).GetSafeNormal();
-				objectHit.Actor = bestObj->GetActor();
 				objectHit.SnapType = ESnapType::CT_EDGESNAP;
-				objectHit.CP1 = bestLine.CP1;
-				objectHit.CP2 = bestLine.CP2;
+				objectHit.Actor = bestObj->GetActor();
 				if (objectHit.Actor == directHitActor)
 				{
 					objectHit.Normal = directHitNormal;
@@ -2584,12 +2605,11 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 			}
 			else if (bestLine.ObjID == MOD_ID_NONE)
 			{
-				objectHit.Valid = true;
-				objectHit.Location = bestLineIntersection;
-				objectHit.EdgeDir = (bestLine.P2 - bestLine.P1).GetSafeNormal();
 				objectHit.SnapType = ESnapType::CT_CORNERSNAP;
-				objectHit.CP1 = bestLine.CP1;
-				objectHit.CP2 = bestLine.CP2;
+			}
+			else
+			{
+				objectHit.Valid = false;
 			}
 		}
 	}
