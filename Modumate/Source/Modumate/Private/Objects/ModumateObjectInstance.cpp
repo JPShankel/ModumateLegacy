@@ -38,12 +38,12 @@ FModumateObjectInstance::FModumateObjectInstance(UWorld *world, FModumateDocumen
 		return;
 	}
 
-	// TODO: we should neither need to store the assembly by value, nor should we need to get it by ToolMode rather than ObjectType.
 	EToolMode assemblyToolMode = UModumateTypeStatics::ToolModeFromObjectType(StateData_V2.ObjectType);
-	const FBIMAssemblySpec* existingAssembly = Document->PresetManager.GetAssemblyByKey(assemblyToolMode, StateData_V2.AssemblyKey);
-	if (existingAssembly)
+
+	// May return a default assembly if preset database changes, so update assembly key if necessary
+	if (Document->PresetManager.TryGetProjectAssemblyForPreset(StateData_V2.ObjectType, StateData_V2.AssemblyKey, CachedAssembly))
 	{
-		CachedAssembly = *existingAssembly;
+		StateData_V2.AssemblyKey = CachedAssembly.UniqueKey();
 	}
 	else
 	{
@@ -81,20 +81,11 @@ void FModumateObjectInstance::UpdateAssemblyFromKey()
 {
 	if (CachedAssembly.UniqueKey() != StateData_V2.AssemblyKey)
 	{
-		// TODO: we should neither need to store the assembly by value, nor should we need to get it by ToolMode rather than ObjectType.
-		EToolMode assemblyToolMode = UModumateTypeStatics::ToolModeFromObjectType(StateData_V2.ObjectType);
-		const FBIMAssemblySpec* existingAssembly = Document->PresetManager.GetAssemblyByKey(assemblyToolMode, StateData_V2.AssemblyKey);
-		if (existingAssembly)
+		// Meta-objects don't have assemblies but we track MOI type in the CachedAssembly
+		if (!Document->PresetManager.TryGetProjectAssemblyForPreset(StateData_V2.ObjectType, StateData_V2.AssemblyKey, CachedAssembly))
 		{
-			CachedAssembly = *existingAssembly;
-		}
-		else
-		{
-			CachedAssembly = FBIMAssemblySpec();
-			CachedAssembly.RootPreset = StateData_V2.AssemblyKey;
 			CachedAssembly.ObjectType = StateData_V2.ObjectType;
 		}
-
 		bAssemblyLayersReversed = false;
 	}
 }

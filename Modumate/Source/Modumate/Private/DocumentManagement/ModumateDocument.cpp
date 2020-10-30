@@ -2210,8 +2210,10 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 	{
 		CommandHistory = docRec.CommandHistory;
 
-		// Note: will check version against header and simply init from db if presets are out of date
+		
+#if 0   // TODO: while preset serialization is in flux, use the latest database and rely on defaults for fallback
 		PresetManager.FromDocumentRecord(world, docHeader, docRec);
+#endif
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.
