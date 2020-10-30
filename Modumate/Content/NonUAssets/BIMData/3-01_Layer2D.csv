@@ -7,7 +7,7 @@ PROPERTY,,String,,,,Layer.NamedDimensions,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildLayerPattern,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildModuleArray,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildGapArray,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,,12,12,12,12,22,0,0,0,0,0
+,,Presets,,,,,,,,,,,12,12,12,12,23,0,0,0,0,0
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Layer.Name,Layer.NamedDimensions,DataType=InputPins,ChildModuleArray,ChildGapArray,ChildLayerPattern,DataType=TG_Parent Node+CategoryPath,4LayeredAssembly --> Wall,4LayeredAssembly --> Floor,4LayeredAssembly --> Roof,4LayeredAssembly --> Ceiling,4LayeredAssembly --> Finish,4LayeredAssembly --> System Panel,4LayeredAssembly --> Countertop,4LayeredAssembly --> Layered Tread,4LayeredAssembly --> Layered Riser,4LayeredAssembly --> Landscape
 PRESET,,"3Layer2D --> Board and Panel --> Cement
 2ModuleLWT --> Board/Panel --> Cement
@@ -665,6 +665,22 @@ PRESET,,"3Layer2D --> Board and Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-0.5625inW-0.25inD
 0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Metal
+2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Zinc-0RawMaterial-Zinc-0Color --> Metal --> Zinc-37383A-CoolDarkGrey
+0DimLW-180in-36in
+0DimThk-1inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Metal,,"36in x 180in, 1in, Metal, Zinc, Cool Dark Grey, Soldier Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> Metal
+1Material --> Metal --> Zinc-0RawMaterial-Zinc-0Color --> Metal --> Zinc-37383A-CoolDarkGrey
+0DimLW-180in-36in
+0DimThk-1inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
@@ -674,13 +690,13 @@ PRESET,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> OSB (Oriented Strand Board),,"48in x 96in, 3/8in, OSB (Oriented Strand Board), Wood Strands, White, Soldier Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> OSB (Oriented Strand Board),,"48in x 96in, 3/8in, OSB (Oriented Strand Board), Wood Strands, White, Running Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
@@ -690,13 +706,13 @@ PRESET,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> OSB (Oriented Strand Board),,"48in x 96in, 7/16in, OSB (Oriented Strand Board), Wood Strands, White, Soldier Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> OSB (Oriented Strand Board),,"48in x 96in, 7/16in, OSB (Oriented Strand Board), Wood Strands, White, Running Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.4375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Particle Board
 2ModuleLWT --> Board/Panel --> Particle Board
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
@@ -706,13 +722,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Particle Board
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Particle Board,,"48in x 96in, 3/8in, Particle Board, Wood Particles, White, Soldier Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> Particle Board
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Particle Board,,"48in x 96in, 3/8in, Particle Board, Wood Particles, White, Running Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> Particle Board
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Particle Board
 2ModuleLWT --> Board/Panel --> Particle Board
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
@@ -722,13 +738,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Particle Board
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Particle Board,,"48in x 96in, 1/2in, Particle Board, Wood Particles, White, Soldier Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> Particle Board
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Particle Board,,"48in x 96in, 1/2in, Particle Board, Wood Particles, White, Running Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> Particle Board
 1Material --> Fibrous --> Wood Particles-0RawMaterial-Wood Particles-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.5inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
@@ -738,13 +754,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Plywood
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Plywood,,"48in x 96in, 11/32in, Plywood, Plywood, White, Soldier Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> Plywood
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Plywood,,"48in x 96in, 11/32in, Plywood, Plywood, White, Running Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.34375inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
@@ -754,13 +770,13 @@ PRESET,,"3Layer2D --> Board and Panel --> Plywood
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Plywood,,"48in x 96in, 15/32in, Plywood, Plywood, White, Soldier Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> Plywood
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Board and Panel --> Plywood,,"48in x 96in, 15/32in, Plywood, Plywood, White, Running Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT","2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Plank --> Engineered Wood
 2ModuleLWT --> Plank --> Engineered Wood
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
@@ -930,13 +946,45 @@ PRESET,,"3Layer2D --> Plank --> Wood
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0.0625inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Plank --> Wood,,"5in x 60in, 1/2in, Wood, Ipe, Natural, Soldier Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Plank --> Wood
+0LayerPattern --> 2D-Random Stagger",,3Layer2D --> Plank --> Wood,,"5in x 60in, 1/2in, Wood, Ipe, Natural, Random Stagger","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Ipe-0RawMaterial-Ipe-0Color --> Wood --> Ipe-FFFFFF-Natural
 0DimLW-60in-5in
 0DimThk-0.5inT","2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0.0625inD
-0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
+0Profile-Flat",0LayerPattern --> 2D-Random Stagger,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural
+0DimLW-48in-3in
+0DimThk-0.75inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Random Stagger",,3Layer2D --> Plank --> Wood,,"3in x 48in, 3/4in, Wood, Oak (White), Natural, Random Stagger","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural
+0DimLW-48in-3in
+0DimThk-0.75inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Random Stagger,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural
+0DimLW-72in-7in
+0DimThk-0.75inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Random Stagger",,3Layer2D --> Plank --> Wood,,"7in x 72in, 3/4in, Wood, Oak (White), Natural, Random Stagger","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural
+0DimLW-72in-7in
+0DimThk-0.75inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Random Stagger,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural

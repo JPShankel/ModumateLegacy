@@ -23,7 +23,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond
+0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
@@ -33,7 +33,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond
+0LayerPattern --> 2D-Running Bond
 4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
@@ -44,7 +44,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond
+0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
@@ -54,7 +54,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,5Stair,,OSB + Plywood Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
+0LayerPattern --> 2D-Running Bond",,5Stair,,OSB + Plywood Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
@@ -64,7 +64,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond
+0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
@@ -74,7 +74,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond","4LayeredAssembly --> Layered Riser
+0LayerPattern --> 2D-Running Bond","4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
@@ -84,7 +84,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond
+0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
@@ -94,7 +94,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond"
+0LayerPattern --> 2D-Running Bond"
 PRESET,,"5Stair
 4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> Plywood
@@ -106,7 +106,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond
+0LayerPattern --> 2D-Running Bond
 4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
@@ -117,7 +117,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,5Stair,,Plywood stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
+0LayerPattern --> 2D-Running Bond",,5Stair,,Plywood stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
@@ -127,7 +127,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond","4LayeredAssembly --> Layered Riser
+0LayerPattern --> 2D-Running Bond","4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> Plywood
 2ModuleLWT --> Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
@@ -137,7 +137,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond"
+0LayerPattern --> 2D-Running Bond"
 PRESET,,"5Stair
 4LayeredAssembly --> Layered Tread
 3Layer2D --> Tile --> Stone
@@ -202,7 +202,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond
+0LayerPattern --> 2D-Running Bond
 4LayeredAssembly --> Layered Riser
 3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
@@ -223,7 +223,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,5Stair,,Birch Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
+0LayerPattern --> 2D-Running Bond",,5Stair,,Birch Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
@@ -243,7 +243,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond","4LayeredAssembly --> Layered Riser
+0LayerPattern --> 2D-Running Bond","4LayeredAssembly --> Layered Riser
 3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
@@ -263,7 +263,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond"
+0LayerPattern --> 2D-Running Bond"
 PRESET,,"5Stair
 4LayeredAssembly --> Layered Tread
 3Layer2D --> Plank --> Wood
@@ -285,7 +285,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,5Stair,,Walnut Open Tread Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
+0LayerPattern --> 2D-Running Bond",,5Stair,,Walnut Open Tread Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
@@ -305,7 +305,7 @@ PRESET,,"5Stair
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",
+0LayerPattern --> 2D-Running Bond",
 PRESET,,"5Stair
 4LayeredAssembly --> Layered Tread
 2Layer0D --> Transparent --> Glass

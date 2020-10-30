@@ -241,10 +241,11 @@ PRESET,,0Color --> Metal --> Steel-404040-Gray8,,0Color --> Metal --> Steel,,Gra
 PRESET,,0Color --> Metal --> Steel-2B2B2B-Gray9,,0Color --> Metal --> Steel,,Gray 9,2B2B2B,,,1Material --> Metal --> Steel
 PRESET,,0Color --> Metal --> Steel-151515-Gray10,,0Color --> Metal --> Steel,,Gray 10,151515,,,1Material --> Metal --> Steel
 PRESET,,0Color --> Metal --> Steel-000000-Black,,0Color --> Metal --> Steel,,Black,000000,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Tin-FFFFFF-Untinted,,0Color --> Metal --> Tin,,Untinted,FFFFFF,,,1Material --> Metal --> Tin
+PRESET,,0Color --> Metal --> Tin-FFFFFF-White,,0Color --> Metal --> Tin,,White,FFFFFF,,,1Material --> Metal --> Tin
 PRESET,,0Color --> Metal --> Tin-CCCCCC-Dark,,0Color --> Metal --> Tin,,Dark,CCCCCC,,,1Material --> Metal --> Tin
-PRESET,,0Color --> Metal --> Zinc-FFFFFF-Untinted,,0Color --> Metal --> Zinc,,Untinted,FFFFFF,,,1Material --> Metal --> Zinc
-PRESET,,0Color --> Metal --> Zinc-CCCCCC-Dark,,0Color --> Metal --> Zinc,,Dark,CCCCCC,,,1Material --> Metal --> Zinc
+PRESET,,0Color --> Metal --> Zinc-FFFFFF-White,,0Color --> Metal --> Zinc,,White,FFFFFF,,,1Material --> Metal --> Zinc
+PRESET,,0Color --> Metal --> Zinc-CCCCCC-LightGrey,,0Color --> Metal --> Zinc,,Light Grey,CCCCCC,,,1Material --> Metal --> Zinc
+PRESET,,0Color --> Metal --> Zinc-37383A-CoolDarkGrey,,0Color --> Metal --> Zinc,,Cool Dark Grey,37383A,,,1Material --> Metal --> Zinc
 PRESET,,0Color --> Spread --> Paint-F3F1ED-GentleWhite,,0Color --> Spread --> Paint,,Gentle White,F3F1ED,,,1Material --> Spread --> Paint
 PRESET,,0Color --> Spread --> Paint-C4C4C4-Grey,,0Color --> Spread --> Paint,,Grey,C4C4C4,,,1Material --> Spread --> Paint
 PRESET,,0Color --> Spread --> Paint-F5D9CC-Peach,,0Color --> Spread --> Paint,,Peach,F5D9CC,,,1Material --> Spread --> Paint

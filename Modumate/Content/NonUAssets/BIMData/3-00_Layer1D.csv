@@ -7,7 +7,7 @@ PROPERTY,,String,,,,Layer.NamedDimensions,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildLayerPattern,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..,,ChildModuleArray,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildGapMaterial,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,,20,33,33,33,15,0,0,0,0,0
+,,Presets,,,,,,,,,,,21,34,34,34,15,0,0,0,0,0
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Layer.Name,Layer.NamedDimensions,DataType=InputPins,ChildModuleArray,ChildGapMaterial,ChildLayerPattern,DataType=TG_Parent Node+CategoryPath,4LayeredAssembly --> Wall,4LayeredAssembly --> Floor,4LayeredAssembly --> Roof,4LayeredAssembly --> Ceiling,4LayeredAssembly --> Finish,4LayeredAssembly --> System Panel,4LayeredAssembly --> Countertop,4LayeredAssembly --> Layered Tread,4LayeredAssembly --> Layered Riser,4LayeredAssembly --> Landscape
 PRESET,,"3Layer1D --> Corrugated Deck --> Plastic
 2ModuleWDProfile --> Corrugated Plastic Sheet
@@ -342,43 +342,53 @@ PRESET,,"3Layer1D --> Furring --> Wood Strips
 PRESET,,"3Layer1D --> Furring --> Wood Strips
 2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
-0DimWD-0.75inW-2.5inD
+0DimWD-0.75inW-0.75inD
 0Profile-Solid Rectangle
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
-0LayerPattern --> 1D-16-Inch O.C.",,3Layer1D --> Furring --> Wood Strips,,"0.75in x 2.5in, Wood Lumber, Spruce-Pine-Fir, Natural, Foam (Extruded Polystyrene), Pink, 16-Inch O.C.","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleWDProfile --> Wood Lumber
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0LayerPattern --> 1D-16-Inch O.C.",,3Layer1D --> Furring --> Wood Strips,,"0.75in x 0.75in, Wood Lumber, Spruce-Pine-Fir, Natural, Air, Clear, 16-Inch O.C.","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
-0DimWD-0.75inW-2.5inD
-0Profile-Solid Rectangle",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink,0LayerPattern --> 1D-16-Inch O.C.,,X,X,X,X,,,,,,
+0DimWD-0.75inW-0.75inD
+0Profile-Solid Rectangle",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear,0LayerPattern --> 1D-16-Inch O.C.,,X,X,X,X,,,,,,
 PRESET,,"3Layer1D --> Furring --> Wood Strips
 2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-2.5inD
 0Profile-Solid Rectangle
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
-0LayerPattern --> 1D-24-Inch O.C.",,3Layer1D --> Furring --> Wood Strips,,"0.75in x 2.5in, Wood Lumber, Spruce-Pine-Fir, Natural, Foam (Extruded Polystyrene), Pink, 24-Inch O.C.","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleWDProfile --> Wood Lumber
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0LayerPattern --> 1D-16-Inch O.C.",,3Layer1D --> Furring --> Wood Strips,,"0.75in x 2.5in, Wood Lumber, Spruce-Pine-Fir, Natural, Air, Clear, 16-Inch O.C.","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-2.5inD
-0Profile-Solid Rectangle",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink,0LayerPattern --> 1D-24-Inch O.C.,,X,X,X,X,,,,,,
+0Profile-Solid Rectangle",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear,0LayerPattern --> 1D-16-Inch O.C.,,X,X,X,X,,,,,,
+PRESET,,"3Layer1D --> Furring --> Wood Strips
+2ModuleWDProfile --> Wood Lumber
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
+0DimWD-0.75inW-2.5inD
+0Profile-Solid Rectangle
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0LayerPattern --> 1D-24-Inch O.C.",,3Layer1D --> Furring --> Wood Strips,,"0.75in x 2.5in, Wood Lumber, Spruce-Pine-Fir, Natural, Air, Clear, 24-Inch O.C.","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleWDProfile --> Wood Lumber
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
+0DimWD-0.75inW-2.5inD
+0Profile-Solid Rectangle",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear,0LayerPattern --> 1D-24-Inch O.C.,,X,X,X,X,,,,,,
 PRESET,,"3Layer1D --> Furring --> Wood Strips
 2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-3.5inD
 0Profile-Solid Rectangle
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
-0LayerPattern --> 1D-16-Inch O.C.",,3Layer1D --> Furring --> Wood Strips,,"0.75in x 3.5in, Wood Lumber, Spruce-Pine-Fir, Natural, Foam (Extruded Polystyrene), Pink, 16-Inch O.C.","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleWDProfile --> Wood Lumber
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0LayerPattern --> 1D-16-Inch O.C.",,3Layer1D --> Furring --> Wood Strips,,"0.75in x 3.5in, Wood Lumber, Spruce-Pine-Fir, Natural, Air, Clear, 16-Inch O.C.","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-3.5inD
-0Profile-Solid Rectangle",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink,0LayerPattern --> 1D-16-Inch O.C.,,X,X,X,X,,,,,,
+0Profile-Solid Rectangle",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear,0LayerPattern --> 1D-16-Inch O.C.,,X,X,X,X,,,,,,
 PRESET,,"3Layer1D --> Furring --> Wood Strips
 2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-3.5inD
 0Profile-Solid Rectangle
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
-0LayerPattern --> 1D-24-Inch O.C.",,3Layer1D --> Furring --> Wood Strips,,"0.75in x 3.5in, Wood Lumber, Spruce-Pine-Fir, Natural, Foam (Extruded Polystyrene), Pink, 24-Inch O.C.","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleWDProfile --> Wood Lumber
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0LayerPattern --> 1D-24-Inch O.C.",,3Layer1D --> Furring --> Wood Strips,,"0.75in x 3.5in, Wood Lumber, Spruce-Pine-Fir, Natural, Air, Clear, 24-Inch O.C.","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-3.5inD
-0Profile-Solid Rectangle",1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink,0LayerPattern --> 1D-24-Inch O.C.,,X,X,X,X,,,,,,
+0Profile-Solid Rectangle",1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear,0LayerPattern --> 1D-24-Inch O.C.,,X,X,X,X,,,,,,
 PRESET,,"3Layer1D --> Joist --> Wood
 2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural

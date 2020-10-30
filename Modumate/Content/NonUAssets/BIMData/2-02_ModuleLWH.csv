@@ -1,151 +1,152 @@
-TYPENAME,,2ModuleLWH,,Module,,,,,,,,
-,,Definition,,,,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,
-PROPERTY,,String,,Name,,Module.Name,,,,,,
-PROPERTY,,String,,,,Module.AnchorPoint,,,,,,
-,,InputExtensibility,,InputPreset,,,,,,,,
-INPUTPIN,,1..1,,ChildMaterial,,,,,,,,
-INPUTPIN,,1..1,,ChildDimLWH,,,,,,,,
-,,Presets,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Module.Name,Module.AnchorPoint,DataType=InputPins,ChildMaterial,ChildDimLWH,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
+TYPENAME,,2ModuleLWH,,Module,,,,,,,,,
+,,Definition,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,
+PROPERTY,,String,,Name,,Module.Name,,,,,,,
+PROPERTY,,String,,,,Module.AnchorPoint,,,,,,,
+PROPERTY,,Dimension,,,,Module.BevelWidth,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,
+INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,
+INPUTPIN,,1..1,,ChildDimLWH,,,,,,,,,
+,,Presets,,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Module.Name,Module.AnchorPoint,Module.BevelWidth,DataType=InputPins,ChildMaterial,ChildDimLWH,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"8in Modular, Clay Brick, Clay, Natural","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural,0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH,,3Layer3D
+0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"8in Modular, Clay Brick, Clay, Natural","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural,0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan
-0DimLWH --> ClayBrick-7.625inL-3.125inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Narrow 8in Modular, Clay Brick, Clay, Tan","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan,0DimLWH --> ClayBrick-7.625inL-3.125inW-2.29167inH,,3Layer3D
+0DimLWH --> ClayBrick-7.625inL-3.125inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Narrow 8in Modular, Clay Brick, Clay, Tan","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan,0DimLWH --> ClayBrick-7.625inL-3.125inW-2.29167inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry
-0DimLWH --> ClayBrick-7.625inL-2.29167inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Extra-Narrow 8in Modular, Clay Brick, Clay, Mulberry","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry,0DimLWH --> ClayBrick-7.625inL-2.29167inW-2.29167inH,,3Layer3D
+0DimLWH --> ClayBrick-7.625inL-2.29167inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Extra-Narrow 8in Modular, Clay Brick, Clay, Mulberry","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry,0DimLWH --> ClayBrick-7.625inL-2.29167inW-2.29167inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall 8in Modular, Clay Brick, Clay, Cream","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream,0DimLWH --> ClayBrick-7.625inL-3.625inW-2.75inH,,3Layer3D
+0DimLWH --> ClayBrick-7.625inL-3.625inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall 8in Modular, Clay Brick, Clay, Cream","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream,0DimLWH --> ClayBrick-7.625inL-3.625inW-2.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry
-0DimLWH --> ClayBrick-7.625inL-3.125inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall Narrow 8in Modular, Clay Brick, Clay, Ashberry","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry,0DimLWH --> ClayBrick-7.625inL-3.125inW-2.75inH,,3Layer3D
+0DimLWH --> ClayBrick-7.625inL-3.125inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall Narrow 8in Modular, Clay Brick, Clay, Ashberry","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry,0DimLWH --> ClayBrick-7.625inL-3.125inW-2.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown
-0DimLWH --> ClayBrick-7.625inL-3.625inW-3.625inH",,2ModuleLWH --> Clay Brick,,"Square-Head 8in Modular, Clay Brick, Clay, Brown","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown,0DimLWH --> ClayBrick-7.625inL-3.625inW-3.625inH,,3Layer3D
+0DimLWH --> ClayBrick-7.625inL-3.625inW-3.625inH",,2ModuleLWH --> Clay Brick,,"Square-Head 8in Modular, Clay Brick, Clay, Brown","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown,0DimLWH --> ClayBrick-7.625inL-3.625inW-3.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-FEF9F3-White
-0DimLWH --> ClayBrick-7.625inL-3.625inW-7.625inH",,2ModuleLWH --> Clay Brick,,"Triple-Height 8in Modular, Clay Brick, Clay, White","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-FEF9F3-White,0DimLWH --> ClayBrick-7.625inL-3.625inW-7.625inH,,3Layer3D
+0DimLWH --> ClayBrick-7.625inL-3.625inW-7.625inH",,2ModuleLWH --> Clay Brick,,"Triple-Height 8in Modular, Clay Brick, Clay, White","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-FEF9F3-White,0DimLWH --> ClayBrick-7.625inL-3.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-4F4B48-Midnight
-0DimLWH --> ClayBrick-11.625inL-3.625inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Norman, Clay Brick, Clay, Midnight","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-4F4B48-Midnight,0DimLWH --> ClayBrick-11.625inL-3.625inW-2.29167inH,,3Layer3D
+0DimLWH --> ClayBrick-11.625inL-3.625inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Norman, Clay Brick, Clay, Midnight","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-4F4B48-Midnight,0DimLWH --> ClayBrick-11.625inL-3.625inW-2.29167inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-63454D-Plum
-0DimLWH --> ClayBrick-11.625inL-3.125inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Narrow Norman, Clay Brick, Clay, Plum","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-63454D-Plum,0DimLWH --> ClayBrick-11.625inL-3.125inW-2.29167inH,,3Layer3D
+0DimLWH --> ClayBrick-11.625inL-3.125inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Narrow Norman, Clay Brick, Clay, Plum","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-63454D-Plum,0DimLWH --> ClayBrick-11.625inL-3.125inW-2.29167inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EDCB6E-Yellow
-0DimLWH --> ClayBrick-11.625inL-3.625inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall Norman, Clay Brick, Clay, Yellow","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EDCB6E-Yellow,0DimLWH --> ClayBrick-11.625inL-3.625inW-2.75inH,,3Layer3D
+0DimLWH --> ClayBrick-11.625inL-3.625inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall Norman, Clay Brick, Clay, Yellow","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EDCB6E-Yellow,0DimLWH --> ClayBrick-11.625inL-3.625inW-2.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-11.625inL-3.125inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall Narrow Norman, Clay Brick, Clay, Natural","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural,0DimLWH --> ClayBrick-11.625inL-3.125inW-2.75inH,,3Layer3D
+0DimLWH --> ClayBrick-11.625inL-3.125inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall Narrow Norman, Clay Brick, Clay, Natural","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural,0DimLWH --> ClayBrick-11.625inL-3.125inW-2.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan
-0DimLWH --> ClayBrick-11.625inL-3.625inW-3.625inH",,2ModuleLWH --> Clay Brick,,"Square-Head Norman, Clay Brick, Clay, Tan","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan,0DimLWH --> ClayBrick-11.625inL-3.625inW-3.625inH,,3Layer3D
+0DimLWH --> ClayBrick-11.625inL-3.625inW-3.625inH",,2ModuleLWH --> Clay Brick,,"Square-Head Norman, Clay Brick, Clay, Tan","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan,0DimLWH --> ClayBrick-11.625inL-3.625inW-3.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry
-0DimLWH --> ClayBrick-11.625inL-3.625inW-7.625inH",,2ModuleLWH --> Clay Brick,,"Triple-Height Norman, Clay Brick, Clay, Mulberry","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry,0DimLWH --> ClayBrick-11.625inL-3.625inW-7.625inH,,3Layer3D
+0DimLWH --> ClayBrick-11.625inL-3.625inW-7.625inH",,2ModuleLWH --> Clay Brick,,"Triple-Height Norman, Clay Brick, Clay, Mulberry","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry,0DimLWH --> ClayBrick-11.625inL-3.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream
-0DimLWH --> ClayBrick-15.625inL-3.625inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Monarch, Clay Brick, Clay, Cream","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream,0DimLWH --> ClayBrick-15.625inL-3.625inW-2.29167inH,,3Layer3D
+0DimLWH --> ClayBrick-15.625inL-3.625inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Monarch, Clay Brick, Clay, Cream","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream,0DimLWH --> ClayBrick-15.625inL-3.625inW-2.29167inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry
-0DimLWH --> ClayBrick-15.625inL-3.125inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Narrow Monarch, Clay Brick, Clay, Ashberry","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry,0DimLWH --> ClayBrick-15.625inL-3.125inW-2.29167inH,,3Layer3D
+0DimLWH --> ClayBrick-15.625inL-3.125inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Narrow Monarch, Clay Brick, Clay, Ashberry","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry,0DimLWH --> ClayBrick-15.625inL-3.125inW-2.29167inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown
-0DimLWH --> ClayBrick-15.625inL-3.625inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall Monarch, Clay Brick, Clay, Brown","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown,0DimLWH --> ClayBrick-15.625inL-3.625inW-2.75inH,,3Layer3D
+0DimLWH --> ClayBrick-15.625inL-3.625inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall Monarch, Clay Brick, Clay, Brown","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown,0DimLWH --> ClayBrick-15.625inL-3.625inW-2.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-FEF9F3-White
-0DimLWH --> ClayBrick-15.625inL-3.625inW-7.625inH",,2ModuleLWH --> Clay Brick,,"Triple-Height Monarch, Clay Brick, Clay, White","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-FEF9F3-White,0DimLWH --> ClayBrick-15.625inL-3.625inW-7.625inH,,3Layer3D
+0DimLWH --> ClayBrick-15.625inL-3.625inW-7.625inH",,2ModuleLWH --> Clay Brick,,"Triple-Height Monarch, Clay Brick, Clay, White","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-FEF9F3-White,0DimLWH --> ClayBrick-15.625inL-3.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-4F4B48-Midnight
-0DimLWH --> ClayBrick-11.625inL-3.625inW-1.625inH",,2ModuleLWH --> Clay Brick,,"Roman, Clay Brick, Clay, Midnight","0,0,0",,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-4F4B48-Midnight,0DimLWH --> ClayBrick-11.625inL-3.625inW-1.625inH,,3Layer3D
+0DimLWH --> ClayBrick-11.625inL-3.625inW-1.625inH",,2ModuleLWH --> Clay Brick,,"Roman, Clay Brick, Clay, Midnight","0,0,0",0.1875,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-4F4B48-Midnight,0DimLWH --> ClayBrick-11.625inL-3.625inW-1.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimLWH --> CMU-7.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"6in Half Block, 8in x 8in x 6in, Concrete Masonry Unit, Concrete (Normal Aggregate), Natural","0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimLWH --> CMU-7.625inL-5.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-7.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"6in Half Block, 8in x 8in x 6in, Concrete Masonry Unit, Concrete (Normal Aggregate), Natural","0,0,0",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimLWH --> CMU-7.625inL-5.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray
-0DimLWH --> CMU-7.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"6in Half Block, 8in x 8in x 6in, Concrete Masonry Unit, Concrete (Normal Aggregate), Medium Gray","0,0,1",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,0DimLWH --> CMU-7.625inL-5.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-7.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"6in Half Block, 8in x 8in x 6in, Concrete Masonry Unit, Concrete (Normal Aggregate), Medium Gray","0,0,1",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,0DimLWH --> CMU-7.625inL-5.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey
-0DimLWH --> CMU-15.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"6in Full Block, 8in x 16in x 6in, Concrete Masonry Unit, Concrete (Normal Aggregate), Dark Grey","0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey,0DimLWH --> CMU-15.625inL-5.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-15.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"6in Full Block, 8in x 16in x 6in, Concrete Masonry Unit, Concrete (Normal Aggregate), Dark Grey","0,0,0",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey,0DimLWH --> CMU-15.625inL-5.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black
-0DimLWH --> CMU-15.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"6in Full Block, 8in x 16in x 6in, Concrete Masonry Unit, Concrete (Normal Aggregate), Black","0,0,1",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black,0DimLWH --> CMU-15.625inL-5.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-15.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"6in Full Block, 8in x 16in x 6in, Concrete Masonry Unit, Concrete (Normal Aggregate), Black","0,0,1",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black,0DimLWH --> CMU-15.625inL-5.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
-0DimLWH --> CMU-7.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"8in Half Block, 8in x 8in x 8in, Concrete Masonry Unit, Concrete (Normal Aggregate), Maple","0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple,0DimLWH --> CMU-7.625inL-7.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-7.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"8in Half Block, 8in x 8in x 8in, Concrete Masonry Unit, Concrete (Normal Aggregate), Maple","0,0,0",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple,0DimLWH --> CMU-7.625inL-7.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive
-0DimLWH --> CMU-7.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"8in Half Block, 8in x 8in x 8in, Concrete Masonry Unit, Concrete (Normal Aggregate), Olive","0,0,1",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive,0DimLWH --> CMU-7.625inL-7.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-7.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"8in Half Block, 8in x 8in x 8in, Concrete Masonry Unit, Concrete (Normal Aggregate), Olive","0,0,1",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive,0DimLWH --> CMU-7.625inL-7.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff
-0DimLWH --> CMU-15.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"8in Full Block, 8in x 16in x 8in, Concrete Masonry Unit, Concrete (Normal Aggregate), Buff","0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff,0DimLWH --> CMU-15.625inL-7.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-15.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"8in Full Block, 8in x 16in x 8in, Concrete Masonry Unit, Concrete (Normal Aggregate), Buff","0,0,0",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff,0DimLWH --> CMU-15.625inL-7.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss
-0DimLWH --> CMU-15.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"8in Full Block, 8in x 16in x 8in, Concrete Masonry Unit, Concrete (Normal Aggregate), Moss","0,0,1",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss,0DimLWH --> CMU-15.625inL-7.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-15.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"8in Full Block, 8in x 16in x 8in, Concrete Masonry Unit, Concrete (Normal Aggregate), Moss","0,0,1",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss,0DimLWH --> CMU-15.625inL-7.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean
-0DimLWH --> CMU-7.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"10in Half Block, 8in x 8in x 10in, Concrete Masonry Unit, Concrete (Normal Aggregate), Ocean","0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean,0DimLWH --> CMU-7.625inL-9.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-7.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"10in Half Block, 8in x 8in x 10in, Concrete Masonry Unit, Concrete (Normal Aggregate), Ocean","0,0,0",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean,0DimLWH --> CMU-7.625inL-9.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet
-0DimLWH --> CMU-7.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"10in Half Block, 8in x 8in x 10in, Concrete Masonry Unit, Concrete (Normal Aggregate), Cabernet","0,0,1",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet,0DimLWH --> CMU-7.625inL-9.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-7.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"10in Half Block, 8in x 8in x 10in, Concrete Masonry Unit, Concrete (Normal Aggregate), Cabernet","0,0,1",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet,0DimLWH --> CMU-7.625inL-9.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimLWH --> CMU-15.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"10in Full Block, 8in x 16in x 10in, Concrete Masonry Unit, Concrete (Normal Aggregate), Natural","0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimLWH --> CMU-15.625inL-9.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-15.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"10in Full Block, 8in x 16in x 10in, Concrete Masonry Unit, Concrete (Normal Aggregate), Natural","0,0,0",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimLWH --> CMU-15.625inL-9.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray
-0DimLWH --> CMU-15.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"10in Full Block, 8in x 16in x 10in, Concrete Masonry Unit, Concrete (Normal Aggregate), Medium Gray","0,0,1",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,0DimLWH --> CMU-15.625inL-9.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-15.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"10in Full Block, 8in x 16in x 10in, Concrete Masonry Unit, Concrete (Normal Aggregate), Medium Gray","0,0,1",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,0DimLWH --> CMU-15.625inL-9.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey
-0DimLWH --> CMU-7.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"12in Half Block, 8in x 8in x 12in, Concrete Masonry Unit, Concrete (Normal Aggregate), Dark Grey","0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey,0DimLWH --> CMU-7.625inL-11.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-7.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"12in Half Block, 8in x 8in x 12in, Concrete Masonry Unit, Concrete (Normal Aggregate), Dark Grey","0,0,0",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey,0DimLWH --> CMU-7.625inL-11.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black
-0DimLWH --> CMU-7.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"12in Half Block, 8in x 8in x 12in, Concrete Masonry Unit, Concrete (Normal Aggregate), Black","0,0,1",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black,0DimLWH --> CMU-7.625inL-11.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-7.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"12in Half Block, 8in x 8in x 12in, Concrete Masonry Unit, Concrete (Normal Aggregate), Black","0,0,1",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black,0DimLWH --> CMU-7.625inL-11.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
-0DimLWH --> CMU-15.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"12in Full Block, 8in x 16in x 12in, Concrete Masonry Unit, Concrete (Normal Aggregate), Maple","0,0,0",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple,0DimLWH --> CMU-15.625inL-11.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-15.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"12in Full Block, 8in x 16in x 12in, Concrete Masonry Unit, Concrete (Normal Aggregate), Maple","0,0,0",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple,0DimLWH --> CMU-15.625inL-11.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Concrete Masonry Unit
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive
-0DimLWH --> CMU-15.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"12in Full Block, 8in x 16in x 12in, Concrete Masonry Unit, Concrete (Normal Aggregate), Olive","0,0,1",,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive,0DimLWH --> CMU-15.625inL-11.625inW-7.625inH,,3Layer3D
+0DimLWH --> CMU-15.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"12in Full Block, 8in x 16in x 12in, Concrete Masonry Unit, Concrete (Normal Aggregate), Olive","0,0,1",0.25,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive,0DimLWH --> CMU-15.625inL-11.625inW-7.625inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Earth Brick
 1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White
-0DimLWH --> EarthBrick-11.614inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,"Full Block, 29.5cm x 14cm x 9cm, Earth Brick, Rammed Earth, White","0,0,0",,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White,0DimLWH --> EarthBrick-11.614inL-5.512inW-3.543inH,,3Layer3D
+0DimLWH --> EarthBrick-11.614inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,"Full Block, 29.5cm x 14cm x 9cm, Earth Brick, Rammed Earth, White","0,0,0",0.25,,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White,0DimLWH --> EarthBrick-11.614inL-5.512inW-3.543inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Earth Brick
 1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White
-0DimLWH --> EarthBrick-8.563inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,"3/4 Block, 21.75cm x 14cm x 9cm, Earth Brick, Rammed Earth, White","0,0,1",,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White,0DimLWH --> EarthBrick-8.563inL-5.512inW-3.543inH,,3Layer3D
+0DimLWH --> EarthBrick-8.563inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,"3/4 Block, 21.75cm x 14cm x 9cm, Earth Brick, Rammed Earth, White","0,0,1",0.25,,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White,0DimLWH --> EarthBrick-8.563inL-5.512inW-3.543inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Earth Brick
 1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White
-0DimLWH --> EarthBrick-5.512inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,"Half Block, 14cm x 14cm x 9cm, Earth Brick, Rammed Earth, White","0,0,2",,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White,0DimLWH --> EarthBrick-5.512inL-5.512inW-3.543inH,,3Layer3D
+0DimLWH --> EarthBrick-5.512inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,"Half Block, 14cm x 14cm x 9cm, Earth Brick, Rammed Earth, White","0,0,2",0.25,,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White,0DimLWH --> EarthBrick-5.512inL-5.512inW-3.543inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
-0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH",,2ModuleLWH --> Glass Block,,"4in x 8in x 4in, Glass Block, Glass Block, Untinted","0,0,0",,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D
+0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH",,2ModuleLWH --> Glass Block,,"4in x 8in x 4in, Glass Block, Glass Block, Untinted","0,0,0",0.1875,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
-0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH",,2ModuleLWH --> Glass Block,,"4in x 8in x 4in, Glass Block, Glass Block, Limestone","0,0,1",,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D
+0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH",,2ModuleLWH --> Glass Block,,"4in x 8in x 4in, Glass Block, Glass Block, Limestone","0,0,1",0.1875,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
-0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH",,2ModuleLWH --> Glass Block,,"4in x 8in x 4in, Glass Block, Glass Block, Slate","0,0,2",,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-D6DADB-Slate,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D
+0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH",,2ModuleLWH --> Glass Block,,"4in x 8in x 4in, Glass Block, Glass Block, Slate","0,0,2",0.1875,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-D6DADB-Slate,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-BAC7CD-ChillyBlue
-0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH",,2ModuleLWH --> Glass Block,,"6in x 6in x 4in, Glass Block, Glass Block, Chilly Blue","0,0,0",,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-BAC7CD-ChillyBlue,0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH,,3Layer3D
+0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH",,2ModuleLWH --> Glass Block,,"6in x 6in x 4in, Glass Block, Glass Block, Chilly Blue","0,0,0",0.1875,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-BAC7CD-ChillyBlue,0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-829CA9-BayBlue
-0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH",,2ModuleLWH --> Glass Block,,"6in x 6in x 4in, Glass Block, Glass Block, Bay Blue","0,0,1",,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-829CA9-BayBlue,0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH,,3Layer3D
+0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH",,2ModuleLWH --> Glass Block,,"6in x 6in x 4in, Glass Block, Glass Block, Bay Blue","0,0,1",0.1875,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-829CA9-BayBlue,0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-A6C7C0-Aquamarine
-0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH",,2ModuleLWH --> Glass Block,,"6in x 6in x 4in, Glass Block, Glass Block, Aquamarine","0,0,2",,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-A6C7C0-Aquamarine,0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH,,3Layer3D
+0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH",,2ModuleLWH --> Glass Block,,"6in x 6in x 4in, Glass Block, Glass Block, Aquamarine","0,0,2",0.1875,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-A6C7C0-Aquamarine,0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-A7B5A8-SageGreen
-0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Sage Green","0,0,0",,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-A7B5A8-SageGreen,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D
+0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Sage Green","0,0,0",0.1875,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-A7B5A8-SageGreen,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow
-0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Sandy Yellow","0,0,1",,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D
+0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Sandy Yellow","0,0,1",0.1875,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-AC8F8B-DeepBlush
-0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Deep Blush","0,0,2",,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-AC8F8B-DeepBlush,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D
+0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Deep Blush","0,0,2",0.1875,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-AC8F8B-DeepBlush,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D
 PRESET,,"2ModuleLWH --> Glass Block
 1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-292D38-Indigo
-0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Indigo","0,0,3",,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-292D38-Indigo,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D
+0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Indigo","0,0,3",0.1875,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-292D38-Indigo,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D
