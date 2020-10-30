@@ -110,7 +110,7 @@ public:
 	virtual FTransform GetWorldTransform() const override;
 	virtual FVector GetNormal() const override { return FVector::ZeroVector; }
 	virtual FVector GetCorner(int32 index) const override;
-	virtual int32 GetNumCorners() const;
+	virtual int32 GetNumCorners() const override;
 
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 

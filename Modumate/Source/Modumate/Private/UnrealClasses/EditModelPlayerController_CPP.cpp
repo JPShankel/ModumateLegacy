@@ -1725,6 +1725,12 @@ void AEditModelPlayerController_CPP::UpdateMouseTraceParams()
 		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_SURFACE_MOI);
 		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_DECORATOR_MOI);
 		break;
+	case EToolMode::VE_SURFACEGRAPH:
+		if (CurrentTool->IsInUse())
+		{
+			MOITraceObjectQueryParams = FCollisionObjectQueryParams(COLLISION_SURFACE_MOI);
+		}
+		break;
 	case EToolMode::VE_FINISH:
 	case EToolMode::VE_TRIM:
 	case EToolMode::VE_CABINET:
@@ -2015,7 +2021,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 
 		// Order of precedence: structural hit first, then user snap points, then a sketch plane hit, then no hit
 		// Exception: Prioritize World Axis Snap over Face Snap
-		bool validWorldSnap = false;
+		bool bValidSketchWorldSnap = false;
 		switch (sketchHit.SnapType)
 		{
 			case ESnapType::CT_CUSTOMSNAPX:
@@ -2025,14 +2031,23 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 			case ESnapType::CT_WORLDSNAPY:
 			case ESnapType::CT_WORLDSNAPZ:
 			case ESnapType::CT_WORLDSNAPXY:
-				validWorldSnap = true;
+				bValidSketchWorldSnap = true;
 				break;
 		};
 
-		bool validFaceOverride = ((structuralHit.SnapType == ESnapType::CT_FACESELECT) || (structuralHit.SnapType == ESnapType::CT_NOSNAP));
-		bool worldSnapOverride = validWorldSnap && validFaceOverride;
+		bool bCombineStructuralSketchSnaps = false;
+		if (bValidSketchWorldSnap && structuralHit.Valid)
+		{
+			switch (structuralHit.SnapType)
+			{
+			case ESnapType::CT_FACESELECT:
+			case ESnapType::CT_EDGESNAP:
+				bCombineStructuralSketchSnaps = true;
+				break;
+			}
+		}
 
-		if (structuralHit.Valid && !worldSnapOverride)
+		if (structuralHit.Valid && !bCombineStructuralSketchSnaps)
 		{
 			if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("STRUCTURAL")); }
 			projectedHit = GetShiftConstrainedMouseHit(structuralHit);
@@ -2044,21 +2059,26 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 			projectedHit = GetShiftConstrainedMouseHit(userPointHit);
 			baseHit = userPointHit;
 		}
-		else if (sketchDist < (structuralDist - StructuralSnapPreferenceEpsilon) || worldSnapOverride)
+		else if (sketchDist < (structuralDist - StructuralSnapPreferenceEpsilon) || bCombineStructuralSketchSnaps)
 		{
+			if (bCombineStructuralSketchSnaps && (structuralHit.SnapType == ESnapType::CT_EDGESNAP))
+			{
+				sketchHit.Location = FMath::ClosestPointOnInfiniteLine(sketchHit.Origin, sketchHit.Location, structuralHit.Location);
+			}
+
 			// If this sketch hit is being used because of a world or custom axis snap, then allow it to just be a snapped structural hit.
 			// That means we need to redo the structural mouse hit with the snapped screen position of the sketch hit, and report the new location.
 			// This allows physical hits against objects that are aligned with snap axes to still report data like hit normals and actors.
 			FVector2D sketchHitScreenPos;
 			FVector sketchMouseOrigin, sketchMouseDir;
-			if (worldSnapOverride && sketchHit.Valid && structuralHit.Valid &&
+			if (bCombineStructuralSketchSnaps && sketchHit.Valid && structuralHit.Valid &&
 				ProjectWorldLocationToScreen(sketchHit.Location, sketchHitScreenPos) &&
 				UGameplayStatics::DeprojectScreenToWorld(this, sketchHitScreenPos, sketchMouseOrigin, sketchMouseDir))
 			{
 				FMouseWorldHitType snappedStructuralHit = GetObjectMouseHit(sketchMouseOrigin, sketchMouseDir, true);
 
 				float screenSpaceDist;
-				if (snappedStructuralHit.Valid && (snappedStructuralHit.Actor.Get() == structuralHit.Actor.Get()) &&
+				if (snappedStructuralHit.Valid &&// (snappedStructuralHit.Actor.Get() == structuralHit.Actor.Get()) &&
 					DistanceBetweenWorldPointsInScreenSpace(snappedStructuralHit.Location, sketchHit.Location, screenSpaceDist) &&
 					(screenSpaceDist < SnapPointMaxScreenDistance))
 				{
@@ -2364,7 +2384,9 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetAffordanceHit(const FVecto
 					if (!ret.Valid || (affordanceIntercept - mouseLoc).Size() < (ret.Location - mouseLoc).Size())
 					{
 						ret.SnapType = customSnaps[i];
+						ret.Origin = affordance.Origin;
 						ret.Location = affordanceIntercept;
+						ret.Normal = customBasis[i];
 						ret.Valid = true;
 					}
 				}

@@ -7,6 +7,8 @@
 
 #include "EditModelSurfaceGraphTool.generated.h"
 
+class FModumateObjectInstance;
+
 UCLASS()
 class MODUMATE_API USurfaceGraphTool : public UEditModelToolBase
 {
@@ -29,23 +31,27 @@ public:
 	virtual bool HasDimensionActor() { return true; }
 
 protected:
+	bool UpdateTarget(const FModumateObjectInstance* HitObject, const FVector& HitLocation, const FVector& HitNormal);
 	bool InitializeSegment();
+	bool CompleteSegment();
 	bool CreateGraphFromFaceTarget(int32& OutSurfaceGraphID);
 	bool AddEdge(FVector StartPos, FVector EndPos);
 	void ResetTarget();
 
-	class FModumateObjectInstance *HostTarget;
-	class FModumateObjectInstance *GraphTarget;
-	class FModumateObjectInstance *GraphElementTarget;
+	const FModumateObjectInstance* HitGraphHostMOI;
+	const FModumateObjectInstance* HitGraphMOI;
+	TSharedPtr<Modumate::FGraph2D> HitSurfaceGraph;
+	const FModumateObjectInstance* HitGraphElementMOI;
+	TArray<const FModumateObjectInstance*> HitAdjacentGraphMOIs;
 
-	UPROPERTY()
-	AActor* HitHostActor;
-
-	FVector HitLocation, HitNormal;
+	FVector HitLocation;
 	int32 HitFaceIndex;
-	TArray<int32> HostCornerIndices;
-	TArray<FVector> HostCornerPositions;
-	FVector TargetFaceOrigin, TargetFaceNormal, TargetFaceAxisX, TargetFaceAxisY;
-	EMouseMode OriginalMouseMode;
+	FTransform HitFaceOrigin;
+	TArray<FVector> HitFacePoints;
+
+	const FModumateObjectInstance* TargetGraphMOI;
 	TSharedPtr<Modumate::FGraph2D> TargetSurfaceGraph;
+	TArray<const FModumateObjectInstance*> TargetAdjacentGraphMOIs;
+
+	EMouseMode OriginalMouseMode;
 };

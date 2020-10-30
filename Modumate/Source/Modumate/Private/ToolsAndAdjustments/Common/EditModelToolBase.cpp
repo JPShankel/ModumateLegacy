@@ -107,12 +107,15 @@ bool UEditModelToolBase::PostEndOrAbort()
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 	InUse = false;
 
-	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
-	if (dimensionActor != nullptr)
+	if (PendingDimensionActor)
 	{
-		dimensionActor->DimensionText->Measurement->OnTextCommitted.RemoveDynamic(this, &UEditModelToolBase::OnTextCommitted);
+		PendingDimensionActor->DimensionText->Measurement->OnTextCommitted.RemoveDynamic(this, &UEditModelToolBase::OnTextCommitted);
 		DimensionManager->SetActiveActorID(MOD_ID_NONE);
 		DimensionManager->ReleaseDimensionActor(PendingSegmentID);
+
+		PendingSegmentID = MOD_ID_NONE;
+		PendingDimensionActor = nullptr;
+		PendingSegment = nullptr;
 	}
 
 	return true;
@@ -167,14 +170,15 @@ void UEditModelToolBase::OnTextCommitted(const FText& Text, ETextCommit::Type Co
 
 void UEditModelToolBase::InitializeDimension()
 {
-	auto dimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
-	PendingSegmentID = dimensionActor->ID;
+	PendingDimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+	PendingSegmentID = PendingDimensionActor->ID;
+	PendingSegment = PendingDimensionActor->GetLineActor();
 
-	auto dimensionWidget = dimensionActor->DimensionText;
+	auto dimensionWidget = PendingDimensionActor->DimensionText;
 	dimensionWidget->Measurement->SetIsReadOnly(false);
 	dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &UEditModelToolBase::OnTextCommitted);
 
-	GameInstance->DimensionManager->SetActiveActorID(PendingSegmentID);
+	DimensionManager->SetActiveActorID(PendingSegmentID);
 }
 
 void UEditModelToolBase::OnAxisConstraintChanged()

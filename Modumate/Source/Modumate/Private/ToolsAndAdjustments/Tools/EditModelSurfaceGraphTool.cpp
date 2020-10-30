@@ -3,11 +3,13 @@
 #include "ToolsAndAdjustments/Tools/EditModelSurfaceGraphTool.h"
 
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "ModumateCore/ModumateTargetingStatics.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "Objects/SurfaceGraph.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
+#include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -18,17 +20,14 @@ using namespace Modumate;
 
 USurfaceGraphTool::USurfaceGraphTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, HostTarget(nullptr)
-	, GraphTarget(nullptr)
-	, GraphElementTarget(nullptr)
-	, HitHostActor(nullptr)
+	, HitGraphHostMOI(nullptr)
+	, HitGraphMOI(nullptr)
+	, HitSurfaceGraph(nullptr)
+	, HitGraphElementMOI(nullptr)
 	, HitLocation(ForceInitToZero)
-	, HitNormal(ForceInitToZero)
 	, HitFaceIndex(INDEX_NONE)
-	, TargetFaceOrigin(ForceInitToZero)
-	, TargetFaceNormal(ForceInitToZero)
-	, TargetFaceAxisX(ForceInitToZero)
-	, TargetFaceAxisY(ForceInitToZero)
+	, TargetGraphMOI(nullptr)
+	, TargetSurfaceGraph(nullptr)
 	, OriginalMouseMode(EMouseMode::Object)
 {
 }
@@ -60,79 +59,76 @@ bool USurfaceGraphTool::Deactivate()
 
 bool USurfaceGraphTool::BeginUse()
 {
-	if (HostTarget && (HostTarget->ID != 0))
+	// If there's no graph on the target, then just create an explicit surface graph for the face,
+	// before starting any poly-line drawing.
+	if (HitGraphHostMOI && (HitFaceIndex != INDEX_NONE) && (HitGraphMOI == nullptr))
 	{
-		// Otherwise, start drawing a poly-line on the target surface graph.
+		int32 newSurfaceGraphID;
+		if (!CreateGraphFromFaceTarget(newSurfaceGraphID))
+		{
+			return false;
+		}
+		HitGraphMOI = GameState->Document.GetObjectById(newSurfaceGraphID);
+
+		return true;
+	}
+
+	bool bValidStart = false;
+	if (HitAdjacentGraphMOIs.Num() > 0)
+	{
+		TargetGraphMOI = nullptr;
+		TargetSurfaceGraph.Reset();
+		TargetAdjacentGraphMOIs = HitAdjacentGraphMOIs;
+		bValidStart = true;
+	}
+	else if (HitGraphMOI && HitSurfaceGraph)
+	{
+		TargetGraphMOI = HitGraphMOI;
+		TargetSurfaceGraph = HitSurfaceGraph;
+		TargetAdjacentGraphMOIs.Reset();
+		bValidStart = true;
+	}
+
+	if (bValidStart)
+	{
+		// Start drawing a poly-line on the target surface graph.
 		// TODO: use the normal and tangent of the hit cursor, and override the "global axes";
 		// this will allow appropriately-colored green and red lines for the surface graph's local X and Y axes,
 		// while also allowing tangent affordance(s) for any connected surface graph vertices that are the hit target.
-		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(HitLocation, TargetFaceNormal, TargetFaceAxisX, false, false);
-		InUse = true;
+		//Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(HitLocation, HitNormal);
 
-		// If there's no graph on the target, then just create an explicit surface graph for the face,
-		// before starting any poly-line drawing.
-		if (GraphTarget == nullptr)
+		if (InitializeSegment())
 		{
-			int32 newSurfaceGraphID;
-			if (!CreateGraphFromFaceTarget(newSurfaceGraphID))
-			{
-				return false;
-			}
-			GraphTarget = GameState->Document.GetObjectById(newSurfaceGraphID);
-		}
-		else
-		{
-			if (!InitializeSegment())
-			{
-				return false;
-			}
+			InUse = true;
+			Controller->UpdateMouseTraceParams();
+			return true;
 		}
 	}
 
-	return true;
+	return false;
 }
 
 bool USurfaceGraphTool::EnterNextStage()
 {
-	// Make sure we have a valid target first
-	if (!(HostTarget && (HostTarget->ID != 0) && (HitFaceIndex != INDEX_NONE) && (GraphTarget != nullptr)))
-	{
-		return false;
-	}
-
-	// Make sure we have a valid edge to add to a valid target graph
 	const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
-	FVector projectedHitPosition = cursor.SketchPlaneProject(cursor.WorldPosition);
 
-	auto* dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
-	auto* pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
-	if (pendingSegment == nullptr)
-	{
-		HitLocation = projectedHitPosition;
-		return InitializeSegment();
-	}
-
-	FVector edgeStartPos = cursor.SketchPlaneProject(pendingSegment->Point1);
-	FVector edgeEndPos = cursor.SketchPlaneProject(pendingSegment->Point2);
-	if (edgeStartPos.Equals(edgeEndPos))
+	if (PendingSegment == nullptr)
 	{
 		return false;
 	}
 
-	if (!AddEdge(edgeStartPos, edgeEndPos))
-	{
-		return false;
-	}
-
-	// If successful so far, continue from the end point for adding the next line segment
-	pendingSegment->Point1 = edgeEndPos;
-	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(edgeEndPos, TargetFaceNormal, TargetFaceAxisX, false, false);
-
-	return true;
+	PendingSegment->Point2 = cursor.SketchPlaneProject(cursor.WorldPosition);
+	return CompleteSegment();
 }
 
 bool USurfaceGraphTool::EndUse()
 {
+	TargetGraphMOI = nullptr;
+	TargetSurfaceGraph.Reset();
+	TargetAdjacentGraphMOIs.Reset();
+
+	Controller->UpdateMouseTraceParams();
+
 	return Super::EndUse();
 }
 
@@ -143,90 +139,44 @@ bool USurfaceGraphTool::AbortUse()
 
 bool USurfaceGraphTool::FrameUpdate()
 {
-	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+	FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+	auto *cursorHitMOI = GameState->Document.ObjectFromActor(cursor.Actor);
 
-	auto *moi = GameState->Document.ObjectFromActor(cursor.Actor);
-	if ((moi == nullptr) || !cursor.bValid || (cursor.Actor == nullptr))
-	{
-		return true;
-	}
-
-	int32 newHitFaceIndex = UModumateObjectStatics::GetFaceIndexFromTargetHit(moi, cursor.WorldPosition, cursor.HitNormal);
+	bool bValidTarget = UpdateTarget(cursorHitMOI, cursor.WorldPosition, cursor.HitNormal);
 
 	if (IsInUse())
 	{
-		FVector projectedHitPosition = cursor.SketchPlaneProject(cursor.WorldPosition);
-
-		auto *dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
-		auto *pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
-
-		if (pendingSegment)
+		if (bValidTarget)
 		{
-			pendingSegment->Point2 = projectedHitPosition;
+			// TODO: don't set a different snap affordance every frame, use the results of the segment start hit to get multiple affordances
+			FQuat hitFaceRotation = HitFaceOrigin.GetRotation();
+			if (hitFaceRotation.IsNormalized() && (!cursor.HasAffordanceSet() || (HitAdjacentGraphMOIs.Num() <= 1)))
+			{
+				cursor.SetAffordanceFrame(PendingSegment->Point1, hitFaceRotation.GetAxisZ(), hitFaceRotation.GetAxisX(), false, false);
+			}
+
+			PendingSegment->Point2 = cursor.SketchPlaneProject(HitLocation);
 		}
+		else
+		{
+			PendingSegment->Point2 = PendingSegment->Point1;
+		}
+
+		PendingSegment->SetVisibilityInApp(bValidTarget);
+		PendingDimensionActor->DimensionText->SetVisibility(bValidTarget ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 	}
 	else
 	{
-		ResetTarget();
-
-		// If we're targeting a face, then figure out whether we're targeting an object onto which we can apply a surface graph,
-		// or if we're targeting an existing surface graph that we want to edit and snap against.
-		HitFaceIndex = newHitFaceIndex;
-
-		EGraphObjectType hitObjectGraphType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType());
-		if (hitObjectGraphType != EGraphObjectType::None)
+		if (bValidTarget && (HitGraphMOI == nullptr))
 		{
-			FModumateObjectInstance *surfaceGraphObj = moi->GetParentObject();
-			FModumateObjectInstance *surfaceGraphHost = surfaceGraphObj ? surfaceGraphObj->GetParentObject() : nullptr;
-			if (!ensure(surfaceGraphObj && (surfaceGraphObj->GetObjectType() == EObjectType::OTSurfaceGraph) && surfaceGraphHost))
+			int32 numCorners = HitFacePoints.Num();
+			for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
 			{
-				return true;
-			}
+				int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
 
-			HostTarget = surfaceGraphHost;
-			HitHostActor = surfaceGraphHost->GetActor();
-			HitLocation = cursor.WorldPosition;
-			HitNormal = cursor.HitNormal;
-			GraphTarget = surfaceGraphObj;
-			GraphElementTarget = moi;
-
-			HitFaceIndex = UModumateObjectStatics::GetFaceIndexFromTargetHit(surfaceGraphHost, cursor.WorldPosition, cursor.HitNormal);
-		}
-		else if (HitFaceIndex != INDEX_NONE)
-		{
-			HostTarget = moi;
-			HitHostActor = cursor.Actor;
-			HitLocation = cursor.WorldPosition;
-			HitNormal = cursor.HitNormal;
-
-			// See if there's already a surface graph mounted to the same target MOI, at the same target face as the current target.
-			for (int32 childID : HostTarget->GetChildIDs())
-			{
-				FModumateObjectInstance *childObj = GameState->Document.GetObjectById(childID);
-				int32 childFaceIdx = UModumateObjectStatics::GetParentFaceIndex(childObj);
-				if (childObj && (childObj->GetObjectType() == EObjectType::OTSurfaceGraph) && (childFaceIdx == HitFaceIndex))
-				{
-					GraphTarget = childObj;
-					break;
-				}
-			}
-		}
-
-		if (HostTarget && UModumateObjectStatics::GetGeometryFromFaceIndex(HostTarget, HitFaceIndex,
-			HostCornerPositions, TargetFaceNormal, TargetFaceAxisX, TargetFaceAxisY))
-		{
-			TargetFaceOrigin = HostCornerPositions[0];
-			if (GraphTarget == nullptr)
-			{
-				int32 numCorners = HostCornerPositions.Num();
-				for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
-				{
-					int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
-
-					Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(HostCornerPositions[curCornerIdx], HostCornerPositions[nextCornerIdx],
-						AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness)
-					);
-				}
+				Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(HitFacePoints[curCornerIdx], HitFacePoints[nextCornerIdx],
+					AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness)
+				);
 			}
 		}
 	}
@@ -236,14 +186,12 @@ bool USurfaceGraphTool::FrameUpdate()
 
 bool USurfaceGraphTool::HandleInputNumber(double n)
 {
-	auto *dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
-	auto *pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
-	if (!pendingSegment)
+	if (PendingSegment == nullptr)
 	{
 		return false;
 	}
 
-	FVector direction = pendingSegment->Point2 - pendingSegment->Point1;
+	FVector direction = PendingSegment->Point2 - PendingSegment->Point1;
 	if (direction.IsNearlyZero())
 	{
 		return false;
@@ -251,19 +199,14 @@ bool USurfaceGraphTool::HandleInputNumber(double n)
 
 	direction.Normalize();
 
-	FVector newEndPos = pendingSegment->Point1 + direction * n;
+	PendingSegment->Point2 = PendingSegment->Point1 + direction * n;
 
-	if (!AddEdge(pendingSegment->Point1, newEndPos))
+	if (!UpdateTarget(TargetGraphMOI, PendingSegment->Point2, FVector::ZeroVector))
 	{
 		return false;
 	}
 
-	// If successful so far, continue from the end point for adding the next line segment
-	pendingSegment->Point1 = newEndPos;
-	pendingSegment->Point2 = newEndPos;
-	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(newEndPos, TargetFaceNormal, TargetFaceAxisX, false, false);
-
-	return true;
+	return CompleteSegment();
 }
 
 TArray<EEditViewModes> USurfaceGraphTool::GetRequiredEditModes() const
@@ -271,28 +214,151 @@ TArray<EEditViewModes> USurfaceGraphTool::GetRequiredEditModes() const
 	return { EEditViewModes::SurfaceGraphs };
 }
 
+bool USurfaceGraphTool::UpdateTarget(const FModumateObjectInstance* HitObject, const FVector& Location, const FVector& Normal)
+{
+	ResetTarget();
+
+	HitLocation = Location;
+
+	if (HitObject)
+	{
+		HitSurfaceGraph = GameState->Document.FindSurfaceGraph(HitObject->ID);
+		if (!HitSurfaceGraph.IsValid())
+		{
+			HitSurfaceGraph = GameState->Document.FindSurfaceGraphByObjID(HitObject->ID);
+		}
+
+		if (HitSurfaceGraph.IsValid())
+		{
+			int32 hitSurfaceGraphID = HitSurfaceGraph->GetID();
+			HitGraphMOI = GameState->Document.GetObjectById(hitSurfaceGraphID);
+			HitGraphHostMOI = GameState->Document.GetObjectById(HitGraphMOI ? HitGraphMOI->GetParentID() : MOD_ID_NONE);
+			HitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(HitGraphMOI);
+		}
+		else
+		{
+			HitFaceIndex = UModumateTargetingStatics::GetFaceIndexFromTargetHit(HitObject, Location, Normal);
+			if (HitFaceIndex != INDEX_NONE)
+			{
+				HitGraphHostMOI = HitObject;
+				for (auto hostChild : HitGraphHostMOI->GetChildObjects())
+				{
+					int32 childFaceIndex = UModumateObjectStatics::GetParentFaceIndex(hostChild);
+					if ((childFaceIndex == HitFaceIndex) && (hostChild->GetObjectType() == EObjectType::OTSurfaceGraph))
+					{
+						HitGraphMOI = hostChild;
+						break;
+					}
+				}
+			}
+		}
+
+		UModumateTargetingStatics::GetConnectedSurfaceGraphs(HitObject, Location, HitAdjacentGraphMOIs);
+	}
+
+	if (IsInUse())
+	{
+		if ((PendingDimensionActor == nullptr) || (PendingSegment == nullptr))
+		{
+			return false;
+		}
+
+		bool bValidSegmentTarget = false;
+
+		if (TargetAdjacentGraphMOIs.Num() > 0)
+		{
+			if (HitAdjacentGraphMOIs.Num() > 0)
+			{
+				for (auto hitAdjacentGraphMOI : HitAdjacentGraphMOIs)
+				{
+					if (TargetAdjacentGraphMOIs.Contains(hitAdjacentGraphMOI))
+					{
+						HitGraphMOI = hitAdjacentGraphMOI;
+						bValidSegmentTarget = true;
+						break;
+					}
+				}
+			}
+			else if (HitGraphMOI)
+			{
+				bValidSegmentTarget = TargetAdjacentGraphMOIs.Contains(HitGraphMOI);
+			}
+		}
+		else if (TargetGraphMOI && TargetSurfaceGraph.IsValid())
+		{
+			if (HitGraphMOI == TargetGraphMOI)
+			{
+				bValidSegmentTarget = true;
+			}
+			else if (HitAdjacentGraphMOIs.Contains(TargetGraphMOI))
+			{
+				HitGraphMOI = TargetGraphMOI;
+				bValidSegmentTarget = true;
+			}
+		}
+
+		if (!bValidSegmentTarget)
+		{
+			ResetTarget();
+			return false;
+		}
+
+		if (HitFaceIndex == INDEX_NONE)
+		{
+			HitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(HitGraphMOI);
+		}
+	}
+
+	if (HitGraphMOI)
+	{
+		HitGraphHostMOI = GameState->Document.GetObjectById(HitGraphMOI->GetParentID());
+		HitSurfaceGraph = GameState->Document.FindSurfaceGraph(HitGraphMOI->ID);
+	}
+
+	return HitGraphHostMOI && UModumateObjectStatics::GetGeometryFromFaceIndex(HitGraphHostMOI, HitFaceIndex, HitFacePoints, HitFaceOrigin);
+}
+
 bool USurfaceGraphTool::InitializeSegment()
 {
 	InitializeDimension();
 
-	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
-	if (!dimensionActor)
-	{
-		return false;
-	}
-
-	auto pendingSegment = dimensionActor->GetLineActor();
-	if (!pendingSegment)
-	{
-		return false;
-	}
-
 	// TODO: this could also likely be generalized to be in InitializeDimension, but would have to be 
 	// done for all of the tools
-	pendingSegment->Point1 = HitLocation;
-	pendingSegment->Point2 = HitLocation;
-	pendingSegment->Color = FColor::Black;
-	pendingSegment->Thickness = 3;
+	PendingSegment->Point1 = HitLocation;
+	PendingSegment->Point2 = HitLocation;
+	PendingSegment->Color = FColor::Black;
+	PendingSegment->Thickness = 3;
+
+	return true;
+}
+
+bool USurfaceGraphTool::CompleteSegment()
+{
+	if (PendingSegment == nullptr)
+	{
+		return false;
+	}
+
+	// Make sure we have a valid edge to add - if not, then try to start over from the current point
+	FVector segmentDelta = PendingSegment->Point2 - PendingSegment->Point1;
+	if (!(HitGraphHostMOI && (HitGraphHostMOI->ID != MOD_ID_NONE) &&
+		HitGraphMOI && (HitFaceIndex != INDEX_NONE) && !segmentDelta.IsNearlyZero()))
+	{
+		AbortUse();
+		return BeginUse();
+	}
+
+	TargetGraphMOI = HitGraphMOI;
+	TargetSurfaceGraph = HitSurfaceGraph;
+	TargetAdjacentGraphMOIs = HitAdjacentGraphMOIs;
+
+	if (!AddEdge(PendingSegment->Point1, PendingSegment->Point2))
+	{
+		return false;
+	}
+
+	// If successful so far, continue from the end point for adding the next line segment
+	PendingSegment->Point1 = PendingSegment->Point2;
 
 	return true;
 }
@@ -301,7 +367,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 {
 	OutSurfaceGraphID = MOD_ID_NONE;
 
-	if (!(HostTarget && HitHostActor && (HitFaceIndex != INDEX_NONE)))
+	if (!(HitGraphHostMOI && (HitFaceIndex != INDEX_NONE)))
 	{
 		return false;
 	}
@@ -310,11 +376,11 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 	int32 nextID = GameState->Document.GetNextAvailableID();
 	TArray<FDeltaPtr> deltas;
 
-	if (GraphTarget)
+	if (HitGraphMOI)
 	{
-		OutSurfaceGraphID = GraphTarget->ID;
-		TargetSurfaceGraph = GameState->Document.FindSurfaceGraph(OutSurfaceGraphID);
-		if (!TargetSurfaceGraph.IsValid() || !TargetSurfaceGraph->IsEmpty())
+		OutSurfaceGraphID = HitGraphMOI->ID;
+		HitSurfaceGraph = GameState->Document.FindSurfaceGraph(OutSurfaceGraphID);
+		if (!HitSurfaceGraph.IsValid() || !HitSurfaceGraph->IsEmpty())
 		{
 			return false;
 		}
@@ -322,31 +388,31 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 	else
 	{
 		OutSurfaceGraphID = nextID++;
-		TargetSurfaceGraph = MakeShared<FGraph2D>(OutSurfaceGraphID);
+		HitSurfaceGraph = MakeShared<FGraph2D>(OutSurfaceGraphID);
 	}
 
 	// Create the delta for adding the surface graph object, if it didn't already exist
-	if (GraphTarget == nullptr)
+	if (HitGraphMOI == nullptr)
 	{
 		FMOISurfaceGraphData surfaceCustomData;
 		surfaceCustomData.ParentFaceIndex = HitFaceIndex;
 
 		FMOIStateData surfaceStateData;
-		surfaceStateData.ID = TargetSurfaceGraph->GetID();
+		surfaceStateData.ID = HitSurfaceGraph->GetID();
 		surfaceStateData.ObjectType = EObjectType::OTSurfaceGraph;
-		surfaceStateData.ParentID = HostTarget->ID;
+		surfaceStateData.ParentID = HitGraphHostMOI->ID;
 		surfaceStateData.CustomData.SaveStructData(surfaceCustomData);
 
 		auto surfaceObjectDelta = MakeShared<FMOIDelta>();
 		surfaceObjectDelta->AddCreateDestroyState(surfaceStateData, EMOIDeltaType::Create);
 
 		deltas.Add(surfaceObjectDelta);
-		deltas.Add(MakeShared<FGraph2DDelta>(TargetSurfaceGraph->GetID(), EGraph2DDeltaType::Add));
+		deltas.Add(MakeShared<FGraph2DDelta>(HitSurfaceGraph->GetID(), EGraph2DDeltaType::Add));
 	}
 
 	// Make sure we have valid geometry from the target
-	int32 numPerimeterPoints = HostCornerPositions.Num();
-	if ((numPerimeterPoints < 3) || !TargetFaceNormal.IsNormalized() || !TargetFaceAxisX.IsNormalized() || !TargetFaceAxisY.IsNormalized())
+	int32 numPerimeterPoints = HitFacePoints.Num();
+	if ((numPerimeterPoints < 3) || !HitFaceOrigin.IsRotationNormalized())
 	{
 		return false;
 	}
@@ -355,13 +421,13 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 	TArray<TArray<FVector2D>> graphPolygonsToAdd;
 
 	TArray<FVector2D> &perimeterPolygon = graphPolygonsToAdd.AddDefaulted_GetRef();
-	Algo::Transform(HostCornerPositions, perimeterPolygon, [this](const FVector &WorldPoint) {
-		return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
+	Algo::Transform(HitFacePoints, perimeterPolygon, [this](const FVector &WorldPoint) {
+		return UModumateGeometryStatics::ProjectPoint2DTransform(WorldPoint, HitFaceOrigin);
 	});
 
 	// Project the holes that the target has into graph polygons, if any
 	const auto &volumeGraph = GameState->Document.GetVolumeGraph();
-	const auto *hostParentFace = volumeGraph.FindFace(HostTarget->GetParentID());
+	const auto *hostParentFace = volumeGraph.FindFace(HitGraphHostMOI->GetParentID());
 
 	// this only counts faces that are contained, not holes without faces (CachedIslands)
 	if (hostParentFace->ContainedFaceIDs.Num() != hostParentFace->CachedHoles.Num())
@@ -376,19 +442,19 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 			const auto *containedFace = volumeGraph.FindFace(containedFaceID);
 			TArray<FVector2D> &holePolygon = graphPolygonsToAdd.AddDefaulted_GetRef();
 			Algo::Transform(containedFace->CachedPositions, holePolygon, [this](const FVector &WorldPoint) {
-				return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
+				return UModumateGeometryStatics::ProjectPoint2DTransform(WorldPoint, HitFaceOrigin);
 			});
 		}
 	}
 
 	TArray<FGraph2DDelta> fillGraphDeltas;
-	if (!TargetSurfaceGraph->PopulateFromPolygons(fillGraphDeltas, nextID, graphPolygonsToAdd, true))
+	if (!HitSurfaceGraph->PopulateFromPolygons(fillGraphDeltas, nextID, graphPolygonsToAdd, true))
 	{
 		return false;
 	}
 
 	// We no longer need neither an existing target surface graph, or a temporary one used to create deltas.
-	TargetSurfaceGraph.Reset();
+	HitSurfaceGraph.Reset();
 
 	for (FGraph2DDelta& graphDelta : fillGraphDeltas)
 	{
@@ -399,19 +465,18 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 
 bool USurfaceGraphTool::AddEdge(FVector StartPos, FVector EndPos)
 {
-	auto targetSurfaceGraph = GameState->Document.FindSurfaceGraph(GraphTarget->ID);
-	if (!targetSurfaceGraph.IsValid() || targetSurfaceGraph->IsEmpty())
+	if (!TargetSurfaceGraph.IsValid() || TargetSurfaceGraph->IsEmpty())
 	{
 		return false;
 	}
 
-	FVector2D startPos = UModumateGeometryStatics::ProjectPoint2D(StartPos, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
-	FVector2D endPos = UModumateGeometryStatics::ProjectPoint2D(EndPos, TargetFaceAxisX, TargetFaceAxisY, TargetFaceOrigin);
+	FVector2D startPos = UModumateGeometryStatics::ProjectPoint2DTransform(StartPos, HitFaceOrigin);
+	FVector2D endPos = UModumateGeometryStatics::ProjectPoint2DTransform(EndPos, HitFaceOrigin);
 
 	// Try to add the edge to the graph, and apply the delta(s) to the document
 	TArray<FGraph2DDelta> addEdgeDeltas;
 	int32 nextID = GameState->Document.GetNextAvailableID();
-	if (!targetSurfaceGraph->AddEdge(addEdgeDeltas, nextID, startPos, endPos))
+	if (!TargetSurfaceGraph->AddEdge(addEdgeDeltas, nextID, startPos, endPos))
 	{
 		return false;
 	}
@@ -434,10 +499,13 @@ bool USurfaceGraphTool::AddEdge(FVector StartPos, FVector EndPos)
 
 void USurfaceGraphTool::ResetTarget()
 {
-	HostTarget = nullptr;
-	GraphTarget = nullptr;
-	GraphElementTarget = nullptr;
-	HitHostActor = nullptr;
-	HitLocation = HitNormal = FVector::ZeroVector;
+	HitGraphHostMOI = nullptr;
+	HitGraphMOI = nullptr;
+	HitSurfaceGraph.Reset();
+	HitGraphElementMOI = nullptr;
+	HitAdjacentGraphMOIs.Reset();
+	HitLocation = FVector::ZeroVector;
 	HitFaceIndex = INDEX_NONE;
+	HitFaceOrigin.SetIdentity();
+	HitFacePoints.Reset();
 }

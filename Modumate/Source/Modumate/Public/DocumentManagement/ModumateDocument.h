@@ -65,9 +65,6 @@ private:
 	// The surface graphs used by the current document, mapped by owning object ID
 	TMap<int32, TSharedPtr<Modumate::FGraph2D>> SurfaceGraphs;
 
-	// Link between 2D graph objects and the surface graph they are a part of
-	TMap<int32, int32> SurfaceGraphsBy2DGraphObj;
-
 	TMap<EObjectDirtyFlags, TArray<FModumateObjectInstance*>> DirtyObjectMap;
 
 public:

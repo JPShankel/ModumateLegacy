@@ -43,13 +43,13 @@ bool UFinishTool::Deactivate()
 
 bool UFinishTool::BeginUse()
 {
-	if ((HostTarget == nullptr) || (HostTarget->ID == MOD_ID_NONE))
+	if ((HitGraphHostMOI == nullptr) || (HitGraphHostMOI->ID == MOD_ID_NONE))
 	{
 		return false;
 	}
 
 	// If we aren't already targeting a surface polygon, then we'll try to create an implicit one and a graph on the target host.
-	if (GraphElementTarget == nullptr)
+	if (HitGraphElementMOI == nullptr)
 	{
 		// Use the base class SurfaceGraphTool to create a graph, if it doesn't already exist
 		int32 newSurfaceGraphID;
@@ -58,10 +58,10 @@ bool UFinishTool::BeginUse()
 			return false;
 		}
 
-		GraphTarget = GameState->Document.GetObjectById(newSurfaceGraphID);
+		HitGraphMOI = GameState->Document.GetObjectById(newSurfaceGraphID);
 		auto surfaceGraph = GameState->Document.FindSurfaceGraph(newSurfaceGraphID);
 
-		if (!ensure(GraphTarget && (GraphTarget->GetObjectType() == EObjectType::OTSurfaceGraph) && surfaceGraph.IsValid()))
+		if (!ensure(HitGraphMOI && (HitGraphMOI->GetObjectType() == EObjectType::OTSurfaceGraph) && surfaceGraph.IsValid()))
 		{
 			return false;
 		}
@@ -71,19 +71,19 @@ bool UFinishTool::BeginUse()
 			const FGraph2DPolygon &surfacePolygon = kvp.Value;
 			if (surfacePolygon.bInterior && (surfacePolygon.ContainingPolyID == MOD_ID_NONE))
 			{
-				GraphElementTarget = GameState->Document.GetObjectById(surfacePolygon.ID);
+				HitGraphElementMOI = GameState->Document.GetObjectById(surfacePolygon.ID);
 				break;
 			}
 		}
 
-		if (GraphElementTarget == nullptr)
+		if (HitGraphElementMOI == nullptr)
 		{
 			return false;
 		}
 	}
 
 	// If we're replacing an existing finish, just swap its assembly
-	for (FModumateObjectInstance *child : GraphElementTarget->GetChildObjects())
+	for (const FModumateObjectInstance *child : HitGraphElementMOI->GetChildObjects())
 	{
 		if (child->GetObjectType() == EObjectType::OTFinish)
 		{
@@ -103,7 +103,7 @@ bool UFinishTool::BeginUse()
 	}
 
 	// Otherwise, create a new finish object on the target surface graph polygon
-	FMOIStateData newFinishState(GameState->Document.GetNextAvailableID(), EObjectType::OTFinish, GraphElementTarget->ID);
+	FMOIStateData newFinishState(GameState->Document.GetNextAvailableID(), EObjectType::OTFinish, HitGraphElementMOI->ID);
 	newFinishState.AssemblyKey = AssemblyKey;
 
 	auto createFinishDelta = MakeShared<FMOIDelta>();
@@ -119,14 +119,14 @@ bool UFinishTool::FrameUpdate()
 		return false;
 	}
 
-	if (GraphElementTarget && (GraphElementTarget->GetObjectType() == EObjectType::OTSurfacePolygon))
+	if (HitGraphElementMOI && (HitGraphElementMOI->GetObjectType() == EObjectType::OTSurfacePolygon))
 	{
-		int32 numCorners = GraphElementTarget->GetNumCorners();
+		int32 numCorners = HitGraphElementMOI->GetNumCorners();
 		for (int32 curPointIdx = 0; curPointIdx < numCorners; ++curPointIdx)
 		{
 			int32 nextPointIdx = (curPointIdx + 1) % numCorners;
 
-			Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(GraphElementTarget->GetCorner(curPointIdx), GraphElementTarget->GetCorner(nextPointIdx),
+			Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(HitGraphElementMOI->GetCorner(curPointIdx), HitGraphElementMOI->GetCorner(nextPointIdx),
 				AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness)
 			);
 		}

@@ -83,6 +83,12 @@ protected:
 
 	int32 PendingSegmentID;
 
+	UPROPERTY()
+	class ADimensionActor* PendingDimensionActor;
+
+	UPROPERTY()
+	class ALineActor* PendingSegment;
+
 	// ModumateBlue
 	FColor AffordanceLineColor = FColor(28, 159, 255);
 	float AffordanceLineThickness = 3.0f;

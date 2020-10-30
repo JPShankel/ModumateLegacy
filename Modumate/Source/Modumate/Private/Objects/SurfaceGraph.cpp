@@ -31,6 +31,11 @@ FVector FMOISurfaceGraphImpl::GetCorner(int32 index) const
 	return ensure(CachedFacePoints.IsValidIndex(index)) ? CachedFacePoints[index] : GetLocation();
 }
 
+int32 FMOISurfaceGraphImpl::GetNumCorners() const
+{
+	return CachedFacePoints.Num();
+}
+
 void FMOISurfaceGraphImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = InstanceData.StaticStruct();

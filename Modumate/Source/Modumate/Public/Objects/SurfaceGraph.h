@@ -22,6 +22,7 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
 	virtual FVector GetCorner(int32 index) const override;
+	virtual int32 GetNumCorners() const override;
 	virtual FVector GetNormal() const override;
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;

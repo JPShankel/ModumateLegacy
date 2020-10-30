@@ -5,6 +5,7 @@
 #include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "ModumateCore/ModumateTargetingStatics.h"
 #include "Objects/FFE.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
@@ -121,7 +122,7 @@ bool UFFETool::BeginUse()
 
 	FModumateObjectInstance *hitMOI = doc->ObjectFromActor(snappedCursor.Actor);
 	int32 parentID = hitMOI != nullptr ? hitMOI->ID : Controller->EMPlayerState->GetViewGroupObjectID();
-	int32 parentFaceIdx = UModumateObjectStatics::GetFaceIndexFromTargetHit(hitMOI, hitLoc, snappedCursor.HitNormal);
+	int32 parentFaceIdx = UModumateTargetingStatics::GetFaceIndexFromTargetHit(hitMOI, hitLoc, snappedCursor.HitNormal);
 
 	FMOIFFEData ffeData;
 	ffeData.Location = hitLoc;

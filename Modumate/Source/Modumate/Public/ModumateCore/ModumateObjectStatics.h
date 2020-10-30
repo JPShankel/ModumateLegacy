@@ -45,7 +45,6 @@ public:
 
 	// Face-mounted objects
 	static int32 GetParentFaceIndex(const FModumateObjectInstance *FaceMountedObj);
-	static int32 GetFaceIndexFromTargetHit(const FModumateObjectInstance *HitObject, const FVector &HitLocation, const FVector &HitNormal);
 	static bool GetGeometryFromFaceIndex(const FModumateObjectInstance *Host, int32 FaceIndex,
 		TArray<FVector>& OutFacePoints, FVector& OutNormal, FVector& OutFaceAxisX, FVector& OutFaceAxisY);
 	static bool GetGeometryFromFaceIndex(const FModumateObjectInstance *Host, int32 FaceIndex,
