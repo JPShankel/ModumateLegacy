@@ -293,23 +293,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				}
 				Preset.PartSlots.Last().PartPreset = FBIMKey(*NormalizeCell(cell));
 			}
-			else if (category.Equals(TEXT("ID")))
-			{
-				if (Preset.PartSlots.Num() == 0 || !Preset.PartSlots.Last().ID.IsNone())
-				{
-					Preset.PartSlots.AddDefaulted();
-				}
-				Preset.PartSlots.Last().ID = FBIMKey(*NormalizeCell(cell));
-			}
-			else if (category.Equals(TEXT("ParentID")))
-			{
-				if (Preset.PartSlots.Num() == 0 || !Preset.PartSlots.Last().ParentID.IsNone())
-				{
-					Preset.PartSlots.AddDefaulted();
-				}
-				Preset.PartSlots.Last().ParentID = FBIMKey(*NormalizeCell(cell));
-			}
-			else if (category.Equals(TEXT("SlotID")))
+			else if (category.Equals(TEXT("SlotName")))
 			{
 				if (Preset.PartSlots.Num() == 0 || !Preset.PartSlots.Last().SlotName.IsNone())
 				{

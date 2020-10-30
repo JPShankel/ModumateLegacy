@@ -1,7 +1,7 @@
 TYPENAME,,2ModuleLWT,,Module,,,,,,,,,
 ,,Definition,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,
-PROPERTY,,String,,Name,,Module.Name,,,,,,,
+PROPERTY,,DisplayText,,Name,,Module.Name,,,,,,,
 PROPERTY,,Dimension,,,,Module.BevelWidth,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,
 INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,

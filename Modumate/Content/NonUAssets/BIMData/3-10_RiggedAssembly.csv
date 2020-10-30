@@ -1,14 +1,14 @@
 TYPENAME,,3RiggedAssembly,,Assembly,,,,,,,,,,,,,,,,,
 ,,Definition,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,,,,,,,,,,,,,,,,
-PROPERTY,,String,,Name,,Assembly.Name,,,,,,,,,,,,,,,
-PROPERTY,,String,,,,Assembly.IconDimX,,,,,,,,,,,,,,,
-PROPERTY,,String,,,,Assembly.IconDimZ,,,,,,,,,,,,,,,
-PROPERTY,,String,,,,Assembly.NamedDimensions,,,,,,,,,,,,,,,
+PROPERTY,,DisplayText,,Name,,Assembly.Name,,,,,,,,,,,,,,,
+PROPERTY,,Dimension,,,,Assembly.IconDimX,,,,,,,,,,,,,,,
+PROPERTY,,Dimension,,,,Assembly.IconDimZ,,,,,,,,,,,,,,,
+PROPERTY,,DimensionSet,,NamedDimensions,,Assembly.NamedDimensions,,,,,,,,,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Assembly.IconDimX,Assembly.IconDimZ,Assembly.NamedDimensions,DataType=StartsInProject,X,DataType=Slots,SlotConfig,SlotID,PartPreset,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Assembly.IconDimX,Assembly.IconDimZ,Assembly.NamedDimensions,DataType=StartsInProject,X,DataType=Slots,SlotConfig,SlotName,PartPreset,,,,,,
 PRESET,,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3

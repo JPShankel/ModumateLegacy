@@ -91,11 +91,18 @@ UENUM()
 enum class EBIMValueType : uint8
 {
 	None = 0,
-	String,
-	Angle,
-	Bool,
+	AssetPath,
+	Boolean,
+	CategoryPath,
 	Dimension,
+	DimensionSet,
+	DisplayText,
 	Formula,
+	HexValue,
+	Number,
+	PresetID,
+	String,
+	Vector,
 	Error = 255
 };
 

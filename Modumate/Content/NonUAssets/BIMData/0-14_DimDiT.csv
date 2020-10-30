@@ -1,7 +1,7 @@
 TYPENAME,,0DimDiT,,Dimension,,,,,,
 ,,Definition,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,
-PROPERTY,,String,,Name,,Dimension.Name,,,,
+PROPERTY,,DisplayText,,Name,,Dimension.Name,,,,
 PROPERTY,,Dimension,,Diameter,,Dimension.Diameter,,,,
 PROPERTY,,Dimension,,Thickness,,Dimension.Thickness,,,,
 ,,Presets,,,,,,,,

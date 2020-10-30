@@ -69,5 +69,5 @@ AssemblyWindow,VE_WINDOW,OTWindow,,RiggedAssembly,Vertical,DimensionSet,First,Op
 ,,,,,,TreadDepthMax,14in,,,,
 ,,,,,,RiserHeightMin,4in,,,,
 ,,,,,,RiserHeightMax,7.75in,,,,
-5Cabinet --> Floor,VE_CABINET,OTCabinet,,CompoundAssembly,Horizontal,,,Cabinet,Cabinet,none,
-5Cabinet --> Wall,VE_CABINET,OTCabinet,,CompoundAssembly,Vertical,,,Cabinet,Cabinet,none,
+AssemblyCabinetFloor,VE_CABINET,OTCabinet,,CompoundAssembly,Horizontal,,,Cabinet,Cabinet,none,
+AssemblyCabinetWall,VE_CABINET,OTCabinet,,CompoundAssembly,Vertical,,,Cabinet,Cabinet,none,

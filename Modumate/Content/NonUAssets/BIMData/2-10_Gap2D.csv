@@ -1,7 +1,7 @@
 TYPENAME,,2Gap2D,,Gap,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,String,,Name,,Gap.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DisplayText,,Name,,Gap.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildDimWD,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

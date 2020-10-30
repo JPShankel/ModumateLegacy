@@ -1,10 +1,10 @@
 TYPENAME,,0RawMaterial,,RawMaterial,,,,,,,
 ,,Definition,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,
-PROPERTY,,String,,Name,,RawMaterial.Name,,,,,
-PROPERTY,,String,,,,RawMaterial.AssetID,,,,,
-PROPERTY,,String,,,,RawMaterial.AssetPath,,,,,
-PROPERTY,,String,,,,RawMaterial.TextureTilingSize,,,,,
+PROPERTY,,DisplayText,,Name,,RawMaterial.Name,,,,,
+PROPERTY,,PresetID,,,,RawMaterial.AssetID,,,,,
+PROPERTY,,AssetPath,,,,RawMaterial.AssetPath,,,,,
+PROPERTY,,Number,,,,RawMaterial.TextureTilingSize,,,,,
 ,,Presets,,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,RawMaterial.Name,RawMaterial.AssetPath,RawMaterial.AssetID,RawMaterial.TextureTilingSize,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
 PRESET,,0RawMaterial-Abstract,,0RawMaterial,,Abstract,/Game/ShoppingData/Materials/Abstract/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Abstract,1,,1Material --> Abstract

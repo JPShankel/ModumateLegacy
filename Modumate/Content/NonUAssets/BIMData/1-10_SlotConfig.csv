@@ -1,7 +1,7 @@
 TYPENAME,,1SlotConfig,,SlotConfig,,,,,,,,,,,,
 ,,Definition,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,Scope.Property,,,,,,,,,,
-PROPERTY,,String,,Name,,SlotConfig.Name,,,,,,,,,,
+PROPERTY,,DisplayText,,Name,,SlotConfig.Name,,,,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,,,,
 INPUTPIN,,1..,,ChildSlotArray,,,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,,

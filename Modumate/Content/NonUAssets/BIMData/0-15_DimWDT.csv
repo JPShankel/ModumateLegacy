@@ -1,7 +1,7 @@
 TYPENAME,,0DimWDT,,Dimension,,,,,,,
 ,,Definition,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,
-PROPERTY,,String,,Name,,Dimension.Name,,,,,
+PROPERTY,,DisplayText,,Name,,Dimension.Name,,,,,
 PROPERTY,,Dimension,,Width,,Dimension.Width,,,,,
 PROPERTY,,Dimension,,Depth,,Dimension.Depth,,,,,
 PROPERTY,,Dimension,,Thickness,,Dimension.Thickness,,,,,

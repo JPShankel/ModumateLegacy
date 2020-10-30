@@ -1,7 +1,7 @@
 TYPENAME,,0DimLW,,Dimension,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,String,,Name,,Dimension.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DisplayText,,Name,,Dimension.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PROPERTY,,Dimension,,Width,,Dimension.Width,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PROPERTY,,Dimension,,Length,,Dimension.Length,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,Presets,,,,,,,,8,17,6,6,6,6,33,6,6,6,7,7,17,8,13,36,12,36,21,33,37,65,33,4,4,4,4,4
