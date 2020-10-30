@@ -2058,6 +2058,7 @@ bool FModumateDocument::ExportPDF(UWorld *world, const TCHAR *filepath, const FV
 
 	CurrentDraftingView = MakeShared<FModumateDraftingView>(world, this, FModumateDraftingView::kPDF);
 	CurrentDraftingView->CurrentFilePath = FString(filepath);
+	CurrentDraftingView->GeneratePagesFromCutPlanes(world);
 
 	return true;
 }
