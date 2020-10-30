@@ -2303,6 +2303,15 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 		ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTWindow);
 		ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTDoor);
 
+		// Hide all cut planes on load
+		TArray<FModumateObjectInstance*> cutPlanes = GetObjectsOfType(EObjectType::OTCutPlane);
+		TArray<int32> hideCutPlaneIds;
+		for (auto curCutPlane : cutPlanes)
+		{
+			hideCutPlaneIds.Add(curCutPlane->ID);
+		}
+		AddHideObjectsById(world, hideCutPlaneIds);
+
 		ClearUndoBuffer();
 
 		if (setAsCurrentProject)

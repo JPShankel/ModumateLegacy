@@ -90,7 +90,7 @@ public:
 	void SwitchRightMenu(ERightMenuState NewMenuState);
 	void UpdateCutPlanesList();
 	bool RemoveCutPlaneFromList(int32 ObjID = MOD_ID_NONE);
-	bool UpdateCutPlaneVisibilityinList(bool IsVisible, int32 ObjID = MOD_ID_NONE);
+	bool UpdateCutPlaneInList(int32 ObjID = MOD_ID_NONE);
 	void RefreshAssemblyList();
 	void ShowAlertPausedAccountDialog();
 	void ShowAlertFreeAccountDialog();

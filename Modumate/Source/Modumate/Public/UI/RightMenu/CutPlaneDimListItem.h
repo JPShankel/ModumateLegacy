@@ -42,22 +42,22 @@ public:
 	FName TooltipID_CheckBoxVisibility;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UCheckBox *CheckBoxVisibility;
+	class UCheckBox* CheckBoxVisibility;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateTextBlockUserWidget *TextDimension;
+	class UModumateTextBlockUserWidget* TextDimension;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateTextBlockUserWidget *TextTitle;
+	class UModumateEditableTextBoxUserWidget* TextTitleEditable;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButton *ModumateButtonMain;
+	class UModumateButton* ModumateButtonMain;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonSave;
+	class UModumateButtonUserWidget* ButtonSave;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonEdit;
+	class UModumateButtonUserWidget* ButtonEdit;
 
 	UFUNCTION()
 	void OnButtonMainReleased();
@@ -71,12 +71,15 @@ public:
 	UFUNCTION()
 	void OnCheckBoxVisibilityChanged(bool IsChecked);
 
+	UFUNCTION()
+	void OnEditableTitleCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
 	// UserObjectListEntry interface
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 
-	void BuildAsVerticalCutPlaneItem(const FQuat &Rotation);
-	void BuildAsHorizontalCutPlaneItem(const FVector &Location);
-	void UpdateCheckBoxVisibility(bool NewVisible);
+	void BuildAsVerticalCutPlaneItem(const FQuat& Rotation);
+	void BuildAsHorizontalCutPlaneItem(const FVector& Location);
+	void UpdateVisibilityAndName(bool NewVisible, const FString& NewName);
 
 protected:
 

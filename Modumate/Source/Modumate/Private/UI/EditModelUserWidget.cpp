@@ -163,11 +163,11 @@ bool UEditModelUserWidget::RemoveCutPlaneFromList(int32 ObjID /*= MOD_ID_NONE*/)
 	return false;
 }
 
-bool UEditModelUserWidget::UpdateCutPlaneVisibilityinList(bool IsVisible, int32 ObjID /*= MOD_ID_NONE*/)
+bool UEditModelUserWidget::UpdateCutPlaneInList(int32 ObjID /*= MOD_ID_NONE*/)
 {
 	if (CurrentRightMenuState == ERightMenuState::CutPlaneMenu)
 	{
-		return CutPlaneMenu->UpdateCutPlaneVisibilityInMenuBlock(IsVisible, ObjID);
+		return CutPlaneMenu->UpdateCutPlaneParamInMenuBlock(ObjID);
 	}
 	return false;
 }

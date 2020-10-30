@@ -139,7 +139,7 @@ bool UCutPlaneMenuWidget::RemoveCutPlaneFromMenuBlock(int32 ObjID /*= MOD_ID_NON
 	}
 }
 
-bool UCutPlaneMenuWidget::UpdateCutPlaneVisibilityInMenuBlock(bool IsVisible, int32 ObjID /*= MOD_ID_NONE*/)
+bool UCutPlaneMenuWidget::UpdateCutPlaneParamInMenuBlock(int32 ObjID /*= MOD_ID_NONE*/)
 {
 	UCutPlaneDimListItemObject *item = GetListItemFromObjID(ObjID);
 	if (!item)
@@ -166,7 +166,11 @@ bool UCutPlaneMenuWidget::UpdateCutPlaneVisibilityInMenuBlock(bool IsVisible, in
 	UCutPlaneDimListItem *itemWidget = Cast<UCutPlaneDimListItem>(block->CutPlanesList->GetEntryWidgetFromItem(item));
 	if (itemWidget)
 	{
-		itemWidget->UpdateCheckBoxVisibility(IsVisible);
+		FModumateObjectInstance* moi = GameState->Document.GetObjectById(ObjID);
+		FMOICutPlaneData cutPlaneData;
+		moi->GetStateData().CustomData.LoadStructData(cutPlaneData);
+
+		itemWidget->UpdateVisibilityAndName(!moi->IsRequestedHidden(), cutPlaneData.Name);
 		return true;
 	}
 	return false;

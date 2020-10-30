@@ -52,5 +52,5 @@ public:
 	void UpdateCutPlaneMenuBlocks();
 	UCutPlaneDimListItemObject *GetListItemFromObjID(int32 ObjID = MOD_ID_NONE);
 	bool RemoveCutPlaneFromMenuBlock(int32 ObjID = MOD_ID_NONE);
-	bool UpdateCutPlaneVisibilityInMenuBlock(bool IsVisible, int32 ObjID = MOD_ID_NONE);
+	bool UpdateCutPlaneParamInMenuBlock(int32 ObjID = MOD_ID_NONE);
 };

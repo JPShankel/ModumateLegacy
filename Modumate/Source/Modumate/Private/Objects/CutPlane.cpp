@@ -92,7 +92,7 @@ void FMOICutPlaneImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOu
 	auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
 	if (controller && controller->EditModelUserWidget)
 	{
-		controller->EditModelUserWidget->UpdateCutPlaneVisibilityinList(!MOI->IsRequestedHidden(), MOI->ID);
+		controller->EditModelUserWidget->UpdateCutPlaneInList(MOI->ID);
 	}
 }
 

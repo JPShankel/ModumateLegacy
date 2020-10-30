@@ -7,6 +7,11 @@
 #include "Components/CheckBox.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/TooltipManager.h"
+#include "Objects/CutPlane.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/Custom/ModumateButton.h"
+#include "UI/Custom/ModumateEditableTextBox.h"
+#include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 
 
 UCutPlaneDimListItem::UCutPlaneDimListItem(const FObjectInitializer& ObjectInitializer)
@@ -20,12 +25,14 @@ bool UCutPlaneDimListItem::Initialize()
 	{
 		return false;
 	}
-	if (!CheckBoxVisibility)
+	if (!(CheckBoxVisibility && ButtonEdit && TextTitleEditable))
 	{
 		return false;
 	}
 	CheckBoxVisibility->OnCheckStateChanged.AddDynamic(this, &UCutPlaneDimListItem::OnCheckBoxVisibilityChanged);
 	CheckBoxVisibility->ToolTipWidgetDelegate.BindDynamic(this, &UCutPlaneDimListItem::OnCheckBoxTooltipWidget);
+	ButtonEdit->ModumateButton->OnReleased.AddDynamic(this, &UCutPlaneDimListItem::OnButtonEditReleased);
+	TextTitleEditable->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UCutPlaneDimListItem::OnEditableTitleCommitted);
 
 	return true;
 }
@@ -63,9 +70,39 @@ void UCutPlaneDimListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
 
 }
 
+void UCutPlaneDimListItem::OnEditableTitleCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	if (CommitMethod == ETextCommit::OnCleared)
+	{
+		// TODO: Revert name on clear
+		FSlateApplication::Get().SetAllUserFocusToGameViewport();
+		return;
+	}
+
+	// TODO: Detect if new name already exist
+
+	AEditModelGameState_CPP *gameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
+	if (gameState)
+	{
+		FModumateObjectInstance* moi = gameState->Document.GetObjectById(ObjID);
+		FMOIStateData oldStateData = moi->GetStateData();
+		FMOIStateData newStateData = oldStateData;
+
+		FMOICutPlaneData newCutPlaneData;
+		newStateData.CustomData.LoadStructData(newCutPlaneData);
+		newCutPlaneData.Name = TextTitleEditable->ModumateEditableTextBox->Text.ToString();
+
+		newStateData.CustomData.SaveStructData<FMOICutPlaneData>(newCutPlaneData);
+		auto delta = MakeShared<FMOIDelta>();
+		delta->AddMutationState(moi, oldStateData, newStateData);
+
+		gameState->Document.ApplyDeltas({ delta }, GetWorld());
+	}
+}
+
 void UCutPlaneDimListItem::OnButtonEditReleased()
 {
-	// TODO: Edit cut plane name
+	TextTitleEditable->ModumateEditableTextBox->SetKeyboardFocus();
 }
 
 void UCutPlaneDimListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
@@ -75,10 +112,9 @@ void UCutPlaneDimListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 	{
 		return;
 	}
-
-	UpdateCheckBoxVisibility(cutPlaneItemObject->Visibility);
+	UpdateVisibilityAndName(cutPlaneItemObject->Visibility, cutPlaneItemObject->DisplayName);
 	ObjID = cutPlaneItemObject->ObjId;
-	TextTitle->ChangeText(FText::FromString(cutPlaneItemObject->DisplayName));
+
 	switch (cutPlaneItemObject->CutPlaneType)
 	{
 	case ECutPlaneType::Horizontal:
@@ -95,22 +131,23 @@ void UCutPlaneDimListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 	
 }
 
-void UCutPlaneDimListItem::BuildAsVerticalCutPlaneItem(const FQuat &Rotation)
+void UCutPlaneDimListItem::BuildAsVerticalCutPlaneItem(const FQuat& Rotation)
 {
 	float angle = Rotation.GetAngle();
 	TextDimension->ChangeText(FText::AsNumber(angle));
 }
 
-void UCutPlaneDimListItem::BuildAsHorizontalCutPlaneItem(const FVector &Location)
+void UCutPlaneDimListItem::BuildAsHorizontalCutPlaneItem(const FVector& Location)
 {
 	TArray<int32> imperialsInches;
 	UModumateDimensionStatics::CentimetersToImperialInches(Location.Z, imperialsInches);
 	TextDimension->ChangeText(UModumateDimensionStatics::ImperialInchesToDimensionStringText(imperialsInches));
 }
 
-void UCutPlaneDimListItem::UpdateCheckBoxVisibility(bool NewVisible)
+void UCutPlaneDimListItem::UpdateVisibilityAndName(bool NewVisible, const FString& NewName)
 {
 	CheckBoxVisibility->SetIsChecked(!NewVisible);
+	TextTitleEditable->ChangeText(FText::FromString(NewName));
 }
 
 UWidget* UCutPlaneDimListItem::OnCheckBoxTooltipWidget()
