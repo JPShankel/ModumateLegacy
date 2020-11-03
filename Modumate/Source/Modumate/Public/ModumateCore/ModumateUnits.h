@@ -4,10 +4,10 @@
 
 namespace Modumate
 {
-	static const float InchesToCentimeters = 2.54f;
-	static const float CentimetersToInches = 1.0f / InchesToCentimeters;
-	static const float InchesPerFoot = 12.0f;
-	static const float DefaultWorldToFloorplan = 48.0f; // (1/4" = 1')
+	static constexpr float InchesToCentimeters = 2.54f;
+	static constexpr float CentimetersToInches = 1.0f / InchesToCentimeters;
+	static constexpr float InchesPerFoot = 12.0f;
+	static constexpr float DefaultWorldToFloorplan = 48.0f; // (1/4" = 1')
 
 	namespace Units {
 

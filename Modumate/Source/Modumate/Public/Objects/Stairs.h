@@ -20,6 +20,15 @@ public:
 
 	virtual void SetupDynamicGeometry() override;
 
+	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
+		TArray<TArray<FVector>>& OutPerimeters) const override;
+	void GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const;
+	void GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const;
+
+
 protected:
 	bool bCachedUseRisers, bCachedStartRiser, bCachedEndRiser;
 	TArray<TArray<FVector>> CachedTreadPolys;
@@ -30,4 +39,8 @@ protected:
 	FCachedLayerDimsByType CachedTreadDims;
 	FCachedLayerDimsByType CachedRiserDims;
 	float TreadRun = 0.0f;
+
+	// Empirically derived overlap.
+	// TODO: put in assembly spec.
+	static constexpr float OpenStairsOverhang = 2.0f * Modumate::InchesToCentimeters;
 };

@@ -31,7 +31,7 @@ namespace Modumate
 	{
 		const TSet<EObjectType> separatorOccluderTypes({ EObjectType::OTWallSegment, EObjectType::OTFloorSegment,
 			EObjectType::OTRoofFace, EObjectType::OTCeiling, EObjectType::OTSystemPanel, EObjectType::OTDoor,
-			EObjectType::OTWindow });
+			EObjectType::OTWindow,  EObjectType::OTStaircase });
 
 		const TSet<EObjectType>  actorMeshOccluderTypes({ EObjectType::OTStructureLine,
 			EObjectType::OTMullion, EObjectType::OTCabinet });
@@ -249,6 +249,11 @@ namespace Modumate
 
 	}
 
+	FEdge FModumateClippingTriangles::WorldLineToView(FEdge line) const
+	{
+		return { TransformMatrix.TransformPosition(line.Vertex[0]), TransformMatrix.TransformPosition(line.Vertex[1]) };
+	}
+
 	bool FModumateClippingTriangles::ClipSingleWorldLine(FEdge& viewLine, Occluder occluder, TArray<FEdge>& generatedLines)
 	{
 		float maxZ = FMath::Max(viewLine.Vertex[0].Z, viewLine.Vertex[1].Z);
@@ -256,12 +261,15 @@ namespace Modumate
 		if (maxZ > occluder.MinZ && LineBoxIntersection(viewLine, occluder.BoundingBox))
 		{
 			Vec2 a(viewLine.Vertex[0]);
-			Vec2 dir(viewLine.Vertex[1] - viewLine.Vertex[0]);
+			FVector delta3d(viewLine.Vertex[1] - viewLine.Vertex[0]);
+			Vec2 dir(delta3d);
 			Vec2 q(occluder.Vertices[0]);
 			Vec2 u(Vec2(occluder.Vertices[1]) - q);
 			Vec2 v(Vec2(occluder.Vertices[2]) - q);
 			// Epsilon for eroding clipped line away in view-space:
-			const FVector vecEps(dir.GetSafeNormal() * (LineClipEpsilon * Scale), 0.0f);
+			FVector normalizedDir = (viewLine.Vertex[1] - viewLine.Vertex[0]).GetSafeNormal();
+			FVector vecEps(dir.GetSafeNormal() * (LineClipEpsilon * Scale), 0.0f);
+			vecEps.Z = vecEps.Size() / dir.Size() * delta3d.Z;
 
 			// Intersect line with all triangle sides.
 			Vec2 t1Alpha = Intersect2V(dir, -u, q - a);

@@ -188,7 +188,7 @@ namespace Modumate {
 			EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTCeiling,
 			EObjectType::OTRoofFace, EObjectType::OTWindow, EObjectType::OTDoor,
 			EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTRailSegment,
-			EObjectType::OTSystemPanel, EObjectType::OTMullion
+			EObjectType::OTSystemPanel, EObjectType::OTMullion, EObjectType::OTStaircase
 			}));
 
 		for (auto object: beyondCutObjects)

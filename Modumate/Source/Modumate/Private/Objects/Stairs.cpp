@@ -5,10 +5,12 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateStairStatics.h"
 #include "ModumateCore/ModumateUnits.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "Algo/Accumulate.h"
 
 class AEditModelPlayerController_CPP;
-
 
 FMOIStaircaseImpl::FMOIStaircaseImpl(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
@@ -86,8 +88,7 @@ void FMOIStaircaseImpl::SetupDynamicGeometry()
 	TreadLayers.Empty();
 	RiserLayers.Empty();
 	const float totalTreadThickness = CachedTreadDims.TotalUnfinishedWidth;
-	const float totalRiserThickness = bCachedUseRisers ? CachedRiserDims.TotalUnfinishedWidth :
-		2.0f * Modumate::InchesToCentimeters;  // Empirically derived overlap. 
+	const float totalRiserThickness = bCachedUseRisers ? CachedRiserDims.TotalUnfinishedWidth : OpenStairsOverhang; 
 	const FBIMAssemblySpec& assembly = MOI->GetAssembly();
 	int32 numTreadLayers = assembly.TreadLayers.Num();
 	int32 numRiserLayers = assembly.RiserLayers.Num();
@@ -140,6 +141,213 @@ void FMOIStaircaseImpl::SetupDynamicGeometry()
 	// Set up the triangulated staircase mesh by extruding each tread and riser polygon
 	DynamicMeshActor->SetupStairPolys(stairOrigin, CachedTreadPolys, CachedRiserPolys, CachedRiserNormals, TreadLayers, RiserLayers,
 		MOI->GetAssembly());
+}
+
+void FMOIStaircaseImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
+	TArray<TArray<FVector>>& OutPerimeters) const
+{
+	bool bGetFarLines = ParentPage->lineClipping.IsValid();
+	if (bGetFarLines)
+	{
+		GetBeyondLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox);
+	}
+	else
+	{
+		GetInPlaneLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox);
+	}
+}
+
+void FMOIStaircaseImpl::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
+{
+	static const Modumate::Units::FThickness stairLineThickness = Modumate::Units::FThickness::Points(0.15f);
+	static const Modumate::FMColor lineColor(0.439, 0.439f, 0.439f);  // Gray112
+	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges;
+
+	float treadThickness = CachedTreadDims.TotalUnfinishedWidth;
+	float riserThickness = bCachedUseRisers ? CachedRiserDims.TotalUnfinishedWidth : OpenStairsOverhang;
+
+	TArray<FEdge> beyondPlaneLines;
+	FVector location = DynamicMeshActor->GetActorLocation();
+
+	bool bProcessingRisers = bCachedUseRisers;
+	int32 riserNumber = 0;
+	auto treadsList = { &CachedTreadPolys };
+	auto treadsRisersList = { &CachedRiserPolys, &CachedTreadPolys };
+	auto& stairItemsList = bCachedUseRisers ? treadsRisersList : treadsList;
+
+	for (const auto* componentPolys: stairItemsList)
+	{
+		for (const auto& componentPoly: *componentPolys)
+		{
+			const int32 numCorners = componentPoly.Num();
+			TArray<FVector> points = componentPoly;
+
+			if (componentPoly.Num() == 4)
+			{
+				if (bProcessingRisers)
+				{   // Don't overlap treads & risers;
+					points[2] -= treadThickness * FVector::UpVector;
+					points[3] -= treadThickness * FVector::UpVector;
+				}
+				else
+				{
+					FVector riserNormal = (points[2] - points[1]).GetUnsafeNormal();
+					points[2] += riserThickness * riserNormal;
+					points[3] += riserThickness * riserNormal;
+				}
+			}
+
+			FVector thicknessDelta = bProcessingRisers ? riserThickness * CachedRiserNormals[riserNumber++] : treadThickness * -FVector::UpVector;
+			for (int32 p = 0; p < numCorners; ++p)
+			{
+				beyondPlaneLines.Add({ points[p], points[(p + 1) % numCorners] });
+				beyondPlaneLines.Add({ points[p] + thicknessDelta, points[(p + 1) % numCorners] + thicknessDelta });
+				beyondPlaneLines.Add({ points[p], points[p] + thicknessDelta });
+			}
+
+		}
+		bProcessingRisers = false;
+	}
+
+	for (const auto& line : beyondPlaneLines)
+	{
+		FVector v0 = line.Vertex[0] + location;
+		FVector v1 = line.Vertex[1] + location;
+
+		TArray<FEdge> clippedLineSections = ParentPage->lineClipping->ClipWorldLineToView({ v0, v1 });
+		for (const auto& lineSection : clippedLineSections)
+		{
+			FVector2D vert0(lineSection.Vertex[0]);
+			FVector2D vert1(lineSection.Vertex[1]);
+
+			FVector2D boxClipped0;
+			FVector2D boxClipped1;
+
+			if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
+			{
+				TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShared<Modumate::FDraftingLine>(
+					Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
+					Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
+					stairLineThickness, lineColor);
+				ParentPage->Children.Add(draftingLine);
+				draftingLine->SetLayerTypeRecursive(dwgLayerType);
+			}
+		}
+	}
+
+}
+
+void FMOIStaircaseImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
+{
+	static const Modumate::Units::FThickness lineThickness = Modumate::Units::FThickness::Points(0.25f);
+	static const Modumate::FMColor lineColor = Modumate::FMColor::Gray96;
+	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kSeparatorCutOuterSurface;
+
+	float treadThickness = CachedTreadDims.TotalUnfinishedWidth;
+	float riserThickness = bCachedUseRisers ? CachedRiserDims.TotalUnfinishedWidth : OpenStairsOverhang;
+
+	TArray<FEdge> inPlaneLines;
+	FVector location = DynamicMeshActor->GetActorLocation();
+
+	bool bProcessingRisers = bCachedUseRisers;
+	float treadExtension = bCachedUseRisers ? riserThickness : OpenStairsOverhang;
+	int32 riserNumber = 0;
+	auto treadsList = { &CachedTreadPolys };
+	auto treadsRisersList = { &CachedRiserPolys, &CachedTreadPolys };
+	auto& stairItemsList = bCachedUseRisers ? treadsRisersList : treadsList;
+
+	for (const auto* componentPolys: stairItemsList)
+	{
+		for (const auto& componentPoly: *componentPolys)
+		{
+			TArray<FVector> pointsA = componentPoly;
+			TArray<FVector> pointsB;
+
+			FVector thicknessDelta = bProcessingRisers ? riserThickness * CachedRiserNormals[riserNumber++] : treadThickness * -FVector::UpVector;
+
+			if (componentPoly.Num() == 4)
+			{
+				if (bProcessingRisers)
+				{   // Don't overlap treads & risers;
+					pointsA[2] -= treadThickness * FVector::UpVector;
+					pointsA[3] -= treadThickness * FVector::UpVector;
+				}
+				else
+				{
+					FVector riserNormal = (pointsA[2] - pointsA[1]).GetUnsafeNormal();
+					pointsA[2] += treadExtension * riserNormal;
+					pointsA[3] += treadExtension * riserNormal;
+				}
+			}
+
+			for (auto& p: pointsA)
+			{
+				p += location;
+				pointsB.Add(p + thicknessDelta);
+			}
+
+			FBox itemBounds(pointsA);
+			itemBounds += pointsB;
+			if (FMath::PlaneAABBIntersection(Plane, itemBounds))
+			{
+				TArray<FVector> intersectPoints;
+				const int32 numPoints = pointsA.Num();
+				for (int32 p = 0; p < numPoints; ++p)
+				{
+					FVector intersection;
+					if (FMath::SegmentPlaneIntersection(pointsA[p], pointsB[p], Plane, intersection))
+					{
+						intersectPoints.Add(intersection);
+					}
+					if (FMath::SegmentPlaneIntersection(pointsA[p], pointsA[(p + 1) % numPoints], Plane, intersection))
+					{
+						intersectPoints.Add(intersection);
+					}
+					if (FMath::SegmentPlaneIntersection(pointsB[p], pointsB[(p + 1) % numPoints], Plane, intersection))
+					{
+						intersectPoints.Add(intersection);
+					}
+				}
+				if (intersectPoints.Num() != 0)
+				{
+					TArray<FVector2D> projectedPoints;
+					for (const auto& point3d: intersectPoints)
+					{
+						projectedPoints.Add(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, point3d));
+					}
+					TArray<int32> indices;
+					ConvexHull2D::ComputeConvexHull(projectedPoints, indices);
+					const int32 numHullPoints = indices.Num();
+					for (int32 p = 0; p < numHullPoints; ++p)
+					{
+						inPlaneLines.Add(FEdge(FVector(projectedPoints[indices[p]], 0),
+							FVector(projectedPoints[indices[(p + 1) % numHullPoints]], 0)));
+					}
+				}
+			}
+		}
+		bProcessingRisers = false;
+	}
+
+	for (const auto& line : inPlaneLines)
+	{
+		FVector2D start(line.Vertex[0]);
+		FVector2D end(line.Vertex[1]);
+		FVector2D clippedStart, clippedEnd;
+
+		if (UModumateFunctionLibrary::ClipLine2DToRectangle(start, end, BoundingBox, clippedStart, clippedEnd))
+		{
+			TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShared<Modumate::FDraftingLine>(
+				Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
+				Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+				lineThickness, lineColor);
+			ParentPage->Children.Add(draftingLine);
+			draftingLine->SetLayerTypeRecursive(dwgLayerType);
+		}
+	}
 }
 
 void FMOIStaircaseImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
