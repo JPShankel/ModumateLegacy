@@ -7,28 +7,20 @@
 #include "Blueprint/IUserObjectListEntry.h"
 #include "ModumateCore/ModumateTypes.h"
 
-#include "CutPlaneDimListItem.generated.h"
+#include "CutPlaneExportListItem.generated.h"
 
 /**
  *
  */
 
-UENUM(BlueprintType)
-enum class ECutPlaneType : uint8
-{
-	Horizontal,
-	Vertical,
-	Other,
-	None
-};
 
 UCLASS()
-class MODUMATE_API UCutPlaneDimListItem : public UUserWidget, public IUserObjectListEntry
+class MODUMATE_API UCutPlaneExportListItem : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 
 public:
-	UCutPlaneDimListItem(const FObjectInitializer& ObjectInitializer);
+	UCutPlaneExportListItem(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
 protected:
@@ -39,44 +31,31 @@ protected:
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName TooltipID_CheckBoxVisibility;
+	FName TooltipID;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UCheckBox* CheckBoxVisibility;
+	class UModumateCheckBox* CheckBoxExport;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlockUserWidget* TextDimension;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateEditableTextBoxUserWidget* TextTitleEditable;
+	class UModumateTextBlockUserWidget* TextTitle;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButton* ModumateButtonMain;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget* ButtonEdit;
-
 	UFUNCTION()
 	void OnButtonMainReleased();
-
-	UFUNCTION()
-	void OnButtonEditReleased();
-
-	UFUNCTION()
-	void OnCheckBoxVisibilityChanged(bool IsChecked);
-
-	UFUNCTION()
-	void OnEditableTitleCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
 	// UserObjectListEntry interface
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 
 	void BuildAsVerticalCutPlaneItem(const FQuat& Rotation);
 	void BuildAsHorizontalCutPlaneItem(const FVector& Location);
-	void UpdateVisibilityAndName(bool NewVisible, const FString& NewName);
 
 protected:
 
 	UFUNCTION()
-	UWidget* OnCheckBoxTooltipWidget();
+	UWidget* OnTooltipWidget();
 };

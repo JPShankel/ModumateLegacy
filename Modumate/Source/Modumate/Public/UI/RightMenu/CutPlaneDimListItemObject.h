@@ -21,4 +21,5 @@ public:
 	FVector Location = FVector::ZeroVector;
 	FQuat Rotation = FQuat::Identity;
 	bool Visibility = true;
+	bool CanExport = false;
 };

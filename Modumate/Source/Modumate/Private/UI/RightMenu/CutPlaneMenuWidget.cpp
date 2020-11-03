@@ -6,8 +6,8 @@
 #include "UI/RightMenu/CutPlaneDimListItemObject.h"
 #include "UI/RightMenu/CutPlaneMenuBlock.h"
 #include "Components/ListView.h"
-#include "UI/RightMenu/CutPlaneDimListItem.h"
 #include "Objects/CutPlane.h"
+#include "UI/RightMenu/CutPlaneMenuBlockExport.h"
 
 using namespace Modumate;
 
@@ -33,7 +33,7 @@ void UCutPlaneMenuWidget::NativeConstruct()
 
 }
 
-void UCutPlaneMenuWidget::SetViewMenuVisibility(bool NewVisible)
+void UCutPlaneMenuWidget::SetCutPlaneMenuVisibility(bool NewVisible)
 {
 	if (NewVisible)
 	{
@@ -42,6 +42,7 @@ void UCutPlaneMenuWidget::SetViewMenuVisibility(bool NewVisible)
 	}
 	else
 	{
+		CutPlaneMenuBlockExport->SetExportMenuVisibility(false);
 		this->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
@@ -67,6 +68,7 @@ void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 		newCutPlaneObj->Location = cutPlaneData.Location;
 		newCutPlaneObj->Rotation = cutPlaneData.Rotation;
 		newCutPlaneObj->Visibility = !cutPlaneMois[i]->IsRequestedHidden();
+		newCutPlaneObj->CanExport = cutPlaneData.bIsExported;
 
 		// Place cut plane item by its orientation
 		float cutPlaneUpDot = FMath::Abs(newCutPlaneObj->Rotation.GetUpVector() | FVector::UpVector);
@@ -101,7 +103,7 @@ void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 	}
 }
 
-UCutPlaneDimListItemObject * UCutPlaneMenuWidget::GetListItemFromObjID(int32 ObjID /*MOD_ID_NONE*/)
+UCutPlaneDimListItemObject* UCutPlaneMenuWidget::GetListItemFromObjID(int32 ObjID /*MOD_ID_NONE*/)
 {
 	UCutPlaneDimListItemObject *outItem = HorizontalItemToIDMap.FindRef(ObjID);
 	if (!outItem)
@@ -173,4 +175,56 @@ bool UCutPlaneMenuWidget::UpdateCutPlaneParamInMenuBlock(int32 ObjID /*= MOD_ID_
 		return true;
 	}
 	return false;
+}
+
+void UCutPlaneMenuWidget::SetCutPlaneExportMenuVisibility(bool NewVisible)
+{
+	// If this menu is currently closed, open it
+	if (NewVisible && this->GetVisibility() == ESlateVisibility::Collapsed)
+	{
+		SetCutPlaneMenuVisibility(true);
+	}
+	CutPlaneMenuBlockExport->SetExportMenuVisibility(NewVisible);
+}
+
+bool UCutPlaneMenuWidget::GetCutPlaneIDsByType(ECutPlaneType Type, TArray<int32>& OutIDs)
+{
+	OutIDs.Reset();
+	switch (Type)
+	{
+	case ECutPlaneType::Horizontal:
+		for (auto curItem : HorizontalItemToIDMap)
+		{
+			OutIDs.Add(curItem.Key);
+		}
+		return true;
+	case ECutPlaneType::Vertical:
+		for (auto curItem : VerticalItemToIDMap)
+		{
+			OutIDs.Add(curItem.Key);
+		}
+		return true;
+	case ECutPlaneType::Other:
+		for (auto curItem : OtherItemToIDMap)
+		{
+			OutIDs.Add(curItem.Key);
+		}
+		return true;
+	case ECutPlaneType::None:
+		for (auto curItem : HorizontalItemToIDMap)
+		{
+			OutIDs.Add(curItem.Key);
+		}
+		for (auto curItem : VerticalItemToIDMap)
+		{
+			OutIDs.Add(curItem.Key);
+		}
+		for (auto curItem : OtherItemToIDMap)
+		{
+			OutIDs.Add(curItem.Key);
+		}
+		return true;
+	default:
+		return false;
+	}
 }

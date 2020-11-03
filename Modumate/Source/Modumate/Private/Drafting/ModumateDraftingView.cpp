@@ -265,6 +265,16 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 	FCoordinates2D pageMargin = FCoordinates2D(FXCoord::FloorplanInches(0.5f), FYCoord::FloorplanInches(0.5f));
 
 	TArray<FModumateObjectInstance*> cutPlanes = Document->GetObjectsOfType(EObjectType::OTCutPlane);
+	TArray<FModumateObjectInstance*> exportableCutPlanes;
+	for (const auto curCutPlane : cutPlanes)
+	{
+		FMOICutPlaneData cutPlaneData;
+		curCutPlane->GetStateData().CustomData.LoadStructData(cutPlaneData);
+		if (cutPlaneData.bIsExported)
+		{
+			exportableCutPlanes.Add(curCutPlane);
+		}
+	}
 	TArray<FModumateObjectInstance*> scopeBoxes = Document->GetObjectsOfType(EObjectType::OTScopeBox);
 
 	if (ExportType == kPDF)
@@ -279,12 +289,12 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 	draftMan->CurrentDraftingView = this;
 	draftMan->CurrentDrawingInterface = DrawingInterface.Get();
 
-	for (FModumateObjectInstance* cutPlane : cutPlanes)
+	for (FModumateObjectInstance* cutPlane : exportableCutPlanes)
 	{
 		draftMan->RequestRender(TPair<int32, int32>(cutPlane->ID, MOD_ID_NONE));
 	}
 
-	for (FModumateObjectInstance* cutPlane : cutPlanes)
+	for (FModumateObjectInstance* cutPlane : exportableCutPlanes)
 	{
 		ISceneCaptureObject* sceneCaptureInterface = cutPlane->GetSceneCaptureInterface();
 		if (sceneCaptureInterface == nullptr)

@@ -47,11 +47,6 @@ void UCutPlaneDimListItem::OnButtonMainReleased()
 	// TODO: Cut plane action on button released
 }
 
-void UCutPlaneDimListItem::OnButtonSaveReleased()
-{
-	// TODO: Export cut plane
-}
-
 void UCutPlaneDimListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
 {
 	AEditModelGameState_CPP *gameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());

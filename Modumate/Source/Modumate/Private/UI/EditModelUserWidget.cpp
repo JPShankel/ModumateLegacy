@@ -143,7 +143,7 @@ void UEditModelUserWidget::SwitchRightMenu(ERightMenuState NewMenuState)
 	bool newViewMenuVisibility = CurrentRightMenuState == ERightMenuState::ViewMenu;
 	bool newCutPlaneMenuVisibility = CurrentRightMenuState == ERightMenuState::CutPlaneMenu;
 	ViewMenu->SetViewMenuVisibility(newViewMenuVisibility);
-	CutPlaneMenu->SetViewMenuVisibility(newCutPlaneMenuVisibility);
+	CutPlaneMenu->SetCutPlaneMenuVisibility(newCutPlaneMenuVisibility);
 }
 
 void UEditModelUserWidget::UpdateCutPlanesList()

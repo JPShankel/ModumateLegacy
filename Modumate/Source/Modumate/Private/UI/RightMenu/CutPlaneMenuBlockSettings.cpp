@@ -6,6 +6,8 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/RightMenu/CutPlaneMenuWidget.h"
 
 
 using namespace Modumate;
@@ -71,5 +73,5 @@ void UCutPlaneMenuBlockSettings::OnButtonShowHideAllReleased()
 
 void UCutPlaneMenuBlockSettings::OnButtonExportAllReleased()
 {
-	Controller->OnCreateDwg();
+	Controller->EditModelUserWidget->CutPlaneMenu->SetCutPlaneExportMenuVisibility(true);
 }

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "ModumateCore/ModumateTypes.h"
+#include "UI/RightMenu/CutPlaneDimListItem.h"
 
 #include "CutPlaneMenuWidget.generated.h"
 
@@ -26,7 +27,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
-	class AEditModelGameState_CPP *GameState;
+	class AEditModelGameState_CPP* GameState;
 
 	UPROPERTY()
 	TMap<int32, class UCutPlaneDimListItemObject*> HorizontalItemToIDMap;
@@ -48,9 +49,16 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UCutPlaneMenuBlock *CutPlaneMenuBlockOther;
 
-	void SetViewMenuVisibility(bool NewVisible);
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UCutPlaneMenuBlockExport *CutPlaneMenuBlockExport;
+
+	void SetCutPlaneMenuVisibility(bool NewVisible);
 	void UpdateCutPlaneMenuBlocks();
-	UCutPlaneDimListItemObject *GetListItemFromObjID(int32 ObjID = MOD_ID_NONE);
+	UCutPlaneDimListItemObject* GetListItemFromObjID(int32 ObjID = MOD_ID_NONE);
 	bool RemoveCutPlaneFromMenuBlock(int32 ObjID = MOD_ID_NONE);
 	bool UpdateCutPlaneParamInMenuBlock(int32 ObjID = MOD_ID_NONE);
+	void SetCutPlaneExportMenuVisibility(bool NewVisible);
+
+	// Show CutPlane by type, show all if none specified
+	bool GetCutPlaneIDsByType(ECutPlaneType Type, TArray<int32>& OutIDs);
 };
