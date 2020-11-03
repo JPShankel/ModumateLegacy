@@ -31,10 +31,10 @@ namespace Modumate
 	{
 		const TSet<EObjectType> separatorOccluderTypes({ EObjectType::OTWallSegment, EObjectType::OTFloorSegment,
 			EObjectType::OTRoofFace, EObjectType::OTCeiling, EObjectType::OTSystemPanel, EObjectType::OTDoor,
-			EObjectType::OTWindow,  EObjectType::OTStaircase });
+			EObjectType::OTWindow,  EObjectType::OTStaircase, EObjectType::OTRailSegment });
 
 		const TSet<EObjectType>  actorMeshOccluderTypes({ EObjectType::OTStructureLine,
-			EObjectType::OTMullion, EObjectType::OTCabinet });
+			EObjectType::OTMullion, EObjectType::OTCabinet, EObjectType::OTFinish });
 
 		TSet<EObjectType> occluderTypes(separatorOccluderTypes);
 		occluderTypes.Append(actorMeshOccluderTypes);
