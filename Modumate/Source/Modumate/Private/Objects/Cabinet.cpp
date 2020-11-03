@@ -110,10 +110,17 @@ void FMOICabinetImpl::SetupDynamicGeometry()
 		return;
 	}
 
-	// TODO: get material from assembly spec
 	bool bUpdateCollision = !MOI->GetIsInPreviewMode();
 	bool bEnableCollision = !MOI->GetIsInPreviewMode();
-	DynamicMeshActor->SetupCabinetGeometry(CachedBasePoints, CachedExtrusionDelta, FArchitecturalMaterial(), bUpdateCollision, bEnableCollision,
+
+	auto& extrusions = MOI->GetAssembly().Extrusions;
+	if (!ensure(extrusions.Num() == 1))
+	{
+		return;
+	}
+
+	auto& extrusion = extrusions[0];
+	DynamicMeshActor->SetupCabinetGeometry(CachedBasePoints, CachedExtrusionDelta, extrusion.Material, bUpdateCollision, bEnableCollision,
 		ToeKickDimensions, InstanceData.FrontFaceIndex);
 
 	// refresh handle visibility, don't destroy & recreate handles
@@ -197,6 +204,13 @@ void FMOICabinetImpl::UpdateCabinetPortal()
 		return;
 	}
 
+	auto& assembly = MOI->GetAssembly();
+	FVector portalNativeSize = assembly.GetRiggedAssemblyNativeSize();
+	if (portalNativeSize.GetMin() < KINDA_SMALL_NUMBER)
+	{
+		return;
+	}
+
 	// Get enough geometric information to set up the portal assembly
 	FVector extrusionDir = GetNormal();
 	FPlane plane;
@@ -219,9 +233,13 @@ void FMOICabinetImpl::UpdateCabinetPortal()
 		return;
 	}
 
-	FrontFacePortalActor->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, InstanceData.bFrontFaceLateralInverted, true);
+	FVector portalDesiredSize(edgeLength, portalNativeSize.Y, InstanceData.ExtrusionDist - ToeKickDimensions.Y);
+	if (portalDesiredSize.GetMin() < KINDA_SMALL_NUMBER)
+	{
+		return;
+	}
 
-	// Now position the portal where it's supposed to go
+	// Position the portal where it's supposed to go
 	FVector edgeDir = edgeDelta / edgeLength;
 	FVector faceNormal = (edgeDir ^ extrusionDir) * (bCoincident ? 1.0f : -1.0f);
 	FVector toeKickOffset = ToeKickDimensions.Y * extrusionDir;
@@ -229,6 +247,10 @@ void FMOICabinetImpl::UpdateCabinetPortal()
 	FQuat portalRot = FRotationMatrix::MakeFromYZ(faceNormal, extrusionDir).ToQuat();
 
 	FrontFacePortalActor->SetActorLocationAndRotation(portalOrigin, portalRot);
+
+	// Now make the portal's parts from the cabinet's combined assembly
+	FVector portalScale = portalDesiredSize / portalNativeSize;
+	FrontFacePortalActor->MakeFromAssembly(assembly, portalScale, InstanceData.bFrontFaceLateralInverted, true);
 }
 
 void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)

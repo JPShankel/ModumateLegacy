@@ -123,6 +123,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 		bool bMeshChanged = partStaticMeshComp->SetStaticMesh(partMesh);
 		partStaticMeshComp->SetMobility(EComponentMobility::Movable);
 
+		const FVector& partRelativePos = partLayout.PartSlotInstances[slotIdx].Location;
 		FRotator partRotator = FRotator::MakeFromEuler(partLayout.PartSlotInstances[slotIdx].Rotation);
 		FVector partNativeSize = assemblyPart.Mesh.NativeSize * Modumate::InchesToCentimeters;
 
@@ -131,7 +132,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 		FVector partDesiredSize = partLayout.PartSlotInstances[slotIdx].Size;
 
 #if DEBUG_NINE_SLICING
-			DrawDebugCoordinateSystem(GetWorld(), GetActorTransform().TransformPosition(partLocation), GetActorRotation(), 8.0f, false, -1.f, 255, 0.5f);
+		DrawDebugCoordinateSystem(GetWorld(), GetActorTransform().TransformPosition(partRelativePos), GetActorRotation(), 8.0f, true, 1.f, 255, 0.5f);
 #endif // DEBUG_NINE_SLICING
 
 		FBox nineSliceInterior = assemblyPart.Mesh.NineSliceBox;
@@ -181,7 +182,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 			partStaticMeshComp->SetVisibility(true);
 			partStaticMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
-			partStaticMeshComp->SetRelativeLocation(rootFlip * partLayout.PartSlotInstances[slotIdx].Location);
+			partStaticMeshComp->SetRelativeLocation(rootFlip * partRelativePos);
 			partStaticMeshComp->SetRelativeRotation(partRotator);
 			partStaticMeshComp->SetRelativeScale3D(rootFlip * partScale * partLayout.PartSlotInstances[slotIdx].FlipVector);
 
@@ -269,7 +270,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 				UProceduralMeshComponent *procMeshLowLODComp = NineSliceLowLODComps[compIdx];
 				if (procMeshComp && (procMeshComp->GetNumSections() > 0))
 				{
-					FVector relativePos = partLayout.PartSlotInstances[slotIdx].Location;
+					FVector sliceRelativePos = partRelativePos;
 					FVector sliceScale = FVector::OneVector;
 
 					if (!partScale.Equals(FVector::OneVector))
@@ -357,12 +358,12 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 						}
 
 						sliceScale = newBoundsSize / originalBoundsSize;
-						relativePos = partLayout.PartSlotInstances[slotIdx].Location + partLayout.PartSlotInstances[slotIdx].FlipVector * (newBounds.Min - (originalBounds.Min * sliceScale));
+						sliceRelativePos = partLayout.PartSlotInstances[slotIdx].Location + partLayout.PartSlotInstances[slotIdx].FlipVector * (newBounds.Min - (originalBounds.Min * sliceScale));
 					}
 
 					for (auto* comp : { procMeshComp, procMeshLowLODComp })
 					{
-						comp->SetRelativeLocation(rootFlip * relativePos);
+						comp->SetRelativeLocation(rootFlip * sliceRelativePos);
 						comp->SetRelativeRotation(FQuat::Identity);
 						comp->SetRelativeRotation(partRotator);
 						comp->SetRelativeScale3D(rootFlip * sliceScale * partLayout.PartSlotInstances[slotIdx].FlipVector);
@@ -374,7 +375,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 
 #if DEBUG_NINE_SLICING
 					DrawDebugBox(GetWorld(), procMeshComp->Bounds.Origin, procMeshComp->Bounds.BoxExtent,
-						FQuat::Identity, debugSliceColors[sliceIdx], false, -1.f, 255, 0.0f);
+						FQuat::Identity, debugSliceColors[sliceIdx], true, 1.f, 255, 0.0f);
 #endif // DEBUG_NINE_SLICING
 				}
 			}

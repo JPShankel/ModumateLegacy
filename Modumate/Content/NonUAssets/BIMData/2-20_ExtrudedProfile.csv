@@ -573,6 +573,10 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> WoodRectangular
 0DimWD-6inW-6inD
 0Profile-Plate Section",,2ExtrudedProfile --> Beam/Column --> WoodRectangular,,"6in x 6in, Cedar (Western Red), Natural",48in,,,,,1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural,0DimWD-6inW-6inD,0Profile-Plate Section
 PRESET,,"2ExtrudedProfile --> Beam/Column --> WoodRectangular
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-DFE2E7-CoolLightGrey
+0DimWD-6inW-6inD
+0Profile-Plate Section",,2ExtrudedProfile --> Beam/Column --> WoodRectangular,,"6in x 6in, Paint, Cool Light Grey",48in,,,,,1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-DFE2E7-CoolLightGrey,0DimWD-6inW-6inD,0Profile-Plate Section
+PRESET,,"2ExtrudedProfile --> Beam/Column --> WoodRectangular
 1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural
 0DimWD-6inW-8inD
 0Profile-Plate Section",,2ExtrudedProfile --> Beam/Column --> WoodRectangular,,"6in x 8in, Cedar (White), Natural",48in,,,,,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural,0DimWD-6inW-8inD,0Profile-Plate Section

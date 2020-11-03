@@ -60,6 +60,7 @@ PRESET,,0Color --> Aggregates --> Concrete-8F9AA0-Ocean,,0Color --> Aggregates -
 PRESET,,0Color --> Aggregates --> Concrete-9F7D7B-Cabernet,,0Color --> Aggregates --> Concrete,,Cabernet,9F7D7B,,,1Material --> Aggregates --> Concrete
 PRESET,,0Color --> Aggregates --> Decomposed Granite-FFFFFF-White,,0Color --> Aggregates --> Decomposed Granite,,White,FFFFFF,,,1Material --> Aggregates --> Decomposed Granite
 PRESET,,0Color --> Aggregates --> Decomposed Granite-CCCCCC-LightGray,,0Color --> Aggregates --> Decomposed Granite,,Light Gray,CCCCCC,,,1Material --> Aggregates --> Decomposed Granite
+PRESET,,0Color --> Aggregates --> Fiber-Cement-DFE2E7-CoolLightGrey,,0Color --> Aggregates --> Fiber-Cement,,Cool Light Grey,DFE2E7,,,1Material --> Spread --> Paint
 PRESET,,0Color --> Aggregates --> Fiber-Cement-D2D2D0-Salt,,0Color --> Aggregates --> Fiber-Cement,,Salt,D2D2D0,,,1Material --> Aggregates --> Fiber-Cement
 PRESET,,0Color --> Aggregates --> Fiber-Cement-BCB3A0-Blonde,,0Color --> Aggregates --> Fiber-Cement,,Blonde,BCB3A0,,,1Material --> Aggregates --> Fiber-Cement
 PRESET,,0Color --> Aggregates --> Fiber-Cement-A19483-Cappucino,,0Color --> Aggregates --> Fiber-Cement,,Cappucino,A19483,,,1Material --> Aggregates --> Fiber-Cement
@@ -247,6 +248,7 @@ PRESET,,0Color --> Metal --> Zinc-FFFFFF-White,,0Color --> Metal --> Zinc,,White
 PRESET,,0Color --> Metal --> Zinc-CCCCCC-LightGrey,,0Color --> Metal --> Zinc,,Light Grey,CCCCCC,,,1Material --> Metal --> Zinc
 PRESET,,0Color --> Metal --> Zinc-37383A-CoolDarkGrey,,0Color --> Metal --> Zinc,,Cool Dark Grey,37383A,,,1Material --> Metal --> Zinc
 PRESET,,0Color --> Spread --> Paint-F3F1ED-GentleWhite,,0Color --> Spread --> Paint,,Gentle White,F3F1ED,,,1Material --> Spread --> Paint
+PRESET,,0Color --> Spread --> Paint-DFE2E7-CoolLightGrey,,0Color --> Spread --> Paint,,Cool Light Grey,DFE2E7,,,1Material --> Spread --> Paint
 PRESET,,0Color --> Spread --> Paint-C4C4C4-Grey,,0Color --> Spread --> Paint,,Grey,C4C4C4,,,1Material --> Spread --> Paint
 PRESET,,0Color --> Spread --> Paint-F5D9CC-Peach,,0Color --> Spread --> Paint,,Peach,F5D9CC,,,1Material --> Spread --> Paint
 PRESET,,0Color --> Spread --> Paint-D9A788-DesertTan,,0Color --> Spread --> Paint,,Desert Tan,D9A788,,,1Material --> Spread --> Paint

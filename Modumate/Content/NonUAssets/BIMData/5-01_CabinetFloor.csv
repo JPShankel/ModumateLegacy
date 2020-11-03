@@ -1,27 +1,28 @@
-TYPENAME,,5Cabinet,,Assembly,,,,,,,,,
-,,Definition,,,,,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,
-PROPERTY,,DisplayText,,Name,,Assembly.Name,,,,,,,
-PROPERTY,,Dimension,,,,Assembly.IconWidth,,,,,,,
-PROPERTY,,Dimension,,,,Assembly.IconDepth,,,,,,,
-PROPERTY,,Dimension,,,,Assembly.IconHeight,,,,,,,
-PROPERTY,,DimensionSet,,Named Dimensions,,Assembly.NamedDimensions,,,,,,,
-,,InputExtensibility,,InputPreset,,PinTarget,,,,,,,
-INPUTPIN,,1..1,,ChildCabinetFace,,CabinetFace,,,,,,,
-INPUTPIN,,1..1,,ChildCarcassMaterial,,CarcassMaterial,,,,,,,
-,,Presets,,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Assembly.IconWidth,Assembly.IconDepth,Assembly.IconHeight,Assembly.NamedDimensions,DataType=InputPins,CabinetFace,CarcassMaterial
+TYPENAME,,5Cabinet --> Floor,,Assembly,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,
+PROPERTY,,DisplayText,,Name,,Assembly.Name,,,,,,,,,,
+PROPERTY,,Dimension,,,,Assembly.IconWidth,,,,,,,,,,
+PROPERTY,,Dimension,,,,Assembly.IconDepth,,,,,,,,,,
+PROPERTY,,Dimension,,,,Assembly.IconHeight,,,,,,,,,,
+PROPERTY,,Dimension,,,,Assembly.ToeKickHeight,,,,,,,,,,
+PROPERTY,,Dimension,,,,Assembly.ToeKickDepth,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,PinTarget,,,,,,,,,,
+INPUTPIN,,1..1,,ChildCabinetFace,,Cabinet,,,,,,,,,,
+INPUTPIN,,1..1,,ChildCarcassMaterial,,Cabinet,,,,,,,,,,
+,,Presets,,,,,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Assembly.IconWidth,Assembly.IconDepth,Assembly.IconHeight,Assembly.ToeKickHeight,Assembly.ToeKickDepth,DataType=StartsInProject,X,DataType=InputPins,ChildCabinetFace,ChildCarcassMaterial
 PRESET,,"AssemblyCabinetFloor
 AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1
 0Slot-Frame
 Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -52,16 +53,16 @@ Panel
 HandleStatic
 0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe
-1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural",,AssemblyCabinetFloor,,Single Swing (Lower),30in,24in,36in,"(""ToeKickHeight"",4),(""ToeKickDepth"",3.5),(""IconWidth"",30),(""IconDepth"",24),(""IconHeight"",36)",,"AssemblyCabinetFace
+1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural",,AssemblyCabinetFloor,,Single Swing (Lower),30in,24in,36in,4in,3.5in,,X,,"AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1
 0Slot-Frame
 Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -96,7 +97,7 @@ PRESET,,"AssemblyCabinetFloor
 AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1
 0Slot-Frame
 Frame
@@ -120,10 +121,10 @@ Panel
 HandleStatic
 0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen
-1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural",,AssemblyCabinetFloor,,Single Drawer,30in,24in,36in,"(""ToeKickHeight"",4),(""ToeKickDepth"",3.5),(""IconWidth"",30),(""IconDepth"",24),(""IconHeight"",36)",,"AssemblyCabinetFace
+1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural",,AssemblyCabinetFloor,,Single Drawer,30in,24in,36in,4in,3.5in,,X,,"AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1
 0Slot-Frame
 Frame
@@ -193,7 +194,7 @@ Panel
 HandleStatic
 0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen
-1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural",,AssemblyCabinetFloor,,Two Drawers,30in,24in,36in,"(""ToeKickHeight"",4),(""ToeKickDepth"",3.5),(""IconWidth"",30),(""IconDepth"",24),(""IconHeight"",36)",,"AssemblyCabinetFace
+1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural",,AssemblyCabinetFloor,,Two Drawers,30in,24in,36in,4in,3.5in,,X,,"AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelOverlay2Vertical-1
@@ -238,84 +239,3 @@ Panel
 HandleStatic
 0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural
-PRESET,,"AssemblyCabinetWall
-AssemblyCabinetFace
-1SlotConfig --> Frame
-0Slot-Frame
-AssemblyHingeSetLeft
-0Slot-AssemblyPanelOverlay1of1
-0Slot-Frame
-Frame
-0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-AssemblyHingeSetLeft
-AssemblyHingeSet
-1SlotConfig --> HingeSet
-0Slot-Hinge1of3
-0Slot-Hinge3of3
-0Slot-Hinge1of3
-Hinge
-0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0Slot-Hinge3of3
-Hinge
-0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0Slot-AssemblyPanelOverlay1of1
-AssemblyPanel
-1SlotConfig --> Panel
-0Slot-Panel
-0Slot-CasterBarnLeft
-0Slot-CasterBarnRight
-0Slot-HandleXMidWidthYOutsideZMidHeight
-0Slot-HandleXMidStileYOutsideZMidTopRail
-0Slot-HandleXMidStileYOutsideZMidHeight
-0Slot-HandleXMidStileYOutsideZMidBottomRail
-0Slot-Panel
-Panel
-0Mesh-Cabinet-Panel-02.Cabinet-Panel-02'
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
-0Slot-HandleXMidStileYOutsideZMidBottomRail
-HandleStatic
-0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina
-1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural",,AssemblyCabinetWall,,Single Swing (Upper),30in,24in,36in,"(""IconWidth"",30),(""IconDepth"",24),(""IconHeight"",36)",,"AssemblyCabinetFace
-1SlotConfig --> Frame
-0Slot-Frame
-AssemblyHingeSetLeft
-0Slot-AssemblyPanelOverlay1of1
-0Slot-Frame
-Frame
-0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-AssemblyHingeSetLeft
-AssemblyHingeSet
-1SlotConfig --> HingeSet
-0Slot-Hinge1of3
-0Slot-Hinge3of3
-0Slot-Hinge1of3
-Hinge
-0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0Slot-Hinge3of3
-Hinge
-0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0Slot-AssemblyPanelOverlay1of1
-AssemblyPanel
-1SlotConfig --> Panel
-0Slot-Panel
-0Slot-CasterBarnLeft
-0Slot-CasterBarnRight
-0Slot-HandleXMidWidthYOutsideZMidHeight
-0Slot-HandleXMidStileYOutsideZMidTopRail
-0Slot-HandleXMidStileYOutsideZMidHeight
-0Slot-HandleXMidStileYOutsideZMidBottomRail
-0Slot-Panel
-Panel
-0Mesh-Cabinet-Panel-02.Cabinet-Panel-02'
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
-0Slot-HandleXMidStileYOutsideZMidBottomRail
-HandleStatic
-0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina",1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural

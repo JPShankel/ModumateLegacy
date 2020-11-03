@@ -30,3 +30,5 @@
 3-10_RiggedAssembly.csv
 4-00_LayeredAssembly.csv
 5-00_Stair.csv
+5-01_CabinetFloor.csv
+5-02_CabinetWall.csv

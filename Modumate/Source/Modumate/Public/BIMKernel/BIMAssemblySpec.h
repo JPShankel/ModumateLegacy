@@ -37,6 +37,7 @@ private:
 	EBIMResult MakeLayeredAssembly(const FModumateDatabase& InDB);
 	EBIMResult MakeExtrudedAssembly(const FModumateDatabase& InDB);
 	EBIMResult MakeRiggedAssembly(const FModumateDatabase& InDB);	
+	EBIMResult MakeCabinetAssembly(const FModumateDatabase& InDB);
 	EBIMResult DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection);
 
 	FBIMPropertySheet RootProperties;

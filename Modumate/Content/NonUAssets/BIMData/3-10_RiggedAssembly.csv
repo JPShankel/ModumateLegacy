@@ -1077,13 +1077,13 @@ PRESET,,,,,,,,,,,,,,0Slot-SurfaceLockXMiddleYInsideZTop,"LockSurface
 PRESET,,"AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1
 0Slot-Frame
 Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -1115,11 +1115,11 @@ HandleStatic
 0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe",,AssemblyCabinetFace,,Single Swing (Lower),24in,36in,"(""UndercutSizeZ"",0.75),(""IconDimX"",24),(""IconDimZ"",36)",,X,,"1SlotConfig --> Frame
 0Slot-Frame
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1",0Slot-Frame,"Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,AssemblyHingeSetLeft,"AssemblyHingeSet
+PRESET,,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
 0Slot-Hinge3of3
@@ -1151,13 +1151,13 @@ HandleStatic
 PRESET,,"AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1
 0Slot-Frame
 Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -1189,11 +1189,11 @@ HandleStatic
 0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina",,AssemblyCabinetFace,,Single Swing (Upper),24in,36in,"(""IconDimX"",24),(""IconDimZ"",36)",,X,,"1SlotConfig --> Frame
 0Slot-Frame
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1",0Slot-Frame,"Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,AssemblyHingeSetLeft,"AssemblyHingeSet
+PRESET,,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
 0Slot-Hinge3of3
@@ -1225,7 +1225,7 @@ HandleStatic
 PRESET,,"AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1
 0Slot-Frame
 Frame
@@ -1250,7 +1250,7 @@ HandleStatic
 0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",,AssemblyCabinetFace,,Single Drawer,24in,36in,"(""IconDimX"",24),(""IconDimZ"",36)",,X,,"1SlotConfig --> Frame
 0Slot-Frame
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1",0Slot-Frame,"Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,

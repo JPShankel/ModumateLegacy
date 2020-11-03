@@ -92,6 +92,8 @@ namespace BIMPropertyNames
 	extern const FBIMNameType Tangent;
 	extern const FBIMNameType Thickness;
 	extern const FBIMNameType Title;
+	extern const FBIMNameType ToeKickDepth;
+	extern const FBIMNameType ToeKickHeight;
 	extern const FBIMNameType TrimProfile;
 	extern const FBIMNameType UseGroupType;
 	extern const FBIMNameType Width;

@@ -434,9 +434,12 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 	FVector2D toeKickDimensions;
 	UModumateFunctionLibrary::GetCabinetToeKickDimensions(Assembly, toeKickDimensions);
 
-	// Get the exterior finish material for the cabinet
-	static const FName cabinetGeomMatName(TEXT("Cabinet_Exterior_Finish"));
+	// Get the material for the cabinet
 	FArchitecturalMaterial materialData;
+	if (ensure(Assembly.Extrusions.Num() == 1))
+	{
+		materialData = Assembly.Extrusions[0].Material;
+	}
 
 	// Get the cabinet dimensions
 	Units::FUnitValue cabinetWidthUnit(CabinetDimension.X, Units::EUnitType::WorldInches);

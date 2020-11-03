@@ -146,6 +146,10 @@ PRESET,,"2ModuleLWT --> Board/Panel --> Foam
 0DimLW-96in-48in
 0DimThk-3inT",,2ModuleLWT --> Board/Panel --> Foam,,"48in x 96in, 3in, Foam, Foam (Polyisocyanurate), Yellow",0.125in,,1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow,0DimLW-96in-48in,0DimThk-3inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Fiber Cement
+1Material --> Aggregates --> Fiber-Cement-0RawMaterial-Fibre Cement-0Color --> Aggregates --> Fiber-Cement-DFE2E7-CoolLightGrey
+0DimLW-120in-6in
+0DimThk-0.75inT",,2ModuleLWT --> Board/Panel --> Fiber Cement,,"6in x 120in, 3/4in, Fiber Cement, Fibre Cement, Cool Light Grey",.5in,,1Material --> Aggregates --> Fiber-Cement-0RawMaterial-Fibre Cement-0Color --> Aggregates --> Fiber-Cement-DFE2E7-CoolLightGrey,0DimLW-120in-6in,0DimThk-0.75inT,,3Layer2D
+PRESET,,"2ModuleLWT --> Board/Panel --> Fiber Cement
 1Material --> Aggregates --> Fiber-Cement-0RawMaterial-Fibre Cement-0Color --> Aggregates --> Fiber-Cement-D2D2D0-Salt
 0DimLW-96in-48in
 0DimThk-1.5625inT",,2ModuleLWT --> Board/Panel --> Fiber Cement,,"48in x 96in, 1-9/16in, Fiber Cement, Fibre Cement, Salt",0.125in,,1Material --> Aggregates --> Fiber-Cement-0RawMaterial-Fibre Cement-0Color --> Aggregates --> Fiber-Cement-D2D2D0-Salt,0DimLW-96in-48in,0DimThk-1.5625inT,,3Layer2D

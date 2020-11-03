@@ -130,7 +130,6 @@ enum class EBIMValueScope : uint8
 	SurfaceTreatment,
 
 	// These scopes are to be deprecated as we replace the BIM property sheets
-	ToeKick,
 	Node,
 	Room,
 	Roof,

@@ -4,7 +4,7 @@ TYPENAME,,0DimLW,,Dimension,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PROPERTY,,DisplayText,,Name,,Dimension.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PROPERTY,,Dimension,,Width,,Dimension.Width,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PROPERTY,,Dimension,,Length,,Dimension.Length,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,8,17,6,6,6,6,33,6,6,6,7,7,17,8,13,36,12,36,21,33,37,65,33,4,4,4,4,4
+,,Presets,,,,,,,,8,17,6,7,6,6,33,6,6,6,7,7,17,8,13,36,12,36,21,34,37,65,34,4,4,4,4,4
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Width,Dimension.Length,DataType=TG_Parent Node+CategoryPath,2ModuleLWT --> Board/Panel --> Cement,2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber,2ModuleLWT --> Board/Panel --> Foam,2ModuleLWT --> Board/Panel --> Fiber Cement,2ModuleLWT --> Board/Panel --> Gypsum,2ModuleLWT --> Board/Panel --> MDF (Medium-Density Fiberboard),2ModuleLWT --> Board/Panel --> Metal,2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board),2ModuleLWT --> Board/Panel --> Particle Board,2ModuleLWT --> Board/Panel --> Plywood,2ModuleLWT --> Plank --> Engineered Wood,2ModuleLWT --> Plank --> Wood,2ModuleLWT --> Tile --> Acoustic Ceiling Tile,2ModuleLWT --> Tile --> Brick Veneer,2ModuleLWT --> Tile --> Carpet,2ModuleLWT --> Tile --> Clay,2ModuleLWT --> Tile --> Cork,2ModuleLWT --> Tile --> Glass,2ModuleLWT --> Tile --> Laminate,2ModuleLWT --> Tile --> Luxury Vinyl,2ModuleLWT --> Tile --> Porcelain,2ModuleLWT --> Tile --> Stone,2ModuleLWT --> Tile --> Vinyl Composite,2ModuleLWT --> Shingle --> Asphalt,2ModuleLWT --> Shingle --> Clay,2ModuleLWT --> Shingle --> Metal,2ModuleLWT --> Shingle --> Stone,2ModuleLWT --> Shingle --> Wood
 PRESET,,0DimLW-1in-1in,,0DimLW,,1in x 1in,1in,1in,,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
 PRESET,,0DimLW-2in-1in,,0DimLW,,1in x 2in,1in,2in,,,,,,,,,,,,,,,,,X,,X,,,X,X,,,,,,
@@ -58,6 +58,7 @@ PRESET,,0DimLW-9in-6in,,0DimLW,,6in x 9in,6in,9in,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
 PRESET,,0DimLW-12in-6in,,0DimLW,,6in x 12in,6in,12in,,,,,,,,,,,,,,,,,,X,,,X,,,X,,,,,
 PRESET,,0DimLW-18in-6in,,0DimLW,,6in x 18in,6in,18in,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
 PRESET,,0DimLW-24in-6in,,0DimLW,,6in x 24in,6in,24in,,,,,,,,,,,,,,,,,,,,,X,,,X,,,,,
+PRESET,,0DimLW-120in-6in,,0DimLW,,6in x 120in,6in,120in,,,,,X,,,,,,,,,,,,,,,,X,,,X,,,,,
 PRESET,,0DimLW-12in-7in,,0DimLW,,7in x 12in,7in,12in,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X,X
 PRESET,,0DimLW-48in-7in,,0DimLW,,7in x 48in,7in,48in,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,
 PRESET,,0DimLW-60in-7in,,0DimLW,,7in x 60in,7in,60in,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,

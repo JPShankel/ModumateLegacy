@@ -139,9 +139,9 @@ PRESET,,,,,,,,0Slot-AssemblyPanelSwingLeft,,,,,,,,
 PRESET,,,,,,,,0Slot-AssemblyPanelSwingRight,,,,,,,,
 PRESET,,"1SlotConfig --> Frame
 0Slot-Frame
-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1",,1SlotConfig --> Frame,,Overlay (Single),,0Slot-Frame,,,,X,,,,
-PRESET,,,,,,,,AssemblyHingeSetLeft,,,,,,,,
+PRESET,,,,,,,,0Slot-AssemblyHingeSetLeft,,,,,,,,
 PRESET,,,,,,,,0Slot-AssemblyPanelOverlay1of1,,,,,,,,
 PRESET,,"1SlotConfig --> Frame
 0Slot-Frame

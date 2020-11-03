@@ -24,7 +24,8 @@ enum class EBIMPinTarget : uint8
 	None = 0,
 	Default,
 	Tread,
-	Riser
+	Riser,
+	Cabinet
 };
 
 USTRUCT()

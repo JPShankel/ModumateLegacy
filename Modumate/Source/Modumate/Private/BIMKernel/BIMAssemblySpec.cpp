@@ -28,7 +28,8 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		None = 0,
 		Assembly,
 		TreadLayer,
-		RiserLayer
+		RiserLayer,
+		Cabinet
 	};
 
 	// Structure used to walk the tree of presets
@@ -190,6 +191,9 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 				break;
 			case EBIMPinTarget::Riser:
 				childIterator.Target = ELayerTarget::RiserLayer;
+				break;
+			case EBIMPinTarget::Cabinet:
+				childIterator.Target = ELayerTarget::Cabinet;
 				break;
 			default:
 				break;
@@ -387,6 +391,37 @@ FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 	return FVector::ZeroVector;
 }
 
+EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FModumateDatabase& InDB)
+{
+	// Wall cabinets do not have toe kicks, so set to 0 if we don't find one
+	FString depth, height;
+	if (RootProperties.TryGetProperty(EBIMValueScope::Assembly,BIMPropertyNames::ToeKickDepth, depth)
+		&& RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::ToeKickHeight, height))
+	{
+		ToeKickDepth = Modumate::Units::FUnitValue::WorldCentimeters(UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters);
+		ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(UModumateDimensionStatics::StringToFormattedDimension(height).Centimeters);
+	}
+	else
+	{
+		ToeKickDepth = Modumate::Units::FUnitValue::WorldCentimeters(0);
+		ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(0);
+	}
+
+	// Cabinets consist of a list of parts (per rigged assembly) and a single material added to an extrusion for the prism
+	FString materialAsset;
+	if (RootProperties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialAsset))
+	{
+		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(materialAsset);
+		if (ensureAlways(mat != nullptr))
+		{
+			FBIMExtrusionSpec& extrusion = Extrusions.AddDefaulted_GetRef();
+			extrusion.Material = *mat;
+			return EBIMResult::Success;
+		}
+	}
+	return EBIMResult::Error;
+}
+
 EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 {
 	// TODO: "Stubby" temporary FFE don't have parts, just one mesh on their root
@@ -495,14 +530,7 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 	Comments = RootProperties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Comments);
 	CodeName = RootProperties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Code);
 
-	FString depth, height;
-	if (RootProperties.TryGetProperty(EBIMValueScope::ToeKick, BIMPropertyNames::Depth, depth)
-		&& RootProperties.TryGetProperty(EBIMValueScope::ToeKick, BIMPropertyNames::Height, height))
-	{
-		ToeKickDepth = Modumate::Units::FUnitValue::WorldCentimeters(UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters);
-		ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(UModumateDimensionStatics::StringToFormattedDimension(height).Centimeters);
-	}
-
+	FString depth;
 	if (RootProperties.TryGetProperty(EBIMValueScope::Assembly, TEXT("IdealTreadDepth"), depth))
 	{
 		TreadDepth = Modumate::Units::FUnitValue::WorldCentimeters(UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters);
@@ -528,11 +556,14 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 	case EObjectType::OTStaircase:
 		return MakeLayeredAssembly(InDB);
 
-	case EObjectType::OTCabinet:
 	case EObjectType::OTDoor:
 	case EObjectType::OTWindow:
 	case EObjectType::OTFurniture:
 		return MakeRiggedAssembly(InDB);
+
+	case EObjectType::OTCabinet:
+		return MakeCabinetAssembly(InDB);
+
 
 	default:
 		ensureAlways(false);
