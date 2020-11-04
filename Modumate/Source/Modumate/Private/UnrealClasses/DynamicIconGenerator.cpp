@@ -459,7 +459,8 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 		FVector(0.0f, cabinetDepth, 0.0f),
 	};
 	FVector extrusionDelta = cabinetHeight * FVector::UpVector;
-
+	
+	// TODO: Use common cabinet functions to calculate params for icon generation
 	IconDynamicMeshActor->SetupCabinetGeometry(cabinetBasePoints, extrusionDelta, materialData, false, false, toeKickDimensions, 2);
 	IconCompoundMeshActor->MakeFromAssembly(Assembly, FVector::OneVector, false, false);
 
@@ -469,20 +470,19 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 	FVector meshOrigin;
 	IconDynamicMeshActor->GetActorBounds(false, meshOrigin, meshExtent);
 	FVector meshSize = ((CabinetIconScaleFactor / meshExtent.Size()) * FVector::OneVector);
-	FVector meshLocation = FVector(0.f, 0.f, cabinetHeight * meshSize.Z * -0.5f);
+	FVector meshLocation = FVector(cabinetWidth, cabinetDepth, cabinetHeight) * meshSize * -0.5f;
 	IconDynamicMeshActor->SetActorRelativeLocation(meshLocation);
 	IconDynamicMeshActor->SetActorRelativeScale3D(meshSize);
 
 	// Scale IconCompoundMeshActor to fit
-	FTransform dynTransform = IconDynamicMeshActor->GetTransform();
-	FVector newDynLocation = dynTransform.TransformPosition(IconCompoundMeshActor->GetTargetLocation());
-	IconCompoundMeshActor->SetActorLocation(newDynLocation - FVector(meshSize.X * cabinetWidth, meshSize.Y * cabinetDepth, 0.f) * 0.5f);
+	// The portal mesh should be offset same width as cabinet mesh, but it front of it
+	FVector portalLocation = FVector(cabinetWidth, cabinetDepth, cabinetHeight) * meshSize * FVector(-0.5f, 1.f, 0.f);
+	IconCompoundMeshActor->SetActorRelativeLocation(portalLocation);
 	IconCompoundMeshActor->SetActorRelativeScale3D(meshSize);
 
 	// Set bound render to prevent mesh from being occluded by front mesh
 	SetIconCompoundMeshActorForCapture(true);
-	IconDynamicMeshActor->Mesh->SetVisibility(true);
-	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, true);
+	SetIconDynamicMeshLayersForCapture(true);
 
 	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
@@ -493,8 +493,7 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 	IconCompoundMeshActor->SetActorScale3D(FVector::OneVector);
 	IconDynamicMeshActor->SetActorScale3D(FVector::OneVector);
 	SetIconCompoundMeshActorForCapture(false);
-	IconDynamicMeshActor->Mesh->SetVisibility(false);
-	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, false);
+	SetIconDynamicMeshLayersForCapture(false);
 	return true;
 }
 
