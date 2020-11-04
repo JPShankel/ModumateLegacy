@@ -482,6 +482,13 @@ EBIMResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
 {
 	for (auto& extrusion : Extrusions)
 	{
+		// Extrusion dimensions are a sibling so properties are stored in parent and inherited
+		RootProperties.ForEachProperty([&extrusion](const FString& Name, const Modumate::FModumateCommandParameter& MCP)
+		{
+			FBIMPropertyValue vs(*Name);
+			extrusion.Properties.SetProperty(vs.Scope, vs.Name, MCP);
+		});
+			
 		FString materialAsset;
 		if (RootProperties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialAsset))
 		{
