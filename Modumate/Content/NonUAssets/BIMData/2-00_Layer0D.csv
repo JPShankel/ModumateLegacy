@@ -5,7 +5,7 @@ PROPERTY,,DisplayText,,Name,,Layer.Name,,,,,,,,,,,,,,,
 ,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,Child1Material,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,Child0DimThk,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,69,87,87,63,75,28,26,21,21,3,27
+,,Presets,,,,,,,,,69,87,87,63,77,28,26,21,21,3,27
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Layer.Name,DataType=InputPins,Child1Material,Child0DimThk,DataType=TG_Parent Node+CategoryPath,4LayeredAssembly --> Wall,4LayeredAssembly --> Floor,4LayeredAssembly --> Roof,4LayeredAssembly --> Ceiling,4LayeredAssembly --> Finish,4LayeredAssembly --> System Panel,4LayeredAssembly --> Countertop,4LayeredAssembly --> Layered Tread,4LayeredAssembly --> Layered Riser,4LayeredAssembly --> Railing,4LayeredAssembly --> Landscape
 PRESET,,"2Layer0D --> Abstract
 1Material --> Abstract-0RawMaterial-Abstract-0Color --> Abstract-FFFFFF-White
@@ -511,6 +511,12 @@ PRESET,,"2Layer0D --> Spread --> JointCompound
 PRESET,,"2Layer0D --> Spread --> Paint
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
 0DimThk-0.02inT",,2Layer0D --> Spread --> Paint,,"Typical Coat (1/50in), Paint, Gentle White",,1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,0DimThk-0.02inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> Paint
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-C4C4C4-Grey
+0DimThk-0.02inT",,2Layer0D --> Spread --> Paint,,"Typical Coat (1/50in), Paint, Grey",,1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-C4C4C4-Grey,0DimThk-0.02inT,,,,,,X,,,,,,
+PRESET,,"2Layer0D --> Spread --> Paint
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-262527-Midnight
+0DimThk-0.02inT",,2Layer0D --> Spread --> Paint,,"Typical Coat (1/50in), Paint, Midnight",,1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-262527-Midnight,0DimThk-0.02inT,,,,,,X,,,,,,
 PRESET,,"2Layer0D --> Spread --> Paint
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
 0DimThk-0.01inT",,2Layer0D --> Spread --> Paint,,"Thin Coat (1/100in), Paint, Gentle White",,1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,0DimThk-0.01inT,,,,,,X,,,,,,

@@ -57,6 +57,10 @@ PRESET,,"2ModuleLWT --> Board/Panel --> Cement
 1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-A3A7A6-MediumGray
 0DimLW-96in-36in
 0DimThk-0.75inT",,2ModuleLWT --> Board/Panel --> Cement,,"36in x 96in, 3/4in, Cement, Cement, Medium Gray",0.125in,,1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-A3A7A6-MediumGray,0DimLW-96in-36in,0DimThk-0.75inT,,3Layer2D
+PRESET,,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-D6D7D8-Natural
+0DimLW-96in-48in
+0DimThk-8inT",,2ModuleLWT --> Board/Panel --> Cement,,"48in x 96in, 8in, Cement, Cement, Natural",0.125in,,1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-D6D7D8-Natural,0DimLW-96in-48in,0DimThk-8inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
 1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-FFFFFF-White
 0DimLW-24in-24in
@@ -498,9 +502,13 @@ PRESET,,"2ModuleLWT --> Plank --> Wood
 0DimLW-60in-7in
 0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"7in x 60in, 3/8in, Wood, Cedar (Western Red), Natural",0.125in,,1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural,0DimLW-60in-7in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-2B2B2B-Black
 0DimLW-72in-7in
-0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"7in x 72in, 3/8in, Wood, Cedar (White), Natural",0.125in,,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural,0DimLW-72in-7in,0DimThk-0.375inT,,3Layer2D
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"7in x 72in, 3/8in, Wood, Cedar (White), Black",0.125in,,1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-2B2B2B-Black,0DimLW-72in-7in,0DimThk-0.375inT,,3Layer2D
+PRESET,,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural
+0DimLW-72in-7in
+0DimThk-0.375inT",,2ModuleLWT --> Plank --> Wood,,"7in x 72in, 3/8in, Wood, Cherry, Natural",0.125in,,1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural,0DimLW-72in-7in,0DimThk-0.375inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural
 0DimLW-32in-5in
@@ -641,6 +649,10 @@ PRESET,,"2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry
 0DimLW-11.625in-2.75in
 0DimThk-0.5inT",,2ModuleLWT --> Tile --> Brick Veneer,,"Tall Norman, 1/2in, Brick Veneer, Clay, Ashberry",0.125in,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry,0DimLW-11.625in-2.75in,0DimThk-0.5inT,,3Layer2D
+PRESET,,"2ModuleLWT --> Tile --> Brick Veneer
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A4E47-Driftwood
+0DimLW-11.625in-2.75in
+0DimThk-0.5inT",,2ModuleLWT --> Tile --> Brick Veneer,,"Tall Norman, 1/2in, Brick Veneer, Clay, Driftwood",0.125in,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A4E47-Driftwood,0DimLW-11.625in-2.75in,0DimThk-0.5inT,,3Layer2D
 PRESET,,"2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown
 0DimLW-15.625in-2.29167in

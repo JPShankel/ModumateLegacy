@@ -707,6 +707,26 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
+PRESET,,"4LayeredAssembly --> Wall
+3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-D6D7D8-Natural
+0DimLW-96in-48in
+0DimThk-8inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Wall,,"8"" Cement Panel",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-D6D7D8-Natural
+0DimLW-96in-48in
+0DimThk-8inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,"4LayeredAssembly --> Floor
 2Layer0D --> Mass --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
@@ -731,7 +751,7 @@ PRESET,,"4LayeredAssembly --> Floor
 0DimThk-3inT
 2Layer0D --> Sitework --> Gravel
 1Material --> Aggregates --> Gravel-0RawMaterial-Gravel-0Color --> Aggregates --> Gravel-FFFFFF-White
-0DimThk-3inT",,4LayeredAssembly --> Floor,,"6"" Concrete Slab on grade",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"2Layer0D --> Mass --> CastInPlaceConcrete
+0DimThk-3inT",,4LayeredAssembly --> Floor,,"6"" Concrete Slab On Grade",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"2Layer0D --> Mass --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-6inT",,
 PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
@@ -1704,9 +1724,21 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
 PRESET,,"4LayeredAssembly --> Finish
 2Layer0D --> Spread --> Paint
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
-0DimThk-0.01inT",,4LayeredAssembly --> Finish,,Paint,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"2Layer0D --> Spread --> Paint
+0DimThk-0.02inT",,4LayeredAssembly --> Finish,,Paint,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"2Layer0D --> Spread --> Paint
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
-0DimThk-0.01inT",,
+0DimThk-0.02inT",,
+PRESET,,"4LayeredAssembly --> Finish
+2Layer0D --> Spread --> Paint
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-C4C4C4-Grey
+0DimThk-0.02inT",,4LayeredAssembly --> Finish,,Paint,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"2Layer0D --> Spread --> Paint
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-C4C4C4-Grey
+0DimThk-0.02inT",,
+PRESET,,"4LayeredAssembly --> Finish
+2Layer0D --> Spread --> Paint
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-262527-Midnight
+0DimThk-0.02inT",,4LayeredAssembly --> Finish,,Paint,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"2Layer0D --> Spread --> Paint
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-262527-Midnight
+0DimThk-0.02inT",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Board and Panel --> Fiber-Cement
 2ModuleLWT --> Board/Panel --> Fiber Cement
@@ -1778,7 +1810,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-Cascading Thirds
 2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
-0DimThk-0.5inT",,4LayeredAssembly --> Finish,,"Thin Brick Veneer, Thinset",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Tile --> Brick Veneer
+0DimThk-0.5inT",,4LayeredAssembly --> Finish,,"Thin Brick Veneer, Thinset - Classic Red",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Tile --> Brick Veneer
 2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
 0DimLW-7.625in-2.29167in
@@ -1788,6 +1820,32 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimWD-0.375inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Cascading Thirds",,
+PRESET,,,,,,,,,,,,,"2Layer0D --> Spread --> ThinsetCement
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
+0DimThk-0.5inT",,
+PRESET,,"4LayeredAssembly --> Finish
+3Layer2D --> Tile --> Brick Veneer
+2ModuleLWT --> Tile --> Brick Veneer
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A4E47-Driftwood
+0DimLW-11.625in-2.75in
+0DimThk-0.5inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-888280-DustyGray
+0DimWD-0.25inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond
+2Layer0D --> Spread --> ThinsetCement
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
+0DimThk-0.5inT",,4LayeredAssembly --> Finish,,"Thin Brick Veneer, Thinset - Dark",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Tile --> Brick Veneer
+2ModuleLWT --> Tile --> Brick Veneer
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A4E47-Driftwood
+0DimLW-11.625in-2.75in
+0DimThk-0.5inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-888280-DustyGray
+0DimWD-0.25inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
 0DimThk-0.5inT",,
@@ -1836,7 +1894,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-Cascading Fourths
 2Layer0D --> Roll --> Felt
 1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-44443C-WeatheredBrown
-0DimThk-5mmT",,4LayeredAssembly --> Finish,,"Wood Plank Floor, Direct Applied",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
+0DimThk-5mmT",,4LayeredAssembly --> Finish,,"Bamboo Wood Plank Floor, Direct Applied",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural
 0DimLW-48in-5in
@@ -1846,6 +1904,32 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimWD-0.25inW-0.0625inD
 0Profile-Flat
 0LayerPattern --> 2D-Cascading Fourths",,
+PRESET,,,,,,,,,,,,,"2Layer0D --> Roll --> Felt
+1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-44443C-WeatheredBrown
+0DimThk-5mmT",,
+PRESET,,"4LayeredAssembly --> Finish
+3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
+0DimLW-48in-7in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond
+2Layer0D --> Roll --> Felt
+1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-44443C-WeatheredBrown
+0DimThk-5mmT",,4LayeredAssembly --> Finish,,"Birch Wood Plank Floor, Direct Applied",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
+0DimLW-48in-7in
+0DimThk-0.375inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.1875inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"2Layer0D --> Roll --> Felt
 1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-44443C-WeatheredBrown
 0DimThk-5mmT",,
@@ -1900,7 +1984,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimWD-0.75inW-0.75inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0LayerPattern --> 1D-16-Inch O.C.",,4LayeredAssembly --> Finish,,Wood Siding,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
+0LayerPattern --> 1D-16-Inch O.C.",,4LayeredAssembly --> Finish,,Oak Wood Siding,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural
 0DimLW-48in-3in
@@ -1910,6 +1994,74 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimWD-0.25inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Random Stagger",,
+PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Wood Strips
+2ModuleWDProfile --> Wood Lumber
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
+0DimWD-0.75inW-0.75inD
+0Profile-Solid Rectangle
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0LayerPattern --> 1D-16-Inch O.C.",,
+PRESET,,"4LayeredAssembly --> Finish
+3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural
+0DimLW-48in-7in
+0DimThk-0.5inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond
+3Layer1D --> Furring --> Wood Strips
+2ModuleWDProfile --> Wood Lumber
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
+0DimWD-0.75inW-0.75inD
+0Profile-Solid Rectangle
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0LayerPattern --> 1D-16-Inch O.C.",,4LayeredAssembly --> Finish,,Mahogany Wood Siding,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural
+0DimLW-48in-7in
+0DimThk-0.5inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,
+PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Wood Strips
+2ModuleWDProfile --> Wood Lumber
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
+0DimWD-0.75inW-0.75inD
+0Profile-Solid Rectangle
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0LayerPattern --> 1D-16-Inch O.C.",,
+PRESET,,"4LayeredAssembly --> Finish
+3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-2B2B2B-Black
+0DimLW-72in-7in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond
+3Layer1D --> Furring --> Wood Strips
+2ModuleWDProfile --> Wood Lumber
+1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
+0DimWD-0.75inW-0.75inD
+0Profile-Solid Rectangle
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0LayerPattern --> 1D-16-Inch O.C.",,4LayeredAssembly --> Finish,,Black Cedar Wood Siding,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-2B2B2B-Black
+0DimLW-72in-7in
+0DimThk-0.375inT
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Wood Strips
 2ModuleWDProfile --> Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural

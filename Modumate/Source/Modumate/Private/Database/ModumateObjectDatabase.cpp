@@ -3,6 +3,7 @@
 #include "Database/ModumateObjectDatabase.h"
 #include "BIMKernel/BIMAssemblySpec.h"
 #include "ModumateCore/ExpressionEvaluator.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "Misc/FileHelper.h"
 #include "Serialization/Csv/CsvParser.h"
 
@@ -196,21 +197,22 @@ void FModumateDatabase::ReadPresetData()
 		// TODO: to be replaced with typesafe properties
 		if (assetPath.Len() != 0)
 		{
-			FVector nativeSize(
-				Preset.GetProperty(TEXT("NativeSizeX")), 
-				Preset.GetProperty(TEXT("NativeSizeY")), 
-				Preset.GetProperty(TEXT("NativeSizeZ"))
-			);
+			FVector nativeSize, box1, box2;
 
-			FBox nineSlice(
-				FVector(Preset.GetProperty(TEXT("SliceX1")),
-					Preset.GetProperty(TEXT("SliceY1")),
-					Preset.GetProperty(TEXT("SliceZ1"))),
+			// Note: with typesafe BIM properties coming in, these conversions will be done when parsing 'Dimension' type properties
+			nativeSize.X = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("NativeSizeX")).AsString()).Centimeters*Modumate::CentimetersToInches;
+			nativeSize.Y = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("NativeSizeY")).AsString()).Centimeters*Modumate::CentimetersToInches;
+			nativeSize.Z = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("NativeSizeZ")).AsString()).Centimeters*Modumate::CentimetersToInches;
 
-				FVector(Preset.GetProperty(TEXT("SliceX2")),
-					Preset.GetProperty(TEXT("SliceY2")),
-					Preset.GetProperty(TEXT("SliceZ2")))
-			);
+			box1.X = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("SliceX1")).AsString()).Centimeters*Modumate::CentimetersToInches;
+			box1.Y = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("SliceY1")).AsString()).Centimeters*Modumate::CentimetersToInches;
+			box1.Z = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("SliceZ1")).AsString()).Centimeters*Modumate::CentimetersToInches;
+
+			box2.X = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("SliceX2")).AsString()).Centimeters*Modumate::CentimetersToInches;
+			box2.Y = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("SliceY2")).AsString()).Centimeters*Modumate::CentimetersToInches;
+			box2.Z = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("SliceZ2")).AsString()).Centimeters*Modumate::CentimetersToInches;
+
+			FBox nineSlice(box1,box2);
 
 			FString name = Preset.GetProperty(BIMPropertyNames::Name);
 			FString namedDimensions;

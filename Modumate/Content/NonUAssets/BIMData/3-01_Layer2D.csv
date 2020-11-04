@@ -169,6 +169,54 @@ PRESET,,"3Layer2D --> Board and Panel --> Cement
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0.0625inD
 0Profile-Flat",0LayerPattern --> 2D-English Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-D6D7D8-Natural
+0DimLW-72in-36in
+0DimThk-0.75inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-English Bond",,3Layer2D --> Board and Panel --> Cement,,"36in x 72in, 3/4in, Cement, Cement, Natural, English Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-D6D7D8-Natural
+0DimLW-72in-36in
+0DimThk-0.75inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-English Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-A3A7A6-MediumGray
+0DimLW-96in-36in
+0DimThk-0.75inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.0625inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Cement,,"36in x 96in, 3/4in, Cement, Cement, Medium Gray, Soldier Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-A3A7A6-MediumGray
+0DimLW-96in-36in
+0DimThk-0.75inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.0625inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
+PRESET,,"3Layer2D --> Board and Panel --> Cement
+2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-D6D7D8-Natural
+0DimLW-96in-48in
+0DimThk-8inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.125inD
+0Profile-Flat
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Board and Panel --> Cement,,"48in x 96in, 8in, Cement, Cement, Natural, Soldier Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Board/Panel --> Cement
+1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-D6D7D8-Natural
+0DimLW-96in-48in
+0DimThk-8inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0.125inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,X,X,X,X,X,,,,,
 PRESET,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
 2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
 1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-FFFFFF-White
@@ -907,20 +955,20 @@ PRESET,,"3Layer2D --> Plank --> Wood
 0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-2B2B2B-Black
 0DimLW-72in-7in
 0DimThk-0.375inT
-2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.375inW-0inD
+2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Cascading Fourths",,3Layer2D --> Plank --> Wood,,"7in x 72in, 3/8in, Wood, Cedar (White), Natural, Cascading Fourths","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Plank --> Wood
-1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural
+0LayerPattern --> 2D-Soldier Bond",,3Layer2D --> Plank --> Wood,,"7in x 72in, 3/8in, Wood, Cedar (White), Black, Soldier Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-2B2B2B-Black
 0DimLW-72in-7in
-0DimThk-0.375inT","2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.375inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-Cascading Fourths,,,,,,X,,,,,
+0DimThk-0.375inT","2Gap2D --> Gapless
+1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
+0DimWD-0inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Soldier Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Cherry-0RawMaterial-Cherry-0Color --> Wood --> Cherry-FFFFFF-Natural
@@ -969,6 +1017,22 @@ PRESET,,"3Layer2D --> Plank --> Wood
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0.0625inD
 0Profile-Flat",0LayerPattern --> 2D-Random Stagger,,,,,,X,,,,,
+PRESET,,"3Layer2D --> Plank --> Wood
+2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural
+0DimLW-48in-7in
+0DimThk-0.5inT
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Plank --> Wood,,"7in x 48in, 1/2in, Wood, Mahogany, Natural, Running Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Plank --> Wood
+1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural
+0DimLW-48in-7in
+0DimThk-0.5inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
+0DimWD-0.25inW-0inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Plank --> Wood
 2ModuleLWT --> Plank --> Wood
 1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural
@@ -1033,6 +1097,7 @@ PRESET,,"3Layer2D --> Plank --> Wood
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.0625inD
 0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,"3Layer2D --> Tile --> Acoustic Ceiling Tile
 2ModuleLWT --> Tile --> Acoustic Ceiling Tile
 1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
@@ -1211,20 +1276,20 @@ PRESET,,"3Layer2D --> Tile --> Brick Veneer
 0Profile-Flat",0LayerPattern --> 2D-Cascading Fourths,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Brick Veneer
 2ModuleLWT --> Tile --> Brick Veneer
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A4E47-Driftwood
 0DimLW-11.625in-2.75in
 0DimThk-0.5inT
-2Gap2D --> Grout Gaps
-1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
-0DimWD-0.375inW-0inD
+2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-888280-DustyGray
+0DimWD-0.25inW-0.125inD
 0Profile-Flat
-0LayerPattern --> 2D-Common Bond",,3Layer2D --> Tile --> Brick Veneer,,"Tall Norman, 1/2in, Brick Veneer, Clay, Ashberry, Common Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Tile --> Brick Veneer
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry
+0LayerPattern --> 2D-Running Bond",,3Layer2D --> Tile --> Brick Veneer,,"Tall Norman, 1/2in, Brick Veneer, Clay, Driftwood, Running Bond","(""IconDimX"",64),(""IconDimZ"",48)",,"2ModuleLWT --> Tile --> Brick Veneer
+1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A4E47-Driftwood
 0DimLW-11.625in-2.75in
-0DimThk-0.5inT","2Gap2D --> Grout Gaps
-1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
-0DimWD-0.375inW-0inD
-0Profile-Flat",0LayerPattern --> 2D-Common Bond,,,,,,X,,,,,
+0DimThk-0.5inT","2Gap2D --> Mortar Gaps
+1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-888280-DustyGray
+0DimWD-0.25inW-0.125inD
+0Profile-Flat",0LayerPattern --> 2D-Running Bond,,,,,,X,,,,,
 PRESET,,"3Layer2D --> Tile --> Brick Veneer
 2ModuleLWT --> Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown

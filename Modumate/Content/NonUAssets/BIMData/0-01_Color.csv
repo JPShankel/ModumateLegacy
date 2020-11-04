@@ -87,6 +87,7 @@ PRESET,,0Color --> Aggregates --> Gypsum-DFD3BE-Beige,,0Color --> Aggregates -->
 PRESET,,0Color --> Aggregates --> Mortar-C6C6C6-Natural,,0Color --> Aggregates --> Mortar,,Natural,C6C6C6,,,1Material --> Aggregates --> Mortar
 PRESET,,0Color --> Aggregates --> Mortar-C6A989-Buff,,0Color --> Aggregates --> Mortar,,Buff,C6A989,,,1Material --> Aggregates --> Mortar
 PRESET,,0Color --> Aggregates --> Mortar-E5D5C5-AntiqueWhite,,0Color --> Aggregates --> Mortar,,Antique White,E5D5C5,,,1Material --> Aggregates --> Mortar
+PRESET,,0Color --> Aggregates --> Mortar-888280-DustyGray,,0Color --> Aggregates --> Mortar,,Dusty Gray,888280,,,1Material --> Aggregates --> Mortar
 PRESET,,0Color --> Aggregates --> Mortar-696971-Black,,0Color --> Aggregates --> Mortar,,Black,696971,,,1Material --> Aggregates --> Mortar
 PRESET,,0Color --> Aggregates --> Mortar-E3DEDB-White,,0Color --> Aggregates --> Mortar,,White,E3DEDB,,,1Material --> Aggregates --> Mortar
 PRESET,,0Color --> Aggregates --> Mortar-BC9791-Burgundy,,0Color --> Aggregates --> Mortar,,Burgundy,BC9791,,,1Material --> Aggregates --> Mortar
@@ -151,6 +152,7 @@ PRESET,,0Color --> Ceramic --> Clay-D5B795-Tan,,0Color --> Ceramic --> Clay,,Tan
 PRESET,,0Color --> Ceramic --> Clay-9C7164-Mulberry,,0Color --> Ceramic --> Clay,,Mulberry,9C7164,,,1Material --> Ceramic --> Clay
 PRESET,,0Color --> Ceramic --> Clay-EFDABF-Cream,,0Color --> Ceramic --> Clay,,Cream,EFDABF,,,1Material --> Ceramic --> Clay
 PRESET,,0Color --> Ceramic --> Clay-5A535A-Ashberry,,0Color --> Ceramic --> Clay,,Ashberry,5A535A,,,1Material --> Ceramic --> Clay
+PRESET,,0Color --> Ceramic --> Clay-5A4E47-Driftwood,,0Color --> Ceramic --> Clay,,Driftwood,5A4E47,,,1Material --> Ceramic --> Clay
 PRESET,,0Color --> Ceramic --> Clay-825F4C-Brown,,0Color --> Ceramic --> Clay,,Brown,825F4C,,,1Material --> Ceramic --> Clay
 PRESET,,0Color --> Ceramic --> Clay-FEF9F3-White,,0Color --> Ceramic --> Clay,,White,FEF9F3,,,1Material --> Ceramic --> Clay
 PRESET,,0Color --> Ceramic --> Clay-4F4B48-Midnight,,0Color --> Ceramic --> Clay,,Midnight,4F4B48,,,1Material --> Ceramic --> Clay
@@ -261,6 +263,7 @@ PRESET,,0Color --> Spread --> Paint-364155-DeepNavy,,0Color --> Spread --> Paint
 PRESET,,0Color --> Spread --> Paint-1C2F68-RoyalBlue,,0Color --> Spread --> Paint,,Royal Blue,1C2F68,,,1Material --> Spread --> Paint
 PRESET,,0Color --> Spread --> Paint-A7A3B2-DustyLavender,,0Color --> Spread --> Paint,,Dusty Lavender,A7A3B2,,,1Material --> Spread --> Paint
 PRESET,,0Color --> Spread --> Paint-754342-Burgundy,,0Color --> Spread --> Paint,,Burgundy,754342,,,1Material --> Spread --> Paint
+PRESET,,0Color --> Spread --> Paint-262527-Midnight,,0Color --> Spread --> Paint,,Midnight,262527,,,1Material --> Spread --> Paint
 PRESET,,0Color --> Spread --> Plaster-F7EBDB-Shell,,0Color --> Spread --> Plaster,,Shell,F7EBDB,,,1Material --> Spread --> Plaster
 PRESET,,0Color --> Spread --> Plaster-F8F8F6-Pearl,,0Color --> Spread --> Plaster,,Pearl,F8F8F6,,,1Material --> Spread --> Plaster
 PRESET,,0Color --> Spread --> Plaster-B4B4B2-Raw,,0Color --> Spread --> Plaster,,Raw,B4B4B2,,,1Material --> Spread --> Plaster
@@ -322,6 +325,7 @@ PRESET,,0Color --> Wood --> Beech-FFFFFF-Natural,,0Color --> Wood --> Beech,,Nat
 PRESET,,0Color --> Wood --> Birch-FFFFFF-Natural,,0Color --> Wood --> Birch,,Natural,FFFFFF,,,1Material --> Wood --> Birch
 PRESET,,0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural,,0Color --> Wood --> Cedar - Western Red,,Natural,FFFFFF,,,1Material --> Wood --> Cedar - Western Red
 PRESET,,0Color --> Wood --> Cedar - White-FFFFFF-Natural,,0Color --> Wood --> Cedar - White,,Natural,FFFFFF,,,1Material --> Wood --> Cedar - White
+PRESET,,0Color --> Wood --> Cedar - White-2B2B2B-Black,,0Color --> Wood --> Cedar - White,,Black,2B2B2B,,,1Material --> Wood --> Cedar - White
 PRESET,,0Color --> Wood --> Cherry-FFFFFF-Natural,,0Color --> Wood --> Cherry,,Natural,FFFFFF,,,1Material --> Wood --> Cherry
 PRESET,,0Color --> Wood --> Cypress - Bald-FFFFFF-Natural,,0Color --> Wood --> Cypress - Bald,,Natural,FFFFFF,,,1Material --> Wood --> Cypress - Bald
 PRESET,,0Color --> Wood --> Ipe-FFFFFF-Natural,,0Color --> Wood --> Ipe,,Natural,FFFFFF,,,1Material --> Wood --> Ipe
