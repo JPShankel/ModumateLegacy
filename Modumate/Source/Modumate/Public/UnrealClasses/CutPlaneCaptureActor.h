@@ -41,5 +41,6 @@ public:
 	UPROPERTY()
 	UTextureRenderTarget2D *CurrentTextureTarget;
 
-	bool bRenderOnTick = false;
+	bool bCaptureStarted = false;
+	int32 TickCount;
 };

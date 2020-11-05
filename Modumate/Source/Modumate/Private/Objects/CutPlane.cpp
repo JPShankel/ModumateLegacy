@@ -372,8 +372,10 @@ bool FMOICutPlaneImpl::StartRender(FModumateDocument* doc /*= nullptr*/)
 	captureComponent->ShowOnlyActorComponents(object->GetActor(), true);
 
 	// capture scene
-	captureComponent->bCaptureEveryFrame = true;
-	CaptureActor->bRenderOnTick = true;
+	captureComponent->bAlwaysPersistRenderingState = true;
+	captureComponent->CaptureScene();
+	CaptureActor->bCaptureStarted = true;
+	CaptureActor->TickCount = 2;
 
 	CurrentObjectRender = objectRender;
 

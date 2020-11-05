@@ -26,16 +26,12 @@ void ACutPlaneCaptureActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bRenderOnTick)
-	{
-		bRenderOnTick = false;
-	}
-	// TODO: SceneCaptureComponent2D::TickComponent calls CaptureSceneDeferred if bCaptureEveryFrame is true.
-	// we should be able to call CaptureSceneDeferred during StartRender and call ExportRenderTarget
-	// once the scene is captured
-	else if (CaptureComponent->bCaptureEveryFrame)
+	// TODO: Investigate operation of USceneCaptureComponent2D::CaptureScene() & CaptureSceneDeferred(),
+	// see if more reliable way to determine render completion.
+	if (bCaptureStarted && --TickCount == 0)
 	{
 		CaptureComponent->bCaptureEveryFrame = false;
+		bCaptureStarted = false;
 
 		TPair<int32, int32> SceneCaptureObjID = TPair<int32, int32>(ObjID, ScopeBoxID);
 		FString filePath, fileName;
@@ -43,7 +39,8 @@ void ACutPlaneCaptureActor::Tick(float DeltaTime)
 		UDraftingManager::GetImageName(SceneCaptureObjID, fileName);
 
 		UKismetRenderingLibrary::ExportRenderTarget(GetWorld(), CurrentTextureTarget, *filePath, *fileName);
-		UKismetRenderingLibrary::ClearRenderTarget2D(GetWorld(), CurrentTextureTarget);
+		UKismetRenderingLibrary::ReleaseRenderTarget2D(CurrentTextureTarget);
+		CurrentTextureTarget = nullptr;
 
 		Parent->CaptureComplete();
 	}
@@ -56,7 +53,7 @@ ACutPlaneCaptureActor::ACutPlaneCaptureActor()
 	CaptureComponent = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("test_capture_component"));
 
 	CaptureComponent->ProjectionType = ECameraProjectionMode::Orthographic;
-	CaptureComponent->CaptureSource = ESceneCaptureSource::SCS_FinalColorHDR;
+	CaptureComponent->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
 	CaptureComponent->bCaptureEveryFrame = false;
 
 	RootComponent = CaptureComponent;
