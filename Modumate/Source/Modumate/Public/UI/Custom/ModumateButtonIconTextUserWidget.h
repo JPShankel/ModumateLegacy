@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "UnrealClasses/EditModelInputHandler.h"
 
 #include "ModumateButtonIconTextUserWidget.generated.h"
 
@@ -55,6 +56,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName TooltipID;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	EInputCommand InputCommand;
+
+	UFUNCTION()
+	void OnButtonPress();
 
 protected:
 

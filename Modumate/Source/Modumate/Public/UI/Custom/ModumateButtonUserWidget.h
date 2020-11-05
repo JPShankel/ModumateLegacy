@@ -39,7 +39,13 @@ public:
 	FName TooltipID;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButton *ModumateButton;
+	class UModumateButton* ModumateButton;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
+	class UModumateTextBlock* ButtonText;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FText ButtonTextOverride;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	EInputCommand InputCommand;

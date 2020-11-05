@@ -42,9 +42,6 @@ public:
 	class UModumateButtonIconTextUserWidget *ButtonExportAll;
 
 	UFUNCTION()
-	void OnButtonNewCutPlaneReleased();
-
-	UFUNCTION()
 	void OnButtonShowHideAllReleased();
 
 	UFUNCTION()

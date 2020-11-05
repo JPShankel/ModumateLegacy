@@ -12,6 +12,9 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "Objects/CutPlane.h"
+#include "UI/Custom/ModumateTextBlock.h"
+
+#define LOCTEXT_NAMESPACE "ModumateCutPlane"
 
 UCutPlaneMenuBlockExport::UCutPlaneMenuBlockExport(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -231,6 +234,14 @@ void UCutPlaneMenuBlockExport::UpdateCategoryCheckboxes()
 	{
 		CheckBoxAll->SetCheckedState(ECheckBoxState::Undetermined);
 	}
+
+	if (ButtonExport)
+	{
+		int32 totalNum = numCanExportHorizontal + numCanExportVertical + numCanExportOther;
+		FText cutPlaneExportFormat = LOCTEXT("cut_plane_export", "Export ({0}) Cut Planes");
+		FText cutPlaneNumberText = FText::Format(cutPlaneExportFormat, FText::AsNumber(totalNum));
+		ButtonExport->ButtonText->SetText(cutPlaneNumberText);
+	}
 }
 
 void UCutPlaneMenuBlockExport::UpdateCutPlaneExportable(const TArray<int32>& IDs, bool NewExportable)
@@ -261,3 +272,5 @@ void UCutPlaneMenuBlockExport::UpdateCutPlaneExportableByType(ECutPlaneType Type
 		UpdateCutPlaneExportable(idsToChange, NewExportable);
 	}
 }
+
+#undef LOCTEXT_NAMESPACE

@@ -5,6 +5,7 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/TooltipManager.h"
 #include "UI/EditModelUserWidget.h"
+#include "UI/Custom/ModumateTextBlock.h"
 
 UModumateButtonUserWidget::UModumateButtonUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -25,6 +26,12 @@ bool UModumateButtonUserWidget::Initialize()
 
 	ModumateButton->OnReleased.AddDynamic(this, &UModumateButtonUserWidget::OnButtonPress);
 	ToolTipWidgetDelegate.BindDynamic(this, &UModumateButtonUserWidget::OnTooltipWidget);
+
+	if (ButtonText)
+	{
+		ButtonText->SetText(ButtonTextOverride);
+	}
+
 	return true;
 }
 

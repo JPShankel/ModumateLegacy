@@ -5,6 +5,8 @@
 #include "Components/Image.h"
 #include "UI/Custom//ModumateTextBlock.h"
 #include "UnrealClasses/TooltipManager.h"
+#include "UI/Custom/ModumateButton.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 UModumateButtonIconTextUserWidget::UModumateButtonIconTextUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -23,6 +25,7 @@ bool UModumateButtonIconTextUserWidget::Initialize()
 		return false;
 	}
 
+	ModumateButton->OnReleased.AddDynamic(this, &UModumateButtonIconTextUserWidget::OnButtonPress);
 	ButtonText->ModumateTextBlock->OverrideTextWrap(ButtonTextAutoWrapTextOverride, ButtonTextWrapTextAtOverride, ButtonTextWrappingPolicyOverride);
 	ButtonText->EllipsizeWordAt = ButtonTextEllipsizeWordAt;
 	ButtonText->ChangeText(ButtonTextOverride);
@@ -39,7 +42,25 @@ void UModumateButtonIconTextUserWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
+void UModumateButtonIconTextUserWidget::OnButtonPress()
+{
+	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	if (controller && InputCommand != EInputCommand::None)
+	{
+		controller->InputHandlerComponent->TryCommand(InputCommand);
+	}
+}
+
 UWidget* UModumateButtonIconTextUserWidget::OnTooltipWidget()
 {
-	return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID, this);
+	if (!TooltipID.IsNone())
+	{
+		return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID, this);
+	}
+	else if (InputCommand != EInputCommand::None)
+	{
+		return UTooltipManager::GenerateTooltipWithInputWidget(InputCommand, this);
+	}
+
+	return nullptr;
 }

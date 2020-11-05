@@ -82,6 +82,10 @@ void UEditModelUserWidget::UpdateToolTray()
 		break;
 	default:
 		ToolTrayWidget->CloseToolTray();
+		if (Controller->GetToolMode() == EToolMode::VE_CUTPLANE)
+		{
+			SwitchRightMenu(ERightMenuState::CutPlaneMenu);
+		}
 	}
 	
 	if (CurrentActiveToolButton && UEditModelInputHandler::ToolModeFromInputCommand(CurrentActiveToolButton->InputCommand) != Controller->GetToolMode())

@@ -24,12 +24,11 @@ bool UCutPlaneMenuBlockSettings::Initialize()
 		return false;
 	}
 
-	if (!(ButtonNewCutPlane && ButtonShowHideAll && ButtonExportAll))
+	if (!(ButtonShowHideAll && ButtonExportAll))
 	{
 		return false;
 	}
 
-	ButtonNewCutPlane->ModumateButton->OnReleased.AddDynamic(this, &UCutPlaneMenuBlockSettings::OnButtonNewCutPlaneReleased);
 	ButtonShowHideAll->ModumateButton->OnReleased.AddDynamic(this, &UCutPlaneMenuBlockSettings::OnButtonShowHideAllReleased);
 	ButtonExportAll->ModumateButton->OnReleased.AddDynamic(this, &UCutPlaneMenuBlockSettings::OnButtonExportAllReleased);
 
@@ -41,11 +40,6 @@ void UCutPlaneMenuBlockSettings::NativeConstruct()
 	Super::NativeConstruct();
 	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	GameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
-}
-
-void UCutPlaneMenuBlockSettings::OnButtonNewCutPlaneReleased()
-{
-	Controller->SetToolMode(EToolMode::VE_CUTPLANE);
 }
 
 void UCutPlaneMenuBlockSettings::OnButtonShowHideAllReleased()
