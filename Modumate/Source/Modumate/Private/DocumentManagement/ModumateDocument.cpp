@@ -2714,21 +2714,12 @@ void FModumateDocument::DisplayDebugInfo(UWorld* world)
 	AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
 
 	displayMsg(TEXT("OBJECT COUNTS"));
-	displayObjectCount(EObjectType::OTWallSegment, TEXT("OTWallSegment"));
-	displayObjectCount(EObjectType::OTRailSegment, TEXT("OTRailSegment"));
-	displayObjectCount(EObjectType::OTFloorSegment, TEXT("OTFloorSegment"));
-	displayObjectCount(EObjectType::OTCeiling, TEXT("OTCeiling"));
-	displayObjectCount(EObjectType::OTRoofFace, TEXT("OTRoof"));
-	displayObjectCount(EObjectType::OTDoor, TEXT("OTDoor"));
-	displayObjectCount(EObjectType::OTWindow, TEXT("OTWindow"));
-	displayObjectCount(EObjectType::OTSystemPanel, TEXT("OTSystemPanel"));
-	displayObjectCount(EObjectType::OTFurniture, TEXT("OTFurniture"));
-	displayObjectCount(EObjectType::OTCabinet, TEXT("OTCabinet"));
-	displayObjectCount(EObjectType::OTStaircase, TEXT("OTStaircase"));
-	displayObjectCount(EObjectType::OTMullion, TEXT("OTMullion"));
-	displayObjectCount(EObjectType::OTFinish, TEXT("OTFinish"));
-	displayObjectCount(EObjectType::OTGroup, TEXT("OTGroup"));
-	displayObjectCount(EObjectType::OTRoom, TEXT("OTRoom"));
+	auto objectTypeEnum = StaticEnum<EObjectType>();
+	for (int32 objectTypeIdx = 0; objectTypeIdx < objectTypeEnum->NumEnums(); ++objectTypeIdx)
+	{
+		EObjectType objectType = static_cast<EObjectType>(objectTypeEnum->GetValueByIndex(objectTypeIdx));
+		displayObjectCount(objectType, *EnumValueString(EObjectType, objectType));
+	}
 
 	TSet<FBIMKey> asms;
 
