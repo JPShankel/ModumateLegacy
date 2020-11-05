@@ -38,7 +38,8 @@ EBIMResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& InDB)
 	{
 		FSimplePolygon& polygon = SimpleMeshes[0].Asset.Get()->Polygons[0];
 		FVector polyExtents(polygon.Extents.Max.X - polygon.Extents.Min.X, polygon.Extents.Max.Y - polygon.Extents.Min.Y, 1);
-		Properties.SetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Scale, profileSize / polyExtents);
+		Scale = profileSize / polyExtents;
 	}
+
 	return EBIMResult::Success;
 }

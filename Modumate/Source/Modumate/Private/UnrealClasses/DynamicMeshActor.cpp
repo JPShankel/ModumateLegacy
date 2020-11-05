@@ -816,6 +816,10 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 
 	// TODO: scale should come in as an FVector2D
 	FVector2D scale2D(InScale);
+	if (ensure(Assembly.Extrusions.Num() == 1))
+	{
+		scale2D *= FVector2D(Assembly.Extrusions[0].Scale);
+	}
 
 	const FBox2D &profileExtents = polyProfile->Extents;
 	FVector2D profileExtentsMin = profileExtents.Min * scale2D;

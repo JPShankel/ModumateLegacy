@@ -29,4 +29,5 @@ private:
 public:
 	FArchitecturalMaterial Material;
 	TArray<FSimpleMeshRef> SimpleMeshes;
+	FVector Scale { FVector::OneVector };
 };
