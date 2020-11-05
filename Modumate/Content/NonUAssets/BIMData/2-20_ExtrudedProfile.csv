@@ -146,52 +146,52 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> ConcreteRound
 0Profile-Tube Steel",,2ExtrudedProfile --> Beam/Column --> ConcreteRound,,"48in, Concrete (Normal Aggregate), Natural",48in,"(""Diameter"",48),(""IconLength"",48)",,,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimDi-48in,0Profile-Tube Steel
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelC
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> CSteel-3.72W-15D-0.716Wt-0.65Ft
-0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C15X50, Steel, Untinted",48in,"(""Diameter"",48),(""IconLength"",48)",,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-3.72W-15D-0.716Wt-0.65Ft,"0Profile-Channel, C"
+0DimWDWtFt --> CSteel-3.52inW-15inD-0.716inWt-0.65inFt
+0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C15X50, Steel, Untinted",48in,"(""Diameter"",48),(""IconLength"",48)",,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-3.52inW-15inD-0.716inWt-0.65inFt,"0Profile-Channel, C"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelC
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> CSteel-3.52W-15D-0.52Wt-0.65Ft
-0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C15X40, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-3.52W-15D-0.52Wt-0.65Ft,"0Profile-Channel, C"
+0DimWDWtFt --> CSteel-3.4inW-15inD-0.52inWt-0.65inFt
+0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C15X40, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-3.4inW-15inD-0.52inWt-0.65inFt,"0Profile-Channel, C"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelC
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> CSteel-3.4W-15D-0.4Wt-0.65Ft
-0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C15X33.9, Steel, Untinted",48in,,,X,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-3.4W-15D-0.4Wt-0.65Ft,"0Profile-Channel, C"
+0DimWDWtFt --> CSteel-3.17inW-15inD-0.4inWt-0.65inFt
+0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C15X33.9, Steel, Untinted",48in,,,X,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-3.17inW-15inD-0.4inWt-0.65inFt,"0Profile-Channel, C"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelC
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> CSteel-3.17W-12D-0.51Wt-0.501Ft
-0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C12X30, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-3.17W-12D-0.51Wt-0.501Ft,"0Profile-Channel, C"
+0DimWDWtFt --> CSteel-3.05inW-12inD-0.51inWt-0.501inFt
+0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C12X30, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-3.05inW-12inD-0.51inWt-0.501inFt,"0Profile-Channel, C"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelC
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> CSteel-3.05W-12D-0.387Wt-0.501Ft
-0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C12X25, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-3.05W-12D-0.387Wt-0.501Ft,"0Profile-Channel, C"
+0DimWDWtFt --> CSteel-2.94inW-12inD-0.387inWt-0.501inFt
+0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C12X25, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.94inW-12inD-0.387inWt-0.501inFt,"0Profile-Channel, C"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelC
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> CSteel-2.94W-12D-0.282Wt-0.501Ft
-0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C12X20.7, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.94W-12D-0.282Wt-0.501Ft,"0Profile-Channel, C"
+0DimWDWtFt --> CSteel-3.03inW-12inD-0.282inWt-0.501inFt
+0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C12X20.7, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-3.03inW-12inD-0.282inWt-0.501inFt,"0Profile-Channel, C"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelC
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> CSteel-3.03W-10D-0.673Wt-0.436Ft
-0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C10X30, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-3.03W-10D-0.673Wt-0.436Ft,"0Profile-Channel, C"
+0DimWDWtFt --> CSteel-2.89inW-10inD-0.673inWt-0.436inFt
+0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C10X30, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.89inW-10inD-0.673inWt-0.436inFt,"0Profile-Channel, C"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelC
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> CSteel-2.89W-10D-0.526Wt-0.436Ft
-0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C10X25, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.89W-10D-0.526Wt-0.436Ft,"0Profile-Channel, C"
+0DimWDWtFt --> CSteel-2.74inW-10inD-0.526inWt-0.436inFt
+0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C10X25, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.74inW-10inD-0.526inWt-0.436inFt,"0Profile-Channel, C"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelC
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> CSteel-2.74W-10D-0.379Wt-0.436Ft
-0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C10X20, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.74W-10D-0.379Wt-0.436Ft,"0Profile-Channel, C"
+0DimWDWtFt --> CSteel-2.6inW-10inD-0.379inWt-0.436inFt
+0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C10X20, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.6inW-10inD-0.379inWt-0.436inFt,"0Profile-Channel, C"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelC
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> CSteel-2.6W-10D-0.24Wt-0.436Ft
-0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C10X15.3, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.6W-10D-0.24Wt-0.436Ft,"0Profile-Channel, C"
+0DimWDWtFt --> CSteel-2.65inW-10inD-0.24inWt-0.436inFt
+0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C10X15.3, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.65inW-10inD-0.24inWt-0.436inFt,"0Profile-Channel, C"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelC
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> CSteel-2.65W-9D-0.448Wt-0.413Ft
-0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C9X20, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.65W-9D-0.448Wt-0.413Ft,"0Profile-Channel, C"
+0DimWDWtFt --> CSteel-2.49inW-9inD-0.448inWt-0.413inFt
+0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C9X20, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.49inW-9inD-0.448inWt-0.413inFt,"0Profile-Channel, C"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelC
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> CSteel-2.49W-9D-0.285Wt-0.413Ft
-0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C9X15, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.49W-9D-0.285Wt-0.413Ft,"0Profile-Channel, C"
+0DimWDWtFt --> CSteel-2.43inW-9inD-0.285inWt-0.413inFt
+0Profile-Channel, C",,2ExtrudedProfile --> Beam/Column --> SteelC,,"C9X15, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> CSteel-2.43inW-9inD-0.285inWt-0.413inFt,"0Profile-Channel, C"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelHSS
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWDT --> HSS-12inW-24inD-0.698inT
@@ -338,120 +338,120 @@ PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelTube
 0Profile-Tube Steel",,2ExtrudedProfile --> Beam/Column --> SteelTube,,"D3X0.216, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimDiT-0.216inDi-3.5inT,0Profile-Tube Steel
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> WideFlangeSteel-15.9W-44D-1.77Wt-1.03Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W44X335, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-15.9W-44D-1.77Wt-1.03Ft,"0Profile-Wide Flange, W"
+0DimWDWtFt --> WideFlangeSteel-15.8inW-44inD-1.77inWt-1.03inFt
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W44X335, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-15.8inW-44inD-1.77inWt-1.03inFt,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> WideFlangeSteel-15.8W-43.6D-1.58Wt-0.865Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W44X290, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-15.8W-43.6D-1.58Wt-0.865Ft,"0Profile-Wide Flange, W"
+0DimWDWtFt --> WideFlangeSteel-15.8inW-43.6inD-1.58inWt-0.865inFt
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W44X290, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-15.8inW-43.6inD-1.58inWt-0.865inFt,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> WideFlangeSteel-15.8W-43.3D-1.42Wt-0.785Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W44X262, Steel, Untinted",48in,,,X,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-15.8W-43.3D-1.42Wt-0.785Ft,"0Profile-Wide Flange, W"
+0DimWDWtFt --> WideFlangeSteel-15.8inW-43.3inD-1.42inWt-0.785inFt
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W44X262, Steel, Untinted",48in,,,X,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-15.8inW-43.3inD-1.42inWt-0.785inFt,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> WideFlangeSteel-15.8W-42.9D-1.22Wt-0.71Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W44X230, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-15.8W-42.9D-1.22Wt-0.71Ft,"0Profile-Wide Flange, W"
+0DimWDWtFt --> WideFlangeSteel-16.9inW-42.9inD-1.22inWt-0.71inFt
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W44X230, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16.9inW-42.9inD-1.22inWt-0.71inFt,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> WideFlangeSteel-16.9W-43.6D-3.54Wt-1.97Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X655, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16.9W-43.6D-3.54Wt-1.97Ft,"0Profile-Wide Flange, W"
+0DimWDWtFt --> WideFlangeSteel-16.7inW-43.6inD-3.54inWt-1.97inFt
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X655, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16.7inW-43.6inD-3.54inWt-1.97inFt,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> WideFlangeSteel-16.7W-43D-3.23Wt-1.79Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X593, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16.7W-43D-3.23Wt-1.79Ft,"0Profile-Wide Flange, W"
+0DimWDWtFt --> WideFlangeSteel-16.4inW-43inD-3.23inWt-1.79inFt
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X593, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16.4inW-43inD-3.23inWt-1.79inFt,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> WideFlangeSteel-16.4W-42.1D-2.76Wt-1.54Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X503, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16.4W-42.1D-2.76Wt-1.54Ft,"0Profile-Wide Flange, W"
+0DimWDWtFt --> WideFlangeSteel-16.2inW-42.1inD-2.76inWt-1.54inFt
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X503, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16.2inW-42.1inD-2.76inWt-1.54inFt,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> WideFlangeSteel-16.2W-41.3D-2.36Wt-1.34Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X431, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16.2W-41.3D-2.36Wt-1.34Ft,"0Profile-Wide Flange, W"
+0DimWDWtFt --> WideFlangeSteel-16.1inW-41.3inD-2.36inWt-1.34inFt
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X431, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16.1inW-41.3inD-2.36inWt-1.34inFt,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> WideFlangeSteel-16.1W-41D-2.2Wt-1.22Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X397, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16.1W-41D-2.2Wt-1.22Ft,"0Profile-Wide Flange, W"
+0DimWDWtFt --> WideFlangeSteel-16.1inW-41inD-2.2inWt-1.22inFt
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X397, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16.1inW-41inD-2.2inWt-1.22inFt,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> WideFlangeSteel-16.1W-40.6D-2.05Wt-1.16Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X372, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16.1W-40.6D-2.05Wt-1.16Ft,"0Profile-Wide Flange, W"
+0DimWDWtFt --> WideFlangeSteel-16inW-40.6inD-2.05inWt-1.16inFt
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X372, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16inW-40.6inD-2.05inWt-1.16inFt,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> WideFlangeSteel-16W-40.6D-2.01Wt-1.12Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X362, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-16W-40.6D-2.01Wt-1.12Ft,"0Profile-Wide Flange, W"
+0DimWDWtFt --> WideFlangeSteel-15.9inW-40.6inD-2.01inWt-1.12inFt
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X362, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-15.9inW-40.6inD-2.01inWt-1.12inFt,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelW
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> WideFlangeSteel-15.9W-40.2D-1.81Wt-1Ft
-0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X324, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-15.9W-40.2D-1.81Wt-1Ft,"0Profile-Wide Flange, W"
+0DimWDWtFt --> WideFlangeSteel-15.8inW-40.2inD-1.81inWt-1inFt
+0Profile-Wide Flange, W",,2ExtrudedProfile --> Beam/Column --> SteelW,,"W40X324, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> WideFlangeSteel-15.8inW-40.2inD-1.81inWt-1inFt,"0Profile-Wide Flange, W"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-15.9W-22D-1.77Wt-1.03Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT22X167.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.9W-22D-1.77Wt-1.03Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-15.8inW-22inD-1.77inWt-1.03inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT22X167.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8inW-22inD-1.77inWt-1.03inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-15.8W-21.8D-1.58Wt-0.865Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT22X145, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8W-21.8D-1.58Wt-0.865Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-15.8inW-21.8inD-1.58inWt-0.865inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT22X145, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8inW-21.8inD-1.58inWt-0.865inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-15.8W-21.7D-1.42Wt-0.785Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT22X131, Steel, Untinted",48in,,,X,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8W-21.7D-1.42Wt-0.785Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-15.8inW-21.7inD-1.42inWt-0.785inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT22X131, Steel, Untinted",48in,,,X,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8inW-21.7inD-1.42inWt-0.785inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-15.8W-21.5D-1.22Wt-0.71Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT22X115, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8W-21.5D-1.22Wt-0.71Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-16.9inW-21.5inD-1.22inWt-0.71inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT22X115, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16.9inW-21.5inD-1.22inWt-0.71inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-16.9W-21.8D-3.54Wt-1.97Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X327.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16.9W-21.8D-3.54Wt-1.97Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-16.7inW-21.8inD-3.54inWt-1.97inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X327.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16.7inW-21.8inD-3.54inWt-1.97inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-16.7W-21.5D-3.23Wt-1.79Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X296.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16.7W-21.5D-3.23Wt-1.79Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-16.4inW-21.5inD-3.23inWt-1.79inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X296.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16.4inW-21.5inD-3.23inWt-1.79inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-16.4W-21D-2.76Wt-1.54Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X251.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16.4W-21D-2.76Wt-1.54Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-16.2inW-21inD-2.76inWt-1.54inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X251.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16.2inW-21inD-2.76inWt-1.54inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-16.2W-20.6D-2.36Wt-1.34Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X215.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16.2W-20.6D-2.36Wt-1.34Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-16.1inW-20.6inD-2.36inWt-1.34inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X215.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16.1inW-20.6inD-2.36inWt-1.34inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-16.1W-20.5D-2.2Wt-1.22Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X198.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16.1W-20.5D-2.2Wt-1.22Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-16.1inW-20.5inD-2.2inWt-1.22inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X198.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16.1inW-20.5inD-2.2inWt-1.22inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-16.1W-20.3D-2.05Wt-1.16Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X186, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16.1W-20.3D-2.05Wt-1.16Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-16inW-20.3inD-2.05inWt-1.16inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X186, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16inW-20.3inD-2.05inWt-1.16inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-16W-20.3D-2.01Wt-1.12Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X181, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-16W-20.3D-2.01Wt-1.12Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-15.9inW-20.3inD-2.01inWt-1.12inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X181, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.9inW-20.3inD-2.01inWt-1.12inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-15.9W-20.1D-1.81Wt-1Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X162, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.9W-20.1D-1.81Wt-1Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-15.8inW-20.1inD-1.81inWt-1inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X162, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8inW-20.1inD-1.81inWt-1inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-15.8W-19.9D-1.65Wt-0.93Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X148.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8W-19.9D-1.65Wt-0.93Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-15.8inW-19.9inD-1.65inWt-0.93inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X148.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8inW-19.9inD-1.65inWt-0.93inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-15.8W-19.8D-1.58Wt-0.83Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X138.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8W-19.8D-1.58Wt-0.83Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-15.8inW-19.8inD-1.58inWt-0.83inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X138.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8inW-19.8inD-1.58inWt-0.83inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-15.8W-19.7D-1.42Wt-0.75Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X124.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8W-19.7D-1.42Wt-0.75Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-15.8inW-19.7inD-1.42inWt-0.75inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X124.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8inW-19.7inD-1.42inWt-0.75inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-15.8W-19.5D-1.22Wt-0.65Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X107.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8W-19.5D-1.22Wt-0.65Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-15.8inW-19.5inD-1.22inWt-0.65inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X107.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8inW-19.5inD-1.22inWt-0.65inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> SteelWT
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0DimWDWtFt --> TSteel-15.8W-19.3D-1.07Wt-0.65Ft
-0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X99.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-15.8W-19.3D-1.07Wt-0.65Ft,"0Profile-Tee, WT"
+0DimWDWtFt --> TSteel-12.4inW-19.3inD-1.07inWt-0.65inFt
+0Profile-Tee, WT",,2ExtrudedProfile --> Beam/Column --> SteelWT,,"WT20X99.5, Steel, Untinted",48in,,,,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWDWtFt --> TSteel-12.4inW-19.3inD-1.07inWt-0.65inFt,"0Profile-Tee, WT"
 PRESET,,"2ExtrudedProfile --> Beam/Column --> StoneRectangular
 1Material --> Stone --> Alabaster-0RawMaterial-Alabaster-0Color --> Abstract-FFFFFF-White
 0DimWD-10inW-10inD

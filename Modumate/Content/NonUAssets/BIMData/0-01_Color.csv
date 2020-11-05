@@ -358,11 +358,11 @@ PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-7A878F-SilverBlue,,0Color
 PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-38485F-OrderlyBlue,,0Color --> Fibrous --> Cementitious Wood Fiber,,Orderly Blue,38485F,,,1Material --> Fibrous --> Cementitious Wood Fiber
 PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-3C3B40-Ink,,0Color --> Fibrous --> Cementitious Wood Fiber,,Ink,3C3B40,,,1Material --> Fibrous --> Cementitious Wood Fiber
 PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-534E4A-Charcoal,,0Color --> Fibrous --> Cementitious Wood Fiber,,Charcoal,534E4A,,,1Material --> Fibrous --> Cementitious Wood Fiber
-PRESET,,0Color --> Fibrous --> Mineral Fiber-FFFFFF-White,,0Color --> Fibrous --> Mineral Fiber,,White,FFFFFF,,,1Material --> Fibrous --> Mineral Fiber
-PRESET,,0Color --> Fibrous --> Plywood-FFFFFF-White,,0Color --> Fibrous --> Plywood,,White,FFFFFF,,,1Material --> Fibrous --> Plywood
-PRESET,,0Color --> Fibrous --> Wood Fibers-FFFFFF-White,,0Color --> Fibrous --> Wood Fibers,,White,FFFFFF,,,1Material --> Fibrous --> Wood Fibers
-PRESET,,0Color --> Fibrous --> Wood Particles-FFFFFF-White,,0Color --> Fibrous --> Wood Particles,,White,FFFFFF,,,1Material --> Fibrous --> Wood Particles
-PRESET,,0Color --> Fibrous --> Wood Strands-FFFFFF-White,,0Color --> Fibrous --> Wood Strands,,White,FFFFFF,,,1Material --> Fibrous --> Wood Strands
-PRESET,,0Color --> Sitework --> Grass-FFFFFF-White,,0Color --> Sitework --> Grass,,White,FFFFFF,,,1Material --> Sitework --> Grass
-PRESET,,0Color --> Sitework --> Moss-FFFFFF-White,,0Color --> Sitework --> Moss,,White,FFFFFF,,,1Material --> Sitework --> Moss
-PRESET,,0Color --> Sitework --> Soil-FFFFFF-White,,0Color --> Sitework --> Soil,,White,FFFFFF,,,1Material --> Sitework --> Soil
+PRESET,,0Color --> Fibrous --> Mineral Fiber-FFFFFF-Natural,,0Color --> Fibrous --> Mineral Fiber,,Natural,FFFFFF,,,1Material --> Fibrous --> Mineral Fiber
+PRESET,,0Color --> Fibrous --> Plywood-FFFFFF-Natural,,0Color --> Fibrous --> Plywood,,Natural,FFFFFF,,,1Material --> Fibrous --> Plywood
+PRESET,,0Color --> Fibrous --> Wood Fibers-FFFFFF-Natural,,0Color --> Fibrous --> Wood Fibers,,Natural,FFFFFF,,,1Material --> Fibrous --> Wood Fibers
+PRESET,,0Color --> Fibrous --> Wood Particles-FFFFFF-Natural,,0Color --> Fibrous --> Wood Particles,,Natural,FFFFFF,,,1Material --> Fibrous --> Wood Particles
+PRESET,,0Color --> Fibrous --> Wood Strands-FFFFFF-Natural,,0Color --> Fibrous --> Wood Strands,,Natural,FFFFFF,,,1Material --> Fibrous --> Wood Strands
+PRESET,,0Color --> Sitework --> Grass-FFFFFF-Natural,,0Color --> Sitework --> Grass,,Natural,FFFFFF,,,1Material --> Sitework --> Grass
+PRESET,,0Color --> Sitework --> Moss-FFFFFF-Natural,,0Color --> Sitework --> Moss,,Natural,FFFFFF,,,1Material --> Sitework --> Moss
+PRESET,,0Color --> Sitework --> Soil-FFFFFF-Natural,,0Color --> Sitework --> Soil,,Natural,FFFFFF,,,1Material --> Sitework --> Soil

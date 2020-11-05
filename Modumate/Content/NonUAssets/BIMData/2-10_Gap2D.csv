@@ -1,83 +1,89 @@
-TYPENAME,,2Gap2D,,Gap,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DisplayText,,Name,,Gap.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildDimWD,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildProfile,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,11,4,1,1,1,11,1,1,1,11,11,4,5,1,11,11,11,11,11,11,15,11,1,1,1,1,1,5,5,5,5
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Gap.Name,DataType=InputPins,ChildMaterial,ChildDimWD,ChildProfile,DataType=TG_Parent Node+CategoryPath,3Layer2D --> Board and Panel --> Cement,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,3Layer2D --> Board and Panel --> Insulation,3Layer2D --> Board and Panel --> Gypsum,3Layer2D --> Board and Panel --> MDF (Medium-Density Fiberboard),3Layer2D --> Board and Panel --> Metal,3Layer2D --> Board and Panel --> OSB (Oriented Strand Board),3Layer2D --> Board and Panel --> Particle Board,3Layer2D --> Board and Panel --> Plywood,3Layer2D --> Plank --> Engineered Wood,3Layer2D --> Plank --> Wood,3Layer2D --> Tile --> Acoustic Ceiling Tile,3Layer2D --> Tile --> Brick Veneer,3Layer2D --> Tile --> Carpet,3Layer2D --> Tile --> Clay,3Layer2D --> Tile --> Cork,3Layer2D --> Tile --> Glass,3Layer2D --> Tile --> Laminate,3Layer2D --> Tile --> Luxury Vinyl,3Layer2D --> Tile --> Porcelain,3Layer2D --> Tile --> Stone,3Layer2D --> Tile --> Vinyl Composite,3Layer2D --> Shingle --> Asphalt,3Layer2D --> Shingle --> Clay,3Layer2D --> Shingle --> Metal,3Layer2D --> Shingle --> Stone,3Layer2D --> Shingle --> Wood,3Layer3D --> Clay Brick,3Layer3D --> Earth Brick,3Layer3D --> Concrete Masonry Unit,3Layer3D --> Glass Block
+TYPENAME,,2Gap2D,,Gap,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DisplayText,,Name,,Gap.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,Dimension,,Width,,Gap.Width,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,Dimension,,Depth,,Gap.Depth,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PresetID,,Profile,,Gap.Profile,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PresetID,,Inner Material,,Gap.InnerMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PresetID,,Surface Material,,Gap.SurfaceMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,HexValue,,Color Tint,,Gap.ColorTint,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildDimWD,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildProfile,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,,,,,,,11,4,1,1,1,11,1,1,1,11,11,4,5,1,11,11,11,11,11,11,15,11,1,1,1,1,1,5,5,5,5
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Gap.Name,Gap.Width,Gap.Depth,Gap.Profile,Gap.InnerMaterial,Gap.SurfaceMaterial,Gap.ColorTint,DataType=InputPins,ChildMaterial,ChildDimWD,ChildProfile,DataType=TG_Parent Node+CategoryPath,3Layer2D --> Board and Panel --> Cement,3Layer2D --> Board and Panel --> Cementitious Wood Fiber,3Layer2D --> Board and Panel --> Insulation,3Layer2D --> Board and Panel --> Gypsum,3Layer2D --> Board and Panel --> MDF (Medium-Density Fiberboard),3Layer2D --> Board and Panel --> Metal,3Layer2D --> Board and Panel --> OSB (Oriented Strand Board),3Layer2D --> Board and Panel --> Particle Board,3Layer2D --> Board and Panel --> Plywood,3Layer2D --> Plank --> Engineered Wood,3Layer2D --> Plank --> Wood,3Layer2D --> Tile --> Acoustic Ceiling Tile,3Layer2D --> Tile --> Brick Veneer,3Layer2D --> Tile --> Carpet,3Layer2D --> Tile --> Clay,3Layer2D --> Tile --> Cork,3Layer2D --> Tile --> Glass,3Layer2D --> Tile --> Laminate,3Layer2D --> Tile --> Luxury Vinyl,3Layer2D --> Tile --> Porcelain,3Layer2D --> Tile --> Stone,3Layer2D --> Tile --> Vinyl Composite,3Layer2D --> Shingle --> Asphalt,3Layer2D --> Shingle --> Clay,3Layer2D --> Shingle --> Metal,3Layer2D --> Shingle --> Stone,3Layer2D --> Shingle --> Wood,3Layer3D --> Clay Brick,3Layer3D --> Earth Brick,3Layer3D --> Concrete Masonry Unit,3Layer3D --> Glass Block
 PRESET,,"2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat",,2Gap2D --> Gapless,,Gapless,,1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear,0DimWD-0inW-0inD,0Profile-Flat,,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+0Profile-Flat",,2Gap2D --> Gapless,,Gapless,0in,0in,0Profile-Flat,0RawMaterial-Air,-,FFFFFF,,1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear,0DimWD-0inW-0inD,0Profile-Flat,,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
 PRESET,,"2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0inD
-0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.125in x 0in, Mortar, Natural",,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.125inW-0inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.125in x 0in, Mortar, Natural",0.125in,0in,0Profile-Flat,0RawMaterial-Mortar,-,C6C6C6,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.125inW-0inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
 PRESET,,"2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-696971-Black
 0DimWD-0.125inW-0inD
-0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.125in x 0in, Mortar, Black",,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-696971-Black,0DimWD-0.125inW-0inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.125in x 0in, Mortar, Black",0.125in,0in,0Profile-Flat,0RawMaterial-Mortar,-,C6A989,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-696971-Black,0DimWD-0.125inW-0inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
 PRESET,,"2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.125inW-0.0625inD
-0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.125in x 0.0625in, Mortar, Natural",,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.125inW-0.0625inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.125in x 0.0625in, Mortar, Natural",0.125in,0.0625in,0Profile-Flat,0RawMaterial-Mortar,-,E5D5C5,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.125inW-0.0625inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
 PRESET,,"2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0inD
-0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.25in x 0in, Mortar, Natural",,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.25inW-0inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.25in x 0in, Mortar, Natural",0.25in,0in,0Profile-Flat,0RawMaterial-Mortar,-,888280,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.25inW-0inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
 PRESET,,"2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.0625inD
-0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.25in x 0.0625in, Mortar, Natural",,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.25inW-0.0625inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.25in x 0.0625in, Mortar, Natural",0.25in,0.0625in,0Profile-Flat,0RawMaterial-Mortar,-,696971,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.25inW-0.0625inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
 PRESET,,"2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-888280-DustyGray
 0DimWD-0.25inW-0.125inD
-0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.25in x 0.125in, Mortar, Dusty Gray",,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-888280-DustyGray,0DimWD-0.25inW-0.125inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.25in x 0.125in, Mortar, Dusty Gray",0.25in,0.125in,0Profile-Flat,0RawMaterial-Mortar,-,E3DEDB,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-888280-DustyGray,0DimWD-0.25inW-0.125inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
 PRESET,,"2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.125inD
-0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.25in x 0.125in, Mortar, Natural",,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.25inW-0.125inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.25in x 0.125in, Mortar, Natural",0.25in,0.125in,0Profile-Flat,0RawMaterial-Mortar,-,BC9791,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.25inW-0.125inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
 PRESET,,"2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.1875inD
-0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.25in x 0.1875in, Mortar, Natural",,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.25inW-0.1875inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.25in x 0.1875in, Mortar, Natural",0.25in,0.1875in,0Profile-Flat,0RawMaterial-Mortar,-,9B8075,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.25inW-0.1875inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
 PRESET,,"2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.25inW-0.25inD
-0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.25in x 0.25in, Mortar, Natural",,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.25inW-0.25inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.25in x 0.25in, Mortar, Natural",0.25in,0.25in,0Profile-Flat,0RawMaterial-Mortar,-,C6C6C6,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.25inW-0.25inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
 PRESET,,"2Gap2D --> Mortar Gaps
 1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
 0DimWD-0.375inW-0inD
-0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.375in x 0in, Mortar, Natural",,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.375inW-0inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Mortar Gaps,,"0.375in x 0in, Mortar, Natural",0.375in,0in,0Profile-Flat,0RawMaterial-Mortar,-,C6A989,,1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural,0DimWD-0.375inW-0inD,0Profile-Flat,,X,,,,,X,,,,X,X,,,,X,X,X,X,X,X,X,X,,,,,,,,,
 PRESET,,"2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
-0Profile-Flat",,2Gap2D --> Grout Gaps,,"0.375in x 0in, Grout, White",,1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White,0DimWD-0.375inW-0inD,0Profile-Flat,,,,,,,,,,,,,,X,,,,,,,,X,,,,,,,X,X,X,X
+0Profile-Flat",,2Gap2D --> Grout Gaps,,"0.375in x 0in, Grout, White",0.375in,0in,0Profile-Flat,0RawMaterial-Grout,-,EAECE7,,1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White,0DimWD-0.375inW-0inD,0Profile-Flat,,,,,,,,,,,,,,X,,,,,,,,X,,,,,,,X,X,X,X
 PRESET,,"2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.125inD
-0Profile-Flat",,2Gap2D --> Grout Gaps,,"0.375in x 0.125in, Grout, White",,1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White,0DimWD-0.375inW-0.125inD,0Profile-Flat,,,,,,,,,,,,,,X,,,,,,,,X,,,,,,,X,X,X,X
+0Profile-Flat",,2Gap2D --> Grout Gaps,,"0.375in x 0.125in, Grout, White",0.375in,0.125in,0Profile-Flat,0RawMaterial-Grout,-,D0C6BD,,1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White,0DimWD-0.375inW-0.125inD,0Profile-Flat,,,,,,,,,,,,,,X,,,,,,,,X,,,,,,,X,X,X,X
 PRESET,,"2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.25inD
-0Profile-Flat",,2Gap2D --> Grout Gaps,,"0.375in x 0.25in, Grout, White",,1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White,0DimWD-0.375inW-0.25inD,0Profile-Flat,,,,,,,,,,,,,,X,,,,,,,,X,,,,,,,X,X,X,X
+0Profile-Flat",,2Gap2D --> Grout Gaps,,"0.375in x 0.25in, Grout, White",0.375in,0.25in,0Profile-Flat,0RawMaterial-Grout,-,C8C8C6,,1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White,0DimWD-0.375inW-0.25inD,0Profile-Flat,,,,,,,,,,,,,,X,,,,,,,,X,,,,,,,X,X,X,X
 PRESET,,"2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.375inD
-0Profile-Flat",,2Gap2D --> Grout Gaps,,"0.375in x 0.375in, Grout, White",,1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White,0DimWD-0.375inW-0.375inD,0Profile-Flat,,,,,,,,,,,,,,X,,,,,,,,X,,,,,,,X,X,X,X
+0Profile-Flat",,2Gap2D --> Grout Gaps,,"0.375in x 0.375in, Grout, White",0.375in,0.375in,0Profile-Flat,0RawMaterial-Grout,-,B6B7B2,,1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White,0DimWD-0.375inW-0.375inD,0Profile-Flat,,,,,,,,,,,,,,X,,,,,,,,X,,,,,,,X,X,X,X
 PRESET,,"2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-0.5625inW-0.25inD
-0Profile-Flat",,2Gap2D --> Metal Gaps,,"0.5625in x 0.25in, Aluminum, Pure White",,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-0.5625inW-0.25inD,0Profile-Flat,,,X,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Metal Gaps,,"0.5625in x 0.25in, Aluminum, Pure White",0.5625in,0.25in,0Profile-Flat,0RawMaterial-Aluminum,-,EBECF0,,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-0.5625inW-0.25inD,0Profile-Flat,,,X,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,
 PRESET,,"2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1inW-0inD
-0Profile-Flat",,2Gap2D --> Metal Gaps,,"1in x 0in, Aluminum, Pure White",,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1inW-0inD,0Profile-Flat,,,X,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Metal Gaps,,"1in x 0in, Aluminum, Pure White",1in,0in,0Profile-Flat,0RawMaterial-Aluminum,-,C4B99D,,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1inW-0inD,0Profile-Flat,,,X,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,
 PRESET,,"2Gap2D --> Metal Gaps
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimWD-1.5inW-0inD
-0Profile-Flat",,2Gap2D --> Metal Gaps,,"1.5in x 0in, Aluminum, Pure White",,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.5inW-0inD,0Profile-Flat,,,X,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+0Profile-Flat",,2Gap2D --> Metal Gaps,,"1.5in x 0in, Aluminum, Pure White",1.5in,0in,0Profile-Flat,0RawMaterial-Aluminum,-,F4F3D7,,1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,0DimWD-1.5inW-0inD,0Profile-Flat,,,X,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

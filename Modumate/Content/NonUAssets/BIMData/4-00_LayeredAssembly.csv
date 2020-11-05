@@ -1636,7 +1636,7 @@ PRESET,,"4LayeredAssembly --> Ceiling
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer2D --> Tile --> Acoustic Ceiling Tile
 2ModuleLWT --> Tile --> Acoustic Ceiling Tile
-1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
+1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-Natural
 0DimLW-24in-24in
 0DimThk-1inT
 2Gap2D --> Metal Gaps
@@ -1662,7 +1662,7 @@ PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Steel Hat Channel
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Tile --> Acoustic Ceiling Tile
 2ModuleLWT --> Tile --> Acoustic Ceiling Tile
-1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-White
+1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-Natural
 0DimLW-24in-24in
 0DimThk-1inT
 2Gap2D --> Metal Gaps
