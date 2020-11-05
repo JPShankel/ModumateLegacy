@@ -161,12 +161,11 @@ enum class EAxisConstraint : uint8
 UENUM(BlueprintType)
 enum class EEditViewModes : uint8
 {
-	ObjectEditing,
-	MetaPlanes,
-	Rooms,
-	Volumes,
-	ConstructionTimeline,
-	SurfaceGraphs
+	MetaGraph,
+	Separators,
+	SurfaceGraphs,
+	AllObjects,
+	Physical,
 };
 
 UENUM(BlueprintType)
@@ -245,6 +244,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Types")
 	static EToolCategories GetToolCategory(EToolMode ToolMode);
+
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static EToolCategories GetObjectCategory(EObjectType ObjectType);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Types")
 	static FText GetToolCategoryText(EToolCategories ToolCategory);

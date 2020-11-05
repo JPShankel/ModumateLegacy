@@ -141,8 +141,3 @@ bool UFFETool::BeginUse()
 
 	return true;
 }
-
-TArray<EEditViewModes> UFFETool::GetRequiredEditModes() const
-{
-	return { EEditViewModes::ObjectEditing };
-}

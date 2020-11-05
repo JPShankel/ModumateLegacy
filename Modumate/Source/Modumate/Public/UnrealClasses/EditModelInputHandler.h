@@ -97,11 +97,13 @@ enum class EInputCommand : uint8
 	OpeningSystem,
 
 	// Non-tool modal commands
-	CycleEditModes,
-	SetEditMode_ObjectEditing,
-	SetEditMode_MetaPlanes,
-	SetEditMode_SurfaceGraphs,
-	SetEditMode_Rooms,
+	NextViewMode,
+	PrevViewMode,
+	SetViewMode_MetaGraph,
+	SetViewMode_Separators,
+	SetViewMode_SurfaceGraphs,
+	SetViewMode_AllObjects,
+	SetViewMode_Physical,
 	ToggleRoomView,
 	ToggleWalkAround,
 };
@@ -229,8 +231,11 @@ public:
 	UPROPERTY()
 	TMap<EInputCommand, FInputCommandData> AllInputCommandData;
 
-	void RequestInputDisabled(const FName &Requester, bool bShouldDisable);
+	void RequestInputDisabled(const FName& Requester, bool bShouldDisable);
 	bool IsInputEnabled() const;
+
+	void RequestAxisInputPriority(const FName& Requester, bool bShouldPrioritizeAxisInputs);
+	bool IsAxisInputPrioritized() const;
 
 protected:
 	UFUNCTION()
@@ -252,4 +257,6 @@ protected:
 	TSet<FInputChord> BoundChords;
 	FTimerHandle SequenceResetTimer;
 	TSet<FName> InputDisabledRequests;
+	TSet<FName> AxisPriorityRequests;
+	TSet<FKey> BoundAxisKeys;
 };

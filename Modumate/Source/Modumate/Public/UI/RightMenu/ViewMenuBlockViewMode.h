@@ -21,20 +21,26 @@ public:
 	virtual bool Initialize() override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget* Button_ObjectMode;
+	class UModumateButtonUserWidget* Button_MetaGraphMode;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget* Button_SurfaceGraphMode;
+	class UModumateButtonUserWidget* Button_SeparatorsMode;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget* Button_MetaplaneMode;
+	class UModumateButtonUserWidget* Button_SurfaceGraphsMode;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_AllObjectsMode;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_PhysicalMode;
 
 	UFUNCTION()
-	void UpdateEnabledEditModes(const TArray<EEditViewModes>& EnabledEditModes);
+	void UpdateEnabledViewModes(const TArray<EEditViewModes>& EnabledViewModes);
 
 	UFUNCTION()
-	void SetActiveEditMode(EEditViewModes EditMode);
+	void SetActiveViewMode(EEditViewModes ViewMode);
 
 protected:
-	TMap<EEditViewModes, class UModumateButtonUserWidget*> EditModesToButtons;
+	TMap<EEditViewModes, class UModumateButtonUserWidget*> ViewModesToButtons;
 };

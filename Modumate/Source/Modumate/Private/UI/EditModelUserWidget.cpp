@@ -102,7 +102,7 @@ void UEditModelUserWidget::UpdateToolTray()
 
 	if (ViewMenu && ViewMenu->ViewMenu_Block_ViewMode)
 	{
-		ViewMenu->ViewMenu_Block_ViewMode->UpdateEnabledEditModes(Controller->ValidEditModes);
+		ViewMenu->ViewMenu_Block_ViewMode->UpdateEnabledViewModes(Controller->ValidViewModes);
 	}
 }
 
@@ -200,6 +200,6 @@ void UEditModelUserWidget::UpdateViewModeIndicator(EEditViewModes NewViewMode)
 
 	if (ViewMenu && ViewMenu->ViewMenu_Block_ViewMode)
 	{
-		ViewMenu->ViewMenu_Block_ViewMode->SetActiveEditMode(NewViewMode);
+		ViewMenu->ViewMenu_Block_ViewMode->SetActiveViewMode(NewViewMode);
 	}
 }

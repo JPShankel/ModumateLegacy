@@ -47,17 +47,25 @@ void UViewModeIndicatorWidget::SwitchToViewMode(EEditViewModes NewViewMode)
 {
 	switch (NewViewMode)
 	{
-	case EEditViewModes::ObjectEditing:
-		ViewModeText->SetText(TextObjectEditing);
-		ViewModeImage->SetBrushFromTexture(IconObjectEditing);
-		break;
-	case EEditViewModes::MetaPlanes:
+	case EEditViewModes::MetaGraph:
 		ViewModeText->SetText(TextMetaPlanes);
 		ViewModeImage->SetBrushFromTexture(IconMetaPlanes);
+		break;
+	case EEditViewModes::Separators:
+		ViewModeText->SetText(TextSeparators);
+		ViewModeImage->SetBrushFromTexture(IconSeparators);
 		break;
 	case EEditViewModes::SurfaceGraphs:
 		ViewModeText->SetText(TextSurfaceGraphs);
 		ViewModeImage->SetBrushFromTexture(IconSurfaceGraphs);
+		break;
+	case EEditViewModes::AllObjects:
+		ViewModeText->SetText(TextAllObjects);
+		ViewModeImage->SetBrushFromTexture(IconAllObjects);
+		break;
+	case EEditViewModes::Physical:
+		ViewModeText->SetText(TextPhysical);
+		ViewModeImage->SetBrushFromTexture(IconPhysical);
 		break;
 	default:
 		break;

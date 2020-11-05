@@ -418,8 +418,8 @@ void UModumateObjectStatics::ShouldMetaObjBeEnabled(const FModumateObjectInstanc
 
 	if (playerController && doc)
 	{
-		// If we're in room-viewing mode, we don't show any objects besides Rooms
-		if (playerController->EMPlayerState->SelectedViewMode == EEditViewModes::Rooms)
+		// If we're in Physical Mode, we don't show any meta objects
+		if (playerController->EMPlayerState->SelectedViewMode == EEditViewModes::Physical)
 		{
 			return;
 		}

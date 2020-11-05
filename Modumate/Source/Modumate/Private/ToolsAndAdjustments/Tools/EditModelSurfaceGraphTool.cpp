@@ -209,11 +209,6 @@ bool USurfaceGraphTool::HandleInputNumber(double n)
 	return CompleteSegment();
 }
 
-TArray<EEditViewModes> USurfaceGraphTool::GetRequiredEditModes() const
-{
-	return { EEditViewModes::SurfaceGraphs };
-}
-
 bool USurfaceGraphTool::UpdateTarget(const FModumateObjectInstance* HitObject, const FVector& Location, const FVector& Normal)
 {
 	ResetTarget();

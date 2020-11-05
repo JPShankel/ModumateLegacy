@@ -407,11 +407,6 @@ bool UStairTool::EnterNextStage()
 	return true;
 }
 
-TArray<EEditViewModes> UStairTool::GetRequiredEditModes() const
-{
-	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
-}
-
 void UStairTool::OnAssemblyChanged()
 {
 	Super::OnAssemblyChanged();

@@ -36,6 +36,13 @@ void UEditModelInputHandler::SetupBindings()
 
 	if (ensureAlways(Controller && Controller->InputComponent && inputSettings && InputCommandDataTable))
 	{
+		BoundAxisKeys.Reset();
+		auto& axisMappings = inputSettings->GetAxisMappings();
+		for (auto& axisMapping : axisMappings)
+		{
+			BoundAxisKeys.Add(axisMapping.Key);
+		}
+
 		FKey NumberKeys[12] = {
 			EKeys::Zero,
 			EKeys::One,
@@ -379,32 +386,33 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 
 	// Non-tool modal commands
 
-	case EInputCommand::CycleEditModes:
+	case EInputCommand::NextViewMode:
 	{
-		EEditViewModes curEditMode = Controller->EMPlayerState->GetEditMode();
-		int32 curEditModeIndex = Controller->ValidEditModes.Find(curEditMode);
-		if (ensure(curEditModeIndex != INDEX_NONE))
-		{
-			EEditViewModes nextEditMode = Controller->ValidEditModes[(curEditModeIndex + 1) % Controller->ValidEditModes.Num()];
-			return Controller->EMPlayerState->SetEditMode(nextEditMode);
-		}
-		return false;
+		return Controller->EMPlayerState->ChangeViewMode(1);
 	}
-	case EInputCommand::SetEditMode_ObjectEditing:
+	case EInputCommand::PrevViewMode:
 	{
-		return Controller->EMPlayerState->SetEditMode(EEditViewModes::ObjectEditing);
+		return Controller->EMPlayerState->ChangeViewMode(-1);
 	}
-	case EInputCommand::SetEditMode_MetaPlanes:
+	case EInputCommand::SetViewMode_MetaGraph:
 	{
-		return Controller->EMPlayerState->SetEditMode(EEditViewModes::MetaPlanes);
+		return Controller->EMPlayerState->SetViewMode(EEditViewModes::MetaGraph);
 	}
-	case EInputCommand::SetEditMode_SurfaceGraphs:
+	case EInputCommand::SetViewMode_Separators:
 	{
-		return Controller->EMPlayerState->SetEditMode(EEditViewModes::SurfaceGraphs);
+		return Controller->EMPlayerState->SetViewMode(EEditViewModes::Separators);
 	}
-	case EInputCommand::SetEditMode_Rooms:
+	case EInputCommand::SetViewMode_SurfaceGraphs:
 	{
-		return Controller->EMPlayerState->SetEditMode(EEditViewModes::Rooms);
+		return Controller->EMPlayerState->SetViewMode(EEditViewModes::SurfaceGraphs);
+	}
+	case EInputCommand::SetViewMode_AllObjects:
+	{
+		return Controller->EMPlayerState->SetViewMode(EEditViewModes::AllObjects);
+	}
+	case EInputCommand::SetViewMode_Physical:
+	{
+		return Controller->EMPlayerState->SetViewMode(EEditViewModes::Physical);
 	}
 	case EInputCommand::ToggleRoomView:
 	{
@@ -489,7 +497,7 @@ EInputCommand UEditModelInputHandler::InputCommandFromToolMode(EToolMode ToolMod
 	return EInputCommand::None;
 }
 
-void UEditModelInputHandler::RequestInputDisabled(const FName &Requester, bool bShouldDisable)
+void UEditModelInputHandler::RequestInputDisabled(const FName& Requester, bool bShouldDisable)
 {
 	bool bWasInputEnabled = IsInputEnabled();
 
@@ -518,6 +526,26 @@ bool UEditModelInputHandler::IsInputEnabled() const
 	return (InputDisabledRequests.Num() == 0);
 }
 
+void UEditModelInputHandler::RequestAxisInputPriority(const FName &Requester, bool bShouldPrioritizeAxisInputs)
+{
+	if (bShouldPrioritizeAxisInputs)
+	{
+		bool bDuplicateRequest = false;
+		AxisPriorityRequests.Add(Requester, &bDuplicateRequest);
+		ensureAlwaysMsgf(!bDuplicateRequest, TEXT("%s already requested that axis input be prioritized!"), *Requester.ToString());
+	}
+	else
+	{
+		int32 numRemoved = AxisPriorityRequests.Remove(Requester);
+		ensureAlwaysMsgf(numRemoved == 1, TEXT("%s revoked an axis prioritization request that was never set!"), *Requester.ToString());
+	}
+}
+
+bool UEditModelInputHandler::IsAxisInputPrioritized() const
+{
+	return (AxisPriorityRequests.Num() > 0);
+}
+
 void UEditModelInputHandler::HandleBoundChord(FInputChord Chord)
 {
 	if (!IsInputEnabled())
@@ -535,6 +563,13 @@ void UEditModelInputHandler::HandleBoundChord(FInputChord Chord)
 	}
 
 	if (!curCommandNode->Children.Contains(Chord))
+	{
+		return;
+	}
+
+	// If this is a root command that overlaps with a bound axis input, and axis input is currently prioritized,
+	// then don't execute the command or traverse deeper in the input trie.
+	if ((curCommandNode == RootCommandTrie) && IsAxisInputPrioritized() && BoundAxisKeys.Contains(Chord.Key))
 	{
 		return;
 	}

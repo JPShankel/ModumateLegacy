@@ -93,7 +93,7 @@ AEditModelPlayerController_CPP::AEditModelPlayerController_CPP()
 	InputHandlerComponent = CreateDefaultSubobject<UEditModelInputHandler>(TEXT("InputHandlerComponent"));
 	CameraController = CreateDefaultSubobject<UEditModelCameraController>(TEXT("CameraController"));
 
-	DefaultEditModes = { EEditViewModes::ObjectEditing, EEditViewModes::SurfaceGraphs, EEditViewModes::MetaPlanes };
+	DefaultViewModes = { EEditViewModes::AllObjects, EEditViewModes::Physical, EEditViewModes::MetaGraph, EEditViewModes::Separators, EEditViewModes::SurfaceGraphs };
 }
 
 AEditModelPlayerController_CPP::~AEditModelPlayerController_CPP()
@@ -234,6 +234,30 @@ void AEditModelPlayerController_CPP::EndPlay(const EEndPlayReason::Type EndPlayR
 	Super::EndPlay(EndPlayReason);
 }
 
+bool AEditModelPlayerController_CPP::GetRequiredViewModes(EToolCategories ToolCategory, TArray<EEditViewModes>& OutViewModes) const
+{
+	OutViewModes.Reset();
+
+	switch (ToolCategory)
+	{
+		case EToolCategories::MetaGraph:
+			OutViewModes = { EEditViewModes::MetaGraph };
+			return true;
+		case EToolCategories::Separators:
+			OutViewModes = { EEditViewModes::Separators, EEditViewModes::AllObjects };
+			return true;
+		case EToolCategories::SurfaceGraphs:
+			OutViewModes = { EEditViewModes::SurfaceGraphs };
+			return true;
+		case EToolCategories::Attachments:
+			OutViewModes = { EEditViewModes::AllObjects };
+			return true;
+		default:
+		case EToolCategories::Unknown:
+			return false;
+	}
+}
+
 bool AEditModelPlayerController_CPP::ToolIsInUse() const
 {
 	return (CurrentTool && CurrentTool->IsInUse());
@@ -278,14 +302,22 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 	CurrentTool = ModeToTool.FindRef(NewToolMode);
 	if (CurrentTool)
 	{
-		ValidEditModes = CurrentTool->GetRequiredEditModes();
-		if (ValidEditModes.Num() == 0)
+		EToolCategories newToolCategory = UModumateTypeStatics::GetToolCategory(CurrentTool->GetToolMode());
+
+		// First allow the current tool to override the required view modes, then try to get them by the tool category.
+		ValidViewModes.Reset();
+		bool bToolSpecifiesViewModes = CurrentTool->GetRequiredViewModes(ValidViewModes) ||
+			GetRequiredViewModes(newToolCategory, ValidViewModes);
+
+		// If specified, then switch to the first reported required view mode as the highest priority.
+		if (bToolSpecifiesViewModes && (ValidViewModes.Num() > 0))
 		{
-			ValidEditModes = DefaultEditModes;
+			EMPlayerState->SetViewMode(ValidViewModes[0]);
 		}
+		// Otherwise, use the default view modes and keep the current view mode.
 		else
 		{
-			EMPlayerState->SetEditMode(ValidEditModes[0]);
+			ValidViewModes = DefaultViewModes;
 		}
 
 		// TODO: runtime assemblies to be replaced with presets 

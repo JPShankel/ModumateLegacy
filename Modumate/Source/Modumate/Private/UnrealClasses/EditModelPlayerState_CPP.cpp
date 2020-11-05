@@ -32,7 +32,7 @@ AEditModelPlayerState_CPP::AEditModelPlayerState_CPP()
 	, bShowVolumeDebug(false)
 	, bShowSurfaceDebug(false)
 	, bDevelopDDL2Data(false)
-	, SelectedViewMode(EEditViewModes::ObjectEditing)
+	, SelectedViewMode(EEditViewModes::AllObjects)
 	, ShowingFileDialog(false)
 	, HoveredObject(nullptr)
 	, DebugMouseHits(false)
@@ -60,7 +60,7 @@ void AEditModelPlayerState_CPP::BeginPlay()
 
 	PostSelectionChanged();
 	PostViewChanged();
-	SetEditMode(EEditViewModes::ObjectEditing, true);
+	SetViewMode(EEditViewModes::AllObjects, true);
 }
 
 void AEditModelPlayerState_CPP::Tick(float DeltaSeconds)
@@ -264,15 +264,8 @@ AEditModelGameMode_CPP *AEditModelPlayerState_CPP::GetEditModelGameMode()
 
 void AEditModelPlayerState_CPP::ToggleRoomViewMode()
 {
-	if (SelectedViewMode == EEditViewModes::Rooms)
-	{
-		SetEditMode(PreviousModeFromToggleRoomView);
-	}
-	else
-	{
-		PreviousModeFromToggleRoomView = SelectedViewMode;
-		SetEditMode(EEditViewModes::Rooms);
-	}
+	bRoomsVisible = !bRoomsVisible;
+	UpdateObjectVisibilityAndCollision();
 }
 
 bool AEditModelPlayerState_CPP::GetSnapCursorDeltaFromRay(const FVector& RayOrigin, const FVector& RayDir, FVector& OutPosition) const
@@ -583,6 +576,7 @@ void AEditModelPlayerState_CPP::OnNewModel()
 		EMPlayerController->AbortUseTool();
 	}
 	EMPlayerController->SetToolMode(EToolMode::VE_SELECT);
+	SetViewMode(EEditViewModes::AllObjects);
 
 	SnappedCursor.ClearAffordanceFrame();
 
@@ -879,9 +873,9 @@ void AEditModelPlayerState_CPP::SetAssemblyForToolMode(EToolMode Mode, const FBI
 	}
 }
 
-bool AEditModelPlayerState_CPP::SetEditMode(EEditViewModes NewEditViewMode, bool bForceUpdate)
+bool AEditModelPlayerState_CPP::SetViewMode(EEditViewModes NewEditViewMode, bool bForceUpdate)
 {
-	if (((SelectedViewMode != NewEditViewMode) || bForceUpdate) && EMPlayerController && EMPlayerController->ValidEditModes.Contains(NewEditViewMode))
+	if (((SelectedViewMode != NewEditViewMode) || bForceUpdate) && EMPlayerController && EMPlayerController->ValidViewModes.Contains(NewEditViewMode))
 	{
 		SelectedViewMode = NewEditViewMode;
 		EMPlayerController->UpdateMouseTraceParams();
@@ -893,7 +887,7 @@ bool AEditModelPlayerState_CPP::SetEditMode(EEditViewModes NewEditViewMode, bool
 		// Update global meta plane material params
 		if (MetaPlaneMatParamCollection)
 		{
-			float metaPlaneAlphaValue = (SelectedViewMode == EEditViewModes::MetaPlanes) ? 1.0f : 0.75f;
+			float metaPlaneAlphaValue = (SelectedViewMode == EEditViewModes::MetaGraph) ? 1.0f : 0.75f;
 			static const FName metaPlaneAlphaParamName(TEXT("MetaPlaneAlpha"));
 			UMaterialParameterCollectionInstance* metaPlaneMatParamInst = GetWorld()->GetParameterCollectionInstance(MetaPlaneMatParamCollection);
 			metaPlaneMatParamInst->SetScalarParameterValue(metaPlaneAlphaParamName, metaPlaneAlphaValue);
@@ -903,6 +897,38 @@ bool AEditModelPlayerState_CPP::SetEditMode(EEditViewModes NewEditViewMode, bool
 		return true;
 	}
 
+	return false;
+}
+
+bool AEditModelPlayerState_CPP::ChangeViewMode(int32 IndexDelta)
+{
+	IndexDelta = FMath::Sign(IndexDelta);
+	if (IndexDelta == 0)
+	{
+		return false;
+	}
+
+	const auto& validViewModes = EMPlayerController->ValidViewModes;
+	int32 numViewModes = validViewModes.Num();
+	if (numViewModes == 1)
+	{
+		return true;
+	}
+
+	int32 curViewModeIndex = validViewModes.Find(SelectedViewMode);
+	if (ensure(curViewModeIndex != INDEX_NONE))
+	{
+		// Cycle forward or backwards through the valid edit modes,
+		// but skip Physical edit mode because it doesn't follow the hierarchy pattern that the rest of them do.
+		EEditViewModes newViewMode = SelectedViewMode;
+		do
+		{
+			curViewModeIndex = (curViewModeIndex + IndexDelta + numViewModes) % numViewModes;
+			newViewMode = validViewModes[curViewModeIndex];
+		} while (newViewMode == EEditViewModes::Physical);
+
+		return SetViewMode(newViewMode);
+	}
 	return false;
 }
 
@@ -921,29 +947,31 @@ void AEditModelPlayerState_CPP::UpdateObjectVisibilityAndCollision()
 
 bool AEditModelPlayerState_CPP::IsObjectTypeEnabledByViewMode(EObjectType ObjectType) const
 {
-	switch (ObjectType)
+	EToolCategories objectCategory = UModumateTypeStatics::GetObjectCategory(ObjectType);
+	switch (objectCategory)
 	{
-	case EObjectType::OTRoom:
-		return SelectedViewMode == EEditViewModes::Rooms;
-	case EObjectType::OTMetaVertex:
-	case EObjectType::OTMetaEdge:
-	case EObjectType::OTMetaPlane:
-		return SelectedViewMode == EEditViewModes::MetaPlanes;
-	case EObjectType::OTSurfaceGraph:
-	case EObjectType::OTSurfaceVertex:
-	case EObjectType::OTSurfaceEdge:
-	case EObjectType::OTSurfacePolygon:
-		return SelectedViewMode == EEditViewModes::SurfaceGraphs;
-	case EObjectType::OTCutPlane:
-	case EObjectType::OTScopeBox:
-		return true;
-	case EObjectType::OTWallSegment:
-	case EObjectType::OTFloorSegment:
-	case EObjectType::OTCeiling:
-	case EObjectType::OTRoofFace:
-	case EObjectType::OTRailSegment:
-		return (SelectedViewMode == EEditViewModes::ObjectEditing) || (SelectedViewMode == EEditViewModes::SurfaceGraphs);
+	case EToolCategories::MetaGraph:
+		return SelectedViewMode == EEditViewModes::MetaGraph;
+	case EToolCategories::Separators:
+		return (SelectedViewMode != EEditViewModes::MetaGraph);
+	case EToolCategories::SurfaceGraphs:
+		return (SelectedViewMode == EEditViewModes::SurfaceGraphs);
+	case EToolCategories::Attachments:
+		return (SelectedViewMode == EEditViewModes::AllObjects) || (SelectedViewMode == EEditViewModes::Physical);
+	case EToolCategories::Unknown:
+		switch (ObjectType)
+		{
+		case EObjectType::OTRoom:
+			return bRoomsVisible;
+		case EObjectType::OTCutPlane:
+		case EObjectType::OTScopeBox:
+			return true;
+		default:
+			ensureMsgf(false, TEXT("Unhandled uncategorized object type: %s!"), *EnumValueString(EObjectType, ObjectType));
+			return false;
+		}
 	default:
-		return SelectedViewMode == EEditViewModes::ObjectEditing;
+		ensureMsgf(false, TEXT("Unknown object category: %d!"), (int8)objectCategory);
+		return false;
 	}
 }

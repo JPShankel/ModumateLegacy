@@ -40,7 +40,7 @@ public:
 	virtual bool HandleControlKey(bool pressed) override { return true; }
 	virtual bool HandleMouseUp() override { return true; }
 	virtual bool ShowSnapCursorAffordances() override { return true; }
-	virtual TArray<EEditViewModes> GetRequiredEditModes() const override { return {}; }
+	virtual bool GetRequiredViewModes(TArray<EEditViewModes>& OutViewModes) const override { return false; }
 
 	virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override;
 	virtual EAxisConstraint GetAxisConstraint() const { return AxisConstraint; }

@@ -35,25 +35,37 @@ public:
 	class UImage* ViewModeImage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class UTexture2D* IconObjectEditing;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UTexture2D* IconMetaPlanes;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UTexture2D* IconSeparators;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UTexture2D* IconSurfaceGraphs;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UTexture2D* IconAllObjects;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UTexture2D* IconPhysical;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButton* IndicatorButton;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FText TextObjectEditing;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText TextMetaPlanes;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FText TextSeparators;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText TextSurfaceGraphs;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FText TextAllObjects;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FText TextPhysical;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	EInputCommand InputCommand;

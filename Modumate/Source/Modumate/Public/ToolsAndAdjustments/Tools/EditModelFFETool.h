@@ -28,5 +28,4 @@ public:
 
 	virtual bool FrameUpdate() override;
 	virtual bool BeginUse() override;
-	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 };

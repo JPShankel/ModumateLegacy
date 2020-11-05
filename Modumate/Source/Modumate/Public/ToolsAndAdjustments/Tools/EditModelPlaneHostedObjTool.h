@@ -30,7 +30,6 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual bool HandleInvert() override;
-	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 
 	void SetInstanceJustification(const float InJustification);
 	float GetInstanceJustification() const;

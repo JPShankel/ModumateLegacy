@@ -364,11 +364,6 @@ bool UMetaPlaneTool::AbortUse()
 	return Super::AbortUse();
 }
 
-TArray<EEditViewModes> UMetaPlaneTool::GetRequiredEditModes() const
-{
-	return { EEditViewModes::MetaPlanes };
-}
-
 void UMetaPlaneTool::SetInstanceHeight(const float InHeight)
 {
 	InstanceHeight = InHeight;

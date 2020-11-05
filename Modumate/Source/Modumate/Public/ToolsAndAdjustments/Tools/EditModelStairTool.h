@@ -32,7 +32,6 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
-	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 
 protected:
 	enum EState

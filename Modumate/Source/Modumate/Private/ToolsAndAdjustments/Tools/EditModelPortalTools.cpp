@@ -46,11 +46,6 @@ bool UPortalToolBase::Activate()
 	return true;
 }
 
-TArray<EEditViewModes> UPortalToolBase::GetRequiredEditModes() const
-{
-	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
-}
-
 bool UPortalToolBase::Deactivate()
 {
 	GameState->Document.ClearPreviewDeltas(GameState->GetWorld());

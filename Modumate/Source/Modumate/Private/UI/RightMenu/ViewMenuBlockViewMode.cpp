@@ -11,31 +11,33 @@ bool UViewMenuBlockViewMode::Initialize()
 		return false;
 	}
 
-	if (!(Button_ObjectMode && Button_SurfaceGraphMode && Button_MetaplaneMode))
+	if (!(Button_MetaGraphMode && Button_SeparatorsMode && Button_SurfaceGraphsMode && Button_AllObjectsMode && Button_PhysicalMode))
 	{
 		return false;
 	}
 
-	EditModesToButtons.Add(EEditViewModes::ObjectEditing, Button_ObjectMode);
-	EditModesToButtons.Add(EEditViewModes::MetaPlanes, Button_MetaplaneMode);
-	EditModesToButtons.Add(EEditViewModes::SurfaceGraphs, Button_SurfaceGraphMode);
+	ViewModesToButtons.Add(EEditViewModes::MetaGraph, Button_MetaGraphMode);
+	ViewModesToButtons.Add(EEditViewModes::Separators, Button_SeparatorsMode);
+	ViewModesToButtons.Add(EEditViewModes::SurfaceGraphs, Button_SurfaceGraphsMode);
+	ViewModesToButtons.Add(EEditViewModes::AllObjects, Button_AllObjectsMode);
+	ViewModesToButtons.Add(EEditViewModes::Physical, Button_PhysicalMode);
 
 	return true;
 }
 
-void UViewMenuBlockViewMode::UpdateEnabledEditModes(const TArray<EEditViewModes>& EnabledEditModes)
+void UViewMenuBlockViewMode::UpdateEnabledViewModes(const TArray<EEditViewModes>& EnabledViewModes)
 {
-	for (auto& kvp : EditModesToButtons)
+	for (auto& kvp : ViewModesToButtons)
 	{
-		kvp.Value->SetIsEnabled(EnabledEditModes.Contains(kvp.Key));
+		kvp.Value->SetIsEnabled(EnabledViewModes.Contains(kvp.Key));
 	}
 }
 
-void UViewMenuBlockViewMode::SetActiveEditMode(EEditViewModes EditMode)
+void UViewMenuBlockViewMode::SetActiveViewMode(EEditViewModes ViewMode)
 {
-	for (auto& kvp : EditModesToButtons)
+	for (auto& kvp : ViewModesToButtons)
 	{
-		if (kvp.Key == EditMode)
+		if (kvp.Key == ViewMode)
 		{
 			kvp.Value->SwitchToActiveStyle();
 		}

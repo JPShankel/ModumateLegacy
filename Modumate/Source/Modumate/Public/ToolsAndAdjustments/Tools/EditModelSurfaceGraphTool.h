@@ -26,7 +26,6 @@ public:
 	virtual bool AbortUse() override;
 	virtual bool FrameUpdate() override;
 	virtual bool HandleInputNumber(double n) override;
-	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 
 	virtual bool HasDimensionActor() { return true; }
 

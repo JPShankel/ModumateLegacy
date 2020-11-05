@@ -283,14 +283,14 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 
 	FVector camPos = CamTransform.GetLocation();
 	FQuat camRot = CamTransform.GetRotation();
-	bool bShouldInputHaveBeenDisabled = true;
+	bool bShouldAxisInputHaveBeenPrioritized = true;
 
 	// End the previous movement state
 	switch (CurMovementState)
 	{
 	case ECameraMovementState::Default:
 	{
-		bShouldInputHaveBeenDisabled = false;
+		bShouldAxisInputHaveBeenPrioritized = false;
 		break;
 	}
 	case ECameraMovementState::Orbiting:
@@ -328,20 +328,20 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 		break;
 	}
 
-	if (bShouldInputHaveBeenDisabled && Controller->InputHandlerComponent)
+	if (bShouldAxisInputHaveBeenPrioritized && Controller->InputHandlerComponent)
 	{
-		Controller->InputHandlerComponent->RequestInputDisabled(StaticClass()->GetFName(), false);
+		Controller->InputHandlerComponent->RequestAxisInputPriority(StaticClass()->GetFName(), false);
 	}
 
 	// Begin the new movement state
 	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
-	bool bShouldInputBeDisabled = true;
+	bool bShouldPrioritizeAxisInputs = true;
 
 	switch (NewMovementState)
 	{
 	case ECameraMovementState::Default:
 	{
-		bShouldInputBeDisabled = false;
+		bShouldPrioritizeAxisInputs = false;
 		OrbitZoomDeltaAccumulated = 0.0f;
 		break;
 	}
@@ -428,9 +428,9 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 
 	CurMovementState = NewMovementState;
 
-	if (bShouldInputBeDisabled && Controller->InputHandlerComponent)
+	if (bShouldPrioritizeAxisInputs && Controller->InputHandlerComponent)
 	{
-		Controller->InputHandlerComponent->RequestInputDisabled(StaticClass()->GetFName(), true);
+		Controller->InputHandlerComponent->RequestAxisInputPriority(StaticClass()->GetFName(), true);
 	}
 
 	return true;

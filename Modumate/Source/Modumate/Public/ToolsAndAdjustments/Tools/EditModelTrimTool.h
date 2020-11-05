@@ -19,7 +19,6 @@ public:
 	virtual bool Deactivate() override;
 	virtual bool BeginUse() override;
 	virtual bool FrameUpdate() override;
-	virtual TArray<EEditViewModes> GetRequiredEditModes() const override;
 
 protected:
 	int32 TargetEdgeID;

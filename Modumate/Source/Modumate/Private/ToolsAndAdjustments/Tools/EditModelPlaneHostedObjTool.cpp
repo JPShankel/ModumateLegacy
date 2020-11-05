@@ -265,11 +265,6 @@ bool UPlaneHostedObjTool::HandleInvert()
 	return true;
 }
 
-TArray<EEditViewModes> UPlaneHostedObjTool::GetRequiredEditModes() const
-{
-	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
-}
-
 void UPlaneHostedObjTool::SetInstanceJustification(const float InJustification)
 {
 	InstanceJustification = InJustification;

@@ -65,9 +65,8 @@ public:
 	void SetShowGraphDebug(bool bShow);
 
 	EEditViewModes SelectedViewMode;
+	bool bRoomsVisible;
 	bool ShowingFileDialog;
-
-	EEditViewModes PreviousModeFromToggleRoomView;
 
 	FModumateObjectInstance *HoveredObject;
 
@@ -99,7 +98,7 @@ public:
 	bool GetSnapCursorDeltaFromRay(const FVector& RayOrigin, const FVector& RayDir, FVector& OutPosition) const;
 
 	UFUNCTION(BlueprintPure, Category = "Tools")
-	EEditViewModes GetEditMode() { return SelectedViewMode; }
+	EEditViewModes GetViewMode() { return SelectedViewMode; }
 
 	UFUNCTION(BlueprintCallable, Category = "Tools")
 	void ToggleRoomViewMode();
@@ -196,7 +195,10 @@ public:
 	FBIMKey GetAssemblyForToolMode(EToolMode mode);
 
 	UFUNCTION()
-	bool SetEditMode(EEditViewModes NewEditViewMode, bool bForceUpdate = false);
+	bool SetViewMode(EEditViewModes NewEditViewMode, bool bForceUpdate = false);
+
+	UFUNCTION()
+	bool ChangeViewMode(int32 IndexDelta);
 
 	UFUNCTION()
 	void UpdateObjectVisibilityAndCollision();

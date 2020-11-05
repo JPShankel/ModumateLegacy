@@ -110,8 +110,3 @@ bool UTrimTool::FrameUpdate()
 
 	return true;
 }
-
-TArray<EEditViewModes> UTrimTool::GetRequiredEditModes() const
-{
-	return { EEditViewModes::ObjectEditing, EEditViewModes::SurfaceGraphs };
-}

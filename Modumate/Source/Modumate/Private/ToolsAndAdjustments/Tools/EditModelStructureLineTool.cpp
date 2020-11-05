@@ -244,11 +244,6 @@ bool UStructureLineTool::AbortUse()
 	return UEditModelToolBase::AbortUse();
 }
 
-TArray<EEditViewModes> UStructureLineTool::GetRequiredEditModes() const
-{
-	return { EEditViewModes::ObjectEditing, EEditViewModes::MetaPlanes };
-}
-
 void UStructureLineTool::OnCreateObjectModeChanged()
 {
 	Super::OnCreateObjectModeChanged();

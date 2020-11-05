@@ -41,6 +41,12 @@ EToolCategories UModumateTypeStatics::GetToolCategory(EToolMode ToolMode)
 	}
 }
 
+EToolCategories UModumateTypeStatics::GetObjectCategory(EObjectType ObjectType)
+{
+	EToolMode objectToolMode = UModumateTypeStatics::ToolModeFromObjectType(ObjectType);
+	return GetToolCategory(objectToolMode);
+}
+
 EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 {
 	switch (tm)

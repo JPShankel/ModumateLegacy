@@ -53,10 +53,10 @@ void AEditModelPlayerPawn_CPP::PossessedBy(AController* NewController)
 
 	EMPlayerController = Cast<AEditModelPlayerController_CPP>(NewController);
 
-	// Stop disabling InputHandler commands when we're possessed
+	// Stop prioritizing axis input when we're possessed
 	if (EMPlayerController && EMPlayerController->InputHandlerComponent && bHaveEverBeenPossessed)
 	{
-		EMPlayerController->InputHandlerComponent->RequestInputDisabled(StaticClass()->GetFName(), false);
+		EMPlayerController->InputHandlerComponent->RequestAxisInputPriority(StaticClass()->GetFName(), false);
 	}
 
 	bHaveEverBeenPossessed = true;
@@ -64,10 +64,10 @@ void AEditModelPlayerPawn_CPP::PossessedBy(AController* NewController)
 
 void AEditModelPlayerPawn_CPP::UnPossessed()
 {
-	// Disable InputHandler commands when we're not possessed
+	// Start prioritizing axis input when we're not possessed
 	if (EMPlayerController && EMPlayerController->InputHandlerComponent)
 	{
-		EMPlayerController->InputHandlerComponent->RequestInputDisabled(StaticClass()->GetFName(), true);
+		EMPlayerController->InputHandlerComponent->RequestAxisInputPriority(StaticClass()->GetFName(), true);
 	}
 
 	EMPlayerController = nullptr;
