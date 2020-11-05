@@ -223,7 +223,7 @@ public:
 	 */
 	static bool TestPointInPolygon(const FVector2D& Point, const TArray<FVector2D>& Polygon, FPointInPolyResult& OutResult, float Tolerance = RAY_INTERSECT_TOLERANCE);
 
-	// Test if one simple polygon contains another; either fully (no touching vertices/edges) or partially (overlapping edges and/or touching vertices).
+	// Test if a simple polygon contains a (simple or non-simple) polygon; either fully (no touching vertices/edges) or partially (overlapping edges and/or touching vertices).
 	// NOTE: this requires that the polygons have edges that are already fully split, and do not intersect with one another except at vertices, and no vertices lie inside other edges.
 	// [param] bOutFullyContained: All vertices and edges of ContainedPolygon are inside of ContainingPolygon, and do not touch.
 	// [param] bOutPartiallyContained: All vertices and edges of ContainedPolygon are either inside of ContainingPolygon, or overlap with vertices and edges of ContainingPolygon, AND

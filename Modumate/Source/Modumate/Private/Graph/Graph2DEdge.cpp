@@ -50,6 +50,45 @@ namespace Modumate
 		}
 	}
 
+	bool FGraph2DEdge::GetAdjacentInteriorPolygons(const FGraph2DPolygon*& OutPolyLeft, const FGraph2DPolygon*& OutPolyRight) const
+	{
+		OutPolyLeft = OutPolyRight = nullptr;
+
+		auto graph = Graph.Pin();
+		if (!ensure(graph.IsValid()) || !bValid || bDerivedDataDirty)
+		{
+			return false;
+		}
+
+		auto polyLeft = graph->FindPolygon(LeftPolyID);
+		auto polyRight = graph->FindPolygon(RightPolyID);
+		for (int32 sideIdx = 0; sideIdx < 2; ++sideIdx)
+		{
+			auto adjacentPoly = (sideIdx == 0) ? polyLeft : polyRight;
+			auto& outPoly = (sideIdx == 0) ? OutPolyLeft : OutPolyRight;
+
+			if (adjacentPoly == nullptr)
+			{
+				continue;
+			}
+
+			if (adjacentPoly->bInterior)
+			{
+				outPoly = adjacentPoly;
+			}
+			else if (adjacentPoly->ContainingPolyID != MOD_ID_NONE)
+			{
+				auto adjacentPolyContainer = graph->FindPolygon(adjacentPoly->ContainingPolyID);
+				if (adjacentPolyContainer && adjacentPolyContainer->bInterior)
+				{
+					outPoly = adjacentPolyContainer;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	void FGraph2DEdge::Dirty(bool bConnected)
 	{
 		IGraph2DObject::Dirty(bConnected);

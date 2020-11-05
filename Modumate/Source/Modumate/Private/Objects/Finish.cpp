@@ -142,20 +142,39 @@ void FMOIFinishImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* cont
 
 void FMOIFinishImpl::UpdateConnectedEdges()
 {
-	CachedParentConnectedMOIs.Reset();
+	CachedConnectedEdgeIDs.Reset();
+	FModumateDocument* doc = MOI->GetDocument();
 
-	const FModumateObjectInstance* polyParent = MOI ? MOI->GetParentObject() : nullptr;
-	if (polyParent)
+	auto grandParentGraph = doc->FindSurfaceGraphByObjID(MOI->ID);
+	auto parentSurfacePoly = grandParentGraph ? grandParentGraph->FindPolygon(MOI->GetParentID()) : nullptr;
+
+	if (parentSurfacePoly == nullptr)
 	{
-		polyParent->GetConnectedMOIs(CachedParentConnectedMOIs);
+		return;
+	}
+
+	for (FGraphSignedID edgeID : parentSurfacePoly->Edges)
+	{
+		CachedConnectedEdgeIDs.Add(FMath::Abs(edgeID));
+	}
+	for (int32 containedPolyID : parentSurfacePoly->ContainedPolyIDs)
+	{
+		if (auto containedSurfacePoly = grandParentGraph->FindPolygon(containedPolyID))
+		{
+			for (FGraphSignedID edgeID : containedSurfacePoly->Edges)
+			{
+				CachedConnectedEdgeIDs.Add(FMath::Abs(edgeID));
+			}
+		}
 	}
 
 	CachedConnectedEdgeChildren.Reset();
-	for (FModumateObjectInstance* polyConnectedMOI : CachedParentConnectedMOIs)
+	for (int32 connectedEdgeID : CachedConnectedEdgeIDs)
 	{
-		if (polyConnectedMOI && (polyConnectedMOI->GetObjectType() == EObjectType::OTSurfaceEdge))
+		FModumateObjectInstance* connectedEdgeMOI = doc->GetObjectById(connectedEdgeID);
+		if (connectedEdgeMOI && (connectedEdgeMOI->GetObjectType() == EObjectType::OTSurfaceEdge))
 		{
-			CachedConnectedEdgeChildren.Append(polyConnectedMOI->GetChildObjects());
+			CachedConnectedEdgeChildren.Append(connectedEdgeMOI->GetChildObjects());
 		}
 	}
 }

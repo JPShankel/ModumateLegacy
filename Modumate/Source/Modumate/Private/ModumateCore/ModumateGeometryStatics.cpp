@@ -1270,9 +1270,10 @@ bool UModumateGeometryStatics::TestPointInPolygon(const FVector2D& Point, const 
 
 bool UModumateGeometryStatics::GetPolygonContainment(const TArray<FVector2D> &ContainingPolygon, const TArray<FVector2D> &ContainedPolygon, bool& bOutFullyContained, bool& bOutPartiallyContained)
 {
+	// We allow 2 contained points because contained polygons are not required to be simple, only containing polygons
 	int32 numContainingPoints = ContainingPolygon.Num();
 	int32 numContainedPoints = ContainedPolygon.Num();
-	if (!ensureAlways((numContainingPoints >= 3) && (numContainedPoints >= 3)))
+	if (!ensureAlways((numContainingPoints >= 3) && (numContainedPoints >= 2)))
 	{
 		return false;
 	}

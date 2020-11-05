@@ -180,9 +180,15 @@ bool FMOITrimImpl::UpdateCachedStructure()
 
 	// See if the trim should be offset based on its neighboring polygons
 	float maxNeighboringThickness = 0.0f;
-	const FModumateObjectInstance* leftPolyMOI = doc->GetObjectById(surfaceEdge->LeftPolyID);
-	const FModumateObjectInstance* rightPolyMOI = doc->GetObjectById(surfaceEdge->RightPolyID);
-	for (auto neighborPolyMOI : {leftPolyMOI, rightPolyMOI})
+	const Modumate::FGraph2DPolygon *surfacePolyLeft, *surfacePolyRight;
+	if (!surfaceEdge->GetAdjacentInteriorPolygons(surfacePolyLeft, surfacePolyRight))
+	{
+		return false;
+	}
+
+	const FModumateObjectInstance* leftPolyMOI = doc->GetObjectById(surfacePolyLeft->ID);
+	const FModumateObjectInstance* rightPolyMOI = doc->GetObjectById(surfacePolyRight->ID);
+	for (auto neighborPolyMOI : { leftPolyMOI, rightPolyMOI })
 	{
 		if (neighborPolyMOI && (neighborPolyMOI->GetObjectType() == EObjectType::OTSurfacePolygon))
 		{

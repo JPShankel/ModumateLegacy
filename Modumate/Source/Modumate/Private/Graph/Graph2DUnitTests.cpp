@@ -1172,21 +1172,21 @@ namespace Modumate
 
 		for (auto& polykvp : Graph->GetPolygons())
 		{
-			auto& interiorPolys = polykvp.Value.ContainedPolyIDs;
-			if (interiorPolys.Num() != 0)
+			auto& containedPolys = polykvp.Value.ContainedPolyIDs;
+			if (containedPolys.Num() != 0)
 			{
 				Test->TestEqual(TEXT("Only one containing polygon"), foundContainingPolyID, MOD_ID_NONE);
 				foundContainingPolyID = polykvp.Key;
 
-				Test->TestEqual(TEXT("Containing polygon contains correct number of faces"), interiorPolys.Num(), TestNumContainedFaces);
+				Test->TestEqual(TEXT("Containing polygon contains correct number of faces"), containedPolys.Num(), TestNumContainedFaces);
 
-				for (int32 containedID : interiorPolys)
+				for (int32 containedID : containedPolys)
 				{
 					auto containedPoly = Graph->FindPolygon(containedID);
 					if (ensure(containedPoly))
 					{
 						Test->TestTrue(TEXT("Contained poly is contained by the right poly"),
-							containedPoly->bInterior && (containedPoly->ContainingPolyID == foundContainingPolyID));
+							(containedPoly->ContainingPolyID == foundContainingPolyID));
 					}
 				}
 			}
@@ -1276,7 +1276,7 @@ namespace Modumate
 		TestDeltas(this, deltas, graph, 4, 8, 8);
 
 		// Make sure containment is correct
-		TestGraphContainment(this, graph, 1, containingPolyID);
+		TestGraphContainment(this, graph, 2, containingPolyID);
 
 		TestTrue(TEXT("Undo hole addition"), graph->ApplyInverseDeltas(holeDeltas));
 		TestGraph(this, graph, 2, 4, 4);
@@ -1284,7 +1284,7 @@ namespace Modumate
 
 		TestTrue(TEXT("Redo hole addition"), graph->ApplyDeltas(holeDeltas));
 		TestGraph(this, graph, 4, 8, 8);
-		TestGraphContainment(this, graph, 1, containingPolyID);
+		TestGraphContainment(this, graph, 2, containingPolyID);
 
 		return true;
 	}

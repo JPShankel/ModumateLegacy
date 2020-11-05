@@ -35,8 +35,8 @@ namespace Modumate
 			return false;
 		}
 
-		// Exterior polygons do not participate in containment
-		if (!bInterior || !otherPoly->bInterior)
+		// Exterior polygons cannot contain anything because they aren't guaranteed to have simple polygonal perimeters
+		if (!otherPoly->bInterior)
 		{
 			return false;
 		}
@@ -59,9 +59,14 @@ namespace Modumate
 			return false;
 		}
 
+		// For testing whether exterior polygons are contained by interior polygons, we must use
+		// all of their points, because they don't have a defined simple polygonal interior.
+		// For interior polygons, this is an optimization, and should not affect the correctness of results.
+		const TArray<FVector2D>& containedPolyVerts = bInterior ? CachedPerimeterPoints : CachedPoints;
+
 		// Now, check the actual polygon perimeters for geometric containment, allowing partial containment with a shared vertex
 		bool bFullyContained, bPartiallyContained;
-		bool bValidContainment = UModumateGeometryStatics::GetPolygonContainment(otherPoly->CachedPerimeterPoints, CachedPerimeterPoints, bFullyContained, bPartiallyContained);
+		bool bValidContainment = UModumateGeometryStatics::GetPolygonContainment(otherPoly->CachedPerimeterPoints, containedPolyVerts, bFullyContained, bPartiallyContained);
 		return bValidContainment && (bFullyContained || bPartiallyContained);
 	}
 

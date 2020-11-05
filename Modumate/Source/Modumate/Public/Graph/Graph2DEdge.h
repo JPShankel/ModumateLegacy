@@ -23,6 +23,7 @@ namespace Modumate
 
 		FGraph2DEdge(int32 InID, TWeakPtr<FGraph2D> InGraph, int32 InStart, int32 InEnd);
 		void SetVertices(int32 InStart, int32 InEnd);
+		bool GetAdjacentInteriorPolygons(const class FGraph2DPolygon*& OutPolyLeft, const class FGraph2DPolygon*& OutPolyRight) const;
 
 		virtual void Dirty(bool bConnected = true) override;
 		virtual bool Clean() override;

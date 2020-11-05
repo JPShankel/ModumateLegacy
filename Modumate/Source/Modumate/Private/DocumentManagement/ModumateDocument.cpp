@@ -2975,10 +2975,11 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 				DrawDebugDirectionalArrow(world, edgeNStartPos, edgeNEndPos, arrowSize, FColor::Blue, false, -1.f, 0, lineThickness);
 			}
 
-			FString faceString = FString::Printf(TEXT("Face #%d: [%s]"), poly.ID,
-				*FString::JoinBy(poly.Edges, TEXT(", "), [](const FGraphSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }));
+			FString faceString = FString::Printf(TEXT("Face #%d: [%s] (%d)"), poly.ID,
+				*FString::JoinBy(poly.Edges, TEXT(", "), [](const FGraphSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }),
+				poly.ContainingPolyID);
 
-			FVector2D originPos = poly.CachedPoints[0];
+			FVector2D originPos = Algo::Accumulate(poly.CachedPoints, FVector2D::ZeroVector) / poly.CachedPoints.Num();
 			FVector originDrawPos = UModumateGeometryStatics::Deproject2DPoint(originPos, faceAxisX, faceAxisY, faceOrigin);
 			DrawDebugString(world, originDrawPos, faceString, nullptr, FColor::White, 0.0f, true);
 		}

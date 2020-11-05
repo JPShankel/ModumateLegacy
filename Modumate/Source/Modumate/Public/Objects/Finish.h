@@ -28,6 +28,6 @@ protected:
 	FTransform CachedGraphOrigin;
 	TArray<FVector> CachedPerimeter;
 	TArray<FPolyHole3D> CachedHoles;
-	TArray<FModumateObjectInstance*> CachedParentConnectedMOIs;
+	TArray<int32> CachedConnectedEdgeIDs;
 	TArray<FModumateObjectInstance*> CachedConnectedEdgeChildren;
 };
