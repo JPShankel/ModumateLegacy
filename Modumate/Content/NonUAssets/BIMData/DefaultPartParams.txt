@@ -1,5 +1,6 @@
 WheelRadius=2
 PanelHangDistanceZ=5
+PanelEdgeInsetDistanceXZ=0.25
 JambLeftSizeX=1
 JambRightSizeX=1
 SillSizeZ=1
@@ -68,6 +69,6 @@ StileRightSizeX=0
 RailTopSizeX=0
 RailTopSizeZ=0
 RailBottomSizeZ=0
-DividerZ1Distance=0
-DividerZ2Distance=0
-DividerZ1of1Distance=0
+DividerZ1Distance=13
+DividerZ2Distance=22
+DividerZ3Distance=30

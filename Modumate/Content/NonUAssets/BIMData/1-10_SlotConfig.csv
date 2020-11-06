@@ -21,12 +21,16 @@ PRESET,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidBottomRail",,1SlotConfig --> Panel,,Cabinet Panel,Self.Panel.NativeSizeY,,0Slot-Panel,,,X,,,,,
 PRESET,,,,,,,,,0Slot-CasterBarnLeft,,,,,,,,
 PRESET,,,,,,,,,0Slot-CasterBarnRight,,,,,,,,
+PRESET,,,,,,,,,0Slot-HandleUpperFixedXZ,,,,,,,,
+PRESET,,,,,,,,,0Slot-HandleLowerFixedXZ,,,,,,,,
 PRESET,,,,,,,,,0Slot-HandleXMidWidthYOutsideZMidHeight,,,,,,,,
 PRESET,,,,,,,,,0Slot-HandleXMidStileYOutsideZMidTopRail,,,,,,,,
 PRESET,,,,,,,,,0Slot-HandleXMidStileYOutsideZMidHeight,,,,,,,,
@@ -104,6 +108,12 @@ PRESET,,,,,,,,,0Slot-AssemblyPanelPocketLeft,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelPocketRight,,,,,,,,
 PRESET,,"1SlotConfig --> Frame
 0Slot-FrameSliding
+0Slot-AssemblyPanelSlidingXX-1
+0Slot-AssemblyPanelSlidingXX-2",,1SlotConfig --> Frame,,Sliding (XX),Self.Frame.NativeSizeY,,0Slot-FrameSliding,,,,X,X,X,,
+PRESET,,,,,,,,,0Slot-AssemblyPanelSlidingXX-1,,,,,,,,
+PRESET,,,,,,,,,0Slot-AssemblyPanelSlidingXX-2,,,,,,,,
+PRESET,,"1SlotConfig --> Frame
+0Slot-FrameSliding
 0Slot-AssemblyPanelSlidingXO-1
 0Slot-AssemblyPanelSlidingXO-2",,1SlotConfig --> Frame,,Sliding (XO),Self.Frame.NativeSizeY,,0Slot-FrameSliding,,,,X,X,X,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelSlidingXO-1,,,,,,,,
@@ -124,50 +134,62 @@ PRESET,,,,,,,,,0Slot-AssemblyPanelSlidingXOX-2,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelSlidingXOX-3,,,,,,,,
 PRESET,,"1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetInsetLeft
 0Slot-AssemblyPanelSwing1of1",,1SlotConfig --> Frame,,Swing / Inset / Casement (Single),Self.Frame.NativeSizeY,,0Slot-Frame,,,,X,X,X,,
-PRESET,,,,,,,,,0Slot-AssemblyHingeSetLeft,,,,,,,,
+PRESET,,,,,,,,,0Slot-AssemblyHingeSetInsetLeft,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelSwing1of1,,,,,,,,
 PRESET,,"1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
-0Slot-AssemblyHingeSetRight
+0Slot-AssemblyHingeSetInsetLeft
+0Slot-AssemblyHingeSetInsetRight
 0Slot-AssemblyPanelSwingLeft
 0Slot-AssemblyPanelSwingRight",,1SlotConfig --> Frame,,Swing / Inset / Casement (Double),Self.Frame.NativeSizeY,,0Slot-Frame,,,,X,X,X,,
-PRESET,,,,,,,,,0Slot-AssemblyHingeSetLeft,,,,,,,,
-PRESET,,,,,,,,,0Slot-AssemblyHingeSetRight,,,,,,,,
+PRESET,,,,,,,,,0Slot-AssemblyHingeSetInsetLeft,,,,,,,,
+PRESET,,,,,,,,,0Slot-AssemblyHingeSetInsetRight,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelSwingLeft,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelSwingRight,,,,,,,,
 PRESET,,"1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1",,1SlotConfig --> Frame,,Overlay (Single),Self.Frame.NativeSizeY+Self.PanelAssembly.Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
-PRESET,,,,,,,,,0Slot-AssemblyHingeSetLeft,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay1of1,,,,,,,,
 PRESET,,"1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
-0Slot-AssemblyHingeSetRight
 0Slot-AssemblyPanelOverlayLeft
 0Slot-AssemblyPanelOverlayRight",,1SlotConfig --> Frame,,Overlay (Two Horizontal),Self.Frame.NativeSizeY+Self.PanelAssembly.Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
-PRESET,,,,,,,,,0Slot-AssemblyHingeSetLeft,,,,,,,,
-PRESET,,,,,,,,,0Slot-AssemblyHingeSetRight,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelOverlayLeft,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelOverlayRight,,,,,,,,
 PRESET,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelOverlay2Vertical-1
-0Slot-AssemblyPanelOverlay2Vertical-2",,1SlotConfig --> Frame,,Overlay (Two Vertical),Self.Frame.NativeSizeY+Self.PanelAssembly.Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
+0Slot-AssemblyPanelOverlay2Vertical-2",,1SlotConfig --> Frame,,Overlay (Two Drawers),Self.Frame.NativeSizeY+Self.PanelAssembly.Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay2Vertical-1,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay2Vertical-2,,,,,,,,
 PRESET,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelOverlay3Vertical-1
 0Slot-AssemblyPanelOverlay3Vertical-2
-0Slot-AssemblyPanelOverlay3Vertical-3",,1SlotConfig --> Frame,,Overlay (Three Vertical),Self.Frame.NativeSizeY+Self.PanelAssembly.Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
+0Slot-AssemblyPanelOverlay3Vertical-3",,1SlotConfig --> Frame,,Overlay (Three Drawers),Self.Frame.NativeSizeY+Self.PanelAssembly.Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay3Vertical-1,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay3Vertical-2,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay3Vertical-3,,,,,,,,
+PRESET,,"1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelOverlay4Vertical-1
+0Slot-AssemblyPanelOverlay4Vertical-2
+0Slot-AssemblyPanelOverlay4Vertical-3
+0Slot-AssemblyPanelOverlay4Vertical-4",,1SlotConfig --> Frame,,Overlay (Four Drawers),Self.Frame.NativeSizeY+Self.PanelAssembly.Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
+PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay4Vertical-1,,,,,,,,
+PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay4Vertical-2,,,,,,,,
+PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay4Vertical-3,,,,,,,,
+PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay4Vertical-4,,,,,,,,
+PRESET,,"1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelOverlay1Above2-1
+0Slot-AssemblyPanelOverlay1Above2-2
+0Slot-AssemblyPanelOverlay1Above2-3",,1SlotConfig --> Frame,,Overlay (One Drawer Over Two Doors),Self.Frame.NativeSizeY+Self.PanelAssembly.Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
+PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay1Above2-1,,,,,,,,
+PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay1Above2-2,,,,,,,,
+PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay1Above2-3,,,,,,,,
 PRESET,,"1SlotConfig --> FFESet
 0Slot-TableInTableAndChairs
 0Slot-ChairAtTable1+1+1+1-1

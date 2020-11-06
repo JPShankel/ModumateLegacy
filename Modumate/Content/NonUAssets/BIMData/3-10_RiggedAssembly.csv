@@ -1,14 +1,13 @@
-TYPENAME,,3RiggedAssembly,,Assembly,,,,,,,,,,,,,,,,,
-,,Definition,,,,,,,,,,,,,,,,,,,
-,,PropertyType,,PropertyName,,,,,,,,,,,,,,,,,
-PROPERTY,,DisplayText,,Name,,Assembly.Name,,,,,,,,,,,,,,,
-PROPERTY,,Dimension,,,,Assembly.IconDimX,,,,,,,,,,,,,,,
-PROPERTY,,Dimension,,,,Assembly.IconDimZ,,,,,,,,,,,,,,,
-PROPERTY,,DimensionSet,,NamedDimensions,,Assembly.NamedDimensions,,,,,,,,,,,,,,,
-,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Assembly.IconDimX,Assembly.IconDimZ,Assembly.NamedDimensions,DataType=StartsInProject,X,DataType=Slots,SlotConfig,SlotName,PartPreset,,,,,,
+TYPENAME,,3RiggedAssembly,,Assembly,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,,,,,,,,,,,,,,,
+PROPERTY,,DisplayText,,Name,,Assembly.Name,,,,,,,,,,,,,,
+PROPERTY,,Dimension,,,,Assembly.IconDimX,,,,,,,,,,,,,,
+PROPERTY,,Dimension,,,,Assembly.IconDimZ,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Assembly.IconDimX,Assembly.IconDimZ,DataType=StartsInProject,X,DataType=Slots,SlotConfig,SlotName,PartPreset,,,,,,
 PRESET,,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -20,12 +19,12 @@ Hinge
 0Slot-Hinge3of3
 Hinge
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyHingeSet,,2-Hinge Set,0,80,"(""IconDimX"",0),(""IconDimZ"",80)",,X,,"1SlotConfig --> HingeSet
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyHingeSet,,2-Hinge Set,0,80,,X,,"1SlotConfig --> HingeSet
 0Slot-Hinge1of3
 0Slot-Hinge3of3",0Slot-Hinge1of3,"Hinge
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-Hinge3of3,"Hinge
+PRESET,,,,,,,,,,,,,0Slot-Hinge3of3,"Hinge
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,"AssemblyHingeSet
@@ -44,16 +43,16 @@ Hinge
 0Slot-Hinge3of3
 Hinge
 0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyHingeSet,,3-Hinge Set,0,80,"(""IconDimX"",0),(""IconDimZ"",80)",,X,,"1SlotConfig --> HingeSet
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyHingeSet,,3-Hinge Set,0,80,,X,,"1SlotConfig --> HingeSet
 0Slot-Hinge1of3
 0Slot-Hinge2of3
 0Slot-Hinge3of3",0Slot-Hinge1of3,"Hinge
 0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-Hinge2of3,"Hinge
+PRESET,,,,,,,,,,,,,0Slot-Hinge2of3,"Hinge
 0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-Hinge3of3,"Hinge
+PRESET,,,,,,,,,,,,,0Slot-Hinge3of3,"Hinge
 0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,"AssemblyHingeSet
@@ -72,16 +71,16 @@ Hinge
 0Slot-Hinge3of3
 Hinge
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyHingeSet,,"3-Hinge Set, Patrician Bronze",0,80,"(""IconDimX"",0),(""IconDimZ"",80)",,X,,"1SlotConfig --> HingeSet
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyHingeSet,,"3-Hinge Set, Patrician Bronze",0,80,,X,,"1SlotConfig --> HingeSet
 0Slot-Hinge1of3
 0Slot-Hinge2of3
 0Slot-Hinge3of3",0Slot-Hinge1of3,"Hinge
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-Hinge2of3,"Hinge
+PRESET,,,,,,,,,,,,,0Slot-Hinge2of3,"Hinge
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-Hinge3of3,"Hinge
+PRESET,,,,,,,,,,,,,0Slot-Hinge3of3,"Hinge
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyPanel
@@ -89,6 +88,8 @@ PRESET,,"AssemblyPanel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -97,27 +98,31 @@ PRESET,,"AssemblyPanel
 Panel
 0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
 1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural
-0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleUpperFixedXZ
 HandleStatic
 0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe",,AssemblyPanel,,Cabinet Panel With Upper Handle,24,36,"(""UndercutSizeZ"",0),(""IconDimX"",24),(""IconDimZ"",36)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,Cabinet Panel With Upper Handle,24,36,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidBottomRail",0Slot-Panel,"Panel
 0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
 1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXMidStileYOutsideZMidTopRail,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleUpperFixedXZ,"HandleStatic
 0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -128,25 +133,29 @@ Panel
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0Slot-HandleXMidStileYOutsideZMidBottomRail
 HandleStatic
-0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina",,AssemblyPanel,,Cabinet Panel With Lower Handle,24,36,"(""UndercutSizeZ"",0),(""IconDimX"",24),(""IconDimZ"",36)",,X,,"1SlotConfig --> Panel
+0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,Cabinet Panel With Lower Handle,24,36,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidBottomRail",0Slot-Panel,"Panel
 0Mesh-Cabinet-Panel-02.Cabinet-Panel-02'
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXMidStileYOutsideZMidBottomRail,"HandleStatic
-0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-HandleXMidStileYOutsideZMidBottomRail,"HandleStatic
+0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -157,20 +166,55 @@ Panel
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural
 0Slot-HandleXMidWidthYOutsideZMidHeight
 HandleStatic
-0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",,AssemblyPanel,,Cabinet Panel With Center Handle,24,36,"(""UndercutSizeZ"",0),(""IconDimX"",24),(""IconDimZ"",36)",,X,,"1SlotConfig --> Panel
+0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,Cabinet Panel With Center Handle,24,36,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidBottomRail",0Slot-Panel,"Panel
 0Mesh-Cabinet-Panel-03.Cabinet-Panel-03'
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXMidWidthYOutsideZMidHeight,"HandleStatic
-0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-HandleXMidWidthYOutsideZMidHeight,"HandleStatic
+0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,Cabinet Panel With Center Handle,24,36,,X,,"1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail",0Slot-Panel,"Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-HandleXMidWidthYOutsideZMidHeight,"HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
@@ -206,7 +250,7 @@ HandleStatic
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Barn Door Panel 1, Walnut",36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Barn Door Panel 1, Walnut",36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -223,16 +267,16 @@ HandleStatic
 0Slot-MailSlot",0Slot-Panel,"Panel
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-CasterBarnLeft,"Caster
+PRESET,,,,,,,,,,,,,0Slot-CasterBarnLeft,"Caster
 0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-CasterBarnRight,"Caster
+PRESET,,,,,,,,,,,,,0Slot-CasterBarnRight,"Caster
 0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
@@ -270,7 +314,7 @@ HandleStatic
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Barn Door Panel 2, Ash",36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Barn Door Panel 2, Ash",36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -287,16 +331,16 @@ HandleStatic
 0Slot-MailSlot",0Slot-Panel,"Panel
 0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-CasterBarnLeft,"Caster
+PRESET,,,,,,,,,,,,,0Slot-CasterBarnLeft,"Caster
 0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-CasterBarnRight,"Caster
+PRESET,,,,,,,,,,,,,0Slot-CasterBarnRight,"Caster
 0Mesh-Door-Caster-Barn-01.Door-Caster-Barn-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyPanel
@@ -326,7 +370,7 @@ HandleStatic
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Pocket Door Panel 1, Walnut",36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Pocket Door Panel 1, Walnut",36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -343,10 +387,10 @@ HandleStatic
 0Slot-MailSlot",0Slot-Panel,"Panel
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
@@ -376,7 +420,7 @@ HandleStatic
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Pocket Door Panel 1, Paint",36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Pocket Door Panel 1, Paint",36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -393,10 +437,10 @@ HandleStatic
 0Slot-MailSlot",0Slot-Panel,"Panel
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
@@ -426,7 +470,7 @@ HandleStatic
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Pocket Door Panel 2, Ash",36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Pocket Door Panel 2, Ash",36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -443,10 +487,10 @@ HandleStatic
 0Slot-MailSlot",0Slot-Panel,"Panel
 0Mesh-Door-Panel-Swing-03.Door-Panel-Swing-03'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXEdgeYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
@@ -477,7 +521,7 @@ HandleStatic
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,White Sliding Door Panel (Active),36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,White Sliding Door Panel (Active),36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -495,10 +539,10 @@ HandleStatic
 0Mesh-Door-Panel-Sliding-01.Door-Panel-Sliding-01'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
@@ -521,7 +565,7 @@ PRESET,,"AssemblyPanel
 Panel
 0Mesh-Door-Panel-Sliding-01.Door-Panel-Sliding-01'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,AssemblyPanel,,White Sliding Door Panel (Passive),36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,AssemblyPanel,,White Sliding Door Panel (Passive),36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -567,7 +611,7 @@ HandleStatic
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,Bronze Sliding Door Panel (Active),36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,Bronze Sliding Door Panel (Active),36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -585,10 +629,10 @@ HandleStatic
 0Mesh-Door-Panel-Sliding-02.Door-Panel-Sliding-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
@@ -611,7 +655,7 @@ PRESET,,"AssemblyPanel
 Panel
 0Mesh-Door-Panel-Sliding-02.Door-Panel-Sliding-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate",,AssemblyPanel,,Bronze Sliding Door Panel (Passive),36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate",,AssemblyPanel,,Bronze Sliding Door Panel (Passive),36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -665,7 +709,7 @@ LockDeadbolt
 0Slot-SurfaceLockLower
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,Mostly Glass Door Panel,36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,Mostly Glass Door Panel,36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -683,16 +727,16 @@ LockSurface
 0Mesh-Door-Panel-Swing-02.Door-Panel-Swing-02'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Lever-01.Door-Handle-Lever-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-Deadbolt,"LockDeadbolt
+PRESET,,,,,,,,,,,,,0Slot-Deadbolt,"LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-01.Door-Lock-Deadbolt-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-SurfaceLockLower,"LockSurface
+PRESET,,,,,,,,,,,,,0Slot-SurfaceLockLower,"LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Clasp-01.Door-Lock-SurfaceLatch-Clasp-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
@@ -727,7 +771,7 @@ HandleStatic
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,Vision Panel Swing Door Panel,36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,Vision Panel Swing Door Panel,36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -745,13 +789,13 @@ LockDeadbolt
 0Mesh-Door-Panel-Swing-06.Door-Panel-Swing-06'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-292D38-Indigo",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Lever-03.Door-Handle-Lever-03'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Lever-03.Door-Handle-Lever-03'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-Deadbolt,"LockDeadbolt
+PRESET,,,,,,,,,,,,,0Slot-Deadbolt,"LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
@@ -789,7 +833,7 @@ LockDeadbolt
 0Slot-SurfaceLockUpper
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Solid Swing Door Panel, Walnut",36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Solid Swing Door Panel, Walnut",36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -806,16 +850,16 @@ LockSurface
 0Slot-MailSlot",0Slot-Panel,"Panel
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Lever-02.Door-Handle-Lever-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-Deadbolt,"LockDeadbolt
+PRESET,,,,,,,,,,,,,0Slot-Deadbolt,"LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-SurfaceLockUpper,"LockSurface
+PRESET,,,,,,,,,,,,,0Slot-SurfaceLockUpper,"LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
@@ -853,7 +897,7 @@ LockDeadbolt
 0Slot-SurfaceLockLower
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Paneled Swing Door Panel, Ash",36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Paneled Swing Door Panel, Ash",36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -870,16 +914,16 @@ LockSurface
 0Slot-MailSlot",0Slot-Panel,"Panel
 0Mesh-Door-Panel-Swing-05.Door-Panel-Swing-05'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-Deadbolt,"LockDeadbolt
+PRESET,,,,,,,,,,,,,0Slot-Deadbolt,"LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-SurfaceLockLower,"LockSurface
+PRESET,,,,,,,,,,,,,0Slot-SurfaceLockLower,"LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyPanel
@@ -909,7 +953,7 @@ HandleStatic
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Solid Swing Door Panel, Paint, White",36,80,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Solid Swing Door Panel, Paint, White",36,80,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
@@ -926,10 +970,10 @@ HandleStatic
 0Slot-MailSlot",0Slot-Panel,"Panel
 0Mesh-Door-Panel-Swing-01.Door-Panel-Swing-01'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYInsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
+PRESET,,,,,,,,,,,,,0Slot-HandleXBacksetYOutsideZHandleHeight,"HandleStatic
 0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
@@ -941,7 +985,7 @@ PRESET,,"AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Fixed Window Panel 1, Aluminum, White",36,48,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",48)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Fixed Window Panel 1, Aluminum, White",36,48,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 0Slot-SurfaceLockLower
@@ -957,7 +1001,7 @@ PRESET,,"AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Fixed Window Panel 1, Aluminum, Patrician Bronze",36,48,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",48)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Fixed Window Panel 1, Aluminum, Patrician Bronze",36,48,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 0Slot-SurfaceLockLower
@@ -973,7 +1017,7 @@ PRESET,,"AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Fixed Window Panel 2, Aluminum, White",36,48,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",48)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Fixed Window Panel 2, Aluminum, White",36,48,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 0Slot-SurfaceLockLower
@@ -989,7 +1033,7 @@ PRESET,,"AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Fixed Window Panel 2, Aluminum, Patrician Bronze",36,48,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",48)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Fixed Window Panel 2, Aluminum, Patrician Bronze",36,48,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 0Slot-SurfaceLockLower
@@ -1005,7 +1049,7 @@ PRESET,,"AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Hung Window Panel, Aluminum, White",36,48,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",24)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Hung Window Panel, Aluminum, White",36,48,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 0Slot-SurfaceLockLower
@@ -1021,7 +1065,7 @@ PRESET,,"AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Hung Window Panel, Aluminum, Patrician Bronze",36,48,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",24)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Hung Window Panel, Aluminum, Patrician Bronze",36,48,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 0Slot-SurfaceLockLower
@@ -1041,14 +1085,14 @@ Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Hung Window Panel (With Lock), Aluminum, White",36,48,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",24)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyPanel,,"Hung Window Panel (With Lock), Aluminum, White",36,48,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 0Slot-SurfaceLockLower
 0Slot-SurfaceLockUpper",0Slot-Panel,"Panel
 0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-SurfaceLockXMiddleYInsideZTop,"LockSurface
+PRESET,,,,,,,,,,,,,0Slot-SurfaceLockXMiddleYInsideZTop,"LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
 PRESET,,"AssemblyPanel
@@ -1064,44 +1108,32 @@ Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Hung Window Panel (With Lock), Aluminum, Patrician Bronze",36,48,"(""UndercutSizeZ"",0.75),(""IconDimX"",36),(""IconDimZ"",24)",,X,,"1SlotConfig --> Panel
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyPanel,,"Hung Window Panel (With Lock), Aluminum, Patrician Bronze",36,48,,X,,"1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
 0Slot-SurfaceLockLower
 0Slot-SurfaceLockUpper",0Slot-Panel,"Panel
 0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-SurfaceLockXMiddleYInsideZTop,"LockSurface
+PRESET,,,,,,,,,,,,,0Slot-SurfaceLockXMiddleYInsideZTop,"LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1
 0Slot-Frame
 Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-0Slot-AssemblyHingeSetLeft
-AssemblyHingeSet
-1SlotConfig --> HingeSet
-0Slot-Hinge1of3
-0Slot-Hinge3of3
-0Slot-Hinge1of3
-Hinge
-0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0Slot-Hinge3of3
-Hinge
-0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0Slot-AssemblyPanelOverlay1of1
 AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -1110,32 +1142,21 @@ AssemblyPanel
 Panel
 0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
 1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural
-0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleUpperFixedXZ
 HandleStatic
 0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe",,AssemblyCabinetFace,,Single Swing (Lower),24in,36in,"(""UndercutSizeZ"",0.75),(""IconDimX"",24),(""IconDimZ"",36)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyCabinetFace,,Single Swing (Lower),24in,36in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1",0Slot-Frame,"Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
-1SlotConfig --> HingeSet
-0Slot-Hinge1of3
-0Slot-Hinge3of3
-0Slot-Hinge1of3
-Hinge
-0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0Slot-Hinge3of3
-Hinge
-0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -1144,38 +1165,26 @@ PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay1of1,"AssemblyPanel
 Panel
 0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
 1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural
-0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleUpperFixedXZ
 HandleStatic
 0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe",,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1
 0Slot-Frame
 Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-0Slot-AssemblyHingeSetLeft
-AssemblyHingeSet
-1SlotConfig --> HingeSet
-0Slot-Hinge1of3
-0Slot-Hinge3of3
-0Slot-Hinge1of3
-Hinge
-0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0Slot-Hinge3of3
-Hinge
-0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0Slot-AssemblyPanelOverlay1of1
 AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -1186,30 +1195,19 @@ Panel
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0Slot-HandleXMidStileYOutsideZMidBottomRail
 HandleStatic
-0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina",,AssemblyCabinetFace,,Single Swing (Upper),24in,36in,"(""IconDimX"",24),(""IconDimZ"",36)",,X,,"1SlotConfig --> Frame
+0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyCabinetFace,,Single Swing (Upper),24in,36in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1",0Slot-Frame,"Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
-1SlotConfig --> HingeSet
-0Slot-Hinge1of3
-0Slot-Hinge3of3
-0Slot-Hinge1of3
-Hinge
-0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
-0Slot-Hinge3of3
-Hinge
-0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -1220,12 +1218,11 @@ Panel
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0Slot-HandleXMidStileYOutsideZMidBottomRail
 HandleStatic
-0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina",,,,,,
+0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1
 0Slot-Frame
 Frame
@@ -1237,6 +1234,8 @@ AssemblyPanel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -1247,18 +1246,19 @@ Panel
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural
 0Slot-HandleXMidWidthYOutsideZMidHeight
 HandleStatic
-0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",,AssemblyCabinetFace,,Single Drawer,24in,36in,"(""IconDimX"",24),(""IconDimZ"",36)",,X,,"1SlotConfig --> Frame
+0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyCabinetFace,,Single Drawer,24in,36in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
 0Slot-AssemblyPanelOverlay1of1",0Slot-Frame,"Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -1269,8 +1269,8 @@ Panel
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural
 0Slot-HandleXMidWidthYOutsideZMidHeight
 HandleStatic
-0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",,,,,,
+0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
@@ -1286,6 +1286,8 @@ AssemblyPanel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -1296,14 +1298,16 @@ Panel
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural
 0Slot-HandleXMidWidthYOutsideZMidHeight
 HandleStatic
-0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen
+0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
 0Slot-AssemblyPanelOverlay2Vertical-2
 AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -1314,18 +1318,20 @@ Panel
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural
 0Slot-HandleXMidWidthYOutsideZMidHeight
 HandleStatic
-0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",,AssemblyCabinetFace,,Two Drawers,24in,36in,"(""IconDimX"",24),(""IconDimZ"",36)",,X,,"1SlotConfig --> Frame
+0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyCabinetFace,,Two Drawers,24in,36in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelOverlay2Vertical-1
 0Slot-AssemblyPanelOverlay2Vertical-2",0Slot-Frame,"Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay2Vertical-1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay2Vertical-1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -1336,13 +1342,15 @@ Panel
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural
 0Slot-HandleXMidWidthYOutsideZMidHeight
 HandleStatic
-0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay2Vertical-2,"AssemblyPanel
+0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay2Vertical-2,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
 0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
 0Slot-HandleXMidWidthYOutsideZMidHeight
 0Slot-HandleXMidStileYOutsideZMidTopRail
 0Slot-HandleXMidStileYOutsideZMidHeight
@@ -1353,8 +1361,540 @@ Panel
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural
 0Slot-HandleXMidWidthYOutsideZMidHeight
 HandleStatic
-0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",,,,,,
+0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,"AssemblyCabinetFace
+1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelOverlay3Vertical-1
+0Slot-AssemblyPanelOverlay3Vertical-2
+0Slot-AssemblyPanelOverlay3Vertical-3
+0Slot-Frame
+Frame
+0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-AssemblyPanelOverlay3Vertical-1
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+0Slot-AssemblyPanelOverlay3Vertical-2
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+0Slot-AssemblyPanelOverlay3Vertical-3
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyCabinetFace,,Three Drawers,24in,36in,,X,,"1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelOverlay3Vertical-1
+0Slot-AssemblyPanelOverlay3Vertical-2
+0Slot-AssemblyPanelOverlay3Vertical-3",0Slot-Frame,"Frame
+0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay3Vertical-1,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay3Vertical-2,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay3Vertical-3,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,"AssemblyCabinetFace
+1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelOverlay4Vertical-1
+0Slot-AssemblyPanelOverlay4Vertical-2
+0Slot-AssemblyPanelOverlay4Vertical-3
+0Slot-AssemblyPanelOverlay4Vertical-4
+0Slot-Frame
+Frame
+0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-AssemblyPanelOverlay4Vertical-1
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+0Slot-AssemblyPanelOverlay4Vertical-2
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+0Slot-AssemblyPanelOverlay4Vertical-3
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+0Slot-AssemblyPanelOverlay4Vertical-4
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyCabinetFace,,Four Drawers,24in,36in,,X,,"1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelOverlay4Vertical-1
+0Slot-AssemblyPanelOverlay4Vertical-2
+0Slot-AssemblyPanelOverlay4Vertical-3
+0Slot-AssemblyPanelOverlay4Vertical-4",0Slot-Frame,"Frame
+0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay4Vertical-1,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay4Vertical-2,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay4Vertical-3,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay4Vertical-4,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,"AssemblyCabinetFace
+1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelOverlay1Above2-1
+0Slot-AssemblyPanelOverlay1Above2-2
+0Slot-AssemblyPanelOverlay1Above2-3
+0Slot-Frame
+Frame
+0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-AssemblyPanelOverlay1Above2-1
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+0Slot-AssemblyPanelOverlay1Above2-2
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+0Slot-AssemblyPanelOverlay1Above2-3
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyCabinetFace,,One Drawer Over Two Doors,24in,36in,,X,,"1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelOverlay1Above2-1
+0Slot-AssemblyPanelOverlay1Above2-2
+0Slot-AssemblyPanelOverlay1Above2-3",0Slot-Frame,"Frame
+0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay1Above2-1,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay1Above2-2,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelOverlay1Above2-3,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,"AssemblyCabinetFace
+1SlotConfig --> Frame
+0Slot-FrameSliding
+0Slot-AssemblyPanelSlidingXX-1
+0Slot-AssemblyPanelSlidingXX-2
+0Slot-FrameSliding
+Frame
+0Mesh-Cabinet-Frame-Sliding-01.Cabinet-Frame-Sliding-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-AssemblyPanelSlidingXX-1
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+0Slot-AssemblyPanelSlidingXX-2
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyCabinetFace,,Two-Door Sliding,48in,36in,,X,,"1SlotConfig --> Frame
+0Slot-FrameSliding
+0Slot-AssemblyPanelSlidingXX-1
+0Slot-AssemblyPanelSlidingXX-2",0Slot-FrameSliding,"Frame
+0Mesh-Cabinet-Frame-Sliding-01.Cabinet-Frame-Sliding-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXX-1,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXX-2,"AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
+0Slot-HandleXMidWidthYOutsideZMidHeight
+HandleStatic
+0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
 PRESET,,"AssemblyDoor
 1SlotConfig --> Frame
 0Slot-Frame
@@ -1404,16 +1944,16 @@ HandleStatic
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,Single Barn Door,36in,80in,"(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,Single Barn Door,36in,80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-TrackBarnSingle
 0Slot-AssemblyPanelBarn1of1",0Slot-Frame,"Frame
 0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-TrackBarnSingle,"TrackBarn
+PRESET,,,,,,,,,,,,,0Slot-TrackBarnSingle,"TrackBarn
 0Mesh-Door-Track-Barn-01.Door-Track-Barn-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelBarn1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelBarn1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -1536,17 +2076,17 @@ HandleStatic
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyDoor,,"Double Barn Door, Ash",36in,80in,"(""IconDimX"",72),(""IconDimZ"",80)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyDoor,,"Double Barn Door, Ash",36in,80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-TrackBarnDouble
 0Slot-AssemblyPanelBarnLeft
 0Slot-AssemblyPanelBarnRight",0Slot-Frame,"Frame
 0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-TrackBarnDouble,"TrackBarn
+PRESET,,,,,,,,,,,,,0Slot-TrackBarnDouble,"TrackBarn
 0Mesh-Door-Track-Barn-02.Door-Track-Barn-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelBarnLeft,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelBarnLeft,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -1582,7 +2122,7 @@ HandleStatic
 HandleStatic
 0Mesh-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelBarnRight,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelBarnRight,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -1654,12 +2194,12 @@ HandleStatic
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,"Single Pocket Door, Paint, White",36in,80in,"(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,"Single Pocket Door, Paint, White",36in,80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelPocket1of1",0Slot-Frame,"Frame
 0Mesh-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelPocket1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelPocket1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -1753,13 +2293,13 @@ HandleStatic
 0Slot-HandleXEdgeYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,"Double Pocket Door, Walnut",72in,80in,"(""IconDimX"",72),(""IconDimZ"",80)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,"Double Pocket Door, Walnut",72in,80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelPocketLeft
 0Slot-AssemblyPanelPocketRight",0Slot-Frame,"Frame
 0Mesh-Door-Frame-Pocket-Double-01.Door-Frame-Pocket-Double-01'
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelPocketLeft,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelPocketLeft,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -1787,7 +2327,7 @@ HandleStatic
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelPocketRight,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelPocketRight,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -1875,13 +2415,13 @@ AssemblyPanel
 Panel
 0Mesh-Door-Panel-Sliding-01.Door-Panel-Sliding-01'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,AssemblyDoor,,Two Panel Sliding Door (Light),72in,80in,"(""IconDimX"",72),(""IconDimZ"",80)",,X,,"1SlotConfig --> Frame
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone",,AssemblyDoor,,Two Panel Sliding Door (Light),72in,80in,,X,,"1SlotConfig --> Frame
 0Slot-FrameSliding
 0Slot-AssemblyPanelSlidingXO-1
 0Slot-AssemblyPanelSlidingXO-2",0Slot-FrameSliding,"Frame
 0Mesh-Door-Frame-Sliding-TwoTrack-01.Door-Frame-Sliding-TwoTrack-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -1910,7 +2450,7 @@ HandleStatic
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-2,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-2,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -1991,13 +2531,13 @@ AssemblyPanel
 Panel
 0Mesh-Door-Panel-Sliding-02.Door-Panel-Sliding-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-2B3033-Quaker
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate",,AssemblyDoor,,Two Panel Sliding Door (Dark),72in,80in,"(""IconDimX"",72),(""IconDimZ"",80)",,X,,"1SlotConfig --> Frame
+1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate",,AssemblyDoor,,Two Panel Sliding Door (Dark),72in,80in,,X,,"1SlotConfig --> Frame
 0Slot-FrameSliding
 0Slot-AssemblyPanelSlidingXO-1
 0Slot-AssemblyPanelSlidingXO-2",0Slot-FrameSliding,"Frame
 0Mesh-Door-Frame-Sliding-TwoTrack-01.Door-Frame-Sliding-TwoTrack-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -2026,7 +2566,7 @@ HandleStatic
 HandleStatic
 0Mesh-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-2,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-2,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -2050,15 +2590,15 @@ Panel
 PRESET,,"AssemblyDoor
 1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
-0Slot-AssemblyHingeSetRight
+0Slot-AssemblyHingeSetInsetLeft
+0Slot-AssemblyHingeSetInsetRight
 0Slot-AssemblyPanelSwingLeft
 0Slot-AssemblyPanelSwingRight
 0Slot-Frame
 Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
-0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetInsetLeft
 AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -2076,7 +2616,7 @@ Hinge
 Hinge
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
-0Slot-AssemblyHingeSetRight
+0Slot-AssemblyHingeSetInsetRight
 AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -2167,15 +2707,15 @@ LockDeadbolt
 0Slot-SurfaceLockLower
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyDoor,,"Double Swing Door, Ash",72in,80in,"(""IconDimX"",72),(""IconDimZ"",80)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyDoor,,"Double Swing Door, Ash",72in,80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
-0Slot-AssemblyHingeSetRight
+0Slot-AssemblyHingeSetInsetLeft
+0Slot-AssemblyHingeSetInsetRight
 0Slot-AssemblyPanelSwingLeft
 0Slot-AssemblyPanelSwingRight",0Slot-Frame,"Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
+PRESET,,,,,,,,,,,,,0Slot-AssemblyHingeSetInsetLeft,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
 0Slot-Hinge2of3
@@ -2192,7 +2732,7 @@ Hinge
 Hinge
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyHingeSetRight,"AssemblyHingeSet
+PRESET,,,,,,,,,,,,,0Slot-AssemblyHingeSetInsetRight,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
 0Slot-Hinge2of3
@@ -2209,7 +2749,7 @@ Hinge
 Hinge
 0Mesh-Door-Hinge-Swing-01.Door-Hinge-Swing-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSwingLeft,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSwingLeft,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -2245,7 +2785,7 @@ LockDeadbolt
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSwingRight,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSwingRight,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -2284,13 +2824,13 @@ LockSurface
 PRESET,,"AssemblyDoor
 1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetInsetLeft
 0Slot-AssemblyPanelSwing1of1
 0Slot-Frame
 Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite
-0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetInsetLeft
 AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -2336,13 +2876,13 @@ HandleStatic
 0Slot-HandleXBacksetYOutsideZHandleHeight
 HandleStatic
 0Mesh-Door-Handle-Lever-31.Door-Handle-Lever-31'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,"Solid Swing Door, Paint, White",36in*(# of Panel children),80in,"(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,"Solid Swing Door, Paint, White",36in*(# of Panel children),80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetInsetLeft
 0Slot-AssemblyPanelSwing1of1",0Slot-Frame,"Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
+PRESET,,,,,,,,,,,,,0Slot-AssemblyHingeSetInsetLeft,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
 0Slot-Hinge2of3
@@ -2359,7 +2899,7 @@ Hinge
 Hinge
 0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSwing1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSwing1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -2390,13 +2930,13 @@ HandleStatic
 PRESET,,"AssemblyDoor
 1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetInsetLeft
 0Slot-AssemblyPanelSwing1of1
 0Slot-Frame
 Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
-0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetInsetLeft
 AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
@@ -2450,13 +2990,13 @@ LockDeadbolt
 0Slot-SurfaceLockUpper
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,"Solid Swing Door, Walnut",36in*(# of Panel children),80in,"(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,"Solid Swing Door, Walnut",36in*(# of Panel children),80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetInsetLeft
 0Slot-AssemblyPanelSwing1of1",0Slot-Frame,"Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
+PRESET,,,,,,,,,,,,,0Slot-AssemblyHingeSetInsetLeft,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
 0Slot-Hinge2of3
@@ -2473,7 +3013,7 @@ Hinge
 Hinge
 0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSwing1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSwing1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -2512,7 +3052,7 @@ LockSurface
 PRESET,,"AssemblyDoor
 1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetInsetLeft
 0Slot-AssemblyPanelSwing1of1
 Frame
 0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
@@ -2569,13 +3109,13 @@ LockDeadbolt
 0Slot-SurfaceLockLower
 LockSurface
 0Mesh-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyDoor,,"Paneled Swing Door, Ash",36in*(# of Panel children),80in,"(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyDoor,,"Paneled Swing Door, Ash",36in*(# of Panel children),80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetInsetLeft
 0Slot-AssemblyPanelSwing1of1",0Slot-Frame,"Frame
 0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
+PRESET,,,,,,,,,,,,,0Slot-AssemblyHingeSetInsetLeft,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
 0Slot-Hinge2of3
@@ -2592,7 +3132,7 @@ Hinge
 Hinge
 0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSwing1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSwing1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -2631,7 +3171,7 @@ LockSurface
 PRESET,,"AssemblyDoor
 1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetInsetLeft
 0Slot-AssemblyPanelSwing1of1
 Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
@@ -2685,13 +3225,13 @@ HandleStatic
 0Slot-Deadbolt
 LockDeadbolt
 0Mesh-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,Vision Panel Swing Door,36in*(# of Panel children),80in,"(""IconDimX"",36),(""IconDimZ"",80)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyDoor,,Vision Panel Swing Door,36in*(# of Panel children),80in,,X,,"1SlotConfig --> Frame
 0Slot-Frame
-0Slot-AssemblyHingeSetLeft
+0Slot-AssemblyHingeSetInsetLeft
 0Slot-AssemblyPanelSwing1of1",0Slot-Frame,"Frame
 0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'
 1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyHingeSetLeft,"AssemblyHingeSet
+PRESET,,,,,,,,,,,,,0Slot-AssemblyHingeSetInsetLeft,"AssemblyHingeSet
 1SlotConfig --> HingeSet
 0Slot-Hinge1of3
 0Slot-Hinge2of3
@@ -2708,7 +3248,7 @@ Hinge
 Hinge
 0Mesh-Door-Hinge-Swing-02.Door-Hinge-Swing-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSwing1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSwing1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-CasterBarnLeft
@@ -2757,12 +3297,12 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyWindow,,Fixed Window 1,,,"(""IconDimX"",36),(""IconDimZ"",48)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyWindow,,Fixed Window 1,,,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelFixed1of1",0Slot-Frame,"Frame
 0Mesh-Window-Frame-Fixed-01.Window-Frame-Fixed-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelFixed1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelFixed1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -2788,12 +3328,12 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,"Fixed Window 1, Patrician Bronze",,,"(""IconDimX"",36),(""IconDimZ"",48)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,"Fixed Window 1, Patrician Bronze",,,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelFixed1of1",0Slot-Frame,"Frame
 0Mesh-Window-Frame-Fixed-01.Window-Frame-Fixed-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelFixed1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelFixed1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -2819,12 +3359,12 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyWindow,,Fixed Window 2,,,"(""IconDimX"",36),(""IconDimZ"",48)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyWindow,,Fixed Window 2,,,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelFixed1of1",0Slot-Frame,"Frame
 0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelFixed1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelFixed1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -2850,12 +3390,12 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,Fixed Window 2. Patrician Bronze,,,"(""IconDimX"",36),(""IconDimZ"",48)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,Fixed Window 2. Patrician Bronze,,,,X,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelFixed1of1",0Slot-Frame,"Frame
 0Mesh-Window-Frame-Fixed-02.Window-Frame-Fixed-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelFixed1of1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelFixed1of1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -2882,13 +3422,13 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyWindow,,Hung Window 1,,,"(""IconDimX"",36),(""IconDimZ"",48)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,AssemblyWindow,,Hung Window 1,,,,X,,"1SlotConfig --> Frame
 0Slot-FrameSliding
 0Slot-AssemblyPanelHung1of2
 0Slot-AssemblyPanelHung2of2",0Slot-FrameSliding,"Frame
 0Mesh-Window-Frame-Hung-01.Window-Frame-Hung-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelHung1of2,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelHung1of2,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -2898,7 +3438,7 @@ PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelHung1of2,"AssemblyPanel
 Panel
 0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelHung2of2,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelHung2of2,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -2929,13 +3469,13 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,"Hung Window 1, Patrician Bronze",,,"(""IconDimX"",36),(""IconDimZ"",48)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,"Hung Window 1, Patrician Bronze",,,,X,,"1SlotConfig --> Frame
 0Slot-FrameSliding
 0Slot-AssemblyPanelHung1of2
 0Slot-AssemblyPanelHung2of2",0Slot-FrameSliding,"Frame
 0Mesh-Window-Frame-Hung-02.Window-Frame-Hung-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelHung1of2,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelHung1of2,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -2945,7 +3485,7 @@ PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelHung1of2,"AssemblyPanel
 Panel
 0Mesh-Window-Panel-Sliding-01.Window-Panel-Sliding-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelHung2of2,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelHung2of2,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -2976,13 +3516,13 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,Sliding Window (XO),,,"(""IconDimX"",48),(""IconDimZ"",48)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,Sliding Window (XO),,,,X,,"1SlotConfig --> Frame
 0Slot-FrameSliding
 0Slot-AssemblyPanelSlidingXO-1
 0Slot-AssemblyPanelSlidingXO-2",0Slot-FrameSliding,"Frame
 0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -2992,7 +3532,7 @@ PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-1,"AssemblyPanel
 Panel
 0Mesh-Window-Panel-Fixed-01.Window-Panel-Fixed-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-2,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXO-2,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -3043,13 +3583,13 @@ AssemblyPanel
 0Slot-Panel
 Panel
 0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,Sliding Window (XOX),,,"(""IconDimX"",60),(""IconDimZ"",48)",,X,,"1SlotConfig --> Frame
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,AssemblyWindow,,Sliding Window (XOX),,,,X,,"1SlotConfig --> Frame
 0Slot-FrameSliding
 0Slot-AssemblyPanelSlidingXOX-1
 0Slot-AssemblyPanelSlidingXOX-2",0Slot-FrameSliding,"Frame
 0Mesh-Window-Frame-Sliding-01.Window-Frame-Sliding-01'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXOX-1,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXOX-1,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -3059,7 +3599,7 @@ PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXOX-1,"AssemblyPanel
 Panel
 0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXOX-2,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXOX-2,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -3069,7 +3609,7 @@ PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXOX-2,"AssemblyPanel
 Panel
 0Mesh-Window-Panel-Fixed-02.Window-Panel-Fixed-02'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXOX-3,"AssemblyPanel
+PRESET,,,,,,,,,,,,,0Slot-AssemblyPanelSlidingXOX-3,"AssemblyPanel
 1SlotConfig --> Panel
 0Slot-Panel
 0Slot-SurfaceLockXMiddleYInsideZTop
@@ -3105,7 +3645,7 @@ Chair
 0Slot-ChairAtTable1+1+1+1-4
 Chair
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyFFESet,,Table with 4 Chairs,,,,,X,,"1SlotConfig --> FFESet
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyFFESet,,Table with 4 Chairs,,,,X,,"1SlotConfig --> FFESet
 0Slot-TableInTableAndChairs
 0Slot-ChairAtTable1+1+1+1-1
 0Slot-ChairAtTable1+1+1+1-2
@@ -3113,16 +3653,16 @@ Chair
 0Slot-ChairAtTable1+1+1+1-4",0Slot-TableInTableAndChairs,"Table
 0Mesh-remade/FFE-Table-Dining-4/FFE-Table-Dining-4-Merged.FFE-Table-Dining-4-Merged'
 1Material --> Stone --> Marble-0RawMaterial-Marble (Calacatta)-0Color --> Abstract-FFFFFF-White",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-1,"Chair
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-1,"Chair
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-2,"Chair
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-2,"Chair
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-3,"Chair
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-3,"Chair
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-4,"Chair
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+1+1+1-4,"Chair
 0Mesh-remade/FFE-Chair-Dining-01/FFE-Chair-Dining-01-Merged.FFE-Chair-Dining-01-Merged'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
 PRESET,,"AssemblyFFESet
@@ -3161,7 +3701,7 @@ Chair
 0Slot-ChairAtTable1+2+1+2-6
 Chair
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyFFESet,,Table with 6 Chairs,,,,,,,"1SlotConfig --> FFESet
+1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,AssemblyFFESet,,Table with 6 Chairs,,,,,,"1SlotConfig --> FFESet
 0Slot-TableInTableAndChairs
 0Slot-ChairAtTable1+2+1+2-1
 0Slot-ChairAtTable1+2+1+2-2
@@ -3171,21 +3711,21 @@ Chair
 0Slot-ChairAtTable1+2+1+2-6",0Slot-TableInTableAndChairs,"Table
 0Mesh-remade/FFE-Table-Dining-1/FFE-Table-Dining-1.FFE-Table-Dining-1'
 1Material --> Stone --> Granite-0RawMaterial-Granite (Brown 1)-0Color --> Abstract-FFFFFF-White",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-ChairAtTable1+2+1+2-1,"Chair
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+2+1+2-1,"Chair
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-ChairAtTable1+2+1+2-2,"Chair
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+2+1+2-2,"Chair
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-ChairAtTable1+2+1+2-3,"Chair
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+2+1+2-3,"Chair
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-ChairAtTable1+2+1+2-4,"Chair
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+2+1+2-4,"Chair
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-ChairAtTable1+2+1+2-5,"Chair
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+2+1+2-5,"Chair
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,
-PRESET,,,,,,,,,,,,,,0Slot-ChairAtTable1+2+1+2-6,"Chair
+PRESET,,,,,,,,,,,,,0Slot-ChairAtTable1+2+1+2-6,"Chair
 0Mesh-remade/FFE-Chair-Dining-02/FFE-Chair-Dining-02.FFE-Chair-Dining-02'
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted",,,,,,

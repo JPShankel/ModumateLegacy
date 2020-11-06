@@ -11,50 +11,56 @@ PRESET,,"Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural",,Frame,,"Face Frame, Ash, Natural",,,0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01',1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
 PRESET,,"Frame
+0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,Frame,,"Face Frame, Paint, Gentle White",,,0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01',1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
+PRESET,,"Frame
 0Mesh-Cabinet-Frame-Frameless-01.Cabinet-Frame-Frameless-01'
 1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural",,Frame,,"""Frameless"" Frame, Bamboo, Natural",,,0Mesh-Cabinet-Frame-Frameless-01.Cabinet-Frame-Frameless-01',1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
+PRESET,,"Frame
+0Mesh-Cabinet-Frame-Sliding-01.Cabinet-Frame-Sliding-01'
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,Frame,,"Sliding Frame, Paint, Gentle White",,,0Mesh-Cabinet-Frame-Sliding-01.Cabinet-Frame-Sliding-01',1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BD9C2B-Gold",,HandleStatic,,"Knob Handle 1, Aluminum, Gold",,,0Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BD9C2B-Gold,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Knob Handle 1, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe",,HandleStatic,,"Knob Handle 2, Aluminum, Taupe",,,0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-BEA883-Taupe,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Knob Handle 2, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Knob-02.Cabinet-Handle-Knob-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Knob-03.Cabinet-Handle-Knob-03'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-81B46F-SpringHill",,HandleStatic,,"Knob Handle 3, Aluminum, Spring Hill",,,0Mesh-Cabinet-Handle-Knob-03.Cabinet-Handle-Knob-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-81B46F-SpringHill,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Knob Handle 3, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Knob-03.Cabinet-Handle-Knob-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina",,HandleStatic,,"Knob Handle 4, Aluminum, Patina",,,0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Knob Handle 4, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01'
-1Material --> Metal --> Copper-0RawMaterial-Copper-0Color --> Metal --> Aluminum-FFFFFF-PureWhite",,HandleStatic,,"Pull Handle 1, Copper, Pure White",,,0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01',1Material --> Metal --> Copper-0RawMaterial-Copper-0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Pull Handle 1, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Pull-01.Cabinet-Handle-Pull-01',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina",,HandleStatic,,"Pull Handle 2, Aluminum, Patina",,,0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-526D4A-Patina,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Pull Handle 2, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Pull-02.Cabinet-Handle-Pull-02',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-1F4D29-Olive",,HandleStatic,,"Pull Handle 3, Aluminum, Olive",,,0Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-1F4D29-Olive,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Pull Handle 3, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen",,HandleStatic,,"Pull Handle 4, Aluminum, Sea Green",,,0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-005337-SeaGreen,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Pull Handle 4, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Pull-04.Cabinet-Handle-Pull-04',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-05.Cabinet-Handle-Pull-05'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-003A21-Jungle",,HandleStatic,,"Pull Handle 5, Aluminum, Jungle",,,0Mesh-Cabinet-Handle-Pull-05.Cabinet-Handle-Pull-05',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-003A21-Jungle,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Pull Handle 5, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Pull-05.Cabinet-Handle-Pull-05',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-013119-Forest",,HandleStatic,,"Pull Handle 6, Aluminum, Forest",,,0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-013119-Forest,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Pull Handle 6, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-07.Cabinet-Handle-Pull-07'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-00280D-Edwardian",,HandleStatic,,"Pull Handle 7, Aluminum, Edwardian",,,0Mesh-Cabinet-Handle-Pull-07.Cabinet-Handle-Pull-07',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-00280D-Edwardian,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Pull Handle 7, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Pull-07.Cabinet-Handle-Pull-07',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-08.Cabinet-Handle-Pull-08'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-4AA7B9-Aqua",,HandleStatic,,"Pull Handle 8, Aluminum, Aqua",,,0Mesh-Cabinet-Handle-Pull-08.Cabinet-Handle-Pull-08',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-4AA7B9-Aqua,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Pull Handle 8, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Pull-08.Cabinet-Handle-Pull-08',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-0084AB-Harbor",,HandleStatic,,"Pull Handle 9, Aluminum, Harbor",,,0Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-0084AB-Harbor,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Pull Handle 9, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"HandleStatic
 0Mesh-Cabinet-Handle-Pull-10.Cabinet-Handle-Pull-10'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-657189-Legacy",,HandleStatic,,"Pull Handle 10, Aluminum, Legacy",,,0Mesh-Cabinet-Handle-Pull-10.Cabinet-Handle-Pull-10',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-657189-Legacy,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",,HandleStatic,,"Pull Handle 10, Aluminum, Patrician Bronze",,,0Mesh-Cabinet-Handle-Pull-10.Cabinet-Handle-Pull-10',1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,X,,,,,
 PRESET,,"Panel
 0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
 1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural",,Panel,,"Slab Panel, Beech, Natural",,,0Mesh-Cabinet-Panel-01.Cabinet-Panel-01',1Material --> Wood --> Beech-0RawMaterial-Beech-0Color --> Wood --> Beech-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
@@ -66,7 +72,7 @@ PRESET,,"Panel
 1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural",,Panel,,"Slab Panel, Raised Edges, Cedar (Western Red), Natural",,,0Mesh-Cabinet-Panel-03.Cabinet-Panel-03',1Material --> Wood --> Cedar - Western Red-0RawMaterial-Cedar (Western Red)-0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
 PRESET,,"Panel
 0Mesh-Cabinet-Panel-04.Cabinet-Panel-04'
-1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural",,Panel,,"Raised Panel, Cedar (White), Natural",,,0Mesh-Cabinet-Panel-04.Cabinet-Panel-04',1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
+1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite",,Panel,,"Raised Panel, Paint, Gentle White",,,0Mesh-Cabinet-Panel-04.Cabinet-Panel-04',1Material --> Spread --> Paint-0RawMaterial-Paint-0Color --> Spread --> Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
 PRESET,,"Panel
 0Mesh-Cabinet-Panel-05.Cabinet-Panel-05'
 1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Wood --> Maple-FFFFFF-Natural",,Panel,,"Glass Panel, Maple, Natural",,,0Mesh-Cabinet-Panel-05.Cabinet-Panel-05',1Material --> Wood --> Maple-0RawMaterial-Maple-0Color --> Wood --> Maple-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,X,,,,
