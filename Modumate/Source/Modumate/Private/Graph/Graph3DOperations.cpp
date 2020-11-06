@@ -1060,12 +1060,6 @@ namespace Modumate
 			}
 		}
 
-		// no edges added
-		if (existingStartEdge != nullptr && existingEndEdge != nullptr)
-		{
-			return false;
-		}
-
 		if (!GetDeltaForFaceVertexAddition(edge->ID, MOD_ID_NONE, vertexID, OutDelta))
 		{
 			return false;
