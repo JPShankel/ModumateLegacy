@@ -1023,24 +1023,14 @@ FTransform FModumateObjectInstance::GetWorldTransform() const
 	return Implementation->GetWorldTransform();
 }
 
-bool FModumateObjectInstance::HasProperty(EBIMValueScope Scope, const FBIMNameType &Name) const
-{
-	return GetDataState_DEPRECATED().ObjectProperties.HasProperty(Scope, Name);
-}
-
-FModumateCommandParameter FModumateObjectInstance::GetProperty(EBIMValueScope Scope, const FBIMNameType &Name) const
-{
-	return GetDataState_DEPRECATED().ObjectProperties.GetProperty(Scope, Name);
-}
-
 const FBIMPropertySheet &FModumateObjectInstance::GetProperties() const
 {
 	return GetDataState_DEPRECATED().ObjectProperties;
 }
 
-void FModumateObjectInstance::SetProperty(EBIMValueScope Scope, const FBIMNameType &Name, const FModumateCommandParameter &Param)
+FBIMPropertySheet& FModumateObjectInstance::GetPropertiesNonConst()
 {
-	GetDataState_DEPRECATED().ObjectProperties.SetProperty(Scope, Name, Param);
+	return GetDataState_DEPRECATED().ObjectProperties;
 }
 
 void FModumateObjectInstance::SetAllProperties(const FBIMPropertySheet &NewProperties)
@@ -1062,7 +1052,7 @@ FMOIDataRecord_DEPRECATED FModumateObjectInstance::AsDataRecord_DEPRECATED() con
 	ret.UVAnchor = FVector::ZeroVector;
 	ret.ControlIndices = CurrentState_DEPRECATED.ControlIndices;
 	ret.Extents = CurrentState_DEPRECATED.Extents;
-	CurrentState_DEPRECATED.ObjectProperties.ToStringMap(ret.ObjectProperties);
+	CurrentState_DEPRECATED.ObjectProperties.ToStringMap_DEPRECATED(ret.ObjectProperties);
 	ret.ObjectInverted = CurrentState_DEPRECATED.bObjectInverted;
 	return ret;
 }

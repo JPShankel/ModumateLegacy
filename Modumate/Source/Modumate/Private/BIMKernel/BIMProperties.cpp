@@ -5,49 +5,9 @@
 
 struct MODUMATE_API FBIMPropertySheetRecord;
 
-
-FBIMPropertyValue::FBIMPropertyValue(EBIMValueScope InScope, EBIMValueType InType, const FBIMNameType &InName) :
+FBIMPropertyKey::FBIMPropertyKey(EBIMValueScope InScope, const FBIMNameType& InName) :
 	Scope(InScope),
-	Type(InType),
-	Name(InName),
-	Value(0)
-{}
-
-FBIMPropertyValue::FBIMPropertyValue(EBIMValueScope InScope, EBIMValueType InType, const FBIMNameType &InName, const FValue &InValue) :
-	Scope(InScope),
-	Type(InType),
-	Name(InName),
-	Value(InValue)
-{}
-
-FBIMPropertyValue::FBIMPropertyValue(EBIMValueType InType, const FBIMNameType &InQN) : Type(InType), Value(0)
-{
-	if (InQN.IsNone())
-	{
-		Scope = EBIMValueScope::None;
-		Name = NAME_None;
-	}
-	else
-	{
-		TArray<FString> split;
-		InQN.ToString().ParseIntoArray(split, TEXT("."));
-		if (ensureAlways(split.Num() == 2))
-		{
-			Scope = BIMValueScopeFromName(*split[0]);
-			Name = *split[1];
-		}
-	}
-}
-
-FBIMPropertyValue::FBIMPropertyValue(EBIMValueType InType, const FBIMNameType &InQN, const FValue &InValue) : FBIMPropertyValue(InType,InQN)
-{
-	Value = InValue;
-}
-
-FBIMPropertyValue::FBIMPropertyValue(const FBIMNameType &InQN) : FBIMPropertyValue(EBIMValueType::None, InQN)
-{}
-
-FBIMPropertyValue::FBIMPropertyValue(const FBIMNameType &InQN, const FValue &InValue) : FBIMPropertyValue(EBIMValueType::None, InQN, InValue)
+	Name(InName)
 {}
 
 FBIMNameType BIMNameFromValueType(EBIMValueType InValueType)
@@ -70,107 +30,185 @@ EBIMValueScope BIMValueScopeFromName(const FBIMNameType &InName)
 	return EnumValueByString(EBIMValueScope, InName.ToString());
 }
 
-FBIMNameType FBIMPropertyValue::QN() const
+FBIMPropertyKey::FBIMPropertyKey(const FBIMNameType& InQN)
+{
+	TArray<FString> parts;
+	InQN.ToString().ParseIntoArray(parts, TEXT("."));
+	if (ensureAlways(parts.Num() == 2))
+	{
+		Scope = BIMValueScopeFromName(*parts[0]);
+		Name = *parts[1];
+	}
+}
+
+FBIMNameType FBIMPropertyKey::QN() const
 {
 	return *FString::Printf(TEXT("%s.%s"), *BIMNameFromValueScope(Scope).ToString(),*(Name.ToString()));
 }
 
-FBIMPropertyValue::FValue FBIMPropertySheet::GetProperty(EBIMValueScope InScope, const FBIMNameType &InName) const
+bool FBIMPropertySheet::FromDataRecord(const FBIMPropertySheetRecord &InRecord)
 {
-	return FModumateFunctionParameterSet::GetValue(FBIMPropertyValue(InScope, EBIMValueType::None, InName).QN().ToString());
+	StringMap.Reset();
+	NumberMap.Reset();
+	return FromStringMap_DEPRECATED(InRecord.Properties);
 }
 
-void FBIMPropertySheet::SetProperty(EBIMValueScope InScope, const FBIMNameType &InName, const FBIMPropertyValue::FValue &InParam)
+// TODO: replace this jankiness with direct serialization of internal type maps
+bool FBIMPropertySheet::ToStringMap_DEPRECATED(TMap<FString, FString>& OutMap) const
 {
-	FBIMNameType QN = FBIMPropertyValue(InScope, EBIMValueType::None, InName).QN();
-	FModumateFunctionParameterSet::SetValue(QN.ToString(), InParam);
-	TArray<FBIMNameType> *boundProps = PropertyBindings.Find(QN);
-	if (boundProps != nullptr)
+	for (auto& kvp : NumberMap)
 	{
-		for (auto &prop : *boundProps)
+		FString key = FString::Printf(TEXT("NUMBER:%s"), *kvp.Key.ToString());
+		FString value = FString::Printf(TEXT("%f"), kvp.Value);
+		OutMap.Add(key, value);
+	}
+
+	for (auto& kvp : StringMap)
+	{
+		FString key = FString::Printf(TEXT("STRING:%s"), *kvp.Key.ToString());
+		OutMap.Add(key, kvp.Value);
+	}
+	return true;
+}
+
+bool FBIMPropertySheet::FromStringMap_DEPRECATED(const TMap<FString, FString>& InMap)
+{
+	static const FString numberK = TEXT("NUMBER");
+	static const FString stringK = TEXT("STRING");
+
+	for (auto& kvp : InMap)
+	{
+		FString key = kvp.Key;
+		int32 index;
+		if (ensureAlways(key.FindChar(TCHAR(':'), index)))
 		{
-			FBIMPropertyValue vs(prop);
-			FModumateFunctionParameterSet::SetValue(vs.QN().ToString(), InParam);
+			FString type = key.Left(index);
+			if (type.Equals(numberK))
+			{
+				key = key.Right(key.Len()-index-1);
+				NumberMap.Add(*key, FCString::Atof(*kvp.Value));
+			}
+			else if (type.Equals(stringK))
+			{
+				key = key.Right(key.Len()-index-1);
+				StringMap.Add(*key, kvp.Value);
+			}
 		}
 	}
+	return true;
 }
 
-bool FBIMPropertySheet::HasProperty(EBIMValueScope InScope, const FBIMNameType &InName) const
+bool FBIMPropertySheet::Matches(const FBIMPropertySheet& PropSheet) const
 {
-	return FModumateFunctionParameterSet::HasValue(FBIMPropertyValue(InScope, EBIMValueType::None, InName).QN().ToString());
-}
-
-void FBIMPropertySheet::RemoveProperty(EBIMValueScope InScope, const FBIMNameType &InName)
-{
-	FBIMNameType QN = FBIMPropertyValue(InScope, EBIMValueType::None, InName).QN();
-	PropertyBindings.Remove(QN);
-	FModumateFunctionParameterSet::Remove(QN.ToString());
-}
-
-bool FBIMPropertySheet::BindProperty(EBIMValueScope SourceScope, const FBIMNameType &SourceName, EBIMValueScope TargetScope, const FBIMNameType &TargetName)
-{
-	// Bound properties cannot pre-exist with their own values
-	if (HasProperty(TargetScope, TargetName))
+	if (StringMap.Num() != PropSheet.StringMap.Num())
 	{
 		return false;
 	}
 
-	// The source for a bound property must exist
-	if (!HasProperty(SourceScope, SourceName))
+	if (NumberMap.Num() != PropSheet.NumberMap.Num())
 	{
 		return false;
 	}
 
-	SetProperty(TargetScope, TargetName, GetProperty(SourceScope,SourceName));
-			
-	FBIMPropertyValue source(SourceScope, EBIMValueType::None, SourceName);
-	FBIMPropertyValue target(TargetScope, EBIMValueType::None, TargetName);
-
-	TArray<FBIMNameType> &targets = PropertyBindings.FindOrAdd(source.QN());
-	if (!targets.Contains(target.QN()))
+	for (auto& kvp : StringMap)
 	{
-		targets.Add(target.QN());
+		const FString* theirString = PropSheet.StringMap.Find(kvp.Key);
+		if (theirString == nullptr || !theirString->Equals(kvp.Value))
+		{
+			return false;
+		}
+	}
+
+	for (auto& kvp : NumberMap)
+	{
+		const float* theirNum = PropSheet.NumberMap.Find(kvp.Key);
+		if (theirNum == nullptr || !FMath::IsNearlyEqual(kvp.Value,*theirNum))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+EBIMResult FBIMPropertySheet::AddProperties(const FBIMPropertySheet& PropSheet)
+{
+	for (auto& kvp : PropSheet.StringMap)
+	{
+		StringMap.Add(kvp.Key, kvp.Value);
+	}
+	for (auto& kvp : PropSheet.NumberMap)
+	{
+		NumberMap.Add(kvp.Key, kvp.Value);
+	}
+	return EBIMResult::Success;
+}
+
+bool FBIMPropertySheet::ToDataRecord(FBIMPropertySheetRecord &OutRecord) const
+{
+	return ToStringMap_DEPRECATED(OutRecord.Properties);
+}
+
+template<>
+bool FBIMPropertySheet::TryGetProperty<FName>(EBIMValueScope InScope, const FBIMNameType& InName, FName& OutT) const
+{
+	FString stringKey;
+	if (TryGetProperty<FString>(InScope, InName, stringKey))
+	{
+		OutT = *stringKey;
 		return true;
 	}
 	return false;
 }
 
-bool FBIMPropertySheet::FromDataRecord(const FBIMPropertySheetRecord &InRecord)
+template<>
+bool FBIMPropertySheet::TryGetProperty<FBIMKey>(EBIMValueScope InScope, const FBIMNameType& InName, FBIMKey& OutT) const
 {
-	Empty();
-	PropertyBindings.Empty();
-
-	if (!ensureAlways(InRecord.BindingSources.Num() == InRecord.BindingTargets.Num()))
+	FString stringKey;
+	if (TryGetProperty<FString>(InScope, InName, stringKey))
 	{
-		return false;
+		OutT = FBIMKey(stringKey);
+		return true;
 	}
-
-	FromStringMap(InRecord.Properties);
-
-	for (int32 i = 0; i < InRecord.BindingSources.Num(); ++i)
-	{
-		FBIMPropertyValue source(InRecord.BindingSources[i]);
-		FBIMPropertyValue target(InRecord.BindingTargets[i]);
-		TArray<FBIMNameType> &targets = PropertyBindings.FindOrAdd(source.QN());
-		targets.Add(target.QN());
-	}
-
-	return true;
+	return false;
 }
 
-bool FBIMPropertySheet::ToDataRecord(FBIMPropertySheetRecord &OutRecord) const
+template<>
+bool FBIMPropertySheet::TryGetProperty<FText>(EBIMValueScope InScope, const FBIMNameType& InName, FText& OutT) const
 {
-	ToStringMap(OutRecord.Properties);
-	for (auto &sourceProp : PropertyBindings)
+	FString stringKey;
+	if (TryGetProperty<FString>(InScope, InName, stringKey))
 	{
-		for (auto &targetProp : sourceProp.Value)
-		{
-			OutRecord.BindingSources.Add(sourceProp.Key);
-			OutRecord.BindingTargets.Add(targetProp);
-		}
+		OutT = FText::FromString(stringKey);
+		return true;
 	}
-	return true;
+	return false;
 }
+
+template<>
+bool FBIMPropertySheet::TryGetProperty<Modumate::Units::FUnitValue>(EBIMValueScope InScope, const FBIMNameType& InName, Modumate::Units::FUnitValue& OutT) const
+{
+	float v;
+	if (TryGetProperty<float>(InScope, InName, v))
+	{
+		OutT = Modumate::Units::FUnitValue::WorldCentimeters(v);
+		return true;
+	}
+	return false;
+}
+
+template<>
+bool FBIMPropertySheet::TryGetProperty<int32>(EBIMValueScope InScope, const FBIMNameType& InName, int32& OutT) const
+{
+	float v;
+	if (TryGetProperty<float>(InScope, InName, v))
+	{
+		OutT = static_cast<int32>(v);
+		return true;
+	}
+	return false;
+}
+
 
 // Todo: re-evaluate as an enum when variable catalog stabilizes
 namespace BIMPropertyNames

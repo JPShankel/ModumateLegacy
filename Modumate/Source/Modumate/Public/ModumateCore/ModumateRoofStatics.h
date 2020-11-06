@@ -12,7 +12,7 @@
 class FModumateDocument;
 class FModumateObjectInstance;
 
-class FBIMPropertySheet;
+struct FBIMPropertySheet;
 
 // Helper struct for roof tessellation
 USTRUCT()

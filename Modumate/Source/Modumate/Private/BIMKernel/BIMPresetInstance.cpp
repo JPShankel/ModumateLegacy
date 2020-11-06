@@ -65,7 +65,7 @@ bool FBIMPresetInstance::Matches(const FBIMPresetInstance &OtherPreset) const
 
 EBIMResult FBIMPresetInstance::ToDataRecord(FCraftingPresetRecord& OutRecord) const
 {
-	OutRecord.DisplayName = GetDisplayName();
+	OutRecord.DisplayName = DisplayName.ToString();
 	OutRecord.NodeType = NodeType;
 	OutRecord.PresetID = PresetID;
 	OutRecord.SlotConfigPresetID = SlotConfigPresetID;
@@ -132,7 +132,6 @@ EBIMResult FBIMPresetInstance::FromDataRecord(const FBIMPresetCollection &Preset
 	ObjectType = Record.ObjectType;
 	NodeScope = nodeType->Scope;
 
-	Properties.Empty();
 	ChildPresets.Empty();
 
 	Properties.FromDataRecord(Record.PropertyRecord);
@@ -170,39 +169,14 @@ EBIMResult FBIMPresetInstance::FromDataRecord(const FBIMPresetCollection &Preset
 		ParentTagPaths.AddDefaulted_GetRef().FromString(ptp);
 	}
 
-	FString displayName;
-	if (TryGetProperty(BIMPropertyNames::Name, displayName))
-	{
-		DisplayName = FText::FromString(displayName);
-	}
+	TryGetProperty(BIMPropertyNames::Name, DisplayName);
 
 	return EBIMResult::Success;
 }
 
-
-FString FBIMPresetInstance::GetDisplayName() const
-{
-	return Properties.GetProperty(EBIMValueScope::Preset, BIMPropertyNames::Name);
-}
-
 bool FBIMPresetInstance::HasProperty(const FBIMNameType& Name) const
 {
-	return Properties.HasProperty(NodeScope, Name);
-}
-
-Modumate::FModumateCommandParameter FBIMPresetInstance::GetProperty(const FBIMNameType& Name) const
-{
-	return Properties.GetProperty(NodeScope, Name);
-}
-
-Modumate::FModumateCommandParameter FBIMPresetInstance::GetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name) const
-{
-	return Properties.GetProperty(Scope, Name);
-}
-
-void FBIMPresetInstance::SetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name, const Modumate::FModumateCommandParameter& V)
-{
-	Properties.SetProperty(Scope, Name, V);
+	return Properties.HasProperty<float>(NodeScope, Name) || Properties.HasProperty<FString>(NodeScope, Name);
 }
 
 void FBIMPresetInstance::SetProperties(const FBIMPropertySheet& InProperties)
@@ -221,4 +195,3 @@ bool FBIMPresetInstance::SupportsChild(const FBIMPresetInstance& CandidateChild)
 	}
 	return false;
 }
-

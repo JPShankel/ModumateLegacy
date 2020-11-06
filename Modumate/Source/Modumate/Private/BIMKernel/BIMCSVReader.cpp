@@ -1,6 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "BIMKernel/BIMCSVReader.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 
 FBIMCSVReader::FBIMCSVReader()
 {
@@ -218,11 +219,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 			{
 				if (!Preset.PresetID.IsNone())
 				{
-					FString presetName;
-					if (Preset.TryGetProperty(BIMPropertyNames::Name, presetName))
-					{
-						Preset.DisplayName = FText::FromString(presetName);
-					}
+					Preset.TryGetProperty(BIMPropertyNames::Name, Preset.DisplayName);
 					OutPresets.Add(Preset.PresetID, Preset);
 					Preset = FBIMPresetInstance();
 				}
@@ -241,21 +238,54 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 		}
 		else if (PropertyRange.IsIn(i))
 		{
-			FBIMPropertyValue propSpec(*PropertyRange.Get(i));
+			FBIMPropertyKey propSpec(*PropertyRange.Get(i));
+
 			// Only add blank properties if they don't already exist
 			if (!Preset.HasProperty(propSpec.Name) || !cell.IsEmpty())
 			{
-				/*
-				TODO: refactored BIM properties will distinguish user-facing string properties from keys (which need whitespace stripped)
-				For now, use the unstripped string for 'Name,' which is always user facing
-				*/
-				if (propSpec.Name == BIMPropertyNames::Name)
+				EBIMValueType* propType = PropertyTypeMap.Find(propSpec.QN());
+				if (ensureAlways(propType != nullptr))
 				{
-					Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, Row[i]);
-				}
-				else
-				{
-					Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, cell);
+					switch (*propType)
+					{
+						// These values are stored as is from the spreadsheet
+						case EBIMValueType::Vector:
+						case EBIMValueType::DimensionSet:
+						case EBIMValueType::String:
+						case EBIMValueType::HexValue:
+						case EBIMValueType::Formula:
+						case EBIMValueType::Boolean:
+						case EBIMValueType::DisplayText:
+						{
+							Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, FString(Row[i]));
+						}
+						break;
+
+						// These values want to have whitespace stripped
+						case EBIMValueType::PresetID:
+						case EBIMValueType::AssetPath:
+						case EBIMValueType::CategoryPath: 
+						{
+							Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, cell);
+						}
+						break;
+
+						case EBIMValueType::Dimension:
+						{
+							Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, UModumateDimensionStatics::StringToFormattedDimension(cell).Centimeters);
+						}
+						break;
+
+						case EBIMValueType::Number: 
+						{
+							float v = FCString::Atof(Row[i]);
+							Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, v);
+						}
+						break;
+
+						default:
+							ensureAlways(false);
+					};
 				}
 			}
 		}
@@ -370,29 +400,29 @@ EBIMResult FBIMCSVReader::ProcessPropertyDeclarationRow(const TArray<const TCHAR
 	//Row Format:
 	//[PROPERTY][][Property Type][][Property Name][][Property Value]
 	FName propertyTypeName = Row[2];
-	FString propertyName = Row[4];
+	FString displayName = Row[4];
 	EBIMValueType propertyTypeEnum;
-	FBIMPropertyValue propertyValue = Row[6];
+	FBIMPropertyKey qualifiedName = Row[6];
 
 	if (!TryFindEnumValueByName<EBIMValueType>(TEXT("EBIMValueType"), propertyTypeName, propertyTypeEnum))
 	{
 		return EBIMResult::Error;
 	}
 
-	PropertyTypeMap.Add(*propertyName, propertyTypeEnum);
+	PropertyTypeMap.Add(qualifiedName.QN(), propertyTypeEnum);
 
-	if (propertyValue.Scope == EBIMValueScope::None)
+	if (qualifiedName.Scope == EBIMValueScope::None)
 	{
 		return EBIMResult::Error;
 	}
 	else
 	{
-		NodeType.Properties.SetProperty(propertyValue.Scope, propertyValue.Name, FBIMPropertyValue::FValue());
+		NodeType.Properties.SetProperty(qualifiedName.Scope, qualifiedName.Name, FString());
 
 		//Properties are only visible in the editor if they nave display names
-		if (!propertyName.IsEmpty())
+		if (!displayName.IsEmpty())
 		{
-			NodeType.FormItemToProperty.Add(propertyName, propertyValue.QN());
+			NodeType.FormItemToProperty.Add(displayName, qualifiedName.QN());
 		}
 	}
 	return EBIMResult::Success;

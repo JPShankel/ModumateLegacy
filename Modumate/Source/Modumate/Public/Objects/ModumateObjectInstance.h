@@ -265,16 +265,26 @@ public:
 
 	// Property getters/setters that, for now, only pass through directly to ObjectProperties.
 	// TODO: use these for instance-level overrides, where they pass through to the assembly.
-	bool HasProperty(EBIMValueScope Scope, const FBIMNameType &Name) const;
-	Modumate::FModumateCommandParameter GetProperty(EBIMValueScope Scope, const FBIMNameType &Name) const;
 	const FBIMPropertySheet &GetProperties() const;
-	void SetProperty(EBIMValueScope Scope, const FBIMNameType &Name, const Modumate::FModumateCommandParameter &Param);
+	FBIMPropertySheet& GetPropertiesNonConst();
 	void SetAllProperties(const FBIMPropertySheet &NewProperties);
 
 	template<class T>
 	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType &Name, T &OutT) const
 	{
 		return GetProperties().TryGetProperty(Scope, Name, OutT);
+	}
+
+	template<class T>
+	T GetProperty(EBIMValueScope Scope, const FBIMNameType& Name) const
+	{
+		return GetProperties().GetProperty<T>(Scope, Name);
+	}
+
+	template<class T>
+	void SetProperty(EBIMValueScope Scope, const FBIMNameType& Name, const T& Value) 
+	{
+		return GetPropertiesNonConst().SetProperty<T>(Scope, Name, Value);
 	}
 
 	TArray<FModumateObjectInstance *> GetAllDescendents();

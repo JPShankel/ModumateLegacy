@@ -205,10 +205,13 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 	{
 		FString debugString = FString::Printf(TEXT("ID: ")) + FString::FromInt(Node->GetInstanceID()) + LINE_TERMINATOR + PresetID.ToString() + LINE_TERMINATOR + LINE_TERMINATOR + FString::Printf(TEXT("Properties:")) + LINE_TERMINATOR;
 		Modumate::FModumateFunctionParameterSet params;
+		
+#if 0 // TODO: provide a debug string in BIM properties
 		Node->InstanceProperties.ForEachProperty([this, &params, &debugString](const FString &name, const Modumate::FModumateCommandParameter &param)
 		{
 			debugString = debugString + name + param.AsString() + LINE_TERMINATOR;
 		});
+#endif
 		Button_Debug->SetToolTipText(FText::FromString(debugString));
 	}
 
@@ -244,7 +247,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 			newEnterable->Text_Title->ChangeText(FText::FromString(curProperty.Key));
 
 			// Text value: user enter-able
-			FBIMPropertyValue value(curProperty.Value);
+			FBIMPropertyKey value(curProperty.Value);
 			FString valueString;
 			if (Node->InstanceProperties.TryGetProperty(value.Scope, value.Name, valueString))
 			{

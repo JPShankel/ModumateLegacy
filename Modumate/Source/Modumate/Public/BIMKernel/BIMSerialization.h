@@ -25,7 +25,7 @@ struct MODUMATE_API FBIMPropertySheetRecord
 USTRUCT()
 struct MODUMATE_API FCraftingPresetRecord
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	FString DisplayName;
@@ -79,7 +79,7 @@ struct MODUMATE_API FCraftingPresetRecord
 USTRUCT()
 struct MODUMATE_API FCustomAssemblyCraftingNodeRecord
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY()
 	FName TypeName;

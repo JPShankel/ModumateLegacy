@@ -9,7 +9,7 @@
 bool FMOIStateData_DEPRECATED::ToParameterSet(const FString& Prefix, Modumate::FModumateFunctionParameterSet& OutParameterSet) const
 {
 	TMap<FString, FString> propertyMap;
-	if (!ObjectProperties.ToStringMap(propertyMap))
+	if (!ObjectProperties.ToStringMap_DEPRECATED(propertyMap))
 	{
 		return false;
 	}
@@ -53,7 +53,7 @@ bool FMOIStateData_DEPRECATED::FromParameterSet(const FString& Prefix, const Mod
 		propertyMap.Add(propertyNames[i], propertyValues[i]);
 	}
 
-	ObjectProperties.FromStringMap(propertyMap);
+	ObjectProperties.FromStringMap_DEPRECATED(propertyMap);
 
 	Extents = ParameterSet.GetValue(Prefix + Modumate::Parameters::kExtents);
 	ControlIndices = ParameterSet.GetValue(Prefix + Modumate::Parameters::kIndices);

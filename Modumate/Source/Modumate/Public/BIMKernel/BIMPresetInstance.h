@@ -116,28 +116,35 @@ public:
 	FBIMTagPath MyTagPath;
 
 	bool HasProperty(const FBIMNameType& Name) const;
-	Modumate::FModumateCommandParameter GetProperty(const FBIMNameType& Name) const;
+
+	template<class T>
+	T GetProperty(const FBIMNameType& Name) const
+	{
+		return Properties.GetProperty<T>(NodeScope, Name);
+	}
 	
-	Modumate::FModumateCommandParameter GetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name) const;
-	void SetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name, const Modumate::FModumateCommandParameter& V);
+	template<class T>
+	T GetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name) const
+	{
+		return Properties.GetProperty<T>(Scope, Name);
+	}
+
+	template<class T>
+	void SetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name, const T& Value)
+	{
+		Properties.SetProperty<T>(Scope, Name, Value);
+	}
 
 	void SetProperties(const FBIMPropertySheet& InProperties);
 
 	template <class T>
 	bool TryGetProperty(const FBIMNameType& Name, T& OutT) const
 	{
-		if (HasProperty(Name))
-		{
-			OutT = GetProperty(Name);
-			return true;
-		}
-		return false;
+		return Properties.TryGetProperty<T>(NodeScope, Name, OutT);
 	}
 
 	// Sort child nodes by PinSetIndex and PinSetPosition so serialization will be consistent
 	EBIMResult SortChildNodes();
-
-	FString GetDisplayName() const;
 
 	bool Matches(const FBIMPresetInstance& OtherPreset) const;
 	bool SupportsChild(const FBIMPresetInstance& CandidateChild) const;

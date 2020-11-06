@@ -163,11 +163,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		}
 
 		// Having analyzed the preset and retargeted (if necessary) the properties, apply all of the preset's properties to the target
-		presetIterator.Preset->Properties.ForEachProperty([this, presetIterator](const FString& Name, const Modumate::FModumateCommandParameter& MCP)
-		{
-			FBIMPropertyValue vs(*Name);
-			presetIterator.TargetProperties->SetProperty(vs.Scope, vs.Name, MCP);
-		});
+		presetIterator.TargetProperties->AddProperties(presetIterator.Preset->Properties);
 
 		// Add our own children to DFS stack
 		// Iterate in reverse order because stack operations are LIFO
@@ -315,23 +311,23 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 
 					// FVectorExpression holds 3 values as formula strings (ie "Parent.NativeSizeX * 0.5) that are evaluated in CompoundMeshActor
 					partSpec.Translation = Modumate::Expression::FVectorExpression(
-						childSlotPreset->GetProperty(TEXT("LocationX")),
-						childSlotPreset->GetProperty(TEXT("LocationY")),
-						childSlotPreset->GetProperty(TEXT("LocationZ")));
+						childSlotPreset->GetProperty<FString>(TEXT("LocationX")),
+						childSlotPreset->GetProperty<FString>(TEXT("LocationY")),
+						childSlotPreset->GetProperty<FString>(TEXT("LocationZ")));
 
 					partSpec.Orientation = Modumate::Expression::FVectorExpression(
-						childSlotPreset->GetProperty(TEXT("RotationX")),
-						childSlotPreset->GetProperty(TEXT("RotationY")),
-						childSlotPreset->GetProperty(TEXT("RotationZ")));
+						childSlotPreset->GetProperty<FString>(TEXT("RotationX")),
+						childSlotPreset->GetProperty<FString>(TEXT("RotationY")),
+						childSlotPreset->GetProperty<FString>(TEXT("RotationZ")));
 
 					partSpec.Size = Modumate::Expression::FVectorExpression(
-						childSlotPreset->GetProperty(TEXT("SizeX")),
-						childSlotPreset->GetProperty(TEXT("SizeY")),
-						childSlotPreset->GetProperty(TEXT("SizeZ")));
+						childSlotPreset->GetProperty<FString>(TEXT("SizeX")),
+						childSlotPreset->GetProperty<FString>(TEXT("SizeY")),
+						childSlotPreset->GetProperty<FString>(TEXT("SizeZ")));
 
-					partSpec.Flip[0] = !childSlotPreset->GetProperty(TEXT("FlipX")).AsString().IsEmpty();
-					partSpec.Flip[1] = !childSlotPreset->GetProperty(TEXT("FlipY")).AsString().IsEmpty();
-					partSpec.Flip[2] = !childSlotPreset->GetProperty(TEXT("FlipZ")).AsString().IsEmpty();
+					partSpec.Flip[0] = !childSlotPreset->GetProperty<FString>(TEXT("FlipX")).IsEmpty();
+					partSpec.Flip[1] = !childSlotPreset->GetProperty<FString>(TEXT("FlipY")).IsEmpty();
+					partSpec.Flip[2] = !childSlotPreset->GetProperty<FString>(TEXT("FlipZ")).IsEmpty();
 
 					break;
 				}
@@ -393,17 +389,13 @@ FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 
 EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FModumateDatabase& InDB)
 {
-	// Wall cabinets do not have toe kicks, so set to 0 if we don't find one
-	FString depth, height;
-	if (RootProperties.TryGetProperty(EBIMValueScope::Assembly,BIMPropertyNames::ToeKickDepth, depth)
-		&& RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::ToeKickHeight, height))
-	{
-		ToeKickDepth = Modumate::Units::FUnitValue::WorldCentimeters(UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters);
-		ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(UModumateDimensionStatics::StringToFormattedDimension(height).Centimeters);
-	}
-	else
+	if (!RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::ToeKickDepth, ToeKickDepth))
 	{
 		ToeKickDepth = Modumate::Units::FUnitValue::WorldCentimeters(0);
+	}
+
+	if (!RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::ToeKickHeight, ToeKickHeight))
+	{
 		ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(0);
 	}
 
@@ -427,7 +419,13 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 	// TODO: "Stubby" temporary FFE don't have parts, just one mesh on their root
 	if (Parts.Num() == 0)
 	{
-		FBIMKey meshKey = FBIMKey(RootProperties.GetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID).AsString());
+		FBIMKey meshKey;
+
+		if (!RootProperties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshKey))
+		{
+			return EBIMResult::Error;
+		}
+
 		const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(meshKey);
 		if (mesh == nullptr)
 		{
@@ -436,6 +434,11 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 
 		FBIMPartSlotSpec& partSlot = Parts.AddDefaulted_GetRef();
 		partSlot.Mesh = *mesh;
+		partSlot.Translation = Modumate::Expression::FVectorExpression(TEXT("0"), TEXT("0"), TEXT("0"));
+		partSlot.Size = Modumate::Expression::FVectorExpression(TEXT("Self.ScaledSizeX"), TEXT("Self.ScaledSizeY"), TEXT("Self.ScaledSizeZ"));
+		partSlot.Flip[0] = false;
+		partSlot.Flip[1] = false;
+		partSlot.Flip[2] = false;
 		partSlot.ParentSlotIndex = INDEX_NONE;
 	}
 	return EBIMResult::Success;
@@ -482,12 +485,9 @@ EBIMResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
 {
 	for (auto& extrusion : Extrusions)
 	{
+
 		// Extrusion dimensions are a sibling so properties are stored in parent and inherited
-		RootProperties.ForEachProperty([&extrusion](const FString& Name, const Modumate::FModumateCommandParameter& MCP)
-		{
-			FBIMPropertyValue vs(*Name);
-			extrusion.Properties.SetProperty(vs.Scope, vs.Name, MCP);
-		});
+		extrusion.Properties.AddProperties(RootProperties);
 			
 		FString materialAsset;
 		if (RootProperties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialAsset))
@@ -533,15 +533,10 @@ Modumate::Units::FUnitValue FBIMAssemblySpec::CalculateThickness() const
 
 EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection)
 {
-	DisplayName = RootProperties.GetProperty(EBIMValueScope::Assembly,BIMPropertyNames::Name);
-	Comments = RootProperties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Comments);
-	CodeName = RootProperties.GetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Code);
-
-	FString depth;
-	if (RootProperties.TryGetProperty(EBIMValueScope::Assembly, TEXT("IdealTreadDepth"), depth))
-	{
-		TreadDepth = Modumate::Units::FUnitValue::WorldCentimeters(UModumateDimensionStatics::StringToFormattedDimension(depth).Centimeters);
-	}
+	RootProperties.TryGetProperty(EBIMValueScope::Assembly,BIMPropertyNames::Name, DisplayName);
+	RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Comments, Comments);
+	RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Code, CodeName);
+	RootProperties.TryGetProperty(EBIMValueScope::Assembly, TEXT("IdealTreadDepth"), TreadDepth);
 
 	// TODO: move assembly synthesis to each tool mode or MOI implementation (TBD)
 	EBIMResult result = EBIMResult::Error;
@@ -570,7 +565,6 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 
 	case EObjectType::OTCabinet:
 		return MakeCabinetAssembly(InDB);
-
 
 	default:
 		ensureAlways(false);

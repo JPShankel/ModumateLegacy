@@ -6,20 +6,18 @@
 
 EBIMResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& InDB)
 {
-	FString diameterString;
-	FModumateFormattedDimension xDim, yDim;
-	if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter, diameterString))
+	Modumate::Units::FUnitValue xDim, yDim;
+	if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter, xDim))
 	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter));
 		yDim = xDim;
 	}
 	else
 	{
-		xDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width));
-		yDim = UModumateDimensionStatics::StringToFormattedDimension(Properties.GetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth));
+		Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, xDim);
+		Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, yDim);
 	}
 
-	FBIMKey profileKey = FBIMKey(Properties.GetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID).AsString());
+	FBIMKey profileKey = FBIMKey(Properties.GetProperty<FString>(EBIMValueScope::Profile, BIMPropertyNames::AssetID));
 
 	if (ensureAlways(!profileKey.IsNone()))
 	{
@@ -32,7 +30,7 @@ EBIMResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& InDB)
 	}
 
 	// TODO: re-orient column meshes so width is along X instead of depth
-	FVector profileSize(xDim.Centimeters, yDim.Centimeters, 1);
+	FVector profileSize(xDim.AsWorldCentimeters(), yDim.AsWorldCentimeters(), 1);
 
 	if (ensureAlways(SimpleMeshes.Num() > 0 && SimpleMeshes[0].Asset.Get()->Polygons.Num() > 0))
 	{

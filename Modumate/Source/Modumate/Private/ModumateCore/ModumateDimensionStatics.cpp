@@ -109,7 +109,6 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 			else
 			{
 				ret.Format = EDimensionFormat::Error;
-
 			}
 		}
 		else
@@ -775,8 +774,6 @@ void UModumateDimensionStatics::CentimetersToImperialInches(float Centimeters, T
 		}
 		return;
 	}
-
-
 }
 
 FText UModumateDimensionStatics::ImperialInchesToDimensionStringText(TArray<int32>& Imperial)

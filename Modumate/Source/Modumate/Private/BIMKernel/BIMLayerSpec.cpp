@@ -32,10 +32,10 @@ As we refactor patterns, we would like "unpatterened" layers to consist of a sin
 */
 EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 {
-	FString materialKey;
+	FBIMKey materialKey;
 	if (ensureAlways(LayerProperties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialKey)))
 	{
-		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(FBIMKey(materialKey));
+		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(materialKey);
 		if (ensureAlways(mat != nullptr))
 		{
 			Material_DEPRECATED = *mat;
@@ -43,37 +43,22 @@ EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 		}
 	}
 
-	FString colorKey;
+	FBIMKey colorKey;
 	if (ensureAlways(LayerProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::AssetID, colorKey)))
 	{
-		const FCustomColor* customColor = InDB.GetCustomColorByKey(FBIMKey(colorKey));
+		const FCustomColor* customColor = InDB.GetCustomColorByKey(colorKey);
 		if (customColor != nullptr)
 		{
 			Material_DEPRECATED.DefaultBaseColor = *customColor;
 		}
 	}
 
-	FString thickness;
-
-	if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, thickness))
+	if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, Thickness))
 	{
-		if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, thickness))
+		if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, Thickness))
 		{
-			LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, thickness);
+			LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, Thickness);
 		}
-	}
-
-	if (ensureAlways(!thickness.IsEmpty()))
-	{
-		FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(thickness);
-		if (ensureAlways(dim.Format != EDimensionFormat::Error))
-		{
-			Thickness = Modumate::Units::FUnitValue::WorldCentimeters(dim.Centimeters);
-		}
-	}
-	else
-	{
-		return EBIMResult::Error;
 	}
 
 	return EBIMResult::Success;
@@ -118,49 +103,19 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 		We need to reconcile those against the actual targets for X, Y & Z
 		For now "everyone has a depth or a length and a thickness and a width" is a reasonable approximation
 		*/
-		FString dimStr;
-		if (modProps.TryGetProperty(EBIMValueScope::Module, BIMPropertyNames::BevelWidth, dimStr))
+		modProps.TryGetProperty(EBIMValueScope::Module, BIMPropertyNames::BevelWidth, module.BevelWidth);
+		if (!modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, module.ModuleExtents.X))
 		{
-			FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(dimStr);
-			module.BevelWidth = Modumate::Units::FUnitValue::WorldCentimeters(dim.Centimeters);
-		}
-		if (!modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, dimStr))
-		{
-			modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, dimStr);
-			if (!dimStr.IsEmpty())
-			{
-				FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(dimStr);
-				if (ensureAlways(dim.Format != EDimensionFormat::Error))
-				{
-					module.ModuleExtents.X = dim.Centimeters;
-				}
-			}
+			modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, module.ModuleExtents.X);
 		}
 
 		// The layer's thickness is either the module's thickness or whichever parameter (Depth or Width) the pattern specifies
-		dimStr.Empty();
-		if (!modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, dimStr))
+		if (!modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, module.ModuleExtents.Y))
 		{
-			modProps.TryGetProperty(EBIMValueScope::Dimension, Pattern.ThicknessDimensionPropertyName, dimStr);
+			modProps.TryGetProperty(EBIMValueScope::Dimension, Pattern.ThicknessDimensionPropertyName, module.ModuleExtents.Y);
 		}
 
-		if (!dimStr.IsEmpty())
-		{
-			FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(dimStr);
-			if (ensureAlways(dim.Format != EDimensionFormat::Error))
-			{
-				module.ModuleExtents.Y = dim.Centimeters;
-			}
-		}
-
-		if (modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, dimStr))
-		{
-			FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(dimStr);
-			if (ensureAlways(dim.Format != EDimensionFormat::Error))
-			{
-				module.ModuleExtents.Z = dim.Centimeters;
-			}
-		}
+		modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, module.ModuleExtents.Z);
 	}
 
 	/*
@@ -188,23 +143,8 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 		/*
 		Gap dimensions are reliably defined
 		*/
-		if (ensureAlways(GapProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, gapStr)))
-		{
-			FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(gapStr);
-			if (ensureAlways(dim.Format != EDimensionFormat::Error))
-			{
-				Gap.GapExtents.X = dim.Centimeters;
-			}
-		}
-
-		if (ensureAlways(GapProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, gapStr)))
-		{
-			FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(gapStr);
-			if (ensureAlways(dim.Format != EDimensionFormat::Error))
-			{
-				Gap.GapExtents.Y = dim.Centimeters;
-			}
-		}
+		ensureAlways(GapProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, Gap.GapExtents.X));
+		ensureAlways(GapProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, Gap.GapExtents.Y));
 	}
 
 	// TODO: handle multiple modules, find overall thickness for 2.5 dimensional patterns 

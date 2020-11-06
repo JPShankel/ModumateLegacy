@@ -90,41 +90,33 @@ bool UModumateRoomStatics::GetRoomConfig(const FModumateObjectInstance *RoomObj,
 	// allow the proper serialization of types like FColor and FText to avoid unnecessary conversion.
 	bool bSuccess = true;
 
-	FString presetStr;
-	bSuccess = RoomObj->TryGetProperty<FString>(EBIMValueScope::Room, BIMPropertyNames::Preset, presetStr) && bSuccess;
-	OutRoomConfig.Key = FBIMKey(presetStr);
+	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Preset, OutRoomConfig.Key) && bSuccess;
 
 	OutRoomConfig.ObjectID = RoomObj->ID;
 
-	bSuccess = RoomObj->TryGetProperty<FString>(EBIMValueScope::Room, BIMPropertyNames::Number, OutRoomConfig.RoomNumber) && bSuccess;
+	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Number, OutRoomConfig.RoomNumber) && bSuccess;
 
 	FString colorString;
-	bSuccess = RoomObj->TryGetProperty<FString>(EBIMValueScope::Room, BIMPropertyNames::Color, colorString) && bSuccess;
+	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Color, colorString) && bSuccess;
 	OutRoomConfig.RoomColor = FColor::FromHex(colorString);
 
-	bSuccess = RoomObj->TryGetProperty<float>(EBIMValueScope::Room, BIMPropertyNames::Area, OutRoomConfig.Area) && bSuccess;
+	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Area, OutRoomConfig.Area) && bSuccess;
 
-	bSuccess = RoomObj->TryGetProperty<FName>(EBIMValueScope::Room, BIMPropertyNames::Code, OutRoomConfig.UseGroupCode) && bSuccess;
+	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Code, OutRoomConfig.UseGroupCode) && bSuccess;
 
-	FString groupTypeString;
-	bSuccess = RoomObj->TryGetProperty<FString>(EBIMValueScope::Room, BIMPropertyNames::UseGroupType, groupTypeString) && bSuccess;
-	OutRoomConfig.UseGroupType = FText::FromString(groupTypeString);
+	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::UseGroupType, OutRoomConfig.UseGroupType) && bSuccess;
 
-	FString displayNameString;
-	bSuccess = RoomObj->TryGetProperty<FString>(EBIMValueScope::Room, BIMPropertyNames::Name, displayNameString) && bSuccess;
-	OutRoomConfig.DisplayName = FText::FromString(displayNameString);
+	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Name, OutRoomConfig.DisplayName) && bSuccess;
 
-	bSuccess = RoomObj->TryGetProperty<int32>(EBIMValueScope::Room, BIMPropertyNames::OccupantsNumber, OutRoomConfig.OccupantsNumber) && bSuccess;
+	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantsNumber, OutRoomConfig.OccupantsNumber) && bSuccess;
 
-	bSuccess = RoomObj->TryGetProperty<float>(EBIMValueScope::Room, BIMPropertyNames::OccupantLoadFactor, OutRoomConfig.OccupantLoadFactor) && bSuccess;
+	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantLoadFactor, OutRoomConfig.OccupantLoadFactor) && bSuccess;
 
 	FString areaTypeString;
-	bSuccess = RoomObj->TryGetProperty<FString>(EBIMValueScope::Room, BIMPropertyNames::AreaType, areaTypeString) &&
+	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::AreaType, areaTypeString) &&
 		TryEnumValueByString(EAreaType, areaTypeString, OutRoomConfig.AreaType) && bSuccess;
 
-	FString loadFactorSpecialCalcString;
-	bSuccess = RoomObj->TryGetProperty<FString>(EBIMValueScope::Room, BIMPropertyNames::LoadFactorSpecialCalc, loadFactorSpecialCalcString) && bSuccess;
-	OutRoomConfig.LoadFactorSpecialCalc = FText::FromString(loadFactorSpecialCalcString);
+	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::LoadFactorSpecialCalc, OutRoomConfig.LoadFactorSpecialCalc) && bSuccess;
 
 	return bSuccess;
 }
@@ -150,10 +142,10 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(FModumateObjectInstance *RoomObj
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Preset, ConfigKey.ToString());
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Color, roomConfig->HexValue);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Area, 0.0f);
-	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Code, roomConfig->UseGroupCode);
+	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Code, roomConfig->UseGroupCode.ToString());
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::UseGroupType, roomConfig->UseGroupType.ToString());
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Name, roomConfig->DisplayName.ToString());
-	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantsNumber, 0);
+	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantsNumber, 0.0f);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantLoadFactor, roomConfig->OccupantLoadFactor);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::AreaType, EnumValueString(EAreaType, roomConfig->AreaType));
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::LoadFactorSpecialCalc, roomConfig->LoadFactorSpecialCalc.ToString());
@@ -191,9 +183,9 @@ void UModumateRoomStatics::UpdateDerivedRoomProperties(FModumateObjectInstance *
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Area, roomAreaValueFT2);
 
 	// Calculate number of occupants
-	int32 occupantsNumValue = 0;
+	float occupantsNumValue = 0;
 	float occupantLoadFactor = 0.0f;
-	if (RoomObj->TryGetProperty<float>(EBIMValueScope::Room, BIMPropertyNames::OccupantLoadFactor, occupantLoadFactor) &&
+	if (RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantLoadFactor, occupantLoadFactor) &&
 		(occupantLoadFactor > 0.0f))
 	{
 		occupantsNumValue = FMath::RoundHalfFromZero(roomAreaValueFT2 / occupantLoadFactor);

@@ -3,7 +3,6 @@
 #include "Database/ModumateObjectDatabase.h"
 #include "BIMKernel/BIMAssemblySpec.h"
 #include "ModumateCore/ExpressionEvaluator.h"
-#include "ModumateCore/ModumateDimensionStatics.h"
 #include "Misc/FileHelper.h"
 #include "Serialization/Csv/CsvParser.h"
 
@@ -185,49 +184,54 @@ void FModumateDatabase::ReadPresetData()
 
 	FAddAssetFunction addColor = [this](const FBIMPresetInstance& Preset)
 	{
-		FString hexValue = Preset.GetProperty(BIMPropertyNames::HexValue);
-		FString colorName = Preset.GetProperty(BIMPropertyNames::Name);
-		AddCustomColor(Preset.PresetID, colorName, hexValue);
+		FString hexValue, colorName;
+		if (ensureAlways(Preset.TryGetProperty<FString>(BIMPropertyNames::HexValue, hexValue) &&
+			Preset.TryGetProperty<FString>(BIMPropertyNames::Name, colorName)))
+		{
+			AddCustomColor(Preset.PresetID, colorName, hexValue);
+		}
 	};
 
 	FAddAssetFunction addMesh = [this](const FBIMPresetInstance& Preset)
 	{
-		FString assetPath = Preset.GetScopedProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
+		FString assetPath = Preset.GetScopedProperty<FString>(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
 
-		// TODO: to be replaced with typesafe properties
-		if (assetPath.Len() != 0)
+		if (ensureAlways(assetPath.Len() > 0))
 		{
-			FVector nativeSize, box1, box2;
+			FVector nativeSize = FVector(
+				Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("NativeSizeX")),
+				Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("NativeSizeY")),
+				Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("NativeSizeZ"))
+			) * Modumate::CentimetersToInches;
 
-			// Note: with typesafe BIM properties coming in, these conversions will be done when parsing 'Dimension' type properties
-			nativeSize.X = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("NativeSizeX")).AsString()).Centimeters*Modumate::CentimetersToInches;
-			nativeSize.Y = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("NativeSizeY")).AsString()).Centimeters*Modumate::CentimetersToInches;
-			nativeSize.Z = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("NativeSizeZ")).AsString()).Centimeters*Modumate::CentimetersToInches;
+			FBox nineSlice(
+				FVector(Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceX1")),
+					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceY1")),
+					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceZ1"))) * Modumate::CentimetersToInches,
 
-			box1.X = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("SliceX1")).AsString()).Centimeters*Modumate::CentimetersToInches;
-			box1.Y = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("SliceY1")).AsString()).Centimeters*Modumate::CentimetersToInches;
-			box1.Z = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("SliceZ1")).AsString()).Centimeters*Modumate::CentimetersToInches;
+				FVector(Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceX2")),
+					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceY2")),
+					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceZ2"))) * Modumate::CentimetersToInches
+			);
 
-			box2.X = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("SliceX2")).AsString()).Centimeters*Modumate::CentimetersToInches;
-			box2.Y = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("SliceY2")).AsString()).Centimeters*Modumate::CentimetersToInches;
-			box2.Z = UModumateDimensionStatics::StringToFormattedDimension(Preset.GetProperty(TEXT("SliceZ2")).AsString()).Centimeters*Modumate::CentimetersToInches;
-
-			FBox nineSlice(box1,box2);
-
-			FString name = Preset.GetProperty(BIMPropertyNames::Name);
-			FString namedDimensions;
-			Preset.TryGetProperty(BIMPropertyNames::NamedDimensions,namedDimensions);
+			FString name;
+			Preset.TryGetProperty(BIMPropertyNames::Name, name);
+			FString namedDimensions = Preset.GetScopedProperty<FString>(EBIMValueScope::Mesh,BIMPropertyNames::NamedDimensions);
 			AddArchitecturalMesh(Preset.PresetID, name, namedDimensions, nativeSize, nineSlice, assetPath);
 		}
 	};
 
 	FAddAssetFunction addRawMaterial = [this](const FBIMPresetInstance& Preset)
 	{
-		FString assetPath = Preset.GetProperty(BIMPropertyNames::AssetPath);
+		FString assetPath;
+		Preset.TryGetProperty(BIMPropertyNames::AssetPath,assetPath);
 		if (assetPath.Len() != 0)
 		{
-			FString matName = Preset.GetProperty(BIMPropertyNames::Name);
-			AddArchitecturalMaterial(Preset.PresetID, matName, FBIMKey(),assetPath);
+			FString matName;
+			if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
+			{
+				AddArchitecturalMaterial(Preset.PresetID, matName, FBIMKey(), assetPath);
+			}
 		}
 	};
 
@@ -257,20 +261,27 @@ void FModumateDatabase::ReadPresetData()
 			const FBIMPresetInstance* preset = PresetManager.CraftingNodePresets.Presets.Find(rawMaterial);
 			if (preset != nullptr)
 			{
-				FString assetPath = preset->GetProperty(BIMPropertyNames::AssetPath);
-				FString matName = Preset.GetProperty(BIMPropertyNames::Name);
-				AddArchitecturalMaterial(Preset.PresetID, matName, color, assetPath);
+				FString assetPath, matName;
+				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::AssetPath, assetPath) 
+					&& Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
+				{
+					AddArchitecturalMaterial(Preset.PresetID, matName, color, assetPath);
+				}
 			}
 		}
 	};
 
 	FAddAssetFunction addProfile = [this](const FBIMPresetInstance& Preset)
 	{
-		FString assetPath = Preset.GetProperty(BIMPropertyNames::AssetPath);
+		FString assetPath;
+		Preset.TryGetProperty(BIMPropertyNames::AssetPath,assetPath);
 		if (assetPath.Len() != 0)
 		{
-			FString name = Preset.GetProperty(BIMPropertyNames::Name);
-			AddSimpleMesh(Preset.PresetID, name, assetPath);
+			FString name;
+			if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, name)))
+			{
+				AddSimpleMesh(Preset.PresetID, name, assetPath);
+			}
 		}
 	};
 
