@@ -421,6 +421,35 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 	{
 		FBIMKey meshKey;
 
+		auto stringToAxis = [](const FString& InStr, FVector& OutVector,const FVector& InDefault)
+		{
+			if (InStr.Len() == 2)
+			{
+				float v = InStr[0] == TCHAR('+') ? 1.0f : -1.0f;
+				switch (InStr[1])
+				{
+				case TCHAR('X'): OutVector = FVector(v, 0, 0); return true;
+				case TCHAR('Y'): OutVector = FVector(0, v, 0); return true;
+				case TCHAR('Z'): OutVector = FVector(0, 0, v); return true;
+				default: OutVector = InDefault; return false;
+				};
+			}
+			OutVector = InDefault; 
+			return false;
+		};
+
+		// Normal and Tangent have default values set in class def
+		FString vectorStr;
+		if (RootProperties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::Normal, vectorStr))
+		{
+			ensureAlways(stringToAxis(vectorStr, Normal, Normal));
+		}
+
+		if (RootProperties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::Tangent, vectorStr))
+		{
+			ensureAlways(stringToAxis(vectorStr, Tangent, Tangent));
+		}
+
 		if (!RootProperties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshKey))
 		{
 			return EBIMResult::Error;
