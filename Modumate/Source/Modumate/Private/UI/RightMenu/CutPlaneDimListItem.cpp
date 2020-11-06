@@ -12,6 +12,8 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UI/EditModelUserWidget.h"
 
 
 UCutPlaneDimListItem::UCutPlaneDimListItem(const FObjectInitializer& ObjectInitializer)
@@ -67,9 +69,9 @@ void UCutPlaneDimListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
 
 void UCutPlaneDimListItem::OnEditableTitleCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	if (CommitMethod == ETextCommit::OnCleared)
+	// Lose focus if this commit is not entering its value
+	if (!(CommitMethod == ETextCommit::OnEnter || CommitMethod == ETextCommit::OnUserMovedFocus))
 	{
-		// TODO: Revert name on clear
 		FSlateApplication::Get().SetAllUserFocusToGameViewport();
 		return;
 	}
