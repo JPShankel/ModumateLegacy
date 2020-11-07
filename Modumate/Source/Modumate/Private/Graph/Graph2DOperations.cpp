@@ -374,7 +374,11 @@ namespace Modumate
 	bool FGraph2D::DeleteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const TArray<int32>& ObjectIDsToDelete)
 	{
 		// the ids that are considered for deletion starts with the input arguments and grows based on object connectivity
+
+		// adjacentVertexIDs contains the vertices that are deleted as well as the vertices on edges that are deleted
+		TSet<int32> adjacentVertexIDs;
 		TSet<int32> vertexIDsToDelete, edgeIDsToDelete, polyIDsToDelete;
+
 		for (int32 signedIDToDelete : ObjectIDsToDelete)
 		{
 			int32 objectIDToDelete = FMath::Abs(signedIDToDelete);
@@ -398,6 +402,7 @@ namespace Modumate
 				break;
 			}
 		}
+		adjacentVertexIDs = vertexIDsToDelete;
 
 		for (int32 vertexID : vertexIDsToDelete)
 		{
@@ -436,9 +441,48 @@ namespace Modumate
 						{
 							vertexIDsToDelete.Add(FMath::Abs(vertexID));
 						}
+						adjacentVertexIDs.Add(FMath::Abs(vertexID));
 					}
 				}
 			}
+		}
+
+		// if a deleted vertex is contained in the bounds, delete the whole surface graph
+		bool bDeletedVertexOnBounds = false;
+		for (int32 outerBoundsVertexID : BoundingPolygon.Value)
+		{
+			if (adjacentVertexIDs.Contains(outerBoundsVertexID))
+			{
+				bDeletedVertexOnBounds = true;
+				break;
+			}
+		}
+		if (!bDeletedVertexOnBounds)
+		{
+			for (auto& kvp : BoundingContainedPolygons)
+			{
+				for (int32 innerBoundsVertexID : kvp.Value)
+				{
+					if (adjacentVertexIDs.Contains(innerBoundsVertexID))
+					{
+						bDeletedVertexOnBounds = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if (bDeletedVertexOnBounds)
+		{
+			vertexIDsToDelete.Reset();
+			edgeIDsToDelete.Reset();
+
+			TArray<int32> deleteVerticesArray, deleteEdgesArray;
+			Vertices.GenerateKeyArray(deleteVerticesArray);
+			Edges.GenerateKeyArray(deleteEdgesArray);
+
+			vertexIDsToDelete.Append(deleteVerticesArray);
+			edgeIDsToDelete.Append(deleteEdgesArray);
 		}
 
 		FGraph2DDelta deleteDelta(ID);
