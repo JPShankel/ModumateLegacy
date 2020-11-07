@@ -89,6 +89,11 @@ namespace Modumate
 		// and outside the bounding contained vertices
 		TPair<int32, TArray<int32>> BoundingPolygon;
 		TMap<int32, TArray<int32>> BoundingContainedPolygons;
+	public:
+		TMap<int32, int32> GraphFaceToInnerBound;
+		TMap<int32, int32> GraphVertexToBoundVertex;
+
+	private:
 
 		// During validation, the vertex IDs saved in BoundingVertices and BoundingContainedVertices
 		// are converted into this to calculate whether the vertices and edges of the graph are within the bounds
@@ -202,11 +207,11 @@ namespace Modumate
 
 		// Set lists of vertex IDs to represent the bounds of the surface graph.  All vertices and edges must be inside the 
 		// OuterBounds (inclusive) and outside all InnerBounds (inclusive).
-		bool SetBounds(TArray<FGraph2DDelta> &OutDeltas, TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds);
+		bool SetBounds(TArray<FGraph2DDelta> &OutDeltas, TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds, TMap<int32, int32>& FaceToPoly, TMap<int32, int32>& GraphToSurface);
 
 		// Create Deltas for an empty graph resulting in adding the specified polygons.
 		// If using as bounds, the bounds will be set based on the resulting polygons.
-		bool PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, TArray<TArray<FVector2D>>& InitialPolygons, bool bUseAsBounds);
+		bool PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, TMap<int32, TArray<FVector2D>>& InitialPolygons, TMap<int32, TArray<int32>>& FaceToVertices, bool bUseAsBounds);
 
 		// The "Direct" versions of helper functions are meant to be combined together to make deltas that result in
 		// more complicated operations, and do not apply the delta that they create.

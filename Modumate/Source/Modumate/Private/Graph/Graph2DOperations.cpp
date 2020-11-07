@@ -374,7 +374,7 @@ namespace Modumate
 	bool FGraph2D::DeleteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const TArray<int32>& ObjectIDsToDelete)
 	{
 		// the ids that are considered for deletion starts with the input arguments and grows based on object connectivity
-		TSet<int32> vertexIDsToDelete, edgeIDsToDelete;
+		TSet<int32> vertexIDsToDelete, edgeIDsToDelete, polyIDsToDelete;
 		for (int32 signedIDToDelete : ObjectIDsToDelete)
 		{
 			int32 objectIDToDelete = FMath::Abs(signedIDToDelete);
@@ -387,6 +387,8 @@ namespace Modumate
 				edgeIDsToDelete.Add(objectIDToDelete);
 				break;
 			case EGraphObjectType::Polygon:
+				// TODO: this should be derived from CalculatePolygons
+				polyIDsToDelete.Add(objectIDToDelete);
 				if (FGraph2DPolygon* polygon = FindPolygon(objectIDToDelete))
 				{
 					vertexIDsToDelete.Append(polygon->VertexIDs);
@@ -475,10 +477,45 @@ namespace Modumate
 		}
 		// Otherwise, we expect the bounds to be valid enough to use for validating the previous deletion deltas
 		// TODO: allow for auto-updating the bounds, i.e. after joining two exterior colinear edges.
-		else if (!ValidateAgainstBounds())
+		else
 		{
-			ApplyInverseDeltas(OutDeltas);
-			return false;
+			FBoundsUpdate currentBounds;
+			currentBounds.InnerBounds = BoundingContainedPolygons;
+			currentBounds.GraphFaceToInnerBound = GraphFaceToInnerBound;
+			for (int32 polyID : polyIDsToDelete)
+			{
+				if (currentBounds.InnerBounds.Contains(polyID))
+				{
+					currentBounds.InnerBounds.Remove(polyID);
+				}
+				if (currentBounds.GraphVerticesToSurfaceVertices.Contains(polyID))
+				{
+					currentBounds.GraphVerticesToSurfaceVertices.Remove(polyID);
+				}
+			}
+
+			currentBounds.OuterBounds = BoundingPolygon;
+			// TODO: unclear how to deal with modifying the OuterBounds
+
+			for (auto& kvp : GraphVertexToBoundVertex)
+			{
+				if (FindVertex(kvp.Value) != nullptr)
+				{
+					currentBounds.GraphVerticesToSurfaceVertices.Add(kvp.Key, kvp.Value);
+				}
+			}
+
+			if (!ValidateAgainstBounds())
+			{
+				ApplyInverseDeltas(OutDeltas);
+				return false;
+			}
+
+			if (!SetBounds(OutDeltas, currentBounds.OuterBounds, currentBounds.InnerBounds, currentBounds.GraphFaceToInnerBound, currentBounds.GraphVerticesToSurfaceVertices))
+			{
+				ApplyInverseDeltas(OutDeltas);
+				return false;
+			}
 		}
 
 		ApplyInverseDeltas(OutDeltas);
@@ -755,12 +792,12 @@ namespace Modumate
 		return MoveVertices(OutDeltas, NextID, newVertexPositions);
 	}
 
-	bool FGraph2D::SetBounds(TArray<FGraph2DDelta> &OutDeltas, TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds)
+	bool FGraph2D::SetBounds(TArray<FGraph2DDelta> &OutDeltas, TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds, TMap<int32, int32>& FaceToPoly, TMap<int32, int32>& GraphToSurface)
 	{
 		FGraph2DDelta boundsDelta(ID);
 
 		// test to make sure provided polygons are valid
-		if (OuterBounds.Value.Num() < 3)
+		if (!(BoundingPolygon.Value.Num() == 0 && OuterBounds.Value.Num() == 0) && OuterBounds.Value.Num() < 3)
 		{
 			return false;
 		}
@@ -775,10 +812,14 @@ namespace Modumate
 		FBoundsUpdate currentBounds;
 		currentBounds.OuterBounds = BoundingPolygon;
 		currentBounds.InnerBounds = BoundingContainedPolygons;
+		currentBounds.GraphFaceToInnerBound = GraphFaceToInnerBound;
+		currentBounds.GraphVerticesToSurfaceVertices = GraphVertexToBoundVertex;
 
 		FBoundsUpdate nextBounds;
 		nextBounds.OuterBounds = OuterBounds;
 		nextBounds.InnerBounds = InnerBounds;
+		nextBounds.GraphFaceToInnerBound = FaceToPoly;
+		nextBounds.GraphVerticesToSurfaceVertices = GraphToSurface;
 
 		boundsDelta.BoundsUpdates = TPair<FBoundsUpdate, FBoundsUpdate>(currentBounds, nextBounds);
 
@@ -787,9 +828,10 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph2D::PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, TArray<TArray<FVector2D>>& InitialPolygons, bool bUseAsBounds)
+	bool FGraph2D::PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, TMap<int32, TArray<FVector2D>>& InitialPolygons, TMap<int32, TArray<int32>>& FaceToVertices, bool bUseAsBounds)
 	{
-		if (!IsEmpty() || (InitialPolygons.Num() == 0))
+		//if (!IsEmpty() || (InitialPolygons.Num() == 0))
+		if (InitialPolygons.Num() == 0)
 		{
 			return false;
 		}
@@ -797,31 +839,53 @@ namespace Modumate
 		TArray<FGraph2DDelta> appliedDeltas;
 
 		// Populate the target graph with the polygon vertices
-		FGraph2DDelta& addVerticesDelta = appliedDeltas.Add_GetRef(FGraph2DDelta(ID));
-		for (int32 polygonIdx = 0; polygonIdx < InitialPolygons.Num(); polygonIdx++)
+		TMap<int32, TSet<int32>> faceToSurfaceVertices;
+		TMap<int32, int32> graphVertexToSurfaceVertex = GraphVertexToBoundVertex;
+
+		for (auto& kvp : InitialPolygons)
 		{
-			const TArray<FVector2D>& polygonVertices = InitialPolygons[polygonIdx];
+			int32 idx = 0;
+			FGraph2DDelta& addVerticesDelta = appliedDeltas.Add_GetRef(FGraph2DDelta(ID));
+
+			const TArray<FVector2D>& polygonVertices = kvp.Value;
 
 			for (const FVector2D& polygonVertex : polygonVertices)
 			{
-				if (!AddVertexDirect(addVerticesDelta, NextID, polygonVertex))
+				const FGraph2DVertex *existingVertex = FindVertex(polygonVertex);
+				if (existingVertex == nullptr)
 				{
-					ApplyInverseDeltas(appliedDeltas);
-					return false;
-				}
-			}
-		}
+					if (kvp.Key != MOD_ID_NONE)
+					{
+						graphVertexToSurfaceVertex.Add(FaceToVertices[kvp.Key][idx], NextID);
+					}
 
-		if (!ApplyDelta(addVerticesDelta))
-		{
-			ApplyInverseDeltas(appliedDeltas);
-			return false;
+					if (!AddVertexDirect(addVerticesDelta, NextID, polygonVertex))
+					{
+						ApplyInverseDeltas(appliedDeltas);
+						return false;
+					}
+				}
+				else if (kvp.Key != MOD_ID_NONE)
+				{
+					graphVertexToSurfaceVertex.Add(FaceToVertices[kvp.Key][idx], existingVertex->ID);
+				}
+				idx++;
+			}
+
+			if (!ApplyDelta(addVerticesDelta))
+			{
+				ApplyInverseDeltas(appliedDeltas);
+				return false;
+			}
+
+			faceToSurfaceVertices.Add(kvp.Key, TSet<int32>());
+			AggregateAddedVertices({ addVerticesDelta }, faceToSurfaceVertices[kvp.Key]);
 		}
 
 		FGraph2DDelta& addEdgesDelta = appliedDeltas.Add_GetRef(FGraph2DDelta(ID));
-		for (int32 polygonIdx = 0; polygonIdx < InitialPolygons.Num(); polygonIdx++)
+		for (auto& kvp : InitialPolygons)
 		{
-			const TArray<FVector2D>& polygonVertices = InitialPolygons[polygonIdx];
+			const TArray<FVector2D>& polygonVertices = kvp.Value;
 			int32 numPolygonVerts = polygonVertices.Num();
 			for (int32 polyPointIdxA = 0; polyPointIdxA < numPolygonVerts; ++polyPointIdxA)
 			{
@@ -831,6 +895,9 @@ namespace Modumate
 				int32 polyVertexIDA = polyVertexA ? polyVertexA->ID : MOD_ID_NONE;
 				int32 polyVertexIDB = polyVertexB ? polyVertexB->ID : MOD_ID_NONE;
 
+				// TODO existingEdges
+
+				// TODO: this is vulnerable because it may result in overlapping edges
 				if (!AddEdgeDirect(addEdgesDelta, NextID, polyVertexA->ID, polyVertexB->ID))
 				{
 					ApplyInverseDeltas(appliedDeltas);
@@ -838,6 +905,9 @@ namespace Modumate
 				}
 			}
 		}
+
+		TSet<int32> addedVertices, addedEdges, addedPolys;
+		AggregateAddedObjects({ addEdgesDelta }, addedVertices, addedEdges, addedPolys);
 
 		if (!ApplyDelta(addEdgesDelta))
 		{
@@ -854,20 +924,72 @@ namespace Modumate
 		// Clean polygons now, to ensure that perimeters and interior/exterior values are up-to-date.
 		CleanDirtyObjects(true);
 
-		// Make sure that the calculated polygons correspond to those that were intended to populate the graph
-		int32 numInteriorPolygons = 0;
-		for (auto& kvp : Polygons)
+		// Find the interior polygons that correspond to the volume graph polygons
+
+		TMap<int32, TSet<int32>> faceToSurfaceEdges;
+		for (auto& kvp : InitialPolygons)
 		{
-			if (kvp.Value.bInterior)
+			const TArray<FVector2D>& polygonVertices = kvp.Value;
+			int32 numPolygonVerts = polygonVertices.Num();
+
+			faceToSurfaceEdges.Add(kvp.Key, TSet<int32>());
+			for (int32 polyPointIdxA = 0; polyPointIdxA < numPolygonVerts; ++polyPointIdxA)
 			{
-				numInteriorPolygons++;
+				int32 polyPointIdxB = (polyPointIdxA + 1) % numPolygonVerts;
+
+				AggregateAddedEdges({ addEdgesDelta }, faceToSurfaceEdges[kvp.Key], polygonVertices[polyPointIdxA], polygonVertices[polyPointIdxB]);
 			}
 		}
 
-		if (numInteriorPolygons != InitialPolygons.Num())
+		TMap<int32, int32> graphFaceToSurfacePoly = GraphFaceToInnerBound;
+		for (auto& kvp : faceToSurfaceEdges)
 		{
-			ApplyInverseDeltas(appliedDeltas);
-			return false;
+			bool bStart = true;
+			TSet<int32> surfacePolyCandidates;
+			for (int32 edgeID : kvp.Value)
+			{
+				auto edge = FindEdge(edgeID);
+				if (edge == nullptr)
+				{
+					continue;
+				}
+
+				auto leftPoly = FindPolygon(edge->LeftPolyID);
+				auto rightPoly = FindPolygon(edge->RightPolyID);
+				
+				TSet<int32> current;
+				if (leftPoly && leftPoly->bInterior)
+				{
+					current.Add(leftPoly->ID);
+				}
+				if (rightPoly && rightPoly->bInterior)
+				{
+					current.Add(rightPoly->ID);
+				}
+
+				if (bStart)
+				{
+					surfacePolyCandidates = current;
+					bStart = false;
+				}
+				else
+				{
+					surfacePolyCandidates = surfacePolyCandidates.Intersect(current);
+					if (surfacePolyCandidates.Num() == 0)
+					{
+						ApplyInverseDeltas(appliedDeltas);
+						return false;
+					}
+				}
+			}
+
+			if (surfacePolyCandidates.Num() != 1)
+			{
+				ApplyInverseDeltas(appliedDeltas);
+				return false;
+			}
+			// TODO: exterior is MOD_ID_NONE
+			graphFaceToSurfacePoly.Add(kvp.Key, *surfacePolyCandidates.CreateConstIterator());
 		}
 
 		// Now, optionally set the bounds based on the resulting polygons
@@ -891,7 +1013,7 @@ namespace Modumate
 				}
 			}
 
-			if (!SetBounds(appliedDeltas, outerBounds, innerBounds) || !ValidateAgainstBounds())
+			if (!SetBounds(appliedDeltas, outerBounds, innerBounds, graphFaceToSurfacePoly, graphVertexToSurfaceVertex) || !ValidateAgainstBounds())
 			{
 				ApplyInverseDeltas(appliedDeltas);
 				return false;

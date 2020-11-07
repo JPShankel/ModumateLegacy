@@ -422,12 +422,14 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 	}
 
 	// Project all of the polygons to add to the target graph
-	TArray<TArray<FVector2D>> graphPolygonsToAdd;
+	TMap<int32, TArray<FVector2D>> graphPolygonsToAdd;
+	TMap<int32, TArray<int32>> graphFaceToVertices;
 
-	TArray<FVector2D> &perimeterPolygon = graphPolygonsToAdd.AddDefaulted_GetRef();
+	TArray<FVector2D> perimeterPolygon;
 	Algo::Transform(HitFacePoints, perimeterPolygon, [this](const FVector &WorldPoint) {
 		return UModumateGeometryStatics::ProjectPoint2DTransform(WorldPoint, HitFaceOrigin);
 	});
+	graphPolygonsToAdd.Add(MOD_ID_NONE, perimeterPolygon);
 
 	// Project the holes that the target has into graph polygons, if any
 	const auto &volumeGraph = GameState->Document.GetVolumeGraph();
@@ -444,15 +446,17 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 		for (int32 containedFaceID : hostParentFace->ContainedFaceIDs)
 		{
 			const auto *containedFace = volumeGraph.FindFace(containedFaceID);
-			TArray<FVector2D> &holePolygon = graphPolygonsToAdd.AddDefaulted_GetRef();
+			TArray<FVector2D> holePolygon;
 			Algo::Transform(containedFace->CachedPositions, holePolygon, [this](const FVector &WorldPoint) {
 				return UModumateGeometryStatics::ProjectPoint2DTransform(WorldPoint, HitFaceOrigin);
 			});
+			graphPolygonsToAdd.Add(containedFaceID, holePolygon);
+			graphFaceToVertices.Add(containedFaceID, containedFace->VertexIDs);
 		}
 	}
 
 	TArray<FGraph2DDelta> fillGraphDeltas;
-	if (!HitSurfaceGraph->PopulateFromPolygons(fillGraphDeltas, nextID, graphPolygonsToAdd, true))
+	if (!HitSurfaceGraph->PopulateFromPolygons(fillGraphDeltas, nextID, graphPolygonsToAdd, graphFaceToVertices, true))
 	{
 		return false;
 	}

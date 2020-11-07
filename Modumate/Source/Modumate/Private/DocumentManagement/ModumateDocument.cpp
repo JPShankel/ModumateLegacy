@@ -52,6 +52,7 @@ const FName FModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
 FModumateDocument::FModumateDocument()
 	: NextID(1)
 	, PrePreviewNextID(1)
+	, ReservingObjectID(MOD_ID_NONE)
 	, bApplyingPreviewDeltas(false)
 	, bFastClearingPreviewDeltas(false)
 	, bSlowClearingPreviewDeltas(false)
@@ -1706,6 +1707,35 @@ FBoxSphereBounds FModumateDocument::CalculateProjectBounds() const
 
 	FBoxSphereBounds projectBounds(allMOIPoints.GetData(), allMOIPoints.Num());
 	return projectBounds;
+}
+
+int32 FModumateDocument::GetNextAvailableID() const 
+{ 
+	return NextID; 
+}
+
+int32 FModumateDocument::ReserveNextIDs(int32 reservingObjID)
+{ 
+	if (!ensureAlways(ReservingObjectID == MOD_ID_NONE))
+	{
+		return MOD_ID_NONE;
+	}
+
+	ReservingObjectID = reservingObjID;
+
+	return NextID;
+}
+
+void FModumateDocument::SetNextID(int32 ID, int32 reservingObjID)
+{
+	if (!ensureAlways(ReservingObjectID == reservingObjID) ||
+		!ensureAlways(ID >= NextID))
+	{
+		return;
+	}
+
+	NextID = ID;
+	ReservingObjectID = MOD_ID_NONE;
 }
 
 bool FModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)

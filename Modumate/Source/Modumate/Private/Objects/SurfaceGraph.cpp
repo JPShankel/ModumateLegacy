@@ -3,6 +3,7 @@
 #include "Objects/SurfaceGraph.h"
 
 #include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "DocumentManagement/ModumateDocument.h"
 
@@ -101,8 +102,124 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 				}
 			}
 
+			// Attempt to update the surface graph with the correct bounds
+			int32 nextID = doc->ReserveNextIDs(MOI->ID);
+			
+			// find hosting metaplane
+			auto hostObj = doc->GetObjectById(MOI->GetParentID());
+			if (hostObj == nullptr)
+			{
+				return false;
+			}
+
+			auto faceObj = doc->GetObjectById(hostObj->GetParentID());
+			if (faceObj == nullptr)
+			{
+				return false;
+			}
+
+			auto& graph = doc->GetVolumeGraph();
+			auto face = graph.FindFace(faceObj->ID);
+			if (face == nullptr)
+			{
+				return false;
+			}
+
+			// movement updates
+			for (auto& kvp : surfaceGraph->GraphVertexToBoundVertex)
+			{
+				auto graphVertex = graph.FindVertex(kvp.Key);
+				auto surfaceVertex = surfaceGraph->FindVertex(kvp.Value);
+
+				if (!graphVertex || !surfaceVertex)
+				{
+					continue;
+				}
+
+				FVector2D newPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(graphVertex->Position, CachedFaceOrigin);
+				if (!newPos2D.Equals(surfaceVertex->Position, PLANAR_DOT_EPSILON))
+				{
+					vertexMoves.Add(surfaceVertex->ID, newPos2D);
+				}
+			}
+
+			if (FVector::Parallel(face->CachedPlane, MOI->GetNormal()))
+			{
+				// removes
+				TArray<FGraph2DDelta> deleteDeltas;
+				TArray<int32> deleteIDs;
+				for (auto& kvp : surfaceGraph->GraphFaceToInnerBound)
+				{
+					// face in the map is no longer contained
+					if (kvp.Key != MOD_ID_NONE && !face->ContainedFaceIDs.Contains(kvp.Key))
+					{
+						deleteIDs.Add(kvp.Value);
+					}
+				}
+
+				surfaceGraph->DeleteObjects(deleteDeltas, nextID, deleteIDs);
+
+				for (auto& delta : deleteDeltas)
+				{
+					OutSideEffectDeltas->Add(MakeShared<FGraph2DDelta>(delta));
+				}
+
+				// adds
+				TArray<int32> addIDs;
+				for (int32 containedFaceID : face->ContainedFaceIDs)
+				{
+					if (!surfaceGraph->GraphFaceToInnerBound.Contains(containedFaceID))
+					{
+						addIDs.Add(containedFaceID);
+
+					}
+				}
+
+				if (addIDs.Num() > 0)
+				{
+					int32 hitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(MOI);
+					TArray<FVector> cornerPositions;
+					FVector origin, normal, axisX, axisY;
+					TMap<int32, TArray<FVector2D>> graphPolygonsToAdd;
+					TMap<int32, TArray<int32>> graphFaceToVertices;
+					auto hostmoi = doc->GetObjectById(MOI->GetParentID());
+					if (hostmoi && UModumateObjectStatics::GetGeometryFromFaceIndex(hostmoi, hitFaceIndex,
+						cornerPositions, normal, axisX, axisY))
+					{
+						origin = cornerPositions[0];
+
+						for (int32 id : addIDs)
+						{
+							const auto* containedFace = graph.FindFace(id);
+							TArray<FVector2D> holePolygon;
+							Algo::Transform(containedFace->CachedPositions, holePolygon, [this, axisX, axisY, origin](const FVector& WorldPoint) {
+								return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, axisX, axisY, origin);
+								});
+							graphPolygonsToAdd.Add(id, holePolygon);
+							graphFaceToVertices.Add(id, containedFace->VertexIDs);
+						}
+
+						TArray<FGraph2DDelta> boundsDeltas;
+						if (!surfaceGraph->PopulateFromPolygons(boundsDeltas, nextID, graphPolygonsToAdd, graphFaceToVertices, true))
+						{
+							doc->SetNextID(doc->GetNextAvailableID(), MOI->ID);
+							return true;
+						}
+
+						for (auto& delta : boundsDeltas)
+						{
+							OutSideEffectDeltas->Add(MakeShared<FGraph2DDelta>(delta));
+						}
+					}
+				}
+
+				
+			}
+
+			// surface graph can only have inner bounds (that are mirrored by the volume graph)
+			// if its normal is parallel to the plane it is hosted on
+
 			// Attempt to generate deltas with the projected positions
-			int32 nextID = doc->GetNextAvailableID();
 			TArray<FGraph2DDelta> moveDeltas;
 			bool bValidGraph = bFoundAllVertices;
 			if (bValidGraph && (vertexMoves.Num() > 0))
@@ -131,6 +248,8 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 
 				OutSideEffectDeltas->Add(deleteSurfaceDelta);
 			}
+
+			doc->SetNextID(nextID, MOI->ID);
 		}
 		else if (numIDs == 0)
 		{

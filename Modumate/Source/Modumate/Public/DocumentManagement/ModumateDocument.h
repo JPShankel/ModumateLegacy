@@ -35,6 +35,7 @@ private:
 
 	int32 NextID;
 	int32 PrePreviewNextID;
+	int32 ReservingObjectID;
 	bool bApplyingPreviewDeltas, bFastClearingPreviewDeltas, bSlowClearingPreviewDeltas;
 
 	TArray<FModumateObjectInstance*> ObjectInstanceArray;
@@ -83,7 +84,9 @@ public:
 
 	// TODO: resolve how best to get IDs for created objects into MOI deltas
 	// For now, just ask what the next ID will be
-	int32 GetNextAvailableID() const { return NextID; }
+	int32 GetNextAvailableID() const;
+	int32 ReserveNextIDs(int32 reservingObjID);
+	void SetNextID(int32 ID, int32 reservingObjID);
 
 	const TArray<FModumateObjectInstance*>& GetObjectInstances() const { return ObjectInstanceArray; }
 	TArray<FModumateObjectInstance*>& GetObjectInstances() { return ObjectInstanceArray; }
