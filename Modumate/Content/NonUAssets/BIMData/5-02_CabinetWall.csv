@@ -18,7 +18,7 @@ AssemblyCabinetFace
 0Slot-Frame
 Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0Slot-AssemblyPanelOverlay1of1
 AssemblyPanel
 1SlotConfig --> Panel
@@ -33,20 +33,20 @@ AssemblyPanel
 0Slot-HandleXMidStileYOutsideZMidBottomRail
 0Slot-Panel
 Panel
-0Mesh-Cabinet-Panel-02.Cabinet-Panel-02'
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
+0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0Slot-HandleXMidStileYOutsideZMidBottomRail
 HandleStatic
 0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
-1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural",,AssemblyCabinetWall,,Single Swing (Upper),30in,24in,36in,,X,,"AssemblyCabinetFace
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,AssemblyCabinetWall,,Single Swing (Upper),30in,24in,36in,,X,,"AssemblyCabinetFace
 1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelOverlay1of1
 0Slot-Frame
 Frame
 0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
-1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0Slot-AssemblyPanelOverlay1of1
 AssemblyPanel
 1SlotConfig --> Panel
@@ -61,9 +61,68 @@ AssemblyPanel
 0Slot-HandleXMidStileYOutsideZMidBottomRail
 0Slot-Panel
 Panel
-0Mesh-Cabinet-Panel-02.Cabinet-Panel-02'
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
+0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0Slot-HandleXMidStileYOutsideZMidBottomRail
 HandleStatic
 0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",1Material --> Wood --> Teak-0RawMaterial-Teak-0Color --> Wood --> Teak-FFFFFF-Natural
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
+PRESET,,"AssemblyCabinetWall
+AssemblyCabinetFace
+1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelOverlayLeft
+0Slot-AssemblyPanelOverlayRight
+0Slot-Frame
+Frame
+0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
+0Slot-AssemblyPanelOverlayLeft
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+HandleStatic
+0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural",,AssemblyCabinetWall,,Double Swing (Upper),30in,24in,36in,,X,,"AssemblyCabinetFace
+1SlotConfig --> Frame
+0Slot-Frame
+0Slot-AssemblyPanelOverlayLeft
+0Slot-AssemblyPanelOverlayRight
+0Slot-Frame
+Frame
+0Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
+0Slot-AssemblyPanelOverlayLeft
+AssemblyPanel
+1SlotConfig --> Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleUpperFixedXZ
+0Slot-HandleLowerFixedXZ
+0Slot-HandleXMidWidthYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidTopRail
+0Slot-HandleXMidStileYOutsideZMidHeight
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-Panel
+Panel
+0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
+1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
+0Slot-HandleXMidStileYOutsideZMidBottomRail
+HandleStatic
+0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
+1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural

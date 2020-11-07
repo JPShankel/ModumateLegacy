@@ -155,7 +155,7 @@ PRESET,,,,,,,,,0Slot-AssemblyPanelOverlay1of1,,,,,,,,
 PRESET,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-AssemblyPanelOverlayLeft
-0Slot-AssemblyPanelOverlayRight",,1SlotConfig --> Frame,,Overlay (Two Horizontal),Self.Frame.NativeSizeY+Self.PanelAssembly.Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
+0Slot-AssemblyPanelOverlayRight",,1SlotConfig --> Frame,,Overlay (Double),Self.Frame.NativeSizeY+Self.PanelAssembly.Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelOverlayLeft,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelOverlayRight,,,,,,,,
 PRESET,,"1SlotConfig --> Frame

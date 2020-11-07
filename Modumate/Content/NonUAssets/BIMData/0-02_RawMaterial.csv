@@ -43,6 +43,7 @@ PRESET,,0RawMaterial-Glass Block,,0RawMaterial,,Glass Block,/Game/ShoppingData/M
 PRESET,,0RawMaterial-Glass,,0RawMaterial,,Glass,/Game/ShoppingData/Materials/Glass-Clear/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Glass,1,,1Material --> Glass and Transparent --> Glass
 PRESET,,0RawMaterial-Mesh Fly Screen,,0RawMaterial,,Mesh Fly Screen,/Game/ShoppingData/Materials/Mesh-FlyScreen/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Mesh Fly Screen,1,,1Material --> Glass and Transparent --> Mesh Fly Screen
 PRESET,,0RawMaterial-Aluminum,,0RawMaterial,,Aluminum,/Game/ShoppingData/Materials/Metal-Aluminum-Anodized/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Aluminum,1,,1Material --> Metal --> Aluminum
+PRESET,,0RawMaterial-Aluminum (Brushed),,0RawMaterial,,Aluminum (Brushed),/Game/ShoppingData/Materials/Metal-Aluminum-Brushed/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Aluminum (Brushed),2,,1Material --> Metal --> Aluminum
 PRESET,,0RawMaterial-Chrome,,0RawMaterial,,Chrome,/Game/ShoppingData/Materials/Metal-Chrome/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Chrome,1,,1Material --> Metal --> Chrome
 PRESET,,0RawMaterial-Copper,,0RawMaterial,,Copper,/Game/ShoppingData/Materials/Metal-Copper/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Copper,1,,1Material --> Metal --> Copper
 PRESET,,0RawMaterial-Iron,,0RawMaterial,,Iron,/Game/ShoppingData/Materials/Metal-Iron-Cast/SceneUMaterial_Inst.SceneUMaterial_Inst,0RawMaterial-Iron,1,,1Material --> Metal --> Iron
