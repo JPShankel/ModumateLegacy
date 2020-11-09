@@ -7,8 +7,6 @@
 #include "BIMKernel/BIMProperties.h"
 #include "BIMKernel/BIMTagPath.h"
 #include "BIMKernel/BIMKey.h"
-#include "BIMKernel/BIMSerialization.h"
-#include "BIMKernel/BIMAssemblySpec.h"
 #include "BIMKernel/BIMPresetTypeDefinition.h"
 
 #include "BIMPresetInstance.generated.h"
@@ -71,11 +69,14 @@ struct MODUMATE_API FBIMPresetInstance
 	GENERATED_BODY()
 
 private:
+
+	UPROPERTY()
 	FBIMPropertySheet Properties;
 
 	//for direct access to properties
 	friend class FBIMCraftingTreeNodePool;
 	friend class FBIMAssemblySpec;
+	friend class FBIMCraftingTreeNode;
 
 public:
 
@@ -112,7 +113,10 @@ public:
 	UPROPERTY()
 	TArray<FBIMPresetPinAttachment> ChildPresets;
 
+	UPROPERTY()
 	TArray<FBIMTagPath> ParentTagPaths;
+
+	UPROPERTY()
 	FBIMTagPath MyTagPath;
 
 	bool HasProperty(const FBIMNameType& Name) const;
@@ -148,7 +152,4 @@ public:
 
 	bool Matches(const FBIMPresetInstance& OtherPreset) const;
 	bool SupportsChild(const FBIMPresetInstance& CandidateChild) const;
-
-	EBIMResult ToDataRecord(FCraftingPresetRecord &OutRecord) const;
-	EBIMResult FromDataRecord(const FBIMPresetCollection &PresetCollection, const FCraftingPresetRecord &Records);
 };

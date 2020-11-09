@@ -38,7 +38,6 @@ FORCEINLINE uint32 GetTypeHash(const FBIMKey& BIMKey)
 	return BIMKey.HashValue;
 }
 
-
 template<>
 struct TStructOpsTypeTraits<FBIMKey> : public TStructOpsTypeTraitsBase2<FBIMKey>
 {

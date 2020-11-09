@@ -7,7 +7,7 @@
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonSerializer.h"
 #include "JsonObjectConverter.h"
-#include "BIMKernel/BIMSerialization.h"
+#include "BIMKernel/BIMPresetCollection.h"
 #include "DocumentManagement/ModumateCameraView.h"
 #include "Objects/MOIState.h"
 
@@ -256,10 +256,6 @@ struct FCustomAssemblyRecordV4
 	UPROPERTY()
 	TArray<FCustomAssemblyProperty> PropertySheet;
 
-	//TODO: CraftingNodes is deprecated in favor of RootPreset
-	UPROPERTY()
-	TArray<FCustomAssemblyCraftingNodeRecord> CraftingNodes;
-
 	UPROPERTY()
 	FBIMKey RootPreset;
 };
@@ -306,9 +302,8 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 	UPROPERTY()
 	TMap<EToolMode, FBIMKey> CurrentToolAssemblyMap;
 
-	// DDL 2.0
 	UPROPERTY()
-	TArray<FCraftingPresetRecord> CraftingPresetArrayV2;
+	FBIMPresetCollection PresetCollection;
 
 	UPROPERTY()
 	TArray<FBIMKey> ProjectAssemblyPresets;

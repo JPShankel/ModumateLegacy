@@ -19,50 +19,6 @@ FPresetManager::FPresetManager()
 FPresetManager::~FPresetManager()
 {}
 
-EBIMResult FPresetManager::FromDocumentRecord(UWorld* World, const FModumateDocumentHeader& DocumentHeader, const FMOIDocumentRecord& DocumentRecord)
-{
-	KeyStore = DocumentRecord.KeyStore;
-
-	if (DocumentRecord.CraftingPresetArrayV2.Num() != 0)
-	{
-		CraftingNodePresets.FromDataRecords(DocumentRecord.CraftingPresetArrayV2);
-	}
-
-	FBIMPresetCollection &presetCollection = CraftingNodePresets;
-
-	// In the DDL2verse, assemblies are stored solely by their root preset ID then rebaked into runtime assemblies on load
-	for (auto& presetID : DocumentRecord.ProjectAssemblyPresets)
-	{
-		// this ensure will fire if expected presets have become obsolete, resave to fix
-		FBIMKey bimKey(presetID);
-		if (!ensureAlways(CraftingNodePresets.Presets.Contains(bimKey)))
-		{
-			continue;
-		}
-	}
-
-	GraphCollection.Empty();
-	for (auto& cgr : DocumentRecord.CustomGraph2DRecords)
-	{
-		GraphCollection.Add(cgr.Key, cgr.Value);
-	}
-
-	return EBIMResult::Success;
-}
-
-EBIMResult FPresetManager::ToDocumentRecord(FMOIDocumentRecord &OutRecord) const
-{
-	CraftingNodePresets.ToDataRecords(OutRecord.CraftingPresetArrayV2);
-	OutRecord.KeyStore = KeyStore;
-
-	for (auto& cgc : GraphCollection)
-	{
-		OutRecord.CustomGraph2DRecords.Add(cgc.Key.ToString(), cgc.Value);
-	}
-
-	return EBIMResult::Success;
-}
-
 FBIMKey FPresetManager::GetAvailableKey(const FBIMKey& BaseKey)
 {
 	FString newKey;

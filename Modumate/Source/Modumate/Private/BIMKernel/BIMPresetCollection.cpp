@@ -2,6 +2,7 @@
 
 #include "BIMKernel/BIMPresetCollection.h"
 #include "BIMKernel/BIMCSVReader.h"
+#include "BIMKernel/BIMAssemblySpec.h"
 #include "ModumateCore/ModumateScriptProcessor.h"
 
 
@@ -198,30 +199,4 @@ EBIMResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModumateDa
 	}
 
 	return OutAssemblySpec.FromPreset(InDB, previewCollection, assemblyPreset.PresetID);
-}
-
-EBIMResult FBIMPresetCollection::ToDataRecords(TArray<FCraftingPresetRecord> &OutRecords) const
-{
-	for (auto &kvp : Presets)
-	{
-		FCraftingPresetRecord &presetRec = OutRecords.AddDefaulted_GetRef();
-		kvp.Value.ToDataRecord(presetRec);
-	}
-	return EBIMResult::Success;
-}
-
-EBIMResult FBIMPresetCollection::FromDataRecords(const TArray<FCraftingPresetRecord> &Records)
-{
-	Presets.Empty();
-
-	for (auto &presetRecord : Records)
-	{
-		FBIMPresetInstance newPreset;
-		if (newPreset.FromDataRecord(*this, presetRecord) == EBIMResult::Success)
-		{
-			Presets.Add(newPreset.PresetID, newPreset);
-		}
-	}
-
-	return EBIMResult::Success;
 }

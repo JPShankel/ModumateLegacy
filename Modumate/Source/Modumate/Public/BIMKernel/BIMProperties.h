@@ -7,6 +7,7 @@
 #include "BIMKernel/BIMKey.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "Database/ModumateObjectEnums.h"
+#include "BIMProperties.generated.h"
 
 struct  FBIMPropertySheetRecord;
 typedef FName FBIMNameType;
@@ -90,23 +91,28 @@ struct MODUMATE_API FBIMPropertyKey
 	FBIMNameType Name;
 };
 
+USTRUCT()
 struct MODUMATE_API FBIMPropertySheet
 {
+	GENERATED_BODY()
 
 private:
 	// BIM properties come in many flavors but are all either numbers or strings
-	typedef TMap<FBIMNameType, FString> FStringMap;
-	typedef TMap<FBIMNameType, float> FNumberMap;
+	typedef TMap<FName, FString> FStringMap;
+	typedef TMap<FName, float> FNumberMap;
 
-	FStringMap StringMap;
-	FNumberMap NumberMap;
+	UPROPERTY()
+	TMap<FName, FString> StringMap;
+
+	UPROPERTY()
+	TMap<FName, float> NumberMap;
 
 	// Typed map accessors used in template functions below
 	void GetMap(FStringMap*& OutMapPtr){OutMapPtr = &StringMap;}
 	void GetMap(FNumberMap*& OutMapPtr){OutMapPtr = &NumberMap;}
 
-	void GetMapConst(const FStringMap*& OutMapPtr) const {OutMapPtr = &StringMap;}
-	void GetMapConst(const FNumberMap*& OutMapPtr) const {OutMapPtr = &NumberMap;}
+	void GetMap(const FStringMap*& OutMapPtr) const {OutMapPtr = &StringMap;}
+	void GetMap(const FNumberMap*& OutMapPtr) const {OutMapPtr = &NumberMap;}
 
 public:
 
@@ -115,7 +121,7 @@ public:
 	{
 		FBIMNameType qn = FBIMPropertyKey(InScope, InName).QN();
 		const TMap<FName, T>* propMap;
-		GetMapConst(propMap);
+		GetMap(propMap);
 		return propMap->Contains(qn);
 	}
 
@@ -128,10 +134,10 @@ public:
 	}
 
 	template<class T>
-	T GetProperty(EBIMValueScope InScope, const FBIMNameType& InName) const
+	T GetProperty(EBIMValueScope Scope, const FBIMNameType& Name) const
 	{
 		T ret;
-		TryGetProperty<T>(InScope, InName, ret);
+		TryGetProperty<T>(Scope, Name, ret);
 		return ret;
 	}
 
@@ -139,7 +145,7 @@ public:
 	bool TryGetProperty(EBIMValueScope InScope, const FBIMNameType& InName, T& OutT) const
 	{
 		const TMap<FName, T>* propMap;
-		GetMapConst(propMap);
+		GetMap(propMap);
 
 		const T* ret = propMap->Find(FBIMPropertyKey(InScope, InName).QN());
 		if (ret != nullptr)
@@ -153,28 +159,21 @@ public:
 
 	// These template specializations provide common conversions between text and numerical types
 	template<>
-	bool TryGetProperty<FName>(EBIMValueScope InScope, const FBIMNameType& InName, FName& OutT) const;
+	bool TryGetProperty<FName>(EBIMValueScope Scope, const FBIMNameType& Name, FName& OutT) const;
 
 	template<>
-	bool TryGetProperty<FText>(EBIMValueScope InScope, const FBIMNameType& InName, FText& OutT) const;
+	bool TryGetProperty<FText>(EBIMValueScope Scope, const FBIMNameType& Name, FText& OutT) const;
 
 	template<>
-	bool TryGetProperty<FBIMKey>(EBIMValueScope InScope, const FBIMNameType& InName, FBIMKey& OutT) const;
+	bool TryGetProperty<FBIMKey>(EBIMValueScope Scope, const FBIMNameType& Name, FBIMKey& OutT) const;
 
 	template<>
-	bool TryGetProperty<Modumate::Units::FUnitValue>(EBIMValueScope InScope, const FBIMNameType& InName, Modumate::Units::FUnitValue& OutT) const;
+	bool TryGetProperty<Modumate::Units::FUnitValue>(EBIMValueScope Scope, const FBIMNameType& Name, Modumate::Units::FUnitValue& OutT) const;
 
 	template<>
-	bool TryGetProperty<int32>(EBIMValueScope InScope, const FBIMNameType& InName, int32& OutT) const;
+	bool TryGetProperty<int32>(EBIMValueScope Scope, const FBIMNameType& Name, int32& OutT) const;
 
 	EBIMResult AddProperties(const FBIMPropertySheet& PropSheet);
 
-	// TODO: old serialization stored props as maps of JSON objects, to be replaced with direct storage of internal maps
-	bool ToStringMap_DEPRECATED(TMap<FString, FString>& OutMap) const;
-	bool FromStringMap_DEPRECATED(const TMap<FString, FString>& InMap);
-
 	bool Matches(const FBIMPropertySheet& PropSheet) const;
-
-	bool FromDataRecord(const FBIMPropertySheetRecord& InRecord);
-	bool ToDataRecord(FBIMPropertySheetRecord& OutRecord) const;
 };

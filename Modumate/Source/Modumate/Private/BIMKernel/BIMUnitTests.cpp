@@ -110,111 +110,13 @@ static bool testKeys()
 
 static bool testTags()
 {
-	FBIMTagGroup group1, group2;
-
-	group1.Add(TEXT("TAG1"));
-	group1.Add(TEXT("TAG2"));
-	group1.Add(TEXT("TAG3"));
-
-	group2.Add(TEXT("TAG1"));
-	group2.Add(TEXT("TAG2"));
-	group2.Add(TEXT("TAG3"));
-
-	if (!ensureAlways(group1.MatchesAll(group2)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(group1.MatchesAny(group2)))
-	{
-		return false;
-	}
-
-	group1 = FBIMTagGroup();
-	group2 = FBIMTagGroup();
-
-	group1.Add(TEXT("TAG1"));
-	group1.Add(TEXT("TAG2"));
-
-	group2.Add(TEXT("TAG1"));
-	group2.Add(TEXT("TAG2"));
-	group2.Add(TEXT("TAG3"));
-
-	if (!ensureAlways(!group1.MatchesAll(group2)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(group1.MatchesAny(group2)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(!group2.MatchesAll(group1)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(group2.MatchesAny(group1)))
-	{
-		return false;
-	}
-
-	group1 = FBIMTagGroup();
-	group2 = FBIMTagGroup();
-
-	group1.Add(TEXT("TAG1"));
-	group1.Add(TEXT("TAG2"));
-
-	group2.Add(TEXT("TAG1"));
-	group2.Add(TEXT("TAG2"));
-	group2.Add(TEXT("TAG3"));
-
-	if (!ensureAlways(!group1.MatchesAll(group2)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(group1.MatchesAny(group2)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(!group2.MatchesAll(group1)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(group2.MatchesAny(group1)))
-	{
-		return false;
-	}
-
-	group1 = FBIMTagGroup();
-	group2 = FBIMTagGroup();
-
-	group1.Add(TEXT("TAG1"));
-	group1.Add(TEXT("G1TAG2"));
-
-	group2.Add(TEXT("G2TAG1"));
-	group2.Add(TEXT("TAG1"));
-	group2.Add(TEXT("TAG3"));
-
-	if (!ensureAlways(!group1.MatchesAll(group2)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(group1.MatchesAny(group2)))
-	{
-		return false;
-	}
 
 	FString outString1,outString2;
 
 	FBIMTagPath path1, path2;
-	path1.Add(group1);
-	path1.Add(group2);
+	path1.Tags.Add(TEXT("TAG1"));
+	path1.Tags.Add(TEXT("TAG2"));
+	path1.Tags.Add(TEXT("TAG3"));
 
 	if (!ensureAlways(path1.ToString(outString1) == EBIMResult::Success))
 	{
@@ -246,24 +148,10 @@ static bool testTags()
 		return false;
 	}
 
-	group1 = FBIMTagGroup();
-	group2 = FBIMTagGroup();
-	FBIMTagGroup group3, group4;
-
-	group1.Add(TEXT("ONE"));
-	group2.Add(TEXT("TWO"));
-	group3.Add(TEXT("THREE"));
-	group4.Add(TEXT("FOUR"));
-
-	path1 = FBIMTagPath();
-	path1.Add(group1);
-	path1.Add(group2);
-	path1.Add(group3);
-	path1.Add(group4);
 
 	path2 = FBIMTagPath();
-	path2.Add(group1);
-	path2.Add(group2);
+	path2.Tags.Add(TEXT("TAG1"));
+	path2.Tags.Add(TEXT("TAG2"));
 
 	if (!ensureAlways(path1.MatchesPartial(path2)))
 	{
@@ -276,30 +164,8 @@ static bool testTags()
 	}
 
 	path1 = FBIMTagPath();
-	path1.Add(group1);
-	path1.Add(group2);
-
-	path2 = FBIMTagPath();
-	path2.Add(group1);
-	path2.Add(group4);
-
-	if (!ensureAlways(!path1.MatchesPartial(path2)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(!path2.MatchesPartial(path1)))
-	{
-		return false;
-	}
-
-	path1 = FBIMTagPath();
-	path1.Add(group3);
-	path1.Add(group4);
-
-	path2 = FBIMTagPath();
-	path2.Add(group1);
-	path2.Add(group4);
+	path1.Tags.Add(TEXT("TAG1"));
+	path1.Tags.Add(TEXT("TORGO"));
 
 	if (!ensureAlways(!path1.MatchesPartial(path2)))
 	{
@@ -321,29 +187,7 @@ bool testPreset(const FBIMPresetCollection &PresetCollection, const FBIMKey& Pre
 	{
 		return false;
 	}
-
-	FBIMPresetInstance outPreset;
-	FCraftingPresetRecord record;
-
-	if (preset->ToDataRecord(record) != EBIMResult::Success)
-	{
-		return false;
-	}
-
-	if (outPreset.FromDataRecord(PresetCollection, record) != EBIMResult::Success)
-	{
-		return false;
-	}
-
-	if (!ensureAlways(outPreset.Matches(*preset)))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(preset->Matches(outPreset)))
-	{
-		return false;
-	}
+	// TODO: node editor tests
 	return true;
 }
 

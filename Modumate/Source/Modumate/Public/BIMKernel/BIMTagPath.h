@@ -4,25 +4,39 @@
 
 #include "CoreMinimal.h"
 #include "BIMKernel/BIMEnums.h"
+#include "BIMTagPath.generated.h"
 
-typedef FName FBIMTag;
-
-class FBIMTagGroup : public TArray<FBIMTag>
+USTRUCT()
+struct FBIMTagPath
 {
 public:
-	bool MatchesAny(const FBIMTagGroup &OtherGroup) const;
-	bool MatchesAll(const FBIMTagGroup &OtherGroup) const;
+	GENERATED_BODY()
 
-	EBIMResult FromString(const FString &InString);
-	EBIMResult ToString(FString &OutString) const;
-};
+	//Not a UPROPERTY, we serialize the full string representation
+	TArray<FString> Tags;
 
-class FBIMTagPath : public TArray<FBIMTagGroup>
-{
-public:
+	FBIMTagPath() {};
+	FBIMTagPath(const FString& InStr);
+
 	bool MatchesExact(const FBIMTagPath &OtherPath) const;
 	bool MatchesPartial(const FBIMTagPath& OtherPath) const;
 
 	EBIMResult FromString(const FString &InString);
 	EBIMResult ToString(FString &OutString) const;
+
+	bool ExportTextItem(FString& ValueStr, FBIMTagPath const& DefaultValue, UObject* Parent, int32 PortFlags, UObject* ExportRootScope) const;
+	bool ImportTextItem(const TCHAR*& Buffer, int32 PortFlags, UObject* Parent, FOutputDevice* ErrorText);
+
+	bool operator==(const FBIMTagPath& RHS) const;
+	bool operator!=(const FBIMTagPath& RHS) const;
+};
+
+template<>
+struct TStructOpsTypeTraits<FBIMTagPath> : public TStructOpsTypeTraitsBase2<FBIMTagPath>
+{
+	enum
+	{
+		WithExportTextItem = true,
+		WithImportTextItem = true,
+	};
 };

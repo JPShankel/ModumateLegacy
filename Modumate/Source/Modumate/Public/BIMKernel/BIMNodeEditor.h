@@ -71,9 +71,7 @@ public:
 	EBIMPresetEditorNodeStatus GetPresetStatus(const FBIMPresetCollection &PresetCollection) const;
 
 	EBIMResult ToPreset(const FBIMPresetCollection& PresetCollection, FBIMPresetInstance& OutPreset) const;
-
-	EBIMResult ToDataRecord(FCustomAssemblyCraftingNodeRecord &OutRecord) const;
-	EBIMResult FromDataRecord(FBIMCraftingTreeNodePool &InstancePool, const FBIMPresetCollection &PresetCollection, const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets);
+	EBIMResult FromPreset(const FBIMPresetCollection& PresetCollection, const FBIMPresetInstance& InPreset);
 
 	bool CanRemoveChild(const FBIMCraftingTreeNodeSharedPtrConst &Child) const;
 	bool CanReorderChild(const FBIMCraftingTreeNodeSharedPtrConst &Child) const;
@@ -104,9 +102,6 @@ private:
 	TMap<int32, FBIMCraftingTreeNodeWeakPtr> InstanceMap;
 	TArray<FBIMCraftingTreeNodeSharedPtr> InstancePool;
 
-	// Does not create a fully resolved node, used in FromDataRecord only
-	FBIMCraftingTreeNodeSharedPtr CreateNodeInstanceFromDataRecord(const FBIMPresetCollection &PresetCollection, const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets);
-
 public:
 
 	EBIMResult ResetInstances();
@@ -117,15 +112,12 @@ public:
 
 	const TArray<FBIMCraftingTreeNodeSharedPtr> &GetInstancePool() const { return InstancePool; }
 
-	FBIMCraftingTreeNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
+	FBIMCraftingTreeNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition, const FBIMKey& SlotAssignment=FBIMKey());
 	EBIMResult SetNewPresetForNode(const FBIMPresetCollection &PresetCollection, int32 InstanceID, const FBIMKey &PresetID);
 
 	const FBIMCraftingTreeNodeSharedPtr InstanceFromID(int32 InstanceID) const;
 	FBIMCraftingTreeNodeSharedPtr InstanceFromID(int32 InstanceID);
 	FBIMCraftingTreeNodeSharedPtr FindInstanceByPredicate(const std::function<bool(const FBIMCraftingTreeNodeSharedPtr &Instance)> &Predicate);
-
-	bool FromDataRecord(const FBIMPresetCollection &PresetCollection, const TArray<FCustomAssemblyCraftingNodeRecord> &InDataRecords, bool RecursePresets);
-	bool ToDataRecord(TArray<FCustomAssemblyCraftingNodeRecord> &OutDataRecords) const;
 
 	bool ValidatePool() const;
 

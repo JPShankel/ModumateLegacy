@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "BIMKernel/BIMPresetInstance.h"
-#include "BIMKernel/BIMKey.h"
-#include "BIMKernel/BIMProperties.h"
-
 #include "CoreMinimal.h"
+
+#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/BIMPresetTypeDefinition.h"
+#include "BIMKernel/BIMPresetInstance.h"
 
 #include "BIMPresetCollection.generated.h"
 
@@ -22,9 +22,6 @@ struct MODUMATE_API FBIMPresetCollection
 	TMap<FBIMKey, FBIMPresetInstance> Presets;
 
 	EObjectType GetPresetObjectType(const FBIMKey &PresetID) const;
-
-	EBIMResult ToDataRecords(TArray<FCraftingPresetRecord> &OutRecords) const;
-	EBIMResult FromDataRecords(const TArray<FCraftingPresetRecord> &Record);
 
 	EBIMResult GetDependentPresets(const FBIMKey &PresetID, TArray<FBIMKey>& OutPresets) const;
 

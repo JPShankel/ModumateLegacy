@@ -33,10 +33,8 @@ public:
 	FPresetManager();
 	virtual ~FPresetManager();
 
-	static const int32 MinimumReadableVersion = 7;
-
 	// DDL 2.0
-	FBIMPresetCollection CraftingNodePresets, DraftingNodePresets;
+	FBIMPresetCollection CraftingNodePresets;
 
 	bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FBIMKey& PresetID, FBIMAssemblySpec& OutAssembly) const;
 	bool TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAssemblySpec& OutAssembly) const;
@@ -54,9 +52,6 @@ public:
 	// All such schemes should switch to this one key store
 	// TODO: the key store is likely to grow, so we may need to add some scope discrimination or a more complex scheme down the road
 	FBIMKey GetAvailableKey(const FBIMKey& BaseKey);
-
-	EBIMResult FromDocumentRecord(UWorld* World, const FModumateDocumentHeader& DocumentHeader, const FMOIDocumentRecord& DocumentRecord);
-	EBIMResult ToDocumentRecord(FMOIDocumentRecord& OutRecord) const;
 
 	const FBIMAssemblySpec* GetAssemblyByKey(EToolMode Mode, const FBIMKey& Key) const;
 

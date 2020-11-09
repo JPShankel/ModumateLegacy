@@ -180,25 +180,6 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 		OutHeader.Version = 6;
 	}
 
-	//If the preset manager is out of date, load a new one and throw out MOI types that depend on presets (leave graph)
-	if (OutHeader.Version < FPresetManager::MinimumReadableVersion)
-	{
-		TArray<EObjectType> whiteList = {
-			EObjectType::OTMetaVertex,
-			EObjectType::OTMetaEdge,
-			EObjectType::OTMetaPlane,
-			EObjectType::OTCutPlane,
-			EObjectType::OTScopeBox,
-			EObjectType::OTDrawing,
-			EObjectType::OTRoom };
-
-		OutRecord.ObjectInstances = OutRecord.ObjectInstances.FilterByPredicate(
-			[&whiteList](const FMOIDataRecord_DEPRECATED &Record)
-		{
-			return whiteList.Contains(Record.ObjectType);
-		});
-	}
-
 	if (OutHeader.Version < 8) // Empty FName keys serialized as "None", BIMKeys as empty string
 	{
 		const FBIMKey badNone = FBIMKey(TEXT("None"));

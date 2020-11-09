@@ -2153,7 +2153,7 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 	docRec.CommandHistory = CommandHistory;
 
 	// DDL 2.0
-	PresetManager.ToDocumentRecord(docRec);
+	docRec.PresetCollection = PresetManager.CraftingNodePresets;
 
 	// Capture object instances into doc struct
 	for (FModumateObjectInstance* obj : ObjectInstanceArray)
@@ -2241,10 +2241,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 	{
 		CommandHistory = docRec.CommandHistory;
 
-		
-#if 0   // TODO: while preset serialization is in flux, use the latest database and rely on defaults for fallback
-		PresetManager.FromDocumentRecord(world, docHeader, docRec);
-#endif
+		PresetManager.CraftingNodePresets = docRec.PresetCollection;
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.

@@ -1052,7 +1052,6 @@ FMOIDataRecord_DEPRECATED FModumateObjectInstance::AsDataRecord_DEPRECATED() con
 	ret.UVAnchor = FVector::ZeroVector;
 	ret.ControlIndices = CurrentState_DEPRECATED.ControlIndices;
 	ret.Extents = CurrentState_DEPRECATED.Extents;
-	CurrentState_DEPRECATED.ObjectProperties.ToStringMap_DEPRECATED(ret.ObjectProperties);
 	ret.ObjectInverted = CurrentState_DEPRECATED.bObjectInverted;
 	return ret;
 }

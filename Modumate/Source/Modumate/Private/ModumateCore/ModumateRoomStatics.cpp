@@ -89,7 +89,6 @@ bool UModumateRoomStatics::GetRoomConfig(const FModumateObjectInstance *RoomObj,
 	// TODO: expose these BIM values directly to Blueprint and delete FRoomConfigurationBlueprint, and/or
 	// allow the proper serialization of types like FColor and FText to avoid unnecessary conversion.
 	bool bSuccess = true;
-
 	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Preset, OutRoomConfig.Key) && bSuccess;
 
 	OutRoomConfig.ObjectID = RoomObj->ID;

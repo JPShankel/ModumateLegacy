@@ -82,5 +82,6 @@ struct MODUMATE_API FBIMPresetTypeDefinition
 	UPROPERTY()
 	TArray<FBIMPresetNodePinSet> PinSets;
 
+	UPROPERTY()
 	FBIMPropertySheet Properties;
 };

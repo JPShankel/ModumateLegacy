@@ -63,41 +63,6 @@ bool FBIMPresetInstance::Matches(const FBIMPresetInstance &OtherPreset) const
 	return true;
 }
 
-EBIMResult FBIMPresetInstance::ToDataRecord(FCraftingPresetRecord& OutRecord) const
-{
-	OutRecord.DisplayName = DisplayName.ToString();
-	OutRecord.NodeType = NodeType;
-	OutRecord.PresetID = PresetID;
-	OutRecord.SlotConfigPresetID = SlotConfigPresetID;
-	OutRecord.CategoryTitle = CategoryTitle.ToString();
-	OutRecord.ObjectType = ObjectType;
-	MyTagPath.ToString(OutRecord.MyTagPath);
-
-	for (auto& ptp : ParentTagPaths)
-	{
-		ptp.ToString(OutRecord.ParentTagPaths.AddDefaulted_GetRef());
-	}
-
-	for (auto& childPreset : ChildPresets)
-	{
-		OutRecord.ChildSetIndices.Add(childPreset.ParentPinSetIndex);
-		OutRecord.ChildSetPositions.Add(childPreset.ParentPinSetPosition);
-		OutRecord.ChildPresets.Add(childPreset.PresetID);
-	}
-
-	for (auto& partSlot : PartSlots)
-	{
-		OutRecord.PartPresets.Add(partSlot.PartPreset);
-		OutRecord.PartIDs.Add(partSlot.ID);
-		OutRecord.PartParentIDs.Add(partSlot.ParentID);
-		OutRecord.PartSlotNames.Add(partSlot.SlotName);
-	}
-
-	Properties.ToDataRecord(OutRecord.PropertyRecord);
-
-	return EBIMResult::Success;
-}
-
 EBIMResult FBIMPresetInstance::SortChildNodes()
 {
 	ChildPresets.Sort([](const FBIMPresetPinAttachment& LHS, const FBIMPresetPinAttachment& RHS)
@@ -112,65 +77,6 @@ EBIMResult FBIMPresetInstance::SortChildNodes()
 		}
 		return LHS.ParentPinSetPosition < RHS.ParentPinSetPosition;
 	});
-	return EBIMResult::Success;
-}
-
-EBIMResult FBIMPresetInstance::FromDataRecord(const FBIMPresetCollection &PresetCollection, const FCraftingPresetRecord &Record)
-{
-	NodeType = Record.NodeType;
-	CategoryTitle = FText::FromString(Record.CategoryTitle);
-
-	const FBIMPresetTypeDefinition *nodeType = PresetCollection.NodeDescriptors.Find(NodeType);
-	// TODO: this ensure will fire if expected presets have become obsolete, resave to fix
-	if (!ensureAlways(nodeType != nullptr))
-	{
-		return EBIMResult::Error;
-	}
-
-	PresetID = Record.PresetID;
-	SlotConfigPresetID = Record.SlotConfigPresetID;
-	ObjectType = Record.ObjectType;
-	NodeScope = nodeType->Scope;
-
-	ChildPresets.Empty();
-
-	Properties.FromDataRecord(Record.PropertyRecord);
-
-	if (ensureAlways(Record.ChildSetIndices.Num() == Record.ChildPresets.Num() &&
-		Record.ChildSetPositions.Num() == Record.ChildPresets.Num()))
-	{
-		for (int32 i = 0; i < Record.ChildPresets.Num(); ++i)
-		{
-			FBIMPresetPinAttachment &attachment = ChildPresets.AddDefaulted_GetRef();
-			attachment.ParentPinSetIndex = Record.ChildSetIndices[i];
-			attachment.ParentPinSetPosition = Record.ChildSetPositions[i];
-			attachment.PresetID = Record.ChildPresets[i];
-		}
-	}
-
-	if (ensureAlways(Record.PartIDs.Num() == Record.PartParentIDs.Num() &&
-		Record.PartIDs.Num() == Record.PartPresets.Num() &&
-		Record.PartIDs.Num() == Record.PartSlotNames.Num()))
-	{
-		for (int32 i = 0; i < Record.PartIDs.Num();++i)
-		{
-			FBIMPresetPartSlot &partSlot = PartSlots.AddDefaulted_GetRef();
-			partSlot.ID = Record.PartIDs[i];
-			partSlot.ParentID = Record.PartParentIDs[i];
-			partSlot.PartPreset = Record.PartPresets[i];
-			partSlot.SlotName = Record.PartSlotNames[i];
-		}
-	}
-
-	MyTagPath.FromString(Record.MyTagPath);
-
-	for (auto &ptp : Record.ParentTagPaths)
-	{
-		ParentTagPaths.AddDefaulted_GetRef().FromString(ptp);
-	}
-
-	TryGetProperty(BIMPropertyNames::Name, DisplayName);
-
 	return EBIMResult::Success;
 }
 

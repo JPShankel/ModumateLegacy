@@ -277,100 +277,6 @@ EBIMResult FBIMCraftingTreeNode::AttachChild(const FBIMPresetCollection &PresetC
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMCraftingTreeNode::ToDataRecord(FCustomAssemblyCraftingNodeRecord &OutRecord) const
-{
-	OutRecord.InstanceID = InstanceID;
-	OutRecord.PresetID = PresetID;
-
-	if (ParentInstance.IsValid())
-	{
-		FBIMCraftingTreeNodeSharedPtr sharedParent = ParentInstance.Pin();
-		OutRecord.ParentID = sharedParent->GetInstanceID();
-		ensureAlways(sharedParent->FindChild(InstanceID, OutRecord.PinSetIndex, OutRecord.PinSetPosition) != EBIMResult::Error);
-	}
-	else
-	{
-		OutRecord.PinSetIndex = 0;
-		OutRecord.PinSetPosition = 0;
-		OutRecord.ParentID = 0;
-	}
-
-	InstanceProperties.ToDataRecord(OutRecord.PropertyRecord);
-
-	return EBIMResult::Success;
-}
-
-EBIMResult FBIMCraftingTreeNode::FromDataRecord(
-	FBIMCraftingTreeNodePool &InstancePool,
-	const FBIMPresetCollection &PresetCollection,
-	const FCustomAssemblyCraftingNodeRecord &DataRecord,
-	bool RecursePresets)
-{
-	const FBIMPresetInstance* preset = PresetCollection.Presets.Find(DataRecord.PresetID);
-	if (preset == nullptr)
-	{
-		return EBIMResult::Error;
-	}
-
-	const FBIMPresetTypeDefinition *descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
-	if (descriptor == nullptr)
-	{
-		return EBIMResult::Error;
-	}
-
-	// DestroyNodeInstance removes grand children, so we don't need to recurse
-	for (auto &pin : AttachedChildren)
-	{
-		while (pin.Children.Num() > 0)
-		{
-			TArray<int32> destroyedChildren;
-			InstancePool.DestroyNodeInstance(pin.Children[0].Pin()->GetInstanceID(), destroyedChildren);
-		}
-	}
-
-	CategoryTitle = preset->CategoryTitle;
-	PresetID = DataRecord.PresetID;
-	InstanceProperties.FromDataRecord(DataRecord.PropertyRecord);
-
-	for (auto &ip : preset->ChildPresets)
-	{
-		if (ensureAlways(ip.ParentPinSetIndex < AttachedChildren.Num()))
-		{
-			// The first designated list in a sequence is assigned to the top of the pinset, not the last
-			// This ensures that categories will be chosen from a list of categories, not the user preset at the end of the sequence
-			FAttachedChildGroup &pinSet = AttachedChildren[ip.ParentPinSetIndex];
-		}
-	}
-
-	if (!RecursePresets)
-	{
-		FBIMCraftingTreeNodeSharedPtr parent = InstancePool.InstanceFromID(DataRecord.ParentID);
-		if (parent.IsValid())
-		{
-			parent->AttachChildAt(PresetCollection, AsShared(), DataRecord.PinSetIndex, DataRecord.PinSetPosition);
-		}
-	}
-	else
-	{
-		for (auto &ip : preset->ChildPresets)
-		{
-			if (ensureAlways(ip.ParentPinSetIndex < AttachedChildren.Num()))
-			{
-				FAttachedChildGroup &pinSet = AttachedChildren[ip.ParentPinSetIndex];
-				if (ip.ParentPinSetPosition == pinSet.Children.Num())
-				{
-					InstancePool.CreateNodeInstanceFromPreset(PresetCollection, DataRecord.InstanceID, ip.PresetID, ip.ParentPinSetIndex,ip.ParentPinSetPosition);
-				}
-				else
-				{
-					InstancePool.SetNewPresetForNode(PresetCollection, pinSet.Children[ip.ParentPinSetPosition].Pin()->GetInstanceID(), ip.PresetID);
-				}
-			}
-		}
-	}
-	return EBIMResult::Success;
-}
-
 EBIMResult FBIMCraftingTreeNode::ToPreset(const FBIMPresetCollection& PresetCollection, FBIMPresetInstance& OutPreset) const
 {
 	const FBIMPresetInstance* basePreset = PresetCollection.Presets.Find(PresetID);
@@ -443,17 +349,6 @@ EBIMResult FBIMCraftingTreeNodePool::DestroyNodeInstance(int32 InstanceID, TArra
 	return DestroyNodeInstance(InstanceFromID(InstanceID), OutDestroyed);
 }
 
-FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromDataRecord(const FBIMPresetCollection &PresetCollection, const FCustomAssemblyCraftingNodeRecord &DataRecord, bool RecursePresets)
-{
-	FBIMCraftingTreeNodeSharedPtr instance = InstancePool.Add_GetRef(MakeShareable(new FBIMCraftingTreeNode(DataRecord.InstanceID)));
-
-	InstanceMap.Add(DataRecord.InstanceID, instance);
-	NextInstanceID = FMath::Max(NextInstanceID + 1, DataRecord.InstanceID + 1);
-
-	instance->FromDataRecord(*this, PresetCollection, DataRecord, RecursePresets);
-
-	return instance;
-}
 
 EBIMResult FBIMCraftingTreeNodePool::InitFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID, FBIMCraftingTreeNodeSharedPtr& OutRootNode)
 {
@@ -471,6 +366,21 @@ EBIMResult FBIMCraftingTreeNodePool::SetNewPresetForNode(const FBIMPresetCollect
 		return EBIMResult::Error;
 	}
 
+	TArray<int32> toDestroy;
+	for (auto& ac : inst->AttachedChildren)
+	{
+		for (auto& child : ac.Children)
+		{
+			toDestroy.Add(child.Pin()->GetInstanceID());
+		}
+	}
+
+	for (auto& child : toDestroy)
+	{
+		TArray<int32> destroyed;
+		DestroyNodeInstance(child, destroyed);
+	}
+
 	const FBIMPresetInstance* preset = PresetCollection.Presets.Find(PresetID);
 
 	if (!ensureAlways(preset != nullptr))
@@ -478,22 +388,46 @@ EBIMResult FBIMCraftingTreeNodePool::SetNewPresetForNode(const FBIMPresetCollect
 		return EBIMResult::Error;
 	}
 
-	inst->PresetID = PresetID;
-	inst->InstanceProperties = preset->Properties;
+	inst->FromPreset(PresetCollection, *preset);
 
-	FCustomAssemblyCraftingNodeRecord dataRecord;
-
-	EBIMResult result = inst->ToDataRecord(dataRecord);
-
-	if (result != EBIMResult::Success)
+	for (auto& childPreset : preset->ChildPresets)
 	{
-		return result;
+		CreateNodeInstanceFromPreset(PresetCollection, inst->GetInstanceID(), childPreset.PresetID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition);
 	}
 
-	return inst->FromDataRecord(*this, PresetCollection, dataRecord, true);
+	for (auto& partPreset : preset->PartSlots)
+	{
+		CreateNodeInstanceFromPreset(PresetCollection, inst->GetInstanceID(), partPreset.PartPreset, -1, -1, partPreset.SlotName);
+	}
+
+	return EBIMResult::Success;
 }
 
-FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
+EBIMResult FBIMCraftingTreeNode::FromPreset(const FBIMPresetCollection& PresetCollection,const FBIMPresetInstance& InPreset)
+{
+	const FBIMPresetTypeDefinition* descriptor = PresetCollection.NodeDescriptors.Find(InPreset.NodeType);
+	if (!ensureAlways(descriptor != nullptr))
+	{
+		return EBIMResult::Error;
+	}
+
+	AttachedChildren.SetNum(descriptor->PinSets.Num());
+
+	for (int32 i = 0; i < AttachedChildren.Num(); ++i)
+	{
+		AttachedChildren[i].SetType.MinCount = descriptor->PinSets[i].MinCount;
+		AttachedChildren[i].SetType.MaxCount = descriptor->PinSets[i].MaxCount;
+	}
+
+	CategoryTitle = InPreset.CategoryTitle;
+	PresetID = InPreset.PresetID;
+	CurrentOrientation = InPreset.Orientation;
+	InstanceProperties = InPreset.Properties;	
+	
+	return EBIMResult::Success;
+}
+
+FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition, const FBIMKey& SlotAssignment)
 {
 	struct FPresetTreeIterator
 	{
@@ -510,14 +444,14 @@ FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPr
 			ParentSetPosition = -1;
 		}
 
-		FPresetTreeIterator(int32 InParentNode, const FBIMKey& InPresetID, int32 InParentSetIndex, int32 InParentSetPosition) : 
-			ParentNode(InParentNode), PresetID(InPresetID), ParentSetIndex(InParentSetIndex), ParentSetPosition(InParentSetPosition)
+		FPresetTreeIterator(int32 InParentNode, const FBIMKey& InPresetID, int32 InParentSetIndex, int32 InParentSetPosition, const FBIMKey& InSlot) : 
+			ParentNode(InParentNode), PresetID(InPresetID), SlotAssignment(InSlot), ParentSetIndex(InParentSetIndex), ParentSetPosition(InParentSetPosition)
 		{}
 	};
 
 	TArray<FPresetTreeIterator> iteratorStack;
 
-	iteratorStack.Push(FPresetTreeIterator(ParentID, PresetID, ParentSetIndex, ParentSetPosition));
+	iteratorStack.Push(FPresetTreeIterator(ParentID, PresetID, ParentSetIndex, ParentSetPosition, SlotAssignment));
 
 	FBIMCraftingTreeNodeSharedPtr returnVal = nullptr;
 
@@ -531,33 +465,11 @@ FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPr
 			return nullptr;
 		}
 
-		const FBIMPresetTypeDefinition* descriptor = PresetCollection.NodeDescriptors.Find(preset->NodeType);
-		if (!ensureAlways(descriptor != nullptr))
-		{
-			return nullptr;
-		}
-
 		FBIMCraftingTreeNodeSharedPtr instance = InstancePool.Add_GetRef(MakeShareable(new FBIMCraftingTreeNode(NextInstanceID)));
 		InstanceMap.Add(NextInstanceID, instance);
 		++NextInstanceID;
 
-		instance->AttachedChildren.SetNum(descriptor->PinSets.Num());
-
-		for (int32 i = 0; i < instance->AttachedChildren.Num(); ++i)
-		{
-			instance->AttachedChildren[i].SetType.MinCount = descriptor->PinSets[i].MinCount;
-			instance->AttachedChildren[i].SetType.MaxCount = descriptor->PinSets[i].MaxCount;
-		}
-
-		instance->CategoryTitle = preset->CategoryTitle;
-		instance->PresetID = preset->PresetID;
-		instance->CurrentOrientation = preset->Orientation;
-		instance->InstanceProperties = preset->Properties;
-
-		if (returnVal == nullptr)
-		{
-			returnVal = instance;
-		}
+		instance->FromPreset(PresetCollection,*preset);
 
 		FBIMCraftingTreeNodeSharedPtr parent = InstanceFromID(iterator.ParentNode);
 		if (parent != nullptr)
@@ -574,9 +486,14 @@ FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPr
 			}
 		}
 
+		if (returnVal == nullptr)
+		{
+			returnVal = instance;
+		}
+
 		for (auto& childPreset : preset->ChildPresets)
 		{
-			iteratorStack.Push(FPresetTreeIterator(instance->GetInstanceID(), childPreset.PresetID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition));
+			iteratorStack.Push(FPresetTreeIterator(instance->GetInstanceID(), childPreset.PresetID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition, FBIMKey()));
 		}
 
 		for (auto& partPreset : preset->PartSlots)
@@ -587,34 +504,6 @@ FBIMCraftingTreeNodeSharedPtr FBIMCraftingTreeNodePool::CreateNodeInstanceFromPr
 
 	ValidatePool();
 	return returnVal;
-}
-
-bool FBIMCraftingTreeNodePool::FromDataRecord(const FBIMPresetCollection &PresetCollection, const TArray<FCustomAssemblyCraftingNodeRecord> &InDataRecords, bool RecursePresets)
-{
-	ResetInstances();
-
-	for (auto &dr : InDataRecords)
-	{
-		// Parents recursively create their children who might also be in the data record array already, so make sure we don't double up
-		if (InstanceFromID(dr.InstanceID) == nullptr)
-		{
-			FBIMCraftingTreeNodeSharedPtr inst = CreateNodeInstanceFromDataRecord(PresetCollection, dr, RecursePresets);
-			NextInstanceID = FMath::Max(dr.InstanceID + 1, NextInstanceID);
-		}
-	}
-
-	ValidatePool();
-	return true;
-}
-
-bool FBIMCraftingTreeNodePool::ToDataRecord(TArray<FCustomAssemblyCraftingNodeRecord> &OutDataRecords) const
-{
-	for (auto &instance : InstancePool)
-	{
-		FCustomAssemblyCraftingNodeRecord &record = OutDataRecords.AddDefaulted_GetRef();
-		instance->ToDataRecord(record);
-	}
-	return true;
 }
 
 bool FBIMCraftingTreeNodePool::ValidatePool() const
