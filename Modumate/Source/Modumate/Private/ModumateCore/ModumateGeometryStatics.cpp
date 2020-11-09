@@ -224,7 +224,7 @@ bool FLayerGeomDef::CachePoints2D()
 			bool bHoleOverlapsOther, bHolePartiallyInOther, bHoleFullyInOther;
 			UModumateGeometryStatics::GetPolygonIntersection(otherHole2D.Points, hole2D.Points, bHoleOverlapsOther, bHolePartiallyInOther, bHoleFullyInOther);
 
-			if (bHoleOverlapsOther || bHolePartiallyInOther || bHoleFullyInOther)
+			if (bHolePartiallyInOther || bHoleFullyInOther)
 			{
 				bHoleValid = false;
 				break;
