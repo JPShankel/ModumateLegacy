@@ -61,6 +61,7 @@ public:
 	Modumate::Units::FUnitValue ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(0);
 	Modumate::Units::FUnitValue TreadDepth = Modumate::Units::FUnitValue::WorldCentimeters(0);
 
+	FString SlotConfigConceptualSizeY;
 	// For DataCollection support in preset manager
 	FBIMKey UniqueKey() const { return RootPreset; }
 

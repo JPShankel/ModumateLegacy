@@ -165,6 +165,7 @@ namespace BIMPropertyNames
 	const FBIMNameType Code = TEXT("Code");
 	const FBIMNameType Color = TEXT("Color");
 	const FBIMNameType Comments = TEXT("Comments");
+	const FBIMNameType ConceptualSizeY = TEXT("ConceptualSizeY");
 	const FBIMNameType Configuration = TEXT("Configuration");
 	const FBIMNameType Depth = TEXT("Depth");
 	const FBIMNameType Diameter = TEXT("Diameter");

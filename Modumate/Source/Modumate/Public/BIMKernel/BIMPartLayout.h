@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BIMKernel/BIMEnums.h"
+#include "ModumateCore/ModumateUnits.h"
 
 class FBIMAssemblySpec;
 
@@ -23,6 +24,8 @@ public:
 
 	TArray<FPartSlotInstance> PartSlotInstances;
 	EBIMResult FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const FVector& InScale);
+
+	float CabinetPanelAssemblyConceptualSizeY = 0.0f;
 
 	static const FString ScaledSizeX;
 	static const FString ScaledSizeY;

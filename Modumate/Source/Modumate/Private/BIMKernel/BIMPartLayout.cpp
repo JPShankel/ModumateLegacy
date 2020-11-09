@@ -149,6 +149,22 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 		}
 	}
 
+	if (!InAssemblySpec.SlotConfigConceptualSizeY.IsEmpty())
+	{
+		TArray<FString> varNames;
+		Modumate::Expression::ExtractVariables(InAssemblySpec.SlotConfigConceptualSizeY, varNames);
+		for (const auto& var : varNames)
+		{
+			float val;
+			if (ensureAlways(TryGetValueForPart(InAssemblySpec, 0, var, val)))
+			{
+				PartSlotInstances[0].VariableValues.Add(var, val);
+			}
+		}
+
+		CabinetPanelAssemblyConceptualSizeY = Modumate::Expression::Evaluate(PartSlotInstances[0].VariableValues, InAssemblySpec.SlotConfigConceptualSizeY);
+	}
+
 	// Second pass: compute all derived values by applying transformation formulae 
 	// Second pass values may depend on values set on first pass on any node or on second pass values further up the hierarchy
 		// Convert flip boolean to scale factor.

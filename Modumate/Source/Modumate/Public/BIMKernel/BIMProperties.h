@@ -31,6 +31,7 @@ namespace BIMPropertyNames
 	extern const FBIMNameType Code;
 	extern const FBIMNameType Color;
 	extern const FBIMNameType Comments;
+	extern const FBIMNameType ConceptualSizeY;
 	extern const FBIMNameType Configuration;
 	extern const FBIMNameType Depth;
 	extern const FBIMNameType Diameter;

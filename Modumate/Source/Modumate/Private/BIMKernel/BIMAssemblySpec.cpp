@@ -204,6 +204,15 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			partIterator.SlotConfigPreset = presetIterator.Preset->SlotConfigPresetID;
 			partIterator.Slot = part;
 			partIteratorQueue.Enqueue(partIterator);
+
+			if (SlotConfigConceptualSizeY.IsEmpty())
+			{
+				const FBIMPresetInstance* slotConfigPreset = PresetCollection.Presets.Find(partIterator.SlotConfigPreset);
+				if (ensureAlways(slotConfigPreset != nullptr))
+				{
+					slotConfigPreset->TryGetProperty(BIMPropertyNames::ConceptualSizeY, SlotConfigConceptualSizeY);
+				}
+			}
 		}
 	}
 
