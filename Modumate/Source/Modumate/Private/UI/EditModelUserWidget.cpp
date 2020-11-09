@@ -86,6 +86,12 @@ void UEditModelUserWidget::UpdateToolTray()
 		{
 			SwitchRightMenu(ERightMenuState::CutPlaneMenu);
 		}
+
+		// Close BIMDesigner if it's still open
+		if (BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
+		{
+			ToggleBIMDesigner(false);
+		}
 	}
 	
 	if (CurrentActiveToolButton && UEditModelInputHandler::ToolModeFromInputCommand(CurrentActiveToolButton->InputCommand) != Controller->GetToolMode())
@@ -139,6 +145,7 @@ void UEditModelUserWidget::ToggleBIMDesigner(bool Open)
 		BIMBlockDialogBox->SetVisibility(ESlateVisibility::Collapsed);
 		BIMDesigner->UpdateNodeSwapMenuVisibility(INDEX_NONE, false);
 	}
+	ToolTrayWidget->ToolTrayBIMDesignerMode(Open);
 }
 
 void UEditModelUserWidget::SwitchRightMenu(ERightMenuState NewMenuState)

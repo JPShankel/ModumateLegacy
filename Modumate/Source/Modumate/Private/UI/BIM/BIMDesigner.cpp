@@ -20,6 +20,7 @@
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "UI/BIM/BIMBlockSlotList.h"
 #include "UI/BIM/BIMBlockSlotListItem.h"
+#include "UnrealClasses/DynamicIconGenerator.h"
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -151,6 +152,8 @@ float UBIMDesigner::GetCurrentZoomScale() const
 
 bool UBIMDesigner::EditPresetInBIMDesigner(const FBIMKey& PresetID)
 {
+	Controller->DynamicIconGenerator->ReleaseSavedRenderTarget();
+
 	FBIMCraftingTreeNodeSharedPtr rootNode;
 	EBIMResult getPresetResult = InstancePool.InitFromPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, PresetID, rootNode);
 	if (getPresetResult != EBIMResult::Success)
@@ -292,6 +295,21 @@ void UBIMDesigner::UpdateBIMDesigner()
 	}
 
 	AutoArrangeNodes();
+
+	// Adjust canvas size and position to fit root node to screen
+	UCanvasPanelSlot* rootNodeCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(RootNode);
+	UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(ScaleBoxForNodes);
+	if (RootNode && rootNodeCanvasSlot && canvasSlot)
+	{
+		ScaleBoxForNodes->SetUserSpecifiedScale(1.f);
+		FVector2D rootNodePos = rootNodeCanvasSlot->GetPosition();
+		int32 screenX;
+		int32 screenY;
+		Controller->GetViewportSize(screenX, screenY);
+		float newCanvasPosX = RootNodeHorizontalPosition;
+		float newCanvasPosY = (screenY * 0.5f) - rootNodePos.Y - (RootNode->GetEstimatedNodeSize().Y * 0.5f);
+		canvasSlot->SetPosition(FVector2D(newCanvasPosX, newCanvasPosY));
+	}
 }
 
 void UBIMDesigner::AutoArrangeNodes()

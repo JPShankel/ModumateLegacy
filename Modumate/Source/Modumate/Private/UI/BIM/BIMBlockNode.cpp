@@ -249,11 +249,8 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 			// Text value: user enter-able
 			FBIMPropertyKey value(curProperty.Value);
 			FString valueString;
-			if (Node->InstanceProperties.TryGetProperty(value.Scope, value.Name, valueString))
-			{
-				newEnterable->BuildEnterableFieldFromProperty(ParentBIMDesigner, ID, value.Scope, value.Name, valueString);
-			}
-
+			Node->InstanceProperties.TryGetProperty(value.Scope, value.Name, valueString);
+			newEnterable->BuildEnterableFieldFromProperty(ParentBIMDesigner, ID, value.Scope, value.Name, valueString);
 			VerticalBoxProperties->AddChildToVerticalBox(newEnterable);
 		}
 	}
@@ -284,18 +281,18 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 	}
 
 	// Remove delete button if removal of this node is not allow
-	if (bNodeHasSlotPart || !Node->ParentInstance.IsValid() || !Node->ParentInstance.Pin()->CanRemoveChild(Node))
-	{
-		ButtonDeleteCollapsed->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonDeleteExpanded->SetVisibility(ESlateVisibility::Collapsed);
-	}
+	ESlateVisibility removeHandleVisibility =
+		bNodeHasSlotPart || !Node->ParentInstance.IsValid() || !Node->ParentInstance.Pin()->CanRemoveChild(Node) ?
+		ESlateVisibility::Collapsed : ESlateVisibility::Visible;
+	ButtonDeleteCollapsed->SetVisibility(removeHandleVisibility);
+	ButtonDeleteExpanded->SetVisibility(removeHandleVisibility);
 
-	// Remove grab handle if reordering is not allow
-	if (bNodeHasSlotPart || !Node->ParentInstance.IsValid() || !Node->ParentInstance.Pin()->CanReorderChild(Node))
-	{
-		GrabHandleImage->SetVisibility(ESlateVisibility::Collapsed);
-		ComponentPresetListItem->GrabHandleImage->SetVisibility(ESlateVisibility::Collapsed);
-	}
+	// Remove grab handle visibility if reordering is not allow
+	ESlateVisibility reorderHandleVisibility =
+		bNodeHasSlotPart || !Node->ParentInstance.IsValid() || !Node->ParentInstance.Pin()->CanReorderChild(Node) ?
+		ESlateVisibility::Collapsed : ESlateVisibility::Visible;
+	GrabHandleImage->SetVisibility(reorderHandleVisibility);
+	ComponentPresetListItem->GrabHandleImage->SetVisibility(reorderHandleVisibility);
 
 	bool bCaptureSuccess = false;
 	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, IconTexture, ID);

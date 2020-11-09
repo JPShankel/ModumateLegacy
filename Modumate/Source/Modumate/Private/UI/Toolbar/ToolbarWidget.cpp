@@ -49,6 +49,9 @@ void UToolbarWidget::OnButtonReleaseMetaPlane()
 	if (EditModelUserWidget->ToolTrayWidget->CurrentToolCategory != EToolCategories::MetaGraph)
 	{
 		EditModelUserWidget->ToolTrayWidget->ChangeBlockToMetaPlaneTools();
+
+		// TODO: button shouldn't be allow to be pressed when BIM Designer is opened
+		EditModelUserWidget->ToggleBIMDesigner(false);
 	}
 }
 
@@ -57,6 +60,9 @@ void UToolbarWidget::OnButtonReleaseSeparators()
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
 		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSeparatorTools(EToolMode::VE_NONE);
+
+		// TODO: button shouldn't be allow to be pressed when BIM Designer is opened
+		EditModelUserWidget->ToggleBIMDesigner(false);
 	}
 }
 
@@ -66,6 +72,9 @@ void UToolbarWidget::OnButtonReleaseSurfaceGraphs()
 	if (EditModelUserWidget->ToolTrayWidget->CurrentToolCategory != EToolCategories::SurfaceGraphs)
 	{
 		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSurfaceGraphTools();
+
+		// TODO: button shouldn't be allow to be pressed when BIM Designer is opened
+		EditModelUserWidget->ToggleBIMDesigner(false);
 	}
 }
 
@@ -74,6 +83,9 @@ void UToolbarWidget::OnButtonReleaseAttachments()
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
 		EditModelUserWidget->ToolTrayWidget->ChangeBlockToAttachmentTools(EToolMode::VE_NONE);
+
+		// TODO: button shouldn't be allow to be pressed when BIM Designer is opened
+		EditModelUserWidget->ToggleBIMDesigner(false);
 	}
 }
 

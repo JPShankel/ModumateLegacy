@@ -63,4 +63,5 @@ public:
 	bool IsToolTrayVisible();
 	void OpenToolTray();
 	void CloseToolTray();
+	void ToolTrayBIMDesignerMode(bool Enable);
 };

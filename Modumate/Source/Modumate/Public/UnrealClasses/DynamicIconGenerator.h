@@ -113,6 +113,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UPROPERTY()
 	class AEditModelGameMode_CPP* Gamemode;
@@ -133,7 +134,7 @@ public:
 
 	// TODO: Temporary for storing render target until BIMKey can guarantee unique appearance
 	UPROPERTY()
-	TMap<FBIMKey, UTextureRenderTarget2D*> BIMKeyToRenderTarget;
+	TArray<UTextureRenderTarget2D*> BIMKeyToRenderTarget;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -168,7 +169,7 @@ public:
 	void SetIconDynamicMeshLayersForCapture(bool Visible);
 	void SetIconCompoundMeshActorForCapture(bool Visible);
 
-	// TODO: This is a temp function for releasing saved render targets related to BIM presets
-	// When BIMKey can guarantee unique appearance, then BIMKeyToRenderTarget map and this function can be removed
-	void ReleaseSavedRenderTarget(const FBIMKey& PresetID);
+	// TODO: This is a temp function for releasing saved render targets related to BIM presets	
+	// When BIMKey can guarantee unique appearance, then BIMKeyToRenderTarget array and this function can be removed	
+	void ReleaseSavedRenderTarget();
 };

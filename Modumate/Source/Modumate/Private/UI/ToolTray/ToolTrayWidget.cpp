@@ -185,3 +185,12 @@ void UToolTrayWidget::CloseToolTray()
 	SetVisibility(ESlateVisibility::Collapsed);
 	HideAllToolTrayBlocks();
 }
+
+void UToolTrayWidget::ToolTrayBIMDesignerMode(bool Enable)
+{
+	ESlateVisibility newVisibility = Enable ? ESlateVisibility::Collapsed : ESlateVisibility::SelfHitTestInvisible;
+	ToolTrayBlockTools->SetVisibility(newVisibility);
+	ToolTrayBlockModes->SetVisibility(newVisibility);
+	ToolTrayBlockProperties->SetVisibility(newVisibility);
+	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+}

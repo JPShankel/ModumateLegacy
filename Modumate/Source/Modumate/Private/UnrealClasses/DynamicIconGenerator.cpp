@@ -86,6 +86,12 @@ void ADynamicIconGenerator::BeginPlay()
 	IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
 }
 
+void ADynamicIconGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	ReleaseSavedRenderTarget();
+	Super::EndPlay(EndPlayReason);
+}
+
 // Called every frame
 void ADynamicIconGenerator::Tick(float DeltaTime)
 {
@@ -204,8 +210,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 	if (captureSuccess)
 	{
 		// TODO: Save texture cache, release RT resource
-		ReleaseSavedRenderTarget(PresetID);
-		BIMKeyToRenderTarget.Add(PresetID, renderTarget);
+		BIMKeyToRenderTarget.Add(renderTarget);
 
 		OutTexture = renderTarget;
 		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
@@ -1131,12 +1136,11 @@ void ADynamicIconGenerator::SetIconCompoundMeshActorForCapture(bool Visible)
 	IconCompoundMeshActor->SetActorHiddenInGame(!Visible);
 }
 
-void ADynamicIconGenerator::ReleaseSavedRenderTarget(const FBIMKey& PresetID)
+void ADynamicIconGenerator::ReleaseSavedRenderTarget()
 {
-	UTextureRenderTarget2D* existingRenderTarget = BIMKeyToRenderTarget.FindRef(PresetID);
-	if (existingRenderTarget)
+	for (auto curRT : BIMKeyToRenderTarget)
 	{
-		existingRenderTarget->ReleaseResource();
-		BIMKeyToRenderTarget.Remove(PresetID);
+		curRT->ReleaseResource();
 	}
+	BIMKeyToRenderTarget.Empty();
 }
