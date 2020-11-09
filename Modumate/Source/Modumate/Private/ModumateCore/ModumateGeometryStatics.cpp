@@ -334,7 +334,8 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &Ou
 
 	int32 numHoles = ValidHoles2D.Num();
 
-	if (Thickness > PLANAR_DOT_EPSILON)
+	// If the layer has *any* thickness, then triangulate its opposite side so that there can be distinct triangles
+	if (Thickness > SMALL_NUMBER)
 	{
 		bool bTriangulatedB = UModumateGeometryStatics::TriangulateVerticesGTE(CachedPointsB2D, ValidHoles2D, trisB2D, &verticesB2D);
 
@@ -366,7 +367,7 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &Ou
 	}
 
 	// If the layer is infinitely thin, then exit before we bother creating triangles for the other sides.
-	if (Thickness <= PLANAR_DOT_EPSILON)
+	if (Thickness < SMALL_NUMBER)
 	{
 		return true;
 	}
@@ -381,6 +382,13 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector> &OutVerts, TArray<int32> &Ou
 		OutUVs.Add(uvB * uvScale);
 		OutNormals.Add(Normal);
 		OutTangents.Add(FProcMeshTangent(AxisX, false));
+	}
+
+	// If the layer is just *very* thin, then only make triangles for the opposite extrusion, not the sides
+	// TODO: double-precision would give us a better opportunity to accurately make *tiny* slivers for the sides of extremely thin layers, if desired
+	if (Thickness <= PLANAR_DOT_EPSILON)
+	{
+		return true;
 	}
 
 	// Perimeter sides
