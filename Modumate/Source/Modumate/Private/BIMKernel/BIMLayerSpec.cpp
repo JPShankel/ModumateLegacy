@@ -136,8 +136,16 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 				const FCustomColor* color = InDB.GetCustomColorByKey(gapStr);
 				if (ensureAlways(color != nullptr))
 				{
-					Gap.Material.DefaultBaseColor = *color;
+					Gap.BaseColor = *color;
 				}
+				else
+				{
+					Gap.BaseColor = Gap.Material.DefaultBaseColor;
+				}
+			}
+			else
+			{
+				Gap.BaseColor = Gap.Material.DefaultBaseColor;
 			}
 		}
 		/*
