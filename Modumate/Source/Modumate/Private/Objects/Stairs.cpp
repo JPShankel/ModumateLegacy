@@ -162,7 +162,7 @@ void FMOIStaircaseImpl::GetBeyondLines(const TSharedPtr<Modumate::FDraftingCompo
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
 	static const Modumate::Units::FThickness stairLineThickness = Modumate::Units::FThickness::Points(0.15f);
-	static const Modumate::FMColor lineColor(0.439, 0.439f, 0.439f);  // Gray112
+	static const Modumate::FMColor lineColor(0.439f, 0.439f, 0.439f);  // Gray112
 	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges;
 
 	float treadThickness = CachedTreadDims.TotalUnfinishedWidth;

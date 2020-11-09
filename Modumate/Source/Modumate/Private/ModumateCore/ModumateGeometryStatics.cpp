@@ -2266,3 +2266,134 @@ bool UModumateGeometryStatics::ArePlanesCoplanar(const FPlane& PlaneA, const FPl
 {
 	return PlaneA.Equals(PlaneB, Epsilon) || PlaneA.Equals(PlaneB.Flip(), Epsilon);
 }
+
+void UModumateGeometryStatics::GetPlaneIntersections(TArray<FVector>& OutIntersections, const TArray<FVector>& InPoints,
+	const FPlane& InPlane, const FVector InLocation /*  = FVector::ZeroVector */)
+{
+	int32 numPoints = InPoints.Num();
+	for (int32 pointIdx = 0; pointIdx < numPoints; pointIdx++)
+	{
+		FVector layerPoint1 = InPoints[pointIdx] + InLocation;
+		FVector layerPoint2 = InPoints[(pointIdx + 1) % numPoints] + InLocation;
+
+		FVector point;
+		if (FMath::SegmentPlaneIntersection(layerPoint1, layerPoint2, InPlane, point))
+		{
+			OutIntersections.Add(point);
+		}
+	}
+}
+
+void UModumateGeometryStatics::GetRangesForHolesOnPlane(TArray<TPair<float, float>>& OutRanges, TPair<FVector, FVector>& Intersection, const FLayerGeomDef& Layer,
+	const FVector& HoleOffset, const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin)
+{
+	FVector intersectionStart = Intersection.Key;
+	FVector intersectionEnd = Intersection.Value;
+
+	// TODO: only works when the plane goes through the object once (2 intersections)
+	FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, AxisX, AxisY, intersectionStart);
+	FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, AxisX, AxisY, intersectionEnd);
+	float length = (end - start).Size();
+	FVector2D intersectionDir = (end - start).GetSafeNormal();
+
+	TArray<TPair<float, float>> holeRanges;
+	TArray<TPair<float, float>> mergedRanges;
+	int32 idx = 0;
+
+	// intersect holes with the plane, and figure out the ranges along the original line where there is a valid hole
+	for (auto& hole : Layer.Holes3D)
+	{
+		if (!Layer.HolesValid[idx])
+		{
+			continue;
+		}
+		TArray<FVector> projectedHolePoints;
+		for (auto& point : hole.Points)
+		{
+			// TODO: cache this value
+			projectedHolePoints.Add(point + HoleOffset);
+		}
+
+		// TODO: once there is potential for concave holes, generalize the sorter in GetDraftingLines and sort here as well
+		TArray<FVector> holeIntersections;
+		GetPlaneIntersections(holeIntersections, projectedHolePoints, Plane);
+
+		if (holeIntersections.Num() != 2)
+		{
+			continue;
+		}
+		FVector2D holeStart = UModumateGeometryStatics::ProjectPoint2D(Origin, AxisX, AxisY, holeIntersections[0]);
+		FVector2D holeEnd = UModumateGeometryStatics::ProjectPoint2D(Origin, AxisX, AxisY, holeIntersections[1]);
+
+		float holeDotIntersection = (holeStart - start) | intersectionDir;
+		FVector2D holeStartOnIntersection = holeDotIntersection * intersectionDir;
+		if (holeDotIntersection < 0.0f || holeStartOnIntersection.Size() > length)
+		{	// If one end of hole is off the segment both must be.
+			continue;
+		}
+
+		float hs = (holeStart - start).Size() / length;
+		float he = (holeEnd - start).Size() / length;
+		if (hs > he)
+		{
+			Swap(hs, he);
+		}
+		holeRanges.Add(TPair<float, float>(hs, he));
+		idx++;
+	}
+
+	holeRanges.Sort();
+
+	//TODO: merging the ranges may be unnecessary because it seems like if holes overlap, one of them will be invalid
+	for (auto& range : holeRanges)
+	{
+		if (mergedRanges.Num() == 0)
+		{
+			mergedRanges.Push(range);
+			continue;
+		}
+		auto& currentRange = mergedRanges.Top();
+		// if the sorted ranges overlap, combine them
+		if (range.Value > currentRange.Value && range.Key < currentRange.Value)
+		{
+			mergedRanges.Top() = TPair<float, float>(currentRange.Key, range.Value);
+		}
+		else if (range.Key > currentRange.Value)
+		{
+			mergedRanges.Push(range);
+		}
+	}
+
+	// lines for drafting are drawn in the areas where there aren't holes, 
+	// so OutRanges inverts the merged ranges (which is where there are holes)
+	if (mergedRanges.Num() == 0)
+	{
+		OutRanges.Add(TPair<float, float>(0, 1));
+	}
+	else
+	{
+		OutRanges.Add(TPair<float, float>(0, mergedRanges[0].Key));
+		for (int32 rangeIdx = 0; rangeIdx < mergedRanges.Num() - 1; rangeIdx++)
+		{
+			OutRanges.Add(TPair<float, float>(mergedRanges[rangeIdx].Value, mergedRanges[rangeIdx + 1].Key));
+		}
+		OutRanges.Add(TPair<float, float>(mergedRanges[mergedRanges.Num() - 1].Value, 1));
+	}
+}
+
+bool UModumateGeometryStatics::Points3dSorter(const FVector& rhs, const FVector& lhs)
+{
+	if (!FMath::IsNearlyEqual(rhs.X, lhs.X, KINDA_SMALL_NUMBER))
+	{
+		return rhs.X > lhs.X;
+	}
+	else if (!FMath::IsNearlyEqual(rhs.Y, lhs.Y, KINDA_SMALL_NUMBER))
+	{
+		return rhs.Y > lhs.Y;
+	}
+	else if (!FMath::IsNearlyEqual(rhs.Z, lhs.Z, KINDA_SMALL_NUMBER))
+	{
+		return rhs.Z > lhs.Z;
+	}
+	return true;
+};

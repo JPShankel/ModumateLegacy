@@ -278,4 +278,12 @@ public:
 
 	// Compare that the given planes lie in the same plane, even if they have opposite normals.
 	static bool ArePlanesCoplanar(const FPlane& PlaneA, const FPlane& PlaneB, float Epsilon = THRESH_POINTS_ARE_NEAR);
+
+	static void GetPlaneIntersections(TArray<FVector>& OutIntersections, const TArray<FVector>& InPoints, const FPlane& InPlane, const FVector InLocation = FVector::ZeroVector);
+
+	// Divide Intersection by any projected layer-holes; return as parametric ranges.
+	static void GetRangesForHolesOnPlane(TArray<TPair<float, float>>& OutRanges, TPair<FVector, FVector>& Intersection, const FLayerGeomDef& Layer, const FVector& HoleOffset, const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin);
+
+	// Sort helper for points that lie on an arbitrary line.
+	static bool Points3dSorter(const FVector& rhs, const FVector& lhs);
 };

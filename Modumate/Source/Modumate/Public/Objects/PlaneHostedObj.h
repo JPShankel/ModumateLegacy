@@ -52,14 +52,10 @@ public:
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane,
 		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 		TArray<TArray<FVector>> &OutPerimeters) const override;
-	// TODO: may want to integrate this back into GetDrafting lines to help cache some more variables
-	virtual bool GetRangesForHolesOnPlane(TArray<TPair<float, float>> &OutRanges, TPair<FVector, FVector> &Intersection, const FLayerGeomDef &Layer, const float CurrentThickness, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin) const;
 
 protected:
 	void InternalUpdateGeometry();
 	void UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalculateEdgeExtensions);
-	// TODO: this should be replaced by FGraph3DFace::IntersectsPlane, and that code needs to be generalized first
-	void GetPlaneIntersections(TArray<FVector> &OutIntersections, const TArray<FVector> &InPoints, const FPlane &InPlane) const;
 	void UpdateConnectedEdges();
 	void MarkEdgesMiterDirty();
 	void GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
