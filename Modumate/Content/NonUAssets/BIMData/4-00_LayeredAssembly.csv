@@ -537,13 +537,13 @@ PRESET,,"4LayeredAssembly --> Wall
 0LayerPattern --> 2D-Running Bond
 3Layer3D --> Concrete Masonry Unit
 2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean
-0DimLWH --> CMU-7.625inL-9.625inW-7.625inH
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimLWH --> CMU-7.625inL-5.625inW-7.625inH
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
-0DimWD-0.375inW-0.375inD
+0DimWD-0.375inW-0.25inD
 0Profile-Flat
-0LayerPattern --> 2D-Stack Bond",,4LayeredAssembly --> Wall,,Double Wythe Composite Brick,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer3D --> Clay Brick
+0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Wall,,Double Wythe Composite Brick,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer3D --> Clay Brick
 2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
 0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
@@ -554,13 +554,13 @@ PRESET,,"4LayeredAssembly --> Wall
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean
-0DimLWH --> CMU-7.625inL-9.625inW-7.625inH
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimLWH --> CMU-7.625inL-5.625inW-7.625inH
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
-0DimWD-0.375inW-0.375inD
+0DimWD-0.375inW-0.25inD
 0Profile-Flat
-0LayerPattern --> 2D-Stack Bond",,
+0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer3D --> Clay Brick
 2ModuleLWH --> Clay Brick
@@ -576,13 +576,13 @@ PRESET,,"4LayeredAssembly --> Wall
 0DimThk-3inT
 3Layer3D --> Concrete Masonry Unit
 2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean
-0DimLWH --> CMU-7.625inL-9.625inW-7.625inH
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimLWH --> CMU-7.625inL-5.625inW-7.625inH
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
-0DimWD-0.375inW-0.375inD
+0DimWD-0.375inW-0.25inD
 0Profile-Flat
-0LayerPattern --> 2D-Stack Bond",,4LayeredAssembly --> Wall,,Exterior Brick Composite Cavity,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer3D --> Clay Brick
+0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Wall,,Exterior Brick Composite Cavity,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer3D --> Clay Brick
 2ModuleLWH --> Clay Brick
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
 0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
@@ -596,13 +596,13 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Void --> Air
 0DimThk-3inT",,
 PRESET,,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean
-0DimLWH --> CMU-7.625inL-9.625inW-7.625inH
+1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
+0DimLWH --> CMU-7.625inL-5.625inW-7.625inH
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
-0DimWD-0.375inW-0.375inD
+0DimWD-0.375inW-0.25inD
 0Profile-Flat
-0LayerPattern --> 2D-Stack Bond",,
+0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer3D --> Clay Brick
 2ModuleLWH --> Clay Brick
@@ -705,26 +705,6 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,
-PRESET,,"4LayeredAssembly --> Wall
-3Layer2D --> Board and Panel --> Cement
-2ModuleLWT --> Board/Panel --> Cement
-1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-D6D7D8-Natural
-0DimLW-96in-48in
-0DimThk-8inT
-2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.25inW-0.125inD
-0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Wall,,"8"" Cement Panel",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Cement
-2ModuleLWT --> Board/Panel --> Cement
-1Material --> Aggregates --> Cement-0RawMaterial-Cement-0Color --> Aggregates --> Cement-D6D7D8-Natural
-0DimLW-96in-48in
-0DimThk-8inT
-2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.25inW-0.125inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,"4LayeredAssembly --> Floor
