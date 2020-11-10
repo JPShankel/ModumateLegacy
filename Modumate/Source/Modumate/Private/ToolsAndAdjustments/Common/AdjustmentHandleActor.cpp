@@ -422,9 +422,14 @@ FVector AAdjustmentHandleActor::GetHandleDirection() const
 	}
 
 	int32 numPoints = TargetMOI->GetNumCorners();
-	if (numPoints == 0)
+	if ((numPoints == 0) || (TargetIndex == INDEX_NONE) || (TargetIndex > numPoints))
 	{
 		return FVector::ZeroVector;
+	}
+
+	if (TargetIndex == numPoints)
+	{
+		return TargetMOI->GetNormal();
 	}
 
 	TArray<FVector> targetPoints;

@@ -382,7 +382,7 @@ void ADynamicMeshActor::SetupPrismGeometry(const TArray<FVector> &BasePoints, co
 }
 
 void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial& MaterialData, bool bUpdateCollision, bool bEnableCollision,
-	const FVector2D& ToeKickDimensions, int32 FrontIdxStart, float UVRotOffset)
+	const FVector2D& ToeKickDimensions, float FaceInsetDist, int32 FrontIdxStart, float UVRotOffset)
 {
 	int32 numPoints = BasePoints.Num();
 	float extrusionDist = ExtrusionDelta.Size();
@@ -400,27 +400,54 @@ void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector>& BasePoints, 
 	{
 		return;
 	}
+	FVector planeNormal = FMath::Sign(extrusionNormal | basePlane) * extrusionNormal;
 
 	LayerGeometries.Reset();
 	SetActorLocation(FVector::ZeroVector);
 	SetActorRotation(FQuat::Identity);
 
-	bool bHaveToeKick = (ToeKickDimensions.X > 0.0f) && (ToeKickDimensions.Y > 0.0f) && BasePoints.IsValidIndex(FrontIdxStart);
-	if (bHaveToeKick)
-	{
-		// TODO: support toe kicks with consolidated mesh generation
-	}
+	TArray<FVector> upperBoxBottomPoints(BasePoints);
+	float upperBoxHeight = extrusionDist;
 
-	TArray<FVector> topPoints;
-	for (const FVector& basePoint : BasePoints)
+	// If there's a front face, then we may need to:
+	// - offset the front edge of the lower cabinet box by the toe kick depth
+	// - offset the front edge of the upper cabinet box by the face inset distance
+	// - offset the upper cabinet box points by the toe kick height
+	bool bHaveFrontFace = (FrontIdxStart != INDEX_NONE) && (FrontIdxStart <= numPoints);
+	if (bHaveFrontFace)
 	{
-		topPoints.Add(basePoint + ExtrusionDelta);
-	}
+		int32 frontIdxEnd = (FrontIdxStart + 1) % numPoints;
 
-	FLayerGeomDef& cabinetMainPrism = LayerGeometries.AddDefaulted_GetRef();
-	cabinetMainPrism.Init(BasePoints, topPoints, extrusionNormal);
+		if (!FMath::IsNearlyZero(FaceInsetDist))
+		{
+			if (!UModumateGeometryStatics::TranslatePolygonEdge(upperBoxBottomPoints, planeNormal, FrontIdxStart, -FaceInsetDist,
+				upperBoxBottomPoints[FrontIdxStart], upperBoxBottomPoints[frontIdxEnd]))
+			{
+				return;
+			}
+		}
+
+		if ((ToeKickDimensions.X > 0.0f) && (ToeKickDimensions.Y > 0.0f) && (ToeKickDimensions.Y < extrusionDist))
+		{
+			TArray<FVector> lowerBoxBottomPoints(BasePoints);
+			if (UModumateGeometryStatics::TranslatePolygonEdge(lowerBoxBottomPoints, planeNormal, FrontIdxStart, -ToeKickDimensions.X,
+				lowerBoxBottomPoints[FrontIdxStart], lowerBoxBottomPoints[frontIdxEnd]))
+			{
+				LayerGeometries.Add(FLayerGeomDef(lowerBoxBottomPoints, ToeKickDimensions.Y, extrusionNormal));
+
+				FVector toeKickDelta = ToeKickDimensions.Y * extrusionNormal;
+				for (FVector& mainBoxBottomPoint : upperBoxBottomPoints)
+				{
+					mainBoxBottomPoint += toeKickDelta;
+				}
+
+				upperBoxHeight -= ToeKickDimensions.Y;
+			}
+		}
+	}
 
 	// Now, triangulate the intermediate cabinet box geometry data
+	FLayerGeomDef& cabinetMainPrism = LayerGeometries.Add_GetRef(FLayerGeomDef(upperBoxBottomPoints, upperBoxHeight, extrusionNormal));
 	int32 numLayers = LayerGeometries.Num();
 	SetupProceduralLayers(numLayers);
 	CachedMIDs.SetNumZeroed(1);

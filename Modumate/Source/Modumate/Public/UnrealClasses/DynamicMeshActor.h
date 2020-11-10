@@ -112,7 +112,7 @@ public:
 
 	void SetupPrismGeometry(const TArray<FVector>& BasePpoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial& MaterialData, bool bUpdateCollision, bool bEnableCollision, float UVRotOffset = 0.0f);
 	void SetupCabinetGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial& MaterialData, bool bUpdateCollision, bool bEnableCollision,
-		const FVector2D& ToeKickDimensions = FVector2D::ZeroVector, int32 FrontIdxStart = 0, float UVRotOffset = 0.0f);
+		const FVector2D& ToeKickDimensions = FVector2D::ZeroVector, float FaceInsetDist = 0.0f, int32 FrontIdxStart = INDEX_NONE, float UVRotOffset = 0.0f);
 
 	bool SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint, const FVector& ObjNormal, const FVector& ObjUp,
 		const FVector2D& UpperExtensions = FVector2D::ZeroVector, const FVector2D& OuterExtensions = FVector2D::ZeroVector, const FVector& InScale = FVector::OneVector, bool bRecreateSection = true, bool bCreateCollision = true);

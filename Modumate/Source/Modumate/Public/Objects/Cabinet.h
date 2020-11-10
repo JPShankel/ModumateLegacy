@@ -35,6 +35,7 @@ class MODUMATE_API ASelectCabinetFrontHandle : public AAdjustmentHandleActor
 
 public:
 	static const float FaceCenterHeightOffset;
+	static const float BaseCenterOffset;
 
 	virtual bool BeginUse() override;
 	virtual FVector GetHandlePosition() const override;
@@ -65,20 +66,24 @@ public:
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane,
 		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 		TArray<TArray<FVector>> &OutPerimeters) const override;
-	static FName CabinetGeometryMatName;
+
+	static bool GetFaceGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, int32 FaceIndex,
+		TArray<FVector>& OutFacePoints, FTransform& OutFaceTransform);
+	static bool UpdateCabinetActors(const FBIMAssemblySpec& Assembly, const TArray<FVector>& InBasePoints, const FVector& InExtrusionDelta,
+		int32 FrontFaceIndex, bool bFaceLateralInverted, bool bUpdateCollision, bool bEnableCollision,
+		class ADynamicMeshActor* CabinetBoxActor, class ACompoundMeshActor* CabinetFaceActor, bool& bOutFaceValid);
 
 protected:
 	bool UpdateCachedGeometryData();
-	void UpdateCabinetPortal();
 
 	bool AdjustmentHandlesVisible;
 	TArray<TWeakObjectPtr<ASelectCabinetFrontHandle>> FrontSelectionHandles;
 	TWeakObjectPtr<ACompoundMeshActor> FrontFacePortalActor;
-	FVector2D ToeKickDimensions;
 
 	FTransform CachedBaseOrigin;
 	TArray<FVector> CachedBasePoints;
 	FVector CachedExtrusionDelta;
+	bool bCurrentFaceValid;
 
 	FMOICabinetData InstanceData;
 };

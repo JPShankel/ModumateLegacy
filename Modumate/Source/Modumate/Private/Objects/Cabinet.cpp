@@ -2,6 +2,7 @@
 
 #include "Objects/Cabinet.h"
 
+#include "Algo/Accumulate.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "Drafting/ModumateClippingTriangles.h"
 #include "Drafting/ModumateDraftingElements.h"
@@ -19,13 +20,11 @@
 
 using namespace Modumate::Units;
 
-FName FMOICabinetImpl::CabinetGeometryMatName(TEXT("Cabinet_Exterior_Finish"));
-
 FMOICabinetImpl::FMOICabinetImpl(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
 	, AdjustmentHandlesVisible(false)
-	, ToeKickDimensions(ForceInitToZero)
 	, CachedExtrusionDelta(ForceInitToZero)
+	, bCurrentFaceValid(false)
 {
 }
 
@@ -98,8 +97,9 @@ void FMOICabinetImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOut
 
 	if (FrontFacePortalActor.IsValid())
 	{
-		FrontFacePortalActor->SetActorHiddenInGame(!bOutVisible);
-		FrontFacePortalActor->SetActorEnableCollision(bOutCollisionEnabled);
+		bool bHasFrontFace = (InstanceData.FrontFaceIndex != INDEX_NONE) && bCurrentFaceValid;
+		FrontFacePortalActor->SetActorHiddenInGame(!bHasFrontFace || !bOutVisible);
+		FrontFacePortalActor->SetActorEnableCollision(bHasFrontFace && bOutCollisionEnabled);
 	}
 }
 
@@ -113,23 +113,21 @@ void FMOICabinetImpl::SetupDynamicGeometry()
 	bool bUpdateCollision = !MOI->GetIsInPreviewMode();
 	bool bEnableCollision = !MOI->GetIsInPreviewMode();
 
-	auto& extrusions = MOI->GetAssembly().Extrusions;
-	if (!ensure(extrusions.Num() == 1))
+	if (!FrontFacePortalActor.IsValid())
 	{
-		return;
+		FrontFacePortalActor = MOI->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass());
+		FrontFacePortalActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 	}
 
-	auto& extrusion = extrusions[0];
-	DynamicMeshActor->SetupCabinetGeometry(CachedBasePoints, CachedExtrusionDelta, extrusion.Material, bUpdateCollision, bEnableCollision,
-		ToeKickDimensions, InstanceData.FrontFaceIndex);
+	UpdateCabinetActors(MOI->GetAssembly(), CachedBasePoints, CachedExtrusionDelta, InstanceData.FrontFaceIndex,
+		InstanceData.bFrontFaceLateralInverted, bUpdateCollision, bEnableCollision,
+		DynamicMeshActor.Get(), FrontFacePortalActor.Get(), bCurrentFaceValid);
 
 	// refresh handle visibility, don't destroy & recreate handles
 	AEditModelPlayerController_CPP *controller = DynamicMeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 
 	// TODO: revisit the handle paradigm for cabinets
 	MOI->ShowAdjustmentHandles(controller, AdjustmentHandlesVisible);
-
-	UpdateCabinetPortal();
 }
 
 void FMOICabinetImpl::GetStructuralPointsAndLines(TArray<FStructurePoint>& OutPoints, TArray<FStructureLine>& OutLines, bool bForSnapping, bool bForSelection) const
@@ -163,6 +161,270 @@ bool FMOICabinetImpl::GetInvertedState(FMOIStateData& OutState) const
 	return OutState.CustomData.SaveStructData(modifiedCabinetData);
 }
 
+bool FMOICabinetImpl::GetFaceGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, int32 FaceIndex,
+	TArray<FVector>& OutFacePoints, FTransform& OutFaceTransform)
+{
+	OutFacePoints.Reset();
+	OutFaceTransform.SetIdentity();
+
+	int32 numBasePoints = BasePoints.Num();
+	if ((FaceIndex == INDEX_NONE) || (FaceIndex > numBasePoints))
+	{
+		return false;
+	}
+
+	FVector faceNormal(ForceInitToZero), faceUp(ForceInitToZero);
+	FVector extrusionDir = ExtrusionDelta.GetSafeNormal();
+
+	// If the face is on one of the rectangular sides of the prism
+	if (FaceIndex < numBasePoints)
+	{
+		const FVector& baseEdgeStartPoint = BasePoints[FaceIndex];
+		const FVector& baseEdgeEndPoint = BasePoints[(FaceIndex + 1) % numBasePoints];
+		FVector baseEdgeDir = (baseEdgeEndPoint - baseEdgeStartPoint).GetSafeNormal();
+
+		OutFacePoints.Add(baseEdgeStartPoint);
+		OutFacePoints.Add(baseEdgeEndPoint);
+		OutFacePoints.Add(baseEdgeEndPoint + ExtrusionDelta);
+		OutFacePoints.Add(baseEdgeStartPoint + ExtrusionDelta);
+
+		FPlane facePlane;
+		if (!UModumateGeometryStatics::GetPlaneFromPoints(OutFacePoints, facePlane))
+		{
+			return false;
+		}
+
+		faceNormal = extrusionDir ^ baseEdgeDir;
+		if ((faceNormal | facePlane) < 0.0f)
+		{
+			faceNormal *= -1.0f;
+		}
+
+		faceUp = (FMath::Abs(baseEdgeDir.Z) > FMath::Abs(extrusionDir.Z)) ? baseEdgeDir : extrusionDir;
+	}
+	// If the face is on the extruded face of the prism
+	else
+	{
+		faceNormal = extrusionDir;
+
+		// Quadrilateral check
+		if (numBasePoints != 4)
+		{
+			return false;
+		}
+
+		for (int32 basePointIdx = 0; basePointIdx < 4; ++basePointIdx)
+		{
+			const FVector& baseEdgeStartPoint = BasePoints[basePointIdx];
+			const FVector& baseEdgeEndPoint = BasePoints[(basePointIdx + 1) % numBasePoints];
+			const FVector& baseEdgePrevPoint = BasePoints[(basePointIdx - 1 + numBasePoints) % numBasePoints];
+			FVector baseEdgeCurDir = (baseEdgeEndPoint - baseEdgeStartPoint).GetSafeNormal();
+			FVector baseEdgePrevDir = (baseEdgeStartPoint - baseEdgePrevPoint).GetSafeNormal();
+
+			// Rectangle check
+			if (!FVector::Orthogonal(baseEdgeCurDir, baseEdgePrevDir))
+			{
+				return false;
+			}
+
+			// Find the most vertical edge for the up-axis of the face
+			if (faceUp.IsNearlyZero() || (FMath::Abs(baseEdgeCurDir.Z) > FMath::Abs(faceUp.Z)))
+			{
+				faceUp = baseEdgeCurDir;
+			}
+
+			// Use the extruded point for the face point
+			OutFacePoints.Add(baseEdgeStartPoint + ExtrusionDelta);
+		}
+	}
+
+	if (!faceUp.IsNormalized())
+	{
+		return false;
+	}
+	else if (faceUp.Z < 0.0f)
+	{
+		faceUp *= -1.0f;
+	}
+
+	OutFaceTransform.SetRotation(FRotationMatrix::MakeFromYZ(faceNormal, faceUp).ToQuat());
+
+	FVector faceCenter = 0.25f * Algo::Accumulate(OutFacePoints, FVector::ZeroVector);
+	FVector faceAxisX = OutFaceTransform.GetUnitAxis(EAxis::X);
+
+	FBox2D faceRelativeBox(ForceInitToZero);
+	for (const FVector& facePoint : OutFacePoints)
+	{
+		faceRelativeBox += UModumateGeometryStatics::ProjectPoint2D(facePoint, faceAxisX, faceUp, faceCenter);
+	}
+
+	FVector2D faceSize2D = faceRelativeBox.GetSize();
+	OutFaceTransform.SetScale3D(FVector(faceSize2D.X, 1.0f, faceSize2D.Y));
+
+	FVector faceFlatSize = (faceSize2D.X * faceAxisX) + (faceSize2D.Y * faceUp);
+	FVector faceOrigin = faceCenter - 0.5f * faceFlatSize;
+	OutFaceTransform.SetLocation(faceOrigin);
+
+	return true;
+}
+
+bool FMOICabinetImpl::UpdateCabinetActors(const FBIMAssemblySpec& Assembly, const TArray<FVector>& InBasePoints, const FVector& InExtrusionDelta,
+	int32 FrontFaceIndex, bool bFaceLateralInverted, bool bUpdateCollision, bool bEnableCollision,
+	ADynamicMeshActor* CabinetBoxActor, ACompoundMeshActor* CabinetFaceActor, bool& bOutFaceValid)
+{
+	bOutFaceValid = false;
+	int32 numBasePoints = InBasePoints.Num();
+	auto& extrusions = Assembly.Extrusions;
+	if (!ensure((extrusions.Num() == 1) && (numBasePoints >= 3) && !InExtrusionDelta.IsNearlyZero() && (FrontFaceIndex <= numBasePoints) && CabinetBoxActor && CabinetFaceActor))
+	{
+		return false;
+	}
+
+	// Get enough geometric information to set up the portal assembly and toe kick, if specified
+	TArray<FVector> basePoints = InBasePoints;
+	FVector extrusionDelta = InExtrusionDelta;
+	float extrusionDist = extrusionDelta.Size();
+	FVector extrusionDir = extrusionDelta / extrusionDist;
+	FPlane basePlane(basePoints[0], extrusionDir);
+	UWorld* world = CabinetBoxActor->GetWorld();
+
+	FVector2D toeKickDimensions(Assembly.ToeKickDepth.AsWorldCentimeters(), Assembly.ToeKickHeight.AsWorldCentimeters());
+	float faceInsetDist = 0.0f;
+
+	TArray<FVector> facePoints;
+	FTransform faceTransform;
+	bOutFaceValid = (FrontFaceIndex != INDEX_NONE) && FMOICabinetImpl::GetFaceGeometry(basePoints, extrusionDelta, FrontFaceIndex, facePoints, faceTransform);
+
+	if (!bOutFaceValid)
+	{
+		CabinetFaceActor->SetActorHiddenInGame(true);
+		CabinetFaceActor->SetActorEnableCollision(false);
+	}
+	else
+	{
+		FVector faceOrigin = faceTransform.GetLocation();
+		FQuat faceRot = faceTransform.GetRotation();
+		FVector faceNormal = faceRot.GetAxisY();
+		FVector faceUp = faceRot.GetAxisZ();
+		FVector faceScale3D = faceTransform.GetScale3D();
+
+		// If the front face is on one of the extruded sides, then potentially re-orient the base points and front index if the face's bottom isn't along the base
+		// (i.e. a vertical-wall-mounted cabinet, flush with the floor, whose front face is assigned to one of the vertical sides with a toe kick)
+		if (FrontFaceIndex < numBasePoints)
+		{
+			if (!FVector::Coincident(extrusionDir, faceUp))
+			{
+				// Find the point in the original base points that corresponds to the face origin, the bottom of the face
+				FVector projectedFaceOrigin = FVector::PointPlaneProject(faceOrigin, basePlane);
+				int32 faceOriginBaseIdx = INDEX_NONE;
+				for (int32 basePointIdx = 0; basePointIdx < numBasePoints; ++basePointIdx)
+				{
+					auto& basePoint = basePoints[basePointIdx];
+					if (basePoint.Equals(projectedFaceOrigin, PLANAR_DOT_EPSILON))
+					{
+						faceOriginBaseIdx = basePointIdx;
+						break;
+					}
+				}
+
+				// We expect to find a point that's close enough on the base, regardless of the base shape
+				if (!ensure(faceOriginBaseIdx != INDEX_NONE))
+				{
+					return false;
+				}
+
+				// From that base point, find which direction to traverse around the base corresponds to a valid cabinet box bottom, if any.
+				int32 prevBaseIdx = (faceOriginBaseIdx - 1 + numBasePoints) % numBasePoints;
+				int32 nextBaseIdx = (faceOriginBaseIdx + 1) % numBasePoints;
+				const FVector& faceOriginBasePoint = basePoints[faceOriginBaseIdx];
+				const FVector& prevBasePoint = basePoints[prevBaseIdx];
+				const FVector& nextBasePoint = basePoints[nextBaseIdx];
+				FVector prevBaseDelta = (prevBasePoint - faceOriginBasePoint);
+				FVector nextBaseDelta = (nextBasePoint - faceOriginBasePoint);
+				FVector prevBaseDir = prevBaseDelta.GetSafeNormal();
+				FVector nextBaseDir = nextBaseDelta.GetSafeNormal();
+				FVector newBaseBottomDelta(ForceInitToZero);
+
+				if (FVector::Coincident(prevBaseDir, faceUp) && FVector::Coincident(nextBaseDir, -faceNormal))
+				{
+					newBaseBottomDelta = nextBaseDelta;
+				}
+				else if (FVector::Coincident(nextBaseDir, faceUp) && FVector::Coincident(prevBaseDir, -faceNormal))
+				{
+					newBaseBottomDelta = prevBaseDelta;
+				}
+
+				// If we didn't find a valid direction, then the original cabinet base host polygon is not rectangular, and cannot host a toe kick.
+				// We can extrude it from the base anyway, but we'll have to zero out the toe kick dimensions in order to not have an error.
+				if (newBaseBottomDelta.IsNearlyZero())
+				{
+					toeKickDimensions.Set(0.0f, 0.0f);
+				}
+				// Otherwise, we can re-orient the base points and front index in order to extrude the cabinet from the new bottom,
+				// orthogonal with both the selected cabinet face and the original cabinet base host polygon.
+				else
+				{
+					basePoints = {
+						faceOriginBasePoint,
+						faceOriginBasePoint + extrusionDelta,
+						faceOriginBasePoint + newBaseBottomDelta + extrusionDelta,
+						faceOriginBasePoint + newBaseBottomDelta,
+					};
+					extrusionDelta = faceUp * faceScale3D.Z;
+					FrontFaceIndex = 0;
+				}
+			}
+		}
+		// Otherwise, if the new front face is considered the "top" of the extruded base polygon, then create the base points as bottom rectangular extruded face
+		else
+		{
+			FVector frontFaceDeltaX = faceRot.GetAxisX() * faceScale3D.X;
+
+			basePoints = {
+				faceOrigin,
+				faceOrigin + frontFaceDeltaX,
+				faceOrigin + frontFaceDeltaX - extrusionDelta,
+				faceOrigin - extrusionDelta
+			};
+			extrusionDelta = faceUp * faceScale3D.Z;
+			FrontFaceIndex = 0;
+		}
+
+		FVector portalNativeSize = Assembly.GetRiggedAssemblyNativeSize();
+		if (portalNativeSize.GetMin() < KINDA_SMALL_NUMBER)
+		{
+			return false;
+		}
+
+		FVector portalDesiredSize(faceScale3D.X, portalNativeSize.Y, faceScale3D.Z - toeKickDimensions.Y);
+		if (portalDesiredSize.GetMin() < KINDA_SMALL_NUMBER)
+		{
+			return false;
+		}
+
+		// Now make the portal's parts from the cabinet's combined assembly
+		FVector portalScale = portalDesiredSize / portalNativeSize;
+		CabinetFaceActor->MakeFromAssembly(Assembly, portalScale, bFaceLateralInverted, bUpdateCollision && bEnableCollision);
+
+		// Update the face inset distance, now that it's been calculated by the cabinet's part layout
+		// TODO: update the part layout (if necessary and not already cached) before having to fully update the whole portal actor.
+		faceInsetDist = CabinetFaceActor->CachedPartLayout.CabinetPanelAssemblyConceptualSizeY;
+
+		// Position the portal where it's supposed to go, now that toe kick and face inset have been calculated
+		FVector toeKickOffset = toeKickDimensions.Y * faceUp;
+		FVector insetDelta = -faceInsetDist * faceNormal;
+		FVector portalOrigin = toeKickOffset + faceOrigin + insetDelta;
+
+		CabinetFaceActor->SetActorLocationAndRotation(portalOrigin, faceRot);
+	}
+
+	auto& extrusion = extrusions[0];
+	CabinetBoxActor->SetupCabinetGeometry(basePoints, extrusionDelta, extrusion.Material, bUpdateCollision, bEnableCollision,
+		toeKickDimensions, faceInsetDist, FrontFaceIndex);
+
+	return true;
+}
+
 bool FMOICabinetImpl::UpdateCachedGeometryData()
 {
 	const FModumateObjectInstance* parentObj = MOI ? MOI->GetParentObject() : nullptr;
@@ -178,7 +440,6 @@ bool FMOICabinetImpl::UpdateCachedGeometryData()
 		}
 
 		CachedExtrusionDelta = InstanceData.ExtrusionDist * GetNormal();
-		UModumateFunctionLibrary::GetCabinetToeKickDimensions(MOI->GetAssembly(), ToeKickDimensions);
 
 		return true;
 	}
@@ -186,80 +447,11 @@ bool FMOICabinetImpl::UpdateCachedGeometryData()
 	return false;
 }
 
-void FMOICabinetImpl::UpdateCabinetPortal()
-{
-	int32 frontFaceIndex = InstanceData.FrontFaceIndex;
-	if ((frontFaceIndex == INDEX_NONE) && FrontFacePortalActor.IsValid())
-	{
-		FrontFacePortalActor->Destroy();
-	}
-	else if ((frontFaceIndex >= 0) && !FrontFacePortalActor.IsValid())
-	{
-		FrontFacePortalActor = DynamicMeshActor->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass());
-		FrontFacePortalActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-	}
-
-	if (!FrontFacePortalActor.IsValid())
-	{
-		return;
-	}
-
-	auto& assembly = MOI->GetAssembly();
-	FVector portalNativeSize = assembly.GetRiggedAssemblyNativeSize();
-	if (portalNativeSize.GetMin() < KINDA_SMALL_NUMBER)
-	{
-		return;
-	}
-
-	// Get enough geometric information to set up the portal assembly
-	FVector extrusionDir = GetNormal();
-	FPlane plane;
-	if (!UModumateGeometryStatics::GetPlaneFromPoints(CachedBasePoints, plane))
-	{
-		return;
-	}
-	if (!FVector::Parallel(plane, extrusionDir))
-	{
-		return;
-	}
-	bool bCoincident = FVector::Coincident(FVector(plane), extrusionDir);
-
-	const FVector &p1 = CachedBasePoints[frontFaceIndex];
-	const FVector &p2 = CachedBasePoints[(frontFaceIndex + 1) % CachedBasePoints.Num()];
-	FVector edgeDelta = p2 - p1;
-	float edgeLength = edgeDelta.Size();
-	if (!ensureAlways(!FMath::IsNearlyZero(edgeLength)))
-	{
-		return;
-	}
-
-	FVector portalDesiredSize(edgeLength, portalNativeSize.Y, InstanceData.ExtrusionDist - ToeKickDimensions.Y);
-	if (portalDesiredSize.GetMin() < KINDA_SMALL_NUMBER)
-	{
-		return;
-	}
-
-	// Position the portal where it's supposed to go
-	FVector edgeDir = edgeDelta / edgeLength;
-	FVector faceNormal = (edgeDir ^ extrusionDir) * (bCoincident ? 1.0f : -1.0f);
-	FVector toeKickOffset = ToeKickDimensions.Y * extrusionDir;
-	FVector portalOrigin = toeKickOffset + (bCoincident ? p2 : p1);
-	FQuat portalRot = FRotationMatrix::MakeFromYZ(faceNormal, extrusionDir).ToQuat();
-
-	FrontFacePortalActor->SetActorLocationAndRotation(portalOrigin, portalRot);
-
-	// Now make the portal's parts from the cabinet's combined assembly
-	FVector portalScale = portalDesiredSize / portalNativeSize;
-	FrontFacePortalActor->MakeFromAssembly(assembly, portalScale, InstanceData.bFrontFaceLateralInverted, true);
-}
-
 void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
 	int32 numBasePoints = CachedBasePoints.Num();
-	for (int32 i = 0; i < numBasePoints; ++i)
+	for (int32 i = 0; i <= numBasePoints; ++i)
 	{
-		// TODO: show the adjustment handles for the underlying SurfacePolygon, so its shape can stretch without going into SurfaceGraph view mode
-
 		auto selectFrontHandle = MOI->MakeHandle<ASelectCabinetFrontHandle>();
 		selectFrontHandle->SetTargetIndex(i);
 
@@ -310,6 +502,7 @@ void FMOICabinetImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Cont
 using namespace Modumate;
 
 const float ASelectCabinetFrontHandle::FaceCenterHeightOffset = 20.0f;
+const float ASelectCabinetFrontHandle::BaseCenterOffset = 10.0f;
 
 bool ASelectCabinetFrontHandle::BeginUse()
 {
@@ -343,22 +536,46 @@ bool ASelectCabinetFrontHandle::BeginUse()
 FVector ASelectCabinetFrontHandle::GetHandlePosition() const
 {
 	const FModumateObjectInstance* cabinetParent = TargetMOI ? TargetMOI->GetParentObject() : nullptr;
-	if (!ensure(cabinetParent && (cabinetParent->GetObjectType() == EObjectType::OTSurfacePolygon)))
+	if (!ensure(cabinetParent && (cabinetParent->GetObjectType() == EObjectType::OTSurfacePolygon) && (TargetIndex != INDEX_NONE)))
 	{
 		return FVector::ZeroVector;
 	}
 
 	int32 numBasePoints = cabinetParent->GetNumCorners();
-	FVector edgeCenter = 0.5f * (cabinetParent->GetCorner(TargetIndex) + cabinetParent->GetCorner((TargetIndex + 1) % numBasePoints));
+	if ((numBasePoints == 0) || TargetIndex > numBasePoints)
+	{
+		return FVector::ZeroVector;
+	}
 
+	FVector extrusionDir = TargetMOI->GetNormal();
 	FVector extrusionDelta(ForceInitToZero);
 	FMOICabinetData cabinetInstanceData;
 	if (TargetMOI->GetStateData().CustomData.LoadStructData(cabinetInstanceData))
 	{
-		extrusionDelta = ((0.5f * cabinetInstanceData.ExtrusionDist) + FaceCenterHeightOffset) * TargetMOI->GetNormal();
+		extrusionDelta = ((0.5f * cabinetInstanceData.ExtrusionDist) + FaceCenterHeightOffset) * extrusionDir;
 	}
 
-	return edgeCenter + extrusionDelta;
+	if (TargetIndex < numBasePoints)
+	{
+		FVector edgeCenter = 0.5f * (cabinetParent->GetCorner(TargetIndex) + cabinetParent->GetCorner((TargetIndex + 1) % numBasePoints));
+		return edgeCenter + extrusionDelta;
+	}
+	else
+	{
+		FVector baseCenter(ForceInitToZero);
+		for (int32 cornerIdx = 0; cornerIdx < numBasePoints; ++cornerIdx)
+		{
+			baseCenter += cabinetParent->GetCorner(cornerIdx);
+		}
+		baseCenter /= numBasePoints;
+
+		FVector baseAxisX, baseAxisY;
+		UModumateGeometryStatics::FindBasisVectors(baseAxisX, baseAxisY, extrusionDir);
+
+		FVector centerOffset = BaseCenterOffset * baseAxisY;
+
+		return baseCenter + extrusionDelta + centerOffset;
+	}
 }
 
 bool ASelectCabinetFrontHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const

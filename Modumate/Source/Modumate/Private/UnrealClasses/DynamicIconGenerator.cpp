@@ -2,21 +2,23 @@
 
 
 #include "UnrealClasses/DynamicIconGenerator.h"
-#include "Runtime/Engine/Classes/Components/RectLightComponent.h"
-#include "UnrealClasses/DynamicMeshActor.h"
-#include "UnrealClasses/CompoundMeshActor.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "UI/EditModelUserWidget.h"
-#include "UI/BIM/BIMDesigner.h"
-#include "ModumateCore/ModumateDimensionStatics.h"
-#include "ModumateCore/ModumateUnits.h"
+
 #include "Kismet/KismetRenderingLibrary.h"
-#include "UnrealClasses/ThumbnailCacheManager.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateStairStatics.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "Objects/Cabinet.h"
+#include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
+#include "Runtime/Engine/Classes/Components/RectLightComponent.h"
+#include "UI/BIM/BIMDesigner.h"
+#include "UI/EditModelUserWidget.h"
+#include "UnrealClasses/CompoundMeshActor.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/ThumbnailCacheManager.h"
 
 using namespace Modumate;
 
@@ -435,10 +437,6 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 	// Now that we have a cabinet assembly, a DynamicMeshActor, and CompoundMeshActor,
 	// we can make a fake cabinet for icon generation the same way that FMOICabinetImpl does.
 
-	// Get the toe kick dimensions from the assembly
-	FVector2D toeKickDimensions;
-	UModumateFunctionLibrary::GetCabinetToeKickDimensions(Assembly, toeKickDimensions);
-
 	// Get the material for the cabinet
 	FArchitecturalMaterial materialData;
 	if (ensure(Assembly.Extrusions.Num() == 1))
@@ -464,10 +462,6 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 		FVector(0.0f, cabinetDepth, 0.0f),
 	};
 	FVector extrusionDelta = cabinetHeight * FVector::UpVector;
-	
-	// TODO: Use common cabinet functions to calculate params for icon generation
-	IconDynamicMeshActor->SetupCabinetGeometry(cabinetBasePoints, extrusionDelta, materialData, false, false, toeKickDimensions, 2);
-	IconCompoundMeshActor->MakeFromAssembly(Assembly, FVector::OneVector, false, false);
 
 	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
 	// Scale IconDynamicMeshActor to fit

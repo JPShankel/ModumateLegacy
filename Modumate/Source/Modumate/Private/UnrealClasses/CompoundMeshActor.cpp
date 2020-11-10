@@ -81,9 +81,9 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 	FVector rootFlip = Scale.GetSignVector();
 	Scale = Scale.GetAbs();
 
-	// Fetch scaled part layout for assembly
-	FBIMPartLayout partLayout;
-	if (!ensureAlways(partLayout.FromAssembly(ObAsm,Scale)==EBIMResult::Success))
+	// Update scaled part layout for assembly
+	// TODO: determine when we can avoid re-calculating the part layout, ideally by comparing assembly by-value or by-key as well as the desired scale.
+	if (!ensureAlways(CachedPartLayout.FromAssembly(ObAsm,Scale)==EBIMResult::Success))
 	{
 		return;
 	}
@@ -91,7 +91,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 	// Walk over part layout and build mesh components
 	int32 numSlots = ObAsm.Parts.Num();
 
-	if (!ensureAlways(numSlots == partLayout.PartSlotInstances.Num()))
+	if (!ensureAlways(numSlots == CachedPartLayout.PartSlotInstances.Num()))
 	{
 		return;
 	}
@@ -123,13 +123,13 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 		bool bMeshChanged = partStaticMeshComp->SetStaticMesh(partMesh);
 		partStaticMeshComp->SetMobility(EComponentMobility::Movable);
 
-		const FVector& partRelativePos = partLayout.PartSlotInstances[slotIdx].Location;
-		FRotator partRotator = FRotator::MakeFromEuler(partLayout.PartSlotInstances[slotIdx].Rotation);
+		const FVector& partRelativePos = CachedPartLayout.PartSlotInstances[slotIdx].Location;
+		FRotator partRotator = FRotator::MakeFromEuler(CachedPartLayout.PartSlotInstances[slotIdx].Rotation);
 		FVector partNativeSize = assemblyPart.Mesh.NativeSize * Modumate::InchesToCentimeters;
 
- 		FVector partScale = partLayout.PartSlotInstances[slotIdx].Size / partNativeSize;
+ 		FVector partScale = CachedPartLayout.PartSlotInstances[slotIdx].Size / partNativeSize;
 
-		FVector partDesiredSize = partLayout.PartSlotInstances[slotIdx].Size;
+		FVector partDesiredSize = CachedPartLayout.PartSlotInstances[slotIdx].Size;
 
 #if DEBUG_NINE_SLICING
 		DrawDebugCoordinateSystem(GetWorld(), GetActorTransform().TransformPosition(partRelativePos), GetActorRotation(), 8.0f, true, 1.f, 255, 0.5f);
@@ -184,7 +184,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 
 			partStaticMeshComp->SetRelativeLocation(rootFlip * partRelativePos);
 			partStaticMeshComp->SetRelativeRotation(partRotator);
-			partStaticMeshComp->SetRelativeScale3D(rootFlip * partScale * partLayout.PartSlotInstances[slotIdx].FlipVector);
+			partStaticMeshComp->SetRelativeScale3D(rootFlip * partScale * CachedPartLayout.PartSlotInstances[slotIdx].FlipVector);
 
 			UModumateFunctionLibrary::SetMeshMaterialsFromMapping(partStaticMeshComp, assemblyPart.ChannelMaterials);
 
@@ -358,7 +358,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 						}
 
 						sliceScale = newBoundsSize / originalBoundsSize;
-						sliceRelativePos = partLayout.PartSlotInstances[slotIdx].Location + partLayout.PartSlotInstances[slotIdx].FlipVector * (newBounds.Min - (originalBounds.Min * sliceScale));
+						sliceRelativePos = CachedPartLayout.PartSlotInstances[slotIdx].Location + CachedPartLayout.PartSlotInstances[slotIdx].FlipVector * (newBounds.Min - (originalBounds.Min * sliceScale));
 					}
 
 					for (auto* comp : { procMeshComp, procMeshLowLODComp })
@@ -366,7 +366,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 						comp->SetRelativeLocation(rootFlip * sliceRelativePos);
 						comp->SetRelativeRotation(FQuat::Identity);
 						comp->SetRelativeRotation(partRotator);
-						comp->SetRelativeScale3D(rootFlip * sliceScale * partLayout.PartSlotInstances[slotIdx].FlipVector);
+						comp->SetRelativeScale3D(rootFlip * sliceScale * CachedPartLayout.PartSlotInstances[slotIdx].FlipVector);
 						comp->SetVisibility(true);
 						comp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 					}

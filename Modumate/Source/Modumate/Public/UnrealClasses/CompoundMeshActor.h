@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Database/ModumateObjectEnums.h"
 #include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/BIMPartLayout.h"
 #include "GameFramework/Actor.h"
 
 #include "CompoundMeshActor.generated.h"
@@ -70,6 +71,10 @@ public:
 	// if they were to become a fully-fledged MOI, by systems like tools.
 	FBIMKey TempAssemblyKey;
 	EToolMode TempObjectToolMode;
+
+	// The part layout that's filled and evaluated by a given assembly;
+	// cached so it can provide calculated values and potentially avoid re-evaluating itself unnecessarily.
+	FBIMPartLayout CachedPartLayout;
 
 private:
 	void ResetProcMeshComponents(TArray<UProceduralMeshComponent*> &ProcMeshComps, int32 maxNumMeshes);

@@ -83,8 +83,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
 	static FBIMKey GetShopItemFromActor(AActor* TargetActor, bool& bSuccess);
 
-	static bool GetCabinetToeKickDimensions(const FBIMAssemblySpec &obAsm, FVector2D &outToeKickDims);
-
 	// Helper non-BP methods for below BP method
 	static bool SetMeshMaterial(UMeshComponent *MeshComponent, const FArchitecturalMaterial &Material, int32 MatIndex, UMaterialInstanceDynamic** CachedMIDPtr = nullptr);
 	static bool SetMeshMaterialsFromMapping(UMeshComponent *MeshComponent, const TMap<FName, FArchitecturalMaterial> &MaterialMapping, const TMap<FName, int32> *MatIndexMapping = nullptr);

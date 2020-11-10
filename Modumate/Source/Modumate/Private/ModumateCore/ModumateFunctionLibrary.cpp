@@ -470,11 +470,6 @@ FBIMKey UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool
 }
 
 using namespace Modumate;
-bool UModumateFunctionLibrary::GetCabinetToeKickDimensions(const FBIMAssemblySpec &obAsm, FVector2D &outToeKickDims)
-{
-	outToeKickDims.Set(obAsm.ToeKickDepth.AsWorldCentimeters(), obAsm.ToeKickHeight.AsWorldCentimeters());
-	return true;
-}
 
 bool UModumateFunctionLibrary::SetMeshMaterial(UMeshComponent *MeshComponent, const FArchitecturalMaterial &Material, int32 MatIndex, UMaterialInstanceDynamic** CachedMIDPtr)
 {
