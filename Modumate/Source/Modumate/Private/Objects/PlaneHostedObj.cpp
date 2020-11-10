@@ -557,6 +557,10 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 
 	if (numLayers > 0)
 	{
+		const float totalThickness = Algo::Accumulate(LayerGeometries, 0.0f,
+			[](float s, const auto& layer) { return s + layer.Thickness; });
+		const FVector planeOffset = totalThickness * LayerGeometries[0].Normal;
+
 		auto addPerimeterLines = [&backgroundLines, parentLocation](const TArray<FVector>& points)
 		{
 			int numPoints = points.Num();
@@ -592,6 +596,13 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 
 		addOpeningLines(LayerGeometries[0], parentLocation, true);
 		addOpeningLines(LayerGeometries[numLayers - 1], parentLocation, false);
+
+		// Corner lines normal to plane.
+		for (const auto& point: LayerGeometries[0].PointsA)
+		{
+			FEdge line(point + parentLocation, point + parentLocation + planeOffset);
+			backgroundLines.Emplace(line, Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges);
+		}
 
 		FVector2D boxClipped0;
 		FVector2D boxClipped1;
