@@ -315,13 +315,15 @@ bool FMOICutPlaneImpl::StartRender(FModumateDocument* doc /*= nullptr*/)
 
 	FMatrix endMatrix;
 
+	const FVector viewDirection = GetNormal();
 	FVector endAxisX, endAxisY;
-	UModumateGeometryStatics::FindBasisVectors(endAxisX, endAxisY, GetNormal());
-	if (!FVector::Parallel(GetNormal(), FVector::UpVector))
+	UModumateGeometryStatics::FindBasisVectors(endAxisX, endAxisY, viewDirection);
+	if (!FVector::Parallel(viewDirection, FVector::UpVector))
 	{
 		endAxisX *= -1.0f;
+		endAxisY *= -1.0f;
 	}
-	endMatrix = FRotationMatrix::MakeFromXY(GetNormal(), endAxisX);
+	endMatrix = FRotationMatrix::MakeFromXY(viewDirection, endAxisX);
 
 	FQuat rotation;
 	rotation = FQuat(endMatrix);
@@ -339,14 +341,13 @@ bool FMOICutPlaneImpl::StartRender(FModumateDocument* doc /*= nullptr*/)
 			bounds += maxPoint;
 		}
 	}
-	float maxDimension = bounds.GetSize().GetMax();
+	float maxDimension = bounds.GetSize().Size();
 
 	FVector location = object->GetObjectLocation();
 	FVector2D projectedLocation = UModumateGeometryStatics::ProjectPoint2D(location, endAxisX, endAxisY, CachedPoints[0]);
-	FVector2D renderOrigin = projectedLocation + FVector2D(maxDimension, -maxDimension);
+	FVector2D renderOrigin = projectedLocation + FVector2D(maxDimension, maxDimension);
 	FVector2D renderSize = 2.0f * FVector2D(maxDimension, maxDimension);
 	float depth = CachedPlane.PlaneDot(location);
-	renderOrigin.Y = -renderOrigin.Y;  // !?
 	objectRender.PagePosition = renderOrigin;
 	objectRender.Size = renderSize;
 	objectRender.Depth = depth;
@@ -360,7 +361,7 @@ bool FMOICutPlaneImpl::StartRender(FModumateDocument* doc /*= nullptr*/)
 	// setup capture component
 	auto* captureComponent = CaptureActor->CaptureComponent;
 	FTransform cutPlaneTransform;
-	cutPlaneTransform.SetTranslation(location);
+	cutPlaneTransform.SetTranslation(location - 2.0f * maxDimension * viewDirection);
 
 	cutPlaneTransform.SetRotation(rotation);
 
