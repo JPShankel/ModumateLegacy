@@ -136,7 +136,7 @@ public:
 	template<class T>
 	void SetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name, const T& Value)
 	{
-		Properties.SetProperty<T>(Scope, Name, Value);
+		Properties.SetProperty(Scope, Name, Value);
 	}
 
 	void SetProperties(const FBIMPropertySheet& InProperties);
@@ -144,7 +144,7 @@ public:
 	template <class T>
 	bool TryGetProperty(const FBIMNameType& Name, T& OutT) const
 	{
-		return Properties.TryGetProperty<T>(NodeScope, Name, OutT);
+		return Properties.TryGetProperty(NodeScope, Name, OutT);
 	}
 
 	// Sort child nodes by PinSetIndex and PinSetPosition so serialization will be consistent

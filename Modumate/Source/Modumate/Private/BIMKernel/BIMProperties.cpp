@@ -92,8 +92,7 @@ EBIMResult FBIMPropertySheet::AddProperties(const FBIMPropertySheet& PropSheet)
 	return EBIMResult::Success;
 }
 
-template<>
-bool FBIMPropertySheet::TryGetProperty<FName>(EBIMValueScope InScope, const FBIMNameType& InName, FName& OutT) const
+bool FBIMPropertySheet::TryGetProperty(EBIMValueScope InScope, const FBIMNameType& InName, FName& OutT) const
 {
 	FString stringKey;
 	if (TryGetProperty<FString>(InScope, InName, stringKey))
@@ -104,8 +103,7 @@ bool FBIMPropertySheet::TryGetProperty<FName>(EBIMValueScope InScope, const FBIM
 	return false;
 }
 
-template<>
-bool FBIMPropertySheet::TryGetProperty<FBIMKey>(EBIMValueScope InScope, const FBIMNameType& InName, FBIMKey& OutT) const
+bool FBIMPropertySheet::TryGetProperty(EBIMValueScope InScope, const FBIMNameType& InName, FBIMKey& OutT) const
 {
 	FString stringKey;
 	if (TryGetProperty<FString>(InScope, InName, stringKey))
@@ -116,8 +114,7 @@ bool FBIMPropertySheet::TryGetProperty<FBIMKey>(EBIMValueScope InScope, const FB
 	return false;
 }
 
-template<>
-bool FBIMPropertySheet::TryGetProperty<FText>(EBIMValueScope InScope, const FBIMNameType& InName, FText& OutT) const
+bool FBIMPropertySheet::TryGetProperty(EBIMValueScope InScope, const FBIMNameType& InName, FText& OutT) const
 {
 	FString stringKey;
 	if (TryGetProperty<FString>(InScope, InName, stringKey))
@@ -128,8 +125,7 @@ bool FBIMPropertySheet::TryGetProperty<FText>(EBIMValueScope InScope, const FBIM
 	return false;
 }
 
-template<>
-bool FBIMPropertySheet::TryGetProperty<Modumate::Units::FUnitValue>(EBIMValueScope InScope, const FBIMNameType& InName, Modumate::Units::FUnitValue& OutT) const
+bool FBIMPropertySheet::TryGetProperty(EBIMValueScope InScope, const FBIMNameType& InName, Modumate::Units::FUnitValue& OutT) const
 {
 	float v;
 	if (TryGetProperty<float>(InScope, InName, v))
@@ -140,8 +136,7 @@ bool FBIMPropertySheet::TryGetProperty<Modumate::Units::FUnitValue>(EBIMValueSco
 	return false;
 }
 
-template<>
-bool FBIMPropertySheet::TryGetProperty<int32>(EBIMValueScope InScope, const FBIMNameType& InName, int32& OutT) const
+bool FBIMPropertySheet::TryGetProperty(EBIMValueScope InScope, const FBIMNameType& InName, int32& OutT) const
 {
 	float v;
 	if (TryGetProperty<float>(InScope, InName, v))

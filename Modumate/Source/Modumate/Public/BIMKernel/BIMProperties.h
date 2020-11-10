@@ -158,22 +158,13 @@ public:
 		return false;
 	}
 
-	// These template specializations provide common conversions between text and numerical types
-	template<>
-	bool TryGetProperty<FName>(EBIMValueScope Scope, const FBIMNameType& Name, FName& OutT) const;
-
-	template<>
-	bool TryGetProperty<FText>(EBIMValueScope Scope, const FBIMNameType& Name, FText& OutT) const;
-
-	template<>
-	bool TryGetProperty<FBIMKey>(EBIMValueScope Scope, const FBIMNameType& Name, FBIMKey& OutT) const;
-
-	template<>
-	bool TryGetProperty<Modumate::Units::FUnitValue>(EBIMValueScope Scope, const FBIMNameType& Name, Modumate::Units::FUnitValue& OutT) const;
-
-	template<>
-	bool TryGetProperty<int32>(EBIMValueScope Scope, const FBIMNameType& Name, int32& OutT) const;
-
+	// These overrides provide common conversions between text and numerical types using template func
+	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType& Name, FName& OutT) const;
+	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType& Name, FText& OutT) const;
+	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType& Name, FBIMKey& OutT) const;
+	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType& Name, Modumate::Units::FUnitValue& OutT) const;
+	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType& Name, int32& OutT) const;
+	
 	EBIMResult AddProperties(const FBIMPropertySheet& PropSheet);
 
 	bool Matches(const FBIMPropertySheet& PropSheet) const;
