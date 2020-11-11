@@ -75,8 +75,8 @@ void FMOISurfaceEdgeImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &
 	FMOIEdgeImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
 	if (MOI && LineActor.IsValid())
 	{
-		bOutVisible = false;
-		bOutCollisionEnabled = false;
+		bool bShouldBeVisible = false;
+		bool bShouldCollisionBeEnabled = false;
 
 		AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(LineActor->GetWorld()->GetFirstPlayerController()->PlayerState);
 
@@ -85,16 +85,19 @@ void FMOISurfaceEdgeImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &
 		switch (controller->EMPlayerState->GetViewMode())
 		{
 		case EEditViewModes::SurfaceGraphs:
-			bOutVisible = true;
-			bOutCollisionEnabled = true;
+			bShouldBeVisible = true;
+			bShouldCollisionBeEnabled = true;
 			break;
 		case EEditViewModes::AllObjects:
-			bOutVisible = !bHaveChildren;
-			bOutCollisionEnabled = !bHaveChildren;
+			bShouldBeVisible = !bHaveChildren;
+			bShouldCollisionBeEnabled = !bHaveChildren;
 			break;
 		default:
 			break;
 		}
+
+		bOutVisible = !MOI->IsRequestedHidden() && bShouldBeVisible;
+		bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bShouldCollisionBeEnabled;
 
 		LineActor->SetVisibilityInApp(bOutVisible);
 		LineActor->SetActorEnableCollision(bOutCollisionEnabled);
