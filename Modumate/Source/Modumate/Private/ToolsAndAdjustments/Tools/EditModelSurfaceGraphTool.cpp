@@ -229,6 +229,10 @@ bool USurfaceGraphTool::UpdateTarget(const FModumateObjectInstance* HitObject, c
 			{
 				HitGraphElementMOI = HitObject;
 			}
+			else if (HitSurfaceGraph->ContainsObject(HitObject->GetParentID()))
+			{
+				HitGraphElementMOI = HitObject->GetParentObject();
+			}
 
 			int32 hitSurfaceGraphID = HitSurfaceGraph->GetID();
 			HitGraphMOI = GameState->Document.GetObjectById(hitSurfaceGraphID);
