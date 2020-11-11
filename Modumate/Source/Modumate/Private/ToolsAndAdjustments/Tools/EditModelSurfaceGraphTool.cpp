@@ -63,14 +63,17 @@ bool USurfaceGraphTool::BeginUse()
 	// before starting any poly-line drawing.
 	if (HitGraphHostMOI && (HitFaceIndex != INDEX_NONE) && (HitGraphMOI == nullptr))
 	{
-		int32 newSurfaceGraphID;
-		if (!CreateGraphFromFaceTarget(newSurfaceGraphID))
+		int32 newSurfaceGraphID, newRootPolyID;
+		TArray<FDeltaPtr> deltas;
+		int32 nextID = GameState->Document.GetNextAvailableID();
+		if (CreateGraphFromFaceTarget(nextID, newSurfaceGraphID, newRootPolyID, deltas) &&
+			GameState->Document.ApplyDeltas(deltas, GetWorld()))
 		{
-			return false;
+			HitGraphMOI = GameState->Document.GetObjectById(newSurfaceGraphID);
+			return true;
 		}
-		HitGraphMOI = GameState->Document.GetObjectById(newSurfaceGraphID);
 
-		return true;
+		return false;
 	}
 
 	bool bValidStart = false;
@@ -371,9 +374,10 @@ bool USurfaceGraphTool::CompleteSegment()
 	return true;
 }
 
-bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
+bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfaceGraphID, int32& OutRootPolyID, TArray<FDeltaPtr>& OutDeltas)
 {
 	OutSurfaceGraphID = MOD_ID_NONE;
+	OutRootPolyID = MOD_ID_NONE;
 
 	if (!(HitGraphHostMOI && (HitFaceIndex != INDEX_NONE)))
 	{
@@ -381,9 +385,6 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 	}
 
 	// If we're targeting a surface graph object, it has to be empty
-	int32 nextID = GameState->Document.GetNextAvailableID();
-	TArray<FDeltaPtr> deltas;
-
 	if (HitGraphMOI)
 	{
 		OutSurfaceGraphID = HitGraphMOI->ID;
@@ -395,7 +396,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 	}
 	else
 	{
-		OutSurfaceGraphID = nextID++;
+		OutSurfaceGraphID = NextID++;
 		HitSurfaceGraph = MakeShared<FGraph2D>(OutSurfaceGraphID);
 	}
 
@@ -414,8 +415,8 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 		auto surfaceObjectDelta = MakeShared<FMOIDelta>();
 		surfaceObjectDelta->AddCreateDestroyState(surfaceStateData, EMOIDeltaType::Create);
 
-		deltas.Add(surfaceObjectDelta);
-		deltas.Add(MakeShared<FGraph2DDelta>(HitSurfaceGraph->GetID(), EGraph2DDeltaType::Add));
+		OutDeltas.Add(surfaceObjectDelta);
+		OutDeltas.Add(MakeShared<FGraph2DDelta>(HitSurfaceGraph->GetID(), EGraph2DDeltaType::Add));
 	}
 
 	// Make sure we have valid geometry from the target
@@ -460,7 +461,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 	}
 
 	TArray<FGraph2DDelta> fillGraphDeltas;
-	if (!HitSurfaceGraph->PopulateFromPolygons(fillGraphDeltas, nextID, graphPolygonsToAdd, graphFaceToVertices, true))
+	if (!HitSurfaceGraph->PopulateFromPolygons(fillGraphDeltas, NextID, graphPolygonsToAdd, graphFaceToVertices, true, OutRootPolyID))
 	{
 		return false;
 	}
@@ -470,9 +471,10 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& OutSurfaceGraphID)
 
 	for (FGraph2DDelta& graphDelta : fillGraphDeltas)
 	{
-		deltas.Add(MakeShared<FGraph2DDelta>(graphDelta));
+		OutDeltas.Add(MakeShared<FGraph2DDelta>(graphDelta));
 	}
-	return GameState->Document.ApplyDeltas(deltas, GetWorld());
+
+	return (OutDeltas.Num() > 0);
 }
 
 bool USurfaceGraphTool::AddEdge(FVector StartPos, FVector EndPos)

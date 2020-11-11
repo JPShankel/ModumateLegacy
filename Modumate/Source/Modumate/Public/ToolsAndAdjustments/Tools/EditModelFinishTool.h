@@ -20,4 +20,7 @@ public:
 	virtual bool Deactivate() override;
 	virtual bool BeginUse() override;
 	virtual bool FrameUpdate() override;
+
+protected:
+	bool GetFinishCreationDeltas(TArray<FDeltaPtr>& OutDeltas);
 };

@@ -211,7 +211,7 @@ namespace Modumate
 
 		// Create Deltas for an empty graph resulting in adding the specified polygons.
 		// If using as bounds, the bounds will be set based on the resulting polygons.
-		bool PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, TMap<int32, TArray<FVector2D>>& InitialPolygons, TMap<int32, TArray<int32>>& FaceToVertices, bool bUseAsBounds);
+		bool PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, TMap<int32, TArray<FVector2D>>& InitialPolygons, TMap<int32, TArray<int32>>& FaceToVertices, bool bUseAsBounds, int32& OutRootPolyID);
 
 		// The "Direct" versions of helper functions are meant to be combined together to make deltas that result in
 		// more complicated operations, and do not apply the delta that they create.

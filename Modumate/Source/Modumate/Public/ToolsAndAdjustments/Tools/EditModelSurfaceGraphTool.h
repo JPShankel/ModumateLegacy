@@ -33,7 +33,7 @@ protected:
 	bool UpdateTarget(const FModumateObjectInstance* HitObject, const FVector& HitLocation, const FVector& HitNormal);
 	bool InitializeSegment();
 	bool CompleteSegment();
-	bool CreateGraphFromFaceTarget(int32& OutSurfaceGraphID);
+	bool CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfaceGraphID, int32& OutRootPolyID, TArray<FDeltaPtr>& OutDeltas);
 	bool AddEdge(FVector StartPos, FVector EndPos);
 	void ResetTarget();
 

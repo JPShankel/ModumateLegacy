@@ -199,8 +199,9 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 							graphFaceToVertices.Add(id, containedFace->VertexIDs);
 						}
 
+						int32 rootPolyID;
 						TArray<FGraph2DDelta> boundsDeltas;
-						if (!surfaceGraph->PopulateFromPolygons(boundsDeltas, nextID, graphPolygonsToAdd, graphFaceToVertices, true))
+						if (!surfaceGraph->PopulateFromPolygons(boundsDeltas, nextID, graphPolygonsToAdd, graphFaceToVertices, true, rootPolyID))
 						{
 							doc->SetNextID(doc->GetNextAvailableID(), MOI->ID);
 							return true;

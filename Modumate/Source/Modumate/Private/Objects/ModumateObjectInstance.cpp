@@ -121,9 +121,6 @@ void FModumateObjectInstance::Destroy(bool bFullDelete)
 			parentObj->RemoveCachedChildID(ID);
 		}
 
-		// If we need to do anything else during destruction, like cached its destroyed state, that would go here.
-		DestroyActor(bFullDelete);
-
 		// Clear dirty flags, since we won't be able to clean the object later
 		DirtyFlags = EObjectDirtyFlags::None;
 		for (EObjectDirtyFlags dirtyFlag : UModumateTypeStatics::OrderedDirtyFlags)
@@ -133,6 +130,9 @@ void FModumateObjectInstance::Destroy(bool bFullDelete)
 
 		bDestroyed = true;
 	}
+
+	// DestroyActor is safe to call multiple times, and may be necessary if this was only partially deleted before being fully deleted
+	DestroyActor(bFullDelete);
 }
 
 FModumateObjectInstance *FModumateObjectInstance::GetParentObject()

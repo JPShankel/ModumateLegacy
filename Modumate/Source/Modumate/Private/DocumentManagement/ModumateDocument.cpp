@@ -341,6 +341,13 @@ bool FModumateDocument::DeleteObjectImpl(FModumateObjectInstance *ObjToDelete)
 
 		if (bKeepDeletedObj)
 		{
+			// If we already had an object of the same ID in the deleted list, then we want to preserve it less than the current object being deleted.
+			if (DeletedObjects.Contains(ObjToDelete->ID))
+			{
+				ensure(bFastClearingPreviewDeltas || bSlowClearingPreviewDeltas);
+				delete DeletedObjects.FindAndRemoveChecked(ObjToDelete->ID);
+			}
+
 			ObjToDelete->Destroy(bDestroyActor);
 			DeletedObjects.Add(ObjToDelete->ID, ObjToDelete);
 		}
@@ -387,32 +394,36 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObj(UWorld* World, co
 		NextID = StateData.ID + 1;
 	}
 
-	FModumateObjectInstance* obj = TryGetDeletedObject(StateData.ID);
-	if (obj && (obj->GetStateData() == StateData) && RestoreObjectImpl(obj))
+	// See if we can restore an identical object that was previously deleted (i.e. by undo, or by clearing a preview delta that created an object)
+	FModumateObjectInstance* deletedObj = TryGetDeletedObject(StateData.ID);
+	if (deletedObj)
 	{
-		return obj;
-	}
-	else
-	{
-		if (!ensureAlwaysMsgf(!ObjectsByID.Contains(StateData.ID),
-			TEXT("Tried to create a new object with the same ID (%d) as an existing one!"), StateData.ID))
+		if ((deletedObj->GetStateData() == StateData) && RestoreObjectImpl(deletedObj))
 		{
-			return nullptr;
+			return deletedObj;
 		}
 
-		obj = new FModumateObjectInstance(World, this, StateData);
-		ObjectInstanceArray.AddUnique(obj);
-		ObjectsByID.Add(StateData.ID, obj);
-
-		obj->SetStateData(StateData);
-		obj->PostCreateObject(true);
-
-		UModumateAnalyticsStatics::RecordObjectCreation(World, StateData.ObjectType);
-
-		return obj;
+		// If there was a deleted object with the same ID as our new object, but cannot be restored for the given state data,
+		// then fully delete it since its ID must no longer be safely referenced.
+		delete DeletedObjects.FindAndRemoveChecked(StateData.ID);
 	}
 
-	return nullptr;
+	if (!ensureAlwaysMsgf(!ObjectsByID.Contains(StateData.ID),
+		TEXT("Tried to create a new object with the same ID (%d) as an existing one!"), StateData.ID))
+	{
+		return nullptr;
+	}
+
+	FModumateObjectInstance* newObj = new FModumateObjectInstance(World, this, StateData);
+	ObjectInstanceArray.AddUnique(newObj);
+	ObjectsByID.Add(StateData.ID, newObj);
+
+	newObj->SetStateData(StateData);
+	newObj->PostCreateObject(true);
+
+	UModumateAnalyticsStatics::RecordObjectCreation(World, StateData.ObjectType);
+
+	return newObj;
 }
 
 bool FModumateDocument::ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World)
@@ -831,6 +842,25 @@ void FModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
 		PostApplyDeltas(World);
 
 		PreviewDeltas.Reset();
+	}
+
+	if (bSlowClearingPreviewDeltas)
+	{
+		// Fully delete any objects that were created by preview deltas, in this case found and defined by
+		// their ID being greater than the non-preview NextID.
+		TArray<int32> invalidDeletedIDs;
+		for (auto kvp : DeletedObjects)
+		{
+			if (kvp.Key >= NextID)
+			{
+				invalidDeletedIDs.Add(kvp.Key);
+			}
+		}
+
+		for (int32 invalidDeletedID : invalidDeletedIDs)
+		{
+			delete DeletedObjects.FindAndRemoveChecked(invalidDeletedID);
+		}
 	}
 
 	NextID = PrePreviewNextID;

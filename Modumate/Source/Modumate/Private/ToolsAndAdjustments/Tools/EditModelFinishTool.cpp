@@ -2,6 +2,7 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelFinishTool.h"
 
+#include "DocumentManagement/ObjIDReservationHandle.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -38,78 +39,22 @@ bool UFinishTool::Deactivate()
 		Controller->EMPlayerState->SnappedCursor.MouseMode = OriginalMouseMode;
 	}
 
+	GameState->Document.ClearPreviewDeltas(GetWorld());
+
 	return Super::Deactivate();
 }
 
 bool UFinishTool::BeginUse()
 {
-	if ((HitGraphHostMOI == nullptr) || (HitGraphHostMOI->ID == MOD_ID_NONE))
+	GameState->Document.ClearPreviewDeltas(GetWorld());
+
+	TArray<FDeltaPtr> deltas;
+	if (GetFinishCreationDeltas(deltas))
 	{
-		return false;
+		return GameState->Document.ApplyDeltas(deltas, GetWorld());
 	}
 
-	// If we aren't already targeting a surface polygon, then we'll try to create an implicit one and a graph on the target host.
-	if (HitGraphElementMOI == nullptr)
-	{
-		// Use the base class SurfaceGraphTool to create a graph, if it doesn't already exist
-		int32 newSurfaceGraphID;
-		if (!CreateGraphFromFaceTarget(newSurfaceGraphID))
-		{
-			return false;
-		}
-
-		HitGraphMOI = GameState->Document.GetObjectById(newSurfaceGraphID);
-		auto surfaceGraph = GameState->Document.FindSurfaceGraph(newSurfaceGraphID);
-
-		if (!ensure(HitGraphMOI && (HitGraphMOI->GetObjectType() == EObjectType::OTSurfaceGraph) && surfaceGraph.IsValid()))
-		{
-			return false;
-		}
-
-		for (auto &kvp : surfaceGraph->GetPolygons())
-		{
-			const FGraph2DPolygon &surfacePolygon = kvp.Value;
-			if (surfacePolygon.bInterior && (surfacePolygon.ContainingPolyID == MOD_ID_NONE))
-			{
-				HitGraphElementMOI = GameState->Document.GetObjectById(surfacePolygon.ID);
-				break;
-			}
-		}
-
-		if (HitGraphElementMOI == nullptr)
-		{
-			return false;
-		}
-	}
-
-	// If we're replacing an existing finish, just swap its assembly
-	for (const FModumateObjectInstance *child : HitGraphElementMOI->GetChildObjects())
-	{
-		if (child->GetObjectType() == EObjectType::OTFinish)
-		{
-			if (child->GetAssembly().UniqueKey() != AssemblyKey)
-			{
-				auto swapAssemblyDelta = MakeShared<FMOIDelta>();
-				auto& newState = swapAssemblyDelta->AddMutationState(child);
-				newState.AssemblyKey = AssemblyKey;
-
-				return GameState->Document.ApplyDeltas({ swapAssemblyDelta }, GetWorld());
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
-
-	// Otherwise, create a new finish object on the target surface graph polygon
-	FMOIStateData newFinishState(GameState->Document.GetNextAvailableID(), EObjectType::OTFinish, HitGraphElementMOI->ID);
-	newFinishState.AssemblyKey = AssemblyKey;
-
-	auto createFinishDelta = MakeShared<FMOIDelta>();
-	createFinishDelta->AddCreateDestroyState(newFinishState, EMOIDeltaType::Create);
-
-	return GameState->Document.ApplyDeltas({ createFinishDelta }, GetWorld());
+	return false;
 }
 
 bool UFinishTool::FrameUpdate()
@@ -131,6 +76,80 @@ bool UFinishTool::FrameUpdate()
 			);
 		}
 	}
+
+	GameState->Document.StartPreviewing();
+
+	TArray<FDeltaPtr> deltas;
+	if (GetFinishCreationDeltas(deltas))
+	{
+		GameState->Document.ApplyPreviewDeltas(deltas, GetWorld());
+	}
+
+	return true;
+}
+
+bool UFinishTool::GetFinishCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
+{
+	if ((HitGraphHostMOI == nullptr) || (HitGraphHostMOI->ID == MOD_ID_NONE))
+	{
+		return false;
+	}
+
+	// If we're replacing an existing finish, just swap its assembly
+	if (HitGraphElementMOI)
+	{
+		for (const FModumateObjectInstance* child : HitGraphElementMOI->GetChildObjects())
+		{
+			if (child->GetObjectType() == EObjectType::OTFinish)
+			{
+				if (child->GetAssembly().UniqueKey() != AssemblyKey)
+				{
+					auto swapAssemblyDelta = MakeShared<FMOIDelta>();
+					auto& newState = swapAssemblyDelta->AddMutationState(child);
+					newState.AssemblyKey = AssemblyKey;
+
+					OutDeltas.Add(swapAssemblyDelta);
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+	}
+
+	FObjIDReservationHandle objIDReservation(&GameState->Document, HitGraphHostMOI->ID);
+	int32& nextID = objIDReservation.NextID;
+	int32 surfaceGraphPolyID = MOD_ID_NONE;
+
+	// If we're targeting an existing surface polygon, then try to use it as the parent for the finish
+	if (HitGraphMOI)
+	{
+		if ((HitGraphElementMOI == nullptr) || (HitGraphElementMOI->GetObjectType() != EObjectType::OTSurfacePolygon))
+		{
+			return false;
+		}
+
+		surfaceGraphPolyID = HitGraphElementMOI->ID;
+	}
+	// Otherwise, if we aren't already targeting a surface graph or polygon, then we'll try to create a graph on the target host.
+	else
+	{
+		// Use the base class SurfaceGraphTool to get deltas to create a graph, and find the polygon that would host this finish object
+		int32 newSurfaceGraphID;
+		if (!CreateGraphFromFaceTarget(nextID, newSurfaceGraphID, surfaceGraphPolyID, OutDeltas))
+		{
+			return false;
+		}
+	}
+
+	// Now, create a new finish object on the target surface graph polygon
+	FMOIStateData newFinishState(nextID, EObjectType::OTFinish, surfaceGraphPolyID);
+	newFinishState.AssemblyKey = AssemblyKey;
+
+	auto createFinishDelta = MakeShared<FMOIDelta>();
+	createFinishDelta->AddCreateDestroyState(newFinishState, EMOIDeltaType::Create);
+	OutDeltas.Add(createFinishDelta);
 
 	return true;
 }

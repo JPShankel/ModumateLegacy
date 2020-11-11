@@ -872,9 +872,8 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph2D::PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, TMap<int32, TArray<FVector2D>>& InitialPolygons, TMap<int32, TArray<int32>>& FaceToVertices, bool bUseAsBounds)
+	bool FGraph2D::PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, TMap<int32, TArray<FVector2D>>& InitialPolygons, TMap<int32, TArray<int32>>& FaceToVertices, bool bUseAsBounds, int32& OutRootPolyID)
 	{
-		//if (!IsEmpty() || (InitialPolygons.Num() == 0))
 		if (InitialPolygons.Num() == 0)
 		{
 			return false;
@@ -1036,11 +1035,16 @@ namespace Modumate
 			graphFaceToSurfacePoly.Add(kvp.Key, *surfacePolyCandidates.CreateConstIterator());
 		}
 
+		FGraph2DPolygon* outerPolygon = GetRootPolygon();
+		if (outerPolygon)
+		{
+			OutRootPolyID = outerPolygon->ID;
+		}
+
 		// Now, optionally set the bounds based on the resulting polygons
 		if (bUseAsBounds)
 		{
 			// We require that the graph has a well-defined root polygon (one that contains all the others) in order to set bounds
-			FGraph2DPolygon* outerPolygon = GetRootPolygon();
 			if (outerPolygon == nullptr)
 			{
 				ApplyInverseDeltas(appliedDeltas);
