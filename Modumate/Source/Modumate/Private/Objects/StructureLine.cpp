@@ -264,6 +264,18 @@ bool FMOIStructureLine::GetPerimeterPoints(TArray<FVector>& outPerimeterPoints) 
 	FVector scaleVector;
 	FTransform localToWorld = MOI->GetWorldTransform();
 
+	FVector scale(FVector::OneVector);
+	const auto& assembly = MOI->GetAssembly();
+	if (ensureAlways(assembly.Extrusions.Num() > 0))
+	{
+		scale = MOI->GetAssembly().Extrusions[0].Scale;
+	}
+	else
+	{
+		return false;
+	}
+
+
 	if (!UModumateObjectStatics::GetPolygonProfile(&MOI->GetAssembly(), polyProfile)
 		|| polyProfile->Points.Num() == 0)
 	{
@@ -272,7 +284,7 @@ bool FMOIStructureLine::GetPerimeterPoints(TArray<FVector>& outPerimeterPoints) 
 		
 	for (const auto& point : polyProfile->Points)
 	{
-		outPerimeterPoints.Add(localToWorld.TransformPosition(point.X * LineUp + point.Y * LineNormal));
+		outPerimeterPoints.Add(localToWorld.TransformPosition(point.X * LineUp * scale.X + point.Y * LineNormal * scale.Y));
 	}
 
 	return true;
@@ -318,9 +330,6 @@ TArray<FEdge> FMOIStructureLine::GetBeyondLinesFromMesh(const TSharedPtr<Modumat
 
 	static constexpr float facetThreshold = 0.985;  // 10 degrees
 		
-	FVector bottomCap(perimeter[closestPoint] + startOffset);
-	FVector topCap(perimeter[closestPoint] + endOffset);
-
 	// Test closest facet for winding direction:
 	bool bPerimeterFacingDir;
 	FVector tp0 = perimeter[(closestPoint + numEdges - 1) % numEdges];
@@ -354,15 +363,17 @@ TArray<FEdge> FMOIStructureLine::GetBeyondLinesFromMesh(const TSharedPtr<Modumat
 				FEdge edgeAlongBeam(draftLineStart, draftLineEnd);
 				edgeAlongBeam.Count = int(bSilhouette);  // Use count field to encode internal/silhouette.
 				beamEdges.Add(edgeAlongBeam);
-				beamEdges.Emplace(bottomCap, draftLineStart);
-				beamEdges.Emplace(topCap, draftLineEnd);
-				bottomCap = draftLineStart;
-				topCap = draftLineEnd;
 			}
 		}
 
 		previousNormal = normal;
 		bPreviousFacing = bFacing;
+
+		if (edge < numEdges)
+		{
+			beamEdges.Emplace(p1 + startOffset, p2 + startOffset);
+			beamEdges.Emplace(p1 + endOffset, p2 + endOffset);
+		}
 	}
 
 	return beamEdges;
