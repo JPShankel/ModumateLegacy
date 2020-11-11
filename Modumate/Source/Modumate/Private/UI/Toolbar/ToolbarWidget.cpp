@@ -7,6 +7,7 @@
 #include "UI/EditModelUserWidget.h"
 #include "UI/ToolTray/ToolTrayWidget.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UI/BIM/BIMDesigner.h"
 
 
 UToolbarWidget::UToolbarWidget(const FObjectInitializer& ObjectInitializer)
@@ -51,7 +52,10 @@ void UToolbarWidget::OnButtonReleaseMetaPlane()
 		EditModelUserWidget->ToolTrayWidget->ChangeBlockToMetaPlaneTools();
 
 		// TODO: button shouldn't be allow to be pressed when BIM Designer is opened
-		EditModelUserWidget->ToggleBIMDesigner(false);
+		if (EditModelUserWidget->BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
+		{
+			EditModelUserWidget->ToggleBIMDesigner(false);
+		}
 	}
 }
 
@@ -59,10 +63,13 @@ void UToolbarWidget::OnButtonReleaseSeparators()
 {
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
-		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSeparatorTools(EToolMode::VE_NONE);
+		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSeparatorTools(Controller->GetToolMode());
 
 		// TODO: button shouldn't be allow to be pressed when BIM Designer is opened
-		EditModelUserWidget->ToggleBIMDesigner(false);
+		if (EditModelUserWidget->BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
+		{
+			EditModelUserWidget->ToggleBIMDesigner(false);
+		}
 	}
 }
 
@@ -74,7 +81,10 @@ void UToolbarWidget::OnButtonReleaseSurfaceGraphs()
 		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSurfaceGraphTools();
 
 		// TODO: button shouldn't be allow to be pressed when BIM Designer is opened
-		EditModelUserWidget->ToggleBIMDesigner(false);
+		if (EditModelUserWidget->BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
+		{
+			EditModelUserWidget->ToggleBIMDesigner(false);
+		}
 	}
 }
 
@@ -82,10 +92,13 @@ void UToolbarWidget::OnButtonReleaseAttachments()
 {
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
-		EditModelUserWidget->ToolTrayWidget->ChangeBlockToAttachmentTools(EToolMode::VE_NONE);
+		EditModelUserWidget->ToolTrayWidget->ChangeBlockToAttachmentTools(Controller->GetToolMode());
 
 		// TODO: button shouldn't be allow to be pressed when BIM Designer is opened
-		EditModelUserWidget->ToggleBIMDesigner(false);
+		if (EditModelUserWidget->BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
+		{
+			EditModelUserWidget->ToggleBIMDesigner(false);
+		}
 	}
 }
 
