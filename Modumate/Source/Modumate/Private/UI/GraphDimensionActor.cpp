@@ -79,8 +79,17 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 	if (Graph != nullptr)
 	{
 		auto targetEdge = Graph->FindEdge(FMath::Abs(TargetEdgeID));
+		if (targetEdge == nullptr)
+		{
+			return;
+		}
+
 		auto startVertex = Graph->FindVertex(targetEdge->StartVertexID);
 		auto endVertex = Graph->FindVertex(targetEdge->EndVertexID);
+		if (startVertex == nullptr || endVertex == nullptr)
+		{
+			return;
+		}
 
 		startPosition = startVertex->Position;
 		endPosition = endVertex->Position;
@@ -99,13 +108,22 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 	else if (SurfaceGraph != nullptr)
 	{
 		auto targetEdge = SurfaceGraph->FindEdge(FMath::Abs(TargetEdgeID));
+		if (targetEdge == nullptr)
+		{
+			return;
+		}
+
 		auto startVertex = SurfaceGraph->FindVertex(targetEdge->StartVertexID);
 		auto endVertex = SurfaceGraph->FindVertex(targetEdge->EndVertexID);
-		auto surfaceGraphObj = GameState->Document.GetObjectById(SurfaceGraph->GetID());
-		auto surfaceGraphParent = GameState->Document.GetObjectById(surfaceGraphObj->GetParentID());
+		if (startVertex == nullptr || endVertex == nullptr)
+		{
+			return;
+		}
 
+		auto surfaceGraphObj = GameState->Document.GetObjectById(SurfaceGraph->GetID());
+		auto surfaceGraphParent = surfaceGraphObj != nullptr ? GameState->Document.GetObjectById(surfaceGraphObj->GetParentID()) : nullptr;
 		int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceGraphObj);
-		if (surfaceGraphFaceIndex == INDEX_NONE)
+		if ((surfaceGraphParent == nullptr) || (surfaceGraphFaceIndex == INDEX_NONE))
 		{
 			return;
 		}
