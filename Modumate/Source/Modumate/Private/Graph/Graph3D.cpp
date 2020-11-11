@@ -558,7 +558,7 @@ namespace Modumate
 		{
 			if (FGraph3DEdge *faceEdge = FindEdge(edgeID))
 			{
-				faceEdge->RemoveFace(FaceID, false);
+				faceEdge->RemoveFace(FaceID, false, true);
 			}
 		}
 
@@ -784,7 +784,7 @@ namespace Modumate
 			auto &delta = kvp.Value;
 			if (ensureAlways(face && (face->ID != delta.NextContainingFaceID)))
 			{
-				face->ContainingFaceID = delta.NextContainingFaceID;
+				face->UpdateContainingFace(delta.NextContainingFaceID);
 				face->ContainedFaceIDs.Append(delta.ContainedFaceIDsToAdd);
 				for (int32 faceIDToRemove : delta.ContainedFaceIDsToRemove)
 				{
@@ -1036,7 +1036,7 @@ namespace Modumate
 
 			for (auto connection : edge->ConnectedFaces)
 			{
-				if (ExistingFaces.Contains(FMath::Abs(connection.FaceID)) && FMath::Abs(connection.FaceID) != FMath::Abs(AddedFaceID) && FVector::Coincident(connection.EdgeFaceDir, edgeNormal))
+				if (!connection.bContained && ExistingFaces.Contains(FMath::Abs(connection.FaceID)) && FMath::Abs(connection.FaceID) != FMath::Abs(AddedFaceID) && FVector::Coincident(connection.EdgeFaceDir, edgeNormal))
 				{
 					OutOverlappingFaces.Add(FMath::Abs(connection.FaceID));
 				}
@@ -1065,7 +1065,7 @@ namespace Modumate
 
 			for (auto connection : edge->ConnectedFaces)
 			{
-				if (FMath::Abs(connection.FaceID) != FMath::Abs(AddedFaceID) && FVector::Coincident(connection.EdgeFaceDir, edgeNormal))
+				if (!connection.bContained && FMath::Abs(connection.FaceID) != FMath::Abs(AddedFaceID) && FVector::Coincident(connection.EdgeFaceDir, edgeNormal))
 				{
 					return connection.FaceID;
 				}
@@ -1805,6 +1805,10 @@ namespace Modumate
 
 				for (auto edgeFace : edge->ConnectedFaces)
 				{
+					if (edgeFace.bContained)
+					{
+						continue;
+					}
 					adjacentFaceIDs.Add(FMath::Abs(edgeFace.FaceID));
 				}
 			}

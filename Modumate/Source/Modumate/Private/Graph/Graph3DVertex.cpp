@@ -27,7 +27,10 @@ namespace Modumate {
 			auto edge = Graph->FindEdge(edgeID);
 			for (auto faceConnection : edge->ConnectedFaces)
 			{
-				OutFaceIDs.Add(FMath::Abs(faceConnection.FaceID));
+				if (!faceConnection.bContained)
+				{
+					OutFaceIDs.Add(FMath::Abs(faceConnection.FaceID));
+				}
 			}
 		}
 	}
@@ -40,7 +43,10 @@ namespace Modumate {
 			OutEdgeIDs.Add(FMath::Abs(edgeID));
 			for (auto faceConnection : edge->ConnectedFaces)
 			{
-				OutFaceIDs.Add(FMath::Abs(faceConnection.FaceID));
+				if (!faceConnection.bContained)
+				{
+					OutFaceIDs.Add(FMath::Abs(faceConnection.FaceID));
+				}
 			}
 		}
 	}

@@ -9,11 +9,13 @@ namespace Modumate
 		FGraphSignedID FaceID;		// The ID of the face, with sign indicating whether this edge is forward in the face's edge list
 		FVector EdgeFaceDir;	// The internal normal of the edge to the face
 		float FaceAngle;		// The angle of the face dir with respect to the edge's reference normal
+		bool bContained;		// Whether the edge is contained by the face
 
-		FEdgeFaceConnection(FGraphSignedID InFaceID, FVector InEdgeFaceDir, float InFaceAngle)
+		FEdgeFaceConnection(FGraphSignedID InFaceID, FVector InEdgeFaceDir, float InFaceAngle, bool InContained)
 			: FaceID(InFaceID)
 			, EdgeFaceDir(InEdgeFaceDir)
 			, FaceAngle(InFaceAngle)
+			, bContained(InContained)
 		{ }
 	};
 
@@ -31,8 +33,9 @@ namespace Modumate
 		FGraph3DEdge(int32 InID, FGraph3D* InGraph, int32 InStart, int32 InEnd, const TSet<int32> &InGroupIDs);
 
 		void SetVertices(int32 InStart, int32 InEnd);
-		bool AddFace(FGraphSignedID FaceID, const FVector &EdgeFaceDir);
-		bool RemoveFace(FGraphSignedID FaceID, bool bRequireSameSign);
+		bool AddFace(FGraphSignedID FaceID, const FVector &EdgeFaceDir, bool bContained);
+		bool RemoveFace(FGraphSignedID FaceID, bool bRequireSameSign, bool bDeletingFace);
+		bool RemoveParallelContainingFace(FVector EdgeNormal);
 		void SortFaces();
 		bool GetNextFace(FGraphSignedID CurFaceID, FGraphSignedID &OutNextFaceID, float &OutAngleDelta, int32 &OutNextFaceIndex) const;
 

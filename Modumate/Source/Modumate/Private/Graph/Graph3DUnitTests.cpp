@@ -3024,4 +3024,82 @@ namespace Modumate
 
 		return true;
 	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphContainmentConnections, "Modumate.Graph.3D.ContainmentConnections", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphContainmentConnections::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+		int32 NextID = 1;
+
+		TArray<FGraph3DDelta> deltas;
+		int32 existingID = 0;
+
+		TArray<int32> faceIDs;
+		if (!SetupContainedFace(this, graph, tempGraph, NextID, faceIDs))
+		{
+			return false;
+		}
+
+		int32 outerFaceID = faceIDs[0];
+		int32 innerFaceID = faceIDs[1];
+		auto outerFace = graph.FindFace(outerFaceID);
+		auto innerFace = graph.FindFace(innerFaceID);
+
+		TArray<int32> innerEdges = innerFace->EdgeIDs;
+		for (int32 edgeID : innerEdges)
+		{
+			auto edge = graph.FindEdge(edgeID);
+			TestTrue(TEXT("test edge connections"), edge->ConnectedFaces.Num() == 2);
+		}
+
+		// delete contained face, but not the edges, and test the connected faces
+		deltas.AddDefaulted();
+		TestTrue(TEXT("Delete face, excluding connected edges and vertices"),
+			tempGraph.GetDeltaForDeleteObjects({ innerFaceID }, deltas[0], false));
+		TestDeltas(this, deltas, graph, tempGraph, 1, 8, 8, false);
+
+		for (int32 edgeID : innerEdges)
+		{
+			auto edge = graph.FindEdge(edgeID);
+			TestTrue(TEXT("test loose edge connections"), edge->ConnectedFaces.Num() == 0);
+		}
+
+		ApplyInverseDeltas(this, graph, tempGraph, deltas);
+		deltas.Reset();
+
+		// Add a vertical face, then
+		// delete contained face, but not the edges, and test the connected faces
+		innerFace = graph.FindFace(innerFaceID);
+		int32 edgeID = innerFace->EdgeIDs[0];
+		FVector offset(0.0f, 0.0f, 100.0f);
+
+		auto edge = graph.FindEdge(edgeID);
+		auto startVertex = graph.FindVertex(edge->StartVertexID);
+		auto endVertex = graph.FindVertex(edge->EndVertexID);
+
+		TArray<FVector> positions = {
+			startVertex->Position,
+			endVertex->Position,
+			endVertex->Position + offset,
+			startVertex->Position + offset
+		};
+
+		TestTrue(TEXT("Add Face"),
+			tempGraph.GetDeltaForFaceAddition(positions, deltas, NextID, existingID));
+		TestDeltas(this, deltas, graph, tempGraph, 3, 10, 11);
+
+		edge = graph.FindEdge(edgeID);
+		TestTrue(TEXT("test edge connections"), edge->ConnectedFaces.Num() == 3);
+
+		deltas.AddDefaulted();
+		TestTrue(TEXT("Delete face, excluding connected edges and vertices"),
+			tempGraph.GetDeltaForDeleteObjects({ innerFaceID }, deltas[0], false));
+		TestDeltas(this, deltas, graph, tempGraph, 2, 10, 11, false);
+
+		edge = graph.FindEdge(edgeID);
+		TestTrue(TEXT("test edge connections"), edge->ConnectedFaces.Num() == 1);
+
+		return true;
+	}
 }

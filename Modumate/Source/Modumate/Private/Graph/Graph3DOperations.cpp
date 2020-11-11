@@ -878,7 +878,7 @@ namespace Modumate
 
 		for (auto connection : edge->ConnectedFaces)
 		{
-			if (connection.FaceID != FaceID)
+			if (connection.FaceID != FaceID && !connection.bContained)
 			{
 				bool bForward;
 				int32 edgeIdx = FindFace(connection.FaceID)->FindEdgeIndex(edge->ID, bForward);
@@ -1669,6 +1669,10 @@ namespace Modumate
 				// consider all faces that are connected to the edge for deletion
 				for (auto faceConnection : edge->ConnectedFaces)
 				{
+					if (faceConnection.bContained)
+					{
+						continue;
+					}
 					faceIDsToDelete.Add(FMath::Abs(faceConnection.FaceID));
 				}
 
@@ -1717,6 +1721,11 @@ namespace Modumate
 						bool bDeleteEdge = true;
 						for (auto connection : edge->ConnectedFaces)
 						{
+							if (connection.bContained)
+							{
+								continue;
+							}
+
 							if (!faceIDsToDelete.Contains(FMath::Abs(connection.FaceID)))
 							{
 								bDeleteEdge = false;

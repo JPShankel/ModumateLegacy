@@ -139,31 +139,33 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 				for (int32 connectionIdx = 0; connectionIdx < numFaces; connectionIdx++)
 				{
 					auto& connection = connectedFaces[connectionIdx];
+					auto& nextConnection = connectedFaces[(connectionIdx + 1) % numFaces];
+					auto& prevConnection = connectedFaces[(connectionIdx + numFaces - 1) % numFaces];
+					if (connection.bContained || nextConnection.bContained || prevConnection.bContained)
+					{
+						continue;
+					}
 
-					if (FMath::Abs(connection.FaceID) == face->ID)
+					if (!connection.bContained && FMath::Abs(connection.FaceID) == face->ID)
 					{
 						if (numFaces == 2)
 						{
 							// other face
 							auto angleActor = AddDimensionActor<AAngleDimensionActor>();
-							angleActor->SetTarget(edgeID, TPair<int32, int32>(connection.FaceID,
-								connectedFaces[(connectionIdx + 1) % numFaces].FaceID));
+							angleActor->SetTarget(edgeID, TPair<int32, int32>(connection.FaceID, nextConnection.FaceID));
 							CurrentGraphDimensionStrings.Add(angleActor->ID);
 						}
 						else if (numFaces >= 3)
 						{
 							// previous face
 							auto angleActor = AddDimensionActor<AAngleDimensionActor>();
-							angleActor->SetTarget(edgeID, TPair<int32, int32>(connection.FaceID,
-								connectedFaces[(connectionIdx + numFaces - 1) % numFaces].FaceID));
+							angleActor->SetTarget(edgeID, TPair<int32, int32>(connection.FaceID, prevConnection.FaceID));
 							CurrentGraphDimensionStrings.Add(angleActor->ID);
 
 							// next face
 							angleActor = AddDimensionActor<AAngleDimensionActor>();
-							angleActor->SetTarget(edgeID, TPair<int32, int32>(connection.FaceID,
-								connectedFaces[(connectionIdx + 1) % numFaces].FaceID));
+							angleActor->SetTarget(edgeID, TPair<int32, int32>(connection.FaceID, nextConnection.FaceID));
 							CurrentGraphDimensionStrings.Add(angleActor->ID);
-
 						}
 					}
 				}

@@ -120,7 +120,7 @@ namespace Modumate
 			auto edge = Graph->FindEdge(edgeID);
 			if (edge != nullptr)
 			{
-				edge->RemoveFace(ID, false);
+				edge->RemoveFace(ID, false, false);
 			}
 		}
 
@@ -170,8 +170,9 @@ namespace Modumate
 			Cached2DEdgeNormals.Add(edgeNormal2D);
 
 			FGraphSignedID signedFaceID = ID * (bEdgeForward ? 1 : -1);
-			edge->AddFace(signedFaceID, edgeNormal);
+			edge->AddFace(signedFaceID, edgeNormal, false);
 		}
+		UpdateContainingFace(ContainingFaceID);
 
 		bValid = true;
 		return bValid;
@@ -337,6 +338,44 @@ namespace Modumate
 		}
 
 		return bSuccess;
+	}
+
+	void FGraph3DFace::UpdateContainingFace(int32 NewContainingFaceID)
+	{
+		for (int32 edgeID : EdgeIDs)
+		{
+			auto edge = Graph->FindEdge(edgeID);
+			if (edge == nullptr)
+			{
+				continue;
+			}
+
+			FVector edgeNormal;
+			int32 sign = 1;
+			for (auto& connection : edge->ConnectedFaces)
+			{
+				if (FMath::Abs(connection.FaceID) == ID)
+				{
+					sign = connection.FaceID == ID ? 1 : -1;
+					edgeNormal = connection.EdgeFaceDir * -1.0f;
+				}
+			}
+
+			if (!edgeNormal.IsNearlyZero())
+			{
+				edge->RemoveParallelContainingFace(edgeNormal);
+			}
+
+			// don't add a face connection when the new face doesn't exist
+			if (NewContainingFaceID == MOD_ID_NONE)
+			{
+				continue;
+			}
+
+			edge->AddFace(NewContainingFaceID * sign, edgeNormal, true);
+		}
+
+		ContainingFaceID = NewContainingFaceID;
 	}
 
 	void FGraph3DFace::GetAdjacentFaceIDs(TSet<int32>& OutFaceIDs) const

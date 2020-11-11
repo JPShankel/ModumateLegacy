@@ -62,7 +62,7 @@ namespace Modumate
 		bDirty = (ConnectedFaces.Num() > 0);
 	}
 
-	bool FGraph3DEdge::AddFace(FGraphSignedID FaceID, const FVector &EdgeFaceDir)
+	bool FGraph3DEdge::AddFace(FGraphSignedID FaceID, const FVector &EdgeFaceDir, bool bContained)
 	{
 		for (FEdgeFaceConnection &connectedFace : ConnectedFaces)
 		{
@@ -81,19 +81,21 @@ namespace Modumate
 		float angleCross = (EdgeFaceDir ^ CachedRefNorm) | CachedDir;
 		float faceAngle = (angleCross > 0.0f) ? absAngle : (360.0f - absAngle);
 
-		ConnectedFaces.Add(FEdgeFaceConnection(FaceID, EdgeFaceDir, faceAngle));
+		ConnectedFaces.Add(FEdgeFaceConnection(FaceID, EdgeFaceDir, faceAngle, bContained));
 		bDirty = true;
 
 		return true;
 	}
 
-	bool FGraph3DEdge::RemoveFace(FGraphSignedID FaceID, bool bRequireSameSign)
+	bool FGraph3DEdge::RemoveFace(FGraphSignedID FaceID, bool bRequireSameSign, bool bDeletingFace)
 	{
 		if (!bRequireSameSign)
 		{
 			FaceID = FMath::Abs(FaceID);
 		}
 
+		bool bRemovedFace = false;
+		FVector removedNormal;
 		for (int32 i = ConnectedFaces.Num() - 1; i >= 0; --i)
 		{
 			int32 connectedFaceID = ConnectedFaces[i].FaceID;
@@ -103,6 +105,37 @@ namespace Modumate
 			}
 
 			if (connectedFaceID == FaceID)
+			{
+				removedNormal = ConnectedFaces[i].EdgeFaceDir;
+				ConnectedFaces.RemoveAt(i);
+				bDirty = true;
+
+				bRemovedFace = true;
+				break;
+			}
+		}
+
+		// clean up related containment face connection
+		if (bRemovedFace && bDeletingFace)
+		{
+			for (int32 i = ConnectedFaces.Num() - 1; i >= 0; --i)
+			{
+				if (ConnectedFaces[i].bContained &&
+					FVector::Parallel(removedNormal, ConnectedFaces[i].EdgeFaceDir))
+				{
+					ConnectedFaces.RemoveAt(i);
+				}
+			}
+		}
+
+		return bRemovedFace;
+	}
+
+	bool FGraph3DEdge::RemoveParallelContainingFace(FVector EdgeNormal)
+	{
+		for (int32 i = ConnectedFaces.Num() - 1; i >= 0; --i)
+		{
+			if (ConnectedFaces[i].bContained && FVector::Parallel(ConnectedFaces[i].EdgeFaceDir, EdgeNormal))
 			{
 				ConnectedFaces.RemoveAt(i);
 				bDirty = true;
@@ -133,7 +166,7 @@ namespace Modumate
 						}
 					}
 
-					ensureAlways(bFaceContainsThisEdge);
+					ensureAlways(bFaceContainsThisEdge != connectedFace.bContained);
 				}
 			}
 		}
