@@ -15,7 +15,7 @@ TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,D
 PRESET,,"5Stair
 4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -25,7 +25,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -36,7 +36,7 @@ PRESET,,"5Stair
 0LayerPattern --> 2D-Running Bond
 4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -46,7 +46,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -56,7 +56,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,5Stair,,OSB + Plywood Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -66,7 +66,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -76,7 +76,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond","4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -86,7 +86,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -98,7 +98,7 @@ PRESET,,"5Stair
 PRESET,,"5Stair
 4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -109,7 +109,7 @@ PRESET,,"5Stair
 0LayerPattern --> 2D-Running Bond
 4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -119,7 +119,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,5Stair,,Plywood stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -129,7 +129,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond","4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -141,7 +141,7 @@ PRESET,,"5Stair
 PRESET,,"5Stair
 4LayeredAssembly --> Layered Tread
 3Layer2D --> Tile --> Stone
-2ModuleLWT --> Tile --> Stone
+Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
 0DimLW-6in-3in
 0DimThk-0.5inT
@@ -152,7 +152,7 @@ PRESET,,"5Stair
 0LayerPattern --> 2D-English Bond
 4LayeredAssembly --> Layered Riser
 3Layer2D --> Tile --> Stone
-2ModuleLWT --> Tile --> Stone
+Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
 0DimLW-6in-3in
 0DimThk-0.5inT
@@ -162,7 +162,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-English Bond",,5Stair,,Limestone Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Tile --> Stone
-2ModuleLWT --> Tile --> Stone
+Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
 0DimLW-6in-3in
 0DimThk-0.5inT
@@ -172,7 +172,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-English Bond","4LayeredAssembly --> Layered Riser
 3Layer2D --> Tile --> Stone
-2ModuleLWT --> Tile --> Stone
+Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
 0DimLW-6in-3in
 0DimThk-0.5inT
@@ -184,7 +184,7 @@ PRESET,,"5Stair
 PRESET,,"5Stair
 4LayeredAssembly --> Layered Tread
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-48in-7in
 0DimThk-0.375inT
@@ -194,7 +194,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -205,7 +205,7 @@ PRESET,,"5Stair
 0LayerPattern --> 2D-Running Bond
 4LayeredAssembly --> Layered Riser
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-48in-7in
 0DimThk-0.375inT
@@ -215,7 +215,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -225,7 +225,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,5Stair,,Birch Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-48in-7in
 0DimThk-0.375inT
@@ -235,7 +235,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -245,7 +245,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond","4LayeredAssembly --> Layered Riser
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-48in-7in
 0DimThk-0.375inT
@@ -255,7 +255,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -267,7 +267,7 @@ PRESET,,"5Stair
 PRESET,,"5Stair
 4LayeredAssembly --> Layered Tread
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0DimLW-72in-7in
 0DimThk-0.75inT
@@ -277,7 +277,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -287,7 +287,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,5Stair,,Walnut Open Tread Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0DimLW-72in-7in
 0DimThk-0.75inT
@@ -297,7 +297,7 @@ PRESET,,"5Stair
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT

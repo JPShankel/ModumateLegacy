@@ -17,8 +17,8 @@ PRESET,,"4LayeredAssembly --> Wall
 0DimThk-6inT",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -27,15 +27,15 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer1D --> Stud --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-3.5inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -43,8 +43,8 @@ PRESET,,"4LayeredAssembly --> Wall
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Wall,,2x4 Interior Wood Stud,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -53,15 +53,15 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-3.5inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -71,8 +71,8 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -81,15 +81,15 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer1D --> Stud --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-5.5inD
 0Profile-Solid Rectangle
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-24-Inch O.C.
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -97,8 +97,8 @@ PRESET,,"4LayeredAssembly --> Wall
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Wall,,2x6 Interior Insulated Wood Stud,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -107,15 +107,15 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-5.5inD
 0Profile-Solid Rectangle
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-24-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -125,8 +125,8 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -135,14 +135,14 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer1D --> Stud --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-3.5inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -154,8 +154,8 @@ PRESET,,"4LayeredAssembly --> Wall
 2Layer0D --> Membrane --> PolyethyleneVaporBarrier
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT",,4LayeredAssembly --> Wall,,2x4 Exterior Wood Stud,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -164,14 +164,14 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-3.5inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -188,7 +188,7 @@ PRESET,,"4LayeredAssembly --> Wall
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -198,14 +198,14 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer1D --> Stud --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-3.5inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -220,7 +220,7 @@ PRESET,,"4LayeredAssembly --> Wall
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -230,14 +230,14 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-3.5inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -251,8 +251,8 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
 0DimThk-0.0625inT",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -261,15 +261,15 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -277,8 +277,8 @@ PRESET,,"4LayeredAssembly --> Wall
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Wall,,3 5/8in Interior Metal Stud,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -287,15 +287,15 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -305,8 +305,8 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -315,14 +315,14 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -334,8 +334,8 @@ PRESET,,"4LayeredAssembly --> Wall
 2Layer0D --> Membrane --> PolyethyleneVaporBarrier
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT",,4LayeredAssembly --> Wall,,3 5/8in Exterior Metal Stud,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -344,14 +344,14 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -365,8 +365,8 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
 0DimThk-0.0625inT",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -375,14 +375,14 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-2inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-24-Inch O.C.",,4LayeredAssembly --> Wall,,"2-1/2"" Metal Furring",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -391,7 +391,7 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-2inD
 0Profile-Steel C-Stud
@@ -417,8 +417,8 @@ PRESET,,"4LayeredAssembly --> Wall
 0DimThk-8inT",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -427,7 +427,7 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
@@ -437,15 +437,15 @@ PRESET,,"4LayeredAssembly --> Wall
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-6inT
 3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -453,8 +453,8 @@ PRESET,,"4LayeredAssembly --> Wall
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Wall,,"3 5/8"" Interior Metal Stud 6"" Cavity",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -463,7 +463,7 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
@@ -473,15 +473,15 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Void --> Air
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-6inT",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -491,35 +491,27 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer3D --> Clay Brick
-2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer3D --> Clay Brick
-2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Wall,,Double Wythe Brick,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer3D --> Clay Brick
-2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer3D --> Clay Brick
-2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
@@ -527,35 +519,27 @@ PRESET,,,,,,,,,,,,,"3Layer3D --> Clay Brick
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer3D --> Clay Brick
-2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer3D --> Concrete Masonry Unit
-2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimLWH --> CMU-7.625inL-5.625inW-7.625inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.25inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Wall,,Double Wythe Composite Brick,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer3D --> Clay Brick
-2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
-2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimLWH --> CMU-7.625inL-5.625inW-7.625inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.25inD
@@ -563,9 +547,7 @@ PRESET,,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer3D --> Clay Brick
-2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
@@ -575,17 +557,13 @@ PRESET,,"4LayeredAssembly --> Wall
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-3inT
 3Layer3D --> Concrete Masonry Unit
-2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimLWH --> CMU-7.625inL-5.625inW-7.625inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.25inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Wall,,Exterior Brick Composite Cavity,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer3D --> Clay Brick
-2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
@@ -595,9 +573,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Void --> Air
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-3inT",,
 PRESET,,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
-2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimLWH --> CMU-7.625inL-5.625inW-7.625inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0.25inD
@@ -605,9 +581,7 @@ PRESET,,,,,,,,,,,,,"3Layer3D --> Concrete Masonry Unit
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Wall
 3Layer3D --> Clay Brick
-2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
@@ -617,7 +591,7 @@ PRESET,,"4LayeredAssembly --> Wall
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-1inT
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -630,7 +604,7 @@ PRESET,,"4LayeredAssembly --> Wall
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -640,15 +614,15 @@ PRESET,,"4LayeredAssembly --> Wall
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -656,9 +630,7 @@ PRESET,,"4LayeredAssembly --> Wall
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Wall,,Exterior Brick Metal Stud Insulated Cavity Wall,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer3D --> Clay Brick
-2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH
+ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
 2Gap2D --> Grout Gaps
 1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
 0DimWD-0.375inW-0inD
@@ -668,7 +640,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Void --> Air
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-1inT",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -681,7 +653,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -691,15 +663,15 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-3.625inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -766,7 +738,7 @@ PRESET,,"4LayeredAssembly --> Floor
 0DimThk-4.125inT",,
 PRESET,,"4LayeredAssembly --> Floor
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -776,13 +748,13 @@ PRESET,,"4LayeredAssembly --> Floor
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer1D --> Joist --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-7.25inD
 0Profile-Solid Rectangle
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-24-Inch O.C.",,4LayeredAssembly --> Floor,,2x8 Wood Joist,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -792,7 +764,7 @@ PRESET,,"4LayeredAssembly --> Floor
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-7.25inD
 0Profile-Solid Rectangle
@@ -800,7 +772,7 @@ PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Wood
 0LayerPattern --> 1D-24-Inch O.C.",,
 PRESET,,"4LayeredAssembly --> Floor
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -810,13 +782,13 @@ PRESET,,"4LayeredAssembly --> Floor
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer1D --> Joist --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-7.25inD
 0Profile-Solid Rectangle
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-24-Inch O.C.",,4LayeredAssembly --> Floor,,2x8 Wood Joist Over Unconditioned Space,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -826,14 +798,14 @@ PRESET,,"4LayeredAssembly --> Floor
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-7.25inD
 0Profile-Solid Rectangle
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-24-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
+Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
 0DimThk-2inT
@@ -847,7 +819,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
 0DimThk-0.0625inT",,
 PRESET,,"4LayeredAssembly --> Floor
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -857,13 +829,13 @@ PRESET,,"4LayeredAssembly --> Floor
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer1D --> Joist --> Engineered Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-7.25inD
 0Profile-Solid Rectangle
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-24-Inch O.C.",,4LayeredAssembly --> Floor,,2x8 Engineered Wood Joist,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -873,7 +845,7 @@ PRESET,,"4LayeredAssembly --> Floor
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Engineered Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimWD-1.5inW-7.25inD
 0Profile-Solid Rectangle
@@ -881,7 +853,7 @@ PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Engineered Wood
 0LayerPattern --> 1D-24-Inch O.C.",,
 PRESET,,"4LayeredAssembly --> Floor
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -891,13 +863,13 @@ PRESET,,"4LayeredAssembly --> Floor
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer1D --> Joist --> Steel C-Joist
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-6inD
 0Profile-Steel C-Stud
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-24-Inch O.C.",,4LayeredAssembly --> Floor,,"6"" Light Gauge Steel Joist",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -907,7 +879,7 @@ PRESET,,"4LayeredAssembly --> Floor
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Steel C-Joist
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-6inD
 0Profile-Steel C-Stud
@@ -918,14 +890,14 @@ PRESET,,"4LayeredAssembly --> Floor
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT
 3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 0D-Continuous
 3Layer1D --> Joist --> Steel Web Joist
-2ModuleWDProfile --> Steel Web Joist
+Steel Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-3.5inW-11.875inD
 0Profile-Steel Web Joist
@@ -934,14 +906,14 @@ PRESET,,"4LayeredAssembly --> Floor
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 0D-Continuous",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Steel Web Joist
-2ModuleWDProfile --> Steel Web Joist
+Steel Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-3.5inW-11.875inD
 0Profile-Steel Web Joist
@@ -952,14 +924,14 @@ PRESET,,"4LayeredAssembly --> Floor
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT
 3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 0D-Continuous
 3Layer1D --> Joist --> Wood Web Joist
-2ModuleWDProfile --> Wood Web Joist
+Wood Web Joist
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-11.875inD
 0Profile-Wood Web Joist
@@ -968,14 +940,14 @@ PRESET,,"4LayeredAssembly --> Floor
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 0D-Continuous",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Wood Web Joist
-2ModuleWDProfile --> Wood Web Joist
+Wood Web Joist
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-11.875inD
 0Profile-Wood Web Joist
@@ -986,14 +958,14 @@ PRESET,,"4LayeredAssembly --> Floor
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT
 3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 0D-Continuous
 3Layer1D --> Joist --> Wood-Chord, Steel-Web Joist
-2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
+Wood-Chord, Steel-Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-3.5inW-11.875inD
 0Profile-Wood-Chord Steel-Web Joist
@@ -1002,14 +974,14 @@ PRESET,,"4LayeredAssembly --> Floor
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 0D-Continuous",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Wood-Chord, Steel-Web Joist
-2ModuleWDProfile --> Wood-Chord, Steel-Web Joist
+Wood-Chord, Steel-Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-3.5inW-11.875inD
 0Profile-Wood-Chord Steel-Web Joist
@@ -1035,7 +1007,7 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimThk-0.0625inT
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1045,10 +1017,10 @@ PRESET,,"4LayeredAssembly --> Roof
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
-0DimThk-3inT
+0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -1061,7 +1033,7 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT
 3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
@@ -1073,7 +1045,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> BitumenousFelt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimThk-0.0625inT",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1083,10 +1055,10 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
-0DimThk-3inT
+0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -1099,7 +1071,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Mass --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
@@ -1113,7 +1085,7 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimThk-0.0625inT
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1123,10 +1095,10 @@ PRESET,,"4LayeredAssembly --> Roof
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
-0DimThk-3inT
+0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -1139,7 +1111,7 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT
 3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
@@ -1151,7 +1123,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> BitumenousFelt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimThk-0.0625inT",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1161,10 +1133,10 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
-0DimThk-3inT
+0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -1177,7 +1149,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Mass --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
@@ -1191,7 +1163,7 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimThk-0.0625inT
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1201,10 +1173,10 @@ PRESET,,"4LayeredAssembly --> Roof
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
-0DimThk-3inT
+0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -1217,7 +1189,7 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT
 3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
@@ -1229,7 +1201,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> BitumenousFelt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimThk-0.0625inT",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1239,10 +1211,10 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
-0DimThk-3inT
+0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -1255,7 +1227,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Mass --> CastInPlaceConcrete
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
@@ -1272,7 +1244,7 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1282,10 +1254,10 @@ PRESET,,"4LayeredAssembly --> Roof
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
-0DimThk-3inT
+0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -1295,7 +1267,7 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT
 3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
@@ -1310,7 +1282,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> RubberizedAsphalt
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1320,10 +1292,10 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
-0DimThk-3inT
+0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -1333,7 +1305,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
@@ -1344,7 +1316,7 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1354,7 +1326,7 @@ PRESET,,"4LayeredAssembly --> Roof
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer1D --> Joist --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-7.25inD
 0Profile-Solid Rectangle
@@ -1363,7 +1335,7 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT",,
 ,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1373,7 +1345,7 @@ PRESET,,"4LayeredAssembly --> Roof
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-7.25inD
 0Profile-Solid Rectangle
@@ -1384,7 +1356,7 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1394,7 +1366,7 @@ PRESET,,"4LayeredAssembly --> Roof
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer1D --> Joist --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-9.25inD
 0Profile-Solid Rectangle
@@ -1403,7 +1375,7 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
 0DimThk-0.0625inT",,
 ,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1413,40 +1385,40 @@ PRESET,,"4LayeredAssembly --> Roof
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-9.25inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-24-Inch O.C.",,
 PRESET,,"4LayeredAssembly --> Roof
+2Layer0D --> Membrane --> PolyethyleneVaporBarrier
+1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
+0DimThk-0.0625inT
 3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
-0DimThk-3inT
+0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
-0LayerPattern --> 2D-Soldier Bond
-2Layer0D --> Membrane --> PolyethyleneVaporBarrier
+0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Roof,,2x8 Insulated Wood Joist,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
 1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
-0DimThk-0.0625inT",,4LayeredAssembly --> Roof,,2x8 Insulated Wood Joist,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate-0RawMaterial-Foam (Polyisocyanurate)-0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow
+0DimThk-0.0625inT",,
+PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
-0DimThk-3inT
+0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
-PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
-1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
-0DimThk-0.0625inT",,
 ,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1456,7 +1428,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Membrane --> PolyethyleneVaporBarrier
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 ,,,,,,,,,,,,,"3Layer1D --> Joist --> Wood
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-7.25inD
 0Profile-Solid Rectangle
@@ -1467,14 +1439,14 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT
 3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 0D-Continuous
 3Layer1D --> Joist --> Steel Web Joist
-2ModuleWDProfile --> Steel Web Joist
+Steel Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-3.5inW-11.875inD
 0Profile-Steel Web Joist
@@ -1483,14 +1455,14 @@ PRESET,,"4LayeredAssembly --> Roof
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
 0DimThk-3inT",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Corrugated Deck --> Steel
-2ModuleWDProfile --> Corrugated Steel Deck
+Corrugated Steel Deck
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
 0Profile-Corrugated Steel
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 0D-Continuous",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Steel Web Joist
-2ModuleWDProfile --> Steel Web Joist
+Steel Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-3.5inW-11.875inD
 0Profile-Steel Web Joist
@@ -1498,7 +1470,7 @@ PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Steel Web Joist
 0LayerPattern --> 1D-24-Inch O.C.",,
 PRESET,,"4LayeredAssembly --> Roof
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1508,13 +1480,13 @@ PRESET,,"4LayeredAssembly --> Roof
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer1D --> Joist --> Steel Web Joist
-2ModuleWDProfile --> Steel Web Joist
+Steel Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-3.5inW-11.875inD
 0Profile-Steel Web Joist
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-24-Inch O.C.",,4LayeredAssembly --> Roof,,"18"" Open Web Steel Joist, Plywood Sheathing",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -1524,7 +1496,7 @@ PRESET,,"4LayeredAssembly --> Roof
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Steel Web Joist
-2ModuleWDProfile --> Steel Web Joist
+Steel Web Joist
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-3.5inW-11.875inD
 0Profile-Steel Web Joist
@@ -1532,15 +1504,15 @@ PRESET,,,,,,,,,,,,,"3Layer1D --> Joist --> Steel Web Joist
 0LayerPattern --> 1D-24-Inch O.C.",,
 PRESET,,"4LayeredAssembly --> Ceiling
 3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-1.625inD
 0Profile-Steel C-Stud
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -1548,15 +1520,15 @@ PRESET,,"4LayeredAssembly --> Ceiling
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Ceiling,,"5/8"" Gypsum",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-1.625inD
 0Profile-Steel C-Stud
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -1569,7 +1541,7 @@ PRESET,,"4LayeredAssembly --> Ceiling
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-12inT
 3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-1.625inD
 0Profile-Steel C-Stud
@@ -1584,7 +1556,7 @@ PRESET,,"4LayeredAssembly --> Ceiling
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-12inT",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-1.625inD
 0Profile-Steel C-Stud
@@ -1601,21 +1573,21 @@ PRESET,,"4LayeredAssembly --> Ceiling
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-12inT
 3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-1.625inD
 0Profile-Steel C-Stud
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer1D --> Furring --> Steel Hat Channel
-2ModuleWDProfile --> Steel Hat Channel
+Steel Hat Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.25inW-0.875inD
 0Profile-Steel Hat Channel
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer2D --> Tile --> Acoustic Ceiling Tile
-2ModuleLWT --> Tile --> Acoustic Ceiling Tile
+Tile --> Acoustic Ceiling Tile
 1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-Natural
 0DimLW-24in-24in
 0DimThk-1inT
@@ -1627,21 +1599,21 @@ PRESET,,"4LayeredAssembly --> Ceiling
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-12inT",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-1.625inD
 0Profile-Steel C-Stud
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Steel Hat Channel
-2ModuleWDProfile --> Steel Hat Channel
+Steel Hat Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.25inW-0.875inD
 0Profile-Steel Hat Channel
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Tile --> Acoustic Ceiling Tile
-2ModuleLWT --> Tile --> Acoustic Ceiling Tile
+Tile --> Acoustic Ceiling Tile
 1Material --> Fibrous --> Mineral Fiber-0RawMaterial-Mineral Fiber-0Color --> Fibrous --> Mineral Fiber-FFFFFF-Natural
 0DimLW-24in-24in
 0DimThk-1inT
@@ -1652,21 +1624,21 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Tile --> Acoustic Ceiling Tile
 0LayerPattern --> 2D-Stack Bond",,
 PRESET,,"4LayeredAssembly --> Ceiling
 3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-1.625inD
 0Profile-Steel C-Stud
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer1D --> Furring --> Steel Hat Channel
-2ModuleWDProfile --> Steel Hat Channel
+Steel Hat Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.25inW-0.875inD
 0Profile-Steel Hat Channel
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.
 3Layer2D --> Board and Panel --> Cementitious Wood Fiber
-2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+Board/Panel --> Cementitious Wood Fiber
 1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-FFFFFF-White
 0DimLW-24in-24in
 0DimThk-0.375inT
@@ -1678,21 +1650,21 @@ PRESET,,"4LayeredAssembly --> Ceiling
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimThk-12inT",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Stud --> Steel C-Channel
-2ModuleWDProfile --> Steel C-Channel
+Steel C-Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.625inW-1.625inD
 0Profile-Steel C-Stud
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Steel Hat Channel
-2ModuleWDProfile --> Steel Hat Channel
+Steel Hat Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.25inW-0.875inD
 0Profile-Steel Hat Channel
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Cementitious Wood Fiber
-2ModuleLWT --> Board/Panel --> Cementitious Wood Fiber
+Board/Panel --> Cementitious Wood Fiber
 1Material --> Fibrous --> Cementitious Wood Fiber-0RawMaterial-Cementitious Wood Fiber-0Color --> Fibrous --> Cementitious Wood Fiber-FFFFFF-White
 0DimLW-24in-24in
 0DimThk-0.375inT
@@ -1721,7 +1693,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimThk-0.02inT",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Board and Panel --> Fiber-Cement
-2ModuleLWT --> Board/Panel --> Fiber Cement
+Board/Panel --> Fiber Cement
 1Material --> Aggregates --> Fiber-Cement-0RawMaterial-Fibre Cement-0Color --> Aggregates --> Fiber-Cement-DFE2E7-CoolLightGrey
 0DimLW-120in-6in
 0DimThk-0.75inT
@@ -1730,7 +1702,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Random Stagger",,4LayeredAssembly --> Finish,,Fiber-Cement Siding,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Fiber-Cement
-2ModuleLWT --> Board/Panel --> Fiber Cement
+Board/Panel --> Fiber Cement
 1Material --> Aggregates --> Fiber-Cement-0RawMaterial-Fibre Cement-0Color --> Aggregates --> Fiber-Cement-DFE2E7-CoolLightGrey
 0DimLW-120in-6in
 0DimThk-0.75inT
@@ -1753,7 +1725,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Roll --> LathMetal
 0DimThk-0.125inT",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Tile --> Porcelain
-2ModuleLWT --> Tile --> Porcelain
+Tile --> Porcelain
 1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-E6E3DE-Eggshell
 0DimLW-4in-4in
 0DimThk-0.25inT
@@ -1765,7 +1737,7 @@ PRESET,,"4LayeredAssembly --> Finish
 2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
 0DimThk-0.5inT",,4LayeredAssembly --> Finish,,Porcelain Tile,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Tile --> Porcelain
-2ModuleLWT --> Tile --> Porcelain
+Tile --> Porcelain
 1Material --> Ceramic --> Porcelain-0RawMaterial-Porcelain-0Color --> Ceramic --> Porcelain-E6E3DE-Eggshell
 0DimLW-4in-4in
 0DimThk-0.25inT
@@ -1779,7 +1751,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Spread --> ThinsetCement
 0DimThk-0.5inT",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Tile --> Brick Veneer
-2ModuleLWT --> Tile --> Brick Veneer
+Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
 0DimLW-7.625in-2.29167in
 0DimThk-0.5inT
@@ -1791,7 +1763,7 @@ PRESET,,"4LayeredAssembly --> Finish
 2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
 0DimThk-0.5inT",,4LayeredAssembly --> Finish,,"Thin Brick Veneer, Thinset - Classic Red",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Tile --> Brick Veneer
-2ModuleLWT --> Tile --> Brick Veneer
+Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
 0DimLW-7.625in-2.29167in
 0DimThk-0.5inT
@@ -1805,7 +1777,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Spread --> ThinsetCement
 0DimThk-0.5inT",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Tile --> Brick Veneer
-2ModuleLWT --> Tile --> Brick Veneer
+Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A4E47-Driftwood
 0DimLW-11.625in-2.75in
 0DimThk-0.5inT
@@ -1817,7 +1789,7 @@ PRESET,,"4LayeredAssembly --> Finish
 2Layer0D --> Spread --> ThinsetCement
 1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Fine Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
 0DimThk-0.5inT",,4LayeredAssembly --> Finish,,"Thin Brick Veneer, Thinset - Dark",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Tile --> Brick Veneer
-2ModuleLWT --> Tile --> Brick Veneer
+Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A4E47-Driftwood
 0DimLW-11.625in-2.75in
 0DimThk-0.5inT
@@ -1831,7 +1803,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Spread --> ThinsetCement
 0DimThk-0.5inT",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Tile --> Brick Veneer
-2ModuleLWT --> Tile --> Brick Veneer
+Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
 0DimLW-7.625in-2.29167in
 0DimThk-0.5inT
@@ -1846,7 +1818,7 @@ PRESET,,"4LayeredAssembly --> Finish
 2Layer0D --> Roll --> LathMetal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-F4F3D7-Birch
 0DimThk-0.125inT",,4LayeredAssembly --> Finish,,"Thin Brick Veneer, Thickset",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Tile --> Brick Veneer
-2ModuleLWT --> Tile --> Brick Veneer
+Tile --> Brick Veneer
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
 0DimLW-7.625in-2.29167in
 0DimThk-0.5inT
@@ -1863,7 +1835,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Roll --> LathMetal
 0DimThk-0.125inT",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural
 0DimLW-48in-5in
 0DimThk-0.375inT
@@ -1875,7 +1847,7 @@ PRESET,,"4LayeredAssembly --> Finish
 2Layer0D --> Roll --> Felt
 1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-44443C-WeatheredBrown
 0DimThk-5mmT",,4LayeredAssembly --> Finish,,"Bamboo Wood Plank Floor, Direct Applied",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Bamboo-0RawMaterial-Bamboo-0Color --> Wood --> Bamboo-FFFFFF-Natural
 0DimLW-48in-5in
 0DimThk-0.375inT
@@ -1889,7 +1861,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Roll --> Felt
 0DimThk-5mmT",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-48in-7in
 0DimThk-0.375inT
@@ -1901,7 +1873,7 @@ PRESET,,"4LayeredAssembly --> Finish
 2Layer0D --> Roll --> Felt
 1Material --> Fabric and Upholstery --> Felt-0RawMaterial-Felt-0Color --> Fabric and Upholstery --> Felt-44443C-WeatheredBrown
 0DimThk-5mmT",,4LayeredAssembly --> Finish,,"Birch Wood Plank Floor, Direct Applied",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-48in-7in
 0DimThk-0.375inT
@@ -1915,7 +1887,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Roll --> Felt
 0DimThk-5mmT",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
 0DimLW-32in-5in
 0DimThk-0.375inT
@@ -1925,13 +1897,13 @@ PRESET,,"4LayeredAssembly --> Finish
 0Profile-Flat
 0LayerPattern --> 2D-Cascading Thirds
 3Layer1D --> Furring --> Steel Z Channel
-2ModuleWDProfile --> Steel Z Channel
+Steel Z Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-2inW-1.5inD
 0Profile-Steel Z Channel
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern --> 1D-24-Inch O.C.",,4LayeredAssembly --> Finish,,Wood Rainscreen,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Ash-0RawMaterial-Ash-0Color --> Wood --> Ash-FFFFFF-Natural
 0DimLW-32in-5in
 0DimThk-0.375inT
@@ -1941,7 +1913,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0Profile-Flat
 0LayerPattern --> 2D-Cascading Thirds",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Steel Z Channel
-2ModuleWDProfile --> Steel Z Channel
+Steel Z Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-2inW-1.5inD
 0Profile-Steel Z Channel
@@ -1949,7 +1921,7 @@ PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Steel Z Channel
 0LayerPattern --> 1D-24-Inch O.C.",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural
 0DimLW-48in-3in
 0DimThk-0.75inT
@@ -1959,13 +1931,13 @@ PRESET,,"4LayeredAssembly --> Finish
 0Profile-Flat
 0LayerPattern --> 2D-Random Stagger
 3Layer1D --> Furring --> Wood Strips
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-0.75inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.",,4LayeredAssembly --> Finish,,Oak Wood Siding,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Oak - White-0RawMaterial-Oak (White)-0Color --> Wood --> Oak - White-FFFFFF-Natural
 0DimLW-48in-3in
 0DimThk-0.75inT
@@ -1975,7 +1947,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0Profile-Flat
 0LayerPattern --> 2D-Random Stagger",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Wood Strips
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-0.75inD
 0Profile-Solid Rectangle
@@ -1983,7 +1955,7 @@ PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Wood Strips
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural
 0DimLW-48in-7in
 0DimThk-0.5inT
@@ -1993,13 +1965,13 @@ PRESET,,"4LayeredAssembly --> Finish
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer1D --> Furring --> Wood Strips
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-0.75inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.",,4LayeredAssembly --> Finish,,Mahogany Wood Siding,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Mahogany-0RawMaterial-Mahogany-0Color --> Wood --> Mahogany-FFFFFF-Natural
 0DimLW-48in-7in
 0DimThk-0.5inT
@@ -2009,7 +1981,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Wood Strips
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-0.75inD
 0Profile-Solid Rectangle
@@ -2017,7 +1989,7 @@ PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Wood Strips
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-2B2B2B-Black
 0DimLW-72in-7in
 0DimThk-0.375inT
@@ -2027,13 +1999,13 @@ PRESET,,"4LayeredAssembly --> Finish
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer1D --> Furring --> Wood Strips
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-0.75inD
 0Profile-Solid Rectangle
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0LayerPattern --> 1D-16-Inch O.C.",,4LayeredAssembly --> Finish,,Black Cedar Wood Siding,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Cedar - White-0RawMaterial-Cedar (White)-0Color --> Wood --> Cedar - White-2B2B2B-Black
 0DimLW-72in-7in
 0DimThk-0.375inT
@@ -2043,7 +2015,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Wood Strips
-2ModuleWDProfile --> Wood Lumber
+Wood Lumber
 1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-0.75inD
 0Profile-Solid Rectangle
@@ -2057,7 +2029,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimThk-0.5inT",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Tile --> Carpet
-2ModuleLWT --> Tile --> Carpet
+Tile --> Carpet
 1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White
 0DimLW-32in-16in
 0DimThk-0.5inT
@@ -2066,7 +2038,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Stack Bond",,4LayeredAssembly --> Finish,,Carpet Tile,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Tile --> Carpet
-2ModuleLWT --> Tile --> Carpet
+Tile --> Carpet
 1Material --> Fabric and Upholstery --> Carpet-0RawMaterial-Carpet (Low Profile)-0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White
 0DimLW-32in-16in
 0DimThk-0.5inT
@@ -2077,7 +2049,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-Stack Bond",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Zinc-0RawMaterial-Zinc-0Color --> Metal --> Zinc-37383A-CoolDarkGrey
 0DimLW-180in-36in
 0DimThk-1inT
@@ -2086,7 +2058,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> Finish,,Zinc Standing-Seam Exterior,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Zinc-0RawMaterial-Zinc-0Color --> Metal --> Zinc-37383A-CoolDarkGrey
 0DimLW-180in-36in
 0DimThk-1inT
@@ -2096,7 +2068,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Steel Hat Channel
-2ModuleWDProfile --> Steel Hat Channel
+Steel Hat Channel
 1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
 0DimWD-1.25inW-0.875inD
 0Profile-Steel Hat Channel
@@ -2104,7 +2076,7 @@ PRESET,,,,,,,,,,,,,"3Layer1D --> Furring --> Steel Hat Channel
 0LayerPattern --> 1D-16-Inch O.C.",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Tile --> Stone
-2ModuleLWT --> Tile --> Stone
+Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White
 0DimLW-4in-3in
 0DimThk-0.5inT
@@ -2113,7 +2085,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimWD-0.375inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Flemish Bond",,4LayeredAssembly --> Finish,,Stone Tile,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Tile --> Stone
-2ModuleLWT --> Tile --> Stone
+Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (White)-0Color --> Abstract-FFFFFF-White
 0DimLW-4in-3in
 0DimThk-0.5inT
@@ -2127,7 +2099,7 @@ PRESET,,,,,,,,,,,,,"2Layer0D --> Spread --> ThinsetCement
 0DimThk-0.75inT",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Shingle --> Asphalt
-2ModuleLWT --> Shingle --> Asphalt
+Shingle --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimLW-12in-7in
 0DimThk-0.375inT
@@ -2136,7 +2108,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Finish,,Asphalt Shingle,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Shingle --> Asphalt
-2ModuleLWT --> Shingle --> Asphalt
+Shingle --> Asphalt
 1Material --> Aggregates --> Asphalt-0RawMaterial-Asphalt-0Color --> Aggregates --> Asphalt-594D41-Barkwood
 0DimLW-12in-7in
 0DimThk-0.375inT
@@ -2147,7 +2119,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Shingle --> Clay
-2ModuleLWT --> Shingle --> Clay
+Shingle --> Clay
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
 0DimLW-12in-7in
 0DimThk-0.75inT
@@ -2156,7 +2128,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Stack Bond",,4LayeredAssembly --> Finish,,Clay Shingle,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Shingle --> Clay
-2ModuleLWT --> Shingle --> Clay
+Shingle --> Clay
 1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
 0DimLW-12in-7in
 0DimThk-0.75inT
@@ -2167,7 +2139,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-Stack Bond",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Shingle --> Metal
-2ModuleLWT --> Shingle --> Metal
+Shingle --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimLW-12in-7in
 0DimThk-0.375inT
@@ -2176,7 +2148,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Finish,,Metal Shingle,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Shingle --> Metal
-2ModuleLWT --> Shingle --> Metal
+Shingle --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimLW-12in-7in
 0DimThk-0.375inT
@@ -2187,19 +2159,19 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Shingle --> Stone
-2ModuleLWT --> Shingle --> Metal
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray
-0DimLW-12in-7in
-0DimThk-0.75inT
+Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-C0C0C0-Gray3
+0DimLW-12in-12in
+0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Finish,,Slate Shingle,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Shingle --> Stone
-2ModuleLWT --> Shingle --> Metal
-1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-EBECF0-LightGray
-0DimLW-12in-7in
-0DimThk-0.75inT
+Shingle --> Stone
+1Material --> Stone --> Slate-0RawMaterial-Slate-0Color --> Stone --> Slate-C0C0C0-Gray3
+0DimLW-12in-12in
+0DimThk-0.375inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
@@ -2207,7 +2179,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Finish
 3Layer2D --> Shingle --> Wood
-2ModuleLWT --> Shingle --> Wood
+Shingle --> Wood
 1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Wood --> Redwood-FFFFFF-Natural
 0DimLW-12in-7in
 0DimThk-0.375inT
@@ -2216,7 +2188,7 @@ PRESET,,"4LayeredAssembly --> Finish
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Finish,,Wood Shingle,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Shingle --> Wood
-2ModuleLWT --> Shingle --> Wood
+Shingle --> Wood
 1Material --> Wood --> Redwood-0RawMaterial-Redwood-0Color --> Wood --> Redwood-FFFFFF-Natural
 0DimLW-12in-7in
 0DimThk-0.375inT
@@ -2314,18 +2286,18 @@ PRESET,,"4LayeredAssembly --> System Panel
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
 0DimThk-0.125inT
 3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
+Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
-0DimThk-0.75inT
+0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -2336,18 +2308,18 @@ PRESET,,"4LayeredAssembly --> System Panel
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
 0DimThk-0.125inT",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
+Board/Panel --> Foam
 1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
 0DimLW-96in-48in
-0DimThk-0.75inT
+0DimThk-2inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -2360,8 +2332,8 @@ PRESET,,"4LayeredAssembly --> System Panel
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
 0DimThk-0.125inT
 3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
 0DimLW-96in-48in
 0DimThk-1inT
 2Gap2D --> Gapless
@@ -2370,8 +2342,8 @@ PRESET,,"4LayeredAssembly --> System Panel
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -2382,8 +2354,8 @@ PRESET,,"4LayeredAssembly --> System Panel
 1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
 0DimThk-0.125inT",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
 0DimLW-96in-48in
 0DimThk-1inT
 2Gap2D --> Gapless
@@ -2392,8 +2364,8 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
-2ModuleLWT --> Board/Panel --> Gypsum
-1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
+Board/Panel --> Gypsum
+1Material --> Aggregates --> Gypsum-0RawMaterial-Gypsum (Type X)-0Color --> Aggregates --> Gypsum-D6D7D1-Natural
 0DimLW-96in-48in
 0DimThk-0.625inT
 2Gap2D --> Gapless
@@ -2403,7 +2375,7 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Gypsum
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimLW-12in-12in
 0DimThk-0.25inT
@@ -2413,8 +2385,8 @@ PRESET,,"4LayeredAssembly --> System Panel
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
 0DimLW-96in-48in
 0DimThk-1inT
 2Gap2D --> Gapless
@@ -2423,7 +2395,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimLW-12in-12in
 0DimThk-0.25inT
@@ -2432,7 +2404,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 0DimWD-0.5625inW-0.25inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> System Panel,,"Insulated Aluminum panel, 1""",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimLW-12in-12in
 0DimThk-0.25inT
@@ -2442,8 +2414,8 @@ PRESET,,"4LayeredAssembly --> System Panel
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
 0DimLW-96in-48in
 0DimThk-1inT
 2Gap2D --> Gapless
@@ -2452,7 +2424,7 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimLW-12in-12in
 0DimThk-0.25inT
@@ -2463,7 +2435,7 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Metal
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimLW-12in-12in
 0DimThk-0.25inT
@@ -2473,8 +2445,8 @@ PRESET,,"4LayeredAssembly --> System Panel
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
 0DimLW-96in-48in
 0DimThk-1inT
 2Gap2D --> Gapless
@@ -2483,7 +2455,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimLW-12in-12in
 0DimThk-0.25inT
@@ -2492,7 +2464,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 0DimWD-0.5625inW-0.25inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,4LayeredAssembly --> System Panel,,"Insulated Aluminum panel, 1-1/2""",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimLW-12in-12in
 0DimThk-0.25inT
@@ -2502,8 +2474,8 @@ PRESET,,"4LayeredAssembly --> System Panel
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
 0DimLW-96in-48in
 0DimThk-1inT
 2Gap2D --> Gapless
@@ -2512,7 +2484,7 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-FFFFFF-PureWhite
 0DimLW-12in-12in
 0DimThk-0.25inT
@@ -2523,7 +2495,7 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Metal
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,"4LayeredAssembly --> System Panel
 3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-AAAB8C-GreenGray
 0DimLW-16in-12in
 0DimThk-0.5inT
@@ -2533,17 +2505,17 @@ PRESET,,"4LayeredAssembly --> System Panel
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
 0DimLW-96in-48in
-0DimThk-2inT
+0DimThk-1inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond
 3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-AAAB8C-GreenGray
 0DimLW-16in-12in
 0DimThk-0.5inT
@@ -2552,7 +2524,7 @@ PRESET,,"4LayeredAssembly --> System Panel
 0DimWD-0.5625inW-0.25inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> System Panel,,"Insulated Aluminum panel, 2""",64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-AAAB8C-GreenGray
 0DimLW-16in-12in
 0DimThk-0.5inT
@@ -2562,17 +2534,17 @@ PRESET,,"4LayeredAssembly --> System Panel
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Insulation
-2ModuleLWT --> Board/Panel --> Foam
-1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink
+Board/Panel --> Foam
+1Material --> Synthetic and Polymer --> Foam - Polyethylene-0RawMaterial-Foam (Polyethylene)-0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White
 0DimLW-96in-48in
-0DimThk-2inT
+0DimThk-1inT
 2Gap2D --> Gapless
 1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Soldier Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Metal
-2ModuleLWT --> Board/Panel --> Metal
+Board/Panel --> Metal
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-AAAB8C-GreenGray
 0DimLW-16in-12in
 0DimThk-0.5inT
@@ -2607,7 +2579,7 @@ PRESET,,"4LayeredAssembly --> Countertop
 0DimThk-2inT",,
 PRESET,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2616,7 +2588,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Layered Tread,,Plywood Tread,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2627,7 +2599,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Tile --> Stone
-2ModuleLWT --> Tile --> Stone
+Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
 0DimLW-6in-3in
 0DimThk-0.5inT
@@ -2636,7 +2608,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0DimWD-0.375inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-English Bond",,4LayeredAssembly --> Layered Tread,,Limestone Tread,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Tile --> Stone
-2ModuleLWT --> Tile --> Stone
+Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
 0DimLW-6in-3in
 0DimThk-0.5inT
@@ -2653,7 +2625,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0DimThk-1inT",,
 PRESET,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -2663,7 +2635,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2672,7 +2644,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Layered Tread,,Plywood + OSB Tread,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -2682,7 +2654,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2693,7 +2665,7 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-48in-7in
 0DimThk-0.375inT
@@ -2703,7 +2675,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2712,7 +2684,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Layered Tread,,Birch + Plywood Tread,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-48in-7in
 0DimThk-0.375inT
@@ -2722,7 +2694,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2733,7 +2705,7 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Layered Tread
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0DimLW-72in-7in
 0DimThk-0.75inT
@@ -2743,7 +2715,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2752,7 +2724,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Layered Tread,,Walnut + Plywood Tread,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0DimLW-72in-7in
 0DimThk-0.75inT
@@ -2762,7 +2734,7 @@ PRESET,,"4LayeredAssembly --> Layered Tread
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2773,7 +2745,7 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2782,7 +2754,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Layered Riser,,Plywood Riser,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2793,7 +2765,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Layered Riser
 3Layer2D --> Tile --> Stone
-2ModuleLWT --> Tile --> Stone
+Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
 0DimLW-6in-3in
 0DimThk-0.5inT
@@ -2802,7 +2774,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0DimWD-0.375inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-English Bond",,4LayeredAssembly --> Layered Riser,,Limestone Riser,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Tile --> Stone
-2ModuleLWT --> Tile --> Stone
+Tile --> Stone
 1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
 0DimLW-6in-3in
 0DimThk-0.5inT
@@ -2819,7 +2791,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0DimThk-1inT",,
 PRESET,,"4LayeredAssembly --> Layered Riser
 3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -2829,7 +2801,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2838,7 +2810,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Layered Riser,,Plywood + OSB Riser,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-2ModuleLWT --> Board/Panel --> OSB (Oriented Strand Board)
+Board/Panel --> OSB (Oriented Strand Board)
 1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.375inT
@@ -2848,7 +2820,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2859,7 +2831,7 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Layered Riser
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-48in-7in
 0DimThk-0.375inT
@@ -2869,7 +2841,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2878,7 +2850,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Layered Riser,,Birch + Plywood Riser,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
 0DimLW-48in-7in
 0DimThk-0.375inT
@@ -2888,7 +2860,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2899,7 +2871,7 @@ PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,"4LayeredAssembly --> Layered Riser
 3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0DimLW-72in-7in
 0DimThk-0.75inT
@@ -2909,7 +2881,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond
 3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT
@@ -2918,7 +2890,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0DimWD-0inW-0inD
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,4LayeredAssembly --> Layered Riser,,Walnut + Plywood Riser,64in,48in,"(""IconDimX"",64),(""IconDimZ"",48)",,X,,"3Layer2D --> Plank --> Wood
-2ModuleLWT --> Plank --> Wood
+Plank --> Wood
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
 0DimLW-72in-7in
 0DimThk-0.75inT
@@ -2928,7 +2900,7 @@ PRESET,,"4LayeredAssembly --> Layered Riser
 0Profile-Flat
 0LayerPattern --> 2D-Running Bond",,
 PRESET,,,,,,,,,,,,,"3Layer2D --> Board and Panel --> Plywood
-2ModuleLWT --> Board/Panel --> Plywood
+Board/Panel --> Plywood
 1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
 0DimLW-96in-48in
 0DimThk-0.46875inT

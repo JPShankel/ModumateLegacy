@@ -1,166 +1,256 @@
-TYPENAME,,2ModuleLWH,,Module,,,,,,,,,,,,,,,,,,
-,,Definition,,,,,,,,,,,,,,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,
-PROPERTY,,DisplayText,,Name,,Module.Name,,,,,,,,,,,,,,,,
-PROPERTY,,Dimension,,Length,,Module.Length,,,,,,,,,,,,,,,,
-PROPERTY,,Dimension,,Width,,Module.Width,,,,,,,,,,,,,,,,
-PROPERTY,,Dimension,,Height,,Module.Height,,,,,,,,,,,,,,,,
-PROPERTY,,Dimension,,Bevel Width,,Module.BevelWidth,,,,,,,,,,,,,,,,
-PROPERTY,,PresetID,,Inner Material,,Module.InnerMaterial,,,,,,,,,,,,,,,,
-PROPERTY,,PresetID,,Surface Material,,Module.SurfaceMaterial,,,,,,,,,,,,,,,,
-PROPERTY,,HexValue,,Color Tint,,Module.ColorTint,,,,,,,,,,,,,,,,
-,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildDimLWH,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,,,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Module.Name,Module.Length,Module.Width,Module.Height,Module.BevelWidth,Module.InnerMaterial,Module.SurfaceMaterial,Module.ColorTint,DataType=InputPins,ChildMaterial,ChildDimLWH,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath,DataType=Dimensions,NamedDimension,Value,UI Group
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"8in Modular, Clay Brick, Clay, Natural",7.625in,3.625in,2.29167in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-A05633-Natural,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural,0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH,,3Layer3D,,Length,7.625in,Major
-PRESET,,,,,,,,,,,,,,,,,,,,Width,3.625in,Major
-PRESET,,,,,,,,,,,,,,,,,,,,Height,2.29167in,Major
-PRESET,,,,,,,,,,,,,,,,,,,,BevelWidth,0.1875in,Minor
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan
-0DimLWH --> ClayBrick-7.625inL-3.125inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Narrow 8in Modular, Clay Brick, Clay, Tan",7.625in,3.125in,2.29167in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-D5B795-Tan,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan,0DimLWH --> ClayBrick-7.625inL-3.125inW-2.29167inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry
-0DimLWH --> ClayBrick-7.625inL-2.29167inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Extra-Narrow 8in Modular, Clay Brick, Clay, Mulberry",7.625in,2.29167in,2.29167in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-9C7164-Mulberry,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry,0DimLWH --> ClayBrick-7.625inL-2.29167inW-2.29167inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream
-0DimLWH --> ClayBrick-7.625inL-3.625inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall 8in Modular, Clay Brick, Clay, Cream",7.625in,3.625in,2.75in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-EFDABF-Cream,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream,0DimLWH --> ClayBrick-7.625inL-3.625inW-2.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry
-0DimLWH --> ClayBrick-7.625inL-3.125inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall Narrow 8in Modular, Clay Brick, Clay, Ashberry",7.625in,3.125in,2.75in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-5A535A-Ashberry,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry,0DimLWH --> ClayBrick-7.625inL-3.125inW-2.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown
-0DimLWH --> ClayBrick-7.625inL-3.625inW-3.625inH",,2ModuleLWH --> Clay Brick,,"Square-Head 8in Modular, Clay Brick, Clay, Brown",7.625in,3.625in,3.625in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-5A4E47-Driftwood,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown,0DimLWH --> ClayBrick-7.625inL-3.625inW-3.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-FEF9F3-White
-0DimLWH --> ClayBrick-7.625inL-3.625inW-7.625inH",,2ModuleLWH --> Clay Brick,,"Triple-Height 8in Modular, Clay Brick, Clay, White",7.625in,3.625in,7.625in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-825F4C-Brown,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-FEF9F3-White,0DimLWH --> ClayBrick-7.625inL-3.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-4F4B48-Midnight
-0DimLWH --> ClayBrick-11.625inL-3.625inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Norman, Clay Brick, Clay, Midnight",11.625in,3.625in,2.29167in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-FEF9F3-White,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-4F4B48-Midnight,0DimLWH --> ClayBrick-11.625inL-3.625inW-2.29167inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-63454D-Plum
-0DimLWH --> ClayBrick-11.625inL-3.125inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Narrow Norman, Clay Brick, Clay, Plum",11.625in,3.125in,2.29167in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-4F4B48-Midnight,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-63454D-Plum,0DimLWH --> ClayBrick-11.625inL-3.125inW-2.29167inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EDCB6E-Yellow
-0DimLWH --> ClayBrick-11.625inL-3.625inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall Norman, Clay Brick, Clay, Yellow",11.625in,3.625in,2.75in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-63454D-Plum,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EDCB6E-Yellow,0DimLWH --> ClayBrick-11.625inL-3.625inW-2.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural
-0DimLWH --> ClayBrick-11.625inL-3.125inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall Narrow Norman, Clay Brick, Clay, Natural",11.625in,3.125in,2.75in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-EDCB6E-Yellow,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural,0DimLWH --> ClayBrick-11.625inL-3.125inW-2.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan
-0DimLWH --> ClayBrick-11.625inL-3.625inW-3.625inH",,2ModuleLWH --> Clay Brick,,"Square-Head Norman, Clay Brick, Clay, Tan",11.625in,3.625in,3.625in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-A05633-Natural,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-D5B795-Tan,0DimLWH --> ClayBrick-11.625inL-3.625inW-3.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry
-0DimLWH --> ClayBrick-11.625inL-3.625inW-7.625inH",,2ModuleLWH --> Clay Brick,,"Triple-Height Norman, Clay Brick, Clay, Mulberry",11.625in,3.625in,7.625in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-D5B795-Tan,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-9C7164-Mulberry,0DimLWH --> ClayBrick-11.625inL-3.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream
-0DimLWH --> ClayBrick-15.625inL-3.625inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Monarch, Clay Brick, Clay, Cream",15.625in,3.625in,2.29167in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-9C7164-Mulberry,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-EFDABF-Cream,0DimLWH --> ClayBrick-15.625inL-3.625inW-2.29167inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry
-0DimLWH --> ClayBrick-15.625inL-3.125inW-2.29167inH",,2ModuleLWH --> Clay Brick,,"Narrow Monarch, Clay Brick, Clay, Ashberry",15.625in,3.125in,2.29167in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-EFDABF-Cream,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-5A535A-Ashberry,0DimLWH --> ClayBrick-15.625inL-3.125inW-2.29167inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown
-0DimLWH --> ClayBrick-15.625inL-3.625inW-2.75inH",,2ModuleLWH --> Clay Brick,,"Tall Monarch, Clay Brick, Clay, Brown",15.625in,3.625in,2.75in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-5A535A-Ashberry,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-825F4C-Brown,0DimLWH --> ClayBrick-15.625inL-3.625inW-2.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-FEF9F3-White
-0DimLWH --> ClayBrick-15.625inL-3.625inW-7.625inH",,2ModuleLWH --> Clay Brick,,"Triple-Height Monarch, Clay Brick, Clay, White",15.625in,3.625in,7.625in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-5A4E47-Driftwood,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-FEF9F3-White,0DimLWH --> ClayBrick-15.625inL-3.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Clay Brick
-1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-4F4B48-Midnight
-0DimLWH --> ClayBrick-11.625inL-3.625inW-1.625inH",,2ModuleLWH --> Clay Brick,,"Roman, Clay Brick, Clay, Midnight",11.625in,3.625in,1.625in,0.1875in,0RawMaterial-Clay,-,0Color --> Ceramic --> Clay-825F4C-Brown,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-4F4B48-Midnight,0DimLWH --> ClayBrick-11.625inL-3.625inW-1.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimLWH --> CMU-7.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"6in Half Block, 8in x 8in x 6in, Concrete Masonry Unit, Concrete (Normal Aggregate), Natural",7.625in,5.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-D6D7D8-Natural,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimLWH --> CMU-7.625inL-5.625inW-7.625inH,,3Layer3D,,Length,7.625in,Major
-,,,,,,,,,,,,,,,,,,,,Width,3.625in,Major
-,,,,,,,,,,,,,,,,,,,,Height,2.29167in,Major
-,,,,,,,,,,,,,,,,,,,,BevelWidth,0.1875in,Minor
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray
-0DimLWH --> CMU-7.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"6in Half Block, 8in x 8in x 6in, Concrete Masonry Unit, Concrete (Normal Aggregate), Medium Gray",7.625in,5.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,0DimLWH --> CMU-7.625inL-5.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey
-0DimLWH --> CMU-15.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"6in Full Block, 8in x 16in x 6in, Concrete Masonry Unit, Concrete (Normal Aggregate), Dark Grey",15.625in,5.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-70716C-DarkGrey,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey,0DimLWH --> CMU-15.625inL-5.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black
-0DimLWH --> CMU-15.625inL-5.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"6in Full Block, 8in x 16in x 6in, Concrete Masonry Unit, Concrete (Normal Aggregate), Black",15.625in,5.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-2F3131-Black,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black,0DimLWH --> CMU-15.625inL-5.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
-0DimLWH --> CMU-7.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"8in Half Block, 8in x 8in x 8in, Concrete Masonry Unit, Concrete (Normal Aggregate), Maple",7.625in,7.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-AC998D-Maple,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple,0DimLWH --> CMU-7.625inL-7.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive
-0DimLWH --> CMU-7.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"8in Half Block, 8in x 8in x 8in, Concrete Masonry Unit, Concrete (Normal Aggregate), Olive",7.625in,7.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-ABA283-Olive,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive,0DimLWH --> CMU-7.625inL-7.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff
-0DimLWH --> CMU-15.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"8in Full Block, 8in x 16in x 8in, Concrete Masonry Unit, Concrete (Normal Aggregate), Buff",15.625in,7.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-CFB086-Buff,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-CFB086-Buff,0DimLWH --> CMU-15.625inL-7.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss
-0DimLWH --> CMU-15.625inL-7.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"8in Full Block, 8in x 16in x 8in, Concrete Masonry Unit, Concrete (Normal Aggregate), Moss",15.625in,7.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-9FA08B-Moss,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9FA08B-Moss,0DimLWH --> CMU-15.625inL-7.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean
-0DimLWH --> CMU-7.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"10in Half Block, 8in x 8in x 10in, Concrete Masonry Unit, Concrete (Normal Aggregate), Ocean",7.625in,9.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-8F9AA0-Ocean,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-8F9AA0-Ocean,0DimLWH --> CMU-7.625inL-9.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet
-0DimLWH --> CMU-7.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"10in Half Block, 8in x 8in x 10in, Concrete Masonry Unit, Concrete (Normal Aggregate), Cabernet",7.625in,9.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-9F7D7B-Cabernet,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-9F7D7B-Cabernet,0DimLWH --> CMU-7.625inL-9.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural
-0DimLWH --> CMU-15.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"10in Full Block, 8in x 16in x 10in, Concrete Masonry Unit, Concrete (Normal Aggregate), Natural",15.625in,9.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-D6D7D8-Natural,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,0DimLWH --> CMU-15.625inL-9.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray
-0DimLWH --> CMU-15.625inL-9.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"10in Full Block, 8in x 16in x 10in, Concrete Masonry Unit, Concrete (Normal Aggregate), Medium Gray",15.625in,9.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,0DimLWH --> CMU-15.625inL-9.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey
-0DimLWH --> CMU-7.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"12in Half Block, 8in x 8in x 12in, Concrete Masonry Unit, Concrete (Normal Aggregate), Dark Grey",7.625in,11.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-70716C-DarkGrey,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-70716C-DarkGrey,0DimLWH --> CMU-7.625inL-11.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black
-0DimLWH --> CMU-7.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"12in Half Block, 8in x 8in x 12in, Concrete Masonry Unit, Concrete (Normal Aggregate), Black",7.625in,11.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-2F3131-Black,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-2F3131-Black,0DimLWH --> CMU-7.625inL-11.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple
-0DimLWH --> CMU-15.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"12in Full Block, 8in x 16in x 12in, Concrete Masonry Unit, Concrete (Normal Aggregate), Maple",15.625in,11.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-AC998D-Maple,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-AC998D-Maple,0DimLWH --> CMU-15.625inL-11.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Concrete Masonry Unit
-1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive
-0DimLWH --> CMU-15.625inL-11.625inW-7.625inH",,2ModuleLWH --> Concrete Masonry Unit,,"12in Full Block, 8in x 16in x 12in, Concrete Masonry Unit, Concrete (Normal Aggregate), Olive",15.625in,11.625in,7.625in,0.25in,0RawMaterial-Concrete (Normal Aggregate),-,0Color --> Aggregates --> Concrete-ABA283-Olive,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-ABA283-Olive,0DimLWH --> CMU-15.625inL-11.625inW-7.625inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Earth Brick
-1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White
-0DimLWH --> EarthBrick-11.614inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,"Full Block, 29.5cm x 14cm x 9cm, Earth Brick, Rammed Earth, White",11.614in,5.512in,3.543in,0.25in,0RawMaterial-Rammed Earth,-,0Color --> Aggregates --> Rammed Earth-FFFFFF-Untinted,,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White,0DimLWH --> EarthBrick-11.614inL-5.512inW-3.543inH,,3Layer3D,,Length,7.625in,Major
-PRESET,,,,,,,,,,,,,,,,,,,,Width,3.625in,Major
-PRESET,,,,,,,,,,,,,,,,,,,,Height,2.29167in,Major
-PRESET,,,,,,,,,,,,,,,,,,,,BevelWidth,0.1875in,Minor
-PRESET,,"2ModuleLWH --> Earth Brick
-1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White
-0DimLWH --> EarthBrick-8.563inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,"3/4 Block, 21.75cm x 14cm x 9cm, Earth Brick, Rammed Earth, White",8.563in,5.512in,3.543in,0.25in,0RawMaterial-Rammed Earth,-,0Color --> Aggregates --> Rammed Earth-FFFFFF-Untinted,,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White,0DimLWH --> EarthBrick-8.563inL-5.512inW-3.543inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Earth Brick
-1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White
-0DimLWH --> EarthBrick-5.512inL-5.512inW-3.543inH",,2ModuleLWH --> Earth Brick,,"Half Block, 14cm x 14cm x 9cm, Earth Brick, Rammed Earth, White",5.512in,5.512in,3.543in,0.25in,0RawMaterial-Rammed Earth,-,0Color --> Aggregates --> Rammed Earth-FFFFFF-Untinted,,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White,0DimLWH --> EarthBrick-5.512inL-5.512inW-3.543inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted
-0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH",,2ModuleLWH --> Glass Block,,"4in x 8in x 4in, Glass Block, Glass Block, Untinted",7.75in,3.875in,3.75in,0.1875in,0RawMaterial-Glass Block,-,0Color --> Glass and Transparent --> Air-FFFFFF-Clear,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone
-0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH",,2ModuleLWH --> Glass Block,,"4in x 8in x 4in, Glass Block, Glass Block, Limestone",7.75in,3.875in,3.75in,0.1875in,0RawMaterial-Glass Block,-,0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
-0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH",,2ModuleLWH --> Glass Block,,"4in x 8in x 4in, Glass Block, Glass Block, Slate",7.75in,3.875in,3.75in,0.1875in,0RawMaterial-Glass Block,-,0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-D6DADB-Slate,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-BAC7CD-ChillyBlue
-0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH",,2ModuleLWH --> Glass Block,,"6in x 6in x 4in, Glass Block, Glass Block, Chilly Blue",5.75in,3.875in,5.75in,0.1875in,0RawMaterial-Glass Block,-,0Color --> Glass and Transparent --> Glass-D6DADB-Slate,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-BAC7CD-ChillyBlue,0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-829CA9-BayBlue
-0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH",,2ModuleLWH --> Glass Block,,"6in x 6in x 4in, Glass Block, Glass Block, Bay Blue",5.75in,3.875in,5.75in,0.1875in,0RawMaterial-Glass Block,-,0Color --> Glass and Transparent --> Glass-BAC7CD-ChillyBlue,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-829CA9-BayBlue,0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-A6C7C0-Aquamarine
-0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH",,2ModuleLWH --> Glass Block,,"6in x 6in x 4in, Glass Block, Glass Block, Aquamarine",5.75in,3.875in,5.75in,0.1875in,0RawMaterial-Glass Block,-,0Color --> Glass and Transparent --> Glass-829CA9-BayBlue,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-A6C7C0-Aquamarine,0DimLWH --> GlassBlock-5.75inL-3.875inW-5.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-A7B5A8-SageGreen
-0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Sage Green",7.75in,3.875in,7.75in,0.1875in,0RawMaterial-Glass Block,-,0Color --> Glass and Transparent --> Glass-A6C7C0-Aquamarine,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-A7B5A8-SageGreen,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow
-0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Sandy Yellow",7.75in,3.875in,7.75in,0.1875in,0RawMaterial-Glass Block,-,0Color --> Glass and Transparent --> Glass-A7B5A8-SageGreen,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-AC8F8B-DeepBlush
-0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Deep Blush",7.75in,3.875in,7.75in,0.1875in,0RawMaterial-Glass Block,-,0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-AC8F8B-DeepBlush,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D,,,,
-PRESET,,"2ModuleLWH --> Glass Block
-1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-292D38-Indigo
-0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH",,2ModuleLWH --> Glass Block,,"8in x 8in x 4in, Glass Block, Glass Block, Indigo",7.75in,3.875in,7.75in,0.1875in,0RawMaterial-Glass Block,-,0Color --> Glass and Transparent --> Glass-AC8F8B-DeepBlush,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-292D38-Indigo,0DimLWH --> GlassBlock-7.75inL-3.875inW-7.75inH,,3Layer3D,,,,
+TYPENAME,,2ModuleLWH,,Module,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DisplayText,,Name,,Module.Name,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PresetID,,Inner Material,,Module.InnerMaterial,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PresetID,,Surface Material (Optional),,Module.SurfaceMaterial,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,HexValue,,Color Tint,,Module.ColorTint,,,,,,,,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildDimWD,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildDimLW,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildDimThk,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildDimLWH,,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=SubcategoryPath,SubcategoryPath,DataType=Properties,Module.Name,DataType=Dimensions,Dimension,Value,UI Group,DataType=Profile,Module.Profile,DataType=Material,AppliesToChannel,Module.InnerMaterial,Module.SurfaceMaterial,Module.ColorTint,DataType=InputPins,ChildMaterial,ChildDimWD,ChildDimLW,ChildDimThk,ChildDimLWH,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
+PRESET,,ModuleLinear-Width-0.5in-Depth-0.5in-IconLength-96in-0Profile-Corrugated Plastic-Finish1-0RawMaterial-Plastic---EAEAEA,,ModuleLinear,,Corrugated Plastic Sheet,,Corrugated Plastic Sheet,,Width,0.5in,Major,,0Profile-Corrugated Plastic,,Finish1,0RawMaterial-Plastic,-,EAEAEA,,1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6,0DimWD-0.5inW-0.5inD,,,,,
+PRESET,,,,,,,,,,Depth,0.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-6in-Depth-1.5in-IconLength-96in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA,,ModuleLinear,,Corrugated Steel Deck,,Corrugated Steel Deck,,Width,6in,Major,,0Profile-Corrugated Steel,,Finish1,0RawMaterial-Steel,-,EAEAEA,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-6inW-1.5inD,,,,,
+PRESET,,,,,,,,,,Depth,1.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-1.625in-Depth-1.625in-IconLength-96in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF,,ModuleLinear,,Steel C-Channel,,1 5/8in Steel C-Channel,,Width,1.625in,Major,,0Profile-Steel C-Stud,,Finish1,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-1.625inW-1.625inD,,,,,
+PRESET,,,,,,,,,,Depth,1.625in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-1.625in-Depth-2in-IconLength-96in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF,,ModuleLinear,,Steel C-Channel,,2in Steel C-Channel,,Width,1.625in,Major,,0Profile-Steel C-Stud,,Finish1,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-1.625inW-2inD,,,,,
+PRESET,,,,,,,,,,Depth,2in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-1.625in-Depth-3.625in-IconLength-96in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF,,ModuleLinear,,Steel C-Channel,,3 5/8in Steel C-Channel,,Width,1.625in,Major,,0Profile-Steel C-Stud,,Finish1,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-1.625inW-3.625inD,,,,,
+PRESET,,,,,,,,,,Depth,3.625in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-1.625in-Depth-6in-IconLength-96in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF,,ModuleLinear,,Steel C-Channel,,6in Steel C-Channel,,Width,1.625in,Major,,0Profile-Steel C-Stud,,Finish1,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-1.625inW-6inD,,,,,
+PRESET,,,,,,,,,,Depth,6in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-1.5in-Depth-6in-IconLength-96in-0Profile-Steel C-H Stud-Finish1-0RawMaterial-Steel---FFFFFF,,ModuleLinear,,Steel C-H Channel,,6in Steel C-H Channel,,Width,1.5in,Major,,0Profile-Steel C-H Stud,,Finish1,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-1.5inW-6inD,,,,,
+PRESET,,,,,,,,,,Depth,6in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-1.25in-Depth-0.875in-IconLength-96in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel---FFFFFF,,ModuleLinear,,Steel Hat Channel,,7/8in Steel Hat Channel,,Width,1.25in,Major,,0Profile-Steel Hat Channel,,Finish1,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-1.25inW-0.875inD,,,,,
+PRESET,,,,,,,,,,Depth,0.875in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-3.5in-Depth-11.875in-IconLength-96in-0Profile-Steel Web Joist-Finish1-0RawMaterial-Steel---FFFFFF,,ModuleLinear,,Steel Web Joist,,12in Steel Web Joist,,Width,3.5in,Major,,0Profile-Steel Web Joist,,Finish1,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-3.5inW-11.875inD,,,,,
+PRESET,,,,,,,,,,Depth,11.875in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-2in-Depth-1.5in-IconLength-96in-0Profile-Steel Z Channel-Finish1-0RawMaterial-Steel---FFFFFF,,ModuleLinear,,Steel Z Channel,,1.5in Steel Z Channel,,Width,2in,Major,,0Profile-Steel Z Channel,,Finish1,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-2inW-1.5inD,,,,,
+PRESET,,,,,,,,,,Depth,1.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-0.75in-Depth-0.75in-IconLength-96in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,ModuleLinear,,Wood Lumber,,Typical 1x1,,Width,0.75in,Major,,0Profile-Solid Rectangle,,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-0.75inW-0.75inD,,,,,
+PRESET,,,,,,,,,,Depth,0.75in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-1.5in-Depth-3.5in-IconLength-96in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,ModuleLinear,,Wood Lumber,,Typical 2x4,,Width,1.5in,Major,,0Profile-Solid Rectangle,,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-3.5inD,,,,,
+PRESET,,,,,,,,,,Depth,3.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-1.5in-Depth-5.5in-IconLength-96in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,ModuleLinear,,Wood Lumber,,Typical 2x6,,Width,1.5in,Major,,0Profile-Solid Rectangle,,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-5.5inD,,,,,
+PRESET,,,,,,,,,,Depth,5.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-1.5in-Depth-7.25in-IconLength-96in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,ModuleLinear,,Wood Lumber,,Typical 2x8,,Width,1.5in,Major,,0Profile-Solid Rectangle,,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-7.25inD,,,,,
+PRESET,,,,,,,,,,Depth,7.25in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-1.5in-Depth-9.25in-IconLength-96in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,ModuleLinear,,Wood Lumber,,Typical 2x10,,Width,1.5in,Major,,0Profile-Solid Rectangle,,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-9.25inD,,,,,
+PRESET,,,,,,,,,,Depth,9.25in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-1.5in-Depth-3.5in-IconLength-96in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands---FFFFFF,,ModuleLinear,,Wood Lumber,,Engineered Wood 2x4,,Width,1.5in,Major,,0Profile-Solid Rectangle,,Finish1,0RawMaterial-Wood Strands,-,FFFFFF,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-3.5inD,,,,,
+PRESET,,,,,,,,,,Depth,3.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-1.5in-Depth-7.25in-IconLength-96in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands---FFFFFF,,ModuleLinear,,Wood Lumber,,Engineered Wood 2x8,,Width,1.5in,Major,,0Profile-Solid Rectangle,,Finish1,0RawMaterial-Wood Strands,-,FFFFFF,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-7.25inD,,,,,
+PRESET,,,,,,,,,,Depth,7.25in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-3.5in-Depth-11.875in-IconLength-96in-0Profile-Wood Web Joist-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,ModuleLinear,,Wood Web Joist,,12in Wood Web Joist,,Width,3.5in,Major,,0Profile-Wood Web Joist,,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-11.875inD,,,,,
+PRESET,,,,,,,,,,Depth,11.875in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModuleLinear-Width-3.5in-Depth-11.875in-IconLength-96in-0Profile-Wood-Chord Steel-Web Joist-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,ModuleLinear,,"Wood-Chord, Steel-Web Joist",,12in Wood-Chord Steel-Web Joist,,Width,3.5in,Major,,0Profile-Wood-Chord Steel-Web Joist,,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-3.5inW-11.875inD,,,,,
+PRESET,,,,,,,,,,Depth,11.875in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconLength,96in,Preview,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-60in-Width-36in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cement---D6D7D8,,ModulePlanar,,Board/Panel --> Cement,,Cement Board,,Length,60in,Major,,,,Finish1,0RawMaterial-Cement,-,D6D7D8,,,,0DimLW-60in-36in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,36in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-24in-Width-24in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cementitious Wood Fiber---FFFFFF,,ModulePlanar,,Board/Panel --> Cementitious Wood Fiber,,Cementitious Wood Fiber Board,,Length,24in,Major,,,,Finish1,0RawMaterial-Cementitious Wood Fiber,-,FFFFFF,,,,0DimLW-24in-24in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,24in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)---ECB9BE,,ModulePlanar,,Board/Panel --> Foam,,Foam Board,,Length,96in,Major,,,,Finish1,0RawMaterial-Foam (Extruded Polystyrene),-,ECB9BE,,,,0DimLW-96in-48in,0DimThk-2inT,,,
+PRESET,,,,,,,,,,Width,48in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,1in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyethylene)---FAFAFA,,ModulePlanar,,Board/Panel --> Foam,,Foam Board,,Length,96in,Major,,,,Finish1,0RawMaterial-Foam (Polyethylene),-,FAFAFA,,,,0DimLW-96in-48in,0DimThk-1inT,,,
+PRESET,,,,,,,,,,Width,48in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,1in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)---FAF1D0,,ModulePlanar,,Board/Panel --> Foam,,Foam Board,,Length,96in,Major,,,,Finish1,0RawMaterial-Foam (Polyisocyanurate),-,FAF1D0,,,,0DimLW-96in-48in,0DimThk-2inT,,,
+PRESET,,,,,,,,,,Width,48in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,2in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-120in-Width-6in-Thickness-0.75in-BevelWidth-0.5in-Finish1-0RawMaterial-Fibre Cement---DFE2E7,,ModulePlanar,,Board/Panel --> Fiber Cement,,Fiber Cement Board,,Length,120in,Major,,,,Finish1,0RawMaterial-Fibre Cement,-,DFE2E7,,,,0DimLW-120in-6in,0DimThk-0.75inT,,,
+PRESET,,,,,,,,,,Width,6in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.75in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.5in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-96in-Width-48in-Thickness-0.5in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1,,ModulePlanar,,Board/Panel --> Gypsum,,Gypsum Board,,Length,96in,Major,,,,Finish1,0RawMaterial-Gypsum (Type X),-,D6D7D1,,,,0DimLW-96in-48in,0DimThk-0.5inT,,,
+PRESET,,,,,,,,,,Width,48in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.0625in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1,,ModulePlanar,,Board/Panel --> Gypsum,,Gypsum Board,,Length,96in,Major,,,,Finish1,0RawMaterial-Gypsum (Type X),-,D6D7D1,,,,0DimLW-96in-48in,0DimThk-0.625inT,,,
+PRESET,,,,,,,,,,Width,48in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.625in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.0625in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-96in-Width-48in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Particles---FFFFFF,,ModulePlanar,,Board/Panel --> MDF (Medium-Density Fiberboard),,MDF Board,,Length,96in,Major,,,,Finish1,0RawMaterial-Wood Particles,-,FFFFFF,,,,0DimLW-96in-48in,0DimThk-0.5inT,,,
+PRESET,,,,,,,,,,Width,48in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---FFFFFF,,ModulePlanar,,Board/Panel --> Metal,,Metal Panel,,Length,12in,Major,,,,Finish1,0RawMaterial-Aluminum,-,FFFFFF,,,,0DimLW-12in-12in,0DimThk-0.25inT,,,
+PRESET,,,,,,,,,,Width,12in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.25in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-16in-Width-12in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---D0C0A9,,ModulePlanar,,Board/Panel --> Metal,,16in x 12in Metal Panel,,Length,16in,Major,,,,Finish1,0RawMaterial-Aluminum,-,D0C0A9,,,,0DimLW-16in-12in,0DimThk-0.5inT,,,
+PRESET,,,,,,,,,,Width,12in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-180in-Width-36in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Zinc---013119,,ModulePlanar,,Board/Panel --> Metal,,180in x 36in Metal Panel,,Length,180in,Major,,,,Finish1,0RawMaterial-Zinc,-,013119,,,,0DimLW-180in-36in,0DimThk-1inT,,,
+PRESET,,,,,,,,,,Width,36in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,1in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF,,ModulePlanar,,Board/Panel --> OSB (Oriented Strand Board),,"3/8"" OSB",,Length,96in,Major,,,,Finish1,0RawMaterial-Wood Strands,-,FFFFFF,,,,0DimLW-96in-48in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,48in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Particles---FFFFFF,,ModulePlanar,,Board/Panel --> Particle Board,,"3/8"" Particle Board",,Length,96in,Major,,,,Finish1,0RawMaterial-Wood Particles,-,FFFFFF,,,,0DimLW-96in-48in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,48in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-96in-Width-48in-Thickness-0.34375in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF,,ModulePlanar,,Board/Panel --> Plywood,,"11/32"" Plywood",,Length,96in,Major,,,,Finish1,0RawMaterial-Plywood,-,FFFFFF,,,,0DimLW-96in-48in,0DimThk-0.34375inT,,,
+PRESET,,,,,,,,,,Width,48in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.34375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF,,ModulePlanar,,Board/Panel --> Plywood,,"15/32"" Plywood",,Length,96in,Major,,,,Finish1,0RawMaterial-Plywood,-,FFFFFF,,,,0DimLW-96in-48in,0DimThk-0.46875inT,,,
+PRESET,,,,,,,,,,Width,48in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.46875in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-0RawMaterial-Teak-FFFFFF,,ModulePlanar,,Plank --> Engineered Wood,,Engineered Wood Plank,,Length,32in,Major,,,,Finish1,0RawMaterial-Plywood,0RawMaterial-Teak,FFFFFF,,,,0DimLW-32in-5in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Birch (Yellow)---FFFFFF,,ModulePlanar,,Plank --> Wood,,Wood Plank,,Length,32in,Major,,,,Finish1,0RawMaterial-Birch (Yellow),-,FFFFFF,,,,0DimLW-32in-5in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-48in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cedar (White)---FFFFFF,,ModulePlanar,,Plank --> Wood,,Wood Plank,,Length,48in,Major,,,,Finish1,0RawMaterial-Cedar (White),-,FFFFFF,,,,0DimLW-48in-5in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry---FFFFFF,,ModulePlanar,,Plank --> Wood,,Wood Plank,,Length,48in,Major,,,,Finish1,0RawMaterial-Cherry,-,FFFFFF,,,,0DimLW-48in-7in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,7in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-72in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Ash---FFFFFF,,ModulePlanar,,Plank --> Wood,,Wood Plank,,Length,72in,Major,,,,Finish1,0RawMaterial-Ash,-,FFFFFF,,,,0DimLW-72in-7in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,7in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-48in-Width-7in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Cedar (Western Red)---FFFFFF,,ModulePlanar,,Plank --> Wood,,Wood Plank,,Length,48in,Major,,,,Finish1,0RawMaterial-Cedar (Western Red),-,FFFFFF,,,,0DimLW-48in-7in,0DimThk-0.5inT,,,
+PRESET,,,,,,,,,,Width,7in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-48in-Width-3in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (Red)---FFFFFF,,ModulePlanar,,Plank --> Wood,,Wood Plank,,Length,48in,Major,,,,Finish1,0RawMaterial-Oak (Red),-,FFFFFF,,,,0DimLW-48in-3in,0DimThk-0.75inT,,,
+PRESET,,,,,,,,,,Width,3in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.75in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)---FFFFFF,,ModulePlanar,,Plank --> Wood,,Wood Plank,,Length,72in,Major,,,,Finish1,0RawMaterial-Oak (White),-,FFFFFF,,,,0DimLW-72in-7in,0DimThk-0.75inT,,,
+PRESET,,,,,,,,,,Width,7in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.75in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-24in-Width-24in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Mineral Fiber---FFFFFF,,ModulePlanar,,Tile --> Acoustic Ceiling Tile,,Acoustic Ceiling Tile,,Length,24in,Major,,,,Finish1,0RawMaterial-Mineral Fiber,-,FFFFFF,,,,0DimLW-24in-24in,0DimThk-1inT,,,
+PRESET,,,,,,,,,,Width,24in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,1in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-7.625in-Width-2.29167in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay---A05633,,ModulePlanar,,Tile --> Brick Veneer,,Brick Veneer,,Length,7.625in,Major,,,,Finish1,0RawMaterial-Clay,-,A05633,,,,0DimLW-7.625in-2.29167in,0DimThk-0.5inT,,,
+PRESET,,,,,,,,,,Width,2.29167in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-11.625in-Width-2.75in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay---5A4E47,,ModulePlanar,,Tile --> Brick Veneer,,Brick Veneer,,Length,11.625in,Major,,,,Finish1,0RawMaterial-Clay,-,5A4E47,,,,0DimLW-11.625in-2.75in,0DimThk-0.5inT,,,
+PRESET,,,,,,,,,,Width,2.75in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-32in-Width-16in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Carpet (Low Profile)---E9EAE6,,ModulePlanar,,Tile --> Carpet,,Carpet Tile,,Length,32in,Major,,,,Finish1,0RawMaterial-Carpet (Low Profile),-,E9EAE6,,,,0DimLW-32in-16in,0DimThk-0.5inT,,,
+PRESET,,,,,,,,,,Width,16in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-4in-Width-2in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay---9C7164,,ModulePlanar,,Tile --> Clay,,Clay Tile,,Length,4in,Major,,,,Finish1,0RawMaterial-Clay,-,9C7164,,,,0DimLW-4in-2in,0DimThk-0.5inT,,,
+PRESET,,,,,,,,,,Width,2in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.0625in-Finish1-0RawMaterial-Cork---BF945F,,ModulePlanar,,Tile --> Cork,,Cork Tile,,Length,12in,Major,,,,Finish1,0RawMaterial-Cork,-,BF945F,,,,0DimLW-12in-12in,0DimThk-0.25inT,,,
+PRESET,,,,,,,,,,Width,12in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.25in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.0625in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-2in-Width-2in-Thickness-0.25in-BevelWidth-0.0625in-Finish1-0RawMaterial-Glass---F2F2F2,,ModulePlanar,,Tile --> Glass,,Glass Tile,,Length,2in,Major,,,,Finish1,0RawMaterial-Glass,-,F2F2F2,,,,0DimLW-2in-2in,0DimThk-0.25inT,,,
+PRESET,,,,,,,,,,Width,2in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.25in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.0625in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-24in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Particles-0RawMaterial-Sycamore-FFFFFF,,ModulePlanar,,Tile --> Laminate,,Laminate Tile,,Length,24in,Major,,,,Finish1,0RawMaterial-Wood Particles,0RawMaterial-Sycamore,FFFFFF,,,,0DimLW-24in-12in,0DimThk-0.25inT,,,
+PRESET,,,,,,,,,,Width,12in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.25in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-24in-Width-8in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Vinyl Composite-0RawMaterial-Walnut-FFFFFF,,ModulePlanar,,Tile --> Luxury Vinyl,,Luxury Vinyl Tile,,Length,24in,Major,,,,Finish1,0RawMaterial-Vinyl Composite,0RawMaterial-Walnut,FFFFFF,,,,0DimLW-24in-8in,0DimThk-0.25inT,,,
+PRESET,,,,,,,,,,Width,8in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.25in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-4in-Width-4in-Thickness-0.25in-BevelWidth-0.0625in-Finish1-0RawMaterial-Porcelain---E6E3DE,,ModulePlanar,,Tile --> Porcelain,,Porcelain Tile,,Length,4in,Major,,,,Finish1,0RawMaterial-Porcelain,-,E6E3DE,,,,0DimLW-4in-4in,0DimThk-0.25inT,,,
+PRESET,,,,,,,,,,Width,4in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.25in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.0625in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-4in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Calacatta)---FFFFFF,,ModulePlanar,,Tile --> Stone,,Stone Tile,,Length,4in,Major,,,,Finish1,0RawMaterial-Marble (Calacatta),-,FFFFFF,,,,0DimLW-4in-3in,0DimThk-0.5inT,,,
+PRESET,,,,,,,,,,Width,3in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)---FFFFFF,,ModulePlanar,,Tile --> Stone,,Stone Tile,,Length,6in,Major,,,,Finish1,0RawMaterial-Marble (Grey 1),-,FFFFFF,,,,0DimLW-6in-3in,0DimThk-0.5inT,,,
+PRESET,,,,,,,,,,Width,3in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.5in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Vinyl Composite---9C7164,,ModulePlanar,,Tile --> Vinyl Composite,,Vinyl Composite Tile,,Length,12in,Major,,,,Finish1,0RawMaterial-Vinyl Composite,-,9C7164,,,,0DimLW-12in-12in,0DimThk-0.25inT,,,
+PRESET,,,,,,,,,,Width,12in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.25in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Asphalt---594D41,,ModulePlanar,,Shingle --> Asphalt,,Asphalt Shingle,,Length,12in,Major,,,,Finish1,0RawMaterial-Asphalt,-,594D41,,,,0DimLW-12in-7in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,7in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-12in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay---A05633,,ModulePlanar,,Shingle --> Clay,,Clay Shingle,,Length,12in,Major,,,,Finish1,0RawMaterial-Clay,-,A05633,,,,0DimLW-12in-7in,0DimThk-0.75inT,,,
+PRESET,,,,,,,,,,Width,7in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.75in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---EBECF0,,ModulePlanar,,Shingle --> Metal,,Metal Shingle,,Length,12in,Major,,,,Finish1,0RawMaterial-Aluminum,-,EBECF0,,,,0DimLW-12in-7in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,7in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Slate---ABABAB,,ModulePlanar,,Shingle --> Stone,,Stone Shingle,,Length,12in,Major,,,,Finish1,0RawMaterial-Slate,-,ABABAB,,,,0DimLW-12in-12in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,7in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModulePlanar-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Redwood---FFFFFF,,ModulePlanar,,Shingle --> Wood,,Wood Shingle,,Length,12in,Major,,,,Finish1,0RawMaterial-Redwood,-,FFFFFF,,,,0DimLW-12in-7in,0DimThk-0.375inT,,,
+PRESET,,,,,,,,,,Width,7in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Thickness,0.375in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.125in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633,,ModuleVolumetric,,Clay Brick,,"8in Modular, Clay, Natural",,Length,7.625in,Major,,,,Finish1,0RawMaterial-Clay,-,A05633,,1Material --> Ceramic --> Clay-0RawMaterial-Clay-0Color --> Ceramic --> Clay-A05633-Natural,,,,0DimLWH --> ClayBrick-7.625inL-3.625inW-2.29167inH,,3Layer3D
+PRESET,,,,,,,,,,Width,3.625in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Height,2.29167in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.1875in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,,ModuleVolumetric,,Concrete Masonry Unit,,"8in Full Block, 8in x 16in x 8in, Concrete (Normal Aggregate), Natural",,Length,7.625in,Major,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),-,D6D7D8,,1Material --> Aggregates --> Concrete-0RawMaterial-Concrete (Normal Aggregate)-0Color --> Aggregates --> Concrete-D6D7D8-Natural,,,,0DimLWH --> CMU-15.625inL-7.625inW-7.625inH,,3Layer3D
+PRESET,,,,,,,,,,Width,3.625in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Height,2.29167in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.1875in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModuleVolumetric-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Rammed Earth---FFFFFF,,ModuleVolumetric,,Earth Brick,,"Full Block, 29.5cm x 14cm x 9cm, Rammed Earth, White",,Length,7.625in,Major,,,,Finish1,0RawMaterial-Rammed Earth,-,FFFFFF,,1Material --> Aggregates --> Rammed Earth-0RawMaterial-Rammed Earth-0Color --> Abstract-FFFFFF-White,,,,0DimLWH --> EarthBrick-11.614inL-5.512inW-3.543inH,,3Layer3D
+PRESET,,,,,,,,,,Width,3.625in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Height,2.29167in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.1875in,Minor,,,,,,,,,,,,,,,
+PRESET,,ModuleVolumetric-Length-7.75in-Width-3.875in-Height-3.75in-BevelWidth-0.1875in-Finish1-0RawMaterial-Glass Block---F2F2F2,,ModuleVolumetric,,Glass Block,,"4in x 8in x 4in, Glass Block, Untinted",,Length,7.75in,Major,,,,Finish1,0RawMaterial-Glass Block,-,F2F2F2,,1Material --> Glass and Transparent --> Glass Block-0RawMaterial-Glass Block-0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,,,,0DimLWH --> GlassBlock-7.75inL-3.875inW-3.75inH,,3Layer3D
+PRESET,,,,,,,,,,Width,3.875in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,Height,3.75in,Major,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,BevelWidth,0.1875in,Minor,,,,,,,,,,,,,,,
