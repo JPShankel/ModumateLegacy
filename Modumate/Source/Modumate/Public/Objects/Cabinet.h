@@ -4,7 +4,8 @@
 
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "CoreMinimal.h"
-#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "ToolsAndAdjustments/Handles/CabinetFrontFaceHandle.h"
+#include "ToolsAndAdjustments/Handles/CabinetExtrusionHandle.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "Objects/ModumateObjectInstance.h"
 
@@ -27,22 +28,6 @@ struct MODUMATE_API FMOICabinetData
 };
 
 class AEditModelPlayerController_CPP;
-
-UCLASS()
-class MODUMATE_API ASelectCabinetFrontHandle : public AAdjustmentHandleActor
-{
-	GENERATED_BODY()
-
-public:
-	static const float FaceCenterHeightOffset;
-	static const float BaseCenterOffset;
-
-	virtual bool BeginUse() override;
-	virtual FVector GetHandlePosition() const override;
-
-protected:
-	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
-};
 
 class FModumateObjectInstance;
 
@@ -67,6 +52,7 @@ public:
 		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 		TArray<TArray<FVector>> &OutPerimeters) const override;
 
+	static void RectangleCheck(const TArray<FVector>& Points, bool& bOutIsRectangular, FVector& OutMostVerticalDir);
 	static bool GetFaceGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, int32 FaceIndex,
 		TArray<FVector>& OutFacePoints, FTransform& OutFaceTransform);
 	static bool UpdateCabinetActors(const FBIMAssemblySpec& Assembly, const TArray<FVector>& InBasePoints, const FVector& InExtrusionDelta,
@@ -77,13 +63,14 @@ protected:
 	bool UpdateCachedGeometryData();
 
 	bool AdjustmentHandlesVisible;
-	TArray<TWeakObjectPtr<ASelectCabinetFrontHandle>> FrontSelectionHandles;
+	TArray<TWeakObjectPtr<ACabinetFrontFaceHandle>> FrontSelectionHandles;
 	TWeakObjectPtr<ACompoundMeshActor> FrontFacePortalActor;
 
 	FTransform CachedBaseOrigin;
 	TArray<FVector> CachedBasePoints;
 	FVector CachedExtrusionDelta;
 	bool bCurrentFaceValid;
+	bool bBaseIsRectangular;
 
 	FMOICabinetData InstanceData;
 };

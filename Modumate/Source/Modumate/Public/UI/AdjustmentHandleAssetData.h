@@ -40,9 +40,6 @@ public:
 	class USlateWidgetStyleAsset* RoofRetractFacesStyle;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	class USlateWidgetStyleAsset* CabinetFrontFaceStyle;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	class USlateWidgetStyleAsset* PortalJustifyStyle;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)

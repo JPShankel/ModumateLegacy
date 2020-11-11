@@ -96,7 +96,7 @@ public:
 	float PortalIconScaleFactor = 50.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
-	float CabinetIconScaleFactor = 23.f;
+	float CabinetIconSizePadding = 10.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
 	float TrimIconScaleFactor = 24.f;

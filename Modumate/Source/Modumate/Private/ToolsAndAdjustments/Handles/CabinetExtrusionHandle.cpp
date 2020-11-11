@@ -1,28 +1,33 @@
-#include "ToolsAndAdjustments/Handles/AdjustPolyExtrusionHandle.h"
+// Copyright 2020 Modumate, Inc. All Rights Reserved.
 
+#include "ToolsAndAdjustments/Handles/CabinetExtrusionHandle.h"
+
+#include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Objects/Cabinet.h"
-#include "Objects/ModumateObjectInstance.h"
+#include "ToolsAndAdjustments/Handles/CabinetFrontFaceHandle.h"
 #include "UI/AdjustmentHandleAssetData.h"
-#include "UI/DimensionManager.h"
 #include "UI/DimensionActor.h"
+#include "UI/DimensionManager.h"
+#include "UI/EditModelPlayerHUD.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
-bool AAdjustPolyExtrusionHandle::BeginUse()
+
+bool ACabinetExtrusionHandle::BeginUse()
 {
-	UE_LOG(LogCallTrace, Display, TEXT("AAdjustPolyExtrusionHandle::OnBeginUse"));
+	UE_LOG(LogCallTrace, Display, TEXT("ACabinetExtrusionHandle::OnBeginUse"));
 
 	if (!Super::BeginUse())
 	{
 		return false;
 	}
 
-	if (!TargetMOI || (TargetMOI->GetObjectType() != EObjectType::OTCabinet && TargetMOI->GetObjectType() != EObjectType::OTScopeBox))
+	if (!TargetMOI || (TargetMOI->GetObjectType() != EObjectType::OTCabinet))
 	{
-		UE_LOG(LogCallTrace, Error, TEXT("AdjustPolyExtrusionHandle only currently supported for Cabinets!"));
+		UE_LOG(LogCallTrace, Error, TEXT("ACabinetExtrusionHandle only currently supported for Cabinets!"));
 		return false;
 	}
 
@@ -31,7 +36,6 @@ bool AAdjustPolyExtrusionHandle::BeginUse()
 		return false;
 	}
 
-	// TODO: generalize extrusion for objects besides cabinets once ScopeBox is back online
 	FMOICabinetData cabinetData;
 	if (!TargetOriginalState.CustomData.LoadStructData(cabinetData))
 	{
@@ -47,7 +51,7 @@ bool AAdjustPolyExtrusionHandle::BeginUse()
 	return true;
 }
 
-bool AAdjustPolyExtrusionHandle::UpdateUse()
+bool ACabinetExtrusionHandle::UpdateUse()
 {
 	Super::UpdateUse();
 
@@ -58,20 +62,20 @@ bool AAdjustPolyExtrusionHandle::UpdateUse()
 
 	switch (Controller->EMPlayerState->SnappedCursor.SnapType)
 	{
-	case ESnapType::CT_CORNERSNAP:
-	case ESnapType::CT_MIDSNAP:
-	case ESnapType::CT_EDGESNAP:
-	case ESnapType::CT_FACESELECT:
-		snapStructural = true;
-		extrusionDelta = (hitPoint.Z - AnchorLoc.Z) * Sign;
-		break;
-	default:
+	case ESnapType::CT_NOSNAP:
+	{
 		FVector projectedDeltaPos;
 		snapCursor = Controller->EMPlayerState->GetSnapCursorDeltaFromRay(AnchorLoc, OriginalPlane, projectedDeltaPos);
 		if (snapCursor)
 		{
 			extrusionDelta = (projectedDeltaPos - AnchorLoc) | (Sign * OriginalPlane);
 		}
+	}
+	break;
+	default:
+		snapStructural = true;
+		extrusionDelta = (hitPoint - AnchorLoc) | FVector(OriginalPlane);
+		break;
 	}
 
 	// project pending segment onto extrusion vector
@@ -89,7 +93,7 @@ bool AAdjustPolyExtrusionHandle::UpdateUse()
 
 	if (snapCursor || snapStructural)
 	{
-		if ((newExtrusion > 0.0f) && (newExtrusion != LastValidExtrusion))
+		if (newExtrusion > 0.0f)
 		{
 			LastValidExtrusion = newExtrusion;
 			ApplyExtrusion(true);
@@ -99,7 +103,7 @@ bool AAdjustPolyExtrusionHandle::UpdateUse()
 	return true;
 }
 
-void AAdjustPolyExtrusionHandle::EndUse()
+void ACabinetExtrusionHandle::EndUse()
 {
 	ApplyExtrusion(false);
 
@@ -109,12 +113,13 @@ void AAdjustPolyExtrusionHandle::EndUse()
 	}
 }
 
-FVector AAdjustPolyExtrusionHandle::GetHandlePosition() const
+FVector ACabinetExtrusionHandle::GetHandlePosition() const
 {
-	// TODO: generalize extrusion for objects besides cabinets once ScopeBox is back online
+	// this is assuming that GetNumCorners only counts the base points
+	int32 numBasePoints = TargetMOI->GetNumCorners();
+
 	FMOICabinetData cabinetData;
-	int32 numCorners = TargetMOI->GetNumCorners();
-	if (!ensure((numCorners > 0) && TargetMOI->GetStateData().CustomData.LoadStructData(cabinetData)))
+	if (!ensure((numBasePoints > 0) && TargetMOI->GetStateData().CustomData.LoadStructData(cabinetData)))
 	{
 		return TargetMOI->GetObjectLocation();
 	}
@@ -122,26 +127,27 @@ FVector AAdjustPolyExtrusionHandle::GetHandlePosition() const
 	FVector objectNormal = TargetMOI->GetNormal();
 	FVector offset = (Sign > 0.0f) ? (cabinetData.ExtrusionDist * objectNormal) : FVector::ZeroVector;
 
-	// this is assuming that the target object is a prism and GetCorner enumerates the base points first
-	int32 numBasePoints = numCorners / 2.0f;
-
 	FVector centroid = FVector::ZeroVector;
 	for (int32 cornerIdx = 0; cornerIdx < numBasePoints; cornerIdx++)
 	{
 		centroid += TargetMOI->GetCorner(cornerIdx);
 	}
-	
 	centroid /= numBasePoints;
 
-	return offset + centroid;
+	FVector baseAxisX, baseAxisY;
+	UModumateGeometryStatics::FindBasisVectors(baseAxisX, baseAxisY, objectNormal);
+
+	FVector centerOffset = -ACabinetFrontFaceHandle::BaseCenterOffset * baseAxisY;
+
+	return offset + centroid + centerOffset;
 }
 
-FVector AAdjustPolyExtrusionHandle::GetHandleDirection() const
+FVector ACabinetExtrusionHandle::GetHandleDirection() const
 {
 	return ensure(TargetMOI) ? Sign * TargetMOI->GetNormal() : FVector::ZeroVector;
 }
 
-bool AAdjustPolyExtrusionHandle::HandleInputNumber(float number)
+bool ACabinetExtrusionHandle::HandleInputNumber(float number)
 {
 	float dir = FMath::Sign(LastValidExtrusion - OriginalExtrusion);
 	LastValidExtrusion = OriginalExtrusion + number * dir;
@@ -150,11 +156,10 @@ bool AAdjustPolyExtrusionHandle::HandleInputNumber(float number)
 	return true;
 }
 
-void AAdjustPolyExtrusionHandle::ApplyExtrusion(bool bIsPreview)
+void ACabinetExtrusionHandle::ApplyExtrusion(bool bIsPreview)
 {
 	auto delta = MakeShared<FMOIDelta>();
 
-	// TODO: generalize extrusion for objects besides cabinets once ScopeBox is back online
 	FMOIStateData targetModifiedState = TargetOriginalState;
 	FMOICabinetData modifiedCabinetData;
 	if (ensure(targetModifiedState.CustomData.LoadStructData(modifiedCabinetData)))
@@ -175,7 +180,7 @@ void AAdjustPolyExtrusionHandle::ApplyExtrusion(bool bIsPreview)
 	}
 }
 
-bool AAdjustPolyExtrusionHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
+bool ACabinetExtrusionHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D& OutWidgetSize, FVector2D& OutMainButtonOffset) const
 {
 	OutButtonStyle = PlayerHUD->HandleAssets->GenericArrowStyle;
 	OutWidgetSize = FVector2D(16.0f, 16.0f);

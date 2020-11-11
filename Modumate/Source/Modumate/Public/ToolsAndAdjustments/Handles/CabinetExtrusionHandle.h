@@ -4,9 +4,11 @@
 
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 
-#include "AdjustPolyExtrusionHandle.generated.h"
+#include "CabinetExtrusionHandle.generated.h"
+
+
 UCLASS()
-class MODUMATE_API AAdjustPolyExtrusionHandle : public AAdjustmentHandleActor
+class MODUMATE_API ACabinetExtrusionHandle : public AAdjustmentHandleActor
 {
 	GENERATED_BODY()
 
@@ -27,4 +29,3 @@ protected:
 	float OriginalExtrusion;
 	float LastValidExtrusion;
 };
-

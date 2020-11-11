@@ -11,7 +11,8 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyExtrusionHandle.h"
+#include "ToolsAndAdjustments/Handles/CabinetExtrusionHandle.h"
+#include "ToolsAndAdjustments/Handles/CabinetFrontFaceHandle.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -25,6 +26,7 @@ FMOICabinetImpl::FMOICabinetImpl(FModumateObjectInstance *moi)
 	, AdjustmentHandlesVisible(false)
 	, CachedExtrusionDelta(ForceInitToZero)
 	, bCurrentFaceValid(false)
+	, bBaseIsRectangular(false)
 {
 }
 
@@ -161,6 +163,42 @@ bool FMOICabinetImpl::GetInvertedState(FMOIStateData& OutState) const
 	return OutState.CustomData.SaveStructData(modifiedCabinetData);
 }
 
+void FMOICabinetImpl::RectangleCheck(const TArray<FVector>& Points, bool& bOutIsRectangular, FVector& OutMostVerticalDir)
+{
+	bOutIsRectangular = false;
+	OutMostVerticalDir = FVector::ZeroVector;
+
+	// Quadrilateral check
+	int32 numPoints = Points.Num();
+	if (numPoints != 4)
+	{
+		return;
+	}
+
+	for (int32 pointIdx = 0; pointIdx < 4; ++pointIdx)
+	{
+		const FVector& edgeStartPoint = Points[pointIdx];
+		const FVector& edgeEndPoint = Points[(pointIdx + 1) % numPoints];
+		const FVector& edgePrevPoint = Points[(pointIdx - 1 + numPoints) % numPoints];
+		FVector edgeCurDir = (edgeEndPoint - edgeStartPoint).GetSafeNormal();
+		FVector edgePrevDir = (edgeStartPoint - edgePrevPoint).GetSafeNormal();
+
+		// Angle check
+		if (!FVector::Orthogonal(edgeCurDir, edgePrevDir))
+		{
+			return;
+		}
+
+		// Find the most vertical edge for the up-axis of the rectangle
+		if (OutMostVerticalDir.IsNearlyZero() || (FMath::Abs(edgeCurDir.Z) > FMath::Abs(OutMostVerticalDir.Z)))
+		{
+			OutMostVerticalDir = edgeCurDir;
+		}
+	}
+
+	bOutIsRectangular = true;
+}
+
 bool FMOICabinetImpl::GetFaceGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, int32 FaceIndex,
 	TArray<FVector>& OutFacePoints, FTransform& OutFaceTransform)
 {
@@ -207,34 +245,17 @@ bool FMOICabinetImpl::GetFaceGeometry(const TArray<FVector>& BasePoints, const F
 	{
 		faceNormal = extrusionDir;
 
-		// Quadrilateral check
-		if (numBasePoints != 4)
+		bool bIsRectangular;
+		RectangleCheck(BasePoints, bIsRectangular, faceUp);
+		if (!bIsRectangular)
 		{
 			return false;
 		}
 
-		for (int32 basePointIdx = 0; basePointIdx < 4; ++basePointIdx)
+		for (const FVector& basePoint : BasePoints)
 		{
-			const FVector& baseEdgeStartPoint = BasePoints[basePointIdx];
-			const FVector& baseEdgeEndPoint = BasePoints[(basePointIdx + 1) % numBasePoints];
-			const FVector& baseEdgePrevPoint = BasePoints[(basePointIdx - 1 + numBasePoints) % numBasePoints];
-			FVector baseEdgeCurDir = (baseEdgeEndPoint - baseEdgeStartPoint).GetSafeNormal();
-			FVector baseEdgePrevDir = (baseEdgeStartPoint - baseEdgePrevPoint).GetSafeNormal();
-
-			// Rectangle check
-			if (!FVector::Orthogonal(baseEdgeCurDir, baseEdgePrevDir))
-			{
-				return false;
-			}
-
-			// Find the most vertical edge for the up-axis of the face
-			if (faceUp.IsNearlyZero() || (FMath::Abs(baseEdgeCurDir.Z) > FMath::Abs(faceUp.Z)))
-			{
-				faceUp = baseEdgeCurDir;
-			}
-
 			// Use the extruded point for the face point
-			OutFacePoints.Add(baseEdgeStartPoint + ExtrusionDelta);
+			OutFacePoints.Add(basePoint + ExtrusionDelta);
 		}
 	}
 
@@ -295,19 +316,15 @@ bool FMOICabinetImpl::UpdateCabinetActors(const FBIMAssemblySpec& Assembly, cons
 	FTransform faceTransform;
 	bOutFaceValid = (FrontFaceIndex != INDEX_NONE) && FMOICabinetImpl::GetFaceGeometry(basePoints, extrusionDelta, FrontFaceIndex, facePoints, faceTransform);
 
-	if (!bOutFaceValid)
-	{
-		CabinetFaceActor->SetActorHiddenInGame(true);
-		CabinetFaceActor->SetActorEnableCollision(false);
-	}
-	else
-	{
-		FVector faceOrigin = faceTransform.GetLocation();
-		FQuat faceRot = faceTransform.GetRotation();
-		FVector faceNormal = faceRot.GetAxisY();
-		FVector faceUp = faceRot.GetAxisZ();
-		FVector faceScale3D = faceTransform.GetScale3D();
+	FVector faceOrigin = faceTransform.GetLocation();
+	FQuat faceRot = faceTransform.GetRotation();
+	FVector faceNormal = faceRot.GetAxisY();
+	FVector faceUp = faceRot.GetAxisZ();
+	FVector faceScale3D = faceTransform.GetScale3D();
+	FVector portalOrigin(ForceInitToZero);
 
+	if (bOutFaceValid)
+	{
 		// If the front face is on one of the extruded sides, then potentially re-orient the base points and front index if the face's bottom isn't along the base
 		// (i.e. a vertical-wall-mounted cabinet, flush with the floor, whose front face is assigned to one of the vertical sides with a toe kick)
 		if (FrontFaceIndex < numBasePoints)
@@ -413,14 +430,28 @@ bool FMOICabinetImpl::UpdateCabinetActors(const FBIMAssemblySpec& Assembly, cons
 		// Position the portal where it's supposed to go, now that toe kick and face inset have been calculated
 		FVector toeKickOffset = toeKickDimensions.Y * faceUp;
 		FVector insetDelta = -faceInsetDist * faceNormal;
-		FVector portalOrigin = toeKickOffset + faceOrigin + insetDelta;
-
-		CabinetFaceActor->SetActorLocationAndRotation(portalOrigin, faceRot);
+		portalOrigin = toeKickOffset + faceOrigin + insetDelta;
+	}
+	else
+	{
+		FrontFaceIndex = INDEX_NONE;
 	}
 
+	// Set up the cabinet box geometry, which will recenter the actor around its base points
 	auto& extrusion = extrusions[0];
 	CabinetBoxActor->SetupCabinetGeometry(basePoints, extrusionDelta, extrusion.Material, bUpdateCollision, bEnableCollision,
 		toeKickDimensions, faceInsetDist, FrontFaceIndex);
+
+	// Then, either position the newly-set up cabinet face actor, or hide it if it's disabled, since it's attached to the cabinet box actor.
+	if (bOutFaceValid)
+	{
+		CabinetFaceActor->SetActorLocationAndRotation(portalOrigin, faceRot);
+	}
+	else
+	{
+		CabinetFaceActor->SetActorHiddenInGame(true);
+		CabinetFaceActor->SetActorEnableCollision(false);
+	}
 
 	return true;
 }
@@ -439,6 +470,9 @@ bool FMOICabinetImpl::UpdateCachedGeometryData()
 			CachedBasePoints.Add(parentObj->GetCorner(cornerIdx));
 		}
 
+		FVector mostVerticalEdge;
+		RectangleCheck(CachedBasePoints, bBaseIsRectangular, mostVerticalEdge);
+
 		CachedExtrusionDelta = InstanceData.ExtrusionDist * GetNormal();
 
 		return true;
@@ -452,13 +486,13 @@ void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *con
 	int32 numBasePoints = CachedBasePoints.Num();
 	for (int32 i = 0; i <= numBasePoints; ++i)
 	{
-		auto selectFrontHandle = MOI->MakeHandle<ASelectCabinetFrontHandle>();
+		auto selectFrontHandle = MOI->MakeHandle<ACabinetFrontFaceHandle>();
 		selectFrontHandle->SetTargetIndex(i);
 
 		FrontSelectionHandles.Add(selectFrontHandle);
 	}
 
-	auto topExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
+	auto topExtrusionHandle = MOI->MakeHandle<ACabinetExtrusionHandle>();
 	topExtrusionHandle->SetSign(1.0f);
 
 	// parent handles
@@ -493,96 +527,19 @@ void FMOICabinetImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Cont
 	{
 		if (frontHandle.IsValid())
 		{
-			bool bHandleEnabled = bShow && ((InstanceData.FrontFaceIndex == INDEX_NONE) || (InstanceData.FrontFaceIndex == frontHandle->TargetIndex));
+			// Show a handle if requested, and:
+			// - either a front hasn't been set or the handle is the front, and
+			// - either the handle targets the side of the cabinet, or the top of the cabinet is rectangular
+			bool bHandleEnabled = bShow &&
+				((InstanceData.FrontFaceIndex == INDEX_NONE) || (InstanceData.FrontFaceIndex == frontHandle->TargetIndex)) &&
+				((frontHandle->TargetIndex != CachedBasePoints.Num()) || bBaseIsRectangular);
+
 			frontHandle->SetEnabled(bHandleEnabled);
 		}
 	}
 }
 
 using namespace Modumate;
-
-const float ASelectCabinetFrontHandle::FaceCenterHeightOffset = 20.0f;
-const float ASelectCabinetFrontHandle::BaseCenterOffset = 10.0f;
-
-bool ASelectCabinetFrontHandle::BeginUse()
-{
-	if (!ensure(TargetMOI))
-	{
-		return false;
-	}
-
-	auto delta = MakeShared<FMOIDelta>();
-	auto& modifiedStateData = delta->AddMutationState(TargetMOI);
-
-	FMOICabinetData modifiedCustomData;
-	if (ensure(modifiedStateData.CustomData.LoadStructData(modifiedCustomData)))
-	{
-		if (modifiedCustomData.FrontFaceIndex == TargetIndex)
-		{
-			modifiedCustomData.FrontFaceIndex = INDEX_NONE;
-		}
-		else
-		{
-			modifiedCustomData.FrontFaceIndex = TargetIndex;
-		}
-
-		modifiedStateData.CustomData.SaveStructData(modifiedCustomData);
-		GameState->Document.ApplyDeltas({ delta }, GetWorld());
-	}
-
-	return false;
-}
-
-FVector ASelectCabinetFrontHandle::GetHandlePosition() const
-{
-	const FModumateObjectInstance* cabinetParent = TargetMOI ? TargetMOI->GetParentObject() : nullptr;
-	if (!ensure(cabinetParent && (cabinetParent->GetObjectType() == EObjectType::OTSurfacePolygon) && (TargetIndex != INDEX_NONE)))
-	{
-		return FVector::ZeroVector;
-	}
-
-	int32 numBasePoints = cabinetParent->GetNumCorners();
-	if ((numBasePoints == 0) || TargetIndex > numBasePoints)
-	{
-		return FVector::ZeroVector;
-	}
-
-	FVector extrusionDir = TargetMOI->GetNormal();
-	FVector extrusionDelta(ForceInitToZero);
-	FMOICabinetData cabinetInstanceData;
-	if (TargetMOI->GetStateData().CustomData.LoadStructData(cabinetInstanceData))
-	{
-		extrusionDelta = ((0.5f * cabinetInstanceData.ExtrusionDist) + FaceCenterHeightOffset) * extrusionDir;
-	}
-
-	if (TargetIndex < numBasePoints)
-	{
-		FVector edgeCenter = 0.5f * (cabinetParent->GetCorner(TargetIndex) + cabinetParent->GetCorner((TargetIndex + 1) % numBasePoints));
-		return edgeCenter + extrusionDelta;
-	}
-	else
-	{
-		FVector baseCenter(ForceInitToZero);
-		for (int32 cornerIdx = 0; cornerIdx < numBasePoints; ++cornerIdx)
-		{
-			baseCenter += cabinetParent->GetCorner(cornerIdx);
-		}
-		baseCenter /= numBasePoints;
-
-		FVector baseAxisX, baseAxisY;
-		UModumateGeometryStatics::FindBasisVectors(baseAxisX, baseAxisY, extrusionDir);
-
-		FVector centerOffset = BaseCenterOffset * baseAxisY;
-
-		return baseCenter + extrusionDelta + centerOffset;
-	}
-}
-
-bool ASelectCabinetFrontHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
-{
-	OutButtonStyle = PlayerHUD->HandleAssets->CabinetFrontFaceStyle;
-	return true;
-}
 
 void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane,
 	const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
@@ -595,6 +552,7 @@ void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &Par
 
 	const ADynamicMeshActor * actor = DynamicMeshActor.Get();
 	const TArray<FLayerGeomDef>& LayerGeometries = actor->LayerGeometries;
+	const FVector actorOrigin = actor->GetActorLocation();
 
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
@@ -610,8 +568,8 @@ void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &Par
 			int32 numPoints = layerPoints.Num();
 			for (int32 point = 0; point < numPoints; ++point)
 			{
-				FVector vertex1 = layerPoints[point];
-				FVector vertex2 = layerPoints[(point + 1) % numPoints];
+				FVector vertex1 = actorOrigin + layerPoints[point];
+				FVector vertex2 = actorOrigin + layerPoints[(point + 1) % numPoints];
 
 				FVector intersection;
 				if (FMath::SegmentPlaneIntersection(vertex1, vertex2, Plane, intersection))
@@ -673,9 +631,9 @@ void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &Par
 			int32 numPoints = layer.PointsA.Num();
 			for (int point = 0; point < numPoints; ++point)
 			{
-				cabinetEdges.Emplace(layer.PointsA[point], layer.PointsA[(point + 1) % numPoints]);
-				cabinetEdges.Emplace(layer.PointsB[point], layer.PointsB[(point + 1) % numPoints]);
-				cabinetEdges.Emplace(layer.PointsA[point], layer.PointsB[point]);
+				cabinetEdges.Emplace(actorOrigin + layer.PointsA[point], actorOrigin + layer.PointsA[(point + 1) % numPoints]);
+				cabinetEdges.Emplace(actorOrigin + layer.PointsB[point], actorOrigin + layer.PointsB[(point + 1) % numPoints]);
+				cabinetEdges.Emplace(actorOrigin + layer.PointsA[point], actorOrigin + layer.PointsB[point]);
 			}
 		}
 

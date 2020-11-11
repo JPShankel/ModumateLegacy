@@ -3,7 +3,6 @@
 #include "Objects/ScopeBox.h"
 
 #include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyExtrusionHandle.h"
 #include "UI/HUDDrawWidget.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -148,9 +147,5 @@ void FMOIScopeBoxImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *co
 		edgeHandle->SetAdjustPolyEdge(true);
 	}
 
-	auto topExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
-	topExtrusionHandle->SetSign(1.0f);
-
-	auto bottomExtrusionHandle = MOI->MakeHandle<AAdjustPolyExtrusionHandle>();
-	bottomExtrusionHandle->SetSign(-1.0f);
+	// TODO: rewrite extrusion handles specifically for scope boxes
 }

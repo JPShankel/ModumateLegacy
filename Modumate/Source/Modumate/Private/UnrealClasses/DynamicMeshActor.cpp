@@ -387,7 +387,7 @@ void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector>& BasePoints, 
 	int32 numPoints = BasePoints.Num();
 	float extrusionDist = ExtrusionDelta.Size();
 
-	if (!ensure((numPoints >= 3) && !FMath::IsNearlyZero(extrusionDist)))
+	if (!ensure((numPoints >= 3) && !FMath::IsNearlyZero(extrusionDist) && FrontIdxStart < numPoints))
 	{
 		return;
 	}
@@ -401,12 +401,19 @@ void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector>& BasePoints, 
 		return;
 	}
 	FVector planeNormal = FMath::Sign(extrusionNormal | basePlane) * extrusionNormal;
+	FVector centroid = Algo::Accumulate(BasePoints, FVector::ZeroVector) / numPoints;
 
 	LayerGeometries.Reset();
-	SetActorLocation(FVector::ZeroVector);
+	SetActorLocation(centroid);
 	SetActorRotation(FQuat::Identity);
 
-	TArray<FVector> upperBoxBottomPoints(BasePoints);
+	TArray<FVector> recenteredBasePoints;
+	for (const FVector& basePoint : BasePoints)
+	{
+		recenteredBasePoints.Add(basePoint - centroid);
+	}
+
+	TArray<FVector> upperBoxBottomPoints(recenteredBasePoints);
 	float upperBoxHeight = extrusionDist;
 
 	// If there's a front face, then we may need to:
@@ -429,7 +436,7 @@ void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector>& BasePoints, 
 
 		if ((ToeKickDimensions.X > 0.0f) && (ToeKickDimensions.Y > 0.0f) && (ToeKickDimensions.Y < extrusionDist))
 		{
-			TArray<FVector> lowerBoxBottomPoints(BasePoints);
+			TArray<FVector> lowerBoxBottomPoints(recenteredBasePoints);
 			if (UModumateGeometryStatics::TranslatePolygonEdge(lowerBoxBottomPoints, planeNormal, FrontIdxStart, -ToeKickDimensions.X,
 				lowerBoxBottomPoints[FrontIdxStart], lowerBoxBottomPoints[frontIdxEnd]))
 			{

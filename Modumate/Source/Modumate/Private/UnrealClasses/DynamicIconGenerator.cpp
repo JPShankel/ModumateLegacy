@@ -77,10 +77,14 @@ void ADynamicIconGenerator::BeginPlay()
 	GameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
 	Controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
 
-	IconDynamicMeshActor = GetWorld()->SpawnActor<ADynamicMeshActor>(Gamemode->DynamicMeshActorClass.Get());
+	FActorSpawnParameters dynamicMeshSpawnParams;
+	dynamicMeshSpawnParams.Name = FName(TEXT("IconDynamicMeshActor"));
+	IconDynamicMeshActor = GetWorld()->SpawnActor<ADynamicMeshActor>(Gamemode->DynamicMeshActorClass.Get(), dynamicMeshSpawnParams);
 	IconDynamicMeshActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
 
-	IconCompoundMeshActor = GetWorld()->SpawnActor<ACompoundMeshActor>();
+	FActorSpawnParameters compoundMeshSpawnParams;
+	compoundMeshSpawnParams.Name = FName(TEXT("IconCompoundMeshActor"));
+	IconCompoundMeshActor = GetWorld()->SpawnActor<ACompoundMeshActor>(compoundMeshSpawnParams);
 	IconCompoundMeshActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
 
 	DynCustomMaterial = IconSphereMesh->CreateDynamicMaterialInstance(0, CustomMaterialBase);
@@ -449,44 +453,43 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 	Units::FUnitValue cabinetHeightUnit(CabinetDimension.Z, Units::EUnitType::WorldInches);
 	Units::FUnitValue cabinetDepthUnit(CabinetDimension.Y, Units::EUnitType::WorldInches);
 
-
 	float cabinetWidth = cabinetWidthUnit.AsWorldCentimeters();
 	float cabinetHeight = cabinetHeightUnit.AsWorldCentimeters();
 	float cabinetDepth = cabinetDepthUnit.AsWorldCentimeters();
+	FVector cabinetExtents(cabinetWidth, cabinetDepth, cabinetHeight);
 
 	// Make the cabinet base + box geometry
+	FVector captureOrigin = GetActorLocation();
 	TArray<FVector> cabinetBasePoints = {
-		FVector::ZeroVector,
-		FVector(cabinetWidth, 0.0f, 0.0f),
-		FVector(cabinetWidth, cabinetDepth, 0.0f),
-		FVector(0.0f, cabinetDepth, 0.0f),
+		captureOrigin + 0.5f * FVector(-cabinetExtents.X, -cabinetExtents.Y, -cabinetExtents.Z),
+		captureOrigin + 0.5f * FVector(cabinetExtents.X, -cabinetExtents.Y, -cabinetExtents.Z),
+		captureOrigin + 0.5f * FVector(cabinetExtents.X, cabinetExtents.Y, -cabinetExtents.Z),
+		captureOrigin + 0.5f * FVector(-cabinetExtents.X, cabinetExtents.Y, -cabinetExtents.Z),
 	};
 	FVector extrusionDelta = cabinetHeight * FVector::UpVector;
 
-	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
-	// Scale IconDynamicMeshActor to fit
-	FVector meshExtent;
-	FVector meshOrigin;
-	IconDynamicMeshActor->GetActorBounds(false, meshOrigin, meshExtent);
-	FVector meshSize = ((CabinetIconScaleFactor / meshExtent.Size()) * FVector::OneVector);
-	FVector meshLocation = FVector(cabinetWidth, cabinetDepth, cabinetHeight) * meshSize * -0.5f;
-	IconDynamicMeshActor->SetActorRelativeLocation(meshLocation);
-	IconDynamicMeshActor->SetActorRelativeScale3D(meshSize);
+	// Step 2: Update the actors to show the current cabinet assembly
+	bool bFaceValid;
+	FMOICabinetImpl::UpdateCabinetActors(Assembly, cabinetBasePoints, extrusionDelta, 2, false, false, false, IconDynamicMeshActor, IconCompoundMeshActor, bFaceValid);
 
-	// Scale IconCompoundMeshActor to fit
-	// The portal mesh should be offset same width as cabinet mesh, but it front of it
-	FVector portalLocation = FVector(cabinetWidth, cabinetDepth, cabinetHeight) * meshSize * FVector(-0.5f, 1.f, 0.f);
-	IconCompoundMeshActor->SetActorRelativeLocation(portalLocation);
-	IconCompoundMeshActor->SetActorRelativeScale3D(meshSize);
+	// Step 3: Position the spring arm in order to capture the cabinet
+	FVector oldSpringArmRelPos = SpringArm->GetRelativeLocation();
+	FVector captureForward = SceneCaptureComp->GetForwardVector();
+	FVector cabinetBoxOrigin, cabinetBoxExtents;
+	IconDynamicMeshActor->GetActorBounds(false, cabinetBoxOrigin, cabinetBoxExtents);
+	float springArmCaptureDist = (cabinetBoxExtents.Size() + CabinetIconSizePadding) / FMath::Tan(FMath::DegreesToRadians(SceneCaptureComp->FOVAngle));
+	SpringArm->SetWorldLocation(cabinetBoxOrigin - (springArmCaptureDist * captureForward));
 
 	// Set bound render to prevent mesh from being occluded by front mesh
 	SetIconCompoundMeshActorForCapture(true);
 	SetIconDynamicMeshLayersForCapture(true);
 
+	// Step 4: Capture!
 	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
-	// Step 3: Cleanup
+	// Step 5: Cleanup
+	SpringArm->SetRelativeLocation(oldSpringArmRelPos);
 	IconCompoundMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
 	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
 	IconCompoundMeshActor->SetActorScale3D(FVector::OneVector);
