@@ -35,7 +35,7 @@ AssemblyPanel
 Panel
 0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
-0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-HandleLowerFixedXZ
 HandleStatic
 0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
@@ -63,7 +63,7 @@ AssemblyPanel
 Panel
 0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
-0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-HandleLowerFixedXZ
 HandleStatic
 0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
@@ -93,7 +93,7 @@ AssemblyPanel
 Panel
 0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
-0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-HandleLowerFixedXZ
 HandleStatic
 0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze
@@ -122,7 +122,7 @@ AssemblyPanel
 Panel
 0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'
 1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
-0Slot-HandleXMidStileYOutsideZMidBottomRail
+0Slot-HandleLowerFixedXZ
 HandleStatic
 0Mesh-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'
 1Material --> Metal --> Aluminum-0RawMaterial-Aluminum-0Color --> Metal --> Aluminum-331F20-PatricianBronze",1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural

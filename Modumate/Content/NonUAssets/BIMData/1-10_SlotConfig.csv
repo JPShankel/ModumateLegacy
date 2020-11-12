@@ -75,14 +75,14 @@ PRESET,,,,,,,,,0Slot-SurfaceLockUpper,,,,,,,,
 PRESET,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-TrackBarnSingle
-0Slot-AssemblyPanelBarn1of1",,1SlotConfig --> Frame,,Barn (Single),Self.Frame.NativeSizeY+Self.Track.RailDistanceY+(1/2)*Self.AssemblyPanel.Panel.NativeSizeY,,0Slot-Frame,,,,X,X,X,,
+0Slot-AssemblyPanelBarn1of1",,1SlotConfig --> Frame,,Barn (Single),Self.Frame.NativeSizeY+Self.TrackBarn.RailDistanceY+(1/2)*Self.AssemblyPanel.Panel.NativeSizeY,,0Slot-Frame,,,,X,X,X,,
 PRESET,,,,,,,,,0Slot-TrackBarnSingle,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelBarn1of1,,,,,,,,
 PRESET,,"1SlotConfig --> Frame
 0Slot-Frame
 0Slot-TrackBarnDouble
 0Slot-AssemblyPanelBarnLeft
-0Slot-AssemblyPanelBarnRight",,1SlotConfig --> Frame,,Barn (Double),Self.Frame.NativeSizeY+Self.Track.RailDistanceY+(1/2)*Self.AssemblyPanel.Panel.NativeSizeY,,0Slot-Frame,,,,X,X,X,,
+0Slot-AssemblyPanelBarnRight",,1SlotConfig --> Frame,,Barn (Double),Self.Frame.NativeSizeY+Self.TrackBarn.RailDistanceY+(1/2)*Self.AssemblyPanel.Panel.NativeSizeY,,0Slot-Frame,,,,X,X,X,,
 PRESET,,,,,,,,,0Slot-TrackBarnDouble,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelBarnLeft,,,,,,,,
 PRESET,,,,,,,,,0Slot-AssemblyPanelBarnRight,,,,,,,,
@@ -224,4 +224,3 @@ PRESET,,,,,,,,,0Slot-ChairAtTable1+2+1+2-3,,,,,,,,
 PRESET,,,,,,,,,0Slot-ChairAtTable1+2+1+2-4,,,,,,,,
 PRESET,,,,,,,,,0Slot-ChairAtTable1+2+1+2-5,,,,,,,,
 PRESET,,,,,,,,,0Slot-ChairAtTable1+2+1+2-6,,,,,,,,
-,,,,,,,,,,,,,,,,,
