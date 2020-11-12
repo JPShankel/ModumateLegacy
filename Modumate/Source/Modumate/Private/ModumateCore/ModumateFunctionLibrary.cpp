@@ -139,6 +139,10 @@ FVector UModumateFunctionLibrary::GetWorldComponentToScreenSizeScale(UStaticMesh
 	float fovD = UKismetMathLibrary::DegSin(cameraActor->GetFOVAngle());
 	float distance = FVector::Dist(cameraActor->GetCameraLocation(), Target->GetComponentLocation());
 	float relativeScreenSize = FMath::Clamp(50.0f / (distance * fovD), 0.0f, 1.0f);
+	if (relativeScreenSize < KINDA_SMALL_NUMBER)
+	{
+		return FVector::ZeroVector;
+	}
 
 	float rFOV = FMath::DegreesToRadians(cameraActor->GetFOVAngle());
 	float fovScale = 2 * FMath::Tan(rFOV / 2.f);
@@ -146,27 +150,45 @@ FVector UModumateFunctionLibrary::GetWorldComponentToScreenSizeScale(UStaticMesh
 	return (DesiredScreenSize / relativeScreenSize) * fovScale;
 }
 
-void UModumateFunctionLibrary::ComponentAsBillboard(UStaticMeshComponent * Target, FVector DesiredScreenSize)
+bool UModumateFunctionLibrary::ComponentAsBillboard(UStaticMeshComponent * Target, FVector DesiredScreenSize)
 {
-	Target->SetWorldScale3D(GetWorldComponentToScreenSizeScale(Target, DesiredScreenSize));
+	FVector worldScale = GetWorldComponentToScreenSizeScale(Target, DesiredScreenSize);
+
+	constexpr float maxValidScale = 10000.0f;
+	if (worldScale.IsNearlyZero() || (worldScale.Size() > maxValidScale))
+	{
+		return false;
+	}
+
+	Target->SetWorldScale3D(worldScale);
 	FRotator camRot = UGameplayStatics::GetPlayerCameraManager(Target, 0)->GetCameraRotation();
 	FTransform transformRot = FTransform(camRot, FVector::ZeroVector, FVector::OneVector);
 	FRotator newRot = UKismetMathLibrary::TransformRotation(transformRot, FRotator(90.0, 0.0, 0.0));
 	Target->SetWorldRotation(newRot);
+	return true;
 }
 
-void UModumateFunctionLibrary::ComponentToUIScreenPosition(UStaticMeshComponent * Target, FVector WorldLocation, FVector ScreenOffset)
+bool UModumateFunctionLibrary::ComponentToUIScreenPosition(UStaticMeshComponent * Target, FVector WorldLocation, FVector ScreenOffset)
 {
 	APlayerController* playerController = UGameplayStatics::GetPlayerController(Target, 0);
 	FVector2D screenLocation;
 	playerController->ProjectWorldLocationToScreen(WorldLocation, screenLocation, false);
+	if (!playerController->ProjectWorldLocationToScreen(WorldLocation, screenLocation, false))
+	{
+		return false;
+	}
 
 	screenLocation = screenLocation + FVector2D(ScreenOffset.X, ScreenOffset.Y * -1);
 	FVector convertWorldLocation, convertWorldDirection;
-	playerController->DeprojectScreenPositionToWorld(screenLocation.X, screenLocation.Y, convertWorldLocation, convertWorldDirection);
+	if (!playerController->DeprojectScreenPositionToWorld(screenLocation.X, screenLocation.Y, convertWorldLocation, convertWorldDirection))
+	{
+		return false;
+	}
+
 	float distanceFromCamera = 1.0f;
 	FVector newLocation = convertWorldLocation + convertWorldDirection * distanceFromCamera;
 	Target->SetWorldLocation(newLocation, false, 0, ETeleportType::None);
+	return true;
 }
 
 // Reimplemented in 2D based on FMath::LineBoxIntersection in 3D

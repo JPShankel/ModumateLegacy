@@ -90,12 +90,18 @@ void AVertexActor::UpdateVisuals()
 	FVector dirToCamera = (CameraLocation - MoiLocation).GetSafeNormal();
 	static float occlusionEpsilon = 0.1f;
 	FVector occlusionTraceStart = MoiLocation + (occlusionEpsilon * dirToCamera);
-	bool bVertexOccluded = Controller->LineTraceSingleAgainstMOIs(hitResult, occlusionTraceStart, CameraLocation);
-	MeshComp->SetVisibility(!bVertexOccluded);
+	static float cameraBehindDist = 1000.0f;
+	FVector occlusionTraceEnd = CameraLocation + (dirToCamera * cameraBehindDist);
 
-	if (!bVertexOccluded)
+	bool bVertexOccluded = Controller->LineTraceSingleAgainstMOIs(hitResult, occlusionTraceStart, occlusionTraceEnd);
+	bool bValidVertex = !bVertexOccluded;
+	if (bValidVertex)
 	{
-		UModumateFunctionLibrary::ComponentToUIScreenPosition(MeshComp, MoiLocation, FVector::ZeroVector);
-		UModumateFunctionLibrary::ComponentAsBillboard(MeshComp, FVector(HandleScreenSize));
+		bool bValidScreenPosition = UModumateFunctionLibrary::ComponentToUIScreenPosition(MeshComp, MoiLocation, FVector::ZeroVector);
+		bool bValidBillboardRot = UModumateFunctionLibrary::ComponentAsBillboard(MeshComp, FVector(HandleScreenSize));
+		bValidVertex = bValidScreenPosition && bValidBillboardRot;
 	}
+
+	MeshComp->SetVisibility(bValidVertex);
+	MeshComp->SetCollisionEnabled(bValidVertex ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
 }

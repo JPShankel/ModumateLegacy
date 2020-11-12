@@ -44,11 +44,11 @@ public:
 
 	// Change component transform as if it is like a material billboard
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static void ComponentAsBillboard(UStaticMeshComponent* Target, FVector DesiredScreenSize);
+	static bool ComponentAsBillboard(UStaticMeshComponent* Target, FVector DesiredScreenSize);
 
 	// Change component location to as close to camera as possible, acting like an UI element
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
-	static void ComponentToUIScreenPosition(UStaticMeshComponent* Target, FVector WorldLocation, FVector ScreenOffset = FVector::ZeroVector);
+	static bool ComponentToUIScreenPosition(UStaticMeshComponent* Target, FVector WorldLocation, FVector ScreenOffset = FVector::ZeroVector);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static bool LineBoxIntersection(const FBox2D &box, const FVector2D &start, const FVector2D &end);
