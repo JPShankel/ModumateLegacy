@@ -186,8 +186,8 @@ bool FMOITrimImpl::UpdateCachedStructure()
 		return false;
 	}
 
-	const FModumateObjectInstance* leftPolyMOI = doc->GetObjectById(surfacePolyLeft->ID);
-	const FModumateObjectInstance* rightPolyMOI = doc->GetObjectById(surfacePolyRight->ID);
+	const FModumateObjectInstance* leftPolyMOI = surfacePolyLeft ? doc->GetObjectById(surfacePolyLeft->ID) : nullptr;
+	const FModumateObjectInstance* rightPolyMOI = surfacePolyRight ? doc->GetObjectById(surfacePolyRight->ID) : nullptr;
 	for (auto neighborPolyMOI : { leftPolyMOI, rightPolyMOI })
 	{
 		if (neighborPolyMOI && (neighborPolyMOI->GetObjectType() == EObjectType::OTSurfacePolygon))
