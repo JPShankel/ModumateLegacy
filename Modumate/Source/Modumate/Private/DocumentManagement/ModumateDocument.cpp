@@ -2271,7 +2271,9 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 	{
 		CommandHistory = docRec.CommandHistory;
 
+#if 0 // TODO: preset serialization to be fixed with bim designer 
 		PresetManager.CraftingNodePresets = docRec.PresetCollection;
+#endif
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.
