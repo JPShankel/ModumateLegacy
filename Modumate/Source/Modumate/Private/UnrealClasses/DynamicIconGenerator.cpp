@@ -280,6 +280,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 		return SetIconMeshForPortalAssembly(Assembly, InRenderTarget);
 	case EObjectType::OTStructureLine:
 	case EObjectType::OTTrim:
+	case EObjectType::OTMullion:
 		return SetIconMeshForTrimAssembly(Assembly, InRenderTarget);
 	case EObjectType::OTCabinet:
 		return SetIconMeshForCabinetAssembly(Assembly, InRenderTarget);
