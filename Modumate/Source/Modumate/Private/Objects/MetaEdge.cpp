@@ -84,24 +84,6 @@ bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 	return true;
 }
 
-void FMOIMetaEdgeImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
-{
-	FMOIEdgeImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
-
-	if (MOI && LineActor.IsValid())
-	{
-		AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(LineActor->GetWorld()->GetFirstPlayerController()->PlayerState);
-
-		bool bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane;
-		UModumateObjectStatics::ShouldMetaObjBeEnabled(MOI, bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane);
-		bOutVisible = !MOI->IsRequestedHidden() && bShouldBeVisible;
-		bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bShouldCollisionBeEnabled;
-
-		LineActor->SetVisibilityInApp(bOutVisible);
-		LineActor->SetActorEnableCollision(bOutCollisionEnabled);
-	}
-}
-
 void FMOIMetaEdgeImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
 {
 	if (MOI->HasAdjustmentHandles())

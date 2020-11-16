@@ -34,6 +34,18 @@ int32 FMOIVertexImplBase::GetNumCorners() const
 	return VertexActor.IsValid() ? 1 : 0;
 }
 
+void FMOIVertexImplBase::UpdateVisibilityAndCollision(bool& bOutVisible, bool& bOutCollisionEnabled)
+{
+	if (MOI && VertexActor.IsValid())
+	{
+		UModumateObjectStatics::GetNonPhysicalEnabledFlags(MOI, bOutVisible, bOutCollisionEnabled);
+
+		VertexActor->SetActorHiddenInGame(!bOutVisible);
+		VertexActor->SetActorTickEnabled(bOutVisible);
+		VertexActor->SetActorEnableCollision(bOutCollisionEnabled);
+	}
+}
+
 void FMOIVertexImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	TArray<FVector> vertexTangents;

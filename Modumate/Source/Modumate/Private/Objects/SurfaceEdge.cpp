@@ -70,40 +70,6 @@ bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelta
 	return true;
 }
 
-void FMOISurfaceEdgeImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
-{
-	FMOIEdgeImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
-	if (MOI && LineActor.IsValid())
-	{
-		bool bShouldBeVisible = false;
-		bool bShouldCollisionBeEnabled = false;
-
-		AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(LineActor->GetWorld()->GetFirstPlayerController()->PlayerState);
-
-		bool bHaveChildren = (MOI->GetChildIDs().Num() > 0);
-		auto controller = MOI->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-		switch (controller->EMPlayerState->GetViewMode())
-		{
-		case EEditViewModes::SurfaceGraphs:
-			bShouldBeVisible = true;
-			bShouldCollisionBeEnabled = true;
-			break;
-		case EEditViewModes::AllObjects:
-			bShouldBeVisible = !bHaveChildren;
-			bShouldCollisionBeEnabled = !bHaveChildren;
-			break;
-		default:
-			break;
-		}
-
-		bOutVisible = !MOI->IsRequestedHidden() && bShouldBeVisible;
-		bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bShouldCollisionBeEnabled;
-
-		LineActor->SetVisibilityInApp(bOutVisible);
-		LineActor->SetActorEnableCollision(bOutCollisionEnabled);
-	}
-}
-
 void FMOISurfaceEdgeImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
 {
 	if (MOI->HasAdjustmentHandles())

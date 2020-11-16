@@ -22,21 +22,6 @@ FVector FMOISurfaceVertexImpl::GetLocation() const
 	return CachedDeprojectedLocation;
 }
 
-void FMOISurfaceVertexImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
-{
-	UWorld* world = MOI ? MOI->GetWorld() : nullptr;
-	auto controller = world ? world->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
-	if (controller && VertexActor.IsValid())
-	{
-		bool bEnabledByViewMode = controller->EMPlayerState->IsObjectTypeEnabledByViewMode(EObjectType::OTSurfaceVertex);
-		bOutVisible = bOutCollisionEnabled = bEnabledByViewMode;
-
-		VertexActor->SetActorHiddenInGame(!bOutVisible);
-		VertexActor->SetActorTickEnabled(bOutVisible);
-		VertexActor->SetActorEnableCollision(bOutCollisionEnabled);
-	}
-}
-
 bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	auto surfaceGraphObj = MOI ? MOI->GetParentObject() : nullptr;

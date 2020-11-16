@@ -947,15 +947,20 @@ void AEditModelPlayerState_CPP::UpdateObjectVisibilityAndCollision()
 
 bool AEditModelPlayerState_CPP::IsObjectTypeEnabledByViewMode(EObjectType ObjectType) const
 {
+	if (SelectedViewMode == EEditViewModes::AllObjects)
+	{
+		return true;
+	}
+
 	EToolCategories objectCategory = UModumateTypeStatics::GetObjectCategory(ObjectType);
 	switch (objectCategory)
 	{
 	case EToolCategories::MetaGraph:
-		return SelectedViewMode == EEditViewModes::MetaGraph;
+		return (SelectedViewMode != EEditViewModes::Physical);
 	case EToolCategories::Separators:
 		return (SelectedViewMode != EEditViewModes::MetaGraph);
 	case EToolCategories::SurfaceGraphs:
-		return (SelectedViewMode == EEditViewModes::SurfaceGraphs);
+		return (SelectedViewMode == EEditViewModes::SurfaceGraphs) || (SelectedViewMode == EEditViewModes::AllObjects);
 	case EToolCategories::Attachments:
 		return (SelectedViewMode == EEditViewModes::AllObjects) || (SelectedViewMode == EEditViewModes::Physical);
 	case EToolCategories::Unknown:

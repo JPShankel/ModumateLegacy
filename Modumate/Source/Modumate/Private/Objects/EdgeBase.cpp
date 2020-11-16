@@ -61,30 +61,16 @@ void FMOIEdgeImplBase::OnSelected(bool bIsSelected)
 
 void FMOIEdgeImplBase::UpdateVisibilityAndCollision(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
-	FModumateObjectInstanceImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
-
 	if (MOI && LineActor.IsValid())
 	{
-		AEditModelGameMode_CPP* gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
-		// Color
-		if (gameMode)
-		{
-			
-			FColor color;
-			if (MOI->IsSelected())
-			{
-				color = SelectedColor;
-			}
-			else if (MOI->IsHovered())
-			{
-				color = HoveredColor;
-			}
-			else
-			{
-				color = BaseColor;
-			}
+		UModumateObjectStatics::GetNonPhysicalEnabledFlags(MOI, bOutVisible, bOutCollisionEnabled);
 
-			LineActor->UpdateVisuals(true, GetThicknessMultiplier(), color);
+		LineActor->SetVisibilityInApp(bOutVisible);
+		LineActor->SetActorEnableCollision(bOutCollisionEnabled);
+
+		if (bOutVisible)
+		{
+			UpdateMaterial();
 		}
 	}
 }
@@ -122,4 +108,32 @@ float FMOIEdgeImplBase::GetThicknessMultiplier() const
 	}
 
 	return 1.0f;
+}
+
+void FMOIEdgeImplBase::UpdateMaterial()
+{
+	if (MOI && LineActor.IsValid())
+	{
+		AEditModelGameMode_CPP* gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+		// Color
+		if (gameMode)
+		{
+
+			FColor color;
+			if (MOI->IsSelected())
+			{
+				color = SelectedColor;
+			}
+			else if (MOI->IsHovered())
+			{
+				color = HoveredColor;
+			}
+			else
+			{
+				color = BaseColor;
+			}
+
+			LineActor->UpdateVisuals(true, GetThicknessMultiplier(), color);
+		}
+	}
 }

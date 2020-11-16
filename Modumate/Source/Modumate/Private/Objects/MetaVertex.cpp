@@ -12,21 +12,6 @@ FMOIMetaVertexImpl::FMOIMetaVertexImpl(FModumateObjectInstance *moi)
 {
 }
 
-void FMOIMetaVertexImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
-{
-	if (MOI && VertexActor.IsValid())
-	{
-		bool bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane;
-		UModumateObjectStatics::ShouldMetaObjBeEnabled(MOI, bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane);
-		bOutVisible = !MOI->IsRequestedHidden() && bShouldBeVisible;
-		bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bShouldCollisionBeEnabled;
-
-		VertexActor->SetActorHiddenInGame(!bOutVisible);
-		VertexActor->SetActorTickEnabled(bOutVisible);
-		VertexActor->SetActorEnableCollision(bOutCollisionEnabled);
-	}
-}
-
 bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)

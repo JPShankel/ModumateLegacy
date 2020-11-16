@@ -18,6 +18,7 @@ struct FSimplePolygon;
 
 namespace Modumate
 {
+	class FGraph2DEdge;
 	class FGraph3DEdge;
 };
 
@@ -52,11 +53,15 @@ public:
 	static bool GetGeometryFromSurfacePoly(const FModumateDocument* Doc, int32 SurfacePolyID, bool& bOutInterior, bool& bOutInnerBounds,
 		FTransform& OutOrigin, TArray<FVector>& OutPerimeter, TArray<FPolyHole3D>& OutHoles);
 
-	// Meta Objects
-	static void EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const FModumateDocument *Doc,
-		bool &bOutConnectedToEmptyPlane, bool &bOutConnectedToSelectedPlane);
-	static void ShouldMetaObjBeEnabled(const FModumateObjectInstance *MetaMOI,
-		bool &bOutShouldBeVisible, bool &bOutShouldCollisionBeEnabled, bool &bOutIsConnected);
+	// Meta/Surface Objects
+	static bool GetEdgeFaceConnections(const Modumate::FGraph3DEdge* GraphEdge, const FModumateDocument* Doc,
+		bool& bOutConnectedToAnyFace, bool& bOutConnectedToValidFace);
+	static bool GetEdgePolyConnections(const Modumate::FGraph2DEdge* SurfaceEdge, const FModumateDocument* Doc,
+		bool& bOutConnectedToAnyPolygon, bool& bOutConnectedToValidPolygon);
+
+	static bool GetNonPhysicalEnabledFlags(const FModumateObjectInstance* NonPhysicalMOI, bool& bOutVisible, bool& bOutCollisionEnabled);
+	static bool GetMetaObjEnabledFlags(const FModumateObjectInstance* MetaMOI, bool& bOutVisible, bool& bOutCollisionEnabled);
+	static bool GetSurfaceObjEnabledFlags(const FModumateObjectInstance* SurfaceMOI, bool& bOutVisible, bool& bOutCollisionEnabled);
 
 	static void GetGraphIDsFromMOIs(const TSet<FModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs);
 

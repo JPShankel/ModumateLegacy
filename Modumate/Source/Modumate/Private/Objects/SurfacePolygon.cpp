@@ -20,33 +20,24 @@ FMOISurfacePolygonImpl::FMOISurfacePolygonImpl(FModumateObjectInstance *moi)
 
 void FMOISurfacePolygonImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	FMOIPlaneImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
 	if (MOI && DynamicMeshActor.IsValid())
 	{
-		bOutVisible = false;
-		bOutCollisionEnabled = false;
+		bool bPreviouslyVisible = MOI->IsVisible();
 
-		if (bInteriorPolygon && !MOI->IsRequestedHidden())
-		{
-			bool bHaveChildren = (MOI->GetChildIDs().Num() > 0);
-			auto controller = MOI->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-			switch (controller->EMPlayerState->GetViewMode())
-			{
-			case EEditViewModes::SurfaceGraphs:
-				bOutVisible = true;
-				bOutCollisionEnabled = true;
-				break;
-			case EEditViewModes::AllObjects:
-				bOutVisible = !bHaveChildren;
-				bOutCollisionEnabled = !bHaveChildren;
-				break;
-			default:
-				break;
-			}
-		}
+		UModumateObjectStatics::GetSurfaceObjEnabledFlags(MOI, bOutVisible, bOutCollisionEnabled);
 
 		DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
 		DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
+
+		if (bOutVisible)
+		{
+			FMOIPlaneImplBase::UpdateMaterial();
+		}
+
+		if (bPreviouslyVisible != bOutVisible)
+		{
+			UpdateConnectedVisuals();
+		}
 	}
 }
 

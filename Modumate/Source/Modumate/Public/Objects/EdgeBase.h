@@ -24,6 +24,7 @@ public:
 
 protected:
 	float GetThicknessMultiplier() const;
+	void UpdateMaterial();
 
 	TWeakObjectPtr<UWorld> World;
 	TArray<FModumateObjectInstance*> CachedConnectedMOIs;

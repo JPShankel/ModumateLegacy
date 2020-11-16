@@ -15,23 +15,26 @@ FMOIMetaPlaneImpl::FMOIMetaPlaneImpl(FModumateObjectInstance *moi)
 
 }
 
-void FMOIMetaPlaneImpl::PostCreateObject(bool bNewObject)
-{
-	UpdateConnectedVisuals();
-}
-
 void FMOIMetaPlaneImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	FMOIPlaneImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
-
 	if (MOI && DynamicMeshActor.IsValid())
 	{
-		bool bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane;
-		UModumateObjectStatics::ShouldMetaObjBeEnabled(MOI, bShouldBeVisible, bShouldCollisionBeEnabled, bConnectedToAnyPlane);
-		bOutVisible = !MOI->IsRequestedHidden() && bShouldBeVisible;
-		bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bShouldCollisionBeEnabled;
+		bool bPreviouslyVisible = MOI->IsVisible();
+
+		UModumateObjectStatics::GetMetaObjEnabledFlags(MOI, bOutVisible, bOutCollisionEnabled);
+
 		DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
 		DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
+
+		if (bOutVisible)
+		{
+			FMOIPlaneImplBase::UpdateMaterial();
+		}
+
+		if (bPreviouslyVisible != bOutVisible)
+		{
+			UpdateConnectedVisuals();
+		}
 	}
 }
 
@@ -51,50 +54,11 @@ void FMOIMetaPlaneImpl::SetupDynamicGeometry()
 	DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, GetAlpha(), true, &CachedHoles, bEnableCollision);
 
 	MOI->UpdateVisibilityAndCollision();
-
-	// If this plane's children changed, then make sure its neighbors
-	// have the correct visuals and collision as well, since they might be dependent on this one.
-	if (bChildrenChanged)
-	{
-		UpdateConnectedVisuals();
-	}
 }
 
 void FMOIMetaPlaneImpl::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
 	FMOIPlaneImplBase::OnHovered(controller, bIsHovered);
-
-	if (MOI && DynamicMeshActor.IsValid())
-	{
-		UpdateConnectedVisuals();
-	}
-}
-
-void FMOIMetaPlaneImpl::OnSelected(bool bIsSelected)
-{
-	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
-
-	if (MOI && DynamicMeshActor.IsValid())
-	{
-		UpdateConnectedVisuals();
-	}
-}
-
-void FMOIMetaPlaneImpl::UpdateConnectedVisuals()
-{
-	if (MOI)
-	{
-		MOI->UpdateVisibilityAndCollision();
-		// Update the visuals of all of our connected edges
-		MOI->GetConnectedMOIs(TempConnectedMOIs);
-		for (FModumateObjectInstance *connectedMOI : TempConnectedMOIs)
-		{
-			if ((connectedMOI->GetObjectType() == EObjectType::OTMetaEdge))
-			{
-				connectedMOI->MarkDirty(EObjectDirtyFlags::Visuals);
-			}
-		}
-	}
 }
 
 void FMOIMetaPlaneImpl::UpdateCachedGraphData()

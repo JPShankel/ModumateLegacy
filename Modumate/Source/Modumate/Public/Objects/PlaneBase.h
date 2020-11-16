@@ -21,16 +21,18 @@ public:
 
 	virtual void OnSelected(bool bIsSelected) override;
 	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
+	virtual void PostCreateObject(bool bNewObject) override;
 
 protected:
 	virtual float GetAlpha() const;
+	virtual void UpdateMaterial();
+	virtual void UpdateConnectedVisuals();
 
-protected:
 	FArchitecturalMaterial MaterialData;
 	FColor SelectedColor, HoveredColor, BaseColor;
 	TArray<FVector> CachedPoints;
 	FPlane CachedPlane;
 	FVector CachedAxisX, CachedAxisY, CachedOrigin, CachedCenter;
 	TArray<FPolyHole3D> CachedHoles;
+	TArray<FModumateObjectInstance*> TempConnectedMOIs;
 };
-

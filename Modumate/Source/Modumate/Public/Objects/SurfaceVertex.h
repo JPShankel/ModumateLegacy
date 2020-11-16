@@ -11,7 +11,6 @@ public:
 	FMOISurfaceVertexImpl(FModumateObjectInstance *moi);
 
 	virtual FVector GetLocation() const override;
-	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetTangents(TArray<FVector>& OutTangents) const override;
 

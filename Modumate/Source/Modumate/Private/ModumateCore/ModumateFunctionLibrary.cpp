@@ -451,11 +451,15 @@ void UModumateFunctionLibrary::DocAddHideMoiActors(const TArray<AActor*> Actors)
 		{
 			objectIDsToHide.Add(object->ID);
 
-			int32 parentID = object->GetParentID();
-			EGraph3DObjectType parentGraphObjectType;
-			if (doc->IsObjectInVolumeGraph(parentID, parentGraphObjectType))
+			auto* parentObj = object->GetParentObject();
+
+			EObjectType parentObjType = parentObj ? parentObj->GetObjectType() : EObjectType::OTNone;
+			EGraphObjectType parentGraph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(parentObjType);
+			EGraph3DObjectType parentGraph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(parentObjType);
+
+			if ((parentGraph2DObjType != EGraphObjectType::None) || (parentGraph3DObjType != EGraph3DObjectType::None))
 			{
-				objectIDsToHide.Add(parentID);
+				objectIDsToHide.Add(parentObj->ID);
 			}
 		}
 

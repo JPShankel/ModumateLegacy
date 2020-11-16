@@ -5,6 +5,7 @@
 #include "BIMKernel/BIMProperties.h"
 #include "Database/ModumateSimpleMesh.h"
 #include "DocumentManagement/ModumateSnappingView.h"
+#include "Graph/Graph2D.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
@@ -359,15 +360,15 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument*
 	return true;
 }
 
-void UModumateObjectStatics::EdgeConnectedToValidPlane(const Modumate::FGraph3DEdge *GraphEdge, const FModumateDocument *Doc,
-	bool &bOutConnectedToEmptyPlane, bool &bOutConnectedToSelectedPlane)
+bool UModumateObjectStatics::GetEdgeFaceConnections(const Modumate::FGraph3DEdge* GraphEdge, const FModumateDocument* Doc,
+	bool& bOutConnectedToAnyFace, bool& bOutConnectedToValidFace)
 {
-	bOutConnectedToEmptyPlane = false;
-	bOutConnectedToSelectedPlane = false;
+	bOutConnectedToAnyFace = false;
+	bOutConnectedToValidFace = false;
 
 	if ((GraphEdge == nullptr) || (Doc == nullptr))
 	{
-		return;
+		return false;
 	}
 
 	for (const auto &edgeFaceConn : GraphEdge->ConnectedFaces)
@@ -375,176 +376,269 @@ void UModumateObjectStatics::EdgeConnectedToValidPlane(const Modumate::FGraph3DE
 		const auto *connectedFaceMOI = Doc->GetObjectById(FMath::Abs(edgeFaceConn.FaceID));
 		if (connectedFaceMOI && (connectedFaceMOI->GetObjectType() == EObjectType::OTMetaPlane))
 		{
-			const TArray<int32> &faceMOIChildIDs = connectedFaceMOI->GetChildIDs();
-			int32 numChildren = faceMOIChildIDs.Num();
+			bOutConnectedToAnyFace = true;
 
-			// Connected to empty plane
-			if (numChildren == 0)
+			// TODO: if the evaluation is expensive, or should be dependent on data that requires cleaning,
+			// then this should require `connectedFaceMOI->IsDirty(EObjectDirtyFlags::Visuals)` to be true, and return false otherwise.
+			bool bConnectedFaceVisible, bConnectedFaceCollidable;
+			if (!GetMetaObjEnabledFlags(connectedFaceMOI, bConnectedFaceVisible, bConnectedFaceCollidable))
 			{
-				bOutConnectedToEmptyPlane = true;
+				return false;
 			}
 
-			if (connectedFaceMOI->IsSelected())
+			if (bConnectedFaceVisible)
 			{
-				bOutConnectedToSelectedPlane = true;
-			}
-			else if (numChildren == 1)
-			{
-				// Connected to plane that is selectd or whose child is selected
-				const auto *faceChild = Doc->GetObjectById(faceMOIChildIDs[0]);
-				if (faceChild && faceChild->IsSelected())
-				{
-					bOutConnectedToSelectedPlane = true;
-				}
+				bOutConnectedToValidFace = true;
+				break;
 			}
 		}
+	}
+
+	return true;
+}
+
+bool UModumateObjectStatics::GetEdgePolyConnections(const Modumate::FGraph2DEdge* SurfaceEdge, const FModumateDocument* Doc,
+	bool& bOutConnectedToAnyPolygon, bool& bOutConnectedToValidPolygon)
+{
+	bOutConnectedToAnyPolygon = false;
+	bOutConnectedToValidPolygon = false;
+
+	if ((SurfaceEdge == nullptr) || (Doc == nullptr))
+	{
+		return false;
+	}
+
+	const Modumate::FGraph2DPolygon *leftInteriorPoly, *rightInteriorPoly;
+	if (!SurfaceEdge->GetAdjacentInteriorPolygons(leftInteriorPoly, rightInteriorPoly))
+	{
+		return false;
+	}
+
+	for (auto* adjacentPoly : { leftInteriorPoly, rightInteriorPoly })
+	{
+		if (adjacentPoly == nullptr)
+		{
+			continue;
+		}
+
+		const auto* connectedPolyMOI = Doc->GetObjectById(adjacentPoly->ID);
+		if (connectedPolyMOI && (connectedPolyMOI->GetObjectType() == EObjectType::OTSurfacePolygon))
+		{
+			bOutConnectedToAnyPolygon = true;
+
+			// TODO: if the evaluation is expensive, or should be dependent on data that requires cleaning,
+			// then this should require `connectedFaceMOI->IsDirty(EObjectDirtyFlags::Visuals)` to be true, and return false otherwise.
+			bool bConnectedPolyVisible, bConnectedPolyCollidable;
+			if (!GetSurfaceObjEnabledFlags(connectedPolyMOI, bConnectedPolyVisible, bConnectedPolyCollidable))
+			{
+				return false;
+			}
+
+			if (bConnectedPolyVisible)
+			{
+				bOutConnectedToValidPolygon = true;
+				break;
+			}
+		}
+	}
+
+	return true;
+}
+
+bool UModumateObjectStatics::GetNonPhysicalEnabledFlags(const FModumateObjectInstance* NonPhysicalMOI, bool& bOutVisible, bool& bOutCollisionEnabled)
+{
+	EObjectType objectType = NonPhysicalMOI ? NonPhysicalMOI->GetObjectType() : EObjectType::OTNone;
+	EToolCategories objectCategory = UModumateTypeStatics::GetObjectCategory(objectType);
+	switch (objectCategory)
+	{
+	case EToolCategories::MetaGraph:
+		return GetMetaObjEnabledFlags(NonPhysicalMOI, bOutVisible, bOutCollisionEnabled);
+	case EToolCategories::SurfaceGraphs:
+		return GetSurfaceObjEnabledFlags(NonPhysicalMOI, bOutVisible, bOutCollisionEnabled);
+	default:
+		ensureMsgf(false, TEXT("Invalid object; must be member of Volume Graph or Surface Graph!"));
+		return false;
 	}
 }
 
-void UModumateObjectStatics::ShouldMetaObjBeEnabled(const FModumateObjectInstance *MetaMOI,
-	bool &bOutShouldBeVisible, bool &bOutShouldCollisionBeEnabled, bool &bOutIsConnected)
+bool UModumateObjectStatics::GetMetaObjEnabledFlags(const FModumateObjectInstance *MetaMOI, bool& bOutVisible, bool& bOutCollisionEnabled)
 {
-	bOutShouldBeVisible = bOutShouldCollisionBeEnabled = bOutIsConnected = false;
+	bOutVisible = bOutCollisionEnabled = false;
 
-	if (MetaMOI == nullptr)
-	{
-		return;
-	}
-
-	const AActor *metaActor = MetaMOI->GetActor();
-	const FModumateDocument *doc = MetaMOI->GetDocument();
+	const AActor* metaActor = MetaMOI ? MetaMOI->GetActor() : nullptr;
+	const FModumateDocument* doc = MetaMOI ? MetaMOI->GetDocument() : nullptr;
 	UWorld *world = metaActor ? metaActor->GetWorld() : nullptr;
 	AEditModelPlayerController_CPP *playerController = world ? world->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
-
-	if (playerController && doc)
+	if (playerController == nullptr)
 	{
-		// If we're in Physical Mode, we don't show any meta objects
-		if (playerController->EMPlayerState->SelectedViewMode == EEditViewModes::Physical)
-		{
-			return;
-		}
-
-		EObjectType objectType = MetaMOI->GetObjectType();
-		int32 objID = MetaMOI->ID;
-		const FGraph3D &volumeGraph = doc->GetVolumeGraph();
-
-		bool bInMetaToolMode = false;
-		EToolMode curToolMode = playerController->GetToolMode();
-		switch (curToolMode)
-		{
-		case EToolMode::VE_WALL:
-		case EToolMode::VE_FLOOR:
-		case EToolMode::VE_ROOF_FACE:
-		case EToolMode::VE_STAIR:
-		case EToolMode::VE_METAPLANE:
-		case EToolMode::VE_STRUCTURELINE:
-		case EToolMode::VE_CEILING:
-			bInMetaToolMode = true;
-			break;
-		default:
-			break;
-		}
-
-		bool bEnabledByViewMode = playerController->EMPlayerState->IsObjectTypeEnabledByViewMode(objectType);
-		bool bConnectedToEmptyPlane = false;
-		bool bConnectedToSelectedPlane = false;
-
-		switch (objectType)
-		{
-		case EObjectType::OTMetaVertex:
-		{
-			auto *graphVertex = volumeGraph.FindVertex(objID);
-			if (graphVertex == nullptr)
-			{
-				bOutShouldBeVisible = false;
-				bOutShouldCollisionBeEnabled = false;
-				break;
-			}
-
-			bOutIsConnected = (graphVertex->ConnectedEdgeIDs.Num() > 0);
-			for (FGraphSignedID connectedEdgeID : graphVertex->ConnectedEdgeIDs)
-			{
-				const auto *connectedEdge = volumeGraph.FindEdge(connectedEdgeID);
-				EdgeConnectedToValidPlane(connectedEdge, doc, bConnectedToEmptyPlane, bConnectedToSelectedPlane);
-				if (bConnectedToSelectedPlane)
-				{
-					break;
-				}
-			}
-
-			bOutShouldBeVisible = (bEnabledByViewMode || bConnectedToSelectedPlane || MetaMOI->IsSelected());
-			bOutShouldCollisionBeEnabled = bOutShouldBeVisible || bConnectedToEmptyPlane || bInMetaToolMode;
-			break;
-		}
-		case EObjectType::OTMetaEdge:
-		{
-			auto *graphEdge = volumeGraph.FindEdge(objID);
-			if (graphEdge == nullptr)
-			{
-				bOutShouldBeVisible = false;
-				bOutShouldCollisionBeEnabled = false;
-				break;
-			}
-
-			bool bEdgeHasChild = false;
-			bool bEdgeHasSelectedChild = false;
-			const TArray<int32> &edgeChildIDs = MetaMOI->GetChildIDs();
-			for (int32 edgeChildID : edgeChildIDs)
-			{
-				const FModumateObjectInstance *edgeChildObj = MetaMOI->GetDocument()->GetObjectById(edgeChildID);
-				if (edgeChildObj)
-				{
-					bEdgeHasChild = true;
-
-					if (edgeChildObj->IsSelected())
-					{
-						bEdgeHasSelectedChild = true;
-					}
-				}
-			}
-
-			bOutIsConnected = (graphEdge->ConnectedFaces.Num() > 0);
-			EdgeConnectedToValidPlane(graphEdge, doc, bConnectedToEmptyPlane, bConnectedToSelectedPlane);
-
-			// Edges with GroupIDs should be hidden outside of meta-plane view mode
-			// TODO: add more sophistication to this, based on how GroupIDs are used besides Roof Perimeters
-			if (!bEnabledByViewMode && (graphEdge->GroupIDs.Num() > 0))
-			{
-				bOutShouldBeVisible = false;
-				bOutShouldCollisionBeEnabled = false;
-			}
-			else
-			{
-				bOutShouldBeVisible = (bConnectedToSelectedPlane || bEdgeHasSelectedChild ||
-					bConnectedToEmptyPlane || bEnabledByViewMode || MetaMOI->IsSelected() ||
-					(!bOutIsConnected && !bEdgeHasChild));
-				bOutShouldCollisionBeEnabled = bOutShouldBeVisible || bInMetaToolMode;
-			}
-			break;
-		}
-		case EObjectType::OTMetaPlane:
-		{
-			auto *graphFace = volumeGraph.FindFace(objID);
-
-			// TODO: this should only be the case when the object is about to be deleted, there should be a flag for that.
-			if (graphFace == nullptr)
-			{
-				bOutShouldBeVisible = false;
-				bOutShouldCollisionBeEnabled = false;
-				break;
-			}
-
-			bOutIsConnected = true;
-			bool bPlaneHasChildren = (MetaMOI->GetChildIDs().Num() > 0);
-
-			bOutShouldBeVisible = (bEnabledByViewMode || !bPlaneHasChildren);
-			bOutShouldCollisionBeEnabled = bOutShouldBeVisible || bInMetaToolMode;
-			break;
-		}
-		default:
-			break;
-		}
+		return false;
 	}
+
+	EObjectType objectType = MetaMOI->GetObjectType();
+	int32 objID = MetaMOI->ID;
+	const FGraph3D& volumeGraph = doc->GetVolumeGraph();
+	if (!volumeGraph.ContainsObject(objID))
+	{
+		return false;
+	}
+
+	// We may need to use children / sibling children connectivity to disable visibility and/or collision.
+	bool bConnectedToAnyFace = false;
+	bool bConnectedToValidFace = false;
+	bool bHasChildren = (MetaMOI->GetChildIDs().Num() > 0);
+
+	EToolCategories curToolCategory = UModumateTypeStatics::GetToolCategory(playerController->GetToolMode());
+	bool bInCompatibleToolCategory = (curToolCategory == EToolCategories::MetaGraph) || (curToolCategory == EToolCategories::Separators);
+
+	EEditViewModes curViewMode = playerController->EMPlayerState->SelectedViewMode;
+	bool bMetaViewMode = (curViewMode == EEditViewModes::MetaGraph);
+	bool bHybridViewMode = (curViewMode != EEditViewModes::Physical);
+
+	switch (objectType)
+	{
+	case EObjectType::OTMetaVertex:
+	{
+		auto *graphVertex = volumeGraph.FindVertex(objID);
+
+		for (FGraphSignedID connectedEdgeID : graphVertex->ConnectedEdgeIDs)
+		{
+			bool bEdgeConnectedToAnyFace, bEdgeConnectedToValidFace;
+			if (!GetEdgeFaceConnections(volumeGraph.FindEdge(connectedEdgeID), doc, bEdgeConnectedToAnyFace, bEdgeConnectedToValidFace))
+			{
+				return false;
+			}
+
+			bConnectedToAnyFace |= bEdgeConnectedToAnyFace;
+			bConnectedToValidFace |= bEdgeConnectedToValidFace;
+		}
+
+		bOutVisible =
+			(bMetaViewMode || (bHybridViewMode && !bHasChildren)) &&
+			(!bConnectedToAnyFace || bConnectedToValidFace);
+		bOutCollisionEnabled = bOutVisible || bInCompatibleToolCategory;
+		break;
+	}
+	case EObjectType::OTMetaEdge:
+	{
+		auto *graphEdge = volumeGraph.FindEdge(objID);
+
+		if (!GetEdgeFaceConnections(graphEdge, doc, bConnectedToAnyFace, bConnectedToValidFace))
+		{
+			return false;
+		}
+
+		// Edges with GroupIDs should be hidden outside of meta-plane view mode
+		// TODO: add more sophistication to this, based on how GroupIDs are used besides Roof Perimeters
+		if (bMetaViewMode && graphEdge->GroupIDs.Num() > 0)
+		{
+			bOutVisible = true;
+			bOutCollisionEnabled = true;
+		}
+		else
+		{
+			bOutVisible =
+				(bMetaViewMode || (bHybridViewMode && !bHasChildren)) &&
+				(!bConnectedToAnyFace || bConnectedToValidFace);
+			bOutCollisionEnabled = bOutVisible || bInCompatibleToolCategory;
+		}
+		break;
+	}
+	case EObjectType::OTMetaPlane:
+	{
+		bOutVisible = !MetaMOI->IsRequestedHidden() && (bMetaViewMode || (bHybridViewMode && !bHasChildren));
+		bOutCollisionEnabled = !MetaMOI->IsCollisionRequestedDisabled() && (bOutVisible || bInCompatibleToolCategory);
+		break;
+	}
+	default:
+		break;
+	}
+
+	return true;
+}
+
+bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const FModumateObjectInstance* SurfaceMOI, bool& bOutVisible, bool& bOutCollisionEnabled)
+{
+	bOutVisible = bOutCollisionEnabled = false;
+
+	const AActor* surfaceActor = SurfaceMOI ? SurfaceMOI->GetActor() : nullptr;
+	const FModumateDocument* doc = SurfaceMOI ? SurfaceMOI->GetDocument() : nullptr;
+	UWorld* world = surfaceActor ? surfaceActor->GetWorld() : nullptr;
+	AEditModelPlayerController_CPP* playerController = world ? world->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+	if (playerController == nullptr)
+	{
+		return false;
+	}
+
+	EObjectType objectType = SurfaceMOI->GetObjectType();
+	int32 objID = SurfaceMOI->ID;
+	auto surfaceGraph = doc->FindSurfaceGraphByObjID(objID);
+	if (!surfaceGraph.IsValid() || !surfaceGraph->ContainsObject(objID))
+	{
+		return false;
+	}
+
+	// We may need to use children / sibling children connectivity to disable visibility and/or collision.
+	bool bConnectedToAnyPolygon = false;
+	bool bConnectedToValidPolygon = false;
+	bool bHasChildren = (SurfaceMOI->GetChildIDs().Num() > 0);
+
+	EToolCategories curToolCategory = UModumateTypeStatics::GetToolCategory(playerController->GetToolMode());
+	bool bInCompatibleToolCategory = (curToolCategory == EToolCategories::SurfaceGraphs) || (curToolCategory == EToolCategories::Attachments);
+
+	EEditViewModes curViewMode = playerController->EMPlayerState->SelectedViewMode;
+	bool bSurfaceViewMode = (curViewMode == EEditViewModes::SurfaceGraphs);
+	bool bHybridViewMode = (curViewMode == EEditViewModes::AllObjects);
+
+	switch (objectType)
+	{
+	case EObjectType::OTSurfaceVertex:
+	{
+		auto* surfaceVertex = surfaceGraph->FindVertex(objID);
+
+		for (FGraphSignedID connectedEdgeID : surfaceVertex->Edges)
+		{
+			bool bEdgeConnectedToAnyPolygon, bEdgeConnectedToValidPolygon;
+			if (!GetEdgePolyConnections(surfaceGraph->FindEdge(connectedEdgeID), doc, bEdgeConnectedToAnyPolygon, bEdgeConnectedToValidPolygon))
+			{
+				return false;
+			}
+
+			bConnectedToAnyPolygon |= bEdgeConnectedToAnyPolygon;
+			bConnectedToValidPolygon |= bEdgeConnectedToValidPolygon;
+		}
+
+		bOutVisible =
+			(bSurfaceViewMode || (bHybridViewMode && !bHasChildren)) &&
+			(!bConnectedToAnyPolygon || bConnectedToValidPolygon);
+		bOutCollisionEnabled = bOutVisible || bInCompatibleToolCategory;
+		break;
+	}
+	case EObjectType::OTSurfaceEdge:
+	{
+		auto* surfaceEdge = surfaceGraph->FindEdge(objID);
+
+		if (!GetEdgePolyConnections(surfaceEdge, doc, bConnectedToAnyPolygon, bConnectedToValidPolygon))
+		{
+			return false;
+		}
+
+		bOutVisible =
+			(bSurfaceViewMode || (bHybridViewMode && !bHasChildren)) &&
+			(!bConnectedToAnyPolygon || bConnectedToValidPolygon);
+		bOutCollisionEnabled = bOutVisible || bInCompatibleToolCategory;
+		break;
+	}
+	case EObjectType::OTSurfacePolygon:
+	{
+		bOutVisible = !SurfaceMOI->IsRequestedHidden() && (bSurfaceViewMode || (bHybridViewMode && !bHasChildren));
+		bOutCollisionEnabled = !SurfaceMOI->IsCollisionRequestedDisabled() && (bOutVisible || bInCompatibleToolCategory);
+		break;
+	}
+	default:
+		break;
+	}
+
+	return true;
 }
 
 void UModumateObjectStatics::GetGraphIDsFromMOIs(const TSet<FModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs)

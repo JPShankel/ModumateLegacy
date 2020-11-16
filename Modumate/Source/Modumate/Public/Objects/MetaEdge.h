@@ -10,7 +10,6 @@ public:
 	FMOIMetaEdgeImpl(FModumateObjectInstance *moi);
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
-	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 	virtual const IMiterNode* GetMiterInterface() const override { return this; }
 

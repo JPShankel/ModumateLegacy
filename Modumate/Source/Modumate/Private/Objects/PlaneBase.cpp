@@ -101,6 +101,36 @@ void FMOIPlaneImplBase::UpdateVisibilityAndCollision(bool& bOutVisible, bool& bO
 {
 	FModumateObjectInstanceImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
 
+	if (bOutVisible)
+	{
+		UpdateMaterial();
+	}
+}
+
+void FMOIPlaneImplBase::OnSelected(bool bIsSelected)
+{
+	MOI->UpdateVisibilityAndCollision();
+	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
+}
+
+void FMOIPlaneImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
+{
+	MOI->UpdateVisibilityAndCollision();
+	FModumateObjectInstanceImplBase::OnHovered(controller, bIsHovered);
+}
+
+void FMOIPlaneImplBase::PostCreateObject(bool bNewObject)
+{
+	UpdateConnectedVisuals();
+}
+
+float FMOIPlaneImplBase::GetAlpha() const
+{
+	return MOI->IsHovered() ? 1.5f : 1.0f;
+}
+
+void FMOIPlaneImplBase::UpdateMaterial()
+{
 	if (MOI && DynamicMeshActor.IsValid())
 	{
 		AEditModelGameMode_CPP* gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
@@ -129,19 +159,16 @@ void FMOIPlaneImplBase::UpdateVisibilityAndCollision(bool& bOutVisible, bool& bO
 	}
 }
 
-void FMOIPlaneImplBase::OnSelected(bool bIsSelected)
+void FMOIPlaneImplBase::UpdateConnectedVisuals()
 {
-	MOI->UpdateVisibilityAndCollision();
-	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
-}
-
-void FMOIPlaneImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
-{
-	MOI->UpdateVisibilityAndCollision();
-	FModumateObjectInstanceImplBase::OnHovered(controller, bIsHovered);
-}
-
-float FMOIPlaneImplBase::GetAlpha() const
-{
-	return MOI->IsHovered() ? 1.5f : 1.0f;
+	if (MOI)
+	{
+		MOI->UpdateVisibilityAndCollision();
+		// Update the visuals of all of our connected edges
+		MOI->GetConnectedMOIs(TempConnectedMOIs);
+		for (FModumateObjectInstance* connectedMOI : TempConnectedMOIs)
+		{
+			connectedMOI->MarkDirty(EObjectDirtyFlags::Visuals);
+		}
+	}
 }
