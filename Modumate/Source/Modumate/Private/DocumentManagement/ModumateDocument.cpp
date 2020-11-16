@@ -28,6 +28,7 @@
 #include "Drafting/ModumateDraftingView.h"
 #include "ModumateCore/ModumateMitering.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "Objects/SurfaceGraph.h"
 
 #include "Algo/Transform.h"
 #include "Algo/Accumulate.h"
@@ -1540,7 +1541,6 @@ bool FModumateDocument::FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<in
 			}
 		}
 	}
-
 	return true;
 }
 
@@ -2935,6 +2935,11 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 		{
 			continue;
 		}
+
+		const FMOISurfaceGraphImpl* surfaceGraphImpl = static_cast<const FMOISurfaceGraphImpl*>(surfaceGraphObj->Implementation);
+		FString surfaceGraphString = FString::Printf(TEXT("SurfaceGraph: #%d, face %d, %s"),
+			surfaceGraphID, surfaceGraphFaceIndex, surfaceGraphImpl->IsGraphLinked() ? TEXT("linked") : TEXT("unlinked"));
+		GEngine->AddOnScreenDebugMessage(surfaceGraphID, 0.0f, FColor::White, surfaceGraphString);
 
 		TArray<FVector> facePoints;
 		FVector faceNormal, faceAxisX, faceAxisY;

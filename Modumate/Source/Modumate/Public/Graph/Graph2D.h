@@ -106,6 +106,10 @@ namespace Modumate
 		FBoundsInformation CachedOuterBounds;
 		TArray<FBoundsInformation> CachedInnerBounds;
 
+		// If vertices on the outer bounds are moved, the surface graph moi needs to check
+		// whether or not it should still be linked to the host moi
+		bool bBoundsDirty = false;
+
 		// 2D Graph Deltas
 		// The graph operations create a list of deltas that represent instructions for applying the operation.
 		// Creating a list of deltas is undo/redo-able, and the public graph operations will leave the graph in the same state
@@ -164,6 +168,9 @@ namespace Modumate
 
 		void GetOuterBoundsIDs(TArray<int32> &OutVertexIDs) const;
 		const TMap<int32, TArray<int32>>& GetInnerBounds() const;
+
+		bool IsOuterBoundsDirty();
+		void ClearOuterBoundsDirty();
 
 		// TODO: aggregate polygons constrained by polygon
 

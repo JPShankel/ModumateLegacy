@@ -27,6 +27,9 @@ public:
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
+	bool CheckGraphLink();
+	bool IsGraphLinked() const { return bLinked; }
+
 	static constexpr float VisualNormalOffset = 0.1f;
 
 protected:
@@ -37,5 +40,7 @@ protected:
 	FTransform CachedFaceOrigin;
 
 	FMOISurfaceGraphData InstanceData;
+
+	bool bLinked = true;
 };
 

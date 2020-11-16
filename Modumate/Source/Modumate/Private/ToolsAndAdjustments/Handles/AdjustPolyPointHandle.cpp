@@ -347,7 +347,7 @@ bool AAdjustPolyPointHandle::GetTransforms(const FVector Offset, TMap<int32, FTr
 				OutTransforms.Add(poly->CachedPerimeterVertexIDs[TargetIndex], FTransform(OriginalPolyPoints[TargetIndex] + Offset));
 			}
 		}
-		if (TargetMOI->GetObjectType() == EObjectType::OTSurfaceEdge)
+		else if (TargetMOI->GetObjectType() == EObjectType::OTSurfaceEdge)
 		{
 			auto edge = surfaceGraph->FindEdge(TargetMOI->ID);
 

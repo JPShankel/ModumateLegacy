@@ -783,11 +783,6 @@ namespace Modumate
 				return false;
 			}
 
-			if (IsVertexIDBounding(vertexID))
-			{
-				return false;
-			}
-
 			FVector2D oldPos = vertex->Position;
 			FVector2D newPos = kvp.Value;
 

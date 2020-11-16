@@ -707,6 +707,15 @@ namespace Modumate
 			GraphVertexToBoundVertex = Delta.BoundsUpdates.Value.GraphVerticesToSurfaceVertices;
 		}
 
+		for (int32 vertexID : BoundingPolygon.Value)
+		{
+			if (Delta.VertexMovements.Contains(vertexID))
+			{
+				bBoundsDirty = true;
+				break;
+			}
+		}
+
 		// Polygons may still be dirty at this point, but until we're ready to end applying a series of deltas and/or re-calculate polygons,
 		// we can't be sure that the intended Polygon structures will match the current graph traversals, so it's unsafe to clean them now.
 
@@ -1223,5 +1232,14 @@ namespace Modumate
 	const TMap<int32, TArray<int32>>& FGraph2D::GetInnerBounds() const
 	{
 		return BoundingContainedPolygons;
+	}
+
+	bool FGraph2D::IsOuterBoundsDirty()
+	{
+		return bBoundsDirty;
+	}
+	void FGraph2D::ClearOuterBoundsDirty()
+	{
+		bBoundsDirty = false;
 	}
 }

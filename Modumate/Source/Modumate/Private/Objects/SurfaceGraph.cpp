@@ -62,6 +62,7 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 		// If we aren't evaluating side effects, then updating cached graph data (and subsequently dirtying children surface graph elements) is enough
 		if (OutSideEffectDeltas == nullptr)
 		{
+			CheckGraphLink();
 			return true;
 		}
 
@@ -82,23 +83,30 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 			{
 				bFoundAllVertices = false;
 			}
-			else
+			else 
 			{
-				for (int32 facePointIdx = 0; facePointIdx < numCachedFacePoints; ++facePointIdx)
+				if (!surfaceGraph->IsOuterBoundsDirty() && bLinked)
 				{
-					Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(FaceIdxToVertexID[facePointIdx]);
-					if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
+					for (int32 facePointIdx = 0; facePointIdx < numCachedFacePoints; ++facePointIdx)
 					{
-						FVector2D newPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
-						if (!newPos2D.Equals(vertex->Position, PLANAR_DOT_EPSILON))
+						Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(FaceIdxToVertexID[facePointIdx]);
+						if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
 						{
-							vertexMoves.Add(vertex->ID, newPos2D);
+							FVector2D newPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
+							if (!newPos2D.Equals(vertex->Position, PLANAR_DOT_EPSILON))
+							{
+								vertexMoves.Add(vertex->ID, newPos2D);
+							}
+						}
+						else
+						{
+							bFoundAllVertices = false;
 						}
 					}
-					else
-					{
-						bFoundAllVertices = false;
-					}
+				}
+				else
+				{
+					CheckGraphLink();
 				}
 			}
 
@@ -268,6 +276,54 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 		}
 	}
 
+	return true;
+}
+
+bool FMOISurfaceGraphImpl::CheckGraphLink()
+{
+	FModumateDocument* doc = MOI ? MOI->GetDocument() : nullptr;
+	auto surfaceGraph = doc ? doc->FindSurfaceGraph(MOI->ID) : nullptr;
+	if (!ensure(doc && surfaceGraph))
+	{
+		return false;
+	}
+
+	surfaceGraph->ClearOuterBoundsDirty();
+
+	int32 numIDs = FaceIdxToVertexID.Num();
+	if (numIDs == 0)
+	{
+		return true;
+	}
+
+	int32 numCachedFacePoints = CachedFacePoints.Num();
+	if (numCachedFacePoints != numIDs)
+	{
+		return false;
+	}
+
+	TArray<int32> boundingVertexIDs;
+	surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
+
+	for (int32 facePointIdx = 0; facePointIdx < numCachedFacePoints; ++facePointIdx)
+	{
+		Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(FaceIdxToVertexID[facePointIdx]);
+		if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
+		{
+			FVector2D newPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
+			if (!newPos2D.Equals(vertex->Position, PLANAR_DOT_EPSILON))
+			{
+				bLinked = false;
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	bLinked = true;
 	return true;
 }
 

@@ -207,7 +207,8 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInsta
 	case EObjectType::OTSystemPanel:
 	{
 		const FModumateObjectInstance *hostParent = Host->GetParentObject();
-		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
+		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)) ||
+			hostParent->IsDirty(EObjectDirtyFlags::Structure) || hostParent->IsDirty(EObjectDirtyFlags::Mitering))
 		{
 			return false;
 		}

@@ -163,6 +163,7 @@ private:
 
 	// SUPER TEMPORARY TODO: we don't have a way to expose derived/non-definitional implementation-specific data, so this will be here until MOIs are UObjects.
 	friend class UModumateRoofStatics;
+	friend class FModumateDocument;
 
 	TWeakObjectPtr<AActor> MeshActor = nullptr;
 	TWeakObjectPtr<UWorld> World = nullptr;
