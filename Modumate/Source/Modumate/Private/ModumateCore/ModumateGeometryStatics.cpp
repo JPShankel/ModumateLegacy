@@ -2405,3 +2405,33 @@ bool UModumateGeometryStatics::Points3dSorter(const FVector& rhs, const FVector&
 	}
 	return true;
 };
+
+void UModumateGeometryStatics::DeCasteljau(const FVector Points[4], int32 iterations, TArray<FVector>& outCurve)
+{
+	int32 n = 4;
+	TArray<FVector> points(Points, n);
+
+	for (int32 i = 0; i < iterations; ++i)
+	{
+		TArray<FVector> newPoints;
+		newPoints.Add(points[0]);
+		for (int32 p = 0; p < n - 1; p += 3)
+		{
+			FVector p1(0.5f * (points[p] + points[p + 1]));
+			FVector p2(0.5f * (points[p + 1] + points[p + 2]));
+			FVector p3(0.5f * (points[p + 2] + points[p + 3]));
+			FVector p4(0.5f * (p1 + p2));
+			FVector p5(0.5f * (p2 + p3));
+			newPoints.Add(p1);
+			newPoints.Add(p4);
+			newPoints.Add(0.5f * (p4 + p5));
+			newPoints.Add(p5);
+			newPoints.Add(p3);
+			newPoints.Add(points[p + 3]);
+		}
+		points = MoveTemp(newPoints);
+		n = points.Num();
+	}
+
+	outCurve = MoveTemp(points);
+};

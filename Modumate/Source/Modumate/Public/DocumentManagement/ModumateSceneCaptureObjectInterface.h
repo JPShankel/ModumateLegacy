@@ -28,7 +28,8 @@ protected:
 		int32 MoiId = MOD_ID_NONE;
 		FVector2D PagePosition { ForceInitToZero };
 		FVector2D Size { ForceInitToZero };
-		float Depth = 0.0f;
+		float Scale { 1.0f };
+		float Depth  { 0.0f };
 		Modumate::FModumateLayerType LayerType;
 		FString JsonTrace;
 		int32 LocalId = 0;

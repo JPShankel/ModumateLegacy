@@ -40,6 +40,7 @@ void ACutPlaneCaptureActor::Tick(float DeltaTime)
 
 		UKismetRenderingLibrary::ExportRenderTarget(GetWorld(), CurrentTextureTarget, *filePath, *fileName);
 		UKismetRenderingLibrary::ReleaseRenderTarget2D(CurrentTextureTarget);
+		CaptureComponent->TextureTarget = nullptr;
 		CurrentTextureTarget = nullptr;
 
 		Parent->CaptureComplete();

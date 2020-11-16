@@ -286,4 +286,7 @@ public:
 
 	// Sort helper for points that lie on an arbitrary line.
 	static bool Points3dSorter(const FVector& rhs, const FVector& lhs);
+
+	// Smooth a Bezier curve.
+	static void DeCasteljau(const FVector Points[4], int32 iterations, TArray<FVector>& outCurve);
 };

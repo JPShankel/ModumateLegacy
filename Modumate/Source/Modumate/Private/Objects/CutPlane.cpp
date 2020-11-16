@@ -204,6 +204,7 @@ void FMOICutPlaneImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComp
 		bool bClosedCurve = false;
 		const float lineDepth = traceResponse.Value.Depth;
 		const FVector tracePosition(traceResponse.Value.PagePosition, lineDepth);
+		const FVector traceScale(-traceResponse.Value.Scale, -traceResponse.Value.Scale, 1.0f);
 		TArray<FEdge> outlineLines;
 		int lineStartIndex = outlineLines.Num();
 		for (const FModumateTraceSplineEntry& entry: trace.lines)
@@ -230,18 +231,18 @@ void FMOICutPlaneImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComp
 			}
 			else if (entry.cubic.Num() > 0)
 			{
+				static constexpr int32 numSmoothingIterations = 2;
+				
 				FVector u(entry.cubic[0].x, entry.cubic[0].y, 0.0f);
 				FVector v(entry.cubic[1].x, entry.cubic[1].y, 0.0f);
 				FVector w(entry.cubic[2].x, entry.cubic[2].y, 0.0f);
-
-				// One level of de Casteljau:
-				FVector au((currentPoint + u) * 0.5);
-				FVector uv((u + v) * 0.5);
-				FVector vw((v + w) * 0.5);
-				outlineLines.Emplace(currentPoint, au);
-				outlineLines.Emplace(au, uv);
-				outlineLines.Emplace(uv, vw);
-				outlineLines.Emplace(vw, w);
+				FVector controlPoints[4] = { currentPoint, u, v, w };
+				TArray<FVector> smoothedCurve;
+				UModumateGeometryStatics::DeCasteljau(controlPoints, numSmoothingIterations, smoothedCurve);
+				for (int32 i = 0; i < smoothedCurve.Num() - 1; ++i)
+				{
+					outlineLines.Emplace(smoothedCurve[i], smoothedCurve[i + 1]);
+				}
 				currentPoint = w;
 			}
 			else if (!FMath::IsNaN(entry.depth))
@@ -260,8 +261,8 @@ void FMOICutPlaneImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComp
 
 		for (auto& line: outlineLines)
 		{
-			line.Vertex[0] *= FVector(-PixelsToWorldCentimeters, -PixelsToWorldCentimeters, 1.0f);
-			line.Vertex[1] *= FVector(-PixelsToWorldCentimeters, -PixelsToWorldCentimeters, 1.0f);
+			line.Vertex[0] *= traceScale;
+			line.Vertex[1] *= traceScale;
 			line.Vertex[0] += tracePosition;
 			line.Vertex[1] += tracePosition;
 		}
@@ -343,18 +344,21 @@ bool FMOICutPlaneImpl::StartRender(FModumateDocument* doc /*= nullptr*/)
 	}
 	float maxDimension = bounds.GetSize().Size();
 
-	FVector location = object->GetObjectLocation();
+	static constexpr int32 renderTargetSize = 1500;
+
+	FVector location = actor->GetActorLocation();
 	FVector2D projectedLocation = UModumateGeometryStatics::ProjectPoint2D(location, endAxisX, endAxisY, CachedPoints[0]);
 	FVector2D renderOrigin = projectedLocation + FVector2D(maxDimension, maxDimension);
 	FVector2D renderSize = 2.0f * FVector2D(maxDimension, maxDimension);
 	float depth = CachedPlane.PlaneDot(location);
 	objectRender.PagePosition = renderOrigin;
 	objectRender.Size = renderSize;
+	objectRender.Scale = 2.0f * maxDimension / renderTargetSize;
 	objectRender.Depth = depth;
 	
 	// setup texture target
-	CaptureActor->CurrentTextureTarget = UKismetRenderingLibrary::CreateRenderTarget2D(DynamicMeshActor->GetWorld(), (int)(renderSize.X * pixelsPerWorldCentimeter),
-		(int)(renderSize.Y * pixelsPerWorldCentimeter), ETextureRenderTargetFormat::RTF_RGBA8);
+	CaptureActor->CurrentTextureTarget = UKismetRenderingLibrary::CreateRenderTarget2D(DynamicMeshActor->GetWorld(), renderTargetSize,
+		renderTargetSize, ETextureRenderTargetFormat::RTF_RGBA8);
 	CaptureActor->CurrentTextureTarget->ClearColor = FLinearColor(1.0f, 1.0f, 1.0f);
 	CaptureActor->ScopeBoxID = objectRender.LocalId;
 
@@ -366,7 +370,7 @@ bool FMOICutPlaneImpl::StartRender(FModumateDocument* doc /*= nullptr*/)
 	cutPlaneTransform.SetRotation(rotation);
 
 	captureComponent->TextureTarget = CaptureActor->CurrentTextureTarget;
-	captureComponent->OrthoWidth = renderSize.X;
+	captureComponent->OrthoWidth = 2.0f * maxDimension;
 	captureComponent->SetWorldTransform(cutPlaneTransform);
 
 	captureComponent->ClearShowOnlyComponents();

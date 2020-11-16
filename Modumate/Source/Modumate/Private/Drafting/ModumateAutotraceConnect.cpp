@@ -74,6 +74,7 @@ namespace Modumate
 
 #if 0
 		// Local server:
+		static const FString ServerAddress(TEXT("http://localhost:8081"));
 		request->SetURL(ServerAddress + "/autotrace");
 		request->SetHeader(TEXT("Authorization"), TEXT("Basic YW1zOmtpZ2VibXk2dWtrNzN3"));
 #else
