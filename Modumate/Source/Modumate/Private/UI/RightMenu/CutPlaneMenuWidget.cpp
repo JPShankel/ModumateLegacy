@@ -61,14 +61,7 @@ void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 	for (int32 i = 0; i < cutPlaneMois.Num(); ++i)
 	{
 		UCutPlaneDimListItemObject *newCutPlaneObj = NewObject<UCutPlaneDimListItemObject>(this);
-		FMOICutPlaneData cutPlaneData;
-		cutPlaneMois[i]->GetStateData().CustomData.LoadStructData(cutPlaneData);
-		newCutPlaneObj->DisplayName = cutPlaneData.Name;
-		newCutPlaneObj->ObjId = cutPlaneMois[i]->ID;
-		newCutPlaneObj->Location = cutPlaneData.Location;
-		newCutPlaneObj->Rotation = cutPlaneData.Rotation;
-		newCutPlaneObj->Visibility = !cutPlaneMois[i]->IsRequestedHidden();
-		newCutPlaneObj->CanExport = cutPlaneData.bIsExported;
+		BuildCutPlaneItemFromMoi(newCutPlaneObj, cutPlaneMois[i]);
 
 		// Place cut plane item by its orientation
 		float cutPlaneUpDot = FMath::Abs(newCutPlaneObj->Rotation.GetUpVector() | FVector::UpVector);
@@ -142,13 +135,18 @@ bool UCutPlaneMenuWidget::RemoveCutPlaneFromMenuBlock(int32 ObjID /*= MOD_ID_NON
 
 bool UCutPlaneMenuWidget::UpdateCutPlaneParamInMenuBlock(int32 ObjID /*= MOD_ID_NONE*/)
 {
-	UCutPlaneDimListItemObject *item = GetListItemFromObjID(ObjID);
-	if (!item)
+	// Listview uses UCutPlaneDimListItemObject to build UCutPlaneDimListItem widget, both need to be updated
+	UCutPlaneDimListItemObject* item = GetListItemFromObjID(ObjID);
+	FModumateObjectInstance* moi = GameState->Document.GetObjectById(ObjID);
+	if (!(item && moi))
 	{
 		return false;
 	}
 
-	UCutPlaneMenuBlock *block;
+	// Update UCutPlaneDimListItemObject
+	BuildCutPlaneItemFromMoi(item, moi);
+
+	UCutPlaneMenuBlock* block;
 	switch (item->CutPlaneType)
 	{
 	case ECutPlaneType::Horizontal:
@@ -164,14 +162,11 @@ bool UCutPlaneMenuWidget::UpdateCutPlaneParamInMenuBlock(int32 ObjID /*= MOD_ID_
 		return false;
 	}
 
-	UCutPlaneDimListItem *itemWidget = Cast<UCutPlaneDimListItem>(block->CutPlanesList->GetEntryWidgetFromItem(item));
+	// Update UCutPlaneDimListItem from the updated CutPlaneDimListItemObject
+	UCutPlaneDimListItem* itemWidget = Cast<UCutPlaneDimListItem>(block->CutPlanesList->GetEntryWidgetFromItem(item));
 	if (itemWidget)
 	{
-		FModumateObjectInstance* moi = GameState->Document.GetObjectById(ObjID);
-		FMOICutPlaneData cutPlaneData;
-		moi->GetStateData().CustomData.LoadStructData(cutPlaneData);
-
-		itemWidget->UpdateVisibilityAndName(!moi->IsRequestedHidden(), cutPlaneData.Name);
+		itemWidget->NativeOnListItemObjectSet(item);
 		return true;
 	}
 	return false;
@@ -185,6 +180,20 @@ void UCutPlaneMenuWidget::SetCutPlaneExportMenuVisibility(bool NewVisible)
 		SetCutPlaneMenuVisibility(true);
 	}
 	CutPlaneMenuBlockExport->SetExportMenuVisibility(NewVisible);
+}
+
+void UCutPlaneMenuWidget::BuildCutPlaneItemFromMoi(UCutPlaneDimListItemObject* CutPlaneObj, const class FModumateObjectInstance* Moi)
+{
+	FMOICutPlaneData cutPlaneData;
+	if (ensure(Moi->GetStateData().CustomData.LoadStructData(cutPlaneData)))
+	{
+		CutPlaneObj->DisplayName = cutPlaneData.Name;
+		CutPlaneObj->ObjId = Moi->ID;
+		CutPlaneObj->Location = cutPlaneData.Location;
+		CutPlaneObj->Rotation = cutPlaneData.Rotation;
+		CutPlaneObj->Visibility = !Moi->IsRequestedHidden();
+		CutPlaneObj->CanExport = cutPlaneData.bIsExported;
+	}
 }
 
 bool UCutPlaneMenuWidget::GetCutPlaneIDsByType(ECutPlaneType Type, TArray<int32>& OutIDs)
