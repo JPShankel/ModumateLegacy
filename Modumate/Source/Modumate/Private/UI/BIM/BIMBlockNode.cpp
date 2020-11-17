@@ -92,7 +92,7 @@ FReply UBIMBlockNode::NativeOnMouseButtonUp(const FGeometry& InGeometry, const F
 	FReply reply = Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
 	if (InMouseEvent.GetEffectingButton() == ToggleCollapseKey && !DragTick)
 	{
-		UpdateNodeCollapse(!NodeCollapse, true);
+		ParentBIMDesigner->SetNodeAsSelected(ID);
 	}
 	return reply;
 }
@@ -175,22 +175,24 @@ void UBIMBlockNode::UpdateNodeDirty(bool NewDirty)
 	DirtyStateBorder->SetVisibility(newVisibility);
 }
 
-void UBIMBlockNode::UpdateNodeCollapse(bool NewCollapse, bool AllowAutoArrange)
+void UBIMBlockNode::UpdateNodeCollapse(bool NewCollapse)
 {
 	NodeCollapse = NewCollapse;
 	ENodeWidgetSwitchState newNodeSwitchState = NodeCollapse ? ENodeWidgetSwitchState::Collapsed : ENodeWidgetSwitchState::Expanded;
 	UpdateNodeSwitchState(newNodeSwitchState);
-	if (AllowAutoArrange)
-	{
-		ParentBIMDesigner->AutoArrangeNodes();
-	}
 }
 
-bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCraftingTreeNodeSharedPtr &Node, bool bAsSlot)
+void UBIMBlockNode::UpdateNodeHidden(bool NewHide)
+{
+	bNodeIsHidden = NewHide;
+	SetVisibility(bNodeIsHidden ? ESlateVisibility::Collapsed : ESlateVisibility::SelfHitTestInvisible);
+}
+
+bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPresetEditorNodeSharedPtr &Node, bool bAsSlot)
 {
 	IsKingNode = Node->ParentInstance == nullptr;
 	ParentBIMDesigner = OuterBIMDesigner;
-	PresetID = Node->PresetID;
+	PresetID = Node->WorkingPresetCopy.PresetID;
 	bNodeHasSlotPart = bAsSlot;
 	TitleNodeCollapsed->ChangeText(Node->CategoryTitle);
 	TitleNodeExpanded->ChangeText(Node->CategoryTitle);
@@ -221,18 +223,8 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 		ParentID = Node->ParentInstance.Pin()->GetInstanceID();
 	}
 
-	if (IsKingNode)
-	{
-		UpdateNodeCollapse(false);
-	}
-	else
-	{
-		// TODO: Collapse state of non king node depends on current user selection
-		UpdateNodeCollapse(true);
-	}
-
 	// Node status
-	UpdateNodeDirty(Node->GetPresetStatus(Controller->GetDocument()->PresetManager.CraftingNodePresets) == EBIMPresetEditorNodeStatus::Dirty);
+	UpdateNodeDirty(Node->GetPresetStatus() == EBIMPresetEditorNodeStatus::Dirty);
 
 	// Build instance properties
 	VerticalBoxProperties->ClearChildren();
@@ -240,7 +232,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 	Controller->GetDocument()->PresetManager.CraftingNodePresets.GetPropertyFormForPreset(PresetID, properties);
 	for (auto& curProperty : properties)
 	{
-		UBIMBlockUserEnterable *newEnterable = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockUserEnterable>(BIMBlockUserEnterableClass);
+		UBIMBlockUserEnterable* newEnterable = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockUserEnterable>(BIMBlockUserEnterableClass);
 		if (newEnterable)
 		{
 			// Text title
@@ -249,7 +241,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCr
 			// Text value: user enter-able
 			FBIMPropertyKey value(curProperty.Value);
 			FString valueString;
-			Node->InstanceProperties.TryGetProperty(value.Scope, value.Name, valueString);
+			Node->WorkingPresetCopy.Properties.TryGetProperty(value.Scope, value.Name, valueString);
 			newEnterable->BuildEnterableFieldFromProperty(ParentBIMDesigner, ID, value.Scope, value.Name, valueString);
 			VerticalBoxProperties->AddChildToVerticalBox(newEnterable);
 		}
@@ -357,8 +349,24 @@ void UBIMBlockNode::BeginDrag()
 	}
 }
 
+void UBIMBlockNode::SetNodeAsHighlighted(bool NewHighlight)
+{
+	bNodeHighlight = NewHighlight;
+	float opacity = bNodeHighlight ? 1.f : NodeNonHighlightOpacity;
+	SetRenderOpacity(opacity);
+	ComponentPresetListItem->IconImage->SetRenderOpacity(opacity);
+
+	UMaterialInstanceDynamic* dynMat = ComponentPresetListItem->IconImage->GetDynamicMaterial();
+	dynMat->SetScalarParameterValue(NodeAlphaParamName, bNodeHighlight ? 1.f : 0.f);
+}
+
 FVector2D UBIMBlockNode::GetEstimatedNodeSize()
 {
+	if (bNodeIsHidden)
+	{
+		return 0.f;
+	}
+
 	float estimatedSize = 0.f;
 
 	if (NodeDirty)

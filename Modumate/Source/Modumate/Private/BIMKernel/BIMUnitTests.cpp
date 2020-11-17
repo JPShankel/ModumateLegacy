@@ -2,12 +2,12 @@
 
 #include "BIMKernel/BIMUnitTests.h"
 #include "JsonObjectConverter.h"
-#include "BIMKernel/BIMTagPath.h"
-#include "BIMKernel/BIMNodeEditor.h"
-#include "BIMKernel/BIMAssemblySpec.h"
-#include "BIMKernel/BIMPresetCollection.h"
-#include "BIMKernel/BIMPresetInstance.h"
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Core/BIMTagPath.h"
+#include "BIMKernel/Presets/BIMPresetEditor.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
+#include "BIMKernel/Presets/BIMPresetCollection.h"
+#include "BIMKernel/Presets/BIMPresetInstance.h"
+#include "BIMKernel/Core/BIMKey.h"
 
 static bool testKeys()
 {
@@ -285,8 +285,8 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 
 	FBIMPresetTypeDefinition *nodeType = presetCollection.NodeDescriptors.Find(assemblyPreset->NodeType);
 
-	FBIMCraftingTreeNodePool instancePool;
-	FBIMCraftingTreeNodeSharedPtr rootNode;
+	FBIMPresetEditor instancePool;
+	FBIMPresetEditorNodeSharedPtr rootNode;
 	if (!ensureAlways(instancePool.InitFromPreset(presetCollection, layeredAssemblies[0], rootNode) == EBIMResult::Success))
 	{
 		return false;
@@ -304,9 +304,8 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 			return false;
 		}
 
-		if (!ensureAlways(rootNode->GetPresetStatus(presetCollection) == EBIMPresetEditorNodeStatus::UpToDate))
+		if (!ensureAlways(rootNode->GetPresetStatus() == EBIMPresetEditorNodeStatus::UpToDate))
 		{
-			rootNode->GetPresetStatus(presetCollection);
 			return false;
 		}
 	}

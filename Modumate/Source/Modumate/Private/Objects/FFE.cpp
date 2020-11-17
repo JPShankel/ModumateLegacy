@@ -10,7 +10,7 @@
 #include "ToolsAndAdjustments/Handles/AdjustFFEInvertHandle.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "BIMKernel/BIMProperties.h"
+#include "BIMKernel/Core/BIMProperties.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
 #include "ModumateCore/ModumateObjectStatics.h"

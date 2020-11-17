@@ -11,16 +11,17 @@
 #include "DocumentManagement/ModumatePresetManager.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "ModumateCore/ModumateSlateHelper.h"
-#include "BIMKernel/BIMNodeEditor.h"
+#include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "UI/BIM/BIMBlockAddLayer.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "Components/Sizebox.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "UI/BIM/BIMBlockSlotList.h"
 #include "UI/BIM/BIMBlockSlotListItem.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
+#include "UI/BIM/BIMBlockMiniNode.h"
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -99,10 +100,18 @@ int32 UBIMDesigner::NativePaint(const FPaintArgs& Args, const FGeometry& Allotte
 		if (!curNode->IsKingNode && curNode->ParentID > -1)
 		{
 			UBIMBlockNode *parentNode = IdToNodeMap.FindRef(curNode->ParentID);
-			if (parentNode)
+			if (parentNode && !curNode->bNodeIsHidden)
 			{
 				DrawConnectSplineForNodes(Context, parentNode, curNode);
 			}
+		}
+	}
+	for (auto& curMiniNode : MiniNodes)
+	{
+		UBIMBlockNode* node = IdToNodeMap.FindRef(curMiniNode->ParentID);
+		if (node)
+		{
+			DrawConnectSplineForMiniNode(Context, node, curMiniNode);
 		}
 	}
 	return LayerId;
@@ -145,6 +154,102 @@ bool UBIMDesigner::UpdateCraftingAssembly()
 		*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly) == EBIMResult::Success;
 }
 
+void UBIMDesigner::ToggleCollapseExpandNodes()
+{
+	bool newAllCollapse = false;
+	for (const auto curNode : BIMBlockNodes)
+	{
+		if (curNode != RootNode && !curNode->NodeCollapse)
+		{
+			newAllCollapse = true;
+			break;
+		}
+	}
+	for (const auto curNode : BIMBlockNodes)
+	{
+		if (curNode != RootNode)
+		{
+			curNode->UpdateNodeCollapse(newAllCollapse);
+		}
+	}
+}
+
+void UBIMDesigner::SetNodeAsSelected(int32 InstanceID)
+{
+	SelectedNodeID = InstanceID;
+
+	// If selected node is root node, then use simpler method to determine highlighted and hidden nodes
+	if (RootNode->ID == SelectedNodeID)
+	{
+		for (const auto curNode : BIMBlockNodes)
+		{
+			if (curNode == RootNode)
+			{
+				curNode->UpdateNodeCollapse(false);
+				curNode->SetNodeAsHighlighted(true);
+				curNode->UpdateNodeHidden(false);
+			}
+			else
+			{
+				bool isHighlighted = curNode->ParentID == SelectedNodeID;
+				curNode->UpdateNodeCollapse(true);
+				curNode->SetNodeAsHighlighted(isHighlighted);
+				curNode->UpdateNodeHidden(!isHighlighted);
+			}
+		}
+		return;
+	}
+
+	// Find selected node's children
+	TArray<int32> selectedNodeChildren;
+	const FBIMPresetEditorNodeSharedPtr selectedInst = InstancePool.InstanceFromID(SelectedNodeID);
+	if (selectedInst)
+	{
+		TArray<FBIMPresetEditorNodeSharedPtr> childNodes;
+		selectedInst->GatherAllChildNodes(childNodes);
+		for (const auto curNode : childNodes)
+		{
+			selectedNodeChildren.Add(curNode->GetInstanceID());
+		}
+	}
+
+	// Set nodes expanded or collapsed state based on which node is selected
+	// All nodes from selected node's parent lineage are expanded, all other nodes are collapsed
+	// All nodes that are within the branch of selected node are consider as highlighted
+	TArray<int32> selectedNodeLineage;
+	InstancePool.FindNodeParentLineage(SelectedNodeID, selectedNodeLineage);
+	TArray<int32> highlightedNodeIDs;
+
+	for (const auto curNode : BIMBlockNodes)
+	{
+		bool bIsExpanded = selectedNodeLineage.Contains(curNode->ID) || SelectedNodeID == curNode->ID;
+		curNode->UpdateNodeCollapse(!bIsExpanded);
+
+		bool bIsHighlighted = selectedNodeLineage.Contains(curNode->ID) || SelectedNodeID == curNode->ID || selectedNodeChildren.Contains(curNode->ID);
+		curNode->SetNodeAsHighlighted(bIsHighlighted);
+		if (bIsHighlighted)
+		{
+			highlightedNodeIDs.Add(curNode->ID);
+		}
+	}
+
+	// Hide non-highlighted nodes that don't have highlighted siblings
+	for (const auto curNode : BIMBlockNodes)
+	{
+		if (curNode->bNodeHighlight)
+		{
+			curNode->UpdateNodeHidden(false);
+		}
+		else
+		{
+			bool hasHighlightedParent = highlightedNodeIDs.Contains(curNode->ParentID);
+			curNode->UpdateNodeHidden(!hasHighlightedParent);
+		}
+	}
+
+	AutoArrangeNodes();
+}
+
 float UBIMDesigner::GetCurrentZoomScale() const
 {
 	return ScaleBoxForNodes->UserSpecifiedScale;
@@ -154,14 +259,14 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FBIMKey& PresetID)
 {
 	Controller->DynamicIconGenerator->ReleaseSavedRenderTarget();
 
-	FBIMCraftingTreeNodeSharedPtr rootNode;
+	FBIMPresetEditorNodeSharedPtr rootNode;
 	EBIMResult getPresetResult = InstancePool.InitFromPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, PresetID, rootNode);
 	if (getPresetResult != EBIMResult::Success)
 	{
 		return false;
 	}
-
-	UpdateBIMDesigner();
+	SelectedNodeID = rootNode->GetInstanceID();
+	UpdateBIMDesigner(true);
 	return true;
 }
 
@@ -177,7 +282,7 @@ bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey
 	return true;
 }
 
-void UBIMDesigner::UpdateBIMDesigner()
+void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 {
 	EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(
 		Controller->GetDocument()->PresetManager.CraftingNodePresets,
@@ -189,21 +294,13 @@ void UBIMDesigner::UpdateBIMDesigner()
 		curNodeWidget->RemoveFromParent();
 		curNodeWidget->ReleaseNode();
 	}
-	for (auto& curItem : NodesWithAddLayerButton)
-	{
-		auto& curAddButton = curItem.Value;
-		curAddButton->RemoveFromParent();
-		Controller->HUDDrawWidget->UserWidgetPool.Release(curAddButton);
-	}
 
 	BIMBlockNodes.Empty();
 	IdToNodeMap.Empty();
-	NodesWithAddLayerButton.Empty();
 
-	TArray<const FBIMCraftingTreeNode::FAttachedChildGroup*> addableChildGroup; // Child groups that allow user to add more nodes
 	TMap<int32, class UBIMBlockNode*> IdToNodeMapUnSorted; 	// Temp map used to aid sorting node order
 
-	for (const FBIMCraftingTreeNodeSharedPtr& curInstance : InstancePool.GetInstancePool())
+	for (const FBIMPresetEditorNodeSharedPtr& curInstance : InstancePool.GetInstancePool())
 	{
 		// Create widget for this node only if it's not embedded
 		int32 embeddedInId = INDEX_NONE;
@@ -212,14 +309,6 @@ void UBIMDesigner::UpdateBIMDesigner()
 		{
 			// Create a normal node or a rigged assembly node, depends on whether any of its children have parts
 			bool bChildrenHasPart = false;
-			for (const auto& curChild : curInstance->AttachedChildren)
-			{
-				if (curChild.IsPart())
-				{
-					bChildrenHasPart = true;
-					break;
-				}
-			}
 			TSubclassOf<UBIMBlockNode> nodeWidgetClass = bChildrenHasPart ? BIMBlockRiggedNodeClass : BIMBlockNodeClass;
 			UBIMBlockNode* newBlockNode = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockNode>(nodeWidgetClass);
 			if (newBlockNode)
@@ -238,16 +327,6 @@ void UBIMDesigner::UpdateBIMDesigner()
 				{
 					canvasSlot->SetAutoSize(true);
 				}
-
-				// Save the node's child group if it can add child
-				for (auto& curChildGroup : curInstance->AttachedChildren)
-				{
-					if (curChildGroup.SetType.MaxCount > curChildGroup.Children.Num() ||
-						curChildGroup.SetType.MaxCount == -1)
-					{
-						addableChildGroup.AddUnique(&curChildGroup);
-					}
-				}
 			}
 		}
 	}
@@ -263,25 +342,53 @@ void UBIMDesigner::UpdateBIMDesigner()
 		}
 	}
 
-	for (int32 i = 0; i < addableChildGroup.Num(); ++i)
+	SetNodeAsSelected(SelectedNodeID);
+
+	// Adjust canvas size and position to fit root node to screen
+	if (AutoAdjustToRootNode)
 	{
-		// Place add button under the last attached child node
-		// TODO: Possible tech debt. This is under the assumption that addable node already has at least one child node attached
-		if (addableChildGroup[i]->Children.Num() > 0)
+		UCanvasPanelSlot* rootNodeCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(RootNode);
+		UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(ScaleBoxForNodes);
+		if (RootNode && rootNodeCanvasSlot && canvasSlot)
 		{
-			int32 lastChildID = addableChildGroup[i]->Children.Last().Pin()->GetInstanceID();
-			UBIMBlockNode *nodeWithAddButton = IdToNodeMap.FindRef(lastChildID);
-			if (nodeWithAddButton)
+			ScaleBoxForNodes->SetUserSpecifiedScale(1.f);
+			FVector2D rootNodePos = rootNodeCanvasSlot->GetPosition();
+			int32 screenX;
+			int32 screenY;
+			Controller->GetViewportSize(screenX, screenY);
+			float newCanvasPosX = RootNodeHorizontalPosition;
+			float newCanvasPosY = (static_cast<float>(screenY) * 0.5f) - rootNodePos.Y - (RootNode->GetEstimatedNodeSize().Y * 0.5f);
+			canvasSlot->SetPosition(FVector2D(newCanvasPosX, newCanvasPosY));
+		}
+	}
+}
+
+void UBIMDesigner::AutoArrangeNodes()
+{
+
+	for (auto& curItem : NodesWithAddLayerButton)
+	{
+		auto& curAddButton = curItem.Value;
+		curAddButton->RemoveFromParent();
+		Controller->HUDDrawWidget->UserWidgetPool.Release(curAddButton);
+	}
+	NodesWithAddLayerButton.Empty();
+	for (const FBIMPresetEditorNodeSharedPtr& curInstance : InstancePool.GetInstancePool())
+	{
+		if (curInstance->bWantAddButton)
+		{
+			UBIMBlockNode* nodeWithAddButton = IdToNodeMap.FindRef(curInstance->GetInstanceID());
+			if (nodeWithAddButton && !nodeWithAddButton->bNodeIsHidden)
 			{
-				UBIMBlockAddLayer *newAddButton = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockAddLayer>(BIMAddLayerClass);
+				UBIMBlockAddLayer* newAddButton = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockAddLayer>(BIMAddLayerClass);
 				if (newAddButton)
 				{
 					NodesWithAddLayerButton.Add(nodeWithAddButton, newAddButton);
 
-					newAddButton->ParentID = addableChildGroup[i]->Children.Last().Pin()->ParentInstance.Pin()->GetInstanceID();
-					newAddButton->PresetID = addableChildGroup[i]->Children.Last().Pin()->PresetID;
-					newAddButton->ParentSetIndex = i;
-					newAddButton->ParentSetPosition = addableChildGroup[i]->Children.Num();
+					newAddButton->ParentID = curInstance->ParentInstance.Pin()->GetInstanceID();
+					newAddButton->PresetID = curInstance->WorkingPresetCopy.PresetID;
+					newAddButton->ParentSetIndex = curInstance->MyParentPinSetIndex;
+					newAddButton->ParentSetPosition = curInstance->MyParentPinSetPosition + 1;
 
 					CanvasPanelForNodes->AddChildToCanvas(newAddButton);
 					UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(newAddButton);
@@ -294,26 +401,6 @@ void UBIMDesigner::UpdateBIMDesigner()
 		}
 	}
 
-	AutoArrangeNodes();
-
-	// Adjust canvas size and position to fit root node to screen
-	UCanvasPanelSlot* rootNodeCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(RootNode);
-	UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(ScaleBoxForNodes);
-	if (RootNode && rootNodeCanvasSlot && canvasSlot)
-	{
-		ScaleBoxForNodes->SetUserSpecifiedScale(1.f);
-		FVector2D rootNodePos = rootNodeCanvasSlot->GetPosition();
-		int32 screenX;
-		int32 screenY;
-		Controller->GetViewportSize(screenX, screenY);
-		float newCanvasPosX = RootNodeHorizontalPosition;
-		float newCanvasPosY = (screenY * 0.5f) - rootNodePos.Y - (RootNode->GetEstimatedNodeSize().Y * 0.5f);
-		canvasSlot->SetPosition(FVector2D(newCanvasPosX, newCanvasPosY));
-	}
-}
-
-void UBIMDesigner::AutoArrangeNodes()
-{
 	NodeCoordinateMap.Empty();
 
 	if (BIMBlockNodes.Num() == 0)
@@ -479,7 +566,70 @@ void UBIMDesigner::AutoArrangeNodes()
 				canvasSlot->SetPosition(addButtonPosition);
 			}
 		}
+	}
 
+	// Mini nodes represent children that are hidden, but their parent node is visible
+	for (auto& curMiniNode : MiniNodes)
+	{
+		curMiniNode->RemoveFromParent();
+		Controller->HUDDrawWidget->UserWidgetPool.Release(curMiniNode);
+	}
+	MiniNodes.Empty();
+
+	for (auto& curNode : BIMBlockNodes)
+	{
+		if (!curNode->bNodeIsHidden)
+		{
+			FBIMPresetEditorNodeSharedPtr instPtr = InstancePool.InstanceFromID(curNode->ID);
+			if (instPtr.IsValid())
+			{
+				TArray<int32> rawChildrenIDs; TArray<int32> childrenIDs;
+				instPtr->GatherChildrenInOrder(rawChildrenIDs);
+
+				// Only check nodes that has widgets (embedded nodes don't have widgets)
+				for (auto curID : rawChildrenIDs)
+				{
+					if (IdToNodeMap.FindRef(curID))
+					{
+						childrenIDs.Add(curID);
+					}
+				}
+
+				if (childrenIDs.Num() > 0)
+				{
+					UBIMBlockNode* childNode = IdToNodeMap.FindRef(childrenIDs[0]);
+					if (childNode && childNode->bNodeIsHidden)
+					{
+						UBIMBlockMiniNode* newMiniNode = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockMiniNode>(BIMMiniNodeClass);
+						if (newMiniNode)
+						{
+							CanvasPanelForNodes->AddChildToCanvas(newMiniNode);
+							newMiniNode->BuildMiniNode(this, instPtr->GetInstanceID(), childrenIDs.Num());
+							MiniNodes.Add(newMiniNode);
+
+							// Place miniNode in average position of the children nodes
+							FVector2D miniNodePosition = FVector2D::ZeroVector;
+							for (int32 i = 0; i < childrenIDs.Num(); ++i)
+							{
+								UBIMBlockNode* curChildNode = IdToNodeMap.FindRef(childrenIDs[i]);
+								UCanvasPanelSlot* curChildSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(curChildNode);
+								if (curChildSlot)
+								{
+									miniNodePosition += curChildSlot->GetPosition();
+								}
+							}
+							miniNodePosition = miniNodePosition / childrenIDs.Num();
+
+							UCanvasPanelSlot* miniNodeSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(newMiniNode);
+							if (miniNodeSlot)
+							{
+								miniNodeSlot->SetPosition(miniNodePosition);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -517,15 +667,40 @@ void UBIMDesigner::DrawConnectSplineForNodes(const FPaintContext& context, class
 
 	TArray<FVector2D> splinePts = { startPoint, FVector2D(startX, startPoint.Y), FVector2D(endX, endPoint.Y), endPoint };
 
-	UModumateSlateHelper::DrawCubicBezierSplineBP(context, splinePts, NodeSplineColor, NodeSplineThickness);
+	UModumateSlateHelper::DrawCubicBezierSplineBP(context, splinePts, StartNode->bNodeHighlight ? NodeSplineHighlightedColor : NodeSplineFadeColor, NodeSplineThickness);
+}
+
+void UBIMDesigner::DrawConnectSplineForMiniNode(const FPaintContext& context, class UBIMBlockNode* StartNode, class UBIMBlockMiniNode* MiniNode) const
+{
+	UCanvasPanelSlot* canvasSlotStart = UWidgetLayoutLibrary::SlotAsCanvasSlot(StartNode);
+	UCanvasPanelSlot* canvasSlotEnd = UWidgetLayoutLibrary::SlotAsCanvasSlot(MiniNode);
+	UCanvasPanelSlot* canvasSlotScaleBox = UWidgetLayoutLibrary::SlotAsCanvasSlot(ScaleBoxForNodes);
+	if (!(canvasSlotStart && canvasSlotEnd && canvasSlotScaleBox))
+	{
+		return;
+	}
+
+	FVector2D startNodeSize = StartNode->GetEstimatedNodeSize();
+	FVector2D startNodePos = canvasSlotStart->GetPosition() + FVector2D(startNodeSize.X, startNodeSize.Y / 2.f);
+	FVector2D endNodePos = canvasSlotEnd->GetPosition() + FVector2D(0.f, MiniNode->AttachmentOffset);
+
+	FVector2D startPoint = (startNodePos * GetCurrentZoomScale()) + canvasSlotScaleBox->GetPosition();
+	FVector2D endPoint = (endNodePos * GetCurrentZoomScale()) + canvasSlotScaleBox->GetPosition();
+
+	float startX = startPoint.X + NodeSplineBezierStartPercentage * (endPoint.X - startPoint.X);
+	float endX = startPoint.X + NodeSplineBezierEndPercentage * (endPoint.X - startPoint.X);
+
+	TArray<FVector2D> splinePts = { startPoint, FVector2D(startX, startPoint.Y), FVector2D(endX, endPoint.Y), endPoint };
+
+	UModumateSlateHelper::DrawCubicBezierSplineBP(context, splinePts, StartNode->bNodeHighlight ? NodeSplineHighlightedColor : NodeSplineFadeColor, NodeSplineThickness);
 }
 
 FBIMKey UBIMDesigner::GetPresetID(int32 InstanceID)
 {
-	FBIMCraftingTreeNodeSharedPtr instPtr = InstancePool.InstanceFromID(InstanceID);
+	FBIMPresetEditorNodeSharedPtr instPtr = InstancePool.InstanceFromID(InstanceID);
 	if (ensureAlways(instPtr.IsValid()))
 	{
-		return instPtr->PresetID;
+		return instPtr->WorkingPresetCopy.PresetID;
 	}
 	return FBIMKey();
 }
@@ -545,7 +720,7 @@ bool UBIMDesigner::DeleteNode(int32 InstanceID)
 
 bool UBIMDesigner::AddNodeFromPreset(int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
 {
-	FBIMCraftingTreeNodeSharedPtr newNode = InstancePool.CreateNodeInstanceFromPreset(
+	FBIMPresetEditorNodeSharedPtr newNode = InstancePool.CreateNodeInstanceFromPreset(
 		Controller->GetDocument()->PresetManager.CraftingNodePresets,
 		ParentID, PresetID, ParentSetIndex, ParentSetPosition);
 	if (!newNode.IsValid())
@@ -559,12 +734,12 @@ bool UBIMDesigner::AddNodeFromPreset(int32 ParentID, const FBIMKey& PresetID, in
 
 bool UBIMDesigner::SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value)
 {
-	FBIMCraftingTreeNodeSharedPtr instPtr = InstancePool.InstanceFromID(NodeID);
+	FBIMPresetEditorNodeSharedPtr instPtr = InstancePool.InstanceFromID(NodeID);
 	if (!instPtr.IsValid())
 	{
 		return false;
 	}
-	instPtr->InstanceProperties.SetProperty(Scope, NameType, Value);
+	instPtr->WorkingPresetCopy.Properties.SetProperty(Scope, NameType, Value);
 	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
 	return true;
@@ -572,7 +747,7 @@ bool UBIMDesigner::SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, co
 
 bool UBIMDesigner::UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVisibility, FVector2D offset)
 {
-	const FBIMCraftingTreeNodeWeakPtr inst = InstancePool.InstanceFromID(SwapFromNodeID);
+	const FBIMPresetEditorNodeWeakPtr inst = InstancePool.InstanceFromID(SwapFromNodeID);
 	if (!inst.IsValid())
 	{
 		SizeBoxSwapTray->SetVisibility(ESlateVisibility::Collapsed);
@@ -637,7 +812,7 @@ bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition
 	FVector2D localMousePosScaled = localMousePos / GetCurrentZoomScale();
 
 	// Groups of nodes to check for reorder. Assuming nodes in canvas already arranged vertically correctly
-	FBIMCraftingTreeNodeSharedPtr instPtr = InstancePool.InstanceFromID(NodeID);
+	FBIMPresetEditorNodeSharedPtr instPtr = InstancePool.InstanceFromID(NodeID);
 	if (!instPtr.IsValid())
 	{
 		return false;
@@ -706,21 +881,22 @@ bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition
 
 bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 {
-	FBIMCraftingTreeNodeSharedPtr node = InstancePool.InstanceFromID(InstanceID);
+	FBIMPresetEditorNodeSharedPtr node = InstancePool.InstanceFromID(InstanceID);
 	if (!ensureAlways(node.IsValid()))
 	{
 		return false;
 	}
 
-	FBIMPresetInstance outPreset;
-	node->ToPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, outPreset);
+	FBIMPresetInstance outPreset = node->WorkingPresetCopy;
 
 	if (SaveAs)
 	{
 		outPreset.PresetID = Controller->GetDocument()->PresetManager.GetAvailableKey(outPreset.PresetID);
 		CraftingAssembly.RootPreset = outPreset.PresetID;
-		node->PresetID = outPreset.PresetID;
+		node->WorkingPresetCopy.PresetID = outPreset.PresetID;
 	}
+
+	node->OriginalPresetCopy = node->WorkingPresetCopy;
 
 	Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Add(outPreset.PresetID, outPreset);
 
@@ -728,7 +904,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 	if (!node->ParentInstance.IsValid())
 	{
 		UTexture2D* outTexture;
-		UThumbnailCacheManager::SaveThumbnailFromPresetKey(RootNode->IconTexture, node->PresetID, outTexture, this);
+		UThumbnailCacheManager::SaveThumbnailFromPresetKey(RootNode->IconTexture, node->WorkingPresetCopy.PresetID, outTexture, this);
 
 		Controller->GetDocument()->PresetManager.UpdateProjectAssembly(CraftingAssembly);
 		Controller->EditModelUserWidget->RefreshAssemblyList();

@@ -3,7 +3,7 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 
 #include "Algo/Transform.h"
-#include "BIMKernel/BIMProperties.h"
+#include "BIMKernel/Core/BIMProperties.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "Drafting/APDFLLib.h"
 #include "DocumentManagement/ModumateCommands.h"

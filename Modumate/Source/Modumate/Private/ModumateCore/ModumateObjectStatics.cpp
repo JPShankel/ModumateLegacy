@@ -2,7 +2,7 @@
 
 #include "ModumateCore/ModumateObjectStatics.h"
 
-#include "BIMKernel/BIMProperties.h"
+#include "BIMKernel/Core/BIMProperties.h"
 #include "Database/ModumateSimpleMesh.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Graph/Graph2D.h"

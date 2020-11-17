@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BIMKernel/BIMNodeEditor.h"
-#include "BIMKernel/BIMAssemblySpec.h"
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Presets/BIMPresetEditor.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
+#include "BIMKernel/Core/BIMKey.h"
 
 #include "BIMDesigner.generated.h"
 
@@ -51,6 +51,9 @@ protected:
 	UPROPERTY()
 	TMap<class UBIMBlockNode*, class UBIMBlockAddLayer*> NodesWithAddLayerButton;
 
+	UPROPERTY()
+	TArray<class UBIMBlockMiniNode*> MiniNodes;
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FKey DragKey = EKeys::MiddleMouseButton;
@@ -62,7 +65,10 @@ public:
 	float ZoomDeltaMinus = 0.91f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FLinearColor NodeSplineColor = FLinearColor(0.25f, 0.25f, 0.25f, 1.f);
+	FLinearColor NodeSplineHighlightedColor = FLinearColor(0.25f, 0.25f, 0.25f, 1.f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor NodeSplineFadeColor = FLinearColor(0.25f, 0.25f, 0.25f, 0.25f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float NodeSplineThickness= 1.f;
@@ -126,19 +132,26 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockAddLayer> BIMAddLayerClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UBIMBlockMiniNode> BIMMiniNodeClass;
+
 	UFUNCTION()
 	void PerformDrag();
 
-	FBIMCraftingTreeNodePool InstancePool;
+	int32 SelectedNodeID = INDEX_NONE;
+	FBIMPresetEditor InstancePool;
 	FBIMAssemblySpec CraftingAssembly;
-	bool UpdateCraftingAssembly();
 
+	bool UpdateCraftingAssembly();
+	void ToggleCollapseExpandNodes();
+	void SetNodeAsSelected(int32 InstanceID);
 	float GetCurrentZoomScale() const;
 	bool EditPresetInBIMDesigner(const FBIMKey& PresetID);
 	bool SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey& PresetID);
-	void UpdateBIMDesigner();
+	void UpdateBIMDesigner(bool AutoAdjustToRootNode = false);
 	void AutoArrangeNodes();
 	void DrawConnectSplineForNodes(const FPaintContext& context, class UBIMBlockNode* StartNode, class UBIMBlockNode* EndNode) const;
+	void DrawConnectSplineForMiniNode(const FPaintContext& context, class UBIMBlockNode* StartNode, class UBIMBlockMiniNode* MiniNode) const;
 	FBIMKey GetPresetID(int32 InstanceID);
 	bool DeleteNode(int32 InstanceID);
 	bool AddNodeFromPreset(int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);

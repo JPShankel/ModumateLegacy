@@ -28,22 +28,19 @@ void UBIMBlockSlotList::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMCraftingTreeNodeSharedPtr& NodePtr)
+void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMPresetEditorNodeSharedPtr& NodePtr)
 {
 	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	NodeIDToSlotMapItem.Empty();
 	VerticalBoxSlots->ClearChildren();
 
-	for (int32 i = 0; i < NodePtr->AttachedChildren.Num(); ++i)
+	for (int32 i = 0; i < NodePtr->WorkingPresetCopy.PartSlots.Num(); ++i)
 	{
+		const FBIMPresetPartSlot& partSlot = NodePtr->WorkingPresetCopy.PartSlots[i];
 		UBIMBlockSlotListItem* newSlot = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockSlotListItem>(SlotListItemClass);
-		if (newSlot && NodePtr->AttachedChildren[i].IsPart())
-		{	
-			for (const auto& curChild : NodePtr->AttachedChildren[i].Children)
-			{
-				NodeIDToSlotMapItem.Add(curChild.Pin()->GetInstanceID(), newSlot);
-			}
-			FString presetString = NodePtr->AttachedChildren[i].PartSlot.PartPreset.ToString();
+		if (newSlot)// && NodePtr->AttachedChildren[i].IsPart())
+		{
+			FString presetString = partSlot.PartPreset.ToString();
 			newSlot->TextBlockWidget->ChangeText(FText::FromString(presetString));
 			newSlot->SlotID = i;
 			VerticalBoxSlots->AddChildToVerticalBox(newSlot);

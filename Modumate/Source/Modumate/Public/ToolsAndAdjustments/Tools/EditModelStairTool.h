@@ -3,7 +3,7 @@
 #pragma once
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
-#include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 
 #include "EditModelStairTool.generated.h"
 

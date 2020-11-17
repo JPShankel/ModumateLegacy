@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BIMKernel/BIMEnums.h"
-#include "BIMKernel/BIMProperties.h"
+#include "BIMKernel/Core/BIMEnums.h"
+#include "BIMKernel/Core/BIMProperties.h"
 
 #include "BIMBlockUserEnterable.generated.h"
 
@@ -33,6 +33,7 @@ protected:
 	EBIMValueScope Scope = EBIMValueScope::None;
 	FBIMNameType NameTpye = NAME_None;
 	int32 NodeID = -1;
+	FString OriginalValueString;
 
 public:
 

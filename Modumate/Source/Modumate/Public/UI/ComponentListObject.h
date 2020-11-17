@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Database/ModumateObjectEnums.h"
 #include "UI/ComponentAssemblyListItem.h"
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Core/BIMKey.h"
 
 #include "ComponentListObject.generated.h"
 

@@ -7,7 +7,7 @@
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonSerializer.h"
 #include "JsonObjectConverter.h"
-#include "BIMKernel/BIMPresetCollection.h"
+#include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "DocumentManagement/ModumateCameraView.h"
 #include "Objects/MOIState.h"
 

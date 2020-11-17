@@ -7,7 +7,7 @@
 #include "ModumateCore/ModumateTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/Object.h"
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Core/BIMKey.h"
 
 #include "ModumateRoomStatics.generated.h"
 

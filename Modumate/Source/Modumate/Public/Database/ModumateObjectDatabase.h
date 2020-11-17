@@ -10,8 +10,8 @@
 #include "DocumentManagement/ModumatePresetManager.h"
 #include "ModumateCore/ModumateRoomStatics.h"
 
-#include "BIMKernel/BIMKey.h"
-#include "BIMKernel/BIMLegacyPattern.h"
+#include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 
 class MODUMATE_API FModumateDatabase
 {

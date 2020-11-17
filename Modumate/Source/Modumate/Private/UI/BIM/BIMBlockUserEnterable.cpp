@@ -33,7 +33,14 @@ void UBIMBlockUserEnterable::NativeConstruct()
 
 void UBIMBlockUserEnterable::OnEditableTextBoxCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	ParentBIMDesigner->SetNodeProperty(NodeID, Scope, NameTpye, Text_Value->ModumateEditableTextBox->GetText().ToString());
+	if (CommitMethod == ETextCommit::OnEnter)
+	{
+		ParentBIMDesigner->SetNodeProperty(NodeID, Scope, NameTpye, Text_Value->ModumateEditableTextBox->GetText().ToString());
+	}
+	else
+	{
+		Text_Value->ChangeText(FText::FromString(OriginalValueString));
+	}
 }
 
 void UBIMBlockUserEnterable::BuildEnterableFieldFromProperty(class UBIMDesigner *OuterBIMDesigner, int32 InNodeID, const EBIMValueScope &InScope, const FBIMNameType &InNameType, const FString &InValue)
@@ -42,5 +49,6 @@ void UBIMBlockUserEnterable::BuildEnterableFieldFromProperty(class UBIMDesigner 
 	NodeID = InNodeID;
 	Scope = InScope;
 	NameTpye = InNameType;
-	Text_Value->ChangeText(FText::FromString(InValue));
+	OriginalValueString = InValue;
+	Text_Value->ChangeText(FText::FromString(OriginalValueString));
 }

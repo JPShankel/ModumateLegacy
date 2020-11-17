@@ -2,13 +2,16 @@
 
 #pragma once
 
-#include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "GameFramework/Actor.h"
 #include "ModumateCore/LayerGeomDef.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "ProceduralMeshComponent.h"
-
+#include "ModumateCore/ModumateTypes.h"
+#include "Database/ModumateArchitecturalMaterial.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "DynamicMeshActor.generated.h"
 
 

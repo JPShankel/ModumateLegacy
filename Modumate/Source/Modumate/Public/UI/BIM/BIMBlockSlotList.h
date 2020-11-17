@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BIMKernel/BIMNodeEditor.h"
+#include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "BIMBlockSlotList.generated.h"
 
 /**
@@ -38,6 +38,6 @@ public:
 	UPROPERTY()
 	TMap<int32, class UBIMBlockSlotListItem*> NodeIDToSlotMapItem;
 
-	void BuildSlotAssignmentList(const FBIMCraftingTreeNodeSharedPtr& NodePtr);
+	void BuildSlotAssignmentList(const FBIMPresetEditorNodeSharedPtr& NodePtr);
 	void ReleaseSlotAssignmentList();
 };

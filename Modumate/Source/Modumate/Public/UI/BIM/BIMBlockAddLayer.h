@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Core/BIMKey.h"
 #include "BIMBlockAddLayer.generated.h"
 
 /**

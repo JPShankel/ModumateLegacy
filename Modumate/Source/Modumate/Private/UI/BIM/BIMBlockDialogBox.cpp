@@ -6,6 +6,7 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UI/BIM/BIMDesigner.h"
 
 
 
@@ -49,4 +50,8 @@ void UBIMBlockDialogBox::OnReleaseButton_VariableText_GreyOutline()
 void UBIMBlockDialogBox::OnReleaseButton_ActionText_Blue()
 {
 	// TODO: toggle all collapse/expand node
+	if (Controller && Controller->EditModelUserWidget)
+	{
+		Controller->EditModelUserWidget->BIMDesigner->ToggleCollapseExpandNodes();
+	}
 }

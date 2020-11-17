@@ -3,7 +3,7 @@
 #include "Drafting/APDFLLib.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "Drafting/ModumateDraftingDraw.h"
-#include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "Drafting/ModumateDraftingElements.h"
 
 namespace Modumate

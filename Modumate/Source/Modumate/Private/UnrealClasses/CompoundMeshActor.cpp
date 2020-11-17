@@ -15,7 +15,7 @@
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "BIMKernel/BIMPartLayout.h"
+#include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 
 using namespace Modumate;
 

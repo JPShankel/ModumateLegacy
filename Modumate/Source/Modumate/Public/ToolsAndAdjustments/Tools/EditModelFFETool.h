@@ -1,7 +1,7 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #pragma once
-#include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 
 #include "EditModelFFETool.generated.h"

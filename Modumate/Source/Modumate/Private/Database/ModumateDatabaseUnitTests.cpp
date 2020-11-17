@@ -1,6 +1,6 @@
 #include "CoreMinimal.h"
 #include "ModumateCore/ExpressionEvaluator.h"
-#include "BIMKernel/BIMProperties.h"
+#include "BIMKernel/Core/BIMProperties.h"
 
 static bool testVectorFormula()
 {

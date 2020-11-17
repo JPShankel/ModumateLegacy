@@ -89,7 +89,7 @@ void ADynamicIconGenerator::BeginPlay()
 
 	DynCustomMaterial = IconSphereMesh->CreateDynamicMaterialInstance(0, CustomMaterialBase);
 
-	IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
+	IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), RenderTargetSize, RenderTargetSize, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
 }
 
 void ADynamicIconGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -175,7 +175,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 	}
 
 	// The following presets need render capture for icon
-	UTextureRenderTarget2D* renderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 256, 256, ETextureRenderTargetFormat::RTF_RGBA8, FLinearColor::Black, true);
+	UTextureRenderTarget2D* renderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), RenderTargetSize, RenderTargetSize, ETextureRenderTargetFormat::RTF_RGBA8, FLinearColor::Black, true);
 	bool captureSuccess = false;
 	switch (preset->NodeScope)
 	{
@@ -807,23 +807,23 @@ bool ADynamicIconGenerator::SetIconMeshForPart(bool UseDependentPreset, const FB
 	}
 	else
 	{
-		const FBIMCraftingTreeNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
-		TArray<FBIMCraftingTreeNodeSharedPtr> childrenNodes;
+		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+		TArray<FBIMPresetEditorNodeSharedPtr> childrenNodes;
 		inst->GatherAllChildNodes(childrenNodes);
 		for (const auto& child : childrenNodes)
 		{
-			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
+			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(child->WorkingPresetCopy.PresetID);
 			if (preset->NodeScope == EBIMValueScope::RawMaterial)
 			{
-				rawMaterialKey = child->PresetID;
+				rawMaterialKey = child->WorkingPresetCopy.PresetID;
 			}
 			if (preset->NodeScope == EBIMValueScope::Color)
 			{
-				colorKey = child->PresetID;
+				colorKey = child->WorkingPresetCopy.PresetID;
 			}
 			if (preset->NodeScope == EBIMValueScope::Mesh)
 			{
-				meshKey = child->PresetID;
+				meshKey = child->WorkingPresetCopy.PresetID;
 			}
 		}
 	}
@@ -899,19 +899,19 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(bool UseDependentPreset, cons
 	}
 	else
 	{
-		const FBIMCraftingTreeNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
-		TArray<FBIMCraftingTreeNodeSharedPtr> childrenNodes;
+		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+		TArray<FBIMPresetEditorNodeSharedPtr> childrenNodes;
 		inst->GatherAllChildNodes(childrenNodes);
 		for (const auto& child : childrenNodes)
 		{
-			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
+			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(child->WorkingPresetCopy.PresetID);
 			if (preset->NodeScope == EBIMValueScope::RawMaterial)
 			{
-				rawMaterialKey = child->PresetID;
+				rawMaterialKey = child->WorkingPresetCopy.PresetID;
 			}
 			if (preset->NodeScope == EBIMValueScope::Color)
 			{
-				colorKey = child->PresetID;
+				colorKey = child->WorkingPresetCopy.PresetID;
 			}
 		}
 	}
@@ -978,26 +978,26 @@ bool ADynamicIconGenerator::SetIconMeshForModule(bool UseDependentPreset, const 
 	}
 	else
 	{
-		const FBIMCraftingTreeNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
-		TArray<FBIMCraftingTreeNodeSharedPtr> childrenNodes;
+		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+		TArray<FBIMPresetEditorNodeSharedPtr> childrenNodes;
 		inst->GatherAllChildNodes(childrenNodes);
 		for (const auto& child : childrenNodes)
 		{
-			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(child->PresetID);
+			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(child->WorkingPresetCopy.PresetID);
 			if (preset->NodeScope == EBIMValueScope::RawMaterial)
 			{
-				rawMaterialKey = child->PresetID;
+				rawMaterialKey = child->WorkingPresetCopy.PresetID;
 			}
 			if (preset->NodeScope == EBIMValueScope::Color)
 			{
-				colorKey = child->PresetID;
+				colorKey = child->WorkingPresetCopy.PresetID;
 			}
 			if (preset->NodeScope == EBIMValueScope::Dimension)
 			{
-				child->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, widthString);
-				child->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, lengthString);
-				child->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, depthString);
-				child->InstanceProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, heightString);
+				child->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, widthString);
+				child->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, lengthString);
+				child->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, depthString);
+				child->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, heightString);
 			}
 		}
 	}

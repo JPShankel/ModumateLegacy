@@ -1,7 +1,7 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
 #include "Database/ModumateObjectDatabase.h"
-#include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "Misc/FileHelper.h"
 #include "Serialization/Csv/CsvParser.h"
@@ -414,6 +414,44 @@ void FModumateDatabase::ReadPresetData()
 	*/
 	for (auto &kvp : PresetManager.CraftingNodePresets.Presets)
 	{
+		if (!kvp.Value.SlotConfigPresetID.IsNone())
+		{
+			const FBIMPresetInstance* slotConfig = PresetManager.CraftingNodePresets.Presets.Find(kvp.Value.SlotConfigPresetID);
+			if (!ensureAlways(slotConfig != nullptr))
+			{
+				continue;
+			}
+
+			TArray<FBIMPresetPartSlot> EmptySlots;
+			for (auto& configSlot : slotConfig->ChildPresets)
+			{
+				const FBIMPresetInstance* slotPreset = PresetManager.CraftingNodePresets.Presets.Find(configSlot.PresetID);
+				if (!ensureAlways(slotPreset != nullptr))
+				{
+					continue;
+				}
+
+				FBIMPresetPartSlot* partSlot = kvp.Value.PartSlots.FindByPredicate([slotPreset](const FBIMPresetPartSlot& PartSlot)
+				{
+					if (PartSlot.SlotPreset == slotPreset->PresetID)
+					{
+						return true;
+					}
+					return false;
+				});
+
+				if (partSlot == nullptr)
+				{
+					FBIMPresetPartSlot& newSlot = EmptySlots.AddDefaulted_GetRef();
+					newSlot.SlotPreset = slotPreset->PresetID;
+				}
+			}
+
+			if (EmptySlots.Num() > 0)
+			{
+				kvp.Value.PartSlots.Append(EmptySlots);
+			}
+		}
 		// Load assets (mesh, material, profile or color)
 		for (auto& assetFunc : assetTargetPaths)
 		{

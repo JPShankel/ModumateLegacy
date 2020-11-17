@@ -5,7 +5,7 @@
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Math/Box.h"
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Core/BIMKey.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "ModumateCore/ModumateDimensionString.h"
 #include "UObject/Object.h"

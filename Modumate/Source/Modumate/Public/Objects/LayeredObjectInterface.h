@@ -1,7 +1,7 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 
 class FModumateObjectInstance;
 

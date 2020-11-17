@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Core/BIMKey.h"
 #include "Database/ModumateObjectEnums.h"
 #include "DynamicIconGenerator.generated.h"
 
@@ -67,6 +67,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
 	FName MaterialIconTextureParamName = TEXT("Texture");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
+	int32 RenderTargetSize = 512;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Dimension")
 	float WallLength = 91.44f;

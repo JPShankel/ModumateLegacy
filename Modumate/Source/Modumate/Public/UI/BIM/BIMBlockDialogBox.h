@@ -27,13 +27,13 @@ protected:
 public:
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController_CPP* Controller;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_VariableText_GreyOutline;
+	class UModumateButtonUserWidget* Button_VariableText_GreyOutline;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *Button_ActionText_Blue;
+	class UModumateButtonUserWidget* Button_ActionText_Blue;
 
 	UFUNCTION()
 	void OnReleaseButton_VariableText_GreyOutline();

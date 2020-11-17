@@ -14,7 +14,7 @@
 #include "Components/Sizebox.h"
 #include "UI/SelectionTray/SelectionTrayWidget.h"
 #include "UI/ComponentPresetListItem.h"
-#include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 
 UToolTrayBlockAssembliesList::UToolTrayBlockAssembliesList(const FObjectInitializer& ObjectInitializer)

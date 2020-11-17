@@ -4,7 +4,7 @@
 
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Core/BIMKey.h"
 #include "Database/ModumateObjectEnums.h"
 
 #include "EditModelToolBase.generated.h"

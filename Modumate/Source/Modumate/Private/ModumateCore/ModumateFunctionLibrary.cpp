@@ -34,7 +34,7 @@
 #include "ModumateCore/ModumateUnits.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Algo/Accumulate.h"
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Core/BIMKey.h"
 
 #include <algorithm>
 #include <queue>

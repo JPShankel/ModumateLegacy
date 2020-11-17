@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Core/BIMKey.h"
 #include "Database/ModumateObjectEnums.h"
 #include "ModumateCore/StructDataWrapper.h"
 
 // TODO: remove these
-#include "BIMKernel/BIMProperties.h"
+#include "BIMKernel/Core/BIMProperties.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
 
 #include "MOIState.generated.h"

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine.h"
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Core/BIMKey.h"
 #include "Database/ModumateObjectEnums.h"
 
 #include "EditModelToolInterface.generated.h"

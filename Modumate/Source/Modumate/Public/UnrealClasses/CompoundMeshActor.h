@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Database/ModumateObjectEnums.h"
-#include "BIMKernel/BIMAssemblySpec.h"
-#include "BIMKernel/BIMPartLayout.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
+#include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 #include "GameFramework/Actor.h"
 
 #include "CompoundMeshActor.generated.h"

@@ -64,7 +64,7 @@ void UBIMBlockDropdownPreset::BuildDropdownFromProperty(class UBIMDesigner* Oute
 	EmbeddedParentID = InEmbeddedParentID;
 	DropdownOffset = InDropdownOffset;
 
-	const FBIMCraftingTreeNodeSharedPtr nodePtr = ParentBIMDesigner->InstancePool.InstanceFromID(NodeID);
+	const FBIMPresetEditorNodeSharedPtr nodePtr = ParentBIMDesigner->InstancePool.InstanceFromID(NodeID);
 	if (!nodePtr.IsValid())
 	{
 		return;
@@ -75,15 +75,15 @@ void UBIMBlockDropdownPreset::BuildDropdownFromProperty(class UBIMDesigner* Oute
 
 	// Icon
 	bool bCaptureSuccess = false;
-	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, nodePtr->PresetID, IconMaterial, IconTexture, NodeID);
+	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, nodePtr->WorkingPresetCopy.PresetID, IconMaterial, IconTexture, NodeID);
 	if (bCaptureSuccess)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);
 	}
 
 	// PresetText
-	PresetID = nodePtr->PresetID;
-	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
+	PresetID = nodePtr->WorkingPresetCopy.PresetID;
+	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(nodePtr->WorkingPresetCopy.PresetID);
 	if (preset != nullptr)
 	{
 		PresetText->ChangeText(preset->DisplayName);

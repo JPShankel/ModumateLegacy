@@ -3,8 +3,8 @@
 #pragma once
 #include "ToolsAndAdjustments/Tools/EditModelMetaPlaneTool.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "BIMKernel/BIMKey.h"
-#include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 
 #include "EditModelPlaneHostedObjTool.generated.h"
 

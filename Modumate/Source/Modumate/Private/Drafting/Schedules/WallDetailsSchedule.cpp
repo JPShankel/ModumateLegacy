@@ -4,7 +4,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "Drafting/ModumateDraftingTags.h"
-#include "BIMKernel/BIMAssemblySpec.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "Drafting/Schedules/ScheduleGrid.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 

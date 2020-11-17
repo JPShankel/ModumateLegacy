@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Core/BIMKey.h"
 #include "Runtime/Engine/Classes/Materials/Material.h"
 
 #include "ModumateArchitecturalMaterial.generated.h"

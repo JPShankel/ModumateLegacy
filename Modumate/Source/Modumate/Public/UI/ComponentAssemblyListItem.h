@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/IUserObjectListEntry.h"
 #include "Database/ModumateObjectEnums.h"
-#include "BIMKernel/BIMKey.h"
+#include "BIMKernel/Core/BIMKey.h"
 
 #include "ComponentAssemblyListItem.generated.h"
 

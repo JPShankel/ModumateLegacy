@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BIMKernel/BIMNodeEditor.h"
+#include "BIMKernel/Presets/BIMPresetEditor.h"
 
 #include "BIMBlockNode.generated.h"
 
@@ -82,6 +82,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
 	float BottomPadding = 12.f;
 
+	// Opacity of node if it's not highlighted
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Node Material")
+	float NodeNonHighlightOpacity = 0.6f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Node Material")
+	FName NodeAlphaParamName = TEXT("MaskAlpha");
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FKey DragKey = EKeys::LeftMouseButton;
 
@@ -155,6 +162,8 @@ public:
 	bool NodeDirty = false;
 	bool NodeCollapse = true;
 	bool bNodeHasSlotPart = false;
+	bool bNodeHighlight = false;
+	bool bNodeIsHidden = false;
 	ENodeWidgetSwitchState NodeSwitchState = ENodeWidgetSwitchState::None;
 
 	UFUNCTION()
@@ -176,12 +185,13 @@ public:
 	void OnButtonDirtyCancel();
 
 	void UpdateNodeDirty(bool NewDirty);
-	void UpdateNodeCollapse(bool NewCollapse, bool AllowAutoArrange = false);
-	bool BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMCraftingTreeNodeSharedPtr &Node, bool bAsSlot);
+	void UpdateNodeCollapse(bool NewCollapse);
+	void UpdateNodeHidden(bool NewHide);
+	bool BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPresetEditorNodeSharedPtr &Node, bool bAsSlot);
 	void ReleaseNode();
 	void UpdateNodeSwitchState(ENodeWidgetSwitchState NewState);
 	void BeginDrag();
-	void SetNameForNode(const FString& NewName);
+	void SetNodeAsHighlighted(bool NewHighlight);
 
 	UFUNCTION(BlueprintPure)
 	FVector2D GetEstimatedNodeSize();
