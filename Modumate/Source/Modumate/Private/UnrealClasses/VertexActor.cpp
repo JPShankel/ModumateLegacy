@@ -33,6 +33,9 @@ void AVertexActor::BeginPlay()
 		// Allow outline to be draw over the handle mesh
 		MeshComp->SetRenderCustomDepth(true);
 		MeshComp->SetCustomDepthStencilValue(1);
+
+		// Disable shadows because they are expensive, and there are a lot of these things
+		MeshComp->SetCastShadow(false);
 	}
 
 	Controller = Cast<AEditModelPlayerController_CPP>(this->GetWorld()->GetFirstPlayerController());

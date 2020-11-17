@@ -22,6 +22,7 @@ ALineActor::ALineActor(const FObjectInitializer& ObjectInitializer)
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
 	RootComponent = ProceduralMesh;
 	ProceduralMesh->bUseAsyncCooking = true;
+	ProceduralMesh->SetCastShadow(false);
 	PrimaryActorTick.bCanEverTick = true;
 
 	Uvs.Init(FVector2D(), 4);
