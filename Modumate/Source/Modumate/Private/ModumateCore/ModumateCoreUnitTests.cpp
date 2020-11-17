@@ -11,6 +11,7 @@
 #include "JsonObjectConverter.h"
 #include "MathUtil.h"
 #include "ModumateCore/ExpressionEvaluator.h"
+#include "ModumateCore/LayerGeomDef.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"

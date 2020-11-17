@@ -1,18 +1,19 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "Drafting/ModumateClippingTriangles.h"
-#include "DocumentManagement/ModumateDocument.h"
-#include "Objects/ModumateObjectInstance.h"
-#include "UnrealClasses/DynamicMeshActor.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
 
+#include "Algo/AnyOf.h"
 #include "Algo/Copy.h"
 #include "Algo/ForEach.h"
-#include "Algo/AnyOf.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "Math/Matrix.h"
-#include "Math/TranslationMatrix.h"
 #include "Math/ScaleMatrix.h"
+#include "Math/TranslationMatrix.h"
 #include "Misc/AssertionMacros.h"
+#include "ModumateCore/LayerGeomDef.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Objects/ModumateObjectInstance.h"
+#include "UnrealClasses/DynamicMeshActor.h"
 
 namespace Modumate
 {

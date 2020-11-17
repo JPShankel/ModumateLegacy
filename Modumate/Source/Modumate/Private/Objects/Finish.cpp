@@ -2,8 +2,11 @@
 
 #include "Objects/Finish.h"
 
+#include "Algo/Accumulate.h"
 #include "DocumentManagement/ModumateDocument.h"
+#include "Drafting/ModumateDraftingElements.h"
 #include "Graph/Graph2D.h"
+#include "ModumateCore/LayerGeomDef.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
@@ -11,8 +14,6 @@
 #include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "Drafting/ModumateDraftingElements.h"
-#include "Algo/Accumulate.h"
 
 
 FMOIFinishImpl::FMOIFinishImpl(FModumateObjectInstance *moi)
@@ -246,7 +247,7 @@ void FMOIFinishImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposi
 			FVector intersectionStart = intersections[idx];
 			FVector intersectionEnd = intersections[idx + 1];
 			TPair<FVector, FVector> currentIntersection = TPair<FVector, FVector>(intersectionStart, intersectionEnd);
-			UModumateGeometryStatics::GetRangesForHolesOnPlane(lineRanges, currentIntersection, layer, currentThickness * layer.Normal,
+			layer.GetRangesForHolesOnPlane(lineRanges, currentIntersection, currentThickness * layer.Normal,
 				Plane, -AxisX, -AxisY, Origin);
 
 			// TODO: unclear why the axes need to be flipped here, could be because of the different implementation of finding intersections

@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "BIMKernel/BIMAssemblySpec.h"
-#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/LayerGeomDef.h"
 
 class FModumateObjectInstance;
 

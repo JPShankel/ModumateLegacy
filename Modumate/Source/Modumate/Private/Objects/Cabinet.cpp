@@ -7,7 +7,7 @@
 #include "Drafting/ModumateClippingTriangles.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "DrawDebugHelpers.h"
-#include "Math/ConvexHull2d.h"
+#include "ModumateCore/LayerGeomDef.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"

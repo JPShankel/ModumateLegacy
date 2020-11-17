@@ -1,6 +1,7 @@
 #include "ModumateCore/ModumateMitering.h"
 
 #include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/LayerGeomDef.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Objects/MiterNode.h"
 #include "ModumateCore/ModumateObjectStatics.h"
