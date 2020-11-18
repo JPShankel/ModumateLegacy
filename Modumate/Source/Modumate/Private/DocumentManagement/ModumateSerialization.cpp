@@ -44,16 +44,6 @@ void FMOIDocumentRecordV4::FromVersion3(const FMOIDocumentRecordV3 &v3)
 {
 	ObjectInstances = v3.ObjectInstances;
 	CommandHistory = v3.CommandHistory;
-
-	for (auto &ca3 : v3.CustomAssemblies)
-	{
-		FCustomAssemblyRecordV4 ca4;
-		ca4.DatabaseKey = ca3.DatabaseKey;
-		ca4.DisplayName = ca3.DisplayName;
-		ca4.ObjectType = ca3.ObjectType;
-		ca4.ToolMode = ca3.ToolMode;
-		CustomAssemblies.Add(ca4);
-	}
 }
 
 FString FCustomAssemblyProperty::ToCompactString() const

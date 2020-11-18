@@ -46,6 +46,37 @@ EBIMResult FPresetManager::GetProjectAssembliesForObjectType(EObjectType ObjectT
 	return EBIMResult::Success;
 }
 
+EBIMResult FPresetManager::FromDocumentRecord(const FModumateDatabase& InDB, const FMOIDocumentRecord& DocRecord)
+{
+	CraftingNodePresets = DocRecord.PresetCollection;
+	KeyStore = DocRecord.KeyStore;
+	AssembliesByObjectType.Empty();
+	for (auto& kvp : CraftingNodePresets.Presets)
+	{
+		FBIMPresetTypeDefinition* typeDef = CraftingNodePresets.NodeDescriptors.Find(kvp.Value.NodeType);
+		if (ensureAlways(typeDef != nullptr))
+		{
+			kvp.Value.TypeDefinition = *typeDef;
+		}
+
+		if (kvp.Value.ObjectType != EObjectType::OTNone)
+		{
+			FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(kvp.Value.ObjectType);
+			FBIMAssemblySpec newSpec;
+			newSpec.FromPreset(InDB, CraftingNodePresets, kvp.Key);
+			db.AddData(newSpec);
+		}
+	}
+	return EBIMResult::Success;
+}
+
+EBIMResult FPresetManager::ToDocumentRecord(FMOIDocumentRecord& DocRecord) const
+{
+	DocRecord.PresetCollection = CraftingNodePresets;
+	DocRecord.KeyStore = KeyStore;
+	return EBIMResult::Success;
+}
+
 EBIMResult FPresetManager::AddOrUpdateGraph2DRecord(const FBIMKey& Key, const FGraph2DRecord& Graph, FBIMKey& OutKey)
 {
 	static const FString defaultGraphBaseKey(TEXT("Graph2D"));
@@ -131,10 +162,6 @@ bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, cons
 	}
 	return false;
 }
-
-/*
-Starting point: get a tree
-*/
 
 const FBIMAssemblySpec *FPresetManager::GetAssemblyByKey(EToolMode ToolMode, const FBIMKey& Key) const
 {

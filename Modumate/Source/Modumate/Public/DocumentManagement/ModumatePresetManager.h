@@ -47,6 +47,9 @@ public:
 	EBIMResult RemoveGraph2DRecord(const FBIMKey& Key);
 	EBIMResult GetGraph2DRecord(const FBIMKey& Key, FGraph2DRecord& OutGraph) const;
 
+	EBIMResult FromDocumentRecord(const FModumateDatabase& InDB, const FMOIDocumentRecord& DocRecord);
+	EBIMResult ToDocumentRecord(FMOIDocumentRecord& DocRecord) const;
+
 	// Intended as a general way to generate keys: given a base name, append with increment integers until an unused name is found
 	// This pattern is used through out the app, particularly in FModumateDocument, to generate IDs for new objects
 	// All such schemes should switch to this one key store

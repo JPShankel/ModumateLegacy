@@ -21,6 +21,8 @@ struct MODUMATE_API FBIMPresetCollection
 	UPROPERTY()
 	TMap<FBIMKey, FBIMPresetInstance> Presets;
 
+	bool Matches(const FBIMPresetCollection& OtherCollection) const;
+
 	EObjectType GetPresetObjectType(const FBIMKey &PresetID) const;
 
 	EBIMResult GetDependentPresets(const FBIMKey &PresetID, TArray<FBIMKey>& OutPresets) const;

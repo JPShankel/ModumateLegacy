@@ -11,6 +11,11 @@
 
 static bool testKeys()
 {
+	if (FBIMKey() != FBIMKey(TEXT("")))
+	{
+		return false;
+	}
+
 	FBIMKey key1(TEXT("Value1"));
 	FBIMKey key2(TEXT("Value1"));
 

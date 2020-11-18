@@ -3,8 +3,9 @@
 #include "BIMKernel/Core/BIMKey.h"
 #include "Hash/CityHash.h"
 
-FBIMKey::FBIMKey() : StringValue(), HashValue(0)
+FBIMKey::FBIMKey() : StringValue()
 {
+	UpdateHash();
 }
 
 FBIMKey::FBIMKey(FString InStr) : StringValue(MoveTemp(InStr))

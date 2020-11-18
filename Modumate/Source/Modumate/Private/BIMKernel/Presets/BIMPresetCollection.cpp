@@ -200,3 +200,45 @@ EBIMResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModumateDa
 
 	return OutAssemblySpec.FromPreset(InDB, previewCollection, assemblyPreset.PresetID);
 }
+
+bool FBIMPresetCollection::Matches(const FBIMPresetCollection& OtherCollection) const
+{
+	if (NodeDescriptors.Num() != OtherCollection.NodeDescriptors.Num())
+	{
+		return false;
+	}
+
+	for (const auto& kvp : OtherCollection.NodeDescriptors)
+	{
+		const FBIMPresetTypeDefinition* typeDef = NodeDescriptors.Find(kvp.Key);
+		if (typeDef == nullptr)
+		{
+			return false;
+		}
+		if (!typeDef->Matches(kvp.Value))
+		{
+			return false;
+		}
+	}
+
+	if (Presets.Num() != OtherCollection.Presets.Num())
+	{
+		return false;
+	}
+
+	for (const auto& kvp : OtherCollection.Presets)
+	{
+		const FBIMPresetInstance* preset = Presets.Find(kvp.Key);
+		if (preset == nullptr)
+		{
+			return false;
+		}
+		if (!preset->Matches(kvp.Value))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+

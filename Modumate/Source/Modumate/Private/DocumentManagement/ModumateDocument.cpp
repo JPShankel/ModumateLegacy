@@ -2183,7 +2183,7 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 	docRec.CommandHistory = CommandHistory;
 
 	// DDL 2.0
-	docRec.PresetCollection = PresetManager.CraftingNodePresets;
+	PresetManager.ToDocumentRecord(docRec);
 
 	// Capture object instances into doc struct
 	for (FModumateObjectInstance* obj : ObjectInstanceArray)
@@ -2260,9 +2260,9 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 
 	MakeNew(world);
 
-	AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
+	AEditModelGameMode_CPP* gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
 
-	FModumateDatabase *objectDB = gameMode->ObjectDatabase;
+	FModumateDatabase* objectDB = gameMode->ObjectDatabase;
 
 	FModumateDocumentHeader docHeader;
 	FMOIDocumentRecord docRec;
@@ -2271,9 +2271,10 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 	{
 		CommandHistory = docRec.CommandHistory;
 
-#if 0 // TODO: preset serialization to be fixed with bim designer 
-		PresetManager.CraftingNodePresets = docRec.PresetCollection;
-#endif
+		if (docRec.PresetCollection.Presets.Num() > 0 && docRec.PresetCollection.NodeDescriptors.Num() > 0)
+		{
+			PresetManager.FromDocumentRecord(*objectDB,docRec);
+		}
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.
@@ -2281,7 +2282,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 
 		// Load all of the surface graphs now
-		for (const auto &kvp : docRec.SurfaceGraphs)
+		for (const auto& kvp : docRec.SurfaceGraphs)
 		{
 			const FGraph2DRecord& surfaceGraphRecord = kvp.Value;
 			TSharedPtr<FGraph2D> surfaceGraph = MakeShared<FGraph2D>(kvp.Key);
@@ -2334,7 +2335,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 
 		// Check for objects that have errors, as a result of having been loaded and cleaned.
 		// TODO: prompt the user to fix, or delete, these objects
-		for (auto *obj : ObjectInstanceArray)
+		for (auto* obj : ObjectInstanceArray)
 		{
 			if (EMPlayerState->DoesObjectHaveAnyError(obj->ID))
 			{
@@ -2343,7 +2344,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 			}
 		}
 
-		for (auto &cta : docRec.CurrentToolAssemblyMap)
+		for (auto& cta : docRec.CurrentToolAssemblyMap)
 		{
 			TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(cta.Key);
 			if (ensureAlways(tool))
@@ -2377,7 +2378,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 		{
 			SetCurrentProjectPath(path);
 
-			if (auto *gameInstance = world->GetGameInstance<UModumateGameInstance>())
+			if (auto* gameInstance = world->GetGameInstance<UModumateGameInstance>())
 			{
 				gameInstance->UserSettings.RecordRecentProject(path, true);
 

@@ -297,16 +297,10 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 	TArray<FMOIStateData> ObjectData;
 
 	UPROPERTY()
-	TArray<FCustomAssemblyRecordV4> CustomAssemblies;
-
-	UPROPERTY()
 	TMap<EToolMode, FBIMKey> CurrentToolAssemblyMap;
 
 	UPROPERTY()
 	FBIMPresetCollection PresetCollection;
-
-	UPROPERTY()
-	TArray<FBIMKey> ProjectAssemblyPresets;
 
 	UPROPERTY()
 	TSet<FString> KeyStore;
