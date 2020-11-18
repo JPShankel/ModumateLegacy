@@ -25,6 +25,7 @@
 #include "UnrealClasses/Modumate.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateStats.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateObjectStatics.h"
@@ -298,9 +299,11 @@ void UModumateFunctionLibrary::ScreenLineExtend(FVector2D & ReturnStart, FVector
 }
 
 
+DECLARE_CYCLE_STAT(TEXT("Project-Bidirectional"), STAT_ModumateFunctionLibrary, STATGROUP_Modumate);
 
 bool UModumateFunctionLibrary::ProjectWorldToScreenBidirectional(APlayerController const * Player, const FVector & WorldPosition, FVector2D & ScreenPosition, bool & bTargetBehindCamera, bool bPlayerViewportRelative)
 {
+	SCOPE_CYCLE_COUNTER(STAT_ModumateFunctionLibrary);
 	FVector Projected;
 	bTargetBehindCamera = false;
 
