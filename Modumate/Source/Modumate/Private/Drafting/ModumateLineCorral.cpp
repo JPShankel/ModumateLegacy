@@ -2,6 +2,7 @@
 
 #include "Drafting/ModumateLineCorral.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
+#include "SegmentTypes.h"
 
 using namespace Modumate;
 
@@ -196,18 +197,21 @@ bool FModumateLineCorral::SaveDocument(const FString& filename)
 
 void FModumateLineCorral::ProcessLines()
 {
+	using FVector2Double = FVector2<double>;
+	static constexpr double Epsilon2 = Epsilon * Epsilon;
+
 	FLineSegments originalLines(InLines);
 	while (InLines.Num() != 0)
 	{
 		FLineSegment lineA = InLines.Pop();
-		FVector2D startA(lineA.StartVert);
-		FVector2D endA(lineA.EndVert);
-		FVector2D deltaA = endA - startA;
-		if (deltaA.IsNearlyZero(Epsilon))
+		FVector2Double startA(lineA.StartVert);
+		FVector2Double endA(lineA.EndVert);
+		FVector2Double deltaA = endA - startA;
+		if (deltaA.SquaredLength() < Epsilon2)
 		{
 			continue;
 		}
-		FVector2D dirA = deltaA.GetSafeNormal();
+		FVector2Double dirA = deltaA.Normalized();
 
 		FModumateLayerType lineAType = LineDataItems[lineA.LineData].LayerType;
 		FLineSegments clippedSegments;  // To be reprocessed.
@@ -227,37 +231,39 @@ void FModumateLineCorral::ProcessLines()
 			bool bLayerGreater = lineAType < lineBType;
 			if ((bLayerEqual || bLayerGreater) && lineA.BoundingBox.Intersect(lineB.BoundingBox))
 			{
-				FVector2D startB(lineB.StartVert);
-				FVector2D endB(lineB.EndVert);
-				FVector2D deltaB = endB - startB;
-				FVector2D dirB = deltaB.GetSafeNormal();
+				FVector2Double startB(lineB.StartVert);
+				FVector2Double endB(lineB.EndVert);
+				FVector2Double deltaB = endB - startB;
+				FVector2Double dirB = deltaB.Normalized();
 
-				if (UModumateGeometryStatics::IsLineSegmentWithin2D(lineB.StartVert, lineB.EndVert,
-					lineA.StartVert, lineA.EndVert, Epsilon))
+				if (UModumateGeometryStatics::IsLineSegmentWithin2D(FVector2Double(lineB.StartVert), FVector2Double(lineB.EndVert),
+					FVector2Double(lineA.StartVert), FVector2Double(lineA.EndVert), Epsilon))
 				{
-					deltaA = deltaA.ZeroVector;
+					deltaA = FVector2Double::Zero();
 					break;
 				}
 
 				bool bNotClipped = false;
-				float aDotB = dirA | dirB;
+				double aDotB = dirA.Dot(dirB);
 				if (FMath::Abs(aDotB) > THRESH_NORMALS_ARE_PARALLEL)
 				{	// Lines parallel and possibly overlap.
-					FVector2D intersectOnA = FMath::ClosestPointOnSegment2D(startB, startA, endA);
-					if (FVector2D::DistSquared(intersectOnA, startB) < Epsilon)
+					FSegment2d lineSegmentA(startA, endA);
+					FVector2Double intersectOnA = lineSegmentA.NearestPoint(startB);
+					if (intersectOnA.DistanceSquared(startB) < Epsilon2)
 					{   // Lines overlap
 						if (aDotB > 0.0f)
 						{
-							if (FVector2D::DistSquared(startA, intersectOnA) > Epsilon)
+							if (startA.DistanceSquared(intersectOnA) > Epsilon2)
 							{
 								endA = intersectOnA;
+								lineSegmentA.SetEndPoint(endA);
 								deltaA = endA - startA;
 								FLineSegment clippedLine = lineA;
 								clippedLine.StartVert = lineA.EndVert;
-								clippedLine.EndVert = intersectOnA;
-								lineA.EndVert = endA;
+								clippedLine.EndVert = FVector2D(intersectOnA);
+								lineA.EndVert = FVector2D(endA);
 								clippedSegments.Push(clippedLine);
-								if (deltaA.IsNearlyZero(Epsilon))
+								if (deltaA.SquaredLength() < Epsilon2)
 								{
 									break;
 								}
@@ -269,17 +275,18 @@ void FModumateLineCorral::ProcessLines()
 						}
 						else
 						{
-							if (FVector2D::DistSquared(endA, intersectOnA) > Epsilon)
+							if (endA.DistanceSquared(intersectOnA) > Epsilon2)
 							{
 								startA = intersectOnA;
+								lineSegmentA.SetStartPoint(startA);
 								deltaA = endA - startA;
 								FLineSegment clippedLine = lineA;
-								clippedLine.StartVert = intersectOnA;
+								clippedLine.StartVert = FVector2D(intersectOnA);
 								clippedLine.EndVert = lineA.StartVert;
 								clippedSegments.Push(clippedLine);
-								lineA.StartVert = startA;
+								lineA.StartVert = FVector2D(startA);
 								clippedSegments.Push(clippedLine);
-								if (deltaA.IsNearlyZero(Epsilon))
+								if (deltaA.SquaredLength() < Epsilon2)
 								{
 									break;
 								}
@@ -291,21 +298,21 @@ void FModumateLineCorral::ProcessLines()
 
 						}
 					}
-					intersectOnA = FMath::ClosestPointOnSegment2D(endB, startA, endA);
-					if (FVector2D::DistSquared(intersectOnA, endB) < Epsilon)
+					intersectOnA = lineSegmentA.NearestPoint(endB);
+					if (intersectOnA.DistanceSquared(endB) < Epsilon2)
 					{   // Lines overlap
 						if (aDotB > 0.0f)
 						{
-							if (FVector2D::DistSquared(endA, intersectOnA) > Epsilon)
+							if (endA.DistanceSquared(intersectOnA) > Epsilon2)
 							{
 								startA = intersectOnA;
 								deltaA = endA - startA;
 								FLineSegment clippedLine = lineA;
-								clippedLine.StartVert = intersectOnA;
+								clippedLine.StartVert = FVector2D(intersectOnA);
 								clippedLine.EndVert = lineA.StartVert;
 								clippedSegments.Push(clippedLine);
-								lineA.StartVert = startA;
-								if (deltaA.IsNearlyZero(Epsilon))
+								lineA.StartVert = FVector2D(startA);
+								if (deltaA.SquaredLength() < Epsilon2)
 								{
 									break;
 								}
@@ -313,16 +320,16 @@ void FModumateLineCorral::ProcessLines()
 						}
 						else
 						{
-							if (FVector2D::DistSquared(startA, intersectOnA) > Epsilon)
+							if (startA.DistanceSquared(intersectOnA) > Epsilon2)
 							{
 								endA = intersectOnA;
 								deltaA = endA - startA;
 								FLineSegment clippedLine = lineA;
 								clippedLine.StartVert = lineA.EndVert;
-								clippedLine.EndVert = intersectOnA;
+								clippedLine.EndVert = FVector2D(intersectOnA);
 								clippedSegments.Push(clippedLine);
-								lineA.EndVert = endA;
-								if (deltaA.IsNearlyZero(Epsilon))
+								lineA.EndVert = FVector2D(endA);
+								if (deltaA.SquaredLength() < Epsilon2)
 								{
 									break;
 								}
@@ -331,7 +338,7 @@ void FModumateLineCorral::ProcessLines()
 					}
 					else if (bNotClipped)
 					{
-						deltaA = FVector2D::ZeroVector;
+						deltaA = FVector2Double::Zero();
 						break;
 					}
 
@@ -341,7 +348,7 @@ void FModumateLineCorral::ProcessLines()
 			}
 		}
 
-		if (!deltaA.IsNearlyZero(Epsilon))
+		if (deltaA.SquaredLength() >= Epsilon2)
 		{
 			OutLines.Push(lineA);
 		}

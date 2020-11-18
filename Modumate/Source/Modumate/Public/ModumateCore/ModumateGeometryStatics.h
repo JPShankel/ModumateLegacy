@@ -7,6 +7,7 @@
 #include "Database/ModumateSimpleMesh.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "Graph/Graph3DTypes.h"
+#include "VectorTypes.h"
 
 #include "ModumateGeometryStatics.generated.h"
 
@@ -185,6 +186,9 @@ public:
 	static bool IsLineSegmentWithin2D(const FEdge& OuterLine, const FEdge& InnerLine, float epsilon = THRESH_POINTS_ARE_NEAR);
 	static bool IsLineSegmentWithin2D(const FVector2D& OuterLineStart, const FVector2D& OuterLineEnd,
 		const FVector2D& InnerLineStart, const FVector2D& InnerLineEnd, float epsilon = THRESH_POINTS_ARE_NEAR);
+	// Use double-precision calculations internally.
+	static bool IsLineSegmentWithin2D(const FVector2d& OuterLineStart, const FVector2d& OuterLineEnd,
+		const FVector2d& InnerLineStart, const FVector2d& InnerLineEnd, double epsilon = THRESH_POINTS_ARE_NEAR);
 
 	static bool IsLineSegmentBoundedByPoints2D(const FVector2D &StartPosition, const FVector2D &EndPosition, const TArray<FVector2D> &Positions, const TArray<FVector2D> &BoundingNormals, float Epsilon = THRESH_POINTS_ARE_NEAR);
 

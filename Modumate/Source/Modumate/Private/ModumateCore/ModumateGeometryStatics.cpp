@@ -1770,6 +1770,52 @@ bool UModumateGeometryStatics::IsLineSegmentWithin2D(const FVector2D& OuterLineS
 	return true;
 }
 
+bool UModumateGeometryStatics::IsLineSegmentWithin2D(const FVector2d& OuterLineStart, const FVector2d& OuterLineEnd,
+	const FVector2d& InnerLineStart, const FVector2d& InnerLineEnd, double epsilon /*= THRESH_POINTS_ARE_NEAR*/)
+{
+	// TODO: Add this alias to Modumate header?
+	using FVector2Double = FVector2<double>;
+
+	FVector2Double outerDir(OuterLineEnd - OuterLineStart);
+	double epsilon2 = epsilon * epsilon;
+
+	double lineLength2 = outerDir.SquaredLength();
+	if (lineLength2 < epsilon2)
+	{
+		return false;
+	}
+
+	outerDir.Normalize();
+	FVector2Double innerDir(InnerLineEnd - InnerLineStart);
+	innerDir.Normalize();
+	if (FMath::Abs(outerDir.Dot(innerDir)) < THRESH_NORMALS_ARE_PARALLEL)
+	{
+		return false;
+	}
+
+	double lineLength = FMathd::Sqrt(lineLength2) + epsilon;
+
+	FVector2Double innerP1 = InnerLineStart - OuterLineStart;
+
+	double projectedInner1 = outerDir.Dot(innerP1);
+	if (projectedInner1 < -epsilon || projectedInner1 > lineLength
+		|| innerP1.DistanceSquared(projectedInner1 * outerDir) > epsilon2)
+	{
+		return false;
+	}
+
+	FVector2Double innerP2 = InnerLineEnd - OuterLineStart;
+	
+	double projectedInner2 = outerDir.Dot(innerP2);
+	if (projectedInner2 < -epsilon || projectedInner2 > lineLength
+		|| innerP2.DistanceSquared(projectedInner2 * outerDir) > epsilon2)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 bool UModumateGeometryStatics::IsLineSegmentBoundedByPoints2D(const FVector2D &StartPosition, const FVector2D &EndPosition, const TArray<FVector2D> &Positions, const TArray<FVector2D> &EdgeNormals, float Epsilon)
 {
 	int32 numPoints = Positions.Num();

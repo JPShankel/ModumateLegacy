@@ -13,6 +13,9 @@
 
 namespace Modumate
 {
+	// For local testing:
+	const FString FModumateDwgConnect::ServerAddress(TEXT("http://localhost:8080"));
+
 	FModumateDwgConnect::FModumateDwgConnect(const FModumateDwgDraw& dwgDraw)
 		: DwgDraw(dwgDraw)
 	{ }

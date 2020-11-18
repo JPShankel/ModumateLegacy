@@ -132,5 +132,5 @@ private:
 	int32 CurrentIndex{ 0 };
 
 	void ProcessLines();
-	static constexpr float Epsilon = 0.6f;	// World units
+	static constexpr float Epsilon = 0.1f;	// World units
 };
