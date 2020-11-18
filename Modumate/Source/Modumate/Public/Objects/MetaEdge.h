@@ -11,6 +11,7 @@ public:
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
+	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow) override;
 	virtual const IMiterNode* GetMiterInterface() const override { return this; }
 
 	// Begin IMiterNode interface
@@ -19,5 +20,6 @@ public:
 
 protected:
 	FMiterData CachedMiterData;
+	FColor BaseDefaultColor, BaseGroupedColor, HoverDefaultColor, HoverGroupedColor;
 };
 

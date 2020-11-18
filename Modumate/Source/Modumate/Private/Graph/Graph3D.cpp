@@ -452,7 +452,7 @@ namespace Modumate
 		}
 
 		FGraph3DFace newFace = FGraph3DFace(newID, this, VertexIDs, InGroupIDs, InContainingFaceID, InContainedFaceIDs);
-		if (!ensureAlways(newFace.bValid))
+		if (!ensure(newFace.bValid))
 		{
 			return nullptr;
 		}

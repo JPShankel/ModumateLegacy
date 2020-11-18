@@ -660,6 +660,8 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 	// objects that are deleted, but their metadata (like hosted obj) is not
 	// passed on to another object
 	// if it is passed on to another object, the MarkDirty here is redundant
+
+	// Dirty every group whose members were deleted, or that had members added/removed
 	TSet<int32> dirtyGroupIDs;
 	for (auto& kvp : Delta.VertexDeletions)
 	{
@@ -688,13 +690,21 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		}
 		dirtyGroupIDs.Append(face->GroupIDs);
 	}
-
-	for (int32 groupID : dirtyGroupIDs)
+	for (auto& kvp : Delta.GroupIDsUpdates)
 	{
-		auto groupObj = GetObjectById(groupID);
-		if (groupObj != nullptr)
+		dirtyGroupIDs.Append(kvp.Value.GroupIDsToAdd);
+		dirtyGroupIDs.Append(kvp.Value.GroupIDsToRemove);
+	}
+
+	// Dirty every group member that was added or removed from a group
+	TArray<int32> updatedGroupMemberIDs;
+	Delta.GroupIDsUpdates.GetKeys(updatedGroupMemberIDs);
+
+	for (int32 groupMemberID : updatedGroupMemberIDs)
+	{
+		if (auto groupMemberObj = GetObjectById(groupMemberID))
 		{
-			groupObj->MarkDirty(EObjectDirtyFlags::Structure);
+			groupMemberObj->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 	}
 

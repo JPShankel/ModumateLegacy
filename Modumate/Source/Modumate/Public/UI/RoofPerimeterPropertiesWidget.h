@@ -80,6 +80,9 @@ protected:
 	class AEditModelGameState_CPP *GameState;
 
 	UFUNCTION()
+	FEventReply OnClickedBorder(FGeometry MyGeometry, const FPointerEvent& MouseEvent);
+
+	UFUNCTION()
 	void OnControlChangedGabled(bool bIsChecked);
 
 	UFUNCTION()

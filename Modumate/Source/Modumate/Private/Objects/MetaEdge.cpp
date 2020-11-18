@@ -14,6 +14,10 @@
 
 FMOIMetaEdgeImpl::FMOIMetaEdgeImpl(FModumateObjectInstance *moi)
 	: FMOIEdgeImplBase(moi)
+	, BaseDefaultColor(FColor::Black)
+	, BaseGroupedColor(FColor::Purple)
+	, HoverDefaultColor(FColor::Black)
+	, HoverGroupedColor(FColor::Magenta)
 {
 }
 
@@ -39,8 +43,13 @@ bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 		LineActor->Point1 = vertexStart->Position;
 		LineActor->Point2 = vertexEnd->Position;
 
-		// If our own geometry has been updated, then we need to re-evaluate our mitering.
-		MOI->MarkDirty(EObjectDirtyFlags::Mitering);
+		bool bGrouped = (edge->GroupIDs.Num() > 0);
+		BaseColor = bGrouped ? BaseGroupedColor : BaseDefaultColor;
+		HoveredColor = bGrouped ? HoverGroupedColor : HoverDefaultColor;
+
+		// If our own geometry has been updated, then we need to re-evaluate our mitering,
+		// and if connectivity has changed then we need to update visuals.
+		MOI->MarkDirty(EObjectDirtyFlags::Visuals | EObjectDirtyFlags::Mitering);
 	}
 	break;
 	case EObjectDirtyFlags::Mitering:
@@ -96,6 +105,34 @@ void FMOIMetaEdgeImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* co
 	{
 		auto vertexHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
 		vertexHandle->SetTargetIndex(i);
+	}
+}
+
+void FMOIMetaEdgeImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow)
+{
+	FMOIEdgeImplBase::ShowAdjustmentHandles(Controller, bShow);
+
+	FModumateDocument* doc = MOI ? MOI->GetDocument() : nullptr;
+	if (!ensure(doc))
+	{
+		return;
+	}
+
+	auto& graph = doc->GetVolumeGraph();
+	auto edge = graph.FindEdge(MOI->ID);
+	if (!ensure(edge))
+	{
+		return;
+	}
+
+	// Mirror adjustment handles of this meta edge with all group objects that it belongs to
+	for (int32 groupID : edge->GroupIDs)
+	{
+		auto groupObj = doc->GetObjectById(groupID);
+		if (groupObj)
+		{
+			groupObj->ShowAdjustmentHandles(Controller, bShow);
+		}
 	}
 }
 

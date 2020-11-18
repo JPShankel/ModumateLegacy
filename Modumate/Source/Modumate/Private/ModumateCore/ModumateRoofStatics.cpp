@@ -234,13 +234,21 @@ bool FTessellationPolygon::UpdatePolygonVerts()
 					const FVector &lastPolyVert = PolygonVerts.Last();
 					if (clipStartPoint.Equals(lastPolyVert, RAY_INTERSECT_TOLERANCE))
 					{
-						PolygonVerts.Add(clipEndPoint);
+						if (!lastPolyVert.Equals(clipEndPoint, RAY_INTERSECT_TOLERANCE))
+						{
+							PolygonVerts.Add(clipEndPoint);
+						}
+
 						bConsumed = true;
 						bReachedStartRay = testClipPointOnRay(StartPoint, StartDir, clipEndPoint, curLengthOnEndRay);
 					}
 					else if (clipEndPoint.Equals(lastPolyVert, RAY_INTERSECT_TOLERANCE))
 					{
-						PolygonVerts.Add(clipStartPoint);
+						if (!lastPolyVert.Equals(clipStartPoint, RAY_INTERSECT_TOLERANCE))
+						{
+							PolygonVerts.Add(clipStartPoint);
+						}
+
 						bConsumed = true;
 						bReachedStartRay = testClipPointOnRay(StartPoint, StartDir, clipStartPoint, curLengthOnEndRay);
 					}
@@ -287,10 +295,10 @@ void FTessellationPolygon::DrawDebug(const FColor &Color, UWorld* World, const F
 		World = GWorld;
 	}
 
-	static bool bPersistent = true;
-	static float lifetime = 1.0f;
+	static bool bPersistent = false;
+	static float lifetime = 4.0f;
 	static uint8 depth = 0xFF;
-	static float edgeThickness = 0.5f;
+	static float edgeThickness = 2.0f;
 	static float clipThickness = 1.0f;
 	static float pointSize = 1.5f;
 	static float nonConvergingLineLength = 500.0f;
@@ -462,11 +470,26 @@ bool UModumateRoofStatics::TessellateSlopedEdges(const TArray<FVector> &EdgePoin
 		const FVector &edgeNormal = edgeNormals[edgeIdx];
 		const FVector &prevEdgeNormal = edgeNormals[prevEdgeIdx];
 
-		FVector ridgeDir = (prevEdgeNormal ^ edgeNormal).GetSafeNormal();
-		if ((ridgeDir | baseNormal) < 0.0f)
+		FVector ridgeDir(ForceInitToZero);
+
+		if (FVector::Parallel(edgeNormal, prevEdgeNormal))
 		{
-			ridgeDir *= -1.0f;
+			ridgeDir = edgeTangents[edgeIdx];
 		}
+		else
+		{
+			ridgeDir = (prevEdgeNormal ^ edgeNormal).GetSafeNormal();
+			if ((ridgeDir | baseNormal) < 0.0f)
+			{
+				ridgeDir *= -1.0f;
+			}
+		}
+
+		if (ridgeDir.IsNearlyZero())
+		{
+			return false;
+		}
+
 		ridgeDirs.Add(ridgeDir);
 	}
 

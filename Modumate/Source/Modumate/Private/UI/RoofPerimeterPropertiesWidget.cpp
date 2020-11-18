@@ -36,6 +36,7 @@ bool URoofPerimeterPropertiesWidget::Initialize()
 		return false;
 	}
 
+	RootBorder->OnMouseButtonDownEvent.BindDynamic(this, &URoofPerimeterPropertiesWidget::OnClickedBorder);
 	ControlGabled->OnCheckStateChanged.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnControlChangedGabled);
 	ControlHasFace->OnCheckStateChanged.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnControlChangedHasFace);
 	SlopeEditorFraction->OnTextChanged.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnSlopeEditorFractionTextChanged);
@@ -44,8 +45,8 @@ bool URoofPerimeterPropertiesWidget::Initialize()
 	SlopeEditorDegrees->OnTextCommitted.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnSlopeEditorDegreesTextCommitted);
 	OverhangEditor->OnTextChanged.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnOverhangEditorTextChanged);
 	OverhangEditor->OnTextCommitted.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnOverhangEditorTextCommitted);
-	ButtonCommit->OnPressed.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnButtonPressedCommit);
-	ButtonCancel->OnPressed.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnButtonPressedCancel);
+	ButtonCommit->OnReleased.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnButtonPressedCommit);
+	ButtonCancel->OnReleased.AddDynamic(this, &URoofPerimeterPropertiesWidget::OnButtonPressedCancel);
 
 	return true;
 }
@@ -120,6 +121,11 @@ void URoofPerimeterPropertiesWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
+FEventReply URoofPerimeterPropertiesWidget::OnClickedBorder(FGeometry MyGeometry, const FPointerEvent& MouseEvent)
+{
+	return FEventReply(true);
+}
+
 void URoofPerimeterPropertiesWidget::OnControlChangedGabled(bool bIsChecked)
 {
 	if (bIsChecked && ControlHasFace && (ControlHasFace->GetCheckedState() == ECheckBoxState::Checked))
@@ -145,7 +151,7 @@ void URoofPerimeterPropertiesWidget::OnSlopeEditorFractionTextChanged(const FTex
 
 void URoofPerimeterPropertiesWidget::OnSlopeEditorFractionTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	if (CommitMethod == ETextCommit::OnEnter)
+	if (CommitMethod != ETextCommit::OnCleared)
 	{
 		float numeratorValue;
 		if (UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), numeratorValue))
@@ -163,7 +169,7 @@ void URoofPerimeterPropertiesWidget::OnSlopeEditorDegreesTextChanged(const FText
 
 void URoofPerimeterPropertiesWidget::OnSlopeEditorDegreesTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	if (CommitMethod == ETextCommit::OnEnter)
+	if (CommitMethod != ETextCommit::OnCleared)
 	{
 		float degreesValue;
 		if (UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), degreesValue))
@@ -181,7 +187,7 @@ void URoofPerimeterPropertiesWidget::OnOverhangEditorTextChanged(const FText& Ne
 
 void URoofPerimeterPropertiesWidget::OnOverhangEditorTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	if (CommitMethod == ETextCommit::OnEnter)
+	if (CommitMethod != ETextCommit::OnCleared)
 	{
 		// TODO: parse the text from a formatted dimension, rather than the raw cm value
 		float OverhangValueCM;

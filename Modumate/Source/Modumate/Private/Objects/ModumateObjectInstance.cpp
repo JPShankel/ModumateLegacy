@@ -466,13 +466,13 @@ void FModumateObjectInstance::RequestCollisionDisabled(const FName &Requester, b
 	{
 		bool bDuplicateRequest = false;
 		CollisionDisabledRequests.Add(Requester, &bDuplicateRequest);
-		ensureAlwaysMsgf(!bDuplicateRequest, TEXT("%s already requested that MOI %d has collision disabled!"),
+		ensureMsgf(!bDuplicateRequest, TEXT("%s already requested that MOI %d has collision disabled!"),
 			*Requester.ToString(), ID);
 	}
 	else
 	{
 		int32 numRemoved = CollisionDisabledRequests.Remove(Requester);
-		ensureAlwaysMsgf(numRemoved == 1, TEXT("%s revoked a collision disabled request for MOI %d that was never set!"),
+		ensureMsgf(numRemoved == 1, TEXT("%s revoked a collision disabled request for MOI %d that was never set!"),
 			*Requester.ToString(), ID);
 	}
 
@@ -786,7 +786,7 @@ bool FModumateObjectInstance::GetTypedInstanceData(UScriptStruct*& OutStructDef,
 
 bool FModumateObjectInstance::BeginPreviewOperation_DEPRECATED()
 {
-	if (!ensureAlways(!GetIsInPreviewMode()))
+	if (!ensure(!GetIsInPreviewMode()))
 	{
 		return false;
 	}
@@ -798,7 +798,7 @@ bool FModumateObjectInstance::BeginPreviewOperation_DEPRECATED()
 
 bool FModumateObjectInstance::EndPreviewOperation_DEPRECATED()
 {
-	if (!ensureAlways(GetIsInPreviewMode()))
+	if (!ensure(GetIsInPreviewMode()))
 	{
 		return false;
 	}

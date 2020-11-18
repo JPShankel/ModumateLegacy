@@ -15,6 +15,7 @@ EToolCategories UModumateTypeStatics::GetToolCategory(EToolMode ToolMode)
 	switch (ToolMode)
 	{
 	case EToolMode::VE_METAPLANE:
+	case EToolMode::VE_ROOF_PERIMETER:
 		return EToolCategories::MetaGraph;
 	case EToolMode::VE_WALL:
 	case EToolMode::VE_FLOOR:

@@ -7,12 +7,11 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Graph/Graph3D.h"
-#include "UnrealClasses/LineActor.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "UnrealClasses/VertexActor.h"
 #include "ToolsAndAdjustments/Handles/RoofPerimeterHandles.h"
 #include "UI/RoofPerimeterPropertiesWidget.h"
+
 
 FMOIRoofPerimeterImpl::FMOIRoofPerimeterImpl(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
@@ -56,9 +55,8 @@ void FMOIRoofPerimeterImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, v
 
 void FMOIRoofPerimeterImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	// TODO: update visibility/collision based on edit mode, whether roof faces have been created, etc.
-	FModumateObjectInstanceImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
-	UpdateLineActors();
+	// RoofPerimeters are only seen and interacted with via their edges.
+	bOutVisible = bOutCollisionEnabled = false;
 }
 
 void FMOIRoofPerimeterImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller)
@@ -109,18 +107,6 @@ void FMOIRoofPerimeterImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP
 	}
 }
 
-void FMOIRoofPerimeterImpl::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
-{
-	FModumateObjectInstanceImplBase::OnHovered(controller, bIsHovered);
-	UpdateLineActors();
-}
-
-void FMOIRoofPerimeterImpl::OnSelected(bool bIsSelected)
-{
-	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
-	UpdateLineActors();
-}
-
 void FMOIRoofPerimeterImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	int32 numPoints = CachedPerimeterPoints.Num();
@@ -135,12 +121,6 @@ void FMOIRoofPerimeterImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> 
 		outPoints.Add(FStructurePoint(pointA, dir, pointAIdx));
 		outLines.Add(FStructureLine(pointA, pointB, pointAIdx, pointBIdx));
 	}
-}
-
-AActor *FMOIRoofPerimeterImpl::RestoreActor()
-{
-	LineActors.Reset();
-	return FModumateObjectInstanceImplBase::RestoreActor();
 }
 
 AActor *FMOIRoofPerimeterImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
@@ -330,97 +310,3 @@ void FMOIRoofPerimeterImpl::UpdatePerimeterGeometry()
 
 	PerimeterActor->SetActorLocation(CachedPerimeterCenter);
 }
-
-void FMOIRoofPerimeterImpl::UpdateLineActors()
-{
-	if (!ensure(MOI))
-	{
-		return;
-	}
-
-	// Keep track of which edges we already have actors for,
-	// which edges we need to create actors for,
-	// and which edges no longer need actors.
-	TempEdgeIDsToAdd.Reset();
-	TempEdgeIDsToRemove.Reset();
-
-	for (auto &kvp : LineActors)
-	{
-		TempEdgeIDsToRemove.Add(kvp.Key);
-	}
-
-	const Modumate::FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
-
-	for (FGraphSignedID signedEdgeID : CachedEdgeIDs)
-	{
-		int32 edgeID = FMath::Abs(signedEdgeID);
-		if (volumeGraph.ContainsObject(edgeID))
-		{
-			if (!LineActors.Contains(edgeID))
-			{
-				TempEdgeIDsToAdd.Add(edgeID);
-			}
-
-			TempEdgeIDsToRemove.Remove(edgeID);
-		}
-		else
-		{
-			TempEdgeIDsToRemove.Remove(edgeID);
-		}
-	}
-
-	// Delete outdated line actors
-	for (int32 edgeIDToRemove : TempEdgeIDsToRemove)
-	{
-		TWeakObjectPtr<ALineActor> lineToRemove;
-		LineActors.RemoveAndCopyValue(edgeIDToRemove, lineToRemove);
-		if (lineToRemove.IsValid())
-		{
-			lineToRemove->Destroy();
-		}
-	}
-
-	// Add new line actors, just the key so we can spawn them all later
-	for (int32 edgeIDToAdd : TempEdgeIDsToAdd)
-	{
-		LineActors.Add(edgeIDToAdd);
-	}
-
-	// Update existing line actors
-	bool bMOIVisible = MOI->IsVisible();
-	bool bMOICollisionEnabled = MOI->IsCollisionEnabled();
-	bool bMOISelected = MOI->IsSelected();
-	bool bMOIHovered = MOI->IsHovered();
-	FColor lineColor = bMOIHovered ? FColor::White : (bValidPerimeterLoop ? FColor::Purple : FColor::Red);
-	float lineThickness = bMOISelected ? 6.0f : 3.0f;
-
-	for (auto &kvp : LineActors)
-	{
-		int32 edgeID = kvp.Key;
-		TWeakObjectPtr<ALineActor> &lineActor = kvp.Value;
-		const Modumate::FGraph3DEdge *graphEdge = volumeGraph.FindEdge(edgeID);
-		if (graphEdge)
-		{
-			const Modumate::FGraph3DVertex *startVertex = volumeGraph.FindVertex(graphEdge->StartVertexID);
-			const Modumate::FGraph3DVertex *endVertex = volumeGraph.FindVertex(graphEdge->EndVertexID);
-			if (startVertex && endVertex)
-			{
-				// Spawn the actor now, expected if it's new, or if it became stale
-				if (!lineActor.IsValid())
-				{
-					lineActor = World->SpawnActor<ALineActor>();
-				}
-
-				// Keep the line actor with the same direction as the original graph edge, for consistency
-				lineActor->SetActorHiddenInGame(!bMOIVisible);
-				lineActor->SetActorEnableCollision(bMOICollisionEnabled);
-				lineActor->SetIsHUD(false);
-				lineActor->Point1 = startVertex->Position;
-				lineActor->Point2 = endVertex->Position;
-				lineActor->Color = lineColor;
-				lineActor->Thickness = lineThickness;
-			}
-		}
-	}
-}
-

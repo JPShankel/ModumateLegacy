@@ -188,7 +188,7 @@ void AAdjustmentHandleActor::PostEndOrAbort()
 		SourceMOI->ShowAdjustmentHandles(Controller, true);
 	}
 
-	if (ensureAlways(bIsInUse))
+	if (ensure(bIsInUse))
 	{
 		bIsInUse = false;
 	}
