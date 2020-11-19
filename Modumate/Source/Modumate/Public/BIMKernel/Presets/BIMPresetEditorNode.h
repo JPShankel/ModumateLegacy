@@ -62,6 +62,9 @@ public:
 	int32 MyParentPinSetPosition = INDEX_NONE;
 	TArray<FBIMPresetEditorNodeWeakPtr> ChildNodes;
 
+	FBIMKey MyParentPartSlot;
+	TArray<FBIMPresetEditorNodeWeakPtr> PartNodes;
+
 	bool bWantAddButton = false;
 
 	int32 GetInstanceID() const;

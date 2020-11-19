@@ -336,7 +336,6 @@ void UBIMBlockNode::UpdateNodeSwitchState(ENodeWidgetSwitchState NewState)
 	default:
 		break;
 	}
-	ParentBIMDesigner->AutoArrangeNodes();
 }
 
 void UBIMBlockNode::BeginDrag()

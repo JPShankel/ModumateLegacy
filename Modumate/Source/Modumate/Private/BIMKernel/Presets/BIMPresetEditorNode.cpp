@@ -63,7 +63,7 @@ EBIMResult FBIMPresetEditorNode::SetPartSlotPreset(const FBIMKey& SlotPreset, co
 EBIMResult FBIMPresetEditorNode::NodeIamEmbeddedIn(int32& OutNodeId) const
 {
 	OutNodeId = INDEX_NONE;
-	
+	// TODO: Should consider partslot when determining if this is embedded
 	if (WorkingPresetCopy.ChildPresets.Num() == 0 && ParentInstance.IsValid())
 	{
 		OutNodeId = ParentInstance.Pin()->GetInstanceID();
@@ -89,12 +89,16 @@ EBIMResult FBIMPresetEditorNode::NodesEmbeddedInMe(TArray<int32>& OutNodeIds) co
 
 EBIMResult FBIMPresetEditorNode::GatherAllChildNodes(TArray<FBIMPresetEditorNodeSharedPtr>& OutChildren)
 {
+	// TODO: Split this into separate function to get PartNodes
 	TArray<FBIMPresetEditorNodeSharedPtr> nodeStack;
 	nodeStack.Push(AsShared());
 	do
 	{
 		FBIMPresetEditorNodeSharedPtr currentNode = nodeStack.Pop();
-		for (auto& childNode : currentNode->ChildNodes)
+
+		TArray<FBIMPresetEditorNodeWeakPtr> currentNodeToCheck = currentNode->PartNodes.Num() == 0 ? currentNode->ChildNodes : currentNode->PartNodes;
+		
+		for (auto& childNode : currentNodeToCheck)
 		{
 			FBIMPresetEditorNodeSharedPtr childNodePinned = childNode.Pin();
 			if (childNodePinned != nullptr)
@@ -132,9 +136,14 @@ int32 FBIMPresetEditorNode::GetNumChildrenOnPin(int32 InPin) const
 
 bool FBIMPresetEditorNode::CanRemoveChild(const FBIMPresetEditorNodeSharedPtrConst& Child) const
 {
-	if (ensureAlways(MyParentPinSetIndex != INDEX_NONE && MyParentPinSetIndex < WorkingPresetCopy.TypeDefinition.PinSets.Num()))
+	if (!Child->MyParentPartSlot.IsNone())
 	{
-		return GetNumChildrenOnPin(MyParentPinSetIndex) > WorkingPresetCopy.TypeDefinition.PinSets[MyParentPinSetIndex].MinCount;
+		return false;
+	}
+
+	if (ensureAlways(Child->MyParentPinSetIndex != INDEX_NONE && Child->MyParentPinSetIndex < WorkingPresetCopy.TypeDefinition.PinSets.Num()))
+	{
+		return GetNumChildrenOnPin(Child->MyParentPinSetIndex) > WorkingPresetCopy.TypeDefinition.PinSets[Child->MyParentPinSetIndex].MinCount;
 	}
 
 	return false;
@@ -142,6 +151,11 @@ bool FBIMPresetEditorNode::CanRemoveChild(const FBIMPresetEditorNodeSharedPtrCon
 
 bool FBIMPresetEditorNode::CanReorderChild(const FBIMPresetEditorNodeSharedPtrConst& Child) const
 {
+	if (!Child->MyParentPartSlot.IsNone())
+	{
+		return false;
+	}
+
 	if (ensureAlways(Child->MyParentPinSetIndex != INDEX_NONE))
 	{
 		return GetNumChildrenOnPin(Child->MyParentPinSetIndex) > 1;
@@ -210,7 +224,15 @@ EBIMResult FBIMPresetEditorNode::FindOtherChildrenOnPin(TArray<int32>& OutChildI
 
 EBIMResult FBIMPresetEditorNode::GatherChildrenInOrder(TArray<int32>& OutChildIDs) const
 {
-	Algo::Transform(ChildNodes, OutChildIDs, [](const FBIMPresetEditorNodeWeakPtr& Child) {return Child.Pin()->GetInstanceID(); });
+	// TODO: Split this into separate function for PartNodes
+	if (PartNodes.Num() == 0)
+	{
+		Algo::Transform(ChildNodes, OutChildIDs, [](const FBIMPresetEditorNodeWeakPtr& Child) {return Child.Pin()->GetInstanceID(); });
+	}
+	else
+	{
+		Algo::Transform(PartNodes, OutChildIDs, [](const FBIMPresetEditorNodeWeakPtr& Child) {return Child.Pin()->GetInstanceID(); });
+	}
 	return EBIMResult::Success;
 }
 
@@ -305,7 +327,7 @@ bool FBIMPresetEditorNode::ValidateNode() const
 		return false;
 	}
 
-	if (MyParentPinSetIndex == INDEX_NONE || MyParentPinSetPosition == INDEX_NONE)
+	if (MyParentPartSlot.IsNone() && (MyParentPinSetIndex == INDEX_NONE || MyParentPinSetPosition == INDEX_NONE))
 	{
 		return false;
 	}

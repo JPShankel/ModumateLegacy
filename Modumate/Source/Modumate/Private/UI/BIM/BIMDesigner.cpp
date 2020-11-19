@@ -197,6 +197,7 @@ void UBIMDesigner::SetNodeAsSelected(int32 InstanceID)
 				curNode->UpdateNodeHidden(!isHighlighted);
 			}
 		}
+		AutoArrangeNodes();
 		return;
 	}
 
@@ -284,9 +285,16 @@ bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey
 
 void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 {
-	EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(
-		Controller->GetDocument()->PresetManager.CraftingNodePresets,
-		*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly);
+	// TODO: Skip slot based assembly for now
+	FBIMPresetEditorNodeSharedPtr rootNodeInst = InstancePool.InstanceFromID(1);
+	if (rootNodeInst->WorkingPresetCopy.PartSlots.Num() == 0)
+	{
+		EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(
+			Controller->GetDocument()->PresetManager.CraftingNodePresets,
+			*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly);
+	}
+
+	bool bAssemblyHasPart = false;
 
 	// Remove old nodes
 	for (auto& curNodeWidget : BIMBlockNodes)
@@ -302,14 +310,22 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 
 	for (const FBIMPresetEditorNodeSharedPtr& curInstance : InstancePool.GetInstancePool())
 	{
-		// Create widget for this node only if it's not embedded
+		// Determine if this is a node with slots
+		TArray<FBIMPresetPartSlot> partSlots;
+		curInstance->GetPartSlots(partSlots);
+		bool bInstHasParts = partSlots.Num() > 0;
+		if (bInstHasParts)
+		{
+			bAssemblyHasPart = true;
+		}
+
+		// Create widget for this node only if it's not embedded, nodes with slots must have widgets 
 		int32 embeddedInId = INDEX_NONE;
 		curInstance->NodeIamEmbeddedIn(embeddedInId);
-		if (embeddedInId == INDEX_NONE)
+		if (embeddedInId == INDEX_NONE || bInstHasParts)
 		{
 			// Create a normal node or a rigged assembly node, depends on whether any of its children have parts
-			bool bChildrenHasPart = false;
-			TSubclassOf<UBIMBlockNode> nodeWidgetClass = bChildrenHasPart ? BIMBlockRiggedNodeClass : BIMBlockNodeClass;
+			TSubclassOf<UBIMBlockNode> nodeWidgetClass = bInstHasParts ? BIMBlockRiggedNodeClass : BIMBlockNodeClass;
 			UBIMBlockNode* newBlockNode = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockNode>(nodeWidgetClass);
 			if (newBlockNode)
 			{
@@ -318,7 +334,7 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 					RootNode = newBlockNode;
 					// Do other kingly things, maybe auto focus when no other node is selected
 				}
-				newBlockNode->BuildNode(this, curInstance, bChildrenHasPart);
+				newBlockNode->BuildNode(this, curInstance, bInstHasParts);
 				BIMBlockNodes.Add(newBlockNode);
 				CanvasPanelForNodes->AddChildToCanvas(newBlockNode);
 				IdToNodeMapUnSorted.Add(curInstance->GetInstanceID(), newBlockNode);
@@ -331,14 +347,31 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 		}
 	}
 
-	TArray<int32> sortedNodeIDs;
-	InstancePool.GetSortedNodeIDs(sortedNodeIDs);
-	for (const auto& curID : sortedNodeIDs)
+	// Map nodes by ID. Sort by id if this is not parts assembly
+	if (bAssemblyHasPart)
 	{
-		const auto& curNode = IdToNodeMapUnSorted.FindRef(curID);
-		if (curNode)
+		// TODO: Maybe make InstanceMap public in BIMPresetEditor
+		for (auto& curInst : InstancePool.GetInstancePool())
 		{
-			IdToNodeMap.Add(curID, curNode);
+			int32 instID = curInst->GetInstanceID();
+			const auto& curNode = IdToNodeMapUnSorted.FindRef(instID);
+			if (curNode)
+			{
+				IdToNodeMap.Add(instID, curNode);
+			}
+		}
+	}
+	else
+	{
+		TArray<int32> sortedNodeIDs;
+		InstancePool.GetSortedNodeIDs(sortedNodeIDs);
+		for (const auto& curID : sortedNodeIDs)
+		{
+			const auto& curNode = IdToNodeMapUnSorted.FindRef(curID);
+			if (curNode)
+			{
+				IdToNodeMap.Add(curID, curNode);
+			}
 		}
 	}
 

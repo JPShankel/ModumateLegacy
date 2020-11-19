@@ -104,12 +104,13 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 				instance->MyParentPinSetPosition = iterator.ParentSetPosition;
 				parent->ChildNodes.Add(instance);
 			}
-#if 0 // TODO: access parts directly from preset
 			else
 			{
-				ensureAlways(parent->AttachPartChild(instance, *iterator.SlotAssignment.ToString()) != EBIMResult::Error);
+				instance->MyParentPartSlot = iterator.SlotAssignment;
+				instance->MyParentPinSetIndex = INDEX_NONE;
+				instance->MyParentPinSetPosition = INDEX_NONE;
+				parent->PartNodes.Add(instance);
 			}
-#endif
 		}
 
 		if (returnVal == nullptr)
@@ -130,6 +131,14 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 			iteratorStack.Push(FPresetTreeIterator(instance->GetInstanceID(), partPreset.PartPreset, partPreset.SlotName));
 		}
 #endif
+		for (int32 i = preset->PartSlots.Num() - 1; i >= 0; --i)
+		{
+			auto& partPreset = preset->PartSlots[i];
+			if (!partPreset.PartPreset.IsNone())
+			{
+				iteratorStack.Push(FPresetTreeIterator(instance->GetInstanceID(), partPreset.PartPreset, partPreset.SlotPreset));
+			}
+		}
 	}
 
 	for (auto& createdInstance : createdInstances)
@@ -161,17 +170,30 @@ bool FBIMPresetEditor::ValidatePool() const
 		return ret;
 	};
 
-	auto myParentPointsToMe = [](const FBIMPresetEditorNodeSharedPtr &me)
+	auto myParentPointsToMe = [](const FBIMPresetEditorNodeSharedPtr& me)
 	{
 		if (me->ParentInstance == nullptr)
 		{
 			return true;
 		}
-		for (auto &op : me->ParentInstance.Pin()->ChildNodes)
+		if (me->MyParentPartSlot.IsNone())
 		{
-			if (op.HasSameObject(me.Get()))
+			for (auto& op : me->ParentInstance.Pin()->ChildNodes)
 			{
-				return true;
+				if (op.HasSameObject(me.Get()))
+				{
+					return true;
+				}
+			}
+		}
+		else
+		{
+			for (auto& op : me->ParentInstance.Pin()->PartNodes)
+			{
+				if (op.HasSameObject(me.Get()))
+				{
+					return true;
+				}
 			}
 		}
 		return false;
