@@ -1,7 +1,12 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "Drafting/ModumateClippingTriangles.h"
-
+#include "DocumentManagement/ModumateDocument.h"
+#include "Objects/ModumateObjectInstance.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "UnrealClasses/CompoundMeshActor.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Objects/Portal.h"
 #include "Algo/AnyOf.h"
 #include "Algo/Copy.h"
 #include "Algo/ForEach.h"
@@ -62,39 +67,60 @@ namespace Modumate
 				const auto* parent = object->GetParentObject();
 				if (parent)
 				{
-					meshActor = Cast<ADynamicMeshActor>(parent->GetActor());
+					const ACompoundMeshActor* portalActor = Cast<ACompoundMeshActor>(object->GetActor());
+					int32 numCorners = parent->GetNumCorners();
+					if (!ensure(numCorners == 4))
+					{
+						continue;
+					}
+					
+					const FMOIStateData& portalState = object->GetStateData();
+					FMOIPortalData portalData;
+					portalState.CustomData.LoadStructData(portalData);
+					FVector faceOffset = parent->GetNormal() * portalData.Justification;
+					const UStaticMeshComponent* panelMesh = nullptr;
+					const UStaticMeshComponent* frameMesh = nullptr;
+
+					faceOffset += parent->GetNormal() * portalActor->GetPortalCenter(doc, object->GetStateData().AssemblyKey);
+					for (int32 c = 0; c < numCorners; ++c)
+					{
+						vertices.Emplace(parent->GetCorner(c) + faceOffset);
+					}
+					triangles = { 0, 1, 2, 0, 2, 3 };
 				}
 			}
 			else
 			{
 				meshActor = Cast<ADynamicMeshActor>(object->GetActor());
-			}
 
-			if (!meshActor)
-			{
-				continue;
-			}
-			localToWorld = meshActor->ActorToWorld();
-
-			if (actorMeshOccluderTypes.Contains(objectType))
-			{
-				UProceduralMeshComponent* meshComponent = meshActor->Mesh;
-				const FProcMeshSection* meshSection = meshComponent->GetProcMeshSection(0);
-				if (meshSection)
+				if (!meshActor)
 				{
-					for (const auto& vertex: meshSection->ProcVertexBuffer)
-					{
-						vertices.Add((vertex.Position));
-					}
-					triangles.Append(meshSection->ProcIndexBuffer);
+					continue;
 				}
+				localToWorld = meshActor->ActorToWorld();
 
-			}
+				if (actorMeshOccluderTypes.Contains(objectType))
+				{
+					UProceduralMeshComponent* meshComponent = meshActor->Mesh;
+					const FProcMeshSection* meshSection = meshComponent->GetProcMeshSection(0);
+					if (meshSection)
+					{
+						for (const auto& vertex : meshSection->ProcVertexBuffer)
+						{
+							vertices.Add((vertex.Position));
+						}
+						triangles.Append(meshSection->ProcIndexBuffer);
+					}
 
-			const TArray<FLayerGeomDef>& layerGeoms = meshActor->LayerGeometries;
-			for (const auto& layerGeom: layerGeoms)
-			{
-				layerGeom.TriangulateMesh(vertices, triangles, normals, uvs, tangents, uvAnchor, 0.0f);
+				}
+				else
+				{
+					const TArray<FLayerGeomDef>& layerGeoms = meshActor->LayerGeometries;
+					for (const auto& layerGeom : layerGeoms)
+					{
+						layerGeom.TriangulateMesh(vertices, triangles, normals, uvs, tangents, uvAnchor, 0.0f);
+					}
+				}
 			}
 
 			static constexpr float triangleEpsilon = 1.0f;  // Push triangles back slightly.

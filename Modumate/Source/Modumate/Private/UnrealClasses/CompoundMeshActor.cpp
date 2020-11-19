@@ -16,6 +16,7 @@
 #include "ModumateCore/ModumateUnits.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
+#include "DocumentManagement/ModumateDocument.h"
 
 using namespace Modumate;
 
@@ -605,4 +606,37 @@ void ACompoundMeshActor::SetIsDynamic(bool dynamicStatus)
 			}
 		}
 	}
+}
+
+float ACompoundMeshActor::GetPortalCenter(const FModumateDocument* Doc, const FBIMKey& AssemblyKey) const
+{
+	float centerOffset = 0.0f;
+	
+	const UStaticMeshComponent* panelMesh = nullptr;
+
+	const FBIMAssemblySpec* assembly = Doc->PresetManager.GetAssemblyByKey(EToolMode::VE_DOOR, AssemblyKey);
+	assembly = assembly ? assembly : Doc->PresetManager.GetAssemblyByKey(EToolMode::VE_WINDOW, AssemblyKey);
+	if (assembly)
+	{
+		static const FBIMTagPath panelTag("Panel");
+		for (int32 slot = 0; slot < assembly->Parts.Num(); ++slot)
+		{
+			if (assembly->Parts[slot].NodeCategoryPath == panelTag && StaticMeshComps[slot]
+				&& StaticMeshComps[slot]->GetStaticMesh())
+			{
+				panelMesh = StaticMeshComps[slot];
+				break;
+			}
+		}
+	}
+
+	if (panelMesh)
+	{
+		FVector meshMin, meshMax;
+		panelMesh->GetLocalBounds(meshMin, meshMax);
+		FTransform panelMeshTransform = panelMesh->GetRelativeTransform();
+		centerOffset = 0.5f * FMath::Abs(meshMax.Y - meshMin.Y) + panelMeshTransform.GetTranslation().Y;
+	}
+
+	return centerOffset;
 }

@@ -15,6 +15,7 @@ class UPointLightComponent;
 class USpotLightComponent;
 class UStaticMeshComponent;
 class UProceduralMeshComponent;
+class FModumateDocument;
 
 UCLASS()
 class MODUMATE_API ACompoundMeshActor : public AActor
@@ -42,6 +43,8 @@ public:
 
 	void SetIsDynamic(bool DynamicStatus);
 	bool GetIsDynamic() const { return bIsDynamic; }
+
+	float GetPortalCenter(const FModumateDocument* Doc, const FBIMKey& AssemblyKey) const;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<bool> UseSlicedMesh;
