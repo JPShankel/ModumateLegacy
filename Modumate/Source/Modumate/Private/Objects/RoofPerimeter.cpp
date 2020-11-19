@@ -2,15 +2,17 @@
 
 #include "Objects/RoofPerimeter.h"
 
+#include "DocumentManagement/DocumentDelta.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "Graph/Graph3D.h"
+#include "Graph/Graph3DDelta.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "ToolsAndAdjustments/Handles/RoofPerimeterHandles.h"
+#include "UI/RoofPerimeterPropertiesWidget.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "Graph/Graph3D.h"
-#include "DocumentManagement/ModumateDocument.h"
-#include "ModumateCore/ModumateGeometryStatics.h"
-#include "ToolsAndAdjustments/Handles/RoofPerimeterHandles.h"
-#include "UI/RoofPerimeterPropertiesWidget.h"
 
 
 FMOIRoofPerimeterImpl::FMOIRoofPerimeterImpl(FModumateObjectInstance *moi)
@@ -152,6 +154,31 @@ bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 		// but we don't have a better time to do it besides cleaning structural flags.
 		if (!UpdateConnectedIDs())
 		{
+			// If we're unable to update the graph for this RoofPerimeter, then it's not yet recoverable and must destroy itself.
+			// TODO: show error state, and add the ability to manually/automatically recover a roof perimeter with the data for its remaining edges intact
+			if (OutSideEffectDeltas)
+			{
+				// Delete the roof perimeter MOI
+				auto deletionDelta = MakeShared<FMOIDelta>();
+				deletionDelta->AddCreateDestroyState(MOI->GetStateData(), EMOIDeltaType::Destroy);
+				OutSideEffectDeltas->Add(deletionDelta);
+
+				// Delete the roof group from the graph
+				if (TempGroupMembers.Num() > 0)
+				{
+					auto graphDelta = MakeShared<FGraph3DDelta>();
+					for (int32 staleGroupMemberID : TempGroupMembers)
+					{
+						FGraph3DGroupIDsDelta groupIDsDelta(TSet<int32>(), TSet<int32>({ MOI->ID }));
+						graphDelta->GroupIDsUpdates.Add(staleGroupMemberID, groupIDsDelta);
+					}
+
+					OutSideEffectDeltas->Add(graphDelta);
+				}
+
+				return true;
+			}
+
 			return false;
 		}
 

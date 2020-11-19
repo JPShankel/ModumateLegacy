@@ -364,7 +364,9 @@ bool AEditModelPlayerState_CPP::ValidateSelectionsAndView()
 		viewChanged = true;
 	}
 
-	if (selectionChanged)
+	// Call PostSelectionChanged if either the set has been fixed, or we have selections
+	// (just in case their selection state/handles change based on whatever just required re-validating selection state)
+	if (selectionChanged || (SelectedObjects.Num() > 0))
 	{
 		PostSelectionChanged();
 	}

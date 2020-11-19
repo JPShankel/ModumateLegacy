@@ -101,8 +101,6 @@ void FModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 		AEditModelPlayerState_CPP* EMPlayerState = Cast<AEditModelPlayerState_CPP>(World->GetFirstPlayerController()->PlayerState);
 		EMPlayerState->RefreshActiveAssembly();
 
-		EMPlayerState->PostSelectionChanged();
-
 #if WITH_EDITOR
 		ensureAlways(fromBufferSize == FromBuffer.Num());
 		ensureAlways(toBufferSize == ToBuffer.Num());
@@ -694,6 +692,16 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 	{
 		dirtyGroupIDs.Append(kvp.Value.GroupIDsToAdd);
 		dirtyGroupIDs.Append(kvp.Value.GroupIDsToRemove);
+	}
+
+	// Dirty every group that was added to or removed from an element, or had members that were deleted without a GroupIDsUpdates delta
+	for (int32 groupID : dirtyGroupIDs)
+	{
+		auto groupObj = GetObjectById(groupID);
+		if (groupObj != nullptr)
+		{
+			groupObj->MarkDirty(EObjectDirtyFlags::Structure);
+		}
 	}
 
 	// Dirty every group member that was added or removed from a group

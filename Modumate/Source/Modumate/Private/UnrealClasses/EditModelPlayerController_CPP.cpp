@@ -514,6 +514,16 @@ void AEditModelPlayerController_CPP::OnHoverHandleWidget(UAdjustmentHandleWidget
 		return;
 	}
 
+	// Clear the hover handles of actors that have been destroyed
+	for (int32 i = HoverHandleActors.Num() - 1; i >= 0; --i)
+	{
+		auto curHoverHandleActor = HoverHandleActors[i];
+		if ((curHoverHandleActor == nullptr) || curHoverHandleActor->IsActorBeingDestroyed())
+		{
+			HoverHandleActors.RemoveAt(i);
+		}
+	}
+
 	// Maintain a stack of hovered handle widgets, so we can easily access the latest hovered one for input purposes,
 	// but allow the handle widgets to use their own hover system for individual hover state.
 	if (bIsHovered)
@@ -533,7 +543,7 @@ void AEditModelPlayerController_CPP::OnHoverHandleWidget(UAdjustmentHandleWidget
 
 	if ((HoverHandleActors.Num() > 0) && HoverHandleActor == nullptr)
 	{
-		ensureAlways(false);
+		ensureMsgf(false, TEXT("Hovering over an invalid hover handle actor!"));
 	}
 }
 

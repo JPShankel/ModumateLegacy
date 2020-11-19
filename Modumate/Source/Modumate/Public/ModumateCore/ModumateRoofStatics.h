@@ -37,6 +37,7 @@ struct MODUMATE_API FTessellationPolygon
 
 	bool ClipWithPolygon(const FTessellationPolygon &ClippingPolygon);
 	bool UpdatePolygonVerts();
+	bool IsValid() const;
 
 	void DrawDebug(const FColor &Color, class UWorld* World = nullptr, const FTransform &Transform = FTransform::Identity);
 };

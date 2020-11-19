@@ -127,9 +127,16 @@ bool FTessellationPolygon::ClipWithPolygon(const FTessellationPolygon &ClippingP
 			return false;
 		}
 
-		// If this polygon is a triangle, make sure the clip points are inside the triangle.
 		if (bCachedEndsConverge)
 		{
+			// If this polygon starts as a triangle, make sure the clip points aren't equal to the existing edge converging intersection
+			if (clipStartPoint.Equals(CachedEdgeIntersection, RAY_INTERSECT_TOLERANCE) &&
+				clipEndPoint.Equals(CachedEdgeIntersection, RAY_INTERSECT_TOLERANCE))
+			{
+				return false;
+			}
+
+			// If this polygon starts as a triangle, make sure the clip points are inside the triangle.
 			static float constexpr BARY_EPSILON = 0.05f;
 			FVector clipStartBary = FMath::ComputeBaryCentric2D(clipStartPoint, StartPoint, EndPoint, CachedEdgeIntersection);
 			FVector clipEndBary = FMath::ComputeBaryCentric2D(clipEndPoint, StartPoint, EndPoint, CachedEdgeIntersection);
@@ -141,6 +148,7 @@ bool FTessellationPolygon::ClipWithPolygon(const FTessellationPolygon &ClippingP
 
 		ClippingPoints.Add(clipStartPoint);
 		ClippingPoints.Add(clipEndPoint);
+
 		return true;
 	}
 
@@ -271,6 +279,7 @@ bool FTessellationPolygon::UpdatePolygonVerts()
 
 				PolygonVerts.Add(clipPointA);
 				PolygonVerts.Add(clipPointB);
+
 				int32 minIndex = FMath::Min(endRaySegStartIdx, endRaySegEndIdx);
 				ClippingPoints.RemoveAt(minIndex, 2, false);
 				bConsumeClipSegments = true;
@@ -285,6 +294,11 @@ bool FTessellationPolygon::UpdatePolygonVerts()
 		}
 	}
 
+	return IsValid();
+}
+
+bool FTessellationPolygon::IsValid() const
+{
 	return (PolygonVerts.Num() >= 3);
 }
 
@@ -561,9 +575,9 @@ bool UModumateRoofStatics::TessellateSlopedEdges(const TArray<FVector> &EdgePoin
 #endif
 		}
 
-		edgePoly.UpdatePolygonVerts();
+		bool bPolyValid = edgePoly.UpdatePolygonVerts();
 
-		if (EdgeProperties[edgeIdx].bHasFace)
+		if (EdgeProperties[edgeIdx].bHasFace && bPolyValid)
 		{
 			combinedPolygons.Add(edgePoly);
 		}
@@ -572,8 +586,11 @@ bool UModumateRoofStatics::TessellateSlopedEdges(const TArray<FVector> &EdgePoin
 	// Collect the vertices for each edge tessellation polygon
 	for (auto &edgePoly : combinedPolygons)
 	{
-		OutCombinedPolyVerts.Append(edgePoly.PolygonVerts);
-		OutPolyVertIndices.Add(OutCombinedPolyVerts.Num() - 1);
+		if (edgePoly.IsValid())
+		{
+			OutCombinedPolyVerts.Append(edgePoly.PolygonVerts);
+			OutPolyVertIndices.Add(OutCombinedPolyVerts.Num() - 1);
+		}
 	}
 
 	return true;

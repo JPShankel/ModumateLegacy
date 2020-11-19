@@ -54,7 +54,7 @@ bool ACreateRoofFacesHandle::BeginUse()
 		int32 nextID = doc.GetNextAvailableID();
 		TSet<int32> groupIDs({ TargetMOI->ID });
 
-		bool bFaceAdditionFailure = false;
+		bool bAnyFaceFailure = false;
 		TArray<FGraph3DDelta> graphDeltas;
 
 		for (int32 polyIdx = 0; polyIdx < numCalculatedPolys; ++polyIdx)
@@ -66,27 +66,24 @@ bool ACreateRoofFacesHandle::BeginUse()
 
 			int32 existingFaceID;
 			bool bAddedFace = tempVolumeGraph.GetDeltaForFaceAddition(polyVerts, graphDeltas, nextID, existingFaceID, groupIDs);
-			if (!bAddedFace)
-			{
-				bFaceAdditionFailure = true;
-				break;
-			}
+			bAnyFaceFailure = bAnyFaceFailure || !bAddedFace;
 
 			vertIdxStart = vertIdxEnd + 1;
 		}
 
-		if (graphDeltas.Num() == 0)
-		{
-			bFaceAdditionFailure = true;
-		}
+		bool bFullFaceFailure = (graphDeltas.Num() == 0);
 
 		FGraph3D::CloneFromGraph(tempVolumeGraph, volumeGraph);
 
-		if (bFaceAdditionFailure)
+		if (bFullFaceFailure)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to generate graph deltas for all requested roof faces :("));
+			UE_LOG(LogTemp, Error, TEXT("Failed to generate graph deltas for each requested roof face :("));
 			EndUse();
 			return false;
+		}
+		else if (bAnyFaceFailure)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to generate graph deltas for all requested roof faces :("));
 		}
 
 		TArray<FDeltaPtr> deltaPtrs;
