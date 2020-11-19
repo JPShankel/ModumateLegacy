@@ -14,80 +14,80 @@ INPUTPIN,,1..1,,ChildMaterial,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildDimWD,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildProfile,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,,,,,0,1,1,1,1,4,2,1,1,4,1,6,4,1
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Module.Name,Module.Width,Module.Depth,Module.IconLength,Module.Profile,Module.InnerMaterial,Module.SurfaceMaterial,Module.ColorTint,DataType=InputPins,ChildMaterial,ChildDimWD,ChildProfile,DataType=TG_Parent Node+CategoryPath,3Layer1D --> Corrugated Deck --> Plastic,3Layer1D --> Corrugated Deck --> Steel,3Layer1D --> Furring --> Steel Hat Channel,3Layer1D --> Furring --> Steel Z Channel,3Layer1D --> Furring --> Wood Strips,3Layer1D --> Joist --> Wood,3Layer1D --> Joist --> Engineered Wood,3Layer1D --> Joist --> Wood Web Joist,"3Layer1D --> Joist --> Wood-Chord, Steel-Web Joist",3Layer1D --> Joist --> Steel C-Joist,3Layer1D --> Joist --> Steel Web Joist,3Layer1D --> Stud --> Wood,3Layer1D --> Stud --> Steel C-Channel,3Layer1D --> Stud --> Steel C-H Channel
-PRESET,,"Corrugated Plastic Sheet
-1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Module.Name,Module.Width,Module.Depth,Module.IconLength,Module.Profile,Module.InnerMaterial,Module.SurfaceMaterial,Module.ColorTint,DataType=InputPins,ChildMaterial,ChildDimWD,ChildProfile,DataType=TG_Parent Node+CategoryPath,Assembly_Layer_Corrugated Deck_Plastic,Assembly_Layer_Corrugated Deck_Steel,Assembly_Layer_Furring_Steel Hat Channel,Assembly_Layer_Furring_Steel Z Channel,Assembly_Layer_Furring_Wood Strips,Assembly_Layer_Joist_Wood,Assembly_Layer_Joist_Engineered Wood,Assembly_Layer_Joist_Wood Web Joist,"Assembly_Layer_Joist_Wood-Chord, Steel-Web Joist",Assembly_Layer_Joist_Steel C-Joist,Assembly_Layer_Joist_Steel Web Joist,Assembly_Layer_Stud_Wood,Assembly_Layer_Stud_Steel C-Channel,Assembly_Layer_Stud_Steel C-H Channel
+PRESET,,"Part_ModuleLinear_Corrugated Plastic Sheet
+1Material_Synthetic and Polymer_Plastic-0RawMaterial-Plastic-0Color_Abstract-6B6B6B-Gray6
 0DimWD-0.5inW-0.5inD
-0Profile-Corrugated Plastic",,Corrugated Plastic Sheet,,"0.5in x 0.5in, Plastic, Gray 6",0.5in,0.5in,96in,0Profile-Corrugated Plastic,0RawMaterial-Plastic,-,EAEAEA,,1Material --> Synthetic and Polymer --> Plastic-0RawMaterial-Plastic-0Color --> Abstract-6B6B6B-Gray6,0DimWD-0.5inW-0.5inD,0Profile-Corrugated Plastic,,X,,,,,,,,,,,,,
-PRESET,,"Corrugated Steel Deck
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Profile-Corrugated Plastic",,Part_ModuleLinear_Corrugated Plastic Sheet,,"0.5in x 0.5in, Corrugated Plastic Sheet, Plastic, Gray 6",0.5in,0.5in,96in,0Profile-Corrugated Plastic,0RawMaterial-Plastic,-,EAEAEA,,1Material_Synthetic and Polymer_Plastic-0RawMaterial-Plastic-0Color_Abstract-6B6B6B-Gray6,0DimWD-0.5inW-0.5inD,0Profile-Corrugated Plastic,,X,,,,,,,,,,,,,
+PRESET,,"Part_ModuleLinear_Corrugated Steel Deck
+1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted
 0DimWD-6inW-1.5inD
-0Profile-Corrugated Steel",,Corrugated Steel Deck,,"6in x 1.5in, Steel, Untinted",6in,1.5in,96in,0Profile-Corrugated Steel,0RawMaterial-Steel,-,EAEAEA,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-6inW-1.5inD,0Profile-Corrugated Steel,,,X,,,,,,,,,,,,
-PRESET,,"Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Profile-Corrugated Steel",,Part_ModuleLinear_Corrugated Steel Deck,,"6in x 1.5in, Corrugated Steel Deck, Steel, Untinted",6in,1.5in,96in,0Profile-Corrugated Steel,0RawMaterial-Steel,-,EAEAEA,,1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted,0DimWD-6inW-1.5inD,0Profile-Corrugated Steel,,,X,,,,,,,,,,,,
+PRESET,,"Part_ModuleLinear_Steel C-Channel
+1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted
 0DimWD-1.625inW-1.625inD
-0Profile-Steel C-Stud",,Steel C-Channel,,"1.625in x 1.625in, Steel, Untinted",1.625in,1.625in,96in,0Profile-Steel C-Stud,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-1.625inW-1.625inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
-PRESET,,"Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Profile-Steel C-Stud",,Part_ModuleLinear_Steel C-Channel,,"1.625in x 1.625in, Steel C-Channel, Steel, Untinted",1.625in,1.625in,96in,0Profile-Steel C-Stud,0RawMaterial-Steel,-,FFFFFF,,1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted,0DimWD-1.625inW-1.625inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+PRESET,,"Part_ModuleLinear_Steel C-Channel
+1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted
 0DimWD-1.625inW-2inD
-0Profile-Steel C-Stud",,Steel C-Channel,,"1.625in x 2in, Steel, Untinted",1.625in,2in,96in,0Profile-Steel C-Stud,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-1.625inW-2inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
-PRESET,,"Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Profile-Steel C-Stud",,Part_ModuleLinear_Steel C-Channel,,"1.625in x 2in, Steel C-Channel, Steel, Untinted",1.625in,2in,96in,0Profile-Steel C-Stud,0RawMaterial-Steel,-,FFFFFF,,1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted,0DimWD-1.625inW-2inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+PRESET,,"Part_ModuleLinear_Steel C-Channel
+1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted
 0DimWD-1.625inW-3.625inD
-0Profile-Steel C-Stud",,Steel C-Channel,,"1.625in x 3.625in, Steel, Untinted",1.625in,3.625in,96in,0Profile-Steel C-Stud,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-1.625inW-3.625inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
-PRESET,,"Steel C-Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Profile-Steel C-Stud",,Part_ModuleLinear_Steel C-Channel,,"1.625in x 3.625in, Steel C-Channel, Steel, Untinted",1.625in,3.625in,96in,0Profile-Steel C-Stud,0RawMaterial-Steel,-,FFFFFF,,1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted,0DimWD-1.625inW-3.625inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+PRESET,,"Part_ModuleLinear_Steel C-Channel
+1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted
 0DimWD-1.625inW-6inD
-0Profile-Steel C-Stud",,Steel C-Channel,,"1.625in x 6in, Steel, Untinted",1.625in,6in,96in,0Profile-Steel C-Stud,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-1.625inW-6inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
-PRESET,,"Steel C-H Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Profile-Steel C-Stud",,Part_ModuleLinear_Steel C-Channel,,"1.625in x 6in, Steel C-Channel, Steel, Untinted",1.625in,6in,96in,0Profile-Steel C-Stud,0RawMaterial-Steel,-,FFFFFF,,1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted,0DimWD-1.625inW-6inD,0Profile-Steel C-Stud,,,,,,,,,,,X,,,X,
+PRESET,,"Part_ModuleLinear_Steel C-H Channel
+1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted
 0DimWD-1.5inW-6inD
-0Profile-Steel C-H Stud",,Steel C-H Channel,,"1.5in x 6in, Steel, Untinted",1.5in,6in,96in,0Profile-Steel C-H Stud,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-1.5inW-6inD,0Profile-Steel C-H Stud,,,,,,,,,,,,,,,X
-PRESET,,"Steel Hat Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Profile-Steel C-H Stud",,Part_ModuleLinear_Steel C-H Channel,,"1.5in x 6in, Steel C-H Channel, Steel, Untinted",1.5in,6in,96in,0Profile-Steel C-H Stud,0RawMaterial-Steel,-,FFFFFF,,1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted,0DimWD-1.5inW-6inD,0Profile-Steel C-H Stud,,,,,,,,,,,,,,,X
+PRESET,,"Part_ModuleLinear_Steel Hat Channel
+1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted
 0DimWD-1.25inW-0.875inD
-0Profile-Steel Hat Channel",,Steel Hat Channel,,"1.25in x 0.875in, Steel, Untinted",1.25in,0.875in,96in,0Profile-Steel Hat Channel,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-1.25inW-0.875inD,0Profile-Steel Hat Channel,,,,X,,,,,,,,,,,
-PRESET,,"Steel Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Profile-Steel Hat Channel",,Part_ModuleLinear_Steel Hat Channel,,"1.25in x 0.875in, Steel Hat Channel, Steel, Untinted",1.25in,0.875in,96in,0Profile-Steel Hat Channel,0RawMaterial-Steel,-,FFFFFF,,1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted,0DimWD-1.25inW-0.875inD,0Profile-Steel Hat Channel,,,,X,,,,,,,,,,,
+PRESET,,"Part_ModuleLinear_Steel Web Joist
+1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted
 0DimWD-3.5inW-11.875inD
-0Profile-Steel Web Joist",,Steel Web Joist,,"3.5in x 11.875in, Steel, Untinted",3.5in,11.875in,96in,0Profile-Steel Web Joist,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-3.5inW-11.875inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
-PRESET,,"Steel Z Channel
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Profile-Steel Web Joist",,Part_ModuleLinear_Steel Web Joist,,"3.5in x 11.875in, Steel Web Joist, Steel, Untinted",3.5in,11.875in,96in,0Profile-Steel Web Joist,0RawMaterial-Steel,-,FFFFFF,,1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted,0DimWD-3.5inW-11.875inD,0Profile-Steel Web Joist,,,,,,,,,,,,X,,,
+PRESET,,"Part_ModuleLinear_Steel Z Channel
+1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted
 0DimWD-2inW-1.5inD
-0Profile-Steel Z Channel",,Steel Z Channel,,"2in x 1.5in, Steel, Untinted",2in,1.5in,96in,0Profile-Steel Z Channel,0RawMaterial-Steel,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-2inW-1.5inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
-PRESET,,"Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
+0Profile-Steel Z Channel",,Part_ModuleLinear_Steel Z Channel,,"2in x 1.5in, Steel Z Channel, Steel, Untinted",2in,1.5in,96in,0Profile-Steel Z Channel,0RawMaterial-Steel,-,FFFFFF,,1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted,0DimWD-2inW-1.5inD,0Profile-Steel Z Channel,,,,,X,,,,,,,,,,
+PRESET,,"Part_ModuleLinear_Wood Lumber
+1Material_Wood_Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-0.75inW-0.75inD
-0Profile-Solid Rectangle",,Wood Lumber,,"0.75in x 0.75in, Spruce-Pine-Fir, Natural",0.75in,0.75in,96in,0Profile-Solid Rectangle,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-0.75inW-0.75inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
-PRESET,,"Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
+0Profile-Solid Rectangle",,Part_ModuleLinear_Wood Lumber,,"0.75in x 0.75in, Wood Lumber, Spruce-Pine-Fir, Natural",0.75in,0.75in,96in,0Profile-Solid Rectangle,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material_Wood_Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-0.75inW-0.75inD,0Profile-Solid Rectangle,,,,,,X,,,,,,,,,
+PRESET,,"Part_ModuleLinear_Wood Lumber
+1Material_Wood_Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-3.5inD
-0Profile-Solid Rectangle",,Wood Lumber,,"2x4, Spruce-Pine-Fir, Natural",1.5in,3.5in,96in,0Profile-Solid Rectangle,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-3.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
-PRESET,,"Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
+0Profile-Solid Rectangle",,Part_ModuleLinear_Wood Lumber,,"2x4, Wood Lumber, Spruce-Pine-Fir, Natural",1.5in,3.5in,96in,0Profile-Solid Rectangle,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material_Wood_Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-3.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+PRESET,,"Part_ModuleLinear_Wood Lumber
+1Material_Wood_Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-5.5inD
-0Profile-Solid Rectangle",,Wood Lumber,,"2x6, Spruce-Pine-Fir, Natural",1.5in,5.5in,96in,0Profile-Solid Rectangle,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-5.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
-PRESET,,"Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
+0Profile-Solid Rectangle",,Part_ModuleLinear_Wood Lumber,,"2x6, Wood Lumber, Spruce-Pine-Fir, Natural",1.5in,5.5in,96in,0Profile-Solid Rectangle,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material_Wood_Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-5.5inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+PRESET,,"Part_ModuleLinear_Wood Lumber
+1Material_Wood_Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-7.25inD
-0Profile-Solid Rectangle",,Wood Lumber,,"2x8, Spruce-Pine-Fir, Natural",1.5in,7.25in,96in,0Profile-Solid Rectangle,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-7.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
-PRESET,,"Wood Lumber
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
+0Profile-Solid Rectangle",,Part_ModuleLinear_Wood Lumber,,"2x8, Wood Lumber, Spruce-Pine-Fir, Natural",1.5in,7.25in,96in,0Profile-Solid Rectangle,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material_Wood_Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-7.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+PRESET,,"Part_ModuleLinear_Wood Lumber
+1Material_Wood_Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-1.5inW-9.25inD
-0Profile-Solid Rectangle",,Wood Lumber,,"2x10, Spruce-Pine-Fir, Natural",1.5in,9.25in,96in,0Profile-Solid Rectangle,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-9.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
-PRESET,,"Wood Lumber
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
+0Profile-Solid Rectangle",,Part_ModuleLinear_Wood Lumber,,"2x10, Wood Lumber, Spruce-Pine-Fir, Natural",1.5in,9.25in,96in,0Profile-Solid Rectangle,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material_Wood_Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-1.5inW-9.25inD,0Profile-Solid Rectangle,,,,,,,X,,,,,,X,,
+PRESET,,"Part_ModuleLinear_Wood Lumber
+1Material_Fibrous_Wood Strands-0RawMaterial-Wood Strands-0Color_Abstract-FFFFFF-White
 0DimWD-1.5inW-3.5inD
-0Profile-Solid Rectangle",,Wood Lumber,,"2x4, Wood Strands, White",1.5in,3.5in,96in,0Profile-Solid Rectangle,0RawMaterial-Wood Strands,-,FFFFFF,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-3.5inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
-PRESET,,"Wood Lumber
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
+0Profile-Solid Rectangle",,Part_ModuleLinear_Wood Lumber,,"2x4, Wood Lumber, Wood Strands, White",1.5in,3.5in,96in,0Profile-Solid Rectangle,0RawMaterial-Wood Strands,-,FFFFFF,,1Material_Fibrous_Wood Strands-0RawMaterial-Wood Strands-0Color_Abstract-FFFFFF-White,0DimWD-1.5inW-3.5inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
+PRESET,,"Part_ModuleLinear_Wood Lumber
+1Material_Fibrous_Wood Strands-0RawMaterial-Wood Strands-0Color_Abstract-FFFFFF-White
 0DimWD-1.5inW-7.25inD
-0Profile-Solid Rectangle",,Wood Lumber,,"2x8, Wood Strands, White",1.5in,7.25in,96in,0Profile-Solid Rectangle,0RawMaterial-Wood Strands,-,FFFFFF,,1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White,0DimWD-1.5inW-7.25inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
-PRESET,,"Wood Web Joist
-1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural
+0Profile-Solid Rectangle",,Part_ModuleLinear_Wood Lumber,,"2x8, Wood Lumber, Wood Strands, White",1.5in,7.25in,96in,0Profile-Solid Rectangle,0RawMaterial-Wood Strands,-,FFFFFF,,1Material_Fibrous_Wood Strands-0RawMaterial-Wood Strands-0Color_Abstract-FFFFFF-White,0DimWD-1.5inW-7.25inD,0Profile-Solid Rectangle,,,,,,,,X,,,,,X,,
+PRESET,,"Part_ModuleLinear_Wood Web Joist
+1Material_Wood_Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural
 0DimWD-3.5inW-11.875inD
-0Profile-Wood Web Joist",,Wood Web Joist,,"3.5in x 11.875in, Spruce-Pine-Fir, Natural",3.5in,11.875in,96in,0Profile-Wood Web Joist,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Wood --> Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-11.875inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
-PRESET,,"Wood-Chord, Steel-Web Joist
-1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted
+0Profile-Wood Web Joist",,Part_ModuleLinear_Wood Web Joist,,"3.5in x 11.875in, Wood Web Joist, Spruce-Pine-Fir, Natural",3.5in,11.875in,96in,0Profile-Wood Web Joist,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material_Wood_Spruce-Pine-Fir-0RawMaterial-Spruce-Pine-Fir-0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural,0DimWD-3.5inW-11.875inD,0Profile-Wood Web Joist,,,,,,,,,X,,,,,,
+PRESET,,"Part_ModuleLinear_Wood-Chord, Steel-Web Joist
+1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted
 0DimWD-3.5inW-11.875inD
-0Profile-Wood-Chord Steel-Web Joist",,"Wood-Chord, Steel-Web Joist",,"3.5in x 11.875in, Steel, Untinted",3.5in,11.875in,96in,0Profile-Wood-Chord Steel-Web Joist,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material --> Metal --> Steel-0RawMaterial-Steel-0Color --> Metal --> Steel-FFFFFF-Untinted,0DimWD-3.5inW-11.875inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,
+0Profile-Wood-Chord Steel-Web Joist",,"Part_ModuleLinear_Wood-Chord, Steel-Web Joist",,"3.5in x 11.875in, Wood-Chord, Steel-Web Joist, Steel, Untinted",3.5in,11.875in,96in,0Profile-Wood-Chord Steel-Web Joist,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,1Material_Metal_Steel-0RawMaterial-Steel-0Color_Metal_Steel-FFFFFF-Untinted,0DimWD-3.5inW-11.875inD,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,X,,,,,

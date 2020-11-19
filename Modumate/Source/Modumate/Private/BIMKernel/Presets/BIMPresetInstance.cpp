@@ -183,7 +183,7 @@ bool FBIMPresetInstance::ValidatePreset() const
 			const FBIMPresetPinAttachment& previous = ChildPresets[i-1];
 			const FBIMPresetPinAttachment& current = ChildPresets[i];
 			bool isSibling = (current.ParentPinSetIndex == previous.ParentPinSetIndex && current.ParentPinSetPosition == previous.ParentPinSetPosition + 1);
-			bool isCousin = (current.ParentPinSetIndex == previous.ParentPinSetIndex + 1 && current.ParentPinSetPosition == 0);
+			bool isCousin = (current.ParentPinSetIndex > previous.ParentPinSetIndex && current.ParentPinSetPosition == 0);
 			if (!isSibling && !isCousin)
 			{
 				return false;

@@ -1,4 +1,4 @@
-TYPENAME,,5Stair,,Assembly,,,,,,,,,,,,
+TYPENAME,,Assembly_Serrated_Stair,,Assembly,,,,,,,,,,,,
 ,,Definition,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,
 PROPERTY,,DisplayText,,Name,,Assembly.Name,,,,,,,,,,
@@ -12,305 +12,105 @@ INPUTPIN,,1..1,,ChildTread,,Tread,,,,,,,,,,
 INPUTPIN,,0..1,,ChildRiser,,Riser,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Assembly.IdealTreadDepth,Assembly.IconRise,Assembly.IconRun,Assembly.IconWidth,Assembly.NamedDimensions,DataType=StartsInProject,X,DataType=InputPins,ChildTread,ChildRiser
-PRESET,,"5Stair
-4LayeredAssembly --> Layered Tread
-3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-Board/Panel --> OSB (Oriented Strand Board)
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.375inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-4LayeredAssembly --> Layered Riser
-3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-Board/Panel --> OSB (Oriented Strand Board)
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.375inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond",,5Stair,,OSB + Plywood Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
-3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-Board/Panel --> OSB (Oriented Strand Board)
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.375inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond","4LayeredAssembly --> Layered Riser
-3Layer2D --> Board and Panel --> OSB (Oriented Strand Board)
-Board/Panel --> OSB (Oriented Strand Board)
-1Material --> Fibrous --> Wood Strands-0RawMaterial-Wood Strands-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.375inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond"
-PRESET,,"5Stair
-4LayeredAssembly --> Layered Tread
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-4LayeredAssembly --> Layered Riser
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond",,5Stair,,Plywood stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond","4LayeredAssembly --> Layered Riser
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond"
-PRESET,,"5Stair
-4LayeredAssembly --> Layered Tread
-3Layer2D --> Tile --> Stone
-Tile --> Stone
-1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
-0DimLW-6in-3in
-0DimThk-0.5inT
-2Gap2D --> Grout Gaps
-1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
-0DimWD-0.375inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-English Bond
-4LayeredAssembly --> Layered Riser
-3Layer2D --> Tile --> Stone
-Tile --> Stone
-1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
-0DimLW-6in-3in
-0DimThk-0.5inT
-2Gap2D --> Grout Gaps
-1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
-0DimWD-0.375inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-English Bond",,5Stair,,Limestone Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
-3Layer2D --> Tile --> Stone
-Tile --> Stone
-1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
-0DimLW-6in-3in
-0DimThk-0.5inT
-2Gap2D --> Grout Gaps
-1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
-0DimWD-0.375inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-English Bond","4LayeredAssembly --> Layered Riser
-3Layer2D --> Tile --> Stone
-Tile --> Stone
-1Material --> Stone --> Limestone-0RawMaterial-Limestone (Beige)-0Color --> Abstract-FFFFFF-White
-0DimLW-6in-3in
-0DimThk-0.5inT
-2Gap2D --> Grout Gaps
-1Material --> Aggregates --> Grout-0RawMaterial-Grout-0Color --> Aggregates --> Grout-EAECE7-White
-0DimWD-0.375inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-English Bond"
-PRESET,,"5Stair
-4LayeredAssembly --> Layered Tread
-3Layer2D --> Plank --> Wood
-Plank --> Wood
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
-0DimLW-48in-7in
-0DimThk-0.375inT
-2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.25inW-0.1875inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-4LayeredAssembly --> Layered Riser
-3Layer2D --> Plank --> Wood
-Plank --> Wood
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
-0DimLW-48in-7in
-0DimThk-0.375inT
-2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.25inW-0.1875inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond",,5Stair,,Birch Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
-3Layer2D --> Plank --> Wood
-Plank --> Wood
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
-0DimLW-48in-7in
-0DimThk-0.375inT
-2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.25inW-0.1875inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond","4LayeredAssembly --> Layered Riser
-3Layer2D --> Plank --> Wood
-Plank --> Wood
-1Material --> Wood --> Birch-0RawMaterial-Birch (Yellow)-0Color --> Wood --> Birch-FFFFFF-Natural
-0DimLW-48in-7in
-0DimThk-0.375inT
-2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.25inW-0.1875inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond"
-PRESET,,"5Stair
-4LayeredAssembly --> Layered Tread
-3Layer2D --> Plank --> Wood
-Plank --> Wood
-1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
-0DimLW-72in-7in
-0DimThk-0.75inT
-2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.25inW-0.0625inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond",,5Stair,,Walnut Open Tread Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
-3Layer2D --> Plank --> Wood
-Plank --> Wood
-1Material --> Wood --> Walnut-0RawMaterial-Walnut-0Color --> Wood --> Walnut-FFFFFF-Natural
-0DimLW-72in-7in
-0DimThk-0.75inT
-2Gap2D --> Mortar Gaps
-1Material --> Aggregates --> Mortar-0RawMaterial-Mortar-0Color --> Aggregates --> Mortar-C6C6C6-Natural
-0DimWD-0.25inW-0.0625inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond
-3Layer2D --> Board and Panel --> Plywood
-Board/Panel --> Plywood
-1Material --> Fibrous --> Plywood-0RawMaterial-Plywood-0Color --> Abstract-FFFFFF-White
-0DimLW-96in-48in
-0DimThk-0.46875inT
-2Gap2D --> Gapless
-1Material --> Glass and Transparent --> Air-0RawMaterial-Air-0Color --> Glass and Transparent --> Air-FFFFFF-Clear
-0DimWD-0inW-0inD
-0Profile-Flat
-0LayerPattern --> 2D-Running Bond",
-PRESET,,"5Stair
-4LayeredAssembly --> Layered Tread
-2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
-0DimThk-1inT",,5Stair,,Glass Open Tread Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"4LayeredAssembly --> Layered Tread
-2Layer0D --> Transparent --> Glass
-1Material --> Glass and Transparent --> Glass-0RawMaterial-Glass-0Color --> Glass and Transparent --> Glass-D6DADB-Slate
-0DimThk-1inT",
+PRESET,,"Assembly_Serrated_Stair
+Assembly_LayerStack_Tread
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+0LayerPattern_2D-Running Bond
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond
+Assembly_LayerStack_Riser
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+0LayerPattern_2D-Running Bond
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond",,Assembly_Serrated_Stair,,OSB + Plywood Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"Assembly_LayerStack_Tread
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+0LayerPattern_2D-Running Bond
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond","Assembly_LayerStack_Riser
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+0LayerPattern_2D-Running Bond
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond"
+PRESET,,"Assembly_Serrated_Stair
+Assembly_LayerStack_Tread
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond
+Assembly_LayerStack_Riser
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond",,Assembly_Serrated_Stair,,Plywood stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"Assembly_LayerStack_Tread
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond","Assembly_LayerStack_Riser
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond"
+PRESET,,"Assembly_Serrated_Stair
+Assembly_LayerStack_Tread
+Assembly_Layer
+Part_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)---FFFFFF
+0LayerPattern_2D-English Bond
+Assembly_LayerStack_Riser
+Assembly_Layer
+Part_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)---FFFFFF
+0LayerPattern_2D-English Bond",,Assembly_Serrated_Stair,,Limestone Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"Assembly_LayerStack_Tread
+Assembly_Layer
+Part_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)---FFFFFF
+0LayerPattern_2D-English Bond","Assembly_LayerStack_Riser
+Assembly_Layer
+Part_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)---FFFFFF
+0LayerPattern_2D-English Bond"
+PRESET,,"Assembly_Serrated_Stair
+Assembly_LayerStack_Tread
+Assembly_Layer
+Part_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry---FFFFFF
+0LayerPattern_2D-Running Bond
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond
+Assembly_LayerStack_Riser
+Assembly_Layer
+Part_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry---FFFFFF
+0LayerPattern_2D-Running Bond
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond",,Assembly_Serrated_Stair,,Birch Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"Assembly_LayerStack_Tread
+Assembly_Layer
+Part_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry---FFFFFF
+0LayerPattern_2D-Running Bond
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond","Assembly_LayerStack_Riser
+Assembly_Layer
+Part_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry---FFFFFF
+0LayerPattern_2D-Running Bond
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond"
+PRESET,,"Assembly_Serrated_Stair
+Assembly_LayerStack_Tread
+Assembly_Layer
+Part_ModulePlanar_Tile_Luxury Vinyl-Length-24in-Width-8in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Vinyl Composite-0RawMaterial-Walnut-FFFFFF
+0LayerPattern_2D-Soldier Bond
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond",,Assembly_Serrated_Stair,,Walnut Open Tread Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"Assembly_LayerStack_Tread
+Assembly_Layer
+Part_ModulePlanar_Tile_Luxury Vinyl-Length-24in-Width-8in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Vinyl Composite-0RawMaterial-Walnut-FFFFFF
+0LayerPattern_2D-Soldier Bond
+Assembly_Layer
+Part_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+0LayerPattern_2D-Running Bond",
+PRESET,,"Assembly_Serrated_Stair
+Assembly_LayerStack_Tread
+Assembly_Layer-Thickness-1in-Finish1-0RawMaterial-Glass---D6DAD8",,Assembly_Serrated_Stair,,Glass Open Tread Stair,11in,36in,66in,48in,"(""IdealTreadDepth"",11),(""IconRise"",36),(""IconRun"",66),(""IconWidth"",48)",,X,,"Assembly_LayerStack_Tread
+Assembly_Layer-Thickness-1in-Finish1-0RawMaterial-Glass---D6DAD8",

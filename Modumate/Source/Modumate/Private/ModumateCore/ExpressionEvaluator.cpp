@@ -325,7 +325,7 @@ namespace Modumate
 		bool Modumate::Expression::ExtractVariables(const FString &ExprString, TArray<FString>& OutVariables)
 		{
 			// Note: do not clear the container, this is meant to be called across multiple expressions
-			static const std::wregex varMatch(L"[a-zA-Z][a-zA-Z0-9]+([.][a-zA-Z0-9]+)*");
+			static const std::wregex varMatch(L"[a-zA-Z][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*");
 			std::wsmatch match;
 			std::wstring exprWString = *ExprString;
 			while (std::regex_search(exprWString, match, varMatch))

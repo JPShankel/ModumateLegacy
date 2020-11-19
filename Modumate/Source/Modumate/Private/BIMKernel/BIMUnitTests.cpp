@@ -220,11 +220,10 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 		return false;
 	}
 
-	TArray<FBIMKey> layeredAssemblies,materialColorPresets,layerPresets,riggedPresets;
-	FName layeredType(TEXT("4LayeredAssembly"));
-	FName layer0Type(TEXT("2Layer0D"));
+	TArray<FBIMKey> layeredAssemblies,materialColorPresets,riggedPresets;
+	FName layeredType(TEXT("Assembly_LayerStack"));
 	FName materialColorType(TEXT("1Material"));
-	FName riggedType(TEXT("3RiggedAssembly"));
+	FName riggedType(TEXT("Assembly_Rigged"));
 
 	for (auto &kvp : presetCollection.Presets)
 	{
@@ -241,24 +240,12 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 		{
 			materialColorPresets.Add(kvp.Key);
 		}
-		else if (kvp.Value.NodeType == layer0Type)
-		{
-			layerPresets.Add(kvp.Key);
-		}
 	}
 
 	TMap<FString, FBIMNameType> propertyForm;
 	if (presetCollection.GetPropertyFormForPreset(materialColorPresets[0], propertyForm) != EBIMResult::Success)
 	{
 		return false;
-	}
-
-	for (auto &kvp : presetCollection.NodeDescriptors)
-	{
-		if (kvp.Value.TypeName == layer0Type)
-		{
-			kvp.Value.Scope = EBIMValueScope::Layer;
-		}
 	}
 
 	if (!ensureAlways(layeredAssemblies.Num() > 0) || !ensureAlways(materialColorPresets.Num() > 0))
@@ -280,13 +267,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	Make sure preset keys are consistent between known parents and children
 	*/
 	FBIMPresetInstance* assemblyPreset = presetCollection.Presets.Find(layeredAssemblies[0]);
-	FBIMPresetInstance* layerPreset = presetCollection.Presets.Find(layerPresets[0]);
 	FBIMKey assemblyPresetFirstLayer = assemblyPreset->ChildPresets[0].PresetID;
-
-	if (!ensureAlways(layerPresets[0] == assemblyPresetFirstLayer))
-	{
-		return false;
-	}
 
 	FBIMPresetTypeDefinition *nodeType = presetCollection.NodeDescriptors.Find(assemblyPreset->NodeType);
 

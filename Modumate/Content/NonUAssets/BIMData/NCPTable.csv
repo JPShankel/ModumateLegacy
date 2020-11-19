@@ -17,57 +17,55 @@ TG_MyNode+CategoryPath,ToolMode,ObjectType,AssetType,IconType,IconOrientation,To
 0LayerPattern,,,Pattern,Pattern,Flat,,,,Pattern,[Preset.Name],
 1Material,,,Material,Sphere,Vertical,,,,Material,"[RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
 1MaterialUneditable,,,,,,,,,,[Material.Name],
-2Layer0D,,,,Layer,Vertical,,,,Layer,"[Dimension.Thickness] [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]",Include [Preset.ColloquialName] value is not Standard
-2ModuleWDProfile,,,,ModuleWDProfile,Horizontal,,,,Module,"[Dimension.Width] x [Dimension.Depth] [Level1NCP] [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
-2ModuleLWH,,,,ModuleLWH,Vertical,,,,Module,"[Dimension.Length] x [Dimension.Width] x [Dimension.Height] [Level1NCP], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
-2ModuleLWT,,,,ModuleLWT,Vertical,,,,Module,"[Dimension.Length] x [Dimension.Width] x [Dimension.Thickness] [Level2NCP] [Level1NCP], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
+Assembly_Layer,,,,Layer,Vertical,,,,Layer,"[Dimension.Thickness] [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]",Include [Preset.ColloquialName] value is not Standard
+Part_ModuleLinear,,,,ModuleWDProfile,Horizontal,,,,Module,"[Dimension.Width] x [Dimension.Depth] [Level1NCP] [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
+Part_ModulePlanar,,,,ModuleLWT,Vertical,,,,Module,"[Dimension.Length] x [Dimension.Width] x [Dimension.Thickness] [Level2NCP] [Level1NCP], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
+Part_ModuleVolumetric,,,,ModuleLWH,Vertical,,,,Module,"[Dimension.Length] x [Dimension.Width] x [Dimension.Height] [Level1NCP], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
 2Gap2D,,,,Gap2D,Flat,,,,Gap,"[Dimension.Width] x [Dimension.Depth] [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName]if  value is not Standard or Unfinished, Include Profile is value is not Flat"
-2ExtrudedProfile --> Beam/Column,VE_STRUCTURELINE,OTStructureLine,,ExtrudedProfile,Horizontal,OffsetX,0,ExtrudedProfile,Beam / Column,"[ChildDimension] [Profile.Name], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
+Part_ExtrudedProfile_BeamColumn,VE_STRUCTURELINE,OTStructureLine,,ExtrudedProfile,Horizontal,OffsetX,0,ExtrudedProfile,Beam / Column,"[ChildDimension] [Profile.Name], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
 ,,,,,,OffsetY,0,,,,
 ,,,,,,Rotation,0,,,,
 ,,,,,,FlipX,No,,,,
 ,,,,,,FlipY,No,,,,
-2ExtrudedProfile --> Mullion,VE_MULLION,OTMullion,,ExtrudedProfile,Vertical,OffsetX,0,ExtrudedProfile,Mullion,"[ChildDimension] [Profile.Name], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
+Part_ExtrudedProfile_Mullion,VE_MULLION,OTMullion,,ExtrudedProfile,Vertical,OffsetX,0,ExtrudedProfile,Mullion,"[ChildDimension] [Profile.Name], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
 ,,,,,,FlipX,No,,,,
-2ExtrudedProfile --> Trim,VE_TRIM,OTTrim,,ExtrudedProfile,Horizontal,OffsetX,0,ExtrudedProfile,Trim,"[ChildDimension] [Profile.Name], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
+Part_ExtrudedProfile_Trim,VE_TRIM,OTTrim,,ExtrudedProfile,Horizontal,OffsetX,0,ExtrudedProfile,Trim,"[ChildDimension] [Profile.Name], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
 ,,,,,,FlipX,No,,,,
 Part,,,,TexturedMeshes,Vertical,,,,Part,"[Level3NCP], [Mesh.DisplayName] [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
-Part --> FFE,VE_PLACEOBJECT,OTFurniture,,TexturedMeshes,Vertical,,,,Part,"[Level3NCP], [Mesh.DisplayName] [Mesh.MaterialKey1] [RawMaterial.Name], [Mesh.MaterialKey2] [RawMaterial.Name], etc",none
-2SawtoothStringer,,,,Stringer,Vertical,,,,Stringer,"[Dimension.Thickness]X[Dimension.Depth], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
-3Layer1D,,,,Layer,Vertical,,,,Layer,"[Level1NCP], [Module.Dimension], [Module.Material], [Pattern], [Gap.Dimension] [Gap.Material]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
-3Layer2D,,,,Layer,Vertical,,,,Layer,"[Level1NCP], [Module.Dimension], [Module.Material], [Pattern], [Gap.Dimension] [Gap.Material]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
-3Layer3D,,,,Layer,Vertical,,,,Layer,"[Level1NCP], [Module.Dimension], [Module.Material], [Pattern], [Gap.Dimension] [Gap.Material]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
+Part_FFE,VE_PLACEOBJECT,OTFurniture,,TexturedMeshes,Vertical,,,,Part,"[Level3NCP], [Mesh.DisplayName] [Mesh.MaterialKey1] [RawMaterial.Name], [Mesh.MaterialKey2] [RawMaterial.Name], etc",none
+SawtoothStringer,,,,Stringer,Vertical,,,,Stringer,"[Dimension.Thickness]X[Dimension.Depth], [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
+Assembly_Layer,,,,Layer,Vertical,,,,Layer,"[Level1NCP], [Module.Dimension], [Module.Material], [Pattern], [Gap.Dimension] [Gap.Material]","Include [Color.HexValue] if no value for [Color.Nickname] and value is not #FFFFFF, Include [Preset.ColloquialName] if  value is not Standard or Unfinished"
 XXXXHardwareGroup,,,,HardwareGroup,Vertical,,,,Hardware Group,none,
-4LayeredAssembly --> Wall,VE_WALL,OTWallSegment,,LayeredAssembly,Vertical,Justification,Centerline,LayeredAssembly,Wall,none,
+Assembly_LayerStack_Wall,VE_WALL,OTWallSegment,,LayeredAssembly,Vertical,Justification,Centerline,LayeredAssembly,Wall,none,
 ,,,,,,Flip,None,,,,
-4LayeredAssembly --> Floor,VE_FLOOR,OTFloorSegment,,LayeredAssembly,Horizontal,Justification,First,LayeredAssembly,Floor,none,
+Assembly_LayerStack_Floor,VE_FLOOR,OTFloorSegment,,LayeredAssembly,Horizontal,Justification,First,LayeredAssembly,Floor,none,
 ,,,,,,Flip,Down,,,,
-4LayeredAssembly --> Roof,VE_ROOF_FACE,OTRoofFace,,LayeredAssembly,Horizontal,Justification,First,LayeredAssembly,Roof,none,
+Assembly_LayerStack_Roof,VE_ROOF_FACE,OTRoofFace,,LayeredAssembly,Horizontal,Justification,First,LayeredAssembly,Roof,none,
 ,,,,,,Flip,Down,,,,
-4LayeredAssembly --> Ceiling,VE_CEILING,OTCeiling,,LayeredAssembly,Horizontal,Justification,Last,LayeredAssembly,Ceiling,none,
+Assembly_LayerStack_Ceiling,VE_CEILING,OTCeiling,,LayeredAssembly,Horizontal,Justification,Last,LayeredAssembly,Ceiling,none,
 ,,,,,,Flip,Up,,,,
-4LayeredAssembly --> Finish,VE_FINISH,OTFinish,,LayeredAssembly,Vertical,,,LayeredAssembly,Finish,none,
+Assembly_LayerStack_Finish,VE_FINISH,OTFinish,,LayeredAssembly,Vertical,,,LayeredAssembly,Finish,none,
 ,,,,,,Flip,None,,,,
-4LayeredAssembly --> System Panel,VE_SYSTEMPANEL,OTSystemPanel,,LayeredAssembly,Vertical,Justification,First,LayeredAssembly,System Panel,none,
-4LayeredAssembly --> Countertop,VE_COUNTERTOP,OTCountertop,,LayeredAssembly,Horizontal,Justification,First,LayeredAssembly,Countertop,none,
-4LayeredAssembly --> Layered Tread,,,,LayeredAssembly,Horizontal,,,,Layered Tread,none,
-4LayeredAssembly --> Layered Riser,,,,LayeredAssembly,Vertical,,,,Layered Riser,none,
-4LayeredAssembly --> Railing,VE_RAIL,OTRailSegment,,RiggedAssembly,Vertical,,,Railing,Railing,none,
-4LayeredAssembly --> Landscape,,,,LayeredAssembly,Horizontal,,,,Landscape,none,
-AssemblyDoor,VE_DOOR,OTDoor,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Door,none,
-,,,,,,Flip,None,,,,
-,,,,,,Reverse,None,,,,
-,,,,,,Open,0,,,,
-Assembly --> Cabinet,VE_CABINET,OTCabinet,,RiggedAssembly,,,,,,,
-Assembly --> FFESet,VE_PLACEOBJECT,OTFurniture,,RiggedAssembly,Vertical,,,FFE,FF&E Group,none,
-AssemblyWindow,VE_WINDOW,OTWindow,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Window,none,
+Assembly_LayerStack_System Panel,VE_SYSTEMPANEL,OTSystemPanel,,LayeredAssembly,Vertical,Justification,First,LayeredAssembly,System Panel,none,
+Assembly_LayerStack_Countertop,VE_COUNTERTOP,OTCountertop,,LayeredAssembly,Horizontal,Justification,First,LayeredAssembly,Countertop,none,
+Assembly_LayerStack_Tread,,,,LayeredAssembly,Horizontal,,,,Layered Tread,none,
+Assembly_LayerStack_Riser,,,,LayeredAssembly,Vertical,,,,Layered Riser,none,
+Assembly_LayerStack_Railing,VE_RAIL,OTRailSegment,,RiggedAssembly,Vertical,,,Railing,Railing,none,
+Assembly_LayerStack_Landscape,,,,LayeredAssembly,Horizontal,,,,Landscape,none,
+Assembly_Rigged_Door,VE_DOOR,OTDoor,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Door,none,
 ,,,,,,Flip,None,,,,
 ,,,,,,Reverse,None,,,,
 ,,,,,,Open,0,,,,
-5Stair,VE_STAIR,OTStaircase,,CompoundAssembly,Vertical,TreadDepthMin,11in,Stair,Stair,none,
+Assembly_Rigged_Cabinet,VE_CABINET,OTCabinet,,RiggedAssembly,,,,,,,
+Assembly_Rigged_FFESet,VE_PLACEOBJECT,OTFurniture,,RiggedAssembly,Vertical,,,FFE,FF&E Group,none,
+Assembly_Rigged_Window,VE_WINDOW,OTWindow,,RiggedAssembly,Vertical,DimensionSet,First,Opening,Window,none,
+,,,,,,Flip,None,,,,
+,,,,,,Reverse,None,,,,
+,,,,,,Open,0,,,,
+Assembly_Serrated_Stair,VE_STAIR,OTStaircase,,CompoundAssembly,Vertical,TreadDepthMin,11in,Stair,Stair,none,
 ,,,,,,TreadDepthIdeal,12in,,,,
 ,,,,,,TreadDepthMax,14in,,,,
 ,,,,,,RiserHeightMin,4in,,,,
 ,,,,,,RiserHeightMax,7.75in,,,,
-AssemblyCabinetFloor,VE_CABINET,OTCabinet,,CompoundAssembly,Horizontal,,,Cabinet,Cabinet,none,
-AssemblyCabinetWall,VE_CABINET,OTCabinet,,CompoundAssembly,Vertical,,,Cabinet,Cabinet,none,
+Assembly_Rigged_CabinetFloor,VE_CABINET,OTCabinet,,CompoundAssembly,Horizontal,,,Cabinet,Cabinet,none,
+Assembly_Rigged_CabinetWall,VE_CABINET,OTCabinet,,CompoundAssembly,Vertical,,,Cabinet,Cabinet,none,

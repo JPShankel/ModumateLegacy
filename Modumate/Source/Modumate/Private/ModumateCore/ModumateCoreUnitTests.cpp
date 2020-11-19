@@ -1405,13 +1405,13 @@ namespace Modumate
 	static bool testVariableExtraction()
 	{
 		TArray<FString> outVars;
-		Modumate::Expression::ExtractVariables(TEXT("1.75*Globe.Radius + (5 1/2) * TotalArea + 15/(My.Brilliant.Career)"), outVars);
+		Modumate::Expression::ExtractVariables(TEXT("1.75*Globe.Radius + (5 1/2) * TotalArea + 15/(Self.Part_Frame.NativeSizeX)"), outVars);
 		if (outVars.Num() != 3)
 		{
 			return false;
 		}
 
-		FString vars[] = { TEXT("Globe.Radius"),TEXT("TotalArea"),TEXT("My.Brilliant.Career") };
+		FString vars[] = { TEXT("Globe.Radius"),TEXT("TotalArea"),TEXT("Self.Part_Frame.NativeSizeX") };
 
 		for (int32 i = 0; i < 3; ++i)
 		{

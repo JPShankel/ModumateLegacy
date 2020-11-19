@@ -6,32 +6,33 @@ PROPERTY,,Dimension,,Diameter,,Dimension.Diameter,,,,
 PROPERTY,,Dimension,,Thickness,,Dimension.Thickness,,,,
 ,,Presets,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Diameter,Dimension.Thickness,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
-PRESET,,0DimDiT-12.75inDi-0.365inT,,0DimDiT,,D12X0.375,12.75in,0.365in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-10.75inDi-0.365inT,,0DimDiT,,D10X0.365,10.75in,0.365in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-8.625inDi-0.5inT,,0DimDiT,,D8X0.5,8.625in,0.5in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-8.625inDi-0.322inT,,0DimDiT,,D8X0.322,8.625in,0.322in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-6.625inDi-0.432inT,,0DimDiT,,D6X0.432,6.625in,0.432in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-6.625inDi-0.28inT,,0DimDiT,,D6X0.280,6.625in,0.28in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-5.563inDi-0.258inT,,0DimDiT,,D5X0.258,5.563in,0.258in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-4.5inDi-0.337inT,,0DimDiT,,D4X0.337,4.5in,0.337in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-4.5inDi-0.237inT,,0DimDiT,,D4X0.237,4.5in,0.237in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-4inDi-0.226inT,,0DimDiT,,D3.5X0.226,4in,0.226in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-3.5inDi-0.3inT,,0DimDiT,,D3X0.3,3.5in,0.3in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-3.5inDi-0.216inT,,0DimDiT,,D3X0.216,3.5in,0.216in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-3.5inDi-0.12inT,,0DimDiT,,D3X0.120,3.5in,0.12in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-2.875inDi-0.276inT,,0DimDiT,,D2.5X0.276,2.875in,0.276in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-2.875inDi-0.203inT,,0DimDiT,,D2.5X0.203,2.875in,0.203in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-2.375inDi-0.218inT,,0DimDiT,,D2X0.218,2.375in,0.218in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-2.375inDi-0.154inT,,0DimDiT,,D2X0.154,2.375in,0.154in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-1.9inDi-0.2inT,,0DimDiT,,D1.5X0.2,1.9in,0.2in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-1.9inDi-0.145inT,,0DimDiT,,D1.5X0.145,1.9in,0.145in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-1.9inDi-0.109inT,,0DimDiT,,D1.5X0.109,1.9in,0.109in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-1.66inDi-0.191inT,,0DimDiT,,D1.25X0.191,1.66in,0.191in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-1.66inDi-0.14inT,,0DimDiT,,D1.25X0.140,1.66in,0.14in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-1.66inDi-0.109inT,,0DimDiT,,D1.25X0.109,1.66in,0.109in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-1.315inDi-0.179inT,,0DimDiT,,D1X0.179,1.315in,0.179in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-1.315inDi-0.133inT,,0DimDiT,,D1X0.133,1.315in,0.133in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-1.05inDi-0.154inT,,0DimDiT,,D0.75X0.154,1.05in,0.154in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-1.05inDi-0.113inT,,0DimDiT,,D0.75X0.113,1.05in,0.113in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-0.84inDi-0.147inT,,0DimDiT,,D0.5X0.147,0.84in,0.147in,,2ExtrudedProfile --> Beam/Column --> SteelTube
-PRESET,,0DimDiT-0.84inDi-0.109inT,,0DimDiT,,D0.5X0.109,0.84in,0.109in,,2ExtrudedProfile --> Beam/Column --> SteelTube
+PRESET,,0DimDiT-12.75inDi-0.365inT,,0DimDiT,,D12X0.375,12.75in,0.365in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-10.75inDi-0.365inT,,0DimDiT,,D10X0.365,10.75in,0.365in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-8.625inDi-0.5inT,,0DimDiT,,D8X0.5,8.625in,0.5in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-8.625inDi-0.322inT,,0DimDiT,,D8X0.322,8.625in,0.322in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-6.625inDi-0.432inT,,0DimDiT,,D6X0.432,6.625in,0.432in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-6.625inDi-0.28inT,,0DimDiT,,D6X0.280,6.625in,0.28in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-5.563inDi-0.258inT,,0DimDiT,,D5X0.258,5.563in,0.258in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-4.5inDi-0.337inT,,0DimDiT,,D4X0.337,4.5in,0.337in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-4.5inDi-0.237inT,,0DimDiT,,D4X0.237,4.5in,0.237in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-4inDi-0.226inT,,0DimDiT,,D3.5X0.226,4in,0.226in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-3.5inDi-0.3inT,,0DimDiT,,D3X0.3,3.5in,0.3in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-3.5inDi-0.216inT,,0DimDiT,,D3X0.216,3.5in,0.216in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-3.5inDi-0.12inT,,0DimDiT,,D3X0.120,3.5in,0.12in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-2.875inDi-0.276inT,,0DimDiT,,D2.5X0.276,2.875in,0.276in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-2.875inDi-0.203inT,,0DimDiT,,D2.5X0.203,2.875in,0.203in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-2.375inDi-0.218inT,,0DimDiT,,D2X0.218,2.375in,0.218in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-2.375inDi-0.154inT,,0DimDiT,,D2X0.154,2.375in,0.154in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-1.9inDi-0.2inT,,0DimDiT,,D1.5X0.2,1.9in,0.2in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-1.9inDi-0.145inT,,0DimDiT,,D1.5X0.145,1.9in,0.145in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-1.9inDi-0.109inT,,0DimDiT,,D1.5X0.109,1.9in,0.109in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-1.66inDi-0.191inT,,0DimDiT,,D1.25X0.191,1.66in,0.191in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-1.66inDi-0.14inT,,0DimDiT,,D1.25X0.140,1.66in,0.14in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-1.66inDi-0.109inT,,0DimDiT,,D1.25X0.109,1.66in,0.109in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-1.315inDi-0.179inT,,0DimDiT,,D1X0.179,1.315in,0.179in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-1.315inDi-0.133inT,,0DimDiT,,D1X0.133,1.315in,0.133in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-1.05inDi-0.154inT,,0DimDiT,,D0.75X0.154,1.05in,0.154in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-1.05inDi-0.113inT,,0DimDiT,,D0.75X0.113,1.05in,0.113in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-0.84inDi-0.147inT,,0DimDiT,,D0.5X0.147,0.84in,0.147in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+PRESET,,0DimDiT-0.84inDi-0.109inT,,0DimDiT,,D0.5X0.109,0.84in,0.109in,,Part_ExtrudedProfile_BeamColumn_SteelTube
+,,,,,,,,,,

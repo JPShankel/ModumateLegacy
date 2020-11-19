@@ -5,7 +5,7 @@ PROPERTY,,DisplayText,,Name,,Dimension.Name,,,,
 PROPERTY,,Dimension,,Width,,Dimension.Height,,,,
 PROPERTY,,Dimension,,Depth,,Dimension.Depth,,,,
 ,,Presets,,,,,,,,9
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Height,Dimension.Depth,DataType=TG_Parent Node+CategoryPath,5Cabinet
+TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Height,Dimension.Depth,DataType=TG_Parent Node+CategoryPath,#REF!
 PRESET,,0DimHD-0inW-0inD,,0DimHD,,0in x 0in,0in,0in,,X
 PRESET,,0DimHD-4inW-0inD,,0DimHD,,4in x 0in,4in,0in,,X
 PRESET,,0DimHD-4inW-1inD,,0DimHD,,4in x 1in,4in,1in,,X

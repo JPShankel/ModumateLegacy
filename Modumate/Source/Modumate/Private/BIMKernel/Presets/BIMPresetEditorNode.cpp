@@ -327,7 +327,7 @@ bool FBIMPresetEditorNode::ValidateNode() const
 			bool isSibling = (childPtr->MyParentPinSetIndex == previousPtr->MyParentPinSetIndex &&
 				childPtr->MyParentPinSetPosition == previousPtr->MyParentPinSetPosition + 1);
 
-			bool isCousin = (childPtr->MyParentPinSetIndex == previousPtr->MyParentPinSetIndex+1 && childPtr->MyParentPinSetPosition == 0);
+			bool isCousin = (childPtr->MyParentPinSetIndex > previousPtr->MyParentPinSetIndex && childPtr->MyParentPinSetPosition == 0);
 
 			if (!isSibling && !isCousin)
 			{

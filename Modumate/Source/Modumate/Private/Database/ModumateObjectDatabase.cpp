@@ -398,7 +398,7 @@ void FModumateDatabase::ReadPresetData()
 	}
 
 	const TArray<TPair<FString, EObjectType>> stubbies({
-		TPair <FString,EObjectType>(TEXT("2Part0Slice-->FF&E"),EObjectType::OTFurniture)
+		TPair <FString,EObjectType>(TEXT("2Part0Slice_FF&E"),EObjectType::OTFurniture)
 	});
 
 	for (auto& stubby : stubbies)

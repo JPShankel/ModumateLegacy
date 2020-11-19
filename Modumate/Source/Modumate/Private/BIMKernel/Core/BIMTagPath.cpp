@@ -2,7 +2,7 @@
 
 #include "BIMKernel/Core/BIMTagPath.h"
 
-static constexpr TCHAR* BIMTagPathSeparator = TEXT("-->");
+static constexpr TCHAR* BIMTagPathSeparator = TEXT("_");
 
 EBIMResult FBIMTagPath::FromString(const FString &InString)
 {
@@ -13,11 +13,14 @@ EBIMResult FBIMTagPath::FromString(const FString &InString)
 
 EBIMResult FBIMTagPath::ToString(FString &OutString) const
 {
-	OutString = Tags[0];
-
-	for (int32 i = 1; i < Tags.Num(); ++i)
+	if (Tags.Num() > 0)
 	{
-		OutString = FString::Printf(TEXT("%s%s%s"), *OutString, BIMTagPathSeparator, *Tags[i]);
+		OutString = Tags[0];
+
+		for (int32 i = 1; i < Tags.Num(); ++i)
+		{
+			OutString = FString::Printf(TEXT("%s%s%s"), *OutString, BIMTagPathSeparator, *Tags[i]);
+		}
 	}
 
 	return EBIMResult::Success;

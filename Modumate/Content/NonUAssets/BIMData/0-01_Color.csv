@@ -5,365 +5,365 @@ PROPERTY,,DisplayText,,Name,,Color.Name,,,,
 PROPERTY,,HexValue,,,,Color.HEXValue,,,,
 ,,Presets,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Color.Name,Color.HEXValue,,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
-PRESET,,0Color --> Abstract-FFFFFF-White,,0Color --> Abstract,,White,FFFFFF,,,1Material --> Abstract
-PRESET,,0Color --> Abstract-EAEAEA-Gray1,,0Color --> Abstract,,Gray 1,EAEAEA,,,1Material --> Abstract
-PRESET,,0Color --> Abstract-D5D5D5-Gray2,,0Color --> Abstract,,Gray 2,D5D5D5,,,1Material --> Abstract
-PRESET,,0Color --> Abstract-C0C0C0-Gray3,,0Color --> Abstract,,Gray 3,C0C0C0,,,1Material --> Abstract
-PRESET,,0Color --> Abstract-ABABAB-Gray4,,0Color --> Abstract,,Gray 4,ABABAB,,,1Material --> Abstract
-PRESET,,0Color --> Abstract-959595-Gray5,,0Color --> Abstract,,Gray 5,959595,,,1Material --> Abstract
-PRESET,,0Color --> Abstract-6B6B6B-Gray6,,0Color --> Abstract,,Gray 6,6B6B6B,,,1Material --> Abstract
-PRESET,,0Color --> Abstract-555555-Gray7,,0Color --> Abstract,,Gray 7,555555,,,1Material --> Abstract
-PRESET,,0Color --> Abstract-404040-Gray8,,0Color --> Abstract,,Gray 8,404040,,,1Material --> Abstract
-PRESET,,0Color --> Abstract-2B2B2B-Gray9,,0Color --> Abstract,,Gray 9,2B2B2B,,,1Material --> Abstract
-PRESET,,0Color --> Abstract-151515-Gray10,,0Color --> Abstract,,Gray 10,151515,,,1Material --> Abstract
-PRESET,,0Color --> Abstract-000000-Black,,0Color --> Abstract,,Black,000000,,,1Material --> Abstract
-PRESET,,0Color --> Aggregates --> Asphalt-594D41-Barkwood,,0Color --> Aggregates --> Asphalt,,Barkwood,594D41,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-52595B-PewterGray,,0Color --> Aggregates --> Asphalt,,Pewter Gray,52595B,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-646963-Gray-GreenSlate,,0Color --> Aggregates --> Asphalt,,Gray-Green Slate,646963,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-743131-RichRed,,0Color --> Aggregates --> Asphalt,,Rich Red,743131,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-2F3336-Charcoal,,0Color --> Aggregates --> Asphalt,,Charcoal,2F3336,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-9A7957-Caramel,,0Color --> Aggregates --> Asphalt,,Caramel,9A7957,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-6B6758-Olive,,0Color --> Aggregates --> Asphalt,,Olive,6B6758,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-856B5B-Driftwood,,0Color --> Aggregates --> Asphalt,,Driftwood,856B5B,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-929796-Silver,,0Color --> Aggregates --> Asphalt,,Silver,929796,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-2A3A2F-ForestGreen,,0Color --> Aggregates --> Asphalt,,Forest Green,2A3A2F,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-50392E-Mocha,,0Color --> Aggregates --> Asphalt,,Mocha,50392E,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-684F3C-AdobeSunset,,0Color --> Aggregates --> Asphalt,,Adobe Sunset,684F3C,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-413834-BrandywineDusk,,0Color --> Aggregates --> Asphalt,,Brandywine Dusk,413834,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-786147-Goldenrod,,0Color --> Aggregates --> Asphalt,,Goldenrod,786147,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-4B4034-DustySaddle,,0Color --> Aggregates --> Asphalt,,Dusty Saddle,4B4034,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-2F2F2D-DarkSky,,0Color --> Aggregates --> Asphalt,,Dark Sky,2F2F2D,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-5C523E-CedarFalls,,0Color --> Aggregates --> Asphalt,,Cedar Falls,5C523E,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-5C5D5A-MistyMorning,,0Color --> Aggregates --> Asphalt,,Misty Morning,5C5D5A,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-57605F-CobblestoneSlate,,0Color --> Aggregates --> Asphalt,,Cobblestone Slate,57605F,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Asphalt-969B99-FoxHollowGray,,0Color --> Aggregates --> Asphalt,,Fox Hollow Gray,969B99,,,1Material --> Aggregates --> Asphalt
-PRESET,,0Color --> Aggregates --> Cement-FFFFFF-White,,0Color --> Aggregates --> Cement,,White,FFFFFF,,,1Material --> Aggregates --> Cement
-PRESET,,0Color --> Aggregates --> Cement-D6D7D8-Natural,,0Color --> Aggregates --> Cement,,Natural,D6D7D8,,,1Material --> Aggregates --> Cement
-PRESET,,0Color --> Aggregates --> Cement-A3A7A6-MediumGray,,0Color --> Aggregates --> Cement,,Medium Gray,A3A7A6,,,1Material --> Aggregates --> Cement
-PRESET,,0Color --> Aggregates --> Cement-70716C-DarkGrey,,0Color --> Aggregates --> Cement,,Dark Grey,70716C,,,1Material --> Aggregates --> Cement
-PRESET,,0Color --> Aggregates --> Cement-2F3131-Black,,0Color --> Aggregates --> Cement,,Black,2F3131,,,1Material --> Aggregates --> Cement
-PRESET,,0Color --> Aggregates --> Cement-AC998D-Maple,,0Color --> Aggregates --> Cement,,Maple,AC998D,,,1Material --> Aggregates --> Cement
-PRESET,,0Color --> Aggregates --> Cement-ABA283-Olive,,0Color --> Aggregates --> Cement,,Olive,ABA283,,,1Material --> Aggregates --> Cement
-PRESET,,0Color --> Aggregates --> Cement-CFB086-Buff,,0Color --> Aggregates --> Cement,,Buff,CFB086,,,1Material --> Aggregates --> Cement
-PRESET,,0Color --> Aggregates --> Cement-9FA08B-Moss,,0Color --> Aggregates --> Cement,,Moss,9FA08B,,,1Material --> Aggregates --> Cement
-PRESET,,0Color --> Aggregates --> Cement-8F9AA0-Ocean,,0Color --> Aggregates --> Cement,,Ocean,8F9AA0,,,1Material --> Aggregates --> Cement
-PRESET,,0Color --> Aggregates --> Cement-9F7D7B-Cabernet,,0Color --> Aggregates --> Cement,,Cabernet,9F7D7B,,,1Material --> Aggregates --> Cement
-PRESET,,0Color --> Aggregates --> Concrete-D6D7D8-Natural,,0Color --> Aggregates --> Concrete,,Natural,D6D7D8,,,1Material --> Aggregates --> Concrete
-PRESET,,0Color --> Aggregates --> Concrete-A3A7A6-MediumGray,,0Color --> Aggregates --> Concrete,,Medium Gray,A3A7A6,,,1Material --> Aggregates --> Concrete
-PRESET,,0Color --> Aggregates --> Concrete-70716C-DarkGrey,,0Color --> Aggregates --> Concrete,,Dark Grey,70716C,,,1Material --> Aggregates --> Concrete
-PRESET,,0Color --> Aggregates --> Concrete-2F3131-Black,,0Color --> Aggregates --> Concrete,,Black,2F3131,,,1Material --> Aggregates --> Concrete
-PRESET,,0Color --> Aggregates --> Concrete-AC998D-Maple,,0Color --> Aggregates --> Concrete,,Maple,AC998D,,,1Material --> Aggregates --> Concrete
-PRESET,,0Color --> Aggregates --> Concrete-ABA283-Olive,,0Color --> Aggregates --> Concrete,,Olive,ABA283,,,1Material --> Aggregates --> Concrete
-PRESET,,0Color --> Aggregates --> Concrete-CFB086-Buff,,0Color --> Aggregates --> Concrete,,Buff,CFB086,,,1Material --> Aggregates --> Concrete
-PRESET,,0Color --> Aggregates --> Concrete-9FA08B-Moss,,0Color --> Aggregates --> Concrete,,Moss,9FA08B,,,1Material --> Aggregates --> Concrete
-PRESET,,0Color --> Aggregates --> Concrete-8F9AA0-Ocean,,0Color --> Aggregates --> Concrete,,Ocean,8F9AA0,,,1Material --> Aggregates --> Concrete
-PRESET,,0Color --> Aggregates --> Concrete-9F7D7B-Cabernet,,0Color --> Aggregates --> Concrete,,Cabernet,9F7D7B,,,1Material --> Aggregates --> Concrete
-PRESET,,0Color --> Aggregates --> Decomposed Granite-FFFFFF-White,,0Color --> Aggregates --> Decomposed Granite,,White,FFFFFF,,,1Material --> Aggregates --> Decomposed Granite
-PRESET,,0Color --> Aggregates --> Decomposed Granite-CCCCCC-LightGray,,0Color --> Aggregates --> Decomposed Granite,,Light Gray,CCCCCC,,,1Material --> Aggregates --> Decomposed Granite
-PRESET,,0Color --> Aggregates --> Fiber-Cement-DFE2E7-CoolLightGrey,,0Color --> Aggregates --> Fiber-Cement,,Cool Light Grey,DFE2E7,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Aggregates --> Fiber-Cement-D2D2D0-Salt,,0Color --> Aggregates --> Fiber-Cement,,Salt,D2D2D0,,,1Material --> Aggregates --> Fiber-Cement
-PRESET,,0Color --> Aggregates --> Fiber-Cement-BCB3A0-Blonde,,0Color --> Aggregates --> Fiber-Cement,,Blonde,BCB3A0,,,1Material --> Aggregates --> Fiber-Cement
-PRESET,,0Color --> Aggregates --> Fiber-Cement-A19483-Cappucino,,0Color --> Aggregates --> Fiber-Cement,,Cappucino,A19483,,,1Material --> Aggregates --> Fiber-Cement
-PRESET,,0Color --> Aggregates --> Fiber-Cement-685F4D-Earth,,0Color --> Aggregates --> Fiber-Cement,,Earth,685F4D,,,1Material --> Aggregates --> Fiber-Cement
-PRESET,,0Color --> Aggregates --> Fiber-Cement-999A6D-HeatheredMoss,,0Color --> Aggregates --> Fiber-Cement,,Heathered Moss,999A6D,,,1Material --> Aggregates --> Fiber-Cement
-PRESET,,0Color --> Aggregates --> Fiber-Cement-5E6247-ForestGreen,,0Color --> Aggregates --> Fiber-Cement,,Forest Green,5E6247,,,1Material --> Aggregates --> Fiber-Cement
-PRESET,,0Color --> Aggregates --> Fiber-Cement-677B86-SteelyBlue,,0Color --> Aggregates --> Fiber-Cement,,Steely Blue,677B86,,,1Material --> Aggregates --> Fiber-Cement
-PRESET,,0Color --> Aggregates --> Fiber-Cement-435259-Blue,,0Color --> Aggregates --> Fiber-Cement,,Blue,435259,,,1Material --> Aggregates --> Fiber-Cement
-PRESET,,0Color --> Aggregates --> Fiber-Cement-692D2E-VeryRed,,0Color --> Aggregates --> Fiber-Cement,,Very Red,692D2E,,,1Material --> Aggregates --> Fiber-Cement
-PRESET,,0Color --> Aggregates --> Fiber-Cement-714B2B-Caramel,,0Color --> Aggregates --> Fiber-Cement,,Caramel,714B2B,,,1Material --> Aggregates --> Fiber-Cement
-PRESET,,0Color --> Aggregates --> Gravel-FFFFFF-White,,0Color --> Aggregates --> Gravel,,White,FFFFFF,,,1Material --> Aggregates --> Gravel
-PRESET,,0Color --> Aggregates --> Gravel-CCCCCC-LightGray,,0Color --> Aggregates --> Gravel,,Light Gray,CCCCCC,,,1Material --> Aggregates --> Gravel
-PRESET,,0Color --> Aggregates --> Grout-EAECE7-White,,0Color --> Aggregates --> Grout,,White,EAECE7,,,1Material --> Aggregates --> Grout
-PRESET,,0Color --> Aggregates --> Grout-D0C6BD-Cream2,,0Color --> Aggregates --> Grout,,Cream 2,D0C6BD,,,1Material --> Aggregates --> Grout
-PRESET,,0Color --> Aggregates --> Grout-C8C8C6-WarmGrey,,0Color --> Aggregates --> Grout,,Warm Grey,C8C8C6,,,1Material --> Aggregates --> Grout
-PRESET,,0Color --> Aggregates --> Grout-B6B7B2-CoolGrey,,0Color --> Aggregates --> Grout,,Cool Grey,B6B7B2,,,1Material --> Aggregates --> Grout
-PRESET,,0Color --> Aggregates --> Grout-6B6A66-DarkGrey,,0Color --> Aggregates --> Grout,,Dark Grey,6B6A66,,,1Material --> Aggregates --> Grout
-PRESET,,0Color --> Aggregates --> Grout-4D5940-Green,,0Color --> Aggregates --> Grout,,Green,4D5940,,,1Material --> Aggregates --> Grout
-PRESET,,0Color --> Aggregates --> Grout-56758A-Blue,,0Color --> Aggregates --> Grout,,Blue,56758A,,,1Material --> Aggregates --> Grout
-PRESET,,0Color --> Aggregates --> Gypsum-D6D7D1-Natural,,0Color --> Aggregates --> Gypsum,,Natural,D6D7D1,,,1Material --> Aggregates --> Gypsum
-PRESET,,0Color --> Aggregates --> Gypsum-E5B496-Salmon,,0Color --> Aggregates --> Gypsum,,Salmon,E5B496,,,1Material --> Aggregates --> Gypsum
-PRESET,,0Color --> Aggregates --> Gypsum-9FC4B2-Green,,0Color --> Aggregates --> Gypsum,,Green,9FC4B2,,,1Material --> Aggregates --> Gypsum
-PRESET,,0Color --> Aggregates --> Gypsum-DFD3BE-Beige,,0Color --> Aggregates --> Gypsum,,Beige,DFD3BE,,,1Material --> Aggregates --> Gypsum
-PRESET,,0Color --> Aggregates --> Mortar-C6C6C6-Natural,,0Color --> Aggregates --> Mortar,,Natural,C6C6C6,,,1Material --> Aggregates --> Mortar
-PRESET,,0Color --> Aggregates --> Mortar-C6A989-Buff,,0Color --> Aggregates --> Mortar,,Buff,C6A989,,,1Material --> Aggregates --> Mortar
-PRESET,,0Color --> Aggregates --> Mortar-E5D5C5-AntiqueWhite,,0Color --> Aggregates --> Mortar,,Antique White,E5D5C5,,,1Material --> Aggregates --> Mortar
-PRESET,,0Color --> Aggregates --> Mortar-888280-DustyGray,,0Color --> Aggregates --> Mortar,,Dusty Gray,888280,,,1Material --> Aggregates --> Mortar
-PRESET,,0Color --> Aggregates --> Mortar-696971-Black,,0Color --> Aggregates --> Mortar,,Black,696971,,,1Material --> Aggregates --> Mortar
-PRESET,,0Color --> Aggregates --> Mortar-E3DEDB-White,,0Color --> Aggregates --> Mortar,,White,E3DEDB,,,1Material --> Aggregates --> Mortar
-PRESET,,0Color --> Aggregates --> Mortar-BC9791-Burgundy,,0Color --> Aggregates --> Mortar,,Burgundy,BC9791,,,1Material --> Aggregates --> Mortar
-PRESET,,0Color --> Aggregates --> Mortar-9B8075-DarkBrown,,0Color --> Aggregates --> Mortar,,Dark Brown,9B8075,,,1Material --> Aggregates --> Mortar
-PRESET,,0Color --> Aggregates --> Rammed Earth-FFFFFF-Untinted,,0Color --> Aggregates --> Rammed Earth,,Untinted,FFFFFF,,,1Material --> Aggregates --> Rammed Earth
-PRESET,,0Color --> Aggregates --> Rammed Earth-CCCCCC-Dark,,0Color --> Aggregates --> Rammed Earth,,Dark,CCCCCC,,,1Material --> Aggregates --> Rammed Earth
-PRESET,,0Color --> Aggregates --> Sand-FFFFFF-Untinted,,0Color --> Aggregates --> Sand,,Untinted,FFFFFF,,,1Material --> Aggregates --> Sand
-PRESET,,0Color --> Aggregates --> Sand-CCCCCC-Dark,,0Color --> Aggregates --> Sand,,Dark,CCCCCC,,,1Material --> Aggregates --> Sand
-PRESET,,0Color --> Aggregates --> Terrazzo-FFFFFF-Untinted,,0Color --> Aggregates --> Terrazzo,,Untinted,FFFFFF,,,1Material --> Aggregates --> Terrazzo
-PRESET,,0Color --> Aggregates --> Terrazzo-CCCCCC-Dark,,0Color --> Aggregates --> Terrazzo,,Dark,CCCCCC,,,1Material --> Aggregates --> Terrazzo
-PRESET,,0Color --> Fabric and Upholstery --> Carpet-E9EAE6-White,,0Color --> Fabric and Upholstery --> Carpet,,White,E9EAE6,,,1Material --> Fabric and Upholstery --> Carpet
-PRESET,,0Color --> Fabric and Upholstery --> Carpet-D0C6BD-Cream1,,0Color --> Fabric and Upholstery --> Carpet,,Cream 1,D0C6BD,,,1Material --> Fabric and Upholstery --> Carpet
-PRESET,,0Color --> Fabric and Upholstery --> Carpet-BF945F-Saddle,,0Color --> Fabric and Upholstery --> Carpet,,Saddle,BF945F,,,1Material --> Fabric and Upholstery --> Carpet
-PRESET,,0Color --> Fabric and Upholstery --> Carpet-A99978-Parchment,,0Color --> Fabric and Upholstery --> Carpet,,Parchment,A99978,,,1Material --> Fabric and Upholstery --> Carpet
-PRESET,,0Color --> Fabric and Upholstery --> Carpet-88543F-Copper,,0Color --> Fabric and Upholstery --> Carpet,,Copper,88543F,,,1Material --> Fabric and Upholstery --> Carpet
-PRESET,,0Color --> Fabric and Upholstery --> Carpet-464F3C-OliveGreen,,0Color --> Fabric and Upholstery --> Carpet,,Olive Green,464F3C,,,1Material --> Fabric and Upholstery --> Carpet
-PRESET,,0Color --> Fabric and Upholstery --> Carpet-7A878F-SilverBlue,,0Color --> Fabric and Upholstery --> Carpet,,Silver Blue,7A878F,,,1Material --> Fabric and Upholstery --> Carpet
-PRESET,,0Color --> Fabric and Upholstery --> Carpet-38485F-OrderlyBlue,,0Color --> Fabric and Upholstery --> Carpet,,Orderly Blue,38485F,,,1Material --> Fabric and Upholstery --> Carpet
-PRESET,,0Color --> Fabric and Upholstery --> Carpet-3C3B40-Ink,,0Color --> Fabric and Upholstery --> Carpet,,Ink,3C3B40,,,1Material --> Fabric and Upholstery --> Carpet
-PRESET,,0Color --> Fabric and Upholstery --> Carpet-534E4A-Charcoal,,0Color --> Fabric and Upholstery --> Carpet,,Charcoal,534E4A,,,1Material --> Fabric and Upholstery --> Carpet
-PRESET,,0Color --> Fabric and Upholstery --> Cotton-FFFFFF-Untinted,,0Color --> Fabric and Upholstery --> Cotton,,Untinted,FFFFFF,,,1Material --> Fabric and Upholstery --> Cotton
-PRESET,,0Color --> Fabric and Upholstery --> Cotton-CCCCCC-Dark,,0Color --> Fabric and Upholstery --> Cotton,,Dark,CCCCCC,,,1Material --> Fabric and Upholstery --> Cotton
-PRESET,,0Color --> Fabric and Upholstery --> Felt-2B2C30-Black,,0Color --> Fabric and Upholstery --> Felt,,Black,2B2C30,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-977953-Shakewood,,0Color --> Fabric and Upholstery --> Felt,,Shakewood,977953,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-9E8C74-Tan,,0Color --> Fabric and Upholstery --> Felt,,Tan,9E8C74,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-564237-Brown,,0Color --> Fabric and Upholstery --> Felt,,Brown,564237,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-44443C-WeatheredBrown,,0Color --> Fabric and Upholstery --> Felt,,Weathered Brown,44443C,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-AE5529-Aztec,,0Color --> Fabric and Upholstery --> Felt,,Aztec,AE5529,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-CDA488-Camel,,0Color --> Fabric and Upholstery --> Felt,,Camel,CDA488,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-B9A081-Khaki,,0Color --> Fabric and Upholstery --> Felt,,Khaki,B9A081,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-C79A59-Gold,,0Color --> Fabric and Upholstery --> Felt,,Gold,C79A59,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-66604A-Olive,,0Color --> Fabric and Upholstery --> Felt,,Olive,66604A,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-45484D-Titanium,,0Color --> Fabric and Upholstery --> Felt,,Titanium,45484D,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-1E5612-EnglishGreen,,0Color --> Fabric and Upholstery --> Felt,,English Green,1E5612,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-08422D-DarkGreen,,0Color --> Fabric and Upholstery --> Felt,,Dark Green,08422D,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-535971-AcademyBlue,,0Color --> Fabric and Upholstery --> Felt,,Academy Blue,535971,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-021F7F-EuroBlue,,0Color --> Fabric and Upholstery --> Felt,,Euro Blue,021F7F,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-080C2F-Navy,,0Color --> Fabric and Upholstery --> Felt,,Navy,080C2F,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-1D0750-Purple,,0Color --> Fabric and Upholstery --> Felt,,Purple,1D0750,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-2B519A-ElectricBlue,,0Color --> Fabric and Upholstery --> Felt,,Electric Blue,2B519A,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-6C6F74-SteelGray,,0Color --> Fabric and Upholstery --> Felt,,Steel Gray,6C6F74,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-685141-Taupe,,0Color --> Fabric and Upholstery --> Felt,,Taupe,685141,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-7A2022-Burgundy,,0Color --> Fabric and Upholstery --> Felt,,Burgundy,7A2022,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-4A0C17-Wine,,0Color --> Fabric and Upholstery --> Felt,,Wine,4A0C17,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-5F625B-Slate,,0Color --> Fabric and Upholstery --> Felt,,Slate,5F625B,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Felt-D9D9D9-White,,0Color --> Fabric and Upholstery --> Felt,,White,D9D9D9,,,1Material --> Fabric and Upholstery --> Felt
-PRESET,,0Color --> Fabric and Upholstery --> Leather-B69377-Natural,,0Color --> Fabric and Upholstery --> Leather,,Natural,B69377,,,1Material --> Fabric and Upholstery --> Leather
-PRESET,,0Color --> Fabric and Upholstery --> Leather-8C5131-LightBrown,,0Color --> Fabric and Upholstery --> Leather,,Light Brown,8C5131,,,1Material --> Fabric and Upholstery --> Leather
-PRESET,,0Color --> Fabric and Upholstery --> Leather-46413E-AntiqueBrown,,0Color --> Fabric and Upholstery --> Leather,,Antique Brown,46413E,,,1Material --> Fabric and Upholstery --> Leather
-PRESET,,0Color --> Fabric and Upholstery --> Leather-2A2927-DarkBrown,,0Color --> Fabric and Upholstery --> Leather,,Dark Brown,2A2927,,,1Material --> Fabric and Upholstery --> Leather
-PRESET,,0Color --> Fabric and Upholstery --> Leather-5B5B67-Gray,,0Color --> Fabric and Upholstery --> Leather,,Gray,5B5B67,,,1Material --> Fabric and Upholstery --> Leather
-PRESET,,0Color --> Fabric and Upholstery --> Leather-141517-Black,,0Color --> Fabric and Upholstery --> Leather,,Black,141517,,,1Material --> Fabric and Upholstery --> Leather
-PRESET,,0Color --> Fabric and Upholstery --> Leather-556A57-Jade,,0Color --> Fabric and Upholstery --> Leather,,Jade,556A57,,,1Material --> Fabric and Upholstery --> Leather
-PRESET,,0Color --> Fabric and Upholstery --> Silk-FFFFFF-Untinted,,0Color --> Fabric and Upholstery --> Silk,,Untinted,FFFFFF,,,1Material --> Fabric and Upholstery --> Silk
-PRESET,,0Color --> Fabric and Upholstery --> Silk-CCCCCC-Dark,,0Color --> Fabric and Upholstery --> Silk,,Dark,CCCCCC,,,1Material --> Fabric and Upholstery --> Silk
-PRESET,,0Color --> Fabric and Upholstery --> Velvet-FFFFFF-Untinted,,0Color --> Fabric and Upholstery --> Velvet,,Untinted,FFFFFF,,,1Material --> Fabric and Upholstery --> Velvet
-PRESET,,0Color --> Fabric and Upholstery --> Velvet-CCCCCC-Dark,,0Color --> Fabric and Upholstery --> Velvet,,Dark,CCCCCC,,,1Material --> Fabric and Upholstery --> Velvet
-PRESET,,0Color --> Fabric and Upholstery --> Vinyl-FFFFFF-Untinted,,0Color --> Fabric and Upholstery --> Vinyl,,Untinted,FFFFFF,,,1Material --> Fabric and Upholstery --> Vinyl
-PRESET,,0Color --> Fabric and Upholstery --> Vinyl-CCCCCC-Dark,,0Color --> Fabric and Upholstery --> Vinyl,,Dark,CCCCCC,,,1Material --> Fabric and Upholstery --> Vinyl
-PRESET,,0Color --> Ceramic --> Clay-A05633-Natural,,0Color --> Ceramic --> Clay,,Natural,A05633,,,1Material --> Ceramic --> Clay
-PRESET,,0Color --> Ceramic --> Clay-D5B795-Tan,,0Color --> Ceramic --> Clay,,Tan,D5B795,,,1Material --> Ceramic --> Clay
-PRESET,,0Color --> Ceramic --> Clay-9C7164-Mulberry,,0Color --> Ceramic --> Clay,,Mulberry,9C7164,,,1Material --> Ceramic --> Clay
-PRESET,,0Color --> Ceramic --> Clay-EFDABF-Cream,,0Color --> Ceramic --> Clay,,Cream,EFDABF,,,1Material --> Ceramic --> Clay
-PRESET,,0Color --> Ceramic --> Clay-5A535A-Ashberry,,0Color --> Ceramic --> Clay,,Ashberry,5A535A,,,1Material --> Ceramic --> Clay
-PRESET,,0Color --> Ceramic --> Clay-5A4E47-Driftwood,,0Color --> Ceramic --> Clay,,Driftwood,5A4E47,,,1Material --> Ceramic --> Clay
-PRESET,,0Color --> Ceramic --> Clay-825F4C-Brown,,0Color --> Ceramic --> Clay,,Brown,825F4C,,,1Material --> Ceramic --> Clay
-PRESET,,0Color --> Ceramic --> Clay-FEF9F3-White,,0Color --> Ceramic --> Clay,,White,FEF9F3,,,1Material --> Ceramic --> Clay
-PRESET,,0Color --> Ceramic --> Clay-4F4B48-Midnight,,0Color --> Ceramic --> Clay,,Midnight,4F4B48,,,1Material --> Ceramic --> Clay
-PRESET,,0Color --> Ceramic --> Clay-63454D-Plum,,0Color --> Ceramic --> Clay,,Plum,63454D,,,1Material --> Ceramic --> Clay
-PRESET,,0Color --> Ceramic --> Clay-EDCB6E-Yellow,,0Color --> Ceramic --> Clay,,Yellow,EDCB6E,,,1Material --> Ceramic --> Clay
-PRESET,,0Color --> Ceramic --> Porcelain-FAFAFA-NearlyWhite,,0Color --> Ceramic --> Porcelain,,Nearly White,FAFAFA,,,1Material --> Ceramic --> Porcelain
-PRESET,,0Color --> Ceramic --> Porcelain-E6E3DE-Eggshell,,0Color --> Ceramic --> Porcelain,,Eggshell,E6E3DE,,,1Material --> Ceramic --> Porcelain
-PRESET,,0Color --> Ceramic --> Porcelain-F9D0BA-Peach,,0Color --> Ceramic --> Porcelain,,Peach,F9D0BA,,,1Material --> Ceramic --> Porcelain
-PRESET,,0Color --> Ceramic --> Porcelain-F2BEB3-Coral,,0Color --> Ceramic --> Porcelain,,Coral,F2BEB3,,,1Material --> Ceramic --> Porcelain
-PRESET,,0Color --> Ceramic --> Porcelain-EEE7D5-Butter,,0Color --> Ceramic --> Porcelain,,Butter,EEE7D5,,,1Material --> Ceramic --> Porcelain
-PRESET,,0Color --> Ceramic --> Porcelain-D7E5D8-Mint,,0Color --> Ceramic --> Porcelain,,Mint,D7E5D8,,,1Material --> Ceramic --> Porcelain
-PRESET,,0Color --> Ceramic --> Porcelain-A5CCDB-Cerulean,,0Color --> Ceramic --> Porcelain,,Cerulean,A5CCDB,,,1Material --> Ceramic --> Porcelain
-PRESET,,0Color --> Glass and Transparent --> Air-FFFFFF-Clear,,0Color --> Glass and Transparent --> Air,,Clear,FFFFFF,,,1Material --> Glass and Transparent --> Air
-PRESET,,0Color --> Glass and Transparent --> Glass-F2F2F2-Untinted,,0Color --> Glass and Transparent --> Glass,,Untinted,F2F2F2,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-E1DDDA-Limestone,,0Color --> Glass and Transparent --> Glass,,Limestone,E1DDDA,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-D6DADB-Slate,,0Color --> Glass and Transparent --> Glass,,Slate,D6DADB,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-BAC7CD-ChillyBlue,,0Color --> Glass and Transparent --> Glass,,Chilly Blue,BAC7CD,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-829CA9-BayBlue,,0Color --> Glass and Transparent --> Glass,,Bay Blue,829CA9,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-A6C7C0-Aquamarine,,0Color --> Glass and Transparent --> Glass,,Aquamarine,A6C7C0,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-A7B5A8-SageGreen,,0Color --> Glass and Transparent --> Glass,,Sage Green,A7B5A8,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-D1C6A6-SandyYellow,,0Color --> Glass and Transparent --> Glass,,Sandy Yellow,D1C6A6,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-AC8F8B-DeepBlush,,0Color --> Glass and Transparent --> Glass,,Deep Blush,AC8F8B,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-292D38-Indigo,,0Color --> Glass and Transparent --> Glass,,Indigo,292D38,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-DFE8E3-Clear,,0Color --> Glass and Transparent --> Glass,,Clear,DFE8E3,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-C2DAD0-Green,,0Color --> Glass and Transparent --> Glass,,Green,C2DAD0,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-BECACA-GreyGreen,,0Color --> Glass and Transparent --> Glass,,Grey Green,BECACA,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-A6AAAD-DarkGrey,,0Color --> Glass and Transparent --> Glass,,Dark Grey,A6AAAD,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-BAB1A7-Bronze,,0Color --> Glass and Transparent --> Glass,,Bronze,BAB1A7,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-EBEBE9-LowIron,,0Color --> Glass and Transparent --> Glass,,Low Iron,EBEBE9,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-A5C1CD-Blue,,0Color --> Glass and Transparent --> Glass,,Blue,A5C1CD,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-A9D6D8-Teal,,0Color --> Glass and Transparent --> Glass,,Teal,A9D6D8,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Glass-C6D1D7-GreyBlue,,0Color --> Glass and Transparent --> Glass,,Grey Blue,C6D1D7,,,1Material --> Glass and Transparent --> Glass
-PRESET,,0Color --> Glass and Transparent --> Mesh Fly Screen-FFFFFF-Untinted,,0Color --> Glass and Transparent --> Mesh Fly Screen,,Untinted,FFFFFF,,,1Material --> Glass and Transparent --> Mesh Fly Screen
-PRESET,,0Color --> Glass and Transparent --> Mesh Fly Screen-CCCCCC-Dark,,0Color --> Glass and Transparent --> Mesh Fly Screen,,Dark,CCCCCC,,,1Material --> Glass and Transparent --> Mesh Fly Screen
-PRESET,,0Color --> Metal --> Aluminum-FFFFFF-PureWhite,,0Color --> Metal --> Aluminum,,Pure White,FFFFFF,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-EBECF0-LightGray,,0Color --> Metal --> Aluminum,,Light Gray,EBECF0,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-C4B99D-Sandstone,,0Color --> Metal --> Aluminum,,Sandstone,C4B99D,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-F4F3D7-Birch,,0Color --> Metal --> Aluminum,,Birch,F4F3D7,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-D0C0A9-Portland,,0Color --> Metal --> Aluminum,,Portland,D0C0A9,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-AAAB8C-GreenGray,,0Color --> Metal --> Aluminum,,Green Gray,AAAB8C,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-634C44-Brown,,0Color --> Metal --> Aluminum,,Brown,634C44,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-535B50-Yorktown,,0Color --> Metal --> Aluminum,,Yorktown,535B50,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-2B3033-Quaker,,0Color --> Metal --> Aluminum,,Quaker,2B3033,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-3E282A-Amber,,0Color --> Metal --> Aluminum,,Amber,3E282A,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-331F20-PatricianBronze,,0Color --> Metal --> Aluminum,,Patrician Bronze,331F20,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-DDB486-BurntAlmond,,0Color --> Metal --> Aluminum,,Burnt Almond,DDB486,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-BD9C2B-Gold,,0Color --> Metal --> Aluminum,,Gold,BD9C2B,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-BEA883-Taupe,,0Color --> Metal --> Aluminum,,Taupe,BEA883,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-81B46F-SpringHill,,0Color --> Metal --> Aluminum,,Spring Hill,81B46F,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-526D4A-Patina,,0Color --> Metal --> Aluminum,,Patina,526D4A,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-1F4D29-Olive,,0Color --> Metal --> Aluminum,,Olive,1F4D29,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-005337-SeaGreen,,0Color --> Metal --> Aluminum,,Sea Green,005337,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-003A21-Jungle,,0Color --> Metal --> Aluminum,,Jungle,003A21,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-013119-Forest,,0Color --> Metal --> Aluminum,,Forest,013119,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-00280D-Edwardian,,0Color --> Metal --> Aluminum,,Edwardian,00280D,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-4AA7B9-Aqua,,0Color --> Metal --> Aluminum,,Aqua,4AA7B9,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-0084AB-Harbor,,0Color --> Metal --> Aluminum,,Harbor,0084AB,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-657189-Legacy,,0Color --> Metal --> Aluminum,,Legacy,657189,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-316A7D-Military,,0Color --> Metal --> Aluminum,,Military,316A7D,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-234C5E-Wedge,,0Color --> Metal --> Aluminum,,Wedge,234C5E,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-00384F-Royal,,0Color --> Metal --> Aluminum,,Royal,00384F,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-54111A-Brandy,,0Color --> Metal --> Aluminum,,Brandy,54111A,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-781F25-Rust,,0Color --> Metal --> Aluminum,,Rust,781F25,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-F02C44-ColonialRed,,0Color --> Metal --> Aluminum,,Colonial Red,F02C44,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-A23933-Brick,,0Color --> Metal --> Aluminum,,Brick,A23933,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-D35153-Somel,,0Color --> Metal --> Aluminum,,Somel,D35153,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-D56A62-Hazel,,0Color --> Metal --> Aluminum,,Hazel,D56A62,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-FF896B-Rose,,0Color --> Metal --> Aluminum,,Rose,FF896B,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-8F9092-DarkGray,,0Color --> Metal --> Aluminum,,Dark Gray,8F9092,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-F7D400-Yellow,,0Color --> Metal --> Aluminum,,Yellow,F7D400,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-414141-NearBlack,,0Color --> Metal --> Aluminum,,Near Black,414141,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Aluminum-2A2A2A-Black,,0Color --> Metal --> Aluminum,,Black,2A2A2A,,,1Material --> Metal --> Aluminum
-PRESET,,0Color --> Metal --> Chrome-FFFFFF-Untinted,,0Color --> Metal --> Chrome,,Untinted,FFFFFF,,,1Material --> Metal --> Chrome
-PRESET,,0Color --> Metal --> Chrome-CCCCCC-Dark,,0Color --> Metal --> Chrome,,Dark,CCCCCC,,,1Material --> Metal --> Chrome
-PRESET,,0Color --> Metal --> Copper-C17244-Natural,,0Color --> Metal --> Copper,,Natural,C17244,,,1Material --> Metal --> Copper
-PRESET,,0Color --> Metal --> Iron-FFFFFF-Untinted,,0Color --> Metal --> Iron,,Untinted,FFFFFF,,,1Material --> Metal --> Iron
-PRESET,,0Color --> Metal --> Iron-CCCCCC-Dark,,0Color --> Metal --> Iron,,Dark,CCCCCC,,,1Material --> Metal --> Iron
-PRESET,,0Color --> Metal --> Nickel-FFFFFF-Untinted,,0Color --> Metal --> Nickel,,Untinted,FFFFFF,,,1Material --> Metal --> Nickel
-PRESET,,0Color --> Metal --> Nickel-CCCCCC-Dark,,0Color --> Metal --> Nickel,,Dark,CCCCCC,,,1Material --> Metal --> Nickel
-PRESET,,0Color --> Metal --> Steel-FFFFFF-Untinted,,0Color --> Metal --> Steel,,Untinted,FFFFFF,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Steel-EAEAEA-Gray1,,0Color --> Metal --> Steel,,Gray 1,EAEAEA,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Steel-D5D5D5-Gray2,,0Color --> Metal --> Steel,,Gray 2,D5D5D5,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Steel-C0C0C0-Gray3,,0Color --> Metal --> Steel,,Gray 3,C0C0C0,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Steel-ABABAB-Gray4,,0Color --> Metal --> Steel,,Gray 4,ABABAB,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Steel-959595-Gray5,,0Color --> Metal --> Steel,,Gray 5,959595,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Steel-6B6B6B-Gray6,,0Color --> Metal --> Steel,,Gray 6,6B6B6B,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Steel-555555-Gray7,,0Color --> Metal --> Steel,,Gray 7,555555,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Steel-404040-Gray8,,0Color --> Metal --> Steel,,Gray 8,404040,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Steel-2B2B2B-Gray9,,0Color --> Metal --> Steel,,Gray 9,2B2B2B,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Steel-151515-Gray10,,0Color --> Metal --> Steel,,Gray 10,151515,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Steel-000000-Black,,0Color --> Metal --> Steel,,Black,000000,,,1Material --> Metal --> Steel
-PRESET,,0Color --> Metal --> Tin-FFFFFF-White,,0Color --> Metal --> Tin,,White,FFFFFF,,,1Material --> Metal --> Tin
-PRESET,,0Color --> Metal --> Tin-CCCCCC-Dark,,0Color --> Metal --> Tin,,Dark,CCCCCC,,,1Material --> Metal --> Tin
-PRESET,,0Color --> Metal --> Zinc-FFFFFF-White,,0Color --> Metal --> Zinc,,White,FFFFFF,,,1Material --> Metal --> Zinc
-PRESET,,0Color --> Metal --> Zinc-CCCCCC-LightGrey,,0Color --> Metal --> Zinc,,Light Grey,CCCCCC,,,1Material --> Metal --> Zinc
-PRESET,,0Color --> Metal --> Zinc-37383A-CoolDarkGrey,,0Color --> Metal --> Zinc,,Cool Dark Grey,37383A,,,1Material --> Metal --> Zinc
-PRESET,,0Color --> Spread --> Paint-F3F1ED-GentleWhite,,0Color --> Spread --> Paint,,Gentle White,F3F1ED,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-DFE2E7-CoolLightGrey,,0Color --> Spread --> Paint,,Cool Light Grey,DFE2E7,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-C4C4C4-Grey,,0Color --> Spread --> Paint,,Grey,C4C4C4,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-ABABAB-DarkGrey,,0Color --> Spread --> Paint,,Dark Grey,ABABAB,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-F5D9CC-Peach,,0Color --> Spread --> Paint,,Peach,F5D9CC,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-D9A788-DesertTan,,0Color --> Spread --> Paint,,Desert Tan,D9A788,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-F4D5AB-Apricot,,0Color --> Spread --> Paint,,Apricot,F4D5AB,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-D0CD95-Thyme,,0Color --> Spread --> Paint,,Thyme,D0CD95,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-8DA8A1-Jade,,0Color --> Spread --> Paint,,Jade,8DA8A1,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-95D0D2-Aquamarine,,0Color --> Spread --> Paint,,Aquamarine,95D0D2,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-5A7491-PostalBlue,,0Color --> Spread --> Paint,,Postal Blue,5A7491,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-364155-DeepNavy,,0Color --> Spread --> Paint,,Deep Navy,364155,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-1C2F68-RoyalBlue,,0Color --> Spread --> Paint,,Royal Blue,1C2F68,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-A7A3B2-DustyLavender,,0Color --> Spread --> Paint,,Dusty Lavender,A7A3B2,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-754342-Burgundy,,0Color --> Spread --> Paint,,Burgundy,754342,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Paint-262527-Midnight,,0Color --> Spread --> Paint,,Midnight,262527,,,1Material --> Spread --> Paint
-PRESET,,0Color --> Spread --> Plaster-F7EBDB-Shell,,0Color --> Spread --> Plaster,,Shell,F7EBDB,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-F8F8F6-Pearl,,0Color --> Spread --> Plaster,,Pearl,F8F8F6,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-B4B4B2-Raw,,0Color --> Spread --> Plaster,,Raw,B4B4B2,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-FAF1D0-Champagne,,0Color --> Spread --> Plaster,,Champagne,FAF1D0,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-CBBDA2-Tan,,0Color --> Spread --> Plaster,,Tan,CBBDA2,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-E5CAAD-Coral,,0Color --> Spread --> Plaster,,Coral,E5CAAD,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-B5B5B7-MediumGray,,0Color --> Spread --> Plaster,,Medium Gray,B5B5B7,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-92918D-DarkGray,,0Color --> Spread --> Plaster,,Dark Gray,92918D,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-DDCBA7-Wheat,,0Color --> Spread --> Plaster,,Wheat,DDCBA7,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-EBD5AC-Palomino,,0Color --> Spread --> Plaster,,Palomino,EBD5AC,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-B3AF8C-Olive,,0Color --> Spread --> Plaster,,Olive,B3AF8C,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-B4BBC1-Twilight,,0Color --> Spread --> Plaster,,Twilight,B4BBC1,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-A2AFB8-Blue,,0Color --> Spread --> Plaster,,Blue,A2AFB8,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Spread --> Plaster-D0B4A8-Rose,,0Color --> Spread --> Plaster,,Rose,D0B4A8,,,1Material --> Spread --> Plaster
-PRESET,,0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-FAFAFA-White,,0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene,,White,FAFAFA,,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
-PRESET,,0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-ECB9BE-Pink,,0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene,,Pink,ECB9BE,,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
-PRESET,,0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-CFDEE4-Blue,,0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene,,Blue,CFDEE4,,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
-PRESET,,0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene-FAF1D0-Yellow,,0Color --> Synthetic and Polymer --> Foam - Extruded Polystyrene,,Yellow,FAF1D0,,,1Material --> Synthetic and Polymer --> Foam - Extruded Polystyrene
-PRESET,,0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAFAFA-White,,0Color --> Synthetic and Polymer --> Foam - Polyethylene,,White,FAFAFA,,,1Material --> Synthetic and Polymer --> Foam - Polyethylene
-PRESET,,0Color --> Synthetic and Polymer --> Foam - Polyethylene-ECB9BE-Pink,,0Color --> Synthetic and Polymer --> Foam - Polyethylene,,Pink,ECB9BE,,,1Material --> Synthetic and Polymer --> Foam - Polyethylene
-PRESET,,0Color --> Synthetic and Polymer --> Foam - Polyethylene-CFDEE4-Blue,,0Color --> Synthetic and Polymer --> Foam - Polyethylene,,Blue,CFDEE4,,,1Material --> Synthetic and Polymer --> Foam - Polyethylene
-PRESET,,0Color --> Synthetic and Polymer --> Foam - Polyethylene-FAF1D0-Yellow,,0Color --> Synthetic and Polymer --> Foam - Polyethylene,,Yellow,FAF1D0,,,1Material --> Synthetic and Polymer --> Foam - Polyethylene
-PRESET,,0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAFAFA-White,,0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate,,White,FAFAFA,,,1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
-PRESET,,0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-ECB9BE-Pink,,0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate,,Pink,ECB9BE,,,1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
-PRESET,,0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-CFDEE4-Blue,,0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate,,Blue,CFDEE4,,,1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
-PRESET,,0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate-FAF1D0-Yellow,,0Color --> Synthetic and Polymer --> Foam - Polyisocyanurate,,Yellow,FAF1D0,,,1Material --> Synthetic and Polymer --> Foam - Polyisocyanurate
-PRESET,,0Color --> Synthetic and Polymer --> Plastic-FFFFFF-White,,0Color --> Synthetic and Polymer --> Plastic,,White,FFFFFF,,,1Material --> Synthetic and Polymer --> Plastic
-PRESET,,0Color --> Synthetic and Polymer --> Plastic-CCCCCC-LightGray,,0Color --> Synthetic and Polymer --> Plastic,,Light Gray,CCCCCC,,,1Material --> Synthetic and Polymer --> Plastic
-PRESET,,0Color --> Synthetic and Polymer --> Rubber-FFFFFF-White,,0Color --> Synthetic and Polymer --> Rubber,,White,FFFFFF,,,1Material --> Synthetic and Polymer --> Rubber
-PRESET,,0Color --> Synthetic and Polymer --> Rubber-CCCCCC-LightGray,,0Color --> Synthetic and Polymer --> Rubber,,Light Gray,CCCCCC,,,1Material --> Synthetic and Polymer --> Rubber
-PRESET,,0Color --> Synthetic and Polymer --> Vinyl Composite-FFFFFF-White,,0Color --> Synthetic and Polymer --> Vinyl Composite,,White,FFFFFF,,,1Material --> Synthetic and Polymer --> Vinyl Composite
-PRESET,,0Color --> Synthetic and Polymer --> Vinyl Composite-CCCCCC-LightGray,,0Color --> Synthetic and Polymer --> Vinyl Composite,,Light Gray,CCCCCC,,,1Material --> Synthetic and Polymer --> Vinyl Composite
-PRESET,,0Color --> Stone --> Alabaster-FFFFFF-White,,0Color --> Stone --> Alabaster,,White,FFFFFF,,,1Material --> Stone --> Alabaster
-PRESET,,0Color --> Stone --> Basalt-FFFFFF-White,,0Color --> Stone --> Basalt,,White,FFFFFF,,,1Material --> Stone --> Basalt
-PRESET,,0Color --> Stone --> Granite-FFFFFF-White,,0Color --> Stone --> Granite,,White,FFFFFF,,,1Material --> Stone --> Granite
-PRESET,,0Color --> Stone --> Lava Stone-FFFFFF-White,,0Color --> Stone --> Lava Stone,,White,FFFFFF,,,1Material --> Stone --> Lava Stone
-PRESET,,0Color --> Stone --> Limestone-FFFFFF-White,,0Color --> Stone --> Limestone,,White,FFFFFF,,,1Material --> Stone --> Limestone
-PRESET,,0Color --> Stone --> Marble-FFFFFF-White,,0Color --> Stone --> Marble,,White,FFFFFF,,,1Material --> Stone --> Marble
-PRESET,,0Color --> Stone --> Onyx-FFFFFF-White,,0Color --> Stone --> Onyx,,White,FFFFFF,,,1Material --> Stone --> Onyx
-PRESET,,0Color --> Stone --> Quartzite-FFFFFF-White,,0Color --> Stone --> Quartzite,,White,FFFFFF,,,1Material --> Stone --> Quartzite
-PRESET,,0Color --> Stone --> Sandstone-FFFFFF-White,,0Color --> Stone --> Sandstone,,White,FFFFFF,,,1Material --> Stone --> Sandstone
-PRESET,,0Color --> Stone --> Slate-FFFFFF-White,,0Color --> Stone --> Slate,,White,FFFFFF,,,1Material --> Stone --> Slate
-PRESET,,0Color --> Stone --> Slate-EAEAEA-Gray1,,0Color --> Stone --> Slate,,Gray 1,EAEAEA,,,1Material --> Stone --> Slate
-PRESET,,0Color --> Stone --> Slate-D5D5D5-Gray2,,0Color --> Stone --> Slate,,Gray 2,D5D5D5,,,1Material --> Stone --> Slate
-PRESET,,0Color --> Stone --> Slate-C0C0C0-Gray3,,0Color --> Stone --> Slate,,Gray 3,C0C0C0,,,1Material --> Stone --> Slate
-PRESET,,0Color --> Stone --> Slate-ABABAB-Gray4,,0Color --> Stone --> Slate,,Gray 4,ABABAB,,,1Material --> Stone --> Slate
-PRESET,,0Color --> Stone --> Slate-959595-Gray5,,0Color --> Stone --> Slate,,Gray 5,959595,,,1Material --> Stone --> Slate
-PRESET,,0Color --> Stone --> Slate-6B6B6B-Gray6,,0Color --> Stone --> Slate,,Gray 6,6B6B6B,,,1Material --> Stone --> Slate
-PRESET,,0Color --> Stone --> Slate-555555-Gray7,,0Color --> Stone --> Slate,,Gray 7,555555,,,1Material --> Stone --> Slate
-PRESET,,0Color --> Stone --> Slate-404040-Gray8,,0Color --> Stone --> Slate,,Gray 8,404040,,,1Material --> Stone --> Slate
-PRESET,,0Color --> Stone --> Slate-2B2B2B-Gray9,,0Color --> Stone --> Slate,,Gray 9,2B2B2B,,,1Material --> Stone --> Slate
-PRESET,,0Color --> Stone --> Slate-151515-Gray10,,0Color --> Stone --> Slate,,Gray 10,151515,,,1Material --> Stone --> Slate
-PRESET,,0Color --> Stone --> Slate-000000-Black,,0Color --> Stone --> Slate,,Black,000000,,,1Material --> Stone --> Slate
-PRESET,,0Color --> Stone --> Soapstone-FFFFFF-White,,0Color --> Stone --> Soapstone,,White,FFFFFF,,,1Material --> Stone --> Soapstone
-PRESET,,0Color --> Stone --> Travertine-FFFFFF-White,,0Color --> Stone --> Travertine,,White,FFFFFF,,,1Material --> Stone --> Travertine
-PRESET,,0Color --> Wood --> Ash-FFFFFF-Natural,,0Color --> Wood --> Ash,,Natural,FFFFFF,,,1Material --> Wood --> Ash
-PRESET,,0Color --> Wood --> Bamboo-FFFFFF-Natural,,0Color --> Wood --> Bamboo,,Natural,FFFFFF,,,1Material --> Wood --> Bamboo
-PRESET,,0Color --> Wood --> Beech-FFFFFF-Natural,,0Color --> Wood --> Beech,,Natural,FFFFFF,,,1Material --> Wood --> Beech
-PRESET,,0Color --> Wood --> Birch-FFFFFF-Natural,,0Color --> Wood --> Birch,,Natural,FFFFFF,,,1Material --> Wood --> Birch
-PRESET,,0Color --> Wood --> Cedar - Western Red-FFFFFF-Natural,,0Color --> Wood --> Cedar - Western Red,,Natural,FFFFFF,,,1Material --> Wood --> Cedar - Western Red
-PRESET,,0Color --> Wood --> Cedar - White-FFFFFF-Natural,,0Color --> Wood --> Cedar - White,,Natural,FFFFFF,,,1Material --> Wood --> Cedar - White
-PRESET,,0Color --> Wood --> Cedar - White-2B2B2B-Black,,0Color --> Wood --> Cedar - White,,Black,2B2B2B,,,1Material --> Wood --> Cedar - White
-PRESET,,0Color --> Wood --> Cherry-FFFFFF-Natural,,0Color --> Wood --> Cherry,,Natural,FFFFFF,,,1Material --> Wood --> Cherry
-PRESET,,0Color --> Wood --> Cypress - Bald-FFFFFF-Natural,,0Color --> Wood --> Cypress - Bald,,Natural,FFFFFF,,,1Material --> Wood --> Cypress - Bald
-PRESET,,0Color --> Wood --> Ipe-FFFFFF-Natural,,0Color --> Wood --> Ipe,,Natural,FFFFFF,,,1Material --> Wood --> Ipe
-PRESET,,0Color --> Wood --> Mahogany-FFFFFF-Natural,,0Color --> Wood --> Mahogany,,Natural,FFFFFF,,,1Material --> Wood --> Mahogany
-PRESET,,0Color --> Wood --> Maple-FFFFFF-Natural,,0Color --> Wood --> Maple,,Natural,FFFFFF,,,1Material --> Wood --> Maple
-PRESET,,0Color --> Wood --> Oak - Red-FFFFFF-Natural,,0Color --> Wood --> Oak - Red,,Natural,FFFFFF,,,1Material --> Wood --> Oak - Red
-PRESET,,0Color --> Wood --> Oak - White-FFFFFF-Natural,,0Color --> Wood --> Oak - White,,Natural,FFFFFF,,,1Material --> Wood --> Oak - White
-PRESET,,0Color --> Wood --> Redwood-FFFFFF-Natural,,0Color --> Wood --> Redwood,,Natural,FFFFFF,,,1Material --> Wood --> Redwood
-PRESET,,0Color --> Wood --> Spruce-Pine-Fir-FFFFFF-Natural,,0Color --> Wood --> Spruce-Pine-Fir,,Natural,FFFFFF,,,1Material --> Wood --> Spruce-Pine-Fir
-PRESET,,0Color --> Wood --> Sycamore-FFFFFF-Natural,,0Color --> Wood --> Sycamore,,Natural,FFFFFF,,,1Material --> Wood --> Sycamore
-PRESET,,0Color --> Wood --> Teak-FFFFFF-Natural,,0Color --> Wood --> Teak,,Natural,FFFFFF,,,1Material --> Wood --> Teak
-PRESET,,0Color --> Wood --> Walnut-FFFFFF-Natural,,0Color --> Wood --> Walnut,,Natural,FFFFFF,,,1Material --> Wood --> Walnut
-PRESET,,0Color --> Fibrous --> Cork-FFFFFF-Natural,,0Color --> Fibrous --> Cork,,Natural,FFFFFF,,,1Material --> Fibrous --> Cork
-PRESET,,0Color --> Fibrous --> Cork-D0C6BD-Cream1,,0Color --> Fibrous --> Cork,,Cream 1,D0C6BD,,,1Material --> Fibrous --> Cork
-PRESET,,0Color --> Fibrous --> Cork-BF945F-Saddle,,0Color --> Fibrous --> Cork,,Saddle,BF945F,,,1Material --> Fibrous --> Cork
-PRESET,,0Color --> Fibrous --> Cork-A99978-Parchment,,0Color --> Fibrous --> Cork,,Parchment,A99978,,,1Material --> Fibrous --> Cork
-PRESET,,0Color --> Fibrous --> Cork-88543F-Copper,,0Color --> Fibrous --> Cork,,Copper,88543F,,,1Material --> Fibrous --> Cork
-PRESET,,0Color --> Fibrous --> Cork-464F3C-OliveGreen,,0Color --> Fibrous --> Cork,,Olive Green,464F3C,,,1Material --> Fibrous --> Cork
-PRESET,,0Color --> Fibrous --> Cork-7A878F-SilverBlue,,0Color --> Fibrous --> Cork,,Silver Blue,7A878F,,,1Material --> Fibrous --> Cork
-PRESET,,0Color --> Fibrous --> Cork-38485F-OrderlyBlue,,0Color --> Fibrous --> Cork,,Orderly Blue,38485F,,,1Material --> Fibrous --> Cork
-PRESET,,0Color --> Fibrous --> Cork-3C3B40-Ink,,0Color --> Fibrous --> Cork,,Ink,3C3B40,,,1Material --> Fibrous --> Cork
-PRESET,,0Color --> Fibrous --> Cork-534E4A-Charcoal,,0Color --> Fibrous --> Cork,,Charcoal,534E4A,,,1Material --> Fibrous --> Cork
-PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-FFFFFF-White,,0Color --> Fibrous --> Cementitious Wood Fiber,,White,FFFFFF,,,1Material --> Fibrous --> Cementitious Wood Fiber
-PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-D0C6BD-Cream1,,0Color --> Fibrous --> Cementitious Wood Fiber,,Cream 1,D0C6BD,,,1Material --> Fibrous --> Cementitious Wood Fiber
-PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-BF945F-Saddle,,0Color --> Fibrous --> Cementitious Wood Fiber,,Saddle,BF945F,,,1Material --> Fibrous --> Cementitious Wood Fiber
-PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-A99978-Parchment,,0Color --> Fibrous --> Cementitious Wood Fiber,,Parchment,A99978,,,1Material --> Fibrous --> Cementitious Wood Fiber
-PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-88543F-Copper,,0Color --> Fibrous --> Cementitious Wood Fiber,,Copper,88543F,,,1Material --> Fibrous --> Cementitious Wood Fiber
-PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-464F3C-OliveGreen,,0Color --> Fibrous --> Cementitious Wood Fiber,,Olive Green,464F3C,,,1Material --> Fibrous --> Cementitious Wood Fiber
-PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-7A878F-SilverBlue,,0Color --> Fibrous --> Cementitious Wood Fiber,,Silver Blue,7A878F,,,1Material --> Fibrous --> Cementitious Wood Fiber
-PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-38485F-OrderlyBlue,,0Color --> Fibrous --> Cementitious Wood Fiber,,Orderly Blue,38485F,,,1Material --> Fibrous --> Cementitious Wood Fiber
-PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-3C3B40-Ink,,0Color --> Fibrous --> Cementitious Wood Fiber,,Ink,3C3B40,,,1Material --> Fibrous --> Cementitious Wood Fiber
-PRESET,,0Color --> Fibrous --> Cementitious Wood Fiber-534E4A-Charcoal,,0Color --> Fibrous --> Cementitious Wood Fiber,,Charcoal,534E4A,,,1Material --> Fibrous --> Cementitious Wood Fiber
-PRESET,,0Color --> Fibrous --> Mineral Fiber-FFFFFF-Natural,,0Color --> Fibrous --> Mineral Fiber,,Natural,FFFFFF,,,1Material --> Fibrous --> Mineral Fiber
-PRESET,,0Color --> Fibrous --> Plywood-FFFFFF-Natural,,0Color --> Fibrous --> Plywood,,Natural,FFFFFF,,,1Material --> Fibrous --> Plywood
-PRESET,,0Color --> Fibrous --> Wood Fibers-FFFFFF-Natural,,0Color --> Fibrous --> Wood Fibers,,Natural,FFFFFF,,,1Material --> Fibrous --> Wood Fibers
-PRESET,,0Color --> Fibrous --> Wood Particles-FFFFFF-Natural,,0Color --> Fibrous --> Wood Particles,,Natural,FFFFFF,,,1Material --> Fibrous --> Wood Particles
-PRESET,,0Color --> Fibrous --> Wood Strands-FFFFFF-Natural,,0Color --> Fibrous --> Wood Strands,,Natural,FFFFFF,,,1Material --> Fibrous --> Wood Strands
-PRESET,,0Color --> Sitework --> Grass-FFFFFF-Natural,,0Color --> Sitework --> Grass,,Natural,FFFFFF,,,1Material --> Sitework --> Grass
-PRESET,,0Color --> Sitework --> Moss-FFFFFF-Natural,,0Color --> Sitework --> Moss,,Natural,FFFFFF,,,1Material --> Sitework --> Moss
-PRESET,,0Color --> Sitework --> Soil-FFFFFF-Natural,,0Color --> Sitework --> Soil,,Natural,FFFFFF,,,1Material --> Sitework --> Soil
+PRESET,,0Color_Abstract-FFFFFF-White,,0Color_Abstract,,White,FFFFFF,,,1Material_Abstract
+PRESET,,0Color_Abstract-EAEAEA-Gray1,,0Color_Abstract,,Gray 1,EAEAEA,,,1Material_Abstract
+PRESET,,0Color_Abstract-D5D5D5-Gray2,,0Color_Abstract,,Gray 2,D5D5D5,,,1Material_Abstract
+PRESET,,0Color_Abstract-C0C0C0-Gray3,,0Color_Abstract,,Gray 3,C0C0C0,,,1Material_Abstract
+PRESET,,0Color_Abstract-ABABAB-Gray4,,0Color_Abstract,,Gray 4,ABABAB,,,1Material_Abstract
+PRESET,,0Color_Abstract-959595-Gray5,,0Color_Abstract,,Gray 5,959595,,,1Material_Abstract
+PRESET,,0Color_Abstract-6B6B6B-Gray6,,0Color_Abstract,,Gray 6,6B6B6B,,,1Material_Abstract
+PRESET,,0Color_Abstract-555555-Gray7,,0Color_Abstract,,Gray 7,555555,,,1Material_Abstract
+PRESET,,0Color_Abstract-404040-Gray8,,0Color_Abstract,,Gray 8,404040,,,1Material_Abstract
+PRESET,,0Color_Abstract-2B2B2B-Gray9,,0Color_Abstract,,Gray 9,2B2B2B,,,1Material_Abstract
+PRESET,,0Color_Abstract-151515-Gray10,,0Color_Abstract,,Gray 10,151515,,,1Material_Abstract
+PRESET,,0Color_Abstract-000000-Black,,0Color_Abstract,,Black,000000,,,1Material_Abstract
+PRESET,,0Color_Aggregates_Asphalt-594D41-Barkwood,,0Color_Aggregates_Asphalt,,Barkwood,594D41,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-52595B-PewterGray,,0Color_Aggregates_Asphalt,,Pewter Gray,52595B,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-646963-Gray-GreenSlate,,0Color_Aggregates_Asphalt,,Gray-Green Slate,646963,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-743131-RichRed,,0Color_Aggregates_Asphalt,,Rich Red,743131,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-2F3336-Charcoal,,0Color_Aggregates_Asphalt,,Charcoal,2F3336,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-9A7957-Caramel,,0Color_Aggregates_Asphalt,,Caramel,9A7957,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-6B6758-Olive,,0Color_Aggregates_Asphalt,,Olive,6B6758,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-856B5B-Driftwood,,0Color_Aggregates_Asphalt,,Driftwood,856B5B,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-929796-Silver,,0Color_Aggregates_Asphalt,,Silver,929796,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-2A3A2F-ForestGreen,,0Color_Aggregates_Asphalt,,Forest Green,2A3A2F,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-50392E-Mocha,,0Color_Aggregates_Asphalt,,Mocha,50392E,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-684F3C-AdobeSunset,,0Color_Aggregates_Asphalt,,Adobe Sunset,684F3C,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-413834-BrandywineDusk,,0Color_Aggregates_Asphalt,,Brandywine Dusk,413834,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-786147-Goldenrod,,0Color_Aggregates_Asphalt,,Goldenrod,786147,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-4B4034-DustySaddle,,0Color_Aggregates_Asphalt,,Dusty Saddle,4B4034,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-2F2F2D-DarkSky,,0Color_Aggregates_Asphalt,,Dark Sky,2F2F2D,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-5C523E-CedarFalls,,0Color_Aggregates_Asphalt,,Cedar Falls,5C523E,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-5C5D5A-MistyMorning,,0Color_Aggregates_Asphalt,,Misty Morning,5C5D5A,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-57605F-CobblestoneSlate,,0Color_Aggregates_Asphalt,,Cobblestone Slate,57605F,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Asphalt-969B99-FoxHollowGray,,0Color_Aggregates_Asphalt,,Fox Hollow Gray,969B99,,,1Material_Aggregates_Asphalt
+PRESET,,0Color_Aggregates_Cement-FFFFFF-White,,0Color_Aggregates_Cement,,White,FFFFFF,,,1Material_Aggregates_Cement
+PRESET,,0Color_Aggregates_Cement-D6D7D8-Natural,,0Color_Aggregates_Cement,,Natural,D6D7D8,,,1Material_Aggregates_Cement
+PRESET,,0Color_Aggregates_Cement-A3A7A6-MediumGray,,0Color_Aggregates_Cement,,Medium Gray,A3A7A6,,,1Material_Aggregates_Cement
+PRESET,,0Color_Aggregates_Cement-70716C-DarkGrey,,0Color_Aggregates_Cement,,Dark Grey,70716C,,,1Material_Aggregates_Cement
+PRESET,,0Color_Aggregates_Cement-2F3131-Black,,0Color_Aggregates_Cement,,Black,2F3131,,,1Material_Aggregates_Cement
+PRESET,,0Color_Aggregates_Cement-AC998D-Maple,,0Color_Aggregates_Cement,,Maple,AC998D,,,1Material_Aggregates_Cement
+PRESET,,0Color_Aggregates_Cement-ABA283-Olive,,0Color_Aggregates_Cement,,Olive,ABA283,,,1Material_Aggregates_Cement
+PRESET,,0Color_Aggregates_Cement-CFB086-Buff,,0Color_Aggregates_Cement,,Buff,CFB086,,,1Material_Aggregates_Cement
+PRESET,,0Color_Aggregates_Cement-9FA08B-Moss,,0Color_Aggregates_Cement,,Moss,9FA08B,,,1Material_Aggregates_Cement
+PRESET,,0Color_Aggregates_Cement-8F9AA0-Ocean,,0Color_Aggregates_Cement,,Ocean,8F9AA0,,,1Material_Aggregates_Cement
+PRESET,,0Color_Aggregates_Cement-9F7D7B-Cabernet,,0Color_Aggregates_Cement,,Cabernet,9F7D7B,,,1Material_Aggregates_Cement
+PRESET,,0Color_Aggregates_Concrete-D6D7D8-Natural,,0Color_Aggregates_Concrete,,Natural,D6D7D8,,,1Material_Aggregates_Concrete
+PRESET,,0Color_Aggregates_Concrete-A3A7A6-MediumGray,,0Color_Aggregates_Concrete,,Medium Gray,A3A7A6,,,1Material_Aggregates_Concrete
+PRESET,,0Color_Aggregates_Concrete-70716C-DarkGrey,,0Color_Aggregates_Concrete,,Dark Grey,70716C,,,1Material_Aggregates_Concrete
+PRESET,,0Color_Aggregates_Concrete-2F3131-Black,,0Color_Aggregates_Concrete,,Black,2F3131,,,1Material_Aggregates_Concrete
+PRESET,,0Color_Aggregates_Concrete-AC998D-Maple,,0Color_Aggregates_Concrete,,Maple,AC998D,,,1Material_Aggregates_Concrete
+PRESET,,0Color_Aggregates_Concrete-ABA283-Olive,,0Color_Aggregates_Concrete,,Olive,ABA283,,,1Material_Aggregates_Concrete
+PRESET,,0Color_Aggregates_Concrete-CFB086-Buff,,0Color_Aggregates_Concrete,,Buff,CFB086,,,1Material_Aggregates_Concrete
+PRESET,,0Color_Aggregates_Concrete-9FA08B-Moss,,0Color_Aggregates_Concrete,,Moss,9FA08B,,,1Material_Aggregates_Concrete
+PRESET,,0Color_Aggregates_Concrete-8F9AA0-Ocean,,0Color_Aggregates_Concrete,,Ocean,8F9AA0,,,1Material_Aggregates_Concrete
+PRESET,,0Color_Aggregates_Concrete-9F7D7B-Cabernet,,0Color_Aggregates_Concrete,,Cabernet,9F7D7B,,,1Material_Aggregates_Concrete
+PRESET,,0Color_Aggregates_Decomposed Granite-FFFFFF-White,,0Color_Aggregates_Decomposed Granite,,White,FFFFFF,,,1Material_Aggregates_Decomposed Granite
+PRESET,,0Color_Aggregates_Decomposed Granite-CCCCCC-LightGray,,0Color_Aggregates_Decomposed Granite,,Light Gray,CCCCCC,,,1Material_Aggregates_Decomposed Granite
+PRESET,,0Color_Aggregates_Fiber-Cement-DFE2E7-CoolLightGrey,,0Color_Aggregates_Fiber-Cement,,Cool Light Grey,DFE2E7,,,1Material_Spread_Paint
+PRESET,,0Color_Aggregates_Fiber-Cement-D2D2D0-Salt,,0Color_Aggregates_Fiber-Cement,,Salt,D2D2D0,,,1Material_Aggregates_Fiber-Cement
+PRESET,,0Color_Aggregates_Fiber-Cement-BCB3A0-Blonde,,0Color_Aggregates_Fiber-Cement,,Blonde,BCB3A0,,,1Material_Aggregates_Fiber-Cement
+PRESET,,0Color_Aggregates_Fiber-Cement-A19483-Cappucino,,0Color_Aggregates_Fiber-Cement,,Cappucino,A19483,,,1Material_Aggregates_Fiber-Cement
+PRESET,,0Color_Aggregates_Fiber-Cement-685F4D-Earth,,0Color_Aggregates_Fiber-Cement,,Earth,685F4D,,,1Material_Aggregates_Fiber-Cement
+PRESET,,0Color_Aggregates_Fiber-Cement-999A6D-HeatheredMoss,,0Color_Aggregates_Fiber-Cement,,Heathered Moss,999A6D,,,1Material_Aggregates_Fiber-Cement
+PRESET,,0Color_Aggregates_Fiber-Cement-5E6247-ForestGreen,,0Color_Aggregates_Fiber-Cement,,Forest Green,5E6247,,,1Material_Aggregates_Fiber-Cement
+PRESET,,0Color_Aggregates_Fiber-Cement-677B86-SteelyBlue,,0Color_Aggregates_Fiber-Cement,,Steely Blue,677B86,,,1Material_Aggregates_Fiber-Cement
+PRESET,,0Color_Aggregates_Fiber-Cement-435259-Blue,,0Color_Aggregates_Fiber-Cement,,Blue,435259,,,1Material_Aggregates_Fiber-Cement
+PRESET,,0Color_Aggregates_Fiber-Cement-692D2E-VeryRed,,0Color_Aggregates_Fiber-Cement,,Very Red,692D2E,,,1Material_Aggregates_Fiber-Cement
+PRESET,,0Color_Aggregates_Fiber-Cement-714B2B-Caramel,,0Color_Aggregates_Fiber-Cement,,Caramel,714B2B,,,1Material_Aggregates_Fiber-Cement
+PRESET,,0Color_Aggregates_Gravel-FFFFFF-White,,0Color_Aggregates_Gravel,,White,FFFFFF,,,1Material_Aggregates_Gravel
+PRESET,,0Color_Aggregates_Gravel-CCCCCC-LightGray,,0Color_Aggregates_Gravel,,Light Gray,CCCCCC,,,1Material_Aggregates_Gravel
+PRESET,,0Color_Aggregates_Grout-EAECE7-White,,0Color_Aggregates_Grout,,White,EAECE7,,,1Material_Aggregates_Grout
+PRESET,,0Color_Aggregates_Grout-D0C6BD-Cream2,,0Color_Aggregates_Grout,,Cream 2,D0C6BD,,,1Material_Aggregates_Grout
+PRESET,,0Color_Aggregates_Grout-C8C8C6-WarmGrey,,0Color_Aggregates_Grout,,Warm Grey,C8C8C6,,,1Material_Aggregates_Grout
+PRESET,,0Color_Aggregates_Grout-B6B7B2-CoolGrey,,0Color_Aggregates_Grout,,Cool Grey,B6B7B2,,,1Material_Aggregates_Grout
+PRESET,,0Color_Aggregates_Grout-6B6A66-DarkGrey,,0Color_Aggregates_Grout,,Dark Grey,6B6A66,,,1Material_Aggregates_Grout
+PRESET,,0Color_Aggregates_Grout-4D5940-Green,,0Color_Aggregates_Grout,,Green,4D5940,,,1Material_Aggregates_Grout
+PRESET,,0Color_Aggregates_Grout-56758A-Blue,,0Color_Aggregates_Grout,,Blue,56758A,,,1Material_Aggregates_Grout
+PRESET,,0Color_Aggregates_Gypsum-D6D7D1-Natural,,0Color_Aggregates_Gypsum,,Natural,D6D7D1,,,1Material_Aggregates_Gypsum
+PRESET,,0Color_Aggregates_Gypsum-E5B496-Salmon,,0Color_Aggregates_Gypsum,,Salmon,E5B496,,,1Material_Aggregates_Gypsum
+PRESET,,0Color_Aggregates_Gypsum-9FC4B2-Green,,0Color_Aggregates_Gypsum,,Green,9FC4B2,,,1Material_Aggregates_Gypsum
+PRESET,,0Color_Aggregates_Gypsum-DFD3BE-Beige,,0Color_Aggregates_Gypsum,,Beige,DFD3BE,,,1Material_Aggregates_Gypsum
+PRESET,,0Color_Aggregates_Mortar-C6C6C6-Natural,,0Color_Aggregates_Mortar,,Natural,C6C6C6,,,1Material_Aggregates_Mortar
+PRESET,,0Color_Aggregates_Mortar-C6A989-Buff,,0Color_Aggregates_Mortar,,Buff,C6A989,,,1Material_Aggregates_Mortar
+PRESET,,0Color_Aggregates_Mortar-E5D5C5-AntiqueWhite,,0Color_Aggregates_Mortar,,Antique White,E5D5C5,,,1Material_Aggregates_Mortar
+PRESET,,0Color_Aggregates_Mortar-888280-DustyGray,,0Color_Aggregates_Mortar,,Dusty Gray,888280,,,1Material_Aggregates_Mortar
+PRESET,,0Color_Aggregates_Mortar-696971-Black,,0Color_Aggregates_Mortar,,Black,696971,,,1Material_Aggregates_Mortar
+PRESET,,0Color_Aggregates_Mortar-E3DEDB-White,,0Color_Aggregates_Mortar,,White,E3DEDB,,,1Material_Aggregates_Mortar
+PRESET,,0Color_Aggregates_Mortar-BC9791-Burgundy,,0Color_Aggregates_Mortar,,Burgundy,BC9791,,,1Material_Aggregates_Mortar
+PRESET,,0Color_Aggregates_Mortar-9B8075-DarkBrown,,0Color_Aggregates_Mortar,,Dark Brown,9B8075,,,1Material_Aggregates_Mortar
+PRESET,,0Color_Aggregates_Rammed Earth-FFFFFF-Untinted,,0Color_Aggregates_Rammed Earth,,Untinted,FFFFFF,,,1Material_Aggregates_Rammed Earth
+PRESET,,0Color_Aggregates_Rammed Earth-CCCCCC-Dark,,0Color_Aggregates_Rammed Earth,,Dark,CCCCCC,,,1Material_Aggregates_Rammed Earth
+PRESET,,0Color_Aggregates_Sand-FFFFFF-Untinted,,0Color_Aggregates_Sand,,Untinted,FFFFFF,,,1Material_Aggregates_Sand
+PRESET,,0Color_Aggregates_Sand-CCCCCC-Dark,,0Color_Aggregates_Sand,,Dark,CCCCCC,,,1Material_Aggregates_Sand
+PRESET,,0Color_Aggregates_Terrazzo-FFFFFF-Untinted,,0Color_Aggregates_Terrazzo,,Untinted,FFFFFF,,,1Material_Aggregates_Terrazzo
+PRESET,,0Color_Aggregates_Terrazzo-CCCCCC-Dark,,0Color_Aggregates_Terrazzo,,Dark,CCCCCC,,,1Material_Aggregates_Terrazzo
+PRESET,,0Color_Fabric and Upholstery_Carpet-E9EAE6-White,,0Color_Fabric and Upholstery_Carpet,,White,E9EAE6,,,1Material_Fabric and Upholstery_Carpet
+PRESET,,0Color_Fabric and Upholstery_Carpet-D0C6BD-Cream1,,0Color_Fabric and Upholstery_Carpet,,Cream 1,D0C6BD,,,1Material_Fabric and Upholstery_Carpet
+PRESET,,0Color_Fabric and Upholstery_Carpet-BF945F-Saddle,,0Color_Fabric and Upholstery_Carpet,,Saddle,BF945F,,,1Material_Fabric and Upholstery_Carpet
+PRESET,,0Color_Fabric and Upholstery_Carpet-A99978-Parchment,,0Color_Fabric and Upholstery_Carpet,,Parchment,A99978,,,1Material_Fabric and Upholstery_Carpet
+PRESET,,0Color_Fabric and Upholstery_Carpet-88543F-Copper,,0Color_Fabric and Upholstery_Carpet,,Copper,88543F,,,1Material_Fabric and Upholstery_Carpet
+PRESET,,0Color_Fabric and Upholstery_Carpet-464F3C-OliveGreen,,0Color_Fabric and Upholstery_Carpet,,Olive Green,464F3C,,,1Material_Fabric and Upholstery_Carpet
+PRESET,,0Color_Fabric and Upholstery_Carpet-7A878F-SilverBlue,,0Color_Fabric and Upholstery_Carpet,,Silver Blue,7A878F,,,1Material_Fabric and Upholstery_Carpet
+PRESET,,0Color_Fabric and Upholstery_Carpet-38485F-OrderlyBlue,,0Color_Fabric and Upholstery_Carpet,,Orderly Blue,38485F,,,1Material_Fabric and Upholstery_Carpet
+PRESET,,0Color_Fabric and Upholstery_Carpet-3C3B40-Ink,,0Color_Fabric and Upholstery_Carpet,,Ink,3C3B40,,,1Material_Fabric and Upholstery_Carpet
+PRESET,,0Color_Fabric and Upholstery_Carpet-534E4A-Charcoal,,0Color_Fabric and Upholstery_Carpet,,Charcoal,534E4A,,,1Material_Fabric and Upholstery_Carpet
+PRESET,,0Color_Fabric and Upholstery_Cotton-FFFFFF-Untinted,,0Color_Fabric and Upholstery_Cotton,,Untinted,FFFFFF,,,1Material_Fabric and Upholstery_Cotton
+PRESET,,0Color_Fabric and Upholstery_Cotton-CCCCCC-Dark,,0Color_Fabric and Upholstery_Cotton,,Dark,CCCCCC,,,1Material_Fabric and Upholstery_Cotton
+PRESET,,0Color_Fabric and Upholstery_Felt-2B2C30-Black,,0Color_Fabric and Upholstery_Felt,,Black,2B2C30,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-977953-Shakewood,,0Color_Fabric and Upholstery_Felt,,Shakewood,977953,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-9E8C74-Tan,,0Color_Fabric and Upholstery_Felt,,Tan,9E8C74,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-564237-Brown,,0Color_Fabric and Upholstery_Felt,,Brown,564237,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-44443C-WeatheredBrown,,0Color_Fabric and Upholstery_Felt,,Weathered Brown,44443C,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-AE5529-Aztec,,0Color_Fabric and Upholstery_Felt,,Aztec,AE5529,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-CDA488-Camel,,0Color_Fabric and Upholstery_Felt,,Camel,CDA488,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-B9A081-Khaki,,0Color_Fabric and Upholstery_Felt,,Khaki,B9A081,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-C79A59-Gold,,0Color_Fabric and Upholstery_Felt,,Gold,C79A59,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-66604A-Olive,,0Color_Fabric and Upholstery_Felt,,Olive,66604A,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-45484D-Titanium,,0Color_Fabric and Upholstery_Felt,,Titanium,45484D,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-1E5612-EnglishGreen,,0Color_Fabric and Upholstery_Felt,,English Green,1E5612,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-08422D-DarkGreen,,0Color_Fabric and Upholstery_Felt,,Dark Green,08422D,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-535971-AcademyBlue,,0Color_Fabric and Upholstery_Felt,,Academy Blue,535971,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-021F7F-EuroBlue,,0Color_Fabric and Upholstery_Felt,,Euro Blue,021F7F,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-080C2F-Navy,,0Color_Fabric and Upholstery_Felt,,Navy,080C2F,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-1D0750-Purple,,0Color_Fabric and Upholstery_Felt,,Purple,1D0750,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-2B519A-ElectricBlue,,0Color_Fabric and Upholstery_Felt,,Electric Blue,2B519A,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-6C6F74-SteelGray,,0Color_Fabric and Upholstery_Felt,,Steel Gray,6C6F74,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-685141-Taupe,,0Color_Fabric and Upholstery_Felt,,Taupe,685141,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-7A2022-Burgundy,,0Color_Fabric and Upholstery_Felt,,Burgundy,7A2022,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-4A0C17-Wine,,0Color_Fabric and Upholstery_Felt,,Wine,4A0C17,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-5F625B-Slate,,0Color_Fabric and Upholstery_Felt,,Slate,5F625B,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Felt-D9D9D9-White,,0Color_Fabric and Upholstery_Felt,,White,D9D9D9,,,1Material_Fabric and Upholstery_Felt
+PRESET,,0Color_Fabric and Upholstery_Leather-B69377-Natural,,0Color_Fabric and Upholstery_Leather,,Natural,B69377,,,1Material_Fabric and Upholstery_Leather
+PRESET,,0Color_Fabric and Upholstery_Leather-8C5131-LightBrown,,0Color_Fabric and Upholstery_Leather,,Light Brown,8C5131,,,1Material_Fabric and Upholstery_Leather
+PRESET,,0Color_Fabric and Upholstery_Leather-46413E-AntiqueBrown,,0Color_Fabric and Upholstery_Leather,,Antique Brown,46413E,,,1Material_Fabric and Upholstery_Leather
+PRESET,,0Color_Fabric and Upholstery_Leather-2A2927-DarkBrown,,0Color_Fabric and Upholstery_Leather,,Dark Brown,2A2927,,,1Material_Fabric and Upholstery_Leather
+PRESET,,0Color_Fabric and Upholstery_Leather-5B5B67-Gray,,0Color_Fabric and Upholstery_Leather,,Gray,5B5B67,,,1Material_Fabric and Upholstery_Leather
+PRESET,,0Color_Fabric and Upholstery_Leather-141517-Black,,0Color_Fabric and Upholstery_Leather,,Black,141517,,,1Material_Fabric and Upholstery_Leather
+PRESET,,0Color_Fabric and Upholstery_Leather-556A57-Jade,,0Color_Fabric and Upholstery_Leather,,Jade,556A57,,,1Material_Fabric and Upholstery_Leather
+PRESET,,0Color_Fabric and Upholstery_Silk-FFFFFF-Untinted,,0Color_Fabric and Upholstery_Silk,,Untinted,FFFFFF,,,1Material_Fabric and Upholstery_Silk
+PRESET,,0Color_Fabric and Upholstery_Silk-CCCCCC-Dark,,0Color_Fabric and Upholstery_Silk,,Dark,CCCCCC,,,1Material_Fabric and Upholstery_Silk
+PRESET,,0Color_Fabric and Upholstery_Velvet-FFFFFF-Untinted,,0Color_Fabric and Upholstery_Velvet,,Untinted,FFFFFF,,,1Material_Fabric and Upholstery_Velvet
+PRESET,,0Color_Fabric and Upholstery_Velvet-CCCCCC-Dark,,0Color_Fabric and Upholstery_Velvet,,Dark,CCCCCC,,,1Material_Fabric and Upholstery_Velvet
+PRESET,,0Color_Fabric and Upholstery_Vinyl-FFFFFF-Untinted,,0Color_Fabric and Upholstery_Vinyl,,Untinted,FFFFFF,,,1Material_Fabric and Upholstery_Vinyl
+PRESET,,0Color_Fabric and Upholstery_Vinyl-CCCCCC-Dark,,0Color_Fabric and Upholstery_Vinyl,,Dark,CCCCCC,,,1Material_Fabric and Upholstery_Vinyl
+PRESET,,0Color_Ceramic_Clay-A05633-Natural,,0Color_Ceramic_Clay,,Natural,A05633,,,1Material_Ceramic_Clay
+PRESET,,0Color_Ceramic_Clay-D5B795-Tan,,0Color_Ceramic_Clay,,Tan,D5B795,,,1Material_Ceramic_Clay
+PRESET,,0Color_Ceramic_Clay-9C7164-Mulberry,,0Color_Ceramic_Clay,,Mulberry,9C7164,,,1Material_Ceramic_Clay
+PRESET,,0Color_Ceramic_Clay-EFDABF-Cream,,0Color_Ceramic_Clay,,Cream,EFDABF,,,1Material_Ceramic_Clay
+PRESET,,0Color_Ceramic_Clay-5A535A-Ashberry,,0Color_Ceramic_Clay,,Ashberry,5A535A,,,1Material_Ceramic_Clay
+PRESET,,0Color_Ceramic_Clay-5A4E47-Driftwood,,0Color_Ceramic_Clay,,Driftwood,5A4E47,,,1Material_Ceramic_Clay
+PRESET,,0Color_Ceramic_Clay-825F4C-Brown,,0Color_Ceramic_Clay,,Brown,825F4C,,,1Material_Ceramic_Clay
+PRESET,,0Color_Ceramic_Clay-FEF9F3-White,,0Color_Ceramic_Clay,,White,FEF9F3,,,1Material_Ceramic_Clay
+PRESET,,0Color_Ceramic_Clay-4F4B48-Midnight,,0Color_Ceramic_Clay,,Midnight,4F4B48,,,1Material_Ceramic_Clay
+PRESET,,0Color_Ceramic_Clay-63454D-Plum,,0Color_Ceramic_Clay,,Plum,63454D,,,1Material_Ceramic_Clay
+PRESET,,0Color_Ceramic_Clay-EDCB6E-Yellow,,0Color_Ceramic_Clay,,Yellow,EDCB6E,,,1Material_Ceramic_Clay
+PRESET,,0Color_Ceramic_Porcelain-FAFAFA-NearlyWhite,,0Color_Ceramic_Porcelain,,Nearly White,FAFAFA,,,1Material_Ceramic_Porcelain
+PRESET,,0Color_Ceramic_Porcelain-E6E3DE-Eggshell,,0Color_Ceramic_Porcelain,,Eggshell,E6E3DE,,,1Material_Ceramic_Porcelain
+PRESET,,0Color_Ceramic_Porcelain-F9D0BA-Peach,,0Color_Ceramic_Porcelain,,Peach,F9D0BA,,,1Material_Ceramic_Porcelain
+PRESET,,0Color_Ceramic_Porcelain-F2BEB3-Coral,,0Color_Ceramic_Porcelain,,Coral,F2BEB3,,,1Material_Ceramic_Porcelain
+PRESET,,0Color_Ceramic_Porcelain-EEE7D5-Butter,,0Color_Ceramic_Porcelain,,Butter,EEE7D5,,,1Material_Ceramic_Porcelain
+PRESET,,0Color_Ceramic_Porcelain-D7E5D8-Mint,,0Color_Ceramic_Porcelain,,Mint,D7E5D8,,,1Material_Ceramic_Porcelain
+PRESET,,0Color_Ceramic_Porcelain-A5CCDB-Cerulean,,0Color_Ceramic_Porcelain,,Cerulean,A5CCDB,,,1Material_Ceramic_Porcelain
+PRESET,,0Color_Glass and Transparent_Air-FFFFFF-Clear,,0Color_Glass and Transparent_Air,,Clear,FFFFFF,,,1Material_Glass and Transparent_Air
+PRESET,,0Color_Glass and Transparent_Glass-F2F2F2-Untinted,,0Color_Glass and Transparent_Glass,,Untinted,F2F2F2,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-E1DDDA-Limestone,,0Color_Glass and Transparent_Glass,,Limestone,E1DDDA,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-D6DADB-Slate,,0Color_Glass and Transparent_Glass,,Slate,D6DADB,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-BAC7CD-ChillyBlue,,0Color_Glass and Transparent_Glass,,Chilly Blue,BAC7CD,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-829CA9-BayBlue,,0Color_Glass and Transparent_Glass,,Bay Blue,829CA9,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-A6C7C0-Aquamarine,,0Color_Glass and Transparent_Glass,,Aquamarine,A6C7C0,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-A7B5A8-SageGreen,,0Color_Glass and Transparent_Glass,,Sage Green,A7B5A8,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-D1C6A6-SandyYellow,,0Color_Glass and Transparent_Glass,,Sandy Yellow,D1C6A6,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-AC8F8B-DeepBlush,,0Color_Glass and Transparent_Glass,,Deep Blush,AC8F8B,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-292D38-Indigo,,0Color_Glass and Transparent_Glass,,Indigo,292D38,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-DFE8E3-Clear,,0Color_Glass and Transparent_Glass,,Clear,DFE8E3,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-C2DAD0-Green,,0Color_Glass and Transparent_Glass,,Green,C2DAD0,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-BECACA-GreyGreen,,0Color_Glass and Transparent_Glass,,Grey Green,BECACA,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-A6AAAD-DarkGrey,,0Color_Glass and Transparent_Glass,,Dark Grey,A6AAAD,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-BAB1A7-Bronze,,0Color_Glass and Transparent_Glass,,Bronze,BAB1A7,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-EBEBE9-LowIron,,0Color_Glass and Transparent_Glass,,Low Iron,EBEBE9,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-A5C1CD-Blue,,0Color_Glass and Transparent_Glass,,Blue,A5C1CD,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-A9D6D8-Teal,,0Color_Glass and Transparent_Glass,,Teal,A9D6D8,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Glass-C6D1D7-GreyBlue,,0Color_Glass and Transparent_Glass,,Grey Blue,C6D1D7,,,1Material_Glass and Transparent_Glass
+PRESET,,0Color_Glass and Transparent_Mesh Fly Screen-FFFFFF-Untinted,,0Color_Glass and Transparent_Mesh Fly Screen,,Untinted,FFFFFF,,,1Material_Glass and Transparent_Mesh Fly Screen
+PRESET,,0Color_Glass and Transparent_Mesh Fly Screen-CCCCCC-Dark,,0Color_Glass and Transparent_Mesh Fly Screen,,Dark,CCCCCC,,,1Material_Glass and Transparent_Mesh Fly Screen
+PRESET,,0Color_Metal_Aluminum-FFFFFF-PureWhite,,0Color_Metal_Aluminum,,Pure White,FFFFFF,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-EBECF0-LightGray,,0Color_Metal_Aluminum,,Light Gray,EBECF0,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-C4B99D-Sandstone,,0Color_Metal_Aluminum,,Sandstone,C4B99D,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-F4F3D7-Birch,,0Color_Metal_Aluminum,,Birch,F4F3D7,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-D0C0A9-Portland,,0Color_Metal_Aluminum,,Portland,D0C0A9,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-AAAB8C-GreenGray,,0Color_Metal_Aluminum,,Green Gray,AAAB8C,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-634C44-Brown,,0Color_Metal_Aluminum,,Brown,634C44,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-535B50-Yorktown,,0Color_Metal_Aluminum,,Yorktown,535B50,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-2B3033-Quaker,,0Color_Metal_Aluminum,,Quaker,2B3033,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-3E282A-Amber,,0Color_Metal_Aluminum,,Amber,3E282A,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-331F20-PatricianBronze,,0Color_Metal_Aluminum,,Patrician Bronze,331F20,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-DDB486-BurntAlmond,,0Color_Metal_Aluminum,,Burnt Almond,DDB486,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-BD9C2B-Gold,,0Color_Metal_Aluminum,,Gold,BD9C2B,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-BEA883-Taupe,,0Color_Metal_Aluminum,,Taupe,BEA883,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-81B46F-SpringHill,,0Color_Metal_Aluminum,,Spring Hill,81B46F,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-526D4A-Patina,,0Color_Metal_Aluminum,,Patina,526D4A,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-1F4D29-Olive,,0Color_Metal_Aluminum,,Olive,1F4D29,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-005337-SeaGreen,,0Color_Metal_Aluminum,,Sea Green,005337,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-003A21-Jungle,,0Color_Metal_Aluminum,,Jungle,003A21,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-013119-Forest,,0Color_Metal_Aluminum,,Forest,013119,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-00280D-Edwardian,,0Color_Metal_Aluminum,,Edwardian,00280D,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-4AA7B9-Aqua,,0Color_Metal_Aluminum,,Aqua,4AA7B9,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-0084AB-Harbor,,0Color_Metal_Aluminum,,Harbor,0084AB,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-657189-Legacy,,0Color_Metal_Aluminum,,Legacy,657189,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-316A7D-Military,,0Color_Metal_Aluminum,,Military,316A7D,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-234C5E-Wedge,,0Color_Metal_Aluminum,,Wedge,234C5E,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-00384F-Royal,,0Color_Metal_Aluminum,,Royal,00384F,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-54111A-Brandy,,0Color_Metal_Aluminum,,Brandy,54111A,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-781F25-Rust,,0Color_Metal_Aluminum,,Rust,781F25,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-F02C44-ColonialRed,,0Color_Metal_Aluminum,,Colonial Red,F02C44,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-A23933-Brick,,0Color_Metal_Aluminum,,Brick,A23933,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-D35153-Somel,,0Color_Metal_Aluminum,,Somel,D35153,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-D56A62-Hazel,,0Color_Metal_Aluminum,,Hazel,D56A62,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-FF896B-Rose,,0Color_Metal_Aluminum,,Rose,FF896B,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-8F9092-DarkGray,,0Color_Metal_Aluminum,,Dark Gray,8F9092,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-F7D400-Yellow,,0Color_Metal_Aluminum,,Yellow,F7D400,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-414141-NearBlack,,0Color_Metal_Aluminum,,Near Black,414141,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Aluminum-2A2A2A-Black,,0Color_Metal_Aluminum,,Black,2A2A2A,,,1Material_Metal_Aluminum
+PRESET,,0Color_Metal_Chrome-FFFFFF-Untinted,,0Color_Metal_Chrome,,Untinted,FFFFFF,,,1Material_Metal_Chrome
+PRESET,,0Color_Metal_Chrome-CCCCCC-Dark,,0Color_Metal_Chrome,,Dark,CCCCCC,,,1Material_Metal_Chrome
+PRESET,,0Color_Metal_Copper-C17244-Natural,,0Color_Metal_Copper,,Natural,C17244,,,1Material_Metal_Copper
+PRESET,,0Color_Metal_Iron-FFFFFF-Untinted,,0Color_Metal_Iron,,Untinted,FFFFFF,,,1Material_Metal_Iron
+PRESET,,0Color_Metal_Iron-CCCCCC-Dark,,0Color_Metal_Iron,,Dark,CCCCCC,,,1Material_Metal_Iron
+PRESET,,0Color_Metal_Nickel-FFFFFF-Untinted,,0Color_Metal_Nickel,,Untinted,FFFFFF,,,1Material_Metal_Nickel
+PRESET,,0Color_Metal_Nickel-CCCCCC-Dark,,0Color_Metal_Nickel,,Dark,CCCCCC,,,1Material_Metal_Nickel
+PRESET,,0Color_Metal_Steel-FFFFFF-Untinted,,0Color_Metal_Steel,,Untinted,FFFFFF,,,1Material_Metal_Steel
+PRESET,,0Color_Metal_Steel-EAEAEA-Gray1,,0Color_Metal_Steel,,Gray 1,EAEAEA,,,1Material_Metal_Steel
+PRESET,,0Color_Metal_Steel-D5D5D5-Gray2,,0Color_Metal_Steel,,Gray 2,D5D5D5,,,1Material_Metal_Steel
+PRESET,,0Color_Metal_Steel-C0C0C0-Gray3,,0Color_Metal_Steel,,Gray 3,C0C0C0,,,1Material_Metal_Steel
+PRESET,,0Color_Metal_Steel-ABABAB-Gray4,,0Color_Metal_Steel,,Gray 4,ABABAB,,,1Material_Metal_Steel
+PRESET,,0Color_Metal_Steel-959595-Gray5,,0Color_Metal_Steel,,Gray 5,959595,,,1Material_Metal_Steel
+PRESET,,0Color_Metal_Steel-6B6B6B-Gray6,,0Color_Metal_Steel,,Gray 6,6B6B6B,,,1Material_Metal_Steel
+PRESET,,0Color_Metal_Steel-555555-Gray7,,0Color_Metal_Steel,,Gray 7,555555,,,1Material_Metal_Steel
+PRESET,,0Color_Metal_Steel-404040-Gray8,,0Color_Metal_Steel,,Gray 8,404040,,,1Material_Metal_Steel
+PRESET,,0Color_Metal_Steel-2B2B2B-Gray9,,0Color_Metal_Steel,,Gray 9,2B2B2B,,,1Material_Metal_Steel
+PRESET,,0Color_Metal_Steel-151515-Gray10,,0Color_Metal_Steel,,Gray 10,151515,,,1Material_Metal_Steel
+PRESET,,0Color_Metal_Steel-000000-Black,,0Color_Metal_Steel,,Black,000000,,,1Material_Metal_Steel
+PRESET,,0Color_Metal_Tin-FFFFFF-White,,0Color_Metal_Tin,,White,FFFFFF,,,1Material_Metal_Tin
+PRESET,,0Color_Metal_Tin-CCCCCC-Dark,,0Color_Metal_Tin,,Dark,CCCCCC,,,1Material_Metal_Tin
+PRESET,,0Color_Metal_Zinc-FFFFFF-White,,0Color_Metal_Zinc,,White,FFFFFF,,,1Material_Metal_Zinc
+PRESET,,0Color_Metal_Zinc-CCCCCC-LightGrey,,0Color_Metal_Zinc,,Light Grey,CCCCCC,,,1Material_Metal_Zinc
+PRESET,,0Color_Metal_Zinc-37383A-CoolDarkGrey,,0Color_Metal_Zinc,,Cool Dark Grey,37383A,,,1Material_Metal_Zinc
+PRESET,,0Color_Spread_Paint-F3F1ED-GentleWhite,,0Color_Spread_Paint,,Gentle White,F3F1ED,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-DFE2E7-CoolLightGrey,,0Color_Spread_Paint,,Cool Light Grey,DFE2E7,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-C4C4C4-Grey,,0Color_Spread_Paint,,Grey,C4C4C4,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-ABABAB-DarkGrey,,0Color_Spread_Paint,,Dark Grey,ABABAB,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-F5D9CC-Peach,,0Color_Spread_Paint,,Peach,F5D9CC,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-D9A788-DesertTan,,0Color_Spread_Paint,,Desert Tan,D9A788,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-F4D5AB-Apricot,,0Color_Spread_Paint,,Apricot,F4D5AB,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-D0CD95-Thyme,,0Color_Spread_Paint,,Thyme,D0CD95,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-8DA8A1-Jade,,0Color_Spread_Paint,,Jade,8DA8A1,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-95D0D2-Aquamarine,,0Color_Spread_Paint,,Aquamarine,95D0D2,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-5A7491-PostalBlue,,0Color_Spread_Paint,,Postal Blue,5A7491,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-364155-DeepNavy,,0Color_Spread_Paint,,Deep Navy,364155,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-1C2F68-RoyalBlue,,0Color_Spread_Paint,,Royal Blue,1C2F68,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-A7A3B2-DustyLavender,,0Color_Spread_Paint,,Dusty Lavender,A7A3B2,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-754342-Burgundy,,0Color_Spread_Paint,,Burgundy,754342,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Paint-262527-Midnight,,0Color_Spread_Paint,,Midnight,262527,,,1Material_Spread_Paint
+PRESET,,0Color_Spread_Plaster-F7EBDB-Shell,,0Color_Spread_Plaster,,Shell,F7EBDB,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-F8F8F6-Pearl,,0Color_Spread_Plaster,,Pearl,F8F8F6,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-B4B4B2-Raw,,0Color_Spread_Plaster,,Raw,B4B4B2,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-FAF1D0-Champagne,,0Color_Spread_Plaster,,Champagne,FAF1D0,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-CBBDA2-Tan,,0Color_Spread_Plaster,,Tan,CBBDA2,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-E5CAAD-Coral,,0Color_Spread_Plaster,,Coral,E5CAAD,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-B5B5B7-MediumGray,,0Color_Spread_Plaster,,Medium Gray,B5B5B7,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-92918D-DarkGray,,0Color_Spread_Plaster,,Dark Gray,92918D,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-DDCBA7-Wheat,,0Color_Spread_Plaster,,Wheat,DDCBA7,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-EBD5AC-Palomino,,0Color_Spread_Plaster,,Palomino,EBD5AC,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-B3AF8C-Olive,,0Color_Spread_Plaster,,Olive,B3AF8C,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-B4BBC1-Twilight,,0Color_Spread_Plaster,,Twilight,B4BBC1,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-A2AFB8-Blue,,0Color_Spread_Plaster,,Blue,A2AFB8,,,1Material_Spread_Plaster
+PRESET,,0Color_Spread_Plaster-D0B4A8-Rose,,0Color_Spread_Plaster,,Rose,D0B4A8,,,1Material_Spread_Plaster
+PRESET,,0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-FAFAFA-White,,0Color_Synthetic and Polymer_Foam - Extruded Polystyrene,,White,FAFAFA,,,1Material_Synthetic and Polymer_Foam - Extruded Polystyrene
+PRESET,,0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink,,0Color_Synthetic and Polymer_Foam - Extruded Polystyrene,,Pink,ECB9BE,,,1Material_Synthetic and Polymer_Foam - Extruded Polystyrene
+PRESET,,0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-CFDEE4-Blue,,0Color_Synthetic and Polymer_Foam - Extruded Polystyrene,,Blue,CFDEE4,,,1Material_Synthetic and Polymer_Foam - Extruded Polystyrene
+PRESET,,0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-FAF1D0-Yellow,,0Color_Synthetic and Polymer_Foam - Extruded Polystyrene,,Yellow,FAF1D0,,,1Material_Synthetic and Polymer_Foam - Extruded Polystyrene
+PRESET,,0Color_Synthetic and Polymer_Foam - Polyethylene-FAFAFA-White,,0Color_Synthetic and Polymer_Foam - Polyethylene,,White,FAFAFA,,,1Material_Synthetic and Polymer_Foam - Polyethylene
+PRESET,,0Color_Synthetic and Polymer_Foam - Polyethylene-ECB9BE-Pink,,0Color_Synthetic and Polymer_Foam - Polyethylene,,Pink,ECB9BE,,,1Material_Synthetic and Polymer_Foam - Polyethylene
+PRESET,,0Color_Synthetic and Polymer_Foam - Polyethylene-CFDEE4-Blue,,0Color_Synthetic and Polymer_Foam - Polyethylene,,Blue,CFDEE4,,,1Material_Synthetic and Polymer_Foam - Polyethylene
+PRESET,,0Color_Synthetic and Polymer_Foam - Polyethylene-FAF1D0-Yellow,,0Color_Synthetic and Polymer_Foam - Polyethylene,,Yellow,FAF1D0,,,1Material_Synthetic and Polymer_Foam - Polyethylene
+PRESET,,0Color_Synthetic and Polymer_Foam - Polyisocyanurate-FAFAFA-White,,0Color_Synthetic and Polymer_Foam - Polyisocyanurate,,White,FAFAFA,,,1Material_Synthetic and Polymer_Foam - Polyisocyanurate
+PRESET,,0Color_Synthetic and Polymer_Foam - Polyisocyanurate-ECB9BE-Pink,,0Color_Synthetic and Polymer_Foam - Polyisocyanurate,,Pink,ECB9BE,,,1Material_Synthetic and Polymer_Foam - Polyisocyanurate
+PRESET,,0Color_Synthetic and Polymer_Foam - Polyisocyanurate-CFDEE4-Blue,,0Color_Synthetic and Polymer_Foam - Polyisocyanurate,,Blue,CFDEE4,,,1Material_Synthetic and Polymer_Foam - Polyisocyanurate
+PRESET,,0Color_Synthetic and Polymer_Foam - Polyisocyanurate-FAF1D0-Yellow,,0Color_Synthetic and Polymer_Foam - Polyisocyanurate,,Yellow,FAF1D0,,,1Material_Synthetic and Polymer_Foam - Polyisocyanurate
+PRESET,,0Color_Synthetic and Polymer_Plastic-FFFFFF-White,,0Color_Synthetic and Polymer_Plastic,,White,FFFFFF,,,1Material_Synthetic and Polymer_Plastic
+PRESET,,0Color_Synthetic and Polymer_Plastic-CCCCCC-LightGray,,0Color_Synthetic and Polymer_Plastic,,Light Gray,CCCCCC,,,1Material_Synthetic and Polymer_Plastic
+PRESET,,0Color_Synthetic and Polymer_Rubber-FFFFFF-White,,0Color_Synthetic and Polymer_Rubber,,White,FFFFFF,,,1Material_Synthetic and Polymer_Rubber
+PRESET,,0Color_Synthetic and Polymer_Rubber-CCCCCC-LightGray,,0Color_Synthetic and Polymer_Rubber,,Light Gray,CCCCCC,,,1Material_Synthetic and Polymer_Rubber
+PRESET,,0Color_Synthetic and Polymer_Vinyl Composite-FFFFFF-White,,0Color_Synthetic and Polymer_Vinyl Composite,,White,FFFFFF,,,1Material_Synthetic and Polymer_Vinyl Composite
+PRESET,,0Color_Synthetic and Polymer_Vinyl Composite-CCCCCC-LightGray,,0Color_Synthetic and Polymer_Vinyl Composite,,Light Gray,CCCCCC,,,1Material_Synthetic and Polymer_Vinyl Composite
+PRESET,,0Color_Stone_Alabaster-FFFFFF-White,,0Color_Stone_Alabaster,,White,FFFFFF,,,1Material_Stone_Alabaster
+PRESET,,0Color_Stone_Basalt-FFFFFF-White,,0Color_Stone_Basalt,,White,FFFFFF,,,1Material_Stone_Basalt
+PRESET,,0Color_Stone_Granite-FFFFFF-White,,0Color_Stone_Granite,,White,FFFFFF,,,1Material_Stone_Granite
+PRESET,,0Color_Stone_Lava Stone-FFFFFF-White,,0Color_Stone_Lava Stone,,White,FFFFFF,,,1Material_Stone_Lava Stone
+PRESET,,0Color_Stone_Limestone-FFFFFF-White,,0Color_Stone_Limestone,,White,FFFFFF,,,1Material_Stone_Limestone
+PRESET,,0Color_Stone_Marble-FFFFFF-White,,0Color_Stone_Marble,,White,FFFFFF,,,1Material_Stone_Marble
+PRESET,,0Color_Stone_Onyx-FFFFFF-White,,0Color_Stone_Onyx,,White,FFFFFF,,,1Material_Stone_Onyx
+PRESET,,0Color_Stone_Quartzite-FFFFFF-White,,0Color_Stone_Quartzite,,White,FFFFFF,,,1Material_Stone_Quartzite
+PRESET,,0Color_Stone_Sandstone-FFFFFF-White,,0Color_Stone_Sandstone,,White,FFFFFF,,,1Material_Stone_Sandstone
+PRESET,,0Color_Stone_Slate-FFFFFF-White,,0Color_Stone_Slate,,White,FFFFFF,,,1Material_Stone_Slate
+PRESET,,0Color_Stone_Slate-EAEAEA-Gray1,,0Color_Stone_Slate,,Gray 1,EAEAEA,,,1Material_Stone_Slate
+PRESET,,0Color_Stone_Slate-D5D5D5-Gray2,,0Color_Stone_Slate,,Gray 2,D5D5D5,,,1Material_Stone_Slate
+PRESET,,0Color_Stone_Slate-C0C0C0-Gray3,,0Color_Stone_Slate,,Gray 3,C0C0C0,,,1Material_Stone_Slate
+PRESET,,0Color_Stone_Slate-ABABAB-Gray4,,0Color_Stone_Slate,,Gray 4,ABABAB,,,1Material_Stone_Slate
+PRESET,,0Color_Stone_Slate-959595-Gray5,,0Color_Stone_Slate,,Gray 5,959595,,,1Material_Stone_Slate
+PRESET,,0Color_Stone_Slate-6B6B6B-Gray6,,0Color_Stone_Slate,,Gray 6,6B6B6B,,,1Material_Stone_Slate
+PRESET,,0Color_Stone_Slate-555555-Gray7,,0Color_Stone_Slate,,Gray 7,555555,,,1Material_Stone_Slate
+PRESET,,0Color_Stone_Slate-404040-Gray8,,0Color_Stone_Slate,,Gray 8,404040,,,1Material_Stone_Slate
+PRESET,,0Color_Stone_Slate-2B2B2B-Gray9,,0Color_Stone_Slate,,Gray 9,2B2B2B,,,1Material_Stone_Slate
+PRESET,,0Color_Stone_Slate-151515-Gray10,,0Color_Stone_Slate,,Gray 10,151515,,,1Material_Stone_Slate
+PRESET,,0Color_Stone_Slate-000000-Black,,0Color_Stone_Slate,,Black,000000,,,1Material_Stone_Slate
+PRESET,,0Color_Stone_Soapstone-FFFFFF-White,,0Color_Stone_Soapstone,,White,FFFFFF,,,1Material_Stone_Soapstone
+PRESET,,0Color_Stone_Travertine-FFFFFF-White,,0Color_Stone_Travertine,,White,FFFFFF,,,1Material_Stone_Travertine
+PRESET,,0Color_Wood_Ash-FFFFFF-Natural,,0Color_Wood_Ash,,Natural,FFFFFF,,,1Material_Wood_Ash
+PRESET,,0Color_Wood_Bamboo-FFFFFF-Natural,,0Color_Wood_Bamboo,,Natural,FFFFFF,,,1Material_Wood_Bamboo
+PRESET,,0Color_Wood_Beech-FFFFFF-Natural,,0Color_Wood_Beech,,Natural,FFFFFF,,,1Material_Wood_Beech
+PRESET,,0Color_Wood_Birch-FFFFFF-Natural,,0Color_Wood_Birch,,Natural,FFFFFF,,,1Material_Wood_Birch
+PRESET,,0Color_Wood_Cedar - Western Red-FFFFFF-Natural,,0Color_Wood_Cedar - Western Red,,Natural,FFFFFF,,,1Material_Wood_Cedar - Western Red
+PRESET,,0Color_Wood_Cedar - White-FFFFFF-Natural,,0Color_Wood_Cedar - White,,Natural,FFFFFF,,,1Material_Wood_Cedar - White
+PRESET,,0Color_Wood_Cedar - White-2B2B2B-Black,,0Color_Wood_Cedar - White,,Black,2B2B2B,,,1Material_Wood_Cedar - White
+PRESET,,0Color_Wood_Cherry-FFFFFF-Natural,,0Color_Wood_Cherry,,Natural,FFFFFF,,,1Material_Wood_Cherry
+PRESET,,0Color_Wood_Cypress - Bald-FFFFFF-Natural,,0Color_Wood_Cypress - Bald,,Natural,FFFFFF,,,1Material_Wood_Cypress - Bald
+PRESET,,0Color_Wood_Ipe-FFFFFF-Natural,,0Color_Wood_Ipe,,Natural,FFFFFF,,,1Material_Wood_Ipe
+PRESET,,0Color_Wood_Mahogany-FFFFFF-Natural,,0Color_Wood_Mahogany,,Natural,FFFFFF,,,1Material_Wood_Mahogany
+PRESET,,0Color_Wood_Maple-FFFFFF-Natural,,0Color_Wood_Maple,,Natural,FFFFFF,,,1Material_Wood_Maple
+PRESET,,0Color_Wood_Oak - Red-FFFFFF-Natural,,0Color_Wood_Oak - Red,,Natural,FFFFFF,,,1Material_Wood_Oak - Red
+PRESET,,0Color_Wood_Oak - White-FFFFFF-Natural,,0Color_Wood_Oak - White,,Natural,FFFFFF,,,1Material_Wood_Oak - White
+PRESET,,0Color_Wood_Redwood-FFFFFF-Natural,,0Color_Wood_Redwood,,Natural,FFFFFF,,,1Material_Wood_Redwood
+PRESET,,0Color_Wood_Spruce-Pine-Fir-FFFFFF-Natural,,0Color_Wood_Spruce-Pine-Fir,,Natural,FFFFFF,,,1Material_Wood_Spruce-Pine-Fir
+PRESET,,0Color_Wood_Sycamore-FFFFFF-Natural,,0Color_Wood_Sycamore,,Natural,FFFFFF,,,1Material_Wood_Sycamore
+PRESET,,0Color_Wood_Teak-FFFFFF-Natural,,0Color_Wood_Teak,,Natural,FFFFFF,,,1Material_Wood_Teak
+PRESET,,0Color_Wood_Walnut-FFFFFF-Natural,,0Color_Wood_Walnut,,Natural,FFFFFF,,,1Material_Wood_Walnut
+PRESET,,0Color_Fibrous_Cork-FFFFFF-Natural,,0Color_Fibrous_Cork,,Natural,FFFFFF,,,1Material_Fibrous_Cork
+PRESET,,0Color_Fibrous_Cork-D0C6BD-Cream1,,0Color_Fibrous_Cork,,Cream 1,D0C6BD,,,1Material_Fibrous_Cork
+PRESET,,0Color_Fibrous_Cork-BF945F-Saddle,,0Color_Fibrous_Cork,,Saddle,BF945F,,,1Material_Fibrous_Cork
+PRESET,,0Color_Fibrous_Cork-A99978-Parchment,,0Color_Fibrous_Cork,,Parchment,A99978,,,1Material_Fibrous_Cork
+PRESET,,0Color_Fibrous_Cork-88543F-Copper,,0Color_Fibrous_Cork,,Copper,88543F,,,1Material_Fibrous_Cork
+PRESET,,0Color_Fibrous_Cork-464F3C-OliveGreen,,0Color_Fibrous_Cork,,Olive Green,464F3C,,,1Material_Fibrous_Cork
+PRESET,,0Color_Fibrous_Cork-7A878F-SilverBlue,,0Color_Fibrous_Cork,,Silver Blue,7A878F,,,1Material_Fibrous_Cork
+PRESET,,0Color_Fibrous_Cork-38485F-OrderlyBlue,,0Color_Fibrous_Cork,,Orderly Blue,38485F,,,1Material_Fibrous_Cork
+PRESET,,0Color_Fibrous_Cork-3C3B40-Ink,,0Color_Fibrous_Cork,,Ink,3C3B40,,,1Material_Fibrous_Cork
+PRESET,,0Color_Fibrous_Cork-534E4A-Charcoal,,0Color_Fibrous_Cork,,Charcoal,534E4A,,,1Material_Fibrous_Cork
+PRESET,,0Color_Fibrous_Cementitious Wood Fiber-FFFFFF-White,,0Color_Fibrous_Cementitious Wood Fiber,,White,FFFFFF,,,1Material_Fibrous_Cementitious Wood Fiber
+PRESET,,0Color_Fibrous_Cementitious Wood Fiber-D0C6BD-Cream1,,0Color_Fibrous_Cementitious Wood Fiber,,Cream 1,D0C6BD,,,1Material_Fibrous_Cementitious Wood Fiber
+PRESET,,0Color_Fibrous_Cementitious Wood Fiber-BF945F-Saddle,,0Color_Fibrous_Cementitious Wood Fiber,,Saddle,BF945F,,,1Material_Fibrous_Cementitious Wood Fiber
+PRESET,,0Color_Fibrous_Cementitious Wood Fiber-A99978-Parchment,,0Color_Fibrous_Cementitious Wood Fiber,,Parchment,A99978,,,1Material_Fibrous_Cementitious Wood Fiber
+PRESET,,0Color_Fibrous_Cementitious Wood Fiber-88543F-Copper,,0Color_Fibrous_Cementitious Wood Fiber,,Copper,88543F,,,1Material_Fibrous_Cementitious Wood Fiber
+PRESET,,0Color_Fibrous_Cementitious Wood Fiber-464F3C-OliveGreen,,0Color_Fibrous_Cementitious Wood Fiber,,Olive Green,464F3C,,,1Material_Fibrous_Cementitious Wood Fiber
+PRESET,,0Color_Fibrous_Cementitious Wood Fiber-7A878F-SilverBlue,,0Color_Fibrous_Cementitious Wood Fiber,,Silver Blue,7A878F,,,1Material_Fibrous_Cementitious Wood Fiber
+PRESET,,0Color_Fibrous_Cementitious Wood Fiber-38485F-OrderlyBlue,,0Color_Fibrous_Cementitious Wood Fiber,,Orderly Blue,38485F,,,1Material_Fibrous_Cementitious Wood Fiber
+PRESET,,0Color_Fibrous_Cementitious Wood Fiber-3C3B40-Ink,,0Color_Fibrous_Cementitious Wood Fiber,,Ink,3C3B40,,,1Material_Fibrous_Cementitious Wood Fiber
+PRESET,,0Color_Fibrous_Cementitious Wood Fiber-534E4A-Charcoal,,0Color_Fibrous_Cementitious Wood Fiber,,Charcoal,534E4A,,,1Material_Fibrous_Cementitious Wood Fiber
+PRESET,,0Color_Fibrous_Mineral Fiber-FFFFFF-Natural,,0Color_Fibrous_Mineral Fiber,,Natural,FFFFFF,,,1Material_Fibrous_Mineral Fiber
+PRESET,,0Color_Fibrous_Plywood-FFFFFF-Natural,,0Color_Fibrous_Plywood,,Natural,FFFFFF,,,1Material_Fibrous_Plywood
+PRESET,,0Color_Fibrous_Wood Fibers-FFFFFF-Natural,,0Color_Fibrous_Wood Fibers,,Natural,FFFFFF,,,1Material_Fibrous_Wood Fibers
+PRESET,,0Color_Fibrous_Wood Particles-FFFFFF-Natural,,0Color_Fibrous_Wood Particles,,Natural,FFFFFF,,,1Material_Fibrous_Wood Particles
+PRESET,,0Color_Fibrous_Wood Strands-FFFFFF-Natural,,0Color_Fibrous_Wood Strands,,Natural,FFFFFF,,,1Material_Fibrous_Wood Strands
+PRESET,,0Color_Sitework_Grass-FFFFFF-Natural,,0Color_Sitework_Grass,,Natural,FFFFFF,,,1Material_Sitework_Grass
+PRESET,,0Color_Sitework_Moss-FFFFFF-Natural,,0Color_Sitework_Moss,,Natural,FFFFFF,,,1Material_Sitework_Moss
+PRESET,,0Color_Sitework_Soil-FFFFFF-Natural,,0Color_Sitework_Soil,,Natural,FFFFFF,,,1Material_Sitework_Soil
