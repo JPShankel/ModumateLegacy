@@ -34,15 +34,30 @@ void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMPresetEditorNodeShared
 	NodeIDToSlotMapItem.Empty();
 	VerticalBoxSlots->ClearChildren();
 
-	for (int32 i = 0; i < NodePtr->WorkingPresetCopy.PartSlots.Num(); ++i)
+	TArray<FBIMPresetPartSlot> partSlots;
+	NodePtr->GetPartSlots(partSlots);
+	for (int32 i = 0; i < partSlots.Num(); ++i)
 	{
-		const FBIMPresetPartSlot& partSlot = NodePtr->WorkingPresetCopy.PartSlots[i];
 		UBIMBlockSlotListItem* newSlot = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockSlotListItem>(SlotListItemClass);
-		if (newSlot)// && NodePtr->AttachedChildren[i].IsPart())
+		if (newSlot)
 		{
-			FString presetString = partSlot.PartPreset.ToString();
+			FString presetString = partSlots[i].SlotPreset.ToString();
 			newSlot->TextBlockWidget->ChangeText(FText::FromString(presetString));
-			newSlot->SlotID = i;
+
+			newSlot->SlotIndex = i;
+			newSlot->ParentID = NodePtr->GetInstanceID();
+
+			if (partSlots[i].PartPreset.IsNone())
+			{
+				newSlot->ConnectSlotItemToNode(MOD_ID_NONE);
+			}
+			else
+			{
+				int32 connectedChildID = MOD_ID_NONE;
+				NodePtr->FindNodeIDConnectedToSlot(partSlots[i].SlotPreset, connectedChildID);
+				newSlot->ConnectSlotItemToNode(connectedChildID);
+			}
+
 			VerticalBoxSlots->AddChildToVerticalBox(newSlot);
 		}
 	}

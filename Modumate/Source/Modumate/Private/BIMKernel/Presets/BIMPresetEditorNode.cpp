@@ -194,6 +194,19 @@ EBIMResult FBIMPresetEditorNode::FindChild(int32 ChildID, int32& OutPinSetIndex,
 	return EBIMResult::Error;
 }
 
+EBIMResult FBIMPresetEditorNode::FindNodeIDConnectedToSlot(const FBIMKey& SlotPreset, int32& OutChildID) const
+{
+	for (auto& curNode : PartNodes)
+	{
+		if (curNode.Pin()->MyParentPartSlot == SlotPreset)
+		{
+			OutChildID = curNode.Pin()->GetInstanceID();
+			return EBIMResult::Success;
+		}
+	}
+	return EBIMResult::Error;
+}
+
 EBIMResult FBIMPresetEditorNode::FindOtherChildrenOnPin(TArray<int32>& OutChildIDs) const
 {
 	if (ParentInstance != nullptr)

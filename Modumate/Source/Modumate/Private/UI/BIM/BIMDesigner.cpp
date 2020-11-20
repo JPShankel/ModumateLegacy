@@ -687,7 +687,7 @@ void UBIMDesigner::DrawConnectSplineForNodes(const FPaintContext& context, class
 		if (slotListItem)
 		{
 			float slotOffset = StartNode->NodeDirty ? SlotListStartOffsetDirty : SlotListStartOffset;
-			startNodePos.Y = canvasSlotStart->GetPosition().Y + slotOffset + (slotListItem->SlotID * SlotListItemHeight);
+			startNodePos.Y = canvasSlotStart->GetPosition().Y + slotOffset + (slotListItem->SlotIndex * SlotListItemHeight);
 		}
 	}
 	FVector2D endNodePos = canvasSlotEnd->GetPosition() + FVector2D(0.f, endNodeSize.Y / 2.f);
@@ -945,4 +945,29 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 
 	UpdateBIMDesigner();
 	return true;
+}
+
+void UBIMDesigner::ToggleSlotNode(int32 ParentPartSlotID, int32 SlotID, bool NewEnable)
+{
+	const FBIMPresetEditorNodeSharedPtr nodeParent = InstancePool.InstanceFromID(ParentPartSlotID);
+	if (nodeParent.IsValid())
+	{
+		EBIMResult result = EBIMResult::Error;
+		if (NewEnable)
+		{
+			// TODO: get default preset for slot
+			FBIMKey newPartPreset = nodeParent->OriginalPresetCopy.PartSlots[SlotID].PartPreset;
+			result = nodeParent->SetPartSlotPreset(nodeParent->WorkingPresetCopy.PartSlots[SlotID].SlotPreset, newPartPreset);
+		}
+		else
+		{
+			result = nodeParent->ClearPartSlot(nodeParent->WorkingPresetCopy.PartSlots[SlotID].SlotPreset);
+
+		}
+
+		if (result == EBIMResult::Success)
+		{
+			UpdateBIMDesigner();
+		}
+	}
 }

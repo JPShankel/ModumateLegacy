@@ -35,8 +35,11 @@ EBIMResult FBIMPresetCollection::GetDependentPresets(const FBIMKey& PresetID, TA
 		}
 		for (auto& part : preset->PartSlots)
 		{
-			OutPresets.AddUnique(part.PartPreset);
-			presetStack.Push(part.PartPreset);
+			if (!part.PartPreset.IsNone())
+			{
+				OutPresets.AddUnique(part.PartPreset);
+				presetStack.Push(part.PartPreset);
+			}
 		}
 	}
 	return EBIMResult::Success;

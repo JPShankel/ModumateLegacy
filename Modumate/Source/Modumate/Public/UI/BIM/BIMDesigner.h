@@ -159,4 +159,5 @@ public:
 	bool UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVisibility, FVector2D offset = FVector2D::ZeroVector);
 	bool GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, int32 NodeID);
 	bool SavePresetFromNode(bool SaveAs, int32 InstanceID);
+	void ToggleSlotNode(int32 ParentPartSlotID, int32 SlotID, bool NewEnable);
 };

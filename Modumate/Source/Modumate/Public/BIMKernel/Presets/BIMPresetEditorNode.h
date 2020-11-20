@@ -83,6 +83,7 @@ public:
 	EBIMResult ClearPartSlot(const FBIMKey& SlotPreset);
 
 	EBIMResult FindChild(int32 ChildID, int32& OutPinSetIndex, int32& OutPinSetPosition) const;
+	EBIMResult FindNodeIDConnectedToSlot(const FBIMKey& SlotPreset, int32& OutChildID) const;
 	EBIMResult FindOtherChildrenOnPin(TArray<int32>& OutChildIDs) const;
 	EBIMResult GatherChildrenInOrder(TArray<int32>& OutChildIDs) const;
 	EBIMResult GatherAllChildNodes(TArray<FBIMPresetEditorNodeSharedPtr>& OutChildren);
