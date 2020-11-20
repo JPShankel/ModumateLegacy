@@ -404,8 +404,11 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 				FVector intersectionStart = intersections[idx];
 				FVector intersectionEnd = intersections[idx + 1];
 				TPair<FVector, FVector> currentIntersection = TPair<FVector, FVector>(intersectionStart, intersectionEnd);
+				// Hole coords are on the parent meta-plane so project.
+				FVector samplePoint = usePointsA ? layer.PointsA[0] : layer.PointsB[0];
+				FVector hole3DDisplacement = (samplePoint | layer.Normal) * layer.Normal;
 				layer.GetRangesForHolesOnPlane(lineRanges, currentIntersection,
-					parentLocation + currentThickness * layer.Normal, Plane, -AxisX, -AxisY, Origin);
+					parentLocation + hole3DDisplacement, Plane, -AxisX, -AxisY, Origin);
 
 				// TODO: unclear why the axes need to be flipped here, could be because of the different implementation of finding intersections
 				FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersectionStart);
