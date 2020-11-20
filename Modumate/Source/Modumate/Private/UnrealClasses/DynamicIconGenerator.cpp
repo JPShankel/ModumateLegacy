@@ -547,7 +547,11 @@ bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &As
 	TArray<UStaticMesh*> meshes;
 	for (int32 i = 0; i < Assembly.Parts.Num(); ++i)
 	{
-		meshes.Add(Assembly.Parts[i].Mesh.EngineMesh.Get());
+		// The first part in a multi-part FFE is the root part and has no mesh
+		if (Assembly.Parts[i].Mesh.EngineMesh.IsValid())
+		{
+			meshes.Add(Assembly.Parts[i].Mesh.EngineMesh.Get());
+		}
 	}
 	if (meshes.Num() == 0)
 	{

@@ -3,6 +3,7 @@
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/AssemblySpec/BIMLayerSpec.h"
+#include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
@@ -481,6 +482,12 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 		partSlot.Flip[2] = false;
 		partSlot.ParentSlotIndex = INDEX_NONE;
 	}
+
+#if WITH_EDITOR
+	FBIMPartLayout layout;
+	ensureAlways(layout.FromAssembly(*this, FVector::OneVector) == EBIMResult::Success);
+#endif
+
 	return EBIMResult::Success;
 }
 
