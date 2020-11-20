@@ -2,6 +2,15 @@
 
 #include "BIMKernel/Presets/BIMPresetTypeDefinition.h"
 
+FBIMPresetNodePinSet::FBIMPresetNodePinSet(FName InSetName, int32 InMinCount, int32 InMaxCount) :
+	SetName(InSetName), MinCount(InMinCount), MaxCount(InMaxCount)
+{}
+
+FBIMPresetNodePinSet::FBIMPresetNodePinSet() : 
+	MinCount(0), MaxCount(0)
+{
+}
+
 bool FBIMPresetNodePinSet::Matches(const FBIMPresetNodePinSet& OtherPinSet) const
 {
 	if (!SetName.IsEqual(OtherPinSet.SetName))

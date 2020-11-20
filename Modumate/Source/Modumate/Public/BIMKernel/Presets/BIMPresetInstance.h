@@ -154,6 +154,7 @@ public:
 
 	EBIMResult AddChildPreset(const FBIMKey& ChildPresetID, int32 PinSetIndex, int32 PinSetPosition);
 	EBIMResult RemoveChildPreset(int32 PinSetIndex, int32 PinSetPosition);
+	bool HasPin(int32 PinSetIndex, int32 PinSetPosition) const;
 
 	bool ValidatePreset() const;
 

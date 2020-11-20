@@ -45,11 +45,8 @@ struct MODUMATE_API FBIMPresetNodePinSet
 	UPROPERTY()
 	EBIMPinTarget PinTarget = EBIMPinTarget::Default;
 
-	FBIMPresetNodePinSet(FName InSetName, int32 InMinCount, int32 InMaxCount) :
-		SetName(InSetName), MinCount(InMinCount), MaxCount(InMaxCount)
-	{}
-
-	FBIMPresetNodePinSet() {};
+	FBIMPresetNodePinSet(FName InSetName, int32 InMinCount, int32 InMaxCount);
+	FBIMPresetNodePinSet();
 
 	bool Matches(const FBIMPresetNodePinSet& OtherPinSet) const;
 };

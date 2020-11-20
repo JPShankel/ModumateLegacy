@@ -73,7 +73,7 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 	TArray<FBIMPresetEditorNodeSharedPtr> createdInstances;
 
 	FBIMPresetEditorNodeSharedPtr parent = InstanceFromID(ParentID);
-	if (parent.IsValid())
+	if (parent.IsValid() && !parent->WorkingPresetCopy.HasPin(ParentSetIndex,ParentSetPosition))
 	{
 		parent->WorkingPresetCopy.AddChildPreset(PresetID, ParentSetIndex, ParentSetPosition);
 	}
@@ -146,13 +146,17 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 		createdInstance->SortChildren();
 	}
 
-	if (returnVal->ParentInstance.IsValid())
-	{
-		returnVal->ParentInstance.Pin()->SortChildren();
-	}
-
-	ValidatePool();
 	return returnVal;
+}
+
+EBIMResult FBIMPresetEditor::SortAndValidate() const
+{
+	for (auto inst : InstancePool)
+	{
+		inst->SortChildren();
+	}
+	ValidatePool();
+	return EBIMResult::Success;
 }
 
 bool FBIMPresetEditor::ValidatePool() const
@@ -568,6 +572,7 @@ EBIMResult FBIMPresetEditor::InitFromPreset(const FBIMPresetCollection& PresetCo
 {
 	ResetInstances();
 	OutRootNode = CreateNodeInstanceFromPreset(PresetCollection, 0, PresetID, 0, 0);
+	SortAndValidate();
 	return OutRootNode.IsValid() ? EBIMResult::Success : EBIMResult::Error;
 }
 
@@ -612,15 +617,8 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& Pre
 
 	for (auto& childPreset : preset->ChildPresets)
 	{
-		auto newNode = CreateNodeInstanceFromPreset(PresetCollection, 0, childPreset.PresetID, INDEX_NONE, INDEX_NONE);
-		inst->ChildNodes.Add(newNode);
-		auto lastPinned = inst->ChildNodes.Last().Pin();
-		lastPinned->MyParentPinSetIndex = childPreset.ParentPinSetIndex;
-		lastPinned->MyParentPinSetPosition = childPreset.ParentPinSetPosition;
-		lastPinned->ParentInstance = inst;
+		CreateNodeInstanceFromPreset(PresetCollection, InstanceID, childPreset.PresetID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition);
 	}
-
-	inst->SortChildren();
 
 #if 0 // TODO: UI will need custom part processing, not just nodes
 	for (auto& partPreset : preset->PartSlots)
@@ -628,6 +626,8 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& Pre
 		CreateNodeInstanceFromPreset(PresetCollection, inst->GetInstanceID(), partPreset.PartPreset, -1, -1, partPreset.SlotName);
 	}
 #endif
+
+	SortAndValidate();
 
 	return EBIMResult::Success;
 }

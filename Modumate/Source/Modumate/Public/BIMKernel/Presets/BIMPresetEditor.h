@@ -45,6 +45,8 @@ public:
 	const FBIMPresetEditorNodeSharedPtr InstanceFromID(int32 InstanceID) const;
 	FBIMPresetEditorNodeSharedPtr InstanceFromID(int32 InstanceID);
 
+	EBIMResult SortAndValidate() const;
+
 	bool ValidatePool() const;
 
 	EBIMResult CreateAssemblyFromNodes(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec);

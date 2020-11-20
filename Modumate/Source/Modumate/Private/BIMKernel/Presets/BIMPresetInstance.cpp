@@ -120,6 +120,18 @@ bool FBIMPresetInstance::SupportsChild(const FBIMPresetInstance& CandidateChild)
 	return false;
 }
 
+bool FBIMPresetInstance::HasPin(int32 PinSetIndex, int32 PinSetPosition) const
+{
+	for (auto& child : ChildPresets)
+	{
+		if (child.ParentPinSetIndex == PinSetIndex && child.ParentPinSetPosition == PinSetPosition)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 EBIMResult FBIMPresetInstance::AddChildPreset(const FBIMKey& ChildPresetID, int32 PinSetIndex, int32 PinSetPosition)
 {
 	FName pinChannel;
@@ -174,7 +186,7 @@ bool FBIMPresetInstance::ValidatePreset() const
 {
 	if (ChildPresets.Num() > 0)
 	{
-		if (ChildPresets[0].ParentPinSetIndex != 0 || ChildPresets[0].ParentPinSetPosition != 0)
+		if (ChildPresets[0].ParentPinSetPosition != 0)
 		{
 			return false;
 		}
