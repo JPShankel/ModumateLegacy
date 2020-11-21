@@ -54,9 +54,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
 	float NodeWidth = 312.f;
 
-	// Similar to NodeWidth, but for nodes with slots (parts)
+	// Similar to NodeWidth, but for expanded nodes with slots (parts)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
-	float SlotNodeWidth = 442.f;
+	float SlotNodeWidthExpanded = 442.f;
+
+	// Similar to NodeWidth, but for collapsed nodes with slots (parts)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
+	float SlotNodeWidthCollapsed = 432.f;
 
 	// Size of the tab on top of the node during dirty state
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")

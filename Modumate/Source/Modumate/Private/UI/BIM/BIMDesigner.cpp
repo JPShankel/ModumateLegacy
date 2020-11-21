@@ -681,12 +681,16 @@ void UBIMDesigner::DrawConnectSplineForNodes(const FPaintContext& context, class
 
 	FVector2D startNodePos = canvasSlotStart->GetPosition() + FVector2D(startNodeSize.X, startNodeSize.Y / 2.f);
 	// If there's a slot item connect to the node, use slot item's position instead of node's mid position
-	if (StartNode->bNodeHasSlotPart && StartNode->NodeSwitchState == ENodeWidgetSwitchState::Expanded)
+	if (StartNode->bNodeHasSlotPart && !StartNode->NodeCollapse)
 	{
 		UBIMBlockSlotListItem* slotListItem = StartNode->BIMBlockSlotList->NodeIDToSlotMapItem.FindRef(EndNode->ID);
 		if (slotListItem)
 		{
-			float slotOffset = StartNode->NodeDirty ? SlotListStartOffsetDirty : SlotListStartOffset;
+			float slotOffset = SlotListStartOffset;
+			if (StartNode->NodeDirty)
+			{
+				slotOffset += SlotListDirtyTabSize;
+			}
 			startNodePos.Y = canvasSlotStart->GetPosition().Y + slotOffset + (slotListItem->SlotIndex * SlotListItemHeight);
 		}
 	}

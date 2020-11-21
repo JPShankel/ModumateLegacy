@@ -384,7 +384,7 @@ FVector2D UBIMBlockNode::GetEstimatedNodeSize()
 		estimatedSize += BottomPadding;
 	}
 
-	float outWidth = bNodeHasSlotPart ? SlotNodeWidth : NodeWidth;
+	float outWidth = bNodeHasSlotPart ? (NodeCollapse ? SlotNodeWidthCollapsed : SlotNodeWidthExpanded) : NodeWidth;
 
 	return FVector2D(outWidth, estimatedSize);
 }

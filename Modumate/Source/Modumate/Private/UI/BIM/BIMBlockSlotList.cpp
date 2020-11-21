@@ -7,6 +7,9 @@
 #include "UI/EditModelPlayerHUD.h"
 #include "Components/VerticalBox.h"
 #include "UI/BIM/BIMBlockSlotListItem.h"
+#include "DocumentManagement/ModumatePresetManager.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "BIMKernel/Presets/BIMPresetEditor.h"
 
 UBIMBlockSlotList::UBIMBlockSlotList(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -41,8 +44,11 @@ void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMPresetEditorNodeShared
 		UBIMBlockSlotListItem* newSlot = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockSlotListItem>(SlotListItemClass);
 		if (newSlot)
 		{
-			FString presetString = partSlots[i].SlotPreset.ToString();
-			newSlot->TextBlockWidget->ChangeText(FText::FromString(presetString));
+			const FBIMPresetInstance* preset = controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(partSlots[i].SlotPreset);
+			if (preset != nullptr)
+			{
+				newSlot->TextBlockWidget->ChangeText(preset->DisplayName);
+			}		
 
 			newSlot->SlotIndex = i;
 			newSlot->ParentID = NodePtr->GetInstanceID();
@@ -56,6 +62,7 @@ void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMPresetEditorNodeShared
 				int32 connectedChildID = MOD_ID_NONE;
 				NodePtr->FindNodeIDConnectedToSlot(partSlots[i].SlotPreset, connectedChildID);
 				newSlot->ConnectSlotItemToNode(connectedChildID);
+				NodeIDToSlotMapItem.Add(connectedChildID, newSlot);
 			}
 
 			VerticalBoxSlots->AddChildToVerticalBox(newSlot);

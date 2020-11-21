@@ -98,15 +98,15 @@ public:
 
 	// Starting position for the first slot item, offset from top of the node
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float SlotListStartOffset = 50.f;
+	float SlotListStartOffset = 52.f;
 
-	// Starting position for the first slot item, offset from top of the node when it is dirty
+	// Size of the additional tab if this node is dirty
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float SlotListStartOffsetDirty = 150.f;
+	float SlotListDirtyTabSize = 100.f;
 
 	// Height of slot item
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float SlotListItemHeight = 16.f;
+	float SlotListItemHeight = 18.f;
 
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *Controller;
