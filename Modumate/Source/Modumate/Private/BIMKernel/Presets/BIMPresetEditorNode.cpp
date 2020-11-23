@@ -34,32 +34,6 @@ EBIMResult FBIMPresetEditorNode::GetPartSlots(TArray<FBIMPresetPartSlot>& OutPar
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetEditorNode::ClearPartSlot(const FBIMKey& SlotPreset)
-{
-	for (auto& partSlot : WorkingPresetCopy.PartSlots)
-	{
-		if (partSlot.SlotPreset == SlotPreset)
-		{
-			partSlot.PartPreset = FBIMKey();
-			return EBIMResult::Success;
-		}
-	}
-	return EBIMResult::Error;
-}
-
-EBIMResult FBIMPresetEditorNode::SetPartSlotPreset(const FBIMKey& SlotPreset, const FBIMKey& PartPreset)
-{
-	for (auto& partSlot : WorkingPresetCopy.PartSlots)
-	{
-		if (partSlot.SlotPreset == SlotPreset)
-		{
-			partSlot.PartPreset = PartPreset;
-			return EBIMResult::Success;
-		}
-	}
-	return EBIMResult::Error;
-}
-
 EBIMResult FBIMPresetEditorNode::NodeIamEmbeddedIn(int32& OutNodeId) const
 {
 	OutNodeId = INDEX_NONE;
@@ -268,10 +242,27 @@ EBIMResult FBIMPresetEditorNode::DetachSelfFromParent()
 			}
 		}
 
+		auto pinnedParent = ParentInstance.Pin();
 		if (childToRemove.IsValid())
 		{
-			ParentInstance.Pin()->ChildNodes.Remove(childToRemove);
-			ParentInstance.Pin()->WorkingPresetCopy.RemoveChildPreset(MyParentPinSetIndex, MyParentPinSetPosition);
+			pinnedParent->ChildNodes.Remove(childToRemove);
+			pinnedParent->WorkingPresetCopy.RemoveChildPreset(MyParentPinSetIndex, MyParentPinSetPosition);
+		}
+		else
+		{
+			for (auto& partNode : ParentInstance.Pin()->PartNodes)
+			{
+				if (partNode.HasSameObject(this))
+				{
+					childToRemove = partNode;
+					break;
+				}
+			}
+			if (childToRemove.IsValid())
+			{
+				pinnedParent->PartNodes.Remove(childToRemove);
+				pinnedParent->WorkingPresetCopy.SetPartPreset(childToRemove.Pin()->MyParentPartSlot, FBIMKey());
+			}
 		}
 
 		ParentInstance = nullptr;
@@ -310,6 +301,26 @@ EBIMResult FBIMPresetEditorNode::SortChildren()
 		}
 		return lhsPin->MyParentPinSetPosition < rhsPin->MyParentPinSetPosition;
 	});
+
+
+	// When parts are added and removed, the PartNodes array gets out of order
+	TMap<FBIMKey, FBIMPresetEditorNodeWeakPtr> slotMap;
+	for (auto& partNode : PartNodes)
+	{
+		slotMap.Add(partNode.Pin()->MyParentPartSlot, partNode);
+	}
+
+	PartNodes.Empty();
+
+	for (auto& presetPart : WorkingPresetCopy.PartSlots)
+	{
+		auto* slotNode = slotMap.Find(presetPart.SlotPreset);
+		// Will be null for empty slots
+		if (slotNode != nullptr)
+		{
+			PartNodes.Add(*slotNode);
+		}
+	}
 
 	UpdateAddButtons();
 

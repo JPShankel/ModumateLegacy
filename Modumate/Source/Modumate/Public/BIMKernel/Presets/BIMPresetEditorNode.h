@@ -79,8 +79,6 @@ public:
 	EBIMResult AddChildPreset(const FBIMPresetEditorNodeSharedPtr& Child, int32 PinSetIndex, int32 PinSetPosition);
 
 	EBIMResult GetPartSlots(TArray<FBIMPresetPartSlot>& OutPartSlots) const;
-	EBIMResult SetPartSlotPreset(const FBIMKey& SlotPreset, const FBIMKey& PartPreset);
-	EBIMResult ClearPartSlot(const FBIMKey& SlotPreset);
 
 	EBIMResult FindChild(int32 ChildID, int32& OutPinSetIndex, int32& OutPinSetPosition) const;
 	EBIMResult FindNodeIDConnectedToSlot(const FBIMKey& SlotPreset, int32& OutChildID) const;

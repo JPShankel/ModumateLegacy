@@ -42,6 +42,9 @@ public:
 	FBIMPresetEditorNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition, const FBIMKey& SlotAssignment=FBIMKey());
 	EBIMResult SetNewPresetForNode(const FBIMPresetCollection &PresetCollection, int32 InstanceID, const FBIMKey &PresetID);
 
+	EBIMResult SetPartPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, int32 SlotID, const FBIMKey& PartPreset);
+	EBIMResult ClearPartPreset(int32 ParentID, int32 SlotID);
+
 	const FBIMPresetEditorNodeSharedPtr InstanceFromID(int32 InstanceID) const;
 	FBIMPresetEditorNodeSharedPtr InstanceFromID(int32 InstanceID);
 

@@ -961,12 +961,11 @@ void UBIMDesigner::ToggleSlotNode(int32 ParentPartSlotID, int32 SlotID, bool New
 		{
 			// TODO: get default preset for slot
 			FBIMKey newPartPreset = nodeParent->OriginalPresetCopy.PartSlots[SlotID].PartPreset;
-			result = nodeParent->SetPartSlotPreset(nodeParent->WorkingPresetCopy.PartSlots[SlotID].SlotPreset, newPartPreset);
+			result = InstancePool.SetPartPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets,ParentPartSlotID, SlotID, newPartPreset);
 		}
 		else
 		{
-			result = nodeParent->ClearPartSlot(nodeParent->WorkingPresetCopy.PartSlots[SlotID].SlotPreset);
-
+			result = InstancePool.ClearPartPreset(ParentPartSlotID, SlotID);
 		}
 
 		if (result == EBIMResult::Success)

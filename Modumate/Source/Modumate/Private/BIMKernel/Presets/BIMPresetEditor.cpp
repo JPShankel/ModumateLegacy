@@ -73,9 +73,20 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 	TArray<FBIMPresetEditorNodeSharedPtr> createdInstances;
 
 	FBIMPresetEditorNodeSharedPtr parent = InstanceFromID(ParentID);
-	if (parent.IsValid() && !parent->WorkingPresetCopy.HasPin(ParentSetIndex,ParentSetPosition))
+	if (parent.IsValid())
 	{
-		parent->WorkingPresetCopy.AddChildPreset(PresetID, ParentSetIndex, ParentSetPosition);
+		// Presets are assigned either to a part slot or a pin, but not both
+		if (SlotAssignment.IsNone())
+		{
+			if (!parent->WorkingPresetCopy.HasPin(ParentSetIndex, ParentSetPosition))
+			{
+				parent->WorkingPresetCopy.AddChildPreset(PresetID, ParentSetIndex, ParentSetPosition);
+			}
+		}
+		else
+		{
+			parent->WorkingPresetCopy.SetPartPreset(SlotAssignment, PresetID);
+		}
 	}
 
 	while (iteratorStack.Num() > 0)
@@ -124,13 +135,6 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 			iteratorStack.Push(FPresetTreeIterator(instance->GetInstanceID(), childPreset.PresetID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition, FBIMKey()));
 		}
 
-#if 0 // TODO: parts not yet supported
-		for (int32 i=preset->PartSlots.Num()-1;i>=0;--i)
-		{
-			auto& partPreset = preset->PartSlots[i];
-			iteratorStack.Push(FPresetTreeIterator(instance->GetInstanceID(), partPreset.PartPreset, partPreset.SlotName));
-		}
-#endif
 		for (int32 i = preset->PartSlots.Num() - 1; i >= 0; --i)
 		{
 			auto& partPreset = preset->PartSlots[i];
@@ -554,6 +558,7 @@ EBIMResult FBIMPresetEditor::DestroyNodeInstance(const FBIMPresetEditorNodeShare
 		InstanceMap.Remove(inst->GetInstanceID());
 		InstancePool.Remove(inst);
 	}
+
 	if (parent.IsValid())
 	{
 		parent->SortChildren();
@@ -604,11 +609,14 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& Pre
 		return EBIMResult::Error;
 	}
 
-	for (auto& sibling : inst->ParentInstance.Pin()->WorkingPresetCopy.ChildPresets)
+	if (inst->ParentInstance.IsValid())
 	{
-		if (sibling.ParentPinSetIndex == inst->MyParentPinSetIndex && sibling.ParentPinSetPosition == inst->MyParentPinSetPosition)
+		for (auto& sibling : inst->ParentInstance.Pin()->WorkingPresetCopy.ChildPresets)
 		{
-			sibling.PresetID = preset->PresetID;
+			if (sibling.ParentPinSetIndex == inst->MyParentPinSetIndex && sibling.ParentPinSetPosition == inst->MyParentPinSetPosition)
+			{
+				sibling.PresetID = preset->PresetID;
+			}
 		}
 	}
 
@@ -620,14 +628,68 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& Pre
 		CreateNodeInstanceFromPreset(PresetCollection, InstanceID, childPreset.PresetID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition);
 	}
 
-#if 0 // TODO: UI will need custom part processing, not just nodes
 	for (auto& partPreset : preset->PartSlots)
 	{
-		CreateNodeInstanceFromPreset(PresetCollection, inst->GetInstanceID(), partPreset.PartPreset, -1, -1, partPreset.SlotName);
+		CreateNodeInstanceFromPreset(PresetCollection, inst->GetInstanceID(), partPreset.PartPreset, INDEX_NONE, INDEX_NONE, partPreset.SlotPreset);
 	}
-#endif
 
 	SortAndValidate();
 
 	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetEditor::SetPartPreset(const FBIMPresetCollection& PresetCollection, int32 ParentID, int32 SlotID, const FBIMKey& PartPreset)
+{
+	const FBIMPresetEditorNodeSharedPtr nodeParent = InstanceFromID(ParentID);
+
+	if (!nodeParent.IsValid())
+	{
+		return EBIMResult::Error;
+	}
+
+	FBIMKey slotPreset = nodeParent->WorkingPresetCopy.PartSlots[SlotID].SlotPreset;
+
+	// If we already have a part here, just swap the preset
+	for (auto& partNode : nodeParent->PartNodes)
+	{
+		auto partNodePinned = partNode.Pin();
+		if (partNodePinned->MyParentPartSlot == slotPreset)
+		{
+			SetNewPresetForNode(PresetCollection, partNodePinned->GetInstanceID(), PartPreset);
+			return EBIMResult::Success;
+		}
+	}
+
+	// If we don't already have this part, create a new node
+	if (CreateNodeInstanceFromPreset(PresetCollection, ParentID, PartPreset, INDEX_NONE, INDEX_NONE, slotPreset).IsValid())
+	{
+		nodeParent->SortChildren();
+		return EBIMResult::Success;
+	}
+	return EBIMResult::Error;
+}
+
+EBIMResult FBIMPresetEditor::ClearPartPreset(int32 ParentID, int32 SlotID)
+{
+	const FBIMPresetEditorNodeSharedPtr nodeParent = InstanceFromID(ParentID);
+
+	if (!nodeParent.IsValid())
+	{
+		return EBIMResult::Error;
+	}
+
+	FBIMKey slotPreset = nodeParent->WorkingPresetCopy.PartSlots[SlotID].SlotPreset;
+
+	for (auto& partNode : nodeParent->PartNodes)
+	{
+		auto partNodePinned = partNode.Pin();
+		if (partNodePinned->MyParentPartSlot == slotPreset)
+		{
+			TArray<int32> destroyed;
+			// DestroyNodeInstance will update the preset
+			DestroyNodeInstance(partNodePinned,destroyed);
+			return EBIMResult::Success;
+		}
+	}
+	return EBIMResult::Error;
 }

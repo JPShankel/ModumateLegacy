@@ -182,6 +182,20 @@ EBIMResult FBIMPresetInstance::RemoveChildPreset(int32 PinSetIndex, int32 PinSet
 	return EBIMResult::Success;
 }
 
+EBIMResult FBIMPresetInstance::SetPartPreset(const FBIMKey& SlotPreset, const FBIMKey& PartPreset)
+{
+	for (auto& partSlot : PartSlots)
+	{
+		if (partSlot.SlotPreset == SlotPreset)
+		{
+			partSlot.PartPreset = PartPreset;
+			return EBIMResult::Success;
+		}
+	}
+	return EBIMResult::Error;
+}
+
+
 bool FBIMPresetInstance::ValidatePreset() const
 {
 	if (ChildPresets.Num() > 0)
